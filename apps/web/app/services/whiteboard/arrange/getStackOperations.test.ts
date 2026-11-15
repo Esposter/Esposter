@@ -1,8 +1,8 @@
 import type { PositionedDocument, ShapeElement } from "vue-block-editor-headless";
 
-import { StackMove } from "@/models/whiteboard/StackMove";
-import { getStackOperations } from "@/services/whiteboard/arrange/getStackOperations";
-import { WHITEBOARD_PROCESS } from "@/services/whiteboard/constants.test";
+import { StackMove } from "#src/models/whiteboard/StackMove";
+import { getStackOperations } from "#src/services/whiteboard/arrange/getStackOperations";
+import { WHITEBOARD_PROCESS } from "#src/services/whiteboard/constants.test";
 import { applyPatches } from "@esposter/shared";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";

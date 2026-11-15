@@ -4,9 +4,9 @@ import type { SurveyDocument } from "vue-survey-engine-headless";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
-import ResourceSurveyResponses from "@/components/Resource/Survey/Responses.vue";
-import { useSession } from "@/services/auth/authClient.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
+import ResourceSurveyResponses from "#src/components/Resource/Survey/Responses.vue";
+import { useSession } from "#src/services/auth/authClient.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { SurveyResponseMode } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
@@ -16,7 +16,7 @@ import { v7 } from "uuid";
 import { assert, beforeEach, describe, expect, test, vi } from "vitest";
 import { createSurveyDocument, SurveyNodeType, surveyNodeTypeDefinitionMap } from "vue-survey-engine-headless";
 
-vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
+vi.mock(import("#src/services/auth/authClient"), () => import("#src/services/auth/authClient.test"));
 
 describe("resourceSurveyResponses", () => {
   const { trpcMsw } = setupMswTrpc();

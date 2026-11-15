@@ -1,12 +1,12 @@
-import type { NoteSlashItem } from "@/models/resource/note/NoteSlashItem";
+import type { NoteSlashItem } from "#src/models/resource/note/NoteSlashItem";
 import type { SuggestionOptions } from "@tiptap/suggestion";
 import type { Except } from "type-fest";
 
-import NoteBlockList from "@/components/Resource/Note/BlockList.vue";
-import { SuggestionTrigger } from "@/models/shared/SuggestionTrigger";
-import { getRender } from "@/services/message/getRender";
-import { getNoteSlashItems } from "@/services/resource/note/getNoteSlashItems";
-import { searchItems } from "@/services/search/searchItems";
+import NoteBlockList from "#src/components/Resource/Note/BlockList.vue";
+import { SuggestionTrigger } from "#src/models/shared/SuggestionTrigger";
+import { getRender } from "#src/services/message/getRender";
+import { getNoteSlashItems } from "#src/services/resource/note/getNoteSlashItems";
+import { searchItems } from "#src/services/search/searchItems";
 import { PluginKey } from "@tiptap/pm/state";
 
 // The `/` at the start of a line or after a space: the typed `/query` is removed, then the block runs at the caret

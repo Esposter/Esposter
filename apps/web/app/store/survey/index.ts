@@ -3,8 +3,8 @@ import type { SurveySettings } from "#shared/models/resource/survey/SurveySettin
 import type { SurveyDocument } from "vue-survey-engine-headless";
 
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
-import { createContentData } from "@/services/resource/createContentData";
-import { useResourceStore } from "@/store/resource";
+import { createContentData } from "#src/services/resource/createContentData";
+import { useResourceStore } from "#src/store/resource/index";
 import { ResourceType } from "@esposter/db-schema";
 import { createSurveyDocument } from "vue-survey-engine-headless";
 

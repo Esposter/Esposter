@@ -1,6 +1,6 @@
-import { useRealtimeStore } from "@/store/message/room/realtime";
-import { useUserSettingsStore } from "@/store/message/user/settings";
-import { checkIsEditableTarget } from "@/util/dom/checkIsEditableTarget";
+import { useRealtimeStore } from "#src/store/message/room/realtime";
+import { useUserSettingsStore } from "#src/store/message/user/settings/index";
+import { checkIsEditableTarget } from "#src/util/dom/checkIsEditableTarget";
 import { VoiceInputMode } from "@esposter/db-schema";
 import { defaultWindow } from "@vueuse/core";
 

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { UserSettingsContentMap } from "@/services/message/user/settings/UserSettingsContentMap";
-import { useUserSettingsDialogStore } from "@/store/message/user/settings/dialog";
+import { UserSettingsContentMap } from "#src/services/message/user/settings/UserSettingsContentMap";
+import { useUserSettingsDialogStore } from "#src/store/message/user/settings/dialog";
 
 interface Props {
   settingsType: keyof typeof UserSettingsContentMap;

@@ -1,13 +1,13 @@
 // @vitest-environment happy-dom
-import type { EditorRegistry } from "@/models/editor/EditorRegistry";
+import type { EditorRegistry } from "#src/models/editor/EditorRegistry";
 import type { ResolvedRegion } from "vue-editor-layout-headless";
 
-import EditorRegion from "@/components/Editor/Region.vue";
+import EditorRegion from "#src/components/Editor/Region.vue";
 import { mount } from "@vue/test-utils";
 import { describe, expect, test, vi } from "vitest";
 import { RegionEdge, RegionPresentation, SizeClass } from "vue-editor-layout-headless";
 
-vi.mock(import("@/composables/editor/useEditorSizeClass"), () => ({
+vi.mock(import("#src/composables/editor/useEditorSizeClass"), () => ({
   useEditorSizeClass: () => computed(() => SizeClass.Expanded),
 }));
 

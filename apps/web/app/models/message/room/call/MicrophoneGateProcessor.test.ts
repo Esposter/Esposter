@@ -1,6 +1,6 @@
-import type { MicrophoneGateSettings } from "@/models/message/room/call/MicrophoneGateSettings";
+import type { MicrophoneGateSettings } from "#src/models/message/room/call/MicrophoneGateSettings";
 
-import { MicrophoneGateProcessor } from "@/models/message/room/call/MicrophoneGateProcessor";
+import { MicrophoneGateProcessor } from "#src/models/message/room/call/MicrophoneGateProcessor";
 import { DEFAULT_INPUT_SENSITIVITY_DECIBELS } from "@esposter/db-schema";
 import { describe, expect, test, vi } from "vitest";
 

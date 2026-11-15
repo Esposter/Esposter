@@ -1,6 +1,6 @@
-import type { Item } from "@/models/shared/Item";
+import type { Item } from "#src/models/shared/Item";
 
-import { getMenuItemValue } from "@/services/ui/getMenuItemValue";
+import { getMenuItemValue } from "#src/services/ui/getMenuItemValue";
 
 // The item a menu's chosen value names, whether it is one of the list or one of a group's children
 export const getMenuItemByValue = (items: Item[], value: string): Item | undefined => {

@@ -1,6 +1,6 @@
 import type { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 
-import { useResourceStore } from "@/store/resource";
+import { useResourceStore } from "#src/store/resource/index";
 
 // Keyed by the list a dialog was opened on: a duplicated list keeps its todos' ids, so an app-lifetime target would
 // Re-open the dialog over the copy's same todos

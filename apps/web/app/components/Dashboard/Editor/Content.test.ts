@@ -6,24 +6,24 @@ import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
 import { Visual } from "#shared/models/dashboard/data/Visual";
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
-import DashboardEditorContent from "@/components/Dashboard/Editor/Content.vue";
-import DashboardGrid from "@/components/Dashboard/Grid/Index.vue";
-import DashboardGridTile from "@/components/Dashboard/Grid/Tile.vue";
-import DashboardVisualPreviewActionsMenu from "@/components/Dashboard/Visual/Preview/ActionsMenu.vue";
-import DashboardVisualPreviewContainer from "@/components/Dashboard/Visual/Preview/Container.vue";
-import UiConfirmDialog from "@/components/Ui/ConfirmDialog.vue";
+import DashboardEditorContent from "#src/components/Dashboard/Editor/Content.vue";
+import DashboardGrid from "#src/components/Dashboard/Grid/Index.vue";
+import DashboardGridTile from "#src/components/Dashboard/Grid/Tile.vue";
+import DashboardVisualPreviewActionsMenu from "#src/components/Dashboard/Visual/Preview/ActionsMenu.vue";
+import DashboardVisualPreviewContainer from "#src/components/Dashboard/Visual/Preview/Container.vue";
+import UiConfirmDialog from "#src/components/Ui/ConfirmDialog.vue";
 import {
   DASHBOARD_EDITOR_ROW_HEIGHT,
   DASHBOARD_GRID_COMMANDS,
   DASHBOARD_GRID_MARGIN,
-} from "@/services/dashboard/constants";
-import { stubGridWidth } from "@/services/dashboard/grid/stubGridWidth.test";
-import { stubApexChartEngine } from "@/services/styled/stubApexChartEngine.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useDashboardStore } from "@/store/dashboard";
-import { useVisualStore } from "@/store/dashboard/visual";
-import { useResourceStore } from "@/store/resource";
-import { useCommandStore } from "@/store/ui/command";
+} from "#src/services/dashboard/constants";
+import { stubGridWidth } from "#src/services/dashboard/grid/stubGridWidth.test";
+import { stubApexChartEngine } from "#src/services/styled/stubApexChartEngine.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useDashboardStore } from "#src/store/dashboard/index";
+import { useVisualStore } from "#src/store/dashboard/visual";
+import { useResourceStore } from "#src/store/resource/index";
+import { useCommandStore } from "#src/store/ui/command";
 import { ResourceType } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";

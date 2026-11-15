@@ -2,7 +2,7 @@
 import type { ResourceInResource } from "@esposter/db-schema";
 
 import { pluralize } from "#shared/util/text/pluralize";
-import { useListDialogStore } from "@/store/resource/listDialog";
+import { useListDialogStore } from "#src/store/resource/listDialog";
 
 interface Props {
   deleteResources: (resources: ResourceInResource[]) => Promise<void>;

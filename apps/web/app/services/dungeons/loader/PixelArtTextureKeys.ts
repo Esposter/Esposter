@@ -1,8 +1,8 @@
 import { MonsterPartyKey } from "#shared/models/dungeons/keys/image/MonsterPartyKey";
 import { BallKey } from "#shared/models/dungeons/keys/image/UI/BallKey";
-import { WorldLoaderMap } from "@/services/dungeons/loader/image/WorldLoaderMap";
-import { SpritesheetLoaderMap } from "@/services/dungeons/loader/spritesheet/SpritesheetLoaderMap";
-import { TilesetLoaderMap } from "@/services/dungeons/loader/TilesetLoaderMap";
+import { WorldLoaderMap } from "#src/services/dungeons/loader/image/WorldLoaderMap";
+import { SpritesheetLoaderMap } from "#src/services/dungeons/loader/spritesheet/SpritesheetLoaderMap";
+import { TilesetLoaderMap } from "#src/services/dungeons/loader/TilesetLoaderMap";
 
 // The textures drawn on a pixel grid: every tileset and spritesheet, the
 // World's foregrounds cut from those tilesets, and two images. The monsters, the painted backgrounds and Kenney's UI

@@ -1,4 +1,4 @@
-import { toSurveyMultipleTextItemFromText } from "@/services/resource/survey/toSurveyMultipleTextItemFromText";
+import { toSurveyMultipleTextItemFromText } from "#src/services/resource/survey/toSurveyMultipleTextItemFromText";
 import { describe, expect, test } from "vitest";
 import { SurveyMultipleTextItemInputType } from "vue-survey-engine-headless";
 

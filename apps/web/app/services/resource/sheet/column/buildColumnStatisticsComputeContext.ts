@@ -1,8 +1,8 @@
 import type { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnValue";
-import type { ColumnStatisticsComputeContext } from "@/models/resource/sheet/column/ColumnStatisticsComputeContext";
+import type { ColumnStatisticsComputeContext } from "#src/models/resource/sheet/column/ColumnStatisticsComputeContext";
 
-import { countOccurrences } from "@/util/array/countOccurrences";
+import { countOccurrences } from "#src/util/array/countOccurrences";
 
 export const buildColumnStatisticsComputeContext = (
   columnType: ColumnType,

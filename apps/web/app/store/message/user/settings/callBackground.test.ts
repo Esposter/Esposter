@@ -1,10 +1,10 @@
 // @vitest-environment nuxt
 import type { CallBackground } from "#shared/models/message/call/CallBackground";
 
-import { CallVirtualBackgroundDefinitions } from "@/services/message/room/call/CallVirtualBackgroundDefinitions";
-import { getCallBackgroundSelection } from "@/services/message/room/call/getCallBackgroundSelection";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useCallBackgroundStore } from "@/store/message/user/settings/callBackground";
+import { CallVirtualBackgroundDefinitions } from "#src/services/message/room/call/CallVirtualBackgroundDefinitions";
+import { getCallBackgroundSelection } from "#src/services/message/room/call/getCallBackgroundSelection";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useCallBackgroundStore } from "#src/store/message/user/settings/callBackground";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test, vi } from "vitest";
 

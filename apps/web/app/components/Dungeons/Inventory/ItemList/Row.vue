@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { MenuTextStyle } from "@/assets/dungeons/scene/inventory/styles/MenuTextStyle";
-import { CONTENT_MENU_WIDTH, INITIAL_CURSOR_POSITION } from "@/services/dungeons/scene/inventory/constants";
+import { MenuTextStyle } from "#src/assets/dungeons/scene/inventory/styles/MenuTextStyle";
+import { CONTENT_MENU_WIDTH, INITIAL_CURSOR_POSITION } from "#src/services/dungeons/scene/inventory/constants";
 import { Input } from "phaser";
 import { Rectangle, Text } from "vue-phaserjs";
 

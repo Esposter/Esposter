@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { Item } from "#shared/models/dungeons/item/Item";
 
-import { MenuTextStyle } from "@/assets/dungeons/scene/inventory/styles/MenuTextStyle";
-import { INITIAL_CURSOR_POSITION } from "@/services/dungeons/scene/inventory/constants";
-import { DISABLED_OPACITY } from "@/services/ui/constants";
-import { prettify } from "@/util/text/prettify";
+import { MenuTextStyle } from "#src/assets/dungeons/scene/inventory/styles/MenuTextStyle";
+import { INITIAL_CURSOR_POSITION } from "#src/services/dungeons/scene/inventory/constants";
+import { DISABLED_OPACITY } from "#src/services/ui/constants";
+import { prettify } from "#src/util/text/prettify";
 import { Container, Text } from "vue-phaserjs";
 
 interface Props {

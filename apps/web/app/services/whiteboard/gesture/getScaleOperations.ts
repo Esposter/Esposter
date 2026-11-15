@@ -1,12 +1,12 @@
-import type { ResizeHandle } from "@/models/whiteboard/ResizeHandle";
+import type { ResizeHandle } from "#src/models/whiteboard/ResizeHandle";
 import type { JsonPatchOperation } from "@esposter/shared";
 import type { Point, PositionedDocument } from "vue-block-editor-headless";
 
-import { getChainedOperations } from "@/services/whiteboard/edit/getChainedOperations";
-import { MINIMUM_ELEMENT_SIZE } from "@/services/whiteboard/gesture/constants";
-import { getElementIndexById } from "@/services/whiteboard/gesture/getElementIndexById";
-import { getResizedSides } from "@/services/whiteboard/gesture/getResizedSides";
-import { getSelectionBounds } from "@/services/whiteboard/gesture/getSelectionBounds";
+import { getChainedOperations } from "#src/services/whiteboard/edit/getChainedOperations";
+import { MINIMUM_ELEMENT_SIZE } from "#src/services/whiteboard/gesture/constants";
+import { getElementIndexById } from "#src/services/whiteboard/gesture/getElementIndexById";
+import { getResizedSides } from "#src/services/whiteboard/gesture/getResizedSides";
+import { getSelectionBounds } from "#src/services/whiteboard/gesture/getSelectionBounds";
 import { exhaustiveGuard, JsonPatchOperationType, takeOne } from "@esposter/shared";
 import {
   ArrowEndKey,

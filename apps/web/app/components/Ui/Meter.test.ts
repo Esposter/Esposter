@@ -1,8 +1,8 @@
 // @vitest-environment happy-dom
-import UiMeter from "@/components/Ui/Meter.vue";
-import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
-import { UiStyles } from "@/models/ui/UiStyle";
-import { METER_BLOCK_COUNT } from "@/services/ui/constants";
+import UiMeter from "#src/components/Ui/Meter.vue";
+import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
+import { UiStyles } from "#src/models/ui/UiStyle";
+import { METER_BLOCK_COUNT } from "#src/services/ui/constants";
 import { mount } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 

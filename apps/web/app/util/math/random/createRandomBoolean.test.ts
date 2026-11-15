@@ -1,4 +1,4 @@
-import { createRandomBoolean } from "@/util/math/random/createRandomBoolean";
+import { createRandomBoolean } from "#src/util/math/random/createRandomBoolean";
 import { describe, expect, test } from "vitest";
 
 describe(createRandomBoolean, () => {

@@ -1,4 +1,4 @@
-import type { MixedValue } from "@/models/editor/MixedValue";
+import type { MixedValue } from "#src/models/editor/MixedValue";
 
 import { takeOne } from "@esposter/shared";
 

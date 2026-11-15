@@ -1,20 +1,20 @@
 <script setup lang="ts">
-import type { UiCalendarEvent } from "@/models/ui/UiCalendarEvent";
-import type { UiCommand } from "@/models/ui/UiCommand";
-import type { UiMenuItem } from "@/models/ui/UiMenuItem";
+import type { UiCalendarEvent } from "#src/models/ui/UiCalendarEvent";
+import type { UiCommand } from "#src/models/ui/UiCommand";
+import type { UiMenuItem } from "#src/models/ui/UiMenuItem";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiCalendarView, UiCalendarViews } from "@/models/ui/UiCalendarView";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiCalendarView, UiCalendarViews } from "#src/models/ui/UiCalendarView";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import {
   CALENDAR_COMMAND_GROUP,
   CALENDAR_OPENING_HOUR,
   CALENDAR_SLOT_DURATION,
   CALENDAR_WORK_WEEK_DAY_COUNT,
-} from "@/services/ui/constants";
-import { UiCalendarViewIconMeaningMap } from "@/services/ui/UiCalendarViewIconMeaningMap";
-import { UiCalendarViewStepMap } from "@/services/ui/UiCalendarViewStepMap";
-import { getStartOfWeek } from "@/util/date/getStartOfWeek";
+} from "#src/services/ui/constants";
+import { UiCalendarViewIconMeaningMap } from "#src/services/ui/UiCalendarViewIconMeaningMap";
+import { UiCalendarViewStepMap } from "#src/services/ui/UiCalendarViewStepMap";
+import { getStartOfWeek } from "#src/util/date/getStartOfWeek";
 import { getZonedDateTime } from "@esposter/shared";
 
 interface Props {

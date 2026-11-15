@@ -1,4 +1,4 @@
-import { getInitials } from "@/util/text/getInitials";
+import { getInitials } from "#src/util/text/getInitials";
 import { describe, expect, test } from "vitest";
 
 describe(getInitials, () => {

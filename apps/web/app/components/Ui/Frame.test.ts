@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-import UiFrame from "@/components/Ui/Frame.vue";
+import UiFrame from "#src/components/Ui/Frame.vue";
 import { mount } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 

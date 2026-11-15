@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { UserAchievementWithDefinition } from "@/models/achievement/UserAchievementWithDefinition";
+import type { UserAchievementWithDefinition } from "#src/models/achievement/UserAchievementWithDefinition";
 
-import { UiDialogSize } from "@/models/ui/UiDialogSize";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { MAX_RECENT_ACHIEVEMENTS } from "@/services/achievement/constants";
-import { getUnlockedUserAchievements } from "@/services/achievement/getUnlockedUserAchievements";
+import { UiDialogSize } from "#src/models/ui/UiDialogSize";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { MAX_RECENT_ACHIEVEMENTS } from "#src/services/achievement/constants";
+import { getUnlockedUserAchievements } from "#src/services/achievement/getUnlockedUserAchievements";
 
 interface Props {
   userAchievements: UserAchievementWithDefinition[];

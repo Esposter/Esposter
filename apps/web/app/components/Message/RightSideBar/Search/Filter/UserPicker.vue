@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { UiListItem } from "@/models/ui/UiListItem";
+import type { UiListItem } from "#src/models/ui/UiListItem";
 import type { SerializableValue } from "@esposter/db-schema";
 
-import { useRoomStore } from "@/store/message/room";
-import { useMemberStore } from "@/store/message/user/member";
+import { useRoomStore } from "#src/store/message/room/index";
+import { useMemberStore } from "#src/store/message/user/member";
 
 const emit = defineEmits<{ select: [value: SerializableValue] }>();
 const { readMembers, readMoreMembers } = useReadMembers();

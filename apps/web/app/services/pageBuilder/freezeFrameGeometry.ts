@@ -1,7 +1,7 @@
-import type { FrameGeometry } from "@/models/pageBuilder/FrameGeometry";
-import type { OverlayBox } from "@/models/pageBuilder/OverlayBox";
+import type { FrameGeometry } from "#src/models/pageBuilder/FrameGeometry";
+import type { OverlayBox } from "#src/models/pageBuilder/OverlayBox";
 
-import { checkIsInsideBox } from "@/services/pageBuilder/checkIsInsideBox";
+import { checkIsInsideBox } from "#src/services/pageBuilder/checkIsInsideBox";
 
 // The frame's node boxes as they stood when a drag began, before the drag's own preview moved any of them. The preview is
 // Drawn in the frame and pushes the nodes after it along, and whatever the pointer then resolves reads those pushed boxes, so

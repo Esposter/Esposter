@@ -1,4 +1,4 @@
-import type { UiMenuItem } from "@/models/ui/UiMenuItem";
+import type { UiMenuItem } from "#src/models/ui/UiMenuItem";
 
 // The steps of a rating scale of the given count, each drawn as its number and holding that number as its value
 export const getSurveyRatingItems = (rateCount: number): UiMenuItem<number>[] =>

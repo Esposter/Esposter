@@ -1,4 +1,4 @@
-import { splitBackgroundLayers } from "@/services/pageBuilder/splitBackgroundLayers";
+import { splitBackgroundLayers } from "#src/services/pageBuilder/splitBackgroundLayers";
 import { describe, expect, test } from "vitest";
 
 describe(splitBackgroundLayers, () => {

@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import type { AnyPageBuilderDocument } from "@/models/pageBuilder/AnyPageBuilderDocument";
-import type { AnyPageBuilderKind } from "@/models/pageBuilder/AnyPageBuilderKind";
-import type { FrameGeometry } from "@/models/pageBuilder/FrameGeometry";
-import type { PaletteGroup } from "@/models/ui/palette/PaletteGroup";
+import type { AnyPageBuilderDocument } from "#src/models/pageBuilder/AnyPageBuilderDocument";
+import type { AnyPageBuilderKind } from "#src/models/pageBuilder/AnyPageBuilderKind";
+import type { FrameGeometry } from "#src/models/pageBuilder/FrameGeometry";
+import type { PaletteGroup } from "#src/models/ui/palette/PaletteGroup";
 import type { BlockNode } from "vue-block-editor-headless";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { MERGE_FIELD_KIND_PREFIX } from "@/services/pageBuilder/constants";
-import { createMergeFieldNode } from "@/services/pageBuilder/email/createMergeFieldNode";
-import { getMergeFieldColumnName } from "@/services/pageBuilder/getMergeFieldColumnName";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { MERGE_FIELD_KIND_PREFIX } from "#src/services/pageBuilder/constants";
+import { createMergeFieldNode } from "#src/services/pageBuilder/email/createMergeFieldNode";
+import { getMergeFieldColumnName } from "#src/services/pageBuilder/getMergeFieldColumnName";
 import { MjmlNodeType } from "mjml-blocks";
 
 interface Props {

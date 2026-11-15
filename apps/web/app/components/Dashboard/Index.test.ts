@@ -5,10 +5,10 @@ import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregatio
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { MimeType } from "#shared/models/file/MimeType";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
-import DashboardIndex from "@/components/Dashboard/Index.vue";
-import { readTileRectangles } from "@/services/dashboard/grid/readTileRectangles.test";
-import { stubGridWidth } from "@/services/dashboard/grid/stubGridWidth.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
+import DashboardIndex from "#src/components/Dashboard/Index.vue";
+import { readTileRectangles } from "#src/services/dashboard/grid/readTileRectangles.test";
+import { stubGridWidth } from "#src/services/dashboard/grid/stubGridWidth.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { downloadFile } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";

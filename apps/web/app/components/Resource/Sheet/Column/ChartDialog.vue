@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { ColumnStatistics } from "#shared/models/resource/sheet/column/ColumnStatistics";
 
-import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
-import { UiDialogSize } from "@/models/ui/UiDialogSize";
-import { computeColumnChartData } from "@/services/resource/sheet/column/computeColumnChartData";
+import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
+import { UiDialogSize } from "#src/models/ui/UiDialogSize";
+import { computeColumnChartData } from "#src/services/resource/sheet/column/computeColumnChartData";
 
 interface Props {
   columnStatistics?: ColumnStatistics;

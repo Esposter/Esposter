@@ -1,4 +1,4 @@
-import type { ColumnFilter } from "@/models/resource/sheet/column/ColumnFilter";
+import type { ColumnFilter } from "#src/models/resource/sheet/column/ColumnFilter";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 

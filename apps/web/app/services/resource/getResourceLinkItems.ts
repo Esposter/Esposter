@@ -1,7 +1,7 @@
-import type { Item } from "@/models/shared/Item";
+import type { Item } from "#src/models/shared/Item";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { copyLinkToClipboard } from "@/services/resource/copyLinkToClipboard";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { copyLinkToClipboard } from "#src/services/resource/copyLinkToClipboard";
 import { RoutePath } from "@esposter/shared";
 
 // What a resource's link offers wherever a row of one has a menu: the resource beside the current page, and its address

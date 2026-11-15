@@ -4,7 +4,7 @@ import { useCallObject } from "#server/composables/realtime/useCallObject";
 import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
 import { createParticipant } from "#server/services/message/call/createParticipant";
 import { createMockAuthSession, createMockCaller, createMockContext } from "#server/trpc/context.test";
-import { callRouter } from "#server/trpc/routers/call";
+import { callRouter } from "#server/trpc/routers/call/index";
 import { callSessionsInMessage, DatabaseEntityType } from "@esposter/db-schema";
 import { NotFoundError } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";

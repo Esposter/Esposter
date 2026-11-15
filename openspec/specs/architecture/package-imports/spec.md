@@ -1,4 +1,10 @@
-## ADDED Requirements
+# architecture/package-imports Specification
+
+## Purpose
+
+Every package, the web app included, names its own source through the subpath imports its manifest declares, each specifier naming its file with no query, so Node, the bundlers, the test runner and the typecheck resolve it alike and every TypeScript script runs under Node.
+
+## Requirements
 
 ### Requirement: A package addresses its own source through its manifest
 
@@ -21,6 +27,16 @@ Every package, the web app included, SHALL reach its own modules through the sub
 - **GIVEN** a module in the web app that imports through `@/` or `@@/`
 - **WHEN** the repository is linted
 - **THEN** the lint fails on that import
+
+### Requirement: A subpath import names a file with no query
+
+An import of a package's own source SHALL name a file with no query, and a bundler query SHALL be passed as an `import.meta.glob` option.
+
+#### Scenario: A query in an import specifier
+
+- **GIVEN** a module importing one of its package's own files through a `#` name carrying `?raw`
+- **WHEN** the repository is linted
+- **THEN** the lint fails naming the glob form
 
 ### Requirement: Every TypeScript script runs under Node
 

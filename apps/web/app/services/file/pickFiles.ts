@@ -1,4 +1,4 @@
-import { showOpenFilePicker } from "@/services/file/showOpenFilePicker";
+import { showOpenFilePicker } from "#src/services/file/showOpenFilePicker";
 import { getResultAsync } from "@esposter/shared";
 
 // The picker both the composer's upload button and its actions menu open, so the two cannot disagree about what a

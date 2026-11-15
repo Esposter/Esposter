@@ -1,4 +1,4 @@
-import type { CameraMask } from "@/models/dungeons/camera/CameraMask";
+import type { CameraMask } from "#src/models/dungeons/camera/CameraMask";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 export const removeCameraMask = (scene: SceneWithPlugins, { graphics, mask }: CameraMask) => {

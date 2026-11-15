@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { MenuTextStyle } from "@/assets/dungeons/scene/inventory/styles/MenuTextStyle";
+import { MenuTextStyle } from "#src/assets/dungeons/scene/inventory/styles/MenuTextStyle";
 import { Container, Text } from "vue-phaserjs";
 </script>
 

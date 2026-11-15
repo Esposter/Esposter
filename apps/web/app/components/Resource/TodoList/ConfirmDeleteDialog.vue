@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { pluralize } from "#shared/util/text/pluralize";
-import { useTodoListStore } from "@/store/resource/todoList";
-import { useTodoDialogStore } from "@/store/resource/todoList/todoDialog";
+import { useTodoListStore } from "#src/store/resource/todoList/index";
+import { useTodoDialogStore } from "#src/store/resource/todoList/todoDialog";
 
 const todoListStore = useTodoListStore();
 const { deleteItems } = todoListStore;

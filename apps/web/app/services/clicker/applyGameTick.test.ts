@@ -1,8 +1,8 @@
 import { BuildingMap } from "#shared/assets/clicker/data/BuildingMap";
 import { BuildingId } from "#shared/models/clicker/data/building/BuildingId";
-import { applyGameTick } from "@/services/clicker/applyGameTick";
-import { FPS } from "@/services/clicker/constants";
-import { createClicker } from "@/services/clicker/createClicker";
+import { applyGameTick } from "#src/services/clicker/applyGameTick";
+import { FPS } from "#src/services/clicker/constants";
+import { createClicker } from "#src/services/clicker/createClicker";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 

@@ -1,5 +1,5 @@
-import { DurationUnit, DurationUnits } from "@/models/date/DurationUnit";
-import { createUnitFormatter } from "@/util/date/createUnitFormatter";
+import { DurationUnit, DurationUnits } from "#src/models/date/DurationUnit";
+import { createUnitFormatter } from "#src/util/date/createUnitFormatter";
 
 const DurationUnitFormatterMap: Record<DurationUnit, Intl.NumberFormat> = {
   [DurationUnit.Day]: createUnitFormatter(DurationUnit.Day),

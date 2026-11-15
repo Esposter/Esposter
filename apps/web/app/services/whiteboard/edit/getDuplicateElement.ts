@@ -1,6 +1,6 @@
 import type { Point, PositionedElement } from "vue-block-editor-headless";
 
-import { getDuplicateArrowEnd } from "@/services/whiteboard/edit/getDuplicateArrowEnd";
+import { getDuplicateArrowEnd } from "#src/services/whiteboard/edit/getDuplicateArrowEnd";
 import { exhaustiveGuard, takeOne } from "@esposter/shared";
 import { PositionedElementType } from "vue-block-editor-headless";
 

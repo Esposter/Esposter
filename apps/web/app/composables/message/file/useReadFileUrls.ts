@@ -1,7 +1,7 @@
-import type { ReadFileUrl } from "@/models/message/file/ReadFileUrl";
+import type { ReadFileUrl } from "#src/models/message/file/ReadFileUrl";
 import type { FileEntity } from "@esposter/db-schema";
 
-import { checkHasThumbnail } from "@/services/message/file/checkHasThumbnail";
+import { checkHasThumbnail } from "#src/services/message/file/checkHasThumbnail";
 import { READ_PRESIGNED_URL_DURATION_MS } from "@esposter/db-schema";
 import { getResultAsync, takeOne } from "@esposter/shared";
 

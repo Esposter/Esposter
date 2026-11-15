@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ProductGroups } from "@/services/app/ProductGroups";
+import { ProductGroups } from "#src/services/app/ProductGroups";
 
 const emit = defineEmits<{ select: [] }>();
 </script>

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { ResourceListSource } from "@/models/resource/list/ResourceListSource";
-import type { Item } from "@/models/shared/Item";
+import type { ResourceListSource } from "#src/models/resource/list/ResourceListSource";
+import type { Item } from "#src/models/shared/Item";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { UiTextFieldType } from "#src/models/ui/UiTextFieldType";
 import { RoutePath } from "@esposter/shared";
 
 interface Props {

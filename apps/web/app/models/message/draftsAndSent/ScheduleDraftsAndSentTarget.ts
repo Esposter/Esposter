@@ -1,4 +1,4 @@
-import type { ComposerTarget } from "@/models/message/ComposerTarget";
+import type { ComposerTarget } from "#src/models/message/ComposerTarget";
 import type { RoomInMessage } from "@esposter/db-schema";
 
 export interface ScheduleDraftsAndSentTarget {

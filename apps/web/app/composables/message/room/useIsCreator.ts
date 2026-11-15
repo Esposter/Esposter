@@ -1,7 +1,7 @@
-import type { ClientMessage } from "@/models/message/ClientMessage";
+import type { ClientMessage } from "#src/models/message/ClientMessage";
 
 import { checkIsMessageAuthor } from "#shared/services/message/checkIsMessageAuthor";
-import { useRoomStore } from "@/store/message/room";
+import { useRoomStore } from "#src/store/message/room/index";
 
 export const useIsCreator = async (message: MaybeRefOrGetter<ClientMessage | undefined>) => {
   const { data: session } = await useAuthSession();

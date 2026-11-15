@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import ResourceListFilterPill from "@/components/Resource/List/FilterPill.vue";
+import ResourceListFilterPill from "#src/components/Resource/List/FilterPill.vue";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 

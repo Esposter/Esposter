@@ -1,4 +1,4 @@
-import type { SurveyDropSlot } from "@/models/resource/survey/SurveyDropSlot";
+import type { SurveyDropSlot } from "#src/models/resource/survey/SurveyDropSlot";
 import type { SurveyDocument } from "vue-survey-engine-headless";
 
 import { getAcceptedTypes } from "vue-block-editor-headless";

@@ -1,5 +1,5 @@
 /* eslint-disable perfectionist/sort-switch-case -- the cardinal moves read in their pairs, and the diagonals fall through together */
-import type { GridValue } from "@/models/dungeons/GridValue";
+import type { GridValue } from "#src/models/dungeons/GridValue";
 import type { Position } from "grid-engine";
 import type { SetRequired } from "type-fest";
 import type { UnwrapRef } from "vue";

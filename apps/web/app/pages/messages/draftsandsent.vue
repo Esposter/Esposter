@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { DraftsAndSentTab, DraftsAndSentTabs } from "@/models/message/draftsAndSent/DraftsAndSentTab";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { TAB_QUERY_PARAMETER_KEY } from "@/services/route/constants";
+import { DraftsAndSentTab, DraftsAndSentTabs } from "#src/models/message/draftsAndSent/DraftsAndSentTab";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { TAB_QUERY_PARAMETER_KEY } from "#src/services/route/constants";
 
 definePageMeta({ middleware: "auth" });
 useHead({ title: "Drafts & sent" });

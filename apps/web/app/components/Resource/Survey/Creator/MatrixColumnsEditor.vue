@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { SurveyMatrixColumn } from "vue-survey-engine-headless";
 
-import { toSurveyMatrixColumnFromText } from "@/services/resource/survey/toSurveyMatrixColumnFromText";
+import { toSurveyMatrixColumnFromText } from "#src/services/resource/survey/toSurveyMatrixColumnFromText";
 import { SurveyMatrixCellType, surveyMatrixColumnSchema } from "vue-survey-engine-headless";
 
 interface Props {

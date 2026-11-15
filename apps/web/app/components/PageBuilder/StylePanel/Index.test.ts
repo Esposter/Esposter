@@ -9,11 +9,11 @@ import {
   TEST_THIRD_ID,
   TEST_URL,
 } from "#shared/services/pageBuilder/constants.test";
-import PageBuilderStylePanel from "@/components/PageBuilder/StylePanel/Index.vue";
-import { webpageKind } from "@/services/pageBuilder/webpageKind";
-import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
-import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
-import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
+import PageBuilderStylePanel from "#src/components/PageBuilder/StylePanel/Index.vue";
+import { webpageKind } from "#src/services/pageBuilder/webpageKind";
+import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
+import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
+import { usePageBuilderHistoryStore } from "#src/store/pageBuilder/history";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";

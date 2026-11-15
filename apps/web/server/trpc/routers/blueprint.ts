@@ -6,7 +6,7 @@ import { deployBlueprint } from "#server/services/blueprint/deployBlueprint";
 import { getInvalidBlueprintError } from "#server/services/blueprint/getInvalidBlueprintError";
 import { getResourceListTopics } from "#server/services/resource/getResourceListTopics";
 import { readResourceContent } from "#server/services/resource/readResourceContent";
-import { router } from "#server/trpc";
+import { router } from "#server/trpc/index";
 import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { createResourceProcedures } from "#server/trpc/procedure/resource/createResourceProcedures";
 import { getOwnerProcedure } from "#server/trpc/procedure/resource/getOwnerProcedure";

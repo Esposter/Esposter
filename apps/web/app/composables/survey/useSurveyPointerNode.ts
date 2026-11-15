@@ -1,4 +1,4 @@
-import { useSurveyCreatorStore } from "@/store/survey/creator";
+import { useSurveyCreatorStore } from "#src/store/survey/creator";
 import { getBlockNode } from "vue-block-editor-headless";
 import { surveyNodeChildren } from "vue-survey-engine-headless";
 

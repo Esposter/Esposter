@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
-import { createRoomCategory } from "@/services/message/roomCategory/createRoomCategory.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useRoomCategoryStore } from "@/store/message/roomCategory";
+import { createRoomCategory } from "#src/services/message/roomCategory/createRoomCategory.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useRoomCategoryStore } from "#src/store/message/roomCategory";
 import { takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { v7 } from "uuid";

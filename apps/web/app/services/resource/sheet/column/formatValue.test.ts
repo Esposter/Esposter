@@ -1,7 +1,7 @@
 import { BooleanFormat } from "#shared/models/resource/sheet/column/BooleanFormat";
 import { DateFormat } from "#shared/models/resource/sheet/column/DateFormat";
 import { NumberFormat } from "#shared/models/resource/sheet/column/NumberFormat";
-import { formatValue } from "@/services/resource/sheet/column/formatValue";
+import { formatValue } from "#src/services/resource/sheet/column/formatValue";
 import { describe, expect, test } from "vitest";
 
 describe(formatValue, () => {

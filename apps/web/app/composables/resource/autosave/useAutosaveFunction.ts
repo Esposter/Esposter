@@ -1,8 +1,8 @@
 import type { Promisable } from "type-fest";
 
-import { RESOURCE_AUTOSAVE_DEBOUNCE_MS } from "@/services/resource/constants";
-import { useResourceStore } from "@/store/resource";
-import { getRouteParam } from "@/util/router/getRouteParam";
+import { RESOURCE_AUTOSAVE_DEBOUNCE_MS } from "#src/services/resource/constants";
+import { useResourceStore } from "#src/store/resource/index";
+import { getRouteParam } from "#src/util/router/getRouteParam";
 import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 
 // The one shared autosave cadence, bound to the resource that was open when the edit landed. The binding refuses a

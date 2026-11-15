@@ -1,8 +1,8 @@
-import type { PageBuilderPaletteCategory } from "@/models/pageBuilder/PageBuilderPaletteCategory";
+import type { PageBuilderPaletteCategory } from "#src/models/pageBuilder/PageBuilderPaletteCategory";
 import type { MjmlNode } from "mjml-blocks";
 
 import { EmailNodeType } from "#shared/models/pageBuilder/EmailNodeType";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { MjmlNodeType } from "mjml-blocks";
 
 // The groups the email palette lists its node types in, in the order shown. A block is inserted into the first slot that

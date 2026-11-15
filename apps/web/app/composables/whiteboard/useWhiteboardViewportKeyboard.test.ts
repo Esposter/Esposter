@@ -1,13 +1,13 @@
 // @vitest-environment nuxt
-import { useWhiteboardViewportKeyboard } from "@/composables/whiteboard/useWhiteboardViewportKeyboard";
+import { useWhiteboardViewportKeyboard } from "#src/composables/whiteboard/useWhiteboardViewportKeyboard";
 import {
   createWhiteboardEditState,
   pressKey,
   WHITEBOARD_PROCESS,
   WHITEBOARD_PROCESS_ID,
-} from "@/services/whiteboard/constants.test";
-import { useWhiteboardStore } from "@/store/resource/whiteboard";
-import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
+} from "#src/services/whiteboard/constants.test";
+import { useWhiteboardEditorStore } from "#src/store/resource/whiteboard/editor";
+import { useWhiteboardStore } from "#src/store/resource/whiteboard/index";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { v7 } from "uuid";
 import { describe, expect, onTestFinished, test } from "vitest";

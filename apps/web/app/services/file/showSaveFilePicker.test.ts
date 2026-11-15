@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-import { showSaveFilePicker } from "@/services/file/showSaveFilePicker";
+import { showSaveFilePicker } from "#src/services/file/showSaveFilePicker";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(showSaveFilePicker, () => {

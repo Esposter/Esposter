@@ -1,4 +1,4 @@
-import type { Threshold } from "@/models/math/Threshold";
+import type { Threshold } from "#src/models/math/Threshold";
 
 import { takeOne } from "@esposter/shared";
 

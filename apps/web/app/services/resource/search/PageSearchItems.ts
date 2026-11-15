@@ -1,10 +1,10 @@
 // @unocss-include
-import type { ResourceSearchItem } from "@/models/resource/search/ResourceSearchItem";
+import type { ResourceSearchItem } from "#src/models/resource/search/ResourceSearchItem";
 
-import { ResourceListSources } from "@/models/resource/list/ResourceListSource";
-import { ResourceSearchGroup } from "@/models/resource/search/ResourceSearchGroup";
-import { ResourceListSourceDefinitionMap } from "@/services/resource/list/ResourceListSourceDefinitionMap";
-import { ResourceListSourceSearchTitleMap } from "@/services/resource/search/ResourceListSourceSearchTitleMap";
+import { ResourceListSources } from "#src/models/resource/list/ResourceListSource";
+import { ResourceSearchGroup } from "#src/models/resource/search/ResourceSearchGroup";
+import { ResourceListSourceDefinitionMap } from "#src/services/resource/list/ResourceListSourceDefinitionMap";
+import { ResourceListSourceSearchTitleMap } from "#src/services/resource/search/ResourceListSourceSearchTitleMap";
 import { ID_SEPARATOR, RoutePath } from "@esposter/shared";
 
 // The list routes come from the source registry so a new source is searchable without being listed twice

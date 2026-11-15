@@ -1,6 +1,6 @@
-import type { LandMask } from "@/models/visual/LandMask";
+import type { LandMask } from "#src/models/visual/LandMask";
 
-import { isLandAt } from "@/services/visual/globe/isLandAt";
+import { isLandAt } from "#src/services/visual/globe/isLandAt";
 import { describe, expect, test } from "vitest";
 
 describe(isLandAt, () => {

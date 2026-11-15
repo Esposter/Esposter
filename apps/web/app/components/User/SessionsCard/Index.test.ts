@@ -1,12 +1,12 @@
 // @vitest-environment nuxt
 import type { SessionSummary } from "#server/models/session/SessionSummary";
 
-import UiErrorState from "@/components/Ui/ErrorState.vue";
-import UserSessionsCard from "@/components/User/SessionsCard/Index.vue";
-import UserSessionsCardRow from "@/components/User/SessionsCard/Row.vue";
-import UserSettingsListSkeleton from "@/components/User/Settings/ListSkeleton.vue";
-import { UserSettingsPageSection } from "@/models/user/UserSettingsPageSection";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
+import UiErrorState from "#src/components/Ui/ErrorState.vue";
+import UserSessionsCard from "#src/components/User/SessionsCard/Index.vue";
+import UserSessionsCardRow from "#src/components/User/SessionsCard/Row.vue";
+import UserSettingsListSkeleton from "#src/components/User/Settings/ListSkeleton.vue";
+import { UserSettingsPageSection } from "#src/models/user/UserSettingsPageSection";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";

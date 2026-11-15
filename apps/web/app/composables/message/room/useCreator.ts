@@ -1,9 +1,9 @@
-import type { ClientMessage } from "@/models/message/ClientMessage";
-import type { Creator } from "@/models/message/Creator";
+import type { ClientMessage } from "#src/models/message/ClientMessage";
+import type { Creator } from "#src/models/message/Creator";
 
-import { UNKNOWN_CREATOR } from "@/services/message/constants";
-import { useUserStore } from "@/store/message/user";
-import { useAppUserStore } from "@/store/message/user/appUser";
+import { UNKNOWN_CREATOR } from "#src/services/message/constants";
+import { useAppUserStore } from "#src/store/message/user/appUser";
+import { useUserStore } from "#src/store/message/user/index";
 
 // A message with no creator to name is undefined, and one with a message always has a creator, placeholder or not
 export function useCreator(message: MaybeRefOrGetter<ClientMessage>): ComputedRef<Creator>;

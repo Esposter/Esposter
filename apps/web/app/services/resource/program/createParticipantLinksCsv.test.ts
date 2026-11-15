@@ -1,4 +1,4 @@
-import { createParticipantLinksCsv } from "@/services/resource/program/createParticipantLinksCsv";
+import { createParticipantLinksCsv } from "#src/services/resource/program/createParticipantLinksCsv";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { ButtonProps } from "@/components/Login/ButtonProps";
+import type { ButtonProps } from "#src/components/Login/ButtonProps";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { toTitleCase } from "@/util/text/toTitleCase";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { toTitleCase } from "#src/util/text/toTitleCase";
 
 interface Props extends ButtonProps {
   isLinked?: true;

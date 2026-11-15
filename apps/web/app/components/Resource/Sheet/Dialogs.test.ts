@@ -1,10 +1,10 @@
 // @vitest-environment nuxt
 import { createDataSource } from "#shared/models/resource/sheet/datasource/createDataSource.test";
-import ResourceSheetDialogs from "@/components/Resource/Sheet/Dialogs.vue";
-import { setupWithDataSource } from "@/composables/resource/sheet/commands/setupWithDataSource.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useResourceStore } from "@/store/resource";
-import { useSheetPortableDialogStore } from "@/store/resource/sheet/portableDialog";
+import ResourceSheetDialogs from "#src/components/Resource/Sheet/Dialogs.vue";
+import { setupWithDataSource } from "#src/composables/resource/sheet/commands/setupWithDataSource.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useResourceStore } from "#src/store/resource/index";
+import { useSheetPortableDialogStore } from "#src/store/resource/sheet/portableDialog";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";

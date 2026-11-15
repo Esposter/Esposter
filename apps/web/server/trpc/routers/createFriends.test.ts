@@ -1,8 +1,8 @@
 import type { AuthSession } from "#server/models/auth/AuthSession";
 import type { Context } from "#server/trpc/context";
 
-import { createCallerFactory } from "#server/trpc";
 import { createMockAuthSession, createMockContext } from "#server/trpc/context.test";
+import { createCallerFactory } from "#server/trpc/index";
 import { friendRequestRouter } from "#server/trpc/routers/friendRequest";
 import { assert, describe } from "vitest";
 

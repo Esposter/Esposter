@@ -1,7 +1,7 @@
-import type { MemberGroup } from "@/models/message/member/MemberGroup";
+import type { MemberGroup } from "#src/models/message/member/MemberGroup";
 import type { PublicUser, RoomRoleInMessage } from "@esposter/db-schema";
 
-import { getTopRole } from "@/services/message/member/getTopRole";
+import { getTopRole } from "#src/services/message/member/getTopRole";
 import { getOrCreate } from "@esposter/shared";
 
 // Discord-style member grouping — one group per top role ordered by position (highest first).

@@ -1,9 +1,9 @@
 // @vitest-environment happy-dom
-import UiForm from "@/components/Ui/Form.vue";
-import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
-import UiTextField from "@/components/Ui/TextField.vue";
-import { UiStyles } from "@/models/ui/UiStyle";
-import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
+import UiForm from "#src/components/Ui/Form.vue";
+import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
+import UiTextField from "#src/components/Ui/TextField.vue";
+import { UiStyles } from "#src/models/ui/UiStyle";
+import { UiTextFieldType } from "#src/models/ui/UiTextFieldType";
 import { flushPromises, mount } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 
@@ -63,7 +63,8 @@ describe("uiTextField", () => {
     test("takes focus as it mounts when it is asked to, unless the reader is typing elsewhere", async () => {
       expect.hasAssertions();
 
-      const typing = window.document.body.appendChild(window.document.createElement("textarea"));
+      const typing = window.document.createElement("textarea");
+      window.document.body.append(typing);
       typing.focus();
       mount(UiTextField, { attachTo: window.document.body, props: { isAutofocus: true, label, modelValue: "" } });
       await flushPromises();

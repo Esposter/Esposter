@@ -1,7 +1,7 @@
-import type { ResolvedThemeMode } from "@/models/ui/ResolvedThemeMode";
+import type { ResolvedThemeMode } from "#src/models/ui/ResolvedThemeMode";
 
-import { ThemeMode, themeModeSchema } from "@/models/ui/ThemeMode";
-import { THEME_COOKIE_NAME, THEME_COOKIE_OPTIONS } from "@/services/ui/constants";
+import { ThemeMode, themeModeSchema } from "#src/models/ui/ThemeMode";
+import { THEME_COOKIE_NAME, THEME_COOKIE_OPTIONS } from "#src/services/ui/constants";
 
 // The reader's theme mode, a cookie as the style is, so the first response already renders it. System follows the
 // Scheme the browser asks for, which only the browser can read: `NuxtTheme` keeps `isSystemDark` in step once mounted,

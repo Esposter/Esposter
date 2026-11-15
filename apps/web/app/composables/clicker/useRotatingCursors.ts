@@ -1,5 +1,5 @@
 import { Target } from "#shared/models/clicker/data/Target";
-import { useClickerStore } from "@/store/clicker";
+import { useClickerStore } from "#src/store/clicker/index";
 import { ID_SEPARATOR, takeOne } from "@esposter/shared";
 import { v7 } from "uuid";
 

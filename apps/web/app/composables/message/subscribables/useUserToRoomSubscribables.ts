@@ -1,6 +1,6 @@
-import { useUserToRoomStore } from "@/store/message/room/userToRoom";
-import { useMemberStore } from "@/store/message/user/member";
-import { useConnectionStore } from "@/store/realtime/connection";
+import { useUserToRoomStore } from "#src/store/message/room/userToRoom";
+import { useMemberStore } from "#src/store/message/user/member";
+import { useConnectionStore } from "#src/store/realtime/connection";
 import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 
 export const useUserToRoomSubscribables = () => {

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { AdminActionType, RoomInMessage } from "@esposter/db-schema";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useModerationLogStore } from "@/store/message/moderation/log";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { useModerationLogStore } from "#src/store/message/moderation/log";
 
 interface Props {
   room: RoomInMessage;

@@ -1,10 +1,10 @@
 import type { JsonPatchOperation } from "@esposter/shared";
 import type { Bounds, Point, PositionedDocument } from "vue-block-editor-headless";
 
-import { AlignEdge } from "@/models/whiteboard/AlignEdge";
-import { WHITEBOARD_ALIGN_MINIMUM_BOXES } from "@/services/whiteboard/arrange/constants";
-import { getSelectedBoxes } from "@/services/whiteboard/arrange/getSelectedBoxes";
-import { getBoxedSelectionBounds } from "@/services/whiteboard/gesture/getBoxedSelectionBounds";
+import { AlignEdge } from "#src/models/whiteboard/AlignEdge";
+import { WHITEBOARD_ALIGN_MINIMUM_BOXES } from "#src/services/whiteboard/arrange/constants";
+import { getSelectedBoxes } from "#src/services/whiteboard/arrange/getSelectedBoxes";
+import { getBoxedSelectionBounds } from "#src/services/whiteboard/gesture/getBoxedSelectionBounds";
 import { exhaustiveGuard } from "@esposter/shared";
 import { movePositionedElement } from "vue-block-editor-headless";
 

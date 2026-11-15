@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useVisualStore } from "@/store/dashboard/visual";
+import { useVisualStore } from "#src/store/dashboard/visual";
 
 const visualStore = useVisualStore();
 const { applyEdit } = visualStore;

@@ -1,6 +1,6 @@
 // @unocss-include
 
-import { useSurveyCreatorStore } from "@/store/survey/creator";
+import { useSurveyCreatorStore } from "#src/store/survey/creator";
 
 // The selection a canvas element takes: drawn as chosen while its pointer is the selected one, and chosen by a click on
 // Itself or by Enter while it holds focus. A click from a node inside it is stopped there, and an Enter from inside it is

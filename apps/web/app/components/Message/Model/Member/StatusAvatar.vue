@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { User } from "better-auth";
 
-import { StatusTokenMap } from "@/services/message/user/status/StatusTokenMap";
-import { useStatusStore } from "@/store/message/user/status";
+import { StatusTokenMap } from "#src/services/message/user/status/StatusTokenMap";
+import { useStatusStore } from "#src/store/message/user/status";
 
 interface Props {
   id: User["id"];

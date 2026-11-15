@@ -1,8 +1,8 @@
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 
-import { reconcileDataSource } from "@/services/resource/sheet/dataSource/reconcileDataSource";
-import { useSheetStore } from "@/store/resource/sheet";
-import { useSheetHistoryStore } from "@/store/resource/sheet/history";
+import { reconcileDataSource } from "#src/services/resource/sheet/dataSource/reconcileDataSource";
+import { useSheetHistoryStore } from "#src/store/resource/sheet/history/index";
+import { useSheetStore } from "#src/store/resource/sheet/index";
 
 // Imports replace the whole data section wholesale, so the command history no longer applies.
 // An import awaits before it writes — a revision, a dataset read — so the setter is taken where the import starts and

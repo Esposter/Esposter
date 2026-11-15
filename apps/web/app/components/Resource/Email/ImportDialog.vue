@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { UiDialogSize } from "@/models/ui/UiDialogSize";
-import { checkIsBlankSource } from "@/services/shared/checkIsBlankSource";
-import { useEmailImportDialogStore } from "@/store/emailEditor/importDialog";
-import { useResourceStore } from "@/store/resource";
+import { UiDialogSize } from "#src/models/ui/UiDialogSize";
+import { checkIsBlankSource } from "#src/services/shared/checkIsBlankSource";
+import { useEmailImportDialogStore } from "#src/store/emailEditor/importDialog";
+import { useResourceStore } from "#src/store/resource/index";
 
 const emailImportDialogStore = useEmailImportDialogStore();
 const { isImportOpen } = storeToRefs(emailImportDialogStore);

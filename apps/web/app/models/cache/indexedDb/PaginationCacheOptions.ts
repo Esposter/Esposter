@@ -1,8 +1,8 @@
-import type { IndexedDbDatabaseSchema } from "@/models/cache/indexedDb/IndexedDbDatabaseSchema";
-import type { IndexedDbStoreConfiguration } from "@/models/cache/indexedDb/IndexedDbStoreConfiguration";
-import type { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStoreName";
-import type { PartitionKey } from "@/models/cache/indexedDb/PartitionKey";
-import type { CursorPaginationSlice } from "@/models/pagination/cursor/CursorPaginationSlice";
+import type { IndexedDbDatabaseSchema } from "#src/models/cache/indexedDb/IndexedDbDatabaseSchema";
+import type { IndexedDbStoreConfiguration } from "#src/models/cache/indexedDb/IndexedDbStoreConfiguration";
+import type { IndexedDbStoreName } from "#src/models/cache/indexedDb/IndexedDbStoreName";
+import type { PartitionKey } from "#src/models/cache/indexedDb/PartitionKey";
+import type { CursorPaginationSlice } from "#src/models/pagination/cursor/CursorPaginationSlice";
 import type { DatabaseIndexName } from "@esposter/shared";
 import type { Promisable } from "type-fest";
 

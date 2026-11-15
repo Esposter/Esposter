@@ -1,4 +1,4 @@
-import { Grid } from "@/models/dungeons/Grid";
+import { Grid } from "#src/models/dungeons/Grid";
 import { Direction } from "grid-engine";
 import { describe, expect, test } from "vitest";
 

@@ -1,7 +1,7 @@
-import type { UiSchemaFormConfiguration } from "@/models/ui/schemaForm/UiSchemaFormConfiguration";
-import type { UiSchemaFormRendererProps } from "@/models/ui/schemaForm/UiSchemaFormRendererProps";
+import type { UiSchemaFormConfiguration } from "#src/models/ui/schemaForm/UiSchemaFormConfiguration";
+import type { UiSchemaFormRendererProps } from "#src/models/ui/schemaForm/UiSchemaFormRendererProps";
 
-import { getSchemaFormLayout } from "@/services/ui/schemaForm/getSchemaFormLayout";
+import { getSchemaFormLayout } from "#src/services/ui/schemaForm/getSchemaFormLayout";
 import { mapDispatchToControlProps, mapStateToControlProps } from "@jsonforms/core";
 
 // What every field of a schema form reads beside JSON Forms' own control: its layout meta, and the schema's issue at

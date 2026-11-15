@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { SentMessageWithRoom } from "#shared/models/db/message/SentMessageWithRoom";
-import type { UiListItem } from "@/models/ui/UiListItem";
+import type { UiListItem } from "#src/models/ui/UiListItem";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useSentMessageStore } from "@/store/message/sentMessage";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { useSentMessageStore } from "#src/store/message/sentMessage";
 import { ID_SEPARATOR, RoutePath } from "@esposter/shared";
 
 const { readMoreSentMessages } = useReadSentMessages();

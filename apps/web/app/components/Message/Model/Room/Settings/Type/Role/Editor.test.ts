@@ -1,10 +1,10 @@
 // @vitest-environment nuxt
 import type { RoomRoleInMessage } from "@esposter/db-schema";
 
-import MessageModelRoomSettingsTypeRoleEditor from "@/components/Message/Model/Room/Settings/Type/Role/Editor.vue";
-import MessageModelRoomSettingsTypeRolePermissionList from "@/components/Message/Model/Room/Settings/Type/Role/Permission/List.vue";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useRoleStore } from "@/store/message/room/role";
+import MessageModelRoomSettingsTypeRoleEditor from "#src/components/Message/Model/Room/Settings/Type/Role/Editor.vue";
+import MessageModelRoomSettingsTypeRolePermissionList from "#src/components/Message/Model/Room/Settings/Type/Role/Permission/List.vue";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useRoleStore } from "#src/store/message/room/role";
 import { RoomPermission } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { v7 } from "uuid";

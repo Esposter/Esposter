@@ -1,4 +1,4 @@
-import { LOCAL_STORAGE_KEY_SEPARATOR } from "@/services/shared/constants";
+import { LOCAL_STORAGE_KEY_SEPARATOR } from "#src/services/shared/constants";
 
 // Central registry for every localStorage key (RoutePath-style) so keys can never overlap.
 // Values are kept byte-identical to their historical strings to preserve existing persisted data.

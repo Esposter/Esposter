@@ -1,5 +1,5 @@
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
-import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
+import { UiTextFieldType } from "#src/models/ui/UiTextFieldType";
 
 export const FieldInputTypeMap = {
   [ColumnType.Number]: UiTextFieldType.Number,

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { UiCommand } from "@/models/ui/UiCommand";
+import type { UiCommand } from "#src/models/ui/UiCommand";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { useVirtualFocus } from "@vuetify/v0";
 
 interface Props {

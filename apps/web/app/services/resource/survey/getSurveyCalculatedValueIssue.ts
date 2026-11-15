@@ -1,6 +1,6 @@
 import type { SurveyCalculatedValue, SurveyDocument } from "vue-survey-engine-headless";
 
-import { SURVEY_CALCULATED_VALUES_POINTER } from "@/services/resource/survey/constants";
+import { SURVEY_CALCULATED_VALUES_POINTER } from "#src/services/resource/survey/constants";
 import { checkSurveyDocument } from "vue-survey-engine-headless";
 
 // The message the survey check gives the calculated value at an index, checked on the document as it would be with these

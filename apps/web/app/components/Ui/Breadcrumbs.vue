@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { UiBreadcrumb } from "@/models/ui/UiBreadcrumb";
+import type { UiBreadcrumb } from "#src/models/ui/UiBreadcrumb";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { Breadcrumbs } from "@vuetify/v0";
 
 interface Props {

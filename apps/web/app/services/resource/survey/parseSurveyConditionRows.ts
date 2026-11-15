@@ -1,8 +1,8 @@
-import type { SurveyConditionRows } from "@/models/resource/survey/SurveyConditionRows";
+import type { SurveyConditionRows } from "#src/models/resource/survey/SurveyConditionRows";
 
-import { SurveyConditionJoin } from "@/models/resource/survey/SurveyConditionJoin";
-import { getSurveyConditionOperands } from "@/services/resource/survey/getSurveyConditionOperands";
-import { toSurveyConditionRow } from "@/services/resource/survey/toSurveyConditionRow";
+import { SurveyConditionJoin } from "#src/models/resource/survey/SurveyConditionJoin";
+import { getSurveyConditionOperands } from "#src/services/resource/survey/getSurveyConditionOperands";
+import { toSurveyConditionRow } from "#src/services/resource/survey/toSurveyConditionRow";
 import { parseSurveyExpression, SurveyExpressionBinaryOperator, SurveyExpressionNodeType } from "survey-expression";
 
 // The rows an expression reads as, joined by the one connective, or none when its shape is not rows. Empty text holds

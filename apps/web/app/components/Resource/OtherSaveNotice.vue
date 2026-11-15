@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { useResourceStore } from "@/store/resource";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { useResourceStore } from "#src/store/resource/index";
 
 const resourceStore = useResourceStore();
 const { heldSave } = storeToRefs(resourceStore);

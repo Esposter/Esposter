@@ -1,4 +1,4 @@
-import type { EditorToolbarItem } from "@/models/editor/EditorToolbarItem";
+import type { EditorToolbarItem } from "#src/models/editor/EditorToolbarItem";
 import type { Except } from "type-fest";
 import type { ShapeKind } from "vue-block-editor-headless";
 

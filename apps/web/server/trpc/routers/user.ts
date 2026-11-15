@@ -28,10 +28,10 @@ import { deleteAccountSessions } from "#server/services/user/deleteAccountSessio
 import { getDataExportLink } from "#server/services/user/getDataExportLink";
 import { publishUserRoomTopics } from "#server/services/user/publishUserRoomTopics";
 import { readActiveDataExport } from "#server/services/user/readActiveDataExport";
-import { router } from "#server/trpc";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
+import { router } from "#server/trpc/index";
 import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { standardRateLimitedProcedure } from "#server/trpc/procedure/standardRateLimitedProcedure";

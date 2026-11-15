@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useBuildingStore } from "@/store/clicker/building";
-import { useUpgradeStore } from "@/store/clicker/upgrade";
+import { useBuildingStore } from "#src/store/clicker/building";
+import { useUpgradeStore } from "#src/store/clicker/upgrade";
 
 const { $trpc } = useNuxtApp();
 const upgradeStore = useUpgradeStore();

@@ -1,11 +1,11 @@
 // @unocss-include
-import type { UiCommand } from "@/models/ui/UiCommand";
+import type { UiCommand } from "#src/models/ui/UiCommand";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { ACCOUNT_COMMAND_GROUP, PAGES_COMMAND_GROUP } from "@/services/app/constants";
-import { SecondaryPageLinkItems } from "@/services/app/SecondaryPageLinkItems";
-import { UserSettingsPageLinkItem } from "@/services/app/UserSettingsPageLinkItem";
-import { signOutOfBrowser } from "@/services/auth/signOutOfBrowser";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { ACCOUNT_COMMAND_GROUP, PAGES_COMMAND_GROUP } from "#src/services/app/constants";
+import { SecondaryPageLinkItems } from "#src/services/app/SecondaryPageLinkItems";
+import { UserSettingsPageLinkItem } from "#src/services/app/UserSettingsPageLinkItem";
+import { signOutOfBrowser } from "#src/services/auth/signOutOfBrowser";
 import { RoutePath } from "@esposter/shared";
 
 // The rarely used, which the dock's account menu keeps behind one step and the palette offers by name: the reader's

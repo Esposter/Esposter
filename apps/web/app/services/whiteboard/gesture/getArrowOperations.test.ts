@@ -1,4 +1,4 @@
-import { getArrowOperations } from "@/services/whiteboard/gesture/getArrowOperations";
+import { getArrowOperations } from "#src/services/whiteboard/gesture/getArrowOperations";
 import { applyPatches } from "@esposter/shared";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";

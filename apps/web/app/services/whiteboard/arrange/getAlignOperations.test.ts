@@ -1,8 +1,8 @@
 import type { ArrowElement, PositionedDocument, ShapeElement } from "vue-block-editor-headless";
 
-import { AlignEdge } from "@/models/whiteboard/AlignEdge";
-import { getAlignOperations } from "@/services/whiteboard/arrange/getAlignOperations";
-import { WHITEBOARD_ARROW, WHITEBOARD_PROCESS } from "@/services/whiteboard/constants.test";
+import { AlignEdge } from "#src/models/whiteboard/AlignEdge";
+import { getAlignOperations } from "#src/services/whiteboard/arrange/getAlignOperations";
+import { WHITEBOARD_ARROW, WHITEBOARD_PROCESS } from "#src/services/whiteboard/constants.test";
 import { applyPatches } from "@esposter/shared";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";

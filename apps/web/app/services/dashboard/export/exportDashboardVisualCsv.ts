@@ -4,14 +4,14 @@ import type { Dataset } from "#shared/models/dataset/Dataset";
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
 import { MimeType } from "#shared/models/file/MimeType";
 import { getDatasetTruncation } from "#shared/services/dataset/getDatasetTruncation";
-import { VisualDatasetShape } from "@/models/dashboard/VisualDatasetShape";
-import { checkIsAxisVisualPropsData } from "@/services/dashboard/checkIsAxisVisualPropsData";
-import { computeDatasetVisualPropsData } from "@/services/dashboard/dataset/computeDatasetVisualPropsData";
-import { VisualTypeDatasetShapeMap } from "@/services/dashboard/dataset/VisualTypeDatasetShapeMap";
-import { createDrawnDataset } from "@/services/dashboard/export/createDrawnDataset";
-import { createDatasetCsv } from "@/services/dataset/createDatasetCsv";
-import { getDatasetTruncationText } from "@/services/dataset/getDatasetTruncationText";
-import { useAlertStore } from "@/store/alert";
+import { VisualDatasetShape } from "#src/models/dashboard/VisualDatasetShape";
+import { checkIsAxisVisualPropsData } from "#src/services/dashboard/checkIsAxisVisualPropsData";
+import { computeDatasetVisualPropsData } from "#src/services/dashboard/dataset/computeDatasetVisualPropsData";
+import { VisualTypeDatasetShapeMap } from "#src/services/dashboard/dataset/VisualTypeDatasetShapeMap";
+import { createDrawnDataset } from "#src/services/dashboard/export/createDrawnDataset";
+import { createDatasetCsv } from "#src/services/dataset/createDatasetCsv";
+import { getDatasetTruncationText } from "#src/services/dataset/getDatasetTruncationText";
+import { useAlertStore } from "#src/store/alert";
 import { downloadFile, takeOne } from "@esposter/shared";
 
 // The rows a bound visual draws, as a CSV named after the visual. A card's file is its one value.

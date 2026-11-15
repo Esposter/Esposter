@@ -6,8 +6,8 @@ import {
   DEFAULT_COMPLETED_MESSAGE,
   INVITE_ONLY_MESSAGE,
 } from "#shared/services/resource/survey/constants";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { getRouteParamString } from "@/util/router/getRouteParamString";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { getRouteParamString } from "#src/util/router/getRouteParamString";
 import { ResourceType, SurveyResponseMode } from "@esposter/db-schema";
 import { sanitizeHtml } from "@esposter/shared";
 import { flattenSurveyQuestions } from "vue-survey-engine-headless";

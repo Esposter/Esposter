@@ -1,8 +1,8 @@
 import { PageMarkType } from "#shared/models/app/PageMarkType";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { getPageIcon } from "@/services/app/getPageIcon";
-import { UserSettingsPageLinkItem } from "@/services/app/UserSettingsPageLinkItem";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { getPageIcon } from "#src/services/app/getPageIcon";
+import { UserSettingsPageLinkItem } from "#src/services/app/UserSettingsPageLinkItem";
 import { ResourceType } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 import { v7 } from "uuid";

@@ -5,11 +5,11 @@ import { TEST_ID, TEST_OTHER_ID, TEST_ROOT } from "#shared/services/pageBuilder/
 import { createButton } from "#shared/services/pageBuilder/createButton.test";
 import { webpageNodeChildren } from "#shared/services/pageBuilder/webpageNodeChildren";
 import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
-import { usePageBuilderHistoryCommands } from "@/composables/pageBuilder/usePageBuilderHistoryCommands";
-import { webpageKind } from "@/services/pageBuilder/webpageKind";
-import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
-import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
-import { useCommandStore } from "@/store/ui/command";
+import { usePageBuilderHistoryCommands } from "#src/composables/pageBuilder/usePageBuilderHistoryCommands";
+import { webpageKind } from "#src/services/pageBuilder/webpageKind";
+import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
+import { usePageBuilderHistoryStore } from "#src/store/pageBuilder/history";
+import { useCommandStore } from "#src/store/ui/command";
 import { noop } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { v7 } from "uuid";

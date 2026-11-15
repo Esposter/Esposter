@@ -1,7 +1,7 @@
-import type { ResourceFilterValues } from "@/models/resource/list/ResourceFilterValues";
+import type { ResourceFilterValues } from "#src/models/resource/list/ResourceFilterValues";
 import type { Except } from "type-fest";
 
-import { getResourceFilterInput } from "@/services/resource/list/getResourceFilterInput";
+import { getResourceFilterInput } from "#src/services/resource/list/getResourceFilterInput";
 
 // The summary cards read every filter except `types` — the cards are what sets it, so grouping by a type
 // The user already narrowed to would only ever render the one card they are standing on. Lazy, because the

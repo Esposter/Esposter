@@ -1,13 +1,13 @@
-import type { ClickerItemProperties } from "@/models/clicker/ClickerItemProperties";
+import type { ClickerItemProperties } from "#src/models/clicker/ClickerItemProperties";
 
 import { clickerSaveSchema } from "#shared/models/clicker/data/ClickerSave";
-import { createClicker } from "@/services/clicker/createClicker";
-import { ClickerColorMap } from "@/services/clicker/properties/ClickerColorMap";
-import { ClickerIconComponentMap } from "@/services/clicker/properties/ClickerIconComponentMap";
-import { ClickerNameMap } from "@/services/clicker/properties/ClickerNameMap";
-import { ClickerPluralNameMap } from "@/services/clicker/properties/ClickerPluralNameMap";
-import { toClickerSave } from "@/services/clicker/save/toClickerSave";
-import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
+import { createClicker } from "#src/services/clicker/createClicker";
+import { ClickerColorMap } from "#src/services/clicker/properties/ClickerColorMap";
+import { ClickerIconComponentMap } from "#src/services/clicker/properties/ClickerIconComponentMap";
+import { ClickerNameMap } from "#src/services/clicker/properties/ClickerNameMap";
+import { ClickerPluralNameMap } from "#src/services/clicker/properties/ClickerPluralNameMap";
+import { toClickerSave } from "#src/services/clicker/save/toClickerSave";
+import { LocalStorageKey } from "#src/services/shared/LocalStorageKey";
 
 export const useClickerStore = defineStore("clicker", () => {
   const { $trpc } = useNuxtApp();

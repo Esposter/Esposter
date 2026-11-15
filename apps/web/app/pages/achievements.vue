@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { AchievementView, AchievementViews } from "@/models/achievement/AchievementView";
-import { AchievementViewItems } from "@/services/achievement/AchievementViewItems";
-import { VIEW_QUERY_PARAMETER_KEY } from "@/services/route/constants";
+import { AchievementView, AchievementViews } from "#src/models/achievement/AchievementView";
+import { AchievementViewItems } from "#src/services/achievement/AchievementViewItems";
+import { VIEW_QUERY_PARAMETER_KEY } from "#src/services/route/constants";
 
 definePageMeta({ middleware: "auth" });
 

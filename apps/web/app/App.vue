@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useLayoutStore } from "@/store/layout";
-import { useReadableTextStore } from "@/store/ui/readableText";
+import { useLayoutStore } from "#src/store/layout";
+import { useReadableTextStore } from "#src/store/ui/readableText";
 
 const { currentRoute } = useRouter();
 const layoutStore = useLayoutStore();

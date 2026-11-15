@@ -1,4 +1,4 @@
-import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
+import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
 import { RegionEdge } from "vue-editor-layout-headless";
 
 // Where a sheet stands for the edge its region sits at. A drawer slides in from its own side, as the page's drawers do. The

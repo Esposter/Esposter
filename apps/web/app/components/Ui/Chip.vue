@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { UiToken } from "@/models/ui/UiToken";
+import type { UiToken } from "#src/models/ui/UiToken";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 interface Props {
   meaning?: UiIconMeaning;

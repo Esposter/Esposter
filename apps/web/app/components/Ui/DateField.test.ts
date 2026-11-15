@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
-import UiDateField from "@/components/Ui/DateField.vue";
-import { getDaySelector } from "@/components/Ui/getDaySelector.test";
-import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
-import { UiStyles } from "@/models/ui/UiStyle";
+import UiDateField from "#src/components/Ui/DateField.vue";
+import { getDaySelector } from "#src/components/Ui/getDaySelector.test";
+import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
+import { UiStyles } from "#src/models/ui/UiStyle";
 import { getZonedDateTime } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";

@@ -1,6 +1,6 @@
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
-import type { EmailDocument } from "@/models/pageBuilder/EmailDocument";
-import type { OverlayBox } from "@/models/pageBuilder/OverlayBox";
+import type { EmailDocument } from "#src/models/pageBuilder/EmailDocument";
+import type { OverlayBox } from "#src/models/pageBuilder/OverlayBox";
 
 import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";

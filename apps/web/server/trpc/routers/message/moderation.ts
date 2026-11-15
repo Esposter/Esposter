@@ -21,9 +21,9 @@ import { announceRoomMemberRemoval } from "#server/services/room/announceRoomMem
 import { getRoomListTopics } from "#server/services/room/getRoomListTopics";
 import { getRoomMembershipWhere } from "#server/services/room/getRoomMembershipWhere";
 import { assertIsManageable } from "#server/services/room/rbac/assertIsManageable";
-import { router } from "#server/trpc";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
+import { router } from "#server/trpc/index";
 import { assertIsRoomMiddleware } from "#server/trpc/middleware/assertIsRoomMiddleware";
 import { moderationLogPlugin } from "#server/trpc/plugins/moderationLogPlugin";
 import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";

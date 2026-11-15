@@ -1,9 +1,9 @@
 <script setup lang="ts" generic="TType extends RowValueType">
-import type { Row } from "@/models/user/ProfileCard/Row";
-import type { RowValueType } from "@/models/user/ProfileCard/RowValueType";
+import type { Row } from "#src/models/user/ProfileCard/Row";
+import type { RowValueType } from "#src/models/user/ProfileCard/RowValueType";
 
-import { RowValueComponentMap } from "@/services/user/RowValueComponentMap";
-import { toTitleCase } from "@/util/text/toTitleCase";
+import { RowValueComponentMap } from "#src/services/user/RowValueComponentMap";
+import { toTitleCase } from "#src/util/text/toTitleCase";
 
 interface Props<TType extends RowValueType> {
   isEditMode: boolean;

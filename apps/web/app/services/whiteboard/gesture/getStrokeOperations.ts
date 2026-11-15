@@ -1,7 +1,7 @@
 import type { JsonPatchOperation } from "@esposter/shared";
 import type { Point, PositionedDocument } from "vue-block-editor-headless";
 
-import { STROKE_WIDTH } from "@/services/whiteboard/gesture/constants";
+import { STROKE_WIDTH } from "#src/services/whiteboard/gesture/constants";
 import { insertPositionedElement, PositionedElementType } from "vue-block-editor-headless";
 
 // The operations that add a stroke through the points at the top of the element list, drawn last so it sits above what it crosses. A stroke

@@ -2,9 +2,9 @@
 import type { Promisable } from "type-fest";
 import type { z } from "zod";
 
-import { UiDialogSize } from "@/models/ui/UiDialogSize";
-import { DIALOG_BODY_TRANSITION_DURATION, DIALOG_CLOSE_DURATION_MS } from "@/services/ui/constants";
-import { prettify } from "@/util/text/prettify";
+import { UiDialogSize } from "#src/models/ui/UiDialogSize";
+import { DIALOG_BODY_TRANSITION_DURATION, DIALOG_CLOSE_DURATION_MS } from "#src/services/ui/constants";
+import { prettify } from "#src/util/text/prettify";
 
 interface Props<T> {
   editedItem: T;

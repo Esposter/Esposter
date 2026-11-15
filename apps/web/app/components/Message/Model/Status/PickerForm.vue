@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import type { UserStatus } from "@esposter/db-schema";
 
-import { MutationStatus } from "@/models/shared/MutationStatus";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { authClient } from "@/services/auth/authClient";
-import { SelectableStatusDefinitionList } from "@/services/message/user/status/SelectableStatusDefinitionList";
-import { StatusIconMap } from "@/services/message/user/status/StatusIconMap";
-import { StatusTokenMap } from "@/services/message/user/status/StatusTokenMap";
-import { UiRules } from "@/services/ui/UiRules";
-import { useStatusStore } from "@/store/message/user/status";
+import { MutationStatus } from "#src/models/shared/MutationStatus";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { authClient } from "#src/services/auth/authClient";
+import { SelectableStatusDefinitionList } from "#src/services/message/user/status/SelectableStatusDefinitionList";
+import { StatusIconMap } from "#src/services/message/user/status/StatusIconMap";
+import { StatusTokenMap } from "#src/services/message/user/status/StatusTokenMap";
+import { UiRules } from "#src/services/ui/UiRules";
+import { useStatusStore } from "#src/store/message/user/status";
 import { STATUS_MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
 import { noop } from "@esposter/shared";
 

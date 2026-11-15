@@ -1,20 +1,20 @@
 // @vitest-environment nuxt
 import type { FriendRequestInSocialWithRelations, PublicUser } from "@esposter/db-schema";
 
-import { useSession } from "@/services/auth/authClient.test";
-import { createUser } from "@/services/message/user/createUser.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useAlertStore } from "@/store/alert";
-import { useBlockStore } from "@/store/message/user/block";
-import { useFriendStore } from "@/store/message/user/friend";
-import { useFriendRequestStore } from "@/store/message/user/friendRequest";
+import { useSession } from "#src/services/auth/authClient.test";
+import { createUser } from "#src/services/message/user/createUser.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useAlertStore } from "#src/store/alert";
+import { useBlockStore } from "#src/store/message/user/block";
+import { useFriendStore } from "#src/store/message/user/friend";
+import { useFriendRequestStore } from "#src/store/message/user/friendRequest";
 import { TRPCError } from "@trpc/server";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 interface MockSessionValue {
   data?: { user: { id: string } };
 }
-vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
+vi.mock(import("#src/services/auth/authClient"), () => import("#src/services/auth/authClient.test"));
 
 describe(useFriendRequestStore, () => {
   const { trpcMsw } = setupMswTrpc();

@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
-import UiLoadingBar from "@/components/Ui/LoadingBar.vue";
-import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
-import { UiStyles } from "@/models/ui/UiStyle";
+import UiLoadingBar from "#src/components/Ui/LoadingBar.vue";
+import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
+import { UiStyles } from "#src/models/ui/UiStyle";
 import { flushPromises, mount } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 

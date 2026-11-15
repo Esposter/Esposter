@@ -1,16 +1,16 @@
 import type { WhiteboardElement } from "#shared/models/resource/whiteboard/WhiteboardElement";
-import type { WhiteboardEditState } from "@/models/whiteboard/WhiteboardEditState";
-import type { WhiteboardHistoryEntry } from "@/models/whiteboard/WhiteboardHistoryEntry";
+import type { WhiteboardEditState } from "#src/models/whiteboard/WhiteboardEditState";
+import type { WhiteboardHistoryEntry } from "#src/models/whiteboard/WhiteboardHistoryEntry";
 import type { JsonPatchOperation } from "@esposter/shared";
 import type { PositionedDocument, PositionedElementProperty } from "vue-block-editor-headless";
 
-import { createContentData } from "@/services/resource/createContentData";
-import { MAX_WHITEBOARD_HISTORY_SIZE } from "@/services/resource/whiteboard/constants";
-import { createErrorAlert } from "@/services/trpc/createErrorAlert";
-import { applyWhiteboardEdit } from "@/services/whiteboard/edit/applyWhiteboardEdit";
-import { redoWhiteboardEdit } from "@/services/whiteboard/edit/redoWhiteboardEdit";
-import { undoWhiteboardEdit } from "@/services/whiteboard/edit/undoWhiteboardEdit";
-import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
+import { createContentData } from "#src/services/resource/createContentData";
+import { MAX_WHITEBOARD_HISTORY_SIZE } from "#src/services/resource/whiteboard/constants";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
+import { applyWhiteboardEdit } from "#src/services/whiteboard/edit/applyWhiteboardEdit";
+import { redoWhiteboardEdit } from "#src/services/whiteboard/edit/redoWhiteboardEdit";
+import { undoWhiteboardEdit } from "#src/services/whiteboard/edit/undoWhiteboardEdit";
+import { useWhiteboardEditorStore } from "#src/store/resource/whiteboard/editor";
 import { ResourceType } from "@esposter/db-schema";
 import { getResult } from "@esposter/shared";
 import { insertPositionedElement, updatePositionedElementProperty, useEditSession } from "vue-block-editor-headless";

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useSheetHistoryStore } from "@/store/resource/sheet/history";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { useSheetHistoryStore } from "#src/store/resource/sheet/history/index";
 
 const sheetHistoryStore = useSheetHistoryStore();
 const { isRedoable, redoDescription } = storeToRefs(sheetHistoryStore);

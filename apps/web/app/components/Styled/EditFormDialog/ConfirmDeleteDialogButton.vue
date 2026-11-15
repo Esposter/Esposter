@@ -1,8 +1,8 @@
 <script setup lang="ts" generic="T">
 import type { Promisable } from "type-fest";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 interface Props<T> {
   itemType: string;

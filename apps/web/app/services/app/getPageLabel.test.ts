@@ -1,5 +1,5 @@
 import { MESSAGE_DISPLAY_NAME } from "#shared/services/message/constants";
-import { getPageLabel } from "@/services/app/getPageLabel";
+import { getPageLabel } from "#src/services/app/getPageLabel";
 import { RoutePath } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 

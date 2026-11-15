@@ -1,13 +1,13 @@
 import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnValue";
 import type { SurveyResponseRecord } from "#shared/models/resource/survey/SurveyResponseRecord";
-import type { BaseSurveySummaryCard } from "@/models/resource/survey/BaseSurveySummaryCard";
-import type { SurveySummaryCard } from "@/models/resource/survey/SurveySummaryCard";
+import type { BaseSurveySummaryCard } from "#src/models/resource/survey/BaseSurveySummaryCard";
+import type { SurveySummaryCard } from "#src/models/resource/survey/SurveySummaryCard";
 import type { SurveyChoice, SurveyQuestionNode } from "vue-survey-engine-headless";
 
 import { getAverage } from "#shared/services/resource/sheet/column/getAverage";
 import { CHECKBOX_ANSWER_SEPARATOR } from "#shared/services/resource/survey/constants";
-import { SurveySummaryCardType } from "@/models/resource/survey/SurveySummaryCardType";
-import { SURVEY_SUMMARY_ANSWER_LIMIT } from "@/services/survey/summary/constants";
+import { SurveySummaryCardType } from "#src/models/resource/survey/SurveySummaryCardType";
+import { SURVEY_SUMMARY_ANSWER_LIMIT } from "#src/services/survey/summary/constants";
 import {
   checkIsSurveyAnsweringNode,
   getSurveyChoiceText,

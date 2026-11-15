@@ -1,6 +1,6 @@
 // @unocss-include
-import { EmojiGroups } from "@/models/message/emoji/EmojiGroup";
-import { SkinTones } from "@/models/message/emoji/SkinTone";
+import { EmojiGroups } from "#src/models/message/emoji/EmojiGroup";
+import { SkinTones } from "#src/models/message/emoji/SkinTone";
 
 // One keystroke can match most of the dataset, and nothing is virtualised, so results are capped for the DOM
 export const MAX_EMOJI_SEARCH_RESULTS = 90;

@@ -2,9 +2,9 @@
 import type { SceneEmits, SceneProps, SceneWithPlugins } from "vue-phaserjs";
 
 import { SoundSetting } from "#shared/models/dungeons/data/settings/SoundSetting";
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { useSettingsStore } from "@/store/dungeons/settings";
-import { useVolumeStore } from "@/store/dungeons/settings/volume";
+import { SceneKey } from "#src/models/dungeons/keys/SceneKey";
+import { useSettingsStore } from "#src/store/dungeons/settings/index";
+import { useVolumeStore } from "#src/store/dungeons/settings/volume";
 import { getScene, Scene } from "vue-phaserjs";
 
 defineSlots<{ default: () => VNode }>();

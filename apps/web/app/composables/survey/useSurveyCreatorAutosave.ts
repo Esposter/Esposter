@@ -1,7 +1,7 @@
 import type { SurveyDocument } from "vue-survey-engine-headless";
 
-import { createErrorAlert } from "@/services/trpc/createErrorAlert";
-import { useSurveyCreatorStore } from "@/store/survey/creator";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
+import { useSurveyCreatorStore } from "#src/store/survey/creator";
 
 // Saves the creator's document on the shared autosave cadence each time it changes. The saves are one write queue under one
 // Key, so no two run at once, and each saves the document as it stands when its turn comes, so an edit made during a save is

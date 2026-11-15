@@ -5,12 +5,12 @@ import { createColumn } from "#shared/models/resource/sheet/column/createColumn.
 import { StringTransformationType } from "#shared/models/resource/sheet/column/transformation/string/StringTransformationType";
 import { createDataSource } from "#shared/models/resource/sheet/datasource/createDataSource.test";
 import { createRow } from "#shared/models/resource/sheet/datasource/createRow.test";
-import { createUpdatedColumn } from "@/composables/resource/sheet/commands/createUpdatedColumn.test";
-import { createUpdatedRow } from "@/composables/resource/sheet/commands/createUpdatedRow.test";
-import { setupCommandTest } from "@/composables/resource/sheet/commands/setupCommandTest.test";
-import { setupWithDataSource } from "@/composables/resource/sheet/commands/setupWithDataSource.test";
-import { NullStrategy } from "@/models/resource/sheet/commands/NullStrategy";
-import { useSheetHistoryStore } from "@/store/resource/sheet/history";
+import { createUpdatedColumn } from "#src/composables/resource/sheet/commands/createUpdatedColumn.test";
+import { createUpdatedRow } from "#src/composables/resource/sheet/commands/createUpdatedRow.test";
+import { setupCommandTest } from "#src/composables/resource/sheet/commands/setupCommandTest.test";
+import { setupWithDataSource } from "#src/composables/resource/sheet/commands/setupWithDataSource.test";
+import { NullStrategy } from "#src/models/resource/sheet/commands/NullStrategy";
+import { useSheetHistoryStore } from "#src/store/resource/sheet/history/index";
 import { takeOne, toRawDeep } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 

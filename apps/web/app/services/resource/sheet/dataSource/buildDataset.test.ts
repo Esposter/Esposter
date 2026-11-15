@@ -1,4 +1,4 @@
-import { buildDataset } from "@/services/resource/sheet/dataSource/buildDataset";
+import { buildDataset } from "#src/services/resource/sheet/dataSource/buildDataset";
 import { describe, expect, test } from "vitest";
 
 describe(buildDataset, () => {

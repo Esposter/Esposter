@@ -1,6 +1,6 @@
 import type { JsonSchema } from "@jsonforms/core";
 
-import { getSchemaFormVariantValue } from "@/services/ui/schemaForm/getSchemaFormVariantValue";
+import { getSchemaFormVariantValue } from "#src/services/ui/schemaForm/getSchemaFormVariantValue";
 import { describe, expect, test } from "vitest";
 
 const createPickerVariant = (type: string, itemsKey: string): JsonSchema => {

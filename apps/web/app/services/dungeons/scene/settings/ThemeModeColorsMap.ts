@@ -1,4 +1,4 @@
-import type { Theme } from "@/models/dungeons/theme/Theme";
+import type { Theme } from "#src/models/dungeons/theme/Theme";
 
 import { ThemeModeSetting } from "#shared/models/dungeons/data/settings/ThemeModeSetting";
 

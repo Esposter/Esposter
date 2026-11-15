@@ -2,8 +2,8 @@ import type { Page, SearchHistoryInMessage, Topic } from "@esposter/db-schema";
 import type { User } from "better-auth";
 
 import { ownedBy } from "#server/services/db/ownedBy";
-import { router } from "#server/trpc";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
+import { router } from "#server/trpc/index";
 import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { getMemberProcedure } from "#server/trpc/procedure/room/getMemberProcedure";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";

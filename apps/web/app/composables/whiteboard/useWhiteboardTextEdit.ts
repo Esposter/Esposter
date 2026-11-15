@@ -1,10 +1,10 @@
-import type { WhiteboardEditState } from "@/models/whiteboard/WhiteboardEditState";
-import type { WhiteboardTextEdit } from "@/models/whiteboard/WhiteboardTextEdit";
+import type { WhiteboardEditState } from "#src/models/whiteboard/WhiteboardEditState";
+import type { WhiteboardTextEdit } from "#src/models/whiteboard/WhiteboardTextEdit";
 
-import { WhiteboardTextEditAction } from "@/models/whiteboard/WhiteboardTextEditAction";
-import { applyWhiteboardEdit } from "@/services/whiteboard/edit/applyWhiteboardEdit";
-import { getTextEditAction } from "@/services/whiteboard/text/getTextEditAction";
-import { getTextEditOperations } from "@/services/whiteboard/text/getTextEditOperations";
+import { WhiteboardTextEditAction } from "#src/models/whiteboard/WhiteboardTextEditAction";
+import { applyWhiteboardEdit } from "#src/services/whiteboard/edit/applyWhiteboardEdit";
+import { getTextEditAction } from "#src/services/whiteboard/text/getTextEditAction";
+import { getTextEditOperations } from "#src/services/whiteboard/text/getTextEditOperations";
 import { getPositionedElementText } from "vue-block-editor-headless";
 
 // A text edited in place on a whiteboard: a shape's text, an arrow's label or a sticky note's text, opened by a double click. The draft is written

@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { PDFDocumentProxy } from "pdfjs-dist";
 
-import { PdfSidebarTab } from "@/models/pdf/PdfSidebarTab";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
-import { PDF_IMAGE_RESOURCES_BASE_URL } from "@/services/pdf/constants";
-import { loadPdfViewer } from "@/services/pdf/loadPdfViewer";
-import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
+import { PdfSidebarTab } from "#src/models/pdf/PdfSidebarTab";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiTextFieldType } from "#src/models/ui/UiTextFieldType";
+import { PDF_IMAGE_RESOURCES_BASE_URL } from "#src/services/pdf/constants";
+import { loadPdfViewer } from "#src/services/pdf/loadPdfViewer";
+import { LocalStorageKey } from "#src/services/shared/LocalStorageKey";
 import { usePdfAnnotations, usePdfViewer } from "vue-pdfjs-headless";
 
 interface Props {

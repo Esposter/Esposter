@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import PageBuilderEmptyPage from "@/components/PageBuilder/EmptyPage.vue";
+import PageBuilderEmptyPage from "#src/components/PageBuilder/EmptyPage.vue";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 

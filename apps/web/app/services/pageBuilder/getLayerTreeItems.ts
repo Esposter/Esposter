@@ -1,5 +1,5 @@
-import type { PageBuilderHelper } from "@/models/pageBuilder/PageBuilderHelper";
-import type { UiTreeItem } from "@/models/ui/UiTreeItem";
+import type { PageBuilderHelper } from "#src/models/pageBuilder/PageBuilderHelper";
+import type { UiTreeItem } from "#src/models/ui/UiTreeItem";
 
 import { getBlockLayerRows, getBlockNode } from "vue-block-editor-headless";
 

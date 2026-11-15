@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { UiRules } from "@/services/ui/UiRules";
+import { UiRules } from "#src/services/ui/UiRules";
 import { MAX_TAG_NAME_LENGTH, MAX_TAG_VALUE_LENGTH } from "@esposter/db-schema";
 
 const tagName = defineModel<string>("tagName", { required: true });

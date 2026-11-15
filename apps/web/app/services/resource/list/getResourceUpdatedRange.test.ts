@@ -1,5 +1,5 @@
-import { ResourceUpdatedFilter } from "@/models/resource/list/ResourceUpdatedFilter";
-import { getResourceUpdatedRange } from "@/services/resource/list/getResourceUpdatedRange";
+import { ResourceUpdatedFilter } from "#src/models/resource/list/ResourceUpdatedFilter";
+import { getResourceUpdatedRange } from "#src/services/resource/list/getResourceUpdatedRange";
 import { getEndOfDay } from "@esposter/shared";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 

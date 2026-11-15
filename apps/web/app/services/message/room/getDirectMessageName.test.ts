@@ -1,5 +1,5 @@
-import { createRoom } from "@/services/message/room/createRoom.test";
-import { getDirectMessageName } from "@/services/message/room/getDirectMessageName";
+import { createRoom } from "#src/services/message/room/createRoom.test";
+import { getDirectMessageName } from "#src/services/message/room/getDirectMessageName";
 import { RoomType } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 

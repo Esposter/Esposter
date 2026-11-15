@@ -1,10 +1,10 @@
-import type { JoinCallOptions } from "@/models/message/room/call/JoinCallOptions";
+import type { JoinCallOptions } from "#src/models/message/room/call/JoinCallOptions";
 import type { CallParticipant } from "@esposter/db-schema";
 
-import { MutationStatus } from "@/models/shared/MutationStatus";
-import { getDefaultJoinCallOptions } from "@/services/message/room/call/getDefaultJoinCallOptions";
-import { getRestoredItems } from "@/services/shared/getRestoredItems";
-import { useConnectionStore } from "@/store/realtime/connection";
+import { MutationStatus } from "#src/models/shared/MutationStatus";
+import { getDefaultJoinCallOptions } from "#src/services/message/room/call/getDefaultJoinCallOptions";
+import { getRestoredItems } from "#src/services/shared/getRestoredItems";
+import { useConnectionStore } from "#src/store/realtime/connection";
 
 export const useKnockerStore = defineStore("message/room/call/knocker", () => {
   const { $trpc } = useNuxtApp();

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { NuxtError } from "#app";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { useBookmarkStore } from "@/store/bookmark";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { useBookmarkStore } from "#src/store/bookmark";
 import { RoutePath } from "@esposter/shared";
 
 interface Props {

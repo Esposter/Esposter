@@ -1,10 +1,10 @@
-import type { StateName } from "@/models/dungeons/state/battle/StateName";
-import type { State } from "@/models/dungeons/state/State";
+import type { StateName } from "#src/models/dungeons/state/battle/StateName";
+import type { State } from "#src/models/dungeons/state/State";
 
-import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
-import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
-import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
-import { prettify } from "@/util/text/prettify";
+import { battleStateMachine } from "#src/services/dungeons/scene/battle/battleStateMachine";
+import { useBattleDialogStore } from "#src/store/dungeons/battle/dialog";
+import { useBattlePlayerStore } from "#src/store/dungeons/battle/player";
+import { prettify } from "#src/util/text/prettify";
 import { getSynchronizedFunction } from "@esposter/shared";
 import { sleepScene } from "vue-phaserjs";
 

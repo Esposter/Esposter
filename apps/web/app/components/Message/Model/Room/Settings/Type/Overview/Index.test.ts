@@ -1,12 +1,12 @@
 // @vitest-environment nuxt
 import type { UpdateRoomInput } from "@esposter/db-schema";
 
-import MessageModelRoomSettingsTypeOverviewIndex from "@/components/Message/Model/Room/Settings/Type/Overview/Index.vue";
-import MessageModelRoomSettingsTypeOverviewSlowmodeField from "@/components/Message/Model/Room/Settings/Type/Overview/SlowmodeField.vue";
-import MessageModelRoomSettingsTypeOverviewTopicField from "@/components/Message/Model/Room/Settings/Type/Overview/TopicField.vue";
-import { createRoom } from "@/services/message/room/createRoom.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useRoomStore } from "@/store/message/room";
+import MessageModelRoomSettingsTypeOverviewIndex from "#src/components/Message/Model/Room/Settings/Type/Overview/Index.vue";
+import MessageModelRoomSettingsTypeOverviewSlowmodeField from "#src/components/Message/Model/Room/Settings/Type/Overview/SlowmodeField.vue";
+import MessageModelRoomSettingsTypeOverviewTopicField from "#src/components/Message/Model/Room/Settings/Type/Overview/TopicField.vue";
+import { createRoom } from "#src/services/message/room/createRoom.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useRoomStore } from "#src/store/message/room/index";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { assert, describe, expect, test } from "vitest";

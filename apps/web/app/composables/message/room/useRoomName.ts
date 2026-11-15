@@ -1,4 +1,4 @@
-import { useRoomStore } from "@/store/message/room";
+import { useRoomStore } from "#src/store/message/room/index";
 
 export const useRoomName = (roomId: MaybeRefOrGetter<string>) => {
   const roomStore = useRoomStore();

@@ -1,7 +1,7 @@
-import { createBenchDataSource } from "@/composables/resource/sheet/commands/createBenchDataSource.bench";
-import { generateBenchRows } from "@/composables/resource/sheet/commands/generateBenchRows.bench";
-import { KeepDuplicateMode } from "@/models/resource/sheet/commands/KeepDuplicateMode";
-import { findDuplicateRows } from "@/services/resource/sheet/commands/findDuplicateRows";
+import { createBenchDataSource } from "#src/composables/resource/sheet/commands/createBenchDataSource.bench";
+import { generateBenchRows } from "#src/composables/resource/sheet/commands/generateBenchRows.bench";
+import { KeepDuplicateMode } from "#src/models/resource/sheet/commands/KeepDuplicateMode";
+import { findDuplicateRows } from "#src/services/resource/sheet/commands/findDuplicateRows";
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { describe, test } from "vitest";
 

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { TodoListItemOrigin } from "#shared/models/resource/todoList/TodoListItemOrigin";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { RESOURCE_DATE_TIME_ATTRIBUTES } from "@/services/resource/constants";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { RESOURCE_DATE_TIME_ATTRIBUTES } from "#src/services/resource/constants";
 
 const modelValue = defineModel<TodoListItemOrigin>({ required: true });
 </script>

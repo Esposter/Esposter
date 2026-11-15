@@ -1,7 +1,7 @@
-import type { StateMachineStateMap } from "@/models/dungeons/state/StateMachineStateMap";
+import type { StateMachineStateMap } from "#src/models/dungeons/state/StateMachineStateMap";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { StateMachine } from "@/services/dungeons/state/StateMachine";
+import { StateMachine } from "#src/services/dungeons/state/StateMachine";
 import { describe, expect, test, vi } from "vitest";
 
 describe(StateMachine, () => {

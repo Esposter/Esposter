@@ -1,7 +1,7 @@
-import type { ComposerTarget } from "@/models/message/ComposerTarget";
+import type { ComposerTarget } from "#src/models/message/ComposerTarget";
 
-import { getComposerKey } from "@/services/message/composer/getComposerKey";
-import { getComposerTarget } from "@/services/message/composer/getComposerTarget";
+import { getComposerKey } from "#src/services/message/composer/getComposerKey";
+import { getComposerTarget } from "#src/services/message/composer/getComposerTarget";
 import { ID_SEPARATOR } from "@esposter/shared";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";

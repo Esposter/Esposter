@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { ComposerTarget } from "@/models/message/ComposerTarget";
+import type { ComposerTarget } from "#src/models/message/ComposerTarget";
 
-import { useUploadFileStore } from "@/store/message/input/uploadFile";
+import { useUploadFileStore } from "#src/store/message/input/uploadFile";
 import { takeOne } from "@esposter/shared";
 
 interface Props {

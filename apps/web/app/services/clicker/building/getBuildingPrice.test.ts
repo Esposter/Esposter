@@ -1,6 +1,6 @@
 import { BuildingMap } from "#shared/assets/clicker/data/BuildingMap";
 import { BuildingId } from "#shared/models/clicker/data/building/BuildingId";
-import { getBuildingPrice } from "@/services/clicker/building/getBuildingPrice";
+import { getBuildingPrice } from "#src/services/clicker/building/getBuildingPrice";
 import { describe, expect, test } from "vitest";
 
 describe(getBuildingPrice, () => {

@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { AchievementSort } from "@/models/achievement/AchievementSort";
-import { AchievementStatus, AchievementStatuses } from "@/models/achievement/AchievementStatus";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { AchievementSortItems } from "@/services/achievement/AchievementSortItems";
-import { AchievementStatusItems } from "@/services/achievement/AchievementStatusItems";
-import { getAchievementListMap } from "@/services/achievement/getAchievementListMap";
-import { sortAchievementDefinitions } from "@/services/achievement/sortAchievementDefinitions";
-import { TAB_QUERY_PARAMETER_KEY } from "@/services/route/constants";
-import { useAchievementStore } from "@/store/achievement";
+import { AchievementSort } from "#src/models/achievement/AchievementSort";
+import { AchievementStatus, AchievementStatuses } from "#src/models/achievement/AchievementStatus";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { AchievementSortItems } from "#src/services/achievement/AchievementSortItems";
+import { AchievementStatusItems } from "#src/services/achievement/AchievementStatusItems";
+import { getAchievementListMap } from "#src/services/achievement/getAchievementListMap";
+import { sortAchievementDefinitions } from "#src/services/achievement/sortAchievementDefinitions";
+import { TAB_QUERY_PARAMETER_KEY } from "#src/services/route/constants";
+import { useAchievementStore } from "#src/store/achievement/index";
 
 const achievementStore = useAchievementStore();
 const { achievementDefinitions, statistics, userAchievements } = storeToRefs(achievementStore);

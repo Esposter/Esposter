@@ -1,4 +1,4 @@
-import { deserializeResourceSortBy } from "@/services/resource/list/deserializeResourceSortBy";
+import { deserializeResourceSortBy } from "#src/services/resource/list/deserializeResourceSortBy";
 import { SortOrder } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 

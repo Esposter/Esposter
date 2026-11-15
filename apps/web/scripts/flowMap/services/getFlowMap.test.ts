@@ -1,5 +1,5 @@
-import { FLOW_MAP_PATH } from "@@/scripts/flowMap/constants";
-import { getFlowMap } from "@@/scripts/flowMap/services/getFlowMap";
+import { FLOW_MAP_PATH } from "#scripts/flowMap/constants";
+import { getFlowMap } from "#scripts/flowMap/services/getFlowMap";
 import { readFileSync } from "node:fs";
 import { describe, expect, test } from "vitest";
 

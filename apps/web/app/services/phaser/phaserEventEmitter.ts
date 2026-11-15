@@ -1,4 +1,4 @@
-import type { PhaserEvents } from "@/models/phaser/PhaserEvents";
+import type { PhaserEvents } from "#src/models/phaser/PhaserEvents";
 
 import { TypedEventEmitter } from "@esposter/shared";
 

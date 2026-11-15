@@ -1,4 +1,4 @@
-import type { SpaceWordBoundaries } from "@/util/types/SpaceWordBoundaries";
+import type { SpaceWordBoundaries } from "#src/util/types/SpaceWordBoundaries";
 
 import { normalizeString } from "@esposter/shared";
 

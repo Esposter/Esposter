@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Card } from "@/models/visual/Card";
+import type { Card } from "#src/models/visual/Card";
 
 interface Props {
   cards: Card[];

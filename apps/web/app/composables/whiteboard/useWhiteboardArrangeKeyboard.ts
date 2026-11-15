@@ -1,11 +1,11 @@
-import type { UiCommand } from "@/models/ui/UiCommand";
-import type { WhiteboardEditState } from "@/models/whiteboard/WhiteboardEditState";
+import type { UiCommand } from "#src/models/ui/UiCommand";
+import type { WhiteboardEditState } from "#src/models/whiteboard/WhiteboardEditState";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { StackMove } from "@/models/whiteboard/StackMove";
-import { getStackOperations } from "@/services/whiteboard/arrange/getStackOperations";
-import { applyWhiteboardEdit } from "@/services/whiteboard/edit/applyWhiteboardEdit";
-import { WHITEBOARD_COMMAND_GROUP } from "@/services/whiteboard/keyboard/constants";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { StackMove } from "#src/models/whiteboard/StackMove";
+import { getStackOperations } from "#src/services/whiteboard/arrange/getStackOperations";
+import { applyWhiteboardEdit } from "#src/services/whiteboard/edit/applyWhiteboardEdit";
+import { WHITEBOARD_COMMAND_GROUP } from "#src/services/whiteboard/keyboard/constants";
 
 // The keys that stack a selection. Cmd or Ctrl with the closing bracket brings it forward and with the opening bracket sends it backward, and Shift
 // As well takes it to the front or the back, as the produced keys read it. The keys are bound only while there is a selection, and none is bound

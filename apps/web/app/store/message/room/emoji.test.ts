@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
 import type { RoomEmojiWithPresignedUrl } from "@esposter/db-schema";
 
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useRoomEmojiStore } from "@/store/message/room/emoji";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useRoomEmojiStore } from "#src/store/message/room/emoji";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 

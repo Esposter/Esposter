@@ -1,13 +1,13 @@
 import type { ColumnStatisticsKey } from "#shared/models/resource/sheet/column/ColumnStatisticsKey";
-import type { ColumnStatisticsDefinition } from "@/models/resource/sheet/column/ColumnStatisticsDefinition";
+import type { ColumnStatisticsDefinition } from "#src/models/resource/sheet/column/ColumnStatisticsDefinition";
 
 import { ColumnStatisticName } from "#shared/models/resource/sheet/column/ColumnStatisticName";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { getAverage } from "#shared/services/resource/sheet/column/getAverage";
 import { getSummation } from "#shared/services/resource/sheet/column/getSummation";
-import { defineColumnStatistics } from "@/services/resource/sheet/column/defineColumnStatistics";
-import { formatOptionalColumnValue } from "@/services/resource/sheet/column/formatOptionalColumnValue";
-import { formatOptional } from "@/util/text/formatOptional";
+import { defineColumnStatistics } from "#src/services/resource/sheet/column/defineColumnStatistics";
+import { formatOptionalColumnValue } from "#src/services/resource/sheet/column/formatOptionalColumnValue";
+import { formatOptional } from "#src/util/text/formatOptional";
 
 export const ColumnStatisticsDefinitionMap = {
   [ColumnStatisticName.Average]: defineColumnStatistics({

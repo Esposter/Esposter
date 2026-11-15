@@ -1,6 +1,6 @@
-import type { NavigationTrailPage } from "@/models/shared/NavigationTrailPage";
+import type { NavigationTrailPage } from "#src/models/shared/NavigationTrailPage";
 
-import { NavigationTrailPageMap } from "@/services/shared/NavigationTrailPageMap";
+import { NavigationTrailPageMap } from "#src/services/shared/NavigationTrailPageMap";
 import { RoutePath } from "@esposter/shared";
 
 // The pages the visitor came through to reach the one they are on. Rendered as the breadcrumb, and read by the

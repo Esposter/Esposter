@@ -1,5 +1,5 @@
 import { Row } from "#shared/models/resource/sheet/datasource/Row";
-import { PasteRangeCommand } from "@/models/resource/sheet/commands/PasteRangeCommand";
+import { PasteRangeCommand } from "#src/models/resource/sheet/commands/PasteRangeCommand";
 import { toRawDeep } from "@esposter/shared";
 
 export const usePasteRange = () =>

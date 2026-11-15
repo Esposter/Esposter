@@ -1,5 +1,5 @@
-import { compressContentDelta } from "@/services/resource/compressContentDelta";
-import { instantiateZstdEncoder } from "@/services/resource/instantiateZstdEncoder";
+import { compressContentDelta } from "#src/services/resource/compressContentDelta";
+import { instantiateZstdEncoder } from "#src/services/resource/instantiateZstdEncoder";
 import { DEFAULT_COMPRESSION_LEVEL, getWindowLog } from "@esposter/shared";
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { readFile } from "node:fs/promises";

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { MessageComponentProps } from "@/models/message/MessageComponentProps";
+import type { MessageComponentProps } from "#src/models/message/MessageComponentProps";
 
 import { pollMessageContentSchema } from "#shared/models/message/poll/PollMessageContent";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { getOptionIdVoteCountMap } from "@/services/message/poll/getOptionIdVoteCountMap";
-import { getVoteDescription } from "@/services/message/poll/getVoteDescription";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { getOptionIdVoteCountMap } from "#src/services/message/poll/getOptionIdVoteCountMap";
+import { getVoteDescription } from "#src/services/message/poll/getVoteDescription";
 import { InvalidOperationError, jsonDateParse, Operation } from "@esposter/shared";
 
 interface Props extends MessageComponentProps {}

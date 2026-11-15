@@ -1,4 +1,4 @@
-import { checkIsUnlockedUserAchievement } from "@/services/achievement/checkIsUnlockedUserAchievement";
+import { checkIsUnlockedUserAchievement } from "#src/services/achievement/checkIsUnlockedUserAchievement";
 import { describe, expect, test } from "vitest";
 
 describe(checkIsUnlockedUserAchievement, () => {

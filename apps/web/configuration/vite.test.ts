@@ -1,6 +1,6 @@
 import type { Nuxt, ViteConfig } from "nuxt/schema";
 
-import { viteHooks } from "@@/configuration/vite";
+import { viteHooks } from "#configuration/vite";
 import { assert, describe, expect, test, vi } from "vitest";
 
 describe("viteHooks", () => {

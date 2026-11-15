@@ -1,5 +1,5 @@
-import { checkIsAnsweredByErrorLink } from "@/services/trpc/checkIsAnsweredByErrorLink";
-import { useAlertStore } from "@/store/alert";
+import { checkIsAnsweredByErrorLink } from "#src/services/trpc/checkIsAnsweredByErrorLink";
+import { useAlertStore } from "#src/store/alert";
 
 export const createErrorAlert = (error: Error, message = error.message) => {
   if (checkIsAnsweredByErrorLink(error)) return;

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useUserSettingsDialogStore } from "@/store/message/user/settings/dialog";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { useUserSettingsDialogStore } from "#src/store/message/user/settings/dialog";
 
 const userSettingsDialogStore = useUserSettingsDialogStore();
 const { isVisible } = storeToRefs(userSettingsDialogStore);

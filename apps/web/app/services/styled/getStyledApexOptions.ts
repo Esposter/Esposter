@@ -1,7 +1,7 @@
 import type { ApexChart, ApexLegendFormatterOpts, ApexOptions } from "apexcharts";
 
 import { escapeHtml } from "#shared/util/text/escapeHtml";
-import { ApexChartMarkerShapes } from "@/services/styled/ApexChartMarkerShapes";
+import { ApexChartMarkerShapes } from "#src/services/styled/ApexChartMarkerShapes";
 import { defu } from "defu";
 
 interface StyledApexOptionsInput {

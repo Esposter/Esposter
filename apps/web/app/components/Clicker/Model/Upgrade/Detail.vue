@@ -2,10 +2,10 @@
 import type { Upgrade } from "#shared/models/clicker/data/upgrade/Upgrade";
 
 import { ItemType } from "#shared/models/clicker/data/ItemType";
-import { Sound } from "@/models/clicker/Sound";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { usePointStore } from "@/store/clicker/point";
-import { useUpgradeStore } from "@/store/clicker/upgrade";
+import { Sound } from "#src/models/clicker/Sound";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { usePointStore } from "#src/store/clicker/point";
+import { useUpgradeStore } from "#src/store/clicker/upgrade";
 
 interface Props {
   isBought?: true;

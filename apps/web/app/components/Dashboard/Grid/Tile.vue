@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { GridGeometry, GridPoint, GridStep } from "vue-grid-layout-headless";
 
-import { getGeometryStyle } from "@/services/dashboard/grid/getGeometryStyle";
-import { getKeyStep } from "@/services/dashboard/grid/getKeyStep";
+import { getGeometryStyle } from "#src/services/dashboard/grid/getGeometryStyle";
+import { getKeyStep } from "#src/services/dashboard/grid/getKeyStep";
 import { takeOne } from "@esposter/shared";
 import { checkChangesHeight, ResizeEdge } from "vue-grid-layout-headless";
 

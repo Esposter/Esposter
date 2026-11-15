@@ -1,8 +1,8 @@
-import type { ResourceFilterValues } from "@/models/resource/list/ResourceFilterValues";
+import type { ResourceFilterValues } from "#src/models/resource/list/ResourceFilterValues";
 
-import { ResourceStatusFilter } from "@/models/resource/list/ResourceStatusFilter";
-import { getResourceUpdatedRange } from "@/services/resource/list/getResourceUpdatedRange";
-import { ResourceListSourceDefinitionMap } from "@/services/resource/list/ResourceListSourceDefinitionMap";
+import { ResourceStatusFilter } from "#src/models/resource/list/ResourceStatusFilter";
+import { getResourceUpdatedRange } from "#src/services/resource/list/getResourceUpdatedRange";
+import { ResourceListSourceDefinitionMap } from "#src/services/resource/list/ResourceListSourceDefinitionMap";
 import { normalizeString } from "@esposter/shared";
 
 // Maps the client filter refs' sentinel values onto the procedure's optional filter input

@@ -3,9 +3,9 @@ import type { ResourceInResource } from "@esposter/db-schema";
 import { CsvDelimiter } from "#shared/models/resource/sheet/csv/CsvDelimiter";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { formatDate } from "#shared/util/date/formatDate";
-import { RESOURCE_DATE_FORMAT } from "@/services/resource/constants";
-import { RESOURCES_CSV_HEADER_TITLES } from "@/services/resource/list/constants";
-import { escapeCsvCell } from "@/services/resource/sheet/csv/escapeCsvCell";
+import { RESOURCE_DATE_FORMAT } from "#src/services/resource/constants";
+import { RESOURCES_CSV_HEADER_TITLES } from "#src/services/resource/list/constants";
+import { escapeCsvCell } from "#src/services/resource/sheet/csv/escapeCsvCell";
 
 export const getResourcesCsv = (resources: ResourceInResource[]): string => {
   const headerRow = RESOURCES_CSV_HEADER_TITLES.map((title) => escapeCsvCell(title, CsvDelimiter.Comma)).join(

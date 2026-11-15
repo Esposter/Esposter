@@ -1,14 +1,14 @@
 // @vitest-environment nuxt
 import { createResourceLinkSchema } from "#shared/services/resource/link/createResourceLinkSchema";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
-import ResourceLinkSelect from "@/components/Resource/Link/Select.vue";
-import UiSchemaForm from "@/components/Ui/SchemaForm/Index.vue";
-import UiSchemaFormText from "@/components/Ui/SchemaForm/Text.vue";
-import UiSelect from "@/components/Ui/Select/Index.vue";
-import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { UiStyles } from "@/models/ui/UiStyle";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
+import ResourceLinkSelect from "#src/components/Resource/Link/Select.vue";
+import UiSchemaForm from "#src/components/Ui/SchemaForm/Index.vue";
+import UiSchemaFormText from "#src/components/Ui/SchemaForm/Text.vue";
+import UiSelect from "#src/components/Ui/Select/Index.vue";
+import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { UiStyles } from "#src/models/ui/UiStyle";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { ResourceLinkType, ResourceType } from "@esposter/db-schema";
 import { noop, takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";

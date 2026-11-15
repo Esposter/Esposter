@@ -1,9 +1,9 @@
-import type { SurveyConditionRow } from "@/models/resource/survey/SurveyConditionRow";
+import type { SurveyConditionRow } from "#src/models/resource/survey/SurveyConditionRow";
 import type { SurveyExpressionNode } from "survey-expression";
 
-import { SurveyConditionOperator } from "@/models/resource/survey/SurveyConditionOperator";
-import { SURVEY_CONDITION_BINARY_OPERATORS } from "@/services/resource/survey/constants";
-import { toSurveyConditionValue } from "@/services/resource/survey/toSurveyConditionValue";
+import { SurveyConditionOperator } from "#src/models/resource/survey/SurveyConditionOperator";
+import { SURVEY_CONDITION_BINARY_OPERATORS } from "#src/services/resource/survey/constants";
+import { toSurveyConditionValue } from "#src/services/resource/survey/toSurveyConditionValue";
 import { SurveyExpressionNodeType, SurveyExpressionUnaryOperator } from "survey-expression";
 
 // A reference compared with a literal, or a reference tested for being empty, read back as the row it was built from.

@@ -1,4 +1,4 @@
-import type { WordFilterFormData } from "@/models/message/moderation/WordFilterFormData";
+import type { WordFilterFormData } from "#src/models/message/moderation/WordFilterFormData";
 
 // The save of a word filter form, applied to the filter the room holds now. A field the reader did not change takes what
 // The room holds, and each word the reader added or removed is applied to that list, so an edit another moderator made

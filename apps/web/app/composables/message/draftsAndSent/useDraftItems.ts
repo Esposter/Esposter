@@ -1,6 +1,6 @@
-import { getComposerTarget } from "@/services/message/composer/getComposerTarget";
-import { useInputStore } from "@/store/message/input";
-import { useRoomStore } from "@/store/message/room";
+import { getComposerTarget } from "#src/services/message/composer/getComposerTarget";
+import { useInputStore } from "#src/store/message/input/index";
+import { useRoomStore } from "#src/store/message/room/index";
 
 export const useDraftItems = () => {
   const inputStore = useInputStore();

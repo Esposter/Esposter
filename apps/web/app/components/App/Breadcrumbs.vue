@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { UiBreadcrumb } from "@/models/ui/UiBreadcrumb";
+import type { UiBreadcrumb } from "#src/models/ui/UiBreadcrumb";
 
-import { RESOURCE_EXPLORER_DISPLAY_NAME } from "@/services/resource/constants";
-import { useNavigationTrailStore } from "@/store/navigationTrail";
+import { RESOURCE_EXPLORER_DISPLAY_NAME } from "#src/services/resource/constants";
+import { useNavigationTrailStore } from "#src/store/navigationTrail";
 import { RoutePath } from "@esposter/shared";
 
 // Safe here: the only read is `route.path` inside the computed below, this renders inside the page whose route

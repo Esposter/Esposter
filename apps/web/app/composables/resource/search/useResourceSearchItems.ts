@@ -1,14 +1,14 @@
 // @unocss-include
-import type { ResourceSearchItem } from "@/models/resource/search/ResourceSearchItem";
+import type { ResourceSearchItem } from "#src/models/resource/search/ResourceSearchItem";
 
-import { ResourceSearchGroup } from "@/models/resource/search/ResourceSearchGroup";
-import { RECENT_SEARCHES_LIMIT, RESOURCE_SEARCH_LIMIT } from "@/services/resource/search/constants";
-import { getPageSearchItems } from "@/services/resource/search/getPageSearchItems";
-import { getResourceSearchItem } from "@/services/resource/search/getResourceSearchItem";
-import { getServiceSearchItems } from "@/services/resource/search/getServiceSearchItems";
-import { pushRecent } from "@/services/resource/search/pushRecent";
-import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
-import { useRecentStore } from "@/store/resource/recent";
+import { ResourceSearchGroup } from "#src/models/resource/search/ResourceSearchGroup";
+import { RECENT_SEARCHES_LIMIT, RESOURCE_SEARCH_LIMIT } from "#src/services/resource/search/constants";
+import { getPageSearchItems } from "#src/services/resource/search/getPageSearchItems";
+import { getResourceSearchItem } from "#src/services/resource/search/getResourceSearchItem";
+import { getServiceSearchItems } from "#src/services/resource/search/getServiceSearchItems";
+import { pushRecent } from "#src/services/resource/search/pushRecent";
+import { LocalStorageKey } from "#src/services/shared/LocalStorageKey";
+import { useRecentStore } from "#src/store/resource/recent";
 import { ID_SEPARATOR, normalizeString, RoutePath } from "@esposter/shared";
 
 // The palette's resources scope across groups: as-you-type Resources/Services/Pages for a query, recent searches

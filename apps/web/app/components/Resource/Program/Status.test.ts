@@ -7,14 +7,14 @@ import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType"
 import { MimeType } from "#shared/models/file/MimeType";
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
-import ResourceProgramStatus from "@/components/Resource/Program/Status.vue";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { useSession } from "@/services/auth/authClient.test";
-import { createParticipantLinksCsv } from "@/services/resource/program/createParticipantLinksCsv";
-import { createProgramInviteHtml } from "@/services/resource/program/createProgramInviteHtml";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useNotificationStore } from "@/store/notification";
-import { useResourceStore } from "@/store/resource";
+import ResourceProgramStatus from "#src/components/Resource/Program/Status.vue";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { useSession } from "#src/services/auth/authClient.test";
+import { createParticipantLinksCsv } from "#src/services/resource/program/createParticipantLinksCsv";
+import { createProgramInviteHtml } from "#src/services/resource/program/createProgramInviteHtml";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useNotificationStore } from "#src/store/notification";
+import { useResourceStore } from "#src/store/resource/index";
 import { ResourceType, SurveyResponseMode } from "@esposter/db-schema";
 import { downloadFile, generateSecretToken, RoutePath, takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
@@ -28,7 +28,7 @@ vi.mock(import("@esposter/shared"), async (importOriginal) => ({
   ...(await importOriginal()),
   downloadFile: vi.fn<typeof downloadFile>(),
 }));
-vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
+vi.mock(import("#src/services/auth/authClient"), () => import("#src/services/auth/authClient.test"));
 
 // Each guard answers before any file is built, so a refused export names what the owner must fix and downloads
 // Nothing. The notices are the whole visible outcome, so they are what each test reads back

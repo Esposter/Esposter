@@ -2,7 +2,7 @@
 import type { ResourceInResource } from "@esposter/db-schema";
 
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
-import { ResourceBladeSlug } from "@/models/resource/ResourceBladeSlug";
+import { ResourceBladeSlug } from "#src/models/resource/ResourceBladeSlug";
 import { ResourceType } from "@esposter/db-schema";
 import { mockNuxtImport } from "@nuxt/test-utils/runtime";
 import { v7 } from "uuid";

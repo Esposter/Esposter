@@ -2,9 +2,9 @@
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
 
 import { checkIsEditableColumnValue } from "#shared/services/resource/sheet/column/checkIsEditableColumnValue";
-import { toColumnKey } from "@/services/resource/sheet/column/toColumnKey";
-import { useCellStore } from "@/store/resource/sheet/cell";
-import { useColumnStore } from "@/store/resource/sheet/column";
+import { toColumnKey } from "#src/services/resource/sheet/column/toColumnKey";
+import { useCellStore } from "#src/store/resource/sheet/cell";
+import { useColumnStore } from "#src/store/resource/sheet/column";
 
 interface Props {
   columnKey: string;

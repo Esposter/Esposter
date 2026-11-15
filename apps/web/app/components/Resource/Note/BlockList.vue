@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { NoteSlashItem } from "@/models/resource/note/NoteSlashItem";
+import type { NoteSlashItem } from "#src/models/resource/note/NoteSlashItem";
 import type { SuggestionProps } from "@tiptap/suggestion";
 
-import { SuggestionTrigger } from "@/models/shared/SuggestionTrigger";
-import { getSuggestionListTitle } from "@/services/message/getSuggestionListTitle";
+import { SuggestionTrigger } from "#src/models/shared/SuggestionTrigger";
+import { getSuggestionListTitle } from "#src/services/message/getSuggestionListTitle";
 import { takeOne } from "@esposter/shared";
 
 const { command, items } = defineProps<Pick<SuggestionProps<NoteSlashItem>, "command" | "items" | "query">>();

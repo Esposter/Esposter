@@ -1,9 +1,9 @@
 import type { AttributeNode, DirectiveNode, ElementNode, TemplateChildNode } from "@vue/compiler-core";
 
-import { UiStyleToken } from "@/models/ui/UiStyleToken";
-import { walkElements } from "@/walkElements.test";
-import { BREAKPOINTS } from "@@/configuration/breakpoints";
-import unoConfig from "@@/uno.config";
+import { BREAKPOINTS } from "#configuration/breakpoints";
+import { UiStyleToken } from "#src/models/ui/UiStyleToken";
+import { walkElements } from "#src/walkElements.test";
+import unoConfig from "#uno.config";
 import { NodeTypes } from "@vue/compiler-core";
 import { glob, readFile } from "node:fs/promises";
 import { join } from "node:path";

@@ -1,10 +1,10 @@
 // @unocss-include
 import type { UnparameterizedAdminActionInput } from "#shared/models/db/moderation/UnparameterizedAdminActionInput";
-import type { Item } from "@/models/shared/Item";
+import type { Item } from "#src/models/shared/Item";
 
-import { useCallStore } from "@/store/message/room/call";
-import { useParticipantStore } from "@/store/message/room/call/participant";
-import { useRoleStore } from "@/store/message/room/role";
+import { useCallStore } from "#src/store/message/room/call/index";
+import { useParticipantStore } from "#src/store/message/room/call/participant";
+import { useRoleStore } from "#src/store/message/room/role";
 import { AdminActionType, RoomPermission } from "@esposter/db-schema";
 
 export const useCallParticipantActions = () => {

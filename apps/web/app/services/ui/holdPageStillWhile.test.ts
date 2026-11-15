@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import { holdPageStillWhile } from "@/services/ui/holdPageStillWhile";
+import { holdPageStillWhile } from "#src/services/ui/holdPageStillWhile";
 import { describe, expect, test } from "vitest";
 
 describe(holdPageStillWhile, () => {

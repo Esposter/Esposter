@@ -1,9 +1,9 @@
 import type { NumberColumn } from "#shared/models/resource/sheet/column/NumberColumn";
-import type { BaseColumnForm } from "@/models/resource/sheet/column/BaseColumnForm";
+import type { BaseColumnForm } from "#src/models/resource/sheet/column/BaseColumnForm";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { numberColumnSchema } from "#shared/models/resource/sheet/column/NumberColumn";
-import { createBaseColumnFormSchema } from "@/services/resource/sheet/column/createBaseColumnFormSchema";
+import { createBaseColumnFormSchema } from "#src/services/resource/sheet/column/createBaseColumnFormSchema";
 import { z } from "zod";
 
 export interface NumberColumnForm

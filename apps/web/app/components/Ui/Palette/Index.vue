@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { PaletteGroup } from "@/models/ui/palette/PaletteGroup";
+import type { PaletteGroup } from "#src/models/ui/palette/PaletteGroup";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
-import { checkIsPaletteSearching } from "@/services/ui/palette/checkIsPaletteSearching";
-import { filterPaletteGroups } from "@/services/ui/palette/filterPaletteGroups";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { UiTextFieldType } from "#src/models/ui/UiTextFieldType";
+import { checkIsPaletteSearching } from "#src/services/ui/palette/checkIsPaletteSearching";
+import { filterPaletteGroups } from "#src/services/ui/palette/filterPaletteGroups";
 
 interface Props {
   groups: PaletteGroup[];

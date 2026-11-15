@@ -1,4 +1,4 @@
-import { MediaDeviceKind } from "@/models/message/room/call/MediaDeviceKind";
+import { MediaDeviceKind } from "#src/models/message/room/call/MediaDeviceKind";
 
 // Which persisted selection each device kind writes to, so writing a pick, switching the live device on a
 // Change, and reading the picks back all share one declaration instead of three parallel ones

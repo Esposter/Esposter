@@ -1,5 +1,5 @@
-import type { ClientMessage } from "@/models/message/ClientMessage";
-import type { Creator } from "@/models/message/Creator";
+import type { ClientMessage } from "#src/models/message/ClientMessage";
+import type { Creator } from "#src/models/message/Creator";
 
 export interface MessageComponentProps {
   active?: boolean;

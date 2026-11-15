@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import MessageModelRoomSettingsTypeOverviewSlowmodeField from "@/components/Message/Model/Room/Settings/Type/Overview/SlowmodeField.vue";
+import MessageModelRoomSettingsTypeOverviewSlowmodeField from "#src/components/Message/Model/Room/Settings/Type/Overview/SlowmodeField.vue";
 import { MAX_SLOWMODE_MS } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";

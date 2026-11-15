@@ -1,8 +1,8 @@
 import type { JsonPatchOperation } from "@esposter/shared";
 import type { PositionedDocument } from "vue-block-editor-headless";
 
-import { StackMove } from "@/models/whiteboard/StackMove";
-import { getSelectedElements } from "@/services/whiteboard/getSelectedElements";
+import { StackMove } from "#src/models/whiteboard/StackMove";
+import { getSelectedElements } from "#src/services/whiteboard/getSelectedElements";
 import { exhaustiveGuard, takeOne } from "@esposter/shared";
 import { changePositionedElementZOrder } from "vue-block-editor-headless";
 

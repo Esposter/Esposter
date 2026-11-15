@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { SurveyKeyedChoice } from "@/models/resource/survey/SurveyKeyedChoice";
-import type { UiListItem } from "@/models/ui/UiListItem";
+import type { SurveyKeyedChoice } from "#src/models/resource/survey/SurveyKeyedChoice";
+import type { UiListItem } from "#src/models/ui/UiListItem";
 import type { SurveyAnswerValue, SurveyChoice, SurveyRankingNode } from "vue-survey-engine-headless";
 
-import { getSurveyKeyedChoices } from "@/services/resource/survey/getSurveyKeyedChoices";
+import { getSurveyKeyedChoices } from "#src/services/resource/survey/getSurveyKeyedChoices";
 import { getSurveyChoiceText } from "vue-survey-engine-headless";
 
 interface Props {

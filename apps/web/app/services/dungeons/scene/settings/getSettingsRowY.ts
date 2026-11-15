@@ -1,4 +1,7 @@
-import { INITIAL_SETTINGS_POSITION, SETTINGS_POSITION_INCREMENT } from "@/services/dungeons/scene/settings/constants";
+import {
+  INITIAL_SETTINGS_POSITION,
+  SETTINGS_POSITION_INCREMENT,
+} from "#src/services/dungeons/scene/settings/constants";
 
 // One row per settings option, evenly spaced down the menu
 export const getSettingsRowY = (rowIndex: number) =>

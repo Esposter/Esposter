@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { RoomReaction } from "@esposter/db-schema";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { authClient } from "@/services/auth/authClient";
-import { useMessageDialogStore } from "@/store/message/dialog";
-import { useEmojiStore } from "@/store/message/emoji";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { authClient } from "#src/services/auth/authClient";
+import { useMessageDialogStore } from "#src/store/message/dialog";
+import { useEmojiStore } from "#src/store/message/emoji";
 import { mergeProps } from "vue";
 
 interface Props {

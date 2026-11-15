@@ -1,14 +1,14 @@
 // @vitest-environment happy-dom
 import type { TextElement } from "vue-block-editor-headless";
 
-import { useWhiteboardTextEdit } from "@/composables/whiteboard/useWhiteboardTextEdit";
+import { useWhiteboardTextEdit } from "#src/composables/whiteboard/useWhiteboardTextEdit";
 import {
   createWhiteboardEditState,
   pressKey,
   WHITEBOARD_PROCESS,
   WHITEBOARD_PROCESS_ID,
-} from "@/services/whiteboard/constants.test";
-import { getDraftPlacement } from "@/services/whiteboard/text/getDraftPlacement";
+} from "#src/services/whiteboard/constants.test";
+import { getDraftPlacement } from "#src/services/whiteboard/text/getDraftPlacement";
 import { takeOne } from "@esposter/shared";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";

@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { UiSchemaFormRendererProps } from "@/models/ui/schemaForm/UiSchemaFormRendererProps";
-import type { UiSelectItem } from "@/models/ui/UiSelectItem";
+import type { UiSchemaFormRendererProps } from "#src/models/ui/schemaForm/UiSchemaFormRendererProps";
+import type { UiSelectItem } from "#src/models/ui/UiSelectItem";
 import type { JsonSchema } from "@jsonforms/core";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { getSchemaFormVariantIndex } from "@/services/ui/schemaForm/getSchemaFormVariantIndex";
-import { getSchemaFormVariantValue } from "@/services/ui/schemaForm/getSchemaFormVariantValue";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { getSchemaFormVariantIndex } from "#src/services/ui/schemaForm/getSchemaFormVariantIndex";
+import { getSchemaFormVariantValue } from "#src/services/ui/schemaForm/getSchemaFormVariantValue";
 import { createCombinatorRenderInfos, mapDispatchToControlProps, mapStateToOneOfProps } from "@jsonforms/core";
 
 interface Props extends UiSchemaFormRendererProps {}

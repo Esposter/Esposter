@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { getEmojiDescription } from "@/services/message/emoji/getEmojiDescription";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { getEmojiDescription } from "#src/services/message/emoji/getEmojiDescription";
 
 interface Props {
   emoji: string;

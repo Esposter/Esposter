@@ -1,9 +1,9 @@
 // @vitest-environment nuxt
-import type { WhiteboardEditState } from "@/models/whiteboard/WhiteboardEditState";
+import type { WhiteboardEditState } from "#src/models/whiteboard/WhiteboardEditState";
 import type { ShapeElement } from "vue-block-editor-headless";
 
-import { useWhiteboardArrangeKeyboard } from "@/composables/whiteboard/useWhiteboardArrangeKeyboard";
-import { createWhiteboardEditState, pressKey, WHITEBOARD_PROCESS } from "@/services/whiteboard/constants.test";
+import { useWhiteboardArrangeKeyboard } from "#src/composables/whiteboard/useWhiteboardArrangeKeyboard";
+import { createWhiteboardEditState, pressKey, WHITEBOARD_PROCESS } from "#src/services/whiteboard/constants.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";

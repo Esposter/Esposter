@@ -1,5 +1,5 @@
-import type { ResourceSearchGroup } from "@/models/resource/search/ResourceSearchGroup";
-import type { ResourceSearchItem } from "@/models/resource/search/ResourceSearchItem";
+import type { ResourceSearchGroup } from "#src/models/resource/search/ResourceSearchGroup";
+import type { ResourceSearchItem } from "#src/models/resource/search/ResourceSearchItem";
 import type { ResourceInResource } from "@esposter/db-schema";
 
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";

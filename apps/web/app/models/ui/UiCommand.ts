@@ -1,4 +1,4 @@
-import type { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import type { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import type { Promisable } from "type-fest";
 import type { RouteLocationRaw } from "vue-router";
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useKnockerStore } from "@/store/message/room/call/knocker";
+import { useKnockerStore } from "#src/store/message/room/call/knocker";
 
 const knockerStore = useKnockerStore();
 const { cancelKnock } = knockerStore;

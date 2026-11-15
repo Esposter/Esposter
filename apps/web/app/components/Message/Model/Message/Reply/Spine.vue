@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useReplyStore } from "@/store/message/input/reply";
+import { useReplyStore } from "#src/store/message/input/reply";
 
 interface Props {
   replyToId: number;

@@ -1,4 +1,4 @@
-import { DASHBOARD_BREAKPOINTS } from "@/services/dashboard/constants";
+import { DASHBOARD_BREAKPOINTS } from "#src/services/dashboard/constants";
 import { takeOne } from "@esposter/shared";
 
 // The column count of the widest breakpoint the width reaches, so a narrower screen takes fewer columns

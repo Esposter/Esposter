@@ -1,7 +1,7 @@
-import type { WhiteboardToolItem } from "@/models/whiteboard/WhiteboardToolItem";
+import type { WhiteboardToolItem } from "#src/models/whiteboard/WhiteboardToolItem";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { GestureTool } from "@/models/whiteboard/GestureTool";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { GestureTool } from "#src/models/whiteboard/GestureTool";
 
 // The tools the toolbar chooses between, each with its mark, its title and the key that chooses it. The shape tool is the shape slot,
 // Which holds the shapes, so it is not a member here

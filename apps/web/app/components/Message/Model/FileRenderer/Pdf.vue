@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { FileRendererComponentProps } from "@/models/message/file/FileRendererComponentProps";
+import type { FileRendererComponentProps } from "#src/models/message/file/FileRendererComponentProps";
 
-import { UiDialogSize } from "@/models/ui/UiDialogSize";
-import { PREVIEW_MAX_HEIGHT } from "@/services/message/file/constants";
-import { loadPdfRenderer } from "@/services/pdf/loadPdfRenderer";
+import { UiDialogSize } from "#src/models/ui/UiDialogSize";
+import { PREVIEW_MAX_HEIGHT } from "#src/services/message/file/constants";
+import { loadPdfRenderer } from "#src/services/pdf/loadPdfRenderer";
 import { usePdfDocument } from "vue-pdfjs-headless";
 
 const { isPreview, url } = defineProps<FileRendererComponentProps>();

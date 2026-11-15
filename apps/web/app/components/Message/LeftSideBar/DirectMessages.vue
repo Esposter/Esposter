@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
+import { LocalStorageKey } from "#src/services/shared/LocalStorageKey";
 
 const isCollapsed = useLocalStorage(LocalStorageKey.MessageSidebarDirectMessagesCollapsed, false);
 </script>

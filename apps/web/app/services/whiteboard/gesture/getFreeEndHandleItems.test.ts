@@ -1,6 +1,6 @@
 import type { ArrowElement } from "vue-block-editor-headless";
 
-import { getFreeEndHandleItems } from "@/services/whiteboard/gesture/getFreeEndHandleItems";
+import { getFreeEndHandleItems } from "#src/services/whiteboard/gesture/getFreeEndHandleItems";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 import {

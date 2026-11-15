@@ -2,8 +2,8 @@ import type { Context } from "#server/trpc/context";
 import type { AnyRouter } from "@trpc/server";
 
 import { createMcpServer } from "#server/services/mcp/createMcpServer";
-import { publicProcedure, router } from "#server/trpc";
 import { createMockContext } from "#server/trpc/context.test";
+import { publicProcedure, router } from "#server/trpc/index";
 import { McpScope, McpScopes } from "@esposter/db-schema";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";

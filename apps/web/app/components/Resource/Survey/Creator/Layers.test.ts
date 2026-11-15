@@ -1,9 +1,9 @@
 // @vitest-environment nuxt
-import ResourceSurveyCreatorLayers from "@/components/Resource/Survey/Creator/Layers.vue";
-import { createSurveyTestDocument } from "@/services/survey/createSurveyTestDocument.test";
-import { createSurveyTestPage } from "@/services/survey/createSurveyTestPage.test";
-import { createSurveyTestQuestion } from "@/services/survey/createSurveyTestQuestion.test";
-import { useSurveyCreatorStore } from "@/store/survey/creator";
+import ResourceSurveyCreatorLayers from "#src/components/Resource/Survey/Creator/Layers.vue";
+import { createSurveyTestDocument } from "#src/services/survey/createSurveyTestDocument.test";
+import { createSurveyTestPage } from "#src/services/survey/createSurveyTestPage.test";
+import { createSurveyTestQuestion } from "#src/services/survey/createSurveyTestQuestion.test";
+import { useSurveyCreatorStore } from "#src/store/survey/creator";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { assert, describe, expect, test } from "vitest";

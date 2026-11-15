@@ -1,4 +1,4 @@
-import { getEntityNotFoundStatusMessage } from "@/services/shared/error/getEntityNotFoundStatusMessage";
+import { getEntityNotFoundStatusMessage } from "#src/services/shared/error/getEntityNotFoundStatusMessage";
 import { DatabaseEntityType } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
 import { TRPCClientError } from "@trpc/client";

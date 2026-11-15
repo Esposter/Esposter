@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computeDataSourceStatistics } from "@/services/resource/sheet/dataSource/computeDataSourceStatistics";
-import { useSheetStore } from "@/store/resource/sheet";
-import { useRowStore } from "@/store/resource/sheet/row";
+import { computeDataSourceStatistics } from "#src/services/resource/sheet/dataSource/computeDataSourceStatistics";
+import { useSheetStore } from "#src/store/resource/sheet/index";
+import { useRowStore } from "#src/store/resource/sheet/row";
 
 const sheetStore = useSheetStore();
 const { loadContent } = sheetStore;

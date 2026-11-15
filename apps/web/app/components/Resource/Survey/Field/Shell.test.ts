@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-import ResourceSurveyFieldShell from "@/components/Resource/Survey/Field/Shell.vue";
+import ResourceSurveyFieldShell from "#src/components/Resource/Survey/Field/Shell.vue";
 import { mount } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";

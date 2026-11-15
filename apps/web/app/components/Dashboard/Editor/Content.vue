@@ -1,20 +1,20 @@
 <script setup lang="ts">
 import type { Visual } from "#shared/models/dashboard/data/Visual";
-import type { DashboardGridTransfer } from "@/models/dashboard/DashboardGridTransfer";
+import type { DashboardGridTransfer } from "#src/models/dashboard/DashboardGridTransfer";
 import type { GridBlock } from "vue-grid-layout-headless";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import {
   DASHBOARD_EDITOR_ROW_HEIGHT,
   DASHBOARD_GRID_COMMANDS,
   DASHBOARD_NO_COLUMNS,
-} from "@/services/dashboard/constants";
-import { findVisual } from "@/services/dashboard/visual/findVisual";
-import { getVisualDeleteDescription } from "@/services/dashboard/visual/getVisualDeleteDescription";
-import { useDashboardStore } from "@/store/dashboard";
-import { useDashboardDialogStore } from "@/store/dashboard/dialog";
-import { useVisualStore } from "@/store/dashboard/visual";
-import { prettify } from "@/util/text/prettify";
+} from "#src/services/dashboard/constants";
+import { findVisual } from "#src/services/dashboard/visual/findVisual";
+import { getVisualDeleteDescription } from "#src/services/dashboard/visual/getVisualDeleteDescription";
+import { useDashboardDialogStore } from "#src/store/dashboard/dialog";
+import { useDashboardStore } from "#src/store/dashboard/index";
+import { useVisualStore } from "#src/store/dashboard/visual";
+import { prettify } from "#src/util/text/prettify";
 
 const dashboardStore = useDashboardStore();
 const { dashboard } = storeToRefs(dashboardStore);

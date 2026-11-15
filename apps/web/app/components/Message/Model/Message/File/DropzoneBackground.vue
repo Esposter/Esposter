@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { ComposerTarget } from "@/models/message/ComposerTarget";
+import type { ComposerTarget } from "#src/models/message/ComposerTarget";
 
-import { THREAD_COMPOSER_DROP_ZONE_ATTRIBUTE } from "@/services/message/composer/constants";
-import { useRoomStore } from "@/store/message/room";
-import { useThreadStore } from "@/store/message/thread";
+import { THREAD_COMPOSER_DROP_ZONE_ATTRIBUTE } from "#src/services/message/composer/constants";
+import { useRoomStore } from "#src/store/message/room/index";
+import { useThreadStore } from "#src/store/message/thread";
 import { getSynchronizedFunction } from "@esposter/shared";
 import { defaultDocument } from "@vueuse/core";
 

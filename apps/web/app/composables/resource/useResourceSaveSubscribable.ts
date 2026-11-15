@@ -1,6 +1,6 @@
-import { useConnectionStore } from "@/store/realtime/connection";
-import { useResourceStore } from "@/store/resource";
-import { getRouteParam } from "@/util/router/getRouteParam";
+import { useConnectionStore } from "#src/store/realtime/connection";
+import { useResourceStore } from "#src/store/resource/index";
+import { getRouteParam } from "#src/util/router/getRouteParam";
 import { getResultAsync, noop } from "@esposter/shared";
 
 // Another device's save of the open resource, whatever its type. The user socket carries every type's save, so one

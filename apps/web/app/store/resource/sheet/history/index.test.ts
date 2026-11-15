@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
-import { setupCommandTest } from "@/composables/resource/sheet/commands/setupCommandTest.test";
-import { setupWithDataSource } from "@/composables/resource/sheet/commands/setupWithDataSource.test";
-import { MAX_HISTORY_SIZE } from "@/services/resource/sheet/constants";
-import { useSheetHistoryStore } from "@/store/resource/sheet/history";
+import { setupCommandTest } from "#src/composables/resource/sheet/commands/setupCommandTest.test";
+import { setupWithDataSource } from "#src/composables/resource/sheet/commands/setupWithDataSource.test";
+import { MAX_HISTORY_SIZE } from "#src/services/resource/sheet/constants";
+import { useSheetHistoryStore } from "#src/store/resource/sheet/history/index";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 

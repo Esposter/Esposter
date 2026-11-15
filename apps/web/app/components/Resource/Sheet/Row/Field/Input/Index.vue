@@ -1,9 +1,9 @@
 <script setup lang="ts" generic="TColumnType extends Exclude<ColumnType, typeof ColumnType.Computed>">
 import type { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
-import type { ColumnTypeColumnMap } from "@/models/resource/sheet/column/ColumnTypeColumnMap";
-import type { ColumnTypeModelValueMap } from "@/models/resource/sheet/column/ColumnTypeModelValueMap";
+import type { ColumnTypeColumnMap } from "#src/models/resource/sheet/column/ColumnTypeColumnMap";
+import type { ColumnTypeModelValueMap } from "#src/models/resource/sheet/column/ColumnTypeModelValueMap";
 
-import { FieldInputComponentMap } from "@/services/resource/sheet/column/FieldInputComponentMap";
+import { FieldInputComponentMap } from "#src/services/resource/sheet/column/FieldInputComponentMap";
 
 interface Props {
   column: ColumnTypeColumnMap[TColumnType];

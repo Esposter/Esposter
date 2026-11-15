@@ -1,6 +1,6 @@
-import { PressMoveOutcome } from "@/models/ui/PressMoveOutcome";
-import { DRAG_START_DISTANCE, LONG_PRESS_MOVE_TOLERANCE } from "@/services/ui/constants";
-import { getPressMoveOutcome } from "@/services/ui/getPressMoveOutcome";
+import { PressMoveOutcome } from "#src/models/ui/PressMoveOutcome";
+import { DRAG_START_DISTANCE, LONG_PRESS_MOVE_TOLERANCE } from "#src/services/ui/constants";
+import { getPressMoveOutcome } from "#src/services/ui/getPressMoveOutcome";
 import { describe, expect, test } from "vitest";
 
 describe(getPressMoveOutcome, () => {

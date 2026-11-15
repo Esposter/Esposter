@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useBallStore } from "@/store/dungeons/battle/ball";
+import { useBallStore } from "#src/store/dungeons/battle/ball";
 import { Curves, Math } from "phaser";
 import { PathFollower } from "vue-phaserjs";
 

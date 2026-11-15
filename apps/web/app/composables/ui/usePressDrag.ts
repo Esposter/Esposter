@@ -1,8 +1,8 @@
-import { PressMoveOutcome } from "@/models/ui/PressMoveOutcome";
-import { TOUCH_DRAG_DELAY_MS } from "@/services/ui/constants";
-import { getPressMoveOutcome } from "@/services/ui/getPressMoveOutcome";
-import { holdPageStillWhile } from "@/services/ui/holdPageStillWhile";
-import { swallowNextWindowClick } from "@/services/ui/swallowNextWindowClick";
+import { PressMoveOutcome } from "#src/models/ui/PressMoveOutcome";
+import { TOUCH_DRAG_DELAY_MS } from "#src/services/ui/constants";
+import { getPressMoveOutcome } from "#src/services/ui/getPressMoveOutcome";
+import { holdPageStillWhile } from "#src/services/ui/holdPageStillWhile";
+import { swallowNextWindowClick } from "#src/services/ui/swallowNextWindowClick";
 
 // What a press tracked to its end hands its editor: where the drag starts, each move of it, what a release lands and the end
 // Of the press however it came. The editor keeps what differs between editors, which is what a move draws and what a

@@ -1,4 +1,4 @@
-import type { UiCommand } from "@/models/ui/UiCommand";
+import type { UiCommand } from "#src/models/ui/UiCommand";
 
 // Does what a command does: runs it, or goes where it leads. A disabled command does nothing, so a shortcut bound to it
 // Cannot run an action the selection has refused

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { useAlertStore } from "@/store/alert";
-import { useClipboardStore } from "@/store/clipboard";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { useAlertStore } from "#src/store/alert";
+import { useClipboardStore } from "#src/store/clipboard";
 
 const { data: session } = await useAuthSession();
 const alertStore = useAlertStore();

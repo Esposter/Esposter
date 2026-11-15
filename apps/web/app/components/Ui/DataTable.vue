@@ -1,18 +1,18 @@
 <script setup lang="ts" generic="T extends { id: string }, TSortKey extends string">
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
-import type { UiDataTableCell } from "@/models/ui/UiDataTableCell";
-import type { UiDataTableColumn } from "@/models/ui/UiDataTableColumn";
+import type { UiDataTableCell } from "#src/models/ui/UiDataTableCell";
+import type { UiDataTableColumn } from "#src/models/ui/UiDataTableColumn";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiDataTableDensity } from "@/models/ui/UiDataTableDensity";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiDataTableDensity } from "#src/models/ui/UiDataTableDensity";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import {
   DATA_TABLE_SKELETON_ROW_COUNT,
   MAX_DATA_TABLE_COLUMN_WIDTH,
   MIN_DATA_TABLE_COLUMN_WIDTH,
   REORDER_HANDLE_CLASS,
-} from "@/services/ui/constants";
-import { getNextGridCellPosition } from "@/services/ui/getNextGridCellPosition";
+} from "#src/services/ui/constants";
+import { getNextGridCellPosition } from "#src/services/ui/getNextGridCellPosition";
 import { SortOrder } from "@esposter/db-schema";
 import { checkIsNestedInteraction } from "@esposter/shared";
 

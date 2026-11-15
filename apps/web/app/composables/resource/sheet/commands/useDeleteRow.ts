@@ -1,4 +1,4 @@
-import { DeleteRowCommand } from "@/models/resource/sheet/commands/DeleteRowCommand";
+import { DeleteRowCommand } from "#src/models/resource/sheet/commands/DeleteRowCommand";
 import { takeOne, toRawDeep } from "@esposter/shared";
 
 export const useDeleteRow = () =>

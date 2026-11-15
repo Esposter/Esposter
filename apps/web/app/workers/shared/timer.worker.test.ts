@@ -1,6 +1,6 @@
-import type { TimerRequest } from "@/models/shared/TimerRequest";
+import type { TimerRequest } from "#src/models/shared/TimerRequest";
 
-import { TimerMethod } from "@/models/shared/TimerMethod";
+import { TimerMethod } from "#src/models/shared/TimerMethod";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 // The worker module attaches its listener as it loads, so each test loads a fresh copy against a fake worker scope
@@ -10,7 +10,7 @@ const loadWorker = async () => {
     postMessage: vi.fn<(response: unknown) => void>(),
   };
   vi.stubGlobal("self", scope);
-  await import("@/workers/shared/timer.worker");
+  await import("#src/workers/shared/timer.worker");
   const [, listener] = scope.addEventListener.mock.calls[0] ?? [];
   return {
     post: (request: TimerRequest) => {

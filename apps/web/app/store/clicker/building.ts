@@ -3,13 +3,13 @@ import type { Building } from "#shared/models/clicker/data/building/Building";
 import type { BuildingWithStatistics } from "#shared/models/clicker/data/building/BuildingWithStatistics";
 
 import { parseDictionaryToArray } from "#shared/util/object/parseDictionaryToArray";
-import { getBuildingPrice as baseGetBuildingPrice } from "@/services/clicker/building/getBuildingPrice";
-import { formatNumberLong } from "@/services/clicker/formatNumberLong";
-import { applyBuildingUpgrade } from "@/services/clicker/upgrade/applyBuildingUpgrade";
-import { applyBuildingUpgrades } from "@/services/clicker/upgrade/applyBuildingUpgrades";
-import { useClickerStore } from "@/store/clicker";
-import { usePointStore } from "@/store/clicker/point";
-import { getInitials } from "@/util/text/getInitials";
+import { getBuildingPrice as baseGetBuildingPrice } from "#src/services/clicker/building/getBuildingPrice";
+import { formatNumberLong } from "#src/services/clicker/formatNumberLong";
+import { applyBuildingUpgrade } from "#src/services/clicker/upgrade/applyBuildingUpgrade";
+import { applyBuildingUpgrades } from "#src/services/clicker/upgrade/applyBuildingUpgrades";
+import { useClickerStore } from "#src/store/clicker/index";
+import { usePointStore } from "#src/store/clicker/point";
+import { getInitials } from "#src/util/text/getInitials";
 
 export const useBuildingStore = defineStore("clicker/building", () => {
   const clickerStore = useClickerStore();

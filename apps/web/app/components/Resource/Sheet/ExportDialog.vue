@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import type { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
 
-import { createDefaultSheetSettings } from "@/services/resource/sheet/createDefaultSheetSettings";
-import { DataSourceConfigurationMap } from "@/services/resource/sheet/dataSource/DataSourceConfigurationMap";
-import { filterDataSourceColumns } from "@/services/resource/sheet/dataSource/filterDataSourceColumns";
-import { filterDataSourceRows } from "@/services/resource/sheet/dataSource/filterDataSourceRows";
-import { useResourceStore } from "@/store/resource";
-import { useSheetStore } from "@/store/resource/sheet";
-import { useFilterStore } from "@/store/resource/sheet/filter";
-import { useRowStore } from "@/store/resource/sheet/row";
+import { createDefaultSheetSettings } from "#src/services/resource/sheet/createDefaultSheetSettings";
+import { DataSourceConfigurationMap } from "#src/services/resource/sheet/dataSource/DataSourceConfigurationMap";
+import { filterDataSourceColumns } from "#src/services/resource/sheet/dataSource/filterDataSourceColumns";
+import { filterDataSourceRows } from "#src/services/resource/sheet/dataSource/filterDataSourceRows";
+import { useResourceStore } from "#src/store/resource/index";
+import { useFilterStore } from "#src/store/resource/sheet/filter";
+import { useSheetStore } from "#src/store/resource/sheet/index";
+import { useRowStore } from "#src/store/resource/sheet/row";
 
 interface Props {
   dataSourceType: DataSourceType;

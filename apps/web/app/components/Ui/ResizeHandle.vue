@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RESIZE_HANDLE_KEYBOARD_STEP } from "@/services/ui/constants";
+import { RESIZE_HANDLE_KEYBOARD_STEP } from "#src/services/ui/constants";
 
 interface Props {
   // Sits on the pane's start edge and grows it as the pointer moves toward the start, as a right sidebar's handle does,

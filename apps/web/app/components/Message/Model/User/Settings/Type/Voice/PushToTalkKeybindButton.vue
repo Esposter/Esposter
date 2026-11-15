@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { useUserSettingsStore } from "@/store/message/user/settings";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { useUserSettingsStore } from "#src/store/message/user/settings/index";
 
 interface Props {
   keybind: string;

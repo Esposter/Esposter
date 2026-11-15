@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { ModerationLogInRoom } from "#shared/models/db/room/ModerationLogInRoom";
 
-import { AdminActionColorMap } from "@/services/message/moderation/AdminActionColorMap";
-import { AdminActionIconMap } from "@/services/message/moderation/AdminActionIconMap";
-import { formatDuration } from "@/util/date/formatDuration";
+import { AdminActionColorMap } from "#src/services/message/moderation/AdminActionColorMap";
+import { AdminActionIconMap } from "#src/services/message/moderation/AdminActionIconMap";
+import { formatDuration } from "#src/util/date/formatDuration";
 import { AUTOMOD_USER_ID } from "@esposter/db-schema";
 
 interface Props {

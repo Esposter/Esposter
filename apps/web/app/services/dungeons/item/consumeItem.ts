@@ -1,6 +1,6 @@
 import type { Item } from "#shared/models/dungeons/item/Item";
 
-import { useInventorySceneStore } from "@/store/dungeons/inventory/scene";
+import { useInventorySceneStore } from "#src/store/dungeons/inventory/scene";
 
 // Spending the item is the same act whichever resolver handled it, so it is the caller's step rather than
 // Something a resolver can forget to do

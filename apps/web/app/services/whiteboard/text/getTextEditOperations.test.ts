@@ -1,7 +1,7 @@
-import type { WhiteboardTextEdit } from "@/models/whiteboard/WhiteboardTextEdit";
+import type { WhiteboardTextEdit } from "#src/models/whiteboard/WhiteboardTextEdit";
 
-import { WHITEBOARD_PROCESS, WHITEBOARD_PROCESS_ID } from "@/services/whiteboard/constants.test";
-import { getTextEditOperations } from "@/services/whiteboard/text/getTextEditOperations";
+import { WHITEBOARD_PROCESS, WHITEBOARD_PROCESS_ID } from "#src/services/whiteboard/constants.test";
+import { getTextEditOperations } from "#src/services/whiteboard/text/getTextEditOperations";
 import { describe, expect, test } from "vitest";
 
 describe(getTextEditOperations, () => {

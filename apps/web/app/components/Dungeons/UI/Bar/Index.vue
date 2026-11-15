@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { ImagePosition } from "@/models/dungeons/ImagePosition";
-import type { BarType } from "@/models/dungeons/UI/bar/BarType";
+import type { ImagePosition } from "#src/models/dungeons/ImagePosition";
+import type { BarType } from "#src/models/dungeons/UI/bar/BarType";
 import type { Tweens } from "phaser";
 import type { TweenBuilderConfiguration } from "vue-phaserjs";
 
-import { BarTextureMap } from "@/services/dungeons/UI/bar/BarTextureMap";
-import { useSettingsStore } from "@/store/dungeons/settings";
+import { BarTextureMap } from "#src/services/dungeons/UI/bar/BarTextureMap";
+import { useSettingsStore } from "#src/store/dungeons/settings/index";
 import { Math } from "phaser";
 import { Image, useTween } from "vue-phaserjs";
 

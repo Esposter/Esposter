@@ -1,4 +1,4 @@
-import { ResourceListSource } from "@/models/resource/list/ResourceListSource";
+import { ResourceListSource } from "#src/models/resource/list/ResourceListSource";
 
 // The list routes' titles as a flat search result carries them. Spelled out here rather than taken from the
 // Definition: the menu sits under a "Resources" heading that supplies the noun, while a search result or a palette

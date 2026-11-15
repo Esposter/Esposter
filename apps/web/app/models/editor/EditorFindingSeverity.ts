@@ -1,4 +1,4 @@
-import { UiToken } from "@/models/ui/UiToken";
+import { UiToken } from "#src/models/ui/UiToken";
 
 // How serious a finding is. An error refuses a save and a warning informs without refusing one. The values are the tokens
 // The surface draws each in, so UiStatusIconMeaningMap marks a finding with no map of its own

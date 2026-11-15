@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { EditorFinding } from "@/models/editor/EditorFinding";
+import type { EditorFinding } from "#src/models/editor/EditorFinding";
 
-import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
+import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
 
 interface Props {
   // The findings the editor's check holds for its document, which the problems surface lists

@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { getDeleteRowDescription } from "@/services/resource/sheet/commands/getDeleteRowDescription";
-import { getEditRowDescription } from "@/services/resource/sheet/commands/getEditRowDescription";
-import { useRowDialogStore } from "@/store/resource/sheet/rowDialog";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { getDeleteRowDescription } from "#src/services/resource/sheet/commands/getDeleteRowDescription";
+import { getEditRowDescription } from "#src/services/resource/sheet/commands/getEditRowDescription";
+import { useRowDialogStore } from "#src/store/resource/sheet/rowDialog";
 
 interface Props {
   index: number;

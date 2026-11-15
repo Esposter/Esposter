@@ -1,7 +1,7 @@
-import { Grid } from "@/models/dungeons/Grid";
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { MenuOption } from "@/models/dungeons/scene/monsterParty/MenuOption";
-import { usePlayerStore } from "@/store/dungeons/player";
+import { Grid } from "#src/models/dungeons/Grid";
+import { SceneKey } from "#src/models/dungeons/keys/SceneKey";
+import { MenuOption } from "#src/models/dungeons/scene/monsterParty/MenuOption";
+import { usePlayerStore } from "#src/store/dungeons/player";
 
 const MonsterPartyMenuOptionGrid = new Grid<MenuOption[][]>({ grid: [], isWrapping: true });
 

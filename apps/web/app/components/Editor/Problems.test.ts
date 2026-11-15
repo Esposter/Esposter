@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
-import EditorProblems from "@/components/Editor/Problems.vue";
-import { EditorFindingSeverity } from "@/models/editor/EditorFindingSeverity";
+import EditorProblems from "#src/components/Editor/Problems.vue";
+import { EditorFindingSeverity } from "#src/models/editor/EditorFindingSeverity";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { v7 } from "uuid";

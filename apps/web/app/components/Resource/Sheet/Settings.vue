@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { createDefaultSheetSettings } from "@/services/resource/sheet/createDefaultSheetSettings";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { createDefaultSheetSettings } from "#src/services/resource/sheet/createDefaultSheetSettings";
 import {
   DataSourceTypeItemCategoryDefinitionMap,
   DataSourceTypeItemCategoryDefinitions,
-} from "@/services/resource/sheet/dataSource/DataSourceTypeItemCategoryDefinitionMap";
-import { useSheetStore } from "@/store/resource/sheet";
+} from "#src/services/resource/sheet/dataSource/DataSourceTypeItemCategoryDefinitionMap";
+import { useSheetStore } from "#src/store/resource/sheet/index";
 
 const sheetStore = useSheetStore();
 const { loadContent, saveSheet } = sheetStore;

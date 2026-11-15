@@ -2,13 +2,13 @@
 import type { CSSProperties } from "vue";
 import type { PositionedElement } from "vue-block-editor-headless";
 
-import { getElementStrokeAttributes } from "@/services/whiteboard/palette/getElementStrokeAttributes";
+import { getElementStrokeAttributes } from "#src/services/whiteboard/palette/getElementStrokeAttributes";
 import {
   WHITEBOARD_TEXT_EDIT_ANCHOR_MAP,
   WHITEBOARD_TEXT_EDIT_VERTICAL_SHIFT_MAP,
-} from "@/services/whiteboard/text/constants";
-import { getDraftPlacement } from "@/services/whiteboard/text/getDraftPlacement";
-import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
+} from "#src/services/whiteboard/text/constants";
+import { getDraftPlacement } from "#src/services/whiteboard/text/getDraftPlacement";
+import { useWhiteboardEditorStore } from "#src/store/resource/whiteboard/editor";
 import { getTextLineHeight, TEXT_FONT_FAMILY } from "vue-block-editor-headless";
 
 interface Props {

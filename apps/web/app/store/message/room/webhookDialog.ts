@@ -1,6 +1,6 @@
 import type { PublicWebhookInMessage } from "@esposter/db-schema";
 
-import { WebhookDialogAction } from "@/models/message/room/WebhookDialogAction";
+import { WebhookDialogAction } from "#src/models/message/room/WebhookDialogAction";
 
 export const useWebhookDialogStore = defineStore("message/room/webhookDialog", () => {
   const deletingId = ref<PublicWebhookInMessage["id"]>("");

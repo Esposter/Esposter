@@ -3,12 +3,12 @@ import type { MemberCountByTopRole } from "#shared/models/db/room/MemberCountByT
 import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
 import type { RoomRoleInMessage } from "@esposter/db-schema";
 
-import { createRoomRole } from "@/services/message/member/createRoomRole.test";
-import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
-import { createUser } from "@/services/message/user/createUser.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useRoleStore } from "@/store/message/room/role";
-import { useMemberStore } from "@/store/message/user/member";
+import { createRoomRole } from "#src/services/message/member/createRoomRole.test";
+import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
+import { createUser } from "#src/services/message/user/createUser.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useRoleStore } from "#src/store/message/room/role";
+import { useMemberStore } from "#src/store/message/user/member";
 import { TRPCError } from "@trpc/server";
 import { v7 } from "uuid";
 import { beforeEach, describe, expect, test, vi } from "vitest";

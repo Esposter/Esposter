@@ -5,21 +5,21 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 import { Save } from "#shared/models/dungeons/data/Save";
 import { MonsterKey } from "#shared/models/dungeons/keys/image/UI/MonsterKey";
 import { Monster } from "#shared/models/dungeons/monster/Monster";
-import { useMonsterPartyOptionGrid } from "@/composables/dungeons/scene/monsterParty/useMonsterPartyOptionGrid";
-import { usePreviousScene } from "@/composables/dungeons/usePreviousScene";
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
-import { phaserEventEmitter } from "@/services/phaser/phaserEventEmitter";
-import { useDungeonsStore } from "@/store/dungeons";
-import { useMonsterPartyInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
-import { useMonsterPartyInputStore } from "@/store/dungeons/monsterParty/input";
+import { useMonsterPartyOptionGrid } from "#src/composables/dungeons/scene/monsterParty/useMonsterPartyOptionGrid";
+import { usePreviousScene } from "#src/composables/dungeons/usePreviousScene";
+import { SceneKey } from "#src/models/dungeons/keys/SceneKey";
+import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";
+import { phaserEventEmitter } from "#src/services/phaser/phaserEventEmitter";
+import { useDungeonsStore } from "#src/store/dungeons/index";
+import { useMonsterPartyInfoPanelStore } from "#src/store/dungeons/monsterParty/infoPanel";
+import { useMonsterPartyInputStore } from "#src/store/dungeons/monsterParty/input";
 import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 // The dungeons store imports Phaser, which cannot initialise under the test environment. Only its save is read here, so
 // The fake keeps the real save shape and holds one save for every reader
 // oxlint-disable-next-line vitest/prefer-import-in-mock -- A partial fake: the typed module would load Phaser and its full store type
-vi.mock("@/store/dungeons", async () => {
+vi.mock("#src/store/dungeons/index", async () => {
   const { Dungeons } = await import("#shared/models/dungeons/data/Dungeons");
   const { Save: DungeonsSave } = await import("#shared/models/dungeons/data/Save");
   const { reactive } = await import("vue");
@@ -33,8 +33,8 @@ vi.mock("@/store/dungeons", async () => {
 });
 
 // The scene switch belongs to Phaser, so only its calls are recorded
-vi.mock(import("@/composables/dungeons/usePreviousScene"), async () => {
-  const { SceneKey: MockSceneKey } = await import("@/models/dungeons/keys/SceneKey");
+vi.mock(import("#src/composables/dungeons/usePreviousScene"), async () => {
+  const { SceneKey: MockSceneKey } = await import("#src/models/dungeons/keys/SceneKey");
   const { computed } = await import("vue");
   const usePreviousSceneMock = {
     launchScene: vi.fn<() => void>(),
@@ -47,7 +47,7 @@ vi.mock(import("@/composables/dungeons/usePreviousScene"), async () => {
 
 // Text animation drives Phaser's scene, and the dialog store only reaches it once a message is shown, which these tests
 // Never do
-vi.mock(import("@/composables/dungeons/text/useAnimateText"), () => ({ useAnimateText: () => Promise.resolve() }));
+vi.mock(import("#src/composables/dungeons/text/useAnimateText"), () => ({ useAnimateText: () => Promise.resolve() }));
 
 const setParty = (...monsters: Monster[]) => {
   const dungeonsStore = useDungeonsStore();

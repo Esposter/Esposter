@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ClientMessage } from "@/models/message/ClientMessage";
+import type { ClientMessage } from "#src/models/message/ClientMessage";
 
 interface Props {
   isPreview?: boolean;

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { ArrowElement } from "vue-block-editor-headless";
 
-import { WHITEBOARD_TEXT_COLOR } from "@/services/whiteboard/palette/constants";
+import { WHITEBOARD_TEXT_COLOR } from "#src/services/whiteboard/palette/constants";
 import {
   getArrowheads,
   getArrowRoute,

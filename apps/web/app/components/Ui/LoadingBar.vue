@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { LOADING_BAR_BLOCK_COUNT } from "@/services/ui/constants";
+import { LOADING_BAR_BLOCK_COUNT } from "#src/services/ui/constants";
 import { Progress } from "@vuetify/v0";
 
 interface Props {

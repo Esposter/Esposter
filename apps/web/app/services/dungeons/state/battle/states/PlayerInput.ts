@@ -1,11 +1,11 @@
-import type { State } from "@/models/dungeons/state/State";
+import type { State } from "#src/models/dungeons/state/State";
 
-import { ActivePanel } from "@/models/dungeons/scene/battle/menu/ActivePanel";
-import { StateName } from "@/models/dungeons/state/battle/StateName";
-import { useBattleInfoPanelStore } from "@/store/dungeons/battle/infoPanel";
-import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
-import { useBattleSceneStore } from "@/store/dungeons/battle/scene";
-import { prettify } from "@/util/text/prettify";
+import { ActivePanel } from "#src/models/dungeons/scene/battle/menu/ActivePanel";
+import { StateName } from "#src/models/dungeons/state/battle/StateName";
+import { useBattleInfoPanelStore } from "#src/store/dungeons/battle/infoPanel";
+import { useBattlePlayerStore } from "#src/store/dungeons/battle/player";
+import { useBattleSceneStore } from "#src/store/dungeons/battle/scene";
+import { prettify } from "#src/util/text/prettify";
 
 export const PlayerInput: State<typeof StateName.PlayerInput> = {
   name: StateName.PlayerInput,

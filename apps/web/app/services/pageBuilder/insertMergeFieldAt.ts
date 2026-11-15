@@ -1,12 +1,12 @@
-import type { OverlayBox } from "@/models/pageBuilder/OverlayBox";
-import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
+import type { OverlayBox } from "#src/models/pageBuilder/OverlayBox";
+import type { PageBuilderKind } from "#src/models/pageBuilder/PageBuilderKind";
 import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "vue-block-editor-headless";
 
 import { noteDocumentSchema } from "#shared/models/resource/note/NoteDocument";
-import { appendMergeFieldToText } from "@/services/pageBuilder/email/appendMergeFieldToText";
-import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
-import { getTextNodeIdAt } from "@/services/pageBuilder/getTextNodeIdAt";
-import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
+import { appendMergeFieldToText } from "#src/services/pageBuilder/email/appendMergeFieldToText";
+import { getNodePointer } from "#src/services/pageBuilder/getNodePointer";
+import { getTextNodeIdAt } from "#src/services/pageBuilder/getTextNodeIdAt";
+import { usePageBuilderHistoryStore } from "#src/store/pageBuilder/history";
 import { JsonPatchOperationType } from "@esposter/shared";
 import { getBlockNode, getBlockPropValue } from "vue-block-editor-headless";
 

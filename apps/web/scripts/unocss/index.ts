@@ -1,4 +1,4 @@
-import unoConfiguration from "@@/uno.config";
+import unoConfiguration from "#uno.config";
 import { defineCommand, runMain } from "citty";
 import { createGenerator } from "unocss";
 

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { UiListItem } from "@/models/ui/UiListItem";
+import type { UiListItem } from "#src/models/ui/UiListItem";
 import type { SurveyAnswerValue, SurveyImagePickerNode } from "vue-survey-engine-headless";
 
-import { SURVEY_IMAGE_FIT_CLASSES } from "@/services/resource/survey/constants";
-import { getSurveyKeyedChoices } from "@/services/resource/survey/getSurveyKeyedChoices";
+import { SURVEY_IMAGE_FIT_CLASSES } from "#src/services/resource/survey/constants";
+import { getSurveyKeyedChoices } from "#src/services/resource/survey/getSurveyKeyedChoices";
 import { getSurveyChoiceText } from "vue-survey-engine-headless";
 
 interface Props {

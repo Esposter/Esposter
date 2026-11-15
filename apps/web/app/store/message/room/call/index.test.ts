@@ -1,25 +1,28 @@
 // @vitest-environment nuxt
-import type { ClientMessage } from "@/models/message/ClientMessage";
+import type { ClientMessage } from "#src/models/message/ClientMessage";
 import type { CallParticipant } from "@esposter/db-schema";
 
 import { getMockSession } from "#server/trpc/context.test";
 import { createId } from "#shared/util/math/random/createId";
-import { useSession } from "@/services/auth/authClient.test";
-import { AdminActionHookMap } from "@/services/message/moderation/AdminActionHookMap";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useAlertStore } from "@/store/alert";
-import { useCallStore } from "@/store/message/room/call";
-import { useMediaStore } from "@/store/message/room/call/media";
-import { useParticipantStore } from "@/store/message/room/call/participant";
-import { useRealtimeStore } from "@/store/message/room/realtime";
+import { useSession } from "#src/services/auth/authClient.test";
+import { AdminActionHookMap } from "#src/services/message/moderation/AdminActionHookMap";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useAlertStore } from "#src/store/alert";
+import { useCallStore } from "#src/store/message/room/call/index";
+import { useMediaStore } from "#src/store/message/room/call/media";
+import { useParticipantStore } from "#src/store/message/room/call/participant";
+import { useRealtimeStore } from "#src/store/message/room/realtime";
 import { AdminActionType, CALL_ID_LENGTH } from "@esposter/db-schema";
 import { RoutePath, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
-vi.mock(import("@/services/realtime/openRealtimeSocket"), () => import("@/services/realtime/openRealtimeSocket.test"));
+vi.mock(import("#src/services/auth/authClient"), () => import("#src/services/auth/authClient.test"));
+vi.mock(
+  import("#src/services/realtime/openRealtimeSocket"),
+  () => import("#src/services/realtime/openRealtimeSocket.test"),
+);
 
 const createParticipant = (id: string): CallParticipant => ({
   id,

@@ -1,5 +1,5 @@
-import ImageChoicesEditor from "@/components/Resource/Survey/Creator/ImageChoicesEditor.vue";
-import ImageUpload from "@/components/Resource/Survey/Creator/ImageUpload.vue";
+import ImageChoicesEditor from "#src/components/Resource/Survey/Creator/ImageChoicesEditor.vue";
+import ImageUpload from "#src/components/Resource/Survey/Creator/ImageUpload.vue";
 import { SurveyNodeType } from "vue-survey-engine-headless";
 
 // The editors an image and an image picker take in the Creator's properties, drawn after the list editors. Each takes

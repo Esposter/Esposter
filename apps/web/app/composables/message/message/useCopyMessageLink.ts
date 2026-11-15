@@ -1,6 +1,6 @@
-import type { ClientMessage } from "@/models/message/ClientMessage";
+import type { ClientMessage } from "#src/models/message/ClientMessage";
 
-import { useClipboardStore } from "@/store/clipboard";
+import { useClipboardStore } from "#src/store/clipboard";
 import { RoutePath } from "@esposter/shared";
 
 // A message link and a thread link are the same deep link — the thread is named by its root message — so the

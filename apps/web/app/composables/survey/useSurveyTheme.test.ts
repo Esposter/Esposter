@@ -1,4 +1,4 @@
-import { useSurveyTheme } from "@/composables/survey/useSurveyTheme";
+import { useSurveyTheme } from "#src/composables/survey/useSurveyTheme";
 import { describe, expect, test } from "vitest";
 import { surveyRootPropsSchema } from "vue-survey-engine-headless";
 

@@ -1,5 +1,5 @@
-import { useRoomStore } from "@/store/message/room";
-import { useCallStore } from "@/store/message/room/call";
+import { useCallStore } from "#src/store/message/room/call/index";
+import { useRoomStore } from "#src/store/message/room/index";
 
 export const useCallSubscribables = () => {
   const onlineSubscribableContext = getOnlineSubscribableContext();

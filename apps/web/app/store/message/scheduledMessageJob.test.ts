@@ -1,9 +1,9 @@
 // @vitest-environment nuxt
-import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
-import { createScheduledMessageJob } from "@/services/message/draftsAndSent/createScheduledMessageJob.test";
-import { createRoom } from "@/services/message/room/createRoom.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useScheduledMessageJobStore } from "@/store/message/scheduledMessageJob";
+import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
+import { createScheduledMessageJob } from "#src/services/message/draftsAndSent/createScheduledMessageJob.test";
+import { createRoom } from "#src/services/message/room/createRoom.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useScheduledMessageJobStore } from "#src/store/message/scheduledMessageJob";
 import { MessageType } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
 import { v7 } from "uuid";

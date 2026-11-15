@@ -1,17 +1,17 @@
 import type { TeleportTarget } from "#shared/generated/tiled/propertyTypes/class/TeleportTarget";
-import type { Effect } from "@/models/dungeons/scene/world/interaction/Effect";
+import type { Effect } from "#src/models/dungeons/scene/world/interaction/Effect";
 
 import { ObjectgroupName } from "#shared/generated/tiled/layers/ObjectgroupName";
 import { TeleportObjectProperty } from "#shared/generated/tiled/propertyTypes/class/TeleportObjectProperty";
 import { SoundEffectKey } from "#shared/models/dungeons/keys/sound/SoundEffectKey";
-import { DirectionToGridDirectionMap } from "@/services/dungeons/direction/DirectionToGridDirectionMap";
-import { getPositionAfterDirectionMovement } from "@/services/dungeons/direction/getPositionAfterDirectionMovement";
-import { getObjects } from "@/services/dungeons/scene/world/getObjects";
-import { getDungeonsSoundEffect } from "@/services/dungeons/sound/getDungeonsSoundEffect";
-import { getTiledObjectProperty } from "@/services/dungeons/tilemap/getTiledObjectProperty";
-import { phaserEventEmitter } from "@/services/phaser/phaserEventEmitter";
-import { usePlayerStore } from "@/store/dungeons/player";
-import { useWorldSceneStore } from "@/store/dungeons/world/scene";
+import { DirectionToGridDirectionMap } from "#src/services/dungeons/direction/DirectionToGridDirectionMap";
+import { getPositionAfterDirectionMovement } from "#src/services/dungeons/direction/getPositionAfterDirectionMovement";
+import { getObjects } from "#src/services/dungeons/scene/world/getObjects";
+import { getDungeonsSoundEffect } from "#src/services/dungeons/sound/getDungeonsSoundEffect";
+import { getTiledObjectProperty } from "#src/services/dungeons/tilemap/getTiledObjectProperty";
+import { phaserEventEmitter } from "#src/services/phaser/phaserEventEmitter";
+import { usePlayerStore } from "#src/store/dungeons/player";
+import { useWorldSceneStore } from "#src/store/dungeons/world/scene";
 import { getResultAsync, noop, NotFoundError } from "@esposter/shared";
 import { Cameras } from "phaser";
 import { useCameraStore } from "vue-phaserjs";

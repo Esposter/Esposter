@@ -3,8 +3,8 @@ import type { InviteInMessage, RoomInMessage } from "@esposter/db-schema";
 
 import { checkIsInviteUsable } from "#shared/services/room/invite/checkIsInviteUsable";
 import { DEFAULT_INVITE_EXPIRE_AFTER_MINUTES, INVITE_MAX_USES_OPTIONS } from "#shared/services/room/invite/constants";
-import { getInviteLink } from "@/services/message/room/invite/getInviteLink";
-import { inviteCreateHooks } from "@/services/message/room/invite/inviteCreateHooks";
+import { getInviteLink } from "#src/services/message/room/invite/getInviteLink";
+import { inviteCreateHooks } from "#src/services/message/room/invite/inviteCreateHooks";
 
 export const useInviteStore = defineStore("message/room/invite", () => {
   const { $trpc } = useNuxtApp();

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { ClientMessage } from "@/models/message/ClientMessage";
+import type { ClientMessage } from "#src/models/message/ClientMessage";
 
-import { getColumnLayout } from "@/services/message/file/getColumnLayout";
+import { getColumnLayout } from "#src/services/message/file/getColumnLayout";
 
 interface Props {
   isPreview?: boolean;

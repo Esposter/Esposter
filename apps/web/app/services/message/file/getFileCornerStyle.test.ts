@@ -1,6 +1,6 @@
-import { CONTAINER_BORDER_RADIUS } from "@/services/message/file/constants";
-import { getColumnLayout } from "@/services/message/file/getColumnLayout";
-import { getFileCornerStyle } from "@/services/message/file/getFileCornerStyle";
+import { CONTAINER_BORDER_RADIUS } from "#src/services/message/file/constants";
+import { getColumnLayout } from "#src/services/message/file/getColumnLayout";
+import { getFileCornerStyle } from "#src/services/message/file/getFileCornerStyle";
 import { describe, expect, test } from "vitest";
 
 describe(getFileCornerStyle, () => {

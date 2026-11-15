@@ -1,8 +1,8 @@
-import type { DropTarget } from "@/models/pageBuilder/DropTarget";
+import type { DropTarget } from "#src/models/pageBuilder/DropTarget";
 import type { SurveyDocument } from "vue-survey-engine-headless";
 
-import { getSurveyNodeLocation } from "@/services/resource/survey/getSurveyNodeLocation";
-import { getSurveySlotLength } from "@/services/resource/survey/getSurveySlotLength";
+import { getSurveyNodeLocation } from "#src/services/resource/survey/getSurveyNodeLocation";
+import { getSurveySlotLength } from "#src/services/resource/survey/getSurveySlotLength";
 import { getBlockNode, getBlockPropPointer } from "vue-block-editor-headless";
 import { surveyNodeChildren } from "vue-survey-engine-headless";
 

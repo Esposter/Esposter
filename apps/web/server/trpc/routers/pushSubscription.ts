@@ -1,7 +1,7 @@
 import type { PushSubscriptionInNotification } from "@esposter/db-schema";
 
-import { router } from "#server/trpc";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
+import { router } from "#server/trpc/index";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { pushSubscriptionInputSchema } from "#shared/models/db/pushSubscription/PushSubscriptionInput";
 import { DatabaseEntityType, pushSubscriptionsInNotification } from "@esposter/db-schema";

@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
-import { usePressDrag } from "@/composables/ui/usePressDrag";
-import { DRAG_START_DISTANCE, LONG_PRESS_MOVE_TOLERANCE, TOUCH_DRAG_DELAY_MS } from "@/services/ui/constants";
+import { usePressDrag } from "#src/composables/ui/usePressDrag";
+import { DRAG_START_DISTANCE, LONG_PRESS_MOVE_TOLERANCE, TOUCH_DRAG_DELAY_MS } from "#src/services/ui/constants";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 const createHandlers = () => ({

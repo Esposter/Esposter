@@ -2,8 +2,8 @@ import type { Dataset } from "#shared/models/dataset/Dataset";
 import type { DatasetColumn } from "#shared/models/dataset/DatasetColumn";
 
 import { coerceValue } from "#shared/services/resource/sheet/column/coerceValue";
-import { inferColumnType } from "@/services/resource/sheet/column/inferColumnType";
-import { getUniqueColumnNames } from "@/services/resource/sheet/dataSource/getUniqueColumnNames";
+import { inferColumnType } from "#src/services/resource/sheet/column/inferColumnType";
+import { getUniqueColumnNames } from "#src/services/resource/sheet/dataSource/getUniqueColumnNames";
 import { takeOne } from "@esposter/shared";
 
 export const buildDataset = (sourceNames: string[], bodyRows: string[][]): Dataset => {

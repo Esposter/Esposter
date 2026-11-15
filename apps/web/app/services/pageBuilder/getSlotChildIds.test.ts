@@ -3,9 +3,9 @@ import {
   TEST_ROOT_TEXT_ID,
   TEST_SECTION_ID,
   TEST_WEBPAGE,
-} from "@/services/pageBuilder/constants.test";
-import { getSlotChildIds } from "@/services/pageBuilder/getSlotChildIds";
-import { webpageKind } from "@/services/pageBuilder/webpageKind";
+} from "#src/services/pageBuilder/constants.test";
+import { getSlotChildIds } from "#src/services/pageBuilder/getSlotChildIds";
+import { webpageKind } from "#src/services/pageBuilder/webpageKind";
 import { describe, expect, test } from "vitest";
 
 describe(getSlotChildIds, () => {

@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-import { pickFileInput } from "@/services/file/pickFileInput";
+import { pickFileInput } from "#src/services/file/pickFileInput";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 

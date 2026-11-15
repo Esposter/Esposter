@@ -1,7 +1,7 @@
 import type { PollMessageContent } from "#shared/models/message/poll/PollMessageContent";
-import type { ClientMessage } from "@/models/message/ClientMessage";
+import type { ClientMessage } from "#src/models/message/ClientMessage";
 
-import { useDataStore } from "@/store/message/data";
+import { useDataStore } from "#src/store/message/data";
 import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 
 export const useVotePoll = async (

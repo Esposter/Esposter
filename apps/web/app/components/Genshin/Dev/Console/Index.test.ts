@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 import type { DevCommand } from "genshin-world";
 
-import GenshinDevConsole from "@/components/Genshin/Dev/Console/Index.vue";
+import GenshinDevConsole from "#src/components/Genshin/Dev/Console/Index.vue";
 import { flushPromises, mount } from "@vue/test-utils";
 import { createDevRegistry } from "genshin-world";
 import { createPinia, setActivePinia } from "pinia";

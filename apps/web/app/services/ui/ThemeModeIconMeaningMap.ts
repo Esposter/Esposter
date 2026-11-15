@@ -1,5 +1,5 @@
-import { ThemeMode } from "@/models/ui/ThemeMode";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { ThemeMode } from "#src/models/ui/ThemeMode";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 export const ThemeModeIconMeaningMap = {
   [ThemeMode.Dark]: UiIconMeaning.DarkMode,

@@ -1,4 +1,4 @@
-import type { db } from "#server/db";
+import type { db } from "#server/db/index";
 import type { getJobQueue } from "#server/services/queue/getJobQueue";
 import type { RequestEvent } from "nuxt/server";
 
@@ -26,7 +26,7 @@ const { findFirst, send } = vi.hoisted(() => ({
 
 // The lookup is the only query the route makes, so the fake holds only that table
 vi.mock(
-  import("#server/db"),
+  import("#server/db/index"),
   () => ({ db: { query: { webhooksInMessage: { findFirst } } } }) as unknown as Partial<{ db: typeof db }>,
 );
 vi.mock(import("#server/services/queue/getJobQueue"), () => ({

@@ -2,7 +2,7 @@
 import type { TodoListStep } from "#shared/models/resource/todoList/TodoListStep";
 
 import { TODO_LIST_ITEM_STEPS_MAX_LENGTH } from "#shared/services/resource/item/constants";
-import ResourceTodoListSteps from "@/components/Resource/TodoList/Steps.vue";
+import ResourceTodoListSteps from "#src/components/Resource/TodoList/Steps.vue";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";

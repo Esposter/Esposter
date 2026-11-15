@@ -1,12 +1,12 @@
-import type { State } from "@/models/dungeons/state/State";
+import type { State } from "#src/models/dungeons/state/State";
 
-import { StateName } from "@/models/dungeons/state/battle/StateName";
-import { checkIsMonsterFainted } from "@/services/dungeons/monster/checkIsMonsterFainted";
-import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
-import { useActionStore } from "@/store/dungeons/battle/action";
-import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
-import { useEnemyStore } from "@/store/dungeons/battle/enemy";
-import { prettify } from "@/util/text/prettify";
+import { StateName } from "#src/models/dungeons/state/battle/StateName";
+import { checkIsMonsterFainted } from "#src/services/dungeons/monster/checkIsMonsterFainted";
+import { battleStateMachine } from "#src/services/dungeons/scene/battle/battleStateMachine";
+import { useActionStore } from "#src/store/dungeons/battle/action";
+import { useBattleDialogStore } from "#src/store/dungeons/battle/dialog";
+import { useEnemyStore } from "#src/store/dungeons/battle/enemy";
+import { prettify } from "#src/util/text/prettify";
 
 export const PlayerPostAttackCheck: State<typeof StateName.PlayerPostAttackCheck> = {
   name: StateName.PlayerPostAttackCheck,

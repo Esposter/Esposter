@@ -1,20 +1,20 @@
 <script setup lang="ts">
-import type { SurveyEditDraft } from "@/models/resource/survey/SurveyEditDraft";
+import type { SurveyEditDraft } from "#src/models/resource/survey/SurveyEditDraft";
 import type { SurveyCalculatedValue } from "vue-survey-engine-headless";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import {
   SURVEY_CALCULATED_VALUE_EXPRESSION,
   SURVEY_CALCULATED_VALUE_NAME_REQUIRED_MESSAGE,
   SURVEY_REFUSED_MESSAGE,
-} from "@/services/resource/survey/constants";
-import { getActiveSurveyEditDraft } from "@/services/resource/survey/getActiveSurveyEditDraft";
-import { getNewCalculatedValueName } from "@/services/resource/survey/getNewCalculatedValueName";
-import { getSurveyCalculatedValueIssue } from "@/services/resource/survey/getSurveyCalculatedValueIssue";
-import { getSurveyConditionAnswers } from "@/services/resource/survey/getSurveyConditionAnswers";
-import { getSurveyExpressionFault } from "@/services/resource/survey/getSurveyExpressionFault";
-import { checkIsBlankSource } from "@/services/shared/checkIsBlankSource";
-import { useSurveyCreatorStore } from "@/store/survey/creator";
+} from "#src/services/resource/survey/constants";
+import { getActiveSurveyEditDraft } from "#src/services/resource/survey/getActiveSurveyEditDraft";
+import { getNewCalculatedValueName } from "#src/services/resource/survey/getNewCalculatedValueName";
+import { getSurveyCalculatedValueIssue } from "#src/services/resource/survey/getSurveyCalculatedValueIssue";
+import { getSurveyConditionAnswers } from "#src/services/resource/survey/getSurveyConditionAnswers";
+import { getSurveyExpressionFault } from "#src/services/resource/survey/getSurveyExpressionFault";
+import { checkIsBlankSource } from "#src/services/shared/checkIsBlankSource";
+import { useSurveyCreatorStore } from "#src/store/survey/creator";
 
 const surveyCreatorStore = useSurveyCreatorStore();
 const { document: surveyDocument } = storeToRefs(surveyCreatorStore);

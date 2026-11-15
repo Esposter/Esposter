@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { ResourceSaveStateDefinition } from "@/models/resource/ResourceSaveStateDefinition";
+import type { ResourceSaveStateDefinition } from "#src/models/resource/ResourceSaveStateDefinition";
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { ResourceSaveState } from "@/models/resource/ResourceSaveState";
-import { RESOURCE_DATE_TIME_ATTRIBUTES } from "@/services/resource/constants";
-import { ResourceSaveStateDefinitionMap } from "@/services/resource/ResourceSaveStateDefinitionMap";
-import { useResourceStore } from "@/store/resource";
+import { ResourceSaveState } from "#src/models/resource/ResourceSaveState";
+import { RESOURCE_DATE_TIME_ATTRIBUTES } from "#src/services/resource/constants";
+import { ResourceSaveStateDefinitionMap } from "#src/services/resource/ResourceSaveStateDefinitionMap";
+import { useResourceStore } from "#src/store/resource/index";
 
 interface Props {
   resource: ResourceInResource;

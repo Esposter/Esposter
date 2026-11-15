@@ -1,4 +1,4 @@
-import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
+import type { PlayerInput } from "#src/models/dungeons/UI/input/PlayerInput";
 
 import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOption";
 import { Direction } from "grid-engine";

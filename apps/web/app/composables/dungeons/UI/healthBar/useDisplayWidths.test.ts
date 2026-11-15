@@ -1,4 +1,4 @@
-import { useDisplayWidths } from "@/composables/dungeons/UI/healthBar/useDisplayWidths";
+import { useDisplayWidths } from "#src/composables/dungeons/UI/healthBar/useDisplayWidths";
 import { describe, expect, test } from "vitest";
 
 describe(useDisplayWidths, () => {

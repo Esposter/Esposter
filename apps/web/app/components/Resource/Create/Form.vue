@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import type { SheetResource } from "#shared/models/resource/sheet/SheetResource";
-import type { CreatableResourceType } from "@/models/resource/CreatableResourceType";
+import type { CreatableResourceType } from "#src/models/resource/CreatableResourceType";
 
-import { ResourceBladeSlug } from "@/models/resource/ResourceBladeSlug";
-import { MutationStatus } from "@/models/shared/MutationStatus";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { getResourceBladePath } from "@/services/resource/getResourceBladePath";
-import { UiRules } from "@/services/ui/UiRules";
-import { useNotificationStore } from "@/store/notification";
+import { ResourceBladeSlug } from "#src/models/resource/ResourceBladeSlug";
+import { MutationStatus } from "#src/models/shared/MutationStatus";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { getResourceBladePath } from "#src/services/resource/getResourceBladePath";
+import { UiRules } from "#src/services/ui/UiRules";
+import { useNotificationStore } from "#src/store/notification";
 import { RESOURCE_NAME_MAX_LENGTH, ResourceType } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 

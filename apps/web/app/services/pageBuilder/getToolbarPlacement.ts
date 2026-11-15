@@ -1,5 +1,5 @@
-import type { FramePlacement } from "@/models/pageBuilder/FramePlacement";
-import type { OverlayBox } from "@/models/pageBuilder/OverlayBox";
+import type { FramePlacement } from "#src/models/pageBuilder/FramePlacement";
+import type { OverlayBox } from "#src/models/pageBuilder/OverlayBox";
 
 // The height a toolbar takes in the app's viewport, so that above its node it clears the node's top edge
 export const TOOLBAR_HEIGHT = 40;

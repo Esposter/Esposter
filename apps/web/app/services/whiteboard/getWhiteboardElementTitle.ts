@@ -1,8 +1,8 @@
 import type { PositionedElement } from "vue-block-editor-headless";
 
-import { GestureTool } from "@/models/whiteboard/GestureTool";
-import { WhiteboardShapeItemMap } from "@/services/whiteboard/tool/WhiteboardShapeItemMap";
-import { WhiteboardToolItemMap } from "@/services/whiteboard/tool/WhiteboardToolItemMap";
+import { GestureTool } from "#src/models/whiteboard/GestureTool";
+import { WhiteboardShapeItemMap } from "#src/services/whiteboard/tool/WhiteboardShapeItemMap";
+import { WhiteboardToolItemMap } from "#src/services/whiteboard/tool/WhiteboardToolItemMap";
 import { PositionedElementType } from "vue-block-editor-headless";
 
 // The title a properties panel names one element by: a shape by its kind's name, and every other element by the tool that places it

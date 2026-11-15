@@ -1,4 +1,4 @@
-import { useScheduledMessageJobStore } from "@/store/message/scheduledMessageJob";
+import { useScheduledMessageJobStore } from "#src/store/message/scheduledMessageJob";
 
 export const useReadScheduledMessageJobs = () => {
   const { $trpc } = useNuxtApp();

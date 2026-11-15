@@ -4,7 +4,7 @@ import { createMcpServer } from "#server/services/mcp/createMcpServer";
 import { consumeAddressRateLimit } from "#server/services/rateLimiter/consumeAddressRateLimit";
 import { getIpAddress } from "#server/services/request/getIpAddress";
 import { createContext } from "#server/trpc/context";
-import { trpcRouter } from "#server/trpc/routers";
+import { trpcRouter } from "#server/trpc/routers/index";
 import { getApiKeyScopes } from "#shared/services/auth/getApiKeyScopes";
 import { withFinalizerAsync } from "@esposter/shared";
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";

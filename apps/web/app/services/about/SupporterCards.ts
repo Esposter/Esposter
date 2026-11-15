@@ -1,4 +1,4 @@
-import type { Card } from "@/models/visual/Card";
+import type { Card } from "#src/models/visual/Card";
 
 export const SupporterCards: Card[] = [
   "Braedon Wooding",

@@ -1,6 +1,6 @@
 import { formatDate } from "#shared/util/date/formatDate";
-import { TIMELINE_DATE_FORMAT, TIMELINE_DATE_WITH_YEAR_FORMAT } from "@/util/date/constants";
-import { getTimelineDateLabel } from "@/util/date/getTimelineDateLabel";
+import { TIMELINE_DATE_FORMAT, TIMELINE_DATE_WITH_YEAR_FORMAT } from "#src/util/date/constants";
+import { getTimelineDateLabel } from "#src/util/date/getTimelineDateLabel";
 import { getZonedDateTime } from "@esposter/shared";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 

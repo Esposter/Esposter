@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useRoomSearchStore } from "@/store/message/room/search";
+import { useRoomSearchStore } from "#src/store/message/room/search";
 import { RoutePath } from "@esposter/shared";
 
 const roomSearchStore = useRoomSearchStore();

@@ -1,10 +1,10 @@
 import { TEST_ID, TEST_ROOT, TEST_URL } from "#shared/services/pageBuilder/constants.test";
 import { createButton } from "#shared/services/pageBuilder/createButton.test";
-import { usePageBuilderContent } from "@/composables/pageBuilder/usePageBuilderContent";
-import { webpageKind } from "@/services/pageBuilder/webpageKind";
-import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
-import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
-import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
+import { usePageBuilderContent } from "#src/composables/pageBuilder/usePageBuilderContent";
+import { webpageKind } from "#src/services/pageBuilder/webpageKind";
+import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
+import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
+import { usePageBuilderHistoryStore } from "#src/store/pageBuilder/history";
 import { createPinia, setActivePinia } from "pinia";
 import { v7 } from "uuid";
 import { beforeEach, describe, expect, test } from "vitest";

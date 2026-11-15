@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useNotificationStore } from "@/store/notification";
-import { useSurveyResponseDialogStore } from "@/store/resource/surveyResponseDialog";
+import { useNotificationStore } from "#src/store/notification";
+import { useSurveyResponseDialogStore } from "#src/store/resource/surveyResponseDialog";
 import { NotificationSeverity } from "@esposter/db-schema";
 
 interface Props {

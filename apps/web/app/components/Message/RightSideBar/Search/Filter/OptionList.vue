@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { SearchFilterOption } from "@/models/message/filter/SearchFilterOption";
-import type { UiListItem } from "@/models/ui/UiListItem";
+import type { SearchFilterOption } from "#src/models/message/filter/SearchFilterOption";
+import type { UiListItem } from "#src/models/ui/UiListItem";
 import type { SerializableValue } from "@esposter/db-schema";
 
 interface Props {

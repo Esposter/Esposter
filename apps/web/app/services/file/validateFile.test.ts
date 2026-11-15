@@ -1,7 +1,7 @@
 import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
-import { EMPTY_FILE_MESSAGE } from "@/services/file/constants";
-import { getFileSize } from "@/services/file/getFileSize";
-import { validateFile } from "@/services/file/validateFile";
+import { EMPTY_FILE_MESSAGE } from "#src/services/file/constants";
+import { getFileSize } from "#src/services/file/getFileSize";
+import { validateFile } from "#src/services/file/validateFile";
 import { describe, expect, test } from "vitest";
 
 describe(validateFile, () => {

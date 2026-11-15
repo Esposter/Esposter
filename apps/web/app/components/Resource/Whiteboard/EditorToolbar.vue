@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import type { EditorToolbarGroup } from "@/models/editor/EditorToolbarGroup";
+import type { EditorToolbarGroup } from "#src/models/editor/EditorToolbarGroup";
 
-import { useInsertWhiteboardImages } from "@/composables/whiteboard/useInsertWhiteboardImages";
-import { EditorToolbarGroupKind } from "@/models/editor/EditorToolbarGroupKind";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { GestureTool } from "@/models/whiteboard/GestureTool";
+import { useInsertWhiteboardImages } from "#src/composables/whiteboard/useInsertWhiteboardImages";
+import { EditorToolbarGroupKind } from "#src/models/editor/EditorToolbarGroupKind";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { GestureTool } from "#src/models/whiteboard/GestureTool";
 import {
   WHITEBOARD_IMAGE_ACCEPT,
   WHITEBOARD_SHAPE_TOOL_ITEM,
   WHITEBOARD_TOOL_LOCK_SHORTCUT,
-} from "@/services/whiteboard/tool/constants";
-import { WhiteboardShapeItemMap } from "@/services/whiteboard/tool/WhiteboardShapeItemMap";
-import { WhiteboardToolItemMap } from "@/services/whiteboard/tool/WhiteboardToolItemMap";
-import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
+} from "#src/services/whiteboard/tool/constants";
+import { WhiteboardShapeItemMap } from "#src/services/whiteboard/tool/WhiteboardShapeItemMap";
+import { WhiteboardToolItemMap } from "#src/services/whiteboard/tool/WhiteboardToolItemMap";
+import { useWhiteboardEditorStore } from "#src/store/resource/whiteboard/editor";
 
 // Every tool a whiteboard is drawn with, in one toolbar: the select and hand tools, the shape slot, the drawing tools and the image picker.
 // The lock that keeps a tool in hand sits here too.

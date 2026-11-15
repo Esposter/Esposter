@@ -11,9 +11,9 @@ import { ColumnTransformationType } from "#shared/models/resource/sheet/column/t
 import { createDataSource } from "#shared/models/resource/sheet/datasource/createDataSource.test";
 import { createRow } from "#shared/models/resource/sheet/datasource/createRow.test";
 import { compileSheetColumns } from "#shared/services/resource/sheet/column/compileSheetColumns";
-import { createBooleanColumn } from "@/composables/resource/sheet/commands/createBooleanColumn.test";
-import { computeColumnStatisticsForColumn } from "@/services/resource/sheet/column/computeColumnStatisticsForColumn";
-import { createColumnStatistics } from "@/services/resource/sheet/column/createColumnStatistics.test";
+import { createBooleanColumn } from "#src/composables/resource/sheet/commands/createBooleanColumn.test";
+import { computeColumnStatisticsForColumn } from "#src/services/resource/sheet/column/computeColumnStatisticsForColumn";
+import { createColumnStatistics } from "#src/services/resource/sheet/column/createColumnStatistics.test";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 

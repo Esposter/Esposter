@@ -1,4 +1,4 @@
-import { getOverlayBox } from "@/services/pageBuilder/getOverlayBox";
+import { getOverlayBox } from "#src/services/pageBuilder/getOverlayBox";
 import { describe, expect, test } from "vitest";
 
 describe(getOverlayBox, () => {

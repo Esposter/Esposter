@@ -1,7 +1,7 @@
 import type { Context } from "#server/trpc/context";
 
-import { createCallerFactory } from "#server/trpc";
 import { createMockUser, getMockSession } from "#server/trpc/context.test";
+import { createCallerFactory } from "#server/trpc/index";
 import { createFriends } from "#server/trpc/routers/createFriends.test";
 import { directMessageRouter } from "#server/trpc/routers/room/directMessage";
 import { describe } from "vitest";

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { DRAWINGS } from "@/services/anime/constants";
-import { mod } from "@/util/math/mod";
+import { DRAWINGS } from "#src/services/anime/constants";
+import { mod } from "#src/util/math/mod";
 import { takeOne } from "@esposter/shared";
 
 const drawingIndex = ref(0);

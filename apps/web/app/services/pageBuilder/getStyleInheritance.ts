@@ -4,7 +4,7 @@ import type { StyleProperty } from "#shared/models/pageBuilder/StyleProperty";
 
 import { StyleState } from "#shared/models/pageBuilder/StyleState";
 import { STYLE_BREAKPOINT_ORDER } from "#shared/services/pageBuilder/constants";
-import { STYLE_BREAKPOINT_TITLE_MAP } from "@/services/pageBuilder/constants";
+import { STYLE_BREAKPOINT_TITLE_MAP } from "#src/services/pageBuilder/constants";
 
 interface StyleInheritance {
   // Where the value is set: a breakpoint's name, or the default state of the field's own breakpoint

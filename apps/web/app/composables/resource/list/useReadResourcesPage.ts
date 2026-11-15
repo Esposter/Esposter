@@ -1,6 +1,6 @@
 import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
 import type { ResourceListPage } from "#shared/models/resource/ResourceListPage";
-import type { ReadResourcesOptions } from "@/models/resource/list/ReadResourcesOptions";
+import type { ReadResourcesOptions } from "#src/models/resource/list/ReadResourcesOptions";
 
 interface ReadResourcesPageOptions<TFilterInput> {
   // Resolved once per read and handed to every page of it, so a relative Updated preset anchors its boundary to one instant

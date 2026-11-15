@@ -1,8 +1,8 @@
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { createRoom } from "@/services/message/room/createRoom.test";
-import { createUserToRoom } from "@/services/message/room/createUserToRoom.test";
-import { checkIsRoomUnread } from "@/services/message/room/list/checkIsRoomUnread";
+import { createRoom } from "#src/services/message/room/createRoom.test";
+import { createUserToRoom } from "#src/services/message/room/createUserToRoom.test";
+import { checkIsRoomUnread } from "#src/services/message/room/list/checkIsRoomUnread";
 import { describe, expect, test } from "vitest";
 
 describe(checkIsRoomUnread, () => {

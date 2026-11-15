@@ -1,9 +1,9 @@
 // @vitest-environment nuxt
-import UiDateRangeField from "@/components/Ui/DateRangeField.vue";
-import { getDaySelector } from "@/components/Ui/getDaySelector.test";
-import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
-import { UiStyles } from "@/models/ui/UiStyle";
-import { TEST_EPOCH_DATE } from "@/services/ui/constants.test";
+import UiDateRangeField from "#src/components/Ui/DateRangeField.vue";
+import { getDaySelector } from "#src/components/Ui/getDaySelector.test";
+import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
+import { UiStyles } from "#src/models/ui/UiStyle";
+import { TEST_EPOCH_DATE } from "#src/services/ui/constants.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 

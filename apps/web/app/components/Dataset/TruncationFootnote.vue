@@ -2,8 +2,8 @@
 import type { DatasetTruncation } from "#shared/models/dataset/DatasetTruncation";
 
 import { DATASET_ROW_CAP_DESCRIPTION } from "#shared/services/dataset/constants";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { getDatasetTruncationText } from "@/services/dataset/getDatasetTruncationText";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { getDatasetTruncationText } from "#src/services/dataset/getDatasetTruncationText";
 
 interface Props {
   truncation: DatasetTruncation;

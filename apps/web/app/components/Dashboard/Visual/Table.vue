@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { Visual } from "#shared/models/dashboard/data/Visual";
-import type { AxisVisualPropsData } from "@/models/dashboard/AxisVisualPropsData";
-import type { UiDataTableColumn } from "@/models/ui/UiDataTableColumn";
+import type { AxisVisualPropsData } from "#src/models/dashboard/AxisVisualPropsData";
+import type { UiDataTableColumn } from "#src/models/ui/UiDataTableColumn";
 
 import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregationType";
 import { NUMBER_FORMATTER } from "#shared/services/intl/constants";
-import { DASHBOARD_TABLE_CATEGORY_KEY } from "@/services/dashboard/constants";
+import { DASHBOARD_TABLE_CATEGORY_KEY } from "#src/services/dashboard/constants";
 import { takeOne } from "@esposter/shared";
 
 interface Props {

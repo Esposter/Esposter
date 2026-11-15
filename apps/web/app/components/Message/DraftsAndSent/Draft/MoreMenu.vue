@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { DraftItem } from "@/models/message/draftsAndSent/DraftItem";
-import type { Item } from "@/models/shared/Item";
+import type { DraftItem } from "#src/models/message/draftsAndSent/DraftItem";
+import type { Item } from "#src/models/shared/Item";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { getDraftItemRoute } from "@/services/message/draftsAndSent/getDraftItemRoute";
-import { useDraftsAndSentScheduleDialogStore } from "@/store/message/draftsAndSent/scheduleDialog";
-import { useInputStore } from "@/store/message/input";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { getDraftItemRoute } from "#src/services/message/draftsAndSent/getDraftItemRoute";
+import { useDraftsAndSentScheduleDialogStore } from "#src/store/message/draftsAndSent/scheduleDialog";
+import { useInputStore } from "#src/store/message/input/index";
 
 interface Props {
   draftItem: DraftItem;

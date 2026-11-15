@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { UiRules } from "@/services/ui/UiRules";
+import { UiRules } from "#src/services/ui/UiRules";
 import { RESOURCE_NAME_MAX_LENGTH } from "@esposter/db-schema";
 
 interface Props {

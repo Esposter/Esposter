@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { checkIsActiveColumnFilter } from "@/services/resource/sheet/column/checkIsActiveColumnFilter";
-import { useFilterStore } from "@/store/resource/sheet/filter";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { checkIsActiveColumnFilter } from "#src/services/resource/sheet/column/checkIsActiveColumnFilter";
+import { useFilterStore } from "#src/store/resource/sheet/filter";
 
 const filterStore = useFilterStore();
 const { clearColumnFilters } = filterStore;

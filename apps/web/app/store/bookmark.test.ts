@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useBookmarkStore } from "@/store/bookmark";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useBookmarkStore } from "#src/store/bookmark";
 import { TRPCError } from "@trpc/server";
 import { describe, expect, test } from "vitest";
 

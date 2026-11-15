@@ -1,8 +1,8 @@
 // @vitest-environment happy-dom
 import { PageMarkType } from "#shared/models/app/PageMarkType";
-import { RECENT_PAGES_STORED_LIMIT } from "@/services/app/constants";
-import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
-import { useRecentPageStore } from "@/store/recentPage";
+import { RECENT_PAGES_STORED_LIMIT } from "#src/services/app/constants";
+import { LocalStorageKey } from "#src/services/shared/LocalStorageKey";
+import { useRecentPageStore } from "#src/store/recentPage";
 import { ResourceType } from "@esposter/db-schema";
 import { ZERO_UUID } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";

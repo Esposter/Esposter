@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { ResourceDialogsComponentMap } from "@/services/resource/ResourceDialogsComponentMap";
+import { ResourceDialogsComponentMap } from "#src/services/resource/ResourceDialogsComponentMap";
 
 interface Props {
   activeBlade: string;

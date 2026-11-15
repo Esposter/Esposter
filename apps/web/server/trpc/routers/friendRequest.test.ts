@@ -1,9 +1,8 @@
 import type { Context } from "#server/trpc/context";
-import type { TRPCRouter } from "#server/trpc/routers";
+import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
-import { createCallerFactory } from "#server/trpc";
 import {
   createMockAuthSession,
   createMockCaller,
@@ -11,6 +10,7 @@ import {
   createMockUser,
   getMockSession,
 } from "#server/trpc/context.test";
+import { createCallerFactory } from "#server/trpc/index";
 import { blockRouter } from "#server/trpc/routers/block";
 import { friendRequestRouter } from "#server/trpc/routers/friendRequest";
 import {

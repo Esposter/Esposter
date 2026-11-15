@@ -1,6 +1,6 @@
 import type { TagStyle } from "@codemirror/language";
 
-import { UiToken } from "@/models/ui/UiToken";
+import { UiToken } from "#src/models/ui/UiToken";
 import { tags } from "@lezer/highlight";
 
 // The code viewer's highlighting, mapped the way the docs' shiki theme maps its scopes: keywords and tags in the accent,

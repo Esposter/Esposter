@@ -1,5 +1,5 @@
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { useSceneStore } from "@/store/dungeons/scene";
+import { SceneKey } from "#src/models/dungeons/keys/SceneKey";
+import { useSceneStore } from "#src/store/dungeons/scene";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 

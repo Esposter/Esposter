@@ -1,11 +1,11 @@
 // @vitest-environment nuxt
-import ResourceSurveyCreatorTheme from "@/components/Resource/Survey/Creator/Theme.vue";
-import UiFileField from "@/components/Ui/FileField.vue";
-import UiSelect from "@/components/Ui/Select/Index.vue";
-import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
-import { useSurveyFiles } from "@/composables/survey/useSurveyFiles";
-import { UiStyles } from "@/models/ui/UiStyle";
-import { useSurveyCreatorStore } from "@/store/survey/creator";
+import ResourceSurveyCreatorTheme from "#src/components/Resource/Survey/Creator/Theme.vue";
+import UiFileField from "#src/components/Ui/FileField.vue";
+import UiSelect from "#src/components/Ui/Select/Index.vue";
+import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
+import { useSurveyFiles } from "#src/composables/survey/useSurveyFiles";
+import { UiStyles } from "#src/models/ui/UiStyle";
+import { useSurveyCreatorStore } from "#src/store/survey/creator";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, describe, expect, test, vi } from "vitest";
@@ -16,8 +16,8 @@ const { deleteFile, uploadFile } = vi.hoisted(() => ({
   uploadFile: vi.fn<(file: File) => Promise<string>>(),
 }));
 
-vi.mock(import("@/composables/resource/useUploadResourceFile"), () => ({ useUploadResourceFile: () => uploadFile }));
-vi.mock(import("@/composables/resource/useDeleteResourceFile"), () => ({ useDeleteResourceFile: () => deleteFile }));
+vi.mock(import("#src/composables/resource/useUploadResourceFile"), () => ({ useUploadResourceFile: () => uploadFile }));
+vi.mock(import("#src/composables/resource/useDeleteResourceFile"), () => ({ useDeleteResourceFile: () => deleteFile }));
 
 describe("resourceSurveyCreatorTheme", () => {
   const accentColor = "#00ff00";

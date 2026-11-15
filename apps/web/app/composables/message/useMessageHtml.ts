@@ -1,7 +1,7 @@
 import { escapeHtml } from "#shared/util/text/escapeHtml";
-import { getEmojiShortcode } from "@/services/message/emoji/getEmojiShortcode";
-import { useRoomEmojiStore } from "@/store/message/room/emoji";
-import { useUserStore } from "@/store/message/user";
+import { getEmojiShortcode } from "#src/services/message/emoji/getEmojiShortcode";
+import { useRoomEmojiStore } from "#src/store/message/room/emoji";
+import { useUserStore } from "#src/store/message/user/index";
 import {
   CUSTOM_EMOJI_ID_ATTRIBUTE,
   MENTION_ID_ATTRIBUTE,

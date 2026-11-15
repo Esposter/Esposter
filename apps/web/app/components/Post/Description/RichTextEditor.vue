@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { FooterBarSlotProps } from "@/components/RichTextEditor/FooterBarSlotProps";
+import type { FooterBarSlotProps } from "#src/components/RichTextEditor/FooterBarSlotProps";
 
 import { POST_DESCRIPTION_MAX_LENGTH } from "@esposter/db-schema";
 

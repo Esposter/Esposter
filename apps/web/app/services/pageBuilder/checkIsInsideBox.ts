@@ -1,4 +1,4 @@
-import type { OverlayBox } from "@/models/pageBuilder/OverlayBox";
+import type { OverlayBox } from "#src/models/pageBuilder/OverlayBox";
 
 // Whether a point lies in a box, its edges included. A node with no rect in the frame holds no point
 export const checkIsInsideBox = (point: { x: number; y: number }, box: OverlayBox | undefined) =>

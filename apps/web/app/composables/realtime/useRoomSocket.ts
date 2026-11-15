@@ -1,8 +1,8 @@
-import { getNewestMessageId } from "@/services/message/getNewestMessageId";
-import { useDataStore } from "@/store/message/data";
-import { useRoomStore } from "@/store/message/room";
-import { useRoomEmojiStore } from "@/store/message/room/emoji";
-import { useConnectionStore } from "@/store/realtime/connection";
+import { getNewestMessageId } from "#src/services/message/getNewestMessageId";
+import { useDataStore } from "#src/store/message/data";
+import { useRoomEmojiStore } from "#src/store/message/room/emoji";
+import { useRoomStore } from "#src/store/message/room/index";
+import { useConnectionStore } from "#src/store/realtime/connection";
 
 // The socket of the room on screen, open while that room is the current one. It opens before the room's messages are read.
 // So a change made while the read is in flight arrives over the socket rather than in the gap between the two.

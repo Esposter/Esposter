@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { RoomEmojiWithPresignedUrl, RoomInMessage } from "@esposter/db-schema";
 
-import { getEmojiShortcode } from "@/services/message/emoji/getEmojiShortcode";
-import { useRoomEmojiStore } from "@/store/message/room/emoji";
+import { getEmojiShortcode } from "#src/services/message/emoji/getEmojiShortcode";
+import { useRoomEmojiStore } from "#src/store/message/room/emoji";
 import { selectRoomEmojiInMessageSchema } from "@esposter/db-schema";
 
 interface Props {

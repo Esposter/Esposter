@@ -1,4 +1,4 @@
-import { DashboardEditorRegion } from "@/models/dashboard/DashboardEditorRegion";
+import { DashboardEditorRegion } from "#src/models/dashboard/DashboardEditorRegion";
 
 // The name each region is announced by: its landmark's label, or a sheet's title
 export const DashboardEditorRegionNameMap = {

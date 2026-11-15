@@ -1,5 +1,5 @@
-import { webpageRootFormSchema } from "@/models/pageBuilder/WebpageRootForm";
-import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
+import { webpageRootFormSchema } from "#src/models/pageBuilder/WebpageRootForm";
+import { zodToJsonSchema } from "#src/services/jsonSchema/zodToJsonSchema";
 import { describe, expect, test } from "vitest";
 
 describe("webpageRootFormSchema", () => {

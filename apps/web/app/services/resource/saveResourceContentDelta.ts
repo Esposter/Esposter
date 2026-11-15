@@ -1,10 +1,10 @@
-import type { ContentBaseline } from "@/models/resource/ContentBaseline";
-import type { ResourceRouter } from "@/models/resource/ResourceRouter";
+import type { ContentBaseline } from "#src/models/resource/ContentBaseline";
+import type { ResourceRouter } from "#src/models/resource/ResourceRouter";
 import type { ResourceInResource, ResourceType } from "@esposter/db-schema";
 
 import { MAX_REQUEST_SIZE } from "#shared/services/app/constants";
 import { CONTENT_BASELINE_MISMATCH_ERROR_MESSAGE } from "#shared/services/resource/constants";
-import { getRequestBodyByteLength } from "@/services/trpc/getRequestBodyByteLength";
+import { getRequestBodyByteLength } from "#src/services/trpc/getRequestBodyByteLength";
 import { getResultAsync } from "@esposter/shared";
 
 // A large document saved as a delta against the stored bytes this client holds. Undefined whenever the delta
@@ -19,7 +19,7 @@ export const saveResourceContentDelta = async (
 ): Promise<ResourceInResource | undefined> => {
   const deltaBytes = await getResultAsync(async () => {
     // eslint-disable-next-line no-restricted-syntax -- the delta worker and its wasm load on the first large save, keeping them out of the eager graph (see encodeContentDelta)
-    const { encodeContentDelta } = await import("@/services/resource/encodeContentDelta");
+    const { encodeContentDelta } = await import("#src/services/resource/encodeContentDelta");
     return encodeContentDelta(contentBytes, contentBaseline.bytes);
   }).match(
     (bytes) => bytes,

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { EditorFinding } from "@/models/editor/EditorFinding";
-import type { UiListItem } from "@/models/ui/UiListItem";
+import type { EditorFinding } from "#src/models/editor/EditorFinding";
+import type { UiListItem } from "#src/models/ui/UiListItem";
 
-import { EditorFindingSeverity } from "@/models/editor/EditorFindingSeverity";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiStatusIconMeaningMap } from "@/services/ui/UiStatusIconMeaningMap";
+import { EditorFindingSeverity } from "#src/models/editor/EditorFindingSeverity";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiStatusIconMeaningMap } from "#src/services/ui/UiStatusIconMeaningMap";
 import { takeOne } from "@esposter/shared";
 
 interface Props {

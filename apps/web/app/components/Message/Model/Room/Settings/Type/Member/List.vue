@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { UiListItem } from "@/models/ui/UiListItem";
+import type { UiListItem } from "#src/models/ui/UiListItem";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
-import { getMemberDescription } from "@/services/message/member/getMemberDescription";
-import { useRoleStore } from "@/store/message/room/role";
-import { useMemberStore } from "@/store/message/user/member";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { UiTextFieldType } from "#src/models/ui/UiTextFieldType";
+import { getMemberDescription } from "#src/services/message/member/getMemberDescription";
+import { useRoleStore } from "#src/store/message/room/role";
+import { useMemberStore } from "#src/store/message/user/member";
 import { DEFAULT_PAGE_LIMIT } from "@esposter/db-schema";
 import { noop } from "@esposter/shared";
 

@@ -1,4 +1,4 @@
-import { getCardStyles } from "@/services/visual/getCardStyles";
+import { getCardStyles } from "#src/services/visual/getCardStyles";
 import { describe, expect, test } from "vitest";
 
 describe(getCardStyles, () => {

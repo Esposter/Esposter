@@ -1,5 +1,5 @@
 import type { EmailNodeType } from "#shared/models/pageBuilder/EmailNodeType";
-import type { EmailCanvasContext } from "@/models/pageBuilder/EmailCanvasContext";
+import type { EmailCanvasContext } from "#src/models/pageBuilder/EmailCanvasContext";
 import type { MjmlNode, MjmlNodeType } from "mjml-blocks";
 
 // One email node type's drawing: the node narrowed to that type, and what the canvas reads around it

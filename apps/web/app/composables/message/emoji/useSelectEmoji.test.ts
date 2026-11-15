@@ -1,8 +1,8 @@
 import type { AddReactionInput } from "#shared/models/db/message/reaction/AddReactionInput";
 import type { RoomReaction } from "@esposter/db-schema";
 
-import { useSelectEmoji } from "@/composables/message/emoji/useSelectEmoji";
-import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
+import { useSelectEmoji } from "#src/composables/message/emoji/useSelectEmoji";
+import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
 import { MessageType } from "@esposter/db-schema";
 import { v7 } from "uuid";
 import { beforeEach, describe, expect, test, vi } from "vitest";
@@ -17,12 +17,12 @@ const { createEmoji, emojis, toggleEmoji } = vi.hoisted(() => ({
 
 // The composable reads three members off the store and nothing else, so the double is those three — the cast is
 // What standing in for a Pinia store's full surface costs, and it is the only one this double needs
-vi.mock(import("@/store/message/emoji"), () => ({
+vi.mock(import("#src/store/message/emoji"), () => ({
   useEmojiStore: (() => ({
     createEmoji,
     getEmojis: () => emojis,
     toggleEmoji,
-  })) as unknown as (typeof import("@/store/message/emoji"))["useEmojiStore"],
+  })) as unknown as (typeof import("#src/store/message/emoji"))["useEmojiStore"],
 }));
 
 describe(useSelectEmoji, () => {

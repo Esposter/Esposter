@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import type { Item } from "@/models/shared/Item";
+import type { Item } from "#src/models/shared/Item";
 
 import { ITEM_NAME_MAX_LENGTH } from "#shared/services/resource/item/constants";
-import { TodoListSort } from "@/models/resource/todoList/TodoListSort";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
-import { TodoListSortLabelMap } from "@/services/resource/todoList/TodoListSortLabelMap";
-import { TodoListSortMeaningMap } from "@/services/resource/todoList/TodoListSortMeaningMap";
-import { UiRules } from "@/services/ui/UiRules";
-import { useTodoListStore } from "@/store/resource/todoList";
+import { TodoListSort } from "#src/models/resource/todoList/TodoListSort";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { UiTextFieldType } from "#src/models/ui/UiTextFieldType";
+import { TodoListSortLabelMap } from "#src/services/resource/todoList/TodoListSortLabelMap";
+import { TodoListSortMeaningMap } from "#src/services/resource/todoList/TodoListSortMeaningMap";
+import { UiRules } from "#src/services/ui/UiRules";
+import { useTodoListStore } from "#src/store/resource/todoList/index";
 
 const todoListStore = useTodoListStore();
 const { addItem } = todoListStore;

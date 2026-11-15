@@ -1,7 +1,7 @@
-import type { BackgroundMusicKey } from "@/models/dungeons/keys/sound/BackgroundMusicKey";
+import type { BackgroundMusicKey } from "#src/models/dungeons/keys/sound/BackgroundMusicKey";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { getDungeonsSound } from "@/services/dungeons/sound/getDungeonsSound";
+import { getDungeonsSound } from "#src/services/dungeons/sound/getDungeonsSound";
 
 let backgroundMusicKey: BackgroundMusicKey | undefined;
 

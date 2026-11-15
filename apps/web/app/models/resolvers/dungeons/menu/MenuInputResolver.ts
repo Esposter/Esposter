@@ -1,7 +1,7 @@
-import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
+import type { PlayerInput } from "#src/models/dungeons/UI/input/PlayerInput";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { AInputResolver } from "@/models/resolvers/dungeons/AInputResolver";
+import { AInputResolver } from "#src/models/resolvers/dungeons/AInputResolver";
 
 interface MenuStore {
   onPlayerInput: (scene: SceneWithPlugins, justDownInput: PlayerInput) => boolean | Promise<boolean>;

@@ -1,6 +1,6 @@
 import type { JsonSchema } from "@jsonforms/core";
 
-import { getSchemaFormVariantIndex } from "@/services/ui/schemaForm/getSchemaFormVariantIndex";
+import { getSchemaFormVariantIndex } from "#src/services/ui/schemaForm/getSchemaFormVariantIndex";
 import { describe, expect, test } from "vitest";
 
 describe(getSchemaFormVariantIndex, () => {

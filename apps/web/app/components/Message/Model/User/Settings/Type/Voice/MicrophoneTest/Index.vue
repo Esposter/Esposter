@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getInputSensitivityFraction } from "@/services/message/settings/getInputSensitivityFraction";
+import { getInputSensitivityFraction } from "#src/services/message/settings/getInputSensitivityFraction";
 
 const { isTesting, level, start, stop } = useMicrophoneLevel();
 </script>

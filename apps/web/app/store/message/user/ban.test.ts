@@ -2,10 +2,10 @@
 import type { BanInRoom } from "#shared/models/db/room/BanInRoom";
 import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
 
-import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
-import { createUser } from "@/services/message/user/createUser.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useBanStore } from "@/store/message/user/ban";
+import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
+import { createUser } from "#src/services/message/user/createUser.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useBanStore } from "#src/store/message/user/ban";
 import { TRPCError } from "@trpc/server";
 import { v7 } from "uuid";
 import { beforeEach, describe, expect, test } from "vitest";

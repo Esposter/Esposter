@@ -1,6 +1,6 @@
 import type { PositionedDocument, PositionedElement } from "vue-block-editor-headless";
 
-import { getElementIndexById } from "@/services/whiteboard/gesture/getElementIndexById";
+import { getElementIndexById } from "#src/services/whiteboard/gesture/getElementIndexById";
 import { takeOne } from "@esposter/shared";
 
 // The element a selection names when exactly one is selected, with its index in the element list. Several selected, or none, name no element

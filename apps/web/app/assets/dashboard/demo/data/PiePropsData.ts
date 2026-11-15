@@ -1,4 +1,4 @@
-import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
+import type { VisualPropsData } from "#src/models/dashboard/VisualPropsData";
 
 export const PiePropsData = {
   options: { labels: ["Team A", "Team B", "Team C", "Team D", "Team E"] },

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { createErrorAlert } from "@/services/trpc/createErrorAlert";
-import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
+import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
 import { ResourceType } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
 

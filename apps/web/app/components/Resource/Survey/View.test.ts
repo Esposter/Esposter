@@ -1,13 +1,13 @@
 // @vitest-environment nuxt
-import type { useSurveyResponse } from "@/composables/survey/useSurveyResponse";
+import type { useSurveyResponse } from "#src/composables/survey/useSurveyResponse";
 
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
 import { DEFAULT_COMPLETED_MESSAGE, INVITE_ONLY_MESSAGE } from "#shared/services/resource/survey/constants";
-import ResourceSurveyView from "@/components/Resource/Survey/View.vue";
-import { createSurveyTestDocument } from "@/services/survey/createSurveyTestDocument.test";
-import { createSurveyTestPage } from "@/services/survey/createSurveyTestPage.test";
-import { createSurveyTestQuestion } from "@/services/survey/createSurveyTestQuestion.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
+import ResourceSurveyView from "#src/components/Resource/Survey/View.vue";
+import { createSurveyTestDocument } from "#src/services/survey/createSurveyTestDocument.test";
+import { createSurveyTestPage } from "#src/services/survey/createSurveyTestPage.test";
+import { createSurveyTestQuestion } from "#src/services/survey/createSurveyTestQuestion.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { SurveyResponseMode } from "@esposter/db-schema";
 import { mockNuxtImport, mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";

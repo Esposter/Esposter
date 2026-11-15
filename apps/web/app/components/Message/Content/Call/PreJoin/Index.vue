@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { useCallStore } from "@/store/message/room/call";
-import { useKnockerStore } from "@/store/message/room/call/knocker";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { useCallStore } from "#src/store/message/room/call/index";
+import { useKnockerStore } from "#src/store/message/room/call/knocker";
 import { withFinalizerAsync } from "@esposter/shared";
 
 interface Props {

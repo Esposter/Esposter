@@ -1,4 +1,4 @@
-import { GlobeConfiguration } from "@/services/visual/GlobeConfiguration";
+import { GlobeConfiguration } from "#src/services/visual/GlobeConfiguration";
 
 const { arcGrowTime, arcHoldTime, arcStagger } = GlobeConfiguration;
 const period = 2 * arcGrowTime + arcHoldTime;

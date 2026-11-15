@@ -1,8 +1,8 @@
-import type { DragReorderContext } from "@/models/ui/dragReorder/DragReorderContext";
+import type { DragReorderContext } from "#src/models/ui/dragReorder/DragReorderContext";
 
-import { REORDER_GHOST_CLASS } from "@/services/ui/constants";
-import { endPress } from "@/services/ui/dragReorder/endPress";
-import { stopSwallowing } from "@/services/ui/dragReorder/stopSwallowing";
+import { REORDER_GHOST_CLASS } from "#src/services/ui/constants";
+import { endPress } from "#src/services/ui/dragReorder/endPress";
+import { stopSwallowing } from "#src/services/ui/dragReorder/stopSwallowing";
 
 // Takes a drag off the page with its component, leaving no row held, styled or swallowing a click
 export const disposeDragReorder = (context: DragReorderContext) => {

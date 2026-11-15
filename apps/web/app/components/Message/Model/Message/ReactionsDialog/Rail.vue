@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { UiListItem } from "@/models/ui/UiListItem";
+import type { UiListItem } from "#src/models/ui/UiListItem";
 import type { RoomReaction } from "@esposter/db-schema";
 
 interface Props {

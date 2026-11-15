@@ -1,14 +1,14 @@
 // @vitest-environment nuxt
-import type { ClientMessage } from "@/models/message/ClientMessage";
+import type { ClientMessage } from "#src/models/message/ClientMessage";
 
 import { MimeType } from "#shared/models/file/MimeType";
-import MessageRightSideBarThreadIndex from "@/components/Message/RightSideBar/Thread/Index.vue";
-import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
-import { MessageHookMap } from "@/services/message/MessageHookMap";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useLayoutStore } from "@/store/layout";
-import { useFileStore } from "@/store/message/file";
-import { useThreadStore } from "@/store/message/thread";
+import MessageRightSideBarThreadIndex from "#src/components/Message/RightSideBar/Thread/Index.vue";
+import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
+import { MessageHookMap } from "#src/services/message/MessageHookMap";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useLayoutStore } from "#src/store/layout";
+import { useFileStore } from "#src/store/message/file/index";
+import { useThreadStore } from "#src/store/message/thread";
 import { MessageType } from "@esposter/db-schema";
 import { noop, Operation } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";

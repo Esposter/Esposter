@@ -3,7 +3,7 @@ import type { NumberColumn } from "#shared/models/resource/sheet/column/NumberCo
 import type { StringColumn } from "#shared/models/resource/sheet/column/StringColumn";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
-import { FieldInputTypeMap } from "@/services/resource/sheet/column/FieldInputTypeMap";
+import { FieldInputTypeMap } from "#src/services/resource/sheet/column/FieldInputTypeMap";
 
 interface Props {
   column: NumberColumn | StringColumn;
@@ -11,7 +11,7 @@ interface Props {
 }
 
 const modelValue = defineModel<null | number | string>({ required: true });
-const { column, isInline } = defineProps<Props>();
+const { column } = defineProps<Props>();
 const textValue = computed({
   get: () => (modelValue.value === null ? "" : String(modelValue.value)),
   set: (value) => {

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { ButtonProps } from "@/components/Login/ButtonProps";
+import type { ButtonProps } from "#src/components/Login/ButtonProps";
 
-import { authClient } from "@/services/auth/authClient";
-import { createErrorAlert } from "@/services/trpc/createErrorAlert";
-import { useAlertStore } from "@/store/alert";
-import { toTitleCase } from "@/util/text/toTitleCase";
+import { authClient } from "#src/services/auth/authClient";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
+import { useAlertStore } from "#src/store/alert";
+import { toTitleCase } from "#src/util/text/toTitleCase";
 import { getResultAsync, noop } from "@esposter/shared";
 
 defineProps<ButtonProps>();

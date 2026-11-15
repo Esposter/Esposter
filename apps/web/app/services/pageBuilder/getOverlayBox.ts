@@ -1,4 +1,4 @@
-import type { OverlayBox } from "@/models/pageBuilder/OverlayBox";
+import type { OverlayBox } from "#src/models/pageBuilder/OverlayBox";
 
 // An element's box placed inside the frame's body, from the viewport rects both are measured in. The size is the element's own
 export const getOverlayBox = (

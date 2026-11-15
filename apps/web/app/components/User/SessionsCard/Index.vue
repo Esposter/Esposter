@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { UserSettingsPageSection } from "@/models/user/UserSettingsPageSection";
+import type { UserSettingsPageSection } from "#src/models/user/UserSettingsPageSection";
 
-import { signOutOfBrowser } from "@/services/auth/signOutOfBrowser";
-import { SESSIONS_MUTATION_KEY } from "@/services/user/constants";
-import { useUserSessionDialogStore } from "@/store/user/sessionDialog";
+import { signOutOfBrowser } from "#src/services/auth/signOutOfBrowser";
+import { SESSIONS_MUTATION_KEY } from "#src/services/user/constants";
+import { useUserSessionDialogStore } from "#src/store/user/sessionDialog";
 import { RoutePath } from "@esposter/shared";
 
 interface Props {

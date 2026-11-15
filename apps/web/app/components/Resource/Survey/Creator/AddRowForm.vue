@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { checkIsBlankSource } from "@/services/shared/checkIsBlankSource";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { checkIsBlankSource } from "#src/services/shared/checkIsBlankSource";
 
 interface Props {
   label: string;

@@ -1,6 +1,6 @@
 import type { SpritesheetKey } from "#shared/models/dungeons/keys/spritesheet/SpritesheetKey";
-import type { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import type { TilesetKey } from "@/models/dungeons/keys/TilesetKey";
+import type { SceneKey } from "#src/models/dungeons/keys/SceneKey";
+import type { TilesetKey } from "#src/models/dungeons/keys/TilesetKey";
 import type { GridEngine } from "grid-engine";
 import type { Scene } from "phaser";
 import type SliderPlugin from "phaser4-rex-plugins/plugins/slider-plugin";

@@ -1,8 +1,8 @@
-import type { Popup } from "@/models/clicker/Popup";
+import type { Popup } from "#src/models/clicker/Popup";
 
-import { POPUP_DURATION_MS } from "@/services/clicker/constants";
-import { useMouseStore } from "@/store/clicker/mouse";
-import { usePointStore } from "@/store/clicker/point";
+import { POPUP_DURATION_MS } from "#src/services/clicker/constants";
+import { useMouseStore } from "#src/store/clicker/mouse";
+import { usePointStore } from "#src/store/clicker/point";
 import { v7 } from "uuid";
 
 export const usePopupStore = defineStore("clicker/popup", () => {

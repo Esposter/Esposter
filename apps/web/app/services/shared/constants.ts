@@ -1,4 +1,4 @@
-import type { Item } from "@/models/shared/Item";
+import type { Item } from "#src/models/shared/Item";
 
 export const BLANK_VALUE = "-";
 

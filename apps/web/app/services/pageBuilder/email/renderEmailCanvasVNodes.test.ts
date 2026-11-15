@@ -3,8 +3,8 @@ import { emailBodyChildrenSchema } from "#shared/services/pageBuilder/email/emai
 import { emailRegistry } from "#shared/services/pageBuilder/email/emailRegistry";
 import { noteRichText } from "#shared/services/pageBuilder/email/noteRichText";
 import { STARTER_EMAIL_SOURCE } from "#shared/services/pageBuilder/email/starterEmailSource";
-import { renderEmailCanvasVNodes } from "@/services/pageBuilder/email/renderEmailCanvasVNodes";
-import { emailKind } from "@/services/pageBuilder/emailKind";
+import { renderEmailCanvasVNodes } from "#src/services/pageBuilder/email/renderEmailCanvasVNodes";
+import { emailKind } from "#src/services/pageBuilder/emailKind";
 import { takeOne } from "@esposter/shared";
 import { parseMjmlDocument } from "mjml-blocks";
 import { describe, expect, test } from "vitest";

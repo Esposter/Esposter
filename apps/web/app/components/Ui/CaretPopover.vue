@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { POPOVER_POSITION_TRY } from "@/services/ui/constants";
+import { POPOVER_POSITION_TRY } from "#src/services/ui/constants";
 import { noop } from "@esposter/shared";
 import { usePopover } from "@vuetify/v0";
 

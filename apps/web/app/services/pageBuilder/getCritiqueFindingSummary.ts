@@ -2,7 +2,7 @@ import type { CritiqueFinding } from "#shared/models/pageBuilder/CritiqueFinding
 
 import { CritiqueFindingKind } from "#shared/models/pageBuilder/CritiqueFindingKind";
 import { MIN_TEXT_CONTRAST_RATIO } from "#shared/services/pageBuilder/critique/constants";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { exhaustiveGuard } from "@esposter/shared";
 
 // What a finding says, and the meaning its row is marked with: a failed check is a warning, and a check that could not run

@@ -1,26 +1,26 @@
 // @vitest-environment nuxt
-import type { ClientMessage } from "@/models/message/ClientMessage";
-import type { ComposerTarget } from "@/models/message/ComposerTarget";
+import type { ClientMessage } from "#src/models/message/ClientMessage";
+import type { ComposerTarget } from "#src/models/message/ComposerTarget";
 import type { Page } from "@esposter/db-schema";
 import type { Router } from "vue-router";
 
 import { getMockSession } from "#server/trpc/context.test";
 import { MimeType } from "#shared/models/file/MimeType";
-import { createPendingQuery } from "@/composables/data/pagination/createPendingQuery.test";
-import { goOnline } from "@/composables/shared/network.test";
-import { MessageHook } from "@/models/message/MessageHook";
-import { useSession } from "@/services/auth/authClient.test";
-import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
-import { SPOILER_FILENAME_PREFIX } from "@/services/message/file/constants";
-import { createMessage as createRoomMessage } from "@/services/message/message/createMessage.test";
-import { MessageHookMap } from "@/services/message/MessageHookMap";
-import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useDataStore } from "@/store/message/data";
-import { useInputStore } from "@/store/message/input";
-import { useUploadFileStore } from "@/store/message/input/uploadFile";
-import { useThreadStore } from "@/store/message/thread";
-import { useThreadFollowStore } from "@/store/message/threadFollow";
+import { createPendingQuery } from "#src/composables/data/pagination/createPendingQuery.test";
+import { goOnline } from "#src/composables/shared/network.test";
+import { MessageHook } from "#src/models/message/MessageHook";
+import { useSession } from "#src/services/auth/authClient.test";
+import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
+import { SPOILER_FILENAME_PREFIX } from "#src/services/message/file/constants";
+import { createMessage as createRoomMessage } from "#src/services/message/message/createMessage.test";
+import { MessageHookMap } from "#src/services/message/MessageHookMap";
+import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useDataStore } from "#src/store/message/data";
+import { useInputStore } from "#src/store/message/input/index";
+import { useUploadFileStore } from "#src/store/message/input/uploadFile";
+import { useThreadStore } from "#src/store/message/thread";
+import { useThreadFollowStore } from "#src/store/message/threadFollow";
 import { MessageType } from "@esposter/db-schema";
 import { Operation, takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -30,7 +30,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vi
 interface MockSessionValue {
   data?: { user: { id: string } };
 }
-vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
+vi.mock(import("#src/services/auth/authClient"), () => import("#src/services/auth/authClient.test"));
 
 describe(useDataStore, () => {
   const { trpcMsw } = setupMswTrpc();

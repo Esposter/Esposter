@@ -1,10 +1,10 @@
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { JoystickControls } from "@/models/dungeons/input/JoystickControls";
-import { KeyboardControls } from "@/models/dungeons/input/KeyboardControls";
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { useControlsStore } from "@/store/dungeons/controls";
-import { checkIsMobile } from "@/util/device/checkIsMobile";
+import { JoystickControls } from "#src/models/dungeons/input/JoystickControls";
+import { KeyboardControls } from "#src/models/dungeons/input/KeyboardControls";
+import { SceneKey } from "#src/models/dungeons/keys/SceneKey";
+import { useControlsStore } from "#src/store/dungeons/controls";
+import { checkIsMobile } from "#src/util/device/checkIsMobile";
 import { usePhaserStore } from "vue-phaserjs";
 
 export const useInitializeControls = (scene: SceneWithPlugins) => {

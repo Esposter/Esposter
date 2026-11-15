@@ -1,10 +1,10 @@
 import type { PublicUser } from "@esposter/db-schema";
 
-import { requirePartitionKey } from "@/services/message/requirePartitionKey";
-import { useRoomStore } from "@/store/message/room";
-import { useRoleStore } from "@/store/message/room/role";
-import { useUserStore } from "@/store/message/user";
-import { useMemberStore } from "@/store/message/user/member";
+import { requirePartitionKey } from "#src/services/message/requirePartitionKey";
+import { useRoomStore } from "#src/store/message/room/index";
+import { useRoleStore } from "#src/store/message/room/role";
+import { useUserStore } from "#src/store/message/user/index";
+import { useMemberStore } from "#src/store/message/user/member";
 
 export const useReadMembers = () => {
   const { $trpc } = useNuxtApp();

@@ -1,6 +1,6 @@
 import type { CSSProperties } from "vue";
 
-import { CONTAINER_BORDER_RADIUS } from "@/services/message/file/constants";
+import { CONTAINER_BORDER_RADIUS } from "#src/services/message/file/constants";
 import { takeOne } from "@esposter/shared";
 
 // The grid is 12 columns wide, so a row's tile count is 12 divided by its column span: the first row's last tile

@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-import { checkIsHorizontalFlow } from "@/services/pageBuilder/checkIsHorizontalFlow";
+import { checkIsHorizontalFlow } from "#src/services/pageBuilder/checkIsHorizontalFlow";
 import { describe, expect, test } from "vitest";
 
 const createElement = (style: Partial<CSSStyleDeclaration>): HTMLElement => {

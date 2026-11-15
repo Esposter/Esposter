@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { UiStatus } from "@/models/ui/UiStatus";
+import type { UiStatus } from "#src/models/ui/UiStatus";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { UiStatusIconMeaningMap } from "@/services/ui/UiStatusIconMeaningMap";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { UiStatusIconMeaningMap } from "#src/services/ui/UiStatusIconMeaningMap";
 
 interface Props {
   // How long it stays before it closes itself; without one it stays until its source takes it away

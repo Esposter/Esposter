@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useKnockerStore } from "@/store/message/room/call/knocker";
-import { useParticipantStore } from "@/store/message/room/call/participant";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { useKnockerStore } from "#src/store/message/room/call/knocker";
+import { useParticipantStore } from "#src/store/message/room/call/participant";
 
 const knockerStore = useKnockerStore();
 const { knockers } = storeToRefs(knockerStore);

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { AchievementDefinitionEntry } from "#shared/models/achievement/AchievementDefinitionEntry";
-import type { UserAchievementWithDefinition } from "@/models/achievement/UserAchievementWithDefinition";
+import type { UserAchievementWithDefinition } from "#src/models/achievement/UserAchievementWithDefinition";
 import type { AchievementName } from "@esposter/db-schema";
 
 interface Props {

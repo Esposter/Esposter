@@ -1,10 +1,10 @@
-import type { SurveyConditionOperator } from "@/models/resource/survey/SurveyConditionOperator";
+import type { SurveyConditionOperator } from "#src/models/resource/survey/SurveyConditionOperator";
 
 import {
   SURVEY_BOOLEAN_CONDITION_OPERATORS,
   SURVEY_LIST_CONDITION_OPERATORS,
   SURVEY_SCALAR_CONDITION_OPERATORS,
-} from "@/services/resource/survey/constants";
+} from "#src/services/resource/survey/constants";
 import { SurveyNodeType } from "vue-survey-engine-headless";
 
 // The comparisons that suit an answer's kind: a yes or no answer is equal or not, a list only contains or does not, and

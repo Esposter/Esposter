@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { Position } from "grid-engine";
 
-import { SceneMode } from "@/models/dungeons/scene/monsterParty/SceneMode";
-import { DEFAULT_INFO_DIALOG_MESSAGE } from "@/services/dungeons/scene/monsterParty/constants";
-import { MonsterPartyConfirmationMenuOptionGrid } from "@/services/dungeons/scene/monsterParty/MonsterPartyConfirmationMenuOptionGrid";
-import { getMenuPosition } from "@/services/dungeons/UI/menu/getMenuPosition";
-import { useMonsterPartyInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
-import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
+import { SceneMode } from "#src/models/dungeons/scene/monsterParty/SceneMode";
+import { DEFAULT_INFO_DIALOG_MESSAGE } from "#src/services/dungeons/scene/monsterParty/constants";
+import { MonsterPartyConfirmationMenuOptionGrid } from "#src/services/dungeons/scene/monsterParty/MonsterPartyConfirmationMenuOptionGrid";
+import { getMenuPosition } from "#src/services/dungeons/UI/menu/getMenuPosition";
+import { useMonsterPartyInfoPanelStore } from "#src/store/dungeons/monsterParty/infoPanel";
+import { useMonsterPartySceneStore } from "#src/store/dungeons/monsterParty/scene";
 import { onCreate } from "vue-phaserjs";
 
 const monsterPartySceneStore = useMonsterPartySceneStore();

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useFriendDialogStore } from "@/store/message/user/friendDialog";
+import { useFriendDialogStore } from "#src/store/message/user/friendDialog";
 
 interface Props {
   userId: string;

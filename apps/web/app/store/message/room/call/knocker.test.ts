@@ -2,14 +2,17 @@
 import type { CallParticipant } from "@esposter/db-schema";
 
 import { createId } from "#shared/util/math/random/createId";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useKnockerStore } from "@/store/message/room/call/knocker";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useKnockerStore } from "#src/store/message/room/call/knocker";
 import { CALL_ID_LENGTH } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
 import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 
-vi.mock(import("@/services/realtime/openRealtimeSocket"), () => import("@/services/realtime/openRealtimeSocket.test"));
+vi.mock(
+  import("#src/services/realtime/openRealtimeSocket"),
+  () => import("#src/services/realtime/openRealtimeSocket.test"),
+);
 
 const createParticipant = (name: string): CallParticipant => ({
   id: v7(),

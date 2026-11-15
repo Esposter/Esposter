@@ -1,9 +1,9 @@
 // @vitest-environment nuxt
-import { createRoom } from "@/services/message/room/createRoom.test";
-import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useRoomStore } from "@/store/message/room";
-import { useRoomDialogStore } from "@/store/message/room/dialog";
+import { createRoom } from "#src/services/message/room/createRoom.test";
+import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useRoomDialogStore } from "#src/store/message/room/dialog";
+import { useRoomStore } from "#src/store/message/room/index";
 import { TRPCError } from "@trpc/server";
 import { describe, expect, test } from "vitest";
 

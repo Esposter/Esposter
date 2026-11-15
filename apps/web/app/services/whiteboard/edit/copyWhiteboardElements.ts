@@ -1,9 +1,9 @@
-import type { WhiteboardEditState } from "@/models/whiteboard/WhiteboardEditState";
+import type { WhiteboardEditState } from "#src/models/whiteboard/WhiteboardEditState";
 import type { PositionedElement } from "vue-block-editor-headless";
 
-import { applyWhiteboardEdit } from "@/services/whiteboard/edit/applyWhiteboardEdit";
-import { WHITEBOARD_DUPLICATE_OFFSET } from "@/services/whiteboard/edit/constants";
-import { getCopyOperations } from "@/services/whiteboard/edit/getCopyOperations";
+import { applyWhiteboardEdit } from "#src/services/whiteboard/edit/applyWhiteboardEdit";
+import { WHITEBOARD_DUPLICATE_OFFSET } from "#src/services/whiteboard/edit/constants";
+import { getCopyOperations } from "#src/services/whiteboard/edit/getCopyOperations";
 import { takeOne } from "@esposter/shared";
 import { v7 } from "uuid";
 

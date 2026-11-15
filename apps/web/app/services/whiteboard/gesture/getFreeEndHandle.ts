@@ -1,7 +1,7 @@
 import type { ArrowEndKey, Point, PositionedDocument } from "vue-block-editor-headless";
 
-import { getFreeEndHandleItems } from "@/services/whiteboard/gesture/getFreeEndHandleItems";
-import { getPointDistance } from "@/services/whiteboard/gesture/getPointDistance";
+import { getFreeEndHandleItems } from "#src/services/whiteboard/gesture/getFreeEndHandleItems";
+import { getPointDistance } from "#src/services/whiteboard/gesture/getPointDistance";
 import { takeOne } from "@esposter/shared";
 
 // The free end of the one selected arrow a point lands on: the arrow and which of its ends, or undefined when the point lands on none. A bound end

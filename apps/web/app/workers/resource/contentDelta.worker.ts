@@ -1,10 +1,15 @@
-import type { ContentDeltaRequest } from "@/models/resource/ContentDeltaRequest";
-import type { ContentDeltaResponse } from "@/models/resource/ContentDeltaResponse";
+import type { ContentDeltaRequest } from "#src/models/resource/ContentDeltaRequest";
+import type { ContentDeltaResponse } from "#src/models/resource/ContentDeltaResponse";
 
-import zstdWasmUrl from "@/generated/zstd/zstd.wasm?url";
-import { compressContentDelta } from "@/services/resource/compressContentDelta";
-import { instantiateZstdEncoder } from "@/services/resource/instantiateZstdEncoder";
-import { getResultAsync, getSynchronizedFunction } from "@esposter/shared";
+import { compressContentDelta } from "#src/services/resource/compressContentDelta";
+import { instantiateZstdEncoder } from "#src/services/resource/instantiateZstdEncoder";
+import { getResultAsync, getSynchronizedFunction, takeOne } from "@esposter/shared";
+
+const zstdWasmUrl = takeOne(
+  Object.values(
+    import.meta.glob<string>("#src/generated/zstd/zstd.wasm", { eager: true, import: "default", query: "?url" }),
+  ),
+);
 
 // Compresses a document against its baseline off the main thread: a dictionary as large as the document makes it
 // Seconds of work at the content limit. One worker per save, terminated after it, so the encoder's memory — the

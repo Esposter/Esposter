@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { formatNumberLong } from "@/services/clicker/formatNumberLong";
-import { useClickerStore } from "@/store/clicker";
-import { useBuildingStore } from "@/store/clicker/building";
+import { formatNumberLong } from "#src/services/clicker/formatNumberLong";
+import { useBuildingStore } from "#src/store/clicker/building";
+import { useClickerStore } from "#src/store/clicker/index";
 
 const clickerStore = useClickerStore();
 const { clicker, clickerItemProperties } = storeToRefs(clickerStore);

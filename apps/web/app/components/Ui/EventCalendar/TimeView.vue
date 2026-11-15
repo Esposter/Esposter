@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { UiCalendarEvent } from "@/models/ui/UiCalendarEvent";
-import type { UiCalendarSlotEmits } from "@/models/ui/UiCalendarSlotEmits";
+import type { UiCalendarEvent } from "#src/models/ui/UiCalendarEvent";
+import type { UiCalendarSlotEmits } from "#src/models/ui/UiCalendarSlotEmits";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { CALENDAR_OPENING_HOUR, CALENDAR_SLOT_DURATION } from "@/services/ui/constants";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { CALENDAR_OPENING_HOUR, CALENDAR_SLOT_DURATION } from "#src/services/ui/constants";
 import { takeOne } from "@esposter/shared";
 
 interface Props {

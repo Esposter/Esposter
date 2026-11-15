@@ -1,14 +1,14 @@
-import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
+import type { PlayerInput } from "#src/models/dungeons/UI/input/PlayerInput";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { SceneMode } from "@/models/dungeons/scene/monsterParty/SceneMode";
-import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
-import { AInputResolver } from "@/models/resolvers/dungeons/AInputResolver";
-import { DEFAULT_INFO_DIALOG_MESSAGE } from "@/services/dungeons/scene/monsterParty/constants";
-import { checkIsMovingDirection } from "@/services/dungeons/UI/input/checkIsMovingDirection";
-import { useMonsterPartyInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
-import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
-import { usePlayerStore } from "@/store/dungeons/player";
+import { SceneMode } from "#src/models/dungeons/scene/monsterParty/SceneMode";
+import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";
+import { AInputResolver } from "#src/models/resolvers/dungeons/AInputResolver";
+import { DEFAULT_INFO_DIALOG_MESSAGE } from "#src/services/dungeons/scene/monsterParty/constants";
+import { checkIsMovingDirection } from "#src/services/dungeons/UI/input/checkIsMovingDirection";
+import { useMonsterPartyInfoPanelStore } from "#src/store/dungeons/monsterParty/infoPanel";
+import { useMonsterPartySceneStore } from "#src/store/dungeons/monsterParty/scene";
+import { usePlayerStore } from "#src/store/dungeons/player";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 
 export class MoveInputResolver extends AInputResolver {

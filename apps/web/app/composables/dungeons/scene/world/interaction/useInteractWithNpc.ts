@@ -1,10 +1,10 @@
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { DirectionToGridDirectionMap } from "@/services/dungeons/direction/DirectionToGridDirectionMap";
-import { getOppositeDirection } from "@/services/dungeons/direction/getOppositeDirection";
-import { applyNpcEffects } from "@/services/dungeons/scene/world/applyNpcEffects";
-import { usePlayerStore } from "@/store/dungeons/player";
-import { useNpcStore } from "@/store/dungeons/world/npc";
+import { DirectionToGridDirectionMap } from "#src/services/dungeons/direction/DirectionToGridDirectionMap";
+import { getOppositeDirection } from "#src/services/dungeons/direction/getOppositeDirection";
+import { applyNpcEffects } from "#src/services/dungeons/scene/world/applyNpcEffects";
+import { usePlayerStore } from "#src/store/dungeons/player";
+import { useNpcStore } from "#src/store/dungeons/world/npc";
 import { takeOne } from "@esposter/shared";
 
 export const useInteractWithNpc = async (scene: SceneWithPlugins): Promise<boolean> => {

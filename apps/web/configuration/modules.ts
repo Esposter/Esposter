@@ -14,9 +14,9 @@ const UNPLUGIN_PWA_NUXT_MODULE_PATH = "../../packages/unplugin-pwa-nuxt/src/modu
 const trpcNuxtModule: [string, ModuleOptions] = [
   "../../packages/trpc-nuxt-module/src/module.ts",
   {
-    createContext: { from: "~~/server/trpc/context", name: "createContext" },
+    createContext: { from: "#server/trpc/context", name: "createContext" },
     endpoint: TRPC_CLIENT_PATH,
-    router: { from: "~~/server/trpc/routers", name: "trpcRouter" },
+    router: { from: "#server/trpc/routers/index", name: "trpcRouter" },
   },
 ];
 // @TODO: https://github.com/vitest-dev/vitest/issues/11842 — add unplugin-pwa-nuxt to the Vitest branch below once a virtual id starting with `/` loads under Vitest on Windows

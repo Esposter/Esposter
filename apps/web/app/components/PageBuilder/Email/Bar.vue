@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import type { EditorFinding } from "@/models/editor/EditorFinding";
-import type { Item } from "@/models/shared/Item";
+import type { EditorFinding } from "#src/models/editor/EditorFinding";
+import type { Item } from "#src/models/shared/Item";
 
 import { MAX_EMAIL_PREVIEW_LENGTH } from "#shared/services/pageBuilder/email/constants";
-import { EmailView } from "@/models/pageBuilder/EmailView";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { UiToggleGroupVariant } from "@/models/ui/UiToggleGroupVariant";
-import { authClient } from "@/services/auth/authClient";
-import { ROOT_INTERACTION_ID, ROOT_POINTER } from "@/services/pageBuilder/constants";
-import { useEmailEditorStore } from "@/store/emailEditor";
-import { useEmailImportDialogStore } from "@/store/emailEditor/importDialog";
-import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
-import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
-import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
+import { EmailView } from "#src/models/pageBuilder/EmailView";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { UiToggleGroupVariant } from "#src/models/ui/UiToggleGroupVariant";
+import { authClient } from "#src/services/auth/authClient";
+import { ROOT_INTERACTION_ID, ROOT_POINTER } from "#src/services/pageBuilder/constants";
+import { useEmailImportDialogStore } from "#src/store/emailEditor/importDialog";
+import { useEmailEditorStore } from "#src/store/emailEditor/index";
+import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
+import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
+import { usePageBuilderHistoryStore } from "#src/store/pageBuilder/history";
 import { JsonPatchOperationType, noop } from "@esposter/shared";
 
 interface Props {

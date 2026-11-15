@@ -1,11 +1,11 @@
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
-import type { PageBuilderHistoryEntry } from "@/models/pageBuilder/PageBuilderHistoryEntry";
-import type { OpenPageBuilderDocument } from "@/store/pageBuilder/document";
+import type { PageBuilderHistoryEntry } from "#src/models/pageBuilder/PageBuilderHistoryEntry";
+import type { OpenPageBuilderDocument } from "#src/store/pageBuilder/document";
 import type { History, JsonPatchOperation } from "@esposter/shared";
 
-import { MAX_PAGE_BUILDER_HISTORY_SIZE } from "@/services/pageBuilder/constants";
-import { getRecordedHistory } from "@/services/pageBuilder/getRecordedHistory";
-import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
+import { MAX_PAGE_BUILDER_HISTORY_SIZE } from "#src/services/pageBuilder/constants";
+import { getRecordedHistory } from "#src/services/pageBuilder/getRecordedHistory";
+import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
 import { ResourceType } from "@esposter/db-schema";
 import { createHistory, getResult, InvalidOperationError, Operation, redoHistory, undoHistory } from "@esposter/shared";
 import { applyBlockEdit } from "vue-block-editor-headless";

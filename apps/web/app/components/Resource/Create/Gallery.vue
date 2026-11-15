@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { CreatableResourceTypes } from "@/models/resource/CreatableResourceType";
-import { ResourceTypeDescriptionMap } from "@/services/resource/ResourceTypeDescriptionMap";
+import { CreatableResourceTypes } from "#src/models/resource/CreatableResourceType";
+import { ResourceTypeDescriptionMap } from "#src/services/resource/ResourceTypeDescriptionMap";
 import { RoutePath } from "@esposter/shared";
 
 interface Props {

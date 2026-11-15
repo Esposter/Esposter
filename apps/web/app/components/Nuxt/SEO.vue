@@ -1,11 +1,11 @@
 <script setup lang="ts">
+import { UiPaletteMap } from "#configuration/UiPaletteMap";
 import { PAGE_TITLE_SEPARATOR, SITE_DESCRIPTION } from "#shared/services/app/constants";
-import { ResolvedThemeModes } from "@/models/ui/ResolvedThemeMode";
-import { ThemeMode } from "@/models/ui/ThemeMode";
-import { UiToken } from "@/models/ui/UiToken";
-import { useUiStyleStore } from "@/store/ui/style";
-import { useThemeModeStore } from "@/store/ui/themeMode";
-import { UiPaletteMap } from "@@/configuration/UiPaletteMap";
+import { ResolvedThemeModes } from "#src/models/ui/ResolvedThemeMode";
+import { ThemeMode } from "#src/models/ui/ThemeMode";
+import { UiToken } from "#src/models/ui/UiToken";
+import { useUiStyleStore } from "#src/store/ui/style";
+import { useThemeModeStore } from "#src/store/ui/themeMode";
 import { SITE_NAME } from "@esposter/shared";
 
 defineSlots<{ default: () => VNode }>();

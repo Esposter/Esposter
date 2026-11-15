@@ -1,4 +1,4 @@
-import { getStyledApexOptions } from "@/services/styled/getStyledApexOptions";
+import { getStyledApexOptions } from "#src/services/styled/getStyledApexOptions";
 import { assert, describe, expect, test } from "vitest";
 
 describe(getStyledApexOptions, () => {

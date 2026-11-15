@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
-import StyledEditFormDialogErrorIcon from "@/components/Styled/EditFormDialog/ErrorIcon.vue";
-import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
-import { DEFAULT_UI_STYLE } from "@@/configuration/constants";
+import { DEFAULT_UI_STYLE } from "#configuration/constants";
+import StyledEditFormDialogErrorIcon from "#src/components/Styled/EditFormDialog/ErrorIcon.vue";
+import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
 import { mount } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";

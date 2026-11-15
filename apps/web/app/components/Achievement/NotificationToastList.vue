@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useAchievementStore } from "@/store/achievement";
+import { useAchievementStore } from "#src/store/achievement/index";
 
 useAchievementSubscribables();
 await useUserSocket();

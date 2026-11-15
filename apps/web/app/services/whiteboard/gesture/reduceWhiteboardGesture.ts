@@ -1,19 +1,19 @@
-import type { GesturePointerEvent } from "@/models/whiteboard/GesturePointerEvent";
-import type { WhiteboardGestureResult } from "@/models/whiteboard/WhiteboardGestureResult";
-import type { WhiteboardGestureState } from "@/models/whiteboard/WhiteboardGestureState";
+import type { GesturePointerEvent } from "#src/models/whiteboard/GesturePointerEvent";
+import type { WhiteboardGestureResult } from "#src/models/whiteboard/WhiteboardGestureResult";
+import type { WhiteboardGestureState } from "#src/models/whiteboard/WhiteboardGestureState";
 
-import { GesturePhase } from "@/models/whiteboard/GesturePhase";
-import { reduceArrowGesture } from "@/services/whiteboard/gesture/reduceArrowGesture";
-import { reduceConnectGesture } from "@/services/whiteboard/gesture/reduceConnectGesture";
-import { reduceDrawingGesture } from "@/services/whiteboard/gesture/reduceDrawingGesture";
-import { reduceEndGesture } from "@/services/whiteboard/gesture/reduceEndGesture";
-import { reduceMarqueeGesture } from "@/services/whiteboard/gesture/reduceMarqueeGesture";
-import { reduceMovingGesture } from "@/services/whiteboard/gesture/reduceMovingGesture";
-import { reducePanningGesture } from "@/services/whiteboard/gesture/reducePanningGesture";
-import { reducePlacingGesture } from "@/services/whiteboard/gesture/reducePlacingGesture";
-import { reducePressedGesture } from "@/services/whiteboard/gesture/reducePressedGesture";
-import { reduceResizingGesture } from "@/services/whiteboard/gesture/reduceResizingGesture";
-import { startWhiteboardGesture } from "@/services/whiteboard/gesture/startWhiteboardGesture";
+import { GesturePhase } from "#src/models/whiteboard/GesturePhase";
+import { reduceArrowGesture } from "#src/services/whiteboard/gesture/reduceArrowGesture";
+import { reduceConnectGesture } from "#src/services/whiteboard/gesture/reduceConnectGesture";
+import { reduceDrawingGesture } from "#src/services/whiteboard/gesture/reduceDrawingGesture";
+import { reduceEndGesture } from "#src/services/whiteboard/gesture/reduceEndGesture";
+import { reduceMarqueeGesture } from "#src/services/whiteboard/gesture/reduceMarqueeGesture";
+import { reduceMovingGesture } from "#src/services/whiteboard/gesture/reduceMovingGesture";
+import { reducePanningGesture } from "#src/services/whiteboard/gesture/reducePanningGesture";
+import { reducePlacingGesture } from "#src/services/whiteboard/gesture/reducePlacingGesture";
+import { reducePressedGesture } from "#src/services/whiteboard/gesture/reducePressedGesture";
+import { reduceResizingGesture } from "#src/services/whiteboard/gesture/reduceResizingGesture";
+import { startWhiteboardGesture } from "#src/services/whiteboard/gesture/startWhiteboardGesture";
 import { exhaustiveGuard } from "@esposter/shared";
 
 // The one reducer every pointer event of a whiteboard goes through. With no gesture in progress a press starts one, and any other

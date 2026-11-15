@@ -1,4 +1,4 @@
-import { SKIN_TONE_MODIFIERS, VARIATION_SELECTOR } from "@/services/message/emoji/constants";
+import { SKIN_TONE_MODIFIERS, VARIATION_SELECTOR } from "#src/services/message/emoji/constants";
 
 // `characterEmojiMap` is built and queried on this key, so one emoji has exactly one identity however it arrived:
 // A toned pick (👋🏽), an unqualified legacy glyph (❤) and the dataset's own form (❤️) all collapse onto it

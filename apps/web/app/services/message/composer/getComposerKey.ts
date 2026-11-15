@@ -1,4 +1,4 @@
-import type { ComposerTarget } from "@/models/message/ComposerTarget";
+import type { ComposerTarget } from "#src/models/message/ComposerTarget";
 
 import { ID_SEPARATOR } from "@esposter/shared";
 

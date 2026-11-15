@@ -1,4 +1,4 @@
-import type { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import type { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 export interface ArrowKeyDefinition {
   // The step the key takes across the grid, as a row delta then a column delta

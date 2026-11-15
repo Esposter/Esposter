@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { useRoomEmojiStore } from "@/store/message/room/emoji";
-import { useRoomEmojiDialogStore } from "@/store/message/room/emojiDialog";
+import { useRoomEmojiStore } from "#src/store/message/room/emoji";
+import { useRoomEmojiDialogStore } from "#src/store/message/room/emojiDialog";
 
 interface Props {
   roomId: RoomInMessage["id"];

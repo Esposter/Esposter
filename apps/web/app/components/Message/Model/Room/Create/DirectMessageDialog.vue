@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useDirectMessageStore } from "@/store/message/room/directMessage";
+import { useDirectMessageStore } from "#src/store/message/room/directMessage";
 
 const isOpen = defineModel<boolean>({ default: false });
 const directMessageStore = useDirectMessageStore();

@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { ClientMessage } from "@/models/message/ClientMessage";
+import type { ClientMessage } from "#src/models/message/ClientMessage";
 import type { FileEntity } from "@esposter/db-schema";
 
-import { getFileCornerStyle } from "@/services/message/file/getFileCornerStyle";
-import { useFileStore } from "@/store/message/file";
-import { useFileDialogStore } from "@/store/message/file/dialog";
-import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
+import { getFileCornerStyle } from "#src/services/message/file/getFileCornerStyle";
+import { useFileDialogStore } from "#src/store/message/file/dialog";
+import { useFileStore } from "#src/store/message/file/index";
+import { EMPTY_TEXT_REGEX } from "#src/util/text/constants";
 
 interface Props {
   columnLayout: number[];

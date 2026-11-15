@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { ResourceListFilterTypeDefinition } from "@/models/resource/list/ResourceListFilterTypeDefinition";
-import type { ResourceStatusFilter } from "@/models/resource/list/ResourceStatusFilter";
-import type { ResourceUpdatedFilter } from "@/models/resource/list/ResourceUpdatedFilter";
+import type { ResourceListFilterTypeDefinition } from "#src/models/resource/list/ResourceListFilterTypeDefinition";
+import type { ResourceStatusFilter } from "#src/models/resource/list/ResourceStatusFilter";
+import type { ResourceUpdatedFilter } from "#src/models/resource/list/ResourceUpdatedFilter";
 import type { ResourceType } from "@esposter/db-schema";
 
-import { ResourceListFilterType, ResourceListFilterTypes } from "@/models/resource/list/ResourceListFilterType";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { ResourceListFilterType, ResourceListFilterTypes } from "#src/models/resource/list/ResourceListFilterType";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 interface Props {
   hasActiveFilters: boolean;

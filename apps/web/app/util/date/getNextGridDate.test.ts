@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-import { getNextGridDate } from "@/util/date/getNextGridDate";
+import { getNextGridDate } from "#src/util/date/getNextGridDate";
 import { describe, expect, test } from "vitest";
 
 describe(getNextGridDate, () => {

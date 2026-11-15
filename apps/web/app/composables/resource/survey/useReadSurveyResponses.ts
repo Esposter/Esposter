@@ -1,7 +1,7 @@
 import type { SurveyResponseRecords } from "#shared/models/resource/survey/SurveyResponseRecords";
-import type { SurveySummaryCard } from "@/models/resource/survey/SurveySummaryCard";
+import type { SurveySummaryCard } from "#src/models/resource/survey/SurveySummaryCard";
 
-import { getSurveyDocumentResponseSummaryCards } from "@/services/resource/survey/getSurveyDocumentResponseSummaryCards";
+import { getSurveyDocumentResponseSummaryCards } from "#src/services/resource/survey/getSurveyDocumentResponseSummaryCards";
 import { getResultAsync } from "@esposter/shared";
 
 // The responses of one survey, read beside the survey itself. The summary is drawn from both reads, so its failure is

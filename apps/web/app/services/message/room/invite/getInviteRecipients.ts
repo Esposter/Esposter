@@ -1,8 +1,8 @@
-import type { InviteRecipient } from "@/models/message/room/invite/InviteRecipient";
+import type { InviteRecipient } from "#src/models/message/room/invite/InviteRecipient";
 import type { PublicUser, RoomInMessage } from "@esposter/db-schema";
 
-import { getDirectMessageName } from "@/services/message/room/getDirectMessageName";
-import { getFriendRecencyMap } from "@/services/message/room/invite/getFriendRecencyMap";
+import { getDirectMessageName } from "#src/services/message/room/getDirectMessageName";
+import { getFriendRecencyMap } from "#src/services/message/room/invite/getFriendRecencyMap";
 
 // The friends and group conversations the invite dialog lists in one order, the one talked to most recently leading. A
 // Group's recency is its place in the direct message list, the same order a friend's is read in, and a friend with no

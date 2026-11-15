@@ -1,7 +1,7 @@
 import { formatDate } from "#shared/util/date/formatDate";
 import { parseLooseDate } from "#shared/util/date/parseLooseDate";
-import { MONTH_FORMAT } from "@/services/resource/sheet/column/constants";
-import { countOccurrences } from "@/util/array/countOccurrences";
+import { MONTH_FORMAT } from "#src/services/resource/sheet/column/constants";
+import { countOccurrences } from "#src/util/array/countOccurrences";
 
 export const computeMonthFrequencies = (dates: string[], format?: string): readonly (readonly [string, number])[] => {
   const months = dates

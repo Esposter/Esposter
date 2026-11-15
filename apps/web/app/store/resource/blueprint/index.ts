@@ -1,9 +1,9 @@
 import type { BlueprintResource } from "#shared/models/resource/blueprint/BlueprintResource";
 
-import { createEmptyBlueprint } from "@/services/resource/blueprint/createEmptyBlueprint";
-import { stringifyBlueprintManifest } from "@/services/resource/blueprint/stringifyBlueprintManifest";
-import { createContentData } from "@/services/resource/createContentData";
-import { useResourceStore } from "@/store/resource";
+import { createEmptyBlueprint } from "#src/services/resource/blueprint/createEmptyBlueprint";
+import { stringifyBlueprintManifest } from "#src/services/resource/blueprint/stringifyBlueprintManifest";
+import { createContentData } from "#src/services/resource/createContentData";
+import { useResourceStore } from "#src/store/resource/index";
 import { ResourceType } from "@esposter/db-schema";
 
 export const useBlueprintStore = defineStore("resource/blueprint", () => {

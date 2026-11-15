@@ -1,15 +1,15 @@
 import type { Layout } from "vue-editor-layout-headless";
 
-import { SurveyEditorContent } from "@/models/resource/survey/SurveyEditorContent";
-import { SurveyEditorPanel } from "@/models/resource/survey/SurveyEditorPanel";
-import { SurveyEditorRegion } from "@/models/resource/survey/SurveyEditorRegion";
-import { SurveyEditorSelectionKind } from "@/models/resource/survey/SurveyEditorSelectionKind";
+import { SurveyEditorContent } from "#src/models/resource/survey/SurveyEditorContent";
+import { SurveyEditorPanel } from "#src/models/resource/survey/SurveyEditorPanel";
+import { SurveyEditorRegion } from "#src/models/resource/survey/SurveyEditorRegion";
+import { SurveyEditorSelectionKind } from "#src/models/resource/survey/SurveyEditorSelectionKind";
 import {
   DOCKED_REGION_PRESENTATION_MAP,
   SIDE_REGION_PRESENTATION_MAP,
   SIDE_REGION_SIZE,
-} from "@/services/editor/constants";
-import { SURVEY_BAR_HEIGHT, SURVEY_DESIGN_MODE } from "@/services/resource/survey/constants";
+} from "#src/services/editor/constants";
+import { SURVEY_BAR_HEIGHT, SURVEY_DESIGN_MODE } from "#src/services/resource/survey/constants";
 import { RegionEdge, RegionOpening } from "vue-editor-layout-headless";
 
 // The survey's editor as plain data: a bar across the top, the structure beside the canvas and the inspector beyond it. Preview

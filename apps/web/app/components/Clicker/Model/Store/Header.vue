@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { UiMenuItem } from "@/models/ui/UiMenuItem";
+import type { UiMenuItem } from "#src/models/ui/UiMenuItem";
 
-import { BUY_QUANTITIES } from "@/services/clicker/constants";
-import { useBuildingStore } from "@/store/clicker/building";
+import { BUY_QUANTITIES } from "#src/services/clicker/constants";
+import { useBuildingStore } from "#src/store/clicker/building";
 
 const buildingStore = useBuildingStore();
 const { buyQuantity } = storeToRefs(buildingStore);

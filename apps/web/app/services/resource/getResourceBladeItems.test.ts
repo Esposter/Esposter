@@ -1,7 +1,7 @@
-import type { Item } from "@/models/shared/Item";
+import type { Item } from "#src/models/shared/Item";
 
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
-import { getResourceBladeItems } from "@/services/resource/getResourceBladeItems";
+import { getResourceBladeItems } from "#src/services/resource/getResourceBladeItems";
 import { ResourceType } from "@esposter/db-schema";
 import { describe, expect, test, vi } from "vitest";
 

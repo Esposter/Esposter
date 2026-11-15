@@ -1,9 +1,9 @@
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { getObjects } from "@/services/dungeons/scene/world/getObjects";
-import { ObjectInteractionEffectMap } from "@/services/dungeons/scene/world/interaction/effect/ObjectInteractionEffectMap";
-import { OBJECTGROUP_NAMES } from "@/services/dungeons/tilemap/constants";
-import { useWorldSceneStore } from "@/store/dungeons/world/scene";
+import { getObjects } from "#src/services/dungeons/scene/world/getObjects";
+import { ObjectInteractionEffectMap } from "#src/services/dungeons/scene/world/interaction/effect/ObjectInteractionEffectMap";
+import { OBJECTGROUP_NAMES } from "#src/services/dungeons/tilemap/constants";
+import { useWorldSceneStore } from "#src/store/dungeons/world/scene";
 
 export const useInteractWithObject = async (scene: SceneWithPlugins): Promise<boolean> => {
   const worldSceneStore = useWorldSceneStore();

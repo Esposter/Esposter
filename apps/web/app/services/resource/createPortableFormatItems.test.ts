@@ -1,8 +1,8 @@
-import type { PortableFormat } from "@/models/resource/PortableFormat";
+import type { PortableFormat } from "#src/models/resource/PortableFormat";
 
-import { PortableFormatKind } from "@/models/resource/PortableFormatKind";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { createPortableFormatItems } from "@/services/resource/createPortableFormatItems";
+import { PortableFormatKind } from "#src/models/resource/PortableFormatKind";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { createPortableFormatItems } from "#src/services/resource/createPortableFormatItems";
 import { describe, expect, test, vi } from "vitest";
 
 const createFormat = (label: string): PortableFormat => ({

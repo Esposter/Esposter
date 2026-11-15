@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { Row, rowSchema } from "#shared/models/resource/sheet/datasource/Row";
-import { getVisibleEditableColumns } from "@/services/resource/sheet/column/getVisibleEditableColumns";
-import { createEmptyRowData } from "@/services/resource/sheet/dataSource/createEmptyRowData";
-import { useSheetStore } from "@/store/resource/sheet";
+import { getVisibleEditableColumns } from "#src/services/resource/sheet/column/getVisibleEditableColumns";
+import { createEmptyRowData } from "#src/services/resource/sheet/dataSource/createEmptyRowData";
+import { useSheetStore } from "#src/store/resource/sheet/index";
 import { takeOne, toRawDeep } from "@esposter/shared";
 
 const sheetStore = useSheetStore();

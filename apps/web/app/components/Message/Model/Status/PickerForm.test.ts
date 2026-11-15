@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
-import MessageModelStatusPickerForm from "@/components/Message/Model/Status/PickerForm.vue";
-import { useSession } from "@/services/auth/authClient.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useStatusStore } from "@/store/message/user/status";
+import MessageModelStatusPickerForm from "#src/components/Message/Model/Status/PickerForm.vue";
+import { useSession } from "#src/services/auth/authClient.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useStatusStore } from "#src/store/message/user/status";
 import { UserStatus } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
@@ -10,7 +10,7 @@ import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
+vi.mock(import("#src/services/auth/authClient"), () => import("#src/services/auth/authClient.test"));
 
 describe("messageModelStatusPickerForm", () => {
   const { trpcMsw } = setupMswTrpc();

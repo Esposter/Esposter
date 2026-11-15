@@ -22,6 +22,12 @@ export const OTHER_RESTRICTED_IMPORT_PATHS: RestrictedImportPath[] = [
   },
   { importNames: ["useRoute"], message: USE_ROUTE_MESSAGE, name: "vue-router" },
   { importNames: ["inject", "provide"], message: CONTEXT_MESSAGE, name: "vue" },
+  {
+    importNames: ["Editor"],
+    message:
+      "Type an editor as `@tiptap/core`'s `Editor`: every tiptap callback hands that one over, and the Vue editor extends it, so either passes where it is named. See the tiptap skill.",
+    name: "@tiptap/vue-3",
+  },
 ];
 // A console child of a windowless parent, or any `detached` child, opens its own terminal window on Windows unless
 // `windowsHide` is set. The wrappers force it, so every child process goes through them; a type import stays free.
@@ -49,15 +55,31 @@ export const WORKSPACE_LIBRARY_IMPORT_PATTERN: RestrictedImportPattern = {
     "The Nuxt configuration loads in `nuxt prepare`, the app's postinstall, before any workspace library is built — a runtime import of one fails every fresh install. Import the npm package the library wraps instead; types are fine.",
 };
 export const SHARED_APP_IMPORT_PATTERN: RestrictedImportPattern = {
-  group: ["@/**", "~/**"],
+  group: ["#src/**"],
   message:
     "`shared/` is parsed by the server too, so it may not reach into the client-only app tree — see openspec/specs/architecture/module-boundaries/design.md. Move the code to `shared/`, or give the client concern its own twin under `app/`.",
 };
 const PACKAGE_ALIAS_IMPORT_PATTERN: RestrictedImportPattern = {
   group: ["@/**", "~/**"],
   message:
-    "A package addresses its own source through the `#src/*` subpath imports its manifest declares, never a tsconfig `paths` alias — a `paths` entry re-points into whichever package is compiling, so a sibling bundling this one from source resolves it to nothing. See openspec/specs/architecture/build-pipeline/design.md. (`apps/web` is the only tree that keeps `@/` — those are Nuxt's own aliases.)",
+    "A package addresses its own source through the `#src/*` subpath imports its manifest declares, never a tsconfig `paths` alias — a `paths` entry re-points into whichever package is compiling, so a sibling bundling this one from source resolves it to nothing. See openspec/specs/architecture/build-pipeline/design.md.",
 };
+// A query is part of the specifier a subpath import substitutes into its pattern, so `#src/a.html?raw` names
+// `./app/a.html?raw.ts`, a file that does not exist
+const SUBPATH_QUERY_IMPORT_PATTERN: RestrictedImportPattern = {
+  message:
+    'A `#` name takes no query — the manifest pattern swallows it. Pass it as a glob option: `import.meta.glob("#src/…", { eager: true, import: "default", query: "?raw" })`. See the file-organization skill, references/import-aliases.md.',
+  regex: "^#[^?]*\\?",
+};
+// The web app's own source is named by its manifest's subpath imports, which Node resolves as Nuxt does
+export const WEB_IMPORT_PATTERNS: RestrictedImportPattern[] = [
+  {
+    group: ["@/**", "@@/**", "~/**", "~~/**"],
+    message:
+      "The web app addresses its own source through the subpath imports its manifest declares — `#src/*` for `app/`, `#shared/*`, `#server/*`, `#scripts/*`, `#configuration/*` — each naming its file (`/index` for a folder), so a script runs under bare `node`. See the file-organization skill, references/import-aliases.md.",
+  },
+  SUBPATH_QUERY_IMPORT_PATTERN,
+];
 const PACKAGE_RELATIVE_IMPORT_PATTERN: RestrictedImportPattern = {
   group: ["./*", "./**", "../*", "../**"],
   message:
@@ -66,6 +88,7 @@ const PACKAGE_RELATIVE_IMPORT_PATTERN: RestrictedImportPattern = {
 export const PACKAGE_IMPORT_PATTERNS: RestrictedImportPattern[] = [
   PACKAGE_ALIAS_IMPORT_PATTERN,
   PACKAGE_RELATIVE_IMPORT_PATTERN,
+  SUBPATH_QUERY_IMPORT_PATTERN,
 ];
 export const MOD_IMPORT_PATTERN: RestrictedImportPattern = {
   group: ["#src/*", "@/**", "~/**"],

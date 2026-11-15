@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiDialogSize } from "@/models/ui/UiDialogSize";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
-import { MessageComponentMap } from "@/services/message/MessageComponentMap";
-import { useDataStore } from "@/store/message/data";
-import { useForwardStore } from "@/store/message/input/forward";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiDialogSize } from "#src/models/ui/UiDialogSize";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { UiTextFieldType } from "#src/models/ui/UiTextFieldType";
+import { MessageComponentMap } from "#src/services/message/MessageComponentMap";
+import { useDataStore } from "#src/store/message/data";
+import { useForwardStore } from "#src/store/message/input/forward";
 import { DEFAULT_PAGE_LIMIT, MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
 
 const { $trpc } = useNuxtApp();

@@ -1,9 +1,9 @@
 // @vitest-environment nuxt
 import type { SurveyAnswerValue, SurveyPanelDynamicNode } from "vue-survey-engine-headless";
 
-import ResourceSurveyFieldPanelDynamic from "@/components/Resource/Survey/Field/PanelDynamic.vue";
-import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
-import { UiStyles } from "@/models/ui/UiStyle";
+import ResourceSurveyFieldPanelDynamic from "#src/components/Resource/Survey/Field/PanelDynamic.vue";
+import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
+import { UiStyles } from "#src/models/ui/UiStyle";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
@@ -40,8 +40,8 @@ describe("resourceSurveyFieldPanelDynamic", () => {
   // A row's field loads on demand through a dynamic import, which is module I/O rather than a microtask, so the text and
   // Checkbox fields' modules are awaited once up front and each mount resolves them within its flush
   beforeAll(async () => {
-    await import("@/components/Resource/Survey/Field/Text.vue");
-    await import("@/components/Resource/Survey/Field/Checkbox.vue");
+    await import("#src/components/Resource/Survey/Field/Text.vue");
+    await import("#src/components/Resource/Survey/Field/Checkbox.vue");
   });
 
   describe.each(UiStyles)("%s", (uiStyle) => {

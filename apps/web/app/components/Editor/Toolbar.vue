@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { EditorToolbarGroup } from "@/models/editor/EditorToolbarGroup";
-import type { EditorToolbarItem } from "@/models/editor/EditorToolbarItem";
-import type { Item } from "@/models/shared/Item";
+import type { EditorToolbarGroup } from "#src/models/editor/EditorToolbarGroup";
+import type { EditorToolbarItem } from "#src/models/editor/EditorToolbarItem";
+import type { Item } from "#src/models/shared/Item";
 
-import { EditorToolbarGroupKind } from "@/models/editor/EditorToolbarGroupKind";
-import { getToolbarFolds } from "@/services/editor/getToolbarFolds";
+import { EditorToolbarGroupKind } from "#src/models/editor/EditorToolbarGroupKind";
+import { getToolbarFolds } from "#src/services/editor/getToolbarFolds";
 import { takeOne } from "@esposter/shared";
 
 interface Props {

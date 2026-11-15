@@ -1,6 +1,6 @@
-import type { MicrophoneGateSettings } from "@/models/message/room/call/MicrophoneGateSettings";
+import type { MicrophoneGateSettings } from "#src/models/message/room/call/MicrophoneGateSettings";
 
-import { computeInputLevelDecibels } from "@/services/message/room/call/computeInputLevelDecibels";
+import { computeInputLevelDecibels } from "#src/services/message/room/call/computeInputLevelDecibels";
 
 // The microphone's gate on the audio thread, run once per render quantum: the block is read before the gain applies,
 // Then written at the volume while the gate is open or as silence while it is closed. Nothing passes until the page has

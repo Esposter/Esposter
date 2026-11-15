@@ -1,5 +1,5 @@
 <script setup lang="ts" generic="T extends string">
-import type { UiMenuItem } from "@/models/ui/UiMenuItem";
+import type { UiMenuItem } from "#src/models/ui/UiMenuItem";
 
 import { Radio } from "@vuetify/v0";
 import { mergeProps } from "vue";

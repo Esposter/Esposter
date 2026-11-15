@@ -2,10 +2,10 @@
 import type { ResourceInResource } from "@esposter/db-schema";
 
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { getSnapshotVersionId } from "@/services/resource/getSnapshotVersionId";
-import { useVersionHistoryStore } from "@/store/resource/versionHistory";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { getSnapshotVersionId } from "#src/services/resource/getSnapshotVersionId";
+import { useVersionHistoryStore } from "#src/store/resource/versionHistory";
 import { SnapshotChannel } from "@esposter/db-schema";
 
 interface Props {

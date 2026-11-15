@@ -1,6 +1,6 @@
-import type { OnlineSubscribableContext } from "@/models/shared/OnlineSubscribableContext";
-import type { OnlineSubscribableSource } from "@/models/shared/OnlineSubscribableSource";
-import type { OnlineSubscribableValues } from "@/models/shared/OnlineSubscribableValues";
+import type { OnlineSubscribableContext } from "#src/models/shared/OnlineSubscribableContext";
+import type { OnlineSubscribableSource } from "#src/models/shared/OnlineSubscribableSource";
+import type { OnlineSubscribableValues } from "#src/models/shared/OnlineSubscribableValues";
 import type { Promisable } from "type-fest";
 import type { MultiWatchSources, WatchSource } from "vue";
 

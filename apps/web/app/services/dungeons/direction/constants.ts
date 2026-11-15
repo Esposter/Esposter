@@ -1,4 +1,4 @@
-import type { InteractableDirectionMap } from "@/models/dungeons/direction/InteractableDirectionMap";
+import type { InteractableDirectionMap } from "#src/models/dungeons/direction/InteractableDirectionMap";
 
 import { Direction } from "grid-engine";
 

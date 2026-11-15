@@ -1,4 +1,4 @@
-import type { SurveyConditionValue } from "@/models/resource/survey/SurveyConditionValue";
+import type { SurveyConditionValue } from "#src/models/resource/survey/SurveyConditionValue";
 
 // A decimal is held as a number only when writing that number back gives the text typed, so a point or a leading zero
 // Typed part way stays text the reader can keep typing

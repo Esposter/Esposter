@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-import MessageRightSideBarPane from "@/components/Message/RightSideBar/Pane.vue";
+import MessageRightSideBarPane from "#src/components/Message/RightSideBar/Pane.vue";
 import { mount } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 

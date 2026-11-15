@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { getSurveyChoiceListEditorOptions } from "@/services/resource/survey/getSurveyChoiceListEditorOptions";
-import { useAlertStore } from "@/store/alert";
+import { getSurveyChoiceListEditorOptions } from "#src/services/resource/survey/getSurveyChoiceListEditorOptions";
+import { useAlertStore } from "#src/store/alert";
 import { v7 } from "uuid";
 import { surveyImageChoiceSchema, SurveyNodeType } from "vue-survey-engine-headless";
 

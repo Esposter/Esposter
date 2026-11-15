@@ -1,7 +1,7 @@
-import type { SurveyConditionRow } from "@/models/resource/survey/SurveyConditionRow";
+import type { SurveyConditionRow } from "#src/models/resource/survey/SurveyConditionRow";
 
-import { SurveyConditionOperator } from "@/models/resource/survey/SurveyConditionOperator";
-import { buildSurveyConditionValue } from "@/services/resource/survey/buildSurveyConditionValue";
+import { SurveyConditionOperator } from "#src/models/resource/survey/SurveyConditionOperator";
+import { buildSurveyConditionValue } from "#src/services/resource/survey/buildSurveyConditionValue";
 
 // A reference to the answer, then the operator, then the value when the operator takes one
 export const buildSurveyConditionRow = ({ operator, questionName, value }: SurveyConditionRow): string => {

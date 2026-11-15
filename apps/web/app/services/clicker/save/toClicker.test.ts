@@ -2,9 +2,9 @@ import { BuildingMap } from "#shared/assets/clicker/data/BuildingMap";
 import { UpgradeMap } from "#shared/assets/clicker/data/upgrades/UpgradeMap";
 import { BuildingId } from "#shared/models/clicker/data/building/BuildingId";
 import { CursorUpgradeId } from "#shared/models/clicker/data/upgrade/CursorUpgradeId";
-import { createClicker } from "@/services/clicker/createClicker";
-import { toClicker } from "@/services/clicker/save/toClicker";
-import { toClickerSave } from "@/services/clicker/save/toClickerSave";
+import { createClicker } from "#src/services/clicker/createClicker";
+import { toClicker } from "#src/services/clicker/save/toClicker";
+import { toClickerSave } from "#src/services/clicker/save/toClickerSave";
 import { describe, expect, test } from "vitest";
 
 describe(toClicker, () => {

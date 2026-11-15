@@ -1,4 +1,4 @@
-import { useDungeonsStore } from "@/store/dungeons";
+import { useDungeonsStore } from "#src/store/dungeons/index";
 
 export const usePlayerStore = defineStore("dungeons/player", () => {
   const dungeonsStore = useDungeonsStore();

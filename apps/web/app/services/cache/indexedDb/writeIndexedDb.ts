@@ -1,10 +1,10 @@
-import type { IndexedDbDatabaseSchema } from "@/models/cache/indexedDb/IndexedDbDatabaseSchema";
-import type { IndexedDbStoreConfiguration } from "@/models/cache/indexedDb/IndexedDbStoreConfiguration";
-import type { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStoreName";
+import type { IndexedDbDatabaseSchema } from "#src/models/cache/indexedDb/IndexedDbDatabaseSchema";
+import type { IndexedDbStoreConfiguration } from "#src/models/cache/indexedDb/IndexedDbStoreConfiguration";
+import type { IndexedDbStoreName } from "#src/models/cache/indexedDb/IndexedDbStoreName";
 import type { DatabaseIndexKey, DatabaseIndexName } from "@esposter/shared";
 
-import { getCachedItems } from "@/services/cache/indexedDb/getCachedItems";
-import { openIndexedDb } from "@/services/cache/indexedDb/openIndexedDb";
+import { getCachedItems } from "#src/services/cache/indexedDb/getCachedItems";
+import { openIndexedDb } from "#src/services/cache/indexedDb/openIndexedDb";
 import { toRawDeep } from "@esposter/shared";
 
 export const writeIndexedDb = async <

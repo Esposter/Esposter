@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
-import ResourceSurveyCreatorCanvas from "@/components/Resource/Survey/Creator/Canvas.vue";
-import { useSurveyCreatorStore } from "@/store/survey/creator";
+import ResourceSurveyCreatorCanvas from "#src/components/Resource/Survey/Creator/Canvas.vue";
+import { useSurveyCreatorStore } from "#src/store/survey/creator";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 import { surveyDocumentSchema, SurveyNodeType } from "vue-survey-engine-headless";

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { getSurveyDropSlots } from "@/services/resource/survey/getSurveyDropSlots";
-import { SurveyNodeTypeIconMap } from "@/services/resource/survey/SurveyNodeTypeIconMap";
-import { useSurveyCreatorStore } from "@/store/survey/creator";
+import { getSurveyDropSlots } from "#src/services/resource/survey/getSurveyDropSlots";
+import { SurveyNodeTypeIconMap } from "#src/services/resource/survey/SurveyNodeTypeIconMap";
+import { useSurveyCreatorStore } from "#src/store/survey/creator";
 import { surveyNodeTypeDefinitionMap } from "vue-survey-engine-headless";
 
 // The survey drawn as a respondent would see it, with no answers and nothing to type into. Each page is a heading over its

@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { BackgroundMusicKey } from "@/models/dungeons/keys/sound/BackgroundMusicKey";
-import { getActiveInputResolvers } from "@/services/dungeons/scene/world/getActiveInputResolvers";
-import { playDungeonsBackgroundMusic } from "@/services/dungeons/sound/playDungeonsBackgroundMusic";
+import { SceneKey } from "#src/models/dungeons/keys/SceneKey";
+import { BackgroundMusicKey } from "#src/models/dungeons/keys/sound/BackgroundMusicKey";
+import { getActiveInputResolvers } from "#src/services/dungeons/scene/world/getActiveInputResolvers";
+import { playDungeonsBackgroundMusic } from "#src/services/dungeons/sound/playDungeonsBackgroundMusic";
 import { useCameraStore } from "vue-phaserjs";
 
 const cameraStore = useCameraStore();

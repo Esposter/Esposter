@@ -1,7 +1,7 @@
-import { RECENT_PAGE_EXCLUDED_PATHS } from "@/services/app/constants";
-import { getPageTitle } from "@/services/app/getPageTitle";
-import { usePageMarkStore } from "@/store/pageMark";
-import { useRecentPageStore } from "@/store/recentPage";
+import { RECENT_PAGE_EXCLUDED_PATHS } from "#src/services/app/constants";
+import { getPageTitle } from "#src/services/app/getPageTitle";
+import { usePageMarkStore } from "#src/store/pageMark";
+import { useRecentPageStore } from "#src/store/recentPage";
 
 // Records each page the reader lands on for the dock's recent pages, and the title its head settles on beside the
 // Mark the page declares

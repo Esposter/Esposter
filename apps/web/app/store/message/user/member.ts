@@ -1,15 +1,15 @@
 import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
 import type { PublicUser } from "@esposter/db-schema";
 
-import { MemberCounts } from "@/models/message/user/MemberCounts";
-import { compareText } from "@/services/message/member/compareText";
-import { foldAsciiCase } from "@/services/message/member/foldAsciiCase";
-import { memberRoleChangeHooks } from "@/services/message/member/memberRoleChangeHooks";
-import { createBatchedRefresh } from "@/services/shared/createBatchedRefresh";
-import { createOperationData } from "@/services/shared/createOperationData";
-import { useRoomStore } from "@/store/message/room";
-import { useRoleStore } from "@/store/message/room/role";
-import { useUserStore } from "@/store/message/user";
+import { MemberCounts } from "#src/models/message/user/MemberCounts";
+import { compareText } from "#src/services/message/member/compareText";
+import { foldAsciiCase } from "#src/services/message/member/foldAsciiCase";
+import { memberRoleChangeHooks } from "#src/services/message/member/memberRoleChangeHooks";
+import { createBatchedRefresh } from "#src/services/shared/createBatchedRefresh";
+import { createOperationData } from "#src/services/shared/createOperationData";
+import { useRoomStore } from "#src/store/message/room/index";
+import { useRoleStore } from "#src/store/message/room/role";
+import { useUserStore } from "#src/store/message/user/index";
 import { DerivedDatabaseEntityType } from "@esposter/db-schema";
 import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 

@@ -1,6 +1,6 @@
 import type { PublicUser } from "@esposter/db-schema";
 
-import { useStatusStore } from "@/store/message/user/status";
+import { useStatusStore } from "#src/store/message/user/status";
 
 export const useReadUserStatuses = () => {
   const { $trpc } = useNuxtApp();

@@ -1,5 +1,5 @@
-import { DASHBOARD_VIEW_SEPARATOR } from "@/services/dashboard/chart/constants";
-import { parseViewEntry } from "@/services/dashboard/chart/parseViewEntry";
+import { DASHBOARD_VIEW_SEPARATOR } from "#src/services/dashboard/chart/constants";
+import { parseViewEntry } from "#src/services/dashboard/chart/parseViewEntry";
 
 // This visual's view replaces whatever the link said about it and leaves every other visual's entry alone, so a
 // Reader who adjusts a second chart sends a link carrying both. An empty token is a visual with no view worth

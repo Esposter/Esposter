@@ -1,7 +1,7 @@
-import { NullStrategy } from "@/models/resource/sheet/commands/NullStrategy";
-import { NullStrategyCommand } from "@/models/resource/sheet/commands/NullStrategyCommand";
-import { getNullAffectedCells } from "@/services/resource/sheet/commands/getNullAffectedCells";
-import { getNullAffectedRows } from "@/services/resource/sheet/commands/getNullAffectedRows";
+import { NullStrategy } from "#src/models/resource/sheet/commands/NullStrategy";
+import { NullStrategyCommand } from "#src/models/resource/sheet/commands/NullStrategyCommand";
+import { getNullAffectedCells } from "#src/services/resource/sheet/commands/getNullAffectedCells";
+import { getNullAffectedRows } from "#src/services/resource/sheet/commands/getNullAffectedRows";
 
 export const useNullStrategy = () =>
   useSheetCommand((dataSource, strategy: NullStrategy) => {

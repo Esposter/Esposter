@@ -1,4 +1,4 @@
-import type { MutationStatus } from "@/models/shared/MutationStatus";
+import type { MutationStatus } from "#src/models/shared/MutationStatus";
 
 // The four ways a call can end, so a caller can tell a persisted write from one that was dropped as a duplicate,
 // Superseded by a newer call, or rejected — the operation's own rejection never escapes, so this is the only

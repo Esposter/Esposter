@@ -1,4 +1,4 @@
-import type { EmailCanvasContext } from "@/models/pageBuilder/EmailCanvasContext";
+import type { EmailCanvasContext } from "#src/models/pageBuilder/EmailCanvasContext";
 import type { MjmlNode } from "mjml-blocks";
 
 // A container draws the children it holds, and a labelled box when it holds none, so the tree stays visible

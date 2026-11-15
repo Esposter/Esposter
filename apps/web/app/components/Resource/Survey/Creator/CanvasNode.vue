@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { SurveyPlaceableNode } from "vue-survey-engine-headless";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useSurveyCreatorStore } from "@/store/survey/creator";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { useSurveyCreatorStore } from "#src/store/survey/creator";
 import { SurveyNodeType } from "vue-survey-engine-headless";
 
 interface Props {

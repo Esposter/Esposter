@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-import { getKeyStep } from "@/services/dashboard/grid/getKeyStep";
+import { getKeyStep } from "#src/services/dashboard/grid/getKeyStep";
 import { describe, expect, test } from "vitest";
 
 describe("getKeyStep", () => {

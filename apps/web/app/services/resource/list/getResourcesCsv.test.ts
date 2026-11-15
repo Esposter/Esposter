@@ -1,7 +1,7 @@
 import { CsvDelimiter } from "#shared/models/resource/sheet/csv/CsvDelimiter";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
-import { RESOURCES_CSV_HEADER_TITLES } from "@/services/resource/list/constants";
-import { getResourcesCsv } from "@/services/resource/list/getResourcesCsv";
+import { RESOURCES_CSV_HEADER_TITLES } from "#src/services/resource/list/constants";
+import { getResourcesCsv } from "#src/services/resource/list/getResourcesCsv";
 import { describe, expect, test } from "vitest";
 
 describe(getResourcesCsv, () => {

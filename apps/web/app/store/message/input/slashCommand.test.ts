@@ -1,10 +1,10 @@
 // @vitest-environment nuxt
-import type { SlashCommand } from "@/models/message/slashCommands/SlashCommand";
+import type { SlashCommand } from "#src/models/message/slashCommands/SlashCommand";
 
-import { SlashCommandType } from "@/models/message/slashCommands/SlashCommandType";
-import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
-import { useInputStore } from "@/store/message/input";
-import { useSlashCommandStore } from "@/store/message/input/slashCommand";
+import { SlashCommandType } from "#src/models/message/slashCommands/SlashCommandType";
+import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
+import { useInputStore } from "#src/store/message/input/index";
+import { useSlashCommandStore } from "#src/store/message/input/slashCommand";
 import { ID_SEPARATOR } from "@esposter/shared";
 import { v7 } from "uuid";
 import { beforeEach, describe, expect, test } from "vitest";

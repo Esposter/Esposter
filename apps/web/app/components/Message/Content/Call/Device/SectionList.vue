@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { DeviceSection } from "@/models/message/room/call/DeviceSection";
-import type { UiListItem } from "@/models/ui/UiListItem";
+import type { DeviceSection } from "#src/models/message/room/call/DeviceSection";
+import type { UiListItem } from "#src/models/ui/UiListItem";
 
-import { MediaDeviceKindMetadataMap } from "@/services/message/room/call/MediaDeviceKindMetadataMap";
+import { MediaDeviceKindMetadataMap } from "#src/services/message/room/call/MediaDeviceKindMetadataMap";
 
 interface Props {
   sections: DeviceSection[];

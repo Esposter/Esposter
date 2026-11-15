@@ -1,7 +1,7 @@
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { checkIsValidResourceBlade } from "@/services/resource/checkIsValidResourceBlade";
-import { getRouteParam } from "@/util/router/getRouteParam";
+import { checkIsValidResourceBlade } from "#src/services/resource/checkIsValidResourceBlade";
+import { getRouteParam } from "#src/util/router/getRouteParam";
 
 // Per-type blade slugs need the loaded resource's type, so the blade is 404-guarded after load rather than in the
 // Page's validate, and watched because blade switches reuse the page instance

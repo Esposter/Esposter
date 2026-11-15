@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import type { IndexedRow } from "@/models/resource/sheet/commands/IndexedRow";
-import type { UiDataTableColumn } from "@/models/ui/UiDataTableColumn";
+import type { IndexedRow } from "#src/models/resource/sheet/commands/IndexedRow";
+import type { UiDataTableColumn } from "#src/models/ui/UiDataTableColumn";
 
 import { pluralize } from "#shared/util/text/pluralize";
-import { KeepDuplicateMode, KeepDuplicateModes } from "@/models/resource/sheet/commands/KeepDuplicateMode";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiDialogSize } from "@/models/ui/UiDialogSize";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { getVisibleEditableColumns } from "@/services/resource/sheet/column/getVisibleEditableColumns";
-import { findDuplicateRows } from "@/services/resource/sheet/commands/findDuplicateRows";
-import { useSheetStore } from "@/store/resource/sheet";
+import { KeepDuplicateMode, KeepDuplicateModes } from "#src/models/resource/sheet/commands/KeepDuplicateMode";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiDialogSize } from "#src/models/ui/UiDialogSize";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { getVisibleEditableColumns } from "#src/services/resource/sheet/column/getVisibleEditableColumns";
+import { findDuplicateRows } from "#src/services/resource/sheet/commands/findDuplicateRows";
+import { useSheetStore } from "#src/store/resource/sheet/index";
 import { takeOne } from "@esposter/shared";
 
 const isOpen = defineModel<boolean>({ default: false });

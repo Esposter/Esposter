@@ -1,16 +1,19 @@
 // @vitest-environment nuxt
 import type { RoomMessage } from "@esposter/db-schema";
 
-import { useMessageEvents } from "@/composables/message/events/useMessageEvents";
-import { openRealtimeSocket } from "@/services/realtime/openRealtimeSocket.test";
-import { useDataStore } from "@/store/message/data";
-import { useConnectionStore } from "@/store/realtime/connection";
+import { useMessageEvents } from "#src/composables/message/events/useMessageEvents";
+import { openRealtimeSocket } from "#src/services/realtime/openRealtimeSocket.test";
+import { useDataStore } from "#src/store/message/data";
+import { useConnectionStore } from "#src/store/realtime/connection";
 import { MessageType } from "@esposter/db-schema";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 
-vi.mock(import("@/services/realtime/openRealtimeSocket"), () => import("@/services/realtime/openRealtimeSocket.test"));
+vi.mock(
+  import("#src/services/realtime/openRealtimeSocket"),
+  () => import("#src/services/realtime/openRealtimeSocket.test"),
+);
 
 // A message as the room's object sends it: its integer id is the room's own, and the room is named by the socket instead
 const createRoomMessage = (id: number, message: string): RoomMessage => {

@@ -2,7 +2,7 @@ import type { BuildingWithStatistics } from "#shared/models/clicker/data/buildin
 import type { Effect } from "#shared/models/clicker/data/effect/Effect";
 
 import { EffectTypes } from "#shared/models/clicker/data/effect/EffectType";
-import { EffectOperatorMap } from "@/services/clicker/effect/EffectOperatorMap";
+import { EffectOperatorMap } from "#src/services/clicker/effect/EffectOperatorMap";
 
 export const applyEffects = (basePower: number, allEffects: Effect[], boughtBuildings: BuildingWithStatistics[]) => {
   let resultPower = basePower;

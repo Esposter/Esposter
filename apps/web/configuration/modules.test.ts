@@ -1,4 +1,4 @@
-import packageJson from "@@/package.json" with { type: "json" };
+import packageJson from "#package.json" with { type: "json" };
 import { describe, expect, test } from "vitest";
 
 import { nonVitestModules } from "./modules.ts";

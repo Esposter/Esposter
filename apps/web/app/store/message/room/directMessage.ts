@@ -2,10 +2,10 @@ import type { DirectMessageParticipant } from "#shared/models/db/room/DirectMess
 import type { HideDirectMessageInput } from "#shared/models/db/room/HideDirectMessageInput";
 import type { PublicUser, RoomInMessage } from "@esposter/db-schema";
 
-import { authClient } from "@/services/auth/authClient";
-import { createOperationData } from "@/services/shared/createOperationData";
-import { useDataStore } from "@/store/message/data";
-import { useRoomStore } from "@/store/message/room";
+import { authClient } from "#src/services/auth/authClient";
+import { createOperationData } from "#src/services/shared/createOperationData";
+import { useDataStore } from "#src/store/message/data";
+import { useRoomStore } from "#src/store/message/room/index";
 import { DerivedDatabaseEntityType, MessageType } from "@esposter/db-schema";
 import { ID_SEPARATOR, RoutePath, takeOne } from "@esposter/shared";
 

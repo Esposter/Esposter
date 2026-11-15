@@ -1,5 +1,5 @@
 // @unocss-include
-import type { ListLinkItem } from "@/models/shared/ListLinkItem";
+import type { ListLinkItem } from "#src/models/shared/ListLinkItem";
 
 import { RoutePath } from "@esposter/shared";
 

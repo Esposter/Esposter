@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
-import type { WhiteboardEditState } from "@/models/whiteboard/WhiteboardEditState";
+import type { WhiteboardEditState } from "#src/models/whiteboard/WhiteboardEditState";
 
-import { useWhiteboardKeyboard } from "@/composables/whiteboard/useWhiteboardKeyboard";
-import { GestureTool } from "@/models/whiteboard/GestureTool";
+import { useWhiteboardKeyboard } from "#src/composables/whiteboard/useWhiteboardKeyboard";
+import { GestureTool } from "#src/models/whiteboard/GestureTool";
 import {
   createWhiteboardEditState,
   pressKey,
@@ -10,12 +10,12 @@ import {
   WHITEBOARD_ARROW_ID,
   WHITEBOARD_PROCESS,
   WHITEBOARD_PROCESS_ID,
-} from "@/services/whiteboard/constants.test";
-import { applyWhiteboardEdit } from "@/services/whiteboard/edit/applyWhiteboardEdit";
-import { WHITEBOARD_DUPLICATE_OFFSET } from "@/services/whiteboard/edit/constants";
-import { getMoveOperations } from "@/services/whiteboard/gesture/getMoveOperations";
-import { WHITEBOARD_NUDGE_LARGE_STEP, WHITEBOARD_NUDGE_STEP } from "@/services/whiteboard/keyboard/constants";
-import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
+} from "#src/services/whiteboard/constants.test";
+import { applyWhiteboardEdit } from "#src/services/whiteboard/edit/applyWhiteboardEdit";
+import { WHITEBOARD_DUPLICATE_OFFSET } from "#src/services/whiteboard/edit/constants";
+import { getMoveOperations } from "#src/services/whiteboard/gesture/getMoveOperations";
+import { WHITEBOARD_NUDGE_LARGE_STEP, WHITEBOARD_NUDGE_STEP } from "#src/services/whiteboard/keyboard/constants";
+import { useWhiteboardEditorStore } from "#src/store/resource/whiteboard/editor";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { ExecuteAdminActionInput } from "#shared/models/db/moderation/ExecuteAdminActionInput";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
-import { UiDialogSize } from "@/models/ui/UiDialogSize";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
+import { UiDialogSize } from "#src/models/ui/UiDialogSize";
 
 interface Props {
   getInput: (roomId: string) => ExecuteAdminActionInput;

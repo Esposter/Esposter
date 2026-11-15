@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-import { useDocumentPictureInPicture } from "@/composables/useDocumentPictureInPicture";
+import { useDocumentPictureInPicture } from "#src/composables/useDocumentPictureInPicture";
 import { afterEach, assert, describe, expect, test, vi } from "vitest";
 
 describe(useDocumentPictureInPicture, () => {

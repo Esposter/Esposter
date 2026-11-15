@@ -2,8 +2,8 @@ import type { Dataset } from "#shared/models/dataset/Dataset";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
-import { datasetToDataSource } from "@/services/resource/sheet/dataSource/datasetToDataSource";
-import { reconcileDataSource } from "@/services/resource/sheet/dataSource/reconcileDataSource";
+import { datasetToDataSource } from "#src/services/resource/sheet/dataSource/datasetToDataSource";
+import { reconcileDataSource } from "#src/services/resource/sheet/dataSource/reconcileDataSource";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 

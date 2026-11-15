@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { UiStatus } from "@/models/ui/UiStatus";
+import type { UiStatus } from "#src/models/ui/UiStatus";
 
-import { MediaDeviceKind } from "@/models/message/room/call/MediaDeviceKind";
-import { MediaDeviceKindMetadataMap } from "@/services/message/room/call/MediaDeviceKindMetadataMap";
-import { ConnectionQualityMetadataMap } from "@/services/message/room/realtime/ConnectionQualityMetadataMap";
-import { ConnectionStateMetadataMap } from "@/services/message/room/realtime/ConnectionStateMetadataMap";
-import { useRealtimeStore } from "@/store/message/room/realtime";
-import { useVoiceDeviceSettingsStore } from "@/store/message/user/settings/voiceDevice";
+import { MediaDeviceKind } from "#src/models/message/room/call/MediaDeviceKind";
+import { MediaDeviceKindMetadataMap } from "#src/services/message/room/call/MediaDeviceKindMetadataMap";
+import { ConnectionQualityMetadataMap } from "#src/services/message/room/realtime/ConnectionQualityMetadataMap";
+import { ConnectionStateMetadataMap } from "#src/services/message/room/realtime/ConnectionStateMetadataMap";
+import { useRealtimeStore } from "#src/store/message/room/realtime";
+import { useVoiceDeviceSettingsStore } from "#src/store/message/user/settings/voiceDevice";
 
 const realtimeStore = useRealtimeStore();
 const { connectionQuality, connectionState } = storeToRefs(realtimeStore);

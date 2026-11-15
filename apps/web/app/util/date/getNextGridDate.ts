@@ -1,4 +1,4 @@
-import { getStartOfWeek } from "@/util/date/getStartOfWeek";
+import { getStartOfWeek } from "#src/util/date/getStartOfWeek";
 
 // The day a key moves a grid of days to, as the WAI-ARIA date grid walks one: a day or a week by arrow, the week's ends
 // By Home and End, and a month by Page Up and Page Down, a year with Shift. Any other key moves nowhere, nor does a key

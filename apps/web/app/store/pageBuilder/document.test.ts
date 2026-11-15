@@ -2,8 +2,8 @@
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 
 import { TEST_LANG } from "#shared/services/pageBuilder/constants.test";
-import { webpageKind } from "@/services/pageBuilder/webpageKind";
-import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
+import { webpageKind } from "#src/services/pageBuilder/webpageKind";
+import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
 import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 

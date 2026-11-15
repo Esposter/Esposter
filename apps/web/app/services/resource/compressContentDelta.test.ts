@@ -1,5 +1,5 @@
-import { compressContentDelta } from "@/services/resource/compressContentDelta";
-import { instantiateZstdEncoder } from "@/services/resource/instantiateZstdEncoder";
+import { compressContentDelta } from "#src/services/resource/compressContentDelta";
+import { instantiateZstdEncoder } from "#src/services/resource/instantiateZstdEncoder";
 import { getWindowLog } from "@esposter/shared";
 import { readFile } from "node:fs/promises";
 import { constants, zstdDecompressSync } from "node:zlib";

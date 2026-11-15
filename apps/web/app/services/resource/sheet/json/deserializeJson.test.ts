@@ -1,8 +1,8 @@
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
-import { JSON_SETTINGS } from "@/services/resource/sheet/json/constants.test";
-import { createJsonFile } from "@/services/resource/sheet/json/createJsonFile.test";
-import { deserializeJson } from "@/services/resource/sheet/json/deserializeJson";
+import { JSON_SETTINGS } from "#src/services/resource/sheet/json/constants.test";
+import { createJsonFile } from "#src/services/resource/sheet/json/createJsonFile.test";
+import { deserializeJson } from "#src/services/resource/sheet/json/deserializeJson";
 import { describe, expect, test } from "vitest";
 
 describe(deserializeJson, () => {

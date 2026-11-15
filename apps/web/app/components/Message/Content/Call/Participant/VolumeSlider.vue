@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { DEFAULT_PARTICIPANT_VOLUME_PERCENTAGE } from "@/services/message/room/call/constants";
-import { useMediaStore } from "@/store/message/room/call/media";
+import { DEFAULT_PARTICIPANT_VOLUME_PERCENTAGE } from "#src/services/message/room/call/constants";
+import { useMediaStore } from "#src/store/message/room/call/media";
 import { MAX_USER_VOLUME_PERCENTAGE } from "@esposter/db-schema";
 
 interface Props {

@@ -1,8 +1,8 @@
 import type { Item } from "#shared/models/dungeons/item/Item";
 
-import { Grid } from "@/models/dungeons/Grid";
-import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
-import { useInventorySceneStore } from "@/store/dungeons/inventory/scene";
+import { Grid } from "#src/models/dungeons/Grid";
+import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";
+import { useInventorySceneStore } from "#src/store/dungeons/inventory/scene";
 import { Direction } from "grid-engine";
 
 const ItemOptionGrid = new Grid<(Item | typeof PlayerSpecialInput.Cancel)[][]>({

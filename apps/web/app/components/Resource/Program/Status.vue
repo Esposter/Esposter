@@ -2,12 +2,12 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 
 import { ProgramInviteScope } from "#shared/models/resource/program/ProgramInviteScope";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { RESOURCE_DATE_TIME_ATTRIBUTES } from "@/services/resource/constants";
-import { ProgramStatusHeaders } from "@/services/resource/program/ProgramStatusHeaders";
-import { DATA_TABLE_ITEMS_PER_PAGE_OPTIONS } from "@/services/ui/constants";
-import { useProgramStore } from "@/store/resource/program";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { RESOURCE_DATE_TIME_ATTRIBUTES } from "#src/services/resource/constants";
+import { ProgramStatusHeaders } from "#src/services/resource/program/ProgramStatusHeaders";
+import { DATA_TABLE_ITEMS_PER_PAGE_OPTIONS } from "#src/services/ui/constants";
+import { useProgramStore } from "#src/store/resource/program/index";
 import { SurveyResponseMode } from "@esposter/db-schema";
 
 const { $trpc } = useNuxtApp();

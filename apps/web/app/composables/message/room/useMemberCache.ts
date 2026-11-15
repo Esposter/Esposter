@@ -1,7 +1,7 @@
-import { MemberIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MemberIndexedDbStoreConfiguration";
-import { useRoomStore } from "@/store/message/room";
-import { useUserStore } from "@/store/message/user";
-import { useMemberStore } from "@/store/message/user/member";
+import { MemberIndexedDbStoreConfiguration } from "#src/services/cache/indexedDb/configurations/MemberIndexedDbStoreConfiguration";
+import { useRoomStore } from "#src/store/message/room/index";
+import { useUserStore } from "#src/store/message/user/index";
+import { useMemberStore } from "#src/store/message/user/member";
 
 export const useMemberCache = () => {
   const roomStore = useRoomStore();

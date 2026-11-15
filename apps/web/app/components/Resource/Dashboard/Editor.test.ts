@@ -5,26 +5,26 @@ import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
 import { Visual } from "#shared/models/dashboard/data/Visual";
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
-import DashboardEditorGroupForm from "@/components/Dashboard/Editor/GroupForm.vue";
-import DashboardEditorPalette from "@/components/Dashboard/Editor/Palette.vue";
-import DashboardEditorSettings from "@/components/Dashboard/Editor/Settings.vue";
-import DashboardEditorVisualForm from "@/components/Dashboard/Editor/VisualForm.vue";
-import DashboardVisualPreviewContainer from "@/components/Dashboard/Visual/Preview/Container.vue";
-import EditorShell from "@/components/Editor/Shell.vue";
-import ResourceDashboardEditor from "@/components/Resource/Dashboard/Editor.vue";
-import UiRadioGroup from "@/components/Ui/RadioGroup.vue";
-import UiTextField from "@/components/Ui/TextField.vue";
-import { DashboardEditorRegion } from "@/models/dashboard/DashboardEditorRegion";
-import { DashboardSelectionKind } from "@/models/dashboard/DashboardSelectionKind";
-import { DashboardEditorRegistry } from "@/services/dashboard/editor/DashboardEditorRegistry";
-import { DashboardLayout } from "@/services/dashboard/editor/DashboardLayout";
-import { stubGridWidth } from "@/services/dashboard/grid/stubGridWidth.test";
-import { RESOURCE_AUTOSAVE_DEBOUNCE_MS } from "@/services/resource/constants";
-import { stubApexChartEngine } from "@/services/styled/stubApexChartEngine.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useDashboardStore } from "@/store/dashboard";
-import { useVisualStore } from "@/store/dashboard/visual";
-import { useResourceStore } from "@/store/resource";
+import DashboardEditorGroupForm from "#src/components/Dashboard/Editor/GroupForm.vue";
+import DashboardEditorPalette from "#src/components/Dashboard/Editor/Palette.vue";
+import DashboardEditorSettings from "#src/components/Dashboard/Editor/Settings.vue";
+import DashboardEditorVisualForm from "#src/components/Dashboard/Editor/VisualForm.vue";
+import DashboardVisualPreviewContainer from "#src/components/Dashboard/Visual/Preview/Container.vue";
+import EditorShell from "#src/components/Editor/Shell.vue";
+import ResourceDashboardEditor from "#src/components/Resource/Dashboard/Editor.vue";
+import UiRadioGroup from "#src/components/Ui/RadioGroup.vue";
+import UiTextField from "#src/components/Ui/TextField.vue";
+import { DashboardEditorRegion } from "#src/models/dashboard/DashboardEditorRegion";
+import { DashboardSelectionKind } from "#src/models/dashboard/DashboardSelectionKind";
+import { DashboardEditorRegistry } from "#src/services/dashboard/editor/DashboardEditorRegistry";
+import { DashboardLayout } from "#src/services/dashboard/editor/DashboardLayout";
+import { stubGridWidth } from "#src/services/dashboard/grid/stubGridWidth.test";
+import { RESOURCE_AUTOSAVE_DEBOUNCE_MS } from "#src/services/resource/constants";
+import { stubApexChartEngine } from "#src/services/styled/stubApexChartEngine.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useDashboardStore } from "#src/store/dashboard/index";
+import { useVisualStore } from "#src/store/dashboard/visual";
+import { useResourceStore } from "#src/store/resource/index";
 import { ResourceType } from "@esposter/db-schema";
 import { takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
@@ -36,7 +36,7 @@ import { checkLayout } from "vue-editor-layout-headless";
 // The window's size class decides whether the palette and the inspector are docked beside the grid or sheets over it,
 // So a test says how wide the window is before the editor mounts. A window is expanded unless a test says otherwise
 const display = vi.hoisted(() => ({ isCompact: false, isMobile: false }));
-vi.mock(import("@/composables/ui/useUiDisplay"), async (importOriginal) => {
+vi.mock(import("#src/composables/ui/useUiDisplay"), async (importOriginal) => {
   const actual = await importOriginal();
 
   return {

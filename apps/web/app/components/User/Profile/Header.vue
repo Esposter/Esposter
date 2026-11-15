@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { PublicUser } from "@esposter/db-schema";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { RoutePath } from "@esposter/shared";
 
 interface Props {

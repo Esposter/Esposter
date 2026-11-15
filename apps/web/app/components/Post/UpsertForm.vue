@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { PostInPost } from "@esposter/db-schema";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiRules } from "@/services/ui/UiRules";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiRules } from "#src/services/ui/UiRules";
 import { POST_TITLE_MAX_LENGTH } from "@esposter/db-schema";
 
 interface Props {

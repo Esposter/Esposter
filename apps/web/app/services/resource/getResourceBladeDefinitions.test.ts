@@ -1,9 +1,9 @@
 // @vitest-environment happy-dom
 // The editor component map reaches browser-only editors, which touch `window` at import time
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { ResourceBladeType } from "@/models/resource/ResourceBladeType";
-import { checkIsValidResourceBlade } from "@/services/resource/checkIsValidResourceBlade";
-import { getResourceBladeDefinitions } from "@/services/resource/getResourceBladeDefinitions";
+import { ResourceBladeType } from "#src/models/resource/ResourceBladeType";
+import { checkIsValidResourceBlade } from "#src/services/resource/checkIsValidResourceBlade";
+import { getResourceBladeDefinitions } from "#src/services/resource/getResourceBladeDefinitions";
 import { ResourceType, ResourceTypes } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";

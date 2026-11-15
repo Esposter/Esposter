@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import type { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 
 import { Button } from "@vuetify/v0";
 

@@ -1,4 +1,4 @@
-import { db } from "#server/db";
+import { db } from "#server/db/index";
 import { readSession } from "#server/services/auth/readSession";
 import { RATE_LIMITER_BYPASS_LOG_MESSAGE } from "#server/services/rateLimiter/constants";
 import { getIpAddress } from "#server/services/request/getIpAddress";

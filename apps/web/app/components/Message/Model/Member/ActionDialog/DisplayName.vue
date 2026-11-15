@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { MemberActionDialogProps } from "@/models/message/member/MemberActionDialogProps";
+import type { MemberActionDialogProps } from "#src/models/message/member/MemberActionDialogProps";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
-import { UiDialogSize } from "@/models/ui/UiDialogSize";
-import { useMemberStore } from "@/store/message/user/member";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
+import { UiDialogSize } from "#src/models/ui/UiDialogSize";
+import { useMemberStore } from "#src/store/message/user/member";
 
 const isOpen = defineModel<boolean>({ default: false });
 const { displayName, roomId, user } = defineProps<MemberActionDialogProps>();

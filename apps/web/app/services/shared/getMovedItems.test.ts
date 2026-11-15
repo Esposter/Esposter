@@ -1,4 +1,4 @@
-import { getMovedItems } from "@/services/shared/getMovedItems";
+import { getMovedItems } from "#src/services/shared/getMovedItems";
 import { describe, expect, test } from "vitest";
 
 describe(getMovedItems, () => {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { SPINNER_FRAMES, SPINNER_INTERVAL_MS } from "@/services/ui/constants";
+import { SPINNER_FRAMES, SPINNER_INTERVAL_MS } from "#src/services/ui/constants";
 import { takeOne } from "@esposter/shared";
 
 const uiStyle = useUiStyle();

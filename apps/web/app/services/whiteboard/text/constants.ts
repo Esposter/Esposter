@@ -1,4 +1,4 @@
-import type { UiMenuItem } from "@/models/ui/UiMenuItem";
+import type { UiMenuItem } from "#src/models/ui/UiMenuItem";
 import type { CSSProperties } from "vue";
 
 import { HorizontalAlignment, TextAnchor, TextSize, VerticalAlignment } from "vue-block-editor-headless";

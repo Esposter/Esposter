@@ -1,8 +1,8 @@
-import type { DropIndicator } from "@/models/pageBuilder/DropIndicator";
-import type { DropIndicatorInput } from "@/models/pageBuilder/DropIndicatorInput";
+import type { DropIndicator } from "#src/models/pageBuilder/DropIndicator";
+import type { DropIndicatorInput } from "#src/models/pageBuilder/DropIndicatorInput";
 
-import { DropIndicatorKind } from "@/models/pageBuilder/DropIndicatorKind";
-import { getLineBox } from "@/services/pageBuilder/getLineBox";
+import { DropIndicatorKind } from "#src/models/pageBuilder/DropIndicatorKind";
+import { getLineBox } from "#src/services/pageBuilder/getLineBox";
 
 // The indicator of a drop: a line where the block lands among the children of its slot, or an outline of the slot's owner
 // When the slot is empty. None when the boxes it would be drawn in are not measured

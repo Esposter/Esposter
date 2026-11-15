@@ -2,22 +2,22 @@
 import type { Point } from "vue-block-editor-headless";
 import type { Context } from "vue-editor-layout-headless";
 
-import { useWhiteboardArrangeKeyboard } from "@/composables/whiteboard/useWhiteboardArrangeKeyboard";
-import { useWhiteboardContextMenu } from "@/composables/whiteboard/useWhiteboardContextMenu";
-import { useWhiteboardGesture } from "@/composables/whiteboard/useWhiteboardGesture";
-import { useWhiteboardKeyboard } from "@/composables/whiteboard/useWhiteboardKeyboard";
-import { useWhiteboardTextEdit } from "@/composables/whiteboard/useWhiteboardTextEdit";
-import { useWhiteboardViewportKeyboard } from "@/composables/whiteboard/useWhiteboardViewportKeyboard";
-import { EditorType } from "@/models/editor/EditorType";
-import { getHitElementId } from "@/services/whiteboard/gesture/getHitElementId";
-import { getHitTolerance } from "@/services/whiteboard/gesture/getHitTolerance";
-import { getWorldPoint } from "@/services/whiteboard/gesture/getWorldPoint";
-import { WHITEBOARD_LAYOUT, WHITEBOARD_REGION_NAME_MAP } from "@/services/whiteboard/layout/constants";
-import { getWhiteboardSelectionKind } from "@/services/whiteboard/layout/getWhiteboardSelectionKind";
-import { WhiteboardContentComponentMap } from "@/services/whiteboard/layout/WhiteboardContentComponentMap";
-import { useWhiteboardStore } from "@/store/resource/whiteboard";
-import { useWhiteboardDialogStore } from "@/store/resource/whiteboard/dialog";
-import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
+import { useWhiteboardArrangeKeyboard } from "#src/composables/whiteboard/useWhiteboardArrangeKeyboard";
+import { useWhiteboardContextMenu } from "#src/composables/whiteboard/useWhiteboardContextMenu";
+import { useWhiteboardGesture } from "#src/composables/whiteboard/useWhiteboardGesture";
+import { useWhiteboardKeyboard } from "#src/composables/whiteboard/useWhiteboardKeyboard";
+import { useWhiteboardTextEdit } from "#src/composables/whiteboard/useWhiteboardTextEdit";
+import { useWhiteboardViewportKeyboard } from "#src/composables/whiteboard/useWhiteboardViewportKeyboard";
+import { EditorType } from "#src/models/editor/EditorType";
+import { getHitElementId } from "#src/services/whiteboard/gesture/getHitElementId";
+import { getHitTolerance } from "#src/services/whiteboard/gesture/getHitTolerance";
+import { getWorldPoint } from "#src/services/whiteboard/gesture/getWorldPoint";
+import { WHITEBOARD_LAYOUT, WHITEBOARD_REGION_NAME_MAP } from "#src/services/whiteboard/layout/constants";
+import { getWhiteboardSelectionKind } from "#src/services/whiteboard/layout/getWhiteboardSelectionKind";
+import { WhiteboardContentComponentMap } from "#src/services/whiteboard/layout/WhiteboardContentComponentMap";
+import { useWhiteboardDialogStore } from "#src/store/resource/whiteboard/dialog";
+import { useWhiteboardEditorStore } from "#src/store/resource/whiteboard/editor";
+import { useWhiteboardStore } from "#src/store/resource/whiteboard/index";
 import { getExportBounds } from "vue-block-editor-headless";
 
 // The whiteboard's editor, drawn by the editor shell over the whiteboard's layout and registry. The canvas is the shell's default slot.

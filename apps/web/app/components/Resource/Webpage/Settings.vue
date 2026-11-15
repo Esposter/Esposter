@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { WEBPAGE_DESCRIPTION_MAX_LENGTH } from "#shared/services/resource/constants";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { createErrorAlert } from "@/services/trpc/createErrorAlert";
-import { useResourceStore } from "@/store/resource";
-import { useWebpageEditorStore } from "@/store/webpageEditor";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
+import { useResourceStore } from "#src/store/resource/index";
+import { useWebpageEditorStore } from "#src/store/webpageEditor/index";
 import { ResourceType } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
 

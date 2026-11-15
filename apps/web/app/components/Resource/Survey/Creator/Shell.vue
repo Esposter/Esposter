@@ -1,21 +1,21 @@
 <script setup lang="ts">
-import type { UiCommand } from "@/models/ui/UiCommand";
+import type { UiCommand } from "#src/models/ui/UiCommand";
 import type { Context } from "vue-editor-layout-headless";
 
-import { EditorType } from "@/models/editor/EditorType";
-import { SurveyEditorSelectionKind } from "@/models/resource/survey/SurveyEditorSelectionKind";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { EditorType } from "#src/models/editor/EditorType";
+import { SurveyEditorSelectionKind } from "#src/models/resource/survey/SurveyEditorSelectionKind";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import {
   SURVEY_CREATOR_COMMAND_GROUP,
   SURVEY_DESIGN_MODE,
   SURVEY_PREVIEW_MODE,
-} from "@/services/resource/survey/constants";
-import { SurveyEditorLayout } from "@/services/resource/survey/SurveyEditorLayout";
-import { SurveyEditorPanelNameMap } from "@/services/resource/survey/SurveyEditorPanelNameMap";
-import { SurveyEditorRegionNameMap } from "@/services/resource/survey/SurveyEditorRegionNameMap";
-import { SurveyEditorRegistry } from "@/services/resource/survey/SurveyEditorRegistry";
-import { getHistoryCommands } from "@/services/ui/getHistoryCommands";
-import { useSurveyCreatorStore } from "@/store/survey/creator";
+} from "#src/services/resource/survey/constants";
+import { SurveyEditorLayout } from "#src/services/resource/survey/SurveyEditorLayout";
+import { SurveyEditorPanelNameMap } from "#src/services/resource/survey/SurveyEditorPanelNameMap";
+import { SurveyEditorRegionNameMap } from "#src/services/resource/survey/SurveyEditorRegionNameMap";
+import { SurveyEditorRegistry } from "#src/services/resource/survey/SurveyEditorRegistry";
+import { getHistoryCommands } from "#src/services/ui/getHistoryCommands";
+import { useSurveyCreatorStore } from "#src/store/survey/creator";
 import { noop } from "@esposter/shared";
 
 const surveyCreatorStore = useSurveyCreatorStore();

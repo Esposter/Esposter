@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { UserSettingsPageSection } from "@/models/user/UserSettingsPageSection";
-import { UserSettingsPageLinkItem } from "@/services/app/UserSettingsPageLinkItem";
+import { UserSettingsPageSection } from "#src/models/user/UserSettingsPageSection";
+import { UserSettingsPageLinkItem } from "#src/services/app/UserSettingsPageLinkItem";
 
 definePageMeta({ middleware: "auth" });
 </script>

@@ -1,4 +1,4 @@
-import { mod } from "@/util/math/mod";
+import { mod } from "#src/util/math/mod";
 import { describe, expect, test } from "vitest";
 
 describe(mod, () => {

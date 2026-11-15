@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import ResourceServiceMenu from "@/components/Resource/ServiceMenu.vue";
+import ResourceServiceMenu from "#src/components/Resource/ServiceMenu.vue";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";

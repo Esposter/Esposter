@@ -1,9 +1,9 @@
 import type { Visual } from "#shared/models/dashboard/data/Visual";
 
 import { listVisuals } from "#shared/services/dashboard/listVisuals";
-import { checkIsMoveRefused } from "@/services/dashboard/visual/checkIsMoveRefused";
-import { findVisualLocation } from "@/services/dashboard/visual/findVisualLocation";
-import { getGroupTitle } from "@/services/dashboard/visual/getGroupTitle";
+import { checkIsMoveRefused } from "#src/services/dashboard/visual/checkIsMoveRefused";
+import { findVisualLocation } from "#src/services/dashboard/visual/findVisualLocation";
+import { getGroupTitle } from "#src/services/dashboard/visual/getGroupTitle";
 
 const DASHBOARD_OPTION_TITLE = "Dashboard";
 // The lists a visual can move to from its own list, as radio options whose value is the group's id, and "" for the

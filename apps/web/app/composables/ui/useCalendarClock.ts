@@ -1,4 +1,4 @@
-import { CALENDAR_CLOCK_INTERVAL_MS } from "@/services/ui/constants";
+import { CALENDAR_CLOCK_INTERVAL_MS } from "#src/services/ui/constants";
 import { getZonedDateTime } from "@esposter/shared";
 
 // The time where the reader is, read again every minute, so a calendar left open past midnight moves on to the new day

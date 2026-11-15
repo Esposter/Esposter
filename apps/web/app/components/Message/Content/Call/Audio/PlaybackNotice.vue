@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiToken } from "@/models/ui/UiToken";
-import { useRealtimeStore } from "@/store/message/room/realtime";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiToken } from "#src/models/ui/UiToken";
+import { useRealtimeStore } from "#src/store/message/room/realtime";
 
 const realtimeStore = useRealtimeStore();
 const { startAudio } = realtimeStore;

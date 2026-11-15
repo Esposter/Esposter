@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 import type { PdfOutline } from "vue-pdfjs-headless";
 
-import { flattenOutline } from "@/services/pdf/flattenOutline";
+import { flattenOutline } from "#src/services/pdf/flattenOutline";
 import { describe, expect, test } from "vitest";
 
 const createNode = (title: string, items: PdfOutline = []): PdfOutline[number] => ({

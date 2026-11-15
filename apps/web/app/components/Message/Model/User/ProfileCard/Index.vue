@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
-import type { MemberDialogType } from "@/models/message/user/MemberDialogType";
+import type { MemberDialogType } from "#src/models/message/user/MemberDialogType";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useModerationNoteStore } from "@/store/message/moderation/note";
-import { useRoomStore } from "@/store/message/room";
-import { useRoleStore } from "@/store/message/room/role";
-import { useFriendStore } from "@/store/message/user/friend";
-import { useFriendRequestStore } from "@/store/message/user/friendRequest";
-import { useStatusStore } from "@/store/message/user/status";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { useModerationNoteStore } from "#src/store/message/moderation/note";
+import { useRoomStore } from "#src/store/message/room/index";
+import { useRoleStore } from "#src/store/message/room/role";
+import { useFriendStore } from "#src/store/message/user/friend";
+import { useFriendRequestStore } from "#src/store/message/user/friendRequest";
+import { useStatusStore } from "#src/store/message/user/status";
 import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 
 interface Props {

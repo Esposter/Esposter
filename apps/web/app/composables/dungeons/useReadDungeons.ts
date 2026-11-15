@@ -1,6 +1,6 @@
-import { toLocalDungeons } from "@/services/dungeons/toLocalDungeons";
-import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
-import { useDungeonsStore } from "@/store/dungeons";
+import { toLocalDungeons } from "#src/services/dungeons/toLocalDungeons";
+import { LocalStorageKey } from "#src/services/shared/LocalStorageKey";
+import { useDungeonsStore } from "#src/store/dungeons/index";
 
 export const useReadDungeons = async () => {
   const { $trpc } = useNuxtApp();

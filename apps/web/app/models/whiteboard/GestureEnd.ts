@@ -1,4 +1,4 @@
-import type { GesturePhase } from "@/models/whiteboard/GesturePhase";
+import type { GesturePhase } from "#src/models/whiteboard/GesturePhase";
 import type { ArrowEndKey, Point } from "vue-block-editor-headless";
 
 // A drag of one free end of a selected arrow. The end is moved with the pointer and bound where it is released on a shape. The press's screen point

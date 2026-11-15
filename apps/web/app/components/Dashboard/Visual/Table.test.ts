@@ -1,11 +1,11 @@
 // @vitest-environment nuxt
-import type { AxisVisualPropsData } from "@/models/dashboard/AxisVisualPropsData";
+import type { AxisVisualPropsData } from "#src/models/dashboard/AxisVisualPropsData";
 
 import { Visual } from "#shared/models/dashboard/data/Visual";
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
 import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregationType";
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
-import DashboardVisualTable from "@/components/Dashboard/Visual/Table.vue";
+import DashboardVisualTable from "#src/components/Dashboard/Visual/Table.vue";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { v7 } from "uuid";

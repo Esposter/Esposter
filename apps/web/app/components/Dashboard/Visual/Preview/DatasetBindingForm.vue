@@ -2,11 +2,11 @@
 import type { VisualDatasetBinding } from "#shared/models/dashboard/data/VisualDatasetBinding";
 
 import { DatasetAggregationType, DatasetAggregationTypes } from "#shared/models/dataset/DatasetAggregationType";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { authClient } from "@/services/auth/authClient";
-import { createErrorAlert } from "@/services/trpc/createErrorAlert";
-import { useAlertStore } from "@/store/alert";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { authClient } from "#src/services/auth/authClient";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
+import { useAlertStore } from "#src/store/alert";
 
 const modelValue = defineModel<undefined | VisualDatasetBinding>({ required: true });
 const { $trpc } = useNuxtApp();

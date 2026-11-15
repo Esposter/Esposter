@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { RightDrawerComponentMap } from "@/services/message/RightDrawerComponentMap";
-import { useMessageLayoutStore } from "@/store/message/ui/layout";
+import { RightDrawerComponentMap } from "#src/services/message/RightDrawerComponentMap";
+import { useMessageLayoutStore } from "#src/store/message/ui/layout";
 
 const messageLayoutStore = useMessageLayoutStore();
 const { rightDrawer, splitRightDrawer } = storeToRefs(messageLayoutStore);

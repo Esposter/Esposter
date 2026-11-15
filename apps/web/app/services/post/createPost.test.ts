@@ -1,6 +1,6 @@
 import type { PostInPostWithRelations } from "@esposter/db-schema";
 
-import { createUser } from "@/services/message/user/createUser.test";
+import { createUser } from "#src/services/message/user/createUser.test";
 import { v7 } from "uuid";
 import { describe } from "vitest";
 

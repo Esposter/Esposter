@@ -1,8 +1,8 @@
-import type { UiCommand } from "@/models/ui/UiCommand";
+import type { UiCommand } from "#src/models/ui/UiCommand";
 
-import { PAGE_BUILDER_COMMAND_GROUP } from "@/services/pageBuilder/constants";
-import { getHistoryCommands } from "@/services/ui/getHistoryCommands";
-import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
+import { PAGE_BUILDER_COMMAND_GROUP } from "#src/services/pageBuilder/constants";
+import { getHistoryCommands } from "#src/services/ui/getHistoryCommands";
+import { usePageBuilderHistoryStore } from "#src/store/pageBuilder/history";
 
 // A command titled with the edit it acts on, or with its bare verb when there is no edit to act on
 const getTitle = (verb: string, label: string) => (label ? `${verb} ${label}` : verb);

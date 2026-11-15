@@ -1,4 +1,4 @@
-import { getMemberDescription } from "@/services/message/member/getMemberDescription";
+import { getMemberDescription } from "#src/services/message/member/getMemberDescription";
 import { describe, expect, test } from "vitest";
 
 describe(getMemberDescription, () => {

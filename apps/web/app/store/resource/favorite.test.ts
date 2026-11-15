@@ -2,10 +2,10 @@
 import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
 
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
-import { CacheTag } from "@/models/cache/CacheTag";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useCacheStore } from "@/store/cache";
-import { useFavoriteStore } from "@/store/resource/favorite";
+import { CacheTag } from "#src/models/cache/CacheTag";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useCacheStore } from "#src/store/cache";
+import { useFavoriteStore } from "#src/store/resource/favorite";
 import { TRPCError } from "@trpc/server";
 import { describe, expect, test, vi } from "vitest";
 

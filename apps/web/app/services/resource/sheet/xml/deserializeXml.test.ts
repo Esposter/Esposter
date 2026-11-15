@@ -1,8 +1,8 @@
 // @vitest-environment happy-dom
 // The codec reads the document with DOMParser, which only a DOM environment supplies
-import { XML_SETTINGS } from "@/services/resource/sheet/xml/constants.test";
-import { createXmlFile } from "@/services/resource/sheet/xml/createXmlFile.test";
-import { deserializeXml } from "@/services/resource/sheet/xml/deserializeXml";
+import { XML_SETTINGS } from "#src/services/resource/sheet/xml/constants.test";
+import { createXmlFile } from "#src/services/resource/sheet/xml/createXmlFile.test";
+import { deserializeXml } from "#src/services/resource/sheet/xml/deserializeXml";
 import { describe, expect, test } from "vitest";
 
 describe(deserializeXml, () => {

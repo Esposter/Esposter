@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { PostInPostWithRelations } from "@esposter/db-schema";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { useCommentStore } from "@/store/post/comment";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { useCommentStore } from "#src/store/post/comment/index";
 
 interface Props {
   comment: PostInPostWithRelations;

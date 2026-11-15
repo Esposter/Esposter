@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { POST_FEED_SORT_TYPES } from "@/services/post/constants";
-import { getPostSortTypeItems } from "@/services/post/getPostSortTypeItems";
-import { usePostStore } from "@/store/post";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { POST_FEED_SORT_TYPES } from "#src/services/post/constants";
+import { getPostSortTypeItems } from "#src/services/post/getPostSortTypeItems";
+import { usePostStore } from "#src/store/post/index";
 import { RoutePath } from "@esposter/shared";
 
 const postSortTypeItems = getPostSortTypeItems(POST_FEED_SORT_TYPES);

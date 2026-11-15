@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import { trimFileExtension } from "@/util/file/trimFileExtension";
+import { trimFileExtension } from "#src/util/file/trimFileExtension";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { dirname } from "node:path";
 import { describe, expect, test } from "vitest";
@@ -15,10 +15,10 @@ describe("app", () => {
       Object.entries(
         import.meta.glob<Component>(
           [
-            "@/components/About/**/*.vue",
-            "@/components/Anime/**/*.vue",
-            "@/components/Nuxt/**/*.vue",
-            "@/components/Transition/**/*.vue",
+            "#src/components/About/**/*.vue",
+            "#src/components/Anime/**/*.vue",
+            "#src/components/Nuxt/**/*.vue",
+            "#src/components/Transition/**/*.vue",
           ],
           { eager: true, import: "default" },
         ),

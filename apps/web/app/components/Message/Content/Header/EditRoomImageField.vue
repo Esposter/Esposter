@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { validateFileWithAlert } from "@/services/file/validateFileWithAlert";
-import { createErrorAlert } from "@/services/trpc/createErrorAlert";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { validateFileWithAlert } from "#src/services/file/validateFileWithAlert";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { getResultAsync } from "@esposter/shared";
 
 interface Props {

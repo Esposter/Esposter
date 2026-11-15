@@ -1,7 +1,7 @@
-import type { DropTarget } from "@/models/pageBuilder/DropTarget";
+import type { DropTarget } from "#src/models/pageBuilder/DropTarget";
 import type { SurveyDocument, SurveyNodeType } from "vue-survey-engine-headless";
 
-import { getSurveyInsertPlaces } from "@/services/resource/survey/getSurveyInsertPlaces";
+import { getSurveyInsertPlaces } from "#src/services/resource/survey/getSurveyInsertPlaces";
 import { getAcceptedTypes } from "vue-block-editor-headless";
 import { surveyNodeChildren, surveyRegistry } from "vue-survey-engine-headless";
 

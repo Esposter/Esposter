@@ -1,11 +1,11 @@
 // @vitest-environment nuxt
-import ResourceSurveyCreatorChoiceListEditor from "@/components/Resource/Survey/Creator/ChoiceListEditor.vue";
-import { getButtonByText } from "@/components/Resource/Survey/Creator/getButtonByText.test";
-import ResourceSurveyCreatorMatrixColumnsEditor from "@/components/Resource/Survey/Creator/MatrixColumnsEditor.vue";
-import UiConfirmDialog from "@/components/Ui/ConfirmDialog.vue";
-import UiForm from "@/components/Ui/Form.vue";
-import UiSelect from "@/components/Ui/Select/Index.vue";
-import UiTextField from "@/components/Ui/TextField.vue";
+import ResourceSurveyCreatorChoiceListEditor from "#src/components/Resource/Survey/Creator/ChoiceListEditor.vue";
+import { getButtonByText } from "#src/components/Resource/Survey/Creator/getButtonByText.test";
+import ResourceSurveyCreatorMatrixColumnsEditor from "#src/components/Resource/Survey/Creator/MatrixColumnsEditor.vue";
+import UiConfirmDialog from "#src/components/Ui/ConfirmDialog.vue";
+import UiForm from "#src/components/Ui/Form.vue";
+import UiSelect from "#src/components/Ui/Select/Index.vue";
+import UiTextField from "#src/components/Ui/TextField.vue";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { assert, describe, expect, test } from "vitest";
 import { SurveyMatrixCellType } from "vue-survey-engine-headless";

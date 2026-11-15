@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { UiMenuItem } from "@/models/ui/UiMenuItem";
+import type { UiMenuItem } from "#src/models/ui/UiMenuItem";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { useSurveyCreatorStore } from "@/store/survey/creator";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { useSurveyCreatorStore } from "#src/store/survey/creator";
 import { SurveyProgressBarPlacement } from "vue-survey-engine-headless";
 
 const surveyCreatorStore = useSurveyCreatorStore();

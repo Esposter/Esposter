@@ -18,10 +18,10 @@ import { getTopRolePosition } from "#server/services/room/rbac/getTopRolePositio
 import { readRoleWithAuthority } from "#server/services/room/rbac/readRoleWithAuthority";
 import { setMemberPermissionOverride } from "#server/services/room/rbac/setMemberPermissionOverride";
 import { requireUserToRoom } from "#server/services/room/requireUserToRoom";
-import { router } from "#server/trpc";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
+import { router } from "#server/trpc/index";
 import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { getMemberProcedure } from "#server/trpc/procedure/room/getMemberProcedure";
 import { getPermissionsProcedure } from "#server/trpc/procedure/room/getPermissionsProcedure";

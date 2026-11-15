@@ -1,10 +1,10 @@
 import type { Monster } from "#shared/models/dungeons/monster/Monster";
 
 import { MONSTER_PARTY_MAX_LENGTH } from "#shared/services/dungeons/constants";
-import { SceneMode } from "@/models/dungeons/scene/monsterParty/SceneMode";
-import { checkIsMonsterFainted } from "@/services/dungeons/monster/checkIsMonsterFainted";
-import { COLUMN_SIZE } from "@/services/dungeons/scene/monsterParty/constants";
-import { usePlayerStore } from "@/store/dungeons/player";
+import { SceneMode } from "#src/models/dungeons/scene/monsterParty/SceneMode";
+import { checkIsMonsterFainted } from "#src/services/dungeons/monster/checkIsMonsterFainted";
+import { COLUMN_SIZE } from "#src/services/dungeons/scene/monsterParty/constants";
+import { usePlayerStore } from "#src/store/dungeons/player";
 
 export const useMonsterPartySceneStore = defineStore("dungeons/monsterParty/scene", () => {
   const playerStore = usePlayerStore();

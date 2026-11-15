@@ -5,7 +5,7 @@ import type { ItemEntityType } from "@esposter/shared";
 import type { Promisable } from "type-fest";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { useMonsterPartyInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
+import { useMonsterPartyInfoPanelStore } from "#src/store/dungeons/monsterParty/infoPanel";
 
 export abstract class AItemResolver implements ItemEntityType<ItemEffectType> {
   type;

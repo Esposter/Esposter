@@ -2,9 +2,9 @@ import type { ResourceInResource } from "@esposter/db-schema";
 
 import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
-import { CacheTag } from "@/models/cache/CacheTag";
-import { useCacheStore } from "@/store/cache";
-import { useNotificationStore } from "@/store/notification";
+import { CacheTag } from "#src/models/cache/CacheTag";
+import { useCacheStore } from "#src/store/cache";
+import { useNotificationStore } from "#src/store/notification";
 import { NotificationSeverity } from "@esposter/db-schema";
 import { MAX_READ_LIMIT, RoutePath, takeOne } from "@esposter/shared";
 

@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import type { TagRow } from "@/models/resource/TagRow";
+import type { TagRow } from "#src/models/resource/TagRow";
 import type { ResourceTags } from "@esposter/db-schema";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiDialogSize } from "@/models/ui/UiDialogSize";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { getResourceTags } from "@/services/resource/tag/getResourceTags";
-import { getTagRows } from "@/services/resource/tag/getTagRows";
-import { UiRules } from "@/services/ui/UiRules";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiDialogSize } from "#src/models/ui/UiDialogSize";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { getResourceTags } from "#src/services/resource/tag/getResourceTags";
+import { getTagRows } from "#src/services/resource/tag/getTagRows";
+import { UiRules } from "#src/services/ui/UiRules";
 import { MAX_TAG_NAME_LENGTH, MAX_TAG_VALUE_LENGTH, MAX_TAGS_COUNT } from "@esposter/db-schema";
 import { v7 } from "uuid";
 

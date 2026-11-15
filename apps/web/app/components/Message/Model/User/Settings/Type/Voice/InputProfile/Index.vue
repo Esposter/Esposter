@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { UserSettingsInMessage } from "@esposter/db-schema";
 
-import { NoiseSuppressionModeItems } from "@/services/message/user/settings/NoiseSuppressionModeItems";
-import { useUserSettingsStore } from "@/store/message/user/settings";
+import { NoiseSuppressionModeItems } from "#src/services/message/user/settings/NoiseSuppressionModeItems";
+import { useUserSettingsStore } from "#src/store/message/user/settings/index";
 
 interface Props {
   userSettings: UserSettingsInMessage;

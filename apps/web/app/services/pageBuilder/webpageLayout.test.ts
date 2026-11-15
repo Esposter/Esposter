@@ -1,8 +1,8 @@
 import {
   PAGE_BUILDER_CONTENT_KEY_MAP,
   PAGE_BUILDER_SELECTION_KIND_MAP,
-} from "@/services/pageBuilder/pageBuilderLayout";
-import { webpageLayout } from "@/services/pageBuilder/webpageLayout";
+} from "#src/services/pageBuilder/pageBuilderLayout";
+import { webpageLayout } from "#src/services/pageBuilder/webpageLayout";
 import { describe, expect, test } from "vitest";
 import { checkLayout } from "vue-editor-layout-headless";
 

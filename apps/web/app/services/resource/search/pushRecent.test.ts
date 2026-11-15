@@ -1,4 +1,4 @@
-import { pushRecent } from "@/services/resource/search/pushRecent";
+import { pushRecent } from "#src/services/resource/search/pushRecent";
 import { describe, expect, test } from "vitest";
 
 describe(pushRecent, () => {

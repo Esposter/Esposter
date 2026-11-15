@@ -1,4 +1,4 @@
-import { toIconMap } from "@/services/clicker/icon/toIconMap";
+import { toIconMap } from "#src/services/clicker/icon/toIconMap";
 import { describe, expect, test } from "vitest";
 
 describe(toIconMap, () => {

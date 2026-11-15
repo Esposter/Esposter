@@ -1,7 +1,7 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
 
-import { getResourceListSortName } from "@/services/resource/list/getResourceListSortName";
+import { getResourceListSortName } from "#src/services/resource/list/getResourceListSortName";
 import { SortOrder } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 

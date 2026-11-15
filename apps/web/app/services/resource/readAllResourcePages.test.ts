@@ -1,6 +1,6 @@
 import type { Page } from "@esposter/db-schema";
 
-import { readAllResourcePages } from "@/services/resource/readAllResourcePages";
+import { readAllResourcePages } from "#src/services/resource/readAllResourcePages";
 import { describe, expect, test, vi } from "vitest";
 
 describe(readAllResourcePages, () => {

@@ -2,7 +2,7 @@ import { createColumn } from "#shared/models/resource/sheet/column/createColumn.
 import { StringColumn } from "#shared/models/resource/sheet/column/StringColumn";
 import { createDataSource } from "#shared/models/resource/sheet/datasource/createDataSource.test";
 import { createRow } from "#shared/models/resource/sheet/datasource/createRow.test";
-import { findDuplicateRows } from "@/services/resource/sheet/commands/findDuplicateRows";
+import { findDuplicateRows } from "#src/services/resource/sheet/commands/findDuplicateRows";
 import { describe, expect, test } from "vitest";
 
 describe(findDuplicateRows, () => {

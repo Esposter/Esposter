@@ -1,6 +1,6 @@
-import type { SlashCommandMenuCommand } from "@/models/message/slashCommands/SlashCommandMenuCommand";
+import type { SlashCommandMenuCommand } from "#src/models/message/slashCommands/SlashCommandMenuCommand";
 
-import { SlashCommandType } from "@/models/message/slashCommands/SlashCommandType";
+import { SlashCommandType } from "#src/models/message/slashCommands/SlashCommandType";
 
 // The chip row focuses by index: the parameters count from 0, so the command input before them sits at -1 and
 // A row with nothing focused takes the next index past it

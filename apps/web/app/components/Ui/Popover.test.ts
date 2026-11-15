@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
-import UiPopover from "@/components/Ui/Popover.vue";
-import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
-import { UiStyles } from "@/models/ui/UiStyle";
+import UiPopover from "#src/components/Ui/Popover.vue";
+import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
+import { UiStyles } from "#src/models/ui/UiStyle";
 import { flushPromises, mount } from "@vue/test-utils";
 import { describe, expect, onTestFinished, test, vi } from "vitest";
 

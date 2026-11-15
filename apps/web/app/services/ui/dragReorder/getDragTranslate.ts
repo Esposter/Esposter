@@ -1,5 +1,5 @@
-import type { Drag } from "@/models/ui/dragReorder/Drag";
-import type { Press } from "@/models/ui/dragReorder/Press";
+import type { Drag } from "#src/models/ui/dragReorder/Drag";
+import type { Press } from "#src/models/ui/dragReorder/Press";
 
 import { takeOne } from "@esposter/shared";
 

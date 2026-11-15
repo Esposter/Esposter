@@ -3,10 +3,10 @@ import type { StartGenshinResult } from "#server/services/genshin/startGenshin";
 import type { VueWrapper } from "@vue/test-utils";
 import type { GenshinSave } from "genshin-world/save";
 
-import { useGenshinSave } from "@/composables/genshin/useGenshinSave";
-import { useSession } from "@/services/auth/authClient.test";
-import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
+import { useGenshinSave } from "#src/composables/genshin/useGenshinSave";
+import { useSession } from "#src/services/auth/authClient.test";
+import { LocalStorageKey } from "#src/services/shared/LocalStorageKey";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
@@ -14,7 +14,7 @@ import { EMPTY_GENSHIN_SAVE } from "genshin-world/save";
 import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
+vi.mock(import("#src/services/auth/authClient"), () => import("#src/services/auth/authClient.test"));
 
 describe(useGenshinSave, () => {
   const { trpcMsw } = setupMswTrpc();

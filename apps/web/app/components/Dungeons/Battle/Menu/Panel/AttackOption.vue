@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ActivePanel } from "@/models/dungeons/scene/battle/menu/ActivePanel";
-import { BLANK_VALUE } from "@/services/shared/constants";
-import { useBattleSceneStore } from "@/store/dungeons/battle/scene";
+import { ActivePanel } from "#src/models/dungeons/scene/battle/menu/ActivePanel";
+import { BLANK_VALUE } from "#src/services/shared/constants";
+import { useBattleSceneStore } from "#src/store/dungeons/battle/scene";
 
 const battleSceneStore = useBattleSceneStore();
 const { activePanel } = storeToRefs(battleSceneStore);

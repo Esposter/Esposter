@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { TOAST_DURATION_MS } from "@/services/ui/constants";
-import { useNotificationStore } from "@/store/notification";
+import { TOAST_DURATION_MS } from "#src/services/ui/constants";
+import { useNotificationStore } from "#src/store/notification";
 import { NotificationSeverity } from "@esposter/db-schema";
 
 const notificationStore = useNotificationStore();

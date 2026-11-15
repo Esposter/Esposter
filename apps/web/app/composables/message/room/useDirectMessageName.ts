@@ -1,7 +1,7 @@
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { getDirectMessageName } from "@/services/message/room/getDirectMessageName";
-import { useDirectMessageStore } from "@/store/message/room/directMessage";
+import { getDirectMessageName } from "#src/services/message/room/getDirectMessageName";
+import { useDirectMessageStore } from "#src/store/message/room/directMessage";
 
 export const useDirectMessageName = (room: MaybeRefOrGetter<RoomInMessage | undefined>) => {
   const directMessageStore = useDirectMessageStore();

@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import type { GesturePointerEvent } from "@/models/whiteboard/GesturePointerEvent";
-import type { GestureWheelEvent } from "@/models/whiteboard/GestureWheelEvent";
+import type { GesturePointerEvent } from "#src/models/whiteboard/GesturePointerEvent";
+import type { GestureWheelEvent } from "#src/models/whiteboard/GestureWheelEvent";
 import type { Point } from "vue-block-editor-headless";
 
 import { MimeType } from "#shared/models/file/MimeType";
-import { useInsertWhiteboardImages } from "@/composables/whiteboard/useInsertWhiteboardImages";
-import { GesturePointerAction } from "@/models/whiteboard/GesturePointerAction";
-import { getWorldPoint } from "@/services/whiteboard/gesture/getWorldPoint";
-import { useWhiteboardStore } from "@/store/resource/whiteboard";
-import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
+import { useInsertWhiteboardImages } from "#src/composables/whiteboard/useInsertWhiteboardImages";
+import { GesturePointerAction } from "#src/models/whiteboard/GesturePointerAction";
+import { getWorldPoint } from "#src/services/whiteboard/gesture/getWorldPoint";
+import { useWhiteboardEditorStore } from "#src/store/resource/whiteboard/editor";
+import { useWhiteboardStore } from "#src/store/resource/whiteboard/index";
 
 // The canvas draws the document in z-order under its viewport, or the preview of the gesture in progress in its place. Its overlay slot is drawn
 // Over the elements in the document's coordinates, and its html slot over the page, for whatever a gesture or a text edit shows while it lasts.

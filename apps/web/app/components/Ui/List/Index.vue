@@ -1,5 +1,5 @@
 <script setup lang="ts" generic="T extends string, TExtra = unknown">
-import type { UiListItem } from "@/models/ui/UiListItem";
+import type { UiListItem } from "#src/models/ui/UiListItem";
 
 import { takeOne } from "@esposter/shared";
 import { useRovingFocus } from "@vuetify/v0";

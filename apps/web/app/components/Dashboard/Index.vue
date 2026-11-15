@@ -2,8 +2,8 @@
 import type { Visual } from "#shared/models/dashboard/data/Visual";
 import type { CollisionMode, CompactType } from "vue-grid-layout-headless";
 
-import { DASHBOARD_PUBLISHED_ROW_HEIGHT } from "@/services/dashboard/constants";
-import { getBreakpointColumnNumber } from "@/services/dashboard/grid/getBreakpointColumnNumber";
+import { DASHBOARD_PUBLISHED_ROW_HEIGHT } from "#src/services/dashboard/constants";
+import { getBreakpointColumnNumber } from "#src/services/dashboard/grid/getBreakpointColumnNumber";
 
 interface Props {
   collision: CollisionMode;

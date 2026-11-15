@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { ClientMessage } from "@/models/message/ClientMessage";
+import type { ClientMessage } from "#src/models/message/ClientMessage";
 
-import { MessageComponentMap } from "@/services/message/MessageComponentMap";
+import { MessageComponentMap } from "#src/services/message/MessageComponentMap";
 import { checkIsNestedInteraction } from "@esposter/shared";
 
 interface Props {

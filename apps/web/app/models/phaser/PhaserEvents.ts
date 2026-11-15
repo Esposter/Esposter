@@ -1,6 +1,6 @@
 import type { Item } from "#shared/models/dungeons/item/Item";
 import type { Monster } from "#shared/models/dungeons/monster/Monster";
-import type { SceneEvents } from "@/models/phaser/SceneEvents";
+import type { SceneEvents } from "#src/models/phaser/SceneEvents";
 import type { Direction, Position } from "grid-engine";
 import type { SceneWithPlugins } from "vue-phaserjs";
 

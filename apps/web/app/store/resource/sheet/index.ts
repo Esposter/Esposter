@@ -1,8 +1,8 @@
 import type { SheetResource } from "#shared/models/resource/sheet/SheetResource";
 
-import { createContentData } from "@/services/resource/createContentData";
-import { createDefaultSheetResource } from "@/services/resource/sheet/createDefaultSheetResource";
-import { useSheetHistoryStore } from "@/store/resource/sheet/history";
+import { createContentData } from "#src/services/resource/createContentData";
+import { createDefaultSheetResource } from "#src/services/resource/sheet/createDefaultSheetResource";
+import { useSheetHistoryStore } from "#src/store/resource/sheet/history/index";
 import { ResourceType } from "@esposter/db-schema";
 
 export const useSheetStore = defineStore("resource/sheet", () => {

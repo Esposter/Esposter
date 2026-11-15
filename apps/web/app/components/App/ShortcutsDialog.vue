@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useCommandStore } from "@/store/ui/command";
+import { useCommandStore } from "#src/store/ui/command";
 
 const commandStore = useCommandStore();
 const { commands, isShortcutsDialogOpen } = storeToRefs(commandStore);

@@ -1,25 +1,25 @@
 <script setup lang="ts">
-import type { AnyPageBuilderKind } from "@/models/pageBuilder/AnyPageBuilderKind";
-import type { DropTarget } from "@/models/pageBuilder/DropTarget";
-import type { OverlayBox } from "@/models/pageBuilder/OverlayBox";
-import type { UiCommand } from "@/models/ui/UiCommand";
-import type { OpenPageBuilderDocument } from "@/store/pageBuilder/document";
+import type { AnyPageBuilderKind } from "#src/models/pageBuilder/AnyPageBuilderKind";
+import type { DropTarget } from "#src/models/pageBuilder/DropTarget";
+import type { OverlayBox } from "#src/models/pageBuilder/OverlayBox";
+import type { UiCommand } from "#src/models/ui/UiCommand";
+import type { OpenPageBuilderDocument } from "#src/store/pageBuilder/document";
 import type { BlockNode } from "vue-block-editor-headless";
 
 import { PageBuilderDevice } from "#shared/models/pageBuilder/PageBuilderDevice";
 import { DESKTOP_MIN_WIDTH, DEVICE_WIDTH_MAP } from "#shared/services/pageBuilder/constants";
 import { getPresentDefinitions } from "#shared/services/pageBuilder/getPresentDefinitions";
 import { getWebpageCss } from "#shared/services/pageBuilder/getWebpageCss";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { PAGE_BUILDER_COMMAND_GROUP } from "@/services/pageBuilder/constants";
-import { renderEmailCanvasVNodes } from "@/services/pageBuilder/email/renderEmailCanvasVNodes";
-import { getNodeIdFromElement } from "@/services/pageBuilder/getNodeIdFromElement";
-import { renderCanvasVNodes } from "@/services/pageBuilder/renderCanvasVNodes";
-import { DRAG_PREVIEW_NODE_ID, withDragPreview } from "@/services/pageBuilder/withDragPreview";
-import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
-import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
-import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
-import { checkIsEditableTarget } from "@/util/dom/checkIsEditableTarget";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { PAGE_BUILDER_COMMAND_GROUP } from "#src/services/pageBuilder/constants";
+import { renderEmailCanvasVNodes } from "#src/services/pageBuilder/email/renderEmailCanvasVNodes";
+import { getNodeIdFromElement } from "#src/services/pageBuilder/getNodeIdFromElement";
+import { renderCanvasVNodes } from "#src/services/pageBuilder/renderCanvasVNodes";
+import { DRAG_PREVIEW_NODE_ID, withDragPreview } from "#src/services/pageBuilder/withDragPreview";
+import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
+import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
+import { usePageBuilderHistoryStore } from "#src/store/pageBuilder/history";
+import { checkIsEditableTarget } from "#src/util/dom/checkIsEditableTarget";
 import { ResourceType } from "@esposter/db-schema";
 
 interface Props {

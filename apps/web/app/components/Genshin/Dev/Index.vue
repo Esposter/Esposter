@@ -4,8 +4,8 @@ import type { DevRegistry } from "genshin-world";
 import type { GenshinSave } from "genshin-world/save";
 
 import { GENSHIN_REGION_DATA_BASE_URL } from "#shared/services/genshin/constants";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { GENSHIN_DEV_COMMAND_GROUP, GENSHIN_DEV_STATS_GROUP } from "@/services/genshin/dev/constants";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { GENSHIN_DEV_COMMAND_GROUP, GENSHIN_DEV_STATS_GROUP } from "#src/services/genshin/dev/constants";
 import { createBooleanVariable, createDevRegistry, createStatCommand, exposeDevRegistry } from "genshin-world";
 
 interface Props {

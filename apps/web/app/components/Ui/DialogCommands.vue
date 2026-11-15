@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { UI_DIALOG_INJECTION_KEY } from "@/services/ui/constants";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { UI_DIALOG_INJECTION_KEY } from "#src/services/ui/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The dialog's own commands — full screen where the dialog can take the page, and close — for the dialog this stands in.

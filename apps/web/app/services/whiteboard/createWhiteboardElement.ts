@@ -1,12 +1,12 @@
 import type { WhiteboardElement } from "#shared/models/resource/whiteboard/WhiteboardElement";
-import type { WhiteboardPlacement } from "@/models/whiteboard/WhiteboardPlacement";
+import type { WhiteboardPlacement } from "#src/models/whiteboard/WhiteboardPlacement";
 import type { Bounds } from "vue-block-editor-headless";
 
 import {
   WHITEBOARD_SHAPE_FILL,
   WHITEBOARD_STICKY_NOTE_FILL,
   WHITEBOARD_TEXT_BOX_TEXT,
-} from "@/services/whiteboard/palette/constants";
+} from "#src/services/whiteboard/palette/constants";
 import {
   CornerStyle,
   DashPattern,

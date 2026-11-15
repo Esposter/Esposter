@@ -1,5 +1,5 @@
 import { useCallObject } from "#server/composables/realtime/useCallObject";
-import { db } from "#server/db";
+import { db } from "#server/db/index";
 import { readSocketSession } from "#server/services/auth/readSocketSession";
 import { checkIsCallConnectionAdmitted } from "#server/services/message/call/checkIsCallConnectionAdmitted";
 import { forwardSocket } from "#server/services/realtime/forwardSocket";

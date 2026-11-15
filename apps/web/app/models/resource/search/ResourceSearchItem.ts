@@ -1,4 +1,4 @@
-import type { ResourceSearchGroup } from "@/models/resource/search/ResourceSearchGroup";
+import type { ResourceSearchGroup } from "#src/models/resource/search/ResourceSearchGroup";
 import type { RouteLocationRaw } from "vue-router";
 
 export interface ResourceSearchItem {

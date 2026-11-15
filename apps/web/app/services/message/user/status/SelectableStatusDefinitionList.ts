@@ -1,4 +1,4 @@
-import type { SelectableStatusDefinition } from "@/models/message/user/status/SelectableStatusDefinition";
+import type { SelectableStatusDefinition } from "#src/models/message/user/status/SelectableStatusDefinition";
 
 import { UserStatus } from "@esposter/db-schema";
 

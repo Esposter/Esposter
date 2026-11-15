@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getRouteParam } from "@/util/router/getRouteParam";
+import { getRouteParam } from "#src/util/router/getRouteParam";
 
 definePageMeta({ validate: (route) => getRouteParam(route.params, "id").length > 0 });
 

@@ -1,9 +1,9 @@
 import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnValue";
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
-import type { AffectedCell } from "@/models/resource/sheet/commands/AffectedCell";
+import type { AffectedCell } from "#src/models/resource/sheet/commands/AffectedCell";
 
-import { getVisibleColumns } from "@/services/resource/sheet/column/getVisibleColumns";
-import { collectAffectedCells } from "@/services/resource/sheet/commands/collectAffectedCells";
+import { getVisibleColumns } from "#src/services/resource/sheet/column/getVisibleColumns";
+import { collectAffectedCells } from "#src/services/resource/sheet/commands/collectAffectedCells";
 
 export const findMatchingCells = (
   dataSource: DataSource,

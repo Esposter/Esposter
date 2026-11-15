@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { AppNotificationAction } from "@/models/notification/AppNotificationAction";
+import type { AppNotificationAction } from "#src/models/notification/AppNotificationAction";
 
-import { createErrorAlert } from "@/services/trpc/createErrorAlert";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 
 interface Props {
   action: AppNotificationAction;

@@ -1,4 +1,4 @@
-import type { Drag } from "@/models/ui/dragReorder/Drag";
+import type { Drag } from "#src/models/ui/dragReorder/Drag";
 
 export interface Press {
   container: HTMLElement;

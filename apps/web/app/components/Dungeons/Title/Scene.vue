@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { BackgroundMusicKey } from "@/models/dungeons/keys/sound/BackgroundMusicKey";
-import { playDungeonsBackgroundMusic } from "@/services/dungeons/sound/playDungeonsBackgroundMusic";
-import { useControlsStore } from "@/store/dungeons/controls";
-import { useTitleSceneStore } from "@/store/dungeons/title/scene";
+import { SceneKey } from "#src/models/dungeons/keys/SceneKey";
+import { BackgroundMusicKey } from "#src/models/dungeons/keys/sound/BackgroundMusicKey";
+import { playDungeonsBackgroundMusic } from "#src/services/dungeons/sound/playDungeonsBackgroundMusic";
+import { useControlsStore } from "#src/store/dungeons/controls";
+import { useTitleSceneStore } from "#src/store/dungeons/title/scene";
 import { Image, Text } from "vue-phaserjs";
 
 const buildVersion = await useBuildVersion();

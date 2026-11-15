@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useUserSettingsStore } from "@/store/message/user/settings";
-import { useUserSettingsDialogStore } from "@/store/message/user/settings/dialog";
+import { useUserSettingsDialogStore } from "#src/store/message/user/settings/dialog";
+import { useUserSettingsStore } from "#src/store/message/user/settings/index";
 
 const userSettingsDialogStore = useUserSettingsDialogStore();
 const { isVisible, settingsType } = storeToRefs(userSettingsDialogStore);

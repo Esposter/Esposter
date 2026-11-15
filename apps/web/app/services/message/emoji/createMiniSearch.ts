@@ -1,7 +1,7 @@
-import type { EmojiDocument } from "@/models/message/emoji/EmojiDocument";
+import type { EmojiDocument } from "#src/models/message/emoji/EmojiDocument";
 
-import { EmojiDocumentPropertyNames } from "@/models/message/emoji/EmojiDocument";
-import { getEmojiIndex } from "@/services/message/emoji/getEmojiIndex";
+import { EmojiDocumentPropertyNames } from "#src/models/message/emoji/EmojiDocument";
+import { getEmojiIndex } from "#src/services/message/emoji/getEmojiIndex";
 import characterKeywordsMap from "emojilib";
 import MiniSearch from "minisearch";
 

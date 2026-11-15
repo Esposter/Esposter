@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { ArrowElement, ArrowheadKind, ArrowPathKind } from "vue-block-editor-headless";
 
-import { WHITEBOARD_ARROWHEAD_ITEMS, WHITEBOARD_PATH_KIND_ITEMS } from "@/services/whiteboard/arrow/constants";
-import { WHITEBOARD_DEFAULT_ARROWHEAD } from "@/services/whiteboard/palette/constants";
-import { useWhiteboardStore } from "@/store/resource/whiteboard";
+import { WHITEBOARD_ARROWHEAD_ITEMS, WHITEBOARD_PATH_KIND_ITEMS } from "#src/services/whiteboard/arrow/constants";
+import { WHITEBOARD_DEFAULT_ARROWHEAD } from "#src/services/whiteboard/palette/constants";
+import { useWhiteboardStore } from "#src/store/resource/whiteboard/index";
 import { ArrowEndKey, unbindPositionedArrowEnd } from "vue-block-editor-headless";
 
 interface Props {

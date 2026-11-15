@@ -1,4 +1,4 @@
-import { SettingsType } from "@/models/message/room/SettingsType";
+import { SettingsType } from "#src/models/message/room/SettingsType";
 import { RoomPermission } from "@esposter/db-schema";
 
 // A panel is listed only where its own actions can succeed: every read and every write behind these panels is

@@ -1,4 +1,4 @@
-import type { SurveyListEditorOptions } from "@/models/resource/survey/SurveyListEditorOptions";
+import type { SurveyListEditorOptions } from "#src/models/resource/survey/SurveyListEditorOptions";
 import type { z } from "zod";
 
 // What a choice list's editor checks each row by: a choice needs a value, a value is unique within its list, and the

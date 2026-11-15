@@ -1,4 +1,4 @@
-import type { StoredUserStatus } from "@/models/message/user/status/StoredUserStatus";
+import type { StoredUserStatus } from "#src/models/message/user/status/StoredUserStatus";
 import type { UserStatusInMessage } from "@esposter/db-schema";
 
 import { UserStatus } from "@esposter/db-schema";

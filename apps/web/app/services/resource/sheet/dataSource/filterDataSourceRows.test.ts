@@ -4,9 +4,9 @@ import { createColumn } from "#shared/models/resource/sheet/column/createColumn.
 import { createNumberColumn } from "#shared/models/resource/sheet/column/createNumberColumn.test";
 import { createDataSource } from "#shared/models/resource/sheet/datasource/createDataSource.test";
 import { createRow } from "#shared/models/resource/sheet/datasource/createRow.test";
-import { createBooleanColumn } from "@/composables/resource/sheet/commands/createBooleanColumn.test";
-import { BooleanFilterValue } from "@/models/resource/sheet/column/BooleanFilterValue";
-import { filterDataSourceRows } from "@/services/resource/sheet/dataSource/filterDataSourceRows";
+import { createBooleanColumn } from "#src/composables/resource/sheet/commands/createBooleanColumn.test";
+import { BooleanFilterValue } from "#src/models/resource/sheet/column/BooleanFilterValue";
+import { filterDataSourceRows } from "#src/services/resource/sheet/dataSource/filterDataSourceRows";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 

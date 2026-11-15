@@ -1,10 +1,10 @@
 // @vitest-environment nuxt
 import type { ShapeElement } from "vue-block-editor-headless";
 
-import ResourceWhiteboardEditorPropertiesSeveralPanel from "@/components/Resource/Whiteboard/EditorPropertiesSeveralPanel.vue";
-import { createWhiteboardEditState, WHITEBOARD_PROCESS } from "@/services/whiteboard/constants.test";
-import { useWhiteboardStore } from "@/store/resource/whiteboard";
-import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
+import ResourceWhiteboardEditorPropertiesSeveralPanel from "#src/components/Resource/Whiteboard/EditorPropertiesSeveralPanel.vue";
+import { createWhiteboardEditState, WHITEBOARD_PROCESS } from "#src/services/whiteboard/constants.test";
+import { useWhiteboardEditorStore } from "#src/store/resource/whiteboard/editor";
+import { useWhiteboardStore } from "#src/store/resource/whiteboard/index";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { v7 } from "uuid";
 import { assert, describe, expect, test } from "vitest";

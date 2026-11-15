@@ -1,17 +1,17 @@
 // @vitest-environment nuxt
-import type { ClientMessage } from "@/models/message/ClientMessage";
+import type { ClientMessage } from "#src/models/message/ClientMessage";
 import type { Page } from "@esposter/db-schema";
 
 import { getMockSession } from "#server/trpc/context.test";
-import { flushCache } from "@/composables/cache/indexedDb/flushCache.test";
-import { goOffline } from "@/composables/shared/network.test";
-import { MessageIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MessageIndexedDbStoreConfiguration";
-import { resetIndexedDb } from "@/services/cache/indexedDb/openIndexedDb";
-import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
-import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
-import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
-import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
-import { useDataStore } from "@/store/message/data";
+import { flushCache } from "#src/composables/cache/indexedDb/flushCache.test";
+import { goOffline } from "#src/composables/shared/network.test";
+import { MessageIndexedDbStoreConfiguration } from "#src/services/cache/indexedDb/configurations/MessageIndexedDbStoreConfiguration";
+import { resetIndexedDb } from "#src/services/cache/indexedDb/openIndexedDb";
+import { readIndexedDb } from "#src/services/cache/indexedDb/readIndexedDb";
+import { writeIndexedDb } from "#src/services/cache/indexedDb/writeIndexedDb";
+import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
+import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
+import { useDataStore } from "#src/store/message/data";
 import { MessageType } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";

@@ -1,7 +1,7 @@
-import type { ClientMessage } from "@/models/message/ClientMessage";
+import type { ClientMessage } from "#src/models/message/ClientMessage";
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { useReplyStore } from "@/store/message/input/reply";
+import { useReplyStore } from "#src/store/message/input/reply";
 
 export const useReadReplies = () => {
   const { $trpc } = useNuxtApp();

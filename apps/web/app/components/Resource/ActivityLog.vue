@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useActivityStore } from "@/store/resource/activity";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { useActivityStore } from "#src/store/resource/activity";
 import { getResultAsync, noop } from "@esposter/shared";
 
 interface Props {

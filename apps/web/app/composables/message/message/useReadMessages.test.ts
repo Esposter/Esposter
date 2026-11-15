@@ -1,9 +1,9 @@
 // @vitest-environment nuxt
-import { useReadMessages } from "@/composables/message/message/useReadMessages";
-import { createMessage } from "@/services/message/message/createMessage.test";
-import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useEmojiStore } from "@/store/message/emoji";
+import { useReadMessages } from "#src/composables/message/message/useReadMessages";
+import { createMessage } from "#src/services/message/message/createMessage.test";
+import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useEmojiStore } from "#src/store/message/emoji";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";

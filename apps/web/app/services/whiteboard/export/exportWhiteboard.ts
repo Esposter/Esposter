@@ -1,13 +1,13 @@
 import { MimeType } from "#shared/models/file/MimeType";
 import { pluralize } from "#shared/util/text/pluralize";
-import { WhiteboardExportFormat } from "@/models/whiteboard/WhiteboardExportFormat";
-import { sanitizeFilename } from "@/services/app/sanitizeFilename";
-import { rasterizeSvg } from "@/services/capture/rasterizeSvg";
-import { createErrorAlert } from "@/services/trpc/createErrorAlert";
-import { getWhiteboardImageUrls } from "@/services/whiteboard/export/getWhiteboardImageUrls";
-import { useAlertStore } from "@/store/alert";
-import { useResourceStore } from "@/store/resource";
-import { useWhiteboardStore } from "@/store/resource/whiteboard";
+import { WhiteboardExportFormat } from "#src/models/whiteboard/WhiteboardExportFormat";
+import { sanitizeFilename } from "#src/services/app/sanitizeFilename";
+import { rasterizeSvg } from "#src/services/capture/rasterizeSvg";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
+import { getWhiteboardImageUrls } from "#src/services/whiteboard/export/getWhiteboardImageUrls";
+import { useAlertStore } from "#src/store/alert";
+import { useResourceStore } from "#src/store/resource/index";
+import { useWhiteboardStore } from "#src/store/resource/whiteboard/index";
 import { downloadFile, getResultAsync, noop } from "@esposter/shared";
 import { getExportBounds, PositionedElementType, toPositionedSvg } from "vue-block-editor-headless";
 

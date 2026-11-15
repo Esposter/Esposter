@@ -1,10 +1,10 @@
 // @unocss-include
-import type { ResourceListSourceDefinition } from "@/models/resource/list/ResourceListSourceDefinition";
+import type { ResourceListSourceDefinition } from "#src/models/resource/list/ResourceListSourceDefinition";
 
 import { ResourceListItemPropertyNames } from "#shared/models/resource/ResourceListItem";
-import { ResourceListSource } from "@/models/resource/list/ResourceListSource";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { DEFAULT_RESOURCE_SORT_BY, LAST_ACCESSED_RESOURCE_SORT_BY } from "@/services/resource/constants";
+import { ResourceListSource } from "#src/models/resource/list/ResourceListSource";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { DEFAULT_RESOURCE_SORT_BY, LAST_ACCESSED_RESOURCE_SORT_BY } from "#src/services/resource/constants";
 import { RoutePath } from "@esposter/shared";
 
 // Everything that differs between the list routes, in one place: a filter preset, a default sort, the copy an

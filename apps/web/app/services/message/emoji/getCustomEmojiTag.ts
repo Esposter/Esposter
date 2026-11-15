@@ -1,4 +1,4 @@
-import type { CustomEmoji } from "@/models/message/emoji/CustomEmoji";
+import type { CustomEmoji } from "#src/models/message/emoji/CustomEmoji";
 
 import { CUSTOM_EMOJI_TAG_PREFIX } from "@esposter/db-schema";
 

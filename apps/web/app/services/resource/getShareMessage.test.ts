@@ -1,4 +1,4 @@
-import { getShareMessage } from "@/services/resource/getShareMessage";
+import { getShareMessage } from "#src/services/resource/getShareMessage";
 import { describe, expect, test } from "vitest";
 
 describe(getShareMessage, () => {

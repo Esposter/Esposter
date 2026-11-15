@@ -1,11 +1,11 @@
 import type { Page, ResourceInResource } from "@esposter/db-schema";
 
 import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
-import { MAX_CSV_EXPORT_ROWS } from "@/services/resource/constants";
-import { getResourcesCsv } from "@/services/resource/list/getResourcesCsv";
-import { readAllResourcePages } from "@/services/resource/readAllResourcePages";
-import { DataSourceConfigurationMap } from "@/services/resource/sheet/dataSource/DataSourceConfigurationMap";
-import { useNotificationStore } from "@/store/notification";
+import { MAX_CSV_EXPORT_ROWS } from "#src/services/resource/constants";
+import { getResourcesCsv } from "#src/services/resource/list/getResourcesCsv";
+import { readAllResourcePages } from "#src/services/resource/readAllResourcePages";
+import { DataSourceConfigurationMap } from "#src/services/resource/sheet/dataSource/DataSourceConfigurationMap";
+import { useNotificationStore } from "#src/store/notification";
 import { NotificationSeverity } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 

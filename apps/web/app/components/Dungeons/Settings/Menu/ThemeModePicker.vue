@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOption";
 import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
-import { MenuTextStyle } from "@/assets/dungeons/scene/settings/styles/MenuTextStyle";
+import { MenuTextStyle } from "#src/assets/dungeons/scene/settings/styles/MenuTextStyle";
 import {
   THEME_MODE_PICKER_CURSOR_OFFSET_Y,
   THEME_MODE_PICKER_CURSOR_X,
   THEME_MODE_PICKER_PADDING,
   THEME_MODE_PICKER_TEXT_X,
-} from "@/services/dungeons/scene/settings/constants";
-import { getSettingsOptionY } from "@/services/dungeons/scene/settings/getSettingsOptionY";
-import { useColorPickerStore } from "@/store/dungeons/settings/colorPicker";
+} from "#src/services/dungeons/scene/settings/constants";
+import { getSettingsOptionY } from "#src/services/dungeons/scene/settings/getSettingsOptionY";
+import { useColorPickerStore } from "#src/store/dungeons/settings/colorPicker";
 import { Direction } from "grid-engine";
 import { Input } from "phaser";
 import { Image, Text } from "vue-phaserjs";

@@ -1,11 +1,11 @@
-import type { GesturePointerEvent } from "@/models/whiteboard/GesturePointerEvent";
-import type { GestureResizing } from "@/models/whiteboard/GestureResizing";
-import type { WhiteboardGestureResult } from "@/models/whiteboard/WhiteboardGestureResult";
-import type { WhiteboardGestureState } from "@/models/whiteboard/WhiteboardGestureState";
+import type { GesturePointerEvent } from "#src/models/whiteboard/GesturePointerEvent";
+import type { GestureResizing } from "#src/models/whiteboard/GestureResizing";
+import type { WhiteboardGestureResult } from "#src/models/whiteboard/WhiteboardGestureResult";
+import type { WhiteboardGestureState } from "#src/models/whiteboard/WhiteboardGestureState";
 
-import { getResizeOperations } from "@/services/whiteboard/gesture/getResizeOperations";
-import { getScaleOperations } from "@/services/whiteboard/gesture/getScaleOperations";
-import { reducePointerGesture } from "@/services/whiteboard/gesture/reducePointerGesture";
+import { getResizeOperations } from "#src/services/whiteboard/gesture/getResizeOperations";
+import { getScaleOperations } from "#src/services/whiteboard/gesture/getScaleOperations";
+import { reducePointerGesture } from "#src/services/whiteboard/gesture/reducePointerGesture";
 import { takeOne } from "@esposter/shared";
 
 // A resize previews the selection stretched by the pointer's travel from the press: one element is stretched from its handle, and several are

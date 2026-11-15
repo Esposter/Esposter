@@ -1,5 +1,5 @@
-import { createRoomRole } from "@/services/message/member/createRoomRole.test";
-import { getTopRole } from "@/services/message/member/getTopRole";
+import { createRoomRole } from "#src/services/message/member/createRoomRole.test";
+import { getTopRole } from "#src/services/message/member/getTopRole";
 import { describe, expect, test } from "vitest";
 
 describe(getTopRole, () => {

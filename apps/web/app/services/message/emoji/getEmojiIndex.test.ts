@@ -1,13 +1,13 @@
-import type { CustomEmoji } from "@/models/message/emoji/CustomEmoji";
+import type { CustomEmoji } from "#src/models/message/emoji/CustomEmoji";
 
-import { EmojiGroups } from "@/models/message/emoji/EmojiGroup";
-import { EmojiType } from "@/models/message/emoji/EmojiType";
-import { SkinTone } from "@/models/message/emoji/SkinTone";
-import { applySkinTone } from "@/services/message/emoji/applySkinTone";
-import { MAX_EMOJI_SEARCH_RESULTS } from "@/services/message/emoji/constants";
-import { getEmojiIndex } from "@/services/message/emoji/getEmojiIndex";
-import { getEmojiSlug } from "@/services/message/emoji/getEmojiSlug";
-import { searchEmojis } from "@/services/message/emoji/searchEmojis";
+import { EmojiGroups } from "#src/models/message/emoji/EmojiGroup";
+import { EmojiType } from "#src/models/message/emoji/EmojiType";
+import { SkinTone } from "#src/models/message/emoji/SkinTone";
+import { applySkinTone } from "#src/services/message/emoji/applySkinTone";
+import { MAX_EMOJI_SEARCH_RESULTS } from "#src/services/message/emoji/constants";
+import { getEmojiIndex } from "#src/services/message/emoji/getEmojiIndex";
+import { getEmojiSlug } from "#src/services/message/emoji/getEmojiSlug";
+import { searchEmojis } from "#src/services/message/emoji/searchEmojis";
 import { takeOne } from "@esposter/shared";
 import characterEmojiRecordMap from "unicode-emoji-json/data-by-emoji.json";
 import { v7 } from "uuid";

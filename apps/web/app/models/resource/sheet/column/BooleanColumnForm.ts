@@ -1,9 +1,9 @@
 import type { BooleanColumn } from "#shared/models/resource/sheet/column/BooleanColumn";
-import type { BaseColumnForm } from "@/models/resource/sheet/column/BaseColumnForm";
+import type { BaseColumnForm } from "#src/models/resource/sheet/column/BaseColumnForm";
 
 import { booleanColumnSchema } from "#shared/models/resource/sheet/column/BooleanColumn";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
-import { createBaseColumnFormSchema } from "@/services/resource/sheet/column/createBaseColumnFormSchema";
+import { createBaseColumnFormSchema } from "#src/services/resource/sheet/column/createBaseColumnFormSchema";
 import { z } from "zod";
 
 export interface BooleanColumnForm extends BaseColumnForm<typeof ColumnType.Boolean>, Pick<BooleanColumn, "format"> {}

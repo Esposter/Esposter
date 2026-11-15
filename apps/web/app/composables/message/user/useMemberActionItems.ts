@@ -1,20 +1,20 @@
 // @unocss-include
 import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
-import type { Item } from "@/models/shared/Item";
+import type { Item } from "#src/models/shared/Item";
 import type { RoomInMessage } from "@esposter/db-schema";
 
 import { checkIsMemberManageable } from "#shared/services/room/rbac/checkIsMemberManageable";
-import { MemberDialogType } from "@/models/message/user/MemberDialogType";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { authClient } from "@/services/auth/authClient";
-import { AdminActionIconMap } from "@/services/message/moderation/AdminActionIconMap";
-import { useClipboardStore } from "@/store/clipboard";
-import { useModerationNoteStore } from "@/store/message/moderation/note";
-import { useRoomStore } from "@/store/message/room";
-import { useDirectMessageStore } from "@/store/message/room/directMessage";
-import { useRoleStore } from "@/store/message/room/role";
-import { useFriendStore } from "@/store/message/user/friend";
-import { useFriendRequestStore } from "@/store/message/user/friendRequest";
+import { MemberDialogType } from "#src/models/message/user/MemberDialogType";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { authClient } from "#src/services/auth/authClient";
+import { AdminActionIconMap } from "#src/services/message/moderation/AdminActionIconMap";
+import { useClipboardStore } from "#src/store/clipboard";
+import { useModerationNoteStore } from "#src/store/message/moderation/note";
+import { useDirectMessageStore } from "#src/store/message/room/directMessage";
+import { useRoomStore } from "#src/store/message/room/index";
+import { useRoleStore } from "#src/store/message/room/role";
+import { useFriendStore } from "#src/store/message/user/friend";
+import { useFriendRequestStore } from "#src/store/message/user/friendRequest";
 import { AdminActionType, checkHasPermission, RoomPermission } from "@esposter/db-schema";
 
 // What can be done to a member, behind their profile's overflow menu and their row's context menu alike, so the two

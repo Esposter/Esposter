@@ -1,4 +1,4 @@
-import { collectSurveyFileUrls } from "@/services/resource/survey/collectSurveyFileUrls";
+import { collectSurveyFileUrls } from "#src/services/resource/survey/collectSurveyFileUrls";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 import { surveyDocumentSchema, SurveyNodeType } from "vue-survey-engine-headless";

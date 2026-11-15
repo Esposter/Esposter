@@ -1,8 +1,8 @@
-import type { AssetLoader } from "@/models/dungeons/loader/AssetLoader";
+import type { AssetLoader } from "#src/models/dungeons/loader/AssetLoader";
 
 import { MonsterPartyKey } from "#shared/models/dungeons/keys/image/MonsterPartyKey";
-import monsterPartyBackground from "@/assets/dungeons/scene/monsterParty/background.png";
-import monsterDetailsBackground from "@/assets/dungeons/scene/monsterParty/monsterDetailsBackground.png";
+import monsterPartyBackground from "#src/assets/dungeons/scene/monsterParty/background.png";
+import monsterDetailsBackground from "#src/assets/dungeons/scene/monsterParty/monsterDetailsBackground.png";
 
 export const MonsterPartyLoaderMap = {
   [MonsterPartyKey.MonsterDetailsBackground]: (scene) =>

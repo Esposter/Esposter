@@ -1,19 +1,19 @@
 import type { useRoomObject } from "#server/composables/realtime/useRoomObject";
 import type { useUserObject } from "#server/composables/realtime/useUserObject";
 import type { Context } from "#server/trpc/context";
-import type { TRPCRouter } from "#server/trpc/routers";
+import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { RoomMessage, RoomObjectRpc, UserObjectRpc } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { MAX_FORWARD_ROOMS, MAX_SEARCH_ROOMS } from "#server/services/message/constants";
 import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
-import { createCallerFactory } from "#server/trpc";
 import { createMockAuthSession, createMockCaller, createMockContext, getMockSession } from "#server/trpc/context.test";
+import { createCallerFactory } from "#server/trpc/index";
 import { createMentionMessage } from "#server/trpc/routers/createMentionMessage.test";
 import { createRoomMember } from "#server/trpc/routers/createRoomMember.test";
-import { messageRouter } from "#server/trpc/routers/message";
-import { roomRouter } from "#server/trpc/routers/room";
+import { messageRouter } from "#server/trpc/routers/message/index";
+import { roomRouter } from "#server/trpc/routers/room/index";
 import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
 import { deleteMessageInputSchema } from "#shared/models/db/message/DeleteMessageInput";
 import { pinMessageInputSchema } from "#shared/models/db/message/PinMessageInput";

@@ -3,7 +3,7 @@ import type { TilemapKey } from "#shared/generated/tiled/propertyTypes/enum/Tile
 import type { WorldData } from "#shared/models/dungeons/data/world/WorldData";
 import type { Tilemaps } from "phaser";
 
-import { useDungeonsStore } from "@/store/dungeons";
+import { useDungeonsStore } from "#src/store/dungeons/index";
 
 export const useWorldSceneStore = defineStore("dungeons/world/scene", () => {
   const dungeonsStore = useDungeonsStore();

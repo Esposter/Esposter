@@ -1,8 +1,8 @@
-import { benchRows1k, benchRows10k, benchRows100 } from "@/composables/resource/sheet/commands/constants.bench";
-import { createBenchDataSource } from "@/composables/resource/sheet/commands/createBenchDataSource.bench";
-import { generateBenchRows } from "@/composables/resource/sheet/commands/generateBenchRows.bench";
-import { setupCommandBench } from "@/composables/resource/sheet/commands/setupCommandBench.bench";
-import { CreateRowsCommand } from "@/models/resource/sheet/commands/CreateRowsCommand";
+import { benchRows1k, benchRows10k, benchRows100 } from "#src/composables/resource/sheet/commands/constants.bench";
+import { createBenchDataSource } from "#src/composables/resource/sheet/commands/createBenchDataSource.bench";
+import { generateBenchRows } from "#src/composables/resource/sheet/commands/generateBenchRows.bench";
+import { setupCommandBench } from "#src/composables/resource/sheet/commands/setupCommandBench.bench";
+import { CreateRowsCommand } from "#src/models/resource/sheet/commands/CreateRowsCommand";
 import { describe } from "vitest";
 
 // Offset past the largest fixture so an inserted row never collides with one already there.

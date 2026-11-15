@@ -1,8 +1,8 @@
-import type { MovementStarted } from "@/models/dungeons/gridEngine/MovementStarted";
-import type { MovementStopped } from "@/models/dungeons/gridEngine/MovementStopped";
-import type { PositionChangeFinished } from "@/models/dungeons/gridEngine/PositionChangeFinished";
-import type { PositionChangeStarted } from "@/models/dungeons/gridEngine/PositionChangeStarted";
-import type { Character } from "@/models/dungeons/scene/world/Character";
+import type { MovementStarted } from "#src/models/dungeons/gridEngine/MovementStarted";
+import type { MovementStopped } from "#src/models/dungeons/gridEngine/MovementStopped";
+import type { PositionChangeFinished } from "#src/models/dungeons/gridEngine/PositionChangeFinished";
+import type { PositionChangeStarted } from "#src/models/dungeons/gridEngine/PositionChangeStarted";
+import type { Character } from "#src/models/dungeons/scene/world/Character";
 import type { SceneWithPlugins, Sprite } from "vue-phaserjs";
 
 export interface CharacterProps {

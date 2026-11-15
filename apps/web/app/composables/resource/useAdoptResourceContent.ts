@@ -1,7 +1,7 @@
 import type { ResourceType } from "@esposter/db-schema";
 import type { Promisable } from "type-fest";
 
-import { ResourceContentHookMap } from "@/services/resource/ResourceContentHookMap";
+import { ResourceContentHookMap } from "#src/services/resource/ResourceContentHookMap";
 
 // What a blade whose document a third-party library owns registers so a restore reaches it. Only such a blade
 // Needs it: a Vue-rendered type re-renders from the ref its store refilled, where a library holds the document

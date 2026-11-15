@@ -2,8 +2,8 @@ import type { Chart } from "#shared/models/dashboard/data/chart/Chart";
 import type { VisualType } from "#shared/models/dashboard/data/VisualType";
 import type { ApexOptions } from "apexcharts";
 
-import { getActiveChartTypeResolvers } from "@/services/dashboard/chart/getActiveChartTypeResolvers";
-import { getActiveVisualTypeResolvers } from "@/services/dashboard/visual/getActiveVisualTypeResolvers";
+import { getActiveChartTypeResolvers } from "#src/services/dashboard/chart/getActiveChartTypeResolvers";
+import { getActiveVisualTypeResolvers } from "#src/services/dashboard/visual/getActiveVisualTypeResolvers";
 
 export const useApexOptions = (
   chart: MaybeRefOrGetter<Chart>,

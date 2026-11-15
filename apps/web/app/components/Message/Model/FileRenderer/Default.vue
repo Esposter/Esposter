@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { FileRendererComponentProps } from "@/models/message/file/FileRendererComponentProps";
+import type { FileRendererComponentProps } from "#src/models/message/file/FileRendererComponentProps";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { getFileSize } from "@/services/file/getFileSize";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { getFileSize } from "#src/services/file/getFileSize";
 
 defineProps<FileRendererComponentProps>();
 </script>

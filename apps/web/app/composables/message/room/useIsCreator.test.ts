@@ -1,12 +1,12 @@
 // @vitest-environment nuxt
-import { useIsCreator } from "@/composables/message/room/useIsCreator";
-import { useSession } from "@/services/auth/authClient.test";
-import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
+import { useIsCreator } from "#src/composables/message/room/useIsCreator";
+import { useSession } from "#src/services/auth/authClient.test";
+import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
 import { MessageType } from "@esposter/db-schema";
 import { v7 } from "uuid";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
+vi.mock(import("#src/services/auth/authClient"), () => import("#src/services/auth/authClient.test"));
 
 describe(useIsCreator, () => {
   const roomId = v7();

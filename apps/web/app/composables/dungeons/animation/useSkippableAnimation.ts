@@ -1,4 +1,4 @@
-import { useSettingsStore } from "@/store/dungeons/settings";
+import { useSettingsStore } from "#src/store/dungeons/settings/index";
 import { noop } from "@esposter/shared";
 
 // Animations off changes how long a presentation takes, never where it ends. Each one passes its end state here,

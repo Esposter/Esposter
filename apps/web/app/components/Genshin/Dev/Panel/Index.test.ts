@@ -1,9 +1,9 @@
 // @vitest-environment happy-dom
 import type { DevVariable } from "genshin-world";
 
-import GenshinDevPanel from "@/components/Genshin/Dev/Panel/Index.vue";
-import { GENSHIN_DEV_SCENARIOS_TAB, GENSHIN_DEV_STATS_GROUP } from "@/services/genshin/dev/constants";
-import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
+import GenshinDevPanel from "#src/components/Genshin/Dev/Panel/Index.vue";
+import { GENSHIN_DEV_SCENARIOS_TAB, GENSHIN_DEV_STATS_GROUP } from "#src/services/genshin/dev/constants";
+import { LocalStorageKey } from "#src/services/shared/LocalStorageKey";
 import { noop, takeOne } from "@esposter/shared";
 import { flushPromises, mount } from "@vue/test-utils";
 import { createDevRegistry, DevVariableKind } from "genshin-world";

@@ -1,17 +1,17 @@
 import type { Layout } from "vue-editor-layout-headless";
 
-import { EmailContentKey } from "@/models/emailEditor/EmailContentKey";
-import { EmailView } from "@/models/pageBuilder/EmailView";
+import { EmailContentKey } from "#src/models/emailEditor/EmailContentKey";
+import { EmailView } from "#src/models/pageBuilder/EmailView";
 import {
   DOCKED_REGION_PRESENTATION_MAP,
   SIDE_REGION_PRESENTATION_MAP,
   SIDE_REGION_SIZE,
-} from "@/services/editor/constants";
+} from "#src/services/editor/constants";
 import {
   PAGE_BUILDER_PANEL_ID_MAP,
   PAGE_BUILDER_PANEL_NAME_MAP,
   PAGE_BUILDER_SELECTION_KIND_MAP,
-} from "@/services/pageBuilder/pageBuilderLayout";
+} from "#src/services/pageBuilder/pageBuilderLayout";
 import { RegionEdge, RegionOpening } from "vue-editor-layout-headless";
 
 // The bar is one row as tall as its preview text field, which stacks a label, an input and a counter. A narrow window scrolls the

@@ -1,4 +1,4 @@
-import { MentionSuggestion } from "@/services/message/MentionSuggestion";
+import { MentionSuggestion } from "#src/services/message/MentionSuggestion";
 import { MENTION_ITEM_TYPE_ATTRIBUTE } from "@esposter/shared";
 import { Mention } from "@tiptap/extension-mention";
 

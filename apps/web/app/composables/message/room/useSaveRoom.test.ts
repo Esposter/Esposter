@@ -1,10 +1,10 @@
 // @vitest-environment nuxt
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { useSaveRoom } from "@/composables/message/room/useSaveRoom";
-import { createRoom } from "@/services/message/room/createRoom.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useRoomStore } from "@/store/message/room";
+import { useSaveRoom } from "#src/composables/message/room/useSaveRoom";
+import { createRoom } from "#src/services/message/room/createRoom.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useRoomStore } from "#src/store/message/room/index";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
 import { describe, expect, test } from "vitest";

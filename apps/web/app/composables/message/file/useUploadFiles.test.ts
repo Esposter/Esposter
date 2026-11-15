@@ -1,15 +1,15 @@
 // @vitest-environment nuxt
-import type { TRPCRouter } from "#server/trpc/routers";
-import type { ComposerTarget } from "@/models/message/ComposerTarget";
+import type { TRPCRouter } from "#server/trpc/routers/index";
+import type { ComposerTarget } from "#src/models/message/ComposerTarget";
 import type { inferProcedureInput } from "@trpc/server";
 
 import { MimeType } from "#shared/models/file/MimeType";
 import { STORAGE_QUOTA_EXCEEDED_ERROR_MESSAGE } from "#shared/services/storage/constants";
-import { useUploadFiles } from "@/composables/message/file/useUploadFiles";
-import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useAlertStore } from "@/store/alert";
-import { useUploadFileStore } from "@/store/message/input/uploadFile";
+import { useUploadFiles } from "#src/composables/message/file/useUploadFiles";
+import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useAlertStore } from "#src/store/alert";
+import { useUploadFileStore } from "#src/store/message/input/uploadFile";
 import { noop, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { v7 } from "uuid";
@@ -19,10 +19,10 @@ const { uploadFileToUrlMock } = vi.hoisted(() => ({
   uploadFileToUrlMock: vi.fn<(blob: Blob, presignedUrl: string) => Promise<void>>(),
 }));
 
-vi.mock(import("@/services/file/uploadFileToUrl"), () => ({ uploadFileToUrl: uploadFileToUrlMock }));
+vi.mock(import("#src/services/file/uploadFileToUrl"), () => ({ uploadFileToUrl: uploadFileToUrlMock }));
 // Thumbnail generation downscales through a canvas the test env has no renderer for, and every case here
 // Drives the upload outcome directly — so resolve it to a fixed blob rather than standing up a DOM.
-vi.mock(import("@/services/file/generateImageThumbnail"), () => ({
+vi.mock(import("#src/services/file/generateImageThumbnail"), () => ({
   generateImageThumbnail: () => Promise.resolve(new Blob(["thumbnail"])),
 }));
 

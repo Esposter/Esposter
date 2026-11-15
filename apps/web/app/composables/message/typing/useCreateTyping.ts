@@ -1,5 +1,5 @@
-import { useInputStore } from "@/store/message/input";
-import { useRoomStore } from "@/store/message/room";
+import { useInputStore } from "#src/store/message/input/index";
+import { useRoomStore } from "#src/store/message/room/index";
 import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 
 export const useCreateTyping = () => {

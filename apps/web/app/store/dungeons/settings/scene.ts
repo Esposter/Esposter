@@ -1,20 +1,20 @@
 /* oxlint-disable typescript/no-unsafe-enum-assignment -- the option is a runtime name, so its setting is the union of every setting's type, wider than the grid's value union that the lookup needs; setSettings is generic over the option, but the grid's value is the union of every cell's value, so no type relates the two without the assertion */
-import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
+import type { PlayerInput } from "#src/models/dungeons/UI/input/PlayerInput";
 import type { Position } from "grid-engine";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOption";
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
-import { InfoContainerTextMap } from "@/services/dungeons/scene/settings/InfoContainerTextMap";
-import { SettingsOptionGrid } from "@/services/dungeons/scene/settings/SettingsOptionGrid";
-import { checkIsUpdateThemeModeSetting } from "@/services/dungeons/settings/checkIsUpdateThemeModeSetting";
-import { checkIsPlayerSpecialInput } from "@/services/dungeons/UI/input/checkIsPlayerSpecialInput";
-import { getDirectionStep } from "@/services/dungeons/UI/input/getDirectionStep";
-import { useDungeonsStore } from "@/store/dungeons";
-import { useSettingsStore } from "@/store/dungeons/settings";
-import { useColorPickerStore } from "@/store/dungeons/settings/colorPicker";
-import { useVolumeStore } from "@/store/dungeons/settings/volume";
+import { SceneKey } from "#src/models/dungeons/keys/SceneKey";
+import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";
+import { InfoContainerTextMap } from "#src/services/dungeons/scene/settings/InfoContainerTextMap";
+import { SettingsOptionGrid } from "#src/services/dungeons/scene/settings/SettingsOptionGrid";
+import { checkIsUpdateThemeModeSetting } from "#src/services/dungeons/settings/checkIsUpdateThemeModeSetting";
+import { checkIsPlayerSpecialInput } from "#src/services/dungeons/UI/input/checkIsPlayerSpecialInput";
+import { getDirectionStep } from "#src/services/dungeons/UI/input/getDirectionStep";
+import { useDungeonsStore } from "#src/store/dungeons/index";
+import { useColorPickerStore } from "#src/store/dungeons/settings/colorPicker";
+import { useSettingsStore } from "#src/store/dungeons/settings/index";
+import { useVolumeStore } from "#src/store/dungeons/settings/volume";
 import { exhaustiveGuard, getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
 import { clamp } from "@vueuse/core";
 import { Direction } from "grid-engine";

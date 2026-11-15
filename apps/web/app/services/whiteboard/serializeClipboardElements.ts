@@ -1,6 +1,6 @@
 import type { PositionedElement } from "vue-block-editor-headless";
 
-import { WHITEBOARD_CLIPBOARD_MARKER } from "@/services/whiteboard/constants";
+import { WHITEBOARD_CLIPBOARD_MARKER } from "#src/services/whiteboard/constants";
 import { getResult } from "@esposter/shared";
 import { positionedElementSchema } from "vue-block-editor-headless";
 import { z } from "zod";

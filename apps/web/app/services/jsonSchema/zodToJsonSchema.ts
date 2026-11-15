@@ -1,6 +1,6 @@
 import { RESOURCE_LINK_TYPE_KEYWORD } from "#shared/services/resource/link/constants";
 import { resourceLinkRegistry } from "#shared/services/resource/link/resourceLinkRegistry";
-import { processSchema } from "@/services/jsonSchema/processSchema";
+import { processSchema } from "#src/services/jsonSchema/processSchema";
 import { z } from "zod";
 
 export const zodToJsonSchema = (schema: z.ZodType) => {

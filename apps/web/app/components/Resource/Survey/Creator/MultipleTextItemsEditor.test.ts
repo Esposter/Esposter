@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
-import ResourceSurveyCreatorMultipleTextItemsEditor from "@/components/Resource/Survey/Creator/MultipleTextItemsEditor.vue";
-import UiForm from "@/components/Ui/Form.vue";
-import UiSelect from "@/components/Ui/Select/Index.vue";
+import ResourceSurveyCreatorMultipleTextItemsEditor from "#src/components/Resource/Survey/Creator/MultipleTextItemsEditor.vue";
+import UiForm from "#src/components/Ui/Form.vue";
+import UiSelect from "#src/components/Ui/Select/Index.vue";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 import { SurveyMultipleTextItemInputType } from "vue-survey-engine-headless";

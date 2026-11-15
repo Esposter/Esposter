@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import type { Item } from "@/models/shared/Item";
+import type { Item } from "#src/models/shared/Item";
 import type { RoomInMessage } from "@esposter/db-schema";
 
 import { pluralize } from "#shared/util/text/pluralize";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { checkHasRoomDraft } from "@/services/message/room/list/checkHasRoomDraft";
-import { checkIsRoomUnread } from "@/services/message/room/list/checkIsRoomUnread";
-import { useInputStore } from "@/store/message/input";
-import { useRoomStore } from "@/store/message/room";
-import { useRoomDialogStore } from "@/store/message/room/dialog";
-import { useRoleStore } from "@/store/message/room/role";
-import { useUserToRoomStore } from "@/store/message/room/userToRoom";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { checkHasRoomDraft } from "#src/services/message/room/list/checkHasRoomDraft";
+import { checkIsRoomUnread } from "#src/services/message/room/list/checkIsRoomUnread";
+import { useInputStore } from "#src/store/message/input/index";
+import { useRoomDialogStore } from "#src/store/message/room/dialog";
+import { useRoomStore } from "#src/store/message/room/index";
+import { useRoleStore } from "#src/store/message/room/role";
+import { useUserToRoomStore } from "#src/store/message/room/userToRoom";
 import { RoomPermission } from "@esposter/db-schema";
 
 interface Props {

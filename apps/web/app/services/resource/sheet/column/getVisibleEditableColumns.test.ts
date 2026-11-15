@@ -1,7 +1,7 @@
 import { ComputedColumn } from "#shared/models/resource/sheet/column/ComputedColumn";
 import { NumberColumn } from "#shared/models/resource/sheet/column/NumberColumn";
 import { StringColumn } from "#shared/models/resource/sheet/column/StringColumn";
-import { getVisibleEditableColumns } from "@/services/resource/sheet/column/getVisibleEditableColumns";
+import { getVisibleEditableColumns } from "#src/services/resource/sheet/column/getVisibleEditableColumns";
 import { describe, expect, test } from "vitest";
 
 describe(getVisibleEditableColumns, () => {

@@ -3,9 +3,9 @@ import type { Upgrade } from "#shared/models/clicker/data/upgrade/Upgrade";
 import type { UpgradeId } from "#shared/models/clicker/data/upgrade/UpgradeId";
 
 import { parseDictionaryToArray } from "#shared/util/object/parseDictionaryToArray";
-import { getUnlockedUpgrades } from "@/services/clicker/upgrade/getUnlockedUpgrades";
-import { useClickerStore } from "@/store/clicker";
-import { usePointStore } from "@/store/clicker/point";
+import { getUnlockedUpgrades } from "#src/services/clicker/upgrade/getUnlockedUpgrades";
+import { useClickerStore } from "#src/store/clicker/index";
+import { usePointStore } from "#src/store/clicker/point";
 
 const sortByPrice = (upgradesToSort: Upgrade[]) =>
   upgradesToSort.toSorted((firstUpgrade, secondUpgrade) => firstUpgrade.price - secondUpgrade.price);

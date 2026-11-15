@@ -1,5 +1,5 @@
-import type { UiCommand } from "@/models/ui/UiCommand";
-import type { UiCommandScope } from "@/models/ui/UiCommandScope";
+import type { UiCommand } from "#src/models/ui/UiCommand";
+import type { UiCommandScope } from "#src/models/ui/UiCommandScope";
 
 // Every command the mounted surfaces offer, and the search scopes they bring. A surface registers while it is mounted
 // And its entries leave with it, so the palette only offers what the page in front of the reader can do, and the

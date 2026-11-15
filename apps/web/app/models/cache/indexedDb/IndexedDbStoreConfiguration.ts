@@ -1,5 +1,5 @@
-import type { IndexedDbDatabaseSchema } from "@/models/cache/indexedDb/IndexedDbDatabaseSchema";
-import type { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStoreName";
+import type { IndexedDbDatabaseSchema } from "#src/models/cache/indexedDb/IndexedDbDatabaseSchema";
+import type { IndexedDbStoreName } from "#src/models/cache/indexedDb/IndexedDbStoreName";
 import type { DatabaseIndexName } from "@esposter/shared";
 
 export interface IndexedDbStoreConfiguration<

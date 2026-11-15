@@ -1,4 +1,4 @@
-import type { UiMenuItem } from "@/models/ui/UiMenuItem";
+import type { UiMenuItem } from "#src/models/ui/UiMenuItem";
 
 import { CornerStyle, DashPattern, SketchLevel, StrokeWidth } from "vue-block-editor-headless";
 

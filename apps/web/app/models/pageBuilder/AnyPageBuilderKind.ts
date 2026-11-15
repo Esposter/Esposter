@@ -1,5 +1,5 @@
-import type { AnyPageBuilderDocument } from "@/models/pageBuilder/AnyPageBuilderDocument";
-import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
+import type { AnyPageBuilderDocument } from "#src/models/pageBuilder/AnyPageBuilderDocument";
+import type { PageBuilderKind } from "#src/models/pageBuilder/PageBuilderKind";
 import type { BlockNode, BlockRootProps, BlockTypeDefinition } from "vue-block-editor-headless";
 import type { z } from "zod";
 

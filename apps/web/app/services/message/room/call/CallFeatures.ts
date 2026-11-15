@@ -1,5 +1,5 @@
 // @unocss-include
-import type { CallFeature } from "@/models/message/room/call/CallFeature";
+import type { CallFeature } from "#src/models/message/room/call/CallFeature";
 
 export const CallFeatures: CallFeature[] = [
   {

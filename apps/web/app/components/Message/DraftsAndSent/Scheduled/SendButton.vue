@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { ScheduledMessageJobWithRoom } from "#shared/models/db/message/scheduledMessageJob/ScheduledMessageJobWithRoom";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useScheduledMessageJobStore } from "@/store/message/scheduledMessageJob";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { useScheduledMessageJobStore } from "#src/store/message/scheduledMessageJob";
 import { ScheduledMessageJobType } from "@esposter/db-schema";
 
 interface Props {

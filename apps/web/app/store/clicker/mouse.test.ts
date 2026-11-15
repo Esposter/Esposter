@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
 import { UpgradeMap } from "#shared/assets/clicker/data/upgrades/UpgradeMap";
 import { CursorUpgradeId } from "#shared/models/clicker/data/upgrade/CursorUpgradeId";
-import { useClickerStore } from "@/store/clicker";
-import { useMouseStore } from "@/store/clicker/mouse";
+import { useClickerStore } from "#src/store/clicker/index";
+import { useMouseStore } from "#src/store/clicker/mouse";
 import { describe, expect, test } from "vitest";
 
 describe(useMouseStore, () => {

@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
-import ResourceListSummary from "@/components/Resource/List/Summary.vue";
-import UiSkeleton from "@/components/Ui/Skeleton.vue";
+import ResourceListSummary from "#src/components/Resource/List/Summary.vue";
+import UiSkeleton from "#src/components/Ui/Skeleton.vue";
 import { ResourceType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";

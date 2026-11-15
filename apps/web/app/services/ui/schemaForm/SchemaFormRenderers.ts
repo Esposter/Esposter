@@ -1,16 +1,16 @@
 import type { JsonFormsRendererRegistryEntry, JsonSchema } from "@jsonforms/core";
 
-import UiSchemaFormArray from "@/components/Ui/SchemaForm/Array.vue";
-import UiSchemaFormCheckbox from "@/components/Ui/SchemaForm/Checkbox.vue";
-import UiSchemaFormHidden from "@/components/Ui/SchemaForm/Hidden.vue";
-import UiSchemaFormLayout from "@/components/Ui/SchemaForm/Layout.vue";
-import UiSchemaFormObject from "@/components/Ui/SchemaForm/Object.vue";
-import UiSchemaFormOneOf from "@/components/Ui/SchemaForm/OneOf.vue";
-import UiSchemaFormResourceLink from "@/components/Ui/SchemaForm/ResourceLink.vue";
-import UiSchemaFormSelect from "@/components/Ui/SchemaForm/Select.vue";
-import UiSchemaFormText from "@/components/Ui/SchemaForm/Text.vue";
-import { getResourceLinkSource } from "@/services/resource/link/getResourceLinkSource";
-import { getSchemaFormLayout } from "@/services/ui/schemaForm/getSchemaFormLayout";
+import UiSchemaFormArray from "#src/components/Ui/SchemaForm/Array.vue";
+import UiSchemaFormCheckbox from "#src/components/Ui/SchemaForm/Checkbox.vue";
+import UiSchemaFormHidden from "#src/components/Ui/SchemaForm/Hidden.vue";
+import UiSchemaFormLayout from "#src/components/Ui/SchemaForm/Layout.vue";
+import UiSchemaFormObject from "#src/components/Ui/SchemaForm/Object.vue";
+import UiSchemaFormOneOf from "#src/components/Ui/SchemaForm/OneOf.vue";
+import UiSchemaFormResourceLink from "#src/components/Ui/SchemaForm/ResourceLink.vue";
+import UiSchemaFormSelect from "#src/components/Ui/SchemaForm/Select.vue";
+import UiSchemaFormText from "#src/components/Ui/SchemaForm/Text.vue";
+import { getResourceLinkSource } from "#src/services/resource/link/getResourceLinkSource";
+import { getSchemaFormLayout } from "#src/services/ui/schemaForm/getSchemaFormLayout";
 import {
   and,
   isBooleanControl,

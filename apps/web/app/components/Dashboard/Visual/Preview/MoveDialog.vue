@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { Visual } from "#shared/models/dashboard/data/Visual";
 
-import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
-import { UiDialogSize } from "@/models/ui/UiDialogSize";
-import { getVisualMoveTargets } from "@/services/dashboard/visual/getVisualMoveTargets";
-import { useVisualStore } from "@/store/dashboard/visual";
+import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
+import { UiDialogSize } from "#src/models/ui/UiDialogSize";
+import { getVisualMoveTargets } from "#src/services/dashboard/visual/getVisualMoveTargets";
+import { useVisualStore } from "#src/store/dashboard/visual";
 
 interface Props {
   visual: Visual;

@@ -1,5 +1,5 @@
-import type { ComposerTarget } from "@/models/message/ComposerTarget";
-import type { Draft } from "@/models/message/Draft";
+import type { ComposerTarget } from "#src/models/message/ComposerTarget";
+import type { Draft } from "#src/models/message/Draft";
 import type { RoomInMessage } from "@esposter/db-schema";
 
 export interface DraftItem extends Draft {

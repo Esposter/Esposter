@@ -7,8 +7,11 @@ import type {
   TextElement,
 } from "vue-block-editor-headless";
 
-import { WHITEBOARD_DASH_PATTERN_ITEMS, WHITEBOARD_STROKE_WIDTH_ITEMS } from "@/services/whiteboard/stroke/constants";
-import { useWhiteboardStore } from "@/store/resource/whiteboard";
+import {
+  WHITEBOARD_DASH_PATTERN_ITEMS,
+  WHITEBOARD_STROKE_WIDTH_ITEMS,
+} from "#src/services/whiteboard/stroke/constants";
+import { useWhiteboardStore } from "#src/store/resource/whiteboard/index";
 import { PositionedElementType } from "vue-block-editor-headless";
 
 interface Props {

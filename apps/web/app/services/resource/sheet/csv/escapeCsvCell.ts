@@ -1,4 +1,4 @@
-import { FORMULA_TRIGGER_CHARACTERS } from "@/services/resource/sheet/csv/constants";
+import { FORMULA_TRIGGER_CHARACTERS } from "#src/services/resource/sheet/csv/constants";
 
 // A spreadsheet runs a cell that opens with a formula trigger as a formula, and the text a file holds is not all the
 // Owner's: an import's cells came from the file, and a survey or a participant list holds what others typed. So every

@@ -5,10 +5,10 @@ import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnVal
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { getEffectiveColumnType } from "#shared/services/resource/sheet/column/getEffectiveColumnType";
-import { buildColumnStatisticsComputeContext } from "@/services/resource/sheet/column/buildColumnStatisticsComputeContext";
-import { ColumnStatisticsDefinitions } from "@/services/resource/sheet/column/ColumnStatisticsDefinitionMap";
-import { computeMonthFrequencies } from "@/services/resource/sheet/column/computeMonthFrequencies";
-import { computeTopFrequencies } from "@/services/resource/sheet/column/computeTopFrequencies";
+import { buildColumnStatisticsComputeContext } from "#src/services/resource/sheet/column/buildColumnStatisticsComputeContext";
+import { ColumnStatisticsDefinitions } from "#src/services/resource/sheet/column/ColumnStatisticsDefinitionMap";
+import { computeMonthFrequencies } from "#src/services/resource/sheet/column/computeMonthFrequencies";
+import { computeTopFrequencies } from "#src/services/resource/sheet/column/computeTopFrequencies";
 
 // The values are the column's cells as the compiled sheet reads them, one per row, so a caller that already holds
 // Them does not read every cell a second time

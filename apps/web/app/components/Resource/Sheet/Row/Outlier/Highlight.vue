@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { OUTLIER_HIGHLIGHT_CLASS } from "@/services/resource/sheet/constants";
+import { OUTLIER_HIGHLIGHT_CLASS } from "#src/services/resource/sheet/constants";
 
 interface Props {
   isOutlier: boolean;

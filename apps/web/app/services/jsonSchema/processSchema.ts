@@ -1,7 +1,7 @@
 import type { z } from "zod";
 
-import { processAnyOf } from "@/services/jsonSchema/processAnyOf";
-import { processTitle } from "@/services/jsonSchema/processTitle";
+import { processAnyOf } from "#src/services/jsonSchema/processAnyOf";
+import { processTitle } from "#src/services/jsonSchema/processTitle";
 
 const processedSchemas = new WeakSet<object>();
 

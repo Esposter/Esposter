@@ -2,9 +2,9 @@ import { BuildingId } from "#shared/models/clicker/data/building/BuildingId";
 import { EffectType } from "#shared/models/clicker/data/effect/EffectType";
 import { CursorUpgradeId } from "#shared/models/clicker/data/upgrade/CursorUpgradeId";
 import { GrandmaUpgradeId } from "#shared/models/clicker/data/upgrade/GrandmaUpgradeId";
-import { createBuildingWithStatistics } from "@/services/clicker/createBuildingWithStatistics.test";
-import { applyBuildingUpgrade } from "@/services/clicker/upgrade/applyBuildingUpgrade";
-import { createUpgrade } from "@/services/clicker/upgrade/createUpgrade.test";
+import { createBuildingWithStatistics } from "#src/services/clicker/createBuildingWithStatistics.test";
+import { applyBuildingUpgrade } from "#src/services/clicker/upgrade/applyBuildingUpgrade";
+import { createUpgrade } from "#src/services/clicker/upgrade/createUpgrade.test";
 import { describe, expect, test } from "vitest";
 
 describe(applyBuildingUpgrade, () => {

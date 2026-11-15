@@ -1,4 +1,4 @@
-import type { Press } from "@/models/ui/dragReorder/Press";
+import type { Press } from "#src/models/ui/dragReorder/Press";
 
 // The state one useDragReorder call holds across its presses, and the timers that drive it, which the drag's helpers
 // Take in place of closing over them

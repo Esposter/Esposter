@@ -1,4 +1,4 @@
-import { createSingleFlight } from "@/services/shared/createSingleFlight";
+import { createSingleFlight } from "#src/services/shared/createSingleFlight";
 import { describe, expect, test, vi } from "vitest";
 
 describe(createSingleFlight, () => {

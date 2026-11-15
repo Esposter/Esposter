@@ -1,4 +1,4 @@
-import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
+import type { VisualPropsData } from "#src/models/dashboard/VisualPropsData";
 
 export const BoxPlotPropsData = {
   options: { plotOptions: { boxPlot: { colors: { lower: "#A5978B", upper: "#5C4742" } } } },

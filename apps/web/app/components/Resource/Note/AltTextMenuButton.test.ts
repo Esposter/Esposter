@@ -2,10 +2,10 @@
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { getNoteExtensions } from "#shared/services/resource/note/getNoteExtensions";
 import { renderNoteHtml } from "#shared/services/resource/note/renderNoteHtml";
-import ResourceNoteAltTextMenuButton from "@/components/Resource/Note/AltTextMenuButton.vue";
+import ResourceNoteAltTextMenuButton from "#src/components/Resource/Note/AltTextMenuButton.vue";
 import { getResourceFileBlobName } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { Editor } from "@tiptap/vue-3";
+import { Editor } from "@tiptap/core";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 

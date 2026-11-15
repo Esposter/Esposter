@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { SurveyResponseRecord } from "#shared/models/resource/survey/SurveyResponseRecord";
-import type { Item } from "@/models/shared/Item";
-import type { UiDataTableColumn } from "@/models/ui/UiDataTableColumn";
-import type { UiTabItem } from "@/models/ui/UiTabItem";
+import type { Item } from "#src/models/shared/Item";
+import type { UiDataTableColumn } from "#src/models/ui/UiDataTableColumn";
+import type { UiTabItem } from "#src/models/ui/UiTabItem";
 
 import { getDatasetTruncation } from "#shared/services/dataset/getDatasetTruncation";
-import { SurveyResponseView } from "@/models/resource/survey/SurveyResponseView";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { NO_ACTION_ITEMS } from "@/services/shared/constants";
-import { DATA_TABLE_ITEMS_PER_PAGE_OPTIONS } from "@/services/ui/constants";
-import { useSurveyResponseDialogStore } from "@/store/resource/surveyResponseDialog";
-import { getRouteParam } from "@/util/router/getRouteParam";
+import { SurveyResponseView } from "#src/models/resource/survey/SurveyResponseView";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { NO_ACTION_ITEMS } from "#src/services/shared/constants";
+import { DATA_TABLE_ITEMS_PER_PAGE_OPTIONS } from "#src/services/ui/constants";
+import { useSurveyResponseDialogStore } from "#src/store/resource/surveyResponseDialog";
+import { getRouteParam } from "#src/util/router/getRouteParam";
 
 const { currentRoute } = useRouter();
 const surveyResponseDialogStore = useSurveyResponseDialogStore();

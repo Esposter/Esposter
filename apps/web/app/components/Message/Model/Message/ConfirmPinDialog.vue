@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { getEntityIdEqualComparator } from "@/services/entity/getEntityIdEqualComparator";
-import { getMessageWriteTarget } from "@/services/message/getMessageWriteTarget";
-import { MessageComponentMap } from "@/services/message/MessageComponentMap";
-import { useDataStore } from "@/store/message/data";
-import { useMessageDialogStore } from "@/store/message/dialog";
+import { getEntityIdEqualComparator } from "#src/services/entity/getEntityIdEqualComparator";
+import { getMessageWriteTarget } from "#src/services/message/getMessageWriteTarget";
+import { MessageComponentMap } from "#src/services/message/MessageComponentMap";
+import { useDataStore } from "#src/store/message/data";
+import { useMessageDialogStore } from "#src/store/message/dialog";
 import { noop } from "@esposter/shared";
 
 const { $trpc } = useNuxtApp();

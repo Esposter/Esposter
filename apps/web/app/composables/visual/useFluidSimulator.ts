@@ -1,7 +1,7 @@
-import type { FluidResources } from "@/models/visual/FluidResources";
+import type { FluidResources } from "#src/models/visual/FluidResources";
 import type { RenderTarget } from "three/webgpu";
 
-import waterNormalsUrl from "@/assets/visual/textures/waternormals.jpg?url";
+import waterNormalsUrl from "#src/assets/visual/textures/waternormals.jpg";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { SkyMesh } from "three/examples/jsm/objects/SkyMesh.js";
 import { WaterMesh } from "three/examples/jsm/objects/WaterMesh.js";

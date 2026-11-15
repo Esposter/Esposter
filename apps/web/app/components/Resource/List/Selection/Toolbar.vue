@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { Item } from "@/models/shared/Item";
+import type { Item } from "#src/models/shared/Item";
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useBlueprintCaptureDialogStore } from "@/store/resource/blueprint/captureDialog";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { useBlueprintCaptureDialogStore } from "#src/store/resource/blueprint/captureDialog";
 
 interface Props {
   selectedResources: ResourceInResource[];

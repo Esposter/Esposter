@@ -3,9 +3,9 @@ import type { VueWrapper } from "@vue/test-utils";
 import type { Router } from "vue-router";
 
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
-import { ResourceSaveState } from "@/models/resource/ResourceSaveState";
-import { RESOURCE_AUTOSAVE_DEBOUNCE_MS } from "@/services/resource/constants";
-import { useResourceStore } from "@/store/resource";
+import { ResourceSaveState } from "#src/models/resource/ResourceSaveState";
+import { RESOURCE_AUTOSAVE_DEBOUNCE_MS } from "#src/services/resource/constants";
+import { useResourceStore } from "#src/store/resource/index";
 import { ResourceType } from "@esposter/db-schema";
 import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";

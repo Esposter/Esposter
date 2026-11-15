@@ -1,5 +1,5 @@
-import { closeAudioContext } from "@/services/resource/todoList/closeAudioContext";
-import { scheduleNotes } from "@/services/resource/todoList/scheduleNotes";
+import { closeAudioContext } from "#src/services/resource/todoList/closeAudioContext";
+import { scheduleNotes } from "#src/services/resource/todoList/scheduleNotes";
 import { getResult } from "@esposter/shared";
 
 // Synthesized rather than a sound file, so the chime costs no download; each tick gets a context of its own, closed

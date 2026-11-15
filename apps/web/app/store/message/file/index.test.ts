@@ -1,12 +1,12 @@
 // @vitest-environment nuxt
 import { MimeType } from "#shared/models/file/MimeType";
-import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
-import { MessageHookMap } from "@/services/message/MessageHookMap";
-import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useDataStore } from "@/store/message/data";
-import { useFileStore } from "@/store/message/file";
-import { useThreadStore } from "@/store/message/thread";
+import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
+import { MessageHookMap } from "#src/services/message/MessageHookMap";
+import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useDataStore } from "#src/store/message/data";
+import { useFileStore } from "#src/store/message/file/index";
+import { useThreadStore } from "#src/store/message/thread";
 import { MessageType, READ_PRESIGNED_URL_REFRESH_INTERVAL_MS } from "@esposter/db-schema";
 import { MAX_READ_LIMIT, Operation, takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
 import { v7 } from "uuid";

@@ -1,7 +1,7 @@
-import type { Drag } from "@/models/ui/dragReorder/Drag";
-import type { Press } from "@/models/ui/dragReorder/Press";
+import type { Drag } from "#src/models/ui/dragReorder/Drag";
+import type { Press } from "#src/models/ui/dragReorder/Press";
 
-import { getDragSiblingTranslate } from "@/services/ui/dragReorder/getDragSiblingTranslate";
+import { getDragSiblingTranslate } from "#src/services/ui/dragReorder/getDragSiblingTranslate";
 import { takeOne } from "@esposter/shared";
 
 // Only the rows between the old slot and the new change where they sit

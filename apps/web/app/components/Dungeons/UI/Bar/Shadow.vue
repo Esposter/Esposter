@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { ImagePosition } from "@/models/dungeons/ImagePosition";
+import type { ImagePosition } from "#src/models/dungeons/ImagePosition";
 
-import { BarShadowTextureMap } from "@/services/dungeons/UI/bar/BarShadowTextureMap";
+import { BarShadowTextureMap } from "#src/services/dungeons/UI/bar/BarShadowTextureMap";
 
 interface Props {
   imagePosition: ImagePosition;

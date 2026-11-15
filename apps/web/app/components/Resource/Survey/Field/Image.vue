@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { SurveyAnswerValue, SurveyImageNode } from "vue-survey-engine-headless";
 
-import { SURVEY_IMAGE_FIT_CLASSES } from "@/services/resource/survey/constants";
+import { SURVEY_IMAGE_FIT_CLASSES } from "#src/services/resource/survey/constants";
 
 interface Props {
   // A picture asks nothing, so it takes no error and is never disabled; both are taken so the chooser hands every kind

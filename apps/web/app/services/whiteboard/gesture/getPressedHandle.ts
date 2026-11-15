@@ -1,9 +1,9 @@
-import type { ResizeHandle } from "@/models/whiteboard/ResizeHandle";
+import type { ResizeHandle } from "#src/models/whiteboard/ResizeHandle";
 import type { ArrowEndKey, Point, PositionedDocument } from "vue-block-editor-headless";
 
-import { getConnectionHandle } from "@/services/whiteboard/gesture/getConnectionHandle";
-import { getFreeEndHandle } from "@/services/whiteboard/gesture/getFreeEndHandle";
-import { getResizeHandle } from "@/services/whiteboard/gesture/getResizeHandle";
+import { getConnectionHandle } from "#src/services/whiteboard/gesture/getConnectionHandle";
+import { getFreeEndHandle } from "#src/services/whiteboard/gesture/getFreeEndHandle";
+import { getResizeHandle } from "#src/services/whiteboard/gesture/getResizeHandle";
 
 // A handle a press on the select tool lands on: a resize of the selection, a connection of a shape, or a drag of a free arrow end. Each one is
 // The gesture the press starts, and a press on none falls through to the element or the canvas beneath it

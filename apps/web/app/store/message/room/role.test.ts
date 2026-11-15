@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
-import { createRoomRole } from "@/services/message/member/createRoomRole.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useRoleStore } from "@/store/message/room/role";
+import { createRoomRole } from "#src/services/message/member/createRoomRole.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useRoleStore } from "#src/store/message/room/role";
 import { TRPCError } from "@trpc/server";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";

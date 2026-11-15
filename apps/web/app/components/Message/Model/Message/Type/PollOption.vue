@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getVoteDescription } from "@/services/message/poll/getVoteDescription";
+import { getVoteDescription } from "#src/services/message/poll/getVoteDescription";
 
 interface Props {
   label: string;

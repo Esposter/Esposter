@@ -1,6 +1,6 @@
-import type { PhaserSubscriptions } from "@/models/phaser/PhaserSubscriptions";
+import type { PhaserSubscriptions } from "#src/models/phaser/PhaserSubscriptions";
 
-import { phaserEventEmitter } from "@/services/phaser/phaserEventEmitter";
+import { phaserEventEmitter } from "#src/services/phaser/phaserEventEmitter";
 
 export const createPhaserSubscriptions = (): PhaserSubscriptions => {
   let unsubscribes: (() => void)[] = [];

@@ -1,7 +1,7 @@
 import type { GenshinSave } from "genshin-world/save";
 
-import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
-import { parseJsonWithSchema } from "@/services/shared/parseJsonWithSchema";
+import { LocalStorageKey } from "#src/services/shared/LocalStorageKey";
+import { parseJsonWithSchema } from "#src/services/shared/parseJsonWithSchema";
 import { getResult } from "@esposter/shared";
 import { genshinSaveSchema } from "genshin-world/save";
 

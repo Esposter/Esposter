@@ -1,4 +1,4 @@
-import { getWorkerTimers } from "@/services/shared/getWorkerTimers";
+import { getWorkerTimers } from "#src/services/shared/getWorkerTimers";
 
 // The interval lives in a Web Worker so it keeps firing while the tab is backgrounded,
 // Where browsers throttle main-thread timers

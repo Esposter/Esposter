@@ -1,4 +1,4 @@
-import { getShortcutKeyLabels } from "@/services/ui/getShortcutKeyLabels";
+import { getShortcutKeyLabels } from "#src/services/ui/getShortcutKeyLabels";
 import { describe, expect, test } from "vitest";
 
 describe(getShortcutKeyLabels, () => {

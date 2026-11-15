@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import type { Visual } from "#shared/models/dashboard/data/Visual";
-import type { DashboardVisualEmits } from "@/models/dashboard/DashboardVisualEmits";
+import type { DashboardVisualEmits } from "#src/models/dashboard/DashboardVisualEmits";
 import type { CollisionMode, CompactType } from "vue-grid-layout-headless";
 
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
-import { DASHBOARD_GRID_MARGIN } from "@/services/dashboard/constants";
-import { getGeometryStyle } from "@/services/dashboard/grid/getGeometryStyle";
-import { checkIsMoveRefused } from "@/services/dashboard/visual/checkIsMoveRefused";
-import { DRAG_START_DISTANCE } from "@/services/ui/constants";
-import { useVisualStore } from "@/store/dashboard/visual";
-import { prettify } from "@/util/text/prettify";
+import { DASHBOARD_GRID_MARGIN } from "#src/services/dashboard/constants";
+import { getGeometryStyle } from "#src/services/dashboard/grid/getGeometryStyle";
+import { checkIsMoveRefused } from "#src/services/dashboard/visual/checkIsMoveRefused";
+import { DRAG_START_DISTANCE } from "#src/services/ui/constants";
+import { useVisualStore } from "#src/store/dashboard/visual";
+import { prettify } from "#src/util/text/prettify";
 import { useGridLayout } from "vue-grid-layout-headless";
 
 interface Props {

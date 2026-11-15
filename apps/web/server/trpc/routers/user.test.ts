@@ -1,5 +1,5 @@
 import type { Context } from "#server/trpc/context";
-import type { TRPCRouter } from "#server/trpc/routers";
+import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { R2Bucket } from "@cloudflare/workers-types";
 import type { BlobDeletionQueueMessage } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
@@ -13,7 +13,6 @@ import { MockPublishedTopics } from "#server/services/realtime/publishTopics.tes
 import { getBucket } from "#server/services/storage/getBucket";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { DATA_EXPORT_LINK_DURATION_MS } from "#server/services/user/constants";
-import { createCallerFactory } from "#server/trpc";
 import {
   createMockAuthSession,
   createMockContext,
@@ -22,7 +21,8 @@ import {
   getMockRevokeSession,
   getMockSession,
 } from "#server/trpc/context.test";
-import { roomRouter } from "#server/trpc/routers/room";
+import { createCallerFactory } from "#server/trpc/index";
+import { roomRouter } from "#server/trpc/routers/room/index";
 import { userRouter } from "#server/trpc/routers/user";
 import { MimeType } from "#shared/models/file/MimeType";
 import { MAX_CALL_BACKGROUND_SIZE_BYTES, MAX_CALL_BACKGROUNDS } from "#shared/services/message/constants";

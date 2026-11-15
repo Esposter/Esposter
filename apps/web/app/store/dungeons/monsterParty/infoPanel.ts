@@ -1,7 +1,7 @@
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { DialogTarget } from "@/models/dungeons/UI/dialog/DialogTarget";
-import { useDialogStore } from "@/store/dungeons/dialog";
+import { DialogTarget } from "#src/models/dungeons/UI/dialog/DialogTarget";
+import { useDialogStore } from "#src/store/dungeons/dialog";
 
 export const useMonsterPartyInfoPanelStore = defineStore("dungeons/monsterParty/infoPanel", () => {
   const dialogStore = useDialogStore();

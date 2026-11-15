@@ -1,6 +1,6 @@
-import type { UiStyle } from "@/models/ui/UiStyle";
+import type { UiStyle } from "#src/models/ui/UiStyle";
 
-import { UI_STYLE_INJECTION_KEY } from "@/services/ui/constants";
+import { UI_STYLE_INJECTION_KEY } from "#src/services/ui/constants";
 import { config } from "@vue/test-utils";
 import { afterEach, beforeEach, describe } from "vitest";
 

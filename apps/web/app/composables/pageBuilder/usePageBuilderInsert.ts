@@ -1,11 +1,11 @@
-import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
+import type { PageBuilderKind } from "#src/models/pageBuilder/PageBuilderKind";
 import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "vue-block-editor-headless";
 
-import { getInsertableTypes } from "@/services/pageBuilder/getInsertableTypes";
-import { getInsertTarget } from "@/services/pageBuilder/getInsertTarget";
-import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
-import { insertAt } from "@/services/pageBuilder/insertAt";
-import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
+import { getInsertableTypes } from "#src/services/pageBuilder/getInsertableTypes";
+import { getInsertTarget } from "#src/services/pageBuilder/getInsertTarget";
+import { getNodePointer } from "#src/services/pageBuilder/getNodePointer";
+import { insertAt } from "#src/services/pageBuilder/insertAt";
+import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
 
 // Inserts a new block of a type into one open resource's document, at the selection's place. An edit the slot refuses
 // Does nothing and announces nothing. A landed insert is one history entry, selects the new node and is announced once

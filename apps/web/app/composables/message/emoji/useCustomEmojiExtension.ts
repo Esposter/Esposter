@@ -1,5 +1,5 @@
-import { CUSTOM_EMOJI_TYPE } from "@/services/message/emoji/constants";
-import { getEmojiShortcode } from "@/services/message/emoji/getEmojiShortcode";
+import { CUSTOM_EMOJI_TYPE } from "#src/services/message/emoji/constants";
+import { getEmojiShortcode } from "#src/services/message/emoji/getEmojiShortcode";
 import { CUSTOM_EMOJI_ID_ATTRIBUTE, CUSTOM_EMOJI_NAME_ATTRIBUTE } from "@esposter/shared";
 import { mergeAttributes, Node } from "@tiptap/vue-3";
 

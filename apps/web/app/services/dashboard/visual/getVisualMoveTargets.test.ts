@@ -1,6 +1,6 @@
 import { Visual } from "#shared/models/dashboard/data/Visual";
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
-import { getVisualMoveTargets } from "@/services/dashboard/visual/getVisualMoveTargets";
+import { getVisualMoveTargets } from "#src/services/dashboard/visual/getVisualMoveTargets";
 import { describe, expect, test } from "vitest";
 
 describe(getVisualMoveTargets, () => {

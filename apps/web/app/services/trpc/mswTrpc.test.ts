@@ -1,8 +1,8 @@
-import type { TRPCRouter } from "#server/trpc/routers";
+import type { TRPCRouter } from "#server/trpc/routers/index";
 
 import { rootConfig } from "#server/trpc/rootConfig";
-import { trpcRouter } from "#server/trpc/routers";
-import { TRPC_CLIENT_PATH } from "@/services/trpc/constants";
+import { trpcRouter } from "#server/trpc/routers/index";
+import { TRPC_CLIENT_PATH } from "#src/services/trpc/constants";
 import { initTRPC } from "@trpc/server";
 import { Headers as HappyDomHeaders } from "happy-dom";
 import { setupServer } from "msw/node";

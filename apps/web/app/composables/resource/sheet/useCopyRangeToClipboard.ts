@@ -1,9 +1,9 @@
-import { copyToClipboard } from "@/services/resource/sheet/commands/copyToClipboard";
-import { filterDataSourceRange } from "@/services/resource/sheet/dataSource/filterDataSourceRange";
-import { createErrorAlert } from "@/services/trpc/createErrorAlert";
-import { useSheetStore } from "@/store/resource/sheet";
-import { useCellStore } from "@/store/resource/sheet/cell";
-import { useRowStore } from "@/store/resource/sheet/row";
+import { copyToClipboard } from "#src/services/resource/sheet/commands/copyToClipboard";
+import { filterDataSourceRange } from "#src/services/resource/sheet/dataSource/filterDataSourceRange";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
+import { useCellStore } from "#src/store/resource/sheet/cell";
+import { useSheetStore } from "#src/store/resource/sheet/index";
+import { useRowStore } from "#src/store/resource/sheet/row";
 import { getResultAsync, noop } from "@esposter/shared";
 
 export const useCopyRangeToClipboard = () => {

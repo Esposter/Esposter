@@ -1,7 +1,7 @@
 import type { Column } from "#shared/models/resource/sheet/column/Column";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
-import { getVisibleColumns } from "@/services/resource/sheet/column/getVisibleColumns";
+import { getVisibleColumns } from "#src/services/resource/sheet/column/getVisibleColumns";
 
 // The columns a text command (null strategies, string transformations) can act on — the string ones among what
 // The user can currently see

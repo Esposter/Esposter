@@ -3,11 +3,11 @@ import type { RoomInMessage } from "@esposter/db-schema";
 
 import { MAX_ROOM_EMOJI_SIZE_BYTES, MAX_ROOM_EMOJIS } from "#shared/services/message/constants";
 import { pluralize } from "#shared/util/text/pluralize";
-import { UiToken } from "@/models/ui/UiToken";
-import { getFileSize } from "@/services/file/getFileSize";
-import { validateFile } from "@/services/file/validateFile";
-import { getEmojiShortcode } from "@/services/message/emoji/getEmojiShortcode";
-import { useRoomEmojiStore } from "@/store/message/room/emoji";
+import { UiToken } from "#src/models/ui/UiToken";
+import { getFileSize } from "#src/services/file/getFileSize";
+import { validateFile } from "#src/services/file/validateFile";
+import { getEmojiShortcode } from "#src/services/message/emoji/getEmojiShortcode";
+import { useRoomEmojiStore } from "#src/store/message/room/emoji";
 import { selectRoomEmojiInMessageSchema } from "@esposter/db-schema";
 
 interface Props {

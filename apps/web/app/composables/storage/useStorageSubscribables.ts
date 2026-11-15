@@ -1,5 +1,5 @@
-import { useConnectionStore } from "@/store/realtime/connection";
-import { useStorageStore } from "@/store/storage";
+import { useConnectionStore } from "#src/store/realtime/connection";
+import { useStorageStore } from "#src/store/storage";
 import { checkIsServer } from "@esposter/shared";
 
 export const useStorageSubscribables = () => {

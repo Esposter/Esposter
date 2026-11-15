@@ -1,8 +1,8 @@
-import type { AnyPageBuilderKind } from "@/models/pageBuilder/AnyPageBuilderKind";
-import type { FrameGeometry } from "@/models/pageBuilder/FrameGeometry";
+import type { AnyPageBuilderKind } from "#src/models/pageBuilder/AnyPageBuilderKind";
+import type { FrameGeometry } from "#src/models/pageBuilder/FrameGeometry";
 
-import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
-import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
+import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
+import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
 import { getSynchronizedFunction } from "@esposter/shared";
 
 // The editing of one open page builder document, which every arrangement of the builder shares: what a screen reader hears, the

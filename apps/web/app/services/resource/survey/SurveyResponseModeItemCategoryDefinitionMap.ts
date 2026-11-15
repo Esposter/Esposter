@@ -1,7 +1,7 @@
-import type { UiSelectItem } from "@/models/ui/UiSelectItem";
+import type { UiSelectItem } from "#src/models/ui/UiSelectItem";
 import type { Except } from "type-fest";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { SurveyResponseMode } from "@esposter/db-schema";
 
 export const SurveyResponseModeItemCategoryDefinitionMap = {

@@ -1,5 +1,5 @@
-import { toMergeField } from "@/services/emailEditor/toMergeField";
-import { appendMergeFieldToText } from "@/services/pageBuilder/email/appendMergeFieldToText";
+import { toMergeField } from "#src/services/emailEditor/toMergeField";
+import { appendMergeFieldToText } from "#src/services/pageBuilder/email/appendMergeFieldToText";
 import { describe, expect, test } from "vitest";
 
 describe(appendMergeFieldToText, () => {

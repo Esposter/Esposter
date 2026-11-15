@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useRowStore } from "@/store/resource/sheet/row";
-import { useRowDialogStore } from "@/store/resource/sheet/rowDialog";
+import { useRowStore } from "#src/store/resource/sheet/row";
+import { useRowDialogStore } from "#src/store/resource/sheet/rowDialog";
 
 const rowStore = useRowStore();
 const { selectedRowIds } = storeToRefs(rowStore);

@@ -1,9 +1,9 @@
 import type { JsonPatchOperation } from "@esposter/shared";
 import type { Bounds, Point, PositionedDocument } from "vue-block-editor-headless";
 
-import { DistributeAxis } from "@/models/whiteboard/DistributeAxis";
-import { WHITEBOARD_DISTRIBUTE_MINIMUM_BOXES } from "@/services/whiteboard/arrange/constants";
-import { getSelectedBoxes } from "@/services/whiteboard/arrange/getSelectedBoxes";
+import { DistributeAxis } from "#src/models/whiteboard/DistributeAxis";
+import { WHITEBOARD_DISTRIBUTE_MINIMUM_BOXES } from "#src/services/whiteboard/arrange/constants";
+import { getSelectedBoxes } from "#src/services/whiteboard/arrange/getSelectedBoxes";
 import { takeOne } from "@esposter/shared";
 import { movePositionedElement } from "vue-block-editor-headless";
 

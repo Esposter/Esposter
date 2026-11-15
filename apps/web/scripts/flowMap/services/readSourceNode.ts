@@ -1,8 +1,8 @@
-import type { FlowMapSourceContext } from "@@/scripts/flowMap/models/FlowMapSourceContext";
-import type { FlowMapSourceNode } from "@@/scripts/flowMap/models/FlowMapSourceNode";
+import type { FlowMapSourceContext } from "#scripts/flowMap/models/FlowMapSourceContext";
+import type { FlowMapSourceNode } from "#scripts/flowMap/models/FlowMapSourceNode";
 import type { TemplateChildNode } from "@vue/compiler-core";
 
-import { WEB_DIRECTORY } from "@@/scripts/constants";
+import { WEB_DIRECTORY } from "#scripts/constants";
 import {
   CLIENT_DIRECTORIES,
   DEFAULT_LAYOUT,
@@ -15,7 +15,7 @@ import {
   ROUTE_PATH_REFERENCE_REGEX,
   SOURCE_ALIAS_DIRECTORY_MAP,
   SOURCE_EXTENSIONS,
-} from "@@/scripts/flowMap/constants";
+} from "#scripts/flowMap/constants";
 import { ElementTypes, NodeTypes } from "@vue/compiler-core";
 import { existsSync, readFileSync, statSync } from "node:fs";
 import { dirname, resolve } from "node:path";

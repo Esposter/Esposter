@@ -1,4 +1,4 @@
-import { ignoreWarn } from "@/util/console/ignoreWarn";
+import { ignoreWarn } from "#src/util/console/ignoreWarn";
 import { noop } from "@esposter/shared";
 import { afterEach, describe, expect, test, vi } from "vitest";
 

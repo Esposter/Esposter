@@ -1,10 +1,10 @@
 import type { AuthSession } from "#server/models/auth/AuthSession";
 import type { Context } from "#server/trpc/context";
-import type { TRPCRouter } from "#server/trpc/routers";
+import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { TRPCBuiltRouter, TRPCRouterRecord } from "@trpc/server";
 
 import { authMocks, createMockSession, insertMockSession } from "#server/auth.test";
-import { createCallerFactory } from "#server/trpc";
+import { createCallerFactory } from "#server/trpc/index";
 import { createMockDb as baseCreateMockDb } from "@esposter/db-mock";
 import { usersInAuth } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";

@@ -1,4 +1,4 @@
-import { getMixedValue } from "@/services/editor/getMixedValue";
+import { getMixedValue } from "#src/services/editor/getMixedValue";
 import { describe, expect, test } from "vitest";
 
 describe(getMixedValue, () => {

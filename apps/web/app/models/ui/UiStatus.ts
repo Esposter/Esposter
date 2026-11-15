@@ -1,4 +1,4 @@
-import type { UiToken } from "@/models/ui/UiToken";
+import type { UiToken } from "#src/models/ui/UiToken";
 
 // How something went, one of the four tokens that say it. A token is its value, so a store's own severity strings pass
 // Straight through

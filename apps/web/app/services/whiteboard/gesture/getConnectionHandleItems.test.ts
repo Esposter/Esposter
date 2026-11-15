@@ -1,6 +1,6 @@
 import type { ShapeElement } from "vue-block-editor-headless";
 
-import { getConnectionHandleItems } from "@/services/whiteboard/gesture/getConnectionHandleItems";
+import { getConnectionHandleItems } from "#src/services/whiteboard/gesture/getConnectionHandleItems";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 import {

@@ -1,4 +1,4 @@
-import { MOBILE_REGEX, NOT_MOBILE_REGEX } from "@/util/device/constants";
+import { MOBILE_REGEX, NOT_MOBILE_REGEX } from "#src/util/device/constants";
 import { checkIsServer } from "@esposter/shared";
 
 export const checkIsMobile = () => {

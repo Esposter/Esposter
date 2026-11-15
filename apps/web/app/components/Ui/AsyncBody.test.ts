@@ -1,10 +1,10 @@
 // @vitest-environment happy-dom
-import UiAsyncBody from "@/components/Ui/AsyncBody.vue";
-import UiEmptyState from "@/components/Ui/EmptyState.vue";
-import UiErrorState from "@/components/Ui/ErrorState.vue";
-import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { UiStyles } from "@/models/ui/UiStyle";
+import UiAsyncBody from "#src/components/Ui/AsyncBody.vue";
+import UiEmptyState from "#src/components/Ui/EmptyState.vue";
+import UiErrorState from "#src/components/Ui/ErrorState.vue";
+import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { UiStyles } from "#src/models/ui/UiStyle";
 import { mount } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 

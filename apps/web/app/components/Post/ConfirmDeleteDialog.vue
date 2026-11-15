@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { usePostStore } from "@/store/post";
-import { useCommentStore } from "@/store/post/comment";
-import { usePostDialogStore } from "@/store/post/dialog";
+import { useCommentStore } from "#src/store/post/comment/index";
+import { usePostDialogStore } from "#src/store/post/dialog";
+import { usePostStore } from "#src/store/post/index";
 import { RoutePath } from "@esposter/shared";
 
 const postStore = usePostStore();

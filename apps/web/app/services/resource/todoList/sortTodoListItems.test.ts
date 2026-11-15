@@ -1,6 +1,6 @@
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
-import { TodoListSort } from "@/models/resource/todoList/TodoListSort";
-import { sortTodoListItems } from "@/services/resource/todoList/sortTodoListItems";
+import { TodoListSort } from "#src/models/resource/todoList/TodoListSort";
+import { sortTodoListItems } from "#src/services/resource/todoList/sortTodoListItems";
 import { describe, expect, test } from "vitest";
 
 describe(sortTodoListItems, () => {

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { ClientMessage } from "@/models/message/ClientMessage";
+import type { ClientMessage } from "#src/models/message/ClientMessage";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { useAlertStore } from "@/store/alert";
-import { useForwardStore } from "@/store/message/input/forward";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { useAlertStore } from "#src/store/alert";
+import { useForwardStore } from "#src/store/message/input/forward";
 import { RoutePath, takeOne } from "@esposter/shared";
 
 interface Props {

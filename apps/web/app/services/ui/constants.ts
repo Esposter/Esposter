@@ -1,7 +1,7 @@
-import type { UiDialogContext } from "@/models/ui/UiDialogContext";
-import type { UiStyle } from "@/models/ui/UiStyle";
+import type { UiDialogContext } from "#src/models/ui/UiDialogContext";
+import type { UiStyle } from "#src/models/ui/UiStyle";
 
-import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
+import { UiTextFieldType } from "#src/models/ui/UiTextFieldType";
 
 // The terminal's spinner: a star that grows and shrinks back, a frame at a time
 export const SPINNER_FRAMES = ["·", "✢", "✳", "✶", "✻", "✽", "✻", "✶", "✳", "✢"];

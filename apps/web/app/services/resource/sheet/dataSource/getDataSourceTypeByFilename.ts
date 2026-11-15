@@ -1,5 +1,5 @@
 import { DataSourceTypes } from "#shared/models/resource/sheet/datasource/DataSourceType";
-import { DataSourceConfigurationMap } from "@/services/resource/sheet/dataSource/DataSourceConfigurationMap";
+import { DataSourceConfigurationMap } from "#src/services/resource/sheet/dataSource/DataSourceConfigurationMap";
 import { normalizeString } from "@esposter/shared";
 
 // The create form takes any portable file rather than a format the user picked first, so the format map's

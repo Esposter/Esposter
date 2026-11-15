@@ -1,8 +1,8 @@
 import type { JsonPatchOperation } from "@esposter/shared";
 import type { Point, PositionedDocument, PositionedElement } from "vue-block-editor-headless";
 
-import { getChainedOperations } from "@/services/whiteboard/edit/getChainedOperations";
-import { getDuplicateElement } from "@/services/whiteboard/edit/getDuplicateElement";
+import { getChainedOperations } from "#src/services/whiteboard/edit/getChainedOperations";
+import { getDuplicateElement } from "#src/services/whiteboard/edit/getDuplicateElement";
 import { insertPositionedElement, PositionedElementType } from "vue-block-editor-headless";
 
 // The operations that insert a copy of each original on top of the element list, as one list, each copy under the id its original maps to and moved

@@ -1,6 +1,6 @@
-import type { ClientMessage } from "@/models/message/ClientMessage";
+import type { ClientMessage } from "#src/models/message/ClientMessage";
 
-import { useEmojiStore } from "@/store/message/emoji";
+import { useEmojiStore } from "#src/store/message/emoji";
 
 export const useSelectEmoji = (message: ClientMessage) => {
   const emojiStore = useEmojiStore();

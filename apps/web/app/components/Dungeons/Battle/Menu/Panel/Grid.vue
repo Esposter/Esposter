@@ -1,16 +1,16 @@
 <script setup lang="ts" generic="TGrid extends readonly (readonly unknown[])[]">
-import type { Grid } from "@/models/dungeons/Grid";
-import type { GridValue } from "@/models/dungeons/GridValue";
+import type { Grid } from "#src/models/dungeons/Grid";
+import type { GridValue } from "#src/models/dungeons/GridValue";
 
-import { getGridKey } from "@/services/dungeons/getGridKey";
+import { getGridKey } from "#src/services/dungeons/getGridKey";
 import {
   CURSOR_POSITION_INCREMENT,
   INITIAL_CURSOR_POSITION,
   MENU_HEIGHT,
   MENU_PADDING,
-} from "@/services/dungeons/scene/battle/menu/constants";
-import { getPanelTextPosition } from "@/services/dungeons/scene/battle/menu/getPanelTextPosition";
-import { PANEL_BORDER_COLOR, PANEL_FILL_COLOR } from "@/services/dungeons/UI/constants";
+} from "#src/services/dungeons/scene/battle/menu/constants";
+import { getPanelTextPosition } from "#src/services/dungeons/scene/battle/menu/getPanelTextPosition";
+import { PANEL_BORDER_COLOR, PANEL_FILL_COLOR } from "#src/services/dungeons/UI/constants";
 import { Container, Rectangle } from "vue-phaserjs";
 
 interface Props {

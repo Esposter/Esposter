@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import ErrorPage from "@/error.vue";
+import ErrorPage from "#src/error.vue";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 

@@ -1,12 +1,12 @@
-import type { createErrorAlert } from "@/services/trpc/createErrorAlert";
+import type { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 
-import { useAutoSearch } from "@/composables/useAutoSearch";
-import { AUTO_SEARCH_THROTTLE_MS } from "@/services/shared/constants";
+import { useAutoSearch } from "#src/composables/useAutoSearch";
+import { AUTO_SEARCH_THROTTLE_MS } from "#src/services/shared/constants";
 import { noop } from "@esposter/shared";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("@/services/trpc/createErrorAlert"), () => ({ createErrorAlert: vi.fn<typeof createErrorAlert>() }));
+vi.mock(import("#src/services/trpc/createErrorAlert"), () => ({ createErrorAlert: vi.fn<typeof createErrorAlert>() }));
 
 const setupAutoSearch = () => {
   const searchQuery = ref("");

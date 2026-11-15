@@ -1,8 +1,8 @@
-import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
+import type { PageBuilderKind } from "#src/models/pageBuilder/PageBuilderKind";
 import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "vue-block-editor-headless";
 
-import { getEmptyContainerSlotPointer } from "@/services/pageBuilder/getEmptyContainerSlotPointer";
-import { getNodeSlotPointer } from "@/services/pageBuilder/getNodeSlotPointer";
+import { getEmptyContainerSlotPointer } from "#src/services/pageBuilder/getEmptyContainerSlotPointer";
+import { getNodeSlotPointer } from "#src/services/pageBuilder/getNodeSlotPointer";
 import { parseArrayIndex, parseJsonPointer } from "@esposter/shared";
 import { getAcceptedTypes } from "vue-block-editor-headless";
 

@@ -1,8 +1,8 @@
 import type { MonsterKey } from "#shared/models/dungeons/keys/image/UI/MonsterKey";
 
 import { Monster } from "#shared/models/dungeons/monster/Monster";
-import { getLevelExperience } from "@/services/dungeons/monster/getLevelExperience";
-import { levelUp } from "@/services/dungeons/monster/levelUp";
+import { getLevelExperience } from "#src/services/dungeons/monster/getLevelExperience";
+import { levelUp } from "#src/services/dungeons/monster/levelUp";
 
 // Wild encounters spawn above the species' base level by replaying the normal level-up rolls
 // Rather than scaling the statistics, so a spawn is identical to a monster trained to that level

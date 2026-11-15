@@ -1,4 +1,4 @@
-import { EXTENDED_LANGUAGES } from "@/services/codemirror/constants";
+import { EXTENDED_LANGUAGES } from "#src/services/codemirror/constants";
 
 // Keyed by language name, because that is what `getLanguage` hands back and `getLanguageExtension` takes.
 // Every extension is escaped: `c++` and `cmake.in` are real entries, and their punctuation is literal.

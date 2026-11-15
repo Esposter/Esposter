@@ -2,9 +2,9 @@
 import type { Extension } from "@codemirror/state";
 
 import { MimeType } from "#shared/models/file/MimeType";
-import MessageModelFileRendererCode from "@/components/Message/Model/FileRenderer/Code.vue";
-import { getLanguageExtension } from "@/services/codemirror/getLanguageExtension";
-import { PREVIEW_MAX_HEIGHT } from "@/services/message/file/constants";
+import MessageModelFileRendererCode from "#src/components/Message/Model/FileRenderer/Code.vue";
+import { getLanguageExtension } from "#src/services/codemirror/getLanguageExtension";
+import { PREVIEW_MAX_HEIGHT } from "#src/services/message/file/constants";
 import { language, StreamLanguage } from "@codemirror/language";
 import { FileEntity } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -16,7 +16,7 @@ import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vites
 import { Transition } from "vue";
 
 // The grammar loads from its own module on first use, so a test holds it back until the text is already on screen
-vi.mock(import("@/services/codemirror/getLanguageExtension"), () => ({
+vi.mock(import("#src/services/codemirror/getLanguageExtension"), () => ({
   getLanguageExtension: vi.fn<typeof getLanguageExtension>(() => Promise.resolve([])),
 }));
 

@@ -15,9 +15,9 @@ This is also why a rule with a live example beats a rule with a historical one: 
 
 ## Generic placeholders, never identifiers from one change
 
-Code examples use `Foo`/`Bar`/`baz`, `external-pkg`, `@/models/Bar`. **Never paste the concrete identifiers, function names, package names, or file paths from the change that prompted the note** — a skill is a reusable convention, not a changelog, and task-specific names make the rule read as a one-off that doesn't generalise.
+Code examples use `Foo`/`Bar`/`baz`, `external-pkg`, `#src/models/Bar`. **Never paste the concrete identifiers, function names, package names, or file paths from the change that prompted the note** — a skill is a reusable convention, not a changelog, and task-specific names make the rule read as a one-off that doesn't generalise.
 
-Generic source categories (`#shared`, `@vueuse/*`, `@/`) are fine — they describe a class of import, not a specific symbol. A concrete path is fine when the path **is** the rule (a registry file every consumer must edit).
+Generic source categories (`#shared`, `@vueuse/*`, `#src/`) are fine — they describe a class of import, not a specific symbol. A concrete path is fine when the path **is** the rule (a registry file every consumer must edit).
 
 **A name in an example is either real or a placeholder, never a name that was real once.** An example of the right form names an identifier the tree holds, so `scripts/src/workspace/staleNames.test.ts` fails the day it is renamed; an example of the wrong form, or a shape with nothing in the tree to point at, keeps the part the rule is about and takes a placeholder stem for the rest — `dmFoo` against `directMessageFoo`, `FOO_PROPS` for a table wrongly screamed, `readFoosByBar` becoming `readFoosByBars` — which the test skips by design. A realistic name invented for the example — a settings-visible flag, a feature-card component — is the one shape that fails both: it reads as a citation and resolves nowhere.
 

@@ -1,10 +1,10 @@
 // @vitest-environment nuxt
 import type { SurveyDocument } from "vue-survey-engine-headless";
 
-import ResourceSurveyCreatorImageUpload from "@/components/Resource/Survey/Creator/ImageUpload.vue";
-import UiFileField from "@/components/Ui/FileField.vue";
-import { useSurveyFiles } from "@/composables/survey/useSurveyFiles";
-import { useSurveyCreatorStore } from "@/store/survey/creator";
+import ResourceSurveyCreatorImageUpload from "#src/components/Resource/Survey/Creator/ImageUpload.vue";
+import UiFileField from "#src/components/Ui/FileField.vue";
+import { useSurveyFiles } from "#src/composables/survey/useSurveyFiles";
+import { useSurveyCreatorStore } from "#src/store/survey/creator";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
@@ -17,8 +17,8 @@ const { deleteFile, uploadFile } = vi.hoisted(() => ({
   uploadFile: vi.fn<(file: File) => Promise<string>>(),
 }));
 
-vi.mock(import("@/composables/resource/useUploadResourceFile"), () => ({ useUploadResourceFile: () => uploadFile }));
-vi.mock(import("@/composables/resource/useDeleteResourceFile"), () => ({ useDeleteResourceFile: () => deleteFile }));
+vi.mock(import("#src/composables/resource/useUploadResourceFile"), () => ({ useUploadResourceFile: () => uploadFile }));
+vi.mock(import("#src/composables/resource/useDeleteResourceFile"), () => ({ useDeleteResourceFile: () => deleteFile }));
 
 // A survey whose one page holds one image question, of the given picture
 const createDocument = (imageLink: string) =>

@@ -2,9 +2,9 @@
 
 import type { SerializableValue } from "@esposter/db-schema";
 
-import AuthorTypePicker from "@/components/Message/RightSideBar/Search/Filter/AuthorTypePicker.vue";
-import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
-import { UiStyles } from "@/models/ui/UiStyle";
+import AuthorTypePicker from "#src/components/Message/RightSideBar/Search/Filter/AuthorTypePicker.vue";
+import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
+import { UiStyles } from "#src/models/ui/UiStyle";
 import { FilterTypeAuthorType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";

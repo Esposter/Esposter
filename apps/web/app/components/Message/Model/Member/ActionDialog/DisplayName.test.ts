@@ -1,10 +1,10 @@
 // @vitest-environment nuxt
 import type { UpdateUserToRoomInput } from "#shared/models/db/userToRoom/UpdateUserToRoomInput";
 
-import MessageModelMemberActionDialogDisplayName from "@/components/Message/Model/Member/ActionDialog/DisplayName.vue";
-import { createUserToRoom } from "@/services/message/room/createUserToRoom.test";
-import { createUser } from "@/services/message/user/createUser.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
+import MessageModelMemberActionDialogDisplayName from "#src/components/Message/Model/Member/ActionDialog/DisplayName.vue";
+import { createUserToRoom } from "#src/services/message/room/createUserToRoom.test";
+import { createUser } from "#src/services/message/user/createUser.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";

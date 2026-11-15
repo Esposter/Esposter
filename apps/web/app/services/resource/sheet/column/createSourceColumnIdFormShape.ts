@@ -1,4 +1,4 @@
-import type { ColumnFormContext } from "@/models/resource/sheet/column/ColumnFormContext";
+import type { ColumnFormContext } from "#src/models/resource/sheet/column/ColumnFormContext";
 
 import { sourceColumnIdSchema } from "#shared/models/resource/sheet/column/transformation/SourceColumnId";
 

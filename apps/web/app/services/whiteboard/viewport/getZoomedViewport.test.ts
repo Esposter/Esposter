@@ -1,4 +1,4 @@
-import { getZoomedViewport } from "@/services/whiteboard/viewport/getZoomedViewport";
+import { getZoomedViewport } from "#src/services/whiteboard/viewport/getZoomedViewport";
 import { describe, expect, test } from "vitest";
 
 describe(getZoomedViewport, () => {

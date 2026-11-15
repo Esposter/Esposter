@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { getCalendarWeeks } from "@/services/ui/getCalendarWeeks";
-import { getNextGridDate } from "@/util/date/getNextGridDate";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { getCalendarWeeks } from "#src/services/ui/getCalendarWeeks";
+import { getNextGridDate } from "#src/util/date/getNextGridDate";
 
 interface Props {
   // A span of days in the from and to models rather than one day: the first press sets its start and the second its

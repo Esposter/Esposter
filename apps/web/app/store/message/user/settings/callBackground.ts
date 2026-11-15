@@ -2,12 +2,12 @@ import type { CallBackground } from "#shared/models/message/call/CallBackground"
 import type { UserSettingsInMessage } from "@esposter/db-schema";
 
 import { MAX_CALL_BACKGROUNDS } from "#shared/services/message/constants";
-import { getSingleFilePresignedUrlEntities } from "@/services/file/getSingleFilePresignedUrlEntities";
-import { uploadFilesToPresignedUrls } from "@/services/file/uploadFilesToPresignedUrls";
-import { CallVirtualBackgroundDefinitions } from "@/services/message/room/call/CallVirtualBackgroundDefinitions";
-import { CALL_BACKGROUND_UPLOAD_KEY } from "@/services/message/room/call/constants";
-import { getCallBackgroundKey } from "@/services/message/room/call/getCallBackgroundKey";
-import { getCallBackgroundSelection } from "@/services/message/room/call/getCallBackgroundSelection";
+import { getSingleFilePresignedUrlEntities } from "#src/services/file/getSingleFilePresignedUrlEntities";
+import { uploadFilesToPresignedUrls } from "#src/services/file/uploadFilesToPresignedUrls";
+import { CallVirtualBackgroundDefinitions } from "#src/services/message/room/call/CallVirtualBackgroundDefinitions";
+import { CALL_BACKGROUND_UPLOAD_KEY } from "#src/services/message/room/call/constants";
+import { getCallBackgroundKey } from "#src/services/message/room/call/getCallBackgroundKey";
+import { getCallBackgroundSelection } from "#src/services/message/room/call/getCallBackgroundSelection";
 
 export const useCallBackgroundStore = defineStore("message/user/settings/callBackground", () => {
   const { $trpc } = useNuxtApp();

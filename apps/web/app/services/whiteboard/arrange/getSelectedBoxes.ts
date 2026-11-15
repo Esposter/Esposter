@@ -1,6 +1,6 @@
 import type { Bounds, PositionedDocument } from "vue-block-editor-headless";
 
-import { getSelectedElements } from "@/services/whiteboard/getSelectedElements";
+import { getSelectedElements } from "#src/services/whiteboard/getSelectedElements";
 import { checkIsResizablePositionedElement, getElementBounds } from "vue-block-editor-headless";
 
 // The selected elements that take a size of their own, each with its index and its bounds, in the order of the element list. An arrow and a stroke

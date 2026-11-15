@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { UiSelectItem } from "@/models/ui/UiSelectItem";
+import type { UiSelectItem } from "#src/models/ui/UiSelectItem";
 import type { Page } from "@esposter/db-schema";
 
-import { getMissingResourceMessage } from "@/services/resource/getMissingResourceMessage";
-import { prependNoneSelectItem } from "@/services/ui/prependNoneSelectItem";
+import { getMissingResourceMessage } from "#src/services/resource/getMissingResourceMessage";
+import { prependNoneSelectItem } from "#src/services/ui/prependNoneSelectItem";
 
 interface Props {
   // A required binding offers no None, since choosing it would leave the field with no resource at all

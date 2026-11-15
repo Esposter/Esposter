@@ -1,8 +1,8 @@
-import { getSurveyInsertTarget } from "@/services/resource/survey/getSurveyInsertTarget";
-import { createSurveyTestDocument } from "@/services/survey/createSurveyTestDocument.test";
-import { createSurveyTestPage } from "@/services/survey/createSurveyTestPage.test";
-import { createSurveyTestPanelDynamic } from "@/services/survey/createSurveyTestPanelDynamic.test";
-import { createSurveyTestQuestion } from "@/services/survey/createSurveyTestQuestion.test";
+import { getSurveyInsertTarget } from "#src/services/resource/survey/getSurveyInsertTarget";
+import { createSurveyTestDocument } from "#src/services/survey/createSurveyTestDocument.test";
+import { createSurveyTestPage } from "#src/services/survey/createSurveyTestPage.test";
+import { createSurveyTestPanelDynamic } from "#src/services/survey/createSurveyTestPanelDynamic.test";
+import { createSurveyTestQuestion } from "#src/services/survey/createSurveyTestQuestion.test";
 import { describe, expect, test } from "vitest";
 import { SurveyNodeType } from "vue-survey-engine-headless";
 

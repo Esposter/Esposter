@@ -1,4 +1,4 @@
-import { extractSchemaFields } from "@/services/zod/extractSchemaFields";
+import { extractSchemaFields } from "#src/services/zod/extractSchemaFields";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
 

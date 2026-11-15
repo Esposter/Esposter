@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
-import MessageModelMessageListItem from "@/components/Message/Model/Message/List/Item.vue";
-import MessageModelMessageListItemContainer from "@/components/Message/Model/Message/List/ItemContainer.vue";
-import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
+import MessageModelMessageListItem from "#src/components/Message/Model/Message/List/Item.vue";
+import MessageModelMessageListItemContainer from "#src/components/Message/Model/Message/List/ItemContainer.vue";
+import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
 import { MessageType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { v7 } from "uuid";

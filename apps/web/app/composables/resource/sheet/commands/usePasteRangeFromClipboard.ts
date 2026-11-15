@@ -1,11 +1,11 @@
 import { Row } from "#shared/models/resource/sheet/datasource/Row";
-import { PasteMode } from "@/models/resource/sheet/commands/PasteMode";
-import { createPastedRowData } from "@/services/resource/sheet/commands/createPastedRowData";
-import { parseClipboardValuesByPosition } from "@/services/resource/sheet/commands/parseClipboardValuesByPosition";
-import { createErrorAlert } from "@/services/trpc/createErrorAlert";
-import { useSheetStore } from "@/store/resource/sheet";
-import { useCellStore } from "@/store/resource/sheet/cell";
-import { useColumnStore } from "@/store/resource/sheet/column";
+import { PasteMode } from "#src/models/resource/sheet/commands/PasteMode";
+import { createPastedRowData } from "#src/services/resource/sheet/commands/createPastedRowData";
+import { parseClipboardValuesByPosition } from "#src/services/resource/sheet/commands/parseClipboardValuesByPosition";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
+import { useCellStore } from "#src/store/resource/sheet/cell";
+import { useColumnStore } from "#src/store/resource/sheet/column";
+import { useSheetStore } from "#src/store/resource/sheet/index";
 import { exhaustiveGuard, getResultAsync, noop } from "@esposter/shared";
 
 export const usePasteRangeFromClipboard = () => {

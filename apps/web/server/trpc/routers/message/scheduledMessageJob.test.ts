@@ -1,12 +1,12 @@
 import type { useRoomObject } from "#server/composables/realtime/useRoomObject";
 import type { useUserObject } from "#server/composables/realtime/useUserObject";
 import type { Context } from "#server/trpc/context";
-import type { TRPCRouter } from "#server/trpc/routers";
+import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { RoomObjectRpc, UserObjectRpc } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { createCallerFactory } from "#server/trpc";
 import { createMockAuthSession, createMockContext, getMockSession } from "#server/trpc/context.test";
+import { createCallerFactory } from "#server/trpc/index";
 import { scheduledMessageJobRouter } from "#server/trpc/routers/message/scheduledMessageJob";
 import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
 import { encodePageCursor, ScheduledMessageJobType, usersToRoomsInMessage } from "@esposter/db-schema";

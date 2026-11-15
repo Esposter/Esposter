@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { UserSettingsPageSection } from "@/models/user/UserSettingsPageSection";
+import type { UserSettingsPageSection } from "#src/models/user/UserSettingsPageSection";
 
-import { AccountLinkErrorMessageMap } from "@/services/auth/AccountLinkErrorMessageMap";
-import { authClient } from "@/services/auth/authClient";
-import { requireAuthData } from "@/services/auth/requireAuthData";
-import { LoginButtonItems } from "@/services/login/LoginButtonItems";
-import { LINKED_ACCOUNTS_MUTATION_KEY } from "@/services/user/constants";
-import { useAlertStore } from "@/store/alert";
+import { AccountLinkErrorMessageMap } from "#src/services/auth/AccountLinkErrorMessageMap";
+import { authClient } from "#src/services/auth/authClient";
+import { requireAuthData } from "#src/services/auth/requireAuthData";
+import { LoginButtonItems } from "#src/services/login/LoginButtonItems";
+import { LINKED_ACCOUNTS_MUTATION_KEY } from "#src/services/user/constants";
+import { useAlertStore } from "#src/store/alert";
 import { RoutePath } from "@esposter/shared";
 
 interface Props {

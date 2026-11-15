@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ViewComponentMap } from "@/services/resource/ViewComponentMap";
+import { ViewComponentMap } from "#src/services/resource/ViewComponentMap";
 import { ResourceType } from "@esposter/db-schema";
 
 const route = useRoute();

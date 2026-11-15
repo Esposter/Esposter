@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
-import { WebhookDialogAction } from "@/models/message/room/WebhookDialogAction";
-import { useWebhookDialogStore } from "@/store/message/room/webhookDialog";
+import { WebhookDialogAction } from "#src/models/message/room/WebhookDialogAction";
+import { useWebhookDialogStore } from "#src/store/message/room/webhookDialog";
 import { describe, expect, test } from "vitest";
 
 describe(useWebhookDialogStore, () => {

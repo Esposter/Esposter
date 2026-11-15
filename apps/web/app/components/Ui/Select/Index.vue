@@ -1,7 +1,7 @@
 <script setup lang="ts" generic="T extends string, TModel extends T | T[] = T">
-import type { UiMenuItem } from "@/models/ui/UiMenuItem";
+import type { UiMenuItem } from "#src/models/ui/UiMenuItem";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { checkIsDeepEqual } from "@esposter/shared";
 import { Select } from "@vuetify/v0";
 

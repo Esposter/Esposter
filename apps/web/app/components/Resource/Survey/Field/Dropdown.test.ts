@@ -1,9 +1,9 @@
 // @vitest-environment happy-dom
 import type { SurveyDropdownNode } from "vue-survey-engine-headless";
 
-import SurveyFieldDropdown from "@/components/Resource/Survey/Field/Dropdown.vue";
-import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
-import { UiStyles } from "@/models/ui/UiStyle";
+import SurveyFieldDropdown from "#src/components/Resource/Survey/Field/Dropdown.vue";
+import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
+import { UiStyles } from "#src/models/ui/UiStyle";
 import { flushPromises, mount } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { assert, describe, expect, test } from "vitest";

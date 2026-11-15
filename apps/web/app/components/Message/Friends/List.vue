@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { Item } from "@/models/shared/Item";
+import type { Item } from "#src/models/shared/Item";
 import type { PublicUser } from "@esposter/db-schema";
 
 import { compareCreatedAt } from "#shared/util/date/compareCreatedAt";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useBlockStore } from "@/store/message/user/block";
-import { useFriendStore } from "@/store/message/user/friend";
-import { useFriendDialogStore } from "@/store/message/user/friendDialog";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { useBlockStore } from "#src/store/message/user/block";
+import { useFriendStore } from "#src/store/message/user/friend";
+import { useFriendDialogStore } from "#src/store/message/user/friendDialog";
 
 const friendStore = useFriendStore();
 const { friends } = storeToRefs(friendStore);

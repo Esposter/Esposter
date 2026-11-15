@@ -1,7 +1,7 @@
-import type { UploadFilesToPresignedUrlsOptions } from "@/models/file/UploadFilesToPresignedUrlsOptions";
+import type { UploadFilesToPresignedUrlsOptions } from "#src/models/file/UploadFilesToPresignedUrlsOptions";
 import type { FilePresignedUrlEntity } from "@esposter/db-schema";
 
-import { uploadFileToUrl } from "@/services/file/uploadFileToUrl";
+import { uploadFileToUrl } from "#src/services/file/uploadFileToUrl";
 import { settleAll, takeOne } from "@esposter/shared";
 
 // The one presigned upload round-trip: generate write targets -> PUT each file to its url -> return the targets.

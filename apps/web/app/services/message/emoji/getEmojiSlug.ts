@@ -1,5 +1,5 @@
-import { getEmojiCharacterKey } from "@/services/message/emoji/getEmojiCharacterKey";
-import { getEmojiIndex } from "@/services/message/emoji/getEmojiIndex";
+import { getEmojiCharacterKey } from "#src/services/message/emoji/getEmojiCharacterKey";
+import { getEmojiIndex } from "#src/services/message/emoji/getEmojiIndex";
 
 // A reaction's tag is also its identity — `useSelectEmoji` finds the existing row by matching it — so every
 // Form one can arrive in resolves to the same slug before anything is compared: a picked character, a toned

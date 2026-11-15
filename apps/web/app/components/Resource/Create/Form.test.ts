@@ -1,10 +1,10 @@
 // @vitest-environment nuxt
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
-import ResourceCreateForm from "@/components/Resource/Create/Form.vue";
-import ResourceWhiteboardEditor from "@/components/Resource/Whiteboard/Editor.vue";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useResourceStore } from "@/store/resource";
-import { useWhiteboardStore } from "@/store/resource/whiteboard";
+import ResourceCreateForm from "#src/components/Resource/Create/Form.vue";
+import ResourceWhiteboardEditor from "#src/components/Resource/Whiteboard/Editor.vue";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useResourceStore } from "#src/store/resource/index";
+import { useWhiteboardStore } from "#src/store/resource/whiteboard/index";
 import { ResourceType } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 import { mockNuxtImport, mountSuspended } from "@nuxt/test-utils/runtime";

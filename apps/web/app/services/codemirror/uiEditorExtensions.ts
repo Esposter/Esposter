@@ -1,7 +1,7 @@
 import type { Extension } from "@codemirror/state";
 
-import { UiToken } from "@/models/ui/UiToken";
-import { uiHighlightSpecs } from "@/services/codemirror/uiHighlightSpecs";
+import { UiToken } from "#src/models/ui/UiToken";
+import { uiHighlightSpecs } from "#src/services/codemirror/uiHighlightSpecs";
 import { HighlightStyle, syntaxHighlighting } from "@codemirror/language";
 import { EditorView } from "codemirror";
 

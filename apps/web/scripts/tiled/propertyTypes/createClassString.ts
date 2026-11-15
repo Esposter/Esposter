@@ -1,11 +1,11 @@
-import type { TiledObjectProperty } from "@/models/dungeons/tilemap/TiledObjectProperty";
-import type { ImportTypeLine } from "@@/scripts/models/ImportTypeLine";
-import type { InterfaceProperty } from "@@/scripts/models/InterfaceProperty";
+import type { ImportTypeLine } from "#scripts/models/ImportTypeLine";
+import type { InterfaceProperty } from "#scripts/models/InterfaceProperty";
+import type { TiledObjectProperty } from "#src/models/dungeons/tilemap/TiledObjectProperty";
 
-import { TILED_ROOT_DIRECTORY } from "@@/scripts/tiled/constants";
-import { PROPERTY_TYPES_DIRECTORY } from "@@/scripts/tiled/propertyTypes/constants";
-import { createImportTypeLinesString } from "@@/scripts/util/createImportTypeLinesString";
-import { createInterfaceString } from "@@/scripts/util/createInterfaceString";
+import { TILED_ROOT_DIRECTORY } from "#scripts/tiled/constants";
+import { PROPERTY_TYPES_DIRECTORY } from "#scripts/tiled/propertyTypes/constants";
+import { createImportTypeLinesString } from "#scripts/util/createImportTypeLinesString";
+import { createInterfaceString } from "#scripts/util/createInterfaceString";
 import { PropertyType } from "parse-tmx";
 
 const TILED_ROOT_DIRECTORY_IMPORT_PATH = `#${TILED_ROOT_DIRECTORY}/${PROPERTY_TYPES_DIRECTORY}`;

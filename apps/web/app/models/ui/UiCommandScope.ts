@@ -1,4 +1,4 @@
-import type { UiCommand } from "@/models/ui/UiCommand";
+import type { UiCommand } from "#src/models/ui/UiCommand";
 
 // A surface's own search inside the palette: the docs, the rooms, the resources. The surface keeps its search stack
 // And hands the palette its query and what that query finds

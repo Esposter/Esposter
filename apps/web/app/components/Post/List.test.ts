@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
 import { PostSortType } from "#shared/models/post/PostSortType";
-import PostList from "@/components/Post/List.vue";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
+import PostList from "#src/components/Post/List.vue";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { createEmptyPage } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";

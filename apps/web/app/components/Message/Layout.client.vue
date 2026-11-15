@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { LEFT_DRAWER_WIDTH, PAGE_TITLE_SEPARATOR, RIGHT_DRAWER_WIDTH } from "#shared/services/app/constants";
 import { MESSAGE_DISPLAY_NAME } from "#shared/services/message/constants";
-import { MAX_SIDE_PANE_WIDTH, MIN_SIDE_PANE_WIDTH } from "@/services/ui/constants";
-import { useLayoutStore } from "@/store/layout";
-import { useRoomStore } from "@/store/message/room";
-import { useMessageLayoutStore } from "@/store/message/ui/layout";
+import { MAX_SIDE_PANE_WIDTH, MIN_SIDE_PANE_WIDTH } from "#src/services/ui/constants";
+import { useLayoutStore } from "#src/store/layout";
+import { useRoomStore } from "#src/store/message/room/index";
+import { useMessageLayoutStore } from "#src/store/message/ui/layout";
 
 useHead({
   titleTemplate: (title) => (title ? `${MESSAGE_DISPLAY_NAME}${PAGE_TITLE_SEPARATOR}${title}` : MESSAGE_DISPLAY_NAME),

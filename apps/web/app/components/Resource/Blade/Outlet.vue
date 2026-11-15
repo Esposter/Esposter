@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import ResourceOverview from "@/components/Resource/Overview.vue";
-import { ResourceBladeType } from "@/models/resource/ResourceBladeType";
-import { ResourceBladeDefinitionMap } from "@/services/resource/ResourceBladeDefinitionMap";
-import { ResourceEditorComponentMap } from "@/services/resource/ResourceEditorComponentMap";
-import { ResourceOverviewComponentMap } from "@/services/resource/ResourceOverviewComponentMap";
+import ResourceOverview from "#src/components/Resource/Overview.vue";
+import { ResourceBladeType } from "#src/models/resource/ResourceBladeType";
+import { ResourceBladeDefinitionMap } from "#src/services/resource/ResourceBladeDefinitionMap";
+import { ResourceEditorComponentMap } from "#src/services/resource/ResourceEditorComponentMap";
+import { ResourceOverviewComponentMap } from "#src/services/resource/ResourceOverviewComponentMap";
 import { ID_SEPARATOR } from "@esposter/shared";
 
 interface Props {

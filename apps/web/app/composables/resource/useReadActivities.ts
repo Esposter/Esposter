@@ -1,6 +1,6 @@
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { useActivityStore } from "@/store/resource/activity";
+import { useActivityStore } from "#src/store/resource/activity";
 
 export const useReadActivities = (id: ResourceInResource["id"]) => {
   const { $trpc } = useNuxtApp();

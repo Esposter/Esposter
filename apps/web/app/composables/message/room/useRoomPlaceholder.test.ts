@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
-import { useRoomPlaceholder } from "@/composables/message/room/useRoomPlaceholder";
-import { createRoom } from "@/services/message/room/createRoom.test";
-import { createUser } from "@/services/message/user/createUser.test";
-import { useUserStore } from "@/store/message/user";
+import { useRoomPlaceholder } from "#src/composables/message/room/useRoomPlaceholder";
+import { createRoom } from "#src/services/message/room/createRoom.test";
+import { createUser } from "#src/services/message/user/createUser.test";
+import { useUserStore } from "#src/store/message/user/index";
 import { describe, expect, test } from "vitest";
 
 describe(useRoomPlaceholder, () => {

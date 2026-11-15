@@ -1,9 +1,9 @@
 // @vitest-environment nuxt
 import { TEST_ID } from "#shared/services/pageBuilder/constants.test";
-import PageBuilderCanvasOverlays from "@/components/PageBuilder/Canvas/Overlays.vue";
-import { webpageKind } from "@/services/pageBuilder/webpageKind";
-import { DRAG_PREVIEW_NODE_ID } from "@/services/pageBuilder/withDragPreview";
-import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
+import PageBuilderCanvasOverlays from "#src/components/PageBuilder/Canvas/Overlays.vue";
+import { webpageKind } from "#src/services/pageBuilder/webpageKind";
+import { DRAG_PREVIEW_NODE_ID } from "#src/services/pageBuilder/withDragPreview";
+import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { afterEach, describe, expect, test, vi } from "vitest";
 

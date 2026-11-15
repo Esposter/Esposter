@@ -1,5 +1,8 @@
 import { createColumn } from "#shared/models/resource/sheet/column/createColumn.test";
-import { BENCH_COLUMN_NAMES, generateBenchRows } from "@/composables/resource/sheet/commands/generateBenchRows.bench";
+import {
+  BENCH_COLUMN_NAMES,
+  generateBenchRows,
+} from "#src/composables/resource/sheet/commands/generateBenchRows.bench";
 import { describe } from "vitest";
 
 export const benchColumns = BENCH_COLUMN_NAMES.map((name) => createColumn(name));

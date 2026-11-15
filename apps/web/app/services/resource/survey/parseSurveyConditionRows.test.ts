@@ -1,7 +1,7 @@
-import { SurveyConditionJoin } from "@/models/resource/survey/SurveyConditionJoin";
-import { SurveyConditionOperator } from "@/models/resource/survey/SurveyConditionOperator";
-import { buildSurveyCondition } from "@/services/resource/survey/buildSurveyCondition";
-import { parseSurveyConditionRows } from "@/services/resource/survey/parseSurveyConditionRows";
+import { SurveyConditionJoin } from "#src/models/resource/survey/SurveyConditionJoin";
+import { SurveyConditionOperator } from "#src/models/resource/survey/SurveyConditionOperator";
+import { buildSurveyCondition } from "#src/services/resource/survey/buildSurveyCondition";
+import { parseSurveyConditionRows } from "#src/services/resource/survey/parseSurveyConditionRows";
 import { describe, expect, test } from "vitest";
 
 describe(parseSurveyConditionRows, () => {

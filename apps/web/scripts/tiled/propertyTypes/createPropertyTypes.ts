@@ -1,10 +1,10 @@
-import type { TiledProject } from "@@/scripts/tiled/models/TiledProject";
+import type { TiledProject } from "#scripts/tiled/models/TiledProject";
 
-import { outputFile } from "@@/scripts/services/outputFile";
-import { TILED_ROOT_DIRECTORY, WORLD_ROOT_DIRECTORY } from "@@/scripts/tiled/constants";
-import { PROPERTY_TYPES_DIRECTORY } from "@@/scripts/tiled/propertyTypes/constants";
-import { createClassString } from "@@/scripts/tiled/propertyTypes/createClassString";
-import { createValueSetString } from "@@/scripts/util/createValueSetString";
+import { outputFile } from "#scripts/services/outputFile";
+import { TILED_ROOT_DIRECTORY, WORLD_ROOT_DIRECTORY } from "#scripts/tiled/constants";
+import { PROPERTY_TYPES_DIRECTORY } from "#scripts/tiled/propertyTypes/constants";
+import { createClassString } from "#scripts/tiled/propertyTypes/createClassString";
+import { createValueSetString } from "#scripts/util/createValueSetString";
 import { jsonDateParse } from "@esposter/shared";
 import { readFile } from "node:fs/promises";
 import { PropertyType } from "parse-tmx";

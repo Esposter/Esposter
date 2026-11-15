@@ -1,5 +1,5 @@
-import { ResourceBladeSlug } from "@/models/resource/ResourceBladeSlug";
-import { ResourceBladeType } from "@/models/resource/ResourceBladeType";
+import { ResourceBladeSlug } from "#src/models/resource/ResourceBladeSlug";
+import { ResourceBladeType } from "#src/models/resource/ResourceBladeType";
 import { describe, expect, test } from "vitest";
 
 describe("resourceBladeSlug", () => {

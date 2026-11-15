@@ -1,10 +1,10 @@
 import type { Dataset } from "#shared/models/dataset/Dataset";
 import type { DatasetQuery } from "#shared/models/dataset/DatasetQuery";
-import type { AxisVisualPropsData } from "@/models/dashboard/AxisVisualPropsData";
+import type { AxisVisualPropsData } from "#src/models/dashboard/AxisVisualPropsData";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
-import { VisualDatasetShape } from "@/models/dashboard/VisualDatasetShape";
-import { DASHBOARD_TABLE_CATEGORY_KEY } from "@/services/dashboard/constants";
+import { VisualDatasetShape } from "#src/models/dashboard/VisualDatasetShape";
+import { DASHBOARD_TABLE_CATEGORY_KEY } from "#src/services/dashboard/constants";
 import { takeOne } from "@esposter/shared";
 
 // The key a series' column is read from, by its position, so a category sharing a series' name cannot overwrite it

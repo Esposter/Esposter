@@ -1,11 +1,11 @@
 // @vitest-environment nuxt
 import type { Editor } from "@tiptap/core";
 
-import { createRoomRole } from "@/services/message/member/createRoomRole.test";
-import { MentionSuggestion } from "@/services/message/MentionSuggestion";
-import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useRoleStore } from "@/store/message/room/role";
+import { createRoomRole } from "#src/services/message/member/createRoomRole.test";
+import { MentionSuggestion } from "#src/services/message/MentionSuggestion";
+import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useRoleStore } from "#src/store/message/room/role";
 import { RoomPermission } from "@esposter/db-schema";
 import { MENTION_EVERYONE_ID, MENTION_HERE_ID, MentionType } from "@esposter/shared";
 import { v7 } from "uuid";

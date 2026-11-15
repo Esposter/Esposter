@@ -2,7 +2,7 @@
 import { createColumn } from "#shared/models/resource/sheet/column/createColumn.test";
 import { createDataSource } from "#shared/models/resource/sheet/datasource/createDataSource.test";
 import { createRow } from "#shared/models/resource/sheet/datasource/createRow.test";
-import { copyToClipboard } from "@/services/resource/sheet/commands/copyToClipboard";
+import { copyToClipboard } from "#src/services/resource/sheet/commands/copyToClipboard";
 import { takeOne } from "@esposter/shared";
 import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vitest";
 

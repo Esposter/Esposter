@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { MenuTextStyle } from "@/assets/dungeons/scene/title/styles/MenuTextStyle";
+import { MenuTextStyle } from "#src/assets/dungeons/scene/title/styles/MenuTextStyle";
 import {
   CURSOR_POSITION_INCREMENT,
   INITIAL_CURSOR_POSITION,
   MENU_BACKGROUND_WIDTH,
-} from "@/services/dungeons/scene/title/menu/constants";
-import { PlayerTitleMenuOptionGrid } from "@/services/dungeons/scene/title/menu/PlayerTitleMenuOptionGrid";
-import { DISABLED_OPACITY } from "@/services/ui/constants";
+} from "#src/services/dungeons/scene/title/menu/constants";
+import { PlayerTitleMenuOptionGrid } from "#src/services/dungeons/scene/title/menu/PlayerTitleMenuOptionGrid";
+import { DISABLED_OPACITY } from "#src/services/ui/constants";
 import { Input } from "phaser";
 import { Text } from "vue-phaserjs";
 

@@ -1,5 +1,5 @@
-import type { BaseCursorKeys } from "@/models/dungeons/input/BaseCursorKeys";
-import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
+import type { BaseCursorKeys } from "#src/models/dungeons/input/BaseCursorKeys";
+import type { PlayerInput } from "#src/models/dungeons/UI/input/PlayerInput";
 
 export interface Controls {
   cursorKeys?: BaseCursorKeys;

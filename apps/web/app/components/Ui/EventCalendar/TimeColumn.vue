@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import type { UiCalendarEvent } from "@/models/ui/UiCalendarEvent";
-import type { UiCalendarSlotEmits } from "@/models/ui/UiCalendarSlotEmits";
+import type { UiCalendarEvent } from "#src/models/ui/UiCalendarEvent";
+import type { UiCalendarSlotEmits } from "#src/models/ui/UiCalendarSlotEmits";
 
 import {
   CALENDAR_CLOSING_HOUR,
   CALENDAR_OPENING_HOUR,
   CALENDAR_SLOT_DURATION,
   CALENDAR_WORK_WEEK_DAY_COUNT,
-} from "@/services/ui/constants";
+} from "#src/services/ui/constants";
 import { getZonedDateTime } from "@esposter/shared";
 
 interface Props {

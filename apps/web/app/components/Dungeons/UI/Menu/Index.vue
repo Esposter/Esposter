@@ -1,9 +1,9 @@
 <script setup lang="ts" generic="TGrid extends readonly (readonly string[])[]">
-import type { Grid } from "@/models/dungeons/Grid";
+import type { Grid } from "#src/models/dungeons/Grid";
 import type { Position } from "grid-engine";
 
-import { MENU_DEPTH, MENU_WIDTH } from "@/services/dungeons/UI/menu/constants";
-import { getMenuHeight } from "@/services/dungeons/UI/menu/getMenuHeight";
+import { MENU_DEPTH, MENU_WIDTH } from "#src/services/dungeons/UI/menu/constants";
+import { getMenuHeight } from "#src/services/dungeons/UI/menu/getMenuHeight";
 import { Container, Rectangle } from "vue-phaserjs";
 
 interface Props {

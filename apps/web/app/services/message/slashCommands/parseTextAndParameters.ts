@@ -1,4 +1,4 @@
-import type { SlashCommandParameter } from "@/models/message/slashCommands/SlashCommandParameter";
+import type { SlashCommandParameter } from "#src/models/message/slashCommands/SlashCommandParameter";
 
 import { ID_SEPARATOR, normalizeString } from "@esposter/shared";
 

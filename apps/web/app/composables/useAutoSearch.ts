@@ -1,5 +1,5 @@
-import { AUTO_SEARCH_THROTTLE_MS } from "@/services/shared/constants";
-import { createErrorAlert } from "@/services/trpc/createErrorAlert";
+import { AUTO_SEARCH_THROTTLE_MS } from "#src/services/shared/constants";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { getResultAsync, normalizeString } from "@esposter/shared";
 
 interface UseAutoSearchOptions {

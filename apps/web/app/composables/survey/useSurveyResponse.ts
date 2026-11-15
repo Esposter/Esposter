@@ -1,8 +1,8 @@
 import type { SurveyResponseInResource } from "@esposter/db-schema";
 import type { SurveyAnswers } from "vue-survey-engine-headless";
 
-import { MutationStatus } from "@/models/shared/MutationStatus";
-import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
+import { MutationStatus } from "#src/models/shared/MutationStatus";
+import { LocalStorageKey } from "#src/services/shared/LocalStorageKey";
 import { getResultAsync } from "@esposter/shared";
 import { v7 } from "uuid";
 import { surveyAnswerValueSchema } from "vue-survey-engine-headless";

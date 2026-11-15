@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import ResourceSurveyCollection from "@/components/Resource/Survey/Collection.vue";
+import ResourceSurveyCollection from "#src/components/Resource/Survey/Collection.vue";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 

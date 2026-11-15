@@ -1,15 +1,15 @@
 import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
-import type { BroadcastMentionItem } from "@/models/message/BroadcastMentionItem";
-import type { MentionNodeAttributes } from "@/models/message/MentionNodeAttributes";
-import type { RoleMentionItem } from "@/models/message/RoleMentionItem";
+import type { BroadcastMentionItem } from "#src/models/message/BroadcastMentionItem";
+import type { MentionNodeAttributes } from "#src/models/message/MentionNodeAttributes";
+import type { RoleMentionItem } from "#src/models/message/RoleMentionItem";
 import type { MentionOptions } from "@tiptap/extension-mention";
 
-import MentionList from "@/components/Message/Model/Message/Suggestion/MentionList.vue";
-import { getBroadcastMentionItems } from "@/services/message/getBroadcastMentionItems";
-import { getRender } from "@/services/message/getRender";
-import { getRoleMentionItems } from "@/services/message/getRoleMentionItems";
-import { readMemberMentionItems } from "@/services/message/readMemberMentionItems";
-import { useRoomStore } from "@/store/message/room";
+import MentionList from "#src/components/Message/Model/Message/Suggestion/MentionList.vue";
+import { getBroadcastMentionItems } from "#src/services/message/getBroadcastMentionItems";
+import { getRender } from "#src/services/message/getRender";
+import { getRoleMentionItems } from "#src/services/message/getRoleMentionItems";
+import { readMemberMentionItems } from "#src/services/message/readMemberMentionItems";
+import { useRoomStore } from "#src/store/message/room/index";
 import { PluginKey } from "@tiptap/pm/state";
 
 export const MentionSuggestion: MentionOptions<

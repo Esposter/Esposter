@@ -1,7 +1,7 @@
 import { MimeType } from "#shared/models/file/MimeType";
-import { createElementSvg } from "@/services/capture/createElementSvg";
-import { rasterizeSvg } from "@/services/capture/rasterizeSvg";
-import { useAlertStore } from "@/store/alert";
+import { createElementSvg } from "#src/services/capture/createElementSvg";
+import { rasterizeSvg } from "#src/services/capture/rasterizeSvg";
+import { useAlertStore } from "#src/store/alert";
 import { downloadFile, getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
 
 // The page as it is drawn: the grid holds every tile, and the capture reads it at its rendered size once the fonts are in

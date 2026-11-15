@@ -1,19 +1,19 @@
 // @vitest-environment nuxt
-import UiConfirmDialog from "@/components/Ui/ConfirmDialog.vue";
-import UserDeleteAccountCard from "@/components/User/DeleteAccountCard/Index.vue";
-import { UserSettingsPageSection } from "@/models/user/UserSettingsPageSection";
-import { useSession } from "@/services/auth/authClient.test";
-import { signOutOfBrowser } from "@/services/auth/signOutOfBrowser";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { AccountDeletionKeptItems } from "@/services/user/settings/AccountDeletionKeptItems";
+import UiConfirmDialog from "#src/components/Ui/ConfirmDialog.vue";
+import UserDeleteAccountCard from "#src/components/User/DeleteAccountCard/Index.vue";
+import { UserSettingsPageSection } from "#src/models/user/UserSettingsPageSection";
+import { useSession } from "#src/services/auth/authClient.test";
+import { signOutOfBrowser } from "#src/services/auth/signOutOfBrowser";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { AccountDeletionKeptItems } from "#src/services/user/settings/AccountDeletionKeptItems";
 import { RoutePath } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, assert, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
-vi.mock(import("@/services/auth/signOutOfBrowser"));
+vi.mock(import("#src/services/auth/authClient"), () => import("#src/services/auth/authClient.test"));
+vi.mock(import("#src/services/auth/signOutOfBrowser"));
 
 const getDialog = () => {
   const dialog = document.body.querySelector<HTMLElement>('[role="alertdialog"]');

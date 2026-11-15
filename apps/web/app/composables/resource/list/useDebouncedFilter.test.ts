@@ -1,5 +1,5 @@
-import { useDebouncedFilter } from "@/composables/resource/list/useDebouncedFilter";
-import { RESOURCE_SEARCH_DEBOUNCE_MS } from "@/services/resource/search/constants";
+import { useDebouncedFilter } from "#src/composables/resource/list/useDebouncedFilter";
+import { RESOURCE_SEARCH_DEBOUNCE_MS } from "#src/services/resource/search/constants";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useDebouncedFilter, () => {

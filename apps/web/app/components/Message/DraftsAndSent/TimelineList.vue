@@ -1,7 +1,7 @@
 <script setup lang="ts" generic="TItem">
-import type { UiListItem } from "@/models/ui/UiListItem";
+import type { UiListItem } from "#src/models/ui/UiListItem";
 
-import { getTimelineSections } from "@/services/message/draftsAndSent/getTimelineSections";
+import { getTimelineSections } from "#src/services/message/draftsAndSent/getTimelineSections";
 import { takeOne } from "@esposter/shared";
 import { parse } from "node-html-parser";
 

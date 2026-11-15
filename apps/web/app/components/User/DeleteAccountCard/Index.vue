@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { UserSettingsPageSection } from "@/models/user/UserSettingsPageSection";
+import type { UserSettingsPageSection } from "#src/models/user/UserSettingsPageSection";
 
-import { MutationStatus } from "@/models/shared/MutationStatus";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { signOutOfBrowser } from "@/services/auth/signOutOfBrowser";
-import { ACCOUNT_DELETION_MUTATION_KEY } from "@/services/user/constants";
-import { AccountDeletionKeptItems } from "@/services/user/settings/AccountDeletionKeptItems";
+import { MutationStatus } from "#src/models/shared/MutationStatus";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { signOutOfBrowser } from "#src/services/auth/signOutOfBrowser";
+import { ACCOUNT_DELETION_MUTATION_KEY } from "#src/services/user/constants";
+import { AccountDeletionKeptItems } from "#src/services/user/settings/AccountDeletionKeptItems";
 import { RoutePath } from "@esposter/shared";
 
 interface Props {

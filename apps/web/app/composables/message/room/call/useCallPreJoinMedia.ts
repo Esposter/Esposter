@@ -1,6 +1,6 @@
-import { MutationStatus } from "@/models/shared/MutationStatus";
-import { useKnockerStore } from "@/store/message/room/call/knocker";
-import { useVoiceDeviceSettingsStore } from "@/store/message/user/settings/voiceDevice";
+import { MutationStatus } from "#src/models/shared/MutationStatus";
+import { useKnockerStore } from "#src/store/message/room/call/knocker";
+import { useVoiceDeviceSettingsStore } from "#src/store/message/user/settings/voiceDevice";
 
 export const useCallPreJoinMedia = () => {
   const knockerStore = useKnockerStore();

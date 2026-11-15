@@ -2,9 +2,9 @@ import type { DeleteBanInput } from "#shared/models/db/moderation/DeleteBanInput
 import type { BanInRoom } from "#shared/models/db/room/BanInRoom";
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { createOperationData } from "@/services/shared/createOperationData";
-import { getInsertedItems } from "@/services/shared/getInsertedItems";
-import { useRoomStore } from "@/store/message/room";
+import { createOperationData } from "#src/services/shared/createOperationData";
+import { getInsertedItems } from "#src/services/shared/getInsertedItems";
+import { useRoomStore } from "#src/store/message/room/index";
 import { DatabaseEntityType } from "@esposter/db-schema";
 import { ID_SEPARATOR } from "@esposter/shared";
 

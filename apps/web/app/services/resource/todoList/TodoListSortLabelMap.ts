@@ -1,4 +1,4 @@
-import { TodoListSort } from "@/models/resource/todoList/TodoListSort";
+import { TodoListSort } from "#src/models/resource/todoList/TodoListSort";
 
 export const TodoListSortLabelMap = {
   [TodoListSort.Alphabetical]: "Alphabetically",

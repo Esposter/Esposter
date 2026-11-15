@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useNpcStore } from "@/store/dungeons/world/npc";
-import { useWorldSceneStore } from "@/store/dungeons/world/scene";
+import { useNpcStore } from "#src/store/dungeons/world/npc";
+import { useWorldSceneStore } from "#src/store/dungeons/world/scene";
 import { takeOne } from "@esposter/shared";
 import { onCreate } from "vue-phaserjs";
 

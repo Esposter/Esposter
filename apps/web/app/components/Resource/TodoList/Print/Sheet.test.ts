@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
-import ResourceTodoListPrintSheet from "@/components/Resource/TodoList/Print/Sheet.vue";
-import { TodoListSort } from "@/models/resource/todoList/TodoListSort";
-import { useTodoListStore } from "@/store/resource/todoList";
+import ResourceTodoListPrintSheet from "#src/components/Resource/TodoList/Print/Sheet.vue";
+import { TodoListSort } from "#src/models/resource/todoList/TodoListSort";
+import { useTodoListStore } from "#src/store/resource/todoList/index";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";

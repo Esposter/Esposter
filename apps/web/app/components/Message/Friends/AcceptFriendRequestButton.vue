@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { PublicUser } from "@esposter/db-schema";
 
-import { useFriendRequestStore } from "@/store/message/user/friendRequest";
+import { useFriendRequestStore } from "#src/store/message/user/friendRequest";
 
 interface Props {
   sender: PublicUser;

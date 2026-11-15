@@ -1,4 +1,4 @@
-import { useNotificationStore } from "@/store/notification";
+import { useNotificationStore } from "#src/store/notification";
 import { AppNotificationTypeChannelMap, NotificationChannel, pushNotificationPayloadSchema } from "@esposter/db-schema";
 import { getResult, getSynchronizedFunction } from "@esposter/shared";
 

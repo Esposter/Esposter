@@ -1,5 +1,5 @@
-import { createSuggestionExtension } from "@/services/message/editor/createSuggestionExtension";
-import { EmojiSuggestion } from "@/services/message/emoji/EmojiSuggestion";
+import { createSuggestionExtension } from "#src/services/message/editor/createSuggestionExtension";
+import { EmojiSuggestion } from "#src/services/message/emoji/EmojiSuggestion";
 
 const EmojiExtension = createSuggestionExtension("emoji");
 

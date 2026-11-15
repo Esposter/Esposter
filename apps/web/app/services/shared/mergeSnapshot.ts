@@ -1,4 +1,4 @@
-import type { SnapshotPush } from "@/models/shared/SnapshotPush";
+import type { SnapshotPush } from "#src/models/shared/SnapshotPush";
 
 // The answer to a read with the pushes that landed while it was in flight replayed over it, in the order they landed.
 // The answer can predate a push in either direction, a create it lacks or a removal it still lists, so the last push

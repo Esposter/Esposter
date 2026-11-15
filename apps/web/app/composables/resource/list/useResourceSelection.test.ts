@@ -1,4 +1,4 @@
-import { useResourceSelection } from "@/composables/resource/list/useResourceSelection";
+import { useResourceSelection } from "#src/composables/resource/list/useResourceSelection";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 

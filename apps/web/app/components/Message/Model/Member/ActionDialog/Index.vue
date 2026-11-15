@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { MemberActionDialogProps } from "@/models/message/member/MemberActionDialogProps";
+import type { MemberActionDialogProps } from "#src/models/message/member/MemberActionDialogProps";
 
-import { MemberDialogType } from "@/models/message/user/MemberDialogType";
+import { MemberDialogType } from "#src/models/message/user/MemberDialogType";
 import { AdminActionType } from "@esposter/db-schema";
 
 // The dialog one of a member's actions opened. The row mounts this only while one is open, so closing it is clearing

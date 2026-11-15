@@ -1,4 +1,4 @@
-import { computeInputLevelDecibels } from "@/services/message/room/call/computeInputLevelDecibels";
+import { computeInputLevelDecibels } from "#src/services/message/room/call/computeInputLevelDecibels";
 import { MIN_INPUT_SENSITIVITY_DECIBELS } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 

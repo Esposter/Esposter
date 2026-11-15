@@ -1,4 +1,4 @@
-import { MERGE_FIELD_KIND_PREFIX } from "@/services/pageBuilder/constants";
+import { MERGE_FIELD_KIND_PREFIX } from "#src/services/pageBuilder/constants";
 
 // The column a palette item's kind names when it is a merge field's, or undefined when it names a block type
 export const getMergeFieldColumnName = (itemKind: string): string | undefined =>

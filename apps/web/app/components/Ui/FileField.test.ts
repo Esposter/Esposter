@@ -1,9 +1,9 @@
 // @vitest-environment happy-dom
 import { MimeType } from "#shared/models/file/MimeType";
-import UiFileField from "@/components/Ui/FileField.vue";
-import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
-import { UiStyles } from "@/models/ui/UiStyle";
-import { getFileSize } from "@/services/file/getFileSize";
+import UiFileField from "#src/components/Ui/FileField.vue";
+import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
+import { UiStyles } from "#src/models/ui/UiStyle";
+import { getFileSize } from "#src/services/file/getFileSize";
 import { flushPromises, mount } from "@vue/test-utils";
 import { afterEach, describe, expect, test, vi } from "vitest";
 

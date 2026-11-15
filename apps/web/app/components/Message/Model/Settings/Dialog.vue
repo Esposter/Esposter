@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { UiDialogSize } from "@/models/ui/UiDialogSize";
+import { UiDialogSize } from "#src/models/ui/UiDialogSize";
 
 interface Props {
   // The dialog's accessible name: whose settings these are

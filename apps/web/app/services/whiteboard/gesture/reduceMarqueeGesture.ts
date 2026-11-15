@@ -1,11 +1,11 @@
-import type { GestureMarquee } from "@/models/whiteboard/GestureMarquee";
-import type { GesturePointerEvent } from "@/models/whiteboard/GesturePointerEvent";
-import type { WhiteboardGestureResult } from "@/models/whiteboard/WhiteboardGestureResult";
-import type { WhiteboardGestureState } from "@/models/whiteboard/WhiteboardGestureState";
+import type { GestureMarquee } from "#src/models/whiteboard/GestureMarquee";
+import type { GesturePointerEvent } from "#src/models/whiteboard/GesturePointerEvent";
+import type { WhiteboardGestureResult } from "#src/models/whiteboard/WhiteboardGestureResult";
+import type { WhiteboardGestureState } from "#src/models/whiteboard/WhiteboardGestureState";
 
-import { GesturePointerAction } from "@/models/whiteboard/GesturePointerAction";
-import { getMarqueeSelection } from "@/services/whiteboard/gesture/getMarqueeSelection";
-import { getWorldPoint } from "@/services/whiteboard/gesture/getWorldPoint";
+import { GesturePointerAction } from "#src/models/whiteboard/GesturePointerAction";
+import { getMarqueeSelection } from "#src/services/whiteboard/gesture/getMarqueeSelection";
+import { getWorldPoint } from "#src/services/whiteboard/gesture/getWorldPoint";
 import { exhaustiveGuard } from "@esposter/shared";
 import { getPointsBounds } from "vue-block-editor-headless";
 

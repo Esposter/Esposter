@@ -2,8 +2,8 @@
 import type { WorldForegroundKey } from "#shared/models/dungeons/keys/image/world/WorldForegroundKey";
 
 import { ImageKeys } from "#shared/models/dungeons/keys/image/ImageKey";
-import { useWorldPlayerStore } from "@/store/dungeons/world/player";
-import { useWorldSceneStore } from "@/store/dungeons/world/scene";
+import { useWorldPlayerStore } from "#src/store/dungeons/world/player";
+import { useWorldSceneStore } from "#src/store/dungeons/world/scene";
 import { Image } from "vue-phaserjs";
 
 const worldSceneStore = useWorldSceneStore();

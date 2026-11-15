@@ -1,7 +1,7 @@
 // @unocss-include
-import type { ConnectionMetadata } from "@/models/message/room/realtime/ConnectionMetadata";
+import type { ConnectionMetadata } from "#src/models/message/room/realtime/ConnectionMetadata";
 
-import { ConnectionState } from "@/models/message/room/realtime/ConnectionState";
+import { ConnectionState } from "#src/models/message/room/realtime/ConnectionState";
 
 export const ConnectionStateMetadataMap: Record<ConnectionState, ConnectionMetadata> = {
   [ConnectionState.Connected]: { icon: "i-mdi:check-circle", status: "success", title: "Connected" },

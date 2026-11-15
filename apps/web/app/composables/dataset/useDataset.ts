@@ -1,7 +1,7 @@
 import type { Dataset } from "#shared/models/dataset/Dataset";
 import type { DatasetReference } from "#shared/models/dataset/DatasetReference";
 
-import { getDatasetErrorMessage } from "@/services/dataset/getDatasetErrorMessage";
+import { getDatasetErrorMessage } from "#src/services/dataset/getDatasetErrorMessage";
 
 export const useDataset = (reference: MaybeRefOrGetter<DatasetReference | undefined>) => {
   const { $trpc } = useNuxtApp();

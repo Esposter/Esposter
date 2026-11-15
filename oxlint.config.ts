@@ -17,6 +17,7 @@ import {
   SHARED_APP_IMPORT_PATTERN,
   VUETIFY_IMPORT_PATH,
   VUETIFY_IMPORT_PATTERN,
+  WEB_IMPORT_PATTERNS,
   WORKSPACE_LIBRARY_IMPORT_PATTERN,
 } from "#oxlint/importRestrictions";
 import { JS_PLUGINS } from "#oxlint/jsPlugins";
@@ -70,7 +71,7 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
           "error",
           {
             paths: [...RESTRICTED_IMPORT_PATHS, VUETIFY_IMPORT_PATH],
-            patterns: [VUETIFY_IMPORT_PATTERN, WORKSPACE_LIBRARY_IMPORT_PATTERN],
+            patterns: [VUETIFY_IMPORT_PATTERN, WORKSPACE_LIBRARY_IMPORT_PATTERN, ...WEB_IMPORT_PATTERNS],
           },
         ],
       },
@@ -94,7 +95,10 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
       rules: {
         "no-restricted-imports": [
           "error",
-          { paths: [...APP_RESTRICTED_IMPORT_PATHS, VUETIFY_IMPORT_PATH], patterns: [VUETIFY_IMPORT_PATTERN] },
+          {
+            paths: [...APP_RESTRICTED_IMPORT_PATHS, VUETIFY_IMPORT_PATH],
+            patterns: [VUETIFY_IMPORT_PATTERN, ...WEB_IMPORT_PATTERNS],
+          },
         ],
       },
     },
@@ -111,7 +115,7 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
           "error",
           ...RESTRICTED_GLOBALS.filter((restrictedGlobal) => restrictedGlobal !== USE_UI_STYLE_GLOBAL),
         ],
-        "no-restricted-imports": ["error", { paths: APP_RESTRICTED_IMPORT_PATHS }],
+        "no-restricted-imports": ["error", { paths: APP_RESTRICTED_IMPORT_PATHS, patterns: WEB_IMPORT_PATTERNS }],
       },
     },
     {
@@ -133,7 +137,7 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
               { importNames: ["useRouter"], message: USE_ROUTER_PAGE_MESSAGE, name: "#imports" },
               { importNames: ["useRouter"], message: USE_ROUTER_PAGE_MESSAGE, name: "vue-router" },
             ],
-            patterns: [VUETIFY_IMPORT_PATTERN],
+            patterns: [VUETIFY_IMPORT_PATTERN, ...WEB_IMPORT_PATTERNS],
           },
         ],
       },
@@ -162,7 +166,7 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
           "error",
           {
             paths: [...RESTRICTED_IMPORT_PATHS, VUETIFY_IMPORT_PATH],
-            patterns: [VUETIFY_IMPORT_PATTERN, SHARED_APP_IMPORT_PATTERN],
+            patterns: [VUETIFY_IMPORT_PATTERN, SHARED_APP_IMPORT_PATTERN, ...WEB_IMPORT_PATTERNS],
           },
         ],
       },
@@ -284,7 +288,10 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     "no-restricted-globals": ["error", ...RESTRICTED_GLOBALS],
     "no-restricted-imports": [
       "error",
-      { paths: [...RESTRICTED_IMPORT_PATHS, VUETIFY_IMPORT_PATH], patterns: [VUETIFY_IMPORT_PATTERN] },
+      {
+        paths: [...RESTRICTED_IMPORT_PATHS, VUETIFY_IMPORT_PATH],
+        patterns: [VUETIFY_IMPORT_PATTERN, ...WEB_IMPORT_PATTERNS],
+      },
     ],
     "no-restricted-properties": [
       "error",

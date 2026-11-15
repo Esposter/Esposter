@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
-import { POPUP_DURATION_MS } from "@/services/clicker/constants";
-import { usePopupStore } from "@/store/clicker/popup";
+import { POPUP_DURATION_MS } from "#src/services/clicker/constants";
+import { usePopupStore } from "#src/store/clicker/popup";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(usePopupStore, () => {

@@ -1,4 +1,4 @@
-import { getContrastingColor } from "@/services/ui/getContrastingColor";
+import { getContrastingColor } from "#src/services/ui/getContrastingColor";
 import { describe, expect, test } from "vitest";
 
 describe(getContrastingColor, () => {

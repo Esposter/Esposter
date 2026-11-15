@@ -1,6 +1,6 @@
 import type { PageMark } from "#shared/models/app/PageMark";
 
-import { usePageMarkStore } from "@/store/pageMark";
+import { usePageMarkStore } from "#src/store/pageMark";
 
 // Declares what the calling page is for as long as it is mounted, at whatever path it is at now — a resource page
 // Keeps its mark across its blades' paths — so the dock can draw the page's mark rather than its title's letter

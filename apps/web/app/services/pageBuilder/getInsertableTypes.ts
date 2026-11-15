@@ -1,6 +1,6 @@
-import type { PageBuilderHelper } from "@/models/pageBuilder/PageBuilderHelper";
+import type { PageBuilderHelper } from "#src/models/pageBuilder/PageBuilderHelper";
 
-import { getInsertTarget } from "@/services/pageBuilder/getInsertTarget";
+import { getInsertTarget } from "#src/services/pageBuilder/getInsertTarget";
 import { getAcceptedTypes } from "vue-block-editor-headless";
 
 // The types, of those given, an insert at the insertion point lands. Each type resolves its target the way an insert does,

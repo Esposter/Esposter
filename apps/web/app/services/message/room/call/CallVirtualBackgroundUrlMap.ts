@@ -1,8 +1,8 @@
-import aurora from "@/assets/message/room/call/backgrounds/aurora.svg?url";
-import forest from "@/assets/message/room/call/backgrounds/forest.svg?url";
-import studio from "@/assets/message/room/call/backgrounds/studio.svg?url";
-import sunrise from "@/assets/message/room/call/backgrounds/sunrise.svg?url";
-import { CallVirtualBackground } from "@/models/message/room/call/CallVirtualBackground";
+import aurora from "#src/assets/message/room/call/backgrounds/aurora.svg";
+import forest from "#src/assets/message/room/call/backgrounds/forest.svg";
+import studio from "#src/assets/message/room/call/backgrounds/studio.svg";
+import sunrise from "#src/assets/message/room/call/backgrounds/sunrise.svg";
+import { CallVirtualBackground } from "#src/models/message/room/call/CallVirtualBackground";
 
 // Typed over every member, so a preset added to the enum without its file is a type error rather than a missing picture
 export const CallVirtualBackgroundUrlMap = {

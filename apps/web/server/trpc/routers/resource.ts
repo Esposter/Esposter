@@ -50,9 +50,9 @@ import { withResourceRollback } from "#server/services/resource/withResourceRoll
 import { writeResourceActivities } from "#server/services/resource/writeResourceActivities";
 import { emitStorageUsage } from "#server/services/storage/emitStorageUsage";
 import { getBucket } from "#server/services/storage/getBucket";
-import { router } from "#server/trpc";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
+import { router } from "#server/trpc/index";
 import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { getOwnerProcedure } from "#server/trpc/procedure/resource/getOwnerProcedure";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";

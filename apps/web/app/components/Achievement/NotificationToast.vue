@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { UserAchievementWithDefinition } from "@/models/achievement/UserAchievementWithDefinition";
+import type { UserAchievementWithDefinition } from "#src/models/achievement/UserAchievementWithDefinition";
 
-import { TOAST_DURATION_MS } from "@/services/ui/constants";
-import { prettify } from "@/util/text/prettify";
+import { TOAST_DURATION_MS } from "#src/services/ui/constants";
+import { prettify } from "#src/util/text/prettify";
 import { RoutePath } from "@esposter/shared";
 
 interface Props {

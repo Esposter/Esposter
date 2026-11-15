@@ -1,10 +1,10 @@
-import type { ResourceSearchItem } from "@/models/resource/search/ResourceSearchItem";
+import type { ResourceSearchItem } from "#src/models/resource/search/ResourceSearchItem";
 
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { CreatableResourceTypes } from "@/models/resource/CreatableResourceType";
-import { ResourceSearchGroup } from "@/models/resource/search/ResourceSearchGroup";
-import { ResourceTypeDescriptionMap } from "@/services/resource/ResourceTypeDescriptionMap";
-import { searchItems } from "@/services/search/searchItems";
+import { CreatableResourceTypes } from "#src/models/resource/CreatableResourceType";
+import { ResourceSearchGroup } from "#src/models/resource/search/ResourceSearchGroup";
+import { ResourceTypeDescriptionMap } from "#src/services/resource/ResourceTypeDescriptionMap";
+import { searchItems } from "#src/services/search/searchItems";
 import { ID_SEPARATOR, RoutePath } from "@esposter/shared";
 
 export const getServiceSearchItems = (searchQuery: string): ResourceSearchItem[] =>

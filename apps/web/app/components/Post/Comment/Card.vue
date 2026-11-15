@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { Item } from "@/models/shared/Item";
+import type { Item } from "#src/models/shared/Item";
 import type { PostInPostWithRelations } from "@esposter/db-schema";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { authClient } from "@/services/auth/authClient";
-import { MAX_COMMENT_INDENT_DEPTH } from "@/services/post/constants";
-import { useCommentStore } from "@/store/post/comment";
-import { useCommentDialogStore } from "@/store/post/comment/dialog";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { authClient } from "#src/services/auth/authClient";
+import { MAX_COMMENT_INDENT_DEPTH } from "#src/services/post/constants";
+import { useCommentDialogStore } from "#src/store/post/comment/dialog";
+import { useCommentStore } from "#src/store/post/comment/index";
 import { RoutePath } from "@esposter/shared";
 
 interface Props {

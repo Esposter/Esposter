@@ -1,5 +1,5 @@
-import type { Sound } from "@/models/clicker/Sound";
+import type { Sound } from "#src/models/clicker/Sound";
 
-import { SoundMap } from "@/services/clicker/SoundMap";
+import { SoundMap } from "#src/services/clicker/SoundMap";
 
 export const useClickerSound = (sound: Sound) => useSound(SoundMap[sound]);

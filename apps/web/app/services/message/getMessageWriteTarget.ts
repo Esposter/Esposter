@@ -1,5 +1,5 @@
-import type { ClientMessage } from "@/models/message/ClientMessage";
-import type { CursorPaginationSlice } from "@/models/pagination/cursor/CursorPaginationSlice";
+import type { ClientMessage } from "#src/models/message/ClientMessage";
+import type { CursorPaginationSlice } from "#src/models/pagination/cursor/CursorPaginationSlice";
 
 // The message a dialog's write is about, and its room's items read as the write is issued
 // The optimistic apply runs when the write is sent, by which time the room on screen can be another one

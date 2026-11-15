@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ResourceUpdatedFilter } from "@/models/resource/list/ResourceUpdatedFilter";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { ResourceUpdatedFilterItems } from "@/services/resource/list/ResourceUpdatedFilterItems";
+import { ResourceUpdatedFilter } from "#src/models/resource/list/ResourceUpdatedFilter";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { ResourceUpdatedFilterItems } from "#src/services/resource/list/ResourceUpdatedFilterItems";
 import { getZonedDateTime } from "@esposter/shared";
 
 const updatedFilter = defineModel<"" | ResourceUpdatedFilter>("updatedFilter", { required: true });

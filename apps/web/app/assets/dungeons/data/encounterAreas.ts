@@ -1,5 +1,5 @@
-import type { BaseEncounterableMonster } from "@/models/dungeons/area/BaseEncounterableMonster";
-import type { EncounterArea } from "@/models/dungeons/area/EncounterArea";
+import type { BaseEncounterableMonster } from "#src/models/dungeons/area/BaseEncounterableMonster";
+import type { EncounterArea } from "#src/models/dungeons/area/EncounterArea";
 import type { Except } from "type-fest";
 
 import { Area } from "#shared/generated/tiled/propertyTypes/enum/Area";

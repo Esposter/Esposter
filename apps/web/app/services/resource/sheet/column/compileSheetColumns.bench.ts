@@ -8,8 +8,8 @@ import { createNumberColumn } from "#shared/models/resource/sheet/column/createN
 import { AggregationTransformationType } from "#shared/models/resource/sheet/column/transformation/AggregationTransformationType";
 import { ColumnTransformationType } from "#shared/models/resource/sheet/column/transformation/ColumnTransformationType";
 import { compileSheetColumns } from "#shared/services/resource/sheet/column/compileSheetColumns";
-import { generateBenchRows } from "@/composables/resource/sheet/commands/generateBenchRows.bench";
-import { compareColumnValues } from "@/services/resource/sheet/column/compareColumnValues";
+import { generateBenchRows } from "#src/composables/resource/sheet/commands/generateBenchRows.bench";
+import { compareColumnValues } from "#src/services/resource/sheet/column/compareColumnValues";
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { describe, test } from "vitest";
 

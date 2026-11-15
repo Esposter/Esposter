@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { EditorRegistry } from "@/models/editor/EditorRegistry";
+import type { EditorRegistry } from "#src/models/editor/EditorRegistry";
 import type { ResolvedRegion } from "vue-editor-layout-headless";
 
-import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
-import { RegionEdgeDialogPlacementMap } from "@/services/editor/RegionEdgeDialogPlacementMap";
-import { RegionEdgeOverlayClassMap } from "@/services/editor/RegionEdgeOverlayClassMap";
+import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
+import { RegionEdgeDialogPlacementMap } from "#src/services/editor/RegionEdgeDialogPlacementMap";
+import { RegionEdgeOverlayClassMap } from "#src/services/editor/RegionEdgeOverlayClassMap";
 import { RegionEdge, RegionPresentation, SizeClass } from "vue-editor-layout-headless";
 
 interface Props {

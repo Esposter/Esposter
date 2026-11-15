@@ -1,5 +1,5 @@
 import { KIBIBYTE } from "#shared/services/app/constants";
-import { getFileSize } from "@/services/file/getFileSize";
+import { getFileSize } from "#src/services/file/getFileSize";
 import { describe, expect, test } from "vitest";
 
 describe(getFileSize, () => {

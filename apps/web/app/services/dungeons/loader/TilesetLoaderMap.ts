@@ -1,17 +1,17 @@
-import type { AssetLoader } from "@/models/dungeons/loader/AssetLoader";
+import type { AssetLoader } from "#src/models/dungeons/loader/AssetLoader";
 
-import basicPlainsUrl from "@/assets/dungeons/tilesets/axulart/BasicPlains.png?url";
-import beachAndCavesUrl from "@/assets/dungeons/tilesets/axulart/BeachAndCaves.png?url";
-import houseUrl from "@/assets/dungeons/tilesets/axulart/House.png?url";
-import houseInteriorUrl from "@/assets/dungeons/tilesets/axulart/HouseInterior.png?url";
-import bushesUrl from "@/assets/dungeons/tilesets/firstParty/Bushes.png?url";
-import collisionUrl from "@/assets/dungeons/tilesets/firstParty/Collision.png?url";
-import dungeonUrl from "@/assets/dungeons/tilesets/firstParty/Dungeon.png?url";
-import encounterUrl from "@/assets/dungeons/tilesets/firstParty/Encounter.png?url";
-import entranceUrl from "@/assets/dungeons/tilesets/firstParty/Entrance.png?url";
-import grassUrl from "@/assets/dungeons/tilesets/firstParty/Grass.png?url";
-import teleportUrl from "@/assets/dungeons/tilesets/firstParty/Teleport.png?url";
-import { TilesetKey } from "@/models/dungeons/keys/TilesetKey";
+import basicPlainsUrl from "#src/assets/dungeons/tilesets/axulart/BasicPlains.png";
+import beachAndCavesUrl from "#src/assets/dungeons/tilesets/axulart/BeachAndCaves.png";
+import houseUrl from "#src/assets/dungeons/tilesets/axulart/House.png";
+import houseInteriorUrl from "#src/assets/dungeons/tilesets/axulart/HouseInterior.png";
+import bushesUrl from "#src/assets/dungeons/tilesets/firstParty/Bushes.png";
+import collisionUrl from "#src/assets/dungeons/tilesets/firstParty/Collision.png";
+import dungeonUrl from "#src/assets/dungeons/tilesets/firstParty/Dungeon.png";
+import encounterUrl from "#src/assets/dungeons/tilesets/firstParty/Encounter.png";
+import entranceUrl from "#src/assets/dungeons/tilesets/firstParty/Entrance.png";
+import grassUrl from "#src/assets/dungeons/tilesets/firstParty/Grass.png";
+import teleportUrl from "#src/assets/dungeons/tilesets/firstParty/Teleport.png";
+import { TilesetKey } from "#src/models/dungeons/keys/TilesetKey";
 
 export const TilesetLoaderMap = {
   [TilesetKey.BasicPlains]: (scene) => scene.load.image(TilesetKey.BasicPlains, basicPlainsUrl),

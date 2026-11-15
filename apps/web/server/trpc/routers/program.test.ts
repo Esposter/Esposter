@@ -1,19 +1,19 @@
 import type { Context } from "#server/trpc/context";
-import type { TRPCRouter } from "#server/trpc/routers";
+import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { ProgramResource } from "#shared/models/resource/program/ProgramResource";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 import type { MjmlFlowNode, MjmlLeafNode } from "mjml-blocks";
 
 import { ProgramStatusDatasetColumnName } from "#server/models/dataset/programStatus/ProgramStatusDatasetColumnName";
 import { DANGLING_PROGRAM_BINDING_REASON } from "#server/services/program/constants";
-import { createCallerFactory } from "#server/trpc";
 import { createMockAuthSession, createMockContext } from "#server/trpc/context.test";
-import { trpcRouter } from "#server/trpc/routers";
+import { createCallerFactory } from "#server/trpc/index";
 import { AUDIENCE_KEY_COLUMN, createAudienceSheet } from "#server/trpc/routers/createAudienceSheet.test";
 import { createBoundProgram } from "#server/trpc/routers/createBoundProgram.test";
 import { createPublishedSurvey, createSurvey, createSurveyDocumentWith } from "#server/trpc/routers/createSurvey.test";
 import { datasetRouter } from "#server/trpc/routers/dataset";
 import { emailRouter } from "#server/trpc/routers/email";
+import { trpcRouter } from "#server/trpc/routers/index";
 import { programRouter } from "#server/trpc/routers/program";
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { sheetRouter } from "#server/trpc/routers/sheet";

@@ -1,8 +1,8 @@
-import type { ColumnStatisticsRow } from "@/models/resource/sheet/column/ColumnStatisticsRow";
+import type { ColumnStatisticsRow } from "#src/models/resource/sheet/column/ColumnStatisticsRow";
 
 import { compileSheetColumns } from "#shared/services/resource/sheet/column/compileSheetColumns";
-import { computeColumnStatisticsForColumn } from "@/services/resource/sheet/column/computeColumnStatisticsForColumn";
-import { useSheetStore } from "@/store/resource/sheet";
+import { computeColumnStatisticsForColumn } from "#src/services/resource/sheet/column/computeColumnStatisticsForColumn";
+import { useSheetStore } from "#src/store/resource/sheet/index";
 
 // Each row is paired with the column it was computed from, so a consumer formatting a statistic in that column's
 // Units already holds it. Nested rather than spread onto the statistics: the pairing is what is wanted, and

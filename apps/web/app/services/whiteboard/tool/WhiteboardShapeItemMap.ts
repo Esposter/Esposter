@@ -1,6 +1,6 @@
-import type { WhiteboardShapeItem } from "@/models/whiteboard/WhiteboardShapeItem";
+import type { WhiteboardShapeItem } from "#src/models/whiteboard/WhiteboardShapeItem";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { ShapeKind } from "vue-block-editor-headless";
 
 // The shapes the shape tool places, in the order its slot's menu lists them: the basic shapes, then the flowchart ones.

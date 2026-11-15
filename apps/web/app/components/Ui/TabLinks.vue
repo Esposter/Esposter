@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { UiTabLink } from "@/models/ui/UiTabLink";
+import type { UiTabLink } from "#src/models/ui/UiTabLink";
 
 interface Props {
   // Each link its icon alone, named by its title and showing it as a tooltip, for a row with little width

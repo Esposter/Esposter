@@ -1,11 +1,11 @@
 import type { VisualType } from "#shared/models/dashboard/data/VisualType";
 import type { Dataset } from "#shared/models/dataset/Dataset";
 import type { DatasetQuery } from "#shared/models/dataset/DatasetQuery";
-import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
+import type { VisualPropsData } from "#src/models/dashboard/VisualPropsData";
 
-import { VisualDatasetShape } from "@/models/dashboard/VisualDatasetShape";
-import { DatasetAggregationComputeMap } from "@/services/dashboard/dataset/DatasetAggregationComputeMap";
-import { VisualTypeDatasetShapeMap } from "@/services/dashboard/dataset/VisualTypeDatasetShapeMap";
+import { VisualDatasetShape } from "#src/models/dashboard/VisualDatasetShape";
+import { DatasetAggregationComputeMap } from "#src/services/dashboard/dataset/DatasetAggregationComputeMap";
+import { VisualTypeDatasetShapeMap } from "#src/services/dashboard/dataset/VisualTypeDatasetShapeMap";
 import { exhaustiveGuard, getOrCreate, takeOne } from "@esposter/shared";
 
 // Undefined for a visual type no aggregated query can draw, which then shows its demo data as an unbound one does

@@ -1,4 +1,4 @@
-import { getFocusedId } from "@/components/Ui/getFocusedId.test";
+import { getFocusedId } from "#src/components/Ui/getFocusedId.test";
 import { flushPromises } from "@vue/test-utils";
 import { assert, describe } from "vitest";
 

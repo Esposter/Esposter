@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { CallParticipant } from "@esposter/db-schema";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { useCallStore } from "@/store/message/room/call";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { useCallStore } from "#src/store/message/room/call/index";
 
 interface Props {
   isSpeaking: boolean;

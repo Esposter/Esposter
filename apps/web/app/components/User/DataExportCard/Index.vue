@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { UserSettingsPageSection } from "@/models/user/UserSettingsPageSection";
+import type { UserSettingsPageSection } from "#src/models/user/UserSettingsPageSection";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { DataExportOmittedItems } from "@/services/user/settings/DataExportOmittedItems";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { DataExportOmittedItems } from "#src/services/user/settings/DataExportOmittedItems";
 import { DataExportStatus } from "@esposter/db-schema";
 
 interface Props {

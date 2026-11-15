@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { useFriendRequestStore } from "@/store/message/user/friendRequest";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { useFriendRequestStore } from "#src/store/message/user/friendRequest";
 
 interface Props {
   userId: string;

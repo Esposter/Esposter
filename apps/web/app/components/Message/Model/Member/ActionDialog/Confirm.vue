@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { MemberActionTarget } from "@/models/message/member/MemberActionTarget";
+import type { MemberActionTarget } from "#src/models/message/member/MemberActionTarget";
 import type { AdminActionType } from "@esposter/db-schema";
 
-import { AdminActionTitleMap } from "@/services/message/moderation/AdminActionTitleMap";
+import { AdminActionTitleMap } from "#src/services/message/moderation/AdminActionTitleMap";
 
 interface Props {
   text: string;

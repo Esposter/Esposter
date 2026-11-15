@@ -1,8 +1,8 @@
 import type { AchievementDefinitionEntry } from "#shared/models/achievement/AchievementDefinitionEntry";
-import type { UserAchievementWithDefinition } from "@/models/achievement/UserAchievementWithDefinition";
+import type { UserAchievementWithDefinition } from "#src/models/achievement/UserAchievementWithDefinition";
 
-import { AchievementStatus } from "@/models/achievement/AchievementStatus";
-import { getUnlockedUserAchievements } from "@/services/achievement/getUnlockedUserAchievements";
+import { AchievementStatus } from "#src/models/achievement/AchievementStatus";
+import { getUnlockedUserAchievements } from "#src/services/achievement/getUnlockedUserAchievements";
 
 export const getAchievementListMap = (
   achievementDefinitions: AchievementDefinitionEntry[],

@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import type { Recurrence } from "#shared/models/resource/todoList/Recurrence";
-import type { UiSelectItem } from "@/models/ui/UiSelectItem";
+import type { UiSelectItem } from "#src/models/ui/UiSelectItem";
 
 import { RecurrenceUnit } from "#shared/models/resource/todoList/RecurrenceUnit";
 import { TODO_LIST_RECURRENCE_INTERVAL_MAX } from "#shared/services/resource/item/constants";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
-import { RecurrenceUnitLabelMap } from "@/services/resource/todoList/RecurrenceUnitLabelMap";
-import { prependNoneSelectItem } from "@/services/ui/prependNoneSelectItem";
-import { UiRules } from "@/services/ui/UiRules";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { UiTextFieldType } from "#src/models/ui/UiTextFieldType";
+import { RecurrenceUnitLabelMap } from "#src/services/resource/todoList/RecurrenceUnitLabelMap";
+import { prependNoneSelectItem } from "#src/services/ui/prependNoneSelectItem";
+import { UiRules } from "#src/services/ui/UiRules";
 
 interface Props {
   // The due date a new repeat counts from

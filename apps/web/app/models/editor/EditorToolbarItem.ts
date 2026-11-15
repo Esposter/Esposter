@@ -1,4 +1,4 @@
-import type { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import type { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import type { Promisable } from "type-fest";
 
 // One tool, toggle or command a toolbar draws: its mark and title, the shortcut its registered command carries, its

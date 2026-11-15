@@ -1,6 +1,6 @@
-import type { UiCommand } from "@/models/ui/UiCommand";
+import type { UiCommand } from "#src/models/ui/UiCommand";
 
-import { runCommand } from "@/services/ui/runCommand";
+import { runCommand } from "#src/services/ui/runCommand";
 import { describe, expect, test, vi } from "vitest";
 
 describe(runCommand, () => {

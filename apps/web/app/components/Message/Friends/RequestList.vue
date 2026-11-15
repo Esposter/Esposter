@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { compareCreatedAt } from "#shared/util/date/compareCreatedAt";
-import { useFriendRequestStore } from "@/store/message/user/friendRequest";
+import { useFriendRequestStore } from "#src/store/message/user/friendRequest";
 
 const friendRequestStore = useFriendRequestStore();
 const { receivedFriendRequests } = storeToRefs(friendRequestStore);

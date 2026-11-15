@@ -1,5 +1,5 @@
 // @unocss-include
-import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
+import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
 
 // How tall the frame inside each placement's dialog stands, in the two forms it takes. A dialog that stands at its
 // Content's height is held under the limit its placement gives it, and a tall one stands at a fixed height there, so a

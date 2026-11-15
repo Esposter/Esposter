@@ -1,4 +1,4 @@
-import type { ClientMessage } from "@/models/message/ClientMessage";
+import type { ClientMessage } from "#src/models/message/ClientMessage";
 
 // Targets for singleton dialogs: action items write the target, the single mounted
 // Dialog instance opens while it is set and clears it back to 0, the absent message id, on close

@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { EditorFinding } from "@/models/editor/EditorFinding";
-import type { EmailDocument } from "@/models/pageBuilder/EmailDocument";
+import type { EditorFinding } from "#src/models/editor/EditorFinding";
+import type { EmailDocument } from "#src/models/pageBuilder/EmailDocument";
 
 import { PageBuilderDevice } from "#shared/models/pageBuilder/PageBuilderDevice";
 import { DEVICE_WIDTH_MAP } from "#shared/services/pageBuilder/constants";
-import { EditorFindingSeverity } from "@/models/editor/EditorFindingSeverity";
-import { toEmailValidatorFinding } from "@/services/emailEditor/toEmailValidatorFinding";
-import { RESOURCE_AUTOSAVE_DEBOUNCE_MS } from "@/services/resource/constants";
+import { EditorFindingSeverity } from "#src/models/editor/EditorFindingSeverity";
+import { toEmailValidatorFinding } from "#src/services/emailEditor/toEmailValidatorFinding";
+import { RESOURCE_AUTOSAVE_DEBOUNCE_MS } from "#src/services/resource/constants";
 
 interface Props {
   // The device the canvas's toggle sets: mobile and tablet draw the email at their device's width, and desktop fills the pane

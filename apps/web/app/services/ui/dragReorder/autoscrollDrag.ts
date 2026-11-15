@@ -1,8 +1,8 @@
-import type { DragReorderContext } from "@/models/ui/dragReorder/DragReorderContext";
+import type { DragReorderContext } from "#src/models/ui/dragReorder/DragReorderContext";
 
-import { DRAG_AUTOSCROLL_SPEED } from "@/services/ui/constants";
-import { getAutoscroll } from "@/services/ui/dragReorder/getAutoscroll";
-import { moveDrag } from "@/services/ui/dragReorder/moveDrag";
+import { DRAG_AUTOSCROLL_SPEED } from "#src/services/ui/constants";
+import { getAutoscroll } from "#src/services/ui/dragReorder/getAutoscroll";
+import { moveDrag } from "#src/services/ui/dragReorder/moveDrag";
 
 // Scrolls the scroller the pointer is near the edge of, a frame at a time, and moves the held row with it
 export const autoscrollDrag = (context: DragReorderContext, delta: number) => {

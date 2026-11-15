@@ -1,8 +1,8 @@
-import type { GesturePointerEvent } from "@/models/whiteboard/GesturePointerEvent";
-import type { WhiteboardGestureResult } from "@/models/whiteboard/WhiteboardGestureResult";
-import type { WhiteboardGestureState } from "@/models/whiteboard/WhiteboardGestureState";
+import type { GesturePointerEvent } from "#src/models/whiteboard/GesturePointerEvent";
+import type { WhiteboardGestureResult } from "#src/models/whiteboard/WhiteboardGestureResult";
+import type { WhiteboardGestureState } from "#src/models/whiteboard/WhiteboardGestureState";
 
-import { GesturePointerAction } from "@/models/whiteboard/GesturePointerAction";
+import { GesturePointerAction } from "#src/models/whiteboard/GesturePointerAction";
 import { exhaustiveGuard } from "@esposter/shared";
 
 // A cancel drops the gesture and its preview, and a press holds the state, for every gesture that previews what it

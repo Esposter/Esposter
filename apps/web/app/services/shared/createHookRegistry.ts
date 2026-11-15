@@ -1,5 +1,5 @@
-import type { AnyHook } from "@/models/shared/AnyHook";
-import type { HookRegistry } from "@/models/shared/HookRegistry";
+import type { AnyHook } from "#src/models/shared/AnyHook";
+import type { HookRegistry } from "#src/models/shared/HookRegistry";
 
 import { checkIsServer, noop } from "@esposter/shared";
 

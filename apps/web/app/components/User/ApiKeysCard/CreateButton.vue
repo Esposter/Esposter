@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { CreateApiKeyInput, McpScope } from "@esposter/db-schema";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
-import { UiDialogSize } from "@/models/ui/UiDialogSize";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { McpScopeTitleMap } from "@/services/auth/McpScopeTitleMap";
-import { UiRules } from "@/services/ui/UiRules";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
+import { UiDialogSize } from "#src/models/ui/UiDialogSize";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { McpScopeTitleMap } from "#src/services/auth/McpScopeTitleMap";
+import { UiRules } from "#src/services/ui/UiRules";
 import { API_KEY_NAME_MAX_LENGTH, McpScopes } from "@esposter/db-schema";
 
 interface Props {

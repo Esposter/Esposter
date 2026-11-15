@@ -1,13 +1,13 @@
 // @unocss-include
-import type { BladeDefinition } from "@/models/resource/BladeDefinition";
+import type { BladeDefinition } from "#src/models/resource/BladeDefinition";
 import type { ResourceType } from "@esposter/db-schema";
 import type { Except } from "type-fest";
 
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { ResourceBladeType } from "@/models/resource/ResourceBladeType";
-import { BuiltInBladeDefinitionMap } from "@/services/resource/BuiltInBladeDefinitionMap";
-import { ResourceBladeDefinitionMap } from "@/services/resource/ResourceBladeDefinitionMap";
-import { ResourceEditorComponentMap } from "@/services/resource/ResourceEditorComponentMap";
+import { ResourceBladeType } from "#src/models/resource/ResourceBladeType";
+import { BuiltInBladeDefinitionMap } from "#src/services/resource/BuiltInBladeDefinitionMap";
+import { ResourceBladeDefinitionMap } from "#src/services/resource/ResourceBladeDefinitionMap";
+import { ResourceEditorComponentMap } from "#src/services/resource/ResourceEditorComponentMap";
 
 // Which blades a type has, in nav order — the one answer to that question. The built-ins render through the
 // Outlet's own branches rather than a component here, so the shape is the definition minus its component.

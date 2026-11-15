@@ -1,4 +1,4 @@
-import type { ClientMessage } from "@/models/message/ClientMessage";
+import type { ClientMessage } from "#src/models/message/ClientMessage";
 import type { RoomInMessage } from "@esposter/db-schema";
 
 // Everything a rendered message reads besides itself — its author, the message it replies to, its attachments'

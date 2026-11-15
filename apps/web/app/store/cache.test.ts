@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
-import { CacheTag } from "@/models/cache/CacheTag";
-import { useCacheStore } from "@/store/cache";
+import { CacheTag } from "#src/models/cache/CacheTag";
+import { useCacheStore } from "#src/store/cache";
 import { flushPromises } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
 import { describe, expect, test, vi } from "vitest";

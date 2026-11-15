@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
-import type { EmailDocument } from "@/models/pageBuilder/EmailDocument";
+import type { EmailDocument } from "#src/models/pageBuilder/EmailDocument";
 import type { ResourcePublicationInResource } from "@esposter/db-schema";
 import type { MjmlColumnNode } from "mjml-blocks";
 
@@ -18,18 +18,18 @@ import {
 } from "#shared/services/pageBuilder/constants.test";
 import { webpageDocumentSchema } from "#shared/services/pageBuilder/webpageDocumentSchema";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
-import PageBuilderContentPanel from "@/components/PageBuilder/ContentPanel.vue";
-import ResourceLinkSelect from "@/components/Resource/Link/Select.vue";
-import UiSchemaForm from "@/components/Ui/SchemaForm/Index.vue";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { TEST_EMAIL, TEST_NESTED_TEXT_ID } from "@/services/pageBuilder/constants.test";
-import { emailKind } from "@/services/pageBuilder/emailKind";
-import { renderCanvasVNodes } from "@/services/pageBuilder/renderCanvasVNodes";
-import { webpageKind } from "@/services/pageBuilder/webpageKind";
-import { getUnpublishedResourceMessage } from "@/services/resource/getUnpublishedResourceMessage";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
-import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
+import PageBuilderContentPanel from "#src/components/PageBuilder/ContentPanel.vue";
+import ResourceLinkSelect from "#src/components/Resource/Link/Select.vue";
+import UiSchemaForm from "#src/components/Ui/SchemaForm/Index.vue";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { TEST_EMAIL, TEST_NESTED_TEXT_ID } from "#src/services/pageBuilder/constants.test";
+import { emailKind } from "#src/services/pageBuilder/emailKind";
+import { renderCanvasVNodes } from "#src/services/pageBuilder/renderCanvasVNodes";
+import { webpageKind } from "#src/services/pageBuilder/webpageKind";
+import { getUnpublishedResourceMessage } from "#src/services/resource/getUnpublishedResourceMessage";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
+import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
 import { createEmptyPage, ResourceType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises, mount } from "@vue/test-utils";

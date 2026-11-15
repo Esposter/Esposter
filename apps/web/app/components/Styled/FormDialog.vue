@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import type { UiDialogSize } from "@/models/ui/UiDialogSize";
+import type { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import type { UiDialogSize } from "#src/models/ui/UiDialogSize";
 import type { Promisable } from "type-fest";
 
 interface Props {

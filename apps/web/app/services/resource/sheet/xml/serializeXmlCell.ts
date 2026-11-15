@@ -1,5 +1,5 @@
 import { escapeXml } from "#shared/util/text/escapeXml";
-import { XML_CELL_ELEMENT_NAME, XML_NAME_REGEX } from "@/services/resource/sheet/xml/constants";
+import { XML_CELL_ELEMENT_NAME, XML_NAME_REGEX } from "#src/services/resource/sheet/xml/constants";
 
 // XML 1.0 holds no control character but tab, newline and carriage return, nor the two noncharacters ending the plane, so they are
 // Dropped as the XFDF writer drops them. A carriage return is written as its reference, since a reader folds a bare one

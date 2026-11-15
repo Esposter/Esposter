@@ -1,9 +1,9 @@
 import type { SearchMessagesInput } from "#shared/models/db/message/SearchMessagesInput";
-import type { ClientMessage } from "@/models/message/ClientMessage";
+import type { ClientMessage } from "#src/models/message/ClientMessage";
 import type { Filter, FilterType } from "@esposter/db-schema";
 
 import { checkIsSearchQueryEmpty } from "#shared/services/message/checkIsSearchQueryEmpty";
-import { useRoomStore } from "@/store/message/room";
+import { useRoomStore } from "#src/store/message/room/index";
 
 // The search a room's results were read for, held beside them so a continuation is read for that search
 type ResultSearch = Pick<SearchMessagesInput, "filters" | "query">;

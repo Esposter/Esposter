@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { ApexChart, ApexOptions } from "apexcharts";
 
-import { getStyledApexOptions } from "@/services/styled/getStyledApexOptions";
-import { useThemeModeStore } from "@/store/ui/themeMode";
+import { getStyledApexOptions } from "#src/services/styled/getStyledApexOptions";
+import { useThemeModeStore } from "#src/store/ui/themeMode";
 import { clonePlainDeep } from "@esposter/shared";
 import ApexCharts from "apexcharts";
 

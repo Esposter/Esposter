@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { DraftItem } from "@/models/message/draftsAndSent/DraftItem";
+import type { DraftItem } from "#src/models/message/draftsAndSent/DraftItem";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useDataStore } from "@/store/message/data";
-import { useInputStore } from "@/store/message/input";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { useDataStore } from "#src/store/message/data";
+import { useInputStore } from "#src/store/message/input/index";
 import { MessageType } from "@esposter/db-schema";
 
 interface Props {

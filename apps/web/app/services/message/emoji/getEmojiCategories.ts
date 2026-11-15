@@ -1,16 +1,16 @@
-import type { CustomEmoji } from "@/models/message/emoji/CustomEmoji";
-import type { EmojiCategory } from "@/models/message/emoji/EmojiCategory";
-import type { PickableEmoji } from "@/models/message/emoji/PickableEmoji";
+import type { CustomEmoji } from "#src/models/message/emoji/CustomEmoji";
+import type { EmojiCategory } from "#src/models/message/emoji/EmojiCategory";
+import type { PickableEmoji } from "#src/models/message/emoji/PickableEmoji";
 
-import { EmojiGroups } from "@/models/message/emoji/EmojiGroup";
+import { EmojiGroups } from "#src/models/message/emoji/EmojiGroup";
 import {
   RECENT_EMOJI_CATEGORY_ICON,
   RECENT_EMOJI_CATEGORY_TITLE,
   ROOM_EMOJI_CATEGORY_ICON,
   ROOM_EMOJI_CATEGORY_TITLE,
-} from "@/services/message/emoji/constants";
-import { EmojiGroupIconMap } from "@/services/message/emoji/EmojiGroupIconMap";
-import { getEmojiIndex } from "@/services/message/emoji/getEmojiIndex";
+} from "#src/services/message/emoji/constants";
+import { EmojiGroupIconMap } from "#src/services/message/emoji/EmojiGroupIconMap";
+import { getEmojiIndex } from "#src/services/message/emoji/getEmojiIndex";
 
 // Frequently Used is pinned ahead of the CLDR groups when it has anything in it, and the room's own emoji sit
 // Between the two — which is where Discord puts a server's set, above every unicode category and below the

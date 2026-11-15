@@ -1,15 +1,15 @@
 import type { StyleProperty } from "#shared/models/pageBuilder/StyleProperty";
-import type { PageBuilderHistoryEntry } from "@/models/pageBuilder/PageBuilderHistoryEntry";
+import type { PageBuilderHistoryEntry } from "#src/models/pageBuilder/PageBuilderHistoryEntry";
 
-import { DEVICE_BREAKPOINT_MAP } from "@/services/pageBuilder/constants";
-import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
-import { getStyleInheritance } from "@/services/pageBuilder/getStyleInheritance";
-import { getStyleOperations } from "@/services/pageBuilder/getStyleOperations";
-import { setStyleProperty } from "@/services/pageBuilder/setStyleProperty";
-import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
-import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
-import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
-import { usePageBuilderStyleClipboardStore } from "@/store/pageBuilder/styleClipboard";
+import { DEVICE_BREAKPOINT_MAP } from "#src/services/pageBuilder/constants";
+import { getNodePointer } from "#src/services/pageBuilder/getNodePointer";
+import { getStyleInheritance } from "#src/services/pageBuilder/getStyleInheritance";
+import { getStyleOperations } from "#src/services/pageBuilder/getStyleOperations";
+import { setStyleProperty } from "#src/services/pageBuilder/setStyleProperty";
+import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
+import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
+import { usePageBuilderHistoryStore } from "#src/store/pageBuilder/history";
+import { usePageBuilderStyleClipboardStore } from "#src/store/pageBuilder/styleClipboard";
 import { noop } from "@esposter/shared";
 import { getBlockNode } from "vue-block-editor-headless";
 

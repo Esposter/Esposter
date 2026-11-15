@@ -1,5 +1,5 @@
 import { CsvDelimiter } from "#shared/models/resource/sheet/csv/CsvDelimiter";
-import { deserializeCsvLine } from "@/services/resource/sheet/csv/deserializeCsvLine";
+import { deserializeCsvLine } from "#src/services/resource/sheet/csv/deserializeCsvLine";
 import { describe, expect, test } from "vitest";
 
 describe(deserializeCsvLine, () => {

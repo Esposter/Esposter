@@ -1,6 +1,6 @@
 import { EN_US_CONJUNCTION_FORMATTER } from "#shared/services/intl/constants";
 import { pluralize } from "#shared/util/text/pluralize";
-import { MAX_REACTION_HOVER_NAMES } from "@/services/message/emoji/constants";
+import { MAX_REACTION_HOVER_NAMES } from "#src/services/message/emoji/constants";
 
 // "Alice, Bob and 4 others" — the same shape Discord's hover card uses, so the line stays readable at any
 // Count. The overflow entry is itself a list member rather than a suffix, which is what lets `Intl` place the

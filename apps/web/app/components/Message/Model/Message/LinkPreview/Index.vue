@@ -2,8 +2,8 @@
 import type { LinkPreviewResponse } from "@esposter/db-schema";
 
 import { MimeType } from "#shared/models/file/MimeType";
-import MessageModelMessageLinkPreviewDefault from "@/components/Message/Model/Message/LinkPreview/Default.vue";
-import MessageModelMessageLinkPreviewURL from "@/components/Message/Model/Message/LinkPreview/URL.vue";
+import MessageModelMessageLinkPreviewDefault from "#src/components/Message/Model/Message/LinkPreview/Default.vue";
+import MessageModelMessageLinkPreviewURL from "#src/components/Message/Model/Message/LinkPreview/URL.vue";
 
 const { contentType } = defineProps<LinkPreviewResponse>();
 const component = computed<Component | undefined>(() => {

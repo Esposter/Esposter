@@ -1,4 +1,4 @@
-import type { TiledObjectProperty } from "@/models/dungeons/tilemap/TiledObjectProperty";
+import type { TiledObjectProperty } from "#src/models/dungeons/tilemap/TiledObjectProperty";
 
 import { NotFoundError } from "@esposter/shared";
 

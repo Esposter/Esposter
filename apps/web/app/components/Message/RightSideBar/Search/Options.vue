@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { UiListItem } from "@/models/ui/UiListItem";
+import type { UiListItem } from "#src/models/ui/UiListItem";
 import type { FilterType } from "@esposter/db-schema";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { FilterTypePlaceholderMap } from "@/services/message/filter/FilterTypePlaceholderMap";
-import { getFilterKeyword } from "@/services/message/filter/getFilterKeyword";
-import { useSearchMessageStore } from "@/store/message/search";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { FilterTypePlaceholderMap } from "#src/services/message/filter/FilterTypePlaceholderMap";
+import { getFilterKeyword } from "#src/services/message/filter/getFilterKeyword";
+import { useSearchMessageStore } from "#src/store/message/search/index";
 import { FilterTypes } from "@esposter/db-schema";
 
 const searchMessageStore = useSearchMessageStore();

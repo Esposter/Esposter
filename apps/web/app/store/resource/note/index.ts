@@ -1,5 +1,5 @@
 import { EMPTY_NOTE_DOC } from "#shared/services/resource/constants";
-import { createContentData } from "@/services/resource/createContentData";
+import { createContentData } from "#src/services/resource/createContentData";
 import { ResourceType } from "@esposter/db-schema";
 
 export const useNoteStore = defineStore("resource/note", () => {

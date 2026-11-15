@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-import ResourceWhiteboardElementStickyNote from "@/components/Resource/Whiteboard/ElementStickyNote.vue";
+import ResourceWhiteboardElementStickyNote from "#src/components/Resource/Whiteboard/ElementStickyNote.vue";
 import { mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
 import { v7 } from "uuid";

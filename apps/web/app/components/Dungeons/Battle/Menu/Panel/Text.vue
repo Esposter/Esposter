@@ -1,8 +1,8 @@
 <script setup lang="ts" generic="TGrid extends readonly (readonly unknown[])[]">
-import type { Grid } from "@/models/dungeons/Grid";
+import type { Grid } from "#src/models/dungeons/Grid";
 import type { Position } from "grid-engine";
 
-import { DialogTextStyle } from "@/assets/dungeons/styles/DialogTextStyle";
+import { DialogTextStyle } from "#src/assets/dungeons/styles/DialogTextStyle";
 import { Input } from "phaser";
 import { Text } from "vue-phaserjs";
 

@@ -3,12 +3,12 @@ import type { Column } from "#shared/models/resource/sheet/column/Column";
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
 
 import { checkIsEditableColumnValue } from "#shared/services/resource/sheet/column/checkIsEditableColumnValue";
-import { OUTLIER_HIGHLIGHT_CLASS } from "@/services/resource/sheet/constants";
-import { getItemId } from "@/services/resource/sheet/getItemId";
-import { useCellStore } from "@/store/resource/sheet/cell";
-import { useFindReplaceStore } from "@/store/resource/sheet/findReplace";
-import { useOutlierStore } from "@/store/resource/sheet/outlier";
-import { useRowStore } from "@/store/resource/sheet/row";
+import { OUTLIER_HIGHLIGHT_CLASS } from "#src/services/resource/sheet/constants";
+import { getItemId } from "#src/services/resource/sheet/getItemId";
+import { useCellStore } from "#src/store/resource/sheet/cell";
+import { useFindReplaceStore } from "#src/store/resource/sheet/findReplace";
+import { useOutlierStore } from "#src/store/resource/sheet/outlier";
+import { useRowStore } from "#src/store/resource/sheet/row";
 
 interface Props {
   column: Column;

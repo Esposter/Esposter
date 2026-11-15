@@ -1,14 +1,14 @@
 import type { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
-import type { PortableFormat } from "@/models/resource/PortableFormat";
+import type { PortableFormat } from "#src/models/resource/PortableFormat";
 
-import { importFile } from "@/services/file/importFile";
-import { createDefaultSheetSettings } from "@/services/resource/sheet/createDefaultSheetSettings";
-import { DataSourceConfigurationMap } from "@/services/resource/sheet/dataSource/DataSourceConfigurationMap";
-import { DataSourceTypeItemCategoryDefinitionMap } from "@/services/resource/sheet/dataSource/DataSourceTypeItemCategoryDefinitionMap";
-import { useResourceStore } from "@/store/resource";
-import { useSheetStore } from "@/store/resource/sheet";
-import { useSheetPortableDialogStore } from "@/store/resource/sheet/portableDialog";
-import { trimFileExtension } from "@/util/file/trimFileExtension";
+import { importFile } from "#src/services/file/importFile";
+import { createDefaultSheetSettings } from "#src/services/resource/sheet/createDefaultSheetSettings";
+import { DataSourceConfigurationMap } from "#src/services/resource/sheet/dataSource/DataSourceConfigurationMap";
+import { DataSourceTypeItemCategoryDefinitionMap } from "#src/services/resource/sheet/dataSource/DataSourceTypeItemCategoryDefinitionMap";
+import { useResourceStore } from "#src/store/resource/index";
+import { useSheetStore } from "#src/store/resource/sheet/index";
+import { useSheetPortableDialogStore } from "#src/store/resource/sheet/portableDialog";
+import { trimFileExtension } from "#src/util/file/trimFileExtension";
 
 // Per-format import/export for Sheet. Both hand off to the dialog the blade shell mounts rather than acting
 // Outright: an import shows what it is about to replace the sheet with, and an export asks which columns to take

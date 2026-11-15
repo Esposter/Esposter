@@ -1,10 +1,10 @@
 import type { Position } from "grid-engine";
 
 import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOption";
-import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
-import { SettingsOptionGrid } from "@/services/dungeons/scene/settings/SettingsOptionGrid";
-import { useControlsStore } from "@/store/dungeons/controls";
-import { useSettingsSceneStore } from "@/store/dungeons/settings/scene";
+import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";
+import { SettingsOptionGrid } from "#src/services/dungeons/scene/settings/SettingsOptionGrid";
+import { useControlsStore } from "#src/store/dungeons/controls";
+import { useSettingsSceneStore } from "#src/store/dungeons/settings/scene";
 import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 
 export const useSettingsOnGridClick = (position: MaybeRefOrGetter<Position>) => {

@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 import { TEST_ID } from "#shared/services/pageBuilder/constants.test";
-import { getNodeIdFromElement } from "@/services/pageBuilder/getNodeIdFromElement";
+import { getNodeIdFromElement } from "#src/services/pageBuilder/getNodeIdFromElement";
 import { runInNewContext } from "node:vm";
 import { describe, expect, test } from "vitest";
 

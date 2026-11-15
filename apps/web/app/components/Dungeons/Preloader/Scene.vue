@@ -2,21 +2,21 @@
 import type { Loader } from "phaser";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { FontLoaders } from "@/services/dungeons/loader/FontLoaderMap";
-import { ImageLoaders } from "@/services/dungeons/loader/image/ImageLoaderMap";
-import { PixelArtTextureKeys } from "@/services/dungeons/loader/PixelArtTextureKeys";
-import { SoundLoaders } from "@/services/dungeons/loader/sound/SoundLoaderMap";
-import { SpritesheetLoaders } from "@/services/dungeons/loader/spritesheet/SpritesheetLoaderMap";
-import { TilemapLoaders } from "@/services/dungeons/loader/TilemapLoaderMap";
-import { TilesetLoaders } from "@/services/dungeons/loader/TilesetLoaderMap";
+import { SceneKey } from "#src/models/dungeons/keys/SceneKey";
+import { FontLoaders } from "#src/services/dungeons/loader/FontLoaderMap";
+import { ImageLoaders } from "#src/services/dungeons/loader/image/ImageLoaderMap";
+import { PixelArtTextureKeys } from "#src/services/dungeons/loader/PixelArtTextureKeys";
+import { SoundLoaders } from "#src/services/dungeons/loader/sound/SoundLoaderMap";
+import { SpritesheetLoaders } from "#src/services/dungeons/loader/spritesheet/SpritesheetLoaderMap";
+import { TilemapLoaders } from "#src/services/dungeons/loader/TilemapLoaderMap";
+import { TilesetLoaders } from "#src/services/dungeons/loader/TilesetLoaderMap";
 import {
   PROGRESS_BAR_HEIGHT,
   PROGRESS_BAR_MAX_WIDTH,
   PROGRESS_BOX_HEIGHT,
   PROGRESS_BOX_WIDTH,
-} from "@/services/dungeons/scene/preloader/constants";
-import { prettify } from "@/util/text/prettify";
+} from "#src/services/dungeons/scene/preloader/constants";
+import { prettify } from "#src/util/text/prettify";
 import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 import { Textures } from "phaser";
 import { Rectangle, Text, usePhaserStore } from "vue-phaserjs";

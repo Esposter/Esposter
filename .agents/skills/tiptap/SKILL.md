@@ -28,6 +28,10 @@ const slashCommandExtension = useSlashCommandExtension();
 
 Every entry is a `use*Extension()` call but Mention's, a module constant (`apps/web/app/services/message/MentionExtension.ts`). `RichTextEditor` owns only the always-on extensions (`StarterKit`, `CharacterCount`, `Placeholder`, `FileHandler`, `useLinkClickExtension`); feature extensions come via the `:extensions` prop.
 
+## An editor is typed as `@tiptap/core`'s `Editor`
+
+Every tiptap callback (`onCreate`, `onUpdate`, an extension's hooks) hands over the core `Editor`, and `@tiptap/vue-3`'s extends it, so a prop, parameter or store field names the core one and either instance passes with no cast. `no-restricted-imports` refuses `Editor` from `@tiptap/vue-3`.
+
 ## `useEditor` owns the editor's lifecycle — never register a second teardown
 
 `useEditor` constructs the editor in `onMounted` (so a component that `await`s its content in setup is already

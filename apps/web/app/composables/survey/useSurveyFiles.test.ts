@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import { useSurveyFiles } from "@/composables/survey/useSurveyFiles";
+import { useSurveyFiles } from "#src/composables/survey/useSurveyFiles";
 import { v7 } from "uuid";
 import { afterEach, describe, expect, test, vi } from "vitest";
 import { surveyDocumentSchema, SurveyNodeType } from "vue-survey-engine-headless";
@@ -9,8 +9,8 @@ const { deleteFile, uploadFile } = vi.hoisted(() => ({
   uploadFile: vi.fn<(file: File) => Promise<string>>(),
 }));
 
-vi.mock(import("@/composables/resource/useUploadResourceFile"), () => ({ useUploadResourceFile: () => uploadFile }));
-vi.mock(import("@/composables/resource/useDeleteResourceFile"), () => ({ useDeleteResourceFile: () => deleteFile }));
+vi.mock(import("#src/composables/resource/useUploadResourceFile"), () => ({ useUploadResourceFile: () => uploadFile }));
+vi.mock(import("#src/composables/resource/useDeleteResourceFile"), () => ({ useDeleteResourceFile: () => deleteFile }));
 
 // A survey whose one page holds an image question of the given picture, and whose logo is the given one
 const createDocument = (imageLink: string, logo: string) =>

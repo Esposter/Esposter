@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
-import type { AppNotification } from "@/models/notification/AppNotification";
+import type { AppNotification } from "#src/models/notification/AppNotification";
 
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useNotificationStore } from "@/store/notification";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useNotificationStore } from "#src/store/notification";
 import { NotificationSeverity } from "@esposter/db-schema";
 import { v7 } from "uuid";
 import { assert, beforeEach, describe, expect, test } from "vitest";

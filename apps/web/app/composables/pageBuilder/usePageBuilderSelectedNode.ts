@@ -1,8 +1,8 @@
-import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
+import type { PageBuilderKind } from "#src/models/pageBuilder/PageBuilderKind";
 import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "vue-block-editor-headless";
 
-import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
-import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
+import { getNodePointer } from "#src/services/pageBuilder/getNodePointer";
+import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
 
 // The open document a kind's commands act on, and the selected node within it. The document is the one the shell draws,
 // With the kind the shell was given, and the selection is the canvas's, so every command that acts on the selected node

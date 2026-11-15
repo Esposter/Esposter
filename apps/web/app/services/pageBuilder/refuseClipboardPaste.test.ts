@@ -1,5 +1,5 @@
-import { PageBuilderEditor } from "@/models/pageBuilder/PageBuilderEditor";
-import { refuseClipboardPaste } from "@/services/pageBuilder/refuseClipboardPaste";
+import { PageBuilderEditor } from "#src/models/pageBuilder/PageBuilderEditor";
+import { refuseClipboardPaste } from "#src/services/pageBuilder/refuseClipboardPaste";
 import { describe, expect, test } from "vitest";
 
 describe(refuseClipboardPaste, () => {

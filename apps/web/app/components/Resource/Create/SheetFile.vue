@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import type { SheetResource } from "#shared/models/resource/sheet/SheetResource";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { createDefaultSheetSettings } from "@/services/resource/sheet/createDefaultSheetSettings";
-import { DATA_SOURCE_ACCEPT, DATA_SOURCE_ACCEPTS } from "@/services/resource/sheet/dataSource/constants";
-import { DataSourceConfigurationMap } from "@/services/resource/sheet/dataSource/DataSourceConfigurationMap";
-import { getDataSourceTypeByFilename } from "@/services/resource/sheet/dataSource/getDataSourceTypeByFilename";
-import { trimFileExtension } from "@/util/file/trimFileExtension";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { createDefaultSheetSettings } from "#src/services/resource/sheet/createDefaultSheetSettings";
+import { DATA_SOURCE_ACCEPT, DATA_SOURCE_ACCEPTS } from "#src/services/resource/sheet/dataSource/constants";
+import { DataSourceConfigurationMap } from "#src/services/resource/sheet/dataSource/DataSourceConfigurationMap";
+import { getDataSourceTypeByFilename } from "#src/services/resource/sheet/dataSource/getDataSourceTypeByFilename";
+import { trimFileExtension } from "#src/util/file/trimFileExtension";
 import { getResultAsync, takeOne } from "@esposter/shared";
 
 // The parsed content the create form saves right after createResource — unset while the form is name-only

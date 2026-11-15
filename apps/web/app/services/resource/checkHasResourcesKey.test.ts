@@ -1,4 +1,4 @@
-import { checkHasResourcesKey } from "@/services/resource/checkHasResourcesKey";
+import { checkHasResourcesKey } from "#src/services/resource/checkHasResourcesKey";
 import { McpScope } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 

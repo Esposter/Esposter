@@ -1,13 +1,13 @@
-import type { EditorRegistry } from "@/models/editor/EditorRegistry";
+import type { EditorRegistry } from "#src/models/editor/EditorRegistry";
 
-import ResourceSurveyCreatorCalculatedValues from "@/components/Resource/Survey/Creator/CalculatedValues.vue";
-import ResourceSurveyCreatorLayers from "@/components/Resource/Survey/Creator/Layers.vue";
-import ResourceSurveyCreatorLogicBuilder from "@/components/Resource/Survey/Creator/LogicBuilder.vue";
-import ResourceSurveyCreatorPalette from "@/components/Resource/Survey/Creator/Palette.vue";
-import ResourceSurveyCreatorProperties from "@/components/Resource/Survey/Creator/Properties.vue";
-import ResourceSurveyCreatorTheme from "@/components/Resource/Survey/Creator/Theme.vue";
-import ResourceSurveyCreatorToolbar from "@/components/Resource/Survey/Creator/Toolbar.vue";
-import { SurveyEditorContent } from "@/models/resource/survey/SurveyEditorContent";
+import ResourceSurveyCreatorCalculatedValues from "#src/components/Resource/Survey/Creator/CalculatedValues.vue";
+import ResourceSurveyCreatorLayers from "#src/components/Resource/Survey/Creator/Layers.vue";
+import ResourceSurveyCreatorLogicBuilder from "#src/components/Resource/Survey/Creator/LogicBuilder.vue";
+import ResourceSurveyCreatorPalette from "#src/components/Resource/Survey/Creator/Palette.vue";
+import ResourceSurveyCreatorProperties from "#src/components/Resource/Survey/Creator/Properties.vue";
+import ResourceSurveyCreatorTheme from "#src/components/Resource/Survey/Creator/Theme.vue";
+import ResourceSurveyCreatorToolbar from "#src/components/Resource/Survey/Creator/Toolbar.vue";
+import { SurveyEditorContent } from "#src/models/resource/survey/SurveyEditorContent";
 
 // The component each content key of the survey's layout draws. The layout check reports a key with no entry here
 export const SurveyEditorRegistry: EditorRegistry = {

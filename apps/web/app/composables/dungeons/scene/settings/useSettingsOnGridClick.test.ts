@@ -1,13 +1,13 @@
-import type { Controls } from "@/models/dungeons/input/Controls";
+import type { Controls } from "#src/models/dungeons/input/Controls";
 
 import { getInitialSettings } from "#shared/models/dungeons/data/settings/Settings";
 import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOption";
 import { TextSpeedSetting } from "#shared/models/dungeons/data/settings/TextSpeedSetting";
-import { useSettingsOnGridClick } from "@/composables/dungeons/scene/settings/useSettingsOnGridClick";
-import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
-import { SettingsOptionGrid } from "@/services/dungeons/scene/settings/SettingsOptionGrid";
-import { useControlsStore } from "@/store/dungeons/controls";
-import { useSettingsStore } from "@/store/dungeons/settings";
+import { useSettingsOnGridClick } from "#src/composables/dungeons/scene/settings/useSettingsOnGridClick";
+import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";
+import { SettingsOptionGrid } from "#src/services/dungeons/scene/settings/SettingsOptionGrid";
+import { useControlsStore } from "#src/store/dungeons/controls";
+import { useSettingsStore } from "#src/store/dungeons/settings/index";
 import { NotFoundError } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
@@ -16,7 +16,7 @@ const { saveDungeons } = vi.hoisted(() => ({ saveDungeons: vi.fn<() => void>() }
 
 // Only the store's state and its save are read here, so the fake keeps the real save shape and records each save
 // oxlint-disable-next-line vitest/prefer-import-in-mock -- A partial fake: the typed module would load Phaser and its full store type
-vi.mock("@/store/dungeons", async () => {
+vi.mock("#src/store/dungeons/index", async () => {
   const { Dungeons } = await import("#shared/models/dungeons/data/Dungeons");
   const { reactive } = await import("vue");
   const dungeons = reactive(new Dungeons());

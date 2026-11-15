@@ -1,7 +1,7 @@
 import type { BookmarkPageLink } from "#shared/models/app/BookmarkPageLink";
 import type { ToggleBookmarkInput } from "#shared/models/db/bookmark/ToggleBookmarkInput";
 
-import { useNotificationStore } from "@/store/notification";
+import { useNotificationStore } from "#src/store/notification";
 
 // A bookmark made here names the page the reader is on, which they reach, so it is available until a read says otherwise
 const toBookmark = (input: ToggleBookmarkInput): BookmarkPageLink => ({ ...input, isAvailable: true });

@@ -1,10 +1,10 @@
-import type { GesturePointerEvent } from "@/models/whiteboard/GesturePointerEvent";
-import type { WhiteboardGestureResult } from "@/models/whiteboard/WhiteboardGestureResult";
-import type { WhiteboardGestureState } from "@/models/whiteboard/WhiteboardGestureState";
-import type { WhiteboardPlacement } from "@/models/whiteboard/WhiteboardPlacement";
+import type { GesturePointerEvent } from "#src/models/whiteboard/GesturePointerEvent";
+import type { WhiteboardGestureResult } from "#src/models/whiteboard/WhiteboardGestureResult";
+import type { WhiteboardGestureState } from "#src/models/whiteboard/WhiteboardGestureState";
+import type { WhiteboardPlacement } from "#src/models/whiteboard/WhiteboardPlacement";
 
-import { GesturePhase } from "@/models/whiteboard/GesturePhase";
-import { getWorldPoint } from "@/services/whiteboard/gesture/getWorldPoint";
+import { GesturePhase } from "#src/models/whiteboard/GesturePhase";
+import { getWorldPoint } from "#src/services/whiteboard/gesture/getWorldPoint";
 
 // A press with a placing tool holds the element it would place: its id is fixed at the press, and its origin is the press's document point
 export const startPlacingGesture = (

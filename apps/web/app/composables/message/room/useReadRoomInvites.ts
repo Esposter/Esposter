@@ -1,6 +1,6 @@
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { useRoomInviteStore } from "@/store/message/room/roomInvite";
+import { useRoomInviteStore } from "#src/store/message/room/roomInvite";
 
 // The room's whole set rather than the reader's own link
 export const useReadRoomInvites = (roomId: RoomInMessage["id"]) => {

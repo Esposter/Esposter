@@ -1,8 +1,17 @@
-import type { ContentDeltaRequest } from "@/models/resource/ContentDeltaRequest";
-import type { ContentDeltaResponse } from "@/models/resource/ContentDeltaResponse";
+import type { ContentDeltaRequest } from "#src/models/resource/ContentDeltaRequest";
+import type { ContentDeltaResponse } from "#src/models/resource/ContentDeltaResponse";
 
-import ContentDeltaWorker from "@/workers/resource/contentDelta.worker?worker";
-import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
+import { InvalidOperationError, Operation, takeOne, withFinalizerAsync } from "@esposter/shared";
+
+const ContentDeltaWorker = takeOne(
+  Object.values(
+    import.meta.glob<new () => Worker>("#src/workers/resource/contentDelta.worker", {
+      eager: true,
+      import: "default",
+      query: "?worker",
+    }),
+  ),
+);
 
 // Hands one document and its baseline to a worker of its own and takes the delta back. Loaded behind the delta
 // Path's own import, so the worker and its wasm are fetched only by a tab that saves a large document

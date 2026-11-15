@@ -1,5 +1,5 @@
-import { toIconMap } from "@/services/clicker/icon/toIconMap";
+import { toIconMap } from "#src/services/clicker/icon/toIconMap";
 
 export const MenuIconMap = toIconMap(
-  import.meta.glob<string>("@/assets/clicker/icons/menu/*.png", { eager: true, import: "default" }),
+  import.meta.glob<string>("#src/assets/clicker/icons/menu/*.png", { eager: true, import: "default" }),
 );

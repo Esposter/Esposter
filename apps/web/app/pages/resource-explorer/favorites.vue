@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ResourceListSource } from "@/models/resource/list/ResourceListSource";
+import { ResourceListSource } from "#src/models/resource/list/ResourceListSource";
 
 definePageMeta({ middleware: "auth" });
 </script>

@@ -1,9 +1,9 @@
 // @vitest-environment nuxt
 import { Visual } from "#shared/models/dashboard/data/Visual";
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
-import DashboardGrid from "@/components/Dashboard/Grid/Index.vue";
-import DashboardVisualGroup from "@/components/Dashboard/Visual/Group.vue";
-import { stubGridWidth } from "@/services/dashboard/grid/stubGridWidth.test";
+import DashboardGrid from "#src/components/Dashboard/Grid/Index.vue";
+import DashboardVisualGroup from "#src/components/Dashboard/Visual/Group.vue";
+import { stubGridWidth } from "#src/services/dashboard/grid/stubGridWidth.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";

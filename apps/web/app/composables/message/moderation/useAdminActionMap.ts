@@ -1,9 +1,9 @@
-import type { AdminAction } from "@/models/message/moderation/AdminAction";
+import type { AdminAction } from "#src/models/message/moderation/AdminAction";
 
 import { pluralize } from "#shared/util/text/pluralize";
-import { AdminActionHookMap } from "@/services/message/moderation/AdminActionHookMap";
-import { useAlertStore } from "@/store/alert";
-import { useRoomStore } from "@/store/message/room";
+import { AdminActionHookMap } from "#src/services/message/moderation/AdminActionHookMap";
+import { useAlertStore } from "#src/store/alert";
+import { useRoomStore } from "#src/store/message/room/index";
 import { AdminActionType, AdminActionTypes } from "@esposter/db-schema";
 
 export const useAdminActionMap = () => {

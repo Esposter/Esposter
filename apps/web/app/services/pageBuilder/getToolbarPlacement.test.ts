@@ -1,6 +1,6 @@
-import type { FramePlacement } from "@/models/pageBuilder/FramePlacement";
+import type { FramePlacement } from "#src/models/pageBuilder/FramePlacement";
 
-import { getToolbarPlacement, TOOLBAR_HEIGHT } from "@/services/pageBuilder/getToolbarPlacement";
+import { getToolbarPlacement, TOOLBAR_HEIGHT } from "#src/services/pageBuilder/getToolbarPlacement";
 import { describe, expect, test } from "vitest";
 
 describe(getToolbarPlacement, () => {

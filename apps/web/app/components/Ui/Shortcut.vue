@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getShortcutKeyLabels } from "@/services/ui/getShortcutKeyLabels";
+import { getShortcutKeyLabels } from "#src/services/ui/getShortcutKeyLabels";
 
 interface Props {
   // In Vuetify 0's hotkey syntax: a chord joined by "+", a sequence by "-"

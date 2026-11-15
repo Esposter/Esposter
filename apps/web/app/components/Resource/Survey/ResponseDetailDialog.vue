@@ -2,9 +2,9 @@
 import type { DatasetColumn } from "#shared/models/dataset/DatasetColumn";
 import type { SurveyResponseRecord } from "#shared/models/resource/survey/SurveyResponseRecord";
 
-import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
-import { UiDialogSize } from "@/models/ui/UiDialogSize";
-import { useSurveyResponseDialogStore } from "@/store/resource/surveyResponseDialog";
+import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
+import { UiDialogSize } from "#src/models/ui/UiDialogSize";
+import { useSurveyResponseDialogStore } from "#src/store/resource/surveyResponseDialog";
 
 interface Props {
   columns: DatasetColumn[];

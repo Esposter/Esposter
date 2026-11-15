@@ -2,7 +2,7 @@
 import type { DatasetTruncation } from "#shared/models/dataset/DatasetTruncation";
 
 import { DATASET_ROW_CAP_DESCRIPTION } from "#shared/services/dataset/constants";
-import { getDatasetTruncationText } from "@/services/dataset/getDatasetTruncationText";
+import { getDatasetTruncationText } from "#src/services/dataset/getDatasetTruncationText";
 
 interface Props {
   truncation: DatasetTruncation;

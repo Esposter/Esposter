@@ -1,14 +1,14 @@
-import type { TRPCRouter } from "#server/trpc/routers";
+import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { R2Bucket } from "@cloudflare/workers-types";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { transformPublishedEmail } from "#server/services/emailEditor/transformPublishedEmail";
 import { incrementResourceViewCount } from "#server/services/resource/incrementResourceViewCount";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
-import { createCallerFactory } from "#server/trpc";
 import { getMockSession } from "#server/trpc/context.test";
-import { trpcRouter } from "#server/trpc/routers";
+import { createCallerFactory } from "#server/trpc/index";
 import { emailRouter } from "#server/trpc/routers/email";
+import { trpcRouter } from "#server/trpc/routers/index";
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";

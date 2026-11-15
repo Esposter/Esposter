@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { todoListItemSchema } from "#shared/models/resource/todoList/TodoListItem";
-import { useTodoListStore } from "@/store/resource/todoList";
+import { useTodoListStore } from "#src/store/resource/todoList/index";
 
 const todoListStore = useTodoListStore();
 const { resetItem, saveItem } = todoListStore;

@@ -1,4 +1,4 @@
-import type { ClassPropertyType } from "@/models/dungeons/tilemap/ClassPropertyType";
-import type { EnumPropertyType } from "@/models/dungeons/tilemap/EnumPropertyType";
+import type { ClassPropertyType } from "#src/models/dungeons/tilemap/ClassPropertyType";
+import type { EnumPropertyType } from "#src/models/dungeons/tilemap/EnumPropertyType";
 
 export type PropertyTypes = (ClassPropertyType | EnumPropertyType)[];

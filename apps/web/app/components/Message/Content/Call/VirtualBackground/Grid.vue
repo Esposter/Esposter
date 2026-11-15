@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { MAX_CALL_BACKGROUND_SIZE_BYTES, MAX_CALL_BACKGROUNDS } from "#shared/services/message/constants";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { validateFileWithAlert } from "@/services/file/validateFileWithAlert";
-import { CallVirtualBackgroundDefinitions } from "@/services/message/room/call/CallVirtualBackgroundDefinitions";
-import { getCallBackgroundSelection } from "@/services/message/room/call/getCallBackgroundSelection";
-import { useCallBackgroundStore } from "@/store/message/user/settings/callBackground";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { validateFileWithAlert } from "#src/services/file/validateFileWithAlert";
+import { CallVirtualBackgroundDefinitions } from "#src/services/message/room/call/CallVirtualBackgroundDefinitions";
+import { getCallBackgroundSelection } from "#src/services/message/room/call/getCallBackgroundSelection";
+import { useCallBackgroundStore } from "#src/store/message/user/settings/callBackground";
 
 interface Props {
   selectedVirtualBackground: string;

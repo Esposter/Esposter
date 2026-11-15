@@ -1,6 +1,6 @@
 import type { Promisable } from "type-fest";
 
-import { createHookRegistry } from "@/services/shared/createHookRegistry";
+import { createHookRegistry } from "#src/services/shared/createHookRegistry";
 import { AdminActionTypes } from "@esposter/db-schema";
 
 type AdminActionHook = (roomId: string) => Promisable<void>;

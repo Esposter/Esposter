@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useFindReplaceStore } from "@/store/resource/sheet/findReplace";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { useFindReplaceStore } from "#src/store/resource/sheet/findReplace";
 
 const findReplaceStore = useFindReplaceStore();
 const { goToOccurrence } = findReplaceStore;

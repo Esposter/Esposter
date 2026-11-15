@@ -1,7 +1,7 @@
-import type { UiSelectItem } from "@/models/ui/UiSelectItem";
+import type { UiSelectItem } from "#src/models/ui/UiSelectItem";
 
-import { BooleanFilterValue } from "@/models/resource/sheet/column/BooleanFilterValue";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { BooleanFilterValue } from "#src/models/resource/sheet/column/BooleanFilterValue";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 export const BooleanFilterValueItemCategoryDefinitions: UiSelectItem<BooleanFilterValue>[] = [
   { meaning: UiIconMeaning.Filter, title: "All", value: "" },

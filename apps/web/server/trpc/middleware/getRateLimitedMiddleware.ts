@@ -2,7 +2,7 @@ import type { RateLimiterType } from "#server/models/rateLimiter/RateLimiterType
 
 import { RATE_LIMITER_BYPASS_LOG_MESSAGE } from "#server/services/rateLimiter/constants";
 import { RateLimiterMap } from "#server/services/rateLimiter/RateLimiterMap";
-import { middleware } from "#server/trpc";
+import { middleware } from "#server/trpc/index";
 import { IS_PRODUCTION } from "#shared/util/environment/constants";
 import { ID_SEPARATOR } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";

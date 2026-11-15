@@ -5,7 +5,7 @@ import { saveGenshinInputSchema } from "#server/models/genshin/SaveGenshinInput"
 import { startGenshinInputSchema } from "#server/models/genshin/StartGenshinInput";
 import { saveGenshin } from "#server/services/genshin/saveGenshin";
 import { startGenshin } from "#server/services/genshin/startGenshin";
-import { router } from "#server/trpc";
+import { router } from "#server/trpc/index";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 
 export const genshinRouter = router({

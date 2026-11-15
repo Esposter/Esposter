@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { ColumnStatistics } from "#shared/models/resource/sheet/column/ColumnStatistics";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
-import { UiDialogSize } from "@/models/ui/UiDialogSize";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { ChartableColumnTypes } from "@/services/resource/sheet/column/ChartableColumnTypes";
-import { ColumnStatisticsHeaders } from "@/services/resource/sheet/column/ColumnStatisticsHeaders";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
+import { UiDialogSize } from "#src/models/ui/UiDialogSize";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { ChartableColumnTypes } from "#src/services/resource/sheet/column/ChartableColumnTypes";
+import { ColumnStatisticsHeaders } from "#src/services/resource/sheet/column/ColumnStatisticsHeaders";
 
 const isOpen = defineModel<boolean>({ default: false });
 const columnStatistics = useColumnStatistics();

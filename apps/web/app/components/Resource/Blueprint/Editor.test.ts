@@ -1,19 +1,19 @@
 // @vitest-environment nuxt
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
-import ResourceBlueprintEditor from "@/components/Resource/Blueprint/Editor.vue";
-import { showOpenFilePicker } from "@/services/file/showOpenFilePicker";
-import { createEmptyBlueprint } from "@/services/resource/blueprint/createEmptyBlueprint";
-import { PortableFormatMap } from "@/services/resource/PortableFormatMap";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useResourceStore } from "@/store/resource";
-import { useBlueprintStore } from "@/store/resource/blueprint";
+import ResourceBlueprintEditor from "#src/components/Resource/Blueprint/Editor.vue";
+import { showOpenFilePicker } from "#src/services/file/showOpenFilePicker";
+import { createEmptyBlueprint } from "#src/services/resource/blueprint/createEmptyBlueprint";
+import { PortableFormatMap } from "#src/services/resource/PortableFormatMap";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useBlueprintStore } from "#src/store/resource/blueprint/index";
+import { useResourceStore } from "#src/store/resource/index";
 import { ResourceType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { assert, beforeEach, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("@/services/file/showOpenFilePicker"), () => ({
+vi.mock(import("#src/services/file/showOpenFilePicker"), () => ({
   showOpenFilePicker: vi.fn<typeof showOpenFilePicker>(),
 }));
 

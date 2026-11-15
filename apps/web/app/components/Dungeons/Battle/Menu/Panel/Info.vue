@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { DialogTextStyle } from "@/assets/dungeons/styles/DialogTextStyle";
-import { ActivePanel } from "@/models/dungeons/scene/battle/menu/ActivePanel";
-import { WORD_PADDING } from "@/services/dungeons/UI/constants";
-import { useBattleInfoPanelStore } from "@/store/dungeons/battle/infoPanel";
-import { useBattleSceneStore } from "@/store/dungeons/battle/scene";
+import { DialogTextStyle } from "#src/assets/dungeons/styles/DialogTextStyle";
+import { ActivePanel } from "#src/models/dungeons/scene/battle/menu/ActivePanel";
+import { WORD_PADDING } from "#src/services/dungeons/UI/constants";
+import { useBattleInfoPanelStore } from "#src/store/dungeons/battle/infoPanel";
+import { useBattleSceneStore } from "#src/store/dungeons/battle/scene";
 import { onCreate, Text } from "vue-phaserjs";
 
 const battleSceneStore = useBattleSceneStore();

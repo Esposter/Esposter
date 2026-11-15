@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { roomFilterWordSchema } from "#shared/models/db/room/RoomFilterWord";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { UiRules } from "@/services/ui/UiRules";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { UiRules } from "#src/services/ui/UiRules";
 import { FILTER_KEY_MAX_LENGTH, FILTER_WORDS_MAX_LENGTH } from "@esposter/db-schema";
 
 const words = defineModel<string[]>({ required: true });

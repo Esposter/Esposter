@@ -1,11 +1,11 @@
-import type { GesturePointerEvent } from "@/models/whiteboard/GesturePointerEvent";
-import type { GestureWheelEvent } from "@/models/whiteboard/GestureWheelEvent";
+import type { GesturePointerEvent } from "#src/models/whiteboard/GesturePointerEvent";
+import type { GestureWheelEvent } from "#src/models/whiteboard/GestureWheelEvent";
 
-import { GesturePhase } from "@/models/whiteboard/GesturePhase";
-import { reduceWhiteboardGesture } from "@/services/whiteboard/gesture/reduceWhiteboardGesture";
-import { getWheelViewport } from "@/services/whiteboard/viewport/getWheelViewport";
-import { useWhiteboardStore } from "@/store/resource/whiteboard";
-import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
+import { GesturePhase } from "#src/models/whiteboard/GesturePhase";
+import { reduceWhiteboardGesture } from "#src/services/whiteboard/gesture/reduceWhiteboardGesture";
+import { getWheelViewport } from "#src/services/whiteboard/viewport/getWheelViewport";
+import { useWhiteboardEditorStore } from "#src/store/resource/whiteboard/editor";
+import { useWhiteboardStore } from "#src/store/resource/whiteboard/index";
 import { v7 } from "uuid";
 
 // Each pointer event is read by the gesture reducer over the stores' own document, selection, tool and viewport, and what it leaves is

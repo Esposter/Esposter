@@ -1,7 +1,7 @@
 import type { ImageElement, Point } from "vue-block-editor-headless";
 
-import { getCentredPosition } from "@/services/whiteboard/getCentredPosition";
-import { WHITEBOARD_IMAGE_SIZE } from "@/services/whiteboard/palette/constants";
+import { getCentredPosition } from "#src/services/whiteboard/getCentredPosition";
+import { WHITEBOARD_IMAGE_SIZE } from "#src/services/whiteboard/palette/constants";
 import { v7 } from "uuid";
 import { PositionedElementType } from "vue-block-editor-headless";
 

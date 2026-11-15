@@ -2,7 +2,7 @@ import { BooleanValue } from "#shared/models/resource/sheet/column/BooleanValue"
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { DateFormats } from "#shared/models/resource/sheet/column/DateFormat";
 import { formatDate } from "#shared/util/date/formatDate";
-import { inferColumnType } from "@/services/resource/sheet/column/inferColumnType";
+import { inferColumnType } from "#src/services/resource/sheet/column/inferColumnType";
 import { describe, expect, test } from "vitest";
 
 describe(inferColumnType, () => {

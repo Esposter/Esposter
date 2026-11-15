@@ -1,4 +1,4 @@
-import { RESOURCE_SEARCH_DEBOUNCE_MS } from "@/services/resource/search/constants";
+import { RESOURCE_SEARCH_DEBOUNCE_MS } from "#src/services/resource/search/constants";
 
 // Every text filter the workbench owns (the search box, a tag pill's name and value) is part of the data
 // Table's `search` prop, so writing one per keystroke resets the table to page 1 and re-runs both the count

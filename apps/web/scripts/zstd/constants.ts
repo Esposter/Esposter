@@ -1,4 +1,4 @@
-import { WEB_DIRECTORY } from "@@/scripts/constants";
+import { WEB_DIRECTORY } from "#scripts/constants";
 import { resolve } from "node:path";
 
 // Pinned with the checksum its release publishes, so a regeneration builds the same bytes or refuses to run. The

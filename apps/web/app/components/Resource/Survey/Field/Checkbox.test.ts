@@ -1,9 +1,9 @@
 // @vitest-environment happy-dom
 import type { SurveyCheckboxNode, SurveyCheckboxNodeProps } from "vue-survey-engine-headless";
 
-import ResourceSurveyFieldCheckbox from "@/components/Resource/Survey/Field/Checkbox.vue";
-import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
-import { UiStyles } from "@/models/ui/UiStyle";
+import ResourceSurveyFieldCheckbox from "#src/components/Resource/Survey/Field/Checkbox.vue";
+import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
+import { UiStyles } from "#src/models/ui/UiStyle";
 import { flushPromises, mount } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";

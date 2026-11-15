@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useBlockStore } from "@/store/message/user/block";
+import { useBlockStore } from "#src/store/message/user/block";
 
 const blockStore = useBlockStore();
 const { blockedUsers } = storeToRefs(blockStore);

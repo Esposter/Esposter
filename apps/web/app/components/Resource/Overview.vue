@@ -4,12 +4,12 @@ import type { ResourceInResource } from "@esposter/db-schema";
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
 import { getSnapshotRetainedSince } from "#shared/services/resource/getSnapshotRetainedSince";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { UiToken } from "@/models/ui/UiToken";
-import { RESOURCE_DATE_TIME_ATTRIBUTES } from "@/services/resource/constants";
-import { copyLinkToClipboard } from "@/services/resource/copyLinkToClipboard";
-import { useResourceStore } from "@/store/resource";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { UiToken } from "#src/models/ui/UiToken";
+import { RESOURCE_DATE_TIME_ATTRIBUTES } from "#src/services/resource/constants";
+import { copyLinkToClipboard } from "#src/services/resource/copyLinkToClipboard";
+import { useResourceStore } from "#src/store/resource/index";
 import { SnapshotChannel } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 

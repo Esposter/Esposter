@@ -1,7 +1,7 @@
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
-import { ColumnResolver } from "@/models/resolvers/dashboard/visual/ColumnResolver";
-import { TypeResolver } from "@/models/resolvers/dashboard/visual/TypeResolver";
-import { getActiveVisualTypeResolvers } from "@/services/dashboard/visual/getActiveVisualTypeResolvers";
+import { ColumnResolver } from "#src/models/resolvers/dashboard/visual/ColumnResolver";
+import { TypeResolver } from "#src/models/resolvers/dashboard/visual/TypeResolver";
+import { getActiveVisualTypeResolvers } from "#src/services/dashboard/visual/getActiveVisualTypeResolvers";
 import { describe, expect, test } from "vitest";
 
 describe(getActiveVisualTypeResolvers, () => {

@@ -1,12 +1,12 @@
-import type { DialogMessage } from "@/models/dungeons/UI/dialog/DialogMessage";
-import type { DialogTarget } from "@/models/dungeons/UI/dialog/DialogTarget";
+import type { DialogMessage } from "#src/models/dungeons/UI/dialog/DialogMessage";
+import type { DialogTarget } from "#src/models/dungeons/UI/dialog/DialogTarget";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { useAnimateText } from "@/composables/dungeons/text/useAnimateText";
-import { SceneEventKey } from "@/models/dungeons/scene/SceneEventKey";
-import { getDialogTargetText } from "@/services/dungeons/dialog/getDialogTargetText";
-import { getSceneEventKey } from "@/services/phaser/getSceneEventKey";
-import { phaserEventEmitter } from "@/services/phaser/phaserEventEmitter";
+import { useAnimateText } from "#src/composables/dungeons/text/useAnimateText";
+import { SceneEventKey } from "#src/models/dungeons/scene/SceneEventKey";
+import { getDialogTargetText } from "#src/services/dungeons/dialog/getDialogTargetText";
+import { getSceneEventKey } from "#src/services/phaser/getSceneEventKey";
+import { phaserEventEmitter } from "#src/services/phaser/phaserEventEmitter";
 
 // Shows a message's title and types its text into the dialog, the sequence every message shows whether or not the player
 // Confirms it

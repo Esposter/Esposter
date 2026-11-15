@@ -1,5 +1,5 @@
-import type { ClientMessage } from "@/models/message/ClientMessage";
-import type { UiContextMenu } from "@/models/ui/UiContextMenu";
+import type { ClientMessage } from "#src/models/message/ClientMessage";
+import type { UiContextMenu } from "#src/models/ui/UiContextMenu";
 
 export const useMessageStore = defineStore("message", () => {
   // The message whose options menu is open, so every other message holds still under it

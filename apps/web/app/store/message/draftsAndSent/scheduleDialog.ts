@@ -1,6 +1,6 @@
-import type { ScheduleDraftsAndSentTarget } from "@/models/message/draftsAndSent/ScheduleDraftsAndSentTarget";
+import type { ScheduleDraftsAndSentTarget } from "#src/models/message/draftsAndSent/ScheduleDraftsAndSentTarget";
 
-import { getEarliestScheduledAt } from "@/services/message/getEarliestScheduledAt";
+import { getEarliestScheduledAt } from "#src/services/message/getEarliestScheduledAt";
 
 export const useDraftsAndSentScheduleDialogStore = defineStore("message/draftsAndSent/scheduleDialog", () => {
   const target = ref<ScheduleDraftsAndSentTarget>();

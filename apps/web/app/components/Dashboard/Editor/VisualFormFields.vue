@@ -2,15 +2,15 @@
 import type { Visual } from "#shared/models/dashboard/data/Visual";
 
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
-import { VisualDatasetShape } from "@/models/dashboard/VisualDatasetShape";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { VisualTypeChartTypesMap } from "@/services/dashboard/chart/VisualTypeChartTypesMap";
-import { checkIsChartVisualType } from "@/services/dashboard/checkIsChartVisualType";
-import { VisualTypeDatasetShapeMap } from "@/services/dashboard/dataset/VisualTypeDatasetShapeMap";
-import { setVisualType } from "@/services/dashboard/setVisualType";
-import { VisualTypeCategoryDefinitions } from "@/services/dashboard/VisualTypeCategoryDefinitions";
-import { useVisualStore } from "@/store/dashboard/visual";
-import { prettify } from "@/util/text/prettify";
+import { VisualDatasetShape } from "#src/models/dashboard/VisualDatasetShape";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { VisualTypeChartTypesMap } from "#src/services/dashboard/chart/VisualTypeChartTypesMap";
+import { checkIsChartVisualType } from "#src/services/dashboard/checkIsChartVisualType";
+import { VisualTypeDatasetShapeMap } from "#src/services/dashboard/dataset/VisualTypeDatasetShapeMap";
+import { setVisualType } from "#src/services/dashboard/setVisualType";
+import { VisualTypeCategoryDefinitions } from "#src/services/dashboard/VisualTypeCategoryDefinitions";
+import { useVisualStore } from "#src/store/dashboard/visual";
+import { prettify } from "#src/util/text/prettify";
 
 // The draft of the selected visual, which the store copied when the visual was selected and which is not the visual itself
 const editedItem = defineModel<Visual>({ required: true });

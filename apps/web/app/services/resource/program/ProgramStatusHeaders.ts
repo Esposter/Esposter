@@ -1,5 +1,5 @@
 import type { ProgramStatusRow } from "#shared/models/resource/program/ProgramStatusRow";
-import type { UiDataTableColumn } from "@/models/ui/UiDataTableColumn";
+import type { UiDataTableColumn } from "#src/models/ui/UiDataTableColumn";
 
 export const ProgramStatusHeaders: UiDataTableColumn<ProgramStatusRow & { id: string }>[] = [
   { key: "keyValue", title: "Participant" },

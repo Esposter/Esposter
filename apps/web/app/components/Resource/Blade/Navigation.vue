@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { UiTabLink } from "@/models/ui/UiTabLink";
+import type { UiTabLink } from "#src/models/ui/UiTabLink";
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { getResourceBladeDefinitions } from "@/services/resource/getResourceBladeDefinitions";
-import { getResourceBladePath } from "@/services/resource/getResourceBladePath";
+import { getResourceBladeDefinitions } from "#src/services/resource/getResourceBladeDefinitions";
+import { getResourceBladePath } from "#src/services/resource/getResourceBladePath";
 
 interface Props {
   activeBlade: string;

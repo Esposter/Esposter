@@ -1,10 +1,10 @@
 // @vitest-environment nuxt
 import type { ImageElement } from "vue-block-editor-headless";
 
-import ResourceWhiteboardEditorPropertiesAltText from "@/components/Resource/Whiteboard/EditorPropertiesAltText.vue";
-import { createWhiteboardEditState } from "@/services/whiteboard/constants.test";
-import { createWhiteboardImageElement } from "@/services/whiteboard/createWhiteboardImageElement";
-import { useWhiteboardStore } from "@/store/resource/whiteboard";
+import ResourceWhiteboardEditorPropertiesAltText from "#src/components/Resource/Whiteboard/EditorPropertiesAltText.vue";
+import { createWhiteboardEditState } from "#src/services/whiteboard/constants.test";
+import { createWhiteboardImageElement } from "#src/services/whiteboard/createWhiteboardImageElement";
+import { useWhiteboardStore } from "#src/store/resource/whiteboard/index";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 

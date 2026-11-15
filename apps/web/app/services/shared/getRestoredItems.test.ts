@@ -1,4 +1,4 @@
-import { getRestoredItems } from "@/services/shared/getRestoredItems";
+import { getRestoredItems } from "#src/services/shared/getRestoredItems";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 

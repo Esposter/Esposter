@@ -3,22 +3,22 @@ import type { DeleteFileInput } from "#shared/models/db/message/DeleteFileInput"
 import type { DeleteMessageInput } from "#shared/models/db/message/DeleteMessageInput";
 import type { UpdateMessageInput } from "#shared/models/db/message/UpdateMessageInput";
 import type { MessageEvents } from "#shared/models/message/events/MessageEvents";
-import type { ClientMessage } from "@/models/message/ClientMessage";
-import type { ComposerTarget } from "@/models/message/ComposerTarget";
+import type { ClientMessage } from "#src/models/message/ClientMessage";
+import type { ComposerTarget } from "#src/models/message/ComposerTarget";
 import type { Page, Typing } from "@esposter/db-schema";
 import type { Editor } from "@tiptap/core";
 
 import { BACKOFF_BASE_DELAY_MS, BACKOFF_MAX_DELAY_MS } from "#shared/services/pagination/constants";
-import { MessageHook } from "@/models/message/MessageHook";
-import { authClient } from "@/services/auth/authClient";
-import { getEntityIdEqualComparator } from "@/services/entity/getEntityIdEqualComparator";
-import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
-import { messageHolderRegistry } from "@/services/message/messageHolderRegistry";
-import { MessageHookMap } from "@/services/message/MessageHookMap";
-import { createOperationData } from "@/services/shared/createOperationData";
-import { createErrorAlert } from "@/services/trpc/createErrorAlert";
-import { useRoomStore } from "@/store/message/room";
-import { useThreadFollowStore } from "@/store/message/threadFollow";
+import { MessageHook } from "#src/models/message/MessageHook";
+import { authClient } from "#src/services/auth/authClient";
+import { getEntityIdEqualComparator } from "#src/services/entity/getEntityIdEqualComparator";
+import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
+import { messageHolderRegistry } from "#src/services/message/messageHolderRegistry";
+import { MessageHookMap } from "#src/services/message/MessageHookMap";
+import { createOperationData } from "#src/services/shared/createOperationData";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
+import { useRoomStore } from "#src/store/message/room/index";
+import { useThreadFollowStore } from "#src/store/message/threadFollow";
 import { DatabaseEntityType } from "@esposter/db-schema";
 import {
   chunk,

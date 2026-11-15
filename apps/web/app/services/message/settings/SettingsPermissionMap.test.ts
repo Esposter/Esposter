@@ -1,5 +1,5 @@
-import { SettingsType } from "@/models/message/room/SettingsType";
-import { SettingsPermissionMap } from "@/services/message/settings/SettingsPermissionMap";
+import { SettingsType } from "#src/models/message/room/SettingsType";
+import { SettingsPermissionMap } from "#src/services/message/settings/SettingsPermissionMap";
 import { describe, expect, test } from "vitest";
 
 describe("settingsPermissionMap", () => {

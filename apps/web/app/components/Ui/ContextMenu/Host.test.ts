@@ -1,11 +1,11 @@
 // @vitest-environment nuxt
-import type { Item } from "@/models/shared/Item";
+import type { Item } from "#src/models/shared/Item";
 
-import UiContextMenuHost from "@/components/Ui/ContextMenu/Host.vue";
-import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
-import { UiStyles } from "@/models/ui/UiStyle";
-import { LONG_PRESS_MOVE_TOLERANCE, LONG_PRESS_MS } from "@/services/ui/constants";
-import { useContextMenuStore } from "@/store/ui/contextMenu";
+import UiContextMenuHost from "#src/components/Ui/ContextMenu/Host.vue";
+import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
+import { UiStyles } from "#src/models/ui/UiStyle";
+import { LONG_PRESS_MOVE_TOLERANCE, LONG_PRESS_MS } from "#src/services/ui/constants";
+import { useContextMenuStore } from "#src/store/ui/contextMenu";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, describe, expect, test, vi } from "vitest";

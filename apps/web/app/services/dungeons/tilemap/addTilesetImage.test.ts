@@ -1,7 +1,7 @@
 import type { Tilemaps } from "phaser";
 
-import { addTilesetImage } from "@/services/dungeons/tilemap/addTilesetImage";
-import { BASE_TILESET_KEYS } from "@/services/dungeons/tilemap/constants";
+import { addTilesetImage } from "#src/services/dungeons/tilemap/addTilesetImage";
+import { BASE_TILESET_KEYS } from "#src/services/dungeons/tilemap/constants";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test, vi } from "vitest";
 

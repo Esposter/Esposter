@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { CharacterProps } from "@/components/Dungeons/World/Character/CharacterProps";
-import type { Npc } from "@/models/dungeons/scene/world/Npc";
+import type { CharacterProps } from "#src/components/Dungeons/World/Character/CharacterProps";
+import type { Npc } from "#src/models/dungeons/scene/world/Npc";
 import type { Direction } from "grid-engine";
 
 import { takeOne } from "@esposter/shared";

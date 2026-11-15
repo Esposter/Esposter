@@ -1,10 +1,10 @@
 import type { CsvFileSettings } from "#shared/models/resource/sheet/CsvFileSettings";
 
 import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
-import { deserializeCsvLine } from "@/services/resource/sheet/csv/deserializeCsvLine";
-import { splitCsvRecords } from "@/services/resource/sheet/csv/splitCsvRecords";
-import { deserializeToDataSource } from "@/services/resource/sheet/dataSource/deserializeToDataSource";
-import { getSourceColumnName } from "@/services/resource/sheet/dataSource/getSourceColumnName";
+import { deserializeCsvLine } from "#src/services/resource/sheet/csv/deserializeCsvLine";
+import { splitCsvRecords } from "#src/services/resource/sheet/csv/splitCsvRecords";
+import { deserializeToDataSource } from "#src/services/resource/sheet/dataSource/deserializeToDataSource";
+import { getSourceColumnName } from "#src/services/resource/sheet/dataSource/getSourceColumnName";
 
 export const deserializeCsv = async (file: File, settings: CsvFileSettings) => {
   const text = await file.text();

@@ -1,14 +1,14 @@
 <!-- eslint-disable perfectionist/sort-objects -- the rows render in declaration order -->
 <script setup lang="ts">
-import type { UserSettingsPageSection } from "@/models/user/UserSettingsPageSection";
+import type { UserSettingsPageSection } from "#src/models/user/UserSettingsPageSection";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { RowValueType } from "@/models/user/ProfileCard/RowValueType";
-import { authClient } from "@/services/auth/authClient";
-import { requireAuthData } from "@/services/auth/requireAuthData";
-import { getEntityNotFoundStatusMessage } from "@/services/shared/error/getEntityNotFoundStatusMessage";
-import { PROFILE_MUTATION_KEY } from "@/services/user/constants";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { RowValueType } from "#src/models/user/ProfileCard/RowValueType";
+import { authClient } from "#src/services/auth/authClient";
+import { requireAuthData } from "#src/services/auth/requireAuthData";
+import { getEntityNotFoundStatusMessage } from "#src/services/shared/error/getEntityNotFoundStatusMessage";
+import { PROFILE_MUTATION_KEY } from "#src/services/user/constants";
 import { DatabaseEntityType } from "@esposter/db-schema";
 import { checkIsDeepEqual } from "@esposter/shared";
 

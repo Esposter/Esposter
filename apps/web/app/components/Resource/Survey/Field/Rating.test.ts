@@ -1,12 +1,12 @@
 // @vitest-environment happy-dom
 import type { SurveyAnswerValue, SurveyRatingNode } from "vue-survey-engine-headless";
 
-import ResourceSurveyFieldRating from "@/components/Resource/Survey/Field/Rating.vue";
-import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { UiStyles } from "@/models/ui/UiStyle";
-import { SURVEY_SMILEY_MEANINGS } from "@/services/resource/survey/constants";
-import { UiIconMap } from "@/services/ui/UiIconMap";
+import ResourceSurveyFieldRating from "#src/components/Resource/Survey/Field/Rating.vue";
+import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { UiStyles } from "#src/models/ui/UiStyle";
+import { SURVEY_SMILEY_MEANINGS } from "#src/services/resource/survey/constants";
+import { UiIconMap } from "#src/services/ui/UiIconMap";
 import { flushPromises, mount } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";

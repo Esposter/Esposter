@@ -1,5 +1,5 @@
-import type { DropTarget } from "@/models/pageBuilder/DropTarget";
-import type { SurveyDropSlot } from "@/models/resource/survey/SurveyDropSlot";
+import type { DropTarget } from "#src/models/pageBuilder/DropTarget";
+import type { SurveyDropSlot } from "#src/models/resource/survey/SurveyDropSlot";
 import type { SurveyNodeType } from "vue-survey-engine-headless";
 
 // The drag a creator pane starts from the palette or the canvas. The palette starts it and the canvas draws it.

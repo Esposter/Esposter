@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
-import UiRadioGroup from "@/components/Ui/RadioGroup.vue";
-import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
-import { UiStyles } from "@/models/ui/UiStyle";
+import UiRadioGroup from "#src/components/Ui/RadioGroup.vue";
+import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
+import { UiStyles } from "#src/models/ui/UiStyle";
 import { flushPromises, mount } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 

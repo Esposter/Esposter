@@ -1,4 +1,4 @@
-import { getHexColor } from "@/services/ui/getHexColor";
+import { getHexColor } from "#src/services/ui/getHexColor";
 import { describe, expect, test } from "vitest";
 
 describe(getHexColor, () => {

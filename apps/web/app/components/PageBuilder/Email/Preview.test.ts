@@ -1,15 +1,15 @@
 /* oxlint-disable testing/no-faked-set-timeout -- the afterEach above restores the real clock before the harness waits a turn on setTimeout */
 // @vitest-environment nuxt
-import type { EmailDocument } from "@/models/pageBuilder/EmailDocument";
+import type { EmailDocument } from "#src/models/pageBuilder/EmailDocument";
 
 import { EmailValidationLevel } from "#shared/models/pageBuilder/EmailValidationLevel";
 import { PageBuilderDevice } from "#shared/models/pageBuilder/PageBuilderDevice";
 import { DEVICE_WIDTH_MAP } from "#shared/services/pageBuilder/constants";
-import PageBuilderEmailPreview from "@/components/PageBuilder/Email/Preview.vue";
-import { EditorFindingSeverity } from "@/models/editor/EditorFindingSeverity";
-import { RESOURCE_AUTOSAVE_DEBOUNCE_MS } from "@/services/resource/constants";
-import { TRPC_CLIENT_PATH } from "@/services/trpc/constants";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
+import PageBuilderEmailPreview from "#src/components/PageBuilder/Email/Preview.vue";
+import { EditorFindingSeverity } from "#src/models/editor/EditorFindingSeverity";
+import { RESOURCE_AUTOSAVE_DEBOUNCE_MS } from "#src/services/resource/constants";
+import { TRPC_CLIENT_PATH } from "#src/services/trpc/constants";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";

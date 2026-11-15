@@ -1,12 +1,12 @@
 // @unocss-include
-import type { UiMenuItem } from "@/models/ui/UiMenuItem";
+import type { UiMenuItem } from "#src/models/ui/UiMenuItem";
 import type { SurveyMultipleTextItemInputType } from "vue-survey-engine-headless";
 
-import { SurveyConditionJoin } from "@/models/resource/survey/SurveyConditionJoin";
-import { SurveyConditionOperator } from "@/models/resource/survey/SurveyConditionOperator";
-import { SurveyConditionProp } from "@/models/resource/survey/SurveyConditionProp";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
+import { SurveyConditionJoin } from "#src/models/resource/survey/SurveyConditionJoin";
+import { SurveyConditionOperator } from "#src/models/resource/survey/SurveyConditionOperator";
+import { SurveyConditionProp } from "#src/models/resource/survey/SurveyConditionProp";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { UiTextFieldType } from "#src/models/ui/UiTextFieldType";
 import { SurveyExpressionBinaryOperator } from "survey-expression";
 import { SurveyImageFit, SurveyNodeType, SurveyTextInputType } from "vue-survey-engine-headless";
 

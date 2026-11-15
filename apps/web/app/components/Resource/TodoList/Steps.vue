@@ -2,9 +2,9 @@
 import type { TodoListStep } from "#shared/models/resource/todoList/TodoListStep";
 
 import { ITEM_NAME_MAX_LENGTH, TODO_LIST_ITEM_STEPS_MAX_LENGTH } from "#shared/services/resource/item/constants";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { UiRules } from "@/services/ui/UiRules";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { UiRules } from "#src/services/ui/UiRules";
 import { v7 } from "uuid";
 
 // Absent until the first step, and absent again once the last is removed, as the item's schema wants it

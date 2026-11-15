@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { SurveyChoice } from "vue-survey-engine-headless";
 
-import { getSurveyChoiceListEditorOptions } from "@/services/resource/survey/getSurveyChoiceListEditorOptions";
-import { parseChoiceLines } from "@/services/resource/survey/parseChoiceLines";
+import { getSurveyChoiceListEditorOptions } from "#src/services/resource/survey/getSurveyChoiceListEditorOptions";
+import { parseChoiceLines } from "#src/services/resource/survey/parseChoiceLines";
 import { surveyChoiceSchema } from "vue-survey-engine-headless";
 
 interface Props {

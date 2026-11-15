@@ -1,4 +1,4 @@
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { NotificationType } from "@esposter/db-schema";
 
 export const NotificationTypeMeaningMap = {

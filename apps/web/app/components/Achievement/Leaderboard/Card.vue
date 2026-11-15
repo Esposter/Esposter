@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { PointsLeaderboard } from "#shared/models/achievement/PointsLeaderboard";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 interface Props {
   leaderboard: PointsLeaderboard;

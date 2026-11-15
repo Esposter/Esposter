@@ -1,6 +1,6 @@
-import type { ClientMessage } from "@/models/message/ClientMessage";
+import type { ClientMessage } from "#src/models/message/ClientMessage";
 
-import { SAME_BATCH_WINDOW_MS } from "@/services/message/constants";
+import { SAME_BATCH_WINDOW_MS } from "#src/services/message/constants";
 import { MessageType } from "@esposter/db-schema";
 
 // Consecutive messages from one author within the batch window render as one batch. A webhook post is matched by the

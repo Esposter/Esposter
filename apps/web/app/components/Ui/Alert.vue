@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { UiStatus } from "@/models/ui/UiStatus";
+import type { UiStatus } from "#src/models/ui/UiStatus";
 
-import { UiStatusIconMeaningMap } from "@/services/ui/UiStatusIconMeaningMap";
+import { UiStatusIconMeaningMap } from "#src/services/ui/UiStatusIconMeaningMap";
 import { Alert } from "@vuetify/v0";
 
 interface Props {

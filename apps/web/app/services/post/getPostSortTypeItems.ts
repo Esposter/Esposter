@@ -1,6 +1,6 @@
 import type { PostSortType } from "#shared/models/post/PostSortType";
 
-import { PostSortTypeIconMeaningMap } from "@/services/post/PostSortTypeIconMeaningMap";
+import { PostSortTypeIconMeaningMap } from "#src/services/post/PostSortTypeIconMeaningMap";
 
 // The options of a Sort by select over the given sorts, each drawn with its own mark
 export const getPostSortTypeItems = (postSortTypes: PostSortType[]) =>

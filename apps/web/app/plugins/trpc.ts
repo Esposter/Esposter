@@ -1,14 +1,14 @@
-import type { TRPCRouter } from "#server/trpc/routers";
+import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { TRPCLink } from "@trpc/client";
 
 import { transformer } from "#shared/services/trpc/transformer";
 import { IS_PRODUCTION, IS_TEST } from "#shared/util/environment/constants";
-import { TRPC_CLIENT_PATH } from "@/services/trpc/constants";
-import { createHttpBatchingLink } from "@/services/trpc/createHttpBatchingLink";
-import { createOfflineLink } from "@/services/trpc/createOfflineLink";
-import { errorLink } from "@/services/trpc/errorLink";
-import { getTrpcHeaders } from "@/services/trpc/getTrpcHeaders";
-import { topicsLink } from "@/services/trpc/topicsLink";
+import { TRPC_CLIENT_PATH } from "#src/services/trpc/constants";
+import { createHttpBatchingLink } from "#src/services/trpc/createHttpBatchingLink";
+import { createOfflineLink } from "#src/services/trpc/createOfflineLink";
+import { errorLink } from "#src/services/trpc/errorLink";
+import { getTrpcHeaders } from "#src/services/trpc/getTrpcHeaders";
+import { topicsLink } from "#src/services/trpc/topicsLink";
 import { checkIsServer } from "@esposter/shared";
 import { isNonJsonSerializable, loggerLink, splitLink } from "@trpc/client";
 

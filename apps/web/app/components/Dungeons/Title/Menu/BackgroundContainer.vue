@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { getTweenRange } from "@/services/dungeons/animation/getTweenRange";
+import { getTweenRange } from "#src/services/dungeons/animation/getTweenRange";
 import {
   CURSOR_POSITION_INCREMENT,
   INITIAL_CURSOR_POSITION,
   MENU_BACKGROUND_HEIGHT,
   MENU_BACKGROUND_WIDTH,
-} from "@/services/dungeons/scene/title/menu/constants";
-import { PlayerTitleMenuOptionGrid } from "@/services/dungeons/scene/title/menu/PlayerTitleMenuOptionGrid";
+} from "#src/services/dungeons/scene/title/menu/constants";
+import { PlayerTitleMenuOptionGrid } from "#src/services/dungeons/scene/title/menu/PlayerTitleMenuOptionGrid";
 import { Container } from "vue-phaserjs";
 </script>
 

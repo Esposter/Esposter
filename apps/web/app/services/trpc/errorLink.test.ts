@@ -1,10 +1,10 @@
 // @vitest-environment happy-dom
-import type { TRPCRouter } from "#server/trpc/routers";
+import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { Operation } from "@trpc/client";
 
-import { getSession } from "@/services/auth/authClient.test";
-import { errorLink } from "@/services/trpc/errorLink";
-import { useAlertStore } from "@/store/alert";
+import { getSession } from "#src/services/auth/authClient.test";
+import { errorLink } from "#src/services/trpc/errorLink";
+import { useAlertStore } from "#src/store/alert";
 import { RoutePath, waitForSynchronizedFunctions } from "@esposter/shared";
 import { TRPCClientError } from "@trpc/client";
 import { observable } from "@trpc/server/observable";
@@ -20,7 +20,7 @@ const { navigateTo } = vi.hoisted(() => ({
 // The global, which the resolved import never reads. The alert store is the real one, as in useMutation's suite
 vi.mock(import("#app/composables/router"), async (importOriginal) => ({ ...(await importOriginal()), navigateTo }));
 
-vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
+vi.mock(import("#src/services/auth/authClient"), () => import("#src/services/auth/authClient.test"));
 
 describe(errorLink, () => {
   const message = "";

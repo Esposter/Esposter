@@ -1,5 +1,5 @@
-import { DropIndicatorKind } from "@/models/pageBuilder/DropIndicatorKind";
-import { getDropIndicatorBox } from "@/services/pageBuilder/getDropIndicatorBox";
+import { DropIndicatorKind } from "#src/models/pageBuilder/DropIndicatorKind";
+import { getDropIndicatorBox } from "#src/services/pageBuilder/getDropIndicatorBox";
 import { describe, expect, test } from "vitest";
 
 describe(getDropIndicatorBox, () => {

@@ -1,6 +1,6 @@
-import type { UserAchievementWithDefinition } from "@/models/achievement/UserAchievementWithDefinition";
+import type { UserAchievementWithDefinition } from "#src/models/achievement/UserAchievementWithDefinition";
 
-import { checkIsUnlockedUserAchievement } from "@/services/achievement/checkIsUnlockedUserAchievement";
+import { checkIsUnlockedUserAchievement } from "#src/services/achievement/checkIsUnlockedUserAchievement";
 
 export const getUnlockedUserAchievements = (userAchievements: UserAchievementWithDefinition[]) =>
   userAchievements.filter((userAchievement) => checkIsUnlockedUserAchievement(userAchievement));

@@ -1,13 +1,13 @@
 // @vitest-environment nuxt
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { TEST_OTHER_ID, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
-import { usePageBuilderKeyCommands } from "@/composables/pageBuilder/usePageBuilderKeyCommands";
-import { LAST_IN_SLOT_MESSAGE } from "@/services/pageBuilder/constants";
-import { TEST_ROOT_TEXT_ID, TEST_TEXT_CONTENT } from "@/services/pageBuilder/constants.test";
-import { webpageKind } from "@/services/pageBuilder/webpageKind";
-import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
-import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
-import { useCommandStore } from "@/store/ui/command";
+import { usePageBuilderKeyCommands } from "#src/composables/pageBuilder/usePageBuilderKeyCommands";
+import { LAST_IN_SLOT_MESSAGE } from "#src/services/pageBuilder/constants";
+import { TEST_ROOT_TEXT_ID, TEST_TEXT_CONTENT } from "#src/services/pageBuilder/constants.test";
+import { webpageKind } from "#src/services/pageBuilder/webpageKind";
+import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
+import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
+import { useCommandStore } from "#src/store/ui/command";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";

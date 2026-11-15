@@ -1,10 +1,10 @@
 // @vitest-environment nuxt
 import type { RoomRoleInMessage } from "@esposter/db-schema";
 
-import MessageModelRoomSettingsTypeRoleDeleteButton from "@/components/Message/Model/Room/Settings/Type/Role/DeleteButton.vue";
-import MessageModelRoomSettingsTypeRoleListIndex from "@/components/Message/Model/Room/Settings/Type/Role/List/Index.vue";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useRoleStore } from "@/store/message/room/role";
+import MessageModelRoomSettingsTypeRoleDeleteButton from "#src/components/Message/Model/Room/Settings/Type/Role/DeleteButton.vue";
+import MessageModelRoomSettingsTypeRoleListIndex from "#src/components/Message/Model/Room/Settings/Type/Role/List/Index.vue";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useRoleStore } from "#src/store/message/room/role";
 import { RoomPermission } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { v7 } from "uuid";

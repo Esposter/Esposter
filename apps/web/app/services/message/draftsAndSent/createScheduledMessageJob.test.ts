@@ -1,6 +1,6 @@
 import type { ScheduledMessageJobWithRoom } from "#shared/models/db/message/scheduledMessageJob/ScheduledMessageJobWithRoom";
 
-import { createRoom } from "@/services/message/room/createRoom.test";
+import { createRoom } from "#src/services/message/room/createRoom.test";
 import { ScheduledMessageJobType } from "@esposter/db-schema";
 import { v7 } from "uuid";
 import { describe } from "vitest";

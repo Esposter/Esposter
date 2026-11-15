@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { MAX_ZOOM_SCALE, MIN_ZOOM_SCALE, ZOOM_SCALE_PER_WHEEL_STEP } from "@/services/message/file/constants";
-import { useFileStore } from "@/store/message/file";
-import { useFileDialogStore } from "@/store/message/file/dialog";
+import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { MAX_ZOOM_SCALE, MIN_ZOOM_SCALE, ZOOM_SCALE_PER_WHEEL_STEP } from "#src/services/message/file/constants";
+import { useFileDialogStore } from "#src/store/message/file/dialog";
+import { useFileStore } from "#src/store/message/file/index";
 import { getMimeCategory, MimeCategory } from "@esposter/db-schema";
 import { downloadUrl } from "@esposter/shared";
 

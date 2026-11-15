@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
-import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
-import UiTokenField from "@/components/Ui/TokenField.vue";
-import { UiStyles } from "@/models/ui/UiStyle";
+import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
+import UiTokenField from "#src/components/Ui/TokenField.vue";
+import { UiStyles } from "#src/models/ui/UiStyle";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";

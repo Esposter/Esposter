@@ -4,12 +4,12 @@ import type { UpdatePostInput } from "#shared/models/db/post/UpdatePostInput";
 import type { PostInPostWithRelations } from "@esposter/db-schema";
 
 import { PostSortType } from "#shared/models/post/PostSortType";
-import { MutationStatus } from "@/models/shared/MutationStatus";
-import { applyPostCounts } from "@/services/post/applyPostCounts";
-import { postCountHooks } from "@/services/post/postCountHooks";
-import { createOperationData } from "@/services/shared/createOperationData";
-import { createErrorAlert } from "@/services/trpc/createErrorAlert";
-import { usePostCountStore } from "@/store/post/count";
+import { MutationStatus } from "#src/models/shared/MutationStatus";
+import { applyPostCounts } from "#src/services/post/applyPostCounts";
+import { postCountHooks } from "#src/services/post/postCountHooks";
+import { createOperationData } from "#src/services/shared/createOperationData";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
+import { usePostCountStore } from "#src/store/post/count";
 import { DatabaseEntityType } from "@esposter/db-schema";
 
 export const usePostStore = defineStore("post", () => {

@@ -1,4 +1,4 @@
-import { useNotificationStore } from "@/store/notification";
+import { useNotificationStore } from "#src/store/notification";
 
 // The installed app's icon badge mirrors the bell's unread count, so an install that is not in the foreground
 // Still shows what is waiting. Only the count the running tab knows about: a push that arrives while the app is

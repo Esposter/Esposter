@@ -1,11 +1,11 @@
 // @vitest-environment nuxt
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
-import ResourceHomeList from "@/components/Resource/Home/List.vue";
-import ResourceHomeListItem from "@/components/Resource/Home/ListItem.vue";
-import UiEmptyState from "@/components/Ui/EmptyState.vue";
-import { ResourceListSource } from "@/models/resource/list/ResourceListSource";
-import { RECENT_RESOURCES_LIMIT } from "@/services/resource/constants";
-import { ResourceListSourceDefinitionMap } from "@/services/resource/list/ResourceListSourceDefinitionMap";
+import ResourceHomeList from "#src/components/Resource/Home/List.vue";
+import ResourceHomeListItem from "#src/components/Resource/Home/ListItem.vue";
+import UiEmptyState from "#src/components/Ui/EmptyState.vue";
+import { ResourceListSource } from "#src/models/resource/list/ResourceListSource";
+import { RECENT_RESOURCES_LIMIT } from "#src/services/resource/constants";
+import { ResourceListSourceDefinitionMap } from "#src/services/resource/list/ResourceListSourceDefinitionMap";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 

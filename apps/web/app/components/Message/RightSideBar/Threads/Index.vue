@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useLayoutStore } from "@/store/layout";
-import { useRoomStore } from "@/store/message/room";
-import { useThreadFollowStore } from "@/store/message/threadFollow";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { useLayoutStore } from "#src/store/layout";
+import { useRoomStore } from "#src/store/message/room/index";
+import { useThreadFollowStore } from "#src/store/message/threadFollow";
 
 const layoutStore = useLayoutStore();
 const { isRightDrawerOpen } = storeToRefs(layoutStore);

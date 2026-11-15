@@ -1,13 +1,13 @@
-import type { UiCommand } from "@/models/ui/UiCommand";
+import type { UiCommand } from "#src/models/ui/UiCommand";
 
-import { PasteMode } from "@/models/resource/sheet/commands/PasteMode";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { ArrowKeyDefinitionMap } from "@/services/resource/sheet/ArrowKeyDefinitionMap";
-import { SHEET_COMMAND_GROUP } from "@/services/resource/sheet/constants";
-import { getHistoryCommands } from "@/services/ui/getHistoryCommands";
-import { useCellStore } from "@/store/resource/sheet/cell";
-import { useColumnStore } from "@/store/resource/sheet/column";
-import { useRowStore } from "@/store/resource/sheet/row";
+import { PasteMode } from "#src/models/resource/sheet/commands/PasteMode";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { ArrowKeyDefinitionMap } from "#src/services/resource/sheet/ArrowKeyDefinitionMap";
+import { SHEET_COMMAND_GROUP } from "#src/services/resource/sheet/constants";
+import { getHistoryCommands } from "#src/services/ui/getHistoryCommands";
+import { useCellStore } from "#src/store/resource/sheet/cell";
+import { useColumnStore } from "#src/store/resource/sheet/column";
+import { useRowStore } from "#src/store/resource/sheet/row";
 import { getSynchronizedFunction } from "@esposter/shared";
 
 // The spreadsheet's keyboard surface: undo and redo, and copy, paste, select-all and extending the cell selection. A

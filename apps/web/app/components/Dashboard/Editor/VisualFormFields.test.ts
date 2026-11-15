@@ -1,9 +1,9 @@
 // @vitest-environment nuxt
 import { Visual } from "#shared/models/dashboard/data/Visual";
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
-import DashboardEditorVisualFormFields from "@/components/Dashboard/Editor/VisualFormFields.vue";
-import UiSchemaForm from "@/components/Ui/SchemaForm/Index.vue";
-import UiTextField from "@/components/Ui/TextField.vue";
+import DashboardEditorVisualFormFields from "#src/components/Dashboard/Editor/VisualFormFields.vue";
+import UiSchemaForm from "#src/components/Ui/SchemaForm/Index.vue";
+import UiTextField from "#src/components/Ui/TextField.vue";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 

@@ -2,8 +2,8 @@ import { BuildingId } from "#shared/models/clicker/data/building/BuildingId";
 import { EffectType } from "#shared/models/clicker/data/effect/EffectType";
 import { Target } from "#shared/models/clicker/data/Target";
 import { CursorUpgradeId } from "#shared/models/clicker/data/upgrade/CursorUpgradeId";
-import { applyMouseUpgrades } from "@/services/clicker/upgrade/applyMouseUpgrades";
-import { createUpgrade } from "@/services/clicker/upgrade/createUpgrade.test";
+import { applyMouseUpgrades } from "#src/services/clicker/upgrade/applyMouseUpgrades";
+import { createUpgrade } from "#src/services/clicker/upgrade/createUpgrade.test";
 import { describe, expect, test } from "vitest";
 
 describe(applyMouseUpgrades, () => {

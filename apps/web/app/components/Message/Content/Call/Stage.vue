@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useMediaStore } from "@/store/message/room/call/media";
+import { useMediaStore } from "#src/store/message/room/call/media";
 
 interface Props {
   isDense?: true;

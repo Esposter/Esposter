@@ -3,7 +3,7 @@ import { createNumberColumn } from "#shared/models/resource/sheet/column/createN
 import { NumberFormat } from "#shared/models/resource/sheet/column/NumberFormat";
 import { createDataSource } from "#shared/models/resource/sheet/datasource/createDataSource.test";
 import { createRow } from "#shared/models/resource/sheet/datasource/createRow.test";
-import { findMatchingCells } from "@/services/resource/sheet/commands/findMatchingCells";
+import { findMatchingCells } from "#src/services/resource/sheet/commands/findMatchingCells";
 import { describe, expect, test } from "vitest";
 
 describe(findMatchingCells, () => {

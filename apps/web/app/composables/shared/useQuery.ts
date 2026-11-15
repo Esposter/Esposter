@@ -1,8 +1,8 @@
 import type { Topic } from "@esposter/db-schema";
 
-import { collectTopics } from "@/services/realtime/collectTopics";
-import { createErrorAlert } from "@/services/trpc/createErrorAlert";
-import { useConnectionStore } from "@/store/realtime/connection";
+import { collectTopics } from "#src/services/realtime/collectTopics";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
+import { useConnectionStore } from "#src/store/realtime/connection";
 import { getSynchronizedFunction, ID_SEPARATOR, noop } from "@esposter/shared";
 
 interface QueryOptions<TResult> {

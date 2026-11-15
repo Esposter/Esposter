@@ -1,8 +1,8 @@
 // @vitest-environment happy-dom
 import { PageBuilderDevice } from "#shared/models/pageBuilder/PageBuilderDevice";
 import { TEST_ID } from "#shared/services/pageBuilder/constants.test";
-import PageBuilderCanvasDeviceToggle from "@/components/PageBuilder/Canvas/DeviceToggle.vue";
-import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
+import PageBuilderCanvasDeviceToggle from "#src/components/PageBuilder/Canvas/DeviceToggle.vue";
+import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
 import { flushPromises, mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";

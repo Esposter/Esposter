@@ -1,5 +1,5 @@
 // @unocss-include
-import { UiDialogSize } from "@/models/ui/UiDialogSize";
+import { UiDialogSize } from "#src/models/ui/UiDialogSize";
 
 // How wide each size stands, in rems, held to the viewport so a narrow screen leaves the dialog a margin either side.
 // Full leaves the page a thinner margin than the others, so it takes more of the screen

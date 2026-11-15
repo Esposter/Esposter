@@ -4,17 +4,17 @@ import type { SurveyDocument } from "vue-survey-engine-headless";
 
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
-import ResourceSurveyEditor from "@/components/Resource/Survey/Editor.vue";
-import { useSurveyCreatorCommands } from "@/composables/survey/useSurveyCreatorCommands";
-import { EditorFindingSeverity } from "@/models/editor/EditorFindingSeverity";
-import { ResourceSaveState } from "@/models/resource/ResourceSaveState";
-import { createSurveyTestDocument } from "@/services/survey/createSurveyTestDocument.test";
-import { createSurveyTestPage } from "@/services/survey/createSurveyTestPage.test";
-import { createSurveyTestQuestion } from "@/services/survey/createSurveyTestQuestion.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useAlertStore } from "@/store/alert";
-import { useResourceStore } from "@/store/resource";
-import { useSurveyCreatorStore } from "@/store/survey/creator";
+import ResourceSurveyEditor from "#src/components/Resource/Survey/Editor.vue";
+import { useSurveyCreatorCommands } from "#src/composables/survey/useSurveyCreatorCommands";
+import { EditorFindingSeverity } from "#src/models/editor/EditorFindingSeverity";
+import { ResourceSaveState } from "#src/models/resource/ResourceSaveState";
+import { createSurveyTestDocument } from "#src/services/survey/createSurveyTestDocument.test";
+import { createSurveyTestPage } from "#src/services/survey/createSurveyTestPage.test";
+import { createSurveyTestQuestion } from "#src/services/survey/createSurveyTestQuestion.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useAlertStore } from "#src/store/alert";
+import { useResourceStore } from "#src/store/resource/index";
+import { useSurveyCreatorStore } from "#src/store/survey/creator";
 import { ResourceType } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
@@ -28,7 +28,7 @@ const { sweepMock, trackMock } = vi.hoisted(() => ({
 }));
 
 // The file sweep is covered by useSurveyFiles's own suite, so it is mocked at its seam here
-vi.mock(import("@/composables/survey/useSurveyFiles"), () => ({
+vi.mock(import("#src/composables/survey/useSurveyFiles"), () => ({
   useSurveyFiles: () => ({
     sweep: sweepMock,
     track: trackMock,

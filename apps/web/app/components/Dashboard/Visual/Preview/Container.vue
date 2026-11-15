@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { Visual } from "#shared/models/dashboard/data/Visual";
-import type { DashboardVisualEmits } from "@/models/dashboard/DashboardVisualEmits";
+import type { DashboardVisualEmits } from "#src/models/dashboard/DashboardVisualEmits";
 import type { CollisionMode, CompactType } from "vue-grid-layout-headless";
 
-import { useVisualStore } from "@/store/dashboard/visual";
+import { useVisualStore } from "#src/store/dashboard/visual";
 import { getSynchronizedFunction } from "@esposter/shared";
 
 interface Props {

@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import type { DatasetReference } from "#shared/models/dataset/DatasetReference";
-import type { UiSelectItem } from "@/models/ui/UiSelectItem";
+import type { UiSelectItem } from "#src/models/ui/UiSelectItem";
 
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
-import { authClient } from "@/services/auth/authClient";
-import { DatasetProviderTypeIconMeaningMap } from "@/services/dataset/DatasetProviderTypeIconMeaningMap";
-import { DatasetProviderTypeItemCategoryDefinitions } from "@/services/dataset/DatasetProviderTypeItemCategoryDefinitions";
-import { DatasetProviderTypeSourceRouterMap } from "@/services/dataset/DatasetProviderTypeSourceRouterMap";
-import { readAllResourcePages } from "@/services/resource/readAllResourcePages";
-import { createErrorAlert } from "@/services/trpc/createErrorAlert";
-import { prependNoneSelectItem } from "@/services/ui/prependNoneSelectItem";
+import { authClient } from "#src/services/auth/authClient";
+import { DatasetProviderTypeIconMeaningMap } from "#src/services/dataset/DatasetProviderTypeIconMeaningMap";
+import { DatasetProviderTypeItemCategoryDefinitions } from "#src/services/dataset/DatasetProviderTypeItemCategoryDefinitions";
+import { DatasetProviderTypeSourceRouterMap } from "#src/services/dataset/DatasetProviderTypeSourceRouterMap";
+import { readAllResourcePages } from "#src/services/resource/readAllResourcePages";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
+import { prependNoneSelectItem } from "#src/services/ui/prependNoneSelectItem";
 import { getResultAsync, noop } from "@esposter/shared";
 
 interface Props {

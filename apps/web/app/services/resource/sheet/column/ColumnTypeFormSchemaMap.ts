@@ -1,12 +1,12 @@
-import type { ColumnForm } from "@/models/resource/sheet/column/ColumnForm";
+import type { ColumnForm } from "#src/models/resource/sheet/column/ColumnForm";
 import type { z } from "zod";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
-import { booleanColumnFormSchema } from "@/models/resource/sheet/column/BooleanColumnForm";
-import { computedColumnFormSchema } from "@/models/resource/sheet/column/ComputedColumnForm";
-import { dateColumnFormSchema } from "@/models/resource/sheet/column/DateColumnForm";
-import { numberColumnFormSchema } from "@/models/resource/sheet/column/NumberColumnForm";
-import { stringColumnFormSchema } from "@/models/resource/sheet/column/StringColumnForm";
+import { booleanColumnFormSchema } from "#src/models/resource/sheet/column/BooleanColumnForm";
+import { computedColumnFormSchema } from "#src/models/resource/sheet/column/ComputedColumnForm";
+import { dateColumnFormSchema } from "#src/models/resource/sheet/column/DateColumnForm";
+import { numberColumnFormSchema } from "#src/models/resource/sheet/column/NumberColumnForm";
+import { stringColumnFormSchema } from "#src/models/resource/sheet/column/StringColumnForm";
 
 export const ColumnTypeFormSchemaMap = {
   [ColumnType.Boolean]: booleanColumnFormSchema,

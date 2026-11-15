@@ -1,6 +1,6 @@
 import type { Promisable } from "type-fest";
 
-import { createErrorAlert } from "@/services/trpc/createErrorAlert";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { getResultAsync, noop } from "@esposter/shared";
 
 // The signed-in reader is handed the account's id from the session read here, so it never reads a session of its own

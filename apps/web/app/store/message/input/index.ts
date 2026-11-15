@@ -1,17 +1,17 @@
-import type { ComposerTarget } from "@/models/message/ComposerTarget";
-import type { Draft } from "@/models/message/Draft";
+import type { ComposerTarget } from "#src/models/message/ComposerTarget";
+import type { Draft } from "#src/models/message/Draft";
 import type { Editor } from "@tiptap/core";
 
-import { EMPTY_FILE_MESSAGE } from "@/services/file/constants";
-import { validateFile } from "@/services/file/validateFile";
-import { getComposerKey } from "@/services/message/composer/getComposerKey";
-import { DRAFT_DEBOUNCE_MS } from "@/services/message/draft/constants";
-import { draftsSerializer } from "@/services/message/draft/draftsSerializer";
-import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
-import { useAlertStore } from "@/store/alert";
-import { useUploadFileStore } from "@/store/message/input/uploadFile";
-import { useRoomStore } from "@/store/message/room";
-import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
+import { EMPTY_FILE_MESSAGE } from "#src/services/file/constants";
+import { validateFile } from "#src/services/file/validateFile";
+import { getComposerKey } from "#src/services/message/composer/getComposerKey";
+import { DRAFT_DEBOUNCE_MS } from "#src/services/message/draft/constants";
+import { draftsSerializer } from "#src/services/message/draft/draftsSerializer";
+import { LocalStorageKey } from "#src/services/shared/LocalStorageKey";
+import { useAlertStore } from "#src/store/alert";
+import { useUploadFileStore } from "#src/store/message/input/uploadFile";
+import { useRoomStore } from "#src/store/message/room/index";
+import { EMPTY_TEXT_REGEX } from "#src/util/text/constants";
 import { sanitizeTextHtml } from "@esposter/shared";
 
 export const useInputStore = defineStore("message/input", () => {

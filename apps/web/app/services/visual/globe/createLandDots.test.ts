@@ -1,6 +1,6 @@
-import type { LandMask } from "@/models/visual/LandMask";
+import type { LandMask } from "#src/models/visual/LandMask";
 
-import { createLandDots } from "@/services/visual/globe/createLandDots";
+import { createLandDots } from "#src/services/visual/globe/createLandDots";
 import { describe, expect, test } from "vitest";
 
 describe(createLandDots, () => {

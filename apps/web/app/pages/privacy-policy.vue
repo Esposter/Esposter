@@ -1,5 +1,11 @@
 <script setup lang="ts">
-import privacyPolicyHtml from "@/assets/about/privacyPolicy.html?raw";
+import { takeOne } from "@esposter/shared";
+
+const privacyPolicyHtml = takeOne(
+  Object.values(
+    import.meta.glob<string>("#src/assets/about/privacyPolicy.html", { eager: true, import: "default", query: "?raw" }),
+  ),
+);
 </script>
 
 <template>

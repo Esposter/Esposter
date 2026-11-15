@@ -1,4 +1,4 @@
-import { parseChoiceLines } from "@/services/resource/survey/parseChoiceLines";
+import { parseChoiceLines } from "#src/services/resource/survey/parseChoiceLines";
 import { describe, expect, test } from "vitest";
 
 describe("parseChoiceLines", () => {

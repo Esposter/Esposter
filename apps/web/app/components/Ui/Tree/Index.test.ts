@@ -1,10 +1,10 @@
 // @vitest-environment nuxt
-import type { UiTreeItem } from "@/models/ui/UiTreeItem";
+import type { UiTreeItem } from "#src/models/ui/UiTreeItem";
 
-import { press } from "@/components/Ui/press.test";
-import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
-import UiTree from "@/components/Ui/Tree/Index.vue";
-import { UiStyles } from "@/models/ui/UiStyle";
+import { press } from "#src/components/Ui/press.test";
+import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
+import UiTree from "#src/components/Ui/Tree/Index.vue";
+import { UiStyles } from "#src/models/ui/UiStyle";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 

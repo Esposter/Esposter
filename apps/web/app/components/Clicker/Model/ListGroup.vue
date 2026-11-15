@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import type { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 interface Props {
   count: number;

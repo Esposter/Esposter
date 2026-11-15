@@ -1,15 +1,15 @@
-import type { State } from "@/models/dungeons/state/State";
+import type { State } from "#src/models/dungeons/state/State";
 
-import { StateName } from "@/models/dungeons/state/battle/StateName";
-import { getAttack } from "@/services/dungeons/attack/getAttack";
-import { getDamage } from "@/services/dungeons/monster/getDamage";
-import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
-import { useAttackManagerStore } from "@/store/dungeons/battle/attackManager";
-import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
-import { useEnemyStore } from "@/store/dungeons/battle/enemy";
-import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
-import { getRandomValue } from "@/util/math/random/getRandomValue";
-import { prettify } from "@/util/text/prettify";
+import { StateName } from "#src/models/dungeons/state/battle/StateName";
+import { getAttack } from "#src/services/dungeons/attack/getAttack";
+import { getDamage } from "#src/services/dungeons/monster/getDamage";
+import { battleStateMachine } from "#src/services/dungeons/scene/battle/battleStateMachine";
+import { useAttackManagerStore } from "#src/store/dungeons/battle/attackManager";
+import { useBattleDialogStore } from "#src/store/dungeons/battle/dialog";
+import { useEnemyStore } from "#src/store/dungeons/battle/enemy";
+import { useBattlePlayerStore } from "#src/store/dungeons/battle/player";
+import { getRandomValue } from "#src/util/math/random/getRandomValue";
+import { prettify } from "#src/util/text/prettify";
 import { sleepScene } from "vue-phaserjs";
 
 export const EnemyAttack: State<typeof StateName.EnemyAttack> = {

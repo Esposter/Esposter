@@ -1,14 +1,14 @@
-import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
+import type { PlayerInput } from "#src/models/dungeons/UI/input/PlayerInput";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { MenuOption } from "@/models/dungeons/scene/monsterParty/MenuOption";
-import { SceneMode } from "@/models/dungeons/scene/monsterParty/SceneMode";
-import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
-import { checkIsMovingDirection } from "@/services/dungeons/UI/input/checkIsMovingDirection";
-import { useMonsterDetailsSceneStore } from "@/store/dungeons/monsterDetails/scene";
-import { useMonsterPartyInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
-import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
+import { SceneKey } from "#src/models/dungeons/keys/SceneKey";
+import { MenuOption } from "#src/models/dungeons/scene/monsterParty/MenuOption";
+import { SceneMode } from "#src/models/dungeons/scene/monsterParty/SceneMode";
+import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";
+import { checkIsMovingDirection } from "#src/services/dungeons/UI/input/checkIsMovingDirection";
+import { useMonsterDetailsSceneStore } from "#src/store/dungeons/monsterDetails/scene";
+import { useMonsterPartyInfoPanelStore } from "#src/store/dungeons/monsterParty/infoPanel";
+import { useMonsterPartySceneStore } from "#src/store/dungeons/monsterParty/scene";
 import { exhaustiveGuard } from "@esposter/shared";
 
 export const useMonsterPartyMenuStore = defineStore("dungeons/monsterParty/menu", () => {

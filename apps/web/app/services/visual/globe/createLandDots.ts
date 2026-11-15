@@ -1,7 +1,7 @@
-import type { GeoPoint } from "@/models/visual/GeoPoint";
-import type { LandMask } from "@/models/visual/LandMask";
+import type { GeoPoint } from "#src/models/visual/GeoPoint";
+import type { LandMask } from "#src/models/visual/LandMask";
 
-import { isLandAt } from "@/services/visual/globe/isLandAt";
+import { isLandAt } from "#src/services/visual/globe/isLandAt";
 
 // Rings of latitude, each spaced evenly in arc length, so the dots stay the same distance apart from the equator to the poles
 export const createLandDots = (landMask: LandMask, spacing: number) => {

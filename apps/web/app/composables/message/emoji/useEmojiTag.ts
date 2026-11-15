@@ -1,8 +1,8 @@
-import { DELETED_EMOJI_DESCRIPTION } from "@/services/message/emoji/constants";
-import { getEmojiDescription } from "@/services/message/emoji/getEmojiDescription";
-import { getEmojiShortcode } from "@/services/message/emoji/getEmojiShortcode";
-import { parseCustomEmojiId } from "@/services/message/emoji/parseCustomEmojiId";
-import { useRoomEmojiStore } from "@/store/message/room/emoji";
+import { DELETED_EMOJI_DESCRIPTION } from "#src/services/message/emoji/constants";
+import { getEmojiDescription } from "#src/services/message/emoji/getEmojiDescription";
+import { getEmojiShortcode } from "#src/services/message/emoji/getEmojiShortcode";
+import { parseCustomEmojiId } from "#src/services/message/emoji/parseCustomEmojiId";
+import { useRoomEmojiStore } from "#src/store/message/room/emoji";
 
 // One resolution of a stored reaction tag, read by everything that renders one: which of the room's uploads it
 // Names, and the label the hover card and the reactions dialog read. A tag whose emoji has been deleted resolves

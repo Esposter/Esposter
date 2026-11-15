@@ -1,4 +1,4 @@
-import type { PostCounts } from "@/services/post/postCountHooks";
+import type { PostCounts } from "#src/services/post/postCountHooks";
 import type { PostInPost } from "@esposter/db-schema";
 
 // Writes one read's counts onto the copies a store holds of those posts. A copy the read does not name keeps its own

@@ -22,9 +22,9 @@ description: Apply when running or recommending any pnpm script. Esposter's pnpm
 
 `pnpm i` after a manifest change, `pnpm test` with the paths a change touched, never the whole suite locally (the ban is the `testing` skill's, `references/running-the-suite.md`), `vp run build:packages` for the libraries as a set, `pnpm release` for a manual release (the nightly runs its halves, `release:gate` and `release:version`), and `vp run lint:unused` for knip; the `ai:<domain>:<verb>` scripts no human types are `references/ai-scripts.md`.
 
-## A `.ts` script runs under `node` where it can, `vpx` where it cannot — `references/typescript-scripts.md`
+## A `.ts` script runs under `node` — `references/typescript-scripts.md`
 
-Node strips types natively; a tsconfig alias or an extensionless import moves the script to `vpx`, and the code is never bent to fit `node`.
+Node strips types natively, every source file is erasable and every package reaches its source through its manifest's subpath imports, so no script needs another loader.
 
 ## `"scriptsComments"` — `references/scripts-comments.md`
 

@@ -1,8 +1,8 @@
-import type { ClientMessage } from "@/models/message/ClientMessage";
+import type { ClientMessage } from "#src/models/message/ClientMessage";
 
-import { messageHolderRegistry } from "@/services/message/messageHolderRegistry";
-import { MessageHookMap } from "@/services/message/MessageHookMap";
-import { useRoomStore } from "@/store/message/room";
+import { messageHolderRegistry } from "#src/services/message/messageHolderRegistry";
+import { MessageHookMap } from "#src/services/message/MessageHookMap";
+import { useRoomStore } from "#src/store/message/room/index";
 import { Operation } from "@esposter/shared";
 
 export const useThreadFollowStore = defineStore("message/threadFollow", () => {

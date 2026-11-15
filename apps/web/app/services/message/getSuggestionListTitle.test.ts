@@ -1,5 +1,5 @@
-import { SuggestionTrigger } from "@/models/shared/SuggestionTrigger";
-import { getSuggestionListTitle } from "@/services/message/getSuggestionListTitle";
+import { SuggestionTrigger } from "#src/models/shared/SuggestionTrigger";
+import { getSuggestionListTitle } from "#src/services/message/getSuggestionListTitle";
 import { describe, expect, test } from "vitest";
 
 describe(getSuggestionListTitle, () => {

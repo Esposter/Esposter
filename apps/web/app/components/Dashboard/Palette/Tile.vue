@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { Visual } from "#shared/models/dashboard/data/Visual";
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { checkIsGroupTooDeep } from "@/services/dashboard/visual/checkIsGroupTooDeep";
-import { useVisualStore } from "@/store/dashboard/visual";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { checkIsGroupTooDeep } from "#src/services/dashboard/visual/checkIsGroupTooDeep";
+import { useVisualStore } from "#src/store/dashboard/visual";
 import { startExternalDrag } from "vue-grid-layout-headless";
 
 interface Props {

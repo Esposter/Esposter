@@ -1,13 +1,13 @@
-import type { UiCommand } from "@/models/ui/UiCommand";
+import type { UiCommand } from "#src/models/ui/UiCommand";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { getSelectedElements } from "@/services/whiteboard/getSelectedElements";
-import { WHITEBOARD_COMMAND_GROUP } from "@/services/whiteboard/keyboard/constants";
-import { WHITEBOARD_RESET_SCALE } from "@/services/whiteboard/viewport/constants";
-import { useWhiteboardStore } from "@/store/resource/whiteboard";
-import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
-import { checkIsEditableTarget } from "@/util/dom/checkIsEditableTarget";
-import { checkIsElementTarget } from "@/util/dom/checkIsElementTarget";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { getSelectedElements } from "#src/services/whiteboard/getSelectedElements";
+import { WHITEBOARD_COMMAND_GROUP } from "#src/services/whiteboard/keyboard/constants";
+import { WHITEBOARD_RESET_SCALE } from "#src/services/whiteboard/viewport/constants";
+import { useWhiteboardEditorStore } from "#src/store/resource/whiteboard/editor";
+import { useWhiteboardStore } from "#src/store/resource/whiteboard/index";
+import { checkIsEditableTarget } from "#src/util/dom/checkIsEditableTarget";
+import { checkIsElementTarget } from "#src/util/dom/checkIsElementTarget";
 import { defaultWindow } from "@vueuse/core";
 
 // The keys that move a whiteboard's view: Ctrl or Cmd with 0 resets the zoom about the view's centre, Shift with 1 fits the content and Shift

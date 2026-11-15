@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { UiCalendarEvent } from "@/models/ui/UiCalendarEvent";
+import type { UiCalendarEvent } from "#src/models/ui/UiCalendarEvent";
 
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { setDueAt } from "#shared/services/resource/todoList/setDueAt";
-import { useTodoListStore } from "@/store/resource/todoList";
+import { useTodoListStore } from "#src/store/resource/todoList/index";
 
 const todoListStore = useTodoListStore();
 const { editItem, loadContent, saveTodoList } = todoListStore;

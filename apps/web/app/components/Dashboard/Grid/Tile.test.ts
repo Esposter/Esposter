@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-import DashboardGridTile from "@/components/Dashboard/Grid/Tile.vue";
+import DashboardGridTile from "#src/components/Dashboard/Grid/Tile.vue";
 import { mount } from "@vue/test-utils";
 import { describe, expect, test, vi } from "vitest";
 import { ResizeEdge } from "vue-grid-layout-headless";

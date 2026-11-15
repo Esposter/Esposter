@@ -5,8 +5,8 @@ import {
   WHITEBOARD_HORIZONTAL_ALIGNMENT_ITEMS,
   WHITEBOARD_TEXT_SIZE_ITEMS,
   WHITEBOARD_VERTICAL_ALIGNMENT_ITEMS,
-} from "@/services/whiteboard/text/constants";
-import { useWhiteboardStore } from "@/store/resource/whiteboard";
+} from "#src/services/whiteboard/text/constants";
+import { useWhiteboardStore } from "#src/store/resource/whiteboard/index";
 import { getHorizontalAlignment, getVerticalAlignment, PositionedElementType } from "vue-block-editor-headless";
 
 interface Props {

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { PdfViewerState } from "vue-pdfjs-headless";
 
-import { UiRules } from "@/services/ui/UiRules";
+import { UiRules } from "#src/services/ui/UiRules";
 
 interface Props {
   filename: string;

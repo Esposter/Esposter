@@ -1,13 +1,13 @@
-import type { DragReorderContext } from "@/models/ui/dragReorder/DragReorderContext";
-import type { Press } from "@/models/ui/dragReorder/Press";
+import type { DragReorderContext } from "#src/models/ui/dragReorder/DragReorderContext";
+import type { Press } from "#src/models/ui/dragReorder/Press";
 
-import { getMovedItems } from "@/services/shared/getMovedItems";
-import { DRAG_IGNORE_SELECTOR } from "@/services/ui/constants";
-import { cancelDrag } from "@/services/ui/dragReorder/cancelDrag";
-import { claimedPresses } from "@/services/ui/dragReorder/claimedPresses";
-import { endPress } from "@/services/ui/dragReorder/endPress";
-import { getChildOf } from "@/services/ui/dragReorder/getChildOf";
-import { listenToPress } from "@/services/ui/dragReorder/listenToPress";
+import { getMovedItems } from "#src/services/shared/getMovedItems";
+import { DRAG_IGNORE_SELECTOR } from "#src/services/ui/constants";
+import { cancelDrag } from "#src/services/ui/dragReorder/cancelDrag";
+import { claimedPresses } from "#src/services/ui/dragReorder/claimedPresses";
+import { endPress } from "#src/services/ui/dragReorder/endPress";
+import { getChildOf } from "#src/services/ui/dragReorder/getChildOf";
+import { listenToPress } from "#src/services/ui/dragReorder/listenToPress";
 
 // Takes a press on a row of the container, when it is a primary press on the row's handle, and makes it the press in
 // Progress, ending the one before it, whose release never reached the page

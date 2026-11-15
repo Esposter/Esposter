@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { MENU_BACKGROUND_WIDTH } from "@/services/dungeons/scene/title/menu/constants";
+import { MENU_BACKGROUND_WIDTH } from "#src/services/dungeons/scene/title/menu/constants";
 import { Container, onCreate } from "vue-phaserjs";
 
 const x = ref<number>();

@@ -1,9 +1,9 @@
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { CaptureResult } from "@/models/dungeons/item/CaptureResult";
-import { getTweenRange } from "@/services/dungeons/animation/getTweenRange";
-import { useBallStore } from "@/store/dungeons/battle/ball";
-import { useEnemyStore } from "@/store/dungeons/battle/enemy";
+import { CaptureResult } from "#src/models/dungeons/item/CaptureResult";
+import { getTweenRange } from "#src/services/dungeons/animation/getTweenRange";
+import { useBallStore } from "#src/store/dungeons/battle/ball";
+import { useEnemyStore } from "#src/store/dungeons/battle/enemy";
 import { Math } from "phaser";
 import { sleepScene, useTween } from "vue-phaserjs";
 

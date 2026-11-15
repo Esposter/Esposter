@@ -1,7 +1,7 @@
 <script setup lang="ts">
 /* eslint-disable no-restricted-syntax -- removes a row from the unsaved note editor draft; removes a column from the unsaved note editor draft; removes a table from the unsaved note editor draft */
-import type { Item } from "@/models/shared/Item";
-import type { Editor } from "@tiptap/vue-3";
+import type { Item } from "#src/models/shared/Item";
+import type { Editor } from "@tiptap/core";
 
 interface Props {
   editor?: Editor;

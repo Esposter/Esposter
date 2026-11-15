@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import { useAlertStore } from "@/store/alert";
+import { useAlertStore } from "#src/store/alert";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 

@@ -1,4 +1,4 @@
-import type { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import type { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import type { RouteLocationRaw } from "vue-router";
 
 // One row of a list: somewhere to go, something to do, or a choice. Every row leads with a mark — what its icon says,

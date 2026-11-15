@@ -1,6 +1,6 @@
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
-import { WEBPAGE_NODE_TYPE_TITLE_MAP } from "@/services/pageBuilder/constants";
-import { getDropRefusal } from "@/services/pageBuilder/getDropRefusal";
+import { WEBPAGE_NODE_TYPE_TITLE_MAP } from "#src/services/pageBuilder/constants";
+import { getDropRefusal } from "#src/services/pageBuilder/getDropRefusal";
 import { describe, expect, test } from "vitest";
 
 describe(getDropRefusal, () => {

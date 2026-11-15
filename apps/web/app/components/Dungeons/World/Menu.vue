@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { Position } from "grid-engine";
 
-import { WorldMenuOptionGrid } from "@/services/dungeons/scene/world/WorldMenuOptionGrid";
-import { MENU_PADDING, MENU_WIDTH } from "@/services/dungeons/UI/menu/constants";
-import { useWorldMenuStore } from "@/store/dungeons/world/menu";
+import { WorldMenuOptionGrid } from "#src/services/dungeons/scene/world/WorldMenuOptionGrid";
+import { MENU_PADDING, MENU_WIDTH } from "#src/services/dungeons/UI/menu/constants";
+import { useWorldMenuStore } from "#src/store/dungeons/world/menu";
 import { onUpdate } from "vue-phaserjs";
 
 const worldMenuStore = useWorldMenuStore();

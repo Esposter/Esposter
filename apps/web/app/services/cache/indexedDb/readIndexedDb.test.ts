@@ -1,7 +1,7 @@
-import { MessageIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MessageIndexedDbStoreConfiguration";
-import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
-import { setupIndexedDbSuite } from "@/services/cache/indexedDb/setupIndexedDbSuite.test";
-import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
+import { MessageIndexedDbStoreConfiguration } from "#src/services/cache/indexedDb/configurations/MessageIndexedDbStoreConfiguration";
+import { readIndexedDb } from "#src/services/cache/indexedDb/readIndexedDb";
+import { setupIndexedDbSuite } from "#src/services/cache/indexedDb/setupIndexedDbSuite.test";
+import { writeIndexedDb } from "#src/services/cache/indexedDb/writeIndexedDb";
 import { takeOne } from "@esposter/shared";
 import { afterEach, describe, expect, test, vi } from "vitest";
 

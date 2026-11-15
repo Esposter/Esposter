@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { ScheduledMessageJobWithRoom } from "#shared/models/db/message/scheduledMessageJob/ScheduledMessageJobWithRoom";
-import type { Item } from "@/models/shared/Item";
+import type { Item } from "#src/models/shared/Item";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { getScheduledMessageJobText } from "@/services/message/draftsAndSent/getScheduledMessageJobText";
-import { useDraftsAndSentScheduleDialogStore } from "@/store/message/draftsAndSent/scheduleDialog";
-import { useScheduledMessageJobStore } from "@/store/message/scheduledMessageJob";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { getScheduledMessageJobText } from "#src/services/message/draftsAndSent/getScheduledMessageJobText";
+import { useDraftsAndSentScheduleDialogStore } from "#src/store/message/draftsAndSent/scheduleDialog";
+import { useScheduledMessageJobStore } from "#src/store/message/scheduledMessageJob";
 import { ScheduledMessageJobType } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 

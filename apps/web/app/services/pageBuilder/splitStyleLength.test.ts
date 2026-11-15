@@ -1,4 +1,4 @@
-import { splitStyleLength } from "@/services/pageBuilder/splitStyleLength";
+import { splitStyleLength } from "#src/services/pageBuilder/splitStyleLength";
 import { describe, expect, test } from "vitest";
 
 describe(splitStyleLength, () => {

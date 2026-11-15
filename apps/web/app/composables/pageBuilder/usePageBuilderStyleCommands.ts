@@ -1,7 +1,7 @@
-import type { UiCommand } from "@/models/ui/UiCommand";
+import type { UiCommand } from "#src/models/ui/UiCommand";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { PAGE_BUILDER_COMMAND_GROUP } from "@/services/pageBuilder/constants";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { PAGE_BUILDER_COMMAND_GROUP } from "#src/services/pageBuilder/constants";
 
 // Copy style and Paste style for one open resource's selected node, listed in the command palette beside the edits
 export const usePageBuilderStyleCommands = (resourceId: MaybeRefOrGetter<string>) => {

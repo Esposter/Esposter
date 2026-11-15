@@ -6,10 +6,10 @@ import { EMPTY_NOTE_DOC } from "#shared/services/resource/constants";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { getNoteExtensions } from "#shared/services/resource/note/getNoteExtensions";
-import { useInsertNoteImages } from "@/composables/resource/note/useInsertNoteImages";
-import { useResourceStore } from "@/store/resource";
+import { useInsertNoteImages } from "#src/composables/resource/note/useInsertNoteImages";
+import { useResourceStore } from "#src/store/resource/index";
 import { getResourceFileBlobName, ResourceType } from "@esposter/db-schema";
-import { Editor } from "@tiptap/vue-3";
+import { Editor } from "@tiptap/core";
 import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 
@@ -19,7 +19,7 @@ const { uploadResourceFileMock } = vi.hoisted(() => ({
 
 // The upload itself is covered by useUploadResourceFile's own suite, so this one mocks it at its seam and asserts what
 // The insertion does with the url it hands back, or with the refusal it throws
-vi.mock(import("@/composables/resource/useUploadResourceFile"), () => ({
+vi.mock(import("#src/composables/resource/useUploadResourceFile"), () => ({
   useUploadResourceFile: () => uploadResourceFileMock,
 }));
 

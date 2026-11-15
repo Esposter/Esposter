@@ -1,4 +1,4 @@
-import { prettify } from "@/util/text/prettify";
+import { prettify } from "#src/util/text/prettify";
 import { describe, expect, test } from "vitest";
 
 describe(prettify, () => {

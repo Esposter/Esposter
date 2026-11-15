@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import type { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 interface Props {
   // What a read that returned nothing says, as UiEmptyState takes it. A list with no empty state of its own leaves it

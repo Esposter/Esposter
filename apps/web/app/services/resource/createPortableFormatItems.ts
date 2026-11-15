@@ -1,7 +1,7 @@
-import type { PortableFormat } from "@/models/resource/PortableFormat";
-import type { PortableFormatKind } from "@/models/resource/PortableFormatKind";
-import type { Item } from "@/models/shared/Item";
-import type { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import type { PortableFormat } from "#src/models/resource/PortableFormat";
+import type { PortableFormatKind } from "#src/models/resource/PortableFormatKind";
+import type { Item } from "#src/models/shared/Item";
+import type { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 // A resource with several formats gets one command named by its verb, which opens the formats beneath it in the same
 // Menu, each against its own icon: a flat row of "Import Csv" and "Export Csv" per format would bury the commands around

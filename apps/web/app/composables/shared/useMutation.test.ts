@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
-import { MutationStatus } from "@/models/shared/MutationStatus";
-import { useAlertStore } from "@/store/alert";
+import { MutationStatus } from "#src/models/shared/MutationStatus";
+import { useAlertStore } from "#src/store/alert";
 import { noop } from "@esposter/shared";
 import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test, vi } from "vitest";

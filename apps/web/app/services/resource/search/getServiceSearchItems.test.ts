@@ -1,8 +1,8 @@
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { CreatableResourceTypes } from "@/models/resource/CreatableResourceType";
-import { ResourceSearchGroup } from "@/models/resource/search/ResourceSearchGroup";
-import { ResourceTypeDescriptionMap } from "@/services/resource/ResourceTypeDescriptionMap";
-import { getServiceSearchItems } from "@/services/resource/search/getServiceSearchItems";
+import { CreatableResourceTypes } from "#src/models/resource/CreatableResourceType";
+import { ResourceSearchGroup } from "#src/models/resource/search/ResourceSearchGroup";
+import { ResourceTypeDescriptionMap } from "#src/services/resource/ResourceTypeDescriptionMap";
+import { getServiceSearchItems } from "#src/services/resource/search/getServiceSearchItems";
 import { ResourceType } from "@esposter/db-schema";
 import { ID_SEPARATOR, RoutePath } from "@esposter/shared";
 import { describe, expect, test } from "vitest";

@@ -1,6 +1,6 @@
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
-import { MERGE_FIELD_KIND_PREFIX } from "@/services/pageBuilder/constants";
-import { getMergeFieldColumnName } from "@/services/pageBuilder/getMergeFieldColumnName";
+import { MERGE_FIELD_KIND_PREFIX } from "#src/services/pageBuilder/constants";
+import { getMergeFieldColumnName } from "#src/services/pageBuilder/getMergeFieldColumnName";
 import { describe, expect, test } from "vitest";
 
 describe(getMergeFieldColumnName, () => {

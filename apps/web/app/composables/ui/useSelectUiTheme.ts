@@ -1,9 +1,9 @@
-import type { ResolvedThemeMode } from "@/models/ui/ResolvedThemeMode";
-import type { UiStyle } from "@/models/ui/UiStyle";
+import type { ResolvedThemeMode } from "#src/models/ui/ResolvedThemeMode";
+import type { UiStyle } from "#src/models/ui/UiStyle";
 
-import { ThemeMode } from "@/models/ui/ThemeMode";
-import { getUiTheme } from "@/services/ui/getUiTheme";
-import { UiPaletteMap } from "@@/configuration/UiPaletteMap";
+import { UiPaletteMap } from "#configuration/UiPaletteMap";
+import { ThemeMode } from "#src/models/ui/ThemeMode";
+import { getUiTheme } from "#src/services/ui/getUiTheme";
 import { useTheme } from "@vuetify/v0";
 
 // Selects the library theme for a style and a resolved mode — on the server render as well, which an immediate watcher

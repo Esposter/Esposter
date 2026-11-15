@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
-import { useReadUsersByIds } from "@/composables/message/room/useReadUsersByIds";
-import { createUser } from "@/services/message/user/createUser.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useUserStore } from "@/store/message/user";
+import { useReadUsersByIds } from "#src/composables/message/room/useReadUsersByIds";
+import { createUser } from "#src/services/message/user/createUser.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useUserStore } from "#src/store/message/user/index";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 

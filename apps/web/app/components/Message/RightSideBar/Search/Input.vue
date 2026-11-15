@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { checkIsFilterPending } from "#shared/services/message/checkIsFilterPending";
-import { getFilterDisplayValue } from "@/services/message/filter/getFilterDisplayValue";
-import { getFilterTypeFromSearchQuery } from "@/services/message/filter/getFilterTypeFromSearchQuery";
-import { SearchFilterComponentMap } from "@/services/message/filter/SearchFilterComponentMap";
-import { useSearchMessageStore } from "@/store/message/search";
+import { getFilterDisplayValue } from "#src/services/message/filter/getFilterDisplayValue";
+import { getFilterTypeFromSearchQuery } from "#src/services/message/filter/getFilterTypeFromSearchQuery";
+import { SearchFilterComponentMap } from "#src/services/message/filter/SearchFilterComponentMap";
+import { useSearchMessageStore } from "#src/store/message/search/index";
 
 const { readSearchedMessages } = useReadSearchedMessages();
 const searchMessageStore = useSearchMessageStore();

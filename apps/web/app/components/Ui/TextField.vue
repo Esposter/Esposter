@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { UiRule } from "@/models/ui/UiRule";
+import type { UiRule } from "#src/models/ui/UiRule";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
-import { TEXT_FIELD_AUTOCOMPLETES } from "@/services/ui/constants";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { UiTextFieldType } from "#src/models/ui/UiTextFieldType";
+import { TEXT_FIELD_AUTOCOMPLETES } from "#src/services/ui/constants";
 import { Input } from "@vuetify/v0";
 
 interface Props {

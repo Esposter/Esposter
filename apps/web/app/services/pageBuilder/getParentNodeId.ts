@@ -1,8 +1,8 @@
-import type { PageBuilderHelper } from "@/models/pageBuilder/PageBuilderHelper";
+import type { PageBuilderHelper } from "#src/models/pageBuilder/PageBuilderHelper";
 
-import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
-import { getNodeSlotPointer } from "@/services/pageBuilder/getNodeSlotPointer";
-import { getSlotOwnerId } from "@/services/pageBuilder/getSlotOwnerId";
+import { getNodePointer } from "#src/services/pageBuilder/getNodePointer";
+import { getNodeSlotPointer } from "#src/services/pageBuilder/getNodeSlotPointer";
+import { getSlotOwnerId } from "#src/services/pageBuilder/getSlotOwnerId";
 import { parseJsonPointer } from "@esposter/shared";
 
 // The id of the node whose slot holds the node, or the empty id for a node in the page's own content, or none when the

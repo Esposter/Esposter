@@ -4,10 +4,10 @@ import {
   WHITEBOARD_ARROW_ID,
   WHITEBOARD_PROCESS,
   WHITEBOARD_PROCESS_ID,
-} from "@/services/whiteboard/constants.test";
-import { WHITEBOARD_DUPLICATE_OFFSET } from "@/services/whiteboard/edit/constants";
-import { pasteWhiteboardElements } from "@/services/whiteboard/edit/pasteWhiteboardElements";
-import { serializeClipboardElements } from "@/services/whiteboard/serializeClipboardElements";
+} from "#src/services/whiteboard/constants.test";
+import { WHITEBOARD_DUPLICATE_OFFSET } from "#src/services/whiteboard/edit/constants";
+import { pasteWhiteboardElements } from "#src/services/whiteboard/edit/pasteWhiteboardElements";
+import { serializeClipboardElements } from "#src/services/whiteboard/serializeClipboardElements";
 import { takeOne } from "@esposter/shared";
 import { assert, describe, expect, test } from "vitest";
 import { ArrowheadKind } from "vue-block-editor-headless";

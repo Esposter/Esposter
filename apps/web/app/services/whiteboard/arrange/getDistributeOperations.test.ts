@@ -1,8 +1,8 @@
 import type { PositionedDocument, ShapeElement } from "vue-block-editor-headless";
 
-import { DistributeAxis } from "@/models/whiteboard/DistributeAxis";
-import { getDistributeOperations } from "@/services/whiteboard/arrange/getDistributeOperations";
-import { WHITEBOARD_PROCESS } from "@/services/whiteboard/constants.test";
+import { DistributeAxis } from "#src/models/whiteboard/DistributeAxis";
+import { getDistributeOperations } from "#src/services/whiteboard/arrange/getDistributeOperations";
+import { WHITEBOARD_PROCESS } from "#src/services/whiteboard/constants.test";
 import { applyPatches } from "@esposter/shared";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";

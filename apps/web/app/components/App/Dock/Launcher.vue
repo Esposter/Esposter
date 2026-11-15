@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { DOCK_POPOVER_POSITION_AREA } from "@/services/app/constants";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { DOCK_POPOVER_POSITION_AREA } from "#src/services/app/constants";
 </script>
 
 <!-- Every product, grouped by what it is for, under the way to keep the page open now among the reader's places. On a

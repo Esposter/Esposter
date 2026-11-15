@@ -1,7 +1,7 @@
-import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
+import type { PageBuilderKind } from "#src/models/pageBuilder/PageBuilderKind";
 import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "vue-block-editor-headless";
 
-import { PageBuilderEditor } from "@/models/pageBuilder/PageBuilderEditor";
+import { PageBuilderEditor } from "#src/models/pageBuilder/PageBuilderEditor";
 import { getResult, SITE_NAME } from "@esposter/shared";
 import { createBlockNodesSchema } from "vue-block-editor-headless";
 import { z } from "zod";

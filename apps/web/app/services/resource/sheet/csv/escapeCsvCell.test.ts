@@ -1,4 +1,4 @@
-import { escapeCsvCell } from "@/services/resource/sheet/csv/escapeCsvCell";
+import { escapeCsvCell } from "#src/services/resource/sheet/csv/escapeCsvCell";
 import { describe, expect, test } from "vitest";
 
 describe(escapeCsvCell, () => {

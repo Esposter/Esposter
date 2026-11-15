@@ -1,4 +1,4 @@
-import { compareColumnValues } from "@/services/resource/sheet/column/compareColumnValues";
+import { compareColumnValues } from "#src/services/resource/sheet/column/compareColumnValues";
 import { describe, expect, test } from "vitest";
 
 describe(compareColumnValues, () => {

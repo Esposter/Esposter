@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
-import ResourceSheetImportDatasetDialog from "@/components/Resource/Sheet/ImportDatasetDialog.vue";
-import UiSelect from "@/components/Ui/Select/Index.vue";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
+import ResourceSheetImportDatasetDialog from "#src/components/Resource/Sheet/ImportDatasetDialog.vue";
+import UiSelect from "#src/components/Ui/Select/Index.vue";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";

@@ -1,9 +1,9 @@
-import type { TRPCRouter } from "#server/trpc/routers";
+import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { TRPCLink } from "@trpc/client";
 
-import { authClient } from "@/services/auth/authClient";
-import { ALERTED_ERROR_CODES } from "@/services/trpc/constants";
-import { useAlertStore } from "@/store/alert";
+import { authClient } from "#src/services/auth/authClient";
+import { ALERTED_ERROR_CODES } from "#src/services/trpc/constants";
+import { useAlertStore } from "#src/store/alert";
 import { getResultAsync, getSynchronizedFunction, RoutePath } from "@esposter/shared";
 import { observable } from "@trpc/server/observable";
 

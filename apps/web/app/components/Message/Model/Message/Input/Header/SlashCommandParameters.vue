@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useSlashCommandStore } from "@/store/message/input/slashCommand";
+import { useSlashCommandStore } from "#src/store/message/input/slashCommand";
 
 const slashCommandStore = useSlashCommandStore();
 const { activeParameters, errors, focusedIndex, hiddenParameters, pendingSlashCommand, selectedHiddenIndex } =

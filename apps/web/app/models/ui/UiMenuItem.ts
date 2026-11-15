@@ -1,4 +1,4 @@
-import type { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import type { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import type { Except } from "type-fest";
 
 // One choice in a menu, a select, a field's suggestions or a row of tabs: what it reads as, what choosing it gives,

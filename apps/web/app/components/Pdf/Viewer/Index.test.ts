@@ -1,12 +1,12 @@
 // @vitest-environment nuxt
 import type { PDFDocumentProxy } from "pdfjs-dist";
 
-import PdfViewer from "@/components/Pdf/Viewer/Index.vue";
-import PdfViewerSidebar from "@/components/Pdf/Viewer/Sidebar.vue";
-import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
-import UiSpinner from "@/components/Ui/Spinner.vue";
-import { UiStyles } from "@/models/ui/UiStyle";
-import { loadPdfViewer } from "@/services/pdf/loadPdfViewer";
+import PdfViewer from "#src/components/Pdf/Viewer/Index.vue";
+import PdfViewerSidebar from "#src/components/Pdf/Viewer/Sidebar.vue";
+import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
+import UiSpinner from "#src/components/Ui/Spinner.vue";
+import { UiStyles } from "#src/models/ui/UiStyle";
+import { loadPdfViewer } from "#src/services/pdf/loadPdfViewer";
 import { noop } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
@@ -14,12 +14,12 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { usePdfViewer } from "vue-pdfjs-headless";
 
 // The viewer's module never loads here unless a test settles it, so each test sees the dialog at the state its props give
-vi.mock(import("@/services/pdf/loadPdfViewer"), () => ({
+vi.mock(import("#src/services/pdf/loadPdfViewer"), () => ({
   loadPdfViewer: vi.fn<typeof loadPdfViewer>(() => new Promise(() => {})),
 }));
 // The sidebar's default follows the breakpoint, so a test says whether the screen is a phone's before the viewer mounts
 const device = vi.hoisted(() => ({ isPhone: false }));
-vi.mock(import("@/composables/ui/useUiDisplay"), async (importOriginal) => {
+vi.mock(import("#src/composables/ui/useUiDisplay"), async (importOriginal) => {
   const actual = await importOriginal();
 
   return { ...actual, useUiDisplay: () => ({ ...actual.useUiDisplay(), mdAndDown: shallowRef(device.isPhone) }) };

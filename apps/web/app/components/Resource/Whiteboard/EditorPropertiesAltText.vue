@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { ImageElement } from "vue-block-editor-headless";
 
-import { useWhiteboardStore } from "@/store/resource/whiteboard";
+import { useWhiteboardStore } from "#src/store/resource/whiteboard/index";
 
 interface Props {
   element: ImageElement;

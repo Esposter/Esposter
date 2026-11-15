@@ -1,9 +1,9 @@
 // @vitest-environment nuxt
 import type { InviteInMessageWithCreator } from "@esposter/db-schema";
 
-import { inviteCreateHooks } from "@/services/message/room/invite/inviteCreateHooks";
-import { createUser } from "@/services/message/user/createUser.test";
-import { useRoomInviteStore } from "@/store/message/room/roomInvite";
+import { inviteCreateHooks } from "#src/services/message/room/invite/inviteCreateHooks";
+import { createUser } from "#src/services/message/user/createUser.test";
+import { useRoomInviteStore } from "#src/store/message/room/roomInvite";
 import { SECRET_TOKEN_LENGTH } from "@esposter/shared";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ResourceListSource } from "@/models/resource/list/ResourceListSource";
-import { useFavoriteStore } from "@/store/resource/favorite";
+import { ResourceListSource } from "#src/models/resource/list/ResourceListSource";
+import { useFavoriteStore } from "#src/store/resource/favorite";
 
 const favoriteStore = useFavoriteStore();
 const { favorites, isPending, isReadSettled } = storeToRefs(favoriteStore);

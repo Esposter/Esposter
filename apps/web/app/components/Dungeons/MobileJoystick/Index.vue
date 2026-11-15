@@ -3,10 +3,10 @@ import type { GameObjects } from "phaser";
 import type VirtualJoystick from "phaser4-rex-plugins/plugins/virtualjoystick";
 
 import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
-import { JOYSTICK_RADIUS } from "@/services/dungeons/scene/joystick/constants";
-import { getJoystickX } from "@/services/dungeons/scene/joystick/getJoystickX";
-import { getJoystickY } from "@/services/dungeons/scene/joystick/getJoystickY";
-import { useControlsStore } from "@/store/dungeons/controls";
+import { JOYSTICK_RADIUS } from "#src/services/dungeons/scene/joystick/constants";
+import { getJoystickX } from "#src/services/dungeons/scene/joystick/getJoystickX";
+import { getJoystickY } from "#src/services/dungeons/scene/joystick/getJoystickY";
+import { useControlsStore } from "#src/store/dungeons/controls";
 import { getScene, Image, useInjectSceneKey } from "vue-phaserjs";
 
 const controlsStore = useControlsStore();

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { SettingsSection } from "@/models/message/user/settings/SettingsSection";
+import type { SettingsSection } from "#src/models/message/user/settings/SettingsSection";
 
 interface Props {
   title: SettingsSection;

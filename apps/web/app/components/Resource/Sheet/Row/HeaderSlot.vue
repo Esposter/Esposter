@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { toColumnKey } from "@/services/resource/sheet/column/toColumnKey";
-import { useColumnStore } from "@/store/resource/sheet/column";
-import { useFilterStore } from "@/store/resource/sheet/filter";
+import { toColumnKey } from "#src/services/resource/sheet/column/toColumnKey";
+import { useColumnStore } from "#src/store/resource/sheet/column";
+import { useFilterStore } from "#src/store/resource/sheet/filter";
 
 interface Props {
   columnKey: string;

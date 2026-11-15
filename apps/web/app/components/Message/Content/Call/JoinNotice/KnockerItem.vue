@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { CallParticipant } from "@esposter/db-schema";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useCallStore } from "@/store/message/room/call";
-import { useKnockerStore } from "@/store/message/room/call/knocker";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { useCallStore } from "#src/store/message/room/call/index";
+import { useKnockerStore } from "#src/store/message/room/call/knocker";
 import { withFinalizerAsync } from "@esposter/shared";
 
 interface Props {

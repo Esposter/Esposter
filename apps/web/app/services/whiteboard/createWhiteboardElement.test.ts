@@ -1,5 +1,5 @@
-import { createWhiteboardElement } from "@/services/whiteboard/createWhiteboardElement";
-import { WHITEBOARD_STICKY_NOTE_FILL } from "@/services/whiteboard/palette/constants";
+import { createWhiteboardElement } from "#src/services/whiteboard/createWhiteboardElement";
+import { WHITEBOARD_STICKY_NOTE_FILL } from "#src/services/whiteboard/palette/constants";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 import {

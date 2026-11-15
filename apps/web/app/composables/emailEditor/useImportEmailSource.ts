@@ -2,9 +2,9 @@ import { MAX_EMAIL_NODES } from "#shared/services/pageBuilder/email/constants";
 import { emailBodyChildrenSchema } from "#shared/services/pageBuilder/email/emailNodeSchema";
 import { emailRegistry } from "#shared/services/pageBuilder/email/emailRegistry";
 import { noteRichText } from "#shared/services/pageBuilder/email/noteRichText";
-import { createErrorAlert } from "@/services/trpc/createErrorAlert";
-import { useAlertStore } from "@/store/alert";
-import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
+import { useAlertStore } from "#src/store/alert";
+import { usePageBuilderHistoryStore } from "#src/store/pageBuilder/history";
 import { getResult, JsonPatchOperationType } from "@esposter/shared";
 import { parseMjmlDocument } from "mjml-blocks";
 

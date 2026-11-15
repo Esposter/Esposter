@@ -1,6 +1,6 @@
 import type { Dataset } from "#shared/models/dataset/Dataset";
 
-import { useResourceStore } from "@/store/resource";
+import { useResourceStore } from "#src/store/resource/index";
 
 // Singleton dialog target for the personalized export's truncation confirm: the command bar stages the
 // Capped dataset here and the Editor blade renders the decision, so a partial send is never an accident.

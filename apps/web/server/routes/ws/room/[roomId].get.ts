@@ -1,5 +1,5 @@
 import { useRoomObject } from "#server/composables/realtime/useRoomObject";
-import { db } from "#server/db";
+import { db } from "#server/db/index";
 import { readSocketSession } from "#server/services/auth/readSocketSession";
 import { forwardSocket } from "#server/services/realtime/forwardSocket";
 import { readSocketValue } from "#server/services/realtime/readSocketValue";

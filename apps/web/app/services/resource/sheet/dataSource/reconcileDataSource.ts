@@ -1,7 +1,7 @@
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 
-import { inheritIdentity } from "@/services/resource/sheet/dataSource/inheritIdentity";
-import { toComparable } from "@/services/resource/sheet/dataSource/toComparable";
+import { inheritIdentity } from "#src/services/resource/sheet/dataSource/inheritIdentity";
+import { toComparable } from "#src/services/resource/sheet/dataSource/toComparable";
 import { checkIsDeepEqual } from "@esposter/shared";
 
 // An import builds every column and row new, and a new item mints a random id and fresh timestamps, so the same

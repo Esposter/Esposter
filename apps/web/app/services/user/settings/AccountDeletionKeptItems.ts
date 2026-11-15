@@ -1,4 +1,4 @@
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 // What deleting an account keeps, in the words the deletion spec gives, each a row of the confirmation's list
 export const AccountDeletionKeptItems = [

@@ -1,8 +1,8 @@
-import type { ResourceFilterValues } from "@/models/resource/list/ResourceFilterValues";
+import type { ResourceFilterValues } from "#src/models/resource/list/ResourceFilterValues";
 
-import { ResourceListSource } from "@/models/resource/list/ResourceListSource";
-import { ResourceUpdatedFilter } from "@/models/resource/list/ResourceUpdatedFilter";
-import { getResourceFilterKey } from "@/services/resource/list/getResourceFilterKey";
+import { ResourceListSource } from "#src/models/resource/list/ResourceListSource";
+import { ResourceUpdatedFilter } from "#src/models/resource/list/ResourceUpdatedFilter";
+import { getResourceFilterKey } from "#src/services/resource/list/getResourceFilterKey";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(getResourceFilterKey, () => {

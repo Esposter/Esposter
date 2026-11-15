@@ -1,4 +1,4 @@
-import type { ImportTypeLine } from "@@/scripts/models/ImportTypeLine";
+import type { ImportTypeLine } from "#scripts/models/ImportTypeLine";
 
 import { EN_US_COMPARATOR } from "#shared/services/intl/constants";
 

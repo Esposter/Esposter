@@ -1,13 +1,13 @@
-import type { SlashCommandParameters } from "@/models/message/slashCommands/SlashCommandParameters";
+import type { SlashCommandParameters } from "#src/models/message/slashCommands/SlashCommandParameters";
 
-import { SlashCommandType } from "@/models/message/slashCommands/SlashCommandType";
-import { useDataStore } from "@/store/message/data";
-import { usePollDialogStore } from "@/store/message/input/pollDialog";
-import { useReplyStore } from "@/store/message/input/reply";
-import { useScheduledMessageJobDialogStore } from "@/store/message/input/scheduledMessageJobDialog";
-import { useSlashCommandStore } from "@/store/message/input/slashCommand";
-import { useRoomStore } from "@/store/message/room";
-import { createRandomBoolean } from "@/util/math/random/createRandomBoolean";
+import { SlashCommandType } from "#src/models/message/slashCommands/SlashCommandType";
+import { useDataStore } from "#src/store/message/data";
+import { usePollDialogStore } from "#src/store/message/input/pollDialog";
+import { useReplyStore } from "#src/store/message/input/reply";
+import { useScheduledMessageJobDialogStore } from "#src/store/message/input/scheduledMessageJobDialog";
+import { useSlashCommandStore } from "#src/store/message/input/slashCommand";
+import { useRoomStore } from "#src/store/message/room/index";
+import { createRandomBoolean } from "#src/util/math/random/createRandomBoolean";
 import { MessageType, ScheduledMessageJobType } from "@esposter/db-schema";
 import { exhaustiveGuard } from "@esposter/shared";
 import { marked } from "marked";

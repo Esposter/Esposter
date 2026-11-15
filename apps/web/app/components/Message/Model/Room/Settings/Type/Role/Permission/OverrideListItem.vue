@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { UiMenuItem } from "@/models/ui/UiMenuItem";
+import type { UiMenuItem } from "#src/models/ui/UiMenuItem";
 
-import { PermissionOverrideState } from "@/models/message/room/role/PermissionOverrideState";
+import { PermissionOverrideState } from "#src/models/message/room/role/PermissionOverrideState";
 
 interface Props {
   description: string;

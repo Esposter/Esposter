@@ -1,5 +1,5 @@
-import { ThemeModeGlassPanelImageKeyMap } from "@/services/dungeons/scene/settings/ThemeModeGlassPanelImageKeyMap";
-import { useColorPickerStore } from "@/store/dungeons/settings/colorPicker";
+import { ThemeModeGlassPanelImageKeyMap } from "#src/services/dungeons/scene/settings/ThemeModeGlassPanelImageKeyMap";
+import { useColorPickerStore } from "#src/store/dungeons/settings/colorPicker";
 
 export const useGlassPanelImageKey = () => {
   const colorPickerStore = useColorPickerStore();

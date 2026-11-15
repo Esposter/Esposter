@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { SurveyDocument } from "vue-survey-engine-headless";
 
-import { useAlertStore } from "@/store/alert";
-import { useResourceStore } from "@/store/resource";
-import { useSurveyStore } from "@/store/survey";
-import { useSurveyCreatorStore } from "@/store/survey/creator";
+import { useAlertStore } from "#src/store/alert";
+import { useResourceStore } from "#src/store/resource/index";
+import { useSurveyCreatorStore } from "#src/store/survey/creator";
+import { useSurveyStore } from "#src/store/survey/index";
 import { ResourceType } from "@esposter/db-schema";
 import { checkSurveyDocument } from "vue-survey-engine-headless";
 

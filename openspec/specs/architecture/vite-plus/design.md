@@ -35,11 +35,9 @@ How CI carries the cache and why a hit needs the install are in [monorepo toolin
 
 Every cached task is probed against this tree before it is trusted: a source edit, a content edit, a `.vue` edit, and a file created where a build looks for one must each miss the cache, and only a run that read nothing changed may replay. The native tools were probed on Linux as well, because the tracer there interposes on libc for a dynamically linked process and a read that skips libc goes unseen ([vite-task 777](https://github.com/voidzero-dev/vite-task/issues/777)). The Go compiler `typecheck` loads in-process and tsgolint, the statically linked binary behind type-aware lint, both missed on an edit to a file only they read. A new native tool is probed the same way before a task caches it. The edited file is one the task reads: the root project covers the root files and not `packages`, so an edit under a package misses nothing there and reads as a hit that proves nothing.
 
-## Scripts run through `node`, or `vpx` for an alias
+## Scripts run under `node`
 
-A TypeScript script runs under plain `node` wherever it can: every source file is erasable (`erasableSyntaxOnly`), so Node's own type stripping runs it with no loader, and `scripts` reaches its modules through its `imports` map. A script whose graph reaches a tsconfig `paths` alias runs under `vpx`, the bin the `vite-plus` devDependency ships, which every workspace script finds on its PATH through the root's `node_modules/.bin`: `vpx --tsconfig tsconfig.root.json` is the form `apps/web/scripts/*` take, since they reach app source through Nuxt's `@/*`, `@@/*` and `#shared/*`. The `package-scripts` skill's `references/typescript-scripts.md` owns which runner a file gets, and `scripts/src/workspace/packageScripts.test.ts` strips every module a `node` entry reaches.
-
-The persona plugin runs its TypeScript under plain `node` the same way. The [persona plugin](../../infra/claude-interface/persona-plugin/README.md) records that.
+Every TypeScript script runs under plain `node`: every source file is erasable (`erasableSyntaxOnly`), and every package, the web app included, reaches its own source through the subpath imports its manifest declares, so Node's own type stripping and resolution run it with no loader. `vpx` ships with `vite-plus`, which stays for tests, lint and builds; no script entry runs through it, which `scripts/src/workspace/packageScripts.test.ts` holds, and the `package-scripts` skill's `references/typescript-scripts.md` owns the rule. The persona plugin runs its TypeScript under plain `node` the same way ([persona plugin](../../infra/claude-interface/persona-plugin/README.md)).
 
 ## One copy of every tool
 

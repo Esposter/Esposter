@@ -1,8 +1,8 @@
-import type { WhiteboardTextEdit } from "@/models/whiteboard/WhiteboardTextEdit";
+import type { WhiteboardTextEdit } from "#src/models/whiteboard/WhiteboardTextEdit";
 import type { JsonPatchOperation } from "@esposter/shared";
 import type { PositionedDocument } from "vue-block-editor-headless";
 
-import { getElementIndexById } from "@/services/whiteboard/gesture/getElementIndexById";
+import { getElementIndexById } from "#src/services/whiteboard/gesture/getElementIndexById";
 import { takeOne } from "@esposter/shared";
 import { getPositionedElementText, updatePositionedElementText } from "vue-block-editor-headless";
 

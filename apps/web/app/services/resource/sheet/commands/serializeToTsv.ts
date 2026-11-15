@@ -1,7 +1,7 @@
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 
-import { getCellTextRows } from "@/services/resource/sheet/commands/getCellTextRows";
-import { sanitizeTsvField } from "@/services/resource/sheet/commands/sanitizeTsvField";
+import { getCellTextRows } from "#src/services/resource/sheet/commands/getCellTextRows";
+import { sanitizeTsvField } from "#src/services/resource/sheet/commands/sanitizeTsvField";
 
 export const serializeToTsv = (
   dataSource: DataSource,

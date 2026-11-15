@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
 import type { RoomFilterInMessage } from "@esposter/db-schema";
 
-import MessageModelRoomSettingsTypeWordFilterForm from "@/components/Message/Model/Room/Settings/Type/WordFilter/Form.vue";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
+import MessageModelRoomSettingsTypeWordFilterForm from "#src/components/Message/Model/Room/Settings/Type/WordFilter/Form.vue";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { WordFilterAction } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { v7 } from "uuid";

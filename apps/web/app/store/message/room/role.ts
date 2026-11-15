@@ -12,11 +12,11 @@ import type { UpsertMemberPermissionOverrideInput } from "#shared/models/db/role
 import type { RevokeRoleInput, RoomPermission, RoomRoleInMessage } from "@esposter/db-schema";
 
 import { checkIsManageable as baseCheckIsManageable } from "#shared/services/room/rbac/checkIsManageable";
-import { memberRoleChangeHooks } from "@/services/message/member/memberRoleChangeHooks";
-import { MANAGEMENT_PERMISSIONS } from "@/services/room/rbac/constants";
-import { getRestoredItems } from "@/services/shared/getRestoredItems";
-import { useRoomStore } from "@/store/message/room";
-import { useUserStore } from "@/store/message/user";
+import { memberRoleChangeHooks } from "#src/services/message/member/memberRoleChangeHooks";
+import { MANAGEMENT_PERMISSIONS } from "#src/services/room/rbac/constants";
+import { getRestoredItems } from "#src/services/shared/getRestoredItems";
+import { useRoomStore } from "#src/store/message/room/index";
+import { useUserStore } from "#src/store/message/user/index";
 import { checkHasPermission } from "@esposter/db-schema";
 import { ID_SEPARATOR, noop } from "@esposter/shared";
 

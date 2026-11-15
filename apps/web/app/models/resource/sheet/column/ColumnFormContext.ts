@@ -1,5 +1,5 @@
 import type { Column } from "#shared/models/resource/sheet/column/Column";
-import type { UiSelectItem } from "@/models/ui/UiSelectItem";
+import type { UiSelectItem } from "#src/models/ui/UiSelectItem";
 
 import { getPropertyNames } from "@esposter/shared";
 

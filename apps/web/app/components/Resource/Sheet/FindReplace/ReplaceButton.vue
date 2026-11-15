@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { useFindReplaceStore } from "@/store/resource/sheet/findReplace";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { useFindReplaceStore } from "#src/store/resource/sheet/findReplace";
 
 const findReplaceStore = useFindReplaceStore();
 const { currentOccurrenceIndex, findValue, occurrences, replaceValue } = storeToRefs(findReplaceStore);

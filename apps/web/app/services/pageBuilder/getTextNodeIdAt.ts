@@ -1,7 +1,7 @@
-import type { OverlayBox } from "@/models/pageBuilder/OverlayBox";
-import type { PageBuilderHelper } from "@/models/pageBuilder/PageBuilderHelper";
+import type { OverlayBox } from "#src/models/pageBuilder/OverlayBox";
+import type { PageBuilderHelper } from "#src/models/pageBuilder/PageBuilderHelper";
 
-import { checkIsInsideBox } from "@/services/pageBuilder/checkIsInsideBox";
+import { checkIsInsideBox } from "#src/services/pageBuilder/checkIsInsideBox";
 import { MjmlNodeType } from "mjml-blocks";
 import { getBlockLayerRows, getBlockNode } from "vue-block-editor-headless";
 

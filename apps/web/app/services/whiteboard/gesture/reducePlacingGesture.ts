@@ -1,17 +1,17 @@
-import type { GesturePlacing } from "@/models/whiteboard/GesturePlacing";
-import type { GesturePointerEvent } from "@/models/whiteboard/GesturePointerEvent";
-import type { WhiteboardGestureResult } from "@/models/whiteboard/WhiteboardGestureResult";
-import type { WhiteboardGestureState } from "@/models/whiteboard/WhiteboardGestureState";
+import type { GesturePlacing } from "#src/models/whiteboard/GesturePlacing";
+import type { GesturePointerEvent } from "#src/models/whiteboard/GesturePointerEvent";
+import type { WhiteboardGestureResult } from "#src/models/whiteboard/WhiteboardGestureResult";
+import type { WhiteboardGestureState } from "#src/models/whiteboard/WhiteboardGestureState";
 
-import { GesturePointerAction } from "@/models/whiteboard/GesturePointerAction";
-import { GestureTool } from "@/models/whiteboard/GestureTool";
-import { createWhiteboardElement } from "@/services/whiteboard/createWhiteboardElement";
-import { checkIsDragStarted } from "@/services/whiteboard/gesture/checkIsDragStarted";
-import { getDraggedBounds } from "@/services/whiteboard/gesture/getDraggedBounds";
-import { getPreviewOrCommitResult } from "@/services/whiteboard/gesture/getPreviewOrCommitResult";
-import { getWorldPoint } from "@/services/whiteboard/gesture/getWorldPoint";
-import { reducePreviewOrCommitGesture } from "@/services/whiteboard/gesture/reducePreviewOrCommitGesture";
-import { getPlacedBounds } from "@/services/whiteboard/getPlacedBounds";
+import { GesturePointerAction } from "#src/models/whiteboard/GesturePointerAction";
+import { GestureTool } from "#src/models/whiteboard/GestureTool";
+import { createWhiteboardElement } from "#src/services/whiteboard/createWhiteboardElement";
+import { checkIsDragStarted } from "#src/services/whiteboard/gesture/checkIsDragStarted";
+import { getDraggedBounds } from "#src/services/whiteboard/gesture/getDraggedBounds";
+import { getPreviewOrCommitResult } from "#src/services/whiteboard/gesture/getPreviewOrCommitResult";
+import { getWorldPoint } from "#src/services/whiteboard/gesture/getWorldPoint";
+import { reducePreviewOrCommitGesture } from "#src/services/whiteboard/gesture/reducePreviewOrCommitGesture";
+import { getPlacedBounds } from "#src/services/whiteboard/getPlacedBounds";
 import { insertPositionedElement } from "vue-block-editor-headless";
 
 // A placing press previews its element once the pointer has travelled the drag start distance, sized by the drag. A release places the element

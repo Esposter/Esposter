@@ -1,6 +1,6 @@
-import type { CardStackState } from "@/models/visual/CardStackState";
+import type { CardStackState } from "#src/models/visual/CardStackState";
 
-import { getCardStackClass } from "@/services/visual/getCardStackClass";
+import { getCardStackClass } from "#src/services/visual/getCardStackClass";
 import { describe, expect, test } from "vitest";
 
 describe(getCardStackClass, () => {

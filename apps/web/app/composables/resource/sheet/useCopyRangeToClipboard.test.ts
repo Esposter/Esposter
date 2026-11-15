@@ -4,11 +4,11 @@ import { createComputedColumn } from "#shared/models/resource/sheet/column/creat
 import { createNumberColumn } from "#shared/models/resource/sheet/column/createNumberColumn.test";
 import { createDataSource } from "#shared/models/resource/sheet/datasource/createDataSource.test";
 import { createRow } from "#shared/models/resource/sheet/datasource/createRow.test";
-import { setupCommandTest } from "@/composables/resource/sheet/commands/setupCommandTest.test";
-import { setupWithDataSource } from "@/composables/resource/sheet/commands/setupWithDataSource.test";
-import { useCopyRangeToClipboard } from "@/composables/resource/sheet/useCopyRangeToClipboard";
-import { useCellStore } from "@/store/resource/sheet/cell";
-import { useRowStore } from "@/store/resource/sheet/row";
+import { setupCommandTest } from "#src/composables/resource/sheet/commands/setupCommandTest.test";
+import { setupWithDataSource } from "#src/composables/resource/sheet/commands/setupWithDataSource.test";
+import { useCopyRangeToClipboard } from "#src/composables/resource/sheet/useCopyRangeToClipboard";
+import { useCellStore } from "#src/store/resource/sheet/cell";
+import { useRowStore } from "#src/store/resource/sheet/row";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 const selectRange = (rowStart: number, rowEnd: number, columnStart: number, columnEnd: number) => {

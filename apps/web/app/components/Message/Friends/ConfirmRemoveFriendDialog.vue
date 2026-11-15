@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useFriendStore } from "@/store/message/user/friend";
-import { useFriendDialogStore } from "@/store/message/user/friendDialog";
+import { useFriendStore } from "#src/store/message/user/friend";
+import { useFriendDialogStore } from "#src/store/message/user/friendDialog";
 
 const friendStore = useFriendStore();
 const { friends } = storeToRefs(friendStore);

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { checkIsCaretAtEnd } from "@/util/dom/checkIsCaretAtEnd";
+import { checkIsCaretAtEnd } from "#src/util/dom/checkIsCaretAtEnd";
 
 interface Props {
   isFocused?: boolean;

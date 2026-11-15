@@ -1,9 +1,9 @@
 // @vitest-environment nuxt
-import { DRAFT_DEBOUNCE_MS } from "@/services/message/draft/constants";
-import { draftsSerializer } from "@/services/message/draft/draftsSerializer";
-import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
-import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
-import { useInputStore } from "@/store/message/input";
+import { DRAFT_DEBOUNCE_MS } from "#src/services/message/draft/constants";
+import { draftsSerializer } from "#src/services/message/draft/draftsSerializer";
+import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
+import { LocalStorageKey } from "#src/services/shared/LocalStorageKey";
+import { useInputStore } from "#src/store/message/input/index";
 import { marked } from "marked";
 import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";

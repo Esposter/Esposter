@@ -1,8 +1,8 @@
-import type { UiSelectItem } from "@/models/ui/UiSelectItem";
+import type { UiSelectItem } from "#src/models/ui/UiSelectItem";
 
 import { VisualType, VisualTypes } from "#shared/models/dashboard/data/VisualType";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { prettify } from "@/util/text/prettify";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { prettify } from "#src/util/text/prettify";
 
 // A card and a table lead the charts, since the enum is sorted and would otherwise list them among the rest
 const leadingVisualTypes: VisualType[] = [VisualType.Card, VisualType.Table];

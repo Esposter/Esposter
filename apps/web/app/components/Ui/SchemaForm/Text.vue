@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { UiSchemaFormRendererProps } from "@/models/ui/schemaForm/UiSchemaFormRendererProps";
+import type { UiSchemaFormRendererProps } from "#src/models/ui/schemaForm/UiSchemaFormRendererProps";
 
-import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
+import { UiTextFieldType } from "#src/models/ui/UiTextFieldType";
 
 interface Props extends UiSchemaFormRendererProps {}
 // JSON Forms derives whether a field is enabled or read only when the form leaves them unset, which a boolean prop

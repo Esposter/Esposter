@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { compareCreatedAt } from "#shared/util/date/compareCreatedAt";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { THREAD_COMPOSER_DROP_ZONE_ATTRIBUTE } from "@/services/message/composer/constants";
-import { useThreadStore } from "@/store/message/thread";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { THREAD_COMPOSER_DROP_ZONE_ATTRIBUTE } from "#src/services/message/composer/constants";
+import { useThreadStore } from "#src/store/message/thread";
 import { DEFAULT_PAGE_LIMIT } from "@esposter/db-schema";
 
 const threadStore = useThreadStore();

@@ -14,9 +14,9 @@ import { requireReadableCallSession } from "#server/services/message/call/requir
 import { requireThreadRoot } from "#server/services/message/call/requireThreadRoot";
 import { writeCallSummary } from "#server/services/message/call/writeCallSummary";
 import { createSystemRoomMessage } from "#server/services/message/createSystemRoomMessage";
-import { router } from "#server/trpc";
 import { getForbiddenError } from "#server/trpc/guards/getForbiddenError";
 import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
+import { router } from "#server/trpc/index";
 import { getMemberProcedure } from "#server/trpc/procedure/room/getMemberProcedure";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { knockerRouter } from "#server/trpc/routers/call/knocker";

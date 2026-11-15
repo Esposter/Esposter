@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { UiDialogSize } from "@/models/ui/UiDialogSize";
+import type { UiDialogSize } from "#src/models/ui/UiDialogSize";
 
-import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
-import { UI_DIALOG_INJECTION_KEY } from "@/services/ui/constants";
-import { UiDialogFrameClassMap } from "@/services/ui/UiDialogFrameClassMap";
-import { UiDialogPlacementClassMap } from "@/services/ui/UiDialogPlacementClassMap";
-import { UiDialogSizeClassMap } from "@/services/ui/UiDialogSizeClassMap";
+import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
+import { UI_DIALOG_INJECTION_KEY } from "#src/services/ui/constants";
+import { UiDialogFrameClassMap } from "#src/services/ui/UiDialogFrameClassMap";
+import { UiDialogPlacementClassMap } from "#src/services/ui/UiDialogPlacementClassMap";
+import { UiDialogSizeClassMap } from "#src/services/ui/UiDialogSizeClassMap";
 import { Dialog } from "@vuetify/v0";
 
 interface Props {

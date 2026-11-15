@@ -1,4 +1,4 @@
-import { useMonsterPositions } from "@/composables/dungeons/scene/battle/monster/useMonsterPositions";
+import { useMonsterPositions } from "#src/composables/dungeons/scene/battle/monster/useMonsterPositions";
 import { describe, expect, test } from "vitest";
 
 describe(useMonsterPositions, () => {

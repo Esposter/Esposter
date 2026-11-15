@@ -1,5 +1,5 @@
-import { computeInputLevelDecibels } from "@/services/message/room/call/computeInputLevelDecibels";
-import { useVoiceDeviceSettingsStore } from "@/store/message/user/settings/voiceDevice";
+import { computeInputLevelDecibels } from "#src/services/message/room/call/computeInputLevelDecibels";
+import { useVoiceDeviceSettingsStore } from "#src/store/message/user/settings/voiceDevice";
 import { MAX_INPUT_SENSITIVITY_DECIBELS, MIN_INPUT_SENSITIVITY_DECIBELS } from "@esposter/db-schema";
 import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 

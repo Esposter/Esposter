@@ -1,5 +1,5 @@
-import { authClient } from "@/services/auth/authClient";
-import { resetIndexedDb } from "@/services/cache/indexedDb/openIndexedDb";
+import { authClient } from "#src/services/auth/authClient";
+import { resetIndexedDb } from "#src/services/cache/indexedDb/openIndexedDb";
 import { getResultAsync, noop } from "@esposter/shared";
 
 // Ending a session server-side deletes the row and nothing else: this browser still holds the cookie that named

@@ -1,5 +1,5 @@
 export const DRAWINGS = [
-  defineAsyncComponent(() => import("@/components/Anime/Frieren.vue")),
-  defineAsyncComponent(() => import("@/components/Anime/Yui.vue")),
-  defineAsyncComponent(() => import("@/components/Anime/Azunyan.vue")),
+  defineAsyncComponent(() => import("#src/components/Anime/Frieren.vue")),
+  defineAsyncComponent(() => import("#src/components/Anime/Yui.vue")),
+  defineAsyncComponent(() => import("#src/components/Anime/Azunyan.vue")),
 ];

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { YuiExpressions } from "@/services/anime/YuiExpressions";
+import { YuiExpressions } from "#src/services/anime/YuiExpressions";
 </script>
 
 <template>

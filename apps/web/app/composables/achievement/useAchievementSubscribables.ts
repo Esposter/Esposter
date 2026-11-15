@@ -1,5 +1,5 @@
-import { useAchievementStore } from "@/store/achievement";
-import { useConnectionStore } from "@/store/realtime/connection";
+import { useAchievementStore } from "#src/store/achievement/index";
+import { useConnectionStore } from "#src/store/realtime/connection";
 import { checkIsServer } from "@esposter/shared";
 
 export const useAchievementSubscribables = () => {

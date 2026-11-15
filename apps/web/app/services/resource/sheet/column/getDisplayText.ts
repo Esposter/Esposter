@@ -1,7 +1,7 @@
 import type { Column } from "#shared/models/resource/sheet/column/Column";
 import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnValue";
 
-import { formatValue } from "@/services/resource/sheet/column/formatValue";
+import { formatValue } from "#src/services/resource/sheet/column/formatValue";
 
 export const getDisplayText = (value: ColumnValue, column: Column) => {
   if (value === null) return "";

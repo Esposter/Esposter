@@ -1,9 +1,9 @@
 // @vitest-environment happy-dom
 import type { SurveyExpressionNode } from "vue-survey-engine-headless";
 
-import ResourceSurveyFieldExpression from "@/components/Resource/Survey/Field/Expression.vue";
-import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
-import { UiStyles } from "@/models/ui/UiStyle";
+import ResourceSurveyFieldExpression from "#src/components/Resource/Survey/Field/Expression.vue";
+import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
+import { UiStyles } from "#src/models/ui/UiStyle";
 import { mount } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";

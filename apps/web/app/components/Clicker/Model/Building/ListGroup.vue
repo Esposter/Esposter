@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { Building } from "#shared/models/clicker/data/building/Building";
-import type { ClickerBuildingListItem } from "@/models/clicker/ClickerBuildingListItem";
+import type { ClickerBuildingListItem } from "#src/models/clicker/ClickerBuildingListItem";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { STORE_ITEM_POSITION_AREA } from "@/services/clicker/constants";
-import { BuildingIconMap } from "@/services/clicker/icon/BuildingIconMap";
-import { useBuildingStore } from "@/store/clicker/building";
-import { usePointStore } from "@/store/clicker/point";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { STORE_ITEM_POSITION_AREA } from "#src/services/clicker/constants";
+import { BuildingIconMap } from "#src/services/clicker/icon/BuildingIconMap";
+import { useBuildingStore } from "#src/store/clicker/building";
+import { usePointStore } from "#src/store/clicker/point";
 
 interface Props {
   buildings: Building[];

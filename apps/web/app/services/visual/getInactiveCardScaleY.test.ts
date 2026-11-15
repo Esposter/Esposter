@@ -1,4 +1,4 @@
-import { getInactiveCardScaleY } from "@/services/visual/getInactiveCardScaleY";
+import { getInactiveCardScaleY } from "#src/services/visual/getInactiveCardScaleY";
 import { describe, expect, test } from "vitest";
 
 describe(getInactiveCardScaleY, () => {

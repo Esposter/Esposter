@@ -3,7 +3,7 @@ import type { RoomCategoryInMessage } from "@esposter/db-schema";
 import { ownedBy } from "#server/services/db/ownedBy";
 import { requireRoomCategory } from "#server/services/room/category/requireRoomCategory";
 import { getRoomListTopics } from "#server/services/room/getRoomListTopics";
-import { router } from "#server/trpc";
+import { router } from "#server/trpc/index";
 import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { createRoomCategoryInputSchema } from "#shared/models/db/roomCategory/CreateRoomCategoryInput";

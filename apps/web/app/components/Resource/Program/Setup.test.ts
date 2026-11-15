@@ -1,10 +1,10 @@
 // @vitest-environment nuxt
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
-import ResourceProgramSetup from "@/components/Resource/Program/Setup.vue";
-import { useSession } from "@/services/auth/authClient.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useResourceStore } from "@/store/resource";
+import ResourceProgramSetup from "#src/components/Resource/Program/Setup.vue";
+import { useSession } from "#src/services/auth/authClient.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useResourceStore } from "#src/store/resource/index";
 import { createEmptyPage, ResourceType, SurveyResponseMode } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";

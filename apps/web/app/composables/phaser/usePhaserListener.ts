@@ -1,6 +1,6 @@
-import type { PhaserEvents } from "@/models/phaser/PhaserEvents";
+import type { PhaserEvents } from "#src/models/phaser/PhaserEvents";
 
-import { phaserEventEmitter } from "@/services/phaser/phaserEventEmitter";
+import { phaserEventEmitter } from "#src/services/phaser/phaserEventEmitter";
 
 export const usePhaserListener = <TEvent extends keyof PhaserEvents>(event: TEvent, listener: PhaserEvents[TEvent]) => {
   onMounted(() => {

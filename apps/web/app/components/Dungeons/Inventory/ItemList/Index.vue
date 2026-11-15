@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getGridKey } from "@/services/dungeons/getGridKey";
+import { getGridKey } from "#src/services/dungeons/getGridKey";
 
 const itemOptionGrid = useItemOptionGrid();
 </script>

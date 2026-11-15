@@ -2,16 +2,16 @@
 /* oxlint-disable typescript/no-floating-promises -- loadAccountSave retries until the save loads and settles every failure itself, so the promise it returns cannot reject and nothing waits on it; persist settles every failure itself, so the promise it returns cannot reject and nothing waits on it */
 import type { GenshinSave } from "genshin-world/save";
 
-import { MutationStatus } from "@/models/shared/MutationStatus";
-import { AUTOSAVE_INTERVAL_MS } from "@/services/clicker/constants";
-import { getGenshinStartRetryDelayMs } from "@/services/genshin/getGenshinStartRetryDelayMs";
-import { parseGenshinJournal } from "@/services/genshin/parseGenshinJournal";
-import { readGuestSave } from "@/services/genshin/readGuestSave";
-import { createSingleFlight } from "@/services/shared/createSingleFlight";
-import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
-import { checkIsTRPCConflict } from "@/services/trpc/checkIsTRPCConflict";
-import { useAlertStore } from "@/store/alert";
-import { useConnectionStore } from "@/store/realtime/connection";
+import { MutationStatus } from "#src/models/shared/MutationStatus";
+import { AUTOSAVE_INTERVAL_MS } from "#src/services/clicker/constants";
+import { getGenshinStartRetryDelayMs } from "#src/services/genshin/getGenshinStartRetryDelayMs";
+import { parseGenshinJournal } from "#src/services/genshin/parseGenshinJournal";
+import { readGuestSave } from "#src/services/genshin/readGuestSave";
+import { createSingleFlight } from "#src/services/shared/createSingleFlight";
+import { LocalStorageKey } from "#src/services/shared/LocalStorageKey";
+import { checkIsTRPCConflict } from "#src/services/trpc/checkIsTRPCConflict";
+import { useAlertStore } from "#src/store/alert";
+import { useConnectionStore } from "#src/store/realtime/connection";
 import { checkIsServer, getResult, InvalidOperationError, noop, Operation } from "@esposter/shared";
 import { StorageSerializers } from "@vueuse/core";
 import { EMPTY_GENSHIN_SAVE, genshinSaveSchema, mergeGenshinSave } from "genshin-world/save";

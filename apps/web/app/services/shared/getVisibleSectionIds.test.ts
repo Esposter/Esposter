@@ -1,4 +1,4 @@
-import { getVisibleSectionIds } from "@/services/shared/getVisibleSectionIds";
+import { getVisibleSectionIds } from "#src/services/shared/getVisibleSectionIds";
 import { describe, expect, test } from "vitest";
 
 describe(getVisibleSectionIds, () => {

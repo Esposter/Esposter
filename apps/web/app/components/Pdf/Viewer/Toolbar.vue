@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import type { Item } from "@/models/shared/Item";
+import type { Item } from "#src/models/shared/Item";
 import type { PdfAnnotationsState, PdfViewerState } from "vue-pdfjs-headless";
 
 import { MimeType } from "#shared/models/file/MimeType";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
-import { importFile } from "@/services/file/importFile";
-import { createErrorAlert } from "@/services/trpc/createErrorAlert";
-import { useAlertStore } from "@/store/alert";
-import { trimFileExtension } from "@/util/file/trimFileExtension";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { UiTextFieldType } from "#src/models/ui/UiTextFieldType";
+import { importFile } from "#src/services/file/importFile";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
+import { useAlertStore } from "#src/store/alert";
+import { trimFileExtension } from "#src/util/file/trimFileExtension";
 import { downloadFile, getResultAsync, noop } from "@esposter/shared";
 import { PDF_ROTATION_STEP, PdfEditorMode } from "vue-pdfjs-headless";
 

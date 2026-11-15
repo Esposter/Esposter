@@ -1,11 +1,14 @@
 <script setup lang="ts">
-import { MenuTextStyle } from "@/assets/dungeons/scene/monsterParty/styles/MenuTextStyle";
-import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
-import { DEFAULT_INFO_DIALOG_MESSAGE, INFO_CONTAINER_HEIGHT } from "@/services/dungeons/scene/monsterParty/constants";
-import { PANEL_BORDER_COLOR, PANEL_FILL_COLOR } from "@/services/dungeons/UI/constants";
-import { useControlsStore } from "@/store/dungeons/controls";
-import { useDialogStore } from "@/store/dungeons/dialog";
-import { useMonsterPartyInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
+import { MenuTextStyle } from "#src/assets/dungeons/scene/monsterParty/styles/MenuTextStyle";
+import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";
+import {
+  DEFAULT_INFO_DIALOG_MESSAGE,
+  INFO_CONTAINER_HEIGHT,
+} from "#src/services/dungeons/scene/monsterParty/constants";
+import { PANEL_BORDER_COLOR, PANEL_FILL_COLOR } from "#src/services/dungeons/UI/constants";
+import { useControlsStore } from "#src/store/dungeons/controls";
+import { useDialogStore } from "#src/store/dungeons/dialog";
+import { useMonsterPartyInfoPanelStore } from "#src/store/dungeons/monsterParty/infoPanel";
 import { Input } from "phaser";
 import { Container, onCreate, Rectangle, Text } from "vue-phaserjs";
 

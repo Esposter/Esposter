@@ -1,9 +1,9 @@
 // @vitest-environment nuxt
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { SnapshotChannelDefinitionMap } from "#shared/services/resource/SnapshotChannelDefinitionMap";
-import ResourceOverview from "@/components/Resource/Overview.vue";
-import UiSkeleton from "@/components/Ui/Skeleton.vue";
-import { useResourceStore } from "@/store/resource";
+import ResourceOverview from "#src/components/Resource/Overview.vue";
+import UiSkeleton from "#src/components/Ui/Skeleton.vue";
+import { useResourceStore } from "#src/store/resource/index";
 import { SnapshotChannel } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";

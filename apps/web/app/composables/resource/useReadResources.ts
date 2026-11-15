@@ -1,15 +1,15 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
-import type { ResourceFilterValues } from "@/models/resource/list/ResourceFilterValues";
-import type { ResourceListFilters } from "@/models/resource/list/ResourceListFilters";
-import type { ResourceStatusFilter } from "@/models/resource/list/ResourceStatusFilter";
-import type { ResourceUpdatedFilter } from "@/models/resource/list/ResourceUpdatedFilter";
+import type { ResourceFilterValues } from "#src/models/resource/list/ResourceFilterValues";
+import type { ResourceListFilters } from "#src/models/resource/list/ResourceListFilters";
+import type { ResourceStatusFilter } from "#src/models/resource/list/ResourceStatusFilter";
+import type { ResourceUpdatedFilter } from "#src/models/resource/list/ResourceUpdatedFilter";
 import type { ResourceType } from "@esposter/db-schema";
 
-import { ResourceListSource } from "@/models/resource/list/ResourceListSource";
-import { getResourceFilterInput } from "@/services/resource/list/getResourceFilterInput";
-import { getResourceFilterKey } from "@/services/resource/list/getResourceFilterKey";
-import { getResourceListSortName } from "@/services/resource/list/getResourceListSortName";
+import { ResourceListSource } from "#src/models/resource/list/ResourceListSource";
+import { getResourceFilterInput } from "#src/services/resource/list/getResourceFilterInput";
+import { getResourceFilterKey } from "#src/services/resource/list/getResourceFilterKey";
+import { getResourceListSortName } from "#src/services/resource/list/getResourceListSortName";
 import { MAX_READ_LIMIT } from "@esposter/shared";
 
 export const useReadResources = (

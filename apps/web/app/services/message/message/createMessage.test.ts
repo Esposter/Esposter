@@ -1,4 +1,4 @@
-import type { ClientMessage } from "@/models/message/ClientMessage";
+import type { ClientMessage } from "#src/models/message/ClientMessage";
 
 import { MessageType } from "@esposter/db-schema";
 import { v7 } from "uuid";

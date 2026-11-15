@@ -1,10 +1,10 @@
 import type { Context } from "#server/trpc/context";
-import type { TRPCRouter } from "#server/trpc/routers";
+import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { CreateWebhookInput } from "#shared/models/db/webhook/CreateWebhookInput";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { createCallerFactory } from "#server/trpc";
 import { createMockAuthSession, createMockContext } from "#server/trpc/context.test";
+import { createCallerFactory } from "#server/trpc/index";
 import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
 import { webhookRouter } from "#server/trpc/routers/webhook";
 import { WEBHOOK_MAX_LENGTH } from "#shared/services/message/constants";

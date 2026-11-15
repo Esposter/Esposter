@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import type { RoomCategoryInMessage, RoomInMessage } from "@esposter/db-schema";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { resolveRoomCategoryId } from "@/services/message/roomCategory/resolveRoomCategoryId";
-import { getMovedItems } from "@/services/shared/getMovedItems";
-import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
-import { REORDER_HANDLE_CLASS } from "@/services/ui/constants";
-import { useRoomStore } from "@/store/message/room";
-import { useUserToRoomStore } from "@/store/message/room/userToRoom";
-import { useRoomCategoryStore } from "@/store/message/roomCategory";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { resolveRoomCategoryId } from "#src/services/message/roomCategory/resolveRoomCategoryId";
+import { getMovedItems } from "#src/services/shared/getMovedItems";
+import { LocalStorageKey } from "#src/services/shared/LocalStorageKey";
+import { REORDER_HANDLE_CLASS } from "#src/services/ui/constants";
+import { useRoomStore } from "#src/store/message/room/index";
+import { useUserToRoomStore } from "#src/store/message/room/userToRoom";
+import { useRoomCategoryStore } from "#src/store/message/roomCategory";
 import { getOrCreate } from "@esposter/shared";
 
 const isCollapsed = useLocalStorage(LocalStorageKey.MessageSidebarRoomsCollapsed, false);

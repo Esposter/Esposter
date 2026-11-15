@@ -1,14 +1,14 @@
 // @vitest-environment nuxt
-import { usePageBuilderSelection } from "@/composables/pageBuilder/usePageBuilderSelection";
+import { usePageBuilderSelection } from "#src/composables/pageBuilder/usePageBuilderSelection";
 import {
   TEST_NESTED_TEXT_ID,
   TEST_ROOT_TEXT_ID,
   TEST_SECTION_ID,
   TEST_WEBPAGE,
-} from "@/services/pageBuilder/constants.test";
-import { webpageKind } from "@/services/pageBuilder/webpageKind";
-import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
-import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
+} from "#src/services/pageBuilder/constants.test";
+import { webpageKind } from "#src/services/pageBuilder/webpageKind";
+import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
+import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
 import { createPinia, setActivePinia } from "pinia";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";

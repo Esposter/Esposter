@@ -1,4 +1,4 @@
-import type { LandMask } from "@/models/visual/LandMask";
+import type { LandMask } from "#src/models/visual/LandMask";
 
 import { takeOne } from "@esposter/shared";
 

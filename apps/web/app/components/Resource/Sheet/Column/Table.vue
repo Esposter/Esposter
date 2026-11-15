@@ -3,15 +3,15 @@ import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSo
 
 import { compileSheetColumns } from "#shared/services/resource/sheet/column/compileSheetColumns";
 import { getEffectiveColumnType } from "#shared/services/resource/sheet/column/getEffectiveColumnType";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
-import { ColumnHeaders } from "@/services/resource/sheet/column/ColumnHeaders";
-import { ColumnTypeTokenMap } from "@/services/resource/sheet/column/ColumnTypeTokenMap";
-import { computeColumnStatisticsForColumn } from "@/services/resource/sheet/column/computeColumnStatisticsForColumn";
-import { getReorderedItems } from "@/services/shared/getReorderedItems";
-import { REORDER_HANDLE_CLASS } from "@/services/ui/constants";
-import { useColumnStore } from "@/store/resource/sheet/column";
-import { useColumnDialogStore } from "@/store/resource/sheet/columnDialog";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { UiTextFieldType } from "#src/models/ui/UiTextFieldType";
+import { ColumnHeaders } from "#src/services/resource/sheet/column/ColumnHeaders";
+import { ColumnTypeTokenMap } from "#src/services/resource/sheet/column/ColumnTypeTokenMap";
+import { computeColumnStatisticsForColumn } from "#src/services/resource/sheet/column/computeColumnStatisticsForColumn";
+import { getReorderedItems } from "#src/services/shared/getReorderedItems";
+import { REORDER_HANDLE_CLASS } from "#src/services/ui/constants";
+import { useColumnStore } from "#src/store/resource/sheet/column";
+import { useColumnDialogStore } from "#src/store/resource/sheet/columnDialog";
 
 interface Props {
   dataSource: DataSource;

@@ -1,5 +1,5 @@
-import { createWhiteboardEditState, WHITEBOARD_PROCESS } from "@/services/whiteboard/constants.test";
-import { undoWhiteboardEdit } from "@/services/whiteboard/edit/undoWhiteboardEdit";
+import { createWhiteboardEditState, WHITEBOARD_PROCESS } from "#src/services/whiteboard/constants.test";
+import { undoWhiteboardEdit } from "#src/services/whiteboard/edit/undoWhiteboardEdit";
 import { describe, expect, test } from "vitest";
 
 describe(undoWhiteboardEdit, () => {

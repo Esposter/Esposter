@@ -2,7 +2,7 @@ import type { Context } from "#server/trpc/context";
 
 import { createMcpServer } from "#server/services/mcp/createMcpServer";
 import { createMockContext } from "#server/trpc/context.test";
-import { trpcRouter } from "#server/trpc/routers";
+import { trpcRouter } from "#server/trpc/routers/index";
 import { McpScope } from "@esposter/db-schema";
 import { jsonDateParse } from "@esposter/shared";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";

@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 
-import { useAutofocus } from "@/composables/ui/useAutofocus";
+import { useAutofocus } from "#src/composables/ui/useAutofocus";
 import { flushPromises, mount } from "@vue/test-utils";
 import { afterEach, describe, expect, test } from "vitest";
 
@@ -45,7 +45,8 @@ describe(useAutofocus, () => {
   test("leaves a reader who is typing elsewhere alone", async () => {
     expect.hasAssertions();
 
-    const typing = window.document.body.appendChild(window.document.createElement("textarea"));
+    const typing = window.document.createElement("textarea");
+    window.document.body.append(typing);
     typing.focus();
     const component = mount(createInputComponent(ref(true)), { attachTo: window.document.body });
     await flushPromises();
@@ -57,7 +58,8 @@ describe(useAutofocus, () => {
   test("takes focus from a control that takes no text", async () => {
     expect.hasAssertions();
 
-    const button = window.document.body.appendChild(window.document.createElement("button"));
+    const button = window.document.createElement("button");
+    window.document.body.append(button);
     button.focus();
     const component = mount(createInputComponent(ref(true)), { attachTo: window.document.body });
     await flushPromises();
@@ -71,7 +73,8 @@ describe(useAutofocus, () => {
     const isEnabled = ref(true);
     const component = mount(createInputComponent(isEnabled), { attachTo: window.document.body });
     await flushPromises();
-    const other = window.document.body.appendChild(window.document.createElement("input"));
+    const other = window.document.createElement("input");
+    window.document.body.append(other);
     other.focus();
     isEnabled.value = false;
     await flushPromises();

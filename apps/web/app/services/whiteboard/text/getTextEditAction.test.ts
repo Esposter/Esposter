@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
-import { pressKey } from "@/services/whiteboard/constants.test";
-import { getTextEditAction } from "@/services/whiteboard/text/getTextEditAction";
+import { pressKey } from "#src/services/whiteboard/constants.test";
+import { getTextEditAction } from "#src/services/whiteboard/text/getTextEditAction";
 import { describe, expect, test } from "vitest";
 
 describe(getTextEditAction, () => {

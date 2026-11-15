@@ -1,13 +1,13 @@
-import type { EmailStyleField } from "@/models/pageBuilder/EmailStyleField";
+import type { EmailStyleField } from "#src/models/pageBuilder/EmailStyleField";
 
 import { emailRegistry } from "#shared/services/pageBuilder/email/emailRegistry";
 import { getEmailAttributeValue } from "#shared/services/pageBuilder/email/getEmailAttributeValue";
-import { getEmailAttributeOperation } from "@/services/pageBuilder/email/getEmailAttributeOperation";
-import { emailKind } from "@/services/pageBuilder/emailKind";
-import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
-import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
-import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
-import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
+import { getEmailAttributeOperation } from "#src/services/pageBuilder/email/getEmailAttributeOperation";
+import { emailKind } from "#src/services/pageBuilder/emailKind";
+import { getNodePointer } from "#src/services/pageBuilder/getNodePointer";
+import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
+import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
+import { usePageBuilderHistoryStore } from "#src/store/pageBuilder/history";
 import { noop } from "@esposter/shared";
 import { getMjmlAttributeFields } from "mjml-blocks";
 import { getBlockNode, getBlockPropValue, getBlockTypeDefinition } from "vue-block-editor-headless";

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { CustomEmoji } from "@/models/message/emoji/CustomEmoji";
-import type { PickableEmoji } from "@/models/message/emoji/PickableEmoji";
+import type { CustomEmoji } from "#src/models/message/emoji/CustomEmoji";
+import type { PickableEmoji } from "#src/models/message/emoji/PickableEmoji";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { EMOJI_PICKER_TOOLTIP_TEXT } from "@/services/styled/constants";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { EMOJI_PICKER_TOOLTIP_TEXT } from "#src/services/styled/constants";
 
 interface Props {
   customEmojis?: CustomEmoji[];

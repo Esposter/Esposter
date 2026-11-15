@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { PageMarkType } from "#shared/models/app/PageMarkType";
-import { checkIsUuidRouteId } from "@/services/router/checkIsUuidRouteId";
+import { checkIsUuidRouteId } from "#src/services/router/checkIsUuidRouteId";
 
 definePageMeta({ middleware: "auth", validate: checkIsUuidRouteId });
 

@@ -2,7 +2,7 @@ import type { Row } from "#shared/models/resource/sheet/datasource/Row";
 
 import { createDataSource } from "#shared/models/resource/sheet/datasource/createDataSource.test";
 import { createRow } from "#shared/models/resource/sheet/datasource/createRow.test";
-import { benchColumns } from "@/composables/resource/sheet/commands/constants.bench";
+import { benchColumns } from "#src/composables/resource/sheet/commands/constants.bench";
 import { describe } from "vitest";
 
 // The per-iteration fixture for every command bench: `bench()` runs its callback in a tight loop, and every

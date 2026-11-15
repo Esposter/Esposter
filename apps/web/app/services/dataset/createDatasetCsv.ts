@@ -2,7 +2,7 @@ import type { Dataset } from "#shared/models/dataset/Dataset";
 import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnValue";
 
 import { CsvDelimiter } from "#shared/models/resource/sheet/csv/CsvDelimiter";
-import { escapeCsvCell } from "@/services/resource/sheet/csv/escapeCsvCell";
+import { escapeCsvCell } from "#src/services/resource/sheet/csv/escapeCsvCell";
 
 const toCellText = (value: ColumnValue | undefined): string =>
   value === null || value === undefined ? "" : String(value);

@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import type { WordFilterFormData } from "@/models/message/moderation/WordFilterFormData";
-import type { UiMenuItem } from "@/models/ui/UiMenuItem";
+import type { WordFilterFormData } from "#src/models/message/moderation/WordFilterFormData";
+import type { UiMenuItem } from "#src/models/ui/UiMenuItem";
 import type { RoomFilterInMessage } from "@esposter/db-schema";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { mergeWordFilterFormData } from "@/services/message/moderation/mergeWordFilterFormData";
-import { TimeoutDurationMap } from "@/services/message/moderation/TimeoutDurationMap";
-import { TimeoutDurationSelectItems } from "@/services/message/moderation/TimeoutDurationSelectItems";
-import { getNumberSelectItems } from "@/services/message/shared/getNumberSelectItems";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { mergeWordFilterFormData } from "#src/services/message/moderation/mergeWordFilterFormData";
+import { TimeoutDurationMap } from "#src/services/message/moderation/TimeoutDurationMap";
+import { TimeoutDurationSelectItems } from "#src/services/message/moderation/TimeoutDurationSelectItems";
+import { getNumberSelectItems } from "#src/services/message/shared/getNumberSelectItems";
 import { WordFilterAction, WordFilterActions } from "@esposter/db-schema";
 import { checkIsDeepEqual, toRawDeep } from "@esposter/shared";
 

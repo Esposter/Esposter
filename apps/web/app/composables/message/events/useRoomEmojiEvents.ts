@@ -1,5 +1,5 @@
-import { useRoomEmojiStore } from "@/store/message/room/emoji";
-import { useConnectionStore } from "@/store/realtime/connection";
+import { useRoomEmojiStore } from "#src/store/message/room/emoji";
+import { useConnectionStore } from "#src/store/realtime/connection";
 
 export const useRoomEmojiEvents = () => {
   const roomEmojiStore = useRoomEmojiStore();

@@ -1,5 +1,5 @@
-import type { Controls } from "@/models/dungeons/input/Controls";
-import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
+import type { Controls } from "#src/models/dungeons/input/Controls";
+import type { PlayerInput } from "#src/models/dungeons/UI/input/PlayerInput";
 
 import { Direction } from "grid-engine";
 import { useInputStore } from "vue-phaserjs";

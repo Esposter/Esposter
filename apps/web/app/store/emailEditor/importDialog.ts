@@ -1,4 +1,4 @@
-import { useResourceStore } from "@/store/resource";
+import { useResourceStore } from "#src/store/resource/index";
 
 // Singleton dialog target for the MJML import: the command bar opens the code field for the email the command ran on,
 // And the Editor blade renders it, so the source is applied to the email it was opened for, never the next one

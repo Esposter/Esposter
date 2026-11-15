@@ -1,8 +1,8 @@
 import type { RevokeInviteInput } from "#shared/models/db/room/RevokeInviteInput";
 import type { InviteInMessageWithCreator } from "@esposter/db-schema";
 
-import { inviteCreateHooks } from "@/services/message/room/invite/inviteCreateHooks";
-import { useInviteStore } from "@/store/message/room/invite";
+import { inviteCreateHooks } from "#src/services/message/room/invite/inviteCreateHooks";
+import { useInviteStore } from "#src/store/message/room/invite";
 
 // The room's whole set, behind ManageRoom — apart from `useInviteStore`, which holds the reader's own link
 export const useRoomInviteStore = defineStore("message/room/roomInvite", () => {

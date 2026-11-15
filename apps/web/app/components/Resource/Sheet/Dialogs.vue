@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
-import { UiDialogSize } from "@/models/ui/UiDialogSize";
-import { useResourceStore } from "@/store/resource";
-import { useSheetPortableDialogStore } from "@/store/resource/sheet/portableDialog";
+import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
+import { UiDialogSize } from "#src/models/ui/UiDialogSize";
+import { useResourceStore } from "#src/store/resource/index";
+import { useSheetPortableDialogStore } from "#src/store/resource/sheet/portableDialog";
 
 const sheetPortableDialogStore = useSheetPortableDialogStore();
 const { exportDataSourceType, isExportOpen, isPreviewOpen, isSurveyImportOpen, previewDataSource, previewName } =

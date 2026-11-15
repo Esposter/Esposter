@@ -1,6 +1,6 @@
-import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
+import type { VisualPropsData } from "#src/models/dashboard/VisualPropsData";
 
-import { createData } from "@/services/dashboard/demo/createData";
+import { createData } from "#src/services/dashboard/demo/createData";
 
 export const Bubble3DPropsData = {
   options: { xaxis: { labels: { rotate: 0 }, tickAmount: 12, type: "datetime" }, yaxis: { max: 70 } },

@@ -1,9 +1,9 @@
 import type { XlsxFileSettings } from "#shared/models/resource/sheet/XlsxFileSettings";
 
 import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
-import { deserializeToDataSource } from "@/services/resource/sheet/dataSource/deserializeToDataSource";
-import { getSourceColumnName } from "@/services/resource/sheet/dataSource/getSourceColumnName";
-import { getCellText } from "@/services/resource/sheet/xlsx/getCellText";
+import { deserializeToDataSource } from "#src/services/resource/sheet/dataSource/deserializeToDataSource";
+import { getSourceColumnName } from "#src/services/resource/sheet/dataSource/getSourceColumnName";
+import { getCellText } from "#src/services/resource/sheet/xlsx/getCellText";
 
 export const deserializeXlsx = async (file: File, settings: XlsxFileSettings) => {
   // eslint-disable-next-line no-restricted-syntax -- the command bar reaches this codec on every resource page, so the workbook parser is fetched only when an xlsx is read

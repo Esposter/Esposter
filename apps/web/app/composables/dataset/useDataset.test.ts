@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
-import { getMissingResourceMessage } from "@/services/resource/getMissingResourceMessage";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
+import { getMissingResourceMessage } from "#src/services/resource/getMissingResourceMessage";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { TRPCError } from "@trpc/server";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";

@@ -1,8 +1,8 @@
-import type { AssetLoader } from "@/models/dungeons/loader/AssetLoader";
+import type { AssetLoader } from "#src/models/dungeons/loader/AssetLoader";
 
 import { CharacterKey } from "#shared/models/dungeons/keys/spritesheet/CharacterKey";
-import character from "@/assets/dungeons/thirdParty/axulart/character/custom.png";
-import npc from "@/assets/dungeons/thirdParty/parabellumGames/characters.png";
+import character from "#src/assets/dungeons/thirdParty/axulart/character/custom.png";
+import npc from "#src/assets/dungeons/thirdParty/parabellumGames/characters.png";
 
 export const CharacterLoaderMap = {
   [CharacterKey.Character]: (scene) =>

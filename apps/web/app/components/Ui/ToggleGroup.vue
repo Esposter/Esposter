@@ -1,8 +1,8 @@
 <script setup lang="ts" generic="T extends number | string">
-import type { UiMenuItem } from "@/models/ui/UiMenuItem";
-import type { UiToggleGroupVariant } from "@/models/ui/UiToggleGroupVariant";
+import type { UiMenuItem } from "#src/models/ui/UiMenuItem";
+import type { UiToggleGroupVariant } from "#src/models/ui/UiToggleGroupVariant";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { Radio } from "@vuetify/v0";
 import { mergeProps } from "vue";
 

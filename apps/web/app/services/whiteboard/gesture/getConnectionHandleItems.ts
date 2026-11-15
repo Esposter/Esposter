@@ -1,7 +1,7 @@
 import type { Point, PositionedDocument } from "vue-block-editor-headless";
 
-import { getConnectionHandlePoint } from "@/services/whiteboard/gesture/getConnectionHandlePoint";
-import { getElementIndexById } from "@/services/whiteboard/gesture/getElementIndexById";
+import { getConnectionHandlePoint } from "#src/services/whiteboard/gesture/getConnectionHandlePoint";
+import { getElementIndexById } from "#src/services/whiteboard/gesture/getElementIndexById";
 import { takeOne } from "@esposter/shared";
 import { CONNECTION_POINT_COUNT, getBindableShape, PositionedElementType } from "vue-block-editor-headless";
 

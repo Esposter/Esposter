@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { RESOURCE_DATE_TIME_ATTRIBUTES, TODO_DUE_CLOCK_INTERVAL_MS } from "@/services/resource/constants";
-import { useTodoListStore } from "@/store/resource/todoList";
-import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { RESOURCE_DATE_TIME_ATTRIBUTES, TODO_DUE_CLOCK_INTERVAL_MS } from "#src/services/resource/constants";
+import { useTodoListStore } from "#src/store/resource/todoList/index";
+import { EMPTY_TEXT_REGEX } from "#src/util/text/constants";
 
 interface Props {
   id: string;

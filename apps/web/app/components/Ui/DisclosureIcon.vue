@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 </script>
 
 <!-- The disclosure mark a trigger draws, turned down while the cue whose attributes it takes reads open -->

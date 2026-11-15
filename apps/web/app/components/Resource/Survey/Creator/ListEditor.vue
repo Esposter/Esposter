@@ -1,6 +1,6 @@
 <script setup lang="ts" generic="TItem extends object">
-import type { SurveyListEditor } from "@/models/resource/survey/SurveyListEditor";
-import type { SurveyListRow } from "@/models/resource/survey/SurveyListRow";
+import type { SurveyListEditor } from "#src/models/resource/survey/SurveyListEditor";
+import type { SurveyListRow } from "#src/models/resource/survey/SurveyListRow";
 
 import { capitalize } from "@esposter/shared";
 

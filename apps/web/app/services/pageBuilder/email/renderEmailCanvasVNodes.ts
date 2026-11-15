@@ -1,10 +1,10 @@
-import type { EmailCanvasContext } from "@/models/pageBuilder/EmailCanvasContext";
-import type { EmailDocument } from "@/models/pageBuilder/EmailDocument";
-import type { EmailKind } from "@/models/pageBuilder/EmailKind";
+import type { EmailCanvasContext } from "#src/models/pageBuilder/EmailCanvasContext";
+import type { EmailDocument } from "#src/models/pageBuilder/EmailDocument";
+import type { EmailKind } from "#src/models/pageBuilder/EmailKind";
 
 import { checkIsStackedColumns } from "#shared/services/pageBuilder/email/checkIsStackedColumns";
 import { getEmailAttributeValue } from "#shared/services/pageBuilder/email/getEmailAttributeValue";
-import { EmailCanvasDrawingMap } from "@/services/pageBuilder/email/canvasDrawing/EmailCanvasDrawingMap";
+import { EmailCanvasDrawingMap } from "#src/services/pageBuilder/email/canvasDrawing/EmailCanvasDrawingMap";
 import { cloneVNode } from "vue";
 import { renderBlockNodes } from "vue-block-editor-headless";
 

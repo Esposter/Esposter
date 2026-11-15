@@ -1,6 +1,6 @@
 import type { ExecuteAdminActionInput } from "#shared/models/db/moderation/ExecuteAdminActionInput";
 
-import { useRoomStore } from "@/store/message/room";
+import { useRoomStore } from "#src/store/message/room/index";
 
 export const useExecuteAdminAction = () => {
   const { $trpc } = useNuxtApp();

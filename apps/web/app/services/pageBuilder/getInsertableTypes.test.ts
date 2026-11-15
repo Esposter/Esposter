@@ -9,11 +9,11 @@ import {
   TEST_NESTED_TEXT_ID,
   TEST_SECTION_ID,
   TEST_TEXT_CONTENT,
-} from "@/services/pageBuilder/constants.test";
-import { emailKind } from "@/services/pageBuilder/emailKind";
-import { getInsertableTypes } from "@/services/pageBuilder/getInsertableTypes";
-import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
-import { webpageKind } from "@/services/pageBuilder/webpageKind";
+} from "#src/services/pageBuilder/constants.test";
+import { emailKind } from "#src/services/pageBuilder/emailKind";
+import { getInsertableTypes } from "#src/services/pageBuilder/getInsertableTypes";
+import { getNodePointer } from "#src/services/pageBuilder/getNodePointer";
+import { webpageKind } from "#src/services/pageBuilder/webpageKind";
 import { MjmlNodeType } from "mjml-blocks";
 import { describe, expect, test } from "vitest";
 

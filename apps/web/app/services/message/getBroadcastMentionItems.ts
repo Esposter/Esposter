@@ -1,5 +1,5 @@
-import { BroadcastMentionItems } from "@/services/message/BroadcastMentionItems";
-import { useRoleStore } from "@/store/message/room/role";
+import { BroadcastMentionItems } from "#src/services/message/BroadcastMentionItems";
+import { useRoleStore } from "#src/store/message/room/role";
 import { RoomPermission } from "@esposter/db-schema";
 
 // The two mentions that notify the whole room are offered only to a member who holds `MentionEveryone`: the server

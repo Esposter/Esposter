@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { webpageKind } from "@/services/pageBuilder/webpageKind";
-import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
-import { useResourceStore } from "@/store/resource";
-import { useWebpageEditorStore } from "@/store/webpageEditor";
+import { webpageKind } from "#src/services/pageBuilder/webpageKind";
+import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
+import { useResourceStore } from "#src/store/resource/index";
+import { useWebpageEditorStore } from "#src/store/webpageEditor/index";
 
 const resourceStore = useResourceStore();
 const { currentResourceId } = storeToRefs(resourceStore);

@@ -1,4 +1,4 @@
-import { useSheetHistoryStore } from "@/store/resource/sheet/history";
+import { useSheetHistoryStore } from "#src/store/resource/sheet/history/index";
 import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeEach, describe } from "vitest";
 

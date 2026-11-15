@@ -2,7 +2,7 @@
 import type { RectangleConfiguration } from "vue-phaserjs";
 
 import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOption";
-import { MenuTextStyle } from "@/assets/dungeons/scene/settings/styles/MenuTextStyle";
+import { MenuTextStyle } from "#src/assets/dungeons/scene/settings/styles/MenuTextStyle";
 import {
   INITIAL_SETTINGS_VALUE_POSITION,
   MENU_HORIZONTAL_PADDING,
@@ -12,9 +12,9 @@ import {
   VOLUME_SLIDER_OFFSET_Y,
   VOLUME_SLIDER_START_X,
   VOLUME_SLIDER_WIDTH,
-} from "@/services/dungeons/scene/settings/constants";
-import { getSettingsOptionY } from "@/services/dungeons/scene/settings/getSettingsOptionY";
-import { useVolumeStore } from "@/store/dungeons/settings/volume";
+} from "#src/services/dungeons/scene/settings/constants";
+import { getSettingsOptionY } from "#src/services/dungeons/scene/settings/getSettingsOptionY";
+import { useVolumeStore } from "#src/store/dungeons/settings/volume";
 import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 import { Input } from "phaser";
 import { Rectangle, Text } from "vue-phaserjs";

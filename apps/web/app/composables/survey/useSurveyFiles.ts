@@ -1,10 +1,10 @@
 import type { SurveyDocument } from "vue-survey-engine-headless";
 
-import { validateFileWithAlert } from "@/services/file/validateFileWithAlert";
-import { collectSurveyFileUrls } from "@/services/resource/survey/collectSurveyFileUrls";
-import { createErrorAlert } from "@/services/trpc/createErrorAlert";
-import { useResourceStore } from "@/store/resource";
-import { useSurveyFilesStore } from "@/store/survey/files";
+import { validateFileWithAlert } from "#src/services/file/validateFileWithAlert";
+import { collectSurveyFileUrls } from "#src/services/resource/survey/collectSurveyFileUrls";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
+import { useResourceStore } from "#src/store/resource/index";
+import { useSurveyFilesStore } from "#src/store/survey/files";
 import { ResourceType } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 

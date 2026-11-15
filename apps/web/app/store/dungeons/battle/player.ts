@@ -1,6 +1,6 @@
-import { getAttack } from "@/services/dungeons/attack/getAttack";
-import { checkIsMonsterFainted } from "@/services/dungeons/monster/checkIsMonsterFainted";
-import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
+import { getAttack } from "#src/services/dungeons/attack/getAttack";
+import { checkIsMonsterFainted } from "#src/services/dungeons/monster/checkIsMonsterFainted";
+import { useMonsterPartySceneStore } from "#src/store/dungeons/monsterParty/scene";
 import { takeOne } from "@esposter/shared";
 
 export const useBattlePlayerStore = defineStore("dungeons/battle/player", () => {

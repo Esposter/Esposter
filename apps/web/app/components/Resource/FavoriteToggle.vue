@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useFavoriteStore } from "@/store/resource/favorite";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { useFavoriteStore } from "#src/store/resource/favorite";
 
 interface Props {
   resource: ResourceInResource;

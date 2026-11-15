@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { SettingsSection } from "@/models/message/user/settings/SettingsSection";
-import type { UserSettingsType } from "@/models/message/user/UserSettingsType";
+import type { SettingsSection } from "#src/models/message/user/settings/SettingsSection";
+import type { UserSettingsType } from "#src/models/message/user/UserSettingsType";
 
-import { UserSettingsTypes } from "@/models/message/user/UserSettingsType";
-import { SETTINGS_CONTENT_ID } from "@/services/message/settings/constants";
-import { UserSettingsListItemMap } from "@/services/message/user/settings/UserSettingsListItemMap";
-import { UserSettingsSectionMap } from "@/services/message/user/settings/UserSettingsSectionMap";
-import { useUserSettingsDialogStore } from "@/store/message/user/settings/dialog";
+import { UserSettingsTypes } from "#src/models/message/user/UserSettingsType";
+import { SETTINGS_CONTENT_ID } from "#src/services/message/settings/constants";
+import { UserSettingsListItemMap } from "#src/services/message/user/settings/UserSettingsListItemMap";
+import { UserSettingsSectionMap } from "#src/services/message/user/settings/UserSettingsSectionMap";
+import { useUserSettingsDialogStore } from "#src/store/message/user/settings/dialog";
 
 const modelValue = defineModel<UserSettingsType>({ required: true });
 const userSettingsDialogStore = useUserSettingsDialogStore();

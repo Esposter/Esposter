@@ -1,8 +1,8 @@
 // @unocss-include
-import type { Item } from "@/models/shared/Item";
+import type { Item } from "#src/models/shared/Item";
 import type { Except } from "type-fest";
 
-import { SettingsType } from "@/models/message/room/SettingsType";
+import { SettingsType } from "#src/models/message/room/SettingsType";
 
 export const SettingsListItemMap: Record<SettingsType, Except<Extract<Item, { icon: string }>, "onClick" | "title">> = {
   [SettingsType.Attachments]: { icon: "i-mdi:paperclip" },

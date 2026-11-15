@@ -1,4 +1,4 @@
-import type { Emoji } from "@/models/message/emoji/Emoji";
+import type { Emoji } from "#src/models/message/emoji/Emoji";
 import type { PropertyNames } from "@esposter/shared";
 
 import { getPropertyNames } from "@esposter/shared";

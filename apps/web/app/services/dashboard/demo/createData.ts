@@ -1,4 +1,4 @@
-import { createRandomInteger } from "@/util/math/random/createRandomInteger";
+import { createRandomInteger } from "#src/util/math/random/createRandomInteger";
 
 // A bubble-chart demo series: x and y are the axis coordinates, z the bubble size. Every range below includes both of
 // Its ends, and the random helper's maximum is exclusive, so each maximum is one above the largest value wanted

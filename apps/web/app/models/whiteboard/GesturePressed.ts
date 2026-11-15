@@ -1,5 +1,5 @@
-import type { GesturePhase } from "@/models/whiteboard/GesturePhase";
-import type { ResizeHandle } from "@/models/whiteboard/ResizeHandle";
+import type { GesturePhase } from "#src/models/whiteboard/GesturePhase";
+import type { ResizeHandle } from "#src/models/whiteboard/ResizeHandle";
 import type { Point } from "vue-block-editor-headless";
 
 // A press that is not yet a gesture: released as a click, or a drag once it has travelled the drag start distance

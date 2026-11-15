@@ -1,14 +1,14 @@
 // @vitest-environment nuxt
 import type { PublicWebhookInMessage } from "@esposter/db-schema";
 
-import { createRoom } from "@/services/message/room/createRoom.test";
-import { createWebhook } from "@/services/message/room/createWebhook.test";
-import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
-import { createUser } from "@/services/message/user/createUser.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useAlertStore } from "@/store/alert";
-import { useWebhookStore } from "@/store/message/room/webhook";
-import { useWebhookDialogStore } from "@/store/message/room/webhookDialog";
+import { createRoom } from "#src/services/message/room/createRoom.test";
+import { createWebhook } from "#src/services/message/room/createWebhook.test";
+import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
+import { createUser } from "#src/services/message/user/createUser.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useAlertStore } from "#src/store/alert";
+import { useWebhookStore } from "#src/store/message/room/webhook";
+import { useWebhookDialogStore } from "#src/store/message/room/webhookDialog";
 import { TRPCError } from "@trpc/server";
 import { v7 } from "uuid";
 import { beforeEach, describe, expect, test } from "vitest";

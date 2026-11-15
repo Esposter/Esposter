@@ -1,7 +1,7 @@
-import type { State } from "@/models/dungeons/state/State";
+import type { State } from "#src/models/dungeons/state/State";
 
-import { StateName } from "@/models/dungeons/state/battle/StateName";
-import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
+import { StateName } from "#src/models/dungeons/state/battle/StateName";
+import { battleStateMachine } from "#src/services/dungeons/scene/battle/battleStateMachine";
 
 export const EnemyInput: State<typeof StateName.EnemyInput> = {
   name: StateName.EnemyInput,

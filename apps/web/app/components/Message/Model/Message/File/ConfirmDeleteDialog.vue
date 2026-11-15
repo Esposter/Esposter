@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useDataStore } from "@/store/message/data";
-import { useFileDialogStore } from "@/store/message/file/dialog";
+import { useDataStore } from "#src/store/message/data";
+import { useFileDialogStore } from "#src/store/message/file/dialog";
 
 const dataStore = useDataStore();
 const { deleteFile, getSlice } = dataStore;

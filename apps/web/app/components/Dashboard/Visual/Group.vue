@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import type { Visual } from "#shared/models/dashboard/data/Visual";
-import type { DashboardVisualEmits } from "@/models/dashboard/DashboardVisualEmits";
+import type { DashboardVisualEmits } from "#src/models/dashboard/DashboardVisualEmits";
 import type { CollisionMode, CompactType } from "vue-grid-layout-headless";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import {
   DASHBOARD_EDITOR_ROW_HEIGHT,
   DASHBOARD_NO_COLUMNS,
   DASHBOARD_PUBLISHED_ROW_HEIGHT,
-} from "@/services/dashboard/constants";
-import { getBreakpointColumnNumber } from "@/services/dashboard/grid/getBreakpointColumnNumber";
-import { getGroupTitle } from "@/services/dashboard/visual/getGroupTitle";
+} from "#src/services/dashboard/constants";
+import { getBreakpointColumnNumber } from "#src/services/dashboard/grid/getBreakpointColumnNumber";
+import { getGroupTitle } from "#src/services/dashboard/visual/getGroupTitle";
 
 interface Props {
   collision: CollisionMode;

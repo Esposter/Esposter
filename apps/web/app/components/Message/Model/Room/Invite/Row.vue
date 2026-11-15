@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { InviteInMessageWithCreator, RoomInMessage } from "@esposter/db-schema";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { getInviteLink } from "@/services/message/room/invite/getInviteLink";
-import { useRoleStore } from "@/store/message/room/role";
-import { useUserStore } from "@/store/message/user";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { getInviteLink } from "#src/services/message/room/invite/getInviteLink";
+import { useRoleStore } from "#src/store/message/room/role";
+import { useUserStore } from "#src/store/message/user/index";
 import { RoomPermission } from "@esposter/db-schema";
 
 interface Props {

@@ -1,4 +1,4 @@
-import { substituteMergeFields } from "@/services/emailEditor/substituteMergeFields";
+import { substituteMergeFields } from "#src/services/emailEditor/substituteMergeFields";
 import { describe, expect, test } from "vitest";
 
 describe(substituteMergeFields, () => {

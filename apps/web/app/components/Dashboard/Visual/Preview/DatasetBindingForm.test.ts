@@ -3,16 +3,16 @@ import type { VisualDatasetBinding } from "#shared/models/dashboard/data/VisualD
 
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
-import DashboardVisualPreviewDatasetBindingForm from "@/components/Dashboard/Visual/Preview/DatasetBindingForm.vue";
-import DatasetReferencePicker from "@/components/Dataset/ReferencePicker.vue";
-import { useSession } from "@/services/auth/authClient.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
+import DashboardVisualPreviewDatasetBindingForm from "#src/components/Dashboard/Visual/Preview/DatasetBindingForm.vue";
+import DatasetReferencePicker from "#src/components/Dataset/ReferencePicker.vue";
+import { useSession } from "#src/services/auth/authClient.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 
-vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
+vi.mock(import("#src/services/auth/authClient"), () => import("#src/services/auth/authClient.test"));
 
 describe("dashboardVisualPreviewDatasetBindingForm", () => {
   const { trpcMsw } = setupMswTrpc();

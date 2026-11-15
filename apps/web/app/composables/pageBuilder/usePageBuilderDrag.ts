@@ -1,20 +1,20 @@
-import type { DropTarget } from "@/models/pageBuilder/DropTarget";
-import type { FrameGeometry } from "@/models/pageBuilder/FrameGeometry";
-import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
-import type { UiCommand } from "@/models/ui/UiCommand";
+import type { DropTarget } from "#src/models/pageBuilder/DropTarget";
+import type { FrameGeometry } from "#src/models/pageBuilder/FrameGeometry";
+import type { PageBuilderKind } from "#src/models/pageBuilder/PageBuilderKind";
+import type { UiCommand } from "#src/models/ui/UiCommand";
 import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "vue-block-editor-headless";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { checkIsInsideBox } from "@/services/pageBuilder/checkIsInsideBox";
-import { PAGE_BUILDER_COMMAND_GROUP } from "@/services/pageBuilder/constants";
-import { freezeFrameGeometry } from "@/services/pageBuilder/freezeFrameGeometry";
-import { getDropRefusal } from "@/services/pageBuilder/getDropRefusal";
-import { getEdgeScrollVelocity } from "@/services/pageBuilder/getEdgeScrollVelocity";
-import { getNodeIdAt } from "@/services/pageBuilder/getNodeIdAt";
-import { insertAt } from "@/services/pageBuilder/insertAt";
-import { insertMergeFieldAt } from "@/services/pageBuilder/insertMergeFieldAt";
-import { resolveDropTarget } from "@/services/pageBuilder/resolveDropTarget";
-import { toFramePoint } from "@/services/pageBuilder/toFramePoint";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { checkIsInsideBox } from "#src/services/pageBuilder/checkIsInsideBox";
+import { PAGE_BUILDER_COMMAND_GROUP } from "#src/services/pageBuilder/constants";
+import { freezeFrameGeometry } from "#src/services/pageBuilder/freezeFrameGeometry";
+import { getDropRefusal } from "#src/services/pageBuilder/getDropRefusal";
+import { getEdgeScrollVelocity } from "#src/services/pageBuilder/getEdgeScrollVelocity";
+import { getNodeIdAt } from "#src/services/pageBuilder/getNodeIdAt";
+import { insertAt } from "#src/services/pageBuilder/insertAt";
+import { insertMergeFieldAt } from "#src/services/pageBuilder/insertMergeFieldAt";
+import { resolveDropTarget } from "#src/services/pageBuilder/resolveDropTarget";
+import { toFramePoint } from "#src/services/pageBuilder/toFramePoint";
 import { noop } from "@esposter/shared";
 import { getBlockLayerRows } from "vue-block-editor-headless";
 

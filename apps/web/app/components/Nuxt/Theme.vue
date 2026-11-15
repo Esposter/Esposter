@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { UI_STYLE_INJECTION_KEY } from "@/services/ui/constants";
-import { useUiStyleStore } from "@/store/ui/style";
-import { useThemeModeStore } from "@/store/ui/themeMode";
+import { UI_STYLE_INJECTION_KEY } from "#src/services/ui/constants";
+import { useUiStyleStore } from "#src/store/ui/style";
+import { useThemeModeStore } from "#src/store/ui/themeMode";
 
 defineSlots<{ default: () => VNode }>();
 const uiStyleStore = useUiStyleStore();

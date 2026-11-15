@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { Metadata } from "#shared/models/resource/sheet/datasource/Metadata";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { getFileSize } from "@/services/file/getFileSize";
-import { RESOURCE_DATE_TIME_ATTRIBUTES } from "@/services/resource/constants";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { getFileSize } from "#src/services/file/getFileSize";
+import { RESOURCE_DATE_TIME_ATTRIBUTES } from "#src/services/resource/constants";
 
 interface Props {
   metadata: Metadata;

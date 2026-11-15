@@ -1,5 +1,5 @@
-import { getFilterDisplayValue } from "@/services/message/filter/getFilterDisplayValue";
-import { getInvalidValueError } from "@/services/message/filter/getInvalidValueError";
+import { getFilterDisplayValue } from "#src/services/message/filter/getFilterDisplayValue";
+import { getInvalidValueError } from "#src/services/message/filter/getInvalidValueError";
 import { FilterType, FilterTypeAuthorTypes, FilterTypeHas } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 

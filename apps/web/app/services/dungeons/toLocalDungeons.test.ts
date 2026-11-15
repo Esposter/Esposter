@@ -1,5 +1,5 @@
 import { Dungeons } from "#shared/models/dungeons/data/Dungeons";
-import { toLocalDungeons } from "@/services/dungeons/toLocalDungeons";
+import { toLocalDungeons } from "#src/services/dungeons/toLocalDungeons";
 import { describe, expect, test } from "vitest";
 
 // The read runs on every load, so a save that cannot be parsed must start a fresh game rather than leave the page with

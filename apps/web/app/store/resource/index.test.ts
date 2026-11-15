@@ -2,7 +2,7 @@
 import type { NoteResource } from "#shared/models/resource/note/NoteResource";
 import type { ResourceContent } from "#shared/models/resource/ResourceContent";
 import type { SheetResource } from "#shared/models/resource/sheet/SheetResource";
-import type { uploadFileToUrl } from "@/services/file/uploadFileToUrl";
+import type { uploadFileToUrl } from "#src/services/file/uploadFileToUrl";
 import type { ResourceInResource, ResourcePublicationInResource, ResourceTags } from "@esposter/db-schema";
 
 import { Row } from "#shared/models/resource/sheet/datasource/Row";
@@ -14,16 +14,16 @@ import {
   STALE_CONTENT_VERSION_ERROR_MESSAGE,
 } from "#shared/services/resource/constants";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
-import { setupWithDataSource } from "@/composables/resource/sheet/commands/setupWithDataSource.test";
-import { useDeleteRow } from "@/composables/resource/sheet/commands/useDeleteRow";
-import { ResourceSaveState } from "@/models/resource/ResourceSaveState";
-import { ResourceContentHookMap } from "@/services/resource/ResourceContentHookMap";
-import { createDefaultSheetResource } from "@/services/resource/sheet/createDefaultSheetResource";
-import { getSha256Hex } from "@/services/shared/getSha256Hex";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useNotificationStore } from "@/store/notification";
-import { useResourceStore } from "@/store/resource";
-import { useSheetHistoryStore } from "@/store/resource/sheet/history";
+import { setupWithDataSource } from "#src/composables/resource/sheet/commands/setupWithDataSource.test";
+import { useDeleteRow } from "#src/composables/resource/sheet/commands/useDeleteRow";
+import { ResourceSaveState } from "#src/models/resource/ResourceSaveState";
+import { ResourceContentHookMap } from "#src/services/resource/ResourceContentHookMap";
+import { createDefaultSheetResource } from "#src/services/resource/sheet/createDefaultSheetResource";
+import { getSha256Hex } from "#src/services/shared/getSha256Hex";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useNotificationStore } from "#src/store/notification";
+import { useResourceStore } from "#src/store/resource/index";
+import { useSheetHistoryStore } from "#src/store/resource/sheet/history/index";
 import { ResourceType } from "@esposter/db-schema";
 import { noop, takeOne, withFinalizerAsync } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -32,7 +32,7 @@ import { v7 } from "uuid";
 import { assert, beforeEach, describe, expect, test, vi } from "vitest";
 
 // A worker has no place in the test environment, and what it encodes is the generated module's own test to prove
-vi.mock(import("@/services/resource/encodeContentDelta"), () => ({
+vi.mock(import("#src/services/resource/encodeContentDelta"), () => ({
   encodeContentDelta: () => Promise.resolve(new Uint8Array(1)),
 }));
 // The write is an XMLHttpRequest, which the test environment does not answer at the network the way fetch is. The staged
@@ -40,7 +40,7 @@ vi.mock(import("@/services/resource/encodeContentDelta"), () => ({
 const { uploadFileToUrlMock } = vi.hoisted(() => ({
   uploadFileToUrlMock: vi.fn<typeof uploadFileToUrl>(() => Promise.resolve()),
 }));
-vi.mock(import("@/services/file/uploadFileToUrl"), () => ({ uploadFileToUrl: uploadFileToUrlMock }));
+vi.mock(import("#src/services/file/uploadFileToUrl"), () => ({ uploadFileToUrl: uploadFileToUrlMock }));
 // Sheet is not publishable and Note is, so the pair covers both sides of every capability gate below
 const createResource = (id: string, type: ResourceType = ResourceType.Sheet) => createResourceListItem({ id, type });
 // The unpublished answer the read carries, which is what a publishable type's test overrides

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { PointsLeaderboardEntry } from "#shared/models/achievement/PointsLeaderboardEntry";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { RoutePath } from "@esposter/shared";
 
 interface Props {

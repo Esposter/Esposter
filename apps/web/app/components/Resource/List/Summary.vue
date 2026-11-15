@@ -2,8 +2,8 @@
 import type { ResourceTypeCount } from "#shared/models/resource/ResourceTypeCount";
 import type { ResourceType } from "@esposter/db-schema";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { RESOURCE_SUMMARY_SKELETON_COUNT } from "@/services/resource/constants";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { RESOURCE_SUMMARY_SKELETON_COUNT } from "#src/services/resource/constants";
 
 interface Props {
   counts: ResourceTypeCount[];

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { UiSelectItem } from "@/models/ui/UiSelectItem";
+import type { UiSelectItem } from "#src/models/ui/UiSelectItem";
 
 interface Props {
   items: UiSelectItem<string>[];

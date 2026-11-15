@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import { getRouteParam } from "@/util/router/getRouteParam";
+import { getRouteParam } from "#src/util/router/getRouteParam";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 

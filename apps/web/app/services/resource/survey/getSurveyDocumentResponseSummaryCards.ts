@@ -1,8 +1,8 @@
 import type { SurveyResponseRecords } from "#shared/models/resource/survey/SurveyResponseRecords";
-import type { SurveySummaryCard } from "@/models/resource/survey/SurveySummaryCard";
+import type { SurveySummaryCard } from "#src/models/resource/survey/SurveySummaryCard";
 import type { SurveyDocument } from "vue-survey-engine-headless";
 
-import { getSurveyDocumentSummaryCards } from "@/services/survey/summary/getSurveyDocumentSummaryCards";
+import { getSurveyDocumentSummaryCards } from "#src/services/survey/summary/getSurveyDocumentSummaryCards";
 import { flattenSurveyQuestions } from "vue-survey-engine-headless";
 
 // The summary's cards for the questions the responses hold a column for, so a question with no column has no card

@@ -1,7 +1,7 @@
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
-import type { EmailDocument } from "@/models/pageBuilder/EmailDocument";
-import type { EmailKind } from "@/models/pageBuilder/EmailKind";
-import type { WebpageKind } from "@/models/pageBuilder/WebpageKind";
+import type { EmailDocument } from "#src/models/pageBuilder/EmailDocument";
+import type { EmailKind } from "#src/models/pageBuilder/EmailKind";
+import type { WebpageKind } from "#src/models/pageBuilder/WebpageKind";
 
 import { ResourceType } from "@esposter/db-schema";
 

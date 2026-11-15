@@ -1,20 +1,36 @@
 // @vitest-environment nuxt
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { TEST_ID, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
-import PageBuilderCanvasTextEditor from "@/components/PageBuilder/Canvas/TextEditor.vue";
-import { TEST_ROOT_TEXT_ID, TEST_SECTION_ID, TEST_TEXT_CONTENT } from "@/services/pageBuilder/constants.test";
-import { emailKind } from "@/services/pageBuilder/emailKind";
-import { webpageKind } from "@/services/pageBuilder/webpageKind";
-import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
-import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
-import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
-import { useRichTextSuggestionStore } from "@/store/richTextEditor/suggestion";
+import PageBuilderCanvasTextEditor from "#src/components/PageBuilder/Canvas/TextEditor.vue";
+import { TEST_ROOT_TEXT_ID, TEST_SECTION_ID, TEST_TEXT_CONTENT } from "#src/services/pageBuilder/constants.test";
+import { emailKind } from "#src/services/pageBuilder/emailKind";
+import { webpageKind } from "#src/services/pageBuilder/webpageKind";
+import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
+import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
+import { usePageBuilderHistoryStore } from "#src/store/pageBuilder/history";
+import { useRichTextSuggestionStore } from "#src/store/richTextEditor/suggestion";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { EditorContent } from "@tiptap/vue-3";
 import { flushPromises } from "@vue/test-utils";
 import { MjmlNodeType } from "mjml-blocks";
 import { v7 } from "uuid";
 import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vitest";
+
+const mountEditingText = async () => {
+  const resourceId = v7();
+  const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+  pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
+    content: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text }],
+    root: TEST_ROOT,
+  });
+  const component = await mountSuspended(PageBuilderCanvasTextEditor, {
+    props: { kind: webpageKind, nodeId: TEST_ROOT_TEXT_ID, resourceId },
+  });
+  await vi.advanceTimersByTimeAsync(0);
+  const editor = component.getComponent(EditorContent).props("editor");
+  assert.exists(editor);
+  return { component, editor };
+};
 
 describe("pageBuilderCanvasTextEditor", () => {
   // An editor takes its focus, and its caret at the end of the text, on a timer it sets as it mounts; only `setTimeout`
@@ -26,22 +42,6 @@ describe("pageBuilderCanvasTextEditor", () => {
   afterEach(() => {
     vi.useRealTimers();
   });
-
-  const mountEditingText = async () => {
-    const resourceId = v7();
-    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
-      content: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text }],
-      root: TEST_ROOT,
-    });
-    const component = await mountSuspended(PageBuilderCanvasTextEditor, {
-      props: { kind: webpageKind, nodeId: TEST_ROOT_TEXT_ID, resourceId },
-    });
-    await vi.advanceTimersByTimeAsync(0);
-    const editor = component.getComponent(EditorContent).props("editor");
-    assert.exists(editor);
-    return { component, editor };
-  };
 
   test("begins editing at the end of its text", async () => {
     expect.hasAssertions();
@@ -55,7 +55,8 @@ describe("pageBuilderCanvasTextEditor", () => {
   test("leaves a reader who is typing elsewhere alone", async () => {
     expect.hasAssertions();
 
-    const typing = window.document.body.appendChild(window.document.createElement("textarea"));
+    const typing = window.document.createElement("textarea");
+    window.document.body.append(typing);
     typing.focus();
     const { component, editor } = await mountEditingText();
 

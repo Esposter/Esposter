@@ -1,6 +1,6 @@
 import type { PublicUser, RoomInMessage } from "@esposter/db-schema";
 
-import { useModerationNoteStore } from "@/store/message/moderation/note";
+import { useModerationNoteStore } from "#src/store/message/moderation/note";
 
 export const useReadModerationNotes = (
   roomId: RoomInMessage["id"],

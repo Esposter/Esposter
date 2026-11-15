@@ -3,9 +3,9 @@ import type { DeleteRoomCategoryInput } from "#shared/models/db/roomCategory/Del
 import type { UpdateRoomCategoryInput } from "#shared/models/db/roomCategory/UpdateRoomCategoryInput";
 import type { RoomCategoryInMessage } from "@esposter/db-schema";
 
-import { authClient } from "@/services/auth/authClient";
-import { getRoomCategoryPositionUpdates } from "@/services/message/roomCategory/getRoomCategoryPositionUpdates";
-import { createOperationData } from "@/services/shared/createOperationData";
+import { authClient } from "#src/services/auth/authClient";
+import { getRoomCategoryPositionUpdates } from "#src/services/message/roomCategory/getRoomCategoryPositionUpdates";
+import { createOperationData } from "#src/services/shared/createOperationData";
 import { DatabaseEntityType } from "@esposter/db-schema";
 import { v7 } from "uuid";
 

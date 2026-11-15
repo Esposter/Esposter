@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { UiSelectItem } from "@/models/ui/UiSelectItem";
+import type { UiSelectItem } from "#src/models/ui/UiSelectItem";
 import type { Page } from "@esposter/db-schema";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { readAllResourcePages } from "@/services/resource/readAllResourcePages";
-import { createErrorAlert } from "@/services/trpc/createErrorAlert";
-import { prependNoneSelectItem } from "@/services/ui/prependNoneSelectItem";
-import { useProgramStore } from "@/store/resource/program";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { readAllResourcePages } from "#src/services/resource/readAllResourcePages";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
+import { prependNoneSelectItem } from "#src/services/ui/prependNoneSelectItem";
+import { useProgramStore } from "#src/store/resource/program/index";
 import { SurveyResponseMode } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 

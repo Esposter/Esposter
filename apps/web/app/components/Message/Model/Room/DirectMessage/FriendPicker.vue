@@ -1,12 +1,12 @@
 <script setup lang="ts" generic="TMultiple extends boolean = false">
-import type { FriendPickerModelValue } from "@/models/message/room/directMessage/FriendPickerModelValue";
-import type { UiListItem } from "@/models/ui/UiListItem";
+import type { FriendPickerModelValue } from "#src/models/message/room/directMessage/FriendPickerModelValue";
+import type { UiListItem } from "#src/models/ui/UiListItem";
 import type { PublicUser } from "@esposter/db-schema";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
-import { searchItems } from "@/services/search/searchItems";
-import { useFriendStore } from "@/store/message/user/friend";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { UiTextFieldType } from "#src/models/ui/UiTextFieldType";
+import { searchItems } from "#src/services/search/searchItems";
+import { useFriendStore } from "#src/store/message/user/friend";
 
 interface Props {
   excludedUserIds?: PublicUser["id"][];

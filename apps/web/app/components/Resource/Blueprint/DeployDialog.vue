@@ -4,13 +4,13 @@ import type { BlueprintDeployment } from "#shared/models/resource/blueprint/Blue
 import { buildBlueprintDeployReviews } from "#shared/services/resource/blueprint/buildBlueprintDeployReviews";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { pluralize } from "#shared/util/text/pluralize";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
-import { UiDialogSize } from "@/models/ui/UiDialogSize";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useNotificationStore } from "@/store/notification";
-import { useResourceStore } from "@/store/resource";
-import { useBlueprintStore } from "@/store/resource/blueprint";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
+import { UiDialogSize } from "#src/models/ui/UiDialogSize";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { useNotificationStore } from "#src/store/notification";
+import { useBlueprintStore } from "#src/store/resource/blueprint/index";
+import { useResourceStore } from "#src/store/resource/index";
 import { RoutePath } from "@esposter/shared";
 
 interface Props {

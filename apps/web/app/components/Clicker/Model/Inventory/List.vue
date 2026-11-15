@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useUpgradeStore } from "@/store/clicker/upgrade";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { useUpgradeStore } from "#src/store/clicker/upgrade";
 
 const upgradeStore = useUpgradeStore();
 const { boughtUpgrades } = storeToRefs(upgradeStore);

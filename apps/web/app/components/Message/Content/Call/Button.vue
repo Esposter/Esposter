@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useRoomStore } from "@/store/message/room";
-import { useCallStore } from "@/store/message/room/call";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { useCallStore } from "#src/store/message/room/call/index";
+import { useRoomStore } from "#src/store/message/room/index";
 
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);

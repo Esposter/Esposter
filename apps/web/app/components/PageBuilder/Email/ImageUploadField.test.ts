@@ -1,14 +1,14 @@
 // @vitest-environment nuxt
 import { TEST_ID, TEST_OTHER_ID, TEST_THIRD_ID } from "#shared/services/pageBuilder/constants.test";
-import PageBuilderEmailImageUploadField from "@/components/PageBuilder/Email/ImageUploadField.vue";
-import UiFileField from "@/components/Ui/FileField.vue";
-import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
+import PageBuilderEmailImageUploadField from "#src/components/PageBuilder/Email/ImageUploadField.vue";
+import UiFileField from "#src/components/Ui/FileField.vue";
+import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test, vi } from "vitest";
 
 const { assetUrl, upload } = vi.hoisted(() => ({ assetUrl: "a", upload: { result: Promise.resolve("a") } }));
-vi.mock(import("@/composables/resource/useUploadResourceFile"), () => ({
+vi.mock(import("#src/composables/resource/useUploadResourceFile"), () => ({
   useUploadResourceFile: () => () => upload.result,
 }));
 

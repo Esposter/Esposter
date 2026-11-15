@@ -1,4 +1,4 @@
-import type { UiContextMenu } from "@/models/ui/UiContextMenu";
+import type { UiContextMenu } from "#src/models/ui/UiContextMenu";
 
 // What the one mounted context menu shows, where, and what opened it, so a list of thousands of rows mounts one menu
 // Rather than one per row

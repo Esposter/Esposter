@@ -3,8 +3,8 @@ import type { CallParticipant } from "@esposter/db-schema";
 
 import { getMockSession } from "#server/trpc/context.test";
 import { createId } from "#shared/util/math/random/createId";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useParticipantStore } from "@/store/message/room/call/participant";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useParticipantStore } from "#src/store/message/room/call/participant";
 import { CALL_ID_LENGTH } from "@esposter/db-schema";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";

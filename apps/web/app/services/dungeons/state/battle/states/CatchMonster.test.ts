@@ -4,13 +4,13 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 import { Save } from "#shared/models/dungeons/data/Save";
 import { MonsterKey } from "#shared/models/dungeons/keys/image/UI/MonsterKey";
 import { Monster } from "#shared/models/dungeons/monster/Monster";
-import { CaptureResult } from "@/models/dungeons/item/CaptureResult";
-import { StateName } from "@/models/dungeons/state/battle/StateName";
-import { createCaptureResult } from "@/services/dungeons/item/createCaptureResult";
-import { CatchMonster } from "@/services/dungeons/state/battle/states/CatchMonster";
-import { useDungeonsStore } from "@/store/dungeons";
-import { useEnemyStore } from "@/store/dungeons/battle/enemy";
-import { prettify } from "@/util/text/prettify";
+import { CaptureResult } from "#src/models/dungeons/item/CaptureResult";
+import { StateName } from "#src/models/dungeons/state/battle/StateName";
+import { createCaptureResult } from "#src/services/dungeons/item/createCaptureResult";
+import { CatchMonster } from "#src/services/dungeons/state/battle/states/CatchMonster";
+import { useEnemyStore } from "#src/store/dungeons/battle/enemy";
+import { useDungeonsStore } from "#src/store/dungeons/index";
+import { prettify } from "#src/util/text/prettify";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -20,24 +20,24 @@ const { setState, showMessages } = vi.hoisted(() => ({
 }));
 
 // The state machine holds every battle state, and the dialog is UI over the scene, so only their calls are recorded
-vi.mock("@/services/dungeons/scene/battle/battleStateMachine", () => ({ battleStateMachine: { setState } }));
-vi.mock("@/store/dungeons/battle/dialog", () => ({ useBattleDialogStore: () => ({ showMessages }) }));
+vi.mock("#src/services/dungeons/scene/battle/battleStateMachine", () => ({ battleStateMachine: { setState } }));
+vi.mock("#src/store/dungeons/battle/dialog", () => ({ useBattleDialogStore: () => ({ showMessages }) }));
 
 // The ball's flight and the monster's fall are Phaser tweens, and the outcome the ball is thrown for is decided by the
 // Capture roll, which is tested apart
-vi.mock(import("@/composables/dungeons/item/useThrowBallAnimation"), () => ({
+vi.mock(import("#src/composables/dungeons/item/useThrowBallAnimation"), () => ({
   useThrowBallAnimation: () => Promise.resolve(),
 }));
-vi.mock(import("@/composables/dungeons/scene/battle/monster/useMonsterDeathTween"), () => ({
+vi.mock(import("#src/composables/dungeons/scene/battle/monster/useMonsterDeathTween"), () => ({
   useMonsterDeathTween: () => Promise.resolve(),
 }));
-vi.mock(import("@/services/dungeons/item/createCaptureResult"), () => ({
+vi.mock(import("#src/services/dungeons/item/createCaptureResult"), () => ({
   createCaptureResult: vi.fn<() => CaptureResult>(() => CaptureResult.Failure),
 }));
 
 // The dungeons store imports Phaser, which cannot initialise under the test environment. Only its save is read here, so
 // The fake keeps the real save shape and holds one save for every reader
-vi.mock("@/store/dungeons", async () => {
+vi.mock("#src/store/dungeons/index", async () => {
   const { Dungeons } = await import("#shared/models/dungeons/data/Dungeons");
   const saveModule = await import("#shared/models/dungeons/data/Save");
   const { reactive } = await import("vue");

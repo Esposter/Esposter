@@ -1,21 +1,21 @@
-import type { UiContextMenuPoint } from "@/models/ui/UiContextMenuPoint";
-import type { WhiteboardEditState } from "@/models/whiteboard/WhiteboardEditState";
-import type { WhiteboardContextMenuCommands } from "@/services/whiteboard/contextMenu/getWhiteboardContextMenuItems";
+import type { UiContextMenuPoint } from "#src/models/ui/UiContextMenuPoint";
+import type { WhiteboardEditState } from "#src/models/whiteboard/WhiteboardEditState";
+import type { WhiteboardContextMenuCommands } from "#src/services/whiteboard/contextMenu/getWhiteboardContextMenuItems";
 
-import { StackMove } from "@/models/whiteboard/StackMove";
-import { getStackOperations } from "@/services/whiteboard/arrange/getStackOperations";
+import { StackMove } from "#src/models/whiteboard/StackMove";
+import { getStackOperations } from "#src/services/whiteboard/arrange/getStackOperations";
 import {
   getWhiteboardCanvasContextMenuItems,
   getWhiteboardContextMenuItems,
-} from "@/services/whiteboard/contextMenu/getWhiteboardContextMenuItems";
-import { getHitElementId } from "@/services/whiteboard/gesture/getHitElementId";
-import { getHitTolerance } from "@/services/whiteboard/gesture/getHitTolerance";
-import { getWorldPoint } from "@/services/whiteboard/gesture/getWorldPoint";
-import { WHITEBOARD_RESET_SCALE } from "@/services/whiteboard/viewport/constants";
-import { useAlertStore } from "@/store/alert";
-import { useWhiteboardStore } from "@/store/resource/whiteboard";
-import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
-import { useContextMenuStore } from "@/store/ui/contextMenu";
+} from "#src/services/whiteboard/contextMenu/getWhiteboardContextMenuItems";
+import { getHitElementId } from "#src/services/whiteboard/gesture/getHitElementId";
+import { getHitTolerance } from "#src/services/whiteboard/gesture/getHitTolerance";
+import { getWorldPoint } from "#src/services/whiteboard/gesture/getWorldPoint";
+import { WHITEBOARD_RESET_SCALE } from "#src/services/whiteboard/viewport/constants";
+import { useAlertStore } from "#src/store/alert";
+import { useWhiteboardEditorStore } from "#src/store/resource/whiteboard/editor";
+import { useWhiteboardStore } from "#src/store/resource/whiteboard/index";
+import { useContextMenuStore } from "#src/store/ui/contextMenu";
 import { getResultAsync } from "@esposter/shared";
 import { getPositionedElementText } from "vue-block-editor-headless";
 

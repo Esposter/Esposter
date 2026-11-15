@@ -2,14 +2,17 @@
 import type { RoomMessage, Topic } from "@esposter/db-schema";
 
 import { createId } from "#shared/util/math/random/createId";
-import { openRealtimeSocket, sendRealtimeFrame } from "@/services/realtime/openRealtimeSocket.test";
-import { useConnectionStore } from "@/store/realtime/connection";
+import { openRealtimeSocket, sendRealtimeFrame } from "#src/services/realtime/openRealtimeSocket.test";
+import { useConnectionStore } from "#src/store/realtime/connection";
 import { CALL_ID_LENGTH, getTopic, MAX_FRAME_TOPICS, MessageType, TopicKind } from "@esposter/db-schema";
 import { jsonDateParse } from "@esposter/shared";
 import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 
-vi.mock(import("@/services/realtime/openRealtimeSocket"), () => import("@/services/realtime/openRealtimeSocket.test"));
+vi.mock(
+  import("#src/services/realtime/openRealtimeSocket"),
+  () => import("#src/services/realtime/openRealtimeSocket.test"),
+);
 
 describe(useConnectionStore, () => {
   // A knock opens its call's socket and the admission that follows opens the same call again. The socket it holds is

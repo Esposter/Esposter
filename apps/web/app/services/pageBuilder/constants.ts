@@ -1,11 +1,11 @@
 import type { StyleProperty } from "#shared/models/pageBuilder/StyleProperty";
 import type { WebpageNode } from "#shared/models/pageBuilder/WebpageNode";
-import type { PageBuilderPaletteCategory } from "@/models/pageBuilder/PageBuilderPaletteCategory";
+import type { PageBuilderPaletteCategory } from "#src/models/pageBuilder/PageBuilderPaletteCategory";
 
 import { PageBuilderDevice } from "#shared/models/pageBuilder/PageBuilderDevice";
 import { StyleBreakpoint } from "#shared/models/pageBuilder/StyleBreakpoint";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 // The most edits one open resource's undo history keeps, the oldest dropping first
 export const MAX_PAGE_BUILDER_HISTORY_SIZE = 100;

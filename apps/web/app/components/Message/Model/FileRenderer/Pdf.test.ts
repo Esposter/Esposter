@@ -4,10 +4,10 @@ import type { PDFDocumentLoadingTask, PDFDocumentProxy, PDFPageProxy } from "pdf
 import type { PdfApi, PdfRenderer } from "vue-pdfjs-headless";
 
 import { MimeType } from "#shared/models/file/MimeType";
-import MessageModelFileRendererPdf from "@/components/Message/Model/FileRenderer/Pdf.vue";
-import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
-import { loadPdfRenderer } from "@/services/pdf/loadPdfRenderer";
-import { UiDialogFrameClassMap } from "@/services/ui/UiDialogFrameClassMap";
+import MessageModelFileRendererPdf from "#src/components/Message/Model/FileRenderer/Pdf.vue";
+import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
+import { loadPdfRenderer } from "#src/services/pdf/loadPdfRenderer";
+import { UiDialogFrameClassMap } from "#src/services/ui/UiDialogFrameClassMap";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
@@ -15,7 +15,7 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 
 // Neither the thumbnail nor the viewer draws in this file, which asserts the shell around them and when the dialog
 // Exists. The renderer never loads, so the document is never requested and each component stays at its loading state
-vi.mock(import("@/services/pdf/loadPdfRenderer"), () => ({
+vi.mock(import("#src/services/pdf/loadPdfRenderer"), () => ({
   loadPdfRenderer: vi.fn<typeof loadPdfRenderer>(() => new Promise(() => {})),
 }));
 

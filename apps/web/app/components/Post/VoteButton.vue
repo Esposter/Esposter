@@ -2,9 +2,9 @@
 import type { CreateLikeInput } from "#shared/models/db/post/CreateLikeInput";
 import type { PostInPostWithRelations } from "@esposter/db-schema";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { PostVoteDefinitionMap } from "@/services/post/PostVoteDefinitionMap";
-import { useLikeStore } from "@/store/post/like";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { PostVoteDefinitionMap } from "#src/services/post/PostVoteDefinitionMap";
+import { useLikeStore } from "#src/store/post/like";
 
 interface Props {
   post: PostInPostWithRelations;

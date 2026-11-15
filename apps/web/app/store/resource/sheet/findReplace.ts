@@ -1,6 +1,6 @@
-import { findMatchingCells } from "@/services/resource/sheet/commands/findMatchingCells";
-import { useResourceStore } from "@/store/resource";
-import { useSheetStore } from "@/store/resource/sheet";
+import { findMatchingCells } from "#src/services/resource/sheet/commands/findMatchingCells";
+import { useResourceStore } from "#src/store/resource/index";
+import { useSheetStore } from "#src/store/resource/sheet/index";
 
 export const useFindReplaceStore = defineStore("resource/sheet/findReplace", () => {
   const resourceStore = useResourceStore();

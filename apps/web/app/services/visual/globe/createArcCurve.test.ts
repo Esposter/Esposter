@@ -1,4 +1,4 @@
-import { createArcCurve } from "@/services/visual/globe/createArcCurve";
+import { createArcCurve } from "#src/services/visual/globe/createArcCurve";
 import { describe, expect, test } from "vitest";
 
 describe(createArcCurve, () => {

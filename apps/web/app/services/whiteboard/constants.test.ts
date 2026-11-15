@@ -1,8 +1,8 @@
-import type { WhiteboardEditState } from "@/models/whiteboard/WhiteboardEditState";
-import type { WhiteboardHistoryEntry } from "@/models/whiteboard/WhiteboardHistoryEntry";
+import type { WhiteboardEditState } from "#src/models/whiteboard/WhiteboardEditState";
+import type { WhiteboardHistoryEntry } from "#src/models/whiteboard/WhiteboardHistoryEntry";
 import type { ArrowElement, PositionedDocument, ShapeElement } from "vue-block-editor-headless";
 
-import { MAX_WHITEBOARD_HISTORY_SIZE } from "@/services/resource/whiteboard/constants";
+import { MAX_WHITEBOARD_HISTORY_SIZE } from "#src/services/resource/whiteboard/constants";
 import { createHistory } from "@esposter/shared";
 import { v7 } from "uuid";
 import { describe } from "vitest";

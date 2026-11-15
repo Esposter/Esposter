@@ -1,14 +1,14 @@
-import type { GestureDrawing } from "@/models/whiteboard/GestureDrawing";
-import type { GesturePointerEvent } from "@/models/whiteboard/GesturePointerEvent";
-import type { WhiteboardGestureResult } from "@/models/whiteboard/WhiteboardGestureResult";
-import type { WhiteboardGestureState } from "@/models/whiteboard/WhiteboardGestureState";
+import type { GestureDrawing } from "#src/models/whiteboard/GestureDrawing";
+import type { GesturePointerEvent } from "#src/models/whiteboard/GesturePointerEvent";
+import type { WhiteboardGestureResult } from "#src/models/whiteboard/WhiteboardGestureResult";
+import type { WhiteboardGestureState } from "#src/models/whiteboard/WhiteboardGestureState";
 
-import { STROKE_SAMPLE_DISTANCE } from "@/services/whiteboard/gesture/constants";
-import { getPointDistance } from "@/services/whiteboard/gesture/getPointDistance";
-import { getPreviewOrCommitResult } from "@/services/whiteboard/gesture/getPreviewOrCommitResult";
-import { getStrokeOperations } from "@/services/whiteboard/gesture/getStrokeOperations";
-import { getWorldPoint } from "@/services/whiteboard/gesture/getWorldPoint";
-import { reducePreviewOrCommitGesture } from "@/services/whiteboard/gesture/reducePreviewOrCommitGesture";
+import { STROKE_SAMPLE_DISTANCE } from "#src/services/whiteboard/gesture/constants";
+import { getPointDistance } from "#src/services/whiteboard/gesture/getPointDistance";
+import { getPreviewOrCommitResult } from "#src/services/whiteboard/gesture/getPreviewOrCommitResult";
+import { getStrokeOperations } from "#src/services/whiteboard/gesture/getStrokeOperations";
+import { getWorldPoint } from "#src/services/whiteboard/gesture/getWorldPoint";
+import { reducePreviewOrCommitGesture } from "#src/services/whiteboard/gesture/reducePreviewOrCommitGesture";
 import { takeOne } from "@esposter/shared";
 
 // A stroke takes each point the pointer passes once it has moved a sample distance from the last one, and a release commits

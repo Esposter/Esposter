@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { PopupProps } from "@/components/Clicker/Model/Points/PopupProps";
+import type { PopupProps } from "#src/components/Clicker/Model/Points/PopupProps";
 
-import { formatNumberLong } from "@/services/clicker/formatNumberLong";
-import { useClickerStore } from "@/store/clicker";
+import { formatNumberLong } from "#src/services/clicker/formatNumberLong";
+import { useClickerStore } from "#src/store/clicker/index";
 
 const { duration, left, points, top } = defineProps<PopupProps>();
 const clickerStore = useClickerStore();

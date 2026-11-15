@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import type { ResourceFilterValues } from "@/models/resource/list/ResourceFilterValues";
+import type { ResourceFilterValues } from "#src/models/resource/list/ResourceFilterValues";
 
 import { ResourceListItemPropertyNames } from "#shared/models/resource/ResourceListItem";
-import { ResourceListSource } from "@/models/resource/list/ResourceListSource";
-import { RESOURCE_LIST_ITEMS_PER_PAGE, RESOURCE_LIST_ITEMS_PER_PAGE_OPTIONS } from "@/services/resource/constants";
-import { deserializeResourceColumnKeyWidthMap } from "@/services/resource/list/deserializeResourceColumnKeyWidthMap";
-import { ResourceListSourceDefinitionMap } from "@/services/resource/list/ResourceListSourceDefinitionMap";
-import { serializeResourceColumnKeyWidthMap } from "@/services/resource/list/serializeResourceColumnKeyWidthMap";
-import { NO_ACTION_ITEMS } from "@/services/shared/constants";
-import { useFavoriteStore } from "@/store/resource/favorite";
-import { useListDialogStore } from "@/store/resource/listDialog";
+import { ResourceListSource } from "#src/models/resource/list/ResourceListSource";
+import { RESOURCE_LIST_ITEMS_PER_PAGE, RESOURCE_LIST_ITEMS_PER_PAGE_OPTIONS } from "#src/services/resource/constants";
+import { deserializeResourceColumnKeyWidthMap } from "#src/services/resource/list/deserializeResourceColumnKeyWidthMap";
+import { ResourceListSourceDefinitionMap } from "#src/services/resource/list/ResourceListSourceDefinitionMap";
+import { serializeResourceColumnKeyWidthMap } from "#src/services/resource/list/serializeResourceColumnKeyWidthMap";
+import { NO_ACTION_ITEMS } from "#src/services/shared/constants";
+import { useFavoriteStore } from "#src/store/resource/favorite";
+import { useListDialogStore } from "#src/store/resource/listDialog";
 import { RoutePath, takeOne } from "@esposter/shared";
 
 interface Props {

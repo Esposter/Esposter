@@ -1,6 +1,6 @@
-import type { Alert } from "@/models/shared/Alert";
+import type { Alert } from "#src/models/shared/Alert";
 
-import { TOAST_DURATION_MS } from "@/services/ui/constants";
+import { TOAST_DURATION_MS } from "#src/services/ui/constants";
 import { checkIsServer } from "@esposter/shared";
 import { v7 } from "uuid";
 

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { PickableEmoji } from "@/models/message/emoji/PickableEmoji";
-import type { Editor } from "@tiptap/vue-3";
+import type { PickableEmoji } from "#src/models/message/emoji/PickableEmoji";
+import type { Editor } from "@tiptap/core";
 
-import { getPickableEmojiContent } from "@/services/message/emoji/getPickableEmojiContent";
+import { getPickableEmojiContent } from "#src/services/message/emoji/getPickableEmojiContent";
 
 interface Props {
   editor?: Editor;

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { WHITEBOARD_ZOOM_FACTOR } from "@/services/whiteboard/viewport/constants";
-import { useWhiteboardStore } from "@/store/resource/whiteboard";
-import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { WHITEBOARD_ZOOM_FACTOR } from "#src/services/whiteboard/viewport/constants";
+import { useWhiteboardEditorStore } from "#src/store/resource/whiteboard/editor";
+import { useWhiteboardStore } from "#src/store/resource/whiteboard/index";
 import { getExportBounds } from "vue-block-editor-headless";
 
 // Undo and redo, then zoom in and out about the middle of the canvas, and fit the whole document into it.

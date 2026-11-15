@@ -1,5 +1,5 @@
 // @unocss-include
-import type { Item } from "@/models/shared/Item";
+import type { Item } from "#src/models/shared/Item";
 
 import { ResourceActivityType } from "@esposter/db-schema";
 

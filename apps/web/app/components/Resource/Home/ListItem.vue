@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
-import type { Item } from "@/models/shared/Item";
+import type { Item } from "#src/models/shared/Item";
 
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { getResourceLinkItems } from "@/services/resource/getResourceLinkItems";
-import { useFavoriteStore } from "@/store/resource/favorite";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { getResourceLinkItems } from "#src/services/resource/getResourceLinkItems";
+import { useFavoriteStore } from "#src/store/resource/favorite";
 import { RoutePath } from "@esposter/shared";
 
 interface Props {

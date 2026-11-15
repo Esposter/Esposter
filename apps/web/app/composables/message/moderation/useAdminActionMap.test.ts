@@ -1,12 +1,12 @@
 // @vitest-environment nuxt
-import { useAdminActionMap } from "@/composables/message/moderation/useAdminActionMap";
-import { useSession } from "@/services/auth/authClient.test";
-import { useAlertStore } from "@/store/alert";
+import { useAdminActionMap } from "#src/composables/message/moderation/useAdminActionMap";
+import { useSession } from "#src/services/auth/authClient.test";
+import { useAlertStore } from "#src/store/alert";
 import { AdminActionType } from "@esposter/db-schema";
 import { v7 } from "uuid";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
+vi.mock(import("#src/services/auth/authClient"), () => import("#src/services/auth/authClient.test"));
 
 describe(useAdminActionMap, () => {
   const roomId = v7();

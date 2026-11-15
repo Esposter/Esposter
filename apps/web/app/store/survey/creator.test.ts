@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
 import type { SurveyPageNode } from "vue-survey-engine-headless";
 
-import { useSurveyCreatorStore } from "@/store/survey/creator";
+import { useSurveyCreatorStore } from "#src/store/survey/creator";
 import { createPinia, setActivePinia } from "pinia";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";

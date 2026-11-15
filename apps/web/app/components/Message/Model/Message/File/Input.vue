@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { UploadFileUrl } from "@/models/message/file/UploadFileUrl";
+import type { UploadFileUrl } from "#src/models/message/file/UploadFileUrl";
 import type { FileEntity } from "@esposter/db-schema";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 interface Props {
   file: FileEntity;

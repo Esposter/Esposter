@@ -1,5 +1,5 @@
-import { getFilterKeyword } from "@/services/message/filter/getFilterKeyword";
-import { getFilterTypeFromSearchQuery } from "@/services/message/filter/getFilterTypeFromSearchQuery";
+import { getFilterKeyword } from "#src/services/message/filter/getFilterKeyword";
+import { getFilterTypeFromSearchQuery } from "#src/services/message/filter/getFilterTypeFromSearchQuery";
 import { FilterType, FilterTypes } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 

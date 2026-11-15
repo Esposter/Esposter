@@ -1,9 +1,9 @@
 import type { SurveyDocument } from "vue-survey-engine-headless";
 
-import { EditorFindingSeverity } from "@/models/editor/EditorFindingSeverity";
-import { getSurveyEditorFindings } from "@/services/resource/survey/getSurveyEditorFindings";
-import { createSurveyTestPage } from "@/services/survey/createSurveyTestPage.test";
-import { createSurveyTestQuestion } from "@/services/survey/createSurveyTestQuestion.test";
+import { EditorFindingSeverity } from "#src/models/editor/EditorFindingSeverity";
+import { getSurveyEditorFindings } from "#src/services/resource/survey/getSurveyEditorFindings";
+import { createSurveyTestPage } from "#src/services/survey/createSurveyTestPage.test";
+import { createSurveyTestQuestion } from "#src/services/survey/createSurveyTestQuestion.test";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 import { checkSurveyDocument, surveyRootPropsSchema } from "vue-survey-engine-headless";

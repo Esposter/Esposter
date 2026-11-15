@@ -4,9 +4,9 @@ import type { Position } from "grid-engine";
 import type { Types } from "phaser";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { AttackGameObjectType } from "@/models/dungeons/attack/AttackGameObjectType";
-import { getAnimationCompleteEventKey } from "@/services/dungeons/animation/getAnimationCompleteEventKey";
-import { getAttackPosition } from "@/services/dungeons/scene/battle/attack/getAttackPosition";
+import { AttackGameObjectType } from "#src/models/dungeons/attack/AttackGameObjectType";
+import { getAnimationCompleteEventKey } from "#src/services/dungeons/animation/getAnimationCompleteEventKey";
+import { getAttackPosition } from "#src/services/dungeons/scene/battle/attack/getAttackPosition";
 import { Sprite, useAnimations } from "vue-phaserjs";
 
 interface Props {

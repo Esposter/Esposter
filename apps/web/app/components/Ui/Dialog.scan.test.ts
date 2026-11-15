@@ -1,6 +1,6 @@
 import type { ElementNode, RootNode, TemplateChildNode } from "@vue/compiler-core";
 
-import { walkElements } from "@/walkElements.test";
+import { walkElements } from "#src/walkElements.test";
 import { NodeTypes } from "@vue/compiler-core";
 import { glob, readFile } from "node:fs/promises";
 import { join } from "node:path";

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { BufferGeometry, Mesh, MeshBasicMaterial, MeshStandardMaterial } from "three/webgpu";
 
-import gemGltfUrl from "@/assets/visual/textures/gem.gltf?url";
-import roughnessUrl from "@/assets/visual/textures/roughness.jpeg?url";
+import gemGltfUrl from "#src/assets/visual/textures/gem.gltf";
+import roughnessUrl from "#src/assets/visual/textures/roughness.jpeg";
 import { Vector3 } from "three/webgpu";
 
 const { state: gltf } = useGLTF(gemGltfUrl);

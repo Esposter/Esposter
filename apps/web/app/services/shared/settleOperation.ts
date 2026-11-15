@@ -1,8 +1,8 @@
-import type { MutationOutcome } from "@/models/shared/MutationOutcome";
-import type { OperationContext } from "@/models/shared/OperationContext";
+import type { MutationOutcome } from "#src/models/shared/MutationOutcome";
+import type { OperationContext } from "#src/models/shared/OperationContext";
 
-import { MutationStatus } from "@/models/shared/MutationStatus";
-import { createErrorAlert } from "@/services/trpc/createErrorAlert";
+import { MutationStatus } from "#src/models/shared/MutationStatus";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { getResultAsync } from "@esposter/shared";
 
 export const settleOperation = async <TResult>(

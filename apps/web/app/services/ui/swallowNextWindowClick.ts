@@ -1,5 +1,5 @@
-import { SWALLOW_WINDOW_MS } from "@/services/ui/constants";
-import { swallowClick } from "@/services/ui/swallowClick";
+import { SWALLOW_WINDOW_MS } from "#src/services/ui/constants";
+import { swallowClick } from "#src/services/ui/swallowClick";
 
 // A release can land on the control a press began on, and the browser clicks that control. The click that follows a drag is
 // Stopped before it reaches the control, and only that one: a press or a key starts something whose click is its own, and a

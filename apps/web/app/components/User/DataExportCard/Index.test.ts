@@ -2,10 +2,10 @@
 import type { DataExportInUser } from "@esposter/db-schema";
 import type { VueWrapper } from "@vue/test-utils";
 
-import UserDataExportCard from "@/components/User/DataExportCard/Index.vue";
-import { UserSettingsPageSection } from "@/models/user/UserSettingsPageSection";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { DataExportOmittedItems } from "@/services/user/settings/DataExportOmittedItems";
+import UserDataExportCard from "#src/components/User/DataExportCard/Index.vue";
+import { UserSettingsPageSection } from "#src/models/user/UserSettingsPageSection";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { DataExportOmittedItems } from "#src/services/user/settings/DataExportOmittedItems";
 import { DataExportStatus } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";

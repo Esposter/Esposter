@@ -2,11 +2,11 @@
 import type { RoomInMessage, UpdateRoomInput } from "@esposter/db-schema";
 
 import { MEGABYTE } from "#shared/services/app/constants";
-import MessageModelRoomSettingsTypeAttachmentsIndex from "@/components/Message/Model/Room/Settings/Type/Attachments/Index.vue";
-import { createRoom } from "@/services/message/room/createRoom.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useAlertStore } from "@/store/alert";
-import { useRoomStore } from "@/store/message/room";
+import MessageModelRoomSettingsTypeAttachmentsIndex from "#src/components/Message/Model/Room/Settings/Type/Attachments/Index.vue";
+import { createRoom } from "#src/services/message/room/createRoom.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useAlertStore } from "#src/store/alert";
+import { useRoomStore } from "#src/store/message/room/index";
 import { MimeCategory } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";

@@ -1,4 +1,4 @@
-import { getBreakpointColumnNumber } from "@/services/dashboard/grid/getBreakpointColumnNumber";
+import { getBreakpointColumnNumber } from "#src/services/dashboard/grid/getBreakpointColumnNumber";
 import { describe, expect, test } from "vitest";
 
 describe(getBreakpointColumnNumber, () => {

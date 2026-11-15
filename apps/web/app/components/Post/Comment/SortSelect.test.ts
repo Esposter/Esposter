@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
 import { PostSortType } from "#shared/models/post/PostSortType";
-import PostCommentSortSelect from "@/components/Post/Comment/SortSelect.vue";
+import PostCommentSortSelect from "#src/components/Post/Comment/SortSelect.vue";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 

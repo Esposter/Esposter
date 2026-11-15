@@ -1,9 +1,9 @@
 import type { Column } from "#shared/models/resource/sheet/column/Column";
 import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnValue";
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
-import type { AffectedCell } from "@/models/resource/sheet/commands/AffectedCell";
+import type { AffectedCell } from "#src/models/resource/sheet/commands/AffectedCell";
 
-import { writeCellValue } from "@/services/resource/sheet/commands/writeCellValue";
+import { writeCellValue } from "#src/services/resource/sheet/commands/writeCellValue";
 import { takeOne } from "@esposter/shared";
 
 // Every cell-level command executes and undoes the same way — a value per affected cell, with the column's size

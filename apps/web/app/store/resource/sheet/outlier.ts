@@ -1,11 +1,11 @@
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { compileSheetColumns } from "#shared/services/resource/sheet/column/compileSheetColumns";
 import { getEffectiveColumnType } from "#shared/services/resource/sheet/column/getEffectiveColumnType";
-import { computeColumnStatisticsForColumn } from "@/services/resource/sheet/column/computeColumnStatisticsForColumn";
-import { OUTLIER_STANDARD_DEVIATION_MULTIPLIER } from "@/services/resource/sheet/constants";
-import { getItemId } from "@/services/resource/sheet/getItemId";
-import { useResourceStore } from "@/store/resource";
-import { useSheetStore } from "@/store/resource/sheet";
+import { computeColumnStatisticsForColumn } from "#src/services/resource/sheet/column/computeColumnStatisticsForColumn";
+import { OUTLIER_STANDARD_DEVIATION_MULTIPLIER } from "#src/services/resource/sheet/constants";
+import { getItemId } from "#src/services/resource/sheet/getItemId";
+import { useResourceStore } from "#src/store/resource/index";
+import { useSheetStore } from "#src/store/resource/sheet/index";
 import { takeOne } from "@esposter/shared";
 
 export const useOutlierStore = defineStore("resource/sheet/outlier", () => {

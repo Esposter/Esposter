@@ -2,12 +2,12 @@
 import type { PdfAnnotationsState, PdfViewerState } from "vue-pdfjs-headless";
 
 import { MimeType } from "#shared/models/file/MimeType";
-import { createPdfAnnotationsState } from "@/components/Pdf/Viewer/createPdfAnnotationsState.test";
-import { createPdfViewerState } from "@/components/Pdf/Viewer/createPdfViewerState.test";
-import PdfViewerToolbar from "@/components/Pdf/Viewer/Toolbar.vue";
-import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
-import { UiStyles } from "@/models/ui/UiStyle";
-import { useAlertStore } from "@/store/alert";
+import { createPdfAnnotationsState } from "#src/components/Pdf/Viewer/createPdfAnnotationsState.test";
+import { createPdfViewerState } from "#src/components/Pdf/Viewer/createPdfViewerState.test";
+import PdfViewerToolbar from "#src/components/Pdf/Viewer/Toolbar.vue";
+import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
+import { UiStyles } from "#src/models/ui/UiStyle";
+import { useAlertStore } from "#src/store/alert";
 import { downloadFile } from "@esposter/shared";
 import { flushPromises, mount } from "@vue/test-utils";
 import { err } from "neverthrow";

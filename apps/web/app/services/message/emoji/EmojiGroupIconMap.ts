@@ -1,5 +1,5 @@
 // @unocss-include
-import { EmojiGroup } from "@/models/message/emoji/EmojiGroup";
+import { EmojiGroup } from "#src/models/message/emoji/EmojiGroup";
 
 // The category rail's icons, following Discord's choice of subject for each group
 export const EmojiGroupIconMap: Record<EmojiGroup, string> = {

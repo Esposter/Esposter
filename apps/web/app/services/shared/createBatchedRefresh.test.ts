@@ -1,4 +1,4 @@
-import { createBatchedRefresh } from "@/services/shared/createBatchedRefresh";
+import { createBatchedRefresh } from "#src/services/shared/createBatchedRefresh";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(createBatchedRefresh, () => {

@@ -3,7 +3,7 @@ import type { DeleteLikeInput } from "#shared/models/db/post/DeleteLikeInput";
 import type { UpdateLikeInput } from "#shared/models/db/post/UpdateLikeInput";
 import type { PostInPostWithRelations } from "@esposter/db-schema";
 
-import { usePostCountStore } from "@/store/post/count";
+import { usePostCountStore } from "#src/store/post/count";
 
 // Every copy's change is undone by its own rollback, in one call
 const getRollback = (rollbacks: (() => void)[]) => () => {

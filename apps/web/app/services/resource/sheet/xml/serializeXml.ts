@@ -2,9 +2,9 @@ import type { MimeType } from "#shared/models/file/MimeType";
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 import type { XmlFileSettings } from "#shared/models/resource/sheet/XmlFileSettings";
 
-import { getCellTextRows } from "@/services/resource/sheet/commands/getCellTextRows";
-import { XML_ROOT_ELEMENT_NAME, XML_ROW_ELEMENT_NAME } from "@/services/resource/sheet/xml/constants";
-import { serializeXmlCell } from "@/services/resource/sheet/xml/serializeXmlCell";
+import { getCellTextRows } from "#src/services/resource/sheet/commands/getCellTextRows";
+import { XML_ROOT_ELEMENT_NAME, XML_ROW_ELEMENT_NAME } from "#src/services/resource/sheet/xml/constants";
+import { serializeXmlCell } from "#src/services/resource/sheet/xml/serializeXmlCell";
 import { takeOne } from "@esposter/shared";
 
 export const serializeXml = (dataSource: DataSource, _settings: XmlFileSettings, mimeType: MimeType) => {

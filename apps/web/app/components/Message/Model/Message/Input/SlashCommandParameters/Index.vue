@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { SlashCommand } from "@/models/message/slashCommands/SlashCommand";
+import type { SlashCommand } from "#src/models/message/slashCommands/SlashCommand";
 
-import { COMMAND_INPUT_INDEX, NO_FOCUSED_INDEX } from "@/services/message/slashCommands/constants";
-import { SlashCommandDefinitions } from "@/services/message/slashCommands/SlashCommandDefinitionMap";
-import { useSlashCommandStore } from "@/store/message/input/slashCommand";
+import { COMMAND_INPUT_INDEX, NO_FOCUSED_INDEX } from "#src/services/message/slashCommands/constants";
+import { SlashCommandDefinitions } from "#src/services/message/slashCommands/SlashCommandDefinitionMap";
+import { useSlashCommandStore } from "#src/store/message/input/slashCommand";
 
 const slashCommandStore = useSlashCommandStore();
 const { activeParameters, focusedIndex, lastAddedParameterName, parameterValues, pendingSlashCommand } =

@@ -1,6 +1,6 @@
-import type { UiMenuItem } from "@/models/ui/UiMenuItem";
+import type { UiMenuItem } from "#src/models/ui/UiMenuItem";
 
-import { CardType } from "@/models/visual/CardType";
+import { CardType } from "#src/models/visual/CardType";
 
 export const CardTypeItems: UiMenuItem<CardType>[] = Object.values(CardType).map((cardType) => ({
   title: cardType,

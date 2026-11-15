@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useMediaStore } from "@/store/message/room/call/media";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { useMediaStore } from "#src/store/message/room/call/media";
 
 defineSlots<{ append?: () => VNode }>();
 const mediaStore = useMediaStore();

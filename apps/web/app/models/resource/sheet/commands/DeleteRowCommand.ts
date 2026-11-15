@@ -3,8 +3,8 @@ import type { Row } from "#shared/models/resource/sheet/datasource/Row";
 
 import { ADataSourceCommand } from "#shared/models/resource/sheet/commands/ADataSourceCommand";
 import { CommandType } from "#shared/models/resource/sheet/commands/CommandType";
-import { insertRowAt } from "@/services/resource/sheet/commands/insertRowAt";
-import { removeRowAt } from "@/services/resource/sheet/commands/removeRowAt";
+import { insertRowAt } from "#src/services/resource/sheet/commands/insertRowAt";
+import { removeRowAt } from "#src/services/resource/sheet/commands/removeRowAt";
 
 export class DeleteRowCommand extends ADataSourceCommand<typeof CommandType.DeleteRow> {
   readonly type = CommandType.DeleteRow;

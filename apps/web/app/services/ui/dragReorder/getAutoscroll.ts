@@ -1,4 +1,4 @@
-import { DRAG_AUTOSCROLL_EDGE } from "@/services/ui/constants";
+import { DRAG_AUTOSCROLL_EDGE } from "#src/services/ui/constants";
 
 // The innermost scroller the pointer is near the top or bottom edge of, or past it, that can still scroll that way,
 // And how fast as a share of the full speed. Its edge is where it is seen, so one running past the window's edge

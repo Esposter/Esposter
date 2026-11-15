@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import type { ArrowElement, ShapeElement, StickyNoteElement } from "vue-block-editor-headless";
 
-import { WHITEBOARD_CORNER_STYLE_ITEMS, WHITEBOARD_SKETCH_LEVEL_ITEMS } from "@/services/whiteboard/stroke/constants";
-import { useWhiteboardStore } from "@/store/resource/whiteboard";
+import {
+  WHITEBOARD_CORNER_STYLE_ITEMS,
+  WHITEBOARD_SKETCH_LEVEL_ITEMS,
+} from "#src/services/whiteboard/stroke/constants";
+import { useWhiteboardStore } from "#src/store/resource/whiteboard/index";
 import { PositionedElementType, ShapeKind } from "vue-block-editor-headless";
 
 interface Props {

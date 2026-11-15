@@ -4,9 +4,9 @@ import {
   benchRows1k,
   benchRows10k,
   benchRows100,
-} from "@/composables/resource/sheet/commands/constants.bench";
-import { createBenchDataSource } from "@/composables/resource/sheet/commands/createBenchDataSource.bench";
-import { setupCommandBench } from "@/composables/resource/sheet/commands/setupCommandBench.bench";
+} from "#src/composables/resource/sheet/commands/constants.bench";
+import { createBenchDataSource } from "#src/composables/resource/sheet/commands/createBenchDataSource.bench";
+import { setupCommandBench } from "#src/composables/resource/sheet/commands/setupCommandBench.bench";
 import { takeOne } from "@esposter/shared";
 import { describe } from "vitest";
 

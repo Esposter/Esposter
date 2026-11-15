@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
-import { WHITEBOARD_LAYOUT, WHITEBOARD_SELECTION_KINDS } from "@/services/whiteboard/layout/constants";
-import { WhiteboardContentComponentMap } from "@/services/whiteboard/layout/WhiteboardContentComponentMap";
+import { WHITEBOARD_LAYOUT, WHITEBOARD_SELECTION_KINDS } from "#src/services/whiteboard/layout/constants";
+import { WhiteboardContentComponentMap } from "#src/services/whiteboard/layout/WhiteboardContentComponentMap";
 import { describe, expect, test } from "vitest";
 import { checkLayout } from "vue-editor-layout-headless";
 

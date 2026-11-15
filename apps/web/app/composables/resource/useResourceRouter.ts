@@ -1,4 +1,4 @@
-import type { ResourceRouter } from "@/models/resource/ResourceRouter";
+import type { ResourceRouter } from "#src/models/resource/ResourceRouter";
 import type { ResourceType } from "@esposter/db-schema";
 
 import { uncapitalize } from "@esposter/shared";

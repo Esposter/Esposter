@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { BanInMessage } from "@esposter/db-schema";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { useBanDialogStore } from "@/store/message/user/banDialog";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { useBanDialogStore } from "#src/store/message/user/banDialog";
 
 interface Props {
   userId: BanInMessage["userId"];

@@ -1,19 +1,19 @@
-import type { GesturePointerEvent } from "@/models/whiteboard/GesturePointerEvent";
-import type { WhiteboardGestureState } from "@/models/whiteboard/WhiteboardGestureState";
+import type { GesturePointerEvent } from "#src/models/whiteboard/GesturePointerEvent";
+import type { WhiteboardGestureState } from "#src/models/whiteboard/WhiteboardGestureState";
 import type { ArrowElement, PositionedDocument, StrokeElement, TextElement } from "vue-block-editor-headless";
 
-import { GesturePointerAction } from "@/models/whiteboard/GesturePointerAction";
-import { GestureTool } from "@/models/whiteboard/GestureTool";
-import { ResizeHandle } from "@/models/whiteboard/ResizeHandle";
+import { GesturePointerAction } from "#src/models/whiteboard/GesturePointerAction";
+import { GestureTool } from "#src/models/whiteboard/GestureTool";
+import { ResizeHandle } from "#src/models/whiteboard/ResizeHandle";
 import {
   WHITEBOARD_ARROW,
   WHITEBOARD_ARROW_ID,
   WHITEBOARD_PROCESS,
   WHITEBOARD_PROCESS_ID,
-} from "@/services/whiteboard/constants.test";
-import { HIT_TOLERANCE, PRIMARY_BUTTON } from "@/services/whiteboard/gesture/constants";
-import { getResizeHandle } from "@/services/whiteboard/gesture/getResizeHandle";
-import { reduceWhiteboardGesture } from "@/services/whiteboard/gesture/reduceWhiteboardGesture";
+} from "#src/services/whiteboard/constants.test";
+import { HIT_TOLERANCE, PRIMARY_BUTTON } from "#src/services/whiteboard/gesture/constants";
+import { getResizeHandle } from "#src/services/whiteboard/gesture/getResizeHandle";
+import { reduceWhiteboardGesture } from "#src/services/whiteboard/gesture/reduceWhiteboardGesture";
 import { JsonPatchOperationType } from "@esposter/shared";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";

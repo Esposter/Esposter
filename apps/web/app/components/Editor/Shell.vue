@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { EditorRegistry } from "@/models/editor/EditorRegistry";
-import type { EditorType } from "@/models/editor/EditorType";
+import type { EditorRegistry } from "#src/models/editor/EditorRegistry";
+import type { EditorType } from "#src/models/editor/EditorType";
 import type { Context, Layout } from "vue-editor-layout-headless";
 
-import { useEditorReaderStateStore } from "@/store/editor/readerState";
+import { useEditorReaderStateStore } from "#src/store/editor/readerState";
 import { takeOne } from "@esposter/shared";
 import { parseReaderState, RegionEdge, RegionPresentation, useEditorLayout } from "vue-editor-layout-headless";
 

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { RoomPermissionCategoryItems } from "@/services/message/room/role/RoomPermissionCategoryItems";
-import { useRoleStore } from "@/store/message/room/role";
+import { RoomPermissionCategoryItems } from "#src/services/message/room/role/RoomPermissionCategoryItems";
+import { useRoleStore } from "#src/store/message/room/role";
 import { checkHasPermission, RoomPermission } from "@esposter/db-schema";
 
 interface Props {

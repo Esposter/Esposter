@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { pollMessageContentSchema } from "#shared/models/message/poll/PollMessageContent";
 import { pollOptionSchema } from "#shared/models/message/poll/PollOption";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { POLL_MAX_OPTIONS, POLL_MIN_OPTIONS } from "@/services/message/poll/constants";
-import { UiRules } from "@/services/ui/UiRules";
-import { useDataStore } from "@/store/message/data";
-import { usePollDialogStore } from "@/store/message/input/pollDialog";
-import { useRoomStore } from "@/store/message/room";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { POLL_MAX_OPTIONS, POLL_MIN_OPTIONS } from "#src/services/message/poll/constants";
+import { UiRules } from "#src/services/ui/UiRules";
+import { useDataStore } from "#src/store/message/data";
+import { usePollDialogStore } from "#src/store/message/input/pollDialog";
+import { useRoomStore } from "#src/store/message/room/index";
 import { MessageType } from "@esposter/db-schema";
 import { v7 } from "uuid";
 

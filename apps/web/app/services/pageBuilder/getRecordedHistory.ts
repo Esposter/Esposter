@@ -1,7 +1,7 @@
-import type { PageBuilderHistoryEntry } from "@/models/pageBuilder/PageBuilderHistoryEntry";
+import type { PageBuilderHistoryEntry } from "#src/models/pageBuilder/PageBuilderHistoryEntry";
 import type { History } from "@esposter/shared";
 
-import { checkIsSameDisjointPaths } from "@/services/pageBuilder/checkIsSameDisjointPaths";
+import { checkIsSameDisjointPaths } from "#src/services/pageBuilder/checkIsSameDisjointPaths";
 import { JsonPatchOperationType, pushHistory } from "@esposter/shared";
 
 // The history an edit leaves: a new entry joins the past, unless it continues the newest entry, in the same interaction

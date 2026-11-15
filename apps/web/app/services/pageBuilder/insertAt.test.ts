@@ -1,10 +1,10 @@
 // @vitest-environment nuxt
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
-import { TEST_ROOT_TEXT_ID, TEST_SECTION_ID, TEST_WEBPAGE } from "@/services/pageBuilder/constants.test";
-import { insertAt } from "@/services/pageBuilder/insertAt";
-import { webpageKind } from "@/services/pageBuilder/webpageKind";
-import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
-import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
+import { TEST_ROOT_TEXT_ID, TEST_SECTION_ID, TEST_WEBPAGE } from "#src/services/pageBuilder/constants.test";
+import { insertAt } from "#src/services/pageBuilder/insertAt";
+import { webpageKind } from "#src/services/pageBuilder/webpageKind";
+import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
+import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
 import { createPinia, setActivePinia } from "pinia";
 import { v7 } from "uuid";
 import { afterEach, describe, expect, test, vi } from "vitest";

@@ -1,10 +1,10 @@
 import type { SnapshotVersion } from "#shared/models/resource/SnapshotVersion";
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { MutationStatus } from "@/models/shared/MutationStatus";
-import { getSnapshotVersionTitle } from "@/services/resource/getSnapshotVersionTitle";
-import { useNotificationStore } from "@/store/notification";
-import { useResourceStore } from "@/store/resource";
+import { MutationStatus } from "#src/models/shared/MutationStatus";
+import { getSnapshotVersionTitle } from "#src/services/resource/getSnapshotVersionTitle";
+import { useNotificationStore } from "#src/store/notification";
+import { useResourceStore } from "#src/store/resource/index";
 import { NotificationSeverity, SnapshotChannel } from "@esposter/db-schema";
 
 // The version history panel's own state: one merged timeline over both channels, and the two writes its rows

@@ -2,8 +2,8 @@ import type { MimeType } from "#shared/models/file/MimeType";
 import type { CsvFileSettings } from "#shared/models/resource/sheet/CsvFileSettings";
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 
-import { getCellTextRows } from "@/services/resource/sheet/commands/getCellTextRows";
-import { escapeCsvCell } from "@/services/resource/sheet/csv/escapeCsvCell";
+import { getCellTextRows } from "#src/services/resource/sheet/commands/getCellTextRows";
+import { escapeCsvCell } from "#src/services/resource/sheet/csv/escapeCsvCell";
 
 export const serializeCsv = (dataSource: DataSource, settings: CsvFileSettings, mimeType: MimeType) => {
   const { delimiter } = settings.configuration;

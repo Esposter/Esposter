@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import PdfThumbnail from "@/components/Pdf/Thumbnail.vue";
+import PdfThumbnail from "#src/components/Pdf/Thumbnail.vue";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 

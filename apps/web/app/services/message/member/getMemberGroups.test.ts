@@ -1,7 +1,7 @@
 import type { PublicUser, RoomRoleInMessage } from "@esposter/db-schema";
 
-import { createRoomRole } from "@/services/message/member/createRoomRole.test";
-import { getMemberGroups } from "@/services/message/member/getMemberGroups";
+import { createRoomRole } from "#src/services/message/member/createRoomRole.test";
+import { getMemberGroups } from "#src/services/message/member/getMemberGroups";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 

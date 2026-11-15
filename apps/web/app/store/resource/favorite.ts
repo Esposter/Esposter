@@ -1,8 +1,8 @@
 import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { CacheTag } from "@/models/cache/CacheTag";
-import { useNotificationStore } from "@/store/notification";
+import { CacheTag } from "#src/models/cache/CacheTag";
+import { useNotificationStore } from "#src/store/notification";
 
 // Favorites are server-side from day one — a star that vanishes on another device reads as data loss
 export const useFavoriteStore = defineStore("resource/favorite", () => {

@@ -1,19 +1,19 @@
-import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
+import type { PlayerInput } from "#src/models/dungeons/UI/input/PlayerInput";
 import type { Direction } from "grid-engine";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { SceneMode } from "@/models/dungeons/scene/monsterParty/SceneMode";
-import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
-import { activateItem } from "@/services/dungeons/item/activateItem";
-import { checkIsMonsterFainted } from "@/services/dungeons/monster/checkIsMonsterFainted";
-import { checkIsPlayerSpecialInput } from "@/services/dungeons/UI/input/checkIsPlayerSpecialInput";
-import { phaserEventEmitter } from "@/services/phaser/phaserEventEmitter";
-import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
-import { useDialogStore } from "@/store/dungeons/dialog";
-import { useMonsterDetailsSceneStore } from "@/store/dungeons/monsterDetails/scene";
-import { useMonsterPartyInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
-import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
+import { SceneKey } from "#src/models/dungeons/keys/SceneKey";
+import { SceneMode } from "#src/models/dungeons/scene/monsterParty/SceneMode";
+import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";
+import { activateItem } from "#src/services/dungeons/item/activateItem";
+import { checkIsMonsterFainted } from "#src/services/dungeons/monster/checkIsMonsterFainted";
+import { checkIsPlayerSpecialInput } from "#src/services/dungeons/UI/input/checkIsPlayerSpecialInput";
+import { phaserEventEmitter } from "#src/services/phaser/phaserEventEmitter";
+import { useBattlePlayerStore } from "#src/store/dungeons/battle/player";
+import { useDialogStore } from "#src/store/dungeons/dialog";
+import { useMonsterDetailsSceneStore } from "#src/store/dungeons/monsterDetails/scene";
+import { useMonsterPartyInfoPanelStore } from "#src/store/dungeons/monsterParty/infoPanel";
+import { useMonsterPartySceneStore } from "#src/store/dungeons/monsterParty/scene";
 import { exhaustiveGuard, InvalidOperationError, Operation } from "@esposter/shared";
 
 export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/input", () => {

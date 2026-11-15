@@ -1,6 +1,6 @@
 import type { PublicUser } from "@esposter/db-schema";
 
-import { createOperationData } from "@/services/shared/createOperationData";
+import { createOperationData } from "#src/services/shared/createOperationData";
 import { DatabaseEntityType } from "@esposter/db-schema";
 
 export const useFriendStore = defineStore("message/user/friend", () => {

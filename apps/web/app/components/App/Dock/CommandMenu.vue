@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { UiCommand } from "@/models/ui/UiCommand";
+import type { UiCommand } from "#src/models/ui/UiCommand";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { DOCK_POPOVER_POSITION_AREA } from "@/services/app/constants";
-import { runCommand } from "@/services/ui/runCommand";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { DOCK_POPOVER_POSITION_AREA } from "#src/services/app/constants";
+import { runCommand } from "#src/services/ui/runCommand";
 
 interface Props {
   commands: UiCommand[];

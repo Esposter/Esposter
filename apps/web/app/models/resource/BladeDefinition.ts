@@ -1,5 +1,5 @@
-import type { ResourceBladeSlug } from "@/models/resource/ResourceBladeSlug";
-import type { ResourceBladeType } from "@/models/resource/ResourceBladeType";
+import type { ResourceBladeSlug } from "#src/models/resource/ResourceBladeSlug";
+import type { ResourceBladeType } from "#src/models/resource/ResourceBladeType";
 
 export interface BladeDefinition {
   component: Component;

@@ -1,10 +1,10 @@
 // @vitest-environment nuxt
-import type { UiListItem } from "@/models/ui/UiListItem";
+import type { UiListItem } from "#src/models/ui/UiListItem";
 
-import UiAvatar from "@/components/Ui/Avatar.vue";
-import UiList from "@/components/Ui/List/Index.vue";
-import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
-import { UiStyles } from "@/models/ui/UiStyle";
+import UiAvatar from "#src/components/Ui/Avatar.vue";
+import UiList from "#src/components/Ui/List/Index.vue";
+import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
+import { UiStyles } from "#src/models/ui/UiStyle";
 import { sleep } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";

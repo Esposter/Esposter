@@ -3,9 +3,9 @@ import type { UnlockCondition } from "#shared/models/clicker/data/unlockConditio
 import { BuildingId } from "#shared/models/clicker/data/building/BuildingId";
 import { Target } from "#shared/models/clicker/data/Target";
 import { CursorUpgradeId } from "#shared/models/clicker/data/upgrade/CursorUpgradeId";
-import { createBuildingWithStatistics } from "@/services/clicker/createBuildingWithStatistics.test";
-import { createUpgrade } from "@/services/clicker/upgrade/createUpgrade.test";
-import { getUnlockedUpgrades } from "@/services/clicker/upgrade/getUnlockedUpgrades";
+import { createBuildingWithStatistics } from "#src/services/clicker/createBuildingWithStatistics.test";
+import { createUpgrade } from "#src/services/clicker/upgrade/createUpgrade.test";
+import { getUnlockedUpgrades } from "#src/services/clicker/upgrade/getUnlockedUpgrades";
 import { describe, expect, test } from "vitest";
 
 const createUpgradeWithConditions = (unlockConditions: UnlockCondition[]) => ({

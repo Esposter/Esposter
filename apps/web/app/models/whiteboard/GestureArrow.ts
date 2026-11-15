@@ -1,4 +1,4 @@
-import type { GesturePhase } from "@/models/whiteboard/GesturePhase";
+import type { GesturePhase } from "#src/models/whiteboard/GesturePhase";
 import type { ArrowEnd, Point } from "vue-block-editor-headless";
 
 // An arrow drawn by a press and a drag: its id is fixed at the press, and its start is the end the press took, bound to the connection point

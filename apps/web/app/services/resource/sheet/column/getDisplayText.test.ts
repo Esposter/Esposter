@@ -6,8 +6,8 @@ import { createNumberColumn } from "#shared/models/resource/sheet/column/createN
 import { DateFormat } from "#shared/models/resource/sheet/column/DateFormat";
 import { NumberFormat } from "#shared/models/resource/sheet/column/NumberFormat";
 import { USD_CURRENCY_FORMATTER } from "#shared/services/intl/constants";
-import { createBooleanColumn } from "@/composables/resource/sheet/commands/createBooleanColumn.test";
-import { getDisplayText } from "@/services/resource/sheet/column/getDisplayText";
+import { createBooleanColumn } from "#src/composables/resource/sheet/commands/createBooleanColumn.test";
+import { getDisplayText } from "#src/services/resource/sheet/column/getDisplayText";
 import { describe, expect, test } from "vitest";
 
 describe(getDisplayText, () => {

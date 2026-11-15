@@ -1,4 +1,4 @@
-import { WHITEBOARD_MAX_SCALE, WHITEBOARD_MIN_SCALE } from "@/services/whiteboard/viewport/constants";
+import { WHITEBOARD_MAX_SCALE, WHITEBOARD_MIN_SCALE } from "#src/services/whiteboard/viewport/constants";
 
 // A scale held within the range the canvas zooms to
 export const getClampedScale = (scale: number): number =>

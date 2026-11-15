@@ -1,7 +1,7 @@
-import type { AssetLoader } from "@/models/dungeons/loader/AssetLoader";
+import type { AssetLoader } from "#src/models/dungeons/loader/AssetLoader";
 
 import { BattleKey } from "#shared/models/dungeons/keys/image/BattleKey";
-import battleForestBackground from "@/assets/dungeons/scene/battle/forestBackground.png";
+import battleForestBackground from "#src/assets/dungeons/scene/battle/forestBackground.png";
 
 export const BattleLoaderMap = {
   [BattleKey.BattleForestBackground]: (scene) =>

@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
-import ResourceRelatedResources from "@/components/Resource/RelatedResources.vue";
-import UiErrorState from "@/components/Ui/ErrorState.vue";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
+import ResourceRelatedResources from "#src/components/Resource/RelatedResources.vue";
+import UiErrorState from "#src/components/Ui/ErrorState.vue";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";

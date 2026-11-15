@@ -1,10 +1,10 @@
 import { clickerSaveSchema } from "#shared/models/clicker/data/ClickerSave";
-import { createClicker } from "@/services/clicker/createClicker";
-import { toClicker } from "@/services/clicker/save/toClicker";
-import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
-import { parseJsonWithSchema } from "@/services/shared/parseJsonWithSchema";
-import { useClickerStore } from "@/store/clicker";
-import { useOfflineProgressStore } from "@/store/clicker/offlineProgress";
+import { createClicker } from "#src/services/clicker/createClicker";
+import { toClicker } from "#src/services/clicker/save/toClicker";
+import { LocalStorageKey } from "#src/services/shared/LocalStorageKey";
+import { parseJsonWithSchema } from "#src/services/shared/parseJsonWithSchema";
+import { useClickerStore } from "#src/store/clicker/index";
+import { useOfflineProgressStore } from "#src/store/clicker/offlineProgress";
 import { checkIsDeepEqual, omitDeep } from "@esposter/shared";
 
 export const useReadClicker = async () => {

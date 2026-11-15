@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { Item } from "@/models/shared/Item";
+import type { Item } from "#src/models/shared/Item";
 import type { RoomCategoryInMessage, RoomInMessage } from "@esposter/db-schema";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
-import { REORDER_HANDLE_CLASS } from "@/services/ui/constants";
-import { useRoomCategoryDialogStore } from "@/store/message/roomCategoryDialog";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { LocalStorageKey } from "#src/services/shared/LocalStorageKey";
+import { REORDER_HANDLE_CLASS } from "#src/services/ui/constants";
+import { useRoomCategoryDialogStore } from "#src/store/message/roomCategoryDialog";
 
 interface Props {
   category?: RoomCategoryInMessage;

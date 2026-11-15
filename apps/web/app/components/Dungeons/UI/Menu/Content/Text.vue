@@ -1,8 +1,8 @@
 <script setup lang="ts" generic="TGrid extends readonly (readonly unknown[])[]">
-import type { Grid } from "@/models/dungeons/Grid";
+import type { Grid } from "#src/models/dungeons/Grid";
 
-import { MenuTextStyle } from "@/assets/dungeons/styles/MenuTextStyle";
-import { INITIAL_MENU_CURSOR_POSITION, MENU_CURSOR_POSITION_INCREMENT } from "@/services/dungeons/UI/menu/constants";
+import { MenuTextStyle } from "#src/assets/dungeons/styles/MenuTextStyle";
+import { INITIAL_MENU_CURSOR_POSITION, MENU_CURSOR_POSITION_INCREMENT } from "#src/services/dungeons/UI/menu/constants";
 import { Input } from "phaser";
 import { Text } from "vue-phaserjs";
 

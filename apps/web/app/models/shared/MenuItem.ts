@@ -1,4 +1,4 @@
-import type { IsDivider } from "@/models/shared/IsDivider";
-import type { Item } from "@/models/shared/Item";
+import type { IsDivider } from "#src/models/shared/IsDivider";
+import type { Item } from "#src/models/shared/Item";
 
 export type MenuItem = IsDivider | Item;

@@ -1,6 +1,6 @@
-import { TEST_NESTED_TEXT_ID, TEST_WEBPAGE } from "@/services/pageBuilder/constants.test";
-import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
-import { webpageKind } from "@/services/pageBuilder/webpageKind";
+import { TEST_NESTED_TEXT_ID, TEST_WEBPAGE } from "#src/services/pageBuilder/constants.test";
+import { getNodePointer } from "#src/services/pageBuilder/getNodePointer";
+import { webpageKind } from "#src/services/pageBuilder/webpageKind";
 import { describe, expect, test } from "vitest";
 
 describe(getNodePointer, () => {

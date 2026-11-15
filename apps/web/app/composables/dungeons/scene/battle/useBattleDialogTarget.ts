@@ -1,6 +1,6 @@
-import { DialogTarget } from "@/models/dungeons/UI/dialog/DialogTarget";
-import { useBattleInfoPanelStore } from "@/store/dungeons/battle/infoPanel";
-import { useDialogStore } from "@/store/dungeons/dialog";
+import { DialogTarget } from "#src/models/dungeons/UI/dialog/DialogTarget";
+import { useBattleInfoPanelStore } from "#src/store/dungeons/battle/infoPanel";
+import { useDialogStore } from "#src/store/dungeons/dialog";
 
 export const useBattleDialogTarget = () => {
   const dialogStore = useDialogStore();

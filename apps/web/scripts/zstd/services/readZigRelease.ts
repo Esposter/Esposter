@@ -1,6 +1,6 @@
+import { ZIG_INDEX_URL, ZIG_VERSION } from "#scripts/zstd/constants";
 import { ZigArchitecture } from "#shared/models/zstd/ZigArchitecture";
 import { ZigPlatform } from "#shared/models/zstd/ZigPlatform";
-import { ZIG_INDEX_URL, ZIG_VERSION } from "@@/scripts/zstd/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { z } from "zod";
 

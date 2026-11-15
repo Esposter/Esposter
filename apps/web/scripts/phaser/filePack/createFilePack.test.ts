@@ -1,4 +1,4 @@
-import { createFilePack } from "@@/scripts/phaser/filePack/createFilePack";
+import { createFilePack } from "#scripts/phaser/filePack/createFilePack";
 import { CloudflareEnvironment } from "@esposter/db-schema";
 import { afterEach, describe, expect, test, vi } from "vitest";
 

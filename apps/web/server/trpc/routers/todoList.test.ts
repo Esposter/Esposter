@@ -1,4 +1,4 @@
-import type { TRPCRouter } from "#server/trpc/routers";
+import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { TodoListResource } from "#shared/models/resource/todoList/TodoListResource";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 

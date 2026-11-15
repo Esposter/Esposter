@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { UiListItem } from "@/models/ui/UiListItem";
+import type { UiListItem } from "#src/models/ui/UiListItem";
 
-import { DraftsAndSentTab } from "@/models/message/draftsAndSent/DraftsAndSentTab";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { DraftsAndSentTabMetadataMap } from "@/services/message/draftsAndSent/DraftsAndSentTabMetadataMap";
-import { useInputStore } from "@/store/message/input";
-import { useScheduledMessageJobStore } from "@/store/message/scheduledMessageJob";
+import { DraftsAndSentTab } from "#src/models/message/draftsAndSent/DraftsAndSentTab";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { DraftsAndSentTabMetadataMap } from "#src/services/message/draftsAndSent/DraftsAndSentTabMetadataMap";
+import { useInputStore } from "#src/store/message/input/index";
+import { useScheduledMessageJobStore } from "#src/store/message/scheduledMessageJob";
 import { RoutePath } from "@esposter/shared";
 
 const { currentRoute } = useRouter();
