@@ -2,7 +2,7 @@
 
 ## Why
 
-The Trails in the Sky trilogy (FC, SC and the 3rd) runs on Nihon Falcom's ED6 engine, and no TypeScript library reads its files. The community tools that do are written in Rust, Python, C# and C++, and almost none of them carry a licence this repository can take code from: the useful three are GPL-3.0 and the rest state no licence at all. The formats themselves are small and well understood, though. A probe written for this proposal walked every archive of the owner's PC installs of all three games and decoded every compressed entry with the community's documented two-mode decompressor, with failures only in the uncompressed entries and in a few `._DT` tables of the second game. A reader in TypeScript is therefore within reach, and it is the base any later viewer or modding tool would stand on.
+The Trails in the Sky trilogy (FC, SC and the 3rd) runs on Nihon Falcom's ED6 engine, and no TypeScript library reads its files. The community tools that do are written in Rust, Python, C# and C++, and almost none of them carry a licence this repository can take code from: the useful three are GPL-3.0 and the rest state no licence at all. The formats themselves are small and well understood, though. The community's documented two-mode decompressor decodes the compressed entries of the owner's PC installs of all three games, with one open exception among the second game's `._DT` tables. A reader in TypeScript is therefore within reach, and it is the base any later viewer or modding tool would stand on.
 
 ## What changes
 

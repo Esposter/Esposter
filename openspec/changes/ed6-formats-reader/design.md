@@ -10,7 +10,7 @@ The package never opens a file itself. Each reader takes a `Uint8Array` and retu
 
 ## What the installs hold
 
-These facts were measured on the owner's GOG installs of all three games by a throwaway probe, which is not part of the change, and they agree with the community sources below:
+These facts hold on the owner's GOG installs of all three games, and they agree with the community sources below:
 
 - **Archives** are `ED6_DTnn.dat` files, each indexed by an `ED6_DTnn.dir` beside it. A `.dat` with no `.dir` is a video. Each game has a few dozen archives holding tens of thousands of entries and a few gigabytes of data. Fan patches such as the voice mod repack the archives in place and keep the originals beside them as `zBAK-` copies, so a reader lists only the `ED6_DT[0-9A-F]{2}.dir` names.
 - **The index** opens with the magic `LB DIR`, a `0x1A 0x00` pair, a little-endian `u32` slot count and a `u32` zero. A fixed array of 36-byte slots follows, one per slot counted: a 12-byte name padded with spaces before its extension (`T0001   ._SN`), then six little-endian `u32` fields in the order the community names them: a second timestamp, the stored size, an allocation size, a field that repeats the stored size for most entries, the timestamp, and the offset into the `.dat`. A slot whose ninth character is not `.`, or whose name is `/_______.___`, is empty.
@@ -88,9 +88,11 @@ scripts/src/ed6/
 
 - [uyjulian's Sky dat/dir extraction script](https://gist.github.com/uyjulian/bb0400c3768ea33be395a22df61a0c70) (MIT): the index layout, the compressed-entry rule, both decompression modes at opcode level, and the table of `._CH` sheet sizes and pixel formats. Ported directly.
 - [LB-ARK](https://github.com/Aureole-Suite/LB-ARK) (no licence stated): the archive naming (`ED6_DT00` to `ED6_DT3F`), the `.dat` with no `.dir` being a video, the 8.3 names, and every font living in one fixed archive. Facts only.
-- [skytrails-replacer](https://github.com/spillerrec/skytrails-replacer) (GPL-3.0): its `specifications/dir.ksy` confirms the index fields, and its viewer is the reference for the later model change. Facts only.
+- [skytrails-replacer](https://github.com/spillerrec/skytrails-replacer) (GPL-3.0): its `specifications/dir.ksy` confirms the index fields, its `specifications/_X3.ksy` is the model format's description, and its viewer is the reference for the later model change. Facts only.
 - [Kiseki-Texture-Tool](https://github.com/Sewer56/Kiseki-Texture-Tool) (GPL-3.0): `._DS` as a hidden DDS, `._CH` as headerless 4444, 1555 or 8888 pixels, and `._CP` composing 16×16 tiles into 256×256 frames. The `._CP` records are read from its source. Facts only.
 - [Aureole and the Aureole Suite](https://github.com/Kyuuhachi/Aureole) (no licence stated): Calmare decompiles the scenario scripts of every game from FC to Azure, and is the first reference for the scena opcode table. Facts only.
+- [Factoria](https://github.com/Aureole-Suite/Factoria) (no licence stated on the repository), named by the Aureole Suite's README as its archive tool for the trilogy: the `.dat` and `.dir` archives. Facts only.
+- [falcompress](https://github.com/Aureole-Suite/falcompress) (no licence stated on the repository; the crate published to crates.io states MIT or Apache-2.0, which this change does not rely on): a library for some of Falcom's compression algorithms, which aims to produce their bitstreams exactly. Facts only.
 - [falcom-sjis](https://github.com/Aureole-Suite/falcom-sjis) (no licence stated): Falcom's games encode the heart with the code point for `㈱`, among a few similar substitutions. Facts only.
 - [EDDecompiler](https://github.com/Ouroboros/EDDecompiler) (no licence stated): scena files are the `._SN` entries of `ED6_DT01` and `ED6_DT21`, and the English release is code page 932. Its `Decompiler/Instruction` folder is the second reference for the opcode table. Facts only.
 - [Trails Research Group documentation](https://github.com/Trails-Research-Group/Doc): the index of the community's tools per format, and the BGM tutorial's OGG facts (192 kbps stereo at 44.1 kHz, looped by `LOOPSTART` and `LOOPLENGTH`).
