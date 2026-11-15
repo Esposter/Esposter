@@ -49,3 +49,9 @@ export enum LuaOpcode {
   Vararg = 45,
   ExtraArgument = 46,
 }
+
+// Each opcode's name by its number, for naming an opcode read from a chunk. It is built from the members' own entries
+// Rather than read back through the set, so it holds whether or not the set carries a reverse mapping
+export const LuaOpcodeNames: ReadonlyMap<number, string> = new Map(
+  Object.entries(LuaOpcode).flatMap(([name, value]) => (typeof value === "number" ? [[value, name] as const] : [])),
+);
