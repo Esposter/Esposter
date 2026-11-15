@@ -7,10 +7,8 @@ import type { PublishableResourceType } from "#shared/models/resource/Publishabl
 import type { ResourceFilePresignedUrlEntity } from "#shared/models/resource/ResourceFilePresignedUrlEntity";
 import type { ResourceInResource, ResourcePublicationInResource } from "@esposter/db-schema";
 
-import { getResourceTopics } from "#server/services/resource/getResourceTopics";
 import { createCallerFactory, router } from "#server/trpc";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
-import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { getOwnerProcedure } from "#server/trpc/procedure/resource/getOwnerProcedure";
 import { dashboardRouter } from "#server/trpc/routers/dashboard";
 import { emailRouter } from "#server/trpc/routers/email";
