@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { DevConsoleEntry } from "@/models/genshin/dev/DevConsoleEntry";
+import type { DevConsoleEntry } from "#src/models/genshin/dev/DevConsoleEntry";
 import type { DevRegistry } from "genshin-world";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { GENSHIN_DEV_COMMAND_GROUP, GENSHIN_DEV_CONSOLE_HISTORY_LENGTH } from "@/services/genshin/dev/constants";
-import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { GENSHIN_DEV_COMMAND_GROUP, GENSHIN_DEV_CONSOLE_HISTORY_LENGTH } from "#src/services/genshin/dev/constants";
+import { LocalStorageKey } from "#src/services/shared/LocalStorageKey";
 
 interface Props {
   registry: DevRegistry;

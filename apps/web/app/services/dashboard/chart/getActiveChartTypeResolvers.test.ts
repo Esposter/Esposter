@@ -1,7 +1,7 @@
 import { ChartType } from "#shared/models/dashboard/data/chart/type/ChartType";
-import { BasicResolver } from "@/models/resolvers/dashboard/chart/BasicResolver";
-import { DonutResolver } from "@/models/resolvers/dashboard/chart/DonutResolver";
-import { getActiveChartTypeResolvers } from "@/services/dashboard/chart/getActiveChartTypeResolvers";
+import { BasicResolver } from "#src/models/resolvers/dashboard/chart/BasicResolver";
+import { DonutResolver } from "#src/models/resolvers/dashboard/chart/DonutResolver";
+import { getActiveChartTypeResolvers } from "#src/services/dashboard/chart/getActiveChartTypeResolvers";
 import { describe, expect, test } from "vitest";
 
 describe(getActiveChartTypeResolvers, () => {

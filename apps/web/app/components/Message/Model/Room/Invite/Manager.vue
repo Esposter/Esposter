@@ -4,15 +4,15 @@ import type { RoomInMessage } from "@esposter/db-schema";
 
 import { DEFAULT_INVITE_EXPIRE_AFTER_MINUTES, INVITE_MAX_USES_OPTIONS } from "#shared/services/room/invite/constants";
 import { pluralize } from "#shared/util/text/pluralize";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { UiToken } from "@/models/ui/UiToken";
-import { getInviteLink } from "@/services/message/room/invite/getInviteLink";
-import { InviteExpireAfterSelectItems } from "@/services/message/room/invite/InviteExpireAfterSelectItems";
-import { InviteMaxUsesSelectItems } from "@/services/message/room/invite/InviteMaxUsesSelectItems";
-import { getNumberSelectItems } from "@/services/message/shared/getNumberSelectItems";
-import { useInviteStore } from "@/store/message/room/invite";
-import { useRoleStore } from "@/store/message/room/role";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { UiToken } from "#src/models/ui/UiToken";
+import { getInviteLink } from "#src/services/message/room/invite/getInviteLink";
+import { InviteExpireAfterSelectItems } from "#src/services/message/room/invite/InviteExpireAfterSelectItems";
+import { InviteMaxUsesSelectItems } from "#src/services/message/room/invite/InviteMaxUsesSelectItems";
+import { getNumberSelectItems } from "#src/services/message/shared/getNumberSelectItems";
+import { useInviteStore } from "#src/store/message/room/invite";
+import { useRoleStore } from "#src/store/message/room/role";
 import { RoomPermission } from "@esposter/db-schema";
 import { getSynchronizedFunction } from "@esposter/shared";
 

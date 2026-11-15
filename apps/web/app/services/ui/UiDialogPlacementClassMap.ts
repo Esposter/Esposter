@@ -1,5 +1,5 @@
 // @unocss-include
-import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
+import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
 
 // Where each placement stands the dialog. A drawer slides in from its own side at every width, since the button that
 // Opened it is on that side, a bottom drawer rises to the height of its content up to most of the window so the page it is

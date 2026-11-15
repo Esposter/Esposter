@@ -1,4 +1,4 @@
-import { useConnectionStore } from "@/store/realtime/connection";
+import { useConnectionStore } from "#src/store/realtime/connection";
 
 // The person's own socket, held while someone is signed in. The subscribable closes it on sign-out or unmount.
 // It opens again once the browser is back online, the same way every other subscription on the app does

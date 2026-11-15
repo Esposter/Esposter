@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { MessageComponentProps } from "@/models/message/MessageComponentProps";
+import type { MessageComponentProps } from "#src/models/message/MessageComponentProps";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 interface Props extends MessageComponentProps {}
 

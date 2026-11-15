@@ -1,6 +1,6 @@
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { VisualTypeCategoryDefinitions } from "@/services/dashboard/VisualTypeCategoryDefinitions";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { VisualTypeCategoryDefinitions } from "#src/services/dashboard/VisualTypeCategoryDefinitions";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 

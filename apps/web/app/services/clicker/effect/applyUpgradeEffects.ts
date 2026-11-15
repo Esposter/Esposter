@@ -2,7 +2,7 @@ import type { BuildingWithStatistics } from "#shared/models/clicker/data/buildin
 import type { Effect } from "#shared/models/clicker/data/effect/Effect";
 import type { Upgrade } from "#shared/models/clicker/data/upgrade/Upgrade";
 
-import { applyEffects } from "@/services/clicker/effect/applyEffects";
+import { applyEffects } from "#src/services/clicker/effect/applyEffects";
 
 export const applyUpgradeEffects = (
   upgrade: Upgrade,

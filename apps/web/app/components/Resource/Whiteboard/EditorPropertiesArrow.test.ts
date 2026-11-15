@@ -1,9 +1,13 @@
 // @vitest-environment nuxt
 import type { ArrowElement } from "vue-block-editor-headless";
 
-import ResourceWhiteboardEditorPropertiesArrow from "@/components/Resource/Whiteboard/EditorPropertiesArrow.vue";
-import { createWhiteboardEditState, WHITEBOARD_ARROW, WHITEBOARD_PROCESS } from "@/services/whiteboard/constants.test";
-import { useWhiteboardStore } from "@/store/resource/whiteboard";
+import ResourceWhiteboardEditorPropertiesArrow from "#src/components/Resource/Whiteboard/EditorPropertiesArrow.vue";
+import {
+  createWhiteboardEditState,
+  WHITEBOARD_ARROW,
+  WHITEBOARD_PROCESS,
+} from "#src/services/whiteboard/constants.test";
+import { useWhiteboardStore } from "#src/store/resource/whiteboard/index";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { assert, describe, expect, test } from "vitest";
 import { ArrowheadKind } from "vue-block-editor-headless";

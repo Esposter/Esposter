@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useRoomStore } from "@/store/message/room";
-import { useRoomDialogStore } from "@/store/message/room/dialog";
+import { useRoomDialogStore } from "#src/store/message/room/dialog";
+import { useRoomStore } from "#src/store/message/room/index";
 
 const roomDialogStore = useRoomDialogStore();
 const { inviteRoomId } = storeToRefs(roomDialogStore);

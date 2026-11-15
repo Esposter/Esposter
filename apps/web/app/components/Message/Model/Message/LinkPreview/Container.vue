@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { ClientMessage } from "@/models/message/ClientMessage";
+import type { ClientMessage } from "#src/models/message/ClientMessage";
 import type { LinkPreviewResponse } from "@esposter/db-schema";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { getEntityIdEqualComparator } from "@/services/entity/getEntityIdEqualComparator";
-import { useDataStore } from "@/store/message/data";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { getEntityIdEqualComparator } from "#src/services/entity/getEntityIdEqualComparator";
+import { useDataStore } from "#src/store/message/data";
 import { noop } from "@esposter/shared";
 
 interface Props {

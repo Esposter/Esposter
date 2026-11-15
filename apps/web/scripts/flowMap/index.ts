@@ -1,5 +1,5 @@
-import { FLOW_MAP_PATH } from "@@/scripts/flowMap/constants";
-import { getFlowMap } from "@@/scripts/flowMap/services/getFlowMap";
+import { FLOW_MAP_PATH } from "#scripts/flowMap/constants";
+import { getFlowMap } from "#scripts/flowMap/services/getFlowMap";
 import { mkdir, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
 

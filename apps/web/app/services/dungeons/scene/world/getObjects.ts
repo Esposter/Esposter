@@ -2,7 +2,7 @@ import type { Position } from "grid-engine";
 import type { Tilemaps, Types } from "phaser";
 import type { SetRequired } from "type-fest";
 
-import { getObjectUnitPosition } from "@/services/dungeons/tilemap/getObjectUnitPosition";
+import { getObjectUnitPosition } from "#src/services/dungeons/tilemap/getObjectUnitPosition";
 
 export const getObjects = (tilemap: Tilemaps.Tilemap, objectLayer: Tilemaps.ObjectLayer) => {
   const objects: SetRequired<Types.Tilemaps.TiledObject, keyof Position>[] = [];

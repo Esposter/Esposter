@@ -1,6 +1,6 @@
 import type { ResourceActivityInResource } from "@esposter/db-schema";
 
-import { getRouteParam } from "@/util/router/getRouteParam";
+import { getRouteParam } from "#src/util/router/getRouteParam";
 
 export const useActivityStore = defineStore("resource/activity", () => {
   const router = useRouter();

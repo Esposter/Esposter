@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
-import ResourceSurveyCreatorToolbar from "@/components/Resource/Survey/Creator/Toolbar.vue";
-import { useSurveyCreatorStore } from "@/store/survey/creator";
+import ResourceSurveyCreatorToolbar from "#src/components/Resource/Survey/Creator/Toolbar.vue";
+import { useSurveyCreatorStore } from "#src/store/survey/creator";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";

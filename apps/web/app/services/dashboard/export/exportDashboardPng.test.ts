@@ -1,9 +1,9 @@
 // @vitest-environment nuxt
 import { MimeType } from "#shared/models/file/MimeType";
-import { createElementSvg } from "@/services/capture/createElementSvg";
-import { rasterizeSvg } from "@/services/capture/rasterizeSvg";
-import { exportDashboardPng } from "@/services/dashboard/export/exportDashboardPng";
-import { useAlertStore } from "@/store/alert";
+import { createElementSvg } from "#src/services/capture/createElementSvg";
+import { rasterizeSvg } from "#src/services/capture/rasterizeSvg";
+import { exportDashboardPng } from "#src/services/dashboard/export/exportDashboardPng";
+import { useAlertStore } from "#src/store/alert";
 import { downloadFile, InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -13,7 +13,7 @@ vi.mock(import("@esposter/shared"), async (importOriginal) => ({
 }));
 
 // The real rasteriser runs in no test here, since a PNG needs a canvas the test environment does not draw, so the PNG tests take its answer from a resolved once-value
-vi.mock(import("@/services/capture/rasterizeSvg"), async (importOriginal) => {
+vi.mock(import("#src/services/capture/rasterizeSvg"), async (importOriginal) => {
   const { rasterizeSvg: rasterizeOriginal } = await importOriginal();
   return { rasterizeSvg: vi.fn<typeof rasterizeOriginal>(rasterizeOriginal) };
 });

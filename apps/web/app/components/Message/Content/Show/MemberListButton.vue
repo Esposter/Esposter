@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { RightDrawer } from "@/models/message/RightDrawer";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { RightDrawer } from "#src/models/message/RightDrawer";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 const { isOpen, toggle } = useToggleRightDrawer(RightDrawer.Member);
 </script>

@@ -1,13 +1,13 @@
-import type { DropTarget } from "@/models/pageBuilder/DropTarget";
-import type { DropTargetInput } from "@/models/pageBuilder/DropTargetInput";
-import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
+import type { DropTarget } from "#src/models/pageBuilder/DropTarget";
+import type { DropTargetInput } from "#src/models/pageBuilder/DropTargetInput";
+import type { PageBuilderKind } from "#src/models/pageBuilder/PageBuilderKind";
 import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "vue-block-editor-headless";
 
-import { getCandidateSlotPointers } from "@/services/pageBuilder/getCandidateSlotPointers";
-import { getDropIndex } from "@/services/pageBuilder/getDropIndex";
-import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
-import { getSlotChildIds } from "@/services/pageBuilder/getSlotChildIds";
-import { getSlotOwnerId } from "@/services/pageBuilder/getSlotOwnerId";
+import { getCandidateSlotPointers } from "#src/services/pageBuilder/getCandidateSlotPointers";
+import { getDropIndex } from "#src/services/pageBuilder/getDropIndex";
+import { getNodePointer } from "#src/services/pageBuilder/getNodePointer";
+import { getSlotChildIds } from "#src/services/pageBuilder/getSlotChildIds";
+import { getSlotOwnerId } from "#src/services/pageBuilder/getSlotOwnerId";
 import { getAcceptedTypes } from "vue-block-editor-headless";
 
 // The slot a block dragged over a node drops into: the first candidate whose accepted types include the dragged type

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useBlockStore } from "@/store/message/user/block";
-import { useFriendStore } from "@/store/message/user/friend";
-import { useFriendRequestStore } from "@/store/message/user/friendRequest";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { useBlockStore } from "#src/store/message/user/block";
+import { useFriendStore } from "#src/store/message/user/friend";
+import { useFriendRequestStore } from "#src/store/message/user/friendRequest";
 
 interface Props {
   id: string;

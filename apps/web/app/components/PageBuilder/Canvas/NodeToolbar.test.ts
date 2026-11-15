@@ -6,12 +6,12 @@ import {
   TEST_ROOT,
   TEST_URL,
 } from "#shared/services/pageBuilder/constants.test";
-import PageBuilderCanvasNodeToolbar from "@/components/PageBuilder/Canvas/NodeToolbar.vue";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { TEST_NESTED_TEXT_ID, TEST_SECTION_ID, TEST_WEBPAGE } from "@/services/pageBuilder/constants.test";
-import { webpageKind } from "@/services/pageBuilder/webpageKind";
-import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
-import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
+import PageBuilderCanvasNodeToolbar from "#src/components/PageBuilder/Canvas/NodeToolbar.vue";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { TEST_NESTED_TEXT_ID, TEST_SECTION_ID, TEST_WEBPAGE } from "#src/services/pageBuilder/constants.test";
+import { webpageKind } from "#src/services/pageBuilder/webpageKind";
+import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
+import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test, vi } from "vitest";
 

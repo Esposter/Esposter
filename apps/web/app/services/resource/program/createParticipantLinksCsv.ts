@@ -1,8 +1,8 @@
 import type { ProgramParticipant } from "#shared/models/resource/program/ProgramParticipant";
 
 import { CsvDelimiter } from "#shared/models/resource/sheet/csv/CsvDelimiter";
-import { createParticipantLink } from "@/services/resource/program/createParticipantLink";
-import { escapeCsvCell } from "@/services/resource/sheet/csv/escapeCsvCell";
+import { createParticipantLink } from "#src/services/resource/program/createParticipantLink";
+import { escapeCsvCell } from "#src/services/resource/sheet/csv/escapeCsvCell";
 
 // One row per participant: the key value the owner knows them by, and the survey link carrying their token.
 // A key value comes from the audience dataset, which may be a survey's anonymous answers, so it is untrusted

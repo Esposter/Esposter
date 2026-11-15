@@ -1,18 +1,18 @@
-import type { GestureMarquee } from "@/models/whiteboard/GestureMarquee";
-import type { GestureMoving } from "@/models/whiteboard/GestureMoving";
-import type { GesturePointerEvent } from "@/models/whiteboard/GesturePointerEvent";
-import type { GesturePressed } from "@/models/whiteboard/GesturePressed";
-import type { GestureResizing } from "@/models/whiteboard/GestureResizing";
-import type { WhiteboardGestureResult } from "@/models/whiteboard/WhiteboardGestureResult";
-import type { WhiteboardGestureState } from "@/models/whiteboard/WhiteboardGestureState";
+import type { GestureMarquee } from "#src/models/whiteboard/GestureMarquee";
+import type { GestureMoving } from "#src/models/whiteboard/GestureMoving";
+import type { GesturePointerEvent } from "#src/models/whiteboard/GesturePointerEvent";
+import type { GesturePressed } from "#src/models/whiteboard/GesturePressed";
+import type { GestureResizing } from "#src/models/whiteboard/GestureResizing";
+import type { WhiteboardGestureResult } from "#src/models/whiteboard/WhiteboardGestureResult";
+import type { WhiteboardGestureState } from "#src/models/whiteboard/WhiteboardGestureState";
 
-import { GesturePhase } from "@/models/whiteboard/GesturePhase";
-import { GesturePointerAction } from "@/models/whiteboard/GesturePointerAction";
-import { checkIsDragStarted } from "@/services/whiteboard/gesture/checkIsDragStarted";
-import { getClickSelection } from "@/services/whiteboard/gesture/getClickSelection";
-import { reduceMarqueeGesture } from "@/services/whiteboard/gesture/reduceMarqueeGesture";
-import { reduceMovingGesture } from "@/services/whiteboard/gesture/reduceMovingGesture";
-import { reduceResizingGesture } from "@/services/whiteboard/gesture/reduceResizingGesture";
+import { GesturePhase } from "#src/models/whiteboard/GesturePhase";
+import { GesturePointerAction } from "#src/models/whiteboard/GesturePointerAction";
+import { checkIsDragStarted } from "#src/services/whiteboard/gesture/checkIsDragStarted";
+import { getClickSelection } from "#src/services/whiteboard/gesture/getClickSelection";
+import { reduceMarqueeGesture } from "#src/services/whiteboard/gesture/reduceMarqueeGesture";
+import { reduceMovingGesture } from "#src/services/whiteboard/gesture/reduceMovingGesture";
+import { reduceResizingGesture } from "#src/services/whiteboard/gesture/reduceResizingGesture";
 import { exhaustiveGuard } from "@esposter/shared";
 
 // A press released before it has travelled the drag start distance is a click. Past that distance the press becomes a marquee

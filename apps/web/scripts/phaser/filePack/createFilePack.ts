@@ -1,9 +1,9 @@
 import type { Types } from "phaser";
 
-import { trimFileExtension } from "@/util/file/trimFileExtension";
-import { ContentTypePhaserMethodMap, PHASER_ROOT_DIRECTORY } from "@@/scripts/phaser/constants";
-import { outputFile } from "@@/scripts/services/outputFile";
-import { createValueSetString } from "@@/scripts/util/createValueSetString";
+import { ContentTypePhaserMethodMap, PHASER_ROOT_DIRECTORY } from "#scripts/phaser/constants";
+import { outputFile } from "#scripts/services/outputFile";
+import { createValueSetString } from "#scripts/util/createValueSetString";
+import { trimFileExtension } from "#src/util/file/trimFileExtension";
 import { parseListBucketResult } from "@esposter/db";
 import {
   CLOUDFLARE_ACCOUNT_ID,

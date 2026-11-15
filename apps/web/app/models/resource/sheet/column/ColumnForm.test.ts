@@ -1,5 +1,5 @@
-import { columnFormSchema } from "@/models/resource/sheet/column/ColumnForm";
-import { ColumnTypeFormSchemaMap } from "@/services/resource/sheet/column/ColumnTypeFormSchemaMap";
+import { columnFormSchema } from "#src/models/resource/sheet/column/ColumnForm";
+import { ColumnTypeFormSchemaMap } from "#src/services/resource/sheet/column/ColumnTypeFormSchemaMap";
 import { describe, expect, test } from "vitest";
 
 describe("columnFormSchema", () => {

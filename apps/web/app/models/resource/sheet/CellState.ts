@@ -1,5 +1,5 @@
-import type { CellMode } from "@/models/resource/sheet/CellMode";
-import type { CellPosition } from "@/models/resource/sheet/CellPosition";
+import type { CellMode } from "#src/models/resource/sheet/CellMode";
+import type { CellPosition } from "#src/models/resource/sheet/CellPosition";
 
 export type CellState =
   | { anchor: CellPosition; focus: CellPosition; mode: typeof CellMode.Select }

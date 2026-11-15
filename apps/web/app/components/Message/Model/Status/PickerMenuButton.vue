@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { STATUS_PICKER_POSITION_AREA } from "@/services/message/user/status/constants";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { STATUS_PICKER_POSITION_AREA } from "#src/services/message/user/status/constants";
 
 // What the trigger shows is the caller's, such as the reader's own avatar with its status dot
 defineSlots<{ default: () => VNode }>();

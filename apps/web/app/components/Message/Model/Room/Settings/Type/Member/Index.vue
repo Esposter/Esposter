@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useRoleStore } from "@/store/message/room/role";
-import { useMemberStore } from "@/store/message/user/member";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { useRoleStore } from "#src/store/message/room/role";
+import { useMemberStore } from "#src/store/message/user/member";
 
 interface Props {
   room: RoomInMessage;

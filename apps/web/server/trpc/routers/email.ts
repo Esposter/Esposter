@@ -7,9 +7,9 @@ import { compileEmailDocument } from "#server/services/emailEditor/compileEmailD
 import { getEmailValidatorMessages } from "#server/services/emailEditor/getEmailValidatorMessages";
 import { transformPublishedEmail } from "#server/services/emailEditor/transformPublishedEmail";
 import { readResourceContent } from "#server/services/resource/readResourceContent";
-import { router } from "#server/trpc";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
+import { router } from "#server/trpc/index";
 import { createResourceProcedures } from "#server/trpc/procedure/resource/createResourceProcedures";
 import { getOwnerProcedure } from "#server/trpc/procedure/resource/getOwnerProcedure";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";

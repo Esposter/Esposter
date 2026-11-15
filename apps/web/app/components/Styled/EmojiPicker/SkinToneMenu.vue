@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { SkinTone } from "@/models/message/emoji/SkinTone";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { applySkinTone } from "@/services/message/emoji/applySkinTone";
-import { SKIN_TONE_PREVIEW_EMOJI_SLUG } from "@/services/message/emoji/constants";
-import { getEmojiIndex } from "@/services/message/emoji/getEmojiIndex";
+import { SkinTone } from "#src/models/message/emoji/SkinTone";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { applySkinTone } from "#src/services/message/emoji/applySkinTone";
+import { SKIN_TONE_PREVIEW_EMOJI_SLUG } from "#src/services/message/emoji/constants";
+import { getEmojiIndex } from "#src/services/message/emoji/getEmojiIndex";
 
 const modelValue = defineModel<SkinTone>({ required: true });
 // One tone for every emoji that supports one, chosen once and persisted, rather than a per-emoji long-press

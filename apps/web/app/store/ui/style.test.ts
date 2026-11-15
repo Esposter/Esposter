@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
-import { UI_STYLE_COOKIE_NAME } from "@/services/ui/constants";
-import { useUiStyleStore } from "@/store/ui/style";
-import { DEFAULT_UI_STYLE } from "@@/configuration/constants";
+import { DEFAULT_UI_STYLE } from "#configuration/constants";
+import { UI_STYLE_COOKIE_NAME } from "#src/services/ui/constants";
+import { useUiStyleStore } from "#src/store/ui/style";
 import { describe, expect, test } from "vitest";
 
 describe(useUiStyleStore, () => {

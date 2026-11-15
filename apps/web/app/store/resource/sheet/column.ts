@@ -1,8 +1,8 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 
-import { getVisibleColumns } from "@/services/resource/sheet/column/getVisibleColumns";
-import { useResourceStore } from "@/store/resource";
-import { useSheetStore } from "@/store/resource/sheet";
+import { getVisibleColumns } from "#src/services/resource/sheet/column/getVisibleColumns";
+import { useResourceStore } from "#src/store/resource/index";
+import { useSheetStore } from "#src/store/resource/sheet/index";
 
 export const useColumnStore = defineStore("resource/sheet/column", () => {
   const resourceStore = useResourceStore();

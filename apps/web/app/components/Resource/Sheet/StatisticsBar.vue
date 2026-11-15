@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { DataSourceStatistics } from "@/models/resource/sheet/dataSource/DataSourceStatistics";
+import type { DataSourceStatistics } from "#src/models/resource/sheet/dataSource/DataSourceStatistics";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { getFileSize } from "@/services/file/getFileSize";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { getFileSize } from "#src/services/file/getFileSize";
 
 interface Props {
   filteredRowCount: number;

@@ -1,4 +1,4 @@
-import { toTitleCase } from "@/util/text/toTitleCase";
+import { toTitleCase } from "#src/util/text/toTitleCase";
 import { describe, expect, test } from "vitest";
 
 describe(toTitleCase, () => {

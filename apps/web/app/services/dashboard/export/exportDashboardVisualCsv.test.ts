@@ -7,8 +7,8 @@ import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregatio
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { MimeType } from "#shared/models/file/MimeType";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
-import { exportDashboardVisualCsv } from "@/services/dashboard/export/exportDashboardVisualCsv";
-import { useAlertStore } from "@/store/alert";
+import { exportDashboardVisualCsv } from "#src/services/dashboard/export/exportDashboardVisualCsv";
+import { useAlertStore } from "#src/store/alert";
 import { downloadFile } from "@esposter/shared";
 import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";

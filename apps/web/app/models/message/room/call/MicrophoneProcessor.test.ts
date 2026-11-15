@@ -1,9 +1,18 @@
-import { MicrophoneProcessor } from "@/models/message/room/call/MicrophoneProcessor";
-import microphoneGateUrl from "@/workers/message/room/call/microphoneGate.worklet?worker&url";
+import { MicrophoneProcessor } from "#src/models/message/room/call/MicrophoneProcessor";
 import { DEFAULT_INPUT_SENSITIVITY_DECIBELS, VoiceInputMode } from "@esposter/db-schema";
+import { takeOne } from "@esposter/shared";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(MicrophoneProcessor, () => {
+  const microphoneGateUrl = takeOne(
+    Object.values(
+      import.meta.glob<string>("#src/workers/message/room/call/microphoneGate.worklet", {
+        eager: true,
+        import: "default",
+        query: "?worker&url",
+      }),
+    ),
+  );
   let addModule: ReturnType<typeof vi.fn<(moduleUrl: string) => Promise<void>>>;
   class AudioWorkletNodeStub {
     disconnect = vi.fn<() => void>();

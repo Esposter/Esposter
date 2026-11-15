@@ -1,4 +1,4 @@
-import type { CacheTag } from "@/models/cache/CacheTag";
+import type { CacheTag } from "#src/models/cache/CacheTag";
 import type { Promisable } from "type-fest";
 
 import { getOrCreate } from "@esposter/shared";

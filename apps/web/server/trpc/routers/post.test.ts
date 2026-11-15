@@ -1,11 +1,11 @@
 import type { Context } from "#server/trpc/context";
-import type { TRPCRouter } from "#server/trpc/routers";
+import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { PostInPost } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
-import { createCallerFactory } from "#server/trpc";
 import { createMockAuthSession, createMockCaller, createMockContext } from "#server/trpc/context.test";
+import { createCallerFactory } from "#server/trpc/index";
 import { blockRouter } from "#server/trpc/routers/block";
 import { likeRouter } from "#server/trpc/routers/like";
 import { postRouter } from "#server/trpc/routers/post";

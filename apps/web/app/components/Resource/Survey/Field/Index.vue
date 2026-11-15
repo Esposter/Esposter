@@ -7,8 +7,8 @@ import type {
   SurveyQuestionNode,
 } from "vue-survey-engine-headless";
 
-import { SURVEY_SEEDED_NODE_TYPES } from "@/services/resource/survey/constants";
-import { SurveyFieldComponentMap } from "@/services/resource/survey/SurveyFieldComponentMap";
+import { SURVEY_SEEDED_NODE_TYPES } from "#src/services/resource/survey/constants";
+import { SurveyFieldComponentMap } from "#src/services/resource/survey/SurveyFieldComponentMap";
 import { SurveyNodeType } from "vue-survey-engine-headless";
 
 interface Props {

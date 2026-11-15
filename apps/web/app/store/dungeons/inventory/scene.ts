@@ -1,4 +1,4 @@
-import { usePlayerStore } from "@/store/dungeons/player";
+import { usePlayerStore } from "#src/store/dungeons/player";
 
 export const useInventorySceneStore = defineStore("dungeons/inventory/scene", () => {
   const playerStore = usePlayerStore();

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useVisualStore } from "@/store/dashboard/visual";
+import { useVisualStore } from "#src/store/dashboard/visual";
 
 // The inspector's entry for a selected visual. Its form is mounted once a draft exists, keyed by the visual so a form for
 // Another visual starts afresh

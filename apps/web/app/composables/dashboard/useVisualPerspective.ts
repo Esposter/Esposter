@@ -1,9 +1,9 @@
 import type ApexCharts from "apexcharts";
 
-import { checkIsSafeViewPayload } from "@/services/dashboard/chart/checkIsSafeViewPayload";
-import { DASHBOARD_VIEW_QUERY_KEY } from "@/services/dashboard/chart/constants";
-import { parseViewEntry } from "@/services/dashboard/chart/parseViewEntry";
-import { setViewEntryToken } from "@/services/dashboard/chart/setViewEntryToken";
+import { checkIsSafeViewPayload } from "#src/services/dashboard/chart/checkIsSafeViewPayload";
+import { DASHBOARD_VIEW_QUERY_KEY } from "#src/services/dashboard/chart/constants";
+import { parseViewEntry } from "#src/services/dashboard/chart/parseViewEntry";
+import { setViewEntryToken } from "#src/services/dashboard/chart/setViewEntryToken";
 import { getResult, noop } from "@esposter/shared";
 
 // A zoom window, the series someone hid and the points they selected are the reader's work, so it lives in the

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { SurveyQuestionBaseProps } from "vue-survey-engine-headless";
 
-import { getSurveyQuestionTitle } from "@/services/resource/survey/getSurveyQuestionTitle";
+import { getSurveyQuestionTitle } from "#src/services/resource/survey/getSurveyQuestionTitle";
 
 interface Props {
   // The message the runner gives the question, "" while it has none, drawn under the control and marking it invalid

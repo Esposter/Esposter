@@ -1,8 +1,8 @@
 import type { AItemEntity } from "#shared/models/entity/AItemEntity";
-import type { EntityIdKeys } from "@/models/entity/EntityIdKeys";
+import type { EntityIdKeys } from "#src/models/entity/EntityIdKeys";
 import type { ToData } from "@esposter/shared";
 
-import { getEntityIdEqualComparator } from "@/services/entity/getEntityIdEqualComparator";
+import { getEntityIdEqualComparator } from "#src/services/entity/getEntityIdEqualComparator";
 import { checkIsDeepEqual, toRawDeep } from "@esposter/shared";
 
 // `onEdit` hears every open of an item, a press, a menu's Edit and a restore from the query params alike, so a caller that

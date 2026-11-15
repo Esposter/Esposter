@@ -1,9 +1,9 @@
 // @vitest-environment nuxt
 import type { ShapeElement } from "vue-block-editor-headless";
 
-import ResourceWhiteboardEditorPropertiesStroke from "@/components/Resource/Whiteboard/EditorPropertiesStroke.vue";
-import { createWhiteboardEditState, WHITEBOARD_PROCESS } from "@/services/whiteboard/constants.test";
-import { useWhiteboardStore } from "@/store/resource/whiteboard";
+import ResourceWhiteboardEditorPropertiesStroke from "#src/components/Resource/Whiteboard/EditorPropertiesStroke.vue";
+import { createWhiteboardEditState, WHITEBOARD_PROCESS } from "#src/services/whiteboard/constants.test";
+import { useWhiteboardStore } from "#src/store/resource/whiteboard/index";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { assert, describe, expect, test } from "vitest";
 import { StrokeWidth } from "vue-block-editor-headless";

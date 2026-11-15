@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
-import type { ResourceListSource } from "@/models/resource/list/ResourceListSource";
+import type { ResourceListSource } from "#src/models/resource/list/ResourceListSource";
 
-import { RECENT_RESOURCES_LIMIT } from "@/services/resource/constants";
-import { ResourceListSourceDefinitionMap } from "@/services/resource/list/ResourceListSourceDefinitionMap";
+import { RECENT_RESOURCES_LIMIT } from "#src/services/resource/constants";
+import { ResourceListSourceDefinitionMap } from "#src/services/resource/list/ResourceListSourceDefinitionMap";
 
 interface Props {
   isPending?: boolean;

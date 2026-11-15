@@ -1,5 +1,5 @@
 import type { Context } from "#server/trpc/context";
-import type { TRPCRouter } from "#server/trpc/routers";
+import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { R2Bucket, R2Object } from "@cloudflare/workers-types";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
@@ -9,11 +9,11 @@ import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 import { getStagingContentBlobName } from "#server/services/resource/getStagingContentBlobName";
 import { softDeleteResources } from "#server/services/resource/softDeleteResources";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
-import { createCallerFactory } from "#server/trpc";
 import { createMockAuthSession, createMockContext } from "#server/trpc/context.test";
+import { createCallerFactory } from "#server/trpc/index";
 import { createResourceProcedures } from "#server/trpc/procedure/resource/createResourceProcedures";
-import { trpcRouter } from "#server/trpc/routers";
 import { dashboardRouter } from "#server/trpc/routers/dashboard";
+import { trpcRouter } from "#server/trpc/routers/index";
 import { sheetRouter } from "#server/trpc/routers/sheet";
 import { webpageRouter } from "#server/trpc/routers/webpage";
 import { Dashboard } from "#shared/models/dashboard/data/Dashboard";

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { DOCK_POPOVER_POSITION_AREA } from "@/services/app/constants";
-import { useNotificationStore } from "@/store/notification";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { DOCK_POPOVER_POSITION_AREA } from "#src/services/app/constants";
+import { useNotificationStore } from "#src/store/notification";
 
 const { data: session } = await useAuthSession();
 const notificationStore = useNotificationStore();

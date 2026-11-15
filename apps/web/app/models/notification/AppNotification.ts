@@ -1,4 +1,4 @@
-import type { AppNotificationAction } from "@/models/notification/AppNotificationAction";
+import type { AppNotificationAction } from "#src/models/notification/AppNotificationAction";
 import type { NotificationInNotification } from "@esposter/db-schema";
 
 // The one shape the bell and the snackbar render, whichever end it came from: a delivered notification the

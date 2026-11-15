@@ -1,4 +1,4 @@
-import type { DialogTarget } from "@/models/dungeons/UI/dialog/DialogTarget";
+import type { DialogTarget } from "#src/models/dungeons/UI/dialog/DialogTarget";
 
 export const getDialogTargetText = (target: DialogTarget) =>
   computed({

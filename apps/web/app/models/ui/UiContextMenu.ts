@@ -1,4 +1,4 @@
-import type { Item } from "@/models/shared/Item";
+import type { Item } from "#src/models/shared/Item";
 
 // The one context menu open: the items of the element that opened it, the point it opens at, and that element, which
 // Takes focus back when it closes

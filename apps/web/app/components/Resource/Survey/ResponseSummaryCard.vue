@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { SurveySummaryCard } from "@/models/resource/survey/SurveySummaryCard";
+import type { SurveySummaryCard } from "#src/models/resource/survey/SurveySummaryCard";
 
 import { NUMBER_FORMATTER, PERCENT_FORMATTER } from "#shared/services/intl/constants";
 import { pluralize } from "#shared/util/text/pluralize";
-import { SurveySummaryCardType } from "@/models/resource/survey/SurveySummaryCardType";
-import { SURVEY_SUMMARY_AXIS_HEIGHT, SURVEY_SUMMARY_BAR_HEIGHT } from "@/services/survey/summary/constants";
+import { SurveySummaryCardType } from "#src/models/resource/survey/SurveySummaryCardType";
+import { SURVEY_SUMMARY_AXIS_HEIGHT, SURVEY_SUMMARY_BAR_HEIGHT } from "#src/services/survey/summary/constants";
 
 interface Props {
   card: SurveySummaryCard;

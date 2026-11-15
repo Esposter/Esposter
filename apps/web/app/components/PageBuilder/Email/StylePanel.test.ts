@@ -2,11 +2,11 @@
 import type { MjmlDocument } from "mjml-blocks";
 
 import { TEST_ID, TEST_OTHER_ID, TEST_THIRD_ID, TEST_URL } from "#shared/services/pageBuilder/constants.test";
-import PageBuilderEmailImageUploadField from "@/components/PageBuilder/Email/ImageUploadField.vue";
-import PageBuilderEmailStylePanel from "@/components/PageBuilder/Email/StylePanel.vue";
-import { emailKind } from "@/services/pageBuilder/emailKind";
-import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
-import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
+import PageBuilderEmailImageUploadField from "#src/components/PageBuilder/Email/ImageUploadField.vue";
+import PageBuilderEmailStylePanel from "#src/components/PageBuilder/Email/StylePanel.vue";
+import { emailKind } from "#src/services/pageBuilder/emailKind";
+import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
+import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { MjmlNodeType } from "mjml-blocks";
 import { v7 } from "uuid";

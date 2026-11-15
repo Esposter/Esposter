@@ -1,11 +1,11 @@
-import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
+import type { PlayerInput } from "#src/models/dungeons/UI/input/PlayerInput";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { CharacterId } from "@/models/dungeons/scene/world/CharacterId";
-import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
-import { AInputResolver } from "@/models/resolvers/dungeons/AInputResolver";
-import { checkIsMovingDirection } from "@/services/dungeons/UI/input/checkIsMovingDirection";
-import { useWorldPlayerStore } from "@/store/dungeons/world/player";
+import { CharacterId } from "#src/models/dungeons/scene/world/CharacterId";
+import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";
+import { AInputResolver } from "#src/models/resolvers/dungeons/AInputResolver";
+import { checkIsMovingDirection } from "#src/services/dungeons/UI/input/checkIsMovingDirection";
+import { useWorldPlayerStore } from "#src/store/dungeons/world/player";
 
 export class MovementInteractionInputResolver extends AInputResolver {
   override async handleInput(scene: SceneWithPlugins, justDownInput: PlayerInput, input: PlayerInput) {

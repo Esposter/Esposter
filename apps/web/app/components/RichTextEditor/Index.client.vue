@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { FooterBarSlotProps } from "@/components/RichTextEditor/FooterBarSlotProps";
+import type { FooterBarSlotProps } from "#src/components/RichTextEditor/FooterBarSlotProps";
 import type { FileHandlePluginOptions } from "@tiptap/extension-file-handler";
 import type { AnyExtension, FocusPosition } from "@tiptap/vue-3";
 import type { CSSProperties } from "vue";
 
-import { autofocusEditor } from "@/services/richTextEditor/autofocusEditor";
+import { autofocusEditor } from "#src/services/richTextEditor/autofocusEditor";
 import { FileHandler } from "@tiptap/extension-file-handler";
 import { CharacterCount, Placeholder } from "@tiptap/extensions";
 import { StarterKit } from "@tiptap/starter-kit";

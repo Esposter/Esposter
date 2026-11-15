@@ -4,8 +4,8 @@ import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSo
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { ColumnTypeCreateMap } from "#shared/services/resource/sheet/column/ColumnTypeCreateMap";
-import { ColumnTypeFormSchemaMap } from "@/services/resource/sheet/column/ColumnTypeFormSchemaMap";
-import { extractSchemaFields } from "@/services/zod/extractSchemaFields";
+import { ColumnTypeFormSchemaMap } from "#src/services/resource/sheet/column/ColumnTypeFormSchemaMap";
+import { extractSchemaFields } from "#src/services/zod/extractSchemaFields";
 import { toRawDeep } from "@esposter/shared";
 
 interface Props {

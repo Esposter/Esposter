@@ -1,7 +1,7 @@
 import type { Clicker } from "#shared/models/clicker/data/Clicker";
 
-import { FPS } from "@/services/clicker/constants";
-import { applyBuildingUpgrade } from "@/services/clicker/upgrade/applyBuildingUpgrade";
+import { FPS } from "#src/services/clicker/constants";
+import { applyBuildingUpgrade } from "#src/services/clicker/upgrade/applyBuildingUpgrade";
 
 export const applyGameTick = (clicker: Clicker) => {
   let allBoughtBuildingPower = 0;

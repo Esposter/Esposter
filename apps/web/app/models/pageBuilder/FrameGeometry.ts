@@ -1,4 +1,4 @@
-import type { OverlayBox } from "@/models/pageBuilder/OverlayBox";
+import type { OverlayBox } from "#src/models/pageBuilder/OverlayBox";
 
 // What a palette drag reads of the canvas's frame at each pointer move: the frame's box in the app's viewport, its scale,
 // The node under a point in the frame's own pixels, each node's box in those same pixels, the space the pointer is mapped

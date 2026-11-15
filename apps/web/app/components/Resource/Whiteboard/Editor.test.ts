@@ -6,19 +6,19 @@ import type { ArrowElement, Point, ShapeElement } from "vue-block-editor-headles
 
 import { MimeType } from "#shared/models/file/MimeType";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
-import ResourceWhiteboardEditor from "@/components/Resource/Whiteboard/Editor.vue";
-import ResourceWhiteboardEditorPropertiesArrow from "@/components/Resource/Whiteboard/EditorPropertiesArrow.vue";
-import UiConfirmDialog from "@/components/Ui/ConfirmDialog.vue";
-import UiPalette from "@/components/Ui/Palette/Index.vue";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { pressKey, WHITEBOARD_ARROW, WHITEBOARD_PROCESS } from "@/services/whiteboard/constants.test";
-import { WHITEBOARD_DUPLICATE_OFFSET } from "@/services/whiteboard/edit/constants";
-import { serializeClipboardElements } from "@/services/whiteboard/serializeClipboardElements";
-import { getFitViewport } from "@/services/whiteboard/viewport/getFitViewport";
-import { useResourceStore } from "@/store/resource";
-import { useWhiteboardStore } from "@/store/resource/whiteboard";
-import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
-import { useContextMenuStore } from "@/store/ui/contextMenu";
+import ResourceWhiteboardEditor from "#src/components/Resource/Whiteboard/Editor.vue";
+import ResourceWhiteboardEditorPropertiesArrow from "#src/components/Resource/Whiteboard/EditorPropertiesArrow.vue";
+import UiConfirmDialog from "#src/components/Ui/ConfirmDialog.vue";
+import UiPalette from "#src/components/Ui/Palette/Index.vue";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { pressKey, WHITEBOARD_ARROW, WHITEBOARD_PROCESS } from "#src/services/whiteboard/constants.test";
+import { WHITEBOARD_DUPLICATE_OFFSET } from "#src/services/whiteboard/edit/constants";
+import { serializeClipboardElements } from "#src/services/whiteboard/serializeClipboardElements";
+import { getFitViewport } from "#src/services/whiteboard/viewport/getFitViewport";
+import { useResourceStore } from "#src/store/resource/index";
+import { useWhiteboardEditorStore } from "#src/store/resource/whiteboard/editor";
+import { useWhiteboardStore } from "#src/store/resource/whiteboard/index";
+import { useContextMenuStore } from "#src/store/ui/contextMenu";
 import { ResourceType } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
@@ -38,11 +38,11 @@ const { display, uploadResourceFileMock } = vi.hoisted(() => ({
 }));
 
 // The upload is covered by useUploadResourceFile's own suite, so it is mocked at its seam here, and a paste reaches it
-vi.mock(import("@/composables/resource/useUploadResourceFile"), () => ({
+vi.mock(import("#src/composables/resource/useUploadResourceFile"), () => ({
   useUploadResourceFile: () => uploadResourceFileMock,
 }));
 // The editor's size class is read from the display composable, so a test says how small the window is before the editor mounts
-vi.mock(import("@/composables/ui/useUiDisplay"), async (importOriginal) => {
+vi.mock(import("#src/composables/ui/useUiDisplay"), async (importOriginal) => {
   const { useUiDisplay } = await importOriginal();
   return {
     useUiDisplay: () => ({

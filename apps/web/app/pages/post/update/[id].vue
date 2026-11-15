@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { checkIsUuidRouteId } from "@/services/router/checkIsUuidRouteId";
-import { getEntityNotFoundStatusMessage } from "@/services/shared/error/getEntityNotFoundStatusMessage";
-import { usePostStore } from "@/store/post";
+import { checkIsUuidRouteId } from "#src/services/router/checkIsUuidRouteId";
+import { getEntityNotFoundStatusMessage } from "#src/services/shared/error/getEntityNotFoundStatusMessage";
+import { usePostStore } from "#src/store/post/index";
 import { DatabaseEntityType } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 

@@ -7,10 +7,10 @@ import {
   ZSTD_VERSION,
   ZSTD_WASM_DIRECTORY,
   ZSTD_WASM_PATH,
-} from "@@/scripts/zstd/constants";
-import { downloadVerifiedFile } from "@@/scripts/zstd/services/downloadVerifiedFile";
-import { extractArchive } from "@@/scripts/zstd/services/extractArchive";
-import { readZigRelease } from "@@/scripts/zstd/services/readZigRelease";
+} from "#scripts/zstd/constants";
+import { downloadVerifiedFile } from "#scripts/zstd/services/downloadVerifiedFile";
+import { extractArchive } from "#scripts/zstd/services/extractArchive";
+import { readZigRelease } from "#scripts/zstd/services/readZigRelease";
 import { withFinalizerAsync } from "@esposter/shared";
 import { execFileAsync } from "@esposter/shared-node/child-process";
 import { mkdir, mkdtemp, readdir, rm } from "node:fs/promises";

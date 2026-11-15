@@ -4,9 +4,9 @@ import {
   WHITEBOARD_ARROW_ID,
   WHITEBOARD_PROCESS,
   WHITEBOARD_PROCESS_ID,
-} from "@/services/whiteboard/constants.test";
-import { WHITEBOARD_DUPLICATE_OFFSET } from "@/services/whiteboard/edit/constants";
-import { duplicateWhiteboardElements } from "@/services/whiteboard/edit/duplicateWhiteboardElements";
+} from "#src/services/whiteboard/constants.test";
+import { WHITEBOARD_DUPLICATE_OFFSET } from "#src/services/whiteboard/edit/constants";
+import { duplicateWhiteboardElements } from "#src/services/whiteboard/edit/duplicateWhiteboardElements";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 import { ArrowheadKind } from "vue-block-editor-headless";

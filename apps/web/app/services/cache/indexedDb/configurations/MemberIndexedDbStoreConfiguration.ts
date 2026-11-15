@@ -1,6 +1,6 @@
-import type { IndexedDbStoreConfiguration } from "@/models/cache/indexedDb/IndexedDbStoreConfiguration";
+import type { IndexedDbStoreConfiguration } from "#src/models/cache/indexedDb/IndexedDbStoreConfiguration";
 
-import { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStoreName";
+import { IndexedDbStoreName } from "#src/models/cache/indexedDb/IndexedDbStoreName";
 
 export const MemberIndexedDbStoreConfiguration = {
   indexName: "roomId",

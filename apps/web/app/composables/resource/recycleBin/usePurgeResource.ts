@@ -2,8 +2,8 @@ import type { ResourceInResource } from "@esposter/db-schema";
 
 import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
-import { CacheTag } from "@/models/cache/CacheTag";
-import { useNotificationStore } from "@/store/notification";
+import { CacheTag } from "#src/models/cache/CacheTag";
+import { useNotificationStore } from "#src/store/notification";
 import { NotificationSeverity } from "@esposter/db-schema";
 
 export const usePurgeResource = (refresh: () => Promise<void>) => {

@@ -1,7 +1,7 @@
-import { useCallStore } from "@/store/message/room/call";
-import { useKnockerStore } from "@/store/message/room/call/knocker";
-import { useMediaStore } from "@/store/message/room/call/media";
-import { useConnectionStore } from "@/store/realtime/connection";
+import { useCallStore } from "#src/store/message/room/call/index";
+import { useKnockerStore } from "#src/store/message/room/call/knocker";
+import { useMediaStore } from "#src/store/message/room/call/media";
+import { useConnectionStore } from "#src/store/realtime/connection";
 import { getResultAsync } from "@esposter/shared";
 
 export const useCallIdSubscribables = async (callId: string) => {

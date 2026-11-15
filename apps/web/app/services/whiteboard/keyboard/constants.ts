@@ -1,4 +1,4 @@
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 // The shortcuts dialog and the command palette list every whiteboard command under this group
 export const WHITEBOARD_COMMAND_GROUP = "Whiteboard";

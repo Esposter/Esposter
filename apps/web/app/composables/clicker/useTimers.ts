@@ -1,6 +1,6 @@
-import { applyGameTick } from "@/services/clicker/applyGameTick";
-import { AUTOSAVE_INTERVAL_MS, GAME_TICK_INTERVAL_MS } from "@/services/clicker/constants";
-import { useClickerStore } from "@/store/clicker";
+import { applyGameTick } from "#src/services/clicker/applyGameTick";
+import { AUTOSAVE_INTERVAL_MS, GAME_TICK_INTERVAL_MS } from "#src/services/clicker/constants";
+import { useClickerStore } from "#src/store/clicker/index";
 import { getResultAsync, noop } from "@esposter/shared";
 
 export const useTimers = () => {

@@ -1,7 +1,7 @@
-import type { ColumnFilter } from "@/models/resource/sheet/column/ColumnFilter";
+import type { ColumnFilter } from "#src/models/resource/sheet/column/ColumnFilter";
 
-import { useResourceStore } from "@/store/resource";
-import { useSheetStore } from "@/store/resource/sheet";
+import { useResourceStore } from "#src/store/resource/index";
+import { useSheetStore } from "#src/store/resource/sheet/index";
 
 export const useFilterStore = defineStore("resource/sheet/filter", () => {
   const resourceStore = useResourceStore();

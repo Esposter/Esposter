@@ -1,7 +1,7 @@
 import type { AchievementDefinitionEntry } from "#shared/models/achievement/AchievementDefinitionEntry";
 import type { AchievementName } from "@esposter/db-schema";
 
-import { AchievementSort } from "@/models/achievement/AchievementSort";
+import { AchievementSort } from "#src/models/achievement/AchievementSort";
 
 // Until the rarity read lands every rarity is 0, and toSorted keeps equal elements in their category order
 export const sortAchievementDefinitions = (

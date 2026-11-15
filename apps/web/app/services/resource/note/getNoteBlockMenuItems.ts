@@ -1,5 +1,5 @@
 // @unocss-include
-import type { MenuItem } from "@/models/shared/MenuItem";
+import type { MenuItem } from "#src/models/shared/MenuItem";
 import type { Editor } from "@tiptap/core";
 
 // The block-level items the Note's menu bar and its slash menu both offer, in the order both draw them. The list items

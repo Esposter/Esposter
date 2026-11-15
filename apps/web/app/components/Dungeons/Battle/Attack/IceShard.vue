@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { AttackProps } from "@/models/dungeons/attack/AttackProps";
+import type { AttackProps } from "#src/models/dungeons/attack/AttackProps";
 
 import { AttackKey } from "#shared/models/dungeons/keys/spritesheet/AttackKey";
-import { AttackGameObjectType } from "@/models/dungeons/attack/AttackGameObjectType";
-import { getAnimationCompleteEventKey } from "@/services/dungeons/animation/getAnimationCompleteEventKey";
-import { getAnimationConfiguration } from "@/services/dungeons/animation/getAnimationConfiguration";
+import { AttackGameObjectType } from "#src/models/dungeons/attack/AttackGameObjectType";
+import { getAnimationCompleteEventKey } from "#src/services/dungeons/animation/getAnimationCompleteEventKey";
+import { getAnimationConfiguration } from "#src/services/dungeons/animation/getAnimationConfiguration";
 
 const isActive = defineModel<boolean>("isActive", { required: true });
 defineProps<AttackProps>();

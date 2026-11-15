@@ -1,9 +1,9 @@
-import type { PaletteGroup } from "@/models/ui/palette/PaletteGroup";
+import type { PaletteGroup } from "#src/models/ui/palette/PaletteGroup";
 import type { SurveyDocument } from "vue-survey-engine-headless";
 
-import { SURVEY_PALETTE_GROUPS } from "@/services/resource/survey/constants";
-import { getSurveyInsertTarget } from "@/services/resource/survey/getSurveyInsertTarget";
-import { SurveyNodeTypeIconMap } from "@/services/resource/survey/SurveyNodeTypeIconMap";
+import { SURVEY_PALETTE_GROUPS } from "#src/services/resource/survey/constants";
+import { getSurveyInsertTarget } from "#src/services/resource/survey/getSurveyInsertTarget";
+import { SurveyNodeTypeIconMap } from "#src/services/resource/survey/SurveyNodeTypeIconMap";
 import { surveyNodeTypeDefinitionMap } from "vue-survey-engine-headless";
 
 // The palette's groups of the survey kinds an insertion at the selection takes, each kind listed under its icon and the label its definition

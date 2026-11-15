@@ -1,5 +1,5 @@
-import { useBookmarkStore } from "@/store/bookmark";
-import { useRecentPageStore } from "@/store/recentPage";
+import { useBookmarkStore } from "#src/store/bookmark";
+import { useRecentPageStore } from "#src/store/recentPage";
 
 // The recent pages that are not bookmarked, best ranked first. A bookmarked page is already in reach among the
 // Bookmarks, so wherever the two are listed together the recent ones spend their rows on the others

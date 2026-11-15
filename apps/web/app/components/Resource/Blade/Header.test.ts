@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import ResourceBladeHeader from "@/components/Resource/Blade/Header.vue";
-import { useCommandStore } from "@/store/ui/command";
+import ResourceBladeHeader from "#src/components/Resource/Blade/Header.vue";
+import { useCommandStore } from "#src/store/ui/command";
 import { ResourceType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";

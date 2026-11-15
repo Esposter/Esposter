@@ -2,9 +2,9 @@ import type { PublicUser } from "@esposter/db-schema";
 
 import { containsLike } from "#server/services/db/containsLike";
 import { callUserObjects } from "#server/services/realtime/callUserObjects";
-import { router } from "#server/trpc";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
+import { router } from "#server/trpc/index";
 import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { friendUserIdInputSchema } from "#shared/models/db/friend/FriendUserIdInput";

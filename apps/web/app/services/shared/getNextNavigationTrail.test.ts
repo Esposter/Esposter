@@ -1,7 +1,7 @@
-import { ResourceBladeSlug } from "@/models/resource/ResourceBladeSlug";
-import { NavigationTrailPage } from "@/models/shared/NavigationTrailPage";
-import { getResourceBladePath } from "@/services/resource/getResourceBladePath";
-import { getNextNavigationTrail } from "@/services/shared/getNextNavigationTrail";
+import { ResourceBladeSlug } from "#src/models/resource/ResourceBladeSlug";
+import { NavigationTrailPage } from "#src/models/shared/NavigationTrailPage";
+import { getResourceBladePath } from "#src/services/resource/getResourceBladePath";
+import { getNextNavigationTrail } from "#src/services/shared/getNextNavigationTrail";
 import { RoutePath } from "@esposter/shared";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";

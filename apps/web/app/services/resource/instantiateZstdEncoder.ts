@@ -1,6 +1,6 @@
-import type { ZstdEncoder } from "@/models/resource/ZstdEncoder";
+import type { ZstdEncoder } from "#src/models/resource/ZstdEncoder";
 
-import { checkIsZstdEncoder } from "@/services/resource/checkIsZstdEncoder";
+import { checkIsZstdEncoder } from "#src/services/resource/checkIsZstdEncoder";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The module is built for WASI and asks the host for one thing, randomness, which the libc seeds its allocator

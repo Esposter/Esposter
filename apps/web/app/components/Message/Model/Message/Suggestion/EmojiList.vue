@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { PickableEmoji } from "@/models/message/emoji/PickableEmoji";
+import type { PickableEmoji } from "#src/models/message/emoji/PickableEmoji";
 import type { SuggestionProps } from "@tiptap/suggestion";
 
-import { SuggestionTrigger } from "@/models/shared/SuggestionTrigger";
-import { getEmojiShortcode } from "@/services/message/emoji/getEmojiShortcode";
-import { getSuggestionListTitle } from "@/services/message/getSuggestionListTitle";
-import { useEmojiPickerStore } from "@/store/message/emojiPicker";
+import { SuggestionTrigger } from "#src/models/shared/SuggestionTrigger";
+import { getEmojiShortcode } from "#src/services/message/emoji/getEmojiShortcode";
+import { getSuggestionListTitle } from "#src/services/message/getSuggestionListTitle";
+import { useEmojiPickerStore } from "#src/store/message/emojiPicker";
 import { takeOne } from "@esposter/shared";
 
 const { command, items } = defineProps<Pick<SuggestionProps<PickableEmoji>, "command" | "items" | "query">>();

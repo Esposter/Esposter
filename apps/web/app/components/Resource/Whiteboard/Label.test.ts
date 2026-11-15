@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
-import ResourceWhiteboardLabel from "@/components/Resource/Whiteboard/Label.vue";
-import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
+import ResourceWhiteboardLabel from "#src/components/Resource/Whiteboard/Label.vue";
+import { useWhiteboardEditorStore } from "#src/store/resource/whiteboard/editor";
 import { mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
 import { v7 } from "uuid";

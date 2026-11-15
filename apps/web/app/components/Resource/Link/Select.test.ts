@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
-import ResourceLinkSelect from "@/components/Resource/Link/Select.vue";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { getMissingResourceMessage } from "@/services/resource/getMissingResourceMessage";
+import ResourceLinkSelect from "#src/components/Resource/Link/Select.vue";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { getMissingResourceMessage } from "#src/services/resource/getMissingResourceMessage";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";

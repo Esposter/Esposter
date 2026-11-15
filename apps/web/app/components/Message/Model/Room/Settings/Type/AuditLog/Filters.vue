@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { UiSelectItem } from "@/models/ui/UiSelectItem";
+import type { UiSelectItem } from "#src/models/ui/UiSelectItem";
 import type { AdminActionType } from "@esposter/db-schema";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { AdminActionIconMap } from "@/services/message/moderation/AdminActionIconMap";
-import { useMemberStore } from "@/store/message/user/member";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { AdminActionIconMap } from "#src/services/message/moderation/AdminActionIconMap";
+import { useMemberStore } from "#src/store/message/user/member";
 import { AdminActionTypes } from "@esposter/db-schema";
 
 const type = defineModel<"" | AdminActionType>("type", { default: "", required: true });

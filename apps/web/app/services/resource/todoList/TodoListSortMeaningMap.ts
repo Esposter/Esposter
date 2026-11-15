@@ -1,5 +1,5 @@
-import { TodoListSort } from "@/models/resource/todoList/TodoListSort";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { TodoListSort } from "#src/models/resource/todoList/TodoListSort";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 export const TodoListSortMeaningMap = {
   [TodoListSort.Alphabetical]: UiIconMeaning.SortAscending,

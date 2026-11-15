@@ -1,8 +1,8 @@
 // @vitest-environment happy-dom
-import { createPdfViewerState } from "@/components/Pdf/Viewer/createPdfViewerState.test";
-import PdfViewerWatermarkDialog from "@/components/Pdf/Viewer/WatermarkDialog.vue";
-import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
-import { UiStyles } from "@/models/ui/UiStyle";
+import { createPdfViewerState } from "#src/components/Pdf/Viewer/createPdfViewerState.test";
+import PdfViewerWatermarkDialog from "#src/components/Pdf/Viewer/WatermarkDialog.vue";
+import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
+import { UiStyles } from "#src/models/ui/UiStyle";
 import { flushPromises, mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";

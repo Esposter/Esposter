@@ -1,4 +1,4 @@
-import { getTweenRange } from "@/services/dungeons/animation/getTweenRange";
+import { getTweenRange } from "#src/services/dungeons/animation/getTweenRange";
 import { useTween } from "vue-phaserjs";
 
 export const useMonsterDeathTween = (isEnemy: boolean) => {

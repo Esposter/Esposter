@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useRoomDialogStore } from "@/store/message/room/dialog";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { useRoomDialogStore } from "#src/store/message/room/dialog";
 
 interface Props {
   roomId: RoomInMessage["id"];

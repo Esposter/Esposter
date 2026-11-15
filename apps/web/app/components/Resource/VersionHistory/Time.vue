@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RESOURCE_DATE_TIME_ATTRIBUTES } from "@/services/resource/constants";
+import { RESOURCE_DATE_TIME_ATTRIBUTES } from "#src/services/resource/constants";
 
 interface Props {
   datetime: Date;

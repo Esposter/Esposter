@@ -1,6 +1,6 @@
-import { createRoom } from "@/services/message/room/createRoom.test";
-import { getInviteRecipients } from "@/services/message/room/invite/getInviteRecipients";
-import { createUser } from "@/services/message/user/createUser.test";
+import { createRoom } from "#src/services/message/room/createRoom.test";
+import { getInviteRecipients } from "#src/services/message/room/invite/getInviteRecipients";
+import { createUser } from "#src/services/message/user/createUser.test";
 import { RoomType } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 

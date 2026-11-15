@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { PickableEmoji } from "@/models/message/emoji/PickableEmoji";
-import type { SkinTone } from "@/models/message/emoji/SkinTone";
+import type { PickableEmoji } from "#src/models/message/emoji/PickableEmoji";
+import type { SkinTone } from "#src/models/message/emoji/SkinTone";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { EMOJI_GRID_COLUMN_COUNT } from "@/services/message/emoji/constants";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { EMOJI_GRID_COLUMN_COUNT } from "#src/services/message/emoji/constants";
 import { chunk } from "@esposter/shared";
 
 interface Props {

@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { MAX_BLUEPRINT_ENTRIES } from "#shared/services/resource/blueprint/constants";
 import { pluralize } from "#shared/util/text/pluralize";
-import { MutationStatus } from "@/models/shared/MutationStatus";
-import { UiRules } from "@/services/ui/UiRules";
-import { useNotificationStore } from "@/store/notification";
-import { useBlueprintCaptureDialogStore } from "@/store/resource/blueprint/captureDialog";
+import { MutationStatus } from "#src/models/shared/MutationStatus";
+import { UiRules } from "#src/services/ui/UiRules";
+import { useNotificationStore } from "#src/store/notification";
+import { useBlueprintCaptureDialogStore } from "#src/store/resource/blueprint/captureDialog";
 import { NotificationSeverity, RESOURCE_NAME_MAX_LENGTH } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 

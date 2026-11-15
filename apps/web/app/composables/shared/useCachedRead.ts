@@ -1,7 +1,7 @@
-import type { CacheTag } from "@/models/cache/CacheTag";
+import type { CacheTag } from "#src/models/cache/CacheTag";
 
-import { DEFAULT_CACHE_KEY } from "@/services/cache/constants";
-import { useCacheStore } from "@/store/cache";
+import { DEFAULT_CACHE_KEY } from "#src/services/cache/constants";
+import { useCacheStore } from "#src/store/cache";
 
 interface CachedReadOptions<TResult> {
   isRefetchOnInvalidate?: true;

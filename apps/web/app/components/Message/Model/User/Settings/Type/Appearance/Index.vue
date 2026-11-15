@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { AppearanceSettingsSection } from "@/models/message/user/settings/AppearanceSettingsSection";
+import { AppearanceSettingsSection } from "#src/models/message/user/settings/AppearanceSettingsSection";
 </script>
 
 <template>

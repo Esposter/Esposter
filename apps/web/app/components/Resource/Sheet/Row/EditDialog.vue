@@ -2,9 +2,9 @@
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 
 import { rowSchema } from "#shared/models/resource/sheet/datasource/Row";
-import { getVisibleEditableColumns } from "@/services/resource/sheet/column/getVisibleEditableColumns";
-import { getEditRowDescription } from "@/services/resource/sheet/commands/getEditRowDescription";
-import { useRowDialogStore } from "@/store/resource/sheet/rowDialog";
+import { getVisibleEditableColumns } from "#src/services/resource/sheet/column/getVisibleEditableColumns";
+import { getEditRowDescription } from "#src/services/resource/sheet/commands/getEditRowDescription";
+import { useRowDialogStore } from "#src/store/resource/sheet/rowDialog";
 import { takeOne, toRawDeep } from "@esposter/shared";
 
 interface Props {

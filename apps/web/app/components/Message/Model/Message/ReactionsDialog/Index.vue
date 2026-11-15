@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { UiDialogSize } from "@/models/ui/UiDialogSize";
-import { useMessageDialogStore } from "@/store/message/dialog";
-import { useEmojiStore } from "@/store/message/emoji";
+import { UiDialogSize } from "#src/models/ui/UiDialogSize";
+import { useMessageDialogStore } from "#src/store/message/dialog";
+import { useEmojiStore } from "#src/store/message/emoji";
 
 const messageDialogStore = useMessageDialogStore();
 const { reactionsMessageId, reactionsRoomId } = storeToRefs(messageDialogStore);

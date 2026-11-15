@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { MimeType } from "#shared/models/file/MimeType";
 import { formatDate } from "#shared/util/date/formatDate";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { AUDIO_MESSAGE_DATE_FORMAT, AUDIO_RECORDER_TIMER_INTERVAL_MS } from "@/services/richTextEditor/constants";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { AUDIO_MESSAGE_DATE_FORMAT, AUDIO_RECORDER_TIMER_INTERVAL_MS } from "#src/services/richTextEditor/constants";
 
 const emit = defineEmits<{ "upload-file": [files: File[]] }>();
 // Counted from the recording's own start rather than in ticks, since the interval runs from mount and its phase is

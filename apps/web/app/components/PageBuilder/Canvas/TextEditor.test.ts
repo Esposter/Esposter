@@ -1,14 +1,14 @@
 // @vitest-environment nuxt
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { TEST_ID, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
-import PageBuilderCanvasTextEditor from "@/components/PageBuilder/Canvas/TextEditor.vue";
-import { TEST_ROOT_TEXT_ID, TEST_SECTION_ID, TEST_TEXT_CONTENT } from "@/services/pageBuilder/constants.test";
-import { emailKind } from "@/services/pageBuilder/emailKind";
-import { webpageKind } from "@/services/pageBuilder/webpageKind";
-import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
-import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
-import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
-import { useRichTextSuggestionStore } from "@/store/richTextEditor/suggestion";
+import PageBuilderCanvasTextEditor from "#src/components/PageBuilder/Canvas/TextEditor.vue";
+import { TEST_ROOT_TEXT_ID, TEST_SECTION_ID, TEST_TEXT_CONTENT } from "#src/services/pageBuilder/constants.test";
+import { emailKind } from "#src/services/pageBuilder/emailKind";
+import { webpageKind } from "#src/services/pageBuilder/webpageKind";
+import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
+import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
+import { usePageBuilderHistoryStore } from "#src/store/pageBuilder/history";
+import { useRichTextSuggestionStore } from "#src/store/richTextEditor/suggestion";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { EditorContent } from "@tiptap/vue-3";
 import { flushPromises } from "@vue/test-utils";

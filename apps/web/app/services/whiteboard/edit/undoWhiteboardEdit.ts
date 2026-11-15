@@ -1,4 +1,4 @@
-import type { WhiteboardEditState } from "@/models/whiteboard/WhiteboardEditState";
+import type { WhiteboardEditState } from "#src/models/whiteboard/WhiteboardEditState";
 
 import { undoHistory } from "@esposter/shared";
 import { applyBlockEdit, positionedDocumentSchema } from "vue-block-editor-headless";

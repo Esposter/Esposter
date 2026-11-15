@@ -1,7 +1,7 @@
 import type { JsonSchema } from "@jsonforms/core";
 
-import { getSchemaFormLayout } from "@/services/ui/schemaForm/getSchemaFormLayout";
-import { getSchemaFormVariantIndex } from "@/services/ui/schemaForm/getSchemaFormVariantIndex";
+import { getSchemaFormLayout } from "#src/services/ui/schemaForm/getSchemaFormLayout";
+import { getSchemaFormVariantIndex } from "#src/services/ui/schemaForm/getSchemaFormVariantIndex";
 import { createDefaultValue } from "@jsonforms/core";
 
 // A union switched to another variant keeps what the reader filled in that the new variant has too, and anything the

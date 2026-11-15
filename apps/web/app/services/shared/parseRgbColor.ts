@@ -1,6 +1,6 @@
 import type { SrgbColor } from "#shared/models/shared/SrgbColor";
 
-import { MAX_COLOR_CHANNEL } from "@/services/shared/constants";
+import { MAX_COLOR_CHANNEL } from "#src/services/shared/constants";
 
 // The comma form a browser computes an rgb colour in, its alpha present only where the colour is translucent
 const RGB_COLOR_REGEX =

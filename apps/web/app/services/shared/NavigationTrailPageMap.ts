@@ -1,7 +1,7 @@
-import type { NavigationTrailCrumb } from "@/models/shared/NavigationTrailCrumb";
+import type { NavigationTrailCrumb } from "#src/models/shared/NavigationTrailCrumb";
 
-import { NavigationTrailPage } from "@/models/shared/NavigationTrailPage";
-import { RESOURCE_EXPLORER_DISPLAY_NAME } from "@/services/resource/constants";
+import { NavigationTrailPage } from "#src/models/shared/NavigationTrailPage";
+import { RESOURCE_EXPLORER_DISPLAY_NAME } from "#src/services/resource/constants";
 import { RoutePath } from "@esposter/shared";
 
 // What each trail slug renders as. The title lives here rather than in the url, so a crumb can be renamed

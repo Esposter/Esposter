@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { MenuItem } from "@/models/shared/MenuItem";
+import type { MenuItem } from "#src/models/shared/MenuItem";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { checkIsDivider } from "@/services/shared/checkIsDivider";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { checkIsDivider } from "#src/services/shared/checkIsDivider";
 
 interface Props {
   items: MenuItem[];

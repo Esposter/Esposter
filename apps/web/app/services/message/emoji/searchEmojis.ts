@@ -1,9 +1,9 @@
-import type { CustomEmoji } from "@/models/message/emoji/CustomEmoji";
-import type { PickableEmoji } from "@/models/message/emoji/PickableEmoji";
+import type { CustomEmoji } from "#src/models/message/emoji/CustomEmoji";
+import type { PickableEmoji } from "#src/models/message/emoji/PickableEmoji";
 
-import { MAX_EMOJI_SEARCH_RESULTS } from "@/services/message/emoji/constants";
-import { getEmojiIndex } from "@/services/message/emoji/getEmojiIndex";
-import { getMiniSearch } from "@/services/message/emoji/getMiniSearch";
+import { MAX_EMOJI_SEARCH_RESULTS } from "#src/services/message/emoji/constants";
+import { getEmojiIndex } from "#src/services/message/emoji/getEmojiIndex";
+import { getMiniSearch } from "#src/services/message/emoji/getMiniSearch";
 
 // `fuzzy` is off: on names this short it manufactures noise rather than forgiving typos. Punctuation is a
 // Delimiter and never an operator, so "grin(" searches for "grin" and a query that is punctuation alone

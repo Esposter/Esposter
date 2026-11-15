@@ -1,7 +1,7 @@
-import type { TimerRequest } from "@/models/shared/TimerRequest";
-import type { TimerResponse } from "@/models/shared/TimerResponse";
+import type { TimerRequest } from "#src/models/shared/TimerRequest";
+import type { TimerResponse } from "#src/models/shared/TimerResponse";
 
-import { TimerMethod } from "@/models/shared/TimerMethod";
+import { TimerMethod } from "#src/models/shared/TimerMethod";
 
 // Timers scheduled here keep their pace while the tab is backgrounded, where the browser throttles the page's own
 // Timers. The worker holds only the native handles, so the page owns the ids and the callbacks and a fired timer is

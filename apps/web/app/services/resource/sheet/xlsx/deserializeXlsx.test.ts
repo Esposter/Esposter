@@ -8,9 +8,9 @@ import { createColumn } from "#shared/models/resource/sheet/column/createColumn.
 import { createDataSource } from "#shared/models/resource/sheet/datasource/createDataSource.test";
 import { createRow } from "#shared/models/resource/sheet/datasource/createRow.test";
 import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
-import { DataSourceConfigurationMap } from "@/services/resource/sheet/dataSource/DataSourceConfigurationMap";
-import { deserializeXlsx } from "@/services/resource/sheet/xlsx/deserializeXlsx";
-import { serializeXlsx } from "@/services/resource/sheet/xlsx/serializeXlsx";
+import { DataSourceConfigurationMap } from "#src/services/resource/sheet/dataSource/DataSourceConfigurationMap";
+import { deserializeXlsx } from "#src/services/resource/sheet/xlsx/deserializeXlsx";
+import { serializeXlsx } from "#src/services/resource/sheet/xlsx/serializeXlsx";
 import { describe, expect, test, vi } from "vitest";
 
 // Both codecs are reached statically from PortableFormatMap, so whether they pull their library into the

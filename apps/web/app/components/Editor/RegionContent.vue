@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { EditorRegistry } from "@/models/editor/EditorRegistry";
-import type { UiTabItem } from "@/models/ui/UiTabItem";
+import type { EditorRegistry } from "#src/models/editor/EditorRegistry";
+import type { UiTabItem } from "#src/models/ui/UiTabItem";
 import type { ResolvedRegion } from "vue-editor-layout-headless";
 
-import { UiTabsVariant } from "@/models/ui/UiTabsVariant";
-import { getRegionComponent } from "@/services/editor/getRegionComponent";
+import { UiTabsVariant } from "#src/models/ui/UiTabsVariant";
+import { getRegionComponent } from "#src/services/editor/getRegionComponent";
 import { takeOne } from "@esposter/shared";
 
 interface Props {

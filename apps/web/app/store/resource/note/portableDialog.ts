@@ -1,6 +1,6 @@
 import type { JSONContent } from "@tiptap/core";
 
-import { useResourceStore } from "@/store/resource";
+import { useResourceStore } from "#src/store/resource/index";
 
 // The import is started from the command bar, which the blade shell's dialogs outlive, so the preview cannot live in
 // The blade alone. It is keyed by the note it was parsed for: a file read after the reader moved to another note is

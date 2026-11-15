@@ -1,6 +1,6 @@
-import type { Item } from "@/models/shared/Item";
+import type { Item } from "#src/models/shared/Item";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 // Rename is the same command wherever a resource is offered, from a row's menu or a blade's header
 export const getRenameResourceItem = (onClick: () => void): Item => ({

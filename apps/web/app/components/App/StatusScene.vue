@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { VOXEL_DIGIT_WIDTH, VOXEL_DROP_STAGGER_MS } from "@/services/app/constants";
-import { VoxelDigitMap } from "@/services/app/VoxelDigitMap";
+import { VOXEL_DIGIT_WIDTH, VOXEL_DROP_STAGGER_MS } from "#src/services/app/constants";
+import { VoxelDigitMap } from "#src/services/app/VoxelDigitMap";
 
 interface Props {
   description: string;

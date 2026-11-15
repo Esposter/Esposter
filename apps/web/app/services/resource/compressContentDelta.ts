@@ -1,4 +1,4 @@
-import type { ZstdEncoder } from "@/models/resource/ZstdEncoder";
+import type { ZstdEncoder } from "#src/models/resource/ZstdEncoder";
 
 import { DEFAULT_COMPRESSION_LEVEL, getWindowLog, InvalidOperationError, Operation } from "@esposter/shared";
 

@@ -1,9 +1,9 @@
 import type { PageLink } from "#shared/models/app/PageLink";
-import type { RecentPage } from "@/models/app/RecentPage";
+import type { RecentPage } from "#src/models/app/RecentPage";
 
-import { RECENT_PAGES_STORED_LIMIT } from "@/services/app/constants";
-import { getFrecency } from "@/services/app/getFrecency";
-import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
+import { RECENT_PAGES_STORED_LIMIT } from "#src/services/app/constants";
+import { getFrecency } from "#src/services/app/getFrecency";
+import { LocalStorageKey } from "#src/services/shared/LocalStorageKey";
 import { checkIsDeepEqual } from "@esposter/shared";
 
 // The one ranking both the dock's order and the trim of a full list read, so the pages kept are the ones shown first

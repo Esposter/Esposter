@@ -1,6 +1,6 @@
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { useUserStore } from "@/store/message/user";
+import { useUserStore } from "#src/store/message/user/index";
 
 export const useRoomPlaceholder = (room: MaybeRefOrGetter<RoomInMessage | undefined>) => {
   const userStore = useUserStore();

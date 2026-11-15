@@ -1,19 +1,19 @@
-import type { GesturePointerEvent } from "@/models/whiteboard/GesturePointerEvent";
-import type { WhiteboardGestureResult } from "@/models/whiteboard/WhiteboardGestureResult";
-import type { WhiteboardGestureState } from "@/models/whiteboard/WhiteboardGestureState";
+import type { GesturePointerEvent } from "#src/models/whiteboard/GesturePointerEvent";
+import type { WhiteboardGestureResult } from "#src/models/whiteboard/WhiteboardGestureResult";
+import type { WhiteboardGestureState } from "#src/models/whiteboard/WhiteboardGestureState";
 
-import { GesturePhase } from "@/models/whiteboard/GesturePhase";
-import { GesturePointerAction } from "@/models/whiteboard/GesturePointerAction";
-import { GestureTool } from "@/models/whiteboard/GestureTool";
-import { MIDDLE_BUTTON, PRIMARY_BUTTON } from "@/services/whiteboard/gesture/constants";
-import { getArrowEnd } from "@/services/whiteboard/gesture/getArrowEnd";
-import { getHitElementId } from "@/services/whiteboard/gesture/getHitElementId";
-import { getHitTolerance } from "@/services/whiteboard/gesture/getHitTolerance";
-import { getPressedHandle } from "@/services/whiteboard/gesture/getPressedHandle";
-import { getPressedSelection } from "@/services/whiteboard/gesture/getPressedSelection";
-import { getStrokeOperations } from "@/services/whiteboard/gesture/getStrokeOperations";
-import { getWorldPoint } from "@/services/whiteboard/gesture/getWorldPoint";
-import { startPlacingGesture } from "@/services/whiteboard/gesture/startPlacingGesture";
+import { GesturePhase } from "#src/models/whiteboard/GesturePhase";
+import { GesturePointerAction } from "#src/models/whiteboard/GesturePointerAction";
+import { GestureTool } from "#src/models/whiteboard/GestureTool";
+import { MIDDLE_BUTTON, PRIMARY_BUTTON } from "#src/services/whiteboard/gesture/constants";
+import { getArrowEnd } from "#src/services/whiteboard/gesture/getArrowEnd";
+import { getHitElementId } from "#src/services/whiteboard/gesture/getHitElementId";
+import { getHitTolerance } from "#src/services/whiteboard/gesture/getHitTolerance";
+import { getPressedHandle } from "#src/services/whiteboard/gesture/getPressedHandle";
+import { getPressedSelection } from "#src/services/whiteboard/gesture/getPressedSelection";
+import { getStrokeOperations } from "#src/services/whiteboard/gesture/getStrokeOperations";
+import { getWorldPoint } from "#src/services/whiteboard/gesture/getWorldPoint";
+import { startPlacingGesture } from "#src/services/whiteboard/gesture/startPlacingGesture";
 import { applyPatches, exhaustiveGuard } from "@esposter/shared";
 import { PositionedElementType } from "vue-block-editor-headless";
 

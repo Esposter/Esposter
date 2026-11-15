@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
-import { useRowStore } from "@/store/resource/sheet/row";
+import { UiTextFieldType } from "#src/models/ui/UiTextFieldType";
+import { useRowStore } from "#src/store/resource/sheet/row";
 
 const rowStore = useRowStore();
 const { search } = storeToRefs(rowStore);

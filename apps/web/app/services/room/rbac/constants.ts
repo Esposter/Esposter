@@ -1,4 +1,4 @@
-import { SettingsPermissionMap } from "@/services/message/settings/SettingsPermissionMap";
+import { SettingsPermissionMap } from "#src/services/message/settings/SettingsPermissionMap";
 import { RoomPermission } from "@esposter/db-schema";
 
 // Opening room settings means being able to act in at least one of its panels, so the gate is the union of what the

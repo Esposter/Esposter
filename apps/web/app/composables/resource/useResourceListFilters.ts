@@ -1,14 +1,14 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
-import type { ResourceStatusFilter } from "@/models/resource/list/ResourceStatusFilter";
-import type { ResourceUpdatedFilter } from "@/models/resource/list/ResourceUpdatedFilter";
+import type { ResourceStatusFilter } from "#src/models/resource/list/ResourceStatusFilter";
+import type { ResourceUpdatedFilter } from "#src/models/resource/list/ResourceUpdatedFilter";
 import type { ResourceType } from "@esposter/db-schema";
 
-import { ResourceStatusFilters } from "@/models/resource/list/ResourceStatusFilter";
-import { ResourceUpdatedFilters } from "@/models/resource/list/ResourceUpdatedFilter";
-import { createUpdatedBound } from "@/services/resource/list/createUpdatedBound";
-import { deserializeResourceSortBy } from "@/services/resource/list/deserializeResourceSortBy";
-import { serializeResourceSortBy } from "@/services/resource/list/serializeResourceSortBy";
+import { ResourceStatusFilters } from "#src/models/resource/list/ResourceStatusFilter";
+import { ResourceUpdatedFilters } from "#src/models/resource/list/ResourceUpdatedFilter";
+import { createUpdatedBound } from "#src/services/resource/list/createUpdatedBound";
+import { deserializeResourceSortBy } from "#src/services/resource/list/deserializeResourceSortBy";
+import { serializeResourceSortBy } from "#src/services/resource/list/serializeResourceSortBy";
 import { resourceTypeSchema } from "@esposter/db-schema";
 
 // The list workbench's filter state, mirrored to query params so the list is deep-linkable, refresh-safe and

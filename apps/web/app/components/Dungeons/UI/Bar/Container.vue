@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { ImagePosition } from "@/models/dungeons/ImagePosition";
-import type { BarType } from "@/models/dungeons/UI/bar/BarType";
+import type { ImagePosition } from "#src/models/dungeons/ImagePosition";
+import type { BarType } from "#src/models/dungeons/UI/bar/BarType";
 import type { Position } from "grid-engine";
 import type { Tweens } from "phaser";
 
-import { BAR_WIDTH } from "@/services/dungeons/UI/bar/constants";
+import { BAR_WIDTH } from "#src/services/dungeons/UI/bar/constants";
 import { clamp } from "@vueuse/core";
 import { Container } from "vue-phaserjs";
 

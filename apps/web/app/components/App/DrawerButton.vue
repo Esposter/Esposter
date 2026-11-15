@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import type { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { useLayoutStore } from "@/store/layout";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { useLayoutStore } from "#src/store/layout";
 
 interface Props {
   // The right drawer's button rather than the left's

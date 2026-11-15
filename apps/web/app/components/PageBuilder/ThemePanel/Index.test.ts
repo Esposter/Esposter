@@ -1,9 +1,9 @@
 // @vitest-environment nuxt
 import { TEST_ID, TEST_LANG } from "#shared/services/pageBuilder/constants.test";
-import PageBuilderThemePanel from "@/components/PageBuilder/ThemePanel/Index.vue";
-import { webpageKind } from "@/services/pageBuilder/webpageKind";
-import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
-import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
+import PageBuilderThemePanel from "#src/components/PageBuilder/ThemePanel/Index.vue";
+import { webpageKind } from "#src/services/pageBuilder/webpageKind";
+import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
+import { usePageBuilderHistoryStore } from "#src/store/pageBuilder/history";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 

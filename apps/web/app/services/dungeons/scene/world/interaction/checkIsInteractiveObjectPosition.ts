@@ -1,8 +1,8 @@
-import type { InteractableDirectionMap } from "@/models/dungeons/direction/InteractableDirectionMap";
+import type { InteractableDirectionMap } from "#src/models/dungeons/direction/InteractableDirectionMap";
 import type { Direction, Position } from "grid-engine";
 
-import { getPositionAfterDirectionMovement } from "@/services/dungeons/direction/getPositionAfterDirectionMovement";
-import { checkIsInteractableDirection } from "@/services/dungeons/scene/world/interaction/checkIsInteractableDirection";
+import { getPositionAfterDirectionMovement } from "#src/services/dungeons/direction/getPositionAfterDirectionMovement";
+import { checkIsInteractableDirection } from "#src/services/dungeons/scene/world/interaction/checkIsInteractableDirection";
 
 export const checkIsInteractiveObjectPosition = (
   playerPosition: Position,

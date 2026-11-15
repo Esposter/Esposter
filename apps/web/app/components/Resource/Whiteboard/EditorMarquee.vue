@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { GesturePhase } from "@/models/whiteboard/GesturePhase";
+import { GesturePhase } from "#src/models/whiteboard/GesturePhase";
 import {
   WHITEBOARD_MARQUEE_FILL_OPACITY,
   WHITEBOARD_OVERLAY_STROKE_WIDTH,
-} from "@/services/whiteboard/overlay/constants";
-import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
+} from "#src/services/whiteboard/overlay/constants";
+import { useWhiteboardEditorStore } from "#src/store/resource/whiteboard/editor";
 import { getPointsBounds } from "vue-block-editor-headless";
 
 // The frame of a marquee while it is dragged, over the elements it covers, in the document's coordinates: a thin solid border in the accent around a

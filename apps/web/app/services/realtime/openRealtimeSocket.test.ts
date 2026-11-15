@@ -1,4 +1,4 @@
-import type { RealtimeSocketOptions } from "@/models/realtime/RealtimeSocketOptions";
+import type { RealtimeSocketOptions } from "#src/models/realtime/RealtimeSocketOptions";
 
 import { describe, vi } from "vitest";
 

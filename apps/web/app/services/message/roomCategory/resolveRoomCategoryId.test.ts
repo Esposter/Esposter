@@ -1,5 +1,5 @@
-import { createRoomCategory } from "@/services/message/roomCategory/createRoomCategory.test";
-import { resolveRoomCategoryId } from "@/services/message/roomCategory/resolveRoomCategoryId";
+import { createRoomCategory } from "#src/services/message/roomCategory/createRoomCategory.test";
+import { resolveRoomCategoryId } from "#src/services/message/roomCategory/resolveRoomCategoryId";
 import { describe, expect, test } from "vitest";
 
 describe(resolveRoomCategoryId, () => {

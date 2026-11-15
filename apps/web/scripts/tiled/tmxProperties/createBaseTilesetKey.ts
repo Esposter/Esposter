@@ -1,11 +1,11 @@
 import type { TMXExternalTilesetParsed } from "parse-tmx";
 
-import { getFilename } from "@/util/file/getFilename";
-import { trimFileExtension } from "@/util/file/trimFileExtension";
-import { outputFile } from "@@/scripts/services/outputFile";
-import { TILED_ROOT_DIRECTORY } from "@@/scripts/tiled/constants";
-import { PROPERTY_TYPES_DIRECTORY } from "@@/scripts/tiled/propertyTypes/constants";
-import { createValueSetString } from "@@/scripts/util/createValueSetString";
+import { outputFile } from "#scripts/services/outputFile";
+import { TILED_ROOT_DIRECTORY } from "#scripts/tiled/constants";
+import { PROPERTY_TYPES_DIRECTORY } from "#scripts/tiled/propertyTypes/constants";
+import { createValueSetString } from "#scripts/util/createValueSetString";
+import { getFilename } from "#src/util/file/getFilename";
+import { trimFileExtension } from "#src/util/file/trimFileExtension";
 import { PropertyType } from "parse-tmx";
 
 export const createBaseTilesetKey = async (tilesets: TMXExternalTilesetParsed[]) => {

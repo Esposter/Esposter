@@ -1,7 +1,7 @@
-import type { UiStatus } from "@/models/ui/UiStatus";
+import type { UiStatus } from "#src/models/ui/UiStatus";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { UiToken } from "@/models/ui/UiToken";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { UiToken } from "#src/models/ui/UiToken";
 
 // A status is always a mark as well as a colour, so it reads for a reader who cannot tell the colours apart
 export const UiStatusIconMeaningMap = {

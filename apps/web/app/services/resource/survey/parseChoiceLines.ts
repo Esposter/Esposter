@@ -1,6 +1,6 @@
 import type { SurveyChoice } from "vue-survey-engine-headless";
 
-import { parseChoiceLine } from "@/services/resource/survey/parseChoiceLine";
+import { parseChoiceLine } from "#src/services/resource/survey/parseChoiceLine";
 
 // Choices typed or pasted as lines, a choice per line, with the blank lines dropped. Blank text makes no choices
 export const parseChoiceLines = (text: string): SurveyChoice[] =>

@@ -1,5 +1,5 @@
 import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
-import { getDataSourceTypeByFilename } from "@/services/resource/sheet/dataSource/getDataSourceTypeByFilename";
+import { getDataSourceTypeByFilename } from "#src/services/resource/sheet/dataSource/getDataSourceTypeByFilename";
 import { describe, expect, test } from "vitest";
 
 describe(getDataSourceTypeByFilename, () => {

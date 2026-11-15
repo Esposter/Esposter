@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
-import { createPost } from "@/services/post/createPost.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { usePostStore } from "@/store/post";
+import { createPost } from "#src/services/post/createPost.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { usePostStore } from "#src/store/post/index";
 import { takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { describe, expect, test } from "vitest";

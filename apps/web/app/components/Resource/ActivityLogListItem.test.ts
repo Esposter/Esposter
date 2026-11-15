@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
 import type { ResourceActivityInResource } from "@esposter/db-schema";
 
-import ResourceActivityLogListItem from "@/components/Resource/ActivityLogListItem.vue";
+import ResourceActivityLogListItem from "#src/components/Resource/ActivityLogListItem.vue";
 import { ResourceActivityType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { v7 } from "uuid";

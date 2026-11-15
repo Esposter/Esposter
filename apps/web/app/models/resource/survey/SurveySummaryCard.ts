@@ -1,5 +1,5 @@
-import type { BaseSurveySummaryCard } from "@/models/resource/survey/BaseSurveySummaryCard";
-import type { SurveySummaryCardType } from "@/models/resource/survey/SurveySummaryCardType";
+import type { BaseSurveySummaryCard } from "#src/models/resource/survey/BaseSurveySummaryCard";
+import type { SurveySummaryCardType } from "#src/models/resource/survey/SurveySummaryCardType";
 
 // One question of the summary. A choice's count is out of the responses that answered, so a question taking several
 // Choices can pass 100% across them; a rating is a choice question with an average

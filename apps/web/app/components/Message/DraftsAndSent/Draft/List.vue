@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { DraftItem } from "@/models/message/draftsAndSent/DraftItem";
-import type { UiListItem } from "@/models/ui/UiListItem";
+import type { DraftItem } from "#src/models/message/draftsAndSent/DraftItem";
+import type { UiListItem } from "#src/models/ui/UiListItem";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { getDraftItemRoute } from "@/services/message/draftsAndSent/getDraftItemRoute";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { getDraftItemRoute } from "#src/services/message/draftsAndSent/getDraftItemRoute";
 
 const draftItems = useDraftItems();
 const getRow = (draftItem: DraftItem): UiListItem<string> => ({

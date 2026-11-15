@@ -23,11 +23,11 @@ import { notifyOnlineRoomMembers } from "#server/services/room/notifyOnlineRoomM
 import { getBucket } from "#server/services/storage/getBucket";
 import { getPublicAssetUrl } from "#server/services/storage/getPublicAssetUrl";
 import { getStorageCredentials } from "#server/services/storage/getStorageCredentials";
-import { router } from "#server/trpc";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
+import { router } from "#server/trpc/index";
 import { addProfanityFilterMiddleware } from "#server/trpc/middleware/addProfanityFilterMiddleware";
 import { assertIsRoomMiddleware } from "#server/trpc/middleware/assertIsRoomMiddleware";
 import { getProfanityFilterProcedure } from "#server/trpc/procedure/getProfanityFilterProcedure";

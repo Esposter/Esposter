@@ -1,4 +1,4 @@
-import { getReorderedItems } from "@/services/shared/getReorderedItems";
+import { getReorderedItems } from "#src/services/shared/getReorderedItems";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 

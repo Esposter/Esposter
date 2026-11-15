@@ -1,6 +1,6 @@
 import type { PositionedElement } from "vue-block-editor-headless";
 
-import { WHITEBOARD_TEXT_COLOR } from "@/services/whiteboard/palette/constants";
+import { WHITEBOARD_TEXT_COLOR } from "#src/services/whiteboard/palette/constants";
 import { EXPORT_LINE_COLOR } from "vue-block-editor-headless";
 
 // The colour an element with none of its own draws its outline and text in.

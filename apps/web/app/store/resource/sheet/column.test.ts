@@ -1,9 +1,9 @@
 // @vitest-environment nuxt
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
-import { setupCommandTest } from "@/composables/resource/sheet/commands/setupCommandTest.test";
-import { setupWithDataSource } from "@/composables/resource/sheet/commands/setupWithDataSource.test";
-import { useResourceStore } from "@/store/resource";
-import { useColumnStore } from "@/store/resource/sheet/column";
+import { setupCommandTest } from "#src/composables/resource/sheet/commands/setupCommandTest.test";
+import { setupWithDataSource } from "#src/composables/resource/sheet/commands/setupWithDataSource.test";
+import { useResourceStore } from "#src/store/resource/index";
+import { useColumnStore } from "#src/store/resource/sheet/column";
 import { SortOrder } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 

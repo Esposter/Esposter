@@ -1,5 +1,5 @@
-import { AsyncDataKey } from "@/services/shared/AsyncDataKey";
-import { useCommentStore } from "@/store/post/comment";
+import { AsyncDataKey } from "#src/services/shared/AsyncDataKey";
+import { useCommentStore } from "#src/store/post/comment/index";
 
 // One branch of the tree — the replies to `parentId`, paged on their own under the thread's chosen sort
 export const useReadComments = (parentId: string) => {

@@ -1,6 +1,6 @@
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
 
-import { useResourceStore } from "@/store/resource";
+import { useResourceStore } from "#src/store/resource/index";
 
 // Keyed by the sheet a dialog was opened on: a duplicated sheet keeps its rows' ids, so an app-lifetime target would
 // Re-open the dialog over the copy's same rows

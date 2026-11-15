@@ -1,26 +1,26 @@
-import type { AssetLoader } from "@/models/dungeons/loader/AssetLoader";
+import type { AssetLoader } from "#src/models/dungeons/loader/AssetLoader";
 
 import { ImageKey } from "#shared/models/dungeons/keys/image/UI/ImageKey";
-import blueButton from "@/assets/dungeons/thirdParty/kenneysAssets/UIPack/blueButton00.png";
-import blueButtonSelected from "@/assets/dungeons/thirdParty/kenneysAssets/UIPack/blueButton01.png";
-import barHorizontalBlueLeft from "@/assets/dungeons/thirdParty/kenneysAssets/UISpaceExpansion/barHorizontalBlueLeft.png";
-import barHorizontalBlueMid from "@/assets/dungeons/thirdParty/kenneysAssets/UISpaceExpansion/barHorizontalBlueMid.png";
-import barHorizontalBlueRight from "@/assets/dungeons/thirdParty/kenneysAssets/UISpaceExpansion/barHorizontalBlueRight.png";
-import barHorizontalGreenLeft from "@/assets/dungeons/thirdParty/kenneysAssets/UISpaceExpansion/barHorizontalGreenLeft.png";
-import barHorizontalGreenMid from "@/assets/dungeons/thirdParty/kenneysAssets/UISpaceExpansion/barHorizontalGreenMid.png";
-import barHorizontalGreenRight from "@/assets/dungeons/thirdParty/kenneysAssets/UISpaceExpansion/barHorizontalGreenRight.png";
-import barHorizontalShadowLeft from "@/assets/dungeons/thirdParty/kenneysAssets/UISpaceExpansion/barHorizontalShadowLeft.png";
-import barHorizontalShadowMid from "@/assets/dungeons/thirdParty/kenneysAssets/UISpaceExpansion/barHorizontalShadowMid.png";
-import barHorizontalShadowRight from "@/assets/dungeons/thirdParty/kenneysAssets/UISpaceExpansion/barHorizontalShadowRight.png";
-import customUI from "@/assets/dungeons/thirdParty/kenneysAssets/UISpaceExpansion/customUI.png";
-import glassPanel from "@/assets/dungeons/thirdParty/kenneysAssets/UISpaceExpansion/glassPanel.png";
-import glassPanelGreen from "@/assets/dungeons/thirdParty/kenneysAssets/UISpaceExpansion/glassPanelGreen.png";
-import glassPanelPurple from "@/assets/dungeons/thirdParty/kenneysAssets/UISpaceExpansion/glassPanelPurple.png";
-import cursor from "@/assets/dungeons/UI/cursor/cursor.png";
-import cursorWhite from "@/assets/dungeons/UI/cursor/cursorWhite.png";
-import { BallLoaderMap } from "@/services/dungeons/loader/image/UI/BallLoaderMap";
-import { ControlsLoaderMap } from "@/services/dungeons/loader/image/UI/ControlsLoaderMap";
-import { MonsterLoaderMap } from "@/services/dungeons/loader/image/UI/MonsterLoaderMap";
+import blueButton from "#src/assets/dungeons/thirdParty/kenneysAssets/UIPack/blueButton00.png";
+import blueButtonSelected from "#src/assets/dungeons/thirdParty/kenneysAssets/UIPack/blueButton01.png";
+import barHorizontalBlueLeft from "#src/assets/dungeons/thirdParty/kenneysAssets/UISpaceExpansion/barHorizontalBlueLeft.png";
+import barHorizontalBlueMid from "#src/assets/dungeons/thirdParty/kenneysAssets/UISpaceExpansion/barHorizontalBlueMid.png";
+import barHorizontalBlueRight from "#src/assets/dungeons/thirdParty/kenneysAssets/UISpaceExpansion/barHorizontalBlueRight.png";
+import barHorizontalGreenLeft from "#src/assets/dungeons/thirdParty/kenneysAssets/UISpaceExpansion/barHorizontalGreenLeft.png";
+import barHorizontalGreenMid from "#src/assets/dungeons/thirdParty/kenneysAssets/UISpaceExpansion/barHorizontalGreenMid.png";
+import barHorizontalGreenRight from "#src/assets/dungeons/thirdParty/kenneysAssets/UISpaceExpansion/barHorizontalGreenRight.png";
+import barHorizontalShadowLeft from "#src/assets/dungeons/thirdParty/kenneysAssets/UISpaceExpansion/barHorizontalShadowLeft.png";
+import barHorizontalShadowMid from "#src/assets/dungeons/thirdParty/kenneysAssets/UISpaceExpansion/barHorizontalShadowMid.png";
+import barHorizontalShadowRight from "#src/assets/dungeons/thirdParty/kenneysAssets/UISpaceExpansion/barHorizontalShadowRight.png";
+import customUI from "#src/assets/dungeons/thirdParty/kenneysAssets/UISpaceExpansion/customUI.png";
+import glassPanel from "#src/assets/dungeons/thirdParty/kenneysAssets/UISpaceExpansion/glassPanel.png";
+import glassPanelGreen from "#src/assets/dungeons/thirdParty/kenneysAssets/UISpaceExpansion/glassPanelGreen.png";
+import glassPanelPurple from "#src/assets/dungeons/thirdParty/kenneysAssets/UISpaceExpansion/glassPanelPurple.png";
+import cursor from "#src/assets/dungeons/UI/cursor/cursor.png";
+import cursorWhite from "#src/assets/dungeons/UI/cursor/cursorWhite.png";
+import { BallLoaderMap } from "#src/services/dungeons/loader/image/UI/BallLoaderMap";
+import { ControlsLoaderMap } from "#src/services/dungeons/loader/image/UI/ControlsLoaderMap";
+import { MonsterLoaderMap } from "#src/services/dungeons/loader/image/UI/MonsterLoaderMap";
 
 export const ImageLoaderMap = {
   [ImageKey.BarLeftCapShadow]: (scene) => scene.load.image(ImageKey.BarLeftCapShadow, barHorizontalShadowLeft),

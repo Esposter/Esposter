@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { GroupProps } from "@/components/Clicker/Svg/GroupProps";
+import type { GroupProps } from "#src/components/Clicker/Svg/GroupProps";
 
-import { useClickerStore } from "@/store/clicker";
+import { useClickerStore } from "#src/store/clicker/index";
 
 const svgGroupProps = defineProps<GroupProps>();
 const emit = defineEmits<{ click: [event: MouseEvent] }>();

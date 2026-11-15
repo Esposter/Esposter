@@ -1,10 +1,10 @@
 // @vitest-environment nuxt
-import ResourceListFilterBar from "@/components/Resource/List/FilterBar.vue";
-import ResourceListStatusFilterPill from "@/components/Resource/List/StatusFilterPill.vue";
-import ResourceListTagFilterPill from "@/components/Resource/List/TagFilterPill.vue";
-import ResourceListUpdatedFilterPill from "@/components/Resource/List/UpdatedFilterPill.vue";
-import { ResourceStatusFilter } from "@/models/resource/list/ResourceStatusFilter";
-import { ResourceUpdatedFilter } from "@/models/resource/list/ResourceUpdatedFilter";
+import ResourceListFilterBar from "#src/components/Resource/List/FilterBar.vue";
+import ResourceListStatusFilterPill from "#src/components/Resource/List/StatusFilterPill.vue";
+import ResourceListTagFilterPill from "#src/components/Resource/List/TagFilterPill.vue";
+import ResourceListUpdatedFilterPill from "#src/components/Resource/List/UpdatedFilterPill.vue";
+import { ResourceStatusFilter } from "#src/models/resource/list/ResourceStatusFilter";
+import { ResourceUpdatedFilter } from "#src/models/resource/list/ResourceUpdatedFilter";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 

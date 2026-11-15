@@ -1,8 +1,8 @@
 // @vitest-environment happy-dom
-import UiIconButton from "@/components/Ui/IconButton.vue";
-import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { UiStyles } from "@/models/ui/UiStyle";
+import UiIconButton from "#src/components/Ui/IconButton.vue";
+import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { UiStyles } from "#src/models/ui/UiStyle";
 import { mount } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 

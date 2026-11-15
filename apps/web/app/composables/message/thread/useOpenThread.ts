@@ -1,6 +1,6 @@
-import type { ClientMessage } from "@/models/message/ClientMessage";
+import type { ClientMessage } from "#src/models/message/ClientMessage";
 
-import { useThreadStore } from "@/store/message/thread";
+import { useThreadStore } from "#src/store/message/thread";
 
 export const useOpenThread = () => {
   const { $trpc } = useNuxtApp();

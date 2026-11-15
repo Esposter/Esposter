@@ -1,10 +1,10 @@
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
-import type { IndexedRow } from "@/models/resource/sheet/commands/IndexedRow";
+import type { IndexedRow } from "#src/models/resource/sheet/commands/IndexedRow";
 
-import { benchRows1k, benchRows10k, benchRows100 } from "@/composables/resource/sheet/commands/constants.bench";
-import { createBenchDataSource } from "@/composables/resource/sheet/commands/createBenchDataSource.bench";
-import { setupCommandBench } from "@/composables/resource/sheet/commands/setupCommandBench.bench";
-import { DeleteRowsCommand } from "@/models/resource/sheet/commands/DeleteRowsCommand";
+import { benchRows1k, benchRows10k, benchRows100 } from "#src/composables/resource/sheet/commands/constants.bench";
+import { createBenchDataSource } from "#src/composables/resource/sheet/commands/createBenchDataSource.bench";
+import { setupCommandBench } from "#src/composables/resource/sheet/commands/setupCommandBench.bench";
+import { DeleteRowsCommand } from "#src/models/resource/sheet/commands/DeleteRowsCommand";
 import { describe } from "vitest";
 
 // ~50% deletion at each scale, each row paired with the index its undo restores it to. Read-only input to the

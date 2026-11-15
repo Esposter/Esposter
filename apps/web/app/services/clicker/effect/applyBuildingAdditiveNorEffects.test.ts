@@ -2,8 +2,8 @@ import type { Effect } from "#shared/models/clicker/data/effect/Effect";
 
 import { BuildingId } from "#shared/models/clicker/data/building/BuildingId";
 import { EffectType } from "#shared/models/clicker/data/effect/EffectType";
-import { createBuildingWithStatistics } from "@/services/clicker/createBuildingWithStatistics.test";
-import { applyBuildingAdditiveNorEffects } from "@/services/clicker/effect/applyBuildingAdditiveNorEffects";
+import { createBuildingWithStatistics } from "#src/services/clicker/createBuildingWithStatistics.test";
+import { applyBuildingAdditiveNorEffects } from "#src/services/clicker/effect/applyBuildingAdditiveNorEffects";
 import { describe, expect, test } from "vitest";
 
 describe(applyBuildingAdditiveNorEffects, () => {

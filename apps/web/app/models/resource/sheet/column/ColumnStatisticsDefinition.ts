@@ -1,8 +1,8 @@
 import type { Column } from "#shared/models/resource/sheet/column/Column";
 import type { ColumnStatistics } from "#shared/models/resource/sheet/column/ColumnStatistics";
 import type { ColumnStatisticsKey } from "#shared/models/resource/sheet/column/ColumnStatisticsKey";
-import type { ApplicableColumnTypes } from "@/models/resource/sheet/column/ApplicableColumnTypes";
-import type { ColumnStatisticsComputeContext } from "@/models/resource/sheet/column/ColumnStatisticsComputeContext";
+import type { ApplicableColumnTypes } from "#src/models/resource/sheet/column/ApplicableColumnTypes";
+import type { ColumnStatisticsComputeContext } from "#src/models/resource/sheet/column/ColumnStatisticsComputeContext";
 
 export interface ColumnStatisticsDefinition<
   T extends ColumnStatisticsKey = ColumnStatisticsKey,

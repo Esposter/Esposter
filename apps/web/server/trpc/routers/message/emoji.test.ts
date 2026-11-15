@@ -1,11 +1,11 @@
 import type { useRoomObject } from "#server/composables/realtime/useRoomObject";
 import type { Context } from "#server/trpc/context";
-import type { TRPCRouter } from "#server/trpc/routers";
+import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { RoomObjectRpc } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { createCallerFactory } from "#server/trpc";
 import { getMockSession } from "#server/trpc/context.test";
+import { createCallerFactory } from "#server/trpc/index";
 import { emojiRouter } from "#server/trpc/routers/message/emoji";
 import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
 import { addReactionInputSchema } from "#shared/models/db/message/reaction/AddReactionInput";

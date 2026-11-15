@@ -3,11 +3,11 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { ObjectgroupName } from "#shared/generated/tiled/layers/ObjectgroupName";
 import { Chest } from "#shared/models/dungeons/data/world/Chest";
-import { TileProperty } from "@/models/dungeons/tilemap/TileProperty";
-import { getPositionId } from "@/services/dungeons/direction/getPositionId";
-import { getObjects } from "@/services/dungeons/scene/world/getObjects";
-import { UseCreateTilemapMetadataMap } from "@/services/dungeons/tilemap/UseCreateTilemapMetadataMap";
-import { useWorldSceneStore } from "@/store/dungeons/world/scene";
+import { TileProperty } from "#src/models/dungeons/tilemap/TileProperty";
+import { getPositionId } from "#src/services/dungeons/direction/getPositionId";
+import { getObjects } from "#src/services/dungeons/scene/world/getObjects";
+import { UseCreateTilemapMetadataMap } from "#src/services/dungeons/tilemap/UseCreateTilemapMetadataMap";
+import { useWorldSceneStore } from "#src/store/dungeons/world/scene";
 import { NumberOfDirections } from "grid-engine";
 
 export const useCreateTilemapAssets = (scene: SceneWithPlugins, newTilemap: Tilemaps.Tilemap) => {

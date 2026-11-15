@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import type { EditorToolbarGroup } from "@/models/editor/EditorToolbarGroup";
+import type { EditorToolbarGroup } from "#src/models/editor/EditorToolbarGroup";
 import type { JsonPatchOperation } from "@esposter/shared";
 import type { SurveyDocument } from "vue-survey-engine-headless";
 
-import { EditorToolbarGroupKind } from "@/models/editor/EditorToolbarGroupKind";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { importJsonFile } from "@/services/file/importJsonFile";
-import { SURVEY_DESIGN_MODE, SURVEY_PREVIEW_MODE } from "@/services/resource/survey/constants";
-import { getSurveyNodeLabel } from "@/services/resource/survey/getSurveyNodeLabel";
-import { getSurveyNodePointerById } from "@/services/resource/survey/getSurveyNodePointerById";
-import { HISTORY_REDO_SHORTCUT, HISTORY_UNDO_SHORTCUT } from "@/services/ui/constants";
-import { useAlertStore } from "@/store/alert";
-import { useResourceStore } from "@/store/resource";
-import { useSurveyCreatorStore } from "@/store/survey/creator";
+import { EditorToolbarGroupKind } from "#src/models/editor/EditorToolbarGroupKind";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { importJsonFile } from "#src/services/file/importJsonFile";
+import { SURVEY_DESIGN_MODE, SURVEY_PREVIEW_MODE } from "#src/services/resource/survey/constants";
+import { getSurveyNodeLabel } from "#src/services/resource/survey/getSurveyNodeLabel";
+import { getSurveyNodePointerById } from "#src/services/resource/survey/getSurveyNodePointerById";
+import { HISTORY_REDO_SHORTCUT, HISTORY_UNDO_SHORTCUT } from "#src/services/ui/constants";
+import { useAlertStore } from "#src/store/alert";
+import { useResourceStore } from "#src/store/resource/index";
+import { useSurveyCreatorStore } from "#src/store/survey/creator";
 import { getResultAsync, JsonPatchOperationType, toJsonPointer } from "@esposter/shared";
 import { getBlockNode } from "vue-block-editor-headless";
 import {

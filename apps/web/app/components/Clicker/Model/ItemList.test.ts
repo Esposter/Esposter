@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
-import ClickerModelItemList from "@/components/Clicker/Model/ItemList.vue";
-import UiList from "@/components/Ui/List/Index.vue";
-import UiPopover from "@/components/Ui/Popover.vue";
-import { DIALOG_CLOSE_DURATION_MS } from "@/services/ui/constants";
+import ClickerModelItemList from "#src/components/Clicker/Model/ItemList.vue";
+import UiList from "#src/components/Ui/List/Index.vue";
+import UiPopover from "#src/components/Ui/Popover.vue";
+import { DIALOG_CLOSE_DURATION_MS } from "#src/services/ui/constants";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { afterEach, describe, expect, test, vi } from "vitest";
 

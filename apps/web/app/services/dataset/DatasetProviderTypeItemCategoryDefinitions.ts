@@ -1,9 +1,9 @@
-import type { UiSelectItem } from "@/models/ui/UiSelectItem";
+import type { UiSelectItem } from "#src/models/ui/UiSelectItem";
 import type { Except } from "type-fest";
 
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { parseDictionaryToArray } from "#shared/util/object/parseDictionaryToArray";
-import { DatasetProviderTypeIconMeaningMap } from "@/services/dataset/DatasetProviderTypeIconMeaningMap";
+import { DatasetProviderTypeIconMeaningMap } from "#src/services/dataset/DatasetProviderTypeIconMeaningMap";
 
 const DatasetProviderTypeItemCategoryDefinitionMap = {
   [DatasetProviderType.ProgramStatus]: {

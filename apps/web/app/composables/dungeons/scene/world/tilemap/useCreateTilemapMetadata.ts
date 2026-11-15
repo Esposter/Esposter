@@ -3,10 +3,10 @@ import type { Tilemaps } from "phaser";
 
 import { LayerName } from "#shared/generated/tiled/layers/Home/LayerName";
 import { IS_PRODUCTION } from "#shared/util/environment/constants";
-import { addTilesetImage } from "@/services/dungeons/tilemap/addTilesetImage";
-import { BASE_TILESET_KEYS, OBJECTGROUP_NAMES } from "@/services/dungeons/tilemap/constants";
-import { createLayer } from "@/services/dungeons/tilemap/createLayer";
-import { useWorldSceneStore } from "@/store/dungeons/world/scene";
+import { addTilesetImage } from "#src/services/dungeons/tilemap/addTilesetImage";
+import { BASE_TILESET_KEYS, OBJECTGROUP_NAMES } from "#src/services/dungeons/tilemap/constants";
+import { createLayer } from "#src/services/dungeons/tilemap/createLayer";
+import { useWorldSceneStore } from "#src/store/dungeons/world/scene";
 
 export const useCreateTilemapMetadata = (layerNameEnum: Record<string, string>) => {
   const worldSceneStore = useWorldSceneStore();

@@ -1,6 +1,6 @@
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
-import { computeColumnChartData } from "@/services/resource/sheet/column/computeColumnChartData";
-import { createColumnStatistics } from "@/services/resource/sheet/column/createColumnStatistics.test";
+import { computeColumnChartData } from "#src/services/resource/sheet/column/computeColumnChartData";
+import { createColumnStatistics } from "#src/services/resource/sheet/column/createColumnStatistics.test";
 import { describe, expect, test } from "vitest";
 
 describe(computeColumnChartData, () => {

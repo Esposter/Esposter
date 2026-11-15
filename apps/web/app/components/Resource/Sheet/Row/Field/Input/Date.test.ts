@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
 import { DateColumn } from "#shared/models/resource/sheet/column/DateColumn";
 import { formatDate } from "#shared/util/date/formatDate";
-import ResourceSheetRowFieldInputDate from "@/components/Resource/Sheet/Row/Field/Input/Date.vue";
+import ResourceSheetRowFieldInputDate from "#src/components/Resource/Sheet/Row/Field/Input/Date.vue";
 import { getZonedDateTime } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";

@@ -6,25 +6,25 @@ import type { Monster } from "#shared/models/dungeons/monster/Monster";
 import { ItemId } from "#shared/generated/tiled/propertyTypes/enum/ItemId";
 import { ItemEffectType } from "#shared/models/dungeons/item/ItemEffectType";
 import { MONSTER_PARTY_MAX_LENGTH } from "#shared/services/dungeons/constants";
-import { CaptureItemResolver } from "@/models/resolvers/dungeons/item/CaptureItemResolver";
-import { useInventoryInfoPanelStore } from "@/store/dungeons/inventory/infoPanel";
-import { usePlayerStore } from "@/store/dungeons/player";
+import { CaptureItemResolver } from "#src/models/resolvers/dungeons/item/CaptureItemResolver";
+import { useInventoryInfoPanelStore } from "#src/store/dungeons/inventory/infoPanel";
+import { usePlayerStore } from "#src/store/dungeons/player";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 // The party lives on the player, and the player store reads the dungeons store, which imports Phaser. Only the party is
 // Read here, so the fake holds one
-vi.mock("@/store/dungeons/player", async () => {
+vi.mock("#src/store/dungeons/player", async () => {
   const { reactive } = await import("vue");
   const player = reactive({ monsters: [] as Monster[] });
   return { usePlayerStore: () => ({ player }) };
 });
 // The capture only reads the party and the info panel, so the monster party's panel store, which loads the dialog and
 // With it Phaser, is faked out
-vi.mock("@/store/dungeons/monsterParty/infoPanel", () => ({ useMonsterPartyInfoPanelStore: () => ({}) }));
+vi.mock("#src/store/dungeons/monsterParty/infoPanel", () => ({ useMonsterPartyInfoPanelStore: () => ({}) }));
 // The battle and its event emitter load Phaser, which cannot initialise under the test environment. A capture reaches them
 // Only once it goes ahead, so these fakes stand in for them
-vi.mock("@/services/dungeons/scene/battle/battleStateMachine", () => ({ battleStateMachine: {} }));
-vi.mock("@/services/phaser/phaserEventEmitter", () => ({ phaserEventEmitter: {} }));
+vi.mock("#src/services/dungeons/scene/battle/battleStateMachine", () => ({ battleStateMachine: {} }));
+vi.mock("#src/services/phaser/phaserEventEmitter", () => ({ phaserEventEmitter: {} }));
 
 describe(CaptureItemResolver, () => {
   let item: Item;

@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { MenuTextStyle } from "@/assets/dungeons/scene/settings/styles/MenuTextStyle";
+import { MenuTextStyle } from "#src/assets/dungeons/scene/settings/styles/MenuTextStyle";
 import {
   INITIAL_SETTINGS_POSITION,
   INITIAL_SETTINGS_VALUE_POSITION,
   SETTINGS_VALUE_POSITION_INCREMENT,
-} from "@/services/dungeons/scene/settings/constants";
-import { getSettingsRowY } from "@/services/dungeons/scene/settings/getSettingsRowY";
-import { SettingsOptionGrid } from "@/services/dungeons/scene/settings/SettingsOptionGrid";
-import { useSettingsStore } from "@/store/dungeons/settings";
+} from "#src/services/dungeons/scene/settings/constants";
+import { getSettingsRowY } from "#src/services/dungeons/scene/settings/getSettingsRowY";
+import { SettingsOptionGrid } from "#src/services/dungeons/scene/settings/SettingsOptionGrid";
+import { useSettingsStore } from "#src/store/dungeons/settings/index";
 import { Input } from "phaser";
 import { Text } from "vue-phaserjs";
 

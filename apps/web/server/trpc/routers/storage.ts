@@ -1,7 +1,7 @@
 import type { StorageUsage } from "@esposter/db-schema";
 
-import { router } from "#server/trpc";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
+import { router } from "#server/trpc/index";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { DatabaseEntityType, StorageTierQuotaMap } from "@esposter/db-schema";
 

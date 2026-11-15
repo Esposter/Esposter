@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
-import AppBreadcrumbs from "@/components/App/Breadcrumbs.vue";
-import { NavigationTrailPage } from "@/models/shared/NavigationTrailPage";
-import { RESOURCE_EXPLORER_DISPLAY_NAME } from "@/services/resource/constants";
-import { useNavigationTrailStore } from "@/store/navigationTrail";
+import AppBreadcrumbs from "#src/components/App/Breadcrumbs.vue";
+import { NavigationTrailPage } from "#src/models/shared/NavigationTrailPage";
+import { RESOURCE_EXPLORER_DISPLAY_NAME } from "#src/services/resource/constants";
+import { useNavigationTrailStore } from "#src/store/navigationTrail";
 import { RoutePath } from "@esposter/shared";
 import { mockNuxtImport, mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test, vi } from "vitest";

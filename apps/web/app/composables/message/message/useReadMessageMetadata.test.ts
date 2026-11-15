@@ -1,9 +1,9 @@
 // @vitest-environment nuxt
 import type { ReadMessagesByIdsInput } from "#shared/models/db/message/ReadMessagesByIdsInput";
 
-import { useReadMessageMetadata } from "@/composables/message/message/useReadMessageMetadata";
-import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
+import { useReadMessageMetadata } from "#src/composables/message/message/useReadMessageMetadata";
+import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { MessageType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { v7 } from "uuid";

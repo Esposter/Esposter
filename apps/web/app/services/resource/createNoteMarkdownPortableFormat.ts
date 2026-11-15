@@ -1,17 +1,17 @@
 // @unocss-include
-import type { PortableFormat } from "@/models/resource/PortableFormat";
+import type { PortableFormat } from "#src/models/resource/PortableFormat";
 
 import { MimeType } from "#shared/models/file/MimeType";
 import { noteDocumentSchema } from "#shared/models/resource/note/NoteDocument";
 import { deserializeNoteMarkdown } from "#shared/services/resource/note/deserializeNoteMarkdown";
 import { serializeNoteMarkdown } from "#shared/services/resource/note/serializeNoteMarkdown";
-import { importFile } from "@/services/file/importFile";
-import { validateFileWithAlert } from "@/services/file/validateFileWithAlert";
-import { NOTE_MARKDOWN_ACCEPT } from "@/services/resource/constants";
-import { useResourceStore } from "@/store/resource";
-import { useNoteStore } from "@/store/resource/note";
-import { useNotePortableDialogStore } from "@/store/resource/note/portableDialog";
-import { trimFileExtension } from "@/util/file/trimFileExtension";
+import { importFile } from "#src/services/file/importFile";
+import { validateFileWithAlert } from "#src/services/file/validateFileWithAlert";
+import { NOTE_MARKDOWN_ACCEPT } from "#src/services/resource/constants";
+import { useResourceStore } from "#src/store/resource/index";
+import { useNoteStore } from "#src/store/resource/note/index";
+import { useNotePortableDialogStore } from "#src/store/resource/note/portableDialog";
+import { trimFileExtension } from "#src/util/file/trimFileExtension";
 import { downloadFile, InvalidOperationError, Operation } from "@esposter/shared";
 
 // A note's Markdown file. Export downloads the document as it is held once the note has loaded, named after the note.

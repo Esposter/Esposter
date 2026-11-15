@@ -1,4 +1,4 @@
-import { getRandomValue } from "@/util/math/random/getRandomValue";
+import { getRandomValue } from "#src/util/math/random/getRandomValue";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { afterEach, describe, expect, test, vi } from "vitest";
 

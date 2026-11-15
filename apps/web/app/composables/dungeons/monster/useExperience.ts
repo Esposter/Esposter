@@ -1,6 +1,6 @@
 import type { Monster } from "#shared/models/dungeons/monster/Monster";
 
-import { getLevelExperience } from "@/services/dungeons/monster/getLevelExperience";
+import { getLevelExperience } from "#src/services/dungeons/monster/getLevelExperience";
 
 export const useExperience = (monster: Ref<Monster>) => {
   const levelExperience = computed(() => getLevelExperience(monster.value.statistics.level));

@@ -1,7 +1,7 @@
 import type { Mock } from "vitest";
 
 import { MimeType } from "#shared/models/file/MimeType";
-import { rasterizeSvg } from "@/services/capture/rasterizeSvg";
+import { rasterizeSvg } from "#src/services/capture/rasterizeSvg";
 import { noop } from "@esposter/shared";
 import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vitest";
 

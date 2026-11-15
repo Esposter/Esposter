@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
 import { BuildingMap } from "#shared/assets/clicker/data/BuildingMap";
 import { BuildingId } from "#shared/models/clicker/data/building/BuildingId";
-import { useClickerStore } from "@/store/clicker";
-import { useBuildingStore } from "@/store/clicker/building";
+import { useBuildingStore } from "#src/store/clicker/building";
+import { useClickerStore } from "#src/store/clicker/index";
 import { describe, expect, test } from "vitest";
 
 describe(useBuildingStore, () => {

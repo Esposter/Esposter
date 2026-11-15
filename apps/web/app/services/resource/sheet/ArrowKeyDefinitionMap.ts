@@ -1,6 +1,6 @@
-import type { ArrowKeyDefinition } from "@/models/resource/sheet/ArrowKeyDefinition";
+import type { ArrowKeyDefinition } from "#src/models/resource/sheet/ArrowKeyDefinition";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 export const ArrowKeyDefinitionMap = {
   ArrowDown: { delta: [1, 0], direction: "down", meaning: UiIconMeaning.ArrowDown },

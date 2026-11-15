@@ -1,9 +1,9 @@
-import type { Drag } from "@/models/ui/dragReorder/Drag";
-import type { DragReorderContext } from "@/models/ui/dragReorder/DragReorderContext";
-import type { Press } from "@/models/ui/dragReorder/Press";
+import type { Drag } from "#src/models/ui/dragReorder/Drag";
+import type { DragReorderContext } from "#src/models/ui/dragReorder/DragReorderContext";
+import type { Press } from "#src/models/ui/dragReorder/Press";
 
-import { REORDER_GHOST_CLASS } from "@/services/ui/constants";
-import { slideDrag } from "@/services/ui/dragReorder/slideDrag";
+import { REORDER_GHOST_CLASS } from "#src/services/ui/constants";
+import { slideDrag } from "#src/services/ui/dragReorder/slideDrag";
 import { takeOne } from "@esposter/shared";
 
 // Ends the drag and hands the new order to the call site, and the rows slide to their places once it has rendered

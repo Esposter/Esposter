@@ -2,7 +2,7 @@
 import type { VueWrapper } from "@vue/test-utils";
 import type { Promisable } from "type-fest";
 
-import { goOffline, goOnline } from "@/composables/shared/network.test";
+import { goOffline, goOnline } from "#src/composables/shared/network.test";
 import { noop } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";

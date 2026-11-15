@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { METER_BLOCK_COUNT } from "@/services/ui/constants";
+import { METER_BLOCK_COUNT } from "#src/services/ui/constants";
 
 interface Props {
   // Past it the reading is at its worst, drawn in the danger colour, as a native meter's high mark

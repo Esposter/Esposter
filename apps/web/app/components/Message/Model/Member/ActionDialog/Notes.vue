@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import type { MemberActionDialogProps } from "@/models/message/member/MemberActionDialogProps";
+import type { MemberActionDialogProps } from "#src/models/message/member/MemberActionDialogProps";
 
 import { createModerationNoteInputSchema } from "#shared/models/db/moderation/CreateModerationNoteInput";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
-import { UiDialogSize } from "@/models/ui/UiDialogSize";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { createErrorAlert } from "@/services/trpc/createErrorAlert";
-import { UiRules } from "@/services/ui/UiRules";
-import { useModerationNoteStore } from "@/store/message/moderation/note";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
+import { UiDialogSize } from "#src/models/ui/UiDialogSize";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
+import { UiRules } from "#src/services/ui/UiRules";
+import { useModerationNoteStore } from "#src/store/message/moderation/note";
 import { MODERATION_NOTE_MAX_LENGTH } from "@esposter/db-schema";
 
 const isOpen = defineModel<boolean>({ default: false });

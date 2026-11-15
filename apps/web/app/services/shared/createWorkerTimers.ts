@@ -1,7 +1,7 @@
-import type { TimerRequest } from "@/models/shared/TimerRequest";
-import type { TimerResponse } from "@/models/shared/TimerResponse";
+import type { TimerRequest } from "#src/models/shared/TimerRequest";
+import type { TimerResponse } from "#src/models/shared/TimerResponse";
 
-import { TimerMethod } from "@/models/shared/TimerMethod";
+import { TimerMethod } from "#src/models/shared/TimerMethod";
 
 interface PendingTimer {
   callback: () => void;

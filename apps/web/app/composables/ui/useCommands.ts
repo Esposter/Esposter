@@ -1,7 +1,7 @@
-import type { UiCommand } from "@/models/ui/UiCommand";
+import type { UiCommand } from "#src/models/ui/UiCommand";
 
-import { runCommand } from "@/services/ui/runCommand";
-import { useCommandStore } from "@/store/ui/command";
+import { runCommand } from "#src/services/ui/runCommand";
+import { useCommandStore } from "#src/store/ui/command";
 import { useHotkey } from "@vuetify/v0";
 
 // Registers a surface's commands for as long as the calling component is mounted, and binds each shortcut through

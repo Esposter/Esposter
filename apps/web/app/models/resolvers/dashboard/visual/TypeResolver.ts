@@ -1,7 +1,7 @@
 import type { VisualType } from "#shared/models/dashboard/data/VisualType";
 import type { ApexOptions } from "apexcharts";
 
-import { AVisualTypeResolver } from "@/models/resolvers/dashboard/visual/AVisualTypeResolver";
+import { AVisualTypeResolver } from "#src/models/resolvers/dashboard/visual/AVisualTypeResolver";
 import { uncapitalize } from "@esposter/shared";
 import { defu } from "defu";
 

@@ -1,14 +1,14 @@
 // @vitest-environment nuxt
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
-import ResourceAskClaudeDialog from "@/components/Resource/AskClaudeDialog.vue";
-import { apiKeyList } from "@/services/auth/authClient.test";
-import { getAssistantPrompt } from "@/services/resource/getAssistantPrompt";
+import ResourceAskClaudeDialog from "#src/components/Resource/AskClaudeDialog.vue";
+import { apiKeyList } from "#src/services/auth/authClient.test";
+import { getAssistantPrompt } from "#src/services/resource/getAssistantPrompt";
 import { McpScope } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
+vi.mock(import("#src/services/auth/authClient"), () => import("#src/services/auth/authClient.test"));
 
 describe("resourceAskClaudeDialog", () => {
   afterEach(() => {

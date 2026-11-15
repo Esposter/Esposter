@@ -1,11 +1,11 @@
-import type { Drag } from "@/models/ui/dragReorder/Drag";
-import type { DragReorderContext } from "@/models/ui/dragReorder/DragReorderContext";
-import type { Press } from "@/models/ui/dragReorder/Press";
+import type { Drag } from "#src/models/ui/dragReorder/Drag";
+import type { DragReorderContext } from "#src/models/ui/dragReorder/DragReorderContext";
+import type { Press } from "#src/models/ui/dragReorder/Press";
 
-import { getAutoscroll } from "@/services/ui/dragReorder/getAutoscroll";
-import { getDragTargetIndex } from "@/services/ui/dragReorder/getDragTargetIndex";
-import { getDragTranslate } from "@/services/ui/dragReorder/getDragTranslate";
-import { moveDragSiblings } from "@/services/ui/dragReorder/moveDragSiblings";
+import { getAutoscroll } from "#src/services/ui/dragReorder/getAutoscroll";
+import { getDragTargetIndex } from "#src/services/ui/dragReorder/getDragTargetIndex";
+import { getDragTranslate } from "#src/services/ui/dragReorder/getDragTranslate";
+import { moveDragSiblings } from "#src/services/ui/dragReorder/moveDragSiblings";
 import { takeOne } from "@esposter/shared";
 
 // Moves the held row to the pointer and the rows it passes aside, then asks for the autoscroll a pointer at an edge needs

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { UiMenuItem } from "@/models/ui/UiMenuItem";
+import type { UiMenuItem } from "#src/models/ui/UiMenuItem";
 import type {
   SurveyAnswers,
   SurveyAnswerValue,
@@ -8,14 +8,14 @@ import type {
   SurveyMatrixDynamicNode,
 } from "vue-survey-engine-headless";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { getSurveyAnswerRows } from "@/services/resource/survey/getSurveyAnswerRows";
-import { getSurveyAnswerText } from "@/services/resource/survey/getSurveyAnswerText";
-import { getSurveyQuestionTitle } from "@/services/resource/survey/getSurveyQuestionTitle";
-import { getSurveyRatingItems } from "@/services/resource/survey/getSurveyRatingItems";
-import { getSurveyRatingStep } from "@/services/resource/survey/getSurveyRatingStep";
-import { withSurveyAnswer } from "@/services/resource/survey/withSurveyAnswer";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { getSurveyAnswerRows } from "#src/services/resource/survey/getSurveyAnswerRows";
+import { getSurveyAnswerText } from "#src/services/resource/survey/getSurveyAnswerText";
+import { getSurveyQuestionTitle } from "#src/services/resource/survey/getSurveyQuestionTitle";
+import { getSurveyRatingItems } from "#src/services/resource/survey/getSurveyRatingItems";
+import { getSurveyRatingStep } from "#src/services/resource/survey/getSurveyRatingStep";
+import { withSurveyAnswer } from "#src/services/resource/survey/withSurveyAnswer";
 import { takeOne } from "@esposter/shared";
 import { getSurveyChoiceText, MATRIX_CELL_RATING_COUNT, SurveyMatrixCellType } from "vue-survey-engine-headless";
 

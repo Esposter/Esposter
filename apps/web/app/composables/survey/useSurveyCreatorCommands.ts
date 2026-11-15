@@ -1,16 +1,16 @@
-import type { PageBuilderHistoryEntry } from "@/models/pageBuilder/PageBuilderHistoryEntry";
+import type { PageBuilderHistoryEntry } from "#src/models/pageBuilder/PageBuilderHistoryEntry";
 import type { History, JsonPatchOperation } from "@esposter/shared";
 import type { BlockNodeProps } from "vue-block-editor-headless";
 import type { SurveyDocument, SurveyNode, SurveyNodeType, SurveyRootProps } from "vue-survey-engine-headless";
 
-import { SurveyNodeMoveType } from "@/models/resource/survey/SurveyNodeMoveType";
-import { ROOT_POINTER } from "@/services/pageBuilder/constants";
-import { getRecordedHistory } from "@/services/pageBuilder/getRecordedHistory";
-import { createSurveyNode } from "@/services/resource/survey/createSurveyNode";
-import { getSurveyInsertTarget } from "@/services/resource/survey/getSurveyInsertTarget";
-import { getSurveyNodeLocation } from "@/services/resource/survey/getSurveyNodeLocation";
-import { getSurveyNodeMove } from "@/services/resource/survey/getSurveyNodeMove";
-import { useSurveyCreatorStore } from "@/store/survey/creator";
+import { SurveyNodeMoveType } from "#src/models/resource/survey/SurveyNodeMoveType";
+import { ROOT_POINTER } from "#src/services/pageBuilder/constants";
+import { getRecordedHistory } from "#src/services/pageBuilder/getRecordedHistory";
+import { createSurveyNode } from "#src/services/resource/survey/createSurveyNode";
+import { getSurveyInsertTarget } from "#src/services/resource/survey/getSurveyInsertTarget";
+import { getSurveyNodeLocation } from "#src/services/resource/survey/getSurveyNodeLocation";
+import { getSurveyNodeMove } from "#src/services/resource/survey/getSurveyNodeMove";
+import { useSurveyCreatorStore } from "#src/store/survey/creator";
 import { JsonPatchOperationType, redoHistory, undoHistory } from "@esposter/shared";
 import { v7 } from "uuid";
 import {

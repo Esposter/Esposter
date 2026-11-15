@@ -1,5 +1,5 @@
 // @unocss-include
-import { ResourceBladeType } from "@/models/resource/ResourceBladeType";
+import { ResourceBladeType } from "#src/models/resource/ResourceBladeType";
 
 // How each built-in blade presents itself, in one entry per blade. Editor is the exception that declares no
 // Icon: it renders the type's own editor, so it wears the type's own icon rather than one of its own

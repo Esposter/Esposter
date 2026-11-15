@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 const { data: session } = await useAuthSession();
 const accountCommands = await useAccountCommands();

@@ -1,8 +1,8 @@
-import type { Grid } from "@/models/dungeons/Grid";
+import type { Grid } from "#src/models/dungeons/Grid";
 import type { Position } from "grid-engine";
 
-import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
-import { useControlsStore } from "@/store/dungeons/controls";
+import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";
+import { useControlsStore } from "#src/store/dungeons/controls";
 import { checkIsDeepEqual } from "@esposter/shared";
 
 export const useOnGridClick = <TGrid extends readonly (readonly unknown[])[]>(

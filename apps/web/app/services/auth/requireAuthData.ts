@@ -1,4 +1,4 @@
-import type { AuthResponse } from "@/models/auth/AuthResponse";
+import type { AuthResponse } from "#src/models/auth/AuthResponse";
 
 // The auth client answers with a payload rather than a rejection, and its `fetchOptions: { throw: true }` escape
 // Hatch throws an error whose message is only the http status text — the api's own message (a session too old to

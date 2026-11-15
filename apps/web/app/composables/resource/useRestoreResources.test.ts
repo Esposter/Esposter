@@ -2,9 +2,9 @@
 import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
 
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
-import { useRestoreResources } from "@/composables/resource/useRestoreResources";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useFavoriteStore } from "@/store/resource/favorite";
+import { useRestoreResources } from "#src/composables/resource/useRestoreResources";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useFavoriteStore } from "#src/store/resource/favorite";
 import { MAX_READ_LIMIT } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { describe, expect, test, vi } from "vitest";

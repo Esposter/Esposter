@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { Upgrade } from "#shared/models/clicker/data/upgrade/Upgrade";
-import type { ClickerUpgradeListItem } from "@/models/clicker/ClickerUpgradeListItem";
+import type { ClickerUpgradeListItem } from "#src/models/clicker/ClickerUpgradeListItem";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { INVENTORY_ITEM_POSITION_AREA, STORE_ITEM_POSITION_AREA } from "@/services/clicker/constants";
-import { UpgradeIconMap } from "@/services/clicker/icon/UpgradeIconMap";
-import { usePointStore } from "@/store/clicker/point";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { INVENTORY_ITEM_POSITION_AREA, STORE_ITEM_POSITION_AREA } from "#src/services/clicker/constants";
+import { UpgradeIconMap } from "#src/services/clicker/icon/UpgradeIconMap";
+import { usePointStore } from "#src/store/clicker/point";
 
 interface Props {
   // The inventory's, which has nothing left to pay

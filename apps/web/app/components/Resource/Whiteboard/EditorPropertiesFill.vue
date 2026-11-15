@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { ShapeElement, StickyNoteElement } from "vue-block-editor-headless";
 
-import { useWhiteboardStore } from "@/store/resource/whiteboard";
+import { useWhiteboardStore } from "#src/store/resource/whiteboard/index";
 import { PositionedElementType } from "vue-block-editor-headless";
 
 interface Props {

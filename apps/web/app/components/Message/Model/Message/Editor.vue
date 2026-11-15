@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { ClientMessage } from "@/models/message/ClientMessage";
+import type { ClientMessage } from "#src/models/message/ClientMessage";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { MentionExtension } from "@/services/message/MentionExtension";
-import { useDataStore } from "@/store/message/data";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { MentionExtension } from "#src/services/message/MentionExtension";
+import { useDataStore } from "#src/store/message/data";
 import { MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
 import { Extension } from "@tiptap/vue-3";
 

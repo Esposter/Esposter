@@ -1,9 +1,9 @@
-import type { SlashCommand } from "@/models/message/slashCommands/SlashCommand";
-import type { SlashCommandParameterError } from "@/models/message/slashCommands/SlashCommandParameterError";
+import type { SlashCommand } from "#src/models/message/slashCommands/SlashCommand";
+import type { SlashCommandParameterError } from "#src/models/message/slashCommands/SlashCommandParameterError";
 
-import { parseTextAndParameters } from "@/services/message/slashCommands/parseTextAndParameters";
-import { useInputStore } from "@/store/message/input";
-import { useRoomStore } from "@/store/message/room";
+import { parseTextAndParameters } from "#src/services/message/slashCommands/parseTextAndParameters";
+import { useInputStore } from "#src/store/message/input/index";
+import { useRoomStore } from "#src/store/message/room/index";
 import { ID_SEPARATOR, normalizeString, takeOne, toRawDeep } from "@esposter/shared";
 
 export const useSlashCommandStore = defineStore("message/input/slashCommand", () => {

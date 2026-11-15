@@ -3,10 +3,10 @@ import { createColumn } from "#shared/models/resource/sheet/column/createColumn.
 import { createDataSource } from "#shared/models/resource/sheet/datasource/createDataSource.test";
 import { createRow } from "#shared/models/resource/sheet/datasource/createRow.test";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
-import { setupCommandTest } from "@/composables/resource/sheet/commands/setupCommandTest.test";
-import { setupWithDataSource } from "@/composables/resource/sheet/commands/setupWithDataSource.test";
-import { useResourceStore } from "@/store/resource";
-import { useFindReplaceStore } from "@/store/resource/sheet/findReplace";
+import { setupCommandTest } from "#src/composables/resource/sheet/commands/setupCommandTest.test";
+import { setupWithDataSource } from "#src/composables/resource/sheet/commands/setupWithDataSource.test";
+import { useResourceStore } from "#src/store/resource/index";
+import { useFindReplaceStore } from "#src/store/resource/sheet/findReplace";
 import { describe, expect, test } from "vitest";
 
 describe(useFindReplaceStore, () => {

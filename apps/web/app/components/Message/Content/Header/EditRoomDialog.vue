@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { UiRules } from "@/services/ui/UiRules";
-import { useRoomStore } from "@/store/message/room";
-import { useRoomDialogStore } from "@/store/message/room/dialog";
+import { UiRules } from "#src/services/ui/UiRules";
+import { useRoomDialogStore } from "#src/store/message/room/dialog";
+import { useRoomStore } from "#src/store/message/room/index";
 import { ROOM_NAME_MAX_LENGTH, selectRoomInMessageSchema } from "@esposter/db-schema";
 import { noop } from "@esposter/shared";
 

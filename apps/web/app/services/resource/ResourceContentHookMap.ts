@@ -1,8 +1,8 @@
-import type { HookRegistry } from "@/models/shared/HookRegistry";
+import type { HookRegistry } from "#src/models/shared/HookRegistry";
 import type { ResourceType } from "@esposter/db-schema";
 import type { Promisable } from "type-fest";
 
-import { createHookRegistry } from "@/services/shared/createHookRegistry";
+import { createHookRegistry } from "#src/services/shared/createHookRegistry";
 
 // Cross-store hooks over a resource's content, so a write that replaces the content of a resource a blade
 // Already has open reaches the surface holding it — rather than the blade being keyed on a counter somebody

@@ -1,6 +1,6 @@
 import type { Bounds, Point } from "vue-block-editor-headless";
 
-import { ResizeHandle } from "@/models/whiteboard/ResizeHandle";
+import { ResizeHandle } from "#src/models/whiteboard/ResizeHandle";
 import { exhaustiveGuard } from "@esposter/shared";
 
 // The point a resize handle sits at on a box: a corner, or the middle of an edge

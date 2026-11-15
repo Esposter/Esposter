@@ -1,5 +1,6 @@
 export interface RestrictedImportPattern {
   allowTypeImports?: boolean;
-  group: string[];
+  group?: string[];
   message: string;
+  regex?: string;
 }

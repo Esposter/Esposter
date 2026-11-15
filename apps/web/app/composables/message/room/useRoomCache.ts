@@ -1,6 +1,6 @@
-import { authClient } from "@/services/auth/authClient";
-import { RoomIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/RoomIndexedDbStoreConfiguration";
-import { useRoomStore } from "@/store/message/room";
+import { authClient } from "#src/services/auth/authClient";
+import { RoomIndexedDbStoreConfiguration } from "#src/services/cache/indexedDb/configurations/RoomIndexedDbStoreConfiguration";
+import { useRoomStore } from "#src/store/message/room/index";
 
 export const useRoomCache = () => {
   const session = authClient.useSession();

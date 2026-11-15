@@ -12,17 +12,17 @@ flowchart LR
   shared -. banned .-> app
 ```
 
-`app/` (reached as `@/` or `~/`) is client code — meaning no server module may import it, **not** that it only ever executes in a browser: the SSR render evaluates it in Node, which is [browser execution](../browser-execution/design.md)'s subject rather than this page's. `server/` is Nitro code. `shared/` (reached as `#shared`) is the ground both stand on: every module in it is parsed by the server **and** shipped to the browser. So `app/` and `server/` may import `shared/` freely, and `shared/` may import neither.
+`app/` (reached as `#src/`) is client code — meaning no server module may import it, **not** that it only ever executes in a browser: the SSR render evaluates it in Node, which is [browser execution](../browser-execution/design.md)'s subject rather than this page's. `server/` is Nitro code. `shared/` (reached as `#shared`) is the ground both stand on: every module in it is parsed by the server **and** shipped to the browser. So `app/` and `server/` may import `shared/` freely, and `shared/` may import neither.
 
 ## Why the direction matters
 
-An import from `shared/` into `@/` is not a style complaint. It drags whatever the client module pulls in — a UI component library's types, a form vocabulary, a browser-only runtime value — into the graph the server evaluates, and it does so invisibly: the offending import usually sits several hops from the module a server route actually named. A validation schema that a tRPC procedure parses should not be able to fail because a component's prop type moved.
+An import from `shared/` into `#src/` is not a style complaint. It drags whatever the client module pulls in — a UI component library's types, a form vocabulary, a browser-only runtime value — into the graph the server evaluates, and it does so invisibly: the offending import usually sits several hops from the module a server route actually named. A validation schema that a tRPC procedure parses should not be able to fail because a component's prop type moved.
 
 The direction also encodes the honest split of responsibility. `shared/` states **what a thing is** — its fields, its constraints, the refinements that make a value valid anywhere. How that thing is _rendered_ is a client question, and a client question answered inside `shared/` is a boundary violation waiting to look like a schema.
 
 ## Twins, not relocation
 
-When a `shared/` module is found reaching into `@/`, the fix is almost never to move the client module down into `shared/` — that relocates the boundary instead of restoring it, and usually drags a UI dependency along. The fix is a **twin**: `shared/` keeps the validating schema, and `app/` gets a form schema derived from it.
+When a `shared/` module is found reaching into `#src/`, the fix is almost never to move the client module down into `shared/` — that relocates the boundary instead of restoring it, and usually drags a UI dependency along. The fix is a **twin**: `shared/` keeps the validating schema, and `app/` gets a form schema derived from it.
 
 Derived is the load-bearing word. A twin that restates its counterpart is two schemas that drift; a twin built with Zod's `safeExtend` layers presentation onto the shared schema and overrides nothing else, so a field, constraint or refinement added on the shared side reaches the form without being copied. Typing the result `satisfies z.ZodType<TSharedType>` closes the loop — an arm that stops matching what the server parses stops compiling.
 
@@ -30,13 +30,13 @@ The sheet column forms are the worked example. `shared/models/resource/sheet/col
 
 ## Enforcement
 
-An `overrides` entry in the root `oxlint.config.ts` scopes `no-restricted-imports` to `apps/web/shared/**` and bans the `@/**` and `~/**` patterns. It catches type-only imports too, which matters — a `.d.ts` augmentation reaching into `app/` is the same coupling with the runtime cost hidden.
+An `overrides` entry in the root `oxlint.config.ts` scopes `no-restricted-imports` to `apps/web/shared/**` and bans the `#src/**` pattern. It catches type-only imports too, which matters — a `.d.ts` augmentation reaching into `app/` is the same coupling with the runtime cost hidden.
 
-Two things about that entry are easy to get wrong. Oxlint's path globs do not cross `/`, so the pattern must be `@/**` and never `@/*`. And an `overrides` entry **replaces** a rule's options rather than merging with them, so the repo-wide `node:crypto` ban has to be restated inside the override or it silently stops applying to `shared/`.
+Two things about that entry are easy to get wrong. Oxlint's path globs do not cross `/`, so the pattern must be `#src/**` and never `#src/*`. And an `overrides` entry **replaces** a rule's options rather than merging with them, so the repo-wide `node:crypto` ban has to be restated inside the override or it silently stops applying to `shared/`.
 
 The server direction is deliberately not banned. A handful of `shared/` modules reach into `#server` for a router's inferred types or to register a test double, which costs nothing at runtime.
 
-Nor does the rule reach `scripts/`. The Tiled and Phaser code generators import from `@/` for the tilemap property models they emit against — Node processes reading the browser tree, which never enters either runtime graph.
+Nor does the rule reach `scripts/`. The Tiled and Phaser code generators import from `#src/` for the tilemap property models they emit against — Node processes reading the browser tree, which never enters either runtime graph.
 
 ## What stays in `shared/` despite reaching nothing
 

@@ -1,16 +1,16 @@
 // @vitest-environment nuxt
-import type { UiCalendarEvent } from "@/models/ui/UiCalendarEvent";
+import type { UiCalendarEvent } from "#src/models/ui/UiCalendarEvent";
 
-import UiEventCalendar from "@/components/Ui/EventCalendar/Index.vue";
-import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
-import { UiCalendarView } from "@/models/ui/UiCalendarView";
-import { UiStyles } from "@/models/ui/UiStyle";
+import UiEventCalendar from "#src/components/Ui/EventCalendar/Index.vue";
+import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
+import { UiCalendarView } from "#src/models/ui/UiCalendarView";
+import { UiStyles } from "#src/models/ui/UiStyle";
 import {
   CALENDAR_DAY_EVENT_LIMIT,
   CALENDAR_OPENING_HOUR,
   CALENDAR_SLOT_DURATION,
   CALENDAR_WORK_WEEK_DAY_COUNT,
-} from "@/services/ui/constants";
+} from "#src/services/ui/constants";
 import { getZonedDateTime, takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";

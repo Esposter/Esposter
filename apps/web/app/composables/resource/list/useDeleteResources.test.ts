@@ -3,9 +3,9 @@ import type { ResourceListItem } from "#shared/models/resource/ResourceListItem"
 import type { Router } from "vue-router";
 
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
-import { useDeleteResources } from "@/composables/resource/list/useDeleteResources";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useFavoriteStore } from "@/store/resource/favorite";
+import { useDeleteResources } from "#src/composables/resource/list/useDeleteResources";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useFavoriteStore } from "#src/store/resource/favorite";
 import { RoutePath } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { useForwardStore } from "@/store/message/input/forward";
+import { useForwardStore } from "#src/store/message/input/forward";
 
 interface Props {
   room: RoomInMessage;

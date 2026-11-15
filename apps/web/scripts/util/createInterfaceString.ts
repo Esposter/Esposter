@@ -1,4 +1,4 @@
-import type { InterfaceProperty } from "@@/scripts/models/InterfaceProperty";
+import type { InterfaceProperty } from "#scripts/models/InterfaceProperty";
 
 import { EN_US_COMPARATOR } from "#shared/services/intl/constants";
 import { checkStartsWithNumber } from "#shared/util/regex/checkStartsWithNumber";

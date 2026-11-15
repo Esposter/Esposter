@@ -1,4 +1,4 @@
-import { searchItems } from "@/services/search/searchItems";
+import { searchItems } from "#src/services/search/searchItems";
 import { describe, expect, test } from "vitest";
 
 const getFields = ({ description, title }: { description: string; title: string }) => ({ description, title });

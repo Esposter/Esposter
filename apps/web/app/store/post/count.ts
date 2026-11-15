@@ -1,6 +1,6 @@
 import { MAX_POST_COUNTS_PER_READ } from "#shared/models/db/post/ReadPostCountsInput";
-import { postCountHooks } from "@/services/post/postCountHooks";
-import { createBatchedRefresh } from "@/services/shared/createBatchedRefresh";
+import { postCountHooks } from "#src/services/post/postCountHooks";
+import { createBatchedRefresh } from "#src/services/shared/createBatchedRefresh";
 import { chunk, settleAll } from "@esposter/shared";
 
 // The one owner of the counts the server keeps on posts. A write that changes one asks this store to read them back.

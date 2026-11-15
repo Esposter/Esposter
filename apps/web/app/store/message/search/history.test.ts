@@ -1,9 +1,9 @@
 // @vitest-environment nuxt
 import type { SearchHistoryInMessage } from "@esposter/db-schema";
 
-import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useSearchHistoryStore } from "@/store/message/search/history";
+import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useSearchHistoryStore } from "#src/store/message/search/history";
 import { takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { v7 } from "uuid";

@@ -1,5 +1,5 @@
-import { getNodeSlotPointer } from "@/services/pageBuilder/getNodeSlotPointer";
-import { getSlotOwnerPointer } from "@/services/pageBuilder/getSlotOwnerPointer";
+import { getNodeSlotPointer } from "#src/services/pageBuilder/getNodeSlotPointer";
+import { getSlotOwnerPointer } from "#src/services/pageBuilder/getSlotOwnerPointer";
 
 // The slot a node sits in, then the slot holding that slot's owner, up to the root's content
 export const getHoldingSlotPointers = (nodePointer: string): string[] => {

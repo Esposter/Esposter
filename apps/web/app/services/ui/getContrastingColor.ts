@@ -1,8 +1,8 @@
 import type { SrgbColor } from "#shared/models/shared/SrgbColor";
 
 import { getContrastRatio } from "#shared/services/pageBuilder/critique/getContrastRatio";
-import { MAX_COLOR_CHANNEL } from "@/services/shared/constants";
-import { CONTRAST_BLACK, CONTRAST_WHITE } from "@/services/ui/constants";
+import { MAX_COLOR_CHANNEL } from "#src/services/shared/constants";
+import { CONTRAST_BLACK, CONTRAST_WHITE } from "#src/services/ui/constants";
 
 // The sRGB channels of a six-digit hex colour, each from 0 to 1
 const getSrgbColor = (hexColor: string): SrgbColor => [

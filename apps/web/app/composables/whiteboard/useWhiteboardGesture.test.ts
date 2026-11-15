@@ -1,19 +1,19 @@
 // @vitest-environment nuxt
-import type { GesturePointerEvent } from "@/models/whiteboard/GesturePointerEvent";
+import type { GesturePointerEvent } from "#src/models/whiteboard/GesturePointerEvent";
 
-import { useWhiteboardGesture } from "@/composables/whiteboard/useWhiteboardGesture";
-import { UiToken } from "@/models/ui/UiToken";
-import { GesturePointerAction } from "@/models/whiteboard/GesturePointerAction";
-import { GestureTool } from "@/models/whiteboard/GestureTool";
+import { useWhiteboardGesture } from "#src/composables/whiteboard/useWhiteboardGesture";
+import { UiToken } from "#src/models/ui/UiToken";
+import { GesturePointerAction } from "#src/models/whiteboard/GesturePointerAction";
+import { GestureTool } from "#src/models/whiteboard/GestureTool";
 import {
   createWhiteboardEditState,
   WHITEBOARD_PROCESS,
   WHITEBOARD_PROCESS_ID,
-} from "@/services/whiteboard/constants.test";
-import { PRIMARY_BUTTON } from "@/services/whiteboard/gesture/constants";
-import { useAlertStore } from "@/store/alert";
-import { useWhiteboardStore } from "@/store/resource/whiteboard";
-import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
+} from "#src/services/whiteboard/constants.test";
+import { PRIMARY_BUTTON } from "#src/services/whiteboard/gesture/constants";
+import { useAlertStore } from "#src/store/alert";
+import { useWhiteboardEditorStore } from "#src/store/resource/whiteboard/editor";
+import { useWhiteboardStore } from "#src/store/resource/whiteboard/index";
 import { takeOne } from "@esposter/shared";
 import { v7 } from "uuid";
 import { afterEach, describe, expect, test, vi } from "vitest";

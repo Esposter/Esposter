@@ -1,7 +1,7 @@
-import type { AffectedCell } from "@/models/resource/sheet/commands/AffectedCell";
+import type { AffectedCell } from "#src/models/resource/sheet/commands/AffectedCell";
 
-import { FindReplaceCommand } from "@/models/resource/sheet/commands/FindReplaceCommand";
-import { findMatchingCells } from "@/services/resource/sheet/commands/findMatchingCells";
+import { FindReplaceCommand } from "#src/models/resource/sheet/commands/FindReplaceCommand";
+import { findMatchingCells } from "#src/services/resource/sheet/commands/findMatchingCells";
 
 export const useFindReplace = () =>
   useSheetCommand(

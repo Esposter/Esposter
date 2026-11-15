@@ -1,12 +1,12 @@
 // @vitest-environment nuxt
-import type { ClientMessage } from "@/models/message/ClientMessage";
+import type { ClientMessage } from "#src/models/message/ClientMessage";
 
-import MessageModelMessageReply from "@/components/Message/Model/Message/Reply/Index.vue";
-import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
-import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
-import { createUser } from "@/services/message/user/createUser.test";
-import { useReplyStore } from "@/store/message/input/reply";
-import { useUserStore } from "@/store/message/user";
+import MessageModelMessageReply from "#src/components/Message/Model/Message/Reply/Index.vue";
+import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
+import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
+import { createUser } from "#src/services/message/user/createUser.test";
+import { useReplyStore } from "#src/store/message/input/reply";
+import { useUserStore } from "#src/store/message/user/index";
 import { MessageType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";

@@ -1,14 +1,14 @@
 import type { Context } from "#server/trpc/context";
-import type { TRPCRouter } from "#server/trpc/routers";
+import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { createCallerFactory } from "#server/trpc";
 import { createMockAuthSession, createMockCaller } from "#server/trpc/context.test";
-import { trpcRouter } from "#server/trpc/routers";
+import { createCallerFactory } from "#server/trpc/index";
 import { bookmarkRouter } from "#server/trpc/routers/bookmark";
 import { createRoomMember } from "#server/trpc/routers/createRoomMember.test";
+import { trpcRouter } from "#server/trpc/routers/index";
 import { resourceRouter } from "#server/trpc/routers/resource";
-import { roomRouter } from "#server/trpc/routers/room";
+import { roomRouter } from "#server/trpc/routers/room/index";
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { PageMarkType } from "#shared/models/app/PageMarkType";
 import { bookmarksInApp, DatabaseEntityType, MAX_BOOKMARKS, ResourceType, roomsInMessage } from "@esposter/db-schema";

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { KeybindsSettingsSection } from "@/models/message/user/settings/KeybindsSettingsSection";
-import { MessageInputCommands } from "@/services/message/input/MessageInputCommands";
+import { KeybindsSettingsSection } from "#src/models/message/user/settings/KeybindsSettingsSection";
+import { MessageInputCommands } from "#src/services/message/input/MessageInputCommands";
 </script>
 
 <template>

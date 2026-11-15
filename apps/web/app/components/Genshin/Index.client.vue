@@ -6,9 +6,9 @@ import {
 } from "#shared/services/genshin/constants";
 import { getGenshinGameDataBaseUrl } from "#shared/services/genshin/getGenshinGameDataBaseUrl";
 import { IS_DEVELOPMENT } from "#shared/util/environment/constants";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
-import { UiDialogSize } from "@/models/ui/UiDialogSize";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
+import { UiDialogSize } from "#src/models/ui/UiDialogSize";
 import { GameLanguageTagMap, GameTextKey } from "genshin-text";
 import { computeLoadingProgress, GameOpening } from "genshin-world";
 

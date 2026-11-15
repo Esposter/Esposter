@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { SurveyAnswerValue, SurveySliderNode } from "vue-survey-engine-headless";
 
-import { getSurveyQuestionTitle } from "@/services/resource/survey/getSurveyQuestionTitle";
+import { getSurveyQuestionTitle } from "#src/services/resource/survey/getSurveyQuestionTitle";
 
 interface Props {
   error: string;

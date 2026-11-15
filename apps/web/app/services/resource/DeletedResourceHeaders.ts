@@ -1,5 +1,5 @@
 import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
-import type { UiDataTableColumn } from "@/models/ui/UiDataTableColumn";
+import type { UiDataTableColumn } from "#src/models/ui/UiDataTableColumn";
 
 import { ResourceListItemPropertyNames } from "#shared/models/resource/ResourceListItem";
 import { ItemMetadataPropertyNames } from "#shared/models/shared/ItemMetadataPropertyNames";

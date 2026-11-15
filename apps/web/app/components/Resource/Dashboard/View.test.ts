@@ -2,11 +2,11 @@
 import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
 import { Visual } from "#shared/models/dashboard/data/Visual";
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
-import DashboardVisualPreviewActionsMenu from "@/components/Dashboard/Visual/Preview/ActionsMenu.vue";
-import EditorShell from "@/components/Editor/Shell.vue";
-import ResourceDashboardView from "@/components/Resource/Dashboard/View.vue";
-import { stubGridWidth } from "@/services/dashboard/grid/stubGridWidth.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
+import DashboardVisualPreviewActionsMenu from "#src/components/Dashboard/Visual/Preview/ActionsMenu.vue";
+import EditorShell from "#src/components/Editor/Shell.vue";
+import ResourceDashboardView from "#src/components/Resource/Dashboard/View.vue";
+import { stubGridWidth } from "#src/services/dashboard/grid/stubGridWidth.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";

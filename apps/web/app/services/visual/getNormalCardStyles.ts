@@ -1,7 +1,7 @@
-import type { CardStackGeometry } from "@/models/visual/CardStackGeometry";
-import type { CardStyleVariables } from "@/models/visual/CardStyleVariables";
+import type { CardStackGeometry } from "#src/models/visual/CardStackGeometry";
+import type { CardStyleVariables } from "#src/models/visual/CardStyleVariables";
 
-import { getInactiveCardScaleY } from "@/services/visual/getInactiveCardScaleY";
+import { getInactiveCardScaleY } from "#src/services/visual/getInactiveCardScaleY";
 import { takeOne } from "@esposter/shared";
 
 // Generate CSS card styling for smooth, non-jumping animations.

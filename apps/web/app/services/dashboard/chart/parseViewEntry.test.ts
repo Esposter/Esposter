@@ -1,5 +1,5 @@
-import { DASHBOARD_VIEW_SEPARATOR } from "@/services/dashboard/chart/constants";
-import { parseViewEntry } from "@/services/dashboard/chart/parseViewEntry";
+import { DASHBOARD_VIEW_SEPARATOR } from "#src/services/dashboard/chart/constants";
+import { parseViewEntry } from "#src/services/dashboard/chart/parseViewEntry";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { authClient } from "@/services/auth/authClient";
-import { useDirectMessageStore } from "@/store/message/room/directMessage";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { authClient } from "#src/services/auth/authClient";
+import { useDirectMessageStore } from "#src/store/message/room/directMessage";
 
 const directMessageStore = useDirectMessageStore();
 const { currentDirectMessage } = storeToRefs(directMessageStore);

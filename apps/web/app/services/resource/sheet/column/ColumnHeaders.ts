@@ -1,5 +1,5 @@
 import type { Column } from "#shared/models/resource/sheet/column/Column";
-import type { UiDataTableColumn } from "@/models/ui/UiDataTableColumn";
+import type { UiDataTableColumn } from "#src/models/ui/UiDataTableColumn";
 
 export const ColumnHeaders: UiDataTableColumn<Column>[] = [
   { isSortable: false, key: "drag", title: "" },

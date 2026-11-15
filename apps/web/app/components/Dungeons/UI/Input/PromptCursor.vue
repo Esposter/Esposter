@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
-import { getTweenRange } from "@/services/dungeons/animation/getTweenRange";
-import { useDialogStore } from "@/store/dungeons/dialog";
+import { getTweenRange } from "#src/services/dungeons/animation/getTweenRange";
+import { useDialogStore } from "#src/store/dungeons/dialog";
 import { Image } from "vue-phaserjs";
 
 interface Props {

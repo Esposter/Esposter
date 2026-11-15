@@ -2,10 +2,10 @@
 import type { VueWrapper } from "@vue/test-utils";
 import type { SurveyDocument, SurveyNode } from "vue-survey-engine-headless";
 
-import CalculatedValues from "@/components/Resource/Survey/Creator/CalculatedValues.vue";
-import { getButtonByText } from "@/components/Resource/Survey/Creator/getButtonByText.test";
-import UiConfirmDialog from "@/components/Ui/ConfirmDialog.vue";
-import { useSurveyCreatorStore } from "@/store/survey/creator";
+import CalculatedValues from "#src/components/Resource/Survey/Creator/CalculatedValues.vue";
+import { getButtonByText } from "#src/components/Resource/Survey/Creator/getButtonByText.test";
+import UiConfirmDialog from "#src/components/Ui/ConfirmDialog.vue";
+import { useSurveyCreatorStore } from "#src/store/survey/creator";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";

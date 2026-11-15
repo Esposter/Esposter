@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { UiMenuItem } from "@/models/ui/UiMenuItem";
+import type { UiMenuItem } from "#src/models/ui/UiMenuItem";
 import type { SurveyAnswerValue, SurveyButtonGroupNode } from "vue-survey-engine-headless";
 
 import { getSurveyChoiceText } from "vue-survey-engine-headless";

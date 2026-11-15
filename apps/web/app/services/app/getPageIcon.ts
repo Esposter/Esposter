@@ -2,8 +2,8 @@ import type { PageLink } from "#shared/models/app/PageLink";
 
 import { PageMarkType } from "#shared/models/app/PageMarkType";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { getPageLinkItem } from "@/services/app/getPageLinkItem";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { getPageLinkItem } from "#src/services/app/getPageLinkItem";
 
 // Declared rather than inferred: an inferred union gives every member every key, so a check on one key narrows nothing
 type PageIcon = undefined | { icon: string } | { meaning: UiIconMeaning };

@@ -1,4 +1,4 @@
-import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
+import { LocalStorageKey } from "#src/services/shared/LocalStorageKey";
 
 // Hardware device selections stay device-local (a device picked on one machine must not apply on another).
 // All other voice prefs are synced via the DB-backed useUserSettingsStore.

@@ -1,6 +1,6 @@
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { CacheTag } from "@/models/cache/CacheTag";
+import { CacheTag } from "#src/models/cache/CacheTag";
 import { noop } from "@esposter/shared";
 
 // Feeds the Recent list route, Home's Recent tab and the palette scope's Recently opened group.

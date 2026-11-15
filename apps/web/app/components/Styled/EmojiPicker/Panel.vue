@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import type { CustomEmoji } from "@/models/message/emoji/CustomEmoji";
-import type { PickableEmoji } from "@/models/message/emoji/PickableEmoji";
+import type { CustomEmoji } from "#src/models/message/emoji/CustomEmoji";
+import type { PickableEmoji } from "#src/models/message/emoji/PickableEmoji";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
-import { getEmojiCategories } from "@/services/message/emoji/getEmojiCategories";
-import { getPickableEmojiTag } from "@/services/message/emoji/getPickableEmojiTag";
-import { searchEmojis } from "@/services/message/emoji/searchEmojis";
-import { useLayoutStore } from "@/store/layout";
-import { useEmojiPickerStore } from "@/store/message/emojiPicker";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { UiTextFieldType } from "#src/models/ui/UiTextFieldType";
+import { getEmojiCategories } from "#src/services/message/emoji/getEmojiCategories";
+import { getPickableEmojiTag } from "#src/services/message/emoji/getPickableEmojiTag";
+import { searchEmojis } from "#src/services/message/emoji/searchEmojis";
+import { useLayoutStore } from "#src/store/layout";
+import { useEmojiPickerStore } from "#src/store/message/emojiPicker";
 import { takeOne } from "@esposter/shared";
 
 interface Props {

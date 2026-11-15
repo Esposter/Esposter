@@ -3,7 +3,7 @@ import type { Row } from "#shared/models/resource/sheet/datasource/Row";
 
 import { checkIsEditableColumnValue } from "#shared/services/resource/sheet/column/checkIsEditableColumnValue";
 import { coerceValue } from "#shared/services/resource/sheet/column/coerceValue";
-import { createEmptyRowData } from "@/services/resource/sheet/dataSource/createEmptyRowData";
+import { createEmptyRowData } from "#src/services/resource/sheet/dataSource/createEmptyRowData";
 
 // A new row made from one pasted line — the rows an overwriting paste appends past the end and the rows a shift-down
 // Paste inserts are the same row. Each value lands in the target column at its offset, coerced to that column's type,

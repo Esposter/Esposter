@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { MemberActionTarget } from "@/models/message/member/MemberActionTarget";
+import type { MemberActionTarget } from "#src/models/message/member/MemberActionTarget";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { TimeoutDurationMap } from "@/services/message/moderation/TimeoutDurationMap";
-import { TimeoutDurationSelectItems } from "@/services/message/moderation/TimeoutDurationSelectItems";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { TimeoutDurationMap } from "#src/services/message/moderation/TimeoutDurationMap";
+import { TimeoutDurationSelectItems } from "#src/services/message/moderation/TimeoutDurationSelectItems";
 import { AdminActionType } from "@esposter/db-schema";
 
 interface Props extends MemberActionTarget {}

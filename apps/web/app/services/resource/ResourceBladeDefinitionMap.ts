@@ -1,7 +1,7 @@
 // @unocss-include
-import type { BladeDefinition } from "@/models/resource/BladeDefinition";
+import type { BladeDefinition } from "#src/models/resource/BladeDefinition";
 
-import { ResourceBladeSlug } from "@/models/resource/ResourceBladeSlug";
+import { ResourceBladeSlug } from "#src/models/resource/ResourceBladeSlug";
 import { ResourceType } from "@esposter/db-schema";
 
 // The type's own blades after the built-in Overview/Editor; slugs are route segments on /resources/[id]/[[blade]]
@@ -19,13 +19,13 @@ export const ResourceBladeDefinitionMap: Record<ResourceType, BladeDefinition[]>
   // A program has no canvas, so it declares no Editor — Setup and Status are the whole surface
   [ResourceType.Program]: [
     {
-      component: defineAsyncComponent(() => import("@/components/Resource/Program/Setup.vue")),
+      component: defineAsyncComponent(() => import("#src/components/Resource/Program/Setup.vue")),
       icon: "i-mdi:cog",
       slug: ResourceBladeSlug.Setup,
       title: "Setup",
     },
     {
-      component: defineAsyncComponent(() => import("@/components/Resource/Program/Status.vue")),
+      component: defineAsyncComponent(() => import("#src/components/Resource/Program/Status.vue")),
       icon: "i-mdi:chart-timeline-variant",
       isBodyBare: true,
       slug: ResourceBladeSlug.Status,
@@ -34,14 +34,14 @@ export const ResourceBladeDefinitionMap: Record<ResourceType, BladeDefinition[]>
   ],
   [ResourceType.Sheet]: [
     {
-      component: defineAsyncComponent(() => import("@/components/Resource/Sheet/Data.vue")),
+      component: defineAsyncComponent(() => import("#src/components/Resource/Sheet/Data.vue")),
       icon: "i-mdi:table",
       isBodyBare: true,
       slug: ResourceBladeSlug.Data,
       title: "Data",
     },
     {
-      component: defineAsyncComponent(() => import("@/components/Resource/Sheet/Settings.vue")),
+      component: defineAsyncComponent(() => import("#src/components/Resource/Sheet/Settings.vue")),
       icon: "i-mdi:cog",
       slug: ResourceBladeSlug.Settings,
       title: "Settings",
@@ -49,7 +49,7 @@ export const ResourceBladeDefinitionMap: Record<ResourceType, BladeDefinition[]>
   ],
   [ResourceType.Survey]: [
     {
-      component: defineAsyncComponent(() => import("@/components/Resource/Survey/Responses.vue")),
+      component: defineAsyncComponent(() => import("#src/components/Resource/Survey/Responses.vue")),
       icon: "i-mdi:poll",
       isBodyBare: true,
       slug: ResourceBladeSlug.Responses,
@@ -58,13 +58,13 @@ export const ResourceBladeDefinitionMap: Record<ResourceType, BladeDefinition[]>
   ],
   [ResourceType.TodoList]: [
     {
-      component: defineAsyncComponent(() => import("@/components/Resource/TodoList/Items.vue")),
+      component: defineAsyncComponent(() => import("#src/components/Resource/TodoList/Items.vue")),
       icon: "i-mdi:format-list-checks",
       slug: ResourceBladeSlug.Items,
       title: "Items",
     },
     {
-      component: defineAsyncComponent(() => import("@/components/Resource/TodoList/Calendar.vue")),
+      component: defineAsyncComponent(() => import("#src/components/Resource/TodoList/Calendar.vue")),
       icon: "i-mdi:calendar",
       slug: ResourceBladeSlug.Calendar,
       title: "Calendar",
@@ -73,7 +73,7 @@ export const ResourceBladeDefinitionMap: Record<ResourceType, BladeDefinition[]>
   // The share preview a published page unfurls with, after the built-in Editor as a Sheet's Settings follows its Data
   [ResourceType.Webpage]: [
     {
-      component: defineAsyncComponent(() => import("@/components/Resource/Webpage/Settings.vue")),
+      component: defineAsyncComponent(() => import("#src/components/Resource/Webpage/Settings.vue")),
       icon: "i-mdi:cog",
       slug: ResourceBladeSlug.Settings,
       title: "Settings",

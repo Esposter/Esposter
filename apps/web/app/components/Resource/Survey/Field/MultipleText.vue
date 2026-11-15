@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { SurveyAnswerValue, SurveyMultipleTextNode } from "vue-survey-engine-headless";
 
-import { SURVEY_TEXT_FIELD_TYPES } from "@/services/resource/survey/constants";
-import { getSurveyAnswerText } from "@/services/resource/survey/getSurveyAnswerText";
+import { SURVEY_TEXT_FIELD_TYPES } from "#src/services/resource/survey/constants";
+import { getSurveyAnswerText } from "#src/services/resource/survey/getSurveyAnswerText";
 
 interface Props {
   // The message the runner gives the question when it fails a check, "" when it has none

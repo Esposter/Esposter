@@ -1,7 +1,7 @@
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
-import FieldInputBoolean from "@/components/Resource/Sheet/Row/Field/Input/Boolean.vue";
-import FieldInputDate from "@/components/Resource/Sheet/Row/Field/Input/Date.vue";
-import FieldInputText from "@/components/Resource/Sheet/Row/Field/Input/Text.vue";
+import FieldInputBoolean from "#src/components/Resource/Sheet/Row/Field/Input/Boolean.vue";
+import FieldInputDate from "#src/components/Resource/Sheet/Row/Field/Input/Date.vue";
+import FieldInputText from "#src/components/Resource/Sheet/Row/Field/Input/Text.vue";
 
 export const FieldInputComponentMap = {
   [ColumnType.Boolean]: FieldInputBoolean,

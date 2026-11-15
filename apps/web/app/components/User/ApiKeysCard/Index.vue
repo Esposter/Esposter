@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import type { UserSettingsPageSection } from "@/models/user/UserSettingsPageSection";
+import type { UserSettingsPageSection } from "#src/models/user/UserSettingsPageSection";
 
 import { getApiKeyScopes } from "#shared/services/auth/getApiKeyScopes";
-import { MutationStatus } from "@/models/shared/MutationStatus";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { authClient } from "@/services/auth/authClient";
-import { requireAuthData } from "@/services/auth/requireAuthData";
-import { API_KEYS_MUTATION_KEY } from "@/services/user/constants";
-import { useUserApiKeyDialogStore } from "@/store/user/apiKeyDialog";
+import { MutationStatus } from "#src/models/shared/MutationStatus";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { authClient } from "#src/services/auth/authClient";
+import { requireAuthData } from "#src/services/auth/requireAuthData";
+import { API_KEYS_MUTATION_KEY } from "#src/services/user/constants";
+import { useUserApiKeyDialogStore } from "#src/store/user/apiKeyDialog";
 
 interface Props {
   section: UserSettingsPageSection;

@@ -1,7 +1,7 @@
 import type { Editor } from "@tiptap/core";
 import type { SetupContext } from "vue";
 
-import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
+import { EMPTY_TEXT_REGEX } from "#src/util/text/constants";
 import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 
 export type SaveRichTextEditEmit = SetupContext<{

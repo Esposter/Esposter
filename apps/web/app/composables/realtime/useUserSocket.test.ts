@@ -1,15 +1,15 @@
 // @vitest-environment nuxt
 import type { VueWrapper } from "@vue/test-utils";
 
-import { useUserSocket } from "@/composables/realtime/useUserSocket";
-import { useSession } from "@/services/auth/authClient.test";
-import { useConnectionStore } from "@/store/realtime/connection";
+import { useUserSocket } from "#src/composables/realtime/useUserSocket";
+import { useSession } from "#src/services/auth/authClient.test";
+import { useConnectionStore } from "#src/store/realtime/connection";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
+vi.mock(import("#src/services/auth/authClient"), () => import("#src/services/auth/authClient.test"));
 
 describe(useUserSocket, () => {
   let wrapper: undefined | VueWrapper;

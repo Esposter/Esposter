@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ProductGroups } from "@/services/app/ProductGroups";
+import { ProductGroups } from "#src/services/app/ProductGroups";
 </script>
 
 <!-- What there is to do here, in the launcher's own groups and words, each place one plain line on what it is for. The

@@ -1,8 +1,8 @@
-import type { HistoryCommandOptions } from "@/models/ui/HistoryCommandOptions";
-import type { UiCommand } from "@/models/ui/UiCommand";
+import type { HistoryCommandOptions } from "#src/models/ui/HistoryCommandOptions";
+import type { UiCommand } from "#src/models/ui/UiCommand";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { HISTORY_REDO_SHORTCUT, HISTORY_REDO_Y_SHORTCUT, HISTORY_UNDO_SHORTCUT } from "@/services/ui/constants";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { HISTORY_REDO_SHORTCUT, HISTORY_REDO_Y_SHORTCUT, HISTORY_UNDO_SHORTCUT } from "#src/services/ui/constants";
 
 // Undo and redo for an editor's history, with the redo's Y shortcut beside its usual one so both keyboards reach it.
 // Each editor names its commands by its own prefix, and titles them by what its history would act on

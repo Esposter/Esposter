@@ -1,6 +1,6 @@
 import { columnTransformationSchema } from "#shared/models/resource/sheet/column/transformation/ColumnTransformation";
 import { ColumnTransformationType } from "#shared/models/resource/sheet/column/transformation/ColumnTransformationType";
-import { columnTransformationFormSchema } from "@/models/resource/sheet/column/transformation/ColumnTransformationForm";
+import { columnTransformationFormSchema } from "#src/models/resource/sheet/column/transformation/ColumnTransformationForm";
 import { describe, expect, test } from "vitest";
 
 describe("columnTransformationFormSchema", () => {

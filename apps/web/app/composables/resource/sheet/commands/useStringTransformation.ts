@@ -1,7 +1,7 @@
 import type { StringTransformationType } from "#shared/models/resource/sheet/column/transformation/string/StringTransformationType";
 
-import { StringTransformationCommand } from "@/models/resource/sheet/commands/StringTransformationCommand";
-import { getStringColumnsAffectedCells } from "@/services/resource/sheet/commands/getStringColumnsAffectedCells";
+import { StringTransformationCommand } from "#src/models/resource/sheet/commands/StringTransformationCommand";
+import { getStringColumnsAffectedCells } from "#src/services/resource/sheet/commands/getStringColumnsAffectedCells";
 
 export const useStringTransformation = () =>
   useSheetCommand((dataSource, stringTransformationType: StringTransformationType) => {

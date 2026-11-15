@@ -1,7 +1,7 @@
-import type { TimerRequest } from "@/models/shared/TimerRequest";
+import type { TimerRequest } from "#src/models/shared/TimerRequest";
 
-import { TimerMethod } from "@/models/shared/TimerMethod";
-import { createWorkerTimers } from "@/services/shared/createWorkerTimers";
+import { TimerMethod } from "#src/models/shared/TimerMethod";
+import { createWorkerTimers } from "#src/services/shared/createWorkerTimers";
 import { describe, expect, test, vi } from "vitest";
 
 // A worker stands in as a target that takes the page's requests and fires a timer by posting its id back

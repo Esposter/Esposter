@@ -1,9 +1,9 @@
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
-import { webpageKind } from "@/services/pageBuilder/webpageKind";
-import { createContentData } from "@/services/resource/createContentData";
-import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
-import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
-import { useResourceStore } from "@/store/resource";
+import { webpageKind } from "#src/services/pageBuilder/webpageKind";
+import { createContentData } from "#src/services/resource/createContentData";
+import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
+import { usePageBuilderHistoryStore } from "#src/store/pageBuilder/history";
+import { useResourceStore } from "#src/store/resource/index";
 import { ResourceType } from "@esposter/db-schema";
 
 export const useWebpageEditorStore = defineStore("webpageEditor", () => {

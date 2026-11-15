@@ -1,4 +1,4 @@
-import { COMPOSER_ATTRIBUTE } from "@/services/app/constants";
+import { COMPOSER_ATTRIBUTE } from "#src/services/app/constants";
 
 export const useLayoutStore = defineStore("layout", () => {
   const { isMobile } = useUiDisplay();

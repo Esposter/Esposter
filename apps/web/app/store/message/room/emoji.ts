@@ -1,16 +1,16 @@
 import type { CreateRoomEmojiInput } from "#shared/models/db/roomEmoji/CreateRoomEmojiInput";
 import type { DeleteRoomEmojiInput } from "#shared/models/db/roomEmoji/DeleteRoomEmojiInput";
 import type { UpdateRoomEmojiInput } from "#shared/models/db/roomEmoji/UpdateRoomEmojiInput";
-import type { CustomEmoji } from "@/models/message/emoji/CustomEmoji";
+import type { CustomEmoji } from "#src/models/message/emoji/CustomEmoji";
 import type { RoomEmojiWithPresignedUrl, RoomInMessage } from "@esposter/db-schema";
 import type { Except } from "type-fest";
 
-import { EmojiType } from "@/models/message/emoji/EmojiType";
-import { getSingleFilePresignedUrlEntities } from "@/services/file/getSingleFilePresignedUrlEntities";
-import { uploadFilesToPresignedUrls } from "@/services/file/uploadFilesToPresignedUrls";
-import { createOperationData } from "@/services/shared/createOperationData";
-import { getRestoredItems } from "@/services/shared/getRestoredItems";
-import { useRoomStore } from "@/store/message/room";
+import { EmojiType } from "#src/models/message/emoji/EmojiType";
+import { getSingleFilePresignedUrlEntities } from "#src/services/file/getSingleFilePresignedUrlEntities";
+import { uploadFilesToPresignedUrls } from "#src/services/file/uploadFilesToPresignedUrls";
+import { createOperationData } from "#src/services/shared/createOperationData";
+import { getRestoredItems } from "#src/services/shared/getRestoredItems";
+import { useRoomStore } from "#src/store/message/room/index";
 import { DatabaseEntityType } from "@esposter/db-schema";
 
 export const useRoomEmojiStore = defineStore("message/room/emoji", () => {

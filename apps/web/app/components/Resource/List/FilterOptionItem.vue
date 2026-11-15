@@ -1,7 +1,7 @@
 <script setup lang="ts" generic="T extends string">
-import type { UiMenuItem } from "@/models/ui/UiMenuItem";
+import type { UiMenuItem } from "#src/models/ui/UiMenuItem";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 interface Props {
   item: UiMenuItem<T>;

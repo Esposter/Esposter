@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { Row } from "@/models/user/ProfileCard/Row";
-import type { RowValueType } from "@/models/user/ProfileCard/RowValueType";
+import type { Row } from "#src/models/user/ProfileCard/Row";
+import type { RowValueType } from "#src/models/user/ProfileCard/RowValueType";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { validateFile } from "@/services/file/validateFile";
-import { createErrorAlert } from "@/services/trpc/createErrorAlert";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { validateFile } from "#src/services/file/validateFile";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { getResultAsync } from "@esposter/shared";
 
 interface Props {

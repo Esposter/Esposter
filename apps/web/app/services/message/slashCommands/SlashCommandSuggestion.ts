@@ -1,15 +1,15 @@
-import type { SlashCommand } from "@/models/message/slashCommands/SlashCommand";
-import type { SlashCommandTypeWithoutParameters } from "@/models/message/slashCommands/SlashCommandTypeWithoutParameters";
+import type { SlashCommand } from "#src/models/message/slashCommands/SlashCommand";
+import type { SlashCommandTypeWithoutParameters } from "#src/models/message/slashCommands/SlashCommandTypeWithoutParameters";
 import type { SuggestionOptions } from "@tiptap/suggestion";
 import type { Except } from "type-fest";
 
-import SlashCommandList from "@/components/Message/Model/Message/Suggestion/SlashCommandList.vue";
-import { SuggestionTrigger } from "@/models/shared/SuggestionTrigger";
-import { getRender } from "@/services/message/getRender";
-import { executeSlashCommand } from "@/services/message/slashCommands/executeSlashCommand";
-import { SlashCommandDefinitions } from "@/services/message/slashCommands/SlashCommandDefinitionMap";
-import { searchItems } from "@/services/search/searchItems";
-import { useSlashCommandStore } from "@/store/message/input/slashCommand";
+import SlashCommandList from "#src/components/Message/Model/Message/Suggestion/SlashCommandList.vue";
+import { SuggestionTrigger } from "#src/models/shared/SuggestionTrigger";
+import { getRender } from "#src/services/message/getRender";
+import { executeSlashCommand } from "#src/services/message/slashCommands/executeSlashCommand";
+import { SlashCommandDefinitions } from "#src/services/message/slashCommands/SlashCommandDefinitionMap";
+import { searchItems } from "#src/services/search/searchItems";
+import { useSlashCommandStore } from "#src/store/message/input/slashCommand";
 import { getResultAsync, getSynchronizedFunction, noop, normalizeString } from "@esposter/shared";
 import { PluginKey } from "@tiptap/pm/state";
 

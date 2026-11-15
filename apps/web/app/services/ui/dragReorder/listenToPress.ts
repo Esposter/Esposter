@@ -1,14 +1,14 @@
-import type { DragReorderContext } from "@/models/ui/dragReorder/DragReorderContext";
-import type { Press } from "@/models/ui/dragReorder/Press";
+import type { DragReorderContext } from "#src/models/ui/dragReorder/DragReorderContext";
+import type { Press } from "#src/models/ui/dragReorder/Press";
 
-import { PressMoveOutcome } from "@/models/ui/PressMoveOutcome";
-import { cancelDrag } from "@/services/ui/dragReorder/cancelDrag";
-import { endPress } from "@/services/ui/dragReorder/endPress";
-import { moveDrag } from "@/services/ui/dragReorder/moveDrag";
-import { settleDrag } from "@/services/ui/dragReorder/settleDrag";
-import { startDrag } from "@/services/ui/dragReorder/startDrag";
-import { swallowNextClick } from "@/services/ui/dragReorder/swallowNextClick";
-import { getPressMoveOutcome } from "@/services/ui/getPressMoveOutcome";
+import { PressMoveOutcome } from "#src/models/ui/PressMoveOutcome";
+import { cancelDrag } from "#src/services/ui/dragReorder/cancelDrag";
+import { endPress } from "#src/services/ui/dragReorder/endPress";
+import { moveDrag } from "#src/services/ui/dragReorder/moveDrag";
+import { settleDrag } from "#src/services/ui/dragReorder/settleDrag";
+import { startDrag } from "#src/services/ui/dragReorder/startDrag";
+import { swallowNextClick } from "#src/services/ui/dragReorder/swallowNextClick";
+import { getPressMoveOutcome } from "#src/services/ui/getPressMoveOutcome";
 
 // The window listeners a press holds until it ends, for the pointer's travel, its release and cancel, Escape, the
 // Browser's own drag and selection, and the scrolls that move the rows under a pointer that may not move at all

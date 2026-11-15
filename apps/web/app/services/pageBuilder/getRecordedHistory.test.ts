@@ -1,6 +1,6 @@
-import type { PageBuilderHistoryEntry } from "@/models/pageBuilder/PageBuilderHistoryEntry";
+import type { PageBuilderHistoryEntry } from "#src/models/pageBuilder/PageBuilderHistoryEntry";
 
-import { getRecordedHistory } from "@/services/pageBuilder/getRecordedHistory";
+import { getRecordedHistory } from "#src/services/pageBuilder/getRecordedHistory";
 import { createHistory, JsonPatchOperationType } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 

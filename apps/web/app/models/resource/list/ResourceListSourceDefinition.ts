@@ -1,6 +1,6 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
-import type { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import type { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 export interface ResourceListSourceDefinition {
   // What an unfiltered but empty view says. Shared with the Home card's tabs, so a set is described the same

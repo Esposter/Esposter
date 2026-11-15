@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { Item } from "@/models/shared/Item";
-import type { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import type { Item } from "#src/models/shared/Item";
+import type { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 
 interface Props {
   items: Extract<Item, { meaning: UiIconMeaning }>[];

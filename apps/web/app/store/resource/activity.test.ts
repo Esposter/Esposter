@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
 import type { Page, ResourceActivityInResource } from "@esposter/db-schema";
 
-import { useActivityStore } from "@/store/resource/activity";
+import { useActivityStore } from "#src/store/resource/activity";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getMessageDateLabel } from "@/util/date/getMessageDateLabel";
+import { getMessageDateLabel } from "#src/util/date/getMessageDateLabel";
 
 interface Props {
   createdAt: Date;

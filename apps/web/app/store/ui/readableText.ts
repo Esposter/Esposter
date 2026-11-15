@@ -1,4 +1,4 @@
-import { READABLE_TEXT_COOKIE_NAME, THEME_COOKIE_OPTIONS } from "@/services/ui/constants";
+import { READABLE_TEXT_COOKIE_NAME, THEME_COOKIE_OPTIONS } from "#src/services/ui/constants";
 
 // Whether voxel's text is in the system's own faces rather than the pixel one. A cookie, as the theme is, so the first
 // Response already renders the reader's choice, and a reader signed out has it too

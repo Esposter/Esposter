@@ -1,4 +1,4 @@
-import type { UiGridKeyboardOptions } from "@/models/ui/UiGridKeyboardOptions";
+import type { UiGridKeyboardOptions } from "#src/models/ui/UiGridKeyboardOptions";
 
 // The keyboard of a WAI-ARIA grid with one tab stop: a key the grid maps to another cell moves the stop there once the
 // Grid has drawn it and focuses it, and every other key passes through. Only a key on the focused cell itself moves

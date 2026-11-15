@@ -1,6 +1,6 @@
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { useBanStore } from "@/store/message/user/ban";
+import { useBanStore } from "#src/store/message/user/ban";
 import { noop, normalizeString } from "@esposter/shared";
 
 export const useReadBans = (roomId: RoomInMessage["id"]) => {

@@ -1,20 +1,20 @@
 import type { Monster } from "#shared/models/dungeons/monster/Monster";
-import type { State } from "@/models/dungeons/state/State";
-import type { PhaserEvents } from "@/models/phaser/PhaserEvents";
+import type { State } from "#src/models/dungeons/state/State";
+import type { PhaserEvents } from "#src/models/phaser/PhaserEvents";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { StateName } from "@/models/dungeons/state/battle/StateName";
-import { getExperienceGain } from "@/services/dungeons/monster/getExperienceGain";
-import { getLevelExperience } from "@/services/dungeons/monster/getLevelExperience";
-import { levelUp } from "@/services/dungeons/monster/levelUp";
-import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
-import { phaserEventEmitter } from "@/services/phaser/phaserEventEmitter";
-import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
-import { useEnemyStore } from "@/store/dungeons/battle/enemy";
-import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
-import { usePlayerStore } from "@/store/dungeons/player";
-import { useSettingsStore } from "@/store/dungeons/settings";
-import { useExperienceBarStore } from "@/store/dungeons/UI/experienceBar";
+import { StateName } from "#src/models/dungeons/state/battle/StateName";
+import { getExperienceGain } from "#src/services/dungeons/monster/getExperienceGain";
+import { getLevelExperience } from "#src/services/dungeons/monster/getLevelExperience";
+import { levelUp } from "#src/services/dungeons/monster/levelUp";
+import { battleStateMachine } from "#src/services/dungeons/scene/battle/battleStateMachine";
+import { phaserEventEmitter } from "#src/services/phaser/phaserEventEmitter";
+import { useBattleDialogStore } from "#src/store/dungeons/battle/dialog";
+import { useEnemyStore } from "#src/store/dungeons/battle/enemy";
+import { useBattlePlayerStore } from "#src/store/dungeons/battle/player";
+import { usePlayerStore } from "#src/store/dungeons/player";
+import { useSettingsStore } from "#src/store/dungeons/settings/index";
+import { useExperienceBarStore } from "#src/store/dungeons/UI/experienceBar";
 import { getSynchronizedFunction } from "@esposter/shared";
 
 export const GainExperience: State<typeof StateName.GainExperience> = {

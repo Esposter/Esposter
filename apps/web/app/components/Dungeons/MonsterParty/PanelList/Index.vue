@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { getGridKey } from "@/services/dungeons/getGridKey";
-import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
+import { getGridKey } from "#src/services/dungeons/getGridKey";
+import { useMonsterPartySceneStore } from "#src/store/dungeons/monsterParty/scene";
 
 const monsterPartySceneStore = useMonsterPartySceneStore();
 const { monstersGrid } = storeToRefs(monsterPartySceneStore);

@@ -1,5 +1,5 @@
-import { DASHBOARD_VIEW_SEPARATOR } from "@/services/dashboard/chart/constants";
-import { setViewEntryToken } from "@/services/dashboard/chart/setViewEntryToken";
+import { DASHBOARD_VIEW_SEPARATOR } from "#src/services/dashboard/chart/constants";
+import { setViewEntryToken } from "#src/services/dashboard/chart/setViewEntryToken";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 

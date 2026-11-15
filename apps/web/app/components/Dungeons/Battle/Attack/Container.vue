@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getAttackPosition } from "@/services/dungeons/scene/battle/attack/getAttackPosition";
+import { getAttackPosition } from "#src/services/dungeons/scene/battle/attack/getAttackPosition";
 import { Container } from "vue-phaserjs";
 
 interface Props {

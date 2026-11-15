@@ -1,7 +1,7 @@
 import type { Dashboard } from "#shared/models/dashboard/data/Dashboard";
 import type { Visual } from "#shared/models/dashboard/data/Visual";
 
-import { getVisualList } from "@/services/dashboard/visual/getVisualList";
+import { getVisualList } from "#src/services/dashboard/visual/getVisualList";
 
 // A removal assigns a new list to the group or the dashboard holding it, never splices it, so a holder of the old array
 // Sees no change

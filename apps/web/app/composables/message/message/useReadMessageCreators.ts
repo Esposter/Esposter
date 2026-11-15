@@ -1,4 +1,4 @@
-import type { ClientMessage } from "@/models/message/ClientMessage";
+import type { ClientMessage } from "#src/models/message/ClientMessage";
 import type { RoomInMessage } from "@esposter/db-schema";
 
 // The creators the messages name, read with the messages that name them: a user for a message a user wrote, an app User

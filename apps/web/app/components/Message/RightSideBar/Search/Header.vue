@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { pluralize } from "#shared/util/text/pluralize";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useSearchMessageStore } from "@/store/message/search";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { useSearchMessageStore } from "#src/store/message/search/index";
 
 const searchMessageStore = useSearchMessageStore();
 const { count, isSearching } = storeToRefs(searchMessageStore);

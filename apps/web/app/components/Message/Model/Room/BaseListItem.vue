@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Item } from "@/models/shared/Item";
+import type { Item } from "#src/models/shared/Item";
 import type { RoomInMessage } from "@esposter/db-schema";
 
 import { RoutePath } from "@esposter/shared";

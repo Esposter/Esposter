@@ -1,9 +1,9 @@
 // @vitest-environment nuxt
-import MessageModelMessageLinkPreviewContainer from "@/components/Message/Model/Message/LinkPreview/Container.vue";
-import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
-import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useDataStore } from "@/store/message/data";
+import MessageModelMessageLinkPreviewContainer from "#src/components/Message/Model/Message/LinkPreview/Container.vue";
+import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
+import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useDataStore } from "#src/store/message/data";
 import { MessageType } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";

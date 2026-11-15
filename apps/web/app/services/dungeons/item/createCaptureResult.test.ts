@@ -1,11 +1,13 @@
 import { MonsterKey } from "#shared/models/dungeons/keys/image/UI/MonsterKey";
 import { Monster } from "#shared/models/dungeons/monster/Monster";
-import { CaptureResult } from "@/models/dungeons/item/CaptureResult";
-import { createCaptureResult } from "@/services/dungeons/item/createCaptureResult";
-import { createRandomNumber } from "@/util/math/random/createRandomNumber";
+import { CaptureResult } from "#src/models/dungeons/item/CaptureResult";
+import { createCaptureResult } from "#src/services/dungeons/item/createCaptureResult";
+import { createRandomNumber } from "#src/util/math/random/createRandomNumber";
 import { describe, expect, test, vi } from "vitest";
 
-vi.mock(import("@/util/math/random/createRandomNumber"), () => ({ createRandomNumber: vi.fn<() => number>(() => 0) }));
+vi.mock(import("#src/util/math/random/createRandomNumber"), () => ({
+  createRandomNumber: vi.fn<() => number>(() => 0),
+}));
 
 const getMonster = (health?: number) => {
   const monster = new Monster(MonsterKey.Iguanignite);

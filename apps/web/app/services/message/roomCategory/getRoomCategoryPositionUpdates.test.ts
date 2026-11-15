@@ -1,5 +1,5 @@
-import { createRoomCategory } from "@/services/message/roomCategory/createRoomCategory.test";
-import { getRoomCategoryPositionUpdates } from "@/services/message/roomCategory/getRoomCategoryPositionUpdates";
+import { createRoomCategory } from "#src/services/message/roomCategory/createRoomCategory.test";
+import { getRoomCategoryPositionUpdates } from "#src/services/message/roomCategory/getRoomCategoryPositionUpdates";
 import { describe, expect, test } from "vitest";
 
 describe(getRoomCategoryPositionUpdates, () => {

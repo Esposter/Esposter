@@ -2,12 +2,12 @@ import type { ResourceInResource } from "@esposter/db-schema";
 
 import { MimeType } from "#shared/models/file/MimeType";
 import { getDatasetTruncation } from "#shared/services/dataset/getDatasetTruncation";
-import { createDatasetCsv } from "@/services/dataset/createDatasetCsv";
-import { DatasetProviderTypeResourceTypeMap } from "@/services/dataset/DatasetProviderTypeResourceTypeMap";
-import { getDatasetErrorMessage } from "@/services/dataset/getDatasetErrorMessage";
-import { getDatasetTruncationText } from "@/services/dataset/getDatasetTruncationText";
-import { createErrorAlert } from "@/services/trpc/createErrorAlert";
-import { useAlertStore } from "@/store/alert";
+import { createDatasetCsv } from "#src/services/dataset/createDatasetCsv";
+import { DatasetProviderTypeResourceTypeMap } from "#src/services/dataset/DatasetProviderTypeResourceTypeMap";
+import { getDatasetErrorMessage } from "#src/services/dataset/getDatasetErrorMessage";
+import { getDatasetTruncationText } from "#src/services/dataset/getDatasetTruncationText";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
+import { useAlertStore } from "#src/store/alert";
 import { downloadFile, getResultAsync, noop } from "@esposter/shared";
 
 // The data a dataset-serving resource shows, as one CSV of the same read a Dashboard binding takes. A capped read

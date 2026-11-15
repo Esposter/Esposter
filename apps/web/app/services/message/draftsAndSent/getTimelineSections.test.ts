@@ -1,4 +1,4 @@
-import { getTimelineSections } from "@/services/message/draftsAndSent/getTimelineSections";
+import { getTimelineSections } from "#src/services/message/draftsAndSent/getTimelineSections";
 import { getZonedDateTime } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 

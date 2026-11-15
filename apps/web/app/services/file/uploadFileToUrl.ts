@@ -1,6 +1,6 @@
-import type { UploadFileToUrlOptions } from "@/models/file/UploadFileToUrlOptions";
+import type { UploadFileToUrlOptions } from "#src/models/file/UploadFileToUrlOptions";
 
-import { StorageStatusError } from "@/models/file/StorageStatusError";
+import { StorageStatusError } from "#src/models/file/StorageStatusError";
 import { Operation } from "@esposter/shared";
 
 // One PUT of the whole file to the url the server presigned for it.

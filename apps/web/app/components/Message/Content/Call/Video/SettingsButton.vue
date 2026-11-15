@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useCallStore } from "@/store/message/room/call";
-import { useMediaStore } from "@/store/message/room/call/media";
-import { useRealtimeStore } from "@/store/message/room/realtime";
-import { useVoiceDeviceSettingsStore } from "@/store/message/user/settings/voiceDevice";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { useCallStore } from "#src/store/message/room/call/index";
+import { useMediaStore } from "#src/store/message/room/call/media";
+import { useRealtimeStore } from "#src/store/message/room/realtime";
+import { useVoiceDeviceSettingsStore } from "#src/store/message/user/settings/voiceDevice";
 
 const callStore = useCallStore();
 const { selectVirtualBackground } = callStore;

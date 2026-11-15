@@ -1,7 +1,7 @@
 import { createNumberColumn } from "#shared/models/resource/sheet/column/createNumberColumn.test";
 import { NumberFormat } from "#shared/models/resource/sheet/column/NumberFormat";
 import { USD_CURRENCY_FORMATTER } from "#shared/services/intl/constants";
-import { formatOptionalColumnValue } from "@/services/resource/sheet/column/formatOptionalColumnValue";
+import { formatOptionalColumnValue } from "#src/services/resource/sheet/column/formatOptionalColumnValue";
 import { describe, expect, test } from "vitest";
 
 describe(formatOptionalColumnValue, () => {

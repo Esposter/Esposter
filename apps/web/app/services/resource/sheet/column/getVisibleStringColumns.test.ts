@@ -1,6 +1,6 @@
 import { NumberColumn } from "#shared/models/resource/sheet/column/NumberColumn";
 import { StringColumn } from "#shared/models/resource/sheet/column/StringColumn";
-import { getVisibleStringColumns } from "@/services/resource/sheet/column/getVisibleStringColumns";
+import { getVisibleStringColumns } from "#src/services/resource/sheet/column/getVisibleStringColumns";
 import { describe, expect, test } from "vitest";
 
 describe(getVisibleStringColumns, () => {

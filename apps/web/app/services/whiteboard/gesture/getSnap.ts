@@ -1,9 +1,9 @@
-import type { SnapGuide } from "@/models/whiteboard/SnapGuide";
-import type { SnapResult } from "@/models/whiteboard/SnapResult";
+import type { SnapGuide } from "#src/models/whiteboard/SnapGuide";
+import type { SnapResult } from "#src/models/whiteboard/SnapResult";
 import type { Bounds, PositionedDocument } from "vue-block-editor-headless";
 
-import { SnapAxis } from "@/models/whiteboard/SnapAxis";
-import { ALIGNMENT_TOLERANCE, SNAP_DISTANCE } from "@/services/whiteboard/gesture/constants";
+import { SnapAxis } from "#src/models/whiteboard/SnapAxis";
+import { ALIGNMENT_TOLERANCE, SNAP_DISTANCE } from "#src/services/whiteboard/gesture/constants";
 import { checkIsResizablePositionedElement, getElementBounds } from "vue-block-editor-headless";
 
 // The start and the size a box covers along one axis

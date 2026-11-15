@@ -1,6 +1,6 @@
-import type { EmojiIndex } from "@/models/message/emoji/EmojiIndex";
+import type { EmojiIndex } from "#src/models/message/emoji/EmojiIndex";
 
-import { createEmojiIndex } from "@/services/message/emoji/createEmojiIndex";
+import { createEmojiIndex } from "#src/services/message/emoji/createEmojiIndex";
 
 let emojiIndex: EmojiIndex | undefined;
 // Built on first use rather than at import, so nothing pays for it on a page with no emoji surface, and once

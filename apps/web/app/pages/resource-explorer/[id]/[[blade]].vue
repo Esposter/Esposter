@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { PageMarkType } from "#shared/models/app/PageMarkType";
-import { ResourceBladeType } from "@/models/resource/ResourceBladeType";
-import { checkIsUuidRouteId } from "@/services/router/checkIsUuidRouteId";
-import { useResourceStore } from "@/store/resource";
-import { useFavoriteStore } from "@/store/resource/favorite";
-import { getRouteParam } from "@/util/router/getRouteParam";
+import { ResourceBladeType } from "#src/models/resource/ResourceBladeType";
+import { checkIsUuidRouteId } from "#src/services/router/checkIsUuidRouteId";
+import { useFavoriteStore } from "#src/store/resource/favorite";
+import { useResourceStore } from "#src/store/resource/index";
+import { getRouteParam } from "#src/util/router/getRouteParam";
 
 // Key by id only so switching blades reuses this page (the left resource list stays mounted instead of refetching);
 // The page still remounts when the id changes. Per-type blade slugs need the loaded resource's type, so the blade

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { UiListItem } from "@/models/ui/UiListItem";
+import type { UiListItem } from "#src/models/ui/UiListItem";
 import type { CallParticipant } from "@esposter/db-schema";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useCallStore } from "@/store/message/room/call";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { useCallStore } from "#src/store/message/room/call/index";
 
 interface Props {
   participant: CallParticipant;

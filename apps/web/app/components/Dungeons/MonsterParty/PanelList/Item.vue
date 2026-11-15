@@ -2,9 +2,9 @@
 import type { Monster } from "#shared/models/dungeons/monster/Monster";
 
 import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
-import { HealthLabelTextStyle } from "@/assets/dungeons/styles/HealthLabelTextStyle";
-import { BarType } from "@/models/dungeons/UI/bar/BarType";
-import { prettify } from "@/util/text/prettify";
+import { HealthLabelTextStyle } from "#src/assets/dungeons/styles/HealthLabelTextStyle";
+import { BarType } from "#src/models/dungeons/UI/bar/BarType";
+import { prettify } from "#src/util/text/prettify";
 import { checkIsDeepEqual } from "@esposter/shared";
 import { Input } from "phaser";
 import { Container, Image, Text } from "vue-phaserjs";

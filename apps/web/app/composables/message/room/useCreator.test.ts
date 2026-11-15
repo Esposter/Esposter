@@ -1,10 +1,10 @@
 // @vitest-environment nuxt
-import { useCreator } from "@/composables/message/room/useCreator";
-import { UNKNOWN_USER_NAME } from "@/services/message/constants";
-import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
-import { createUser } from "@/services/message/user/createUser.test";
-import { useUserStore } from "@/store/message/user";
-import { useAppUserStore } from "@/store/message/user/appUser";
+import { useCreator } from "#src/composables/message/room/useCreator";
+import { UNKNOWN_USER_NAME } from "#src/services/message/constants";
+import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
+import { createUser } from "#src/services/message/user/createUser.test";
+import { useAppUserStore } from "#src/store/message/user/appUser";
+import { useUserStore } from "#src/store/message/user/index";
 import { MessageType } from "@esposter/db-schema";
 import { v7 } from "uuid";
 import { beforeEach, describe, expect, test } from "vitest";

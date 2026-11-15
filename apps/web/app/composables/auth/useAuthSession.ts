@@ -1,4 +1,4 @@
-import { authClient } from "@/services/auth/authClient";
+import { authClient } from "#src/services/auth/authClient";
 
 // The session as server rendering reads it, through a fetch shaped like `useFetch` so the request's cookies reach it
 // @TODO: no upstream issue — better-auth's `SessionFetch` is one plain signature, which Nuxt 5's route-typed `useFetch`

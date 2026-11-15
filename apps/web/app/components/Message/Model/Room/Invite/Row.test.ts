@@ -1,11 +1,11 @@
 // @vitest-environment nuxt
 import type { InviteInMessageWithCreator } from "@esposter/db-schema";
 
-import MessageModelRoomInviteEditButton from "@/components/Message/Model/Room/Invite/EditButton.vue";
-import MessageModelRoomInviteRow from "@/components/Message/Model/Room/Invite/Row.vue";
-import { createUser } from "@/services/message/user/createUser.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useRoleStore } from "@/store/message/room/role";
+import MessageModelRoomInviteEditButton from "#src/components/Message/Model/Room/Invite/EditButton.vue";
+import MessageModelRoomInviteRow from "#src/components/Message/Model/Room/Invite/Row.vue";
+import { createUser } from "#src/services/message/user/createUser.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useRoleStore } from "#src/store/message/room/role";
 import { RoomPermission } from "@esposter/db-schema";
 import { SECRET_TOKEN_LENGTH } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";

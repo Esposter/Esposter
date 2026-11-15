@@ -1,4 +1,4 @@
-import { ThemeMode } from "@/models/ui/ThemeMode";
+import { ThemeMode } from "#src/models/ui/ThemeMode";
 
 export const ThemeModeTitleMap = {
   [ThemeMode.Dark]: "Dark",

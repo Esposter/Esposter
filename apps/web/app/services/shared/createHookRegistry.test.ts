@@ -1,4 +1,4 @@
-import { createHookRegistry } from "@/services/shared/createHookRegistry";
+import { createHookRegistry } from "#src/services/shared/createHookRegistry";
 import { noop } from "@esposter/shared";
 import { afterEach, describe, expect, test, vi } from "vitest";
 

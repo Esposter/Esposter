@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { getChestPosition } from "@/services/dungeons/chest/getChestPosition";
-import { getPositionId } from "@/services/dungeons/direction/getPositionId";
-import { useWorldSceneStore } from "@/store/dungeons/world/scene";
+import { getChestPosition } from "#src/services/dungeons/chest/getChestPosition";
+import { getPositionId } from "#src/services/dungeons/direction/getPositionId";
+import { useWorldSceneStore } from "#src/store/dungeons/world/scene";
 
 const worldSceneStore = useWorldSceneStore();
 const { tilemap, worldData } = storeToRefs(worldSceneStore);

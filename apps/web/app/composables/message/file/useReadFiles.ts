@@ -1,6 +1,6 @@
 import type { FileEntity, RoomInMessage } from "@esposter/db-schema";
 
-import { useFileStore } from "@/store/message/file";
+import { useFileStore } from "#src/store/message/file/index";
 import { READ_PRESIGNED_URL_REFRESH_INTERVAL_MS } from "@esposter/db-schema";
 
 export const useReadFiles = () => {

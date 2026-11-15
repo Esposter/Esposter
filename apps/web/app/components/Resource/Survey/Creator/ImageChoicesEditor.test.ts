@@ -1,14 +1,14 @@
 // @vitest-environment nuxt
 import type { SurveyDocument } from "vue-survey-engine-headless";
 
-import { getButtonByText } from "@/components/Resource/Survey/Creator/getButtonByText.test";
-import ResourceSurveyCreatorImageChoicesEditor from "@/components/Resource/Survey/Creator/ImageChoicesEditor.vue";
-import UiConfirmDialog from "@/components/Ui/ConfirmDialog.vue";
-import UiFileField from "@/components/Ui/FileField.vue";
-import UiTextField from "@/components/Ui/TextField.vue";
-import { useSurveyFiles } from "@/composables/survey/useSurveyFiles";
-import { useAlertStore } from "@/store/alert";
-import { useSurveyCreatorStore } from "@/store/survey/creator";
+import { getButtonByText } from "#src/components/Resource/Survey/Creator/getButtonByText.test";
+import ResourceSurveyCreatorImageChoicesEditor from "#src/components/Resource/Survey/Creator/ImageChoicesEditor.vue";
+import UiConfirmDialog from "#src/components/Ui/ConfirmDialog.vue";
+import UiFileField from "#src/components/Ui/FileField.vue";
+import UiTextField from "#src/components/Ui/TextField.vue";
+import { useSurveyFiles } from "#src/composables/survey/useSurveyFiles";
+import { useAlertStore } from "#src/store/alert";
+import { useSurveyCreatorStore } from "#src/store/survey/creator";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
@@ -22,8 +22,8 @@ const { deleteFile, uploadFile } = vi.hoisted(() => ({
   uploadFile: vi.fn<(file: File) => Promise<string>>(),
 }));
 
-vi.mock(import("@/composables/resource/useUploadResourceFile"), () => ({ useUploadResourceFile: () => uploadFile }));
-vi.mock(import("@/composables/resource/useDeleteResourceFile"), () => ({ useDeleteResourceFile: () => deleteFile }));
+vi.mock(import("#src/composables/resource/useUploadResourceFile"), () => ({ useUploadResourceFile: () => uploadFile }));
+vi.mock(import("#src/composables/resource/useDeleteResourceFile"), () => ({ useDeleteResourceFile: () => deleteFile }));
 
 // A survey whose one page holds an image picker, offering a choice for each of the given pictures
 const createDocument = (imageLinks: string[]) =>

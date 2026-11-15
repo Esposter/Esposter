@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { listVisuals } from "#shared/services/dashboard/listVisuals";
 import { pluralize } from "#shared/util/text/pluralize";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useVisualStore } from "@/store/dashboard/visual";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { useVisualStore } from "#src/store/dashboard/visual";
 
 const visualStore = useVisualStore();
 const { createVisual } = visualStore;

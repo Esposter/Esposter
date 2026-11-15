@@ -1,8 +1,8 @@
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 
 import { renderWebpageDocument } from "#shared/services/pageBuilder/renderWebpageDocument";
-import { sanitizeFilename } from "@/services/app/sanitizeFilename";
-import { absolutizeResourceAssetUrls } from "@/services/resource/absolutizeResourceAssetUrls";
+import { sanitizeFilename } from "#src/services/app/sanitizeFilename";
+import { absolutizeResourceAssetUrls } from "#src/services/resource/absolutizeResourceAssetUrls";
 import { downloadFile } from "@esposter/shared";
 
 // The page as the editor holds it, rendered in the browser by the same pure function the server bakes a published page

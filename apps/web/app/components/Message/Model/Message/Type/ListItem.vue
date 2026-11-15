@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { MessageComponentProps } from "@/models/message/MessageComponentProps";
+import type { MessageComponentProps } from "#src/models/message/MessageComponentProps";
 
 interface Props extends Pick<MessageComponentProps, "isPreview"> {
   active?: boolean;

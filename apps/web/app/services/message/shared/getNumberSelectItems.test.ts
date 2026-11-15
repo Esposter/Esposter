@@ -1,5 +1,5 @@
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { getNumberSelectItems } from "@/services/message/shared/getNumberSelectItems";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { getNumberSelectItems } from "#src/services/message/shared/getNumberSelectItems";
 import { describe, expect, test } from "vitest";
 
 describe(getNumberSelectItems, () => {

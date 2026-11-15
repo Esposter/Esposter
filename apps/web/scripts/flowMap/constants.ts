@@ -1,4 +1,4 @@
-import { WEB_DIRECTORY } from "@@/scripts/constants";
+import { WEB_DIRECTORY } from "#scripts/constants";
 import { resolve } from "node:path";
 
 export const COMPONENTS_DIRECTORY = "app/components";
@@ -20,12 +20,7 @@ export const ROUTE_PARAMETER_PLACEHOLDER = "placeholder";
 export const SHELL_ENTRY_PATTERNS = ["app/App.vue", "app/plugins/**/*.ts"];
 // Only client code navigates: an import reaching the server is a type, and says nothing about where a reader can go
 export const CLIENT_DIRECTORIES = ["app/", "shared/"];
-export const SOURCE_ALIAS_DIRECTORY_MAP: Record<string, string> = {
-  "#shared/": "shared/",
-  "@/": "app/",
-  "@@/": "",
-  "~/": "app/",
-};
+export const SOURCE_ALIAS_DIRECTORY_MAP: Record<string, string> = { "#shared/": "shared/", "#src/": "app/" };
 export const SOURCE_EXTENSIONS = ["", ".ts", ".vue", "/index.ts"];
 
 export const CASE_BOUNDARY_REGEX = /(?<=[\da-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])/u;

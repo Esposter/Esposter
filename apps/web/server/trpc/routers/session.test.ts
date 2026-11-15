@@ -1,16 +1,16 @@
 import type { Context } from "#server/trpc/context";
-import type { TRPCRouter } from "#server/trpc/routers";
+import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 import type { Session } from "better-auth";
 
 import { createMockSession } from "#server/auth.test";
-import { createCallerFactory } from "#server/trpc";
 import {
   createMockContext,
   getMockRevokeOtherSessions,
   getMockRevokeSession,
   getMockSession,
 } from "#server/trpc/context.test";
+import { createCallerFactory } from "#server/trpc/index";
 import { sessionRouter } from "#server/trpc/routers/session";
 import { sessionsInAuth } from "@esposter/db-schema";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";

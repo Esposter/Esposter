@@ -1,4 +1,4 @@
-import { getSurveyAnswerRows } from "@/services/resource/survey/getSurveyAnswerRows";
+import { getSurveyAnswerRows } from "#src/services/resource/survey/getSurveyAnswerRows";
 import { describe, expect, test } from "vitest";
 
 describe("getSurveyAnswerRows", () => {

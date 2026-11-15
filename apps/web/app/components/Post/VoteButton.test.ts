@@ -1,9 +1,9 @@
 // @vitest-environment nuxt
 import type { LikeInPost } from "@esposter/db-schema";
 
-import PostVoteButton from "@/components/Post/VoteButton.vue";
-import { createPost } from "@/services/post/createPost.test";
-import { useLikeStore } from "@/store/post/like";
+import PostVoteButton from "#src/components/Post/VoteButton.vue";
+import { createPost } from "#src/services/post/createPost.test";
+import { useLikeStore } from "#src/store/post/like";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { afterEach, describe, expect, test, vi } from "vitest";
 

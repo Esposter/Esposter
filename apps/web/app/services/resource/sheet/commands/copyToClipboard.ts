@@ -1,11 +1,11 @@
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
-import type { CopyToClipboardOptions } from "@/models/resource/sheet/commands/CopyToClipboardOptions";
+import type { CopyToClipboardOptions } from "#src/models/resource/sheet/commands/CopyToClipboardOptions";
 
 import { MimeType } from "#shared/models/file/MimeType";
-import { getVisibleColumns } from "@/services/resource/sheet/column/getVisibleColumns";
-import { getCellTextRows } from "@/services/resource/sheet/commands/getCellTextRows";
-import { serializeToHtml } from "@/services/resource/sheet/commands/serializeToHtml";
-import { serializeToTsv } from "@/services/resource/sheet/commands/serializeToTsv";
+import { getVisibleColumns } from "#src/services/resource/sheet/column/getVisibleColumns";
+import { getCellTextRows } from "#src/services/resource/sheet/commands/getCellTextRows";
+import { serializeToHtml } from "#src/services/resource/sheet/commands/serializeToHtml";
+import { serializeToTsv } from "#src/services/resource/sheet/commands/serializeToTsv";
 
 export const copyToClipboard = async (dataSource: DataSource, options: CopyToClipboardOptions = {}) => {
   const { isIncludingHeaders = true, rowIds } = options;

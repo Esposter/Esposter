@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { useWhiteboardSelectionOperations } from "@/composables/whiteboard/useWhiteboardSelectionOperations";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { StackMove } from "@/models/whiteboard/StackMove";
-import { getStackOperations } from "@/services/whiteboard/arrange/getStackOperations";
+import { useWhiteboardSelectionOperations } from "#src/composables/whiteboard/useWhiteboardSelectionOperations";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { StackMove } from "#src/models/whiteboard/StackMove";
+import { getStackOperations } from "#src/services/whiteboard/arrange/getStackOperations";
 
 // The stacking of the selection, which is the one element when one is selected: one step forward or back, or to the front or the back. Each is one
 // Commit, so one undo step, and each is disabled when the selection cannot move that way

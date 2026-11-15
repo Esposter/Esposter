@@ -1,5 +1,5 @@
 import { Direction } from "#shared/models/dungeons/data/player/Direction";
-import { DirectionToGridDirectionMap } from "@/services/dungeons/direction/DirectionToGridDirectionMap";
+import { DirectionToGridDirectionMap } from "#src/services/dungeons/direction/DirectionToGridDirectionMap";
 import { describe, expect, test } from "vitest";
 
 describe("directionToGridDirectionMap", () => {

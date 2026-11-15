@@ -1,4 +1,4 @@
-import { formatDuration } from "@/util/date/formatDuration";
+import { formatDuration } from "#src/util/date/formatDuration";
 import { describe, expect, test } from "vitest";
 
 describe(formatDuration, () => {

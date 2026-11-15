@@ -4,21 +4,21 @@ import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument
 
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
-import { usePageBuilderClipboard } from "@/composables/pageBuilder/usePageBuilderClipboard";
-import { usePageBuilderMoves } from "@/composables/pageBuilder/usePageBuilderMoves";
-import { PageBuilderEditor } from "@/models/pageBuilder/PageBuilderEditor";
-import { CANNOT_GO_HERE_MESSAGE } from "@/services/pageBuilder/constants";
-import { TEST_ROOT_TEXT_ID, TEST_TEXT_CONTENT } from "@/services/pageBuilder/constants.test";
-import { refuseClipboardPaste } from "@/services/pageBuilder/refuseClipboardPaste";
-import { serializeClipboardNodes } from "@/services/pageBuilder/serializeClipboardNodes";
-import { webpageKind } from "@/services/pageBuilder/webpageKind";
-import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
-import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
+import { usePageBuilderClipboard } from "#src/composables/pageBuilder/usePageBuilderClipboard";
+import { usePageBuilderMoves } from "#src/composables/pageBuilder/usePageBuilderMoves";
+import { PageBuilderEditor } from "#src/models/pageBuilder/PageBuilderEditor";
+import { CANNOT_GO_HERE_MESSAGE } from "#src/services/pageBuilder/constants";
+import { TEST_ROOT_TEXT_ID, TEST_TEXT_CONTENT } from "#src/services/pageBuilder/constants.test";
+import { refuseClipboardPaste } from "#src/services/pageBuilder/refuseClipboardPaste";
+import { serializeClipboardNodes } from "#src/services/pageBuilder/serializeClipboardNodes";
+import { webpageKind } from "#src/services/pageBuilder/webpageKind";
+import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
+import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
 import { createPinia, setActivePinia } from "pinia";
 import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("@/services/pageBuilder/refuseClipboardPaste"), async (importOriginal) => {
+vi.mock(import("#src/services/pageBuilder/refuseClipboardPaste"), async (importOriginal) => {
   const { refuseClipboardPaste: original } = await importOriginal();
   return { refuseClipboardPaste: vi.fn<typeof original>(original) };
 });

@@ -3,8 +3,8 @@ import type { DeleteSearchHistoryInput } from "#shared/models/db/searchHistory/D
 import type { UpdateSearchHistoryInput } from "#shared/models/db/searchHistory/UpdateSearchHistoryInput";
 import type { SearchHistoryInMessage } from "@esposter/db-schema";
 
-import { createOperationData } from "@/services/shared/createOperationData";
-import { useRoomStore } from "@/store/message/room";
+import { createOperationData } from "#src/services/shared/createOperationData";
+import { useRoomStore } from "#src/store/message/room/index";
 import { DatabaseEntityType } from "@esposter/db-schema";
 
 export const useSearchHistoryStore = defineStore("message/search/history", () => {

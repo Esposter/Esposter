@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import type { ComposerTarget } from "@/models/message/ComposerTarget";
+import type { ComposerTarget } from "#src/models/message/ComposerTarget";
 
-import { MessageInputCommands } from "@/services/message/input/MessageInputCommands";
-import { useLayoutStore } from "@/store/layout";
-import { useDataStore } from "@/store/message/data";
-import { useInputStore } from "@/store/message/input";
-import { useReplyStore } from "@/store/message/input/reply";
-import { useSlashCommandStore } from "@/store/message/input/slashCommand";
-import { useRoomStore } from "@/store/message/room";
+import { MessageInputCommands } from "#src/services/message/input/MessageInputCommands";
+import { useLayoutStore } from "#src/store/layout";
+import { useDataStore } from "#src/store/message/data";
+import { useInputStore } from "#src/store/message/input/index";
+import { useReplyStore } from "#src/store/message/input/reply";
+import { useSlashCommandStore } from "#src/store/message/input/slashCommand";
+import { useRoomStore } from "#src/store/message/room/index";
 
 // Discord's phone app waits for a tap before it raises the keyboard over the room, where a desktop types at once
 const layoutStore = useLayoutStore();

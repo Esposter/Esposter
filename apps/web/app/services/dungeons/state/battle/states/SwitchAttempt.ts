@@ -1,13 +1,13 @@
-import type { State } from "@/models/dungeons/state/State";
+import type { State } from "#src/models/dungeons/state/State";
 
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { StateName } from "@/models/dungeons/state/battle/StateName";
-import { checkIsMonsterFainted } from "@/services/dungeons/monster/checkIsMonsterFainted";
-import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
-import { createPhaserSubscriptions } from "@/services/phaser/createPhaserSubscriptions";
-import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
-import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
-import { usePlayerStore } from "@/store/dungeons/player";
+import { SceneKey } from "#src/models/dungeons/keys/SceneKey";
+import { StateName } from "#src/models/dungeons/state/battle/StateName";
+import { checkIsMonsterFainted } from "#src/services/dungeons/monster/checkIsMonsterFainted";
+import { battleStateMachine } from "#src/services/dungeons/scene/battle/battleStateMachine";
+import { createPhaserSubscriptions } from "#src/services/phaser/createPhaserSubscriptions";
+import { useBattleDialogStore } from "#src/store/dungeons/battle/dialog";
+import { useBattlePlayerStore } from "#src/store/dungeons/battle/player";
+import { usePlayerStore } from "#src/store/dungeons/player";
 import { getSynchronizedFunction } from "@esposter/shared";
 
 const { subscribe, unsubscribeAll } = createPhaserSubscriptions();

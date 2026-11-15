@@ -1,5 +1,5 @@
-import { resetIndexedDb } from "@/services/cache/indexedDb/openIndexedDb";
-import { createMessage } from "@/services/message/message/createMessage.test";
+import { resetIndexedDb } from "#src/services/cache/indexedDb/openIndexedDb";
+import { createMessage } from "#src/services/message/message/createMessage.test";
 import { v7 } from "uuid";
 import { afterEach, describe } from "vitest";
 

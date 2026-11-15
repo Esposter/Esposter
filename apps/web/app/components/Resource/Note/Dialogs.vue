@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { renderNoteHtml } from "#shared/services/resource/note/renderNoteHtml";
-import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
-import { UiDialogSize } from "@/models/ui/UiDialogSize";
-import { ResourceContentHookMap } from "@/services/resource/ResourceContentHookMap";
-import { useResourceStore } from "@/store/resource";
-import { useNoteStore } from "@/store/resource/note";
-import { useNotePortableDialogStore } from "@/store/resource/note/portableDialog";
+import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
+import { UiDialogSize } from "#src/models/ui/UiDialogSize";
+import { ResourceContentHookMap } from "#src/services/resource/ResourceContentHookMap";
+import { useResourceStore } from "#src/store/resource/index";
+import { useNoteStore } from "#src/store/resource/note/index";
+import { useNotePortableDialogStore } from "#src/store/resource/note/portableDialog";
 import { ResourceType } from "@esposter/db-schema";
 
 const notePortableDialogStore = useNotePortableDialogStore();

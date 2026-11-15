@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { SettingsContentMap } from "@/services/message/settings/SettingsContentMap";
+import type { SettingsContentMap } from "#src/services/message/settings/SettingsContentMap";
 
-import { SettingsType } from "@/models/message/room/SettingsType";
-import { useRoomStore } from "@/store/message/room";
-import { useRoomDialogStore } from "@/store/message/room/dialog";
+import { SettingsType } from "#src/models/message/room/SettingsType";
+import { useRoomDialogStore } from "#src/store/message/room/dialog";
+import { useRoomStore } from "#src/store/message/room/index";
 
 const roomDialogStore = useRoomDialogStore();
 const { settingsRoomId } = storeToRefs(roomDialogStore);

@@ -1,4 +1,4 @@
-import { BREAKPOINTS_NAMESPACE } from "@/services/ui/constants";
+import { BREAKPOINTS_NAMESPACE } from "#src/services/ui/constants";
 import { useBreakpoints } from "@vuetify/v0";
 
 // The screen's width and which breakpoints it is past, read once for the whole app. The server has no screen, so it

@@ -1,9 +1,9 @@
-import type { TRPCRouter } from "#server/trpc/routers";
+import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { BlueprintResource } from "#shared/models/resource/blueprint/BlueprintResource";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
-import { createCallerFactory } from "#server/trpc";
+import { createCallerFactory } from "#server/trpc/index";
 import { blueprintRouter } from "#server/trpc/routers/blueprint";
 import { programRouter } from "#server/trpc/routers/program";
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";

@@ -1,6 +1,6 @@
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { useUserToRoomStore } from "@/store/message/room/userToRoom";
+import { useUserToRoomStore } from "#src/store/message/room/userToRoom";
 
 export const useReadMyUsersToRooms = () => {
   const { $trpc } = useNuxtApp();

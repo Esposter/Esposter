@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { SurveyMultipleTextItem } from "vue-survey-engine-headless";
 
-import { toSurveyMultipleTextItemFromText } from "@/services/resource/survey/toSurveyMultipleTextItemFromText";
+import { toSurveyMultipleTextItemFromText } from "#src/services/resource/survey/toSurveyMultipleTextItemFromText";
 import { SurveyMultipleTextItemInputType, surveyMultipleTextItemSchema } from "vue-survey-engine-headless";
 
 interface Props {

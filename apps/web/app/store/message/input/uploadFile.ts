@@ -1,11 +1,11 @@
-import type { ComposerTarget } from "@/models/message/ComposerTarget";
-import type { UploadFileUrl } from "@/models/message/file/UploadFileUrl";
+import type { ComposerTarget } from "#src/models/message/ComposerTarget";
+import type { UploadFileUrl } from "#src/models/message/file/UploadFileUrl";
 import type { FileEntity } from "@esposter/db-schema";
 
-import { MessageHook } from "@/models/message/MessageHook";
-import { getComposerKey } from "@/services/message/composer/getComposerKey";
-import { SPOILER_FILENAME_PREFIX } from "@/services/message/file/constants";
-import { MessageHookMap } from "@/services/message/MessageHookMap";
+import { MessageHook } from "#src/models/message/MessageHook";
+import { getComposerKey } from "#src/services/message/composer/getComposerKey";
+import { SPOILER_FILENAME_PREFIX } from "#src/services/message/file/constants";
+import { MessageHookMap } from "#src/services/message/MessageHookMap";
 import { getResultAsync, noop } from "@esposter/shared";
 
 export const useUploadFileStore = defineStore("message/input/uploadFile", () => {

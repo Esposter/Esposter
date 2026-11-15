@@ -1,4 +1,4 @@
-import type { ClientMessage } from "@/models/message/ClientMessage";
+import type { ClientMessage } from "#src/models/message/ClientMessage";
 import type { FileEntity } from "@esposter/db-schema";
 
 // The media viewer's target: a file card writes the id it was clicked on, and the one mounted viewer opens over

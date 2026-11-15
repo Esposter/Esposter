@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { PdfOutlineEntry } from "@/services/pdf/flattenOutline";
+import type { PdfOutlineEntry } from "#src/services/pdf/flattenOutline";
 import type { PdfViewerState } from "vue-pdfjs-headless";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { flattenOutline } from "@/services/pdf/flattenOutline";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { flattenOutline } from "#src/services/pdf/flattenOutline";
 
 interface Props {
   viewer: PdfViewerState;

@@ -2,8 +2,8 @@
 import type { Dataset } from "#shared/models/dataset/Dataset";
 
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
-import { useEmailExportDialogStore } from "@/store/emailEditor/exportDialog";
-import { useResourceStore } from "@/store/resource";
+import { useEmailExportDialogStore } from "#src/store/emailEditor/exportDialog";
+import { useResourceStore } from "#src/store/resource/index";
 import { describe, expect, test } from "vitest";
 
 describe(useEmailExportDialogStore, () => {

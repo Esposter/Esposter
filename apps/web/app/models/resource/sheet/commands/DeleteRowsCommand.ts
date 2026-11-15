@@ -1,5 +1,5 @@
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
-import type { IndexedRow } from "@/models/resource/sheet/commands/IndexedRow";
+import type { IndexedRow } from "#src/models/resource/sheet/commands/IndexedRow";
 
 import { ADataSourceCommand } from "#shared/models/resource/sheet/commands/ADataSourceCommand";
 import { CommandType } from "#shared/models/resource/sheet/commands/CommandType";

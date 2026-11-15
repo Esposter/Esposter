@@ -1,6 +1,6 @@
-import type { SelectItemCategoryDefinition } from "@/models/shared/SelectItemCategoryDefinition";
+import type { SelectItemCategoryDefinition } from "#src/models/shared/SelectItemCategoryDefinition";
 
-import { ResourceStatusFilter } from "@/models/resource/list/ResourceStatusFilter";
+import { ResourceStatusFilter } from "#src/models/resource/list/ResourceStatusFilter";
 
 export const ResourceStatusFilterItems: SelectItemCategoryDefinition<"" | ResourceStatusFilter>[] = [
   { title: "All", value: "" },

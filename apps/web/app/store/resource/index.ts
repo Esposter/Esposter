@@ -1,6 +1,6 @@
 import type { ResourceContent } from "#shared/models/resource/ResourceContent";
-import type { ContentBaseline } from "@/models/resource/ContentBaseline";
-import type { ResourceSave } from "@/models/resource/ResourceSave";
+import type { ContentBaseline } from "#src/models/resource/ContentBaseline";
+import type { ResourceSave } from "#src/models/resource/ResourceSave";
 import type {
   ResourceInResource,
   ResourcePublicationInResource,
@@ -15,19 +15,19 @@ import { ResourceOperationTitleMap } from "#shared/services/notification/Resourc
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
 import { MAX_RESOURCE_CONTENT_SIZE, STALE_CONTENT_VERSION_ERROR_MESSAGE } from "#shared/services/resource/constants";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { CacheTag } from "@/models/cache/CacheTag";
-import { ResourceSaveState } from "@/models/resource/ResourceSaveState";
-import { MutationStatus } from "@/models/shared/MutationStatus";
-import { getFileSize } from "@/services/file/getFileSize";
-import { copyLinkToClipboard } from "@/services/resource/copyLinkToClipboard";
-import { readStoredResourceContent } from "@/services/resource/readStoredResourceContent";
-import { ResourceContentHookMap } from "@/services/resource/ResourceContentHookMap";
-import { saveResourceContentDelta } from "@/services/resource/saveResourceContentDelta";
-import { saveStagedResourceContent } from "@/services/resource/saveStagedResourceContent";
-import { getSha256Hex } from "@/services/shared/getSha256Hex";
-import { getRequestBodyByteLength } from "@/services/trpc/getRequestBodyByteLength";
-import { useNotificationStore } from "@/store/notification";
-import { getRouteParam } from "@/util/router/getRouteParam";
+import { CacheTag } from "#src/models/cache/CacheTag";
+import { ResourceSaveState } from "#src/models/resource/ResourceSaveState";
+import { MutationStatus } from "#src/models/shared/MutationStatus";
+import { getFileSize } from "#src/services/file/getFileSize";
+import { copyLinkToClipboard } from "#src/services/resource/copyLinkToClipboard";
+import { readStoredResourceContent } from "#src/services/resource/readStoredResourceContent";
+import { ResourceContentHookMap } from "#src/services/resource/ResourceContentHookMap";
+import { saveResourceContentDelta } from "#src/services/resource/saveResourceContentDelta";
+import { saveStagedResourceContent } from "#src/services/resource/saveStagedResourceContent";
+import { getSha256Hex } from "#src/services/shared/getSha256Hex";
+import { getRequestBodyByteLength } from "#src/services/trpc/getRequestBodyByteLength";
+import { useNotificationStore } from "#src/store/notification";
+import { getRouteParam } from "#src/util/router/getRouteParam";
 import { NotificationSeverity } from "@esposter/db-schema";
 import { noop, RoutePath, toRawDeep, withFinalizerAsync } from "@esposter/shared";
 

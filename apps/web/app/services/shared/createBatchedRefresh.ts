@@ -1,5 +1,5 @@
-import { BATCHED_REFRESH_BASE_DELAY_MS, BATCHED_REFRESH_MAX_DELAY_MS } from "@/services/shared/constants";
-import { createSingleFlight } from "@/services/shared/createSingleFlight";
+import { BATCHED_REFRESH_BASE_DELAY_MS, BATCHED_REFRESH_MAX_DELAY_MS } from "#src/services/shared/constants";
+import { createSingleFlight } from "#src/services/shared/createSingleFlight";
 import { createExponentialBackoff, getResultAsync, getSynchronizedFunction } from "@esposter/shared";
 
 // A server that stays down is not asked forever: past this many retries in a row the keys stay dirty until the next mark

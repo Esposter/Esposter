@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { useRoleStore } from "@/store/message/room/role";
-import { useRoleDialogStore } from "@/store/message/room/roleDialog";
+import { useRoleStore } from "#src/store/message/room/role";
+import { useRoleDialogStore } from "#src/store/message/room/roleDialog";
 
 interface Props {
   roomId: RoomInMessage["id"];

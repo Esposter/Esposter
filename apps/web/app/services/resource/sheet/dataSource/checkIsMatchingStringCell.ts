@@ -1,5 +1,5 @@
-import type { ColumnFilterPredicate } from "@/models/resource/sheet/column/ColumnFilterPredicate";
-import type { StringColumnFilter } from "@/models/resource/sheet/column/StringColumnFilter";
+import type { ColumnFilterPredicate } from "#src/models/resource/sheet/column/ColumnFilterPredicate";
+import type { StringColumnFilter } from "#src/models/resource/sheet/column/StringColumnFilter";
 
 // A filter variant may answer to more than one ColumnType (one string filter covers Date and String), so the
 // Variant is selected by whether its own type union contains the key rather than by an exact match

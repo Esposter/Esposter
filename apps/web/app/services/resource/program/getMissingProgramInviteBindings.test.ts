@@ -1,5 +1,5 @@
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
-import { getMissingProgramInviteBindings } from "@/services/resource/program/getMissingProgramInviteBindings";
+import { getMissingProgramInviteBindings } from "#src/services/resource/program/getMissingProgramInviteBindings";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 

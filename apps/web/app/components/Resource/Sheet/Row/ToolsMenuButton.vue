@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { Item } from "@/models/shared/Item";
+import type { Item } from "#src/models/shared/Item";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { NullStrategyItemCategoryDefinitions } from "@/services/resource/sheet/commands/NullStrategyItemCategoryDefinitions";
-import { StringTransformationItemCategoryDefinitions } from "@/services/resource/sheet/commands/StringTransformationItemCategoryDefinitions";
-import { useOutlierStore } from "@/store/resource/sheet/outlier";
-import { useRowStore } from "@/store/resource/sheet/row";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { NullStrategyItemCategoryDefinitions } from "#src/services/resource/sheet/commands/NullStrategyItemCategoryDefinitions";
+import { StringTransformationItemCategoryDefinitions } from "#src/services/resource/sheet/commands/StringTransformationItemCategoryDefinitions";
+import { useOutlierStore } from "#src/store/resource/sheet/outlier";
+import { useRowStore } from "#src/store/resource/sheet/row";
 
 const outlierStore = useOutlierStore();
 const { isOutlierHighlightEnabled } = storeToRefs(outlierStore);

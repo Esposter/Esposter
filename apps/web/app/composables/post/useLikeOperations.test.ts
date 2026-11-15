@@ -1,10 +1,10 @@
 // @vitest-environment nuxt
 import type { LikeInPost } from "@esposter/db-schema";
 
-import { useLikeOperations } from "@/composables/post/useLikeOperations";
-import { createPost } from "@/services/post/createPost.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { usePostStore } from "@/store/post";
+import { useLikeOperations } from "#src/composables/post/useLikeOperations";
+import { createPost } from "#src/services/post/createPost.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { usePostStore } from "#src/store/post/index";
 import { TRPCError } from "@trpc/server";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";

@@ -1,5 +1,5 @@
 import type { AchievementDefinitionView } from "#shared/models/achievement/AchievementDefinitionView";
-import type { UserAchievementWithDefinition } from "@/models/achievement/UserAchievementWithDefinition";
+import type { UserAchievementWithDefinition } from "#src/models/achievement/UserAchievementWithDefinition";
 import type { UserAchievementInAchievementWithRelations } from "@esposter/db-schema";
 
 export const toUserAchievementWithDefinition = (

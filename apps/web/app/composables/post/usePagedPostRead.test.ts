@@ -3,11 +3,11 @@ import type { readPostsInputSchema } from "#shared/models/db/post/ReadPostsInput
 import type { z } from "zod";
 
 import { PostSortType } from "#shared/models/post/PostSortType";
-import { usePagedPostRead } from "@/composables/post/usePagedPostRead";
-import { createPost } from "@/services/post/createPost.test";
-import { AsyncDataKey } from "@/services/shared/AsyncDataKey";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { usePostStore } from "@/store/post";
+import { usePagedPostRead } from "#src/composables/post/usePagedPostRead";
+import { createPost } from "#src/services/post/createPost.test";
+import { AsyncDataKey } from "#src/services/shared/AsyncDataKey";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { usePostStore } from "#src/store/post/index";
 import { encodePageCursor, START_PAGE_CURSOR } from "@esposter/db-schema";
 import { noop } from "@esposter/shared";
 import { v7 } from "uuid";

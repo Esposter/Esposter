@@ -1,14 +1,14 @@
 // @vitest-environment nuxt
-import type { WhiteboardEditState } from "@/models/whiteboard/WhiteboardEditState";
+import type { WhiteboardEditState } from "#src/models/whiteboard/WhiteboardEditState";
 
-import { useWhiteboardContextMenu } from "@/composables/whiteboard/useWhiteboardContextMenu";
+import { useWhiteboardContextMenu } from "#src/composables/whiteboard/useWhiteboardContextMenu";
 import {
   createWhiteboardEditState,
   WHITEBOARD_PROCESS,
   WHITEBOARD_PROCESS_ID,
-} from "@/services/whiteboard/constants.test";
-import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
-import { useContextMenuStore } from "@/store/ui/contextMenu";
+} from "#src/services/whiteboard/constants.test";
+import { useWhiteboardEditorStore } from "#src/store/resource/whiteboard/editor";
+import { useContextMenuStore } from "#src/store/ui/contextMenu";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test, vi } from "vitest";
 

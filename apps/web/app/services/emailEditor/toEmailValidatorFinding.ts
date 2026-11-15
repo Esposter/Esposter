@@ -1,8 +1,8 @@
 import type { EmailValidatorMessage } from "#shared/models/pageBuilder/EmailValidatorMessage";
-import type { EditorFinding } from "@/models/editor/EditorFinding";
+import type { EditorFinding } from "#src/models/editor/EditorFinding";
 
 import { EmailValidationLevel } from "#shared/models/pageBuilder/EmailValidationLevel";
-import { EditorFindingSeverity } from "@/models/editor/EditorFindingSeverity";
+import { EditorFindingSeverity } from "#src/models/editor/EditorFindingSeverity";
 
 // The severity each level gives a message. Strict refuses the email, so its messages are errors, and soft renders the email
 // Anyway, so its messages inform

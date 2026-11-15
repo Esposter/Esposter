@@ -1,4 +1,4 @@
-import { getFitViewport } from "@/services/whiteboard/viewport/getFitViewport";
+import { getFitViewport } from "#src/services/whiteboard/viewport/getFitViewport";
 import { describe, expect, test } from "vitest";
 
 describe(getFitViewport, () => {

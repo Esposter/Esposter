@@ -1,8 +1,8 @@
-import type { NavigationTrailPage } from "@/models/shared/NavigationTrailPage";
+import type { NavigationTrailPage } from "#src/models/shared/NavigationTrailPage";
 
-import { NavigationTrailPages } from "@/models/shared/NavigationTrailPage";
-import { getNextNavigationTrail } from "@/services/shared/getNextNavigationTrail";
-import { useNavigationTrailStore } from "@/store/navigationTrail";
+import { NavigationTrailPages } from "#src/models/shared/NavigationTrailPage";
+import { getNextNavigationTrail } from "#src/services/shared/getNextNavigationTrail";
+import { useNavigationTrailStore } from "#src/store/navigationTrail";
 
 // An entry can predate this release or have been edited in devtools, so it is filtered down to slugs that still
 // Exist rather than rendering a crumb to nowhere

@@ -1,5 +1,5 @@
-import type { ResourceStatusFilter } from "@/models/resource/list/ResourceStatusFilter";
-import type { ResourceUpdatedFilter } from "@/models/resource/list/ResourceUpdatedFilter";
+import type { ResourceStatusFilter } from "#src/models/resource/list/ResourceStatusFilter";
+import type { ResourceUpdatedFilter } from "#src/models/resource/list/ResourceUpdatedFilter";
 import type { ResourceType } from "@esposter/db-schema";
 
 // The same filters `ResourceFilterValues` holds unwrapped, less `source`, which the route fixes. Written out

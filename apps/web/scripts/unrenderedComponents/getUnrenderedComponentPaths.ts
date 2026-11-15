@@ -1,7 +1,7 @@
-import { WEB_DIRECTORY } from "@@/scripts/constants";
-import { NON_SOURCE_PATTERNS } from "@@/scripts/flowMap/constants";
-import { readSourceContext } from "@@/scripts/flowMap/services/readSourceContext";
-import { readSourceNode } from "@@/scripts/flowMap/services/readSourceNode";
+import { WEB_DIRECTORY } from "#scripts/constants";
+import { NON_SOURCE_PATTERNS } from "#scripts/flowMap/constants";
+import { readSourceContext } from "#scripts/flowMap/services/readSourceContext";
+import { readSourceNode } from "#scripts/flowMap/services/readSourceNode";
 import { globSync } from "node:fs";
 import { relative, resolve } from "node:path";
 

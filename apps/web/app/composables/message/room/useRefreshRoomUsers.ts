@@ -1,6 +1,6 @@
-import { setRoomUsers } from "@/services/message/room/setRoomUsers";
-import { useDataStore } from "@/store/message/data";
-import { useUserStore } from "@/store/message/user";
+import { setRoomUsers } from "#src/services/message/room/setRoomUsers";
+import { useDataStore } from "#src/store/message/data";
+import { useUserStore } from "#src/store/message/user/index";
 import { chunk, MAX_READ_LIMIT } from "@esposter/shared";
 
 // A person's name and image are published on the topic of every room they are in, so a room's topic re-reads the users it

@@ -1,10 +1,10 @@
-import type { ClientMessage } from "@/models/message/ClientMessage";
+import type { ClientMessage } from "#src/models/message/ClientMessage";
 
-import { MessageHook } from "@/models/message/MessageHook";
-import { messageHolderRegistry } from "@/services/message/messageHolderRegistry";
-import { MessageHookMap } from "@/services/message/MessageHookMap";
-import { useDataStore } from "@/store/message/data";
-import { useRoomStore } from "@/store/message/room";
+import { MessageHook } from "#src/models/message/MessageHook";
+import { messageHolderRegistry } from "#src/services/message/messageHolderRegistry";
+import { MessageHookMap } from "#src/services/message/MessageHookMap";
+import { useDataStore } from "#src/store/message/data";
+import { useRoomStore } from "#src/store/message/room/index";
 import { Operation } from "@esposter/shared";
 
 export const useReplyStore = defineStore("message/input/reply", () => {

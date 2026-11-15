@@ -1,8 +1,8 @@
 import type { Layout } from "vue-editor-layout-headless";
 
-import { DashboardEditorContent } from "@/models/dashboard/DashboardEditorContent";
-import { DashboardEditorRegion } from "@/models/dashboard/DashboardEditorRegion";
-import { DashboardSelectionKind } from "@/models/dashboard/DashboardSelectionKind";
+import { DashboardEditorContent } from "#src/models/dashboard/DashboardEditorContent";
+import { DashboardEditorRegion } from "#src/models/dashboard/DashboardEditorRegion";
+import { DashboardSelectionKind } from "#src/models/dashboard/DashboardSelectionKind";
 import {
   DASHBOARD_EDITOR_BAR_HEIGHT,
   DASHBOARD_EDITOR_INSPECTOR_MAXIMUM_WIDTH,
@@ -11,8 +11,8 @@ import {
   DASHBOARD_EDITOR_PALETTE_MAXIMUM_WIDTH,
   DASHBOARD_EDITOR_PALETTE_MINIMUM_WIDTH,
   DASHBOARD_EDITOR_PALETTE_WIDTH,
-} from "@/services/dashboard/constants";
-import { DOCKED_REGION_PRESENTATION_MAP, SIDE_REGION_PRESENTATION_MAP } from "@/services/editor/constants";
+} from "#src/services/dashboard/constants";
+import { DOCKED_REGION_PRESENTATION_MAP, SIDE_REGION_PRESENTATION_MAP } from "#src/services/editor/constants";
 import { RegionEdge, RegionOpening } from "vue-editor-layout-headless";
 
 // The dashboard editor's layout as data. The bar holds the visual count and Add visual across the top, always. The visuals

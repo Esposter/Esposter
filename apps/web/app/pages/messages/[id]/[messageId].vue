@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { PageMarkType } from "#shared/models/app/PageMarkType";
-import { checkIsMessageRoute } from "@/services/router/checkIsMessageRoute";
+import { checkIsMessageRoute } from "#src/services/router/checkIsMessageRoute";
 
 definePageMeta({ middleware: "auth", validate: checkIsMessageRoute });
 const route = useRoute();

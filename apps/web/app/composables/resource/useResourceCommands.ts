@@ -1,12 +1,12 @@
 // @unocss-include
-import type { UiCommand } from "@/models/ui/UiCommand";
+import type { UiCommand } from "#src/models/ui/UiCommand";
 
-import { ResourceListSource } from "@/models/resource/list/ResourceListSource";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { RESOURCE_EXPLORER_DISPLAY_NAME } from "@/services/resource/constants";
-import { ResourceListSourceSearchTitleMap } from "@/services/resource/search/ResourceListSourceSearchTitleMap";
-import { useNotificationStore } from "@/store/notification";
-import { useCommandStore } from "@/store/ui/command";
+import { ResourceListSource } from "#src/models/resource/list/ResourceListSource";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { RESOURCE_EXPLORER_DISPLAY_NAME } from "#src/services/resource/constants";
+import { ResourceListSourceSearchTitleMap } from "#src/services/resource/search/ResourceListSourceSearchTitleMap";
+import { useNotificationStore } from "#src/store/notification";
+import { useCommandStore } from "#src/store/ui/command";
 import { ID_SEPARATOR, RoutePath } from "@esposter/shared";
 
 // The explorer's Azure-portal-style chords, and its search as the palette's scope: resources, services and pages as

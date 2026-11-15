@@ -2,8 +2,8 @@ import type { BuildingWithStatistics } from "#shared/models/clicker/data/buildin
 import type { Upgrade } from "#shared/models/clicker/data/upgrade/Upgrade";
 
 import { Target } from "#shared/models/clicker/data/Target";
-import { applyEffects } from "@/services/clicker/effect/applyEffects";
-import { applyUpgradeEffects } from "@/services/clicker/effect/applyUpgradeEffects";
+import { applyEffects } from "#src/services/clicker/effect/applyEffects";
+import { applyUpgradeEffects } from "#src/services/clicker/effect/applyUpgradeEffects";
 
 export const applyUpgrades = (
   basePower: number,

@@ -1,4 +1,4 @@
-import { createHookRegistry } from "@/services/shared/createHookRegistry";
+import { createHookRegistry } from "#src/services/shared/createHookRegistry";
 
 type MemberRoleChangeHook = (roomId: string) => void;
 // Fired by the role store on every write to a member's roles — optimistic, rolled back, committed, or arriving from a

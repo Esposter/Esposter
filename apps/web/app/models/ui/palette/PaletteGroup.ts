@@ -1,4 +1,4 @@
-import type { PaletteItem } from "@/models/ui/palette/PaletteItem";
+import type { PaletteItem } from "#src/models/ui/palette/PaletteItem";
 
 export interface PaletteGroup {
   items: PaletteItem[];

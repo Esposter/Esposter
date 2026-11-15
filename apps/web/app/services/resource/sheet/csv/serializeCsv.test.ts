@@ -3,10 +3,10 @@ import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSo
 import { createColumn } from "#shared/models/resource/sheet/column/createColumn.test";
 import { createDataSource } from "#shared/models/resource/sheet/datasource/createDataSource.test";
 import { createRow } from "#shared/models/resource/sheet/datasource/createRow.test";
-import { CSV_MIME_TYPE, CSV_SEMICOLON_SETTINGS, CSV_SETTINGS } from "@/services/resource/sheet/csv/constants.test";
-import { createCsvFile } from "@/services/resource/sheet/csv/createCsvFile.test";
-import { deserializeCsv } from "@/services/resource/sheet/csv/deserializeCsv";
-import { serializeCsv } from "@/services/resource/sheet/csv/serializeCsv";
+import { CSV_MIME_TYPE, CSV_SEMICOLON_SETTINGS, CSV_SETTINGS } from "#src/services/resource/sheet/csv/constants.test";
+import { createCsvFile } from "#src/services/resource/sheet/csv/createCsvFile.test";
+import { deserializeCsv } from "#src/services/resource/sheet/csv/deserializeCsv";
+import { serializeCsv } from "#src/services/resource/sheet/csv/serializeCsv";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 

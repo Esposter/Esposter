@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { ResourceStatusFilter } from "@/models/resource/list/ResourceStatusFilter";
+import type { ResourceStatusFilter } from "#src/models/resource/list/ResourceStatusFilter";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { ResourceStatusFilterItems } from "@/services/resource/list/ResourceStatusFilterItems";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { ResourceStatusFilterItems } from "#src/services/resource/list/ResourceStatusFilterItems";
 
 const modelValue = defineModel<"" | ResourceStatusFilter>({ required: true });
 const emit = defineEmits<{ remove: [] }>();

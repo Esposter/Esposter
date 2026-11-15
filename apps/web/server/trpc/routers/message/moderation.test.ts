@@ -1,7 +1,7 @@
 /* oxlint-disable no-await-in-loop -- Each step reads the last: each member's join replaces the room's invite (createRoomMember); Each step reads the last: each note takes the clock set just before it */
 import type { useRoomObject } from "#server/composables/realtime/useRoomObject";
 import type { Context } from "#server/trpc/context";
-import type { TRPCRouter } from "#server/trpc/routers";
+import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { RoomObjectRpc } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
@@ -9,14 +9,14 @@ import { useCallObject } from "#server/composables/realtime/useCallObject";
 import { createCallSessionId } from "#server/services/message/call/createCallSessionId";
 import { DELETE_USER_MESSAGES_PAGE_LIMIT } from "#server/services/message/constants";
 import { createRoomMessage } from "#server/services/message/createRoomMessage.test";
-import { createCallerFactory } from "#server/trpc";
 import { createMockAuthSession, createMockCaller, createMockContext, getMockSession } from "#server/trpc/context.test";
+import { createCallerFactory } from "#server/trpc/index";
 import { createMentionMessage } from "#server/trpc/routers/createMentionMessage.test";
 import { inviteRouter } from "#server/trpc/routers/invite";
 import { moderationRouter } from "#server/trpc/routers/message/moderation";
 import { readRoomMembershipRows } from "#server/trpc/routers/readRoomMembershipRows.test";
-import { roomRouter } from "#server/trpc/routers/room";
 import { createDirectMessageWithFriend } from "#server/trpc/routers/room/createDirectMessageWithFriend.test";
+import { roomRouter } from "#server/trpc/routers/room/index";
 import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
 import {
   AdminActionType,

@@ -1,9 +1,9 @@
 import type { GameObjects } from "phaser";
 
-import { phaserEventEmitter } from "@/services/phaser/phaserEventEmitter";
-import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
-import { usePlayerStore } from "@/store/dungeons/player";
-import { useWorldSceneStore } from "@/store/dungeons/world/scene";
+import { phaserEventEmitter } from "#src/services/phaser/phaserEventEmitter";
+import { useMonsterPartySceneStore } from "#src/store/dungeons/monsterParty/scene";
+import { usePlayerStore } from "#src/store/dungeons/player";
+import { useWorldSceneStore } from "#src/store/dungeons/world/scene";
 import { toRawDeep } from "@esposter/shared";
 import { Direction } from "grid-engine";
 import { z } from "zod";

@@ -1,4 +1,4 @@
-import type { AnyHook } from "@/models/shared/AnyHook";
+import type { AnyHook } from "#src/models/shared/AnyHook";
 
 export interface HookRegistry<THook extends AnyHook> {
   hooks: readonly THook[];

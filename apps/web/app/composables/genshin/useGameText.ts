@@ -1,4 +1,4 @@
-import { AsyncDataKey } from "@/services/shared/AsyncDataKey";
+import { AsyncDataKey } from "#src/services/shared/AsyncDataKey";
 import { checkIsServer } from "@esposter/shared";
 import {
   ENGLISH_GAME_TEXT,

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { copySelection, requestSelectionDelete } from "@/services/whiteboard/keyboard/selectionActions";
-import { useWhiteboardStore } from "@/store/resource/whiteboard";
-import { useWhiteboardDialogStore } from "@/store/resource/whiteboard/dialog";
-import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { copySelection, requestSelectionDelete } from "#src/services/whiteboard/keyboard/selectionActions";
+import { useWhiteboardDialogStore } from "#src/store/resource/whiteboard/dialog";
+import { useWhiteboardEditorStore } from "#src/store/resource/whiteboard/editor";
+import { useWhiteboardStore } from "#src/store/resource/whiteboard/index";
 
 // Duplicate and delete the selection from the panel, as the keys do. Delete names the selection for the editor's confirmation, which asks first
 const whiteboardStore = useWhiteboardStore();

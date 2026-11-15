@@ -1,9 +1,9 @@
-import type { ValidateFileResult } from "@/models/file/ValidateFileResult";
+import type { ValidateFileResult } from "#src/models/file/ValidateFileResult";
 import type { FileEntity } from "@esposter/db-schema";
 
 import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
-import { EMPTY_FILE_MESSAGE } from "@/services/file/constants";
-import { getFileSize } from "@/services/file/getFileSize";
+import { EMPTY_FILE_MESSAGE } from "#src/services/file/constants";
+import { getFileSize } from "#src/services/file/getFileSize";
 import { fileEntitySchema } from "@esposter/db-schema";
 
 // The single client-side file validator — callers pass a tighter maxSize (e.g. a per-room limit) to narrow it.

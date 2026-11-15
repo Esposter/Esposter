@@ -1,6 +1,6 @@
-import type { GesturePointerEvent } from "@/models/whiteboard/GesturePointerEvent";
-import type { Viewport } from "@/models/whiteboard/Viewport";
-import type { WhiteboardGestureState } from "@/models/whiteboard/WhiteboardGestureState";
+import type { GesturePointerEvent } from "#src/models/whiteboard/GesturePointerEvent";
+import type { Viewport } from "#src/models/whiteboard/Viewport";
+import type { WhiteboardGestureState } from "#src/models/whiteboard/WhiteboardGestureState";
 import type {
   ArrowElement,
   Bounds,
@@ -10,13 +10,13 @@ import type {
   StrokeElement,
 } from "vue-block-editor-headless";
 
-import { GesturePhase } from "@/models/whiteboard/GesturePhase";
-import { GesturePointerAction } from "@/models/whiteboard/GesturePointerAction";
-import { GestureTool } from "@/models/whiteboard/GestureTool";
-import { SnapAxis } from "@/models/whiteboard/SnapAxis";
-import { MINIMUM_ELEMENT_SIZE, PRIMARY_BUTTON, STROKE_WIDTH } from "@/services/whiteboard/gesture/constants";
-import { reduceWhiteboardGesture } from "@/services/whiteboard/gesture/reduceWhiteboardGesture";
-import { WHITEBOARD_SHAPE_FILL, WHITEBOARD_SHAPE_SIZE } from "@/services/whiteboard/palette/constants";
+import { GesturePhase } from "#src/models/whiteboard/GesturePhase";
+import { GesturePointerAction } from "#src/models/whiteboard/GesturePointerAction";
+import { GestureTool } from "#src/models/whiteboard/GestureTool";
+import { SnapAxis } from "#src/models/whiteboard/SnapAxis";
+import { MINIMUM_ELEMENT_SIZE, PRIMARY_BUTTON, STROKE_WIDTH } from "#src/services/whiteboard/gesture/constants";
+import { reduceWhiteboardGesture } from "#src/services/whiteboard/gesture/reduceWhiteboardGesture";
+import { WHITEBOARD_SHAPE_FILL, WHITEBOARD_SHAPE_SIZE } from "#src/services/whiteboard/palette/constants";
 import { JsonPatchOperationType, takeOne } from "@esposter/shared";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";

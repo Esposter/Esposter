@@ -1,7 +1,7 @@
-import { useMediaStore } from "@/store/message/room/call/media";
-import { useParticipantStore } from "@/store/message/room/call/participant";
-import { useRealtimeStore } from "@/store/message/room/realtime";
-import { useConnectionStore } from "@/store/realtime/connection";
+import { useMediaStore } from "#src/store/message/room/call/media";
+import { useParticipantStore } from "#src/store/message/room/call/participant";
+import { useRealtimeStore } from "#src/store/message/room/realtime";
+import { useConnectionStore } from "#src/store/realtime/connection";
 
 // The five participant frames the call socket carries, and the read of the session's participants. Each frame is
 // Registered before the session is read, so a change the read's answer leaves out is one a frame delivers. The join

@@ -1,8 +1,8 @@
 import type { FriendRequestInSocialWithRelations, PublicUser } from "@esposter/db-schema";
 
-import { authClient } from "@/services/auth/authClient";
-import { createOperationData } from "@/services/shared/createOperationData";
-import { useFriendStore } from "@/store/message/user/friend";
+import { authClient } from "#src/services/auth/authClient";
+import { createOperationData } from "#src/services/shared/createOperationData";
+import { useFriendStore } from "#src/store/message/user/friend";
 import { DatabaseEntityType } from "@esposter/db-schema";
 
 export const useFriendRequestStore = defineStore("message/user/friendRequest", () => {

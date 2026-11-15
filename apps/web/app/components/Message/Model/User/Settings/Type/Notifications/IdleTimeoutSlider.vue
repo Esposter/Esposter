@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { UserSettingsInMessage } from "@esposter/db-schema";
 
-import { MS_PER_MINUTE } from "@/services/message/user/settings/constants";
-import { useUserSettingsStore } from "@/store/message/user/settings";
+import { MS_PER_MINUTE } from "#src/services/message/user/settings/constants";
+import { useUserSettingsStore } from "#src/store/message/user/settings/index";
 import { MAX_AUTO_IDLE_THRESHOLD_MS, MIN_AUTO_IDLE_THRESHOLD_MS } from "@esposter/db-schema";
 
 interface Props {

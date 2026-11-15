@@ -8,10 +8,10 @@ import { readSurveyResponseRecords } from "#server/services/survey/readSurveyRes
 import { readSurveyResponsesCount } from "#server/services/survey/readSurveyResponsesCount";
 import { resolveSurveyResponseRead } from "#server/services/survey/resolveSurveyResponseRead";
 import { resolveSurveyResponseWrite } from "#server/services/survey/resolveSurveyResponseWrite";
-import { router } from "#server/trpc";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
+import { router } from "#server/trpc/index";
 import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { createResourceProcedures } from "#server/trpc/procedure/resource/createResourceProcedures";
 import { getOwnerProcedure } from "#server/trpc/procedure/resource/getOwnerProcedure";

@@ -1,8 +1,8 @@
-import type { CursorPaginationSlice } from "@/models/pagination/cursor/CursorPaginationSlice";
+import type { CursorPaginationSlice } from "#src/models/pagination/cursor/CursorPaginationSlice";
 import type { Page } from "@esposter/db-schema";
 
-import { emptyCursorPaginationData } from "@/composables/data/pagination/cursor/useCursorPaginationOperationData";
-import { getPropertyComputed } from "@/util/vue/getPropertyComputed";
+import { emptyCursorPaginationData } from "#src/composables/data/pagination/cursor/useCursorPaginationOperationData";
+import { getPropertyComputed } from "#src/util/vue/getPropertyComputed";
 import { createEmptyPage } from "@esposter/db-schema";
 
 export const useCursorPaginationData = <TItem>(): ReturnType<typeof useCursorPaginationOperationData<TItem>> & {

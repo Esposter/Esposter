@@ -3,7 +3,7 @@ import {
   TODO_COMPLETION_CHIME_GAIN,
   TODO_COMPLETION_CHIME_NOTE_GAP_SECONDS,
   TODO_COMPLETION_CHIME_RING_SECONDS,
-} from "@/services/resource/constants";
+} from "#src/services/resource/constants";
 
 export const scheduleNotes = (audioContext: AudioContext) =>
   TODO_COMPLETION_CHIME_FREQUENCIES_HZ.map((frequency, index) => {

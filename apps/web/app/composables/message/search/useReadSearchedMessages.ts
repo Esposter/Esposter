@@ -2,13 +2,13 @@ import type { Filter } from "@esposter/db-schema";
 
 import { checkIsSearchQueryEmpty } from "#shared/services/message/checkIsSearchQueryEmpty";
 import { getSearchableFilters } from "#shared/services/message/getSearchableFilters";
-import { RightDrawer } from "@/models/message/RightDrawer";
-import { requirePartitionKey } from "@/services/message/requirePartitionKey";
-import { createErrorAlert } from "@/services/trpc/createErrorAlert";
-import { useRoomStore } from "@/store/message/room";
-import { useSearchMessageStore } from "@/store/message/search";
-import { useSearchHistoryStore } from "@/store/message/search/history";
-import { useMessageLayoutStore } from "@/store/message/ui/layout";
+import { RightDrawer } from "#src/models/message/RightDrawer";
+import { requirePartitionKey } from "#src/services/message/requirePartitionKey";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
+import { useRoomStore } from "#src/store/message/room/index";
+import { useSearchHistoryStore } from "#src/store/message/search/history";
+import { useSearchMessageStore } from "#src/store/message/search/index";
+import { useMessageLayoutStore } from "#src/store/message/ui/layout";
 import { getResultAsync, noop, withFinalizerAsync } from "@esposter/shared";
 
 export const useReadSearchedMessages = () => {

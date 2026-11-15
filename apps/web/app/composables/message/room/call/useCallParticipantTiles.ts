@@ -1,11 +1,11 @@
-import type { CallParticipantTileProps } from "@/models/message/room/call/CallParticipantTileProps";
+import type { CallParticipantTileProps } from "#src/models/message/room/call/CallParticipantTileProps";
 
-import { authClient } from "@/services/auth/authClient";
-import { getCallParticipantMap } from "@/services/message/room/call/getCallParticipantMap";
-import { useCallStore } from "@/store/message/room/call";
-import { useMediaStore } from "@/store/message/room/call/media";
-import { useParticipantStore } from "@/store/message/room/call/participant";
-import { useUserStore } from "@/store/message/user";
+import { authClient } from "#src/services/auth/authClient";
+import { getCallParticipantMap } from "#src/services/message/room/call/getCallParticipantMap";
+import { useCallStore } from "#src/store/message/room/call/index";
+import { useMediaStore } from "#src/store/message/room/call/media";
+import { useParticipantStore } from "#src/store/message/room/call/participant";
+import { useUserStore } from "#src/store/message/user/index";
 
 export const useCallParticipantTiles = () => {
   const session = authClient.useSession();

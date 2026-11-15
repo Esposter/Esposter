@@ -3,7 +3,7 @@ import type { ApexOptions } from "apexcharts";
 
 import { basicChartConfigurationSchema } from "#shared/models/dashboard/data/chart/BasicChartConfiguration";
 import { ChartType } from "#shared/models/dashboard/data/chart/type/ChartType";
-import { AChartTypeResolver } from "@/models/resolvers/dashboard/chart/AChartTypeResolver";
+import { AChartTypeResolver } from "#src/models/resolvers/dashboard/chart/AChartTypeResolver";
 import { defu } from "defu";
 import { z } from "zod";
 

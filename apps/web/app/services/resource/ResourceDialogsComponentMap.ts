@@ -1,6 +1,6 @@
-import ResourceNoteDialogs from "@/components/Resource/Note/Dialogs.vue";
-import ResourceSheetDialogs from "@/components/Resource/Sheet/Dialogs.vue";
-import ResourceTodoListDialogs from "@/components/Resource/TodoList/Dialogs.vue";
+import ResourceNoteDialogs from "#src/components/Resource/Note/Dialogs.vue";
+import ResourceSheetDialogs from "#src/components/Resource/Sheet/Dialogs.vue";
+import ResourceTodoListDialogs from "#src/components/Resource/TodoList/Dialogs.vue";
 import { ResourceType } from "@esposter/db-schema";
 
 // Dialogs more than one of a type's blades — or its commands, which are the same on every blade — open, mounted

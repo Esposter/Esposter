@@ -1,7 +1,7 @@
 // @unocss-include
-import type { SlashCommand } from "@/models/message/slashCommands/SlashCommand";
+import type { SlashCommand } from "#src/models/message/slashCommands/SlashCommand";
 
-import { SlashCommandType } from "@/models/message/slashCommands/SlashCommandType";
+import { SlashCommandType } from "#src/models/message/slashCommands/SlashCommandType";
 
 export const SlashCommandDefinitionMap = {
   [SlashCommandType.Flip]: {

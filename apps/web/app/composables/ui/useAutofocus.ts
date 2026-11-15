@@ -1,4 +1,4 @@
-import { checkIsTypingElsewhere } from "@/services/ui/checkIsTypingElsewhere";
+import { checkIsTypingElsewhere } from "#src/services/ui/checkIsTypingElsewhere";
 
 // The one route for a control that asks for focus as it mounts into a live page. The browser's own autofocus is ignored
 // For anything added after the page loaded, so the control takes focus itself: once, the first time its element exists

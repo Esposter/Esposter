@@ -1,9 +1,9 @@
 import type { Bounds, PositionedDocument } from "vue-block-editor-headless";
 
-import { ResizeHandle } from "@/models/whiteboard/ResizeHandle";
-import { getElementIndexById } from "@/services/whiteboard/gesture/getElementIndexById";
-import { getResizedSides } from "@/services/whiteboard/gesture/getResizedSides";
-import { getSelectionBounds } from "@/services/whiteboard/gesture/getSelectionBounds";
+import { ResizeHandle } from "#src/models/whiteboard/ResizeHandle";
+import { getElementIndexById } from "#src/services/whiteboard/gesture/getElementIndexById";
+import { getResizedSides } from "#src/services/whiteboard/gesture/getResizedSides";
+import { getSelectionBounds } from "#src/services/whiteboard/gesture/getSelectionBounds";
 import { takeOne } from "@esposter/shared";
 import { checkIsResizablePositionedElement, PositionedElementType } from "vue-block-editor-headless";
 

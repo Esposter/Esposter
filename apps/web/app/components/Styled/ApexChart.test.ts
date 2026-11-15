@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
-import StyledApexChart from "@/components/Styled/ApexChart.client.vue";
-import { stubApexChartEngine } from "@/services/styled/stubApexChartEngine.test";
+import StyledApexChart from "#src/components/Styled/ApexChart.client.vue";
+import { stubApexChartEngine } from "#src/services/styled/stubApexChartEngine.test";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";

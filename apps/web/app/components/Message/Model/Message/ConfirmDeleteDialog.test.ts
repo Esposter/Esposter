@@ -1,13 +1,13 @@
 // @vitest-environment nuxt
-import MessageModelMessageConfirmDeleteDialog from "@/components/Message/Model/Message/ConfirmDeleteDialog.vue";
-import UiConfirmDialog from "@/components/Ui/ConfirmDialog.vue";
-import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
-import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
-import { createUser } from "@/services/message/user/createUser.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useDataStore } from "@/store/message/data";
-import { useMessageDialogStore } from "@/store/message/dialog";
-import { useUserStore } from "@/store/message/user";
+import MessageModelMessageConfirmDeleteDialog from "#src/components/Message/Model/Message/ConfirmDeleteDialog.vue";
+import UiConfirmDialog from "#src/components/Ui/ConfirmDialog.vue";
+import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
+import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
+import { createUser } from "#src/services/message/user/createUser.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useDataStore } from "#src/store/message/data";
+import { useMessageDialogStore } from "#src/store/message/dialog";
+import { useUserStore } from "#src/store/message/user/index";
 import { MessageType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";

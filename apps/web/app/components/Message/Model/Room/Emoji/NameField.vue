@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { SuggestionTrigger } from "@/models/shared/SuggestionTrigger";
-import { UiRules } from "@/services/ui/UiRules";
+import { SuggestionTrigger } from "#src/models/shared/SuggestionTrigger";
+import { UiRules } from "#src/services/ui/UiRules";
 import { ROOM_EMOJI_NAME_MAX_LENGTH, selectRoomEmojiInMessageSchema } from "@esposter/db-schema";
 
 interface Props {

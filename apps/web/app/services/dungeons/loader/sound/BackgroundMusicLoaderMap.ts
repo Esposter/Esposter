@@ -1,9 +1,9 @@
-import type { AssetLoader } from "@/models/dungeons/loader/AssetLoader";
+import type { AssetLoader } from "#src/models/dungeons/loader/AssetLoader";
 
-import andTheJourneyBegins from "@/assets/dungeons/thirdParty/xDeviruchi/andTheJourneyBegins.wav";
-import decisiveBattle from "@/assets/dungeons/thirdParty/xDeviruchi/decisiveBattle.wav";
-import titleTheme from "@/assets/dungeons/thirdParty/xDeviruchi/titleTheme.wav";
-import { BackgroundMusicKey } from "@/models/dungeons/keys/sound/BackgroundMusicKey";
+import andTheJourneyBegins from "#src/assets/dungeons/thirdParty/xDeviruchi/andTheJourneyBegins.wav";
+import decisiveBattle from "#src/assets/dungeons/thirdParty/xDeviruchi/decisiveBattle.wav";
+import titleTheme from "#src/assets/dungeons/thirdParty/xDeviruchi/titleTheme.wav";
+import { BackgroundMusicKey } from "#src/models/dungeons/keys/sound/BackgroundMusicKey";
 
 export const BackgroundMusicLoaderMap = {
   [BackgroundMusicKey.AndTheJourneyBegins]: (scene) =>

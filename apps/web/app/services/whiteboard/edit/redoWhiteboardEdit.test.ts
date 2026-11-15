@@ -1,7 +1,7 @@
-import { createWhiteboardEditState, WHITEBOARD_PROCESS } from "@/services/whiteboard/constants.test";
-import { applyWhiteboardEdit } from "@/services/whiteboard/edit/applyWhiteboardEdit";
-import { redoWhiteboardEdit } from "@/services/whiteboard/edit/redoWhiteboardEdit";
-import { undoWhiteboardEdit } from "@/services/whiteboard/edit/undoWhiteboardEdit";
+import { createWhiteboardEditState, WHITEBOARD_PROCESS } from "#src/services/whiteboard/constants.test";
+import { applyWhiteboardEdit } from "#src/services/whiteboard/edit/applyWhiteboardEdit";
+import { redoWhiteboardEdit } from "#src/services/whiteboard/edit/redoWhiteboardEdit";
+import { undoWhiteboardEdit } from "#src/services/whiteboard/edit/undoWhiteboardEdit";
 import { describe, expect, test } from "vitest";
 import { updatePositionedElementText } from "vue-block-editor-headless";
 

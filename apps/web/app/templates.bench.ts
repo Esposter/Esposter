@@ -1,5 +1,5 @@
-import { walkElements } from "@/walkElements.test";
-import unoConfig from "@@/uno.config";
+import { walkElements } from "#src/walkElements.test";
+import unoConfig from "#uno.config";
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { NodeTypes } from "@vue/compiler-core";
 import { glob, readFile } from "node:fs/promises";

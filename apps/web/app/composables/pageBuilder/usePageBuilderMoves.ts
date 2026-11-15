@@ -1,21 +1,21 @@
-import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
-import type { UiCommand } from "@/models/ui/UiCommand";
-import type { UiCommandScope } from "@/models/ui/UiCommandScope";
+import type { PageBuilderKind } from "#src/models/pageBuilder/PageBuilderKind";
+import type { UiCommand } from "#src/models/ui/UiCommand";
+import type { UiCommandScope } from "#src/models/ui/UiCommandScope";
 import type { JsonPatchOperation } from "@esposter/shared";
 import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "vue-block-editor-headless";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { PAGE_BUILDER_COMMAND_GROUP } from "@/services/pageBuilder/constants";
-import { getMoveIntoRefusal } from "@/services/pageBuilder/getMoveIntoRefusal";
-import { getMoveOutRefusal } from "@/services/pageBuilder/getMoveOutRefusal";
-import { getNodeIdAt } from "@/services/pageBuilder/getNodeIdAt";
-import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
-import { getNodeSlotPointer } from "@/services/pageBuilder/getNodeSlotPointer";
-import { getNodeTitle } from "@/services/pageBuilder/getNodeTitle";
-import { getSiblingMoveRefusal } from "@/services/pageBuilder/getSiblingMoveRefusal";
-import { getSlotPath } from "@/services/pageBuilder/getSlotPath";
-import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
-import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { PAGE_BUILDER_COMMAND_GROUP } from "#src/services/pageBuilder/constants";
+import { getMoveIntoRefusal } from "#src/services/pageBuilder/getMoveIntoRefusal";
+import { getMoveOutRefusal } from "#src/services/pageBuilder/getMoveOutRefusal";
+import { getNodeIdAt } from "#src/services/pageBuilder/getNodeIdAt";
+import { getNodePointer } from "#src/services/pageBuilder/getNodePointer";
+import { getNodeSlotPointer } from "#src/services/pageBuilder/getNodeSlotPointer";
+import { getNodeTitle } from "#src/services/pageBuilder/getNodeTitle";
+import { getSiblingMoveRefusal } from "#src/services/pageBuilder/getSiblingMoveRefusal";
+import { getSlotPath } from "#src/services/pageBuilder/getSlotPath";
+import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
+import { usePageBuilderHistoryStore } from "#src/store/pageBuilder/history";
 import { parseArrayIndex, parseJsonPointer, readJsonValue } from "@esposter/shared";
 import {
   duplicateBlockNode,

@@ -1,6 +1,6 @@
-import type { ComposerTarget } from "@/models/message/ComposerTarget";
+import type { ComposerTarget } from "#src/models/message/ComposerTarget";
 
-import { checkIsMessageId } from "@/services/message/checkIsMessageId";
+import { checkIsMessageId } from "#src/services/message/checkIsMessageId";
 import { ID_SEPARATOR } from "@esposter/shared";
 
 // The inverse of getComposerKey, for the surfaces that read composer state back out of storage rather than

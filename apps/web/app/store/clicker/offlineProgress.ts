@@ -1,7 +1,7 @@
-import { MIN_OFFLINE_DIALOG_ELAPSED_MS, OFFLINE_CAP_MS, OFFLINE_RATE } from "@/services/clicker/constants";
-import { useClickerStore } from "@/store/clicker";
-import { useBuildingStore } from "@/store/clicker/building";
-import { usePointStore } from "@/store/clicker/point";
+import { MIN_OFFLINE_DIALOG_ELAPSED_MS, OFFLINE_CAP_MS, OFFLINE_RATE } from "#src/services/clicker/constants";
+import { useBuildingStore } from "#src/store/clicker/building";
+import { useClickerStore } from "#src/store/clicker/index";
+import { usePointStore } from "#src/store/clicker/point";
 
 export const useOfflineProgressStore = defineStore("clicker/offlineProgress", () => {
   const clickerStore = useClickerStore();

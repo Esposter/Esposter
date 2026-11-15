@@ -1,4 +1,4 @@
-import type { FrecencyBucket } from "@/models/app/FrecencyBucket";
+import type { FrecencyBucket } from "#src/models/app/FrecencyBucket";
 
 import { RoutePath } from "@esposter/shared";
 

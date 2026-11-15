@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
-import type { ImagePosition } from "@/models/dungeons/ImagePosition";
+import type { ImagePosition } from "#src/models/dungeons/ImagePosition";
 
-import { BarOrigin } from "@/models/dungeons/UI/bar/BarOrigin";
+import { BarOrigin } from "#src/models/dungeons/UI/bar/BarOrigin";
 
 interface Props {
   imagePosition: ImagePosition;

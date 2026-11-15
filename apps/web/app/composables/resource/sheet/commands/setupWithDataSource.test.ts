@@ -4,8 +4,8 @@ import { createColumn } from "#shared/models/resource/sheet/column/createColumn.
 import { createDataSource } from "#shared/models/resource/sheet/datasource/createDataSource.test";
 import { createRow } from "#shared/models/resource/sheet/datasource/createRow.test";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
-import { useResourceStore } from "@/store/resource";
-import { useSheetStore } from "@/store/resource/sheet";
+import { useResourceStore } from "#src/store/resource/index";
+import { useSheetStore } from "#src/store/resource/sheet/index";
 import { describe } from "vitest";
 
 // A sheet is only ever open as a loaded resource, and its view state — page, search, selection — is keyed by that

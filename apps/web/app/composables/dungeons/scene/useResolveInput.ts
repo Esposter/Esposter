@@ -1,7 +1,7 @@
-import type { AInputResolver } from "@/models/resolvers/dungeons/AInputResolver";
+import type { AInputResolver } from "#src/models/resolvers/dungeons/AInputResolver";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { useControlsStore } from "@/store/dungeons/controls";
+import { useControlsStore } from "#src/store/dungeons/controls";
 import { getResultAsync, noop } from "@esposter/shared";
 
 // Reads this frame's input once, then offers it to each resolver in priority order and stops at the first that

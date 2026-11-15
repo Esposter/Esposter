@@ -1,17 +1,17 @@
-import type { ClientMessage } from "@/models/message/ClientMessage";
-import type { Item } from "@/models/shared/Item";
+import type { ClientMessage } from "#src/models/message/ClientMessage";
+import type { Item } from "#src/models/shared/Item";
 
 import { MessageOperation } from "#shared/models/message/MessageOperation";
 import { checkIsMessageOperationPermitted } from "#shared/services/message/checkIsMessageOperationPermitted";
 import { getMessageOperationPermission } from "#shared/services/message/getMessageOperationPermission";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useClipboardStore } from "@/store/clipboard";
-import { useMessageStore } from "@/store/message";
-import { useMessageDialogStore } from "@/store/message/dialog";
-import { useForwardStore } from "@/store/message/input/forward";
-import { useReplyStore } from "@/store/message/input/reply";
-import { useRoleStore } from "@/store/message/room/role";
-import { useUserToRoomStore } from "@/store/message/room/userToRoom";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { useClipboardStore } from "#src/store/clipboard";
+import { useMessageDialogStore } from "#src/store/message/dialog";
+import { useMessageStore } from "#src/store/message/index";
+import { useForwardStore } from "#src/store/message/input/forward";
+import { useReplyStore } from "#src/store/message/input/reply";
+import { useRoleStore } from "#src/store/message/room/role";
+import { useUserToRoomStore } from "#src/store/message/room/userToRoom";
 import { MessageType, RoomPermission } from "@esposter/db-schema";
 import { exhaustiveGuard, noop, normalizeString } from "@esposter/shared";
 import { parse } from "node-html-parser";

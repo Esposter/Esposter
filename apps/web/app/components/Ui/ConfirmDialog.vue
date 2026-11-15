@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { Promisable } from "type-fest";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
-import { UiDialogSize } from "@/models/ui/UiDialogSize";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
+import { UiDialogSize } from "#src/models/ui/UiDialogSize";
 
 interface Props {
   // What answering does, awaited unless the write is optimistic (useDialogAnswer)

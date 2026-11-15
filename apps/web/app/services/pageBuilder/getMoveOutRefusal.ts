@@ -1,7 +1,7 @@
-import type { PageBuilderHelper } from "@/models/pageBuilder/PageBuilderHelper";
+import type { PageBuilderHelper } from "#src/models/pageBuilder/PageBuilderHelper";
 
-import { TOP_LEVEL_MESSAGE } from "@/services/pageBuilder/constants";
-import { getNodeTitle } from "@/services/pageBuilder/getNodeTitle";
+import { TOP_LEVEL_MESSAGE } from "#src/services/pageBuilder/constants";
+import { getNodeTitle } from "#src/services/pageBuilder/getNodeTitle";
 import { parseArrayIndex, parseJsonPointer } from "@esposter/shared";
 import { moveOutAfterParent } from "vue-block-editor-headless";
 

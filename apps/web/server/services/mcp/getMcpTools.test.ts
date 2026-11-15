@@ -4,9 +4,9 @@ import type { z } from "zod";
 
 import { getAgentJsonSchema } from "#server/services/mcp/getAgentJsonSchema";
 import { getMcpTools } from "#server/services/mcp/getMcpTools";
-import { publicProcedure, router } from "#server/trpc";
+import { publicProcedure, router } from "#server/trpc/index";
 import { createResourceProcedures } from "#server/trpc/procedure/resource/createResourceProcedures";
-import { trpcRouter } from "#server/trpc/routers";
+import { trpcRouter } from "#server/trpc/routers/index";
 import { McpScope, McpScopes, ResourceType } from "@esposter/db-schema";
 import { uncapitalize } from "@esposter/shared";
 import { describe, expect, test } from "vitest";

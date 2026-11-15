@@ -1,10 +1,10 @@
 import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
 
-import { CacheTag } from "@/models/cache/CacheTag";
-import { ResourceListSource } from "@/models/resource/list/ResourceListSource";
-import { RECENT_RESOURCES_LIMIT } from "@/services/resource/constants";
-import { getResourceListSortName } from "@/services/resource/list/getResourceListSortName";
-import { ResourceListSourceDefinitionMap } from "@/services/resource/list/ResourceListSourceDefinitionMap";
+import { CacheTag } from "#src/models/cache/CacheTag";
+import { ResourceListSource } from "#src/models/resource/list/ResourceListSource";
+import { RECENT_RESOURCES_LIMIT } from "#src/services/resource/constants";
+import { getResourceListSortName } from "#src/services/resource/list/getResourceListSortName";
+import { ResourceListSourceDefinitionMap } from "#src/services/resource/list/ResourceListSourceDefinitionMap";
 
 // Recent means recently *opened*, and the set is the caller's own server-side access rows, so it follows them
 // Between devices. Home's Recent tab and the palette's resources scope both want the same capped list and both

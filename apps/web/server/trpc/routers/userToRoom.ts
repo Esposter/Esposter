@@ -5,7 +5,7 @@ import { callUserObjects } from "#server/services/realtime/callUserObjects";
 import { assertIsMember } from "#server/services/room/assertIsMember";
 import { getRoomListTopics } from "#server/services/room/getRoomListTopics";
 import { getRoomMembershipWhere } from "#server/services/room/getRoomMembershipWhere";
-import { router } from "#server/trpc";
+import { router } from "#server/trpc/index";
 import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { getMemberProcedure } from "#server/trpc/procedure/room/getMemberProcedure";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";

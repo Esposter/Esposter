@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useCallStore } from "@/store/message/room/call";
-import { useMediaStore } from "@/store/message/room/call/media";
+import { useCallStore } from "#src/store/message/room/call/index";
+import { useMediaStore } from "#src/store/message/room/call/media";
 
 const callStore = useCallStore();
 const { toggleScreenShare } = callStore;

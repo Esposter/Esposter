@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { MenuTextStyle } from "@/assets/dungeons/scene/inventory/styles/MenuTextStyle";
-import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
-import { WORD_PADDING } from "@/services/dungeons/UI/constants";
-import { useInventoryInfoPanelStore } from "@/store/dungeons/inventory/infoPanel";
+import { MenuTextStyle } from "#src/assets/dungeons/scene/inventory/styles/MenuTextStyle";
+import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";
+import { WORD_PADDING } from "#src/services/dungeons/UI/constants";
+import { useInventoryInfoPanelStore } from "#src/store/dungeons/inventory/infoPanel";
 import { onCreate, Text } from "vue-phaserjs";
 
 const inventoryInfoPanelStore = useInventoryInfoPanelStore();

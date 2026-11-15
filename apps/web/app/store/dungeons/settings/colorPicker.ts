@@ -1,8 +1,8 @@
 import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOption";
 import { ThemeModeSettings } from "#shared/models/dungeons/data/settings/ThemeModeSetting";
-import { getDirectionStep } from "@/services/dungeons/UI/input/getDirectionStep";
-import { useSettingsStore } from "@/store/dungeons/settings";
-import { mod } from "@/util/math/mod";
+import { getDirectionStep } from "#src/services/dungeons/UI/input/getDirectionStep";
+import { useSettingsStore } from "#src/store/dungeons/settings/index";
+import { mod } from "#src/util/math/mod";
 import { takeOne } from "@esposter/shared";
 import { Direction } from "grid-engine";
 

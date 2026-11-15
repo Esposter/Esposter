@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useReplyStore } from "@/store/message/input/reply";
-import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { useReplyStore } from "#src/store/message/input/reply";
+import { EMPTY_TEXT_REGEX } from "#src/util/text/constants";
 import { MessageType } from "@esposter/db-schema";
 
 interface Props {

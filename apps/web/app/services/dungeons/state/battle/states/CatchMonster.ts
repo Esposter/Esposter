@@ -1,13 +1,13 @@
-import type { State } from "@/models/dungeons/state/State";
+import type { State } from "#src/models/dungeons/state/State";
 
-import { CaptureResult } from "@/models/dungeons/item/CaptureResult";
-import { StateName } from "@/models/dungeons/state/battle/StateName";
-import { createCaptureResult } from "@/services/dungeons/item/createCaptureResult";
-import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
-import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
-import { useEnemyStore } from "@/store/dungeons/battle/enemy";
-import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
-import { prettify } from "@/util/text/prettify";
+import { CaptureResult } from "#src/models/dungeons/item/CaptureResult";
+import { StateName } from "#src/models/dungeons/state/battle/StateName";
+import { createCaptureResult } from "#src/services/dungeons/item/createCaptureResult";
+import { battleStateMachine } from "#src/services/dungeons/scene/battle/battleStateMachine";
+import { useBattleDialogStore } from "#src/store/dungeons/battle/dialog";
+import { useEnemyStore } from "#src/store/dungeons/battle/enemy";
+import { useMonsterPartySceneStore } from "#src/store/dungeons/monsterParty/scene";
+import { prettify } from "#src/util/text/prettify";
 
 export const CatchMonster: State<typeof StateName.CatchMonster> = {
   name: StateName.CatchMonster,

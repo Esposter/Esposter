@@ -1,4 +1,4 @@
-import { UiToken } from "@/models/ui/UiToken";
+import { UiToken } from "#src/models/ui/UiToken";
 import { UserStatus } from "@esposter/db-schema";
 
 // The colour a status is drawn in, on the dot beside an avatar and the mark of its row in the picker

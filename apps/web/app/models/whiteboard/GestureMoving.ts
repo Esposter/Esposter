@@ -1,5 +1,5 @@
-import type { GesturePhase } from "@/models/whiteboard/GesturePhase";
-import type { SnapGuide } from "@/models/whiteboard/SnapGuide";
+import type { GesturePhase } from "#src/models/whiteboard/GesturePhase";
+import type { SnapGuide } from "#src/models/whiteboard/SnapGuide";
 import type { Point } from "vue-block-editor-headless";
 
 // A drag that moves the selection: each selected element moves by how far the pointer has travelled from the origin. An Alt drag moves copies of

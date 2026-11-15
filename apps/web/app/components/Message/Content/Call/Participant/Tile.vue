@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { CallParticipantTileProps } from "@/models/message/room/call/CallParticipantTileProps";
+import type { CallParticipantTileProps } from "#src/models/message/room/call/CallParticipantTileProps";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 const { isSelf, participant } = defineProps<CallParticipantTileProps>();
 const emit = defineEmits<{ click: [] }>();

@@ -2,12 +2,12 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { TilemapKey } from "#shared/generated/tiled/propertyTypes/enum/TilemapKey";
 import { Save } from "#shared/models/dungeons/data/Save";
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { PlayerTitleMenuOption } from "@/models/dungeons/scene/title/menu/PlayerTitleMenuOption";
-import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
-import { PlayerTitleMenuOptionGrid } from "@/services/dungeons/scene/title/menu/PlayerTitleMenuOptionGrid";
-import { useDungeonsStore } from "@/store/dungeons";
-import { useTitleSceneStore } from "@/store/dungeons/title/scene";
+import { SceneKey } from "#src/models/dungeons/keys/SceneKey";
+import { PlayerTitleMenuOption } from "#src/models/dungeons/scene/title/menu/PlayerTitleMenuOption";
+import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";
+import { PlayerTitleMenuOptionGrid } from "#src/services/dungeons/scene/title/menu/PlayerTitleMenuOptionGrid";
+import { useDungeonsStore } from "#src/store/dungeons/index";
+import { useTitleSceneStore } from "#src/store/dungeons/title/scene";
 import { NotFoundError } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
@@ -15,7 +15,7 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 // The dungeons store imports Phaser, which cannot initialise under the test environment. Only its saves and the scene
 // Switch are read here, so the fake keeps the real save fields and records each switch
 // oxlint-disable-next-line vitest/prefer-import-in-mock -- A partial fake: the typed module would load Phaser and its full store type
-vi.mock("@/store/dungeons", async () => {
+vi.mock("#src/store/dungeons/index", async () => {
   const { Dungeons } = await import("#shared/models/dungeons/data/Dungeons");
   const saveModule = await import("#shared/models/dungeons/data/Save");
   const { reactive } = await import("vue");

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { UiListItem } from "@/models/ui/UiListItem";
+import type { UiListItem } from "#src/models/ui/UiListItem";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { getFilterDisplayValue } from "@/services/message/filter/getFilterDisplayValue";
-import { useSearchMessageStore } from "@/store/message/search";
-import { useSearchHistoryStore } from "@/store/message/search/history";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { getFilterDisplayValue } from "#src/services/message/filter/getFilterDisplayValue";
+import { useSearchHistoryStore } from "#src/store/message/search/history";
+import { useSearchMessageStore } from "#src/store/message/search/index";
 
 const { readMoreSearchHistories, readSearchHistories } = useReadSearchHistories();
 const { isPending } = await readSearchHistories();

@@ -4,7 +4,7 @@ import {
   DOCKED_REGION_PRESENTATION_MAP,
   SIDE_REGION_PRESENTATION_MAP,
   SIDE_REGION_SIZE,
-} from "@/services/editor/constants";
+} from "#src/services/editor/constants";
 import { RegionEdge, RegionOpening } from "vue-editor-layout-headless";
 
 // The parts the page builder's layout is built from: a bar over the page, the blocks at the start, the settings at the end and

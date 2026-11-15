@@ -2,7 +2,7 @@ import { Visual } from "#shared/models/dashboard/data/Visual";
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
 import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregationType";
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
-import { getVisualLinkChartOptions } from "@/services/dashboard/chart/getVisualLinkChartOptions";
+import { getVisualLinkChartOptions } from "#src/services/dashboard/chart/getVisualLinkChartOptions";
 import { ID_SEPARATOR } from "@esposter/shared";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";

@@ -1,5 +1,5 @@
-import { getPageSearchItems } from "@/services/resource/search/getPageSearchItems";
-import { PageSearchItems } from "@/services/resource/search/PageSearchItems";
+import { getPageSearchItems } from "#src/services/resource/search/getPageSearchItems";
+import { PageSearchItems } from "#src/services/resource/search/PageSearchItems";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 

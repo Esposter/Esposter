@@ -1,7 +1,7 @@
 import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
 import type { PublicUser } from "@esposter/db-schema";
 
-import { useRoomStore } from "@/store/message/room";
+import { useRoomStore } from "#src/store/message/room/index";
 
 export const useUserStore = defineStore("message/user", () => {
   const roomStore = useRoomStore();

@@ -2,7 +2,7 @@ import type { AgentApiKey } from "#server/models/auth/AgentApiKey";
 import type { Database } from "@esposter/db-schema";
 import type { RequestEvent } from "nuxt/server";
 
-import { db } from "#server/db";
+import { db } from "#server/db/index";
 import { readSession } from "#server/services/auth/readSession";
 import { getIpAddress } from "#server/services/request/getIpAddress";
 import { getRequestIP } from "nuxt/server";

@@ -2,15 +2,15 @@ import type { Item } from "#shared/models/dungeons/item/Item";
 
 import { ItemId } from "#shared/generated/tiled/propertyTypes/enum/ItemId";
 import { ItemEffectType } from "#shared/models/dungeons/item/ItemEffectType";
-import { consumeItem } from "@/services/dungeons/item/consumeItem";
-import { usePlayerStore } from "@/store/dungeons/player";
+import { consumeItem } from "#src/services/dungeons/item/consumeItem";
+import { usePlayerStore } from "#src/store/dungeons/player";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 // The player store reads the dungeons store, which imports Phaser. Only its inventory is read here, so the fake holds one
 // Player for every reader
 // oxlint-disable-next-line vitest/prefer-import-in-mock -- A partial fake: the typed module would load Phaser and its full store type
-vi.mock("@/store/dungeons/player", async () => {
+vi.mock("#src/store/dungeons/player", async () => {
   const { reactive } = await import("vue");
   const player = reactive({ inventory: [] as Item[] });
   return { usePlayerStore: () => ({ player }) };

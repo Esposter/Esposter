@@ -1,7 +1,7 @@
-import type { TRPCRouter } from "#server/trpc/routers";
+import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { TRPCLink } from "@trpc/client";
 
-import { TRPCOfflineClientError } from "@/models/trpc/TRPCOfflineClientError";
+import { TRPCOfflineClientError } from "#src/models/trpc/TRPCOfflineClientError";
 import { observable } from "@trpc/server/observable";
 
 export const createOfflineLink =

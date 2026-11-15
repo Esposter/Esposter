@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
 import type { UserSettingsInMessage } from "@esposter/db-schema";
 
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useUserSettingsStore } from "@/store/message/user/settings";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useUserSettingsStore } from "#src/store/message/user/settings/index";
 import {
   DEFAULT_AUTO_IDLE_THRESHOLD_MS,
   DEFAULT_INPUT_SENSITIVITY_DECIBELS,

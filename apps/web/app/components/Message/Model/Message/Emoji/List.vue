@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { ClientMessage } from "@/models/message/ClientMessage";
+import type { ClientMessage } from "#src/models/message/ClientMessage";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { useEmojiStore } from "@/store/message/emoji";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { useEmojiStore } from "#src/store/message/emoji";
 
 interface Props {
   isPreview?: boolean;

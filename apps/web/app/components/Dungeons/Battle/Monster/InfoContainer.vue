@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
-import { ExperienceLabelTextStyle } from "@/assets/dungeons/styles/ExperienceLabelTextStyle";
-import { HealthLabelTextStyle } from "@/assets/dungeons/styles/HealthLabelTextStyle";
-import { BarType } from "@/models/dungeons/UI/bar/BarType";
-import { phaserEventEmitter } from "@/services/phaser/phaserEventEmitter";
-import { prettify } from "@/util/text/prettify";
+import { ExperienceLabelTextStyle } from "#src/assets/dungeons/styles/ExperienceLabelTextStyle";
+import { HealthLabelTextStyle } from "#src/assets/dungeons/styles/HealthLabelTextStyle";
+import { BarType } from "#src/models/dungeons/UI/bar/BarType";
+import { phaserEventEmitter } from "#src/services/phaser/phaserEventEmitter";
+import { prettify } from "#src/util/text/prettify";
 import { Container, Image, Text } from "vue-phaserjs";
 
 interface Props {

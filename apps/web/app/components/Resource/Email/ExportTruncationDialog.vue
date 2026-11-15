@@ -2,12 +2,12 @@
 import { DATASET_ROW_CAP_DESCRIPTION } from "#shared/services/dataset/constants";
 import { getDatasetTruncation } from "#shared/services/dataset/getDatasetTruncation";
 import { pluralize } from "#shared/util/text/pluralize";
-import { formatTruncationCount } from "@/services/dataset/formatTruncationCount";
-import { compileStoredEmail } from "@/services/emailEditor/compileStoredEmail";
-import { exportPersonalizedRows } from "@/services/emailEditor/exportPersonalizedRows";
-import { createErrorAlert } from "@/services/trpc/createErrorAlert";
-import { useEmailExportDialogStore } from "@/store/emailEditor/exportDialog";
-import { useResourceStore } from "@/store/resource";
+import { formatTruncationCount } from "#src/services/dataset/formatTruncationCount";
+import { compileStoredEmail } from "#src/services/emailEditor/compileStoredEmail";
+import { exportPersonalizedRows } from "#src/services/emailEditor/exportPersonalizedRows";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
+import { useEmailExportDialogStore } from "#src/store/emailEditor/exportDialog";
+import { useResourceStore } from "#src/store/resource/index";
 import { getResultAsync, noop } from "@esposter/shared";
 
 const emailExportDialogStore = useEmailExportDialogStore();

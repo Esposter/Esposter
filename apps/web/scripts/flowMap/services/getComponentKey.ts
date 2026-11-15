@@ -1,4 +1,4 @@
-import { CASE_BOUNDARY_REGEX, MODE_SUFFIX_REGEX, NAME_SEPARATOR_REGEX } from "@@/scripts/flowMap/constants";
+import { CASE_BOUNDARY_REGEX, MODE_SUFFIX_REGEX, NAME_SEPARATOR_REGEX } from "#scripts/flowMap/constants";
 import { basename, dirname, extname } from "node:path";
 
 const splitByCase = (value: string) =>

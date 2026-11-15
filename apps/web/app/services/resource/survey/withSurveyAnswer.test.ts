@@ -1,4 +1,4 @@
-import { withSurveyAnswer } from "@/services/resource/survey/withSurveyAnswer";
+import { withSurveyAnswer } from "#src/services/resource/survey/withSurveyAnswer";
 import { describe, expect, test } from "vitest";
 
 describe("withSurveyAnswer", () => {

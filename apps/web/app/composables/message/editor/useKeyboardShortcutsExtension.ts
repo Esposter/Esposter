@@ -1,4 +1,4 @@
-import type { ClientMessage } from "@/models/message/ClientMessage";
+import type { ClientMessage } from "#src/models/message/ClientMessage";
 import type { Editor } from "@tiptap/core";
 import type { Promisable } from "type-fest";
 
@@ -6,8 +6,8 @@ import { MessageOperation } from "#shared/models/message/MessageOperation";
 import { MessageOperationPermission } from "#shared/models/message/MessageOperationPermission";
 import { getMessageOperationPermission } from "#shared/services/message/getMessageOperationPermission";
 import { compareCreatedAt } from "#shared/util/date/compareCreatedAt";
-import { useMessageStore } from "@/store/message";
-import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
+import { useMessageStore } from "#src/store/message/index";
+import { EMPTY_TEXT_REGEX } from "#src/util/text/constants";
 import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 import { Extension } from "@tiptap/vue-3";
 

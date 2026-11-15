@@ -7,7 +7,7 @@ import type {
   SurveyPanelRowView,
 } from "vue-survey-engine-headless";
 
-import { withSurveyRequired } from "@/services/resource/survey/withSurveyRequired";
+import { withSurveyRequired } from "#src/services/resource/survey/withSurveyRequired";
 import { SurveyNodeType } from "vue-survey-engine-headless";
 
 interface Props {

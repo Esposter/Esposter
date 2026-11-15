@@ -1,4 +1,4 @@
-import { UiCalendarView } from "@/models/ui/UiCalendarView";
+import { UiCalendarView } from "#src/models/ui/UiCalendarView";
 
 // How far each view steps, which its buttons, its shortcuts and Page Up and Page Down step it: a day, a month, or a week
 // For either week

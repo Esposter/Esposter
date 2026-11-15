@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { ClientMessage } from "@/models/message/ClientMessage";
-import type { Item } from "@/models/shared/Item";
+import type { ClientMessage } from "#src/models/message/ClientMessage";
+import type { Item } from "#src/models/shared/Item";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { EmojiMoreMenuItems } from "@/services/message/emoji/EmojiMoreMenuItems";
-import { useMessageStore } from "@/store/message";
-import { useContextMenuStore } from "@/store/ui/contextMenu";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { EmojiMoreMenuItems } from "#src/services/message/emoji/EmojiMoreMenuItems";
+import { useMessageStore } from "#src/store/message/index";
+import { useContextMenuStore } from "#src/store/ui/contextMenu";
 
 interface Props {
   message: ClientMessage;

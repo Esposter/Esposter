@@ -1,5 +1,5 @@
-import { UiToken } from "@/models/ui/UiToken";
-import { uiHighlightSpecs } from "@/services/codemirror/uiHighlightSpecs";
+import { UiToken } from "#src/models/ui/UiToken";
+import { uiHighlightSpecs } from "#src/services/codemirror/uiHighlightSpecs";
 import { tags } from "@lezer/highlight";
 import { describe, expect, test } from "vitest";
 

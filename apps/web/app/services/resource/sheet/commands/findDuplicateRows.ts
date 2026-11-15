@@ -1,9 +1,9 @@
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
-import type { IndexedRow } from "@/models/resource/sheet/commands/IndexedRow";
+import type { IndexedRow } from "#src/models/resource/sheet/commands/IndexedRow";
 
-import { KeepDuplicateMode } from "@/models/resource/sheet/commands/KeepDuplicateMode";
-import { getVisibleEditableColumns } from "@/services/resource/sheet/column/getVisibleEditableColumns";
+import { KeepDuplicateMode } from "#src/models/resource/sheet/commands/KeepDuplicateMode";
+import { getVisibleEditableColumns } from "#src/services/resource/sheet/column/getVisibleEditableColumns";
 import { takeOne } from "@esposter/shared";
 
 export const findDuplicateRows = (dataSource: DataSource, keepMode: KeepDuplicateMode = KeepDuplicateMode.First) => {

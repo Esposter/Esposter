@@ -1,5 +1,5 @@
 import type { Context } from "#server/trpc/context";
-import type { TRPCRouter } from "#server/trpc/routers";
+import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { ProgramResource } from "#shared/models/resource/program/ProgramResource";
 import type { SurveyResource } from "#shared/models/resource/survey/SurveyResource";
 import type { R2Bucket } from "@cloudflare/workers-types";
@@ -7,8 +7,8 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { ProgramStatusDatasetColumnName } from "#server/models/dataset/programStatus/ProgramStatusDatasetColumnName";
 import { CLOSED_SURVEY_ERROR_REASON, INVALID_PARTICIPANT_TOKEN_ERROR_REASON } from "#server/services/survey/constants";
-import { createCallerFactory } from "#server/trpc";
 import { createMockContext } from "#server/trpc/context.test";
+import { createCallerFactory } from "#server/trpc/index";
 import { AUDIENCE_KEY_COLUMN, createAudienceSheet } from "#server/trpc/routers/createAudienceSheet.test";
 import { createPublishedSurvey, createSurveyDocumentWith } from "#server/trpc/routers/createSurvey.test";
 import { dashboardRouter } from "#server/trpc/routers/dashboard";

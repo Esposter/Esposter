@@ -1,4 +1,4 @@
-import { GridDirectionToDirectionMap } from "@/services/dungeons/direction/GridDirectionToDirectionMap";
+import { GridDirectionToDirectionMap } from "#src/services/dungeons/direction/GridDirectionToDirectionMap";
 import { Direction as GridDirection } from "grid-engine";
 import { describe, expect, test } from "vitest";
 

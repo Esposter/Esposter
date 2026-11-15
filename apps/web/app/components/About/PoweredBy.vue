@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import vuejsLogoUwuUrl from "@/assets/about/vuejsLogoUWU.png?url";
+import vuejsLogoUwuUrl from "#src/assets/about/vuejsLogoUWU.png";
 </script>
 
 <!-- The credit just under the name, large enough to be the page's second hero. The picture's size is given, so the

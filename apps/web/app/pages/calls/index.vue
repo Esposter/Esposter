@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CallFeatures } from "@/services/message/room/call/CallFeatures";
+import { CallFeatures } from "#src/services/message/room/call/CallFeatures";
 
 definePageMeta({ middleware: "auth" });
 </script>

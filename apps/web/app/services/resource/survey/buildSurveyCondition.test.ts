@@ -1,8 +1,8 @@
-import type { SurveyConditionRow } from "@/models/resource/survey/SurveyConditionRow";
+import type { SurveyConditionRow } from "#src/models/resource/survey/SurveyConditionRow";
 
-import { SurveyConditionJoin } from "@/models/resource/survey/SurveyConditionJoin";
-import { SurveyConditionOperator } from "@/models/resource/survey/SurveyConditionOperator";
-import { buildSurveyCondition } from "@/services/resource/survey/buildSurveyCondition";
+import { SurveyConditionJoin } from "#src/models/resource/survey/SurveyConditionJoin";
+import { SurveyConditionOperator } from "#src/models/resource/survey/SurveyConditionOperator";
+import { buildSurveyCondition } from "#src/services/resource/survey/buildSurveyCondition";
 import { runSurveyExpression } from "survey-expression";
 import { describe, expect, test } from "vitest";
 

@@ -1,4 +1,4 @@
-import { getAssistantPrompt } from "@/services/resource/getAssistantPrompt";
+import { getAssistantPrompt } from "#src/services/resource/getAssistantPrompt";
 import { ResourceType } from "@esposter/db-schema";
 import { SITE_NAME } from "@esposter/shared";
 import { v7 } from "uuid";

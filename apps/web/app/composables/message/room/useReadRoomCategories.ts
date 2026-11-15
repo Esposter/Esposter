@@ -1,4 +1,4 @@
-import { useRoomCategoryStore } from "@/store/message/roomCategory";
+import { useRoomCategoryStore } from "#src/store/message/roomCategory";
 
 export const useReadRoomCategories = () => {
   const { $trpc } = useNuxtApp();

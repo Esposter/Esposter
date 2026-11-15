@@ -1,4 +1,4 @@
-import type { WhiteboardHistoryEntry } from "@/models/whiteboard/WhiteboardHistoryEntry";
+import type { WhiteboardHistoryEntry } from "#src/models/whiteboard/WhiteboardHistoryEntry";
 import type { History } from "@esposter/shared";
 import type { PositionedDocument } from "vue-block-editor-headless";
 

@@ -1,10 +1,10 @@
 // @vitest-environment nuxt
 import type { InviteInMessage } from "@esposter/db-schema";
 
-import { getInviteLink } from "@/services/message/room/invite/getInviteLink";
-import { createUser } from "@/services/message/user/createUser.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useInviteStore } from "@/store/message/room/invite";
+import { getInviteLink } from "#src/services/message/room/invite/getInviteLink";
+import { createUser } from "#src/services/message/user/createUser.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useInviteStore } from "#src/store/message/room/invite";
 import { SECRET_TOKEN_LENGTH } from "@esposter/shared";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";

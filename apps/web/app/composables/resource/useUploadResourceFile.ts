@@ -2,10 +2,10 @@ import type { FileAssetsResourceType } from "#shared/models/resource/FileAssetsR
 import type { ResourceFilePresignedUrlEntity } from "#shared/models/resource/ResourceFilePresignedUrlEntity";
 
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
-import { StorageStatusError } from "@/models/file/StorageStatusError";
-import { HTTP_STATUS_PRECONDITION_FAILED } from "@/services/file/constants";
-import { uploadFilesToPresignedUrls } from "@/services/file/uploadFilesToPresignedUrls";
-import { getSha256Hex } from "@/services/shared/getSha256Hex";
+import { StorageStatusError } from "#src/models/file/StorageStatusError";
+import { HTTP_STATUS_PRECONDITION_FAILED } from "#src/services/file/constants";
+import { uploadFilesToPresignedUrls } from "#src/services/file/uploadFilesToPresignedUrls";
+import { getSha256Hex } from "#src/services/shared/getSha256Hex";
 import { getResourceFileBlobName } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
 

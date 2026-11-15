@@ -1,18 +1,18 @@
-import type { EmailCanvasDrawing, EmailCanvasType } from "@/models/pageBuilder/EmailCanvasDrawing";
+import type { EmailCanvasDrawing, EmailCanvasType } from "#src/models/pageBuilder/EmailCanvasDrawing";
 
 import { EmailNodeType } from "#shared/models/pageBuilder/EmailNodeType";
-import { drawContainer } from "@/services/pageBuilder/email/canvasDrawing/drawContainer";
-import { drawDivider } from "@/services/pageBuilder/email/canvasDrawing/drawDivider";
-import { drawHero } from "@/services/pageBuilder/email/canvasDrawing/drawHero";
-import { drawLabel } from "@/services/pageBuilder/email/canvasDrawing/drawLabel";
-import { drawLeaf } from "@/services/pageBuilder/email/canvasDrawing/drawLeaf";
-import { drawNavbarLink } from "@/services/pageBuilder/email/canvasDrawing/drawNavbarLink";
-import { drawRaw } from "@/services/pageBuilder/email/canvasDrawing/drawRaw";
-import { drawSection } from "@/services/pageBuilder/email/canvasDrawing/drawSection";
-import { drawSpacer } from "@/services/pageBuilder/email/canvasDrawing/drawSpacer";
-import { drawSurveyInvite } from "@/services/pageBuilder/email/canvasDrawing/drawSurveyInvite";
-import { drawTable } from "@/services/pageBuilder/email/canvasDrawing/drawTable";
-import { drawText } from "@/services/pageBuilder/email/canvasDrawing/drawText";
+import { drawContainer } from "#src/services/pageBuilder/email/canvasDrawing/drawContainer";
+import { drawDivider } from "#src/services/pageBuilder/email/canvasDrawing/drawDivider";
+import { drawHero } from "#src/services/pageBuilder/email/canvasDrawing/drawHero";
+import { drawLabel } from "#src/services/pageBuilder/email/canvasDrawing/drawLabel";
+import { drawLeaf } from "#src/services/pageBuilder/email/canvasDrawing/drawLeaf";
+import { drawNavbarLink } from "#src/services/pageBuilder/email/canvasDrawing/drawNavbarLink";
+import { drawRaw } from "#src/services/pageBuilder/email/canvasDrawing/drawRaw";
+import { drawSection } from "#src/services/pageBuilder/email/canvasDrawing/drawSection";
+import { drawSpacer } from "#src/services/pageBuilder/email/canvasDrawing/drawSpacer";
+import { drawSurveyInvite } from "#src/services/pageBuilder/email/canvasDrawing/drawSurveyInvite";
+import { drawTable } from "#src/services/pageBuilder/email/canvasDrawing/drawTable";
+import { drawText } from "#src/services/pageBuilder/email/canvasDrawing/drawText";
 import { MjmlNodeType } from "mjml-blocks";
 
 // Every email node type names its drawing here, keyed by the type, so a type with no drawing fails the typecheck.

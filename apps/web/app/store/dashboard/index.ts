@@ -1,5 +1,5 @@
 import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
-import { createContentData } from "@/services/resource/createContentData";
+import { createContentData } from "#src/services/resource/createContentData";
 import { ResourceType } from "@esposter/db-schema";
 
 export const useDashboardStore = defineStore("dashboard", () => {

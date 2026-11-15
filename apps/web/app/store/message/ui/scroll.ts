@@ -1,5 +1,5 @@
-import { useDataStore } from "@/store/message/data";
-import { useRoomStore } from "@/store/message/room";
+import { useDataStore } from "#src/store/message/data";
+import { useRoomStore } from "#src/store/message/room/index";
 import { RoutePath } from "@esposter/shared";
 
 export const useScrollStore = defineStore("message/ui/scroll", () => {

@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import type { PageLink } from "#shared/models/app/PageLink";
-import type { Item } from "@/models/shared/Item";
+import type { Item } from "#src/models/shared/Item";
 
-import UiButton from "@/components/Ui/Button.vue";
-import UiButtonLink from "@/components/Ui/ButtonLink.vue";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { UNAVAILABLE_PAGE_LABEL } from "@/services/app/constants";
-import { getPageIcon } from "@/services/app/getPageIcon";
-import { getPageLabel } from "@/services/app/getPageLabel";
-import { useBookmarkStore } from "@/store/bookmark";
+import UiButton from "#src/components/Ui/Button.vue";
+import UiButtonLink from "#src/components/Ui/ButtonLink.vue";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { UNAVAILABLE_PAGE_LABEL } from "#src/services/app/constants";
+import { getPageIcon } from "#src/services/app/getPageIcon";
+import { getPageLabel } from "#src/services/app/getPageLabel";
+import { useBookmarkStore } from "#src/store/bookmark";
 import { mergeProps } from "vue";
 
 interface Props {

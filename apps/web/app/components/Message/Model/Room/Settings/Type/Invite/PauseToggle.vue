@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 
 interface Props {
   room: RoomInMessage;

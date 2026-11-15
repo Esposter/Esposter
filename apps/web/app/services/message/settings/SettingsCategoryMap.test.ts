@@ -1,5 +1,5 @@
-import { SettingsType } from "@/models/message/room/SettingsType";
-import { SettingsCategoryMap } from "@/services/message/settings/SettingsCategoryMap";
+import { SettingsType } from "#src/models/message/room/SettingsType";
+import { SettingsCategoryMap } from "#src/services/message/settings/SettingsCategoryMap";
 import { describe, expect, test } from "vitest";
 
 describe("settingsCategoryMap", () => {

@@ -1,7 +1,7 @@
 import type { ResourceInResource } from "@esposter/db-schema";
 
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
-import { PortableFormatMap } from "@/services/resource/PortableFormatMap";
+import { PortableFormatMap } from "#src/services/resource/PortableFormatMap";
 
 // Callers only render this for portable types, so the guard also narrows the map key
 export const usePortableFormats = (resource: MaybeRefOrGetter<ResourceInResource>) => {

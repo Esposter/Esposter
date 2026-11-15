@@ -1,12 +1,12 @@
 // @vitest-environment happy-dom
 import type { VueWrapper } from "@vue/test-utils";
 
-import UiConfirmDialog from "@/components/Ui/ConfirmDialog.vue";
-import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiDialogSize } from "@/models/ui/UiDialogSize";
-import { UiStyles } from "@/models/ui/UiStyle";
-import { UiDialogSizeClassMap } from "@/services/ui/UiDialogSizeClassMap";
+import UiConfirmDialog from "#src/components/Ui/ConfirmDialog.vue";
+import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiDialogSize } from "#src/models/ui/UiDialogSize";
+import { UiStyles } from "#src/models/ui/UiStyle";
+import { UiDialogSizeClassMap } from "#src/services/ui/UiDialogSizeClassMap";
 import { noop } from "@esposter/shared";
 import { flushPromises, mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";

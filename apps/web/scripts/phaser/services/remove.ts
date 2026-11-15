@@ -1,4 +1,4 @@
-import { PHASER_ROOT_DIRECTORY } from "@@/scripts/phaser/constants";
+import { PHASER_ROOT_DIRECTORY } from "#scripts/phaser/constants";
 import { rm } from "node:fs/promises";
 
 export const remove = (directory?: string) => {

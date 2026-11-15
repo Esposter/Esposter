@@ -1,4 +1,4 @@
-import type { EmailCanvasDrawing } from "@/models/pageBuilder/EmailCanvasDrawing";
+import type { EmailCanvasDrawing } from "#src/models/pageBuilder/EmailCanvasDrawing";
 import type { MjmlNodeType } from "mjml-blocks";
 
 // A spacer is drawn as the gap its height names, with no label, since the gap is all it holds

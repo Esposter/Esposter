@@ -1,15 +1,15 @@
 import type { AuthSession } from "#server/models/auth/AuthSession";
 import type { Context } from "#server/trpc/context";
-import type { TRPCRouter } from "#server/trpc/routers";
+import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { createCallerFactory } from "#server/trpc";
 import { createMockAuthSession, createMockContext, getMockSession } from "#server/trpc/context.test";
+import { createCallerFactory } from "#server/trpc/index";
 import { createRoomMember } from "#server/trpc/routers/createRoomMember.test";
-import { messageRouter } from "#server/trpc/routers/message";
+import { messageRouter } from "#server/trpc/routers/message/index";
 import { roleRouter } from "#server/trpc/routers/role";
-import { roomRouter } from "#server/trpc/routers/room";
 import { categoryRouter } from "#server/trpc/routers/room/category";
+import { roomRouter } from "#server/trpc/routers/room/index";
 import { userToRoomRouter } from "#server/trpc/routers/userToRoom";
 import {
   DatabaseEntityType,

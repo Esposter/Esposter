@@ -1,4 +1,4 @@
-import { getUnrenderedComponentPaths } from "@@/scripts/unrenderedComponents/getUnrenderedComponentPaths";
+import { getUnrenderedComponentPaths } from "#scripts/unrenderedComponents/getUnrenderedComponentPaths";
 import { describe, expect, test } from "vitest";
 
 describe(getUnrenderedComponentPaths, () => {

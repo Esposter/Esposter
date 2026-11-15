@@ -1,11 +1,11 @@
 import type { Column } from "#shared/models/resource/sheet/column/Column";
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
-import type { ColumnFormContext } from "@/models/resource/sheet/column/ColumnFormContext";
-import type { UiSelectItem } from "@/models/ui/UiSelectItem";
+import type { ColumnFormContext } from "#src/models/resource/sheet/column/ColumnFormContext";
+import type { UiSelectItem } from "#src/models/ui/UiSelectItem";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
-import { columnFormSchema } from "@/models/resource/sheet/column/ColumnForm";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { columnFormSchema } from "#src/models/resource/sheet/column/ColumnForm";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 // What the create and edit column dialogs share: the columns a transformation picks among, every one and by type, and
 // The form schema refined so a name another column already has is refused, the column's own current name aside

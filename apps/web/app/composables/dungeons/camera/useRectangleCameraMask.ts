@@ -1,8 +1,8 @@
-import type { CameraMask } from "@/models/dungeons/camera/CameraMask";
+import type { CameraMask } from "#src/models/dungeons/camera/CameraMask";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { getTweenRange } from "@/services/dungeons/animation/getTweenRange";
-import { removeCameraMask } from "@/services/dungeons/camera/removeCameraMask";
+import { getTweenRange } from "#src/services/dungeons/animation/getTweenRange";
+import { removeCameraMask } from "#src/services/dungeons/camera/removeCameraMask";
 import { Geom, Math } from "phaser";
 
 const maskMap = new WeakMap<SceneWithPlugins, CameraMask>();

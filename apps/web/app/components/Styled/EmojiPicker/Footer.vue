@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { PickableEmoji } from "@/models/message/emoji/PickableEmoji";
-import type { SkinTone } from "@/models/message/emoji/SkinTone";
+import type { PickableEmoji } from "#src/models/message/emoji/PickableEmoji";
+import type { SkinTone } from "#src/models/message/emoji/SkinTone";
 
-import { getEmojiShortcode } from "@/services/message/emoji/getEmojiShortcode";
+import { getEmojiShortcode } from "#src/services/message/emoji/getEmojiShortcode";
 
 interface Props {
   emoji?: PickableEmoji;

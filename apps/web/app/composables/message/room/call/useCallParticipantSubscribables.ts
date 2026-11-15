@@ -1,6 +1,6 @@
-import type { OnlineSubscribableContext } from "@/models/shared/OnlineSubscribableContext";
+import type { OnlineSubscribableContext } from "#src/models/shared/OnlineSubscribableContext";
 
-import { useCallStore } from "@/store/message/room/call";
+import { useCallStore } from "#src/store/message/room/call/index";
 
 // The joined call's participant frames, registered while the call is joined by whichever surface shows it: the messages
 // Layout for a room's call, the call page for a standalone one

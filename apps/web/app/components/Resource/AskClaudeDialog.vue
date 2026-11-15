@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
-import { UiDialogSize } from "@/models/ui/UiDialogSize";
-import { UserSettingsPageSection } from "@/models/user/UserSettingsPageSection";
-import { authClient } from "@/services/auth/authClient";
-import { requireAuthData } from "@/services/auth/requireAuthData";
-import { checkHasResourcesKey } from "@/services/resource/checkHasResourcesKey";
-import { getAssistantPrompt } from "@/services/resource/getAssistantPrompt";
-import { UiRules } from "@/services/ui/UiRules";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
+import { UiDialogSize } from "#src/models/ui/UiDialogSize";
+import { UserSettingsPageSection } from "#src/models/user/UserSettingsPageSection";
+import { authClient } from "#src/services/auth/authClient";
+import { requireAuthData } from "#src/services/auth/requireAuthData";
+import { checkHasResourcesKey } from "#src/services/resource/checkHasResourcesKey";
+import { getAssistantPrompt } from "#src/services/resource/getAssistantPrompt";
+import { UiRules } from "#src/services/ui/UiRules";
 import { RoutePath } from "@esposter/shared";
 
 interface Props {

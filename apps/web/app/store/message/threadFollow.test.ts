@@ -1,12 +1,12 @@
 // @vitest-environment nuxt
 import type { ReadFollowedThreadsResult } from "#shared/models/message/thread/ReadFollowedThreadsResult";
 
-import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
-import { MessageHookMap } from "@/services/message/MessageHookMap";
-import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
-import { createUser } from "@/services/message/user/createUser.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useThreadFollowStore } from "@/store/message/threadFollow";
+import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
+import { MessageHookMap } from "#src/services/message/MessageHookMap";
+import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
+import { createUser } from "#src/services/message/user/createUser.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useThreadFollowStore } from "#src/store/message/threadFollow";
 import { MessageType } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 import { v7 } from "uuid";

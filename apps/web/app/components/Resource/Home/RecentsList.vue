@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ResourceListSource } from "@/models/resource/list/ResourceListSource";
-import { useRecentStore } from "@/store/resource/recent";
+import { ResourceListSource } from "#src/models/resource/list/ResourceListSource";
+import { useRecentStore } from "#src/store/resource/recent";
 
 const recentStore = useRecentStore();
 const { error, isPending, isReadSettled, recents } = storeToRefs(recentStore);

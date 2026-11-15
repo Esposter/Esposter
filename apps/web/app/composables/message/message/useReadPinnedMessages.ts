@@ -1,7 +1,7 @@
-import { toRoomMessagePage } from "@/services/message/message/toRoomMessagePage";
-import { requirePartitionKey } from "@/services/message/requirePartitionKey";
-import { usePinStore } from "@/store/message/pin";
-import { useRoomStore } from "@/store/message/room";
+import { toRoomMessagePage } from "#src/services/message/message/toRoomMessagePage";
+import { requirePartitionKey } from "#src/services/message/requirePartitionKey";
+import { usePinStore } from "#src/store/message/pin";
+import { useRoomStore } from "#src/store/message/room/index";
 
 export const useReadPinnedMessages = () => {
   const roomStore = useRoomStore();

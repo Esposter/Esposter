@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { useSurveyCreatorDrag } from "@/composables/survey/useSurveyCreatorDrag";
-import { getSurveyPaletteGroups } from "@/services/resource/survey/getSurveyPaletteGroups";
-import { useSurveyCreatorStore } from "@/store/survey/creator";
+import { useSurveyCreatorDrag } from "#src/composables/survey/useSurveyCreatorDrag";
+import { getSurveyPaletteGroups } from "#src/services/resource/survey/getSurveyPaletteGroups";
+import { useSurveyCreatorStore } from "#src/store/survey/creator";
 import { SurveyNodeType } from "vue-survey-engine-headless";
 
 const surveyCreatorStore = useSurveyCreatorStore();

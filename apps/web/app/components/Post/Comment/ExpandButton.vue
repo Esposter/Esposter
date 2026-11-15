@@ -2,9 +2,9 @@
 import type { PostInPostWithRelations } from "@esposter/db-schema";
 
 import { pluralize } from "#shared/util/text/pluralize";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useCommentStore } from "@/store/post/comment";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { useCommentStore } from "#src/store/post/comment/index";
 
 interface Props {
   comment: PostInPostWithRelations;

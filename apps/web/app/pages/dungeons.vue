@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { FontKey } from "@/models/dungeons/keys/FontKey";
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { SceneComponentEntries } from "@/services/dungeons/scene/SceneComponentMap";
-import { checkIsMobile } from "@/util/device/checkIsMobile";
+import { FontKey } from "#src/models/dungeons/keys/FontKey";
+import { SceneKey } from "#src/models/dungeons/keys/SceneKey";
+import { SceneComponentEntries } from "#src/services/dungeons/scene/SceneComponentMap";
+import { checkIsMobile } from "#src/util/device/checkIsMobile";
 import { GridEngine } from "grid-engine";
 import { AUTO, Scale } from "phaser";
 import ClickOutsidePlugin from "phaser4-rex-plugins/plugins/clickoutside-plugin.js";

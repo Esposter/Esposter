@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Visual } from "#shared/models/dashboard/data/Visual";
-import type { AxisVisualPropsData } from "@/models/dashboard/AxisVisualPropsData";
+import type { AxisVisualPropsData } from "#src/models/dashboard/AxisVisualPropsData";
 
 import { COMPACT_NUMBER_FORMATTER, NUMBER_FORMATTER } from "#shared/services/intl/constants";
 import { takeOne } from "@esposter/shared";

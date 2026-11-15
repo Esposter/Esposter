@@ -1,5 +1,5 @@
-import type { Emoji } from "@/models/message/emoji/Emoji";
-import type { EmojiGroup } from "@/models/message/emoji/EmojiGroup";
+import type { Emoji } from "#src/models/message/emoji/Emoji";
+import type { EmojiGroup } from "#src/models/message/emoji/EmojiGroup";
 
 // Three views over the same records, each answering one question in constant time: what a stored reaction
 // Renders as, what a picked character is stored as, and what a category tab shows

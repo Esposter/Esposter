@@ -1,4 +1,4 @@
-import { RoomPermissionDefinitionMap } from "@/services/message/room/role/RoomPermissionDefinitionMap";
+import { RoomPermissionDefinitionMap } from "#src/services/message/room/role/RoomPermissionDefinitionMap";
 import { RoomPermission } from "@esposter/db-schema";
 import { normalizeString } from "@esposter/shared";
 

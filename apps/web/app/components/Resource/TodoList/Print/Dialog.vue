@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { UiDialogSize } from "@/models/ui/UiDialogSize";
-import { useTodoListPrintDialogStore } from "@/store/resource/todoList/printDialog";
+import { UiDialogSize } from "#src/models/ui/UiDialogSize";
+import { useTodoListPrintDialogStore } from "#src/store/resource/todoList/printDialog";
 
 const todoListPrintDialogStore = useTodoListPrintDialogStore();
 const { isDialogOpen, isNotesPrinted, isPrinting, isStepsPrinted } = storeToRefs(todoListPrintDialogStore);

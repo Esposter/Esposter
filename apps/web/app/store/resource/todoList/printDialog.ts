@@ -1,4 +1,4 @@
-import { useResourceStore } from "@/store/resource";
+import { useResourceStore } from "#src/store/resource/index";
 
 // Print runs from the Export menu, which is outside any blade, so the dialog it opens is held here and mounted by the
 // Blade shell. Whether it is open is keyed by the list it was opened for, and the two toggles are the viewer's, kept

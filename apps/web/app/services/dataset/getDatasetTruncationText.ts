@@ -1,7 +1,7 @@
 import type { DatasetTruncation } from "#shared/models/dataset/DatasetTruncation";
 
 import { pluralize } from "#shared/util/text/pluralize";
-import { formatTruncationCount } from "@/services/dataset/formatTruncationCount";
+import { formatTruncationCount } from "#src/services/dataset/formatTruncationCount";
 
 // One phrasing for every truncation surface, so a chart footnote and a table banner can never quote
 // Different numbers for the same read. A read can fall short in both ways at once, so both clauses are

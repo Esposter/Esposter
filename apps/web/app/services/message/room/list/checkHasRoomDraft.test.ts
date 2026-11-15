@@ -1,5 +1,5 @@
-import { getComposerKey } from "@/services/message/composer/getComposerKey";
-import { checkHasRoomDraft } from "@/services/message/room/list/checkHasRoomDraft";
+import { getComposerKey } from "#src/services/message/composer/getComposerKey";
+import { checkHasRoomDraft } from "#src/services/message/room/list/checkHasRoomDraft";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 

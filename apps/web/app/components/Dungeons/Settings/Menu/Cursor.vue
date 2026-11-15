@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { SettingsOptionGrid } from "@/services/dungeons/scene/settings/SettingsOptionGrid";
-import { HIGHLIGHT_BORDER_COLOR } from "@/services/dungeons/UI/constants";
+import { SettingsOptionGrid } from "#src/services/dungeons/scene/settings/SettingsOptionGrid";
+import { HIGHLIGHT_BORDER_COLOR } from "#src/services/dungeons/UI/constants";
 import { Rectangle } from "vue-phaserjs";
 
 const { width, y, ...configuration } = useSettingsCursorDimensions(() => SettingsOptionGrid.position.value.y);

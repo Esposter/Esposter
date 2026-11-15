@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
 import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
 
-import MessageModelMessageSuggestionMentionList from "@/components/Message/Model/Message/Suggestion/MentionList.vue";
-import { createUser } from "@/services/message/user/createUser.test";
+import MessageModelMessageSuggestionMentionList from "#src/components/Message/Model/Message/Suggestion/MentionList.vue";
+import { createUser } from "#src/services/message/user/createUser.test";
 import { noop } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";

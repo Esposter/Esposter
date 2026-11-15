@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { MenuTextStyle } from "@/assets/dungeons/scene/settings/styles/MenuTextStyle";
+import { MenuTextStyle } from "#src/assets/dungeons/scene/settings/styles/MenuTextStyle";
 import { Text } from "vue-phaserjs";
 
 useSettingsMenuWidth((width) => (x.value = width / 2));

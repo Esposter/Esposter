@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useFindReplaceStore } from "@/store/resource/sheet/findReplace";
+import { useFindReplaceStore } from "#src/store/resource/sheet/findReplace";
 
 const findReplaceStore = useFindReplaceStore();
 const { findValue, occurrences, replaceValue } = storeToRefs(findReplaceStore);

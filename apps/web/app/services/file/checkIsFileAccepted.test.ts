@@ -1,4 +1,4 @@
-import { checkIsFileAccepted } from "@/services/file/checkIsFileAccepted";
+import { checkIsFileAccepted } from "#src/services/file/checkIsFileAccepted";
 import { describe, expect, test } from "vitest";
 
 describe(checkIsFileAccepted, () => {

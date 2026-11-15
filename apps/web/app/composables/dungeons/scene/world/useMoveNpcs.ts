@@ -1,8 +1,8 @@
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { MovementPattern } from "@/models/dungeons/npc/MovementPattern";
-import { getNextDirection } from "@/services/dungeons/UI/input/getNextDirection";
-import { useNpcStore } from "@/store/dungeons/world/npc";
+import { MovementPattern } from "#src/models/dungeons/npc/MovementPattern";
+import { getNextDirection } from "#src/services/dungeons/UI/input/getNextDirection";
+import { useNpcStore } from "#src/store/dungeons/world/npc";
 import { exhaustiveGuard, takeOne } from "@esposter/shared";
 
 export const useMoveNpcs = (scene: SceneWithPlugins) => {

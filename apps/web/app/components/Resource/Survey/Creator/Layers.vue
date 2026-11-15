@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import type { Item } from "@/models/shared/Item";
-import type { UiListItem } from "@/models/ui/UiListItem";
+import type { Item } from "#src/models/shared/Item";
+import type { UiListItem } from "#src/models/ui/UiListItem";
 
-import { SurveyNodeMoveType } from "@/models/resource/survey/SurveyNodeMoveType";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { getSurveyNodeLabel } from "@/services/resource/survey/getSurveyNodeLabel";
-import { getSurveyNodeMove } from "@/services/resource/survey/getSurveyNodeMove";
-import { getSurveySlotLength } from "@/services/resource/survey/getSurveySlotLength";
-import { useSurveyCreatorStore } from "@/store/survey/creator";
+import { SurveyNodeMoveType } from "#src/models/resource/survey/SurveyNodeMoveType";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { getSurveyNodeLabel } from "#src/services/resource/survey/getSurveyNodeLabel";
+import { getSurveyNodeMove } from "#src/services/resource/survey/getSurveyNodeMove";
+import { getSurveySlotLength } from "#src/services/resource/survey/getSurveySlotLength";
+import { useSurveyCreatorStore } from "#src/store/survey/creator";
 import { parseArrayIndex, parseJsonPointer, toJsonPointer } from "@esposter/shared";
 import { getAcceptingSlotPointers, getBlockLayerRows, getBlockNode } from "vue-block-editor-headless";
 import { surveyNodeChildren, surveyNodeTypeDefinitionMap, surveyRegistry } from "vue-survey-engine-headless";

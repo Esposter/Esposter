@@ -1,9 +1,9 @@
 // @vitest-environment nuxt
-import type { AxisVisualPropsData } from "@/models/dashboard/AxisVisualPropsData";
+import type { AxisVisualPropsData } from "#src/models/dashboard/AxisVisualPropsData";
 
 import { Visual } from "#shared/models/dashboard/data/Visual";
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
-import DashboardVisualCard from "@/components/Dashboard/Visual/Card.vue";
+import DashboardVisualCard from "#src/components/Dashboard/Visual/Card.vue";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 

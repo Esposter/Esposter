@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { getTypingMessage } from "@/services/message/getTypingMessage";
-import { useDataStore } from "@/store/message/data";
+import { getTypingMessage } from "#src/services/message/getTypingMessage";
+import { useDataStore } from "#src/store/message/data";
 
 const dataStore = useDataStore();
 const { typings } = storeToRefs(dataStore);

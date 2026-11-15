@@ -1,6 +1,6 @@
-import type { Threshold } from "@/models/math/Threshold";
+import type { Threshold } from "#src/models/math/Threshold";
 
-import { step } from "@/util/math/ease/step";
+import { step } from "#src/util/math/ease/step";
 import { describe, expect, test } from "vitest";
 
 describe(step, () => {

@@ -1,19 +1,19 @@
 /* oxlint-disable no-await-in-loop -- Each press moves the tab stop the next press starts from; The focus move settles before the next press reads it */
 // @vitest-environment nuxt
-import type { CustomEmoji } from "@/models/message/emoji/CustomEmoji";
+import type { CustomEmoji } from "#src/models/message/emoji/CustomEmoji";
 import type { VueWrapper } from "@vue/test-utils";
 
-import StyledEmojiPickerGrid from "@/components/Styled/EmojiPicker/Grid.vue";
-import StyledEmojiPickerPanel from "@/components/Styled/EmojiPicker/Panel.vue";
-import UiEmptyState from "@/components/Ui/EmptyState.vue";
-import { EmojiGroup, EmojiGroups } from "@/models/message/emoji/EmojiGroup";
-import { EmojiType } from "@/models/message/emoji/EmojiType";
-import { SkinTone } from "@/models/message/emoji/SkinTone";
-import { ROOM_EMOJI_CATEGORY_TITLE } from "@/services/message/emoji/constants";
-import { getCustomEmojiTag } from "@/services/message/emoji/getCustomEmojiTag";
-import { getEmojiIndex } from "@/services/message/emoji/getEmojiIndex";
-import { searchEmojis } from "@/services/message/emoji/searchEmojis";
-import { useEmojiPickerStore } from "@/store/message/emojiPicker";
+import StyledEmojiPickerGrid from "#src/components/Styled/EmojiPicker/Grid.vue";
+import StyledEmojiPickerPanel from "#src/components/Styled/EmojiPicker/Panel.vue";
+import UiEmptyState from "#src/components/Ui/EmptyState.vue";
+import { EmojiGroup, EmojiGroups } from "#src/models/message/emoji/EmojiGroup";
+import { EmojiType } from "#src/models/message/emoji/EmojiType";
+import { SkinTone } from "#src/models/message/emoji/SkinTone";
+import { ROOM_EMOJI_CATEGORY_TITLE } from "#src/services/message/emoji/constants";
+import { getCustomEmojiTag } from "#src/services/message/emoji/getCustomEmojiTag";
+import { getEmojiIndex } from "#src/services/message/emoji/getEmojiIndex";
+import { searchEmojis } from "#src/services/message/emoji/searchEmojis";
+import { useEmojiPickerStore } from "#src/store/message/emojiPicker";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";

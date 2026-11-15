@@ -1,4 +1,4 @@
-import { useAlertStore } from "@/store/alert";
+import { useAlertStore } from "#src/store/alert";
 import { z } from "zod";
 
 export const useSaveToLocalStorage = () => {

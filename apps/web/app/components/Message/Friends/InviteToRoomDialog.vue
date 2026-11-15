@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { UiListItem } from "@/models/ui/UiListItem";
+import type { UiListItem } from "#src/models/ui/UiListItem";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useDirectMessageStore } from "@/store/message/room/directMessage";
-import { useInviteStore } from "@/store/message/room/invite";
-import { useFriendStore } from "@/store/message/user/friend";
-import { useFriendDialogStore } from "@/store/message/user/friendDialog";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { useDirectMessageStore } from "#src/store/message/room/directMessage";
+import { useInviteStore } from "#src/store/message/room/invite";
+import { useFriendStore } from "#src/store/message/user/friend";
+import { useFriendDialogStore } from "#src/store/message/user/friendDialog";
 
 const friendStore = useFriendStore();
 const { friends } = storeToRefs(friendStore);

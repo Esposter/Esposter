@@ -1,10 +1,10 @@
 // @vitest-environment nuxt
 import { createColumn } from "#shared/models/resource/sheet/column/createColumn.test";
 import { createDataSource } from "#shared/models/resource/sheet/datasource/createDataSource.test";
-import ResourceSheetEditDialogButton from "@/components/Resource/Sheet/EditDialog/Button.vue";
-import ResourceSheetRowCreateDialogButton from "@/components/Resource/Sheet/Row/CreateDialogButton.vue";
-import { createUpdatedColumn } from "@/composables/resource/sheet/commands/createUpdatedColumn.test";
-import { setupWithDataSource } from "@/composables/resource/sheet/commands/setupWithDataSource.test";
+import ResourceSheetEditDialogButton from "#src/components/Resource/Sheet/EditDialog/Button.vue";
+import ResourceSheetRowCreateDialogButton from "#src/components/Resource/Sheet/Row/CreateDialogButton.vue";
+import { createUpdatedColumn } from "#src/composables/resource/sheet/commands/createUpdatedColumn.test";
+import { setupWithDataSource } from "#src/composables/resource/sheet/commands/setupWithDataSource.test";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";

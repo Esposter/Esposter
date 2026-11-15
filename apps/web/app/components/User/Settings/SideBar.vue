@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { UserSettingsPageSections } from "@/models/user/UserSettingsPageSection";
-import { UserSettingsPageSectionMap } from "@/services/user/settings/UserSettingsPageSectionMap";
+import { UserSettingsPageSections } from "#src/models/user/UserSettingsPageSection";
+import { UserSettingsPageSectionMap } from "#src/services/user/settings/UserSettingsPageSectionMap";
 
 const visibleIds = useVisibleSectionIds(UserSettingsPageSections);
 </script>

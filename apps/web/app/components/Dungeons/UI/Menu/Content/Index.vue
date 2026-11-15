@@ -1,9 +1,9 @@
 <script setup lang="ts" generic="TGrid extends readonly (readonly string[])[]">
-import type { Grid } from "@/models/dungeons/Grid";
+import type { Grid } from "#src/models/dungeons/Grid";
 
 import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
-import { getGridKey } from "@/services/dungeons/getGridKey";
-import { INITIAL_MENU_CURSOR_POSITION, MENU_CURSOR_POSITION_INCREMENT } from "@/services/dungeons/UI/menu/constants";
+import { getGridKey } from "#src/services/dungeons/getGridKey";
+import { INITIAL_MENU_CURSOR_POSITION, MENU_CURSOR_POSITION_INCREMENT } from "#src/services/dungeons/UI/menu/constants";
 
 interface Props {
   grid: Grid<TGrid>;

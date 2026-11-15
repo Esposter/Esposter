@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-import EditorContextualPanel from "@/components/Editor/ContextualPanel.vue";
+import EditorContextualPanel from "#src/components/Editor/ContextualPanel.vue";
 import { mount } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 

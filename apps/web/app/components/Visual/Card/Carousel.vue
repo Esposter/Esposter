@@ -1,15 +1,15 @@
 <!-- @BIG CREDIT TO Braedon Wooding for providing the base animation code for this AMAZING card carousel -->
 <script setup lang="ts">
-import type { Card } from "@/models/visual/Card";
-import type { CardStackGeometry } from "@/models/visual/CardStackGeometry";
-import type { CardStackState } from "@/models/visual/CardStackState";
-import type { CardStyleVariables } from "@/models/visual/CardStyleVariables";
+import type { Card } from "#src/models/visual/Card";
+import type { CardStackGeometry } from "#src/models/visual/CardStackGeometry";
+import type { CardStackState } from "#src/models/visual/CardStackState";
+import type { CardStyleVariables } from "#src/models/visual/CardStyleVariables";
 
-import CardBase from "@/components/Visual/Card/Base.vue";
-import { getCardStackClass } from "@/services/visual/getCardStackClass";
-import { getCardStyles } from "@/services/visual/getCardStyles";
-import { getInactiveCardScaleY } from "@/services/visual/getInactiveCardScaleY";
-import { getNormalCardStyles } from "@/services/visual/getNormalCardStyles";
+import CardBase from "#src/components/Visual/Card/Base.vue";
+import { getCardStackClass } from "#src/services/visual/getCardStackClass";
+import { getCardStyles } from "#src/services/visual/getCardStyles";
+import { getInactiveCardScaleY } from "#src/services/visual/getInactiveCardScaleY";
+import { getNormalCardStyles } from "#src/services/visual/getNormalCardStyles";
 import { takeOne } from "@esposter/shared";
 
 interface Props {

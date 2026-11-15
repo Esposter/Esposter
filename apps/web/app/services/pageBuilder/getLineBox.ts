@@ -1,9 +1,9 @@
-import type { DropIndicatorInput } from "@/models/pageBuilder/DropIndicatorInput";
-import type { OverlayBox } from "@/models/pageBuilder/OverlayBox";
+import type { DropIndicatorInput } from "#src/models/pageBuilder/DropIndicatorInput";
+import type { OverlayBox } from "#src/models/pageBuilder/OverlayBox";
 
-import { checkIsSameLine } from "@/services/pageBuilder/checkIsSameLine";
-import { LINE_THICKNESS } from "@/services/pageBuilder/constants";
-import { getGapPosition } from "@/services/pageBuilder/getGapPosition";
+import { checkIsSameLine } from "#src/services/pageBuilder/checkIsSameLine";
+import { LINE_THICKNESS } from "#src/services/pageBuilder/constants";
+import { getGapPosition } from "#src/services/pageBuilder/getGapPosition";
 
 // The line in the gap a block lands in, across the slot's axis from the children's own extent
 export const getLineBox = ({

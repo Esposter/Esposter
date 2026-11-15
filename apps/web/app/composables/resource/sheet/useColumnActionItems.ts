@@ -1,13 +1,13 @@
 import type { Column } from "#shared/models/resource/sheet/column/Column";
-import type { Item } from "@/models/shared/Item";
+import type { Item } from "#src/models/shared/Item";
 
 import { getEffectiveColumnType } from "#shared/services/resource/sheet/column/getEffectiveColumnType";
 import { getToggleColumnVisibilityDescription } from "#shared/services/resource/sheet/commands/getToggleColumnVisibilityDescription";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { ChartableColumnTypes } from "@/services/resource/sheet/column/ChartableColumnTypes";
-import { getDeleteColumnDescription } from "@/services/resource/sheet/commands/getDeleteColumnDescription";
-import { getEditColumnDescription } from "@/services/resource/sheet/commands/getEditColumnDescription";
-import { useColumnDialogStore } from "@/store/resource/sheet/columnDialog";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { ChartableColumnTypes } from "#src/services/resource/sheet/column/ChartableColumnTypes";
+import { getDeleteColumnDescription } from "#src/services/resource/sheet/commands/getDeleteColumnDescription";
+import { getEditColumnDescription } from "#src/services/resource/sheet/commands/getEditColumnDescription";
+import { useColumnDialogStore } from "#src/store/resource/sheet/columnDialog";
 
 // A column's commands, which its row's overflow button, its row's context menu and its header in the grid all open,
 // So none of them offers what the others do not

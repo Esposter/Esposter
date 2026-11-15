@@ -1,5 +1,5 @@
-import { WebhookDialogAction } from "@/models/message/room/WebhookDialogAction";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { WebhookDialogAction } from "#src/models/message/room/WebhookDialogAction";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 export const WebhookDialogActionMetaMap = {
   [WebhookDialogAction.Delete]: {

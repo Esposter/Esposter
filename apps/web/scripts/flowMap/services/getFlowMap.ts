@@ -1,16 +1,16 @@
-import type { FlowMapPage } from "@@/scripts/flowMap/models/FlowMapPage";
-import type { FlowMapSourceNode } from "@@/scripts/flowMap/models/FlowMapSourceNode";
+import type { FlowMapPage } from "#scripts/flowMap/models/FlowMapPage";
+import type { FlowMapSourceNode } from "#scripts/flowMap/models/FlowMapSourceNode";
 
-import { WEB_DIRECTORY } from "@@/scripts/constants";
+import { WEB_DIRECTORY } from "#scripts/constants";
 import {
   NODE_ID_SEPARATOR_REGEX,
   ROUTE_PARAMETER_PLACEHOLDER,
   SHELL_ENTRY_PATTERNS,
   SHELL_NODE_ID,
-} from "@@/scripts/flowMap/constants";
-import { readPages } from "@@/scripts/flowMap/services/readPages";
-import { readSourceContext } from "@@/scripts/flowMap/services/readSourceContext";
-import { readSourceNode } from "@@/scripts/flowMap/services/readSourceNode";
+} from "#scripts/flowMap/constants";
+import { readPages } from "#scripts/flowMap/services/readPages";
+import { readSourceContext } from "#scripts/flowMap/services/readSourceContext";
+import { readSourceNode } from "#scripts/flowMap/services/readSourceNode";
 import { getOrCreate, InvalidOperationError, Operation, RoutePath } from "@esposter/shared";
 import { globSync } from "node:fs";
 import { resolve } from "node:path";

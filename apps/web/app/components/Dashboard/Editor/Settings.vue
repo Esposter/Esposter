@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useDashboardStore } from "@/store/dashboard";
+import { useDashboardStore } from "#src/store/dashboard/index";
 import { CollisionMode, CompactType } from "vue-grid-layout-headless";
 
 const dashboardStore = useDashboardStore();

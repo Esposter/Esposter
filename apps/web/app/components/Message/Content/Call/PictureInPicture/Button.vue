@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useMediaStore } from "@/store/message/room/call/media";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { useMediaStore } from "#src/store/message/room/call/media";
 
 const { isSupported } = useDocumentPictureInPicture();
 const mediaStore = useMediaStore();

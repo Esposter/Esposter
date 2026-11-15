@@ -1,9 +1,9 @@
 // @vitest-environment nuxt
-import type { useDesmos } from "@/composables/desmos/useDesmos";
-import type { Expression } from "@/models/desmos/Expression";
+import type { useDesmos } from "#src/composables/desmos/useDesmos";
+import type { Expression } from "#src/models/desmos/Expression";
 
-import VisualDesmosDisplayGraph from "@/components/Visual/Desmos/DisplayGraph.vue";
-import { Colors } from "@/models/desmos/Colors";
+import VisualDesmosDisplayGraph from "#src/components/Visual/Desmos/DisplayGraph.vue";
+import { Colors } from "#src/models/desmos/Colors";
 import { noop } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
@@ -13,7 +13,7 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 const { GraphingCalculator } = vi.hoisted(() => ({
   GraphingCalculator: vi.fn<(element: HTMLElement, options: object) => Promise<unknown>>(),
 }));
-vi.mock(import("@/composables/desmos/useDesmos"), () => ({
+vi.mock(import("#src/composables/desmos/useDesmos"), () => ({
   useDesmos: (() => ({
     onLoaded: (callback: (desmos: unknown) => void) => {
       callback({ GraphingCalculator });

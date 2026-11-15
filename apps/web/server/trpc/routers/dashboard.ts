@@ -1,5 +1,5 @@
 import { transformPublishedDashboard } from "#server/services/dashboard/transformPublishedDashboard";
-import { router } from "#server/trpc";
+import { router } from "#server/trpc/index";
 import { createResourceProcedures } from "#server/trpc/procedure/resource/createResourceProcedures";
 import { ResourceType } from "@esposter/db-schema";
 

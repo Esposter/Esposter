@@ -2,7 +2,7 @@ import type { readModerationLogInputSchema } from "#shared/models/db/moderation/
 import type { RoomInMessage } from "@esposter/db-schema";
 import type { z } from "zod";
 
-import { useModerationLogStore } from "@/store/message/moderation/log";
+import { useModerationLogStore } from "#src/store/message/moderation/log";
 
 // The filters as the client holds them: an unset one is "" and the router reads it as absent
 export const useReadModerationLog = (

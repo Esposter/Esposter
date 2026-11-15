@@ -5,10 +5,10 @@ import type { UpdateWebhookInput } from "#shared/models/db/webhook/UpdateWebhook
 import type { IssuedWebhookInMessage, PublicWebhookInMessage, RoomInMessage } from "@esposter/db-schema";
 import type { Except } from "type-fest";
 
-import { createOperationData } from "@/services/shared/createOperationData";
-import { getRestoredItems } from "@/services/shared/getRestoredItems";
-import { useRoomStore } from "@/store/message/room";
-import { useWebhookDialogStore } from "@/store/message/room/webhookDialog";
+import { createOperationData } from "#src/services/shared/createOperationData";
+import { getRestoredItems } from "#src/services/shared/getRestoredItems";
+import { useRoomStore } from "#src/store/message/room/index";
+import { useWebhookDialogStore } from "#src/store/message/room/webhookDialog";
 import { DatabaseEntityType } from "@esposter/db-schema";
 
 export const useWebhookStore = defineStore("message/room/webhook", () => {

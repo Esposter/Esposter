@@ -1,6 +1,6 @@
 import { StyleBreakpoint } from "#shared/models/pageBuilder/StyleBreakpoint";
 import { StyleState } from "#shared/models/pageBuilder/StyleState";
-import { getStyleInheritance } from "@/services/pageBuilder/getStyleInheritance";
+import { getStyleInheritance } from "#src/services/pageBuilder/getStyleInheritance";
 import { describe, expect, test } from "vitest";
 
 describe(getStyleInheritance, () => {

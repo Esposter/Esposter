@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
-import OtherSaveNotice from "@/components/Resource/OtherSaveNotice.vue";
-import { useResourceStore } from "@/store/resource";
+import OtherSaveNotice from "#src/components/Resource/OtherSaveNotice.vue";
+import { useResourceStore } from "#src/store/resource/index";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 

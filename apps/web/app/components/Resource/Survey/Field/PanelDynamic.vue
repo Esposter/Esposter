@@ -6,11 +6,11 @@ import type {
   SurveyPanelRowView,
 } from "vue-survey-engine-headless";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { getSurveyAnswerRows } from "@/services/resource/survey/getSurveyAnswerRows";
-import { withSurveyAnswer } from "@/services/resource/survey/withSurveyAnswer";
-import { withSurveyRequired } from "@/services/resource/survey/withSurveyRequired";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { getSurveyAnswerRows } from "#src/services/resource/survey/getSurveyAnswerRows";
+import { withSurveyAnswer } from "#src/services/resource/survey/withSurveyAnswer";
+import { withSurveyRequired } from "#src/services/resource/survey/withSurveyRequired";
 import { takeOne } from "@esposter/shared";
 
 interface Props {

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useCallStore } from "@/store/message/room/call";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { useCallStore } from "#src/store/message/room/call/index";
 
 const callStore = useCallStore();
 const { callRoomId } = storeToRefs(callStore);

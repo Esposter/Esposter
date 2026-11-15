@@ -2,8 +2,8 @@ import type { Page } from "@esposter/db-schema";
 import type { Promisable } from "type-fest";
 
 import { BACKOFF_BASE_DELAY_MS, BACKOFF_MAX_DELAY_MS } from "#shared/services/pagination/constants";
-import { getBoundComputed } from "@/util/vue/getBoundComputed";
-import { getPropertyComputed } from "@/util/vue/getPropertyComputed";
+import { getBoundComputed } from "#src/util/vue/getBoundComputed";
+import { getPropertyComputed } from "#src/util/vue/getPropertyComputed";
 import { createEmptyPage } from "@esposter/db-schema";
 import { checkIsServer, createExponentialBackoff, getResultAsync, noop, withFinalizerAsync } from "@esposter/shared";
 

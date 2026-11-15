@@ -1,4 +1,4 @@
-import { useSentMessageStore } from "@/store/message/sentMessage";
+import { useSentMessageStore } from "#src/store/message/sentMessage";
 
 export const useReadSentMessages = () => {
   const { $trpc } = useNuxtApp();

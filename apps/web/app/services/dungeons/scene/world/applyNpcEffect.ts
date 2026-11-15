@@ -1,12 +1,12 @@
-import type { Effect } from "@/models/dungeons/npc/effect/Effect";
-import type { Npc } from "@/models/dungeons/scene/world/Npc";
+import type { Effect } from "#src/models/dungeons/npc/effect/Effect";
+import type { Npc } from "#src/models/dungeons/scene/world/Npc";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { EffectType } from "@/models/dungeons/npc/effect/EffectType";
-import { getEffectCompleteEventKey } from "@/services/dungeons/scene/world/getEffectCompleteEventKey";
-import { phaserEventEmitter } from "@/services/phaser/phaserEventEmitter";
-import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
-import { useWorldPlayerStore } from "@/store/dungeons/world/player";
+import { EffectType } from "#src/models/dungeons/npc/effect/EffectType";
+import { getEffectCompleteEventKey } from "#src/services/dungeons/scene/world/getEffectCompleteEventKey";
+import { phaserEventEmitter } from "#src/services/phaser/phaserEventEmitter";
+import { useWorldDialogStore } from "#src/store/dungeons/world/dialog";
+import { useWorldPlayerStore } from "#src/store/dungeons/world/player";
 import { getResultAsync, noop } from "@esposter/shared";
 import { Cameras } from "phaser";
 import { sleepScene } from "vue-phaserjs";

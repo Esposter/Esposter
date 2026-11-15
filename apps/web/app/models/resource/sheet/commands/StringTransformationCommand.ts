@@ -1,11 +1,11 @@
 import type { StringTransformationType } from "#shared/models/resource/sheet/column/transformation/string/StringTransformationType";
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
-import type { AffectedCell } from "@/models/resource/sheet/commands/AffectedCell";
+import type { AffectedCell } from "#src/models/resource/sheet/commands/AffectedCell";
 
 import { ADataSourceCommand } from "#shared/models/resource/sheet/commands/ADataSourceCommand";
 import { CommandType } from "#shared/models/resource/sheet/commands/CommandType";
 import { computeStringTransformation } from "#shared/services/resource/sheet/column/transformation/string/computeStringTransformation";
-import { writeAffectedCells } from "@/services/resource/sheet/commands/writeAffectedCells";
+import { writeAffectedCells } from "#src/services/resource/sheet/commands/writeAffectedCells";
 
 export class StringTransformationCommand extends ADataSourceCommand<typeof CommandType.StringTransformation> {
   readonly type = CommandType.StringTransformation;

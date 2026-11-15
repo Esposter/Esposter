@@ -1,6 +1,6 @@
 <script setup lang="ts" generic="T extends ClickerListItem">
-import type { ClickerListItem } from "@/models/clicker/ClickerListItem";
-import type { UiListItem } from "@/models/ui/UiListItem";
+import type { ClickerListItem } from "#src/models/clicker/ClickerListItem";
+import type { UiListItem } from "#src/models/ui/UiListItem";
 
 import { ID_SEPARATOR } from "@esposter/shared";
 

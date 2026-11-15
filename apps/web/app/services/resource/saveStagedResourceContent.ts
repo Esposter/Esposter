@@ -1,10 +1,10 @@
-import type { ResourceRouter } from "@/models/resource/ResourceRouter";
+import type { ResourceRouter } from "#src/models/resource/ResourceRouter";
 import type { ResourceInResource, ResourceType } from "@esposter/db-schema";
 
 import { MimeType } from "#shared/models/file/MimeType";
-import { getSingleFilePresignedUrlEntities } from "@/services/file/getSingleFilePresignedUrlEntities";
-import { uploadFilesToPresignedUrls } from "@/services/file/uploadFilesToPresignedUrls";
-import { getSha256Hex } from "@/services/shared/getSha256Hex";
+import { getSingleFilePresignedUrlEntities } from "#src/services/file/getSingleFilePresignedUrlEntities";
+import { uploadFilesToPresignedUrls } from "#src/services/file/uploadFilesToPresignedUrls";
+import { getSha256Hex } from "#src/services/shared/getSha256Hex";
 
 // A document too large for one request body goes to R2 first and is committed by reference: gzipped,
 // Hashed so the commit can tell its own upload from another device's, PUT through a presigned write url the server holds

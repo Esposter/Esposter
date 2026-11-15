@@ -1,8 +1,8 @@
 import type { EmailValidatorMessage } from "#shared/models/pageBuilder/EmailValidatorMessage";
 
 import { EmailValidationLevel } from "#shared/models/pageBuilder/EmailValidationLevel";
-import { EditorFindingSeverity } from "@/models/editor/EditorFindingSeverity";
-import { toEmailValidatorFinding } from "@/services/emailEditor/toEmailValidatorFinding";
+import { EditorFindingSeverity } from "#src/models/editor/EditorFindingSeverity";
+import { toEmailValidatorFinding } from "#src/services/emailEditor/toEmailValidatorFinding";
 import { describe, expect, test } from "vitest";
 
 describe(toEmailValidatorFinding, () => {

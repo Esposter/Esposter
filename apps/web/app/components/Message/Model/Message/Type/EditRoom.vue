@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { MessageComponentProps } from "@/models/message/MessageComponentProps";
+import type { MessageComponentProps } from "#src/models/message/MessageComponentProps";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useRoomDialogStore } from "@/store/message/room/dialog";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { useRoomDialogStore } from "#src/store/message/room/dialog";
 
 interface Props extends MessageComponentProps {}
 

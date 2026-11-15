@@ -1,11 +1,11 @@
-import type { DragReorderContext } from "@/models/ui/dragReorder/DragReorderContext";
+import type { DragReorderContext } from "#src/models/ui/dragReorder/DragReorderContext";
 
-import { TOUCH_DRAG_DELAY_MS } from "@/services/ui/constants";
-import { autoscrollDrag } from "@/services/ui/dragReorder/autoscrollDrag";
-import { disposeDragReorder } from "@/services/ui/dragReorder/disposeDragReorder";
-import { flushPendingSlides } from "@/services/ui/dragReorder/flushPendingSlides";
-import { getDragReorderProps } from "@/services/ui/dragReorder/getDragReorderProps";
-import { startDrag } from "@/services/ui/dragReorder/startDrag";
+import { TOUCH_DRAG_DELAY_MS } from "#src/services/ui/constants";
+import { autoscrollDrag } from "#src/services/ui/dragReorder/autoscrollDrag";
+import { disposeDragReorder } from "#src/services/ui/dragReorder/disposeDragReorder";
+import { flushPendingSlides } from "#src/services/ui/dragReorder/flushPendingSlides";
+import { getDragReorderProps } from "#src/services/ui/dragReorder/getDragReorderProps";
+import { startDrag } from "#src/services/ui/dragReorder/startDrag";
 
 // Reorders a container's children by dragging one, as the pointer half of a reorderable list, whose keyboard half is
 // `useReorder`. The props go on the container, whose element children are the rows, one for each value in order. A

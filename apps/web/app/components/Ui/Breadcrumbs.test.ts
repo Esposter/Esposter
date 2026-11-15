@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
-import UiBreadcrumbs from "@/components/Ui/Breadcrumbs.vue";
-import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
-import { UiStyles } from "@/models/ui/UiStyle";
+import UiBreadcrumbs from "#src/components/Ui/Breadcrumbs.vue";
+import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
+import { UiStyles } from "#src/models/ui/UiStyle";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 import { RouterLink } from "vue-router";

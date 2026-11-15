@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { StrokeElement } from "vue-block-editor-headless";
 
-import { WHITEBOARD_TEXT_COLOR } from "@/services/whiteboard/palette/constants";
+import { WHITEBOARD_TEXT_COLOR } from "#src/services/whiteboard/palette/constants";
 import { getStrokeAttributes, toSmoothedPathData } from "vue-block-editor-headless";
 
 interface Props {

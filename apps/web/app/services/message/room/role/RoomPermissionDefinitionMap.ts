@@ -1,7 +1,7 @@
 import type { RoomPermission } from "@esposter/db-schema";
 
-import { RoomPermissionCategory } from "@/models/message/room/role/RoomPermissionCategory";
-import { RoomPermissionDefinition } from "@/models/message/room/role/RoomPermissionDefinition";
+import { RoomPermissionCategory } from "#src/models/message/room/role/RoomPermissionCategory";
+import { RoomPermissionDefinition } from "#src/models/message/room/role/RoomPermissionDefinition";
 
 // What a bit grants, said to the person deciding whether to grant it. The enum key is what a permission is
 // Called; nothing about `ManageMessages` says it reaches other people's messages, which is the whole question

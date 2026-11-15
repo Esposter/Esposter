@@ -1,11 +1,11 @@
-import type { DialogMessage } from "@/models/dungeons/UI/dialog/DialogMessage";
-import type { DialogTarget } from "@/models/dungeons/UI/dialog/DialogTarget";
-import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
+import type { DialogMessage } from "#src/models/dungeons/UI/dialog/DialogMessage";
+import type { DialogTarget } from "#src/models/dungeons/UI/dialog/DialogTarget";
+import type { PlayerInput } from "#src/models/dungeons/UI/input/PlayerInput";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
-import { animateDialogMessage } from "@/services/dungeons/dialog/animateDialogMessage";
-import { showMessageNoInputRequired } from "@/services/dungeons/dialog/showMessageNoInputRequired";
+import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";
+import { animateDialogMessage } from "#src/services/dungeons/dialog/animateDialogMessage";
+import { showMessageNoInputRequired } from "#src/services/dungeons/dialog/showMessageNoInputRequired";
 import { getResultAsync, getSynchronizedFunction, noop, withFinalizerAsync } from "@esposter/shared";
 
 export const useDialogStore = defineStore("dungeons/dialog", () => {

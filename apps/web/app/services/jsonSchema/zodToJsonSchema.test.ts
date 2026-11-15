@@ -1,8 +1,8 @@
 import { ColumnTransformationType } from "#shared/models/resource/sheet/column/transformation/ColumnTransformationType";
 import { RESOURCE_LINK_TYPE_KEYWORD } from "#shared/services/resource/link/constants";
 import { createResourceLinkSchema } from "#shared/services/resource/link/createResourceLinkSchema";
-import { ColumnFormContextPropertyNames } from "@/models/resource/sheet/column/ColumnFormContext";
-import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
+import { ColumnFormContextPropertyNames } from "#src/models/resource/sheet/column/ColumnFormContext";
+import { zodToJsonSchema } from "#src/services/jsonSchema/zodToJsonSchema";
 import { ResourceLinkType } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";

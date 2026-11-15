@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { UiRules } from "@/services/ui/UiRules";
+import { UiRules } from "#src/services/ui/UiRules";
 import { DISPLAY_NAME_MAX_LENGTH } from "@esposter/db-schema";
 
 const modelValue = defineModel<string>({ required: true });

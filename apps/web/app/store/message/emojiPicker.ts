@@ -1,6 +1,6 @@
-import { SkinTone } from "@/models/message/emoji/SkinTone";
-import { MAX_RECENT_EMOJIS } from "@/services/message/emoji/constants";
-import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
+import { SkinTone } from "#src/models/message/emoji/SkinTone";
+import { MAX_RECENT_EMOJIS } from "#src/services/message/emoji/constants";
+import { LocalStorageKey } from "#src/services/shared/LocalStorageKey";
 
 // Both are per-device display preferences like the message density, so they persist in localStorage rather
 // Than in the DB-backed user settings. Holding them here rather than in a module singleton is what makes the

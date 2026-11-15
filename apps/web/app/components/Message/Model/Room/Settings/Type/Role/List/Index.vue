@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { UiListItem } from "@/models/ui/UiListItem";
+import type { UiListItem } from "#src/models/ui/UiListItem";
 import type { RoomInMessage, RoomRoleInMessage } from "@esposter/db-schema";
 
-import { useRoleStore } from "@/store/message/room/role";
-import { useUserStore } from "@/store/message/user";
+import { useRoleStore } from "#src/store/message/room/role";
+import { useUserStore } from "#src/store/message/user/index";
 
 interface Props {
   roles: RoomRoleInMessage[];

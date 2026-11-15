@@ -2,7 +2,7 @@ import type { UpdateResourceContentResult } from "#shared/models/resource/Update
 
 import { getChangedResourceTopics } from "#server/services/resource/getChangedResourceTopics";
 import { moveWhiteboardElement } from "#server/services/resource/whiteboard/moveWhiteboardElement";
-import { router } from "#server/trpc";
+import { router } from "#server/trpc/index";
 import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { createResourceProcedures } from "#server/trpc/procedure/resource/createResourceProcedures";
 import { getOwnerProcedure } from "#server/trpc/procedure/resource/getOwnerProcedure";

@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import type { UiListItem } from "@/models/ui/UiListItem";
-import type { SettingsContentMap } from "@/services/message/settings/SettingsContentMap";
+import type { UiListItem } from "#src/models/ui/UiListItem";
+import type { SettingsContentMap } from "#src/services/message/settings/SettingsContentMap";
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { SettingsCategories, SettingsCategory } from "@/models/message/room/SettingsCategory";
-import { SettingsType } from "@/models/message/room/SettingsType";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { SettingsCategoryMap } from "@/services/message/settings/SettingsCategoryMap";
-import { SettingsListItemMap } from "@/services/message/settings/SettingsListItemMap";
-import { SettingsPermissionMap } from "@/services/message/settings/SettingsPermissionMap";
-import { useRoleStore } from "@/store/message/room/role";
+import { SettingsCategories, SettingsCategory } from "#src/models/message/room/SettingsCategory";
+import { SettingsType } from "#src/models/message/room/SettingsType";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { SettingsCategoryMap } from "#src/services/message/settings/SettingsCategoryMap";
+import { SettingsListItemMap } from "#src/services/message/settings/SettingsListItemMap";
+import { SettingsPermissionMap } from "#src/services/message/settings/SettingsPermissionMap";
+import { useRoleStore } from "#src/store/message/room/role";
 
 interface Props {
   room: RoomInMessage;

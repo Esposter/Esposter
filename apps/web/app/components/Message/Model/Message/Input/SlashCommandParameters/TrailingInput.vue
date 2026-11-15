@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { pluralize } from "#shared/util/text/pluralize";
-import { useSlashCommandStore } from "@/store/message/input/slashCommand";
-import { checkIsCaretAtStart } from "@/util/dom/checkIsCaretAtStart";
+import { useSlashCommandStore } from "#src/store/message/input/slashCommand";
+import { checkIsCaretAtStart } from "#src/util/dom/checkIsCaretAtStart";
 
 interface Props {
   isFocused?: boolean;

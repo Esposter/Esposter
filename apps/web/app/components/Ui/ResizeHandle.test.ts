@@ -1,8 +1,8 @@
 // @vitest-environment happy-dom
-import UiResizeHandle from "@/components/Ui/ResizeHandle.vue";
-import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
-import { UiStyles } from "@/models/ui/UiStyle";
-import { RESIZE_HANDLE_KEYBOARD_STEP } from "@/services/ui/constants";
+import UiResizeHandle from "#src/components/Ui/ResizeHandle.vue";
+import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
+import { UiStyles } from "#src/models/ui/UiStyle";
+import { RESIZE_HANDLE_KEYBOARD_STEP } from "#src/services/ui/constants";
 import { mount } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 

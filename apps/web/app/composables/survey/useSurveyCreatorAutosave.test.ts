@@ -2,10 +2,10 @@
 import type { VueWrapper } from "@vue/test-utils";
 import type { SurveyDocument } from "vue-survey-engine-headless";
 
-import { useSurveyCreatorAutosave } from "@/composables/survey/useSurveyCreatorAutosave";
-import { useSurveyCreatorCommands } from "@/composables/survey/useSurveyCreatorCommands";
-import { RESOURCE_AUTOSAVE_DEBOUNCE_MS } from "@/services/resource/constants";
-import { useSurveyCreatorStore } from "@/store/survey/creator";
+import { useSurveyCreatorAutosave } from "#src/composables/survey/useSurveyCreatorAutosave";
+import { useSurveyCreatorCommands } from "#src/composables/survey/useSurveyCreatorCommands";
+import { RESOURCE_AUTOSAVE_DEBOUNCE_MS } from "#src/services/resource/constants";
+import { useSurveyCreatorStore } from "#src/store/survey/creator";
 import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";

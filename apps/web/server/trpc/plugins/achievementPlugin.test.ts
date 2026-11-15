@@ -1,11 +1,11 @@
 import type { Context } from "#server/trpc/context";
-import type { TRPCRouter } from "#server/trpc/routers";
+import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { R2Bucket } from "@cloudflare/workers-types";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { createCallerFactory } from "#server/trpc";
 import { createMockContext } from "#server/trpc/context.test";
-import { trpcRouter } from "#server/trpc/routers";
+import { createCallerFactory } from "#server/trpc/index";
+import { trpcRouter } from "#server/trpc/routers/index";
 import { ClickerSave } from "#shared/models/clicker/data/ClickerSave";
 import { achievementDefinitions } from "#shared/services/achievement/achievementDefinitions";
 import { deleteDirectory } from "@esposter/db";

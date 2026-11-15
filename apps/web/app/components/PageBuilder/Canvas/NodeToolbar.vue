@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { AnyPageBuilderKind } from "@/models/pageBuilder/AnyPageBuilderKind";
+import type { AnyPageBuilderKind } from "#src/models/pageBuilder/AnyPageBuilderKind";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
-import { useCommandStore } from "@/store/ui/command";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
+import { useCommandStore } from "#src/store/ui/command";
 
 interface Props {
   announce: (message: string) => void;

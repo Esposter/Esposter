@@ -1,10 +1,10 @@
-import type { Item } from "@/models/shared/Item";
-import type { UiContextMenuPoint } from "@/models/ui/UiContextMenuPoint";
-import type { UiContextMenuPress } from "@/models/ui/UiContextMenuPress";
+import type { Item } from "#src/models/shared/Item";
+import type { UiContextMenuPoint } from "#src/models/ui/UiContextMenuPoint";
+import type { UiContextMenuPress } from "#src/models/ui/UiContextMenuPress";
 
-import { CONTEXT_MENU_BROWSER_SELECTOR, LONG_PRESS_MOVE_TOLERANCE, LONG_PRESS_MS } from "@/services/ui/constants";
-import { swallowClick } from "@/services/ui/swallowClick";
-import { useContextMenuStore } from "@/store/ui/contextMenu";
+import { CONTEXT_MENU_BROWSER_SELECTOR, LONG_PRESS_MOVE_TOLERANCE, LONG_PRESS_MS } from "#src/services/ui/constants";
+import { swallowClick } from "#src/services/ui/swallowClick";
+import { useContextMenuStore } from "#src/store/ui/contextMenu";
 
 // Gives an element a context menu of the items its overflow button shows, so the two never disagree. The props go on
 // The element: a right-click opens the menu at the pointer, a long press on a touch screen at the finger, and the menu

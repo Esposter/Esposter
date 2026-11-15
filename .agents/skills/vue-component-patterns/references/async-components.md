@@ -13,7 +13,7 @@ entry at a time.
 
 ```ts
 export const FooComponentMap: Record<FooType, Component> = {
-  [FooType.Bar]: defineAsyncComponent(() => import("@/components/Foo/Bar.vue")),
+  [FooType.Bar]: defineAsyncComponent(() => import("#src/components/Foo/Bar.vue")),
 };
 ```
 

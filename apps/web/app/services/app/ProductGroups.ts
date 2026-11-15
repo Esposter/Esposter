@@ -1,8 +1,8 @@
 // @unocss-include
-import type { ProductGroup } from "@/models/app/ProductGroup";
+import type { ProductGroup } from "#src/models/app/ProductGroup";
 
 import { MESSAGE_DISPLAY_NAME } from "#shared/services/message/constants";
-import { RESOURCE_EXPLORER_DISPLAY_NAME } from "@/services/resource/constants";
+import { RESOURCE_EXPLORER_DISPLAY_NAME } from "#src/services/resource/constants";
 import { RoutePath } from "@esposter/shared";
 
 export const ProductGroups = [

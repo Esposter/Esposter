@@ -4,15 +4,15 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { ItemEffectType } from "#shared/models/dungeons/item/ItemEffectType";
 import { MONSTER_PARTY_MAX_LENGTH } from "#shared/services/dungeons/constants";
-import { StateName } from "@/models/dungeons/state/battle/StateName";
-import { AItemResolver } from "@/models/resolvers/dungeons/AItemResolver";
-import { checkIsBallKey } from "@/services/dungeons/item/checkIsBallKey";
-import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
-import { phaserEventEmitter } from "@/services/phaser/phaserEventEmitter";
-import { useBallStore } from "@/store/dungeons/battle/ball";
-import { useInventoryInfoPanelStore } from "@/store/dungeons/inventory/infoPanel";
-import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
-import { prettify } from "@/util/text/prettify";
+import { StateName } from "#src/models/dungeons/state/battle/StateName";
+import { AItemResolver } from "#src/models/resolvers/dungeons/AItemResolver";
+import { checkIsBallKey } from "#src/services/dungeons/item/checkIsBallKey";
+import { battleStateMachine } from "#src/services/dungeons/scene/battle/battleStateMachine";
+import { phaserEventEmitter } from "#src/services/phaser/phaserEventEmitter";
+import { useBallStore } from "#src/store/dungeons/battle/ball";
+import { useInventoryInfoPanelStore } from "#src/store/dungeons/inventory/infoPanel";
+import { useMonsterPartySceneStore } from "#src/store/dungeons/monsterParty/scene";
+import { prettify } from "#src/util/text/prettify";
 import { NotFoundError } from "@esposter/shared";
 
 export class CaptureItemResolver extends AItemResolver {

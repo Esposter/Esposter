@@ -1,8 +1,8 @@
 <script setup lang="ts" generic="T extends string">
-import type { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import type { UiMenuItem } from "@/models/ui/UiMenuItem";
+import type { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import type { UiMenuItem } from "#src/models/ui/UiMenuItem";
 
-import { POPOVER_POSITION_AREA, POPOVER_POSITION_TRY } from "@/services/ui/constants";
+import { POPOVER_POSITION_AREA, POPOVER_POSITION_TRY } from "#src/services/ui/constants";
 import { usePopover } from "@vuetify/v0";
 import { mergeProps } from "vue";
 

@@ -1,6 +1,6 @@
-import type { CardStackState } from "@/models/visual/CardStackState";
+import type { CardStackState } from "#src/models/visual/CardStackState";
 
-import { CardStackClass } from "@/models/visual/CardStackClass";
+import { CardStackClass } from "#src/models/visual/CardStackClass";
 
 // Four card classes:
 // - Active: moving right -> left -> right.

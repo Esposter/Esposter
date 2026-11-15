@@ -1,5 +1,5 @@
 // @unocss-include
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 // Lucide's class for every meaning, which Nuxt UI and shadcn ship by default: standard's icons. Lucide draws no filled
 // Star, so the filled one is Material's

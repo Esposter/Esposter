@@ -1,18 +1,18 @@
 // @vitest-environment nuxt
-import { useMemberActionItems } from "@/composables/message/user/useMemberActionItems";
-import { useSession } from "@/services/auth/authClient.test";
-import { createRoomRole } from "@/services/message/member/createRoomRole.test";
-import { createRoom } from "@/services/message/room/createRoom.test";
-import { createUser } from "@/services/message/user/createUser.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useRoomStore } from "@/store/message/room";
-import { useRoleStore } from "@/store/message/room/role";
-import { useFriendStore } from "@/store/message/user/friend";
+import { useMemberActionItems } from "#src/composables/message/user/useMemberActionItems";
+import { useSession } from "#src/services/auth/authClient.test";
+import { createRoomRole } from "#src/services/message/member/createRoomRole.test";
+import { createRoom } from "#src/services/message/room/createRoom.test";
+import { createUser } from "#src/services/message/user/createUser.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useRoomStore } from "#src/store/message/room/index";
+import { useRoleStore } from "#src/store/message/room/role";
+import { useFriendStore } from "#src/store/message/user/friend";
 import { RoomPermission } from "@esposter/db-schema";
 import { v7 } from "uuid";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
+vi.mock(import("#src/services/auth/authClient"), () => import("#src/services/auth/authClient.test"));
 
 describe(useMemberActionItems, () => {
   const { trpcMsw } = setupMswTrpc();

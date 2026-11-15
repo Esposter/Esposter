@@ -1,7 +1,7 @@
 import type { RoomFilterInMessage } from "@esposter/db-schema";
 
-import { router } from "#server/trpc";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
+import { router } from "#server/trpc/index";
 import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { getPermissionsProcedure } from "#server/trpc/procedure/room/getPermissionsProcedure";
 import { upsertRoomFilterInputSchema } from "#shared/models/db/room/UpsertRoomFilterInput";

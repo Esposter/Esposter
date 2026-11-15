@@ -1,4 +1,4 @@
-import { MessageDisplayMode } from "@/models/message/MessageDisplayMode";
+import { MessageDisplayMode } from "#src/models/message/MessageDisplayMode";
 
 export const MessageDisplayModeItems = [
   {

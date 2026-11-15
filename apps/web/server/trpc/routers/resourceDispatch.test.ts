@@ -1,12 +1,12 @@
 import type { Context } from "#server/trpc/context";
-import type { TRPCRouter } from "#server/trpc/routers";
+import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { ResourceFilePresignedUrlEntity } from "#shared/models/resource/ResourceFilePresignedUrlEntity";
 import type { R2Bucket } from "@cloudflare/workers-types";
 import type { ResourcePublicationInResource } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { connectAgentKey } from "#server/services/mcp/connectAgentKey.test";
-import { createCallerFactory } from "#server/trpc";
+import { createCallerFactory } from "#server/trpc/index";
 import { resourceDispatchRouter } from "#server/trpc/routers/resourceDispatch";
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { sheetRouter } from "#server/trpc/routers/sheet";

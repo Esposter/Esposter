@@ -1,15 +1,15 @@
 // @vitest-environment nuxt
 import type { PollMessageContent } from "#shared/models/message/poll/PollMessageContent";
 
-import { useVotePoll } from "@/composables/message/poll/useVotePoll";
-import { useSession } from "@/services/auth/authClient.test";
-import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
+import { useVotePoll } from "#src/composables/message/poll/useVotePoll";
+import { useSession } from "#src/services/auth/authClient.test";
+import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { MessageType } from "@esposter/db-schema";
 import { v7 } from "uuid";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
+vi.mock(import("#src/services/auth/authClient"), () => import("#src/services/auth/authClient.test"));
 
 describe(useVotePoll, () => {
   const { trpcMsw } = setupMswTrpc();

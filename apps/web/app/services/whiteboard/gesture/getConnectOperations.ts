@@ -1,11 +1,11 @@
 import type { JsonPatchOperation } from "@esposter/shared";
 import type { ArrowBinding, ArrowEnd, Point, PositionedDocument, ShapeElement } from "vue-block-editor-headless";
 
-import { createWhiteboardElement } from "@/services/whiteboard/createWhiteboardElement";
-import { getArrowOperations } from "@/services/whiteboard/gesture/getArrowOperations";
-import { getNearestConnectionPointIndex } from "@/services/whiteboard/gesture/getNearestConnectionPointIndex";
-import { getPlacedBounds } from "@/services/whiteboard/getPlacedBounds";
-import { WHITEBOARD_DEFAULT_ARROWHEAD } from "@/services/whiteboard/palette/constants";
+import { createWhiteboardElement } from "#src/services/whiteboard/createWhiteboardElement";
+import { getArrowOperations } from "#src/services/whiteboard/gesture/getArrowOperations";
+import { getNearestConnectionPointIndex } from "#src/services/whiteboard/gesture/getNearestConnectionPointIndex";
+import { getPlacedBounds } from "#src/services/whiteboard/getPlacedBounds";
+import { WHITEBOARD_DEFAULT_ARROWHEAD } from "#src/services/whiteboard/palette/constants";
 import { applyPatches } from "@esposter/shared";
 import {
   getConnectionPoint,

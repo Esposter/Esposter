@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { UserSettingsInMessage } from "@esposter/db-schema";
 
-import { useUserSettingsStore } from "@/store/message/user/settings";
+import { useUserSettingsStore } from "#src/store/message/user/settings/index";
 import { MAX_PUSH_TO_TALK_RELEASE_DELAY_MS, MIN_PUSH_TO_TALK_RELEASE_DELAY_MS } from "@esposter/db-schema";
 
 interface Props {

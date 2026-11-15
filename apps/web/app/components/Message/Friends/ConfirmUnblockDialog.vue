@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useBlockStore } from "@/store/message/user/block";
-import { useFriendDialogStore } from "@/store/message/user/friendDialog";
+import { useBlockStore } from "#src/store/message/user/block";
+import { useFriendDialogStore } from "#src/store/message/user/friendDialog";
 
 const blockStore = useBlockStore();
 const { blockedUsers } = storeToRefs(blockStore);

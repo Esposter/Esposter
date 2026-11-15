@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
-import { MenuExperienceTextStyle } from "@/assets/dungeons/scene/monsterDetails/styles/MenuExperienceTextStyle";
-import { MenuTextStyle } from "@/assets/dungeons/scene/monsterDetails/styles/MenuTextStyle";
-import { ExperienceLabelTextStyle } from "@/assets/dungeons/styles/ExperienceLabelTextStyle";
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { useControlsStore } from "@/store/dungeons/controls";
-import { useMonsterDetailsSceneStore } from "@/store/dungeons/monsterDetails/scene";
-import { prettify } from "@/util/text/prettify";
+import { MenuExperienceTextStyle } from "#src/assets/dungeons/scene/monsterDetails/styles/MenuExperienceTextStyle";
+import { MenuTextStyle } from "#src/assets/dungeons/scene/monsterDetails/styles/MenuTextStyle";
+import { ExperienceLabelTextStyle } from "#src/assets/dungeons/styles/ExperienceLabelTextStyle";
+import { SceneKey } from "#src/models/dungeons/keys/SceneKey";
+import { useControlsStore } from "#src/store/dungeons/controls";
+import { useMonsterDetailsSceneStore } from "#src/store/dungeons/monsterDetails/scene";
+import { prettify } from "#src/util/text/prettify";
 import { Image, Text } from "vue-phaserjs";
 
 const controlsStore = useControlsStore();

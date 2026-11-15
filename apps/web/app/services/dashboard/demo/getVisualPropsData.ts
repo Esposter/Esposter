@@ -1,5 +1,5 @@
 import type { ChartType } from "#shared/models/dashboard/data/chart/type/ChartType";
-import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
+import type { VisualPropsData } from "#src/models/dashboard/VisualPropsData";
 
 import { NotFoundError } from "@esposter/shared";
 

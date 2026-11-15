@@ -2,12 +2,12 @@
 import type { VueWrapper } from "@vue/test-utils";
 
 import { createId } from "#shared/util/math/random/createId";
-import { goOnline } from "@/composables/shared/network.test";
-import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
-import { createCounter } from "@/services/shared/createCounter.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useCallStore } from "@/store/message/room/call";
-import { useParticipantStore } from "@/store/message/room/call/participant";
+import { goOnline } from "#src/composables/shared/network.test";
+import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
+import { createCounter } from "#src/services/shared/createCounter.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useCallStore } from "#src/store/message/room/call/index";
+import { useParticipantStore } from "#src/store/message/room/call/participant";
 import { CALL_ID_LENGTH } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
@@ -19,7 +19,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 const { subscribeCallParticipants } = vi.hoisted(() => ({
   subscribeCallParticipants: vi.fn<(callSessionId: string) => Promise<() => void>>(),
 }));
-vi.mock(import("@/composables/message/room/call/useSubscribeCallParticipants"), () => ({
+vi.mock(import("#src/composables/message/room/call/useSubscribeCallParticipants"), () => ({
   useSubscribeCallParticipants: () => subscribeCallParticipants,
 }));
 

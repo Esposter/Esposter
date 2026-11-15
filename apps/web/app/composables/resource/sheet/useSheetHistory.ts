@@ -1,5 +1,5 @@
-import { useSheetStore } from "@/store/resource/sheet";
-import { useSheetHistoryStore } from "@/store/resource/sheet/history";
+import { useSheetHistoryStore } from "#src/store/resource/sheet/history/index";
+import { useSheetStore } from "#src/store/resource/sheet/index";
 
 // Undo and redo the sheet and save what they leave, for the toolbar's buttons and the shortcuts alike
 export const useSheetHistory = () => {

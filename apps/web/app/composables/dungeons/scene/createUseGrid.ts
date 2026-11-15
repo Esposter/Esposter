@@ -1,4 +1,4 @@
-import type { Grid } from "@/models/dungeons/Grid";
+import type { Grid } from "#src/models/dungeons/Grid";
 
 // The grid is a module singleton so every surface navigates the same cursor, but its rows come from stores
 // That only exist once pinia is active — so the first call wires it up and the rest just take it

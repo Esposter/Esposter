@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { checkIsUuidRouteId } from "@/services/router/checkIsUuidRouteId";
-import { useCommentStore } from "@/store/post/comment";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { checkIsUuidRouteId } from "#src/services/router/checkIsUuidRouteId";
+import { useCommentStore } from "#src/store/post/comment/index";
 
 definePageMeta({ validate: checkIsUuidRouteId });
 

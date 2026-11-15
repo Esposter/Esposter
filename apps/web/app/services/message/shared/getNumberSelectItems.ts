@@ -1,6 +1,6 @@
-import type { SelectItemCategoryDefinition } from "@/models/shared/SelectItemCategoryDefinition";
-import type { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import type { UiSelectItem } from "@/models/ui/UiSelectItem";
+import type { SelectItemCategoryDefinition } from "#src/models/shared/SelectItemCategoryDefinition";
+import type { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import type { UiSelectItem } from "#src/models/ui/UiSelectItem";
 
 // A select holds a string, so each option carries its number as one and is read back through the list it came from
 export const getNumberSelectItems = (items: SelectItemCategoryDefinition<number>[], meaning: UiIconMeaning) =>

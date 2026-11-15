@@ -1,11 +1,11 @@
 import type { DatasetReference } from "#shared/models/dataset/DatasetReference";
 
 import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
-import { emailKind } from "@/services/pageBuilder/emailKind";
-import { createContentData } from "@/services/resource/createContentData";
-import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
-import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
-import { useResourceStore } from "@/store/resource";
+import { emailKind } from "#src/services/pageBuilder/emailKind";
+import { createContentData } from "#src/services/resource/createContentData";
+import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
+import { usePageBuilderHistoryStore } from "#src/store/pageBuilder/history";
+import { useResourceStore } from "#src/store/resource/index";
 import { ResourceType } from "@esposter/db-schema";
 
 export const useEmailEditorStore = defineStore("emailEditor", () => {

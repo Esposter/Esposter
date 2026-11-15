@@ -1,6 +1,6 @@
 import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOption";
-import { TextSpeedDelayMsMap } from "@/services/dungeons/scene/settings/TextSpeedDelayMsMap";
-import { useSettingsStore } from "@/store/dungeons/settings";
+import { TextSpeedDelayMsMap } from "#src/services/dungeons/scene/settings/TextSpeedDelayMsMap";
+import { useSettingsStore } from "#src/store/dungeons/settings/index";
 
 export const useTextDelayMs = () => {
   const settingsStore = useSettingsStore();

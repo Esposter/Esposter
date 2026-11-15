@@ -1,6 +1,6 @@
-import { requirePartitionKey } from "@/services/message/requirePartitionKey";
-import { useRoomStore } from "@/store/message/room";
-import { useSearchHistoryStore } from "@/store/message/search/history";
+import { requirePartitionKey } from "#src/services/message/requirePartitionKey";
+import { useRoomStore } from "#src/store/message/room/index";
+import { useSearchHistoryStore } from "#src/store/message/search/history";
 
 export const useReadSearchHistories = () => {
   const { $trpc } = useNuxtApp();

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useWebhookDialogStore } from "@/store/message/room/webhookDialog";
+import { useWebhookDialogStore } from "#src/store/message/room/webhookDialog";
 
 const webhookDialogStore = useWebhookDialogStore();
 const { issuedUrl } = storeToRefs(webhookDialogStore);

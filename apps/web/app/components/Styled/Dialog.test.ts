@@ -1,12 +1,12 @@
 // @vitest-environment happy-dom
-import StyledDialog from "@/components/Styled/Dialog.vue";
-import StyledFormDialog from "@/components/Styled/FormDialog.vue";
-import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
-import UiTextField from "@/components/Ui/TextField.vue";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiDialogSize } from "@/models/ui/UiDialogSize";
-import { UiDialogSizeClassMap } from "@/services/ui/UiDialogSizeClassMap";
-import { DEFAULT_UI_STYLE } from "@@/configuration/constants";
+import { DEFAULT_UI_STYLE } from "#configuration/constants";
+import StyledDialog from "#src/components/Styled/Dialog.vue";
+import StyledFormDialog from "#src/components/Styled/FormDialog.vue";
+import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
+import UiTextField from "#src/components/Ui/TextField.vue";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiDialogSize } from "#src/models/ui/UiDialogSize";
+import { UiDialogSizeClassMap } from "#src/services/ui/UiDialogSizeClassMap";
 import { noop } from "@esposter/shared";
 import { flushPromises, mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";

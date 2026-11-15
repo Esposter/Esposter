@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
-import { SWALLOW_WINDOW_MS } from "@/services/ui/constants";
-import { swallowNextWindowClick } from "@/services/ui/swallowNextWindowClick";
+import { SWALLOW_WINDOW_MS } from "#src/services/ui/constants";
+import { swallowNextWindowClick } from "#src/services/ui/swallowNextWindowClick";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 const click = () => {

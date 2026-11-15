@@ -1,8 +1,8 @@
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { requirePartitionKey } from "@/services/message/requirePartitionKey";
-import { useRoomStore } from "@/store/message/room";
-import { useRoleStore } from "@/store/message/room/role";
+import { requirePartitionKey } from "#src/services/message/requirePartitionKey";
+import { useRoomStore } from "#src/store/message/room/index";
+import { useRoleStore } from "#src/store/message/room/role";
 
 export const useReadRooms = async () => {
   const { $trpc } = useNuxtApp();

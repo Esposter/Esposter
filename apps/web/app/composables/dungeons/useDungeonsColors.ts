@@ -1,7 +1,7 @@
-import type { DungeonsColors } from "@/models/dungeons/theme/DungeonsColors";
+import type { DungeonsColors } from "#src/models/dungeons/theme/DungeonsColors";
 
-import { ThemeModeColorsMap } from "@/services/dungeons/scene/settings/ThemeModeColorsMap";
-import { useColorPickerStore } from "@/store/dungeons/settings/colorPicker";
+import { ThemeModeColorsMap } from "#src/services/dungeons/scene/settings/ThemeModeColorsMap";
+import { useColorPickerStore } from "#src/store/dungeons/settings/colorPicker";
 
 export const useDungeonsColors = (): DungeonsColors => {
   const colorPickerStore = useColorPickerStore();

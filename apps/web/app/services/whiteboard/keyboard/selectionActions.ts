@@ -1,9 +1,9 @@
-import type { WhiteboardEditState } from "@/models/whiteboard/WhiteboardEditState";
+import type { WhiteboardEditState } from "#src/models/whiteboard/WhiteboardEditState";
 import type { PositionedDocument } from "vue-block-editor-headless";
 
-import { duplicateWhiteboardElements } from "@/services/whiteboard/edit/duplicateWhiteboardElements";
-import { getSelectedElements } from "@/services/whiteboard/getSelectedElements";
-import { serializeClipboardElements } from "@/services/whiteboard/serializeClipboardElements";
+import { duplicateWhiteboardElements } from "#src/services/whiteboard/edit/duplicateWhiteboardElements";
+import { getSelectedElements } from "#src/services/whiteboard/getSelectedElements";
+import { serializeClipboardElements } from "#src/services/whiteboard/serializeClipboardElements";
 import { getResultAsync } from "@esposter/shared";
 
 // The two edits a selection takes from the keys and the properties footer alike, so both paths write the same state

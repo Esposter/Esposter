@@ -1,4 +1,4 @@
-import type { Card } from "@/models/visual/Card";
+import type { Card } from "#src/models/visual/Card";
 
 import { takeOne } from "@esposter/shared";
 

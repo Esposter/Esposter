@@ -1,12 +1,12 @@
 // @vitest-environment happy-dom
-import UiButton from "@/components/Ui/Button.vue";
-import UiDialog from "@/components/Ui/Dialog.vue";
-import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
-import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
-import { UiDialogSize } from "@/models/ui/UiDialogSize";
-import { UiStyles } from "@/models/ui/UiStyle";
-import { UiDialogFrameClassMap } from "@/services/ui/UiDialogFrameClassMap";
-import { UiDialogSizeClassMap } from "@/services/ui/UiDialogSizeClassMap";
+import UiButton from "#src/components/Ui/Button.vue";
+import UiDialog from "#src/components/Ui/Dialog.vue";
+import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
+import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
+import { UiDialogSize } from "#src/models/ui/UiDialogSize";
+import { UiStyles } from "#src/models/ui/UiStyle";
+import { UiDialogFrameClassMap } from "#src/services/ui/UiDialogFrameClassMap";
+import { UiDialogSizeClassMap } from "#src/services/ui/UiDialogSizeClassMap";
 import { noop } from "@esposter/shared";
 import { flushPromises, mount } from "@vue/test-utils";
 import { describe, expect, test, vi } from "vitest";

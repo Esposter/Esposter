@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { ShapeElement } from "vue-block-editor-headless";
 
-import { getElementStrokeAttributes } from "@/services/whiteboard/palette/getElementStrokeAttributes";
+import { getElementStrokeAttributes } from "#src/services/whiteboard/palette/getElementStrokeAttributes";
 import { toShapeOutlinePathData } from "vue-block-editor-headless";
 
 interface Props {

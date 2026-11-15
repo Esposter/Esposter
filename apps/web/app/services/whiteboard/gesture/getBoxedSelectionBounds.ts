@@ -1,6 +1,6 @@
 import type { Bounds, PositionedDocument } from "vue-block-editor-headless";
 
-import { getSelectionBounds } from "@/services/whiteboard/gesture/getSelectionBounds";
+import { getSelectionBounds } from "#src/services/whiteboard/gesture/getSelectionBounds";
 import { checkIsResizablePositionedElement } from "vue-block-editor-headless";
 
 // The box that covers the boxes of the selected elements that take a size of their own, or undefined when none of them does. An arrow and a stroke

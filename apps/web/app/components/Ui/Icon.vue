@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import type { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
-import { UiIconMap } from "@/services/ui/UiIconMap";
+import { UiIconMap } from "#src/services/ui/UiIconMap";
 
 interface Props {
   // The accessible name, for an icon that carries meaning its surroundings do not say; without one it is decoration

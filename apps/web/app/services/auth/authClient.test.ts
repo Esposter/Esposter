@@ -1,4 +1,4 @@
-import type { authClient as baseAuthClient } from "@/services/auth/authClient";
+import type { authClient as baseAuthClient } from "#src/services/auth/authClient";
 
 import { describe, vi } from "vitest";
 

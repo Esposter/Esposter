@@ -1,4 +1,4 @@
-import { toFramePoint } from "@/services/pageBuilder/toFramePoint";
+import { toFramePoint } from "#src/services/pageBuilder/toFramePoint";
 import { describe, expect, test } from "vitest";
 
 describe(toFramePoint, () => {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { Radio } from "@vuetify/v0";
 import { mergeProps } from "vue";
 

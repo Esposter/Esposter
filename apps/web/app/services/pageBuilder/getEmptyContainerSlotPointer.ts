@@ -1,4 +1,4 @@
-import type { PageBuilderHelper } from "@/models/pageBuilder/PageBuilderHelper";
+import type { PageBuilderHelper } from "#src/models/pageBuilder/PageBuilderHelper";
 
 import {
   getBlockNode,

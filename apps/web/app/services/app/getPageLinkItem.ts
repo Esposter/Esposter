@@ -1,8 +1,8 @@
-import type { ListLinkItem } from "@/models/shared/ListLinkItem";
+import type { ListLinkItem } from "#src/models/shared/ListLinkItem";
 
-import { ProductGroups } from "@/services/app/ProductGroups";
-import { SecondaryPageLinkItems } from "@/services/app/SecondaryPageLinkItems";
-import { UserSettingsPageLinkItem } from "@/services/app/UserSettingsPageLinkItem";
+import { ProductGroups } from "#src/services/app/ProductGroups";
+import { SecondaryPageLinkItems } from "#src/services/app/SecondaryPageLinkItems";
+import { UserSettingsPageLinkItem } from "#src/services/app/UserSettingsPageLinkItem";
 
 // The product, secondary or settings page at exactly this path, whose icon and name stand for it; any other page, a room or a
 // Resource, has none, and the dock draws its title's first letter instead

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { pluralize } from "#shared/util/text/pluralize";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 
 interface Props {
   label: string;

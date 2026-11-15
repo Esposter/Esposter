@@ -1,6 +1,6 @@
 import { createColumn } from "#shared/models/resource/sheet/column/createColumn.test";
 import { createRow } from "#shared/models/resource/sheet/datasource/createRow.test";
-import { collectAffectedCells } from "@/services/resource/sheet/commands/collectAffectedCells";
+import { collectAffectedCells } from "#src/services/resource/sheet/commands/collectAffectedCells";
 import { describe, expect, test } from "vitest";
 
 describe(collectAffectedCells, () => {

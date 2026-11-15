@@ -1,4 +1,4 @@
-import type { SurveyListRow } from "@/models/resource/survey/SurveyListRow";
+import type { SurveyListRow } from "#src/models/resource/survey/SurveyListRow";
 
 // A survey list editor as useSurveyListEditor returns it: its draft rows, the message each row is refused with, the
 // Announcement its moves read out, and the writes its rows and its add field make

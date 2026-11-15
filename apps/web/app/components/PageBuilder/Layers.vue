@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { AnyPageBuilderDocument } from "@/models/pageBuilder/AnyPageBuilderDocument";
-import type { AnyPageBuilderKind } from "@/models/pageBuilder/AnyPageBuilderKind";
+import type { AnyPageBuilderDocument } from "#src/models/pageBuilder/AnyPageBuilderDocument";
+import type { AnyPageBuilderKind } from "#src/models/pageBuilder/AnyPageBuilderKind";
 
-import { getLayerTreeItems } from "@/services/pageBuilder/getLayerTreeItems";
-import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
+import { getLayerTreeItems } from "#src/services/pageBuilder/getLayerTreeItems";
+import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
 
 interface Props {
   getDocument: () => AnyPageBuilderDocument | undefined;

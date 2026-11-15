@@ -1,7 +1,7 @@
 // @unocss-include
-import type { DraftsAndSentTabMetadata } from "@/models/message/draftsAndSent/DraftsAndSentTabMetadata";
+import type { DraftsAndSentTabMetadata } from "#src/models/message/draftsAndSent/DraftsAndSentTabMetadata";
 
-import { DraftsAndSentTab } from "@/models/message/draftsAndSent/DraftsAndSentTab";
+import { DraftsAndSentTab } from "#src/models/message/draftsAndSent/DraftsAndSentTab";
 
 // The icon is what the tab, the sidebar badge and the empty state each draw for the same bucket, so it is
 // Spelled once here rather than at each of them.

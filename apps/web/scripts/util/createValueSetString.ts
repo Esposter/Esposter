@@ -1,5 +1,5 @@
+import { createValueSetPropertyString } from "#scripts/util/createValueSetPropertyString";
 import { EN_US_COMPARATOR } from "#shared/services/intl/constants";
-import { createValueSetPropertyString } from "@@/scripts/util/createValueSetPropertyString";
 
 export const createValueSetString = (name: string, properties: string[]) =>
   [

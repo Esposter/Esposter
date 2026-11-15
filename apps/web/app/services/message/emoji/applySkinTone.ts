@@ -1,7 +1,7 @@
-import type { Emoji } from "@/models/message/emoji/Emoji";
+import type { Emoji } from "#src/models/message/emoji/Emoji";
 
-import { SkinTone } from "@/models/message/emoji/SkinTone";
-import { VARIATION_SELECTOR } from "@/services/message/emoji/constants";
+import { SkinTone } from "#src/models/message/emoji/SkinTone";
+import { VARIATION_SELECTOR } from "#src/services/message/emoji/constants";
 
 // Takes the record rather than the character so the support flag cannot be forgotten — toning an emoji that
 // Does not support one appends a stray modifier beside it (🍎🏽).

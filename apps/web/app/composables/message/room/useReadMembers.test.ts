@@ -1,10 +1,10 @@
 // @vitest-environment nuxt
 import type { MemberCountByTopRole } from "#shared/models/db/room/MemberCountByTopRole";
 
-import { useReadMembers } from "@/composables/message/room/useReadMembers";
-import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useMemberStore } from "@/store/message/user/member";
+import { useReadMembers } from "#src/composables/message/room/useReadMembers";
+import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useMemberStore } from "#src/store/message/user/member";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";

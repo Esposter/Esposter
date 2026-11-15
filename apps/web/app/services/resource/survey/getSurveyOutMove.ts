@@ -1,7 +1,7 @@
-import type { SurveyNodeMove } from "@/models/resource/survey/SurveyNodeMove";
+import type { SurveyNodeMove } from "#src/models/resource/survey/SurveyNodeMove";
 import type { SurveyDocument } from "vue-survey-engine-headless";
 
-import { getSurveyNodeLocation } from "@/services/resource/survey/getSurveyNodeLocation";
+import { getSurveyNodeLocation } from "#src/services/resource/survey/getSurveyNodeLocation";
 import { moveOutAfterParent } from "vue-block-editor-headless";
 import { surveyNodeChildren, surveyRegistry } from "vue-survey-engine-headless";
 

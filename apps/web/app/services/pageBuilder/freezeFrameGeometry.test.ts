@@ -1,6 +1,6 @@
-import type { FrameGeometry } from "@/models/pageBuilder/FrameGeometry";
+import type { FrameGeometry } from "#src/models/pageBuilder/FrameGeometry";
 
-import { freezeFrameGeometry } from "@/services/pageBuilder/freezeFrameGeometry";
+import { freezeFrameGeometry } from "#src/services/pageBuilder/freezeFrameGeometry";
 import { describe, expect, test } from "vitest";
 
 const createGeometry = (rects: Record<string, FrameGeometry["frameRect"]>, getScrollTop: () => number) => ({

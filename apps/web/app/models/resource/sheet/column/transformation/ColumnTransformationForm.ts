@@ -12,8 +12,8 @@ import { stringPatternTransformationSchema } from "#shared/models/resource/sheet
 import { stringSplitTransformationSchema } from "#shared/models/resource/sheet/column/transformation/string/StringSplitTransformation";
 import { stringTransformationSchema } from "#shared/models/resource/sheet/column/transformation/string/StringTransformation";
 import { compileRegexMatchPattern } from "#shared/services/resource/sheet/column/transformation/compileRegexMatchPattern";
-import { ColumnFormContextPropertyNames } from "@/models/resource/sheet/column/ColumnFormContext";
-import { createSourceColumnIdFormShape } from "@/services/resource/sheet/column/createSourceColumnIdFormShape";
+import { ColumnFormContextPropertyNames } from "#src/models/resource/sheet/column/ColumnFormContext";
+import { createSourceColumnIdFormShape } from "#src/services/resource/sheet/column/createSourceColumnIdFormShape";
 import { createUniqueArraySchema, noop } from "@esposter/shared";
 import { getMathExpressionNames, parseMathExpression } from "math-expression-compiler";
 import { z } from "zod";

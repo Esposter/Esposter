@@ -4,16 +4,16 @@ import type { ResourceInResource } from "@esposter/db-schema";
 
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { getDatasetTruncation } from "#shared/services/dataset/getDatasetTruncation";
-import { MutationStatus } from "@/models/shared/MutationStatus";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
-import { UiDialogSize } from "@/models/ui/UiDialogSize";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { getDatasetTruncationText } from "@/services/dataset/getDatasetTruncationText";
-import { datasetToDataSource } from "@/services/resource/sheet/dataSource/datasetToDataSource";
-import { useAlertStore } from "@/store/alert";
-import { useResourceStore } from "@/store/resource";
-import { useSheetPortableDialogStore } from "@/store/resource/sheet/portableDialog";
+import { MutationStatus } from "#src/models/shared/MutationStatus";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
+import { UiDialogSize } from "#src/models/ui/UiDialogSize";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { getDatasetTruncationText } from "#src/services/dataset/getDatasetTruncationText";
+import { datasetToDataSource } from "#src/services/resource/sheet/dataSource/datasetToDataSource";
+import { useAlertStore } from "#src/store/alert";
+import { useResourceStore } from "#src/store/resource/index";
+import { useSheetPortableDialogStore } from "#src/store/resource/sheet/portableDialog";
 
 const isOpen = defineModel<boolean>({ default: false });
 const alertStore = useAlertStore();

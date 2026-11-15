@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { UserSettingsPageSection } from "@/models/user/UserSettingsPageSection";
+import type { UserSettingsPageSection } from "#src/models/user/UserSettingsPageSection";
 
-import { UserSettingsPageSectionMap } from "@/services/user/settings/UserSettingsPageSectionMap";
+import { UserSettingsPageSectionMap } from "#src/services/user/settings/UserSettingsPageSectionMap";
 
 interface Props {
   // Absent where a surface of its own already heads the card, as the room's user settings do

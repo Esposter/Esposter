@@ -1,17 +1,17 @@
 // @vitest-environment nuxt
-import type { FrameGeometry } from "@/models/pageBuilder/FrameGeometry";
+import type { FrameGeometry } from "#src/models/pageBuilder/FrameGeometry";
 import type { BlockNode } from "vue-block-editor-headless";
 
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { TEST_ID, TEST_OTHER_ID, TEST_ROOT, TEST_THIRD_ID } from "#shared/services/pageBuilder/constants.test";
-import PageBuilderPalette from "@/components/PageBuilder/Palette.vue";
-import UiPalette from "@/components/Ui/Palette/Index.vue";
-import { WEBPAGE_NODE_TYPE_TITLE_MAP } from "@/services/pageBuilder/constants";
-import { TEST_SECTION_ID, TEST_TEXT_CONTENT } from "@/services/pageBuilder/constants.test";
-import { emailKind } from "@/services/pageBuilder/emailKind";
-import { webpageKind } from "@/services/pageBuilder/webpageKind";
-import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
-import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
+import PageBuilderPalette from "#src/components/PageBuilder/Palette.vue";
+import UiPalette from "#src/components/Ui/Palette/Index.vue";
+import { WEBPAGE_NODE_TYPE_TITLE_MAP } from "#src/services/pageBuilder/constants";
+import { TEST_SECTION_ID, TEST_TEXT_CONTENT } from "#src/services/pageBuilder/constants.test";
+import { emailKind } from "#src/services/pageBuilder/emailKind";
+import { webpageKind } from "#src/services/pageBuilder/webpageKind";
+import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
+import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { MjmlNodeType } from "mjml-blocks";

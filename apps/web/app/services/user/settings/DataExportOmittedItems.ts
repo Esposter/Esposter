@@ -1,4 +1,4 @@
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 // What the archive leaves out, in the words the export's design gives, each a row of the settings card's list
 export const DataExportOmittedItems = [

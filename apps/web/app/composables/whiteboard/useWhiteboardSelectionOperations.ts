@@ -1,8 +1,8 @@
 import type { JsonPatchOperation } from "@esposter/shared";
 import type { PositionedDocument } from "vue-block-editor-headless";
 
-import { useWhiteboardStore } from "@/store/resource/whiteboard";
-import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
+import { useWhiteboardEditorStore } from "#src/store/resource/whiteboard/editor";
+import { useWhiteboardStore } from "#src/store/resource/whiteboard/index";
 
 // A control that changes the selection: whether its change would move nothing, so it is disabled, and its commit, which is one undo step
 export const useWhiteboardSelectionOperations = <TInput>(

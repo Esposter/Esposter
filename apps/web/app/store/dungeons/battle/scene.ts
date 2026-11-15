@@ -1,16 +1,16 @@
-import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
+import type { PlayerInput } from "#src/models/dungeons/UI/input/PlayerInput";
 import type { Direction } from "grid-engine";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { ActivePanel } from "@/models/dungeons/scene/battle/menu/ActivePanel";
-import { PlayerOption } from "@/models/dungeons/scene/battle/menu/PlayerOption";
-import { StateName } from "@/models/dungeons/state/battle/StateName";
-import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
-import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
-import { PlayerBattleMenuOptionGrid } from "@/services/dungeons/scene/battle/menu/PlayerBattleMenuOptionGrid";
-import { checkIsPlayerSpecialInput } from "@/services/dungeons/UI/input/checkIsPlayerSpecialInput";
-import { useDialogStore } from "@/store/dungeons/dialog";
-import { useExperienceBarStore } from "@/store/dungeons/UI/experienceBar";
+import { ActivePanel } from "#src/models/dungeons/scene/battle/menu/ActivePanel";
+import { PlayerOption } from "#src/models/dungeons/scene/battle/menu/PlayerOption";
+import { StateName } from "#src/models/dungeons/state/battle/StateName";
+import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";
+import { battleStateMachine } from "#src/services/dungeons/scene/battle/battleStateMachine";
+import { PlayerBattleMenuOptionGrid } from "#src/services/dungeons/scene/battle/menu/PlayerBattleMenuOptionGrid";
+import { checkIsPlayerSpecialInput } from "#src/services/dungeons/UI/input/checkIsPlayerSpecialInput";
+import { useDialogStore } from "#src/store/dungeons/dialog";
+import { useExperienceBarStore } from "#src/store/dungeons/UI/experienceBar";
 import { exhaustiveGuard, getResultAsync, noop } from "@esposter/shared";
 
 export const useBattleSceneStore = defineStore("dungeons/battle/scene", () => {

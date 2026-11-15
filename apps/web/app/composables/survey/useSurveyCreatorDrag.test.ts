@@ -1,10 +1,10 @@
 // @vitest-environment nuxt
-import type { SurveyDropSlot } from "@/models/resource/survey/SurveyDropSlot";
+import type { SurveyDropSlot } from "#src/models/resource/survey/SurveyDropSlot";
 import type { SurveyPageNode, SurveyPlaceableNode, SurveyTextNode } from "vue-survey-engine-headless";
 
-import { useSurveyCreatorCommands } from "@/composables/survey/useSurveyCreatorCommands";
-import { useSurveyCreatorDrag } from "@/composables/survey/useSurveyCreatorDrag";
-import { useSurveyCreatorStore } from "@/store/survey/creator";
+import { useSurveyCreatorCommands } from "#src/composables/survey/useSurveyCreatorCommands";
+import { useSurveyCreatorDrag } from "#src/composables/survey/useSurveyCreatorDrag";
+import { useSurveyCreatorStore } from "#src/store/survey/creator";
 import { createPinia, setActivePinia } from "pinia";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";

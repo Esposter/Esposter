@@ -1,6 +1,6 @@
-import type { Item } from "@/models/shared/Item";
+import type { Item } from "#src/models/shared/Item";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 // What a whiteboard's context menu runs, each the function the same command's shortcut runs, so the menu and the keys never disagree.
 // The stacking steps are absent when the selection cannot move that way, as the properties panel disables them

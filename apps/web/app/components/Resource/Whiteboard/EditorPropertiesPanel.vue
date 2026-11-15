@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getWhiteboardElementTitle } from "@/services/whiteboard/getWhiteboardElementTitle";
+import { getWhiteboardElementTitle } from "#src/services/whiteboard/getWhiteboardElementTitle";
 import { PositionedElementType } from "vue-block-editor-headless";
 
 // The panel the one element selected opens, for every kind but an arrow, which has a panel of its own. A shape and a sticky note take a fill and a

@@ -1,7 +1,7 @@
-import type { Item } from "@/models/shared/Item";
+import type { Item } from "#src/models/shared/Item";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { getMenuItemByValue } from "@/services/ui/getMenuItemByValue";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { getMenuItemByValue } from "#src/services/ui/getMenuItemByValue";
 import { describe, expect, test } from "vitest";
 
 describe(getMenuItemByValue, () => {

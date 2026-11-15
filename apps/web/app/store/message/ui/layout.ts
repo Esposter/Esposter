@@ -1,7 +1,7 @@
 import { LEFT_DRAWER_WIDTH, RIGHT_DRAWER_WIDTH } from "#shared/services/app/constants";
-import { RightDrawer } from "@/models/message/RightDrawer";
-import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
-import { useLayoutStore } from "@/store/layout";
+import { RightDrawer } from "#src/models/message/RightDrawer";
+import { LocalStorageKey } from "#src/services/shared/LocalStorageKey";
+import { useLayoutStore } from "#src/store/layout";
 
 export const useMessageLayoutStore = defineStore("message/ui/layout", () => {
   const layoutStore = useLayoutStore();

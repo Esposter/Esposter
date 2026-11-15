@@ -1,6 +1,6 @@
-import { Grid } from "@/models/dungeons/Grid";
-import { PlayerTitleMenuOption } from "@/models/dungeons/scene/title/menu/PlayerTitleMenuOption";
-import { useDungeonsStore } from "@/store/dungeons";
+import { Grid } from "#src/models/dungeons/Grid";
+import { PlayerTitleMenuOption } from "#src/models/dungeons/scene/title/menu/PlayerTitleMenuOption";
+import { useDungeonsStore } from "#src/store/dungeons/index";
 
 const grid = [
   [PlayerTitleMenuOption["New Game"]],

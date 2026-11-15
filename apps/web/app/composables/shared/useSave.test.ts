@@ -1,11 +1,11 @@
 // @vitest-environment nuxt
-import { useSession } from "@/services/auth/authClient.test";
-import { createErrorAlert } from "@/services/trpc/createErrorAlert";
+import { useSession } from "#src/services/auth/authClient.test";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { TRPCClientError } from "@trpc/client";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
-vi.mock(import("@/services/trpc/createErrorAlert"));
+vi.mock(import("#src/services/auth/authClient"), () => import("#src/services/auth/authClient.test"));
+vi.mock(import("#src/services/trpc/createErrorAlert"));
 
 interface Counter {
   count: number;

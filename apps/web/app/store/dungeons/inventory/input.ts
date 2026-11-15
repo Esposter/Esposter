@@ -1,14 +1,14 @@
-import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
+import type { PlayerInput } from "#src/models/dungeons/UI/input/PlayerInput";
 import type { Direction } from "grid-engine";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { ItemEffectType } from "#shared/models/dungeons/item/ItemEffectType";
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
-import { activateItem } from "@/services/dungeons/item/activateItem";
-import { checkIsPlayerSpecialInput } from "@/services/dungeons/UI/input/checkIsPlayerSpecialInput";
-import { phaserEventEmitter } from "@/services/phaser/phaserEventEmitter";
-import { useEnemyStore } from "@/store/dungeons/battle/enemy";
+import { SceneKey } from "#src/models/dungeons/keys/SceneKey";
+import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";
+import { activateItem } from "#src/services/dungeons/item/activateItem";
+import { checkIsPlayerSpecialInput } from "#src/services/dungeons/UI/input/checkIsPlayerSpecialInput";
+import { phaserEventEmitter } from "#src/services/phaser/phaserEventEmitter";
+import { useEnemyStore } from "#src/store/dungeons/battle/enemy";
 import { exhaustiveGuard, getResultAsync, noop } from "@esposter/shared";
 
 export const useInventoryInputStore = defineStore("dungeons/inventory/input", () => {

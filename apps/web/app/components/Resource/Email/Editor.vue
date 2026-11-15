@@ -1,32 +1,32 @@
 <script setup lang="ts">
-import type { EditorFinding } from "@/models/editor/EditorFinding";
+import type { EditorFinding } from "#src/models/editor/EditorFinding";
 import type { Context } from "vue-editor-layout-headless";
 
-import PageBuilderContentPanel from "@/components/PageBuilder/ContentPanel.vue";
-import PageBuilderEmailBar from "@/components/PageBuilder/Email/Bar.vue";
-import PageBuilderEmailStylePanel from "@/components/PageBuilder/Email/StylePanel.vue";
-import PageBuilderLayers from "@/components/PageBuilder/Layers.vue";
-import PageBuilderPalette from "@/components/PageBuilder/Palette.vue";
-import UiEmptyState from "@/components/Ui/EmptyState.vue";
-import { EditorType } from "@/models/editor/EditorType";
-import { EmailContentKey } from "@/models/emailEditor/EmailContentKey";
-import { EmailView } from "@/models/pageBuilder/EmailView";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import PageBuilderContentPanel from "#src/components/PageBuilder/ContentPanel.vue";
+import PageBuilderEmailBar from "#src/components/PageBuilder/Email/Bar.vue";
+import PageBuilderEmailStylePanel from "#src/components/PageBuilder/Email/StylePanel.vue";
+import PageBuilderLayers from "#src/components/PageBuilder/Layers.vue";
+import PageBuilderPalette from "#src/components/PageBuilder/Palette.vue";
+import UiEmptyState from "#src/components/Ui/EmptyState.vue";
+import { EditorType } from "#src/models/editor/EditorType";
+import { EmailContentKey } from "#src/models/emailEditor/EmailContentKey";
+import { EmailView } from "#src/models/pageBuilder/EmailView";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import {
   EMAIL_BLOCKS_REGION_ID,
   EMAIL_STRUCTURE_PANEL_ID,
   emailLayout,
   emailPanelNameMap,
   emailRegionNameMap,
-} from "@/services/emailEditor/emailLayout";
-import { emailKind } from "@/services/pageBuilder/emailKind";
-import { getNodeTitleById } from "@/services/pageBuilder/getNodeTitleById";
-import { PAGE_BUILDER_SELECTION_KIND_MAP } from "@/services/pageBuilder/pageBuilderLayout";
-import { useEmailEditorStore } from "@/store/emailEditor";
-import { useEmailExportDialogStore } from "@/store/emailEditor/exportDialog";
-import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
-import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
-import { useResourceStore } from "@/store/resource";
+} from "#src/services/emailEditor/emailLayout";
+import { emailKind } from "#src/services/pageBuilder/emailKind";
+import { getNodeTitleById } from "#src/services/pageBuilder/getNodeTitleById";
+import { PAGE_BUILDER_SELECTION_KIND_MAP } from "#src/services/pageBuilder/pageBuilderLayout";
+import { useEmailExportDialogStore } from "#src/store/emailEditor/exportDialog";
+import { useEmailEditorStore } from "#src/store/emailEditor/index";
+import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
+import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
+import { useResourceStore } from "#src/store/resource/index";
 
 const emailEditorStore = useEmailEditorStore();
 const { loadContent, saveEmail } = emailEditorStore;

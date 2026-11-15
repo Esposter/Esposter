@@ -1,5 +1,5 @@
-import type { State } from "@/models/dungeons/state/State";
-import type { StateMachineStateMap } from "@/models/dungeons/state/StateMachineStateMap";
+import type { State } from "#src/models/dungeons/state/State";
+import type { StateMachineStateMap } from "#src/models/dungeons/state/StateMachineStateMap";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 export class StateMachine<TStateName extends string> {

@@ -1,4 +1,4 @@
-import { DASHBOARD_VIEW_SEPARATOR } from "@/services/dashboard/chart/constants";
+import { DASHBOARD_VIEW_SEPARATOR } from "#src/services/dashboard/chart/constants";
 
 // One `view` entry, split on its **first** separator only: the id ahead of it is a uuid, and everything after it
 // Is the token verbatim, whatever the encoder put in it. An entry carrying no separator at all names no visual,

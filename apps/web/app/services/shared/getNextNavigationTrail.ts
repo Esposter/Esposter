@@ -1,7 +1,7 @@
-import type { NavigationTrailCrumb } from "@/models/shared/NavigationTrailCrumb";
-import type { NavigationTrailPage } from "@/models/shared/NavigationTrailPage";
+import type { NavigationTrailCrumb } from "#src/models/shared/NavigationTrailCrumb";
+import type { NavigationTrailPage } from "#src/models/shared/NavigationTrailPage";
 
-import { NavigationTrailPageMap } from "@/services/shared/NavigationTrailPageMap";
+import { NavigationTrailPageMap } from "#src/services/shared/NavigationTrailPageMap";
 import { RoutePath } from "@esposter/shared";
 
 const NAVIGATION_TRAIL_PAGE_ENTRIES = Object.entries(NavigationTrailPageMap) as [

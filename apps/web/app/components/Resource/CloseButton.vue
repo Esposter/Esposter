@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useNavigationTrailStore } from "@/store/navigationTrail";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { useNavigationTrailStore } from "#src/store/navigationTrail";
 
 const navigationTrailStore = useNavigationTrailStore();
 const { closeTo } = storeToRefs(navigationTrailStore);

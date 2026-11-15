@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { UiTabItem } from "@/models/ui/UiTabItem";
+import type { UiTabItem } from "#src/models/ui/UiTabItem";
 
-import { DraftsAndSentTab, DraftsAndSentTabs } from "@/models/message/draftsAndSent/DraftsAndSentTab";
-import { DraftsAndSentTabMetadataMap } from "@/services/message/draftsAndSent/DraftsAndSentTabMetadataMap";
-import { useScheduledMessageJobStore } from "@/store/message/scheduledMessageJob";
+import { DraftsAndSentTab, DraftsAndSentTabs } from "#src/models/message/draftsAndSent/DraftsAndSentTab";
+import { DraftsAndSentTabMetadataMap } from "#src/services/message/draftsAndSent/DraftsAndSentTabMetadataMap";
+import { useScheduledMessageJobStore } from "#src/store/message/scheduledMessageJob";
 
 defineSlots<{ default: (props: { value: DraftsAndSentTab }) => VNode }>();
 const tab = defineModel<DraftsAndSentTab>({ required: true });

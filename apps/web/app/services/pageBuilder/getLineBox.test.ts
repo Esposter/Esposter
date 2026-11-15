@@ -1,6 +1,6 @@
-import { LINE_THICKNESS } from "@/services/pageBuilder/constants";
-import { TEST_SINGLE_ROW, TEST_WRAPPED_ROW } from "@/services/pageBuilder/constants.test";
-import { getLineBox } from "@/services/pageBuilder/getLineBox";
+import { LINE_THICKNESS } from "#src/services/pageBuilder/constants";
+import { TEST_SINGLE_ROW, TEST_WRAPPED_ROW } from "#src/services/pageBuilder/constants.test";
+import { getLineBox } from "#src/services/pageBuilder/getLineBox";
 import { describe, expect, test } from "vitest";
 
 describe(getLineBox, () => {

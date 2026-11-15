@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { AppNotification } from "@/models/notification/AppNotification";
+import type { AppNotification } from "#src/models/notification/AppNotification";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { UiStatusIconMeaningMap } from "@/services/ui/UiStatusIconMeaningMap";
-import { useNotificationStore } from "@/store/notification";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { UiStatusIconMeaningMap } from "#src/services/ui/UiStatusIconMeaningMap";
+import { useNotificationStore } from "#src/store/notification";
 
 interface Props {
   notification: AppNotification;

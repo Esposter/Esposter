@@ -1,4 +1,4 @@
-import type { getAttackStatePriorityMap } from "@/services/dungeons/scene/battle/getAttackStatePriorityMap";
+import type { getAttackStatePriorityMap } from "#src/services/dungeons/scene/battle/getAttackStatePriorityMap";
 
 export const useActionStore = defineStore("dungeons/battle/action", () => {
   const attackStatePriorityMap = ref<ReturnType<typeof getAttackStatePriorityMap>>();

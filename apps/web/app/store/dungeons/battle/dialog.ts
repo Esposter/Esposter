@@ -1,6 +1,6 @@
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { useDialogStore } from "@/store/dungeons/dialog";
+import { useDialogStore } from "#src/store/dungeons/dialog";
 
 export const useBattleDialogStore = defineStore("dungeons/battle/dialog", () => {
   const dialogStore = useDialogStore();

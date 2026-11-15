@@ -1,17 +1,17 @@
 // @vitest-environment nuxt
-import { useSession } from "@/services/auth/authClient.test";
-import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
-import { createRoom } from "@/services/message/room/createRoom.test";
-import { createUser } from "@/services/message/user/createUser.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useAlertStore } from "@/store/alert";
-import { useDirectMessageStore } from "@/store/message/room/directMessage";
+import { useSession } from "#src/services/auth/authClient.test";
+import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
+import { createRoom } from "#src/services/message/room/createRoom.test";
+import { createUser } from "#src/services/message/user/createUser.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useAlertStore } from "#src/store/alert";
+import { useDirectMessageStore } from "#src/store/message/room/directMessage";
 import { MessageType, RoomType } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
 import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 
-vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
+vi.mock(import("#src/services/auth/authClient"), () => import("#src/services/auth/authClient.test"));
 
 describe(useDirectMessageStore, () => {
   const { trpcMsw } = setupMswTrpc();

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { WebhookDialogAction } from "@/models/message/room/WebhookDialogAction";
+import type { WebhookDialogAction } from "#src/models/message/room/WebhookDialogAction";
 import type { PublicWebhookInMessage } from "@esposter/db-schema";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { WebhookDialogActionMetaMap } from "@/services/message/room/WebhookDialogActionMetaMap";
-import { useWebhookDialogStore } from "@/store/message/room/webhookDialog";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { WebhookDialogActionMetaMap } from "#src/services/message/room/WebhookDialogActionMetaMap";
+import { useWebhookDialogStore } from "#src/store/message/room/webhookDialog";
 
 interface Props {
   action: WebhookDialogAction;

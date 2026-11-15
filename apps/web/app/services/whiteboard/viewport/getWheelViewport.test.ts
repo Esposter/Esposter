@@ -1,9 +1,9 @@
-import type { GestureWheelEvent } from "@/models/whiteboard/GestureWheelEvent";
-import type { Viewport } from "@/models/whiteboard/Viewport";
+import type { GestureWheelEvent } from "#src/models/whiteboard/GestureWheelEvent";
+import type { Viewport } from "#src/models/whiteboard/Viewport";
 
-import { getWorldPoint } from "@/services/whiteboard/gesture/getWorldPoint";
-import { WHITEBOARD_MAX_SCALE, WHITEBOARD_MIN_SCALE } from "@/services/whiteboard/viewport/constants";
-import { getWheelViewport } from "@/services/whiteboard/viewport/getWheelViewport";
+import { getWorldPoint } from "#src/services/whiteboard/gesture/getWorldPoint";
+import { WHITEBOARD_MAX_SCALE, WHITEBOARD_MIN_SCALE } from "#src/services/whiteboard/viewport/constants";
+import { getWheelViewport } from "#src/services/whiteboard/viewport/getWheelViewport";
 import { describe, expect, test } from "vitest";
 
 describe(getWheelViewport, () => {

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { InviteInMessage } from "@esposter/db-schema";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useRoomInviteDialogStore } from "@/store/message/room/roomInviteDialog";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { useRoomInviteDialogStore } from "#src/store/message/room/roomInviteDialog";
 
 interface Props {
   id: InviteInMessage["id"];

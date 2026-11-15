@@ -1,8 +1,8 @@
 import type { JsonPatchOperation } from "@esposter/shared";
 import type { Point, PositionedDocument } from "vue-block-editor-headless";
 
-import { getCopyOperations } from "@/services/whiteboard/edit/getCopyOperations";
-import { getMoveOperations } from "@/services/whiteboard/gesture/getMoveOperations";
+import { getCopyOperations } from "#src/services/whiteboard/edit/getCopyOperations";
+import { getMoveOperations } from "#src/services/whiteboard/gesture/getMoveOperations";
 import { applyPatches } from "@esposter/shared";
 
 // The operations of an Alt drag: the copies of the selection inserted at their originals, then each copy moved by the pointer's delta. The copies

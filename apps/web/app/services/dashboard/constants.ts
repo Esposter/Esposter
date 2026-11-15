@@ -1,6 +1,6 @@
-import type { UiCommand } from "@/models/ui/UiCommand";
+import type { UiCommand } from "#src/models/ui/UiCommand";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 // The grid the editor lays visuals out on. The published dashboard reflows from the same cells, so a visual's stored x/w
 // Lands where it was placed the moment it is viewed, and only a narrower screen takes fewer columns

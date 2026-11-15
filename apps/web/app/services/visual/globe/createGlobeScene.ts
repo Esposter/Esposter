@@ -1,16 +1,16 @@
-import type { LandMask } from "@/models/visual/LandMask";
+import type { LandMask } from "#src/models/visual/LandMask";
 
-import countries from "@/assets/about/countries.json";
-import arcs from "@/assets/about/data.json";
-import landMaskJson from "@/assets/about/generated/globeLandMask/landMask.json";
-import { ARC_STROKES, COLORS } from "@/services/visual/constants";
-import { createArcCurve } from "@/services/visual/globe/createArcCurve";
-import { createLandDots } from "@/services/visual/globe/createLandDots";
-import { getArcState } from "@/services/visual/globe/getArcState";
-import { getStartRotationY } from "@/services/visual/globe/getStartRotationY";
-import { latLngToVector3 } from "@/services/visual/globe/latLngToVector3";
-import { GlobeConfiguration } from "@/services/visual/GlobeConfiguration";
-import { createRandomInteger } from "@/util/math/random/createRandomInteger";
+import countries from "#src/assets/about/countries.json";
+import arcs from "#src/assets/about/data.json";
+import landMaskJson from "#src/assets/about/generated/globeLandMask/landMask.json";
+import { ARC_STROKES, COLORS } from "#src/services/visual/constants";
+import { createArcCurve } from "#src/services/visual/globe/createArcCurve";
+import { createLandDots } from "#src/services/visual/globe/createLandDots";
+import { getArcState } from "#src/services/visual/globe/getArcState";
+import { getStartRotationY } from "#src/services/visual/globe/getStartRotationY";
+import { latLngToVector3 } from "#src/services/visual/globe/latLngToVector3";
+import { GlobeConfiguration } from "#src/services/visual/GlobeConfiguration";
+import { createRandomInteger } from "#src/util/math/random/createRandomInteger";
 import { takeOne } from "@esposter/shared";
 import {
   AmbientLight,

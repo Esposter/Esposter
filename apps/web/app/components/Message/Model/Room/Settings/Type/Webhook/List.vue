@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { WebhookDialogAction } from "@/models/message/room/WebhookDialogAction";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useWebhookStore } from "@/store/message/room/webhook";
+import { WebhookDialogAction } from "#src/models/message/room/WebhookDialogAction";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { useWebhookStore } from "#src/store/message/room/webhook";
 
 interface Props {
   roomId: RoomInMessage["id"];

@@ -1,6 +1,6 @@
 import type { ProgramInvite } from "#shared/models/resource/program/ProgramInvite";
 
-import { substituteMergeFields } from "@/services/emailEditor/substituteMergeFields";
+import { substituteMergeFields } from "#src/services/emailEditor/substituteMergeFields";
 
 // Personalizes the bound email for one participant: their audience row fills the merge fields, and their token rides
 // On every link to the survey, so the invite button the email already has becomes their own link. A link is matched

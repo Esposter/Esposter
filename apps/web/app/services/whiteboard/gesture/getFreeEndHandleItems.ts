@@ -1,6 +1,6 @@
 import type { Point, PositionedDocument } from "vue-block-editor-headless";
 
-import { getElementIndexById } from "@/services/whiteboard/gesture/getElementIndexById";
+import { getElementIndexById } from "#src/services/whiteboard/gesture/getElementIndexById";
 import { takeOne } from "@esposter/shared";
 import { ArrowEndKey, PositionedElementType } from "vue-block-editor-headless";
 

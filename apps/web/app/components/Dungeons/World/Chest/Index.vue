@@ -2,9 +2,9 @@
 import type { Chest } from "#shared/models/dungeons/data/world/Chest";
 import type { Position } from "grid-engine";
 
-import { TilesetKey } from "@/models/dungeons/keys/TilesetKey";
-import { getAnimationConfiguration } from "@/services/dungeons/animation/getAnimationConfiguration";
-import { CHEST_CLOSED_FRAME, CHEST_OPENED_FRAME } from "@/services/dungeons/chest/constants";
+import { TilesetKey } from "#src/models/dungeons/keys/TilesetKey";
+import { getAnimationConfiguration } from "#src/services/dungeons/animation/getAnimationConfiguration";
+import { CHEST_CLOSED_FRAME, CHEST_OPENED_FRAME } from "#src/services/dungeons/chest/constants";
 import { Sprite, useAnimations } from "vue-phaserjs";
 
 interface Props {

@@ -2,10 +2,10 @@
 import type { RoomInMessage } from "@esposter/db-schema";
 
 import { createRoleInputSchema } from "#shared/models/db/role/CreateRoleInput";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useRoleStore } from "@/store/message/room/role";
-import { useMemberStore } from "@/store/message/user/member";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { useRoleStore } from "#src/store/message/room/role";
+import { useMemberStore } from "#src/store/message/user/member";
 
 interface Props {
   roomId: RoomInMessage["id"];

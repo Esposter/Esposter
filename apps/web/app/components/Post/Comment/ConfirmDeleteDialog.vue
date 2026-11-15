@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useCommentStore } from "@/store/post/comment";
-import { useCommentDialogStore } from "@/store/post/comment/dialog";
+import { useCommentDialogStore } from "#src/store/post/comment/dialog";
+import { useCommentStore } from "#src/store/post/comment/index";
 
 const commentStore = useCommentStore();
 const { deleteComment, getSlice } = commentStore;

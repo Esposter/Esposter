@@ -1,9 +1,18 @@
-import type { MicrophoneGateSettings } from "@/models/message/room/call/MicrophoneGateSettings";
+import type { MicrophoneGateSettings } from "#src/models/message/room/call/MicrophoneGateSettings";
 
-import { MICROPHONE_GATE_PROCESSOR_NAME } from "@/services/message/room/call/constants";
-import microphoneGateUrl from "@/workers/message/room/call/microphoneGate.worklet?worker&url";
+import { MICROPHONE_GATE_PROCESSOR_NAME } from "#src/services/message/room/call/constants";
 import { MIN_INPUT_SENSITIVITY_DECIBELS, VoiceInputMode } from "@esposter/db-schema";
-import { exhaustiveGuard } from "@esposter/shared";
+import { exhaustiveGuard, takeOne } from "@esposter/shared";
+
+const microphoneGateUrl = takeOne(
+  Object.values(
+    import.meta.glob<string>("#src/workers/message/room/call/microphoneGate.worklet", {
+      eager: true,
+      import: "default",
+      query: "?worker&url",
+    }),
+  ),
+);
 
 // The mic's Web Audio stage, handed to RealtimeKit as an audio middleware. It applies the user's mic volume as gain
 // And gates transmission below the voice-activity threshold (Voice Activity) or while the push-to-talk key is up

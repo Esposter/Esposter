@@ -5,9 +5,9 @@ import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregatio
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { MimeType } from "#shared/models/file/MimeType";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
-import DashboardVisualPreviewContainer from "@/components/Dashboard/Visual/Preview/Container.vue";
-import UiErrorState from "@/components/Ui/ErrorState.vue";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
+import DashboardVisualPreviewContainer from "#src/components/Dashboard/Visual/Preview/Container.vue";
+import UiErrorState from "#src/components/Ui/ErrorState.vue";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { downloadFile } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";

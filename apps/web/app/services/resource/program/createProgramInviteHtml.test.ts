@@ -1,4 +1,4 @@
-import { createProgramInviteHtml } from "@/services/resource/program/createProgramInviteHtml";
+import { createProgramInviteHtml } from "#src/services/resource/program/createProgramInviteHtml";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 

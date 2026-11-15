@@ -3,7 +3,7 @@ import type { HtmlNode } from "#shared/models/pageBuilder/HtmlNode";
 import type { HtmlRawNode } from "#shared/models/pageBuilder/HtmlRawNode";
 import type { RenderContext } from "#shared/models/pageBuilder/RenderContext";
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
-import type { WebpageKind } from "@/models/pageBuilder/WebpageKind";
+import type { WebpageKind } from "#src/models/pageBuilder/WebpageKind";
 
 import { renderWebpageNode } from "#shared/services/pageBuilder/renderWebpageNode";
 import { serializeHtml } from "#shared/services/pageBuilder/serializeHtml";

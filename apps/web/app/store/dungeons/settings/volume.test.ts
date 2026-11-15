@@ -1,7 +1,7 @@
 import { getInitialSettings } from "#shared/models/dungeons/data/settings/Settings";
 import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOption";
-import { useSettingsStore } from "@/store/dungeons/settings";
-import { useVolumeStore } from "@/store/dungeons/settings/volume";
+import { useSettingsStore } from "#src/store/dungeons/settings/index";
+import { useVolumeStore } from "#src/store/dungeons/settings/volume";
 import { Direction } from "grid-engine";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
@@ -11,7 +11,7 @@ const { saveDungeons } = vi.hoisted(() => ({ saveDungeons: vi.fn<() => void>() }
 // The dungeons store imports Phaser, which cannot initialise under the test environment. Only its state and its save
 // Are read here, so the fake keeps the real save shape and records each save
 // oxlint-disable-next-line vitest/prefer-import-in-mock -- A partial fake: the typed module would load Phaser and its full store type
-vi.mock("@/store/dungeons", async () => {
+vi.mock("#src/store/dungeons/index", async () => {
   const { Dungeons } = await import("#shared/models/dungeons/data/Dungeons");
   const { reactive } = await import("vue");
   const dungeons = reactive(new Dungeons());

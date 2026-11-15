@@ -1,9 +1,9 @@
-import type { GesturePanning } from "@/models/whiteboard/GesturePanning";
-import type { GesturePointerEvent } from "@/models/whiteboard/GesturePointerEvent";
-import type { WhiteboardGestureResult } from "@/models/whiteboard/WhiteboardGestureResult";
-import type { WhiteboardGestureState } from "@/models/whiteboard/WhiteboardGestureState";
+import type { GesturePanning } from "#src/models/whiteboard/GesturePanning";
+import type { GesturePointerEvent } from "#src/models/whiteboard/GesturePointerEvent";
+import type { WhiteboardGestureResult } from "#src/models/whiteboard/WhiteboardGestureResult";
+import type { WhiteboardGestureState } from "#src/models/whiteboard/WhiteboardGestureState";
 
-import { GesturePointerAction } from "@/models/whiteboard/GesturePointerAction";
+import { GesturePointerAction } from "#src/models/whiteboard/GesturePointerAction";
 import { exhaustiveGuard } from "@esposter/shared";
 
 // A pan moves the viewport's origin against the pointer's travel, in document units at the viewport's scale, so the document point

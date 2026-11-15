@@ -5,7 +5,7 @@ import type { ResourceListSortName } from "#shared/models/resource/ResourceListS
 import { resourceListSortNameSchema } from "#shared/models/resource/ResourceListSortName";
 import { ResourceSortName } from "#shared/models/resource/ResourceSortName";
 import { checkIsSortNameAvailable } from "#shared/services/resource/checkIsSortNameAvailable";
-import { getResourceSortName } from "@/services/resource/list/getResourceSortName";
+import { getResourceSortName } from "#src/services/resource/list/getResourceSortName";
 
 // The order a list's read takes. A search takes none, because it is ordered by relevance alone, and only a search is ordered that way
 export const getResourceListSortName = (

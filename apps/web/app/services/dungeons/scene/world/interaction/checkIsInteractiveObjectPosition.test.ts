@@ -1,6 +1,6 @@
-import type { InteractableDirectionMap } from "@/models/dungeons/direction/InteractableDirectionMap";
+import type { InteractableDirectionMap } from "#src/models/dungeons/direction/InteractableDirectionMap";
 
-import { checkIsInteractiveObjectPosition } from "@/services/dungeons/scene/world/interaction/checkIsInteractiveObjectPosition";
+import { checkIsInteractiveObjectPosition } from "#src/services/dungeons/scene/world/interaction/checkIsInteractiveObjectPosition";
 import { Direction } from "grid-engine";
 import { describe, expect, test } from "vitest";
 

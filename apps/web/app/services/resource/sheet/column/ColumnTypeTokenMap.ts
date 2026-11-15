@@ -1,5 +1,5 @@
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
-import { UiToken } from "@/models/ui/UiToken";
+import { UiToken } from "#src/models/ui/UiToken";
 
 // The colour a column's type is marked in, so a glance down the column list reads which kind each one is
 export const ColumnTypeTokenMap = {

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { MessageComponentProps } from "@/models/message/MessageComponentProps";
-import type { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import type { UiToken } from "@/models/ui/UiToken";
+import type { MessageComponentProps } from "#src/models/message/MessageComponentProps";
+import type { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import type { UiToken } from "#src/models/ui/UiToken";
 
 // The shell every non-authored message line shares: a leading icon, one sentence of content, then the timestamp
 // And the reaction row. Only the icon and the sentence differ between them.

@@ -1,13 +1,13 @@
 import type { CreateMessageInput } from "#shared/models/db/message/CreateMessageInput";
-import type { ComposerTarget } from "@/models/message/ComposerTarget";
+import type { ComposerTarget } from "#src/models/message/ComposerTarget";
 import type { Editor } from "@tiptap/core";
 
-import { MentionExtension } from "@/services/message/MentionExtension";
-import { useDataStore } from "@/store/message/data";
-import { useInputStore } from "@/store/message/input";
-import { useReplyStore } from "@/store/message/input/reply";
-import { useUploadFileStore } from "@/store/message/input/uploadFile";
-import { useThreadStore } from "@/store/message/thread";
+import { MentionExtension } from "#src/services/message/MentionExtension";
+import { useDataStore } from "#src/store/message/data";
+import { useInputStore } from "#src/store/message/input/index";
+import { useReplyStore } from "#src/store/message/input/reply";
+import { useUploadFileStore } from "#src/store/message/input/uploadFile";
+import { useThreadStore } from "#src/store/message/thread";
 import { MessageType } from "@esposter/db-schema";
 
 // Everything a composer needs that does not depend on which composer it is — the room's and the thread pane's

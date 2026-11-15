@@ -1,14 +1,14 @@
-import type { DropTarget } from "@/models/pageBuilder/DropTarget";
-import type { SurveyDropSlot } from "@/models/resource/survey/SurveyDropSlot";
+import type { DropTarget } from "#src/models/pageBuilder/DropTarget";
+import type { SurveyDropSlot } from "#src/models/resource/survey/SurveyDropSlot";
 import type { SurveyPlaceableNode } from "vue-survey-engine-headless";
 
-import { useSurveyCreatorCommands } from "@/composables/survey/useSurveyCreatorCommands";
-import { createSurveyNode } from "@/services/resource/survey/createSurveyNode";
-import { getSurveyNodeLocation } from "@/services/resource/survey/getSurveyNodeLocation";
-import { getSurveyNodePointerById } from "@/services/resource/survey/getSurveyNodePointerById";
-import { resolveSurveyDropTarget } from "@/services/resource/survey/resolveSurveyDropTarget";
-import { useSurveyCreatorStore } from "@/store/survey/creator";
-import { useSurveyCreatorDragStore } from "@/store/survey/creatorDrag";
+import { useSurveyCreatorCommands } from "#src/composables/survey/useSurveyCreatorCommands";
+import { createSurveyNode } from "#src/services/resource/survey/createSurveyNode";
+import { getSurveyNodeLocation } from "#src/services/resource/survey/getSurveyNodeLocation";
+import { getSurveyNodePointerById } from "#src/services/resource/survey/getSurveyNodePointerById";
+import { resolveSurveyDropTarget } from "#src/services/resource/survey/resolveSurveyDropTarget";
+import { useSurveyCreatorStore } from "#src/store/survey/creator";
+import { useSurveyCreatorDragStore } from "#src/store/survey/creatorDrag";
 import { v7 } from "uuid";
 import { getBlockNode } from "vue-block-editor-headless";
 import { surveyNodeChildren, SurveyNodeType } from "vue-survey-engine-headless";

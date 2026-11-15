@@ -1,10 +1,10 @@
 // @vitest-environment nuxt
-import MessageDraftsAndSentScheduledSendButton from "@/components/Message/DraftsAndSent/Scheduled/SendButton.vue";
-import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
-import { createScheduledMessageJob } from "@/services/message/draftsAndSent/createScheduledMessageJob.test";
-import { createRoom } from "@/services/message/room/createRoom.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useScheduledMessageJobStore } from "@/store/message/scheduledMessageJob";
+import MessageDraftsAndSentScheduledSendButton from "#src/components/Message/DraftsAndSent/Scheduled/SendButton.vue";
+import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
+import { createScheduledMessageJob } from "#src/services/message/draftsAndSent/createScheduledMessageJob.test";
+import { createRoom } from "#src/services/message/room/createRoom.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useScheduledMessageJobStore } from "#src/store/message/scheduledMessageJob";
 import { MessageType, ScheduledMessageJobType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";

@@ -1,11 +1,11 @@
 <script setup lang="ts" generic="T">
-import type { UiSchemaFormBinding } from "@/models/ui/schemaForm/UiSchemaFormBinding";
-import type { UiSchemaFormConfiguration } from "@/models/ui/schemaForm/UiSchemaFormConfiguration";
+import type { UiSchemaFormBinding } from "#src/models/ui/schemaForm/UiSchemaFormBinding";
+import type { UiSchemaFormConfiguration } from "#src/models/ui/schemaForm/UiSchemaFormConfiguration";
 import type { CoreActions, Dispatch, JsonFormsCore, JsonFormsSubStates, JsonSchema } from "@jsonforms/core";
 import type { z } from "zod";
 
-import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
-import { SchemaFormRenderers } from "@/services/ui/schemaForm/SchemaFormRenderers";
+import { zodToJsonSchema } from "#src/services/jsonSchema/zodToJsonSchema";
+import { SchemaFormRenderers } from "#src/services/ui/schemaForm/SchemaFormRenderers";
 import { checkIsDeepEqual } from "@esposter/shared";
 import { Actions, configReducer, coreReducer, Generate, i18nReducer } from "@jsonforms/core";
 

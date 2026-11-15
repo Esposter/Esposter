@@ -1,6 +1,6 @@
-import type { GestureTool } from "@/models/whiteboard/GestureTool";
-import type { Viewport } from "@/models/whiteboard/Viewport";
-import type { WhiteboardGesture } from "@/models/whiteboard/WhiteboardGesture";
+import type { GestureTool } from "#src/models/whiteboard/GestureTool";
+import type { Viewport } from "#src/models/whiteboard/Viewport";
+import type { WhiteboardGesture } from "#src/models/whiteboard/WhiteboardGesture";
 import type { PositionedDocument, ShapeKind } from "vue-block-editor-headless";
 
 // Everything a whiteboard's pointer gestures read and write: the committed document, the document as a gesture would leave it,

@@ -1,4 +1,4 @@
-import { getFilterKeyword } from "@/services/message/filter/getFilterKeyword";
+import { getFilterKeyword } from "#src/services/message/filter/getFilterKeyword";
 import { FilterTypes } from "@esposter/db-schema";
 import { normalizeString } from "@esposter/shared";
 

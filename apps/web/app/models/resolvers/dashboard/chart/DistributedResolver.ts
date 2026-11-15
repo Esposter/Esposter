@@ -2,7 +2,7 @@ import type { BasicChartConfiguration } from "#shared/models/dashboard/data/char
 import type { ApexOptions } from "apexcharts";
 
 import { ChartType } from "#shared/models/dashboard/data/chart/type/ChartType";
-import { AChartTypeResolver } from "@/models/resolvers/dashboard/chart/AChartTypeResolver";
+import { AChartTypeResolver } from "#src/models/resolvers/dashboard/chart/AChartTypeResolver";
 import { defu } from "defu";
 
 export class DistributedResolver<T extends BasicChartConfiguration> extends AChartTypeResolver<T> {

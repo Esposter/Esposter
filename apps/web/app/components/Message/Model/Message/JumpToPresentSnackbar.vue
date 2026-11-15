@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { useScrollStore } from "@/store/message/ui/scroll";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { useScrollStore } from "#src/store/message/ui/scroll";
 
 const scrollStore = useScrollStore();
 const { isViewingOlderMessages } = storeToRefs(scrollStore);

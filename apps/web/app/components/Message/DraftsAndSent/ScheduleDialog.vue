@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { MutationStatus } from "@/models/shared/MutationStatus";
-import { createErrorAlert } from "@/services/trpc/createErrorAlert";
-import { useDraftsAndSentScheduleDialogStore } from "@/store/message/draftsAndSent/scheduleDialog";
-import { useInputStore } from "@/store/message/input";
+import { MutationStatus } from "#src/models/shared/MutationStatus";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
+import { useDraftsAndSentScheduleDialogStore } from "#src/store/message/draftsAndSent/scheduleDialog";
+import { useInputStore } from "#src/store/message/input/index";
 import { getResultAsync, noop } from "@esposter/shared";
 import { parse } from "node-html-parser";
 

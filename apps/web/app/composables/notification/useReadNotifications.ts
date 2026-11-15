@@ -1,5 +1,5 @@
-import { AsyncDataKey } from "@/services/shared/AsyncDataKey";
-import { useNotificationStore } from "@/store/notification";
+import { AsyncDataKey } from "#src/services/shared/AsyncDataKey";
+import { useNotificationStore } from "#src/store/notification";
 
 export const useReadNotifications = () => {
   const { $trpc } = useNuxtApp();

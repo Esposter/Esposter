@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { SurveyAnswerValue, SurveyRatingNode } from "vue-survey-engine-headless";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { SURVEY_SMILEY_MEANINGS } from "@/services/resource/survey/constants";
-import { getSurveyRatingItems } from "@/services/resource/survey/getSurveyRatingItems";
-import { getSurveyRatingStep } from "@/services/resource/survey/getSurveyRatingStep";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { SURVEY_SMILEY_MEANINGS } from "#src/services/resource/survey/constants";
+import { getSurveyRatingItems } from "#src/services/resource/survey/getSurveyRatingItems";
+import { getSurveyRatingStep } from "#src/services/resource/survey/getSurveyRatingStep";
 import { takeOne } from "@esposter/shared";
 import { SurveyRatingType } from "vue-survey-engine-headless";
 

@@ -7,8 +7,8 @@ Sync `UiTabs` state to the URL instead of a plain `ref`, so the active tab survi
 It validates against the value set via a `transform`, falling back to the default when the param is missing **or** invalid — raw `@vueuse/router` `useRouteQuery` only falls back when the param is absent, so a hand-edited `?tab=garbage` would otherwise leave no tab active. It infers the value-set type from its arguments, so no generic is needed.
 
 ```ts
-import { TAB_QUERY_PARAMETER_KEY } from "@/services/route/constants";
-import { FooTab, FooTabs } from "@/models/<feature>/FooTab";
+import { TAB_QUERY_PARAMETER_KEY } from "#src/services/route/constants";
+import { FooTab, FooTabs } from "#src/models/<feature>/FooTab";
 
 // syncs to ?tab=bar and survives refresh — not a plain ref(FooTab.Bar)
 const tab = useEnumRouteQuery(TAB_QUERY_PARAMETER_KEY, FooTabs, FooTab.Bar);

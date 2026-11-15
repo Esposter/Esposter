@@ -1,8 +1,8 @@
-import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
+import type { PlayerInput } from "#src/models/dungeons/UI/input/PlayerInput";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
-import { MenuInputResolver } from "@/models/resolvers/dungeons/menu/MenuInputResolver";
+import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";
+import { MenuInputResolver } from "#src/models/resolvers/dungeons/menu/MenuInputResolver";
 import { describe, expect, test, vi } from "vitest";
 
 describe(MenuInputResolver, () => {

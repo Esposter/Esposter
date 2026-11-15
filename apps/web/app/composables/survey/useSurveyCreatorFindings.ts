@@ -1,5 +1,5 @@
-import { getSurveyEditorFindings } from "@/services/resource/survey/getSurveyEditorFindings";
-import { useSurveyCreatorStore } from "@/store/survey/creator";
+import { getSurveyEditorFindings } from "#src/services/resource/survey/getSurveyEditorFindings";
+import { useSurveyCreatorStore } from "#src/store/survey/creator";
 
 // The findings of the survey creator's document, which the problems surface lists. They are recomputed once an edit settles
 export const useSurveyCreatorFindings = () => {

@@ -1,6 +1,6 @@
-import type { PageBuilderHelper } from "@/models/pageBuilder/PageBuilderHelper";
+import type { PageBuilderHelper } from "#src/models/pageBuilder/PageBuilderHelper";
 
-import { FIRST_IN_SLOT_MESSAGE, LAST_IN_SLOT_MESSAGE } from "@/services/pageBuilder/constants";
+import { FIRST_IN_SLOT_MESSAGE, LAST_IN_SLOT_MESSAGE } from "#src/services/pageBuilder/constants";
 import { getSiblingMoveOperations } from "vue-block-editor-headless";
 
 // Why a node cannot move one place along its slot, or none when it can. The same operations decide it, so the reason can

@@ -1,8 +1,8 @@
 import type { Item } from "#shared/models/dungeons/item/Item";
 
 import { ItemEffectType } from "#shared/models/dungeons/item/ItemEffectType";
-import { PreviousSceneUsableItemEffectTypesMap } from "@/services/dungeons/scene/inventory/PreviousSceneUsableItemEffectTypesMap";
-import { useSceneStore } from "@/store/dungeons/scene";
+import { PreviousSceneUsableItemEffectTypesMap } from "#src/services/dungeons/scene/inventory/PreviousSceneUsableItemEffectTypesMap";
+import { useSceneStore } from "#src/store/dungeons/scene";
 
 export const useIsUsableItem = (item: MaybeRefOrGetter<Item>) => {
   const sceneStore = useSceneStore();

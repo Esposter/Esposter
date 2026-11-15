@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { checkIsFileAccepted } from "@/services/file/checkIsFileAccepted";
-import { getFileSize } from "@/services/file/getFileSize";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { checkIsFileAccepted } from "#src/services/file/checkIsFileAccepted";
+import { getFileSize } from "#src/services/file/getFileSize";
 
 interface Props {
   // The file types it takes, as the native input's accept: MIME types, wildcards such as image/*, or extensions

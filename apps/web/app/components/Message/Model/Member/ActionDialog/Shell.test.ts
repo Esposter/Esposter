@@ -1,16 +1,16 @@
 // @vitest-environment happy-dom
-import type { useExecuteAdminAction } from "@/composables/message/moderation/useExecuteAdminAction";
+import type { useExecuteAdminAction } from "#src/composables/message/moderation/useExecuteAdminAction";
 
-import Shell from "@/components/Message/Model/Member/ActionDialog/Shell.vue";
-import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiStyles } from "@/models/ui/UiStyle";
+import Shell from "#src/components/Message/Model/Member/ActionDialog/Shell.vue";
+import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiStyles } from "#src/models/ui/UiStyle";
 import { AdminActionType } from "@esposter/db-schema";
 import { flushPromises, mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("@/composables/message/moderation/useExecuteAdminAction"), () => ({
+vi.mock(import("#src/composables/message/moderation/useExecuteAdminAction"), () => ({
   useExecuteAdminAction: vi.fn<typeof useExecuteAdminAction>(),
 }));
 

@@ -1,5 +1,5 @@
 import type { useCallObject } from "#server/composables/realtime/useCallObject";
-import type { db } from "#server/db";
+import type { db } from "#server/db/index";
 import type { RequestEvent } from "nuxt/server";
 
 import callWebhook from "#server/api/webhooks/realtimekit.post";
@@ -18,7 +18,7 @@ const { callObject, findCallSession, findSession } = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  import("#server/db"),
+  import("#server/db/index"),
   () =>
     ({
       db: {

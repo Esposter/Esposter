@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { MessageComponentProps } from "@/models/message/MessageComponentProps";
+import type { MessageComponentProps } from "#src/models/message/MessageComponentProps";
 
-import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
+import { EMPTY_TEXT_REGEX } from "#src/util/text/constants";
 import { SPOILER_SELECTOR } from "@esposter/shared";
 
 interface Props extends Pick<MessageComponentProps, "isPreview" | "message"> {

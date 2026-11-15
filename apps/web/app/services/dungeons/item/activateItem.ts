@@ -2,8 +2,8 @@ import type { Item } from "#shared/models/dungeons/item/Item";
 import type { Monster } from "#shared/models/dungeons/monster/Monster";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { consumeItem } from "@/services/dungeons/item/consumeItem";
-import { getActiveItemResolvers } from "@/services/dungeons/item/getActiveItemResolvers";
+import { consumeItem } from "#src/services/dungeons/item/consumeItem";
+import { getActiveItemResolvers } from "#src/services/dungeons/item/getActiveItemResolvers";
 
 export const activateItem = async (scene: SceneWithPlugins, item: Ref<Item>, monster: Ref<Monster>) => {
   // The resolvers are ordered by precedence, so the first active one owns the item

@@ -2,8 +2,8 @@
 import type { Page } from "@esposter/db-schema";
 
 import { BACKOFF_BASE_DELAY_MS } from "#shared/services/pagination/constants";
-import { createPendingQuery } from "@/composables/data/pagination/createPendingQuery.test";
-import { goOffline, goOnline } from "@/composables/shared/network.test";
+import { createPendingQuery } from "#src/composables/data/pagination/createPendingQuery.test";
+import { goOffline, goOnline } from "#src/composables/shared/network.test";
 import { createEmptyPage } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";

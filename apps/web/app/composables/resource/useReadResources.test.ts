@@ -1,11 +1,11 @@
 // @vitest-environment nuxt
-import type { ReadResourcesOptions } from "@/models/resource/list/ReadResourcesOptions";
+import type { ReadResourcesOptions } from "#src/models/resource/list/ReadResourcesOptions";
 import type { PageCursor } from "@esposter/db-schema";
 
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
-import { useReadResources } from "@/composables/resource/useReadResources";
-import { ResourceUpdatedFilter } from "@/models/resource/list/ResourceUpdatedFilter";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
+import { useReadResources } from "#src/composables/resource/useReadResources";
+import { ResourceUpdatedFilter } from "#src/models/resource/list/ResourceUpdatedFilter";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { encodePageCursor, START_PAGE_CURSOR } from "@esposter/db-schema";
 import { v7 } from "uuid";
 import { afterEach, describe, expect, test, vi } from "vitest";

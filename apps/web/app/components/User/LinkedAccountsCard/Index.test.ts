@@ -1,16 +1,16 @@
 // @vitest-environment nuxt
-import UiErrorState from "@/components/Ui/ErrorState.vue";
-import UserLinkedAccountsCard from "@/components/User/LinkedAccountsCard/Index.vue";
-import UserLinkedAccountsCardRow from "@/components/User/LinkedAccountsCard/Row.vue";
-import UserSettingsListSkeleton from "@/components/User/Settings/ListSkeleton.vue";
-import { UserSettingsPageSection } from "@/models/user/UserSettingsPageSection";
-import { listAccounts } from "@/services/auth/authClient.test";
-import { LoginButtonItems } from "@/services/login/LoginButtonItems";
+import UiErrorState from "#src/components/Ui/ErrorState.vue";
+import UserLinkedAccountsCard from "#src/components/User/LinkedAccountsCard/Index.vue";
+import UserLinkedAccountsCardRow from "#src/components/User/LinkedAccountsCard/Row.vue";
+import UserSettingsListSkeleton from "#src/components/User/Settings/ListSkeleton.vue";
+import { UserSettingsPageSection } from "#src/models/user/UserSettingsPageSection";
+import { listAccounts } from "#src/services/auth/authClient.test";
+import { LoginButtonItems } from "#src/services/login/LoginButtonItems";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test, vi } from "vitest";
 
-vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
+vi.mock(import("#src/services/auth/authClient"), () => import("#src/services/auth/authClient.test"));
 
 const mountCard = () =>
   mountSuspended(UserLinkedAccountsCard, { props: { section: UserSettingsPageSection.LinkedAccounts } });

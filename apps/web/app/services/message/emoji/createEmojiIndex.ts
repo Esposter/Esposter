@@ -1,11 +1,11 @@
-import type { Emoji } from "@/models/message/emoji/Emoji";
-import type { EmojiGroup } from "@/models/message/emoji/EmojiGroup";
-import type { EmojiIndex } from "@/models/message/emoji/EmojiIndex";
+import type { Emoji } from "#src/models/message/emoji/Emoji";
+import type { EmojiGroup } from "#src/models/message/emoji/EmojiGroup";
+import type { EmojiIndex } from "#src/models/message/emoji/EmojiIndex";
 
-import { EmojiGroups } from "@/models/message/emoji/EmojiGroup";
-import { EmojiType } from "@/models/message/emoji/EmojiType";
-import { EMOJI_GROUP_VALUES } from "@/services/message/emoji/constants";
-import { getEmojiCharacterKey } from "@/services/message/emoji/getEmojiCharacterKey";
+import { EmojiGroups } from "#src/models/message/emoji/EmojiGroup";
+import { EmojiType } from "#src/models/message/emoji/EmojiType";
+import { EMOJI_GROUP_VALUES } from "#src/services/message/emoji/constants";
+import { getEmojiCharacterKey } from "#src/services/message/emoji/getEmojiCharacterKey";
 import characterEmojiRecordMap from "unicode-emoji-json/data-by-emoji.json";
 
 const checkIsEmojiGroup = (group: string): group is EmojiGroup => EMOJI_GROUP_VALUES.has(group);

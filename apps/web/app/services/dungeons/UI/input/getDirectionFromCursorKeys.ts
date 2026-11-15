@@ -1,7 +1,7 @@
-import type { InteractableDirection } from "@/models/dungeons/direction/InteractableDirection";
-import type { BaseCursorKeys } from "@/models/dungeons/input/BaseCursorKeys";
+import type { InteractableDirection } from "#src/models/dungeons/direction/InteractableDirection";
+import type { BaseCursorKeys } from "#src/models/dungeons/input/BaseCursorKeys";
 
-import { getDirectionCursorKeyMap } from "@/services/dungeons/UI/input/getDirectionCursorKeyMap";
+import { getDirectionCursorKeyMap } from "#src/services/dungeons/UI/input/getDirectionCursorKeyMap";
 import { Direction } from "grid-engine";
 import { Input } from "phaser";
 

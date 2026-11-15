@@ -1,10 +1,10 @@
-import type { InteractableDirectionMap } from "@/models/dungeons/direction/InteractableDirectionMap";
+import type { InteractableDirectionMap } from "#src/models/dungeons/direction/InteractableDirectionMap";
 import type { Position } from "grid-engine";
 
-import { DEFAULT_INTERACTABLE_DIRECTION_MAP } from "@/services/dungeons/direction/constants";
-import { DirectionToGridDirectionMap } from "@/services/dungeons/direction/DirectionToGridDirectionMap";
-import { checkIsInteractiveObjectPosition } from "@/services/dungeons/scene/world/interaction/checkIsInteractiveObjectPosition";
-import { usePlayerStore } from "@/store/dungeons/player";
+import { DEFAULT_INTERACTABLE_DIRECTION_MAP } from "#src/services/dungeons/direction/constants";
+import { DirectionToGridDirectionMap } from "#src/services/dungeons/direction/DirectionToGridDirectionMap";
+import { checkIsInteractiveObjectPosition } from "#src/services/dungeons/scene/world/interaction/checkIsInteractiveObjectPosition";
+import { usePlayerStore } from "#src/store/dungeons/player";
 
 // Positions are assumed to be unit positions, which nothing in the type can state
 export const useInteractiveObject = <T extends Position>(

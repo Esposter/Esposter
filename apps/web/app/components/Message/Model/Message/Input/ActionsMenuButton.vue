@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { Item } from "@/models/shared/Item";
+import type { Item } from "#src/models/shared/Item";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { pickFiles } from "@/services/file/pickFiles";
-import { MENU_SLASH_COMMANDS } from "@/services/message/slashCommands/constants";
-import { executeSlashCommand } from "@/services/message/slashCommands/executeSlashCommand";
-import { SlashCommandDefinitionMap } from "@/services/message/slashCommands/SlashCommandDefinitionMap";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { pickFiles } from "#src/services/file/pickFiles";
+import { MENU_SLASH_COMMANDS } from "#src/services/message/slashCommands/constants";
+import { executeSlashCommand } from "#src/services/message/slashCommands/executeSlashCommand";
+import { SlashCommandDefinitionMap } from "#src/services/message/slashCommands/SlashCommandDefinitionMap";
 
 const emit = defineEmits<{ "upload-file": [files: File[]] }>();
 const items = computed<Item[]>(() => [

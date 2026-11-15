@@ -1,7 +1,7 @@
 import type { Types } from "phaser";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { ANIMATION_FRAME_RATE } from "@/services/dungeons/animation/constants";
+import { ANIMATION_FRAME_RATE } from "#src/services/dungeons/animation/constants";
 
 // Every animation in the game plays its frames through once, at the same rate
 export const getAnimationConfiguration = (

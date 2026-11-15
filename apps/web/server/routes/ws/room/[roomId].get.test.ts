@@ -1,4 +1,4 @@
-import type { db } from "#server/db";
+import type { db } from "#server/db/index";
 import type { RequestEvent } from "nuxt/server";
 
 import { roomObjectCalls } from "#server/composables/realtime/useRoomObject.test";
@@ -8,7 +8,7 @@ import { assertIsMember } from "#server/services/room/assertIsMember";
 import { TRPCError } from "@trpc/server";
 import { describe, expect, test, vi } from "vitest";
 
-vi.mock(import("#server/db"), () => ({ db: {} as unknown as typeof db }));
+vi.mock(import("#server/db/index"), () => ({ db: {} as unknown as typeof db }));
 vi.mock(import("#server/services/auth/readSession"), () => ({ readSession: vi.fn<typeof readSession>() }));
 vi.mock(import("#server/services/room/assertIsMember"), () => ({ assertIsMember: vi.fn<typeof assertIsMember>() }));
 

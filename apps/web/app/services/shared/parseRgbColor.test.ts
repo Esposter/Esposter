@@ -1,4 +1,4 @@
-import { parseRgbColor } from "@/services/shared/parseRgbColor";
+import { parseRgbColor } from "#src/services/shared/parseRgbColor";
 import { describe, expect, test } from "vitest";
 
 describe(parseRgbColor, () => {

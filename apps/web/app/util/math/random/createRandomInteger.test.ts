@@ -1,4 +1,4 @@
-import { createRandomInteger } from "@/util/math/random/createRandomInteger";
+import { createRandomInteger } from "#src/util/math/random/createRandomInteger";
 import { describe, expect, test } from "vitest";
 
 describe(createRandomInteger, () => {

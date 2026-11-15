@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ResourceSaveState } from "@/models/resource/ResourceSaveState";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { parseBlueprintManifest } from "@/services/resource/blueprint/parseBlueprintManifest";
-import { useResourceStore } from "@/store/resource";
-import { useBlueprintStore } from "@/store/resource/blueprint";
+import { ResourceSaveState } from "#src/models/resource/ResourceSaveState";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { parseBlueprintManifest } from "#src/services/resource/blueprint/parseBlueprintManifest";
+import { useBlueprintStore } from "#src/store/resource/blueprint/index";
+import { useResourceStore } from "#src/store/resource/index";
 import { getResult } from "@esposter/shared";
 
 const blueprintStore = useBlueprintStore();

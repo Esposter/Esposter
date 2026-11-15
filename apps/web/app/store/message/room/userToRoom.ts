@@ -1,6 +1,6 @@
 import type { UserToRoomInMessage } from "@esposter/db-schema";
 
-import { useRoomStore } from "@/store/message/room";
+import { useRoomStore } from "#src/store/message/room/index";
 
 export const useUserToRoomStore = defineStore("message/room/userToRoom", () => {
   const roomStore = useRoomStore();

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { SurveyAnswerValue, SurveyCommentNode } from "vue-survey-engine-headless";
 
-import { getSurveyQuestionTitle } from "@/services/resource/survey/getSurveyQuestionTitle";
+import { getSurveyQuestionTitle } from "#src/services/resource/survey/getSurveyQuestionTitle";
 
 interface Props {
   // The message the runner gives this question, "" while it has none, drawn beside the field and marking it invalid

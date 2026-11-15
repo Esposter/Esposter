@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useLayoutStore } from "@/store/layout";
-import { useCommandStore } from "@/store/ui/command";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { useLayoutStore } from "#src/store/layout";
+import { useCommandStore } from "#src/store/ui/command";
 import { RoutePath, SITE_NAME } from "@esposter/shared";
 
 const layoutStore = useLayoutStore();

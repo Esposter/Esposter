@@ -1,4 +1,4 @@
-import type { Expression } from "@/models/desmos/Expression";
+import type { Expression } from "#src/models/desmos/Expression";
 
 export const FrierenExpressions: Expression[] = [
   { latex: String.raw`y=-0.35\left(x+3.1\right)^{2}+4.4\left\{-3.64<x<-3.1\right\}` },

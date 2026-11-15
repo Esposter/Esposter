@@ -1,4 +1,4 @@
-import { createRandomNumber } from "@/util/math/random/createRandomNumber";
+import { createRandomNumber } from "#src/util/math/random/createRandomNumber";
 import { describe, expect, test } from "vitest";
 
 describe(createRandomNumber, () => {

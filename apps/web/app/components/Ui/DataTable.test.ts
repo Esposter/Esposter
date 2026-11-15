@@ -1,12 +1,12 @@
 // @vitest-environment happy-dom
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
-import type { UiDataTableColumn } from "@/models/ui/UiDataTableColumn";
+import type { UiDataTableColumn } from "#src/models/ui/UiDataTableColumn";
 import type { VueWrapper } from "@vue/test-utils";
 
-import UiDataTable from "@/components/Ui/DataTable.vue";
-import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
-import { UiStyles } from "@/models/ui/UiStyle";
-import { MAX_DATA_TABLE_COLUMN_WIDTH, MIN_DATA_TABLE_COLUMN_WIDTH } from "@/services/ui/constants";
+import UiDataTable from "#src/components/Ui/DataTable.vue";
+import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
+import { UiStyles } from "#src/models/ui/UiStyle";
+import { MAX_DATA_TABLE_COLUMN_WIDTH, MIN_DATA_TABLE_COLUMN_WIDTH } from "#src/services/ui/constants";
 import { SortOrder } from "@esposter/db-schema";
 import { flushPromises, mount } from "@vue/test-utils";
 import { assert, describe, expect, test, vi } from "vitest";

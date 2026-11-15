@@ -1,4 +1,4 @@
-import { SurveyEditorPanel } from "@/models/resource/survey/SurveyEditorPanel";
+import { SurveyEditorPanel } from "#src/models/resource/survey/SurveyEditorPanel";
 
 // The title each panel's tab is drawn with. The bar's panel is never a tab, so its title is only the one its region names
 export const SurveyEditorPanelNameMap = {

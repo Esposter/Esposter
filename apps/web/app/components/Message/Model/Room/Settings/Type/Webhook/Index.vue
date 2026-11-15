@@ -3,9 +3,9 @@ import type { RoomInMessage } from "@esposter/db-schema";
 
 import { DEFAULT_WEBHOOK_NAME, WEBHOOK_MAX_LENGTH } from "#shared/services/message/constants";
 import { pluralize } from "#shared/util/text/pluralize";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiToken } from "@/models/ui/UiToken";
-import { useWebhookStore } from "@/store/message/room/webhook";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiToken } from "#src/models/ui/UiToken";
+import { useWebhookStore } from "#src/store/message/room/webhook";
 
 interface Props {
   room: RoomInMessage;

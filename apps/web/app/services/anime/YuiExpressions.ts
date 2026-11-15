@@ -1,6 +1,6 @@
-import type { Expression } from "@/models/desmos/Expression";
+import type { Expression } from "#src/models/desmos/Expression";
 
-import { Colors } from "@/models/desmos/Colors";
+import { Colors } from "#src/models/desmos/Colors";
 
 export const YuiExpressions: Expression[] = [
   { latex: String.raw`y=-0.1\left(x-1\right)^{2}+4.5\left\{-2.05<x<1\right\}` },

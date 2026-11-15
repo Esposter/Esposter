@@ -1,5 +1,5 @@
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { UiStyle } from "@/models/ui/UiStyle";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { UiStyle } from "#src/models/ui/UiStyle";
 
 export const UiStyleIconMeaningMap = {
   [UiStyle.Standard]: UiIconMeaning.StandardStyle,

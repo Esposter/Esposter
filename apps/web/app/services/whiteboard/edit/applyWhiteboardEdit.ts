@@ -1,4 +1,4 @@
-import type { WhiteboardEditState } from "@/models/whiteboard/WhiteboardEditState";
+import type { WhiteboardEditState } from "#src/models/whiteboard/WhiteboardEditState";
 import type { JsonPatchOperation } from "@esposter/shared";
 
 import { pushHistory } from "@esposter/shared";

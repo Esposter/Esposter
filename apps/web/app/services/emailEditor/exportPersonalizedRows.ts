@@ -1,12 +1,12 @@
 import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnValue";
 
 import { pluralize } from "#shared/util/text/pluralize";
-import { sanitizeFilename } from "@/services/app/sanitizeFilename";
-import { REOPEN_EMAIL_MESSAGE } from "@/services/emailEditor/constants";
-import { exportPersonalizedHtml } from "@/services/emailEditor/exportPersonalizedHtml";
-import { substituteMergeFields } from "@/services/emailEditor/substituteMergeFields";
-import { useAlertStore } from "@/store/alert";
-import { useResourceStore } from "@/store/resource";
+import { sanitizeFilename } from "#src/services/app/sanitizeFilename";
+import { REOPEN_EMAIL_MESSAGE } from "#src/services/emailEditor/constants";
+import { exportPersonalizedHtml } from "#src/services/emailEditor/exportPersonalizedHtml";
+import { substituteMergeFields } from "#src/services/emailEditor/substituteMergeFields";
+import { useAlertStore } from "#src/store/alert";
+import { useResourceStore } from "#src/store/resource/index";
 
 // Names the email the rows were read for: the rows are read for one email, so once the reader has moved to another
 // They would be rendered into a template they were never read for and downloaded under its name

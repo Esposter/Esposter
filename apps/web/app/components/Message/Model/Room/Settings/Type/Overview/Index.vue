@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { UiSelectItem } from "@/models/ui/UiSelectItem";
+import type { UiSelectItem } from "#src/models/ui/UiSelectItem";
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { resolveRoomCategoryId } from "@/services/message/roomCategory/resolveRoomCategoryId";
-import { prependNoneSelectItem } from "@/services/ui/prependNoneSelectItem";
-import { useUserToRoomStore } from "@/store/message/room/userToRoom";
-import { useRoomCategoryStore } from "@/store/message/roomCategory";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { resolveRoomCategoryId } from "#src/services/message/roomCategory/resolveRoomCategoryId";
+import { prependNoneSelectItem } from "#src/services/ui/prependNoneSelectItem";
+import { useUserToRoomStore } from "#src/store/message/room/userToRoom";
+import { useRoomCategoryStore } from "#src/store/message/roomCategory";
 import { selectRoomInMessageSchema } from "@esposter/db-schema";
 import { noop } from "@esposter/shared";
 

@@ -1,11 +1,11 @@
 // @vitest-environment nuxt
 import type { ResourceTagCount } from "#shared/models/resource/ResourceTagCount";
 
-import ResourceTagList from "@/components/Resource/TagList.vue";
-import UiEmptyState from "@/components/Ui/EmptyState.vue";
-import UiErrorState from "@/components/Ui/ErrorState.vue";
-import UiItemContent from "@/components/Ui/ItemContent.vue";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
+import ResourceTagList from "#src/components/Resource/TagList.vue";
+import UiEmptyState from "#src/components/Ui/EmptyState.vue";
+import UiErrorState from "#src/components/Ui/ErrorState.vue";
+import UiItemContent from "#src/components/Ui/ItemContent.vue";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";

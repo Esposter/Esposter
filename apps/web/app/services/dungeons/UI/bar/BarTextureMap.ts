@@ -1,6 +1,6 @@
 import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
-import { BarOrigin } from "@/models/dungeons/UI/bar/BarOrigin";
-import { BarType } from "@/models/dungeons/UI/bar/BarType";
+import { BarOrigin } from "#src/models/dungeons/UI/bar/BarOrigin";
+import { BarType } from "#src/models/dungeons/UI/bar/BarType";
 
 export const BarTextureMap = {
   [BarType.Experience]: {

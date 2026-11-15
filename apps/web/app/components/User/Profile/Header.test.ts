@@ -1,11 +1,11 @@
 // @vitest-environment nuxt
-import UserProfileHeader from "@/components/User/Profile/Header.vue";
-import { useSession } from "@/services/auth/authClient.test";
+import UserProfileHeader from "#src/components/User/Profile/Header.vue";
+import { useSession } from "#src/services/auth/authClient.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 
-vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
+vi.mock(import("#src/services/auth/authClient"), () => import("#src/services/auth/authClient.test"));
 
 describe("userProfileHeader", () => {
   const userId = v7();

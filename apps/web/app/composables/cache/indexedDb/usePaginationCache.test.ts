@@ -1,17 +1,17 @@
 // @vitest-environment nuxt
-import type { IndexedDbDatabaseSchema } from "@/models/cache/indexedDb/IndexedDbDatabaseSchema";
-import type { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStoreName";
-import type { CursorPaginationSlice } from "@/models/pagination/cursor/CursorPaginationSlice";
+import type { IndexedDbDatabaseSchema } from "#src/models/cache/indexedDb/IndexedDbDatabaseSchema";
+import type { IndexedDbStoreName } from "#src/models/cache/indexedDb/IndexedDbStoreName";
+import type { CursorPaginationSlice } from "#src/models/pagination/cursor/CursorPaginationSlice";
 
 import { getMockSession } from "#server/trpc/context.test";
-import { flushCache } from "@/composables/cache/indexedDb/flushCache.test";
-import { goOffline, goOnline } from "@/composables/shared/network.test";
-import { MessageIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MessageIndexedDbStoreConfiguration";
-import { resetIndexedDb } from "@/services/cache/indexedDb/openIndexedDb";
-import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
-import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
-import { createMessage } from "@/services/message/message/createMessage.test";
-import { useAlertStore } from "@/store/alert";
+import { flushCache } from "#src/composables/cache/indexedDb/flushCache.test";
+import { goOffline, goOnline } from "#src/composables/shared/network.test";
+import { MessageIndexedDbStoreConfiguration } from "#src/services/cache/indexedDb/configurations/MessageIndexedDbStoreConfiguration";
+import { resetIndexedDb } from "#src/services/cache/indexedDb/openIndexedDb";
+import { readIndexedDb } from "#src/services/cache/indexedDb/readIndexedDb";
+import { writeIndexedDb } from "#src/services/cache/indexedDb/writeIndexedDb";
+import { createMessage } from "#src/services/message/message/createMessage.test";
+import { useAlertStore } from "#src/store/alert";
 import { noop, takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { v7 } from "uuid";

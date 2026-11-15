@@ -1,4 +1,4 @@
-import { DialogMessage } from "@/models/dungeons/UI/dialog/DialogMessage";
+import { DialogMessage } from "#src/models/dungeons/UI/dialog/DialogMessage";
 import { v7 } from "uuid";
 
 export class DialogTarget {

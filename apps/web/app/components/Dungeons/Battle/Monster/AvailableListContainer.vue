@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { BallKey } from "#shared/models/dungeons/keys/image/UI/BallKey";
-import { checkIsMonsterFainted } from "@/services/dungeons/monster/checkIsMonsterFainted";
-import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
+import { checkIsMonsterFainted } from "#src/services/dungeons/monster/checkIsMonsterFainted";
+import { useMonsterPartySceneStore } from "#src/store/dungeons/monsterParty/scene";
 import { Container, Image, onCreate } from "vue-phaserjs";
 
 const monsterPartySceneStore = useMonsterPartySceneStore();

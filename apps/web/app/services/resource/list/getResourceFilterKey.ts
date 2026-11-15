@@ -1,7 +1,7 @@
-import type { ResourceFilterValues } from "@/models/resource/list/ResourceFilterValues";
+import type { ResourceFilterValues } from "#src/models/resource/list/ResourceFilterValues";
 
-import { ResourceUpdatedFilter } from "@/models/resource/list/ResourceUpdatedFilter";
-import { getResourceFilterInput } from "@/services/resource/list/getResourceFilterInput";
+import { ResourceUpdatedFilter } from "#src/models/resource/list/ResourceUpdatedFilter";
+import { getResourceFilterInput } from "#src/services/resource/list/getResourceFilterInput";
 
 // The identity of the filter the user picked, which is what the row total is cached against. Everything but the
 // Updated range comes from the same normalized input the queries are built from, so two spellings of one filter

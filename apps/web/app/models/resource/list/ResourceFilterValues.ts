@@ -1,6 +1,6 @@
-import type { ResourceListSource } from "@/models/resource/list/ResourceListSource";
-import type { ResourceStatusFilter } from "@/models/resource/list/ResourceStatusFilter";
-import type { ResourceUpdatedFilter } from "@/models/resource/list/ResourceUpdatedFilter";
+import type { ResourceListSource } from "#src/models/resource/list/ResourceListSource";
+import type { ResourceStatusFilter } from "#src/models/resource/list/ResourceStatusFilter";
+import type { ResourceUpdatedFilter } from "#src/models/resource/list/ResourceUpdatedFilter";
 import type { ResourceType } from "@esposter/db-schema";
 
 // The client filter refs' plain values, with `""` sentinels for unset selects

@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { UiMenuItem } from "@/models/ui/UiMenuItem";
+import type { UiMenuItem } from "#src/models/ui/UiMenuItem";
 
-import { ResourceHomeTab, ResourceHomeTabs } from "@/models/resource/ResourceHomeTab";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { TAB_QUERY_PARAMETER_KEY } from "@/services/route/constants";
-import { useFavoriteStore } from "@/store/resource/favorite";
+import { ResourceHomeTab, ResourceHomeTabs } from "#src/models/resource/ResourceHomeTab";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { TAB_QUERY_PARAMETER_KEY } from "#src/services/route/constants";
+import { useFavoriteStore } from "#src/store/resource/favorite";
 import { RoutePath } from "@esposter/shared";
 
 const tab = useEnumRouteQuery(TAB_QUERY_PARAMETER_KEY, ResourceHomeTabs, ResourceHomeTab.Recent);

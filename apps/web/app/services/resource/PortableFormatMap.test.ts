@@ -5,11 +5,11 @@ import { MimeType } from "#shared/models/file/MimeType";
 import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
 import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
-import { showOpenFilePicker } from "@/services/file/showOpenFilePicker";
-import { getResourceBladeItems } from "@/services/resource/getResourceBladeItems";
-import { PortableFormatMap } from "@/services/resource/PortableFormatMap";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useResourceStore } from "@/store/resource";
+import { showOpenFilePicker } from "#src/services/file/showOpenFilePicker";
+import { getResourceBladeItems } from "#src/services/resource/getResourceBladeItems";
+import { PortableFormatMap } from "#src/services/resource/PortableFormatMap";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useResourceStore } from "#src/store/resource/index";
 import { ResourceType } from "@esposter/db-schema";
 import { downloadFile, noop } from "@esposter/shared";
 import { v7 } from "uuid";
@@ -20,7 +20,7 @@ vi.mock(import("@esposter/shared"), async (importOriginal) => ({
   downloadFile: vi.fn<typeof downloadFile>(),
 }));
 
-vi.mock(import("@/services/file/showOpenFilePicker"), () => ({
+vi.mock(import("#src/services/file/showOpenFilePicker"), () => ({
   showOpenFilePicker: vi.fn<typeof showOpenFilePicker>(),
 }));
 

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { pluralize } from "#shared/util/text/pluralize";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { getEntityNotFoundStatusMessage } from "@/services/shared/error/getEntityNotFoundStatusMessage";
-import { useRoomStore } from "@/store/message/room";
-import { getRouteParam } from "@/util/router/getRouteParam";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { getEntityNotFoundStatusMessage } from "#src/services/shared/error/getEntityNotFoundStatusMessage";
+import { useRoomStore } from "#src/store/message/room/index";
+import { getRouteParam } from "#src/util/router/getRouteParam";
 import { DatabaseEntityType, selectInviteInMessageSchema } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 

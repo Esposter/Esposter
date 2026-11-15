@@ -1,9 +1,9 @@
 // @vitest-environment nuxt
 import { PostSortType } from "#shared/models/post/PostSortType";
-import { createPost } from "@/services/post/createPost.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { usePostStore } from "@/store/post";
-import { useCommentStore } from "@/store/post/comment";
+import { createPost } from "#src/services/post/createPost.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useCommentStore } from "#src/store/post/comment/index";
+import { usePostStore } from "#src/store/post/index";
 import { takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { v7 } from "uuid";

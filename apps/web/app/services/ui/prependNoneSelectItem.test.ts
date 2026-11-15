@@ -1,7 +1,7 @@
-import type { UiSelectItem } from "@/models/ui/UiSelectItem";
+import type { UiSelectItem } from "#src/models/ui/UiSelectItem";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { prependNoneSelectItem } from "@/services/ui/prependNoneSelectItem";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { prependNoneSelectItem } from "#src/services/ui/prependNoneSelectItem";
 import { describe, expect, test } from "vitest";
 
 describe(prependNoneSelectItem, () => {

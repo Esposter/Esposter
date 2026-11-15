@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import PageBuilderBackgroundLayers from "@/components/PageBuilder/StylePanel/BackgroundLayers.vue";
+import PageBuilderBackgroundLayers from "#src/components/PageBuilder/StylePanel/BackgroundLayers.vue";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 

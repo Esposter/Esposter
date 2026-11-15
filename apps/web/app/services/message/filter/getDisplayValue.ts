@@ -1,8 +1,8 @@
 import type { SerializableValue } from "@esposter/db-schema";
 
-import { getInvalidValueError } from "@/services/message/filter/getInvalidValueError";
-import { useRoomStore } from "@/store/message/room";
-import { useUserStore } from "@/store/message/user";
+import { getInvalidValueError } from "#src/services/message/filter/getInvalidValueError";
+import { useRoomStore } from "#src/store/message/room/index";
+import { useUserStore } from "#src/store/message/user/index";
 import { FilterType, filterTypeAuthorTypeSchema } from "@esposter/db-schema";
 import { exhaustiveGuard, uncapitalize } from "@esposter/shared";
 

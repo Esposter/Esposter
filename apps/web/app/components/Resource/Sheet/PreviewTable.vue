@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
-import type { UiDataTableColumn } from "@/models/ui/UiDataTableColumn";
+import type { UiDataTableColumn } from "#src/models/ui/UiDataTableColumn";
 
 import { pluralize } from "#shared/util/text/pluralize";
-import { SHEET_IMPORT_PREVIEW_ROW_COUNT } from "@/services/resource/constants";
+import { SHEET_IMPORT_PREVIEW_ROW_COUNT } from "#src/services/resource/constants";
 import { takeOne } from "@esposter/shared";
 
 interface Props {

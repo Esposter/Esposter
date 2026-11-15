@@ -1,4 +1,4 @@
-import type { TagRow } from "@/models/resource/TagRow";
+import type { TagRow } from "#src/models/resource/TagRow";
 import type { ResourceTags } from "@esposter/db-schema";
 
 import { normalizeString } from "@esposter/shared";

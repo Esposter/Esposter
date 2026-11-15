@@ -3,7 +3,7 @@ import type { DatasetQuery } from "#shared/models/dataset/DatasetQuery";
 
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
 import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregationType";
-import { computeDatasetVisualPropsData } from "@/services/dashboard/dataset/computeDatasetVisualPropsData";
+import { computeDatasetVisualPropsData } from "#src/services/dashboard/dataset/computeDatasetVisualPropsData";
 import { describe, expect, test } from "vitest";
 
 describe(computeDatasetVisualPropsData, () => {

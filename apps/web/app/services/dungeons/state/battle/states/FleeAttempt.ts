@@ -1,11 +1,11 @@
-import type { State } from "@/models/dungeons/state/State";
+import type { State } from "#src/models/dungeons/state/State";
 
 import { SoundEffectKey } from "#shared/models/dungeons/keys/sound/SoundEffectKey";
-import { StateName } from "@/models/dungeons/state/battle/StateName";
-import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
-import { getDungeonsSoundEffect } from "@/services/dungeons/sound/getDungeonsSoundEffect";
-import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
-import { createRandomBoolean } from "@/util/math/random/createRandomBoolean";
+import { StateName } from "#src/models/dungeons/state/battle/StateName";
+import { battleStateMachine } from "#src/services/dungeons/scene/battle/battleStateMachine";
+import { getDungeonsSoundEffect } from "#src/services/dungeons/sound/getDungeonsSoundEffect";
+import { useBattleDialogStore } from "#src/store/dungeons/battle/dialog";
+import { createRandomBoolean } from "#src/util/math/random/createRandomBoolean";
 
 export const FleeAttempt: State<typeof StateName.FleeAttempt> = {
   name: StateName.FleeAttempt,

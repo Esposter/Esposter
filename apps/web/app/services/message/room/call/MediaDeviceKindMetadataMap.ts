@@ -1,7 +1,7 @@
 // @unocss-include
-import type { MediaDeviceKindMetadata } from "@/models/message/room/call/MediaDeviceKindMetadata";
+import type { MediaDeviceKindMetadata } from "#src/models/message/room/call/MediaDeviceKindMetadata";
 
-import { MediaDeviceKind } from "@/models/message/room/call/MediaDeviceKind";
+import { MediaDeviceKind } from "#src/models/message/room/call/MediaDeviceKind";
 
 // How the call surfaces name and draw each device kind — the settings menus, the health readout and the device
 // Pickers all show the same three, so the spelling lives once.

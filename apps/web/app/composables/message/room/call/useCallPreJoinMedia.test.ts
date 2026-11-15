@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
-import { useCallPreJoinMedia } from "@/composables/message/room/call/useCallPreJoinMedia";
-import { MediaStreamKind } from "@/models/message/room/call/MediaStreamKind";
-import { useKnockerStore } from "@/store/message/room/call/knocker";
+import { useCallPreJoinMedia } from "#src/composables/message/room/call/useCallPreJoinMedia";
+import { MediaStreamKind } from "#src/models/message/room/call/MediaStreamKind";
+import { useKnockerStore } from "#src/store/message/room/call/knocker";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { beforeEach, describe, expect, test, vi } from "vitest";

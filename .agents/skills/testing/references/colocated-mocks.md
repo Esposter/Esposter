@@ -13,15 +13,15 @@ When a service is mocked across multiple test files, create a colocated `*.test.
 ```ts
 const { fooMock } = vi.hoisted(() => ({ fooMock: {} as { current: () => Promise<Bar> } }));
 
-vi.mock(import("@/services/getFoo"), () => ({ getFoo: () => fooMock.current() }));
+vi.mock(import("#src/services/getFoo"), () => ({ getFoo: () => fooMock.current() }));
 ```
 
 **A module whose export is a dynamic-path `Proxy` can only be mocked at the module seam.** `authClient`
 (better-auth) resolves its methods through a `Proxy`, so `useSession` is not a configurable own property and
 `vi.spyOn(authClient, "useSession")` throws rather than replacing anything. Its colocated
 `app/services/auth/authClient.test.ts` is that seam: it exports the loosely typed `useSession`/`signOut` doubles
-beside the cast `authClient`, so a suite registers `vi.mock(import("@/services/auth/authClient"), () =>
-import("@/services/auth/authClient.test"))` and drives the method it imported from the mock file — never a
+beside the cast `authClient`, so a suite registers `vi.mock(import("#src/services/auth/authClient"), () =>
+import("#src/services/auth/authClient.test"))` and drives the method it imported from the mock file — never a
 per-file factory that re-rolls the cast. A Proxy no colocated file covers yet gets one, on the same shape.
 
 ## Placement and export
@@ -43,7 +43,7 @@ describe.todo("getFoo");
 ## Usage in test files
 
 ```ts
-vi.mock(import("@/services/getFoo"), () => import("@/services/getFoo.test"));
+vi.mock(import("#src/services/getFoo"), () => import("#src/services/getFoo.test"));
 ```
 
 **A mock every suite wants is registered once in the package's vitest `setupFiles`, never per file.** A `vi.mock` is hoisted only within the file that writes it, so one written in a shared helper module (e.g. `context.test.ts`) intercepts a test file's own direct import of the same module only when the helper happens to evaluate first — reorder the imports, or move one out of the suite file, and the module is silently unmocked. That dependence on import order is the reason a registration tends to get copied verbatim into every suite that reads through it. A setup file runs before the test module is imported, so it covers every path regardless of order. In this repo the shared registrations are made in `apps/web/shared/test/setup.ts`, the one place they are registered; a test file adds its own `vi.mock` only for a double that is specific to it (an inline factory over local state).
@@ -51,7 +51,7 @@ vi.mock(import("@/services/getFoo"), () => import("@/services/getFoo.test"));
 When a test needs to call the mock directly (assert on calls / read mock state), import from the **real path** — Vitest intercepts it and returns the mock:
 
 ```ts
-import { getFoo } from "@/services/getFoo";
+import { getFoo } from "#src/services/getFoo";
 const bar = await getFoo(BarType.Baz);
 ```
 

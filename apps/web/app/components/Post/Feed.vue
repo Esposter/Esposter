@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { POST_SKELETON_COUNT } from "@/services/post/constants";
-import { usePostStore } from "@/store/post";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { POST_SKELETON_COUNT } from "#src/services/post/constants";
+import { usePostStore } from "#src/store/post/index";
 
 interface Props {
   emptyDescription: string;

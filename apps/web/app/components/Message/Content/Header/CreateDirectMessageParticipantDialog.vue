@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { MutationStatus } from "@/models/shared/MutationStatus";
-import { useDirectMessageStore } from "@/store/message/room/directMessage";
-import { useFriendStore } from "@/store/message/user/friend";
+import { MutationStatus } from "#src/models/shared/MutationStatus";
+import { useDirectMessageStore } from "#src/store/message/room/directMessage";
+import { useFriendStore } from "#src/store/message/user/friend";
 
 interface Props {
   roomId: RoomInMessage["id"];

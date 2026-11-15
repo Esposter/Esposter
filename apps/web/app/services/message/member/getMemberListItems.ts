@@ -1,11 +1,11 @@
 import type { MemberCountByTopRole } from "#shared/models/db/room/MemberCountByTopRole";
 import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
-import type { MemberGroup } from "@/models/message/member/MemberGroup";
-import type { UiListItem } from "@/models/ui/UiListItem";
+import type { MemberGroup } from "#src/models/message/member/MemberGroup";
+import type { UiListItem } from "#src/models/ui/UiListItem";
 
-import { getMemberDescription } from "@/services/message/member/getMemberDescription";
-import { getMemberGroupTitle } from "@/services/message/member/getMemberGroupTitle";
-import { getRolelessMemberCount } from "@/services/message/member/getRolelessMemberCount";
+import { getMemberDescription } from "#src/services/message/member/getMemberDescription";
+import { getMemberGroupTitle } from "#src/services/message/member/getMemberGroupTitle";
+import { getRolelessMemberCount } from "#src/services/message/member/getRolelessMemberCount";
 
 // Discord's member list: one row per member under the heading of the group they are in, headed by its role and how many
 // Hold it

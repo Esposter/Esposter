@@ -1,8 +1,8 @@
-import type { OnlineSubscribableContext } from "@/models/shared/OnlineSubscribableContext";
+import type { OnlineSubscribableContext } from "#src/models/shared/OnlineSubscribableContext";
 
-import { useCallStore } from "@/store/message/room/call";
-import { useKnockerStore } from "@/store/message/room/call/knocker";
-import { useConnectionStore } from "@/store/realtime/connection";
+import { useCallStore } from "#src/store/message/room/call/index";
+import { useKnockerStore } from "#src/store/message/room/call/knocker";
+import { useConnectionStore } from "#src/store/realtime/connection";
 
 // The standalone call page's share of the joined call: its participants, and the knock frames of its doorkeeper
 export const useCallJoinedSubscribables = (onlineSubscribableContext: OnlineSubscribableContext) => {

@@ -3,9 +3,9 @@ import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument
 
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { TEST_ID, TEST_OTHER_ID, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
-import { TEST_TEXT_CONTENT } from "@/services/pageBuilder/constants.test";
-import { resolveDropTarget } from "@/services/pageBuilder/resolveDropTarget";
-import { webpageKind } from "@/services/pageBuilder/webpageKind";
+import { TEST_TEXT_CONTENT } from "#src/services/pageBuilder/constants.test";
+import { resolveDropTarget } from "#src/services/pageBuilder/resolveDropTarget";
+import { webpageKind } from "#src/services/pageBuilder/webpageKind";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 

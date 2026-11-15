@@ -1,6 +1,6 @@
-import type { EditorFinding } from "@/models/editor/EditorFinding";
+import type { EditorFinding } from "#src/models/editor/EditorFinding";
 
-import { RESOURCE_AUTOSAVE_DEBOUNCE_MS } from "@/services/resource/constants";
+import { RESOURCE_AUTOSAVE_DEBOUNCE_MS } from "#src/services/resource/constants";
 
 // An editor's findings: its check run over the document once an edit has settled on the autosave's cadence, so a finding
 // Clears with the save of the edit that fixed it. An edit replaces the document rather than mutating it, since the check

@@ -1,4 +1,4 @@
-import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
+import type { VisualPropsData } from "#src/models/dashboard/VisualPropsData";
 
 export const RadialBarPropsData = {
   options: { labels: ["Cricket"], plotOptions: { radialBar: { hollow: { size: "70%" } } } },

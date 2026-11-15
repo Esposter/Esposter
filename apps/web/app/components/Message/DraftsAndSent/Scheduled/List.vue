@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { ScheduledMessageJobWithRoom } from "#shared/models/db/message/scheduledMessageJob/ScheduledMessageJobWithRoom";
-import type { UiListItem } from "@/models/ui/UiListItem";
+import type { UiListItem } from "#src/models/ui/UiListItem";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { getScheduledMessageJobText } from "@/services/message/draftsAndSent/getScheduledMessageJobText";
-import { ScheduledMessageJobIconMap } from "@/services/message/draftsAndSent/ScheduledMessageJobIconMap";
-import { useScheduledMessageJobStore } from "@/store/message/scheduledMessageJob";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { getScheduledMessageJobText } from "#src/services/message/draftsAndSent/getScheduledMessageJobText";
+import { ScheduledMessageJobIconMap } from "#src/services/message/draftsAndSent/ScheduledMessageJobIconMap";
+import { useScheduledMessageJobStore } from "#src/store/message/scheduledMessageJob";
 import { RoutePath } from "@esposter/shared";
 
 const { readMoreScheduledMessageJobs } = useReadScheduledMessageJobs();

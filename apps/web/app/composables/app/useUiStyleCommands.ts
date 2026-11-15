@@ -1,11 +1,11 @@
-import type { UiCommand } from "@/models/ui/UiCommand";
+import type { UiCommand } from "#src/models/ui/UiCommand";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { UiStyle, UiStyles } from "@/models/ui/UiStyle";
-import { STYLE_COMMAND_GROUP } from "@/services/app/constants";
-import { UiStyleIconMeaningMap } from "@/services/ui/UiStyleIconMeaningMap";
-import { useReadableTextStore } from "@/store/ui/readableText";
-import { useUiStyleStore } from "@/store/ui/style";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { UiStyle, UiStyles } from "#src/models/ui/UiStyle";
+import { STYLE_COMMAND_GROUP } from "#src/services/app/constants";
+import { UiStyleIconMeaningMap } from "#src/services/ui/UiStyleIconMeaningMap";
+import { useReadableTextStore } from "#src/store/ui/readableText";
+import { useUiStyleStore } from "#src/store/ui/style";
 import { capitalize } from "@esposter/shared";
 
 // The design styles, which the dock's style menu lists and the palette offers by name: a choice, so every style is

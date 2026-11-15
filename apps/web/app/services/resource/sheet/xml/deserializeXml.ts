@@ -2,9 +2,9 @@ import type { XmlFileSettings } from "#shared/models/resource/sheet/XmlFileSetti
 
 import { MimeType } from "#shared/models/file/MimeType";
 import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
-import { deserializeToDataSource } from "@/services/resource/sheet/dataSource/deserializeToDataSource";
-import { getXmlRowCells } from "@/services/resource/sheet/xml/getXmlRowCells";
-import { getXmlRowElements } from "@/services/resource/sheet/xml/getXmlRowElements";
+import { deserializeToDataSource } from "#src/services/resource/sheet/dataSource/deserializeToDataSource";
+import { getXmlRowCells } from "#src/services/resource/sheet/xml/getXmlRowCells";
+import { getXmlRowElements } from "#src/services/resource/sheet/xml/getXmlRowElements";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export const deserializeXml = async (file: File, _settings: XmlFileSettings) => {

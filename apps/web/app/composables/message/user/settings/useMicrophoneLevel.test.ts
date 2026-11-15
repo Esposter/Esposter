@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import { useMicrophoneLevel } from "@/composables/message/user/settings/useMicrophoneLevel";
+import { useMicrophoneLevel } from "#src/composables/message/user/settings/useMicrophoneLevel";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";

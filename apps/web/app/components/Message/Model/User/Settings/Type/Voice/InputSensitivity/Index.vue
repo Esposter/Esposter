@@ -2,8 +2,8 @@
 import type { UserSettingsInMessage } from "@esposter/db-schema";
 
 import { MESSAGE_DISPLAY_NAME } from "#shared/services/message/constants";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiToken } from "@/models/ui/UiToken";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiToken } from "#src/models/ui/UiToken";
 
 interface Props {
   userSettings: UserSettingsInMessage;

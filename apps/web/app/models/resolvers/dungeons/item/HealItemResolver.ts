@@ -3,12 +3,12 @@ import type { Monster } from "#shared/models/dungeons/monster/Monster";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { ItemEffectType } from "#shared/models/dungeons/item/ItemEffectType";
-import { StateName } from "@/models/dungeons/state/battle/StateName";
-import { AItemResolver } from "@/models/resolvers/dungeons/AItemResolver";
-import { checkIsMonsterFainted } from "@/services/dungeons/monster/checkIsMonsterFainted";
-import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
-import { phaserEventEmitter } from "@/services/phaser/phaserEventEmitter";
-import { useMonsterPartyInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
+import { StateName } from "#src/models/dungeons/state/battle/StateName";
+import { AItemResolver } from "#src/models/resolvers/dungeons/AItemResolver";
+import { checkIsMonsterFainted } from "#src/services/dungeons/monster/checkIsMonsterFainted";
+import { battleStateMachine } from "#src/services/dungeons/scene/battle/battleStateMachine";
+import { phaserEventEmitter } from "#src/services/phaser/phaserEventEmitter";
+import { useMonsterPartyInfoPanelStore } from "#src/store/dungeons/monsterParty/infoPanel";
 
 export class HealItemResolver extends AItemResolver {
   constructor() {

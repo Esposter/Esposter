@@ -1,9 +1,9 @@
 // @vitest-environment happy-dom
-import type { UiMenuItem } from "@/models/ui/UiMenuItem";
+import type { UiMenuItem } from "#src/models/ui/UiMenuItem";
 
-import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
-import UiTabs from "@/components/Ui/Tabs.vue";
-import { UiStyles } from "@/models/ui/UiStyle";
+import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
+import UiTabs from "#src/components/Ui/Tabs.vue";
+import { UiStyles } from "#src/models/ui/UiStyle";
 import { flushPromises, mount } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 

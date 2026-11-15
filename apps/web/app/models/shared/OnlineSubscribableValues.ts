@@ -1,4 +1,4 @@
-import type { OnlineSubscribableSource } from "@/models/shared/OnlineSubscribableSource";
+import type { OnlineSubscribableSource } from "#src/models/shared/OnlineSubscribableSource";
 import type { WatchSource } from "vue";
 
 export type OnlineSubscribableValues<TSources extends readonly OnlineSubscribableSource[]> = {

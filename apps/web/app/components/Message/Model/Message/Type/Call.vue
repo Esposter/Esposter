@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { MessageComponentProps } from "@/models/message/MessageComponentProps";
+import type { MessageComponentProps } from "#src/models/message/MessageComponentProps";
 
-import { UiToken } from "@/models/ui/UiToken";
+import { UiToken } from "#src/models/ui/UiToken";
 
 interface Props extends MessageComponentProps {}
 

@@ -1,12 +1,12 @@
-import type { ResourceListSource } from "@/models/resource/list/ResourceListSource";
+import type { ResourceListSource } from "#src/models/resource/list/ResourceListSource";
 
 import { ResourceListItemPropertyNames } from "#shared/models/resource/ResourceListItem";
 import { ResourceSortName } from "#shared/models/resource/ResourceSortName";
 import { checkIsSortNameAvailable } from "#shared/services/resource/checkIsSortNameAvailable";
-import { DEFAULT_HIDDEN_RESOURCE_COLUMN_KEYS } from "@/services/resource/constants";
-import { ResourceListSourceDefinitionMap } from "@/services/resource/list/ResourceListSourceDefinitionMap";
-import { ResourceHeaders } from "@/services/resource/ResourceHeaders";
-import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
+import { DEFAULT_HIDDEN_RESOURCE_COLUMN_KEYS } from "#src/services/resource/constants";
+import { ResourceListSourceDefinitionMap } from "#src/services/resource/list/ResourceListSourceDefinitionMap";
+import { ResourceHeaders } from "#src/services/resource/ResourceHeaders";
+import { LocalStorageKey } from "#src/services/shared/LocalStorageKey";
 
 // Owns what "pinned" means, so the table and the column chooser cannot disagree: the column a source is
 // Ordered by is always rendered and never offered as a checkbox, because a sort key the reader can hide is an

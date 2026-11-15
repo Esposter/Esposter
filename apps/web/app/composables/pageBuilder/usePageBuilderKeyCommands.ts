@@ -1,13 +1,13 @@
-import type { AnyPageBuilderDocument } from "@/models/pageBuilder/AnyPageBuilderDocument";
-import type { AnyPageBuilderKind } from "@/models/pageBuilder/AnyPageBuilderKind";
-import type { UiCommand } from "@/models/ui/UiCommand";
+import type { AnyPageBuilderDocument } from "#src/models/pageBuilder/AnyPageBuilderDocument";
+import type { AnyPageBuilderKind } from "#src/models/pageBuilder/AnyPageBuilderKind";
+import type { UiCommand } from "#src/models/ui/UiCommand";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { PAGE_BUILDER_COMMAND_GROUP } from "@/services/pageBuilder/constants";
-import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
-import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
-import { checkIsEditableTarget } from "@/util/dom/checkIsEditableTarget";
-import { checkIsElementTarget } from "@/util/dom/checkIsElementTarget";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { PAGE_BUILDER_COMMAND_GROUP } from "#src/services/pageBuilder/constants";
+import { getNodePointer } from "#src/services/pageBuilder/getNodePointer";
+import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
+import { checkIsEditableTarget } from "#src/util/dom/checkIsEditableTarget";
+import { checkIsElementTarget } from "#src/util/dom/checkIsElementTarget";
 import { getBlockNode } from "vue-block-editor-headless";
 
 // A focused button or link takes Enter as its own activation rather than a text edit

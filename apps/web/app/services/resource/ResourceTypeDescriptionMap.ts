@@ -1,4 +1,4 @@
-import type { CreatableResourceType } from "@/models/resource/CreatableResourceType";
+import type { CreatableResourceType } from "#src/models/resource/CreatableResourceType";
 
 import { ResourceType } from "@esposter/db-schema";
 

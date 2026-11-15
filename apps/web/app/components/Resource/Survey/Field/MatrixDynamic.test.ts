@@ -2,9 +2,9 @@
 import type { DOMWrapper } from "@vue/test-utils";
 import type { SurveyAnswerValue, SurveyMatrixColumn, SurveyMatrixDynamicNode } from "vue-survey-engine-headless";
 
-import ResourceSurveyFieldMatrixDynamic from "@/components/Resource/Survey/Field/MatrixDynamic.vue";
-import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
-import { UiStyles } from "@/models/ui/UiStyle";
+import ResourceSurveyFieldMatrixDynamic from "#src/components/Resource/Survey/Field/MatrixDynamic.vue";
+import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
+import { UiStyles } from "#src/models/ui/UiStyle";
 import { takeOne } from "@esposter/shared";
 import { flushPromises, mount } from "@vue/test-utils";
 import { v7 } from "uuid";

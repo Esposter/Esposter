@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useCallStore } from "@/store/message/room/call";
-import { useParticipantStore } from "@/store/message/room/call/participant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { useCallStore } from "#src/store/message/room/call/index";
+import { useParticipantStore } from "#src/store/message/room/call/participant";
 
 const callStore = useCallStore();
 const { isCallViewOpen } = storeToRefs(callStore);

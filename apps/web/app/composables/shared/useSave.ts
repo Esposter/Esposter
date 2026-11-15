@@ -2,11 +2,11 @@ import type { ItemMetadata } from "#shared/models/shared/ItemMetadata";
 import type { z } from "zod";
 
 import { ItemMetadataPropertyNames } from "#shared/models/shared/ItemMetadataPropertyNames";
-import { MutationStatus } from "@/models/shared/MutationStatus";
-import { authClient } from "@/services/auth/authClient";
-import { saveItemMetadata } from "@/services/shared/metadata/saveItemMetadata";
-import { checkIsTRPCConflict } from "@/services/trpc/checkIsTRPCConflict";
-import { createErrorAlert } from "@/services/trpc/createErrorAlert";
+import { MutationStatus } from "#src/models/shared/MutationStatus";
+import { authClient } from "#src/services/auth/authClient";
+import { saveItemMetadata } from "#src/services/shared/metadata/saveItemMetadata";
+import { checkIsTRPCConflict } from "#src/services/trpc/checkIsTRPCConflict";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 
 // What saving stamps, which every saved state carries whether it is a content item or a row
 type SavedMetadata = Pick<ItemMetadata, "updatedAt">;

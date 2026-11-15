@@ -8,8 +8,8 @@ the table to read before timing anything by hand (the `bench` skill, `references
 shows: most of a sweep over the whole tree is the loader booting, a `git ls-files` per pathspec and every file read,
 and the scan itself is a small share. So the savings sit at those three:
 
-- **The runner.** `node` boots in a fraction of `vpx`'s time; which one a script gets is
-  the `package-scripts` skill's rule (`references/typescript-scripts.md`), decided by the aliases its import graph reaches and never by rewriting them.
+- **The runner.** Every script runs under `node`, which boots in a fraction of a loader's time (the
+  `package-scripts` skill, `references/typescript-scripts.md`).
 - **One spawn per scan.** `readSweepFilePaths` takes every pathspec a scan wants in one call — git walks its index
   once and lists an overlap once — where a spawn per pathspec pays the process start each time.
 - **Generated files are skipped, by the list that already names them.** A scan over "every source file" reads what

@@ -1,11 +1,11 @@
 // @vitest-environment happy-dom
-import type { Item } from "@/models/shared/Item";
+import type { Item } from "#src/models/shared/Item";
 
-import UiOverflowMenu from "@/components/Ui/OverflowMenu.vue";
-import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { UiStyles } from "@/models/ui/UiStyle";
-import { UiIconMap } from "@/services/ui/UiIconMap";
+import UiOverflowMenu from "#src/components/Ui/OverflowMenu.vue";
+import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { UiStyles } from "#src/models/ui/UiStyle";
+import { UiIconMap } from "#src/services/ui/UiIconMap";
 import { flushPromises, mount } from "@vue/test-utils";
 import { describe, expect, test, vi } from "vitest";
 

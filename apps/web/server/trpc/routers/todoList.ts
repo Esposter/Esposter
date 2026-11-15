@@ -7,8 +7,8 @@ import { appendNotesParagraph } from "#server/services/resource/todoList/appendN
 import { checkIsOpenFollowUp } from "#server/services/resource/todoList/checkIsOpenFollowUp";
 import { requireOpenFollowUp } from "#server/services/resource/todoList/requireOpenFollowUp";
 import { updateTodoListContent } from "#server/services/resource/todoList/updateTodoListContent";
-import { router } from "#server/trpc";
 import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
+import { router } from "#server/trpc/index";
 import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { createResourceProcedures } from "#server/trpc/procedure/resource/createResourceProcedures";
 import { getOwnerProcedure } from "#server/trpc/procedure/resource/getOwnerProcedure";

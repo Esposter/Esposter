@@ -1,8 +1,8 @@
-import { getCallParticipantMap } from "@/services/message/room/call/getCallParticipantMap";
-import { useRoomStore } from "@/store/message/room";
-import { useCallStore } from "@/store/message/room/call";
-import { useParticipantStore } from "@/store/message/room/call/participant";
-import { useUserStore } from "@/store/message/user";
+import { getCallParticipantMap } from "#src/services/message/room/call/getCallParticipantMap";
+import { useCallStore } from "#src/store/message/room/call/index";
+import { useParticipantStore } from "#src/store/message/room/call/participant";
+import { useRoomStore } from "#src/store/message/room/index";
+import { useUserStore } from "#src/store/message/user/index";
 
 // The viewed room's call, each participant named as the room knows them
 export const useCallRoomParticipantMap = () => {

@@ -1,11 +1,11 @@
 // @vitest-environment nuxt
-import MessageModelMessageInputSlashCommandParameters from "@/components/Message/Model/Message/Input/SlashCommandParameters/Index.vue";
-import { SlashCommandType } from "@/models/message/slashCommands/SlashCommandType";
-import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
-import { COMMAND_INPUT_INDEX } from "@/services/message/slashCommands/constants";
-import { SlashCommandDefinitionMap } from "@/services/message/slashCommands/SlashCommandDefinitionMap";
-import { useInputStore } from "@/store/message/input";
-import { useSlashCommandStore } from "@/store/message/input/slashCommand";
+import MessageModelMessageInputSlashCommandParameters from "#src/components/Message/Model/Message/Input/SlashCommandParameters/Index.vue";
+import { SlashCommandType } from "#src/models/message/slashCommands/SlashCommandType";
+import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
+import { COMMAND_INPUT_INDEX } from "#src/services/message/slashCommands/constants";
+import { SlashCommandDefinitionMap } from "#src/services/message/slashCommands/SlashCommandDefinitionMap";
+import { useInputStore } from "#src/store/message/input/index";
+import { useSlashCommandStore } from "#src/store/message/input/slashCommand";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";

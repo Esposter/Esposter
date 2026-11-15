@@ -4,10 +4,10 @@ import type { Page } from "@esposter/db-schema";
 import type { ToData } from "@esposter/shared";
 
 import { BACKOFF_BASE_DELAY_MS } from "#shared/services/pagination/constants";
-import { createPendingQuery } from "@/composables/data/pagination/createPendingQuery.test";
-import { goOnline } from "@/composables/shared/network.test";
-import { useCursorSearcher } from "@/composables/useCursorSearcher";
-import { AUTO_SEARCH_THROTTLE_MS } from "@/services/shared/constants";
+import { createPendingQuery } from "#src/composables/data/pagination/createPendingQuery.test";
+import { goOnline } from "#src/composables/shared/network.test";
+import { useCursorSearcher } from "#src/composables/useCursorSearcher";
+import { AUTO_SEARCH_THROTTLE_MS } from "#src/services/shared/constants";
 import { noop } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";

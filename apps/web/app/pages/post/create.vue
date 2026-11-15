@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { usePostStore } from "@/store/post";
+import { usePostStore } from "#src/store/post/index";
 import { RoutePath } from "@esposter/shared";
 
 definePageMeta({ middleware: "auth" });

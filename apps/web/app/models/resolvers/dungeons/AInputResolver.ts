@@ -1,4 +1,4 @@
-import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
+import type { PlayerInput } from "#src/models/dungeons/UI/input/PlayerInput";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 export abstract class AInputResolver {

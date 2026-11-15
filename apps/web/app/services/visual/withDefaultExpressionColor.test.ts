@@ -1,7 +1,7 @@
-import type { Expression } from "@/models/desmos/Expression";
+import type { Expression } from "#src/models/desmos/Expression";
 
-import { Colors } from "@/models/desmos/Colors";
-import { withDefaultExpressionColor } from "@/services/visual/withDefaultExpressionColor";
+import { Colors } from "#src/models/desmos/Colors";
+import { withDefaultExpressionColor } from "#src/services/visual/withDefaultExpressionColor";
 import { describe, expect, test } from "vitest";
 
 describe(withDefaultExpressionColor, () => {

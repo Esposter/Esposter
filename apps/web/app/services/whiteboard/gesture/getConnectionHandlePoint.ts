@@ -1,6 +1,6 @@
 import type { Point, ShapeElement } from "vue-block-editor-headless";
 
-import { WHITEBOARD_CONNECTION_HANDLE_GAP } from "@/services/whiteboard/overlay/constants";
+import { WHITEBOARD_CONNECTION_HANDLE_GAP } from "#src/services/whiteboard/overlay/constants";
 import { getConnectionPoint, getElementBounds } from "vue-block-editor-headless";
 
 // The point a connection handle sits at: the shape's connection point, pushed outward from the shape's centre by the handle gap, so the handle sits

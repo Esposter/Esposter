@@ -1,11 +1,16 @@
 <script setup lang="ts">
-import { SceneEventKey } from "@/models/dungeons/scene/SceneEventKey";
-import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
-import { DIALOG_DEPTH, DIALOG_HEIGHT, DIALOG_PADDING, DIALOG_WIDTH } from "@/services/dungeons/scene/world/constants";
-import { PANEL_BORDER_COLOR, PANEL_FILL_COLOR } from "@/services/dungeons/UI/constants";
-import { onSceneEvent } from "@/services/phaser/hooks/onSceneEvent";
-import { useControlsStore } from "@/store/dungeons/controls";
-import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
+import { SceneEventKey } from "#src/models/dungeons/scene/SceneEventKey";
+import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";
+import {
+  DIALOG_DEPTH,
+  DIALOG_HEIGHT,
+  DIALOG_PADDING,
+  DIALOG_WIDTH,
+} from "#src/services/dungeons/scene/world/constants";
+import { PANEL_BORDER_COLOR, PANEL_FILL_COLOR } from "#src/services/dungeons/UI/constants";
+import { onSceneEvent } from "#src/services/phaser/hooks/onSceneEvent";
+import { useControlsStore } from "#src/store/dungeons/controls";
+import { useWorldDialogStore } from "#src/store/dungeons/world/dialog";
 import { Input } from "phaser";
 import { Container, Rectangle } from "vue-phaserjs";
 

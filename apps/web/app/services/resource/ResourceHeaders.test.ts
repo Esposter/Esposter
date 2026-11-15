@@ -1,6 +1,6 @@
-import { DEFAULT_HIDDEN_RESOURCE_COLUMN_KEYS } from "@/services/resource/constants";
-import { ResourceListSourceDefinitionMap } from "@/services/resource/list/ResourceListSourceDefinitionMap";
-import { ResourceHeaders } from "@/services/resource/ResourceHeaders";
+import { DEFAULT_HIDDEN_RESOURCE_COLUMN_KEYS } from "#src/services/resource/constants";
+import { ResourceListSourceDefinitionMap } from "#src/services/resource/list/ResourceListSourceDefinitionMap";
+import { ResourceHeaders } from "#src/services/resource/ResourceHeaders";
 import { describe, expect, test } from "vitest";
 
 describe("resourceHeaders", () => {

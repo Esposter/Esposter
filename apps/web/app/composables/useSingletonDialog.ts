@@ -1,4 +1,4 @@
-import { DIALOG_CLOSE_DURATION_MS } from "@/services/ui/constants";
+import { DIALOG_CLOSE_DURATION_MS } from "#src/services/ui/constants";
 
 const checkIsPresent = (value: unknown) => (Array.isArray(value) ? value.length > 0 : Boolean(value));
 

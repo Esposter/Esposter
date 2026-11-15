@@ -5,12 +5,12 @@ import { PageBuilderDevice } from "#shared/models/pageBuilder/PageBuilderDevice"
 import { DEVICE_WIDTH_MAP } from "#shared/services/pageBuilder/constants";
 import { TEST_THIRD_ID } from "#shared/services/pageBuilder/constants.test";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
-import ResourceEmailEditor from "@/components/Resource/Email/Editor.vue";
-import { useSession } from "@/services/auth/authClient.test";
-import { TEST_ROOT_TEXT_ID, TEST_SECTION_ID, TEST_TEXT_CONTENT } from "@/services/pageBuilder/constants.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
-import { useResourceStore } from "@/store/resource";
+import ResourceEmailEditor from "#src/components/Resource/Email/Editor.vue";
+import { useSession } from "#src/services/auth/authClient.test";
+import { TEST_ROOT_TEXT_ID, TEST_SECTION_ID, TEST_TEXT_CONTENT } from "#src/services/pageBuilder/constants.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
+import { useResourceStore } from "#src/store/resource/index";
 import { ResourceType } from "@esposter/db-schema";
 import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
@@ -19,7 +19,7 @@ import { MjmlNodeType } from "mjml-blocks";
 import { v7 } from "uuid";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
+vi.mock(import("#src/services/auth/authClient"), () => import("#src/services/auth/authClient.test"));
 
 describe("resourceEmailEditor", () => {
   const { trpcMsw } = setupMswTrpc();

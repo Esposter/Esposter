@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
-import { useCancelScheduledMessageJobToDraft } from "@/composables/message/draftsAndSent/useCancelScheduledMessageJobToDraft";
-import { createScheduledMessageJob } from "@/services/message/draftsAndSent/createScheduledMessageJob.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useInputStore } from "@/store/message/input";
+import { useCancelScheduledMessageJobToDraft } from "#src/composables/message/draftsAndSent/useCancelScheduledMessageJobToDraft";
+import { createScheduledMessageJob } from "#src/services/message/draftsAndSent/createScheduledMessageJob.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useInputStore } from "#src/store/message/input/index";
 import { TRPCError } from "@trpc/server";
 import { describe, expect, test } from "vitest";
 

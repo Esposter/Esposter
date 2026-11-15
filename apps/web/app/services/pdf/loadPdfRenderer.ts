@@ -1,6 +1,6 @@
 import type { PdfRenderer } from "vue-pdfjs-headless";
 
-import { PDF_CMAP_BASE_URL, PDF_STANDARD_FONT_DATA_BASE_URL, PDF_WASM_BASE_URL } from "@/services/pdf/constants";
+import { PDF_CMAP_BASE_URL, PDF_STANDARD_FONT_DATA_BASE_URL, PDF_WASM_BASE_URL } from "#src/services/pdf/constants";
 import PdfWorker from "pdfjs-dist/build/pdf.worker?url";
 
 // The renderer's API is imported here rather than at the module's top, so a server render never evaluates it.

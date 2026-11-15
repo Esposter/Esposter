@@ -1,17 +1,17 @@
 // @vitest-environment happy-dom
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import ResourceBladeOutlet from "@/components/Resource/Blade/Outlet.vue";
-import { ResourceBladeSlug } from "@/models/resource/ResourceBladeSlug";
+import ResourceBladeOutlet from "#src/components/Resource/Blade/Outlet.vue";
+import { ResourceBladeSlug } from "#src/models/resource/ResourceBladeSlug";
 import { ResourceType } from "@esposter/db-schema";
 import { flushPromises, mount } from "@vue/test-utils";
 import { describe, expect, test, vi } from "vitest";
 
 // A type's own blade is a stub that draws one paragraph, so the outlet's wrapper is what is under test
-vi.mock(import("@/services/resource/ResourceBladeDefinitionMap"), async (importOriginal) => {
+vi.mock(import("#src/services/resource/ResourceBladeDefinitionMap"), async (importOriginal) => {
   const { ResourceBladeDefinitionMap } = await importOriginal();
   const { ResourceType: MockedResourceType } = await import("@esposter/db-schema");
-  const { ResourceBladeSlug: MockedResourceBladeSlug } = await import("@/models/resource/ResourceBladeSlug");
+  const { ResourceBladeSlug: MockedResourceBladeSlug } = await import("#src/models/resource/ResourceBladeSlug");
   const { defineComponent, h } = await import("vue");
   const StubBlade = defineComponent(() => () => h("p", "stub blade"));
 

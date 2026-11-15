@@ -1,4 +1,4 @@
-import { getCachedItems } from "@/services/cache/indexedDb/getCachedItems";
+import { getCachedItems } from "#src/services/cache/indexedDb/getCachedItems";
 import { describe, expect, test } from "vitest";
 
 describe(getCachedItems, () => {

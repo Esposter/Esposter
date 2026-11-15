@@ -1,4 +1,4 @@
-import type { AudioCaptureConstraints } from "@/models/message/room/call/AudioCaptureConstraints";
+import type { AudioCaptureConstraints } from "#src/models/message/room/call/AudioCaptureConstraints";
 
 import { NoiseSuppressionMode } from "@esposter/db-schema";
 import { exhaustiveGuard } from "@esposter/shared";

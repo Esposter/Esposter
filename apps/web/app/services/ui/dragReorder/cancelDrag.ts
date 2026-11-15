@@ -1,7 +1,7 @@
-import type { DragReorderContext } from "@/models/ui/dragReorder/DragReorderContext";
-import type { Press } from "@/models/ui/dragReorder/Press";
+import type { DragReorderContext } from "#src/models/ui/dragReorder/DragReorderContext";
+import type { Press } from "#src/models/ui/dragReorder/Press";
 
-import { settleDrag } from "@/services/ui/dragReorder/settleDrag";
+import { settleDrag } from "#src/services/ui/dragReorder/settleDrag";
 
 // Every row goes back, and the release still to come raises a click that is swallowed like a drop's
 export const cancelDrag = (context: DragReorderContext, currentPress: Press) => {

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { InviteRecipient } from "@/models/message/room/invite/InviteRecipient";
+import type { InviteRecipient } from "#src/models/message/room/invite/InviteRecipient";
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { useDirectMessageStore } from "@/store/message/room/directMessage";
-import { useInviteStore } from "@/store/message/room/invite";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { useDirectMessageStore } from "#src/store/message/room/directMessage";
+import { useInviteStore } from "#src/store/message/room/invite";
 
 interface Props {
   isInviteSendable: boolean;

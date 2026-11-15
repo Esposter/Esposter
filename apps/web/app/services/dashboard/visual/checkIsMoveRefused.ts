@@ -1,8 +1,8 @@
 import type { Visual } from "#shared/models/dashboard/data/Visual";
 
 import { listVisuals } from "#shared/services/dashboard/listVisuals";
-import { checkIsMoveTooDeep } from "@/services/dashboard/visual/checkIsMoveTooDeep";
-import { findVisual } from "@/services/dashboard/visual/findVisual";
+import { checkIsMoveTooDeep } from "#src/services/dashboard/visual/checkIsMoveTooDeep";
+import { findVisual } from "#src/services/dashboard/visual/findVisual";
 
 // Whether a visual, with the visuals it holds, cannot move into a group, or onto the dashboard when there is no group: into
 // Itself or a group it holds, into a visual that is not a group, or past the depth cap. The store refuses such a move, the

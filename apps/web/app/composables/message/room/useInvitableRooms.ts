@@ -1,5 +1,5 @@
-import { useRoomStore } from "@/store/message/room";
-import { useRoleStore } from "@/store/message/room/role";
+import { useRoomStore } from "#src/store/message/room/index";
+import { useRoleStore } from "#src/store/message/room/role";
 import { RoomPermission } from "@esposter/db-schema";
 
 // The rooms a friend can be invited into from outside the room: the reader may mint a link there, and its invites are

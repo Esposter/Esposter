@@ -1,4 +1,4 @@
-import type { CardStackGeometry } from "@/models/visual/CardStackGeometry";
+import type { CardStackGeometry } from "#src/models/visual/CardStackGeometry";
 import type { Except } from "type-fest";
 
 // The scale the card that has just moved settles at, which is the back card of the stack's own scale

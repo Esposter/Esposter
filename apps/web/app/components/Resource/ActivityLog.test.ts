@@ -1,10 +1,10 @@
 // @vitest-environment nuxt
 import type { Page, ResourceActivityInResource } from "@esposter/db-schema";
 
-import ResourceActivityLog from "@/components/Resource/ActivityLog.vue";
-import UiSkeleton from "@/components/Ui/Skeleton.vue";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useActivityStore } from "@/store/resource/activity";
+import ResourceActivityLog from "#src/components/Resource/ActivityLog.vue";
+import UiSkeleton from "#src/components/Ui/Skeleton.vue";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useActivityStore } from "#src/store/resource/activity";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";

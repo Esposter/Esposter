@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { COMPOSER_ATTRIBUTE } from "@/services/app/constants";
+import { COMPOSER_ATTRIBUTE } from "#src/services/app/constants";
 </script>
 
 <!-- The room is one column: its header, the call, the list that scrolls, and the composer, which stays at the foot

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { GroupProps } from "@/components/Clicker/Svg/GroupProps";
+import type { GroupProps } from "#src/components/Clicker/Svg/GroupProps";
 
 defineSlots<{ default: () => VNode }>();
 defineProps<GroupProps>();

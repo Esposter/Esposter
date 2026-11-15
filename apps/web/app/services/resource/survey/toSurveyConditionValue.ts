@@ -1,4 +1,4 @@
-import type { SurveyConditionValue } from "@/models/resource/survey/SurveyConditionValue";
+import type { SurveyConditionValue } from "#src/models/resource/survey/SurveyConditionValue";
 import type { SurveyExpressionNode } from "survey-expression";
 
 import { SurveyExpressionNodeType, SurveyExpressionUnaryOperator } from "survey-expression";

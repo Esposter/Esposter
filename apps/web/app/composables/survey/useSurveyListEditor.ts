@@ -1,7 +1,7 @@
-import type { SurveyListEditorOptions } from "@/models/resource/survey/SurveyListEditorOptions";
-import type { SurveyListRow } from "@/models/resource/survey/SurveyListRow";
+import type { SurveyListEditorOptions } from "#src/models/resource/survey/SurveyListEditorOptions";
+import type { SurveyListRow } from "#src/models/resource/survey/SurveyListRow";
 
-import { getMovedItems } from "@/services/shared/getMovedItems";
+import { getMovedItems } from "#src/services/shared/getMovedItems";
 import { checkIsDeepEqual } from "@esposter/shared";
 
 // A survey list's draft: its rows are held apart from the model, so a row the list refuses stays where it was typed,

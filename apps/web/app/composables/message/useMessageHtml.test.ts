@@ -1,12 +1,12 @@
 // @vitest-environment nuxt
 import type { RoomEmojiWithPresignedUrl } from "@esposter/db-schema";
 
-import { useMessageHtml } from "@/composables/message/useMessageHtml";
-import { EmojiType } from "@/models/message/emoji/EmojiType";
-import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
-import { createUser } from "@/services/message/user/createUser.test";
-import { useRoomEmojiStore } from "@/store/message/room/emoji";
-import { useUserStore } from "@/store/message/user";
+import { useMessageHtml } from "#src/composables/message/useMessageHtml";
+import { EmojiType } from "#src/models/message/emoji/EmojiType";
+import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
+import { createUser } from "#src/services/message/user/createUser.test";
+import { useRoomEmojiStore } from "#src/store/message/room/emoji";
+import { useUserStore } from "#src/store/message/user/index";
 import {
   CUSTOM_EMOJI_ID_ATTRIBUTE,
   CUSTOM_EMOJI_NAME_ATTRIBUTE,

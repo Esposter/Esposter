@@ -1,7 +1,7 @@
 import type { ProgramInvite } from "#shared/models/resource/program/ProgramInvite";
 
-import { createProgramInviteHtml } from "@/services/resource/program/createProgramInviteHtml";
-import { createUniqueFileName } from "@/services/resource/program/createUniqueFileName";
+import { createProgramInviteHtml } from "#src/services/resource/program/createProgramInviteHtml";
+import { createUniqueFileName } from "#src/services/resource/program/createUniqueFileName";
 
 // One file per participant, named after their key value
 export const createProgramInviteFiles = (emailHtml: string, surveyPath: string, invites: ProgramInvite[]) => {

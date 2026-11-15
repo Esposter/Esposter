@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { Position } from "grid-engine";
 
-import { BarType } from "@/models/dungeons/UI/bar/BarType";
-import { BAR_WIDTH } from "@/services/dungeons/UI/bar/constants";
-import { useSettingsStore } from "@/store/dungeons/settings";
-import { useExperienceBarStore } from "@/store/dungeons/UI/experienceBar";
+import { BarType } from "#src/models/dungeons/UI/bar/BarType";
+import { BAR_WIDTH } from "#src/services/dungeons/UI/bar/constants";
+import { useSettingsStore } from "#src/store/dungeons/settings/index";
+import { useExperienceBarStore } from "#src/store/dungeons/UI/experienceBar";
 
 interface Props {
   barPercentage: number;

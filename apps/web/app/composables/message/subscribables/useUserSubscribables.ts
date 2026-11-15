@@ -1,6 +1,6 @@
-import { useMemberStore } from "@/store/message/user/member";
-import { useStatusStore } from "@/store/message/user/status";
-import { useConnectionStore } from "@/store/realtime/connection";
+import { useMemberStore } from "#src/store/message/user/member";
+import { useStatusStore } from "#src/store/message/user/status";
+import { useConnectionStore } from "#src/store/realtime/connection";
 import { UserStatus } from "@esposter/db-schema";
 
 export const useUserSubscribables = async () => {

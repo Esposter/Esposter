@@ -1,31 +1,31 @@
-import type { UiCommand } from "@/models/ui/UiCommand";
-import type { WhiteboardEditState } from "@/models/whiteboard/WhiteboardEditState";
+import type { UiCommand } from "#src/models/ui/UiCommand";
+import type { WhiteboardEditState } from "#src/models/whiteboard/WhiteboardEditState";
 import type { Point, ShapeKind } from "vue-block-editor-headless";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { GestureTool } from "@/models/whiteboard/GestureTool";
-import { getHistoryCommands } from "@/services/ui/getHistoryCommands";
-import { applyWhiteboardEdit } from "@/services/whiteboard/edit/applyWhiteboardEdit";
-import { deleteWhiteboardElements } from "@/services/whiteboard/edit/deleteWhiteboardElements";
-import { pasteWhiteboardElements } from "@/services/whiteboard/edit/pasteWhiteboardElements";
-import { redoWhiteboardEdit } from "@/services/whiteboard/edit/redoWhiteboardEdit";
-import { undoWhiteboardEdit } from "@/services/whiteboard/edit/undoWhiteboardEdit";
-import { getMoveOperations } from "@/services/whiteboard/gesture/getMoveOperations";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { GestureTool } from "#src/models/whiteboard/GestureTool";
+import { getHistoryCommands } from "#src/services/ui/getHistoryCommands";
+import { applyWhiteboardEdit } from "#src/services/whiteboard/edit/applyWhiteboardEdit";
+import { deleteWhiteboardElements } from "#src/services/whiteboard/edit/deleteWhiteboardElements";
+import { pasteWhiteboardElements } from "#src/services/whiteboard/edit/pasteWhiteboardElements";
+import { redoWhiteboardEdit } from "#src/services/whiteboard/edit/redoWhiteboardEdit";
+import { undoWhiteboardEdit } from "#src/services/whiteboard/edit/undoWhiteboardEdit";
+import { getMoveOperations } from "#src/services/whiteboard/gesture/getMoveOperations";
 import {
   WHITEBOARD_COMMAND_GROUP,
   WHITEBOARD_NUDGE_DIRECTIONS,
   WHITEBOARD_NUDGE_LARGE_STEP,
   WHITEBOARD_NUDGE_STEP,
-} from "@/services/whiteboard/keyboard/constants";
+} from "#src/services/whiteboard/keyboard/constants";
 import {
   copySelection,
   requestSelectionDelete,
   writeSelectionToClipboard,
-} from "@/services/whiteboard/keyboard/selectionActions";
-import { WHITEBOARD_TOOL_LOCK_SHORTCUT } from "@/services/whiteboard/tool/constants";
-import { WhiteboardShapeItemMap } from "@/services/whiteboard/tool/WhiteboardShapeItemMap";
-import { WhiteboardToolItemMap } from "@/services/whiteboard/tool/WhiteboardToolItemMap";
-import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
+} from "#src/services/whiteboard/keyboard/selectionActions";
+import { WHITEBOARD_TOOL_LOCK_SHORTCUT } from "#src/services/whiteboard/tool/constants";
+import { WhiteboardShapeItemMap } from "#src/services/whiteboard/tool/WhiteboardShapeItemMap";
+import { WhiteboardToolItemMap } from "#src/services/whiteboard/tool/WhiteboardToolItemMap";
+import { useWhiteboardEditorStore } from "#src/store/resource/whiteboard/editor";
 
 // The keys of a whiteboard's canvas, registered as its commands over its edit state and selection.
 // Delete and Backspace do not delete at once. They name the selection in deletingIds, the target of the confirmation dialog, and confirmDelete runs the deletion once the owner answers it.

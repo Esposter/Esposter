@@ -1,7 +1,7 @@
 import type { Column } from "#shared/models/resource/sheet/column/Column";
 import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnValue";
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
-import type { AffectedCell } from "@/models/resource/sheet/commands/AffectedCell";
+import type { AffectedCell } from "#src/models/resource/sheet/commands/AffectedCell";
 
 import { checkIsEditableColumnValue } from "#shared/services/resource/sheet/column/checkIsEditableColumnValue";
 import { takeOne } from "@esposter/shared";

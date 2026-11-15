@@ -2,8 +2,8 @@
 import type { ResourceType } from "@esposter/db-schema";
 
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { ResourceTypeListItems } from "@/services/resource/list/ResourceTypeListItems";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { ResourceTypeListItems } from "#src/services/resource/list/ResourceTypeListItems";
 
 const modelValue = defineModel<ResourceType[]>({ required: true });
 const selectedTypesText = computed(() =>

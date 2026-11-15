@@ -2,10 +2,10 @@ import type { BuildingWithStatistics } from "#shared/models/clicker/data/buildin
 import type { Effect } from "#shared/models/clicker/data/effect/Effect";
 
 import { EffectType } from "#shared/models/clicker/data/effect/EffectType";
-import { applyAdditiveEffects } from "@/services/clicker/effect/applyAdditiveEffects";
-import { applyBuildingAdditiveEffects } from "@/services/clicker/effect/applyBuildingAdditiveEffects";
-import { applyBuildingAdditiveNorEffects } from "@/services/clicker/effect/applyBuildingAdditiveNorEffects";
-import { applyMultiplicativeEffects } from "@/services/clicker/effect/applyMultiplicativeEffects";
+import { applyAdditiveEffects } from "#src/services/clicker/effect/applyAdditiveEffects";
+import { applyBuildingAdditiveEffects } from "#src/services/clicker/effect/applyBuildingAdditiveEffects";
+import { applyBuildingAdditiveNorEffects } from "#src/services/clicker/effect/applyBuildingAdditiveNorEffects";
+import { applyMultiplicativeEffects } from "#src/services/clicker/effect/applyMultiplicativeEffects";
 
 export const EffectOperatorMap = {
   [EffectType.Additive]: applyAdditiveEffects,

@@ -3,15 +3,15 @@ import type { MemberCountByTopRole } from "#shared/models/db/room/MemberCountByT
 import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
 import type { Page } from "@esposter/db-schema";
 
-import { flushCache } from "@/composables/cache/indexedDb/flushCache.test";
-import { goOffline } from "@/composables/shared/network.test";
-import { MemberCounts } from "@/models/message/user/MemberCounts";
-import { MemberIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MemberIndexedDbStoreConfiguration";
-import { resetIndexedDb } from "@/services/cache/indexedDb/openIndexedDb";
-import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
-import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
-import { createUser } from "@/services/message/user/createUser.test";
-import { useMemberStore } from "@/store/message/user/member";
+import { flushCache } from "#src/composables/cache/indexedDb/flushCache.test";
+import { goOffline } from "#src/composables/shared/network.test";
+import { MemberCounts } from "#src/models/message/user/MemberCounts";
+import { MemberIndexedDbStoreConfiguration } from "#src/services/cache/indexedDb/configurations/MemberIndexedDbStoreConfiguration";
+import { resetIndexedDb } from "#src/services/cache/indexedDb/openIndexedDb";
+import { writeIndexedDb } from "#src/services/cache/indexedDb/writeIndexedDb";
+import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
+import { createUser } from "#src/services/message/user/createUser.test";
+import { useMemberStore } from "#src/store/message/user/member";
 import { createEmptyPage } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";

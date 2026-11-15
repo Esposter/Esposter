@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { FileRendererComponentProps } from "@/models/message/file/FileRendererComponentProps";
+import type { FileRendererComponentProps } from "#src/models/message/file/FileRendererComponentProps";
 
-import { getLanguageExtension } from "@/services/codemirror/getLanguageExtension";
-import { uiEditorExtensions } from "@/services/codemirror/uiEditorExtensions";
-import { PREVIEW_MAX_HEIGHT } from "@/services/message/file/constants";
+import { getLanguageExtension } from "#src/services/codemirror/getLanguageExtension";
+import { uiEditorExtensions } from "#src/services/codemirror/uiEditorExtensions";
+import { PREVIEW_MAX_HEIGHT } from "#src/services/message/file/constants";
 import { Compartment, EditorState } from "@codemirror/state";
 import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 import { basicSetup, EditorView } from "codemirror";

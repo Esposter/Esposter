@@ -1,9 +1,9 @@
-import type { DialogMessage } from "@/models/dungeons/UI/dialog/DialogMessage";
+import type { DialogMessage } from "#src/models/dungeons/UI/dialog/DialogMessage";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { DialogTarget } from "@/models/dungeons/UI/dialog/DialogTarget";
-import { DIALOG_WIDTH } from "@/services/dungeons/scene/world/constants";
-import { useDialogStore } from "@/store/dungeons/dialog";
+import { DialogTarget } from "#src/models/dungeons/UI/dialog/DialogTarget";
+import { DIALOG_WIDTH } from "#src/services/dungeons/scene/world/constants";
+import { useDialogStore } from "#src/store/dungeons/dialog";
 
 export const useWorldDialogStore = defineStore("dungeons/world/dialog", () => {
   const dialogStore = useDialogStore();

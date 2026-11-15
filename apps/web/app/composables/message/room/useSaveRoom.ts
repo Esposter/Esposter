@@ -1,7 +1,7 @@
 import type { RoomInMessage, UpdateRoomInput } from "@esposter/db-schema";
 import type { Except } from "type-fest";
 
-import { useRoomStore } from "@/store/message/room";
+import { useRoomStore } from "#src/store/message/room/index";
 
 // Every room settings panel saves a different slice of the same row through the same mutation target, so the
 // Optimistic apply lives here once. The rollback restores exactly the keys the save wrote rather than the whole

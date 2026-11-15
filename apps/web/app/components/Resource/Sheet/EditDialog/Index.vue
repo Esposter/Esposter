@@ -2,7 +2,7 @@
 import type { Promisable } from "type-fest";
 import type { z } from "zod";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { checkIsDeepEqual } from "@esposter/shared";
 
 interface Props {

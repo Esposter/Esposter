@@ -1,4 +1,4 @@
-import { ResourceUpdatedFilter } from "@/models/resource/list/ResourceUpdatedFilter";
+import { ResourceUpdatedFilter } from "#src/models/resource/list/ResourceUpdatedFilter";
 import { exhaustiveGuard, getEndOfDay } from "@esposter/shared";
 
 // Resolved at fetch time so relative presets stay anchored to "now" instead of a stale computed

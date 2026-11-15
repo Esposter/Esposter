@@ -33,7 +33,7 @@ An `enum` is nominal: `"dark"` does not assign to `ThemeMode`. An `as const` obj
 
 ### `erasableSyntaxOnly` is the enforcer
 
-The shared base (`packages/configuration/tsconfig.base.json`) and the web app's Nuxt TypeScript options (`apps/web/configuration/typescript.ts`) both turn on `erasableSyntaxOnly`. Nuxt generates four standalone tsconfigs and none extends the base, so the base alone would leave the app unchecked; `tsConfig.compilerOptions` reaches all four, and `apps/web/configuration/typescript.test.ts` holds the option there as it holds the other restated ones. The compiler refuses an `enum`, a namespace with runtime code, a parameter property and an `import =`. Nothing in the repository uses the other three today: every namespace is a type-only augmentation in a declaration file. The compiler sits first on the enforcement ladder (`openspec/specs/architecture/enforcement-ladder/design.md`), so no lint rule or list is written for it. With no form left that a stripped graph cannot load, nothing exists to keep an `enum` away from one: the typescript skill holds no list of `as const` exceptions, an import alias is the one thing that moves a script to `vpx`, the persona plugin's copy of `genshin-text` is the source with only its alias re-aimed, and `ExportsGeneration`, which tsdown loads through stripping, is a value set like any other.
+The shared base (`packages/configuration/tsconfig.base.json`) and the web app's Nuxt TypeScript options (`apps/web/configuration/typescript.ts`) both turn on `erasableSyntaxOnly`. Nuxt generates four standalone tsconfigs and none extends the base, so the base alone would leave the app unchecked; `tsConfig.compilerOptions` reaches all four, and `apps/web/configuration/typescript.test.ts` holds the option there as it holds the other restated ones. The compiler refuses an `enum`, a namespace with runtime code, a parameter property and an `import =`. Nothing in the repository uses the other three today: every namespace is a type-only augmentation in a declaration file. The compiler sits first on the enforcement ladder (`openspec/specs/architecture/enforcement-ladder/design.md`), so no lint rule or list is written for it. With no form left that a stripped graph cannot load, nothing exists to keep an `enum` away from one: the typescript skill holds no list of `as const` exceptions, the persona plugin's copy of `genshin-text` is the source with only its alias re-aimed, and `ExportsGeneration`, which tsdown loads through stripping, is a value set like any other.
 
 A set's key is named by the same lint rule an `enum` member was: `no-restricted-syntax` refuses a lowercase, underscored or all-capitals key on an exported PascalCase `as const` object whose values are literals (`packages/configuration/eslint/typescriptRules.js`). The map rule reads `value-set-map/no-literal-map-key`.
 
@@ -60,7 +60,7 @@ The dungeons' texture and sound keys are merges of a dozen hand-written sets res
 
 ## Migration
 
-The conversion is mechanical, so it is one throwaway codemod run per package, never a hand sweep: each `enum` becomes its object and type, each member in a type position becomes `typeof` the member, and the generators are re-run. Everything else an `enum` does carries over: `z.enum`, `Record<X, …>`, mapped types over a set, a Drizzle column built from a set's values, a member as an interface's computed key, and serialized values. One use needs a hand edit, made in its own commit before the codemod: a numeric set read back from a number to its member name (the Lua opcode names), which takes a map written beside the set. An unfiltered `Object.values` over a numeric set changes for the better, since its result today also holds the reverse mapping's name strings. A package is converted whole in one commit, and the base and the Nuxt options turn `erasableSyntaxOnly` on in the commit converting the last, so no package holds both forms. Every `scripts` entry runs under `node`: `scripts/src/workspace/packageScripts.test.ts` strips every module a `node` entry reaches with Node's own stripper. The web app's scripts stay on `vpx` for the Nuxt aliases they reach.
+The conversion is mechanical, so it is one throwaway codemod run per package, never a hand sweep: each `enum` becomes its object and type, each member in a type position becomes `typeof` the member, and the generators are re-run. Everything else an `enum` does carries over: `z.enum`, `Record<X, …>`, mapped types over a set, a Drizzle column built from a set's values, a member as an interface's computed key, and serialized values. One use needs a hand edit, made in its own commit before the codemod: a numeric set read back from a number to its member name (the Lua opcode names), which takes a map written beside the set. An unfiltered `Object.values` over a numeric set changes for the better, since its result today also holds the reverse mapping's name strings. A package is converted whole in one commit, and the base and the Nuxt options turn `erasableSyntaxOnly` on in the commit converting the last, so no package holds both forms. Every `scripts` entry runs under `node`: `scripts/src/workspace/packageScripts.test.ts` strips every module a `node` entry reaches with Node's own stripper.
 
 ## Sources
 
@@ -71,16 +71,16 @@ The conversion is mechanical, so it is one throwaway codemod run per package, ne
 
 ## Key files
 
-| Path                                                         | Role                                                                     |
-| :----------------------------------------------------------- | :----------------------------------------------------------------------- |
-| `packages/configuration/tsconfig.base.json`                  | the base every package tsconfig extends; `erasableSyntaxOnly`            |
-| `apps/web/configuration/typescript.ts`                       | the Nuxt options reaching the app's four tsconfigs; the same flag        |
-| `scripts/src/services/genshinText/getPersonaModuleSource.ts` | the persona copy: the source, its alias re-aimed                         |
-| `scripts/src/workspace/packageScripts.test.ts`               | strips every module a `node` script reaches, proving each move off `vpx` |
-| `packages/shared/src/util/object/mergeObjectsStrict.ts`      | the one merge, throwing on a repeated key                                |
-| `packages/shared/src/util/types/MergeObjectsStrict.ts`       | its type, comparing every pair                                           |
-| `apps/web/scripts/util/createValueSetString.ts`              | the set generator                                                        |
-| `packages/configuration/eslint/typescriptRules.js`           | the member-naming selector, on the object's keys                         |
-| `scripts/src/oxlint/valueSetMap.ts`                          | a constant map keyed by a set's members                                  |
-| `scripts/src/oxlint/literalUnion.ts`                         | the literal-union rule, whose message names the new form                 |
-| `.agents/skills/typescript/references/value-sets.md`         | the set conventions                                                      |
+| Path                                                         | Role                                                              |
+| :----------------------------------------------------------- | :---------------------------------------------------------------- |
+| `packages/configuration/tsconfig.base.json`                  | the base every package tsconfig extends; `erasableSyntaxOnly`     |
+| `apps/web/configuration/typescript.ts`                       | the Nuxt options reaching the app's four tsconfigs; the same flag |
+| `scripts/src/services/genshinText/getPersonaModuleSource.ts` | the persona copy: the source, its alias re-aimed                  |
+| `scripts/src/workspace/packageScripts.test.ts`               | strips every module a `node` script reaches                       |
+| `packages/shared/src/util/object/mergeObjectsStrict.ts`      | the one merge, throwing on a repeated key                         |
+| `packages/shared/src/util/types/MergeObjectsStrict.ts`       | its type, comparing every pair                                    |
+| `apps/web/scripts/util/createValueSetString.ts`              | the set generator                                                 |
+| `packages/configuration/eslint/typescriptRules.js`           | the member-naming selector, on the object's keys                  |
+| `scripts/src/oxlint/valueSetMap.ts`                          | a constant map keyed by a set's members                           |
+| `scripts/src/oxlint/literalUnion.ts`                         | the literal-union rule, whose message names the new form          |
+| `.agents/skills/typescript/references/value-sets.md`         | the set conventions                                               |

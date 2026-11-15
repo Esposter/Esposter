@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { UiListItem } from "@/models/ui/UiListItem";
+import type { UiListItem } from "#src/models/ui/UiListItem";
 
-import { ResourceListSources } from "@/models/resource/list/ResourceListSource";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { ResourceListSourceDefinitionMap } from "@/services/resource/list/ResourceListSourceDefinitionMap";
+import { ResourceListSources } from "#src/models/resource/list/ResourceListSource";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { ResourceListSourceDefinitionMap } from "#src/services/resource/list/ResourceListSourceDefinitionMap";
 import { RoutePath } from "@esposter/shared";
 
 // Closed until the header's menu button opens it, and closed again by the entry that was picked — navigation is the

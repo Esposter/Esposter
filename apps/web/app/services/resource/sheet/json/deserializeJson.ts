@@ -1,8 +1,8 @@
 import type { JsonFileSettings } from "#shared/models/resource/sheet/JsonFileSettings";
 
 import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
-import { deserializeToDataSource } from "@/services/resource/sheet/dataSource/deserializeToDataSource";
-import { getCellText } from "@/services/resource/sheet/json/getCellText";
+import { deserializeToDataSource } from "#src/services/resource/sheet/dataSource/deserializeToDataSource";
+import { getCellText } from "#src/services/resource/sheet/json/getCellText";
 import { getResult, InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { z } from "zod";
 

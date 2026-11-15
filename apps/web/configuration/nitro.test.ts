@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
 import { useRouter } from "#app";
-import { nitro } from "@@/configuration/nitro";
+import { nitro } from "#configuration/nitro";
 import { readdirSync } from "node:fs";
 import { join, sep } from "node:path";
 import { describe, expect, test } from "vitest";

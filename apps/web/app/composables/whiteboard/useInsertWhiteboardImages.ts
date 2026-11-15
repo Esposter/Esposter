@@ -1,13 +1,13 @@
 import type { Point } from "vue-block-editor-headless";
 
 import { NOTE_IMAGE_MIME_TYPES } from "#shared/services/resource/note/constants";
-import { getSha256Hex } from "@/services/shared/getSha256Hex";
-import { createErrorAlert } from "@/services/trpc/createErrorAlert";
-import { createWhiteboardImageElement } from "@/services/whiteboard/createWhiteboardImageElement";
-import { WHITEBOARD_IMAGE_INSERT_OFFSET } from "@/services/whiteboard/palette/constants";
-import { useResourceStore } from "@/store/resource";
-import { useWhiteboardStore } from "@/store/resource/whiteboard";
-import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
+import { getSha256Hex } from "#src/services/shared/getSha256Hex";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
+import { createWhiteboardImageElement } from "#src/services/whiteboard/createWhiteboardImageElement";
+import { WHITEBOARD_IMAGE_INSERT_OFFSET } from "#src/services/whiteboard/palette/constants";
+import { useResourceStore } from "#src/store/resource/index";
+import { useWhiteboardEditorStore } from "#src/store/resource/whiteboard/editor";
+import { useWhiteboardStore } from "#src/store/resource/whiteboard/index";
 import { ResourceType } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
 

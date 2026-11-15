@@ -1,9 +1,9 @@
 import type { Visual } from "#shared/models/dashboard/data/Visual";
 
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
-import { VisualDatasetShape } from "@/models/dashboard/VisualDatasetShape";
-import { VisualTypeChartTypesMap } from "@/services/dashboard/chart/VisualTypeChartTypesMap";
-import { VisualTypeDatasetShapeMap } from "@/services/dashboard/dataset/VisualTypeDatasetShapeMap";
+import { VisualDatasetShape } from "#src/models/dashboard/VisualDatasetShape";
+import { VisualTypeChartTypesMap } from "#src/services/dashboard/chart/VisualTypeChartTypesMap";
+import { VisualTypeDatasetShapeMap } from "#src/services/dashboard/dataset/VisualTypeDatasetShapeMap";
 import { takeOne } from "@esposter/shared";
 
 // Switches a visual to another type in place. Chart types are per visual type, so a switch that leaves the old one

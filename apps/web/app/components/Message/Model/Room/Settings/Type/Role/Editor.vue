@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { RoomInMessage, RoomRoleInMessage } from "@esposter/db-schema";
 
-import { useRoleStore } from "@/store/message/room/role";
+import { useRoleStore } from "#src/store/message/room/role";
 
 interface Props {
   role: RoomRoleInMessage;

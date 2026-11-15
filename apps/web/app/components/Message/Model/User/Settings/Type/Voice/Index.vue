@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { VoiceSettingsSection } from "@/models/message/user/settings/VoiceSettingsSection";
-import { useUserSettingsStore } from "@/store/message/user/settings";
+import { VoiceSettingsSection } from "#src/models/message/user/settings/VoiceSettingsSection";
+import { useUserSettingsStore } from "#src/store/message/user/settings/index";
 
 const userSettingsStore = useUserSettingsStore();
 const { userSettings } = storeToRefs(userSettingsStore);

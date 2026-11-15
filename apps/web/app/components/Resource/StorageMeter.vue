@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { STORAGE_USAGE_ERROR_PERCENTAGE, STORAGE_USAGE_WARNING_PERCENTAGE } from "#shared/services/storage/constants";
-import { getFileSize } from "@/services/file/getFileSize";
-import { useStorageStore } from "@/store/storage";
+import { getFileSize } from "#src/services/file/getFileSize";
+import { useStorageStore } from "#src/store/storage";
 
 useStorageSubscribables();
 

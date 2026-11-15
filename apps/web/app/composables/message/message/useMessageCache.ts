@@ -1,6 +1,6 @@
-import { MessageIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MessageIndexedDbStoreConfiguration";
-import { useDataStore } from "@/store/message/data";
-import { useRoomStore } from "@/store/message/room";
+import { MessageIndexedDbStoreConfiguration } from "#src/services/cache/indexedDb/configurations/MessageIndexedDbStoreConfiguration";
+import { useDataStore } from "#src/store/message/data";
+import { useRoomStore } from "#src/store/message/room/index";
 
 export const useMessageCache = () => {
   const roomStore = useRoomStore();

@@ -2,9 +2,13 @@
 import type { VueWrapper } from "@vue/test-utils";
 import type { TextElement } from "vue-block-editor-headless";
 
-import ResourceWhiteboardEditorPropertiesText from "@/components/Resource/Whiteboard/EditorPropertiesText.vue";
-import { createWhiteboardEditState, WHITEBOARD_ARROW, WHITEBOARD_PROCESS } from "@/services/whiteboard/constants.test";
-import { useWhiteboardStore } from "@/store/resource/whiteboard";
+import ResourceWhiteboardEditorPropertiesText from "#src/components/Resource/Whiteboard/EditorPropertiesText.vue";
+import {
+  createWhiteboardEditState,
+  WHITEBOARD_ARROW,
+  WHITEBOARD_PROCESS,
+} from "#src/services/whiteboard/constants.test";
+import { useWhiteboardStore } from "#src/store/resource/whiteboard/index";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { v7 } from "uuid";
 import { assert, describe, expect, test } from "vitest";

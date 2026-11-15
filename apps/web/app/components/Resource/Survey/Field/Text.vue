@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { SurveyAnswerValue, SurveyTextNode } from "vue-survey-engine-headless";
 
-import { SURVEY_TEXT_FIELD_TYPES } from "@/services/resource/survey/constants";
-import { getSurveyQuestionTitle } from "@/services/resource/survey/getSurveyQuestionTitle";
+import { SURVEY_TEXT_FIELD_TYPES } from "#src/services/resource/survey/constants";
+import { getSurveyQuestionTitle } from "#src/services/resource/survey/getSurveyQuestionTitle";
 import { SurveyTextInputType } from "vue-survey-engine-headless";
 
 interface Props {

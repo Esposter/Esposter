@@ -1,15 +1,15 @@
 // @vitest-environment nuxt
-import type { ClientMessage } from "@/models/message/ClientMessage";
+import type { ClientMessage } from "#src/models/message/ClientMessage";
 import type { Filter } from "@esposter/db-schema";
 import type { MockInstance } from "vitest";
 
-import { useReadSearchedMessages } from "@/composables/message/search/useReadSearchedMessages";
-import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
-import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
-import { createUser } from "@/services/message/user/createUser.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useSearchMessageStore } from "@/store/message/search";
-import { useSearchHistoryStore } from "@/store/message/search/history";
+import { useReadSearchedMessages } from "#src/composables/message/search/useReadSearchedMessages";
+import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
+import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
+import { createUser } from "#src/services/message/user/createUser.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useSearchHistoryStore } from "#src/store/message/search/history";
+import { useSearchMessageStore } from "#src/store/message/search/index";
 import { DEFAULT_PAGE_LIMIT, encodePageCursor, FilterType, MessageType } from "@esposter/db-schema";
 import { noop } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";

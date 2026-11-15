@@ -1,7 +1,7 @@
 import type { Point, PositionedDocument } from "vue-block-editor-headless";
 
-import { getConnectionHandleItems } from "@/services/whiteboard/gesture/getConnectionHandleItems";
-import { getPointDistance } from "@/services/whiteboard/gesture/getPointDistance";
+import { getConnectionHandleItems } from "#src/services/whiteboard/gesture/getConnectionHandleItems";
+import { getPointDistance } from "#src/services/whiteboard/gesture/getPointDistance";
 import { takeOne } from "@esposter/shared";
 
 // A connection handle a press lands on: the selected shape it belongs to, and the connection point it sits at

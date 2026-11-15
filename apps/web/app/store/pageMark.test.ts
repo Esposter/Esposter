@@ -1,5 +1,5 @@
 import { PageMarkType } from "#shared/models/app/PageMarkType";
-import { usePageMarkStore } from "@/store/pageMark";
+import { usePageMarkStore } from "#src/store/pageMark";
 import { ResourceType } from "@esposter/db-schema";
 import { ZERO_UUID } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";

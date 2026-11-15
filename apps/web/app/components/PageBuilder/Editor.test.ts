@@ -19,29 +19,29 @@ import {
   createTestTextNode,
   TEST_GREY_RGB_VALUE,
 } from "#shared/services/pageBuilder/critique/constants.test";
-import PageBuilderCanvasFrame from "@/components/PageBuilder/Canvas/Frame.vue";
-import PageBuilderCanvas from "@/components/PageBuilder/Canvas/Index.vue";
-import PageBuilderEditor from "@/components/PageBuilder/Editor.vue";
-import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
-import { findSheet } from "@/services/editor/findSheet.test";
+import PageBuilderCanvasFrame from "#src/components/PageBuilder/Canvas/Frame.vue";
+import PageBuilderCanvas from "#src/components/PageBuilder/Canvas/Index.vue";
+import PageBuilderEditor from "#src/components/PageBuilder/Editor.vue";
+import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
+import { findSheet } from "#src/services/editor/findSheet.test";
 import {
   DEVICE_BREAKPOINT_MAP,
   WEBPAGE_NODE_TYPE_TITLE_MAP,
   WEBPAGE_PALETTE_CATEGORIES,
-} from "@/services/pageBuilder/constants";
+} from "#src/services/pageBuilder/constants";
 import {
   TEST_NESTED_TEXT_ID,
   TEST_ROOT_TEXT_ID,
   TEST_SECTION_ID,
   TEST_TEXT_CONTENT,
-} from "@/services/pageBuilder/constants.test";
-import { PAGE_BUILDER_REGION_ID_MAP, PAGE_BUILDER_REGION_NAME_MAP } from "@/services/pageBuilder/pageBuilderLayout";
-import { parseClipboardNodes } from "@/services/pageBuilder/serializeClipboardNodes";
-import { webpageKind } from "@/services/pageBuilder/webpageKind";
-import { RESOURCE_AUTOSAVE_DEBOUNCE_MS } from "@/services/resource/constants";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
-import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
+} from "#src/services/pageBuilder/constants.test";
+import { PAGE_BUILDER_REGION_ID_MAP, PAGE_BUILDER_REGION_NAME_MAP } from "#src/services/pageBuilder/pageBuilderLayout";
+import { parseClipboardNodes } from "#src/services/pageBuilder/serializeClipboardNodes";
+import { webpageKind } from "#src/services/pageBuilder/webpageKind";
+import { RESOURCE_AUTOSAVE_DEBOUNCE_MS } from "#src/services/resource/constants";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
+import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
 import { createEmptyPage } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
@@ -56,7 +56,7 @@ const pressKey = (init: KeyboardEventInit, target: EventTarget = document.body) 
 };
 // The size class is read from the display composable, so a test says how small the window is before the editor mounts
 const display = vi.hoisted(() => ({ isCompact: false, isMobile: false }));
-vi.mock(import("@/composables/ui/useUiDisplay"), async (importOriginal) => {
+vi.mock(import("#src/composables/ui/useUiDisplay"), async (importOriginal) => {
   const actual = await importOriginal();
 
   return {

@@ -1,9 +1,9 @@
 // @vitest-environment nuxt
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
-import ResourceHomeList from "@/components/Resource/Home/List.vue";
-import ResourceHomeRecentsList from "@/components/Resource/Home/RecentsList.vue";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useRecentStore } from "@/store/resource/recent";
+import ResourceHomeList from "#src/components/Resource/Home/List.vue";
+import ResourceHomeRecentsList from "#src/components/Resource/Home/RecentsList.vue";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useRecentStore } from "#src/store/resource/recent";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";

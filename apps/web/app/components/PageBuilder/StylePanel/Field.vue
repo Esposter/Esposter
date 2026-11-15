@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import type { StyleProperty } from "#shared/models/pageBuilder/StyleProperty";
 
-import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
+import { UiTextFieldType } from "#src/models/ui/UiTextFieldType";
 import {
   DEFAULT_LENGTH_UNIT,
   STYLE_BORDER_WIDTH_UNITS,
   STYLE_LENGTH_PROPERTIES,
   STYLE_LENGTH_UNITS,
-} from "@/services/pageBuilder/constants";
-import { getStyleValueError } from "@/services/pageBuilder/getStyleValueError";
-import { splitStyleLength } from "@/services/pageBuilder/splitStyleLength";
+} from "#src/services/pageBuilder/constants";
+import { getStyleValueError } from "#src/services/pageBuilder/getStyleValueError";
+import { splitStyleLength } from "#src/services/pageBuilder/splitStyleLength";
 
 interface Props {
   label: string;

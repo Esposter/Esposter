@@ -1,9 +1,9 @@
 // @vitest-environment nuxt
-import MessageModelRoomSettingsTypeProfileIndex from "@/components/Message/Model/Room/Settings/Type/Profile/Index.vue";
-import { createRoom } from "@/services/message/room/createRoom.test";
-import { createUserToRoom } from "@/services/message/room/createUserToRoom.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useUserToRoomStore } from "@/store/message/room/userToRoom";
+import MessageModelRoomSettingsTypeProfileIndex from "#src/components/Message/Model/Room/Settings/Type/Profile/Index.vue";
+import { createRoom } from "#src/services/message/room/createRoom.test";
+import { createUserToRoom } from "#src/services/message/room/createUserToRoom.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useUserToRoomStore } from "#src/store/message/room/userToRoom";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";

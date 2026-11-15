@@ -1,6 +1,8 @@
 import type { NuxtConfig } from "nuxt/schema";
 
 export const vite: NuxtConfig["vite"] = {
+  // A glTF model is imported for its URL like an image, which Vite knows as an asset only by this
+  assetsInclude: ["**/*.gltf"],
   build: {
     // Fix phaser "Local data URIs are not supported"
     // https://www.andrewzigler.com/blog/using-phaser-3-with-nuxt

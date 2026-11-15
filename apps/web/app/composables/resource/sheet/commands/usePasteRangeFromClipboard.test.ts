@@ -4,12 +4,12 @@ import { createComputedColumn } from "#shared/models/resource/sheet/column/creat
 import { createNumberColumn } from "#shared/models/resource/sheet/column/createNumberColumn.test";
 import { createDataSource } from "#shared/models/resource/sheet/datasource/createDataSource.test";
 import { createRow } from "#shared/models/resource/sheet/datasource/createRow.test";
-import { setupCommandTest } from "@/composables/resource/sheet/commands/setupCommandTest.test";
-import { setupWithDataSource } from "@/composables/resource/sheet/commands/setupWithDataSource.test";
-import { usePasteRangeFromClipboard } from "@/composables/resource/sheet/commands/usePasteRangeFromClipboard";
-import { PasteMode } from "@/models/resource/sheet/commands/PasteMode";
-import { useCellStore } from "@/store/resource/sheet/cell";
-import { useSheetHistoryStore } from "@/store/resource/sheet/history";
+import { setupCommandTest } from "#src/composables/resource/sheet/commands/setupCommandTest.test";
+import { setupWithDataSource } from "#src/composables/resource/sheet/commands/setupWithDataSource.test";
+import { usePasteRangeFromClipboard } from "#src/composables/resource/sheet/commands/usePasteRangeFromClipboard";
+import { PasteMode } from "#src/models/resource/sheet/commands/PasteMode";
+import { useCellStore } from "#src/store/resource/sheet/cell";
+import { useSheetHistoryStore } from "#src/store/resource/sheet/history/index";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 const selectAnchor = (rowIndex: number, columnIndex: number) => {

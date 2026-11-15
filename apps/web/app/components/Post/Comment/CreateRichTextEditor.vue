@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { useCommentStore } from "@/store/post/comment";
-import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { useCommentStore } from "#src/store/post/comment/index";
+import { EMPTY_TEXT_REGEX } from "#src/util/text/constants";
 
 interface Props {
   // The comment being replied to, or the post itself

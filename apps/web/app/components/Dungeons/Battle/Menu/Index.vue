@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { ActivePanel } from "@/models/dungeons/scene/battle/menu/ActivePanel";
-import { SceneEventKey } from "@/models/dungeons/scene/SceneEventKey";
-import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
-import { MENU_HEIGHT, MENU_PADDING } from "@/services/dungeons/scene/battle/menu/constants";
-import { HIGHLIGHT_BORDER_COLOR, PANEL_FILL_COLOR } from "@/services/dungeons/UI/constants";
-import { onSceneEvent } from "@/services/phaser/hooks/onSceneEvent";
-import { useBattleSceneStore } from "@/store/dungeons/battle/scene";
-import { useControlsStore } from "@/store/dungeons/controls";
+import { ActivePanel } from "#src/models/dungeons/scene/battle/menu/ActivePanel";
+import { SceneEventKey } from "#src/models/dungeons/scene/SceneEventKey";
+import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";
+import { MENU_HEIGHT, MENU_PADDING } from "#src/services/dungeons/scene/battle/menu/constants";
+import { HIGHLIGHT_BORDER_COLOR, PANEL_FILL_COLOR } from "#src/services/dungeons/UI/constants";
+import { onSceneEvent } from "#src/services/phaser/hooks/onSceneEvent";
+import { useBattleSceneStore } from "#src/store/dungeons/battle/scene";
+import { useControlsStore } from "#src/store/dungeons/controls";
 import { Input } from "phaser";
 import { onCreate, Rectangle } from "vue-phaserjs";
 

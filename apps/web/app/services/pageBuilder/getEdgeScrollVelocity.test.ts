@@ -1,5 +1,5 @@
-import { getEdgeScrollVelocity } from "@/services/pageBuilder/getEdgeScrollVelocity";
-import { DRAG_AUTOSCROLL_EDGE, DRAG_AUTOSCROLL_SPEED } from "@/services/ui/constants";
+import { getEdgeScrollVelocity } from "#src/services/pageBuilder/getEdgeScrollVelocity";
+import { DRAG_AUTOSCROLL_EDGE, DRAG_AUTOSCROLL_SPEED } from "#src/services/ui/constants";
 import { describe, expect, test } from "vitest";
 
 describe(getEdgeScrollVelocity, () => {

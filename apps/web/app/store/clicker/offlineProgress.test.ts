@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
-import { OFFLINE_CAP_MS } from "@/services/clicker/constants";
-import { useOfflineProgressStore } from "@/store/clicker/offlineProgress";
+import { OFFLINE_CAP_MS } from "#src/services/clicker/constants";
+import { useOfflineProgressStore } from "#src/store/clicker/offlineProgress";
 import { describe, expect, test } from "vitest";
 
 // The dialog says production is capped only when the absence passes the cap, so the flag is the cap's edge and nothing

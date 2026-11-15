@@ -1,4 +1,4 @@
-import type { TRPCRouter } from "#server/trpc/routers";
+import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 import type { ArrowElement, ShapeElement } from "vue-block-editor-headless";
 

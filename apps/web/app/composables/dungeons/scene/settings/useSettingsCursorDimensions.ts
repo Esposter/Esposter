@@ -1,5 +1,8 @@
-import { INITIAL_SETTINGS_POSITION, SETTINGS_POSITION_INCREMENT } from "@/services/dungeons/scene/settings/constants";
-import { getSettingsRowY } from "@/services/dungeons/scene/settings/getSettingsRowY";
+import {
+  INITIAL_SETTINGS_POSITION,
+  SETTINGS_POSITION_INCREMENT,
+} from "#src/services/dungeons/scene/settings/constants";
+import { getSettingsRowY } from "#src/services/dungeons/scene/settings/getSettingsRowY";
 
 export const useSettingsCursorDimensions = (rowIndex: MaybeRefOrGetter<number>) => {
   const width = ref<number>();

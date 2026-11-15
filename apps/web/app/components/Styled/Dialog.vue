@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { Promisable } from "type-fest";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
-import { UiDialogSize } from "@/models/ui/UiDialogSize";
-import { DIALOG_BODY_TRANSITION_DURATION } from "@/services/ui/constants";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
+import { UiDialogSize } from "#src/models/ui/UiDialogSize";
+import { DIALOG_BODY_TRANSITION_DURATION } from "#src/services/ui/constants";
 
 interface Props {
   // What confirming does, awaited unless the write is optimistic (useDialogAnswer). A dialog whose confirm submits a

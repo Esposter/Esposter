@@ -1,9 +1,9 @@
-import type { SceneKey } from "@/models/dungeons/keys/SceneKey";
+import type { SceneKey } from "#src/models/dungeons/keys/SceneKey";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { Dungeons, dungeonsSchema } from "#shared/models/dungeons/data/Dungeons";
 import { Save } from "#shared/models/dungeons/data/Save";
-import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
+import { LocalStorageKey } from "#src/services/shared/LocalStorageKey";
 import { getResultAsync, noop } from "@esposter/shared";
 import { Cameras } from "phaser";
 import { useCameraStore, usePhaserStore } from "vue-phaserjs";

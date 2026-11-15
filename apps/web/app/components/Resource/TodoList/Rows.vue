@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
-import type { Item } from "@/models/shared/Item";
-import type { UiListItem } from "@/models/ui/UiListItem";
+import type { Item } from "#src/models/shared/Item";
+import type { UiListItem } from "#src/models/ui/UiListItem";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useTodoListStore } from "@/store/resource/todoList";
-import { useTodoDialogStore } from "@/store/resource/todoList/todoDialog";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { useTodoListStore } from "#src/store/resource/todoList/index";
+import { useTodoDialogStore } from "#src/store/resource/todoList/todoDialog";
 
 interface Props {
   isReorderable?: true;

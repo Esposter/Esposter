@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-import { showOpenFilePicker } from "@/services/file/showOpenFilePicker";
+import { showOpenFilePicker } from "#src/services/file/showOpenFilePicker";
 import { takeOne } from "@esposter/shared";
 import { afterEach, describe, expect, test, vi } from "vitest";
 

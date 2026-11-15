@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getWhiteboardElementTitle } from "@/services/whiteboard/getWhiteboardElementTitle";
+import { getWhiteboardElementTitle } from "#src/services/whiteboard/getWhiteboardElementTitle";
 import { PositionedElementType } from "vue-block-editor-headless";
 
 // The panel an arrow selected opens: its route and arrowheads, its colour, width, dash pattern, sketch level and label size, its stacking and the footer. It is the

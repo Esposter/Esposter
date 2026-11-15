@@ -1,6 +1,6 @@
 import type { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 
-import { TodoListSort } from "@/models/resource/todoList/TodoListSort";
+import { TodoListSort } from "#src/models/resource/todoList/TodoListSort";
 import { exhaustiveGuard } from "@esposter/shared";
 
 // A view over the list, never a rewrite of it: every sort is stable, so todos it ranks alike keep the list's own order

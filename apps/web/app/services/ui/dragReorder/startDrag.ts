@@ -1,12 +1,12 @@
-import type { DragReorderContext } from "@/models/ui/dragReorder/DragReorderContext";
-import type { Press } from "@/models/ui/dragReorder/Press";
+import type { DragReorderContext } from "#src/models/ui/dragReorder/DragReorderContext";
+import type { Press } from "#src/models/ui/dragReorder/Press";
 
-import { REORDER_GHOST_CLASS, REORDER_SLIDE_TRANSITION } from "@/services/ui/constants";
-import { cancelDrag } from "@/services/ui/dragReorder/cancelDrag";
-import { clearRowMotion } from "@/services/ui/dragReorder/clearRowMotion";
-import { endPress } from "@/services/ui/dragReorder/endPress";
-import { measureDrag } from "@/services/ui/dragReorder/measureDrag";
-import { moveDrag } from "@/services/ui/dragReorder/moveDrag";
+import { REORDER_GHOST_CLASS, REORDER_SLIDE_TRANSITION } from "#src/services/ui/constants";
+import { cancelDrag } from "#src/services/ui/dragReorder/cancelDrag";
+import { clearRowMotion } from "#src/services/ui/dragReorder/clearRowMotion";
+import { endPress } from "#src/services/ui/dragReorder/endPress";
+import { measureDrag } from "#src/services/ui/dragReorder/measureDrag";
+import { moveDrag } from "#src/services/ui/dragReorder/moveDrag";
 import { takeOne } from "@esposter/shared";
 
 // Lifts the pressed row into a drag once the pointer has moved far enough, unless the list changed while it waited

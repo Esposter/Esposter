@@ -1,8 +1,8 @@
 import type { Monster } from "#shared/models/dungeons/monster/Monster";
 
-import { Grid } from "@/models/dungeons/Grid";
-import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
-import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
+import { Grid } from "#src/models/dungeons/Grid";
+import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";
+import { useMonsterPartySceneStore } from "#src/store/dungeons/monsterParty/scene";
 
 const MonsterPartyOptionGrid = new Grid<(Monster | typeof PlayerSpecialInput.Cancel)[][]>({
   grid: [],

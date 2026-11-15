@@ -5,9 +5,9 @@ import {
   WHITEBOARD_ARROW,
   WHITEBOARD_PROCESS,
   WHITEBOARD_PROCESS_ID,
-} from "@/services/whiteboard/constants.test";
-import { deleteWhiteboardElements } from "@/services/whiteboard/edit/deleteWhiteboardElements";
-import { undoWhiteboardEdit } from "@/services/whiteboard/edit/undoWhiteboardEdit";
+} from "#src/services/whiteboard/constants.test";
+import { deleteWhiteboardElements } from "#src/services/whiteboard/edit/deleteWhiteboardElements";
+import { undoWhiteboardEdit } from "#src/services/whiteboard/edit/undoWhiteboardEdit";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 import { PositionedElementType, TextSize } from "vue-block-editor-headless";

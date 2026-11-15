@@ -1,4 +1,4 @@
-import { ConnectionState } from "@/models/message/room/realtime/ConnectionState";
+import { ConnectionState } from "#src/models/message/room/realtime/ConnectionState";
 
 // RealtimeKit's socket states read as the call's connection: a failed socket has left the call, so it reads as
 // Disconnected until the user joins again

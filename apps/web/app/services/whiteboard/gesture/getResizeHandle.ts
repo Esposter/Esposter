@@ -1,10 +1,10 @@
-import type { ResizeHandle } from "@/models/whiteboard/ResizeHandle";
+import type { ResizeHandle } from "#src/models/whiteboard/ResizeHandle";
 import type { Point, PositionedDocument } from "vue-block-editor-headless";
 
-import { getPointDistance } from "@/services/whiteboard/gesture/getPointDistance";
-import { getResizeHandlePoint } from "@/services/whiteboard/gesture/getResizeHandlePoint";
-import { getSelectionBounds } from "@/services/whiteboard/gesture/getSelectionBounds";
-import { getSelectionResizeHandles } from "@/services/whiteboard/gesture/getSelectionResizeHandles";
+import { getPointDistance } from "#src/services/whiteboard/gesture/getPointDistance";
+import { getResizeHandlePoint } from "#src/services/whiteboard/gesture/getResizeHandlePoint";
+import { getSelectionBounds } from "#src/services/whiteboard/gesture/getSelectionBounds";
+import { getSelectionResizeHandles } from "#src/services/whiteboard/gesture/getSelectionResizeHandles";
 
 // The handle of the selection a point lands on, corners first, or undefined when it lands on none of the selection's handles
 export const getResizeHandle = (

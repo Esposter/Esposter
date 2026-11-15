@@ -1,4 +1,4 @@
-import { getTypingMessage } from "@/services/message/getTypingMessage";
+import { getTypingMessage } from "#src/services/message/getTypingMessage";
 import { describe, expect, test } from "vitest";
 
 describe(getTypingMessage, () => {

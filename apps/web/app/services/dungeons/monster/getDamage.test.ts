@@ -1,8 +1,8 @@
-import { getDamage } from "@/services/dungeons/monster/getDamage";
+import { getDamage } from "#src/services/dungeons/monster/getDamage";
 import { describe, expect, test, vi } from "vitest";
 
 // Pin the damage roll to its upper bound so the formula is deterministic
-vi.mock(import("@/util/math/random/createRandomNumber"), () => ({ createRandomNumber: () => 1 }));
+vi.mock(import("#src/util/math/random/createRandomNumber"), () => ({ createRandomNumber: () => 1 }));
 
 describe(getDamage, () => {
   const attack = 10;

@@ -1,7 +1,7 @@
 import type { ScheduledMessageJobWithRoom } from "#shared/models/db/message/scheduledMessageJob/ScheduledMessageJobWithRoom";
 
-import { MutationStatus } from "@/models/shared/MutationStatus";
-import { getRestoredItems } from "@/services/shared/getRestoredItems";
+import { MutationStatus } from "#src/models/shared/MutationStatus";
+import { getRestoredItems } from "#src/services/shared/getRestoredItems";
 
 // A scheduled item is named by its id and its room, which is what both of its writes take
 type ScheduledMessageJobKey = Pick<ScheduledMessageJobWithRoom, "id" | "roomId">;

@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 import type { ArrowElement } from "vue-block-editor-headless";
 
-import ResourceWhiteboardElementArrow from "@/components/Resource/Whiteboard/ElementArrow.vue";
+import ResourceWhiteboardElementArrow from "#src/components/Resource/Whiteboard/ElementArrow.vue";
 import { mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
 import { v7 } from "uuid";

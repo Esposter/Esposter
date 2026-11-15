@@ -1,4 +1,4 @@
-import type { GesturePhase } from "@/models/whiteboard/GesturePhase";
+import type { GesturePhase } from "#src/models/whiteboard/GesturePhase";
 import type { Point } from "vue-block-editor-headless";
 
 // A drag from a connection handle of a selected shape: the shape and the connection point its handle sits on, and the ids fixed at the press for the

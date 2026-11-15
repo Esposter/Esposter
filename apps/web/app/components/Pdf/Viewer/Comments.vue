@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { PdfAnnotationsState, PdfViewerState } from "vue-pdfjs-headless";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 interface Props {
   annotations: PdfAnnotationsState;

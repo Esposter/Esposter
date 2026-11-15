@@ -1,10 +1,10 @@
-import type { Drag } from "@/models/ui/dragReorder/Drag";
-import type { Press } from "@/models/ui/dragReorder/Press";
+import type { Drag } from "#src/models/ui/dragReorder/Drag";
+import type { Press } from "#src/models/ui/dragReorder/Press";
 
-import { getDragOffsets } from "@/services/ui/dragReorder/getDragOffsets";
-import { getDragScale } from "@/services/ui/dragReorder/getDragScale";
-import { getDragShift } from "@/services/ui/dragReorder/getDragShift";
-import { getScrollers } from "@/services/ui/dragReorder/getScrollers";
+import { getDragOffsets } from "#src/services/ui/dragReorder/getDragOffsets";
+import { getDragScale } from "#src/services/ui/dragReorder/getDragScale";
+import { getDragShift } from "#src/services/ui/dragReorder/getDragShift";
+import { getScrollers } from "#src/services/ui/dragReorder/getScrollers";
 import { takeOne } from "@esposter/shared";
 
 // Where each row sits as the drag starts, which the slots and the held row's travel are measured from

@@ -1,8 +1,8 @@
-import type { ResourceLinkSource } from "@/models/resource/link/ResourceLinkSource";
+import type { ResourceLinkSource } from "#src/models/resource/link/ResourceLinkSource";
 
 import { NO_SURVEY_ID } from "#shared/services/pageBuilder/constants";
-import { ResourceLinkRouter } from "@/models/resource/link/ResourceLinkRouter";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { ResourceLinkRouter } from "#src/models/resource/link/ResourceLinkRouter";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { ResourceLinkType } from "@esposter/db-schema";
 
 // The source of each link type a schema form can draw. A survey's list is its published surveys alone, since a survey

@@ -1,7 +1,7 @@
-import type { CellState } from "@/models/resource/sheet/CellState";
+import type { CellState } from "#src/models/resource/sheet/CellState";
 
-import { CellMode } from "@/models/resource/sheet/CellMode";
-import { useResourceStore } from "@/store/resource";
+import { CellMode } from "#src/models/resource/sheet/CellMode";
+import { useResourceStore } from "#src/store/resource/index";
 
 export const useCellStore = defineStore("resource/sheet/cell", () => {
   const resourceStore = useResourceStore();

@@ -1,7 +1,7 @@
 import type { Meta } from "#server/models/trpc/Meta";
 import type { AnyProcedure, AnyRouter } from "@trpc/server";
 
-import { trpcRouter } from "#server/trpc/routers";
+import { trpcRouter } from "#server/trpc/routers/index";
 import { describe, expect, test } from "vitest";
 
 describe("topics", () => {

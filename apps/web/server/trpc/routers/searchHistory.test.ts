@@ -1,9 +1,9 @@
 import type { Context } from "#server/trpc/context";
-import type { TRPCRouter } from "#server/trpc/routers";
+import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { createCallerFactory } from "#server/trpc";
 import { createMockAuthSession, createMockContext } from "#server/trpc/context.test";
+import { createCallerFactory } from "#server/trpc/index";
 import { searchHistoryRouter } from "#server/trpc/routers/searchHistory";
 import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
 import { FilterType, FilterTypeHas, searchHistoriesInMessage } from "@esposter/db-schema";

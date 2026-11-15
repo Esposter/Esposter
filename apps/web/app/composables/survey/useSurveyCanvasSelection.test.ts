@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
-import { useSurveyCanvasSelection } from "@/composables/survey/useSurveyCanvasSelection";
-import { useSurveyCreatorStore } from "@/store/survey/creator";
+import { useSurveyCanvasSelection } from "#src/composables/survey/useSurveyCanvasSelection";
+import { useSurveyCreatorStore } from "#src/store/survey/creator";
 import { createPinia, setActivePinia } from "pinia";
 import { describe, expect, test } from "vitest";
 import { surveyDocumentSchema, SurveyNodeType } from "vue-survey-engine-headless";

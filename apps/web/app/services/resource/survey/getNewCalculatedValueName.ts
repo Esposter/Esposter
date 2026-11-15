@@ -1,4 +1,4 @@
-import { SURVEY_CALCULATED_VALUE_NAME } from "@/services/resource/survey/constants";
+import { SURVEY_CALCULATED_VALUE_NAME } from "#src/services/resource/survey/constants";
 
 // The name a new calculated value starts with, numbered past each name an answer or a value already holds
 export const getNewCalculatedValueName = (takenNames: readonly string[]): string => {

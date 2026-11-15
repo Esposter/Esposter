@@ -1,13 +1,13 @@
 import type { Context } from "#server/trpc/context";
-import type { TRPCRouter } from "#server/trpc/routers";
+import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { Dataset } from "#shared/models/dataset/Dataset";
 import type { SheetResource } from "#shared/models/resource/sheet/SheetResource";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { connectAgentKey } from "#server/services/mcp/connectAgentKey.test";
 import { insertSurveyResponses } from "#server/services/survey/insertSurveyResponses.test";
-import { createCallerFactory } from "#server/trpc";
 import { createMockAuthSession, createMockContext } from "#server/trpc/context.test";
+import { createCallerFactory } from "#server/trpc/index";
 import {
   createPageDocument,
   createPublishedSurvey,

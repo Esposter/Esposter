@@ -1,9 +1,9 @@
-import type { TRPCRouter } from "#server/trpc/routers";
+import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { TRPCLink } from "@trpc/client";
 
 import { transformer } from "#shared/services/trpc/transformer";
-import { TRPC_CLIENT_PATH } from "@/services/trpc/constants";
-import { getTrpcHeaders } from "@/services/trpc/getTrpcHeaders";
+import { TRPC_CLIENT_PATH } from "#src/services/trpc/constants";
+import { getTrpcHeaders } from "#src/services/trpc/getTrpcHeaders";
 
 // Production batches the calls sent in one tick into one request. The test build sends each call as its own request,
 // Because a batch is answered as one response: a read a test holds open would hold every read sent with it in that tick

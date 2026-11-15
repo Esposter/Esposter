@@ -1,6 +1,6 @@
-import type { DialogMessageKey } from "@/models/dungeons/UI/dialog/DialogMessageKey";
+import type { DialogMessageKey } from "#src/models/dungeons/UI/dialog/DialogMessageKey";
 
-import { DialogMessage } from "@/models/dungeons/UI/dialog/DialogMessage";
+import { DialogMessage } from "#src/models/dungeons/UI/dialog/DialogMessage";
 
 export const useDialogMessage = <TTypeKey extends string = "">(typeKey: string | TTypeKey = "") => {
   const dialogMessage = ref(new DialogMessage());

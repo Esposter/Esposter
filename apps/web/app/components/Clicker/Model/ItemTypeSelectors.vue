@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { ClickerType } from "#shared/models/clicker/data/ClickerType";
-import type { UiMenuItem } from "@/models/ui/UiMenuItem";
+import type { UiMenuItem } from "#src/models/ui/UiMenuItem";
 
 import { ClickerTypes } from "#shared/models/clicker/data/ClickerType";
-import { ClickerIconComponentMap } from "@/services/clicker/properties/ClickerIconComponentMap";
-import { ClickerNameMap } from "@/services/clicker/properties/ClickerNameMap";
-import { useClickerStore } from "@/store/clicker";
+import { ClickerIconComponentMap } from "#src/services/clicker/properties/ClickerIconComponentMap";
+import { ClickerNameMap } from "#src/services/clicker/properties/ClickerNameMap";
+import { useClickerStore } from "#src/store/clicker/index";
 
 const clickerStore = useClickerStore();
 const { clicker } = storeToRefs(clickerStore);

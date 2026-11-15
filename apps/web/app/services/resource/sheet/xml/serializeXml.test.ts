@@ -5,10 +5,10 @@ import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSo
 import { createColumn } from "#shared/models/resource/sheet/column/createColumn.test";
 import { createDataSource } from "#shared/models/resource/sheet/datasource/createDataSource.test";
 import { createRow } from "#shared/models/resource/sheet/datasource/createRow.test";
-import { XML_MIME_TYPE, XML_SETTINGS } from "@/services/resource/sheet/xml/constants.test";
-import { createXmlFile } from "@/services/resource/sheet/xml/createXmlFile.test";
-import { deserializeXml } from "@/services/resource/sheet/xml/deserializeXml";
-import { serializeXml } from "@/services/resource/sheet/xml/serializeXml";
+import { XML_MIME_TYPE, XML_SETTINGS } from "#src/services/resource/sheet/xml/constants.test";
+import { createXmlFile } from "#src/services/resource/sheet/xml/createXmlFile.test";
+import { deserializeXml } from "#src/services/resource/sheet/xml/deserializeXml";
+import { serializeXml } from "#src/services/resource/sheet/xml/serializeXml";
 import { describe, expect, test } from "vitest";
 
 const roundTrip = async (dataSource: DataSource) => {

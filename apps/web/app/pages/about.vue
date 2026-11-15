@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { GlobeConfiguration } from "@/services/visual/GlobeConfiguration";
+import { GlobeConfiguration } from "#src/services/visual/GlobeConfiguration";
 
 // The globe is the last thing on the page and three.js is most of its weight, so its code is fetched only once the
 // Reader scrolls within a screen of it. The box holds the globe's size meanwhile, so nothing shifts when it arrives

@@ -1,6 +1,6 @@
 import { getChangedResourceTopics } from "#server/services/resource/getChangedResourceTopics";
 import { runSheetCommand } from "#server/services/resource/sheet/runSheetCommand";
-import { router } from "#server/trpc";
+import { router } from "#server/trpc/index";
 import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { createResourceProcedures } from "#server/trpc/procedure/resource/createResourceProcedures";
 import { getOwnerProcedure } from "#server/trpc/procedure/resource/getOwnerProcedure";

@@ -1,8 +1,8 @@
 import { formatDate } from "#shared/util/date/formatDate";
-import { checkIsToday } from "@/util/date/checkIsToday";
-import { checkIsYesterday } from "@/util/date/checkIsYesterday";
-import { TIMELINE_DATE_FORMAT, TIMELINE_DATE_WITH_YEAR_FORMAT } from "@/util/date/constants";
-import { getPlainDate } from "@/util/date/getPlainDate";
+import { checkIsToday } from "#src/util/date/checkIsToday";
+import { checkIsYesterday } from "#src/util/date/checkIsYesterday";
+import { TIMELINE_DATE_FORMAT, TIMELINE_DATE_WITH_YEAR_FORMAT } from "#src/util/date/constants";
+import { getPlainDate } from "#src/util/date/getPlainDate";
 
 // A day from another year names its year too, since without it two days sharing a weekday, month and day would be
 // Headed the same, and a list running them one after the other would show them under one heading

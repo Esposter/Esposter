@@ -1,8 +1,8 @@
 import type { ResourceInResource, ResourceType } from "@esposter/db-schema";
 
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { AsyncDataKey } from "@/services/shared/AsyncDataKey";
-import { getRouteParamString } from "@/util/router/getRouteParamString";
+import { AsyncDataKey } from "#src/services/shared/AsyncDataKey";
+import { getRouteParamString } from "#src/util/router/getRouteParamString";
 
 // Shared fetch-or-404 for the published view pages. The SSR result rides the payload to the client so
 // Hydration never re-issues the read — the public read increments the resource view count, and a

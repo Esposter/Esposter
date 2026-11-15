@@ -2,7 +2,7 @@ import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { WEBPAGE_PLACEABLE_NODE_TYPES } from "#shared/services/pageBuilder/constants";
 import { TEST_ID } from "#shared/services/pageBuilder/constants.test";
 import { webpageNodeTypeDefinitionMap } from "#shared/services/pageBuilder/webpageNodeTypeDefinitionMap";
-import { createWebpageNode } from "@/services/pageBuilder/webpageNodeDefaults";
+import { createWebpageNode } from "#src/services/pageBuilder/webpageNodeDefaults";
 import { describe, expect, test } from "vitest";
 
 describe(createWebpageNode, () => {

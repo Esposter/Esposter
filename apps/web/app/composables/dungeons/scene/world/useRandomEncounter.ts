@@ -3,18 +3,18 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { LayerName } from "#shared/generated/tiled/layers/Home/LayerName";
 import { EncounterObjectProperty } from "#shared/generated/tiled/propertyTypes/class/EncounterObjectProperty";
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { getEncounterArea } from "@/services/dungeons/area/getEncounterArea";
-import { createEncounteredMonster } from "@/services/dungeons/monster/createEncounteredMonster";
-import { MAX_STEPS_BEFORE_NEXT_ENCOUNTER } from "@/services/dungeons/scene/world/constants";
-import { getTiledObjectProperty } from "@/services/dungeons/tilemap/getTiledObjectProperty";
-import { useDungeonsStore } from "@/store/dungeons";
-import { useEnemyStore } from "@/store/dungeons/battle/enemy";
-import { useSettingsStore } from "@/store/dungeons/settings";
-import { useEncounterStore } from "@/store/dungeons/world/encounter";
-import { useWorldSceneStore } from "@/store/dungeons/world/scene";
-import { createRandomBoolean } from "@/util/math/random/createRandomBoolean";
-import { getWeightedRandomValue } from "@/util/math/random/getWeightedRandomValue";
+import { SceneKey } from "#src/models/dungeons/keys/SceneKey";
+import { getEncounterArea } from "#src/services/dungeons/area/getEncounterArea";
+import { createEncounteredMonster } from "#src/services/dungeons/monster/createEncounteredMonster";
+import { MAX_STEPS_BEFORE_NEXT_ENCOUNTER } from "#src/services/dungeons/scene/world/constants";
+import { getTiledObjectProperty } from "#src/services/dungeons/tilemap/getTiledObjectProperty";
+import { useEnemyStore } from "#src/store/dungeons/battle/enemy";
+import { useDungeonsStore } from "#src/store/dungeons/index";
+import { useSettingsStore } from "#src/store/dungeons/settings/index";
+import { useEncounterStore } from "#src/store/dungeons/world/encounter";
+import { useWorldSceneStore } from "#src/store/dungeons/world/scene";
+import { createRandomBoolean } from "#src/util/math/random/createRandomBoolean";
+import { getWeightedRandomValue } from "#src/util/math/random/getWeightedRandomValue";
 import { NotFoundError } from "@esposter/shared";
 
 export const useRandomEncounter = (scene: SceneWithPlugins) => {

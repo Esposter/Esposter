@@ -16,10 +16,7 @@ describe("moduleCycles", () => {
 
     const ALIAS_DIRECTORY_MAP = new Map([
       ["#shared/", "shared/"],
-      ["@/", "app/"],
-      ["@@/", ""],
-      ["~/", "app/"],
-      ["~~/", ""],
+      ["#src/", "app/"],
     ]);
     const sourcePaths = (await Array.fromAsync(glob(["app/**/*.{ts,vue}", "shared/**/*.ts"], { cwd: ROOT })))
       .map((sourcePath) => sourcePath.replaceAll("\\", "/"))

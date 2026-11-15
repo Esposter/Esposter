@@ -1,10 +1,10 @@
 // @vitest-environment nuxt
 import { MimeType } from "#shared/models/file/MimeType";
-import { useInsertWhiteboardImages } from "@/composables/whiteboard/useInsertWhiteboardImages";
-import { getSha256Hex } from "@/services/shared/getSha256Hex";
-import { WHITEBOARD_IMAGE_INSERT_OFFSET, WHITEBOARD_IMAGE_SIZE } from "@/services/whiteboard/palette/constants";
-import { useAlertStore } from "@/store/alert";
-import { useWhiteboardStore } from "@/store/resource/whiteboard";
+import { useInsertWhiteboardImages } from "#src/composables/whiteboard/useInsertWhiteboardImages";
+import { getSha256Hex } from "#src/services/shared/getSha256Hex";
+import { WHITEBOARD_IMAGE_INSERT_OFFSET, WHITEBOARD_IMAGE_SIZE } from "#src/services/whiteboard/palette/constants";
+import { useAlertStore } from "#src/store/alert";
+import { useWhiteboardStore } from "#src/store/resource/whiteboard/index";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test, vi } from "vitest";
 import { getElementBounds } from "vue-block-editor-headless";
@@ -14,7 +14,7 @@ const { uploadResourceFileMock } = vi.hoisted(() => ({
 }));
 
 // The upload is covered by useUploadResourceFile's own suite, so it is mocked at its seam here
-vi.mock(import("@/composables/resource/useUploadResourceFile"), () => ({
+vi.mock(import("#src/composables/resource/useUploadResourceFile"), () => ({
   useUploadResourceFile: () => uploadResourceFileMock,
 }));
 

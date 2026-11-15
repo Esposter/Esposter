@@ -1,7 +1,7 @@
 import { ResourceListItemPropertyNames } from "#shared/models/resource/ResourceListItem";
-import { deserializeResourceColumnKeyWidthMap } from "@/services/resource/list/deserializeResourceColumnKeyWidthMap";
-import { serializeResourceColumnKeyWidthMap } from "@/services/resource/list/serializeResourceColumnKeyWidthMap";
-import { MAX_DATA_TABLE_COLUMN_WIDTH, MIN_DATA_TABLE_COLUMN_WIDTH } from "@/services/ui/constants";
+import { deserializeResourceColumnKeyWidthMap } from "#src/services/resource/list/deserializeResourceColumnKeyWidthMap";
+import { serializeResourceColumnKeyWidthMap } from "#src/services/resource/list/serializeResourceColumnKeyWidthMap";
+import { MAX_DATA_TABLE_COLUMN_WIDTH, MIN_DATA_TABLE_COLUMN_WIDTH } from "#src/services/ui/constants";
 import { describe, expect, test } from "vitest";
 
 describe(deserializeResourceColumnKeyWidthMap, () => {

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { PositionedElement } from "vue-block-editor-headless";
 
-import { getElementStrokeAttributes } from "@/services/whiteboard/palette/getElementStrokeAttributes";
-import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
+import { getElementStrokeAttributes } from "#src/services/whiteboard/palette/getElementStrokeAttributes";
+import { useWhiteboardEditorStore } from "#src/store/resource/whiteboard/editor";
 import { getPositionedElementText, getTextLayout, getTextPlacement, TEXT_FONT_FAMILY } from "vue-block-editor-headless";
 
 interface Props {

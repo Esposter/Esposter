@@ -1,11 +1,11 @@
 // @vitest-environment nuxt
 import type { LikeInPost } from "@esposter/db-schema";
 
-import { createPost } from "@/services/post/createPost.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { usePostStore } from "@/store/post";
-import { useCommentStore } from "@/store/post/comment";
-import { useLikeStore } from "@/store/post/like";
+import { createPost } from "#src/services/post/createPost.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useCommentStore } from "#src/store/post/comment/index";
+import { usePostStore } from "#src/store/post/index";
+import { useLikeStore } from "#src/store/post/like";
 import { takeOne } from "@esposter/shared";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";

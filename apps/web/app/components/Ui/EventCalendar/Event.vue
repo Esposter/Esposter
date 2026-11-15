@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { UiCalendarEvent } from "@/models/ui/UiCalendarEvent";
+import type { UiCalendarEvent } from "#src/models/ui/UiCalendarEvent";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { CALENDAR_SLOT_DURATION } from "@/services/ui/constants";
-import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { CALENDAR_SLOT_DURATION } from "#src/services/ui/constants";
+import { EMPTY_TEXT_REGEX } from "#src/util/text/constants";
 import { mergeProps } from "vue";
 
 interface Props {

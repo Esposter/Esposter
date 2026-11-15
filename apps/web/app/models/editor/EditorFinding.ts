@@ -1,4 +1,4 @@
-import type { EditorFindingSeverity } from "@/models/editor/EditorFindingSeverity";
+import type { EditorFindingSeverity } from "#src/models/editor/EditorFindingSeverity";
 
 // A problem an editor's check finds in its document: the node it concerns, how serious it is and what it says. A node is
 // Named by its id, the form each editor's selection holds, and "" names the document as a whole, which selects no node

@@ -1,10 +1,10 @@
-import type { WhiteboardGestureState } from "@/models/whiteboard/WhiteboardGestureState";
+import type { WhiteboardGestureState } from "#src/models/whiteboard/WhiteboardGestureState";
 import type { Except } from "type-fest";
 import type { ArrowEnd, Point } from "vue-block-editor-headless";
 
-import { getHitElementId } from "@/services/whiteboard/gesture/getHitElementId";
-import { getHitTolerance } from "@/services/whiteboard/gesture/getHitTolerance";
-import { getNearestConnectionPointIndex } from "@/services/whiteboard/gesture/getNearestConnectionPointIndex";
+import { getHitElementId } from "#src/services/whiteboard/gesture/getHitElementId";
+import { getHitTolerance } from "#src/services/whiteboard/gesture/getHitTolerance";
+import { getNearestConnectionPointIndex } from "#src/services/whiteboard/gesture/getNearestConnectionPointIndex";
 import { getBindableShape, getConnectionPoint, getElementBounds } from "vue-block-editor-headless";
 
 // The end an arrow takes where a point lands: bound to the connection point nearest the point on the shape the point hits, or free at the point.

@@ -3,11 +3,11 @@ import type { JSONContent } from "@tiptap/core";
 
 import { EMPTY_NOTE_DOC } from "#shared/services/resource/constants";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
-import ResourceNoteDialogs from "@/components/Resource/Note/Dialogs.vue";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useResourceStore } from "@/store/resource";
-import { useNoteStore } from "@/store/resource/note";
-import { useNotePortableDialogStore } from "@/store/resource/note/portableDialog";
+import ResourceNoteDialogs from "#src/components/Resource/Note/Dialogs.vue";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useResourceStore } from "#src/store/resource/index";
+import { useNoteStore } from "#src/store/resource/note/index";
+import { useNotePortableDialogStore } from "#src/store/resource/note/portableDialog";
 import { ResourceType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";

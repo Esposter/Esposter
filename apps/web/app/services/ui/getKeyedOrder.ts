@@ -1,4 +1,4 @@
-import { getMovedItems } from "@/services/shared/getMovedItems";
+import { getMovedItems } from "#src/services/shared/getMovedItems";
 
 // The order the key leaves the values in, or undefined when it moves nothing: another key or chord, or a row already
 // At the end it is moving towards

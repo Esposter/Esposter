@@ -1,6 +1,6 @@
-import type { RoleMentionItem } from "@/models/message/RoleMentionItem";
+import type { RoleMentionItem } from "#src/models/message/RoleMentionItem";
 
-import { useRoleStore } from "@/store/message/room/role";
+import { useRoleStore } from "#src/store/message/room/role";
 import { MentionType } from "@esposter/shared";
 
 export const getRoleMentionItems = (query: string, roomId: string): RoleMentionItem[] => {

@@ -1,6 +1,6 @@
 import type { FrameRow, WalkingAnimationMapping } from "grid-engine";
 
-import { InteractableDirection } from "@/models/dungeons/direction/InteractableDirection";
+import { InteractableDirection } from "#src/models/dungeons/direction/InteractableDirection";
 import { Direction } from "grid-engine";
 
 export const MAX_STEPS_BEFORE_NEXT_ENCOUNTER = 20;

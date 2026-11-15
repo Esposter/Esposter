@@ -1,7 +1,7 @@
 <!-- Everything a TodoList opens from more than one blade or from its commands: the edit dialog, and Print list with the
      sheet it prints, which is mounted only while printing -->
 <script setup lang="ts">
-import { useTodoListPrintDialogStore } from "@/store/resource/todoList/printDialog";
+import { useTodoListPrintDialogStore } from "#src/store/resource/todoList/printDialog";
 
 const todoListPrintDialogStore = useTodoListPrintDialogStore();
 const { isPrinting } = storeToRefs(todoListPrintDialogStore);

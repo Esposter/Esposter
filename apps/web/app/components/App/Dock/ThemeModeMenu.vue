@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ThemeModeIconMeaningMap } from "@/services/ui/ThemeModeIconMeaningMap";
-import { useThemeModeStore } from "@/store/ui/themeMode";
+import { ThemeModeIconMeaningMap } from "#src/services/ui/ThemeModeIconMeaningMap";
+import { useThemeModeStore } from "#src/store/ui/themeMode";
 
 const themeModeStore = useThemeModeStore();
 const { themeMode } = storeToRefs(themeModeStore);

@@ -1,12 +1,12 @@
-import type { ClientMessage } from "@/models/message/ClientMessage";
+import type { ClientMessage } from "#src/models/message/ClientMessage";
 
-import { AdminActionHookMap } from "@/services/message/moderation/AdminActionHookMap";
-import { createErrorAlert } from "@/services/trpc/createErrorAlert";
-import { useKnockerStore } from "@/store/message/room/call/knocker";
-import { useMediaStore } from "@/store/message/room/call/media";
-import { useParticipantStore } from "@/store/message/room/call/participant";
-import { useRealtimeStore } from "@/store/message/room/realtime";
-import { useConnectionStore } from "@/store/realtime/connection";
+import { AdminActionHookMap } from "#src/services/message/moderation/AdminActionHookMap";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
+import { useKnockerStore } from "#src/store/message/room/call/knocker";
+import { useMediaStore } from "#src/store/message/room/call/media";
+import { useParticipantStore } from "#src/store/message/room/call/participant";
+import { useRealtimeStore } from "#src/store/message/room/realtime";
+import { useConnectionStore } from "#src/store/realtime/connection";
 import { AdminActionType } from "@esposter/db-schema";
 import { getResultAsync, noop, RoutePath, withFinalizerAsync } from "@esposter/shared";
 

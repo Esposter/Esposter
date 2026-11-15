@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { UiTreeItem } from "@/models/ui/UiTreeItem";
+import type { UiTreeItem } from "#src/models/ui/UiTreeItem";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { Treeview } from "@vuetify/v0";
 
 interface Props {

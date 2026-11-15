@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { splitBackgroundLayers } from "@/services/pageBuilder/splitBackgroundLayers";
+import { splitBackgroundLayers } from "#src/services/pageBuilder/splitBackgroundLayers";
 import { v7 } from "uuid";
 
 interface Layer {

@@ -1,11 +1,11 @@
-import type { State } from "@/models/dungeons/state/State";
+import type { State } from "#src/models/dungeons/state/State";
 
-import { PlayerOption } from "@/models/dungeons/scene/battle/menu/PlayerOption";
-import { StateName } from "@/models/dungeons/state/battle/StateName";
-import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
-import { getAttackStatePriorityMap } from "@/services/dungeons/scene/battle/getAttackStatePriorityMap";
-import { PlayerBattleMenuOptionGrid } from "@/services/dungeons/scene/battle/menu/PlayerBattleMenuOptionGrid";
-import { useActionStore } from "@/store/dungeons/battle/action";
+import { PlayerOption } from "#src/models/dungeons/scene/battle/menu/PlayerOption";
+import { StateName } from "#src/models/dungeons/state/battle/StateName";
+import { battleStateMachine } from "#src/services/dungeons/scene/battle/battleStateMachine";
+import { getAttackStatePriorityMap } from "#src/services/dungeons/scene/battle/getAttackStatePriorityMap";
+import { PlayerBattleMenuOptionGrid } from "#src/services/dungeons/scene/battle/menu/PlayerBattleMenuOptionGrid";
+import { useActionStore } from "#src/store/dungeons/battle/action";
 
 export const Battle: State<typeof StateName.Battle> = {
   name: StateName.Battle,

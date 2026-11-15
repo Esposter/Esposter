@@ -1,5 +1,5 @@
-import { getSingleFilePresignedUrlEntities } from "@/services/file/getSingleFilePresignedUrlEntities";
-import { uploadFilesToPresignedUrls } from "@/services/file/uploadFilesToPresignedUrls";
+import { getSingleFilePresignedUrlEntities } from "#src/services/file/getSingleFilePresignedUrlEntities";
+import { uploadFilesToPresignedUrls } from "#src/services/file/uploadFilesToPresignedUrls";
 import { withFinalizerAsync } from "@esposter/shared";
 
 // Mints a presigned url for the single file, puts it there, and hands back the public url — returned rather than written,

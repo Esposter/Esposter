@@ -1,6 +1,6 @@
 import type { Bounds, PositionedDocument } from "vue-block-editor-headless";
 
-import { getElementIndexById } from "@/services/whiteboard/gesture/getElementIndexById";
+import { getElementIndexById } from "#src/services/whiteboard/gesture/getElementIndexById";
 import { takeOne } from "@esposter/shared";
 import { getBoundsCorners, getElementBounds, getPointsBounds } from "vue-block-editor-headless";
 

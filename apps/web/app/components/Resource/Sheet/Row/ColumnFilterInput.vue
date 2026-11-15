@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { Column } from "#shared/models/resource/sheet/column/Column";
-import type { BooleanFilterValue } from "@/models/resource/sheet/column/BooleanFilterValue";
-import type { ColumnFilter } from "@/models/resource/sheet/column/ColumnFilter";
+import type { BooleanFilterValue } from "#src/models/resource/sheet/column/BooleanFilterValue";
+import type { ColumnFilter } from "#src/models/resource/sheet/column/ColumnFilter";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
-import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
-import { BooleanFilterValueItemCategoryDefinitions } from "@/services/resource/sheet/column/BooleanFilterValueItemCategoryDefinitions";
+import { UiTextFieldType } from "#src/models/ui/UiTextFieldType";
+import { BooleanFilterValueItemCategoryDefinitions } from "#src/services/resource/sheet/column/BooleanFilterValueItemCategoryDefinitions";
 
 interface Props {
   column: Column;

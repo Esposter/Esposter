@@ -4,7 +4,7 @@ import type { AchievementName, UserAchievementInAchievementWithRelations } from 
 
 import { achievementPointsSummation } from "#server/services/achievement/achievementPointsSummation";
 import { buildPointsLeaderboard } from "#server/services/achievement/buildPointsLeaderboard";
-import { router } from "#server/trpc";
+import { router } from "#server/trpc/index";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { standardRateLimitedProcedure } from "#server/trpc/procedure/standardRateLimitedProcedure";
 import { readUserAchievementsInputSchema } from "#shared/models/db/achievement/ReadUserAchievementsInput";

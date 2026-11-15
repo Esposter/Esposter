@@ -1,4 +1,4 @@
-import type { GenshinDevSaveCommandsOptions } from "@/models/genshin/dev/GenshinDevSaveCommandsOptions";
+import type { GenshinDevSaveCommandsOptions } from "#src/models/genshin/dev/GenshinDevSaveCommandsOptions";
 import type { DevCommand, DevOutcome, DevSaveOutcome, DevSaveTables } from "genshin-world";
 
 import { getResultAsync } from "@esposter/shared";

@@ -1,4 +1,4 @@
-import { useSurveyListEditor } from "@/composables/survey/useSurveyListEditor";
+import { useSurveyListEditor } from "#src/composables/survey/useSurveyListEditor";
 import { describe, expect, test } from "vitest";
 
 const createEditor = (items: { value: string }[]) => {

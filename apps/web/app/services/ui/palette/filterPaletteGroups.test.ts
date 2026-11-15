@@ -1,7 +1,7 @@
-import type { PaletteGroup } from "@/models/ui/palette/PaletteGroup";
+import type { PaletteGroup } from "#src/models/ui/palette/PaletteGroup";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { filterPaletteGroups } from "@/services/ui/palette/filterPaletteGroups";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { filterPaletteGroups } from "#src/services/ui/palette/filterPaletteGroups";
 import { describe, expect, test } from "vitest";
 
 describe(filterPaletteGroups, () => {

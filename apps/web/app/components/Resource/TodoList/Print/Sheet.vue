@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { RESOURCE_DATE_TIME_ATTRIBUTES } from "@/services/resource/constants";
-import { sortCompletedTodoListItems } from "@/services/resource/todoList/sortCompletedTodoListItems";
-import { sortTodoListItems } from "@/services/resource/todoList/sortTodoListItems";
-import { useResourceStore } from "@/store/resource";
-import { useTodoListStore } from "@/store/resource/todoList";
-import { useTodoListPrintDialogStore } from "@/store/resource/todoList/printDialog";
-import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
+import { RESOURCE_DATE_TIME_ATTRIBUTES } from "#src/services/resource/constants";
+import { sortCompletedTodoListItems } from "#src/services/resource/todoList/sortCompletedTodoListItems";
+import { sortTodoListItems } from "#src/services/resource/todoList/sortTodoListItems";
+import { useResourceStore } from "#src/store/resource/index";
+import { useTodoListStore } from "#src/store/resource/todoList/index";
+import { useTodoListPrintDialogStore } from "#src/store/resource/todoList/printDialog";
+import { EMPTY_TEXT_REGEX } from "#src/util/text/constants";
 
 const resourceStore = useResourceStore();
 const { resource } = storeToRefs(resourceStore);

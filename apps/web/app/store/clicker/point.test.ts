@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
-import { useClickerStore } from "@/store/clicker";
-import { usePointStore } from "@/store/clicker/point";
+import { useClickerStore } from "#src/store/clicker/index";
+import { usePointStore } from "#src/store/clicker/point";
 import { describe, expect, test } from "vitest";
 
 describe(usePointStore, () => {

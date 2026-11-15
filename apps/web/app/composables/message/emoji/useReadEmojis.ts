@@ -1,7 +1,7 @@
-import type { ClientMessage } from "@/models/message/ClientMessage";
+import type { ClientMessage } from "#src/models/message/ClientMessage";
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { useEmojiStore } from "@/store/message/emoji";
+import { useEmojiStore } from "#src/store/message/emoji";
 
 export const useReadEmojis = () => {
   const { $trpc } = useNuxtApp();

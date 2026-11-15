@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { PageMarkType } from "#shared/models/app/PageMarkType";
-import { checkIsMessageRoute } from "@/services/router/checkIsMessageRoute";
+import { checkIsMessageRoute } from "#src/services/router/checkIsMessageRoute";
 import { getSynchronizedFunction } from "@esposter/shared";
 
 definePageMeta({ middleware: "auth", validate: checkIsMessageRoute });

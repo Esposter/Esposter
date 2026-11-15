@@ -2,8 +2,8 @@
 import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useRoleStore } from "@/store/message/room/role";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { useRoleStore } from "#src/store/message/room/role";
 
 interface Props {
   member: MemberInRoom;

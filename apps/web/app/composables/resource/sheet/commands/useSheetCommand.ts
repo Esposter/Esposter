@@ -1,8 +1,8 @@
 import type { ADataSourceCommand } from "#shared/models/resource/sheet/commands/ADataSourceCommand";
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 
-import { useSheetStore } from "@/store/resource/sheet";
-import { useSheetHistoryStore } from "@/store/resource/sheet/history";
+import { useSheetHistoryStore } from "#src/store/resource/sheet/history/index";
+import { useSheetStore } from "#src/store/resource/sheet/index";
 
 // Owns the shared command scaffold: the store wiring, the execute+push tail, and the autosave.
 // `createCommand` returns undefined for no-op cases (e.g. target not found), which skips execution entirely.

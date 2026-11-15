@@ -1,4 +1,4 @@
-import { useConnectionStore } from "@/store/realtime/connection";
+import { useConnectionStore } from "#src/store/realtime/connection";
 import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 
 export const useModerationEvents = () => {

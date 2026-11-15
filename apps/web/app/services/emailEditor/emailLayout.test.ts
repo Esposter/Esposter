@@ -1,9 +1,9 @@
 import type { Context, ResolvedLayout, ResolvedRegion } from "vue-editor-layout-headless";
 
-import { EmailContentKey } from "@/models/emailEditor/EmailContentKey";
-import { EmailView } from "@/models/pageBuilder/EmailView";
-import { emailLayout, emailPanelNameMap } from "@/services/emailEditor/emailLayout";
-import { PAGE_BUILDER_SELECTION_KIND_MAP } from "@/services/pageBuilder/pageBuilderLayout";
+import { EmailContentKey } from "#src/models/emailEditor/EmailContentKey";
+import { EmailView } from "#src/models/pageBuilder/EmailView";
+import { emailLayout, emailPanelNameMap } from "#src/services/emailEditor/emailLayout";
+import { PAGE_BUILDER_SELECTION_KIND_MAP } from "#src/services/pageBuilder/pageBuilderLayout";
 import { assert, describe, expect, test } from "vitest";
 import {
   checkLayout,

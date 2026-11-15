@@ -1,4 +1,4 @@
-import type { PageBuilderLayout } from "@/models/pageBuilder/PageBuilderLayout";
+import type { PageBuilderLayout } from "#src/models/pageBuilder/PageBuilderLayout";
 
 import {
   PAGE_BUILDER_BASE_PANELS,
@@ -9,7 +9,7 @@ import {
   PAGE_BUILDER_REGION_ID_MAP,
   PAGE_BUILDER_REGIONS,
   PAGE_BUILDER_SELECTION_KIND_MAP,
-} from "@/services/pageBuilder/pageBuilderLayout";
+} from "#src/services/pageBuilder/pageBuilderLayout";
 
 // The webpage's arrangement on the shell. Its settings tabs follow the selection: with nothing selected the page's own settings
 // And its theme, and with a node its content and its style for the device the toggle in the bar chose

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { SettingsContentMap } from "@/services/message/settings/SettingsContentMap";
+import { SettingsContentMap } from "#src/services/message/settings/SettingsContentMap";
 
 interface Props {
   room: RoomInMessage;

@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
-import UiCaretPopover from "@/components/Ui/CaretPopover.vue";
-import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
-import { UiStyles } from "@/models/ui/UiStyle";
+import UiCaretPopover from "#src/components/Ui/CaretPopover.vue";
+import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
+import { UiStyles } from "#src/models/ui/UiStyle";
 import { mount } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 

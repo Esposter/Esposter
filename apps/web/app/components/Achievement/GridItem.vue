@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { AchievementDefinitionEntry } from "#shared/models/achievement/AchievementDefinitionEntry";
-import type { UserAchievementWithDefinition } from "@/models/achievement/UserAchievementWithDefinition";
+import type { UserAchievementWithDefinition } from "#src/models/achievement/UserAchievementWithDefinition";
 
-import { checkIsUnlockedUserAchievement } from "@/services/achievement/checkIsUnlockedUserAchievement";
-import { RARE_ACHIEVEMENT_THRESHOLD } from "@/services/achievement/constants";
-import { prettify } from "@/util/text/prettify";
+import { checkIsUnlockedUserAchievement } from "#src/services/achievement/checkIsUnlockedUserAchievement";
+import { RARE_ACHIEVEMENT_THRESHOLD } from "#src/services/achievement/constants";
+import { prettify } from "#src/util/text/prettify";
 
 interface Props {
   achievementDefinition: AchievementDefinitionEntry;

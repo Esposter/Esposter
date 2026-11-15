@@ -1,7 +1,7 @@
-import type { TRPCRouter } from "#server/trpc/routers";
+import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { createCallerFactory } from "#server/trpc";
+import { createCallerFactory } from "#server/trpc/index";
 import { createPublishedSurvey, createSurveyDocumentWith } from "#server/trpc/routers/createSurvey.test";
 import { dashboardRouter } from "#server/trpc/routers/dashboard";
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";

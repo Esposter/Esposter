@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { UiCollapsibleVariant } from "@/models/ui/UiCollapsibleVariant";
+import type { UiCollapsibleVariant } from "#src/models/ui/UiCollapsibleVariant";
 
 import { Collapsible } from "@vuetify/v0";
 

@@ -1,4 +1,4 @@
-import { parseClipboardValuesByPosition } from "@/services/resource/sheet/commands/parseClipboardValuesByPosition";
+import { parseClipboardValuesByPosition } from "#src/services/resource/sheet/commands/parseClipboardValuesByPosition";
 import { describe, expect, test } from "vitest";
 
 describe(parseClipboardValuesByPosition, () => {

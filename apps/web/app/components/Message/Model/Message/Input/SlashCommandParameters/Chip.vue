@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { slashCommandParameterValueSchema } from "@/models/message/slashCommands/SlashCommandParameter";
-import { REQUIRED_ERROR_MESSAGE } from "@/services/message/slashCommands/constants";
-import { useSlashCommandStore } from "@/store/message/input/slashCommand";
-import { checkIsCaretAtEnd } from "@/util/dom/checkIsCaretAtEnd";
-import { checkIsCaretAtStart } from "@/util/dom/checkIsCaretAtStart";
+import { slashCommandParameterValueSchema } from "#src/models/message/slashCommands/SlashCommandParameter";
+import { REQUIRED_ERROR_MESSAGE } from "#src/services/message/slashCommands/constants";
+import { useSlashCommandStore } from "#src/store/message/input/slashCommand";
+import { checkIsCaretAtEnd } from "#src/util/dom/checkIsCaretAtEnd";
+import { checkIsCaretAtStart } from "#src/util/dom/checkIsCaretAtStart";
 
 interface Props {
   autofocus?: boolean;

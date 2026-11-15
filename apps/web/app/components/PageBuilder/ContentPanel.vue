@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { AnyPageBuilderKind } from "@/models/pageBuilder/AnyPageBuilderKind";
+import type { AnyPageBuilderKind } from "#src/models/pageBuilder/AnyPageBuilderKind";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
 import { z } from "zod";
 
 interface Props {

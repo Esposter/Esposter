@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import { GestureTool } from "@/models/whiteboard/GestureTool";
-import { getConnectionHandleItems } from "@/services/whiteboard/gesture/getConnectionHandleItems";
-import { getFreeEndHandleItems } from "@/services/whiteboard/gesture/getFreeEndHandleItems";
-import { getResizeHandlePoint } from "@/services/whiteboard/gesture/getResizeHandlePoint";
-import { getSelectionBounds } from "@/services/whiteboard/gesture/getSelectionBounds";
-import { getSelectionResizeHandles } from "@/services/whiteboard/gesture/getSelectionResizeHandles";
+import { GestureTool } from "#src/models/whiteboard/GestureTool";
+import { getConnectionHandleItems } from "#src/services/whiteboard/gesture/getConnectionHandleItems";
+import { getFreeEndHandleItems } from "#src/services/whiteboard/gesture/getFreeEndHandleItems";
+import { getResizeHandlePoint } from "#src/services/whiteboard/gesture/getResizeHandlePoint";
+import { getSelectionBounds } from "#src/services/whiteboard/gesture/getSelectionBounds";
+import { getSelectionResizeHandles } from "#src/services/whiteboard/gesture/getSelectionResizeHandles";
 import {
   WHITEBOARD_HANDLE_SIZE,
   WHITEBOARD_OVERLAY_STROKE_WIDTH,
   WHITEBOARD_SELECTION_PADDING,
-} from "@/services/whiteboard/overlay/constants";
-import { useWhiteboardStore } from "@/store/resource/whiteboard";
-import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
+} from "#src/services/whiteboard/overlay/constants";
+import { useWhiteboardEditorStore } from "#src/store/resource/whiteboard/editor";
+import { useWhiteboardStore } from "#src/store/resource/whiteboard/index";
 import { getElementBounds } from "vue-block-editor-headless";
 
 // A solid frame in the accent around the box of each selected element, standing off it by a fixed number of screen pixels at any zoom, so it never

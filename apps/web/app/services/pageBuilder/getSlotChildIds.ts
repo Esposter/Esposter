@@ -1,6 +1,6 @@
-import type { PageBuilderHelper } from "@/models/pageBuilder/PageBuilderHelper";
+import type { PageBuilderHelper } from "#src/models/pageBuilder/PageBuilderHelper";
 
-import { getNodeIdAt } from "@/services/pageBuilder/getNodeIdAt";
+import { getNodeIdAt } from "#src/services/pageBuilder/getNodeIdAt";
 import { getResult, parseJsonPointer, readJsonValue } from "@esposter/shared";
 
 // The ids of a slot's children in order, read from the document. A child without an id contributes none

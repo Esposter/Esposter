@@ -1,20 +1,20 @@
 <script setup lang="ts">
 import type { PageLink } from "#shared/models/app/PageLink";
-import type { UiCommand } from "@/models/ui/UiCommand";
+import type { UiCommand } from "#src/models/ui/UiCommand";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import {
   COMMAND_PALETTE_SHORTCUT,
   GENERAL_COMMAND_GROUP,
   PLACES_COMMAND_GROUP,
   UNAVAILABLE_PAGE_LABEL,
-} from "@/services/app/constants";
-import { getPageIcon } from "@/services/app/getPageIcon";
-import { getPageLabel } from "@/services/app/getPageLabel";
-import { ProductGroups } from "@/services/app/ProductGroups";
-import { runCommand } from "@/services/ui/runCommand";
-import { useBookmarkStore } from "@/store/bookmark";
-import { useCommandStore } from "@/store/ui/command";
+} from "#src/services/app/constants";
+import { getPageIcon } from "#src/services/app/getPageIcon";
+import { getPageLabel } from "#src/services/app/getPageLabel";
+import { ProductGroups } from "#src/services/app/ProductGroups";
+import { runCommand } from "#src/services/ui/runCommand";
+import { useBookmarkStore } from "#src/store/bookmark";
+import { useCommandStore } from "#src/store/ui/command";
 import { RoutePath, SITE_NAME } from "@esposter/shared";
 import MiniSearch from "minisearch";
 

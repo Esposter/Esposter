@@ -1,4 +1,4 @@
-import { UiRules } from "@/services/ui/UiRules";
+import { UiRules } from "#src/services/ui/UiRules";
 import { describe, expect, test } from "vitest";
 
 describe("uiRules", () => {

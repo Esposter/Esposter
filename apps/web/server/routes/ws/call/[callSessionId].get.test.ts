@@ -1,4 +1,4 @@
-import type { db } from "#server/db";
+import type { db } from "#server/db/index";
 import type { RequestEvent } from "nuxt/server";
 
 import { callObjectCalls } from "#server/composables/realtime/useCallObject.test";
@@ -7,7 +7,7 @@ import { readSession } from "#server/services/auth/readSession";
 import { checkIsCallConnectionAdmitted } from "#server/services/message/call/checkIsCallConnectionAdmitted";
 import { describe, expect, test, vi } from "vitest";
 
-vi.mock(import("#server/db"), () => ({ db: {} }) as unknown as Partial<{ db: typeof db }>);
+vi.mock(import("#server/db/index"), () => ({ db: {} }) as unknown as Partial<{ db: typeof db }>);
 vi.mock(import("#server/services/auth/readSession"), () => ({ readSession: vi.fn<typeof readSession>() }));
 vi.mock(import("#server/services/message/call/checkIsCallConnectionAdmitted"), () => ({
   checkIsCallConnectionAdmitted: vi.fn<(...args: unknown[]) => Promise<boolean>>(),

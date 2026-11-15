@@ -1,4 +1,4 @@
-import type { EmailCanvasDrawing } from "@/models/pageBuilder/EmailCanvasDrawing";
+import type { EmailCanvasDrawing } from "#src/models/pageBuilder/EmailCanvasDrawing";
 import type { MjmlNode, MjmlNodeType } from "mjml-blocks";
 
 import { checkIsColumn } from "#shared/services/pageBuilder/email/checkIsColumn";

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { formatNumberLong } from "@/services/clicker/formatNumberLong";
-import { useClickerStore } from "@/store/clicker";
+import { formatNumberLong } from "#src/services/clicker/formatNumberLong";
+import { useClickerStore } from "#src/store/clicker/index";
 
 await useReadClicker();
 useTimers();

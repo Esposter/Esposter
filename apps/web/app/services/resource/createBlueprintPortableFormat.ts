@@ -1,16 +1,16 @@
 // @unocss-include
-import type { PortableFormat } from "@/models/resource/PortableFormat";
+import type { PortableFormat } from "#src/models/resource/PortableFormat";
 
 import { MimeType } from "#shared/models/file/MimeType";
-import { importFile } from "@/services/file/importFile";
-import { validateFileWithAlert } from "@/services/file/validateFileWithAlert";
-import { parseBlueprintManifest } from "@/services/resource/blueprint/parseBlueprintManifest";
-import { stringifyBlueprintManifest } from "@/services/resource/blueprint/stringifyBlueprintManifest";
-import { BLUEPRINT_MANIFEST_ACCEPT } from "@/services/resource/constants";
-import { useResourceStore } from "@/store/resource";
-import { useBlueprintStore } from "@/store/resource/blueprint";
-import { useVersionHistoryStore } from "@/store/resource/versionHistory";
-import { trimFileExtension } from "@/util/file/trimFileExtension";
+import { importFile } from "#src/services/file/importFile";
+import { validateFileWithAlert } from "#src/services/file/validateFileWithAlert";
+import { parseBlueprintManifest } from "#src/services/resource/blueprint/parseBlueprintManifest";
+import { stringifyBlueprintManifest } from "#src/services/resource/blueprint/stringifyBlueprintManifest";
+import { BLUEPRINT_MANIFEST_ACCEPT } from "#src/services/resource/constants";
+import { useBlueprintStore } from "#src/store/resource/blueprint/index";
+import { useResourceStore } from "#src/store/resource/index";
+import { useVersionHistoryStore } from "#src/store/resource/versionHistory";
+import { trimFileExtension } from "#src/util/file/trimFileExtension";
 import { downloadFile } from "@esposter/shared";
 
 // A blueprint's manifest as a JSON file. Export downloads the saved manifest, named after the blueprint, so the file is

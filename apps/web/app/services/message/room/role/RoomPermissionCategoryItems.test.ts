@@ -1,4 +1,4 @@
-import { RoomPermissionCategoryItems } from "@/services/message/room/role/RoomPermissionCategoryItems";
+import { RoomPermissionCategoryItems } from "#src/services/message/room/role/RoomPermissionCategoryItems";
 import { describe, expect, test } from "vitest";
 
 describe("roomPermissionCategoryItems", () => {

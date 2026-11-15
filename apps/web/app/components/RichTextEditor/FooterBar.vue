@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { FooterBarSlotProps } from "@/components/RichTextEditor/FooterBarSlotProps";
+import type { FooterBarSlotProps } from "#src/components/RichTextEditor/FooterBarSlotProps";
 
 defineSlots<{ append: (props: FooterBarSlotProps) => VNode; prepend: (props: FooterBarSlotProps) => VNode }>();
 

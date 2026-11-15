@@ -1,13 +1,13 @@
-import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
+import type { PlayerInput } from "#src/models/dungeons/UI/input/PlayerInput";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { MenuOption } from "@/models/dungeons/scene/world/MenuOption";
-import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
-import { WorldMenuOptionGrid } from "@/services/dungeons/scene/world/WorldMenuOptionGrid";
-import { checkIsMovingDirection } from "@/services/dungeons/UI/input/checkIsMovingDirection";
-import { useDungeonsStore } from "@/store/dungeons";
-import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
+import { SceneKey } from "#src/models/dungeons/keys/SceneKey";
+import { MenuOption } from "#src/models/dungeons/scene/world/MenuOption";
+import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";
+import { WorldMenuOptionGrid } from "#src/services/dungeons/scene/world/WorldMenuOptionGrid";
+import { checkIsMovingDirection } from "#src/services/dungeons/UI/input/checkIsMovingDirection";
+import { useDungeonsStore } from "#src/store/dungeons/index";
+import { useWorldDialogStore } from "#src/store/dungeons/world/dialog";
 import { exhaustiveGuard } from "@esposter/shared";
 
 export const useWorldMenuStore = defineStore("dungeons/world/menu", () => {

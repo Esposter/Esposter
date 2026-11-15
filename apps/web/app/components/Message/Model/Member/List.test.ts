@@ -1,12 +1,12 @@
 // @vitest-environment nuxt
-import MessageModelMemberList from "@/components/Message/Model/Member/List.vue";
-import UiList from "@/components/Ui/List/Index.vue";
-import UiPopover from "@/components/Ui/Popover.vue";
-import { createRoom } from "@/services/message/room/createRoom.test";
-import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
-import { createUser } from "@/services/message/user/createUser.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useRoomStore } from "@/store/message/room";
+import MessageModelMemberList from "#src/components/Message/Model/Member/List.vue";
+import UiList from "#src/components/Ui/List/Index.vue";
+import UiPopover from "#src/components/Ui/Popover.vue";
+import { createRoom } from "#src/services/message/room/createRoom.test";
+import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
+import { createUser } from "#src/services/message/user/createUser.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useRoomStore } from "#src/store/message/room/index";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";

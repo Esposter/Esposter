@@ -1,18 +1,18 @@
-import type { GestureMoving } from "@/models/whiteboard/GestureMoving";
-import type { GesturePointerEvent } from "@/models/whiteboard/GesturePointerEvent";
-import type { SnapResult } from "@/models/whiteboard/SnapResult";
-import type { WhiteboardGestureResult } from "@/models/whiteboard/WhiteboardGestureResult";
-import type { WhiteboardGestureState } from "@/models/whiteboard/WhiteboardGestureState";
+import type { GestureMoving } from "#src/models/whiteboard/GestureMoving";
+import type { GesturePointerEvent } from "#src/models/whiteboard/GesturePointerEvent";
+import type { SnapResult } from "#src/models/whiteboard/SnapResult";
+import type { WhiteboardGestureResult } from "#src/models/whiteboard/WhiteboardGestureResult";
+import type { WhiteboardGestureState } from "#src/models/whiteboard/WhiteboardGestureState";
 import type { Point, PositionedDocument } from "vue-block-editor-headless";
 
-import { GesturePointerAction } from "@/models/whiteboard/GesturePointerAction";
-import { getBoxedSelectionBounds } from "@/services/whiteboard/gesture/getBoxedSelectionBounds";
-import { getCopyMoveOperations } from "@/services/whiteboard/gesture/getCopyMoveOperations";
-import { getMoveOperations } from "@/services/whiteboard/gesture/getMoveOperations";
-import { getPreviewOrCommitResult } from "@/services/whiteboard/gesture/getPreviewOrCommitResult";
-import { getSnap } from "@/services/whiteboard/gesture/getSnap";
-import { getWorldPoint } from "@/services/whiteboard/gesture/getWorldPoint";
-import { reducePreviewOrCommitGesture } from "@/services/whiteboard/gesture/reducePreviewOrCommitGesture";
+import { GesturePointerAction } from "#src/models/whiteboard/GesturePointerAction";
+import { getBoxedSelectionBounds } from "#src/services/whiteboard/gesture/getBoxedSelectionBounds";
+import { getCopyMoveOperations } from "#src/services/whiteboard/gesture/getCopyMoveOperations";
+import { getMoveOperations } from "#src/services/whiteboard/gesture/getMoveOperations";
+import { getPreviewOrCommitResult } from "#src/services/whiteboard/gesture/getPreviewOrCommitResult";
+import { getSnap } from "#src/services/whiteboard/gesture/getSnap";
+import { getWorldPoint } from "#src/services/whiteboard/gesture/getWorldPoint";
+import { reducePreviewOrCommitGesture } from "#src/services/whiteboard/gesture/reducePreviewOrCommitGesture";
 
 // The snap a move takes at the pointer's delta: the boxes of the moving elements, moved by the delta, snapped to the other elements. Alt turns the snap
 // Off, and a move of nothing that takes a box has nothing to snap

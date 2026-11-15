@@ -1,10 +1,10 @@
 // @vitest-environment nuxt
 import type { PointsLeaderboard } from "#shared/models/achievement/PointsLeaderboard";
 
-import AchievementLeaderboardCard from "@/components/Achievement/Leaderboard/Card.vue";
-import AchievementLeaderboard from "@/components/Achievement/Leaderboard/Index.vue";
-import UiErrorState from "@/components/Ui/ErrorState.vue";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
+import AchievementLeaderboardCard from "#src/components/Achievement/Leaderboard/Card.vue";
+import AchievementLeaderboard from "#src/components/Achievement/Leaderboard/Index.vue";
+import UiErrorState from "#src/components/Ui/ErrorState.vue";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";

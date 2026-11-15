@@ -8,8 +8,8 @@ import type {
   SurveyTextNode,
 } from "vue-survey-engine-headless";
 
-import { useSurveyCreatorCommands } from "@/composables/survey/useSurveyCreatorCommands";
-import { useSurveyCreatorStore } from "@/store/survey/creator";
+import { useSurveyCreatorCommands } from "#src/composables/survey/useSurveyCreatorCommands";
+import { useSurveyCreatorStore } from "#src/store/survey/creator";
 import { createPinia, setActivePinia } from "pinia";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";

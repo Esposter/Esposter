@@ -1,10 +1,10 @@
-import { RESET_DATABASE_TIMEOUT_MS } from "@/services/cache/constants";
+import { RESET_DATABASE_TIMEOUT_MS } from "#src/services/cache/constants";
 import {
   DATABASE_NAME,
   DATABASE_VERSION,
   openIndexedDb,
   resetIndexedDb,
-} from "@/services/cache/indexedDb/openIndexedDb";
+} from "#src/services/cache/indexedDb/openIndexedDb";
 import { getRequestError, openDatabase, Operation } from "@esposter/shared";
 import { afterEach, describe, expect, test, vi } from "vitest";
 

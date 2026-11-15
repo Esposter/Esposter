@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { CardType, CardTypes } from "@/models/visual/CardType";
-import { SupporterCards } from "@/services/about/SupporterCards";
-import { TAB_QUERY_PARAMETER_KEY } from "@/services/route/constants";
-import { CardTypeItems } from "@/services/visual/CardTypeItems";
+import { CardType, CardTypes } from "#src/models/visual/CardType";
+import { SupporterCards } from "#src/services/about/SupporterCards";
+import { TAB_QUERY_PARAMETER_KEY } from "#src/services/route/constants";
+import { CardTypeItems } from "#src/services/visual/CardTypeItems";
 
 const cardType = useEnumRouteQuery(TAB_QUERY_PARAMETER_KEY, CardTypes, CardType.Marquee);
 </script>

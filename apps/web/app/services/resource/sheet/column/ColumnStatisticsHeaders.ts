@@ -1,8 +1,8 @@
-import type { ColumnStatisticsRow } from "@/models/resource/sheet/column/ColumnStatisticsRow";
-import type { UiDataTableColumn } from "@/models/ui/UiDataTableColumn";
+import type { ColumnStatisticsRow } from "#src/models/resource/sheet/column/ColumnStatisticsRow";
+import type { UiDataTableColumn } from "#src/models/ui/UiDataTableColumn";
 
-import { ColumnStatisticsDefinitions } from "@/services/resource/sheet/column/ColumnStatisticsDefinitionMap";
-import { compareColumnValues } from "@/services/resource/sheet/column/compareColumnValues";
+import { ColumnStatisticsDefinitions } from "#src/services/resource/sheet/column/ColumnStatisticsDefinitionMap";
+import { compareColumnValues } from "#src/services/resource/sheet/column/compareColumnValues";
 
 // A row is the column paired with its statistics, so every column reads through an accessor rather than through
 // A key naming a top-level field. A statistic shows in its column's units and sorts by the number behind them

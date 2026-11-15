@@ -1,5 +1,5 @@
 // @unocss-include
-import type { MenuItem } from "@/models/shared/MenuItem";
+import type { MenuItem } from "#src/models/shared/MenuItem";
 import type { Editor } from "@tiptap/core";
 
 // The two marks every editor menu here offers, in the order both menus draw them.

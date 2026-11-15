@@ -1,12 +1,12 @@
 import type { Monster } from "#shared/models/dungeons/monster/Monster";
-import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
+import type { PlayerInput } from "#src/models/dungeons/UI/input/PlayerInput";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
-import { ATTACK_DISPLAY_LIMIT } from "@/services/dungeons/attack/constants";
-import { getAttack } from "@/services/dungeons/attack/getAttack";
-import { checkIsPlayerSpecialInput } from "@/services/dungeons/UI/input/checkIsPlayerSpecialInput";
+import { SceneKey } from "#src/models/dungeons/keys/SceneKey";
+import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";
+import { ATTACK_DISPLAY_LIMIT } from "#src/services/dungeons/attack/constants";
+import { getAttack } from "#src/services/dungeons/attack/getAttack";
+import { checkIsPlayerSpecialInput } from "#src/services/dungeons/UI/input/checkIsPlayerSpecialInput";
 import { exhaustiveGuard } from "@esposter/shared";
 
 export const useMonsterDetailsSceneStore = defineStore("dungeons/monsterDetails/scene", () => {

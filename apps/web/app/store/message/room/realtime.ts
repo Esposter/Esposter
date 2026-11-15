@@ -1,25 +1,25 @@
 import type { RTKParticipant, RTKSelf } from "@cloudflare/realtimekit";
 
-import { MicrophoneProcessor } from "@/models/message/room/call/MicrophoneProcessor";
-import { ConnectionQuality } from "@/models/message/room/realtime/ConnectionQuality";
-import { ConnectionState } from "@/models/message/room/realtime/ConnectionState";
-import { RemoteAudioSource } from "@/models/message/room/realtime/RemoteAudioSource";
-import { MutationStatus } from "@/models/shared/MutationStatus";
+import { MicrophoneProcessor } from "#src/models/message/room/call/MicrophoneProcessor";
+import { ConnectionQuality } from "#src/models/message/room/realtime/ConnectionQuality";
+import { ConnectionState } from "#src/models/message/room/realtime/ConnectionState";
+import { RemoteAudioSource } from "#src/models/message/room/realtime/RemoteAudioSource";
+import { MutationStatus } from "#src/models/shared/MutationStatus";
 import {
   DEFAULT_PARTICIPANT_VOLUME_PERCENTAGE,
   SCREEN_SHARE_CONSTRAINTS,
-} from "@/services/message/room/call/constants";
-import { getAudioCaptureDefaults } from "@/services/message/room/call/getAudioCaptureDefaults";
-import { VoiceDeviceKinds, VoiceDeviceSettingsKeyMap } from "@/services/message/room/call/VoiceDeviceSettingsKeyMap";
-import { POOR_CONNECTION_SCORE } from "@/services/message/room/realtime/constants";
-import { getLocalDevices } from "@/services/message/room/realtime/getLocalDevices";
-import { rasterizeSvg } from "@/services/message/room/realtime/rasterizeSvg";
-import { SocketConnectionStateMap } from "@/services/message/room/realtime/SocketConnectionStateMap";
-import { useMediaStore } from "@/store/message/room/call/media";
-import { useParticipantStore } from "@/store/message/room/call/participant";
-import { useUserSettingsStore } from "@/store/message/user/settings";
-import { useCallBackgroundStore } from "@/store/message/user/settings/callBackground";
-import { useVoiceDeviceSettingsStore } from "@/store/message/user/settings/voiceDevice";
+} from "#src/services/message/room/call/constants";
+import { getAudioCaptureDefaults } from "#src/services/message/room/call/getAudioCaptureDefaults";
+import { VoiceDeviceKinds, VoiceDeviceSettingsKeyMap } from "#src/services/message/room/call/VoiceDeviceSettingsKeyMap";
+import { POOR_CONNECTION_SCORE } from "#src/services/message/room/realtime/constants";
+import { getLocalDevices } from "#src/services/message/room/realtime/getLocalDevices";
+import { rasterizeSvg } from "#src/services/message/room/realtime/rasterizeSvg";
+import { SocketConnectionStateMap } from "#src/services/message/room/realtime/SocketConnectionStateMap";
+import { useMediaStore } from "#src/store/message/room/call/media";
+import { useParticipantStore } from "#src/store/message/room/call/participant";
+import { useCallBackgroundStore } from "#src/store/message/user/settings/callBackground";
+import { useUserSettingsStore } from "#src/store/message/user/settings/index";
+import { useVoiceDeviceSettingsStore } from "#src/store/message/user/settings/voiceDevice";
 import RealtimeKitClient from "@cloudflare/realtimekit";
 import RealtimeKitVideoBackgroundTransformer from "@cloudflare/realtimekit-virtual-background";
 import {

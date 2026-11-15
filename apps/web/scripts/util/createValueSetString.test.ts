@@ -1,4 +1,4 @@
-import { createValueSetString } from "@@/scripts/util/createValueSetString";
+import { createValueSetString } from "#scripts/util/createValueSetString";
 import { describe, expect, test } from "vitest";
 
 describe(createValueSetString, () => {

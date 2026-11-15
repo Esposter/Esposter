@@ -1,5 +1,5 @@
-import { useRoomStore } from "@/store/message/room";
-import { useConnectionStore } from "@/store/realtime/connection";
+import { useRoomStore } from "#src/store/message/room/index";
+import { useConnectionStore } from "#src/store/realtime/connection";
 import { getTopic, TopicKind } from "@esposter/db-schema";
 import { getSynchronizedFunction } from "@esposter/shared";
 

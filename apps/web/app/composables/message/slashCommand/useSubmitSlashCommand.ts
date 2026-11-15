@@ -1,11 +1,11 @@
-import type { SlashCommandParameters } from "@/models/message/slashCommands/SlashCommandParameters";
-import type { SlashCommandType } from "@/models/message/slashCommands/SlashCommandType";
+import type { SlashCommandParameters } from "#src/models/message/slashCommands/SlashCommandParameters";
+import type { SlashCommandType } from "#src/models/message/slashCommands/SlashCommandType";
 
-import { slashCommandParameterValueSchema } from "@/models/message/slashCommands/SlashCommandParameter";
-import { REQUIRED_ERROR_MESSAGE } from "@/services/message/slashCommands/constants";
-import { executeSlashCommand } from "@/services/message/slashCommands/executeSlashCommand";
-import { useSlashCommandStore } from "@/store/message/input/slashCommand";
-import { useRoomStore } from "@/store/message/room";
+import { slashCommandParameterValueSchema } from "#src/models/message/slashCommands/SlashCommandParameter";
+import { REQUIRED_ERROR_MESSAGE } from "#src/services/message/slashCommands/constants";
+import { executeSlashCommand } from "#src/services/message/slashCommands/executeSlashCommand";
+import { useSlashCommandStore } from "#src/store/message/input/slashCommand";
+import { useRoomStore } from "#src/store/message/room/index";
 
 export const useSubmitSlashCommand = () => {
   const roomStore = useRoomStore();

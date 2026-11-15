@@ -1,4 +1,4 @@
-import type { AppNotification } from "@/models/notification/AppNotification";
+import type { AppNotification } from "#src/models/notification/AppNotification";
 import type { Except, SetOptional } from "type-fest";
 
 import { compareCreatedAt } from "#shared/util/date/compareCreatedAt";

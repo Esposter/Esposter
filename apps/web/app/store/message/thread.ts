@@ -1,11 +1,11 @@
-import type { ClientMessage } from "@/models/message/ClientMessage";
+import type { ClientMessage } from "#src/models/message/ClientMessage";
 
-import { RightDrawer } from "@/models/message/RightDrawer";
-import { messageHolderRegistry } from "@/services/message/messageHolderRegistry";
-import { MessageHookMap } from "@/services/message/MessageHookMap";
-import { useLayoutStore } from "@/store/layout";
-import { useThreadFollowStore } from "@/store/message/threadFollow";
-import { useMessageLayoutStore } from "@/store/message/ui/layout";
+import { RightDrawer } from "#src/models/message/RightDrawer";
+import { messageHolderRegistry } from "#src/services/message/messageHolderRegistry";
+import { MessageHookMap } from "#src/services/message/MessageHookMap";
+import { useLayoutStore } from "#src/store/layout";
+import { useThreadFollowStore } from "#src/store/message/threadFollow";
+import { useMessageLayoutStore } from "#src/store/message/ui/layout";
 import { Operation } from "@esposter/shared";
 
 export const useThreadStore = defineStore("message/thread", () => {

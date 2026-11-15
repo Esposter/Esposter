@@ -1,7 +1,7 @@
 import type { Monster } from "#shared/models/dungeons/monster/Monster";
 
-import { CaptureResult } from "@/models/dungeons/item/CaptureResult";
-import { createRandomNumber } from "@/util/math/random/createRandomNumber";
+import { CaptureResult } from "#src/models/dungeons/item/CaptureResult";
+import { createRandomNumber } from "#src/util/math/random/createRandomNumber";
 
 export const createCaptureResult = ({ statistics, status }: Monster) => {
   const healthRate = status.health / statistics.maxHealth;

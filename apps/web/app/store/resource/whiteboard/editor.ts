@@ -1,12 +1,12 @@
-import type { CanvasRect } from "@/models/whiteboard/CanvasRect";
-import type { Viewport } from "@/models/whiteboard/Viewport";
-import type { WhiteboardGesture } from "@/models/whiteboard/WhiteboardGesture";
+import type { CanvasRect } from "#src/models/whiteboard/CanvasRect";
+import type { Viewport } from "#src/models/whiteboard/Viewport";
+import type { WhiteboardGesture } from "#src/models/whiteboard/WhiteboardGesture";
 import type { Bounds, Point, PositionedDocument, PositionedElement } from "vue-block-editor-headless";
 
-import { GestureTool } from "@/models/whiteboard/GestureTool";
-import { getWorldPoint } from "@/services/whiteboard/gesture/getWorldPoint";
-import { getFitViewport } from "@/services/whiteboard/viewport/getFitViewport";
-import { getZoomedViewport } from "@/services/whiteboard/viewport/getZoomedViewport";
+import { GestureTool } from "#src/models/whiteboard/GestureTool";
+import { getWorldPoint } from "#src/services/whiteboard/gesture/getWorldPoint";
+import { getFitViewport } from "#src/services/whiteboard/viewport/getFitViewport";
+import { getZoomedViewport } from "#src/services/whiteboard/viewport/getZoomedViewport";
 import { getExportBounds, ShapeKind } from "vue-block-editor-headless";
 
 // The view of an open whiteboard: where its canvas sits on the page, what is selected, the tool and the shape a shape tool places, and the viewport.

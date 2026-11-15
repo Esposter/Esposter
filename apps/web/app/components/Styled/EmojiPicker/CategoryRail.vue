@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { EmojiCategory } from "@/models/message/emoji/EmojiCategory";
-import type { UiMenuItem } from "@/models/ui/UiMenuItem";
+import type { EmojiCategory } from "#src/models/message/emoji/EmojiCategory";
+import type { UiMenuItem } from "#src/models/ui/UiMenuItem";
 
 interface Props {
   categories: EmojiCategory[];

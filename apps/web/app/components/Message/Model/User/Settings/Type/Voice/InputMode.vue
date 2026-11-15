@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { UserSettingsInMessage } from "@esposter/db-schema";
 
-import { VoiceInputModeLabelMap } from "@/services/message/user/settings/VoiceInputModeLabelMap";
-import { useUserSettingsStore } from "@/store/message/user/settings";
+import { VoiceInputModeLabelMap } from "#src/services/message/user/settings/VoiceInputModeLabelMap";
+import { useUserSettingsStore } from "#src/store/message/user/settings/index";
 import { VoiceInputMode, VoiceInputModes } from "@esposter/db-schema";
 
 interface Props {

@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
 import { UpgradeMap } from "#shared/assets/clicker/data/upgrades/UpgradeMap";
 import { CursorUpgradeId } from "#shared/models/clicker/data/upgrade/CursorUpgradeId";
-import { useClickerStore } from "@/store/clicker";
-import { useUpgradeStore } from "@/store/clicker/upgrade";
+import { useClickerStore } from "#src/store/clicker/index";
+import { useUpgradeStore } from "#src/store/clicker/upgrade";
 import { describe, expect, test } from "vitest";
 
 // The store is the purchase's only gate: the buttons that disable on the price are one caller each, and a purchase

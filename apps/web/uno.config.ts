@@ -4,9 +4,9 @@ import { readdirSync, readFileSync } from "node:fs";
 import { basename, join } from "node:path";
 import { defineConfig, presetAttributify, presetIcons, presetWind4, symbols } from "unocss";
 
-import { UiTokens } from "./app/models/ui/UiToken";
-import { UNOCSS_BREAKPOINTS } from "./configuration/breakpoints";
-import { UiStyleMap } from "./configuration/UiStyleMap";
+import { UiTokens } from "./app/models/ui/UiToken.ts";
+import { UNOCSS_BREAKPOINTS } from "./configuration/breakpoints.ts";
+import { UiStyleMap } from "./configuration/UiStyleMap.ts";
 
 // What cannot be used yet, faded by one strength across the app: a control that is disabled, and something still on its
 // Way, such as a message the server has not confirmed

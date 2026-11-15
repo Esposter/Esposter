@@ -1,8 +1,8 @@
-import type { GestureWheelEvent } from "@/models/whiteboard/GestureWheelEvent";
-import type { Viewport } from "@/models/whiteboard/Viewport";
+import type { GestureWheelEvent } from "#src/models/whiteboard/GestureWheelEvent";
+import type { Viewport } from "#src/models/whiteboard/Viewport";
 
-import { WHITEBOARD_WHEEL_ZOOM_RATE } from "@/services/whiteboard/viewport/constants";
-import { getZoomedViewport } from "@/services/whiteboard/viewport/getZoomedViewport";
+import { WHITEBOARD_WHEEL_ZOOM_RATE } from "#src/services/whiteboard/viewport/constants";
+import { getZoomedViewport } from "#src/services/whiteboard/viewport/getZoomedViewport";
 
 // The viewport a wheel turn leaves. A plain wheel pans it by the turn, in screen pixels at the viewport's scale. A wheel with Ctrl or Cmd
 // Held, which a trackpad pinch also is, zooms about the pointer by a factor that grows with the turn

@@ -1,7 +1,7 @@
 import type { ColumnStatistics } from "#shared/models/resource/sheet/column/ColumnStatistics";
-import type { ColumnChartData } from "@/models/resource/sheet/column/ColumnChartData";
+import type { ColumnChartData } from "#src/models/resource/sheet/column/ColumnChartData";
 
-import { BASE_CHART_OPTIONS } from "@/services/resource/sheet/column/constants";
+import { BASE_CHART_OPTIONS } from "#src/services/resource/sheet/column/constants";
 
 export const buildTopFrequenciesChartData = (
   columnStatistics: ColumnStatistics,

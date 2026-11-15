@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { UiCalendarEvent } from "@/models/ui/UiCalendarEvent";
+import type { UiCalendarEvent } from "#src/models/ui/UiCalendarEvent";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { CALENDAR_DAY_EVENT_LIMIT, CALENDAR_WORK_WEEK_DAY_COUNT } from "@/services/ui/constants";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { CALENDAR_DAY_EVENT_LIMIT, CALENDAR_WORK_WEEK_DAY_COUNT } from "#src/services/ui/constants";
 
 interface Props {
   day: Temporal.PlainDate;

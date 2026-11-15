@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
-import { UiDialogSize } from "@/models/ui/UiDialogSize";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { UserSettingsPageSection } from "@/models/user/UserSettingsPageSection";
-import { useResourceStore } from "@/store/resource";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
+import { UiDialogSize } from "#src/models/ui/UiDialogSize";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { UserSettingsPageSection } from "#src/models/user/UserSettingsPageSection";
+import { useResourceStore } from "#src/store/resource/index";
 import { RoutePath } from "@esposter/shared";
 
 const resourceStore = useResourceStore();

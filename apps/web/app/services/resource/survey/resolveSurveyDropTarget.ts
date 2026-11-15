@@ -1,9 +1,9 @@
-import type { DropTarget } from "@/models/pageBuilder/DropTarget";
-import type { SurveyDropSlot } from "@/models/resource/survey/SurveyDropSlot";
+import type { DropTarget } from "#src/models/pageBuilder/DropTarget";
+import type { SurveyDropSlot } from "#src/models/resource/survey/SurveyDropSlot";
 import type { SurveyNodeType } from "vue-survey-engine-headless";
 
-import { checkIsInsideBox } from "@/services/pageBuilder/checkIsInsideBox";
-import { getDropIndex } from "@/services/pageBuilder/getDropIndex";
+import { checkIsInsideBox } from "#src/services/pageBuilder/checkIsInsideBox";
+import { getDropIndex } from "#src/services/pageBuilder/getDropIndex";
 
 // The slot a kind dropped at a viewport point lands in: the nearest slot whose box holds the point and whose accepted types
 // Take the kind, nearest being the smallest box, since a nested slot's box lies within its owner's. The index is the first

@@ -1,7 +1,7 @@
 // @unocss-include
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { UiStyle } from "@/models/ui/UiStyle";
-import { LucideIconMap } from "@/services/ui/LucideIconMap";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { UiStyle } from "#src/models/ui/UiStyle";
+import { LucideIconMap } from "#src/services/ui/LucideIconMap";
 
 // Each style's class for every meaning, written whole so the icons preset sees it: Lucide for standard, and for
 // Voxel the pixel set first, and a Material Design Icons class where it has no glyph

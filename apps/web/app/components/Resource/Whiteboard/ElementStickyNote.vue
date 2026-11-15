@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { StickyNoteElement } from "vue-block-editor-headless";
 
-import { getElementStrokeAttributes } from "@/services/whiteboard/palette/getElementStrokeAttributes";
+import { getElementStrokeAttributes } from "#src/services/whiteboard/palette/getElementStrokeAttributes";
 import { getBoundsCorners, toClosedSketchedPathData } from "vue-block-editor-headless";
 
 interface Props {

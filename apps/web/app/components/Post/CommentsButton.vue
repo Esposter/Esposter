@@ -2,8 +2,8 @@
 import type { PostInPostWithRelations } from "@esposter/db-schema";
 
 import { pluralize } from "#shared/util/text/pluralize";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { RoutePath } from "@esposter/shared";
 
 interface Props {

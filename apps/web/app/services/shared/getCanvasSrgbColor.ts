@@ -1,6 +1,6 @@
 import type { SrgbColor } from "#shared/models/shared/SrgbColor";
 
-import { MAX_COLOR_CHANNEL } from "@/services/shared/constants";
+import { MAX_COLOR_CHANNEL } from "#src/services/shared/constants";
 import { takeOne } from "@esposter/shared";
 
 // The sRGB channels of a colour the browser computes in a space other than rgb, read off a one-pixel canvas it is drawn

@@ -1,5 +1,5 @@
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
-import { VisualDatasetShape } from "@/models/dashboard/VisualDatasetShape";
+import { VisualDatasetShape } from "#src/models/dashboard/VisualDatasetShape";
 
 export const VisualTypeDatasetShapeMap = {
   // A table is the grouped result itself, so it takes the categories a chart over the same binding draws

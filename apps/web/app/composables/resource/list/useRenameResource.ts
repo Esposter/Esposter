@@ -1,7 +1,7 @@
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { CacheTag } from "@/models/cache/CacheTag";
-import { useNotificationStore } from "@/store/notification";
+import { CacheTag } from "#src/models/cache/CacheTag";
+import { useNotificationStore } from "#src/store/notification";
 import { noop } from "@esposter/shared";
 
 // Owned here rather than in the dialog because the dialog closes on submit — the row the rename applies to and

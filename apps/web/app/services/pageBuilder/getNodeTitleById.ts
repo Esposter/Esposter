@@ -1,6 +1,6 @@
-import type { PageBuilderHelper } from "@/models/pageBuilder/PageBuilderHelper";
+import type { PageBuilderHelper } from "#src/models/pageBuilder/PageBuilderHelper";
 
-import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
+import { getNodePointer } from "#src/services/pageBuilder/getNodePointer";
 import { getBlockNode } from "vue-block-editor-headless";
 
 // The title a node is listed under: its block type's title, or the id itself when no node in the document holds it or its type

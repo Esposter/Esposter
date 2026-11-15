@@ -1,5 +1,5 @@
-import type { UiMenuItem } from "@/models/ui/UiMenuItem";
-import type { UiMenuOptions } from "@/models/ui/UiMenuOptions";
+import type { UiMenuItem } from "#src/models/ui/UiMenuItem";
+import type { UiMenuOptions } from "#src/models/ui/UiMenuOptions";
 import type { usePopover } from "@vuetify/v0";
 
 import { takeOne } from "@esposter/shared";

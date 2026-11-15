@@ -1,6 +1,6 @@
 import type { SuggestionOptions, SuggestionProps } from "@tiptap/suggestion";
 
-import { useRichTextSuggestionStore } from "@/store/richTextEditor/suggestion";
+import { useRichTextSuggestionStore } from "#src/store/richTextEditor/suggestion";
 
 // What the suggestion plugin reports is written to the one suggestion the editor draws, rather than a list mounted by
 // Hand on the body, where no theme scope reached it

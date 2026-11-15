@@ -3,10 +3,10 @@ import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSo
 import { createColumn } from "#shared/models/resource/sheet/column/createColumn.test";
 import { createDataSource } from "#shared/models/resource/sheet/datasource/createDataSource.test";
 import { createRow } from "#shared/models/resource/sheet/datasource/createRow.test";
-import { JSON_MIME_TYPE, JSON_SETTINGS } from "@/services/resource/sheet/json/constants.test";
-import { createJsonFile } from "@/services/resource/sheet/json/createJsonFile.test";
-import { deserializeJson } from "@/services/resource/sheet/json/deserializeJson";
-import { serializeJson } from "@/services/resource/sheet/json/serializeJson";
+import { JSON_MIME_TYPE, JSON_SETTINGS } from "#src/services/resource/sheet/json/constants.test";
+import { createJsonFile } from "#src/services/resource/sheet/json/createJsonFile.test";
+import { deserializeJson } from "#src/services/resource/sheet/json/deserializeJson";
+import { serializeJson } from "#src/services/resource/sheet/json/serializeJson";
 import { jsonDateParse } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 

@@ -1,8 +1,8 @@
-import { authClient } from "@/services/auth/authClient";
-import { useRoomStore } from "@/store/message/room";
-import { useDirectMessageStore } from "@/store/message/room/directMessage";
-import { useMemberStore } from "@/store/message/user/member";
-import { useConnectionStore } from "@/store/realtime/connection";
+import { authClient } from "#src/services/auth/authClient";
+import { useDirectMessageStore } from "#src/store/message/room/directMessage";
+import { useRoomStore } from "#src/store/message/room/index";
+import { useMemberStore } from "#src/store/message/user/member";
+import { useConnectionStore } from "#src/store/realtime/connection";
 import { getResultAsync, getSynchronizedFunction, noop, RoutePath, takeOne } from "@esposter/shared";
 
 // The rooms a person is in, and the direct messages among them, change on the person's own socket: every room event

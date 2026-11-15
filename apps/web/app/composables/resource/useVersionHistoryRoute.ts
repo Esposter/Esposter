@@ -1,6 +1,6 @@
 import type { LocationQueryRaw } from "vue-router";
 
-import { getRouteParamString } from "@/util/router/getRouteParamString";
+import { getRouteParamString } from "#src/util/router/getRouteParamString";
 
 // The version history panel's place in the route, which is what makes it deep-linkable: the back button, a
 // Refresh and a shared link all land on the same panel over the same version, because none of it is state the

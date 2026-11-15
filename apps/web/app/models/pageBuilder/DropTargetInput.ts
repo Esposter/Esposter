@@ -1,4 +1,4 @@
-import type { OverlayBox } from "@/models/pageBuilder/OverlayBox";
+import type { OverlayBox } from "#src/models/pageBuilder/OverlayBox";
 
 export interface DropTargetInput<TDocument, TType> {
   checkIsHorizontalOwner: (ownerId: string) => boolean;

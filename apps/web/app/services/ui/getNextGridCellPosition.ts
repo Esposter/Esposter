@@ -1,8 +1,8 @@
-import type { UiGridPosition } from "@/models/ui/UiGridPosition";
-import type { UiGridSize } from "@/models/ui/UiGridSize";
+import type { UiGridPosition } from "#src/models/ui/UiGridPosition";
+import type { UiGridSize } from "#src/models/ui/UiGridSize";
 
-import { clampIndex } from "@/services/ui/clampIndex";
-import { DATA_TABLE_PAGE_KEY_ROW_COUNT } from "@/services/ui/constants";
+import { clampIndex } from "#src/services/ui/clampIndex";
+import { DATA_TABLE_PAGE_KEY_ROW_COUNT } from "#src/services/ui/constants";
 
 // Where a key moves a grid's active cell, as the WAI-ARIA grid pattern walks one: an arrow a cell at a time and never
 // Past the edge, Home and End to the ends of the row, or of the grid with Ctrl, and Page Up and Page Down a run of rows.

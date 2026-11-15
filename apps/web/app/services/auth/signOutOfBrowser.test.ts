@@ -1,18 +1,18 @@
 import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
-import type { ClientMessage } from "@/models/message/ClientMessage";
+import type { ClientMessage } from "#src/models/message/ClientMessage";
 
-import { signOut } from "@/services/auth/authClient.test";
-import { signOutOfBrowser } from "@/services/auth/signOutOfBrowser";
-import { MemberIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MemberIndexedDbStoreConfiguration";
-import { MessageIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MessageIndexedDbStoreConfiguration";
-import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
-import { setupIndexedDbSuite } from "@/services/cache/indexedDb/setupIndexedDbSuite.test";
-import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
-import { createUser } from "@/services/message/user/createUser.test";
+import { signOut } from "#src/services/auth/authClient.test";
+import { signOutOfBrowser } from "#src/services/auth/signOutOfBrowser";
+import { MemberIndexedDbStoreConfiguration } from "#src/services/cache/indexedDb/configurations/MemberIndexedDbStoreConfiguration";
+import { MessageIndexedDbStoreConfiguration } from "#src/services/cache/indexedDb/configurations/MessageIndexedDbStoreConfiguration";
+import { readIndexedDb } from "#src/services/cache/indexedDb/readIndexedDb";
+import { setupIndexedDbSuite } from "#src/services/cache/indexedDb/setupIndexedDbSuite.test";
+import { writeIndexedDb } from "#src/services/cache/indexedDb/writeIndexedDb";
+import { createUser } from "#src/services/message/user/createUser.test";
 import { noop, RoutePath, SITE_NAME, takeOne, toRawDeep } from "@esposter/shared";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
+vi.mock(import("#src/services/auth/authClient"), () => import("#src/services/auth/authClient.test"));
 
 // Rows an earlier page load left in the database, written straight to IndexedDB so this module never opens it
 const writeEarlierPageRows = (message: ClientMessage) =>

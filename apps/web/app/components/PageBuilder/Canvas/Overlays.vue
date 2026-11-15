@@ -1,25 +1,25 @@
 <script setup lang="ts">
-import type { AnyPageBuilderDocument } from "@/models/pageBuilder/AnyPageBuilderDocument";
-import type { AnyPageBuilderKind } from "@/models/pageBuilder/AnyPageBuilderKind";
-import type { DropIndicator } from "@/models/pageBuilder/DropIndicator";
-import type { DropTarget } from "@/models/pageBuilder/DropTarget";
-import type { OverlayBox } from "@/models/pageBuilder/OverlayBox";
+import type { AnyPageBuilderDocument } from "#src/models/pageBuilder/AnyPageBuilderDocument";
+import type { AnyPageBuilderKind } from "#src/models/pageBuilder/AnyPageBuilderKind";
+import type { DropIndicator } from "#src/models/pageBuilder/DropIndicator";
+import type { DropTarget } from "#src/models/pageBuilder/DropTarget";
+import type { OverlayBox } from "#src/models/pageBuilder/OverlayBox";
 
-import { DropIndicatorKind } from "@/models/pageBuilder/DropIndicatorKind";
+import { DropIndicatorKind } from "#src/models/pageBuilder/DropIndicatorKind";
 import {
   OVERLAY_DROP_LINE_STYLE,
   OVERLAY_DROP_OUTLINE_STYLE,
   OVERLAY_HOVER_STYLE,
   OVERLAY_LAYER_STYLE,
   OVERLAY_SELECTION_STYLE,
-} from "@/services/pageBuilder/constants";
-import { getAccent } from "@/services/pageBuilder/getAccent";
-import { getDropIndicatorBox } from "@/services/pageBuilder/getDropIndicatorBox";
-import { getOverlayBox } from "@/services/pageBuilder/getOverlayBox";
-import { getSlotChildIds } from "@/services/pageBuilder/getSlotChildIds";
-import { getSlotOwnerId } from "@/services/pageBuilder/getSlotOwnerId";
-import { DRAG_PREVIEW_NODE_ID } from "@/services/pageBuilder/withDragPreview";
-import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
+} from "#src/services/pageBuilder/constants";
+import { getAccent } from "#src/services/pageBuilder/getAccent";
+import { getDropIndicatorBox } from "#src/services/pageBuilder/getDropIndicatorBox";
+import { getOverlayBox } from "#src/services/pageBuilder/getOverlayBox";
+import { getSlotChildIds } from "#src/services/pageBuilder/getSlotChildIds";
+import { getSlotOwnerId } from "#src/services/pageBuilder/getSlotOwnerId";
+import { DRAG_PREVIEW_NODE_ID } from "#src/services/pageBuilder/withDragPreview";
+import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
 
 interface Props {
   checkIsHorizontalOwner: (ownerId: string) => boolean;

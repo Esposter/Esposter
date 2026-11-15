@@ -1,4 +1,4 @@
-import { useVersionHistoryStore } from "@/store/resource/versionHistory";
+import { useVersionHistoryStore } from "#src/store/resource/versionHistory";
 
 // The state an import preview dialog answers with. The preview an import answers is the one on the resource it was
 // Confirmed on, which the reader may have left by the time the import lands, so the preview closes against that one

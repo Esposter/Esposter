@@ -2,7 +2,7 @@
 import type { ResourceInResource } from "@esposter/db-schema";
 import type { Promisable } from "type-fest";
 
-import { useRecycleBinDialogStore } from "@/store/resource/recycleBinDialog";
+import { useRecycleBinDialogStore } from "#src/store/resource/recycleBinDialog";
 
 interface Props {
   // Passed in rather than emitted, so the confirm awaits the write it makes

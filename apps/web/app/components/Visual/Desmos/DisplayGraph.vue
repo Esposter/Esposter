@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { Expression } from "@/models/desmos/Expression";
+import type { Expression } from "#src/models/desmos/Expression";
 
-import { withDefaultExpressionColor } from "@/services/visual/withDefaultExpressionColor";
-import { useThemeModeStore } from "@/store/ui/themeMode";
-import { ignoreWarn } from "@/util/console/ignoreWarn";
+import { withDefaultExpressionColor } from "#src/services/visual/withDefaultExpressionColor";
+import { useThemeModeStore } from "#src/store/ui/themeMode";
+import { ignoreWarn } from "#src/util/console/ignoreWarn";
 import { takeOne } from "@esposter/shared";
 
 interface Props {

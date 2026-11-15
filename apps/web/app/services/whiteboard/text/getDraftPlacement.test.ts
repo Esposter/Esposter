@@ -1,7 +1,7 @@
 import type { TextElement } from "vue-block-editor-headless";
 
-import { WHITEBOARD_PROCESS } from "@/services/whiteboard/constants.test";
-import { getDraftPlacement } from "@/services/whiteboard/text/getDraftPlacement";
+import { WHITEBOARD_PROCESS } from "#src/services/whiteboard/constants.test";
+import { getDraftPlacement } from "#src/services/whiteboard/text/getDraftPlacement";
 import { v7 } from "uuid";
 import { assert, describe, expect, test } from "vitest";
 import {

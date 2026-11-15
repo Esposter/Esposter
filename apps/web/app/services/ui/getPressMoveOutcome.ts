@@ -1,5 +1,5 @@
-import { PressMoveOutcome } from "@/models/ui/PressMoveOutcome";
-import { DRAG_START_DISTANCE, LONG_PRESS_MOVE_TOLERANCE } from "@/services/ui/constants";
+import { PressMoveOutcome } from "#src/models/ui/PressMoveOutcome";
+import { DRAG_START_DISTANCE, LONG_PRESS_MOVE_TOLERANCE } from "#src/services/ui/constants";
 
 // What a press does on a pointer move before its drag has begun. A mouse or pen press starts the drag once it moves the drag
 // Start distance. A finger that drifts past the long press tolerance has not rested, so it is scrolling and its press is

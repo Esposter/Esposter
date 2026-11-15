@@ -1,5 +1,5 @@
-import { createErrorAlert } from "@/services/trpc/createErrorAlert";
-import { useAlertStore } from "@/store/alert";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
+import { useAlertStore } from "#src/store/alert";
 import { getResultAsync, noop } from "@esposter/shared";
 
 interface UseMediaRecorderOptions {

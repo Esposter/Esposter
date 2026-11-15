@@ -1,4 +1,4 @@
-import { useParticipantStore } from "@/store/message/room/call/participant";
+import { useParticipantStore } from "#src/store/message/room/call/participant";
 
 export const useMediaStore = defineStore("message/room/call/media", () => {
   const participantStore = useParticipantStore();

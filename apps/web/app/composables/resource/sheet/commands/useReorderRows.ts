@@ -1,6 +1,6 @@
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
 
-import { MoveRowCommand } from "@/models/resource/sheet/commands/MoveRowCommand";
+import { MoveRowCommand } from "#src/models/resource/sheet/commands/MoveRowCommand";
 
 export const useReorderRows = () =>
   useSheetCommand((dataSource, newRows: Row[]) => {

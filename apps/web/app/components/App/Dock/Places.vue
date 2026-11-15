@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { RECENT_PAGES_SHOWN_LIMIT } from "@/services/app/constants";
-import { useBookmarkStore } from "@/store/bookmark";
+import { RECENT_PAGES_SHOWN_LIMIT } from "#src/services/app/constants";
+import { useBookmarkStore } from "#src/store/bookmark";
 
 const { data: session } = await useAuthSession();
 const bookmarkStore = useBookmarkStore();

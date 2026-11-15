@@ -1,8 +1,8 @@
 import type { BaseTilesetKey } from "#shared/generated/tiled/propertyTypes/enum/BaseTilesetKey";
-import type { TilesetKey } from "@/models/dungeons/keys/TilesetKey";
+import type { TilesetKey } from "#src/models/dungeons/keys/TilesetKey";
 import type { Tilemaps } from "phaser";
 
-import { ignoreWarn } from "@/util/console/ignoreWarn";
+import { ignoreWarn } from "#src/util/console/ignoreWarn";
 
 // A tileset belongs to the tilemap it was added to, so the cache is per tilemap rather than per map key
 const tilesetCache = new WeakMap<Tilemaps.Tilemap, Map<TilesetKey, Tilemaps.Tileset>>();

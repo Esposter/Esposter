@@ -1,24 +1,24 @@
 <script setup lang="ts">
-import type { EditorRegistry } from "@/models/editor/EditorRegistry";
-import type { AnyPageBuilderKind } from "@/models/pageBuilder/AnyPageBuilderKind";
+import type { EditorRegistry } from "#src/models/editor/EditorRegistry";
+import type { AnyPageBuilderKind } from "#src/models/pageBuilder/AnyPageBuilderKind";
 import type { Context } from "vue-editor-layout-headless";
 
-import PageBuilderBar from "@/components/PageBuilder/Bar.vue";
-import PageBuilderContentPanel from "@/components/PageBuilder/ContentPanel.vue";
-import PageBuilderLayers from "@/components/PageBuilder/Layers.vue";
-import PageBuilderPalette from "@/components/PageBuilder/Palette.vue";
-import PageBuilderStylePanel from "@/components/PageBuilder/StylePanel/Index.vue";
-import PageBuilderThemePanel from "@/components/PageBuilder/ThemePanel/Index.vue";
-import { EditorType } from "@/models/editor/EditorType";
+import PageBuilderBar from "#src/components/PageBuilder/Bar.vue";
+import PageBuilderContentPanel from "#src/components/PageBuilder/ContentPanel.vue";
+import PageBuilderLayers from "#src/components/PageBuilder/Layers.vue";
+import PageBuilderPalette from "#src/components/PageBuilder/Palette.vue";
+import PageBuilderStylePanel from "#src/components/PageBuilder/StylePanel/Index.vue";
+import PageBuilderThemePanel from "#src/components/PageBuilder/ThemePanel/Index.vue";
+import { EditorType } from "#src/models/editor/EditorType";
 import {
   PAGE_BUILDER_CONTENT_KEY_MAP,
   PAGE_BUILDER_PANEL_ID_MAP,
   PAGE_BUILDER_REGION_ID_MAP,
   PAGE_BUILDER_REGION_NAME_MAP,
   PAGE_BUILDER_SELECTION_KIND_MAP,
-} from "@/services/pageBuilder/pageBuilderLayout";
-import { webpageLayout } from "@/services/pageBuilder/webpageLayout";
-import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
+} from "#src/services/pageBuilder/pageBuilderLayout";
+import { webpageLayout } from "#src/services/pageBuilder/webpageLayout";
+import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
 
 interface Props {
   // The kind the resource's document is edited through, which the page builder's kind holds with the document

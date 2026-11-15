@@ -1,5 +1,5 @@
-import { createSuggestionExtension } from "@/services/message/editor/createSuggestionExtension";
-import { NoteSlashSuggestion } from "@/services/resource/note/NoteSlashSuggestion";
+import { createSuggestionExtension } from "#src/services/message/editor/createSuggestionExtension";
+import { NoteSlashSuggestion } from "#src/services/resource/note/NoteSlashSuggestion";
 
 const NoteSlashExtension = createSuggestionExtension("noteSlash");
 

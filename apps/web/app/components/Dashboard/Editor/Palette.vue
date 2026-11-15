@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { VisualTypeCategoryDefinitions } from "@/services/dashboard/VisualTypeCategoryDefinitions";
+import { VisualTypeCategoryDefinitions } from "#src/services/dashboard/VisualTypeCategoryDefinitions";
 </script>
 
 <!-- The visuals palette is the Visuals region: the shell draws it beside the grid, or as a sheet on a narrow window, where

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { GesturePhase } from "@/models/whiteboard/GesturePhase";
-import { SnapAxis } from "@/models/whiteboard/SnapAxis";
-import { WHITEBOARD_OVERLAY_STROKE_WIDTH } from "@/services/whiteboard/overlay/constants";
-import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
+import { GesturePhase } from "#src/models/whiteboard/GesturePhase";
+import { SnapAxis } from "#src/models/whiteboard/SnapAxis";
+import { WHITEBOARD_OVERLAY_STROKE_WIDTH } from "#src/services/whiteboard/overlay/constants";
+import { useWhiteboardEditorStore } from "#src/store/resource/whiteboard/editor";
 
 // The guide lines of the alignments a move holds, drawn in the document's coordinates over the elements. The gesture holds them while the drag runs,
 // So they clear with its release. An X guide is a vertical line at its position, and a Y guide a horizontal line at its position

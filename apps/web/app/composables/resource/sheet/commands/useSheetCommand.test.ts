@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
-import { setupCommandTest } from "@/composables/resource/sheet/commands/setupCommandTest.test";
-import { setupWithDataSource } from "@/composables/resource/sheet/commands/setupWithDataSource.test";
-import { useSheetStore } from "@/store/resource/sheet";
-import { useSheetHistoryStore } from "@/store/resource/sheet/history";
+import { setupCommandTest } from "#src/composables/resource/sheet/commands/setupCommandTest.test";
+import { setupWithDataSource } from "#src/composables/resource/sheet/commands/setupWithDataSource.test";
+import { useSheetHistoryStore } from "#src/store/resource/sheet/history/index";
+import { useSheetStore } from "#src/store/resource/sheet/index";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(useSheetCommand, () => {

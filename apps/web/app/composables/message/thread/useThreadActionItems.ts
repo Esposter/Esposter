@@ -1,10 +1,10 @@
 // @unocss-include
-import type { Item } from "@/models/shared/Item";
+import type { Item } from "#src/models/shared/Item";
 
-import { useCallStore } from "@/store/message/room/call";
-import { useThreadStore } from "@/store/message/thread";
-import { useThreadFollowStore } from "@/store/message/threadFollow";
-import { useMessageLayoutStore } from "@/store/message/ui/layout";
+import { useCallStore } from "#src/store/message/room/call/index";
+import { useThreadStore } from "#src/store/message/thread";
+import { useThreadFollowStore } from "#src/store/message/threadFollow";
+import { useMessageLayoutStore } from "#src/store/message/ui/layout";
 import { ID_SEPARATOR, RoutePath } from "@esposter/shared";
 
 // The thread pane's overflow menu. Everything here acts on the thread the pane is showing, so nothing is

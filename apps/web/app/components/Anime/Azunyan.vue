@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { AzunyanExpressions } from "@/services/anime/AzunyanExpressions";
+import { AzunyanExpressions } from "#src/services/anime/AzunyanExpressions";
 </script>
 
 <template>

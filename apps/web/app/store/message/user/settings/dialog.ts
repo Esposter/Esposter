@@ -1,4 +1,4 @@
-import { UserSettingsType } from "@/models/message/user/UserSettingsType";
+import { UserSettingsType } from "#src/models/message/user/UserSettingsType";
 
 export const useUserSettingsDialogStore = defineStore("message/user/settings/dialog", () => {
   const isVisible = ref(false);

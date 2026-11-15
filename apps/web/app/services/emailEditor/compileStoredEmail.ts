@@ -1,4 +1,4 @@
-import { absolutizeResourceAssetUrls } from "@/services/resource/absolutizeResourceAssetUrls";
+import { absolutizeResourceAssetUrls } from "#src/services/resource/absolutizeResourceAssetUrls";
 
 // The personalised export compiles the stored working copy on the server, so it runs with the editor closed. The command
 // Bar and the truncation confirm share this step and `exportPersonalizedRows`: the email is compiled once, then each row

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { DialogMessage } from "@/models/dungeons/UI/dialog/DialogMessage";
+import type { DialogMessage } from "#src/models/dungeons/UI/dialog/DialogMessage";
 
-import { DialogTextStyle } from "@/assets/dungeons/styles/DialogTextStyle";
-import { DIALOG_WIDTH } from "@/services/dungeons/scene/world/constants";
-import { WORD_PADDING } from "@/services/dungeons/UI/constants";
+import { DialogTextStyle } from "#src/assets/dungeons/styles/DialogTextStyle";
+import { DIALOG_WIDTH } from "#src/services/dungeons/scene/world/constants";
+import { WORD_PADDING } from "#src/services/dungeons/UI/constants";
 import { Text } from "vue-phaserjs";
 
 interface Props {

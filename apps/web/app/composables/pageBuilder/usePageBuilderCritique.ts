@@ -1,12 +1,12 @@
 import { SurveyPublishState } from "#shared/models/pageBuilder/SurveyPublishState";
 import { checkHasSurveyInvite } from "#shared/services/pageBuilder/critique/checkHasSurveyInvite";
 import { critiqueWebpage } from "#shared/services/pageBuilder/critique/critiqueWebpage";
-import { getCritiqueEditorFinding } from "@/services/pageBuilder/getCritiqueEditorFinding";
-import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
-import { getNodeTitle } from "@/services/pageBuilder/getNodeTitle";
-import { webpageKind } from "@/services/pageBuilder/webpageKind";
-import { readBrowserColor } from "@/services/shared/readBrowserColor";
-import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
+import { getCritiqueEditorFinding } from "#src/services/pageBuilder/getCritiqueEditorFinding";
+import { getNodePointer } from "#src/services/pageBuilder/getNodePointer";
+import { getNodeTitle } from "#src/services/pageBuilder/getNodeTitle";
+import { webpageKind } from "#src/services/pageBuilder/webpageKind";
+import { readBrowserColor } from "#src/services/shared/readBrowserColor";
+import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
 import { MAX_READ_LIMIT, parseJsonPointer } from "@esposter/shared";
 
 // The critique of the open webpage, unsaved edits included, as the findings the problems surface lists. A survey is published

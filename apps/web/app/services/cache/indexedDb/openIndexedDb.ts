@@ -1,10 +1,10 @@
-import type { IndexedDbDatabaseSchema } from "@/models/cache/indexedDb/IndexedDbDatabaseSchema";
+import type { IndexedDbDatabaseSchema } from "#src/models/cache/indexedDb/IndexedDbDatabaseSchema";
 import type { Database } from "@esposter/shared";
 
-import { RESET_DATABASE_TIMEOUT_MS } from "@/services/cache/constants";
-import { MemberIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MemberIndexedDbStoreConfiguration";
-import { MessageIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MessageIndexedDbStoreConfiguration";
-import { RoomIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/RoomIndexedDbStoreConfiguration";
+import { RESET_DATABASE_TIMEOUT_MS } from "#src/services/cache/constants";
+import { MemberIndexedDbStoreConfiguration } from "#src/services/cache/indexedDb/configurations/MemberIndexedDbStoreConfiguration";
+import { MessageIndexedDbStoreConfiguration } from "#src/services/cache/indexedDb/configurations/MessageIndexedDbStoreConfiguration";
+import { RoomIndexedDbStoreConfiguration } from "#src/services/cache/indexedDb/configurations/RoomIndexedDbStoreConfiguration";
 import {
   getResultAsync,
   getSynchronizedFunction,

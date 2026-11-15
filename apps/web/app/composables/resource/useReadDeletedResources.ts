@@ -1,4 +1,4 @@
-import { getResourceBinSortName } from "@/services/resource/list/getResourceBinSortName";
+import { getResourceBinSortName } from "#src/services/resource/list/getResourceBinSortName";
 
 // The caller's own Recycle bin: soft-deleted resources awaiting restore or purge
 export const useReadDeletedResources = () => {

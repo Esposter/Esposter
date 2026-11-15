@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
-import UiCheckbox from "@/components/Ui/Checkbox.vue";
-import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
-import { UiStyles } from "@/models/ui/UiStyle";
+import UiCheckbox from "#src/components/Ui/Checkbox.vue";
+import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
+import { UiStyles } from "#src/models/ui/UiStyle";
 import { mount } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 

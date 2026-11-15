@@ -1,4 +1,4 @@
-import { createProgramInviteFiles } from "@/services/resource/program/createProgramInviteFiles";
+import { createProgramInviteFiles } from "#src/services/resource/program/createProgramInviteFiles";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 

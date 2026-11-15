@@ -1,10 +1,10 @@
-import type { AInputResolver } from "@/models/resolvers/dungeons/AInputResolver";
+import type { AInputResolver } from "#src/models/resolvers/dungeons/AInputResolver";
 
-import { MenuInputResolver } from "@/models/resolvers/dungeons/menu/MenuInputResolver";
-import { ConfirmationMenuInputResolver } from "@/models/resolvers/dungeons/monsterParty/ConfirmationMenuInputResolver";
-import { MoveInputResolver } from "@/models/resolvers/dungeons/monsterParty/MoveInputResolver";
-import { SceneInputResolver } from "@/models/resolvers/dungeons/monsterParty/SceneInputResolver";
-import { useMonsterPartyMenuStore } from "@/store/dungeons/monsterParty/menu";
+import { MenuInputResolver } from "#src/models/resolvers/dungeons/menu/MenuInputResolver";
+import { ConfirmationMenuInputResolver } from "#src/models/resolvers/dungeons/monsterParty/ConfirmationMenuInputResolver";
+import { MoveInputResolver } from "#src/models/resolvers/dungeons/monsterParty/MoveInputResolver";
+import { SceneInputResolver } from "#src/models/resolvers/dungeons/monsterParty/SceneInputResolver";
+import { useMonsterPartyMenuStore } from "#src/store/dungeons/monsterParty/menu";
 
 export const getActiveInputResolvers = (): AInputResolver[] => [
   new ConfirmationMenuInputResolver(),

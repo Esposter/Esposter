@@ -1,9 +1,9 @@
 // @vitest-environment happy-dom
-import UiChip from "@/components/Ui/Chip.vue";
-import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { UiStyles } from "@/models/ui/UiStyle";
-import { UiToken } from "@/models/ui/UiToken";
+import UiChip from "#src/components/Ui/Chip.vue";
+import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { UiStyles } from "#src/models/ui/UiStyle";
+import { UiToken } from "#src/models/ui/UiToken";
 import { mount } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 

@@ -1,4 +1,4 @@
-import { pickFileInput } from "@/services/file/pickFileInput";
+import { pickFileInput } from "#src/services/file/pickFileInput";
 
 // The File System Access picker where the browser has it, and the hidden file input where it does not
 export const showOpenFilePicker = async (options?: OpenFilePickerOptions): Promise<OpenFilePickerHandle[]> => {

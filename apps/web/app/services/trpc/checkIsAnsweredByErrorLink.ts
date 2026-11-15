@@ -1,4 +1,4 @@
-import { ANSWERED_ERROR_CODES } from "@/services/trpc/constants";
+import { ANSWERED_ERROR_CODES } from "#src/services/trpc/constants";
 import { TRPCClientError } from "@trpc/client";
 
 export const checkIsAnsweredByErrorLink = (error: unknown) =>

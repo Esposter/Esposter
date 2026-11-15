@@ -1,7 +1,7 @@
 import type { SheetSettings } from "#shared/models/resource/sheet/SheetSettings";
-import type { DataSourceConfiguration } from "@/models/resource/sheet/dataSource/DataSourceConfiguration";
+import type { DataSourceConfiguration } from "#src/models/resource/sheet/dataSource/DataSourceConfiguration";
 
-import { DataSourceConfigurationMap } from "@/services/resource/sheet/dataSource/DataSourceConfigurationMap";
+import { DataSourceConfigurationMap } from "#src/services/resource/sheet/dataSource/DataSourceConfigurationMap";
 
 export const useDataSourceConfiguration = <TSheetSettings extends SheetSettings>(
   settings: MaybeRefOrGetter<TSheetSettings>,

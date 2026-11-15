@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
-import { UiDialogSize } from "@/models/ui/UiDialogSize";
-import { OFFLINE_CAP_MS } from "@/services/clicker/constants";
-import { formatNumberLong } from "@/services/clicker/formatNumberLong";
-import { useClickerStore } from "@/store/clicker";
-import { useOfflineProgressStore } from "@/store/clicker/offlineProgress";
-import { formatDuration } from "@/util/date/formatDuration";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
+import { UiDialogSize } from "#src/models/ui/UiDialogSize";
+import { OFFLINE_CAP_MS } from "#src/services/clicker/constants";
+import { formatNumberLong } from "#src/services/clicker/formatNumberLong";
+import { useClickerStore } from "#src/store/clicker/index";
+import { useOfflineProgressStore } from "#src/store/clicker/offlineProgress";
+import { formatDuration } from "#src/util/date/formatDuration";
 
 const clickerStore = useClickerStore();
 const { clickerItemProperties } = storeToRefs(clickerStore);

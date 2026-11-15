@@ -3,7 +3,7 @@ import { Visual } from "#shared/models/dashboard/data/Visual";
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
 import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregationType";
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
-import { setVisualType } from "@/services/dashboard/setVisualType";
+import { setVisualType } from "#src/services/dashboard/setVisualType";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 

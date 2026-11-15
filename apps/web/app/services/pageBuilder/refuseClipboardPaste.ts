@@ -1,4 +1,4 @@
-import { PageBuilderEditor } from "@/models/pageBuilder/PageBuilderEditor";
+import { PageBuilderEditor } from "#src/models/pageBuilder/PageBuilderEditor";
 
 // The message that refuses a paste, or none when the paste is allowed. A webpage node never goes into an email
 export const refuseClipboardPaste = ({ source, target }: { source: PageBuilderEditor; target: PageBuilderEditor }) =>

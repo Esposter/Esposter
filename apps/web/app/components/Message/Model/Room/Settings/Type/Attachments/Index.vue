@@ -2,8 +2,8 @@
 import type { RoomInMessage } from "@esposter/db-schema";
 
 import { MAX_FILE_REQUEST_SIZE, MEGABYTE } from "#shared/services/app/constants";
-import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
-import { UiRules } from "@/services/ui/UiRules";
+import { UiTextFieldType } from "#src/models/ui/UiTextFieldType";
+import { UiRules } from "#src/services/ui/UiRules";
 import { MimeCategories } from "@esposter/db-schema";
 
 interface Props {

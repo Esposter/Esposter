@@ -1,6 +1,6 @@
 <script setup lang="ts" generic="TModel extends Date | undefined">
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiTextFieldType } from "#src/models/ui/UiTextFieldType";
 import { getZonedDateTime } from "@esposter/shared";
 
 interface Props {

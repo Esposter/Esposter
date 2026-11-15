@@ -2,12 +2,12 @@
 import type { VueWrapper } from "@vue/test-utils";
 import type { SurveyPanelDynamicNode, SurveyPanelNode, SurveyTemplateNode } from "vue-survey-engine-headless";
 
-import Runner from "@/components/Resource/Survey/Runner.vue";
-import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
-import { UiStyles } from "@/models/ui/UiStyle";
-import { createSurveyTestDocument } from "@/services/survey/createSurveyTestDocument.test";
-import { createSurveyTestPage } from "@/services/survey/createSurveyTestPage.test";
-import { createSurveyTestQuestion } from "@/services/survey/createSurveyTestQuestion.test";
+import Runner from "#src/components/Resource/Survey/Runner.vue";
+import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
+import { UiStyles } from "#src/models/ui/UiStyle";
+import { createSurveyTestDocument } from "#src/services/survey/createSurveyTestDocument.test";
+import { createSurveyTestPage } from "#src/services/survey/createSurveyTestPage.test";
+import { createSurveyTestQuestion } from "#src/services/survey/createSurveyTestQuestion.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
@@ -43,8 +43,8 @@ describe("runner", () => {
   // A field loads on demand through a dynamic import, which is module I/O rather than a microtask
   // So the text field's and the dynamic panel's modules are awaited once up front, and each mount then resolves them within its flush
   beforeAll(async () => {
-    await import("@/components/Resource/Survey/Field/PanelDynamic.vue");
-    await import("@/components/Resource/Survey/Field/Text.vue");
+    await import("#src/components/Resource/Survey/Field/PanelDynamic.vue");
+    await import("#src/components/Resource/Survey/Field/Text.vue");
   });
 
   describe.each(UiStyles)("%s", (uiStyle) => {

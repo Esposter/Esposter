@@ -1,10 +1,10 @@
-import type { Effect } from "@/models/dungeons/npc/effect/Effect";
-import type { Npc } from "@/models/dungeons/scene/world/Npc";
+import type { Effect } from "#src/models/dungeons/npc/effect/Effect";
+import type { Npc } from "#src/models/dungeons/scene/world/Npc";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { applyNpcEffect } from "@/services/dungeons/scene/world/applyNpcEffect";
-import { getEffectCompleteEventKey } from "@/services/dungeons/scene/world/getEffectCompleteEventKey";
-import { phaserEventEmitter } from "@/services/phaser/phaserEventEmitter";
+import { applyNpcEffect } from "#src/services/dungeons/scene/world/applyNpcEffect";
+import { getEffectCompleteEventKey } from "#src/services/dungeons/scene/world/getEffectCompleteEventKey";
+import { phaserEventEmitter } from "#src/services/phaser/phaserEventEmitter";
 import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 
 export const applyNpcEffectsRecursive = async (scene: SceneWithPlugins, npc: Npc, effects: Effect[]) => {

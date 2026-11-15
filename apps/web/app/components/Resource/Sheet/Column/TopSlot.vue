@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useColumnStore } from "@/store/resource/sheet/column";
-import { useColumnDialogStore } from "@/store/resource/sheet/columnDialog";
+import { useColumnStore } from "#src/store/resource/sheet/column";
+import { useColumnDialogStore } from "#src/store/resource/sheet/columnDialog";
 
 const columnStore = useColumnStore();
 const { selectedColumnIds } = storeToRefs(columnStore);

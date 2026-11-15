@@ -3,9 +3,9 @@ import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument
 import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { TEST_ID, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
-import { TEST_SECTION_ID, TEST_WEBPAGE } from "@/services/pageBuilder/constants.test";
-import { getInsertTarget } from "@/services/pageBuilder/getInsertTarget";
-import { webpageKind } from "@/services/pageBuilder/webpageKind";
+import { TEST_SECTION_ID, TEST_WEBPAGE } from "#src/services/pageBuilder/constants.test";
+import { getInsertTarget } from "#src/services/pageBuilder/getInsertTarget";
+import { webpageKind } from "#src/services/pageBuilder/webpageKind";
 import { describe, expect, test } from "vitest";
 
 describe(getInsertTarget, () => {

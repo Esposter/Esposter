@@ -1,9 +1,9 @@
 // @vitest-environment nuxt
-import type { PostCounts } from "@/services/post/postCountHooks";
+import type { PostCounts } from "#src/services/post/postCountHooks";
 
 import { MAX_POST_COUNTS_PER_READ } from "#shared/models/db/post/ReadPostCountsInput";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { usePostCountStore } from "@/store/post/count";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { usePostCountStore } from "#src/store/post/count";
 import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 

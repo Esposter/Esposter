@@ -1,9 +1,9 @@
-import type { TRPCRouter } from "#server/trpc/routers";
+import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { R2Bucket } from "@cloudflare/workers-types";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { createCallerFactory } from "#server/trpc";
 import { createMockContext } from "#server/trpc/context.test";
+import { createCallerFactory } from "#server/trpc/index";
 import { dungeonsRouter } from "#server/trpc/routers/dungeons";
 import { Dungeons } from "#shared/models/dungeons/data/Dungeons";
 import { compressZstd, deleteDirectory, listBlobNames } from "@esposter/db";

@@ -1,4 +1,4 @@
-import { getNextDirection } from "@/services/dungeons/UI/input/getNextDirection";
+import { getNextDirection } from "#src/services/dungeons/UI/input/getNextDirection";
 import { Direction } from "grid-engine";
 import { describe, expect, test } from "vitest";
 

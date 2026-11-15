@@ -1,7 +1,7 @@
-import type { EditorType } from "@/models/editor/EditorType";
+import type { EditorType } from "#src/models/editor/EditorType";
 import type { ReaderState } from "vue-editor-layout-headless";
 
-import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
+import { LocalStorageKey } from "#src/services/shared/LocalStorageKey";
 
 export const useEditorReaderStateStore = defineStore("editor/readerState", () => {
   // Every editor type's reader state, kept with the browser so an editor reopens with the sizes and open regions the reader

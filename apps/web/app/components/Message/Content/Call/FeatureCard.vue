@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { CallFeature } from "@/models/message/room/call/CallFeature";
+import type { CallFeature } from "#src/models/message/room/call/CallFeature";
 
 interface Props extends CallFeature {}
 

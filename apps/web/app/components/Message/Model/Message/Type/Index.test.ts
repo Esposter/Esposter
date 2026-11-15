@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
-import MessageModelMessageTypeIndex from "@/components/Message/Model/Message/Type/Index.vue";
-import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
-import { createUser } from "@/services/message/user/createUser.test";
+import MessageModelMessageTypeIndex from "#src/components/Message/Model/Message/Type/Index.vue";
+import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
+import { createUser } from "#src/services/message/user/createUser.test";
 import { MessageType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { v7 } from "uuid";

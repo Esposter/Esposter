@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
-import { useSaveToLocalStorage } from "@/composables/shared/useSaveToLocalStorage";
-import { readGuestSave } from "@/services/genshin/readGuestSave";
-import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
+import { useSaveToLocalStorage } from "#src/composables/shared/useSaveToLocalStorage";
+import { readGuestSave } from "#src/services/genshin/readGuestSave";
+import { LocalStorageKey } from "#src/services/shared/LocalStorageKey";
 import { EMPTY_GENSHIN_SAVE, genshinSaveSchema } from "genshin-world/save";
 import { afterEach, describe, expect, test } from "vitest";
 

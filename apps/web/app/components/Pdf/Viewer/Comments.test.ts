@@ -1,11 +1,11 @@
 // @vitest-environment happy-dom
 import type { PdfComment } from "vue-pdfjs-headless";
 
-import PdfViewerComments from "@/components/Pdf/Viewer/Comments.vue";
-import { createPdfAnnotationsState } from "@/components/Pdf/Viewer/createPdfAnnotationsState.test";
-import { createPdfViewerState } from "@/components/Pdf/Viewer/createPdfViewerState.test";
-import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
-import { UiStyles } from "@/models/ui/UiStyle";
+import PdfViewerComments from "#src/components/Pdf/Viewer/Comments.vue";
+import { createPdfAnnotationsState } from "#src/components/Pdf/Viewer/createPdfAnnotationsState.test";
+import { createPdfViewerState } from "#src/components/Pdf/Viewer/createPdfViewerState.test";
+import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
+import { UiStyles } from "#src/models/ui/UiStyle";
 import { mount } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 

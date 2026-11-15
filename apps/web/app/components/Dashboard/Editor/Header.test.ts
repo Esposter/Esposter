@@ -2,9 +2,9 @@
 import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
 import { Visual } from "#shared/models/dashboard/data/Visual";
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
-import DashboardEditorHeader from "@/components/Dashboard/Editor/Header.vue";
-import { useDashboardStore } from "@/store/dashboard";
-import { useVisualStore } from "@/store/dashboard/visual";
+import DashboardEditorHeader from "#src/components/Dashboard/Editor/Header.vue";
+import { useDashboardStore } from "#src/store/dashboard/index";
+import { useVisualStore } from "#src/store/dashboard/visual";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 

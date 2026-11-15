@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-import { checkIsEditableTarget } from "@/util/dom/checkIsEditableTarget";
+import { checkIsEditableTarget } from "#src/util/dom/checkIsEditableTarget";
 import { describe, expect, onTestFinished, test } from "vitest";
 
 describe(checkIsEditableTarget, () => {

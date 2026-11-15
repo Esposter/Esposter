@@ -1,8 +1,8 @@
 import type { RoomEvent, Topic, UserClientFrame } from "@esposter/db-schema";
 import type { z } from "zod";
 
-import { getDeviceId } from "@/services/realtime/getDeviceId";
-import { openRealtimeSocket } from "@/services/realtime/openRealtimeSocket";
+import { getDeviceId } from "#src/services/realtime/getDeviceId";
+import { openRealtimeSocket } from "#src/services/realtime/openRealtimeSocket";
 import { callEventSchema, MAX_FRAME_TOPICS, roomEventSchema, userEventSchema } from "@esposter/db-schema";
 import { chunk, getOrCreate, jsonDateParse } from "@esposter/shared";
 

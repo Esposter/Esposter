@@ -1,4 +1,4 @@
-import { checkIsSafeViewPayload } from "@/services/dashboard/chart/checkIsSafeViewPayload";
+import { checkIsSafeViewPayload } from "#src/services/dashboard/chart/checkIsSafeViewPayload";
 import { describe, expect, test } from "vitest";
 
 describe(checkIsSafeViewPayload, () => {

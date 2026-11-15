@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { UserSettingsInMessage } from "@esposter/db-schema";
 
-import { getInputSensitivityFraction } from "@/services/message/settings/getInputSensitivityFraction";
-import { useUserSettingsStore } from "@/store/message/user/settings";
+import { getInputSensitivityFraction } from "#src/services/message/settings/getInputSensitivityFraction";
+import { useUserSettingsStore } from "#src/store/message/user/settings/index";
 import { MAX_INPUT_SENSITIVITY_DECIBELS, MIN_INPUT_SENSITIVITY_DECIBELS } from "@esposter/db-schema";
 
 interface Props {

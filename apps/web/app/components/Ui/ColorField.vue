@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { readBrowserColor } from "@/services/shared/readBrowserColor";
-import { DEFAULT_PICKER_COLOR, HEX_COLOR_REGEX } from "@/services/ui/constants";
-import { getContrastingColor } from "@/services/ui/getContrastingColor";
-import { getHexColor } from "@/services/ui/getHexColor";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { readBrowserColor } from "#src/services/shared/readBrowserColor";
+import { DEFAULT_PICKER_COLOR, HEX_COLOR_REGEX } from "#src/services/ui/constants";
+import { getContrastingColor } from "#src/services/ui/getContrastingColor";
+import { getHexColor } from "#src/services/ui/getHexColor";
 
 interface ColorSwatch {
   // The custom property's name without its dashes, which a picked swatch stores as a reference to it

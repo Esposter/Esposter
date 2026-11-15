@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
-import { createUser } from "@/services/message/user/createUser.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useBlockStore } from "@/store/message/user/block";
-import { useFriendStore } from "@/store/message/user/friend";
+import { createUser } from "#src/services/message/user/createUser.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useBlockStore } from "#src/store/message/user/block";
+import { useFriendStore } from "#src/store/message/user/friend";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";

@@ -1,4 +1,4 @@
-import type { SceneEventKey } from "@/models/dungeons/scene/SceneEventKey";
+import type { SceneEventKey } from "#src/models/dungeons/scene/SceneEventKey";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { ID_SEPARATOR } from "@esposter/shared";

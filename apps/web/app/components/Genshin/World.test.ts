@@ -1,9 +1,9 @@
 // @vitest-environment nuxt
-import GenshinDevConsole from "@/components/Genshin/Dev/Console/Index.vue";
-import GenshinDev from "@/components/Genshin/Dev/Index.vue";
-import GenshinDevPanel from "@/components/Genshin/Dev/Panel/Index.vue";
-import GenshinWorld from "@/components/Genshin/World.vue";
-import { useGenshinDevSaveCommands } from "@/composables/genshin/useGenshinDevSaveCommands";
+import GenshinDevConsole from "#src/components/Genshin/Dev/Console/Index.vue";
+import GenshinDev from "#src/components/Genshin/Dev/Index.vue";
+import GenshinDevPanel from "#src/components/Genshin/Dev/Panel/Index.vue";
+import GenshinWorld from "#src/components/Genshin/World.vue";
+import { useGenshinDevSaveCommands } from "#src/composables/genshin/useGenshinDevSaveCommands";
 import { noop } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
@@ -11,7 +11,7 @@ import { ENGLISH_GAME_TEXT, GameLanguage } from "genshin-text";
 import { EMPTY_GENSHIN_SAVE } from "genshin-world/save";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("@/composables/genshin/useGenshinDevSaveCommands"), () => ({
+vi.mock(import("#src/composables/genshin/useGenshinDevSaveCommands"), () => ({
   useGenshinDevSaveCommands: vi.fn<typeof useGenshinDevSaveCommands>(),
 }));
 

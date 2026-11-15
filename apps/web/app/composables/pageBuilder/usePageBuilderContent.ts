@@ -1,4 +1,4 @@
-import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
+import type { PageBuilderKind } from "#src/models/pageBuilder/PageBuilderKind";
 import type {
   BlockDocument,
   BlockNode,
@@ -8,10 +8,10 @@ import type {
 } from "vue-block-editor-headless";
 import type { z } from "zod";
 
-import { ROOT_INTERACTION_ID, ROOT_POINTER } from "@/services/pageBuilder/constants";
-import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
-import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
-import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
+import { ROOT_INTERACTION_ID, ROOT_POINTER } from "#src/services/pageBuilder/constants";
+import { getNodePointer } from "#src/services/pageBuilder/getNodePointer";
+import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
+import { usePageBuilderHistoryStore } from "#src/store/pageBuilder/history";
 import { checkIsDeepEqual, JsonPatchOperationType, noop } from "@esposter/shared";
 import { getBlockNode, getBlockTypeDefinition } from "vue-block-editor-headless";
 

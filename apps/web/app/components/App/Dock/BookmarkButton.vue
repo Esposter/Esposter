@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { RECENT_PAGE_EXCLUDED_PATHS } from "@/services/app/constants";
-import { getPageLabel } from "@/services/app/getPageLabel";
-import { useBookmarkStore } from "@/store/bookmark";
-import { usePageMarkStore } from "@/store/pageMark";
-import { useRecentPageStore } from "@/store/recentPage";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { RECENT_PAGE_EXCLUDED_PATHS } from "#src/services/app/constants";
+import { getPageLabel } from "#src/services/app/getPageLabel";
+import { useBookmarkStore } from "#src/store/bookmark";
+import { usePageMarkStore } from "#src/store/pageMark";
+import { useRecentPageStore } from "#src/store/recentPage";
 
 const { data: session } = await useAuthSession();
 const { currentRoute } = useRouter();

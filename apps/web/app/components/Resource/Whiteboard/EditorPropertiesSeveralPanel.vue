@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { getMixedValue } from "@/services/editor/getMixedValue";
-import { getSelectedElements } from "@/services/whiteboard/getSelectedElements";
-import { useWhiteboardStore } from "@/store/resource/whiteboard";
-import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
+import { getMixedValue } from "#src/services/editor/getMixedValue";
+import { getSelectedElements } from "#src/services/whiteboard/getSelectedElements";
+import { useWhiteboardEditorStore } from "#src/store/resource/whiteboard/editor";
+import { useWhiteboardStore } from "#src/store/resource/whiteboard/index";
 import { PositionedElementType, updatePositionedElementProperty } from "vue-block-editor-headless";
 
 // The panel a selection of several opens: the fill the shapes and sticky notes in it share, or Mixed where they differ, the align, distribute and

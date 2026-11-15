@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Promisable } from "type-fest";
 
-import { useUserSessionDialogStore } from "@/store/user/sessionDialog";
+import { useUserSessionDialogStore } from "#src/store/user/sessionDialog";
 
 interface Props {
   deviceLabel: string;

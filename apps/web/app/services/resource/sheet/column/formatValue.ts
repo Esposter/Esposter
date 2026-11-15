@@ -1,14 +1,14 @@
 import type { BooleanFormat } from "#shared/models/resource/sheet/column/BooleanFormat";
 import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnValue";
 import type { NumberFormat } from "#shared/models/resource/sheet/column/NumberFormat";
-import type { ColumnFormat } from "@/models/resource/sheet/column/ColumnFormat";
+import type { ColumnFormat } from "#src/models/resource/sheet/column/ColumnFormat";
 
 import { BooleanFormats } from "#shared/models/resource/sheet/column/BooleanFormat";
 import { NumberFormats } from "#shared/models/resource/sheet/column/NumberFormat";
 import { formatDate } from "#shared/util/date/formatDate";
 import { parseLooseDate } from "#shared/util/date/parseLooseDate";
-import { formatBoolean } from "@/services/resource/sheet/column/formatBoolean";
-import { formatNumber } from "@/services/resource/sheet/column/formatNumber";
+import { formatBoolean } from "#src/services/resource/sheet/column/formatBoolean";
+import { formatNumber } from "#src/services/resource/sheet/column/formatNumber";
 
 // Each set is typed to its own enum, so a column's format can only be asked about through the wider view of it
 const BOOLEAN_FORMAT_SET: ReadonlySet<ColumnFormat> = BooleanFormats;

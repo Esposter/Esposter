@@ -1,7 +1,7 @@
-import type { AchievementStatus } from "@/models/achievement/AchievementStatus";
-import type { UiMenuItem } from "@/models/ui/UiMenuItem";
+import type { AchievementStatus } from "#src/models/achievement/AchievementStatus";
+import type { UiMenuItem } from "#src/models/ui/UiMenuItem";
 
-import { AchievementStatuses } from "@/models/achievement/AchievementStatus";
+import { AchievementStatuses } from "#src/models/achievement/AchievementStatus";
 
 export const AchievementStatusItems: UiMenuItem<AchievementStatus>[] = Array.from(AchievementStatuses, (status) => ({
   title: status,

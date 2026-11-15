@@ -1,9 +1,9 @@
-import type { IndexedDbDatabaseSchema } from "@/models/cache/indexedDb/IndexedDbDatabaseSchema";
-import type { IndexedDbStoreConfiguration } from "@/models/cache/indexedDb/IndexedDbStoreConfiguration";
-import type { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStoreName";
+import type { IndexedDbDatabaseSchema } from "#src/models/cache/indexedDb/IndexedDbDatabaseSchema";
+import type { IndexedDbStoreConfiguration } from "#src/models/cache/indexedDb/IndexedDbStoreConfiguration";
+import type { IndexedDbStoreName } from "#src/models/cache/indexedDb/IndexedDbStoreName";
 import type { DatabaseIndexKey, DatabaseIndexName } from "@esposter/shared";
 
-import { openIndexedDb } from "@/services/cache/indexedDb/openIndexedDb";
+import { openIndexedDb } from "#src/services/cache/indexedDb/openIndexedDb";
 
 // An empty partition and an unreadable one are different facts, so a refused read is raised rather than
 // Answered with an empty list

@@ -1,6 +1,6 @@
-import type { RecentPage } from "@/models/app/RecentPage";
+import type { RecentPage } from "#src/models/app/RecentPage";
 
-import { FRECENCY_BUCKETS, FRECENCY_OLDEST_WEIGHT } from "@/services/app/constants";
+import { FRECENCY_BUCKETS, FRECENCY_OLDEST_WEIGHT } from "#src/services/app/constants";
 
 export const getFrecency = ({ lastVisitedAt, visitCount }: RecentPage, now: number) =>
   visitCount *

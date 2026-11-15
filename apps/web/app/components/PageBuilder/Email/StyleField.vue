@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { EmailStyleField } from "@/models/pageBuilder/EmailStyleField";
+import type { EmailStyleField } from "#src/models/pageBuilder/EmailStyleField";
 
 import { MjmlAttributeKind } from "mjml-blocks";
 

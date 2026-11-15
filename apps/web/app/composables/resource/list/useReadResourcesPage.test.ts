@@ -1,10 +1,10 @@
 // @vitest-environment nuxt
 import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
 import type { ResourceListPage } from "#shared/models/resource/ResourceListPage";
-import type { ReadResourcesOptions } from "@/models/resource/list/ReadResourcesOptions";
+import type { ReadResourcesOptions } from "#src/models/resource/list/ReadResourcesOptions";
 
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
-import { useReadResourcesPage } from "@/composables/resource/list/useReadResourcesPage";
+import { useReadResourcesPage } from "#src/composables/resource/list/useReadResourcesPage";
 import { createEmptyPage, SortOrder } from "@esposter/db-schema";
 import { describe, expect, test, vi } from "vitest";
 

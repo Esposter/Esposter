@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useInputStore } from "@/store/message/input";
-import { useThreadStore } from "@/store/message/thread";
+import { useInputStore } from "#src/store/message/input/index";
+import { useThreadStore } from "#src/store/message/thread";
 
 const threadStore = useThreadStore();
 const { activeRoomId, activeThreadRootId } = storeToRefs(threadStore);

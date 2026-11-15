@@ -1,6 +1,6 @@
-import type { OverlayBox } from "@/models/pageBuilder/OverlayBox";
+import type { OverlayBox } from "#src/models/pageBuilder/OverlayBox";
 
-import { checkIsSameLine } from "@/services/pageBuilder/checkIsSameLine";
+import { checkIsSameLine } from "#src/services/pageBuilder/checkIsSameLine";
 
 // Along a row that wraps, the pointer's line is the first child whose bottom the pointer has not passed.
 // The drop lands before the first child on that line whose midpoint the pointer has not crossed,

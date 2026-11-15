@@ -1,6 +1,6 @@
 import type { SurveyAnswerValue } from "vue-survey-engine-headless";
 
-import { useSurveyRecordAnswer } from "@/composables/survey/useSurveyRecordAnswer";
+import { useSurveyRecordAnswer } from "#src/composables/survey/useSurveyRecordAnswer";
 import { describe, expect, test } from "vitest";
 
 describe(useSurveyRecordAnswer, () => {

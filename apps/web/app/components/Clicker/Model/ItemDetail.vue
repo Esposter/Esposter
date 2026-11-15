@@ -4,9 +4,9 @@ import type { ItemType } from "#shared/models/clicker/data/ItemType";
 import type { Upgrade } from "#shared/models/clicker/data/upgrade/Upgrade";
 
 import { Target } from "#shared/models/clicker/data/Target";
-import { formatNumberLong } from "@/services/clicker/formatNumberLong";
-import { MenuIconMap } from "@/services/clicker/icon/MenuIconMap";
-import { UpgradeIconMap } from "@/services/clicker/icon/UpgradeIconMap";
+import { formatNumberLong } from "#src/services/clicker/formatNumberLong";
+import { MenuIconMap } from "#src/services/clicker/icon/MenuIconMap";
+import { UpgradeIconMap } from "#src/services/clicker/icon/UpgradeIconMap";
 import { marked } from "marked";
 
 interface Props

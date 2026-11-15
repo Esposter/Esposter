@@ -1,10 +1,10 @@
-import type { CacheTag } from "@/models/cache/CacheTag";
-import type { MutationOutcome } from "@/models/shared/MutationOutcome";
+import type { CacheTag } from "#src/models/cache/CacheTag";
+import type { MutationOutcome } from "#src/models/shared/MutationOutcome";
 import type { Promisable } from "type-fest";
 
-import { MutationStatus } from "@/models/shared/MutationStatus";
-import { settleOperation } from "@/services/shared/settleOperation";
-import { useCacheStore } from "@/store/cache";
+import { MutationStatus } from "#src/models/shared/MutationStatus";
+import { settleOperation } from "#src/services/shared/settleOperation";
+import { useCacheStore } from "#src/store/cache";
 import { withFinalizerAsync } from "@esposter/shared";
 
 interface MutationOptions<TResult> extends QueryOptions<TResult> {

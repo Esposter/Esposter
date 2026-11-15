@@ -1,9 +1,9 @@
 // @vitest-environment happy-dom
-import UiColorField from "@/components/Ui/ColorField.vue";
-import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { UiStyles } from "@/models/ui/UiStyle";
-import { UiIconMap } from "@/services/ui/UiIconMap";
+import UiColorField from "#src/components/Ui/ColorField.vue";
+import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { UiStyles } from "#src/models/ui/UiStyle";
+import { UiIconMap } from "#src/services/ui/UiIconMap";
 import { flushPromises, mount } from "@vue/test-utils";
 import { afterEach, describe, expect, test, vi } from "vitest";
 

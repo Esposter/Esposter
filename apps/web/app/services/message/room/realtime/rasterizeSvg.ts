@@ -1,5 +1,5 @@
 import { MimeType } from "#shared/models/file/MimeType";
-import { FULL_HD_RESOLUTION } from "@/services/message/room/call/constants";
+import { FULL_HD_RESOLUTION } from "#src/services/message/room/call/constants";
 import { getResultAsync, InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
 
 const rasterizedSvgCache = new Map<string, string>();

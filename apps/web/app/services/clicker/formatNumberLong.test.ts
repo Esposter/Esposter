@@ -1,4 +1,4 @@
-import { formatNumberLong } from "@/services/clicker/formatNumberLong";
+import { formatNumberLong } from "#src/services/clicker/formatNumberLong";
 import { describe, expect, test } from "vitest";
 
 describe(formatNumberLong, () => {

@@ -1,11 +1,11 @@
+import type { LayerData } from "#scripts/tiled/models/LayerData";
 import type { TilemapKey } from "#shared/generated/tiled/propertyTypes/enum/TilemapKey";
-import type { LayerData } from "@@/scripts/tiled/models/LayerData";
 
-import { LAYERS_DIRECTORY } from "@@/scripts/tiled/layers/constants";
-import { createLayerNames } from "@@/scripts/tiled/layers/createLayerNames";
-import { createLayerNamesFile } from "@@/scripts/tiled/layers/createLayerNamesFile";
-import { LayerType } from "@@/scripts/tiled/models/LayerType";
-import { getTilemapDirectory } from "@@/scripts/tiled/util/getTilemapDirectory";
+import { LAYERS_DIRECTORY } from "#scripts/tiled/layers/constants";
+import { createLayerNames } from "#scripts/tiled/layers/createLayerNames";
+import { createLayerNamesFile } from "#scripts/tiled/layers/createLayerNamesFile";
+import { LayerType } from "#scripts/tiled/models/LayerType";
+import { getTilemapDirectory } from "#scripts/tiled/util/getTilemapDirectory";
 
 export const createLayers = async (layersData: LayerData[]) => {
   const tilemapLayerNamesMap = new Map<TilemapKey, string[]>();

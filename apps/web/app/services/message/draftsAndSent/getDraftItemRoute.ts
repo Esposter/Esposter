@@ -1,4 +1,4 @@
-import type { DraftItem } from "@/models/message/draftsAndSent/DraftItem";
+import type { DraftItem } from "#src/models/message/draftsAndSent/DraftItem";
 
 import { RoutePath } from "@esposter/shared";
 

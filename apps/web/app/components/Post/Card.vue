@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { Item } from "@/models/shared/Item";
+import type { Item } from "#src/models/shared/Item";
 import type { PostInPostWithRelations } from "@esposter/db-schema";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { usePostDialogStore } from "@/store/post/dialog";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { usePostDialogStore } from "#src/store/post/dialog";
 import { RoutePath } from "@esposter/shared";
 
 interface Props {

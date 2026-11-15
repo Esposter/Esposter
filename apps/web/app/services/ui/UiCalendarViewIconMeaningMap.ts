@@ -1,5 +1,5 @@
-import { UiCalendarView } from "@/models/ui/UiCalendarView";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiCalendarView } from "#src/models/ui/UiCalendarView";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 // The mark each view's command leads with in the palette and the shortcuts dialog: a day's single column of hours, a
 // Week's columns, a month's grid

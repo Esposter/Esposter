@@ -1,25 +1,25 @@
 <script setup lang="ts">
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
-import type { Item } from "@/models/shared/Item";
+import type { Item } from "#src/models/shared/Item";
 import type { ResourceInResource } from "@esposter/db-schema";
 
 import { ResourceListItemPropertyNames } from "#shared/models/resource/ResourceListItem";
 import { ItemMetadataPropertyNames } from "#shared/models/shared/ItemMetadataPropertyNames";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import {
   RESOURCE_DATE_TIME_ATTRIBUTES,
   RESOURCE_LIST_ITEMS_PER_PAGE,
   RESOURCE_LIST_ITEMS_PER_PAGE_OPTIONS,
   RETENTION_ERROR_PERCENTAGE,
   RETENTION_WARNING_PERCENTAGE,
-} from "@/services/resource/constants";
-import { DeletedResourceHeaders } from "@/services/resource/DeletedResourceHeaders";
-import { getPurgesInText } from "@/services/resource/getPurgesInText";
-import { getRetentionElapsedPercentage } from "@/services/resource/getRetentionElapsedPercentage";
-import { NO_ACTION_ITEMS } from "@/services/shared/constants";
-import { useRecycleBinDialogStore } from "@/store/resource/recycleBinDialog";
+} from "#src/services/resource/constants";
+import { DeletedResourceHeaders } from "#src/services/resource/DeletedResourceHeaders";
+import { getPurgesInText } from "#src/services/resource/getPurgesInText";
+import { getRetentionElapsedPercentage } from "#src/services/resource/getRetentionElapsedPercentage";
+import { NO_ACTION_ITEMS } from "#src/services/shared/constants";
+import { useRecycleBinDialogStore } from "#src/store/resource/recycleBinDialog";
 import { RECYCLE_BIN_RETENTION_DAYS } from "@esposter/db-schema";
 
 const { count, error, isPending, items, readDeletedResources, refresh } = useReadDeletedResources();

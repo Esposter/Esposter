@@ -1,4 +1,4 @@
-import { splitCsvRecords } from "@/services/resource/sheet/csv/splitCsvRecords";
+import { splitCsvRecords } from "#src/services/resource/sheet/csv/splitCsvRecords";
 import { describe, expect, test } from "vitest";
 
 describe(splitCsvRecords, () => {

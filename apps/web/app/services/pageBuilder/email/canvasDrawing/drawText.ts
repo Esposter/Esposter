@@ -1,4 +1,4 @@
-import type { EmailCanvasDrawing } from "@/models/pageBuilder/EmailCanvasDrawing";
+import type { EmailCanvasDrawing } from "#src/models/pageBuilder/EmailCanvasDrawing";
 import type { MjmlNodeType } from "mjml-blocks";
 
 import { renderNoteHtml } from "#shared/services/resource/note/renderNoteHtml";

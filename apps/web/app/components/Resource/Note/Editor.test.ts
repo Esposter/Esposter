@@ -4,9 +4,9 @@ import { EMPTY_NOTE_DOC } from "#shared/services/resource/constants";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { getNoteExtensions } from "#shared/services/resource/note/getNoteExtensions";
-import ResourceNoteEditor from "@/components/Resource/Note/Editor.vue";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useResourceStore } from "@/store/resource";
+import ResourceNoteEditor from "#src/components/Resource/Note/Editor.vue";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useResourceStore } from "#src/store/resource/index";
 import { getResourceFileBlobName, ResourceType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { EditorView } from "@tiptap/pm/view";
@@ -21,7 +21,7 @@ const { uploadResourceFileMock } = vi.hoisted(() => ({
 
 // The upload is covered by useUploadResourceFile's own suite, so it is mocked at its seam here, and the paste reaches it
 // Through the editor's own file handler
-vi.mock(import("@/composables/resource/useUploadResourceFile"), () => ({
+vi.mock(import("#src/composables/resource/useUploadResourceFile"), () => ({
   useUploadResourceFile: () => uploadResourceFileMock,
 }));
 

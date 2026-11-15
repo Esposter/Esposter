@@ -1,15 +1,15 @@
 import type { MessageFilePresignedUrlEntity } from "#shared/models/message/file/MessageFilePresignedUrlEntity";
-import type { ComposerTarget } from "@/models/message/ComposerTarget";
+import type { ComposerTarget } from "#src/models/message/ComposerTarget";
 
 import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
-import { generateImageThumbnail } from "@/services/file/generateImageThumbnail";
-import { uploadFilesToPresignedUrls } from "@/services/file/uploadFilesToPresignedUrls";
-import { uploadFileToUrl } from "@/services/file/uploadFileToUrl";
-import { validateFileWithAlert } from "@/services/file/validateFileWithAlert";
-import { createErrorAlert } from "@/services/trpc/createErrorAlert";
-import { useAlertStore } from "@/store/alert";
-import { useUploadFileStore } from "@/store/message/input/uploadFile";
-import { useRoomStore } from "@/store/message/room";
+import { generateImageThumbnail } from "#src/services/file/generateImageThumbnail";
+import { uploadFilesToPresignedUrls } from "#src/services/file/uploadFilesToPresignedUrls";
+import { uploadFileToUrl } from "#src/services/file/uploadFileToUrl";
+import { validateFileWithAlert } from "#src/services/file/validateFileWithAlert";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
+import { useAlertStore } from "#src/store/alert";
+import { useUploadFileStore } from "#src/store/message/input/uploadFile";
+import { useRoomStore } from "#src/store/message/room/index";
 import { FILE_MAX_LENGTH, getMimeCategory } from "@esposter/db-schema";
 import { getResultAsync, noop, takeOne, withFinalizerAsync } from "@esposter/shared";
 

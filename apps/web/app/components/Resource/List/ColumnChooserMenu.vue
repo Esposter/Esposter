@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { ResourceListSource } from "@/models/resource/list/ResourceListSource";
+import type { ResourceListSource } from "#src/models/resource/list/ResourceListSource";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 interface Props {
   source: ResourceListSource;

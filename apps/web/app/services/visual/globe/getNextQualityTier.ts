@@ -1,4 +1,4 @@
-import { GlobeConfiguration } from "@/services/visual/GlobeConfiguration";
+import { GlobeConfiguration } from "#src/services/visual/GlobeConfiguration";
 
 const { qualityTiers, sampleCount, targetFps } = GlobeConfiguration;
 

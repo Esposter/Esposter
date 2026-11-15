@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { LoginButtonItems } from "@/services/login/LoginButtonItems";
+import { LoginButtonItems } from "#src/services/login/LoginButtonItems";
 import { RoutePath, SITE_NAME } from "@esposter/shared";
 
 definePageMeta({ middleware: "guest" });

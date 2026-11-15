@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { UiTooltipActivatorProps } from "@/models/ui/UiTooltipActivatorProps";
+import type { UiTooltipActivatorProps } from "#src/models/ui/UiTooltipActivatorProps";
 
-import { POPOVER_POSITION_TRY, TOOLTIP_NAMESPACE, TOOLTIP_POSITION_AREA } from "@/services/ui/constants";
+import { POPOVER_POSITION_TRY, TOOLTIP_NAMESPACE, TOOLTIP_POSITION_AREA } from "#src/services/ui/constants";
 import { Tooltip } from "@vuetify/v0";
 
 interface Props {

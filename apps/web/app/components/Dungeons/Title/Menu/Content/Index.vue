@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { getGridKey } from "@/services/dungeons/getGridKey";
-import { PlayerTitleMenuOptionGrid } from "@/services/dungeons/scene/title/menu/PlayerTitleMenuOptionGrid";
+import { getGridKey } from "#src/services/dungeons/getGridKey";
+import { PlayerTitleMenuOptionGrid } from "#src/services/dungeons/scene/title/menu/PlayerTitleMenuOptionGrid";
 </script>
 
 <template>

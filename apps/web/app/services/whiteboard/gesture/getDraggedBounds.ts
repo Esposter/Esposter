@@ -1,6 +1,6 @@
 import type { Bounds, Point } from "vue-block-editor-headless";
 
-import { MINIMUM_ELEMENT_SIZE } from "@/services/whiteboard/gesture/constants";
+import { MINIMUM_ELEMENT_SIZE } from "#src/services/whiteboard/gesture/constants";
 
 // The box a placing drag from its press's point to the pointer's point takes: the corner the press holds, extended toward the pointer,
 // And never smaller than the minimum element size, so a drag that barely moves still places an element

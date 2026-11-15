@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { Row } from "@/models/user/ProfileCard/Row";
-import type { RowValueType } from "@/models/user/ProfileCard/RowValueType";
+import type { Row } from "#src/models/user/ProfileCard/Row";
+import type { RowValueType } from "#src/models/user/ProfileCard/RowValueType";
 
-import { UiRules } from "@/services/ui/UiRules";
+import { UiRules } from "#src/services/ui/UiRules";
 import { USER_NAME_MAX_LENGTH } from "@esposter/db-schema";
 
 interface Props {

@@ -1,9 +1,9 @@
 // @vitest-environment nuxt
-import type { UiTabLink } from "@/models/ui/UiTabLink";
+import type { UiTabLink } from "#src/models/ui/UiTabLink";
 
-import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
-import UiTabLinks from "@/components/Ui/TabLinks.vue";
-import { UiStyles } from "@/models/ui/UiStyle";
+import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
+import UiTabLinks from "#src/components/Ui/TabLinks.vue";
+import { UiStyles } from "#src/models/ui/UiStyle";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 import { RouterLink } from "vue-router";

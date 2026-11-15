@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import { useCommandStore } from "@/store/ui/command";
+import { useCommandStore } from "#src/store/ui/command";
 import { noop } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { useHotkey } from "@vuetify/v0";

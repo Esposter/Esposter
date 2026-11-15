@@ -5,7 +5,7 @@ import {
   REORDER_GHOST_CLASS,
   REORDER_SLIDE_TRANSITION,
   TOUCH_DRAG_DELAY_MS,
-} from "@/services/ui/constants";
+} from "#src/services/ui/constants";
 import { takeOne } from "@esposter/shared";
 import { flushPromises, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";

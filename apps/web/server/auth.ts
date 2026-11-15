@@ -1,4 +1,4 @@
-import { db } from "#server/db";
+import { db } from "#server/db/index";
 import { apiKeyPlugin } from "#server/services/auth/apiKeyPlugin";
 import { authModelOptions } from "#server/services/auth/authModelOptions";
 import { PRODUCTION_BASE_URL } from "#server/services/auth/constants";

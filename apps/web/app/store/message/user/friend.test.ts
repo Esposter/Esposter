@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
-import { createUser } from "@/services/message/user/createUser.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useAlertStore } from "@/store/alert";
-import { useFriendStore } from "@/store/message/user/friend";
+import { createUser } from "#src/services/message/user/createUser.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useAlertStore } from "#src/store/alert";
+import { useFriendStore } from "#src/store/message/user/friend";
 import { TRPCError } from "@trpc/server";
 import { describe, expect, test } from "vitest";
 

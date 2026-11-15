@@ -1,8 +1,8 @@
-import { SurveyNodeMoveType } from "@/models/resource/survey/SurveyNodeMoveType";
-import { getSurveyNodeMove } from "@/services/resource/survey/getSurveyNodeMove";
-import { createSurveyTestDocument } from "@/services/survey/createSurveyTestDocument.test";
-import { createSurveyTestPage } from "@/services/survey/createSurveyTestPage.test";
-import { createSurveyTestQuestion } from "@/services/survey/createSurveyTestQuestion.test";
+import { SurveyNodeMoveType } from "#src/models/resource/survey/SurveyNodeMoveType";
+import { getSurveyNodeMove } from "#src/services/resource/survey/getSurveyNodeMove";
+import { createSurveyTestDocument } from "#src/services/survey/createSurveyTestDocument.test";
+import { createSurveyTestPage } from "#src/services/survey/createSurveyTestPage.test";
+import { createSurveyTestQuestion } from "#src/services/survey/createSurveyTestQuestion.test";
 import { describe, expect, test } from "vitest";
 
 describe(getSurveyNodeMove, () => {

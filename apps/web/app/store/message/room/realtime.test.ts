@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
-import { useAlertStore } from "@/store/alert";
-import { useMediaStore } from "@/store/message/room/call/media";
-import { useRealtimeStore } from "@/store/message/room/realtime";
-import { useCallBackgroundStore } from "@/store/message/user/settings/callBackground";
+import { useAlertStore } from "#src/store/alert";
+import { useMediaStore } from "#src/store/message/room/call/media";
+import { useRealtimeStore } from "#src/store/message/room/realtime";
+import { useCallBackgroundStore } from "#src/store/message/user/settings/callBackground";
 import RealtimeKitClient from "@cloudflare/realtimekit";
 import RealtimeKitVideoBackgroundTransformer from "@cloudflare/realtimekit-virtual-background";
 import { waitForSynchronizedFunctions } from "@esposter/shared";

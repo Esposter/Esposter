@@ -1,4 +1,4 @@
-import { getToolbarFolds } from "@/services/editor/getToolbarFolds";
+import { getToolbarFolds } from "#src/services/editor/getToolbarFolds";
 import { describe, expect, test } from "vitest";
 
 describe(getToolbarFolds, () => {

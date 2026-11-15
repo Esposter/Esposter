@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { UiSchemaFormRendererProps } from "@/models/ui/schemaForm/UiSchemaFormRendererProps";
-import type { UiSelectItem } from "@/models/ui/UiSelectItem";
+import type { UiSchemaFormRendererProps } from "#src/models/ui/schemaForm/UiSchemaFormRendererProps";
+import type { UiSelectItem } from "#src/models/ui/UiSelectItem";
 import type { JsonSchema } from "@jsonforms/core";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { prettify } from "@/util/text/prettify";
-import { toTitleCase } from "@/util/text/toTitleCase";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { prettify } from "#src/util/text/prettify";
+import { toTitleCase } from "#src/util/text/toTitleCase";
 
 interface Props extends UiSchemaFormRendererProps {}
 // JSON Forms derives whether a field is enabled or read only when the form leaves them unset, which a boolean prop

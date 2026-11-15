@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import type { UiSelectItem } from "@/models/ui/UiSelectItem";
+import type { UiSelectItem } from "#src/models/ui/UiSelectItem";
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { MutationStatus } from "@/models/shared/MutationStatus";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
-import { UiDialogSize } from "@/models/ui/UiDialogSize";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { getShareMessage } from "@/services/resource/getShareMessage";
-import { useNotificationStore } from "@/store/notification";
+import { MutationStatus } from "#src/models/shared/MutationStatus";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
+import { UiDialogSize } from "#src/models/ui/UiDialogSize";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { getShareMessage } from "#src/services/resource/getShareMessage";
+import { useNotificationStore } from "#src/store/notification";
 import { MESSAGE_MAX_LENGTH, NotificationSeverity } from "@esposter/db-schema";
 import { getResultAsync, MAX_READ_LIMIT, noop, RoutePath } from "@esposter/shared";
 

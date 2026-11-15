@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { COMMAND_PALETTE_SHORTCUT } from "@/services/app/constants";
-import { useCommandStore } from "@/store/ui/command";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { COMMAND_PALETTE_SHORTCUT } from "#src/services/app/constants";
+import { useCommandStore } from "#src/store/ui/command";
 
 interface Props {
   // What the palette searches from here, such as "Search docs"

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RESOURCE_EXPLORER_DISPLAY_NAME } from "@/services/resource/constants";
+import { RESOURCE_EXPLORER_DISPLAY_NAME } from "#src/services/resource/constants";
 
 definePageMeta({ middleware: "auth" });
 useResourceCommands();

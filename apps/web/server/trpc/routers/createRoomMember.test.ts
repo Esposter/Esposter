@@ -1,10 +1,10 @@
 import type { AuthSession } from "#server/models/auth/AuthSession";
 import type { Context } from "#server/trpc/context";
 
-import { createCallerFactory } from "#server/trpc";
 import { createMockAuthSession, createMockContext } from "#server/trpc/context.test";
+import { createCallerFactory } from "#server/trpc/index";
 import { inviteRouter } from "#server/trpc/routers/invite";
-import { roomRouter } from "#server/trpc/routers/room";
+import { roomRouter } from "#server/trpc/routers/room/index";
 import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
 import { describe } from "vitest";
 

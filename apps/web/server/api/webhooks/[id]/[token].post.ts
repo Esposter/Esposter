@@ -1,4 +1,4 @@
-import { db } from "#server/db";
+import { db } from "#server/db/index";
 import { getJobQueue } from "#server/services/queue/getJobQueue";
 import { consumeAddressRateLimit } from "#server/services/rateLimiter/consumeAddressRateLimit";
 import { getIpAddress } from "#server/services/request/getIpAddress";

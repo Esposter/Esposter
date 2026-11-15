@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { BackgroundMusicKey } from "@/models/dungeons/keys/sound/BackgroundMusicKey";
-import { playDungeonsBackgroundMusic } from "@/services/dungeons/sound/playDungeonsBackgroundMusic";
-import { useControlsStore } from "@/store/dungeons/controls";
-import { useSettingsSceneStore } from "@/store/dungeons/settings/scene";
+import { SceneKey } from "#src/models/dungeons/keys/SceneKey";
+import { BackgroundMusicKey } from "#src/models/dungeons/keys/sound/BackgroundMusicKey";
+import { playDungeonsBackgroundMusic } from "#src/services/dungeons/sound/playDungeonsBackgroundMusic";
+import { useControlsStore } from "#src/store/dungeons/controls";
+import { useSettingsSceneStore } from "#src/store/dungeons/settings/scene";
 
 const controlsStore = useControlsStore();
 const { controls } = storeToRefs(controlsStore);

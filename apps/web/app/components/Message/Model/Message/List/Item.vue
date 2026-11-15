@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import type { ClientMessage } from "@/models/message/ClientMessage";
-import type { Creator } from "@/models/message/Creator";
+import type { ClientMessage } from "#src/models/message/ClientMessage";
+import type { Creator } from "#src/models/message/Creator";
 
-import { MessageDisplayMode } from "@/models/message/MessageDisplayMode";
-import { checkIsSameBatch } from "@/services/message/checkIsSameBatch";
-import { MessageComponentMap } from "@/services/message/MessageComponentMap";
-import { useMessageStore } from "@/store/message";
-import { useMessageDialogStore } from "@/store/message/dialog";
-import { useAppearanceStore } from "@/store/message/ui/appearance";
-import { useScrollStore } from "@/store/message/ui/scroll";
-import { useContextMenuStore } from "@/store/ui/contextMenu";
+import { MessageDisplayMode } from "#src/models/message/MessageDisplayMode";
+import { checkIsSameBatch } from "#src/services/message/checkIsSameBatch";
+import { MessageComponentMap } from "#src/services/message/MessageComponentMap";
+import { useMessageDialogStore } from "#src/store/message/dialog";
+import { useMessageStore } from "#src/store/message/index";
+import { useAppearanceStore } from "#src/store/message/ui/appearance";
+import { useScrollStore } from "#src/store/message/ui/scroll";
+import { useContextMenuStore } from "#src/store/ui/contextMenu";
 
 interface Props {
   creator: Creator;

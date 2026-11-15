@@ -1,11 +1,11 @@
-import type { ClientMessage } from "@/models/message/ClientMessage";
+import type { ClientMessage } from "#src/models/message/ClientMessage";
 
-import { checkIsMessageId } from "@/services/message/checkIsMessageId";
-import { toRoomMessagePage } from "@/services/message/message/toRoomMessagePage";
-import { requirePartitionKey } from "@/services/message/requirePartitionKey";
-import { useDataStore } from "@/store/message/data";
-import { useRoomStore } from "@/store/message/room";
-import { getRouteParam } from "@/util/router/getRouteParam";
+import { checkIsMessageId } from "#src/services/message/checkIsMessageId";
+import { toRoomMessagePage } from "#src/services/message/message/toRoomMessagePage";
+import { requirePartitionKey } from "#src/services/message/requirePartitionKey";
+import { useDataStore } from "#src/store/message/data";
+import { useRoomStore } from "#src/store/message/room/index";
+import { getRouteParam } from "#src/util/router/getRouteParam";
 
 export const useReadMessages = () => {
   const { currentRoute } = useRouter();

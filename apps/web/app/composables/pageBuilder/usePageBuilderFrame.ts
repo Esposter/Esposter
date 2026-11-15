@@ -1,10 +1,10 @@
-import type { FrameGeometry } from "@/models/pageBuilder/FrameGeometry";
-import type { FramePlacement } from "@/models/pageBuilder/FramePlacement";
-import type { OverlayBox } from "@/models/pageBuilder/OverlayBox";
+import type { FrameGeometry } from "#src/models/pageBuilder/FrameGeometry";
+import type { FramePlacement } from "#src/models/pageBuilder/FramePlacement";
+import type { OverlayBox } from "#src/models/pageBuilder/OverlayBox";
 
-import { checkIsHorizontalFlow } from "@/services/pageBuilder/checkIsHorizontalFlow";
-import { getNodeIdFromElement } from "@/services/pageBuilder/getNodeIdFromElement";
-import { getToolbarPlacement } from "@/services/pageBuilder/getToolbarPlacement";
+import { checkIsHorizontalFlow } from "#src/services/pageBuilder/checkIsHorizontalFlow";
+import { getNodeIdFromElement } from "#src/services/pageBuilder/getNodeIdFromElement";
+import { getToolbarPlacement } from "#src/services/pageBuilder/getToolbarPlacement";
 import { getFrameScale } from "vue-canvas-frame-headless";
 
 // The frame is scaled to fit its pane, so the scale maps the frame's own pixels to the app's viewport

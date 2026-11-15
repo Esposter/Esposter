@@ -8,9 +8,9 @@ import { issueProgramInvites } from "#server/services/program/issueProgramInvite
 import { readProgramStatusRows } from "#server/services/program/readProgramStatusRows";
 import { regenerateProgramParticipantTokens } from "#server/services/program/regenerateProgramParticipantTokens";
 import { getResourceTopics } from "#server/services/resource/getResourceTopics";
-import { router } from "#server/trpc";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
+import { router } from "#server/trpc/index";
 import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { createResourceProcedures } from "#server/trpc/procedure/resource/createResourceProcedures";
 import { getOwnerProcedure } from "#server/trpc/procedure/resource/getOwnerProcedure";

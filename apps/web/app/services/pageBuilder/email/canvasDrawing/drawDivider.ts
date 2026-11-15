@@ -1,4 +1,4 @@
-import type { EmailCanvasDrawing } from "@/models/pageBuilder/EmailCanvasDrawing";
+import type { EmailCanvasDrawing } from "#src/models/pageBuilder/EmailCanvasDrawing";
 import type { MjmlNodeType } from "mjml-blocks";
 
 // A divider is drawn as the rule its border attributes name, since a rule is what it is

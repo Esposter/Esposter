@@ -1,7 +1,7 @@
 // @unocss-include
-import type { SearchFilterOption } from "@/models/message/filter/SearchFilterOption";
+import type { SearchFilterOption } from "#src/models/message/filter/SearchFilterOption";
 
-import { FilterTypeHasIconMap } from "@/services/message/FilterTypeHasIconMap";
+import { FilterTypeHasIconMap } from "#src/services/message/FilterTypeHasIconMap";
 import { FilterTypeAuthorType, FilterTypeAuthorTypes, FilterTypeHases } from "@esposter/db-schema";
 
 const FilterTypeAuthorTypeIconMap = {

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { LEFT_DRAWER_WIDTH, RIGHT_DRAWER_WIDTH } from "#shared/services/app/constants";
-import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
-import { useLayoutStore } from "@/store/layout";
+import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
+import { useLayoutStore } from "#src/store/layout";
 
 interface Props {
   // The right drawer's content draws its own title and close button, so a narrow screen's sheet draws neither

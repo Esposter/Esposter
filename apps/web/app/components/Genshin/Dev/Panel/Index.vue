@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { DevReading } from "@/models/genshin/dev/DevReading";
+import type { DevReading } from "#src/models/genshin/dev/DevReading";
 import type { DevRegistry, DevResult, DevScenario } from "genshin-world";
 
-import { GENSHIN_DEV_SCENARIOS_TAB } from "@/services/genshin/dev/constants";
-import { getDevTabName } from "@/services/genshin/dev/getDevTabName";
-import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
+import { GENSHIN_DEV_SCENARIOS_TAB } from "#src/services/genshin/dev/constants";
+import { getDevTabName } from "#src/services/genshin/dev/getDevTabName";
+import { LocalStorageKey } from "#src/services/shared/LocalStorageKey";
 import { getOrCreate } from "@esposter/shared";
 
 interface Props {

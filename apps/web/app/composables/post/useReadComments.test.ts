@@ -1,9 +1,9 @@
 // @vitest-environment nuxt
 
 import { PostSortType } from "#shared/models/post/PostSortType";
-import { createPost } from "@/services/post/createPost.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useCommentStore } from "@/store/post/comment";
+import { createPost } from "#src/services/post/createPost.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useCommentStore } from "#src/store/post/comment/index";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 

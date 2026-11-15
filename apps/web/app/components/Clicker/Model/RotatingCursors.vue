@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Target } from "#shared/models/clicker/data/Target";
-import { MenuIconMap } from "@/services/clicker/icon/MenuIconMap";
+import { MenuIconMap } from "#src/services/clicker/icon/MenuIconMap";
 
 const { rotatingDivIds } = useRotatingCursors();
 const icon = MenuIconMap[Target.Cursor];

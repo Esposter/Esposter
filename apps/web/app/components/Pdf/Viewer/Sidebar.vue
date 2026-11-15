@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { UiTabItem } from "@/models/ui/UiTabItem";
+import type { UiTabItem } from "#src/models/ui/UiTabItem";
 import type { PDFDocumentProxy } from "pdfjs-dist";
 import type { PdfAnnotationsState, PdfViewerState } from "vue-pdfjs-headless";
 
-import { PdfSidebarTab } from "@/models/pdf/PdfSidebarTab";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { UiTabsVariant } from "@/models/ui/UiTabsVariant";
+import { PdfSidebarTab } from "#src/models/pdf/PdfSidebarTab";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { UiTabsVariant } from "#src/models/ui/UiTabsVariant";
 
 interface Props {
   annotations: PdfAnnotationsState;

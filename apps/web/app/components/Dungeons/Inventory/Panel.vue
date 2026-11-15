@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { MENU_PADDING } from "@/services/dungeons/scene/inventory/constants";
+import { MENU_PADDING } from "#src/services/dungeons/scene/inventory/constants";
 import { Rectangle } from "vue-phaserjs";
 
 interface Props {

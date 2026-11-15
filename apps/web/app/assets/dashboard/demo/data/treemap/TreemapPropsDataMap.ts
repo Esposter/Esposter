@@ -1,6 +1,6 @@
 import { ChartType } from "#shared/models/dashboard/data/chart/type/ChartType";
-import { BasicPropsData } from "@/assets/dashboard/demo/data/treemap/BasicPropsData";
-import { DistributedPropsData } from "@/assets/dashboard/demo/data/treemap/DistributedPropsData";
+import { BasicPropsData } from "#src/assets/dashboard/demo/data/treemap/BasicPropsData";
+import { DistributedPropsData } from "#src/assets/dashboard/demo/data/treemap/DistributedPropsData";
 
 export const TreemapPropsDataMap = {
   [ChartType.Basic]: BasicPropsData,

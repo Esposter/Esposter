@@ -1,12 +1,12 @@
-import type { ClientMessage } from "@/models/message/ClientMessage";
+import type { ClientMessage } from "#src/models/message/ClientMessage";
 
-import { getEntityIdEqualComparator } from "@/services/entity/getEntityIdEqualComparator";
-import { messageHolderRegistry } from "@/services/message/messageHolderRegistry";
-import { MessageHookMap } from "@/services/message/MessageHookMap";
-import { createOperationData } from "@/services/shared/createOperationData";
-import { getInsertedItems } from "@/services/shared/getInsertedItems";
-import { useDataStore } from "@/store/message/data";
-import { useRoomStore } from "@/store/message/room";
+import { getEntityIdEqualComparator } from "#src/services/entity/getEntityIdEqualComparator";
+import { messageHolderRegistry } from "#src/services/message/messageHolderRegistry";
+import { MessageHookMap } from "#src/services/message/MessageHookMap";
+import { createOperationData } from "#src/services/shared/createOperationData";
+import { getInsertedItems } from "#src/services/shared/getInsertedItems";
+import { useDataStore } from "#src/store/message/data";
+import { useRoomStore } from "#src/store/message/room/index";
 import { DatabaseEntityType } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 

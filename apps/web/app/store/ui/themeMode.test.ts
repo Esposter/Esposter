@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
-import { ThemeMode } from "@/models/ui/ThemeMode";
-import { THEME_COOKIE_NAME } from "@/services/ui/constants";
-import { useThemeModeStore } from "@/store/ui/themeMode";
+import { ThemeMode } from "#src/models/ui/ThemeMode";
+import { THEME_COOKIE_NAME } from "#src/services/ui/constants";
+import { useThemeModeStore } from "#src/store/ui/themeMode";
 import { describe, expect, test } from "vitest";
 
 describe(useThemeModeStore, () => {

@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { MenuItem } from "@/models/shared/MenuItem";
+import type { MenuItem } from "#src/models/shared/MenuItem";
 import type { Editor } from "@tiptap/vue-3";
 
 import { NOTE_IMAGE_MIME_TYPES } from "#shared/services/resource/note/constants";
-import { getNoteBlockMenuItems } from "@/services/resource/note/getNoteBlockMenuItems";
-import { getListMenuItems } from "@/services/richTextEditor/getListMenuItems";
-import { getTextFormatMenuItems } from "@/services/richTextEditor/getTextFormatMenuItems";
+import { getNoteBlockMenuItems } from "#src/services/resource/note/getNoteBlockMenuItems";
+import { getListMenuItems } from "#src/services/richTextEditor/getListMenuItems";
+import { getTextFormatMenuItems } from "#src/services/richTextEditor/getTextFormatMenuItems";
 
 interface Props {
   editor?: Editor;

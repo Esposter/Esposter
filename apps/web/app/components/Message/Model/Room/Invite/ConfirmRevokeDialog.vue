@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { useRoomInviteStore } from "@/store/message/room/roomInvite";
-import { useRoomInviteDialogStore } from "@/store/message/room/roomInviteDialog";
+import { useRoomInviteStore } from "#src/store/message/room/roomInvite";
+import { useRoomInviteDialogStore } from "#src/store/message/room/roomInviteDialog";
 
 interface Props {
   roomId: RoomInMessage["id"];

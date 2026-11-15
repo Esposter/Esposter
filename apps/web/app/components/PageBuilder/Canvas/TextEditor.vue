@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import type { TextNodeProps } from "#shared/models/pageBuilder/TextNodeProps";
-import type { AnyPageBuilderKind } from "@/models/pageBuilder/AnyPageBuilderKind";
+import type { AnyPageBuilderKind } from "#src/models/pageBuilder/AnyPageBuilderKind";
 
 import { getNoteExtensions } from "#shared/services/resource/note/getNoteExtensions";
-import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
-import { autofocusEditor } from "@/services/richTextEditor/autofocusEditor";
-import { MergeFieldExtension } from "@/services/pageBuilder/MergeFieldExtension";
-import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
-import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
-import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
+import { getNodePointer } from "#src/services/pageBuilder/getNodePointer";
+import { MergeFieldExtension } from "#src/services/pageBuilder/MergeFieldExtension";
+import { autofocusEditor } from "#src/services/richTextEditor/autofocusEditor";
+import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
+import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
+import { usePageBuilderHistoryStore } from "#src/store/pageBuilder/history";
 import { noop } from "@esposter/shared";
 import { EditorContent, useEditor } from "@tiptap/vue-3";
 import { v7 } from "uuid";

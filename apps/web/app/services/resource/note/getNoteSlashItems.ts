@@ -1,13 +1,13 @@
 // @unocss-include
-import type { NoteSlashItem } from "@/models/resource/note/NoteSlashItem";
-import type { Item } from "@/models/shared/Item";
-import type { MenuItem } from "@/models/shared/MenuItem";
+import type { NoteSlashItem } from "#src/models/resource/note/NoteSlashItem";
+import type { Item } from "#src/models/shared/Item";
+import type { MenuItem } from "#src/models/shared/MenuItem";
 import type { Editor } from "@tiptap/core";
 
-import { getNoteBlockMenuItems } from "@/services/resource/note/getNoteBlockMenuItems";
-import { NoteSlashAliasMap } from "@/services/resource/note/NoteSlashAliasMap";
-import { getListMenuItems } from "@/services/richTextEditor/getListMenuItems";
-import { checkIsDivider } from "@/services/shared/checkIsDivider";
+import { getNoteBlockMenuItems } from "#src/services/resource/note/getNoteBlockMenuItems";
+import { NoteSlashAliasMap } from "#src/services/resource/note/NoteSlashAliasMap";
+import { getListMenuItems } from "#src/services/richTextEditor/getListMenuItems";
+import { checkIsDivider } from "#src/services/shared/checkIsDivider";
 
 // The blocks the slash menu inserts: the Note's menu items and the list items the composer shares, read off the menus
 // Rather than listed again, plus the two blocks only the slash menu offers

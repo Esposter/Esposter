@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
-import ResourceWhiteboardEditorTextEdit from "@/components/Resource/Whiteboard/EditorTextEdit.vue";
-import { WHITEBOARD_PROCESS } from "@/services/whiteboard/constants.test";
-import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
+import ResourceWhiteboardEditorTextEdit from "#src/components/Resource/Whiteboard/EditorTextEdit.vue";
+import { WHITEBOARD_PROCESS } from "#src/services/whiteboard/constants.test";
+import { useWhiteboardEditorStore } from "#src/store/resource/whiteboard/editor";
 import { mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
 import { v7 } from "uuid";

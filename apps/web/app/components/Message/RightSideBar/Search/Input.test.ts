@@ -2,10 +2,10 @@
 import type { searchMessagesInputSchema } from "#shared/models/db/message/SearchMessagesInput";
 import type { z } from "zod";
 
-import MessageRightSideBarSearchInput from "@/components/Message/RightSideBar/Search/Input.vue";
-import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useSearchMessageStore } from "@/store/message/search";
+import MessageRightSideBarSearchInput from "#src/components/Message/RightSideBar/Search/Input.vue";
+import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useSearchMessageStore } from "#src/store/message/search/index";
 import { DEFAULT_PAGE_LIMIT, FilterType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
@@ -14,7 +14,7 @@ import { describe, expect, test, vi } from "vitest";
 
 // A pending chip opens its picker, whose chunk and reads land after the environment is torn down, and no test here
 // Asserts on the picker. The cast is the one a stub cannot avoid: the real type is the picker's own instance type
-vi.mock(import("@/services/message/filter/SearchFilterComponentMap"), async (importOriginal) => {
+vi.mock(import("#src/services/message/filter/SearchFilterComponentMap"), async (importOriginal) => {
   const { SearchFilterComponentMap } = await importOriginal();
   const { FilterType: MockFilterType } = await import("@esposter/db-schema");
   return {

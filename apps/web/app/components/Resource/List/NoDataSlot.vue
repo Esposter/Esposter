@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { ResourceListSource } from "@/models/resource/list/ResourceListSource";
+import type { ResourceListSource } from "#src/models/resource/list/ResourceListSource";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { ResourceListSourceDefinitionMap } from "@/services/resource/list/ResourceListSourceDefinitionMap";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { ResourceListSourceDefinitionMap } from "#src/services/resource/list/ResourceListSourceDefinitionMap";
 
 interface Props {
   error: string;

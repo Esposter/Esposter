@@ -1,6 +1,6 @@
 import type { Column } from "#shared/models/resource/sheet/column/Column";
 
-import { useResourceStore } from "@/store/resource";
+import { useResourceStore } from "#src/store/resource/index";
 
 // Keyed by the sheet a dialog was opened on: a target is a column name, which the next sheet opened very likely has
 // Too, so an app-lifetime target would re-open the dialog over that sheet's same-named column

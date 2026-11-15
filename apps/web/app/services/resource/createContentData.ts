@@ -1,8 +1,8 @@
 import type { ResourceContent } from "#shared/models/resource/ResourceContent";
 import type { ResourceType } from "@esposter/db-schema";
 
-import { ResourceContentHookMap } from "@/services/resource/ResourceContentHookMap";
-import { useResourceStore } from "@/store/resource";
+import { ResourceContentHookMap } from "#src/services/resource/ResourceContentHookMap";
+import { useResourceStore } from "#src/store/resource/index";
 
 // The load/save half every content store shares: rebuild the content from the open resource's blob, and seed
 // The dirty check so the editor's own load echo compares equal instead of writing back and bumping

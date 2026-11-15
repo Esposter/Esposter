@@ -1,6 +1,6 @@
 import type { CallParticipant } from "@esposter/db-schema";
 
-import { authClient } from "@/services/auth/authClient";
+import { authClient } from "#src/services/auth/authClient";
 
 export const useParticipantStore = defineStore("message/room/call/participant", () => {
   const session = authClient.useSession();

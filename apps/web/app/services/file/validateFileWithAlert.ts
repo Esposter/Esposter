@@ -1,5 +1,5 @@
-import { validateFile } from "@/services/file/validateFile";
-import { useAlertStore } from "@/store/alert";
+import { validateFile } from "#src/services/file/validateFile";
+import { useAlertStore } from "#src/store/alert";
 
 // Wraps the client-side file validator so every rejection surfaces the same error alert, naming the file it
 // Rejected — a multi-file drop is rejected as a whole, so the alert has to say which file caused it.

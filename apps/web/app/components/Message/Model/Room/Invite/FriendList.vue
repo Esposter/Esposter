@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
-import { getInviteRecipients } from "@/services/message/room/invite/getInviteRecipients";
-import { searchItems } from "@/services/search/searchItems";
-import { useDirectMessageStore } from "@/store/message/room/directMessage";
-import { useInviteStore } from "@/store/message/room/invite";
-import { useFriendStore } from "@/store/message/user/friend";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { UiTextFieldType } from "#src/models/ui/UiTextFieldType";
+import { getInviteRecipients } from "#src/services/message/room/invite/getInviteRecipients";
+import { searchItems } from "#src/services/search/searchItems";
+import { useDirectMessageStore } from "#src/store/message/room/directMessage";
+import { useInviteStore } from "#src/store/message/room/invite";
+import { useFriendStore } from "#src/store/message/user/friend";
 import { getSynchronizedFunction } from "@esposter/shared";
 
 interface Props {

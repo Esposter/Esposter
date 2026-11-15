@@ -1,9 +1,9 @@
-import type { AssetLoader } from "@/models/dungeons/loader/AssetLoader";
+import type { AssetLoader } from "#src/models/dungeons/loader/AssetLoader";
 
 import { AttackKey } from "#shared/models/dungeons/keys/spritesheet/AttackKey";
-import iceAttackActive from "@/assets/dungeons/thirdParty/pimen/iceAttack/active.png";
-import iceAttackStart from "@/assets/dungeons/thirdParty/pimen/iceAttack/start.png";
-import slash from "@/assets/dungeons/thirdParty/pimen/slash.png";
+import iceAttackActive from "#src/assets/dungeons/thirdParty/pimen/iceAttack/active.png";
+import iceAttackStart from "#src/assets/dungeons/thirdParty/pimen/iceAttack/start.png";
+import slash from "#src/assets/dungeons/thirdParty/pimen/slash.png";
 
 export const AttackLoaderMap = {
   [AttackKey.Slash]: (scene) => scene.load.spritesheet(AttackKey.Slash, slash, { frameHeight: 48, frameWidth: 48 }),

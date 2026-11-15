@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { UiSchemaFormRendererProps } from "@/models/ui/schemaForm/UiSchemaFormRendererProps";
-import type { UiSelectItem } from "@/models/ui/UiSelectItem";
+import type { UiSchemaFormRendererProps } from "#src/models/ui/schemaForm/UiSchemaFormRendererProps";
+import type { UiSelectItem } from "#src/models/ui/UiSelectItem";
 
-import ResourceLinkSelect from "@/components/Resource/Link/Select.vue";
-import { getUnpublishedResourceMessage } from "@/services/resource/getUnpublishedResourceMessage";
-import { getResourceLinkSource } from "@/services/resource/link/getResourceLinkSource";
+import ResourceLinkSelect from "#src/components/Resource/Link/Select.vue";
+import { getUnpublishedResourceMessage } from "#src/services/resource/getUnpublishedResourceMessage";
+import { getResourceLinkSource } from "#src/services/resource/link/getResourceLinkSource";
 import { MAX_READ_LIMIT } from "@esposter/shared";
 
 interface Props extends UiSchemaFormRendererProps {}

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 // Aliased so the auto-imported <Dashboard> component isn't shadowed by the model class
 import { Dashboard as BaseDashboard } from "#shared/models/dashboard/data/Dashboard";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { exportDashboardPng } from "@/services/dashboard/export/exportDashboardPng";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { exportDashboardPng } from "#src/services/dashboard/export/exportDashboardPng";
 import { ResourceType } from "@esposter/db-schema";
 
 interface Props {

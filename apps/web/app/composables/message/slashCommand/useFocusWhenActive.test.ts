@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 
-import { useFocusWhenActive } from "@/composables/message/slashCommand/useFocusWhenActive";
+import { useFocusWhenActive } from "#src/composables/message/slashCommand/useFocusWhenActive";
 import { flushPromises, mount } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 

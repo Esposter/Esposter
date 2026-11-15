@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
-import MessageModelRoomEmojiNameField from "@/components/Message/Model/Room/Emoji/NameField.vue";
-import { SuggestionTrigger } from "@/models/shared/SuggestionTrigger";
+import MessageModelRoomEmojiNameField from "#src/components/Message/Model/Room/Emoji/NameField.vue";
+import { SuggestionTrigger } from "#src/models/shared/SuggestionTrigger";
 import { noop } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";

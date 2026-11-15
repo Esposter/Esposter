@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { checkIsMessageId } from "@/services/message/checkIsMessageId";
-import { useDataStore } from "@/store/message/data";
-import { useRoomStore } from "@/store/message/room";
-import { getRouteParam } from "@/util/router/getRouteParam";
+import { checkIsMessageId } from "#src/services/message/checkIsMessageId";
+import { useDataStore } from "#src/store/message/data";
+import { useRoomStore } from "#src/store/message/room/index";
+import { getRouteParam } from "#src/util/router/getRouteParam";
 
 const { currentRoute } = useRouter();
 const roomStore = useRoomStore();

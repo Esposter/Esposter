@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { PageBuilderDevice } from "#shared/models/pageBuilder/PageBuilderDevice";
-import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
+import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
 
 interface Props {
   resourceId: string;

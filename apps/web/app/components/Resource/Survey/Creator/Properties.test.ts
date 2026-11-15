@@ -2,12 +2,12 @@
 import type { VueWrapper } from "@vue/test-utils";
 import type { z } from "zod";
 
-import ResourceSurveyCreatorChoiceListEditor from "@/components/Resource/Survey/Creator/ChoiceListEditor.vue";
-import ResourceSurveyCreatorImageChoicesEditor from "@/components/Resource/Survey/Creator/ImageChoicesEditor.vue";
-import ResourceSurveyCreatorImageUpload from "@/components/Resource/Survey/Creator/ImageUpload.vue";
-import ResourceSurveyCreatorProperties from "@/components/Resource/Survey/Creator/Properties.vue";
-import UiSchemaForm from "@/components/Ui/SchemaForm/Index.vue";
-import { useSurveyCreatorStore } from "@/store/survey/creator";
+import ResourceSurveyCreatorChoiceListEditor from "#src/components/Resource/Survey/Creator/ChoiceListEditor.vue";
+import ResourceSurveyCreatorImageChoicesEditor from "#src/components/Resource/Survey/Creator/ImageChoicesEditor.vue";
+import ResourceSurveyCreatorImageUpload from "#src/components/Resource/Survey/Creator/ImageUpload.vue";
+import ResourceSurveyCreatorProperties from "#src/components/Resource/Survey/Creator/Properties.vue";
+import UiSchemaForm from "#src/components/Ui/SchemaForm/Index.vue";
+import { useSurveyCreatorStore } from "#src/store/survey/creator";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";

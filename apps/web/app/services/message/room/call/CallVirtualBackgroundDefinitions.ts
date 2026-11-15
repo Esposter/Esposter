@@ -1,5 +1,5 @@
-import { CallVirtualBackground } from "@/models/message/room/call/CallVirtualBackground";
-import { CallVirtualBackgroundUrlMap } from "@/services/message/room/call/CallVirtualBackgroundUrlMap";
+import { CallVirtualBackground } from "#src/models/message/room/call/CallVirtualBackground";
+import { CallVirtualBackgroundUrlMap } from "#src/services/message/room/call/CallVirtualBackgroundUrlMap";
 
 export const CallVirtualBackgroundDefinitions = [
   { id: "", title: "None", url: "" },

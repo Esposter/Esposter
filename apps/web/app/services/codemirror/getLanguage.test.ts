@@ -1,4 +1,4 @@
-import { getLanguage } from "@/services/codemirror/getLanguage";
+import { getLanguage } from "#src/services/codemirror/getLanguage";
 import { describe, expect, test } from "vitest";
 
 describe(getLanguage, () => {

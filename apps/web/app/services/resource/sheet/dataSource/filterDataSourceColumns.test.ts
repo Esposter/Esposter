@@ -2,7 +2,7 @@ import { createComputedColumn } from "#shared/models/resource/sheet/column/creat
 import { createNumberColumn } from "#shared/models/resource/sheet/column/createNumberColumn.test";
 import { createDataSource } from "#shared/models/resource/sheet/datasource/createDataSource.test";
 import { createRow } from "#shared/models/resource/sheet/datasource/createRow.test";
-import { filterDataSourceColumns } from "@/services/resource/sheet/dataSource/filterDataSourceColumns";
+import { filterDataSourceColumns } from "#src/services/resource/sheet/dataSource/filterDataSourceColumns";
 import { describe, expect, test } from "vitest";
 
 describe(filterDataSourceColumns, () => {

@@ -1,6 +1,6 @@
-import type { SelectItemCategoryDefinition } from "@/models/shared/SelectItemCategoryDefinition";
+import type { SelectItemCategoryDefinition } from "#src/models/shared/SelectItemCategoryDefinition";
 
-import { TimeoutDurationMap } from "@/services/message/moderation/TimeoutDurationMap";
+import { TimeoutDurationMap } from "#src/services/message/moderation/TimeoutDurationMap";
 
 // The one list of durations every timeout picker offers, built once rather than per component instance
 export const TimeoutDurationSelectItems: SelectItemCategoryDefinition<number>[] = Object.entries(

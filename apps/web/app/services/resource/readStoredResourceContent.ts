@@ -1,7 +1,7 @@
-import type { ResourceRouter } from "@/models/resource/ResourceRouter";
+import type { ResourceRouter } from "#src/models/resource/ResourceRouter";
 import type { ResourceInResource, ResourceType } from "@esposter/db-schema";
 
-import { StorageStatusError } from "@/models/file/StorageStatusError";
+import { StorageStatusError } from "#src/models/file/StorageStatusError";
 import { Operation } from "@esposter/shared";
 
 // A document larger than one request body read as the bytes storage holds, through a presigned read url the server

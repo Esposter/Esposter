@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 import type { StrokeElement } from "vue-block-editor-headless";
 
-import ResourceWhiteboardElementStroke from "@/components/Resource/Whiteboard/ElementStroke.vue";
+import ResourceWhiteboardElementStroke from "#src/components/Resource/Whiteboard/ElementStroke.vue";
 import { mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
 import { v7 } from "uuid";

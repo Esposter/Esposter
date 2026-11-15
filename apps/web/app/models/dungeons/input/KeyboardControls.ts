@@ -1,9 +1,9 @@
 import type { Types } from "phaser";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { BaseControls } from "@/models/dungeons/input/BaseControls";
-import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
-import { getDirectionFromCursorKeys } from "@/services/dungeons/UI/input/getDirectionFromCursorKeys";
+import { BaseControls } from "#src/models/dungeons/input/BaseControls";
+import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";
+import { getDirectionFromCursorKeys } from "#src/services/dungeons/UI/input/getDirectionFromCursorKeys";
 import { NotInitializedError } from "@esposter/shared";
 import { Input } from "phaser";
 

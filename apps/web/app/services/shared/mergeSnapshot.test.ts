@@ -1,6 +1,6 @@
-import type { SnapshotPush } from "@/models/shared/SnapshotPush";
+import type { SnapshotPush } from "#src/models/shared/SnapshotPush";
 
-import { mergeSnapshot } from "@/services/shared/mergeSnapshot";
+import { mergeSnapshot } from "#src/services/shared/mergeSnapshot";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 

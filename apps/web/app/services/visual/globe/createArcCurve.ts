@@ -1,6 +1,6 @@
-import type { GlobeArc } from "@/models/visual/GlobeArc";
+import type { GlobeArc } from "#src/models/visual/GlobeArc";
 
-import { latLngToVector3 } from "@/services/visual/globe/latLngToVector3";
+import { latLngToVector3 } from "#src/services/visual/globe/latLngToVector3";
 import { CubicBezierCurve3, Vector3 } from "three";
 
 // The two control points sit a third of the way along the great circle from each end. The curve's middle is then

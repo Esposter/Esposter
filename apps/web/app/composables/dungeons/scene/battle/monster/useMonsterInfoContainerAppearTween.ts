@@ -1,5 +1,5 @@
-import { getTweenRange } from "@/services/dungeons/animation/getTweenRange";
-import { phaserEventEmitter } from "@/services/phaser/phaserEventEmitter";
+import { getTweenRange } from "#src/services/dungeons/animation/getTweenRange";
+import { phaserEventEmitter } from "#src/services/phaser/phaserEventEmitter";
 import { useTween } from "vue-phaserjs";
 
 export const useMonsterInfoContainerAppearTween = (isEnemy: boolean) => {

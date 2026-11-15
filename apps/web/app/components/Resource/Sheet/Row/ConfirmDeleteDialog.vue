@@ -2,7 +2,7 @@
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 
 import { pluralize } from "#shared/util/text/pluralize";
-import { useRowDialogStore } from "@/store/resource/sheet/rowDialog";
+import { useRowDialogStore } from "#src/store/resource/sheet/rowDialog";
 
 interface Props {
   dataSource: DataSource;

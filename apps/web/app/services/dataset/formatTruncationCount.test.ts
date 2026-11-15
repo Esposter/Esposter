@@ -1,4 +1,4 @@
-import { formatTruncationCount } from "@/services/dataset/formatTruncationCount";
+import { formatTruncationCount } from "#src/services/dataset/formatTruncationCount";
 import { describe, expect, test } from "vitest";
 
 describe(formatTruncationCount, () => {

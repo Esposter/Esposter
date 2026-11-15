@@ -1,11 +1,11 @@
-import type { Drag } from "@/models/ui/dragReorder/Drag";
-import type { DragReorderContext } from "@/models/ui/dragReorder/DragReorderContext";
-import type { Press } from "@/models/ui/dragReorder/Press";
+import type { Drag } from "#src/models/ui/dragReorder/Drag";
+import type { DragReorderContext } from "#src/models/ui/dragReorder/DragReorderContext";
+import type { Press } from "#src/models/ui/dragReorder/Press";
 
-import { REORDER_SLIDE_TRANSITION } from "@/services/ui/constants";
-import { clearRowMotion } from "@/services/ui/dragReorder/clearRowMotion";
-import { getDragSlides } from "@/services/ui/dragReorder/getDragSlides";
-import { releaseRowTransition } from "@/services/ui/dragReorder/releaseRowTransition";
+import { REORDER_SLIDE_TRANSITION } from "#src/services/ui/constants";
+import { clearRowMotion } from "#src/services/ui/dragReorder/clearRowMotion";
+import { getDragSlides } from "#src/services/ui/dragReorder/getDragSlides";
+import { releaseRowTransition } from "#src/services/ui/dragReorder/releaseRowTransition";
 import { takeOne } from "@esposter/shared";
 
 // Every row slides from where it was let go to where it now sits, and the styles the drag set come off again once

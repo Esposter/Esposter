@@ -1,8 +1,8 @@
 import type { AchievementDefinitionEntry } from "#shared/models/achievement/AchievementDefinitionEntry";
-import type { UserAchievementWithDefinition } from "@/models/achievement/UserAchievementWithDefinition";
+import type { UserAchievementWithDefinition } from "#src/models/achievement/UserAchievementWithDefinition";
 
-import { AchievementStatus } from "@/models/achievement/AchievementStatus";
-import { getAchievementListMap } from "@/services/achievement/getAchievementListMap";
+import { AchievementStatus } from "#src/models/achievement/AchievementStatus";
+import { getAchievementListMap } from "#src/services/achievement/getAchievementListMap";
 import { EmailAchievementName, MessageAchievementName } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 

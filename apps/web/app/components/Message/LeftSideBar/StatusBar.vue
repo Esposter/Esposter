@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useCallStore } from "@/store/message/room/call";
-import { useStatusStore } from "@/store/message/user/status";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { useCallStore } from "#src/store/message/room/call/index";
+import { useStatusStore } from "#src/store/message/user/status";
 
 const { data: session } = await useAuthSession();
 const statusStore = useStatusStore();

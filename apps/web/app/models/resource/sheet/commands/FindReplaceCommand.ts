@@ -1,11 +1,11 @@
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
-import type { AffectedCell } from "@/models/resource/sheet/commands/AffectedCell";
+import type { AffectedCell } from "#src/models/resource/sheet/commands/AffectedCell";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { ADataSourceCommand } from "#shared/models/resource/sheet/commands/ADataSourceCommand";
 import { CommandType } from "#shared/models/resource/sheet/commands/CommandType";
 import { coerceValue } from "#shared/services/resource/sheet/column/coerceValue";
-import { writeAffectedCells } from "@/services/resource/sheet/commands/writeAffectedCells";
+import { writeAffectedCells } from "#src/services/resource/sheet/commands/writeAffectedCells";
 import { takeOne } from "@esposter/shared";
 
 export class FindReplaceCommand extends ADataSourceCommand<typeof CommandType.FindReplace> {

@@ -1,5 +1,5 @@
 import { getCommitCount } from "#server/services/app/getCommitCount";
-import { router } from "#server/trpc";
+import { router } from "#server/trpc/index";
 import { standardRateLimitedProcedure } from "#server/trpc/procedure/standardRateLimitedProcedure";
 
 export const appRouter = router({

@@ -3,7 +3,7 @@ import type { Types } from "phaser";
 import type { Except } from "type-fest";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { getDungeonsSound } from "@/services/dungeons/sound/getDungeonsSound";
+import { getDungeonsSound } from "#src/services/dungeons/sound/getDungeonsSound";
 
 export const getDungeonsSoundEffect = (
   scene: SceneWithPlugins,

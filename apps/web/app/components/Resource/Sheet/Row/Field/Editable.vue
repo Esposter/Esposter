@@ -4,9 +4,9 @@ import type { EditableColumnValue } from "#shared/models/resource/sheet/column/E
 
 import { Row } from "#shared/models/resource/sheet/datasource/Row";
 import { checkIsEditableColumnValue } from "#shared/services/resource/sheet/column/checkIsEditableColumnValue";
-import { useCellStore } from "@/store/resource/sheet/cell";
-import { useColumnStore } from "@/store/resource/sheet/column";
-import { useRowStore } from "@/store/resource/sheet/row";
+import { useCellStore } from "#src/store/resource/sheet/cell";
+import { useColumnStore } from "#src/store/resource/sheet/column";
+import { useRowStore } from "#src/store/resource/sheet/row";
 import { getSynchronizedFunction, takeOne, toRawDeep } from "@esposter/shared";
 
 interface Props {

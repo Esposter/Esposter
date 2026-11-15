@@ -1,4 +1,4 @@
-import type { PaletteGroup } from "@/models/ui/palette/PaletteGroup";
+import type { PaletteGroup } from "#src/models/ui/palette/PaletteGroup";
 
 import { normalizeString } from "@esposter/shared";
 

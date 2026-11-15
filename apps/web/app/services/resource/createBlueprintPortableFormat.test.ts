@@ -2,13 +2,13 @@
 import { MimeType } from "#shared/models/file/MimeType";
 import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
-import { showOpenFilePicker } from "@/services/file/showOpenFilePicker";
-import { createBlueprintPortableFormat } from "@/services/resource/createBlueprintPortableFormat";
-import { PortableFormatMap } from "@/services/resource/PortableFormatMap";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useAlertStore } from "@/store/alert";
-import { useResourceStore } from "@/store/resource";
-import { useBlueprintStore } from "@/store/resource/blueprint";
+import { showOpenFilePicker } from "#src/services/file/showOpenFilePicker";
+import { createBlueprintPortableFormat } from "#src/services/resource/createBlueprintPortableFormat";
+import { PortableFormatMap } from "#src/services/resource/PortableFormatMap";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useAlertStore } from "#src/store/alert";
+import { useBlueprintStore } from "#src/store/resource/blueprint/index";
+import { useResourceStore } from "#src/store/resource/index";
 import { ResourceType } from "@esposter/db-schema";
 import { downloadFile } from "@esposter/shared";
 import { flushPromises } from "@vue/test-utils";
@@ -20,7 +20,7 @@ vi.mock(import("@esposter/shared"), async (importOriginal) => ({
   downloadFile: vi.fn<typeof downloadFile>(),
 }));
 
-vi.mock(import("@/services/file/showOpenFilePicker"), () => ({
+vi.mock(import("#src/services/file/showOpenFilePicker"), () => ({
   showOpenFilePicker: vi.fn<typeof showOpenFilePicker>(),
 }));
 

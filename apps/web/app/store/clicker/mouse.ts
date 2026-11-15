@@ -1,5 +1,5 @@
-import { applyMouseUpgrades } from "@/services/clicker/upgrade/applyMouseUpgrades";
-import { useClickerStore } from "@/store/clicker";
+import { applyMouseUpgrades } from "#src/services/clicker/upgrade/applyMouseUpgrades";
+import { useClickerStore } from "#src/store/clicker/index";
 
 export const useMouseStore = defineStore("clicker/mouse", () => {
   const clickerStore = useClickerStore();

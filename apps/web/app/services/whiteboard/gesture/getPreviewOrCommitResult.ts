@@ -1,8 +1,8 @@
-import type { WhiteboardGestureResult } from "@/models/whiteboard/WhiteboardGestureResult";
-import type { WhiteboardGestureState } from "@/models/whiteboard/WhiteboardGestureState";
+import type { WhiteboardGestureResult } from "#src/models/whiteboard/WhiteboardGestureResult";
+import type { WhiteboardGestureState } from "#src/models/whiteboard/WhiteboardGestureState";
 import type { JsonPatchOperation } from "@esposter/shared";
 
-import { GesturePointerAction } from "@/models/whiteboard/GesturePointerAction";
+import { GesturePointerAction } from "#src/models/whiteboard/GesturePointerAction";
 import { applyPatches } from "@esposter/shared";
 
 // A move previews the operations on the document, and a release commits them as one edit that ends the gesture

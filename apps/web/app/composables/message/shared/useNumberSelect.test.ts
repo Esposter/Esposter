@@ -1,4 +1,4 @@
-import { useNumberSelect } from "@/composables/message/shared/useNumberSelect";
+import { useNumberSelect } from "#src/composables/message/shared/useNumberSelect";
 import { describe, expect, test } from "vitest";
 
 describe(useNumberSelect, () => {

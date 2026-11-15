@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
 import { MimeType } from "#shared/models/file/MimeType";
-import { createElementSvg } from "@/services/capture/createElementSvg";
+import { createElementSvg } from "#src/services/capture/createElementSvg";
 import { describe, expect, test, vi } from "vitest";
 
 describe(createElementSvg, () => {

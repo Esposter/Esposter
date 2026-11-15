@@ -1,14 +1,14 @@
 // @vitest-environment nuxt
-import ResourceSurveyCreatorCanvas from "@/components/Resource/Survey/Creator/Canvas.vue";
-import ResourceSurveyCreatorShell from "@/components/Resource/Survey/Creator/Shell.vue";
-import ResourceSurveyRunner from "@/components/Resource/Survey/Runner.vue";
-import { SurveyEditorRegion } from "@/models/resource/survey/SurveyEditorRegion";
-import { SurveyEditorSelectionKind } from "@/models/resource/survey/SurveyEditorSelectionKind";
-import { findSheet } from "@/services/editor/findSheet.test";
-import { SurveyEditorLayout } from "@/services/resource/survey/SurveyEditorLayout";
-import { SurveyEditorRegionNameMap } from "@/services/resource/survey/SurveyEditorRegionNameMap";
-import { SurveyEditorRegistry } from "@/services/resource/survey/SurveyEditorRegistry";
-import { useSurveyCreatorStore } from "@/store/survey/creator";
+import ResourceSurveyCreatorCanvas from "#src/components/Resource/Survey/Creator/Canvas.vue";
+import ResourceSurveyCreatorShell from "#src/components/Resource/Survey/Creator/Shell.vue";
+import ResourceSurveyRunner from "#src/components/Resource/Survey/Runner.vue";
+import { SurveyEditorRegion } from "#src/models/resource/survey/SurveyEditorRegion";
+import { SurveyEditorSelectionKind } from "#src/models/resource/survey/SurveyEditorSelectionKind";
+import { findSheet } from "#src/services/editor/findSheet.test";
+import { SurveyEditorLayout } from "#src/services/resource/survey/SurveyEditorLayout";
+import { SurveyEditorRegionNameMap } from "#src/services/resource/survey/SurveyEditorRegionNameMap";
+import { SurveyEditorRegistry } from "#src/services/resource/survey/SurveyEditorRegistry";
+import { useSurveyCreatorStore } from "#src/store/survey/creator";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { beforeEach, describe, expect, test, vi } from "vitest";
@@ -17,7 +17,7 @@ import { surveyDocumentSchema, SurveyNodeType } from "vue-survey-engine-headless
 
 // The size class is read from the display composable, so a test says how small the window is before the shell mounts
 const display = vi.hoisted(() => ({ isCompact: false, isMobile: false }));
-vi.mock(import("@/composables/ui/useUiDisplay"), async (importOriginal) => {
+vi.mock(import("#src/composables/ui/useUiDisplay"), async (importOriginal) => {
   const actual = await importOriginal();
 
   return {

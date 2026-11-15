@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { POPOVER_POSITION_AREA, POPOVER_POSITION_TRY } from "@/services/ui/constants";
-import { getMenuItemByValue } from "@/services/ui/getMenuItemByValue";
-import { getUiMenuItems } from "@/services/ui/getUiMenuItems";
-import { useContextMenuStore } from "@/store/ui/contextMenu";
+import { POPOVER_POSITION_AREA, POPOVER_POSITION_TRY } from "#src/services/ui/constants";
+import { getMenuItemByValue } from "#src/services/ui/getMenuItemByValue";
+import { getUiMenuItems } from "#src/services/ui/getUiMenuItems";
+import { useContextMenuStore } from "#src/store/ui/contextMenu";
 import { usePopover } from "@vuetify/v0";
 
 const contextMenuStore = useContextMenuStore();

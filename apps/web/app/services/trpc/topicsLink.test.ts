@@ -2,8 +2,8 @@ import type { Operation } from "@trpc/client";
 
 import { TOPICS_HEADER } from "#shared/services/realtime/constants";
 import { formatTopicsHeaderValue } from "#shared/services/realtime/formatTopicsHeaderValue";
-import { collectTopics } from "@/services/realtime/collectTopics";
-import { topicsLink } from "@/services/trpc/topicsLink";
+import { collectTopics } from "#src/services/realtime/collectTopics";
+import { topicsLink } from "#src/services/trpc/topicsLink";
 import { getTopic, TopicKind } from "@esposter/db-schema";
 import { observable, observableToPromise } from "@trpc/server/observable";
 import { v7 } from "uuid";

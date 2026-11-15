@@ -1,4 +1,4 @@
-import { useResourceStore } from "@/store/resource";
+import { useResourceStore } from "#src/store/resource/index";
 
 // Singleton dialog targets for the Responses blade's row actions (detail / delete), keyed by response id. Keyed by the
 // Survey too: the delete dialog resolves no item, so a target left over from one survey would re-open it over the next

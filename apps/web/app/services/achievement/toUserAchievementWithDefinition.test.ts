@@ -1,7 +1,7 @@
 import type { UserAchievementInAchievementWithRelations } from "@esposter/db-schema";
 
 import { AchievementDefinitionMap } from "#shared/services/achievement/AchievementDefinitionMap";
-import { toUserAchievementWithDefinition } from "@/services/achievement/toUserAchievementWithDefinition";
+import { toUserAchievementWithDefinition } from "#src/services/achievement/toUserAchievementWithDefinition";
 import { EmailAchievementName } from "@esposter/db-schema";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";

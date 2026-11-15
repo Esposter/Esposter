@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { prettify } from "@/util/text/prettify";
+import { prettify } from "#src/util/text/prettify";
 
 interface Props {
   isSavable: boolean;

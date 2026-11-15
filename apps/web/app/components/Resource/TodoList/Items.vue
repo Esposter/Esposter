@@ -1,18 +1,18 @@
 <script setup lang="ts">
 import type { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
-import type { Item } from "@/models/shared/Item";
-import type { UiListItem } from "@/models/ui/UiListItem";
+import type { Item } from "#src/models/shared/Item";
+import type { UiListItem } from "#src/models/ui/UiListItem";
 
-import { TodoListSort } from "@/models/resource/todoList/TodoListSort";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { TODO_COMPLETION_HOLD_MS } from "@/services/resource/constants";
-import { playTodoCompletionChime } from "@/services/resource/todoList/playTodoCompletionChime";
-import { sortCompletedTodoListItems } from "@/services/resource/todoList/sortCompletedTodoListItems";
-import { sortTodoListItems } from "@/services/resource/todoList/sortTodoListItems";
-import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
-import { useResourceStore } from "@/store/resource";
-import { useTodoListStore } from "@/store/resource/todoList";
-import { useTodoDialogStore } from "@/store/resource/todoList/todoDialog";
+import { TodoListSort } from "#src/models/resource/todoList/TodoListSort";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { TODO_COMPLETION_HOLD_MS } from "#src/services/resource/constants";
+import { playTodoCompletionChime } from "#src/services/resource/todoList/playTodoCompletionChime";
+import { sortCompletedTodoListItems } from "#src/services/resource/todoList/sortCompletedTodoListItems";
+import { sortTodoListItems } from "#src/services/resource/todoList/sortTodoListItems";
+import { LocalStorageKey } from "#src/services/shared/LocalStorageKey";
+import { useResourceStore } from "#src/store/resource/index";
+import { useTodoListStore } from "#src/store/resource/todoList/index";
+import { useTodoDialogStore } from "#src/store/resource/todoList/todoDialog";
 import { promiseTimeout } from "@vueuse/core";
 import { parse } from "node-html-parser";
 

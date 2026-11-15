@@ -1,6 +1,6 @@
 import { StyleBreakpoint } from "#shared/models/pageBuilder/StyleBreakpoint";
 import { StyleState } from "#shared/models/pageBuilder/StyleState";
-import { setStyleProperty } from "@/services/pageBuilder/setStyleProperty";
+import { setStyleProperty } from "#src/services/pageBuilder/setStyleProperty";
 import { describe, expect, test } from "vitest";
 
 describe(setStyleProperty, () => {

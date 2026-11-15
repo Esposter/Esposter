@@ -1,5 +1,5 @@
 import { PostSortType } from "#shared/models/post/PostSortType";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 export const PostSortTypeIconMeaningMap = {
   [PostSortType.Hot]: UiIconMeaning.Hot,

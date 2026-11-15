@@ -1,6 +1,6 @@
-import type { Npc } from "@/models/dungeons/scene/world/Npc";
+import type { Npc } from "#src/models/dungeons/scene/world/Npc";
 
-import { createOperationData } from "@/services/shared/createOperationData";
+import { createOperationData } from "#src/services/shared/createOperationData";
 
 export const useNpcStore = defineStore("dungeons/world/npc", () => {
   const { items, ...restData } = useCursorPaginationData<Npc>();

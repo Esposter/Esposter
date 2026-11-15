@@ -1,12 +1,12 @@
-import type { ReadFileUrl } from "@/models/message/file/ReadFileUrl";
+import type { ReadFileUrl } from "#src/models/message/file/ReadFileUrl";
 import type { FileEntity, RoomInMessage } from "@esposter/db-schema";
 
-import { getInferredMimetype } from "@/services/file/getInferredMimetype";
-import { checkHasThumbnail } from "@/services/message/file/checkHasThumbnail";
-import { MessageHookMap } from "@/services/message/MessageHookMap";
-import { useDataStore } from "@/store/message/data";
-import { useRoomStore } from "@/store/message/room";
-import { useThreadStore } from "@/store/message/thread";
+import { getInferredMimetype } from "#src/services/file/getInferredMimetype";
+import { checkHasThumbnail } from "#src/services/message/file/checkHasThumbnail";
+import { MessageHookMap } from "#src/services/message/MessageHookMap";
+import { useDataStore } from "#src/store/message/data";
+import { useRoomStore } from "#src/store/message/room/index";
+import { useThreadStore } from "#src/store/message/thread";
 import { READ_PRESIGNED_URL_REFRESH_INTERVAL_MS } from "@esposter/db-schema";
 import {
   checkIsServer,

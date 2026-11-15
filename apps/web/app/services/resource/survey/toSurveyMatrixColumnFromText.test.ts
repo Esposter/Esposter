@@ -1,4 +1,4 @@
-import { toSurveyMatrixColumnFromText } from "@/services/resource/survey/toSurveyMatrixColumnFromText";
+import { toSurveyMatrixColumnFromText } from "#src/services/resource/survey/toSurveyMatrixColumnFromText";
 import { describe, expect, test } from "vitest";
 import { SurveyMatrixCellType } from "vue-survey-engine-headless";
 

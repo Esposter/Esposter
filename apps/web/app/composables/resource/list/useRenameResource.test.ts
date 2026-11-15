@@ -2,9 +2,9 @@
 import type { ResourceInResource } from "@esposter/db-schema";
 
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
-import { useRenameResource } from "@/composables/resource/list/useRenameResource";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useFavoriteStore } from "@/store/resource/favorite";
+import { useRenameResource } from "#src/composables/resource/list/useRenameResource";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useFavoriteStore } from "#src/store/resource/favorite";
 import { TRPCError } from "@trpc/server";
 import { describe, expect, test, vi } from "vitest";
 

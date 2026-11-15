@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { ClickerListItem } from "@/models/clicker/ClickerListItem";
+import type { ClickerListItem } from "#src/models/clicker/ClickerListItem";
 
-import { formatNumberLong } from "@/services/clicker/formatNumberLong";
+import { formatNumberLong } from "#src/services/clicker/formatNumberLong";
 
 interface Props {
   item: ClickerListItem;

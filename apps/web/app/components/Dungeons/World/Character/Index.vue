@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { CharacterProps } from "@/components/Dungeons/World/Character/CharacterProps";
+import type { CharacterProps } from "#src/components/Dungeons/World/Character/CharacterProps";
 import type { Position } from "grid-engine";
 import type { Subscription } from "rxjs";
 

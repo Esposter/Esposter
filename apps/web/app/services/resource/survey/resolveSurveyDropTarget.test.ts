@@ -1,7 +1,7 @@
-import type { OverlayBox } from "@/models/pageBuilder/OverlayBox";
-import type { SurveyDropSlot } from "@/models/resource/survey/SurveyDropSlot";
+import type { OverlayBox } from "#src/models/pageBuilder/OverlayBox";
+import type { SurveyDropSlot } from "#src/models/resource/survey/SurveyDropSlot";
 
-import { resolveSurveyDropTarget } from "@/services/resource/survey/resolveSurveyDropTarget";
+import { resolveSurveyDropTarget } from "#src/services/resource/survey/resolveSurveyDropTarget";
 import { describe, expect, test } from "vitest";
 import { SurveyNodeType } from "vue-survey-engine-headless";
 

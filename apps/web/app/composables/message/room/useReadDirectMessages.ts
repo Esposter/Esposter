@@ -1,6 +1,6 @@
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { useDirectMessageStore } from "@/store/message/room/directMessage";
+import { useDirectMessageStore } from "#src/store/message/room/directMessage";
 
 export const useReadDirectMessages = () => {
   const { $trpc } = useNuxtApp();

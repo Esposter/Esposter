@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useLayoutStore } from "@/store/layout";
-import { usePinStore } from "@/store/message/pin";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { useLayoutStore } from "#src/store/layout";
+import { usePinStore } from "#src/store/message/pin";
 import { DEFAULT_PAGE_LIMIT } from "@esposter/db-schema";
 
 const layoutStore = useLayoutStore();

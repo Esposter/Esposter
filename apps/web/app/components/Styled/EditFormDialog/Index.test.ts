@@ -1,8 +1,8 @@
 // @vitest-environment happy-dom
-import StyledEditFormDialog from "@/components/Styled/EditFormDialog/Index.vue";
-import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
-import { DIALOG_CLOSE_DURATION_MS } from "@/services/ui/constants";
-import { DEFAULT_UI_STYLE } from "@@/configuration/constants";
+import { DEFAULT_UI_STYLE } from "#configuration/constants";
+import StyledEditFormDialog from "#src/components/Styled/EditFormDialog/Index.vue";
+import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
+import { DIALOG_CLOSE_DURATION_MS } from "#src/services/ui/constants";
 import { noop } from "@esposter/shared";
 import { flushPromises, mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";

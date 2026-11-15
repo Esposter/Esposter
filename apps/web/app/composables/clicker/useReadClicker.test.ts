@@ -4,21 +4,21 @@ import type { VueWrapper } from "@vue/test-utils";
 
 import { BuildingMap } from "#shared/assets/clicker/data/BuildingMap";
 import { BuildingId } from "#shared/models/clicker/data/building/BuildingId";
-import { useReadClicker } from "@/composables/clicker/useReadClicker";
-import { useSession } from "@/services/auth/authClient.test";
-import { createClicker } from "@/services/clicker/createClicker";
-import { toClickerSave } from "@/services/clicker/save/toClickerSave";
-import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useClickerStore } from "@/store/clicker";
-import { useOfflineProgressStore } from "@/store/clicker/offlineProgress";
+import { useReadClicker } from "#src/composables/clicker/useReadClicker";
+import { useSession } from "#src/services/auth/authClient.test";
+import { createClicker } from "#src/services/clicker/createClicker";
+import { toClickerSave } from "#src/services/clicker/save/toClickerSave";
+import { LocalStorageKey } from "#src/services/shared/LocalStorageKey";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useClickerStore } from "#src/store/clicker/index";
+import { useOfflineProgressStore } from "#src/store/clicker/offlineProgress";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
+vi.mock(import("#src/services/auth/authClient"), () => import("#src/services/auth/authClient.test"));
 
 const writeGuestSave = (clicker: Clicker) => {
   localStorage.setItem(LocalStorageKey.ClickerStore, JSON.stringify(toClickerSave(clicker)));

@@ -1,8 +1,8 @@
 // @vitest-environment happy-dom
-import type { PaletteGroup } from "@/models/ui/palette/PaletteGroup";
+import type { PaletteGroup } from "#src/models/ui/palette/PaletteGroup";
 
-import UiPalette from "@/components/Ui/Palette/Index.vue";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import UiPalette from "#src/components/Ui/Palette/Index.vue";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { mount } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 

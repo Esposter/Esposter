@@ -1,6 +1,6 @@
-import type { DragReorderContext } from "@/models/ui/dragReorder/DragReorderContext";
+import type { DragReorderContext } from "#src/models/ui/dragReorder/DragReorderContext";
 
-import { startDragPress } from "@/services/ui/dragReorder/startDragPress";
+import { startDragPress } from "#src/services/ui/dragReorder/startDragPress";
 
 // The props a reorderable container takes, with a handle as a selector to limit a drag to a press inside it, for rows
 // Whose own content is pressed for other things

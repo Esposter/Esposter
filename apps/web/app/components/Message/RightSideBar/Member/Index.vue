@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useLayoutStore } from "@/store/layout";
-import { useMemberStore } from "@/store/message/user/member";
+import { useLayoutStore } from "#src/store/layout";
+import { useMemberStore } from "#src/store/message/user/member";
 
 const layoutStore = useLayoutStore();
 const { isRightDrawerOpen } = storeToRefs(layoutStore);

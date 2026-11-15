@@ -1,4 +1,4 @@
-import { sanitizeFilename } from "@/services/app/sanitizeFilename";
+import { sanitizeFilename } from "#src/services/app/sanitizeFilename";
 
 // Key values are unique per program, but sanitizing can map two of them to one name ("12/3" and "12-3").
 // A name already taken gets a counter rather than replacing the participant who has it

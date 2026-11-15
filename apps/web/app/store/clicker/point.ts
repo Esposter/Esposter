@@ -1,4 +1,4 @@
-import { useClickerStore } from "@/store/clicker";
+import { useClickerStore } from "#src/store/clicker/index";
 
 export const usePointStore = defineStore("clicker/point", () => {
   const clickerStore = useClickerStore();

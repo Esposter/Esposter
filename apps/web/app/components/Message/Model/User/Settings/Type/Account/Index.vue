@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { AccountSettingsSection } from "@/models/message/user/settings/AccountSettingsSection";
+import { AccountSettingsSection } from "#src/models/message/user/settings/AccountSettingsSection";
 </script>
 
 <template>

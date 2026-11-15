@@ -2,7 +2,7 @@
 import type { ImageElement } from "vue-block-editor-headless";
 
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
-import { useResourceStore } from "@/store/resource";
+import { useResourceStore } from "#src/store/resource/index";
 import { getResourceFileBlobName } from "@esposter/db-schema";
 
 interface Props {

@@ -4,12 +4,12 @@ import type { ImageElement, PositionedDocument } from "vue-block-editor-headless
 import { MimeType } from "#shared/models/file/MimeType";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
-import { WhiteboardExportFormat } from "@/models/whiteboard/WhiteboardExportFormat";
-import { rasterizeSvg } from "@/services/capture/rasterizeSvg";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { exportWhiteboard } from "@/services/whiteboard/export/exportWhiteboard";
-import { useAlertStore } from "@/store/alert";
-import { useResourceStore } from "@/store/resource";
+import { WhiteboardExportFormat } from "#src/models/whiteboard/WhiteboardExportFormat";
+import { rasterizeSvg } from "#src/services/capture/rasterizeSvg";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { exportWhiteboard } from "#src/services/whiteboard/export/exportWhiteboard";
+import { useAlertStore } from "#src/store/alert";
+import { useResourceStore } from "#src/store/resource/index";
 import { getResourceFileBlobName, ResourceType } from "@esposter/db-schema";
 import { downloadFile } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -33,7 +33,7 @@ vi.mock(import("@esposter/shared"), async (importOriginal) => ({
 }));
 
 // The canvas is missing from the test environment, so the rasterizer is replaced by one that resolves the PNG the test gives it
-vi.mock(import("@/services/capture/rasterizeSvg"), () => ({ rasterizeSvg: vi.fn<typeof rasterizeSvg>() }));
+vi.mock(import("#src/services/capture/rasterizeSvg"), () => ({ rasterizeSvg: vi.fn<typeof rasterizeSvg>() }));
 
 describe(exportWhiteboard, () => {
   const { trpcMsw } = setupMswTrpc();

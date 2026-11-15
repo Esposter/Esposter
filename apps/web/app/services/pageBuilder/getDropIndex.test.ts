@@ -1,7 +1,7 @@
-import type { OverlayBox } from "@/models/pageBuilder/OverlayBox";
+import type { OverlayBox } from "#src/models/pageBuilder/OverlayBox";
 
-import { TEST_SINGLE_ROW, TEST_WRAPPED_ROW } from "@/services/pageBuilder/constants.test";
-import { getDropIndex } from "@/services/pageBuilder/getDropIndex";
+import { TEST_SINGLE_ROW, TEST_WRAPPED_ROW } from "#src/services/pageBuilder/constants.test";
+import { getDropIndex } from "#src/services/pageBuilder/getDropIndex";
 import { describe, expect, test } from "vitest";
 
 describe(getDropIndex, () => {

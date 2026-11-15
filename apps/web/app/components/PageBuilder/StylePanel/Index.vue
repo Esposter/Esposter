@@ -2,14 +2,14 @@
 import type { StyleProperty } from "#shared/models/pageBuilder/StyleProperty";
 
 import { StyleState } from "#shared/models/pageBuilder/StyleState";
-import { UiCollapsibleVariant } from "@/models/ui/UiCollapsibleVariant";
+import { UiCollapsibleVariant } from "#src/models/ui/UiCollapsibleVariant";
 import {
   DEFAULT_THEME_COLOR,
   STYLE_CHOICES,
   STYLE_COLOR_PROPERTIES,
   STYLE_SECTORS,
-} from "@/services/pageBuilder/constants";
-import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
+} from "#src/services/pageBuilder/constants";
+import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
 
 interface Props {
   resourceId: string;

@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { WebhookDialogAction } from "@/models/message/room/WebhookDialogAction";
-import { WebhookDialogActionMetaMap } from "@/services/message/room/WebhookDialogActionMetaMap";
-import { useWebhookStore } from "@/store/message/room/webhook";
-import { useWebhookDialogStore } from "@/store/message/room/webhookDialog";
+import { WebhookDialogAction } from "#src/models/message/room/WebhookDialogAction";
+import { WebhookDialogActionMetaMap } from "#src/services/message/room/WebhookDialogActionMetaMap";
+import { useWebhookStore } from "#src/store/message/room/webhook";
+import { useWebhookDialogStore } from "#src/store/message/room/webhookDialog";
 
 interface Props {
   action: WebhookDialogAction;

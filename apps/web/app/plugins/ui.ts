@@ -1,11 +1,11 @@
-import { ResolvedThemeModes } from "@/models/ui/ResolvedThemeMode";
-import { ThemeMode } from "@/models/ui/ThemeMode";
-import { UiStyles } from "@/models/ui/UiStyle";
-import { BREAKPOINTS_NAMESPACE } from "@/services/ui/constants";
-import { getUiTheme } from "@/services/ui/getUiTheme";
-import { BREAKPOINTS } from "@@/configuration/breakpoints";
-import { DEFAULT_UI_STYLE } from "@@/configuration/constants";
-import { UiPaletteMap } from "@@/configuration/UiPaletteMap";
+import { BREAKPOINTS } from "#configuration/breakpoints";
+import { DEFAULT_UI_STYLE } from "#configuration/constants";
+import { UiPaletteMap } from "#configuration/UiPaletteMap";
+import { ResolvedThemeModes } from "#src/models/ui/ResolvedThemeMode";
+import { ThemeMode } from "#src/models/ui/ThemeMode";
+import { UiStyles } from "#src/models/ui/UiStyle";
+import { BREAKPOINTS_NAMESPACE } from "#src/services/ui/constants";
+import { getUiTheme } from "#src/services/ui/getUiTheme";
 import { createBreakpointsPlugin, createHydrationPlugin, createThemePlugin, useBreakpoints } from "@vuetify/v0";
 import { V0UnheadThemeAdapter } from "@vuetify/v0/theme/adapters/unhead";
 

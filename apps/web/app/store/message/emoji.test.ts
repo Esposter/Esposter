@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
 import { getMockSession } from "#server/trpc/context.test";
-import { useSession } from "@/services/auth/authClient.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useEmojiStore } from "@/store/message/emoji";
+import { useSession } from "#src/services/auth/authClient.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useEmojiStore } from "#src/store/message/emoji";
 import { noop, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { v7 } from "uuid";
@@ -11,7 +11,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 interface MockSessionValue {
   data?: { user: { id: string } };
 }
-vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
+vi.mock(import("#src/services/auth/authClient"), () => import("#src/services/auth/authClient.test"));
 
 describe(useEmojiStore, () => {
   const { trpcMsw } = setupMswTrpc();

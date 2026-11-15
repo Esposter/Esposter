@@ -1,5 +1,5 @@
-import { useSingletonDialog } from "@/composables/useSingletonDialog";
-import { DIALOG_CLOSE_DURATION_MS } from "@/services/ui/constants";
+import { useSingletonDialog } from "#src/composables/useSingletonDialog";
+import { DIALOG_CLOSE_DURATION_MS } from "#src/services/ui/constants";
 import { v7 } from "uuid";
 import { describe, expect, onTestFinished, test, vi } from "vitest";
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Promisable } from "type-fest";
 
-import { useUserApiKeyDialogStore } from "@/store/user/apiKeyDialog";
+import { useUserApiKeyDialogStore } from "#src/store/user/apiKeyDialog";
 
 interface Props {
   deleteKey: () => Promisable<unknown>;

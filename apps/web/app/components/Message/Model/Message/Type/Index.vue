@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { MessageComponentProps } from "@/models/message/MessageComponentProps";
+import type { MessageComponentProps } from "#src/models/message/MessageComponentProps";
 
-import { getShortTimeLabel } from "@/util/date/getShortTimeLabel";
+import { getShortTimeLabel } from "#src/util/date/getShortTimeLabel";
 
 defineSlots<{ default?: () => VNode }>();
 const { isPreview = false, isSameBatch: baseIsSameBatch, message } = defineProps<MessageComponentProps>();

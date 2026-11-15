@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { TOOLTIP_NAMESPACE } from "@/services/ui/constants";
+import { TOOLTIP_NAMESPACE } from "#src/services/ui/constants";
 import { useTooltipRoot } from "@vuetify/v0";
 
 defineSlots<{ default: () => VNode }>();

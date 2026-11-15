@@ -1,4 +1,4 @@
-import { getVisibleSectionIds } from "@/services/shared/getVisibleSectionIds";
+import { getVisibleSectionIds } from "#src/services/shared/getVisibleSectionIds";
 import { checkIsServer } from "@esposter/shared";
 
 // Same members in the same order. Both halves are load-bearing and only one of them is visible at a glance: a

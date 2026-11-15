@@ -1,6 +1,6 @@
 import { TEST_ORIGIN } from "#shared/services/pageBuilder/constants.test";
 import { createTestTextDocument } from "#shared/services/pageBuilder/createTestTextDocument.test";
-import { exportWebpageHtml } from "@/services/pageBuilder/exportWebpageHtml";
+import { exportWebpageHtml } from "#src/services/pageBuilder/exportWebpageHtml";
 import { downloadFile, takeOne } from "@esposter/shared";
 import { describe, expect, test, vi } from "vitest";
 

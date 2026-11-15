@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { SnapshotVersion } from "#shared/models/resource/SnapshotVersion";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
-import { UiDialogSize } from "@/models/ui/UiDialogSize";
-import { getSnapshotVersionId } from "@/services/resource/getSnapshotVersionId";
-import { getSnapshotVersionTitle } from "@/services/resource/getSnapshotVersionTitle";
-import { useVersionHistoryStore } from "@/store/resource/versionHistory";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
+import { UiDialogSize } from "#src/models/ui/UiDialogSize";
+import { getSnapshotVersionId } from "#src/services/resource/getSnapshotVersionId";
+import { getSnapshotVersionTitle } from "#src/services/resource/getSnapshotVersionTitle";
+import { useVersionHistoryStore } from "#src/store/resource/versionHistory";
 
 interface Props {
   versions: SnapshotVersion[];

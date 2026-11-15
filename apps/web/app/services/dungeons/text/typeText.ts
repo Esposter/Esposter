@@ -1,8 +1,8 @@
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { SoundEffectKey } from "#shared/models/dungeons/keys/sound/SoundEffectKey";
-import { useTextDelayMs } from "@/composables/dungeons/text/useTextDelayMs";
-import { getDungeonsSoundEffect } from "@/services/dungeons/sound/getDungeonsSoundEffect";
+import { useTextDelayMs } from "#src/composables/dungeons/text/useTextDelayMs";
+import { getDungeonsSoundEffect } from "#src/services/dungeons/sound/getDungeonsSoundEffect";
 import { Scenes } from "phaser";
 
 export const typeText = (scene: SceneWithPlugins, targetText: Ref<string>, textSections: string[]) => {

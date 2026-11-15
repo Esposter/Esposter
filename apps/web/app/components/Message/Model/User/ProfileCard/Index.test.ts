@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
-import MessageModelUserProfileCard from "@/components/Message/Model/User/ProfileCard/Index.vue";
-import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
-import { createUser } from "@/services/message/user/createUser.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
+import MessageModelUserProfileCard from "#src/components/Message/Model/User/ProfileCard/Index.vue";
+import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
+import { createUser } from "#src/services/message/user/createUser.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";

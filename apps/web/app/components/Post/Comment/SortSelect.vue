@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { POST_SORT_TYPES } from "@/services/post/constants";
-import { getPostSortTypeItems } from "@/services/post/getPostSortTypeItems";
-import { useCommentStore } from "@/store/post/comment";
+import { POST_SORT_TYPES } from "#src/services/post/constants";
+import { getPostSortTypeItems } from "#src/services/post/getPostSortTypeItems";
+import { useCommentStore } from "#src/store/post/comment/index";
 
 const commentStore = useCommentStore();
 const { commentSortType } = storeToRefs(commentStore);

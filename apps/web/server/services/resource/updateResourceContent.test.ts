@@ -1,6 +1,6 @@
 import type { AuthedContext } from "#server/models/auth/AuthedContext";
 import type { ResourceContentUpdate } from "#server/models/resource/ResourceContentUpdate";
-import type { TRPCRouter } from "#server/trpc/routers";
+import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { updateResourceContent } from "#server/services/resource/updateResourceContent";

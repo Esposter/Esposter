@@ -1,4 +1,4 @@
-import type { UiRule } from "@/models/ui/UiRule";
+import type { UiRule } from "#src/models/ui/UiRule";
 
 import { checkContainsProfanity } from "@esposter/shared";
 

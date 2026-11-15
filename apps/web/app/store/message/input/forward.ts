@@ -1,6 +1,6 @@
-import type { ClientMessage } from "@/models/message/ClientMessage";
+import type { ClientMessage } from "#src/models/message/ClientMessage";
 
-import { useRoomStore } from "@/store/message/room";
+import { useRoomStore } from "#src/store/message/room/index";
 
 export const useForwardStore = defineStore("message/input/forward", () => {
   const roomStore = useRoomStore();

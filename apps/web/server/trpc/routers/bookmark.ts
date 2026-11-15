@@ -2,8 +2,8 @@ import type { BookmarkPageLink } from "#shared/models/app/BookmarkPageLink";
 
 import { getInsertSelectMetadata } from "#server/services/db/getInsertSelectMetadata";
 import { getPublicationWhere } from "#server/services/resource/getPublicationWhere";
-import { router } from "#server/trpc";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
+import { router } from "#server/trpc/index";
 import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { PageMarkType } from "#shared/models/app/PageMarkType";

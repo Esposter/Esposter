@@ -1,7 +1,7 @@
 import { MimeType } from "#shared/models/file/MimeType";
 import { escapeXml } from "#shared/util/text/escapeXml";
-import { copyComputedStyles } from "@/services/capture/copyComputedStyles";
-import { readFontFaceCss } from "@/services/capture/readFontFaceCss";
+import { copyComputedStyles } from "#src/services/capture/copyComputedStyles";
+import { readFontFaceCss } from "#src/services/capture/readFontFaceCss";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export const createElementSvg = async (element: HTMLElement) => {

@@ -1,4 +1,4 @@
-import { parseGenshinJournal } from "@/services/genshin/parseGenshinJournal";
+import { parseGenshinJournal } from "#src/services/genshin/parseGenshinJournal";
 import { EMPTY_GENSHIN_SAVE } from "genshin-world/save";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";

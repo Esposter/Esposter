@@ -1,5 +1,5 @@
 import type { Context } from "#server/trpc/context";
-import type { TRPCRouter } from "#server/trpc/routers";
+import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { ReadCritiqueResult } from "#shared/models/resource/ReadCritiqueResult";
 import type { ResourceReferences } from "#shared/models/resource/ResourceReferences";
 import type { SnapshotRestoration } from "#shared/models/resource/SnapshotRestoration";
@@ -16,11 +16,11 @@ import { CONTENT_SAVED_COALESCE_WINDOW_MS, DUPLICATE_NAME_SUFFIX } from "#server
 import { getSnapshotObjectBlobName } from "#server/services/resource/snapshot/getSnapshotObjectBlobName";
 import { getBucket } from "#server/services/storage/getBucket";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
-import { createCallerFactory } from "#server/trpc";
 import { createMockAuthSession, createMockContext } from "#server/trpc/context.test";
-import { trpcRouter } from "#server/trpc/routers";
+import { createCallerFactory } from "#server/trpc/index";
 import { dashboardRouter } from "#server/trpc/routers/dashboard";
 import { emailRouter } from "#server/trpc/routers/email";
+import { trpcRouter } from "#server/trpc/routers/index";
 import { resourceRouter } from "#server/trpc/routers/resource";
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { sheetRouter } from "#server/trpc/routers/sheet";

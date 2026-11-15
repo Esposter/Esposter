@@ -1,15 +1,15 @@
-import type { GestureConnecting } from "@/models/whiteboard/GestureConnecting";
-import type { GesturePointerEvent } from "@/models/whiteboard/GesturePointerEvent";
-import type { WhiteboardGestureResult } from "@/models/whiteboard/WhiteboardGestureResult";
-import type { WhiteboardGestureState } from "@/models/whiteboard/WhiteboardGestureState";
+import type { GestureConnecting } from "#src/models/whiteboard/GestureConnecting";
+import type { GesturePointerEvent } from "#src/models/whiteboard/GesturePointerEvent";
+import type { WhiteboardGestureResult } from "#src/models/whiteboard/WhiteboardGestureResult";
+import type { WhiteboardGestureState } from "#src/models/whiteboard/WhiteboardGestureState";
 
-import { checkIsDragStarted } from "@/services/whiteboard/gesture/checkIsDragStarted";
-import { getArrowEnd } from "@/services/whiteboard/gesture/getArrowEnd";
-import { getConnectOperations } from "@/services/whiteboard/gesture/getConnectOperations";
-import { getHitElementId } from "@/services/whiteboard/gesture/getHitElementId";
-import { getHitTolerance } from "@/services/whiteboard/gesture/getHitTolerance";
-import { getWorldPoint } from "@/services/whiteboard/gesture/getWorldPoint";
-import { reducePointerGesture } from "@/services/whiteboard/gesture/reducePointerGesture";
+import { checkIsDragStarted } from "#src/services/whiteboard/gesture/checkIsDragStarted";
+import { getArrowEnd } from "#src/services/whiteboard/gesture/getArrowEnd";
+import { getConnectOperations } from "#src/services/whiteboard/gesture/getConnectOperations";
+import { getHitElementId } from "#src/services/whiteboard/gesture/getHitElementId";
+import { getHitTolerance } from "#src/services/whiteboard/gesture/getHitTolerance";
+import { getWorldPoint } from "#src/services/whiteboard/gesture/getWorldPoint";
+import { reducePointerGesture } from "#src/services/whiteboard/gesture/reducePointerGesture";
 import { PositionedElementType } from "vue-block-editor-headless";
 
 // A drag from a connection handle previews the arrow it would draw, and a release commits it as one edit. A release on another shape joins that shape

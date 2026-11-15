@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Column } from "#shared/models/resource/sheet/column/Column";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 interface Props {
   column: Column;

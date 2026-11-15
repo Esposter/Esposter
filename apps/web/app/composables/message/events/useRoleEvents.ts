@@ -1,6 +1,6 @@
-import { authClient } from "@/services/auth/authClient";
-import { useRoleStore } from "@/store/message/room/role";
-import { useConnectionStore } from "@/store/realtime/connection";
+import { authClient } from "#src/services/auth/authClient";
+import { useRoleStore } from "#src/store/message/room/role";
+import { useConnectionStore } from "#src/store/realtime/connection";
 import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 
 // A role's permission bitfield is a bigint, which JSON cannot carry, so an event names it by its decimal digits

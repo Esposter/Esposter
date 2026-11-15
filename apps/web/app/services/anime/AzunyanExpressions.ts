@@ -1,6 +1,6 @@
-import type { Expression } from "@/models/desmos/Expression";
+import type { Expression } from "#src/models/desmos/Expression";
 
-import { Colors } from "@/models/desmos/Colors";
+import { Colors } from "#src/models/desmos/Colors";
 
 export const AzunyanExpressions: Expression[] = [
   { latex: String.raw`y=-0.17\left(x-0.66\right)^{2}+3.8\left\{-0.542<x<1.2\right\}` },

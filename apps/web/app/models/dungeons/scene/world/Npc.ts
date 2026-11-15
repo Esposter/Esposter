@@ -1,11 +1,11 @@
 import type { NpcId } from "#shared/generated/tiled/propertyTypes/enum/NpcId";
-import type { Effect } from "@/models/dungeons/npc/effect/Effect";
-import type { Npc as NpcData } from "@/models/dungeons/npc/Npc";
+import type { Effect } from "#src/models/dungeons/npc/effect/Effect";
+import type { Npc as NpcData } from "#src/models/dungeons/npc/Npc";
 import type { Position } from "grid-engine";
 import type { Except } from "type-fest";
 
-import { MovementPattern } from "@/models/dungeons/npc/MovementPattern";
-import { Character } from "@/models/dungeons/scene/world/Character";
+import { MovementPattern } from "#src/models/dungeons/npc/MovementPattern";
+import { Character } from "#src/models/dungeons/scene/world/Character";
 
 // The position comes from `path[pathIndex]` rather than being held, so a patrol is a path and an index
 export class Npc extends Character<NpcId> implements Except<NpcData, "frame" | "id"> {

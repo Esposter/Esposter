@@ -3,8 +3,8 @@ import type { DecorateRouterRecord, RouterRecord } from "@trpc/server/unstable-c
 
 import { getBucket } from "#server/services/storage/getBucket";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
-import { createCallerFactory } from "#server/trpc";
 import { createMockContext } from "#server/trpc/context.test";
+import { createCallerFactory } from "#server/trpc/index";
 import { deleteDirectory } from "@esposter/db";
 import { createMockBucket } from "@esposter/db-mock";
 import { resourcesInResource, StorageBucket } from "@esposter/db-schema";

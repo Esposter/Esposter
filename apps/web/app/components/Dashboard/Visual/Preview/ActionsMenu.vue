@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import type { Visual } from "#shared/models/dashboard/data/Visual";
 import type { Dataset } from "#shared/models/dataset/Dataset";
-import type { Item } from "@/models/shared/Item";
+import type { Item } from "#src/models/shared/Item";
 
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { exportDashboardVisualCsv } from "@/services/dashboard/export/exportDashboardVisualCsv";
-import { getVisualMoveTargets } from "@/services/dashboard/visual/getVisualMoveTargets";
-import { useDashboardDialogStore } from "@/store/dashboard/dialog";
-import { useVisualStore } from "@/store/dashboard/visual";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { exportDashboardVisualCsv } from "#src/services/dashboard/export/exportDashboardVisualCsv";
+import { getVisualMoveTargets } from "#src/services/dashboard/visual/getVisualMoveTargets";
+import { useDashboardDialogStore } from "#src/store/dashboard/dialog";
+import { useVisualStore } from "#src/store/dashboard/visual";
 
 interface Props {
   // A bound visual that draws its rows has a dataset to export, and a demo or failed one has none

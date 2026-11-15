@@ -1,5 +1,5 @@
 import { StringColumn } from "#shared/models/resource/sheet/column/StringColumn";
-import { getVisibleColumns } from "@/services/resource/sheet/column/getVisibleColumns";
+import { getVisibleColumns } from "#src/services/resource/sheet/column/getVisibleColumns";
 import { describe, expect, test } from "vitest";
 
 const createVisibilityColumn = (name: string, isHidden: boolean) => new StringColumn({ isHidden, name });

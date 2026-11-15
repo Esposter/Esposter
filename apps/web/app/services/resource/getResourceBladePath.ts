@@ -1,7 +1,7 @@
-import type { ResourceBladeSlug } from "@/models/resource/ResourceBladeSlug";
+import type { ResourceBladeSlug } from "#src/models/resource/ResourceBladeSlug";
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { ResourceBladeType } from "@/models/resource/ResourceBladeType";
+import { ResourceBladeType } from "#src/models/resource/ResourceBladeType";
 import { RoutePath } from "@esposter/shared";
 
 // Overview is the resource's own path; every other blade hangs off it as a segment.

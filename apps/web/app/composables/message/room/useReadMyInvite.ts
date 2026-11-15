@@ -1,7 +1,7 @@
 import type { InviteInMessage, RoomInMessage } from "@esposter/db-schema";
 
 import { checkIsInviteUsable } from "#shared/services/room/invite/checkIsInviteUsable";
-import { useInviteStore } from "@/store/message/room/invite";
+import { useInviteStore } from "#src/store/message/room/invite";
 
 // Every surface that shows a member's own link reads through here, so the store is seeded the same way from all of
 // Them — the settings row renders a link without ever mounting the manager that creates one

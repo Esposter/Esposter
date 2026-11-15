@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
-import UiStyleField from "@/components/PageBuilder/StylePanel/Field.vue";
-import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
-import { UiStyles } from "@/models/ui/UiStyle";
+import UiStyleField from "#src/components/PageBuilder/StylePanel/Field.vue";
+import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
+import { UiStyles } from "#src/models/ui/UiStyle";
 import { mount } from "@vue/test-utils";
 import { afterEach, describe, expect, test, vi } from "vitest";
 

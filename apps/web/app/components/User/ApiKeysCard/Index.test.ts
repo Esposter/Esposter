@@ -1,17 +1,17 @@
 // @vitest-environment nuxt
-import UiEmptyState from "@/components/Ui/EmptyState.vue";
-import UiErrorState from "@/components/Ui/ErrorState.vue";
-import UserApiKeysCard from "@/components/User/ApiKeysCard/Index.vue";
-import UserApiKeysCardRow from "@/components/User/ApiKeysCard/Row.vue";
-import UserSettingsListSkeleton from "@/components/User/Settings/ListSkeleton.vue";
-import { UserSettingsPageSection } from "@/models/user/UserSettingsPageSection";
-import { apiKeyList } from "@/services/auth/authClient.test";
+import UiEmptyState from "#src/components/Ui/EmptyState.vue";
+import UiErrorState from "#src/components/Ui/ErrorState.vue";
+import UserApiKeysCard from "#src/components/User/ApiKeysCard/Index.vue";
+import UserApiKeysCardRow from "#src/components/User/ApiKeysCard/Row.vue";
+import UserSettingsListSkeleton from "#src/components/User/Settings/ListSkeleton.vue";
+import { UserSettingsPageSection } from "#src/models/user/UserSettingsPageSection";
+import { apiKeyList } from "#src/services/auth/authClient.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 
-vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
+vi.mock(import("#src/services/auth/authClient"), () => import("#src/services/auth/authClient.test"));
 
 const mountCard = () => mountSuspended(UserApiKeysCard, { props: { section: UserSettingsPageSection.ApiKeys } });
 

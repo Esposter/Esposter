@@ -1,8 +1,8 @@
-import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
+import type { PageBuilderKind } from "#src/models/pageBuilder/PageBuilderKind";
 import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "vue-block-editor-headless";
 
-import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
-import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
+import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
+import { usePageBuilderHistoryStore } from "#src/store/pageBuilder/history";
 import { v7 } from "uuid";
 import { insertBlockNode } from "vue-block-editor-headless";
 

@@ -1,5 +1,5 @@
 import { useCallObject } from "#server/composables/realtime/useCallObject";
-import { db } from "#server/db";
+import { db } from "#server/db/index";
 import { checkIsCallConnectionAdmitted } from "#server/services/message/call/checkIsCallConnectionAdmitted";
 import { createParticipant } from "#server/services/message/call/createParticipant";
 import { writeCallSummary } from "#server/services/message/call/writeCallSummary";

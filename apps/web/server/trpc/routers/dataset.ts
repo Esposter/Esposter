@@ -2,7 +2,7 @@ import type { Dataset } from "#shared/models/dataset/Dataset";
 
 import { readDataset } from "#server/services/dataset/readDataset";
 import { getResourceTopics } from "#server/services/resource/getResourceTopics";
-import { router } from "#server/trpc";
+import { router } from "#server/trpc/index";
 import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { datasetReferenceSchema } from "#shared/models/dataset/DatasetReference";

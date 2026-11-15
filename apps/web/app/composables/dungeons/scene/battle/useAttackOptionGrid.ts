@@ -1,7 +1,7 @@
-import type { Attack } from "@/models/dungeons/attack/Attack";
+import type { Attack } from "#src/models/dungeons/attack/Attack";
 
-import { Grid } from "@/models/dungeons/Grid";
-import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
+import { Grid } from "#src/models/dungeons/Grid";
+import { useBattlePlayerStore } from "#src/store/dungeons/battle/player";
 
 const AttackOptionGrid = new Grid<[[Attack | undefined, Attack | undefined], [Attack | undefined, Attack | undefined]]>(
   {

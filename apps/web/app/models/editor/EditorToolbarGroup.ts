@@ -1,5 +1,5 @@
-import type { EditorToolbarGroupKind } from "@/models/editor/EditorToolbarGroupKind";
-import type { EditorToolbarItem } from "@/models/editor/EditorToolbarItem";
+import type { EditorToolbarGroupKind } from "#src/models/editor/EditorToolbarGroupKind";
+import type { EditorToolbarItem } from "#src/models/editor/EditorToolbarItem";
 
 // A run of one kind of item the toolbar draws together: its tools as one tab stop, or its commands as buttons. A tool
 // With variants is a group of its own, holding that one tool as its single item

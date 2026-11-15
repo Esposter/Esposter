@@ -1,4 +1,4 @@
-import type { EmailKind } from "@/models/pageBuilder/EmailKind";
+import type { EmailKind } from "#src/models/pageBuilder/EmailKind";
 
 import { EMAIL_NODE_TYPE_TITLE_MAP } from "#shared/services/pageBuilder/email/constants";
 import { createEmailNode } from "#shared/services/pageBuilder/email/createEmailNode";
@@ -7,8 +7,8 @@ import { emailNodeChildren } from "#shared/services/pageBuilder/email/emailNodeC
 import { emailNodeSchema } from "#shared/services/pageBuilder/email/emailNodeSchema";
 import { emailRegistry } from "#shared/services/pageBuilder/email/emailRegistry";
 import { emailRootFormSchema } from "#shared/services/pageBuilder/email/emailRootFormSchema";
-import { PageBuilderEditor } from "@/models/pageBuilder/PageBuilderEditor";
-import { EMAIL_NODE_TYPE_ICON_MAP, EMAIL_PALETTE_CATEGORIES } from "@/services/pageBuilder/email/constants";
+import { PageBuilderEditor } from "#src/models/pageBuilder/PageBuilderEditor";
+import { EMAIL_NODE_TYPE_ICON_MAP, EMAIL_PALETTE_CATEGORIES } from "#src/services/pageBuilder/email/constants";
 import { MjmlNodeType } from "mjml-blocks";
 
 export const emailKind: EmailKind = {

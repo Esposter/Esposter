@@ -1,14 +1,14 @@
 /* oxlint-disable vitest/prefer-import-in-mock -- A partial fake: the typed module would load Phaser and its full store type; A partial fake: the typed store has members this test never reads; Phaser cannot initialise under the test environment, and no test reads its values; vue-phaserjs loads Phaser, and only the fade effect sleeps the scene */
-import type { Effect } from "@/models/dungeons/npc/effect/Effect";
+import type { Effect } from "#src/models/dungeons/npc/effect/Effect";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { NpcId } from "#shared/generated/tiled/propertyTypes/enum/NpcId";
 import { MonsterKey } from "#shared/models/dungeons/keys/image/UI/MonsterKey";
 import { Monster } from "#shared/models/dungeons/monster/Monster";
-import { EffectType } from "@/models/dungeons/npc/effect/EffectType";
-import { Npc } from "@/models/dungeons/scene/world/Npc";
-import { applyNpcEffects } from "@/services/dungeons/scene/world/applyNpcEffects";
-import { useDungeonsStore } from "@/store/dungeons";
+import { EffectType } from "#src/models/dungeons/npc/effect/EffectType";
+import { Npc } from "#src/models/dungeons/scene/world/Npc";
+import { applyNpcEffects } from "#src/services/dungeons/scene/world/applyNpcEffects";
+import { useDungeonsStore } from "#src/store/dungeons/index";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -18,7 +18,7 @@ const { showMessages } = vi.hoisted(() => ({
 
 // The dungeons store imports Phaser, which cannot initialise under the test environment. Only its save is read here, so
 // The fake keeps the real save shape and holds one save for every reader
-vi.mock("@/store/dungeons", async () => {
+vi.mock("#src/store/dungeons/index", async () => {
   const { Dungeons } = await import("#shared/models/dungeons/data/Dungeons");
   const { Save } = await import("#shared/models/dungeons/data/Save");
   const { reactive } = await import("vue");
@@ -27,7 +27,7 @@ vi.mock("@/store/dungeons", async () => {
 });
 
 // The dialog is UI over the scene, so only the messages it is asked to show are recorded
-vi.mock("@/store/dungeons/world/dialog", () => ({ useWorldDialogStore: () => ({ showMessages }) }));
+vi.mock("#src/store/dungeons/world/dialog", () => ({ useWorldDialogStore: () => ({ showMessages }) }));
 
 // The scene's camera and timing are Phaser's, and only the fade effect reaches them, which these tests do not run
 vi.mock("phaser", () => ({ Cameras: { Scene2D: { Events: {} } } }));

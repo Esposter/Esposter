@@ -1,5 +1,5 @@
-import { CALENDAR_WEEK_COUNT } from "@/services/ui/constants";
-import { getStartOfWeek } from "@/util/date/getStartOfWeek";
+import { CALENDAR_WEEK_COUNT } from "#src/services/ui/constants";
+import { getStartOfWeek } from "#src/util/date/getStartOfWeek";
 
 // A month's days as a calendar's grid draws them, week by week from the start of the week its first day falls in:
 // Always six weeks, so the grid keeps its height from one month to the next

@@ -1,3 +1,3 @@
 export const DefaultRenderer = defineAsyncComponent(
-  () => import("@/components/Message/Model/FileRenderer/Default.vue"),
+  () => import("#src/components/Message/Model/FileRenderer/Default.vue"),
 );

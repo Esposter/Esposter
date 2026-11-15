@@ -1,12 +1,12 @@
 // @vitest-environment happy-dom
-import type { EditorToolbarGroup } from "@/models/editor/EditorToolbarGroup";
-import type { EditorToolbarItem } from "@/models/editor/EditorToolbarItem";
+import type { EditorToolbarGroup } from "#src/models/editor/EditorToolbarGroup";
+import type { EditorToolbarItem } from "#src/models/editor/EditorToolbarItem";
 
-import EditorToolbar from "@/components/Editor/Toolbar.vue";
-import UiIcon from "@/components/Ui/Icon.vue";
-import UiOverflowMenu from "@/components/Ui/OverflowMenu.vue";
-import { EditorToolbarGroupKind } from "@/models/editor/EditorToolbarGroupKind";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import EditorToolbar from "#src/components/Editor/Toolbar.vue";
+import UiIcon from "#src/components/Ui/Icon.vue";
+import UiOverflowMenu from "#src/components/Ui/OverflowMenu.vue";
+import { EditorToolbarGroupKind } from "#src/models/editor/EditorToolbarGroupKind";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { takeOne } from "@esposter/shared";
 import { flushPromises, mount } from "@vue/test-utils";
 import { afterEach, describe, expect, test, vi } from "vitest";

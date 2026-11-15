@@ -9,9 +9,9 @@ import { Direction } from "#shared/models/dungeons/data/player/Direction";
 import { Save } from "#shared/models/dungeons/data/Save";
 import { Chest } from "#shared/models/dungeons/data/world/Chest";
 import { getItem } from "#shared/services/dungeons/item/getItem";
-import { getPositionId } from "@/services/dungeons/direction/getPositionId";
-import { chestInteractionEffect } from "@/services/dungeons/scene/world/interaction/effect/chestInteractionEffect";
-import { useDungeonsStore } from "@/store/dungeons";
+import { getPositionId } from "#src/services/dungeons/direction/getPositionId";
+import { chestInteractionEffect } from "#src/services/dungeons/scene/world/interaction/effect/chestInteractionEffect";
+import { useDungeonsStore } from "#src/store/dungeons/index";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -19,7 +19,7 @@ const { showMessages } = vi.hoisted(() => ({ showMessages: vi.fn<() => Promise<v
 
 // The dungeons store imports Phaser, which cannot initialise under the test environment. Only its save is read here, so
 // The fake keeps the real save shape and holds one save for every reader
-vi.mock("@/store/dungeons", async () => {
+vi.mock("#src/store/dungeons/index", async () => {
   const { Dungeons } = await import("#shared/models/dungeons/data/Dungeons");
   const { Save: DungeonsSave } = await import("#shared/models/dungeons/data/Save");
   const { reactive } = await import("vue");
@@ -28,10 +28,10 @@ vi.mock("@/store/dungeons", async () => {
 });
 
 // The dialog is UI over the scene, so only the messages it is asked to show are recorded
-vi.mock("@/store/dungeons/world/dialog", () => ({ useWorldDialogStore: () => ({ showMessages }) }));
+vi.mock("#src/store/dungeons/world/dialog", () => ({ useWorldDialogStore: () => ({ showMessages }) }));
 
 // Sound plays through Phaser's scene, which is not run here
-vi.mock("@/services/dungeons/sound/getDungeonsSoundEffect", () => ({
+vi.mock("#src/services/dungeons/sound/getDungeonsSoundEffect", () => ({
   getDungeonsSoundEffect: () => ({ play: () => undefined }),
 }));
 

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useBanStore } from "@/store/message/user/ban";
-import { useBanDialogStore } from "@/store/message/user/banDialog";
+import { useBanStore } from "#src/store/message/user/ban";
+import { useBanDialogStore } from "#src/store/message/user/banDialog";
 
 const banStore = useBanStore();
 const { items } = storeToRefs(banStore);

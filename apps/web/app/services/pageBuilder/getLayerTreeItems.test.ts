@@ -3,9 +3,9 @@ import {
   TEST_ROOT_TEXT_ID,
   TEST_SECTION_ID,
   TEST_WEBPAGE,
-} from "@/services/pageBuilder/constants.test";
-import { getLayerTreeItems } from "@/services/pageBuilder/getLayerTreeItems";
-import { webpageKind } from "@/services/pageBuilder/webpageKind";
+} from "#src/services/pageBuilder/constants.test";
+import { getLayerTreeItems } from "#src/services/pageBuilder/getLayerTreeItems";
+import { webpageKind } from "#src/services/pageBuilder/webpageKind";
 import { describe, expect, test } from "vitest";
 
 describe(getLayerTreeItems, () => {

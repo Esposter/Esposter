@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { checkIsSameDay } from "@/util/date/checkIsSameDay";
-import { getTimelineDateLabel } from "@/util/date/getTimelineDateLabel";
+import { checkIsSameDay } from "#src/util/date/checkIsSameDay";
+import { getTimelineDateLabel } from "#src/util/date/getTimelineDateLabel";
 
 interface Props {
   messageDate: Date;

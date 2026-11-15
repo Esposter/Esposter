@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import type { Item } from "@/models/shared/Item";
+import type { Item } from "#src/models/shared/Item";
 
-import { RightDrawer } from "@/models/message/RightDrawer";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { NotificationTypeLabelMap } from "@/services/message/NotificationTypeLabelMap";
-import { NotificationTypeMeaningMap } from "@/services/message/NotificationTypeMeaningMap";
-import { useRoomStore } from "@/store/message/room";
-import { useUserToRoomStore } from "@/store/message/room/userToRoom";
-import { useMessageLayoutStore } from "@/store/message/ui/layout";
+import { RightDrawer } from "#src/models/message/RightDrawer";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { NotificationTypeLabelMap } from "#src/services/message/NotificationTypeLabelMap";
+import { NotificationTypeMeaningMap } from "#src/services/message/NotificationTypeMeaningMap";
+import { useRoomStore } from "#src/store/message/room/index";
+import { useUserToRoomStore } from "#src/store/message/room/userToRoom";
+import { useMessageLayoutStore } from "#src/store/message/ui/layout";
 import { NotificationType } from "@esposter/db-schema";
 import { noop } from "@esposter/shared";
 

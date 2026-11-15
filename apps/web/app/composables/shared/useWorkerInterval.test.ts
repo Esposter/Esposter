@@ -4,7 +4,10 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 
 // The timer worker needs a Web Worker, which the test environment has no equivalent for — the
 // Delegation keeps the composable's own scheduling under vitest's fake timers
-vi.mock(import("@/services/shared/getWorkerTimers"), () => import("@/services/shared/getWorkerTimersStandIn.test"));
+vi.mock(
+  import("#src/services/shared/getWorkerTimers"),
+  () => import("#src/services/shared/getWorkerTimersStandIn.test"),
+);
 
 describe(useWorkerInterval, () => {
   const intervalMs = 1;

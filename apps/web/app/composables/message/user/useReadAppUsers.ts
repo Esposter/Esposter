@@ -1,6 +1,6 @@
 import type { AppUserInMessage, RoomInMessage } from "@esposter/db-schema";
 
-import { useAppUserStore } from "@/store/message/user/appUser";
+import { useAppUserStore } from "#src/store/message/user/appUser";
 
 export const useReadAppUsers = () => {
   const { $trpc } = useNuxtApp();

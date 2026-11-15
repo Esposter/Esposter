@@ -1,6 +1,6 @@
-import type { IndexedRow } from "@/models/resource/sheet/commands/IndexedRow";
+import type { IndexedRow } from "#src/models/resource/sheet/commands/IndexedRow";
 
-import { DeleteRowsCommand } from "@/models/resource/sheet/commands/DeleteRowsCommand";
+import { DeleteRowsCommand } from "#src/models/resource/sheet/commands/DeleteRowsCommand";
 import { takeOne, toRawDeep } from "@esposter/shared";
 
 export const useDeleteRows = () =>

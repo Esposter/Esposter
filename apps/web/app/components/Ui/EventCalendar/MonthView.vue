@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { UiCalendarEvent } from "@/models/ui/UiCalendarEvent";
+import type { UiCalendarEvent } from "#src/models/ui/UiCalendarEvent";
 
-import { getCalendarWeeks } from "@/services/ui/getCalendarWeeks";
-import { getNextGridDate } from "@/util/date/getNextGridDate";
+import { getCalendarWeeks } from "#src/services/ui/getCalendarWeeks";
+import { getNextGridDate } from "#src/util/date/getNextGridDate";
 
 interface Props {
   eventDayMap: Map<string, UiCalendarEvent[]>;

@@ -1,9 +1,9 @@
 // @vitest-environment nuxt
 import type { SurveyResponseInResource } from "@esposter/db-schema";
 
-import { useSurveyResponse } from "@/composables/survey/useSurveyResponse";
-import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
+import { useSurveyResponse } from "#src/composables/survey/useSurveyResponse";
+import { LocalStorageKey } from "#src/services/shared/LocalStorageKey";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { TRPCError } from "@trpc/server";
 import { v7 } from "uuid";
 import { beforeEach, describe, expect, test } from "vitest";

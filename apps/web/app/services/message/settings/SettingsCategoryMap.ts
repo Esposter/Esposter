@@ -1,5 +1,5 @@
-import { SettingsCategory } from "@/models/message/room/SettingsCategory";
-import { SettingsType } from "@/models/message/room/SettingsType";
+import { SettingsCategory } from "#src/models/message/room/SettingsCategory";
+import { SettingsType } from "#src/models/message/room/SettingsType";
 
 // Discord Server Settings grouping — Delete stays a standalone destructive item below the categories
 export const SettingsCategoryMap: Record<SettingsCategory, SettingsType[]> = {

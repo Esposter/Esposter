@@ -1,4 +1,4 @@
-import type { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import type { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import type { Promisable } from "type-fest";
 
 // An action a menu or a list shows. Its icon is what it says, drawn in the nearest style's glyph, or a whole class for

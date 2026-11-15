@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
+import { EMPTY_TEXT_REGEX } from "#src/util/text/constants";
 
 interface Props {
   description: string;

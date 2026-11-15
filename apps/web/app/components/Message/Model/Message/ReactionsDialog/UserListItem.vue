@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { PublicUser, RoomInMessage } from "@esposter/db-schema";
 
-import { useUserStore } from "@/store/message/user";
+import { useUserStore } from "#src/store/message/user/index";
 
 interface Props {
   roomId: RoomInMessage["id"];

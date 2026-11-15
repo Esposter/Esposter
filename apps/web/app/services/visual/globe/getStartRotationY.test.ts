@@ -1,4 +1,4 @@
-import { getStartRotationY } from "@/services/visual/globe/getStartRotationY";
+import { getStartRotationY } from "#src/services/visual/globe/getStartRotationY";
 import { describe, expect, test } from "vitest";
 
 describe(getStartRotationY, () => {

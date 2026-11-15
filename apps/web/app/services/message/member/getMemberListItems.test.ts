@@ -1,8 +1,8 @@
 import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
 
-import { createRoomRole } from "@/services/message/member/createRoomRole.test";
-import { getMemberListItems } from "@/services/message/member/getMemberListItems";
-import { createUser } from "@/services/message/user/createUser.test";
+import { createRoomRole } from "#src/services/message/member/createRoomRole.test";
+import { getMemberListItems } from "#src/services/message/member/getMemberListItems";
+import { createUser } from "#src/services/message/user/createUser.test";
 import { describe, expect, test } from "vitest";
 
 describe(getMemberListItems, () => {

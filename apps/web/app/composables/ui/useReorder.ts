@@ -1,4 +1,4 @@
-import { getKeyedOrder } from "@/services/ui/getKeyedOrder";
+import { getKeyedOrder } from "#src/services/ui/getKeyedOrder";
 
 // A reorderable list's keyboard half, since a drag is never the only way to do a thing: Alt+Up and Alt+Down move the
 // Focused row one place, each move read out through a live region

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useRoomCategoryStore } from "@/store/message/roomCategory";
-import { useRoomCategoryDialogStore } from "@/store/message/roomCategoryDialog";
+import { useRoomCategoryStore } from "#src/store/message/roomCategory";
+import { useRoomCategoryDialogStore } from "#src/store/message/roomCategoryDialog";
 
 const roomCategoryStore = useRoomCategoryStore();
 const { roomCategories } = storeToRefs(roomCategoryStore);

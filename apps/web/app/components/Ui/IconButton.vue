@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import type { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import type { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import type { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 import { mergeProps } from "vue";
 

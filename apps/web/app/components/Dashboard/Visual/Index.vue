@@ -1,19 +1,19 @@
 <script setup lang="ts">
 import type { Visual } from "#shared/models/dashboard/data/Visual";
 import type { Dataset } from "#shared/models/dataset/Dataset";
-import type { DashboardVisualEmits } from "@/models/dashboard/DashboardVisualEmits";
+import type { DashboardVisualEmits } from "#src/models/dashboard/DashboardVisualEmits";
 import type { CollisionMode, CompactType } from "vue-grid-layout-headless";
 
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { VISUAL_INTERACTION_CHART_OPTIONS } from "@/services/dashboard/chart/constants";
-import { getVisualLinkChartOptions } from "@/services/dashboard/chart/getVisualLinkChartOptions";
-import { checkIsAxisVisualPropsData } from "@/services/dashboard/checkIsAxisVisualPropsData";
-import { checkIsChartVisualType } from "@/services/dashboard/checkIsChartVisualType";
-import { VisualTypeDemoDataMap } from "@/services/dashboard/demo/VisualTypeDemoDataMap";
-import { exportDashboardVisualCsv } from "@/services/dashboard/export/exportDashboardVisualCsv";
-import { useClipboardStore } from "@/store/clipboard";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { VISUAL_INTERACTION_CHART_OPTIONS } from "#src/services/dashboard/chart/constants";
+import { getVisualLinkChartOptions } from "#src/services/dashboard/chart/getVisualLinkChartOptions";
+import { checkIsAxisVisualPropsData } from "#src/services/dashboard/checkIsAxisVisualPropsData";
+import { checkIsChartVisualType } from "#src/services/dashboard/checkIsChartVisualType";
+import { VisualTypeDemoDataMap } from "#src/services/dashboard/demo/VisualTypeDemoDataMap";
+import { exportDashboardVisualCsv } from "#src/services/dashboard/export/exportDashboardVisualCsv";
+import { useClipboardStore } from "#src/store/clipboard";
 import { takeOne } from "@esposter/shared";
 import { defu } from "defu";
 

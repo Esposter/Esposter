@@ -1,5 +1,5 @@
-import type { ResourceLinkRouter } from "@/models/resource/link/ResourceLinkRouter";
-import type { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import type { ResourceLinkRouter } from "#src/models/resource/link/ResourceLinkRouter";
+import type { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 // Where a link type's resources are listed from: the router that owns them, the mark they are drawn with, and what the
 // Picker says while there is none to choose

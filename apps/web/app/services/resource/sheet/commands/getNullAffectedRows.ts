@@ -1,8 +1,8 @@
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
-import type { IndexedRow } from "@/models/resource/sheet/commands/IndexedRow";
+import type { IndexedRow } from "#src/models/resource/sheet/commands/IndexedRow";
 
-import { getVisibleEditableColumns } from "@/services/resource/sheet/column/getVisibleEditableColumns";
-import { checkIsNullOrEmptyValue } from "@/services/resource/sheet/commands/checkIsNullOrEmptyValue";
+import { getVisibleEditableColumns } from "#src/services/resource/sheet/column/getVisibleEditableColumns";
+import { checkIsNullOrEmptyValue } from "#src/services/resource/sheet/commands/checkIsNullOrEmptyValue";
 import { takeOne } from "@esposter/shared";
 
 export const getNullAffectedRows = (dataSource: DataSource) => {

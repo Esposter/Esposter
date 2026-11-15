@@ -1,4 +1,4 @@
-import { XML_CELL_ELEMENT_NAME } from "@/services/resource/sheet/xml/constants";
+import { XML_CELL_ELEMENT_NAME } from "#src/services/resource/sheet/xml/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // A cell holds text alone, so a child element of its own is refused, and the refusal names that element. A cell

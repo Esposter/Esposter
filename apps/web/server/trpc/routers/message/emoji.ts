@@ -2,9 +2,9 @@ import type { RoomReaction } from "@esposter/db-schema";
 
 import { useRoomObject } from "#server/composables/realtime/useRoomObject";
 import { getRoomActor } from "#server/services/realtime/getRoomActor";
-import { router } from "#server/trpc";
 import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
+import { router } from "#server/trpc/index";
 import { getMemberProcedure } from "#server/trpc/procedure/room/getMemberProcedure";
 import { addReactionInputSchema } from "#shared/models/db/message/reaction/AddReactionInput";
 import { readReactionsInputSchema } from "#shared/models/db/message/reaction/ReadReactionsInput";

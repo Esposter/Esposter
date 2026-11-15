@@ -1,23 +1,23 @@
 // @vitest-environment nuxt
 import type { TextNode } from "#shared/models/pageBuilder/TextNode";
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
-import type { FrameGeometry } from "@/models/pageBuilder/FrameGeometry";
+import type { FrameGeometry } from "#src/models/pageBuilder/FrameGeometry";
 import type { MjmlDocument } from "mjml-blocks";
 
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { NO_SURVEY_ID } from "#shared/services/pageBuilder/constants";
 import { TEST_ID, TEST_OTHER_ID, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
-import { usePageBuilderDrag } from "@/composables/pageBuilder/usePageBuilderDrag";
-import { toMergeField } from "@/services/emailEditor/toMergeField";
-import { WEBPAGE_NODE_TYPE_TITLE_MAP } from "@/services/pageBuilder/constants";
-import { TEST_SECTION_ID, TEST_TEXT_CONTENT } from "@/services/pageBuilder/constants.test";
-import { emailKind } from "@/services/pageBuilder/emailKind";
-import { getDropRefusal } from "@/services/pageBuilder/getDropRefusal";
-import { getSlotChildIds } from "@/services/pageBuilder/getSlotChildIds";
-import { webpageKind } from "@/services/pageBuilder/webpageKind";
-import { TOUCH_DRAG_DELAY_MS } from "@/services/ui/constants";
-import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
-import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
+import { usePageBuilderDrag } from "#src/composables/pageBuilder/usePageBuilderDrag";
+import { toMergeField } from "#src/services/emailEditor/toMergeField";
+import { WEBPAGE_NODE_TYPE_TITLE_MAP } from "#src/services/pageBuilder/constants";
+import { TEST_SECTION_ID, TEST_TEXT_CONTENT } from "#src/services/pageBuilder/constants.test";
+import { emailKind } from "#src/services/pageBuilder/emailKind";
+import { getDropRefusal } from "#src/services/pageBuilder/getDropRefusal";
+import { getSlotChildIds } from "#src/services/pageBuilder/getSlotChildIds";
+import { webpageKind } from "#src/services/pageBuilder/webpageKind";
+import { TOUCH_DRAG_DELAY_MS } from "#src/services/ui/constants";
+import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
+import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { MjmlNodeType } from "mjml-blocks";
 import { v7 } from "uuid";

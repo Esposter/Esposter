@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { SurveyConditionProp } from "@/models/resource/survey/SurveyConditionProp";
-import type { SurveyConditionRow } from "@/models/resource/survey/SurveyConditionRow";
-import type { SurveyEditDraft } from "@/models/resource/survey/SurveyEditDraft";
+import type { SurveyConditionProp } from "#src/models/resource/survey/SurveyConditionProp";
+import type { SurveyConditionRow } from "#src/models/resource/survey/SurveyConditionRow";
+import type { SurveyEditDraft } from "#src/models/resource/survey/SurveyEditDraft";
 
-import { SurveyConditionJoin } from "@/models/resource/survey/SurveyConditionJoin";
-import { SurveyConditionOperator } from "@/models/resource/survey/SurveyConditionOperator";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { buildSurveyCondition } from "@/services/resource/survey/buildSurveyCondition";
+import { SurveyConditionJoin } from "#src/models/resource/survey/SurveyConditionJoin";
+import { SurveyConditionOperator } from "#src/models/resource/survey/SurveyConditionOperator";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { buildSurveyCondition } from "#src/services/resource/survey/buildSurveyCondition";
 import {
   SURVEY_BOOLEAN_VALUE_ITEMS,
   SURVEY_CONDITION_ADVANCED_MESSAGE,
@@ -14,15 +14,15 @@ import {
   SURVEY_CONDITION_OPERATOR_TITLES,
   SURVEY_CONDITION_SECTIONS,
   SURVEY_REFUSED_MESSAGE,
-} from "@/services/resource/survey/constants";
-import { getActiveSurveyEditDraft } from "@/services/resource/survey/getActiveSurveyEditDraft";
-import { getSurveyConditionAnswers } from "@/services/resource/survey/getSurveyConditionAnswers";
-import { getSurveyConditionOperators } from "@/services/resource/survey/getSurveyConditionOperators";
-import { getSurveyExpressionFault } from "@/services/resource/survey/getSurveyExpressionFault";
-import { parseSurveyConditionRows } from "@/services/resource/survey/parseSurveyConditionRows";
-import { toSurveyConditionInputValue } from "@/services/resource/survey/toSurveyConditionInputValue";
-import { checkIsBlankSource } from "@/services/shared/checkIsBlankSource";
-import { useSurveyCreatorStore } from "@/store/survey/creator";
+} from "#src/services/resource/survey/constants";
+import { getActiveSurveyEditDraft } from "#src/services/resource/survey/getActiveSurveyEditDraft";
+import { getSurveyConditionAnswers } from "#src/services/resource/survey/getSurveyConditionAnswers";
+import { getSurveyConditionOperators } from "#src/services/resource/survey/getSurveyConditionOperators";
+import { getSurveyExpressionFault } from "#src/services/resource/survey/getSurveyExpressionFault";
+import { parseSurveyConditionRows } from "#src/services/resource/survey/parseSurveyConditionRows";
+import { toSurveyConditionInputValue } from "#src/services/resource/survey/toSurveyConditionInputValue";
+import { checkIsBlankSource } from "#src/services/shared/checkIsBlankSource";
+import { useSurveyCreatorStore } from "#src/store/survey/creator";
 import { SurveyNodeType } from "vue-survey-engine-headless";
 
 const surveyCreatorStore = useSurveyCreatorStore();

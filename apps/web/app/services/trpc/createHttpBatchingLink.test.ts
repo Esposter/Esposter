@@ -1,10 +1,10 @@
 // @vitest-environment nuxt
-import type { TRPCRouter } from "#server/trpc/routers";
+import type { TRPCRouter } from "#server/trpc/routers/index";
 
 import { DEVICE_ID_HEADER } from "#shared/models/realtime/DeviceId";
-import { getDeviceId } from "@/services/realtime/getDeviceId";
-import { createHttpBatchingLink } from "@/services/trpc/createHttpBatchingLink";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
+import { getDeviceId } from "#src/services/realtime/getDeviceId";
+import { createHttpBatchingLink } from "#src/services/trpc/createHttpBatchingLink";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { createTRPCClient } from "@trpc/client";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";

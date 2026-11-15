@@ -1,13 +1,13 @@
 // @vitest-environment nuxt
-import type { ClientMessage } from "@/models/message/ClientMessage";
-import type { Item } from "@/models/shared/Item";
+import type { ClientMessage } from "#src/models/message/ClientMessage";
+import type { Item } from "#src/models/shared/Item";
 
 import { getMockSession } from "#server/trpc/context.test";
-import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
-import { createUserToRoom } from "@/services/message/room/createUserToRoom.test";
-import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useUserToRoomStore } from "@/store/message/room/userToRoom";
+import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
+import { createUserToRoom } from "#src/services/message/room/createUserToRoom.test";
+import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useUserToRoomStore } from "#src/store/message/room/userToRoom";
 import { MessageType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";

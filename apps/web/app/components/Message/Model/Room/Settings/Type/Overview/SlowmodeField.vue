@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
-import { UiRules } from "@/services/ui/UiRules";
+import { UiTextFieldType } from "#src/models/ui/UiTextFieldType";
+import { UiRules } from "#src/services/ui/UiRules";
 import { MAX_SLOWMODE_MS } from "@esposter/db-schema";
 
 const modelValue = defineModel<number>({ required: true });

@@ -1,4 +1,4 @@
-import { DRAG_AUTOSCROLL_EDGE, DRAG_AUTOSCROLL_SPEED } from "@/services/ui/constants";
+import { DRAG_AUTOSCROLL_EDGE, DRAG_AUTOSCROLL_SPEED } from "#src/services/ui/constants";
 
 // How fast a drag scrolls its frame, in viewport pixels a millisecond, from how deep the pointer is in the band at either
 // End of the frame: negative toward its top, positive toward its bottom, and zero between them. Past an end, full speed

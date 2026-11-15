@@ -1,11 +1,11 @@
 // @vitest-environment happy-dom
-import type { EditorRegistry } from "@/models/editor/EditorRegistry";
+import type { EditorRegistry } from "#src/models/editor/EditorRegistry";
 import type { Context, Layout, Region } from "vue-editor-layout-headless";
 
-import EditorShell from "@/components/Editor/Shell.vue";
-import { EditorType } from "@/models/editor/EditorType";
-import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
-import { RESIZE_HANDLE_KEYBOARD_STEP } from "@/services/ui/constants";
+import EditorShell from "#src/components/Editor/Shell.vue";
+import { EditorType } from "#src/models/editor/EditorType";
+import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
+import { RESIZE_HANDLE_KEYBOARD_STEP } from "#src/services/ui/constants";
 import { flushPromises, mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
 import { assert, beforeEach, describe, expect, test, vi } from "vitest";
@@ -13,7 +13,7 @@ import { RegionEdge, RegionOpening, RegionPresentation, SizeClass } from "vue-ed
 
 // The size class is read from the display composable, so a test says how small the window is before the shell mounts
 const display = vi.hoisted(() => ({ isCompact: false, isMobile: false }));
-vi.mock(import("@/composables/ui/useUiDisplay"), async (importOriginal) => {
+vi.mock(import("#src/composables/ui/useUiDisplay"), async (importOriginal) => {
   const actual = await importOriginal();
 
   return {

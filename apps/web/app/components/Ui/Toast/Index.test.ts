@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
-import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
-import UiToast from "@/components/Ui/Toast/Index.vue";
-import { UiStyles } from "@/models/ui/UiStyle";
+import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
+import UiToast from "#src/components/Ui/Toast/Index.vue";
+import { UiStyles } from "#src/models/ui/UiStyle";
 import { mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 

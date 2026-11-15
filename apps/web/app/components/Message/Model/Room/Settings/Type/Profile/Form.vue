@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { RoomInMessage, UserToRoomInMessage } from "@esposter/db-schema";
 
-import { useUserToRoomStore } from "@/store/message/room/userToRoom";
+import { useUserToRoomStore } from "#src/store/message/room/userToRoom";
 
 interface Props {
   roomId: RoomInMessage["id"];

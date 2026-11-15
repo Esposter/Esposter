@@ -1,4 +1,4 @@
-import { getRandomValues } from "@/util/math/random/getRandomValues";
+import { getRandomValues } from "#src/util/math/random/getRandomValues";
 import { describe, expect, test } from "vitest";
 
 describe(getRandomValues, () => {

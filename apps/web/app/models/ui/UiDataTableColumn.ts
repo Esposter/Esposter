@@ -1,4 +1,4 @@
-import type { BaseUiDataTableColumn } from "@/models/ui/BaseUiDataTableColumn";
+import type { BaseUiDataTableColumn } from "#src/models/ui/BaseUiDataTableColumn";
 
 // One column of a data table: the header it reads as and what its cells show. A column its header sorts by is keyed
 // By what the server sorts on, so the order a header sets is one the server takes; any other column is keyed freely

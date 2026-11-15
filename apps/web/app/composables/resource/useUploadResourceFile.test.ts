@@ -1,12 +1,12 @@
 // @vitest-environment nuxt
-import type { uploadFileToUrl } from "@/services/file/uploadFileToUrl";
+import type { uploadFileToUrl } from "#src/services/file/uploadFileToUrl";
 
 import { MimeType } from "#shared/models/file/MimeType";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
-import { useUploadResourceFile } from "@/composables/resource/useUploadResourceFile";
-import { StorageStatusError } from "@/models/file/StorageStatusError";
-import { getSha256Hex } from "@/services/shared/getSha256Hex";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
+import { useUploadResourceFile } from "#src/composables/resource/useUploadResourceFile";
+import { StorageStatusError } from "#src/models/file/StorageStatusError";
+import { getSha256Hex } from "#src/services/shared/getSha256Hex";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { getResourceFileBlobName, ResourceType } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 import { v7 } from "uuid";
@@ -17,8 +17,8 @@ const { getSha256HexMock, uploadFileToUrlMock } = vi.hoisted(() => ({
   uploadFileToUrlMock: vi.fn<typeof uploadFileToUrl>(),
 }));
 
-vi.mock(import("@/services/file/uploadFileToUrl"), () => ({ uploadFileToUrl: uploadFileToUrlMock }));
-vi.mock(import("@/services/shared/getSha256Hex"), async (importOriginal) => {
+vi.mock(import("#src/services/file/uploadFileToUrl"), () => ({ uploadFileToUrl: uploadFileToUrlMock }));
+vi.mock(import("#src/services/shared/getSha256Hex"), async (importOriginal) => {
   const { getSha256Hex: hashBytes } = await importOriginal();
   getSha256HexMock.mockImplementation(hashBytes);
   return { getSha256Hex: getSha256HexMock };

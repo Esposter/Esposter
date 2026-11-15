@@ -2,10 +2,10 @@
 import type { ResourceInResource } from "@esposter/db-schema";
 
 import { pluralize } from "#shared/util/text/pluralize";
-import { ResourceBladeSlug } from "@/models/resource/ResourceBladeSlug";
-import { formatTruncationCount } from "@/services/dataset/formatTruncationCount";
-import { getResourceBladePath } from "@/services/resource/getResourceBladePath";
-import { useSurveyStore } from "@/store/survey";
+import { ResourceBladeSlug } from "#src/models/resource/ResourceBladeSlug";
+import { formatTruncationCount } from "#src/services/dataset/formatTruncationCount";
+import { getResourceBladePath } from "#src/services/resource/getResourceBladePath";
+import { useSurveyStore } from "#src/store/survey/index";
 
 interface Props {
   resource: ResourceInResource;

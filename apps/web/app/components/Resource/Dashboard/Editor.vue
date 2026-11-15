@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { EditorType } from "@/models/editor/EditorType";
-import { DashboardEditorRegionNameMap } from "@/services/dashboard/editor/DashboardEditorRegionNameMap";
-import { DashboardEditorRegistry } from "@/services/dashboard/editor/DashboardEditorRegistry";
-import { DashboardLayout } from "@/services/dashboard/editor/DashboardLayout";
-import { getDashboardEditorContext } from "@/services/dashboard/editor/getDashboardEditorContext";
-import { findVisual } from "@/services/dashboard/visual/findVisual";
-import { useDashboardStore } from "@/store/dashboard";
-import { useVisualStore } from "@/store/dashboard/visual";
+import { EditorType } from "#src/models/editor/EditorType";
+import { DashboardEditorRegionNameMap } from "#src/services/dashboard/editor/DashboardEditorRegionNameMap";
+import { DashboardEditorRegistry } from "#src/services/dashboard/editor/DashboardEditorRegistry";
+import { DashboardLayout } from "#src/services/dashboard/editor/DashboardLayout";
+import { getDashboardEditorContext } from "#src/services/dashboard/editor/getDashboardEditorContext";
+import { findVisual } from "#src/services/dashboard/visual/findVisual";
+import { useDashboardStore } from "#src/store/dashboard/index";
+import { useVisualStore } from "#src/store/dashboard/visual";
 
 const dashboardStore = useDashboardStore();
 const { loadContent, saveDashboard } = dashboardStore;

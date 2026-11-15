@@ -1,8 +1,8 @@
 // @unocss-include
-import type { Item } from "@/models/shared/Item";
+import type { Item } from "#src/models/shared/Item";
 import type { Except } from "type-fest";
 
-import { UserSettingsType } from "@/models/message/user/UserSettingsType";
+import { UserSettingsType } from "#src/models/message/user/UserSettingsType";
 
 export const UserSettingsListItemMap: Record<
   UserSettingsType,

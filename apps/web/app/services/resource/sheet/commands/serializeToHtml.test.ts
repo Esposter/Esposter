@@ -1,7 +1,7 @@
 import { createColumn } from "#shared/models/resource/sheet/column/createColumn.test";
 import { createDataSource } from "#shared/models/resource/sheet/datasource/createDataSource.test";
 import { createRow } from "#shared/models/resource/sheet/datasource/createRow.test";
-import { serializeToHtml } from "@/services/resource/sheet/commands/serializeToHtml";
+import { serializeToHtml } from "#src/services/resource/sheet/commands/serializeToHtml";
 import { describe, expect, test } from "vitest";
 
 describe(serializeToHtml, () => {

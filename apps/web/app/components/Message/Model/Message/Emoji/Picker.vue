@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { PickableEmoji } from "@/models/message/emoji/PickableEmoji";
-import type { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import type { PickableEmoji } from "#src/models/message/emoji/PickableEmoji";
+import type { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 
-import { useRoomStore } from "@/store/message/room";
-import { useRoomEmojiStore } from "@/store/message/room/emoji";
-import { useRoleStore } from "@/store/message/room/role";
+import { useRoomEmojiStore } from "#src/store/message/room/emoji";
+import { useRoomStore } from "#src/store/message/room/index";
+import { useRoleStore } from "#src/store/message/room/role";
 import { RoomPermission } from "@esposter/db-schema";
 
 interface Props {

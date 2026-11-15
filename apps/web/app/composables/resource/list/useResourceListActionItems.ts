@@ -1,12 +1,12 @@
 // @unocss-include
-import type { Item } from "@/models/shared/Item";
+import type { Item } from "#src/models/shared/Item";
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { getDeleteResourceItem } from "@/services/resource/getDeleteResourceItem";
-import { getRenameResourceItem } from "@/services/resource/getRenameResourceItem";
-import { getResourceLinkItems } from "@/services/resource/getResourceLinkItems";
-import { useBlueprintCaptureDialogStore } from "@/store/resource/blueprint/captureDialog";
-import { useListDialogStore } from "@/store/resource/listDialog";
+import { getDeleteResourceItem } from "#src/services/resource/getDeleteResourceItem";
+import { getRenameResourceItem } from "#src/services/resource/getRenameResourceItem";
+import { getResourceLinkItems } from "#src/services/resource/getResourceLinkItems";
+import { useBlueprintCaptureDialogStore } from "#src/store/resource/blueprint/captureDialog";
+import { useListDialogStore } from "#src/store/resource/listDialog";
 
 // The row ⋮ menu and the right-click menu are the same commands behind two triggers, so the items have one definition.
 // Plain "Open" is deliberately absent — clicking the row already does that, and a second visible affordance for it

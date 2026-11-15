@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import type { Item } from "@/models/shared/Item";
+import type { Item } from "#src/models/shared/Item";
 import type { ResourceInResource } from "@esposter/db-schema";
 
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { exportDatasetCsv } from "@/services/dataset/exportDatasetCsv";
-import { getResourceBladeItems } from "@/services/resource/getResourceBladeItems";
-import { useResourceStore } from "@/store/resource";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { exportDatasetCsv } from "#src/services/dataset/exportDatasetCsv";
+import { getResourceBladeItems } from "#src/services/resource/getResourceBladeItems";
+import { useResourceStore } from "#src/store/resource/index";
 import { RoutePath } from "@esposter/shared";
 
 interface Props {

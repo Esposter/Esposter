@@ -1,10 +1,10 @@
-import { MessageIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MessageIndexedDbStoreConfiguration";
-import { RoomIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/RoomIndexedDbStoreConfiguration";
-import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
-import { setupIndexedDbSuite } from "@/services/cache/indexedDb/setupIndexedDbSuite.test";
-import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
-import { createMessage } from "@/services/message/message/createMessage.test";
-import { createRoom } from "@/services/message/room/createRoom.test";
+import { MessageIndexedDbStoreConfiguration } from "#src/services/cache/indexedDb/configurations/MessageIndexedDbStoreConfiguration";
+import { RoomIndexedDbStoreConfiguration } from "#src/services/cache/indexedDb/configurations/RoomIndexedDbStoreConfiguration";
+import { readIndexedDb } from "#src/services/cache/indexedDb/readIndexedDb";
+import { setupIndexedDbSuite } from "#src/services/cache/indexedDb/setupIndexedDbSuite.test";
+import { writeIndexedDb } from "#src/services/cache/indexedDb/writeIndexedDb";
+import { createMessage } from "#src/services/message/message/createMessage.test";
+import { createRoom } from "#src/services/message/room/createRoom.test";
 import { takeOne } from "@esposter/shared";
 import { v7 } from "uuid";
 import { afterEach, describe, expect, test, vi } from "vitest";

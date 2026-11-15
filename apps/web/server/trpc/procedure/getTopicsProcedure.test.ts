@@ -1,8 +1,8 @@
 import type { Topic } from "@esposter/db-schema";
 
 import { MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
-import { createCallerFactory, router } from "#server/trpc";
 import { createMockContext } from "#server/trpc/context.test";
+import { createCallerFactory, router } from "#server/trpc/index";
 import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { standardRateLimitedProcedure } from "#server/trpc/procedure/standardRateLimitedProcedure";
 import { readTopicsHeader } from "#shared/services/realtime/readTopicsHeader";

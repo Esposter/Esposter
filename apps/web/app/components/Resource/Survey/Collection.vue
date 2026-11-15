@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { DEFAULT_CLOSED_MESSAGE, MAX_CLOSED_MESSAGE_LENGTH } from "#shared/services/resource/survey/constants";
-import { SurveyResponseModeItemCategoryDefinitions } from "@/services/resource/survey/SurveyResponseModeItemCategoryDefinitions";
-import { useSurveyStore } from "@/store/survey";
+import { SurveyResponseModeItemCategoryDefinitions } from "#src/services/resource/survey/SurveyResponseModeItemCategoryDefinitions";
+import { useSurveyStore } from "#src/store/survey/index";
 import { SurveyResponseMode } from "@esposter/db-schema";
 import { toRawDeep } from "@esposter/shared";
 

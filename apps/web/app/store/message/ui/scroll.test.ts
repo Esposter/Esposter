@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
 import type { Router } from "vue-router";
 
-import { useDataStore } from "@/store/message/data";
-import { useScrollStore } from "@/store/message/ui/scroll";
+import { useDataStore } from "#src/store/message/data";
+import { useScrollStore } from "#src/store/message/ui/scroll";
 import { RoutePath } from "@esposter/shared";
 import { mockNuxtImport } from "@nuxt/test-utils/runtime";
 import { v7 } from "uuid";

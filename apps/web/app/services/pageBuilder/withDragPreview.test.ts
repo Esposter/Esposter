@@ -4,10 +4,10 @@ import {
   TEST_ROOT_TEXT_ID,
   TEST_SECTION_ID,
   TEST_WEBPAGE,
-} from "@/services/pageBuilder/constants.test";
-import { getSlotChildIds } from "@/services/pageBuilder/getSlotChildIds";
-import { webpageKind } from "@/services/pageBuilder/webpageKind";
-import { DRAG_PREVIEW_NODE_ID, withDragPreview } from "@/services/pageBuilder/withDragPreview";
+} from "#src/services/pageBuilder/constants.test";
+import { getSlotChildIds } from "#src/services/pageBuilder/getSlotChildIds";
+import { webpageKind } from "#src/services/pageBuilder/webpageKind";
+import { DRAG_PREVIEW_NODE_ID, withDragPreview } from "#src/services/pageBuilder/withDragPreview";
 import { describe, expect, test } from "vitest";
 
 describe(withDragPreview, () => {

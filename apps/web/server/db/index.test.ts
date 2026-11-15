@@ -1,4 +1,4 @@
-import type { db as realDb } from "#server/db";
+import type { db as realDb } from "#server/db/index";
 import type { Database } from "@esposter/db-schema";
 
 import { relations } from "@esposter/db-schema";

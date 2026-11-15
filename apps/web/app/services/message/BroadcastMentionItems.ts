@@ -1,4 +1,4 @@
-import type { BroadcastMentionItem } from "@/models/message/BroadcastMentionItem";
+import type { BroadcastMentionItem } from "#src/models/message/BroadcastMentionItem";
 
 import { MENTION_EVERYONE_ID, MENTION_HERE_ID } from "@esposter/shared";
 

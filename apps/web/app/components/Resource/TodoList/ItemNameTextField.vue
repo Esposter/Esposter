@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ITEM_NAME_MAX_LENGTH } from "#shared/services/resource/item/constants";
-import { UiRules } from "@/services/ui/UiRules";
+import { UiRules } from "#src/services/ui/UiRules";
 
 const modelValue = defineModel<string>({ required: true });
 const nameRules = [UiRules.required(), UiRules.maxLength(ITEM_NAME_MAX_LENGTH)];

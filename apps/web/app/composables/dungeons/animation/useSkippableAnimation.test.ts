@@ -1,9 +1,9 @@
-import { useSkippableAnimation } from "@/composables/dungeons/animation/useSkippableAnimation";
+import { useSkippableAnimation } from "#src/composables/dungeons/animation/useSkippableAnimation";
 import { describe, expect, test, vi } from "vitest";
 
 const { settingsStore } = vi.hoisted(() => ({ settingsStore: { isSkipAnimations: false } }));
 // oxlint-disable-next-line vitest/prefer-import-in-mock -- The settings store loads Phaser, which the test environment cannot start
-vi.mock("@/store/dungeons/settings", () => ({ useSettingsStore: () => settingsStore }));
+vi.mock("#src/store/dungeons/settings/index", () => ({ useSettingsStore: () => settingsStore }));
 
 describe(useSkippableAnimation, () => {
   test("plays the animation and not the end state while animations are on", async () => {

@@ -3,7 +3,7 @@ import {
   CONTENT_MENU_WIDTH,
   CURSOR_POSITION_INCREMENT,
   INITIAL_CURSOR_POSITION,
-} from "@/services/dungeons/scene/inventory/constants";
+} from "#src/services/dungeons/scene/inventory/constants";
 import { Container } from "vue-phaserjs";
 
 const itemOptionGrid = useItemOptionGrid();

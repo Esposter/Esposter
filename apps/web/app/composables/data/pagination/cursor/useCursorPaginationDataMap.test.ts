@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
-import { createPendingQuery } from "@/composables/data/pagination/createPendingQuery.test";
-import { goOnline } from "@/composables/shared/network.test";
+import { createPendingQuery } from "#src/composables/data/pagination/createPendingQuery.test";
+import { goOnline } from "#src/composables/shared/network.test";
 import { createEmptyPage } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";

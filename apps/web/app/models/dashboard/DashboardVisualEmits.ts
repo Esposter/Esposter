@@ -1,5 +1,5 @@
 import type { Visual } from "#shared/models/dashboard/data/Visual";
-import type { DashboardGridTransfer } from "@/models/dashboard/DashboardGridTransfer";
+import type { DashboardGridTransfer } from "#src/models/dashboard/DashboardGridTransfer";
 import type { GridBlock } from "vue-grid-layout-headless";
 
 // What a grid and the visuals it draws emit, shared by the grid, the group's frame and the renderer that holds them

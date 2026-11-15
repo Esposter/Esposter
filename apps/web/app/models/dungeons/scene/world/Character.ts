@@ -1,6 +1,6 @@
 import type { NpcId } from "#shared/generated/tiled/propertyTypes/enum/NpcId";
-import type { Asset } from "@/models/dungeons/Asset";
-import type { CharacterId } from "@/models/dungeons/scene/world/CharacterId";
+import type { Asset } from "#src/models/dungeons/Asset";
+import type { CharacterId } from "#src/models/dungeons/scene/world/CharacterId";
 import type { ID_SEPARATOR } from "@esposter/shared";
 import type { Direction, WalkingAnimationMapping } from "grid-engine";
 

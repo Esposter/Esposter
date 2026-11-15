@@ -1,5 +1,5 @@
-import { getUniqueColumnNames } from "@/services/resource/sheet/dataSource/getUniqueColumnNames";
-import { getXmlCell } from "@/services/resource/sheet/xml/getXmlCell";
+import { getUniqueColumnNames } from "#src/services/resource/sheet/dataSource/getUniqueColumnNames";
+import { getXmlCell } from "#src/services/resource/sheet/xml/getXmlCell";
 import { takeOne } from "@esposter/shared";
 
 // A row's cells are its child elements in order, then its attributes. A name the row repeats is numbered the way a

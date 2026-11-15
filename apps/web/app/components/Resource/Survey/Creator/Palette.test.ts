@@ -1,10 +1,10 @@
 // @vitest-environment nuxt
-import ResourceSurveyCreatorPalette from "@/components/Resource/Survey/Creator/Palette.vue";
-import { createSurveyTestDocument } from "@/services/survey/createSurveyTestDocument.test";
-import { createSurveyTestPage } from "@/services/survey/createSurveyTestPage.test";
-import { createSurveyTestPanelDynamic } from "@/services/survey/createSurveyTestPanelDynamic.test";
-import { createSurveyTestQuestion } from "@/services/survey/createSurveyTestQuestion.test";
-import { useSurveyCreatorStore } from "@/store/survey/creator";
+import ResourceSurveyCreatorPalette from "#src/components/Resource/Survey/Creator/Palette.vue";
+import { createSurveyTestDocument } from "#src/services/survey/createSurveyTestDocument.test";
+import { createSurveyTestPage } from "#src/services/survey/createSurveyTestPage.test";
+import { createSurveyTestPanelDynamic } from "#src/services/survey/createSurveyTestPanelDynamic.test";
+import { createSurveyTestQuestion } from "#src/services/survey/createSurveyTestQuestion.test";
+import { useSurveyCreatorStore } from "#src/store/survey/creator";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 import {

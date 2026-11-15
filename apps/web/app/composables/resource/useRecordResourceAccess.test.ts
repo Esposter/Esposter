@@ -2,9 +2,9 @@
 import type { ResourceInResource } from "@esposter/db-schema";
 
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
-import { CacheTag } from "@/models/cache/CacheTag";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useCacheStore } from "@/store/cache";
+import { CacheTag } from "#src/models/cache/CacheTag";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useCacheStore } from "#src/store/cache";
 import { describe, expect, test } from "vitest";
 
 describe(useRecordResourceAccess, () => {

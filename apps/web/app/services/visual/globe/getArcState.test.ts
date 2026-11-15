@@ -1,5 +1,5 @@
-import { getArcState } from "@/services/visual/globe/getArcState";
-import { GlobeConfiguration } from "@/services/visual/GlobeConfiguration";
+import { getArcState } from "#src/services/visual/globe/getArcState";
+import { GlobeConfiguration } from "#src/services/visual/GlobeConfiguration";
 import { describe, expect, test } from "vitest";
 
 const { arcGrowTime, arcHoldTime, arcStagger } = GlobeConfiguration;

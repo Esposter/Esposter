@@ -1,4 +1,4 @@
-import type { DurationUnit } from "@/models/date/DurationUnit";
+import type { DurationUnit } from "#src/models/date/DurationUnit";
 
 // Pinned to en-US rather than the reader's locale, like every other formatter here: a duration is rendered on
 // Both sides of hydration, and a server that speaks a different locale would print different text to the one

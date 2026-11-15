@@ -1,15 +1,15 @@
-import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
+import type { PageBuilderKind } from "#src/models/pageBuilder/PageBuilderKind";
 import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "vue-block-editor-headless";
 
-import { CANNOT_GO_HERE_MESSAGE } from "@/services/pageBuilder/constants";
-import { getInsertTarget } from "@/services/pageBuilder/getInsertTarget";
-import { getNodeIdAt } from "@/services/pageBuilder/getNodeIdAt";
-import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
-import { getNodeTitle } from "@/services/pageBuilder/getNodeTitle";
-import { refuseClipboardPaste } from "@/services/pageBuilder/refuseClipboardPaste";
-import { parseClipboardNodes, serializeClipboardNodes } from "@/services/pageBuilder/serializeClipboardNodes";
-import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
-import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
+import { CANNOT_GO_HERE_MESSAGE } from "#src/services/pageBuilder/constants";
+import { getInsertTarget } from "#src/services/pageBuilder/getInsertTarget";
+import { getNodeIdAt } from "#src/services/pageBuilder/getNodeIdAt";
+import { getNodePointer } from "#src/services/pageBuilder/getNodePointer";
+import { getNodeTitle } from "#src/services/pageBuilder/getNodeTitle";
+import { refuseClipboardPaste } from "#src/services/pageBuilder/refuseClipboardPaste";
+import { parseClipboardNodes, serializeClipboardNodes } from "#src/services/pageBuilder/serializeClipboardNodes";
+import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
+import { usePageBuilderHistoryStore } from "#src/store/pageBuilder/history";
 import { getResultAsync, parseJsonPointer } from "@esposter/shared";
 import { getBlockNode, pasteBlockNodes } from "vue-block-editor-headless";
 

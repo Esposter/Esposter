@@ -1,5 +1,5 @@
-import { AsyncDataKey } from "@/services/shared/AsyncDataKey";
-import { usePostStore } from "@/store/post";
+import { AsyncDataKey } from "#src/services/shared/AsyncDataKey";
+import { usePostStore } from "#src/store/post/index";
 
 export const useReadPosts = (userId?: string) => {
   const postStore = usePostStore();

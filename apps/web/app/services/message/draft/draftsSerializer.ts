@@ -1,7 +1,7 @@
-import type { Draft } from "@/models/message/Draft";
+import type { Draft } from "#src/models/message/Draft";
 import type { Serializer } from "@vueuse/core";
 
-import { draftSchema } from "@/models/message/Draft";
+import { draftSchema } from "#src/models/message/Draft";
 import { getResult } from "@esposter/shared";
 import { z } from "zod";
 

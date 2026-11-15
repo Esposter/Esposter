@@ -1,7 +1,7 @@
-import type { Item } from "@/models/shared/Item";
-import type { UiMenuItem } from "@/models/ui/UiMenuItem";
+import type { Item } from "#src/models/shared/Item";
+import type { UiMenuItem } from "#src/models/ui/UiMenuItem";
 
-import { getMenuItemValue } from "@/services/ui/getMenuItemValue";
+import { getMenuItemValue } from "#src/services/ui/getMenuItemValue";
 
 export const getUiMenuItems = (items: Item[], parentTitle?: string): UiMenuItem<string>[] =>
   items.map(

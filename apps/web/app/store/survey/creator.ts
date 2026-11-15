@@ -1,8 +1,8 @@
-import type { PageBuilderHistoryEntry } from "@/models/pageBuilder/PageBuilderHistoryEntry";
+import type { PageBuilderHistoryEntry } from "#src/models/pageBuilder/PageBuilderHistoryEntry";
 import type { SurveyDocument } from "vue-survey-engine-headless";
 
-import { MAX_PAGE_BUILDER_HISTORY_SIZE } from "@/services/pageBuilder/constants";
-import { getSurveyNodePointerById } from "@/services/resource/survey/getSurveyNodePointerById";
+import { MAX_PAGE_BUILDER_HISTORY_SIZE } from "#src/services/pageBuilder/constants";
+import { getSurveyNodePointerById } from "#src/services/resource/survey/getSurveyNodePointerById";
 import { getBlockNode, useEditSession } from "vue-block-editor-headless";
 import { createSurveyDocument, surveyNodeChildren } from "vue-survey-engine-headless";
 

@@ -1,7 +1,7 @@
 import type { Dataset } from "#shared/models/dataset/Dataset";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
-import { createDatasetCsv } from "@/services/dataset/createDatasetCsv";
+import { createDatasetCsv } from "#src/services/dataset/createDatasetCsv";
 import { describe, expect, test } from "vitest";
 
 describe(createDatasetCsv, () => {

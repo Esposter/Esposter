@@ -1,7 +1,7 @@
 import type { CreateLikeInput } from "#shared/models/db/post/CreateLikeInput";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 // A cast upvote fills in the accent, as any pressed toggle does, and a cast downvote in the danger colour, so the
 // Two directions never read alike. Typed rather than inferred, since only a downvote has a variant of its own

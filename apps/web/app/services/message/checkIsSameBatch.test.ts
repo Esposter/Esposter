@@ -1,6 +1,6 @@
-import { checkIsSameBatch } from "@/services/message/checkIsSameBatch";
-import { SAME_BATCH_WINDOW_MS } from "@/services/message/constants";
-import { createMessage } from "@/services/message/message/createMessage.test";
+import { checkIsSameBatch } from "#src/services/message/checkIsSameBatch";
+import { SAME_BATCH_WINDOW_MS } from "#src/services/message/constants";
+import { createMessage } from "#src/services/message/message/createMessage.test";
 import { MessageType } from "@esposter/db-schema";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";

@@ -1,7 +1,7 @@
-import { getOtherUserId } from "@/composables/message/subscribables/getOtherUserId";
-import { useFriendStore } from "@/store/message/user/friend";
-import { useFriendRequestStore } from "@/store/message/user/friendRequest";
-import { useConnectionStore } from "@/store/realtime/connection";
+import { getOtherUserId } from "#src/composables/message/subscribables/getOtherUserId";
+import { useFriendStore } from "#src/store/message/user/friend";
+import { useFriendRequestStore } from "#src/store/message/user/friendRequest";
+import { useConnectionStore } from "#src/store/realtime/connection";
 
 export const useFriendSubscribables = async () => {
   const currentInstance = getCurrentInstance();

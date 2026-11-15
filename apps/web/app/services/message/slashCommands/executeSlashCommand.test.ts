@@ -1,10 +1,10 @@
 // @vitest-environment nuxt
-import { SlashCommandType } from "@/models/message/slashCommands/SlashCommandType";
-import { createRoom } from "@/services/message/room/createRoom.test";
-import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
-import { executeSlashCommand } from "@/services/message/slashCommands/executeSlashCommand";
-import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useRoomStore } from "@/store/message/room";
+import { SlashCommandType } from "#src/models/message/slashCommands/SlashCommandType";
+import { createRoom } from "#src/services/message/room/createRoom.test";
+import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
+import { executeSlashCommand } from "#src/services/message/slashCommands/executeSlashCommand";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useRoomStore } from "#src/store/message/room/index";
 import { TRPCError } from "@trpc/server";
 import { beforeEach, describe, expect, test } from "vitest";
 

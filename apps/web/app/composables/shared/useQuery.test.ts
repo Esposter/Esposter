@@ -1,14 +1,17 @@
 // @vitest-environment nuxt
-import { readActiveTopics } from "@/services/realtime/collectTopics";
-import { sendRealtimeFrame } from "@/services/realtime/openRealtimeSocket.test";
-import { useAlertStore } from "@/store/alert";
-import { useConnectionStore } from "@/store/realtime/connection";
+import { readActiveTopics } from "#src/services/realtime/collectTopics";
+import { sendRealtimeFrame } from "#src/services/realtime/openRealtimeSocket.test";
+import { useAlertStore } from "#src/store/alert";
+import { useConnectionStore } from "#src/store/realtime/connection";
 import { getTopic, TopicKind } from "@esposter/db-schema";
 import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 
-vi.mock(import("@/services/realtime/openRealtimeSocket"), () => import("@/services/realtime/openRealtimeSocket.test"));
+vi.mock(
+  import("#src/services/realtime/openRealtimeSocket"),
+  () => import("#src/services/realtime/openRealtimeSocket.test"),
+);
 
 describe(useQuery, () => {
   const result = "result";

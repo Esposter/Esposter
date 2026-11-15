@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { MutationStatus } from "@/models/shared/MutationStatus";
-import { getEarliestScheduledAt } from "@/services/message/getEarliestScheduledAt";
-import { UiRules } from "@/services/ui/UiRules";
-import { useScheduledMessageJobDialogStore } from "@/store/message/input/scheduledMessageJobDialog";
-import { useRoomStore } from "@/store/message/room";
+import { MutationStatus } from "#src/models/shared/MutationStatus";
+import { getEarliestScheduledAt } from "#src/services/message/getEarliestScheduledAt";
+import { UiRules } from "#src/services/ui/UiRules";
+import { useScheduledMessageJobDialogStore } from "#src/store/message/input/scheduledMessageJobDialog";
+import { useRoomStore } from "#src/store/message/room/index";
 import { ScheduledMessageJobType } from "@esposter/db-schema";
 import { marked } from "marked";
 
