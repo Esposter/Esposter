@@ -14,6 +14,7 @@ import type { SnapshotRestoration } from "#shared/models/resource/SnapshotRestor
 import type { SnapshotVersion } from "#shared/models/resource/SnapshotVersion";
 import type { UpdateResourceContentResult } from "#shared/models/resource/UpdateResourceContentResult";
 import type { ResourceActivityInResource, ResourceInResource } from "@esposter/db-schema";
+import type { User } from "better-auth";
 import type { SQL } from "drizzle-orm";
 
 import { getAgentJsonSchema } from "#server/services/mcp/getAgentJsonSchema";
@@ -98,6 +99,12 @@ import {
 import { getSynchronizedFunction, MAX_READ_LIMIT, Operation, RoutePath, takeOne } from "@esposter/shared";
 import { and, count, desc, eq, isNotNull, isNull } from "drizzle-orm";
 
+// The topics of a procedure that changes many resources at once: each resource and its owner's list of resources
+const getChangedResourcesTopics = ({ ctx, input: { ids } }: { ctx: { user: User }; input: { ids: string[] } }) => [
+  ...ids.map((id) => getTopic(TopicKind.Resource, id)),
+  ...getResourceListTopics(ctx.user.id),
+];
+
 export const resourceRouter = router({
   // Typeless: the type is named in the input, so one tool creates a resource of any type
   createResource: getTopicsProcedure(
@@ -122,10 +129,7 @@ export const resourceRouter = router({
           scope: McpScope.Resources,
         },
       }),
-    ({ ctx, input: { ids } }) => [
-      ...ids.map((id) => getTopic(TopicKind.Resource, id)),
-      ...getResourceListTopics(ctx.user.id),
-    ],
+    getChangedResourcesTopics,
   )
     // Owner-scoped where so callers can only ever soft-delete their own rows
     .mutation<ResourceInResource[]>(async ({ ctx, input: { ids } }) => {
@@ -343,7 +347,7 @@ export const resourceRouter = router({
         scope: McpScope.Resources,
       },
     }),
-    ({ ctx, input: { id } }) => [getTopic(TopicKind.Resource, id), ...getResourceListTopics(ctx.user.id)],
+    getChangedResourceTopics,
   ).query<ResourceReferences>(async ({ ctx }) => {
     const [consumers, dependencyReferences] = await Promise.all([
       readResourceConsumers(ctx, [ctx.resource.id]),
@@ -455,10 +459,7 @@ export const resourceRouter = router({
           scope: McpScope.Resources,
         },
       }),
-    ({ ctx, input: { ids } }) => [
-      ...ids.map((id) => getTopic(TopicKind.Resource, id)),
-      ...getResourceListTopics(ctx.user.id),
-    ],
+    getChangedResourcesTopics,
   ).mutation<ResourceInResource[]>(async ({ ctx, input: { ids } }) => {
     const userId = ctx.user.id;
     const restoredResources = await ctx.db
