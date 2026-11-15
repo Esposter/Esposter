@@ -30,9 +30,9 @@ const sheetPlacement = computed(() =>
   sizeClass.value === SizeClass.Compact ? UiDialogPlacement.DrawerBottom : RegionEdgeDialogPlacementMap[region.edge],
 );
 // A top or bottom region is a bar, sized by its height, and a start or end region a column, sized by its width
-const isVertical = computed(() => [RegionEdge.Bottom, RegionEdge.Top].includes(region.edge));
+const isVertical = computed(() => region.edge === RegionEdge.Bottom || region.edge === RegionEdge.Top);
 // The handle sits on the region's inner edge, so a region at the end or the bottom takes it on its start or top side
-const isReversed = computed(() => [RegionEdge.Bottom, RegionEdge.End].includes(region.edge));
+const isReversed = computed(() => region.edge === RegionEdge.Bottom || region.edge === RegionEdge.End);
 // A handle moves a docked region between its limits, so equal limits leave it nothing to move
 const isResizable = computed(
   () => region.presentation === RegionPresentation.Docked && region.minimumSize < region.maximumSize,
