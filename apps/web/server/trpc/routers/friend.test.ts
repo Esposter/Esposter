@@ -7,12 +7,15 @@ import { createCallerFactory } from "#server/trpc";
 import { createMockAuthSession, createMockContext, getMockSession } from "#server/trpc/context.test";
 import { createFriendship } from "#server/trpc/routers/createFriendship.test";
 import { friendRouter } from "#server/trpc/routers/friend";
+import { readTopicsHeader } from "#shared/services/realtime/readTopicsHeader";
 import {
   blocksInSocial,
   DatabaseEntityType,
   friendRequestsInSocial,
   friendsInSocial,
+  getTopic,
   PublicUserColumns,
+  TopicKind,
 } from "@esposter/db-schema";
 import { getFriendshipId, InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { v7 } from "uuid";
@@ -42,6 +45,19 @@ describe("friendRouter", () => {
 
     expect(friendUsers).toHaveLength(1);
     expect(takeOne(friendUsers).id).toBe(user.id);
+  });
+
+  test("watches each friend's own topic, so a renamed friend refreshes the list", async () => {
+    expect.hasAssertions();
+
+    const { user } = await createFriendship(mockContext);
+    const readContext = await createMockContext();
+    await createCallerFactory(friendRouter)(readContext).readFriends();
+
+    expect(readTopicsHeader(readContext.responseHeaders, "readFriends")).toStrictEqual([
+      getTopic(TopicKind.Friend, getMockSession().user.id),
+      getTopic(TopicKind.User, user.id),
+    ]);
   });
 
   test("reads friends as receiver", async () => {

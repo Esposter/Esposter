@@ -15,11 +15,13 @@ import {
   friendsInSocial,
   getPublicUserColumns,
   getTopic,
+  publicUserSchema,
   TopicKind,
   usersInAuth,
 } from "@esposter/db-schema";
 import { getFriendshipId, MAX_READ_LIMIT, Operation } from "@esposter/shared";
 import { and, eq, isNull, ne, or } from "drizzle-orm";
+import { z } from "zod";
 
 export const friendRouter = router({
   deleteFriend: getTopicsProcedure(
@@ -41,8 +43,13 @@ export const friendRouter = router({
       userObject.deleteFriend({ receiverId: friendId, senderId: userId }),
     );
   }),
-  readFriends: getTopicsProcedure(standardAuthedProcedure, ({ ctx }) => [
+  // Each friend's own topic too, since the list shows their name and image, which they change without touching it
+  readFriends: getTopicsProcedure(standardAuthedProcedure, ({ ctx, output }) => [
     getTopic(TopicKind.Friend, ctx.user.id),
+    ...z
+      .array(publicUserSchema.pick({ id: true }))
+      .parse(output)
+      .map(({ id }) => getTopic(TopicKind.User, id)),
   ]).query<PublicUser[]>(({ ctx }) => {
     const userId = ctx.user.id;
     return ctx.db

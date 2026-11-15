@@ -13,8 +13,8 @@ import { getResultAsync, noop } from "@esposter/shared";
 export interface TopicsOptions<TContextOverrides, TInput> {
   ctx: Simplify<Overwrite<Context, TContextOverrides>>;
   input: TInput;
-  // A mutation's result, for a topic only the write names, such as a created row's id. A middleware never sees the
-  // Resolver's output type, so a topic read from it parses it. A query's topics never read it
+  // The resolver's result, for a topic only the result names: a created row's id, or the people a list shows. A
+  // Middleware never sees the resolver's output type, so a topic read from it parses it
   output: unknown;
 }
 
