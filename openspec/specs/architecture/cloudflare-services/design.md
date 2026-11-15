@@ -117,7 +117,7 @@ A call session is a RealtimeKit meeting. The web Worker creates the meeting thro
 - A file goes in an R2 bucket, public only when its content is public by design.
 - A delay is an alarm on the owner's object. A queue is for work that can wait without a clock.
 
-The decisions behind this split, and the alternatives they beat, are recorded in the [Cloudflare program](../../../changes/infra-cloudflare-program/design.md).
+The decisions behind this split, and the alternatives they beat, are recorded in the [Cloudflare program](../../../changes/archive/2026-11-15-infra-cloudflare-program/design.md).
 
 ## Key files
 

@@ -2,7 +2,7 @@
 import "temporal-polyfill/global";
 
 // The realtime objects, one per room, call, person and live-query topic. The web Worker reaches each through its binding, and so does the jobs Worker.
-// Deploying this Worker restarts them, so this Worker changes only when they do (openspec/changes/infra-cloudflare-realtime/design.md)
+// Deploying this Worker restarts them, so this Worker changes only when they do (openspec/specs/architecture/cloudflare-services/design.md)
 export { CallObject } from "#src/durableObjects/CallObject";
 export { RoomObject } from "#src/durableObjects/RoomObject";
 export { TopicObject } from "#src/durableObjects/TopicObject";

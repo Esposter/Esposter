@@ -23,4 +23,5 @@
 
 ## 5. Teardown
 
-- [ ] 5.1 After the rollback window, delete the Railway services and the Azure estate, the archive bucket and the cutover command, and rewrite the Azure services page. Verified by `pnpm infra:preview` showing no Azure resource.
+- [x] 5.1 After the rollback window, delete the Railway services and the Azure estate, the archive bucket and the cutover command, and rewrite the Azure services page. Verified by `pnpm infra:preview` showing no Azure resource.
+  - Run once production's data was verified, as the owner asked, instead of after a soak: the Railway project is deleted through its CLI (Railway keeps it restorable for forty-eight hours), the Azure estate through Pulumi with `az` reporting no resource group or resource left, then the emptied archive buckets, the staging host, the cutover command, its routes and its secret.

@@ -1,7 +1,5 @@
 # Tasks
 
-A session taking the program up cold, on any machine, starts from [the handoff](handoff.md): the machine setup, the hand deploy of the develop estate, and what is in flight.
-
 ## 1. Parts
 
 - [x] 1.1 Ship [runtime](../infra-cloudflare-runtime/tasks.md). Verified by its tasks all ticked.
@@ -10,7 +8,7 @@ A session taking the program up cold, on any machine, starts from [the handoff](
 - [x] 1.4 Ship [jobs](../infra-cloudflare-jobs/tasks.md). Verified by its tasks all ticked.
 - [x] 1.5 Ship [calls](../infra-cloudflare-calls/tasks.md). Verified by its tasks all ticked.
 - [x] 1.6 Ship [pulumi](../infra-cloudflare-pulumi/tasks.md). Verified by its tasks all ticked.
-- [ ] 1.7 Ship [cutover](../infra-cloudflare-cutover/tasks.md). Verified by its tasks all ticked.
+- [x] 1.7 Ship [cutover](../infra-cloudflare-cutover/tasks.md). Verified by its tasks all ticked.
 
 ## 2. Realtime and ids
 
@@ -52,12 +50,13 @@ A session taking the program up cold, on any machine, starts from [the handoff](
 
 - [x] 7.2 Confirm the deploy job runs migrations before `wrangler deploy`, uploads secrets with `wrangler secret bulk`, and is never cancelled mid-deploy. Verified by one green deploy run.
 - [x] 7.3 Teach the cutover to re-key D1 rows to UUIDv7 through the id map and import each room's messages and pending scheduled messages into its object (realtime 4.1), then rehearse the whole cutover on the develop estate. Verified by `verify` passing on develop.
-- [ ] 7.4 Run the production cutover on `next.esposter.com`, switch the apex record from Railway to the web Worker, soak, then tear down: the Azure resources and `src/azure` in Pulumi, the Railway services, the cutover tool and its reschedule route. The `esposter.com` nameservers already point at Cloudflare. Verified by the cutover design's checks.
+- [x] 7.4 Run the production cutover on `next.esposter.com`, switch the apex record from Railway to the web Worker, soak, then tear down: the Azure resources and `src/azure` in Pulumi, the Railway services, the cutover tool and its reschedule route. The `esposter.com` nameservers already point at Cloudflare. Verified by the cutover design's checks.
 
 ## 8. Docs and names
 
-- [ ] 8.1 Sweep every spec, skill, ledger and README for the retired platform: delete pages describing retired mechanisms, merge duplicates, give the `drizzle` skill its D1 rules (batches, guarded writes, FTS5, `json_each`, the hundred-parameter cap), and replace the root README's Railway and Postgres badges with Cloudflare's. Verified by no mention of Azure, Railway, LiveKit, Postgres or Web PubSub outside the cutover and the archive.
-- [ ] 8.2 Rename any package, folder or identifier still named for the retired platform. Verified by the same search.
+- [x] 8.1 Sweep every spec, skill, ledger and README for the retired platform: delete pages describing retired mechanisms, merge duplicates, give the `drizzle` skill its D1 rules (batches, guarded writes, FTS5, `json_each`, the hundred-parameter cap), and replace the root README's Railway and Postgres badges with Cloudflare's. Verified by no mention of Azure, Railway, LiveKit, Postgres or Web PubSub outside the cutover and the archive.
+  - What remains of the words is not the platform: the Azure portal and ARM cited as prior art for the resource UI, Genshin names such as Azurelight, a colour name, and placeholder hosts in fixtures.
+- [x] 8.2 Rename any package, folder or identifier still named for the retired platform. Verified by the same search.
 
 ## 9. Finish, in this order
 
@@ -67,4 +66,5 @@ A session taking the program up cold, on any machine, starts from [the handoff](
 - [x] 9.3 Land by the owner's sync to main, not through the review: the branch was reviewed in 9.2, and the review's windows would only re-read it. First disconnect the Railway `Esposter` service's GitHub source in both environments (production deploys `main`, develop deploys `ai/queue`), so their running deployments keep serving and no push rebuilds them; keep the `esposter.com` Workers custom domain out of the stack until the cutover, so the apex record stays on Railway. Then rebase `ai/cloudflare` onto `ai/queue` and push the one commit to `main` and then to `ai/queue`, so the review finds nothing owed; `main`'s deploy puts the production Workers behind `next.esposter.com` and `ai/queue`'s puts develop on `dev.esposter.com`. Verified by `main` and `ai/queue` naming the same commit and both Railway environments still serving.
   - Landed after CI passed on the branch. Renovate's msw bump had reached `main` first, so `main` was merged into the branch, as the branch's earlier merge was, and replaying its 600 commits was avoided. The lockfile is the branch's own, regenerated with the bump. Railway's `Esposter` service had no source in either environment.
 - [x] 9.4 Run the production cutover (7.4): copy the data, switch the apex from Railway to the web Worker's `esposter.com` custom domain in one commit, soak. Verified by the cutover's checks.
-- [ ] 9.5 Tear down the old estate: the Railway services deleted through the Railway CLI, the Azure resources removed through Pulumi, then the owner cancels the Railway plan, and the retired npm packages (`azure-mock`, `@esposter/azure`) are deprecated once nothing on `ai/queue` installs them and unpublished when npm's policy allows it (under three hundred downloads a week), with the owner's one-time codes. Verified by no Railway service or Azure resource remaining.
+- [x] 9.5 Tear down the old estate: the Railway services deleted through the Railway CLI, the Azure resources removed through Pulumi, then the owner cancels the Railway plan, and the retired npm packages (`azure-mock`, `@esposter/azure`) are deprecated once nothing on `ai/queue` installs them and unpublished when npm's policy allows it (under three hundred downloads a week), with the owner's one-time codes. Verified by no Railway service or Azure resource remaining.
+  - Two steps are the owner's alone: cancelling the Railway plan, and deprecating `azure-mock` and `@esposter/azure` on npm, which needs the owner's login and one-time code on a machine where npm is signed in.

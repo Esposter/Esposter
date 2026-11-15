@@ -7,7 +7,7 @@ import { DurableObject } from "cloudflare:workers";
 
 // One Topic object per topic, named for it: the users watching it, each held as a storage key, and the window a publish opens.
 // A publish arms the alarm unless one is already set, so every write in the window reaches each subscriber's user object once.
-// When the alarm fires (openspec/changes/infra-cloudflare-live-queries/design.md)
+// When the alarm fires (openspec/specs/architecture/cloudflare-services/design.md)
 export class TopicObject extends DurableObject implements TopicObjectRpc {
   readonly #topic: Topic = topicSchema.parse(getObjectName(this.ctx, "TopicObject"));
 
