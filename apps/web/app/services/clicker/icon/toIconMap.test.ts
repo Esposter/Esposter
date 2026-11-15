@@ -10,4 +10,13 @@ describe(toIconMap, () => {
       "Wizard Tower": "/_nuxt/Wizard%20Tower.png",
     });
   });
+
+  // A production build's asset URL is already encoded, and encoding it again 404s every icon with a space in its name
+  test("keeps an already encoded URL as it is", () => {
+    expect.hasAssertions();
+
+    expect(
+      toIconMap({ "/assets/clicker/icons/buildings/Wizard Tower.png": "/_nuxt/Wizard%20Tower.C8cDYIxL.png" }),
+    ).toStrictEqual({ "Wizard Tower": "/_nuxt/Wizard%20Tower.C8cDYIxL.png" });
+  });
 });
