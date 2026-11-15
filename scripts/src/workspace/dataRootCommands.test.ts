@@ -6,7 +6,7 @@ import { describe, expect, test } from "vitest";
 describe("dataRootCommands", () => {
   // A command is one a page writes inline or in a fence, starting with the tool that runs it. The shell does not expand
   // `{data-root}`, so a command copied as written writes into a folder literally named that
-  const DATA_ROOT_COMMAND_REGEX = /(?:^\s*(?:\$ )?|`)(?<command>(?:pnpm|node|vpx|npx|git) [^`]*\{data-root\}[^`]*)/gu;
+  const DATA_ROOT_COMMAND_REGEX = /(?:^\s*(?:\$ )?|`)(?<command>(?:pnpm|node|npx|git) [^`]*\{data-root\}[^`]*)/gu;
   const getDataRootCommands = (files: { markdown: string; path: string }[]): string[] =>
     getLineMatches(files, DATA_ROOT_COMMAND_REGEX, "command");
 

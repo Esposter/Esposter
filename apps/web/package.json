@@ -20,7 +20,6 @@
     "#scripts/*": "./scripts/*.ts",
     "#server/*": "./server/*.ts",
     "#shared/*": "./shared/*.ts",
-    "#src/*.css": "./app/*.css",
     "#src/*.gltf": "./app/*.gltf",
     "#src/*.html": "./app/*.html",
     "#src/*.jpeg": "./app/*.jpeg",

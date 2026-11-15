@@ -4,6 +4,9 @@ const knipConfiguration: KnipConfig = {
   exclude: ["types"],
   ignoreBinaries: ["pwsh"],
   ignoreExportsUsedInFile: true,
+  // @TODO: no upstream issue — webpro-nl/knip: drop it once an `import.meta.glob` pattern resolves through the
+  // Manifest's subpath imports, the only users of the app's `#src/*.html`, `*.tsx` and `*.wasm` patterns
+  ignoreIssues: { "apps/web/package.json": ["subpaths"] },
   // A workspace's `entry` replaces knip's default `src/index.ts`, so a package that sets one lists its barrel too
   workspaces: {
     ".": {
@@ -23,20 +26,23 @@ const knipConfiguration: KnipConfig = {
     "apps/realtime": { entry: ["src/**/*.ts"] },
     "apps/web": {
       // A development route's handler is registered by its path from a module under `nuxt dev` alone, so nothing imports it
-      // `scripts/*/index.ts` is launched by path through `vpx` in `apps/web/package.json`, and `service-worker/sw.ts` by the
-      // PWA module from `srcDir`, which knip does not follow
+      // `service-worker/sw.ts` is bundled by the PWA module from `srcDir`, which knip does not follow
       entry: [
         "app/App.vue",
         "app/components/**/*.vue",
-        "scripts/*/index.ts",
         "server/development/*.ts",
         // The bindings' declaration is ambient for the server program and named from inside the browser programs'
         // `declare module "cloudflare:workers"`, which knip does not read
         "server/types/cloudflare.d.ts",
         "server/services/devSession/postDevSession.ts",
         "service-worker/sw.ts",
+        // @TODO: no upstream issue — webpro-nl/knip: drop it once an `import.meta.glob` pattern resolves through the
+        // Manifest's subpath imports, which reach each worker and worklet
+        "app/workers/**/*.ts",
       ],
-      ignore: ["public/**", "shared/generated/**"],
+      // @TODO: no upstream issue — webpro-nl/knip: drop `app/assets/**` once the tileset glob is followed, since knip
+      // Reads its Tiled `.tsx` definitions as unused source
+      ignore: ["app/assets/**", "public/**", "shared/generated/**"],
       ignoreDependencies: [
         "@iconify-json/.+",
         "@takumi-rs/core",
@@ -123,9 +129,8 @@ const knipConfiguration: KnipConfig = {
     // A type bench is run by `pnpm bench:types` and imported by nothing, as its fixture is imported by the benches alone
     "packages/vue-block-editor-headless": { entry: ["src/index.ts", "src/**/*.typebench.ts"] },
     scripts: {
-      // Every command is launched by path through `vpx` (`scripts/package.json`), which knip does not trace, so each
-      // Command entry and the shell wrapper's slot gate are named here
-      entry: ["src/**/index.ts", "src/oxlint/**/*.ts", "src/services/genshinAssets/kits/gcsim/checkGcsimConfigs.ts"],
+      // Knip follows each `node` command entry from the manifest; the oxlint plugins load by path from the root config
+      entry: ["src/oxlint/**/*.ts"],
       // Loaded by path through createRequire, which knip cannot follow
       // `@azure/identity` is declared for the lockfile alone: unstorage's optional Azure peer resolves to this copy, so
       // Dropping it re-resolves every Nuxt peer variant with it, and nothing imports it
