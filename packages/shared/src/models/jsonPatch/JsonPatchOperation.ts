@@ -5,17 +5,17 @@ export type JsonPatchOperation = JsonPatchFromOperation | JsonPatchRemoveOperati
 
 interface JsonPatchFromOperation {
   from: string;
-  op: JsonPatchOperationType.Copy | JsonPatchOperationType.Move;
+  op: typeof JsonPatchOperationType.Copy | typeof JsonPatchOperationType.Move;
   path: string;
 }
 
 interface JsonPatchRemoveOperation {
-  op: JsonPatchOperationType.Remove;
+  op: typeof JsonPatchOperationType.Remove;
   path: string;
 }
 
 interface JsonPatchValueOperation {
-  op: JsonPatchOperationType.Add | JsonPatchOperationType.Replace | JsonPatchOperationType.Test;
+  op: typeof JsonPatchOperationType.Add | typeof JsonPatchOperationType.Replace | typeof JsonPatchOperationType.Test;
   path: string;
   value: unknown;
 }

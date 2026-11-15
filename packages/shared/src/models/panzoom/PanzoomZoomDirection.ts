@@ -1,5 +1,3 @@
 // The way a zoom step moves the scale
-export enum PanzoomZoomDirection {
-  In = "in",
-  Out = "out",
-}
+export const PanzoomZoomDirection = { In: "in", Out: "out" } as const;
+export type PanzoomZoomDirection = (typeof PanzoomZoomDirection)[keyof typeof PanzoomZoomDirection];

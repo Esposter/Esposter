@@ -4,5 +4,5 @@ export interface RoleMentionItem {
   color: string;
   id: string;
   name: string;
-  type: MentionType.Role;
+  type: typeof MentionType.Role;
 }
