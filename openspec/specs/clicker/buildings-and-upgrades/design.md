@@ -19,7 +19,7 @@ Numbers render through `formatNumberLong` (`thousand`, `million`, … built by p
 Content lives in `shared/assets/clicker/data/` as constant maps, typed by `satisfies` at compile time and covered by co-located tests for the ordering the type system can't express:
 
 - `BuildingMap` — `Building` per `BuildingId`: `basePrice`, `baseValue`, flavor text (with [compiled variables](../clicker-types/design.md)).
-- `<Building>UpgradeMap` — one map per building, merged into `UpgradeMap` via `mergeObjectsStrict` (which fails the build on id collisions). An `Upgrade` has `price`, `effects: Effect[]`, `unlockConditions`, description + flavor text. Only a building with its own `<Building>UpgradeMap` has upgrade lines (including Cursor's cross-building "Thousand Fingers" tier); giving the other buildings one is [deferred on icon art](../../../deferred/clicker/all-building-upgrades/design.md).
+- `<Building>UpgradeMap` — one map per building, merged into `UpgradeMap` via `mergeObjectsStrict`, which refuses an id two maps share both in its type and when the module loads. An `Upgrade` has `price`, `effects: Effect[]`, `unlockConditions`, description + flavor text. Only a building with its own `<Building>UpgradeMap` has upgrade lines (including Cursor's cross-building "Thousand Fingers" tier); giving the other buildings one is [deferred on icon art](../../../deferred/clicker/all-building-upgrades/design.md).
 
 ## Procedures
 

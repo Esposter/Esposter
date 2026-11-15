@@ -19,7 +19,7 @@ When a large enum has a meaningful "base" subset handled separately, split it:
 
 1. Declare **named sub-groups used independently** as exported enums in their own files (e.g. `BasicFooType.ts`).
 2. Declare **unlabelled/catch-all values** (e.g. `Qux`) as an **unexported `enum BaseXxxType`** inside the merged type's file — never a separate file.
-3. Merge with `mergeObjectsStrict` from `@esposter/shared`; export the union type using enum type names.
+3. Merge with `mergeObjectsStrict` from `@esposter/shared`; export the union type using enum type names. The merge refuses a key any two of its sets share: the merged type is `never`, and the merge throws when its module loads.
 
 ```ts
 // BasicFooType.ts (exported — sub-functions accept this for exhaustive switch)
