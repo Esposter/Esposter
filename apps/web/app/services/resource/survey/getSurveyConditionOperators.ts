@@ -12,7 +12,7 @@ import { SurveyNodeType } from "vue-survey-engine-headless";
 export const getSurveyConditionOperators = (type: SurveyNodeType | undefined): readonly SurveyConditionOperator[] => {
   if (type === SurveyNodeType.Boolean) return SURVEY_BOOLEAN_CONDITION_OPERATORS;
 
-  const listTypes = [
+  const listTypes: SurveyNodeType[] = [
     SurveyNodeType.Checkbox,
     SurveyNodeType.TagBox,
     SurveyNodeType.Ranking,
