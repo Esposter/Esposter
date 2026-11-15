@@ -236,7 +236,15 @@ export class RoomObject extends RealtimeObject<RoomEvent> implements RoomObjectR
     return insertedMessage;
   }
 
+  // Each pending scheduled message leaves its sender's index first, since the rows that name it go with the room
   async deleteAll(): Promise<void> {
+    const scheduledMessages = this.db
+      .select({ id: scheduledMessagesInRoom.id, userId: scheduledMessagesInRoom.userId })
+      .from(scheduledMessagesInRoom)
+      .all();
+    await Promise.all(
+      scheduledMessages.map(({ id, userId }) => this.#notifyUser(userId, (user) => user.removeScheduledMessage(id))),
+    );
     for (const webSocket of this.ctx.getWebSockets()) webSocket.close(1000, "Room deleted");
     await this.ctx.storage.deleteAlarm();
     await this.ctx.storage.deleteAll();

@@ -631,6 +631,24 @@ describe(RoomObject, () => {
     await expect(state.ctx.storage.getAlarm()).resolves.toBeNull();
   });
 
+  test("deleting the room takes each pending scheduled message out of its sender's index", async () => {
+    expect.hasAssertions();
+
+    const { object } = createRoomObject();
+    const scheduledId = v7();
+    await object.importRoom({
+      messages: [],
+      reactions: [],
+      scheduledMessages: [
+        { id: scheduledId, message: "", replyToId: null, runAt: new Date(ROOM_ACTIVITY_DELAY_MS), userId },
+      ],
+    });
+
+    await object.deleteAll();
+
+    expect(getUserStub(userId).removeScheduledMessage).toHaveBeenCalledExactlyOnceWith(scheduledId);
+  });
+
   test("a member coming online and going offline is sent to the room as its status, once for each change", () => {
     expect.hasAssertions();
 
