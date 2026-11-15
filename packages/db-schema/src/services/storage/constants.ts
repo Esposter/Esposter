@@ -1,15 +1,8 @@
-import { ID_SEPARATOR } from "@esposter/shared";
-
 // Every client-supplied piece of a blob name is one separator-free, non-dot segment. Blob names are assembled by
 // Interpolation and the storage sdk hands the result to `URL.pathname`, which normalizes `..` away — so a segment
 // Carrying a separator or a dot segment steers the write or the delete out of the prefix the caller was authorized for.
 export const BLOB_SEGMENT_REGEX = /^(?!\.{1,2}$)[^/\\]+$/u;
 export const FILENAME_MAX_LENGTH = 1000;
-// Characters in the canonical string form `uuid`'s `v7` returns.
-const UUID_LENGTH = 36;
-// A `{uuid}|{filename}` blob segment at its longest, for the inputs that carry one whole. Derived rather than
-// Restated, so a filename the upload accepts can never be one the delete rejects.
-export const BLOB_SEGMENT_MAX_LENGTH = UUID_LENGTH + ID_SEPARATOR.length + FILENAME_MAX_LENGTH;
 export const FILE_MAX_LENGTH = 10;
 // The publish/duplicate asset clone runs on the request path over however many assets the content references —
 // A page embedding hundreds of images would otherwise open that many concurrent probes and copies at once, which
