@@ -7,19 +7,6 @@ import { ThemeModeSetting, themeModeSettingSchema } from "#shared/models/dungeon
 import { IS_PRODUCTION } from "#shared/util/environment/constants";
 import { z } from "zod";
 
-// The `satisfies` carries the exhaustiveness — every option but Close needs an initial value — while
-// `typeof` keeps each key's own type, so a schema wiring one option's value to another fails to compile
-const InitialSettings = {
-  [SettingsOption.Animations]: AnimationsSetting.On,
-  [SettingsOption.Sound]: SoundSetting.On,
-  [SettingsOption.VolumePercentage]: IS_PRODUCTION ? 100 : 0,
-  [SettingsOption["Battle Style"]]: BattleStyleSetting.Shift,
-  [SettingsOption["Text Speed"]]: TextSpeedSetting.Mid,
-  [SettingsOption["Theme Mode"]]: ThemeModeSetting.Blue,
-} satisfies Record<Exclude<SettingsOption, SettingsOption.Close>, unknown>;
-export const getInitialSettings = () => structuredClone(InitialSettings);
-export type Settings = typeof InitialSettings;
-
 export const settingsSchema = z.object({
   [SettingsOption.Animations]: animationsSettingSchema,
   [SettingsOption.Sound]: soundSettingSchema,
@@ -27,4 +14,16 @@ export const settingsSchema = z.object({
   [SettingsOption["Battle Style"]]: battleStyleSettingSchema,
   [SettingsOption["Text Speed"]]: textSpeedSettingSchema,
   [SettingsOption["Theme Mode"]]: themeModeSettingSchema,
-}) satisfies z.ZodType<Settings>;
+});
+export type Settings = z.infer<typeof settingsSchema>;
+
+// Typed by the schema, so every option it holds needs an initial value of its own set
+const InitialSettings: Settings = {
+  [SettingsOption.Animations]: AnimationsSetting.On,
+  [SettingsOption.Sound]: SoundSetting.On,
+  [SettingsOption.VolumePercentage]: IS_PRODUCTION ? 100 : 0,
+  [SettingsOption["Battle Style"]]: BattleStyleSetting.Shift,
+  [SettingsOption["Text Speed"]]: TextSpeedSetting.Mid,
+  [SettingsOption["Theme Mode"]]: ThemeModeSetting.Blue,
+};
+export const getInitialSettings = () => structuredClone(InitialSettings);

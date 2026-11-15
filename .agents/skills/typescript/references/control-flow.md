@@ -34,6 +34,6 @@ stops being right and what a reviewer's "use a guard clause" gets wrong.
 
 ## `switch`
 
-- **Use `if/else if/else` only for non-enum expressions or exactly two branches.** Never switch over a discriminant purely to dispatch different logic per case — key a map by the discriminant instead (`references/type-modelling.md`).
+- **Use `if/else if/else` only for expressions that are not a value set, or for exactly two branches.** Never switch over a discriminant purely to dispatch different logic per case — key a map by the discriminant instead (`references/type-modelling.md`).
 
-- **Every `switch` on an enum or discriminated-union discriminant needs `default: exhaustiveGuard(value)`** (or `return exhaustiveGuard(value)` in return-position), imported from `@esposter/shared`, so a new variant is a compile error. Nested switches each need their own guard. **Exception**: switches on non-enum values (strings, numbers, class instances).
+- **Every `switch` on a value set or discriminated-union discriminant needs `default: exhaustiveGuard(value)`** (or `return exhaustiveGuard(value)` in return-position), imported from `@esposter/shared`, so a new variant is a compile error. Nested switches each need their own guard. **Exception**: switches on values outside a value set (strings, numbers, class instances).

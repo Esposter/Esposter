@@ -18,7 +18,7 @@ description: Apply when a value can be empty or missing — an optional field, p
 - **An optional column carries the sentinel itself** — `.notNull().default("")`, or `.default(0)` where `0` means nothing (`references/sentinel-columns.md`).
 - **`undefined` only where absence differs from every real value**, an absent property is `field?: T`, and `null` stays only inside an external boundary's own shape (`references/null-vs-undefined.md`).
 - **"Not loaded yet" is `useQuery`'s `isPending`**, never a third absent value (`references/null-vs-undefined.md`).
-- Enums never take a `None` member for absence — the `typescript` skill (`references/enums.md`).
+- Value sets never take a `None` member for absence — the `typescript` skill (`references/value-sets.md`).
 
 ## Reference pages
 

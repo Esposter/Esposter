@@ -12,15 +12,19 @@ import { CreateColumnCommand } from "#shared/models/resource/sheet/commands/Crea
 import { CreateComputedColumnCommand } from "#shared/models/resource/sheet/commands/CreateComputedColumnCommand";
 
 export const ColumnTypeCommandMap = {
-  [ColumnType.Boolean]: (columnIndex: number, data: Except<Extract<Column, { type: ColumnType.Boolean }>, "id">) =>
-    new CreateColumnCommand(columnIndex, new BooleanColumn(data)),
-  [ColumnType.Computed]: (columnIndex: number, data: Except<Extract<Column, { type: ColumnType.Computed }>, "id">) =>
-    new CreateComputedColumnCommand(columnIndex, new ComputedColumn(data)),
-  [ColumnType.Date]: (columnIndex: number, data: Except<Extract<Column, { type: ColumnType.Date }>, "id">) =>
+  [ColumnType.Boolean]: (
+    columnIndex: number,
+    data: Except<Extract<Column, { type: typeof ColumnType.Boolean }>, "id">,
+  ) => new CreateColumnCommand(columnIndex, new BooleanColumn(data)),
+  [ColumnType.Computed]: (
+    columnIndex: number,
+    data: Except<Extract<Column, { type: typeof ColumnType.Computed }>, "id">,
+  ) => new CreateComputedColumnCommand(columnIndex, new ComputedColumn(data)),
+  [ColumnType.Date]: (columnIndex: number, data: Except<Extract<Column, { type: typeof ColumnType.Date }>, "id">) =>
     new CreateColumnCommand(columnIndex, new DateColumn(data)),
-  [ColumnType.Number]: (columnIndex: number, data: Except<Extract<Column, { type: ColumnType.Number }>, "id">) =>
+  [ColumnType.Number]: (columnIndex: number, data: Except<Extract<Column, { type: typeof ColumnType.Number }>, "id">) =>
     new CreateColumnCommand(columnIndex, new NumberColumn(data)),
-  [ColumnType.String]: (columnIndex: number, data: Except<Extract<Column, { type: ColumnType.String }>, "id">) =>
+  [ColumnType.String]: (columnIndex: number, data: Except<Extract<Column, { type: typeof ColumnType.String }>, "id">) =>
     new CreateColumnCommand(columnIndex, new StringColumn(data)),
 } as const satisfies {
   [K in ColumnType]: (columnIndex: number, data: Except<Extract<Column, { type: K }>, "id">) => ADataSourceCommand;

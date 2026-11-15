@@ -24,7 +24,7 @@ export const useReadResources = (
     updatedFilter = ref<"" | ResourceUpdatedFilter>(""),
   }: Partial<ResourceListFilters> = {},
   // The route decides the set, so it is a value rather than a ref — a list never changes source in place
-  source = ResourceListSource.All,
+  source: ResourceListSource = ResourceListSource.All,
 ) => {
   const { $trpc } = useNuxtApp();
   const getFilterValues = (): ResourceFilterValues => ({

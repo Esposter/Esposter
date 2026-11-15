@@ -1,6 +1,2 @@
-export enum PlayerOption {
-  Fight = "Fight",
-  Flee = "Flee",
-  Item = "Item",
-  Switch = "Switch",
-}
+export const PlayerOption = { Fight: "Fight", Flee: "Flee", Item: "Item", Switch: "Switch" } as const;
+export type PlayerOption = (typeof PlayerOption)[keyof typeof PlayerOption];

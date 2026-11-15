@@ -9,7 +9,7 @@ import { getValueSize } from "#shared/services/resource/sheet/commands/getValueS
 import { NullStrategy } from "@/models/resource/sheet/commands/NullStrategy";
 import { writeAffectedCells } from "@/services/resource/sheet/commands/writeAffectedCells";
 
-export class NullStrategyCommand extends ADataSourceCommand<CommandType.NullStrategy> {
+export class NullStrategyCommand extends ADataSourceCommand<typeof CommandType.NullStrategy> {
   readonly type = CommandType.NullStrategy;
 
   get description() {

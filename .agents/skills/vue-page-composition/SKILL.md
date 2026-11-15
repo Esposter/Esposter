@@ -31,7 +31,7 @@ One component per action: a row reduces to layout, a menu and its items are one 
 
 ## List Item Rendering: Array + v-for over Hardcoded Items
 
-Three or more items with one shape — two once they will grow or carry non-trivial props — are a PascalCase array in `services/<domain>/` rendered with `v-for`, a reactive one a `computed`, and an enum with no extra data iterated directly (`references/list-items.md`).
+Three or more items with one shape — two once they will grow or carry non-trivial props — are a PascalCase array in `services/<domain>/` rendered with `v-for`, a reactive one a `computed`, and a value set with no extra data iterated directly (`references/list-items.md`).
 
 ## One Affordance Per Action — No Duplicate Behaviour
 

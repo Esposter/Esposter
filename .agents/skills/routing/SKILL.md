@@ -35,7 +35,7 @@ Decide by what the value **is**: part of what the page shows (a filter, a page n
 
 ## Route-Synced Tabs — `references/route-synced-tabs.md`
 
-`UiTabs` state syncs to the URL through `useEnumRouteQuery(TAB_QUERY_PARAMETER_KEY, FooTabs, FooTab.Default)`, never a plain `ref`, so the active tab survives a refresh and is linkable; each enum exposes its value `Set` beside it.
+`UiTabs` state syncs to the URL through `useEnumRouteQuery(TAB_QUERY_PARAMETER_KEY, FooTabs, FooTab.Default)`, never a plain `ref`, so the active tab survives a refresh and is linkable; each value set exposes its value `Set` beside it.
 
 ## Optional / Nested Segments — `references/nested-segments.md`
 
@@ -49,7 +49,7 @@ A file in `public/` or a Nitro `publicAssets` mount never sits at a path a page 
 
 - `references/route-reads.md` — when the `useRoute()` ban fires outside a page, or a component test must drive the route.
 - `references/navigation-state.md` — when deciding where a filter, tab, trail or preference is kept, or writing into a history entry.
-- `references/route-synced-tabs.md` — when a tab or enum-valued selector should survive a refresh.
+- `references/route-synced-tabs.md` — when a tab or value-set-valued selector should survive a refresh.
 - `references/nested-segments.md` — when one page component serves optional or nested segments.
 - `references/links.md` — when adding a link or a control that goes somewhere.
 - `references/navigate-to.md` — when code navigates imperatively.

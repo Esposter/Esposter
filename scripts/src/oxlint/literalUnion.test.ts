@@ -18,7 +18,7 @@ describe("literalUnion", () => {
     { name: "stringBesideNumber", source: `export type X = "a" | 1;`, violations: 0 },
     { name: "singleLiteral", source: `export type X = "a";`, violations: 0 },
     { name: "numericUnion", source: `export type X = -1 | 1;`, violations: 0 },
-    { name: "enumUnion", source: `export type X = Y | T;`, violations: 0 },
+    { name: "valueSetUnion", source: `export type X = Y | T;`, violations: 0 },
     // A template literal type is a pattern rather than a member of a set.
     { name: "templateLiteral", source: "export type X = `a` | `b`;", violations: 0 },
     // A union handed to a generic names keys or narrows a parameter the compiler checks against its target.

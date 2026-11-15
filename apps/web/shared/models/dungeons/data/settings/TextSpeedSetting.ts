@@ -1,9 +1,6 @@
 import { z } from "zod";
 
-export enum TextSpeedSetting {
-  Fast = "Fast",
-  Mid = "Mid",
-  Slow = "Slow",
-}
+export const TextSpeedSetting = { Fast: "Fast", Mid: "Mid", Slow: "Slow" } as const;
+export type TextSpeedSetting = (typeof TextSpeedSetting)[keyof typeof TextSpeedSetting];
 
 export const textSpeedSettingSchema = z.enum(TextSpeedSetting) satisfies z.ZodType<TextSpeedSetting>;

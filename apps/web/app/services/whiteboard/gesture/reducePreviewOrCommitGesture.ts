@@ -10,7 +10,9 @@ import { exhaustiveGuard } from "@esposter/shared";
 export const reducePreviewOrCommitGesture = (
   state: WhiteboardGestureState,
   event: GesturePointerEvent,
-  reduceMoveOrRelease: (action: GesturePointerAction.Move | GesturePointerAction.Up) => WhiteboardGestureResult,
+  reduceMoveOrRelease: (
+    action: typeof GesturePointerAction.Move | typeof GesturePointerAction.Up,
+  ) => WhiteboardGestureResult,
 ): WhiteboardGestureResult => {
   switch (event.action) {
     case GesturePointerAction.Cancel:

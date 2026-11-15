@@ -14,7 +14,7 @@ export interface GesturePressed {
   origin: Point;
   // The copy id of each element the press selects, when Alt was held on an element: a drag that starts from it copies the selection instead
   originalIdCopyIdMap?: Record<string, string>;
-  phase: GesturePhase.Pressed;
+  phase: typeof GesturePhase.Pressed;
   pointerId: number;
   // The press's screen point, which the drag start distance is measured from
   screen: Point;

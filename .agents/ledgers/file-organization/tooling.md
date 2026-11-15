@@ -1373,7 +1373,6 @@
 | `scripts/src/services/genshinText/selectDumpFiles.ts`                                     | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinText/skipWordlessTalkLines.test.ts`                          | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinText/skipWordlessTalkLines.ts`                               | 2026-11-01 · Haiku 5.5  |       |
-| `scripts/src/services/genshinText/toConstObject.ts`                                       | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinText/toDataFileKey.ts`                                       | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinText/toQuestChapter.test.ts`                                 | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinText/toQuestChapter.ts`                                      | 2026-11-01 · Haiku 5.5  |       |

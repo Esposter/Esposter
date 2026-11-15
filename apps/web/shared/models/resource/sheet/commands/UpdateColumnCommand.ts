@@ -17,7 +17,7 @@ import { formatDate } from "#shared/util/date/formatDate";
 import { parseDate } from "#shared/util/date/parseDate";
 import { takeOne, toRawDeep } from "@esposter/shared";
 
-export class UpdateColumnCommand extends ADataSourceCommand<CommandType.UpdateColumn> {
+export class UpdateColumnCommand extends ADataSourceCommand<typeof CommandType.UpdateColumn> {
   readonly type = CommandType.UpdateColumn;
 
   get description() {

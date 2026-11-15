@@ -10,7 +10,7 @@ import { createPastedRowData } from "@/services/resource/sheet/commands/createPa
 import { writeCellValue } from "@/services/resource/sheet/commands/writeCellValue";
 import { takeOne } from "@esposter/shared";
 
-export class PasteRangeCommand extends ADataSourceCommand<CommandType.PasteRange> {
+export class PasteRangeCommand extends ADataSourceCommand<typeof CommandType.PasteRange> {
   readonly type = CommandType.PasteRange;
 
   get description() {

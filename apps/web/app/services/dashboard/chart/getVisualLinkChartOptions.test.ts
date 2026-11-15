@@ -10,7 +10,7 @@ import { describe, expect, test } from "vitest";
 describe(getVisualLinkChartOptions, () => {
   const id = v7();
   const xColumn = "xColumn";
-  const createBoundVisual = (visualXColumn = xColumn, type = VisualType.Area) =>
+  const createBoundVisual = (visualXColumn = xColumn, type: VisualType = VisualType.Area) =>
     new Visual({
       dataset: {
         query: { series: [{ aggregation: DatasetAggregationType.Sum, column: "column" }], xColumn: visualXColumn },

@@ -8,7 +8,7 @@ export interface GestureConnecting {
   arrowId: string;
   connectionIndex: number;
   elementId: string;
-  phase: GesturePhase.Connecting;
+  phase: typeof GesturePhase.Connecting;
   pointerId: number;
   screen: Point;
   shapeId: string;

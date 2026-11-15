@@ -54,7 +54,7 @@ Read it when an input needs the split `:model-value` + `@update:model-value` for
 - **Template refs use `useTemplateRef`** with no generic and no `Ref` suffix (`template-ref/require-ref-name`), and a Three object the script moves is created there and mounted with `<primitive>` rather than reached through one (`references/template-refs.md`).
 - **Sort at display time**, in the computed feeding the template, never in the store (`references/props.md`).
 - **A `computed` earns its place by reuse, work or identity, never by use count** — `references/computed-extraction.md`, read before extracting or inlining one; the traps, the keeps and the cadence question are on that page.
-- **Map lookups over computed** — when a value depends on an enum/discriminant key, use `Map[type]` directly in the template (`Map[type].value` for multiple properties). Fall back to a computed only when the lookup is duplicated in 2+ places.
+- **Map lookups over computed** — when a value depends on a value-set or discriminant key, use `Map[type]` directly in the template (`Map[type].value` for multiple properties). Fall back to a computed only when the lookup is duplicated in 2+ places.
 - **Writable computed over `watch` + local ref** (`references/watch-decision-tree.md`, case 1).
 
 ## Reading the auth session — `references/auth-session.md`

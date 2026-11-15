@@ -7,7 +7,7 @@ import { CommandType } from "#shared/models/resource/sheet/commands/CommandType"
 import { getCreateColumnDescription } from "#shared/services/resource/sheet/commands/getCreateColumnDescription";
 import { getValueSize } from "#shared/services/resource/sheet/commands/getValueSize";
 
-export class CreateColumnCommand extends ADataSourceCommand<CommandType.CreateColumn> {
+export class CreateColumnCommand extends ADataSourceCommand<typeof CommandType.CreateColumn> {
   readonly type = CommandType.CreateColumn;
 
   get description() {

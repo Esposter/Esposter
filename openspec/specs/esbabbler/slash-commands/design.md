@@ -60,7 +60,7 @@ Collapsing parameter mode back to text (Escape, or Backspace in an empty command
 
 | File                                                                        | Role                                                          |
 | :-------------------------------------------------------------------------- | :------------------------------------------------------------ |
-| `apps/web/app/models/message/slashCommands/SlashCommandType.ts`             | command enum                                                  |
+| `apps/web/app/models/message/slashCommands/SlashCommandType.ts`             | command value set                                             |
 | `apps/web/app/services/message/slashCommands/SlashCommandDefinitionMap.ts`  | `Record<SlashCommandType, SlashCommand>` — static definitions |
 | `apps/web/app/services/message/slashCommands/executeSlashCommand.ts`        | execution switch                                              |
 | `apps/web/app/composables/message/slashCommand/useSlashCommandExtension.ts` | TipTap extension (mirrors `MentionExtension`)                 |

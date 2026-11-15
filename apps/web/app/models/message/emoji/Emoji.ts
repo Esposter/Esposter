@@ -9,5 +9,5 @@ export interface Emoji {
   isSkinToneSupported: boolean;
   name: string;
   slug: string;
-  type: EmojiType.Unicode;
+  type: typeof EmojiType.Unicode;
 }

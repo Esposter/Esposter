@@ -9,7 +9,7 @@ How an individual component is written, typed and named. Assembling a page or li
 
 ## Deep dives
 
-- `references/props-and-generics.md` — when a prop or model type depends on an enum/discriminant key, when one component is absorbing several data variants, or when a boolean prop has a default.
+- `references/props-and-generics.md` — when a prop or model type depends on a value-set or discriminant key, when one component is absorbing several data variants, or when a boolean prop has a default.
 - `references/component-naming.md` — when creating, renaming or moving a component file, when a directory of components gets crowded, or when a tag renders empty with no error.
 - `references/shared-shell.md` — when a page needs chrome, or a new product or editor is added.
 - `references/async-components.md` — when a map dispatches a heavy component, or a component awaits in setup behind a `v-if`.

@@ -16,7 +16,7 @@ describe(useApexOptions, () => {
   test("drops the options of a visual type the visual no longer has", () => {
     expect.hasAssertions();
 
-    const visualType = ref(VisualType.Funnel);
+    const visualType = ref<VisualType>(VisualType.Funnel);
     const initialOptions = createInitialOptions();
     const options = useApexOptions(new Chart(), visualType, initialOptions);
 

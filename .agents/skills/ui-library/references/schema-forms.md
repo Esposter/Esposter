@@ -6,7 +6,7 @@ Read when writing a schema a `UiSchemaForm` renders, a dialog that renders one, 
 
 **Never pass a full entity schema to `zodToJsonSchema()`** — an entity carries fields no reader edits, and dates JSON Schema cannot express. Model a separate `*Form` interface and `*FormSchema` (one per file, `BarFooForm.ts`) holding only the editable fields, built from the shared schema by `safeExtend` so a constraint the server adds reaches the form without being copied.
 
-**A field with no `title` is labelled by its own key**, so renaming the field renames the control the reader sees; a rename that only fixes the identifier carries a `.meta({ title })` holding the old label. Titles written as enum values are prettified by `zodToJsonSchema` — `FooType.ConvertTo` reads "Convert To".
+**A field with no `title` is labelled by its own key**, so renaming the field renames the control the reader sees; a rename that only fixes the identifier carries a `.meta({ title })` holding the old label. Titles written as value-set members are prettified by `zodToJsonSchema` — `FooType.ConvertTo` reads "Convert To".
 
 ## `layout` meta is typed data
 
@@ -29,7 +29,7 @@ A check that needs values outside the field — a column name unique among the s
 ## Unions
 
 - **Every variant carries `.meta({ title })`** on the variant object, which the variant choice lists; without one it reads the variant's discriminant.
-- **Each variant fixes its discriminant with `z.literal`.** The form picks the variant whose constant the data carries and hides the constant's own field, so an enum discriminant, which fixes nothing, cannot say which variant the data is in.
+- **Each variant fixes its discriminant with `z.literal`.** The form picks the variant whose constant the data carries and hides the constant's own field, so a value-set discriminant, which fixes nothing, cannot say which variant the data is in.
 - **Pass the discriminated union straight to the form** — `getSchemaFormVariantValue` carries a value across a variant switch, so no dialog hand-rolls one.
 - **`*TypeFormSchemaMap` narrows a value to one variant's fields**, for the dirty check (`extractSchemaFields`), never to choose the form schema. It lives in the union's file and maps each discriminant to its own variant schema.
 

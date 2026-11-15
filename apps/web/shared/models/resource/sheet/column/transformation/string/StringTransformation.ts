@@ -8,7 +8,7 @@ import { stringTransformationTypeSchema } from "#shared/models/resource/sheet/co
 import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
 
-export interface StringTransformation extends ItemEntityType<ColumnTransformationType.String>, SourceColumnId {
+export interface StringTransformation extends ItemEntityType<typeof ColumnTransformationType.String>, SourceColumnId {
   stringTransformationType: StringTransformationType;
 }
 

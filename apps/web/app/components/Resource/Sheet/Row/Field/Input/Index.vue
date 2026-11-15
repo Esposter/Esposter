@@ -1,4 +1,4 @@
-<script setup lang="ts" generic="TColumnType extends Exclude<ColumnType, ColumnType.Computed>">
+<script setup lang="ts" generic="TColumnType extends Exclude<ColumnType, typeof ColumnType.Computed>">
 import type { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import type { ColumnTypeColumnMap } from "@/models/resource/sheet/column/ColumnTypeColumnMap";
 import type { ColumnTypeModelValueMap } from "@/models/resource/sheet/column/ColumnTypeModelValueMap";

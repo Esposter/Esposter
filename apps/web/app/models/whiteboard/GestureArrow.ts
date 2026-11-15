@@ -5,7 +5,7 @@ import type { ArrowEnd, Point } from "vue-block-editor-headless";
 // Of the shape it landed on or free where it landed. The press's screen point is what the drag start distance is measured from
 export interface GestureArrow {
   elementId: string;
-  phase: GesturePhase.Arrow;
+  phase: typeof GesturePhase.Arrow;
   pointerId: number;
   screen: Point;
   start: ArrowEnd;

@@ -4,17 +4,20 @@ import { Grid } from "@/models/dungeons/Grid";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 
-const MonsterPartyOptionGrid = new Grid<(Monster | PlayerSpecialInput.Cancel)[][]>({ grid: [], isWrapping: true });
+const MonsterPartyOptionGrid = new Grid<(Monster | typeof PlayerSpecialInput.Cancel)[][]>({
+  grid: [],
+  isWrapping: true,
+});
 
 export const useMonsterPartyOptionGrid = createUseGrid(MonsterPartyOptionGrid, (grid) => {
   const monsterPartySceneStore = useMonsterPartySceneStore();
   const { monstersGrid } = storeToRefs(monsterPartySceneStore);
   grid.grid = computed(() => {
-    const newGrid: (Monster | PlayerSpecialInput.Cancel)[][] = [...monstersGrid.value];
+    const newGrid: (Monster | typeof PlayerSpecialInput.Cancel)[][] = [...monstersGrid.value];
     const rowSize = monstersGrid.value[0]?.length ?? 0;
     if (rowSize > 0)
       newGrid.push(
-        Array.from<Monster | PlayerSpecialInput.Cancel>({ length: rowSize }).fill(PlayerSpecialInput.Cancel),
+        Array.from<Monster | typeof PlayerSpecialInput.Cancel>({ length: rowSize }).fill(PlayerSpecialInput.Cancel),
       );
     return newGrid;
   });

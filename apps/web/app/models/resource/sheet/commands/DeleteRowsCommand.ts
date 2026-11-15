@@ -8,7 +8,7 @@ import { restoreAtIndices } from "#shared/services/resource/sheet/commands/resto
 import { pluralize } from "#shared/util/text/pluralize";
 import { takeOne } from "@esposter/shared";
 
-export class DeleteRowsCommand extends ADataSourceCommand<CommandType.DeleteRows> {
+export class DeleteRowsCommand extends ADataSourceCommand<typeof CommandType.DeleteRows> {
   readonly type = CommandType.DeleteRows;
 
   get description() {

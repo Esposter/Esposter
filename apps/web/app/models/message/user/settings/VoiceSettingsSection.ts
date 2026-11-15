@@ -1,10 +1,11 @@
-export enum VoiceSettingsSection {
-  Devices = "Devices",
-  InputMode = "Input Mode",
-  InputProfile = "Input Profile",
-  InputSensitivity = "Input Sensitivity",
-  JoinSettings = "Join Settings",
-}
+export const VoiceSettingsSection = {
+  Devices: "Devices",
+  InputMode: "Input Mode",
+  InputProfile: "Input Profile",
+  InputSensitivity: "Input Sensitivity",
+  JoinSettings: "Join Settings",
+} as const;
+export type VoiceSettingsSection = (typeof VoiceSettingsSection)[keyof typeof VoiceSettingsSection];
 // The sections in the order the settings render them, which the enum's own order no longer carries
 // Keyed by section so a new section fails the typecheck until it names its place rather than being left out of the nav
 const VoiceSettingsSectionOrder: Record<VoiceSettingsSection, number> = {

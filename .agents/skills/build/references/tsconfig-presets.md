@@ -18,6 +18,6 @@ These are `**/*.json` under a strict `json/json` ESLint language — **no commen
 
 ## The bootstrap package
 
-`@esposter/configuration` is built by the factories it exports, and reaches its own source through `#src/*` like every other package. Its build config is loaded by Node's strip-only type stripping, so what runs at config time can hold no TypeScript-only syntax such as an `enum` (`references/barrels.md`).
+`@esposter/configuration` is built by the factories it exports, and reaches its own source through `#src/*` like every other package. Its build config is loaded by Node's strip-only type stripping, which `erasableSyntaxOnly` keeps every source file fit for.
 
 A bare `new Error` here is not a finding, though the error-handling rule bans it everywhere else in favour of `InvalidOperationError` (`.agents/skills/error-handling/references/throwing.md`). That constructor lives in `@esposter/shared`, and `@esposter/shared` builds by calling this package's factories — so depending on it here is a cycle in the build order, not a style choice.

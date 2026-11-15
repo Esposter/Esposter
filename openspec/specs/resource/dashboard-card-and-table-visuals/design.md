@@ -28,18 +28,18 @@ flowchart LR
 
 ## Key files
 
-| File                                                                   | Role                                                                                               |
-| ---------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| `apps/web/shared/models/dashboard/data/VisualType.ts`                  | `Card` and `Table`, in the enum's sorted order                                                     |
-| `apps/web/app/components/Dashboard/Visual/Index.vue`                   | dispatches the two non-chart kinds to their components                                             |
-| `apps/web/app/components/Dashboard/Visual/Card.vue`                    | the one number, its label and its compact form                                                     |
-| `apps/web/app/components/Dashboard/Visual/Table.vue`                   | the grouped rows, the sortable columns and the totals row                                          |
-| `apps/web/app/services/dashboard/VisualTypeCategoryDefinitions.ts`     | the palette lists the two plainest kinds first among the charts, then the rest in the enum's order |
-| `apps/web/app/services/dashboard/dataset/VisualTypeDatasetShapeMap.ts` | a shape for each: the table takes the grouped categories, the card a single value                  |
-| `apps/web/app/services/dashboard/chart/VisualTypeChartTypesMap.ts`     | the two kinds take the common chart type                                                           |
-| `apps/web/app/services/dashboard/demo/VisualTypeDemoDataMap.ts`        | the demo value and demo rows an unbound Card and Table show                                        |
-| `apps/web/app/components/Dashboard/Editor/VisualFormFields.vue`        | hides the chart type and chart settings for the two kinds, shows the Card's label                  |
-| `apps/web/shared/services/intl/constants.ts`                           | `NUMBER_FORMATTER`, the number formatter a Card and a Table share                                  |
+| File                                                                   | Role                                                                                                    |
+| ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `apps/web/shared/models/dashboard/data/VisualType.ts`                  | `Card` and `Table`, in the value set's sorted order                                                     |
+| `apps/web/app/components/Dashboard/Visual/Index.vue`                   | dispatches the two non-chart kinds to their components                                                  |
+| `apps/web/app/components/Dashboard/Visual/Card.vue`                    | the one number, its label and its compact form                                                          |
+| `apps/web/app/components/Dashboard/Visual/Table.vue`                   | the grouped rows, the sortable columns and the totals row                                               |
+| `apps/web/app/services/dashboard/VisualTypeCategoryDefinitions.ts`     | the palette lists the two plainest kinds first among the charts, then the rest in the value set's order |
+| `apps/web/app/services/dashboard/dataset/VisualTypeDatasetShapeMap.ts` | a shape for each: the table takes the grouped categories, the card a single value                       |
+| `apps/web/app/services/dashboard/chart/VisualTypeChartTypesMap.ts`     | the two kinds take the common chart type                                                                |
+| `apps/web/app/services/dashboard/demo/VisualTypeDemoDataMap.ts`        | the demo value and demo rows an unbound Card and Table show                                             |
+| `apps/web/app/components/Dashboard/Editor/VisualFormFields.vue`        | hides the chart type and chart settings for the two kinds, shows the Card's label                       |
+| `apps/web/shared/services/intl/constants.ts`                           | `NUMBER_FORMATTER`, the number formatter a Card and a Table share                                       |
 
 ## Sources
 

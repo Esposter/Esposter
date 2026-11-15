@@ -22,7 +22,7 @@ export const typescript: NuxtConfig["typescript"] = {
   // The Workers globals are the server's alone, because loaded into the browser program their `Request` and `Response`
   // Replace the DOM's, so the server tsconfig names the package and the app and shared code never see it
   tsConfig: {
-    compilerOptions: { customConditions: ["source"], noUnusedLocals: true },
+    compilerOptions: { customConditions: ["source"], erasableSyntaxOnly: true, noUnusedLocals: true },
     contentMappers: [{ extensions: [".vue"], package: "vize" }],
     exclude: ["../app/assets/**/*.tsx"],
     vueCompilerOptions: { composables: { useTemplateRef: ["useTemplateRef"] } },

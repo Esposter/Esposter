@@ -29,11 +29,14 @@ export default {
       selector: "TryStatement",
     },
     {
-      // An enum member is a name in code, so it takes the code's casing whatever the value it stands for is spelled
-      // As: `Dark = "dark"`. The one exception is a standard notation whose casing is its meaning, the date format
-      // Tokens, behind a disable. A lone capital is PascalCase; two or more with nothing lowercase is SCREAMING_CASE
-      message: 'An enum member is PascalCase; its value keeps the outside spelling (`Dark = "dark"`).',
-      selector: "TSEnumMember[id.type='Identifier'][id.name=/^[a-z]|_|^[A-Z][A-Z0-9]+$/]",
+      // A value set's key is a name in code, so it takes the code's casing whatever the value it stands for is spelled
+      // As: `Dark: "dark"`. A value set is an exported PascalCase object held `as const` whose values are literals. The
+      // Exceptions are a standard notation whose casing is its meaning, the date format tokens, and a mirror of a
+      // Library's own keys, each behind a disable. A lone capital is PascalCase; two or more with nothing lowercase is
+      // SCREAMING_CASE
+      message: 'A value set\'s key is PascalCase; its value keeps the outside spelling (`Dark: "dark"`).',
+      selector:
+        "ExportNamedDeclaration > VariableDeclaration > VariableDeclarator[id.name=/^[A-Z][a-z]/] > TSAsExpression > ObjectExpression > Property[key.type='Identifier'][key.name=/^[a-z]|_|^[A-Z][A-Z0-9]+$/][value.type='Literal']",
     },
     {
       // The `InMessage` suffix names the schema a message table sits in, and the table's own name is

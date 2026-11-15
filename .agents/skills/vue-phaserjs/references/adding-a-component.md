@@ -19,4 +19,4 @@ export interface ArcConfiguration
 [TransformSetter.X]: (gameObject) => (value) => { gameObject.setX(value); }, // wrap in braces; never the void operator
 ```
 
-A setter map is keyed by its component's setter enum members, never by the literal property name, so the key is `[TransformSetter.X]` rather than `x`.
+A setter map is keyed by its component's setter value-set members, never by the literal property name, so the key is `[TransformSetter.X]` rather than `x`.

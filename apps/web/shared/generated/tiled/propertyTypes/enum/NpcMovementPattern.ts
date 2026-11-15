@@ -1,4 +1,5 @@
-export enum NpcMovementPattern {
-  Clockwise = "Clockwise",
-  Idle = "Idle",
-}
+export const NpcMovementPattern = {
+  Clockwise: "Clockwise",
+  Idle: "Idle",
+} as const;
+export type NpcMovementPattern = (typeof NpcMovementPattern)[keyof typeof NpcMovementPattern];

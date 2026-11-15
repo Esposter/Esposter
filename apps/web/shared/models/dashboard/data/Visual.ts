@@ -17,7 +17,7 @@ export class Visual extends AItemEntity implements ItemEntityType<VisualType>, L
   h = 4;
   // Whether the visual takes its rows from the content it draws, rather than from its saved span
   isAutoHeight = false;
-  type = VisualType.Area;
+  type: VisualType = VisualType.Area;
   // The visuals a group holds, on a grid of its own. Absent on every other type, and a group always holds one
   visuals?: Visual[];
   w = 4;

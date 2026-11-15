@@ -5,7 +5,7 @@ import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInpu
 import { useInventorySceneStore } from "@/store/dungeons/inventory/scene";
 import { Direction } from "grid-engine";
 
-const ItemOptionGrid = new Grid<(Item | PlayerSpecialInput.Cancel)[][]>({
+const ItemOptionGrid = new Grid<(Item | typeof PlayerSpecialInput.Cancel)[][]>({
   grid: [],
   isWrapping: true,
   validate(position) {

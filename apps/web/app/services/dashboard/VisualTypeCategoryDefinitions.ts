@@ -5,7 +5,7 @@ import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { prettify } from "@/util/text/prettify";
 
 // A card and a table lead the charts, since the enum is sorted and would otherwise list them among the rest
-const leadingVisualTypes = [VisualType.Card, VisualType.Table];
+const leadingVisualTypes: VisualType[] = [VisualType.Card, VisualType.Table];
 // Every chart type is offered and none overrides its title, so the enum's order follows the two leading types. A group
 // Lays out other visuals rather than drawing one, so it is listed under Layout alone
 const chartVisualTypes = [

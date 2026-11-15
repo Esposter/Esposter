@@ -1,10 +1,7 @@
 import { z } from "zod";
 
-export enum BooleanFormat {
-  OneZero = "OneZero",
-  TrueFalse = "TrueFalse",
-  YesNo = "YesNo",
-}
+export const BooleanFormat = { OneZero: "OneZero", TrueFalse: "TrueFalse", YesNo: "YesNo" } as const;
+export type BooleanFormat = (typeof BooleanFormat)[keyof typeof BooleanFormat];
 
 export const booleanFormatSchema = z.enum(BooleanFormat) satisfies z.ZodType<BooleanFormat>;
 

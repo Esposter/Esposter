@@ -1,16 +1,17 @@
-export enum CursorUpgradeId {
-  Ambidextrous = "Ambidextrous",
-  "Billion Fingers" = "Billion Fingers",
-  "Carpal Tunnel Prevention Cream" = "Carpal Tunnel Prevention Cream",
-  "Decillion Fingers" = "Decillion Fingers",
-  "Million Fingers" = "Million Fingers",
-  "Nonillion Fingers" = "Nonillion Fingers",
-  "Octillion Fingers" = "Octillion Fingers",
-  "Quadrillion Fingers" = "Quadrillion Fingers",
-  "Quintillion Fingers" = "Quintillion Fingers",
-  "Reinforced Index Finger" = "Reinforced Index Finger",
-  "Septillion Fingers" = "Septillion Fingers",
-  "Sextillion Fingers" = "Sextillion Fingers",
-  "Thousand Fingers" = "Thousand Fingers",
-  "Trillion Fingers" = "Trillion Fingers",
-}
+export const CursorUpgradeId = {
+  Ambidextrous: "Ambidextrous",
+  "Billion Fingers": "Billion Fingers",
+  "Carpal Tunnel Prevention Cream": "Carpal Tunnel Prevention Cream",
+  "Decillion Fingers": "Decillion Fingers",
+  "Million Fingers": "Million Fingers",
+  "Nonillion Fingers": "Nonillion Fingers",
+  "Octillion Fingers": "Octillion Fingers",
+  "Quadrillion Fingers": "Quadrillion Fingers",
+  "Quintillion Fingers": "Quintillion Fingers",
+  "Reinforced Index Finger": "Reinforced Index Finger",
+  "Septillion Fingers": "Septillion Fingers",
+  "Sextillion Fingers": "Sextillion Fingers",
+  "Thousand Fingers": "Thousand Fingers",
+  "Trillion Fingers": "Trillion Fingers",
+} as const;
+export type CursorUpgradeId = (typeof CursorUpgradeId)[keyof typeof CursorUpgradeId];

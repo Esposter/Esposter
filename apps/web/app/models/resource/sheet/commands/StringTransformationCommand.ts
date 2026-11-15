@@ -7,7 +7,7 @@ import { CommandType } from "#shared/models/resource/sheet/commands/CommandType"
 import { computeStringTransformation } from "#shared/services/resource/sheet/column/transformation/string/computeStringTransformation";
 import { writeAffectedCells } from "@/services/resource/sheet/commands/writeAffectedCells";
 
-export class StringTransformationCommand extends ADataSourceCommand<CommandType.StringTransformation> {
+export class StringTransformationCommand extends ADataSourceCommand<typeof CommandType.StringTransformation> {
   readonly type = CommandType.StringTransformation;
 
   get description() {

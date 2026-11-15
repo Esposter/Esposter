@@ -25,7 +25,7 @@ Zod and Drizzle together, because a table, its select schema and the input schem
   An applied migration is history rather than a source of names: a schema rename is swept here and emits a new
   forward migration, never an edit to the old file.
 - Column casing — `drizzle`'s `pgTable` wrapper applies it, so there is nothing to carry. The **words** in a
-  column, table or enum member name are the `naming` ledger's.
+  column, table or value-set member name are the `naming` ledger's.
 
 ## Find recipe
 

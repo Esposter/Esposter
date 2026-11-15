@@ -4,12 +4,12 @@
 | --------------------------------------------------- | ---------------------- | -------------------------------------------------------- |
 | `composables/data`                                  | 2026-10-26             | one of the two pagination cores                          |
 | `composables/shared`                                | 2026-10-26             | the other pagination core                                |
-| `services/{app,auth,login}`                         | 2026-10-25 · Haiku 5.5 |                                                          |
+| `services/{app,auth,login}`                         | —                      |                                                          |
 | `services/{route,router,notification}`              | 2026-10-26             |                                                          |
 | `services/trpc`                                     | 2026-10-26             |                                                          |
-| `services/cache`                                    | 2026-10-25 · Haiku 5.5 |                                                          |
+| `services/cache`                                    | —                      |                                                          |
 | `services/file`                                     | 2026-10-25 · Haiku 5.5 |                                                          |
-| `services/{zod,jsonSchema}`                         | 2026-10-25 · Haiku 5.5 |                                                          |
+| `services/{zod,jsonSchema}`                         | —                      |                                                          |
 | `util/date`                                         | 2026-10-25 · Haiku 5.5 |                                                          |
 | `services/shared`                                   | 2026-10-25 · Haiku 5.5 |                                                          |
 | `services/{styled,entity,codemirror}`               | 2026-10-25 · Haiku 5.5 |                                                          |

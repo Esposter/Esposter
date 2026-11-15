@@ -8,6 +8,6 @@ export const useBallStore = defineStore("dungeons/battle/ball", () => {
   const isVisible = ref(false);
   const startPosition = Object.freeze<Position>({ x: 0, y: 500 });
   const endPosition = Object.freeze<Position>({ x: 725, y: 180 });
-  const texture = ref(BallKey.DamagedBall);
+  const texture = ref<BallKey>(BallKey.DamagedBall);
   return { endPosition, isVisible, pathFollower, startPosition, texture };
 });

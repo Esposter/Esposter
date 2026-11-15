@@ -17,7 +17,7 @@ export const usePasteRangeFromClipboard = () => {
   const { selectedCellRange } = storeToRefs(cellStore);
   const createRows = useCreateRows();
   const pasteRange = usePasteRange();
-  return async (pasteMode = PasteMode.Overwrite) => {
+  return async (pasteMode: PasteMode = PasteMode.Overwrite) => {
     const dataSourceValue = dataSource.value;
     await getResultAsync(async () => {
       const text = await window.navigator.clipboard.readText();

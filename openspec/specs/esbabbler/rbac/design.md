@@ -4,7 +4,7 @@ Discord-complexity role-based access control per room. Every privileged operatio
 
 ## How it works
 
-Each room has roles (`roomRoles`) carrying a `permissions` **bitfield** of `RoomPermission` flags. The field is read and written as a `bigint` through `createBitfieldColumn`, which stores it as decimal text: a JS number loses bits past 2^53 on the way out of D1, so the column is never read as a number. Since TypeScript enums cannot hold bigints, `RoomPermission` is a `const` object of `1n << n` values. A user's effective permissions are the bitwise OR of the room's `@everyone` role plus every role assigned to them in `usersToRoomRoles`, then their own [overrides](../member-permission-overrides/design.md) are folded in: allowed bits are added and denied bits removed, so a member's row is the last word over their roles and never over Administrator.
+Each room has roles (`roomRoles`) carrying a `permissions` **bitfield** of `RoomPermission` flags. The field is read and written as a `bigint` through `createBitfieldColumn`, which stores it as decimal text: a JS number loses bits past 2^53 on the way out of D1, so the column is never read as a number. `RoomPermission` is a value set of `1n << n` bigints. A user's effective permissions are the bitwise OR of the room's `@everyone` role plus every role assigned to them in `usersToRoomRoles`, then their own [overrides](../member-permission-overrides/design.md) are folded in: allowed bits are added and denied bits removed, so a member's row is the last word over their roles and never over Administrator.
 
 ```mermaid
 flowchart TD

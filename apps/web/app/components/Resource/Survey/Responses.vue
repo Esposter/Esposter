@@ -19,7 +19,7 @@ const { deletingResponseId, detailResponseId } = storeToRefs(surveyResponseDialo
 // The blade is keyed by resource id and suspended, so this instance only ever serves one survey
 const id = getRouteParam(currentRoute.value.params, "id");
 const { error, records, refreshResponses, summaryCards, summaryError } = useReadSurveyResponses(id);
-const view = ref(SurveyResponseView.Summary);
+const view = ref<SurveyResponseView>(SurveyResponseView.Summary);
 const viewItems: UiTabItem<SurveyResponseView>[] = Object.values(SurveyResponseView).map((value) => ({
   title: value,
   value,

@@ -5,7 +5,7 @@ import type { MutationStatus } from "@/models/shared/MutationStatus";
 // Signal it did not land. A throwing callback does escape: the promise an entry point returns is rejected by a throw
 // From applyOptimistic, from the rollback it returns, or from onSuccess/onError, and nothing here catches them
 export type MutationOutcome<TResult> =
-  | { error: Error; status: MutationStatus.Failed }
-  | { result: TResult; status: MutationStatus.Succeeded }
-  | { status: MutationStatus.Dropped }
-  | { status: MutationStatus.Stale };
+  | { error: Error; status: typeof MutationStatus.Failed }
+  | { result: TResult; status: typeof MutationStatus.Succeeded }
+  | { status: typeof MutationStatus.Dropped }
+  | { status: typeof MutationStatus.Stale };

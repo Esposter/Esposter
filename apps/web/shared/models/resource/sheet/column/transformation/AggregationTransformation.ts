@@ -9,7 +9,7 @@ import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
 
 export interface AggregationTransformation
-  extends ItemEntityType<ColumnTransformationType.Aggregation>, SourceColumnId {
+  extends ItemEntityType<typeof ColumnTransformationType.Aggregation>, SourceColumnId {
   aggregationTransformationType: AggregationTransformationType;
 }
 

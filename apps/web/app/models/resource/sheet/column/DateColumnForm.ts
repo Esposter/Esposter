@@ -6,7 +6,7 @@ import { dateColumnSchema } from "#shared/models/resource/sheet/column/DateColum
 import { createBaseColumnFormSchema } from "@/services/resource/sheet/column/createBaseColumnFormSchema";
 import { z } from "zod";
 
-export interface DateColumnForm extends BaseColumnForm<ColumnType.Date>, Pick<DateColumn, "format"> {}
+export interface DateColumnForm extends BaseColumnForm<typeof ColumnType.Date>, Pick<DateColumn, "format"> {}
 
 export const dateColumnFormSchema = z
   .object({ ...createBaseColumnFormSchema(z.literal(ColumnType.Date)).shape, format: dateColumnSchema.shape.format })

@@ -25,7 +25,7 @@ const {
   statusRows,
 } = useProgramStatus();
 // Exporting and regenerating both issue links afresh, so the links already sent stop working: each waits on a confirm
-const exportScope = ref(ProgramInviteScope.All);
+const exportScope = ref<ProgramInviteScope>(ProgramInviteScope.All);
 const isExportConfirmOpen = ref(false);
 const regeneratingKeyValue = ref("");
 const isRegenerateConfirmOpen = ref(false);

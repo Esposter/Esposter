@@ -15,7 +15,7 @@ A value needs the prefix when the namespace it lives in is shared:
 | Folder in the user's app data or home         | `Host` or `.agent` collides with any other program's folder, and an uninstall removes files that were never ours                                                                                                    |
 | Process or window title                       | The reader tells windows apart by it; `session` says nothing about whose                                                                                                                                            |
 
-A value that lives only inside something the repo owns — an enum member's value on its own wire, a column name, a query key on its own route — takes no prefix, since nothing else writes there. **Neither does text shown inside our own surface.** A message shown on the page is already ours, so it says _Could not save the note_, never _Could not save the Esposter note_. The product name appears only where the reader chooses among other programs' names: a window title in the taskbar.
+A value that lives only inside something the repo owns — a value-set member's value on its own wire, a column name, a query key on its own route — takes no prefix, since nothing else writes there. **Neither does text shown inside our own surface.** A message shown on the page is already ours, so it says _Could not save the note_, never _Could not save the Esposter note_. The product name appears only where the reader chooses among other programs' names: a window title in the taskbar.
 
 ## How to apply
 

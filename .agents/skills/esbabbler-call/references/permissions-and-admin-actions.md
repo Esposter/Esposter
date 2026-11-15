@@ -8,7 +8,7 @@ The bits are `packages/db-schema/src/models/message/RoomPermission.ts`, in the o
 
 ## `AdminActionType`
 
-The enum is `packages/db-schema/src/models/message/AdminActionType.ts`, and every place an action touches is `openspec/specs/esbabbler/moderation/design.md`.
+The value set is `packages/db-schema/src/models/message/AdminActionType.ts`, and every place an action touches is `openspec/specs/esbabbler/moderation/design.md`.
 
 ## Admin action hooks in the call stores
 

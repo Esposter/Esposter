@@ -8,7 +8,7 @@ import { sheetLayoutSettingsSchema } from "#shared/models/resource/sheet/SheetLa
 import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
 
-export interface CsvFileSettings extends ItemEntityType<DataSourceType.Csv>, SheetLayoutSettings {
+export interface CsvFileSettings extends ItemEntityType<typeof DataSourceType.Csv>, SheetLayoutSettings {
   configuration: CsvDataSourceConfiguration;
 }
 

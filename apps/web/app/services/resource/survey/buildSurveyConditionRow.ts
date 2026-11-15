@@ -6,7 +6,7 @@ import { buildSurveyConditionValue } from "@/services/resource/survey/buildSurve
 // A reference to the answer, then the operator, then the value when the operator takes one
 export const buildSurveyConditionRow = ({ operator, questionName, value }: SurveyConditionRow): string => {
   const reference = `{${questionName}}`;
-  const isTest = [SurveyConditionOperator.Empty, SurveyConditionOperator.NotEmpty].includes(operator);
+  const isTest = operator === SurveyConditionOperator.Empty || operator === SurveyConditionOperator.NotEmpty;
   if (isTest) return `${reference} ${operator}`;
 
   return `${reference} ${operator} ${buildSurveyConditionValue(value)}`;

@@ -2,12 +2,13 @@
 // So this is derived from that action rather than declared per type — an editor that autosaves on its own
 // Cadence, a toolbar command and a dialog's Save all reach the same door and report the same way.
 // See openspec/specs/resource/resource-save-state/design.md
-export enum ResourceSaveState {
+export const ResourceSaveState = {
   // The last write was rejected. Its own notification says why; this is what stays on screen after it closes
-  Failed = "Failed",
-  Saved = "Saved",
+  Failed: "Failed",
+  Saved: "Saved",
   // Edits are on their way — a debounce armed, a write in flight, or both
-  Saving = "Saving",
+  Saving: "Saving",
   // Someone else's save moved this resource on, so nothing typed here can land until the page reloads
-  Stale = "Stale",
-}
+  Stale: "Stale",
+} as const;
+export type ResourceSaveState = (typeof ResourceSaveState)[keyof typeof ResourceSaveState];

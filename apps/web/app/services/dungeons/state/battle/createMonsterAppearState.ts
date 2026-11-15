@@ -10,9 +10,11 @@ import { sleepScene } from "vue-phaserjs";
 
 // A monster sent out to the field, whether it came from the party or replaced the one out: its tween, its "Go" line,
 // Then the turn passes to whoever acts next
-export const createMonsterAppearState = <TStateName extends StateName.BringOutMonster | StateName.SwitchMonster>(
+export const createMonsterAppearState = <
+  TStateName extends typeof StateName.BringOutMonster | typeof StateName.SwitchMonster,
+>(
   name: TStateName,
-  nextStateName: StateName.EnemyInput | StateName.PlayerInput,
+  nextStateName: typeof StateName.EnemyInput | typeof StateName.PlayerInput,
 ): State<TStateName> => ({
   name,
   onEnter: async (scene) => {

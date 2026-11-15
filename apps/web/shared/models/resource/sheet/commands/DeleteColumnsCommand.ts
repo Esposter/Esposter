@@ -9,7 +9,7 @@ import { restoreAtIndices } from "#shared/services/resource/sheet/commands/resto
 import { pluralize } from "#shared/util/text/pluralize";
 import { takeOne, toRawDeep } from "@esposter/shared";
 
-export class DeleteColumnsCommand extends ADataSourceCommand<CommandType.DeleteColumns> {
+export class DeleteColumnsCommand extends ADataSourceCommand<typeof CommandType.DeleteColumns> {
   readonly type = CommandType.DeleteColumns;
 
   get description() {

@@ -1,5 +1,4 @@
-import type { ExportsGeneration } from "#src/models/ExportsGeneration";
-
+import { ExportsGeneration } from "#src/models/ExportsGeneration";
 import { BARREL_FILE, COMPONENTS_DIRECTORY } from "#src/services/constants";
 import { generateComponentBarrel } from "#src/services/generateComponentBarrel";
 import { generateSourceBarrel } from "#src/services/generateSourceBarrel";
@@ -13,19 +12,17 @@ const COMPONENT_BARREL_PATH = join(COMPONENTS_DIRECTORY, BARREL_FILE);
 // Build output the repository tracks, so one on disk that the answer does not write is an earlier build's, left when
 // The package changed its answer. It is removed: the package's own typecheck would still read it, naming modules the
 // Package may have since deleted, and nothing else would ever clear it
-// oxlint-disable enum-map/no-literal-map-key -- an enum here breaks tsdown loading this package's own config through strip-only type stripping, as ExportsGeneration.ts says
 const BarrelsMap: Record<
   ExportsGeneration,
   { barrelPaths: string[]; generators: ((sourceDirectory: string, lazyDirectories: string[]) => void)[] }
 > = {
-  none: { barrelPaths: [], generators: [] },
-  typescript: { barrelPaths: [BARREL_FILE], generators: [generateSourceBarrel] },
-  vue: {
+  [ExportsGeneration.None]: { barrelPaths: [], generators: [] },
+  [ExportsGeneration.TypeScript]: { barrelPaths: [BARREL_FILE], generators: [generateSourceBarrel] },
+  [ExportsGeneration.Vue]: {
     barrelPaths: [COMPONENT_BARREL_PATH, BARREL_FILE],
     generators: [generateComponentBarrel, generateSourceBarrel],
   },
 };
-// oxlint-enable enum-map/no-literal-map-key
 const ALL_BARREL_PATHS = new Set(Object.values(BarrelsMap).flatMap(({ barrelPaths }) => barrelPaths));
 // Writes the barrels into `src` under the package directory tsdown resolved, from the build's `build:prepare` hook.
 // `lazyDirectories` are `src`-relative directories the package loads on demand, and the source barrel leaves them out.

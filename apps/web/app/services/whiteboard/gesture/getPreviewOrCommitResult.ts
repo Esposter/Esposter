@@ -9,7 +9,7 @@ import { applyPatches } from "@esposter/shared";
 export const getPreviewOrCommitResult = (
   state: WhiteboardGestureState,
   operations: JsonPatchOperation[],
-  action: GesturePointerAction.Move | GesturePointerAction.Up,
+  action: typeof GesturePointerAction.Move | typeof GesturePointerAction.Up,
 ): WhiteboardGestureResult => {
   const document = applyPatches(state.document, operations).document;
   if (action === GesturePointerAction.Move) return { operations: [], state: { ...state, preview: document } };

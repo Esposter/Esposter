@@ -61,7 +61,7 @@ All paths relative to `apps/web/app`.
 
 | File                                                                 | Role                                                                                                                                               |
 | -------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `models/resource/sheet/commands/PasteMode.ts`                        | `PasteMode` enum (`Overwrite` / `ShiftDown`)                                                                                                       |
+| `models/resource/sheet/commands/PasteMode.ts`                        | `PasteMode` value set (`Overwrite` / `ShiftDown`)                                                                                                  |
 | `models/resource/sheet/commands/PasteRangeCommand.ts`                | Overwrite paste + undo snapshot                                                                                                                    |
 | `services/resource/sheet/commands/parseClipboardValuesByPosition.ts` | TSV → `string[][]` (no header row)                                                                                                                 |
 | `services/resource/sheet/dataSource/filterDataSourceRange.ts`        | Derives the range's columns and the compute context                                                                                                |

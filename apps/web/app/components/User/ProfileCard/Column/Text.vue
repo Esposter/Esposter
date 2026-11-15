@@ -8,10 +8,10 @@ import { USER_NAME_MAX_LENGTH } from "@esposter/db-schema";
 interface Props {
   isEditMode: boolean;
   label: string;
-  value: Row<RowValueType.Text>["value"];
+  value: Row<typeof RowValueType.Text>["value"];
 }
 
-const modelValue = defineModel<Row<RowValueType.Text>["value"]>({ required: true });
+const modelValue = defineModel<Row<typeof RowValueType.Text>["value"]>({ required: true });
 defineProps<Props>();
 const valueRules = [UiRules.required(), UiRules.maxLength(USER_NAME_MAX_LENGTH), UiRules.isNotProfanity()];
 </script>

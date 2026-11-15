@@ -24,7 +24,7 @@ description: Apply when running or recommending any pnpm script. Esposter's pnpm
 
 ## A `.ts` script runs under `node` where it can, `vpx` where it cannot — `references/typescript-scripts.md`
 
-Node strips types natively; an `enum`, a tsconfig alias or an extensionless import moves the script to `vpx`, and the code is never bent to fit `node`.
+Node strips types natively; a tsconfig alias or an extensionless import moves the script to `vpx`, and the code is never bent to fit `node`.
 
 ## `"scriptsComments"` — `references/scripts-comments.md`
 

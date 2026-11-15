@@ -25,7 +25,7 @@ The moderation-log write is best-effort — a logging failure never turns the bl
 
 ## Data model
 
-`roomFiltersInMessage` carries `action` (a text enum: `Reject` default, `Warn`, `Timeout`) and `timeoutDurationMs` (nullable integer). A database CHECK enforces that a `Timeout` action always carries a positive duration, and the router clears the duration whenever the action is not `Timeout` so a stale value can never re-arm a timeout.
+`roomFiltersInMessage` carries `action` (a text value set: `Reject` default, `Warn`, `Timeout`) and `timeoutDurationMs` (nullable integer). A database CHECK enforces that a `Timeout` action always carries a positive duration, and the router clears the duration whenever the action is not `Timeout` so a stale value can never re-arm a timeout.
 
 ## Procedures
 
@@ -35,7 +35,7 @@ Automod adds no procedure of its own — it is a caller of the moderation intern
 
 | File                                                                            | Role                                                          |
 | :------------------------------------------------------------------------------ | :------------------------------------------------------------ |
-| `packages/db-schema/src/schema/message/roomFiltersInMessage.ts`                 | `action` + `timeoutDurationMs` + enum                         |
+| `packages/db-schema/src/schema/message/roomFiltersInMessage.ts`                 | `action` + `timeoutDurationMs` + value set                    |
 | `packages/db/src/services/message/moderation/getMessageCreationRejection.ts`    | the shared gate — returns the matched filter, applies nothing |
 | `packages/db/src/services/message/moderation/executeAutomodAction.ts`           | timeout + moderation-log core                                 |
 | `apps/web/server/services/message/moderation/executeAutomodAction.ts`           | app wrapper — adds the admin action push                      |

@@ -4,7 +4,7 @@ Who a user appears as (profile card, biography, avatar) and whether they appear 
 
 ## Presence
 
-`userStatuses` table (D1, `userStatusesInMessage`), one row per user: `status` (nullable enum), `isConnected`, `message` (custom status), `expiresAt`.
+`userStatuses` table (D1, `userStatusesInMessage`), one row per user: `status` (nullable value set), `isConnected`, `message` (custom status), `expiresAt`.
 
 - `UserStatus`: `Online | Idle | DoNotDisturb | Offline` — **nullable**: `null` means "connected, no manual override", so the effective status is derived (`getDetectedUserStatus`) from `isConnected` + any manual override + expiry.
 - `user.upsertStatus` upserts the row (`onConflictDoUpdate` on `userId`) and calls the caller's User object `upsertStatus`, which fans the status out to each room the person is in as a room event, so members see the change live. `user.readStatuses(userIds)` batch-loads statuses for the member list.
@@ -39,7 +39,7 @@ In room contexts, a `displayName` wins over the account name ([display names](..
 
 | File                                                             | Role                                                                                    |
 | :--------------------------------------------------------------- | :-------------------------------------------------------------------------------------- |
-| `packages/db-schema/src/schema/message/userStatusesInMessage.ts` | presence table + `UserStatus` enum                                                      |
+| `packages/db-schema/src/schema/message/userStatusesInMessage.ts` | presence table + `UserStatus` value set                                                 |
 | `apps/realtime/src/services/user/setUserConnectedInRooms.ts`     | the connected flag, written on the first socket and the last close, then each room told |
 | `apps/web/server/trpc/routers/user.ts`                           | `upsertStatus`, `readStatuses`, `updateUser`                                            |
 | `apps/web/server/services/user/publishUserRoomTopics.ts`         | the room topics a profile save publishes, one per membership                            |

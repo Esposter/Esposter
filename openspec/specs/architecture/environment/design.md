@@ -14,7 +14,7 @@ Nuxt code runs in three contexts, each with different capabilities:
 
 ## The solution
 
-The app runs in one of three environments, the `Environment` enum (`development`, `production`, `test`), and a deployment names its own in `APP_ENV`. `configuration/vite.ts` sets `vite.mode` from it, so `import.meta.env.MODE` is that value in every bundle — client, server (Nitro) — and Vitest sets it to `test` itself. The constants compare it with the enum, so exactly one is true:
+The app runs in one of three environments, the `Environment` value set (`development`, `production`, `test`), and a deployment names its own in `APP_ENV`. `configuration/vite.ts` sets `vite.mode` from it, so `import.meta.env.MODE` is that value in every bundle — client, server (Nitro) — and Vitest sets it to `test` itself. The constants compare it with the set's members, so exactly one is true:
 
 ```ts
 // apps/web/shared/util/environment/constants.ts

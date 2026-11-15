@@ -6,7 +6,7 @@ import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { createBaseColumnFormSchema } from "@/services/resource/sheet/column/createBaseColumnFormSchema";
 import { z } from "zod";
 
-export interface BooleanColumnForm extends BaseColumnForm<ColumnType.Boolean>, Pick<BooleanColumn, "format"> {}
+export interface BooleanColumnForm extends BaseColumnForm<typeof ColumnType.Boolean>, Pick<BooleanColumn, "format"> {}
 
 export const booleanColumnFormSchema = z
   .object({

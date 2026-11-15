@@ -13,7 +13,7 @@ export const getPermissionsProcedure = <T extends z.ZodType>(
   permission: RoomPermission,
   schema: T,
   roomIdKey: keyof inferParser<T>["out"],
-  rateLimiterType = RateLimiterType.Standard,
+  rateLimiterType: RateLimiterType = RateLimiterType.Standard,
 ) =>
   AuthedProcedureMap[rateLimiterType].input(schema).use(async ({ ctx, input, next }) => {
     const roomId = requireUuid(input[roomIdKey], DatabaseEntityType.Room);

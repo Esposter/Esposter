@@ -6,7 +6,7 @@ import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { DateFormat, dateFormatSchema } from "#shared/models/resource/sheet/column/DateFormat";
 import { z } from "zod";
 
-export class DateColumn extends AColumn<ColumnType.Date> implements Format<DateFormat> {
+export class DateColumn extends AColumn<typeof ColumnType.Date> implements Format<DateFormat> {
   format: DateFormat = DateFormat["D/M/YYYY"];
   override readonly type = ColumnType.Date;
 

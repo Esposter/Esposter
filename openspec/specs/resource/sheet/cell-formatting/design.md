@@ -42,7 +42,7 @@ Paths relative to `apps/web`.
 | `app/services/resource/sheet/column/compareColumnValues.ts` | Underlying-value comparator behind each column's `compare`                  |
 | `app/store/resource/sheet/row.ts`                           | `getCellText` plus the grid's columns, which carry `getValue` and `compare` |
 | `app/components/Resource/Sheet/Row/Field/Index.vue`         | Renders the displayed text with the outlier and find/replace layers         |
-| `app/models/resource/sheet/column/ColumnFormat.ts`          | Union of the boolean, date and number format enums                          |
+| `app/models/resource/sheet/column/ColumnFormat.ts`          | Union of the boolean, date and number format value sets                     |
 
 ## Notes
 

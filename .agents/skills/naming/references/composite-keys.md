@@ -26,11 +26,11 @@ data, so they carry a compatibility contract an in-memory key does not, and the 
 Named either way: the rule being enforced is that no separator is a bare literal at its use site. The reason
 lives here rather than beside each constant, whose name already says which format it serves.
 
-## Segments are existing enum values, never hand-spelled names
+## Segments are existing value-set members, never hand-spelled names
 
 `AsyncDataKey.ReadPosts` composes `Operation.Read` + `DatabaseEntityType.Post` + what scopes it. A
 `` `read-posts:${…}` `` invents a second spelling of two things the repo already names, and nothing renames with
 them.
 
 Reach for `Operation`, `DatabaseEntityType`/`DerivedDatabaseEntityType`, `ResourceType` and the feature's own
-enum before typing any segment as text.
+value set before typing any segment as text.

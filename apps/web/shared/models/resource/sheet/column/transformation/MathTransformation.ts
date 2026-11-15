@@ -7,7 +7,7 @@ import { MAX_RESOURCE_CONTENT_SIZE } from "#shared/services/resource/constants";
 import { createItemEntityTypeSchema, createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
-export interface MathTransformation extends ItemEntityType<ColumnTransformationType.Math> {
+export interface MathTransformation extends ItemEntityType<typeof ColumnTransformationType.Math> {
   expression: string;
   variables: MathVariable[];
 }

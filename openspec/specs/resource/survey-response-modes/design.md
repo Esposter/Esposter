@@ -1,6 +1,6 @@
 # Survey Response Modes
 
-Response identity is an explicit, server-enforced survey setting rather than an implicit "everything is anonymous". A survey declares its **response mode**: **Anonymous** (anyone with the link, no identity carried) or **Identified** (responses must present an opaque participant token issued by a [Program](../program-resource/design.md), so every answer joins back to a participant server-side). The mode is an enum and the enforcement is one validation arm per mode — that is the whole extensibility mechanism, and it is deliberately boring.
+Response identity is an explicit, server-enforced survey setting rather than an implicit "everything is anonymous". A survey declares its **response mode**: **Anonymous** (anyone with the link, no identity carried) or **Identified** (responses must present an opaque participant token issued by a [Program](../program-resource/design.md), so every answer joins back to a participant server-side). The mode is a value set and the enforcement is one validation arm per mode — that is the whole extensibility mechanism, and it is deliberately boring.
 
 **No identifying value ever appears client-side.** The URL carries an opaque UUID token or nothing; what a token means is resolvable only by the owner, server-side.
 
@@ -23,7 +23,7 @@ flowchart LR
 - **Validation** — in `resolveSurveyResponseWrite`, the mode selects one arm of `SurveyResponseModeValidatorMap`. Anonymous strips the token to `""`, so a stale participant link into an anonymous survey still works and just carries nothing. Identified resolves the token against the participant table of a program **bound to this survey** — one holding a `Survey` link to it in the [resource-link index](../../architecture/resource-links/design.md), which a program reading the survey only as its audience does not — which makes a missing token, a forged token, and another survey's token all fail identically, so the response is never an oracle for probing valid tokens. Mode changes take effect live, because they live in working settings rather than the publish snapshot.
 - **Resume** — an Identified update must carry the token it started with; swapping tokens mid-response is a forgery and is rejected. The resolved token is what gets written, never the caller's, so a stale token cannot ride an Anonymous write. A resume reads through `resolveSurveyResponseRead`, which refuses a recycle-binned survey in either mode, as the write boundary does, so a deleted survey's answers stay unreadable to respondents until it is restored or purged.
 
-**Adding a mode is one enum value plus one validation arm.** An `Authenticated` mode (logged-in users, one response per user) would add a session check and store the user id in the same identity slot. The foundation is the explicit mode plus the per-mode boundary check, not any particular mode.
+**Adding a mode is one value set member plus one validation arm.** An `Authenticated` mode (logged-in users, one response per user) would add a session check and store the user id in the same identity slot. The foundation is the explicit mode plus the per-mode boundary check, not any particular mode.
 
 ## Key files
 

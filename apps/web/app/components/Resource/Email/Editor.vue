@@ -49,7 +49,7 @@ const columnNames = computed(() => dataset.value?.columns.map(({ name }) => name
 watchImmediate(columnNames, (newColumnNames) => setMergeFieldColumns(resourceId, newColumnNames));
 // Design and Preview are modes of one editor: Preview removes the editing regions and draws the compiled message. The design stays
 // Mounted beneath it, so its edits and selection survive, and the preview compiles in Design too, so its findings reach the bar
-const view = ref(EmailView.Design);
+const view = ref<EmailView>(EmailView.Design);
 const emailExportDialogStore = useEmailExportDialogStore();
 const { setPendingDataset } = emailExportDialogStore;
 // The stores outlive the blade, so the export and the merge fields staged for this email are torn down with it, since a

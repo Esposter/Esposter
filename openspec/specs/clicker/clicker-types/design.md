@@ -16,7 +16,7 @@ Paths relative to `apps/web`.
 
 | File                                                 | Role                                                    |
 | ---------------------------------------------------- | ------------------------------------------------------- |
-| `shared/models/clicker/data/ClickerType.ts`          | the type enum + schema                                  |
+| `shared/models/clicker/data/ClickerType.ts`          | the type value set + schema                             |
 | `app/services/clicker/properties/ClickerNameMap.ts`  | type → point name (with plural + icon + color siblings) |
 | `app/composables/clicker/useDecompileString.ts`      | reactive flavor-text variable substitution              |
 | `app/components/Clicker/Model/ItemTypeSelectors.vue` | toolbar type switcher                                   |

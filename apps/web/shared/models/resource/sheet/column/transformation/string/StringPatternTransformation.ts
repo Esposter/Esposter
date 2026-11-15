@@ -10,7 +10,7 @@ import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
 
 export interface StringPatternTransformation
-  extends ItemEntityType<ColumnTransformationType.StringPattern>, SourceColumnIds {
+  extends ItemEntityType<typeof ColumnTransformationType.StringPattern>, SourceColumnIds {
   pattern: string;
 }
 

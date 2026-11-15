@@ -17,7 +17,7 @@ The keep test is the standard, not a budget: the aim is code with no test left t
 
 ## Never earns a line
 
-- **A constant, map, schema, enum or generated artifact restated.** The assertion fails only on a deliberate edit, and the diff is the review. The exception is a literal fixed outside this repo (a wire or protocol value, a security limit, a retention window), where catching the edit is the point.
+- **A constant, map, schema, value set or generated artifact restated.** The assertion fails only on a deliberate edit, and the diff is the review. The exception is a literal fixed outside this repo (a wire or protocol value, a security limit, a retention window), where catching the edit is the point.
 - **Framework, filesystem or config wiring.** A directory exists, a config key holds the value just set, a loader was handed the right glob. Nothing a reviewer would merge fails on these. The one pin that earns its line is a literal a tool cannot import and silently drops: a JSON config's ignore list, or a config evaluated during `postinstall`, which runs before any workspace package is built. A path the suite beside it would already fail on does not count.
 - **An existence or smoke check.** "renders", "is defined", "exports a function", "does not throw" with nothing else asserted.
 - **A snapshot nobody reads a property of.** A whole generated or rendered output that no caller depends on in any particular field.

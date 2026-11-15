@@ -3,4 +3,4 @@ import type { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType
 import type { BlockNode } from "vue-block-editor-headless";
 
 // A Section node of a webpage: a block of the page under a semantic tag
-export type SectionNode = BlockNode<WebpageNodeType.Section, SectionNodeProps>;
+export type SectionNode = BlockNode<typeof WebpageNodeType.Section, SectionNodeProps>;

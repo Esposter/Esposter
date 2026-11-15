@@ -18,7 +18,7 @@ Each of these is a finding in review, whatever the placement rules and the `ui-l
 - **Chips as labels.** A chip is a control or a count. A state or a figure beside a title is text in a lower-emphasis role.
 - **Full-width running prose.** Prose wider than about seventy characters is hard to read, so a document or an article holds its text to a readable measure in `rem`; a feed, a conversation or a form keeps the page's width (the `ui-library` skill, `references/design-pass.md`).
 - **Controls competing with content.** Selects, buttons and gauges in the reading area's header push the thing being read down the page. Settings that change rarely belong in a menu or a compact trailing cluster.
-- **Raw data as the display.** JSON in a `pre`, an enum's value as its label, an id as a title. Each has a readable form: a key-value list, a title map, the name it stands for.
+- **Raw data as the display.** JSON in a `pre`, a value set's value as its label, an id as a title. Each has a readable form: a key-value list, a title map, the name it stands for.
 
 ## Checking it
 

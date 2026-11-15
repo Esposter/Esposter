@@ -4,7 +4,7 @@ Clicker is Esposter's idle game at `/clicker`: click the central item to earn po
 
 ## Key concepts
 
-- **Data-driven content** — buildings and upgrades are plain constant maps in `shared/assets/clicker/data/` keyed by enum ids and typed by `satisfies`; the server just serves them (`readBuildingMap` / `readUpgradeMap`). Adding content means adding a map entry, not code.
+- **Data-driven content** — buildings and upgrades are plain constant maps in `shared/assets/clicker/data/` keyed by value set members and typed by `satisfies`; the server just serves them (`readBuildingMap` / `readUpgradeMap`). Adding content means adding a map entry, not code.
 - **Effect engine** — every upgrade carries `Effect[]` records; pure functions fold them over a base power by effect type (additive, multiplicative, per-building). See [effect engine](effect-engine/design.md).
 - **Split Pinia stores** — the stores under `app/store/clicker/` are one per concern, the index store being the save root and type theming; each composes the others per the store-to-store convention.
 - **One save blob per player** — the whole game state is a single `Clicker` entity, persisted through the shared blob-state path ([save data](../genshin/save-data/design.md)); unauthenticated players keep it in localStorage, scoped to the browser/device, not a user. Games deliberately stay off the resource layer ([games integration](../../rejected/resource/games-integration/design.md)). See [game loop and saves](game-loop-and-saves/design.md).

@@ -2,7 +2,7 @@
 
 ## Context
 
-A package's own files are reached two ways. Every package under `packages/*`, the repo-root `scripts` and the repo root's own folders declare subpath imports in their manifest (`"#src/*": "./src/*.ts"`), and the lint bans anything else there (the file-organization skill, `references/import-aliases.md`). The web app instead imports through the aliases Nuxt generates into its four tsconfigs and its Vite and Nitro configs: `@/` for `app/`, `@@/` for the app's root, and Nuxt's own `#shared/` and `#server/`. Nuxt reads those aliases and Node does not, so a script under `apps/web/scripts` that reaches app code cannot run under `node`, and runs under `vpx --tsconfig tsconfig.root.json` instead. That is the last reason the repository runs a script under `vpx` once the value-sets change has removed every `enum` (`openspec/changes/architecture-value-sets/design.md`).
+A package's own files are reached two ways. Every package under `packages/*`, the repo-root `scripts` and the repo root's own folders declare subpath imports in their manifest (`"#src/*": "./src/*.ts"`), and the lint bans anything else there (the file-organization skill, `references/import-aliases.md`). The web app instead imports through the aliases Nuxt generates into its four tsconfigs and its Vite and Nitro configs: `@/` for `app/`, `@@/` for the app's root, and Nuxt's own `#shared/` and `#server/`. Nuxt reads those aliases and Node does not, so a script under `apps/web/scripts` that reaches app code cannot run under `node`, and runs under `vpx --tsconfig tsconfig.root.json` instead. That is the last reason the repository runs a script under `vpx` once the value-sets change has removed every `enum` (`openspec/specs/architecture/value-sets/design.md`).
 
 ## Goals
 

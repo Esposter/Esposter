@@ -18,7 +18,7 @@ export const useCommentStore = defineStore("post/comment", () => {
   const postCountStore = usePostCountStore();
   const { refreshPostCounts } = postCountStore;
   const currentPost = ref<PostInPostWithRelations>();
-  const commentSortType = ref(PostSortType.Hot);
+  const commentSortType = ref<PostSortType>(PostSortType.Hot);
   // Held here rather than in each card, so a card a re-read remounts comes back open
   const expandedCommentIds = ref(new Set<string>());
   // Keyed by the post whose replies the partition holds, the route's own post included

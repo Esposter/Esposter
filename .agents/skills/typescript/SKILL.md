@@ -13,7 +13,7 @@ description: Apply when writing any TypeScript in this project. Esposter's TypeS
 
 ## Deep dives
 
-- `references/enums.md` — when declaring an enum, its Zod schema, its values array, or a ref that holds one.
+- `references/value-sets.md` — when declaring a closed set of named values, its Zod schema, its values array, or a ref that holds one.
 - `references/non-printing-characters.md` — when a non-printing character is about to be written into a literal.
 - `references/collections.md` — when mutating an array, reading-or-inserting on a `Map`, choosing a `Set` over `.some()`, or narrowing what a `.filter()` returns.
 - `references/type-modelling.md` — when reaching for a cast, re-declaring fields a source/SDK type already has, dispatching per variant, a `NuxtConfig` key the compiler can't see, or a TS2590 the compiler cannot represent.
@@ -37,7 +37,7 @@ description: Apply when writing any TypeScript in this project. Esposter's TypeS
 - **The newest platform API, always, and the form it replaces is banned** — every `unicorn/prefer-*` rule not turned off in `oxlint.config.ts` is on repo-wide for that reason, so a legacy form fails lint rather than review; one no rule decides is a finding, and a new replacement earns a `no-restricted-syntax` entry the first time it is re-found.
 - **Array methods are non-mutating** — write `toSorted`/`toReversed`/`toSpliced` and assign the result back; the mutating forms are lint errors (`references/collections.md`).
 - **Never hand-roll read-or-insert on a `Map`** — `getOrCreate(map, key, () => new Set())` from `@esposter/shared` (`references/collections.md`).
-- **Never declare what nothing uses** — every export (schema, type, constant, pluralized enum array) earns its existence with a call site; no speculative API. When removing the last consumer of an export, cascade-delete the newly orphaned export and its now-unused imports too. A published package keeps a generic export a consumer may import with no caller in this repository; feature-specific code follows its feature.
+- **Never declare what nothing uses** — every export (schema, type, constant, pluralized values array) earns its existence with a call site; no speculative API. When removing the last consumer of an export, cascade-delete the newly orphaned export and its now-unused imports too. A published package keeps a generic export a consumer may import with no caller in this repository; feature-specific code follows its feature.
 - **An unused import or local fails the typecheck (`noUnusedLocals`)**, a `.vue` file's `<script setup>` included, so it is deleted rather than kept for later; `noUnusedParameters` stays off, since a callback names the arguments it is handed.
 - **Indexed access under `noUncheckedIndexedAccess`** — `takeOne(array, index)` or `takeOne(record, key)` from `@esposter/shared` drops the `| undefined` the index adds, and a string's character is `str.charAt(index)`, which is `""` out of range. Where a guard reads that absence, the plain index stays, since `takeOne` erases the `undefined` the guard tests for.
 - **No `current*` caching of `.value`** just to use it once. If narrowing is needed after a guard, assign a descriptive name (`const selectedFile = file.value`) — `no-restricted-syntax` refuses a `current*` capture. Prefer plain `const` over `computed()` when the source is already non-reactive (e.g. a `readonly` prop field).
@@ -48,8 +48,9 @@ description: Apply when writing any TypeScript in this project. Esposter's TypeS
 - **Prefer the shortened assignment forms** — compound (`x += y`, `x ??= y`) over `x = x + y`, chained (`a.value = b.value = value`) over repeating the right-hand side. `restrict-plus-operands` and `no-multi-assign` are off for exactly this reason: a cast to silence a lint rule is strictly worse than the operator it replaces.
 - **`as unknown as T` is `any` with extra steps** — a `no-restricted-syntax` error in source (`restrictedSourceSyntaxes.js`; a suite's fakes are exempt), so a surviving one is a disable naming what the compiler cannot see — never "this is safe"; the seams that earn one are `references/type-modelling.md`.
 - **A compiler limit (TS2590) is a tagged `@ts-expect-error` in place, not a redesign** (`references/type-modelling.md`).
-- **Never `Object.values(SomeEnum)` inline**, and never abbreviate an enum value name (`Configuration`, not `Config`).
-- **A union of string literals is an enum** — `"delete" | "get"` becomes `enum HttpMethod` in its own model file and the annotation names it, enforced repo-wide by `literal-union/no-string-literal-union` (except in declaration files); the unions that are not sets, and the `as const` exceptions (the Nuxt configuration's and a Nuxt module's graphs, and bare-`node` plugin code), are `references/enums.md`.
+- **Never `Object.values(SomeSet)` inline**, and never abbreviate a member (`Configuration`, not `Config`).
+- **A closed set is an `as const` object with a type of its name** — `export const ThemeMode = { Dark: "dark" } as const;` and `export type ThemeMode = (typeof ThemeMode)[keyof typeof ThemeMode];`, a member in a type position is `typeof ThemeMode.Dark`, and `erasableSyntaxOnly` refuses an `enum` (`references/value-sets.md`).
+- **A union of string literals is a value set** — `"delete" | "get"` becomes the set `HttpMethod` in its own model file and the annotation names it, enforced repo-wide by `literal-union/no-string-literal-union` (except in declaration files); the unions that are not sets are `references/value-sets.md`.
 - **Track selections by stable ID, not name or index** — names change, indices shift on delete/reorder. Use `entity.id` (UUID) as the key for selected/active items. A stale ID is harmless; a stale name/index is a bug.
 
 ## Functions
@@ -69,7 +70,7 @@ description: Apply when writing any TypeScript in this project. Esposter's TypeS
 ## Control Flow
 
 - **Guard clauses first, one guard per outcome, and a chain runs `if/else if/else` from its first branch to its last** — a balanced `if/else` stays balanced, and no negated test sits before a terminal `else` (`no-negated-condition`). Where each shape stops being right: `references/control-flow.md`.
-- **`switch` for type-based branching, every one on an enum ending in `default: exhaustiveGuard(value)`**; per-case logic is a map keyed by the discriminant (`references/control-flow.md`).
+- **`switch` for type-based branching, every one on a value set ending in `default: exhaustiveGuard(value)`**; per-case logic is a map keyed by the discriminant (`references/control-flow.md`).
 - **Use `.includes()` for 2+ equality checks** — `[A, B].includes(x)` not `x === A || x === B`. Extract to a named constant only if reused.
 
 ## Loops and Iteration

@@ -27,7 +27,7 @@ export const createWorkerTimers = (worker: Pick<Worker, "addEventListener" | "po
   };
 
   const schedule = <TArgs extends unknown[]>(
-    method: TimerMethod.SetInterval | TimerMethod.SetTimeout,
+    method: typeof TimerMethod.SetInterval | typeof TimerMethod.SetTimeout,
     callback: (...args: TArgs) => void,
     args: TArgs,
     delayMs = 0,
@@ -44,7 +44,7 @@ export const createWorkerTimers = (worker: Pick<Worker, "addEventListener" | "po
     return id;
   };
 
-  const clear = (method: TimerMethod.ClearInterval | TimerMethod.ClearTimeout, id: number) => {
+  const clear = (method: typeof TimerMethod.ClearInterval | typeof TimerMethod.ClearTimeout, id: number) => {
     if (!pendingTimers.delete(id)) return;
 
     post({ id, method } satisfies TimerRequest);

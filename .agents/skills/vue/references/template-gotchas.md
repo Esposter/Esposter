@@ -58,6 +58,6 @@ nested closure.
 
 ## `import type` names ARE visible in template casts
 
-`$event as FooType` works on a type-only import; never widen it to a value import for the cast's sake. Only a template _value_ usage (enum member access, a `v-for` source, a call) needs one.
+`$event as FooType` works on a type-only import; never widen it to a value import for the cast's sake. Only a template _value_ usage (value-set member access, a `v-for` source, a call) needs one.
 
 When the type check reports TS2551 `Property 'X' does not exist on type '{ …ctx… }'` on a template identifier, the culprit is a value usage elsewhere in the template, not the cast.

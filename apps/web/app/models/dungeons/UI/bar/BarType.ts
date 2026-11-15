@@ -1,4 +1,2 @@
-export enum BarType {
-  Experience = "Experience",
-  Health = "Health",
-}
+export const BarType = { Experience: "Experience", Health: "Health" } as const;
+export type BarType = (typeof BarType)[keyof typeof BarType];

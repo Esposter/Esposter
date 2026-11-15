@@ -7,7 +7,7 @@ import { createBaseColumnFormSchema } from "@/services/resource/sheet/column/cre
 import { z } from "zod";
 
 export interface NumberColumnForm
-  extends BaseColumnForm<ColumnType.Number>, Pick<NumberColumn, "footerStatisticsKey" | "format"> {}
+  extends BaseColumnForm<typeof ColumnType.Number>, Pick<NumberColumn, "footerStatisticsKey" | "format"> {}
 
 export const numberColumnFormSchema = z
   .object({

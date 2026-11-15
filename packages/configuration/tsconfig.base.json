@@ -4,6 +4,7 @@
     "allowJs": false,
     "allowSyntheticDefaultImports": true,
     "customConditions": ["source"],
+    "erasableSyntaxOnly": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,

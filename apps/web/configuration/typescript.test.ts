@@ -12,10 +12,14 @@ describe("typescript", () => {
     expect(typescript?.tsConfig?.compilerOptions?.customConditions).toStrictEqual([SOURCE_CONDITION]);
   });
 
-  // The packages get `noUnusedLocals` from `tsconfig.base.json`, which no generated tsconfig extends
-  test("keeps noUnusedLocals on in the generated tsconfig, which the app typechecks against", () => {
-    expect.hasAssertions();
+  // The packages get these from `tsconfig.base.json`, which no generated tsconfig extends: `erasableSyntaxOnly` is what
+  // Refuses an enum, so a value set stays an object Node's type stripping can load
+  test.each(["erasableSyntaxOnly", "noUnusedLocals"] as const)(
+    "keeps %s on in the generated tsconfig, which the app typechecks against",
+    (compilerOption) => {
+      expect.hasAssertions();
 
-    expect(typescript?.tsConfig?.compilerOptions?.noUnusedLocals).toBe(true);
-  });
+      expect(typescript?.tsConfig?.compilerOptions?.[compilerOption]).toBe(true);
+    },
+  );
 });

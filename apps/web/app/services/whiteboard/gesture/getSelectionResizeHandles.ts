@@ -8,7 +8,7 @@ import { takeOne } from "@esposter/shared";
 import { checkIsResizablePositionedElement, PositionedElementType } from "vue-block-editor-headless";
 
 // Every handle, corners first, so a press where a corner and an edge overlap grabs the corner
-const ALL_RESIZE_HANDLES = [
+const ALL_RESIZE_HANDLES: ResizeHandle[] = [
   ResizeHandle.BottomRight,
   ResizeHandle.TopLeft,
   ResizeHandle.Bottom,

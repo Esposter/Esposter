@@ -1,6 +1,7 @@
 import type { TsdownConfigurationOptions } from "#src/models/TsdownConfigurationOptions";
 import type { UserConfig } from "tsdown";
 
+import { ExportsGeneration } from "#src/models/ExportsGeneration";
 import { HIDDEN_FOLDER_REGEX, PNPM_PEER_SUFFIX_REGEX, SOURCE_CONDITION } from "#src/services/constants";
 import { generateExports } from "#src/services/generateExports";
 import { getPackagePatterns } from "#src/services/getPackagePatterns";
@@ -21,7 +22,7 @@ import { mergeConfig } from "tsdown";
 // `exportsGeneration` says which barrel the build generates for itself, and the three answers it can give are
 // The whole of what a package may vary here.
 export const getTsdownConfiguration = ({
-  exportsGeneration = "typescript",
+  exportsGeneration = ExportsGeneration.TypeScript,
 }: TsdownConfigurationOptions = {}): UserConfig => {
   const {
     dependencies,

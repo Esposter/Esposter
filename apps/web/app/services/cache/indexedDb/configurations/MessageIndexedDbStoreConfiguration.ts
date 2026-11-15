@@ -7,4 +7,4 @@ export const MessageIndexedDbStoreConfiguration = {
   keyPath: ["roomId", "id"],
   limit: 50,
   storeName: IndexedDbStoreName.Messages,
-} as const satisfies IndexedDbStoreConfiguration<IndexedDbStoreName.Messages>;
+} as const satisfies IndexedDbStoreConfiguration<typeof IndexedDbStoreName.Messages>;

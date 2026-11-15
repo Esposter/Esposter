@@ -10,10 +10,10 @@ import { getResultAsync } from "@esposter/shared";
 interface Props {
   isEditMode: boolean;
   label: string;
-  value: Row<RowValueType.Image>["value"];
+  value: Row<typeof RowValueType.Image>["value"];
 }
 
-const modelValue = defineModel<Row<RowValueType.Image>["value"]>({ required: true });
+const modelValue = defineModel<Row<typeof RowValueType.Image>["value"]>({ required: true });
 defineProps<Props>();
 const { $trpc } = useNuxtApp();
 const { isLoading, uploadImage } = useUploadImage(() => $trpc.user.generateProfileImageUploadUrl.mutate());

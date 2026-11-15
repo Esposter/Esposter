@@ -7,7 +7,8 @@ import { MAX_RESOURCE_CONTENT_SIZE } from "#shared/services/resource/constants";
 import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
 
-export interface RegexMatchTransformation extends ItemEntityType<ColumnTransformationType.RegexMatch>, SourceColumnId {
+export interface RegexMatchTransformation
+  extends ItemEntityType<typeof ColumnTransformationType.RegexMatch>, SourceColumnId {
   groupIndex: number;
   pattern: string;
 }

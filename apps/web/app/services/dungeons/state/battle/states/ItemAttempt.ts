@@ -10,7 +10,7 @@ import { getSynchronizedFunction } from "@esposter/shared";
 
 const { subscribe, unsubscribeAll } = createPhaserSubscriptions();
 
-export const ItemAttempt: State<StateName.ItemAttempt> = {
+export const ItemAttempt: State<typeof StateName.ItemAttempt> = {
   name: StateName.ItemAttempt,
   onEnter: (battleScene) => {
     const battleDialogStore = useBattleDialogStore();

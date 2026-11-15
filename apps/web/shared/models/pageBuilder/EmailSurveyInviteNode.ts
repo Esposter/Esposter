@@ -3,7 +3,7 @@ import type { SurveyInviteNodeProps } from "#shared/models/pageBuilder/SurveyInv
 import type { BlockNode } from "vue-block-editor-headless";
 
 // A survey invite node of an email: the webpage's invite props under the email's own type tag, held by the MJML registry as a leaf
-export type EmailSurveyInviteNode = BlockNode<EmailNodeType.SurveyInvite, SurveyInviteNodeProps>;
+export type EmailSurveyInviteNode = BlockNode<typeof EmailNodeType.SurveyInvite, SurveyInviteNodeProps>;
 
 declare module "mjml-blocks" {
   interface MjmlLeafNodes {

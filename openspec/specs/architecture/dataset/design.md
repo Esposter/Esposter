@@ -22,11 +22,12 @@ interface Dataset {
   partialColumns?: string[]; // columns a capped read may have got wrong rather than left out, named in the truncation warning
 }
 
-enum DatasetProviderType {
-  ProgramStatus = "ProgramStatus",
-  Sheet = "Sheet",
-  SurveyResponses = "SurveyResponses",
-}
+export const DatasetProviderType = {
+  ProgramStatus: "ProgramStatus",
+  Sheet: "Sheet",
+  SurveyResponses: "SurveyResponses",
+} as const;
+export type DatasetProviderType = (typeof DatasetProviderType)[keyof typeof DatasetProviderType];
 
 interface DatasetReference extends ItemEntityType<DatasetProviderType> {
   id: string; // the resource id
@@ -70,4 +71,4 @@ Server structure (`server/services/dataset/`): `DatasetProviderMap.ts` maps `Dat
 - **Consumers choose copy or reference.** Import (Sheet resource) copies rows once. Binding (dashboard visuals, email editor merge fields) stores the `DatasetReference` and re-resolves on load; its `id` is a declared `Dataset` link, so every binding is in the [resource-link index](../resource-links/design.md). All call the same procedure.
 - **A reference whose source is gone reads as missing, and is never rewritten.** `readDataset` answers a reference it cannot resolve to a resource the caller owns — its source deleted, in the recycle bin, or never the caller's — with `NOT_FOUND`, one answer for all three so it confirms nothing about anyone else's resource. `getDatasetErrorMessage` turns that answer into `getMissingResourceMessage`'s, which tells the owner to pick another source or restore this one, and `useDataset` drops the dataset it held, so no consumer offers the previous source's columns under it. Every consumer shows the message where it holds the reference. A Dashboard tile re-reads its source when its bound reference changes or its `refresh()` is called, and a restore calls neither, so a tile that held the message reads the restored source once its reference changes or it mounts afresh. The consumer's content keeps the reference untouched, so a restore heals each consumer the next time it reads its reference ([dangling reference cleanup](../../../rejected/resource/dangling-reference-cleanup/design.md)).
 - **Fetch on load + manual refresh.** No live updates through this layer ([deferred](../../../deferred/resource/realtime-dataset-refresh/design.md)).
-- **No external providers** (HTTP APIs, SQL) until secret storage and injection-safety work is scoped ([deferred](../../../deferred/resource/api-sql-dataset-providers/design.md)) — the enum grows one value per new provider, nothing else changes.
+- **No external providers** (HTTP APIs, SQL) until secret storage and injection-safety work is scoped ([deferred](../../../deferred/resource/api-sql-dataset-providers/design.md)) — the value set grows one member per new provider, nothing else changes.

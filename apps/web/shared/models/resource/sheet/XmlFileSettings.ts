@@ -8,7 +8,7 @@ import { xmlDataSourceConfigurationSchema } from "#shared/models/resource/sheet/
 import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
 
-export interface XmlFileSettings extends ItemEntityType<DataSourceType.Xml>, SheetLayoutSettings {
+export interface XmlFileSettings extends ItemEntityType<typeof DataSourceType.Xml>, SheetLayoutSettings {
   configuration: XmlDataSourceConfiguration;
 }
 

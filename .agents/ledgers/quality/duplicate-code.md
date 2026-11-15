@@ -3,8 +3,8 @@
 | Unit                                                 | Swept                   | Notes                              |
 | :--------------------------------------------------- | :---------------------- | :--------------------------------- |
 | `apps/infra`                                         | 2026-10-14 · Haiku 5.5  |                                    |
-| `apps/jobs`                                          | 2026-10-14 · Haiku 5.5  |                                    |
-| `apps/realtime`                                      | 2026-10-14 · Haiku 5.5  |                                    |
+| `apps/jobs`                                          | —                       |                                    |
+| `apps/realtime`                                      | —                       |                                    |
 | `apps/web/app`                                       | 2026-10-14 · Haiku 5.5  | the rest, excluding the rows above |
 | `apps/web/app/components`                            | 2026-10-14 · Haiku 5.5  | the rest, excluding the rows above |
 | `apps/web/app/components/App`                        | 2026-10-14 · Haiku 5.5  |                                    |

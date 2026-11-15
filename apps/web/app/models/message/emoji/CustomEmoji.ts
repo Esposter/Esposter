@@ -6,5 +6,5 @@ import type { RoomEmojiWithPresignedUrl } from "@esposter/db-schema";
 // Code path — and the image url in place of a character
 export interface CustomEmoji extends Pick<RoomEmojiWithPresignedUrl, "id" | "name" | "presignedUrl"> {
   slug: string;
-  type: EmojiType.Custom;
+  type: typeof EmojiType.Custom;
 }

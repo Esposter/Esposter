@@ -9,7 +9,7 @@ import { z } from "zod";
 export class RespawnLocation {
   direction: Direction = Direction.UP;
   position: Position = { x: 9, y: 4 };
-  tilemapKey = TilemapKey.HomeBuilding1;
+  tilemapKey: TilemapKey = TilemapKey.HomeBuilding1;
 }
 
 export const respawnLocationSchema = z.object({

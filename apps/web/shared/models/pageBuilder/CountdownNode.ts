@@ -3,4 +3,4 @@ import type { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType
 import type { BlockNode } from "vue-block-editor-headless";
 
 // A Countdown node of a webpage: a timer to a date
-export type CountdownNode = BlockNode<WebpageNodeType.Countdown, CountdownNodeProps>;
+export type CountdownNode = BlockNode<typeof WebpageNodeType.Countdown, CountdownNodeProps>;

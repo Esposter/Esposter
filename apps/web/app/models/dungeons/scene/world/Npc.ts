@@ -11,7 +11,7 @@ import { Character } from "@/models/dungeons/scene/world/Character";
 export class Npc extends Character<NpcId> implements Except<NpcData, "frame" | "id"> {
   effects: Effect[] = [];
   isMoving = false;
-  movementPattern = MovementPattern.Idle;
+  movementPattern: MovementPattern = MovementPattern.Idle;
   path: Record<number, Position> = {};
   pathIndex = 0;
 

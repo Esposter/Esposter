@@ -7,7 +7,7 @@ import { z } from "zod";
 
 export class Save {
   player = new Player();
-  tilemapKey = TilemapKey.Home;
+  tilemapKey: TilemapKey = TilemapKey.Home;
   world = getInitialWorld();
 }
 

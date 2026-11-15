@@ -16,7 +16,7 @@ import { exhaustiveGuard, getResultAsync, noop } from "@esposter/shared";
 export const useBattleSceneStore = defineStore("dungeons/battle/scene", () => {
   const dialogStore = useDialogStore();
   const attackOptionGrid = useAttackOptionGrid();
-  const activePanel = ref(ActivePanel.Info);
+  const activePanel = ref<ActivePanel>(ActivePanel.Info);
   const experienceBarStore = useExperienceBarStore();
   // The scene's update event is the frame loop, which drops whatever its listener returns — so the input this
   // Entry point runs reports its own failure rather than leaving one rejection per frame with no handler

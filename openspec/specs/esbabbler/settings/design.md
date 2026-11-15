@@ -10,7 +10,7 @@ A Discord-style settings dialog for **message/communication** preferences, drawn
 | Global route `/user/settings` | Account · Profile                                     | `users` (`UserIntroductionCard` + `UserProfileCard` + presigned avatar upload)   |
 | Theme                         | top-right toggle, not a panel                         | cookie (`THEME_COOKIE_NAME`) — hard SSR constraint (flash-free first paint)      |
 
-The dialog is opened by the gear in `MessageLeftSideBarStatusBar` and mirrors the [room settings](../room-settings/design.md) pattern (`SettingsType` enum → list-item map → content map → `Type/*` panels) with its own parallel wrappers under `Message/Model/User/Settings/`. Unlike room settings there is no permission gating — every panel is self-scoped to the current user.
+The dialog is opened by the gear in `MessageLeftSideBarStatusBar` and mirrors the [room settings](../room-settings/design.md) pattern (`SettingsType` value set → list-item map → content map → `Type/*` panels) with its own parallel wrappers under `Message/Model/User/Settings/`. Unlike room settings there is no permission gating — every panel is self-scoped to the current user.
 
 Both settings dialogs share three conventions: panels are lazy async components rendered inside `<Suspense>` with a shared `MessageModelSettingsSkeleton` fallback (shown on every tab switch); every settings mutation is **optimistic** (apply to the store immediately, mutate in the background, roll back + surface the error on failure — [`useMutation`](../../architecture/client-data/design.md)); and the sidebar section rail is `StyledSlideIndicator` stretched across **all** visible sections.
 
@@ -22,16 +22,16 @@ They also share the responsive shell — the sidebar that sits beside the panel 
 
 `userSettingsInMessage` (`packages/db-schema/src/schema/message/userSettingsInMessage.ts`), 1:1 on `userId` (PK, cascade), under `messageSchema`:
 
-| Column                                                   | Type                                                      | Default         |
-| -------------------------------------------------------- | --------------------------------------------------------- | --------------- |
-| `voiceInputMode`                                         | text enum (`VoiceActivity` \| `PushToTalk`)               | `VoiceActivity` |
-| `pushToTalkKeybind`                                      | text                                                      | `""`            |
-| `pushToTalkReleaseDelayMs`                               | integer (CHECK 0..2000)                                   | 20              |
-| `inputSensitivityDecibels`                               | integer (CHECK −100..0)                                   | −50             |
-| `microphoneVolumePercentage` / `speakerVolumePercentage` | integer                                                   | 100             |
-| `noiseSuppressionMode`                                   | enum → [voice & video settings](../voice-video/design.md) |                 |
-| `isMuteOnJoin` / `isDeafenOnJoin`                        | boolean                                                   | false           |
-| `autoIdleThresholdMs`                                    | integer (CHECK 60_000..86_400_000)                        | 600_000         |
+| Column                                                   | Type                                                           | Default         |
+| -------------------------------------------------------- | -------------------------------------------------------------- | --------------- |
+| `voiceInputMode`                                         | text value set (`VoiceActivity` \| `PushToTalk`)               | `VoiceActivity` |
+| `pushToTalkKeybind`                                      | text                                                           | `""`            |
+| `pushToTalkReleaseDelayMs`                               | integer (CHECK 0..2000)                                        | 20              |
+| `inputSensitivityDecibels`                               | integer (CHECK −100..0)                                        | −50             |
+| `microphoneVolumePercentage` / `speakerVolumePercentage` | integer                                                        | 100             |
+| `noiseSuppressionMode`                                   | value set → [voice & video settings](../voice-video/design.md) |                 |
+| `isMuteOnJoin` / `isDeafenOnJoin`                        | boolean                                                        | false           |
+| `autoIdleThresholdMs`                                    | integer (CHECK 60_000..86_400_000)                             | 600_000         |
 
 Every column is communication-scoped — no account/profile/theme columns, reinforcing the surface split. Read returns the row or an unpersisted defaults object; the first update upserts (`onConflictDoUpdate` on `userId`).
 
@@ -59,7 +59,7 @@ flowchart TD
 
 ## Navigation / scrollspy
 
-The dialog uses a Discord-style two-level nav: a `UiList` of the `UserSettingsListItemMap` types, and under it an "On this page" `UiList` of the current type's sections from `UserSettingsSectionMap` (per-panel subsection enums whose values double as section title **and** DOM id).
+The dialog uses a Discord-style two-level nav: a `UiList` of the `UserSettingsListItemMap` types, and under it an "On this page" `UiList` of the current type's sections from `UserSettingsSectionMap` (per-panel subsection value sets whose values double as section title **and** DOM id).
 
 - **Scroll tracking is the repo-wide mechanism**, not one written for this dialog: `useVisibleSectionIds` over the panel's section ids, bounded by the scroll container, and the `StyledSlideIndicator` rail stretched across every section currently on screen. What that guarantees, and why it is neither a scroll handler nor `v-intersect`, is [section navigation](../../architecture/section-navigation/design.md).
 - **The panel header sits outside the scroll container** (the shared settings content's `#header` slot above its scrolling body region). That structural choice is what keeps the scrollspy free of offset math here: a section clipped above the scroll area is genuinely not visible, and `scrollIntoView` lands a section title just below the header.
@@ -68,9 +68,9 @@ The dialog uses a Discord-style two-level nav: a `UiList` of the `UserSettingsLi
 
 | File                                                             | Role                                                       |
 | :--------------------------------------------------------------- | :--------------------------------------------------------- |
-| `packages/db-schema/src/schema/message/userSettingsInMessage.ts` | table + enums + range constants                            |
+| `packages/db-schema/src/schema/message/userSettingsInMessage.ts` | table + value sets + range constants                       |
 | `apps/web/server/trpc/routers/user.ts`                           | `readUserSettings` + `updateUserSettings`                  |
-| `apps/web/app/models/message/user/UserSettingsType.ts`           | the panel enum; a value is its own title                   |
+| `apps/web/app/models/message/user/UserSettingsType.ts`           | the panel value set; a value is its own title              |
 | `apps/web/app/services/message/user/settings/`                   | list-item / content / section maps                         |
 | `apps/web/app/store/message/user/settings/index.ts`              | DB-backed store (optimistic + revert)                      |
 | `apps/web/app/store/message/user/settings/voiceDevice.ts`        | device-local store (`localStorage` device IDs)             |

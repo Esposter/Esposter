@@ -8,7 +8,7 @@ import { sheetLayoutSettingsSchema } from "#shared/models/resource/sheet/SheetLa
 import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
 
-export interface JsonFileSettings extends ItemEntityType<DataSourceType.Json>, SheetLayoutSettings {
+export interface JsonFileSettings extends ItemEntityType<typeof DataSourceType.Json>, SheetLayoutSettings {
   configuration: JsonDataSourceConfiguration;
 }
 

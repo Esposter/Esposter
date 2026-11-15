@@ -7,7 +7,7 @@ import { getAttackStatePriorityMap } from "@/services/dungeons/scene/battle/getA
 import { PlayerBattleMenuOptionGrid } from "@/services/dungeons/scene/battle/menu/PlayerBattleMenuOptionGrid";
 import { useActionStore } from "@/store/dungeons/battle/action";
 
-export const Battle: State<StateName.Battle> = {
+export const Battle: State<typeof StateName.Battle> = {
   name: StateName.Battle,
   onEnter: async () => {
     // The attack sequence, each step separated by a brief pause:

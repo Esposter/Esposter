@@ -8,7 +8,7 @@ import { getRecordDifferenceDescription } from "#shared/services/resource/sheet/
 import { getValueSize } from "#shared/services/resource/sheet/commands/getValueSize";
 import { takeOne } from "@esposter/shared";
 
-export class UpdateRowCommand extends ADataSourceCommand<CommandType.UpdateRow> {
+export class UpdateRowCommand extends ADataSourceCommand<typeof CommandType.UpdateRow> {
   readonly type = CommandType.UpdateRow;
 
   get description() {

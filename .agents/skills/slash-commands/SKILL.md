@@ -24,11 +24,11 @@ A command with no parameters runs at once, one with parameters goes pending; the
 
 ## Adding a New Command
 
-Enum value, map entry, switch case — the map's `satisfies` and the switch's guard fail typecheck until all three agree (`references/execution.md`).
+Value-set member, map entry, switch case — the map's `satisfies` and the switch's guard fail typecheck until all three agree (`references/execution.md`).
 
 ## The registry is the list, not this page
 
-The enum, the map and the switch must stay in sync — `satisfies Record<SlashCommandType, SlashCommand>` enforces the map and `exhaustiveGuard` enforces the switch — so `SlashCommandDefinitionMap` **is** the readable inventory of what exists and what each command does. Never mirror it here: a copy is one command behind from the first addition.
+The value set, the map and the switch must stay in sync — `satisfies Record<SlashCommandType, SlashCommand>` enforces the map and `exhaustiveGuard` enforces the switch — so `SlashCommandDefinitionMap` **is** the readable inventory of what exists and what each command does. Never mirror it here: a copy is one command behind from the first addition.
 
 Two shapes are worth knowing before reading it, because neither is guessable from the map alone:
 

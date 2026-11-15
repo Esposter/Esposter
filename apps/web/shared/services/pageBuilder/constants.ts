@@ -89,7 +89,7 @@ export const DESKTOP_MIN_WIDTH = TABLET_BREAKPOINT_WIDTH + 1;
 // The breakpoints from the widest to the narrowest, the order their rules are written in, so a narrower override comes after a wider one
 export const STYLE_BREAKPOINT_ORDER = [StyleBreakpoint.Base, StyleBreakpoint.Tablet, StyleBreakpoint.Mobile] as const;
 // The pixel width each device other than desktop draws the page at, inside its own breakpoint
-export const DEVICE_WIDTH_MAP: Readonly<Record<Exclude<PageBuilderDevice, PageBuilderDevice.Desktop>, number>> =
+export const DEVICE_WIDTH_MAP: Readonly<Record<Exclude<PageBuilderDevice, typeof PageBuilderDevice.Desktop>, number>> =
   Object.freeze({ [PageBuilderDevice.Mobile]: 375, [PageBuilderDevice.Tablet]: 768 });
 
 // A UUID that names no survey, the one value a survey invite's id takes until its author chooses a survey

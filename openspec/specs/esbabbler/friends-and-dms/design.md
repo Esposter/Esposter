@@ -4,7 +4,7 @@ Friends are the only source of DM recipients — there is no separate messaging-
 
 ## How it works
 
-Relationship state is encoded by which table a row lives in — no status enum. The pending and accepted tables use a deterministic natural key (`getFriendshipId(senderId, receiverId)`, sorted ids joined by a separator), so duplicate sends conflict on the primary key and become no-ops, and any relationship check is an O(1) key lookup. The blocks table is keyed by its ordered `(blockerId, blockedId)` pair.
+Relationship state is encoded by which table a row lives in — no status value set. The pending and accepted tables use a deterministic natural key (`getFriendshipId(senderId, receiverId)`, sorted ids joined by a separator), so duplicate sends conflict on the primary key and become no-ops, and any relationship check is an O(1) key lookup. The blocks table is keyed by its ordered `(blockerId, blockedId)` pair.
 
 ```mermaid
 stateDiagram-v2
@@ -69,5 +69,5 @@ DMs are invisible to non-participants: invite links are rejected for `RoomType.D
 
 ## Notes
 
-- DMs are not a special case in the push path: `getMessageRecipientUserIds` has no room-type branch, so a DM is filtered exactly like a room. What makes DMs feel different is the default value of `usersToRooms.notificationType` — `NotificationType.DirectMessage`, whose UI label is **Only @mentions**. That enum value names the _notification preference_, not `RoomType.DirectMessage`, and the two are unrelated: it means notify me when I am mentioned by id. A member who wants every message opts into `All`. See [push notifications](../push-notifications/design.md).
+- DMs are not a special case in the push path: `getMessageRecipientUserIds` has no room-type branch, so a DM is filtered exactly like a room. What makes DMs feel different is the default value of `usersToRooms.notificationType` — `NotificationType.DirectMessage`, whose UI label is **Only @mentions**. That member names the _notification preference_, not `RoomType.DirectMessage`, and the two are unrelated: it means notify me when I am mentioned by id. A member who wants every message opts into `All`. See [push notifications](../push-notifications/design.md).
 - Re-adding someone to a group DM they hid works because their `usersToRooms` row is kept.

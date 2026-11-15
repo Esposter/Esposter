@@ -40,7 +40,7 @@ The design, from each module's job to the order a frame runs in, is `openspec/sp
 - **Weather is written after the sky and before the water** — `references/lighting.md`.
 - **One input, read once a frame, bound in one map** — `references/input.md`.
 - **What moves the camera runs ahead of the floating origin by priority, and the body moves in the world's own coordinates** — `references/camera-and-floating-origin.md`.
-- **The engine depends on three alone, so it dispatches over an enum by an `if` chain or a map, never a `switch`**: lint's `default-case` wants a default, and the engine has no `exhaustiveGuard` to give one.
+- **The engine depends on three alone, so it dispatches over a value set by an `if` chain or a map, never a `switch`**: lint's `default-case` wants a default, and the engine has no `exhaustiveGuard` to give one.
 - **A screen over the world is a `ScreenKind`** — `references/screens.md`.
 - **A game rule that moves over time is a deterministic step in the world** — `references/game-rules.md`.
 - **Combat is one set of rules every feature calls into** — `references/game-rules.md`.

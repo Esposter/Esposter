@@ -1,16 +1,17 @@
-export enum GrandmaUpgradeId {
-  "Aging Agents" = "Aging Agents",
-  "Double-thick Glasses" = "Double-thick Glasses",
-  "Forwards From Grandma" = "Forwards From Grandma",
-  "Generation Degeneration" = "Generation Degeneration",
-  "Good Manners" = "Good Manners",
-  "Kitchen Cabinets" = "Kitchen Cabinets",
-  "Lubricated Dentures" = "Lubricated Dentures",
-  "Prune Juice" = "Prune Juice",
-  "Reverse Dementia" = "Reverse Dementia",
-  "Steel-plated Rolling Pins" = "Steel-plated Rolling Pins",
-  "The Unbridling" = "The Unbridling",
-  "Timeproof Hair Dyes" = "Timeproof Hair Dyes",
-  Visits = "Visits",
-  "Xtreme Walkers" = "Xtreme Walkers",
-}
+export const GrandmaUpgradeId = {
+  "Aging Agents": "Aging Agents",
+  "Double-thick Glasses": "Double-thick Glasses",
+  "Forwards From Grandma": "Forwards From Grandma",
+  "Generation Degeneration": "Generation Degeneration",
+  "Good Manners": "Good Manners",
+  "Kitchen Cabinets": "Kitchen Cabinets",
+  "Lubricated Dentures": "Lubricated Dentures",
+  "Prune Juice": "Prune Juice",
+  "Reverse Dementia": "Reverse Dementia",
+  "Steel-plated Rolling Pins": "Steel-plated Rolling Pins",
+  "The Unbridling": "The Unbridling",
+  "Timeproof Hair Dyes": "Timeproof Hair Dyes",
+  Visits: "Visits",
+  "Xtreme Walkers": "Xtreme Walkers",
+} as const;
+export type GrandmaUpgradeId = (typeof GrandmaUpgradeId)[keyof typeof GrandmaUpgradeId];

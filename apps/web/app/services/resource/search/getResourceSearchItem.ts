@@ -8,7 +8,7 @@ import { ID_SEPARATOR, RoutePath } from "@esposter/shared";
 // One row shape for both the Resources group and the Recently opened group — both are live rows now
 export const getResourceSearchItem = (
   { id, name, type }: Pick<ResourceInResource, "id" | "name" | "type">,
-  group: ResourceSearchGroup.RecentlyOpened | ResourceSearchGroup.Resources,
+  group: typeof ResourceSearchGroup.RecentlyOpened | typeof ResourceSearchGroup.Resources,
 ): ResourceSearchItem => ({
   group,
   icon: ResourceDefinitionMap[type].icon,

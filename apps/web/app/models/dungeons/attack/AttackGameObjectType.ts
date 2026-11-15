@@ -1,6 +1,4 @@
 // Attacks can be a simple base sprite
 // Or it can be multiple sprites inside a container
-export enum AttackGameObjectType {
-  Container = "Container",
-  Sprite = "Sprite",
-}
+export const AttackGameObjectType = { Container: "Container", Sprite: "Sprite" } as const;
+export type AttackGameObjectType = (typeof AttackGameObjectType)[keyof typeof AttackGameObjectType];

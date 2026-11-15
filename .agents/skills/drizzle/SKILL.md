@@ -11,7 +11,7 @@ description: Apply when writing or modifying DB schema files in packages/db-sche
 - **A table without its product area's prefix** — SQLite has no schemas, so the area is the table-name prefix (`message_rooms`), and `packages/db-schema/src/schema.test.ts` holds it (`references/schemas-and-names.md`).
 - **A table writing its own copy of a column group the others share** — rejected: parallel tables share their columns through a factory, because a builder reused across tables shares one config (`references/table-definition.md`).
 - **Following `drizzle-kit`'s own skills (`pnpm-drizzle-kit-*`) where they differ from this one** — they describe the tool in general, `push` and CLI-applied migrations included; this skill wins, since `db:gen` is the only generator (`references/migrations.md`, and the package's apply path in `packages/db-schema/README.md`).
-- **A bare table export (`rooms`, `users`)** — it collides with a local of the same name, a row type or a name another module already exports (the `UserStatus` enum); the `In<Area>` suffix is derived, never chosen, and `packages/db-schema/src/schema.test.ts` holds it.
+- **A bare table export (`rooms`, `users`)** — it collides with a local of the same name, a row type or a name another module already exports (the `UserStatus` value set); the `In<Area>` suffix is derived, never chosen, and `packages/db-schema/src/schema.test.ts` holds it.
 
 ## Deep dives
 

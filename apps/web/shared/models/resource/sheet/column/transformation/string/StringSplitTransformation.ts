@@ -8,7 +8,7 @@ import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
 
 export interface StringSplitTransformation
-  extends ItemEntityType<ColumnTransformationType.StringSplit>, SourceColumnId {
+  extends ItemEntityType<typeof ColumnTransformationType.StringSplit>, SourceColumnId {
   delimiter: string;
   segmentIndex: number;
 }

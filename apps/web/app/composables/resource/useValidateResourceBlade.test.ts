@@ -21,7 +21,10 @@ describe(useValidateResourceBlade, () => {
     Object.assign(useRouter().currentRoute.value.params, { id: resource.id });
     const scope = effectScope();
     scope.run(() => {
-      useValidateResourceBlade(ref<ResourceInResource | undefined>(resource), ref(ResourceBladeSlug.Items));
+      useValidateResourceBlade(
+        ref<ResourceInResource | undefined>(resource),
+        ref<ResourceBladeSlug>(ResourceBladeSlug.Items),
+      );
     });
 
     expect(showErrorMock).toHaveBeenCalledExactlyOnceWith(
@@ -39,7 +42,10 @@ describe(useValidateResourceBlade, () => {
     Object.assign(useRouter().currentRoute.value.params, { id: v7() });
     const scope = effectScope();
     scope.run(() => {
-      useValidateResourceBlade(ref<ResourceInResource | undefined>(resource), ref(ResourceBladeSlug.Items));
+      useValidateResourceBlade(
+        ref<ResourceInResource | undefined>(resource),
+        ref<ResourceBladeSlug>(ResourceBladeSlug.Items),
+      );
     });
 
     expect(showErrorMock).not.toHaveBeenCalled();

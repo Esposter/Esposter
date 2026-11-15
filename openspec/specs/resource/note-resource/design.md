@@ -21,13 +21,13 @@ flowchart LR
 
 ## Data model
 
-Note owns no tables. It is one `ResourceType` enum value (`Note`, one value of the resource type enum) and one `ResourceDefinitionMap` entry (`icon`, `title`, `contentSchema`, `capabilities: { fileAssets: true, portable: true, publishable: true }`). Its working copy lives at `{id}/content.json` in the shared `resource-assets` bucket and its published versions in the [version store](../resource-version-store/design.md), exactly like every other resource — see [resources](../../architecture/resource/design.md).
+Note owns no tables. It is one `ResourceType` value set member (`Note`) and one `ResourceDefinitionMap` entry (`icon`, `title`, `contentSchema`, `capabilities: { fileAssets: true, portable: true, publishable: true }`). Its working copy lives at `{id}/content.json` in the shared `resource-assets` bucket and its published versions in the [version store](../resource-version-store/design.md), exactly like every other resource — see [resources](../../architecture/resource/design.md).
 
 ## Key files
 
 | File                                                            | Role                                                                  |
 | --------------------------------------------------------------- | --------------------------------------------------------------------- |
-| `packages/db-schema/src/models/resource/ResourceType.ts`        | `Note` enum value                                                     |
+| `packages/db-schema/src/models/resource/ResourceType.ts`        | `Note` value set member                                               |
 | `apps/web/shared/models/resource/note/NoteResource.ts`          | `{ doc }` content schema                                              |
 | `apps/web/shared/services/resource/constants.ts`                | `EMPTY_NOTE_DOC`, the empty-document default                          |
 | `apps/web/shared/services/resource/ResourceDefinitionMap.ts`    | Note definition entry                                                 |
@@ -46,7 +46,7 @@ Note owns no tables. It is one `ResourceType` enum value (`Note`, one value of t
 
 - **Naming is Note, never Document.** "Document" reads as an umbrella over every editor resource rather than this one type, which is exactly the ambiguity that consolidating them removes. The identifier is singular like every `ResourceType` value; a pluralized display title is a UX decision deferred to `ResourceDefinitionMap` across all types at once, never an identifier change.
 - **JSON at rest, HTML only at render.** No sanitization happens on the save path because nothing HTML is ever stored.
-- **Extensibility cost.** "One `ResourceType` plus one `ResourceDefinitionMap` entry" understates what a new type costs. Beyond the enum value, the definition entry, the editor component and the view component, it needs a per-type tRPC router (`note.ts`) registered in the root router, and a `[ResourceType.Note]: []` entry in the exhaustive `ResourceBladeDefinitionMap`; making it creatable from the explorer adds `CreatableResourceTypes` and `ResourceTypeDescriptionMap`. None of that is the definition map — it is the router-per-type topology, and it is the honest friction of adding a type. Dispatch is the half that is derived rather than listed: `useCreateResource` reaches the type's `createResource` through `useResourceRouter` and the type's own name, so no list of create procedures exists to keep in step.
+- **Extensibility cost.** "One `ResourceType` plus one `ResourceDefinitionMap` entry" understates what a new type costs. Beyond the value set member, the definition entry, the editor component and the view component, it needs a per-type tRPC router (`note.ts`) registered in the root router, and a `[ResourceType.Note]: []` entry in the exhaustive `ResourceBladeDefinitionMap`; making it creatable from the explorer adds `CreatableResourceTypes` and `ResourceTypeDescriptionMap`. None of that is the definition map — it is the router-per-type topology, and it is the honest friction of adding a type. Dispatch is the half that is derived rather than listed: `useCreateResource` reaches the type's `createResource` through `useResourceRouter` and the type's own name, so no list of create procedures exists to keep in step.
 - Collaboration and comments are platform-wide deferrals ([collaboration](../../../deferred/resource/document-collaboration/design.md), [comments](../../../deferred/resource/resource-comments/design.md)), and version history is platform-wide ([resource snapshots](../resource-snapshots/design.md)); Note rides what the platform does. Markdown export and import (the Portable capability) are built, in [note Markdown portability](../note-markdown-portability/design.md).
 
 ## Sources

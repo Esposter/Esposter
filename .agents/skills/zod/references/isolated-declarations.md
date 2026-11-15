@@ -17,8 +17,8 @@ export const itemMetadataSchema: z.ZodObject<{ createdAt: z.ZodDate; deletedAt: 
 
 Annotation pins a portable shape (`.shape` survives emit); `satisfies` still enforces interface conformance.
 
-- Match each field's zod type exactly: `z.array(x)` → `z.ZodArray<typeof x>`; `z.enum(MyEnum)` → `z.ZodEnum<typeof MyEnum>`; `z.strictObject` carries a second `z.core.$strict` config param; reference an imported or `.pick()`-ed sub-schema via `typeof`, extracting an inline `.pick()` to a local `const` first.
-- Annotate unions/enums with their concrete type too (`z.ZodDiscriminatedUnion<...>`, `z.ZodEnum<...>`), never `z.ZodType<T>`.
+- Match each field's zod type exactly: `z.array(x)` → `z.ZodArray<typeof x>`; `z.enum(MyValueSet)` → `z.ZodEnum<typeof MyValueSet>`; `z.strictObject` carries a second `z.core.$strict` config param; reference an imported or `.pick()`-ed sub-schema via `typeof`, extracting an inline `.pick()` to a local `const` first.
+- Annotate unions and `z.enum` schemas with their concrete type too (`z.ZodDiscriminatedUnion<...>`, `z.ZodEnum<...>`), never `z.ZodType<T>`.
 - **To discover the exact type to write**, temporarily assign the schema to `const _: null = mySchema;` and run the package's `typecheck` — the `TS2322` error prints the full inferred `ZodObject<...>` type verbatim; paste it into the annotation and delete the probe.
 - Refinements don't change the annotation — `z.int()` stays `z.ZodNumber`, and `.nonnegative()`/`.positive()` are annotation-safe, so tightening constraints in a library needs no annotation edit (still verify with the package's `typecheck`).
 - In the **app** and **db-schema** (no `--isolatedDeclarations`), keep plain `satisfies z.ZodType<T>` — inference emits the full `ZodObject`.

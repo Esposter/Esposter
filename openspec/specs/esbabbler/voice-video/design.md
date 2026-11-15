@@ -56,7 +56,7 @@ There is **no** shared "speaking indicator analyser" to reuse — in-call active
 
 | File                                                                   | Role                                                                                      |
 | :--------------------------------------------------------------------- | :---------------------------------------------------------------------------------------- |
-| `packages/db-schema/src/schema/message/userSettingsInMessage.ts`       | fields + `NoiseSuppressionMode` enum + check constraints                                  |
+| `packages/db-schema/src/schema/message/userSettingsInMessage.ts`       | fields + `NoiseSuppressionMode` value set + check constraints                             |
 | `apps/web/app/components/Message/Model/User/Settings/Type/Voice/`      | the panel: `Devices/`, `Volume/`, `MicrophoneTest/`, `InputProfile/`, `InputSensitivity/` |
 | `apps/web/app/composables/message/user/settings/useMicrophoneLevel.ts` | read-only mic level for the panel meters                                                  |
 | `apps/web/app/models/message/room/call/MicrophoneProcessor.ts`         | RealtimeKit audio middleware: builds the gate's AudioWorkletNode and posts its settings   |

@@ -10,6 +10,6 @@ export interface GestureMoving {
   origin: Point;
   // The copy id of each original of an Alt drag, fixed at the press, which the copies are inserted under when the drag starts
   originalIdCopyIdMap?: Record<string, string>;
-  phase: GesturePhase.Moving;
+  phase: typeof GesturePhase.Moving;
   pointerId: number;
 }

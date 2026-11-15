@@ -3,7 +3,7 @@ import type { UserConfig } from "tsdown";
 import { KIT_MODULE_DIRECTORY } from "#scripts/kit/constants";
 import { generateCharacterKitMap } from "#scripts/kit/generateCharacterKitMap";
 import { tresCustomElements } from "#scripts/tres/tresCustomElements";
-import { generateExports, getTsdownConfigurationVue } from "@esposter/configuration";
+import { ExportsGeneration, generateExports, getTsdownConfigurationVue } from "@esposter/configuration";
 import { mergeConfig } from "tsdown";
 
 // `terrainTileWorker` is the terrain worker's own entry, which the app bundles as a worker, and `save`
@@ -49,7 +49,7 @@ const tsdownConfiguration: UserConfig = mergeConfig(getTsdownConfigurationVue({ 
   hooks: {
     "build:prepare": async ({ options: { cwd } }) => {
       await generateCharacterKitMap(cwd);
-      generateExports(cwd, "vue", [KIT_MODULE_DIRECTORY, AVATAR_MODULE_DIRECTORY]);
+      generateExports(cwd, ExportsGeneration.Vue, [KIT_MODULE_DIRECTORY, AVATAR_MODULE_DIRECTORY]);
     },
   },
 });

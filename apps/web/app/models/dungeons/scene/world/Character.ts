@@ -9,7 +9,7 @@ import { ItemMetadata } from "#shared/models/shared/ItemMetadata";
 export class Character<TName extends string = string> extends ItemMetadata {
   declare asset: Asset;
   direction?: Direction;
-  declare id: `${CharacterId.Npc}${typeof ID_SEPARATOR}${NpcId}` | CharacterId.Player;
+  declare id: `${typeof CharacterId.Npc}${typeof ID_SEPARATOR}${NpcId}` | typeof CharacterId.Player;
   declare name: TName;
   // Some spritesheets may only animate one side and rely on us to flipX
   singleSidedSpritesheetDirection?: Direction.LEFT | Direction.RIGHT;

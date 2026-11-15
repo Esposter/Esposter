@@ -6,7 +6,7 @@ Read when adding a table, choosing the product area it lives in, naming anything
 
 SQLite has no schemas, so a product area is a table-name prefix. A folder is the area: `src/schema/<area>/` holds `<area>Schema.ts` (`createDatabaseSchema("<area>")`, `packages/db-schema/src/createDatabaseSchema.ts`) and that area's tables, and `src/relations/<area>/` holds their relation parts. A table joins its area through the `sqliteTable` wrapper's `schema` option, and the wrapper names it `<area>_<table>` in D1 (`message_rooms`). Every core table shares one D1 database, so the prefix keeps each name unique across the folders.
 
-An enum is not a database object. A TS enum is held on its column through `createEnumColumn(SomeEnum)` (`packages/db-schema/src/services/shared/createEnumColumn.ts`), and its values are stored as text.
+A value set is not a database object. It is held on its column through `createEnumColumn(SomeValueSet)` (`packages/db-schema/src/services/shared/createEnumColumn.ts`), and its values are stored as text.
 
 A table belongs to the product area whose docs own it — the area is the unit a reader already knows, and the prefix is what a reader sees in the migration SQL:
 
@@ -27,7 +27,7 @@ A new table goes in the area that owns it; a new area with tables of its own get
 
 ## Every name drizzle derives from a table carries its area
 
-The export is derived from the DDL name, never chosen, so it can never collide with a local (`const rooms = …`), a row type or a name another module already exports (the `UserStatus` enum), and every reference says where its table lives:
+The export is derived from the DDL name, never chosen, so it can never collide with a local (`const rooms = …`), a row type or a name another module already exports (the `UserStatus` value set), and every reference says where its table lives:
 
 | Derived from the table `posts` in `post` | Name                      |
 | ---------------------------------------- | ------------------------- |

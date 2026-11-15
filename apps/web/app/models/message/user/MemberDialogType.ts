@@ -1,10 +1,11 @@
 // A dialog a member's actions open, from their profile's overflow menu or their row's context menu alike
-export enum MemberDialogType {
-  Ban = "Ban",
-  DisplayName = "DisplayName",
-  Kick = "Kick",
-  Notes = "Notes",
-  SoftBan = "SoftBan",
-  Timeout = "Timeout",
-  Warn = "Warn",
-}
+export const MemberDialogType = {
+  Ban: "Ban",
+  DisplayName: "DisplayName",
+  Kick: "Kick",
+  Notes: "Notes",
+  SoftBan: "SoftBan",
+  Timeout: "Timeout",
+  Warn: "Warn",
+} as const;
+export type MemberDialogType = (typeof MemberDialogType)[keyof typeof MemberDialogType];

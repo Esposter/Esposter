@@ -3,4 +3,4 @@ import type { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType
 import type { BlockNode } from "vue-block-editor-headless";
 
 // A Columns node of a webpage: a row of Column nodes
-export type ColumnsNode = BlockNode<WebpageNodeType.Columns, ColumnsNodeProps>;
+export type ColumnsNode = BlockNode<typeof WebpageNodeType.Columns, ColumnsNodeProps>;

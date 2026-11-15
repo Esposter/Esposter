@@ -7,7 +7,7 @@ import { getValueSize } from "#shared/services/resource/sheet/commands/getValueS
 import { pluralize } from "#shared/util/text/pluralize";
 import { takeOne } from "@esposter/shared";
 
-export class CreateRowsCommand extends ADataSourceCommand<CommandType.CreateRows> {
+export class CreateRowsCommand extends ADataSourceCommand<typeof CommandType.CreateRows> {
   readonly type = CommandType.CreateRows;
 
   get description() {

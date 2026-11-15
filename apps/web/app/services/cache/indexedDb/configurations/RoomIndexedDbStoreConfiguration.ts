@@ -8,4 +8,4 @@ export const RoomIndexedDbStoreConfiguration = {
   indexName: "viewerId",
   keyPath: ["viewerId", "id"],
   storeName: IndexedDbStoreName.Rooms,
-} as const satisfies IndexedDbStoreConfiguration<IndexedDbStoreName.Rooms>;
+} as const satisfies IndexedDbStoreConfiguration<typeof IndexedDbStoreName.Rooms>;

@@ -52,8 +52,8 @@ export const useRealtimeStore = defineStore("message/room/realtime", () => {
   // Panel, mic test, and pre-join preview - so the call captures the device the user actually picked.
   const voiceDeviceSettingsStore = useVoiceDeviceSettingsStore();
   const remoteAudioElements = new Map<string, { element: HTMLAudioElement; identity: string }>();
-  const connectionQuality = ref(ConnectionQuality.Unknown);
-  const connectionState = ref(ConnectionState.Disconnected);
+  const connectionQuality = ref<ConnectionQuality>(ConnectionQuality.Unknown);
+  const connectionState = ref<ConnectionState>(ConnectionState.Disconnected);
   // The browser refused to play the call's sound without a gesture of the reader's own: it stays silent until they
   // Press the notice's button, whose click is the gesture play() needs
   const isAudioPlaybackBlocked = ref(false);

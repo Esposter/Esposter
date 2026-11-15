@@ -21,7 +21,7 @@ export const useWhiteboardEditorStore = defineStore("resource/whiteboard/editor"
   const selectedIds = ref<string[]>([]);
   const shapeKind = ref<ShapeKind>(ShapeKind.Rectangle);
   const textEditElementId = ref("");
-  const tool = ref(GestureTool.Select);
+  const tool = ref<GestureTool>(GestureTool.Select);
   const viewport = ref<Viewport>({ scale: 1, x: 0, y: 0 });
   const getCentreScreen = (): Point => ({ x: canvasRect.value.width / 2, y: canvasRect.value.height / 2 });
   // The document point at the middle of the canvas, where a picked image is placed

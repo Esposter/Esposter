@@ -5,7 +5,7 @@ import { ADataSourceCommand } from "#shared/models/resource/sheet/commands/AData
 import { CommandType } from "#shared/models/resource/sheet/commands/CommandType";
 import { getToggleColumnVisibilityDescription } from "#shared/services/resource/sheet/commands/getToggleColumnVisibilityDescription";
 
-export class ToggleColumnVisibilityCommand extends ADataSourceCommand<CommandType.ToggleColumnVisibility> {
+export class ToggleColumnVisibilityCommand extends ADataSourceCommand<typeof CommandType.ToggleColumnVisibility> {
   readonly type = CommandType.ToggleColumnVisibility;
 
   get description() {

@@ -8,7 +8,8 @@ import { sourceColumnIdSchema } from "#shared/models/resource/sheet/column/trans
 import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
 
-export interface DatePartTransformation extends ItemEntityType<ColumnTransformationType.DatePart>, SourceColumnId {
+export interface DatePartTransformation
+  extends ItemEntityType<typeof ColumnTransformationType.DatePart>, SourceColumnId {
   datePartType: DatePartType;
 }
 

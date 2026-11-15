@@ -7,7 +7,7 @@ import { VisualType } from "#shared/models/dashboard/data/VisualType";
 export abstract class AVisualTypeResolver implements ItemEntityType<VisualType> {
   type;
 
-  constructor(type = VisualType.Area) {
+  constructor(type: VisualType = VisualType.Area) {
     this.type = type;
   }
 

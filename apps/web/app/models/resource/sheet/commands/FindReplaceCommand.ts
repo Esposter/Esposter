@@ -8,7 +8,7 @@ import { coerceValue } from "#shared/services/resource/sheet/column/coerceValue"
 import { writeAffectedCells } from "@/services/resource/sheet/commands/writeAffectedCells";
 import { takeOne } from "@esposter/shared";
 
-export class FindReplaceCommand extends ADataSourceCommand<CommandType.FindReplace> {
+export class FindReplaceCommand extends ADataSourceCommand<typeof CommandType.FindReplace> {
   readonly type = CommandType.FindReplace;
 
   get description() {

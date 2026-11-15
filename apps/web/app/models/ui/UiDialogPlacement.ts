@@ -2,11 +2,12 @@
 // The middle, for a decision about one thing, as a confirmation is; down the edge a navigation drawer's button stands
 // At, at every width; up from the bottom edge, for content read beside the page it is about; or over the whole page at
 // Every width, for content the reader has asked to give the room
-export enum UiDialogPlacement {
-  DrawerBottom = "DrawerBottom",
-  DrawerEnd = "DrawerEnd",
-  DrawerStart = "DrawerStart",
-  FullScreen = "FullScreen",
-  High = "High",
-  Middle = "Middle",
-}
+export const UiDialogPlacement = {
+  DrawerBottom: "DrawerBottom",
+  DrawerEnd: "DrawerEnd",
+  DrawerStart: "DrawerStart",
+  FullScreen: "FullScreen",
+  High: "High",
+  Middle: "Middle",
+} as const;
+export type UiDialogPlacement = (typeof UiDialogPlacement)[keyof typeof UiDialogPlacement];

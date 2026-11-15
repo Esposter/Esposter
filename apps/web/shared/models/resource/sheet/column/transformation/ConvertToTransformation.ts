@@ -8,7 +8,8 @@ import { sourceColumnIdSchema } from "#shared/models/resource/sheet/column/trans
 import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
 
-export interface ConvertToTransformation extends ItemEntityType<ColumnTransformationType.ConvertTo>, SourceColumnId {
+export interface ConvertToTransformation
+  extends ItemEntityType<typeof ColumnTransformationType.ConvertTo>, SourceColumnId {
   // A computed column is served as the type it yields, so a target is any type a dataset column can hold
   targetType: DatasetColumnType;
 }

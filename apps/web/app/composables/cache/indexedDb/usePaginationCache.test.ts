@@ -17,7 +17,7 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-type MessageValue = IndexedDbDatabaseSchema[IndexedDbStoreName.Messages]["value"];
+type MessageValue = IndexedDbDatabaseSchema[typeof IndexedDbStoreName.Messages]["value"];
 
 describe(usePaginationCache, () => {
   const partitionKeyRef = ref("");

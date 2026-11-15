@@ -1,12 +1,12 @@
 import type { ESTree, Rule } from "@oxlint/plugins";
 
-import { MESSAGE } from "#src/services/oxlint/enumMap/constants";
+import { MESSAGE } from "#src/services/oxlint/valueSetMap/constants";
 import { defineRule } from "@oxlint/plugins";
 
 // A constant map is a PascalCase `…Map`, the name a lookup table gets when it is a module's own constant
 const MAP_NAME_REGEX = /^[A-Z]\w*Map$/u;
 
-// `Record<string, …>` is an open set of keys, which no enum can name, so the map over it keeps its literal keys. A
+// `Record<string, …>` is an open set of keys, which no set can name, so the map over it keeps its literal keys. A
 // `Partial`, `Readonly` or `Required` around it leaves the set open, so it is read through
 const OPEN_SET_WRAPPERS = new Set(["Partial", "Readonly", "Required"]);
 const checkIsOpenSet = (type: ESTree.TSType | undefined): boolean => {
@@ -34,7 +34,7 @@ export const noLiteralMapKey: Rule = defineRule({
         }
         if (expression.type !== "ObjectExpression" || isOpenSet) return;
 
-        // A numeric key is a dataset's id, which no enum can name, so a map keyed by ids keeps them
+        // A numeric key is a dataset's id, which no set can name, so a map keyed by ids keeps them
         for (const property of expression.properties)
           if (property.type === "Property" && !property.computed && !checkIsNumericKey(property.key))
             context.report({ message: MESSAGE, node: property.key });

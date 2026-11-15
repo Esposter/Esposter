@@ -6,6 +6,6 @@ import type { Point } from "vue-block-editor-headless";
 export interface GestureResizing {
   handle: ResizeHandle;
   origin: Point;
-  phase: GesturePhase.Resizing;
+  phase: typeof GesturePhase.Resizing;
   pointerId: number;
 }

@@ -98,7 +98,7 @@ Nothing in a fetch composable touches the cache: hydration is a watcher's job, f
 
 | File                                                          | Role                                                                                       |
 | :------------------------------------------------------------ | :----------------------------------------------------------------------------------------- |
-| `apps/web/app/models/cache/indexedDb/`                        | store name enum, configuration interface, typed `DBSchema`                                 |
+| `apps/web/app/models/cache/indexedDb/`                        | store name value set, configuration interface, typed `DBSchema`                            |
 | `apps/web/app/services/cache/indexedDb/openIndexedDb.ts`      | singleton open, releasing to another tab's delete, + `resetIndexedDb` (sign-out and tests) |
 | `apps/web/app/services/cache/constants.ts`                    | `RESET_DATABASE_TIMEOUT_MS`, the bound on the delete's wait                                |
 | `apps/web/app/services/auth/signOutOfBrowser.ts`              | deletes the whole database just before the load                                            |

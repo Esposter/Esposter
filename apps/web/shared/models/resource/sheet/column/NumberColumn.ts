@@ -9,7 +9,7 @@ import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { numberFormatSchema } from "#shared/models/resource/sheet/column/NumberFormat";
 import { z } from "zod";
 
-export class NumberColumn extends AColumn<ColumnType.Number> implements Partial<Format<NumberFormat>> {
+export class NumberColumn extends AColumn<typeof ColumnType.Number> implements Partial<Format<NumberFormat>> {
   footerStatisticsKey?: ColumnStatisticsKey;
   format?: NumberFormat;
   override readonly type = ColumnType.Number;

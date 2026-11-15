@@ -7,7 +7,7 @@ import { columnTransformationSchema } from "#shared/models/resource/sheet/column
 import { ColumnTransformationType } from "#shared/models/resource/sheet/column/transformation/ColumnTransformationType";
 import { z } from "zod";
 
-export class ComputedColumn extends AColumn<ColumnType.Computed> {
+export class ComputedColumn extends AColumn<typeof ColumnType.Computed> {
   transformation: ColumnTransformation = {
     sourceColumnId: "",
     targetType: ColumnType.String,

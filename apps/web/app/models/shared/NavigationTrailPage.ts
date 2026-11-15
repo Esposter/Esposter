@@ -2,9 +2,7 @@
 // Because a trail is recorded onto a history entry and read back off entries written by earlier releases: an
 // Identifier that names the page and nothing else lets NavigationTrailPageMap re-route it or rename its crumb
 // Without invalidating the trails already out there. See openspec/specs/resource/breadcrumb-trail/design.md
-export enum NavigationTrailPage {
-  All = "all",
-  Resources = "resources",
-}
+export const NavigationTrailPage = { All: "all", Resources: "resources" } as const;
+export type NavigationTrailPage = (typeof NavigationTrailPage)[keyof typeof NavigationTrailPage];
 // Widened to string[] so a slug read back off a history entry can be checked without a cast
 export const NavigationTrailPages: readonly string[] = Object.values(NavigationTrailPage);

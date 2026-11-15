@@ -44,7 +44,7 @@ Because the middleware already resolved the session, `getAuthedMiddleware.ts` si
 
 A route that answers before it knows its caller spends the address budget through `consumeAddressRateLimit`, which applies the same production gate and the same bypass, so the rule is written once rather than per route. It resolves to whether the request may proceed.
 
-Four procedure builders sit on top: `standardRateLimitedProcedure` (public, standard budget), `slowRateLimitedProcedure` (public, the tighter budget), `standardAuthedProcedure`, and `slowAuthedProcedure`. `AuthedProcedureMap.ts` maps the enum onto the latter two, and the room procedure builder `getPermissionsProcedure`, described in [RBAC](../../esbabbler/rbac/design.md), takes a `rateLimiterType` parameter defaulting to `Standard` and selects through it, so moving a room procedure onto the slow budget is a one-argument change at its declaration.
+Four procedure builders sit on top: `standardRateLimitedProcedure` (public, standard budget), `slowRateLimitedProcedure` (public, the tighter budget), `standardAuthedProcedure`, and `slowAuthedProcedure`. `AuthedProcedureMap.ts` maps the value set onto the latter two, and the room procedure builder `getPermissionsProcedure`, described in [RBAC](../../esbabbler/rbac/design.md), takes a `rateLimiterType` parameter defaulting to `Standard` and selects through it, so moving a room procedure onto the slow budget is a one-argument change at its declaration.
 
 ## Refusals
 
@@ -74,13 +74,13 @@ Paths relative to `apps/web`; `packages/` ones to the repo root.
 | `packages/db-schema/src/services/cloudflare/constants.ts`                 | `RATE_LIMITER_DURATION_SECONDS`, the one window            |
 | `configuration/wrangler.ts`                                               | declares every binding in `ratelimits`, per environment    |
 | `server/types/cloudflare.d.ts`                                            | types each binding as `RateLimit`                          |
-| `server/models/rateLimiter/RateLimiterType.ts`                            | the `Slow` / `Standard` enum                               |
-| `server/services/rateLimiter/RateLimiterMap.ts`                           | enum → binding for the procedure budgets                   |
+| `server/models/rateLimiter/RateLimiterType.ts`                            | the `Slow` / `Standard` value set                          |
+| `server/services/rateLimiter/RateLimiterMap.ts`                           | value set → binding for the procedure budgets              |
 | `server/services/rateLimiter/consumeAddressRateLimit.ts`                  | spends the address budget, with the production gate        |
 | `server/services/rateLimiter/constants.ts`                                | the bypass log message                                     |
 | `server/trpc/middleware/getRateLimitedMiddleware.ts`                      | the tRPC budget, refused with `TOO_MANY_REQUESTS`          |
 | `server/trpc/middleware/getAuthedMiddleware.ts`                           | pipes the rate limiter, then requires a session            |
-| `server/trpc/procedure/room/AuthedProcedureMap.ts`                        | enum → authed procedure builder                            |
+| `server/trpc/procedure/room/AuthedProcedureMap.ts`                        | value set → authed procedure builder                       |
 | `server/api/webhooks/[id]/[token].post.ts`                                | inbound webhook route, 429 on overspend                    |
 | `server/api/mcp.post.ts`                                                  | MCP endpoint, 429 on overspend of the address budget       |
 | `server/api/resource-assets/[...path].get.ts`                             | asset redirect route, 429 on overspend                     |

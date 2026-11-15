@@ -14,7 +14,7 @@ export class ClickerSave extends AItemEntity implements ItemEntityType<ClickerTy
   boughtBuildings: BoughtBuilding[] = [];
   boughtUpgrades: UpgradeId[] = [];
   pointCount = 0;
-  type = ClickerType.Default;
+  type: ClickerType = ClickerType.Default;
 
   constructor(init?: Partial<ClickerSave>) {
     super();

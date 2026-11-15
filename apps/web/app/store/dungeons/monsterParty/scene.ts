@@ -21,7 +21,7 @@ export const useMonsterPartySceneStore = defineStore("dungeons/monsterParty/scen
       grid.push(monsters.value.slice(index, index + COLUMN_SIZE));
     return grid;
   });
-  const sceneMode = ref(SceneMode.Default);
+  const sceneMode = ref<SceneMode>(SceneMode.Default);
   const monsterIdToMove = ref("");
   return { isPlayerFainted, monsterIdToMove, monsters, monstersGrid, sceneMode };
 });

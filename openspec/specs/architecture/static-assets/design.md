@@ -23,9 +23,9 @@ Everything else is in `app/assets/`. Packages whose files the server must hand o
 
 ## Saved data names an identifier, never a URL
 
-A value a user's data stores is a name the code resolves to a URL when it reads it. A call background is saved as its preset's enum member, `CallVirtualBackground.Sunrise`, and `CallVirtualBackgroundUrlMap` resolves that member to the bundled URL of its file. The map is typed over every member, so a preset added to the enum without its file fails the typecheck. A rebuild changes the URL but not the name, so a saved setting never goes stale.
+A value a user's data stores is a name the code resolves to a URL when it reads it. A call background is saved as its preset's member, `CallVirtualBackground.Sunrise`, and `CallVirtualBackgroundUrlMap` resolves that member to the bundled URL of its file. The map is typed over every member, so a preset added to the value set without its file fails the typecheck. A rebuild changes the URL but not the name, so a saved setting never goes stale.
 
-The enum follows the repo's convention: each member's value is spelled like its key, and the enum has no `None` member. "No background" is the empty string the setting already defaults to, and the definitions list it as the first entry with an empty `id`, so the picker draws its tile from the same markup as every other preset. A separate None control would repeat the tile's markup, so there is none. Absence is never an enum member, as the `typescript` skill's enum reference says.
+The value set follows the repo's convention: each member's value is spelled like its key, and the set has no `None` member. "No background" is the empty string the setting already defaults to, and the definitions list it as the first entry with an empty `id`, so the picker draws its tile from the same markup as every other preset. A separate None control would repeat the tile's markup, so there is none. Absence is never a member of a value set, as the `typescript` skill's value-set reference says.
 
 ## How a bundled file is read
 
@@ -71,7 +71,7 @@ A file under `shared/` is parsed by the server and read by the Nuxt config in No
 | `apps/web/app/services/dungeons/loader/TilesetUrlMap.ts`                      | Each tileset's bundled Tiled definition, keyed by name, for the external tileset loader                |
 | `packages/vue-phaserjs/src/models/plugins/TiledJSONExternalFile.ts`           | Reads a map's external tilesets from the URL map, never from a folder name                             |
 | `apps/web/app/models/message/room/call/CallVirtualBackground.ts`              | The preset ids a user's setting saves, one member per background                                       |
-| `apps/web/app/services/message/room/call/CallVirtualBackgroundDefinitions.ts` | The preset list, built from the enum, each URL read from `CallVirtualBackgroundUrlMap`                 |
+| `apps/web/app/services/message/room/call/CallVirtualBackgroundDefinitions.ts` | The preset list, built from the value set, each URL read from `CallVirtualBackgroundUrlMap`            |
 | `apps/web/app/store/message/user/settings/callBackground.ts`                  | Resolves a saved preset id back to its URL                                                             |
 | `apps/web/public/`                                                            | The files whose URL is fixed, listed under Which place                                                 |
 | `apps/web/public/pdfjs/images/`                                               | The renderer's annotation icons, copied from its install, with the notice of their licence beside them |

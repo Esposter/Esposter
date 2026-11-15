@@ -13,7 +13,7 @@ const DUPLICATE_SHAPES: [string, (rowCount: number) => number][] = [
   ["half duplicates", (rowCount) => rowCount / 2],
   ["all duplicates", () => 1],
 ];
-const KEEP_DUPLICATE_MODES = [KeepDuplicateMode.First, KeepDuplicateMode.Last];
+const KEEP_DUPLICATE_MODES: KeepDuplicateMode[] = [KeepDuplicateMode.First, KeepDuplicateMode.Last];
 // One group per row count so every task in a group shares the same scale: mean (ms) is directly comparable and
 // `vs base` isolates the shape×mode sensitivity (0% / 50% / 100% duplicates × First/Last) against the
 // All-unique-First baseline, instead of conflating shape with scale.

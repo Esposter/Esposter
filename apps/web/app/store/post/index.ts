@@ -16,7 +16,7 @@ export const usePostStore = defineStore("post", () => {
   const { $trpc } = useNuxtApp();
   const postCountStore = usePostCountStore();
   const { refreshPostCounts } = postCountStore;
-  const sortType = ref(PostSortType.Hot);
+  const sortType = ref<PostSortType>(PostSortType.Hot);
   const { items, ...restData } = useCursorPaginationData<PostInPostWithRelations>();
   const {
     createPost: storeCreatePost,

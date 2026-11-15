@@ -6,7 +6,7 @@ import { CommandType } from "#shared/models/resource/sheet/commands/CommandType"
 import { insertRowAt } from "@/services/resource/sheet/commands/insertRowAt";
 import { removeRowAt } from "@/services/resource/sheet/commands/removeRowAt";
 
-export class DeleteRowCommand extends ADataSourceCommand<CommandType.DeleteRow> {
+export class DeleteRowCommand extends ADataSourceCommand<typeof CommandType.DeleteRow> {
   readonly type = CommandType.DeleteRow;
 
   get description() {

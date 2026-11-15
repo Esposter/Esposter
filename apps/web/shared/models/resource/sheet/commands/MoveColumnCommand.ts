@@ -5,7 +5,7 @@ import { ADataSourceCommand } from "#shared/models/resource/sheet/commands/AData
 import { CommandType } from "#shared/models/resource/sheet/commands/CommandType";
 import { alignRowDataToColumns } from "#shared/services/resource/sheet/commands/alignRowDataToColumns";
 
-export class MoveColumnCommand extends ADataSourceCommand<CommandType.MoveColumn> {
+export class MoveColumnCommand extends ADataSourceCommand<typeof CommandType.MoveColumn> {
   readonly type = CommandType.MoveColumn;
 
   get description() {

@@ -7,7 +7,7 @@ import type { Point } from "vue-block-editor-headless";
 export interface GesturePlacing {
   elementId: string;
   origin: Point;
-  phase: GesturePhase.Placing;
+  phase: typeof GesturePhase.Placing;
   placement: WhiteboardPlacement;
   pointerId: number;
   screen: Point;

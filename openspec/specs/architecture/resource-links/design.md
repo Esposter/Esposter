@@ -8,11 +8,11 @@ What content alone cannot answer is the reverse — which resources point at thi
 
 `resourceLinks`, in the `resource` schema (`packages/db-schema/src/schema/resource/resourceLinksInResource.ts`):
 
-| Column     | Type                          | Notes                                                                                 |
-| ---------- | ----------------------------- | ------------------------------------------------------------------------------------- |
-| `sourceId` | text, FK → resources, cascade | the resource whose content holds the reference; its rows go with it when it is purged |
-| `type`     | `ResourceLinkType` text enum  | the role: what the target is used as                                                  |
-| `targetId` | text, no reference            | the resource referred to                                                              |
+| Column     | Type                              | Notes                                                                                 |
+| ---------- | --------------------------------- | ------------------------------------------------------------------------------------- |
+| `sourceId` | text, FK → resources, cascade     | the resource whose content holds the reference; its rows go with it when it is purged |
+| `type`     | `ResourceLinkType` text value set | the role: what the target is used as                                                  |
+| `targetId` | text, no reference                | the resource referred to                                                              |
 
 The primary key is `(sourceId, type, targetId)`, and `resourceLinks_target_index` on `(targetId, type)` is the reverse lookup.
 
@@ -75,7 +75,7 @@ Two surfaces read the same index the other way, by target: the [delete-time refe
 
 | File                                                                      | Role                                                                     |
 | ------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| `packages/db-schema/src/schema/resource/resourceLinksInResource.ts`       | the table and its role enum                                              |
+| `packages/db-schema/src/schema/resource/resourceLinksInResource.ts`       | the table and its role value set                                         |
 | `packages/db-schema/src/models/resource/ResourceLinkType.ts`              | the roles                                                                |
 | `apps/web/shared/services/resource/link/createResourceLinkSchema.ts`      | the one way a content shape declares a link                              |
 | `apps/web/shared/services/resource/link/resourceLinkRegistry.ts`          | where each declared field's role is recorded                             |

@@ -27,7 +27,7 @@ const mountKeyboard = (
   editState: Ref<WhiteboardEditState>,
   selectedIds: Ref<string[]>,
   deletingIds: Ref<string[]>,
-  tool: Ref<GestureTool> = ref(GestureTool.Select),
+  tool: Ref<GestureTool> = ref<GestureTool>(GestureTool.Select),
   shapeKind: Ref<ShapeKind> = ref<ShapeKind>(ShapeKind.Rectangle),
 ) =>
   mountSuspended(
@@ -265,7 +265,7 @@ describe(useWhiteboardKeyboard, () => {
     const editState = ref(createWhiteboardEditState({ elements: [WHITEBOARD_PROCESS] }));
     const selectedIds = ref<string[]>([]);
     const deletingIds = ref<string[]>([]);
-    const tool = ref(GestureTool.Select);
+    const tool = ref<GestureTool>(GestureTool.Select);
     await mountKeyboard(editState, selectedIds, deletingIds, tool);
 
     pressKey({ bubbles: true, key: "a" });
@@ -285,7 +285,7 @@ describe(useWhiteboardKeyboard, () => {
     const editState = ref(createWhiteboardEditState({ elements: [WHITEBOARD_PROCESS] }));
     const selectedIds = ref<string[]>([WHITEBOARD_PROCESS_ID]);
     const deletingIds = ref<string[]>([]);
-    const tool = ref(GestureTool.Select);
+    const tool = ref<GestureTool>(GestureTool.Select);
     await mountKeyboard(editState, selectedIds, deletingIds, tool);
 
     pressKey({ bubbles: true, key: "a" }, textarea);
@@ -299,7 +299,7 @@ describe(useWhiteboardKeyboard, () => {
     const editState = ref(createWhiteboardEditState({ elements: [WHITEBOARD_PROCESS] }));
     const selectedIds = ref<string[]>([]);
     const deletingIds = ref<string[]>([]);
-    const tool = ref(GestureTool.Shape);
+    const tool = ref<GestureTool>(GestureTool.Shape);
     const whiteboardEditorStore = useWhiteboardEditorStore();
     whiteboardEditorStore.isToolLocked = false;
     await mountKeyboard(editState, selectedIds, deletingIds, tool);

@@ -12,7 +12,7 @@ import { getSynchronizedFunction } from "@esposter/shared";
 
 const { subscribe, unsubscribeAll } = createPhaserSubscriptions();
 
-export const SwitchAttempt: State<StateName.SwitchAttempt> = {
+export const SwitchAttempt: State<typeof StateName.SwitchAttempt> = {
   name: StateName.SwitchAttempt,
   onEnter: async (scene) => {
     const playerStore = usePlayerStore();

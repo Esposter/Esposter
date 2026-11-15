@@ -7,7 +7,7 @@ import { z } from "zod";
 
 // A room's page, marked by the room, whose icon the dock draws from the room icon meaning. The id is the room a bookmark
 // Of the page names
-export interface RoomPageMark extends ItemEntityType<PageMarkType.Room> {
+export interface RoomPageMark extends ItemEntityType<typeof PageMarkType.Room> {
   id: string;
 }
 

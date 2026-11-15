@@ -6,4 +6,4 @@ export const MemberIndexedDbStoreConfiguration = {
   indexName: "roomId",
   keyPath: ["roomId", "id"],
   storeName: IndexedDbStoreName.Members,
-} as const satisfies IndexedDbStoreConfiguration<IndexedDbStoreName.Members>;
+} as const satisfies IndexedDbStoreConfiguration<typeof IndexedDbStoreName.Members>;

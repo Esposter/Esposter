@@ -16,7 +16,7 @@ The row every other part of the TodoList draws on. The Items blade is a `UiList`
 - **The checkbox leads the row**, in `UiList`'s `leading` slot beside the row's button, so the row keeps no mark column of its own ([completion](../todolist-completion/design.md)).
 - **Search** keeps the rows whose title or notes text holds the query, the notes read as text through `node-html-parser` rather than as markup, so a search for `p` does not match every todo with a paragraph.
 - **Order is a view of the `items` array.** There is no table sort header. The open todos follow the viewer's sort, of which [importance](../todolist-importance/design.md) and [manual order](../todolist-manual-order/design.md) are two, and the completed ones follow when they were completed.
-- **No item type.** A todo has no type enum, chip, category definitions or `type` field, since one member would draw the same check beside every row.
+- **No item type.** A todo has no type value set, chip, category definitions or `type` field, since one member would draw the same check beside every row.
 
 ## Key files
 

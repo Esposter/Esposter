@@ -22,7 +22,7 @@ description: Apply when writing Zod schemas. Esposter's Zod conventions for sche
 - `references/field-key-checks.md` — when an object key mirrors another schema's field or a table's entry, and the choice is a literal key or the computed `[src.keyof().enum.field]`.
 - `references/arrays.md` — when a schema holds an array.
 - `references/records.md` — when a schema holds a record, a map from free-text keys to values.
-- `references/zod-4-apis.md` — when writing a format validator, an enum schema, a refinement's error text, or an issue on a `ZodError`.
+- `references/zod-4-apis.md` — when writing a format validator, a value-set schema, a refinement's error text, or an issue on a `ZodError`.
 - `references/defaults.md` — when a field is about to take `.default()`.
 - `references/id-fields.md` — when a schema has an id field.
 - `references/refine-at-least-one.md` — when an update schema needs at least one of its optional fields.
@@ -31,7 +31,7 @@ description: Apply when writing Zod schemas. Esposter's Zod conventions for sche
 ## Imports and Inferred Types
 
 - Always the `z` namespace export: `z.ZodType`, `z.ZodError` — a named import beside it, or `z` imported under another name (`import { z as zod }`), is a `no-restricted-syntax` error.
-- Interface-first (`satisfies z.ZodType<T>`) is the default: a model schema takes it. `z.infer` is only for a type that genuinely must be derived, such as a tRPC input schema with no hand-written interface. A bare `z.enum(SomeEnum)` or `z.discriminatedUnion(…)` declarator is a `no-restricted-syntax` error in source, since a missing `satisfies` there lets a schema point at the wrong enum or a variant drift from its interface.
+- Interface-first (`satisfies z.ZodType<T>`) is the default: a model schema takes it. `z.infer` is only for a type that genuinely must be derived, such as a tRPC input schema with no hand-written interface. A bare `z.enum(SomeValueSet)` or `z.discriminatedUnion(…)` declarator is a `no-restricted-syntax` error in source, since a missing `satisfies` there lets a schema point at the wrong value set or a variant drift from its interface.
 - **When you do need infer, always `export type X = z.infer<typeof xSchema>`** — never `interface X extends z.infer<typeof xSchema> {}`. The extends form trips oxlint `import/namespace` (`"infer" not found in imported namespace`), because the `z` namespace can't be resolved in `extends` position.
 - **One interface and one schema per model file**, the schema beside the interface it satisfies; a second schema in the same file is a split.
 - **Declare the `type` directly beneath its schema and reference it by name** — the alias lives next to the `const xSchema = z.object({...})` it derives from, and use sites refer to `X`. Don't inline `z.infer<typeof xSchema>` at the use site.
@@ -50,7 +50,7 @@ Never a bare `z.record(…)` — `createRecordSchema(keySchema, valueSchema, max
 
 ## Zod 4 APIs
 
-Zod 4's top-level builders (`z.email()`, `z.int()`, `z.strictObject`), `z.enum(MyEnum)`, a refinement's text under `error`, and an issue pushed onto `error.issues` (`references/zod-4-apis.md`).
+Zod 4's top-level builders (`z.email()`, `z.int()`, `z.strictObject`), `z.enum(MyValueSet)`, a refinement's text under `error`, and an issue pushed onto `error.issues` (`references/zod-4-apis.md`).
 
 ## Validate, Never Cast
 
@@ -75,7 +75,7 @@ Every field carries the tightest constraint its domain allows — a bare `z.numb
 - **An object key mirroring another schema's field is checked nowhere in two positions** — `.pick()`/`.omit()` on a generic `z.ZodObject` and `.safeExtend({ … })` — so there the key is the computed `[src.keyof().enum.field]`; everywhere else a literal key is correct and the computed form is noise (`references/field-key-checks.md`).
 - **A spread of `.shape` carries fields and nothing else** — `.catchall()` and every other whole-object modifier stays behind, where `.extend()` would have brought it. Nothing in the types changes when it goes missing, so the derived schema just starts stripping keys the base kept: re-declare the modifier on the derived schema and pin it with a test, because the typecheck will not.
 - **`refineAtLeastOne`**, its key list read off the schema it guards, never restated (`references/refine-at-least-one.md`).
-- **An enum dispatching per-case logic is a map keyed by it**, not a switch — the `typescript` skill (`references/control-flow.md`).
+- **A value set dispatching per-case logic is a map keyed by it**, not a switch — the `typescript` skill (`references/control-flow.md`).
 - **A schema for a class-typed interface strips `toJSON` with `Except` + `ToData`** (`references/class-types.md`).
 - **Schema form schemas** — a schema a `UiSchemaForm` renders gets a separate `*Form` interface and schema, `layout` and title meta, a refinement for a cross-field rule, and its own union rules: the `ui-library` skill's `references/schema-forms.md` owns all of it.
 - **Paginated endpoint schemas** — see the `trpc` skill (`references/read-endpoints.md`).

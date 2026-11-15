@@ -17,7 +17,7 @@ import { useSettingsStore } from "@/store/dungeons/settings";
 import { useExperienceBarStore } from "@/store/dungeons/UI/experienceBar";
 import { getSynchronizedFunction } from "@esposter/shared";
 
-export const GainExperience: State<StateName.GainExperience> = {
+export const GainExperience: State<typeof StateName.GainExperience> = {
   name: StateName.GainExperience,
   onEnter: async (scene) => {
     const settingsStore = useSettingsStore();

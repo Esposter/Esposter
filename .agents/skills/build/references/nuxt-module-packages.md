@@ -2,7 +2,7 @@
 
 Read when creating or editing a workspace package that is a Nuxt module, or registering one in the app. The mechanism and every reason is `openspec/specs/architecture/nuxt-module-packages/design.md`; this page is the checklist an edit is held to. `packages/trpc-nuxt-module` is the package built this way — copy its shape.
 
-- **`src/module.ts` is the `.` entry**, a default `defineNuxtModule` export plus `ModuleOptions`; `exportsGeneration: "none"`, since a barrel over `src` would pull the runtime into the configuration-time entry.
+- **`src/module.ts` is the `.` entry**, a default `defineNuxtModule` export plus `ModuleOptions`; `exportsGeneration: ExportsGeneration.None`, since a barrel over `src` would pull the runtime into the configuration-time entry.
 - **`src/runtime/**` builds unbundled** — `entry: [{ index: "src/module.ts" }, "src/runtime/**/*.ts", …]`, `unbundle: true`, `root: "src"` — and `exports.exclude` keeps `runtime/**/services/**` out of the public map. Never a hand-written runtime barrel.
 - **A type dependency the declarations reference is a `dependency`**: unbundled declarations cannot inline it, and the copy tsdown writes under `dist/node_modules` never publishes.
 - **The runtime imports published packages** (`nuxt/app`, `nitro/h3`, `vue`, `crossws`), never `#imports`, `#app`, bare `h3` or `nitropack/*`; frameworks and engines are peers, `@nuxt/kit` and `@nuxt/schema` dependencies.

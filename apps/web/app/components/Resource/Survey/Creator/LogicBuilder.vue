@@ -100,7 +100,7 @@ const getAnswerType = (questionName: string): SurveyNodeType | undefined =>
   answers.value.find(({ name }) => name === questionName)?.type;
 const checkIsBooleanAnswer = (questionName: string): boolean => getAnswerType(questionName) === SurveyNodeType.Boolean;
 const checkTakesValue = (operator: SurveyConditionOperator): boolean =>
-  ![SurveyConditionOperator.Empty, SurveyConditionOperator.NotEmpty].includes(operator);
+  operator !== SurveyConditionOperator.Empty && operator !== SurveyConditionOperator.NotEmpty;
 const getOperatorItems = (questionName: string) =>
   getSurveyConditionOperators(getAnswerType(questionName)).map((operator) => ({
     title: SURVEY_CONDITION_OPERATOR_TITLES[operator],

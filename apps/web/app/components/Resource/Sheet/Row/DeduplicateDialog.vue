@@ -15,7 +15,7 @@ import { takeOne } from "@esposter/shared";
 const isOpen = defineModel<boolean>({ default: false });
 const sheetStore = useSheetStore();
 const { dataSource } = storeToRefs(sheetStore);
-const keepMode = ref(KeepDuplicateMode.First);
+const keepMode = ref<KeepDuplicateMode>(KeepDuplicateMode.First);
 const deleteDuplicateRows = useDeleteDuplicateRows();
 const duplicateRows = computed(() => findDuplicateRows(dataSource.value, keepMode.value));
 const duplicateCount = computed(() => duplicateRows.value.length);

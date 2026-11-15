@@ -37,7 +37,7 @@ export const fooFormSchema = z.discriminatedUnion("type", [
 ]) satisfies z.ZodType<FooForm>;
 ```
 
-Discriminant enum values are short descriptive names matching the domain (`Bar`, `Baz`), distinct from the member interface names (`BarFoo` → `FooType.Bar`).
+Discriminant value-set members are short descriptive names matching the domain (`Bar`, `Baz`), distinct from the member interface names (`BarFoo` → `FooType.Bar`).
 
 ## Envelope schemas are factories, not copies
 

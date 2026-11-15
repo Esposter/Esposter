@@ -95,7 +95,7 @@ Paths relative to `apps/web`.
 | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
 | `shared/models/resource/sheet/column/ComputedColumn.ts`                                       | Column class + Zod schema                                                                        |
 | `shared/models/resource/sheet/column/transformation/ColumnTransformation.ts`                  | Discriminated union of all transformation variants                                               |
-| `shared/models/resource/sheet/column/transformation/ColumnTransformationType.ts`              | Discriminant enum                                                                                |
+| `shared/models/resource/sheet/column/transformation/ColumnTransformationType.ts`              | Discriminant value set                                                                           |
 | `shared/services/resource/sheet/column/compileSheetColumns.ts`                                | Compile once per column list, bind per row list, read per cell                                   |
 | `shared/services/resource/sheet/column/getCyclicColumnIds.ts`                                 | Tarjan strongly-connected components over source ids: the cycle set                              |
 | `app/services/resource/sheet/column/computeColumnStatisticsForColumn.ts`                      | Per-column statistics over the column's read values                                              |

@@ -8,10 +8,10 @@ import { USER_BIOGRAPHY_MAX_LENGTH } from "@esposter/db-schema";
 interface Props {
   isEditMode: boolean;
   label: string;
-  value: Row<RowValueType.Textarea>["value"];
+  value: Row<typeof RowValueType.Textarea>["value"];
 }
 
-const modelValue = defineModel<Row<RowValueType.Textarea>["value"]>({ required: true });
+const modelValue = defineModel<Row<typeof RowValueType.Textarea>["value"]>({ required: true });
 defineProps<Props>();
 const valueRules = [UiRules.maxLength(USER_BIOGRAPHY_MAX_LENGTH)];
 </script>

@@ -23,7 +23,7 @@ One conversion, `getAgentJsonSchema`, turns a Zod schema into the JSON Schema an
 - **A Date is a `date-time` string**, the form `JSON.stringify` stores and a content schema reads back. Zod has no JSON Schema for a Date, so the conversion's `unrepresentable` handler writes one, and throws on anything else: a Map, a Set or a BigInt in a schema never reaches an agent as `{}`.
 - **Undescribed parts are marked.** `z.unknown()` and `z.any()` are stamped `x-opaque`, the key `OPAQUE_KEY` names, so the agent sees where the schema stops describing.
 - **Read-only fields say so.** A schema given `.readonly()` or `.meta({ readOnly: true })` reaches the agent as JSON Schema's own `readOnly` keyword.
-- **Enums come through as `enum` lists**, so the legal values arrive in the same answer as the shape.
+- **Value sets come through as `enum` lists**, so the legal values arrive in the same answer as the shape.
 - **The resource schema follows its editor.** Notes check documents against the shared writing kit; a Survey's content must be its `{ document, settings }` object, and its document must pass the survey check; and the `html` a published snapshot holds is read-only, since the server bakes it from the document at publish.
 
 ## Reading

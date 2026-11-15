@@ -3,4 +3,4 @@ import type { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType
 import type { BlockNode } from "vue-block-editor-headless";
 
 // A Video node of a webpage: an uploaded video, loaded from an address
-export type VideoNode = BlockNode<WebpageNodeType.Video, VideoNodeProps>;
+export type VideoNode = BlockNode<typeof WebpageNodeType.Video, VideoNodeProps>;

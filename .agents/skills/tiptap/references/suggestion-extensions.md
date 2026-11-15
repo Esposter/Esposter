@@ -48,7 +48,7 @@ ProseMirror is reached through tiptap's re-export, `@tiptap/pm/<module>`, never 
 
 An extension that wires nothing but its own component's callbacks stays inline in that component, as `apps/web/app/components/Message/Model/Message/Editor.vue`'s Enter and Esc do: a composable would only hand the callbacks back in.
 
-## SuggestionTrigger enum
+## SuggestionTrigger value set
 
 Trigger characters live in `apps/web/app/models/shared/SuggestionTrigger.ts`. Never hardcode a trigger character as a string literal in a suggestion config or a component template.
 

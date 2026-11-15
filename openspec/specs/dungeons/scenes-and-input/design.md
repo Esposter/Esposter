@@ -4,7 +4,7 @@ Every Phaser scene is a Vue component registered in `SceneComponentMap` and rend
 
 ## How it works
 
-The Preloader scene loads every asset through the loader constant maps (`services/dungeons/loader/` — images, spritesheets, tilemaps, sounds, fonts, all keyed by enums), then hands off to the Title scene. Title offers New Game / Continue / Settings; both game options land in the World scene, and battles swap World for Battle. `fadeSwitchToScene` on the dungeons store wraps every transition in a camera fade.
+The Preloader scene loads every asset through the loader constant maps (`services/dungeons/loader/` — images, spritesheets, tilemaps, sounds, fonts, all keyed by value sets), then hands off to the Title scene. Title offers New Game / Continue / Settings; both game options land in the World scene, and battles swap World for Battle. `fadeSwitchToScene` on the dungeons store wraps every transition in a camera fade.
 
 The game holds pixel art beside painted art, so filtering is chosen per texture rather than by Phaser's global `pixelArt`, which would turn smoothing off for every texture at once. `PixelArtTextureKeys` names the textures drawn on a pixel grid, each picked by looking at the sheet enlarged: every tileset and spritesheet, the world's foregrounds, the cosmo ball and the monster party's grid. The Preloader filters those nearest once loading completes. The monsters, the painted backgrounds, the title art and Kenney's UI keep linear filtering. A world character rounds its vertices to whole pixels (`fullAuto`), because the world camera's zoom scales every sprite and the default rounding skips a scaled one.
 

@@ -10,7 +10,7 @@ import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { prettify } from "@/util/text/prettify";
 import { sleepScene } from "vue-phaserjs";
 
-export const PlayerAttack: State<StateName.PlayerAttack> = {
+export const PlayerAttack: State<typeof StateName.PlayerAttack> = {
   name: StateName.PlayerAttack,
   onEnter: async (scene) => {
     const attackManagerStore = useAttackManagerStore();

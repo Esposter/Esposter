@@ -3,7 +3,7 @@ import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSo
 import { ADataSourceCommand } from "#shared/models/resource/sheet/commands/ADataSourceCommand";
 import { CommandType } from "#shared/models/resource/sheet/commands/CommandType";
 
-export class MoveRowCommand extends ADataSourceCommand<CommandType.MoveRow> {
+export class MoveRowCommand extends ADataSourceCommand<typeof CommandType.MoveRow> {
   readonly type = CommandType.MoveRow;
 
   get description() {

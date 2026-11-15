@@ -135,7 +135,7 @@ The consumers of a dashboard read its groups through `listVisuals`. A published 
 
 - The Visuals region and the inspector are editor-only, so the viewer's page holds no control the editor would need.
 - The tests pin which tiles carry the editable marker, which handles each tile draws, and which gestures a handle starts.
-- The package's collision and compaction names are its own (`CollisionMode`, `CompactType`); the labels a reader sees are the plain words in the Surface table. The stored packing and overlap values are those enum members, so the shared model imports them rather than keeping a second list, and renaming one needs a backfill of every stored dashboard.
+- The package's collision and compaction names are its own (`CollisionMode`, `CompactType`); the labels a reader sees are the plain words in the Surface table. The stored packing and overlap values are those value set members, so the shared model imports them rather than keeping a second list, and renaming one needs a backfill of every stored dashboard.
 
 ## Key files
 

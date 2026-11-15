@@ -34,4 +34,4 @@ export const SettingsContentMap = {
   [SettingsType.WordFilter]: defineAsyncComponent(
     () => import("@/components/Message/Model/Room/Settings/Type/WordFilter/Index.vue"),
   ),
-} as const satisfies Record<Exclude<SettingsType, SettingsType.Delete>, Component>;
+} as const satisfies Record<Exclude<SettingsType, typeof SettingsType.Delete>, Component>;

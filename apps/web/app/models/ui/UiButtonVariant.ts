@@ -2,11 +2,12 @@
 // Destroys or stops something, quiet for a mark that floats over content without a surface of its own, field for a
 // Trigger that holds a value as a field does, such as a select's, and search for the trigger drawn as the search field
 // It opens. Rating is a step of a rating scale: a mark alone, whose chosen step is drawn by its mark rather than filled
-export enum UiButtonVariant {
-  Accent = "Accent",
-  Danger = "Danger",
-  Field = "Field",
-  Quiet = "Quiet",
-  Rating = "Rating",
-  Search = "Search",
-}
+export const UiButtonVariant = {
+  Accent: "Accent",
+  Danger: "Danger",
+  Field: "Field",
+  Quiet: "Quiet",
+  Rating: "Rating",
+  Search: "Search",
+} as const;
+export type UiButtonVariant = (typeof UiButtonVariant)[keyof typeof UiButtonVariant];

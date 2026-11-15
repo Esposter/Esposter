@@ -17,7 +17,7 @@ export const useSheetPortableDialogStore = defineStore("resource/sheet/portableD
     undefined,
   );
   const { data: previewName, getDataRef: getPreviewNameRef } = useDataMap(getResourceId, "");
-  const { data: exportDataSourceType, getDataRef: getExportDataSourceTypeRef } = useDataMap(
+  const { data: exportDataSourceType, getDataRef: getExportDataSourceTypeRef } = useDataMap<DataSourceType>(
     getResourceId,
     DataSourceType.Csv,
   );

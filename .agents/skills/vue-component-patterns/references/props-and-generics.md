@@ -1,14 +1,14 @@
 # Typing a component's props, models and variants
 
-Read when a prop or model type depends on an enum/discriminant key, when one component is absorbing several data variants, or when a boolean prop has a default. The `is` prefix and the "type as the non-default literal" rule itself are in `SKILL.md`.
+Read when a prop or model type depends on a value-set or discriminant key, when one component is absorbing several data variants, or when a boolean prop has a default. The `is` prefix and the "type as the non-default literal" rule itself are in `SKILL.md`.
 
 ## Generic SFC components
 
-When a component's model value (or other prop) type depends on an enum/discriminant key, make the component generic:
+When a component's model value (or other prop) type depends on a value-set or discriminant key, make the component generic:
 
 ```vue
-<script setup lang="ts" generic="TKey extends SomeEnum">
-// SomeEnum is a string enum (e.g. SomeEnum.A = "A"), so interface keys are string literals.
+<script setup lang="ts" generic="TKey extends SomeValueSet">
+// SomeValueSet is a value set of strings (e.g. `{ A: "A" } as const`), so interface keys are string literals.
 // Model values use "" as the empty-string sentinel and never `| null` (see the typescript / string-utils skills):
 interface ModelValueMap {
   A: boolean;
@@ -19,10 +19,10 @@ const modelValue = defineModel<ModelValueMap[TKey]>({ required: true });
 </script>
 ```
 
-- Use `interface` (not `type`) for the value map — string enum values map directly to string literal keys.
+- Use `interface` (not `type`) for the value map — value-set values map directly to string literal keys.
 - Define the interface locally (not exported unless reused elsewhere).
 - The map type drives inference at call sites where the key type is statically known.
-- For `as const satisfies` maps, use `Record<Exclude<TEnum, ExcludedVariant>, ValueType>` to exclude variants using a different component path (e.g. Boolean → checkbox, not text field).
+- For `as const satisfies` maps, use `Record<Exclude<TValueSet, ExcludedVariant>, ValueType>` to exclude variants using a different component path (e.g. Boolean → checkbox, not text field).
 - If TypeScript can't narrow `TKey` in template `v-if`/`v-else` branches (correlated generics limitation), fall back to the union of all possible values (e.g. `FooValue`) for `defineModel` — the prop type still provides call-site inference.
 
 ## Per-variant type correctness

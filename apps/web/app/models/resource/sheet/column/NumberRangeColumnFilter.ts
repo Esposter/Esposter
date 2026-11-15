@@ -3,5 +3,5 @@ import type { ColumnType } from "#shared/models/resource/sheet/column/ColumnType
 export interface NumberRangeColumnFilter {
   maximum: string;
   minimum: string;
-  type: ColumnType.Number;
+  type: typeof ColumnType.Number;
 }

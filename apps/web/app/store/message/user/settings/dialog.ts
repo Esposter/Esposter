@@ -4,6 +4,6 @@ export const useUserSettingsDialogStore = defineStore("message/user/settings/dia
   const isVisible = ref(false);
   // Mobile-only: the settings sidebar becomes a temporary drawer toggled from the content header
   const isDrawerOpen = ref(false);
-  const settingsType = ref(UserSettingsType.Account);
+  const settingsType = ref<UserSettingsType>(UserSettingsType.Account);
   return { isDrawerOpen, isVisible, settingsType };
 });

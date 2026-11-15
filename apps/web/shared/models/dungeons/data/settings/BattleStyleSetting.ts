@@ -1,8 +1,6 @@
 import { z } from "zod";
 
-export enum BattleStyleSetting {
-  Set = "Set",
-  Shift = "Shift",
-}
+export const BattleStyleSetting = { Set: "Set", Shift: "Shift" } as const;
+export type BattleStyleSetting = (typeof BattleStyleSetting)[keyof typeof BattleStyleSetting];
 
 export const battleStyleSettingSchema = z.enum(BattleStyleSetting) satisfies z.ZodType<BattleStyleSetting>;

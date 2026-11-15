@@ -4,8 +4,8 @@ import { ResizeHandle } from "@/models/whiteboard/ResizeHandle";
 export const getResizedSides = (
   handle: ResizeHandle,
 ): { bottom: boolean; left: boolean; right: boolean; top: boolean } => ({
-  bottom: [ResizeHandle.Bottom, ResizeHandle.BottomRight].includes(handle),
-  left: [ResizeHandle.Left, ResizeHandle.TopLeft].includes(handle),
-  right: [ResizeHandle.BottomRight, ResizeHandle.Right].includes(handle),
-  top: [ResizeHandle.Top, ResizeHandle.TopLeft].includes(handle),
+  bottom: handle === ResizeHandle.Bottom || handle === ResizeHandle.BottomRight,
+  left: handle === ResizeHandle.Left || handle === ResizeHandle.TopLeft,
+  right: handle === ResizeHandle.BottomRight || handle === ResizeHandle.Right,
+  top: handle === ResizeHandle.Top || handle === ResizeHandle.TopLeft,
 });

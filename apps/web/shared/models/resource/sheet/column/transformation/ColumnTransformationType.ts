@@ -1,12 +1,13 @@
-export enum ColumnTransformationType {
-  Aggregation = "Aggregation",
-  ConvertTo = "ConvertTo",
-  DatePart = "DatePart",
-  Math = "Math",
-  RegexMatch = "RegexMatch",
+export const ColumnTransformationType = {
+  Aggregation: "Aggregation",
+  ConvertTo: "ConvertTo",
+  DatePart: "DatePart",
+  Math: "Math",
+  RegexMatch: "RegexMatch",
   // String covers format transformations via a nested StringTransformationType discriminator.
   // StringSplit is a separate top-level entry since its parameters don't fit that enum shape.
-  String = "String",
-  StringPattern = "StringPattern",
-  StringSplit = "StringSplit",
-}
+  String: "String",
+  StringPattern: "StringPattern",
+  StringSplit: "StringSplit",
+} as const;
+export type ColumnTransformationType = (typeof ColumnTransformationType)[keyof typeof ColumnTransformationType];

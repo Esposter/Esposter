@@ -6,7 +6,7 @@ import { z } from "zod";
 
 export class Chest implements BaseChest {
   isOpened = false;
-  itemId = ItemId.Potion;
+  itemId: ItemId = ItemId.Potion;
 }
 
 export const chestSchema = z.object({ isOpened: z.boolean(), itemId: itemIdSchema }) satisfies z.ZodType<Chest>;

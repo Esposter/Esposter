@@ -1,12 +1,13 @@
 import { z } from "zod";
 
-export enum NumberFormat {
-  Compact = "Compact",
-  Currency = "Currency",
-  Percentage = "Percentage",
-  Plain = "Plain",
-  Scientific = "Scientific",
-}
+export const NumberFormat = {
+  Compact: "Compact",
+  Currency: "Currency",
+  Percentage: "Percentage",
+  Plain: "Plain",
+  Scientific: "Scientific",
+} as const;
+export type NumberFormat = (typeof NumberFormat)[keyof typeof NumberFormat];
 
 export const numberFormatSchema = z.enum(NumberFormat) satisfies z.ZodType<NumberFormat>;
 

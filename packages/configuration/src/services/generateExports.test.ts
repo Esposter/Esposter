@@ -1,3 +1,4 @@
+import { ExportsGeneration } from "#src/models/ExportsGeneration";
 import { generateExports } from "#src/services/generateExports";
 import { getComponentName } from "#src/services/getComponentName";
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, statSync, utimesSync, writeFileSync } from "node:fs";
@@ -29,7 +30,7 @@ describe(generateExports, () => {
     writeFileSync(join(sourceDirectory, TEST_FILENAME, `${TEST_FILENAME}.ts`), `export type A = 0;`);
     writeFileSync(join(sourceDirectory, `${TEST_FILENAME}.test.ts`), `export const a = 0;`);
     writeFileSync(join(sourceDirectory, `${TEST_FILENAME}.d.ts`), `export declare const a: 0;`);
-    generateExports(packageDirectory, "typescript");
+    generateExports(packageDirectory, ExportsGeneration.TypeScript);
 
     expect(readFileSync(join(sourceDirectory, "index.ts"), "utf8")).toBe(
       `export * from "./${TEST_FILENAME}/${TEST_FILENAME}.ts";\n`,
@@ -43,7 +44,7 @@ describe(generateExports, () => {
 
     writeFileSync(join(sourceDirectory, `${TEST_FILENAME}.ts`), `export type A = 0;`);
     writeFileSync(join(sourceDirectory, "B.ts"), `export type B = 0;`);
-    generateExports(packageDirectory, "typescript");
+    generateExports(packageDirectory, ExportsGeneration.TypeScript);
 
     expect(readFileSync(join(sourceDirectory, "index.ts"), "utf8")).toBe(
       `export * from "./${TEST_FILENAME}.ts";\nexport * from "./B.ts";\n`,
@@ -55,8 +56,8 @@ describe(generateExports, () => {
     expect.hasAssertions();
 
     writeFileSync(join(sourceDirectory, TEST_FILENAME, `${TEST_FILENAME}.ts`), `export const a = 0;`);
-    generateExports(packageDirectory, "typescript");
-    generateExports(packageDirectory, "none");
+    generateExports(packageDirectory, ExportsGeneration.TypeScript);
+    generateExports(packageDirectory, ExportsGeneration.None);
 
     expect(existsSync(join(sourceDirectory, "index.ts"))).toBe(false);
   });
@@ -69,7 +70,7 @@ describe(generateExports, () => {
     mkdirSync(lazyDirectory, { recursive: true });
     writeFileSync(join(sourceDirectory, `${TEST_FILENAME}.ts`), `export type A = 0;`);
     writeFileSync(join(lazyDirectory, `${TEST_FILENAME}.ts`), `export type B = 0;`);
-    generateExports(packageDirectory, "typescript", [`${TEST_FILENAME}/lazy`]);
+    generateExports(packageDirectory, ExportsGeneration.TypeScript, [`${TEST_FILENAME}/lazy`]);
 
     expect(readFileSync(join(sourceDirectory, "index.ts"), "utf8")).toBe(`export * from "./${TEST_FILENAME}.ts";\n`);
   });
@@ -80,9 +81,9 @@ describe(generateExports, () => {
 
     const barrelPath = join(sourceDirectory, "index.ts");
     writeFileSync(join(sourceDirectory, `${TEST_FILENAME}.ts`), `export type A = 0;`);
-    generateExports(packageDirectory, "typescript");
+    generateExports(packageDirectory, ExportsGeneration.TypeScript);
     utimesSync(barrelPath, 0, 0);
-    generateExports(packageDirectory, "typescript");
+    generateExports(packageDirectory, ExportsGeneration.TypeScript);
 
     expect(statSync(barrelPath).mtimeMs).toBe(0);
   });
@@ -92,7 +93,7 @@ describe(generateExports, () => {
 
     mkdirSync(join(sourceDirectory, "components", TEST_FILENAME), { recursive: true });
     writeFileSync(join(sourceDirectory, "components", TEST_FILENAME, "B.vue"), "<template><i /></template>");
-    generateExports(packageDirectory, "vue");
+    generateExports(packageDirectory, ExportsGeneration.Vue);
 
     expect(readFileSync(join(sourceDirectory, "components", "index.ts"), "utf8")).toBe(
       `export { default as ${getComponentName(`${TEST_FILENAME}/B.vue`)} } from "./${TEST_FILENAME}/B.vue";

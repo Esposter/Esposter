@@ -1,5 +1,7 @@
 import type { CachePattern } from "#vite/models/CachePattern";
 
+import { CacheBase } from "#vite/models/CacheBase";
+
 // The repository root, which every task's patterns and `cwd` are relative to. Read from this file's own location, since
 // `vp run -w` from a package (the app's `pnpm dev`) loads the config with that package as the working directory
 export const ROOT_URL: URL = new URL("../../", import.meta.url);
@@ -12,7 +14,7 @@ export const PACKAGES_DIRECTORY = "packages";
 export const PNPM_STATE_PATTERNS: CachePattern[] = [
   "!**/node_modules/.pnpm-task-run-state-v1/**",
   "!node_modules/.pnpm-workspace-state-v1.json",
-  { base: "workspace", pattern: "!_tmp_*" },
+  { base: CacheBase.Workspace, pattern: "!_tmp_*" },
 ];
 
 // The root project's incremental build state. `tsrs` would write it beside the root tsconfig, where every package

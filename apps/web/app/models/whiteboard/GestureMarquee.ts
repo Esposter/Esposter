@@ -6,6 +6,6 @@ export interface GestureMarquee {
   baseIds: string[];
   current: Point;
   origin: Point;
-  phase: GesturePhase.Marquee;
+  phase: typeof GesturePhase.Marquee;
   pointerId: number;
 }

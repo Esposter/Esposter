@@ -50,8 +50,8 @@ The shared `MessageModelSettingsLeftSideBar` sits beside the panel from the `md`
 
 | File                                                              | Role                                                  |
 | :---------------------------------------------------------------- | :---------------------------------------------------- |
-| `apps/web/app/models/message/room/SettingsType.ts`                | panel enum (values double as titles)                  |
-| `apps/web/app/models/message/room/SettingsCategory.ts`            | sidebar category enum                                 |
+| `apps/web/app/models/message/room/SettingsType.ts`                | panel value set (values double as titles)             |
+| `apps/web/app/models/message/room/SettingsCategory.ts`            | sidebar category value set                            |
 | `apps/web/app/services/message/settings/SettingsCategoryMap.ts`   | category → panels grouping                            |
 | `apps/web/app/services/message/settings/SettingsListItemMap.ts`   | panel icons/colors                                    |
 | `apps/web/app/services/message/settings/SettingsContentMap.ts`    | panel → lazy component                                |

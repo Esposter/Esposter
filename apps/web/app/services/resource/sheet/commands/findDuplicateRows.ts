@@ -6,7 +6,7 @@ import { KeepDuplicateMode } from "@/models/resource/sheet/commands/KeepDuplicat
 import { getVisibleEditableColumns } from "@/services/resource/sheet/column/getVisibleEditableColumns";
 import { takeOne } from "@esposter/shared";
 
-export const findDuplicateRows = (dataSource: DataSource, keepMode = KeepDuplicateMode.First) => {
+export const findDuplicateRows = (dataSource: DataSource, keepMode: KeepDuplicateMode = KeepDuplicateMode.First) => {
   // A row is matched on what is on screen, so a hidden column does not decide it
   const sortedKeys = getVisibleEditableColumns(dataSource.columns)
     .map(({ name }) => name)

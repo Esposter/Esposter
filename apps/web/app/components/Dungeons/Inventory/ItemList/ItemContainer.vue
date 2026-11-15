@@ -7,7 +7,7 @@ import { Container } from "vue-phaserjs";
 
 interface Props {
   columnIndex: number;
-  item: Item | PlayerSpecialInput.Cancel;
+  item: Item | typeof PlayerSpecialInput.Cancel;
   rowIndex: number;
 }
 

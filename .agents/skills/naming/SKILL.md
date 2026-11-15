@@ -17,7 +17,7 @@ and the shapes it takes, is `references/names-a-dependency-owns.md`.
 - **A selector for a `<script setup>` constant's casing** — whether a top-level literal is fixed or captures a ref needs scope analysis no selector has.
 - **A ban on a bare-identifier initialiser (`const a = b`)** — it is also how a mutable binding is snapshotted before it is cleared and how a return shorthand is earned; a trial selector reported many such sites and no alias.
 - **A generic value in a shared namespace** (`host://`, `"SESSION_SECRET"`, a folder named `Host` in the user's app data) — another program claims the same name, and the reader's own variable or handler is read or deleted as ours (`references/shared-namespaces.md`).
-- **An enum member copying the outside casing** (`eq`, `objectgroup`) — one enum then reads in two casings and a member is indistinguishable from a value at the call site (`references/enum-members.md`).
+- **A value set member copying the outside casing** (`eq`, `objectgroup`) — one set then reads in two casings and a member is indistinguishable from a value at the call site (`references/value-set-members.md`).
 
 | Read when                                                                                 | Page                                    |
 | ----------------------------------------------------------------------------------------- | --------------------------------------- |
@@ -27,7 +27,7 @@ and the shapes it takes, is `references/names-a-dependency-owns.md`.
 | Writing a duration, a date, or a literal big enough to miscount                           | `references/numbers-and-time.md`        |
 | A module-scope binding could be SCREAMING_SNAKE_CASE or PascalCase, or need no name       | `references/constant-casing.md`         |
 | A name could be shortened, or a compound holds a word the denylist cannot see             | `references/abbreviations.md`           |
-| An enum member's value comes from outside — a wire string, a library's enum, a notation   | `references/enum-members.md`            |
+| A set member's value comes from outside — a wire string, a library's enum, a notation     | `references/value-set-members.md`       |
 | Naming something that mirrors a library — its option, key, method or wire value           | `references/names-a-dependency-owns.md` |
 | A concept has a prose word and an identifier word, and a sibling needs naming             | `references/concept-words.md`           |
 | Naming a map, a record, or a function that looks one up                                   | `references/map-names.md`               |
@@ -38,7 +38,7 @@ and the shapes it takes, is `references/names-a-dependency-owns.md`.
 | Naming a file, or renaming its export                                                     | `references/file-names.md`              |
 | Setting a boolean environment variable the repo owns                                      | `references/env-values.md`              |
 | Choosing a scheme, env var, registry key, app-data folder or title other programs share   | `references/shared-namespaces.md`       |
-| Naming a panel's subsections, or a list whose labels are also its ids                     | `references/section-enums.md`           |
+| Naming a panel's subsections, or a list whose labels are also its ids                     | `references/section-value-sets.md`      |
 
 ## Booleans
 
@@ -92,11 +92,11 @@ and the shapes it takes, is `references/names-a-dependency-owns.md`.
 
 - **No `With` prefix on mixin interfaces** — name after the capability: `SourceColumnId`, never `With`-prefixed. Schemas and their factories follow: `sourceColumnIdSchema` / `create<Capability>Schema`, never `createWith<Capability>Schema`
 - **`A` prefix for abstract classes only** — `AColumn` (abstract class) ✓, `SlashCommand` (interface) ✓. Lint refuses it on an interface, so the question is what to call one instead: an interface holding the shape its implementors share takes `Base*`, matching the `base*Schema` it is usually declared beside (`BaseColumnForm`, `BaseExecuteAdminActionInput`); anything else is named after what it holds
-- **Interface fields use full type name** — `aggregationTransformationType: AggregationTransformationType` not `transform`, `mode`, or `type`. Never abbreviate enum field names
+- **Interface fields use full type name** — `aggregationTransformationType: AggregationTransformationType` not `transform`, `mode`, or `type`. Never abbreviate a value set's field names
 - **A wrong name is corrected in place, never aliased** — no re-export shim, no version suffix, no comment explaining the history, and neither "it is deployed" nor "it is published" is an exemption (`openspec/specs/architecture/no-compatibility-debt/design.md`; the mechanics of the rename are the `file-organization` skill's `references/renames.md`). A name that is still accurate is left alone: correctness is the criterion, not symmetry with its neighbours.
 - **A file's name is its single export's name**, and renaming the export renames the file in the same change (`references/file-names.md`)
-- **An enum member is PascalCase; its value keeps the outside spelling** — `Dark = "dark"`, `Eq = "eq"`; lint refuses any other member casing. Where an outside spelling seems to belong on the member, and the exceptions that keep it behind a disable — `references/enum-members.md`
-- A panel's subsections, or any list whose labels are also its ids, are one enum per group — `references/section-enums.md`
+- **A value set member is PascalCase; its value keeps the outside spelling** — `Dark: "dark"`, `Eq: "eq"`; lint refuses any other member casing. Where an outside spelling seems to belong on the member, and the exceptions that keep it behind a disable — `references/value-set-members.md`
+- A panel's subsections, or any list whose labels are also its ids, are one value set per group — `references/section-value-sets.md`
 
 ## Constants
 

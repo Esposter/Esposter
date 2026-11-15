@@ -72,7 +72,7 @@ The cap counts **live holds**, which is one per write target and so one per uplo
 
 ## Data model
 
-- `StorageTier` — an enum, with `Free` as its only value. The enum exists so a paid tier is a value add rather than a schema change.
+- `StorageTier` — a value set, with `Free` as its only member. The set exists so a paid tier is one more member rather than a schema change.
 - `StorageTierQuotaMap` — `{ [StorageTier.Free]: 10 * GIBIBYTE }`, `as const satisfies Record<StorageTier, number>`.
 - `users.storageTier` + `users.storageBytesUsed` — the tier and the stored-bytes total. An integer in `number` mode: every tier quota is far under the 2^53 safe-integer ceiling.
 - `storageLedger` — one row per write target, keyed by bucket and object key, and a row is in one of two states rather than one. A **reserved** row is a hold on an object that may never exist: the reserve writes it with `countedBytes = 0`, `declaredBytes` = what the client said it would upload, `expiresAt` = the presigned URL's TTL and `reconciledAt` null. It holds space only through the reserve's pending sum — the counter has not moved for it at all, which is why an expired one can simply stop counting. A **settled** row is stored bytes: `countedBytes` is what the counter is carrying for this object right now, and `reconciledAt` is when that last moved. The object-create event settles a hold in place and stamps the `eventTime` it was ordered by; a server-side charge writes its own row already settled, with `declaredBytes = 0`, `expiresAt` already past and no `eventTime` — it never held space, because its bytes were stored before it ran. A charge and a release find their row on the primary key, so the only index is `(userId, reconciledAt)`, for the two questions a reserve asks about one user — their live holds and their collectable ones. Nothing scans the ledger account-wide.
@@ -104,7 +104,7 @@ Closing these needs a recompute that lists real object sizes per user. Worth doi
 
 | File                                                                                                              | Role                                                                        |
 | ----------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| `packages/db-schema/src/models/user/StorageTier.ts`                                                               | tier enum                                                                   |
+| `packages/db-schema/src/models/user/StorageTier.ts`                                                               | tier value set                                                              |
 | `packages/db-schema/src/schema/auth/usersInAuth.ts`                                                               | `storageTier` + `storageBytesUsed`                                          |
 | `packages/db-schema/src/schema/storage/storageLedgerInStorage.ts`                                                 | the ledger                                                                  |
 | `packages/db-schema/src/models/queue/R2ObjectCreatedQueueMessage.ts`                                              | the object-create notification body the reconcile handler reads             |

@@ -67,7 +67,7 @@ describe("resourceSurveyFieldRating", () => {
         props: { error: "", isDisabled: false, modelValue: 3, node: createNode(SurveyRatingType.Stars, 5) },
       });
       await flushPromises();
-      const meanings = [UiIconMeaning.StarFilled, UiIconMeaning.Star];
+      const meanings: UiIconMeaning[] = [UiIconMeaning.StarFilled, UiIconMeaning.Star];
 
       expect(
         component

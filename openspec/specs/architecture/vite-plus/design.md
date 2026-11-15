@@ -35,11 +35,11 @@ How CI carries the cache and why a hit needs the install are in [monorepo toolin
 
 Every cached task is probed against this tree before it is trusted: a source edit, a content edit, a `.vue` edit, and a file created where a build looks for one must each miss the cache, and only a run that read nothing changed may replay. The native tools were probed on Linux as well, because the tracer there interposes on libc for a dynamically linked process and a read that skips libc goes unseen ([vite-task 777](https://github.com/voidzero-dev/vite-task/issues/777)). The Go compiler `typecheck` loads in-process and tsgolint, the statically linked binary behind type-aware lint, both missed on an edit to a file only they read. A new native tool is probed the same way before a task caches it. The edited file is one the task reads: the root project covers the root files and not `packages`, so an edit under a package misses nothing there and reads as a hit that proves nothing.
 
-## Scripts run through `vpx`
+## Scripts run through `node`, or `vpx` for an alias
 
-The repository's TypeScript scripts run under `vpx`, the bin the `vite-plus` devDependency ships, in place of `tsx`. It runs a file with full TypeScript support (enums, namespaces, tsconfig `paths`) and no devDependency of its own, and every workspace script finds it on its PATH through the root's `node_modules/.bin`. `vpx --tsconfig tsconfig.root.json` is the form `apps/web/scripts/*` take, and `vpx` resolves `paths` aliases for every file under that config. A script that needs `--eval`, the REPL or `--check` stays on `node`, since `vpx` does not transform TypeScript for any of them, and the `package-scripts` skill's `references/typescript-scripts.md` owns which runner a file gets.
+A TypeScript script runs under plain `node` wherever it can: every source file is erasable (`erasableSyntaxOnly`), so Node's own type stripping runs it with no loader, and `scripts` reaches its modules through its `imports` map. A script whose graph reaches a tsconfig `paths` alias runs under `vpx`, the bin the `vite-plus` devDependency ships, which every workspace script finds on its PATH through the root's `node_modules/.bin`: `vpx --tsconfig tsconfig.root.json` is the form `apps/web/scripts/*` take, since they reach app source through Nuxt's `@/*`, `@@/*` and `#shared/*`. The `package-scripts` skill's `references/typescript-scripts.md` owns which runner a file gets, and `scripts/src/workspace/packageScripts.test.ts` strips every module a `node` entry reaches.
 
-The persona plugin runs its TypeScript under plain `node`: its enums are `const` objects, so no loader is registered. The [persona plugin](../../infra/claude-interface/persona-plugin/README.md) records that.
+The persona plugin runs its TypeScript under plain `node` the same way. The [persona plugin](../../infra/claude-interface/persona-plugin/README.md) records that.
 
 ## One copy of every tool
 

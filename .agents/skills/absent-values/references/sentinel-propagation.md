@@ -2,10 +2,10 @@
 
 Read when a sentinel crosses a boundary of our own — a ref into an API input, an input into a row, a row back into a read or into another procedure's input.
 
-A client ref seeded with its sentinel (`""`, `0`, first enum value) always sends the field, so the API input declares it **required** with the sentinel in its value space — never `.partial()`/`.optional()`/`.default()` machinery or `?? undefined` normalisation at the call site. The server truthiness-guards (`if (type) ...`). Minimal code: one value space from ref to query.
+A client ref seeded with its sentinel (`""`, `0`, a value set's first member) always sends the field, so the API input declares it **required** with the sentinel in its value space — never `.partial()`/`.optional()`/`.default()` machinery or `?? undefined` normalisation at the call site. The server truthiness-guards (`if (type) ...`). Minimal code: one value space from ref to query.
 
 - Plain `string` fields already contain `""` — reuse the source schema untouched: `fooSchema.pick({ actorUserId: true })`, non-partial.
-- Enum fields union the sentinel: `type: entitySchema.shape.type.or(z.literal(""))`.
+- Value-set fields union the sentinel: `type: entitySchema.shape.type.or(z.literal(""))`.
 - **Numbers use `0`** when `0` has no domain meaning — invite `expireAfterMinutes`/`maxUses`: `0` = never expires / unlimited (`z.literal([...OPTIONS, 0])`, never `.nullable()`).
 - **The DB schema itself carries the sentinel** so it flows ref → input → row → read untouched — the column-level rules are `references/sentinel-columns.md`.
 - Reserve `.default("")` for fields genuinely omitted by some callers (e.g. `cursor` on the first page request).

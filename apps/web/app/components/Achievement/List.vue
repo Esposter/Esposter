@@ -13,7 +13,7 @@ const achievementStore = useAchievementStore();
 const { achievementDefinitions, statistics, userAchievements } = storeToRefs(achievementStore);
 const { $trpc } = useNuxtApp();
 const { data: achievementNameRarityMap } = useQuery(() => $trpc.achievement.readAchievementRarities.query());
-const sort = ref(AchievementSort.Category);
+const sort = ref<AchievementSort>(AchievementSort.Category);
 const displayAchievementDefinitions = computed(() =>
   sortAchievementDefinitions(achievementDefinitions.value, sort.value, achievementNameRarityMap.value),
 );

@@ -4,7 +4,7 @@ The overworld: tile-based maps authored in Tiled Map Editor, walked with grid-en
 
 ## How it works
 
-**Tiled pipeline** — maps live as `.tmx` files; `pnpm tiled:gen` (`scripts/tiled/index.ts`, built on the `parse-tmx` package) generates typed artifacts into `shared/generated/tiled/`: the `TilemapKey` enum (Home, HomeBuilding1, HomeBuilding2), per-map `LayerName` enums, object-group names, and typed object-property classes (`TeleportObjectProperty`, `EncounterObjectProperty`, `NpcId`, `ItemId`, …). Map content changes are therefore compile-time-checked against the code that consumes them.
+**Tiled pipeline** — maps live as `.tmx` files; `pnpm tiled:gen` (`scripts/tiled/index.ts`, built on the `parse-tmx` package) generates typed artifacts into `shared/generated/tiled/`: the `TilemapKey` value set (Home, HomeBuilding1, HomeBuilding2), per-map `LayerName` value sets, object-group names, and typed object-property classes (`TeleportObjectProperty`, `EncounterObjectProperty`, `NpcId`, `ItemId`, …). Map content changes are therefore compile-time-checked against the code that consumes them.
 
 **Movement** — the grid-engine Phaser plugin moves the player cell-by-cell; position/direction live in the player store and persist in the save. NPCs move by `MovementPattern` (idle or clockwise patrol) via `useMoveNpcs`.
 
@@ -27,17 +27,17 @@ NPC dialog and effects come from the `NpcMap` content map (`assets/dungeons/data
 
 Paths relative to `apps/web`.
 
-| File                                                                                 | Role                                     |
-| ------------------------------------------------------------------------------------ | ---------------------------------------- |
-| `scripts/tiled/index.ts`                                                             | `pnpm tiled:gen` codegen entrypoint      |
-| `shared/generated/tiled/`                                                            | generated enums + typed map properties   |
-| `app/composables/dungeons/scene/world/tilemap/`                                      | tilemap asset/metadata creation          |
-| `app/composables/dungeons/scene/world/interaction/`                                  | interaction dispatch composables         |
-| `app/services/dungeons/scene/world/interaction/effect/ObjectInteractionEffectMap.ts` | object group → effect                    |
-| `app/composables/dungeons/scene/world/useRandomEncounter.ts`                         | encounter roll + battle handoff          |
-| `app/assets/dungeons/data/npcs.ts`                                                   | NPC content (dialog, effects, movement)  |
-| `app/assets/dungeons/data/encounterAreas.ts`                                         | weighted encounter tables + spawn levels |
-| `app/services/dungeons/monster/createEncounteredMonster.ts`                          | level-scaled wild monster spawn          |
+| File                                                                                 | Role                                        |
+| ------------------------------------------------------------------------------------ | ------------------------------------------- |
+| `scripts/tiled/index.ts`                                                             | `pnpm tiled:gen` codegen entrypoint         |
+| `shared/generated/tiled/`                                                            | generated value sets + typed map properties |
+| `app/composables/dungeons/scene/world/tilemap/`                                      | tilemap asset/metadata creation             |
+| `app/composables/dungeons/scene/world/interaction/`                                  | interaction dispatch composables            |
+| `app/services/dungeons/scene/world/interaction/effect/ObjectInteractionEffectMap.ts` | object group → effect                       |
+| `app/composables/dungeons/scene/world/useRandomEncounter.ts`                         | encounter roll + battle handoff             |
+| `app/assets/dungeons/data/npcs.ts`                                                   | NPC content (dialog, effects, movement)     |
+| `app/assets/dungeons/data/encounterAreas.ts`                                         | weighted encounter tables + spawn levels    |
+| `app/services/dungeons/monster/createEncounteredMonster.ts`                          | level-scaled wild monster spawn             |
 
 ## Notes
 

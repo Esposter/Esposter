@@ -4,7 +4,7 @@ import { AColumn, createAColumnSchema } from "#shared/models/resource/sheet/colu
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { z } from "zod";
 
-export class StringColumn extends AColumn<ColumnType.String> {
+export class StringColumn extends AColumn<typeof ColumnType.String> {
   override readonly type = ColumnType.String;
 
   constructor(init?: Partial<StringColumn>) {

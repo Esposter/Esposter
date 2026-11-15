@@ -34,14 +34,14 @@ flowchart LR
 
 Drizzle table `resources` (`packages/db-schema/src/schema/resource/resourcesInResource.ts`) — pure identity + content lifecycle:
 
-| Column           | Type                      | Notes                                                                                              |
-| ---------------- | ------------------------- | -------------------------------------------------------------------------------------------------- |
-| `id`             | UUIDv7 PK                 | becomes the blob path prefix                                                                       |
-| `type`           | `ResourceType` text enum  | one value per type in `ResourceDefinitionMap`                                                      |
-| `name`           | text + length check       | `createNameSchema` pattern; ranked search reads the FTS5 index the triggers keep beside the table  |
-| `tags`           | JSON text, not null, `{}` | free-form key/value labels, indexed beside the name; a tag filter reads its pairs with `json_each` |
-| `userId`         | FK → users, cascade       | owner; resources are single-owner                                                                  |
-| `contentVersion` | integer                   | optimistic concurrency on content saves                                                            |
+| Column           | Type                          | Notes                                                                                              |
+| ---------------- | ----------------------------- | -------------------------------------------------------------------------------------------------- |
+| `id`             | UUIDv7 PK                     | becomes the blob path prefix                                                                       |
+| `type`           | `ResourceType` text value set | one value per type in `ResourceDefinitionMap`                                                      |
+| `name`           | text + length check           | `createNameSchema` pattern; ranked search reads the FTS5 index the triggers keep beside the table  |
+| `tags`           | JSON text, not null, `{}`     | free-form key/value labels, indexed beside the name; a tag filter reads its pairs with `json_each` |
+| `userId`         | FK → users, cascade           | owner; resources are single-owner                                                                  |
+| `contentVersion` | integer                       | optimistic concurrency on content saves                                                            |
 
 Publish state is **normalized into its own table**, `resourcePublications` — a row exists iff the resource is currently published. Publishing is a capability, not a base attribute, so publish columns do not belong on every resource row:
 

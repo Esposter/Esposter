@@ -27,7 +27,7 @@ await load();
 const activeBar = computed(() => route.params.bar || FooBarType.Default);
 ```
 
-**Validate only what is knowable before load.** `validate` runs before setup, so it cannot see fetched data — it checks shape (a uuid, an enum `Set`). A segment whose valid values depend on **loaded** data must be guarded after the load instead. Because sibling-segment switches reuse the page instance, that guard is a `watchImmediate` (a one-shot setup check would not re-run on reuse), not a setup-time `if`:
+**Validate only what is knowable before load.** `validate` runs before setup, so it cannot see fetched data — it checks shape (a uuid, a value `Set`). A segment whose valid values depend on **loaded** data must be guarded after the load instead. Because sibling-segment switches reuse the page instance, that guard is a `watchImmediate` (a one-shot setup check would not re-run on reuse), not a setup-time `if`:
 
 ```ts
 // composables/foo/useValidateFooBar.ts — per-type bar slugs need the loaded foo's type, so validate can't cover them

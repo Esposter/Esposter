@@ -3,4 +3,4 @@ import type { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType
 import type { BlockNode } from "vue-block-editor-headless";
 
 // A Button node of a webpage: a link drawn as a button
-export type ButtonNode = BlockNode<WebpageNodeType.Button, ButtonNodeProps>;
+export type ButtonNode = BlockNode<typeof WebpageNodeType.Button, ButtonNodeProps>;

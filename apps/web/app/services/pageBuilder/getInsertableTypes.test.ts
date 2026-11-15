@@ -18,7 +18,12 @@ import { MjmlNodeType } from "mjml-blocks";
 import { describe, expect, test } from "vitest";
 
 describe(getInsertableTypes, () => {
-  const TEST_TYPES = [WebpageNodeType.Column, WebpageNodeType.Text, WebpageNodeType.Tab, WebpageNodeType.Section];
+  const TEST_TYPES: WebpageNodeType[] = [
+    WebpageNodeType.Column,
+    WebpageNodeType.Text,
+    WebpageNodeType.Tab,
+    WebpageNodeType.Section,
+  ];
   const TEST_EMAIL_TYPES = [MjmlNodeType.Section, MjmlNodeType.Column, MjmlNodeType.Text, MjmlNodeType.Button];
 
   test("an insertion menu offers only the kinds the slot accepts", () => {

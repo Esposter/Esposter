@@ -14,7 +14,7 @@ const ColumnTransformationTypeOutputTypeMap = {
   [ColumnTransformationType.String]: ColumnType.String,
   [ColumnTransformationType.StringPattern]: ColumnType.String,
   [ColumnTransformationType.StringSplit]: ColumnType.String,
-} as const satisfies Record<Exclude<ColumnTransformationType, ColumnTransformationType.ConvertTo>, ColumnType>;
+} as const satisfies Record<Exclude<ColumnTransformationType, typeof ColumnTransformationType.ConvertTo>, ColumnType>;
 
 export const getComputedColumnEffectiveType = ({ transformation }: ToData<ComputedColumn>) =>
   transformation.type === ColumnTransformationType.ConvertTo
