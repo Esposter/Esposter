@@ -21,11 +21,11 @@ const date = computed({
 });
 const dateField = useTemplateRef("dateField");
 
-// A cell opens its editor in place of its text, which the reader goes on to at once; an element added after the page
-// Loaded ignores autofocus, so the editor takes focus itself
-onMounted(() => {
-  if (isInline) dateField.value?.element?.focus();
-});
+// A cell opens its editor in place of its text, which the reader goes on to at once
+useAutofocus(
+  () => dateField.value?.element,
+  () => isInline,
+);
 </script>
 
 <template>

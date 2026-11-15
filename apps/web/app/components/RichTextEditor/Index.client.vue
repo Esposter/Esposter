@@ -4,14 +4,17 @@ import type { FileHandlePluginOptions } from "@tiptap/extension-file-handler";
 import type { AnyExtension, FocusPosition } from "@tiptap/vue-3";
 import type { CSSProperties } from "vue";
 
+import { autofocusEditor } from "@/services/richTextEditor/autofocusEditor";
 import { FileHandler } from "@tiptap/extension-file-handler";
 import { CharacterCount, Placeholder } from "@tiptap/extensions";
 import { StarterKit } from "@tiptap/starter-kit";
 import { EditorContent, useEditor } from "@tiptap/vue-3";
 
 interface Props {
-  autofocus?: FocusPosition;
   extensions?: AnyExtension[];
+  // Where the caret lands when the editor takes focus as it is created, which it does only from a reader who is not
+  // Typing elsewhere; absent, it takes none
+  focusPosition?: FocusPosition;
   height?: string;
   limit: number;
   placeholder?: string;
@@ -24,7 +27,7 @@ const slots = defineSlots<{
   "prepend-outer-footer"?: () => VNode;
 }>();
 const modelValue = defineModel<string>({ required: true });
-const { autofocus = false, extensions, height = "auto", limit, placeholder = "Text (optional)" } = defineProps<Props>();
+const { extensions, focusPosition, height = "auto", limit, placeholder = "Text (optional)" } = defineProps<Props>();
 const emit = defineEmits<{ paste: Parameters<NonNullable<FileHandlePluginOptions["onPaste"]>> }>();
 const linkCursorStyle = ref<CSSProperties["cursor"]>("text");
 // CharacterCount copies its options into the plugin it builds, so a limit given at mount stays the limit.
@@ -45,7 +48,6 @@ const characterCount = CharacterCount.extend({
   },
 }).configure({ limit });
 const editor = useEditor({
-  autofocus,
   content: modelValue.value,
   extensions: [
     characterCount,
@@ -58,6 +60,9 @@ const editor = useEditor({
     useLinkClickExtension(linkCursorStyle),
     ...(extensions ?? []),
   ],
+  onCreate: ({ editor: createdEditor }) => {
+    if (focusPosition !== undefined) autofocusEditor(createdEditor, focusPosition);
+  },
   onUpdate: ({ editor: updatedEditor }) => {
     modelValue.value = updatedEditor.getHTML();
   },

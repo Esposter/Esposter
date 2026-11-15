@@ -151,6 +151,28 @@ A dialog SHALL keep focus inside itself while it is open, and SHALL close on Esc
 - **THEN** focus lands on that control
 - **AND** without such a control, focus lands on the dialog itself
 
+### Requirement: A control that asks for focus never takes it from a reader who is typing
+
+A control that asks for focus as it appears SHALL take it once, and SHALL leave focus where it is while the reader is typing in another text control or an element they edit in place.
+
+#### Scenario: A field mounts while the reader types elsewhere
+
+- **GIVEN** the reader is typing in a text control
+- **WHEN** a field that asks for focus mounts into the page
+- **THEN** focus stays in the control they are typing in
+
+#### Scenario: A field mounts while a button holds focus
+
+- **GIVEN** a button holds focus
+- **WHEN** a field that asks for focus mounts into the page
+- **THEN** focus lands on the field
+
+#### Scenario: A field with controls of its own is not in use
+
+- **GIVEN** a field holds a menu bar and a footer of buttons
+- **WHEN** the reader is not in it, not pointing at it and has no panel of its buttons open
+- **THEN** its buttons are drawn receded, and whole again once the reader is in it
+
 #### Scenario: A failed destructive answer leaves the confirmation open
 
 - **GIVEN** a confirmation's destructive answer is under way

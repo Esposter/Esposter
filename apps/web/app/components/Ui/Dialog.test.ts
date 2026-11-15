@@ -1,4 +1,5 @@
 // @vitest-environment happy-dom
+import UiButton from "@/components/Ui/Button.vue";
 import UiDialog from "@/components/Ui/Dialog.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
@@ -35,7 +36,7 @@ describe("uiDialog", () => {
       const component = mount(UiDialog, {
         attachTo: document.body,
         props: { modelValue: true, title },
-        slots: { default: () => h("button", { autofocus: true, type: "button" }) },
+        slots: { default: () => h(UiButton, { isAutofocus: true }) },
       });
       await flushPromises();
 

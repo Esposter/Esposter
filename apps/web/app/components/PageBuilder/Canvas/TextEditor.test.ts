@@ -14,9 +14,57 @@ import { EditorContent } from "@tiptap/vue-3";
 import { flushPromises } from "@vue/test-utils";
 import { MjmlNodeType } from "mjml-blocks";
 import { v7 } from "uuid";
-import { assert, describe, expect, test } from "vitest";
+import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe("pageBuilderCanvasTextEditor", () => {
+  // An editor takes its focus, and its caret at the end of the text, on a timer it sets as it mounts; only `setTimeout`
+  // Is faked, so the promises the suite flushes keep running
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ["setTimeout"] });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  const mountEditingText = async () => {
+    const resourceId = v7();
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
+      content: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text }],
+      root: TEST_ROOT,
+    });
+    const component = await mountSuspended(PageBuilderCanvasTextEditor, {
+      props: { kind: webpageKind, nodeId: TEST_ROOT_TEXT_ID, resourceId },
+    });
+    await vi.advanceTimersByTimeAsync(0);
+    const editor = component.getComponent(EditorContent).props("editor");
+    assert.exists(editor);
+    return { component, editor };
+  };
+
+  test("begins editing at the end of its text", async () => {
+    expect.hasAssertions();
+
+    const { component, editor } = await mountEditingText();
+
+    expect(editor.state.selection.head).toBe(editor.state.doc.content.size - 1);
+    component.unmount();
+  });
+
+  test("leaves a reader who is typing elsewhere alone", async () => {
+    expect.hasAssertions();
+
+    const typing = window.document.body.appendChild(window.document.createElement("textarea"));
+    typing.focus();
+    const { component, editor } = await mountEditingText();
+
+    expect(window.document.activeElement).toBe(typing);
+    expect(editor.state.selection.head).toBe(1);
+    typing.remove();
+    component.unmount();
+  });
+
   test("a text node being edited shows its own text in the editor", async () => {
     expect.hasAssertions();
 
@@ -130,7 +178,7 @@ describe("pageBuilderCanvasTextEditor", () => {
     const component = await mountSuspended(PageBuilderCanvasTextEditor, {
       props: { kind: emailKind, nodeId: TEST_ROOT_TEXT_ID, resourceId },
     });
-    await nextTick();
+    await vi.advanceTimersByTimeAsync(0);
     const editor = component.getComponent(EditorContent).props("editor");
     assert.exists(editor);
 

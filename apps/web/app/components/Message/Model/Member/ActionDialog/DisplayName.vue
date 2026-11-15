@@ -44,7 +44,7 @@ const save = () =>
       </UiForm>
     </template>
     <template #footer="{ formId }">
-      <UiButton :variant="UiButtonVariant.Quiet" autofocus @click="isOpen = false">Cancel</UiButton>
+      <UiButton is-autofocus :variant="UiButtonVariant.Quiet" @click="isOpen = false">Cancel</UiButton>
       <UiButton :is-pending :form="formId" type="submit" :variant="UiButtonVariant.Accent">Save</UiButton>
     </template>
   </UiDialog>

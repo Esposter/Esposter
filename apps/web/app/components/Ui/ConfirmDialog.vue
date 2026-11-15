@@ -44,7 +44,7 @@ watch(isOpen, (newIsOpen) => {
       <UiTextField v-model="typedName" is-autofocus :label="`Type '${confirmName}' to confirm`" />
     </template>
     <template #footer>
-      <UiButton :variant="UiButtonVariant.Quiet" autofocus @click="isOpen = false">Cancel</UiButton>
+      <UiButton is-autofocus :variant="UiButtonVariant.Quiet" @click="isOpen = false">Cancel</UiButton>
       <UiButton
         :disabled="typedName !== confirmName"
         :is-pending

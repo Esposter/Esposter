@@ -24,6 +24,10 @@ The one exception is a debounce counted by the requests it sends. That suite res
 Vitest runs hooks last-in first-out, so the restore runs before the harness's wait, which then runs on the real clock. The
 line that fakes `setTimeout` carries `oxlint-disable-next-line testing/no-faked-set-timeout` with that reason.
 
+## A timer a library sets as it mounts is advanced, not waited out
+
+`await nextTick()` and `flushPromises()` flush Vue's scheduler and microtasks, and a fake clock changes neither of them: a test that writes a ref still ticks before it reads the DOM. Fake timers are for the one thing they do not flush, a `setTimeout` the code under test sets for itself — Tiptap sets one as an editor mounts, and takes its `onCreate` and its focus on it. The suite installs `vi.useFakeTimers({ toFake: ["setTimeout"] })` in `beforeEach`, so the promises it flushes keep running, and the test calls `await vi.advanceTimersByTimeAsync(0)` where the timer is due. Never a real wait, and a test that does not depend on the timer neither advances nor mentions it.
+
 ## `Temporal.Now` is faked, but only when `toFake` names it
 
 `Temporal` is one of the methods vitest's fake clock accepts, and it is not in the default set — a suite that

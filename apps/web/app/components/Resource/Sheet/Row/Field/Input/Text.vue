@@ -18,19 +18,13 @@ const textValue = computed({
     modelValue.value = column.type === ColumnType.Number ? (value ? Number(value) : null) : value || null;
   },
 });
-const textField = useTemplateRef("textField");
-
-// A cell opens its editor in place of its text, which the reader starts typing into at once; an element added after the
-// Page loaded ignores autofocus, so the editor takes focus itself
-onMounted(() => {
-  if (isInline) textField.value?.element?.focus();
-});
 </script>
 
 <template>
+  <!-- A cell opens its editor in place of its text, which the reader starts typing into at once -->
   <UiTextField
-    ref="textField"
     v-model="textValue"
+    :is-autofocus="isInline"
     :is-label-hidden="isInline"
     :label="column.name"
     :type="FieldInputTypeMap[column.type]"

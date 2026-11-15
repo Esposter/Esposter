@@ -27,9 +27,9 @@ export default defineConfig({
     // Change per surface, so promote it with the reveal work rather than ahead of it.
     "vuejs-accessibility/mouse-events-have-key-events": "off",
     "vuejs-accessibility/no-aria-hidden-on-focusable": "error",
-    // `ignoreNonDOM` is the rule's own schema default, which ESLint never applies. Without it the rule fires on
-    // Every `autofocus` *prop* of a component, where it cannot see what element receives focus.
-    "vuejs-accessibility/no-autofocus": ["error", { ignoreNonDOM: true }],
+    // The rule sees only a DOM element's `autofocus`, and a library component forwards one to its control, so the ban is
+    // `restrictedAccessibilitySyntaxes.js`'s, which covers an element, a component and an editor's option alike
+    "vuejs-accessibility/no-autofocus": "off",
     "vuejs-accessibility/no-onchange": "error",
     "vuejs-accessibility/no-role-presentation-on-focusable": "error",
     "vuejs-accessibility/no-static-element-interactions": "off",

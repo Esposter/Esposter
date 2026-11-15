@@ -64,6 +64,15 @@ const uiSurfaceUtilities = {
       [symbols.selector]: (selector: string) =>
         `${selector}:is(:focus-visible, :has([contenteditable="true"]:focus, :is(input, textarea):focus-visible))`,
     },
+    {
+      // A field around controls of its own — a rich text editor's menu bar and footer — recedes as a whole until the
+      // Reader is in it, pointing at it or has a panel of one of its buttons open, so the field is one thing in one state
+      // Rather than a box with a row of buttons that each answer for themselves. Never the disabled opacity, which says a
+      // Control cannot be pressed
+      opacity: "var(--ui-field-rest-opacity)",
+      [symbols.selector]: (selector: string) =>
+        `${selector}:not(:focus-within, :hover, :has([aria-expanded="true"])) button`,
+    },
     FORCED_COLORS_EDGE,
   ],
   "ui-frame": [

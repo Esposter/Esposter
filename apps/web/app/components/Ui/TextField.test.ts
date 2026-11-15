@@ -60,6 +60,26 @@ describe("uiTextField", () => {
       expect(component.vm.element).toBe(component.get("input").element);
     });
 
+    test("takes focus as it mounts when it is asked to, unless the reader is typing elsewhere", async () => {
+      expect.hasAssertions();
+
+      const typing = window.document.body.appendChild(window.document.createElement("textarea"));
+      typing.focus();
+      mount(UiTextField, { attachTo: window.document.body, props: { isAutofocus: true, label, modelValue: "" } });
+      await flushPromises();
+
+      expect(window.document.activeElement).toBe(typing);
+
+      typing.remove();
+      const component = mount(UiTextField, {
+        attachTo: window.document.body,
+        props: { isAutofocus: true, label, modelValue: "" },
+      });
+      await flushPromises();
+
+      expect(window.document.activeElement).toBe(component.get("input").element);
+    });
+
     test("marks the control invalid with no message of its own, where a call site says so", () => {
       expect.hasAssertions();
 

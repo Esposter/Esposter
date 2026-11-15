@@ -67,6 +67,30 @@ describe("restrictedSyntaxes", () => {
         source: "const pattern = new RegExp(RegExp.escape(value), 'u');",
         violations: 0,
       },
+      {
+        filePath: "nativeAutofocus.vue",
+        name: "nativeAutofocus",
+        source: "<template>\n  <input autofocus />\n</template>",
+        violations: 1,
+      },
+      {
+        filePath: "componentAutofocus.vue",
+        name: "componentAutofocus",
+        source: '<template>\n  <UiButton :autofocus="true" />\n</template>',
+        violations: 1,
+      },
+      {
+        filePath: "libraryAutofocus.vue",
+        name: "libraryAutofocus",
+        source: "<template>\n  <UiTextField is-autofocus />\n</template>",
+        violations: 0,
+      },
+      {
+        filePath: "editorAutofocus.ts",
+        name: "editorAutofocus",
+        source: "useEditor({ autofocus: 'end' });",
+        violations: 1,
+      },
     ],
   });
 });

@@ -157,4 +157,19 @@ export default [
     selector:
       "CallExpression[callee.property.name=/^(every|filter|find|findIndex|findLast|findLastIndex|flatMap|forEach|map|reduce|reduceRight|some)$/][arguments.0.type=/^(Identifier|MemberExpression)$/]:not([arguments.0.name=/^(Boolean|Number|String)$/]):not([arguments.2])",
   },
+  {
+    // Focus on appearing has one route, which the library's components give a call site as `is-autofocus`: a native
+    // `autofocus` is ignored for what is added after the page loaded, and does not look at who is typing. The plugin's
+    // Own `no-autofocus` is off for this, since it sees only a DOM element's attribute and this sees a component's too
+    message:
+      "Don't write `autofocus` on an element or a component. Give a library component `is-autofocus`, which the browser runs when a dialog opens onto it and `useAutofocus` runs when it mounts into a page, leaving a reader typing elsewhere alone. See the ui-library skill's fields page.",
+    selector: "VAttribute:matches([key.name='autofocus'], [key.argument.name='autofocus'])",
+  },
+  {
+    // An editor's own `autofocus` option takes focus on creation whoever holds it, and the same key in a template's
+    // Object of bindings is the attribute again
+    message:
+      "Don't pass `autofocus` in an object. Give the rich text editor `focus-position`, or call `autofocusEditor` from an editor's `onCreate`, which leaves a reader typing elsewhere alone. See the ui-library skill's fields page.",
+    selector: "Property[key.name='autofocus']",
+  },
 ];

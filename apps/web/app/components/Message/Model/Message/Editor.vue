@@ -46,7 +46,7 @@ const customEmojiExtension = useCustomEmojiExtension();
 <template>
   <RichTextEditor
     v-model="editedMessageHtml"
-    autofocus="end"
+    focus-position="end"
     placeholder="Edit message"
     :extensions="[keyboardExtension, MentionExtension, customEmojiExtension]"
     :limit="MESSAGE_MAX_LENGTH"

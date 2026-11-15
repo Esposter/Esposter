@@ -58,6 +58,8 @@ What exists, what each is built on and its keyboard contract are the architectur
 - **A focused control keeps the library's ring** — a field or a row adds its tint beneath it, and a component hides the ring only behind an indicator of its own that reaches 3:1, never a tint alone (`references/document-chrome.md`).
 - **A field is `UiTextField` inside a `UiForm`**, with its rules from `UiRules` or a `UiRule` (`references/fields.md`).
 - **A choice between views of one thing is `UiTabs`**; tabs that go somewhere are `UiTabLinks` (`references/tabs.md`).
+- **A control that asks for focus says `is-autofocus`**, on `UiTextField` or `UiButton`, and never a native `autofocus` on an element or component, an `autofocus` option on an editor, or a hand-written `focus()` on mount — one route runs it for a dialog and for a page, and leaves a reader typing elsewhere alone (`references/fields.md`, enforced by `restrictedSyntaxes.js`).
+- **A field around controls of its own is one `ui-field` in one state** — its buttons recede at rest through `:focus-within`, never a flag a component passes down (`references/fields.md`).
 - **The call site's attributes go on top of the primitive's** — render from the attribute slot with `$attrs` spread after (`references/authoring-components.md`).
 - **A popover's open state is the ref handed to `usePopover`, never a mirror of the one it returns** — no watcher between the two, and a derived one is a `computed` with a `noop` setter: `references/popovers.md`.
 - **A menu item is data** — a `UiMenuItem` list, a command under way disabled rather than hidden (`references/menus.md`).

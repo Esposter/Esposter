@@ -40,7 +40,7 @@ const { answer, isPending } = useDialogAnswer(isOpen);
       a version of its own first, so this can be undone — and the published version stays live until you re-publish.
     </p>
     <template #footer>
-      <UiButton :variant="UiButtonVariant.Quiet" autofocus @click="isOpen = false">Cancel</UiButton>
+      <UiButton is-autofocus :variant="UiButtonVariant.Quiet" @click="isOpen = false">Cancel</UiButton>
       <UiButton :is-pending :variant="UiButtonVariant.Accent" @click="answer(restore)"> Restore </UiButton>
     </template>
   </UiDialog>

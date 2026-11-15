@@ -15,6 +15,8 @@ interface Props {
   error?: string;
   // A line under the field saying how to fill it, which describes it to assistive technology and gives way to an error
   hint?: string;
+  // Takes focus as it appears: the browser's own autofocus when a dialog opens onto it, and `useAutofocus` when it mounts
+  // Into a page, which leaves a reader who is typing elsewhere alone
   isAutofocus?: true;
   // Shown at the disabled opacity and never focused or typed in, as a native disabled control is
   isDisabled?: true;
@@ -38,7 +40,7 @@ interface Props {
 }
 
 const modelValue = defineModel<string>({ required: true });
-const { counter, maxlength, rules = [], type } = defineProps<Props>();
+const { counter, isAutofocus, maxlength, rules = [], type } = defineProps<Props>();
 // The limit counted under the field, whether it only counts or also stops the typing
 const countLimit = computed(() => counter ?? maxlength);
 // The primitive hands a rule whatever its model holds, which for a text field is always its text
@@ -46,6 +48,7 @@ const inputRules = computed(() => rules.map((rule) => (value: unknown) => rule(S
 // The control is ours to render rather than the primitive's, so what completes the field or anchors to it reads the
 // Element here
 const element = useTemplateRef<HTMLInputElement | HTMLTextAreaElement>("element");
+useAutofocus(element, () => isAutofocus);
 // The message a call site gives the field, which the control is described by while it shows, as a failing rule's is
 const errorId = useId();
 // A search says what it searches inside itself, so its label is the hint and stays its accessible name
@@ -92,7 +95,7 @@ defineExpose({ element });
           :aria-invalid="error || isInvalid ? true : attrs['aria-invalid']"
           :aria-required="isRequired || undefined"
           :autocomplete
-          :autofocus="isAutofocus"
+          :autofocus="isAutofocus || undefined"
           :class="{ 'ui-pill pl-10 pr-10': isSearch }"
           :maxlength
           :placeholder="placeholder ?? (isSearch ? label : undefined)"

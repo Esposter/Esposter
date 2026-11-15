@@ -46,7 +46,7 @@ useCommands(MessageInputCommands);
     <MessageModelMessageInputComposer
       v-else
       v-model="input"
-      :autofocus="isTouchScreen ? false : 'end'"
+      :focus-position="isTouchScreen ? undefined : 'end'"
       :placeholder="`Message ${roomName}`"
       :extra-extensions="[slashCommandExtension]"
       :target

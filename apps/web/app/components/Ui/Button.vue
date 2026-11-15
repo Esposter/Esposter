@@ -5,6 +5,8 @@ import { Button } from "@vuetify/v0";
 
 interface Props {
   disabled?: boolean;
+  // Takes focus as its dialog opens, which the browser's own autofocus does for it: a destructive confirmation's Cancel
+  isAutofocus?: true;
   // A write it started is still out: pressing again would only send it twice, so it holds disabled with a spinner
   // Ahead of its content until the write settles
   isPending?: boolean;
@@ -28,6 +30,7 @@ defineExpose({ element });
       ref="element"
       :="{ ...attrs, ...$attrs }"
       :aria-busy="isPending || undefined"
+      :autofocus="isAutofocus || undefined"
       :data-variant="variant"
       ui-button
     >

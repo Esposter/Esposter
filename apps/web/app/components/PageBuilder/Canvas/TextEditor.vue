@@ -4,6 +4,7 @@ import type { AnyPageBuilderKind } from "@/models/pageBuilder/AnyPageBuilderKind
 
 import { getNoteExtensions } from "#shared/services/resource/note/getNoteExtensions";
 import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
+import { autofocusEditor } from "@/services/richTextEditor/autofocusEditor";
 import { MergeFieldExtension } from "@/services/pageBuilder/MergeFieldExtension";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
@@ -37,9 +38,12 @@ const getNodeContent = () => {
 const interactionId = v7();
 const mergeFieldColumns = useMergeFieldColumns(() => resourceId);
 const editor = useEditor({
-  autofocus: "end",
   content: getNodeContent(),
   extensions: [...getNoteExtensions(), MergeFieldExtension.configure({ getColumns: () => mergeFieldColumns.value })],
+  // The edit begins at the end of the text the reader chose to edit
+  onCreate: ({ editor: createdEditor }) => {
+    autofocusEditor(createdEditor, "end");
+  },
   onUpdate: ({ editor: currentEditor }) => {
     const document = getHeldDocument(resourceId)?.document;
     const nodePointer = document && getNodePointer(kind, document, nodeId);

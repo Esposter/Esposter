@@ -47,6 +47,10 @@ describe("unoConfig", () => {
                 "outline-offset": "var(--ui-focus-inset)",
               },
               {
+                "$$symbol-selector": [Function],
+                "opacity": "var(--ui-field-rest-opacity)",
+              },
+              {
                 "$$symbol-parent": "@media (forced-colors: active)",
                 "border": "var(--ui-border-width) solid transparent",
               },
