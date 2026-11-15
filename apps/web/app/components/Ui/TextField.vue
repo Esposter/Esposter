@@ -87,6 +87,7 @@ defineExpose({ element });
         translate-y="-1/2"
       />
       <Input.Control #default="{ attrs }" renderless>
+        <!-- eslint-disable vue/no-restricted-syntax -- the library's own control renders the browser's autofocus for its dialog, which call sites ask for with is-autofocus -->
         <component
           :is="rows ? 'textarea' : 'input'"
           ref="element"
@@ -108,6 +109,7 @@ defineExpose({ element });
           resize-y
           ui-field
         />
+        <!-- eslint-enable vue/no-restricted-syntax -->
       </Input.Control>
       <UiIconButton
         v-if="isSearch && modelValue && !isDisabled"

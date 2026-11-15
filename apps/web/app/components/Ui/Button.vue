@@ -26,6 +26,7 @@ defineExpose({ element });
 
 <template>
   <Button.Root #default="{ attrs }" :disabled="disabled || isPending" renderless>
+    <!-- eslint-disable vue/no-restricted-syntax -- the library's own control renders the browser's autofocus for its dialog, which call sites ask for with is-autofocus -->
     <button
       ref="element"
       :="{ ...attrs, ...$attrs }"
@@ -37,5 +38,6 @@ defineExpose({ element });
       <UiSpinner v-if="isPending" />
       <slot />
     </button>
+    <!-- eslint-enable vue/no-restricted-syntax -->
   </Button.Root>
 </template>
