@@ -1,5 +1,4 @@
 import type { SurveyResponseModeValidator } from "#server/models/survey/SurveyResponseModeValidator";
-import type { Context } from "#server/trpc/context";
 
 import { getInvalidParticipantTokenError } from "#server/services/survey/getInvalidParticipantTokenError";
 import { readBoundProgramIds } from "#server/services/survey/readBoundProgramIds";
@@ -9,11 +8,7 @@ import { and, eq, inArray } from "drizzle-orm";
 
 // The program is the issuer, the survey is the gate — a token only passes when it was issued by a
 // Program actually bound to this survey, so another survey's token is as good as a forged one
-export const resolveIdentifiedToken: SurveyResponseModeValidator = async (
-  db: Context["db"],
-  surveyId,
-  participantToken,
-) => {
+export const resolveIdentifiedToken: SurveyResponseModeValidator = async (db, surveyId, participantToken) => {
   if (!participantToken) throw getInvalidParticipantTokenError();
 
   const survey = await db.query.resourcesInResource.findFirst({

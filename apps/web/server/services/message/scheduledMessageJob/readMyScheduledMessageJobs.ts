@@ -22,13 +22,12 @@ export const readMyScheduledMessageJobs = async (
     userObject.readScheduledMessages(),
     userObject.readReminders(),
   ]);
-  const messagesByRoomId = await fanOutRoomReads(
-    indexedScheduledMessages.map(({ roomId }) => roomId),
-    (roomObject) => roomObject.readScheduledMessages(userId),
-  );
-  const roomIds = [...new Set([...messagesByRoomId.keys(), ...reminders.map(({ roomId }) => roomId)])];
-  const rooms =
-    roomIds.length > 0 ? await db.select().from(roomsInMessage).where(inJsonArray(roomsInMessage.id, roomIds)) : [];
+  const indexedRoomIds = indexedScheduledMessages.map(({ roomId }) => roomId);
+  const roomIds = [...new Set([...indexedRoomIds, ...reminders.map(({ roomId }) => roomId)])];
+  const [messagesByRoomId, rooms] = await Promise.all([
+    fanOutRoomReads(indexedRoomIds, (roomObject) => roomObject.readScheduledMessages(userId)),
+    roomIds.length > 0 ? db.select().from(roomsInMessage).where(inJsonArray(roomsInMessage.id, roomIds)) : [],
+  ]);
   const roomMap = new Map(rooms.map((room) => [room.id, room]));
   const scheduledMessageJobs = [
     ...[...messagesByRoomId].flatMap(([roomId, messages]) =>

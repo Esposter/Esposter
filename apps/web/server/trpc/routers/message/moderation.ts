@@ -121,7 +121,6 @@ export const moderationRouter = router({
       ]);
       if (!isPermitted) throw new TRPCError({ code: "UNAUTHORIZED" });
 
-      const sessionId = ctx.session.id;
       // Being removed from a room, for good or for a while, takes the member out of its calls too. Best-effort
       // Behind the removal, which has already committed: a failed eviction costs one connection that outlives it,
       // Where rethrowing would fail a mutation whose effect already landed
@@ -133,13 +132,7 @@ export const moderationRouter = router({
         case AdminActionType.SoftBan: {
           const deletedMember = await banRoomMember(ctx.db, actorUserId, roomId, targetUserId);
           if (deletedMember)
-            await announceRoomMemberRemoval(
-              ctx.db,
-              deletedMember,
-              actorUserId,
-              sessionId,
-              RoomMemberRemovalAction.Banned,
-            );
+            await announceRoomMemberRemoval(ctx.db, deletedMember, actorUserId, RoomMemberRemovalAction.Banned);
           // A soft ban also purges what the member wrote — best-effort after the ban commits: the ban is the effect that
           // Must not be lost. The purge is one call to the member's room, which tombstones every message they wrote in one
           // Turn, and the blobs those messages named are queued for deletion behind it
@@ -179,13 +172,7 @@ export const moderationRouter = router({
             .where(getRoomMembershipWhere(roomId, targetUserId))
             .returning();
           if (deletedMember)
-            await announceRoomMemberRemoval(
-              ctx.db,
-              deletedMember,
-              actorUserId,
-              sessionId,
-              RoomMemberRemovalAction.Kicked,
-            );
+            await announceRoomMemberRemoval(ctx.db, deletedMember, actorUserId, RoomMemberRemovalAction.Kicked);
           await evictAfterRemoval();
           break;
         }

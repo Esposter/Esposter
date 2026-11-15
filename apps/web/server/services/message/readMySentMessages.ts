@@ -24,12 +24,13 @@ export const readMySentMessages = async (
     roomIdMessageIdsMap.set(roomId, [...(roomIdMessageIdsMap.get(roomId) ?? []), messageId]);
 
   const roomIds = [...roomIdMessageIdsMap.keys()];
-  const messagesByRoomId = await fanOutRoomReads(roomIds, async (roomObject, roomId) => {
-    const messages: RoomMessage[] = await roomObject.readMessagesByIds(roomIdMessageIdsMap.get(roomId) ?? []);
-    return new Map(messages.map((message) => [message.id, message]));
-  });
-  const rooms =
-    roomIds.length > 0 ? await db.select().from(roomsInMessage).where(inJsonArray(roomsInMessage.id, roomIds)) : [];
+  const [messagesByRoomId, rooms] = await Promise.all([
+    fanOutRoomReads(roomIds, async (roomObject, roomId) => {
+      const messages: RoomMessage[] = await roomObject.readMessagesByIds(roomIdMessageIdsMap.get(roomId) ?? []);
+      return new Map(messages.map((message) => [message.id, message]));
+    }),
+    roomIds.length > 0 ? db.select().from(roomsInMessage).where(inJsonArray(roomsInMessage.id, roomIds)) : [],
+  ]);
   const roomMap = new Map(rooms.map((room) => [room.id, room]));
   const lastEntry = page.items.at(-1);
   return {

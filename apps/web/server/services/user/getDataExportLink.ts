@@ -9,7 +9,7 @@ import { Operation } from "@esposter/shared";
 
 // Refused for every state but a ready export that has not expired and names its archive. The expiry is checked here
 // As well as by the blob's lifecycle rule, since a blob the rule has not reached yet still exists after its expiry
-export const getDataExportLink = async ({ blobName, expiresAt, id, status }: DataExportInUser) => {
+export const getDataExportLink = ({ blobName, expiresAt, id, status }: DataExportInUser) => {
   if (status !== DataExportStatus.Ready || !blobName || !expiresAt || expiresAt <= new Date())
     throw getInvalidOperationError(Operation.Read, DatabaseEntityType.DataExport, id);
 

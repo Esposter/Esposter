@@ -29,10 +29,7 @@ const cloneAsset = async (
   if (await bucket.head(destinationBlobName)) return true;
 
   // One HEAD answers both questions the copy needs: that the source is there, and what the clone costs its new owner
-  const sourceObject = await getResultAsync(() => bucket.head(blobName)).match(
-    (object) => object,
-    () => null,
-  );
+  const sourceObject = await getResultAsync(() => bucket.head(blobName)).unwrapOr(null);
   if (!sourceObject) return false;
 
   await chargeAndCopyBlob(

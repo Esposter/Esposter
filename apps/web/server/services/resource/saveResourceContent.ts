@@ -192,7 +192,6 @@ export const saveResourceContent = async (
     savedResource = updatedResource;
     if (hasResourceLinksChanged) await clearResourceLinks(isCurrentContentVersion(savedResource.contentVersion));
     await getResultAsync(async () => {
-      isContentBlobWriteAttempted = true;
       await writeContentBlob();
       removedAssetHashes = await pruneWorkingAssets(ctx.db, id, assetHashes);
     }).match(noop, async (error) => {
@@ -211,9 +210,9 @@ export const saveResourceContent = async (
   }
   // The owner is charged for their own content as for any upload, from here because this write knows its size
   // And a blob with no reserve behind it has no ledger row for `BlobCreated` to find. `resource.userId`, not the
-  // Caller: a blueprint deploy or a restore writes on the owner's behalf. After the transaction, because the
-  // Charge takes the ledger row's lock and then the user's, and a save's transaction held open across those is a
-  // Connection waiting on locks it will not release (openspec/specs/resource/storage-quotas/design.md)
+  // Caller: a blueprint deploy or a restore writes on the owner's behalf. After the content write, because the
+  // Charge takes the ledger row's lock and then the user's, and a save that kept its writes open across those would be
+  // A connection waiting on locks it will not release (openspec/specs/resource/storage-quotas/design.md)
   await chargeAndEmitStorageLedgerEntry(
     ctx.db,
     resource.userId,

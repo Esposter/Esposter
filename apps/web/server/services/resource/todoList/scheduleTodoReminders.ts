@@ -3,6 +3,7 @@ import type { ResourceInResource } from "@esposter/db-schema";
 import type { ToData } from "@esposter/shared";
 
 import { useUserObject } from "#server/composables/realtime/useUserObject";
+import { getTodoItemDueAtMap } from "#server/services/resource/todoList/getTodoItemDueAtMap";
 import { getResultAsync, noop } from "@esposter/shared";
 
 // Gives the reminder of each item whose due date is new or changed since the last Save, and still in the future, to the
@@ -16,14 +17,8 @@ export const scheduleTodoReminders = (
   previousContent: ToData<TodoListResource> | undefined,
 ): Promise<void> =>
   getResultAsync(async () => {
-    const previousDueAtMap = new Map(
-      (previousContent?.items ?? []).flatMap(({ completedAt, dueAt, id }) =>
-        !completedAt && dueAt ? [[id, dueAt.getTime()]] : [],
-      ),
-    );
-    const currentDueAtMap = new Map(
-      content.items.flatMap(({ completedAt, dueAt, id }) => (!completedAt && dueAt ? [[id, dueAt.getTime()]] : [])),
-    );
+    const previousDueAtMap = getTodoItemDueAtMap(previousContent?.items ?? []);
+    const currentDueAtMap = getTodoItemDueAtMap(content.items);
     const now = Date.now();
     const reminders = content.items.flatMap(({ completedAt, dueAt, id }) => {
       if (completedAt || !dueAt || dueAt.getTime() <= now || previousDueAtMap.get(id) === dueAt.getTime()) return [];

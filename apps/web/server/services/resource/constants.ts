@@ -6,7 +6,6 @@ export const CONTENT_SAVED_COALESCE_WINDOW_MS = Temporal.Duration.from({ hours: 
 export const RESOURCE_ASSET_PRESIGNED_URL_DURATION_MS = Temporal.Duration.from({ minutes: 15 }).total("milliseconds");
 // Just under the presigned url life so a browser-cached redirect can never outlive its signature
 export const RESOURCE_ASSET_CACHE_MAX_AGE_SECONDS = Temporal.Duration.from({ minutes: 14 }).total("seconds");
-// Bounded so a hot resource's concurrent increments cannot spin the read path; on exhaustion the count drops
 // Appended to a duplicated resource's name; the base name is truncated so the whole stays within the length check
 export const DUPLICATE_NAME_SUFFIX = " (copy)";
 // A content update that loses to a save made in between is read again and reapplied this many times in all, and then

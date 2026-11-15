@@ -14,10 +14,8 @@ import {
 import { getCloudflareResourceName } from "../../../packages/db-schema/src/services/cloudflare/getCloudflareResourceName.ts";
 import { RateLimiterNamespaceIdMap } from "../../../packages/db-schema/src/services/cloudflare/RateLimiterNamespaceIdMap.ts";
 import { RateLimiterPointsMap } from "../../../packages/db-schema/src/services/cloudflare/RateLimiterPointsMap.ts";
+import { getStorageBucketBindingName } from "../../../packages/db-schema/src/services/storage/getStorageBucketBindingName.ts";
 import { Environment } from "../shared/models/environment/Environment.ts";
-
-// A binding's name is its resource's name in SCREAMING_SNAKE, so each bucket is bound by it
-const toBindingName = (name: string) => name.replaceAll("-", "_").toUpperCase();
 
 // The environment a build is for: CI sets CLOUDFLARE_ENV by its branch, and a build without it is prod. Any other value is
 // A typo that would deploy one environment's bindings under another's name, so it fails the build
@@ -73,7 +71,7 @@ export const getEnvironmentWrangler = (environment: CloudflareEnvironment) => {
       })),
     },
     r2_buckets: Object.values(StorageBucket).map((bucket) => ({
-      binding: toBindingName(bucket),
+      binding: getStorageBucketBindingName(bucket),
       bucket_name: getCloudflareResourceName(environment, CloudflareAssetType.R2Bucket, bucket),
     })),
     // One binding per limiter, each in its own namespace, so a limiter's counts never reach another's

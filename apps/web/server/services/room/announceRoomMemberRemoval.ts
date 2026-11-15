@@ -13,7 +13,6 @@ export const announceRoomMemberRemoval = async (
   db: Context["db"],
   { roomId, userId }: Pick<UserToRoomInMessage, "roomId" | "userId">,
   actorUserId: string,
-  sessionId: string,
   action: RoomMemberRemovalAction,
 ): Promise<void> => {
   await announceRoomMemberDeparture({ roomId, userId });

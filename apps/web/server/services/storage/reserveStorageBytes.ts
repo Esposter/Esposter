@@ -42,9 +42,7 @@ export const reserveStorageBytes = async (
   // Nothing new can drift from the policy (openspec/specs/resource/storage-quotas/design.md)
   const collectableBefore = new Date(now.getTime() - (QUEUE_DELIVERY_TTL_MS + WRITE_PRESIGNED_URL_DURATION_MS));
   // The reservations travel as one JSON bind, so the statement's parameters do not grow with the number of blobs
-  const reservationsJson = JSON.stringify(
-    reservations.map(({ blobName, declaredBytes: bytes }) => ({ blobName, declaredBytes: bytes })),
-  );
+  const reservationsJson = JSON.stringify(reservations);
   // A hold this batch takes over is replaced rather than joined, so it is left out of the sum rather than counted twice
   const blobNames = reservations.map(({ blobName }) => blobName);
   const pendingWhere = and(
