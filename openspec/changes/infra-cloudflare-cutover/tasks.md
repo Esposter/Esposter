@@ -17,8 +17,9 @@
 
 ## 4. Production
 
-- [ ] 4.1 Snapshot, pre-copy, freeze, delta, reschedule, verify and smoke-check production. Verified by `verify` passing and every smoke check in `design.md` passing on `next.esposter.com`.
-- [ ] 4.2 Switch the apex to the web Worker. Verified by `esposter.com` answering from the Worker.
+- [x] 4.1 Snapshot, pre-copy, freeze, delta, reschedule, verify and smoke-check production. Verified by `verify` passing and every smoke check in `design.md` passing on `next.esposter.com`.
+- [x] 4.2 Switch the apex to the web Worker. Verified by `esposter.com` answering from the Worker.
+  - The live half ran clean. The freeze ran from Railway's removal to the apex answering from the Worker in about sixteen minutes, against the rehearsal's three, because production held four shapes develop did not, each fixed inside the freeze: call messages still typed `VoiceCall`, reactions stored as emoji-mart short names, TodoList content read without its compressed frame, and `verify` comparing typed tables under the old v4 partition keys. A fifth, the ledger's counts for rewritten blobs, is the `rewrite-urls` charge above. `verify` passed, and every smoke check passed on `next.esposter.com` except a push, which no subscribed device was there to receive.
 
 ## 5. Teardown
 
