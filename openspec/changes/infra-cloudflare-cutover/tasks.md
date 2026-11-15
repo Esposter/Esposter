@@ -12,7 +12,8 @@
 
 ## 3. Rehearsal
 
-- [ ] 3.1 Deploy both Workers with `next.esposter.com` and run the whole sequence against the develop estate. Verified by `verify` passing on develop and the freeze duration recorded in this file.
+- [x] 3.1 Deploy both Workers with `next.esposter.com` and run the whole sequence against the develop estate. Verified by `verify` passing on develop and the freeze duration recorded in this file.
+  - The live half (`assign-ids`, a full `copy-objects`, `copy-core`, `copy-tables`) took 650 seconds, nearly all of it `copy-objects`. The freeze half (`assign-ids`, `copy-objects --delta`, `copy-core`, `copy-tables --delta`, `rewrite-urls`, `reschedule`, `verify`) took 155 seconds, 97 of them `verify`, and `verify` passed.
 
 ## 4. Production
 
