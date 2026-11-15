@@ -57,7 +57,7 @@ export const usePdfViewer = ({
   viewerApi,
 }: UsePdfViewerOptions): PdfViewerState => {
   const currentPageNumber = ref(0);
-  const editorMode = ref(PdfEditorMode.None);
+  const editorMode = ref<PdfEditorMode>(PdfEditorMode.None);
   const isMatchCase = ref(false);
   const isNotFound = ref(false);
   const isWholeWord = ref(false);

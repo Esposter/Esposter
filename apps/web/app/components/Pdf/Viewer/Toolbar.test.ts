@@ -139,7 +139,7 @@ describe("pdfViewerToolbar", () => {
       expect.hasAssertions();
 
       const annotations = createPdfAnnotationsState();
-      const viewer = createPdfViewerState({ editorMode: ref(PdfEditorMode.FreeText) });
+      const viewer = createPdfViewerState({ editorMode: ref<PdfEditorMode>(PdfEditorMode.FreeText) });
       const component = await openMenu(mountToolbar({ annotations, viewer }));
 
       expect(getMenuItem(component, "Add text")?.attributes("aria-checked")).toBe("true");

@@ -52,7 +52,7 @@ describe("usePdfAnnotations", () => {
   ) => {
     const viewer = {
       drawStoredEditors: vi.fn<() => void>(),
-      editorMode: ref(PdfEditorMode.None),
+      editorMode: ref<PdfEditorMode>(PdfEditorMode.None),
     } as unknown as PdfViewerState;
     const scope = effectScope();
     scopes.push(scope);
