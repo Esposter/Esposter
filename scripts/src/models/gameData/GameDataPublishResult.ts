@@ -8,15 +8,15 @@ import type { GameDataLock } from "genshin-world";
 export type GameDataPublishResult =
   | {
       nextLock: GameDataLock;
-      outcome: GameDataPublishOutcome.DryRun;
+      outcome: typeof GameDataPublishOutcome.DryRun;
       records: GameDataRecord[];
       storedObjectCount: number;
     }
-  | { outcome: GameDataPublishOutcome.Empty }
+  | { outcome: typeof GameDataPublishOutcome.Empty }
   | {
-      outcome: GameDataPublishOutcome.Published;
+      outcome: typeof GameDataPublishOutcome.Published;
       plannedLock: GameDataLock;
       storedObjectCount: number;
       uploadedCountMap: Record<CloudflareEnvironment, number>;
     }
-  | { outcome: GameDataPublishOutcome.Unchanged };
+  | { outcome: typeof GameDataPublishOutcome.Unchanged };

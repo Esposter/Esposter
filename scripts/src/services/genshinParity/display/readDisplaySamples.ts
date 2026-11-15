@@ -14,7 +14,7 @@ import { checkIsPartInterior } from "#src/services/genshinParity/sky/checkIsPart
 import { getPixelDisplayColor } from "#src/services/genshinParity/sky/getPixelDisplayColor";
 import { withFinalizerAsync } from "@esposter/shared";
 
-const TARGET_NAMES = [WitnessTargetName.Albedo, WitnessTargetName.Depth, WitnessTargetName.Part];
+const TARGET_NAMES: WitnessTargetName[] = [WitnessTargetName.Albedo, WitnessTargetName.Depth, WitnessTargetName.Part];
 // A pixel is read where little haze lies over it, its albedo dark in no channel and its colour shown short of white in
 // Every one, where the curve and the encoding still tell one light from the next
 const MAX_DEPTH = 80;

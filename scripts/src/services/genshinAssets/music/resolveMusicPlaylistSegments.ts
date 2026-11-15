@@ -15,7 +15,7 @@ export const resolveMusicPlaylistSegments = ({ id, items }: MusicPlaylist): numb
       if (item.loopCount < 1) throw new InvalidOperationError(Operation.Read, String(id), "loops a segment forever");
       return Array.from({ length: item.loopCount }, () => item.segmentId);
     }
-    if (![MusicPlaylistType.SequenceContinuous, MusicPlaylistType.SequenceStep].includes(item.type))
+    if (item.type !== MusicPlaylistType.SequenceContinuous && item.type !== MusicPlaylistType.SequenceStep)
       throw new InvalidOperationError(Operation.Read, String(id), "plays a group in a random order");
     const children = Array.from({ length: item.childCount }, () => walk(false)).flat();
     // The root's loop count is how often the playlist repeats, which a pass is one of

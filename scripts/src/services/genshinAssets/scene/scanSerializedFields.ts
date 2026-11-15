@@ -56,7 +56,7 @@ export const scanSerializedFields = (
     const count = readInt(offset);
     const end = offset + WORD + count * keyframeWords * WORD + 3 * WORD;
     if (count < 1 || count > MAX_COUNT || !checkHasBytes(offset, end - offset)) return undefined;
-    const keys: Extract<SerializedField, { kind: SerializedFieldKind.Curve }>["keys"] = [];
+    const keys: Extract<SerializedField, { kind: typeof SerializedFieldKind.Curve }>["keys"] = [];
     for (let index = 0; index < count; index++) {
       const key = offset + WORD + index * keyframeWords * WORD;
       const [time = 0, value = 0, inSlope = 0, outSlope = 0] = [0, 1, 2, 3].map((word) => readFloat(key + word * WORD));

@@ -2,39 +2,40 @@
 // `NoActionFile`, `NoPoiseSource`, `TargetCentred` and `UnmeasuredHold` are the index's shared causes, which the builder
 // Applies by rule. A kit's overlay names the others that are its own, and names `BorrowedFromDonor` with the donor each
 // Borrowed path takes its value from
-export enum KitProvisionalCause {
+export const KitProvisionalCause = {
   // A character gcsim has no folder for borrows its donors' frames, hits and areas, which its overlay names per path,
   // Until a source gives its own
-  BorrowedFromDonor = "BorrowedFromDonor",
+  BorrowedFromDonor: "BorrowedFromDonor",
   // A box is priced as the circle to its farthest corner, until an area holds a box
-  BoxAsCircle = "BoxAsCircle",
+  BoxAsCircle: "BoxAsCircle",
   // A source gives another value, and the kit keeps its own until a commit settles it
-  DiffersFromSource = "DiffersFromSource",
+  DiffersFromSource: "DiffersFromSource",
   // A talent whose hits its module spawns as a named list keeps its own hits list empty, unless one of its own hits joins
   // The group at an index no named list's hit does. A stance's actions keep theirs the same way in the skill's group
-  NamedHitList = "NamedHitList",
+  NamedHitList: "NamedHitList",
   // A plunge gcsim has no file for borrows Bennett's plunge frames, hits and areas, and a claymore's charged
   // Attack it has no file for the frames the kits share
-  NoActionFile = "NoActionFile",
+  NoActionFile: "NoActionFile",
   // A hit the module casts to carry an effect, an enemy status or a pulse, which the game deals no damage with, so its
   // Multiplier is 0. The builder refuses it where a source gives the hit a multiplier
-  NoDamageHit = "NoDamageHit",
+  NoDamageHit: "NoDamageHit",
   // The unit gcsim does not model: no source gives a value for a character gcsim has no folder for. Only a kit whose
   // Character has no gcsim folder may name it, and the builder refuses it elsewhere
-  NoGcsimUnit = "NoGcsimUnit",
+  NoGcsimUnit: "NoGcsimUnit",
   // A hit neither gcsim nor the wiki gives poise for deals none
-  NoPoiseSource = "NoPoiseSource",
+  NoPoiseSource: "NoPoiseSource",
   // The value agrees with gcsim's current branch but not the tag the builder reads, so it was read past the licence
   // Line
-  ReadPastLicence = "ReadPastLicence",
+  ReadPastLicence: "ReadPastLicence",
   // A hit gcsim centres on its target reaches the circle round the body to the targeting zone's edge, and an arrow's box
   // On its target the circle round the body as long as the box, until an area holds a target
-  TargetCentred = "TargetCentred",
+  TargetCentred: "TargetCentred",
   // No source gives the value, and no cause is known yet
-  Unclassified = "Unclassified",
+  Unclassified: "Unclassified",
   // A hold's threshold with no table or wiki figure is half a second, Bennett's first Charge Level's
-  UnmeasuredHold = "UnmeasuredHold",
+  UnmeasuredHold: "UnmeasuredHold",
   // A value the published record holds that no source gives and no module comment explains; the published value
   // Stands
-  Unsourced = "Unsourced",
-}
+  Unsourced: "Unsourced",
+} as const;
+export type KitProvisionalCause = (typeof KitProvisionalCause)[keyof typeof KitProvisionalCause];

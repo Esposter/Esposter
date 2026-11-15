@@ -9,10 +9,12 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
-const createLeaf = (path: number[], label: string, type = GcsimTalentType.Attack, selector = 0): GcsimTalentLeaf => ({
-  path,
-  reference: { label, selector, type },
-});
+const createLeaf = (
+  path: number[],
+  label: string,
+  type: GcsimTalentType = GcsimTalentType.Attack,
+  selector = 0,
+): GcsimTalentLeaf => ({ path, reference: { label, selector, type } });
 
 describe(readGcsimConfig, () => {
   test("reads Xiangling's names, talent variables and hitboxes, each on the line it is named on", () => {

@@ -19,7 +19,7 @@ export const createReferenceManifestRow = (
 ): ParityReferenceManifestRow => {
   const recording = source === undefined ? undefined : RECORDING_SOURCE_REGEX.exec(source);
   const language = Object.entries(REFERENCE_ID_LANGUAGE_TAGS).find(([word]) => id.split("-").includes(word))?.[1];
-  let kind = ParityReferenceKind.Other;
+  let kind: ParityReferenceKind = ParityReferenceKind.Other;
   let attribution: ParityReferenceAttribution = {};
   if (wikiTitle !== undefined) {
     kind = ParityReferenceKind.Wiki;

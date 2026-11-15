@@ -6,7 +6,7 @@ import { sampleKeys } from "#src/services/genshinAssets/scene/sampleKeys";
 // A scanned gradient's colour and alpha at a time as Unity evaluates it, its colour keys and its alpha keys each read
 // By the gradient's mode
 export const sampleSerializedGradient = (
-  { alphaKeys, colorKeys, mode }: Extract<SerializedField, { kind: SerializedFieldKind.Gradient }>,
+  { alphaKeys, colorKeys, mode }: Extract<SerializedField, { kind: typeof SerializedFieldKind.Gradient }>,
   time: number,
 ): [number, number, number, number] => {
   const [red = 0, green = 0, blue = 0] = sampleKeys(

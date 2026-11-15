@@ -15,7 +15,7 @@ import { measureFamilyTargets } from "#src/services/genshinParity/passes/measure
 import { toShapeReading } from "#src/services/genshinParity/passes/toShapeReading";
 import { writeShapeDiff } from "#src/services/genshinParity/passes/writeShapeDiff";
 
-const TARGET_NAMES = [
+const TARGET_NAMES: WitnessTargetName[] = [
   WitnessTargetName.Part,
   WitnessTargetName.Depth,
   WitnessTargetName.Normal,

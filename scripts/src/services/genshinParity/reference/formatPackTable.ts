@@ -6,7 +6,11 @@ import { formatEntryPaths } from "#src/services/genshinParity/reference/formatEn
 import { formatMebibytes } from "#src/services/genshinParity/reference/formatMebibytes";
 import { sumOf } from "#src/services/genshinParity/reference/sumOf";
 
-const KINDS = [ParityReferenceKind.Wiki, ParityReferenceKind.RecordingFrame, ParityReferenceKind.Other];
+const KINDS: ParityReferenceKind[] = [
+  ParityReferenceKind.Wiki,
+  ParityReferenceKind.RecordingFrame,
+  ParityReferenceKind.Other,
+];
 
 // The table `references pack` prints: the counts, the sizes by kind, and the largest files packed.
 // It also names the ids refused for a missing input, the files restored from scratch, and those with no screenshot.

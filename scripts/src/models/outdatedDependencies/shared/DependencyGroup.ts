@@ -4,14 +4,15 @@
 // Plugin's — against that lockfile and then the registry, since `pnpm` never reads the lockfile its install runs
 // From. An action a workflow uses and the runner it runs on are each asked of the source that publishes them. The two
 // Workspace sections and `overrides` double as the yaml keys.
-export enum DependencyGroup {
-  Catalog = "catalog",
-  ConfigDependencies = "configDependencies",
-  Engines = "engines",
-  GitHubActions = "github-actions",
-  GitHubRunners = "github-runners",
-  NodeVersion = ".node-version",
-  Npm = "npm",
-  Overrides = "overrides",
-  PackageManager = "packageManager",
-}
+export const DependencyGroup = {
+  Catalog: "catalog",
+  ConfigDependencies: "configDependencies",
+  Engines: "engines",
+  GitHubActions: "github-actions",
+  GitHubRunners: "github-runners",
+  NodeVersion: ".node-version",
+  Npm: "npm",
+  Overrides: "overrides",
+  PackageManager: "packageManager",
+} as const;
+export type DependencyGroup = (typeof DependencyGroup)[keyof typeof DependencyGroup];

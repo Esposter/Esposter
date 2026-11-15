@@ -8,17 +8,17 @@ export type SerializedField = (
   | {
       alphaKeys: { alpha: number; time: number }[];
       colorKeys: { color: [number, number, number]; time: number }[];
-      kind: SerializedFieldKind.Gradient;
+      kind: typeof SerializedFieldKind.Gradient;
       mode: GradientMode;
     }
-  | { color: [number, number, number, number]; kind: SerializedFieldKind.Color }
-  | { elements: SerializedField[]; kind: SerializedFieldKind.Array }
+  | { color: [number, number, number, number]; kind: typeof SerializedFieldKind.Color }
+  | { elements: SerializedField[]; kind: typeof SerializedFieldKind.Array }
   | {
       keys: { inSlope: number; outSlope: number; time: number; value: number }[];
-      kind: SerializedFieldKind.Curve;
+      kind: typeof SerializedFieldKind.Curve;
       postWrap: CurveWrapMode;
       preWrap: CurveWrapMode;
     }
-  | { kind: SerializedFieldKind.Float | SerializedFieldKind.Integer; value: number }
-  | { kind: SerializedFieldKind.Pointer; pointer: ObjectPointer }
+  | { kind: typeof SerializedFieldKind.Float | typeof SerializedFieldKind.Integer; value: number }
+  | { kind: typeof SerializedFieldKind.Pointer; pointer: ObjectPointer }
 ) & { offset: number };

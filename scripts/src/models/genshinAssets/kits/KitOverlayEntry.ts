@@ -14,9 +14,9 @@ import { z } from "zod";
 // And which no overlay file holds.
 export type KitOverlayEntry =
   | { cause: KitProvisionalCause; donor?: KitDonor; value?: unknown }
-  | { file: string; index?: number; line: number; source: KitSource.Gcsim; value?: unknown }
-  | { page: string; row: number; source: KitSource.Wiki; value?: unknown }
-  | { source: KitSource.Gcsim | KitSource.Tables | KitSource.Wiki; value?: unknown };
+  | { file: string; index?: number; line: number; source: typeof KitSource.Gcsim; value?: unknown }
+  | { page: string; row: number; source: typeof KitSource.Wiki; value?: unknown }
+  | { source: typeof KitSource.Gcsim | typeof KitSource.Tables | typeof KitSource.Wiki; value?: unknown };
 
 export const kitOverlayEntrySchema: z.ZodType<KitOverlayEntry> = z.union([
   z

@@ -1,10 +1,11 @@
 // How a curve reads at a time before its first key or after its last, as Unity serializes it (its own internal modes,
 // Not the public WrapMode a script sets them by)
-export enum CurveWrapMode {
+export const CurveWrapMode = {
   // Back and forth across the keys
-  PingPong = 0,
+  PingPong: 0,
   // The keys over again from the first
-  Repeat = 1,
+  Repeat: 1,
   // The nearest end key's value
-  Clamp = 2,
-}
+  Clamp: 2,
+} as const;
+export type CurveWrapMode = (typeof CurveWrapMode)[keyof typeof CurveWrapMode];

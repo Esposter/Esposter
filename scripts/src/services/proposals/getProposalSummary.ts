@@ -13,7 +13,7 @@ const ProposalSignalPathPrefixesMap = {
   [ProposalSignal.Deploy]: ["apps/infra/", "apps/jobs/", "apps/realtime/"],
   [ProposalSignal.Schema]: ["packages/db-schema/"],
   [ProposalSignal.Server]: ["apps/web/server/"],
-} as const satisfies Record<Exclude<ProposalSignal, ProposalSignal.Dependency>, readonly string[]>;
+} as const satisfies Record<Exclude<ProposalSignal, typeof ProposalSignal.Dependency>, readonly string[]>;
 // Everything is read off what the design already states, so nothing here is a field anyone keeps: the lead — the prose
 // Before the first section — is where a proposal links the proposals it waits on, a Key files row is a table line
 // Opening on a backticked path, and a package a proposal adds is the manifest it names there (`openspec` skill)

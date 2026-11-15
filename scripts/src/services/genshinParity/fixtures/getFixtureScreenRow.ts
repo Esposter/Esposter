@@ -26,7 +26,7 @@ export const getFixtureScreenRow = ({
 }): FixtureScreenRow => {
   const referenceId = getPrimaryReferenceId(getVariantEntries(referenceMap, name, variant)) ?? "";
   const entry = referenceMap[referenceId];
-  let referenceStatus = FixtureReferenceStatus.None;
+  let referenceStatus: FixtureReferenceStatus = FixtureReferenceStatus.None;
   if (entry?.pending !== undefined) referenceStatus = FixtureReferenceStatus.Pending;
   else if (entry) referenceStatus = FixtureReferenceStatus.Entry;
   return {

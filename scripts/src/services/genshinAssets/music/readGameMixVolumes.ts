@@ -9,9 +9,7 @@ import { parseWwiseNode } from "#src/services/genshinAssets/music/parseWwiseNode
 import { readGameSoundBanks } from "#src/services/genshinAssets/music/readGameSoundBanks";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-const MIX_OBJECT_TYPES: ReadonlySet<SoundBankObjectType> = new Set(
-  Object.values(SoundBankObjectType).filter((value) => typeof value === "number"),
-);
+const MIX_OBJECT_TYPES: ReadonlySet<SoundBankObjectType> = new Set(Object.values(SoundBankObjectType));
 const PLAYING_OBJECT_TYPES: ReadonlySet<SoundBankObjectType> = new Set([
   SoundBankObjectType.MusicTrack,
   SoundBankObjectType.Sound,

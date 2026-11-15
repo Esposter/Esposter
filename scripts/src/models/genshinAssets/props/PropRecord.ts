@@ -7,9 +7,9 @@ export type PropRecord =
       axis: [number, number];
       foot: number;
       sections: { bottomRadius: number; height: number; topRadius: number }[];
-      shape: PropShape.Lathe;
+      shape: typeof PropShape.Lathe;
     }
-  | { boxes: [number, number, number, number, number, number][]; shape: PropShape.Hull };
+  | { boxes: [number, number, number, number, number, number][]; shape: typeof PropShape.Hull };
 
 // A strict object refuses any key beyond the outline's, so a record carrying the game's vertices, faces or a mesh's name
 // Is refused before it is published

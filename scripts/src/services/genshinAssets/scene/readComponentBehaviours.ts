@@ -26,7 +26,7 @@ import { basename, join } from "node:path";
 // The built-in components read beside the scripts, and where their fields start: past the pointer to their GameObject
 // And their enabled flag, aligned to four bytes. An animator's fields name its controller, and its game object is what
 // Its clips' tracks at "(the animator)" move
-const BUILT_IN_ASSET_TYPES = [AssetType.Animator, AssetType.Camera, AssetType.Light];
+const BUILT_IN_ASSET_TYPES: AssetType[] = [AssetType.Animator, AssetType.Camera, AssetType.Light];
 const BUILT_IN_FIELDS_START = 16;
 // Every MonoBehaviour, animator, camera and light of a component's layout blocks exported raw, per file, named by the
 // Game object its leading pointer sits it on and scanned for the shapes its fields take (`scanSerializedFields`), each

@@ -1,5 +1,3 @@
 // The tar mode a transfer runs: create writes an archive of the listed files to stdout, extract reads one from stdin
-export enum TarOperation {
-  Create = "-c",
-  Extract = "-x",
-}
+export const TarOperation = { Create: "-c", Extract: "-x" } as const;
+export type TarOperation = (typeof TarOperation)[keyof typeof TarOperation];

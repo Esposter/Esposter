@@ -30,8 +30,8 @@ describe(parseSoundBankObjects, () => {
     ]);
     const bank = Buffer.concat([createChunk("BKHD", Buffer.alloc(4)), createChunk("HIRC", hierarchy)]);
 
-    expect(parseSoundBankObjects(bank, new Set([SoundBankObjectType.MusicSegment]))).toStrictEqual([
-      { data: fields, id: 2, type: SoundBankObjectType.MusicSegment },
-    ]);
+    expect(parseSoundBankObjects(bank, new Set<SoundBankObjectType>([SoundBankObjectType.MusicSegment]))).toStrictEqual(
+      [{ data: fields, id: 2, type: SoundBankObjectType.MusicSegment }],
+    );
   });
 });

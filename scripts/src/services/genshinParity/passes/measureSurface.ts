@@ -17,7 +17,7 @@ import { computeLabelSimilarity } from "#src/services/genshinParity/witness/comp
 import { withFinalizerAsync } from "@esposter/shared";
 import { SURFACE_DETAIL_BAND_SIGMAS } from "genshin-engine";
 
-const TARGET_NAMES = [WitnessTargetName.Part, WitnessTargetName.Albedo];
+const TARGET_NAMES: WitnessTargetName[] = [WitnessTargetName.Part, WitnessTargetName.Albedo];
 // The reason a family's structure is read as when the exports draw it within one half of the blocks, so no gate is read
 const NO_GATE_REASON = "no gate: the family lies within one half";
 

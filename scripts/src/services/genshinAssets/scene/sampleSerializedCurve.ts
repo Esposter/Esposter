@@ -8,7 +8,7 @@ import { wrapTime } from "#src/services/genshinAssets/scene/wrapTime";
 // Held at the earlier key's value where a slope is infinite (a step), and clamped to the first and last keys' values
 // Outside them
 export const sampleSerializedCurve = (
-  { keys, postWrap, preWrap }: Extract<SerializedField, { kind: SerializedFieldKind.Curve }>,
+  { keys, postWrap, preWrap }: Extract<SerializedField, { kind: typeof SerializedFieldKind.Curve }>,
   time: number,
 ): number => {
   const [first = 0, last = 0] = [keys[0]?.time, keys.at(-1)?.time];

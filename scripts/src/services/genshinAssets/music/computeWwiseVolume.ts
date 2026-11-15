@@ -7,12 +7,8 @@ import { evaluateWwiseCurve } from "#src/services/genshinAssets/music/evaluateWw
 import { parseWwiseNode } from "#src/services/genshinAssets/music/parseWwiseNode";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-const VOLUME_PROPERTIES: readonly WwiseProperty[] = Object.values(WwiseProperty).filter(
-  (value) => typeof value === "number",
-);
-const VOLUME_CURVE_PARAMETERS: ReadonlySet<number> = new Set(
-  Object.values(WwiseCurveParameter).filter((value) => typeof value === "number"),
-);
+const VOLUME_PROPERTIES: readonly WwiseProperty[] = Object.values(WwiseProperty);
+const VOLUME_CURVE_PARAMETERS: ReadonlySet<number> = new Set(Object.values(WwiseCurveParameter));
 // How loud the game's mix plays a node, in decibels over its source: its own volume and every parent's up the
 // Hierarchy, then the bus the nearest of them sends to and every bus above it to the output, each node's volumes summed
 // With its game parameters' curves read at the parameters' defaults, as the mix stands before the game moves any

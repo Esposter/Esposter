@@ -4,7 +4,7 @@ import { RenewalDecision } from "#src/models/fleet/RenewalDecision";
 import { renewClaim } from "#src/services/fleet/renewClaim";
 import { getResultAsync } from "@esposter/shared";
 
-const RENEWAL_STOP_REASONS: Record<Exclude<RenewalDecision, RenewalDecision.Renew>, string> = {
+const RENEWAL_STOP_REASONS: Record<Exclude<RenewalDecision, typeof RenewalDecision.Renew>, string> = {
   [RenewalDecision.Deleted]: "its ref was deleted",
   [RenewalDecision.Missed]: "it was missed",
   [RenewalDecision.Moved]: "its claim moved during the renewal",

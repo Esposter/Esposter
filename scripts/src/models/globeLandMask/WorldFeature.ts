@@ -8,12 +8,12 @@ const polygonCoordinatesSchema: z.ZodArray<z.ZodArray<typeof positionSchema>> = 
 
 const polygonGeometrySchema: z.ZodObject<{
   coordinates: typeof polygonCoordinatesSchema;
-  type: z.ZodLiteral<GeometryType.Polygon>;
+  type: z.ZodLiteral<typeof GeometryType.Polygon>;
 }> = z.object({ coordinates: polygonCoordinatesSchema, type: z.literal(GeometryType.Polygon) });
 // A MultiPolygon's coordinates add one level for its polygons
 const multiPolygonGeometrySchema: z.ZodObject<{
   coordinates: z.ZodArray<typeof polygonCoordinatesSchema>;
-  type: z.ZodLiteral<GeometryType.MultiPolygon>;
+  type: z.ZodLiteral<typeof GeometryType.MultiPolygon>;
 }> = z.object({ coordinates: z.array(polygonCoordinatesSchema), type: z.literal(GeometryType.MultiPolygon) });
 
 // One country of the world GeoJSON, by its shape

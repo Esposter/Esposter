@@ -1,8 +1,9 @@
 // The stages a pass compiles a program for
-export enum ShaderProgramStage {
-  Domain = "Domain",
-  Fragment = "Fragment",
-  Geometry = "Geometry",
-  Hull = "Hull",
-  Vertex = "Vertex",
-}
+export const ShaderProgramStage = {
+  Domain: "Domain",
+  Fragment: "Fragment",
+  Geometry: "Geometry",
+  Hull: "Hull",
+  Vertex: "Vertex",
+} as const;
+export type ShaderProgramStage = (typeof ShaderProgramStage)[keyof typeof ShaderProgramStage];
