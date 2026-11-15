@@ -42,6 +42,6 @@ describe(useUserSocket, () => {
     );
     await flushPromises();
 
-    expect(openUser).toHaveBeenCalledOnce();
+    expect(openUser).toHaveBeenCalledTimes(1);
   });
 });
