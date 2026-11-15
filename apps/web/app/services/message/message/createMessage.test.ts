@@ -5,7 +5,11 @@ import { v7 } from "uuid";
 import { describe } from "vitest";
 
 // The message row every message test stores, reads and compares, so each suite states only what it varies
-export const createMessage = (roomId: string, message = "", type = MessageType.Message): ClientMessage => ({
+export const createMessage = (
+  roomId: string,
+  message = "",
+  type: MessageType = MessageType.Message,
+): ClientMessage => ({
   appUserId: null,
   appUserImage: "",
   createdAt: new Date(0),

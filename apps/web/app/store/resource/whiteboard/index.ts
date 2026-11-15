@@ -24,7 +24,7 @@ export const useWhiteboardStore = defineStore("resource/whiteboard", () => {
     content: whiteboard,
     loadContent,
     saveContent: saveWhiteboard,
-  } = createContentData<ResourceType.Whiteboard>(ResourceType.Whiteboard, (data) => data ?? { elements: [] });
+  } = createContentData<typeof ResourceType.Whiteboard>(ResourceType.Whiteboard, (data) => data ?? { elements: [] });
   // The session clears the history whenever the content is set from outside a commit, so a read from the server starts afresh
   const { commit, history } = useEditSession<PositionedDocument, WhiteboardHistoryEntry>(
     whiteboard,

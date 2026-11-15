@@ -66,7 +66,7 @@ describe("programRouter", () => {
   const name = "name";
   const document = createSurveyDocumentWith([{ name: "a", type: SurveyNodeType.Rating }]);
   const settings = surveySettingsSchema.parse({});
-  const identifiedSettings = { ...settings, responseMode: SurveyResponseMode.Identified };
+  const identifiedSettings: typeof settings = { ...settings, responseMode: SurveyResponseMode.Identified };
   // Three participants is the smallest set exhibiting responded / not-responded / duplicate-key
   const keyValues = ["", " ", "a"];
   const keyValue = "keyValue";

@@ -8,7 +8,7 @@ import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
 
 export interface TimeoutUserAdminActionInput
-  extends BaseExecuteAdminActionInput, ItemEntityType<AdminActionType.TimeoutUser> {
+  extends BaseExecuteAdminActionInput, ItemEntityType<typeof AdminActionType.TimeoutUser> {
   durationMs: number;
 }
 

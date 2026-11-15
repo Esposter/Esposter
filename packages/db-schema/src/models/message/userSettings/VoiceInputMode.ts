@@ -1,9 +1,7 @@
 import { z } from "zod";
 
-export enum VoiceInputMode {
-  PushToTalk = "PushToTalk",
-  VoiceActivity = "VoiceActivity",
-}
+export const VoiceInputMode = { PushToTalk: "PushToTalk", VoiceActivity: "VoiceActivity" } as const;
+export type VoiceInputMode = (typeof VoiceInputMode)[keyof typeof VoiceInputMode];
 
 export const voiceInputModeSchema = z.enum(VoiceInputMode) satisfies z.ZodType<VoiceInputMode>;
 

@@ -13,7 +13,7 @@ export const useSheetStore = defineStore("resource/sheet", () => {
     getContentWriter,
     loadContent,
     saveContent: saveSheet,
-  } = createContentData<ResourceType.Sheet, SheetResource>(
+  } = createContentData<typeof ResourceType.Sheet, SheetResource>(
     ResourceType.Sheet,
     // Content is parsed from the blob with plain JSON.parse, so the loaded value carries the sheet's data
     // Shape rather than its class instances. Reviving them the way the dashboard does would mean walking

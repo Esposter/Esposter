@@ -7,6 +7,6 @@ export const useProgramStore = defineStore("resource/program", () => {
     content: programResource,
     loadContent,
     saveContent: saveProgram,
-  } = createContentData<ResourceType.Program>(ResourceType.Program, (data) => data ?? createEmptyProgram());
+  } = createContentData<typeof ResourceType.Program>(ResourceType.Program, (data) => data ?? createEmptyProgram());
   return { loadContent, programResource, saveProgram };
 });

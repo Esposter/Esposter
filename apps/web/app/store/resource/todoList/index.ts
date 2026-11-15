@@ -21,7 +21,7 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
     content: todoList,
     loadContent,
     saveContent: saveTodoList,
-  } = createContentData<ResourceType.TodoList, TodoListResource>(
+  } = createContentData<typeof ResourceType.TodoList, TodoListResource>(
     ResourceType.TodoList,
     // Content is parsed from the blob with plain JSON.parse, so the loaded value carries the list's data
     // Shape rather than its class instances. The cast is sound because `toJSON` is the only method these

@@ -6,12 +6,13 @@ import { z } from "zod";
 //
 // Client-only feedback — a mutation error, a save conflict, an export that finished in this tab — is not a member:
 // It never leaves the tab it happened in, so it has no channels to declare and nothing to resolve recipients for.
-export enum AppNotificationType {
-  FriendRequest = "FriendRequest",
-  Message = "Message",
-  Reminder = "Reminder",
-  ResourceOperation = "ResourceOperation",
-  TodoReminder = "TodoReminder",
-}
+export const AppNotificationType = {
+  FriendRequest: "FriendRequest",
+  Message: "Message",
+  Reminder: "Reminder",
+  ResourceOperation: "ResourceOperation",
+  TodoReminder: "TodoReminder",
+} as const;
+export type AppNotificationType = (typeof AppNotificationType)[keyof typeof AppNotificationType];
 
 export const appNotificationTypeSchema = z.enum(AppNotificationType) satisfies z.ZodType<AppNotificationType>;

@@ -9,7 +9,7 @@ import { ResourceType } from "@esposter/db-schema";
 export interface OpenEmailDocument {
   document: EmailDocument;
   kind: EmailKind;
-  type: ResourceType.Email;
+  type: typeof ResourceType.Email;
 }
 
 export type OpenPageBuilderDocument = OpenEmailDocument | OpenWebpageDocument;
@@ -17,7 +17,7 @@ export type OpenPageBuilderDocument = OpenEmailDocument | OpenWebpageDocument;
 export interface OpenWebpageDocument {
   document: WebpageDocument;
   kind: WebpageKind;
-  type: ResourceType.Webpage;
+  type: typeof ResourceType.Webpage;
 }
 // The open documents of the page builder, each held under its resource, so two resources open at once keep their own.
 // A document is loaded and saved through the functions its caller passes, so nothing here reads a store of its own

@@ -53,7 +53,7 @@ export class MicrophoneProcessor {
   #isPushToTalkKeyHeld = false;
   #microphoneVolumePercentage = 100;
   #processor?: AudioWorkletNode;
-  #voiceInputMode = VoiceInputMode.VoiceActivity;
+  #voiceInputMode: VoiceInputMode = VoiceInputMode.VoiceActivity;
 
   // Held by reference, so RealtimeKit's add and remove both name the same middleware
   readonly audioMiddleware = async (audioContext: AudioContext) => {

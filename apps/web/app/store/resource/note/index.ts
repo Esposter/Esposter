@@ -8,6 +8,6 @@ export const useNoteStore = defineStore("resource/note", () => {
     getContentWriter,
     loadContent,
     saveContent: saveNote,
-  } = createContentData<ResourceType.Note>(ResourceType.Note, (data) => data ?? { doc: EMPTY_NOTE_DOC });
+  } = createContentData<typeof ResourceType.Note>(ResourceType.Note, (data) => data ?? { doc: EMPTY_NOTE_DOC });
   return { getContentWriter, loadContent, note, saveNote };
 });

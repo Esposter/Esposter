@@ -1,10 +1,11 @@
 import { z } from "zod";
 
-export enum SurveyResponseMode {
+export const SurveyResponseMode = {
   // Anyone with the link answers and no identity is carried
-  Anonymous = "Anonymous",
+  Anonymous: "Anonymous",
   // Responses must present an opaque participant token issued by a Program
-  Identified = "Identified",
-}
+  Identified: "Identified",
+} as const;
+export type SurveyResponseMode = (typeof SurveyResponseMode)[keyof typeof SurveyResponseMode];
 
 export const surveyResponseModeSchema = z.enum(SurveyResponseMode) satisfies z.ZodType<SurveyResponseMode>;

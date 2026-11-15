@@ -5,7 +5,7 @@ import { z } from "zod";
 
 // A /remind reminder, self-addressed: the recipient is the member who set it, and the deep link is the room it
 // Was set in.
-export interface ReminderNotificationData extends ItemEntityType<AppNotificationType.Reminder> {
+export interface ReminderNotificationData extends ItemEntityType<typeof AppNotificationType.Reminder> {
   roomId: string;
   text: string;
   userId: string;

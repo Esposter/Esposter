@@ -42,7 +42,7 @@ const { uploadFileToUrlMock } = vi.hoisted(() => ({
 }));
 vi.mock(import("@/services/file/uploadFileToUrl"), () => ({ uploadFileToUrl: uploadFileToUrlMock }));
 // Sheet is not publishable and Note is, so the pair covers both sides of every capability gate below
-const createResource = (id: string, type = ResourceType.Sheet) => createResourceListItem({ id, type });
+const createResource = (id: string, type: ResourceType = ResourceType.Sheet) => createResourceListItem({ id, type });
 // The unpublished answer the read carries, which is what a publishable type's test overrides
 type ReadResourceResult = ReturnType<typeof createResource> & { publication: null };
 // The route is what the store loads from, so switching resources in a test is switching the route
@@ -297,9 +297,9 @@ describe(useResourceStore, () => {
     trpcMsw.sheet.saveResourceContentDelta.mutation(saveResourceContentDelta);
     const resourceStore = useResourceStore();
     const { readContent, readResource, saveContent } = resourceStore;
-    const applyContent = vi.fn<(content: ResourceContent<ResourceType.Sheet> | undefined) => void>();
+    const applyContent = vi.fn<(content: ResourceContent<typeof ResourceType.Sheet> | undefined) => void>();
     await readResource();
-    await readContent<ResourceType.Sheet>(applyContent);
+    await readContent<typeof ResourceType.Sheet>(applyContent);
     await saveContent(createLargeSheetResource("a"));
 
     expect(takeOne(applyContent.mock.calls, 0)[0]?.data.metadata.name).toBe(loadedContent.data.metadata.name);

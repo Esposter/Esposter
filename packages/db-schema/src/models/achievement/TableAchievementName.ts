@@ -1,4 +1,2 @@
-export enum TableAchievementName {
-  DataAnalyst = "DataAnalyst",
-  MathWhiz = "MathWhiz",
-}
+export const TableAchievementName = { DataAnalyst: "DataAnalyst", MathWhiz: "MathWhiz" } as const;
+export type TableAchievementName = (typeof TableAchievementName)[keyof typeof TableAchievementName];

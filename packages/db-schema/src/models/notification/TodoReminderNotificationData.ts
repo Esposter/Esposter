@@ -3,7 +3,7 @@ import type { ItemEntityType } from "@esposter/shared";
 import { AppNotificationType } from "#src/models/notification/AppNotificationType";
 import { z } from "zod";
 
-export interface TodoReminderNotificationData extends ItemEntityType<AppNotificationType.TodoReminder> {
+export interface TodoReminderNotificationData extends ItemEntityType<typeof AppNotificationType.TodoReminder> {
   itemName: string;
   resourceId: string;
   userId: string;

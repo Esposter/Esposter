@@ -1,9 +1,7 @@
 import { z } from "zod";
 
-export enum FilterTypeAuthorType {
-  User = "User",
-  Webhook = "Webhook",
-}
+export const FilterTypeAuthorType = { User: "User", Webhook: "Webhook" } as const;
+export type FilterTypeAuthorType = (typeof FilterTypeAuthorType)[keyof typeof FilterTypeAuthorType];
 
 export const filterTypeAuthorTypeSchema = z.enum(FilterTypeAuthorType) satisfies z.ZodType<FilterTypeAuthorType>;
 

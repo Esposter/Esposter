@@ -16,7 +16,7 @@ export const useBlueprintStore = defineStore("resource/blueprint", () => {
   const setManifestJson = (manifest: BlueprintResource) => {
     manifestJson.value = stringifyBlueprintManifest(manifest);
   };
-  const { content: blueprint, loadContent } = createContentData<ResourceType.Blueprint>(
+  const { content: blueprint, loadContent } = createContentData<typeof ResourceType.Blueprint>(
     ResourceType.Blueprint,
     (data) => data ?? createEmptyBlueprint(),
     setManifestJson,

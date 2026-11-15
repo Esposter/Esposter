@@ -152,7 +152,7 @@ describe("userRouter", () => {
     expect.hasAssertions();
 
     const key = "key";
-    const mcpScopes = [McpScope.FollowUps];
+    const mcpScopes: McpScope[] = [McpScope.FollowUps];
     getMockCreateApiKey().mockResolvedValueOnce({ key });
 
     const createdKey = await caller.createApiKey({ mcpScopes, name });

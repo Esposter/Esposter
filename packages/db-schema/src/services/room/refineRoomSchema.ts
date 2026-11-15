@@ -9,7 +9,7 @@ const roomNameSchema = createNameSchema(ROOM_NAME_MAX_LENGTH);
 
 export const refineRoomSchema = <TSchema extends z.ZodType<Partial<{ name: string; type: RoomType }>>>(
   schema: TSchema,
-  roomType = RoomType.Room,
+  roomType: RoomType = RoomType.Room,
 ): TSchema =>
   schema.superRefine(({ name, type }, ctx) => {
     if (name === undefined) return;

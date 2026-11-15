@@ -9,7 +9,9 @@ import { z } from "zod";
 //
 // The excluded session is the one that performed the operation. It already showed the toast synchronously, so
 // Its own device is the one recipient that must not be pushed; every other session of the same user is.
-export interface ResourceOperationNotificationData extends ItemEntityType<AppNotificationType.ResourceOperation> {
+export interface ResourceOperationNotificationData extends ItemEntityType<
+  typeof AppNotificationType.ResourceOperation
+> {
   body?: string;
   excludedSessionId?: string;
   path: string;

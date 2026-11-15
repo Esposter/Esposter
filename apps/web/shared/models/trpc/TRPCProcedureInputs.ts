@@ -36,7 +36,7 @@ export interface TRPCProcedureInputs {
   "clicker.saveClicker": z.input<typeof saveClickerInputSchema>;
   "dungeons.saveDungeons": z.input<typeof saveDungeonsInputSchema>;
   "email.saveResourceContent": ResourceContentSaveInput<
-    (typeof ResourceDefinitionMap)[ResourceType.Email]["contentSchema"]
+    (typeof ResourceDefinitionMap)[typeof ResourceType.Email]["contentSchema"]
   >;
   "invite.createInvite": z.input<typeof createInviteInputSchema>;
   "like.createLike": z.input<typeof createLikeInputSchema>;
@@ -59,19 +59,19 @@ export interface TRPCProcedureInputs {
   "room.leaveRoom": z.input<typeof leaveRoomInputSchema>;
   "room.updateRoom": z.input<typeof updateRoomInputSchema>;
   "sheet.saveResourceContent": ResourceContentSaveInput<
-    (typeof ResourceDefinitionMap)[ResourceType.Sheet]["contentSchema"]
+    (typeof ResourceDefinitionMap)[typeof ResourceType.Sheet]["contentSchema"]
   >;
   "survey.createResource": z.input<typeof createResourceInputSchema>;
   "survey.createSurveyResponse": z.input<typeof createSurveyResponseInputSchema>;
   "survey.deleteResource": z.input<typeof resourceIdInputSchema>;
   "survey.publishResource": z.input<typeof resourceIdInputSchema>;
   "survey.saveResourceContent": ResourceContentSaveInput<
-    (typeof ResourceDefinitionMap)[ResourceType.Survey]["contentSchema"]
+    (typeof ResourceDefinitionMap)[typeof ResourceType.Survey]["contentSchema"]
   >;
   "survey.updateResource": z.input<typeof updateResourceInputSchema>;
   "survey.updateSurveyResponse": z.input<typeof updateSurveyResponseInputSchema>;
   "webpage.saveResourceContent": ResourceContentSaveInput<
-    (typeof ResourceDefinitionMap)[ResourceType.Webpage]["contentSchema"]
+    (typeof ResourceDefinitionMap)[typeof ResourceType.Webpage]["contentSchema"]
   >;
 }
 

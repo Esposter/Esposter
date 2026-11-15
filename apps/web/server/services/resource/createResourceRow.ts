@@ -15,7 +15,9 @@ import { Operation } from "@esposter/shared";
 export const createResourceRow = async (
   ctx: AuthedContext,
   values: { name: ResourceInResource["name"]; tags?: ResourceTags; type: ResourceType },
-  activityType: ResourceActivityType.Created | ResourceActivityType.Duplicated = ResourceActivityType.Created,
+  activityType:
+    | typeof ResourceActivityType.Created
+    | typeof ResourceActivityType.Duplicated = ResourceActivityType.Created,
 ): Promise<ResourceInResource> => {
   const userId = ctx.user.id;
   const newResource = requireMutation(

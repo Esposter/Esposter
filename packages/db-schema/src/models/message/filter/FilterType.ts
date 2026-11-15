@@ -1,17 +1,18 @@
-/* eslint-disable perfectionist/sort-enums -- Discord's filter order, which the search menu lists */
+/* eslint-disable perfectionist/sort-objects -- Discord's filter order, which the search menu lists */
 import { z } from "zod";
 
-export enum FilterType {
-  AuthorType = "AuthorType",
-  From = "From",
-  In = "In",
-  Mentions = "Mentions",
-  Has = "Has",
-  Before = "Before",
-  During = "During",
-  After = "After",
-  Pinned = "Pinned",
-}
+export const FilterType = {
+  AuthorType: "AuthorType",
+  From: "From",
+  In: "In",
+  Mentions: "Mentions",
+  Has: "Has",
+  Before: "Before",
+  During: "During",
+  After: "After",
+  Pinned: "Pinned",
+} as const;
+export type FilterType = (typeof FilterType)[keyof typeof FilterType];
 
 export const filterTypeSchema = z.enum(FilterType) satisfies z.ZodType<FilterType>;
 
