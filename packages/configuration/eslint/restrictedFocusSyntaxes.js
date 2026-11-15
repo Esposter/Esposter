@@ -4,10 +4,10 @@
 // An error — is the keyboard following the reader, and is not inside `onMounted`.
 export default [
   {
-    // A Tiptap chain's `.focus()` is a command, not the element's focus
+    // A Tiptap chain's `.focus()` is a command, not the element's focus, however many commands run before it
     message:
       "Don't focus an element in `onMounted`. Give a library component `is-autofocus`, or call `useAutofocus(element)`, which leaves a reader typing elsewhere alone. See the ui-library skill's fields page.",
     selector:
-      "CallExpression[callee.name='onMounted'] CallExpression[callee.property.name='focus']:not([callee.object.callee.property.name='chain'])",
+      "CallExpression[callee.name='onMounted'] CallExpression[callee.property.name='focus']:not(:has(CallExpression[callee.property.name='chain']))",
   },
 ];

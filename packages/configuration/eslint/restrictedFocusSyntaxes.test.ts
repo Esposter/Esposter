@@ -28,6 +28,13 @@ describe("restrictedFocusSyntaxes", () => {
         source: '<script setup lang="ts">\nonMounted(() => {\n  editor.chain().focus().run();\n});\n</script>',
         violations: 0,
       },
+      {
+        filePath: "app/components/editorChainAfterCommand.vue",
+        name: "editorChainAfterCommand",
+        source:
+          '<script setup lang="ts">\nonMounted(() => {\n  editor.chain().setBold().focus().run();\n});\n</script>',
+        violations: 0,
+      },
       { filePath: "src/components/gameScreen.vue", name: "gameScreen", source: focusOnMountSource, violations: 0 },
     ],
   });
