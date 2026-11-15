@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
-import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { createPendingQuery } from "@/composables/data/pagination/createPendingQuery.test";
 import { goOnline } from "@/composables/shared/network.test";
+import { createEmptyPage } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
@@ -30,7 +30,7 @@ describe(useCursorPaginationDataMap, () => {
     await flushPromises();
   };
   const createPendingRead = () => {
-    const data = new CursorPaginationData<string>();
+    const data = createEmptyPage<string>();
     data.items = [item];
     return createPendingQuery(data);
   };

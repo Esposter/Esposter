@@ -1,9 +1,10 @@
+import type { Page } from "@esposter/db-schema";
 import type { Promisable } from "type-fest";
 
-import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { BACKOFF_BASE_DELAY_MS, BACKOFF_MAX_DELAY_MS } from "#shared/services/pagination/constants";
 import { getBoundComputed } from "@/util/vue/getBoundComputed";
 import { getPropertyComputed } from "@/util/vue/getPropertyComputed";
+import { createEmptyPage } from "@esposter/db-schema";
 import { checkIsServer, createExponentialBackoff, getResultAsync, noop, withFinalizerAsync } from "@esposter/shared";
 
 // The data a reset has replaced. A read issued against it answers a partition that no longer holds that data, so its
@@ -11,9 +12,9 @@ import { checkIsServer, createExponentialBackoff, getResultAsync, noop, withFina
 // It: the rows it restores are the partition's own, so a read still in flight keeps landing on them
 const retiredCursorPaginationData = new WeakSet<object>();
 // Empties a partition, retiring the data it held so a read issued against that data is dropped when it lands
-export const emptyCursorPaginationData = <TItem>(data: Ref<CursorPaginationData<TItem>>, isLoaded: Ref<boolean>) => {
+export const emptyCursorPaginationData = <TItem>(data: Ref<Page<TItem>>, isLoaded: Ref<boolean>) => {
   retiredCursorPaginationData.add(data.value);
-  data.value = new CursorPaginationData<TItem>();
+  data.value = createEmptyPage<TItem>();
   isLoaded.value = false;
 };
 
@@ -21,11 +22,11 @@ interface ReadItemsOptions<TItem> {
   // Payload key, from `AsyncDataKey`, for a read a server render also issues. Without one the read runs twice
   // For every such page — once for the html, once again as hydration replays the same setup client-side
   key?: string;
-  onComplete?: (data: CursorPaginationData<TItem>) => Promisable<void>;
+  onComplete?: (data: Page<TItem>) => Promisable<void>;
 }
 
 export const useCursorPaginationOperationData = <TItem>(
-  bindCursorPaginationData: () => Ref<CursorPaginationData<TItem>>,
+  bindCursorPaginationData: () => Ref<Page<TItem>>,
   // Whether the rows this slice holds are its own, recorded the moment a read or a hydration lands rather than
   // Inferred from the list — an empty list is either "not loaded yet" or "loaded and genuinely empty", and only
   // The load knows which. Bound the same way, and for the same reason, as the slice it describes
@@ -39,24 +40,22 @@ export const useCursorPaginationOperationData = <TItem>(
   const isLoaded = getBoundComputed(bindIsLoaded);
   const items = getPropertyComputed(cursorPaginationData, "items");
   const nextCursor = getPropertyComputed(cursorPaginationData, "nextCursor");
-  const hasMore = getPropertyComputed(cursorPaginationData, "hasMore");
-  const initializeCursorPaginationData = (data: CursorPaginationData<TItem>) => {
+  // A list goes on while it has a cursor to continue from
+  const hasMore = computed(() => Boolean(nextCursor.value));
+  const initializeCursorPaginationData = (data: Page<TItem>) => {
     cursorPaginationData.value = data;
     isLoaded.value = true;
   };
   const resetCursorPaginationData = () => {
     emptyCursorPaginationData(cursorPaginationData, isLoaded);
   };
-  const readItems = async (
-    query: () => Promise<CursorPaginationData<TItem>>,
-    { key, onComplete }: ReadItemsOptions<TItem> = {},
-  ) => {
+  const readItems = async (query: () => Promise<Page<TItem>>, { key, onComplete }: ReadItemsOptions<TItem> = {}) => {
     const isPending = ref(true);
     // Whether the last read failed, so a list shows its error state rather than reading as empty; a refresh clears it
     const isError = ref(false);
     const boundCursorPaginationData = bindCursorPaginationData();
     const boundIsLoaded = bindIsLoaded();
-    const storeCursorPaginationData = async (data: CursorPaginationData<TItem>) => {
+    const storeCursorPaginationData = async (data: Page<TItem>) => {
       boundCursorPaginationData.value = data;
       boundIsLoaded.value = true;
       // Absorbs onComplete errors so data already set above is never lost
@@ -86,7 +85,7 @@ export const useCursorPaginationOperationData = <TItem>(
     // Navigation all read live. A server read that failed wrote nothing, so hydration issues it again and the
     // TRPC error link surfaces what the server render swallowed
     const hydratedData =
-      key && nuxtApp.isHydrating ? (nuxtApp.payload.data[key] as CursorPaginationData<TItem> | undefined) : undefined;
+      key && nuxtApp.isHydrating ? (nuxtApp.payload.data[key] as Page<TItem> | undefined) : undefined;
     if (hydratedData) {
       await storeCursorPaginationData(hydratedData);
       isPending.value = false;
@@ -94,24 +93,23 @@ export const useCursorPaginationOperationData = <TItem>(
     return { isError, isPending, refresh };
   };
   const readMoreItems = async (
-    query: (cursor: string) => Promise<CursorPaginationData<TItem>>,
+    query: (cursor: string) => Promise<Page<TItem>>,
     onComplete?: () => Promisable<void>,
   ) => {
     const boundCursorPaginationData = bindCursorPaginationData();
     await withFinalizerAsync(async () => {
       if (!online.value) return;
       const issuedCursorPaginationData = boundCursorPaginationData.value;
-      const {
-        hasMore: newHasMore,
-        items: newItems,
-        nextCursor: newNextCursor,
-      } = await executeWithBackoff(() => query(issuedCursorPaginationData.nextCursor));
+      const { items: newItems, nextCursor: newNextCursor } = await executeWithBackoff(() =>
+        query(issuedCursorPaginationData.nextCursor),
+      );
       // A page of an order a reset has since replaced belongs to no partition the reader is looking at
       if (retiredCursorPaginationData.has(issuedCursorPaginationData)) return;
 
-      boundCursorPaginationData.value.hasMore = newHasMore;
-      boundCursorPaginationData.value.nextCursor = newNextCursor;
-      boundCursorPaginationData.value.items.push(...newItems);
+      // The page lands on the list it was read for, so a newer read that replaced that list keeps its own rows: the
+      // Newest read of a list wins
+      issuedCursorPaginationData.nextCursor = newNextCursor;
+      issuedCursorPaginationData.items.push(...newItems);
     }, onComplete);
   };
 

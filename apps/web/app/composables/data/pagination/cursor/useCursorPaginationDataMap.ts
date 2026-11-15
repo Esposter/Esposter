@@ -1,9 +1,9 @@
 import type { CursorPaginationSlice } from "@/models/pagination/cursor/CursorPaginationSlice";
 import type { Except } from "type-fest";
 
-import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { emptyCursorPaginationData } from "@/composables/data/pagination/cursor/useCursorPaginationOperationData";
 import { getPropertyComputed } from "@/util/vue/getPropertyComputed";
+import { createEmptyPage } from "@esposter/db-schema";
 
 export const useCursorPaginationDataMap = <TItem>(
   // Left empty by a caller that has no current partition and names every key instead
@@ -19,7 +19,7 @@ export const useCursorPaginationDataMap = <TItem>(
   // Every partition the map holds, for a caller that has to look across them
   keys: ComputedRef<string[]>;
 } => {
-  const { getBoundData, getDataRef, keys } = useDataMap(currentId, () => new CursorPaginationData<TItem>());
+  const { getBoundData, getDataRef, keys } = useDataMap(currentId, () => createEmptyPage<TItem>());
   const { getBoundData: getBoundIsLoaded, getDataRef: getIsLoadedRef } = useDataMap(currentId, false);
   const getSlice = (key: string): CursorPaginationSlice<TItem> => {
     const data = getDataRef(key);

@@ -1,7 +1,10 @@
 // @vitest-environment nuxt
-import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
+import type { Page } from "@esposter/db-schema";
+
 import { BACKOFF_BASE_DELAY_MS } from "#shared/services/pagination/constants";
+import { createPendingQuery } from "@/composables/data/pagination/createPendingQuery.test";
 import { goOffline, goOnline } from "@/composables/shared/network.test";
+import { createEmptyPage } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
@@ -21,11 +24,10 @@ describe(useCursorPaginationOperationData, () => {
       defineComponent({
         render: () => h("div"),
         setup: () => {
-          const cursorPaginationData = ref(new CursorPaginationData<string>());
-          cursorPaginationData.value.hasMore = true;
+          const cursorPaginationData = ref(createEmptyPage<string>());
           cursorPaginationData.value.nextCursor = nextCursor;
           const isLoadedSource = ref(false);
-          ({ readMoreItems } = useCursorPaginationOperationData(
+          ({ items, readItems, readMoreItems } = useCursorPaginationOperationData(
             () => cursorPaginationData,
             () => isLoadedSource,
           ));
@@ -52,7 +54,7 @@ describe(useCursorPaginationOperationData, () => {
     expect.hasAssertions();
 
     // The payload rides to the client as plain data, so the fixture is the shape hydration really reads
-    const serverData: CursorPaginationData<string> = { hasMore: false, items: [item], nextCursor: "" };
+    const serverData: Page<string> = { items: [item], nextCursor: "" };
     await mountSuspended(
       defineComponent({
         render: () => h("div"),
@@ -60,7 +62,7 @@ describe(useCursorPaginationOperationData, () => {
           hydratingNuxtApp = useNuxtApp();
           hydratingNuxtApp.isHydrating = true;
           hydratingNuxtApp.payload.data[key] = serverData;
-          const cursorPaginationData = ref(new CursorPaginationData<string>());
+          const cursorPaginationData = ref(createEmptyPage<string>());
           const isLoadedSource = ref(false);
           ({ isLoaded, items, readItems } = useCursorPaginationOperationData(
             () => cursorPaginationData,
@@ -71,7 +73,7 @@ describe(useCursorPaginationOperationData, () => {
     );
     await flushPromises();
 
-    const query = vi.fn<() => Promise<CursorPaginationData<string>>>();
+    const query = vi.fn<() => Promise<Page<string>>>();
 
     const { isPending } = await readItems(query, { key });
 
@@ -88,7 +90,7 @@ describe(useCursorPaginationOperationData, () => {
       defineComponent({
         render: () => h("div"),
         setup: () => {
-          const cursorPaginationData = ref(new CursorPaginationData<string>());
+          const cursorPaginationData = ref(createEmptyPage<string>());
           const isLoadedSource = ref(false);
           ({ items, readItems } = useCursorPaginationOperationData(
             () => cursorPaginationData,
@@ -98,9 +100,9 @@ describe(useCursorPaginationOperationData, () => {
       }),
     );
     const query = vi
-      .fn<() => Promise<CursorPaginationData<string>>>()
+      .fn<() => Promise<Page<string>>>()
       .mockRejectedValueOnce(new Error(item))
-      .mockResolvedValueOnce({ hasMore: false, items: [item], nextCursor: "" });
+      .mockResolvedValueOnce({ items: [item], nextCursor: "" });
 
     const { isError, isPending, refresh } = await readItems(query);
 
@@ -113,13 +115,27 @@ describe(useCursorPaginationOperationData, () => {
     expect(items.value).toStrictEqual([item]);
   });
 
+  test("drops a late page of a read a newer read replaced", async () => {
+    expect.hasAssertions();
+
+    await mountWithMorePages();
+    const newItem = "newItem";
+    const { query: lateQuery, resolveQuery } = createPendingQuery<Page<string>>({ items: [item], nextCursor: "" });
+    const readMore = readMoreItems(lateQuery);
+    await readItems(() => Promise.resolve({ items: [newItem], nextCursor: "" }));
+    resolveQuery();
+    await readMore;
+
+    expect(items.value).toStrictEqual([newItem]);
+  });
+
   test("does not query more items while offline and still completes the waypoint cycle", async () => {
     expect.hasAssertions();
 
     goOffline();
     await mountWithMorePages();
 
-    const query = vi.fn<(cursor?: string) => Promise<CursorPaginationData<string>>>();
+    const query = vi.fn<(cursor?: string) => Promise<Page<string>>>();
     const onComplete = vi.fn<() => void>();
 
     await readMoreItems(query, onComplete);
@@ -139,7 +155,7 @@ describe(useCursorPaginationOperationData, () => {
       return 0 as never;
     });
     const error = new Error(" ");
-    const query = vi.fn<(cursor?: string) => Promise<CursorPaginationData<string>>>(() => Promise.reject(error));
+    const query = vi.fn<(cursor?: string) => Promise<Page<string>>>(() => Promise.reject(error));
     const onComplete = vi.fn<() => void>();
 
     await expect(readMoreItems(query, onComplete)).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);

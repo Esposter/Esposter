@@ -106,7 +106,7 @@ describe(useNotificationStore, () => {
     const heldNotification = createDeliveredNotification(v7(), epoch);
     const tiedNotification = createDeliveredNotification(v7(), epoch);
     const newestNotification = createDeliveredNotification(v7(), nextDay);
-    initializeCursorPaginationData({ hasMore: false, items: [heldNotification], nextCursor: "" });
+    initializeCursorPaginationData({ items: [heldNotification], nextCursor: "" });
     createNotification({ severity: NotificationSeverity.Info, title });
     const [localNotification] = notifications.value;
     assert.exists(localNotification);
@@ -114,7 +114,6 @@ describe(useNotificationStore, () => {
 
     await storeDeliveredNotifications(() => {
       initializeCursorPaginationData({
-        hasMore: false,
         items: [newestNotification, tiedNotification, heldNotification],
         nextCursor: "",
       });
@@ -136,10 +135,10 @@ describe(useNotificationStore, () => {
 
     const { dismissSnackbar, initializeCursorPaginationData, storeDeliveredNotifications } = notificationStore;
     const heldNotification = createDeliveredNotification(v7(), epoch);
-    initializeCursorPaginationData({ hasMore: false, items: [heldNotification], nextCursor: "" });
+    initializeCursorPaginationData({ items: [heldNotification], nextCursor: "" });
     const pushedNotification = createDeliveredNotification(v7(), nextDay);
     const storePushedPage = () => {
-      initializeCursorPaginationData({ hasMore: false, items: [pushedNotification, heldNotification], nextCursor: "" });
+      initializeCursorPaginationData({ items: [pushedNotification, heldNotification], nextCursor: "" });
     };
     // Both reads are held open, and each stores its page only once its own response lands — the shape a network
     // Read has, and the one that lets the second call snapshot the list before the first has grown it. The second
