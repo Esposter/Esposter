@@ -30,11 +30,11 @@ import { readPostInputSchema } from "#shared/models/db/post/ReadPostInput";
 import { readPostsInputSchema } from "#shared/models/db/post/ReadPostsInput";
 import { updateCommentInputSchema } from "#shared/models/db/post/UpdateCommentInput";
 import { updatePostInputSchema } from "#shared/models/db/post/UpdatePostInput";
-import { getTopic } from "#shared/services/realtime/getTopic";
 import { inJsonArray } from "@esposter/db";
 import {
   DatabaseEntityType,
   DerivedDatabaseEntityType,
+  getTopic,
   PostInPostRelations,
   postsInPost,
   selectPostInPostSchema,

@@ -52,7 +52,6 @@ import { readMembersInputSchema } from "#shared/models/db/room/ReadMembersInput"
 import { readRoomInputSchema } from "#shared/models/db/room/ReadRoomInput";
 import { readRoomsInputSchema } from "#shared/models/db/room/ReadRoomsInput";
 import { readUsersByIdsInputSchema } from "#shared/models/db/room/ReadUsersByIdsInput";
-import { getTopic } from "#shared/services/realtime/getTopic";
 import { checkIsInviteUsable } from "#shared/services/room/invite/checkIsInviteUsable";
 import { createPresignedPutUrl, inJsonArray } from "@esposter/db";
 import {
@@ -61,6 +60,7 @@ import {
   DEFAULT_EVERYONE_PERMISSIONS,
   getDisplayNameExpression,
   getPublicUserColumns,
+  getTopic,
   invitesInMessage,
   MessageType,
   roomIdSchema,

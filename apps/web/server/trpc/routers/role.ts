@@ -34,11 +34,11 @@ import { readMyPermissionsInputSchema } from "#shared/models/db/role/ReadMyPermi
 import { readRolesInputSchema } from "#shared/models/db/role/ReadRolesInput";
 import { updateRoleInputSchema } from "#shared/models/db/role/UpdateRoleInput";
 import { upsertMemberPermissionOverrideInputSchema } from "#shared/models/db/role/UpsertMemberPermissionOverrideInput";
-import { getTopic } from "#shared/services/realtime/getTopic";
 import { checkIsManageable } from "#shared/services/room/rbac/checkIsManageable";
 import { getPermissions } from "@esposter/db";
 import {
   DatabaseEntityType,
+  getTopic,
   revokeRoleInputSchema,
   roomMemberPermissionsInMessage,
   RoomPermission,

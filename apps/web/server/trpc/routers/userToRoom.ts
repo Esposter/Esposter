@@ -11,8 +11,7 @@ import { getMemberProcedure } from "#server/trpc/procedure/room/getMemberProcedu
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { readMyUsersToRoomsInputSchema } from "#shared/models/db/userToRoom/ReadMyUsersToRoomsInput";
 import { updateUserToRoomInputSchema } from "#shared/models/db/userToRoom/UpdateUserToRoomInput";
-import { getTopic } from "#shared/services/realtime/getTopic";
-import { roomIdSchema, TopicKind, usersToRoomsInMessage } from "@esposter/db-schema";
+import { getTopic, roomIdSchema, TopicKind, usersToRoomsInMessage } from "@esposter/db-schema";
 import { and, ne } from "drizzle-orm";
 
 export const userToRoomRouter = router({

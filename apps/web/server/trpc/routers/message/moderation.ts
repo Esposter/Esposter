@@ -42,7 +42,6 @@ import { readModerationNotesCountInputSchema } from "#shared/models/db/moderatio
 import { readModerationNotesInputSchema } from "#shared/models/db/moderation/ReadModerationNotesInput";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { CREATED_AT_DESCENDING_SORT_ITEM, ID_DESCENDING_SORT_ITEM } from "#shared/services/pagination/constants";
-import { getTopic } from "#shared/services/realtime/getTopic";
 import { checkHasPermission } from "@esposter/db";
 import {
   AdminActionType,
@@ -50,6 +49,7 @@ import {
   DatabaseEntityType,
   getDisplayNameExpression,
   getPublicUserColumns,
+  getTopic,
   moderationLogsInMessage,
   moderationNotesInMessage,
   PublishSource,

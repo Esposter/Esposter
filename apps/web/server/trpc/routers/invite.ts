@@ -26,12 +26,12 @@ import { readInviteInputSchema } from "#shared/models/db/room/ReadInviteInput";
 import { readRoomInvitesInputSchema } from "#shared/models/db/room/ReadRoomInvitesInput";
 import { revokeInviteInputSchema } from "#shared/models/db/room/RevokeInviteInput";
 import { ID_DESCENDING_SORT_ITEM } from "#shared/services/pagination/constants";
-import { getTopic } from "#shared/services/realtime/getTopic";
 import { checkIsInviteUsable } from "#shared/services/room/invite/checkIsInviteUsable";
 import { checkHasPermission } from "@esposter/db";
 import {
   DatabaseEntityType,
   getPublicUserColumns,
+  getTopic,
   InviteInMessageRelations,
   invitesInMessage,
   PublicUserColumns,

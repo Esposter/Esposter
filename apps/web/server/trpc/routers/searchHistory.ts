@@ -1,6 +1,6 @@
-import type { User } from "better-auth";
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import type { relations, SearchHistoryInMessage, Topic } from "@esposter/db-schema";
+import type { User } from "better-auth";
 import type { RelationsFilter } from "drizzle-orm";
 
 import { ownedBy } from "#server/services/db/ownedBy";
@@ -16,8 +16,7 @@ import { createSearchHistoryInputSchema } from "#shared/models/db/searchHistory/
 import { deleteSearchHistoryInputSchema } from "#shared/models/db/searchHistory/DeleteSearchHistoryInput";
 import { readSearchHistoriesInputSchema } from "#shared/models/db/searchHistory/ReadSearchHistoriesInput";
 import { updateSearchHistoryInputSchema } from "#shared/models/db/searchHistory/UpdateSearchHistoryInput";
-import { getTopic } from "#shared/services/realtime/getTopic";
-import { DatabaseEntityType, searchHistoriesInMessage, TopicKind } from "@esposter/db-schema";
+import { DatabaseEntityType, getTopic, searchHistoriesInMessage, TopicKind } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 
 // A user's searches, across every room, are one topic: the history a room shows is read from it

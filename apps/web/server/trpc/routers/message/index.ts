@@ -1,10 +1,10 @@
-import type { User } from "better-auth";
 import type { ReadMySentMessagesResult } from "#shared/models/db/message/ReadMySentMessagesResult";
 import type { SearchMessagesResult } from "#shared/models/db/message/SearchMessagesResult";
 import type { MessageFileSasEntity } from "#shared/models/message/file/MessageFileSasEntity";
 import type { ReadFollowedThreadsResult } from "#shared/models/message/thread/ReadFollowedThreadsResult";
 import type { BasePaginationData } from "#shared/models/pagination/BasePaginationData";
 import type { RoomMessage, Topic } from "@esposter/db-schema";
+import type { User } from "better-auth";
 
 import { useRoomObject } from "#server/composables/realtime/useRoomObject";
 import { createSystemRoomMessage } from "#server/services/message/createSystemRoomMessage";
@@ -61,7 +61,6 @@ import { votePollInputSchema } from "#shared/models/db/message/VotePollInput";
 import { zonedCreateMessageInputSchema } from "#shared/models/db/message/ZonedCreateMessageInput";
 import { MessageOperation } from "#shared/models/message/MessageOperation";
 import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
-import { getTopic } from "#shared/services/realtime/getTopic";
 import {
   cloneFiles,
   createThreadFollow,
@@ -75,6 +74,7 @@ import {
   DatabaseEntityType,
   FilterType,
   getMimeCategory,
+  getTopic,
   MessageType,
   roomIdSchema,
   StorageBucket,

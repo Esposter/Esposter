@@ -2,8 +2,8 @@ import type { Meta } from "#server/models/trpc/Meta";
 import type { Context } from "#server/trpc/context";
 import type { Topic } from "@esposter/db-schema";
 import type { TRPCProcedureBuilder } from "@trpc/server";
-import type { User } from "better-auth";
 import type { Overwrite, Simplify } from "@trpc/server/unstable-core-do-not-import";
+import type { User } from "better-auth";
 
 import { publishTopics } from "#server/services/realtime/publishTopics";
 import { getResultAsync, noop } from "@esposter/shared";

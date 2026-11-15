@@ -64,12 +64,12 @@ import { saveStagedResourceContentInputSchema } from "#shared/models/db/resource
 import { updateResourceInputSchema } from "#shared/models/db/resource/UpdateResourceInput";
 import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
-import { getTopic } from "#shared/services/realtime/getTopic";
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { createPresignedGetUrl, getContentBlobName } from "@esposter/db";
 import {
   DatabaseEntityType,
+  getTopic,
   ResourceActivityType,
   resourcePublicationsInResource,
   resourcesInResource,

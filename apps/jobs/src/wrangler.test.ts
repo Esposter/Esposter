@@ -106,6 +106,7 @@ describe.each([{ environment: CloudflareEnvironment.Development }, { environment
       expect(wrangler.durable_objects.bindings).toStrictEqual([
         { class_name: "CallObject", name: "CALL", script_name: realtimeWorkerName },
         { class_name: "RoomObject", name: "ROOM", script_name: realtimeWorkerName },
+        { class_name: "TopicObject", name: "TOPIC", script_name: realtimeWorkerName },
         { class_name: "UserObject", name: "USER", script_name: realtimeWorkerName },
       ]);
     });

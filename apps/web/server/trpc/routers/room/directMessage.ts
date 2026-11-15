@@ -31,7 +31,6 @@ import { deleteDirectMessageParticipantInputSchema } from "#shared/models/db/roo
 import { hideDirectMessageInputSchema } from "#shared/models/db/room/HideDirectMessageInput";
 import { readDirectMessagesInputSchema } from "#shared/models/db/room/ReadDirectMessagesInput";
 import { roomIdsInputSchema } from "#shared/models/db/room/RoomIdsInput";
-import { getTopic } from "#shared/services/realtime/getTopic";
 import { inJsonArray } from "@esposter/db";
 import {
   DatabaseEntityType,
@@ -39,6 +38,7 @@ import {
   friendsInSocial,
   getDisplayNameExpression,
   getPublicUserColumns,
+  getTopic,
   PublicUserColumns,
   roomsInMessage,
   RoomType,

@@ -1,6 +1,6 @@
 import type { SessionSummary } from "#server/models/session/SessionSummary";
-import type { User } from "better-auth";
 import type { Topic } from "@esposter/db-schema";
+import type { User } from "better-auth";
 
 import { auth } from "#server/auth";
 import { getDeviceLabel } from "#server/services/auth/getDeviceLabel";
@@ -11,8 +11,7 @@ import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
 import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { deleteSessionInputSchema } from "#shared/models/db/session/DeleteSessionInput";
-import { getTopic } from "#shared/services/realtime/getTopic";
-import { DatabaseEntityType, TopicKind } from "@esposter/db-schema";
+import { DatabaseEntityType, getTopic, TopicKind } from "@esposter/db-schema";
 
 // The signed-in sessions a user holds are one topic for the user
 const sessionTopics = ({ ctx }: { ctx: { user: User } }): Topic[] => [getTopic(TopicKind.Session, ctx.user.id)];

@@ -5,8 +5,7 @@ import { writeBlobState } from "#server/services/blobState/writeBlobState";
 import { getBucket } from "#server/services/storage/getBucket";
 import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
-import { getTopic } from "#shared/services/realtime/getTopic";
-import { getSaveBlobName } from "@esposter/db-schema";
+import { getSaveBlobName, getTopic } from "@esposter/db-schema";
 
 // A save is sent under the ETag its last read or save returned, so a write over a save another session changed is a
 // CONFLICT, which the client answers by reading again. An absent ETag saves only over no save at all

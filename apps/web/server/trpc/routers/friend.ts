@@ -9,12 +9,12 @@ import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { friendUserIdInputSchema } from "#shared/models/db/friend/FriendUserIdInput";
 import { searchUsersInputSchema } from "#shared/models/db/friend/SearchUsersInput";
-import { getTopic } from "#shared/services/realtime/getTopic";
 import {
   blocksInSocial,
   DatabaseEntityType,
   friendsInSocial,
   getPublicUserColumns,
+  getTopic,
   TopicKind,
   usersInAuth,
 } from "@esposter/db-schema";

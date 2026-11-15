@@ -48,6 +48,7 @@
         "bindings": [
           { "name": "CALL", "class_name": "CallObject", "script_name": "prod-wkr-esposter-realtime" },
           { "name": "ROOM", "class_name": "RoomObject", "script_name": "prod-wkr-esposter-realtime" },
+          { "name": "TOPIC", "class_name": "TopicObject", "script_name": "prod-wkr-esposter-realtime" },
           { "name": "USER", "class_name": "UserObject", "script_name": "prod-wkr-esposter-realtime" },
         ],
       },
@@ -92,6 +93,7 @@
         "bindings": [
           { "name": "CALL", "class_name": "CallObject", "script_name": "dev-wkr-esposter-realtime" },
           { "name": "ROOM", "class_name": "RoomObject", "script_name": "dev-wkr-esposter-realtime" },
+          { "name": "TOPIC", "class_name": "TopicObject", "script_name": "dev-wkr-esposter-realtime" },
           { "name": "USER", "class_name": "UserObject", "script_name": "dev-wkr-esposter-realtime" },
         ],
       },

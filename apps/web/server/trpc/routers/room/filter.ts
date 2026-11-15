@@ -5,9 +5,9 @@ import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { getPermissionsProcedure } from "#server/trpc/procedure/room/getPermissionsProcedure";
 import { upsertRoomFilterInputSchema } from "#shared/models/db/room/UpsertRoomFilterInput";
-import { getTopic } from "#shared/services/realtime/getTopic";
 import {
   DatabaseEntityType,
+  getTopic,
   roomFiltersInMessage,
   roomIdSchema,
   RoomPermission,

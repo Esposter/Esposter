@@ -78,11 +78,11 @@ import { updateResourceInputSchema } from "#shared/models/db/resource/UpdateReso
 import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
 import { ID_DESCENDING_SORT_ITEM } from "#shared/services/pagination/constants";
-import { getTopic } from "#shared/services/realtime/getTopic";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { inJsonArray, purgeResource } from "@esposter/db";
 import {
   DatabaseEntityType,
+  getTopic,
   McpScope,
   RESOURCE_NAME_MAX_LENGTH,
   resourceAccessesInResource,

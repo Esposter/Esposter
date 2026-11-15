@@ -1,5 +1,4 @@
 import type { CallBackgroundBlob } from "#server/models/message/call/CallBackgroundBlob";
-import type { User } from "better-auth";
 import type { CallBackground } from "#shared/models/message/call/CallBackground";
 import type {
   ApiKeyPermissions,
@@ -11,6 +10,7 @@ import type {
   UserSettingsInMessage,
   UserStatusInMessage,
 } from "@esposter/db-schema";
+import type { User } from "better-auth";
 import type { SetNonNullable } from "type-fest";
 
 import { auth } from "#server/auth";
@@ -43,7 +43,6 @@ import { userStatusIdsInputSchema } from "#shared/models/db/user/UserStatusIdsIn
 import { updateUserSettingsInputSchema } from "#shared/models/db/userSettings/UpdateUserSettingsInput";
 import { callBackgroundSlotSchema } from "#shared/models/message/call/CallBackgroundSlot";
 import { MAX_CALL_BACKGROUND_SIZE_BYTES } from "#shared/services/message/constants";
-import { getTopic } from "#shared/services/realtime/getTopic";
 import { createPresignedGetUrl, createPresignedPutUrl } from "@esposter/db";
 import {
   createApiKeyInputSchema,
@@ -57,6 +56,7 @@ import {
   DEFAULT_SPEAKER_VOLUME_PERCENTAGE,
   getDetectedUserStatus,
   getMimeCategory,
+  getTopic,
   getUserProfileImageBlobName,
   MimeCategory,
   NoiseSuppressionMode,

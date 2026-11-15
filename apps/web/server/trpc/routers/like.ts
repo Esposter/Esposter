@@ -15,8 +15,7 @@ import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedPr
 import { createLikeInputSchema } from "#shared/models/db/post/CreateLikeInput";
 import { deleteLikeInputSchema } from "#shared/models/db/post/DeleteLikeInput";
 import { updateLikeInputSchema } from "#shared/models/db/post/UpdateLikeInput";
-import { getTopic } from "#shared/services/realtime/getTopic";
-import { DatabaseEntityType, likesInPost, postsInPost, TopicKind } from "@esposter/db-schema";
+import { DatabaseEntityType, getTopic, likesInPost, postsInPost, TopicKind } from "@esposter/db-schema";
 import { getResultAsync, Operation } from "@esposter/shared";
 import { and, eq, exists, sql } from "drizzle-orm";
 

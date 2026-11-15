@@ -6,8 +6,7 @@ import { readBlobState } from "#server/services/blobState/readBlobState";
 import { getBucket } from "#server/services/storage/getBucket";
 import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
-import { getTopic } from "#shared/services/realtime/getTopic";
-import { getSaveBlobName } from "@esposter/db-schema";
+import { getSaveBlobName, getTopic } from "@esposter/db-schema";
 import { jsonDateParse } from "@esposter/shared";
 
 // The server holds the save, so a save it cannot parse is an error rather than a fresh game: the client's next save

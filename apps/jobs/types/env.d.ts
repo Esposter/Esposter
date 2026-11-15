@@ -1,6 +1,6 @@
 import type { JobsEnvironmentVariables } from "#src/models/environment/JobsEnvironmentVariables";
 import type { Rpc } from "@cloudflare/workers-types";
-import type { CallObjectRpc, RoomObjectRpc, UserObjectRpc } from "@esposter/db-schema";
+import type { CallObjectRpc, RoomObjectRpc, TopicObjectRpc, UserObjectRpc } from "@esposter/db-schema";
 
 // The bindings wrangler.jsonc declares, typed once here. A queue is bound by its job's SCREAMING_SNAKE name with a `_QUEUE` suffix.
 // A bucket is bound by its purpose's name, and each is the same in both environments. The realtime objects belong to another Worker.
@@ -27,6 +27,7 @@ declare global {
       RECONCILE_STORAGE_LEDGER_ENTRY_QUEUE: Queue;
       RESOURCE_ASSETS: R2Bucket;
       ROOM: DurableObjectNamespace<RoomObjectRpc & Rpc.DurableObjectBranded>;
+      TOPIC: DurableObjectNamespace<Rpc.DurableObjectBranded & TopicObjectRpc>;
       USER: DurableObjectNamespace<Rpc.DurableObjectBranded & UserObjectRpc>;
       USER_ASSETS: R2Bucket;
     }

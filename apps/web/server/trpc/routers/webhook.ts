@@ -20,11 +20,11 @@ import { readAppUsersInputSchema } from "#shared/models/db/webhook/ReadAppUsersI
 import { regenerateTokenInputSchema } from "#shared/models/db/webhook/RegenerateTokenInput";
 import { updateWebhookInputSchema } from "#shared/models/db/webhook/UpdateWebhookInput";
 import { WEBHOOK_MAX_LENGTH } from "#shared/services/message/constants";
-import { getTopic } from "#shared/services/realtime/getTopic";
 import { inJsonArray } from "@esposter/db";
 import {
   appUsersInMessage,
   DatabaseEntityType,
+  getTopic,
   roomIdSchema,
   RoomPermission,
   roomsInMessage,

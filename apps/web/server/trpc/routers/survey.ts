@@ -22,8 +22,14 @@ import { createSurveyResponseInputSchema } from "#shared/models/db/survey/Create
 import { deleteSurveyResponseInputSchema } from "#shared/models/db/survey/DeleteSurveyResponseInput";
 import { readSurveyResponseInputSchema } from "#shared/models/db/survey/ReadSurveyResponseInput";
 import { updateSurveyResponseInputSchema } from "#shared/models/db/survey/UpdateSurveyResponseInput";
-import { getTopic } from "#shared/services/realtime/getTopic";
-import { DatabaseEntityType, McpScope, ResourceType, surveyResponsesInResource, TopicKind } from "@esposter/db-schema";
+import {
+  DatabaseEntityType,
+  getTopic,
+  McpScope,
+  ResourceType,
+  surveyResponsesInResource,
+  TopicKind,
+} from "@esposter/db-schema";
 import { Operation, takeOne } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
 

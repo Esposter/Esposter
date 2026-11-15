@@ -1,8 +1,7 @@
 import type { Topic } from "@esposter/db-schema";
 
+import { publishTopics as publishTopicsTo } from "@esposter/db";
 import { env } from "cloudflare:workers";
 
-// Each changed topic's object hears of the write once, however many times the mutation named it
-export const publishTopics = async (topics: Topic[]): Promise<void> => {
-  await Promise.all(Array.from(new Set(topics), (topic) => env.TOPIC.get(env.TOPIC.idFromName(topic)).publish()));
-};
+// The web Worker's Topic objects, through its own binding of the realtime Worker's
+export const publishTopics = (topics: Topic[]): Promise<void> => publishTopicsTo(env.TOPIC, topics);

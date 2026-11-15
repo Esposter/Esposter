@@ -7,8 +7,14 @@ import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { PageMarkType } from "#shared/models/app/PageMarkType";
 import { toggleBookmarkInputSchema } from "#shared/models/db/bookmark/ToggleBookmarkInput";
-import { getTopic } from "#shared/services/realtime/getTopic";
-import { bookmarksInApp, DatabaseEntityType, MAX_BOOKMARKS, TopicKind, usersInAuth } from "@esposter/db-schema";
+import {
+  bookmarksInApp,
+  DatabaseEntityType,
+  getTopic,
+  MAX_BOOKMARKS,
+  TopicKind,
+  usersInAuth,
+} from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 import { and, eq, sql } from "drizzle-orm";
 

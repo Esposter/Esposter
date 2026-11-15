@@ -4,15 +4,18 @@ import { MOCK_ENDPOINT } from "#src/services/notification/constants.test";
 import { sendNotification } from "#src/services/notification/sendNotification";
 import { setupWebPushSuite } from "#src/services/notification/setupWebPushSuite.test";
 import { webpush } from "#src/services/notification/webpush.test";
+import { MockPublishedTopics } from "#src/services/realtime/publishTopics.test";
 import { createUser } from "#src/services/shared/createUser.test";
 import { createMockDb } from "@esposter/db-mock";
 import {
   AppNotificationType,
+  getTopic,
   notificationsInNotification,
   NotificationType,
   pushSubscriptionsInNotification,
   roomsInMessage,
   sessionsInAuth,
+  TopicKind,
   usersInAuth,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
@@ -29,6 +32,7 @@ vi.mock(import("#src/services/shared/db"), () => ({
 }));
 
 vi.mock(import("#src/services/notification/webpush"), () => import("#src/services/notification/webpush.test"));
+vi.mock(import("#src/services/realtime/publishTopics"), () => import("#src/services/realtime/publishTopics.test"));
 
 // The generic web-push send/expiry matrix lives in sendWebPushNotifications.test.ts; what this one owns is the
 // Fan-out AppNotificationTypeChannelMap decides — which types write a bell row, which reach a device, and which session
@@ -69,6 +73,7 @@ describe(sendNotification, () => {
 
   afterEach(async () => {
     await mockDb.delete(notificationsInNotification);
+    MockPublishedTopics.length = 0;
     vi.restoreAllMocks();
   });
 
@@ -152,5 +157,13 @@ describe(sendNotification, () => {
     expect(vi.mocked(webpush.sendNotification).mock.calls[0]?.[0].endpoint).toBe(MOCK_ENDPOINT);
     expect(notification?.title).toBe(title);
     expect(notification?.type).toBe(AppNotificationType.ResourceOperation);
+  });
+
+  test("a bell row tells its recipient's open bell to refetch", async () => {
+    expect.hasAssertions();
+
+    await sendNotification({ path, title, type: AppNotificationType.ResourceOperation, userId: subscriberUserId });
+
+    expect(MockPublishedTopics).toStrictEqual([getTopic(TopicKind.Notification, subscriberUserId)]);
   });
 });

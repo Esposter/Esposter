@@ -1,5 +1,5 @@
-import type { User } from "better-auth";
 import type { RoomMessage, ScheduledRoomMessage, Topic } from "@esposter/db-schema";
+import type { User } from "better-auth";
 
 import { useRoomObject } from "#server/composables/realtime/useRoomObject";
 import { createUserMessage } from "#server/services/message/createUserMessage";
@@ -15,8 +15,7 @@ import { deleteScheduledMessageInputSchema } from "#shared/models/db/message/sch
 import { readScheduledMessagesInputSchema } from "#shared/models/db/message/scheduledMessage/ReadScheduledMessagesInput";
 import { sendScheduledMessageNowInputSchema } from "#shared/models/db/message/scheduledMessage/SendScheduledMessageNowInput";
 import { updateScheduledMessageInputSchema } from "#shared/models/db/message/scheduledMessage/UpdateScheduledMessageInput";
-import { getTopic } from "#shared/services/realtime/getTopic";
-import { DatabaseEntityType, MessageType, TopicKind } from "@esposter/db-schema";
+import { DatabaseEntityType, getTopic, MessageType, TopicKind } from "@esposter/db-schema";
 import { getResultAsync, noop, WordFilteredError } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { v7 } from "uuid";

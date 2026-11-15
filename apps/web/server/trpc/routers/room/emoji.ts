@@ -23,12 +23,12 @@ import { deleteRoomEmojiInputSchema } from "#shared/models/db/roomEmoji/DeleteRo
 import { generateUploadRoomEmojiSasEntityInputSchema } from "#shared/models/db/roomEmoji/GenerateUploadRoomEmojiSasEntityInput";
 import { updateRoomEmojiInputSchema } from "#shared/models/db/roomEmoji/UpdateRoomEmojiInput";
 import { MAX_ROOM_EMOJI_SIZE_BYTES, MAX_ROOM_EMOJIS } from "#shared/services/message/constants";
-import { getTopic } from "#shared/services/realtime/getTopic";
 import { createPresignedPutUrl } from "@esposter/db";
 import {
   DatabaseEntityType,
   getMimeCategory,
   getRoomEmojiBlobName,
+  getTopic,
   MimeCategory,
   roomEmojisInMessage,
   roomIdSchema,

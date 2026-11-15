@@ -1,6 +1,6 @@
-import type { User } from "better-auth";
 import type { ReadNotificationsResult } from "#shared/models/db/notification/ReadNotificationsResult";
 import type { NotificationInNotification, relations, Topic } from "@esposter/db-schema";
+import type { User } from "better-auth";
 import type { RelationsFilter } from "drizzle-orm";
 
 import { ownedBy } from "#server/services/db/ownedBy";
@@ -13,9 +13,9 @@ import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { readNotificationsInputSchema } from "#shared/models/db/notification/ReadNotificationsInput";
-import { getTopic } from "#shared/services/realtime/getTopic";
 import {
   DatabaseEntityType,
+  getTopic,
   notificationsInNotification,
   selectNotificationInNotificationSchema,
   TopicKind,

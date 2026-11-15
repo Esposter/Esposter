@@ -3,14 +3,17 @@ import type { NotificationQueueMessage } from "@esposter/db-schema";
 import { getPushNotificationPayload } from "#src/services/notification/getPushNotificationPayload";
 import { resolveNotification } from "#src/services/notification/resolveNotification";
 import { sendWebPushNotifications } from "#src/services/notification/sendWebPushNotifications";
+import { publishTopics } from "#src/services/realtime/publishTopics";
 import { db } from "#src/services/shared/db";
 import { getPushSubscriptionsForUsers, inJsonArray } from "@esposter/db";
 import {
   AppNotificationTypeChannelMap,
   AppNotificationTypeSeverityMap,
+  getTopic,
   NOTIFICATION_RETENTION_MS,
   NotificationChannel,
   notificationsInNotification,
+  TopicKind,
 } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 import { and, lt } from "drizzle-orm";
@@ -41,7 +44,7 @@ export const sendNotification = async (data: NotificationQueueMessage): Promise<
       .values(userIds.map((userId) => ({ body, path, severity, title, type: data.type, userId })));
     // The retention trim rides the write rather than a sweep of its own: the recipients are already known here,
     // So bounding the table costs one indexed delete against the rows that were just added to. Best-effort,
-    // Because it runs after the rows above have landed — a throw here would ask Event Grid for a redelivery
+    // Because it runs after the rows above have landed — a throw here would ask the queue for a redelivery
     // That inserts them a second time, which is the duplication QueueJobMaxRetriesMap promises this
     // Handler does not cause
     await getResultAsync(() =>
@@ -56,6 +59,13 @@ export const sendNotification = async (data: NotificationQueueMessage): Promise<
     ).match(noop, (error) => {
       console.error("Failed to trim delivered notifications:", error);
     });
+    // Each recipient's open bell refetches. Best-effort and past the write, for the same reason as the trim
+    await getResultAsync(() => publishTopics(userIds.map((userId) => getTopic(TopicKind.Notification, userId)))).match(
+      noop,
+      (error) => {
+        console.error("Failed to publish the bell's topics:", error);
+      },
+    );
   }
   if (!channels.includes(NotificationChannel.Push)) return;
   // A subscription is per-session, so the session that caused the notification is excluded here rather than by

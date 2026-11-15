@@ -7,13 +7,13 @@ import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { friendUserIdInputSchema } from "#shared/models/db/friend/FriendUserIdInput";
-import { getTopic } from "#shared/services/realtime/getTopic";
 import {
   BlockInSocialRelations,
   blocksInSocial,
   DatabaseEntityType,
   friendRequestsInSocial,
   friendsInSocial,
+  getTopic,
   PublicUserColumns,
   TopicKind,
 } from "@esposter/db-schema";

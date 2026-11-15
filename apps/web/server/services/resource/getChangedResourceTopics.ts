@@ -1,5 +1,5 @@
-import type { User } from "better-auth";
 import type { Topic } from "@esposter/db-schema";
+import type { User } from "better-auth";
 
 import { getResourceListTopics } from "#server/services/resource/getResourceListTopics";
 import { getResourceTopics } from "#server/services/resource/getResourceTopics";
