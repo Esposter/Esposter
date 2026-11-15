@@ -7,5 +7,5 @@ export interface SurveyExpressionUnaryNode {
   operand: SurveyExpressionNode;
   operator: SurveyExpressionUnaryOperator;
   position: number;
-  type: SurveyExpressionNodeType.Unary;
+  type: typeof SurveyExpressionNodeType.Unary;
 }

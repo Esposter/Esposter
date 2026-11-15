@@ -5,7 +5,7 @@ import { exhaustiveGuard } from "@esposter/shared";
 
 // `and` and `or` are boolean: an operand counts only when it is `true`, and any other value counts as false (R8)
 export const evaluateLogicOperator = (
-  operator: SurveyExpressionBinaryOperator.And | SurveyExpressionBinaryOperator.Or,
+  operator: typeof SurveyExpressionBinaryOperator.And | typeof SurveyExpressionBinaryOperator.Or,
   left: SurveyLogicValue,
   right: SurveyLogicValue,
 ): boolean => {

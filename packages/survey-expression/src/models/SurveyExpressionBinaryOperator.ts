@@ -1,21 +1,23 @@
 // One member per operator, so no tree holds the spelling the expression was written with
-export enum SurveyExpressionBinaryOperator {
-  Add = "add",
-  AllOf = "allOf",
-  And = "and",
-  AnyOf = "anyOf",
-  Contains = "contains",
-  Divide = "divide",
-  Equal = "equal",
-  Greater = "greater",
-  GreaterOrEqual = "greaterOrEqual",
-  Less = "less",
-  LessOrEqual = "lessOrEqual",
-  Modulo = "modulo",
-  Multiply = "multiply",
-  NotContains = "notContains",
-  NotEqual = "notEqual",
-  Or = "or",
-  Power = "power",
-  Subtract = "subtract",
-}
+export const SurveyExpressionBinaryOperator = {
+  Add: "add",
+  AllOf: "allOf",
+  And: "and",
+  AnyOf: "anyOf",
+  Contains: "contains",
+  Divide: "divide",
+  Equal: "equal",
+  Greater: "greater",
+  GreaterOrEqual: "greaterOrEqual",
+  Less: "less",
+  LessOrEqual: "lessOrEqual",
+  Modulo: "modulo",
+  Multiply: "multiply",
+  NotContains: "notContains",
+  NotEqual: "notEqual",
+  Or: "or",
+  Power: "power",
+  Subtract: "subtract",
+} as const;
+export type SurveyExpressionBinaryOperator =
+  (typeof SurveyExpressionBinaryOperator)[keyof typeof SurveyExpressionBinaryOperator];

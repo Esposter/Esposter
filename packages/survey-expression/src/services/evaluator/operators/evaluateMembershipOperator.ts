@@ -9,10 +9,10 @@ import { exhaustiveGuard } from "@esposter/shared";
 // Membership is boolean, and `notcontains` is the negation of `contains`
 export const evaluateMembershipOperator = (
   operator:
-    | SurveyExpressionBinaryOperator.AllOf
-    | SurveyExpressionBinaryOperator.AnyOf
-    | SurveyExpressionBinaryOperator.Contains
-    | SurveyExpressionBinaryOperator.NotContains,
+    | typeof SurveyExpressionBinaryOperator.AllOf
+    | typeof SurveyExpressionBinaryOperator.AnyOf
+    | typeof SurveyExpressionBinaryOperator.Contains
+    | typeof SurveyExpressionBinaryOperator.NotContains,
   left: SurveyLogicValue,
   right: SurveyLogicValue,
 ): boolean => {

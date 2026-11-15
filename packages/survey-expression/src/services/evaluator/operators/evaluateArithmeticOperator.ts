@@ -11,12 +11,12 @@ import { exhaustiveGuard } from "@esposter/shared";
 // `+` also joins two texts that are not numbers, and a division or a remainder by zero, read as a number, has no result either
 export const evaluateArithmeticOperator = (
   operator:
-    | SurveyExpressionBinaryOperator.Add
-    | SurveyExpressionBinaryOperator.Divide
-    | SurveyExpressionBinaryOperator.Modulo
-    | SurveyExpressionBinaryOperator.Multiply
-    | SurveyExpressionBinaryOperator.Power
-    | SurveyExpressionBinaryOperator.Subtract,
+    | typeof SurveyExpressionBinaryOperator.Add
+    | typeof SurveyExpressionBinaryOperator.Divide
+    | typeof SurveyExpressionBinaryOperator.Modulo
+    | typeof SurveyExpressionBinaryOperator.Multiply
+    | typeof SurveyExpressionBinaryOperator.Power
+    | typeof SurveyExpressionBinaryOperator.Subtract,
   left: SurveyLogicValue,
   right: SurveyLogicValue,
 ): SurveyLogicValue => {

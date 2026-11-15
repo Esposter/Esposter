@@ -8,12 +8,12 @@ import { exhaustiveGuard } from "@esposter/shared";
 // The comparisons are boolean. Greater is less with its sides swapped, and the or-equal forms take equality first
 export const evaluateComparisonOperator = (
   operator:
-    | SurveyExpressionBinaryOperator.Equal
-    | SurveyExpressionBinaryOperator.Greater
-    | SurveyExpressionBinaryOperator.GreaterOrEqual
-    | SurveyExpressionBinaryOperator.Less
-    | SurveyExpressionBinaryOperator.LessOrEqual
-    | SurveyExpressionBinaryOperator.NotEqual,
+    | typeof SurveyExpressionBinaryOperator.Equal
+    | typeof SurveyExpressionBinaryOperator.Greater
+    | typeof SurveyExpressionBinaryOperator.GreaterOrEqual
+    | typeof SurveyExpressionBinaryOperator.Less
+    | typeof SurveyExpressionBinaryOperator.LessOrEqual
+    | typeof SurveyExpressionBinaryOperator.NotEqual,
   left: SurveyLogicValue,
   right: SurveyLogicValue,
 ): boolean => {

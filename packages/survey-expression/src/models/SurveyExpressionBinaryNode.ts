@@ -8,5 +8,5 @@ export interface SurveyExpressionBinaryNode {
   operator: SurveyExpressionBinaryOperator;
   position: number;
   right: SurveyExpressionNode;
-  type: SurveyExpressionNodeType.Binary;
+  type: typeof SurveyExpressionNodeType.Binary;
 }

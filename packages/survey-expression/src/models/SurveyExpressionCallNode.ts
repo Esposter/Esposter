@@ -7,5 +7,5 @@ export interface SurveyExpressionCallNode {
   args: SurveyExpressionNode[];
   name: string;
   position: number;
-  type: SurveyExpressionNodeType.Call;
+  type: typeof SurveyExpressionNodeType.Call;
 }

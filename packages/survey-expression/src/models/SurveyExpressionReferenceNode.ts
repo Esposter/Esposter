@@ -4,5 +4,5 @@ import type { SurveyExpressionNodeType } from "#src/models/SurveyExpressionNodeT
 export interface SurveyExpressionReferenceNode {
   name: string;
   position: number;
-  type: SurveyExpressionNodeType.Reference;
+  type: typeof SurveyExpressionNodeType.Reference;
 }

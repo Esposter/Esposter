@@ -5,5 +5,5 @@ import type { SurveyExpressionNodeType } from "#src/models/SurveyExpressionNodeT
 export interface SurveyExpressionListNode {
   items: SurveyExpressionNode[];
   position: number;
-  type: SurveyExpressionNodeType.List;
+  type: typeof SurveyExpressionNodeType.List;
 }
