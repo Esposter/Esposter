@@ -475,6 +475,25 @@ describe(RoomObject, () => {
     expect(object.readMessages({ limit: 10 })).toStrictEqual([third, second, first]);
   });
 
+  test("a thread is read back as its root and then its replies in the order they were sent, and a message outside it is left out", async () => {
+    expect.hasAssertions();
+
+    const { object } = createRoomObject();
+    const root = await sendMessage(object, "root");
+    const firstReply = await object.createMessage(
+      { message: "first reply", replyToId: root.id, type: MessageType.Message },
+      actor,
+    );
+    // A message outside the thread, sent between its replies, is left out of the read
+    await sendMessage(object, "outside");
+    const secondReply = await object.createMessage(
+      { message: "second reply", replyToId: root.id, type: MessageType.Message },
+      actor,
+    );
+
+    expect(object.readThread(root.id)).toStrictEqual([root, firstReply, secondReply]);
+  });
+
   test("erasing a person's messages blanks what they said and leaves the rest, and their export pages by id", async () => {
     expect.hasAssertions();
 
@@ -505,6 +524,35 @@ describe(RoomObject, () => {
 
     expect(socket.close).toHaveBeenCalledExactlyOnceWith(1000, "Room deleted");
     await expect(state.ctx.storage.getAlarm()).resolves.toBeNull();
+  });
+
+  test("a message sent live is indexed in its sender's user object as sent, with its room and its time", async () => {
+    expect.hasAssertions();
+
+    const { object } = createRoomObject();
+    const message = await sendMessage(object, "hello");
+
+    expect(getUserStub(userId).addSentMessage).toHaveBeenCalledExactlyOnceWith({
+      createdAt: message.createdAt,
+      messageId: message.id,
+      roomId,
+    });
+  });
+
+  test("a scheduled message is indexed in its sender's user object as scheduled, with its room, id and due time", async () => {
+    expect.hasAssertions();
+
+    const { object } = createRoomObject();
+    const scheduledMessage = await object.createScheduledMessage(
+      { id: v7(), message: "later", runAt: new Date(ROOM_ACTIVITY_DELAY_MS) },
+      actor,
+    );
+
+    expect(getUserStub(userId).addScheduledMessage).toHaveBeenCalledExactlyOnceWith({
+      roomId,
+      runAt: scheduledMessage.runAt,
+      scheduledId: scheduledMessage.id,
+    });
   });
 
   test("deleting the room takes each pending scheduled message out of its sender's index", async () => {
