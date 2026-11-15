@@ -33,7 +33,7 @@ describe("dashboardPaletteTile", () => {
   // With the grid's padding and columns, this point lands in the third column of the first row
   const cellPoint = { x: 170, y: 10 };
   const outsidePoint = { x: -50, y: -50 };
-  const createGrid = async (visuals: Visual[] = [], collision = CollisionMode.Push) => {
+  const createGrid = async (visuals: Visual[] = [], collision: CollisionMode = CollisionMode.Push) => {
     const grid = await mountSuspended(DashboardGrid, {
       attachTo: document.body,
       props: { collision, columnNumber, compactType: CompactType.Vertical, isEditable: true, rowHeight: 40, visuals },

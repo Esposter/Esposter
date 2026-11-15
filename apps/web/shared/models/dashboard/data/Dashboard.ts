@@ -11,8 +11,8 @@ import { z } from "zod";
 
 export class Dashboard extends AItemEntity {
   // How the visuals pack, and what a drop does on the visual it lands on
-  collision = CollisionMode.Push;
-  compactType = CompactType.Vertical;
+  collision: CollisionMode = CollisionMode.Push;
+  compactType: CompactType = CompactType.Vertical;
   visuals: Visual[] = [];
 
   constructor(init?: Partial<Dashboard>) {
