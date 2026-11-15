@@ -1,7 +1,14 @@
 // @vitest-environment nuxt
+import { readActiveTopics } from "@/services/realtime/collectTopics";
+import { sendRealtimeFrame } from "@/services/realtime/openRealtimeSocket.test";
 import { useAlertStore } from "@/store/alert";
+import { useConnectionStore } from "@/store/realtime/connection";
+import { getTopic, TopicKind } from "@esposter/db-schema";
 import { waitForSynchronizedFunctions } from "@esposter/shared";
-import { describe, expect, test } from "vitest";
+import { v7 } from "uuid";
+import { describe, expect, test, vi } from "vitest";
+
+vi.mock(import("@/services/realtime/openRealtimeSocket"), () => import("@/services/realtime/openRealtimeSocket.test"));
 
 describe(useQuery, () => {
   const result = "result";
@@ -84,5 +91,32 @@ describe(useQuery, () => {
 
     expect(error.value).toBe("");
     expect(data.value).toBe(result);
+  });
+
+  // A read still in flight when its surface unmounts answers into nothing, so it must not watch the topics it names
+  test("takes no topic watch for a read that answers after its surface unmounted", async () => {
+    expect.hasAssertions();
+
+    const connectionStore = useConnectionStore();
+    connectionStore.openUser();
+    const topic = getTopic(TopicKind.Post, v7());
+    const { promise: isReadReached, resolve: onReadReached } = Promise.withResolvers<void>();
+    const { promise, resolve }: PromiseWithResolvers<string> = Promise.withResolvers();
+    const scope = effectScope();
+    scope.run(() =>
+      useQuery(() => {
+        // The topics link reads a read's topics from its response header, which the tRPC mock does not send, so the
+        // Read names its topic into the collector directly
+        readActiveTopics()?.push(topic);
+        onReadReached();
+        return promise;
+      }),
+    );
+    await isReadReached;
+    scope.stop();
+    resolve(result);
+    await waitForSynchronizedFunctions();
+
+    expect(sendRealtimeFrame).not.toHaveBeenCalled();
   });
 });

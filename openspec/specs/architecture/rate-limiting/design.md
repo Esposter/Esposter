@@ -31,6 +31,7 @@ flowchart TD
   webhookRoute["POST /api/webhooks/{id}/{token}"] -->|"consumeAddressRateLimit, first"| addressBinding["RATE_LIMITER_ADDRESS"]
   webhookRoute -->|"then limit(webhook id)"| webhookBinding["RATE_LIMITER_WEBHOOK"]
   mcpRoute["POST /api/mcp"] -->|"consumeAddressRateLimit, first"| addressBinding
+  realtimeKitRoute["POST /api/webhooks/realtimekit"] -->|"consumeAddressRateLimit, first"| addressBinding
   assetRoute["GET /api/resource-assets/{path}"] -->|"limit(user id or IP)"| assetBinding["RATE_LIMITER_ASSET"]
   authRoute["/api/auth/**"] -->|"limit(path + IP)"| authBinding["RATE_LIMITER_AUTH"]
   middleware -->|"success — procedure runs"| ok["procedure runs"]

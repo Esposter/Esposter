@@ -15,7 +15,7 @@ Discord draws between creating an invite and managing the server's. `revokeInvit
 the predicate drops the owner clause for a caller holding `ManageRoom` rather than the procedure forking.
 
 The list reads what a joiner could actually use — expired and exhausted rows are filtered by
-`checkIsInviteUsable`, the same predicate every other reader applies, rather than by a second copy of it in SQL.
+`checkIsInviteUsable`, the same predicate every other reader applies, rather than by a second copy of it in SQL. The walk is ordered by creation, newest first, with the id only breaking a tie, since an invite id is a random secret rather than a time-ordered one.
 The filter runs after the page is cut rather than before, so a page can render fewer rows than it read and the
 cursor still names the oldest row read: a batch of lapsed links narrows one page instead of ending the walk short
 of the usable links behind it.

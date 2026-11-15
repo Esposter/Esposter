@@ -4,7 +4,7 @@ import type { RoomMessage, Topic } from "@esposter/db-schema";
 import { createId } from "#shared/util/math/random/createId";
 import { openRealtimeSocket, sendRealtimeFrame } from "@/services/realtime/openRealtimeSocket.test";
 import { useConnectionStore } from "@/store/realtime/connection";
-import { CALL_ID_LENGTH, MessageType } from "@esposter/db-schema";
+import { CALL_ID_LENGTH, getTopic, MAX_FRAME_TOPICS, MessageType, TopicKind } from "@esposter/db-schema";
 import { jsonDateParse } from "@esposter/shared";
 import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
@@ -88,6 +88,22 @@ describe(useConnectionStore, () => {
     expect(sendRealtimeFrame.mock.calls.map(([frame]) => jsonDateParse(frame))).toStrictEqual([
       { data: { topics: [topic] }, type: "watch" },
       { data: { topics: [topic] }, type: "unwatch" },
+    ]);
+  });
+
+  // A tab that reads more topics than one frame holds watches them over several frames, each within the cap, so a frame
+  // Never fans its socket out past it and no topic is left unwatched
+  test("watches every topic of a tab that reads more topics than one frame holds", () => {
+    expect.hasAssertions();
+
+    const connectionStore = useConnectionStore();
+    connectionStore.openUser();
+    const topics = Array.from({ length: MAX_FRAME_TOPICS + 1 }, () => getTopic(TopicKind.Post, v7()));
+    connectionStore.watchTopics(topics, vi.fn<() => void>());
+
+    expect(sendRealtimeFrame.mock.calls.map(([frame]) => jsonDateParse(frame))).toStrictEqual([
+      { data: { topics: topics.slice(0, MAX_FRAME_TOPICS) }, type: "watch" },
+      { data: { topics: topics.slice(MAX_FRAME_TOPICS) }, type: "watch" },
     ]);
   });
 });

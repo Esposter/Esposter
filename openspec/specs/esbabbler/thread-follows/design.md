@@ -38,7 +38,7 @@ Auto-follow and the notification both sit in the reply's best-effort tail ([pers
 
 ## Data model
 
-D1 table `threadFollowsInMessage`: `userId`, `roomId`, and `threadRootId` (the root message's integer id in its room), with a composite primary key over all three so a follow is idempotent, plus `isUnfollowed` — the member's recorded decision to stop, which is why a row outlives an unfollow. Room deletion cascades the follows away. The drawer resolves the followed roots back to their messages in one batched read of the room's object (`readMessagesByIds`), which drops any root that was deleted, so it never lists a dangling follow. The drawer lists the roots newest-first by id (a message id only grows within its room) rather than in the order the follows were recorded, and it returns whichever entity each root actually is — a webhook message can be a thread root like any other.
+D1 table `threadFollowsInMessage`: `userId`, `roomId`, and `threadRootId` (the root message's integer id in its room), with a composite primary key over all three so a follow is idempotent, plus `isUnfollowed` — the member's recorded decision to stop, which is why a row outlives an unfollow. Room deletion cascades the follows away. The drawer resolves the followed roots back to their messages in one batched read of the room's object (`readMessagesByIds`), which drops any root that was deleted, so it never lists a dangling follow. The drawer lists the roots newest-first by id (a message id only grows within its room), at most `MAX_FOLLOWED_THREADS` of them, rather than in the order the follows were recorded, and it returns whichever entity each root actually is — a webhook message can be a thread root like any other.
 
 ## Procedures
 

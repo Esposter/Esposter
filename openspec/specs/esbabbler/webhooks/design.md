@@ -43,7 +43,7 @@ The url a member copies points at the **app**, at the web Worker's own route `PO
 
 ## Rendering
 
-`MessageComponentMap` points `MessageType.Webhook` at the ordinary message component — a webhook message is a message, not a distinct surface. What differs is authorship. `WebhookMessageEntity` carries an `appUser` instead of a `userId`, `useCreator` resolves the author from the app-user store merged over the identity embedded in the message, and an "app" badge renders beside the name. Grouping consecutive messages compares the app user's id rather than a user id, and [thread follows](../thread-follows/design.md) skip the root-author follow entirely for these messages because there is no user to follow.
+`MessageComponentMap` points `MessageType.Webhook` at the ordinary message component — a webhook message is a message, not a distinct surface. What differs is authorship. `WebhookMessageEntity` carries an `appUser` instead of a `userId`, `useCreator` resolves the author from the identity embedded in the message, falling back to the app-user store's name and image where the message carries none, and an "app" badge renders beside the name. Grouping consecutive messages compares the app user's id rather than a user id, and [thread follows](../thread-follows/design.md) skip the root-author follow entirely for these messages because there is no user to follow.
 
 ## Procedures
 
