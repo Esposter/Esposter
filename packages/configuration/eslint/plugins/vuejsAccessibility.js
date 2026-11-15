@@ -28,7 +28,7 @@ export default defineConfig({
     "vuejs-accessibility/mouse-events-have-key-events": "off",
     "vuejs-accessibility/no-aria-hidden-on-focusable": "error",
     // The rule sees only a DOM element's `autofocus`, and a library component forwards one to its control, so the ban is
-    // `restrictedAccessibilitySyntaxes.js`'s, which covers an element, a component and an editor's option alike
+    // `restrictedSyntaxes.js`'s, which covers an element, a component and an editor's option alike
     "vuejs-accessibility/no-autofocus": "off",
     "vuejs-accessibility/no-onchange": "error",
     "vuejs-accessibility/no-role-presentation-on-focusable": "error",
