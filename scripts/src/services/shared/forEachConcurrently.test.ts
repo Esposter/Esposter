@@ -1,5 +1,6 @@
 import { forEachConcurrently } from "#src/services/shared/forEachConcurrently";
 import { InvalidOperationError, Operation } from "@esposter/shared";
+import { setImmediate } from "node:timers/promises";
 import { describe, expect, test } from "vitest";
 
 describe(forEachConcurrently, () => {
@@ -65,7 +66,7 @@ describe(forEachConcurrently, () => {
     const run = forEachConcurrently(
       (async function* () {
         yield "a";
-        await new Promise((resolve) => setTimeout(resolve));
+        await setImmediate();
         throw new InvalidOperationError(Operation.Read, "listing", "failed");
       })(),
       limit,

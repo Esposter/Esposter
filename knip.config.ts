@@ -69,6 +69,8 @@ const knipConfiguration: KnipConfig = {
         "tresjs-nuxt",
       ],
     },
+    // Each Durable Object's schema has its own drizzle config, which `db:gen` passes to drizzle-kit by path
+    "packages/db-schema": { entry: ["src/index.ts", "drizzle.*.config.ts"] },
     "packages/follow-ups": { entry: ["scripts/**/*.ts"] },
     "packages/genshin-interface": {
       entry: ["src/index.ts", "src/**/*.reference.ts", "src/**/*.visual.ts"],
