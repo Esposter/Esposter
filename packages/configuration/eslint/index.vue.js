@@ -4,6 +4,7 @@ import oxlint from "@esposter/configuration/eslint/oxlint.js";
 import plugins from "@esposter/configuration/eslint/plugins/index.js";
 import restrictedConstantSyntaxes from "@esposter/configuration/eslint/restrictedConstantSyntaxes.js";
 import restrictedDateSyntaxes from "@esposter/configuration/eslint/restrictedDateSyntaxes.js";
+import restrictedFocusSyntaxes from "@esposter/configuration/eslint/restrictedFocusSyntaxes.js";
 import restrictedModuleSyntaxes from "@esposter/configuration/eslint/restrictedModuleSyntaxes.js";
 import restrictedSourceSyntaxes from "@esposter/configuration/eslint/restrictedSourceSyntaxes.js";
 import restrictedStoreSyntaxes from "@esposter/configuration/eslint/restrictedStoreSyntaxes.js";
@@ -64,6 +65,39 @@ export default withNuxt(plugins)
         "error",
         ...typescriptRules["no-restricted-syntax"].slice(1),
         ...restrictedConstantSyntaxes,
+        ...restrictedModuleSyntaxes,
+        ...restrictedSourceSyntaxes,
+        ...restrictedWatchSyntaxes,
+      ],
+    },
+  })
+  // The Nuxt app's own components and composables are where `useAutofocus` is auto-imported, so a focus in `onMounted`
+  // Is the ask it replaces there; each override carries the base it replaces over and appends the focus ban.
+  .append({
+    files: ["**/app/**/*.vue"],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        ...typescriptRules["no-restricted-syntax"].slice(1),
+        ...restrictedConstantSyntaxes,
+        ...restrictedFocusSyntaxes,
+        ...restrictedSourceSyntaxes,
+        ...restrictedDateSyntaxes,
+        ...restrictedStoreSyntaxes,
+        ...restrictedTrimSyntaxes,
+        ...restrictedWatchSyntaxes,
+      ],
+    },
+  })
+  .append({
+    files: ["**/app/composables/**/*.ts"],
+    ignores: ["**/*.bench.ts", "**/*.test-d.ts", "**/*.test.ts"],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        ...typescriptRules["no-restricted-syntax"].slice(1),
+        ...restrictedConstantSyntaxes,
+        ...restrictedFocusSyntaxes,
         ...restrictedModuleSyntaxes,
         ...restrictedSourceSyntaxes,
         ...restrictedWatchSyntaxes,

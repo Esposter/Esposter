@@ -47,9 +47,7 @@ const style = computed<CSSProperties | undefined>(() => {
     width: placement.isWrapped ? `${placement.width * scale}px` : undefined,
   };
 });
-onMounted(() => {
-  textarea.value?.focus();
-});
+useAutofocus(textarea);
 </script>
 
 <template>
