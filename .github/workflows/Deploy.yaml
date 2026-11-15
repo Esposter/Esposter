@@ -23,8 +23,10 @@ concurrency:
 jobs:
   deploy:
     name: Deploy
-    # Held rather than deployed unless CI's run concluded success: a failed run, or one a newer push cancelled, deploys nothing
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    # Held rather than deployed unless CI's run concluded success: a failed run, or one a newer push cancelled, deploys nothing.
+    # It also deploys only a push to this repository: this job checks out the run's commit and holds the secrets, so a CI
+    # run that ever gained a pull request trigger, from a fork's branch named `main`, must not reach it
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' && github.event.workflow_run.head_repository.full_name == github.repository }}
     runs-on: ubuntu-latest
     env:
       # Nitro reads it while building the web Worker, and wrangler reads it to pick the environment each Worker deploys to

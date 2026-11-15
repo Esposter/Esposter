@@ -43,6 +43,10 @@ Every cron is a quoted UTC string firing on minute 16, its comment giving the ca
 
 Don't append `|| true` to a command the tool already makes idempotent (`references/exit-codes.md`).
 
+## A `workflow_run` deploy runs only a push to this repository
+
+A job that checks out `workflow_run.head_sha` and holds secrets is the "pwn request" shape Scorecard's Dangerous-Workflow check reports (alert 38). It is safe only while the triggering workflow runs nothing from a fork, which nothing in the file says, so the job's `if` states it: `workflow_run.event == 'push'` and `workflow_run.head_repository.full_name == github.repository`. The checkout of the tested commit stays, since the branch's tip may have moved on, and the alert stays open on that pattern until it is dismissed as a false positive with this reason (`openspec/specs/architecture/monorepo-tooling/design.md`, "CI job shape").
+
 ## A comment keeps what the owning page does not say
 
 A workflow comment keeps only what the owning page and the step itself leave unsaid (`references/step-comments.md`).
