@@ -15,15 +15,12 @@ A job's retryable steps — the body's `.parse()`, the persist step — are plai
 Rethrowing here asks for a redelivery that reruns the handler from the top, and a message's fresh time-based `rowKey` makes that rerun a **duplicate** rather than an overwrite. Log and swallow:
 
 ```ts
-await getResultAsync(() => publishToServer({ message: newMessage, type: PublishEventType.Message })).match(
-  noop,
-  (error) => {
-    console.error(`Failed to broadcast message ${newMessage.partitionKey}/${newMessage.rowKey}: `, error);
-  },
-);
+await getResultAsync(() => publishTopics([getTopic(TopicKind.User, buildingRow.userId)])).match(noop, (error) => {
+  console.error(`${QueueJob.ExportUserData} failed to publish for ${dataExportId}`, error);
+});
 ```
 
-Canonical: `createAndBroadcastMessage` (the broadcast) and `processWebhookHandler` (the notification after its message is persisted).
+Canonical: `exportUserDataHandler` (the topic publish after its export row is written).
 
 ## Past the retries — the dead-letter queue
 

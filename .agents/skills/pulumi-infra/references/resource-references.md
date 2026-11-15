@@ -23,13 +23,13 @@ Every resource whose containing resource is declared sets the `parent` Pulumi op
   refers to another. If Pulumi owns the resource, use its output properties (`.name`, `.id`, etc.) as source of truth
   instead of a separate constant.
 - Add constants only for values external to managed resources, values required as plain strings in Pulumi
-  options/import IDs, or shared static identifiers. The account id is the example of the first: it is read from configuration, not created by the program.
+  options/import IDs, or shared static identifiers. The account id is the example of the first: `CLOUDFLARE_ACCOUNT_ID` is committed in `@esposter/db-schema` and imported from there, not created by the program.
 - A local `const` within a file is fine when it is the **source of truth** for that name and reused more than once in
   the same file. `prodR2EsposterMessageAssets.ts` builds `bucketName` once with `getCloudflareResourceName` and uses it as the Pulumi resource name and the bucket's `name`. Don't introduce a local const that merely duplicates a name owned by another resource file.
 - **Named constants only for cross-file reuse** — create a constant file only when the value is referenced in ≥2
   resource files. `QueueConsumerRetryDelay` is the pattern: every resource file that needs it reads it from `src/cloudflare/constants/`.
 - **Per-stack files, shared environment-independent values** — dev and prod each keep their own resource file (names,
-  parents and protection are per-environment), but any value identical across stacks — the account id, the location hint, a queue consumer's retry delay — is imported from one shared constant in `src/cloudflare/constants/` rather than duplicated per stack.
+  parents and protection are per-environment), but any value identical across stacks is imported from one shared constant rather than duplicated per stack: the account id from `@esposter/db-schema`, the location hint and a queue consumer's retry delay from `src/cloudflare/constants/`.
 - **A value the infra shares with app code interpolates the same constant that code uses.** A queue's name is built by `getCloudflareResourceName`, the same function the jobs Worker's batch handler uses to name the queue it consumes, so renaming one cannot leave the infra and the code it feeds silently disagreeing.
 - **Mixing resource outputs and enum literals in one file is fine** — use a resource output (`.name`, `.id`) when
   Pulumi declares the referenced resource, and the plain enum/constant when it does not. The two forms sitting side

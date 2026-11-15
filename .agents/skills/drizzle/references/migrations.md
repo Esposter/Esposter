@@ -15,7 +15,7 @@ pnpm db:gen   # generates snapshot.json + a first-cut migration.sql from the sch
 pnpm db:up    # upgrades snapshot metadata to a newer drizzle-kit format, never an apply command
 ```
 
-- `db:gen` reads no environment variable and no database: the diff is schema-vs-snapshot, never the live D1 database.
+- `db:gen` reads no database: the diff is schema-vs-snapshot, never the live D1 database. `drizzle.config.ts` reads `CLOUDFLARE_ENVIRONMENT` and `CLOUDFLARE_API_TOKEN` into `dbCredentials` when it loads, but `generate` never uses them, so an unset environment is no database rather than an error.
 - **Rename the generated codename folder** descriptively, keeping drizzle's timestamp prefix, then rerun `db:gen` — it must report `No schema changes, nothing to migrate`.
 - Generation surfaces real drift a hand-written chain silently missed. Check a surprising diff against the migrations folder before calling it wrong.
 - **Applying** goes to the `core` D1 database through `pnpm --filter @esposter/db-schema db:migrate`, which uses D1's HTTP API. Local development applies the same folder with `wrangler d1 migrations apply CORE --local`, which `apps/web`'s `predev` runs.
@@ -28,9 +28,13 @@ Two `db:gen` runs in parallel descend from the same parent snapshot and fork the
 
 A rename is indistinguishable from a delete-plus-create in a schema diff, so drizzle-kit refuses to guess: it exits 2 and prints, per ambiguous entity, the hint it would accept. Answer with `rename` and it writes `ALTER TABLE … RENAME TO` or `ALTER TABLE … RENAME COLUMN`, which keeps the rows. That is better than a drop and a copy rewritten afterwards — the SQL is right the first time and `snapshot.json` needs no thought.
 
+Pass the hints to the `drizzle-kit generate` that owns the renamed table or column, from `packages/db-schema/`, then run `pnpm db:gen` to finish the chain. Add `--config drizzle.room.config.ts` (or the call or user config) for an object's schema:
+
 ```bash
-pnpm db:gen --hints-file <path>.json    # a JSON array; --hints '<inline>' blows the Windows 8191-char limit
+pnpm exec drizzle-kit generate --hints-file <path>.json    # a JSON array; --hints '<inline>' blows the Windows 8191-char limit
 ```
+
+`pnpm db:gen --hints-file` does not reach drizzle-kit: `db:gen` is a chain, so an appended flag lands on its last command, `vp fmt`.
 
 Each entry is `{ "type": "rename", "kind": "table" | "column", "from": [...], "to": [...] }`. `from` names the **previous** snapshot's identifier, `to` the new one.
 

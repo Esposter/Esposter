@@ -41,7 +41,7 @@ One input schema file per procedure under `shared/models/db/<feature>/`, even fo
 
 Every user-facing read and write goes through `useQuery`/`useMutation`; never a bare `{}` input (`trpc-procedure/no-empty-input`); an empty optional id is omitted and an empty required one returns early; a reader-sized list in a query's input is read in chunks, since it rides the URL (`references/client-calls.md`).
 
-**Live updates are typed events, never tRPC subscriptions.** A change another client must see is a `RoomEvent`, `CallEvent` or `UserEvent` frame on its object's socket, handled through `useConnectionStore`'s `onRoomEvent`, `onCallEvent` or `onUserEvent`. Queries and mutations stay on tRPC over HTTP (`references/subscriptions.md`).
+**Live updates are not tRPC subscriptions.** The rule, and how a client takes a frame, is `references/subscriptions.md`.
 
 ## Router Structure
 

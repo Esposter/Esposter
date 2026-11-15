@@ -23,4 +23,4 @@
 | `server/services/program`, `post`, `achievement`                                                                                                      | 2026-10-14 · Haiku 5.5 |       |
 | `server/services/friend`, `db`, `blobState`                                                                                                           | 2026-10-14 · Haiku 5.5 |       |
 | `server/services/user`, `role`, `request`, `notification`                                                                                             | 2026-10-14 · Haiku 5.5 |       |
-| `server/services/events`, `emailEditor`, `dashboard`                                                                                                  | 2026-10-14 · Haiku 5.5 |       |
+| `emailEditor`, `dashboard`                                                                                                                            | 2026-10-14 · Haiku 5.5 |       |

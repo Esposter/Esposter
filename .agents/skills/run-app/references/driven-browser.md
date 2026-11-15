@@ -18,7 +18,7 @@ The app's pages that need a person to be signed in are reached through a develop
 
 A run seeds the local D1 files the dev server reads, and nothing it does reaches a remote database. The seed's bindings are Miniflare's local files under `DEV_SEED_PERSIST_ROOT` (`scripts/src/services/devSeed/constants.ts`, the local Wrangler state the dev server reads), the same state the dev server reads, so the rows a run writes are the local dev data itself. `<scratch>` is a directory outside the tree for the run's logs and screenshots.
 
-1. **Seed the local databases**, from the repo root. The seed migrates both local D1 databases and writes the dataset into them, and a rerun converges on the same rows:
+1. **Seed the local database**, from the repo root. The seed migrates the local core D1 database and writes the dataset into it, and a rerun converges on the same rows:
 
    ```bash
    pnpm -C scripts dev:seed

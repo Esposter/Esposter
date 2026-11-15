@@ -7,8 +7,8 @@ not import. It is fatal for a package whose **entry exists to run**, and the fai
 recognising: a registration written as a bare call whose result nothing uses, in a module with no named export
 for the barrel to keep alive, is a pure side effect by every rule a bundler has. Told the package has none, it
 removes them all, keeps the exports, and drops the import of the host library entirely. What ships is a bundle
-that loads without error and does nothing — for the Functions app, one that deploys, starts, reports `Running`
-and never runs a trigger again.
+that loads without error and does nothing — for a Worker, one that deploys, answers its health check and never
+runs a queue handler or a trigger.
 
 So such a package sets `sideEffects: true`. Declaring it beats relying on the absence of the field, because the
 absence is what a repo-wide sweep adding `false` everywhere overwrites without anyone reading the diff twice.

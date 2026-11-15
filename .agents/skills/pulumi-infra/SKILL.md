@@ -13,14 +13,14 @@ description: Apply when modifying apps/infra. Esposter's Pulumi infrastructure f
 
 ## Package Shape
 
-One private package, one `prod` stack, `src/` split by provider (`src/cloudflare/`, `src/github/`) with a generated barrel, `dist/index.js` as the entrypoint, and a clean preview before every `infra:up` (`references/package-shape.md`; the preview is `references/operations.md`). **Teardown pending:** the Azure resources are still declared, so an untargeted `pulumi up` applies them too, and every apply names its resources with `--target` — the first apply after a provider bump is the one exception (`references/operations.md`).
+One private package, one `prod` stack, `src/` split by provider (`src/cloudflare/`, `src/github/`) with a generated barrel, `dist/index.js` as the entrypoint, and a clean preview before every `infra:up` (`references/package-shape.md`; the preview is `references/operations.md`). **Teardown pending:** the Azure resources are still declared, so an untargeted `pulumi up` applies them too, and every apply names its resources with `--target`. Two applies run untargeted: the first apply after a provider bump (`references/operations.md`), and the first deploy, which holds back the queue consumers and Workers custom domains with `--exclude` (`apps/infra/docs/stacks.md`, "First deploy").
 
 ## Cloudflare Rules
 
 - **Provider.** Every Cloudflare resource is declared with `@pulumi/cloudflare`, imported as a namespace (Provider Imports below).
 - **Names.** An environment's resource is `<env>-<assetType>-esposter-<purpose>` and an account's is `<assetType>-esposter-<purpose>`. `getCloudflareResourceName` and `getCloudflareAccountResourceName` in `packages/db-schema/src/services/cloudflare/` build both, for Pulumi and for the Workers, and `apps/infra/docs/cloudflare/naming-conventions.md` lists the asset types. A Pulumi logical name is that name.
 - **Secrets.** Only in the ESC environment, never in Pulumi config (Settled, above).
-- **Worker code.** Pulumi declares what the Workers bind to — queues, queue consumers, buckets, D1 databases, custom domains — and never ships their code. The Deploy workflow (`.github/workflows/Deploy.yaml`) runs `wrangler deploy` for both Workers, on `main` for production and `ai/queue` for development, once CI's run on that commit succeeds.
+- **Worker code.** Pulumi declares what the Workers bind to — queues, queue consumers, buckets, D1 databases, custom domains — and never ships their code. The Deploy workflow (`.github/workflows/Deploy.yaml`) runs `wrangler deploy` for the three Workers (`realtime`, `jobs`, `web`, in that order), on `main` for production and `ai/queue` for development, once CI's run on that commit succeeds.
 
 ## Resource Files
 

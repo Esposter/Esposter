@@ -38,7 +38,7 @@ await ctx.db
   .onConflictDoNothing();
 ```
 
-Several statements are one `db.batch([...])`, never a transaction — there is none on D1 (`references/d1-transactions.md`).
+A write of several statements is covered in `references/d1-transactions.md`.
 
 ## Insert ... select
 
