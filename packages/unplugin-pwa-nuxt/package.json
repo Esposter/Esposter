@@ -1,6 +1,6 @@
 {
   "name": "unplugin-pwa-nuxt",
-  "version": "4.10.1",
+  "version": "4.11.0",
   "description": "Nuxt PWA module on unplugin-pwa — a service worker built by the app, its manifest and its client plugin, for Nuxt 5 and Nitro 3 only",
   "keywords": [
     "nuxt",

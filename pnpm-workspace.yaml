@@ -33,8 +33,8 @@ catalog:
   "@azure/data-tables": ^13.3.2
   "@azure/identity": ^4.14.1
   "@azure/storage-blob": ^12.34.0
-  "@better-auth/api-key": ^1.7.23
-  "@better-auth/drizzle-adapter": ^1.7.23
+  "@better-auth/api-key": ^1.7.25
+  "@better-auth/drizzle-adapter": ^1.7.25
   "@cloudflare/realtimekit": ^2.0.4
   "@cloudflare/realtimekit-virtual-background": ^0.0.3
   "@cloudflare/workers-types": ^5.20261114.1
@@ -50,7 +50,7 @@ catalog:
   "@fontsource/signika": ^5.3.0
   "@hpcc-js/wasm-graphviz": ^1.30.0
   "@huggingface/transformers": ^4.3.2
-  "@iconify-json/lucide": ^1.2.154
+  "@iconify-json/lucide": ^1.2.155
   "@iconify-json/mdi": ^1.2.3
   "@iconify-json/pixelarticons": ^1.2.10
   "@jsonforms/core": ^3.8.0
@@ -94,8 +94,8 @@ catalog:
   "@tiptap/vue-3": ^3.34.0
   "@tresjs/cientos": ^5.11.0
   "@tresjs/core": ^5.11.0
-  "@trpc/client": ^11.28.0
-  "@trpc/server": ^11.28.0
+  "@trpc/client": ^11.28.2
+  "@trpc/server": ^11.28.2
   "@tsdown/css": ^0.23.7
   "@types/mjml": ^5.4.2
   "@types/node": ^26.6.6
@@ -131,7 +131,7 @@ catalog:
   "@webgpu/types": ^0.1.74
   apexcharts: ^8.8.2
   aws4fetch: ^1.0.20
-  better-auth: ^1.7.23
+  better-auth: ^1.7.25
   bowser: ^2.15.0
   # @TODO: no upstream issue — unstorage 2's fs driver, which a storage mount in Nitro 3's server bundle uses, loads
   # `chokidar` without declaring it, so the app installs it for the bundle to resolve (nitrojs/nitro)

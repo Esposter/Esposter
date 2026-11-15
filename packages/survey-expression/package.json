@@ -1,6 +1,6 @@
 {
   "name": "survey-expression",
-  "version": "4.10.1",
+  "version": "4.11.0",
   "description": "The survey's expression language — conditions, calculated values and validators over a survey's answers, checked against SurveyJS's recorded answers with every deliberate difference listed",
   "keywords": [
     "calculated-values",
