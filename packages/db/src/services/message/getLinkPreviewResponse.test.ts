@@ -1,8 +1,8 @@
 import { getLinkPreviewResponse } from "#src/services/message/getLinkPreviewResponse";
-import { getLinkPreview } from "link-preview-js";
+import { getLinkPreview } from "link-preview-js/mobile";
 import { describe, expect, test, vi } from "vitest";
 
-vi.mock(import("link-preview-js"), () => ({
+vi.mock(import("link-preview-js/mobile"), () => ({
   getLinkPreview: vi.fn<typeof getLinkPreview>(() => Promise.reject(new Error(" "))),
 }));
 
