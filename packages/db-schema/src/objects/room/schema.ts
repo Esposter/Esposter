@@ -40,7 +40,12 @@ export const messagesInRoom = sqliteTable(
     // The id a webhook push was accepted under. Unique, so a redelivered push finds the message it already wrote
     webhookDeliveryId: text(),
   },
-  (table) => [uniqueIndex("messagesWebhookDeliveryIdIndex").on(table.webhookDeliveryId)],
+  // A thread is read by its root and a member's messages by their author, each in id order, so neither scans the room
+  (table) => [
+    index("messagesReplyToIdIndex").on(table.replyToId, table.id),
+    index("messagesUserIdIndex").on(table.userId, table.id),
+    uniqueIndex("messagesWebhookDeliveryIdIndex").on(table.webhookDeliveryId),
+  ],
 );
 
 // One row is one reaction on one message: the members who chose one emoji. A deleted message takes its reactions with it
