@@ -1,3 +1,4 @@
+import R2BucketEventNotificationActions from "#src/cloudflare/constants/R2BucketEventNotificationActions";
 import { prodQEsposterReconcileStorageLedgerEntry } from "#src/cloudflare/resources/queues/prodQEsposterReconcileStorageLedgerEntry";
 import { prodR2EsposterMessageAssets } from "#src/cloudflare/resources/r2Buckets/prodR2EsposterMessageAssets";
 import {
@@ -14,7 +15,6 @@ const bucketName = getCloudflareResourceName(
   CloudflareAssetType.R2Bucket,
   StorageBucket.MessageAssets,
 );
-
 // Object creation is the only event this notification carries.
 export const prodR2EsposterMessageAssetsEventNotification: cloudflare.R2BucketEventNotification =
   new cloudflare.R2BucketEventNotification(
@@ -23,7 +23,7 @@ export const prodR2EsposterMessageAssetsEventNotification: cloudflare.R2BucketEv
       accountId: CLOUDFLARE_ACCOUNT_ID,
       bucketName: prodR2EsposterMessageAssets.name,
       queueId: prodQEsposterReconcileStorageLedgerEntry.queueId,
-      rules: [{ actions: ["PutObject", "CopyObject"] }],
+      rules: [{ actions: R2BucketEventNotificationActions }],
     },
     { parent: prodR2EsposterMessageAssets, protect: true },
   );

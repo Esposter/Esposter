@@ -1,3 +1,4 @@
+import ProdJobsWorkerScriptName from "#src/cloudflare/constants/ProdJobsWorkerScriptName";
 import QueueConsumerRetryDelay from "#src/cloudflare/constants/QueueConsumerRetryDelay";
 import { prodDlqEsposterDeleteAccount } from "#src/cloudflare/resources/queues/prodDlqEsposterDeleteAccount";
 import { prodQEsposterDeleteAccount } from "#src/cloudflare/resources/queues/prodQEsposterDeleteAccount";
@@ -5,7 +6,6 @@ import {
   CLOUDFLARE_ACCOUNT_ID,
   CloudflareAssetType,
   CloudflareEnvironment,
-  CloudflareWorkerPurpose,
   getCloudflareResourceName,
   QueueJob,
   QueueJobMaxRetriesMap,
@@ -17,11 +17,6 @@ const queueName = getCloudflareResourceName(
   CloudflareAssetType.Queue,
   QueueJob.DeleteAccount,
 );
-const scriptName = getCloudflareResourceName(
-  CloudflareEnvironment.Production,
-  CloudflareAssetType.Worker,
-  CloudflareWorkerPurpose.Jobs,
-);
 
 export const prodQEsposterDeleteAccountConsumer: cloudflare.QueueConsumer = new cloudflare.QueueConsumer(
   `${queueName}-consumer`,
@@ -29,7 +24,7 @@ export const prodQEsposterDeleteAccountConsumer: cloudflare.QueueConsumer = new 
     accountId: CLOUDFLARE_ACCOUNT_ID,
     deadLetterQueue: prodDlqEsposterDeleteAccount.queueName,
     queueId: prodQEsposterDeleteAccount.queueId,
-    scriptName,
+    scriptName: ProdJobsWorkerScriptName,
     settings: { maxRetries: QueueJobMaxRetriesMap[QueueJob.DeleteAccount], retryDelay: QueueConsumerRetryDelay },
     type: "worker",
   },

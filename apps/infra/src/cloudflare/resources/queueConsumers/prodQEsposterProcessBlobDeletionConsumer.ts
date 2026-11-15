@@ -1,3 +1,4 @@
+import ProdJobsWorkerScriptName from "#src/cloudflare/constants/ProdJobsWorkerScriptName";
 import QueueConsumerRetryDelay from "#src/cloudflare/constants/QueueConsumerRetryDelay";
 import { prodDlqEsposterProcessBlobDeletion } from "#src/cloudflare/resources/queues/prodDlqEsposterProcessBlobDeletion";
 import { prodQEsposterProcessBlobDeletion } from "#src/cloudflare/resources/queues/prodQEsposterProcessBlobDeletion";
@@ -5,7 +6,6 @@ import {
   CLOUDFLARE_ACCOUNT_ID,
   CloudflareAssetType,
   CloudflareEnvironment,
-  CloudflareWorkerPurpose,
   getCloudflareResourceName,
   QueueJob,
   QueueJobMaxRetriesMap,
@@ -17,11 +17,6 @@ const queueName = getCloudflareResourceName(
   CloudflareAssetType.Queue,
   QueueJob.ProcessBlobDeletion,
 );
-const scriptName = getCloudflareResourceName(
-  CloudflareEnvironment.Production,
-  CloudflareAssetType.Worker,
-  CloudflareWorkerPurpose.Jobs,
-);
 
 export const prodQEsposterProcessBlobDeletionConsumer: cloudflare.QueueConsumer = new cloudflare.QueueConsumer(
   `${queueName}-consumer`,
@@ -29,7 +24,7 @@ export const prodQEsposterProcessBlobDeletionConsumer: cloudflare.QueueConsumer 
     accountId: CLOUDFLARE_ACCOUNT_ID,
     deadLetterQueue: prodDlqEsposterProcessBlobDeletion.queueName,
     queueId: prodQEsposterProcessBlobDeletion.queueId,
-    scriptName,
+    scriptName: ProdJobsWorkerScriptName,
     settings: { maxRetries: QueueJobMaxRetriesMap[QueueJob.ProcessBlobDeletion], retryDelay: QueueConsumerRetryDelay },
     type: "worker",
   },

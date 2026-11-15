@@ -15,7 +15,6 @@ const bucketName = getCloudflareResourceName(
   CloudflareAssetType.R2Bucket,
   StorageBucket.UserAssets,
 );
-
 // A data export archive outlives its row's expiry by nothing: the bucket deletes it once the same retention has passed
 export const devR2EsposterUserAssetsLifecycle: cloudflare.R2BucketLifecycle = new cloudflare.R2BucketLifecycle(
   `${bucketName}-lifecycle`,

@@ -13,7 +13,6 @@ const bucketName = getCloudflareResourceName(
   CloudflareAssetType.R2Bucket,
   StorageBucket.MessageAssets,
 );
-
 // An attachment is read mostly in its first month, so after thirty days its blob moves to Infrequent Access, which
 // Stores for less and charges per read. R2 has no colder class to step down to after that
 export const devR2EsposterMessageAssetsLifecycle: cloudflare.R2BucketLifecycle = new cloudflare.R2BucketLifecycle(
@@ -27,7 +26,10 @@ export const devR2EsposterMessageAssetsLifecycle: cloudflare.R2BucketLifecycle =
         enabled: true,
         id: "infrequent-access-after-thirty-days",
         storageClassTransitions: [
-          { condition: { maxAge: 30 * 24 * 60 * 60, type: "Age" }, storageClass: "InfrequentAccess" },
+          {
+            condition: { maxAge: Temporal.Duration.from({ days: 30 }).total("seconds"), type: "Age" },
+            storageClass: "InfrequentAccess",
+          },
         ],
       },
     ],

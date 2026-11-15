@@ -22,19 +22,19 @@ pulumi env set esposter-infra/prod pulumiConfig.esposter-infra:<NAME> <value> --
 
 ## Cloudflare
 
-The Cloudflare provider reads its API token from `cloudflare:apiToken`, the one key outside the `esposter-infra:` namespace. The token is also written to the `CLOUDFLARE_API_TOKEN` Actions secret the deploy job uses. The account id is committed as `CLOUDFLARE_ACCOUNT_ID` in `packages/db-schema/src/services/cloudflare/constants.ts`, since it is not a secret. The billing alert's address is a plain value in the same environment; the zone is declared by the program, so no zone id is set:
+The Cloudflare provider reads its API token from `cloudflare:apiToken`, the one key outside the `esposter-infra:` namespace. The token is also written to the `CLOUDFLARE_API_TOKEN` Actions secret the deploy job uses. The account id is committed as `CLOUDFLARE_ACCOUNT_ID` in `packages/db-schema/src/services/cloudflare/constants.ts`, since it is not a secret. The zone is declared by the program, so no zone id is set:
 
 ```sh
 pulumi env set esposter-infra/prod pulumiConfig.cloudflare:apiToken <token> --secret
 ```
 
-Every Cloudflare resource name is built by `getCloudflareResourceName` and `getCloudflareAccountResourceName` (`apps/infra/docs/cloudflare/naming-conventions.md`), and a Pulumi logical name is that name. A resource applied under a different name previews as a delete and a create, and `protect: true` blocks the delete. Those resources hold data, so the move is the create, cutover and delete sequence on the pulumi-infra migrations page, not an alias.
+Every environment and account Cloudflare resource name is built by `getCloudflareResourceName` and `getCloudflareAccountResourceName` (`apps/infra/docs/cloudflare/naming-conventions.md`), and a Pulumi logical name is that name. The zone, its DNS records, its rulesets and the Workers custom domains are named from their domain as literals instead, as that page's Pulumi section sets out. A resource applied under a different name previews as a delete and a create, and `protect: true` blocks the delete. Those resources hold data, so the move is the create, cutover and delete sequence on the pulumi-infra migrations page, not an alias.
 
 ### First deploy
 
 The web and jobs Workers must exist before a Workers custom domain or a queue consumer can name them, so the first apply is three steps. Queue consumers and Workers custom domains are the two resource types excluded from the first two:
 
-1. `pnpm infra:up` with `--exclude` on the queue consumers and the custom domains. Pulumi creates the zone, its DNS records and ruleset, the R2 buckets, D1 databases, queues, dead-letter queues, bucket notifications and the billing alert.
+1. `pnpm infra:up` with `--exclude` on the queue consumers and the custom domains. Pulumi creates the zone, its DNS records and rulesets, the R2 buckets, D1 databases, queues, dead-letter queues and bucket notifications.
 2. Wrangler deploys the three Workers in that order, `pnpm -C apps/realtime deploy:worker`, `pnpm -C apps/jobs deploy:worker` and `pnpm -C apps/web deploy:worker`, which the deploy job runs on `main` and `ai/queue`.
 3. `pnpm infra:up` again without `--exclude`. Pulumi creates the queue consumers, now that the jobs Worker exists, and the custom domains, now that the web Worker does.
 

@@ -1,3 +1,4 @@
+import ProdJobsWorkerScriptName from "#src/cloudflare/constants/ProdJobsWorkerScriptName";
 import QueueConsumerRetryDelay from "#src/cloudflare/constants/QueueConsumerRetryDelay";
 import { prodDlqEsposterDeleteOrphanedProfileImage } from "#src/cloudflare/resources/queues/prodDlqEsposterDeleteOrphanedProfileImage";
 import { prodQEsposterDeleteOrphanedProfileImage } from "#src/cloudflare/resources/queues/prodQEsposterDeleteOrphanedProfileImage";
@@ -5,7 +6,6 @@ import {
   CLOUDFLARE_ACCOUNT_ID,
   CloudflareAssetType,
   CloudflareEnvironment,
-  CloudflareWorkerPurpose,
   getCloudflareResourceName,
   QueueJob,
   QueueJobMaxRetriesMap,
@@ -17,11 +17,6 @@ const queueName = getCloudflareResourceName(
   CloudflareAssetType.Queue,
   QueueJob.DeleteOrphanedProfileImage,
 );
-const scriptName = getCloudflareResourceName(
-  CloudflareEnvironment.Production,
-  CloudflareAssetType.Worker,
-  CloudflareWorkerPurpose.Jobs,
-);
 
 export const prodQEsposterDeleteOrphanedProfileImageConsumer: cloudflare.QueueConsumer = new cloudflare.QueueConsumer(
   `${queueName}-consumer`,
@@ -29,7 +24,7 @@ export const prodQEsposterDeleteOrphanedProfileImageConsumer: cloudflare.QueueCo
     accountId: CLOUDFLARE_ACCOUNT_ID,
     deadLetterQueue: prodDlqEsposterDeleteOrphanedProfileImage.queueName,
     queueId: prodQEsposterDeleteOrphanedProfileImage.queueId,
-    scriptName,
+    scriptName: ProdJobsWorkerScriptName,
     settings: {
       maxRetries: QueueJobMaxRetriesMap[QueueJob.DeleteOrphanedProfileImage],
       retryDelay: QueueConsumerRetryDelay,

@@ -1,3 +1,4 @@
+import DevJobsWorkerScriptName from "#src/cloudflare/constants/DevJobsWorkerScriptName";
 import QueueConsumerRetryDelay from "#src/cloudflare/constants/QueueConsumerRetryDelay";
 import { devDlqEsposterProcessNotification } from "#src/cloudflare/resources/queues/devDlqEsposterProcessNotification";
 import { devQEsposterProcessNotification } from "#src/cloudflare/resources/queues/devQEsposterProcessNotification";
@@ -5,7 +6,6 @@ import {
   CLOUDFLARE_ACCOUNT_ID,
   CloudflareAssetType,
   CloudflareEnvironment,
-  CloudflareWorkerPurpose,
   getCloudflareResourceName,
   QueueJob,
   QueueJobMaxRetriesMap,
@@ -17,11 +17,6 @@ const queueName = getCloudflareResourceName(
   CloudflareAssetType.Queue,
   QueueJob.ProcessNotification,
 );
-const scriptName = getCloudflareResourceName(
-  CloudflareEnvironment.Development,
-  CloudflareAssetType.Worker,
-  CloudflareWorkerPurpose.Jobs,
-);
 
 export const devQEsposterProcessNotificationConsumer: cloudflare.QueueConsumer = new cloudflare.QueueConsumer(
   `${queueName}-consumer`,
@@ -29,7 +24,7 @@ export const devQEsposterProcessNotificationConsumer: cloudflare.QueueConsumer =
     accountId: CLOUDFLARE_ACCOUNT_ID,
     deadLetterQueue: devDlqEsposterProcessNotification.queueName,
     queueId: devQEsposterProcessNotification.queueId,
-    scriptName,
+    scriptName: DevJobsWorkerScriptName,
     settings: { maxRetries: QueueJobMaxRetriesMap[QueueJob.ProcessNotification], retryDelay: QueueConsumerRetryDelay },
     type: "worker",
   },

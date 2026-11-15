@@ -1,3 +1,4 @@
+import ProdJobsWorkerScriptName from "#src/cloudflare/constants/ProdJobsWorkerScriptName";
 import QueueConsumerRetryDelay from "#src/cloudflare/constants/QueueConsumerRetryDelay";
 import { prodDlqEsposterExportUserData } from "#src/cloudflare/resources/queues/prodDlqEsposterExportUserData";
 import { prodQEsposterExportUserData } from "#src/cloudflare/resources/queues/prodQEsposterExportUserData";
@@ -5,7 +6,6 @@ import {
   CLOUDFLARE_ACCOUNT_ID,
   CloudflareAssetType,
   CloudflareEnvironment,
-  CloudflareWorkerPurpose,
   getCloudflareResourceName,
   QueueJob,
   QueueJobMaxRetriesMap,
@@ -17,11 +17,6 @@ const queueName = getCloudflareResourceName(
   CloudflareAssetType.Queue,
   QueueJob.ExportUserData,
 );
-const scriptName = getCloudflareResourceName(
-  CloudflareEnvironment.Production,
-  CloudflareAssetType.Worker,
-  CloudflareWorkerPurpose.Jobs,
-);
 
 export const prodQEsposterExportUserDataConsumer: cloudflare.QueueConsumer = new cloudflare.QueueConsumer(
   `${queueName}-consumer`,
@@ -29,7 +24,7 @@ export const prodQEsposterExportUserDataConsumer: cloudflare.QueueConsumer = new
     accountId: CLOUDFLARE_ACCOUNT_ID,
     deadLetterQueue: prodDlqEsposterExportUserData.queueName,
     queueId: prodQEsposterExportUserData.queueId,
-    scriptName,
+    scriptName: ProdJobsWorkerScriptName,
     settings: { maxRetries: QueueJobMaxRetriesMap[QueueJob.ExportUserData], retryDelay: QueueConsumerRetryDelay },
     type: "worker",
   },

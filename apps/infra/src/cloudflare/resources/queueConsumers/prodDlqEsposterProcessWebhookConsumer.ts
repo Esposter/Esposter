@@ -1,10 +1,10 @@
+import ProdJobsWorkerScriptName from "#src/cloudflare/constants/ProdJobsWorkerScriptName";
 import QueueConsumerRetryDelay from "#src/cloudflare/constants/QueueConsumerRetryDelay";
 import { prodDlqEsposterProcessWebhook } from "#src/cloudflare/resources/queues/prodDlqEsposterProcessWebhook";
 import {
   CLOUDFLARE_ACCOUNT_ID,
   CloudflareAssetType,
   CloudflareEnvironment,
-  CloudflareWorkerPurpose,
   DEAD_LETTER_CONSUMER_MAX_RETRIES,
   getCloudflareResourceName,
   QueueJob,
@@ -16,18 +16,13 @@ const deadLetterQueueName = getCloudflareResourceName(
   CloudflareAssetType.DeadLetterQueue,
   QueueJob.ProcessWebhook,
 );
-const scriptName = getCloudflareResourceName(
-  CloudflareEnvironment.Production,
-  CloudflareAssetType.Worker,
-  CloudflareWorkerPurpose.Jobs,
-);
 
 export const prodDlqEsposterProcessWebhookConsumer: cloudflare.QueueConsumer = new cloudflare.QueueConsumer(
   `${deadLetterQueueName}-consumer`,
   {
     accountId: CLOUDFLARE_ACCOUNT_ID,
     queueId: prodDlqEsposterProcessWebhook.queueId,
-    scriptName,
+    scriptName: ProdJobsWorkerScriptName,
     settings: { maxRetries: DEAD_LETTER_CONSUMER_MAX_RETRIES, retryDelay: QueueConsumerRetryDelay },
     type: "worker",
   },

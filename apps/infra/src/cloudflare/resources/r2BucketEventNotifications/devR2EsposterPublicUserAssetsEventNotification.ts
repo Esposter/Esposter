@@ -1,3 +1,4 @@
+import R2BucketEventNotificationActions from "#src/cloudflare/constants/R2BucketEventNotificationActions";
 import { devQEsposterDeleteOrphanedProfileImage } from "#src/cloudflare/resources/queues/devQEsposterDeleteOrphanedProfileImage";
 import { devR2EsposterPublicUserAssets } from "#src/cloudflare/resources/r2Buckets/devR2EsposterPublicUserAssets";
 import {
@@ -14,7 +15,6 @@ const bucketName = getCloudflareResourceName(
   CloudflareAssetType.R2Bucket,
   StorageBucket.PublicUserAssets,
 );
-
 // Object creation is the only event this notification carries.
 export const devR2EsposterPublicUserAssetsEventNotification: cloudflare.R2BucketEventNotification =
   new cloudflare.R2BucketEventNotification(
@@ -23,7 +23,7 @@ export const devR2EsposterPublicUserAssetsEventNotification: cloudflare.R2Bucket
       accountId: CLOUDFLARE_ACCOUNT_ID,
       bucketName: devR2EsposterPublicUserAssets.name,
       queueId: devQEsposterDeleteOrphanedProfileImage.queueId,
-      rules: [{ actions: ["PutObject", "CopyObject"] }],
+      rules: [{ actions: R2BucketEventNotificationActions }],
     },
     { parent: devR2EsposterPublicUserAssets, protect: true },
   );

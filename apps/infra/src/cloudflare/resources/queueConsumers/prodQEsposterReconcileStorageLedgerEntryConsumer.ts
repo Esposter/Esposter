@@ -1,3 +1,4 @@
+import ProdJobsWorkerScriptName from "#src/cloudflare/constants/ProdJobsWorkerScriptName";
 import QueueConsumerRetryDelay from "#src/cloudflare/constants/QueueConsumerRetryDelay";
 import { prodDlqEsposterReconcileStorageLedgerEntry } from "#src/cloudflare/resources/queues/prodDlqEsposterReconcileStorageLedgerEntry";
 import { prodQEsposterReconcileStorageLedgerEntry } from "#src/cloudflare/resources/queues/prodQEsposterReconcileStorageLedgerEntry";
@@ -5,7 +6,6 @@ import {
   CLOUDFLARE_ACCOUNT_ID,
   CloudflareAssetType,
   CloudflareEnvironment,
-  CloudflareWorkerPurpose,
   getCloudflareResourceName,
   QueueJob,
   QueueJobMaxRetriesMap,
@@ -17,11 +17,6 @@ const queueName = getCloudflareResourceName(
   CloudflareAssetType.Queue,
   QueueJob.ReconcileStorageLedgerEntry,
 );
-const scriptName = getCloudflareResourceName(
-  CloudflareEnvironment.Production,
-  CloudflareAssetType.Worker,
-  CloudflareWorkerPurpose.Jobs,
-);
 
 export const prodQEsposterReconcileStorageLedgerEntryConsumer: cloudflare.QueueConsumer = new cloudflare.QueueConsumer(
   `${queueName}-consumer`,
@@ -29,7 +24,7 @@ export const prodQEsposterReconcileStorageLedgerEntryConsumer: cloudflare.QueueC
     accountId: CLOUDFLARE_ACCOUNT_ID,
     deadLetterQueue: prodDlqEsposterReconcileStorageLedgerEntry.queueName,
     queueId: prodQEsposterReconcileStorageLedgerEntry.queueId,
-    scriptName,
+    scriptName: ProdJobsWorkerScriptName,
     settings: {
       maxRetries: QueueJobMaxRetriesMap[QueueJob.ReconcileStorageLedgerEntry],
       retryDelay: QueueConsumerRetryDelay,

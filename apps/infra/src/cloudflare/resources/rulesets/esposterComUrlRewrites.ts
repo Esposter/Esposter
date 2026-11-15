@@ -1,9 +1,11 @@
+import AssetsDevEsposterComHostname from "#src/cloudflare/constants/AssetsDevEsposterComHostname";
+import AssetsEsposterComHostname from "#src/cloudflare/constants/AssetsEsposterComHostname";
 import { esposterCom } from "#src/cloudflare/resources/zones/esposterCom";
 import * as cloudflare from "@pulumi/cloudflare";
 
 // A public object's stable url is `https://assets.<env>.esposter.com/<bucket>/<key>`, and the web Worker serves the public
 // Buckets under its `/assets/` route, so each assets host's path is rewritten onto that route before the Worker sees it
-const assetsHosts = ["assets.esposter.com", "assets.dev.esposter.com"];
+const assetsHosts = [AssetsEsposterComHostname, AssetsDevEsposterComHostname];
 
 export const esposterComUrlRewrites: cloudflare.Ruleset = new cloudflare.Ruleset(
   "esposter.com-url-rewrites",
