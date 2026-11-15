@@ -98,7 +98,7 @@ describe(getMessageCreationRejection, () => {
   test("reports a timeout ahead of a missing permission", async () => {
     expect.hasAssertions();
 
-    vi.useFakeTimers({ now: 0 });
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
     await db
       .update(usersToRoomsInMessage)
       .set({ timeoutUntil: new Date(1) })
