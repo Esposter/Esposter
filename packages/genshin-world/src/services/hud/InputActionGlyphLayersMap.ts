@@ -10,7 +10,7 @@ import { InputAction } from "genshin-engine";
 // Its centre the button's): a ring of radius 20.75 and width 3.5 pixels at 0.45 of white, four arrowheads from 9.5 to 24
 // Pixels out, 9 wide at their foot, and a dot of radius 4.5, both white
 export const InputActionGlyphLayersMap: Readonly<
-  Record<InputAction.Aim | InputAction.Jump | InputAction.Sprint, readonly GlyphLayer[]>
+  Record<typeof InputAction.Aim | typeof InputAction.Jump | typeof InputAction.Sprint, readonly GlyphLayer[]>
 > = {
   [InputAction.Aim]: [
     {

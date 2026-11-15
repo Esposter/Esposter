@@ -1,4 +1,2 @@
-export enum AntialiasingMode {
-  Smaa = "Smaa",
-  Traa = "Traa",
-}
+export const AntialiasingMode = { Smaa: "Smaa", Traa: "Traa" } as const;
+export type AntialiasingMode = (typeof AntialiasingMode)[keyof typeof AntialiasingMode];

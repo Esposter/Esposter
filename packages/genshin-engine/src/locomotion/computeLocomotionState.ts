@@ -40,7 +40,7 @@ const getNextGroundState = (
   else if (state === LocomotionState.Dash && stateSeconds < locomotion.dashSeconds) return LocomotionState.Dash;
   else if (input.pressedActions.has(InputAction.Sprint) && stamina > 0) return LocomotionState.Dash;
   else if (
-    [LocomotionState.Dash, LocomotionState.Sprint].includes(state) &&
+    (state === LocomotionState.Dash || state === LocomotionState.Sprint) &&
     isMoving &&
     input.isSprintHeld &&
     stamina > 0

@@ -28,7 +28,7 @@ import { Capsule } from "three/examples/jsm/math/Capsule.js";
 // State it left, its walk, its sprint, its glide, or else its run
 const getSpeed = (state: LocomotionState, locomotion: Locomotion): number => {
   if (state === LocomotionState.Walk) return locomotion.walkSpeed;
-  else if ([LocomotionState.Dash, LocomotionState.Sprint].includes(state)) return locomotion.sprintSpeed;
+  else if (state === LocomotionState.Dash || state === LocomotionState.Sprint) return locomotion.sprintSpeed;
   else if (state === LocomotionState.Glide) return locomotion.glideForwardSpeed;
   else if (state === LocomotionState.Swim) return locomotion.swimSpeed;
   else if (state === LocomotionState.SwimDash) return locomotion.swimDashSpeed;
@@ -213,7 +213,7 @@ export const createCharacterController = (options: CharacterControllerOptions): 
   const turn = (isMoving: boolean): void => {
     if (CLIMB_LOCOMOTION_STATES.includes(phase.state)) facing = Math.atan2(wallNormal.x, wallNormal.z);
     else if (phase.state === LocomotionState.Dash) facing = Math.atan2(-dashDirection.x, -dashDirection.z);
-    else if (isMoving && ![LocomotionState.Drown, LocomotionState.Plunge].includes(phase.state))
+    else if (isMoving && phase.state !== LocomotionState.Drown && phase.state !== LocomotionState.Plunge)
       facing = Math.atan2(-moveDirection.x, -moveDirection.z);
   };
   return {

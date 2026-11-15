@@ -85,7 +85,7 @@ describe(createCharacterMaterial, () => {
     expect.hasAssertions();
 
     const sphereTexture = new DataTexture();
-    const withSphereMode = (sphereMode: PmxSphereMode.Add | PmxSphereMode.Multiply) =>
+    const withSphereMode = (sphereMode: typeof PmxSphereMode.Add | typeof PmxSphereMode.Multiply) =>
       createCharacterMaterial({
         lightUniforms: createLightUniforms(),
         pmxMaterial: { ...pmxMaterial, isOutlined: false, sphereMode, sphereTextureIndex: 1 },

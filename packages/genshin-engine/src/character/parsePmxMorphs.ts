@@ -1,6 +1,7 @@
 import type { PmxMorph } from "#src/models/character/PmxMorph";
 import type { PmxReader } from "#src/models/character/PmxReader";
 
+import { checkIsPmxValue } from "#src/character/checkIsPmxValue";
 import { PmxMorphKind } from "#src/models/character/PmxMorphKind";
 
 // The bytes each offset of a morph passed over takes, by its kind: a bone morph's bone, translation and rotation, a
@@ -8,7 +9,7 @@ import { PmxMorphKind } from "#src/models/character/PmxMorphKind";
 // Of colours and tints, a flip morph's morph and influence, and an impulse morph's rigid body, local flag, velocity and
 // Torque
 const PmxMorphKindOffsetSizeMap: Record<
-  Exclude<PmxMorphKind, PmxMorphKind.Group | PmxMorphKind.Vertex>,
+  Exclude<PmxMorphKind, typeof PmxMorphKind.Group | typeof PmxMorphKind.Vertex>,
   (reader: PmxReader) => number
 > = {
   [PmxMorphKind.AdditionalUv1]: ({ vertexIndexSize }) => vertexIndexSize + 16,
@@ -21,7 +22,6 @@ const PmxMorphKindOffsetSizeMap: Record<
   [PmxMorphKind.Material]: ({ materialIndexSize }) => materialIndexSize + 113,
   [PmxMorphKind.Uv]: ({ vertexIndexSize }) => vertexIndexSize + 16,
 };
-const checkIsPmxMorphKind = (value: number): value is PmxMorphKind => value in PmxMorphKind;
 // A PMX file's morphs, each kept in its place so a group morph's members index the whole list. A vertex morph's offsets
 // And a group morph's members are read; any other kind's offsets are passed over by their size
 export const parsePmxMorphs = (reader: PmxReader): PmxMorph[] =>
@@ -31,7 +31,7 @@ export const parsePmxMorphs = (reader: PmxReader): PmxMorph[] =>
     // The panel MMD lists it under
     reader.readUint8();
     const kind = reader.readUint8();
-    if (!checkIsPmxMorphKind(kind)) throw new RangeError(`Unknown PMX morph kind ${kind}`);
+    if (!checkIsPmxValue(PmxMorphKind, kind)) throw new RangeError(`Unknown PMX morph kind ${kind}`);
     const offsetCount = reader.readInt32();
     if (kind === PmxMorphKind.Group) {
       const indices = new Uint32Array(offsetCount);

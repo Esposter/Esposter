@@ -77,7 +77,7 @@ export interface CharacterShadingInputs {
   specularMultiplier: number;
   // A PMX material's sphere map, laid over its diffuse as MMD lays it, multiplied or added, before the lit colour. It is not
   // The metal map: a PMX file has no lightmap for the metal gate to read, so the sphere never reaches that branch
-  sphere?: { mode: PmxSphereMode.Add | PmxSphereMode.Multiply; texture: Texture };
+  sphere?: { mode: typeof PmxSphereMode.Add | typeof PmxSphereMode.Multiply; texture: Texture };
   vertexAo: number;
   vertexRampWidth: number;
 }

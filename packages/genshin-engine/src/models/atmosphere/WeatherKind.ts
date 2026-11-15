@@ -4,14 +4,15 @@
 // Dragonspine has (Weather, Snowstorm section); the Sheer Cold page's modifier table gives it +200% accumulation under
 // Colder environments, and the Weather page a base rate 2.5 times the snow's, which the two wiki figures disagree on, so
 // Its rate is left to the Sheer Cold change
-export enum WeatherKind {
-  Clear = "Clear",
-  Cloudy = "Cloudy",
-  Eruption = "Eruption",
-  Fog = "Fog",
-  Rain = "Rain",
-  Sandstorm = "Sandstorm",
-  Snow = "Snow",
-  Snowstorm = "Snowstorm",
-  Thunderstorm = "Thunderstorm",
-}
+export const WeatherKind = {
+  Clear: "Clear",
+  Cloudy: "Cloudy",
+  Eruption: "Eruption",
+  Fog: "Fog",
+  Rain: "Rain",
+  Sandstorm: "Sandstorm",
+  Snow: "Snow",
+  Snowstorm: "Snowstorm",
+  Thunderstorm: "Thunderstorm",
+} as const;
+export type WeatherKind = (typeof WeatherKind)[keyof typeof WeatherKind];

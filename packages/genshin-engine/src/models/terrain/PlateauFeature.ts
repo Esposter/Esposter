@@ -5,7 +5,7 @@ import type { TerrainFeatureKind } from "#src/models/terrain/TerrainFeatureKind"
 export interface PlateauFeature {
   falloff: number;
   height: number;
-  kind: TerrainFeatureKind.Plateau;
+  kind: typeof TerrainFeatureKind.Plateau;
   radius: number;
   x: number;
   z: number;

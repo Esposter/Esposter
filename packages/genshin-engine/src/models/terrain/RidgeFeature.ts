@@ -6,7 +6,7 @@ export interface RidgeFeature {
   endX: number;
   endZ: number;
   height: number;
-  kind: TerrainFeatureKind.Ridge;
+  kind: typeof TerrainFeatureKind.Ridge;
   startX: number;
   startZ: number;
   width: number;

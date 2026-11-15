@@ -21,7 +21,7 @@ import { createSeededRandom, WeatherKind } from "genshin-engine";
 export const useAreaWeather = (origin: Vector3, catalogue: Catalogue) => {
   const { camera } = useTres();
   const { onBeforeRender } = useLoop();
-  const areaWeather = shallowRef(WeatherKind.Clear);
+  const areaWeather = shallowRef<WeatherKind>(WeatherKind.Clear);
   const isInCity = shallowRef(false);
   const checkIsRecheckDue = createRecheckDueCheck();
   let checkedArea: CatalogueArea | undefined;

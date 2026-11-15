@@ -7,7 +7,7 @@ export interface CliffFeature {
   endZ: number;
   falloff: number;
   height: number;
-  kind: TerrainFeatureKind.Cliff;
+  kind: typeof TerrainFeatureKind.Cliff;
   startX: number;
   startZ: number;
   width: number;

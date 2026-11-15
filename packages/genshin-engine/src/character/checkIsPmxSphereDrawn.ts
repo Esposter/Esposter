@@ -4,5 +4,5 @@ import { PmxSphereMode } from "#src/models/character/PmxSphereMode";
 // Additional-UV one reads the mesh's second UV set, which is not drawn, so neither's texture is read or kept
 export const checkIsPmxSphereDrawn = (
   sphereMode: PmxSphereMode,
-): sphereMode is PmxSphereMode.Add | PmxSphereMode.Multiply =>
+): sphereMode is typeof PmxSphereMode.Add | typeof PmxSphereMode.Multiply =>
   sphereMode === PmxSphereMode.Multiply || sphereMode === PmxSphereMode.Add;

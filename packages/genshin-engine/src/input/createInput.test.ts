@@ -138,7 +138,7 @@ describe(createInput, () => {
   test("presses a gamepad bumper's shortcut alone when a face button goes down under it", () => {
     expect.hasAssertions();
 
-    const pressedButtons = [GamepadButton.LeftBumper];
+    const pressedButtons: GamepadButton[] = [GamepadButton.LeftBumper];
     const target = createTarget([
       {
         axes: [],
@@ -193,7 +193,7 @@ describe(createInput, () => {
   test("reads the directional pad as a menu's direction, and a bumper's press as one tab step", () => {
     expect.hasAssertions();
 
-    const pressedButtons = new Set([GamepadButton.DirectionalPadRight, GamepadButton.RightBumper]);
+    const pressedButtons = new Set<GamepadButton>([GamepadButton.DirectionalPadRight, GamepadButton.RightBumper]);
     const target = createTarget([
       {
         axes: [],
