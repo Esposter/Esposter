@@ -5,7 +5,7 @@ import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
-import { CompositeKeyEntityType } from "@esposter/db-schema";
+import { DatabaseEntityType } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 
 export const usePinStore = defineStore("message/pin", () => {
@@ -26,7 +26,7 @@ export const usePinStore = defineStore("message/pin", () => {
     const { createMessage, deleteMessage } = createOperationData(
       getSlice(input.roomId).items,
       ["id"],
-      CompositeKeyEntityType.Message,
+      DatabaseEntityType.Message,
     );
     if (input.isPinned) {
       // The source message is read from its own room's slice for the same reason the pin is written to one:

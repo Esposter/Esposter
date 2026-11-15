@@ -1,5 +1,5 @@
 import type { AddReactionInput } from "#shared/models/db/message/reaction/AddReactionInput";
-import type { MessageEmojiMetadataEntity } from "@esposter/db-schema";
+import type { RoomReaction } from "@esposter/db-schema";
 
 import { useSelectEmoji } from "@/composables/message/emoji/useSelectEmoji";
 import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
@@ -11,8 +11,8 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 const { createEmoji, emojis, toggleEmoji } = vi.hoisted(() => ({
   createEmoji: vi.fn<(input: AddReactionInput) => Promise<void>>(),
   // Only the two fields the composable matches on, so the double states its own contract
-  emojis: new Array<Pick<MessageEmojiMetadataEntity, "emojiTag" | "userIds">>(),
-  toggleEmoji: vi.fn<(roomId: string, emoji: MessageEmojiMetadataEntity) => Promise<void>>(),
+  emojis: new Array<Pick<RoomReaction, "emojiTag" | "userIds">>(),
+  toggleEmoji: vi.fn<(roomId: string, emoji: RoomReaction) => Promise<void>>(),
 }));
 
 // The composable reads three members off the store and nothing else, so the double is those three — the cast is

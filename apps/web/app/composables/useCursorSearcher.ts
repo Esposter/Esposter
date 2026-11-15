@@ -1,11 +1,11 @@
+import type { AItemEntity } from "#shared/models/entity/AItemEntity";
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
-import type { AEntity } from "@/models/entity/AEntity";
 import type { ToData } from "@esposter/shared";
 import type { TRPCProcedureOptions } from "@trpc/client";
 
 import { noop, normalizeString } from "@esposter/shared";
 
-export const useCursorSearcher = <TItem extends ToData<AEntity>>(
+export const useCursorSearcher = <TItem extends ToData<AItemEntity>>(
   query: (searchQuery: string, cursor: string, options?: TRPCProcedureOptions) => Promise<CursorPaginationData<TItem>>,
   isAutoSearch?: true,
   isIncludeEmptySearchQuery?: true,

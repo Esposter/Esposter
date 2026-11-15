@@ -1,4 +1,4 @@
-import type { AEntity } from "@/models/entity/AEntity";
+import type { AItemEntity } from "#shared/models/entity/AItemEntity";
 import type { EntityIdKeys } from "@/models/entity/EntityIdKeys";
 import type { ToData } from "@esposter/shared";
 
@@ -7,7 +7,7 @@ import { checkIsDeepEqual, toRawDeep } from "@esposter/shared";
 
 // `onEdit` hears every open of an item, a press, a menu's Edit and a restore from the query params alike, so a caller that
 // Keeps a selection of its own writes it in one place
-export const createEditFormData = <TItem extends ToData<AEntity>, TIdKeys extends EntityIdKeys<TItem>>(
+export const createEditFormData = <TItem extends ToData<AItemEntity>, TIdKeys extends EntityIdKeys<TItem>>(
   items: ComputedRef<TItem[]>,
   idKeys: [...TIdKeys],
   onEdit?: (ids: { [P in keyof TItem & TIdKeys[number]]: TItem[P] }) => void,

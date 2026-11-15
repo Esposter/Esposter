@@ -14,7 +14,7 @@ import { MessageType } from "@esposter/db-schema";
 // Poll delete and pin resolve to Author because a poll is a message its author posted: the rule that lets them
 // Delete or pin their own text message applies to their own poll unchanged, which is what the options menu
 // Already offers. Webhook operations never resolve to Author — a webhook message has no user author
-// (WebhookMessageEntity declares `userId?: undefined`), so an authorship rule there could only ever fall through
+// Its `userId` is null, so an authorship rule there could only ever fall through
 // To RoomPermission.ManageMessages. Call, EditRoom, PinMessage and System messages are written by the server on
 // The room's behalf and support no operation at all.
 export const MessageTypeOperationPermissionMap = {

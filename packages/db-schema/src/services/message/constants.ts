@@ -6,7 +6,6 @@ import { ZERO_UUID } from "@esposter/shared";
 export const AUTOMOD_USER_ID = ZERO_UUID;
 // Caps the follow list read so resolving thread roots reads at most this many messages for a single request.
 export const MAX_FOLLOWED_THREADS = 50;
-export const MENTION_MAX_LENGTH = 100;
 export const MESSAGE_MAX_LENGTH = 10000;
 export const MODERATION_NOTE_MAX_LENGTH = 2000;
 // The largest 32-bit signed integer, the longest slowmode the field can be set to. It is not a whole number of
@@ -22,9 +21,3 @@ export const MESSAGE_BATCH_MAX_LENGTH = 2;
 export const MEMBER_PERMISSION_BIGINT_REGEX = /^\d{1,20}$/u;
 // A RealtimeKit participant token is a signed JWT, which the call's own join hands its client once
 export const CALL_AUTH_TOKEN_MAX_LENGTH = 4096;
-// The origin every reverse-ticked timestamp counts down from. It is wider than any nanosecond timestamp, so the countdown
-// Never goes negative
-export const REVERSE_TICK_CEILING = "9".repeat(30);
-// What a reverse-ticked timestamp is allowed to look like: a countdown is digits and nothing else, with no sign, no
-// Separator and no empty string
-export const REVERSE_TICKED_TIMESTAMP_REGEX = /^\d+$/u;

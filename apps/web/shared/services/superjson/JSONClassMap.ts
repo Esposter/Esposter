@@ -17,7 +17,6 @@ import { StringColumn } from "#shared/models/resource/sheet/column/StringColumn"
 import { Row } from "#shared/models/resource/sheet/datasource/Row";
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
-import { MessageEmojiMetadataEntity, StandardMessageEntity, WebhookMessageEntity } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 
 export const JSONClassMap: Record<string, Class<Serializable>> = {
@@ -31,14 +30,11 @@ export const JSONClassMap: Record<string, Class<Serializable>> = {
   DateColumn,
   Dungeons,
   EmailEditor,
-  MessageEmojiMetadataEntity,
   NumberColumn,
   Row,
-  StandardMessageEntity,
   StringColumn,
   TodoListItem,
   Visual,
-  WebhookMessageEntity,
   WebpageEditor,
 };
 

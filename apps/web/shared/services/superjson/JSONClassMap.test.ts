@@ -19,14 +19,11 @@ describe("jsonClassMap", () => {
       "DateColumn",
       "Dungeons",
       "EmailEditor",
-      "MessageEmojiMetadataEntity",
       "NumberColumn",
       "Row",
-      "StandardMessageEntity",
       "StringColumn",
       "TodoListItem",
       "Visual",
-      "WebhookMessageEntity",
       "WebpageEditor",
     ]);
   });

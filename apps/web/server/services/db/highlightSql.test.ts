@@ -16,7 +16,7 @@ describe(highlightSql, () => {
 
   test.each([
     ["a Drizzle select", `select "users".* from "users" where "email" = 'test@gmail.com' and "is_banned" = true`],
-    ["a Drizzle insert", `insert into "brands" ("name") values ($1) returning "id", "name"`],
+    ["a Drizzle insert", `insert into "brands" ("name") values (?) returning "id", "name"`],
     ["comments and numbers", "select count(*) from t -- note\n/* block */ where a >= 1.5e3"],
     ["doubled quotes and a backslash", String.raw`select 'it''s', 'a\' from t`],
     ["an unterminated string", "select 'abc"],
@@ -39,14 +39,6 @@ describe(highlightSql, () => {
 
     expect(highlightSql("select 'from where' from t")).toBe(
       `${styleText(HighlightStyleMap.keyword, "select")} ${styleText(HighlightStyleMap.string, "'from where'")} ${styleText(HighlightStyleMap.keyword, "from")} t`,
-    );
-  });
-
-  test("a backslash escape in an E-string keeps its escaped quote inside the string", () => {
-    expect.hasAssertions();
-
-    expect(highlightSql(String.raw`select E'it\'s' from t`)).toBe(
-      `${styleText(HighlightStyleMap.keyword, "select")} ${styleText(HighlightStyleMap.string, String.raw`E'it\'s'`)} ${styleText(HighlightStyleMap.keyword, "from")} t`,
     );
   });
 
@@ -146,11 +138,11 @@ describe(highlightSql, () => {
     );
   });
 
-  test("a numbered parameter is painted in the parameter style", () => {
+  test("a placeholder, bare or numbered, is painted in the parameter style", () => {
     expect.hasAssertions();
 
-    expect(highlightSql("select $1")).toBe(
-      `${styleText(HighlightStyleMap.keyword, "select")} ${styleText(HighlightStyleMap.parameter, "$1")}`,
+    expect(highlightSql("select ?, ?2")).toBe(
+      `${styleText(HighlightStyleMap.keyword, "select")} ${styleText(HighlightStyleMap.parameter, "?")}, ${styleText(HighlightStyleMap.parameter, "?2")}`,
     );
   });
 });

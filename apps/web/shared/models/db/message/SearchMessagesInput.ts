@@ -1,19 +1,17 @@
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
 import { checkIsSearchQueryEmpty } from "#shared/services/message/checkIsSearchQueryEmpty";
 import { CREATED_AT_DESCENDING_SORT_ITEM } from "#shared/services/pagination/constants";
-import {
-  filterSchema,
-  roomIdSchema,
-  selectSearchHistoryInMessageSchema,
-  standardMessageEntitySchema,
-} from "@esposter/db-schema";
+import { filterSchema, roomIdSchema, roomMessageSchema, selectSearchHistoryInMessageSchema } from "@esposter/db-schema";
 import { MAX_READ_LIMIT } from "@esposter/shared";
 import { z } from "zod";
 
 export const searchMessagesInputSchema = z
   .object({
     ...roomIdSchema.shape,
-    ...createOffsetPaginationParamsSchema(standardMessageEntitySchema.keyof(), [CREATED_AT_DESCENDING_SORT_ITEM]).shape,
+    // The search orders by its rank and the message's time, so the one sort it accepts is the time the client names
+    ...createOffsetPaginationParamsSchema(roomMessageSchema.pick({ createdAt: true }).keyof(), [
+      CREATED_AT_DESCENDING_SORT_ITEM,
+    ]).shape,
     // Not unique by type: each filter is one condition, so two `has:` or two `from:` narrow together, and
     // `getSearchableFilters` is what drops an exact repeat on either side of the wire
     filters: filterSchema.array().max(MAX_READ_LIMIT).default([]),

@@ -10,14 +10,13 @@ const KEYWORD_PATTERN = SQLITE_KEYWORDS.toSorted(
 ).join("|");
 // One alternation read left to right. A word is consumed whole by the last alternative, so a keyword is only ever
 // Matched at the start of a word, and no lookbehind is needed. Doubled quotes are the only escape inside a string or
-// An identifier, so a backslash is an ordinary character there. An E'...' string is the one exception: its backslash
-// Escapes the next character
+// An identifier, so a backslash is an ordinary character there
 const TOKEN_REGEX = new RegExp(
   [
     String.raw`(?<comment>--[^\r\n]*|/\*[\s\S]*?\*/)`,
-    String.raw`(?<string>(?:[eE]'(?:[^'\\]|\\[\s\S]|'')*'|'(?:[^']|'')*'))`,
+    String.raw`(?<string>'(?:[^']|'')*')`,
     String.raw`(?<identifier>"(?:[^"]|"")*")`,
-    String.raw`(?<parameter>\$\d+)`,
+    String.raw`(?<parameter>\?\d*)`,
     String.raw`(?<keyword>(?:${KEYWORD_PATTERN})\b)`,
     String.raw`(?<function>[a-z_]\w*(?=\s*\())`,
     String.raw`(?<number>(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?)`,
