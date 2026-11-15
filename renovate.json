@@ -28,7 +28,7 @@
       ]
     },
     {
-      "description": "`typescript` is aliased to `typescript-native-bridge` under `overrides:`, so a bump moves the bridge, the TypeScript behind it and `typescript-eslint` at once \u2014 a dedicated pass, never a routine update. A rule matches the resolved package name, so the alias target is named beside the alias.",
+      "description": "`typescript` is aliased to `typescript-native-bridge` under `overrides:`, so a bump moves the bridge, the TypeScript behind it and `typescript-eslint` at once — a dedicated pass, never a routine update. A rule matches the resolved package name, so the alias target is named beside the alias.",
       "enabled": false,
       "matchPackageNames": ["typescript", "typescript-native-bridge"]
     },
@@ -78,7 +78,7 @@
     },
     {
       "automerge": false,
-      "description": "An action's digest is left out of automerge on purpose: an action ships a fix as a new tag, so a digest that moves under the same version is a re-pointed tag \u2014 the shape a SHA pin exists to catch \u2014 and it opens a PR for a person.",
+      "description": "An action's digest is left out of automerge on purpose: an action ships a fix as a new tag, so a digest that moves under the same version is a re-pointed tag — the shape a SHA pin exists to catch — and it opens a PR for a person.",
       "matchManagers": ["github-actions"],
       "matchUpdateTypes": ["digest", "pinDigest"]
     }
