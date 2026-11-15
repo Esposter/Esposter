@@ -47,6 +47,7 @@ describe("schema", () => {
       blocks_blockerId_blockedId_check: "social_blocks"."blockerId" != "social_blocks"."blockedId"
       bookmarks_path_length_check: LENGTH("app_bookmarks"."path") <= 2048
       bookmarks_title_length_check: LENGTH("app_bookmarks"."title") <= 100
+      bookmarks_resourceId_roomId_check: "app_bookmarks"."resourceId" IS NULL OR "app_bookmarks"."roomId" IS NULL
       callSessions_id_length_check: LENGTH("message_callSessions"."id") = 12
       friendRequests_senderId_receiverId_check: "social_friendRequests"."senderId" != "social_friendRequests"."receiverId"
       friends_senderId_receiverId_check: "social_friends"."senderId" != "social_friends"."receiverId"
