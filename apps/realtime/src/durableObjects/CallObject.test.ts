@@ -282,13 +282,33 @@ describe(CallObject, () => {
     await callObject.joinCall({ callSessionId, isAdmissionRequired: false, participant });
     setRejoining(state, participant.id, true);
 
-    const replacedLeave = callObject.participantLeft({ callSessionId, sessionId: participant.id });
+    const replacedLeave = callObject.participantLeft({ callSessionId, leftAt: new Date(), sessionId: participant.id });
     const participantMap = callObject.readParticipantMap();
     setRejoining(state, participant.id, false);
-    const leave = callObject.participantLeft({ callSessionId, sessionId: participant.id });
+    const leave = callObject.participantLeft({ callSessionId, leftAt: new Date(), sessionId: participant.id });
 
     expect(replacedLeave).toBeNull();
     expect(participantMap).toStrictEqual(new Map([[participant.id, { ...participant, isCameraEnabled: false }]]));
     expect(leave).toStrictEqual({ callDurationSeconds: 0, sessionId: participant.id, userId: participant.userId });
+  });
+
+  test("a leave from before the current connection was added is ignored and its participant stays", async () => {
+    expect.hasAssertions();
+
+    stubRealtimeKit();
+    const state = createMockObjectState(callSessionId);
+    const callObject = createCallObject(state);
+    seedMeeting(state);
+    const participant = createParticipant();
+    const kickedAt = new Date();
+    await callObject.joinCall({ callSessionId, isAdmissionRequired: false, participant });
+    state.database
+      .prepare("UPDATE realtimeKitParticipants SET connectedAt = ? WHERE sessionId = ?")
+      .run(kickedAt.getTime() + 1, participant.id);
+
+    const leave = callObject.participantLeft({ callSessionId, leftAt: kickedAt, sessionId: participant.id });
+
+    expect(leave).toBeNull();
+    expect(callObject.readParticipantMap().has(participant.id)).toBe(true);
   });
 });

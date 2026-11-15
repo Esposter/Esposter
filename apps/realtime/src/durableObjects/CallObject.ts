@@ -143,9 +143,20 @@ export class CallObject extends RealtimeObject<CallEvent> implements CallObjectR
   }
 
   // A connection a revoke is replacing is kicked by that revoke, and the kick is not its user leaving.
-  // The replacement is added under the same session, so the participant stays in the call
-  participantLeft({ callSessionId, sessionId }: { callSessionId: string; sessionId: string }): CallLeave | null {
-    if (this.#readRealtimeKitParticipant(sessionId)?.isRejoining) return null;
+  // The replacement is added under the same session, so the participant stays in the call. The kick's webhook can land
+  // After the replacement is added, so a leave from before the current connection was added is the kicked one's too
+  participantLeft({
+    callSessionId,
+    leftAt,
+    sessionId,
+  }: {
+    callSessionId: string;
+    leftAt: Date;
+    sessionId: string;
+  }): CallLeave | null {
+    const realtimeKitParticipant = this.#readRealtimeKitParticipant(sessionId);
+    if (realtimeKitParticipant?.isRejoining || (realtimeKitParticipant && leftAt < realtimeKitParticipant.connectedAt))
+      return null;
     return this.#removeParticipant(callSessionId, sessionId);
   }
 
@@ -264,6 +275,7 @@ export class CallObject extends RealtimeObject<CallEvent> implements CallObjectR
     const isFirstJoiner = this.#addParticipant(callSessionId, participant);
     if (realtimeKit) {
       const realtimeKitRow = {
+        connectedAt: new Date(),
         isRejoining: false,
         publishSources: realtimeKit.publishSources,
         realtimeKitParticipantId: realtimeKit.id,
@@ -505,6 +517,7 @@ export class CallObject extends RealtimeObject<CallEvent> implements CallObjectR
             getRealtimeKitPresetName(publishSources),
           );
           this.#updateRealtimeKitParticipant(sessionId, {
+            connectedAt: new Date(),
             isRejoining: false,
             publishSources,
             realtimeKitParticipantId: addedParticipant.id,

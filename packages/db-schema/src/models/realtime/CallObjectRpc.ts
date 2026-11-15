@@ -24,7 +24,7 @@ export interface CallObjectRpc {
   leaveCall: (input: { callSessionId: string; sessionId: string }) => CallLeave | null;
   participantJoined: (input: { callSessionId: string; participant: CallParticipant }) => void;
   // Null while a revoke is replacing the connection, so its kick is not taken for the participant leaving
-  participantLeft: (input: { callSessionId: string; sessionId: string }) => CallLeave | null;
+  participantLeft: (input: { callSessionId: string; leftAt: Date; sessionId: string }) => CallLeave | null;
   readAccess: (input: { sessionId: string }) => CallAccess;
   readParticipantMap: () => Map<string, CallParticipant>;
   removeConnection: (input: { sessionId: string }) => Promise<void>;

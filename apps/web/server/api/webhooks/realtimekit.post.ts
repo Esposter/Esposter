@@ -14,7 +14,7 @@ import { z } from "zod";
 const realtimeKitWebhookSchema = z.object({
   event: z.enum(["meeting.participantJoined", "meeting.participantLeft"]),
   meeting: z.object({ id: z.string() }),
-  participant: z.object({ customParticipantId: z.string() }),
+  participant: z.object({ customParticipantId: z.string(), leftAt: z.coerce.date().optional() }),
 });
 
 export default defineEventHandler(async (event) => {
@@ -47,7 +47,11 @@ export default defineEventHandler(async (event) => {
       const callObject = getCallObject(callSessionId);
 
       if (webhookEvent.event === "meeting.participantLeft") {
-        const leave = await callObject.participantLeft({ callSessionId, sessionId });
+        const leave = await callObject.participantLeft({
+          callSessionId,
+          leftAt: webhookEvent.participant.leftAt ?? new Date(),
+          sessionId,
+        });
         if (leave) await writeCallSummary(db, callSessionId, leave);
         return { ok: true };
       }

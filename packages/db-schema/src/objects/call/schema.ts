@@ -25,6 +25,9 @@ export const admittedSessions = sqliteTable("admittedSessions", { sessionId: tex
 // A joined connection's RealtimeKit side: the participant it was added as and what it may publish.
 // Whether a revoke is replacing it is what the webhook reads, so the kick is not taken for the connection leaving
 export const realtimeKitParticipants = sqliteTable("realtimeKitParticipants", {
+  // When the current RealtimeKit participant was added. A leave from before it is an earlier connection's, which a
+  // Webhook can deliver after its replacement exists
+  connectedAt: integer({ mode: "timestamp_ms" }).notNull(),
   isRejoining: integer({ mode: "boolean" }).notNull(),
   publishSources: text({ mode: "json" }).$type<PublishSource[]>().notNull(),
   realtimeKitParticipantId: text().notNull(),
