@@ -28,7 +28,7 @@
       ]
     },
     {
-      "description": "`typescript` is aliased to `typescript-native-bridge` under `overrides:`, so a bump moves the bridge, the TypeScript behind it and `typescript-eslint` at once — a dedicated pass, never a routine update. A rule matches the resolved package name, so the alias target is named beside the alias.",
+      "description": "`typescript` is aliased to `typescript-native-bridge` under `overrides:`, so a bump moves the bridge, the TypeScript behind it and `typescript-eslint` at once \u2014 a dedicated pass, never a routine update. A rule matches the resolved package name, so the alias target is named beside the alias.",
       "enabled": false,
       "matchPackageNames": ["typescript", "typescript-native-bridge"]
     },
@@ -55,6 +55,11 @@
       "matchPackageNames": ["vize", "@vizejs/native", "@vizejs/unplugin", "@vizejs/vite-plugin"]
     },
     {
+      "description": "`wrangler` depends on one exact `miniflare` build, and `@esposter/db-mock` runs the tests on `miniflare` directly, so the catalog holds `miniflare` at the exact version the installed `wrangler` names, beta tag included. A `miniflare` bump alone installs a second copy beside wrangler's, so the two move in one branch.",
+      "groupName": "wrangler",
+      "matchPackageNames": ["miniflare", "wrangler"]
+    },
+    {
       "allowedVersions": "<27",
       "description": "`.node-version` is the one node pin, and `@types/node` follows its major with its own minors lagging node's, so the two move in one branch. The pin stays on its major until every environment that runs node can run the next one, and `references/node-major.md` is the checklist that says when. The change that moves the pin with `pnpm update:node <major>` raises this cap to the next major beside it.",
       "groupName": "node",
@@ -73,7 +78,7 @@
     },
     {
       "automerge": false,
-      "description": "An action's digest is left out of automerge on purpose: an action ships a fix as a new tag, so a digest that moves under the same version is a re-pointed tag — the shape a SHA pin exists to catch — and it opens a PR for a person.",
+      "description": "An action's digest is left out of automerge on purpose: an action ships a fix as a new tag, so a digest that moves under the same version is a re-pointed tag \u2014 the shape a SHA pin exists to catch \u2014 and it opens a PR for a person.",
       "matchManagers": ["github-actions"],
       "matchUpdateTypes": ["digest", "pinDigest"]
     }
