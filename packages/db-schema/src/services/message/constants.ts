@@ -4,16 +4,15 @@ import { ZERO_UUID } from "@esposter/shared";
 // It is the all-zero v7 UUID, which passes user-id validation as a v7 and is given to no real user, since a user's id is
 // Minted at random, and it lets the audit log render "AutoMod" instead of resolving a member display name.
 export const AUTOMOD_USER_ID = ZERO_UUID;
-// Caps the follow list read so resolving thread roots never fans out an unbounded number of
-// Azure Table point reads for a single request.
+// Caps the follow list read so resolving thread roots reads at most this many messages for a single request.
 export const MAX_FOLLOWED_THREADS = 50;
 export const MENTION_MAX_LENGTH = 100;
 export const MESSAGE_MAX_LENGTH = 10000;
 export const MODERATION_NOTE_MAX_LENGTH = 2000;
-// `slowmodeMs` is a Postgres `integer`, so a longer slowmode could never be stored — and it is not a whole number
-// Of seconds, so a field editing it in seconds truncates what it advertises.
+// The largest 32-bit signed integer, the longest slowmode the field can be set to. It is not a whole number of
+// Seconds, so a field editing it in seconds truncates what it advertises.
 export const MAX_SLOWMODE_MS = 2_147_483_647;
-// Matches the longest client-selectable timeout and keeps stored durations within Postgres integer range.
+// Matches the longest client-selectable timeout, which fits well inside a 32-bit signed integer.
 export const MAX_TIMEOUT_DURATION_MS = Temporal.Duration.from({ days: 7 }).total("milliseconds");
 export const PUSH_NOTIFICATION_MESSAGE_MAX_LENGTH = 100;
 
@@ -25,7 +24,7 @@ export const MEMBER_PERMISSION_BIGINT_REGEX = /^\d{1,20}$/u;
 export const CALL_AUTH_TOKEN_MAX_LENGTH = 4096;
 // The origin every reverse-ticked timestamp counts down from. It is wider than any nanosecond timestamp, so the countdown
 // Never goes negative
-export const AZURE_SELF_DESTRUCT_TIMER = "9".repeat(30);
+export const REVERSE_TICK_CEILING = "9".repeat(30);
 // What a reverse-ticked timestamp is allowed to look like: a countdown is digits and nothing else, with no sign, no
 // Separator and no empty string
 export const REVERSE_TICKED_TIMESTAMP_REGEX = /^\d+$/u;

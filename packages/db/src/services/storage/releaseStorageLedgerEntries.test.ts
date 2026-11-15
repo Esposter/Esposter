@@ -101,7 +101,7 @@ describe(releaseStorageLedgerEntries, () => {
     await expect(readStorageBytesUsed()).resolves.toBe(overwrittenBytes);
   });
 
-  // Event Grid delivers at-least-once and in no order at all, so the later write's event can land first. The
+  // Storage events arrive at-least-once and in no order at all, so the later write's event can land first. The
   // Handler being idempotent does not cover this: replaying the earlier event is a well-behaved no-op that
   // Still leaves the counter holding a size the blob stopped having
   test("keeps the newest size when events for one blob arrive in reverse order", async () => {
@@ -136,7 +136,7 @@ describe(releaseStorageLedgerEntries, () => {
     await expect(readStorageBytesUsed()).resolves.toBe(overwrittenBytes);
   });
 
-  // A save rewrites one blob name and its event settles that name seconds later, from the Functions host. So a
+  // A save rewrites one blob name and its event settles that name seconds later, from the jobs worker. So a
   // Charge that stood down once the blob had an event would move the counter on a resource's very first save
   // And never again — every save after it counted only by its own event, and nothing at all in the request the
   // Owner's meter is watching
@@ -204,7 +204,7 @@ describe(releaseStorageLedgerEntries, () => {
 
     await createStorageLedgerEntry();
     await reconcileStorageLedgerEntry(db, containerName, blobName, actualBytes);
-    // The owners come back because the release runs in the Functions host, which has no way to reach their
+    // The owners come back because the release runs in the jobs worker, which has no way to reach their
     // Meters except by being told whose counter it just moved
     await expect(releaseStorageLedgerEntries(db, containerName, [blobName])).resolves.toStrictEqual([userId]);
 

@@ -121,7 +121,7 @@ describe(sendNotification, () => {
     ).toBe(RoutePath.MessagesMessage(roomId, messageId));
   });
 
-  // The bell insert is the last step allowed to fail this handler. Event Grid reads a throw as a retry request
+  // The bell insert is the last step allowed to fail this handler. The queue reads a throw as a retry request
   // And QueueJobMaxRetriesMap marks this function replayable, so a trim that failed the invocation would
   // Have the rows written again on the redelivery
   test("keeps the bell row and does not throw when the retention trim fails", async () => {

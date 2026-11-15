@@ -732,7 +732,7 @@ describe(createResourceProcedures, () => {
     await expect(readResourceViews(newResource.id)).resolves.toStrictEqual([]);
   });
 
-  test("generates upload file sas entities", async () => {
+  test("generates upload file presigned url entities", async () => {
     expect.hasAssertions();
 
     const newResource = await webpageCaller.createResource({ name });
@@ -748,7 +748,7 @@ describe(createResourceProcedures, () => {
     ]);
   });
 
-  test("fails generate upload file sas entities with wrong user", async () => {
+  test("fails generate upload file presigned url entities with wrong user", async () => {
     expect.hasAssertions();
 
     const newResource = await webpageCaller.createResource({ name });

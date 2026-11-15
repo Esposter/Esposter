@@ -22,7 +22,7 @@ import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vite
 let mockDb: Database;
 
 // The handler releases each deleted blob's storage hold, so it reaches the database even when this suite
-// Only cares about the blobs — the module-scope client would otherwise dial a real Postgres at import
+// Only cares about the blobs — the module-scope client would otherwise open a real database connection at import
 vi.mock(import("#src/services/shared/db"), () => ({
   get db() {
     return mockDb;
@@ -212,7 +212,7 @@ describe(processBlobDeletionHandler, () => {
     await expect(readContainer()).resolves.toStrictEqual([prefixedBlobName]);
   });
 
-  test("rethrows a failing delete so Event Grid redelivers the batch", async () => {
+  test("rethrows a failing delete so the queue redelivers the batch", async () => {
     expect.hasAssertions();
 
     await seedBlob(blobName);

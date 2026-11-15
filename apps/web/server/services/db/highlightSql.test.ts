@@ -66,7 +66,7 @@ describe(highlightSql, () => {
     );
   });
 
-  test("#133 reads # as an operator, since Postgres has no # comment", () => {
+  test("#133 leaves # unpainted, since SQLite has no # comment", () => {
     expect.hasAssertions();
 
     expect(highlightSql("select 5 # 3 from t")).toBe(
@@ -122,10 +122,10 @@ describe(highlightSql, () => {
     );
   });
 
-  test("#26 paints OVERLAPS as a keyword", () => {
+  test("#26 does not paint OVERLAPS as a keyword, since SQLite has no such keyword", () => {
     expect.hasAssertions();
 
-    expect(highlightSql("select 1 where (a, b) overlaps (c, d)")).toContain(
+    expect(highlightSql("select 1 where (a, b) overlaps (c, d)")).not.toContain(
       styleText(HighlightStyleMap.keyword, "overlaps"),
     );
   });
@@ -146,7 +146,7 @@ describe(highlightSql, () => {
     );
   });
 
-  test("a Postgres parameter is painted in the number style", () => {
+  test("a numbered parameter is painted in the parameter style", () => {
     expect.hasAssertions();
 
     expect(highlightSql("select $1")).toBe(

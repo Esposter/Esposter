@@ -29,7 +29,7 @@ vi.mock(import("@esposter/db"), async (importOriginal) => {
   return {
     ...original,
     createPresignedPutUrl: (_credentials: StorageCredentials, _bucketName: StorageBucket, objectKey: string) =>
-      Promise.resolve(`https://sas.example/${objectKey}`),
+      Promise.resolve(`https://presigned.example/${objectKey}`),
   };
 });
 
@@ -73,7 +73,11 @@ describe(generateReservedResourceAssetPresignedUrlEntities, () => {
       await generateReservedResourceAssetPresignedUrlEntities(db, userId, resourceId, [file]),
     );
 
-    expect(firstEntity).toStrictEqual({ id: hash, isHeld: false, presignedUrl: `https://sas.example/${blobName}` });
+    expect(firstEntity).toStrictEqual({
+      id: hash,
+      isHeld: false,
+      presignedUrl: `https://presigned.example/${blobName}`,
+    });
     expect(secondEntity).toStrictEqual({ id: hash, isHeld: true, presignedUrl: "" });
     expect(secondEntity.id).toBe(firstEntity.id);
     // Only the first upload reserves, so the owner's storage usage does not grow for the second
@@ -107,7 +111,7 @@ describe(generateReservedResourceAssetPresignedUrlEntities, () => {
     } as unknown as R2Bucket;
     const entity = takeOne(await generateReservedResourceAssetPresignedUrlEntities(db, userId, resourceId, [file]));
 
-    expect(entity).toStrictEqual({ id: hash, isHeld: false, presignedUrl: `https://sas.example/${blobName}` });
+    expect(entity).toStrictEqual({ id: hash, isHeld: false, presignedUrl: `https://presigned.example/${blobName}` });
     expect(reserveStorageBytesMock).toHaveBeenCalledExactlyOnceWith(db, userId, StorageBucket.ResourceAssets, [
       { blobName, declaredBytes: file.size },
     ]);
@@ -121,7 +125,7 @@ describe(generateReservedResourceAssetPresignedUrlEntities, () => {
     await bucket.put(blobName, Uint8Array.of(1));
     const entity = takeOne(await generateReservedResourceAssetPresignedUrlEntities(db, userId, resourceId, [file]));
 
-    expect(entity).toStrictEqual({ id: hash, isHeld: false, presignedUrl: `https://sas.example/${blobName}` });
+    expect(entity).toStrictEqual({ id: hash, isHeld: false, presignedUrl: `https://presigned.example/${blobName}` });
     await expect(bucket.head(blobName)).resolves.toBeNull();
   });
 });

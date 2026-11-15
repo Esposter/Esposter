@@ -94,8 +94,8 @@ describe(useNotificationStore, () => {
   });
 
   // A push re-reads the whole first page, so the rows that just arrived are the ones newer than the newest row the
-  // Tab already held — never the newest row overall, which is the local notification created while it was in
-  // Flight, and which toasted when it was created. Postgres writes microseconds and a `Date` keeps milliseconds,
+  // Tab already held — never the newest row overall, which is the local notification created while it is in
+  // Flight, and which toasts when it is created. The stored timestamps keep milliseconds, as a `Date` does,
   // So a row can tie with the watermark and still be one that just arrived: the ids the tab already held are what
   // Settle those ties, and `held` staying silent is that exclusion
   test("toasts every delivered row a push brought back, oldest first", async () => {

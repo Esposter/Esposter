@@ -1,5 +1,5 @@
-// Storage's `sequencer` is an opaque hex string, and its ordering is defined only per blob. Azure documents the
-// Comparison as: pad the shorter value with leading zeros to a common length, then compare lexicographically.
+// A `sequencer` is an opaque string, and its ordering is defined only per blob. The comparison pads the shorter value
+// With leading zeros to a common length, then compares lexicographically.
 // Parsing it as a number is the tempting version and the wrong one — it is far wider than a double, so two
 // Distinct sequencers round to one value and the comparison silently starts answering false.
 // A row that has never seen an event has no position, so the first event is always newer than nothing.

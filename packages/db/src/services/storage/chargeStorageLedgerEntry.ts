@@ -9,10 +9,10 @@ import { storageLedgerInStorage } from "@esposter/db-schema";
 // Which is also why a save is never rejected for being over quota: the upload it would refuse has already
 // Happened, and refusing the charge would only make the counter lie. See openspec/specs/resource/storage-quotas/design.md
 //
-// The amount is provisional: the write raises its own `BlobCreated`, which finds the row this wrote and
+// The amount is provisional: the write raises its own object-create notification, which finds the row this wrote and
 // Replaces the figure with the stored object's real size. It measures where this declares, so it always wins —
-// And it wins by rank rather than by arrival, because Event Grid orders nothing. The event carries storage's
-// Per-blob `sequencer`; this carries none, which is what marks the figure as a guess.
+// And it wins by rank rather than by arrival, because storage events are unordered. The event carries its stored
+// Time as its `sequencer`; this carries none, which is what marks the figure as a guess.
 //
 // Carrying no position does not make it yield to the last event that spoke, though — `reconcileStorageLedgerEntry`
 // Owns that rule and what it trades, because that is where the ranking happens.
@@ -30,7 +30,7 @@ export const chargeStorageLedgerEntry = async (
 ): Promise<void> => {
   // Nothing is charged by the insert itself — `countedBytes` starts at zero and the reconcile below moves the
   // Counter by the difference, so a rewrite of the same blob corrects rather than adds, exactly as a second
-  // `BlobCreated` for one write target does. A concurrent charge of the same blob finds the row already there
+  // Object-create notification for one write target does. A concurrent charge of the same blob finds the row already there
   // And takes the same path.
   await db
     .insert(storageLedgerInStorage)

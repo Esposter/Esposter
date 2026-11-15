@@ -22,7 +22,7 @@ export const reconcileStorageLedgerEntryHandler = async (body: unknown): Promise
   // A reconcile applies a notification only when it is newer than the one already applied
   const { chargedUserId } = await reconcileStorageLedgerEntry(db, containerName, object.key, object.size, eventTime);
   if (chargedUserId) await broadcastStorageUsage([chargedUserId]);
-  // Verified after the ledger step so a mismatched blob is charged before its deletion raises BlobDeleted, which
+  // Verified after the ledger step so a mismatched blob is charged before its deletion raises an object-delete notification, which
   // Releases the charge
   if (containerName === StorageBucket.ResourceAssets) await verifyResourceAssetBlob(object.key);
 };

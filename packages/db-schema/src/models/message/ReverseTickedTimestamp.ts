@@ -1,7 +1,7 @@
-import { AZURE_SELF_DESTRUCT_TIMER, REVERSE_TICKED_TIMESTAMP_REGEX } from "#src/services/message/constants";
+import { REVERSE_TICK_CEILING, REVERSE_TICKED_TIMESTAMP_REGEX } from "#src/services/message/constants";
 import { z } from "zod";
 
-// A countdown from `AZURE_SELF_DESTRUCT_TIMER`, so it is digits only and can never be longer than the number it counts
+// A countdown from `REVERSE_TICK_CEILING`, so it is digits only and can never be longer than the number it counts
 // Down from. Worth constraining rather than left as a bare string because this is a rowKey a client hands back on every
 // Read of one message — an empty or non-numeric one is a malformed key, not a row that happens not to exist, and the two
 // Deserve different answers.
@@ -13,7 +13,7 @@ import { z } from "zod";
 export const reverseTickedTimestampSchema = z
   .string()
   .regex(REVERSE_TICKED_TIMESTAMP_REGEX)
-  .max(AZURE_SELF_DESTRUCT_TIMER.length)
+  .max(REVERSE_TICK_CEILING.length)
   .brand<"ReverseTickedTimestamp", "inout">();
 // A branded schema cannot satisfy a hand-written type, so the type is read off the schema
 export type ReverseTickedTimestamp = z.infer<typeof reverseTickedTimestampSchema>;

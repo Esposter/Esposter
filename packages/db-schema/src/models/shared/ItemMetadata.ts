@@ -8,7 +8,7 @@ export const itemMetadataSchema: z.ZodObject<{
   updatedAt: z.ZodDate;
 }> = z.object({
   createdAt: z.date(),
-  // eslint-disable-next-line no-restricted-syntax -- the soft-delete column Drizzle and Azure Table rows share
+  // eslint-disable-next-line no-restricted-syntax -- the soft-delete column Drizzle rows share
   deletedAt: z.date().nullable(),
   updatedAt: z.date(),
 }) satisfies z.ZodType<ItemMetadata>;

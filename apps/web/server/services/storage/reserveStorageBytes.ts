@@ -37,7 +37,7 @@ export const reserveStorageBytes = async (
   const declaredBytes = reservations.reduce((total, { declaredBytes: bytes }) => total + bytes, 0);
   const now = new Date();
   const expiresAt = new Date(now.getTime() + WRITE_PRESIGNED_URL_DURATION_MS);
-  // A row must outlive every `BlobCreated` that can still name it, or a retry of one whose blob did land finds
+  // A row must outlive every object-create notification that can still name it, or a retry of one whose blob did land finds
   // No row, charges nothing and reports no failure. The completion allowance is the presigned url's own duration reused, so
   // Nothing new can drift from the policy (openspec/specs/resource/storage-quotas/design.md)
   const collectableBefore = new Date(now.getTime() - (QUEUE_DELIVERY_TTL_MS + WRITE_PRESIGNED_URL_DURATION_MS));
@@ -99,7 +99,7 @@ export const reserveStorageBytes = async (
       )
       // A name written again — a resource's staging blob is one fixed name — takes its row over as a fresh hold.
       // `countedBytes` stays: it is what the counter still carries for the blob on that name, so the next
-      // `BlobCreated` corrects the counter by the difference and a release hands back what the row holds
+      // The create notification corrects the counter by the difference and a release hands back what the row holds
       .onConflictDoUpdate({
         set: {
           declaredBytes: sql`excluded.${sql.identifier(storageLedgerInStorage.declaredBytes.name)}`,

@@ -10,7 +10,7 @@ import { MessageType } from "#src/models/message/MessageType";
 import { reverseTickedTimestampSchema } from "#src/models/message/ReverseTickedTimestamp";
 import { sanitizedMessageSchema } from "#src/models/message/SanitizedMessage";
 import { standardMessageTypeSchema } from "#src/models/message/StandardMessageType";
-import { AzureEntity } from "#src/models/shared/AzureEntity";
+import { ItemCompositeKeyEntity } from "#src/models/shared/ItemCompositeKeyEntity";
 import { itemMetadataSchema } from "#src/models/shared/ItemMetadata";
 import { fileEntitySchema } from "#src/models/streams/FileEntity";
 import { selectUserInAuthSchema } from "#src/schema/auth/usersInAuth";
@@ -21,7 +21,7 @@ import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
 export class BaseMessageEntity<TType extends MessageType = StandardMessageType>
-  extends AzureEntity
+  extends ItemCompositeKeyEntity
   implements ItemEntityType<TType>
 {
   files: FileEntity[] = [];

@@ -11,10 +11,10 @@ import { and, eq, exists, isNull, sql } from "drizzle-orm";
 // Redelivery computes a zero delta instead of double-counting, and a re-upload to the same write target (the
 // Presigned url outlives one PUT) corrects the counter rather than stranding the old size on it.
 //
-// `sequencer` is the event's place in this blob's write order. Event Grid delivers at-least-once and unordered,
+// `sequencer` is the event's place in this blob's write order. Storage events arrive at-least-once and unordered,
 // So two writes to one name can have their events arrive reversed — and being idempotent does not save this:
 // Replaying the older event is a perfectly well-behaved no-op that still leaves the counter holding a size the
-// Blob no longer has. A provisional charge passes none, claiming no position in that order.
+// Blob does not have. A provisional charge passes none, claiming no position in that order.
 // Returns whether a ledger row matched, so a caller holding an ambiguous blob name can try its other form, and
 // The owner whose counter this actually moved — the only thing a meter watching the number needs telling about.
 //
@@ -53,7 +53,7 @@ export const reconcileStorageLedgerEntry = async (
   // A charge passes no sequencer and is applied whatever the row has already seen. It cannot yield to the
   // Last event that spoke: the blob it measures is rewritten under one name on every save, so a charge that
   // Stood down after the blob's first event would leave every save after the first counted only by its own
-  // Event — seconds later, from the Functions host, and not at all in the request the owner is watching.
+  // Event — seconds later, from the jobs worker, and not at all in the request the owner is watching.
   // What that trades is a charge delayed past a *newer* write's event putting its own size back; the next
   // Save's charge corrects it rather than stranding it, because the same name is written again. The one
   // Charge whose figure is a guess about a write the server did not make — a clone — is charged before its

@@ -58,8 +58,8 @@ export const useNotificationStore = defineStore("notification", () => {
     executeStoreDeliveredNotificationsMutation(
       async () => {
         const [previousNewestNotification] = deliveredNotifications.value;
-        // The watermark alone cannot separate a row that arrived from the row it ties with: postgres writes
-        // Microseconds and a `Date` keeps milliseconds, so two rows written inside the same millisecond compare
+        // The watermark alone cannot separate a row that arrived from the row it ties with: the stored timestamps
+        // Keep milliseconds, as a `Date` does, so two rows written inside the same millisecond compare
         // Equal once they cross the wire, and the second to be pushed would be dropped as "not newer" and never
         // Toast. The ids the tab already held settle those ties, and the watermark still keeps a page the read
         // Grew — rows the tab never held because it held fewer than a page — from toasting a backlog nobody was pushed

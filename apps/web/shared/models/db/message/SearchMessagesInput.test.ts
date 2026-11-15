@@ -17,7 +17,7 @@ describe("searchMessagesInputSchema", () => {
     expect(searchMessagesInputSchema.safeParse({ filters: [filter], query: "", roomId }).success).toBe(true);
   });
 
-  // Azure Search takes one clause per filter, so two of a type narrow together — rejecting the second would
+  // Each filter is one condition the search ANDs in, so two of a type narrow together — rejecting the second would
   // Fail the whole search on a second `has:` chip
   test("accepts two filters of one type", () => {
     expect.hasAssertions();

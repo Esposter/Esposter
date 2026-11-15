@@ -1,5 +1,5 @@
 name: esposter-infra
-description: Esposter Azure and GitHub infrastructure.
+description: Esposter Cloudflare and GitHub infrastructure.
 runtime:
   name: nodejs
   options:

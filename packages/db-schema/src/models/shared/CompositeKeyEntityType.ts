@@ -1,4 +1,4 @@
-export enum AzureEntityType {
+export enum CompositeKeyEntityType {
   File = "File",
   Message = "Message",
 }

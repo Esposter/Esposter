@@ -8,7 +8,7 @@ import { z } from "zod";
 export const generateUploadFilePresignedUrlEntitiesInputSchema = z.object({
   // `size` is what the storage quota reserves against, so it is bounded at the input boundary rather than
   // Trusted: a negative or non-finite declaration would decrement the counter and bypass the quota entirely.
-  // It is the client's own claim — an Azure presigned write url carries no length constraint — so `BlobCreated` is what
+  // It is the client's own claim — a presigned write url carries no length constraint — so the object-create notification is what
   // Replaces it with the stored object's real size. The array is bounded by the in-flight hold cap rather than
   // The generic read limit: a batch above the cap can never pass the reserve however long the client waits.
   // `hash` is the address the file is stored under, and it is unique within the batch because two identical files

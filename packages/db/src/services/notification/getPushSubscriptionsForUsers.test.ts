@@ -59,7 +59,7 @@ describe(getPushSubscriptionsForUsers, () => {
     expect(readPushSubscriptions.map(({ endpoint }) => endpoint)).toStrictEqual([otherSessionId]);
   });
 
-  // One user past Postgres's cap of 65,535 bind parameters, so a single statement for this room is refused. The owner
+  // A room of more users than MAX_USER_IDS_PER_STATEMENT, so the read takes several waves. The owner
   // Is the last user, so the read only finds its subscriptions if it reaches the final wave
   test("reads the subscriptions of a room too large for one statement", async () => {
     expect.hasAssertions();

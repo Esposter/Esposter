@@ -22,11 +22,6 @@ export const SETUP_TOOLS: readonly SetupTool[] = [
     probe: { args: ["--version"], file: "gh" },
   },
   {
-    install: { darwin: "brew install azure-cli", win32: "winget install --id Microsoft.AzureCLI" },
-    name: "az",
-    probe: { args: ["version"], file: "az" },
-  },
-  {
     install: { darwin: "brew install pulumi/tap/pulumi", win32: "winget install --id Pulumi.Pulumi" },
     name: "pulumi",
     probe: { args: ["version"], file: "pulumi" },
@@ -74,7 +69,6 @@ export const SETUP_TOOLS: readonly SetupTool[] = [
 // The services the machine is logged in to, each probed by the command that succeeds only when it is logged in
 export const SETUP_LOGINS: readonly SetupLogin[] = [
   { login: "gh auth login", name: "gh", probe: { args: ["auth", "status"], file: "gh" } },
-  { login: "az login", name: "az", probe: { args: ["account", "show"], file: "az" } },
   { login: "pulumi login", name: "pulumi", probe: { args: ["whoami"], file: "pulumi" } },
 ];
 

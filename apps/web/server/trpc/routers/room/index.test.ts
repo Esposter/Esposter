@@ -293,7 +293,7 @@ describe("roomRouter", () => {
   // The version being replaced gets no exemption from the age filter: the submitted url is whatever the caller's
   // Form loaded with, so the row value it replaces is the one that can name another admin's seconds-old upload.
   // A version replaced this soon waits for the next image change to collect it
-  test("leaves the replaced profile image younger than the write sas for a later sweep", async () => {
+  test("leaves the replaced profile image younger than the presigned write url for a later sweep", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
@@ -328,7 +328,7 @@ describe("roomRouter", () => {
     await expect(publicUserAssets.head(freshBlobName)).resolves.not.toBeNull();
   });
 
-  test("keeps a profile image blob younger than the write sas out of the deletion sweep", async () => {
+  test("keeps a profile image blob younger than the presigned write url out of the deletion sweep", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });

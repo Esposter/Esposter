@@ -100,7 +100,7 @@ describe("datasetRouter", () => {
     expect(dataset.totalRows).toBe(1);
   });
 
-  test("reads survey responses dataset within the azure page size limit", async () => {
+  test("reads survey responses dataset within the read limit", async () => {
     expect.hasAssertions();
 
     const newSurvey = await setupSurvey();
@@ -237,7 +237,7 @@ describe("datasetRouter", () => {
     expect(dataset.totalRows).toBe(1);
   });
 
-  test("reads file dataset within the azure page size limit", async () => {
+  test("reads file dataset within the read limit", async () => {
     expect.hasAssertions();
 
     const newResource = await setupSheet(

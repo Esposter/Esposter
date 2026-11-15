@@ -9,7 +9,7 @@ import { StorageBucket } from "@esposter/db-schema";
 // A version is stored bytes the owner keeps, charged for exactly what its object cost rather than for a copy of
 // The document — which is what makes the meter say something true: one cell edited costs about a hundred
 // Bytes, and a save that changed nothing costs nothing. On the owner rather than the caller, since a restore
-// Writes on their behalf. The object's own `BlobCreated` reconciles the figure to what storage recorded, which
+// Writes on their behalf. The object's own create notification reconciles the figure to what storage recorded, which
 // Is the same number (openspec/specs/resource/storage-quotas/design.md)
 export const chargeSnapshotVersion = async (
   db: Context["db"],

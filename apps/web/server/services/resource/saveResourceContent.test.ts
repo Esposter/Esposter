@@ -293,9 +293,9 @@ describe(saveResourceContent, () => {
     expect(getReminderCalls()).toStrictEqual([createReminderCall(resource)]);
   });
 
-  // Every save rewrites the same blob name and raises its own `BlobCreated` behind it, which settles that name
-  // From the Functions host seconds later. So the counter has to follow the save that comes after one of those
-  // Events, or the owner's meter moves on their first save of a resource and never again
+  // Every save rewrites the same blob name and raises its own object-create notification behind it, which settles that name
+  // Seconds later, from the jobs worker. So the counter has to follow the save that comes after one of those
+  // Notifications, or the owner's meter moves on their first save of a resource and never again
   test("keeps the counter in step with a save that follows the blob's own event", async () => {
     expect.hasAssertions();
 
