@@ -7,7 +7,7 @@ A closed set of named values is declared two ways. Most are TypeScript `enum`s; 
 ## What Changes
 
 - **BREAKING** Every `enum` becomes an `as const` object with a type of the same name. Call sites keep reading `ThemeMode.Dark`; a member used as a type is written `typeof ThemeMode.Dark`.
-- **BREAKING** `erasableSyntaxOnly` is on in the shared TypeScript base, so the compiler refuses an `enum`, and the list of places allowed the `as const` form is gone, because every place is.
+- **BREAKING** `erasableSyntaxOnly` is on in the shared TypeScript base and in the web app's Nuxt options, so the compiler refuses an `enum` everywhere, and the list of places allowed the `as const` form is gone, because every place is.
 - `mergeObjectsStrict` refuses a key two sets share, comparing every pair in its type and throwing at load when one repeats.
 - The generators that write sets (`createValueSetString` and its callers) write the same form.
 - The dungeons' asset key merges leave with the generated `FileKey` (the `migrate-assets` branch); every other merge stays a merge, now checked.
