@@ -2,5 +2,8 @@
 import type { SinStatusKind } from "./SinStatusKind";
 
 export type SinsResult =
-  | { answers: Record<string, { confidence: number; score: number }>; result: SinStatusKind.Answered }
-  | { reason?: string; result: SinStatusKind.Failed | SinStatusKind.NodeTooOld | SinStatusKind.NoKey };
+  | { answers: Record<string, { confidence: number; score: number }>; result: typeof SinStatusKind.Answered }
+  | {
+      reason?: string;
+      result: typeof SinStatusKind.Failed | typeof SinStatusKind.NodeTooOld | typeof SinStatusKind.NoKey;
+    };

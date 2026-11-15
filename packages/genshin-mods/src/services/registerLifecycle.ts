@@ -131,7 +131,7 @@ const scoreSins = async ($: EngineInterface, text: string, typeSafeKey: string) 
   const result =
     outcome.status === "fulfilled" && outcome.value.exitCode === 0
       ? parseSinsResult(outcome.value.stdout)
-      : { result: SinStatusKind.Failed as const };
+      : { result: SinStatusKind.Failed };
 
   // A `/clear` or a resume during the run has reset the session, and a switch turned off has turned the mod off, so this
   // Run's answers belong to nothing shown

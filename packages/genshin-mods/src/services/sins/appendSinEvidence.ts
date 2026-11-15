@@ -8,7 +8,7 @@ import { SIN_HISTORY_LENGTH, SIN_TOP_LEVEL } from "./constants";
 // Away past the history's length
 export const appendSinEvidence = (
   history: Record<string, number[]>,
-  answers: Extract<SinsResult, { result: SinStatusKind.Answered }>["answers"],
+  answers: Extract<SinsResult, { result: typeof SinStatusKind.Answered }>["answers"],
 ): Record<string, number[]> =>
   Object.fromEntries(
     SIN_NAMES.map((name) => {
