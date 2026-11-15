@@ -36,7 +36,7 @@ const monsterName = computed(() => prettify(monster.key));
       }"
       @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="onGridClick()"
     />
-    <Image :configuration="{ x: 35, y: 20, texture: monster.asset.key, origin: 0, scale: 0.35 }" />
+    <Image :configuration="{ x: 35, y: 20, texture: monster.key, origin: 0, scale: 0.35 }" />
     <Text :configuration="{ x: 162, y: 36, text: monsterName, style: { color: 'white', fontSize: 30 } }" />
     <Text
       :configuration="{

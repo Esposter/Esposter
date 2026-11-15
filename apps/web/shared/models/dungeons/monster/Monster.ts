@@ -1,10 +1,8 @@
-import type { Asset } from "#shared/models/dungeons/Asset";
 import type { AttackId } from "#shared/models/dungeons/attack/AttackId";
 import type { MonsterKey } from "#shared/models/dungeons/keys/image/UI/MonsterKey";
 import type { Statistics } from "#shared/models/dungeons/monster/Statistics";
 import type { Status } from "#shared/models/dungeons/monster/Status";
 
-import { assetSchema } from "#shared/models/dungeons/Asset";
 import { attackIdSchema } from "#shared/models/dungeons/attack/AttackId";
 import { monsterKeySchema } from "#shared/models/dungeons/keys/image/UI/MonsterKey";
 import { statisticsSchema } from "#shared/models/dungeons/monster/Statistics";
@@ -15,7 +13,6 @@ import { v7 } from "uuid";
 import { z } from "zod";
 
 export class Monster {
-  declare asset: Asset;
   declare attackIds: AttackId[];
   id: string = v7();
   declare key: MonsterKey;
@@ -28,7 +25,6 @@ export class Monster {
 }
 
 export const monsterSchema = z.object({
-  asset: assetSchema,
   attackIds: createUniqueArraySchema(attackIdSchema).max(attackIdSchema.options.length),
   id: z.uuidv7(),
   key: monsterKeySchema,

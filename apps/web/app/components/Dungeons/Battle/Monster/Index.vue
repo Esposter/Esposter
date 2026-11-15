@@ -17,15 +17,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <Image
-    :configuration="{
-      ...monsterPosition,
-      texture: activeMonster.asset.key,
-      frame: activeMonster.asset.frame,
-      flipX: !isEnemy,
-      tween: monsterTween,
-    }"
-  />
+  <Image :configuration="{ ...monsterPosition, texture: activeMonster.key, flipX: !isEnemy, tween: monsterTween }" />
   <DungeonsBattleMonsterAvailableListContainer v-if="!isEnemy" />
   <DungeonsBattleMonsterInfoContainer :is-enemy />
 </template>

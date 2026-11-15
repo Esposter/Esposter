@@ -31,9 +31,7 @@ const monsterName = computed(() => prettify(selectedMonster.value.key));
       }"
     />
     <Text :configuration="{ x: 200, y: 60, text: monsterName, style: { ...MenuTextStyle, fontSize: 40 } }" />
-    <Image
-      :configuration="{ x: 160, y: 310, originX: 0, originY: 1, texture: selectedMonster.asset.key, scale: 0.7 }"
-    />
+    <Image :configuration="{ x: 160, y: 310, originX: 0, originY: 1, texture: selectedMonster.key, scale: 0.7 }" />
     <Text :configuration="{ x: 20, y: 340, origin: 0, text: 'Current Exp.', style: MenuExperienceTextStyle }" />
     <Text
       :configuration="{
