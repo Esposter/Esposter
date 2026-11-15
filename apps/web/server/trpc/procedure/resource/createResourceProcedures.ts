@@ -392,10 +392,12 @@ export const createResourceProcedures = <TType extends ResourceType>(
     ).query<ResourcePublicationInResource | undefined>(({ ctx }) =>
       ctx.db.query.resourcePublicationsInResource.findFirst({ where: { resourceId: { eq: ctx.resource.id } } }),
     ),
-    readResourceViewCount: getTopicsProcedure(
-      getOwnerProcedure(type, resourceIdInputSchema, "id"),
-      getResourceTopics,
-    ).query<number>(({ ctx }) => readResourceViewCount(ctx.db, ctx.resource.id)),
+    readResourceViewCount: getOwnerProcedure(type, resourceIdInputSchema, "id")
+      .meta({
+        staticReason:
+          "Every public read moves the count and publishes nothing, so a page view never refetches what its owner has open",
+      })
+      .query<number>(({ ctx }) => readResourceViewCount(ctx.db, ctx.resource.id)),
     unpublishResource: getTopicsProcedure(
       getOwnerProcedure(type, resourceIdInputSchema, "id"),
       getChangedResourceTopics,

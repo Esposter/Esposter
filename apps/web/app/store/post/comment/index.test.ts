@@ -47,7 +47,7 @@ describe(useCommentStore, () => {
     trpcMsw.post.deleteComment.mutation(({ input }) => {
       if (input === comment.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
 
-      return { ancestorIds: [postId], removedCommentCount: 1 };
+      return { ancestorIds: [postId], removedIds: [postId] };
     });
     // The rollback restores the comment with the count it held when the delete was sent.
     // The count the server holds is read back over it: a count that moved while the comment was out of the thread
@@ -76,7 +76,7 @@ describe(useCommentStore, () => {
     expect.hasAssertions();
 
     const reply = createPost({ depth: 2, parentId: comment.id });
-    trpcMsw.post.deleteComment.mutation(() => ({ ancestorIds: [postId], removedCommentCount: 2 }));
+    trpcMsw.post.deleteComment.mutation(() => ({ ancestorIds: [postId], removedIds: [postId] }));
     trpcMsw.post.readPostCounts.query(() => [{ commentCount: 0, id: postId, likeCount: 0 }]);
     const parentPost = createPost({ commentCount: 2, id: postId });
     const commentStore = useCommentStore();

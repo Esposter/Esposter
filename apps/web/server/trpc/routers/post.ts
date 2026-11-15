@@ -40,8 +40,9 @@ import {
   selectPostInPostSchema,
   TopicKind,
 } from "@esposter/db-schema";
-import { Operation, takeOne } from "@esposter/shared";
-import { and, count, eq, isNotNull, isNull, or, sql } from "drizzle-orm";
+import { Operation } from "@esposter/shared";
+import { and, eq, isNotNull, isNull, or, sql } from "drizzle-orm";
+import { z } from "zod";
 
 // A feed card shows a post's counters and the feed is ranked by them, so every change to a post reaches the feed too
 const feedPostsTopic = getTopic(TopicKind.Feed, "posts");
@@ -120,9 +121,13 @@ export const postRouter = router({
 
     return readPostWithRelations(ctx.db, newPost.id, DatabaseEntityType.Post, ctx.user.id);
   }),
-  deleteComment: getTopicsProcedure(standardAuthedProcedure.input(deleteCommentInputSchema), ({ input, output }) =>
-    getPostTopics(input, ...getAncestorIds(output)),
-  ).mutation<DeletedComment>(async ({ ctx, input }) => {
+  // The comment's own page and each reply's beneath it go with the delete, so every removed post's topic is published
+  deleteComment: getTopicsProcedure(standardAuthedProcedure.input(deleteCommentInputSchema), ({ output }) => {
+    const { ancestorIds, removedIds } = z
+      .object({ ancestorIds: z.array(z.string()), removedIds: z.array(z.string()) })
+      .parse(output);
+    return getPostTopics(...removedIds, ...ancestorIds);
+  }).mutation<DeletedComment>(async ({ ctx, input }) => {
     const userId = ctx.user.id;
     const ownedComment = and(ownedBy(postsInPost, input, userId), isNotNull(postsInPost.parentId));
     // The ancestors are what the counters move, and they never change, so they are read ahead of the batch
@@ -132,15 +137,15 @@ export const postRouter = router({
       DerivedDatabaseEntityType.Comment,
       input,
     );
-    // The subtree is the comment and every reply beneath it. It is counted inside the batch rather than read before
-    // It: a reply landing between a read and the delete would otherwise be subtracted from the ancestors without being
-    // Counted. The count and the counter's own subquery see the same rows, since nothing else writes between them
+    // The subtree is the comment and every reply beneath it. It is read inside the batch rather than before it: a reply
+    // Landing between a read and the delete would otherwise be subtracted from the ancestors without being named. The
+    // Read and the counter's own subquery see the same rows, since nothing else writes between them
     const subtreeWhere = or(
       eq(postsInPost.id, input),
       sql`exists (select 1 from json_each(${postsInPost.ancestorIds}) where json_each.value = ${input})`,
     );
-    const [countRows, , deletedCommentRows] = await ctx.db.batch([
-      ctx.db.select({ removedCommentCount: count() }).from(postsInPost).where(subtreeWhere),
+    const [removedRows, , deletedCommentRows] = await ctx.db.batch([
+      ctx.db.select({ id: postsInPost.id }).from(postsInPost).where(subtreeWhere),
       // Every ancestor loses the whole subtree; the guard leaves the counters alone when the delete below will not land
       ctx.db
         .update(postsInPost)
@@ -156,8 +161,7 @@ export const postRouter = router({
       ctx.db.delete(postsInPost).where(ownedComment).returning({ id: postsInPost.id }),
     ]);
     requireMutation(deletedCommentRows[0], Operation.Delete, DerivedDatabaseEntityType.Comment, input);
-    const { removedCommentCount } = takeOne(countRows, 0);
-    return { ancestorIds, removedCommentCount };
+    return { ancestorIds, removedIds: removedRows.map(({ id }: Pick<PostInPost, "id">) => id) };
   }),
   deletePost: getTopicsProcedure(standardAuthedProcedure.input(deletePostInputSchema), ({ input }) =>
     getPostTopics(input),

@@ -54,7 +54,10 @@ export const achievementRouter = router({
   // The share of registered users who have unlocked each achievement, as a percentage. Every definition is keyed, so
   // One nobody has earned reads 0 rather than being absent
   readAchievementRarities: standardRateLimitedProcedure
-    .meta({ staticReason: "Recomputed on read from every user's unlocks, which no tRPC mutation changes" })
+    .meta({
+      staticReason:
+        "Recomputed on read from every user's unlocks, which any user's mutation can move, so publishing each unlock would refetch every open board",
+    })
     .query<Record<AchievementName, number>>(async ({ ctx }) => {
       const [totalUserRows, unlockCounts] = await Promise.all([
         ctx.db.select({ totalUsers: count() }).from(usersInAuth),
@@ -80,7 +83,10 @@ export const achievementRouter = router({
       );
     }),
   readPointsLeaderboard: standardRateLimitedProcedure
-    .meta({ staticReason: "Recomputed on read from every user's unlocks, which no tRPC mutation changes" })
+    .meta({
+      staticReason:
+        "Recomputed on read from every user's unlocks, which any user's mutation can move, so publishing each unlock would refetch every open board",
+    })
     .query<PointsLeaderboard>(async ({ ctx }) => {
       const userTotals = await ctx.db
         .select({

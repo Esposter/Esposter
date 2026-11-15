@@ -1,5 +1,6 @@
 import type { FollowUp } from "#server/models/resource/todoList/FollowUp";
 
+import { getChangedResourceTopics } from "#server/services/resource/getChangedResourceTopics";
 import { getResourceTopics } from "#server/services/resource/getResourceTopics";
 import { readResourceContent } from "#server/services/resource/readResourceContent";
 import { appendNotesParagraph } from "#server/services/resource/todoList/appendNotesParagraph";
@@ -36,7 +37,7 @@ export const todoListRouter = router({
         scope: McpScope.FollowUps,
       },
     }),
-    getResourceTopics,
+    getChangedResourceTopics,
   ).mutation<string>(({ ctx, input: { dueAt, name, notes, repository, sessionId } }) =>
     updateTodoListContent(ctx, ctx.resource, (todoList) => {
       const followUp = new TodoListItem({
@@ -58,7 +59,7 @@ export const todoListRouter = router({
         scope: McpScope.FollowUps,
       },
     }),
-    getResourceTopics,
+    getChangedResourceTopics,
   ).mutation<void>(async ({ ctx, input: { itemId, summary, timeZone } }) => {
     await updateTodoListContent(ctx, ctx.resource, (todoList) => {
       const followUp = requireOpenFollowUp(todoList, itemId);
@@ -76,7 +77,7 @@ export const todoListRouter = router({
         scope: McpScope.FollowUps,
       },
     }),
-    getResourceTopics,
+    getChangedResourceTopics,
   ).mutation<void>(async ({ ctx, input: { itemId, reason } }) => {
     await updateTodoListContent(ctx, ctx.resource, (todoList) => {
       const followUp = requireOpenFollowUp(todoList, itemId);
@@ -117,7 +118,7 @@ export const todoListRouter = router({
         scope: McpScope.Resources,
       },
     }),
-    getResourceTopics,
+    getChangedResourceTopics,
   ).mutation<void>(async ({ ctx, input: { itemId, timeZone } }) => {
     await updateTodoListContent(ctx, ctx.resource, (todoList) => {
       const item = todoList.items.find(({ id }) => id === itemId);

@@ -4,6 +4,7 @@ import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { PostInPost } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
 import { createCallerFactory } from "#server/trpc";
 import { createMockAuthSession, createMockCaller, createMockContext } from "#server/trpc/context.test";
 import { blockRouter } from "#server/trpc/routers/block";
@@ -14,8 +15,10 @@ import {
   blocksInSocial,
   DatabaseEntityType,
   DerivedDatabaseEntityType,
+  getTopic,
   postsInPost,
   PublicUserColumns,
+  TopicKind,
 } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";
@@ -207,7 +210,7 @@ describe("postRouter", () => {
     const deletedComment = await postCaller.deleteComment(newComment.id);
     const post = await postCaller.readPost(newPost.id);
 
-    expect(deletedComment.removedCommentCount).toBe(1);
+    expect(deletedComment.removedIds).toHaveLength(1);
     expect(post.commentCount).toBe(0);
   });
 
@@ -237,11 +240,14 @@ describe("postRouter", () => {
     const { comment: newReply } = await postCaller.createComment({ description, parentId: newComment.id });
     await postCaller.createComment({ description, parentId: newReply.id });
 
+    MockPublishedTopics.length = 0;
     const deletedComment = await postCaller.deleteComment(newComment.id);
     const post = await postCaller.readPost(newPost.id);
 
-    expect(deletedComment.removedCommentCount).toBe(3);
+    expect(deletedComment.removedIds).toHaveLength(3);
     expect(post.commentCount).toBe(0);
+    // A reply's own page goes with the cascade, so its topic is published with the comment's
+    expect(MockPublishedTopics).toContain(getTopic(TopicKind.Post, newReply.id));
   });
 
   test("deletes comment with deleting post", async () => {
