@@ -13,7 +13,7 @@ import { getResultAsync, noop } from "@esposter/shared";
 // They are the reschedule, and the import and summary of a copied room history.
 // (openspec/changes/infra-cloudflare-cutover/design.md)
 export default {
-  fetch: (request, env) => handleCutoverRequest(request, env),
+  fetch: (request, env) => handleCutoverRequest(request, env, validateJobsEnvironment().CUTOVER_SECRET),
   queue: (batch) => handleQueueBatch(batch, validateJobsEnvironment().CLOUDFLARE_ENVIRONMENT),
   scheduled: (_controller, _env, context) => {
     validateJobsEnvironment();

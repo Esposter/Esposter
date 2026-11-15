@@ -16,7 +16,7 @@ describe(handleCutoverRequest, () => {
     const importRoom = vi.fn<RoomObjectRpc["importRoom"]>(() => Promise.resolve(summary));
     const idFromName = vi.fn<(name: string) => string>((name) => name);
     const get = vi.fn<() => { importRoom: typeof importRoom }>(() => ({ importRoom }));
-    const environment = { CUTOVER_SECRET: secret, ROOM: { get, idFromName } };
+    const environment = { ROOM: { get, idFromName } };
     return { environment: environment as unknown as Cloudflare.Env, idFromName, importRoom };
   };
 
@@ -34,6 +34,7 @@ describe(handleCutoverRequest, () => {
     const response = await handleCutoverRequest(
       createImportRequest(JSON.stringify({ roomId, ...emptyCopy })),
       environment,
+      secret,
     );
 
     expect(idFromName).toHaveBeenCalledExactlyOnceWith(roomId);
@@ -48,6 +49,7 @@ describe(handleCutoverRequest, () => {
     const response = await handleCutoverRequest(
       createImportRequest(JSON.stringify({ roomId, ...emptyCopy }), v7()),
       environment,
+      secret,
     );
 
     expect(response.status).toBe(401);
@@ -58,7 +60,7 @@ describe(handleCutoverRequest, () => {
     expect.hasAssertions();
 
     const { environment, importRoom } = createEnvironment();
-    const response = await handleCutoverRequest(createImportRequest(JSON.stringify({ roomId })), environment);
+    const response = await handleCutoverRequest(createImportRequest(JSON.stringify({ roomId })), environment, secret);
 
     expect(response.status).toBe(400);
     expect(importRoom).not.toHaveBeenCalled();

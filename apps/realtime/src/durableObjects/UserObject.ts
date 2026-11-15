@@ -49,8 +49,12 @@ export class UserObject extends RealtimeObject<UserEvent> implements UserObjectR
     return Promise.resolve();
   }
 
+  // A reminder armed again under its id replaces the one it names, so a re-run of the step that armed it converges
   async addReminder(reminder: ScheduledReminder): Promise<void> {
-    await this.db.insert(remindersInUser).values(reminder);
+    await this.db
+      .insert(remindersInUser)
+      .values(reminder)
+      .onConflictDoUpdate({ set: { runAt: reminder.runAt, text: reminder.text }, target: remindersInUser.id });
     await this.#armAlarm();
   }
 

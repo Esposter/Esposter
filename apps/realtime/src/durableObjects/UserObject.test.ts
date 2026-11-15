@@ -269,6 +269,22 @@ describe(UserObject, () => {
     await expect(state.ctx.storage.getAlarm()).resolves.toBeNull();
   });
 
+  test("a reminder armed again under its id replaces the one it names, so a re-run of the step that armed it converges", async () => {
+    expect.hasAssertions();
+
+    const { object } = createUserObject();
+    const reminder = {
+      id: v7(),
+      roomId: v7(),
+      runAt: new Date(Temporal.Duration.from({ minutes: 1 }).total("milliseconds")),
+      text: "text",
+    };
+    await object.addReminder(reminder);
+    await object.addReminder(reminder);
+
+    await expect(object.readReminders()).resolves.toHaveLength(1);
+  });
+
   test("cancelling the reminder that was next due re-arms the alarm for the one after it", async () => {
     expect.hasAssertions();
 

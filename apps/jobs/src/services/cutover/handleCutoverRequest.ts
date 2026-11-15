@@ -23,12 +23,17 @@ const rescheduleRequestSchema = z.object({
 // The temporary internal routes of the cutover are all deleted at teardown.
 // They are the reschedule of the copied jobs, and the import and summary of each room's copied history in its object.
 // The only routes the jobs Worker answers.
-// Every other request is a 404, and every route refuses a request whose secret is not the configured one
-export const handleCutoverRequest = async (request: Request, env: Cloudflare.Env): Promise<Response> => {
+// Every other request is a 404, and every route refuses a request whose secret is not the configured one. The secret is the
+// Validated environment's, never empty, so an isolate missing it throws rather than comparing against nothing
+export const handleCutoverRequest = async (
+  request: Request,
+  env: Cloudflare.Env,
+  cutoverSecret: string,
+): Promise<Response> => {
   const { pathname } = new URL(request.url);
   if (request.method !== "POST" || ![RESCHEDULE_PATH, ROOM_IMPORT_PATH, ROOM_SUMMARY_PATH].includes(pathname))
     return new Response("Not found", { status: 404 });
-  if (!checkIsSecretEqual(request.headers.get(CUTOVER_SECRET_HEADER) ?? "", env.CUTOVER_SECRET))
+  if (!checkIsSecretEqual(request.headers.get(CUTOVER_SECRET_HEADER) ?? "", cutoverSecret))
     return new Response("Unauthorized", { status: 401 });
 
   if (pathname === RESCHEDULE_PATH) {
