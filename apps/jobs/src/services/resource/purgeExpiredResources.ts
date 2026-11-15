@@ -9,7 +9,7 @@ import { and, isNotNull, lt } from "drizzle-orm";
 // That fails mid-purge simply keeps its row and is re-driven by the next run of this function.
 export const purgeExpiredResources = async (): Promise<void> => {
   const expiredResources = await db
-    .select()
+    .select({ id: resourcesInResource.id })
     .from(resourcesInResource)
     .where(
       and(

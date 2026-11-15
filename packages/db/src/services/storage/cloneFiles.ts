@@ -17,8 +17,8 @@ export const cloneFiles = async (
   bucketName: StorageBucket,
   bucket: R2Bucket,
   files: FileEntity[],
-  sourcePrefix = "",
-  destinationPrefix = sourcePrefix,
+  sourcePrefix: string,
+  destinationPrefix: string,
 ): Promise<Pick<FileEntity, "hasThumbnail" | "id">[]> => {
   if (files.length === 0) return [];
 

@@ -3,9 +3,9 @@ import type { SentMessageCursor } from "#src/models/realtime/SentMessageCursor";
 import type { Topic } from "#src/models/realtime/Topic";
 import type { UserEvent } from "#src/models/realtime/UserEvent";
 import type { FriendRequestInSocialWithRelations } from "#src/models/social/FriendRequestInSocialWithRelations";
+import type { StorageUsage } from "#src/models/storage/StorageUsage";
 import type { ReconcileTodoRemindersInput } from "#src/models/todoReminder/ReconcileTodoRemindersInput";
 import type { PublicUser } from "#src/models/user/PublicUser";
-import type { StorageTier } from "#src/models/user/StorageTier";
 import type { UserStatusInMessage } from "#src/schema/message/userStatusesInMessage";
 import type { UserToRoomInMessage } from "#src/schema/message/usersToRoomsInMessage";
 import type { FriendRequestInSocial } from "#src/schema/social/friendRequestsInSocial";
@@ -27,7 +27,7 @@ export interface UserObjectRpc {
   addJoinedCall: (callSessionId: string) => Promise<void>;
   addReminder: (reminder: ScheduledReminder) => Promise<void>;
   addScheduledMessage: (scheduledMessage: { roomId: string; runAt: Date; scheduledId: string }) => Promise<void>;
-  addSentMessage: (sentMessage: { createdAt: Date; messageId: number; roomId: string }) => Promise<void>;
+  addSentMessage: (sentMessage: SentMessageCursor) => Promise<void>;
   // A room-list event, sent to every tab the person has open
   broadcastEvent: (event: UserEvent) => Promise<void>;
   closeSession: (sessionId: string) => Promise<void>;
@@ -38,10 +38,7 @@ export interface UserObjectRpc {
   readJoinedCallIds: () => Promise<string[]>;
   readReminders: () => Promise<ScheduledReminder[]>;
   readScheduledMessages: () => Promise<{ roomId: string; runAt: Date; scheduledId: string }[]>;
-  readSentMessages: (input: {
-    before?: SentMessageCursor;
-    limit: number;
-  }) => Promise<{ createdAt: Date; messageId: number; roomId: string }[]>;
+  readSentMessages: (input: { before?: SentMessageCursor; limit: number }) => Promise<SentMessageCursor[]>;
   reconcileTodoReminders: (input: ReconcileTodoRemindersInput) => Promise<void>;
   removeJoinedCall: (callSessionId: string) => Promise<void>;
   // Whether a reminder was there to remove, so a cancel of one that already fired or never existed is told so
@@ -57,7 +54,7 @@ export interface UserObjectRpc {
   ) => Promise<void>;
   sendFriendRequest: (friendRequest: FriendRequestInSocialWithRelations) => Promise<void>;
   updateAchievement: (userAchievements: UserAchievementInAchievementWithRelations[]) => Promise<void>;
-  updateUsage: (storageUsage: { bytesUsed: number; quotaBytes: number; tier: StorageTier }) => Promise<void>;
+  updateUsage: (storageUsage: StorageUsage) => Promise<void>;
   updateUserToRoom: (userToRoom: UserToRoomInMessage) => Promise<void>;
   upsertStatus: (status: SetNonNullable<UserStatusInMessage, "status">) => Promise<void>;
 }

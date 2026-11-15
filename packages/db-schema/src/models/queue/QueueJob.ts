@@ -1,8 +1,7 @@
 import { z } from "zod";
 
 // One job per queue. A job's Cloudflare Queue and its dead-letter queue are named from its kebab-case value, and the
-// Jobs Worker dispatches each batch on that name. Renamed from `AzureFunction`, which named the Azure Function
-// That ran each job. Purging deleted resources is not here: it runs on a Cron Trigger, not from a queue.
+// Jobs Worker dispatches each batch on that name. Purging deleted resources is not a job: a Cron Trigger runs it.
 export const QueueJob = {
   DeleteAccount: "delete-account",
   DeleteOrphanedProfileImage: "delete-orphaned-profile-image",
@@ -15,3 +14,5 @@ export const QueueJob = {
 export type QueueJob = (typeof QueueJob)[keyof typeof QueueJob];
 
 export const queueJobSchema = z.enum(QueueJob) satisfies z.ZodType<QueueJob>;
+
+export const QueueJobs = Object.values(QueueJob);

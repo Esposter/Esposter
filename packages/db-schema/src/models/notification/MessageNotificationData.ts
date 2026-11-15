@@ -4,6 +4,7 @@ import type { ItemEntityType } from "@esposter/shared";
 import { AppNotificationType } from "#src/models/notification/AppNotificationType";
 import { roomMessageSchema } from "#src/models/realtime/RoomMessage";
 import { roomIdSchema } from "#src/models/shared/RoomId";
+import { selectUserInAuthSchema } from "#src/schema/auth/usersInAuth";
 import { z } from "zod";
 
 // One event for every message, thread reply included: threadRootId is what a reply adds, and it widens the
@@ -22,7 +23,7 @@ export interface MessageNotificationData extends ItemEntityType<AppNotificationT
 }
 
 export const messageNotificationDataSchema = z.object({
-  appUserId: z.string().optional(),
+  appUserId: selectUserInAuthSchema.shape.id.optional(),
   message: roomMessageSchema.pick({ id: true, message: true, userId: true }).safeExtend(roomIdSchema.shape),
   threadRootId: roomMessageSchema.shape.replyToId,
   type: z.literal(AppNotificationType.Message).readonly(),

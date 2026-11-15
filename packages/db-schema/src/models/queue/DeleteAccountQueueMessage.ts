@@ -1,4 +1,5 @@
 import { queueMessageEnvelopeSchema } from "#src/models/queue/QueueMessageEnvelope";
+import { userIdSchema } from "#src/models/shared/UserId";
 import { z } from "zod";
 
 // The one message an account deletion sends. It names the account and nothing else: the sweep is keyed by that user
@@ -9,5 +10,5 @@ export interface DeleteAccountQueueMessage {
 
 export const deleteAccountQueueMessageSchema = z.object({
   ...queueMessageEnvelopeSchema.shape,
-  userId: z.string(),
+  ...userIdSchema.shape,
 }) satisfies z.ZodType<DeleteAccountQueueMessage>;

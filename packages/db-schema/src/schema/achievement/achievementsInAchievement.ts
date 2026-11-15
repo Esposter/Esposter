@@ -5,6 +5,7 @@ import { sqliteTable } from "#src/sqliteTable";
 import { text } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 import { v7 } from "uuid";
+import { z } from "zod";
 
 export const achievementsInAchievement = sqliteTable(
   "achievements",
@@ -19,4 +20,6 @@ export const achievementsInAchievement = sqliteTable(
 
 export type AchievementInAchievement = typeof achievementsInAchievement.$inferSelect;
 
-export const selectAchievementInAchievementSchema = createSelectSchema(achievementsInAchievement);
+export const selectAchievementInAchievementSchema = createSelectSchema(achievementsInAchievement, {
+  id: () => z.uuidv7(),
+});
