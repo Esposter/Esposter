@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
   await getResultAsync(() => assertIsMember({ db, user: authSession.user }, roomId)).match(noop, (error) => {
     throw createError({ cause: error, message: "Forbidden", statusCode: 403 });
   });
-  return forwardSocket(useRoomObject(roomId), event.req, {
+  return forwardSocket(event, useRoomObject(roomId), {
     deviceId,
     sessionId: authSession.session.id,
     userId: authSession.user.id,

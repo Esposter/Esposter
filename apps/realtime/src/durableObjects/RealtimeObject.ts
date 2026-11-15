@@ -1,3 +1,4 @@
+import { RESERVED_CLOSE_CODES } from "#src/services/durableObject/constants";
 import { readSocketIdentity } from "#src/services/realtime/readSocketIdentity";
 import { DurableObject } from "cloudflare:workers";
 
@@ -29,10 +30,12 @@ export abstract class RealtimeObject<TEvent extends { type: string } = { type: s
     });
   }
 
-  // A close the peer began is answered in kind, so the socket is released rather than left half open. An object that has
-  // Its own work to do on a close may await it, as the runtime's handler allows
+  // A close the peer began is answered in kind, so the socket is released rather than left half open. A reserved code
+  // Reports a close that already happened, such as a dropped connection, so there is nothing to answer, and sending it
+  // Would throw before an object's own close work ran. An object that has its own work to do on a close may await it,
+  // As the runtime's handler allows
   override webSocketClose(ws: WebSocket, code: number, reason: string): Promise<void> | void {
-    ws.close(code, reason);
+    if (!RESERVED_CLOSE_CODES.has(code)) ws.close(code, reason);
   }
 
   override webSocketError(ws: WebSocket) {

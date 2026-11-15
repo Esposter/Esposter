@@ -53,6 +53,7 @@ const createEvent = () => {
   return {
     context: { params: { callSessionId: "abcdefghijkl" } },
     req: new Request(url, { headers: { Upgrade: "websocket" } }),
+    res: { headers: new Headers() },
     url: new URL(url),
   } as unknown as RequestEvent;
 };

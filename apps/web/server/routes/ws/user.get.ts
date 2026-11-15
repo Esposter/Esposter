@@ -12,5 +12,5 @@ export default defineEventHandler(async (event) => {
 
   const { deviceId } = readSocketValue(deviceIdSchema, getQuery(event));
   const { session, user } = authSession;
-  return forwardSocket(useUserObject(user.id), event.req, { deviceId, sessionId: session.id, userId: user.id });
+  return forwardSocket(event, useUserObject(user.id), { deviceId, sessionId: session.id, userId: user.id });
 });

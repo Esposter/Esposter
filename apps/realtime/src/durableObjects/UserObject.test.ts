@@ -184,6 +184,20 @@ describe(UserObject, () => {
     expect(getRoomStub(secondRoom.id).detachMember).toHaveBeenCalledExactlyOnceWith(userId, presenceOf(false));
   });
 
+  test("a dropped connection takes the person offline", async () => {
+    expect.hasAssertions();
+
+    const { object, state } = createUserObject();
+    const room = await createRoom();
+    const socket = await connect(object, { deviceId, sessionId });
+    await state.settleWaitUntil();
+    // A dropped connection reaches the object as an abnormal close, a code no endpoint may send back
+    await object.webSocketClose(socket as unknown as WebSocket, 1006, "");
+    await state.settleWaitUntil();
+
+    expect(getRoomStub(room.id).detachMember).toHaveBeenCalledExactlyOnceWith(userId, presenceOf(false));
+  });
+
   test("a save reaches the person's other tabs, the same session's included, and not the tab that made it", async () => {
     expect.hasAssertions();
 

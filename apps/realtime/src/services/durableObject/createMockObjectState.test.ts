@@ -1,5 +1,6 @@
 import type { SQLInputValue } from "node:sqlite";
 
+import { RESERVED_CLOSE_CODES } from "#src/services/durableObject/constants";
 import { jsonDateParse } from "@esposter/shared";
 import { DatabaseSync } from "node:sqlite";
 import { describe, vi } from "vitest";
@@ -43,7 +44,8 @@ export const createMockObjectState = (name: string) => {
   const ctx = {
     acceptWebSocket: (socket: MockSocket, tags: string[]) => {
       socketTags.set(socket, tags);
-      socket.close.mockImplementation(() => {
+      socket.close.mockImplementation((code) => {
+        if (RESERVED_CLOSE_CODES.has(code)) throw new TypeError(`Invalid WebSocket close code: ${code}.`);
         socketTags.delete(socket);
       });
     },

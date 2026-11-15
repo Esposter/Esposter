@@ -53,6 +53,7 @@ const createEvent = () => {
   return {
     context: { params: { roomId: "11111111-1111-7111-8111-111111111111" } },
     req: new Request(url, { headers: { Upgrade: "websocket" } }),
+    res: { headers: new Headers() },
     url: new URL(url),
   } as unknown as RequestEvent;
 };
