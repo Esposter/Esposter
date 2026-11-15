@@ -1,4 +1,2 @@
-export enum HttpMethod {
-  Patch = "PATCH",
-  Post = "POST",
-}
+export const HttpMethod = { Patch: "PATCH", Post: "POST" } as const;
+export type HttpMethod = (typeof HttpMethod)[keyof typeof HttpMethod];
