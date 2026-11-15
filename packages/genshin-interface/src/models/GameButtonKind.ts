@@ -8,12 +8,13 @@
 // A reply.
 // The dialogue's translucent black pill, which the cream Pill does not match.
 // A gold pill, the weapon screen's lit Ascend.
-export enum GameButtonKind {
-  Choice = "Choice",
-  Disc = "Disc",
-  Gold = "Gold",
-  Pill = "Pill",
-  Plain = "Plain",
-  Reply = "Reply",
-  Row = "Row",
-}
+export const GameButtonKind = {
+  Choice: "Choice",
+  Disc: "Disc",
+  Gold: "Gold",
+  Pill: "Pill",
+  Plain: "Plain",
+  Reply: "Reply",
+  Row: "Row",
+} as const;
+export type GameButtonKind = (typeof GameButtonKind)[keyof typeof GameButtonKind];

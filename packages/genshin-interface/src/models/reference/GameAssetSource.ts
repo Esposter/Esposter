@@ -4,7 +4,7 @@ import type { GameSourceKind } from "#src/models/reference/GameSourceKind";
 // Path ID where it has one, its name, and what the derivation takes from it
 export interface GameAssetSource {
   block: string;
-  kind: Exclude<GameSourceKind, GameSourceKind.Capture | GameSourceKind.DataTable>;
+  kind: Exclude<GameSourceKind, typeof GameSourceKind.Capture | typeof GameSourceKind.DataTable>;
   name: string;
   pathId?: string;
   role: string;

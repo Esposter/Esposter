@@ -1,10 +1,6 @@
 // What an interface clip's track moves on a piece: its opacity, its scale, or its offset along x or y in canvas units
 // With y running up the screen, as Unity's does
-export enum InterfaceClipProperty {
-  Opacity = "opacity",
-  Scale = "scale",
-  X = "x",
-  Y = "y",
-}
+export const InterfaceClipProperty = { Opacity: "opacity", Scale: "scale", X: "x", Y: "y" } as const;
+export type InterfaceClipProperty = (typeof InterfaceClipProperty)[keyof typeof InterfaceClipProperty];
 
 export const InterfaceClipProperties: readonly InterfaceClipProperty[] = Object.values(InterfaceClipProperty);

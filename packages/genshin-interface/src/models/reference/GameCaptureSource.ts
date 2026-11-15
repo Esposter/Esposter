@@ -5,7 +5,7 @@ import type { GameSourceKind } from "#src/models/reference/GameSourceKind";
 export type GameCaptureSource = GameCaptureSourceBase &
   ({ capture: string; parityReference?: string } | { capture?: never; parityReference: string });
 interface GameCaptureSourceBase {
-  kind: GameSourceKind.Capture;
+  kind: typeof GameSourceKind.Capture;
   name: string;
   role: string;
 }

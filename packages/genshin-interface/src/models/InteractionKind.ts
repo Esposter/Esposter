@@ -2,13 +2,14 @@
 // Ley line blossom claimed where its outcrop stands,
 // Ground dug up over a buried chest, a Character's dialogue begun, a book, notice or sign read, a waypoint unlocked for
 // The map to teleport to, or an object used to open a screen of its own, such as the crafting bench
-export enum InteractionKind {
-  Activate = "Activate",
-  Claim = "Claim",
-  Dig = "Dig",
-  Open = "Open",
-  PickUp = "PickUp",
-  Read = "Read",
-  Talk = "Talk",
-  Use = "Use",
-}
+export const InteractionKind = {
+  Activate: "Activate",
+  Claim: "Claim",
+  Dig: "Dig",
+  Open: "Open",
+  PickUp: "PickUp",
+  Read: "Read",
+  Talk: "Talk",
+  Use: "Use",
+} as const;
+export type InteractionKind = (typeof InteractionKind)[keyof typeof InteractionKind];

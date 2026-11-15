@@ -1,15 +1,16 @@
 // The bag's tabs, each a kind of item the game files apart
-export enum ItemCategory {
-  Artifact = "Artifact",
-  CharacterDevelopmentItem = "CharacterDevelopmentItem",
-  Food = "Food",
-  Furnishing = "Furnishing",
-  Gadget = "Gadget",
-  Material = "Material",
-  PreciousItem = "PreciousItem",
-  Quest = "Quest",
-  Weapon = "Weapon",
-}
+export const ItemCategory = {
+  Artifact: "Artifact",
+  CharacterDevelopmentItem: "CharacterDevelopmentItem",
+  Food: "Food",
+  Furnishing: "Furnishing",
+  Gadget: "Gadget",
+  Material: "Material",
+  PreciousItem: "PreciousItem",
+  Quest: "Quest",
+  Weapon: "Weapon",
+} as const;
+export type ItemCategory = (typeof ItemCategory)[keyof typeof ItemCategory];
 
 // In the order the game shows them across the bag's head. It is written out, since lint sorts an enum's members and the
 // Enum's own order is alphabetical
