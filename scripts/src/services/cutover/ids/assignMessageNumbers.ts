@@ -10,7 +10,8 @@ export const assignMessageNumbers = (
   messages: { createdAt: Date; rowKey: string }[],
   numberByRowKey: ReadonlyMap<string, number>,
 ): MessageNumber[] => {
-  const highestNumber = Math.max(0, ...numberByRowKey.values());
+  // Folded rather than spread, since a large room's numbers would overflow a call's arguments
+  const highestNumber = numberByRowKey.values().reduce((highest, number) => Math.max(highest, number), 0);
   return messages
     .filter(({ rowKey }) => !numberByRowKey.has(rowKey))
     .toSorted(
