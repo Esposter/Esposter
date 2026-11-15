@@ -464,6 +464,26 @@ The dock SHALL list the reader's bookmarked pages ahead of the pages they visit 
 - **WHEN** the reader signs in on another device
 - **THEN** the bookmark is listed there
 
+#### Scenario: A bookmark of a resource in the recycle bin is hidden until it is restored
+
+- **GIVEN** a reader bookmarks a resource page
+- **WHEN** the resource goes to the recycle bin
+- **THEN** the bookmark is not listed
+- **AND** once the resource is restored, the bookmark is listed again
+
+#### Scenario: A bookmark whose room the reader has left is kept as unavailable
+
+- **GIVEN** a reader bookmarks a room's page and then leaves the room
+- **WHEN** the dock lists the reader's places
+- **THEN** the bookmark is listed muted, saying it is no longer available
+- **AND** pressing it removes the bookmark rather than visiting the page
+
+#### Scenario: A purged resource takes its bookmark with it
+
+- **GIVEN** a reader bookmarks a resource page
+- **WHEN** the resource is purged
+- **THEN** the bookmark is gone with it
+
 #### Scenario: A signed-out reader sees recent pages kept on this device
 
 - **GIVEN** a reader is signed out

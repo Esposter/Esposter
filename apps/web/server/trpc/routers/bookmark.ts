@@ -1,6 +1,7 @@
-import type { PageLink } from "#shared/models/app/PageLink";
+import type { BookmarkPageLink } from "#shared/models/app/BookmarkPageLink";
 
 import { getInsertSelectMetadata } from "#server/services/db/getInsertSelectMetadata";
+import { getPublicationWhere } from "#server/services/resource/getPublicationWhere";
 import { router } from "#server/trpc";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
@@ -12,23 +13,72 @@ import {
   DatabaseEntityType,
   getTopic,
   MAX_BOOKMARKS,
+  resourcesInResource,
   TopicKind,
   usersInAuth,
+  usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
-import { and, eq, sql } from "drizzle-orm";
+import { and, asc, eq, isNull, or, sql } from "drizzle-orm";
 
 export const bookmarkRouter = router({
   readBookmarks: getTopicsProcedure(standardAuthedProcedure, ({ ctx }) => [
     getTopic(TopicKind.Bookmark, ctx.user.id),
-  ]).query<PageLink[]>(async ({ ctx }) => {
-    const userBookmarks = await ctx.db.query.bookmarksInApp.findMany({
-      orderBy: { createdAt: "asc" },
-      where: { userId: { eq: ctx.user.id } },
-    });
-    // A bookmark of a resource's page carries its type as the place's mark; any other page has none
-    return userBookmarks.map(({ path, resourceType, title }): PageLink =>
-      resourceType ? { mark: { resourceType, type: PageMarkType.Resource }, path, title } : { path, title },
+  ]).query<BookmarkPageLink[]>(async ({ ctx }) => {
+    const userId = ctx.user.id;
+    // One query over every target: a resource's owner and publication, and a room's membership, each left-joined so
+    // A bookmark with no target answers nulls. A resource in the recycle bin is left out, and comes back with its restore
+    const userBookmarks = await ctx.db
+      .select({
+        isPublished: sql<boolean>`${getPublicationWhere(ctx.db, bookmarksInApp.resourceId, true)}`.mapWith(Boolean),
+        path: bookmarksInApp.path,
+        resourceId: bookmarksInApp.resourceId,
+        resourceOwnerId: resourcesInResource.userId,
+        resourceType: resourcesInResource.type,
+        roomId: bookmarksInApp.roomId,
+        roomMemberId: usersToRoomsInMessage.roomId,
+        title: bookmarksInApp.title,
+      })
+      .from(bookmarksInApp)
+      .leftJoin(resourcesInResource, eq(resourcesInResource.id, bookmarksInApp.resourceId))
+      .leftJoin(
+        usersToRoomsInMessage,
+        and(eq(usersToRoomsInMessage.roomId, bookmarksInApp.roomId), eq(usersToRoomsInMessage.userId, userId)),
+      )
+      .where(
+        and(
+          eq(bookmarksInApp.userId, userId),
+          or(isNull(bookmarksInApp.resourceId), isNull(resourcesInResource.deletedAt)),
+        ),
+      )
+      .orderBy(asc(bookmarksInApp.createdAt));
+    // A resource is reached by its owner or once published, and a room by its members. A target the reader cannot reach
+    // Carries no mark, so the type of a resource they cannot read is not sent to them
+    return userBookmarks.map(
+      ({
+        isPublished,
+        path,
+        resourceId,
+        resourceOwnerId,
+        resourceType,
+        roomId,
+        roomMemberId,
+        title,
+      }): BookmarkPageLink => {
+        if (resourceId !== null) {
+          const isAvailable = resourceOwnerId === userId || isPublished;
+          return isAvailable && resourceType !== null
+            ? { isAvailable, mark: { id: resourceId, resourceType, type: PageMarkType.Resource }, path, title }
+            : { isAvailable, path, title };
+        }
+        if (roomId !== null) {
+          const isAvailable = roomMemberId !== null;
+          return isAvailable
+            ? { isAvailable, mark: { id: roomId, type: PageMarkType.Room }, path, title }
+            : { isAvailable, path, title };
+        }
+        return { isAvailable: true, path, title };
+      },
     );
   }),
   toggleBookmark: getTopicsProcedure(standardAuthedProcedure.input(toggleBookmarkInputSchema), ({ ctx }) => [
@@ -43,6 +93,9 @@ export const bookmarkRouter = router({
       .returning();
     if (deletedBookmarks.length > 0) return false;
 
+    // The page's target is the one id its mark names, held by the column its kind names, and the other stays null
+    const resourceId = input.mark?.type === PageMarkType.Resource ? input.mark.id : null;
+    const roomId = input.mark?.type === PageMarkType.Room ? input.mark.id : null;
     // The cap is a count, so the insert carries it: the row is only selected while the user is under the cap, and
     // The batch reads the page back after the insert, which tells a page another device just bookmarked (kept) from
     // A full list (refused) without a read ahead of the write
@@ -54,7 +107,8 @@ export const bookmarkRouter = router({
             .select({
               ...getInsertSelectMetadata(bookmarksInApp),
               path: sql`${input.path}`.as("path"),
-              resourceType: sql`${input.mark?.resourceType ?? null}`.as("resourceType"),
+              resourceId: sql`${resourceId}`.as("resourceId"),
+              roomId: sql`${roomId}`.as("roomId"),
               title: sql`${input.title}`.as("title"),
               userId: sql`${userId}`.as("userId"),
             })

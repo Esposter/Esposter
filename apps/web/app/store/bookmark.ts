@@ -1,7 +1,10 @@
-import type { PageLink } from "#shared/models/app/PageLink";
+import type { BookmarkPageLink } from "#shared/models/app/BookmarkPageLink";
 import type { ToggleBookmarkInput } from "#shared/models/db/bookmark/ToggleBookmarkInput";
 
 import { useNotificationStore } from "@/store/notification";
+
+// A bookmark made here names the page the reader is on, which they reach, so it is available until a read says otherwise
+const toBookmark = (input: ToggleBookmarkInput): BookmarkPageLink => ({ ...input, isAvailable: true });
 
 // Server-side, so a reader's bookmarks follow them between devices; a reader who is not signed in has none
 export const useBookmarkStore = defineStore("bookmark", () => {
@@ -9,7 +12,7 @@ export const useBookmarkStore = defineStore("bookmark", () => {
   const { executeMutation } = useMutation();
   const notificationStore = useNotificationStore();
   const { createErrorNotification } = notificationStore;
-  const bookmarks = ref<PageLink[]>([]);
+  const bookmarks = ref<BookmarkPageLink[]>([]);
   const bookmarkPaths = computed(() => new Set(bookmarks.value.map(({ path }) => path)));
   const { read: readBookmarks } = useCachedRead(() => $trpc.bookmark.readBookmarks.query(), {
     onError: createErrorNotification,
@@ -26,7 +29,7 @@ export const useBookmarkStore = defineStore("bookmark", () => {
         const previousBookmark = bookmarks.value.find((bookmark) => bookmark.path === path);
         bookmarks.value = previousBookmark
           ? bookmarks.value.filter((bookmark) => bookmark.path !== path)
-          : [...bookmarks.value, input];
+          : [...bookmarks.value, toBookmark(input)];
         return () => {
           bookmarks.value = previousBookmark
             ? [...bookmarks.value.filter((bookmark) => bookmark.path !== path), previousBookmark]
@@ -40,7 +43,7 @@ export const useBookmarkStore = defineStore("bookmark", () => {
         if (isBookmarked === bookmarkPaths.value.has(path)) return;
 
         const remainingBookmarks = bookmarks.value.filter((bookmark) => bookmark.path !== path);
-        bookmarks.value = isBookmarked ? [...remainingBookmarks, input] : remainingBookmarks;
+        bookmarks.value = isBookmarked ? [...remainingBookmarks, toBookmark(input)] : remainingBookmarks;
       },
     });
   };

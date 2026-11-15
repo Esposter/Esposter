@@ -1,13 +1,14 @@
 import { PageMarkType } from "#shared/models/app/PageMarkType";
 import { usePageMarkStore } from "@/store/pageMark";
 import { ResourceType } from "@esposter/db-schema";
+import { ZERO_UUID } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
 describe(usePageMarkStore, () => {
   const path = "";
-  const mark = { resourceType: ResourceType.Blueprint, type: PageMarkType.Resource };
-  const newMark = { resourceType: ResourceType.Dashboard, type: PageMarkType.Resource };
+  const mark = { id: ZERO_UUID, resourceType: ResourceType.Blueprint, type: PageMarkType.Resource };
+  const newMark = { id: ZERO_UUID, resourceType: ResourceType.Dashboard, type: PageMarkType.Resource };
 
   beforeEach(() => {
     setActivePinia(createPinia());

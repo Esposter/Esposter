@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { PageMarkType } from "#shared/models/app/PageMarkType";
 import { checkIsMessageRoute } from "@/services/router/checkIsMessageRoute";
 import { getSynchronizedFunction } from "@esposter/shared";
 
@@ -8,6 +9,7 @@ const route = useRoute();
 const openThread = useOpenThread();
 // Validated by checkIsMessageRoute before the page renders, so the segment is the thread's root message id
 const { id: roomId, messageId: threadRootId } = route.params;
+usePageMark(() => ({ id: roomId, type: PageMarkType.Room }));
 // The same room the message route renders, with the pane opened on the thread the url names — which is what
 // Makes a thread linkable at all: a popped-out thread window, and every link into one, land here.
 // On mounted rather than in setup: the layout is this page's own child, so its mount decides the drawer state

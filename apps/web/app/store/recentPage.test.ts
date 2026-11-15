@@ -4,6 +4,7 @@ import { RECENT_PAGES_STORED_LIMIT } from "@/services/app/constants";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { useRecentPageStore } from "@/store/recentPage";
 import { ResourceType } from "@esposter/db-schema";
+import { ZERO_UUID } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -54,7 +55,7 @@ describe(useRecentPageStore, () => {
   test("keeps the title and mark across visits and writes new ones", () => {
     expect.hasAssertions();
 
-    const mark = { resourceType: ResourceType.Blueprint, type: PageMarkType.Resource };
+    const mark = { id: ZERO_UUID, resourceType: ResourceType.Blueprint, type: PageMarkType.Resource };
     const recentPageStore = useRecentPageStore();
     const { rankedRecentPages } = storeToRefs(recentPageStore);
     const { updateRecentPage, visitPage } = recentPageStore;

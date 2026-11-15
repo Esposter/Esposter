@@ -38,6 +38,6 @@ describe(useBookmarkStore, () => {
     const { toggleBookmark } = bookmarkStore;
     await Promise.all([toggleBookmark({ path, title }), toggleBookmark({ path, title })]);
 
-    expect(bookmarks.value).toStrictEqual([{ path, title }]);
+    expect(bookmarks.value).toStrictEqual([{ isAvailable: true, path, title }]);
   });
 });

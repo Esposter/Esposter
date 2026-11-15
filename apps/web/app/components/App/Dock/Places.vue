@@ -17,7 +17,12 @@ if (session.value) await readBookmarks();
      a narrow screen shows, so the line lies across the column and stands up in the row -->
 <template>
   <div gap-1 items-center>
-    <AppDockPageLink v-for="bookmark of bookmarks" :key="bookmark.path" :page="bookmark" />
+    <AppDockPageLink
+      v-for="bookmark of bookmarks"
+      :key="bookmark.path"
+      :is-unavailable="!bookmark.isAvailable || undefined"
+      :page="bookmark"
+    />
     <!-- The recent pages live in this browser's storage, which the server render cannot read -->
     <ClientOnly>
       <div

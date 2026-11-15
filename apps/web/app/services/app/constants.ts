@@ -23,6 +23,8 @@ export const VOXEL_DIGIT_WIDTH = 3;
 export const VOXEL_DROP_STAGGER_MS = 40;
 // The dock's panels open beside it: right of the rail, extending down, and above a narrow screen's bottom bar
 export const DOCK_POPOVER_POSITION_AREA = "right span-bottom";
+// What a bookmark says when the page it names can no longer be reached, in the dock's tooltip and the palette's row
+export const UNAVAILABLE_PAGE_LABEL = "No longer available";
 // The one key that opens the command palette on every page
 export const COMMAND_PALETTE_SHORTCUT = "ctrl+k";
 // The palette's own headings: the reader's account, the pages outside the products, the pages they keep coming back

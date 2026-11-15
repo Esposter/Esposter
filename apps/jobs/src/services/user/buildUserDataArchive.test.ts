@@ -289,7 +289,7 @@ describe(buildUserDataArchive, () => {
     });
     expect(account.blocks).toStrictEqual([{ blockedId: otherUserId, blockerId: userId, createdAt: block.createdAt }]);
     expect(account.bookmarks).toStrictEqual([
-      { createdAt: bookmark.createdAt, path, resourceType: null, title, userId },
+      { createdAt: bookmark.createdAt, path, resourceId: null, roomId: null, title, userId },
     ]);
     for (const rows of [account.notifications, account.achievements, account.settings, account.statuses]) {
       expect(rows).toHaveLength(1);

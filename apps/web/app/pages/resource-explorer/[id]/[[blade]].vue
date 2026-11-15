@@ -27,7 +27,9 @@ const activeBlade = computed(() => route.params.blade || ResourceBladeType.Overv
 // Scope's "Recently opened" group all read the rows this writes
 useRecordResourceAccess(resource);
 // The dock draws the resource by its type's icon rather than its name's first letter
-usePageMark(() => resource.value && { resourceType: resource.value.type, type: PageMarkType.Resource });
+usePageMark(
+  () => resource.value && { id: resource.value.id, resourceType: resource.value.type, type: PageMarkType.Resource },
+);
 const favoriteStore = useFavoriteStore();
 const { readFavorites } = favoriteStore;
 // The toolbar's star needs to know whether this resource is already starred

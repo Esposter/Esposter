@@ -1,8 +1,14 @@
 <script setup lang="ts">
+import type { PageLink } from "#shared/models/app/PageLink";
 import type { UiCommand } from "@/models/ui/UiCommand";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { COMMAND_PALETTE_SHORTCUT, GENERAL_COMMAND_GROUP, PLACES_COMMAND_GROUP } from "@/services/app/constants";
+import {
+  COMMAND_PALETTE_SHORTCUT,
+  GENERAL_COMMAND_GROUP,
+  PLACES_COMMAND_GROUP,
+  UNAVAILABLE_PAGE_LABEL,
+} from "@/services/app/constants";
 import { getPageIcon } from "@/services/app/getPageIcon";
 import { getPageLabel } from "@/services/app/getPageLabel";
 import { ProductGroups } from "@/services/app/ProductGroups";
@@ -56,22 +62,26 @@ const foundCommands = computed(() => {
   return offeredCommands.value.filter((_command, commandIndex) => foundIndexes.has(commandIndex));
 });
 
+// A place as the palette lists it: a page to go to, or one that cannot be reached, listed muted with nothing to go to
+const getPlaceCommand = ({ mark, path, title }: PageLink, isAvailable: boolean): UiCommand => {
+  const pageIcon = getPageIcon({ mark, path });
+  return {
+    group: PLACES_COMMAND_GROUP,
+    id: `${PLACES_COMMAND_GROUP}${path}`,
+    title: getPageLabel(path, title),
+    ...(isAvailable ? { to: path } : { description: UNAVAILABLE_PAGE_LABEL, isDisabled: true }),
+    ...(pageIcon ?? { image: "" }),
+  };
+};
+
 useCommands(() => [
   { group: SITE_NAME, id: RoutePath.Index, meaning: UiIconMeaning.Home, title: "Home", to: RoutePath.Index },
   ...ProductGroups.flatMap(({ items, title }) =>
     items.map(({ href, icon, title: itemTitle }) => ({ group: title, icon, id: href, title: itemTitle, to: href })),
   ),
   // The reader's places, as the dock keeps them: bookmarks, then the pages they come back to most
-  ...[...bookmarks.value, ...unbookmarkedRecentPages.value].map(({ mark, path, title }): UiCommand => {
-    const icon = getPageIcon({ mark, path });
-    return {
-      group: PLACES_COMMAND_GROUP,
-      id: `${PLACES_COMMAND_GROUP}${path}`,
-      title: getPageLabel(path, title),
-      to: path,
-      ...(icon ? { icon } : { image: "" }),
-    };
-  }),
+  ...bookmarks.value.map((bookmark) => getPlaceCommand(bookmark, bookmark.isAvailable)),
+  ...unbookmarkedRecentPages.value.map((recentPage) => getPlaceCommand(recentPage, true)),
   ...themeModeCommands.value,
   ...uiStyleCommands.value,
   ...accountCommands.value,

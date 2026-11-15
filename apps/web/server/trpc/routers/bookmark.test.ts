@@ -3,26 +3,36 @@ import type { TRPCRouter } from "#server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { createCallerFactory } from "#server/trpc";
-import { createMockContext } from "#server/trpc/context.test";
+import { createMockAuthSession, createMockCaller } from "#server/trpc/context.test";
+import { trpcRouter } from "#server/trpc/routers";
 import { bookmarkRouter } from "#server/trpc/routers/bookmark";
+import { createRoomMember } from "#server/trpc/routers/createRoomMember.test";
+import { resourceRouter } from "#server/trpc/routers/resource";
+import { roomRouter } from "#server/trpc/routers/room";
+import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { PageMarkType } from "#shared/models/app/PageMarkType";
-import { bookmarksInApp, DatabaseEntityType, MAX_BOOKMARKS, ResourceType } from "@esposter/db-schema";
+import { bookmarksInApp, DatabaseEntityType, MAX_BOOKMARKS, ResourceType, roomsInMessage } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("bookmarkRouter", () => {
+  const { getMockContext } = setupResourceSuite(resourceRouter);
   const path = "/path";
   const title = "title";
+  const name = "name";
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["bookmark"]>;
+  let resourceCaller: DecorateRouterRecord<TRPCRouter["resource"]>;
 
-  beforeAll(async () => {
-    mockContext = await createMockContext();
+  beforeAll(() => {
+    mockContext = getMockContext();
     caller = createCallerFactory(bookmarkRouter)(mockContext);
+    resourceCaller = createCallerFactory(trpcRouter)(mockContext).resource;
   });
 
   afterEach(async () => {
     await mockContext.db.delete(bookmarksInApp);
+    await mockContext.db.delete(roomsInMessage);
   });
 
   test("toggles a bookmark on and off", async () => {
@@ -34,18 +44,62 @@ describe("bookmarkRouter", () => {
     const bookmarksAfterSecondToggle = await caller.readBookmarks();
 
     expect(isBookmarkedAfterFirstToggle).toBe(true);
-    expect(bookmarksAfterFirstToggle).toStrictEqual([{ path, title }]);
+    expect(bookmarksAfterFirstToggle).toStrictEqual([{ isAvailable: true, path, title }]);
     expect(isBookmarkedAfterSecondToggle).toBe(false);
     expect(bookmarksAfterSecondToggle).toStrictEqual([]);
   });
 
-  test("reads a bookmark back with the mark it was saved with", async () => {
+  test("stores a resource page's target and reads it back with its mark", async () => {
     expect.hasAssertions();
 
-    const mark = { resourceType: ResourceType.Blueprint, type: PageMarkType.Resource };
+    const resource = await resourceCaller.createResource({ name, type: ResourceType.Blueprint });
+    const mark = { id: resource.id, resourceType: ResourceType.Blueprint, type: PageMarkType.Resource };
     await caller.toggleBookmark({ mark, path, title });
 
-    await expect(caller.readBookmarks()).resolves.toStrictEqual([{ mark, path, title }]);
+    await expect(caller.readBookmarks()).resolves.toStrictEqual([{ isAvailable: true, mark, path, title }]);
+  });
+
+  test("hides a bookmarked resource while it is in the recycle bin, and reads it back once restored", async () => {
+    expect.hasAssertions();
+
+    const resource = await resourceCaller.createResource({ name, type: ResourceType.Blueprint });
+    const mark = { id: resource.id, resourceType: ResourceType.Blueprint, type: PageMarkType.Resource };
+    await caller.toggleBookmark({ mark, path, title });
+    await resourceCaller.deleteResources({ ids: [resource.id] });
+    const bookmarksWhileBinned = await caller.readBookmarks();
+    await resourceCaller.restoreResources({ ids: [resource.id] });
+
+    expect(bookmarksWhileBinned).toStrictEqual([]);
+    await expect(caller.readBookmarks()).resolves.toStrictEqual([{ isAvailable: true, mark, path, title }]);
+  });
+
+  test("takes a purged resource's bookmark with it", async () => {
+    expect.hasAssertions();
+
+    const resource = await resourceCaller.createResource({ name, type: ResourceType.Blueprint });
+    const mark = { id: resource.id, resourceType: ResourceType.Blueprint, type: PageMarkType.Resource };
+    await caller.toggleBookmark({ mark, path, title });
+    await resourceCaller.deleteResources({ ids: [resource.id] });
+    await resourceCaller.purgeResource({ id: resource.id });
+
+    await expect(caller.readBookmarks()).resolves.toStrictEqual([]);
+  });
+
+  test("reads a room bookmark back unavailable once the reader has left the room", async () => {
+    expect.hasAssertions();
+
+    const room = await createCallerFactory(roomRouter)(mockContext).createRoom({ name });
+    const memberAuthSession = await createMockAuthSession(mockContext.db);
+    await createRoomMember(mockContext, room.id, memberAuthSession.user);
+    const memberCaller = await createMockCaller(bookmarkRouter, memberAuthSession);
+    const mark = { id: room.id, type: PageMarkType.Room } as const;
+    await memberCaller.toggleBookmark({ mark, path, title });
+    const bookmarksWhileMember = await memberCaller.readBookmarks();
+    const memberRoomCaller = await createMockCaller(roomRouter, memberAuthSession);
+    await memberRoomCaller.leaveRoom(room.id);
+
+    expect(bookmarksWhileMember).toStrictEqual([{ isAvailable: true, mark, path, title }]);
+    await expect(memberCaller.readBookmarks()).resolves.toStrictEqual([{ isAvailable: false, path, title }]);
   });
 
   test("fails to bookmark past the limit", async () => {
