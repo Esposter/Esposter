@@ -1,4 +1,4 @@
-import type { Serializable } from "@esposter/shared";
+import type { Serializable } from "#shared/models/shared/Serializable";
 
 import { getJSONClass, getJSONClasses, JSONClassMap } from "#shared/services/superjson/JSONClassMap";
 import { jsonDateParse } from "@esposter/shared";

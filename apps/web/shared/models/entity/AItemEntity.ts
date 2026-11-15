@@ -1,6 +1,7 @@
 import type { ToData } from "@esposter/shared";
 
-import { getPropertyNames, Serializable } from "@esposter/shared";
+import { Serializable } from "#shared/models/shared/Serializable";
+import { getPropertyNames } from "@esposter/shared";
 import { v7 } from "uuid";
 import { z } from "zod";
 

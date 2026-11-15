@@ -86,9 +86,12 @@ describe("unoConfig", () => {
               "background-color": "transparent",
               "border": "none",
               "color": "inherit",
+              "max-width": "calc(100vw - var(--ui-step) * 4)",
               "min-width": "anchor-size(width)",
               "overflow": "visible",
+              "overflow-wrap": "anywhere",
               "padding": "calc(var(--ui-step) * 2)",
+              "width": "max-content",
             },
           ],
           [

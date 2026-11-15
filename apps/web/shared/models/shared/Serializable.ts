@@ -1,4 +1,4 @@
-import { toRawDeep } from "#src/util/reactivity/toRawDeep";
+import { toRawDeep } from "@esposter/shared";
 
 export abstract class Serializable {
   toJSON(): this {

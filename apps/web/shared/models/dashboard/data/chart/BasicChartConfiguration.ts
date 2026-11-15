@@ -1,7 +1,7 @@
 import type { ToData } from "@esposter/shared";
 
 import { ITEM_NAME_MAX_LENGTH } from "#shared/services/resource/item/constants";
-import { Serializable } from "@esposter/shared";
+import { Serializable } from "#shared/models/shared/Serializable";
 import { z } from "zod";
 
 export class BasicChartConfiguration extends Serializable {

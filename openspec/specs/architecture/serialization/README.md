@@ -31,7 +31,7 @@ flowchart TB
 
 ## Why `jsonDateParse` is needed on the transport paths
 
-`StandardMessageEntity` (and all classes in `JSONClassMap`) extend `Serializable`, which defines:
+Every class in `JSONClassMap` extends `Serializable`, which defines:
 
 ```ts
 toJSON(): this {
