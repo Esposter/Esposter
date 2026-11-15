@@ -91,15 +91,20 @@ export const scheduledMessageRouter = router({
       (message) => message,
       async (error) => {
         if (error instanceof TRPCError && error.cause instanceof WordFilteredError) throw error;
-        await roomObject.createScheduledMessage(
-          {
-            id: scheduledMessage.id,
-            message: scheduledMessage.message,
-            replyToId: scheduledMessage.replyToId ?? undefined,
-            runAt: scheduledMessage.runAt,
-          },
-          actor,
-        );
+        // A put-back that fails too is logged, and the caller still hears why the send failed rather than why the put-back did
+        await getResultAsync(() =>
+          roomObject.createScheduledMessage(
+            {
+              id: scheduledMessage.id,
+              message: scheduledMessage.message,
+              replyToId: scheduledMessage.replyToId ?? undefined,
+              runAt: scheduledMessage.runAt,
+            },
+            actor,
+          ),
+        ).match(noop, (putBackError) => {
+          console.error("Scheduled message failed to be put back", { error: putBackError, id: scheduledMessage.id });
+        });
         throw error;
       },
     );

@@ -25,7 +25,7 @@ import { createInviteInputSchema } from "#shared/models/db/room/CreateInviteInpu
 import { readInviteInputSchema } from "#shared/models/db/room/ReadInviteInput";
 import { readRoomInvitesInputSchema } from "#shared/models/db/room/ReadRoomInvitesInput";
 import { revokeInviteInputSchema } from "#shared/models/db/room/RevokeInviteInput";
-import { ID_DESCENDING_SORT_ITEM } from "#shared/services/pagination/constants";
+import { CREATED_AT_DESCENDING_SORT_ITEM, ID_DESCENDING_SORT_ITEM } from "#shared/services/pagination/constants";
 import { checkIsInviteUsable } from "#shared/services/room/invite/checkIsInviteUsable";
 import { checkHasPermission } from "@esposter/db";
 import {
@@ -150,7 +150,8 @@ export const inviteRouter = router({
     getPermissionsProcedure(RoomPermission.ManageRoom, readRoomInvitesInputSchema, "roomId"),
     ({ input }) => [getTopic(TopicKind.Room, input.roomId)],
   ).query<CursorPaginationData<InviteInMessageWithCreator>>(async ({ ctx, input: { cursor, limit, roomId } }) => {
-    const sortBy: SortItem<keyof InviteInMessage>[] = [ID_DESCENDING_SORT_ITEM];
+    // An invite's id is a random secret, not a time-ordered one, so creation time leads and the id only breaks its ties
+    const sortBy: SortItem<keyof InviteInMessage>[] = [CREATED_AT_DESCENDING_SORT_ITEM, ID_DESCENDING_SORT_ITEM];
     const wheres: (SQL | undefined)[] = [eq(invitesInMessage.roomId, roomId)];
     if (cursor) wheres.push(getCursorWhere(invitesInMessage, cursor, sortBy));
 
