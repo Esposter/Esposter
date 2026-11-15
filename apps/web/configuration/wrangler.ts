@@ -1,11 +1,14 @@
 import { CloudflareAssetType } from "../../../packages/db-schema/src/models/cloudflare/CloudflareAssetType.ts";
 import { CloudflareDatabaseRole } from "../../../packages/db-schema/src/models/cloudflare/CloudflareDatabaseRole.ts";
-import { CloudflareEnvironment } from "../../../packages/db-schema/src/models/cloudflare/CloudflareEnvironment.ts";
+import {
+  CloudflareEnvironment,
+  CloudflareEnvironments,
+} from "../../../packages/db-schema/src/models/cloudflare/CloudflareEnvironment.ts";
 import { CloudflareWorkerPurpose } from "../../../packages/db-schema/src/models/cloudflare/CloudflareWorkerPurpose.ts";
-import { RateLimiterBinding } from "../../../packages/db-schema/src/models/cloudflare/RateLimiterBinding.ts";
-import { QueueJob } from "../../../packages/db-schema/src/models/queue/QueueJob.ts";
+import { RateLimiterBindings } from "../../../packages/db-schema/src/models/cloudflare/RateLimiterBinding.ts";
+import { QueueJobs } from "../../../packages/db-schema/src/models/queue/QueueJob.ts";
 import { QueueJobBindingNameMap } from "../../../packages/db-schema/src/models/queue/QueueJobBindingName.ts";
-import { StorageBucket } from "../../../packages/db-schema/src/models/storage/StorageBucket.ts";
+import { StorageBuckets } from "../../../packages/db-schema/src/models/storage/StorageBucket.ts";
 import { CloudflareCoreDatabaseIdMap } from "../../../packages/db-schema/src/services/cloudflare/CloudflareCoreDatabaseIdMap.ts";
 import {
   CLOUDFLARE_ACCOUNT_ID,
@@ -21,12 +24,10 @@ import { Environment } from "../shared/models/environment/Environment.ts";
 // A typo that would deploy one environment's bindings under another's name, so it fails the build
 export const getBuildCloudflareEnvironment = (): CloudflareEnvironment => {
   const value = process.env.CLOUDFLARE_ENV ?? CloudflareEnvironment.Production;
-  const environment = Object.values(CloudflareEnvironment).find(
-    (cloudflareEnvironment) => cloudflareEnvironment === value,
-  );
+  const environment = CloudflareEnvironments.find((cloudflareEnvironment) => cloudflareEnvironment === value);
   if (!environment)
     // oxlint-disable-next-line error-handling/no-bare-error -- the Nuxt configuration loads before `@esposter/shared` is built
-    throw new Error(`CLOUDFLARE_ENV must be one of ${Object.values(CloudflareEnvironment).join(", ")}, got ${value}`);
+    throw new Error(`CLOUDFLARE_ENV must be one of ${CloudflareEnvironments.join(", ")}, got ${value}`);
   return environment;
 };
 
@@ -65,17 +66,17 @@ export const getEnvironmentWrangler = (environment: CloudflareEnvironment) => {
     },
     name: getCloudflareResourceName(environment, CloudflareAssetType.Worker, CloudflareWorkerPurpose.Web),
     queues: {
-      producers: Object.values(QueueJob).map((job) => ({
+      producers: QueueJobs.map((job) => ({
         binding: QueueJobBindingNameMap[job],
         queue: getCloudflareResourceName(environment, CloudflareAssetType.Queue, job),
       })),
     },
-    r2_buckets: Object.values(StorageBucket).map((bucket) => ({
+    r2_buckets: StorageBuckets.map((bucket) => ({
       binding: getStorageBucketBindingName(bucket),
       bucket_name: getCloudflareResourceName(environment, CloudflareAssetType.R2Bucket, bucket),
     })),
     // One binding per limiter, each in its own namespace, so a limiter's counts never reach another's
-    ratelimits: Object.values(RateLimiterBinding).map((binding) => ({
+    ratelimits: RateLimiterBindings.map((binding) => ({
       name: binding,
       namespace_id: RateLimiterNamespaceIdMap[environment][binding],
       simple: { limit: RateLimiterPointsMap[binding], period: RATE_LIMITER_DURATION_SECONDS } as const,

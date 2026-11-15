@@ -1,5 +1,5 @@
+import { useCallObject } from "#server/composables/realtime/useCallObject";
 import { createParticipant } from "#server/services/message/call/createParticipant";
-import { getCallObject } from "#server/services/message/call/getCallObject";
 import { requireCallDoorkeeper } from "#server/services/message/call/requireCallDoorkeeper";
 import { requireCallSession } from "#server/services/message/call/requireCallSession";
 import { router } from "#server/trpc";
@@ -14,14 +14,14 @@ export const knockerRouter = router({
     .meta({ staticReason: "The call object pushes the admission to its sockets as a typed event" })
     .mutation<void>(async ({ ctx, input: { callSessionId, sessionId: knockerSessionId } }) => {
       await requireCallDoorkeeper(ctx, callSessionId, "admit");
-      await getCallObject(callSessionId).admitKnocker({ callSessionId, knockerSessionId });
+      await useCallObject(callSessionId).admitKnocker({ callSessionId, knockerSessionId });
     }),
   dismissKnocker: standardAuthedProcedure
     .input(knockerInputSchema)
     .meta({ staticReason: "The call object pushes the dismissal to its sockets as a typed event" })
     .mutation<void>(async ({ ctx, input: { callSessionId, sessionId: knockerSessionId } }) => {
       await requireCallDoorkeeper(ctx, callSessionId, "dismiss");
-      await getCallObject(callSessionId).dismissKnocker({ callSessionId, knockerSessionId });
+      await useCallObject(callSessionId).dismissKnocker({ callSessionId, knockerSessionId });
     }),
   knockCall: standardAuthedProcedure
     .input(callSessionInputSchema)
@@ -31,7 +31,7 @@ export const knockerRouter = router({
       if (callSession.roomId) throw getForbiddenError("Room calls cannot be knocked — join via joinCallByRoomId");
 
       const { session, user } = ctx;
-      await getCallObject(id).knockCall({
+      await useCallObject(id).knockCall({
         callSessionId: id,
         doorkeeperUserId: callSession.userId,
         knocker: createParticipant(session, user),

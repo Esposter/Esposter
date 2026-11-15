@@ -1,8 +1,8 @@
 import type { RequestEvent } from "nuxt/server";
 
+import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
 import userSocket from "#server/routes/ws/user.get";
 import { readSession } from "#server/services/auth/readSession";
-import { env } from "@esposter/db-mock";
 import { describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#server/services/auth/readSession"), () => ({ readSession: vi.fn<typeof readSession>() }));
@@ -18,20 +18,14 @@ describe("ws/user", () => {
   test("forwards the upgrade to the person's own object", async () => {
     expect.hasAssertions();
 
-    const namespace = createNamespace();
-    env.USER = namespace;
     vi.mocked(readSession).mockResolvedValueOnce(createSessionPayload());
+    userObjectCalls.length = 0;
     await userSocket(createEvent());
 
-    expect(namespace.idFromName).toHaveBeenCalledExactlyOnceWith("22222222-2222-7222-8222-222222222222");
+    expect(userObjectCalls.map(({ method, userId }) => ({ method, userId }))).toStrictEqual([
+      { method: "fetch", userId: "22222222-2222-7222-8222-222222222222" },
+    ]);
   });
-});
-
-const createNamespace = () => ({
-  get: vi.fn<(id: string) => { fetch: (request: Request) => Promise<Response> }>(() => ({
-    fetch: () => Promise.resolve(new Response(null)),
-  })),
-  idFromName: vi.fn<(name: string) => string>((name) => name),
 });
 
 const createSessionPayload = () =>

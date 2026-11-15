@@ -3,11 +3,6 @@
     "editor.codeActionsOnSave": { "source.fixAll.oxc": "explicit", "source.organizeImports": "explicit" }
   },
   "[xml]": { "editor.formatOnSave": false },
-  "azureFunctions.deploySubpath": "apps/jobs",
-  "azureFunctions.postDeployTask": "pnpm i (functions)",
-  "azureFunctions.preDeployTask": "pnpm prune (functions)",
-  "azureFunctions.projectLanguage": "TypeScript",
-  "azureFunctions.projectRuntime": "~4",
   "debug.internalConsoleOptions": "neverOpen",
   "editor.defaultFormatter": "oxc.oxc-vscode",
   "editor.formatOnSave": true,

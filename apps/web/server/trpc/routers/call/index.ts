@@ -1,12 +1,12 @@
 import type { JoinCallResult } from "#shared/models/room/call/JoinCallResult";
 import type { CallParticipant, CallSessionInMessage } from "@esposter/db-schema";
 
+import { useCallObject } from "#server/composables/realtime/useCallObject";
 import { useUserObject } from "#server/composables/realtime/useUserObject";
 import { checkIsCallConnectionAdmitted } from "#server/services/message/call/checkIsCallConnectionAdmitted";
 import { createCallSessionId } from "#server/services/message/call/createCallSessionId";
 import { createParticipant } from "#server/services/message/call/createParticipant";
 import { createStandaloneCallSessionId } from "#server/services/message/call/createStandaloneCallSessionId";
-import { getCallObject } from "#server/services/message/call/getCallObject";
 import { readCallSessionId } from "#server/services/message/call/readCallSessionId";
 import { requireCallSession } from "#server/services/message/call/requireCallSession";
 import { requireJoinedCallSession } from "#server/services/message/call/requireJoinedCallSession";
@@ -49,7 +49,7 @@ export const baseCallRouter = router({
 
       const { session, user } = ctx;
       const isCreator = callSession.userId === user.id;
-      const join = await getCallObject(id).joinCall({
+      const join = await useCallObject(id).joinCall({
         callSessionId: id,
         isAdmissionRequired: !isCreator,
         participant: createParticipant(session, user),
@@ -77,7 +77,7 @@ export const baseCallRouter = router({
       if (!(await checkIsCallConnectionAdmitted(ctx.db, callSessionId, user.id)))
         throw getForbiddenError("You are timed out of this room");
 
-      const join = await getCallObject(callSessionId).joinCall({
+      const join = await useCallObject(callSessionId).joinCall({
         callSessionId,
         isAdmissionRequired: false,
         participant: createParticipant(session, user),
@@ -103,7 +103,7 @@ export const baseCallRouter = router({
     .meta({ staticReason: "The call object pushes the departure to its sockets as a typed event" })
     .mutation<void>(async ({ ctx, input: { callSessionId } }) => {
       const { session } = ctx;
-      const leave = await getCallObject(callSessionId).leaveCall({ callSessionId, sessionId: session.id });
+      const leave = await useCallObject(callSessionId).leaveCall({ callSessionId, sessionId: session.id });
       if (!leave) throw getNotFoundError(DatabaseEntityType.CallSession, callSessionId);
 
       await writeCallSummary(ctx.db, callSessionId, leave);
@@ -113,7 +113,7 @@ export const baseCallRouter = router({
     .meta({ staticReason: "The call object pushes participant changes to its sockets as typed events" })
     .query<Map<string, CallParticipant>>(async ({ ctx, input: { callSessionId } }) => {
       await requireJoinedCallSession(ctx, callSessionId);
-      return getCallObject(callSessionId).readParticipantMap();
+      return useCallObject(callSessionId).readParticipantMap();
     }),
   readCallSession: standardAuthedProcedure
     .input(callSessionInputSchema)
@@ -133,7 +133,7 @@ export const baseCallRouter = router({
     .meta({ staticReason: "The call object pushes the camera change to its sockets as a typed event" })
     .mutation<void>(async ({ ctx, input: { callSessionId, isCameraEnabled } }) => {
       const sessionId = ctx.session.id;
-      const isUpdated = await getCallObject(callSessionId).setCameraEnabled({
+      const isUpdated = await useCallObject(callSessionId).setCameraEnabled({
         callSessionId,
         isCameraEnabled,
         sessionId,
@@ -159,7 +159,7 @@ export const baseCallRouter = router({
         if (!hasMuteMembersPermission) throw getForbiddenError("Missing permission to lower another hand");
       }
 
-      const isUpdated = await getCallObject(callSessionId).setHandRaised({
+      const isUpdated = await useCallObject(callSessionId).setHandRaised({
         callSessionId,
         isHandRaised,
         sessionId: targetSessionId,
@@ -171,7 +171,7 @@ export const baseCallRouter = router({
     .meta({ staticReason: "The call object pushes the mute change to its sockets as a typed event" })
     .mutation<void>(async ({ ctx, input: { callSessionId, isMuted } }) => {
       const sessionId = ctx.session.id;
-      const isUpdated = await getCallObject(callSessionId).setMuted({ callSessionId, isMuted, sessionId });
+      const isUpdated = await useCallObject(callSessionId).setMuted({ callSessionId, isMuted, sessionId });
       if (!isUpdated) throw getForbiddenError("Must join call first");
     }),
 });

@@ -1,10 +1,10 @@
 import type { db } from "#server/db";
 import type { RequestEvent } from "nuxt/server";
 
+import { callObjectCalls } from "#server/composables/realtime/useCallObject.test";
 import callSocket from "#server/routes/ws/call/[callSessionId].get";
 import { readSession } from "#server/services/auth/readSession";
 import { checkIsCallConnectionAdmitted } from "#server/services/message/call/checkIsCallConnectionAdmitted";
-import { env } from "@esposter/db-mock";
 import { describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#server/db"), () => ({ db: {} }) as unknown as Partial<{ db: typeof db }>);
@@ -32,21 +32,15 @@ describe("ws/call/[callSessionId]", () => {
   test("forwards an admitted connection to the call's object", async () => {
     expect.hasAssertions();
 
-    const namespace = createNamespace();
-    env.CALL = namespace;
     vi.mocked(readSession).mockResolvedValueOnce(createSessionPayload());
     vi.mocked(checkIsCallConnectionAdmitted).mockResolvedValueOnce(true);
+    callObjectCalls.length = 0;
     await callSocket(createEvent());
 
-    expect(namespace.idFromName).toHaveBeenCalledExactlyOnceWith("abcdefghijkl");
+    expect(callObjectCalls.map(({ callSessionId, method }) => ({ callSessionId, method }))).toStrictEqual([
+      { callSessionId: "abcdefghijkl", method: "fetch" },
+    ]);
   });
-});
-
-const createNamespace = () => ({
-  get: vi.fn<(id: string) => { fetch: (request: Request) => Promise<Response> }>(() => ({
-    fetch: () => Promise.resolve(new Response(null)),
-  })),
-  idFromName: vi.fn<(name: string) => string>((name) => name),
 });
 
 const createSessionPayload = () =>

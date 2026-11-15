@@ -5,8 +5,8 @@ import { getUserObject } from "#src/services/user/getUserObject";
 import { StorageTierQuotaMap } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 
-// The counter moves in the functions
-// Worker and is read by the meter in the app, so each owner's person hears the new figure on their own object.
+// The counter moves through the storage ledger: its releases run here in the jobs Worker, and its reservations run in
+// The web app. The meter in the app reads it, so each owner's person hears the new figure on their own object.
 // The usage is read here and the quota is derived from the tier.
 // So the figure the meter shows is the one the server gates on.
 // Best-effort: the counter is durable by the time this runs.

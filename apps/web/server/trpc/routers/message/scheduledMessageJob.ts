@@ -1,10 +1,10 @@
 import type { ScheduledMessageJobWithRoom } from "#shared/models/db/message/scheduledMessageJob/ScheduledMessageJobWithRoom";
 import type { BasePaginationData } from "#shared/models/pagination/BasePaginationData";
-import type { ScheduledReminder, Topic } from "@esposter/db-schema";
-import type { User } from "better-auth";
+import type { ScheduledReminder } from "@esposter/db-schema";
 
 import { useRoomObject } from "#server/composables/realtime/useRoomObject";
 import { useUserObject } from "#server/composables/realtime/useUserObject";
+import { getScheduledMessageTopics } from "#server/services/message/getScheduledMessageTopics";
 import { readMyScheduledMessageJobs } from "#server/services/message/scheduledMessageJob/readMyScheduledMessageJobs";
 import { getRoomActor } from "#server/services/realtime/getRoomActor";
 import { router } from "#server/trpc";
@@ -15,14 +15,8 @@ import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedPr
 import { readMyScheduledMessagesInputSchema } from "#shared/models/db/message/scheduledMessage/ReadMyScheduledMessagesInput";
 import { scheduledMessageIdentityInputSchema } from "#shared/models/db/message/scheduledMessage/ScheduledMessageIdentityInput";
 import { scheduleReminderInputSchema } from "#shared/models/db/message/scheduledMessageJob/ScheduleReminderInput";
-import { DatabaseEntityType, getTopic, TopicKind } from "@esposter/db-schema";
+import { DatabaseEntityType } from "@esposter/db-schema";
 import { v7 } from "uuid";
-
-// The person's scheduled items, reminders and scheduled messages alike, which only their own writes change. No object
-// Pushes them as events, so readers learn of a change through this topic
-const getScheduledMessageTopics = ({ ctx }: { ctx: { user: User } }): Topic[] => [
-  getTopic(TopicKind.ScheduledMessage, ctx.user.id),
-];
 
 // The Scheduled tab's rows are held by their owners: a reminder in the person's object, a scheduled message in its room's.
 // Both are listed and cancelled here, so the tab reads and writes each kind through this router alone

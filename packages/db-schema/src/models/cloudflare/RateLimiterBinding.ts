@@ -11,3 +11,5 @@ export const RateLimiterBinding = {
   Webhook: "RATE_LIMITER_WEBHOOK",
 } as const;
 export type RateLimiterBinding = (typeof RateLimiterBinding)[keyof typeof RateLimiterBinding];
+
+export const RateLimiterBindings = Object.values(RateLimiterBinding);

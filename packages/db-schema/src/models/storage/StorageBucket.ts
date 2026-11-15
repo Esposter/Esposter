@@ -16,3 +16,5 @@ export const StorageBucket = {
 export type StorageBucket = (typeof StorageBucket)[keyof typeof StorageBucket];
 
 export const storageBucketSchema = z.enum(StorageBucket) satisfies z.ZodType<StorageBucket>;
+
+export const StorageBuckets = Object.values(StorageBucket);

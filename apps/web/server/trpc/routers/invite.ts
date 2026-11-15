@@ -74,11 +74,12 @@ export const inviteRouter = router({
     );
     // The pause is checked by the statements themselves, so one committed after the check above refuses them too:
     // The old link stays and no new one is minted
+    const roomIsOpenWhere = and(eq(roomsInMessage.id, roomId), eq(roomsInMessage.isInvitePaused, false));
     const roomIsOpen = exists(
       ctx.db
         .select({ _: sql`1` })
         .from(roomsInMessage)
-        .where(and(eq(roomsInMessage.id, roomId), eq(roomsInMessage.isInvitePaused, false))),
+        .where(roomIsOpenWhere),
     );
 
     for (let attempt = 0; attempt < MAX_INVITE_ID_RETRIES; attempt++) {
@@ -105,7 +106,7 @@ export const inviteRouter = router({
                   userId: sql`${userId}`.as("userId"),
                 })
                 .from(roomsInMessage)
-                .where(and(eq(roomsInMessage.id, roomId), eq(roomsInMessage.isInvitePaused, false))),
+                .where(roomIsOpenWhere),
             )
             .returning(),
         ]),

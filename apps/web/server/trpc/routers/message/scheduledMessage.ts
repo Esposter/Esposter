@@ -1,8 +1,8 @@
-import type { RoomMessage, ScheduledRoomMessage, Topic } from "@esposter/db-schema";
-import type { User } from "better-auth";
+import type { RoomMessage, ScheduledRoomMessage } from "@esposter/db-schema";
 
 import { useRoomObject } from "#server/composables/realtime/useRoomObject";
 import { createUserMessage } from "#server/services/message/createUserMessage";
+import { getScheduledMessageTopics } from "#server/services/message/getScheduledMessageTopics";
 import { assertCanCreateMessage } from "#server/services/message/moderation/assertCanCreateMessage";
 import { getRoomActor } from "#server/services/realtime/getRoomActor";
 import { router } from "#server/trpc";
@@ -15,16 +15,10 @@ import { deleteScheduledMessageInputSchema } from "#shared/models/db/message/sch
 import { readScheduledMessagesInputSchema } from "#shared/models/db/message/scheduledMessage/ReadScheduledMessagesInput";
 import { sendScheduledMessageNowInputSchema } from "#shared/models/db/message/scheduledMessage/SendScheduledMessageNowInput";
 import { updateScheduledMessageInputSchema } from "#shared/models/db/message/scheduledMessage/UpdateScheduledMessageInput";
-import { DatabaseEntityType, getTopic, MessageType, TopicKind } from "@esposter/db-schema";
+import { DatabaseEntityType, MessageType } from "@esposter/db-schema";
 import { getResultAsync, noop, WordFilteredError } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { v7 } from "uuid";
-
-// The sender's own scheduled messages, which only their own writes change. No object pushes them as events, so readers
-// Learn of a change through this topic
-const getScheduledMessageTopics = ({ ctx }: { ctx: { user: User } }): Topic[] => [
-  getTopic(TopicKind.ScheduledMessage, ctx.user.id),
-];
 
 // A scheduled message is held by its room's object, which sends it when it comes due and applies the sender's rules
 // Then. The id is the object's key for it, minted here

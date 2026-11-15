@@ -1,3 +1,4 @@
+import { useRoomObject } from "#server/composables/realtime/useRoomObject";
 import { db } from "#server/db";
 import { readSession } from "#server/services/auth/readSession";
 import { forwardSocket } from "#server/services/realtime/forwardSocket";
@@ -6,7 +7,6 @@ import { assertIsMember } from "#server/services/room/assertIsMember";
 import { deviceIdSchema } from "#shared/models/realtime/DeviceId";
 import { selectRoomInMessageSchema } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
-import { env } from "cloudflare:workers";
 import { createError, defineEventHandler, getQuery } from "nuxt/server";
 
 // A room's socket, for a member of the room. The check that fails is refused rather than served, and carries its cause:
@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
   await getResultAsync(() => assertIsMember({ db, user: authSession.user }, roomId)).match(noop, (error) => {
     throw createError({ cause: error, message: "Forbidden", statusCode: 403 });
   });
-  return forwardSocket(env.ROOM.get(env.ROOM.idFromName(roomId)), event.req, {
+  return forwardSocket(useRoomObject(roomId), event.req, {
     deviceId,
     sessionId: authSession.session.id,
     userId: authSession.user.id,

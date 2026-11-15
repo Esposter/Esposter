@@ -5,8 +5,8 @@ import type { TRPCRouter } from "#server/trpc/routers";
 import type { RoomObjectRpc } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { useCallObject } from "#server/composables/realtime/useCallObject";
 import { createCallSessionId } from "#server/services/message/call/createCallSessionId";
-import { getCallObject } from "#server/services/message/call/getCallObject";
 import { createCallerFactory } from "#server/trpc";
 import { createMockAuthSession, createMockCaller, createMockContext, getMockSession } from "#server/trpc/context.test";
 import { inviteRouter } from "#server/trpc/routers/invite";
@@ -27,9 +27,7 @@ import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("#server/services/message/call/getCallObject"), () => ({
-  getCallObject: vi.fn<typeof getCallObject>(),
-}));
+vi.mock(import("#server/composables/realtime/useCallObject"), () => ({ useCallObject: vi.fn<typeof useCallObject>() }));
 // The room's object writes the system lines and purges a soft-banned member's messages, so it is faked: each method
 // Answers what a test sets, and what the router sent it is what the tests read
 const { roomObject } = vi.hoisted(() => ({
@@ -427,7 +425,7 @@ describe("moderationRouter", () => {
     const evictUser = vi.fn<(input: { callSessionId: string; userId: string }) => Promise<unknown[]>>(() =>
       Promise.resolve([]),
     );
-    vi.mocked(getCallObject).mockReturnValueOnce({ evictUser } as unknown as ReturnType<typeof getCallObject>);
+    vi.mocked(useCallObject).mockReturnValueOnce({ evictUser } as unknown as ReturnType<typeof useCallObject>);
     await moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type });
 
     expect(evictUser).toHaveBeenCalledExactlyOnceWith({ callSessionId, userId: member.id });

@@ -1,16 +1,14 @@
 import type { Context } from "#server/trpc/context";
 
+import { useCallObject } from "#server/composables/realtime/useCallObject";
 import { createParticipant } from "#server/services/message/call/createParticipant";
-import { getCallObject } from "#server/services/message/call/getCallObject";
 import { createMockAuthSession, createMockCaller, createMockContext } from "#server/trpc/context.test";
 import { callRouter } from "#server/trpc/routers/call";
 import { callSessionsInMessage } from "@esposter/db-schema";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 // The call object answers for the call's state, so the router's guards are tested against what it reports
-vi.mock(import("#server/services/message/call/getCallObject"), () => ({
-  getCallObject: vi.fn<typeof getCallObject>(),
-}));
+vi.mock(import("#server/composables/realtime/useCallObject"), () => ({ useCallObject: vi.fn<typeof useCallObject>() }));
 
 describe("knockerRouter", () => {
   let mockContext: Context;
@@ -33,7 +31,7 @@ describe("knockerRouter", () => {
     const knockerAuthSession = await createMockAuthSession(mockContext.db);
     const knockerCaller = await createMockCaller(callRouter, knockerAuthSession);
     const knockCall = vi.fn<(input: unknown) => Promise<void>>(() => Promise.resolve());
-    vi.mocked(getCallObject).mockReturnValueOnce({ knockCall } as unknown as ReturnType<typeof getCallObject>);
+    vi.mocked(useCallObject).mockReturnValueOnce({ knockCall } as unknown as ReturnType<typeof useCallObject>);
 
     await knockerCaller.knocker.knockCall({ id: callSessionId });
 
@@ -55,7 +53,7 @@ describe("knockerRouter", () => {
       isJoined: false,
       isKnocking: false,
     }));
-    vi.mocked(getCallObject).mockReturnValueOnce({ readAccess } as unknown as ReturnType<typeof getCallObject>);
+    vi.mocked(useCallObject).mockReturnValueOnce({ readAccess } as unknown as ReturnType<typeof useCallObject>);
 
     await expect(
       outsiderCaller.knocker.admitKnocker({ callSessionId, sessionId: "knocker-session" }),
@@ -73,8 +71,8 @@ describe("knockerRouter", () => {
       isKnocking: false,
     }));
     const admitKnocker = vi.fn<(input: unknown) => Promise<boolean>>(() => Promise.resolve(true));
-    vi.mocked(getCallObject).mockReturnValue({ admitKnocker, readAccess } as unknown as ReturnType<
-      typeof getCallObject
+    vi.mocked(useCallObject).mockReturnValue({ admitKnocker, readAccess } as unknown as ReturnType<
+      typeof useCallObject
     >);
 
     await creatorCaller.knocker.admitKnocker({ callSessionId, sessionId: "knocker-session" });
@@ -93,7 +91,7 @@ describe("knockerRouter", () => {
       isJoined: true,
       isKnocking: false,
     }));
-    vi.mocked(getCallObject).mockReturnValueOnce({ readAccess } as unknown as ReturnType<typeof getCallObject>);
+    vi.mocked(useCallObject).mockReturnValueOnce({ readAccess } as unknown as ReturnType<typeof useCallObject>);
 
     await expect(
       participantCaller.knocker.dismissKnocker({ callSessionId, sessionId: "knocker-session" }),

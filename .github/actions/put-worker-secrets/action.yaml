@@ -16,12 +16,10 @@ runs:
   steps:
     # `pulumi env get` prints a value as it is, so each line of it is masked before the value is used. The file holds every value
     # the Worker gets, and lives under the runner's temporary directory, which the runner removes when the job ends
-    - name: 🔐 Put the secrets
+    - name: 🔐 Gather the secrets
       shell: bash
       env:
         WORKER: ${{ inputs.worker }}
-        DIRECTORY: ${{ inputs.directory }}
-        CONFIG: ${{ inputs.config }}
       run: |
         set -euo pipefail
         umask 077
@@ -35,8 +33,19 @@ runs:
           jq --arg name "$name" --arg value "$value" '. + {($name): $value}' "$secrets_file" > "$secrets_file.next"
           mv "$secrets_file.next" "$secrets_file"
         done
-        if [ -n "$CONFIG" ]; then
-          CLOUDFLARE_ENV= pnpm -C "$DIRECTORY" exec wrangler secret bulk "$secrets_file" --config "$CONFIG"
-        else
-          pnpm -C "$DIRECTORY" exec wrangler secret bulk "$secrets_file"
-        fi
+    - name: 🔐 Put the secrets with the build's configuration
+      if: inputs.config != ''
+      shell: bash
+      env:
+        CLOUDFLARE_ENV: ""
+        CONFIG: ${{ inputs.config }}
+        DIRECTORY: ${{ inputs.directory }}
+        WORKER: ${{ inputs.worker }}
+      run: pnpm -C "$DIRECTORY" exec wrangler secret bulk "$RUNNER_TEMP/$WORKER-secrets.json" --config "$CONFIG"
+    - name: 🔐 Put the secrets
+      if: inputs.config == ''
+      shell: bash
+      env:
+        DIRECTORY: ${{ inputs.directory }}
+        WORKER: ${{ inputs.worker }}
+      run: pnpm -C "$DIRECTORY" exec wrangler secret bulk "$RUNNER_TEMP/$WORKER-secrets.json"

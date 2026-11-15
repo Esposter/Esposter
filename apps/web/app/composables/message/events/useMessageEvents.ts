@@ -16,7 +16,7 @@ export const useMessageEvents = () => {
         getResultAsync(async () => {
           // A member who joined in a previous session fires no onJoinRoom, so their data is loaded here for
           // The author info a new message needs
-          const userIds = Array.from(new Set(data), ({ userId }) => userId).filter((userId) => userId !== null);
+          const userIds = [...new Set(data.map(({ userId }) => userId))].filter((userId) => userId !== null);
           if (userIds.length > 0) await readUsersByIds(roomId, userIds);
           // Each message is its own unit: one whose Create hooks reject stays out of the list and is logged, and the
           // Rest of the batch still lands behind it

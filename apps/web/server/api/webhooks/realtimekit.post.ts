@@ -1,7 +1,7 @@
+import { useCallObject } from "#server/composables/realtime/useCallObject";
 import { db } from "#server/db";
 import { checkIsCallConnectionAdmitted } from "#server/services/message/call/checkIsCallConnectionAdmitted";
 import { createParticipant } from "#server/services/message/call/createParticipant";
-import { getCallObject } from "#server/services/message/call/getCallObject";
 import { writeCallSummary } from "#server/services/message/call/writeCallSummary";
 import { consumeAddressRateLimit } from "#server/services/rateLimiter/consumeAddressRateLimit";
 import { verifyRealtimeKitWebhook } from "#server/services/realtimeKit/verifyRealtimeKitWebhook";
@@ -44,7 +44,7 @@ export default defineEventHandler(async (event) => {
       const sessionId = webhookEvent.participant.customParticipantId;
       if (!callSession) return { ok: true };
       const callSessionId = callSession.id;
-      const callObject = getCallObject(callSessionId);
+      const callObject = useCallObject(callSessionId);
 
       if (webhookEvent.event === "meeting.participantLeft") {
         const leave = await callObject.participantLeft({

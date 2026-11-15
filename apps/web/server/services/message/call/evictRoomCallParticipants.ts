@@ -1,6 +1,6 @@
 import type { Context } from "#server/trpc/context";
 
-import { getCallObject } from "#server/services/message/call/getCallObject";
+import { useCallObject } from "#server/composables/realtime/useCallObject";
 import { readRoomCallSessionIds } from "#server/services/message/call/readRoomCallSessionIds";
 import { writeCallSummary } from "#server/services/message/call/writeCallSummary";
 
@@ -11,7 +11,7 @@ export const evictRoomCallParticipants = async (db: Context["db"], roomId: strin
   const callSessionIds = await readRoomCallSessionIds(db, roomId);
   await Promise.all(
     callSessionIds.map(async (callSessionId) => {
-      const leaves = await getCallObject(callSessionId).evictUser({ callSessionId, userId });
+      const leaves = await useCallObject(callSessionId).evictUser({ callSessionId, userId });
       await Promise.all(leaves.map((leave) => writeCallSummary(db, callSessionId, leave)));
     }),
   );

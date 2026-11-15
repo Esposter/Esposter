@@ -47,7 +47,7 @@ Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/
 
 - Node.js: the version in the root `.node-version` file.
 - pnpm: the version in the `packageManager` field of the root `package.json`.
-- Cloudflare values in `.env` for R2 presigned URLs and RealtimeKit: `CLOUDFLARE_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `REALTIMEKIT_APP_ID` and `REALTIMEKIT_API_TOKEN`.
+- Cloudflare values in `.env` for R2 presigned URLs and RealtimeKit: `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `REALTIMEKIT_APP_ID` and `REALTIMEKIT_API_TOKEN`.
 - The local D1 database needs no account. `pnpm dev` applies its migrations with wrangler.
 
 ### Database

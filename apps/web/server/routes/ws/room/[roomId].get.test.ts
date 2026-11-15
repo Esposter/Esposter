@@ -1,10 +1,10 @@
 import type { db } from "#server/db";
 import type { RequestEvent } from "nuxt/server";
 
+import { roomObjectCalls } from "#server/composables/realtime/useRoomObject.test";
 import roomSocket from "#server/routes/ws/room/[roomId].get";
 import { readSession } from "#server/services/auth/readSession";
 import { assertIsMember } from "#server/services/room/assertIsMember";
-import { env } from "@esposter/db-mock";
 import { TRPCError } from "@trpc/server";
 import { describe, expect, test, vi } from "vitest";
 
@@ -31,21 +31,15 @@ describe("ws/room/[roomId]", () => {
   test("forwards a member's socket to the room's object", async () => {
     expect.hasAssertions();
 
-    const namespace = createNamespace();
-    env.ROOM = namespace;
     vi.mocked(readSession).mockResolvedValueOnce(createSessionPayload());
     vi.mocked(assertIsMember).mockResolvedValueOnce(undefined);
+    roomObjectCalls.length = 0;
     await roomSocket(createEvent());
 
-    expect(namespace.idFromName).toHaveBeenCalledExactlyOnceWith("11111111-1111-7111-8111-111111111111");
+    expect(roomObjectCalls.map(({ method, roomId }) => ({ method, roomId }))).toStrictEqual([
+      { method: "fetch", roomId: "11111111-1111-7111-8111-111111111111" },
+    ]);
   });
-});
-
-const createNamespace = () => ({
-  get: vi.fn<(id: string) => { fetch: (request: Request) => Promise<Response> }>(() => ({
-    fetch: () => Promise.resolve(new Response(null)),
-  })),
-  idFromName: vi.fn<(name: string) => string>((name) => name),
 });
 
 const createSessionPayload = () =>

@@ -132,7 +132,7 @@ await Promise.all([readStatus(), programResource.value.surveyId ? refreshSurveyC
     <UiConfirmDialog
       v-model="isExportConfirmOpen"
       confirm-label="Export"
-      title="Export invites"
+      :title="exportScope === ProgramInviteScope.Awaiting ? 'Export reminders' : 'Export invites'"
       :confirm="() => exportInvites(exportScope)"
     >
       <p>

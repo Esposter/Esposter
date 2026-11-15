@@ -1,6 +1,6 @@
 import type { AuthedContext } from "#server/models/auth/AuthedContext";
 
-import { getCallObject } from "#server/services/message/call/getCallObject";
+import { useCallObject } from "#server/composables/realtime/useCallObject";
 import { requireCallSession } from "#server/services/message/call/requireCallSession";
 import { getForbiddenError } from "#server/trpc/guards/getForbiddenError";
 
@@ -11,7 +11,7 @@ export const requireCallDoorkeeper = async (
   callSessionId: string,
   action: string,
 ) => {
-  const { isJoined } = await getCallObject(callSessionId).readAccess({ sessionId: callerSession.id });
+  const { isJoined } = await useCallObject(callSessionId).readAccess({ sessionId: callerSession.id });
   if (!isJoined) throw getForbiddenError(`Must be in call to ${action} knockers`);
 
   const callSession = await requireCallSession(db, callSessionId);

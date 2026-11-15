@@ -1,8 +1,8 @@
 import type { Context } from "#server/trpc/context";
 
+import { useCallObject } from "#server/composables/realtime/useCallObject";
 import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
 import { createParticipant } from "#server/services/message/call/createParticipant";
-import { getCallObject } from "#server/services/message/call/getCallObject";
 import { createMockAuthSession, createMockCaller, createMockContext } from "#server/trpc/context.test";
 import { callRouter } from "#server/trpc/routers/call";
 import { callSessionsInMessage, DatabaseEntityType } from "@esposter/db-schema";
@@ -10,9 +10,7 @@ import { NotFoundError } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 // The call object answers for the call's state, so the router's guards are tested against what it reports
-vi.mock(import("#server/services/message/call/getCallObject"), () => ({
-  getCallObject: vi.fn<typeof getCallObject>(),
-}));
+vi.mock(import("#server/composables/realtime/useCallObject"), () => ({ useCallObject: vi.fn<typeof useCallObject>() }));
 
 describe("callRouter", () => {
   let mockContext: Context;
@@ -33,7 +31,7 @@ describe("callRouter", () => {
     const { callSessionId } = await creatorCaller.createCall();
     const joinerCaller = await createMockCaller(callRouter, await createMockAuthSession(mockContext.db));
     const joinCall = vi.fn<(input: unknown) => Promise<null>>(() => Promise.resolve(null));
-    vi.mocked(getCallObject).mockReturnValueOnce({ joinCall } as unknown as ReturnType<typeof getCallObject>);
+    vi.mocked(useCallObject).mockReturnValueOnce({ joinCall } as unknown as ReturnType<typeof useCallObject>);
 
     await expect(joinerCaller.joinCall({ id: callSessionId })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Must be admitted to join this call]`,
@@ -51,7 +49,7 @@ describe("callRouter", () => {
     const joinCall = vi.fn<(input: unknown) => Promise<unknown>>(() =>
       Promise.resolve({ authToken: "auth-token", meetingId: "meeting-id", participantMap: new Map() }),
     );
-    vi.mocked(getCallObject).mockReturnValueOnce({ joinCall } as unknown as ReturnType<typeof getCallObject>);
+    vi.mocked(useCallObject).mockReturnValueOnce({ joinCall } as unknown as ReturnType<typeof useCallObject>);
     userObjectCalls.length = 0;
     await joinerCaller.joinCall({ id: callSessionId });
 
@@ -74,7 +72,7 @@ describe("callRouter", () => {
         participantMap: new Map(),
       }),
     );
-    vi.mocked(getCallObject).mockReturnValueOnce({ joinCall } as unknown as ReturnType<typeof getCallObject>);
+    vi.mocked(useCallObject).mockReturnValueOnce({ joinCall } as unknown as ReturnType<typeof useCallObject>);
 
     const result = await creatorCaller.joinCall({ id: callSessionId });
 
@@ -98,7 +96,7 @@ describe("callRouter", () => {
     const creatorCaller = await createMockCaller(callRouter, await createMockAuthSession(mockContext.db));
     const { callSessionId } = await creatorCaller.createCall();
     const leaveCall = vi.fn<(input: unknown) => Promise<null>>(() => Promise.resolve(null));
-    vi.mocked(getCallObject).mockReturnValueOnce({ leaveCall } as unknown as ReturnType<typeof getCallObject>);
+    vi.mocked(useCallObject).mockReturnValueOnce({ leaveCall } as unknown as ReturnType<typeof useCallObject>);
 
     await expect(creatorCaller.leaveCall({ callSessionId })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new NotFoundError(DatabaseEntityType.CallSession, callSessionId).message}]`,
@@ -111,7 +109,7 @@ describe("callRouter", () => {
     const creatorCaller = await createMockCaller(callRouter, await createMockAuthSession(mockContext.db));
     const { callSessionId } = await creatorCaller.createCall();
     const setMuted = vi.fn<(input: unknown) => Promise<boolean>>(() => Promise.resolve(false));
-    vi.mocked(getCallObject).mockReturnValueOnce({ setMuted } as unknown as ReturnType<typeof getCallObject>);
+    vi.mocked(useCallObject).mockReturnValueOnce({ setMuted } as unknown as ReturnType<typeof useCallObject>);
 
     await expect(creatorCaller.setMuted({ callSessionId, isMuted: true })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Must join call first]`,

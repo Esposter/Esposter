@@ -6,11 +6,11 @@ import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { BanInMessage, ModerationLogInMessage, ModerationNoteInMessage } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
 
+import { useCallObject } from "#server/composables/realtime/useCallObject";
 import { useRoomObject } from "#server/composables/realtime/useRoomObject";
 import { RoomMemberRemovalAction } from "#server/models/room/RoomMemberRemovalAction";
 import { containsLike } from "#server/services/db/containsLike";
 import { evictRoomCallParticipants } from "#server/services/message/call/evictRoomCallParticipants";
-import { getCallObject } from "#server/services/message/call/getCallObject";
 import { readRoomCallSessionIds } from "#server/services/message/call/readRoomCallSessionIds";
 import { getRoomDisplayNameMap } from "#server/services/message/getRoomDisplayNameMap";
 import { AdminActionPermissionMap } from "#server/services/message/moderation/AdminActionPermissionMap";
@@ -153,7 +153,7 @@ export const moderationRouter = router({
           const callSessionIds = await readRoomCallSessionIds(ctx.db, roomId);
           await Promise.all(
             callSessionIds.map((callSessionId) =>
-              getCallObject(callSessionId).updatePresets({
+              useCallObject(callSessionId).updatePresets({
                 callSessionId,
                 isGranted: input.type === AdminActionType.ForceUnmute,
                 sources,
