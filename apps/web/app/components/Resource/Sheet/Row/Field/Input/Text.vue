@@ -11,7 +11,7 @@ interface Props {
 }
 
 const modelValue = defineModel<null | number | string>({ required: true });
-const { column, isInline } = defineProps<Props>();
+const { column } = defineProps<Props>();
 const textValue = computed({
   get: () => (modelValue.value === null ? "" : String(modelValue.value)),
   set: (value) => {

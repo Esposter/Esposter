@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { MenuItem } from "#src/models/shared/MenuItem";
-import type { Editor } from "@tiptap/vue-3";
+import type { Editor } from "@tiptap/core";
 
 import { getRichTextMenuItems } from "#src/services/richTextEditor/getRichTextMenuItems";
 

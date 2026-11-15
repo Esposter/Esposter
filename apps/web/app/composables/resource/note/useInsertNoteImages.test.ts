@@ -9,7 +9,7 @@ import { getNoteExtensions } from "#shared/services/resource/note/getNoteExtensi
 import { useInsertNoteImages } from "#src/composables/resource/note/useInsertNoteImages";
 import { useResourceStore } from "#src/store/resource/index";
 import { getResourceFileBlobName, ResourceType } from "@esposter/db-schema";
-import { Editor } from "@tiptap/vue-3";
+import { Editor } from "@tiptap/core";
 import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 

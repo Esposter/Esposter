@@ -22,6 +22,12 @@ export const OTHER_RESTRICTED_IMPORT_PATHS: RestrictedImportPath[] = [
   },
   { importNames: ["useRoute"], message: USE_ROUTE_MESSAGE, name: "vue-router" },
   { importNames: ["inject", "provide"], message: CONTEXT_MESSAGE, name: "vue" },
+  {
+    importNames: ["Editor"],
+    message:
+      "Type an editor as `@tiptap/core`'s `Editor`: every tiptap callback hands that one over, and the Vue editor extends it, so either passes where it is named. See the tiptap skill.",
+    name: "@tiptap/vue-3",
+  },
 ];
 // A console child of a windowless parent, or any `detached` child, opens its own terminal window on Windows unless
 // `windowsHide` is set. The wrappers force it, so every child process goes through them; a type import stays free.

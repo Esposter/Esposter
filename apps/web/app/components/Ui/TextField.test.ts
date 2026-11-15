@@ -63,7 +63,8 @@ describe("uiTextField", () => {
     test("takes focus as it mounts when it is asked to, unless the reader is typing elsewhere", async () => {
       expect.hasAssertions();
 
-      const typing = window.document.body.appendChild(window.document.createElement("textarea"));
+      const typing = window.document.createElement("textarea");
+      window.document.body.append(typing);
       typing.focus();
       mount(UiTextField, { attachTo: window.document.body, props: { isAutofocus: true, label, modelValue: "" } });
       await flushPromises();

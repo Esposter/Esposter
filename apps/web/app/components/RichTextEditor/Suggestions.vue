@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { SuggestionList } from "#src/models/message/SuggestionList";
-import type { Editor } from "@tiptap/vue-3";
+import type { Editor } from "@tiptap/core";
 
 import { useRichTextSuggestionStore } from "#src/store/richTextEditor/suggestion";
 

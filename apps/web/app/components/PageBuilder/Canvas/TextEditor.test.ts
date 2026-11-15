@@ -16,6 +16,22 @@ import { MjmlNodeType } from "mjml-blocks";
 import { v7 } from "uuid";
 import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vitest";
 
+const mountEditingText = async () => {
+  const resourceId = v7();
+  const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+  pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
+    content: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text }],
+    root: TEST_ROOT,
+  });
+  const component = await mountSuspended(PageBuilderCanvasTextEditor, {
+    props: { kind: webpageKind, nodeId: TEST_ROOT_TEXT_ID, resourceId },
+  });
+  await vi.advanceTimersByTimeAsync(0);
+  const editor = component.getComponent(EditorContent).props("editor");
+  assert.exists(editor);
+  return { component, editor };
+};
+
 describe("pageBuilderCanvasTextEditor", () => {
   // An editor takes its focus, and its caret at the end of the text, on a timer it sets as it mounts; only `setTimeout`
   // Is faked, so the promises the suite flushes keep running
@@ -26,22 +42,6 @@ describe("pageBuilderCanvasTextEditor", () => {
   afterEach(() => {
     vi.useRealTimers();
   });
-
-  const mountEditingText = async () => {
-    const resourceId = v7();
-    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
-      content: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text }],
-      root: TEST_ROOT,
-    });
-    const component = await mountSuspended(PageBuilderCanvasTextEditor, {
-      props: { kind: webpageKind, nodeId: TEST_ROOT_TEXT_ID, resourceId },
-    });
-    await vi.advanceTimersByTimeAsync(0);
-    const editor = component.getComponent(EditorContent).props("editor");
-    assert.exists(editor);
-    return { component, editor };
-  };
 
   test("begins editing at the end of its text", async () => {
     expect.hasAssertions();
@@ -55,7 +55,8 @@ describe("pageBuilderCanvasTextEditor", () => {
   test("leaves a reader who is typing elsewhere alone", async () => {
     expect.hasAssertions();
 
-    const typing = window.document.body.appendChild(window.document.createElement("textarea"));
+    const typing = window.document.createElement("textarea");
+    window.document.body.append(typing);
     typing.focus();
     const { component, editor } = await mountEditingText();
 

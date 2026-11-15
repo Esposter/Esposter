@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Editor } from "@tiptap/vue-3";
+import type { Editor } from "@tiptap/core";
 
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";

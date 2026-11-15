@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { MenuItem } from "#src/models/shared/MenuItem";
-import type { Editor } from "@tiptap/vue-3";
+import type { Editor } from "@tiptap/core";
 
 import { NOTE_IMAGE_MIME_TYPES } from "#shared/services/resource/note/constants";
 import { getNoteBlockMenuItems } from "#src/services/resource/note/getNoteBlockMenuItems";

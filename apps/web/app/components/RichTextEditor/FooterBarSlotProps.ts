@@ -1,4 +1,4 @@
-import type { Editor } from "@tiptap/vue-3";
+import type { Editor } from "@tiptap/core";
 
 export interface FooterBarSlotProps {
   editor?: Editor;
