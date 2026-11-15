@@ -12,10 +12,10 @@ import { V0UnheadThemeAdapter } from "@vuetify/v0/theme/adapters/unhead";
 export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.vueApp.use(createHydrationPlugin());
   // The same widths UnoCSS's variants read; below the large one is a narrow screen, where drawers become sheets. The
-  // Server has no screen, so both renders start at no width and hydrate alike, and the client measures once hydration
-  // Has finished: the root suspense resolving. The plugin wraps `mount` to measure as the app mounts, which is before a
-  // Lazily loaded layout or page hydrates, so a wide screen hydrated its drawers as docked columns over the server's
-  // Sheets; the wrapper is set aside and the measuring waits for Nuxt
+  // Server has no screen, so both renders start at no width and hydrate alike. The plugin measures as the app mounts,
+  // Through a wrapper around `mount`, and a server-rendered page hydrates a lazily loaded layout or page after that, so
+  // A wide screen hydrated its drawers as docked columns over the server's sheets. For a server-rendered page the
+  // Wrapper is set aside and the measure waits for the root suspense to resolve; any other mount keeps it
   const { mount } = nuxtApp.vueApp;
   nuxtApp.vueApp.use(
     createBreakpointsPlugin({
@@ -25,10 +25,12 @@ export default defineNuxtPlugin((nuxtApp) => {
       ssr: { clientWidth: 0 },
     }),
   );
-  nuxtApp.vueApp.mount = mount;
-  nuxtApp.hooks.hookOnce("app:suspense:resolve", () => {
-    useBreakpoints(BREAKPOINTS_NAMESPACE).update();
-  });
+  if (nuxtApp.payload.serverRendered) {
+    nuxtApp.vueApp.mount = mount;
+    nuxtApp.hooks.hookOnce("app:suspense:resolve", () => {
+      useBreakpoints(BREAKPOINTS_NAMESPACE).update();
+    });
+  }
   nuxtApp.vueApp.use(
     createThemePlugin({
       // Unhead renders the token stylesheet and the root's `data-theme` into the first response, where the default
