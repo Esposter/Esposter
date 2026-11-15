@@ -95,7 +95,7 @@ const view = () => {
       @delete="
         () => {
           deletingRoomId = message.roomId;
-          deletingMessageId = String(message.id);
+          deletingMessageId = message.id;
           deletingFileId = file.id;
         }
       "

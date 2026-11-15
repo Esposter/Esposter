@@ -49,7 +49,7 @@ describe("messageModelMessageConfirmDeleteDialog", () => {
       id: 1,
     };
     getSlice(roomId).items.value = [deletedMessage];
-    deletingMessageId.value = String(deletedMessage.id);
+    deletingMessageId.value = deletedMessage.id;
     await flushPromises();
 
     const deleted = component.getComponent(UiConfirmDialog).props("confirm")();

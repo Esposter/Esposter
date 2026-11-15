@@ -33,7 +33,7 @@ const contextMenuProps = getContextMenuProps(emoji.emojiTag, () => [
     meaning: UiIconMeaning.Group,
     onClick: () => {
       reactionsRoomId.value = roomId;
-      reactionsMessageId.value = String(emoji.messageId);
+      reactionsMessageId.value = emoji.messageId;
     },
     title: "View Reactions",
   },

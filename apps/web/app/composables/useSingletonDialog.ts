@@ -3,7 +3,7 @@ import { DIALOG_CLOSE_DURATION_MS } from "@/services/ui/constants";
 const checkIsPresent = (value: unknown) => (Array.isArray(value) ? value.length > 0 : Boolean(value));
 
 // The wiring for one singleton dialog, over the target ref that names its item (e.g. deletingId): the writable
-// V-dialog model — open while the target is set, closing resets it to "" — and the resolved item, when the caller
+// V-dialog model — open while the target is set, closing resets it to its empty value — and the resolved item, when the caller
 // Passes one.
 // Resolving and reconciling belong here rather than in the caller's own computed, because the dialog is mounted
 // With `v-if="item"`: a search, a page turn or an optimistic removal takes the row out of the list and unmounts
@@ -18,12 +18,12 @@ const checkIsPresent = (value: unknown) => (Array.isArray(value) ? value.length 
 // Outlives the page, so a dialog left open by a navigation would otherwise re-open over its row on the way back.
 // A dialog over a set of rows — a selection's delete — targets their ids and resolves the rows still present, and an
 // Empty set is no target and no item, so the same reconciling drops a selection whose rows are all gone
-export const useSingletonDialog = <TTarget extends string | string[], TItem>(
+export const useSingletonDialog = <TTarget extends number | string | string[], TItem>(
   target: Ref<TTarget>,
   item?: MaybeRefOrGetter<TItem | undefined>,
 ) => {
   const clearTarget = () => {
-    target.value = (Array.isArray(target.value) ? [] : "") as TTarget;
+    target.value = (Array.isArray(target.value) ? [] : typeof target.value === "number" ? 0 : "") as TTarget;
   };
   const targetItem = computed(() => (item === undefined ? undefined : toValue(item)));
   const leavingItem = shallowRef<TItem>();

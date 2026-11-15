@@ -12,7 +12,7 @@ const { getEmojis } = emojiStore;
 const { isOpen, item: emojis } = useSingletonDialog(reactionsMessageId, () => {
   if (!reactionsMessageId.value) return undefined;
 
-  const messageEmojis = getEmojis(reactionsRoomId.value, Number(reactionsMessageId.value));
+  const messageEmojis = getEmojis(reactionsRoomId.value, reactionsMessageId.value);
   return messageEmojis.length > 0 ? messageEmojis : undefined;
 });
 const selectedEmojiTag = ref("");

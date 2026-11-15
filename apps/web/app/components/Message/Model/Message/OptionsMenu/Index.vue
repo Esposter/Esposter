@@ -70,7 +70,7 @@ watchImmediate(contextMenuRequest, (newContextMenuRequest) => {
       label="More"
       @update:is-open="
         (isOpen) => {
-          optionsMenuMessageId = isOpen ? message.id : '';
+          optionsMenuMessageId = isOpen ? message.id : 0;
           emit('update:menu', isOpen);
         }
       "

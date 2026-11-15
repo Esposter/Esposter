@@ -9,6 +9,6 @@ export const useFileDialogStore = defineStore("message/file/dialog", () => {
   const viewingRoomId = ref<ClientMessage["roomId"]>("");
   const deletingFileId = ref<FileEntity["id"]>("");
   const deletingRoomId = ref<ClientMessage["roomId"]>("");
-  const deletingMessageId = ref("");
+  const deletingMessageId = ref<0 | ClientMessage["id"]>(0);
   return { deletingFileId, deletingMessageId, deletingRoomId, viewingFileId, viewingRoomId };
 });

@@ -67,7 +67,7 @@ export const useMessageActionItems = (message: ClientMessage, isEditable: Ref<bo
   const forwardMessageItem = {
     meaning: UiIconMeaning.Forward,
     onClick: () => {
-      forwardMessageId.value = String(message.id);
+      forwardMessageId.value = message.id;
     },
     title: "Forward",
   } satisfies Item;
@@ -106,7 +106,7 @@ export const useMessageActionItems = (message: ClientMessage, isEditable: Ref<bo
       : {
           meaning: UiIconMeaning.Pin,
           onClick: () => {
-            pinningMessageId.value = String(message.id);
+            pinningMessageId.value = message.id;
           },
           title: "Pin Message",
         },
@@ -197,7 +197,7 @@ export const useMessageActionItems = (message: ClientMessage, isEditable: Ref<bo
           isDanger: true,
           meaning: UiIconMeaning.Delete,
           onClick: () => {
-            deletingMessageId.value = String(message.id);
+            deletingMessageId.value = message.id;
           },
           title: "Delete Message",
         }
