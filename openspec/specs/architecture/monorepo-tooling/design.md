@@ -188,7 +188,7 @@ Declare job permissions explicitly and narrowly:
 - Release jobs: `contents: read` for `version` and `push`, which push through the collector's token rather than the workflow's, and `contents: write` only for the finish that drafts the GitHub release.
 - PR-commenting previews: minimum scopes for OIDC, repo reads, and PR comments.
 
-CodeQL scans pushes to both `ai/queue` and `main`, plus a weekly run on `main`. The queue scan surfaces findings while a change is still in review; the weekly scan picks up query updates after a release. Its alerts job fails while an open CodeQL alert remains on the scanned ref.
+CodeQL scans pushes to both `ai/queue` and `main`, plus a weekly run on `main`. The queue scan surfaces findings while a change is still in review; the weekly scan picks up query updates after a release. Its alerts job fails while an open CodeQL alert remains on the scanned ref. The scan's `paths-ignore` is the workflow's inline `config`, and names only the Tiled tilesets under `apps/web/app/assets/dungeons/tilesets`: they are XML with a `.tsx` extension, which the TypeScript extractor cannot parse. CodeQL has no per-file suppression comment for a parse error, and a tileset cannot carry one.
 
 Scorecard's Vulnerabilities check uses OSV data and reads a root `osv-scanner.toml` beside `pnpm-lock.yaml` when one exists. An exception there names one advisory, why the affected path is not reachable from untrusted input, and when to review that decision again. It silences that advisory in Scorecard; it does not change the locked package or suppress `pnpm audit`.
 

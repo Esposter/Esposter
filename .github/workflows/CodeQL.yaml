@@ -48,6 +48,10 @@ jobs:
         with:
           build-mode: none
           languages: ${{ matrix.language }}
+          # Tiled writes its tilesets as `.tsx` — XML, which the TypeScript extractor reads as TSX and fails on
+          config: |
+            paths-ignore:
+              - apps/web/app/assets/dungeons/tilesets/**
 
       - name: 🔎 Analyse
         uses: github/codeql-action/analyze@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
