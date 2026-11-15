@@ -34,6 +34,12 @@ export const roomsInMessage = sqliteTable(
     // Raid in progress, which the links have to survive.
     isInvitePaused: integer({ mode: "boolean" }).notNull().default(false),
     isReadOnly: integer({ mode: "boolean" }).notNull().default(false),
+    // The time of the room's last message, which places it in the list and is the clock its unread state reads. A room's
+    // Settings move updatedAt alone, so editing a room never makes it unread for its members. A new room starts at the
+    // Time it was created
+    lastMessageAt: integer({ mode: "timestamp_ms" })
+      .notNull()
+      .$defaultFn(() => new Date()),
     // Per-room attachment size cap in bytes — 0 falls back to the global MAX_FILE_REQUEST_SIZE.
     maxFileSizeBytes: integer().notNull().default(0),
     name: text().notNull().default(""),

@@ -6,12 +6,15 @@ export const SOCKET_IDENTITY_HEADER_PREFIX = `x-${SITE_NAME.toLowerCase()}-`;
 
 export const SOCKET_IDENTITY_HEADER = {
   deviceId: `${SOCKET_IDENTITY_HEADER_PREFIX}device-id`,
+  sessionExpiresAt: `${SOCKET_IDENTITY_HEADER_PREFIX}session-expires-at`,
   sessionId: `${SOCKET_IDENTITY_HEADER_PREFIX}session-id`,
   userId: `${SOCKET_IDENTITY_HEADER_PREFIX}user-id`,
 } as const;
 
 export interface SocketIdentity {
   deviceId: string;
+  // The session's expiry in epoch milliseconds, so an object stops writing to a socket its session no longer covers
+  sessionExpiresAt: number;
   sessionId: string;
   userId: string;
 }

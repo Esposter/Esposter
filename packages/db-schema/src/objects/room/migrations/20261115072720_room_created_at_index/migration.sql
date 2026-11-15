@@ -1,0 +1,1 @@
+CREATE INDEX `messagesCreatedAtIndex` ON `messages` (`createdAt`,`id`);

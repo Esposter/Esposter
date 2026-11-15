@@ -2,6 +2,7 @@ import type { LinkPreviewResponse } from "#src/models/message/linkPreview/LinkPr
 import type { MessageType } from "#src/models/message/MessageType";
 import type { FileEntity } from "#src/models/streams/FileEntity";
 
+import { sql } from "drizzle-orm";
 import { index, integer, primaryKey, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 
 // One row is one message in the room.
@@ -12,7 +13,8 @@ import { index, integer, primaryKey, sqliteTable, text, uniqueIndex } from "driz
 // `filenames` is the space-joined file names the search index reads, written with the row.
 // So the index's triggers stay plain SQL.
 // A reply's root is `replyToId`, and a deleted root leaves its replies standing as plain messages.
-// A webhook message has no `userId`; its `appUserId` names the webhook identity that sent it
+// A webhook message has no `userId`; its `appUserId` names the webhook identity that sent it.
+// `updatedAt` moves on every change to the row, and `editedAt` is the time of the last edit, null for a message never edited
 export const messagesInRoom = sqliteTable(
   "messages",
   {
@@ -21,10 +23,10 @@ export const messagesInRoom = sqliteTable(
     appUserImage: text().notNull().default(""),
     createdAt: integer({ mode: "timestamp_ms" }).notNull(),
     deletedAt: integer({ mode: "timestamp_ms" }),
+    editedAt: integer({ mode: "timestamp_ms" }),
     filenames: text().notNull().default(""),
     files: text({ mode: "json" }).$type<FileEntity[]>().notNull().default([]),
     id: integer().primaryKey({ autoIncrement: true }),
-    isEdited: integer({ mode: "boolean" }).notNull().default(false),
     isForward: integer({ mode: "boolean" }).notNull().default(false),
     isPinned: integer({ mode: "boolean" }).notNull().default(false),
     linkPreviewResponse: text({ mode: "json" }).$type<LinkPreviewResponse>(),
@@ -40,8 +42,14 @@ export const messagesInRoom = sqliteTable(
     // The id a webhook push was accepted under. Unique, so a redelivered push finds the message it already wrote
     webhookDeliveryId: text(),
   },
-  // A thread is read by its root and a member's messages by their author, each in id order, so neither scans the room
+  // A thread is read by its root and a member's messages by their author, each in id order, so neither scans the room.
+  // The newest-first search without text reads by time, then id, so its keyset is served by the same pair.
+  // The pinned messages are the live rows that are pinned, so the index holds only those, in id order
   (table) => [
+    index("messagesCreatedAtIndex").on(table.createdAt, table.id),
+    index("messagesPinnedIdIndex")
+      .on(table.id)
+      .where(sql`${table.deletedAt} IS NULL AND ${table.isPinned} = 1`),
     index("messagesReplyToIdIndex").on(table.replyToId, table.id),
     index("messagesUserIdIndex").on(table.userId, table.id),
     uniqueIndex("messagesWebhookDeliveryIdIndex").on(table.webhookDeliveryId),
@@ -64,14 +72,22 @@ export const messageEmojisInRoom = sqliteTable(
 export const onlineMembersInRoom = sqliteTable("onlineMembers", { userId: text().primaryKey() });
 
 // The room's own state that is not a message, in one row.
-// It holds when its last message landed, and the room-activity fan-out still owed for it.
-// A message schedules the fan-out for two seconds on, and every message in that window is one wave
+// It holds the room-activity fan-out still owed. A message schedules the fan-out for two seconds on, and every message in
+// That window is one wave. The wave's time is the newest message's, which the messages already hold
 export const roomState = sqliteTable("roomState", {
   // The time the fan-out is due, or null when none is owed
   bumpDueAt: integer({ mode: "timestamp_ms" }),
   id: integer().primaryKey(),
-  // The time of the room's last message, which the fan-out writes as the room's updatedAt
-  lastMessageAt: integer({ mode: "timestamp_ms" }),
+});
+
+// A sent message whose sender's index does not yet hold it. The object retries each one from its alarm until the index takes
+// It, so a failed index write is repaired rather than leaving the message out of the sender's sent list
+export const unindexedMessagesInRoom = sqliteTable("unindexedMessages", {
+  createdAt: integer({ mode: "timestamp_ms" }).notNull(),
+  messageId: integer().primaryKey(),
+  // The next time the index is asked again
+  retryAt: integer({ mode: "timestamp_ms" }).notNull(),
+  userId: text().notNull(),
 });
 
 // A message a member scheduled to send here, one row until the alarm sends it or the member cancels it.

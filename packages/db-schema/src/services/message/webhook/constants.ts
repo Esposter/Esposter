@@ -1,3 +1,2 @@
-export const APP_USER_NAME_MAX_LENGTH = 100;
 export const WEBHOOK_CONTENT_MAX_LENGTH = 2000;
 export const WEBHOOK_NAME_MAX_LENGTH = 100;

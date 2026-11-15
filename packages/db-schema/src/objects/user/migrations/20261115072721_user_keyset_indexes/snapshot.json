@@ -1,0 +1,290 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "id": "2ef7f350-8be0-47bd-a669-caf314b58994",
+  "prevIds": [
+    "f63b1a8b-6cf7-4ded-a59e-74b1e5d0fc8e"
+  ],
+  "ddl": [
+    {
+      "name": "joinedCallsInUser",
+      "entityType": "tables"
+    },
+    {
+      "name": "remindersInUser",
+      "entityType": "tables"
+    },
+    {
+      "name": "scheduledMessagesInUser",
+      "entityType": "tables"
+    },
+    {
+      "name": "sentMessagesInUser",
+      "entityType": "tables"
+    },
+    {
+      "name": "todoRemindersInUser",
+      "entityType": "tables"
+    },
+    {
+      "table": "joinedCallsInUser",
+      "name": "callSessionId",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "remindersInUser",
+      "name": "id",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "remindersInUser",
+      "name": "roomId",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "remindersInUser",
+      "name": "runAt",
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "remindersInUser",
+      "name": "text",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "scheduledMessagesInUser",
+      "name": "roomId",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "scheduledMessagesInUser",
+      "name": "runAt",
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "scheduledMessagesInUser",
+      "name": "scheduledId",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "sentMessagesInUser",
+      "name": "createdAt",
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "sentMessagesInUser",
+      "name": "messageId",
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "sentMessagesInUser",
+      "name": "roomId",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "todoRemindersInUser",
+      "name": "dueAt",
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "todoRemindersInUser",
+      "name": "itemId",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "todoRemindersInUser",
+      "name": "resourceId",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "remindersInUser",
+      "name": "remindersInUserRunAtIdIndex",
+      "columns": [
+        {
+          "value": "runAt",
+          "isExpression": false
+        },
+        {
+          "value": "id",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "entityType": "indexes"
+    },
+    {
+      "table": "scheduledMessagesInUser",
+      "name": "scheduledMessagesInUserRunAtScheduledIdIndex",
+      "columns": [
+        {
+          "value": "runAt",
+          "isExpression": false
+        },
+        {
+          "value": "scheduledId",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "entityType": "indexes"
+    },
+    {
+      "table": "sentMessagesInUser",
+      "name": "sentMessagesInUserCreatedAtIndex",
+      "columns": [
+        {
+          "value": "createdAt",
+          "isExpression": false
+        },
+        {
+          "value": "roomId",
+          "isExpression": false
+        },
+        {
+          "value": "messageId",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "entityType": "indexes"
+    },
+    {
+      "table": "todoRemindersInUser",
+      "name": "todoRemindersInUserDueAtIndex",
+      "columns": [
+        {
+          "value": "dueAt",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "entityType": "indexes"
+    },
+    {
+      "table": "sentMessagesInUser",
+      "name": "sentMessagesInUser_pk",
+      "columns": [
+        "roomId",
+        "messageId"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
+      "table": "todoRemindersInUser",
+      "name": "todoRemindersInUser_pk",
+      "columns": [
+        "resourceId",
+        "itemId"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
+      "table": "joinedCallsInUser",
+      "name": "joinedCallsInUser_pk",
+      "columns": [
+        "callSessionId"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
+      "table": "remindersInUser",
+      "name": "remindersInUser_pk",
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
+      "table": "scheduledMessagesInUser",
+      "name": "scheduledMessagesInUser_pk",
+      "columns": [
+        "scheduledId"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    }
+  ],
+  "renames": []
+}

@@ -335,7 +335,7 @@ export default {
       // Relational `findMany`/`findFirst` options object, where `limit` is always the page — `.limit(1)` on a select
       // Is an existence probe rather than a page, and a `limit` key elsewhere is some other API's
       message:
-        "Cap a relational read with `MAX_READ_LIMIT` or `DEFAULT_READ_LIMIT`, never a number literal. See the drizzle skill.",
+        "Cap a relational read with `MAX_READ_LIMIT` or `DEFAULT_PAGE_LIMIT`, never a number literal. See the drizzle skill.",
       selector:
         "CallExpression[callee.property.name=/^(findFirst|findMany)$/] > ObjectExpression.arguments > Property[key.name='limit'][value.type='Literal']",
     },

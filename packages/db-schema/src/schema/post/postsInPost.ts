@@ -43,11 +43,19 @@ export const postsInPost = sqliteTable(
       // A count is the number of replies the server has counted, which no write takes below zero
       check("posts_commentCount_check", createMinimumCheckSql(commentCount, 0)),
       // A foreign key gets no index of its own in SQLite, and every read of a thread asks this one question:
-      // One parent's children, best first. The feed asks it too — a root post is the parent that is null
+      // One parent's children, best first. The feed asks it too — a root post is the parent that is null. Each sort
+      // That readPosts offers leads with its own key under the parent, so a page is a range scan in that order
       index("posts_parentId_ranking_index").on(parentId, sql`"ranking" DESC`, sql`"id" DESC`),
-      // The same feed order for one author's posts, which readPosts filters by, and the index a user's deletion cascades
+      index("posts_parentId_id_index").on(parentId, sql`"id" DESC`),
+      index("posts_parentId_likeCount_index").on(parentId, sql`"likeCount" DESC`, sql`"id" DESC`),
+      // The same orders for one author's posts, which readPosts filters by, and the index a user's deletion cascades
       // Through: a foreign key gets no index of its own in SQLite
       index("posts_userId_ranking_index").on(userId, sql`"ranking" DESC`, sql`"id" DESC`),
+      index("posts_userId_id_index").on(userId, sql`"id" DESC`),
+      index("posts_userId_likeCount_index").on(userId, sql`"likeCount" DESC`, sql`"id" DESC`),
+      // The thread a post is in is its first ancestor, which every post beneath it shares. Deleting a post reads that
+      // Thread's rows rather than every post, so the index is on the expression the subtree reads, not on a column
+      index("posts_firstAncestorId_index").on(sql`json_extract("ancestorIds", '$[0]')`),
     ],
     schema: postSchema,
   },

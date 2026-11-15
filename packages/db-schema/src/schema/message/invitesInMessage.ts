@@ -28,8 +28,9 @@ export const invitesInMessage = sqliteTable(
       check("invites_maxUses_check", createMinimumCheckSql(maxUses, 0)),
       check("invites_uses_check", createMinimumCheckSql(uses, 0)),
       check("invites_uses_maxUses_check", sql`${maxUses} = 0 OR ${uses} <= ${maxUses}`),
-      // A room's invite list pages by room, and its deletion cascades through it
-      index("invites_roomId_index").on(roomId),
+      // A room's invite list pages newest first, so the index leads with the room and orders the rest as the read does.
+      // The room's deletion cascades through the same leading column
+      index("invites_roomId_createdAt_id_index").on(roomId, sql`"createdAt" DESC`, sql`"id" DESC`),
     ],
     schema: messageSchema,
   },

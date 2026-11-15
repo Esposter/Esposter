@@ -43,8 +43,7 @@ describe("schema", () => {
       .join("\n");
 
     expect(renderedChecks).toMatchInlineSnapshot(`
-      "appUsers_name_length_check: LENGTH(TRIM("message_appUsers"."name")) BETWEEN 1 AND 100
-      blocks_blockerId_blockedId_check: "social_blocks"."blockerId" != "social_blocks"."blockedId"
+      "blocks_blockerId_blockedId_check: "social_blocks"."blockerId" != "social_blocks"."blockedId"
       bookmarks_path_length_check: LENGTH("app_bookmarks"."path") <= 2048
       bookmarks_title_length_check: LENGTH("app_bookmarks"."title") <= 100
       bookmarks_resourceId_roomId_check: "app_bookmarks"."resourceId" IS NULL OR "app_bookmarks"."roomId" IS NULL

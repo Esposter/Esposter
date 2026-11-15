@@ -21,8 +21,9 @@ export const resourceAccessesInResource = sqliteTable(
     extraConfig: ({ accessedAt, resourceId, userId }) => [
       primaryKey({ columns: [userId, resourceId] }),
       // Recent is "this user's rows, newest first", and the primary key orders by resourceId — without this
-      // The sort re-reads and re-sorts every resource the user has ever opened
-      index("resourceAccesses_userId_accessedAt_index").on(userId, accessedAt),
+      // The sort re-reads and re-sorts every resource the user has ever opened. The resource id ends the index so the
+      // Sort's own tiebreak is read off it too
+      index("resourceAccesses_userId_accessedAt_resourceId_index").on(userId, accessedAt, resourceId),
     ],
     schema: resourceSchema,
   },

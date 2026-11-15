@@ -23,11 +23,12 @@ export const searchHistoriesInMessage = sqliteTable(
     ...createRoomUserColumns(),
   },
   {
-    extraConfig: ({ query, roomId, userId }) => [
+    extraConfig: ({ id, query, roomId, userId }) => [
       check("searchHistories_query_length_check", createMaxLengthCheckSql(query, MESSAGE_MAX_LENGTH)),
       // A member's history in one room is read by both, and either parent's deletion cascades through it:
-      // The user-led index serves a user's reads and their deletion, the room-led index the room's deletion
-      index("searchHistories_userId_roomId_index").on(userId, roomId),
+      // The user-led index serves a user's reads, newest first by id, and their deletion; the room-led index the room's
+      // Deletion
+      index("searchHistories_userId_roomId_id_index").on(userId, roomId, id),
       index("searchHistories_roomId_index").on(roomId),
     ],
     schema: messageSchema,

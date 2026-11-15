@@ -51,10 +51,15 @@ export const resourcesInResource = sqliteTable(
       .references(() => usersInAuth.id, { onDelete: "cascade" }),
   },
   {
-    extraConfig: ({ name, userId }) => [
+    extraConfig: ({ createdAt, deletedAt, id, name, type, updatedAt, userId }) => [
       check("resources_name_length_check", createNameCheckSql(name, RESOURCE_NAME_MAX_LENGTH)),
-      // Every owner's list, count and cascade from a user's deletion filter on the owner first
-      index("resources_userId_index").on(userId),
+      // Every owner's list is ordered by one of its columns with the id breaking ties, so each sort a list offers is an
+      // Index led by the owner: the owner's rows, the cascade of a user's deletion and every count land on these too
+      index("resources_userId_createdAt_id_index").on(userId, createdAt, id),
+      index("resources_userId_deletedAt_id_index").on(userId, deletedAt, id),
+      index("resources_userId_name_id_index").on(userId, name, id),
+      index("resources_userId_type_id_index").on(userId, type, id),
+      index("resources_userId_updatedAt_id_index").on(userId, updatedAt, id),
     ],
     schema: resourceSchema,
   },

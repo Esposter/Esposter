@@ -1,3 +1,6 @@
+import type { PageSort } from "#src/models/pagination/PageSort";
+
+import { SortOrder } from "#src/models/pagination/SortOrder";
 import { ZERO_UUID } from "@esposter/shared";
 
 // Reserved user id used as the actor for automatic moderation actions (word-filter Warn/Timeout).
@@ -21,3 +24,34 @@ export const MESSAGE_BATCH_MAX_LENGTH = 2;
 export const MEMBER_PERMISSION_BIGINT_REGEX = /^\d{1,20}$/u;
 // A RealtimeKit participant token is a signed JWT, which the call's own join hands its client once
 export const CALL_AUTH_TOKEN_MAX_LENGTH = 4096;
+// The order a room's message list reads in, newest first by the room's own sequence id, which is unique within the room
+export const ROOM_MESSAGE_PAGE_SORT = { keys: ["id"], order: SortOrder.Desc } as const satisfies PageSort<"id">;
+// A room's search with text, in the order its rank puts its matches: each room's rank turn about, then the room, then the
+// Message id. The rank is the position a room's own bm25 order gives the match, since scores are not comparable across rooms
+export const ROOM_SEARCH_RANK_PAGE_SORT = {
+  keys: ["rank", "roomId", "id"],
+  order: SortOrder.Asc,
+} as const satisfies PageSort<"id" | "rank" | "roomId">;
+// A room's search without text, newest first by the message's time, then the room, then the message id
+export const ROOM_SEARCH_NEWEST_PAGE_SORT = {
+  keys: ["createdAt", "roomId", "id"],
+  order: SortOrder.Desc,
+} as const satisfies PageSort<"createdAt" | "id" | "roomId">;
+// The messages a person sent, newest first. Their index holds each one once, under its room and its message id
+export const SENT_MESSAGE_PAGE_SORT = {
+  keys: ["createdAt", "roomId", "messageId"],
+  order: SortOrder.Desc,
+} as const satisfies PageSort<"createdAt" | "messageId" | "roomId">;
+// The Scheduled tab: a person's reminders and scheduled messages, soonest first, then by the item's id
+export const SCHEDULED_MESSAGE_JOB_PAGE_SORT = {
+  keys: ["runAt", "id"],
+  order: SortOrder.Asc,
+} as const satisfies PageSort<"id" | "runAt">;
+// A room's bans, newest first by when the ban was made, then by the banned user, which with the room is the ban's key
+export const BAN_PAGE_SORT = { keys: ["createdAt", "userId"], order: SortOrder.Desc } as const satisfies PageSort<
+  "createdAt" | "userId"
+>;
+// A room's moderation log, newest first by its id
+export const MODERATION_LOG_PAGE_SORT = { keys: ["id"], order: SortOrder.Desc } as const satisfies PageSort<"id">;
+// A member's moderation notes in a room, newest first by their id
+export const MODERATION_NOTE_PAGE_SORT = { keys: ["id"], order: SortOrder.Desc } as const satisfies PageSort<"id">;

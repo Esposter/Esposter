@@ -1,13 +1,11 @@
 import type { PageSort } from "#src/models/pagination/PageSort";
 
-import { DEFAULT_PAGE_LIMIT, PAGE_CURSOR_MAX_LENGTH } from "#src/services/pagination/constants";
+import { encodedPageCursorSchema } from "#src/models/pagination/EncodedPageCursor";
+import { pageLimitSchema } from "#src/models/pagination/PageLimit";
 import { decodePageCursor } from "#src/services/pagination/decodePageCursor";
-import { MAX_READ_LIMIT } from "@esposter/shared";
 import { z } from "zod";
 
-const pageLimitSchema = z.int().min(1).max(MAX_READ_LIMIT).default(DEFAULT_PAGE_LIMIT);
-const encodedPageCursorSchema = z.string().max(PAGE_CURSOR_MAX_LENGTH).default("");
-// The cursor parsed for the sort it continues: one the server did not issue for that sort is a bad request
+// The cursor parsed for the sort it continues: one that is not one value per key of that sort is a bad request
 const parsePageCursor = (sort: PageSort) =>
   encodedPageCursorSchema.transform((cursor, context) => {
     const pageCursor = decodePageCursor(cursor, sort);
@@ -18,9 +16,9 @@ const parsePageCursor = (sort: PageSort) =>
 export const createPageInputSchema = (sort: PageSort) =>
   z.object({ cursor: parsePageCursor(sort), limit: pageLimitSchema });
 // A read that offers a choice of order takes the name of one of its sorts, and its cursor is parsed for that sort
-export const createSortedPageInputSchema = <TSortName extends string>(
+export const createSortedPageInputSchema = <TSortName extends string, TKey extends string>(
   sortNameSchema: z.ZodType<TSortName>,
-  sorts: Record<TSortName, PageSort>,
+  sorts: Record<TSortName, PageSort<TKey>>,
   defaultSortName: NoInfer<TSortName>,
 ) =>
   z

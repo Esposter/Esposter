@@ -1,5 +1,4 @@
 import { schema } from "#src/generated/schema";
-import { PublicUserColumns } from "#src/services/user/PublicUserColumns";
 import { defineRelationsPart } from "drizzle-orm";
 
 export const invitesInMessageRelation = defineRelationsPart(schema, (r) => ({
@@ -8,7 +7,3 @@ export const invitesInMessageRelation = defineRelationsPart(schema, (r) => ({
     user: r.one.usersInAuth({ from: r.invitesInMessage.userId, optional: false, to: r.usersInAuth.id }),
   },
 }));
-
-// The room's memberships are counted, never read: the invite is readable by anyone holding its code, and a member's
-// Row carries fields that are theirs alone. The count is taken beside this read, by readInvite
-export const InviteInMessageRelations = { room: true, user: { columns: PublicUserColumns } } as const;

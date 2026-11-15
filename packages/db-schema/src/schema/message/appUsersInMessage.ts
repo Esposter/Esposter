@@ -1,13 +1,12 @@
 import { messageSchema } from "#src/schema/message/messageSchema";
-import { APP_USER_NAME_MAX_LENGTH } from "#src/services/message/webhook/constants";
-import { createNameCheckSql } from "#src/services/shared/createNameCheckSql";
-import { createNameSchema } from "#src/services/shared/createNameSchema";
 import { sqliteTable } from "#src/sqliteTable";
-import { check, text } from "drizzle-orm/sqlite-core";
+import { text } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 import { v7 } from "uuid";
 import { z } from "zod";
 
+// The bot identity a webhook message is authored by. Its name is the webhook's, which is the one row that renames it, so
+// The identity holds only what it alone owns: the image it renders with
 export const appUsersInMessage = sqliteTable(
   "appUsers",
   {
@@ -15,19 +14,10 @@ export const appUsersInMessage = sqliteTable(
       .primaryKey()
       .$defaultFn(() => v7()),
     image: text().notNull().default(""),
-    name: text().notNull(),
   },
-  {
-    extraConfig: ({ name }) => [
-      check("appUsers_name_length_check", createNameCheckSql(name, APP_USER_NAME_MAX_LENGTH)),
-    ],
-    schema: messageSchema,
-  },
+  { schema: messageSchema },
 );
 
 export type AppUserInMessage = typeof appUsersInMessage.$inferSelect;
 
-export const selectAppUserInMessageSchema = createSelectSchema(appUsersInMessage, {
-  id: () => z.uuidv7(),
-  name: (schema) => createNameSchema(APP_USER_NAME_MAX_LENGTH, schema),
-});
+export const selectAppUserInMessageSchema = createSelectSchema(appUsersInMessage, { id: () => z.uuidv7() });
