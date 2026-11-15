@@ -63,7 +63,7 @@ The longest name, `prod-dlq-esposter-reconcile-storage-ledger-entry`, is well in
 
 ## Hostnames
 
-Hostnames are not resource names and keep their own shape: `esposter.com` and `assets.esposter.com` in production, `dev.esposter.com` and `assets.dev.esposter.com` in development, and `next.esposter.com` for the cutover's staging Worker.
+Hostnames are not resource names and keep their own shape: `esposter.com` and `assets.esposter.com` in production, and `dev.esposter.com` and `assets.dev.esposter.com` in development.
 
 ## Bindings
 

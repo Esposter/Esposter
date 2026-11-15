@@ -3,10 +3,10 @@ import type * as cloudflare from "@pulumi/cloudflare";
 import { CloudflareEnvironment } from "@esposter/db-schema";
 
 // The origins a browser reaches a bucket's presigned urls from: the environment's own site, plus local development on the
-// Develop estate and the cutover's smoke host on production
+// Develop estate
 const R2BucketCorsOriginsMap = {
   [CloudflareEnvironment.Development]: ["https://dev.esposter.com", "http://localhost:3000"],
-  [CloudflareEnvironment.Production]: ["https://esposter.com", "https://next.esposter.com"],
+  [CloudflareEnvironment.Production]: ["https://esposter.com"],
 } as const satisfies Record<CloudflareEnvironment, string[]>;
 
 // A presigned url is fetched across origins: an upload PUTs with its signed `Content-Type` and, for a create-only write,
