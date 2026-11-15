@@ -33,7 +33,7 @@ An `enum` is nominal: `"dark"` does not assign to `ThemeMode`. An `as const` obj
 
 ### `erasableSyntaxOnly` is the enforcer
 
-The shared base (`packages/configuration/tsconfig.base.json`) turns on `erasableSyntaxOnly`, so the compiler refuses an `enum`, a namespace with runtime code, a parameter property and an `import =`. Nothing in the repository uses the other three today: every namespace is a type-only augmentation in a declaration file. The compiler sits first on the enforcement ladder (`openspec/specs/architecture/enforcement-ladder/design.md`), so no lint rule or list is written for it, and the typescript skill's list of `as const` exceptions is deleted.
+The shared base (`packages/configuration/tsconfig.base.json`) and the web app's Nuxt TypeScript options (`apps/web/configuration/typescript.ts`) both turn on `erasableSyntaxOnly`. Nuxt generates four standalone tsconfigs and none extends the base, so the base alone would leave the app unchecked; `tsConfig.compilerOptions` reaches all four, and `apps/web/configuration/typescript.test.ts` holds the option there as it holds the other restated ones. The compiler then refuses an `enum`, a namespace with runtime code, a parameter property and an `import =`. Nothing in the repository uses the other three today: every namespace is a type-only augmentation in a declaration file. The compiler sits first on the enforcement ladder (`openspec/specs/architecture/enforcement-ladder/design.md`), so no lint rule or list is written for it. With no form left that a stripped graph cannot load, everything that existed to keep an `enum` away from one goes with it: the typescript skill's list of `as const` exceptions, the package-scripts skill's rule that an `enum` moves a script to `vpx`, and any step that rewrites a copied `enum` into an object for a bare-`node` graph.
 
 ### The merge refuses a collision, at every pair and at load
 
@@ -58,7 +58,7 @@ The dungeons' texture and sound keys are merges of a dozen hand-written sets res
 
 ## Migration
 
-The conversion is mechanical, so it is one throwaway codemod run per package, never a hand sweep: each `enum` becomes its object and type, each member in a type position becomes `typeof` the member, and the generators are re-run. A package is converted whole in one commit, and the base turns `erasableSyntaxOnly` on in the commit converting the last, so no package ever holds both forms.
+The conversion is mechanical, so it is one throwaway codemod run per package, never a hand sweep: each `enum` becomes its object and type, each member in a type position becomes `typeof` the member, and the generators are re-run. A package is converted whole in one commit, and the base and the Nuxt options turn `erasableSyntaxOnly` on in the commit converting the last, so no package ever holds both forms. A script that ran under `vpx` only because a module it reached held an `enum` then moves to `node`: `scripts/src/workspace/packageScripts.test.ts` already strips every module a `node` entry reaches with Node's own stripper, so each move is proven by that test rather than by running the script.
 
 ## Sources
 
@@ -69,16 +69,19 @@ The conversion is mechanical, so it is one throwaway codemod run per package, ne
 
 ## Key files
 
-| Path                                                    | Role                                                     |
-| :------------------------------------------------------ | :------------------------------------------------------- |
-| `packages/configuration/tsconfig.base.json`             | the base every tsconfig extends; `erasableSyntaxOnly`    |
-| `packages/shared/src/util/object/mergeObjectsStrict.ts` | the one merge, throwing on a repeated key                |
-| `packages/shared/src/util/types/MergeObjectsStrict.ts`  | its type, comparing every pair                           |
-| `apps/web/scripts/util/createEnumString.ts`             | the set generator, renamed createValueSetString          |
-| `packages/configuration/eslint/typescriptRules.js`      | the member-naming selector, moved to the object's keys   |
-| `scripts/src/oxlint/literalUnion.ts`                    | the literal-union rule, whose message names the new form |
-| `.agents/skills/typescript/references/enums.md`         | the set conventions, rewritten for the one form          |
+| Path                                                    | Role                                                                     |
+| :------------------------------------------------------ | :----------------------------------------------------------------------- |
+| `packages/configuration/tsconfig.base.json`             | the base every package tsconfig extends; `erasableSyntaxOnly`            |
+| `apps/web/configuration/typescript.ts`                  | the Nuxt options reaching the app's four tsconfigs; the same flag        |
+| `scripts/src/services/genshinText/toConstObject.ts`     | the persona copy's enum rewrite, deleted with the last `enum`            |
+| `scripts/src/workspace/packageScripts.test.ts`          | strips every module a `node` script reaches, proving each move off `vpx` |
+| `packages/shared/src/util/object/mergeObjectsStrict.ts` | the one merge, throwing on a repeated key                                |
+| `packages/shared/src/util/types/MergeObjectsStrict.ts`  | its type, comparing every pair                                           |
+| `apps/web/scripts/util/createEnumString.ts`             | the set generator, renamed createValueSetString                          |
+| `packages/configuration/eslint/typescriptRules.js`      | the member-naming selector, moved to the object's keys                   |
+| `scripts/src/oxlint/literalUnion.ts`                    | the literal-union rule, whose message names the new form                 |
+| `.agents/skills/typescript/references/enums.md`         | the set conventions, rewritten for the one form                          |
 
 ## Not built
 
-Everything above: every set is still an `enum`, the merge is unchecked at runtime and pairwise in its type, and `erasableSyntaxOnly` is off.
+Everything above: every set is still an `enum`, the merge is unchecked at runtime and pairwise in its type, and `erasableSyntaxOnly` is off in the base and in Nuxt's options.
