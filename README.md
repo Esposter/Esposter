@@ -174,15 +174,6 @@
   </tbody>
 </table>
 
-### Cloudflare
-
-- [Workers](https://developers.cloudflare.com/workers/): the web, realtime and jobs Workers.
-- [D1](https://developers.cloudflare.com/d1/): the relational database.
-- [R2](https://developers.cloudflare.com/r2/): files.
-- [Queues](https://developers.cloudflare.com/queues/): async jobs, each with its own dead-letter queue.
-- [Durable Objects](https://developers.cloudflare.com/durable-objects/): live state for each room, call and person.
-- [RealtimeKit](https://realtime.cloudflare.com): calls.
-
 ### Infrastructure
 
 <table>
@@ -193,6 +184,20 @@
     </tr>
   </thead>
   <tbody>
+    <tr>
+      <td width="80" align="center" valign="top">
+        <br />
+        <a href="https://www.cloudflare.com">
+          <img src="./.github/assets/cloudflare/logo.svg" />
+        </a>
+      </td>
+      <td valign="top">
+        <h3><a href="https://developers.cloudflare.com/">Cloudflare</a></h3>
+        <p>
+          Hosting, DNS and data: <a href="https://developers.cloudflare.com/workers/">Workers</a> for the web, realtime and jobs Workers, <a href="https://developers.cloudflare.com/d1/">D1</a> for the relational database, <a href="https://developers.cloudflare.com/r2/">R2</a> for files, <a href="https://developers.cloudflare.com/queues/">Queues</a> for async jobs, <a href="https://developers.cloudflare.com/durable-objects/">Durable Objects</a> for the live state of each room, call and person, and <a href="https://developers.cloudflare.com/realtime/realtimekit/">RealtimeKit</a> for calls.
+        </p>
+      </td>
+    </tr>
     <tr>
       <td width="80" align="center" valign="top">
         <br />
@@ -210,7 +215,7 @@
   </tbody>
 </table>
 
-### Hosting & Domain Providers
+### Domain Registrar
 
 <table>
   <thead>
@@ -230,7 +235,7 @@
       <td valign="top">
         <h3><a href="https://www.namecheap.com/support/knowledgebase/">Namecheap</a></h3>
         <p>
-          ICANN-accredited domain name registrar providing domain name registration and web hosting.
+          The registrar for esposter.com, whose nameservers point at Cloudflare.
         </p>
       </td>
     </tr>
