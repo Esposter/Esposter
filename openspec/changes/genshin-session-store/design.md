@@ -96,9 +96,9 @@ Over `packages/genshin-world`, from the commit before the session store to the m
 
 This change is the foundation: the session store, the bag and the mailbox, with the gate and the performance measures. If it passes, the later slices (the adventure rank, the combat, the quests, the map, then the features that read those) are a second change written from the fan-out table, each judged by the same definition of done. If it does not, it is recorded as a refusal and the root stays as it is, which the guides already allow.
 
-## Playtest
+## Check
 
-None. Where state lives changes and the player sees no difference; the session's parity and visual suites are the check.
+Where state lives changes and the player sees no difference; the session's parity and visual suites are the check.
 
 ## Key files
 

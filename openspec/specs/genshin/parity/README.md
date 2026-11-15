@@ -37,7 +37,7 @@ The steps are the commands of `scripts/src/services/genshinParity/commands/` (`g
 - [Motion](motion/design.md): motion matched at sampled moments, never by recording.
 - [Visual suite](visual-suite/design.md): screens held by the browser suite.
 - [Costs](costs/design.md): the loop's cost, the benches and the GPU reduction.
-- [Commands](commands/design.md): every `genshin:parity` command.
+- [Commands](commands/spec.md): the groups of `genshin:parity` commands and what each does.
 
 ## Shapes come from the game's assets
 

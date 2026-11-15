@@ -15,17 +15,10 @@ flowchart LR
 
 Every issue on `sindresorhus/p-progress` is judged by the [triage](../dependency-admission/design.md) before the upload's own progress was written in its place. No issue is an in-scope defect of that progress: each is either outside the surface the upload uses, or a question the upstream README answers. The progress is tested against the mixed case below.
 
-| Issue                                                                            | Verdict        | Evidence                                                                                                                                                                      |
-| :------------------------------------------------------------------------------- | :------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [#1](https://github.com/sindresorhus/p-progress/issues/1) done/total API         | Out of scope   | The progress keeps the fraction its one caller takes. A done/total signature would change it for nothing the upload reads.                                                    |
-| [#4](https://github.com/sindresorhus/p-progress/issues/4) concurrency            | Out of scope   | The `concurrency` option is not kept. Every file's PUT is in flight at once, as the upload always ran them.                                                                   |
-| [#8](https://github.com/sindresorhus/p-progress/issues/8) percentage fell        | Out of scope   | The regression came from percentages a caller passes in through `progress(p)`, which the upload does not take. Its fraction is bytes sent over bytes total, which only rises. |
-| [#10](https://github.com/sindresorhus/p-progress/issues/10) allSettled           | Out of scope   | No caller settles a set of progress promises; a refused PUT fails its upload, and the batch fails once every other upload has stopped writing.                                |
-| [#11](https://github.com/sindresorhus/p-progress/issues/11) listeners after then | Out of scope   | The progress has no chain. The notifier is passed in before the upload is awaited, so there is no listener to attach late.                                                    |
-| [#14](https://github.com/sindresorhus/p-progress/issues/14) vague example        | False positive | A documentation question; answered by upstream's `example.js` and PR 15.                                                                                                      |
-| [#17](https://github.com/sindresorhus/p-progress/issues/17) `all` types          | Out of scope   | The mapped tuple types belong to upstream's surface. The upload takes `Promise<void>[]`, typed by us.                                                                         |
-| [#18](https://github.com/sindresorhus/p-progress/issues/18) async/await API      | Out of scope   | The constructor and `fn` API are not kept. The upload takes the request's own events, which is the shape the issue asked for.                                                 |
-| [#21](https://github.com/sindresorhus/p-progress/issues/21) `fn` returns 1       | False positive | Resolution sets progress to `1` by design, as `index.d.ts` documents ("Progress percentage `1` is reported for you when the promise resolves"). `fn` is not kept.             |
+The nine issues are counted here and stay on the [tracker](https://github.com/sindresorhus/p-progress/issues?q=is%3Aissue):
+
+- Out of scope: 7, each an API or behaviour the upload does not use.
+- False positive: 2, a documentation question and a resolution that sets progress to `1` by design.
 
 ## Key files
 

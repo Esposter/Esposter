@@ -22,4 +22,4 @@ Task 1.7 waits on task 3.1 of the [weapons](../genshin-assets-weapons/tasks.md) 
 
 ## Impact
 
-The props component, the fits and the lookup in the asset scripts, the hosted datasets and their lock, the props kit in the engine, and the chest, landmark and statue components of the world. No game art ships: a published record holds fitted numbers and colours only.
+The props component, the fits and the lookup in the asset scripts, the hosted datasets and their lock, the props kit in the engine, and the chest, landmark and statue components of the world. The shipping rule is [derived assets](../../specs/genshin/derived-assets/spec.md).

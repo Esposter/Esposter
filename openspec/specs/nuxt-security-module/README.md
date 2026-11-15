@@ -6,7 +6,7 @@ The decision to absorb it, and the rule a security-shaped absorption meets, are 
 
 ## Pages
 
-- [Upstream audit](upstream/design.md) — every issue and pull request on the upstream repository, open and closed, with its verdict and the severity of any security defect.
+- [Upstream audit](upstream/design.md) — every issue and pull request on the upstream repository, open and closed: the defects and built features with their verdicts and the severity of any security defect, and the rest counted.
 - [Defaults review](defaults-review/design.md) — each header and option the module sets by default, its recommended value from the published sources, and a keep, change or remove verdict.
 
 ## Status
@@ -46,7 +46,6 @@ The module's options are its own. Each is declared in `packages/nuxt-security-mo
 | :------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `allowedMethodsRestricter` | Off. A restricter with no method list refuses nothing, so a default-on one would only add per-request work.                                                                                                                                                                                 |
 | `csrf`                     | Off. When on, it is the double submit cookie of the OWASP CSRF Prevention Cheat Sheet.                                                                                                                                                                                                      |
-| `X-XSS-Protection` header  | Not sent. MDN records the header as non-standard and deprecated, and browsers have removed the auditor it configured, so its value does nothing. The serializer test pins it not sent.                                                                                                      |
 | `rateLimiter`              | Off. A limiter keyed on a forwarded address the client can write is spoofable (the [upstream audit](upstream/design.md) records #83 and #196), and the app runs its own limiter, shared across instances ([security posture](../architecture/security-posture/design.md)).                  |
 | `removeLoggers`            | Off. What an app logs is its own choice, and no OWASP, MDN or W3C source asks for console calls to be dropped.                                                                                                                                                                              |
 | `requestSizeLimiter`       | The default limit is declared in `getDefaultModuleOptions`. A request claiming a `multipart/form-data` body gets no larger limit: the client writes that header, so a route that takes a larger body names its own limit in its route rule. The app sets its limit from `MAX_REQUEST_SIZE`. |

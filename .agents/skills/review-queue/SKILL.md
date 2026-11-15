@@ -43,7 +43,7 @@ Every change lands on `ai/queue` itself, in the main checkout: fast-forward `ai/
 
 4. **Removes the branch, or the worktree, once its commits have landed.** A worktree goes through `pnpm ai:worktree:remove <full path>`, which deletes its branch with it, run from outside the worktree. `pnpm ai:land --remove` cannot remove the worktree its own shell still holds, so it prints the line naming that command for a run after the landing exits. A local branch is deleted with `git branch -d`.
 
-**Worktrees live under `.agents/worktrees/`, which is gitignored. Windows needs long paths enabled once (see `openspec/specs/architecture/monorepo-tooling/design.md`, Windows long paths).**
+**Worktrees live under `.agents/worktrees/`, which is gitignored. Windows needs long paths enabled once, which `pnpm ai:setup` checks and prints the command for.**
 
 **Never `reset` or cherry-pick in the main checkout.** A change commits on `ai/queue` there; a concurrent change goes in a worktree instead.
 

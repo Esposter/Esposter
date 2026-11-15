@@ -21,3 +21,7 @@ A non-English audience actually exists — a sustained share of users whose brow
 [Game text](../../../specs/genshin/game-text/design.md) is the game's own words in its fifteen languages, which the game translated itself: the Genshin page and the persona plugin show them in the reader's language, and none of it is the app's own copy, which stays English.
 
 [Message translation](../../esbabbler/message-translation/design.md) is a separate deferred idea: translating **user-authored messages** on demand via a paid translation API. It shares no machinery with translating the UI, and neither one unblocks the other — a translated chat message still renders inside an English interface, and a translated interface still shows messages in whatever language they were typed.
+
+## The survey's two localisation rows
+
+Two localisation rows of the survey wait on the same language picker: the survey Creator's own interface in other languages, with a custom locale, and the runner's button and status texts, such as Previous, Next, Complete and Page n of m, in a respondent's language. The app has no language picker, so a survey has no language to follow. The runner's texts are literal strings in `apps/web/app/components/Resource/Survey/Runner.vue`. The survey's own strings are covered by the [survey translations record](../../../deferred/resource/survey-translations/design.md), and the app's interface waits with this page.

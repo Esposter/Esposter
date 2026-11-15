@@ -1,6 +1,6 @@
 # TodoList Task Rows
 
-The first part of [TodoList to a todo product](../README.md#shipped-log), and the row every other part draws on. The Items blade is a `UiList` of task rows rather than a data table, since a todo list is read top to bottom, and a table squeezed each todo's notes into one column beside its title.
+The row every other part of the TodoList draws on. The Items blade is a `UiList` of task rows rather than a data table, since a todo list is read top to bottom, and a table squeezed each todo's notes into one column beside its title.
 
 ```text
 ☐  Buy the train tickets
@@ -16,7 +16,7 @@ The first part of [TodoList to a todo product](../README.md#shipped-log), and th
 - **The checkbox leads the row**, in `UiList`'s `leading` slot beside the row's button, so the row keeps no mark column of its own ([completion](../todolist-completion/design.md)).
 - **Search** keeps the rows whose title or notes text holds the query, the notes read as text through `node-html-parser` rather than as markup, so a search for `p` does not match every todo with a paragraph.
 - **Order is a view of the `items` array.** There is no table sort header. The open todos follow the viewer's sort, of which [importance](../todolist-importance/design.md) and [manual order](../todolist-manual-order/design.md) are two, and the completed ones follow when they were completed.
-- **No item type.** A todo has no type enum, chip, category definitions or `type` field, since one member would draw the same check beside every row. Content saved with a `type` parses: the schema strips the key it does not declare.
+- **No item type.** A todo has no type enum, chip, category definitions or `type` field, since one member would draw the same check beside every row.
 
 ## Key files
 

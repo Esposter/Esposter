@@ -1,10 +1,10 @@
 # Agent keys
 
-Keys carry scopes, reads are marked read-only and an agent's writes name their key ([agent access](../../agent-access/design.md)). This page also covers two parts: the keys that existed before scopes, which hold none and so reach no tool, and the operations no key should reach whatever its scopes.
+Keys carry scopes, reads are marked read-only and an agent's writes name their key ([agent access](../../agent-access/design.md)). This page covers the operations no key should reach whatever its scopes, and a key with no permissions, which reaches no tool.
 
-## The keys made before scopes
+## A key with no permissions
 
-A key with no permissions holds no scope. The endpoint reads that as a refusal for every tool, so a drain run on a key made before scopes existed is refused every tool.
+A key with no permissions holds no scope, and the endpoint reads that as a refusal for every tool.
 
 ## The owner's alone
 

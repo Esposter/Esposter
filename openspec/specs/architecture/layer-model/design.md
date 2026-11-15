@@ -28,33 +28,6 @@ flowchart LR
   RES -. "every mutation" .-> ACH["Achievements — tRPC path middleware"]
 ```
 
-## Business-logic user journey
+## Outside the resource model
 
-The headline cross-product flow — **create a survey → collect responses → extract/transform → visualise → publish** — runs entirely through resources and their capabilities:
-
-```mermaid
-sequenceDiagram
-  actor Creator
-  actor Respondent
-  participant SV as Survey resource<br/>(Editor blade)
-  participant DB as SQLite, core<br/>(surveyResponses)
-  participant SH as Sheet resource<br/>(Data blade)
-  participant Dash as Dashboard resource
-  participant PUB as Public /view/[type]/[id]
-
-  Creator->>SV: 1. Author survey (Creator autosave → saveDocument)
-  Creator->>SV: 2. Publish — snapshot document + assets as a published version
-  PUB-->>Respondent: 3. Share /view/Survey/{id} (esbabbler, email block, anywhere)
-  Respondent->>DB: 4. Respond → rows (resourceId = survey resource id)
-  Note over SV,DB: Respondents are served the published snapshot — unpublished 404s
-  Creator->>SH: 5. Import responses (dataset.readDataset → one-time copy into a Sheet resource)
-  SH->>SH: 6. Computed columns (Aggregation, Math, RegexMatch, …)
-  Creator->>Dash: 7. Bind visual to a DatasetReference (live re-resolve on load)
-  Dash->>PUB: 8. Publish dashboard — bakes dataset snapshots → shareable /view/Dashboard/{id}
-```
-
-## Capabilities
-
-Each resource type declares its capabilities in `capabilities` on its entry in `ResourceDefinitionMap` ([resources](../resource/design.md)), which is the one place they are read from. `publishable` gives a type a versioned publish copy and a public read; `datasetProvider` lets it serve columns and rows to a dataset consumer; `fileAssets` lets its content reference uploaded files; `portable` gives it the file formats it can be imported from and exported to (`PortableFormatMap`). A capability a type does not declare is absent, not false.
-
-Outside the resource model: **Posts** (relational D1, social feed semantics), **Esbabbler** (distribution channel for published links), **Achievements** (the events layer itself), and **games/anime/fluid** (blob save state or none; achievements only). Single-blob-per-user save state (`useSave`, blob `${userId}/save`) remains only for genuinely one-per-user saves.
+**Posts** (relational D1, social feed semantics), **Esbabbler** (distribution channel for published links), **Achievements** (the events layer itself), and **games/anime/fluid** (blob save state or none; achievements only). Single-blob-per-user save state (`useSave`, blob `${userId}/save`) remains only for genuinely one-per-user saves.

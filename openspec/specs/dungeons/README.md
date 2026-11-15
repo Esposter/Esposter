@@ -8,7 +8,7 @@ Dungeons is Esposter's monster-catching RPG at `/dungeons`: walk a tile-based wo
 - **Generated Tiled types** — maps are authored in Tiled Map Editor; `pnpm tiled:gen` parses the `.tmx` files with `parse-tmx` and generates enums and layer/object-property types into `shared/generated/tiled/`, so map content is type-checked. See [world](world/design.md).
 - **Battle state machine** — a generic `StateMachine` of named states drives every battle turn. See [battle](battle/design.md).
 - **Data-driven content** — monsters, attacks, items, NPCs, and encounter areas are constant maps in `assets/dungeons/data/` and `shared/assets/dungeons/data/`. See [monsters and items](monsters-and-items/design.md).
-- **One save blob per user** — a `Dungeons` entity (save + settings) persisted through the generic blob-state procedures (auth) or localStorage (unauth), the same pattern as [clicker](../clicker/game-loop-and-saves/design.md). See [saves and settings](saves-and-settings/design.md).
+- **One save blob per user** — a `Dungeons` entity (save + settings) persisted through the shared blob-state path ([save data](../genshin/save-data/design.md)). See [saves and settings](saves-and-settings/design.md).
 
 ## Pages
 

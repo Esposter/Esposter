@@ -85,14 +85,7 @@ The confirm control SHALL be the dialog's one confirm action, in the accent colo
 
 ### Requirement: Confirming closes the dialog itself after its answer
 
-Confirming SHALL close the dialog itself, awaiting the answer unless the write is optimistic, and a refused answer SHALL keep the dialog open with its draft intact.
-
-#### Scenario: An awaited confirm holds the dialog until the answer arrives
-
-- **GIVEN** the reader confirms a dialog whose write is not optimistic
-- **WHEN** the answer is pending
-- **THEN** the confirm button shows pending
-- **AND** the dialog stays open until the answer settles
+Confirming SHALL close the dialog itself after its answer, and a refused answer SHALL keep the dialog open with its draft intact. The answer modes are [destructive confirmation](../destructive-confirmation/spec.md)'s.
 
 #### Scenario: A refused answer keeps the draft
 
@@ -100,12 +93,6 @@ Confirming SHALL close the dialog itself, awaiting the answer unless the write i
 - **WHEN** the refusal arrives
 - **THEN** the dialog stays open
 - **AND** the draft the reader entered is still there
-
-#### Scenario: An optimistic confirm closes at once
-
-- **GIVEN** the write behind a dialog is optimistic
-- **WHEN** the reader confirms
-- **THEN** the dialog closes at once
 
 ### Requirement: A form dialog submits only valid input
 
@@ -214,7 +201,7 @@ The base dialog SHALL draw its footer slot after the body, outside the body's sc
 
 ### Requirement: A form's submit stays in the footer
 
-A form in a dialog's body SHALL be submitted by a button in the footer that names the form by its id, so the form scrolls with the body and the submit does not.
+A form in a dialog's body SHALL be submitted by a button in the footer that names the form by its id, so the form scrolls with the body and the submit does not, and a dialog whose footer submits its form SHALL reach the form through the shell rather than generate a form id of its own.
 
 #### Scenario: The footer's submit submits the body's form
 
@@ -227,26 +214,6 @@ A form in a dialog's body SHALL be submitted by a button in the footer that name
 - **GIVEN** a form dialog with a failing field
 - **WHEN** the dialog is open
 - **THEN** the footer's submit is disabled
-
-### Requirement: A call site supplies content, not regions
-
-A dialog's default slot SHALL hold content only, with no padding, scroll wrapper or footer of its own, and a dialog SHALL NOT fix its body's height. A dialog that draws either fails a scan of the call sites.
-
-#### Scenario: A call site that draws its own footer fails the scan
-
-- **GIVEN** a dialog whose default slot holds its own footer element
-- **WHEN** the scan test runs
-- **THEN** the test fails and names the file
-
-### Requirement: A footer submit names the form its dialog holds
-
-A dialog whose footer submits its form SHALL reach the form through the shell, and SHALL NOT generate a form id of its own for the footer to name.
-
-#### Scenario: A footer submit names the form its dialog holds
-
-- **GIVEN** a dialog whose footer carries a submit button beside Cancel
-- **WHEN** the owner presses the submit
-- **THEN** the form in the dialog's body is submitted
 
 #### Scenario: A dialog with an extra footer action keeps it beside the submit
 

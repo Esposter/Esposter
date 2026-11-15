@@ -472,7 +472,10 @@ describe(createKeyframeStore, () => {
     const sumBytes = (readBytes: (writtenVersion: WrittenVersion) => number) =>
       writtenVersions.reduce((total, writtenVersion) => total + readBytes(writtenVersion), 0);
 
-    expect(sumBytes(({ plaintextBytes }) => plaintextBytes)).toMatchInlineSnapshot(`1140624`);
-    expect(sumBytes(({ storedBytes }) => storedBytes)).toMatchInlineSnapshot(`67472`);
+    // A session of keyframes stores about a quarter of its bytes and a session of deltas under a sixteenth, so a
+    // Tenth splits them without pinning the zstd output, which moves with every bump
+    expect(sumBytes(({ storedBytes }) => storedBytes)).toBeLessThan(
+      sumBytes(({ plaintextBytes }) => plaintextBytes) / 10,
+    );
   });
 });

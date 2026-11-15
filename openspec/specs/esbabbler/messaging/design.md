@@ -27,7 +27,7 @@ sequenceDiagram
 
 The send does not write the room's `updatedAt`. The room object marks the room active, and its alarm writes `updatedAt` in D1 once per window and tells each member online, so the room moves to the top of their list.
 
-Real-time delivery is owned by [Cloudflare services](../../architecture/cloudflare-services/design.md), and a [cross-process event bridge](../../../deferred/esbabbler/cross-process-event-bridge/design.md) is decided against for now. A client opens its room's socket at `/ws/room/:roomId`, which the web Worker authorises against D1 before it forwards the upgrade to the room object. A member who leaves or is removed is taken off the room's online list, and every socket of theirs is closed there (`removeMember`).
+Real-time delivery is owned by [Cloudflare services](../../architecture/cloudflare-services/design.md), and a [cross-process event bridge](../../../rejected/esbabbler/cross-process-event-bridge/design.md) is decided against. A client opens its room's socket at `/ws/room/:roomId`, which the web Worker authorises against D1 before it forwards the upgrade to the room object. A member who leaves or is removed is taken off the room's online list, and every socket of theirs is closed there (`removeMember`).
 
 Push notification filtering and delivery detail lives in [push notifications](../push-notifications/design.md).
 

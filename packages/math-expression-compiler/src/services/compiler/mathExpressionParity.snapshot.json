@@ -8398,5 +8398,18 @@
 {"formula":"hypot(1, 1.0000000000001)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":1.4142135623731658,"tolerance":true},
 {"formula":"hypot(0, 1e-16)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":0,"fix":{"cause":"mathjs's hypot reads a magnitude within its absolute tolerance of the largest so far as no larger, so small magnitudes are lost","value":1e-16}},
 {"formula":"hypot(1e-15, 2e-15)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":2e-15,"fix":{"cause":"mathjs's hypot reads a magnitude within its absolute tolerance of the largest so far as no larger, so small magnitudes are lost","value":2.23606797749979e-15}},
-{"formula":"hypot(1 / 0, 1 / 0)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":"NaN","fix":{"cause":"mathjs's hypot answers NaN for two infinite magnitudes, where the length is infinite","value":"Infinity"}}
+{"formula":"hypot(1 / 0, 1 / 0)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":"NaN","fix":{"cause":"mathjs's hypot answers NaN for two infinite magnitudes, where the length is infinite","value":"Infinity"}},
+{"formula":"round(1e300, 9)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":1e+300},
+{"formula":"ceil(1e300, 9)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":"Infinity","fix":{"cause":"mathjs's rounding shifts an integer past the range of a double to infinity, where an integer is already rounded and kept","value":1e+300}},
+{"formula":"floor(-1e300, 9)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":"-Infinity","fix":{"cause":"mathjs's rounding shifts an integer past the range of a double to infinity, where an integer is already rounded and kept","value":-1e+300}},
+{"formula":"fix(1e294, 15)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":"Infinity","fix":{"cause":"mathjs's rounding shifts an integer past the range of a double to infinity, where an integer is already rounded and kept","value":1e+294}},
+{"formula":"mod(1/0, 3)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":"NaN"},
+{"formula":"mod(5, 1/0)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":"NaN"},
+{"formula":"mod(1/0, 0)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":"Infinity"},
+{"formula":"invmod(4, -7)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":-12},
+{"formula":"invmod(-3, -7)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":-12},
+{"formula":"variance([1/0])","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":"NaN"},
+{"formula":"std([1/0])","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":"NaN"},
+{"formula":"and(0)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":false},
+{"formula":"mod(0.3, 0.1)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":-5.551115123125783e-17,"fix":{"cause":"#2936","value":0}}
 ]}

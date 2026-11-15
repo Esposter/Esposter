@@ -53,22 +53,6 @@ The review queue SHALL NOT start work on a timer that looks for newly landed com
 - **THEN** no timer picks it up
 - **AND** the agent lands its own commits when it has something to land
 
-### Requirement: The prompt-cache warning fires once per turn
-
-The prompt-cache warning SHALL fire at most once for each request, at the moment the cache goes cold, and SHALL stand down while a new turn runs.
-
-#### Scenario: A turn ends and the cache is about to go cold
-
-- **GIVEN** a turn has just ended
-- **WHEN** the cache expiry instant is known from the last request
-- **THEN** one warning is armed for that instant
-
-#### Scenario: A new turn starts before the cache goes cold
-
-- **GIVEN** a warning is armed for a cache expiry instant
-- **WHEN** a new turn starts
-- **THEN** the armed warning stands down
-
 ### Requirement: An unattended runner never waits on a timer
 
 Code that runs unattended in a runner SHALL react to events, even where an interactive command may use a bounded wait because a person is watching it.

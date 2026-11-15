@@ -135,42 +135,6 @@ The settings cursor SHALL move between options with direction input and SHALL sa
 - **WHEN** the player confirms
 - **THEN** the game returns to the title
 
-### Requirement: Stored data in an unreadable or older shape starts a fresh run in this browser
-
-The game SHALL accept only the current save shape. Stored data in this browser that cannot be read or is in an older shape SHALL start a fresh run. A signed-in player's stored run that cannot be read SHALL be reported as an error, and no run SHALL start over it.
-
-#### Scenario: Unreadable stored data in this browser starts a fresh run
-
-- **WHEN** the page opens and the stored data in this browser cannot be read
-- **THEN** a fresh run starts
-
-#### Scenario: Older-shape stored data in this browser starts a fresh run
-
-- **WHEN** the page opens and the stored data in this browser is in an older shape
-- **THEN** a fresh run starts
-
-#### Scenario: A signed-in player's unreadable run is reported
-
-- **WHEN** the page opens and the signed-in player's stored run cannot be read
-- **THEN** the page shows an error
-- **AND** no fresh run starts
-
-### Requirement: Saves are refused when the stored copy has changed
-
-A save SHALL be written only against the version of the saved data the player last read, and a refused save SHALL reload the page so the player takes the server's copy.
-
-#### Scenario: A save writes the run
-
-- **WHEN** the player saves and the saved data has not changed since it was read
-- **THEN** the run is stored
-
-#### Scenario: A save over changed data is refused
-
-- **GIVEN** the saved data has changed since the player read it
-- **WHEN** the player saves
-- **THEN** the save is refused
-- **AND** the page reloads with the server's copy
-
 ### Requirement: A party wipe respawns without rolling back
 
 A party wipe SHALL send the player to their respawn location with the party healed, and SHALL keep the progress made since the last save.

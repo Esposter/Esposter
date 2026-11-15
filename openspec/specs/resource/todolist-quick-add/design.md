@@ -1,6 +1,6 @@
 # TodoList Quick Add
 
-Part of [TodoList to a todo product](../README.md#shipped-log), built on [task rows](../todolist-task-rows/design.md). A todo is usually a few words, so adding one takes a field on the list rather than the whole edit dialog, which a row opens for its name, a rich-text editor and a date field.
+Built on [task rows](../todolist-task-rows/design.md). A todo is usually a few words, so adding one takes a field on the list rather than the whole edit dialog, which a row opens for its name, a rich-text editor and a date field.
 
 ## How it works
 

@@ -6,65 +6,36 @@ Each area's page holds its items under **Queue**, the runnable ones, and under *
 
 The fleet reads every page here except this one, and an id that two pages share is an error. A runner's release deletes its item's line from its area's page.
 
-| Page                                 | Covers                                                                                  |
-| :----------------------------------- | :-------------------------------------------------------------------------------------- |
-| [Capitals](capitals/design.md)       | the four capitals laid out as the witness draws them, and the city areas' re-extraction |
-| [Character](character/design.md)     | the character screen's Attributes tab, and the interface's character menu and its tabs  |
-| [Crafting](crafting/design.md)       | the crafting table over its whole frame, and the interface's crafting screen            |
-| [Dialogue](dialogue/design.md)       | the dialogue box's five states, scored over their backdrop                              |
-| [Fontaine](fontaine/design.md)       | Fontaine's region, from its base ground to its frame score                              |
-| [Gcg](gcg/design.md)                 | the Genius Invokation duel board over its frame less the card art                       |
-| [Handbook](handbook/design.md)       | the adventurer handbook's experience page over what the page draws                      |
-| [Inazuma](inazuma/design.md)         | Inazuma's region, from its base ground to its frame score                               |
-| [Interaction](interaction/design.md) | the interaction pill and the selection's move                                           |
-| [Interface](interface/design.md)     | the interface components with no parity-page screen yet                                 |
-| [Inventory](inventory/design.md)     | the bag's whole frame, and the interface's inventory screen                             |
-| [Liyue](liyue/design.md)             | Liyue's region, from its base ground to its frame score                                 |
-| [Login](login/design.md)             | the login screen's light and shadows, and the health notice                             |
-| [Map](map/design.md)                 | the map's names over the terrain, and the Galesong Hill label                           |
-| [Mondstadt](mondstadt/design.md)     | Mondstadt's region, from its base ground to its frame score                             |
-| [Natlan](natlan/design.md)           | Natlan's region, from its base ground to its frame score                                |
-| [Nod-Krai](nod-krai/design.md)       | Nod-Krai's region, from its base ground to its frame score                              |
-| [Paimon](paimon/design.md)           | the quit prompt, the menu's open and close, and the reputation reward page              |
-| [Quest](quest/design.md)             | the quest screen over its whole frame                                                   |
-| [Settings](settings/design.md)       | the follow camera's defaults                                                            |
-| [Snezhnaya](snezhnaya/design.md)     | Snezhnaya's region, from its base ground to its frame score                             |
-| [Sumeru](sumeru/design.md)           | Sumeru's region, from its base ground to its frame score                                |
-| [Text](text/design.md)               | every language's text map, decoded from the install                                     |
-| [Windrise](windrise/design.md)       | the first scene: the oak, the surface and the sun                                       |
-| [Wish](wish/design.md)               | the single pull and the ten results, frame by frame                                     |
-| [World](world/design.md)             | teleports, weather, thunderstorms, lightning, the ores and the scripted props           |
-
 ## Phases
 
-| Area                                  | Page                                 | Kind    | Phase |
-| :------------------------------------ | :----------------------------------- | :------ | :---: |
-| The capitals' city areas              | [Capitals](capitals/design.md)       | Region  |   5   |
-| The character screen and its menu     | [Character](character/design.md)     | Screen  |   2   |
-| The crafting table and screen         | [Crafting](crafting/design.md)       | Screen  |   2   |
-| The dialogue box                      | [Dialogue](dialogue/design.md)       | Pieces  |   2   |
-| Fontaine                              | [Fontaine](fontaine/design.md)       | Region  |   5   |
-| The card game's duel board            | [Gcg](gcg/design.md)                 | Screen  |   6   |
-| The adventurer handbook               | [Handbook](handbook/design.md)       | Screen  |   2   |
-| Inazuma                               | [Inazuma](inazuma/design.md)         | Region  |   5   |
-| The interaction pill                  | [Interaction](interaction/design.md) | Pieces  |   2   |
-| The interface pieces without a screen | [Interface](interface/design.md)     | Pieces  |   2   |
-| The inventory screen                  | [Inventory](inventory/design.md)     | Screen  |   2   |
-| Liyue                                 | [Liyue](liyue/design.md)             | Region  |   5   |
-| The login screen                      | [Login](login/design.md)             | Scene   |   1   |
-| The map screen                        | [Map](map/design.md)                 | Screen  |   2   |
-| Mondstadt                             | [Mondstadt](mondstadt/design.md)     | Region  |   4   |
-| Natlan                                | [Natlan](natlan/design.md)           | Region  |   5   |
-| Nod-Krai                              | [Nod-Krai](nod-krai/design.md)       | Region  |   5   |
-| The Paimon menu                       | [Paimon](paimon/design.md)           | Screen  |   2   |
-| The quest screen                      | [Quest](quest/design.md)             | Screen  |   2   |
-| The settings screen                   | [Settings](settings/design.md)       | Screen  |   2   |
-| Snezhnaya                             | [Snezhnaya](snezhnaya/design.md)     | Region  |   5   |
-| Sumeru                                | [Sumeru](sumeru/design.md)           | Region  |   5   |
-| The game's text in every language     | [Text](text/design.md)               | Dataset |   0   |
-| The first scene, Windrise             | [Windrise](windrise/design.md)       | Scene   |   1   |
-| The wish screen                       | [Wish](wish/design.md)               | Screen  |   2   |
-| The world's playable pieces           | [World](world/design.md)             | Pieces  |   3   |
+| Covers                                                                                  | Page                                 | Kind    | Phase |
+| :-------------------------------------------------------------------------------------- | :----------------------------------- | :------ | :---: |
+| the four capitals laid out as the witness draws them, and the city areas' re-extraction | [Capitals](capitals/design.md)       | Region  |   5   |
+| the character screen's Attributes tab, and the interface's character menu and its tabs  | [Character](character/design.md)     | Screen  |   2   |
+| the crafting table over its whole frame, and the interface's crafting screen            | [Crafting](crafting/design.md)       | Screen  |   2   |
+| the dialogue box's five states, scored over their backdrop                              | [Dialogue](dialogue/design.md)       | Pieces  |   2   |
+| Fontaine's region, from its base ground to its frame score                              | [Fontaine](fontaine/design.md)       | Region  |   5   |
+| the Genius Invokation duel board over its frame less the card art                       | [Gcg](gcg/design.md)                 | Screen  |   6   |
+| the adventurer handbook's experience page over what the page draws                      | [Handbook](handbook/design.md)       | Screen  |   2   |
+| Inazuma's region, from its base ground to its frame score                               | [Inazuma](inazuma/design.md)         | Region  |   5   |
+| the interaction pill and the selection's move                                           | [Interaction](interaction/design.md) | Pieces  |   2   |
+| the interface components with no parity-page screen yet                                 | [Interface](interface/design.md)     | Pieces  |   2   |
+| the bag's whole frame, and the interface's inventory screen                             | [Inventory](inventory/design.md)     | Screen  |   2   |
+| Liyue's region, from its base ground to its frame score                                 | [Liyue](liyue/design.md)             | Region  |   5   |
+| the login screen's light and shadows, and the health notice                             | [Login](login/design.md)             | Scene   |   1   |
+| the map's names over the terrain, and the Galesong Hill label                           | [Map](map/design.md)                 | Screen  |   2   |
+| Mondstadt's region, from its base ground to its frame score                             | [Mondstadt](mondstadt/design.md)     | Region  |   4   |
+| Natlan's region, from its base ground to its frame score                                | [Natlan](natlan/design.md)           | Region  |   5   |
+| Nod-Krai's region, from its base ground to its frame score                              | [Nod-Krai](nod-krai/design.md)       | Region  |   5   |
+| the quit prompt, the menu's open and close, and the reputation reward page              | [Paimon](paimon/design.md)           | Screen  |   2   |
+| the quest screen over its whole frame                                                   | [Quest](quest/design.md)             | Screen  |   2   |
+| the follow camera's defaults                                                            | [Settings](settings/design.md)       | Screen  |   2   |
+| Snezhnaya's region, from its base ground to its frame score                             | [Snezhnaya](snezhnaya/design.md)     | Region  |   5   |
+| Sumeru's region, from its base ground to its frame score                                | [Sumeru](sumeru/design.md)           | Region  |   5   |
+| every language's text map, decoded from the install                                     | [Text](text/design.md)               | Dataset |   0   |
+| the first scene: the oak, the surface and the sun                                       | [Windrise](windrise/design.md)       | Scene   |   1   |
+| the single pull and the ten results, frame by frame                                     | [Wish](wish/design.md)               | Screen  |   2   |
+| teleports, weather, thunderstorms, lightning, the ores and the scripted props           | [World](world/design.md)             | Pieces  |   3   |
 
 ## Bars
 

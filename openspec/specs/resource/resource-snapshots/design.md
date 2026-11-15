@@ -152,12 +152,6 @@ A restore never re-points the publication — it produces a draft to review and 
 
 Because it replaces content underneath an already-open blade, the content stores re-read themselves through `ResourceContentHookMap.Reload` rather than the blade being keyed on a counter something bumps, and the editors that hold the live document themselves are then handed it through a second stage ([third-party document adapters](../../architecture/third-party-document-adapters/design.md)).
 
-## Why not object versioning
-
-**A resource version is not an object version.** It is `content.json` _plus the assets it references_, and a versioned object keeps its own timeline with no cross-object consistency point — so "restore this resource as of Tuesday" resolves to Tuesday's JSON pointing at asset objects since replaced or deleted. Cloning the assets alongside the content is a thing the application does and the storage layer cannot.
-
-Two lesser reasons, each independently sufficient: a non-current object version would be **billed but invisible to the ledger**, which charges the current object and settles it from the object-create event ([storage quotas](../storage-quotas/design.md)); and a version is addressed by an opaque id nothing in the app stores, lists or hands to a restore.
-
 ## Procedures
 
 | Procedure                            | Auth                | Input                      | Purpose                                                        |
@@ -190,6 +184,7 @@ The channel rides with the version on every command, because a version alone nam
 
 ## Notes
 
+- Versioning the storage objects themselves, rather than snapshotting the resource, is [rejected](../../../rejected/resource/object-versioning/design.md).
 - After an unpublish the publish numbering restarts at 1, because unpublish deletes the publication row and the published channel's version rows with it, and releases the files those rows named. The live version is read from the publication row rather than inferred from which versions exist: the listing answers what can be returned to, the row answers what is being served.
 - Purge and soft delete need no step of their own: purge takes `{id}/` wholesale, which is already every channel.
 - [Named checkpoints](../../../rejected/resource/sheet/named-checkpoints/design.md) was rejected for the Sheet editor because undo/redo already traverses prior states, and the resource-level version of the same idea is rejected in [owner-named versions](../../../rejected/resource/owner-named-versions/design.md) — a row is chosen by its time, its reason and what it holds, none of which the owner has to supply.

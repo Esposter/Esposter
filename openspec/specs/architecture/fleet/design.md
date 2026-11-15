@@ -38,7 +38,7 @@ A machine's profile is `{state-root}/machine.json`, written by `pnpm ai:fleet:pr
 - `areas`, the areas the user lent the machine for. A new profile is lent every area. An area a machine was not lent is never worked, however idle it is.
 - `capabilities`, read off the machine each run: its operating system, `game-install` when the game's asset blocks are present, `game-exports` when the parity exports exist, and `media-engine` on macOS, which always has one, or on Windows where FFmpeg lists Direct3D acceleration. `parity-page` is not detected, so the user sets it, and a capability the user set is kept.
 
-The profile's `id` and `areas` are never overwritten once the user has set them.
+The profile's `id` and `areas` are never overwritten once the user has set them. A machine that syncs game data over the LAN also needs an SSH key for its peer and a `{state-root}/peers.json`, which no repository file writes.
 
 ## Entries
 

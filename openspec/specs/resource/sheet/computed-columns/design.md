@@ -14,7 +14,7 @@ Every read goes through one pipeline, `compileSheetColumns(columns)(rows)(row, c
 
 Each caller binds the rows it reads from, and nothing is cached across row lists: a binding lives as long as the caller that made it.
 
-The read sites are: the row store's cell reads (`getCellValue`, which the table's sorting, global search and cell renderer all go through, so `UiDataTable` operates on computed values — the binding is held in a `computed`, so Vue tracks the source cells an aggregation read at bind time), export and range copy (`filterDataSourceColumns` binds every row once and materializes the computed values into plain row data before the serializers or the clipboard run, so exported CSV/JSON and a copied range include them — [copy computed values](../copy-computed-values/design.md)), and statistics (`computeColumnStatisticsForColumn` takes the column's values, which the caller reads once from one binding, plus the outlier store reading the same binding per cell).
+The read sites are: the row store's cell reads (`getCellValue`, which the table's sorting, global search and cell renderer all go through, so `UiDataTable` operates on computed values — the binding is held in a `computed`, so Vue tracks the source cells an aggregation read at bind time), export and range copy (`filterDataSourceColumns` binds every row once and materializes the computed values into plain row data before the serializers or the clipboard run, so exported CSV/JSON and a copied range include them — [clipboard](../clipboard/design.md)), and statistics (`computeColumnStatisticsForColumn` takes the column's values, which the caller reads once from one binding, plus the outlier store reading the same binding per cell).
 
 ```mermaid
 flowchart TD

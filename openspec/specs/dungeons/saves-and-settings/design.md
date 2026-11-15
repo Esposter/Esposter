@@ -1,6 +1,6 @@
 # Saves and Settings
 
-The whole game persists as one `Dungeons` entity per user — a single optional `save` plus `settings` — through the same auth/unauth single-blob pattern as [clicker](../../clicker/game-loop-and-saves/design.md).
+The whole game persists as one `Dungeons` entity per user — a single optional `save` plus `settings` — through the shared blob-state path ([save data](../../genshin/save-data/design.md)).
 
 ## How it works
 

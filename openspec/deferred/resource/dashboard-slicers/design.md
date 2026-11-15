@@ -13,3 +13,11 @@ A dashboard owner asks to narrow a published dashboard by a value rather than a 
 ## Cheaper interim
 
 Brush a range on one chart to dim it on every linked chart; bind a second visual to a Sheet filtered to the slice.
+
+## The visual filter the slicers wait on
+
+A filter on one visual, set by the owner, that keeps only the rows a condition accepts before the visual aggregates them, as Power BI's visual-level filter does ([Add a filter to a report](https://learn.microsoft.com/en-us/power-bi/create-reports/power-bi-report-add-filter)).
+
+It is the first piece of the same query language. Building it for one visual would fix a shape the slicers then change, since a slicer's filter is synced across visuals and held by the reader. A column of the Sheet the visual reads can already be filtered at its source, which every visual over it then shares.
+
+**Revisit when:** the slicers are built, so one filter model serves the owner's visual filter and the reader's slicer, or an owner keeps a second Sheet only to hold a subset of the first for one chart.

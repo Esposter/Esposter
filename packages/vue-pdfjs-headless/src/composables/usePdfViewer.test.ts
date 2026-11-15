@@ -6,6 +6,7 @@ import type { MaybeRefOrGetter } from "vue";
 
 import { PAGE_HEIGHT, PAGE_WIDTH } from "#src/composables/constants.test";
 import { createAnnotationStorage } from "#src/composables/createAnnotationStorage.fixture";
+import { createTestScope } from "#src/composables/createTestScope.test";
 import { usePdfViewer } from "#src/composables/usePdfViewer";
 import { PdfEditorMode } from "#src/models/PdfEditorMode";
 import {
@@ -20,7 +21,7 @@ import {
 import { noop } from "@esposter/shared";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vitest";
-import { effectScope, nextTick, shallowRef } from "vue";
+import { nextTick, shallowRef } from "vue";
 
 const stubPrint = () => {
   const print = vi.fn<() => void>();
@@ -288,7 +289,7 @@ describe(usePdfViewer, () => {
   };
   const mountViewer = (pdfDocument: MaybeRefOrGetter<PDFDocumentProxy | undefined>, highlightTerms: string[] = []) => {
     const container = window.document.createElement("div");
-    const scope = effectScope();
+    const scope = createTestScope();
     const state = scope.run(() =>
       usePdfViewer({
         container,
@@ -323,48 +324,44 @@ describe(usePdfViewer, () => {
   test("zooming in at the largest scale", () => {
     expect.hasAssertions();
 
-    const { scope, state, viewer } = mountViewer(createDocument(3));
+    const { state, viewer } = mountViewer(createDocument(3));
     viewer.currentScale = PDF_MAX_SCALE;
     state.zoomIn();
 
     expect(state.isZoomInDisabled.value).toBe(true);
-    scope.stop();
   });
 
   test("zooming in past the largest scale stops at the package's maximum", () => {
     expect.hasAssertions();
 
-    const { scope, state, viewer } = mountViewer(createDocument(3));
+    const { state, viewer } = mountViewer(createDocument(3));
     // A step from 9.1 would overshoot the package's largest scale, which the zoom must not pass
     viewer.currentScale = 9.1;
     state.zoomIn();
 
     expect(viewer.currentScale).toBe(PDF_MAX_SCALE);
-    scope.stop();
   });
 
   test("a loaded document opens fitted to its container", () => {
     expect.hasAssertions();
 
-    const { scope, state, viewer } = mountViewer(createDocument(3));
+    const { state, viewer } = mountViewer(createDocument(3));
     stubs.eventBus?.dispatch("pagesinit", {});
 
     expect(viewer.currentScaleValue).toBe("auto");
     expect(state.scale.value).toBe(FIT_SCALE);
-    scope.stop();
   });
 
   test("a resize keeps a fit", () => {
     expect.hasAssertions();
 
-    const { scope, state } = mountViewer(createDocument(3));
+    const { state } = mountViewer(createDocument(3));
     stubs.eventBus?.dispatch("pagesinit", {});
     state.fitWidth();
     stubs.scaleWrites = [];
     reportResize?.();
 
     expect(stubs.scaleWrites).toStrictEqual(["page-width"]);
-    scope.stop();
   });
 
   test.each([
@@ -374,79 +371,72 @@ describe(usePdfViewer, () => {
   ] as const)("%s zooms the pages to %s", (action, scaleValue) => {
     expect.hasAssertions();
 
-    const { scope, state, viewer } = mountViewer(createDocument(3));
+    const { state, viewer } = mountViewer(createDocument(3));
     stubs.eventBus?.dispatch("pagesinit", {});
     state[action]();
 
     expect(viewer.currentScaleValue).toBe(scaleValue);
-    scope.stop();
   });
 
   test("the zoom reset returns to the scale a document opens in", () => {
     expect.hasAssertions();
 
-    const { scope, state, viewer } = mountViewer(createDocument(3));
+    const { state, viewer } = mountViewer(createDocument(3));
     stubs.eventBus?.dispatch("pagesinit", {});
     const openedScale = viewer.currentScaleValue;
     state.fitWidth();
     state.resetZoom();
 
     expect(viewer.currentScaleValue).toBe(openedScale);
-    scope.stop();
   });
 
   test("going to a page", () => {
     expect.hasAssertions();
 
-    const { scope, state, viewer } = mountViewer(createDocument(3));
+    const { state, viewer } = mountViewer(createDocument(3));
     state.goToPage(2);
 
     expect(viewer.currentPageNumber).toBe(2);
     expect(state.currentPageNumber.value).toBe(2);
-    scope.stop();
   });
 
   test("rotating turns the pages a step", () => {
     expect.hasAssertions();
 
-    const { scope, state } = mountViewer(createDocument(3));
+    const { state } = mountViewer(createDocument(3));
     state.rotate(PDF_ROTATION_STEP);
 
     expect(state.pagesRotation.value).toBe(PDF_ROTATION_STEP);
-    scope.stop();
   });
 
   test("rotating left from upright turns the pages back a step, past the upright", () => {
     expect.hasAssertions();
 
-    const { scope, state } = mountViewer(createDocument(3));
+    const { state } = mountViewer(createDocument(3));
     state.rotate(-PDF_ROTATION_STEP);
 
     expect(state.pagesRotation.value).toBe(PDF_FULL_TURN - PDF_ROTATION_STEP);
-    scope.stop();
   });
 
   test("rotating past a full turn", () => {
     expect.hasAssertions();
 
-    const { scope, state } = mountViewer(createDocument(3));
+    const { state } = mountViewer(createDocument(3));
     state.rotate(PDF_ROTATION_STEP);
     state.rotate(PDF_ROTATION_STEP);
     state.rotate(PDF_ROTATION_STEP);
     state.rotate(PDF_ROTATION_STEP);
 
     expect(state.pagesRotation.value).toBe(0);
-    scope.stop();
   });
 
   test("zooming out at the smallest scale", () => {
     expect.hasAssertions();
 
-    const { scope, state, viewer } = mountViewer(createDocument(3));
+    const { state, viewer } = mountViewer(createDocument(3));
     viewer.currentScale = PDF_MIN_SCALE;
 
     expect(state.isZoomOutDisabled.value).toBe(true);
-    scope.stop();
   });
 
   test.each([
@@ -456,36 +446,33 @@ describe(usePdfViewer, () => {
     expect.hasAssertions();
 
     matches = total;
-    const { scope, state } = mountViewer(createDocument(3));
+    const { state } = mountViewer(createDocument(3));
     state.searchQuery.value = "word";
     await nextTick();
 
     expect(state.matchesCount.value).toStrictEqual({ current, total });
     expect(state.isNotFound.value).toBe(isNotFound);
-    scope.stop();
   });
 
   test("a resize before any document writes no scale", () => {
     expect.hasAssertions();
 
-    const { scope } = mountViewer(undefined);
+    mountViewer(undefined);
     reportResize?.();
 
     expect(stubs.scaleWrites).toStrictEqual([]);
-    scope.stop();
   });
 
   test("a second document starts on its first page", async () => {
     expect.hasAssertions();
 
     const pdfDocument = shallowRef<PDFDocumentProxy | undefined>(createDocument(3));
-    const { scope, state, viewer } = mountViewer(pdfDocument);
+    const { state, viewer } = mountViewer(pdfDocument);
     viewer.currentPageNumber = 7;
     pdfDocument.value = createDocument(3);
     await nextTick();
 
     expect(state.currentPageNumber.value).toBe(1);
-    scope.stop();
   });
 
   test("a document that replaces another starts with no search", async () => {
@@ -493,7 +480,7 @@ describe(usePdfViewer, () => {
 
     matches = 2;
     const pdfDocument = shallowRef<PDFDocumentProxy | undefined>(createDocument(3));
-    const { scope, state } = mountViewer(pdfDocument);
+    const { state } = mountViewer(pdfDocument);
     state.searchQuery.value = "word";
     await flushPromises();
     pdfDocument.value = createDocument(3);
@@ -501,7 +488,6 @@ describe(usePdfViewer, () => {
 
     expect(state.searchQuery.value).toBe("");
     expect(state.matchesCount.value).toStrictEqual({ current: 0, total: 0 });
-    scope.stop();
   });
 
   test("downloading a document under its name", async () => {
@@ -513,7 +499,7 @@ describe(usePdfViewer, () => {
     vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(function (this: HTMLAnchorElement) {
       downloadName = this.download;
     });
-    const { scope, state } = mountViewer(createDocument(3));
+    const { state } = mountViewer(createDocument(3));
     state.download("report.pdf");
     await flushPromises();
     const [blob] = createObjectURL.mock.calls[0] ?? [];
@@ -521,7 +507,6 @@ describe(usePdfViewer, () => {
 
     expect(downloadName).toBe("report.pdf");
     expect(new Uint8Array(await blob.arrayBuffer())).toStrictEqual(new Uint8Array([1, 2, 3]));
-    scope.stop();
   });
 
   test("an unedited document downloads its original bytes", async () => {
@@ -531,7 +516,7 @@ describe(usePdfViewer, () => {
     vi.spyOn(URL, "revokeObjectURL").mockImplementation(() => {});
     vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
     const pdfDocument = createDocument(3);
-    const { scope, state } = mountViewer(pdfDocument);
+    const { state } = mountViewer(pdfDocument);
     state.download("report.pdf");
     await flushPromises();
     const [blob] = createObjectURL.mock.calls[0] ?? [];
@@ -539,7 +524,6 @@ describe(usePdfViewer, () => {
 
     expect(pdfDocument.saveDocument).not.toHaveBeenCalled();
     expect(new Uint8Array(await blob.arrayBuffer())).toStrictEqual(new Uint8Array([1, 2, 3]));
-    scope.stop();
   });
 
   test("an entry in the annotation storage makes the download save the renderer's bytes", async () => {
@@ -549,7 +533,7 @@ describe(usePdfViewer, () => {
     vi.spyOn(URL, "revokeObjectURL").mockImplementation(() => {});
     vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
     const pdfDocument = createDocument(3);
-    const { scope, state } = mountViewer(pdfDocument);
+    const { state } = mountViewer(pdfDocument);
     // The renderer keys a field's value by the field's id, which its input writes under that id
     pdfDocument.annotationStorage.setValue("4R", { value: "Typed" });
     state.download("report.pdf");
@@ -559,7 +543,6 @@ describe(usePdfViewer, () => {
 
     expect(pdfDocument.saveDocument).toHaveBeenCalledTimes(1);
     expect(new Uint8Array(await blob.arrayBuffer())).toStrictEqual(new Uint8Array([4, 5, 6]));
-    scope.stop();
   });
 
   test("#37 A watermarked download", async () => {
@@ -576,7 +559,7 @@ describe(usePdfViewer, () => {
 
       return Promise.resolve(new Uint8Array([4, 5, 6]));
     });
-    const { scope, state } = mountViewer(pdfDocument);
+    const { state } = mountViewer(pdfDocument);
     state.download("report.pdf", "DRAFT");
     await flushPromises();
 
@@ -603,13 +586,12 @@ describe(usePdfViewer, () => {
     );
     expect(pdfDocument.annotationStorage.size).toBe(0);
     expect(createObjectURL).toHaveBeenCalledTimes(1);
-    scope.stop();
   });
 
   test("#68 Switching the editor mode", async () => {
     expect.hasAssertions();
 
-    const { scope, state } = mountViewer(createDocument(3));
+    const { state } = mountViewer(createDocument(3));
     reportEditorManager();
     state.editorMode.value = PdfEditorMode.Ink;
     await nextTick();
@@ -618,13 +600,12 @@ describe(usePdfViewer, () => {
 
     // The renderer's new manager starts in none, which the reader's mode is set on as the manager is reported
     expect(stubs.editorModes).toStrictEqual([PdfEditorMode.None, PdfEditorMode.Ink, PdfEditorMode.None]);
-    scope.stop();
   });
 
   test("a mode chosen while the document loads is set once the renderer reports its editor", async () => {
     expect.hasAssertions();
 
-    const { scope, state } = mountViewer(createDocument(3));
+    const { state } = mountViewer(createDocument(3));
     state.editorMode.value = PdfEditorMode.Ink;
     await nextTick();
 
@@ -632,13 +613,12 @@ describe(usePdfViewer, () => {
     expect(stubs.editorModes).toStrictEqual([]);
     reportEditorManager();
     expect(stubs.editorModes).toStrictEqual([PdfEditorMode.Ink]);
-    scope.stop();
   });
 
   test("stored free texts are drawn on each page the renderer has rendered", async () => {
     expect.hasAssertions();
 
-    const { scope, state } = mountViewer(createDocument(3));
+    const { state } = mountViewer(createDocument(3));
     const manager = reportEditorManager([0, 2]);
     state.drawStoredEditors();
     await flushPromises();
@@ -647,26 +627,24 @@ describe(usePdfViewer, () => {
     expect(manager.findClonesForPage.mock.calls).toStrictEqual([[manager.layers.get(0)], [manager.layers.get(2)]]);
     expect(manager.layers.get(0)?.div.hidden).toBe(false);
     expect(manager.layers.get(2)?.div.hidden).toBe(false);
-    scope.stop();
   });
 
   test("drawing stored free texts before the renderer reports its editor manager logs nothing", async () => {
     expect.hasAssertions();
 
     const consoleError = vi.spyOn(console, "error").mockImplementation(noop);
-    const { scope, state } = mountViewer(createDocument(3));
+    const { state } = mountViewer(createDocument(3));
     state.drawStoredEditors();
     await flushPromises();
 
     expect(consoleError).not.toHaveBeenCalled();
-    scope.stop();
   });
 
   test("a stored free text the renderer cannot restore is logged", async () => {
     expect.hasAssertions();
 
     const consoleError = vi.spyOn(console, "error").mockImplementation(noop);
-    const { scope, state } = mountViewer(createDocument(3));
+    const { state } = mountViewer(createDocument(3));
     const manager = reportEditorManager([0]);
     const error = new Error("The restore failed");
     manager.findClonesForPage.mockRejectedValueOnce(error);
@@ -674,16 +652,14 @@ describe(usePdfViewer, () => {
     await flushPromises();
 
     expect(consoleError).toHaveBeenCalledExactlyOnceWith(error);
-    scope.stop();
   });
 
   test("the renderer's annotation icons are read from the image path it is given", () => {
     expect.hasAssertions();
 
-    const { scope } = mountViewer(createDocument(3));
+    mountViewer(createDocument(3));
 
     expect(stubs.imageResourcesPath).toBe(IMAGE_RESOURCES_PATH);
-    scope.stop();
   });
 
   test("printing a document", async () => {
@@ -691,7 +667,7 @@ describe(usePdfViewer, () => {
 
     const printSpy = stubPrint();
     vi.spyOn(HTMLCanvasElement.prototype, "toDataURL").mockReturnValue("data:image/png;base64,");
-    const { scope, state } = mountViewer(createDocument(3));
+    const { state } = mountViewer(createDocument(3));
     state.print();
     await flushPromises();
 
@@ -700,7 +676,6 @@ describe(usePdfViewer, () => {
     window.dispatchEvent(new Event("afterprint"));
 
     expect(window.document.querySelector(`.${PDF_PRINT_CLASS}`)).toBeNull();
-    scope.stop();
   });
 
   test("unmounting while a print is drawing", async () => {
@@ -735,7 +710,7 @@ describe(usePdfViewer, () => {
   test("#84 #56 placing an overlay on a page", () => {
     expect.hasAssertions();
 
-    const { scope, state, viewer } = mountViewer(createDocument(3));
+    const { state, viewer } = mountViewer(createDocument(3));
     const element = window.document.createElement("div");
     const viewport = createViewport(viewer.currentScale);
     stubs.eventBus?.dispatch("pagerendered", { pageNumber: 2, source: { div: element, viewport } });
@@ -747,14 +722,13 @@ describe(usePdfViewer, () => {
     expect(overlay.element).toBe(element);
     expect(overlay.pageNumber).toBe(2);
     expect(overlay.viewport).toBe(viewport);
-    scope.stop();
   });
 
   test("#24 highlighting the terms a document opens with", async () => {
     expect.hasAssertions();
 
     const TERMS = ["word", "page"];
-    const { scope, state } = mountViewer(createDocument(3), TERMS);
+    const { state } = mountViewer(createDocument(3), TERMS);
     await flushPromises();
     const [find] = stubs.findEvents;
 
@@ -770,14 +744,13 @@ describe(usePdfViewer, () => {
       query: "word page",
       type: "",
     });
-    scope.stop();
   });
 
   test("#44 following a bookmark", async () => {
     expect.hasAssertions();
 
     const chapter = createOutlineNode("chapter", "Chapter");
-    const { scope, state } = mountViewer(createDocument(3, createPage(), [chapter]));
+    const { state } = mountViewer(createDocument(3, createPage(), [chapter]));
     await flushPromises();
     assert(state.outline.value);
     const [item] = state.outline.value;
@@ -786,17 +759,15 @@ describe(usePdfViewer, () => {
 
     expect(stubs.linkService?.goToDestination).toHaveBeenCalledExactlyOnceWith("chapter");
     expect(state.currentPageNumber.value).toBe(CHAPTER_PAGE);
-    scope.stop();
   });
 
   test("a document with no outline", async () => {
     expect.hasAssertions();
 
-    const { scope, state } = mountViewer(createDocument(3));
+    const { state } = mountViewer(createDocument(3));
     await flushPromises();
 
     expect(state.outline.value).toStrictEqual([]);
-    scope.stop();
   });
 
   test("an outline still being read is undefined, not empty", () => {
@@ -804,10 +775,9 @@ describe(usePdfViewer, () => {
 
     const outline = Promise.withResolvers<null | PdfOutline>();
     const pending = Object.assign(createDocument(3), { getOutline: () => outline.promise });
-    const { scope, state } = mountViewer(pending);
+    const { state } = mountViewer(pending);
 
     expect(state.outline.value).toBeUndefined();
-    scope.stop();
   });
 
   test("an outline that cannot be read is empty and logged", async () => {
@@ -816,12 +786,11 @@ describe(usePdfViewer, () => {
     const error = new Error("a");
     const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
     const failing = Object.assign(createDocument(3), { getOutline: () => Promise.reject(error) });
-    const { scope, state } = mountViewer(failing);
+    const { state } = mountViewer(failing);
     await flushPromises();
 
     expect(state.outline.value).toStrictEqual([]);
     expect(consoleError).toHaveBeenCalledExactlyOnceWith(error);
-    scope.stop();
   });
 
   test("an outline that loads after a newer document is dropped", async () => {
@@ -832,13 +801,12 @@ describe(usePdfViewer, () => {
     const staleOutline = Promise.withResolvers<null | PdfOutline>();
     const staleDocument = Object.assign(createDocument(3), { getOutline: () => staleOutline.promise });
     const pdfDocument = shallowRef<PDFDocumentProxy | undefined>(staleDocument);
-    const { scope, state } = mountViewer(pdfDocument);
+    const { state } = mountViewer(pdfDocument);
     pdfDocument.value = createDocument(3, createPage(), [chapter]);
     await flushPromises();
     staleOutline.resolve([staleChapter]);
     await flushPromises();
 
     expect(state.outline.value).toStrictEqual([chapter]);
-    scope.stop();
   });
 });

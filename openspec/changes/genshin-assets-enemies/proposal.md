@@ -11,7 +11,7 @@ Every enemy in the world is one shared capsule. The game's monsters have bodies,
 - The Hilichurl Fighter's body is extracted and its avatar written from the install, the monster-shape fit that turns a body into our parameters is registered, and a kind's fitted body replaces its capsule once a still of it is found.
 - A windup draws a telegraph of its reach as our own shape.
 
-No game art, mesh, texture, clip or effect is committed or shipped. Only fitted parameters and generated shapes ship.
+The shipping rule is [derived assets](../../specs/genshin/derived-assets/spec.md).
 
 ## Capabilities
 

@@ -88,7 +88,7 @@ The map and the inventory are shared by every component: `pnpm -C scripts genshi
 - **F3, float.** As F2, for the float effect; fit and publish under task 3.9.
 - **F4, bite and splash.** Extract `fishing`. The effects' rows are named with `pnpm -C scripts genshin:assets find <pattern>`, which task 1.7 writes, and their shaders read with `pnpm -C scripts genshin:assets shaders fishing`, which takes the `fishing` component that task 1.1 names. Fit: task 3.10. Check: compare over the strike frame from task 1.4.
 - **F5, point ripple.** No extract. The points come from `pnpm -C scripts genshin:assets fishing --dry-run`, which exists. The ring is the engine's water ripple node, drawn by task 2.5; there is no fit.
-- **W1, fleeing kinds.** Extract `animals`; bounds, task 1.2; fit and publish under task 3.5, checked by `pnpm -C scripts genshin:assets fit animals --dry-run` and `genshin:data verify`. Check: a reference of a kind's flight, if a public still shows one (`pnpm -C scripts genshin:parity fetch` finds the source); until one is recorded, the wildlife scenario of the playtest is the check.
+- **W1, fleeing kinds.** Extract `animals`; bounds, task 1.2; fit and publish under task 3.5, checked by `pnpm -C scripts genshin:assets fit animals --dry-run` and `genshin:data verify`. Check: a reference of a kind's flight, if a public still shows one (`pnpm -C scripts genshin:parity fetch` finds the source); until one is recorded, the test named for the fleeing kinds' silhouettes in task 3.1 is the check.
 - **W2, critters.** Extract `animals`; bounds, task 1.2; fit and publish under task 3.6. Check as W1.
 - **W3, flight numbers.** Clips: `pnpm -C scripts genshin:assets clips animals`, which exports each run clip as JSON once task 1.1 names the `animals` component. Timings: `pnpm -C scripts genshin:assets timings '<clip pattern>'`, which exists and prints seconds and events. Root motion: no command yet; task 1.3 writes `genshin:assets motion`. The write into the wildlife constants is task 3.4, a manual edit checked by the wildlife tests, with no fit.
 - **W4, material sources.** `pnpm -C scripts genshin:assets materialSources --dry-run` exists and publishes the crystalflies; task 3.3 adds the other labels and their join, checked by the same dry run.
@@ -158,7 +158,7 @@ Group 1, the foundations, comes first: its commands and the two components are r
 
 This change holds phase 0, its `x-phase`, because its lowest open task does: the commands and the datasets they publish hold phase 0, the challenge words and the bag icons hold phase 2, the stand-ins and system pieces hold phase 6, and the likeness fits, the motion numbers and the world art lines hold phase 7. Each task carries its phase after its number.
 
-Playtest: a player reaches the cast and the animals, so two playtest scenarios name the states they show, one for the cast and one for the wildlife and props. Each is a file in the dev scenarios folder, listed in that folder's constants, and the first task that needs it creates it. Pet drawing waits on [genshin-wildlife](../genshin-wildlife/design.md) task 5.1, and no task here waits on it.
+A player reaches the cast and the animals, and each is checked by the tests its tasks name and by the parity compares they name. Pet drawing waits on [genshin-wildlife](../genshin-wildlife/design.md) task 5.1, and no task here waits on it.
 
 ## Key files
 
@@ -189,8 +189,6 @@ Playtest: a player reaches the cast and the animals, so two playtest scenarios n
 | `packages/genshin-world/src/services/fishing/computeFishingInteractables.ts`        | The points the ripples mark                                             |
 | `packages/genshin-world/src/components/Fishing/Screen/Index.vue`                    | The reel screen gains the challenge panel and its words                 |
 | `packages/genshin-world/src/components/Archive/Screen/Index.vue`                    | Draws the traced animal icons in Living Beings                          |
-| `packages/genshin-world/src/services/dev/scenarios/constants.ts`                    | Lists the playtest scenarios the family adds                            |
-| `packages/genshin-world/src/services/dev/scenarios/nightAtWindriseScenario.ts`      | The precedent scenario for a Windrise state                             |
 | `packages/genshin-engine/src/nodes/createWaterMaterial.ts`                          | The water ripple node the cast's rings reuse                            |
 | `packages/genshin-engine/src/kits/architecture/createBoxesGeometry.ts`              | A box generator the family's stand-ins are built from                   |
 | `packages/genshin-engine/src/kits/architecture/createLatheStackGeometry.ts`         | A stacked-lathe generator the family's stand-ins are built from         |

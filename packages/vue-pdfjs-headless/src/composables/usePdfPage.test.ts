@@ -2,11 +2,12 @@
 import type { PDFDocumentProxy, PDFPageProxy, RenderTask } from "pdfjs-dist";
 
 import { PAGE_HEIGHT, PAGE_WIDTH } from "#src/composables/constants.test";
+import { createTestScope } from "#src/composables/createTestScope.test";
 import { usePdfPage } from "#src/composables/usePdfPage";
 import { PDF_ROTATION_STEP } from "#src/services/constants";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import { effectScope, nextTick, shallowRef } from "vue";
+import { nextTick, shallowRef } from "vue";
 
 const createRenderTask = (promise: Promise<unknown>, cancel: RenderTask["cancel"] = vi.fn<RenderTask["cancel"]>()) =>
   ({ cancel, promise }) as RenderTask;
@@ -18,7 +19,7 @@ const createDocument = (page: PDFPageProxy): PDFDocumentProxy =>
 
 const mountPage = async (page: PDFPageProxy) => {
   const canvas = window.document.createElement("canvas");
-  const scope = effectScope();
+  const scope = createTestScope();
   scope.run(() => {
     usePdfPage({ canvas, pageNumber: 1, pdfDocument: createDocument(page) });
   });
@@ -67,11 +68,10 @@ describe(usePdfPage, () => {
 
     vi.stubGlobal("devicePixelRatio", 2);
     const page = createPage(vi.fn<PDFPageProxy["render"]>(() => createRenderTask(new Promise(() => {}))));
-    const { canvas, scope } = await mountPage(page);
+    const { canvas } = await mountPage(page);
     reportWidth(400);
 
     expect(canvas.width).toBe(800);
-    scope.stop();
   });
 
   test("#20 a width change while a page is drawing", async () => {
@@ -83,14 +83,13 @@ describe(usePdfPage, () => {
       .fn<PDFPageProxy["render"]>()
       .mockReturnValueOnce(firstTask)
       .mockReturnValueOnce(createRenderTask(new Promise(() => {})));
-    const { canvas, scope } = await mountPage(createPage(render));
+    const { canvas } = await mountPage(createPage(render));
     reportWidth(400);
     reportWidth(200);
 
     expect(firstTask.cancel).toHaveBeenCalledExactlyOnceWith();
     expect(render).toHaveBeenCalledTimes(2);
     expect(canvas.width).toBe(200);
-    scope.stop();
   });
 
   test("a canvas swapped in at the width the last one had is drawn", async () => {
@@ -98,7 +97,7 @@ describe(usePdfPage, () => {
 
     vi.stubGlobal("devicePixelRatio", 1);
     const canvas = shallowRef(window.document.createElement("canvas"));
-    const scope = effectScope();
+    const scope = createTestScope();
     scope.run(() => {
       usePdfPage({
         canvas,
@@ -116,7 +115,6 @@ describe(usePdfPage, () => {
     reportWidth(400);
 
     expect(replacement.width).toBe(400);
-    scope.stop();
   });
 
   test("a quarter turn draws the page turned", async () => {
@@ -132,7 +130,7 @@ describe(usePdfPage, () => {
       rotate: 0,
     } as unknown as PDFPageProxy;
     const pagesRotation = shallowRef(0);
-    const scope = effectScope();
+    const scope = createTestScope();
     scope.run(() => {
       usePdfPage({
         canvas: window.document.createElement("canvas"),
@@ -147,7 +145,6 @@ describe(usePdfPage, () => {
     await nextTick();
 
     expect(getViewport.mock.lastCall?.[0].rotation).toBe(PDF_ROTATION_STEP);
-    scope.stop();
   });
 
   test("a page's own quarter turn is kept under the viewer's turn", async () => {
@@ -164,7 +161,7 @@ describe(usePdfPage, () => {
       rotate: PDF_ROTATION_STEP,
     } as unknown as PDFPageProxy;
     const pagesRotation = shallowRef(0);
-    const scope = effectScope();
+    const scope = createTestScope();
     scope.run(() => {
       usePdfPage({
         canvas: window.document.createElement("canvas"),
@@ -181,7 +178,6 @@ describe(usePdfPage, () => {
     await nextTick();
 
     expect(getViewport.mock.lastCall?.[0].rotation).toBe(PDF_ROTATION_STEP * 2);
-    scope.stop();
   });
 
   test("a page's cached proxy is released when its scope ends", async () => {
@@ -207,13 +203,12 @@ describe(usePdfPage, () => {
       .fn<PDFPageProxy["render"]>()
       .mockReturnValueOnce(firstTask)
       .mockReturnValueOnce(createRenderTask(new Promise(() => {})));
-    const { scope } = await mountPage(createPage(render));
+    await mountPage(createPage(render));
     reportWidth(400);
     reportWidth(200);
     await flushPromises();
 
     expect(console.error).not.toHaveBeenCalled();
-    scope.stop();
   });
 
   test("a draw's own error is logged", async () => {
@@ -222,14 +217,11 @@ describe(usePdfPage, () => {
     vi.stubGlobal("devicePixelRatio", 1);
     vi.spyOn(console, "error").mockImplementation(() => {});
     const error = new Error(" ");
-    const { scope } = await mountPage(
-      createPage(vi.fn<PDFPageProxy["render"]>(() => createRenderTask(Promise.reject(error)))),
-    );
+    await mountPage(createPage(vi.fn<PDFPageProxy["render"]>(() => createRenderTask(Promise.reject(error)))));
     reportWidth(400);
     await flushPromises();
 
     expect(console.error).toHaveBeenCalledExactlyOnceWith(error);
-    scope.stop();
   });
 
   test("a page that loads after the page number has moved on is not drawn", async () => {
@@ -246,7 +238,7 @@ describe(usePdfPage, () => {
     } as unknown as PDFDocumentProxy;
     const pageNumber = shallowRef(1);
     const canvas = window.document.createElement("canvas");
-    const scope = effectScope();
+    const scope = createTestScope();
     scope.run(() => {
       usePdfPage({ canvas, pageNumber, pdfDocument });
     });
@@ -257,7 +249,6 @@ describe(usePdfPage, () => {
     await flushPromises();
 
     expect(render).toHaveBeenCalledTimes(1);
-    scope.stop();
   });
 
   test("a page is not loaded until it is active", async () => {
@@ -267,7 +258,7 @@ describe(usePdfPage, () => {
     const pdfDocument = createDocument(
       createPage(vi.fn<PDFPageProxy["render"]>(() => createRenderTask(new Promise(() => {})))),
     );
-    const scope = effectScope();
+    const scope = createTestScope();
     scope.run(() => {
       usePdfPage({ canvas: window.document.createElement("canvas"), isActive, pageNumber: 1, pdfDocument });
     });
@@ -278,7 +269,6 @@ describe(usePdfPage, () => {
     await flushPromises();
 
     expect(pdfDocument.getPage).toHaveBeenCalledExactlyOnceWith(1);
-    scope.stop();
   });
 
   test("a page loaded while active is kept when it is no longer active", async () => {
@@ -288,7 +278,7 @@ describe(usePdfPage, () => {
     const pdfDocument = createDocument(
       createPage(vi.fn<PDFPageProxy["render"]>(() => createRenderTask(new Promise(() => {})))),
     );
-    const scope = effectScope();
+    const scope = createTestScope();
     scope.run(() => {
       usePdfPage({ canvas: window.document.createElement("canvas"), isActive, pageNumber: 1, pdfDocument });
     });
@@ -299,7 +289,6 @@ describe(usePdfPage, () => {
     await flushPromises();
 
     expect(pdfDocument.getPage).toHaveBeenCalledExactlyOnceWith(1);
-    scope.stop();
   });
 
   test("a canvas removed mid-draw cancels the draw", async () => {
@@ -308,7 +297,7 @@ describe(usePdfPage, () => {
     vi.stubGlobal("devicePixelRatio", 1);
     const cancel = vi.fn<RenderTask["cancel"]>();
     const canvas = shallowRef<HTMLCanvasElement | undefined>(window.document.createElement("canvas"));
-    const scope = effectScope();
+    const scope = createTestScope();
     scope.run(() => {
       usePdfPage({
         canvas,
@@ -324,6 +313,5 @@ describe(usePdfPage, () => {
     await nextTick();
 
     expect(cancel).toHaveBeenCalledExactlyOnceWith();
-    scope.stop();
   });
 });

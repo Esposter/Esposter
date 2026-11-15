@@ -101,16 +101,6 @@ Rich text SHALL be sanitised where it enters the app, so that every stored messa
 - **WHEN** the message is stored
 - **THEN** the script tag is removed before the message is stored
 
-### Requirement: Requests are rate limited by one shared mechanism
-
-Requests SHALL be rate limited by the application's Workers rate limit bindings, one per limiter, with no second limiter answering the same question.
-
-#### Scenario: A client sends too many requests
-
-- **GIVEN** a client that has exceeded the limit of the binding that counts its requests
-- **WHEN** it sends another request
-- **THEN** that binding refuses the request
-
 ### Requirement: An oversized request body is refused
 
 A request that declares a body length larger than the configured limit SHALL be refused before any handler runs. A request with no declared length SHALL be refused when a handler reads past the limit, so no byte past it reaches the handler.

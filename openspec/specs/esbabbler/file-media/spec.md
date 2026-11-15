@@ -1,6 +1,6 @@
 ## Purpose
 
-Client-side image thumbnails, the media viewer, per-room attachment limits, and browsing a room's attachments, all riding the shared SAS upload.
+Client-side image thumbnails, the media viewer, per-room attachment limits, and browsing a room's attachments, all riding the shared presigned upload.
 
 ## Requirements
 

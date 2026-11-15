@@ -16,9 +16,8 @@ rule. How the confirm closes follows from the mutation, so a call site states it
 | Waits for the server, or a create form                          | A confirm or form pending until the write lands. It closes on success and stays open with the draft on `false` |
 | Either, when the app can undo it — the bin, the sheet's history | The same confirm, then the undo on screen once it lands: a toast's Restore, the toolbar's Undo                 |
 
-- **One rule for every delete, the undo as the second guard.** A reader cannot tell from a Delete button whether the
-  app can reverse it, so a delete that did not ask is learned by losing something
-  (`openspec/rejected/architecture/no-confirm-for-undoable-deletes/design.md`).
+- **One rule for every delete, the undo as the second guard**, since a reader cannot tell from a Delete button whether
+  the app can reverse it (`openspec/rejected/architecture/no-confirm-for-undoable-deletes/design.md`).
 - **An optimistic write's dialog never waits for the server.** The list already changed, so a dialog held over it
   while the request is out is a lag with nothing behind it. The rollback and the error toast are the answer to a
   rejection, as they are for every optimistic write.

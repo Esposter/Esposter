@@ -29,8 +29,8 @@ Every line here is a direction a reader reaches for on meeting the Rules section
 - **Dropping `composite` from a preset** (`tsconfig.library.json`, `tsconfig.node.json`, `tsconfig.browser.json`, `tsconfig.nuxt-module.json`), on the reading that nothing consumes it. It is the precondition for `isolatedDeclarations`; without it every package fails `TS5069` (`references/tsconfig-presets.md`).
 - **A `compilerOptions` block in `tsconfig.build.base.json`, or a `paths` block in `tsconfig.base.json`.** The first emits declarations against the wrong lib set; the second shadows real package names (`references/tsconfig-presets.md`).
 - **Hashing `.github/` into a package build's task cache input.** Every command those workflows run is already hashed through a manifest, so the key would move on every comment edit and rebuild a package for a change no build can observe (`openspec/specs/architecture/monorepo-tooling/design.md`, "CI job shape").
-- **Filling a published package's metadata fields** — `engines`, `repository.directory`, a `LICENSE` beside the `license` the manifest names. None is derived by the build or checked by a gate, and a licence cannot be shared by symlink (`openspec/rejected/architecture/published-package-metadata/design.md`).
-- **A size band, or a ceiling per file, in place of the record** — a band is a snapshot of the power of two a tenth above each file, so healthy growth near an edge fails; a ceiling sees growth and never a shrink. The committed record of exact sizes replaces both (`openspec/rejected/architecture/bundle-size-bands/design.md`, `openspec/rejected/architecture/bundle-size-ceilings/design.md`).
+- **Filling a published package's metadata fields** — `engines`, `repository.directory`, a `LICENSE` file — none of which a gate can hold honest (`openspec/rejected/architecture/published-package-metadata/design.md`).
+- **A size band, or a ceiling per file, in place of the record** — the committed record of exact sizes is the one gate (`openspec/specs/architecture/bundle-sizes/design.md`).
 
 ## Rules
 

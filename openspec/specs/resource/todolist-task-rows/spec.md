@@ -66,16 +66,6 @@ Search SHALL match todos whose title or notes text contains the query, reading t
 - **WHEN** the owner searches for p
 - **THEN** that todo is not listed
 
-### Requirement: Saved lists with the retired item type still load
-
-Content saved with the retired item type SHALL still load, with that key dropped.
-
-#### Scenario: Old item type in saved content
-
-- **GIVEN** a todo list saved with a type on each item
-- **WHEN** the owner opens the list
-- **THEN** the list loads normally
-
 ### Requirement: Rows follow the list's own order
 
 The rows SHALL be shown in the order the list holds.

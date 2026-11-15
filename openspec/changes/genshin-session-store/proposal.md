@@ -2,7 +2,7 @@
 
 ## Why
 
-The world session's root (`packages/genshin-world/src/components/World/Session/Index.vue`) is the one place every feature meets. Its script is about 1,300 lines: 51 composable calls that take an options object, 519 option keys in all, and the largest take 53 (`useWorldInteractionDispatch`), 41 (`useWorldFrame`) and 26 (`useWorldInteractables`). Most of those keys are the same few values passed again and again: the saved state, the bag and wallet with their setters, the language, the text maps, the material data and the clock.
+The world session's root (`packages/genshin-world/src/components/World/Session/Index.vue`) is the one place every feature meets. Its script runs to well over a thousand lines: some fifty composable calls that take an options object, several hundred option keys in all, and the largest take over fifty (`useWorldInteractionDispatch`), about forty (`useWorldFrame`) and about twenty-five (`useWorldInteractables`). Most of those keys are the same few values passed again and again: the saved state, the bag and wallet with their setters, the language, the text maps, the material data and the clock.
 
 That repeated list is the cost the splitting guide measures every cut by: a feature that leaves the root takes an options interface with it, so a cut adds more lines than it removes. It is why the menu layer, the five overlay layers and every group composable were judged not to pay, and why the five overlay children were inlined. A page cannot own its composable because the composable's inputs are the root's state.
 

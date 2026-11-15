@@ -49,7 +49,6 @@ A save gains one compression, and every server read gains one decompression. Nei
 
 - **The compression fails:** the save throws before anything is uploaded. A resource save unwinds the way a failed upload already does: the version bump rolls back with its transaction, and a cleared binding stays cleared.
 - **The quota:** a rewritten content blob raises an object-create notification with its new length, and the reconcile moves the owner's counter by the difference.
-- **A read that fails:** a game's load surfaces the error rather than answering with a fresh game, so no autosave can overwrite the save it could not read. Only a guest's save in this browser, which no other copy holds, resets when it no longer parses.
 
 ## Key files
 

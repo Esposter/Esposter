@@ -7,8 +7,8 @@ Esbabbler is Esposter's messaging module: a Discord-like experience with rooms, 
 ## Key concepts
 
 - **Room** — the container for a conversation. Rooms and direct messages share one `rooms` table, distinguished by `RoomType` (`Room` | `DirectMessage`). Membership lives in `usersToRooms`.
-- **Storage split** — relational data (rooms, roles, bans, friends, settings, scheduled jobs) lives in D1; high-volume, time-ordered data (messages, reactions, message search) lives in each room's own object storage, so a message, its reactions and its search row are written in one transaction. See [messaging](messaging/design.md).
-- **Real-time** — each room, call and person has one Durable Object that holds its sockets and pushes typed events over them (`RoomEvent`, `CallEvent`, `UserEvent`); queries and mutations stay tRPC over HTTP, and RealtimeKit's webhooks reach the web Worker. The client's socket events are the source of truth for store mutations.
+- **Storage split** — the [cloud services](../architecture/cloudflare-services/design.md) design says where each kind of data lives; a message, its reactions and its search row are written in one transaction in its room's object storage ([messaging](messaging/design.md)).
+- **Real-time** — each room, call and person has a Durable Object that holds its live state and sockets, as the [cloud services](../architecture/cloudflare-services/design.md) design describes; the client's socket events are the source of truth for store mutations.
 - **RBAC** — permissions are a bitfield on room roles; every privileged procedure is gated through a permissions-aware procedure builder. See [RBAC](rbac/design.md).
 - **Call session** — a call is anchored to a `callSessionsInMessage` row (shareable id, its length set by `CALL_ID_LENGTH`), not to a route. Room calls and standalone `/calls/[id]` share-link calls use the same session model. See [calls](calls/README.md).
 

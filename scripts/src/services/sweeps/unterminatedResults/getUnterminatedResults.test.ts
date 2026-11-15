@@ -64,16 +64,36 @@ describe(getUnterminatedResults, () => {
     expect(getUnterminatedResults("const result = getResult(fn);")).toStrictEqual([{ after: ";", line: 1 }]);
   });
 
-  test("does not read a longer identifier as the call", () => {
+  // A longer or like-named identifier is neither the call, the binding nor its terminator, and only the name read whole
+  // Says which: a longer name starting with a terminator is not that terminator, and another object's field spelled the
+  // Same is not this binding, where reading it as one clears a real finding
+  test.each([
+    ["does not read a longer identifier as the call", "const wrapped = getResultOrDefault(fn);", []],
+    ["does not read a name the call is only the tail of as the call", "const wrapped = mygetResult(fn);", []],
+    [
+      "does not read a longer name starting with a terminator as the terminator",
+      "getResult(fn).matching(noop);",
+      [{ after: ".matching(noop);", line: 1 }],
+    ],
+    [
+      "does not read a longer name on the binding as its terminator",
+      "const result = getResult(fn);\nresult.matching(noop);",
+      [{ after: "; result.matching(noop);", line: 1 }],
+    ],
+    [
+      "does not read a longer non-ASCII name as the binding",
+      "const result = getResult(fn);\néresult.match(noop, log);",
+      [{ after: "; éresult.match(noop, log);", line: 1 }],
+    ],
+    [
+      "does not read a like-named property as the binding",
+      "const result = getResult(fn);\nother.result.match(noop, log);",
+      [{ after: "; other.result.match(noop, log);", line: 1 }],
+    ],
+  ])("%s", (_title, source, expected) => {
     expect.hasAssertions();
 
-    expect(getUnterminatedResults("const wrapped = getResultOrDefault(fn);")).toStrictEqual([]);
-  });
-
-  test("does not read a name the call is only the tail of as the call", () => {
-    expect.hasAssertions();
-
-    expect(getUnterminatedResults("const wrapped = mygetResult(fn);")).toStrictEqual([]);
+    expect(getUnterminatedResults(source)).toStrictEqual(expected);
   });
 
   // Whitespace and a block comment are trivia to the grammar, so the `(` they sit in front of still opens this
@@ -198,37 +218,12 @@ describe(getUnterminatedResults, () => {
     ).toStrictEqual([{ after: "; readSomethingElse();", line: 1 }]);
   });
 
-  // A longer name that starts with a terminator is not the terminator, and only the name read whole says which
-  test("does not read a longer name starting with a terminator as the terminator", () => {
-    expect.hasAssertions();
-
-    expect(getUnterminatedResults("getResult(fn).matching(noop);")).toStrictEqual([
-      { after: ".matching(noop);", line: 1 },
-    ]);
-  });
-
-  test("does not read a longer name on the binding as its terminator", () => {
-    expect.hasAssertions();
-
-    expect(getUnterminatedResults(`const result = getResult(fn);\nresult.matching(noop);`)).toStrictEqual([
-      { after: "; result.matching(noop);", line: 1 },
-    ]);
-  });
-
   // An identifier is not ASCII, so a name matched with `\w` reads a longer one as the binding it is only the
   // Tail of, and misses one whose own characters are outside the range
   test("reads a binding whose name is not ASCII", () => {
     expect.hasAssertions();
 
     expect(getUnterminatedResults(`const éresult = getResult(fn);\néresult.match(noop, log);`)).toStrictEqual([]);
-  });
-
-  test("does not read a longer non-ASCII name as the binding", () => {
-    expect.hasAssertions();
-
-    expect(getUnterminatedResults(`const result = getResult(fn);\néresult.match(noop, log);`)).toStrictEqual([
-      { after: "; éresult.match(noop, log);", line: 1 },
-    ]);
   });
 
   test("reports a binding only a combinator is called on", () => {
@@ -276,15 +271,6 @@ describe(getUnterminatedResults, () => {
 
     expect(getUnterminatedResults(`const result = getResult(fn);\n({ value: result.value } = src);`)).toStrictEqual([
       { after: "; ({ value: result.value } = src);", line: 1 },
-    ]);
-  });
-
-  // Another object's field spelled the same is not this binding, and reading it as one clears a real finding
-  test("does not read a like-named property as the binding", () => {
-    expect.hasAssertions();
-
-    expect(getUnterminatedResults(`const result = getResult(fn);\nother.result.match(noop, log);`)).toStrictEqual([
-      { after: "; other.result.match(noop, log);", line: 1 },
     ]);
   });
 

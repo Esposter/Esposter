@@ -50,64 +50,6 @@ The viewer SHALL let the reader go to any page, zoom in and out, fit a page to t
 - **THEN** the scale stays where it is
 - **AND** the zoom-in control is disabled
 
-### Requirement: The reader can search a PDF's text
-
-The viewer SHALL find text in the PDF, highlight every match, step to the previous and next match, and show how many matches there are.
-
-#### Scenario: Searching for a word
-
-- **GIVEN** a PDF open in the viewer
-- **WHEN** the reader searches for a word the PDF holds
-- **THEN** the first match is highlighted and scrolled into view
-- **AND** the number of matches is shown
-
-#### Scenario: Searching for a word the PDF does not hold
-
-- **GIVEN** a PDF open in the viewer
-- **WHEN** the reader searches for a word the PDF does not hold
-- **THEN** the viewer says nothing was found
-
-#### Scenario: Pressing Enter goes to the next match
-
-- **GIVEN** a search with three matches, the viewer on the first
-- **WHEN** the reader presses Enter in the search field
-- **THEN** the viewer goes to the second match
-
-#### Scenario: Opening a PDF with search terms
-
-- **GIVEN** a viewer given the terms "invoice" and "total"
-- **WHEN** its document loads
-- **THEN** the search bar shows "invoice total", so the terms are searched as one phrase
-- **AND** the matches of that phrase are highlighted, so Next and Previous continue that search
-
-#### Scenario: Opening a PDF without search terms
-
-- **GIVEN** a viewer given no terms
-- **WHEN** its document loads
-- **THEN** nothing is highlighted
-
-### Requirement: The reader can download and print a PDF
-
-The viewer SHALL download the file under its name, carrying the reader's edits, and SHALL print every page of it.
-
-#### Scenario: Downloading
-
-- **GIVEN** a PDF open in the viewer
-- **WHEN** the reader downloads it
-- **THEN** the file is saved under the attachment's file name
-
-#### Scenario: Downloading an edited document
-
-- **GIVEN** a PDF whose form the reader has filled in
-- **WHEN** the reader downloads it
-- **THEN** the saved file carries the typed values, as the `vue-pdfjs-headless` annotations spec states
-
-#### Scenario: Printing
-
-- **GIVEN** a PDF of several pages open in the viewer
-- **WHEN** the reader prints it
-- **THEN** every page is printed, one to a sheet
-
 ### Requirement: A protected PDF asks for its password
 
 The viewer SHALL ask for the password of a password-protected PDF, and SHALL say when the password given is wrong.
@@ -245,22 +187,6 @@ The viewer SHALL show a card for each page in the thumbnails, go to a page when 
 - **GIVEN** a page whose thumbnail has not been drawn
 - **WHEN** its card is listed
 - **THEN** the card shows a placeholder with its page number
-
-### Requirement: The reader rotates the pages a quarter turn
-
-The viewer SHALL turn every page a quarter turn left or right from the menu, and the thumbnails SHALL turn with the pages.
-
-#### Rotating right
-
-- **GIVEN** pages at their upright rotation
-- **WHEN** the reader chooses Rotate right
-- **THEN** the pages and their thumbnails are turned a quarter turn clockwise
-
-#### Rotating left
-
-- **GIVEN** pages at their upright rotation
-- **WHEN** the reader chooses Rotate left
-- **THEN** the pages and their thumbnails are turned a quarter turn counter-clockwise
 
 ### Requirement: The reader downloads a copy with a watermark
 

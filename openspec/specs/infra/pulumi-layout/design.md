@@ -4,9 +4,7 @@ Every Cloudflare resource Esposter runs, and every GitHub repository setting, is
 
 ## Layout rules
 
-- **One resource per file**, named after the resource in camelCase and prefixed with its environment for resources that exist once per environment: `prodD1EsposterCore.ts`, `devQEsposterDeleteAccount.ts`.
-- **Folders follow the Cloudflare resource type**: `src/cloudflare/resources/<resourceType>/`, such as `d1Databases/`, `r2Buckets/`, `queues/` and `queueConsumers/`. Finding a resource's declaration takes the type the dashboard shows it under.
-- **Names come from one function.** `getCloudflareResourceName` and `getCloudflareAccountResourceName` build every name, and the Workers call the same functions, so a resource and the code that names it cannot disagree. A Pulumi logical name is that name. A resource applied under a different name previews as a delete and a create, so a rename of a stateful resource is a move of its data, never a relabel.
+- **A Pulumi logical name is the Cloudflare name.** A resource applied under a different name previews as a delete and a create, so a rename of a stateful resource is a move of its data, never a relabel.
 - **Providers are split.** `src/cloudflare/` holds the `@pulumi/cloudflare` resources and `src/github/` holds the `@pulumi/github` ones: collaborators, environments, labels, secrets written from ESC, and the branch rulesets that make a branch's name the rule for who may create and push it ([branch namespaces](../branch-namespaces/design.md)).
 - **The naming shape** is written once in `apps/infra/docs/cloudflare/naming-conventions.md`: an environment token, an asset-type token and a workload token. Account-scoped resources drop the environment token.
 - The package entrypoint `src/index.ts` is a generated barrel, and Pulumi runs the compiled `dist/index.js`.

@@ -6,42 +6,6 @@ An agent's key carries the scopes its tools need, and a key with no scope reache
 
 ## Requirements
 
-### Requirement: Keys made before scopes gain the follow-ups scope
-
-A key created before scopes existed SHALL be given the follow-ups scope and no other scope when the application starts.
-
-#### Scenario: A key created before scopes can run the follow-ups
-
-- **GIVEN** a key was created before scopes existed and holds no permissions
-- **WHEN** the application starts
-- **THEN** the key can call the follow-ups tools
-- **AND** the key is refused every other tool
-
-#### Scenario: A key that already holds scopes keeps them
-
-- **GIVEN** a key already holds one or more scopes
-- **WHEN** the application starts
-- **THEN** the key's scopes are unchanged
-
-### Requirement: Human-only operations are never served to a key
-
-An operation declared human-only SHALL NOT be listed to any key, whatever scopes the key holds.
-
-#### Scenario: Human-only operations are not listed to a key with every scope
-
-- **GIVEN** a key holds every scope
-- **WHEN** the key lists its tools
-- **THEN** purging a resource is not among them
-- **AND** deleting a survey response is not among them
-- **AND** creating, updating and reading a survey response are not among them
-
-#### Scenario: A key cannot call a human-only operation by name
-
-- **GIVEN** a key holds every scope
-- **WHEN** the key calls purging a resource
-- **THEN** the call is refused
-- **AND** the resource is not purged
-
 ### Requirement: Operations a person can undo stay open to keys
 
 An operation that a revision, the recycle bin or an unpublish can undo SHALL be served to a key that holds the scope it needs.

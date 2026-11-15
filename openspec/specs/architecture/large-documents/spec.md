@@ -112,3 +112,40 @@ A new resource type SHALL get large-document transport by registering with the s
 - **GIVEN** a new resource type registered with the shared resource store
 - **WHEN** its documents outgrow one request body
 - **THEN** they are saved and read through the same transport without new transport code
+
+### Requirement: A large resource save is staged and verified before it is committed
+
+A resource save too large for one request SHALL be staged in storage and committed only when the stored content matches its hash and size.
+
+#### Scenario: A large save within the content limit
+
+- **GIVEN** a document whose save exceeds one request but stays under the content limit
+- **WHEN** the save is made
+- **THEN** the content is staged and committed by reference
+
+#### Scenario: A document over the content limit
+
+- **GIVEN** a document larger than the content limit
+- **WHEN** the user saves it
+- **THEN** the save is refused with a notice
+- **AND** nothing is sent
+
+#### Scenario: Staged content that does not match its hash
+
+- **GIVEN** a staged document whose hash differs from the one the client sent
+- **WHEN** the commit is attempted
+- **THEN** the commit is rejected
+- **AND** the document's version is unchanged
+
+#### Scenario: Staged content overwritten by another device
+
+- **GIVEN** two devices saving the same large resource
+- **WHEN** the second device's staged content is overwritten before its commit reads it
+- **THEN** the commit is rejected
+
+#### Scenario: A committed save whose staged copy cannot be deleted
+
+- **GIVEN** a large save that has been committed
+- **WHEN** the staged copy cannot be deleted
+- **THEN** the save stands
+- **AND** the failure is logged

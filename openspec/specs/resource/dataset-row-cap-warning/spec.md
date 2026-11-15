@@ -37,6 +37,13 @@ Every dataset consumer SHALL say how many rows it shows and how many exist when 
 - **WHEN** the consumer states the total
 - **THEN** the total reads as at least that number, with a plus sign
 
+#### Scenario: A capped survey export warns the owner
+
+- **GIVEN** a survey has more responses than the export reads
+- **WHEN** the owner exports it
+- **THEN** the file holds the rows that were read
+- **AND** an alert says the file is not every response
+
 ### Requirement: The survey responses view warns with a banner
 
 The survey responses view SHALL show a banner above the table when it has not loaded every response.

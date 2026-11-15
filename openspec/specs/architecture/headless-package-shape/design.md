@@ -25,16 +25,7 @@ The functions stay pure. A function over a document is the same function with a 
 
 ## Which packages take the name
 
-The block editor and the survey engine hold their logic in pure functions, and each keeps its reactive state in its package: the block editor's editing session, which the survey and whiteboard stores call, and the survey engine's runner, `useSurveyRunner`. Each of those packages ships a Vue abstraction, imports Vue, and takes the convention's name. The survey expression language and the MJML blocks are pure functions with no state for a composable to keep, and no wrapper of theirs exists in the app, so a Vue peer on either would be cargo.
-
-| Package                                                                       | Name           | Why                                                                                                                             |
-| :---------------------------------------------------------------------------- | :------------- | :------------------------------------------------------------------------------------------------------------------------------ |
-| `vue-block-editor-headless`                                                   | the convention | The home of the editing session composable                                                                                      |
-| `vue-survey-engine-headless`                                                  | the convention | The survey runner's composable                                                                                                  |
-| `vue-grid-layout-headless`, `vue-pdfjs-headless`, `vue-canvas-frame-headless` | the convention | Already the convention                                                                                                          |
-| `survey-expression`                                                           | keeps its own  | Pure functions over answers, with no Vue abstraction to claim                                                                   |
-| `mjml-blocks`                                                                 | keeps its own  | Pure render and read functions, with no Vue abstraction to claim                                                                |
-| `math-expression-compiler`                                                    | keeps its own  | A function of numbers with no state and a single consumer; a consumer that later wants reactive state takes the convention then |
+The block editor and the survey engine hold their logic in pure functions, and each keeps its reactive state in its package: the block editor's editing session, which the survey and whiteboard stores call, and the survey engine's runner, `useSurveyRunner`. Each of those packages ships a Vue abstraction, imports Vue, and takes the convention's name. The survey expression language and the MJML blocks are pure functions with no state for a composable to keep, and no wrapper of theirs exists in the app, so a Vue peer on either would be cargo. The math expression compiler is a function of numbers with a single consumer, and a consumer that later wants reactive state takes the convention then.
 
 ## Pinia
 

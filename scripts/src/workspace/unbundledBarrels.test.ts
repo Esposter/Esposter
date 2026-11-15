@@ -6,9 +6,16 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { build } from "vite";
-import { describe, expect, onTestFinished, test } from "vitest";
+import { assert, describe, expect, onTestFinished, test } from "vitest";
 
-const readDistDirectory = (packagePath: string) => resolve(REPOSITORY_ROOT, packagePath, "dist");
+// A package that builds has its `dist` once the build has run, which CI's coverage job waits for, so a missing one is
+// A build that did not run and fails here rather than passing over the package
+const readDistDirectory = (packagePath: string) => {
+  const distDirectory = resolve(REPOSITORY_ROOT, packagePath, "dist");
+  assert(existsSync(distDirectory), `${packagePath} has no dist, so the build has not run`);
+
+  return distDirectory;
+};
 
 /**
  * A package builds one file per module, so a consumer's bundler drops every module an import does not reach. The
@@ -61,7 +68,6 @@ describe("unbundledBarrels", () => {
 
     const hiddenPaths = PACKAGE_PATHS.flatMap((packagePath) => {
       const distDirectory = readDistDirectory(packagePath);
-      if (!existsSync(distDirectory)) return [];
       return readdirSync(distDirectory, { recursive: true, withFileTypes: true })
         .filter(({ name }) => name.startsWith("."))
         .map(({ name, parentPath }) => `${packagePath}: ${resolve(parentPath, name).slice(distDirectory.length + 1)}`);
@@ -93,7 +99,6 @@ describe("unbundledBarrels", () => {
 
     const stylesheetImporters = PACKAGE_PATHS.flatMap((packagePath) => {
       const distDirectory = readDistDirectory(packagePath);
-      if (!existsSync(distDirectory)) return [];
       return readdirSync(distDirectory, { recursive: true, withFileTypes: true })
         .filter(({ name }) => name.endsWith(".js"))
         .map(({ name, parentPath }) => resolve(parentPath, name))

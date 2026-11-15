@@ -4,15 +4,6 @@ Every user has a bounded, tier-derived allowance for the files they keep in thei
 
 Nothing is scheduled to settle a hold. The counter moves only on a write it is told about — the server charging bytes it wrote itself, R2 telling us a client's object landed, or one of our own deletions removing one — and an abandoned upload needs no cleanup at all because its hold expires as a **predicate** rather than as a state some job flips.
 
-## Why a plain pre-flight check is not enough
-
-The obvious design — "read `storageBytesUsed`, if under quota issue the presigned PUT" — does not stop abuse, for two structural reasons:
-
-1. **It races.** Read-then-check is not atomic. A client firing many upload requests concurrently has them all read the same low counter, all pass, and all upload — overshooting by an unbounded amount.
-2. **The presigned PUT carries no byte cap.** Uploads are a two-step flow ([file uploads](../../architecture/file-uploads/design.md)): the server mints a scoped presigned PUT, the client PUTs bytes **directly to R2**. The server is never in the data path, so it cannot stop a client that declares 1 MB and PUTs 1 GB, and it cannot abort a transfer mid-stream.
-
-This is the difference from Gmail and Drive: their uploads flow **through Google's servers**, so the server counts bytes as they stream and hard-aborts the instant you cross the line. We structurally cannot abort a direct-to-R2 upload — so the check is made **part of the write**, and what the client declared is never what it is ultimately charged.
-
 ## How it works
 
 ```mermaid
@@ -41,7 +32,7 @@ flowchart TD
 
 **The counter holds stored bytes and nothing else.** `users.storageBytesUsed` is the sum of what is actually in object storage for that user. A declaration the client has not yet made good on is not in it — that lives in the ledger and is summed at reserve time.
 
-**Reserve.** The presigned URL is signed first — signing is local and touches nothing in R2 — and the reserve runs before the response is returned, so a rejection is a write target the client never receives. The resource upload chokepoint goes through `generateReservedResourceAssetPresignedUrlEntities`, which checks each address for a held copy and otherwise mints and reserves in one call, and a write target whose name the server fixes rather than mints, a resource's staging object, goes through `generateReservedWritePresignedUrl`, which does the same for that name: a new upload path cannot hand out write targets nothing accounts for. The reserve is one batch over D1: this user's collectable holds are deleted (pure garbage collection — they never entered the counter), and one guarded insert adds the new holds only while `storageBytesUsed + pending + declared <= quota` still holds over the live holds it sums, in the same batch. D1 has no row locks, so the guard in the insert is what stops concurrent reserves from both passing: a reserve that loses the race inserts nothing and is refused. Then one `storageLedger` row per write target, with `countedBytes = 0`.
+**Reserve.** The check is made part of the write, so what the client declared is never what it is ultimately charged. The presigned URL is signed first — signing is local and touches nothing in R2 — and the reserve runs before the response is returned, so a rejection is a write target the client never receives. The resource upload chokepoint goes through `generateReservedResourceAssetPresignedUrlEntities`, which checks each address for a held copy and otherwise mints and reserves in one call, and a write target whose name the server fixes rather than mints, a resource's staging object, goes through `generateReservedWritePresignedUrl`, which does the same for that name: a new upload path cannot hand out write targets nothing accounts for. The reserve is one batch over D1: this user's collectable holds are deleted (pure garbage collection — they never entered the counter), and one guarded insert adds the new holds only while `storageBytesUsed + pending + declared <= quota` still holds over the live holds it sums, in the same batch. D1 has no row locks, so the guard in the insert is what stops concurrent reserves from both passing: a reserve that loses the race inserts nothing and is refused. Then one `storageLedger` row per write target, with `countedBytes = 0`.
 
 **A reserve over a name that already has a row takes the row over.** A resource's staging object is one fixed name, so its next large save reserves a name whose row the last one left — settled by the object-create event, or a hold. The reserve turns it back into a hold: the new `declaredBytes` and `expiresAt`, `reconciledAt` cleared, and `countedBytes` kept, because that is what the counter still carries for the object on that name. The next object-create event then corrects the counter by the difference, and a release hands back whatever the row holds. The row it takes over is left out of the pending sum rather than counted beside the new hold, so the takeover is one replacement, not two holds on one name.
 
@@ -71,27 +62,13 @@ The delete and the release are one operation (`deleteStorageBlobs`), waved in ch
 
 The quota itself is **resolved from the tier at read time**, never copied onto the user row, so moving a user to a new tier changes their limit instantly with nothing to backfill. Only the _usage_ is stored, because recomputing it means enumerating every `{resourceId}/` prefix and message-attachment object.
 
-## Why there is no scheduled sweep
-
-The obvious shape for settling holds is a scheduled job: wake every 15 minutes, list the expired rows, probe each object, and charge or release it. It is the wrong one, and the reasoning generalises:
-
-- **The event already exists.** R2 emits an object-create event with the exact byte count for every write, and the bucket's notification already delivers it to the reconcile queue. Polling for a fact the platform will push is standing compute spent to learn something late.
-- **The other half was never an event.** "This hold expired" is not something that happens — it is something that becomes true. Written as a `WHERE` clause it needs nothing to run; written as a job it needs a schedule, a batch cap, a retry policy, and an ordering story against the arrival of object-create events.
-- **The race disappears rather than being handled.** With two signals (a persistence-time confirm and an unordered, at-least-once reconcile) a whole state machine of conditional transitions exists purely to survive them arriving out of order. With one signal and a predicate there is no second thing to be out of order with.
-
-The cost of doing it with events instead is one R2 event notification per bucket into a queue the [jobs](../../../changes/archive/2026-11-15-infra-cloudflare-jobs/design.md) design already defines — no new service, one event per upload, and reconciliation latency in seconds rather than up to an hour. What it avoids is a scheduled job, a batch cap, and two object requests per expired row.
-
-A lost object-create event would leave an object stored but uncharged. The queue moves a message it cannot deliver into the reconcile job's dead-letter queue, where the dead-letter handler republishes it with `attempt` raised and quarantines it once `MAX_DEAD_LETTER_ATTEMPTS` is reached. The quarantine keeps the message and the failure, so the loss is inspectable instead of silent. The consequence, stated rather than mitigated: a quarantined event's bytes stay uncharged until a usage recompute, the same one the uncounted objects below need.
-
-## The residual gap, and why it is acceptable
+## The residual gap
 
 Between the PUT and the object-create event, a client that under-declared is holding less space than it is about to use. The size of that gap is **not** bounded: a presigned PUT carries no byte cap, and the PUT never passes back through the Worker, so `MAX_FILE_REQUEST_SIZE` constrains the declaration the client sends us and nothing about the bytes it sends R2.
 
 What is bounded is the gap's **shape**. `MAX_UNRECONCILED_STORAGE_LEDGER_ENTRIES` caps how many under-declared uploads one user can have in flight at once, and the object-create event charges each one's real size within seconds of its PUT completing — after which the counter is truthful and every further reserve is rejected. So abuse is a single burst, not a sustained drain, and it only ever exhausts **their own** allowance — never another user's.
 
 The cap counts **live holds**, which is one per write target and so one per upload — the resource upload chokepoint mints no thumbnail targets, so there is nothing riding alongside a file to distort it. The same number bounds each upload request's `files` array, because a batch larger than the cap can never pass the reserve however long the client waits.
-
-True Gmail-style hard enforcement would require **proxying uploads through our own server** so it can count bytes and abort mid-stream. That is rejected: it puts our compute in the data path for every upload — cost, latency, and re-architecting the entire presigned-URL flow — to close a self-inflicted gap that only harms its own author.
 
 ## Data model
 
@@ -115,10 +92,8 @@ Closing these needs a recompute that lists real object sizes per user. Worth doi
 
 ## Failure and retry semantics
 
-- **Client under-declares:** the counter is low for the seconds until the object-create event lands; the next reserve then rejects. Bounded as above.
 - **Presigned PUT issued, upload abandoned:** the hold stops counting at `expiresAt` and is dropped by the next reserve that user makes past the collection bound above. If bytes did land, the object-create event charges them and the object is an orphan under `{id}/files` that **nothing reclaims** until `purgeResource` takes the whole prefix ([blob lifecycle](../../architecture/blob-lifecycle/design.md)) — that prefix has no unreferenced-asset sweep, by design, because a restore must be able to hand back a whole resource.
-- **Object-create event redelivered:** the delta is zero.
-- **Object-create event dead-lettered:** the dead-letter handler republishes it until `MAX_DEAD_LETTER_ATTEMPTS`, then quarantines it, and a quarantined event leaves its object uncharged — see above.
+- **Object-create event dead-lettered:** the queue moves it to the reconcile job's dead-letter queue, where the dead-letter handler republishes it with `attempt` raised until `MAX_DEAD_LETTER_ATTEMPTS`, then quarantines it, keeping the message and the failure. A quarantined event leaves its object uncharged until a usage recompute, the same one the uncounted objects below need.
 - **Object-create event for an object nothing reserved** (a clone): a no-op, never an error. The handler looks the key up as R2 stored it, and a miss charges nothing — a throw would make an unaccounted object a poison message that retries to the dead letter.
 - **The object-create event beats the charge that ledgers its object:** the reconcile finds no row, no-ops, and is never retried — a successful delivery — so the charge, not the event, is what the counter ends up carrying. The figure is still right for the two paths this can happen on: content and a version's object are bytes the server serialized itself, so the charge declares a measurement rather than a guess. The clone is the case where it would not have been, which is why that one charges before its copy instead. What the object loses is its place in the write order, because a charge stamps no `eventTime`: until some later event lands on that row, a retrying event for an _earlier_ write of the same key is treated as the first to speak and applied over it. The counter then holds a superseded size until the newest write's event arrives and wins on rank. Nothing is built for it — closing it means reserving a ledger row before every server-side write and releasing it if the write fails, which is the whole hold machinery spent on bytes that were never in doubt, to shorten a window that ends on the next event either way.
 - **A server-side charge fails after its write committed:** the object is stored and the counter has not moved. The same shape as a dead-lettered event and accepted on the same terms — under-counting only over-serves that one user. It self-corrects where the same object key is written again, which is the case for `{id}/content.json`: the charge writes an absolute size rather than a delta, so the next save charges it in full — which holds only because a charge is never dropped once that object has an event. A **version's object does not self-correct**, because it is content-addressed and write-once: nothing rewrites that key, and a later version with the same content is deduplicated and charges nothing — so only a usage recompute closes it. What is deliberately not built for it is a durable outbox: a byte counter that self-corrects on the next write does not earn a second write path, a queue and a retry policy.
@@ -169,3 +144,5 @@ Closing these needs a recompute that lists real object sizes per user. Worth doi
 - Each bucket's event notification feeds the same reconcile queue, so the handler checks each message's bucket against the set of buckets a reserve writes into rather than trusting the notifications to name only those. A notification that drifts wider delivers messages the handler drops.
 - The handler looks up `object.key` as R2 delivers it. R2's notification carries the name as stored, so the reserve's row is found on the raw key and nothing is decoded.
 - The reserve is a service called from the upload chokepoint, not a tRPC middleware. A middleware runs before the handler, and the ledger rows are keyed by object keys the handler is what mints — so a middleware would have had to either pre-mint the keys or split the one statement that reserves them in two.
+- A plain pre-flight quota check, and proxying uploads through the server to count bytes, are [rejected](../../../rejected/resource/hard-upload-quota-enforcement/design.md): the first races, and the second puts the server in every upload's data path.
+- A scheduled job that settles expired holds is [rejected](../../../rejected/resource/scheduled-quota-sweep/design.md), since the object-create event already carries the size.

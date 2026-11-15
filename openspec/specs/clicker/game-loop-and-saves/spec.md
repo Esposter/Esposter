@@ -87,52 +87,15 @@ The clicker SHALL apply the current definitions of buildings and upgrades to a s
 - **WHEN** the save loads
 - **THEN** the building produces at its current value
 
-### Requirement: A save that cannot be read starts a fresh game only for a guest
+### Requirement: A guest's save that refers to a removed item starts a fresh game
 
-The clicker SHALL start a fresh game when a guest's saved game in this browser cannot be read in its current shape or refers to items that no longer exist. A signed-in player's saved game that cannot be read SHALL be reported as an error, and no game SHALL load over it or save over it.
-
-#### Scenario: Guest's save in an old shape
-
-- **GIVEN** a guest's saved game in this browser is in an earlier format
-- **WHEN** the page loads
-- **THEN** the player starts a fresh game
+The clicker SHALL start a fresh game when a guest's saved game in this browser refers to an upgrade that no longer exists.
 
 #### Scenario: Guest's save referring to a removed item
 
 - **GIVEN** a guest's saved game in this browser refers to an upgrade that no longer exists
 - **WHEN** the page loads
 - **THEN** the player starts a fresh game
-
-#### Scenario: Guest's saved game that is not valid JSON
-
-- **GIVEN** a guest's saved game in this browser that is not valid JSON
-- **WHEN** the page loads
-- **THEN** the player starts a fresh game and the page still opens
-
-#### Scenario: Signed-in player's save that cannot be read
-
-- **GIVEN** a signed-in player's saved game is in an earlier format or refers to an upgrade that no longer exists
-- **WHEN** the page loads
-- **THEN** the page shows an error
-- **AND** no fresh game starts
-- **AND** the saved game is left as it was
-
-#### Scenario: A change is not saved after the signed-in player's save fails to load
-
-- **GIVEN** a signed-in player's saved game could not be read
-- **WHEN** the game changes
-- **THEN** nothing is saved over the server's copy
-
-### Requirement: A save made against an outdated copy is refused
-
-The clicker SHALL refuse a save when the stored copy has changed since the player last read or saved it, and SHALL reload the page to take the stored copy.
-
-#### Scenario: Save from a second session is refused
-
-- **GIVEN** a player whose stored save was changed from another session
-- **WHEN** this session tries to save
-- **THEN** the save is refused
-- **AND** the page reloads with the stored copy
 
 ### Requirement: Clicker milestones unlock their achievements
 

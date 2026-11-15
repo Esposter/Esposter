@@ -24,32 +24,22 @@ flowchart TD
 
 Each row is the magnitude the mechanism is kept for. The readings behind a row live with the artifact that holds them, not here.
 
-| Mechanism                                                           | Magnitude                                                                                                                                                 |
-| :------------------------------------------------------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| One dev server per lane                                             | Flat memory across page loads, so one per lane costs a fixed sliver of RAM, not a sliver per page                                                         |
-| Each command's own Edge                                             | Its memory is released when its page closes, so a shared browser's growth across pages never builds up                                                    |
-| One-off checks, not a standing watcher                              | A check costs a small fraction of the memory-time an always-on watcher holds, so the watcher pays only for a very high check rate                         |
-| The parity directory under the data root's noindex spelling (macOS) | Spotlight stops indexing the extraction, which adds millions of files per run; the root's other spelling is a symlink to it, so every path still resolves |
-| `rg` over `grep -r` from the repository root                        | Two orders of magnitude faster, and it skips what git does not track                                                                                      |
-| GPU video decode for a whole-video scan                             | Several times faster than a CPU decode at full size, since the scan needs a low-resolution luma plane                                                     |
-| GPU vocoder for the persona's spoken lines (DirectML on Windows)    | Most of the CPU time of a line is moved off the CPU; the language model stays on WebGPU, since DirectML rejects a slice in it                             |
-| Surface statistics on the parity page's GPU                         | Several times less wall time and far less Node CPU than the CPU pass, with every printed figure matching it                                               |
-| Colour pass's label similarity on the same GPU                      | A smaller share of the Surface pass's wall time and about half its Node CPU, with every printed figure unchanged                                          |
-| Spectrogram once per signal in `scoreShapedMusic`                   | About a third of the STFTs per call, with every hashed output unchanged                                                                                   |
-| Twiddle table in `transformFourier`                                 | Under half the time per transform, with every output bit-identical                                                                                        |
-| `notes` on one parity page, the game read once                      | One browser launch in place of one per segment, and each segment's game read and spectrogram once, with the written output identical                      |
+| Mechanism                                                           | Magnitude                                                                                                                                                                                                                          |
+| :------------------------------------------------------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| One dev server per lane                                             | Flat memory across page loads, so one per lane costs a fixed sliver of RAM, not a sliver per page                                                                                                                                  |
+| Each command's own Edge                                             | Its memory is released when its page closes, so a shared browser's growth across pages never builds up                                                                                                                             |
+| One-off checks, not a standing watcher                              | A check costs a small fraction of the memory-time an always-on watcher holds, so the watcher pays only for a very high check rate                                                                                                  |
+| The parity directory under the data root's noindex spelling (macOS) | Spotlight stops indexing the extraction, which adds millions of files per run; the root's other spelling is a symlink to it, so every path still resolves. The one-time setup is in [recoverability](../recoverability/design.md). |
+| `rg` over `grep -r` from the repository root                        | Two orders of magnitude faster, and it skips what git does not track                                                                                                                                                               |
+| GPU video decode for a whole-video scan                             | Several times faster than a CPU decode at full size, since the scan needs a low-resolution luma plane                                                                                                                              |
+| GPU vocoder for the persona's spoken lines (DirectML on Windows)    | Most of the CPU time of a line is moved off the CPU; the language model stays on WebGPU, since DirectML rejects a slice in it                                                                                                      |
+| Surface statistics on the parity page's GPU                         | Several times less wall time and far less Node CPU than the CPU pass, with every printed figure matching it                                                                                                                        |
+| Colour pass's label similarity on the same GPU                      | A smaller share of the Surface pass's wall time and about half its Node CPU, with every printed figure unchanged                                                                                                                   |
+| Spectrogram once per signal in `scoreShapedMusic`                   | About a third of the STFTs per call, with every hashed output unchanged                                                                                                                                                            |
+| Twiddle table in `transformFourier`                                 | Under half the time per transform, with every output bit-identical                                                                                                                                                                 |
+| `notes` on one parity page, the game read once                      | One browser launch in place of one per segment, and each segment's game read and spectrogram once, with the written output identical                                                                                               |
 
-The one-off mechanisms that were tried and removed are not kept here: a mechanism that was measured and dropped has no rule left to state. The GPU rows measure the scan's time alone; a peak memory figure for the decodes is not recorded.
-
-## macOS setup
-
-Do these steps once on a Mac. The Genshin parity extraction adds millions of files per run, and Spotlight indexes them unless told otherwise.
-
-- The parity data is in `{data-root}/genshin-parity`. `GENSHIN_PARITY_DIRECTORY` names another folder when set.
-- Create `{data-root}.noindex` as the data folder. macOS never indexes a `*.noindex` folder.
-- Make `{data-root}` a symlink to `{data-root}.noindex`. Spotlight follows no symlink, and every `{data-root}/...` path still resolves.
-- Do not create a real `{data-root}` folder beside the link.
-- In System Settings → Spotlight → Search Privacy, add `node_modules` and the pnpm store (`{home}/Library/pnpm/store`). This step is manual: no command does it.
+A mechanism measured and dropped has no row here, since no rule is left to state. The GPU rows measure the scan's time alone; a peak memory figure for the decodes is not recorded.
 
 ## Key files
 

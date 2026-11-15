@@ -16,10 +16,10 @@
 
 ## Open
 
-- [ ] **Reputation: the first scores of 6.13% mean and FLIP 0.2656, before the rows were measured** — no source yet: the recorded run of that round, which the snapshot no longer keeps.
-- [ ] **Reputation: the round's scores of 2.07% mean, shape 0.879 and FLIP 0.1448, before the ItemTile slots** — no source yet: the recorded run of that round, which the snapshot no longer keeps.
-- [ ] **Reputation: the grid's worst cells at 4.6% to 7.9%, the slots of levels 4 to 7** — no source yet: a per-cell score of the reward grid, which the snapshot does not break down.
-- [ ] **Reputation: the unlock lines at 5.4% to 7.4%** — no source yet: a per-line score of the unlock lines, which the snapshot does not break down.
+- [ ] **Reputation: the first scores, before the rows were measured** — no source yet: the recorded run of that round, which the snapshot no longer keeps.
+- [ ] **Reputation: the round's scores, before the ItemTile slots** — no source yet: the recorded run of that round, which the snapshot no longer keeps.
+- [ ] **Reputation: the grid's worst cells, the slots of levels 4 to 7** — no source yet: a per-cell score of the reward grid, which the snapshot does not break down.
+- [ ] **Reputation: the unlock lines' scores** — no source yet: a per-line score of the unlock lines, which the snapshot does not break down.
 - [ ] **Paimon: the menu over its whole frame is read from the wiki's Version 1.3 still** — no source yet: the cached Paimon Menu page names "Paimon Menu Version 1.3.png" in its gallery (`{data-root}/cache/genshin-wiki/Page_Paimon_Menu.json` line 152), but that image is not on disk, and only its pixels would settle the claim.
 
 ## Sources

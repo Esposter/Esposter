@@ -163,33 +163,6 @@ The system SHALL create a resource without any content and SHALL write its conte
 - **WHEN** it saves
 - **THEN** the resource has saved content
 
-### Requirement: A save over a newer version is refused
-
-The system SHALL refuse a save made from an older copy of a resource's content, and SHALL NOT overwrite the newer version.
-
-#### Scenario: A stale save is refused
-
-- **GIVEN** the owner has a resource open and it was changed elsewhere since it loaded
-- **WHEN** this copy is saved
-- **THEN** the save is refused
-- **AND** the owner is told the content changed
-
-### Requirement: Deleting a resource is undoable until it is purged
-
-The system SHALL move a deleted resource to the recycle bin where it can be restored, and SHALL remove it for good only when it is purged.
-
-#### Scenario: A deleted resource can be restored
-
-- **GIVEN** the owner deletes a resource
-- **WHEN** they restore it from the recycle bin
-- **THEN** the resource comes back with its content
-
-#### Scenario: A purged resource is gone
-
-- **GIVEN** a resource in the recycle bin is purged
-- **WHEN** the owner looks for it
-- **THEN** it is not found
-
 ### Requirement: A published resource is readable at its public address only while published
 
 The system SHALL show a published resource at its public view address, and SHALL NOT show an unpublished resource there.

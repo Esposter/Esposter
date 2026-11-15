@@ -1,6 +1,6 @@
 ## Purpose
 
-Natlan's region: its base ground, renderers, landmarks, camera, shape, surface, display, light and atmosphere, and its location's frame score.
+Natlan's region: its landmarks, camera and sun direction.
 
 ## Requirements
 
@@ -39,13 +39,3 @@ The People of the Springs sun direction SHALL replace the provisional noon only 
 - **GIVEN** the sun's direction is solved from the shadows' edges over flat receivers
 - **WHEN** the solved edges lie within 2 pixels of the reference's
 - **THEN** the held minute replaces the provisional noon
-
-### Requirement: The People of the Springs frame's score
-
-The People of the Springs frame's score SHALL be reported without a numeric gate.
-
-#### Scenario: A frame comparison reports its score
-
-- **GIVEN** the People of the Springs frame is compared against its reference
-- **WHEN** the comparison finishes
-- **THEN** its score is recorded and reported

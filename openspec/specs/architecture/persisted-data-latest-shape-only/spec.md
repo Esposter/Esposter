@@ -6,7 +6,7 @@ No legacy-shape schemas, migration arms, or backwards-compat defaulting — ever
 
 ### Requirement: Persisted client state is read in its latest shape only
 
-Persisted client state SHALL be read only in the latest shape the code writes, and data that does not parse in that shape SHALL reset to a fresh default.
+Persisted client state SHALL be read only in the latest shape the code writes, and browser-stored data that does not parse in that shape SHALL reset to a fresh default.
 
 #### Scenario: A stored browser save no longer parses
 
@@ -67,14 +67,3 @@ A field added to a stored row SHALL describe the rows written after the change. 
 - **WHEN** the row is read
 - **THEN** the field reads its default value
 - **AND** no read path infers the field from the row's other values
-
-### Requirement: Relational data evolves through migrations
-
-Relational data SHALL change shape only through a database migration, and no legacy read path SHALL remain beside the migrated shape.
-
-#### Scenario: A relational table changes shape
-
-- **GIVEN** a table in the relational database changes shape
-- **WHEN** the change is deployed
-- **THEN** a migration brings the stored rows to the new shape
-- **AND** the code reads only the new shape

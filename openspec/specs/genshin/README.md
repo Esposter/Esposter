@@ -133,57 +133,6 @@ It is unofficial and non-commercial, and makes no claim to be HoYoverse's. No mo
 
 What is still to build is the [Genshin proposal](../../changes/genshin-program/design.md), and the open work on what is built is the [roadmap](../../changes/genshin-roadmap/tasks.md). Decided ideas: [deferred](../../deferred/genshin/) and [rejected](../../rejected/genshin/).
 
-## Shipped
-
-- The engine as a package of single-purpose modules, each module added by the page that first needs it.
-- The rendering style, in the Windrise scene.
-- The sky and the game's day over it.
-- The terrain, streamed and morphing.
-- Still water, first in the lake east of Windrise.
-- The wind, and grass generated around the camera.
-- The world map's catalogue, and Mondstadt's landmarks loaded by reach.
-- The free camera flying the world, on the engine's input, simulation, camera and collision modules.
-- The character walking the world on the controller's body through the game's movement states and stamina, the follow camera behind it, photo mode's orbit round it, and the free camera kept for the tuning panel.
-- Scene derivation: every scene re-derived from the game's own exports, drawn beside them by the witness render and priced term by term.
-- The game's opening: its splashes, health notice, login screen with its flight to the door, and startup loading screen.
-- The game's own words in its fifteen languages, served to the page in the reader's and to the persona plugin.
-- The login's music, its second piece played with public-domain recordings layered over the synthesizer.
-- The game's default controls, and its screens opened over the world from them and from the Paimon menu, an unbuilt screen a placeholder under its title.
-- The map on M with its jump list, a jump fading to pale grey and back, the HUD's shell with its minimap, and the touch controls.
-- Map unlocking's statues: resonating with a Statue of The Seven on F fills its area in on the map and minimap, and only the unlocked statues are jumps and places to revive.
-- Enemies: kinds read from the game's tables, an AI on the fixed step, camps, respawn and drops, drawn as capsules.
-- Characters read from HoYoverse's official MMD packs by the engine's own PMX reader and drawn at rest in the game's character shader.
-- Combat's rules as pure, tested functions: auras and reactions, the damage formula, internal cooldown, shields and energy.
-- The party switched on 1 to 4, the character screen on C, and a character's attributes summed from the game's own tables.
-- An artifact rolled by the game's pools and the wiki's weights, enhanced with Artifact EXP at a Mora a point, its fodder and its locks as the game keeps them.
-- The F prompts' rules, the bag and its wallet on B, and the wish's published rules with its screen on F3, offering the standard and beginners' wishes and each event banner the schedule has open from their pools, and a banner's trial where its featured character has one.
-- Original Resin: its count regenerating while the page is closed, its refills from Primogems at the game's daily prices, a claim's price and Adventure EXP, and its counter on the map's top bar.
-- Ley line outcrops: each region's Revelation and Wealth read from the game's tables, their openings by rank and nation, a drawn start and the move along their places, the touch, the camp and the F claim, with the camps' enemies provisional.
-- Mining outcrops and investigation spots: the rank that opens the outcrops, their 06:00 respawn after a mining, and the daily cap of a hundred investigations, as pure rules, with the outcrops drawn in Windrise, and the spots' places, draw and rewards unbuilt.
-- Constellations: each character's six from the game's table, activated with its own Stella Fortuna, which a duplicate draw brings and a five-star past six a Masterless one.
-- Companionship: each character's Friendship Level from total EXP and the level table, with the grant at provisional amounts; the namecard view not yet drawn.
-- Elemental Sight: the range from the character to its reach, the world muted outside what is lit, interactables white, enemies in their element's colour and named, ended by a short walk.
-- The official map's statues and waypoints read and fitted to the scene's transport points, each region's Oculi checked against the wiki's.
-- The official map's puzzle marks fitted into each region's slices by kind, and the Elemental Monument's state machine: lit by its element or a reaction of its own, a timed one going out after its time, and a puzzle of monuments solved once all are lit together.
-- Paimon's Bargains' Fates and the Mondstadt grocery's goods, bought from the shop table, with buy limits restocked on their refresh.
-- Mondstadt's Reputation: its levels, requests, thresholds and bounties from the game's table, its keeper and reward page wired in the world.
-- Expeditions: Mondstadt's places sent from Katheryne's talk and returned on the moment they left, claimed for their items and Mora, recalled for nothing, the limit raised by rank, and a character's expedition talents applied; the bonus's chance is read by level but no claim rolls it yet, and the other nations' places are not built.
-- Commissions: every region's daily tasks dealt from the areas reached and claimed for their rank's reward, the handbook tab and the kept day not yet built.
-- The official map's fleeing birds and beasts, White Pigeon, Crimson Fox and Squirrel, stood in Windrise's scene and running from the character in reach, on provisional flight numbers, with no strike, drop or pick-up yet.
-- Fishing's points fitted by region, its fish, rods and pools read from the game's tables, and its rules for a stock's day and night and refill, a draw, a lure's reaction and the reel's tension, with casts made from the points on its screen.
-- Hosted game data, first phase: the character profiles and book bodies published to R2 by a keyless publisher and read on the Profile tab and in the book reader, so the package bundles none of their generated JSON.
-- Hosted game data, second phase: every other bundled dataset published to R2 and read at the world's gate, which keeps the `genshin-world` dist to a few megabytes.
-- The load budget: each screen's load steps measured and held to a budget by `genshin:parity load`, and the world's load limited to what its first frame reads.
-- The kit framework: each character's kit a hosted record read from gcsim's last MIT release, the wiki and the game's own tables, joined to a behaviour module over the shared primitives and loaded only for the party, and the kit tree with no duplicate code.
-- Save data's roster: the characters a player holds, with their copies and Companionship EXP, kept through a reload, and a guest's characters merged with the account's by the further copy of each.
-- Exploring: Teleport Waypoints paired with the scene's transport points and written into Mondstadt's data, each jump landing at the game's own arrival place.
-- Adventurer's four-piece: a chest opened in the world restores its wearer 6% of its Max HP each second for five seconds, the set's bonus in combat built as a module that answers the chest's event.
-- The world's one reset clock: the daily, weekly and monthly resets read at the server's 04:00 in UTC+8, and the game day counted from the daily reset.
-- The Mystic Offering at the Crafting Bench from Adventure Rank 45: three unlocked five-star artifacts from the bag become a strongbox that rolls a random piece of the set the player chose, with the piece's odds and the batch of thirty-nine not yet built.
-- The world session's features as stores: the quests, the adventure rank, the map, the screen, the Archive, the ground, the pickups, the roster, the puzzles, the Friendship levels, the chests, the statues, the achievements and the cooking, each read by the features that use it and not handed to them, which took the session root's option keys from 388 to 182.
-- Developer tools: a console on the backtick and a panel on F2 in the development build, over one registry of commands, variables and scenarios that automation reaches as `window.__dev.run`, and three's Inspector gone from the Genshin scenes.
-- Statues of The Seven: the Oculi a player finds, held for the Worship Statue's offer, each region's levels claimed one action at a time, the first resonance and the Traveler's element, and the Statue's Blessing's pool with auto-recover on provisional screens.
-
 ## Key files
 
 | File                                                             | Role                                                                                                          |

@@ -1,3 +1,5 @@
+import type { GcsimQueuedAttack } from "#src/models/genshinAssets/kits/gcsim/GcsimQueuedAttack";
+
 import { GcsimHitboxCenter } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxCenter";
 import { GcsimHitboxShape } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxShape";
 import { GCSIM_EMPTY_CONFIG } from "#src/services/genshinAssets/kits/gcsim/constants.test";
@@ -213,93 +215,92 @@ describe(readGcsimQueuedAttacks, () => {
     ]);
   });
 
-  test("reads no hitbox from a local a branch may reassign before the call, where its constructor is no longer the one called", () => {
+  test.each([
+    [
+      "reads no hitbox from a local a branch may reassign before the call, where its constructor is no longer the one called",
+      [
+        {
+          path: "skill.go",
+          source: [
+            GO_PACKAGE_CLAUSE,
+            "",
+            "func (c *char) skillDash(_ map[string]int) {",
+            "\tai := info.AttackInfo{AttackTag: attacks.AttackTagNormal}",
+            "\tap := combat.NewCircleHitOnTarget(c.Core.Combat.PrimaryTarget(), nil, 0.6)",
+            "\tif c.Base.Cons >= 6 {",
+            "\t\tap = combat.NewCircleHitOnTarget(c.Core.Combat.PrimaryTarget(), nil, 0.8)",
+            "\t}",
+            "\tc.Core.QueueAttack(ai, ap, 11, 11, c.particleCB)",
+            "}",
+          ].join("\n"),
+        },
+      ],
+      (queued: GcsimQueuedAttack[]) => queued,
+      [
+        {
+          attackLine: undefined,
+          attackName: "ai",
+          delay: 11,
+          delayLine: 9,
+          file: "skill.go",
+          hitbox: undefined,
+          lastLine: 9,
+          line: 9,
+        },
+      ],
+    ],
+    [
+      "reads no delay from a local a branch may change, `windup := 0` then `windup = 14` in the branch",
+      [
+        {
+          path: "charge.go",
+          source: [
+            GO_PACKAGE_CLAUSE,
+            "",
+            "const shortChargeHitmark = 27",
+            "",
+            "func (c *char) chargeAttackShort() {",
+            "\twindup := 0",
+            "\tif c.Core.Player.CurrentState() == action.Idle {",
+            "\t\twindup = 14",
+            "\t}",
+            "\tc.Core.QueueAttack(c.chargeAi, ap, shortChargeHitmark+windup, shortChargeHitmark+windup)",
+            "}",
+          ].join("\n"),
+        },
+      ],
+      (queued: GcsimQueuedAttack[]) => queued.map(({ delay }) => delay),
+      [undefined],
+    ],
+    [
+      "reads no loop bound from a local a branch adds to, `dur += 240` in the branch, so its loop is not repeated",
+      [
+        {
+          path: "burst.go",
+          source: [
+            GO_PACKAGE_CLAUSE,
+            "",
+            "func (c *char) burst() {",
+            "\tdur := 510",
+            "\tif c.Base.Cons >= 2 {",
+            "\t\tdur += 240",
+            "\t}",
+            "\tfor i := 120; i < dur; i += 120 {",
+            "\t\tc.Core.QueueAttack(ai, ap, 0, i)",
+            "\t}",
+            "}",
+          ].join("\n"),
+        },
+      ],
+      (queued: GcsimQueuedAttack[]) => queued.map(({ delay }) => delay),
+      [undefined],
+    ],
+  ])("%s", (_title, sources, select, expected) => {
     expect.hasAssertions();
 
-    const sources = [
-      {
-        path: "skill.go",
-        source: [
-          GO_PACKAGE_CLAUSE,
-          "",
-          "func (c *char) skillDash(_ map[string]int) {",
-          "\tai := info.AttackInfo{AttackTag: attacks.AttackTagNormal}",
-          "\tap := combat.NewCircleHitOnTarget(c.Core.Combat.PrimaryTarget(), nil, 0.6)",
-          "\tif c.Base.Cons >= 6 {",
-          "\t\tap = combat.NewCircleHitOnTarget(c.Core.Combat.PrimaryTarget(), nil, 0.8)",
-          "\t}",
-          "\tc.Core.QueueAttack(ai, ap, 11, 11, c.particleCB)",
-          "}",
-        ].join("\n"),
-      },
-    ];
-
-    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG)).toStrictEqual([
-      {
-        attackLine: undefined,
-        attackName: "ai",
-        delay: 11,
-        delayLine: 9,
-        file: "skill.go",
-        hitbox: undefined,
-        lastLine: 9,
-        line: 9,
-      },
-    ]);
-  });
-
-  test("reads no delay from a local a branch may change, `windup := 0` then `windup = 14` in the branch", () => {
-    expect.hasAssertions();
-
-    const sources = [
-      {
-        path: "charge.go",
-        source: [
-          GO_PACKAGE_CLAUSE,
-          "",
-          "const shortChargeHitmark = 27",
-          "",
-          "func (c *char) chargeAttackShort() {",
-          "\twindup := 0",
-          "\tif c.Core.Player.CurrentState() == action.Idle {",
-          "\t\twindup = 14",
-          "\t}",
-          "\tc.Core.QueueAttack(c.chargeAi, ap, shortChargeHitmark+windup, shortChargeHitmark+windup)",
-          "}",
-        ].join("\n"),
-      },
-    ];
-
-    expect(
-      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG).map(({ delay }) => delay),
-    ).toStrictEqual([undefined]);
-  });
-
-  test("reads no loop bound from a local a branch adds to, `dur += 240` in the branch, so its loop is not repeated", () => {
-    expect.hasAssertions();
-
-    const sources = [
-      {
-        path: "burst.go",
-        source: [
-          GO_PACKAGE_CLAUSE,
-          "",
-          "func (c *char) burst() {",
-          "\tdur := 510",
-          "\tif c.Base.Cons >= 2 {",
-          "\t\tdur += 240",
-          "\t}",
-          "\tfor i := 120; i < dur; i += 120 {",
-          "\t\tc.Core.QueueAttack(ai, ap, 0, i)",
-          "\t}",
-          "}",
-        ].join("\n"),
-      },
-    ];
-
-    expect(
-      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG).map(({ delay }) => delay),
-    ).toStrictEqual([undefined]);
+    expect(select(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG))).toStrictEqual(
+      expected,
+    );
   });
 
   test("repeats a queue call in a loop bounded by a local a constellation branch raises, once per value at the base bound", () => {

@@ -1,8 +1,8 @@
 # Session menu layer: design
 
-Why the menu layer stays in the session root, and what the recorded build of it was. The HUD, workshop, screens, statue and challenge layers it was recorded beside were forwarding children of the same kind, and have since been inlined into the root on the same measure. The exact code of that build is in [the recorded build](./recorded-build.md), and what it was is in [the proposal](./proposal.md).
+The idea was to move the session's menu layer, one `MenuScreen` with a page body in each of its slots, out of the session root into a child component. The child would receive every value the pages read, report every action they take back to the handlers the root already binds, and mount the menu screen once. It stays in the session root, as the router table of an integration root. The recorded build is in git: commit `9fc42e9c70` moved the overlay layers into children, and `a92c786385` typed the children's props by their models. Commits `1a83591b1b` and `efccf477b9` revert them, so `git show` of the two hashes is the copy.
 
-## The recorded build
+## The build
 
 - **One child, `Menu`, beside the HUD child**, in the session's folder. It mounts `MenuScreen` once and puts each page in its slot. `MenuScreen` reads its pages as named slots of a single usage, so the pages stay slot content of that one usage and are not split into sibling components of the root.
 - **Props are typed by the models they carry**, never by `ReturnType<typeof useX>` of the composable that fills them. A child that names a composable's return type depends on that composable's internals, and the type says nothing a model does not.
@@ -10,9 +10,9 @@ Why the menu layer stays in the session root, and what the recorded build of it 
 - **Events go up grouped by what they act on**, and the root binds each to the handler its composables expose.
 - **The root keeps its script**, the composable calls by feature and the save literal. What the layer needs is passed down; nothing is provided or injected.
 
-## What the recorded build costs
+## What the build costs
 
-The layer's block in the root is the menu's router table: one `MenuScreen` with a page component bound in each slot. The recorded child does not own any of it. It receives every value any page reads, more than seventy props, and every action any page takes, more than twenty events, and passes each to one page unchanged. It holds no state and no logic, and it declares again the type of every prop that each page already declares.
+The layer's block in the root is the menu's router table: one `MenuScreen` with a page component bound in each slot. The child does not own any of it. It receives every value any page reads, more than seventy props, and every action any page takes, more than twenty events, and passes each to one page unchanged. It holds no state and no logic, and it declares again the type of every prop that each page already declares.
 
 Judged by [the splitting guide](../../../../.agents/skills/vue-component-patterns/references/splitting-a-component.md)'s own test, what a cut leaves behind, it is a poor trade. The root sheds a bit over a hundred lines of template and the page imports, and the package grows by several hundred. That is more than twice what the root sheds, to add a hop that no page needs.
 
@@ -26,11 +26,9 @@ Both cheaper shapes were measured on the real block, by counting the bindings of
 
 Neither shape was built. The counts come from the real block and the real composables, and a build would add the pages' fixtures and tests to the adding side, so it can only widen the gap.
 
-A shape that gathers many events into one component forwards them, and that is the shape the checker's defect fails on. The defect did not decide the outcome. The shapes that pay would have far fewer events, so the defect would not have stopped them either.
+## The checker's limit does not decide it
 
-## The checker's limit is gone, and the answer is the same
-
-The first version of this decision leaned on the checker's cap of about fourteen distinct events per component, which the menu's 33 page events exceeded. The cap was a defect and is fixed upstream, so a child can now hold any number of events, and the decision is re-read without it: the measurements above never used it. The recorded child forwards more than seventy props and more than twenty events unchanged, holds no state and no logic, and costs more than twice the lines the root sheds. The shapes that would pay (a bundle of the seven shared props, pages that own their composables) were counted on the real block and move wiring without removing it.
+The forwarding child failed the package typecheck because the checker's event map loses its earliest events once a component declares more than sixteen, models included, without an error. That is reported upstream as [vize issue 11390](https://github.com/ubugeeei-prod/vize/issues/11390) and fixed in a later release. The decision does not rest on it: the measurements above never used the limit, and a shape that gathers many events into one component forwards them, which the limit would stop. The shapes that would pay have far fewer events than the limit, so it would not stop them either.
 
 **Reopen it when one of these changes, and not for the limit:**
 

@@ -10,5 +10,5 @@ Nothing here.
 
 ## Open
 
-- [ ] **Forge: the Materials tab's earlier mean of 6.75% and FLIP of 0.2223, before the placement** — no source yet: the recorded parity run of that layout, which the snapshot no longer keeps.
+- [ ] **Forge: the Materials tab's earlier mean and FLIP, before the placement** — no source yet: the recorded parity run of that layout, which the snapshot no longer keeps.
 - [ ] **Forge: the game's name letters running about a third wider at the same height** — no source yet: a measured width of the game's letters at the reference's height, which no record holds.

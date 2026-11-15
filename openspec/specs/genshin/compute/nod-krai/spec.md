@@ -1,6 +1,6 @@
 ## Purpose
 
-Nod-Krai's region: its base ground, renderers, landmarks, camera, shape, surface, display, light and atmosphere, and its location's frame score.
+Nod-Krai's region: its landmarks, camera and sun direction.
 
 ## Requirements
 
@@ -34,13 +34,3 @@ The Nasha Town sun direction SHALL replace the provisional noon only when the so
 - **GIVEN** the sun's direction is solved from the shadows' edges over flat receivers
 - **WHEN** the solved edges lie within 2 pixels of the reference's
 - **THEN** the held minute replaces the provisional noon
-
-### Requirement: The Nasha Town frame's score
-
-The Nasha Town frame's score SHALL be reported without a numeric gate.
-
-#### Scenario: A frame comparison reports its score
-
-- **GIVEN** the Nasha Town frame is compared against its reference
-- **WHEN** the comparison finishes
-- **THEN** its score is recorded and reported

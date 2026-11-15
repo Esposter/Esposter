@@ -1,7 +1,7 @@
 # JSON/config parity (JSON view, export template, CLI panes)
 
-Azure's declarative-config surfaces: the Essentials "JSON View" panel, ARM/Bicep export-template blade, and CLI/Cloud Shell panes.
+A JSON view of each resource, an export template and a command-line pane, as declarative-config surfaces show a configuration.
 
 ## Why not
 
-Those exist because Azure resources _are_ declarative JSON documents managed by ARM — viewing/exporting the config is the product. Our resources are app content (rows, surveys, canvases) with no config representation a user would act on; a raw row/blob dump serves nobody but a developer with DB access, who already has better tools.
+Viewing or exporting a config is the product only where the resource is a declarative JSON document, managed as one. Our resources are app content (rows, surveys, canvases) with no config representation a user would act on; a raw row/blob dump serves nobody but a developer with DB access, who already has better tools.

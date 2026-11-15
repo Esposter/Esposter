@@ -11,7 +11,7 @@
 
 ## 2. The fishing scene
 
-- [ ] 2.1 [phase 6] Draw a fish stand-in at the lure while a fish is hooked, one shape per fish category (the category task 1.8 carries into the fish record), built from the engine's kits. Verify: tests named after 'A hooked fish is drawn at the lure', 'A fish with no codex model is drawn as its category's stand-in' and 'A family asset without fitted parameters is drawn as its stand-in', written first and seen failing; the cast playtest scenario holds the state.
+- [ ] 2.1 [phase 6] Draw a fish stand-in at the lure while a fish is hooked, one shape per fish category (the category task 1.8 carries into the fish record), built from the engine's kits. Verify: tests named after 'A hooked fish is drawn at the lure', 'A fish with no codex model is drawn as its category's stand-in' and 'A family asset without fitted parameters is drawn as its stand-in', written first and seen failing.
 - [ ] 2.2 [phase 6] Draw one tapered rod in the character's hand while a line is out. Verify: tests named after 'A cast shows the rod and the float' and 'Reeling in clears the rod and the float' check the rod, written first and seen failing.
 - [ ] 2.3 [phase 6] Draw one generated float on the water at the lure point while the line is out. Verify: tests named after 'A cast shows the rod and the float' and 'Reeling in clears the rod and the float' check the float, written first and seen failing.
 - [ ] 2.4 [phase 6] Draw a splash and rings at the lure on a strike that catches the bite, from the engine's water ripple node and a particle burst. Verify: tests named after 'A struck bite shows a splash' and 'A strike with no bite shows no splash', written first and seen failing.
@@ -20,7 +20,7 @@
 
 ## 3. Animals, critters, pets and fish bodies
 
-- [ ] 3.1 [phase 6] Draw one generated silhouette per fleeing kind (White Pigeon, Crimson Fox, Squirrel, Boar) in place of its capsule, sized by the bounds task 1.2 reads; a kind with no silhouette stays a capsule. Verify: tests named after 'A fleeing animal is drawn as its kind' and 'A kind with no silhouette stays a capsule', written first and seen failing; the wildlife playtest scenario holds the state.
+- [ ] 3.1 [phase 6] Draw one generated silhouette per fleeing kind (White Pigeon, Crimson Fox, Squirrel, Boar) in place of its capsule, sized by the bounds task 1.2 reads; a kind with no silhouette stays a capsule. Verify: tests named after 'A fleeing animal is drawn as its kind' and 'A kind with no silhouette stays a capsule', written first and seen failing.
 - [ ] 3.2 [phase 6] Draw one stand-in per critter species group at each of its map points. Verify: tests named after 'A critter stands at each of its points' and 'A butterfly stands at no point', written first and seen failing.
 - [ ] 3.3 [phase 6] Add the other critter groups' labels to the material-source list and join each to its gather row by the name join the crystalflies use, so that each group's pickup gives its item and vanishes. Verify: `pnpm -C scripts genshin:assets materialSources --dry-run` prints the matches per group and the rows that do not join, and a test named after 'A picked critter gives its item and vanishes', written first and seen failing.
 - [ ] 3.4 [phase 7] Write each fleeing kind's escape time and flight speed from its run clip (task 1.3) into the wildlife constants in place of the provisional values, and leave the escape radius provisional. Verify: tests named after 'A startled animal runs at its clip's speed' and 'A clip without root motion keeps the provisional speed', written first and seen failing; the printed motion matches each constant, and `stepWildlife.test.ts` passes.
@@ -35,7 +35,7 @@
 
 ## 4. Props and icons
 
-- [ ] 4.1 [phase 6] Draw one stand-in per fishing-area prop at the place the fishing dataset from task 1.6 gives, in every region that holds one. Verify: tests named after 'A prop stands at its layout's place' and 'A prop without a layout place is not drawn', written first and seen failing; the wildlife playtest scenario holds the state.
+- [ ] 4.1 [phase 6] Draw one stand-in per fishing-area prop at the place the fishing dataset from task 1.6 gives, in every region that holds one. Verify: tests named after 'A prop stands at its layout's place' and 'A prop without a layout place is not drawn', written first and seen failing.
 - [ ] 4.2 [phase 6] Trace each exported animal icon at full resolution with `pnpm -C scripts genshin:parity trace <source>` into a path of ours, and draw it beside its codex entry in the archive's Living Beings. Verify: the trace writes a path for each icon, and a test named after 'An untraced icon stays a disc', written first and seen failing.
 - [ ] 4.3 [phase 2] Trace the fish, bait, rod and Use prompt icons at full resolution into paths of ours, for the bag and the interaction prompts, in place of the discs that [interaction](../../specs/genshin/interaction/design.md)'s open item names. Verify: `pnpm -C scripts genshin:parity trace <source>` writes a path for each icon, and a test named after 'A traced icon replaces a disc', written first and seen failing.
 

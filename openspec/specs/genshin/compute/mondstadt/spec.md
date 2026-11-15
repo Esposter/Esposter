@@ -1,6 +1,6 @@
 ## Purpose
 
-Mondstadt's region: its base ground, renderers, landmarks, camera, shape, surface, display, light and atmosphere, and its location's frame score.
+Mondstadt's region: its landmarks, camera, layout, shape, surface, display, sun direction, light and atmosphere.
 
 ## Requirements
 
@@ -108,13 +108,3 @@ The Mondstadt City atmosphere SHALL keep the sky's statistics within the spread 
 - **GIVEN** the sky's statistics are compared with the reference's two sky halves
 - **WHEN** the statistics fall outside the spread between those halves
 - **THEN** the atmosphere is not held
-
-### Requirement: The Mondstadt City frame's score
-
-The Mondstadt City frame's score SHALL be reported without a numeric gate. It waits on every pass.
-
-#### Scenario: A frame comparison reports its score
-
-- **GIVEN** the Mondstadt City frame is compared against its reference
-- **WHEN** the comparison finishes
-- **THEN** its score is recorded and reported

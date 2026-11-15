@@ -4,11 +4,11 @@ A Power BI report puts headings and commentary on its canvas as text boxes besid
 
 ## Why deferred
 
-Every chart visual renders through ApexCharts today, and a non-chart kind needs the dispatch that [card and table visuals](../../../specs/resource/dashboard-card-and-table-visuals/design.md) introduced. Each chart already carries its own title and subtitle, which covers the labelling a text box is mostly used for.
+Every chart visual renders through ApexCharts today, and the dispatch that [card and table visuals](../../../specs/resource/dashboard-card-and-table-visuals/design.md) built already takes a non-chart kind. Each chart already carries its own title and subtitle, which covers the labelling a text box is mostly used for.
 
 ## Revisit when
 
-Card and table visuals ship, and a dashboard needs a section heading or a paragraph no chart title can hold.
+A dashboard needs a section heading or a paragraph no chart title can hold.
 
 ## Cheaper interim
 

@@ -111,3 +111,4 @@ When a save is refused because the resource was modified elsewhere, the owner SH
 - **WHEN** the other tab saves its older version
 - **THEN** that tab shows a warning that the resource was modified elsewhere
 - **AND** the warning offers a Refresh action that loads the latest version
+- **AND** the newer version is not overwritten

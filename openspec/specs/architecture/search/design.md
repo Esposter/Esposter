@@ -71,15 +71,9 @@ A small list searched as a whole — the slash commands, the explorer's pages an
 
 This branch has no `isPending` and no abort, because there is nothing asynchronous to track. It is not an exception to the ban — the ban is on re-rolling the _server_ query lifecycle — and it is not a licence to hand-roll the index either.
 
-### The command palette — one Ctrl+K
+### The command palette
 
-There is one palette, `AppCommandPalette`, and a surface with a search of its own hands that search to it as a scope rather than opening a dialog of its own ([command palette](../command-palette/design.md)). `useCommandScope` takes the surface's query ref, a getter over what it finds as `UiCommand` rows, and optionally its pending state and a way to read more; the query lifecycle behind them is whichever branch above the surface already uses. The palette's field writes the scope's query, and its list, keyboard contract and empty state are the palette's, so no surface draws results of its own.
-
-```ts
-useCommandScope({ commands: () => rooms.value, placeholder: "Where would you like to go?", query, title: "Rooms" });
-```
-
-The room list registers its cursor-paginated rooms (with `readMore` for the waypoint), and the resource explorer's home page its grouped search, each for as long as it is mounted.
+A surface's search feeds the one Ctrl+K palette as a scope, through `useCommandScope`, and the palette owns its field, list and empty state ([command palette](../command-palette/design.md)).
 
 ## Sanctioned exceptions
 

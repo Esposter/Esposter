@@ -14,7 +14,6 @@ x-touches:
     "packages/genshin-world/src/components/Fishing/**",
     "packages/genshin-world/src/components/World/Wildlife/**",
     "packages/genshin-world/src/components/Archive/**",
-    "packages/genshin-world/src/services/dev/scenarios/**",
     "packages/genshin-world/src/generated/gameDataLock.json",
     "packages/genshin-engine/src/kits/**",
     "packages/genshin-interface/src/components/InteractionPrompts/**",

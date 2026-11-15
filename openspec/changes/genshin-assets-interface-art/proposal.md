@@ -21,4 +21,4 @@ None.
 
 ## Impact
 
-The asset tooling in `scripts` (the trace command, a named-icon export, a picture's colour fit), the shared item tile in `genshin-interface`, two components in `genshin-world` for a trace each, and the roadmap for the lines it lacks. No game art is committed, published or shipped by any task.
+The asset tooling in `scripts` (the trace command, a named-icon export, a picture's colour fit), the shared item tile in `genshin-interface`, two components in `genshin-world` for a trace each, and the roadmap for the lines it lacks. The shipping rule is [derived assets](../../specs/genshin/derived-assets/spec.md).

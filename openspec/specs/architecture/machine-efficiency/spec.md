@@ -81,17 +81,6 @@ A machine SHALL run at most one machine watcher at a time.
 - **WHEN** a new watcher starts
 - **THEN** the new watcher takes over the claim
 
-### Requirement: The heartbeat is published every ten minutes
-
-A machine's heartbeat SHALL be published every ten minutes, and a failed publish SHALL be logged once and retried at the next interval.
-
-#### Scenario: A heartbeat push stalls
-
-- **GIVEN** a heartbeat push that the network stalls
-- **WHEN** the bound on the push passes
-- **THEN** one line is logged
-- **AND** the next heartbeat is pushed at the next interval
-
 ### Requirement: An idle reading starts no work by itself
 
 An idle reading from the machine watcher SHALL NOT start work by itself.

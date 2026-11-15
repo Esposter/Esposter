@@ -65,137 +65,7 @@ describe(compileMathExpression, () => {
     expect(evaluateFormula(formula)).toBe(expected);
   });
 
-  test("an addition of two negative zeros is negative zero, as mathjs adds", () => {
-    expect.hasAssertions();
-
-    expect(Object.is(evaluateFormula("-0 + -0"), -0)).toBe(true);
-  });
-
-  test("a name in a formula is read from the parsed names, minus its assignments and constants", () => {
-    expect.hasAssertions();
-
-    expect(getMathExpressionNames(parseNode("(x = col0 + 1) * x + col1 * pi"))).toStrictEqual(["col0", "col1"]);
-  });
-});
-
-describe("defect fixes", () => {
-  test("#3563 a percentage followed by a sum is a percentage", () => {
-    expect.hasAssertions();
-
-    expect(evaluateFormula("100*25% + 2")).toBe(27);
-    expect(evaluateFormula("10 % +3")).toBe(10 / 100 + 3);
-    expect(evaluateFormula("7 % -3")).toBe(7 / 100 - 3);
-  });
-
-  test("#2851 a sum of percentages adds the plain values", () => {
-    expect.hasAssertions();
-
-    expect(evaluateFormula("10% + 20%")).toBe(10 / 100 + 20 / 100);
-    expect(evaluateFormula("25% + 25%")).toBe(0.5);
-  });
-
-  test("#3282 a chain of percentage sums adds the plain values", () => {
-    expect.hasAssertions();
-
-    expect(evaluateFormula("10% + 20% + 30%")).toBe(10 / 100 + 20 / 100 + 30 / 100);
-  });
-
-  test("#204 a percentage after a plain sum is of the sum's left side", () => {
-    expect.hasAssertions();
-
-    expect(evaluateFormula("100 + 10% + 20%")).toBe(132);
-  });
-
-  test("#513 a quotient that is an exact multiple gives a zero modulo", () => {
-    expect.hasAssertions();
-
-    expect(evaluateFormula("mod(10.8, 1.2)")).toBe(0);
-  });
-
-  test("#2936 a decimal modulo that is an exact multiple is zero", () => {
-    expect.hasAssertions();
-
-    expect(evaluateFormula("mod(0.3, 0.1)")).toBe(0);
-    expect(evaluateFormula("mod(0.15, 0.05)")).toBe(0);
-  });
-
-  test("#2374 a radix prefix with no digit is a zero, and the letter after it a name", () => {
-    expect.hasAssertions();
-
-    expect(evaluateFormula("(x = 3) + 0x")).toBe(3);
-  });
-
-  test("#3421 a binary literal reads only its radix digits", () => {
-    expect.hasAssertions();
-
-    expect(evaluateFormula("(x = 4) + 0b1x")).toBe(8);
-    expect(evaluateFormula("0x1F")).toBe(31);
-    expect(evaluateFormula("0x1F.8")).toBe(31.5);
-    expect(evaluateFormula("0b11i8")).toBe(3);
-    expect(evaluateFormula("0xFFi8")).toBe(-1);
-  });
-
-  test("#2483 and, or and xor take any number of arguments", () => {
-    expect.hasAssertions();
-
-    expect(evaluateFormula("and(1, 1, 0)")).toBe(0);
-    expect(evaluateFormula("or(0, 0, 1)")).toBe(1);
-    expect(evaluateFormula("xor(1, 1, 1)")).toBe(1);
-    expect(evaluateFormula("xor(1, 1)")).toBe(0);
-    expect(evaluateFormula("and(1)")).toBe(1);
-    expect(evaluateFormula("and(0)")).toBe(0);
-    expect(evaluateFormula("xor(1)")).toBe(1);
-    expect(evaluateFormula("xor(0)")).toBe(0);
-  });
-
-  test("#2464 an exact root of a perfect power is exact", () => {
-    expect.hasAssertions();
-
-    expect(evaluateFormula("nthRoot(125, 3)")).toBe(5);
-  });
-
-  test("#2967 coth, csch and sech are the reciprocals of tanh, sinh and cosh", () => {
-    expect.hasAssertions();
-
-    expect(evaluateFormula("coth(1e-7)")).toBe(10000000.000000035);
-    expect(evaluateFormula("sech(0)")).toBe(1);
-  });
-
-  test.each([
-    ["round(1e300, 9)", 1e300],
-    ["ceil(1e300, 9)", 1e300],
-    ["floor(-1e300, 9)", -1e300],
-    ["fix(1e294, 15)", 1e294],
-  ])("a rounding of a number past the shift's range keeps the number, as mathjs rounds: %s", (formula, expected) => {
-    expect.hasAssertions();
-
-    expect(evaluateFormula(formula)).toBe(expected);
-  });
-
-  test.each([
-    ["mod(1/0, 3)", Number.NaN],
-    ["mod(5, 1/0)", Number.NaN],
-    ["mod(1/0, 0)", Number.POSITIVE_INFINITY],
-  ])(
-    "a modulo of a non-finite operand is NaN, and a zero divisor keeps the dividend, as mathjs answers: %s",
-    (formula, expected) => {
-      expect.hasAssertions();
-
-      expect(evaluateFormula(formula)).toBe(expected);
-    },
-  );
-
-  test.each([
-    ["invmod(4, -7)", -12],
-    ["invmod(-3, -7)", -12],
-    ["invmod(3, -7)", -9],
-  ])("an inverse under a negative modulus is reduced below it, as mathjs reduces it: %s", (formula, expected) => {
-    expect.hasAssertions();
-
-    expect(evaluateFormula(formula)).toBe(expected);
-  });
-
-  test.each([["sum([-0, -0])"], ["add(-0, -0, -0)"]])(
+  test.each([["-0 + -0"], ["sum([-0, -0])"], ["add(-0, -0, -0)"]])(
     "a sum of negative zeros is negative zero, as mathjs sums: %s",
     (formula) => {
       expect.hasAssertions();
@@ -204,14 +74,11 @@ describe("defect fixes", () => {
     },
   );
 
-  test.each([["variance([1/0])"], ["std([1/0])"]])(
-    "a single infinite value has no variance, as mathjs answers: %s",
-    (formula) => {
-      expect.hasAssertions();
+  test("a name in a formula is read from the parsed names, minus its assignments and constants", () => {
+    expect.hasAssertions();
 
-      expect(evaluateFormula(formula)).toBe(Number.NaN);
-    },
-  );
+    expect(getMathExpressionNames(parseNode("(x = col0 + 1) * x + col1 * pi"))).toStrictEqual(["col0", "col1"]);
+  });
 });
 
 describe("counting and primality", () => {

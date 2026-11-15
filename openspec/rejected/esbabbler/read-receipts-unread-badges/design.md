@@ -1,6 +1,6 @@
 # Read Receipts / Unread Badges
 
-Track `lastSeenRowKey` / `lastSeenAt` per user per room to show per-room and per-DM unread counts.
+Track the last message each user has seen in each room, and when, to show per-room and per-DM unread counts.
 
 **Why not**
 

@@ -1,6 +1,6 @@
 # Pin resources to a dashboard
 
-Azure lets you pin resources/blades as tiles on portal dashboards — the analogue would be pinning resource tiles into our Dashboard resource type.
+Pinning resource tiles into the Dashboard resource type, so that a dashboard also works as a home page of shortcuts.
 
 ## Why not
 

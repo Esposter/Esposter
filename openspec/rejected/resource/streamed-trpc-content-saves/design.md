@@ -8,7 +8,7 @@ tRPC accepts inputs that are not JSON — `FormData`, `File`, `Blob` and raw bin
 - **A stream carries nothing beside it.** `octetInputParser` makes the input the stream alone, so the resource id and `contentVersion` a save needs have nowhere to go. [File uploads](../../../specs/architecture/file-uploads/design.md) already turned binary tRPC bodies down for this reason.
 - **The browser only streams over HTTP/2.** Chrome sends a streaming request body only over HTTP/2 or later, with `duplex: "half"`, and refuses it over HTTP/1.1, the protocol a plain local dev server speaks. A buffered `Blob` avoids that restriction, but it carries a `content-length` and meets the same request size limiter as JSON does.
 
-A [staged content save](../../../specs/architecture/file-uploads/design.md) uploads a large document to Blob Storage and gives tRPC only a reference.
+A [staged content save](../../../specs/architecture/file-uploads/design.md) uploads a large document to R2 and gives tRPC only a reference.
 
 ## Sources
 

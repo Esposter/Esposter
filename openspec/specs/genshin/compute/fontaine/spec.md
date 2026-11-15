@@ -1,6 +1,6 @@
 ## Purpose
 
-Fontaine's region: its base ground, renderers, landmarks, camera, shape, surface, display, light and atmosphere, and its location's frame score.
+Fontaine's region: its landmarks, camera and sun direction.
 
 ## Requirements
 
@@ -46,13 +46,3 @@ The Fontaine sun direction SHALL replace the provisional noon only when the solv
 - **GIVEN** the sun's direction is solved from the shadows' edges
 - **WHEN** the solved edges miss the reference's by more than 2 pixels
 - **THEN** the provisional noon stays in place
-
-### Requirement: The Fontaine frame's score
-
-The Fontaine frame's score SHALL be reported without a numeric gate.
-
-#### Scenario: A frame comparison reports its score
-
-- **GIVEN** the Fontaine frame is compared against its reference
-- **WHEN** the comparison finishes
-- **THEN** its score is recorded and reported

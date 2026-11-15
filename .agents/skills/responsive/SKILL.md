@@ -9,8 +9,7 @@ Narrow viewports are a first-class target, not an afterthought. A row of buttons
 
 ## Settled — do not re-propose
 
-- **A device-specific component, folder or name** (`mobile/`, a `Mobile` prefix, a phone-only bar of buttons) — every fix to a surface lands in two copies that drift; write one component and climb the ladder (`One component for every device`, this file).
-- **A sheet on a phone in place of a popover** — the popover stays anchored at every width and sizes itself with `min()` against the viewport (`One component for every device`, this file).
+The alternatives already refused, a device folder or prefix, a phone-only bar of buttons and a sheet in place of a popover, are the design's "Settled — do not re-propose" section (`openspec/specs/architecture/responsive/design.md`).
 
 ## One component for every device
 

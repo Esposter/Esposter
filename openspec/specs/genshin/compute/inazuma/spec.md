@@ -1,6 +1,6 @@
 ## Purpose
 
-Inazuma's region: its base ground, renderers, landmarks, camera, shape, surface, display, light and atmosphere, and its location's frame score.
+Inazuma's region: its landmarks, camera, family layout, shape and light.
 
 ## Requirements
 
@@ -53,13 +53,3 @@ Inazuma's light SHALL place its shadow edges within 2 pixels and its stone colou
 - **GIVEN** the sun's direction is solved from the shadows' edges
 - **WHEN** the shadow edges and the stone's colour each stay within their limit
 - **THEN** the light pass passes
-
-### Requirement: The Inazuma frame's score
-
-The Inazuma frame's score SHALL be reported without a numeric gate.
-
-#### Scenario: A frame comparison reports its score
-
-- **GIVEN** the Inazuma frame is compared against its reference
-- **WHEN** the comparison finishes
-- **THEN** its score is recorded and reported

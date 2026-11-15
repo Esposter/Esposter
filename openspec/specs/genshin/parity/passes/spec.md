@@ -26,6 +26,16 @@ The whole frame's score SHALL be the acceptance of a screen, and a pass SHALL be
 - **THEN** its own measure guides the work
 - **AND** the frame is compared only once every pass before it holds
 
+### Requirement: A location's frame score is reported without a numeric gate
+
+A location's frame score SHALL be reported without a numeric gate.
+
+#### Scenario: A frame comparison reports its score
+
+- **GIVEN** a location's frame is compared against its reference
+- **WHEN** the comparison finishes
+- **THEN** its score is recorded and reported
+
 ### Requirement: The passes command names the next work
 
 The passes command SHALL run each pass's measure in order and stop at the first measure that fails or has no measure yet, naming that pass as the next work.

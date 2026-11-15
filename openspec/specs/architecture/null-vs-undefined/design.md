@@ -23,12 +23,7 @@ Boundary shapes where `null` is expected and stays:
 
 The tempting exception is a read that has to distinguish **"not loaded yet"** from **"loaded, and there is no row"**, since `useQuery` seeds its `data` as `undefined` and that looks like the sentinel being spent. It is not an exception: `useQuery` returns `isPending` alongside `data`, and the pending state is that flag's job. A read whose row is absent answers `undefined` like any other, and the consumer gates on `isPending` rather than inventing a third value:
 
-```vue
-<!-- The form renders once the read has answered, whether or not a row came back -->
-<WordFilterForm v-if="!isPending" :filter />
-```
-
-Reaching for `null` here buys nothing and costs the standard: the sentinel says "loaded, empty" only to a reader who already knows the convention, where `isPending` says it in the type.
+The consumer gates on `isPending`, and the reader's rule with its component example is `.agents/skills/absent-values/references/null-vs-undefined.md`.
 
 ## Not lint-enforced
 

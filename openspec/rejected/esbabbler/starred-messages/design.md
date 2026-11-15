@@ -1,6 +1,6 @@
 # Starred / Saved / Bookmarked Messages
 
-Per-user bookmarks stored per `userId/roomId/rowKey`, with a dedicated "Saved" view in the sidebar.
+Per-user bookmarks, each naming one message, with a dedicated "Saved" view in the sidebar.
 
 **Why not**
 

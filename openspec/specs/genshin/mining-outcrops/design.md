@@ -48,5 +48,3 @@ flowchart TD
 ## Open
 
 The rank that opens them is open on the [spec](spec.md).
-
-- [ ] **The 04:00 reset is read in UTC+8, the server's clock** — no source: a game row that names the zone, since the dump's refresh row gives 14400 seconds with none; the reset text names only "{TIMEZONE}" (`{data-root}/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json`, line 131856), so a capture of that Wish count line with the zone filled in would settle it. It is the question [Domains](../domains/design.md) also leaves open.

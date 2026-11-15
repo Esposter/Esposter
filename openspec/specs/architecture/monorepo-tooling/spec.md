@@ -108,41 +108,6 @@ A release SHALL run the format, build, lint, typecheck and test gates before it 
 - **WHEN** every gate passes
 - **THEN** the versions are bumped before any package is published
 
-### Requirement: The nightly release publishes only reviewed main
-
-The nightly release SHALL publish only commits that have landed on the main branch.
-
-#### Scenario: No commit landed on main since the last release
-
-- **GIVEN** no commit has landed on the main branch since the last release tag
-- **WHEN** the nightly run starts
-- **THEN** the release is skipped
-
-#### Scenario: The version push to main is rejected
-
-- **GIVEN** the nightly release has bumped the versions
-- **WHEN** the push of the version commit and tag is rejected
-- **THEN** the job fails before anything is published
-- **AND** the next night versions from the current tip of main
-
-### Requirement: Packages publish without a stored registry credential
-
-Packages SHALL be published using the release job's own CI identity, with no long-lived registry token stored anywhere.
-
-#### Scenario: A new version is published
-
-- **GIVEN** a version is not yet on the registry
-- **WHEN** the release job publishes it
-- **THEN** it authenticates with its CI identity
-- **AND** a public package carries a provenance attestation
-
-#### Scenario: The registry publish fails
-
-- **GIVEN** the release job has created its GitHub release as a draft
-- **WHEN** the registry publish fails
-- **THEN** the GitHub release stays a draft
-- **AND** no public release names a version that did not publish
-
 ### Requirement: The node version is declared in one place
 
 The repository SHALL declare its node version in a single file, and every consumer SHALL take it from that file.

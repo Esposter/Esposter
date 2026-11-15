@@ -22,8 +22,8 @@ openspec/
     <area>-<name>-program/          ← the umbrella over the changes sharing its prefix
     <area>-roadmap/                 ← open work: proposal.md and tasks.md, no spec delta
     archive/                        ← shipped changes, history only
-  deferred/<area>/<idea>/           ← proposal.md (what it was) and design.md (why deferred, revisit when)
-  rejected/<area>/<idea>/           ← proposal.md (what it was) and design.md (why not)
+  deferred/<area>/<idea>/           ← design.md (what it was, why deferred, revisit when)
+  rejected/<area>/<idea>/           ← design.md (what it was, why not)
 ```
 
 A cross-area refactor plan is a change named `refactors-<slug>`: it is no area, so it has no roadmap, no deferred or rejected folder and no product-review pass. A mechanical sweep is not one: it designs no behaviour and lives in `.agents/ledgers/` (`sweeps` skill).
@@ -68,11 +68,12 @@ A capability may hold sub-capabilities — `<area>/<feature>/<sub-feature>/` wit
 
 ## Deferred and rejected ideas
 
-One folder per idea, its kebab-case slug named after the idea. Its `proposal.md` says what it was, and its `design.md` carries the argument:
+One folder per idea, its kebab-case slug named after the idea. Its `design.md` is the whole page: its lead says what the idea was, and its sections carry the argument:
 
-- **`rejected/`** — what it was, **Why not**.
-- **`deferred/`** — what it was, **Why deferred**, and **Revisit when:** the concrete trigger. Optionally the **Cheaper interim** already covering the need.
-- **A deferred idea may carry its full design** when designing it now checks a shared mechanism against a consumer the first build does not have. The flowchart on the editor core is designed in full (`openspec/deferred/resource/flowchart-on-editor-core/design.md`), since which of its futures wins turns on the core's shape. The design is the change's to revise when the idea is revived, so the folder still holds no tasks and no spec delta.
+- **`rejected/`** — **Why not**.
+- **`deferred/`** — **Why deferred**, and **Revisit when:** the concrete trigger. Optionally the **Cheaper interim** already covering the need.
+- **A group of rejected ideas refused for one shared reason** may share one folder named for the surface they touch: its lead says what the group is and what the shared reason is, and each idea gets one `##` section. The group is the one exception to one idea per folder.
+- **A deferred idea may carry its full design** when designing it now checks a shared mechanism against a consumer the first build does not have. The design is the change's to revise when the idea is revived, so the folder still holds no tasks and no spec delta.
 
 GitHub's folder listing is the index of either tree.
 
@@ -91,7 +92,7 @@ A roadmap exists only while its area has open work. When the last item is built,
 | Shipped                   | `specs/<area>/<capability>/`      | Archive the change, rewrite the capability's design as built, remove the roadmap item, log it in `README.md` |
 | Shipped (one-time change) | `changes/archive/`                | Archive the change, remove the roadmap item, sweep references, one shipped-log line — no capability          |
 | Shipped in part           | both                              | What shipped is built into the capability; the change keeps only what is unbuilt                             |
-| Won't do                  | `rejected/<area>/<idea>/`         | One folder with the rationale                                                                                |
+| Won't do                  | `rejected/<area>/<idea>/`         | One `design.md` with the rationale                                                                           |
 | Deferred                  | `deferred/<area>/<idea>/`         | One folder with the rationale and the revisit trigger                                                        |
 
 **A change shipped in part leaves two pages sharing no sentence.** The change's lead points at the capability's design rather than summarizing it, and a source both cite is worded for what each page reads off it, since `scripts/src/workspace/duplicateProse.test.ts` fails on a run of `SHINGLE_SIZE` words the two share. A split that copies the sources list or the summary across is the one shape that test catches by the dozen.

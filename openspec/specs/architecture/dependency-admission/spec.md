@@ -91,7 +91,14 @@ An absorbed package SHALL improve on the package it replaces in what a measureme
 
 ### Requirement: Every upstream issue receives an evidenced verdict before the absorption is built
 
-Every issue in the replaced package's tracker, open or closed, SHALL receive one verdict backed by evidence before the absorption is built.
+Every issue in the replaced package's tracker, open or closed, SHALL receive one verdict backed by evidence before the absorption is built, and the spec SHALL list the in-scope issues with their proof and count the rest by verdict class.
+
+#### Scenario: The spec lists in-scope issues and counts the rest
+
+- **GIVEN** every issue of the tracker has its verdict
+- **WHEN** the replacement's spec records the verdicts
+- **THEN** every in-scope issue, a defect or a feature, is listed with its link and its proof
+- **AND** the other verdicts are counted by class, with a link to the tracker
 
 #### Scenario: A reproduced defect is fixed and covered by a named regression test
 

@@ -88,7 +88,7 @@ export const MEMORY_NEXT = "the owner has not yet chosen where memory lives";
 export const REFERENCES_RESTORE_ARGS: readonly string[] = ["-C", "scripts", "genshin:parity", "references", "restore"];
 export const REFERENCES_RESTORE_COMMAND: string = ["pnpm", ...REFERENCES_RESTORE_ARGS].join(" ");
 export const MEMORY_FOLDER_NAME = "memory";
-// The Windows facts a new machine needs beyond the clone and the logins (the monorepo-tooling page's "Windows machines").
+// The Windows facts a new machine needs beyond the clone and the logins (the recoverability page's setup command).
 // Each is checked and printed with what to do; none is installed by the command
 export const CORE_SYMLINKS_KEY = "core.symlinks";
 export const SYMLINKS_ENABLED_VALUE = "true";

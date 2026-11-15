@@ -307,19 +307,6 @@ describe(parseMjmlDocument, () => {
     expect(bodyWithSection.error?.issues.map((issue) => issue.message)).toStrictEqual(['Unrecognized key: "<body>"']);
   });
 
-  test("an attribute the mjml element does not take is refused by name", () => {
-    expect.hasAssertions();
-
-    const result = parseMjmlDocument(
-      '<mjml title="x"><mj-head><mj-title>a</mj-title></mj-head><mj-body></mj-body></mjml>',
-      TEST_REGISTRY,
-      TEST_BODY_CHILDREN_SCHEMA,
-      TEST_RICH_TEXT,
-      TEST_MAX_NODES,
-    );
-    expect(result.error?.issues.map((issue) => issue.message)).toStrictEqual(['Unrecognized key: "<mjml>"']);
-  });
-
   test("a second title is refused by name, not kept over the first", () => {
     expect.hasAssertions();
 
@@ -389,19 +376,6 @@ describe(parseMjmlDocument, () => {
     ]);
   });
 
-  test("an attribute on the title is refused by name", () => {
-    expect.hasAssertions();
-
-    const result = parseMjmlDocument(
-      '<mjml><mj-head><mj-title foo="a">a</mj-title></mj-head><mj-body></mj-body></mjml>',
-      TEST_REGISTRY,
-      TEST_BODY_CHILDREN_SCHEMA,
-      TEST_RICH_TEXT,
-      TEST_MAX_NODES,
-    );
-    expect(result.error?.issues.map((issue) => issue.message)).toStrictEqual(['Unrecognized key: "<mj-title>"']);
-  });
-
   test("#179 an id attribute is refused at its node, not taken as the node's id", () => {
     expect.hasAssertions();
 
@@ -420,72 +394,54 @@ describe(parseMjmlDocument, () => {
 
   test.each([
     [
-      "content",
+      "a source attribute named content is refused by name, not written over the node's own prop",
       '<mjml><mj-body><mj-section><mj-column><mj-text content="x">Hi</mj-text></mj-column></mj-section></mj-body></mjml>',
       "<content>",
     ],
-    ["children", '<mjml><mj-body><mj-section children="x"></mj-section></mj-body></mjml>', "<children>"],
     [
-      "decorative",
+      "a source attribute named children is refused by name, not written over the node's own prop",
+      '<mjml><mj-body><mj-section children="x"></mj-section></mj-body></mjml>',
+      "<children>",
+    ],
+    [
+      "a source attribute named decorative is refused by name, not written over the node's own prop",
       '<mjml><mj-body><mj-section><mj-column><mj-image decorative="true" src="https://example.com/a.png"></mj-image></mj-column></mj-section></mj-body></mjml>',
       "<decorative>",
     ],
-  ])("a source attribute named %s is refused by name, not written over the node's own prop", (_name, source, key) => {
+    [
+      "an attribute the mjml element does not take is refused by name",
+      '<mjml title="x"><mj-head><mj-title>a</mj-title></mj-head><mj-body></mj-body></mjml>',
+      "<mjml>",
+    ],
+    [
+      "an attribute on the title is refused by name",
+      '<mjml><mj-head><mj-title foo="a">a</mj-title></mj-head><mj-body></mj-body></mjml>',
+      "<mj-title>",
+    ],
+    [
+      "an attribute on the style other than inline is refused by name",
+      '<mjml><mj-head><mj-style media="print">a{}</mj-style></mj-head><mj-body></mj-body></mjml>',
+      "<mj-style>",
+    ],
+    [
+      "a style whose inline is not inline is refused by name",
+      '<mjml><mj-head><mj-style inline="true">a{}</mj-style></mj-head><mj-body></mj-body></mjml>',
+      "<mj-style>",
+    ],
+    [
+      "an attribute on the head is refused by name, not dropped",
+      '<mjml><mj-head foo="x"><mj-title>a</mj-title></mj-head><mj-body></mj-body></mjml>',
+      "<mj-head>",
+    ],
+    [
+      "an attribute on the defaults is refused by name, not dropped",
+      '<mjml><mj-head><mj-attributes foo="x"><mj-text color="red"></mj-text></mj-attributes></mj-head><mj-body></mj-body></mjml>',
+      "<mj-attributes>",
+    ],
+  ])("%s", (_title, source, key) => {
     expect.hasAssertions();
 
     const result = parseMjmlDocument(source, TEST_REGISTRY, TEST_BODY_CHILDREN_SCHEMA, TEST_RICH_TEXT, TEST_MAX_NODES);
     expect(result.error?.issues.map((issue) => issue.message)).toStrictEqual([`Unrecognized key: "${key}"`]);
-  });
-
-  test("an attribute on the style other than inline is refused by name", () => {
-    expect.hasAssertions();
-
-    const result = parseMjmlDocument(
-      '<mjml><mj-head><mj-style media="print">a{}</mj-style></mj-head><mj-body></mj-body></mjml>',
-      TEST_REGISTRY,
-      TEST_BODY_CHILDREN_SCHEMA,
-      TEST_RICH_TEXT,
-      TEST_MAX_NODES,
-    );
-    expect(result.error?.issues.map((issue) => issue.message)).toStrictEqual(['Unrecognized key: "<mj-style>"']);
-  });
-
-  test("a style whose inline is not inline is refused by name", () => {
-    expect.hasAssertions();
-
-    const result = parseMjmlDocument(
-      '<mjml><mj-head><mj-style inline="true">a{}</mj-style></mj-head><mj-body></mj-body></mjml>',
-      TEST_REGISTRY,
-      TEST_BODY_CHILDREN_SCHEMA,
-      TEST_RICH_TEXT,
-      TEST_MAX_NODES,
-    );
-    expect(result.error?.issues.map((issue) => issue.message)).toStrictEqual(['Unrecognized key: "<mj-style>"']);
-  });
-
-  test("an attribute on the head is refused by name, not dropped", () => {
-    expect.hasAssertions();
-
-    const result = parseMjmlDocument(
-      '<mjml><mj-head foo="x"><mj-title>a</mj-title></mj-head><mj-body></mj-body></mjml>',
-      TEST_REGISTRY,
-      TEST_BODY_CHILDREN_SCHEMA,
-      TEST_RICH_TEXT,
-      TEST_MAX_NODES,
-    );
-    expect(result.error?.issues.map((issue) => issue.message)).toStrictEqual(['Unrecognized key: "<mj-head>"']);
-  });
-
-  test("an attribute on the defaults is refused by name, not dropped", () => {
-    expect.hasAssertions();
-
-    const result = parseMjmlDocument(
-      '<mjml><mj-head><mj-attributes foo="x"><mj-text color="red"></mj-text></mj-attributes></mj-head><mj-body></mj-body></mjml>',
-      TEST_REGISTRY,
-      TEST_BODY_CHILDREN_SCHEMA,
-      TEST_RICH_TEXT,
-      TEST_MAX_NODES,
-    );
-    expect(result.error?.issues.map((issue) => issue.message)).toStrictEqual(['Unrecognized key: "<mj-attributes>"']);
   });
 });

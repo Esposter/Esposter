@@ -12,6 +12,8 @@ description: Apply when writing Phaser game objects, stores that hold them, or v
 - **Input composables** — `onUpdate` reads input directly.
 - **`useTimeline`, physics, camera or tilemap-layer components** — nothing consumes them, and a component is added for the game that needs it.
 
+Each refused addition has its reason on [the library additions page](../../../openspec/rejected/vue-phaserjs/additions/design.md).
+
 ## Components
 
 Every game object component follows the same 5-file pattern, split across five trees, and omits a file it does not need, such as `<Circle>`, which takes `<Arc>`'s configuration, emits and setter map — which is the whole inventory rule: what exists is whatever `src/components/` holds, and adding one means adding the files it needs.

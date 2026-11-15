@@ -44,6 +44,13 @@ The version, the tag, the registry publish and the draft release SHALL happen in
 - **THEN** no review run starts
 - **AND** no draft release is created
 
+#### Scenario: The version push is rejected
+
+- **GIVEN** the nightly release has bumped the versions
+- **WHEN** the push of the version commit and tag is rejected
+- **THEN** the job fails before anything is published
+- **AND** the next night versions from the current tip of main
+
 ### Requirement: The release goes public only after the packages publish
 
 A GitHub release SHALL become public only after its packages have reached the registry.
@@ -59,6 +66,17 @@ A GitHub release SHALL become public only after its packages have reached the re
 - **GIVEN** a package fails to publish
 - **WHEN** the publish job is due to run
 - **THEN** the draft release stays a draft
+
+### Requirement: Packages publish without a stored registry credential
+
+Packages SHALL be published using the release job's own CI identity, with no long-lived registry token stored anywhere.
+
+#### Scenario: A new version is published
+
+- **GIVEN** a version is not yet on the registry
+- **WHEN** the release job publishes it
+- **THEN** it authenticates with its CI identity
+- **AND** a public package carries a provenance attestation
 
 ### Requirement: A re-run does not publish a version twice
 

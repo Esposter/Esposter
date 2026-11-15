@@ -285,14 +285,14 @@ The editor SHALL keep a visual's edit, duplicate, export, fit height, move to an
 
 ### Requirement: A viewer sees the visuals and the export, and no editing control
 
-A published dashboard SHALL show its visuals and its own export, and SHALL show no palette, layout control or visual menu.
+A published dashboard SHALL show its visuals and its own export, and SHALL show no palette, inspector, bar, layout control or visual menu.
 
 #### Scenario: Viewing a published dashboard
 
 - **GIVEN** a published dashboard
 - **WHEN** a viewer opens it
 - **THEN** the page shows its visuals and the Export PNG action
-- **AND** it shows no palette, Layout control or visual menu
+- **AND** it shows no palette, inspector, bar, Layout control or visual menu
 
 ### Requirement: A group holds visuals on a grid of its own
 

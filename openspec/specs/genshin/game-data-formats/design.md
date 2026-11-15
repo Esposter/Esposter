@@ -2,20 +2,6 @@
 
 The game's files are references, read locally and never bundled or committed. Two exceptions reach the reader: its text, bundled as generated slices `packages/genshin-text/src/generated` and `packages/genshin-persona/src/generated` ([derived assets](../derived-assets/design.md), [game text](../game-text/design.md)), and the official character packs, which the browser downloads from the published bucket ([published packs](../characters/published-packs/design.md)). This page is what each kind of data holds and how it is read. Every entry names the tool that reads it, so a later session reads the data rather than rediscovering the format. What each component's data is, block by block, is its reference, beside it (below).
 
-## Which kind of data answers what
-
-```mermaid
-flowchart TD
-  Q[A question about a scene] --> K{What holds the answer?}
-  K -->|"a shape or a place"| M["Mesh and Transform: extract, then witness or fit"]
-  K -->|"a place in the open world"| W["StreamGen placements and the tile's TerrainData, found by path hash"]
-  K -->|"a surface"| T["Material values and texture channels: inventory"]
-  K -->|"how it is shaded"| S["Shader programs and their constant layouts: shaders"]
-  K -->|"an interface's place"| R["RectTransform anchors: the raw tail"]
-  K -->|"a motion"| C["AnimationClip curves: CRC32 bindings"]
-  K -->|"a script's setting"| F["A script's raw bytes: behaviours, else measured"]
-```
-
 ## Formats
 
 ### Shaders
@@ -90,9 +76,9 @@ flowchart TD
 
 ### Text
 
-- **The client's text is hash-named "MiHoYoBinData"**, most of it in one block, in a binary layout the community decodes afresh each patch. So `genshin:text decode` `scripts/src/services/genshinText/decodeGameText.ts` decodes each language's text maps from the installed client's own chunks, each named by its path hash, and the repository reads the community's per-patch dump only for the tables naming which hash an interface string or a voice-over line is, pinned to the install's revision, as the [game text](../game-text/design.md) page records.
+- **The client's text is hash-named "MiHoYoBinData"**, most of it in one block, in a binary layout the community decodes afresh each patch. `genshin:text decode` (`scripts/src/services/genshinText/decodeGameText.ts`) would read each language's text maps from the installed client's own chunks, each named by its path hash, but the current client's chunks do not decode, so the repository reads the community's per-patch dump only for the tables naming which hash an interface string or a voice-over line is, pinned to the install's revision, as the [game text](../game-text/design.md) page records.
 - **The dump scrambles a table's field names each patch.** The quest, dialog and character tables keep most of their names readable, but a dialog's own id sits under eleven scrambled capitals (`GFLDJMJKIKE` in `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/DialogExcelConfigData.json`), and each quest's binary output under `{data-root}/genshin-parity/text/BinOutput/Quest/` scrambles every name. So a reader finds a field by the shape of its value rather than its name: a quest's sub quests are the list of objects holding the most sub quests that hold a condition (one sub quest with none, a step the game finishes by script, does not hide the rest), a condition carries a `QUEST_CONTENT_` code and its parameters, a step's id is the number in its quest's hundred, and its words are the hash the text map holds ([quests](../quests/design.md)). A field that names rows of another table by id is found by the join: a season's list of ids is the difficulty rows whose ids it holds, as the Imaginarium Theater's schedule and difficulty tables pair ([Imaginarium Theater](../imaginarium-theater/design.md)).
-- **The welcome is the account kit's.** The welcome card's greeting comes from HoYoverse's account kit, whose string tables sit in its own bundle beside the game (`MiHoYoSDKRes` `scripts/src/services/genshinText/constants.ts`) rather than in the dump ([game text](../game-text/design.md)). The greeting's key is "tips_enter_game", which reads "Welcome, %s!" in English (`{data-root}/genshin-parity/text/Sdk/assets/plugins/mihoyosdk/resources/language/en.json`, line 1), and no file under `{data-root}/genshin-dump-backup-6.6/` holds that key.
+- **The welcome is the account kit's.** The welcome card's greeting comes from HoYoverse's account kit, not the dump: no file under `{data-root}/genshin-dump-backup-6.6/` holds its key, as the [game text](../game-text/design.md) page records.
 
 ## References beside each component
 

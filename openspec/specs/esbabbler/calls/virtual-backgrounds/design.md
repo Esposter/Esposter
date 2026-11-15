@@ -14,7 +14,7 @@ The list is the container listing under that prefix. Nothing has to be kept in s
 
 **The client picks the slot, and the server signs whatever slot it is asked for.** A listing cannot allocate durably: a delete is reclaimed by a worker, so a slot freed a moment ago still reads as taken and would refuse the replacement the user just made room for, and two concurrent requests read the same free one anyway. The client is the only party holding a view that already accounts for the delete it just made. Nothing is lost by trusting it, because the bound was never the count — there are only `MAX_CALL_BACKGROUNDS` names, the request schema enforces that range, and the worst a client can do with a slot it names deliberately is overwrite its own image.
 
-**The size cap is the stored byte length, and the listing is where it is read.** A presigned write url cannot bound what is PUT through it, so the size the picker checked before asking for a target is an early no rather than the guarantee — the same split [custom emoji](../../custom-emoji/design.md) has. A listing already carries each blob's `contentLength`, so a slot that came back over the cap is dropped from the list the picker receives and its blob reclaimed through the standard blob-deletion event. That costs no extra round trip and needs no row to hang a check on, which is what keeps the no-table property intact.
+**The size cap is the stored byte length, and the listing is where it is read.** The size the picker checked before asking for a target is an early no rather than the guarantee, since a presigned write url bounds no bytes ([file uploads](../../../architecture/file-uploads/design.md)) — the same split [custom emoji](../../custom-emoji/design.md) has. A listing already carries each blob's `contentLength`, so a slot that came back over the cap is dropped from the list the picker receives and its blob reclaimed through the standard blob-deletion event. That costs no extra round trip and needs no row to hang a check on, which is what keeps the no-table property intact.
 
 ## Remembering the choice
 
@@ -32,8 +32,8 @@ Picks supersede rather than queue, so only the one still in force is remembered.
 
 ```mermaid
 flowchart TD
-  picker["Background grid — presets plus your slots"] -->|"upload"| sas["Write SAS for the slot the client picked"]
-  sas --> put["Client PUTs the image"]
+  picker["Background grid — presets plus your slots"] -->|"upload"| presign["Write a presigned URL for the slot the client picked"]
+  presign --> put["Client PUTs the image"]
   put --> list["Container listing under the user's prefix"]
   list -->|"over the cap"| reclaim["Dropped from the picker and reclaimed"]
   list --> picker
@@ -63,7 +63,7 @@ A call left while a background is still being read ends that apply quietly. The 
 | :---------------------------------------------------------------------------- | :------------------------------------------------------ |
 | `packages/db-schema/src/schema/message/userSettingsInMessage.ts`              | the persisted selection                                 |
 | `apps/web/server/services/message/call/getCallBackgroundBlobName.ts`          | the one place a slot's blob name is spelled             |
-| `apps/web/server/trpc/routers/user.ts`                                        | slot upload SAS, slot listing, slot delete              |
+| `apps/web/server/trpc/routers/user.ts`                                        | slot upload presigned URL, slot listing, slot delete    |
 | `apps/web/app/models/message/room/call/CallVirtualBackground.ts`              | the preset ids a choice is saved as                     |
 | `apps/web/app/services/message/room/call/CallVirtualBackgroundUrlMap.ts`      | each preset id's bundled url, typed over every member   |
 | `apps/web/app/services/message/room/call/CallVirtualBackgroundDefinitions.ts` | presets as one source among two                         |

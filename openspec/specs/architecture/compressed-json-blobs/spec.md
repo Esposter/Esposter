@@ -71,37 +71,6 @@ A save SHALL store nothing and report failure when its document cannot be compre
 - **AND** the resource's version does not advance
 - **AND** the reader sees the save fail
 
-### Requirement: A game load reports a read it cannot complete
-
-A game load SHALL report a server-stored save it cannot read rather than start a fresh game over it. A guest's save held only in this browser is the exception: one that no longer parses starts a fresh game.
-
-#### Scenario: A failed read does not start a fresh game
-
-- **GIVEN** a player has a saved game
-- **WHEN** the game loads and the read fails
-- **THEN** the player sees an error
-- **AND** no fresh game starts
-- **AND** the saved progress is left as it was
-
-#### Scenario: A server-stored save that no longer parses is reported
-
-- **GIVEN** a signed-in player's stored save no longer parses
-- **WHEN** the game loads
-- **THEN** the player sees an error
-- **AND** no fresh game starts
-
-#### Scenario: A guest's save in this browser that no longer parses starts a fresh game
-
-- **GIVEN** a guest's save in this browser no longer parses
-- **WHEN** the game loads
-- **THEN** a fresh game starts
-
-#### Scenario: A player with no save starts a fresh game
-
-- **GIVEN** a player has never saved
-- **WHEN** the game loads
-- **THEN** a fresh game starts
-
 ### Requirement: Compression does not hold up other requests
 
 Compressing and decompressing a stored document SHALL NOT delay other requests the server is answering.

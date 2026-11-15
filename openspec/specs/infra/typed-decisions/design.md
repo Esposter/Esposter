@@ -46,13 +46,3 @@ Nothing acts on an answer below `0.6`; a decision that writes outside the checko
 `TYPESAFE_API_KEY` is read from the environment of the machine that runs a gate, and no workflow sets it. Where it is absent — a fork, a CI run, a local run without it, any test — every gate answers nothing and its caller escalates, so every judgement escalates to its session or to needs-triage. No path depends on a decision this tier made.
 
 The key never reaches a spawned session either: the launcher withholds every secret-shaped variable from the child, and the session is given nothing but the credential that authenticates itself.
-
-## Setting the key on a machine
-
-The SDK reads `TYPESAFE_API_KEY` from the process environment and from nothing else. On a Windows machine, set it at user scope so every process the user starts sees it:
-
-```powershell
-[Environment]::SetEnvironmentVariable('TYPESAFE_API_KEY', '<key>', 'User')
-```
-
-On macOS or Linux, `export TYPESAFE_API_KEY=<key>` in the shell profile does the same. A process reads the environment when it starts, so open a new terminal, or restart Claude Code, after setting it; a process already running keeps the value it started with.

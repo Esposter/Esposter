@@ -236,7 +236,7 @@ describe(buildItems, () => {
     });
   });
 
-  test("publishes every item the Frostbearing Tree takes or pays, less the wallet's", async () => {
+  test("publishes the items the Frostbearing Tree takes and pays, less the wallet's", async () => {
     expect.hasAssertions();
 
     const built = await buildItems();
@@ -293,7 +293,7 @@ describe(buildItems, () => {
     ]);
   });
 
-  test("publishes every dish a cook recipe yields", async () => {
+  test("publishes the dish a cook recipe yields", async () => {
     expect.hasAssertions();
     vi.mocked(readCookingRecipes).mockReturnValueOnce([
       {
@@ -322,7 +322,7 @@ describe(buildItems, () => {
     expect(ids.map(({ id }) => id)).toContain(DISH_ITEM_ID);
   });
 
-  test("every instruction item a cook recipe unlocks is an item", async () => {
+  test("publishes the instruction item a cook recipe unlocks", async () => {
     expect.hasAssertions();
     vi.mocked(readCookingRecipes).mockReturnValueOnce([
       {
@@ -350,7 +350,7 @@ describe(buildItems, () => {
     expect(ids.map(({ id }) => id)).toContain(INSTRUCTION_ITEM_ID);
   });
 
-  test("publishes every item a Reputation level pays", async () => {
+  test("publishes the item a Reputation level pays", async () => {
     expect.hasAssertions();
 
     const built = await buildItems();
@@ -360,7 +360,7 @@ describe(buildItems, () => {
     expect(ids.map(({ id }) => id)).toContain(REPUTATION_REWARD_ITEM_ID);
   });
 
-  test("publishes every item the Mondstadt grocery sells", async () => {
+  test("publishes the item the Mondstadt grocery sells", async () => {
     expect.hasAssertions();
 
     const built = await buildItems();

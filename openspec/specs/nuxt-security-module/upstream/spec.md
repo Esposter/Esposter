@@ -1,6 +1,6 @@
 ## Purpose
 
-Every issue and pull request on Baroshem/nuxt-security, open and closed, with its verdict from the dependency admission triage, and each verdict on record when nuxt-security-module writes code. The audit records each upstream item's verdict and its severity, and each defect is reproduced before it is treated as ours to fix.
+Every issue and pull request on Baroshem/nuxt-security, open and closed, gets a verdict from the dependency admission triage before nuxt-security-module writes code. The audit keeps the defects and the built features in its table with their severity, counts the other verdicts against the tracker, and reproduces each defect before it is treated as ours to fix.
 
 ## Requirements
 
@@ -16,7 +16,7 @@ The audit SHALL cover every issue and pull request on the upstream tracker, open
 
 ### Requirement: Each upstream item carries exactly one verdict
 
-Each upstream item SHALL carry exactly one verdict from the audit's set: defect, fixed upstream, already built, out of scope, false positive, noise, or fix.
+Each upstream item SHALL carry exactly one verdict from the audit's set: defect, fixed upstream, already built, out of scope, false positive, noise, or fix. The table keeps the defects and the already-built features, and the other items are counted by verdict, with the tracker as their record.
 
 #### Scenario: A pull request is counted once against the issue it closes
 
@@ -26,7 +26,7 @@ Each upstream item SHALL carry exactly one verdict from the audit's set: defect,
 
 ### Requirement: Each upstream item is graded for security severity
 
-Each upstream item SHALL be graded for security severity as high, medium, low or none.
+Each upstream item SHALL be graded for security severity as high, medium, low or none, and the table shows the grade of each item it keeps.
 
 #### Scenario: Severity follows the harm an attacker or a user would meet
 

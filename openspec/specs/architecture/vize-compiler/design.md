@@ -11,6 +11,24 @@ flowchart TD
     owner -- "the app" --> host["@vitejs/plugin-vue, through Nuxt's builder"]
 ```
 
+## Library builds
+
+One compiler reaches the build through three entries of the same release. `getTsdownConfigurationVue` adds `@vizejs/unplugin/rolldown` with `isProduction: true`, and `getVuePlugins` adds `@vizejs/vite-plugin` for the Vitest and Vite runs of a package whose tests import `.vue` files, which is opt-in per package. Both take their plugin's own options through the factory's argument. The app registers no Vize module and compiles through Nuxt's own `@vitejs/plugin-vue` ([Vize compiler](../vize-compiler/design.md)). The packages pin one another exactly, so Renovate bumps them as one group.
+
+- **Styles go through the bundler's CSS pipeline.** Since `@vizejs/unplugin` 0.664.0, every style block, a `<style src>` with a package specifier included, is handed to the bundler (#11523), so tsdown with `@tsdown/css` writes the package's one `style.css` (`css.splitting` is off, since an unbundled build splits CSS per module otherwise) and no workaround plugin is needed. `deps.alwaysBundle` keeps a sibling package's stylesheet in the package's own CSS, so the built JavaScript never imports a `.css` file that Node cannot load, and the scripts and benchmarks that read a Vue package's `dist` under plain Node keep working.
+- **Declarations come from `tsrs`.** `getTsdownConfigurationVue` sets the declaration plugin's generator to `tsrs`, over the package's `tsconfig.build.json` with `tsrs.runExternalCode`, so the `.vue` declarations are written through the same vize content mapper the type check runs ([the type-check change](../../../changes/archive/2026-11-05-architecture-vize-vue-typecheck/design.md)). The declaration program is that tsconfig's own file list, so an ambient `auto-imports.d.ts` is in it (`.agents/skills/build/references/declarations.md`). A component's declaration is vize's component model rather than Vue's `DefineComponent`, and the helper types sit once in a `declare global` block.
+
+The compile-side defects found on the way, each reduced and reported to Vize:
+
+| Issue  | What it was                                                                     | Outcome                                                                 |
+| :----- | :------------------------------------------------------------------------------ | :---------------------------------------------------------------------- |
+| #11456 | the rolldown entry dropped every `<style src>` block without a warning          | an error in 0.656.0, inlined in 0.658.0, a package specifier in 0.661.0 |
+| #11481 | a production build kept the development output shape                            | fixed in 0.661.0 (#11488)                                               |
+| #11482 | a package specifier in `<style src>` failed the build                           | fixed in 0.661.0 (#11492)                                               |
+| #11483 | a plain `<style>` block was injected into the JavaScript and no CSS was written | fixed in 0.664.0 (#11523)                                               |
+| #11457 | the Vite plugin ignored `template.compilerOptions.isCustomElement`              | closed as configuration: `customElements`                               |
+| #11484 | `customElements` cannot exclude a tag                                           | closed as not planned: the list above names every tag                   |
+
 ## The TresJS elements
 
 The library builds hand Vize the TresJS elements as `tresCustomElements`, a list, because Vize takes element names where Vue asks a predicate. A `Tres*` pattern would also take `TresCanvas`, which must stay a component, so the list names each class that TresJS's own predicate keeps. `tresjs-nuxt` keeps that predicate for the app's compiler, and the list restates it for Vize.

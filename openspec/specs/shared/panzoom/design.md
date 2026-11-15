@@ -27,23 +27,23 @@ flowchart TD
 - **The cursor is not forced.** The `cursor` option writes only while panning is possible, so a stylesheet cursor on a pan-disabled element stands. A parent that is a shadow root is handled by its host.
 - **Events keep their names and detail.** `panzoomstart`, `panzoompan`, `panzoomzoom`, `panzoomreset`, `panzoomend` and `panzoomchange` fire on the element with `{ x, y, scale, isSVG, originalEvent }`, not bubbling.
 - **The tracker's features that fit a viewer are built.**
-  - A pinch is proportional (#63, #643, #671, #683): the scale is the scale at the gesture's start times the ratio of the fingers' distance now to the distance then, so it feels the same at every scale. Two fingers down on one point have no ratio, so they start no pinch: the first finger keeps its drag and the second moves nothing.
-  - A wheel notch follows the delta (#586): a pixel delta of 100 is one notch, which scales by the exponential of the step divided by three, as the upstream wheel does, a smaller trackpad delta a proportional fraction of it, a line delta is converted to pixels, and one event moves at most one notch.
-  - `automatic` containment (#102, #511, #598, #707, #583): per axis, `inside` where the scaled element fits the area and `outside` where it overflows. Its scale floor is the fitting scale, which is the "aspect fit" the tracker asks for apart (#504, #577, #659).
-  - `panThreshold` (#441, #452) is the distance a pointer travels before a drag starts, and the click that follows a drag past it is swallowed (#674). Only a drag released by the primary button arms that swallower, so a cancelled drag or a right-button drag leaves the next click alone, and a press clears an armed one.
-  - `panCursor` (#546) is the cursor while a drag is live.
-  - `filter(event)` decides whether a pointer down starts a gesture, which covers the button and modifier asks (#527, #609, #197, #129); `handleStartEvent` stays for parity.
-  - The element carries its scale in `--panzoom-scale` (#627).
-  - `fit()` scales the element to the parent and centres it, and `startScale: "fit"` applies the fit scale at construction, at the start pan (#432, #616, #656).
-  - Attachment is `isConnected`, so an element in an iframe is accepted (#693).
+  - A pinch is proportional: the scale is the scale at the gesture's start times the ratio of the fingers' distance now to the distance then, so it feels the same at every scale. Two fingers down on one point have no ratio, so they start no pinch: the first finger keeps its drag and the second moves nothing.
+  - A wheel notch follows the delta: a pixel delta of 100 is one notch, which scales by the exponential of the step divided by three, as the upstream wheel does, a smaller trackpad delta a proportional fraction of it, a line delta is converted to pixels, and one event moves at most one notch.
+  - `automatic` containment: per axis, `inside` where the scaled element fits the area and `outside` where it overflows. Its scale floor is the fitting scale, which is the "aspect fit" the tracker asks for apart.
+  - `panThreshold` is the distance a pointer travels before a drag starts, and the click that follows a drag past it is swallowed. Only a drag released by the primary button arms that swallower, so a cancelled drag or a right-button drag leaves the next click alone, and a press clears an armed one.
+  - `panCursor` is the cursor while a drag is live.
+  - `filter(event)` decides whether a pointer down starts a gesture, which covers the button and modifier asks; `handleStartEvent` stays for parity.
+  - The element carries its scale in `--panzoom-scale`.
+  - `fit()` scales the element to the parent and centres it, and `startScale: "fit"` applies the fit scale at construction, at the start pan.
+  - Attachment is `isConnected`, so an element in an iframe is accepted.
 - **The rest are declined, each with its reason in the Upstream table.**
-  - Inertia and rubber-band (#212, #225, #625) are an animation model a consumer layers on `panzoomend`.
-  - Rotation (#286, #694) is a gesture of its own.
-  - Double tap (#20, #275) is a gesture recogniser's work, and a consumer calls `zoomToPoint` from its own handler.
-  - Targeting an SVG element and fly-to (#73, #103, #642) are SVG-specific.
-  - Pan limits by ratio (#184, #476, #490) are what containment is.
-  - A panzoom inside an ancestor that applies its own scale (#292) is outside the measure's assumption that no ancestor scales the element.
-  - The remainder (#230, #644, #665, #435, #684, #648, #361, #370, #617) has a workaround on the consumer's side that costs less than an option.
+  - Inertia and rubber-band are an animation model a consumer layers on `panzoomend`.
+  - Rotation is a gesture of its own.
+  - Double tap is a gesture recogniser's work, and a consumer calls `zoomToPoint` from its own handler.
+  - Targeting an SVG element and fly-to are SVG-specific.
+  - Pan limits by ratio are what containment is.
+  - A panzoom inside an ancestor that applies its own scale is outside the measure's assumption that no ancestor scales the element.
+  - The remainder has a workaround on the consumer's side that costs less than an option.
 - **Three limits are kept, each with its trigger.**
   - Two instances on siblings under one parent each record that parent's inline styles, so the second records the first's `overflow: hidden` and a destroy in creation order leaves it behind. Destroying in reverse order restores both.
   - A listener that changes the state during a `panzoomzoom` or `panzoompan` dispatch is followed by a `panzoomchange` carrying the detail built before the nested change; `getScale()` is current.

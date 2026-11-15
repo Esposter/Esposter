@@ -2,7 +2,7 @@
 
 ## Why
 
-Open architecture work — every item links its proposal.
+Open architecture work — every item links the spec or design it changes.
 
 ## What Changes
 

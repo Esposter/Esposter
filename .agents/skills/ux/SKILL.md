@@ -16,8 +16,7 @@ person actually do this thing, and is that where they were already looking?
 - **A deferred-commit undo** (hide the row, wait out the toast, then send) for writes the server cannot reverse, such
   as a message delete. A tab closed inside the window silently drops the write, and the server has no restore to
   fall back on. What has no server-side undo confirms.
-- **An undoable delete acting on click**, the undo its only guard. A reader cannot tell which kind a Delete is until it
-  has gone, and only "every delete asks" is a rule `restrictedDeleteSyntaxes` can hold
+- **An undoable delete acting on click**, the undo its only guard, since a reader cannot tell which deletes are undoable
   (`openspec/rejected/architecture/no-confirm-for-undoable-deletes/design.md`).
 - **Inline error text inside a dialog.** The toast plus a dialog left open is the app's one failure surface, so a
   dialog adds no second place a rejection can appear.

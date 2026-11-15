@@ -8,6 +8,8 @@ A second computer, or the first one after a wipe, reaches the same working state
 
 A fact that fails the test is a defect, whether or not anything has been lost yet: the loss only shows on the day a disk goes, when the cause is no longer in anyone's hands.
 
+**A Mac's Spotlight exclusions** are part of the new-machine steps. Once per Mac: the data folder is `{data-root}.noindex`, a folder macOS never indexes, and `{data-root}` is a symlink to it, since Spotlight follows no symlink and every `{data-root}/...` path still resolves. Create no real `{data-root}` folder beside the link. Then, in System Settings → Spotlight → Search Privacy, add `node_modules` and the pnpm store (`{home}/Library/pnpm/store`), which no command does. The genshin parity extraction adds millions of files per run, which is why it is excluded.
+
 ## Where each kind of thing lives
 
 ```mermaid

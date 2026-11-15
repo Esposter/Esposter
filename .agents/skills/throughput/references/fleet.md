@@ -46,11 +46,11 @@ The fleet has no fixed size. One PC, a lent MacBook, or hundreds of machines all
 
 ## A claim is a ref
 
+The ref's lifecycle — renewal, staleness, release — is the Claims section of `openspec/specs/architecture/fleet/design.md`. This page is the commands and the code that carry it.
+
 - **Claiming creates `refs/claims/<entry-id>` on origin, by pushing a parentless commit.** Git refuses the second create as not a fast-forward, so exactly one worker wins. There is no lock service, and two different entries never contend.
 - **A claim belongs to one worker; a machine runs many.** A holder is `{ machine, worker }`. `pnpm ai:fleet:next` prints the worker id it claimed under (`claimed <id> as worker <worker>`), taken from `FLEET_WORKER` or a new short id when the environment gives none. `hold` and `release` take that id as `--worker`, or read it from `FLEET_WORKER`. A worker adopts only a claim that matches both fields, so another worker on the same machine counts as holding the entry, and `next` moves on. A release stops only its own worker's hold, whose file is named by its id and worker. A claim written before workers reads as worker `""`.
 - **The holder renews it every `RENEW_MILLISECONDS`** (`scripts/src/services/fleet/constants.ts`) with an explicit `--force-with-lease=refs/claims/<id>:<its sha>`, and the renewal's message carries its latest utilization line. Every call to origin's fleet refs goes through `runFleetRefGit`, bounded as `openspec/specs/architecture/fleet/design.md`'s Claims section sets out, so a stalled network fails a renewal rather than freezing the hold. A new call to a fleet ref takes the same runner, never a bare `runGit`.
-- **A claim unrenewed for `STALE_MILLISECONDS` is stale** (`scripts/src/services/fleet/constants.ts`). It is taken over the same way, leased from the stale sha.
-- **Finishing deletes the ref** right after the entry's landing commit is pushed. A missed entry keeps its claim ref, its message naming the miss, until the coordinator's call changes the entry.
 - **A claim never touches `ai/queue`**, so it starts no CI run.
 
 ## Load is read, not reported

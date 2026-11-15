@@ -51,33 +51,33 @@ Each rule is carried by the functions named with it. The per-row conditions of a
 
 ## Deviations by rule key
 
-The package answers the recorded SurveyJS value for every fixture row except the rows below. Each deviating row of `services/fixtures/oracleFixtures.json` names one key, and `oracleFixtures.test.ts` holds the reason for each key and replays the row against the package's own value, so a change to either is noticed. Each key is explained by the rule named after it.
+The package answers the recorded SurveyJS value for every fixture row except the rows below. Each deviating row of `services/fixtures/oracleFixtures.json` names one key, and `oracleFixtures.test.ts` holds the reason for each key and replays the row against the package's own value, so a change to either is noticed.
 
-- **`one-absent-value` (R1).** An operation with no result is `undefined`. SurveyJS gives `null` for an unanswered reference and for a division by zero, `NaN` for arithmetic on a text that is not a number, and an invalid `Date` for a date that does not parse. This package gives `undefined` for each, as it does for `today('x')`, `day('x')` and `dateDiff('x', '1970-01-01')`.
-- **`numeric-arithmetic` (R3).** An empty, boolean, list or record operand has no result, `+` joins only two non-empty texts that read as no number, and a division or remainder by zero has none. `{a} - {b}` with `''` is `undefined` where SurveyJS gives 0, `{a} + {b}` with `'abc'` is `undefined` where SurveyJS joins `'0abc'`, and `{a} + 'x'` on a record is `undefined` where SurveyJS joins `'[object Object]x'`.
-- **`logic-boolean` (R8).** `and` and `or` are boolean, so an operand counts only when it is `true`. `1 and 0` is false and `{a} or {b}` with zero is false, where SurveyJS gives the operand that decides the result.
-- **`condition-true` (R8).** `iif` takes its second value only when its condition is `true`, so `iif('x', 1, 2)` is 2 where SurveyJS gives 1, and `iif({a}, 1, 2)` with 5 is 2 where SurveyJS gives 1.
-- **`one-number-reading` (R2).** A text is a number only as a plain decimal. `'0x1F'`, `'0b1'` and comma decimals stay text, so `{a} * 2` with `'0b1'` is `undefined` where SurveyJS gives 2. An answer keeps its text until an operation asks for a number: `{a}` with `'0x1F'` is `'0x1F'` where SurveyJS gives 31. A numeric text is a number as a date amount too, so `today('3')` adds three days where SurveyJS joins the text.
-- **`aggregate-skip` (R4).** `sum`, `avg`, `count`, `min` and `max` skip what does not read as a number, where SurveyJS joins or counts it. `sum('a', 1)` is 1 where SurveyJS gives `'0a1'`, `avg('a', 2)` is 2 where SurveyJS gives `NaN`, `count('')` is 0 where SurveyJS gives 1, and `avg('', 5, 5)` is 5 where SurveyJS gives 18.33.
-- **`unordered-values` (R7).** An empty value, or a number against a text that does not read as a number, is never ordered, where SurveyJS orders them as zero or as text. `{a} < {b}` with `''` and `'5'` is false where SurveyJS gives true.
-- **`numbers-compare` (R7).** Two values that read as numbers compare as numbers, so `'10' < '9'` is false and `'5.0' = '5'` is true, where SurveyJS compares the texts.
-- **`empty-equality` (R7).** Empty values equal each other, so `{a} = []` is true for an unanswered question and `{a} = ''` is true for a record of empty fields, where SurveyJS gives false for both.
-- **`boolean-equality` (R7).** A boolean equals only the same boolean, so a list holding a number does not contain `true` and a text spelling `true` is not `true`, where SurveyJS equates them. `{a} contains {b}` with `[1, 'x']` and `true` is false where SurveyJS gives true.
-- **`falsy-needle` (R7).** A needle of zero or false matches like any other value, so `{a} contains 0` is true for `'a0b'` and `{a} allof 0` is true for `0`, where SurveyJS treats the needle as empty.
-- **`negated-containment` (R7).** `notcontains` is the negation of `contains`, so `{a} notcontains ''` is true for `'abc'` and `{a} notcontains {b}` is true for an unanswered answer, where SurveyJS gives false for both.
-- **`empty-needle` (R7).** An empty needle is held by nothing, so `contains` and `anyof` are false for it and `allof` is true, where SurveyJS gives `contains` and `anyof` true and `allof` false. `{a} anyof []` is false for any answer, `{a} contains []` is false for `['x']`, `{a} anyof {b}` is false for `'abc'` with an unanswered `b`, and `{a} allof {b}` is true for any answer with an unanswered `b`.
-- **`text-haystack` (R7, R11).** `anyof` holds its right side's items in its left side, as `contains` does, so a text holds an item of the right side as a substring and a scalar left side is not the needle: `'re' anyof 'red'` is false, where SurveyJS reads the left side as the needle and gives true.
-- **`calendar-dates` (R9).** A date is ISO text only, and a date function gives the calendar's answer. `age('1970-01-03')` is `undefined` for a birthdate after the clock, where SurveyJS gives 0. `dateAdd('1970-01-31', 1, 'months')` is `'1970-02-28'`, where SurveyJS gives `'1970-03-03'`. `dateAdd('1970-01-01', 3, 'weeks')` is `undefined` for an interval the language does not know, where SurveyJS leaves the date unchanged. `dateAdd('1970-01-01', 0)` is `'1970-01-01'`, where SurveyJS gives `null`. `dateDiff('1970-01-01', '1970-01-01 05:00:00', 'hours')` is 5, where SurveyJS gives NaN for a date-time end.
-- **`text-identity` (R11).** Texts are equal and contained only when identical, with no trimming and no change of case. `'  x ' = 'x'` is false, `{a} = ''` is false for `'  '`, `{a} = ['a', 'b']` is false for `['A', 'B']`, and `{a} contains 'RED'` is false for `['red']`, where SurveyJS trims and ignores case.
-- **`case-sensitive` (R11).** A reference names an answer by its exact name, so `{Name}` reads only an answer named `Name`, and `{m.A.b}` reads only a key `A`, where SurveyJS ignores case.
-- **`exact-text` (R11).** A boolean is never ordered, so `{a} < {b}` with `0` and `true` is false, and `true > false` is false, where SurveyJS orders a boolean as a number.
-- **`accepted-syntax` (R6).** `not`, a unary minus before any operand (`-(3)`, `- 3`) and a number with a leading dot (`.5`) are part of the grammar and evaluate, where SurveyJS reports an invalid expression.
-- **`power-grouping` (R6).** A chain of `^` groups to the right, so `2 ^ 3 ^ 2` is 512 where SurveyJS gives 64.
-- **`unary-minus` (R6).** A unary minus binds looser than `^`, so `-2 ^ 2` is -4 where SurveyJS gives 4.
-- **`answer-type` (R2).** An answer keeps its stored type, so `{a}` with `'TRUE'` is the text `'TRUE'` where SurveyJS gives true.
-- **`array-filter` (R10).** The filter form of an array function is refused, so `checkSurveyExpression` refuses `avgInArray({m}, 'p', '{p} > 1')` and `runSurveyExpression` answers empty for it, where SurveyJS filters the items.
-- **`precision-range` (R5).** A precision that is not a whole number from zero to `MAX_DECIMAL_PLACES` has no result, so `round(1234.5678, -2)` and `trunc(1.9, -1)` are `undefined`, where SurveyJS gives 1200 and 1.
-- **`text-function` (R5).** A substring's index reads as a number (R2), so `substring('hello', 'x')` is `undefined` where SurveyJS gives `''`, `substring('hello', 1, 'x')` is `undefined` where SurveyJS gives `'ello'`, and a list is not an index either.
+- **`one-absent-value` (R1).** An operation with no result is `undefined`, where SurveyJS gives `null`, `NaN` or an invalid date: `today('x')` is `undefined`.
+- **`numeric-arithmetic` (R3).** An empty, boolean, list or record operand has no result: `{a} - {b}` with `''` is `undefined` where SurveyJS gives 0.
+- **`logic-boolean` (R8).** `and` and `or` are boolean, so an operand counts only when it is `true`: `1 and 0` is `false` where SurveyJS gives the operand that decides the result.
+- **`condition-true` (R8).** `iif` takes its second value only when its condition is `true`: `iif('x', 1, 2)` is 2 where SurveyJS gives 1.
+- **`one-number-reading` (R2).** A text is a number only as a plain decimal: `{a} * 2` with `'0b1'` is `undefined` where SurveyJS gives 2.
+- **`aggregate-skip` (R4).** Aggregates skip what does not read as a number: `sum('a', 1)` is 1 where SurveyJS gives `'0a1'`.
+- **`unordered-values` (R7).** An empty value, or a number against a text that does not read as a number, is never ordered: `{a} < {b}` with `''` and `'5'` is false where SurveyJS gives true.
+- **`numbers-compare` (R7).** Two values that read as numbers compare as numbers: `'10' < '9'` is false where SurveyJS compares the texts.
+- **`empty-equality` (R7).** Empty values equal each other: `{a} = []` is true for an unanswered question where SurveyJS gives false.
+- **`boolean-equality` (R7).** A boolean equals only the same boolean: `{a} contains {b}` with `[1, 'x']` and `true` is false where SurveyJS gives true.
+- **`falsy-needle` (R7).** A needle of zero matches like any other value: `{a} contains 0` is true for `'a0b'` where SurveyJS treats the needle as empty.
+- **`negated-containment` (R7).** `notcontains` is the negation of `contains`: `{a} notcontains ''` is true for `'abc'` where SurveyJS gives false.
+- **`empty-needle` (R7).** An empty needle is held by nothing: `{a} anyof []` is false for any answer where SurveyJS gives true.
+- **`text-haystack` (R7, R11).** `anyof` holds its right side's items in its left side, as `contains` does: `'re' anyof 'red'` is false where SurveyJS reads the left side as the needle and gives true.
+- **`calendar-dates` (R9).** A date function gives the calendar's answer: `dateAdd('1970-01-31', 1, 'months')` is `'1970-02-28'` where SurveyJS gives `'1970-03-03'`.
+- **`text-identity` (R11).** Texts are equal only when identical, with no trimming and no change of case: `'  x ' = 'x'` is false where SurveyJS trims.
+- **`case-sensitive` (R11).** A reference names an answer by its exact name: `{Name}` reads only an answer named `Name` where SurveyJS ignores case.
+- **`exact-text` (R11).** Text is compared exactly, and a boolean is never ordered: `true > false` is false where SurveyJS orders a boolean as a number.
+- **`accepted-syntax` (R6).** `not`, a unary minus before any operand and a number with a leading dot evaluate: `-(3)` evaluates where SurveyJS reports an invalid expression.
+- **`power-grouping` (R6).** A chain of `^` groups to the right: `2 ^ 3 ^ 2` is 512 where SurveyJS gives 64.
+- **`unary-minus` (R6).** A unary minus binds looser than `^`: `-2 ^ 2` is -4 where SurveyJS gives 4.
+- **`answer-type` (R2).** An answer keeps its stored type: `{a}` with `'TRUE'` is the text `'TRUE'` where SurveyJS gives true.
+- **`array-filter` (R10).** The filter form of an array function is refused: `checkSurveyExpression` refuses `avgInArray({m}, 'p', '{p} > 1')` where SurveyJS filters the items.
+- **`precision-range` (R5).** A precision that is not a whole number in range has no result: `round(1234.5678, -2)` is `undefined` where SurveyJS gives 1200.
+- **`text-function` (R5).** A substring's index reads as a number (R2): `substring('hello', 'x')` is `undefined` where SurveyJS gives `''`.
 
 ## Decisions
 

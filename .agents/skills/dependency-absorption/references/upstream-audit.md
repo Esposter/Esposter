@@ -11,7 +11,7 @@ gh api "repos/<owner>/<repo>/issues?state=all&per_page=100" --paginate --jq '.[]
 gh api "repos/<owner>/<repo>/issues/comments?per_page=100" --paginate --jq '.[] | "#\(.issue_url | split("/") | last) @\(.user.login): \(.body)"'
 ```
 
-A verdict table that groups issues is typed by hand: a map of issue numbers to verdict and proof, naming every issue and pull request exactly once before the table is written.
+The verdicts are typed by hand: a map of issue numbers to verdict and proof, naming every issue and pull request exactly once before the table is written. The table then lists the in-scope rows and counts the rest by class, and the counts must sum to the tracker's total, so no item drops out unread.
 
 Read the package's source alongside — the installed copy under `node_modules/.pnpm`, or its `src` when it ships one — since "does the behaviour live in the adapter's code" is answered by the code, not by the thread.
 

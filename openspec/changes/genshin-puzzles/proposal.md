@@ -18,7 +18,7 @@ Constants the map and the wiki leave open, such as a monument's time lit and a S
 
 ## Capabilities
 
-- **genshin/puzzles** (new)
+- **genshin/puzzles** (modified)
 
 ## Waiting on
 

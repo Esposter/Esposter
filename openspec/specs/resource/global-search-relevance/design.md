@@ -53,6 +53,6 @@ The index is keyed by `id`, not by `rowid`, so a rename, a tag edit or a hard de
 
 ## Notes
 
-- A separate hosted search service stays [deferred](../../../deferred/resource/azure-ai-search/design.md). Nothing at this scale needs it, and the full-text index is the cheap part of what it would buy.
+- A separate hosted search service stays [deferred](../../../deferred/resource/hosted-search-service/design.md). Nothing at this scale needs it, and the full-text index is the cheap part of what it would buy.
 - A tag filter is an exact key and value match, a different read from search. The [tags](../tags/design.md) design owns it.
 - Searching content is a different feature with a different index.

@@ -67,4 +67,3 @@ Every later claim SHALL cost 60 resin, and the count SHALL cover all weekly boss
 ## Open
 
 - [ ] **A claimed normal boss returns five seconds after its claim** — no source yet: the wiki's Normal Boss page says the boss returns "in roughly 5 seconds" (`{data-root}/cache/genshin-wiki/Page_Normal_Boss.json`, wikitext line 16), and no respawn row in the game's exports holds a figure; a recording of a claimed boss's respawn would settle the exact five seconds.
-- [ ] **The weekly reset is read on the server's UTC+8 clock** — no source yet: the wiki's Reset page says the reset follows "the player's server's time zone" with no offset (`{data-root}/cache/genshin-wiki/Page_Reset.json`, wikitext line 3), and the game's text writes that zone as a placeholder (`{data-root}/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json`, line 9072); a capture of the in-game "Query Server Time Zone" screen on an Asia-server account would settle it.

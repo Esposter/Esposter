@@ -14,7 +14,7 @@ Characters move as the game's characters do, stand at the game's scale, and show
 
 ## Capabilities
 
-- **genshin/characters** (new)
+- **genshin/characters** (modified)
 
 ## Waiting on
 

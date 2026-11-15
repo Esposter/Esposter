@@ -1,6 +1,6 @@
 # Change Metadata
 
-Read when writing a change's `.openspec.yaml`, or a deferred or rejected idea's.
+Read when writing a change's `.openspec.yaml`.
 
 `openspec new change` writes `schema` and a `created` date, which is deleted: the CLI treats it as optional and nothing reads it, so no change carries a date and history is git's. The rest is ours: OpenSpec's own `affected_areas`, and keys of our own with an `x-` prefix, which the CLI leaves to the tools that read them. A page carries no frontmatter, and no status or date fields anywhere — location carries status, git carries history.
 
@@ -12,7 +12,7 @@ x-model: <model id>
 
 - `affected_areas` names the areas the change moves, the first being its id's prefix.
 - `x-model` is the model that wrote the design, or last rewrote its substance, because a design is executed cold later and the reader weighs it by who designed it; git names the committer, not the model behind it. Every open change with a design names one, held by `scripts/src/workspace/changeModel.test.ts`.
-- `skip_specs: true` marks a change with no spec delta: a roadmap, a refactor, a pure tooling change, and every deferred or rejected idea.
+- `skip_specs: true` marks a change with no spec delta: a roadmap, a refactor and a pure tooling change.
 
 A change may also name these fields, each optional; the first three are the fleet's, read by `pnpm ai:fleet:next --kind unit` (the `throughput` skill, `references/fleet.md`):
 

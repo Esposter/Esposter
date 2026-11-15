@@ -772,12 +772,24 @@ describe(useGridLayout, () => {
     expect(onCommit.mock.calls).toStrictEqual([[{ changes: [{ h: 2, id: "a", w: 2, x: 1, y: 0 }] }]]);
   });
 
-  test("a step past the last column changes nothing", () => {
+  test.each([
+    ["a step past the last column changes nothing", { h: 2, id: "a", w: 2, x: 10, y: 0 }, { dx: 1 }],
+    [
+      "a step that grows an item past the last column changes nothing",
+      { h: 2, id: "a", isAutoHeight: false, w: 4, x: 8, y: 0 },
+      { dw: 1 },
+    ],
+    [
+      "a step that moves an item past the last column changes nothing",
+      { h: 2, id: "a", isAutoHeight: false, w: 4, x: 8, y: 0 },
+      { dx: 1 },
+    ],
+  ])("%s", (_title, item, step) => {
     expect.hasAssertions();
 
-    const { grid, onCommit } = mountGrid({ items: [{ h: 2, id: "a", w: 2, x: 10, y: 0 }] });
+    const { grid, onCommit } = mountGrid({ items: [item] });
 
-    expect(grid.value?.stepItem("a", { dx: 1 })).toBe(false);
+    expect(grid.value?.stepItem("a", step)).toBe(false);
     expect(onCommit).not.toHaveBeenCalled();
   });
 
@@ -814,15 +826,6 @@ describe(useGridLayout, () => {
     expect(onCommit).not.toHaveBeenCalled();
   });
 
-  test("a step that grows an item past the last column changes nothing", () => {
-    expect.hasAssertions();
-
-    const { grid, onCommit } = mountGrid({ items: [{ h: 2, id: "a", isAutoHeight: false, w: 4, x: 8, y: 0 }] });
-
-    expect(grid.value?.stepItem("a", { dw: 1 })).toBe(false);
-    expect(onCommit).not.toHaveBeenCalled();
-  });
-
   test("a step that shrinks an item below one cell in height changes nothing", () => {
     expect.hasAssertions();
 
@@ -832,38 +835,13 @@ describe(useGridLayout, () => {
     expect(onCommit).not.toHaveBeenCalled();
   });
 
-  test("a step that moves an item past the last column changes nothing", () => {
+  test.each([
+    ["south", ResizeEdge.South],
+    ["corner", ResizeEdge.SouthEast],
+  ])("an auto-height item's %s handle changes no height", async (_name, edge) => {
     expect.hasAssertions();
 
-    const { grid, onCommit } = mountGrid({ items: [{ h: 2, id: "a", isAutoHeight: false, w: 4, x: 8, y: 0 }] });
-
-    expect(grid.value?.stepItem("a", { dx: 1 })).toBe(false);
-    expect(onCommit).not.toHaveBeenCalled();
-  });
-
-  test("an auto-height item's south handle changes no height", async () => {
-    expect.hasAssertions();
-
-    const { onCommit, wrapper } = mountGrid({
-      edge: ResizeEdge.South,
-      items: [{ h: 2, id: "a", isAutoHeight: true, w: 2, x: 0, y: 0 }],
-    });
-    await flushPromises();
-    const handle = wrapper.get(".handle");
-    await handle.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
-    await handle.trigger("pointermove", { buttons: 1, clientX: 0, clientY: rowPitch * 3, pointerId });
-    await handle.trigger("pointerup", { clientX: 0, clientY: rowPitch * 3, pointerId });
-
-    expect(onCommit).not.toHaveBeenCalled();
-  });
-
-  test("an auto-height item's corner handle changes no height", async () => {
-    expect.hasAssertions();
-
-    const { onCommit, wrapper } = mountGrid({
-      edge: ResizeEdge.SouthEast,
-      items: [{ h: 2, id: "a", isAutoHeight: true, w: 2, x: 0, y: 0 }],
-    });
+    const { onCommit, wrapper } = mountGrid({ edge, items: [{ h: 2, id: "a", isAutoHeight: true, w: 2, x: 0, y: 0 }] });
     await flushPromises();
     const handle = wrapper.get(".handle");
     await handle.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });

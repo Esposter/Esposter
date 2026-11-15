@@ -46,6 +46,36 @@ Copy SHALL write the displayed value of each computed cell in the range.
 - **WHEN** the owner copies the range
 - **THEN** the computed cells carry their displayed values
 
+### Requirement: Copied values do not depend on whether a source column is hidden
+
+Copying a range SHALL give the same values whether or not the source column of a computed column is hidden.
+
+#### Scenario: Source column hidden
+
+- **GIVEN** the source column of a computed column is hidden
+- **WHEN** the owner copies the computed column
+- **THEN** the copied value is the same as when the source column is shown
+
+### Requirement: A copied computed cell matches what the grid shows
+
+A computed cell in a copied range SHALL copy the value the grid shows for it, including an empty value for a cycle.
+
+#### Scenario: Cycle in a copied range
+
+- **GIVEN** a computed column is part of a cycle and shows an empty cell
+- **WHEN** the owner copies a range containing it
+- **THEN** the copied cell is empty
+
+### Requirement: An aggregation copied from a small range uses every row
+
+An aggregation copied from a small range SHALL be computed over every row of the sheet.
+
+#### Scenario: Copying a single aggregated cell
+
+- **GIVEN** a sheet has an average column
+- **WHEN** the owner copies one cell from it
+- **THEN** the copied value is the average over every row of the sheet
+
 ### Requirement: Ctrl+V overwrites cells from the selection's top-left cell
 
 Ctrl+V SHALL overwrite cells in place starting at the top-left cell of the selection, add rows past the last row, and ignore columns past the last column.

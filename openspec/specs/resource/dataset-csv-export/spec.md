@@ -108,17 +108,6 @@ The export SHALL keep a question's own column when its name matches a reserved c
 - **THEN** the question's column is named "submittedAt"
 - **AND** the submission time column is named "submittedAt_"
 
-### Requirement: A capped export says so
-
-The export SHALL warn when the dataset was cut short, and SHALL NOT present the file as complete.
-
-#### Scenario: A capped survey export warns the owner
-
-- **GIVEN** a survey has more responses than the export reads
-- **WHEN** the owner exports it
-- **THEN** the file holds the rows that were read
-- **AND** an alert says the file is not every response
-
 ### Requirement: The export is CSV only
 
 The export SHALL offer CSV as its only format and SHALL NOT offer a live-linked spreadsheet.

@@ -1,6 +1,6 @@
 ## Purpose
 
-Snezhnaya's region: its base ground, renderers, landmarks, camera, shape, surface, display, light and atmosphere, and its location's frame score.
+Snezhnaya's region: its ground fit, landmarks, camera, shape and light.
 
 ## Requirements
 
@@ -59,13 +59,3 @@ Snezhnaya's light SHALL place the lit stone's colour within 2.3 DeltaE of the re
 - **GIVEN** the night light is read at its held minute
 - **WHEN** the lit stone's colour is compared against the reference
 - **THEN** the light pass passes only where the colour is within 2.3 DeltaE
-
-### Requirement: The Snezhnaya frame's score
-
-The Snezhnaya frame's score SHALL be reported without a numeric gate.
-
-#### Scenario: A frame comparison reports its score
-
-- **GIVEN** the Everfrozen Earth frame is compared against its reference
-- **WHEN** the comparison finishes
-- **THEN** its score is recorded and reported

@@ -1,6 +1,6 @@
 # TodoList Importance
 
-Part of [TodoList to a todo product](../README.md#shipped-log), built on [completion](../todolist-completion/design.md). A list with no way to say what matters first leaves the reader to scan every row for it.
+Built on [completion](../todolist-completion/design.md). A list with no way to say what matters first leaves the reader to scan every row for it.
 
 ## How it works
 

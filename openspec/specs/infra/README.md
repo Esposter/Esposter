@@ -17,7 +17,7 @@ Deeper operational reference lives beside the code in `apps/infra/docs/` (the Cl
 
 ## Shipped log
 
-- **Review** — CodeRabbit and the review collector replaced by one workflow in which no step waits on a person, and whose every limit is an amount rather than a time. → [Review](review/design.md)
+- **Review** — one workflow in which no step waits on a person, and whose every limit is an amount rather than a time. → [Review](review/design.md)
 - **Typed decisions** — issue triage runs on a typed-decision model rather than a session. → [Typed decisions](typed-decisions/design.md)
 - **Branch namespaces** — a branch's name is the whole convention for who may create and push it, enforced by rulesets. → [Branch namespaces](branch-namespaces/design.md)
 - **Every GitHub default declared** — the repository's Actions surface lives in the provider beside its refs, and CodeQL scans `main`. → [Pulumi layout](pulumi-layout/design.md)
@@ -25,4 +25,4 @@ Deeper operational reference lives beside the code in `apps/infra/docs/` (the Cl
 - **Genshin mods** — the mods and the delegation guard run on the function hooks, so nothing is written into the person's settings. → [Genshin mods](claude-interface/genshin-mods/README.md)
 - **Agent console retirement** — the console's code, specs and ideas are removed and the host package is unpublished from npm; the executable stays on the releases that carried it. → [Agent console](../../rejected/infra/agent-console/design.md)
 - **Pulumi preview in CI** — every push to `ai/queue` that touches `apps/infra` previews the plan against the prod stack, its cloud credentials read from the secrets environment rather than stored in the repository. → [Pulumi infrastructure](../../../.agents/skills/pulumi-infra/SKILL.md)
-- **Cloudflare program** — the estate runs on Cloudflare: Workers for the app, realtime and jobs, D1 and each room's Durable Object SQLite for data, R2 for files, Queues and alarms for async work and RealtimeKit for calls; production was copied, verified and cut over, and the Azure and Railway estate is torn down. → [Cloudflare services](../architecture/cloudflare-services/design.md)
+- **Cloudflare program** — the estate runs on Cloudflare: Workers for the app, realtime and jobs, D1 and each room's Durable Object SQLite for data, R2 for files, Queues and alarms for async work and RealtimeKit for calls. → [Cloudflare services](../architecture/cloudflare-services/design.md)

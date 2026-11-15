@@ -4,10 +4,11 @@ import type { PdfRenderer } from "#src/models/PdfRenderer";
 import type { PdfSource } from "#src/models/PdfSource";
 import type { PDFDocumentLoadingTask, PDFDocumentProxy } from "pdfjs-dist";
 
+import { createTestScope } from "#src/composables/createTestScope.test";
 import { usePdfDocument } from "#src/composables/usePdfDocument";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, describe, expect, test, vi } from "vitest";
-import { effectScope, nextTick, ref } from "vue";
+import { nextTick, ref } from "vue";
 
 const createTask = (promise: Promise<unknown>) =>
   ({
@@ -48,7 +49,7 @@ describe(usePdfDocument, () => {
     const updatePassword = vi.fn<(password: string) => void>();
     const { promise, resolve } = Promise.withResolvers<PDFDocumentProxy>();
     const task = createTask(promise);
-    const scope = effectScope();
+    const scope = createTestScope();
     const state = scope.run(() =>
       usePdfDocument({ renderer: createRenderer(vi.fn<PdfApi["getDocument"]>(() => task)), source: url }),
     );
@@ -68,7 +69,7 @@ describe(usePdfDocument, () => {
     expect.hasAssertions();
 
     const task = createTask(new Promise(() => {}));
-    const scope = effectScope();
+    const scope = createTestScope();
     const state = scope.run(() =>
       usePdfDocument({ renderer: createRenderer(vi.fn<PdfApi["getDocument"]>(() => task)), source: url }),
     );
@@ -86,7 +87,7 @@ describe(usePdfDocument, () => {
 
     vi.spyOn(console, "error").mockImplementation(() => {});
     const task = createTask(Promise.reject(new Error(" ")));
-    const scope = effectScope();
+    const scope = createTestScope();
     const state = scope.run(() =>
       usePdfDocument({ renderer: createRenderer(vi.fn<PdfApi["getDocument"]>(() => task)), source: url }),
     );
@@ -107,7 +108,7 @@ describe(usePdfDocument, () => {
       .mockReturnValueOnce(failedTask)
       .mockReturnValueOnce(createTask(new Promise(() => {})));
     const source = ref<string>(url);
-    const scope = effectScope();
+    const scope = createTestScope();
     const state = scope.run(() => usePdfDocument({ renderer: createRenderer(getDocument), source }));
     await flushPromises();
 
@@ -120,7 +121,6 @@ describe(usePdfDocument, () => {
       isPasswordRequested: state?.isPasswordRequested.value,
       isPasswordWrong: state?.isPasswordWrong.value,
     }).toStrictEqual({ isFailed: false, isPasswordRequested: false, isPasswordWrong: false });
-    scope.stop();
   });
 
   test("a password request from a load a source change released is ignored", async () => {
@@ -132,7 +132,7 @@ describe(usePdfDocument, () => {
       .mockReturnValueOnce(releasedTask)
       .mockReturnValueOnce(createTask(new Promise(() => {})));
     const source = ref<string>(url);
-    const scope = effectScope();
+    const scope = createTestScope();
     const state = scope.run(() => usePdfDocument({ renderer: createRenderer(getDocument), source }));
     await flushPromises();
     source.value = otherUrl;
@@ -141,7 +141,6 @@ describe(usePdfDocument, () => {
     await nextTick();
 
     expect(state?.isPasswordRequested.value).toBe(false);
-    scope.stop();
   });
 
   test("a source change while a file is still being read destroys the task that arrives after it", async () => {
@@ -156,7 +155,7 @@ describe(usePdfDocument, () => {
       .mockReturnValueOnce(createTask(new Promise(() => {})))
       .mockReturnValueOnce(staleTask);
     const source = ref<PdfSource>(file);
-    const scope = effectScope();
+    const scope = createTestScope();
     scope.run(() => usePdfDocument({ renderer: createRenderer(getDocument), source }));
     await flushPromises();
     source.value = url;
@@ -165,7 +164,6 @@ describe(usePdfDocument, () => {
     await flushPromises();
 
     expect(staleTask.destroy).toHaveBeenCalledExactlyOnceWith();
-    scope.stop();
   });
 
   test("changing the source mid-load", async () => {
@@ -177,7 +175,7 @@ describe(usePdfDocument, () => {
     const secondTask = createTask(new Promise(() => {}));
     const getDocument = vi.fn<PdfApi["getDocument"]>().mockReturnValueOnce(firstTask).mockReturnValueOnce(secondTask);
     const source = ref<string>(url);
-    const scope = effectScope();
+    const scope = createTestScope();
     scope.run(() => usePdfDocument({ renderer: createRenderer(getDocument), source }));
     await flushPromises();
     source.value = otherUrl;
@@ -193,7 +191,7 @@ describe(usePdfDocument, () => {
     expect.hasAssertions();
 
     const task = createTask(new Promise(() => {}));
-    const scope = effectScope();
+    const scope = createTestScope();
     scope.run(() =>
       usePdfDocument({ renderer: createRenderer(vi.fn<PdfApi["getDocument"]>(() => task)), source: url }),
     );
@@ -209,7 +207,7 @@ describe(usePdfDocument, () => {
     const legacyTask = createTask(Promise.resolve(pdfDocument));
     const legacyGetDocument = vi.fn<PdfApi["getDocument"]>(() => legacyTask);
     const renderer = { ...createRenderer(legacyGetDocument), workerSrc: WORKER_SOURCE };
-    const scope = effectScope();
+    const scope = createTestScope();
     const state = scope.run(() => usePdfDocument({ renderer, source: url }));
     await flushPromises();
 
@@ -222,7 +220,6 @@ describe(usePdfDocument, () => {
       wasmUrl: "",
     });
     expect(state?.pdfDocument.value).toBe(pdfDocument);
-    scope.stop();
   });
 
   test("#69 #70 loading progress rises to the whole file", async () => {
@@ -230,7 +227,7 @@ describe(usePdfDocument, () => {
 
     const { promise, resolve } = Promise.withResolvers<PDFDocumentProxy>();
     const task = createTask(promise);
-    const scope = effectScope();
+    const scope = createTestScope();
     const state = scope.run(() =>
       usePdfDocument({ renderer: createRenderer(vi.fn<PdfApi["getDocument"]>(() => task)), source: url }),
     );
@@ -243,14 +240,13 @@ describe(usePdfDocument, () => {
 
     expect(firstPart).toStrictEqual({ loaded: 1, total: 4 });
     expect(state?.progress.value).toStrictEqual({ loaded: 4, total: 4 });
-    scope.stop();
   });
 
   test("#227 #67 loading parameters reach the renderer as given", async () => {
     expect.hasAssertions();
 
     const getDocument = vi.fn<PdfApi["getDocument"]>(() => createTask(new Promise(() => {})));
-    const scope = effectScope();
+    const scope = createTestScope();
     scope.run(() =>
       usePdfDocument({ parameters: { disableRange: true }, renderer: createRenderer(getDocument), source: url }),
     );
@@ -264,7 +260,6 @@ describe(usePdfDocument, () => {
       url,
       wasmUrl: "",
     });
-    scope.stop();
   });
 
   test("opening a local file", async () => {
@@ -272,7 +267,7 @@ describe(usePdfDocument, () => {
 
     const bytes = new Uint8Array([1, 2, 3]);
     const getDocument = vi.fn<PdfApi["getDocument"]>(() => createTask(Promise.resolve(pdfDocument)));
-    const scope = effectScope();
+    const scope = createTestScope();
     const state = scope.run(() =>
       usePdfDocument({ renderer: createRenderer(getDocument), source: new File([bytes], "report.pdf") }),
     );
@@ -286,6 +281,5 @@ describe(usePdfDocument, () => {
       wasmUrl: "",
     });
     expect(state?.pdfDocument.value).toBe(pdfDocument);
-    scope.stop();
   });
 });

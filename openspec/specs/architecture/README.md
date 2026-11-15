@@ -110,9 +110,3 @@ These pages explain the durable, cross-cutting mechanisms that span multiple pac
 | [Card carousel](visual-card-carousel/design.md)                                  | The About page's supporter cards as a stacked carousel — one card's turn on a timer, the stack's geometry per breakpoint, and each card's animation class                          |
 
 Cross-cutting standards we decided against are recorded in [rejected](../../rejected/architecture/) — check it before proposing a new one. Ones we chose not to build yet, each with a revisit trigger, are in [deferred](../../deferred/architecture/).
-
-## Shipped log
-
-- **Vite+** — the builds run on [Vite+](vite-plus/design.md)'s traced task cache in CI and locally, with no hand-kept content-hash key. `vp env` owns the node install. One copy of each tool lives in the lockfile, the catalog's.
-- **UI library** — the app's interfaces are drawn by [the UI library](ui-library/design.md): its own library over Vuetify 0's headless primitives, one theme system, one way to build a control, and a headless dependency only the library imports.
-- **Keyframe store** — the object format on disk and the caller contract of the `keyframe-store` package are specified in [its area](../keyframe-store/README.md), beside the npm README that stays its install page.

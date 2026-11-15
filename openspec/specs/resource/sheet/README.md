@@ -16,7 +16,7 @@ The editor is mature and has no open work. New ideas are checked against [deferr
 
 ## Shipped log
 
-- **Editing** — inline editing, bulk row and column operations, and Excel-style range copy/paste, every one of them a command on the single history stack ([clipboard](clipboard/design.md), [copy computed values](copy-computed-values/design.md)).
+- **Editing** — inline editing, bulk row and column operations, and Excel-style range copy/paste, every one of them a command on the single history stack ([clipboard](clipboard/design.md)).
 - **Columns** — one list of commands per column (chart, show or hide, edit, delete), opened from its row's overflow button, a right-click on its row or on its header in the grid; reordering by a row's handle or Alt+Up and Alt+Down, rows and columns alike, through the UI library's reorderable table, visibility, a width dragged on the header's edge and kept in the sheet's settings by the column's id, type recasting and per-type formatting ([cell formatting](cell-formatting/design.md)), plus the computed and aggregation families, which a dispatch map extends one entry at a time ([computed columns](computed-columns/design.md)).
 - **Data quality** — null/empty strategy, duplicate-row detection, trim/normalize strings, global find & replace.
 - **Import** — CSV/TSV/JSON/XLSX/XML, import preview, paste tabular data from Excel/Sheets.
