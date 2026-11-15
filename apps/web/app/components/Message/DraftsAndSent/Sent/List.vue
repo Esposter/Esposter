@@ -19,7 +19,8 @@ const getRow = ({ message, room }: SentMessageWithRoom): UiListItem<string> => (
 </script>
 
 <template>
-  <div v-if="items.length > 0" flex flex-col>
+  <!-- A page can come back empty with more behind it, when every message it named is gone, so the waypoint keeps reading -->
+  <div v-if="items.length > 0 || hasMore" flex flex-col>
     <MessageDraftsAndSentTimelineList
       :get-date="({ message }) => message.createdAt"
       :get-row

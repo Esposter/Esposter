@@ -76,6 +76,8 @@ export const useRoomListEvents = () => {
       getSynchronizedFunction(({ roomId, userId }) =>
         getResultAsync(async () => {
           if (userId === session.value.data?.user.id) {
+            // Leaving a server room is the room store's to follow up, so only a direct message the person left moves them
+            if (!directMessages.value.some(({ id }) => id === roomId)) return;
             storeDeleteDirectMessage({ id: roomId });
             await navigateTo(
               directMessages.value.length > 0

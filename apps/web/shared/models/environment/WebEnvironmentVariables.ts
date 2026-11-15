@@ -22,8 +22,6 @@ export interface WebEnvironmentVariables {
   PUBLIC_ASSETS_BASE_URL: string;
   R2_ACCESS_KEY_ID: string;
   R2_SECRET_ACCESS_KEY: string;
-  REALTIMEKIT_API_TOKEN?: string;
-  REALTIMEKIT_APP_ID?: string;
   VAPID_PUBLIC_KEY: string;
 }
 
@@ -42,7 +40,5 @@ export const webEnvironmentVariablesSchema = z.object({
   PUBLIC_ASSETS_BASE_URL: z.url(),
   R2_ACCESS_KEY_ID: z.string().min(1).meta({ secret: true }),
   R2_SECRET_ACCESS_KEY: z.string().min(1).meta({ secret: true }),
-  REALTIMEKIT_API_TOKEN: z.string().min(1).optional().meta({ secret: true }),
-  REALTIMEKIT_APP_ID: z.string().min(1).optional().meta({ secret: true }),
   VAPID_PUBLIC_KEY: z.string().min(1).meta({ secret: true }),
 }) satisfies z.ZodType<WebEnvironmentVariables>;

@@ -11,7 +11,8 @@ import { roomsInMessage } from "@esposter/db-schema";
 
 // The sender's index names each sent message by its room and id, newest first. Each room's object is asked for the
 // Messages the index names there, and the page keeps the index's order: a message its room no longer holds is dropped
-// From the page, and no other message takes its place
+// From the page, and no other message takes its place. The cursor is the index's last entry, whether or not its message
+// Survived, so the next page starts after everything this one read
 export const readMySentMessages = async (
   { before, limit }: ReadMySentMessagesInput,
   db: Context["db"],
@@ -30,6 +31,7 @@ export const readMySentMessages = async (
   const rooms =
     roomIds.length > 0 ? await db.select().from(roomsInMessage).where(inJsonArray(roomsInMessage.id, roomIds)) : [];
   const roomMap = new Map(rooms.map((room) => [room.id, room]));
+  const lastEntry = page.items.at(-1);
   return {
     hasMore: page.hasMore,
     items: page.items.flatMap(({ messageId, roomId }) => {
@@ -37,5 +39,9 @@ export const readMySentMessages = async (
       const room = roomMap.get(roomId);
       return message && room ? [{ message, room }] : [];
     }),
+    nextCursor:
+      page.hasMore && lastEntry
+        ? JSON.stringify({ createdAt: lastEntry.createdAt, messageId: lastEntry.messageId, roomId: lastEntry.roomId })
+        : "",
   };
 };

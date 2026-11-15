@@ -92,4 +92,22 @@ describe(readMySentMessages, () => {
     expect(hasMore).toBe(false);
     expect(items.map(({ message }) => message.id)).toStrictEqual([1]);
   });
+
+  // Every message of a page can be gone, so its cursor names the index's last entry, and the next page still starts past it
+  test("names the index's last entry as the cursor, even when none of the page's messages survived", async () => {
+    expect.hasAssertions();
+
+    await insertUserAndRooms();
+    userObject.readSentMessages.mockResolvedValue([
+      { createdAt, messageId: 1, roomId },
+      { createdAt, messageId: 2, roomId },
+    ]);
+    roomObject.readMessagesByIds.mockReturnValue([]);
+
+    const { hasMore, items, nextCursor } = await readMySentMessages({ limit: 1 }, db, userId);
+
+    expect(hasMore).toBe(true);
+    expect(items).toStrictEqual([]);
+    expect(nextCursor).toBe(JSON.stringify({ createdAt, messageId: 1, roomId }));
+  });
 });
