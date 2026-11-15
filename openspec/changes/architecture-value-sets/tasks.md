@@ -3,7 +3,7 @@
 ## 1. The primitives
 
 - [x] 1.1 `mergeObjectsStrict` throws an `InvalidOperationError` naming a repeated key, and `MergeObjectsStrict` compares every pair of its sets. Verified by a mergeObjectsStrict test beside the merge for the scenarios 'Two sets sharing a key' and 'Sets with no key in common', the first seen failing against `Object.assign`, and by a type test beside `MergeObjectsStrict` for the scenario 'The first and last of three sets sharing a key', seen failing against the neighbour-only type.
-- [ ] 1.2 `createEnumString` becomes createValueSetString, writing a constant object and its type, and the dungeons' Tiled and file-pack generators are re-run. Verified by its test beside it in `apps/web/scripts/util` for the scenarios 'Generating a set from a listing' and 'A listing whose names collide once capitalized', the second seen failing against today's generator, which writes both members and lets the later one win.
+- [ ] 1.2 `createEnumString` becomes createValueSetString, writing a constant object and its type, and the dungeons' Tiled and file-pack generators are re-run. Verified by its test beside it in `apps/web/scripts/util` for the scenarios 'Generating a set from a listing' and 'A listing whose names collide once capitalized', the second seen failing against today's generator, which writes both members and leaves the duplicate for the typecheck to find.
 
 ## 2. Every set on the one form
 
