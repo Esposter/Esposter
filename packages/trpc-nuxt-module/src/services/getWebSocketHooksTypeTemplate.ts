@@ -1,6 +1,6 @@
 import type { ExportReference } from "#src/models/ExportReference";
 
-import { MODULE_NAME, WEBSOCKET_CLOSE_HOOK, WEBSOCKET_OPEN_HOOK } from "#src/runtime/constants";
+import { WEBSOCKET_CLOSE_HOOK, WEBSOCKET_OPEN_HOOK } from "#src/runtime/constants";
 
 // Types the two runtime hooks the WebSocket handler calls with the router's own context, so an app's Nitro plugin
 // Listening on them reads its context without a cast
@@ -8,7 +8,7 @@ export const getWebSocketHooksTypeTemplate = ({ from, name }: ExportReference): 
   const connectionType = `TRPCWebSocketConnection<inferRouterContext<typeof import(${JSON.stringify(from)})[${JSON.stringify(name)}]>>`;
   return [
     `import type { inferRouterContext } from "@trpc/server";`,
-    `import type { TRPCWebSocketConnection } from "${MODULE_NAME}/runtime/server/models/TRPCWebSocketConnection";`,
+    `import type { TRPCWebSocketConnection } from "trpc-nuxt-module/runtime/server/models/TRPCWebSocketConnection";`,
     `declare module "nitro/types" {`,
     `  interface NitroRuntimeHooks {`,
     `    ${JSON.stringify(WEBSOCKET_CLOSE_HOOK)}: (connection: ${connectionType}) => Promise<void> | void;`,

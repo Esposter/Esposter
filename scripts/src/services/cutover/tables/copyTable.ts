@@ -1,16 +1,15 @@
 import type { CopyTableOptions } from "#src/models/cutover/CopyTableOptions";
 import type { CutoverCheckpoint } from "#src/models/cutover/CutoverCheckpoint";
 
+import { getChangedSince } from "#src/services/cutover/checkpoint/getChangedSince";
 import { readCheckpoint } from "#src/services/cutover/checkpoint/readCheckpoint";
 import { writeCheckpoint } from "#src/services/cutover/checkpoint/writeCheckpoint";
-import { DELTA_CLOCK_MARGIN_MS } from "#src/services/cutover/objects/constants";
 import { COPY_TABLES_UNIT_PREFIX } from "#src/services/cutover/tables/constants";
 import { copyMapperRows } from "#src/services/cutover/tables/copyMapperRows";
 import { deleteStaleMapperRows } from "#src/services/cutover/tables/deleteStaleMapperRows";
 import { getMapperCoreTable } from "#src/services/cutover/tables/getMapperCoreTable";
 import { listMapperEntities } from "#src/services/cutover/tables/listMapperEntities";
 import { TableClient } from "@azure/data-tables";
-import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // One Azure Table into its typed table.
 // The full copy runs while the app is live and records when it began.
@@ -42,15 +41,7 @@ export const copyTable = async (options: CopyTableOptions): Promise<void> => {
     return;
   }
 
-  if (!checkpoint.preCopyStartedAt)
-    throw new InvalidOperationError(
-      Operation.Read,
-      unit,
-      "has no pre-copy to take changes from: copy-tables must run first",
-    );
-  if (!checkpoint.completedAt)
-    throw new InvalidOperationError(Operation.Read, unit, "has an unfinished full copy: copy-tables must finish first");
-  const changedSince = new Date(Date.parse(checkpoint.preCopyStartedAt) - DELTA_CLOCK_MARGIN_MS).toISOString();
+  const changedSince = getChangedSince(checkpoint, unit);
   const filter = `Timestamp gt datetime'${changedSince}'`;
   const copied = await copyMapperRows({
     ...rowsOptions,

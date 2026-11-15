@@ -11,18 +11,17 @@ import { LegacyAzureTable } from "#src/models/cutover/LegacyAzureTable";
 import { legacyMessageSchema } from "#src/models/cutover/LegacyMessage";
 import { legacyMessageEmojiSchema } from "#src/models/cutover/LegacyMessageEmoji";
 import { callFunctionsRoute } from "#src/services/cutover/callFunctionsRoute";
+import { getChangedSince } from "#src/services/cutover/checkpoint/getChangedSince";
 import { readCheckpoint } from "#src/services/cutover/checkpoint/readCheckpoint";
 import { writeCheckpoint } from "#src/services/cutover/checkpoint/writeCheckpoint";
 import { MESSAGE_NUMBER_SCOPE, ROOM_IMPORT_PATH } from "#src/services/cutover/constants";
 import { buildRoomImport } from "#src/services/cutover/messages/buildRoomImport";
 import { numberRoomMessages } from "#src/services/cutover/messages/numberRoomMessages";
 import { toRoomScheduledMessages } from "#src/services/cutover/messages/toRoomScheduledMessages";
-import { DELTA_CLOCK_MARGIN_MS } from "#src/services/cutover/objects/constants";
 import { COPY_TABLES_UNIT_PREFIX } from "#src/services/cutover/tables/constants";
 import { listMapperEntities } from "#src/services/cutover/tables/listMapperEntities";
 import { TableClient } from "@azure/data-tables";
 import { roomImportSchema } from "@esposter/db-schema";
-import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export interface CopyRoomMessagesOptions {
   archiveBucket: string;
@@ -119,15 +118,7 @@ export const copyRoomMessages = async (options: CopyRoomMessagesOptions): Promis
     return;
   }
 
-  if (!checkpoint.preCopyStartedAt)
-    throw new InvalidOperationError(
-      Operation.Read,
-      unit,
-      "has no pre-copy to take changes from: copy-tables must run first",
-    );
-  if (!checkpoint.completedAt)
-    throw new InvalidOperationError(Operation.Read, unit, "has an unfinished full copy: copy-tables must finish first");
-  const changedSince = new Date(Date.parse(checkpoint.preCopyStartedAt) - DELTA_CLOCK_MARGIN_MS).toISOString();
+  const changedSince = getChangedSince(checkpoint, unit);
   await copyRooms(`Timestamp gt datetime'${changedSince}'`);
   await writeCheckpoint(client, archiveBucket, unit, { ...checkpoint, deltaCompletedAt: new Date().toISOString() });
 };

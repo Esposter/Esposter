@@ -1,7 +1,7 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
-import { ItemMetadataPropertyNames } from "@esposter/shared";
+import { ItemMetadataPropertyNames } from "#shared/models/shared/ItemMetadataPropertyNames";
 
 // One serialised value per sort item, base64-encoded (see serialize) — sized for the longest sort a read accepts
 export const CURSOR_MAX_LENGTH = 4096;

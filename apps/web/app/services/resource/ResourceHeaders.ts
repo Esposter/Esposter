@@ -2,9 +2,9 @@ import type { ResourceListItem } from "#shared/models/resource/ResourceListItem"
 import type { UiDataTableColumn } from "@/models/ui/UiDataTableColumn";
 
 import { ResourceListItemPropertyNames } from "#shared/models/resource/ResourceListItem";
+import { ItemMetadataPropertyNames } from "#shared/models/shared/ItemMetadataPropertyNames";
 import { formatDate } from "#shared/util/date/formatDate";
 import { RESOURCE_DATE_FORMAT } from "@/services/resource/constants";
-import { ItemMetadataPropertyNames } from "@esposter/shared";
 
 // Publish status is a capability, not a base feature, so it is surfaced per-resource (Overview / editor)
 // Rather than as a mixed-type list column; created/updated apply to every resource

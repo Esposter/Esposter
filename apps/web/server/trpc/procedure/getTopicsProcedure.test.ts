@@ -11,12 +11,11 @@ import { TRPCError } from "@trpc/server";
 import { afterEach, describe, expect, test } from "vitest";
 import { z } from "zod";
 
-const postInputSchema = z.object({ id: z.string() });
-const getPostTopics = ({ input }: { input: z.output<typeof postInputSchema> }): Topic[] => [
-  getTopic(TopicKind.Post, input.id),
-];
-
 describe(getTopicsProcedure, () => {
+  const postInputSchema = z.object({ id: z.string() });
+  const getPostTopics = ({ input }: { input: z.output<typeof postInputSchema> }): Topic[] => [
+    getTopic(TopicKind.Post, input.id),
+  ];
   const postProcedure = getTopicsProcedure(standardRateLimitedProcedure.input(postInputSchema), getPostTopics);
   const testRouter = router({
     failPost: postProcedure.mutation<void>(() => {

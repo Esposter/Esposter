@@ -1,6 +1,7 @@
 import type { RoomMessage, ScheduledRoomMessage } from "@esposter/db-schema";
 
 import { useRoomObject } from "#server/composables/realtime/useRoomObject";
+import { WordFilteredError } from "#server/models/message/moderation/WordFilteredError";
 import { createUserMessage } from "#server/services/message/createUserMessage";
 import { getScheduledMessageTopics } from "#server/services/message/getScheduledMessageTopics";
 import { assertCanCreateMessage } from "#server/services/message/moderation/assertCanCreateMessage";
@@ -16,7 +17,7 @@ import { readScheduledMessagesInputSchema } from "#shared/models/db/message/sche
 import { sendScheduledMessageNowInputSchema } from "#shared/models/db/message/scheduledMessage/SendScheduledMessageNowInput";
 import { updateScheduledMessageInputSchema } from "#shared/models/db/message/scheduledMessage/UpdateScheduledMessageInput";
 import { DatabaseEntityType, MessageType } from "@esposter/db-schema";
-import { getResultAsync, noop, WordFilteredError } from "@esposter/shared";
+import { getResultAsync, noop } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { v7 } from "uuid";
 

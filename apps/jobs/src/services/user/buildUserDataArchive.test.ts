@@ -61,7 +61,6 @@ import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, t
 import { z } from "zod";
 
 let mockDb: Database;
-let resetMockDb: () => Promise<void>;
 
 vi.mock(import("#src/services/shared/db"), () => ({
   get db() {
@@ -105,6 +104,7 @@ const createRoomMessage = (fields: Partial<RoomMessage> & Pick<RoomMessage, "id"
 });
 
 describe(buildUserDataArchive, () => {
+  let resetMockDb: () => Promise<void>;
   const attachmentBytes = new Uint8Array([255]);
   const content = JSON.stringify({});
   const description = "description";

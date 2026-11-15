@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { getEntityIdEqualComparator } from "@/services/entity/getEntityIdEqualComparator";
+import { getMessageWriteTarget } from "@/services/message/getMessageWriteTarget";
 import { MessageComponentMap } from "@/services/message/MessageComponentMap";
 import { useDataStore } from "@/store/message/data";
 import { useMessageDialogStore } from "@/store/message/dialog";
@@ -17,11 +18,9 @@ const { isOpen, item: message } = useSingletonDialog(deletingMessageId, () =>
 const creator = useCreator(message);
 const { executeMutation } = useMutation();
 const deleteMessage = async () => {
-  if (!message.value) return;
-  const { id: messageId, roomId } = message.value;
-  // Resolved as the delete is issued: the optimistic apply runs when the write is sent, by which time the room on
-  // Screen can be another one
-  const { items: roomItems } = getSlice(roomId);
+  const target = getMessageWriteTarget(message.value, getSlice);
+  if (!target) return;
+  const { messageId, roomId, roomItems } = target;
   await executeMutation(() => $trpc.message.deleteMessage.mutate({ id: messageId, roomId }), {
     applyOptimistic: async () => {
       const deletedMessage = roomItems.value.find(getEntityIdEqualComparator(["id"], { id: messageId }));

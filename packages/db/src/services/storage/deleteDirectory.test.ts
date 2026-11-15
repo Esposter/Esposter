@@ -4,9 +4,8 @@ import { createMockBucket } from "@esposter/db-mock";
 import { settleAll } from "@esposter/shared";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 
-const MOCK_BUCKET_CONCURRENCY = 50;
-
 describe(deleteDirectory, () => {
+  const MOCK_BUCKET_CONCURRENCY = 50;
   const prefix = "prefix";
   // More than one R2 delete request holds, so the batching is what is tested
   const blobNames = Array.from({ length: 1001 }, (_value, index) => `${prefix}/${index}`);

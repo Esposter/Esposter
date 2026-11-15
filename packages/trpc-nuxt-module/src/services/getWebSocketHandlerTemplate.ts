@@ -1,7 +1,6 @@
 import type { ExportReference } from "#src/models/ExportReference";
 import type { WebSocketOptions } from "#src/models/WebSocketOptions";
 
-import { MODULE_NAME } from "#src/runtime/constants";
 import { getImportStatement } from "#src/services/getImportStatement";
 
 // Nitro's shutdown is its `close` hook, so every open connection is told to reconnect before the server goes. The
@@ -15,7 +14,7 @@ export const getWebSocketHandlerTemplate = (
   [
     `import { useNitroHooks } from "nitro/app";`,
     `import { defineWebSocketHandler } from "nitro/h3";`,
-    `import { WEBSOCKET_CLOSE_HOOK, WEBSOCKET_OPEN_HOOK } from "${MODULE_NAME}/runtime/constants";`,
+    `import { WEBSOCKET_CLOSE_HOOK, WEBSOCKET_OPEN_HOOK } from "trpc-nuxt-module/runtime/constants";`,
     `import { createTRPCWebSocketHandler } from "trpc-nuxt-module/runtime/server/createTRPCWebSocketHandler";`,
     getImportStatement(router, "router"),
     createContext ? getImportStatement(createContext, "createContext") : "const createContext = () => ({});",

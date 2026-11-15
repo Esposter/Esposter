@@ -3,12 +3,10 @@ import type { CoreTable } from "#src/models/cutover/CoreTable";
 import type { IdMap } from "#src/models/cutover/IdMap";
 import type { SourceClient } from "#src/models/cutover/SourceClient";
 
-import { SqlDialect } from "#src/models/cutover/SqlDialect";
-import { readKeysetRows } from "#src/services/cutover/core/readKeysetRows";
+import { readSourceKeysetRows } from "#src/services/cutover/core/readSourceKeysetRows";
 import { toD1Value } from "#src/services/cutover/core/toD1Value";
 import { inviteTableName, tableNameTokenColumnsMap } from "#src/services/cutover/ids/credentialColumns";
 import { checkIsOldId } from "#src/services/cutover/ids/rewriteOldIds";
-import { quoteIdentifier } from "#src/services/cutover/postgres/quoteIdentifier";
 
 // Gives every row of one Postgres table its new key. A UUID-keyed row gets a UUIDv7 built from its own createdAt.
 // A row with no createdAt gets the time it is first seen, which the id map keeps. A bearer token gets the hash it is re-issued as.
@@ -23,13 +21,7 @@ export const assignCoreTableIds = async (source: SourceClient, table: CoreTable,
     ? { dataType: "string", name: issuer.oldColumn, notNull: false }
     : undefined;
   const columns = [...table.primaryKeyColumns, ...[createdAtColumn, tokenColumn].flatMap((column) => column ?? [])];
-  for await (const row of readKeysetRows({
-    columns,
-    dialect: SqlDialect.Postgres,
-    keyColumns: table.primaryKeyColumns,
-    qualifiedTableName: `${quoteIdentifier(table.pgSchema)}.${quoteIdentifier(table.pgTable)}`,
-    readPage: async ({ params, sql }) => source.unsafe<Record<string, unknown>[]>(sql, params),
-  })) {
+  for await (const row of readSourceKeysetRows(source, table, columns, table.primaryKeyColumns)) {
     const oldId = row.id;
     if (typeof oldId !== "string") continue;
     if (table.name === inviteTableName) {

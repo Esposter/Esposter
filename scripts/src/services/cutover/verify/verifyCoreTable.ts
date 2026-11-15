@@ -3,11 +3,9 @@ import type { D1Executor } from "#src/models/cutover/D1Executor";
 import type { IdMap } from "#src/models/cutover/IdMap";
 import type { SourceClient } from "#src/models/cutover/SourceClient";
 
-import { SqlDialect } from "#src/models/cutover/SqlDialect";
-import { readKeysetRows } from "#src/services/cutover/core/readKeysetRows";
 import { readSourceCoreRows } from "#src/services/cutover/core/readSourceCoreRows";
+import { readTargetCoreRows } from "#src/services/cutover/core/readTargetCoreRows";
 import { toCoreRecord } from "#src/services/cutover/core/toCoreRecord";
-import { quoteIdentifier } from "#src/services/cutover/postgres/quoteIdentifier";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // Compares one table row by row, each row by its new key: the source's values through the copy's transform, the target's as stored.
@@ -21,13 +19,7 @@ export const verifyCoreTable = async (
   idMap: IdMap,
 ): Promise<number> => {
   const keyTargetCanonicalMap = new Map<string, string>();
-  for await (const row of readKeysetRows({
-    columns: table.columns,
-    dialect: SqlDialect.Sqlite,
-    keyColumns: table.primaryKeyColumns,
-    qualifiedTableName: quoteIdentifier(table.name),
-    readPage: (statement) => executor.query(statement),
-  }))
+  for await (const row of readTargetCoreRows(executor, table))
     keyTargetCanonicalMap.set(
       JSON.stringify(table.primaryKeyColumns.map((column) => row[column.name] ?? null)),
       JSON.stringify(table.columns.map((column) => row[column.name] ?? null)),

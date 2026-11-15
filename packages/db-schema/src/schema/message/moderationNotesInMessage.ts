@@ -1,6 +1,6 @@
 import { usersInAuth } from "#src/schema/auth/usersInAuth";
 import { messageSchema } from "#src/schema/message/messageSchema";
-import { roomsInMessage } from "#src/schema/message/roomsInMessage";
+import { createRoomTargetUserColumns } from "#src/services/message/createRoomTargetUserColumns";
 import { sqliteTable } from "#src/sqliteTable";
 import { index, text } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-orm/zod";
@@ -17,12 +17,7 @@ export const moderationNotesInMessage = sqliteTable(
       .primaryKey()
       .$defaultFn(() => v7()),
     note: text().notNull(),
-    roomId: text()
-      .notNull()
-      .references(() => roomsInMessage.id, { onDelete: "cascade" }),
-    targetUserId: text()
-      .notNull()
-      .references(() => usersInAuth.id, { onDelete: "cascade" }),
+    ...createRoomTargetUserColumns(),
   },
   {
     extraConfig: ({ actorUserId, id, roomId, targetUserId }) => [

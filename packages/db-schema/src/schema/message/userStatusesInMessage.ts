@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax -- the select schema refines the Drizzle columns' own nullable expiry and status */
 import { UserStatus, userStatusSchema } from "#src/models/user/UserStatus";
 import { usersInAuth } from "#src/schema/auth/usersInAuth";
 import { messageSchema } from "#src/schema/message/messageSchema";
@@ -33,9 +34,7 @@ export type UserStatusInMessage = typeof userStatusesInMessage.$inferSelect;
 
 export const selectUserStatusInMessageSchema = createSelectSchema(userStatusesInMessage, {
   // The wire carries ISO dates, so the expiry is read back into a date
-  // eslint-disable-next-line no-restricted-syntax -- refines the Drizzle column's own nullable expiry
   expiresAt: () => z.coerce.date().nullable(),
   message: (schema) => schema.max(STATUS_MESSAGE_MAX_LENGTH),
-  // eslint-disable-next-line no-restricted-syntax -- refines the Drizzle column's own nullable status
   status: userStatusSchema.nullable(),
 });

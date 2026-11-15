@@ -1,11 +1,11 @@
 import type { Context } from "#server/trpc/context";
 import type { MessageCreationRejection } from "@esposter/db";
 
+import { WordFilteredError } from "#server/models/message/moderation/WordFilteredError";
 import { executeAutomodAction } from "#server/services/message/moderation/executeAutomodAction";
 import { MessageCreationRejectionReasonMap } from "#server/services/message/moderation/MessageCreationRejectionReasonMap";
 import { getForbiddenError } from "#server/trpc/guards/getForbiddenError";
 import { MessageCreationRejectionType } from "@esposter/db-schema";
-import { WordFilteredError } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 
 // What the tRPC side does with the shared gate's decision: nothing for none, and otherwise the error its transport

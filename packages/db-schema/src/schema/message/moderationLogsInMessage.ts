@@ -1,7 +1,6 @@
 import { AdminActionType } from "#src/models/message/AdminActionType";
-import { usersInAuth } from "#src/schema/auth/usersInAuth";
 import { messageSchema } from "#src/schema/message/messageSchema";
-import { roomsInMessage } from "#src/schema/message/roomsInMessage";
+import { createRoomTargetUserColumns } from "#src/services/message/createRoomTargetUserColumns";
 import { createEnumColumn } from "#src/services/shared/createEnumColumn";
 import { sqliteTable } from "#src/sqliteTable";
 import { index, integer, text } from "drizzle-orm/sqlite-core";
@@ -21,13 +20,7 @@ export const moderationLogsInMessage = sqliteTable(
     id: text()
       .primaryKey()
       .$defaultFn(() => v7()),
-    roomId: text()
-      .notNull()
-      .references(() => roomsInMessage.id, { onDelete: "cascade" }),
-    // The member the action was taken against. Their record goes with their account, as their ban does
-    targetUserId: text()
-      .notNull()
-      .references(() => usersInAuth.id, { onDelete: "cascade" }),
+    ...createRoomTargetUserColumns(),
     type: createEnumColumn(AdminActionType).notNull(),
   },
   {
