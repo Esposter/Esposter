@@ -42,15 +42,11 @@ describe(getPageWhere, () => {
       cursor,
       limit,
     );
-  const readAllIds = async () => {
-    const ids: string[] = [];
-    let encodedCursor = "";
-    do {
-      const page = await readPage(inputSchema.parse({ cursor: encodedCursor, limit }).cursor);
-      ids.push(...page.items.map(({ id }) => id));
-      encodedCursor = page.nextCursor;
-    } while (encodedCursor);
-    return ids;
+  // Each page waits on the cursor the one before it answered, so the pages are read one after another
+  const readAllIds = async (encodedCursor = ""): Promise<string[]> => {
+    const page = await readPage(inputSchema.parse({ cursor: encodedCursor, limit }).cursor);
+    const ids = page.items.map(({ id }) => id);
+    return page.nextCursor ? [...ids, ...(await readAllIds(page.nextCursor))] : ids;
   };
 
   beforeAll(async () => {
