@@ -4,7 +4,7 @@ import { outputFile } from "@@/scripts/services/outputFile";
 import { TILED_ROOT_DIRECTORY, WORLD_ROOT_DIRECTORY } from "@@/scripts/tiled/constants";
 import { PROPERTY_TYPES_DIRECTORY } from "@@/scripts/tiled/propertyTypes/constants";
 import { createClassString } from "@@/scripts/tiled/propertyTypes/createClassString";
-import { createEnumString } from "@@/scripts/util/createEnumString";
+import { createValueSetString } from "@@/scripts/util/createValueSetString";
 import { jsonDateParse } from "@esposter/shared";
 import { readFile } from "node:fs/promises";
 import { PropertyType } from "parse-tmx";
@@ -28,7 +28,7 @@ export const createPropertyTypes = async () => {
         outputFile(
           TILED_ROOT_DIRECTORY,
           `${PROPERTY_TYPES_DIRECTORY}/${type}/${objectPropertyFilename}.ts`,
-          createEnumString(
+          createValueSetString(
             objectPropertyFilename,
             members.map(({ name: memberName }) => memberName),
           ),
@@ -40,14 +40,14 @@ export const createPropertyTypes = async () => {
       await outputFile(
         TILED_ROOT_DIRECTORY,
         `${PROPERTY_TYPES_DIRECTORY}/${type}/${name}.ts`,
-        createEnumString(name, values),
+        createValueSetString(name, values),
       );
     }
 
-  const enumName = "ObjectType";
+  const valueSetName = "ObjectType";
   await outputFile(
     TILED_ROOT_DIRECTORY,
-    `${PROPERTY_TYPES_DIRECTORY}/${PropertyType.Class}/${enumName}.ts`,
-    createEnumString(enumName, classObjectTypes),
+    `${PROPERTY_TYPES_DIRECTORY}/${PropertyType.Class}/${valueSetName}.ts`,
+    createValueSetString(valueSetName, classObjectTypes),
   );
 };

@@ -54,7 +54,7 @@ flowchart LR
 
 ### A set mirroring outside data is generated, not merged
 
-The dungeons' texture and sound keys are merges of a dozen hand-written sets restating the names of files in a bucket. Where a set mirrors data the repository does not author, the generator that reads the data writes the one set: `FileKey` from the dungeons bucket's listing, the Tiled property types from the Tiled project. The generators write the `as const` form (createValueSetString, renamed from `createEnumString`). The dungeons' asset merges go when the `migrate-assets` branch lands.
+The dungeons' texture and sound keys are merges of a dozen hand-written sets restating the names of files in a bucket. Where a set mirrors data the repository does not author, the generator that reads the data writes the one set: `FileKey` from the dungeons bucket's listing, the Tiled property types from the Tiled project. The generators write the `as const` form (`createValueSetString`). The dungeons' asset merges go when the `migrate-assets` branch lands.
 
 ## Migration
 
@@ -77,7 +77,7 @@ The conversion is mechanical, so it is one throwaway codemod run per package, ne
 | `scripts/src/workspace/packageScripts.test.ts`          | strips every module a `node` script reaches, proving each move off `vpx` |
 | `packages/shared/src/util/object/mergeObjectsStrict.ts` | the one merge, throwing on a repeated key                                |
 | `packages/shared/src/util/types/MergeObjectsStrict.ts`  | its type, comparing every pair                                           |
-| `apps/web/scripts/util/createEnumString.ts`             | the set generator, renamed createValueSetString                          |
+| `apps/web/scripts/util/createValueSetString.ts`         | the set generator                                                        |
 | `packages/configuration/eslint/typescriptRules.js`      | the member-naming selector, moved to the object's keys                   |
 | `scripts/src/oxlint/literalUnion.ts`                    | the literal-union rule, whose message names the new form                 |
 | `.agents/skills/typescript/references/enums.md`         | the set conventions, rewritten for the one form                          |

@@ -3,7 +3,7 @@ import type { Types } from "phaser";
 import { trimFileExtension } from "@/util/file/trimFileExtension";
 import { ContentTypePhaserMethodMap, PHASER_ROOT_DIRECTORY } from "@@/scripts/phaser/constants";
 import { outputFile } from "@@/scripts/services/outputFile";
-import { createEnumString } from "@@/scripts/util/createEnumString";
+import { createValueSetString } from "@@/scripts/util/createValueSetString";
 import { parseListBucketResult } from "@esposter/db";
 import {
   CLOUDFLARE_ACCOUNT_ID,
@@ -44,7 +44,7 @@ export const createFilePack = async () => {
   });
   const files: Types.Loader.FileConfig[] = [];
   const fileKeys = new Set<string>();
-  const enumName = "FileKey";
+  const valueSetName = "FileKey";
 
   // A listing carries no content type, so each object's type is read from its own headers
   for (const name of await listObjectNames(client, bucketUrl)) {
@@ -64,7 +64,7 @@ export const createFilePack = async () => {
     for (const [matchedContentType, phaserMethod] of Object.entries(ContentTypePhaserMethodMap))
       if (contentType.includes(matchedContentType)) {
         const key = trimFileExtension(name).replaceAll("/", "");
-        if (fileKeys.has(key)) throw new InvalidOperationError(Operation.Push, enumName, `Duplicate key: ${key}`);
+        if (fileKeys.has(key)) throw new InvalidOperationError(Operation.Push, valueSetName, `Duplicate key: ${key}`);
 
         fileKeys.add(key);
         files.push({ cache: false, key, type: phaserMethod, url: name });
@@ -72,7 +72,7 @@ export const createFilePack = async () => {
   }
 
   await Promise.all([
-    outputFile(PHASER_ROOT_DIRECTORY, `${enumName}.ts`, createEnumString(enumName, [...fileKeys])),
+    outputFile(PHASER_ROOT_DIRECTORY, `${valueSetName}.ts`, createValueSetString(valueSetName, [...fileKeys])),
     (async () => {
       const { code } = await format("files.json", JSON.stringify(files), formatterConfiguration);
       await outputFile(PHASER_ROOT_DIRECTORY, "files.json", code);

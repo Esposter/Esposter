@@ -5,12 +5,12 @@ import { trimFileExtension } from "@/util/file/trimFileExtension";
 import { outputFile } from "@@/scripts/services/outputFile";
 import { TILED_ROOT_DIRECTORY } from "@@/scripts/tiled/constants";
 import { PROPERTY_TYPES_DIRECTORY } from "@@/scripts/tiled/propertyTypes/constants";
-import { createEnumString } from "@@/scripts/util/createEnumString";
+import { createValueSetString } from "@@/scripts/util/createValueSetString";
 import { PropertyType } from "parse-tmx";
 
 export const createBaseTilesetKey = async (tilesets: TMXExternalTilesetParsed[]) => {
   const tilesetKeys = new Set<string>();
-  const enumName = "BaseTilesetKey";
+  const valueSetName = "BaseTilesetKey";
 
   for (const { source } of tilesets) {
     const filename = getFilename(source);
@@ -20,7 +20,7 @@ export const createBaseTilesetKey = async (tilesets: TMXExternalTilesetParsed[])
 
   await outputFile(
     TILED_ROOT_DIRECTORY,
-    `${PROPERTY_TYPES_DIRECTORY}/${PropertyType.Enum}/${enumName}.ts`,
-    createEnumString(enumName, [...tilesetKeys]),
+    `${PROPERTY_TYPES_DIRECTORY}/${PropertyType.Enum}/${valueSetName}.ts`,
+    createValueSetString(valueSetName, [...tilesetKeys]),
   );
 };

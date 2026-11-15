@@ -1,7 +1,7 @@
 import { checkStartsWithNumber } from "#shared/util/regex/checkStartsWithNumber";
 import { capitalize } from "@esposter/shared";
 
-export const createEnumPropertyString = (name: string) => {
+export const createValueSetPropertyString = (name: string) => {
   // We'll support enum properties that start with numbers
   // As tools like Tiled may contain them in enums
   if (checkStartsWithNumber(name)) return `"@${name}"`;
