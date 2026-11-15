@@ -82,13 +82,19 @@ const uiSurfaceUtilities = {
     },
     FORCED_COLORS_EDGE,
   ],
+  // A popover is as wide as its text wants and never wider than the screen, wrapping inside its own edge past that: the
+  // Browser's own width, fit-content, wraps it early in the narrow area beside its anchor, and an unbroken word wraps
+  // Rather than run out past the edge
   "ui-popover": {
     "background-color": "transparent",
     border: "none",
     color: "inherit",
+    "max-width": "calc(100vw - var(--ui-step) * 4)",
     "min-width": "anchor-size(width)",
     overflow: "visible",
+    "overflow-wrap": "anywhere",
     padding: "calc(var(--ui-step) * 2)",
+    width: "max-content",
   },
   // A popover is closed until it opens, and steps in over the motion short; the transform it steps from is its own
   "ui-popover-motion": {

@@ -23,7 +23,7 @@ attach(content);
     ui-popover
     ui-popover-motion
   >
-    <div text-sm px-2 py-1 text-nowrap ui-lifted>
+    <div text-sm px-2 py-1 ui-lifted>
       <slot />
     </div>
   </div>
@@ -32,6 +32,8 @@ attach(content);
 <style scoped>
 /* It pops out of what it names the moment the pointer arrives, and back into it on the way out */
 .tooltip {
+  /* A tooltip is a short label, so a long one wraps at a narrower width than the screen-wide popover default */
+  max-width: min(20rem, calc(100vw - var(--ui-step) * 4));
   transform: scale(0.5);
 }
 
