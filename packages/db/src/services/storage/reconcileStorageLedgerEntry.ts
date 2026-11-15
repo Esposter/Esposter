@@ -3,7 +3,6 @@ import type { Database, StorageBucket, StorageLedgerEntryInStorage } from "@espo
 
 import { checkIsNewerSequencer } from "#src/services/storage/checkIsNewerSequencer";
 import { storageLedgerInStorage, usersInAuth } from "@esposter/db-schema";
-import { InvalidOperationError, Operation } from "@esposter/shared";
 import { and, eq, exists, isNull, sql } from "drizzle-orm";
 
 // Storage told us how many bytes actually landed, so the counter takes them. `countedBytes` is what the counter
@@ -20,8 +19,9 @@ import { and, eq, exists, isNull, sql } from "drizzle-orm";
 // The owner whose counter this actually moved — the only thing a meter watching the number needs telling about.
 //
 // The row is read first, and the write is conditional on that read still holding: the counter and the row move in one
-// Batch only while the row is in the state the delta was computed from. A reconcile that lost that race throws, so the
-// Event is redelivered and computes its delta from the row as it now stands.
+// Batch only while the row is in the state the delta was computed from. A reconcile that lost that race runs again from
+// The row as it now stands, since losing means another write applied first. A charge has no redelivery to lean on, so
+// The retry is here rather than the queue's.
 export const reconcileStorageLedgerEntry = async (
   db: Database,
   containerName: StorageBucket,
@@ -93,7 +93,7 @@ export const reconcileStorageLedgerEntry = async (
       .returning({ userId: storageLedgerInStorage.userId }),
   ]);
   if (updatedStorageLedgerEntries.length === 0)
-    throw new InvalidOperationError(Operation.Update, blobName, "changed while it was being reconciled");
+    return reconcileStorageLedgerEntry(db, containerName, blobName, actualBytes, sequencer);
   if (actualBytes === countedBytes) return { isMatched: true };
 
   return { chargedUserId: userId, isMatched: true };

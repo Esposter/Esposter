@@ -46,6 +46,21 @@ describe(releaseStorageLedgerEntries, () => {
     await db.update(usersInAuth).set({ storageBytesUsed: 0 });
   });
 
+  // Both charges read the row before either writes, so the second's write finds the row moved. A charge has no
+  // Redelivery, so it must settle from the row as it now stands rather than fail a save whose blob is stored
+  test("settles two charges of one blob that race, the counter ending on the size the last one wrote", async () => {
+    expect.hasAssertions();
+
+    await createStorageLedgerEntry();
+    await Promise.all([
+      reconcileStorageLedgerEntry(db, containerName, blobName, actualBytes),
+      reconcileStorageLedgerEntry(db, containerName, blobName, overwrittenBytes),
+    ]);
+    const { countedBytes } = takeOne(await db.query.storageLedgerInStorage.findMany());
+
+    await expect(readStorageBytesUsed()).resolves.toBe(countedBytes);
+  });
+
   test("counts the size storage reports, not the size the client declared", async () => {
     expect.hasAssertions();
 
