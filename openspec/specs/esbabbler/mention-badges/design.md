@@ -25,7 +25,7 @@ flowchart LR
   CM["room object createMessage"] -->|"incrementMentionCounts<br/>(one batched UPDATE, sender excluded)"| DB[("usersToRooms.mentionCount")]
   VIEW["room view<br/>(/messages/[id])"] -->|"clearMentionCount"| DB
   CM -->|"updateUserToRoom per affected member"| UO["each affected member's User object<br/>on their user socket"]
-  ED["edit or delete<br/>(message router)"] -->|"decrementMentionCounts / incrementMentionCounts<br/>(members not read since the text was written)"| DB
+  ED["edit or delete<br/>(message router)"] -->|"applyMentionCounts<br/>(members not read since the text was written)"| DB
   VIEW -->|"updateUserToRoom to the caller's User object"| UO
   UO --> STORE["useUserToRoomStore.myUserToRoom"]
   STORE -->|"mentionCount > 0"| CHIP["room ListItem red chip"]

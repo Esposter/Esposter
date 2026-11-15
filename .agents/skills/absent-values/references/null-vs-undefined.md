@@ -17,7 +17,7 @@ Read when choosing between `undefined` and `null`, declaring an absent property,
 **External boundary — keep `null` where required:**
 
 - **Drizzle ORM** — nullable columns infer as `T | null`, and so does an absent one-to-one relation loaded through `with` (`ResourceWithPublication.publication`); leave the boundary shape as-is and consume it at the call site (`??` onto a sentinel, truthiness guard) only where the app-owned shape is actually needed — there is no conversion layer. See `openspec/specs/architecture/null-vs-undefined/design.md`.
-- **`ItemMetadata.deletedAt`** (`@esposter/shared`) — `Date | null`, the soft-delete column Drizzle's metadata columns carry (`packages/db-schema/src/createMetadataSchema.ts`), so every row satisfies it. An item stored inside a content blob is removed rather than soft deleted, so `AItemEntity` carries the timestamps without `deletedAt`, and a content schema names none.
+- **`ItemMetadata.deletedAt`** (`apps/web/shared/models/shared/ItemMetadata.ts`) — `Date | null`, the soft-delete column Drizzle's metadata columns carry (`packages/db-schema/src/createMetadataSchema.ts`), so every row satisfies it. An item stored inside a content blob is removed rather than soft deleted, so `AItemEntity` carries the timestamps without `deletedAt`, and a content schema names none.
 - **Persisted JSON blobs** — `JSON.stringify` drops an `undefined` key outright, so a blob that must round-trip an empty slot stores `null`. `ColumnValue` is `boolean | null | number | string`: `null` is the empty spreadsheet cell, `""` a cell holding the empty string, and they sort, filter and count apart.
 - **Third-party wire shapes** — `SerializableValue`, and any payload a provider sends; keep raw types, convert on ingress.
 

@@ -32,6 +32,8 @@ describe("messageDraftsAndSentScheduledSendButton", () => {
       onSent();
       return createOptimisticMessage({ roomId: room.id, type: MessageType.Message }, userId);
     });
+    // A send settles the badge by reading the count again, which the server answers with the one job left
+    trpcMsw.message.scheduledMessageJob.readMyScheduledMessageJobsCount.query(() => 1);
     const scheduledMessageJobStore = useScheduledMessageJobStore();
     const { items, scheduledMessageJobCount } = storeToRefs(scheduledMessageJobStore);
     const sentScheduledMessageJob = createJob(v7());

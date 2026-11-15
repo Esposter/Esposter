@@ -1,5 +1,5 @@
 import type { ConfigWidgetRow } from "#src/models/genshinAssets/gadgets/ConfigWidgetRow";
-import type { GadgetSliceRow } from "#src/models/genshinAssets/gadgets/GadgetSliceRow";
+import type { GadgetRow } from "genshin-world";
 
 import { ConfigWidgetTypeGadgetKindMap } from "#src/services/genshinAssets/gadgets/ConfigWidgetTypeGadgetKindMap";
 import { toGatherItemId } from "#src/services/genshinAssets/gadgets/toGatherItemId";
@@ -11,7 +11,7 @@ import { CityIdRegionMap } from "#src/services/genshinAssets/shared/CityIdRegion
 export const toGadgetRows = (
   widgets: Record<string, ConfigWidgetRow>,
   pointTypeItemIdMap: ReadonlyMap<number, number>,
-): GadgetSliceRow[] =>
+): GadgetRow[] =>
   Object.entries(widgets)
     .flatMap(([id, widget]) => {
       const kind = ConfigWidgetTypeGadgetKindMap[widget.$type];

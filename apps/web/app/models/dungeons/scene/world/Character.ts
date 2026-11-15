@@ -4,7 +4,7 @@ import type { CharacterId } from "@/models/dungeons/scene/world/CharacterId";
 import type { ID_SEPARATOR } from "@esposter/shared";
 import type { Direction, WalkingAnimationMapping } from "grid-engine";
 
-import { ItemMetadata } from "@esposter/shared";
+import { ItemMetadata } from "#shared/models/shared/ItemMetadata";
 
 export class Character<TName extends string = string> extends ItemMetadata {
   declare asset: Asset;

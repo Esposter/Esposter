@@ -1,4 +1,4 @@
-import type { GadgetSliceRow } from "#src/models/genshinAssets/gadgets/GadgetSliceRow";
+import type { GadgetRow } from "genshin-world";
 
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
@@ -10,7 +10,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 export const toSereniteaPotGadgetRow = (
   materialRows: readonly { id: number; materialType: string }[],
   itemId: number,
-): GadgetSliceRow => {
+): GadgetRow => {
   const materialRow = materialRows.find(({ id }) => id === itemId);
   if (materialRow?.materialType !== "MATERIAL_WIDGET")
     throw new InvalidOperationError(Operation.Read, `material ${itemId}`, "has no widget material row");

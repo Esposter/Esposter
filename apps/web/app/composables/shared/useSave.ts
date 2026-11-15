@@ -1,4 +1,4 @@
-import type { ItemMetadata } from "@esposter/shared";
+import type { ItemMetadata } from "#shared/models/shared/ItemMetadata";
 import type { z } from "zod";
 
 import { ItemMetadataPropertyNames } from "#shared/models/shared/ItemMetadataPropertyNames";

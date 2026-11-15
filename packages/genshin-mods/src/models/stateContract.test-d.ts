@@ -10,12 +10,12 @@ describe("state contract", () => {
   test("sinStatus holds exactly the values of SinStatusKind", () => {
     expect.hasAssertions();
 
-    expectTypeOf<SinStatus>().toEqualTypeOf<`${SinStatusKind}`>();
+    expectTypeOf<SinStatus>().toEqualTypeOf<SinStatusKind>();
   });
 
   test("a commission task's status holds exactly the values of TaskStatus", () => {
     expect.hasAssertions();
 
-    expectTypeOf<CommissionTask["status"]>().toEqualTypeOf<`${TaskStatus}`>();
+    expectTypeOf<CommissionTask["status"]>().toEqualTypeOf<TaskStatus>();
   });
 });
