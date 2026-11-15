@@ -104,8 +104,8 @@ describe(useCallStore, () => {
 
   // A thread call carries the room it belongs to, so a route keyed on the room alone lands in the room with the
   // Thread pane shut — the call announced itself in a pane the link then refuses to open
-  test.each<{ expected: string; threadRootId: "" | ClientMessage["id"]; title: string }>([
-    { expected: RoutePath.Messages(roomId), threadRootId: "", title: "the room for a room call" },
+  test.each<{ expected: string; threadRootId: 0 | ClientMessage["id"]; title: string }>([
+    { expected: RoutePath.Messages(roomId), threadRootId: 0, title: "the room for a room call" },
     { expected: RoutePath.MessagesThread(roomId, threadRootId), threadRootId, title: "the thread for a thread call" },
   ])("routes to $title", ({ expected, threadRootId: rootId }) => {
     expect.hasAssertions();

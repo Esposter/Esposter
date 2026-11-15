@@ -39,7 +39,7 @@ export const useCallStore = defineStore("message/room/call", () => {
   const callRoomId = ref("");
   // The thread the joined call belongs to, empty for the room's own call — what tells the thread pane whether
   // The call it can start is the one the user is already in
-  const callThreadRootId = ref<"" | ClientMessage["id"]>("");
+  const callThreadRootId = ref<0 | ClientMessage["id"]>(0);
   const activeCallSessionId = ref("");
   // Whether the joined call's knocks are this participant's to answer — the server rejects the knock stream for
   // Anyone else, so it is opened only when this is true
@@ -147,7 +147,7 @@ export const useCallStore = defineStore("message/room/call", () => {
     if (isJoined) await leaveCall();
     else {
       callRoomId.value = "";
-      callThreadRootId.value = "";
+      callThreadRootId.value = 0;
       activeCallSessionId.value = "";
       // The teardown reports rather than propagates: it is unwinding an attempt that already failed, and a
       // Rejected disconnect must not take the join's own error off screen or strand the connecting flag
@@ -241,7 +241,7 @@ export const useCallStore = defineStore("message/room/call", () => {
           },
           async () => {
             callRoomId.value = "";
-            callThreadRootId.value = "";
+            callThreadRootId.value = 0;
             resetKnockerState();
             isDoorkeeper.value = false;
             activeCallSessionId.value = "";
