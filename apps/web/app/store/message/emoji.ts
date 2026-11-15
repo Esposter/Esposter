@@ -13,8 +13,9 @@ const getEmojiKey = ({ emojiTag, messageId }: Pick<RoomReaction, "emojiTag" | "m
 export const useEmojiStore = defineStore("message/emoji", () => {
   const session = authClient.useSession();
   const { $trpc } = useNuxtApp();
-  const { executeMutation: executeCreateEmojiMutation } = useMutation();
-  const { executeMutation: executeDeleteEmojiMutation } = useMutation();
+  // One queue for adds and removes alike, so a remove made while its add is in flight waits for it, and the add's settled
+  // Row never lands after the remove
+  const { executeMutation } = useMutation();
   // A message's reactions, filed under the room they belong to and then under the message. Every write names both,
   // Since a read response, a subscription echo and a rollback all land after an await, when the room on screen may have moved on
   const emojiMap: Ref<Map<string, Map<number, RoomReaction[]>>> = ref(new Map());
@@ -56,7 +57,7 @@ export const useEmojiStore = defineStore("message/emoji", () => {
     if (!session.value.data) return;
 
     const { id: userId } = session.value.data.user;
-    await executeCreateEmojiMutation(() => $trpc.message.emoji.addReaction.mutate(input), {
+    await executeMutation(() => $trpc.message.emoji.addReaction.mutate(input), {
       applyOptimistic: () => {
         storeReactor(input.roomId, input, userId, true);
         return () => {
@@ -75,7 +76,7 @@ export const useEmojiStore = defineStore("message/emoji", () => {
     if (!session.value.data) return;
 
     const { id: userId } = session.value.data.user;
-    await executeDeleteEmojiMutation(() => $trpc.message.emoji.removeReaction.mutate(input), {
+    await executeMutation(() => $trpc.message.emoji.removeReaction.mutate(input), {
       applyOptimistic: () => {
         storeReactor(input.roomId, input, userId, false);
         return () => {

@@ -3,7 +3,7 @@ import { getMockSession } from "#server/trpc/context.test";
 import { useSession } from "@/services/auth/authClient.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useEmojiStore } from "@/store/message/emoji";
-import { takeOne } from "@esposter/shared";
+import { noop, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
@@ -96,5 +96,34 @@ describe(useEmojiStore, () => {
     await createEmoji({ emojiTag, messageId, roomId });
 
     expect(takeOne(getEmojis(roomId, messageId)).userIds).toStrictEqual([otherUserId]);
+  });
+
+  // A remove made while its add is still in flight must wait for it, or the add's settled row lands after the remove and
+  // Puts back a reaction the server no longer holds
+  test("removes a reaction whose add was still in flight", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    useSession.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
+    const emojiStore = useEmojiStore();
+    const { createEmoji, deleteEmoji, getEmojis } = emojiStore;
+    let resolveAdd: (reaction: ReturnType<typeof createReaction>) => void = noop;
+    const addStarted = new Promise<void>((resolveAddStarted) => {
+      trpcMsw.message.emoji.addReaction.mutation(
+        () =>
+          new Promise((resolve) => {
+            resolveAdd = resolve;
+            resolveAddStarted();
+          }),
+      );
+    });
+    trpcMsw.message.emoji.removeReaction.mutation(() => undefined);
+    const createPromise = createEmoji({ emojiTag, messageId, roomId });
+    await addStarted;
+    const deletePromise = deleteEmoji({ emojiTag, messageId, roomId });
+    resolveAdd(createReaction([userId]));
+    await Promise.all([createPromise, deletePromise]);
+
+    expect(getEmojis(roomId, messageId)).toStrictEqual([]);
   });
 });
