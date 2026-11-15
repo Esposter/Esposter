@@ -3,8 +3,10 @@ import type { TableParents } from "#src/models/cutover/TableParents";
 
 import { rewriteOldIds } from "#src/services/cutover/ids/rewriteOldIds";
 import { buildRoomImport } from "#src/services/cutover/messages/buildRoomImport";
+import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { AZURE_SELF_DESTRUCT_TIMER, MessageType } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
+import { z } from "zod";
 
 const getRowKey = (epochMilliseconds: number): string =>
   (BigInt(AZURE_SELF_DESTRUCT_TIMER) - BigInt(epochMilliseconds) * 1000000n).toString();
@@ -136,5 +138,35 @@ describe(buildRoomImport, () => {
     expect(roomImport.messages.map(({ mentions, message }) => ({ mentions, message }))).toStrictEqual([
       { mentions: [USER_NEW_ID], message: `hi ${USER_NEW_ID}` },
     ]);
+  });
+
+  test("gives a poll's options new UUIDv7 ids, with each vote following its option", () => {
+    expect.hasAssertions();
+
+    const OPTION_OLD_ID = "0196a2e4-cccc-4ddd-8eee-ffffffffffff";
+    const poll = {
+      options: [{ id: OPTION_OLD_ID, label: "a" }],
+      question: "q",
+      votes: { [USER_OLD_ID]: OPTION_OLD_ID },
+    };
+
+    const roomImport = buildRoomImport({
+      emojis: [],
+      getNumber,
+      idMap,
+      messages: [
+        { message: createMessage({ message: JSON.stringify(poll), type: MessageType.Poll }), timestamp: undefined },
+      ],
+      parents,
+      scheduledMessages: [],
+    });
+    const {
+      options: [option],
+      votes,
+    } = z
+      .object({ options: z.tuple([z.object({ id: z.uuidv7() })]), votes: z.record(z.string(), z.string()) })
+      .parse(parseMachineJson(roomImport.messages.at(0)?.message ?? ""));
+
+    expect(votes).toStrictEqual({ [USER_NEW_ID]: option.id });
   });
 });
