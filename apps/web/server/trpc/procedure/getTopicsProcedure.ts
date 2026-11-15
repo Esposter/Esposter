@@ -6,6 +6,8 @@ import type { Overwrite, Simplify } from "@trpc/server/unstable-core-do-not-impo
 import type { User } from "better-auth";
 
 import { publishTopics } from "#server/services/realtime/publishTopics";
+import { TOPICS_HEADER } from "#shared/services/realtime/constants";
+import { formatTopicsHeaderValue } from "#shared/services/realtime/formatTopicsHeaderValue";
 import { getResultAsync, noop } from "@esposter/shared";
 
 export interface TopicsOptions<TContextOverrides, TInput> {
@@ -44,7 +46,14 @@ export const getTopicsProcedure = <
 ) =>
   builder.meta({ topics: true }).use(async ({ ctx, input, next, path, type }) => {
     const result = await next();
-    if (!result.ok || type !== "mutation") return result;
+    if (!result.ok) return result;
+    // A query's topics travel back with its answer, so the client watches what the read it rendered came from
+    if (type === "query") {
+      const topics = getTopics({ ctx, input, output: result.data });
+      if (topics.length > 0) ctx.responseHeaders.append(TOPICS_HEADER, formatTopicsHeaderValue(path, topics));
+      return result;
+    }
+    if (type !== "mutation") return result;
 
     await getResultAsync(() => publishTopics(getTopics({ ctx, input, output: result.data }))).match(noop, (error) => {
       console.error(`Failed to publish the topics of "${path}":`, error);

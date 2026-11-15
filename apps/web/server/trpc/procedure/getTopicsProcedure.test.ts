@@ -5,6 +5,7 @@ import { createCallerFactory, router } from "#server/trpc";
 import { createMockContext } from "#server/trpc/context.test";
 import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { standardRateLimitedProcedure } from "#server/trpc/procedure/standardRateLimitedProcedure";
+import { readTopicsHeader } from "#shared/services/realtime/readTopicsHeader";
 import { getTopic, TopicKind } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
 import { afterEach, describe, expect, test } from "vitest";
@@ -40,12 +41,21 @@ describe(getTopicsProcedure, () => {
     expect(MockPublishedTopics).toStrictEqual([getTopic(TopicKind.Post, id)]);
   });
 
-  test("publishes nothing for a failed mutation or for a query", async () => {
+  test("sends a query's topics back on its response, and publishes nothing for it", async () => {
+    expect.hasAssertions();
+
+    const mockContext = await createMockContext();
+    await createTestCaller(mockContext).readPost({ id });
+
+    expect(readTopicsHeader(mockContext.responseHeaders, "readPost")).toStrictEqual([getTopic(TopicKind.Post, id)]);
+    expect(MockPublishedTopics).toStrictEqual([]);
+  });
+
+  test("publishes nothing for a failed mutation", async () => {
     expect.hasAssertions();
 
     const caller = createTestCaller(await createMockContext());
     await expect(caller.failPost({ id })).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Post failed]`);
-    await caller.readPost({ id });
 
     expect(MockPublishedTopics).toStrictEqual([]);
   });
