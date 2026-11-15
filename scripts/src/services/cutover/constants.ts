@@ -41,3 +41,5 @@ export const ESTIMATE_ROWS_PER_SECOND = 2000;
 export const MD5_ALGORITHM = "md5";
 // The compression the app stores a JSON document in, which the copy rewrites inside and carries to R2
 export const ZSTD_CONTENT_ENCODING = "zstd";
+// The position of a UUID's version digit in its text form, the first of its third group
+export const UUID_VERSION_INDEX = 14;

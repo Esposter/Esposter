@@ -1,7 +1,7 @@
 import type { CutoverEnvironment } from "#src/models/cutover/CutoverEnvironment";
 
 import { createR2Client } from "#src/services/cutover/cloudflare/r2/createR2Client";
-import { POSTGRES_ID_MAP_SCOPE } from "#src/services/cutover/constants";
+import { INVITE_CODE_SCOPE, POSTGRES_ID_MAP_SCOPE } from "#src/services/cutover/constants";
 import { getPostgresCoreTables } from "#src/services/cutover/core/getPostgresCoreTables";
 import { getCutoverArchiveBucketName } from "#src/services/cutover/getCutoverArchiveBucketName";
 import { assignCoreTableIds } from "#src/services/cutover/ids/assignCoreTableIds";
@@ -23,7 +23,9 @@ export const runAssignIds = async (cutoverEnvironment: CutoverEnvironment): Prom
   // A pending job has no D1 row, but its room's object and its owner's take it under a new id. It has no createdAt, so
   // It is given the time it is first seen, which the map keeps
   for (const { id } of await readPendingScheduledJobs(source)) idMap.assignOldId(id, new Date());
+  // Each invite's fresh code is kept beside the ids, since copy-core runs in its own process and reads both back
   await idMap.flush(POSTGRES_ID_MAP_SCOPE);
+  await idMap.flush(INVITE_CODE_SCOPE);
   await assignRoomMessageNumbers(source, variables.SOURCE_AZURE_STORAGE_CONNECTION_STRING, idMap);
   await source.end();
 };

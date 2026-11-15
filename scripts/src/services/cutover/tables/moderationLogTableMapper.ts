@@ -2,7 +2,7 @@ import type { TableMapper } from "#src/models/cutover/TableMapper";
 
 import { LegacyAzureTable } from "#src/models/cutover/LegacyAzureTable";
 import { getReverseTickedMilliseconds } from "#src/services/cutover/tables/getReverseTickedMilliseconds";
-import { AdminActionType, moderationLogsInMessage } from "@esposter/db-schema";
+import { AdminActionType, AUTOMOD_USER_ID, moderationLogsInMessage } from "@esposter/db-schema";
 import { getTableName } from "drizzle-orm";
 import { z } from "zod";
 
@@ -29,8 +29,10 @@ export const moderationLogTableMapper: TableMapper = {
     if (!parents.roomIds.has(roomId) || !parents.userIds.has(targetUserId)) return undefined;
 
     const createdAt = getReverseTickedMilliseconds(log.rowKey);
+    // The actor is null once their account is gone, as the schema keeps it, except AutoMod, which no account holds
+    const actorUserId = idMap.rewrite(log.actorUserId);
     return {
-      actorUserId: idMap.rewrite(log.actorUserId),
+      actorUserId: actorUserId === AUTOMOD_USER_ID || parents.userIds.has(actorUserId) ? actorUserId : null,
       createdAt,
       deletedAt: null,
       durationMs: log.durationMs ?? null,

@@ -7,12 +7,15 @@ describe(rewriteOldIds, () => {
   const unmappedOldId = "0196a2e4-aaaa-4bbb-8ccc-dddddddddddd";
   const oldIdNewIdMap = new Map([[oldId, newId]]);
 
-  test("rewrites a nested UUID inside a JSON column, and leaves an unmapped one as it is", () => {
+  // An unmapped UUIDv4 belongs to no row, such as a file's or a poll option's, and every one is a UUIDv7 now
+  test("rewrites a nested UUID inside a JSON column, and gives an unmapped UUIDv4 the version 7 digit", () => {
     expect.hasAssertions();
 
     const json = JSON.stringify({ files: [{ id: oldId, owner: unmappedOldId }] });
 
-    expect(rewriteOldIds(json, oldIdNewIdMap)).toBe(JSON.stringify({ files: [{ id: newId, owner: unmappedOldId }] }));
+    expect(rewriteOldIds(json, oldIdNewIdMap)).toBe(
+      JSON.stringify({ files: [{ id: newId, owner: "0196a2e4-aaaa-7bbb-8ccc-dddddddddddd" }] }),
+    );
   });
 
   test("replaces only a whole token, never a UUID inside a longer one", () => {

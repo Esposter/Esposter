@@ -18,7 +18,8 @@ const legacySurveyResponseSchema = z.object({
 });
 
 // The SurveyResponses table: partitioned by the survey's resource, the answer kept whole as its JSON model.
-// It names its participant by the participant's token, which is written as the hash the participant's row was given; an answer whose participant is gone is left out
+// It names its participant by the participant's token, which is written as the hash the participant's row was given; an answer whose participant is gone is left out.
+// An Anonymous answer names none and is kept
 export const surveyResponseTableMapper: TableMapper = {
   azureTable: LegacyAzureTable.SurveyResponses,
   coreTable: getTableName(surveyResponsesInResource),
@@ -26,7 +27,12 @@ export const surveyResponseTableMapper: TableMapper = {
   toRow: (entity, { idMap, parents, timestamp }) => {
     const response = legacySurveyResponseSchema.parse(entity);
     const resourceId = idMap.rewrite(response.partitionKey);
-    if (!parents.resourceIds.has(resourceId) || idMap.reissuedTokenHashOf(response.participantToken) === undefined)
+    // An Anonymous response names no participant, and keeps the empty hash the schema gives it
+    const isAnonymous = response.participantToken === "";
+    if (
+      !parents.resourceIds.has(resourceId) ||
+      (!isAnonymous && idMap.reissuedTokenHashOf(response.participantToken) === undefined)
+    )
       return undefined;
 
     const createdAt = timestamp?.getTime() ?? Date.now();
@@ -39,11 +45,9 @@ export const surveyResponseTableMapper: TableMapper = {
       model: JSON.stringify(response.model ?? {}),
       modelVersion: response.modelVersion,
       pageNo: response.pageNo,
-      participantTokenHash: requireReissuedTokenHash(
-        idMap,
-        response.participantToken,
-        getTableName(surveyResponsesInResource),
-      ),
+      participantTokenHash: isAnonymous
+        ? ""
+        : requireReissuedTokenHash(idMap, response.participantToken, getTableName(surveyResponsesInResource)),
       resourceId,
       updatedAt: createdAt,
     };

@@ -140,7 +140,7 @@ describe(buildRoomImport, () => {
     ]);
   });
 
-  test("gives a poll's options new UUIDv7 ids, with each vote following its option", () => {
+  test("gives a poll's options UUIDv7 ids, with each vote following its option", () => {
     expect.hasAssertions();
 
     const OPTION_OLD_ID = "0196a2e4-cccc-4ddd-8eee-ffffffffffff";

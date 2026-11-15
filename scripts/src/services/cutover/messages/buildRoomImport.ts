@@ -4,9 +4,9 @@ import type { LegacyMessageEmoji } from "#src/models/cutover/LegacyMessageEmoji"
 import type { TableParents } from "#src/models/cutover/TableParents";
 import type { RoomImport } from "@esposter/db-schema";
 
-import { rewritePollOptionIds } from "#src/services/cutover/messages/rewritePollOptionIds";
 import { getReverseTickedMilliseconds } from "#src/services/cutover/tables/getReverseTickedMilliseconds";
-import { fileEntitySchema, MessageType } from "@esposter/db-schema";
+import { parseMachineJson } from "#src/services/shared/parseMachineJson";
+import { fileEntitySchema } from "@esposter/db-schema";
 import { z } from "zod";
 
 export interface RoomImportSource {
@@ -23,7 +23,7 @@ export interface RoomImportSource {
 // A message is written under the number its row key was given, and a reply, a reaction or a scheduled reply names its message by that number.
 // A reply whose root was never numbered is a plain message, as the schema says.
 // A message whose sender is gone keeps its row with no author, as the schema has it, so the replies to it keep their root.
-// A poll's option ids are minted again as UUIDv7s, with its votes following them
+// A file's id is rewritten with the rest of its entry, the way its blob's key is, so the two still pair up
 export const buildRoomImport = ({
   emojis,
   getNumber,
@@ -41,21 +41,20 @@ export const buildRoomImport = ({
 
     const createdAt = new Date(getReverseTickedMilliseconds(message.rowKey));
     const { appUser } = message;
-    const text = idMap.rewrite(message.message ?? "");
     const appUserId = appUser ? idMap.rewrite(appUser.id) : null;
     return [
       {
         appUserId: appUserId && parents.appUserIds.has(appUserId) ? appUserId : null,
         appUserImage: appUser?.image ?? "",
         createdAt,
-        files: z.array(fileEntitySchema).parse(message.files ?? []),
+        files: z.array(fileEntitySchema).parse(parseMachineJson(idMap.rewrite(JSON.stringify(message.files ?? [])))),
         id,
         isEdited: message.isEdited ?? false,
         isForward: message.isForward ?? false,
         isPinned: message.isPinned ?? false,
         linkPreviewResponse: message.linkPreviewResponse ?? null,
         mentions: (message.mentions ?? []).map((mention) => idMap.rewrite(mention)),
-        message: message.type === MessageType.Poll ? rewritePollOptionIds(text, createdAt) : text,
+        message: idMap.rewrite(message.message ?? ""),
         replyToId: message.replyRowKey === undefined ? null : (getNumber(message.replyRowKey) ?? null),
         senderName: appUser?.name ?? null,
         type: message.type,
