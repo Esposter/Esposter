@@ -10,7 +10,7 @@ import { getMathExpressionScalarCompute } from "#src/services/compiler/getMathEx
 import { MathExpressionBitwiseAbsorptionMap } from "#src/services/compiler/MathExpressionBitwiseAbsorptionMap";
 
 export const compileBinary = (
-  node: Extract<MathExpressionNode, { type: MathExpressionNodeType.Binary }>,
+  node: Extract<MathExpressionNode, { type: typeof MathExpressionNodeType.Binary }>,
   context: MathExpressionCompileContext,
 ): MathExpressionCompiled => {
   const { left, name, right } = node;

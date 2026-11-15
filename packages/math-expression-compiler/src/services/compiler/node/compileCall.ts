@@ -12,7 +12,7 @@ import { matchMathExpressionSignature } from "#src/services/shared/matchMathExpr
 // A call of one or two arguments hands its values straight to its function, and a longer call gathers them in a loop.
 // The signature a call takes is the one its argument kinds match, the same one the parser checked it against
 export const compileCall = (
-  node: Extract<MathExpressionNode, { type: MathExpressionNodeType.Call }>,
+  node: Extract<MathExpressionNode, { type: typeof MathExpressionNodeType.Call }>,
   context: MathExpressionCompileContext,
 ): MathExpressionCompiled => {
   const signatures = getMathExpressionSignatures(node.name);

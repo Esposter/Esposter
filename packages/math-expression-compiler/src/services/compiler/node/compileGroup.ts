@@ -5,6 +5,6 @@ import type { MathExpressionNodeType } from "#src/models/shared/MathExpressionNo
 
 // A parenthesised group is its operand
 export const compileGroup = (
-  node: Extract<MathExpressionNode, { type: MathExpressionNodeType.Group }>,
+  node: Extract<MathExpressionNode, { type: typeof MathExpressionNodeType.Group }>,
   context: MathExpressionCompileContext,
 ): MathExpressionCompiled => context.compile(node.operand);

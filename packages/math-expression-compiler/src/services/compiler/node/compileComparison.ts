@@ -8,7 +8,7 @@ import type { MathExpressionNodeType } from "#src/models/shared/MathExpressionNo
 import { getMathExpressionScalarCompute } from "#src/services/compiler/getMathExpressionScalarCompute";
 
 export const compileComparison = (
-  node: Extract<MathExpressionNode, { type: MathExpressionNodeType.Comparison }>,
+  node: Extract<MathExpressionNode, { type: typeof MathExpressionNodeType.Comparison }>,
   context: MathExpressionCompileContext,
 ): MathExpressionCompiled => {
   const compiledOperands = node.operands.map((operand) => context.compile(operand));

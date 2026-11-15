@@ -6,7 +6,7 @@ import type { MathExpressionNodeType } from "#src/models/shared/MathExpressionNo
 import { getMathExpressionConstant } from "#src/services/compiler/getMathExpressionConstant";
 
 export const compileName = (
-  node: Extract<MathExpressionNode, { type: MathExpressionNodeType.Name }>,
+  node: Extract<MathExpressionNode, { type: typeof MathExpressionNodeType.Name }>,
   context: MathExpressionCompileContext,
 ): MathExpressionCompiled => {
   // An assigned name reads the slot, which starts at its outer value, so it reads that until its assignment runs

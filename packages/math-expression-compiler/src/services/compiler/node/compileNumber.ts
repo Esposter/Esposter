@@ -4,7 +4,7 @@ import type { MathExpressionNodeType } from "#src/models/shared/MathExpressionNo
 
 // A number literal is a constant of its value
 export const compileNumber = (
-  node: Extract<MathExpressionNode, { type: MathExpressionNodeType.Number }>,
+  node: Extract<MathExpressionNode, { type: typeof MathExpressionNodeType.Number }>,
 ): MathExpressionCompiled => {
   const { value } = node;
   return { evaluate: () => value, isConstant: true };

@@ -5,7 +5,7 @@ import type { MathExpressionNodeType } from "#src/models/shared/MathExpressionNo
 
 // An assignment stores its value in the slot of its name, and yields the value
 export const compileAssignment = (
-  node: Extract<MathExpressionNode, { type: MathExpressionNodeType.Assignment }>,
+  node: Extract<MathExpressionNode, { type: typeof MathExpressionNodeType.Assignment }>,
   context: MathExpressionCompileContext,
 ): MathExpressionCompiled => {
   const slot = context.assignedSlots.get(node.name) ?? 0;

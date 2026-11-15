@@ -6,7 +6,7 @@ import type { MathExpressionNodeType } from "#src/models/shared/MathExpressionNo
 import { getMathExpressionScalarCompute } from "#src/services/compiler/getMathExpressionScalarCompute";
 
 export const compileUnary = (
-  node: Extract<MathExpressionNode, { type: MathExpressionNodeType.Unary }>,
+  node: Extract<MathExpressionNode, { type: typeof MathExpressionNodeType.Unary }>,
   context: MathExpressionCompileContext,
 ): MathExpressionCompiled => {
   const compute = getMathExpressionScalarCompute(node.name, "computeUnary");

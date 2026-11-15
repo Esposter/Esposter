@@ -4,7 +4,7 @@ import type { MathExpressionNode } from "#src/models/shared/MathExpressionNode";
 import type { MathExpressionNodeType } from "#src/models/shared/MathExpressionNodeType";
 
 export const compilePercentage = (
-  node: Extract<MathExpressionNode, { type: MathExpressionNodeType.Percentage }>,
+  node: Extract<MathExpressionNode, { type: typeof MathExpressionNodeType.Percentage }>,
   context: MathExpressionCompileContext,
 ): MathExpressionCompiled => {
   const compiledOperand = context.compile(node.operand);

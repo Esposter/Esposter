@@ -9,7 +9,7 @@ import { toNumber } from "#src/services/shared/toNumber";
 import { exhaustiveGuard } from "@esposter/shared";
 
 export const compileLogical = (
-  node: Extract<MathExpressionNode, { type: MathExpressionNodeType.Logical }>,
+  node: Extract<MathExpressionNode, { type: typeof MathExpressionNodeType.Logical }>,
   context: MathExpressionCompileContext,
 ): MathExpressionCompiled => {
   const compiledLeft = context.compile(node.left);

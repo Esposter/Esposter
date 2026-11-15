@@ -7,7 +7,7 @@ import type { MathExpressionNodeType } from "#src/models/shared/MathExpressionNo
 import { checkIsTruthy } from "#src/services/shared/checkIsTruthy";
 
 export const compileConditional = (
-  node: Extract<MathExpressionNode, { type: MathExpressionNodeType.Conditional }>,
+  node: Extract<MathExpressionNode, { type: typeof MathExpressionNodeType.Conditional }>,
   context: MathExpressionCompileContext,
 ): MathExpressionCompiled => {
   const compiledCondition = context.compile(node.condition);
