@@ -64,10 +64,13 @@ export class CallObject extends RealtimeObject<CallEvent> implements CallObjectR
   }
 
   // A revoked session's sockets close first, so the leave that follows finds none left to close.
-  // The connection then leaves as a leave does, and its RealtimeKit participant is dropped so its media stops
-  async closeSession(sessionId: string): Promise<void> {
+  // The connection then leaves as a leave does, and its RealtimeKit participant is dropped so its media stops. The
+  // Leave is handed back, so the departure that ends a room call writes its summary as every other departure does
+  async closeSession(sessionId: string): Promise<CallLeave | null> {
     this.closeRevokedSession(sessionId);
-    if (this.#removeParticipant(this.#callSessionId, sessionId)) await this.removeConnection({ sessionId });
+    const leave = this.#removeParticipant(this.#callSessionId, sessionId);
+    if (leave) await this.removeConnection({ sessionId });
+    return leave;
   }
 
   dismissKnocker({ callSessionId, knockerSessionId }: { callSessionId: string; knockerSessionId: string }): boolean {

@@ -9,8 +9,8 @@ import type { PublishSource } from "#src/models/message/call/PublishSource";
 // State (admission, joined, knocking) says so by its return value rather than throwing
 export interface CallObjectRpc {
   admitKnocker: (input: { callSessionId: string; knockerSessionId: string }) => boolean;
-  // A revoked session's sockets on this call, closed, and its connections left as a leave would
-  closeSession: (sessionId: string) => Promise<void>;
+  // A revoked session's sockets on this call, closed, and its connections left as a leave would, with that leave
+  closeSession: (sessionId: string) => Promise<CallLeave | null>;
   dismissKnocker: (input: { callSessionId: string; knockerSessionId: string }) => boolean;
   // The departures of every connection a user holds in the call, each kicked at RealtimeKit as it leaves
   evictUser: (input: { callSessionId: string; userId: string }) => Promise<CallLeave[]>;

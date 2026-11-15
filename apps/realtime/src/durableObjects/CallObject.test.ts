@@ -143,12 +143,13 @@ describe(CallObject, () => {
     state.ctx.acceptWebSocket(remainerSocket, [`user:${remainer.userId}`, `session:${remainer.id}`]);
     fetchMock.mockClear();
 
-    await callObject.closeSession(revoked.id);
+    const leave = await callObject.closeSession(revoked.id);
 
     const appUrl = `${REALTIMEKIT_API_ORIGIN}/accounts/${CLOUDFLARE_ACCOUNT_ID}/realtime/kit/${credentials.appId}`;
     expect(revokedSocket.close).toHaveBeenCalledExactlyOnceWith(1008, "Session revoked");
     expect(readFrames(remainerSocket)).toStrictEqual([{ data: { callSessionId, id: revoked.id }, type: "leaveCall" }]);
     expect(callObject.readAccess({ sessionId: revoked.id }).isJoined).toBe(false);
+    expect(leave).toStrictEqual({ callDurationSeconds: null, sessionId: revoked.id, userId: revoked.userId });
     expect(fetchMock.mock.calls.map(([input]) => input)).toStrictEqual([
       `${appUrl}/meetings/${meetingId}/active-session/kick`,
     ]);

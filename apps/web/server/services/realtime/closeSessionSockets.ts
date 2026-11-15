@@ -3,6 +3,7 @@ import type { Database } from "@esposter/db-schema";
 import { useCallObject } from "#server/composables/realtime/useCallObject";
 import { useRoomObject } from "#server/composables/realtime/useRoomObject";
 import { useUserObject } from "#server/composables/realtime/useUserObject";
+import { writeCallSummary } from "#server/services/message/call/writeCallSummary";
 import { getResultAsync, noop } from "@esposter/shared";
 
 // A revoked session keeps no socket open on any object the person reaches: their own, each room they are a member of
@@ -30,9 +31,12 @@ export const closeSessionSockets = async (db: Database, userId: string, sessionI
         }),
       ),
       ...callSessions.map(({ id }) =>
-        getResultAsync(() => useCallObject(id).closeSession(sessionId)).match(noop, (error) => {
-          console.error("Session sockets failed to close on a call", { callSessionId: id, error, sessionId });
-        }),
+        getResultAsync(() => useCallObject(id).closeSession(sessionId)).match(
+          (leave) => (leave ? writeCallSummary(db, id, leave) : undefined),
+          (error) => {
+            console.error("Session sockets failed to close on a call", { callSessionId: id, error, sessionId });
+          },
+        ),
       ),
     ]),
   );
