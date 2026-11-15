@@ -3,3 +3,5 @@
 export const TOPIC_COALESCE_MS = 250;
 // The storage key prefix of a topic's subscribers, one key per user watching it
 export const TOPIC_SUBSCRIBER_KEY_PREFIX = "subscriber:";
+// The storage key prefix of a watch, one key per watch: the id of the tab that holds it and the topic it watches
+export const WATCHED_TOPIC_KEY_PREFIX = "watchedTopic:";

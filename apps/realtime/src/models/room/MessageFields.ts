@@ -7,7 +7,6 @@ export interface MessageFields {
   files?: FileEntity[];
   isForward?: boolean;
   linkPreviewResponse?: LinkPreviewResponse | null;
-  mentions?: string[];
   message: string;
   replyToId?: number;
   senderName?: string;

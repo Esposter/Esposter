@@ -193,6 +193,7 @@ describe(CallObject, () => {
       new Request("http://localhost", {
         headers: {
           [SOCKET_IDENTITY_HEADER.deviceId]: v7(),
+          [SOCKET_IDENTITY_HEADER.sessionExpiresAt]: String(Number.MAX_SAFE_INTEGER),
           [SOCKET_IDENTITY_HEADER.sessionId]: v7(),
           [SOCKET_IDENTITY_HEADER.userId]: v7(),
           Upgrade: "websocket",

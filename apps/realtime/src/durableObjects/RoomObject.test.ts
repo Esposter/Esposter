@@ -1,4 +1,4 @@
-import type { RoomObjectRpc, UserObjectRpc } from "@esposter/db-schema";
+import type { PageCursor, RoomObjectRpc, RoomReaction, UserObjectRpc } from "@esposter/db-schema";
 import type { Mock } from "vitest";
 
 import { RoomObject } from "#src/durableObjects/RoomObject";
@@ -7,17 +7,21 @@ import {
   createSocket,
   readFrames,
 } from "#src/services/durableObject/createMockObjectState.test";
-import { ROOM_ACTIVITY_DELAY_MS, ROOM_MEMBER_REMOVED_CODE } from "#src/services/room/constants";
+import { ROOM_ACTIVITY_DELAY_MS, ROOM_MEMBER_REMOVED_CODE, WRITE_RETRY_DELAY_MS } from "#src/services/room/constants";
 import { createUser } from "#src/services/shared/createUser.test";
+import { toMergedPage } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import {
   AppNotificationType,
   appUsersInMessage,
+  createPageInputSchema,
+  getRoomSearchPageSort,
   MessageType,
   RoomPermission,
   roomRolesInMessage,
   roomsInMessage,
   SOCKET_IDENTITY_HEADER,
+  START_PAGE_CURSOR,
   threadFollowsInMessage,
   usersInAuth,
   usersToRoomsInMessage,
@@ -32,13 +36,22 @@ type UserStub = Record<
   | "addSentMessage"
   | "broadcastEvent"
   | "removeScheduledMessage"
-  | "removeSentMessage"
-  | "roomActivity",
+  | "removeSentMessages"
+  | "removeSentMessagesInRoom"
+  | "roomActivity"
+  | "updateUserToRoom",
   Mock
 >;
 
 // The Response the object builds for an upgrade. The test reads no part of it, so the stub builds nothing
 const ResponseStub = function () {};
+
+// A message whose text mentions one member, as the editor writes a mention
+const mentioning = (mentionedUserId: string) =>
+  `<p><span data-type="mention" data-id="${mentionedUserId}">@member</span></p>`;
+
+// A reaction's key, which is how a reaction is paged
+const toReactionKey = ({ emojiTag, messageId }: RoomReaction) => ({ emojiTag, messageId });
 
 // A member's status as the room is sent it when the member comes online or goes offline
 const createStatus = (statusUserId: string, isConnected: boolean) => ({
@@ -51,6 +64,38 @@ const createStatus = (statusUserId: string, isConnected: boolean) => ({
   updatedAt: new Date(0),
   userId: statusUserId,
 });
+
+// A search read as the web merges it: each room answers its matches after the cursor, and the merged page keeps `limit`
+const readSearchPage = (
+  rooms: { object: RoomObjectRpc; roomId: string }[],
+  query: string,
+  cursor: PageCursor,
+  limit: number,
+) =>
+  toMergedPage(
+    rooms.map((room) =>
+      room.object
+        .searchMessages({ cursor, filters: [], isCounted: false, limit: limit + 1, query })
+        .messages.map((message) => ({ ...message, roomId: room.roomId })),
+    ),
+    getRoomSearchPageSort(query),
+    cursor,
+    limit,
+  );
+
+// Every match of a search, read a page at a time from the cursor each page answered
+const readSearchIds = (rooms: { object: RoomObjectRpc; roomId: string }[], query: string, limit: number) => {
+  const sort = getRoomSearchPageSort(query);
+  const matches: { id: number; roomId: string }[] = [];
+  let encodedCursor = "";
+  do {
+    const cursor = createPageInputSchema(sort).parse({ cursor: encodedCursor, limit }).cursor;
+    const page = readSearchPage(rooms, query, cursor, limit);
+    matches.push(...page.items.map(({ id, roomId: matchRoomId }) => ({ id, roomId: matchRoomId })));
+    encodedCursor = page.nextCursor;
+  } while (encodedCursor);
+  return matches;
+};
 
 describe(RoomObject, () => {
   let mockDatabase: Awaited<ReturnType<typeof createMockDb>>;
@@ -65,8 +110,10 @@ describe(RoomObject, () => {
       addSentMessage: vi.fn<UserObjectRpc["addSentMessage"]>(),
       broadcastEvent: vi.fn<UserObjectRpc["broadcastEvent"]>(),
       removeScheduledMessage: vi.fn<UserObjectRpc["removeScheduledMessage"]>(),
-      removeSentMessage: vi.fn<UserObjectRpc["removeSentMessage"]>(),
+      removeSentMessages: vi.fn<UserObjectRpc["removeSentMessages"]>(),
+      removeSentMessagesInRoom: vi.fn<UserObjectRpc["removeSentMessagesInRoom"]>(),
       roomActivity: vi.fn<UserObjectRpc["roomActivity"]>(),
+      updateUserToRoom: vi.fn<UserObjectRpc["updateUserToRoom"]>(),
     };
     userStubs.set(userId, stub);
     return stub;
@@ -80,7 +127,8 @@ describe(RoomObject, () => {
   const otherDeviceId = v7();
   const actor = { deviceId, userId };
   const otherActor = { deviceId: otherDeviceId, userId: otherUserId };
-  const searchAll = { filters: [], limit: 10, offset: 0 };
+  const newestPage = { cursor: START_PAGE_CURSOR, limit: 10 };
+  const searchAll = { cursor: START_PAGE_CURSOR, filters: [], isCounted: true, limit: 10 };
 
   let roomId: string;
   let environment: Cloudflare.Env;
@@ -93,6 +141,13 @@ describe(RoomObject, () => {
 
   const sendMessage = (object: RoomObjectRpc, message: string, sender = actor) =>
     object.createMessage({ message, type: MessageType.Message }, sender);
+  const readMentionCount = async (mentionedUserId: string) => {
+    const [row] = await mockDatabase.db
+      .select({ mentionCount: usersToRoomsInMessage.mentionCount })
+      .from(usersToRoomsInMessage)
+      .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, mentionedUserId)));
+    return row?.mentionCount;
+  };
 
   beforeAll(async () => {
     mockDatabase = await createMockDb();
@@ -144,19 +199,32 @@ describe(RoomObject, () => {
     expect.hasAssertions();
 
     const appUserId = v7();
-    await mockDatabase.db
-      .insert(appUsersInMessage)
-      .values({ id: appUserId, image: "https://example.com/hook.png", name: "hook" });
+    await mockDatabase.db.insert(appUsersInMessage).values({ id: appUserId, image: "https://example.com/hook.png" });
     const { object } = createRoomObject();
     const message = await object.createWebhookMessage({
       appUserId,
+      appUserImage: "",
       deliveryId: v7(),
       message: "from a hook",
       senderName: "hook",
     });
 
     expect(message.appUserImage).toBe("https://example.com/hook.png");
-    expect(object.readMessages({ limit: 10 })).toStrictEqual([message]);
+    expect(object.readMessages(newestPage)).toStrictEqual([message]);
+  });
+
+  test("a webhook message keeps the avatar its push names, over its identity's image", async () => {
+    expect.hasAssertions();
+
+    const { object } = createRoomObject();
+    await object.createWebhookMessage({
+      appUserId: v7(),
+      appUserImage: "https://example.com/avatar.png",
+      deliveryId: v7(),
+      message: "from a hook",
+    });
+
+    expect(object.readMessages(newestPage)[0]?.appUserImage).toBe("https://example.com/avatar.png");
   });
 
   test("a webhook message is notified once, however many times its delivery is made", async () => {
@@ -165,9 +233,9 @@ describe(RoomObject, () => {
     const queue = { send: vi.fn<(message: unknown) => Promise<void>>(() => Promise.resolve()) };
     environment = { ...environment, PROCESS_NOTIFICATION_QUEUE: queue } as unknown as Cloudflare.Env;
     const appUserId = v7();
-    await mockDatabase.db.insert(appUsersInMessage).values({ id: appUserId, image: "", name: "hook" });
+    await mockDatabase.db.insert(appUsersInMessage).values({ id: appUserId, image: "" });
     const { object } = createRoomObject();
-    const input = { appUserId, deliveryId: v7(), message: "from a hook", senderName: "hook" };
+    const input = { appUserId, appUserImage: "", deliveryId: v7(), message: "from a hook", senderName: "hook" };
     const message = await object.createWebhookMessage(input);
     await object.createWebhookMessage(input);
 
@@ -187,7 +255,7 @@ describe(RoomObject, () => {
     state.ctx.acceptWebSocket(viewerSocket, [`user:${otherUserId}`, `device:${otherDeviceId}`]);
     const message = await sendMessage(object, "erased soon");
 
-    await object.deleteUserMessages(userId);
+    await object.deleteUserMessages({ limit: 10, userId });
 
     const tombstone = readFrames(viewerSocket).at(-1);
     expect(tombstone.type).toBe("deleteMessage");
@@ -213,6 +281,7 @@ describe(RoomObject, () => {
     const request = new Request(`https://room.example/ws/room/${roomId}?after=${first.id}`, {
       headers: {
         [SOCKET_IDENTITY_HEADER.deviceId]: deviceId,
+        [SOCKET_IDENTITY_HEADER.sessionExpiresAt]: String(Number.MAX_SAFE_INTEGER),
         [SOCKET_IDENTITY_HEADER.sessionId]: v7(),
         [SOCKET_IDENTITY_HEADER.userId]: userId,
         Upgrade: "websocket",
@@ -230,9 +299,12 @@ describe(RoomObject, () => {
     const { object, state } = createRoomObject();
     const message = await sendMessage(object, "hello");
 
-    expect(object.searchMessages({ ...searchAll, query: "hello" })).toStrictEqual({ count: 1, messages: [message] });
+    expect(object.searchMessages({ ...searchAll, query: "hello" })).toStrictEqual({
+      count: 1,
+      messages: [{ ...message, rank: 1 }],
+    });
 
-    object.updateMessage({ id: message.id, mentions: [], message: "goodbye" }, actor);
+    object.updateMessage({ id: message.id, message: "goodbye" }, actor);
 
     expect(object.searchMessages({ ...searchAll, query: "hello" }).count).toBe(0);
     expect(object.searchMessages({ ...searchAll, query: "goodbye" }).count).toBe(1);
@@ -293,6 +365,68 @@ describe(RoomObject, () => {
     );
   });
 
+  test("a pin and a vote each move the message's updatedAt, so a socket that reconnects finds the change", async () => {
+    expect.hasAssertions();
+
+    const { object } = createRoomObject();
+    const optionId = v7();
+    const poll = await object.createMessage(
+      {
+        message: JSON.stringify({ options: [{ id: optionId, label: "label" }], question: "question", votes: {} }),
+        type: MessageType.Poll,
+      },
+      actor,
+    );
+
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(ROOM_ACTIVITY_DELAY_MS));
+    expect(object.pinMessage(poll.id, actor)?.updatedAt).toStrictEqual(new Date(ROOM_ACTIVITY_DELAY_MS));
+
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(ROOM_ACTIVITY_DELAY_MS * 2));
+    expect(object.votePoll({ id: poll.id, optionId }, otherActor)?.updatedAt).toStrictEqual(
+      new Date(ROOM_ACTIVITY_DELAY_MS * 2),
+    );
+  });
+
+  test("an edit sets the message's editedAt to the edit's time, and a message never edited has none", async () => {
+    expect.hasAssertions();
+
+    const { object } = createRoomObject();
+    const message = await sendMessage(object, "hello");
+    expect(message.editedAt).toBeNull();
+
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(ROOM_ACTIVITY_DELAY_MS));
+    const editedMessage = object.updateMessage({ id: message.id, message: "edited" }, actor);
+    expect(editedMessage?.editedAt).toStrictEqual(new Date(ROOM_ACTIVITY_DELAY_MS));
+    expect(editedMessage?.updatedAt).toStrictEqual(new Date(ROOM_ACTIVITY_DELAY_MS));
+  });
+
+  test("an edit names the members its new text names, when its caller names none", async () => {
+    expect.hasAssertions();
+
+    const { object } = createRoomObject();
+    const message = await sendMessage(object, "hello");
+
+    object.updateMessage({ id: message.id, message: mentioning(otherUserId) }, actor);
+
+    expect(object.readMessages(newestPage)[0]?.mentions).toStrictEqual([otherUserId]);
+  });
+
+  test("an edit of a webhook message names nobody, as its send names nobody", async () => {
+    expect.hasAssertions();
+
+    const { object } = createRoomObject();
+    const message = await object.createWebhookMessage({
+      appUserId: v7(),
+      appUserImage: "",
+      deliveryId: v7(),
+      message: "from a hook",
+    });
+
+    object.updateMessage({ id: message.id, message: mentioning(otherUserId) }, actor);
+
+    expect(object.readMessages(newestPage)[0]?.mentions).toStrictEqual([]);
+  });
+
   test("a scheduled message is sent once when it comes due, and the alarm is armed for the one after", async () => {
     expect.hasAssertions();
 
@@ -311,11 +445,40 @@ describe(RoomObject, () => {
     await object.alarm();
 
     expect(
-      object.readMessages({ limit: 10 }).map(({ message, userId: sender }) => ({ message, userId: sender })),
+      object.readMessages(newestPage).map(({ message, userId: sender }) => ({ message, userId: sender })),
     ).toStrictEqual([{ message: "due", userId }]);
-    expect(object.readScheduledMessages(userId)).toStrictEqual([later]);
+    expect(object.readScheduledMessages({ ids: [later.id], userId })).toStrictEqual([later]);
     expect(getUserStub(userId).removeScheduledMessage).toHaveBeenCalledExactlyOnceWith(due.id);
     await expect(state.ctx.storage.getAlarm()).resolves.toBe(later.runAt.getTime());
+  });
+
+  test("a scheduled message names the members its text mentions, and counts each one's mention as a live send does", async () => {
+    expect.hasAssertions();
+
+    const { object } = createRoomObject();
+    const scheduledMessage = await object.createScheduledMessage(
+      { id: v7(), message: mentioning(otherUserId), runAt: new Date(ROOM_ACTIVITY_DELAY_MS) },
+      actor,
+    );
+
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(scheduledMessage.runAt.getTime()));
+    await object.alarm();
+
+    expect(object.readMessages(newestPage)[0]?.mentions).toStrictEqual([otherUserId]);
+    await expect(readMentionCount(otherUserId)).resolves.toBe(1);
+    expect(getUserStub(otherUserId).updateUserToRoom).toHaveBeenCalledTimes(1);
+    expect(getUserStub(otherUserId).updateUserToRoom.mock.lastCall?.[0]?.mentionCount).toBe(1);
+  });
+
+  test("a live message that mentions a member counts it for them, and never for its sender", async () => {
+    expect.hasAssertions();
+
+    const { object } = createRoomObject();
+    await sendMessage(object, mentioning(otherUserId));
+    await sendMessage(object, mentioning(userId));
+
+    await expect(readMentionCount(otherUserId)).resolves.toBe(1);
+    await expect(readMentionCount(userId)).resolves.toBe(0);
   });
 
   test("a scheduled reply follows its thread for its sender and for the root's author", async () => {
@@ -355,7 +518,7 @@ describe(RoomObject, () => {
     vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(reply.runAt.getTime()));
     await object.alarm();
 
-    const sentReply = takeOne(object.readMessages({ limit: 1 }));
+    const sentReply = takeOne(object.readMessages({ cursor: START_PAGE_CURSOR, limit: 1 }));
     expect(queue.send).toHaveBeenCalledExactlyOnceWith({
       message: { id: sentReply.id, message: "reply", roomId, userId },
       threadRootId: root.id,
@@ -378,8 +541,8 @@ describe(RoomObject, () => {
     vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(scheduledMessage.runAt.getTime()));
     await object.alarm();
 
-    expect(object.readMessages({ limit: 10 })).toStrictEqual([]);
-    expect(object.readScheduledMessages(userId)).toStrictEqual([]);
+    expect(object.readMessages(newestPage)).toStrictEqual([]);
+    expect(object.readScheduledMessages({ ids: [scheduledMessage.id], userId })).toStrictEqual([]);
     expect(getUserStub(userId).removeScheduledMessage).toHaveBeenCalledExactlyOnceWith(scheduledMessage.id);
   });
 
@@ -399,8 +562,8 @@ describe(RoomObject, () => {
     vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(scheduledMessage.runAt.getTime()));
     await object.alarm();
 
-    expect(object.readMessages({ limit: 10 })).toStrictEqual([]);
-    expect(object.readScheduledMessages(userId)).toStrictEqual([]);
+    expect(object.readMessages(newestPage)).toStrictEqual([]);
+    expect(object.readScheduledMessages({ ids: [scheduledMessage.id], userId })).toStrictEqual([]);
   });
 
   test("a scheduled message is dropped, not sent, when its sender no longer holds the permission to send", async () => {
@@ -417,11 +580,11 @@ describe(RoomObject, () => {
     vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(scheduledMessage.runAt.getTime()));
     await object.alarm();
 
-    expect(object.readMessages({ limit: 10 })).toStrictEqual([]);
-    expect(object.readScheduledMessages(otherUserId)).toStrictEqual([]);
+    expect(object.readMessages(newestPage)).toStrictEqual([]);
+    expect(object.readScheduledMessages({ ids: [scheduledMessage.id], userId: otherUserId })).toStrictEqual([]);
   });
 
-  test("the room-activity wave reaches only the members online, once per window, and writes the room's updatedAt", async () => {
+  test("the room-activity wave reaches only the members online, once per window, and writes the room's lastMessageAt", async () => {
     expect.hasAssertions();
 
     const { object, state } = createRoomObject();
@@ -442,10 +605,62 @@ describe(RoomObject, () => {
     expect(userStubs.has(offlineUserId)).toBe(false);
 
     const [room] = await mockDatabase.db
-      .select({ updatedAt: roomsInMessage.updatedAt })
+      .select({ lastMessageAt: roomsInMessage.lastMessageAt })
       .from(roomsInMessage)
       .where(eq(roomsInMessage.id, roomId));
-    expect(room?.updatedAt).toStrictEqual(last.createdAt);
+    expect(room?.lastMessageAt).toStrictEqual(last.createdAt);
+  });
+
+  test("a message sent while the wave writes owes a wave of its own", async () => {
+    expect.hasAssertions();
+
+    const writeStarted = Promise.withResolvers<void>();
+    const writeReleased = Promise.withResolvers<void>();
+    // The wave's write to the room row is held in flight, so a send lands between the wave being taken and its write
+    const holdStatement = (statement: D1PreparedStatement): D1PreparedStatement =>
+      new Proxy(statement, {
+        get: (target, key) => {
+          if (key === "bind") return (...values: unknown[]) => holdStatement(target.bind(...values));
+          if (key === "run")
+            return async () => {
+              writeStarted.resolve();
+              await writeReleased.promise;
+              return target.run();
+            };
+          const value: unknown = Reflect.get(target, key);
+          return typeof value === "function" ? value.bind(target) : value;
+        },
+      });
+    const core = mockDatabase.coreDatabase;
+    environment = {
+      ...environment,
+      CORE: new Proxy(core, {
+        get: (target, key) => {
+          if (key !== "prepare") {
+            const value: unknown = Reflect.get(target, key);
+            return typeof value === "function" ? value.bind(target) : value;
+          }
+          return (query: string) =>
+            query.startsWith('update "message_rooms"') ? holdStatement(target.prepare(query)) : target.prepare(query);
+        },
+      }),
+    };
+    const { object } = createRoomObject();
+    object.attachMember(userId, createStatus(userId, true));
+    const first = await sendMessage(object, "first");
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(ROOM_ACTIVITY_DELAY_MS));
+    const wave = object.alarm();
+    await writeStarted.promise;
+    const second = await sendMessage(object, "second");
+    writeReleased.resolve();
+    await wave;
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(ROOM_ACTIVITY_DELAY_MS * 2));
+    await object.alarm();
+
+    expect(vi.mocked(getUserStub(userId).roomActivity).mock.calls).toStrictEqual([
+      [roomId, first.createdAt],
+      [roomId, second.createdAt],
+    ]);
   });
 
   test("a room-list event reaches only the members online here, each through its own object", async () => {
@@ -460,7 +675,7 @@ describe(RoomObject, () => {
     expect(userStubs.has(otherUserId)).toBe(false);
   });
 
-  test("a read after a cursor is the live messages past it, oldest first, and a read with none is the newest first", async () => {
+  test("a read is the live messages after its cursor in the room's order, and a backward cursor reads the newer ones oldest first", async () => {
     expect.hasAssertions();
 
     const { object } = createRoomObject();
@@ -470,9 +685,18 @@ describe(RoomObject, () => {
     const third = await sendMessage(object, "third");
     await object.deleteMessage(deleted.id, actor);
 
-    expect(object.readMessages({ after: first.id, limit: 1 })).toStrictEqual([second]);
-    expect(object.readMessages({ after: first.id, limit: 10 })).toStrictEqual([second, third]);
-    expect(object.readMessages({ limit: 10 })).toStrictEqual([third, second, first]);
+    expect(object.readMessages(newestPage)).toStrictEqual([third, second, first]);
+    expect(object.readMessages({ cursor: { isBackward: false, values: [third.id] }, limit: 10 })).toStrictEqual([
+      second,
+      first,
+    ]);
+    expect(object.readMessages({ cursor: { isBackward: false, values: [second.id] }, limit: 1 })).toStrictEqual([
+      first,
+    ]);
+    expect(object.readMessages({ cursor: { isBackward: true, values: [first.id] }, limit: 10 })).toStrictEqual([
+      second,
+      third,
+    ]);
   });
 
   test("a thread is read back as its root and then its replies in the order they were sent, and a message outside it is left out", async () => {
@@ -494,22 +718,117 @@ describe(RoomObject, () => {
     expect(object.readThread(root.id)).toStrictEqual([root, firstReply, secondReply]);
   });
 
-  test("erasing a person's messages blanks what they said and leaves the rest, and their export pages by id", async () => {
+  test("erasing a person's messages is paged: each page blanks what they said, leaves their index, and continues after its last id", async () => {
     expect.hasAssertions();
 
     const { object } = createRoomObject();
     const first = await sendMessage(object, "first");
+    const second = await sendMessage(object, "second");
     const bystander = await sendMessage(object, "bystander", otherActor);
-    const last = await sendMessage(object, "last");
+    const third = await sendMessage(object, "third");
 
     expect(object.exportUserMessages({ limit: 1, userId })).toStrictEqual([first]);
-    expect(object.exportUserMessages({ after: first.id, limit: 1, userId })).toStrictEqual([last]);
+    expect(object.exportUserMessages({ after: first.id, limit: 1, userId })).toStrictEqual([second]);
 
-    await expect(object.deleteUserMessages(userId)).resolves.toStrictEqual([first, last]);
+    await expect(object.deleteUserMessages({ limit: 2, userId })).resolves.toStrictEqual([first, second]);
+    expect(getUserStub(userId).removeSentMessages).toHaveBeenCalledExactlyOnceWith({
+      messageIds: [first.id, second.id],
+      roomId,
+    });
+    // The page that ends the erase is short of its limit
+    await expect(object.deleteUserMessages({ after: second.id, limit: 2, userId })).resolves.toStrictEqual([third]);
+    expect(getUserStub(userId).removeSentMessages).toHaveBeenLastCalledWith({ messageIds: [third.id], roomId });
 
-    expect(object.readMessages({ limit: 10 })).toStrictEqual([bystander]);
+    expect(object.readMessages(newestPage)).toStrictEqual([bystander]);
     expect(object.searchMessages({ ...searchAll, query: "first" }).count).toBe(0);
-    expect(getUserStub(userId).removeSentMessage).toHaveBeenCalledTimes(2);
+  });
+
+  test("a person's reactions are read and erased a page at a time, in the order of their message and emoji", async () => {
+    expect.hasAssertions();
+
+    const { object } = createRoomObject();
+    const message = await sendMessage(object, "hello");
+    const otherMessage = await sendMessage(object, "again");
+    object.addReaction({ emojiTag: "a", messageId: message.id }, actor);
+    object.addReaction({ emojiTag: "b", messageId: message.id }, actor);
+    // Another reactor on the first emoji keeps its reaction when the person leaves it
+    object.addReaction({ emojiTag: "a", messageId: message.id }, otherActor);
+    object.addReaction({ emojiTag: "a", messageId: otherMessage.id }, actor);
+
+    expect(object.exportUserReactions({ limit: 2, userId }).map((reaction) => toReactionKey(reaction))).toStrictEqual([
+      { emojiTag: "a", messageId: message.id },
+      { emojiTag: "b", messageId: message.id },
+    ]);
+    expect(object.deleteUserReactions({ limit: 2, userId }).map((reaction) => toReactionKey(reaction))).toStrictEqual([
+      { emojiTag: "a", messageId: message.id },
+      { emojiTag: "b", messageId: message.id },
+    ]);
+    expect(
+      object
+        .deleteUserReactions({ after: { emojiTag: "b", messageId: message.id }, limit: 2, userId })
+        .map((reaction) => toReactionKey(reaction)),
+    ).toStrictEqual([{ emojiTag: "a", messageId: otherMessage.id }]);
+    expect(object.readReactions([message.id, otherMessage.id])).toStrictEqual([
+      { emojiTag: "a", messageId: message.id, userIds: [otherUserId] },
+    ]);
+  });
+
+  test("a search without text reads to its end across a page boundary, newest first, with the message times tied", async () => {
+    expect.hasAssertions();
+
+    const { object } = createRoomObject();
+    // Every message is sent at the same instant, so each page boundary falls inside a tie on time
+    const messages = [
+      await sendMessage(object, "first"),
+      await sendMessage(object, "second"),
+      await sendMessage(object, "third"),
+      await sendMessage(object, "fourth"),
+      await sendMessage(object, "fifth"),
+    ];
+
+    expect(readSearchIds([{ object, roomId }], "", 2)).toStrictEqual(
+      messages.toReversed().map(({ id }) => ({ id, roomId })),
+    );
+  });
+
+  test("a search with text reads to its end across page boundaries as one read does, and counts its matches on the first page", async () => {
+    expect.hasAssertions();
+
+    const { object } = createRoomObject();
+    await sendMessage(object, "tie tie tie");
+    await sendMessage(object, "tie");
+    await sendMessage(object, "tie tie");
+    await sendMessage(object, "tie tie tie tie");
+    await sendMessage(object, "other");
+
+    const whole = readSearchIds([{ object, roomId }], "tie", 10);
+    expect(whole).toHaveLength(4);
+    expect(readSearchIds([{ object, roomId }], "tie", 1)).toStrictEqual(whole);
+    expect(object.searchMessages({ ...searchAll, limit: 1, query: "tie" }).count).toBe(4);
+  });
+
+  test("a search with text across two rooms reads every match to its end, rooms tied on rank taking the room id's order", async () => {
+    expect.hasAssertions();
+
+    const { object } = createRoomObject();
+    const otherRoomId = v7();
+    const otherObject = new RoomObject(
+      createMockObjectState(otherRoomId).ctx as unknown as DurableObjectState,
+      environment,
+    );
+    await sendMessage(object, "tie");
+    await sendMessage(otherObject, "tie", otherActor);
+
+    // Each room ranks its one match first, so the two tie on rank, and the room id orders them
+    const matches = readSearchIds(
+      [
+        { object, roomId },
+        { object: otherObject, roomId: otherRoomId },
+      ],
+      "tie",
+      1,
+    );
+    expect(matches.map(({ roomId: matchRoomId }) => matchRoomId)).toStrictEqual([roomId, otherRoomId].toSorted());
   });
 
   test("deleting the room closes its sockets and clears its alarm", async () => {
@@ -520,10 +839,23 @@ describe(RoomObject, () => {
     state.ctx.acceptWebSocket(socket, [`user:${userId}`, `device:${deviceId}`]);
     await sendMessage(object, "hello");
 
-    await object.deleteAll();
+    await object.deleteAll(actor);
 
     expect(socket.close).toHaveBeenCalledExactlyOnceWith(1000, "Room deleted");
     await expect(state.ctx.storage.getAlarm()).resolves.toBeNull();
+  });
+
+  test("deleting the room takes its sent messages out of each sender's index", async () => {
+    expect.hasAssertions();
+
+    const { object } = createRoomObject();
+    await sendMessage(object, "hello");
+    await sendMessage(object, "reply", otherActor);
+
+    await object.deleteAll(actor);
+
+    expect(getUserStub(userId).removeSentMessagesInRoom).toHaveBeenCalledExactlyOnceWith(roomId);
+    expect(getUserStub(otherUserId).removeSentMessagesInRoom).toHaveBeenCalledExactlyOnceWith(roomId);
   });
 
   test("a message sent live is indexed in its sender's user object as sent, with its room and its time", async () => {
@@ -537,6 +869,37 @@ describe(RoomObject, () => {
       messageId: message.id,
       roomId,
     });
+  });
+
+  test("a sent message its sender's index refuses is written again from the alarm, once its retry is due", async () => {
+    expect.hasAssertions();
+
+    const { object, state } = createRoomObject();
+    // The index refuses the first write and the first retry, so the second retry is the one it takes
+    getUserStub(userId)
+      .addSentMessage.mockRejectedValueOnce(new Error("The index is unreachable"))
+      .mockRejectedValueOnce(new Error("The index is unreachable"));
+    const message = await sendMessage(object, "hello");
+
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(ROOM_ACTIVITY_DELAY_MS));
+    await object.alarm();
+    expect(getUserStub(userId).addSentMessage).toHaveBeenCalledTimes(1);
+    await expect(state.ctx.storage.getAlarm()).resolves.toBe(WRITE_RETRY_DELAY_MS);
+
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(WRITE_RETRY_DELAY_MS));
+    await object.alarm();
+    expect(getUserStub(userId).addSentMessage).toHaveBeenCalledTimes(2);
+    await expect(state.ctx.storage.getAlarm()).resolves.toBe(WRITE_RETRY_DELAY_MS * 2);
+
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(WRITE_RETRY_DELAY_MS * 2));
+    await object.alarm();
+    expect(getUserStub(userId).addSentMessage).toHaveBeenCalledTimes(3);
+    expect(getUserStub(userId).addSentMessage).toHaveBeenLastCalledWith({
+      createdAt: message.createdAt,
+      messageId: message.id,
+      roomId,
+    });
+    await expect(state.ctx.storage.getAlarm()).resolves.toBeNull();
   });
 
   test("a scheduled message is indexed in its sender's user object as scheduled, with its room, id and due time", async () => {
@@ -564,9 +927,44 @@ describe(RoomObject, () => {
       actor,
     );
 
-    await object.deleteAll();
+    await object.deleteAll(actor);
 
     expect(getUserStub(userId).removeScheduledMessage).toHaveBeenCalledExactlyOnceWith(scheduledMessage.id);
+  });
+
+  test("deleting the room is kept, and asked again, while a sender's index refuses its removal", async () => {
+    expect.hasAssertions();
+
+    const { object } = createRoomObject();
+    await sendMessage(object, "hello");
+    getUserStub(userId).removeSentMessagesInRoom.mockRejectedValueOnce(new Error("The index is unreachable"));
+
+    await expect(object.deleteAll(actor)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[AggregateError: The room is kept, since 1 sender index removal(s) failed]`,
+    );
+    expect(object.readMessages(newestPage)).toHaveLength(1);
+
+    await expect(object.deleteAll(actor)).resolves.toBeUndefined();
+  });
+
+  test("a refused teardown tells the room's online members nothing, and the accepted one tells each of them once", async () => {
+    expect.hasAssertions();
+
+    const { object } = createRoomObject();
+    object.attachMember(otherUserId, createStatus(otherUserId, true));
+    await sendMessage(object, "hello");
+    getUserStub(userId).removeSentMessagesInRoom.mockRejectedValueOnce(new Error("The index is unreachable"));
+
+    await expect(object.deleteAll(actor)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[AggregateError: The room is kept, since 1 sender index removal(s) failed]`,
+    );
+    expect(getUserStub(otherUserId).broadcastEvent).not.toHaveBeenCalled();
+
+    await object.deleteAll(actor);
+    expect(getUserStub(otherUserId).broadcastEvent).toHaveBeenCalledExactlyOnceWith({
+      data: { roomId, userId },
+      type: "deleteRoom",
+    });
   });
 
   test("a member coming online and going offline is sent to the room as its status, once for each change", () => {

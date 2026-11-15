@@ -8,12 +8,17 @@ import { describe, vi } from "vitest";
 // A socket the runtime accepted: the close and send calls the object makes are the ones a test reads, and its attachment is
 // Held as the runtime holds it across hibernation
 export const createSocket = () => {
+  // The largest attachment the runtime keeps, which it measures serialized: 16 KiB in the workerd build the tests run on
+  const attachmentMaxBytes = 16_384;
   let attachment: unknown;
   return {
     close: vi.fn<(code: number, reason: string) => void>(),
     deserializeAttachment: () => attachment,
     send: vi.fn<(frame: string) => void>(),
     serializeAttachment: (value: unknown) => {
+      const size = new TextEncoder().encode(JSON.stringify(value)).byteLength;
+      if (size > attachmentMaxBytes)
+        throw new TypeError(`A WebSocket 'attachment' cannot be larger than ${attachmentMaxBytes} bytes.`);
       attachment = value;
     },
   };

@@ -2,10 +2,12 @@ import type {
   FriendInSocial,
   FriendRequestInSocial,
   FriendRequestInSocialWithRelations,
+  PageCursor,
   PublicUser,
   ReconcileTodoRemindersInput,
+  ScheduledMessageInUser,
   ScheduledReminder,
-  SentMessageCursor,
+  SentMessageInUser,
   StorageUsage,
   Topic,
   UserAchievementInAchievementWithRelations,
@@ -20,22 +22,38 @@ import { getObjectName } from "#src/services/durableObject/getObjectName";
 import { readSocketIdentity } from "#src/services/realtime/readSocketIdentity";
 import { REMINDER_RETRY_DELAY_MS } from "#src/services/reminder/constants";
 import { sendTodoReminder } from "#src/services/todoReminder/sendTodoReminder";
-import { readWatchedTopics } from "#src/services/topic/readWatchedTopics";
+import { WATCHED_TOPIC_KEY_PREFIX } from "#src/services/topic/constants";
+import { readSocketWatchId } from "#src/services/topic/readSocketWatchId";
 import { setUserConnectedInRooms } from "#src/services/user/setUserConnectedInRooms";
 import { setUserStatusInRooms } from "#src/services/user/setUserStatusInRooms";
+import { createPageSort, getPageOrderBy, getPageWhere } from "@esposter/db";
 import {
   AppNotificationType,
   joinedCallsInUser,
   publishNotification,
   remindersInUser,
+  SCHEDULED_MESSAGE_JOB_PAGE_SORT,
   scheduledMessagesInUser,
+  SENT_MESSAGE_PAGE_SORT,
   sentMessagesInUser,
   todoRemindersInUser,
   userClientFrameSchema,
 } from "@esposter/db-schema";
 import userMigrations from "@esposter/db-schema/objects/user/migrations/migrations";
 import { getResult, getResultAsync, jsonDateParse, noop } from "@esposter/shared";
-import { and, asc, eq, gt, inArray, lt, lte, or, sql } from "drizzle-orm";
+import { and, asc, count, eq, gt, inArray, lte, sql } from "drizzle-orm";
+import { v7 } from "uuid";
+
+// A topic a tab watches, with the id of the tab's socket that watches it
+interface TopicWatch {
+  topic: Topic;
+  watchId: string;
+}
+
+// The storage key of one watch, by the tab's id and the topic it watches
+const getTopicWatchKey = (watchId: string, topic: Topic) => `${WATCHED_TOPIC_KEY_PREFIX}${watchId}:${topic}`;
+
+const getWatchedTopics = (watches: TopicWatch[]) => new Set(watches.map(({ topic }) => topic));
 
 // One User object per person: its SQLite indexes the messages they sent and their pending scheduled messages.
 // Its reminders and TodoList reminders are held there too.
@@ -45,7 +63,7 @@ export class UserObject extends RealtimeObject<UserEvent> implements UserObjectR
   readonly #userId = getObjectName(this.ctx, "UserObject");
 
   acceptFriendRequest(input: { receiverUser: PublicUser; senderUser: PublicUser }): Promise<void> {
-    return this.#broadcastToTabs({ data: input, type: "acceptFriendRequest" });
+    return this.broadcastEvent({ data: input, type: "acceptFriendRequest" });
   }
 
   // A reminder armed again under its id replaces the one it names, so a re-run of the step that armed it converges
@@ -68,7 +86,7 @@ export class UserObject extends RealtimeObject<UserEvent> implements UserObjectR
       .onConflictDoUpdate({ set: { runAt: scheduledMessage.runAt }, target: scheduledMessagesInUser.scheduledId });
   }
 
-  async addSentMessage(sentMessage: { createdAt: Date; messageId: number; roomId: string }): Promise<void> {
+  async addSentMessage(sentMessage: SentMessageInUser): Promise<void> {
     await this.db.insert(sentMessagesInUser).values(sentMessage).onConflictDoNothing();
   }
 
@@ -81,9 +99,11 @@ export class UserObject extends RealtimeObject<UserEvent> implements UserObjectR
     await this.#armAlarm();
   }
 
-  // A room-list event sent to every tab the person has open, whichever room's write or D1 change raised it
-  broadcastEvent(event: UserEvent): Promise<void> {
-    return this.#broadcastToTabs(event);
+  // A room-list event sent to every tab the person has open, whichever room's write or D1 change raised it. The sockets
+  // Carrying `excludeTag` are left out, so a write's own tab does not hear its echo
+  broadcastEvent(event: UserEvent, { excludeTag }: { excludeTag?: string } = {}): Promise<void> {
+    this.broadcast(event, { excludeTag });
+    return Promise.resolve();
   }
 
   // A revoked session's sockets close here and no other session's do.
@@ -93,12 +113,33 @@ export class UserObject extends RealtimeObject<UserEvent> implements UserObjectR
     return Promise.resolve();
   }
 
+  // The reminders and scheduled messages the person holds, counted together
+  async countScheduledMessageJobs(): Promise<number> {
+    const [reminderCount] = await this.db.select({ count: count() }).from(remindersInUser);
+    const [scheduledMessageCount] = await this.db.select({ count: count() }).from(scheduledMessagesInUser);
+    return (reminderCount?.count ?? 0) + (scheduledMessageCount?.count ?? 0);
+  }
+
   declineFriendRequest(input: Pick<FriendRequestInSocial, "receiverId" | "senderId">): Promise<void> {
-    return this.#broadcastToTabs({ data: input, type: "declineFriendRequest" });
+    return this.broadcastEvent({ data: input, type: "declineFriendRequest" });
   }
 
   deleteFriend(input: Pick<FriendInSocial, "receiverId" | "senderId">): Promise<void> {
-    return this.#broadcastToTabs({ data: input, type: "deleteFriend" });
+    return this.broadcastEvent({ data: input, type: "deleteFriend" });
+  }
+
+  // Every store the person's object holds is emptied, and its alarm cleared, when the account is erased. The sweep runs this
+  // Once the rooms its indexes name are swept, so a replay finds nothing left and the topics its tabs watched are let go of
+  async erase(): Promise<void> {
+    const watches = [...(await this.ctx.storage.list<TopicWatch>({ prefix: WATCHED_TOPIC_KEY_PREFIX })).values()];
+    await this.db.delete(remindersInUser);
+    await this.db.delete(todoRemindersInUser);
+    await this.db.delete(joinedCallsInUser);
+    await this.db.delete(scheduledMessagesInUser);
+    await this.db.delete(sentMessagesInUser);
+    await Promise.all(watches.map(({ topic, watchId }) => this.ctx.storage.delete(getTopicWatchKey(watchId, topic))));
+    await this.ctx.storage.deleteAlarm();
+    await this.#unsubscribeTopics(getWatchedTopics(watches), new Set());
   }
 
   // The first socket brings the person online and the last one to close takes them offline.
@@ -113,50 +154,75 @@ export class UserObject extends RealtimeObject<UserEvent> implements UserObjectR
   }
 
   // A topic one of the person's tabs watches changed, and each tab watching it hears so
-  invalidate(topic: Topic): Promise<void> {
-    for (const socket of this.ctx.getWebSockets())
-      if (readWatchedTopics(socket).includes(topic)) this.sendEvent(socket, { data: { topic }, type: "invalidate" });
-    return Promise.resolve();
+  async invalidate(topic: Topic): Promise<void> {
+    const watchIds = new Set(
+      (await this.#readTopicWatches()).flatMap((watch) => (watch.topic === topic ? [watch.watchId] : [])),
+    );
+    for (const socket of this.ctx.getWebSockets()) {
+      const watchId = readSocketWatchId(socket);
+      if (watchId !== undefined && watchIds.has(watchId))
+        this.sendEvent(socket, { data: { topic }, type: "invalidate" });
+    }
   }
 
   async readJoinedCallIds(): Promise<string[]> {
     return (await this.db.select().from(joinedCallsInUser)).map(({ callSessionId }) => callSessionId);
   }
 
-  async readReminders(): Promise<ScheduledReminder[]> {
-    return this.db.select().from(remindersInUser).orderBy(asc(remindersInUser.runAt));
+  // The reminders the person holds, soonest first by their id, from the cursor, at most `limit` of them
+  async readReminders({ cursor, limit }: { cursor: PageCursor; limit: number }): Promise<ScheduledReminder[]> {
+    const sort = createPageSort(
+      { id: remindersInUser.id, runAt: remindersInUser.runAt },
+      SCHEDULED_MESSAGE_JOB_PAGE_SORT,
+    );
+    return this.db
+      .select()
+      .from(remindersInUser)
+      .where(getPageWhere(sort, cursor))
+      .orderBy(...getPageOrderBy(sort, cursor))
+      .limit(limit);
   }
 
-  async readScheduledMessages() {
-    return this.db.select().from(scheduledMessagesInUser).orderBy(asc(scheduledMessagesInUser.runAt));
+  // The scheduled messages the person's index names, soonest first by their id, from the cursor, at most `limit` of them.
+  // Each is named by its id and its room, and its body is read from the room
+  async readScheduledMessages({
+    cursor,
+    limit,
+  }: {
+    cursor: PageCursor;
+    limit: number;
+  }): Promise<ScheduledMessageInUser[]> {
+    const sort = createPageSort(
+      { id: scheduledMessagesInUser.scheduledId, runAt: scheduledMessagesInUser.runAt },
+      SCHEDULED_MESSAGE_JOB_PAGE_SORT,
+    );
+    return this.db
+      .select({
+        id: scheduledMessagesInUser.scheduledId,
+        roomId: scheduledMessagesInUser.roomId,
+        runAt: scheduledMessagesInUser.runAt,
+      })
+      .from(scheduledMessagesInUser)
+      .where(getPageWhere(sort, cursor))
+      .orderBy(...getPageOrderBy(sort, cursor))
+      .limit(limit);
   }
 
-  // Ordered newest first, and a page is the rows strictly before the cursor.
-  // So a message sent at the same instant to many rooms is neither repeated nor skipped across a page boundary.
-  async readSentMessages(input: { before?: SentMessageCursor; limit: number }) {
-    const { before, limit } = input;
+  // The messages the person sent, newest first from the cursor, at most `limit` of them
+  async readSentMessages({ cursor, limit }: { cursor: PageCursor; limit: number }): Promise<SentMessageInUser[]> {
+    const sort = createPageSort(
+      {
+        createdAt: sentMessagesInUser.createdAt,
+        messageId: sentMessagesInUser.messageId,
+        roomId: sentMessagesInUser.roomId,
+      },
+      SENT_MESSAGE_PAGE_SORT,
+    );
     return this.db
       .select()
       .from(sentMessagesInUser)
-      .where(
-        before
-          ? or(
-              lt(sentMessagesInUser.createdAt, before.createdAt),
-              and(
-                eq(sentMessagesInUser.createdAt, before.createdAt),
-                or(
-                  lt(sentMessagesInUser.roomId, before.roomId),
-                  and(eq(sentMessagesInUser.roomId, before.roomId), lt(sentMessagesInUser.messageId, before.messageId)),
-                ),
-              ),
-            )
-          : undefined,
-      )
-      .orderBy(
-        sql`${sentMessagesInUser.createdAt} DESC`,
-        sql`${sentMessagesInUser.roomId} DESC`,
-        sql`${sentMessagesInUser.messageId} DESC`,
-      )
+      .where(getPageWhere(sort, cursor))
+      .orderBy(...getPageOrderBy(sort, cursor))
       .limit(limit);
   }
 
@@ -199,18 +265,23 @@ export class UserObject extends RealtimeObject<UserEvent> implements UserObjectR
     await this.db.delete(scheduledMessagesInUser).where(eq(scheduledMessagesInUser.scheduledId, scheduledId));
   }
 
-  async removeSentMessage(input: { messageId: number; roomId: string }): Promise<void> {
+  // The sent messages a room's delete or erase removed, by their ids, dropped from the person's index in one statement
+  async removeSentMessages({ messageIds, roomId }: { messageIds: number[]; roomId: string }): Promise<void> {
     await this.db
       .delete(sentMessagesInUser)
-      .where(and(eq(sentMessagesInUser.roomId, input.roomId), eq(sentMessagesInUser.messageId, input.messageId)));
+      .where(and(eq(sentMessagesInUser.roomId, roomId), inArray(sentMessagesInUser.messageId, messageIds)));
+  }
+
+  async removeSentMessagesInRoom(roomId: string): Promise<void> {
+    await this.db.delete(sentMessagesInUser).where(eq(sentMessagesInUser.roomId, roomId));
   }
 
   replaceSession(sessionId: string): Promise<void> {
-    return this.#broadcastToTabs({ data: { sessionId }, type: "replaceSession" });
+    return this.broadcastEvent({ data: { sessionId }, type: "replaceSession" });
   }
 
-  roomActivity(roomId: string, updatedAt: Date): void {
-    this.broadcast({ data: { id: roomId, updatedAt }, type: "roomActivity" });
+  roomActivity(roomId: string, lastMessageAt: Date): void {
+    this.broadcast({ data: { id: roomId, lastMessageAt }, type: "roomActivity" });
   }
 
   // A save leaves out only the tab that made it, since that tab already shows the change.
@@ -219,43 +290,50 @@ export class UserObject extends RealtimeObject<UserEvent> implements UserObjectR
     content: { apiKeyName: string; contentVersion: number; id: string },
     deviceId: string,
   ): Promise<void> {
-    this.broadcast(
+    return this.broadcastEvent(
       { data: content, type: "saveResourceContent" },
       deviceId ? { excludeTag: `device:${deviceId}` } : {},
     );
-    return Promise.resolve();
   }
 
   sendFriendRequest(friendRequest: FriendRequestInSocialWithRelations): Promise<void> {
-    return this.#broadcastToTabs({ data: friendRequest, type: "sendFriendRequest" });
+    return this.broadcastEvent({ data: friendRequest, type: "sendFriendRequest" });
   }
 
   updateAchievement(userAchievements: UserAchievementInAchievementWithRelations[]): Promise<void> {
-    return this.#broadcastToTabs({ data: userAchievements, type: "updateAchievement" });
+    return this.broadcastEvent({ data: userAchievements, type: "updateAchievement" });
   }
 
   updateUsage(storageUsage: StorageUsage): Promise<void> {
-    return this.#broadcastToTabs({ data: storageUsage, type: "updateUsage" });
+    return this.broadcastEvent({ data: storageUsage, type: "updateUsage" });
   }
 
   updateUserToRoom(userToRoom: UserToRoomInMessage): Promise<void> {
-    return this.#broadcastToTabs({ data: userToRoom, type: "updateUserToRoom" });
+    return this.broadcastEvent({ data: userToRoom, type: "updateUserToRoom" });
   }
 
   async upsertStatus(status: Parameters<UserObjectRpc["upsertStatus"]>[0]): Promise<void> {
     await setUserStatusInRooms(status);
   }
 
+  // The watches a closing tab held are dropped, and the topics no other tab watches are let go of
   override async webSocketClose(ws: WebSocket, code: number, reason: string) {
-    const watchedTopics = this.#readAllWatchedTopics();
+    const watchesBefore = await this.#readTopicWatches();
     await super.webSocketClose(ws, code, reason);
     const userId = this.ctx.id.name;
     if (userId && this.ctx.getWebSockets().every((socket) => socket === ws)) this.#reportPresence(userId, false);
-    await this.#syncTopicSubscriptions(watchedTopics, this.#readAllWatchedTopics(ws));
+    const closingWatchId = readSocketWatchId(ws);
+    await Promise.all(
+      watchesBefore.flatMap(({ topic, watchId }) =>
+        watchId === closingWatchId ? [this.ctx.storage.delete(getTopicWatchKey(watchId, topic))] : [],
+      ),
+    );
+    await this.#unsubscribeTopics(getWatchedTopics(watchesBefore), getWatchedTopics(await this.#readTopicWatches()));
   }
 
   // A tab watches or unwatches the topics of its mounted queries.
-  // The object subscribes to a topic on the first of the person's tabs watching it and unsubscribes on the last.
+  // A watch subscribes its topics on every frame, since a subscribe is idempotent and one that failed on an earlier watch is
+  // Then retried. An unwatch unsubscribes the topics no other tab of the person's still watches.
   // So a topic holds each person once, however many tabs they have
   override async webSocketMessage(ws: WebSocket, message: ArrayBuffer | string) {
     if (typeof message !== "string") return;
@@ -263,13 +341,21 @@ export class UserObject extends RealtimeObject<UserEvent> implements UserObjectR
     const frame = userClientFrameSchema.safeParse(parsedJson);
     if (!frame.success) return;
 
-    const watchedTopics = this.#readAllWatchedTopics();
-    const socketTopics = new Set(readWatchedTopics(ws));
-    for (const topic of frame.data.data.topics)
-      if (frame.data.type === "watch") socketTopics.add(topic);
-      else socketTopics.delete(topic);
-    ws.serializeAttachment({ topics: [...socketTopics] });
-    await this.#syncTopicSubscriptions(watchedTopics, this.#readAllWatchedTopics());
+    const watchId = readSocketWatchId(ws) ?? this.#attachWatchId(ws);
+    const { topics } = frame.data.data;
+    if (frame.data.type === "watch") {
+      await Promise.all(
+        topics.map((topic) =>
+          this.ctx.storage.put(getTopicWatchKey(watchId, topic), { topic, watchId } satisfies TopicWatch),
+        ),
+      );
+      await this.#subscribeTopics(topics);
+      return;
+    }
+
+    const watchesBefore = await this.#readTopicWatches();
+    await Promise.all(topics.map((topic) => this.ctx.storage.delete(getTopicWatchKey(watchId, topic))));
+    await this.#unsubscribeTopics(getWatchedTopics(watchesBefore), getWatchedTopics(await this.#readTopicWatches()));
   }
 
   // The alarm is the earliest row still ahead across the reminders and the TodoList reminders.
@@ -307,20 +393,19 @@ export class UserObject extends RealtimeObject<UserEvent> implements UserObjectR
     else await this.ctx.storage.deleteAlarm();
   }
 
-  // The person's own events, each to every tab they have open
-  #broadcastToTabs(event: UserEvent): Promise<void> {
-    this.broadcast(event);
-    return Promise.resolve();
+  // A tab's watches are keyed by an id its socket carries from its first watch, so the socket names them after hibernation
+  #attachWatchId(ws: WebSocket): string {
+    const watchId = v7();
+    ws.serializeAttachment({ watchId });
+    return watchId;
   }
 
-  // Every topic the person's open tabs watch, leaving out a socket that is closing
-  #readAllWatchedTopics(closingSocket?: WebSocket): Set<Topic> {
-    return new Set(
-      this.ctx
-        .getWebSockets()
-        .filter((socket) => socket !== closingSocket)
-        .flatMap((socket) => readWatchedTopics(socket)),
-    );
+  // Every watch a live tab holds. A watch whose socket is gone is left out, so a close the object never heard of cannot
+  // Keep a topic subscribed
+  async #readTopicWatches(): Promise<TopicWatch[]> {
+    const liveWatchIds = new Set(this.ctx.getWebSockets().flatMap((socket) => readSocketWatchId(socket) ?? []));
+    const watches = await this.ctx.storage.list<TopicWatch>({ prefix: WATCHED_TOPIC_KEY_PREFIX });
+    return [...watches.values()].filter(({ watchId }) => liveWatchIds.has(watchId));
   }
 
   // Presence reaches the rooms after the response, so a slow room never delays the socket it was opened on
@@ -392,15 +477,19 @@ export class UserObject extends RealtimeObject<UserEvent> implements UserObjectR
     );
   }
 
-  // The topics the person's tabs started or stopped watching, subscribed to and unsubscribed from their Topic objects
-  async #syncTopicSubscriptions(before: Set<Topic>, after: Set<Topic>): Promise<void> {
-    await Promise.all([
-      ...[...after]
-        .filter((topic) => !before.has(topic))
-        .map((topic) => this.env.TOPIC.get(this.env.TOPIC.idFromName(topic)).subscribe(this.#userId)),
-      ...[...before]
+  // The topics a watch asked for, subscribed to on their Topic objects. A subscribe is a write of the person's id, so repeating it is harmless
+  async #subscribeTopics(topics: Topic[]): Promise<void> {
+    await Promise.all(
+      topics.map((topic) => this.env.TOPIC.get(this.env.TOPIC.idFromName(topic)).subscribe(this.#userId)),
+    );
+  }
+
+  // The topics no tab of the person's watches any more, unsubscribed from their Topic objects
+  async #unsubscribeTopics(before: Set<Topic>, after: Set<Topic>): Promise<void> {
+    await Promise.all(
+      [...before]
         .filter((topic) => !after.has(topic))
         .map((topic) => this.env.TOPIC.get(this.env.TOPIC.idFromName(topic)).unsubscribe(this.#userId)),
-    ]);
+    );
   }
 }

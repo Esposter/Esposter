@@ -2,7 +2,10 @@ import type { MessageFields } from "#src/models/room/MessageFields";
 import type { NewMessage } from "#src/models/room/NewMessage";
 
 import { getFilenames } from "#src/services/room/getFilenames";
+import { getMessageMentions } from "#src/services/room/getMessageMentions";
 
+// The row a message is written as. Its mentions are read from its text here, so no caller can write a message whose
+// Mentions disagree with its text
 export const getMessageRow = (
   {
     appUserId,
@@ -10,7 +13,6 @@ export const getMessageRow = (
     files = [],
     isForward = false,
     linkPreviewResponse = null,
-    mentions = [],
     message,
     replyToId,
     senderName,
@@ -23,13 +25,13 @@ export const getMessageRow = (
   appUserId: appUserId ?? null,
   appUserImage,
   createdAt: now,
+  editedAt: null,
   filenames: getFilenames(files),
   files,
-  isEdited: false,
   isForward,
   isPinned: false,
   linkPreviewResponse,
-  mentions,
+  mentions: getMessageMentions(message, type),
   message,
   replyToId: replyToId ?? null,
   senderName: senderName ?? null,

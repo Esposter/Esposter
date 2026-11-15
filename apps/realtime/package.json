@@ -32,6 +32,7 @@
     "@esposter/shared": "workspace:*",
     "drizzle-orm": "catalog:",
     "temporal-polyfill": "catalog:",
+    "uuid": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
@@ -39,7 +40,6 @@
     "@esposter/configuration": "workspace:*",
     "@esposter/db-mock": "workspace:*",
     "@types/node": "catalog:",
-    "uuid": "catalog:",
     "wrangler": "catalog:"
   }
 }

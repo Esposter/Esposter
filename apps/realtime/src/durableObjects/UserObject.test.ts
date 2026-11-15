@@ -1,6 +1,14 @@
 import type { RoomObject } from "#src/durableObjects/RoomObject";
 import type { MockSocket } from "#src/services/durableObject/createMockObjectState.test";
-import type { RoomObjectRpc, TodoReminder, Topic, TopicObjectRpc, UserClientFrame } from "@esposter/db-schema";
+import type {
+  PageCursor,
+  PageSort,
+  RoomObjectRpc,
+  TodoReminder,
+  Topic,
+  TopicObjectRpc,
+  UserClientFrame,
+} from "@esposter/db-schema";
 import type { Mock } from "vitest";
 
 import { UserObject } from "#src/durableObjects/UserObject";
@@ -12,11 +20,17 @@ import {
 import { createOnlineStatus } from "#src/services/room/createOnlineStatus.test";
 import { createUser } from "#src/services/shared/createUser.test";
 import { sendTodoReminder } from "#src/services/todoReminder/sendTodoReminder";
+import { toPage } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import {
   AppNotificationType,
+  createPageInputSchema,
+  MAX_FRAME_TOPICS,
   roomsInMessage,
+  SCHEDULED_MESSAGE_JOB_PAGE_SORT,
+  SENT_MESSAGE_PAGE_SORT,
   SOCKET_IDENTITY_HEADER,
+  START_PAGE_CURSOR,
   usersInAuth,
   UserStatus,
   usersToRoomsInMessage,
@@ -64,8 +78,21 @@ vi.mock(import("#src/services/shared/db"), () => ({
 const sendFrame = (object: UserObject, socket: MockSocket, frame: UserClientFrame) =>
   object.webSocketMessage(socket as unknown as WebSocket, JSON.stringify(frame));
 
+// Every item a keyset read answers, read a page at a time, each page from the cursor the one before it answered
+const readAll = async <TItem extends Record<TKey, unknown>, TKey extends string>(
+  sort: PageSort<TKey>,
+  read: (input: { cursor: PageCursor; limit: number }) => Promise<TItem[]>,
+  limit: number,
+  encodedCursor = "",
+): Promise<TItem[]> => {
+  const cursor = createPageInputSchema(sort).parse({ cursor: encodedCursor, limit }).cursor;
+  const page = toPage(await read({ cursor, limit: limit + 1 }), sort, cursor, limit);
+  return page.nextCursor ? [...page.items, ...(await readAll(sort, read, limit, page.nextCursor))] : page.items;
+};
+
 describe(UserObject, () => {
   const userId = v7();
+  const firstPage = { cursor: START_PAGE_CURSOR, limit: 10 };
   const sessionId = v7();
   const otherSessionId = v7();
   const deviceId = v7();
@@ -102,6 +129,7 @@ describe(UserObject, () => {
       new Request("http://localhost/ws/user", {
         headers: {
           [SOCKET_IDENTITY_HEADER.deviceId]: tab.deviceId,
+          [SOCKET_IDENTITY_HEADER.sessionExpiresAt]: String(Number.MAX_SAFE_INTEGER),
           [SOCKET_IDENTITY_HEADER.sessionId]: tab.sessionId,
           [SOCKET_IDENTITY_HEADER.userId]: userId,
           Upgrade: "websocket",
@@ -302,7 +330,7 @@ describe(UserObject, () => {
       type: AppNotificationType.Reminder,
       userId,
     });
-    await expect(object.readReminders()).resolves.toHaveLength(1);
+    await expect(object.readReminders(firstPage)).resolves.toHaveLength(1);
     await expect(state.ctx.storage.getAlarm()).resolves.toBe(laterRunAt.getTime());
 
     vi.setSystemTime(laterRunAt);
@@ -326,7 +354,7 @@ describe(UserObject, () => {
     await object.addReminder(reminder);
     await object.addReminder(reminder);
 
-    await expect(object.readReminders()).resolves.toHaveLength(1);
+    await expect(object.readReminders(firstPage)).resolves.toHaveLength(1);
   });
 
   test("cancelling the reminder that was next due re-arms the alarm for the one after it", async () => {
@@ -374,7 +402,8 @@ describe(UserObject, () => {
     await sendFrame(object, secondSocket, { data: { topics: [topic] }, type: "watch" });
     await sendFrame(object, firstSocket, { data: { topics: [topic] }, type: "unwatch" });
 
-    expect(getTopicStub(topic).subscribe).toHaveBeenCalledExactlyOnceWith(userId);
+    // Each watch subscribes the person again, which the topic holds once, and the topic is let go of only by the last tab
+    expect(getTopicStub(topic).subscribe).toHaveBeenCalledWith(userId);
     expect(getTopicStub(topic).unsubscribe).not.toHaveBeenCalled();
 
     await object.webSocketClose(secondSocket as unknown as WebSocket, 1000, "");
@@ -394,5 +423,159 @@ describe(UserObject, () => {
 
     expect(readFrames(watchingSocket)).toContainEqual({ data: { topic }, type: "invalidate" });
     expect(readFrames(otherSocket)).not.toContainEqual({ data: { topic }, type: "invalidate" });
+  });
+
+  // A subscribe that failed on a watch is retried by the next watch of the topic, from any tab, rather than left unsubscribed
+  test("a watch whose subscribe failed is subscribed again by the next watch of its topic", async () => {
+    expect.hasAssertions();
+
+    const { object } = createUserObject();
+    const topic: Topic = `post:${v7()}`;
+    const firstSocket = await connect(object, { deviceId, sessionId });
+    const secondSocket = await connect(object, { deviceId: otherDeviceId, sessionId });
+    getTopicStub(topic).subscribe.mockRejectedValueOnce(new Error("subscribe failed"));
+    await expect(
+      sendFrame(object, firstSocket, { data: { topics: [topic] }, type: "watch" }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: subscribe failed]`);
+    await sendFrame(object, secondSocket, { data: { topics: [topic] }, type: "watch" });
+
+    expect(getTopicStub(topic).subscribe).toHaveBeenCalledTimes(2);
+    expect(getTopicStub(topic).subscribe).toHaveBeenLastCalledWith(userId);
+  });
+
+  // The account's erase empties every store its object holds, the watches of its tabs and its alarm, so nothing is left for
+  // Its rooms' indexes to name
+  test("erasing the person's object empties its reminders, joined calls, indexes and watches, and clears its alarm", async () => {
+    expect.hasAssertions();
+
+    const { object, state } = createUserObject();
+    const roomId = v7();
+    const topic: Topic = `post:${v7()}`;
+    const reminderId = v7();
+    const scheduledId = v7();
+    const resourceId = v7();
+    const dueAt = new Date(Temporal.Duration.from({ minutes: 1 }).total("milliseconds"));
+    await object.addReminder({ id: reminderId, roomId, runAt: dueAt, text: "text" });
+    await object.addJoinedCall(v7());
+    await object.addScheduledMessage({ roomId, runAt: dueAt, scheduledId });
+    await object.addSentMessage({ createdAt: new Date(0), messageId: 1, roomId });
+    await object.reconcileTodoReminders({
+      cancelledItemIds: [],
+      reminders: [{ dueAt, itemId: v7(), resourceId }],
+      resourceId,
+    });
+    const socket = await connect(object, { deviceId, sessionId });
+    await sendFrame(object, socket, { data: { topics: [topic] }, type: "watch" });
+    await expect(state.ctx.storage.getAlarm()).resolves.not.toBeNull();
+
+    await object.erase();
+
+    await expect(object.countScheduledMessageJobs()).resolves.toBe(0);
+    await expect(object.readJoinedCallIds()).resolves.toStrictEqual([]);
+    await expect(object.readSentMessages(firstPage)).resolves.toStrictEqual([]);
+    await expect(object.readScheduledMessages(firstPage)).resolves.toStrictEqual([]);
+    await expect(object.readReminders(firstPage)).resolves.toStrictEqual([]);
+    await expect(state.ctx.storage.getAlarm()).resolves.toBeNull();
+    expect(getTopicStub(topic).unsubscribe).toHaveBeenCalledExactlyOnceWith(userId);
+  });
+
+  test("a tab watching more topics than a socket attachment holds keeps every one, and an invalidation reaches it for any", async () => {
+    expect.hasAssertions();
+
+    const { object } = createUserObject();
+    const topics = Array.from({ length: MAX_FRAME_TOPICS }, (): Topic => `post:${v7()}`);
+    const socket = await connect(object, { deviceId, sessionId });
+    await sendFrame(object, socket, { data: { topics }, type: "watch" });
+    const lastTopic = takeOne(topics, topics.length - 1);
+    await object.invalidate(lastTopic);
+
+    expect(getTopicStub(lastTopic).subscribe).toHaveBeenCalledExactlyOnceWith(userId);
+    expect(readFrames(socket)).toStrictEqual([{ data: { topic: lastTopic }, type: "invalidate" }]);
+  });
+
+  test("the reminders are read to their end across a page boundary, soonest first, with the times tied", async () => {
+    expect.hasAssertions();
+
+    const { object } = createUserObject();
+    const roomId = v7();
+    // Three reminders share the first time and two the next, so the page boundaries fall inside the ties
+    const reminders = [
+      ["00000000-0000-7000-8000-000000000001", new Date(0)],
+      ["00000000-0000-7000-8000-000000000002", new Date(0)],
+      ["00000000-0000-7000-8000-000000000003", new Date(0)],
+      ["00000000-0000-7000-8000-000000000004", new Date(1)],
+      ["00000000-0000-7000-8000-000000000005", new Date(1)],
+    ] as const;
+    await Promise.all(reminders.map(([id, runAt]) => object.addReminder({ id, roomId, runAt, text: id })));
+
+    const ids = await readAll(SCHEDULED_MESSAGE_JOB_PAGE_SORT, (input) => object.readReminders(input), 2);
+
+    expect(ids.map(({ id }) => id)).toStrictEqual(reminders.map(([id]) => id));
+  });
+
+  test("the scheduled messages are read to their end across a page boundary, soonest first, with the times tied", async () => {
+    expect.hasAssertions();
+
+    const { object } = createUserObject();
+    const roomId = v7();
+    const scheduledMessages = [
+      ["00000000-0000-7000-8000-000000000001", new Date(0)],
+      ["00000000-0000-7000-8000-000000000002", new Date(0)],
+      ["00000000-0000-7000-8000-000000000003", new Date(1)],
+      ["00000000-0000-7000-8000-000000000004", new Date(1)],
+      ["00000000-0000-7000-8000-000000000005", new Date(1)],
+    ] as const;
+    await Promise.all(
+      scheduledMessages.map(([scheduledId, runAt]) => object.addScheduledMessage({ roomId, runAt, scheduledId })),
+    );
+
+    const items = await readAll(SCHEDULED_MESSAGE_JOB_PAGE_SORT, (input) => object.readScheduledMessages(input), 2);
+
+    expect(items).toStrictEqual(scheduledMessages.map(([id, runAt]) => ({ id, roomId, runAt })));
+  });
+
+  test("the sent messages are read to their end across a page boundary, newest first, with the times and rooms tied", async () => {
+    expect.hasAssertions();
+
+    const { object } = createUserObject();
+    const firstRoomId = "00000000-0000-7000-8000-000000000001";
+    const secondRoomId = "00000000-0000-7000-8000-000000000002";
+    const newest = { createdAt: new Date(1), messageId: 3, roomId: firstRoomId };
+    const tiedInSecondRoom = [
+      { createdAt: new Date(0), messageId: 1, roomId: secondRoomId },
+      { createdAt: new Date(0), messageId: 2, roomId: secondRoomId },
+    ];
+    const tiedInFirstRoom = [
+      { createdAt: new Date(0), messageId: 1, roomId: firstRoomId },
+      { createdAt: new Date(0), messageId: 2, roomId: firstRoomId },
+    ];
+    await Promise.all(
+      [newest, ...tiedInFirstRoom, ...tiedInSecondRoom].map((sentMessage) => object.addSentMessage(sentMessage)),
+    );
+
+    const items = await readAll(SENT_MESSAGE_PAGE_SORT, (input) => object.readSentMessages(input), 2);
+
+    // Newest first, then the later room of a tie before the earlier one, then the later message of a room
+    expect(items).toStrictEqual([newest, ...tiedInSecondRoom.toReversed(), ...tiedInFirstRoom.toReversed()]);
+  });
+
+  test("a room's sent messages leave the index by their ids, and all of them when the room is deleted, and no other room's", async () => {
+    expect.hasAssertions();
+
+    const { object } = createUserObject();
+    const firstRoomId = "00000000-0000-7000-8000-000000000001";
+    const secondRoomId = "00000000-0000-7000-8000-000000000002";
+    const sentMessages = [
+      { createdAt: new Date(0), messageId: 1, roomId: firstRoomId },
+      { createdAt: new Date(0), messageId: 2, roomId: firstRoomId },
+      { createdAt: new Date(0), messageId: 1, roomId: secondRoomId },
+    ];
+    await Promise.all(sentMessages.map((sentMessage) => object.addSentMessage(sentMessage)));
+
+    await object.removeSentMessages({ messageIds: [2], roomId: firstRoomId });
+    await expect(object.readSentMessages(firstPage)).resolves.toStrictEqual([sentMessages[2], sentMessages[0]]);
+
+    await object.removeSentMessagesInRoom(firstRoomId);
+    await expect(object.readSentMessages(firstPage)).resolves.toStrictEqual([sentMessages[2]]);
   });
 });
