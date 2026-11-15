@@ -1415,7 +1415,6 @@
 | `scripts/src/services/oxlint/literalUnion`                                                | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/oxlint/naming`                                                      | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/oxlint/passThroughHelper`                                           | 2026-10-29 · Haiku 5.5  |       |
-| `scripts/src/services/oxlint/persistThenNotify`                                           | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/oxlint/piniaStore`                                                  | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/oxlint/propsInterface`                                              | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/oxlint/routing`                                                     | 2026-10-29 · Haiku 5.5  |       |

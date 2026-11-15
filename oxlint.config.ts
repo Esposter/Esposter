@@ -75,13 +75,7 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
         ],
       },
     },
-    {
-      files: ["apps/web/server/**/*.ts"],
-      rules: {
-        "persist-then-notify/no-unhandled-effect-after-emit": "error",
-        "trpc-procedure/no-hand-rolled-error": "error",
-      },
-    },
+    { files: ["apps/web/server/**/*.ts"], rules: { "trpc-procedure/no-hand-rolled-error": "error" } },
     { files: ["apps/web/server/trpc/guards/*.ts"], rules: { "trpc-procedure/no-hand-rolled-error": "off" } },
     {
       files: ["apps/web/server/trpc/**/*.ts"],
