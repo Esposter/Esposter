@@ -18,7 +18,6 @@ import {
 } from "@esposter/db";
 import {
   AppNotificationType,
-  MessageCreationRejectionType,
   MessageType,
   publishNotification,
   QueueJob,
@@ -38,15 +37,14 @@ const readThreadRootUserId = async (roomObject: RoomObject, replyToId: null | nu
   return threadRoot?.userId ?? undefined;
 };
 
-// Two tries: a claim lost to a send of the same member's racing this one decides again on the clock that won, and a
-// Second loss is the member racing themselves, which is what slowmode refuses
+// A claim lost to a racing send of the same member's decides again on the clock that won, so slowmode refuses it when
+// The room has slowmode and a room without it takes the send. Each loss means another send landed, so it ends
 const claimSendSlot = async (
   db: Context["db"],
   userId: string,
   roomId: string,
   message: string | undefined,
   now: Date,
-  isRetry = false,
 ): Promise<MessageCreationRejection | undefined> => {
   const member = await db.query.usersToRoomsInMessage.findFirst({
     columns: { lastMessageAt: true },
@@ -68,9 +66,7 @@ const claimSendSlot = async (
     )
     .returning({ userId: usersToRoomsInMessage.userId });
   if (claimed.length > 0) return undefined;
-  return isRetry
-    ? { type: MessageCreationRejectionType.Slowmode }
-    : claimSendSlot(db, userId, roomId, message, now, true);
+  return claimSendSlot(db, userId, roomId, message, now);
 };
 
 export const createUserMessage = async (
