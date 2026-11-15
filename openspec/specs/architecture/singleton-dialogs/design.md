@@ -54,7 +54,7 @@ Where the parent owns the lookup because it passes the item down as a prop (the 
 | `app/store/message/dialog.ts`                                                       | Message dialog targets (`deletingMessageId`, `pinningMessageId`)                                |
 | `app/store/message/room/dialog.ts`                                                  | Room dialog state (`settingsRoomId`, `isEditRoomDialogOpen`)                                    |
 | `app/store/message/roomCategoryDialog.ts`                                           | Category delete target                                                                          |
-| `app/store/message/room/webhookDialog.ts`                                           | Webhook delete and rotate targets, one ref per action read through `getSelectedId(action)`      |
+| `app/store/message/room/webhookDialog.ts`                                           | Webhook delete and regenerate targets, one ref per action read through `getSelectedId(action)`  |
 | `app/store/post/dialog.ts`, `app/store/post/comment/dialog.ts`                      | Post / comment delete targets                                                                   |
 | `app/store/dashboard/dialog.ts`                                                     | Dashboard visual delete target (`deletingVisualId`)                                             |
 | `app/components/Dashboard/Editor/Content.vue`                                       | Dashboard editor: one delete confirm and one edit form for every tile, rather than one per tile |

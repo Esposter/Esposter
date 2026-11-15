@@ -18,7 +18,7 @@ flowchart TD
 - **Fixed name, overwritten in place** — one blob per slot, replaced by the next upload. Nothing accumulates, so no mutation owns a sweep.
 - **Unique name per upload** — chosen where overwrite-in-place would race (a delayed cleanup could delete a concurrent re-upload) or where snapshots must be immutable. The cost of uniqueness is that stale versions accumulate, so **both** the replace path and the parent-delete path must sweep them.
 
-Every sweep goes through a durable publisher — `publishBlobDeletion` for a set of named blobs, `publishBlobPrefixDeletion` for a whole prefix — the best-effort escalation of [persist then notify](../persist-then-notify/design.md). Inline `deleteIfExists` calls at mutation sites are banned; a parent-entity sweep lists the prefix inside the publish thunk rather than reconstructing blob names it cannot know.
+Every sweep goes through a durable publisher — `publishBlobDeletion` for a set of named blobs, `publishBlobPrefixDeletion` for a whole prefix — the best-effort escalation of [persist then notify](../persist-then-notify/design.md). Inline blob deletes at mutation sites are banned; a parent-entity sweep lists the prefix inside the publish thunk rather than reconstructing blob names it cannot know.
 
 ## Who may name a blob for deletion
 
@@ -32,7 +32,7 @@ Nothing is added to the namespace to make this checkable — the token is the ch
 
 ## A name from the request body is one segment, never a path
 
-The grant authorizes _which_ blob, not _what it is called_. Blob names are assembled by interpolation, and a presigned URL is built by parsing the key as a URL path, which normalizes `..` away — so a caller-supplied `filename` or `blobPath` carrying a separator or a dot segment walks the delete straight out of the prefix the grant covered, and out of the bucket. Every client-supplied piece of a blob name is therefore constrained to a single separator-free, non-dot segment at its schema (`BLOB_SEGMENT_REGEX` on `fileEntitySchema.filename` and on resource `deleteFile`'s `blobPath`), which covers the upload's presigned write target and every delete that names the file in one place.
+The grant authorizes _which_ blob, not _what it is called_. Blob names are assembled by interpolation, and a presigned URL is built by parsing the key as a URL path, which normalizes `..` away — so a caller-supplied `filename` or `blobPath` carrying a separator or a dot segment walks the delete straight out of the prefix the grant covered, and out of the bucket. Every client-supplied piece of a blob name is therefore constrained to a single separator-free, non-dot segment at its schema (`BLOB_SEGMENT_REGEX` on `fileEntitySchema.filename`, and `ASSET_HASH_REGEX` on resource `deleteFile`'s `blobPath`), which covers the upload's presigned write target and every delete that names the file, each at the schema that takes it.
 
 The same applies to a name reconstructed from a **stored** column: `roomsInMessage.image` is free text, so `updateRoom`'s sweep never derives a delete target from it at all. It deletes only names its own listing produced (`listRoomProfileImageBlobNames`, over the prefix from `getRoomProfileImageBlobPrefix`), and reads the column solely to _exclude_ the current image from that set. Round-tripping a value through the database does not make it ours.
 

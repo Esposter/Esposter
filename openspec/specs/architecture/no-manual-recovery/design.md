@@ -17,7 +17,7 @@ flowchart TD
   retry -.->|fails again| sink
 ```
 
-The attempt counter travels **with the payload itself**, not in the handler's memory and not on the artifact the sink happens to store it in — so the count survives the round trip through the failure sink. Pick the carrier by asking what the sink round-trips verbatim: the count rides on each event's own id, because every failed cycle writes a brand-new object and an object-scoped counter would restart at zero forever. A counter that resets each cycle is the same infinite loop with more code.
+The attempt counter travels **with the payload itself**, not in the handler's memory and not on the artifact the sink happens to store it in — so the count survives the round trip through the failure sink. Pick the carrier by asking what the sink round-trips verbatim: the count rides in each event's body, because every failed cycle republishes a brand-new message and a counter kept on the message would restart at zero forever. A counter that resets each cycle is the same infinite loop with more code.
 
 **Delivery is at-least-once, so redelivery is normal input, not corruption.** A retried batch may repeat an event id, and the same object may be handed to the handler again after a partial failure — neither is a malformed payload, so neither is a validation bar: rejecting a batch for repeating an id would quarantine every healthy event batched alongside it. Handle it in the handler instead — make each step idempotent, and make the steps that emit the poison log (quarantine, `context.error`) fire only on the delivery that actually created the artifact, so one poison payload logs once rather than once per retry.
 

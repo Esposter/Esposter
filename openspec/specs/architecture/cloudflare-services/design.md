@@ -4,21 +4,21 @@ Which Cloudflare services the app runs on, what each one owns, and which package
 
 ## Service map
 
-| Service                   | What it stores or does                                                                                                                                   | Primary access point                                     |
-| :------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------- |
-| **Workers**, web          | Serves SSR, tRPC over HTTP, the webhooks and the MCP route from any isolate. Holds no state between requests                                             | `apps/web/configuration/nitro.ts`                        |
-| **Workers Static Assets** | Serves the built client bundle without invoking the Worker                                                                                               | the web build's output                                   |
-| **Workers**, realtime     | Exports the three realtime objects and nothing else                                                                                                      | `apps/realtime/src/worker.ts`                            |
-| **Workers**, jobs         | Consumes the queues and runs the nightly purge on a Cron Trigger                                                                                         | `apps/jobs/src/worker.ts`                                |
-| **D1**                    | The `core` database: every relational table, and the typed tables for the moderation, resource activity, survey and program rows                         | `apps/web/server/db/index.ts`                            |
-| **R2**                    | One bucket per storage container: profile images, message attachments, resource content and snapshots, save files, public game data                      | `packages/db-schema/src/models/storage/StorageBucket.ts` |
-| **Durable Objects**       | `RoomObject`, `CallObject` and `UserObject`, exported by the realtime Worker: one per room, call and person, each holding its live state and its sockets | `apps/realtime/src/durableObjects/`                      |
-| **Queues**                | One queue and one dead-letter queue per job, fed by the web Worker, the objects and R2's object-create notifications, and consumed by the jobs Worker    | `packages/db-schema/src/models/queue/QueueJob.ts`        |
-| **Cron Triggers**         | The nightly purge of deleted resources, on the jobs Worker                                                                                               | `apps/jobs/wrangler.jsonc`                               |
-| **RealtimeKit**           | Audio and video for calls: the SFU, TURN and signalling, with participant webhooks back to the web Worker                                                | the [calls](../../esbabbler/calls/README.md) pages       |
-| **Miniflare**             | The D1, R2 and Queues bindings in tests, with no account needed                                                                                          | `packages/db-mock/src/createMockDb.ts`                   |
+| Service                   | What it stores or does                                                                                                                                                                                | Primary access point                                     |
+| :------------------------ | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------- |
+| **Workers**, web          | Serves SSR, tRPC over HTTP, the webhooks and the MCP route from any isolate. Holds no state between requests                                                                                          | `apps/web/configuration/nitro.ts`                        |
+| **Workers Static Assets** | Serves the built client bundle without invoking the Worker                                                                                                                                            | the web build's output                                   |
+| **Workers**, realtime     | Exports the four realtime objects and nothing else                                                                                                                                                    | `apps/realtime/src/worker.ts`                            |
+| **Workers**, jobs         | Consumes the queues and runs the nightly purge on a Cron Trigger                                                                                                                                      | `apps/jobs/src/worker.ts`                                |
+| **D1**                    | The `core` database: every relational table, and the typed tables for the moderation, resource activity, survey and program rows                                                                      | `apps/web/server/db/index.ts`                            |
+| **R2**                    | One bucket per storage container: profile images, message attachments, resource content and snapshots, save files, public game data                                                                   | `packages/db-schema/src/models/storage/StorageBucket.ts` |
+| **Durable Objects**       | `RoomObject`, `CallObject`, `UserObject` and `TopicObject`, exported by the realtime Worker: one per room, call, person and topic, each holding its live state, and all but `TopicObject` its sockets | `apps/realtime/src/durableObjects/`                      |
+| **Queues**                | One queue and one dead-letter queue per job, fed by the web Worker, the objects and R2's object-create notifications, and consumed by the jobs Worker                                                 | `packages/db-schema/src/models/queue/QueueJob.ts`        |
+| **Cron Triggers**         | The nightly purge of deleted resources, on the jobs Worker                                                                                                                                            | `apps/jobs/wrangler.jsonc`                               |
+| **RealtimeKit**           | Audio and video for calls: the SFU, TURN and signalling, with participant webhooks back to the web Worker                                                                                             | the [calls](../../esbabbler/calls/README.md) pages       |
+| **Miniflare**             | The D1, R2 and Queues bindings in tests, with no account needed                                                                                                                                       | `packages/db-mock/src/createMockDb.ts`                   |
 
-Every binding comes from `cloudflare:workers`'s `env`, read once per Worker and passed to the code that uses it as a parameter. No binding is a module-scope client, so a test passes Miniflare's.
+Every binding comes from `cloudflare:workers`'s `env`. A helper reads its binding when it is called (`getBucket`, `getJobQueue`, `getUserObject`, `consumeAddressRateLimit`), not once at load. The exception is the D1 `db`, built once at module scope from `env.CORE` in `apps/web/server/db/index.ts` and `apps/jobs/src/services/shared/db.ts`. A test passes Miniflare's bindings by having `createMockDb` copy them into the `env` stand-in.
 
 ## Where each kind of data lives
 
@@ -34,13 +34,14 @@ A new feature picks D1 when it holds relational or queryable data. It picks an o
 
 ## Live state
 
-Three Durable Objects, exported by the realtime Worker, hold live state, and each owns the sockets viewing it:
+Four Durable Objects, exported by the realtime Worker, hold live state. The first three each own the sockets viewing it, and `TopicObject` holds the watchers of a topic and reaches them through their user objects:
 
-| Object       | One per      | Owns                                                                                                                 | Its sockets                                |
-| :----------- | :----------- | :------------------------------------------------------------------------------------------------------------------- | :----------------------------------------- |
-| `RoomObject` | room         | messages, reactions and search in its SQLite; scheduled messages; the members online in the room                     | everyone viewing the room                  |
-| `CallObject` | call session | participants, knockers and admitted maps; the call's start time; the RealtimeKit participant map                     | everyone joined to or knocking on the call |
-| `UserObject` | person       | the person's sockets across devices; their sent and scheduled indexes; their TodoList reminders; their online status | every signed-in tab of the person          |
+| Object        | One per                     | Owns                                                                                                                           | Its sockets                                                           |
+| :------------ | :-------------------------- | :----------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------- |
+| `RoomObject`  | room                        | messages, reactions and search in its SQLite; scheduled messages; the members online in the room                               | everyone viewing the room                                             |
+| `CallObject`  | call session                | participants, knockers and admitted maps; the call's start time; the RealtimeKit participant map                               | everyone joined to or knocking on the call                            |
+| `UserObject`  | person                      | the person's sockets across devices; their sent and scheduled indexes; their TodoList reminders; their online status           | every signed-in tab of the person                                     |
+| `TopicObject` | topic, a `<kind>:<id>` name | the users watching the topic, as storage keys, and the alarm that invalidates each of them after a publish's coalescing window | none; it invalidates each watcher through that watcher's `UserObject` |
 
 A socket is accepted with the WebSocket hibernation API under tags for its user, session and device. An object is evicted while no message is in flight, so an idle socket costs no duration, and a broadcast is a loop over the sockets a tag names, writing one JSON frame each. Every frame is a member of a discriminated union declared once in `packages/db-schema/src/models/realtime/`: `RoomEvent`, `CallEvent` or `UserEvent`. The objects write those types and the client reads them. Queries and mutations stay on tRPC over HTTP; there are no tRPC subscriptions and no in-process emitters.
 
@@ -127,12 +128,13 @@ The decisions behind this split, and the alternatives they beat, are recorded in
 | `apps/web/server/db/index.ts`                                               | the Drizzle client over the `core` binding                       |
 | `apps/web/server/routes/ws/`                                                | the three socket routes: user, room and call                     |
 | `apps/web/server/services/realtime/forwardSocket.ts`                        | authorises an upgrade and forwards it to the owning object       |
-| `apps/realtime/src/worker.ts`                                               | the realtime Worker: exports the three objects, nothing else     |
+| `apps/realtime/src/worker.ts`                                               | the realtime Worker: exports the four objects, nothing else      |
 | `apps/jobs/src/worker.ts`                                                   | the jobs Worker: queue handler and Cron Trigger                  |
 | `apps/realtime/src/durableObjects/RealtimeObject.ts`                        | the socket behaviour the three objects share                     |
 | `apps/realtime/src/durableObjects/RoomObject.ts`                            | a room's messages, search, scheduled messages and online members |
 | `apps/realtime/src/durableObjects/CallObject.ts`                            | a call's participants, knockers and admissions                   |
 | `apps/realtime/src/durableObjects/UserObject.ts`                            | a person's sockets, indexes, reminders and online status         |
+| `apps/realtime/src/durableObjects/TopicObject.ts`                           | a topic's watchers, and the invalidation a publish sends them    |
 | `apps/jobs/src/handlers/`                                                   | the handler each queue job runs                                  |
 | `apps/realtime/wrangler.jsonc`                                              | the realtime Worker's bindings and object classes                |
 | `apps/jobs/wrangler.jsonc`                                                  | the jobs Worker's bindings, queues and Cron Trigger              |

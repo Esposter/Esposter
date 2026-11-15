@@ -39,7 +39,7 @@ sequenceDiagram
   participant SV as Survey resource<br/>(Editor blade)
   participant DB as SQLite, core<br/>(surveyResponses)
   participant SH as Sheet resource<br/>(Data blade)
-  participant DB as Dashboard resource
+  participant Dash as Dashboard resource
   participant PUB as Public /view/[type]/[id]
 
   Creator->>SV: 1. Author survey (Creator autosave → saveDocument)
@@ -49,8 +49,8 @@ sequenceDiagram
   Note over SV,DB: Respondents are served the published snapshot — unpublished 404s
   Creator->>SH: 5. Import responses (dataset.readDataset → one-time copy into a Sheet resource)
   SH->>SH: 6. Computed columns (Aggregation, Math, RegexMatch, …)
-  Creator->>DB: 7. Bind visual to a DatasetReference (live re-resolve on load)
-  DB->>PUB: 8. Publish dashboard — bakes dataset snapshots → shareable /view/Dashboard/{id}
+  Creator->>Dash: 7. Bind visual to a DatasetReference (live re-resolve on load)
+  Dash->>PUB: 8. Publish dashboard — bakes dataset snapshots → shareable /view/Dashboard/{id}
 ```
 
 ## Capabilities

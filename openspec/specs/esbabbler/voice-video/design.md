@@ -30,7 +30,7 @@ flowchart LR
 | **Input Sensitivity**   | `inputSensitivityDecibels`        | voice-activity gate in `MicrophoneProcessor`: gain → 0 when live dB < threshold (Voice Activity mode only)                                                                                                                                                                                                    |
 | **Input mode**          | `voiceInputMode`                  | `VoiceActivity` enables the sensitivity gate; `PushToTalk` gates on the held keybind — [push-to-talk](../push-to-talk/design.md)                                                                                                                                                                              |
 | **Default mute/deafen** | `isMuteOnJoin` / `isDeafenOnJoin` | initial mic/deafen state in the join flow                                                                                                                                                                                                                                                                     |
-| **Devices**             | `inputDeviceId` etc. (local)      | join: `self.setDevice` before the microphone turns on; mid-call: `self.setDevice` via store watchers                                                                                                                                                                                                          |
+| **Devices**             | `inputDeviceId` etc. (local)      | join: `self.setDevice` for each pick once the meeting has joined, without awaiting it, so a pick may land after the microphone opens on the default device; mid-call: `self.setDevice` via store watchers                                                                                                     |
 
 ## Device selection — single source of truth
 
@@ -38,7 +38,7 @@ The persisted `useVoiceDeviceSettingsStore` (`voiceDevice.ts`, `localStorage`) h
 
 - **Settings panel selects** bind `v-model` directly on the store refs.
 - **Mic test** (`useMicrophoneLevel`) and **pre-join preview** (`useCallPreJoinMedia`) build reactive `computed` `useUserMedia` constraints from the IDs — a device change re-requests the right stream immediately.
-- **The live call**: `connect` applies the stored input, camera and output picks through `self.setDevice` before the microphone turns on; the in-call picker (`useCallDeviceSettings`) and the `HealthButton` readout bind the same refs.
+- **The live call**: once the meeting has joined, `connect` starts applying the stored input, camera and output picks through `self.setDevice` without awaiting them, then enables the microphone. The picks may land after the microphone has opened on the default device; the in-call picker (`useCallDeviceSettings`) and the `HealthButton` readout bind the same refs.
 
 `realtime.ts` keeps no device refs of its own. `setActiveDevice` writes the store; per-kind watchers hand the picked device to `self.setDevice`, which switches the live device mid-call. The SDK does not write a switch back into the store, so there is no echo to guard against. RealtimeKit also keeps its own copy of each pick under its `Realtimekit::…UserDeviceID` keys, which it reads only when no device has been chosen.
 

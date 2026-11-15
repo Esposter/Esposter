@@ -17,7 +17,7 @@ stateDiagram-v2
   Live --> Bin: deleteResource / deleteResources
   Bin --> Live: restoreResources (returns as Draft — re-publish is manual)
   Bin --> [*]: purgeResource (object prefix → row)
-  Bin --> [*]: PurgeDeletedResources Cron Trigger (deletedAt < now − 30d)
+  Bin --> [*]: PurgeDeletedResources Cron Trigger (deletedAt < now − RECYCLE_BIN_RETENTION_MS)
 ```
 
 ### The purge protocol
@@ -32,7 +32,7 @@ The nightly purge runs per resource rather than as one batch, so one poisoned re
 
 `resources.deletedAt` is a nullable timestamp — null is live. It costs no migration: `createMetadataSchema` already gives every table `createdAt`, `updatedAt` and `deletedAt`, so soft delete rides a column the table already has.
 
-`RECYCLE_BIN_RETENTION_MS` (30 days) lives in `@esposter/db-schema` — browser-safe, so both the app UI (the retention column, the delete dialogs) and the nightly purge can import the one value from the same source. The retention column says how long is left in words beside a meter of the window used, the storage meter's blocks filling towards the purge and turning to the warning colour past `RETENTION_WARNING_PERCENTAGE` (nine days left) and the danger colour past `RETENTION_ERROR_PERCENTAGE` (three).
+`RECYCLE_BIN_RETENTION_MS` lives in `@esposter/db-schema` — browser-safe, so both the app UI (the retention column, the delete dialogs) and the nightly purge can import the one value from the same source. The retention column says how long is left in words beside a meter of the window used, the storage meter's blocks filling towards the purge and turning to the warning colour past `RETENTION_WARNING_PERCENTAGE` (nine days left) and the danger colour past `RETENTION_ERROR_PERCENTAGE` (three).
 
 The bin is a `UiDataTable` whose rows go nowhere, since a deleted resource has no page to open onto: its two answers, Restore and Delete forever, are the row's overflow menu and its context menu. Delete forever asks for the resource's name in a `UiConfirmDialog` first.
 

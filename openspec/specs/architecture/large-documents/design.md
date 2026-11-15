@@ -55,7 +55,7 @@ No generic transport abstraction sits above them, because resource content is th
 
 ## Notes
 
-- A browser reads R2 cross-origin, so each bucket needs CORS rules that allow `GET` beside the uploads' `PUT`, and a missing rule fails every large read with a CORS error the owner cannot act on. The Pulumi program declares no bucket CORS rules, so nothing in the repository sets or checks them.
+- A browser reads R2 cross-origin, so each bucket needs CORS rules that allow `GET` beside the uploads' `PUT`, and a missing rule fails every large read with a CORS error the owner cannot act on. The Pulumi program declares one `R2BucketCors` per bucket and environment (`apps/infra/src/cloudflare/resources/r2BucketCors/`), each from `getR2BucketCorsRules`, which allows `GET`, `HEAD` and `PUT`.
 - A row no save has yet sized carries the default of zero and is read inline until its next save writes the size. That inline read is the expected path for such a row, not a broken one.
 - The presigned read URL lives minutes, like the one behind `/api/resource-assets`, because it is used the moment it is issued.
 

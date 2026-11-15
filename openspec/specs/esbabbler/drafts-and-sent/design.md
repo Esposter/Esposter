@@ -4,11 +4,11 @@ Route `/messages/draftsandsent`: a cross-room view of unsent drafts, scheduled j
 
 ## Tabs
 
-| Tab       | Source                            | Ordering                                              |
-| --------- | --------------------------------- | ----------------------------------------------------- |
-| Drafts    | Local draft storage keyed by room | Draft update time descending                          |
-| Scheduled | the owner's object (see below)    | `runAt ASC`, grouped by Today/Yesterday/date          |
-| Sent      | `messages` table, newest first    | Sent time descending, grouped by Today/Yesterday/date |
+| Tab       | Source                                                                                   | Ordering                                              |
+| --------- | ---------------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| Drafts    | Local draft storage keyed by room                                                        | Draft update time descending                          |
+| Scheduled | the owner's object (see below)                                                           | `runAt ASC`, grouped by Today/Yesterday/date          |
+| Sent      | the sender's sent index in their UserObject, then each room object's `readMessagesByIds` | Sent time descending, grouped by Today/Yesterday/date |
 
 Sent messages come from the sender's sent index in the user object, read per room and ordered `createdAt DESC`. `message.readMySentMessages({ before, limit })` returns a cursor page `{ hasMore, items }` of the message rows with their room metadata; the client groups rows by day and links each row back to its source room/message.
 

@@ -6,7 +6,7 @@ A Note is the platform's plain **document**: meeting notes, a spec, a README-sty
 
 ```mermaid
 flowchart LR
-  ED["Editor blade<br/>Tiptap document editor"] -->|"onUpdate → saveResourceContent<br/>content = Tiptap JSON doc"| OBJ[("R2 {id}/content")]
+  ED["Editor blade<br/>Tiptap document editor"] -->|"onUpdate → saveResourceContent<br/>content = Tiptap JSON doc"| OBJ[("R2 {id}/content.json")]
   OBJ -->|publishResource| SNAP[("published version n")]
   VIEW["/view/Note/[id]<br/>ViewComponentMap[Note]"] -->|readPublishedResourceContent| HTML["generateHTML(doc) render<br/>sanitized at the boundary"]
 ```
@@ -21,7 +21,7 @@ flowchart LR
 
 ## Data model
 
-Note owns no tables. It is one `ResourceType` enum value (`Note`, one value of the resource type enum) and one `ResourceDefinitionMap` entry (`icon`, `title`, `contentSchema`, `capabilities: { fileAssets: true, portable: true, publishable: true }`). Its working copy lives at `{id}/content` in the shared `resource-assets` bucket and its published versions in the [version store](../resource-version-store/design.md), exactly like every other resource — see [resources](../../architecture/resource/design.md).
+Note owns no tables. It is one `ResourceType` enum value (`Note`, one value of the resource type enum) and one `ResourceDefinitionMap` entry (`icon`, `title`, `contentSchema`, `capabilities: { fileAssets: true, portable: true, publishable: true }`). Its working copy lives at `{id}/content.json` in the shared `resource-assets` bucket and its published versions in the [version store](../resource-version-store/design.md), exactly like every other resource — see [resources](../../architecture/resource/design.md).
 
 ## Key files
 

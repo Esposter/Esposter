@@ -8,7 +8,7 @@ The shape is the industry-standard declarative template (CloudFormation, Backsta
 
 ```mermaid
 flowchart LR
-  ED["Editor blade<br/>manifest JSON"] -->|saveResourceContent| OBJ[("R2 {id}/content<br/>manifest")]
+  ED["Editor blade<br/>manifest JSON"] -->|saveResourceContent| OBJ[("R2 {id}/content.json<br/>manifest")]
   CMD["Deploy command<br/>parameter form dialog"] -->|"deployBlueprint { id, parameterValues }"| SUB["substitute {{parameter:key}}<br/>in names and content strings"]
   SUB --> VAL["pre-validate every entry<br/>against its type contentSchema"]
   VAL --> TOPO["topo-sort entries by<br/>{{entry:key}} references"]

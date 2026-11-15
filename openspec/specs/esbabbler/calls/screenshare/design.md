@@ -4,7 +4,7 @@ A screen share is a RealtimeKit screen-share track published from the local part
 
 ## How it works
 
-- **Start**: the Share Screen button calls `setScreenShare(true)`, which enables the meeting's screen share under `SCREEN_SHARE_CONSTRAINTS` (1920×1080 at 15 frames a second at most, the sharer's own tab excluded from the picker, and the shared surface switchable mid-share) — the browser's native `getDisplayMedia` picker opens; picking a window/tab/monitor publishes the track (plus a separate screen-share audio track if the user checked "Share audio").
+- **Start**: the Share Screen button calls `setScreenShare(true)`, which enables the meeting's screen share under `SCREEN_SHARE_CONSTRAINTS` (its resolution and frame-rate caps, with the sharer's own tab excluded from the picker) — the browser's native `getDisplayMedia` picker opens; picking a window/tab/monitor publishes the track (plus a separate screen-share audio track if the user checked "Share audio").
 - **Stop**: `setScreenShare(false)` unpublishes; the layout reverts to the video grid.
 - Remote clients receive the stream through each participant's `screenShareUpdate` event, which the store hands into `call/media.ts`'s `remoteScreenShareStreams`.
 - Starting a share **auto-pops the call into picture-in-picture** so the sharer keeps watching the call while presenting; the activation-ordering constraint behind this lives in [picture-in-picture](../picture-in-picture/design.md).

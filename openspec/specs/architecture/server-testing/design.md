@@ -98,5 +98,5 @@ All cleanup — the database and its buckets — lives in `afterEach`, never `be
 2. Import `createMockContext`, session helpers, and your router from their canonical locations.
 3. Follow the `beforeAll → createMockContext → createCallerFactory` pattern.
 4. Use the base user (from `getMockSession()`) as the room/resource owner.
-5. Build a second caller with `createMockCaller(router, await createMockAuthSession(db))` only when a non-owner caller is needed.
+5. Build a second caller with `await createMockCaller(router, await createMockAuthSession(db))` only when a non-owner caller is needed.
 6. Reset the database in `afterEach` (not `beforeEach`).

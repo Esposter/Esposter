@@ -6,7 +6,7 @@ An open editor that does not hear another device's save keeps the version it rea
 
 The person's user object pushes a `saveResourceContent` event to each of their tabs when a save lands, filtered so a device never hears its own save. One generic subscription, run by the explorer (`Explorer/Index.vue`) for whichever resource is open, serves every type, so a type needs no entry anywhere. No type keeps a subscribable of its own.
 
-The stream carries the new content version and the writing device rather than the content. The content is re-read through the reload stage a restore already runs, so a large Sheet arrives by the large-documents path rather than over the socket, and one path adopts whatever wrote the blob.
+The event carries the resource's id, its new content version and the name of the API key that saved it (empty for a save from a session), never the content. The writing device is not in the event: it rides only as the broadcast's exclude tag, which leaves out the saving tab. The content is re-read through the reload stage a restore already runs, so a large Sheet arrives by the large-documents path rather than over the socket, and one path adopts whatever wrote the blob.
 
 ## Adopting
 

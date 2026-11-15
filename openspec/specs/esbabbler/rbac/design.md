@@ -42,7 +42,7 @@ A bitfield bounds **permissions**, never roles. A role is a `roomRoles` row and 
 
 This is the same shape Discord uses, and for the same reason: a room is a **flat scope over a fixed vocabulary**, so a permission check is one aggregate and one `AND` rather than a join per action name. Azure's RBAC solves a different problem — role definitions listing action strings (`Microsoft.Storage/*/read`) evaluated against a scope tree — which is what an open-ended, hierarchical resource surface needs and what a room does not have. Adopting it here would buy a wildcard syntax nobody would write and pay for it in a string match per check.
 
-The one real limit is width: bit 62 is the highest bit the vocabulary uses. The number to watch is how many permissions the vocabulary has, not how many roles a room has. If the vocabulary ever exhausts them, the escape hatch is the read path, not the model: the text column already holds any width, and `createBitfieldColumn` is the one place a wider value would be parsed. Nothing about the roles, the grants or the checks changes with it.
+The one real limit is width: `Administrator` is the highest permission the vocabulary holds, and the list can grow from there up to the last bit before the sign bit of the signed 64-bit `permissions` value. The number to watch is how many permissions the vocabulary has, not how many roles a room has. If the vocabulary ever exhausts them, the escape hatch is the read path, not the model: the text column already holds any width, and `createBitfieldColumn` is the one place a wider value would be parsed. Nothing about the roles, the grants or the checks changes with it.
 
 ## Data model
 
