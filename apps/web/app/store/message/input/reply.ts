@@ -8,10 +8,7 @@ import { Operation } from "@esposter/shared";
 
 export const useReplyStore = defineStore("message/input/reply", () => {
   const roomStore = useRoomStore();
-  const { data: replyToId, setData: setReplyToId } = useDataMap<"" | ClientMessage["id"]>(
-    () => roomStore.currentRoomId,
-    "",
-  );
+  const { data: replyToId, setData: setReplyToId } = useDataMap<ClientMessage["id"]>(() => roomStore.currentRoomId, 0);
   // Keyed by the room the send was for: the reset runs behind the optimistic bubble, so writing through
   // `replyToId.value` would clear the reply target of whichever room the user switched to mid-send instead.
   // Only the room's own composer has one to clear — a thread reply's target is the thread root, which the pane
@@ -19,7 +16,7 @@ export const useReplyStore = defineStore("message/input/reply", () => {
   MessageHookMap[MessageHook.ResetSend].register(({ roomId, threadRootId }) => {
     if (threadRootId) return;
 
-    setReplyToId(roomId, "");
+    setReplyToId(roomId, 0);
   });
 
   const dataStore = useDataStore();

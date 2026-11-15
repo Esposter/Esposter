@@ -24,9 +24,8 @@ const createEventHub = <TEvent extends { data: unknown; type: string }, TContext
     type: TType,
     handler: (data: EventData<TEvent, TType>, context: TContext) => void,
   ) => {
-    const typeHandlers = handlers.get(type) ?? new Set<(data: never, context: TContext) => void>();
+    const typeHandlers = getOrCreate(handlers, type, () => new Set<(data: never, context: TContext) => void>());
     typeHandlers.add(handler);
-    handlers.set(type, typeHandlers);
     return () => {
       typeHandlers.delete(handler);
     };

@@ -5,7 +5,7 @@ import { uploadFileToUrl } from "@/services/file/uploadFileToUrl";
 import { settleAll, takeOne } from "@esposter/shared";
 
 // The one presigned upload round-trip: generate write targets -> PUT each file to its url -> return the targets.
-// Every upload site funnels through here so limit enforcement and progress reporting live in one place.
+// Every upload site funnels through here so the skipped-upload check and progress reporting live in one place.
 export const uploadFilesToPresignedUrls = async <TFilePresignedUrlEntity extends FilePresignedUrlEntity>({
   checkIsUploadSkipped,
   files,

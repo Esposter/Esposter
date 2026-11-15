@@ -41,7 +41,7 @@ useCommands(MessageInputCommands);
   <MessageModelMessageFileDropzoneBackground />
   <div flex flex-col gap-1 w-full ui-body>
     <MessageModelMessageInputHeaderSlashCommandParameters />
-    <MessageModelMessageInputHeaderReply v-if="replyToMessage" :message="replyToMessage" @close="replyToId = ''" />
+    <MessageModelMessageInputHeaderReply v-if="replyToMessage" :message="replyToMessage" @close="replyToId = 0" />
     <MessageModelMessageInputSlashCommandParameters v-if="pendingSlashCommand" />
     <MessageModelMessageInputComposer
       v-else

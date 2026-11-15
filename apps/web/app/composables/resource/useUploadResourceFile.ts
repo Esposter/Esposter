@@ -25,7 +25,8 @@ export const useUploadResourceFile = (type: FileAssetsResourceType, id: MaybeRef
       uploadFilesToPresignedUrls<ResourceFilePresignedUrlEntity>({
         checkIsUploadSkipped: ({ isHeld }) => isHeld,
         files: [file],
-        // UploadFileToPresignedUrl describes the batch by its name, type and size, so the hash is carried in alongside them
+        // UploadFilesToPresignedUrlsOptions describes the batch by its name, type and size, so the hash is
+        // Carried in alongside them
         generateUploadFilePresignedUrlEntities: (files) =>
           generateUploadFilePresignedUrlEntities.query({
             files: files.map((fileEntity) => ({ ...fileEntity, hash: fileHash })),

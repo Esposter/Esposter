@@ -1,4 +1,3 @@
-/* oxlint-disable no-await-in-loop -- Order is the contract: each row lands in the order the window holds it */
 import type { CreateMessageInput } from "#shared/models/db/message/CreateMessageInput";
 import type { DeleteFileInput } from "#shared/models/db/message/DeleteFileInput";
 import type { DeleteMessageInput } from "#shared/models/db/message/DeleteMessageInput";
@@ -207,12 +206,14 @@ export const useDataStore = defineStore("message/data", () => {
         roomId,
       });
       const liveMessageMap = new Map(liveMessages.map((message) => [message.id, message]));
-      for (const loadedMessage of loadedMessages) {
-        const liveMessage = liveMessageMap.get(loadedMessage.id);
-        if (!liveMessage) await storeDeleteMessage({ id: loadedMessage.id, roomId });
-        else if (liveMessage.updatedAt.getTime() !== loadedMessage.updatedAt.getTime())
-          await storeUpdateMessage({ ...liveMessage, roomId });
-      }
+      await Promise.all(
+        loadedMessages.map(async (loadedMessage) => {
+          const liveMessage = liveMessageMap.get(loadedMessage.id);
+          if (!liveMessage) await storeDeleteMessage({ id: loadedMessage.id, roomId });
+          else if (liveMessage.updatedAt.getTime() !== loadedMessage.updatedAt.getTime())
+            await storeUpdateMessage({ ...liveMessage, roomId });
+        }),
+      );
     }).match(noop, console.error),
   );
 

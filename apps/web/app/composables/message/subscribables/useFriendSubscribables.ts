@@ -1,10 +1,7 @@
+import { getOtherUserId } from "@/composables/message/subscribables/getOtherUserId";
 import { useFriendStore } from "@/store/message/user/friend";
 import { useFriendRequestStore } from "@/store/message/user/friendRequest";
 import { useConnectionStore } from "@/store/realtime/connection";
-
-// Of the two parties to a request or a friendship, the one that is not the person
-const getOtherUserId = (userId: string | undefined, receiverId: string, senderId: string) =>
-  senderId === userId ? receiverId : senderId;
 
 export const useFriendSubscribables = async () => {
   const currentInstance = getCurrentInstance();
