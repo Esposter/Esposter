@@ -1,10 +1,10 @@
 import type { Database } from "@esposter/db-schema";
 
 import { deleteAccountDataExportArchives } from "#src/services/account/deleteAccountDataExportArchives";
-import { readBlobNames } from "#src/services/azure/readBlobNames.test";
-import { seedBlob } from "#src/services/azure/seedBlob.test";
 import { createUser } from "#src/services/shared/createUser.test";
 import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
+import { readBlobNames } from "#src/services/storage/readBlobNames.test";
+import { seedBlob } from "#src/services/storage/seedBlob.test";
 import { getDataExportBlobName } from "#src/services/user/getDataExportBlobName";
 import { createMockDb } from "@esposter/db-mock";
 import { dataExportsInUser, DataExportStatus, StorageBucket, usersInAuth } from "@esposter/db-schema";

@@ -6,7 +6,7 @@ Build order. Section 1 lands the gate, section 2 the measurement, and sections 3
 
 - [x] 1.1 Write the message reserve helper in `apps/web/server/services/message/file/`. It reserves every original and thumbnail target for the uploader through `reserveStorageBytes`, then mints them. Test first: a reserve the allowance refuses returns no target and writes no ledger row.
       Verify: the helper's test names match the spec delta's scenarios, and the refused case asserts that no SAS is signed.
-- [x] 1.2 Route `generateUploadFilePresignedUrlEntities` through the helper as a mutation, and move `useUploadFiles` to the mutation client. Test first in the router's test file: a drop of one image writes two ledger rows, one for the original and one for the thumbnail, both under the uploader.
+- [x] 1.2 Route `generateUploadFileSasEntities` through the helper as a mutation, and move `useUploadFiles` to the mutation client. Test first in the router's test file: a drop of one image writes two ledger rows, one for the original and one for the thumbnail, both under the uploader.
       Verify: the router test passes, and the composer test shows the refusal text when the reserve refuses.
 - [x] 1.3 Add `MAX_THUMBNAIL_BYTES` beside `THUMBNAIL_CONTENT_TYPE` in the file constants, and reserve each thumbnail at that bound.
       Verify: the reserve test's thumbnail row carries exactly the constant, and the constant is imported rather than repeated.

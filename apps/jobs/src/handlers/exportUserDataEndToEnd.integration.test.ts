@@ -1,11 +1,11 @@
 import type { Database, RoomMessage } from "@esposter/db-schema";
 
 import { exportUserDataHandler } from "#src/handlers/exportUserDataHandler";
-import { seedBlob } from "#src/services/azure/seedBlob.test";
 import { clearRoomObjectCalls, roomObjectReplies } from "#src/services/room/getRoomObject.test";
 import { createUser } from "#src/services/shared/createUser.test";
 import { getBucket } from "#src/services/storage/getBucket";
 import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
+import { seedBlob } from "#src/services/storage/seedBlob.test";
 import { getDataExportBlobName } from "#src/services/user/getDataExportBlobName";
 import { getContentBlobName, getFileBlobNames, writeJsonBlob } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";

@@ -2,10 +2,10 @@ import type { R2Bucket, R2ObjectBody } from "@cloudflare/workers-types";
 import type { Database, R2ObjectCreatedQueueMessage } from "@esposter/db-schema";
 
 import { reconcileStorageLedgerEntryHandler } from "#src/handlers/reconcileStorageLedgerEntryHandler";
-import { readBlobNames } from "#src/services/azure/readBlobNames.test";
 import { createUser } from "#src/services/shared/createUser.test";
 import { getBucket } from "#src/services/storage/getBucket";
 import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
+import { readBlobNames } from "#src/services/storage/readBlobNames.test";
 import { userObjectCalls } from "#src/services/user/getUserObject.test";
 import { getBlobName } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";

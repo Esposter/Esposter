@@ -1,18 +1,21 @@
 import type { Database, RoomMessage } from "@esposter/db-schema";
 
 import { exportUserDataHandler } from "#src/handlers/exportUserDataHandler";
-import { readBlobNames } from "#src/services/azure/readBlobNames.test";
+import { MockPublishedTopics } from "#src/services/realtime/publishTopics.test";
 import { clearRoomObjectCalls, roomObjectReplies } from "#src/services/room/getRoomObject.test";
 import { createUser } from "#src/services/shared/createUser.test";
 import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
+import { readBlobNames } from "#src/services/storage/readBlobNames.test";
 import { getDataExportBlobName } from "#src/services/user/getDataExportBlobName";
 import { createMockDb } from "@esposter/db-mock";
 import {
   dataExportsInUser,
   DataExportStatus,
+  getTopic,
   MessageType,
   roomsInMessage,
   StorageBucket,
+  TopicKind,
   usersInAuth,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
@@ -30,6 +33,7 @@ vi.mock(import("#src/services/shared/db"), () => ({
 }));
 vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/storage/getBucket.test"));
 vi.mock(import("#src/services/room/getRoomObject"), () => import("#src/services/room/getRoomObject.test"));
+vi.mock(import("#src/services/realtime/publishTopics"), () => import("#src/services/realtime/publishTopics.test"));
 
 const readExportRow = async (dataExportId: string) =>
   takeOne(
@@ -71,6 +75,7 @@ describe(exportUserDataHandler, () => {
     vi.restoreAllMocks();
     await clearMockBuckets();
     clearRoomObjectCalls();
+    MockPublishedTopics.length = 0;
     await mockDb.delete(usersInAuth);
   });
 
@@ -136,6 +141,7 @@ describe(exportUserDataHandler, () => {
     expect(row.expiresAt).toStrictEqual(
       new Date(row.readyAt.getTime() + Temporal.Duration.from({ days: 7 }).total("milliseconds")),
     );
+    expect(MockPublishedTopics).toStrictEqual([getTopic(TopicKind.User, userId)]);
   });
 
   test("a replayed event rebuilds the same blob, leaving one archive for the export", async () => {

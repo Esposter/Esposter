@@ -9,8 +9,8 @@ These settings deviate from Azure hardening best practices. Each is an accepted 
 The app uses connection-string auth (`BlobServiceClient.fromConnectionString`) and service SAS generation, both of which require shared key access:
 
 - `apps/web/server/composables/azure/container/useContainerClient.ts`
-- `packages/db/src/services/azure/container/generateUploadFilePresignedUrlEntities.ts`
-- `packages/db/src/services/azure/container/generateDownloadFilePresignedUrls.ts`
+- `packages/db/src/services/azure/container/generateUploadFileSasEntities.ts`
+- `packages/db/src/services/azure/container/generateDownloadFileSasUrls.ts`
 - `apps/web/server/trpc/routers/message/index.ts`
 - `apps/web/server/trpc/routers/survey.ts`
 

@@ -4,7 +4,7 @@ Message uploads are reserved against the uploader's storage allowance when their
 
 ## Scope
 
-Today a message upload's write target comes from `generateUploadFilePresignedUrlEntities`, which mints a presigned url per file and a sibling thumbnail target, with no reserve and no ledger row. The reconcile handler's container list holds resource assets only. The change adds the reserve, the measurement and the forward charge. It does not add a measured check against the room's size cap, and it does not change the declared-size gate.
+Today a message upload's write target comes from `generateUploadFileSasEntities`, which mints a SAS per file and a sibling thumbnail target, with no reserve and no ledger row. The reconcile handler's container list holds resource assets only. The change adds the reserve, the measurement and the forward charge. It does not add a measured check against the room's size cap, and it does not change the declared-size gate.
 
 ## Decisions
 
@@ -21,7 +21,7 @@ Today a message upload's write target comes from `generateUploadFilePresignedUrl
 ```mermaid
 sequenceDiagram
   participant C as Composer
-  participant P as generateUploadFilePresignedUrlEntities
+  participant P as generateUploadFileSasEntities
   participant L as Storage ledger
   participant S as Blob storage
   participant E as Event Grid
@@ -50,35 +50,35 @@ A forward runs its own leg: `cloneFiles` reads each source blob's length, charge
 
 ## Key files
 
-| File                                                                                             | Role                                                                                                                                                                    |
-| ------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `apps/web/server/trpc/routers/message/index.ts`                                                  | `generateUploadFilePresignedUrlEntities` reserves and mints; `forwardMessage` charges each copy; the comment that calls room attachments outside the quota is rewritten |
-| `apps/web/server/services/resource/generateReservedResourceAssetPresignedUrlEntities.ts`         | the precedent: mint and reserve in one call, which the message path mirrors                                                                                             |
-| `apps/web/server/services/storage/reserveStorageBytes.ts`                                        | the gate, reused unchanged                                                                                                                                              |
-| `apps/web/app/composables/message/file/useUploadFiles.ts`                                        | the composer's caller, moved to the mutation client and showing the refusal                                                                                             |
-| `packages/db/src/services/azure/container/generateUploadFilePresignedUrlEntities.ts`             | names the original and thumbnail targets, reserves the set through its `reserve` option, then signs                                                                     |
-| `packages/db/src/services/azure/container/cloneFiles.ts`                                         | copies a forwarded file's blobs, charging each copy through `chargeAndCopyBlob`                                                                                         |
-| `packages/db/src/services/storage/chargeStorageLedgerEntry.ts`                                   | the charge for a server-written blob, reused for each copy                                                                                                              |
-| `packages/db/src/services/storage/chargeAndCopyBlob.ts`                                          | the charge-then-copy step both clones share                                                                                                                             |
-| `apps/web/server/services/resource/cloneContentAssets.ts`                                        | its clone copies through `chargeAndCopyBlob`, with the same charge as before                                                                                            |
-| `packages/db/src/services/storage/deleteStorageBlobs.ts`                                         | releases a deleted blob's row, reused unchanged                                                                                                                         |
-| `apps/functions/src/handlers/reconcileStorageLedgerEntryHandler.ts`                              | the `BlobCreated` handler; its container list gains message assets                                                                                                      |
-| `apps/infra/src/azure/resources/Microsoft.EventGrid/eventSubscriptions/prodEvgsEsposterAe007.ts` | the resource-asset subscription; a second one covers the message prefix                                                                                                 |
-| `apps/infra/src/azure/resources/Microsoft.EventGrid/eventSubscriptions/devEvgsEsposterAe007.ts`  | the dev counterpart                                                                                                                                                     |
-| `apps/infra/src/azure/resources/Microsoft.EventGrid/eventSubscriptions/prodEvgsEsposterAe008.ts` | the message-attachment subscription, a second one because a subscription filters on one prefix                                                                          |
-| `apps/infra/src/azure/resources/Microsoft.EventGrid/eventSubscriptions/devEvgsEsposterAe008.ts`  | the dev counterpart                                                                                                                                                     |
-| `packages/db-schema/src/services/file/constants.ts`                                              | gains the thumbnail's edge and its declared bound beside its content type                                                                                               |
-| `apps/web/app/services/file/constants.ts`                                                        | loses the thumbnail edge, which moved to the schema package above                                                                                                       |
-| `packages/db-schema/src/schema/storage/storageLedgerInStorage.ts`                                | the ledger comment that keys a message asset by room is rewritten                                                                                                       |
+| File                                                                                             | Role                                                                                                                                                           |
+| ------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `apps/web/server/trpc/routers/message/index.ts`                                                  | `generateUploadFileSasEntities` reserves and mints; `forwardMessage` charges each copy; the comment that calls room attachments outside the quota is rewritten |
+| `apps/web/server/services/resource/generateReservedResourceAssetSasEntities.ts`                  | the precedent: mint and reserve in one call, which the message path mirrors                                                                                    |
+| `apps/web/server/services/storage/reserveStorageBytes.ts`                                        | the gate, reused unchanged                                                                                                                                     |
+| `apps/web/app/composables/message/file/useUploadFiles.ts`                                        | the composer's caller, moved to the mutation client and showing the refusal                                                                                    |
+| `packages/db/src/services/azure/container/generateUploadFileSasEntities.ts`                      | names the original and thumbnail targets, reserves the set through its `reserve` option, then signs                                                            |
+| `packages/db/src/services/azure/container/cloneFiles.ts`                                         | copies a forwarded file's blobs, charging each copy through `chargeAndCopyBlob`                                                                                |
+| `packages/db/src/services/storage/chargeStorageLedgerEntry.ts`                                   | the charge for a server-written blob, reused for each copy                                                                                                     |
+| `packages/db/src/services/storage/chargeAndCopyBlob.ts`                                          | the charge-then-copy step both clones share                                                                                                                    |
+| `apps/web/server/services/resource/cloneContentAssets.ts`                                        | its clone copies through `chargeAndCopyBlob`, with the same charge as before                                                                                   |
+| `packages/db/src/services/storage/deleteStorageBlobs.ts`                                         | releases a deleted blob's row, reused unchanged                                                                                                                |
+| `apps/functions/src/handlers/reconcileStorageLedgerEntryHandler.ts`                              | the `BlobCreated` handler; its container list gains message assets                                                                                             |
+| `apps/infra/src/azure/resources/Microsoft.EventGrid/eventSubscriptions/prodEvgsEsposterAe007.ts` | the resource-asset subscription; a second one covers the message prefix                                                                                        |
+| `apps/infra/src/azure/resources/Microsoft.EventGrid/eventSubscriptions/devEvgsEsposterAe007.ts`  | the dev counterpart                                                                                                                                            |
+| `apps/infra/src/azure/resources/Microsoft.EventGrid/eventSubscriptions/prodEvgsEsposterAe008.ts` | the message-attachment subscription, a second one because a subscription filters on one prefix                                                                 |
+| `apps/infra/src/azure/resources/Microsoft.EventGrid/eventSubscriptions/devEvgsEsposterAe008.ts`  | the dev counterpart                                                                                                                                            |
+| `packages/db-schema/src/services/file/constants.ts`                                              | gains the thumbnail's edge and its declared bound beside its content type                                                                                      |
+| `apps/web/app/services/file/constants.ts`                                                        | loses the thumbnail edge, which moved to the schema package above                                                                                              |
+| `packages/db-schema/src/schema/storage/storageLedgerInStorage.ts`                                | the ledger comment that keys a message asset by room is rewritten                                                                                              |
 
 A new file, in the tree form the design template asks for:
 
 ```text
-apps/web/server/services/message/file/generateReservedMessageFilePresignedUrlEntities.ts   mint and reserve a message's write targets in one call
+apps/web/server/services/message/file/generateReservedMessageFileSasEntities.ts   mint and reserve a message's write targets in one call
 ```
 
 ## Notes
 
-- Room emoji and the other uploads outside the message and resource paths write without a reserve, and this change does not charge them. Room emoji mint their write target through `generateWritePresignedUrl` directly, so charging them is a follow-up that reserves through `reserveStorageBytes` the way this change does; the deferred room-attachment page lists the rest.
+- Room emoji and the other uploads outside the message and resource paths write without a reserve, and this change does not charge them. Room emoji mint their write target through `generateWriteSasUrl` directly, so charging them is a follow-up that reserves through `reserveStorageBytes` the way this change does; the deferred room-attachment page lists the rest.
 - The room's size cap stays a declared-size check. Measuring the stored size against the cap, and deleting a blob that exceeds it, would be a second decision and is not part of this change.
 - The outstanding-reservation cap counts thumbnails as well as originals, so a drop of many images reaches the cap sooner than a drop of the same number of documents.

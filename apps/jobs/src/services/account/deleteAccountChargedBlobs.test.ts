@@ -1,10 +1,10 @@
 import type { Database } from "@esposter/db-schema";
 
 import { deleteAccountChargedBlobs } from "#src/services/account/deleteAccountChargedBlobs";
-import { readBlobNames } from "#src/services/azure/readBlobNames.test";
-import { seedBlob } from "#src/services/azure/seedBlob.test";
 import { createUser } from "#src/services/shared/createUser.test";
 import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
+import { readBlobNames } from "#src/services/storage/readBlobNames.test";
+import { seedBlob } from "#src/services/storage/seedBlob.test";
 import { createMockDb } from "@esposter/db-mock";
 import { StorageBucket, storageLedgerInStorage, usersInAuth } from "@esposter/db-schema";
 import { eq } from "drizzle-orm";
