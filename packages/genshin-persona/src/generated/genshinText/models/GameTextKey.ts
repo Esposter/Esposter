@@ -1010,7 +1010,6 @@ export const GameTextKey = {
   // The map's zoom slider, named by the game's own word for Zoom
   Zoom: "UI_BUTTON_ZOOM",
 } as const;
-
 export type GameTextKey = (typeof GameTextKey)[keyof typeof GameTextKey];
 
 export const GameTextKeys: readonly GameTextKey[] = Object.values(GameTextKey);

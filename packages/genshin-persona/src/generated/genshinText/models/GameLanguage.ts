@@ -18,7 +18,6 @@ export const GameLanguage = {
   Turkish: "Turkish",
   Vietnamese: "Vietnamese",
 } as const;
-
 export type GameLanguage = (typeof GameLanguage)[keyof typeof GameLanguage];
 
 export const GameLanguages: readonly GameLanguage[] = Object.values(GameLanguage);
