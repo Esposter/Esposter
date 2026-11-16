@@ -14,5 +14,8 @@ export const NOTE_SUPPORT_SEMITONES = 0.3;
 export const NOTE_SUPPORT_DELAY_SECONDS = 0.04;
 export const NOTE_SUPPORT_SPAN_SECONDS = 0.6;
 
+// How many of a component's music segments are read at once, each holding its clips' samples and its mix in memory
+export const GAME_MUSIC_SEGMENT_CONCURRENCY = 2;
+
 // The committed report of each music segment's last `listen`
 export const PARITY_MUSIC_SCORES_PATH: string = join(PARITY_SHARED_DIRECTORY, "ParityMusicScores.snapshot.md");
