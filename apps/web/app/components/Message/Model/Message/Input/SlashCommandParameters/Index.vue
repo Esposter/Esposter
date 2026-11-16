@@ -74,7 +74,7 @@ const deleteLastParameter = () => {
         <MessageModelMessageInputSlashCommandParametersChip
           :is-required
           :name
-          :autofocus="lastAddedParameterName === name || (!lastAddedParameterName && index === 0)"
+          :is-autofocus="lastAddedParameterName === name || (!lastAddedParameterName && index === 0)"
           :is-focused="focusedIndex === index"
           :model-value="parameterValues[name] ?? ''"
           @update:model-value="updateParameterValue(name, $event)"

@@ -6,14 +6,14 @@ import { checkIsCaretAtEnd } from "#src/util/dom/checkIsCaretAtEnd";
 import { checkIsCaretAtStart } from "#src/util/dom/checkIsCaretAtStart";
 
 interface Props {
-  autofocus?: boolean;
+  isAutofocus?: boolean;
   isFocused?: boolean;
   isRequired: boolean;
   name: string;
 }
 
 const modelValue = defineModel<string>({ default: "" });
-const { autofocus, isFocused, name } = defineProps<Props>();
+const { isAutofocus, isFocused, name } = defineProps<Props>();
 const emit = defineEmits<{
   blur: [];
   delete: [];
@@ -31,7 +31,7 @@ const isError = computed(() => {
   return Boolean(parameterError && parameterError.messages.length > 0);
 });
 
-useFocusWhenActive(input, () => Boolean(isFocused || autofocus));
+useFocusWhenActive(input, () => Boolean(isFocused || isAutofocus));
 </script>
 
 <template>

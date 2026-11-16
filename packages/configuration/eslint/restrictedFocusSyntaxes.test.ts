@@ -2,9 +2,9 @@ import { setupSyntaxSuite } from "#src/services/setupSyntaxSuite.test";
 import restrictedFocusSyntaxes from "@esposter/configuration/eslint/restrictedFocusSyntaxes.js";
 import { describe } from "vitest";
 
-const focusOnMountSource = '<script setup lang="ts">\nonMounted(() => {\n  input.value?.focus();\n});\n</script>';
-
 describe("restrictedFocusSyntaxes", () => {
+  const focusOnMountSource = '<script setup lang="ts">\nonMounted(() => {\n  input.value?.focus();\n});\n</script>';
+
   setupSyntaxSuite({
     entries: restrictedFocusSyntaxes,
     fixtures: [

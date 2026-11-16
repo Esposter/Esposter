@@ -1,9 +1,8 @@
 import { KIT_MODULE_DIRECTORY } from "#scripts/kit/constants";
+import formatterConfiguration from "@esposter/configuration/oxfmt";
 import { globSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { format } from "oxfmt";
-
-import formatterConfiguration from "@esposter/configuration/oxfmt";
 
 const GENERATED_DIRECTORY = join("src", "generated", "characterKitMap");
 const MAP_NAME = "CharacterIdCreateKitBehaviourMap";

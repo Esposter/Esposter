@@ -1,12 +1,11 @@
 import { KIT_MODULE_DIRECTORY } from "#scripts/kit/constants";
 import { generateCharacterKitMap } from "#scripts/kit/generateCharacterKitMap";
+import formatterConfiguration from "@esposter/configuration/oxfmt";
 import { mkdir, mkdtemp, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { format } from "oxfmt";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
-
-import formatterConfiguration from "@esposter/configuration/oxfmt";
 
 describe(generateCharacterKitMap, () => {
   const MAP_FILE_NAME = "CharacterIdCreateKitBehaviourMap.ts";

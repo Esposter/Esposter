@@ -1,8 +1,7 @@
+import formatterConfiguration from "@esposter/configuration/oxfmt";
 import { glob, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { format } from "oxfmt";
-
-import formatterConfiguration from "@esposter/configuration/oxfmt";
 
 interface RegistryEntry {
   exportNames: string[];
