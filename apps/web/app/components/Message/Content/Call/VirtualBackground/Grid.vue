@@ -60,35 +60,14 @@ onMounted(async () => {
           <UiIcon v-if="!url" :meaning="UiIconMeaning.None" />
         </button>
       </UiTooltip>
-      <!-- A slot's delete sits on the tile rather than behind a menu: the picker is the only surface these
-        exist on, so there is nowhere else for it to live -->
-      <div v-for="callBackground of callBackgrounds" :key="callBackground.slot" relative>
-        <UiTooltip #default="{ activatorProps }" label="Uploaded background">
-          <button
-            :="activatorProps"
-            aria-label="Uploaded background"
-            :aria-pressed="selectedVirtualBackground === getCallBackgroundSelection(callBackground)"
-            :style="{ backgroundImage: `url(${callBackground.presignedUrl})` }"
-            type="button"
-            class="aria-pressed:shadow-[0_0_0_var(--ui-indicator-width)_var(--ui-accent)]"
-            size-full
-            aspect-square
-            cursor-pointer
-            bg-cover
-            bg-center
-            ui-field
-            @click="emit('select', getCallBackgroundSelection(callBackground))"
-          />
-        </UiTooltip>
-        <UiIconButton
-          label="Delete Background"
-          :meaning="UiIconMeaning.Delete"
-          right-1
-          top-1
-          absolute
-          @click="deletingSelection = getCallBackgroundSelection(callBackground)"
-        />
-      </div>
+      <MessageContentCallVirtualBackgroundUploadedBackground
+        v-for="callBackground of callBackgrounds"
+        :key="callBackground.slot"
+        :call-background
+        :selected-virtual-background
+        @delete="deletingSelection = $event"
+        @select="(virtualBackground) => emit('select', virtualBackground)"
+      />
       <UiTooltip
         v-if="callBackgrounds.length < MAX_CALL_BACKGROUNDS"
         #default="{ activatorProps }"
