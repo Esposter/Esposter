@@ -19,4 +19,9 @@ export const routeRules: NuxtConfig["routeRules"] = {
   "/messages/**": { robots: false, ssr: false },
   "/resource-explorer": { robots: false, ssr: false },
   "/resource-explorer/**": { robots: false, ssr: false },
+  // @TODO: https://github.com/h3js/h3/pull/1629 — h3 2.0.8 rebuilds a handler's answer to merge the headers Nitro's
+  // Headers rule writes after it, and a socket's upgrade is a 101 carrying the socket, which the rebuild drops and
+  // Workers refuses to construct. `false` removes the security module's `/**` headers on the sockets' routes until h3
+  // Releases the fix that leaves a 101 as it is
+  "/ws/**": { headers: false },
 };
