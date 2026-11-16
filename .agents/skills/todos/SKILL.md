@@ -46,7 +46,6 @@ Each row is a marker in the unfiled form, waiting for its issue to be filed: the
 
 - `apps/web/uno.config.ts` — unocss/unocss: "`content.filesystem` globs from `process.cwd()` with no `node_modules` ignore, and its watcher's `ignored` is a glob string chokidar 4 and later treat as a literal path, so a monorepo app watches every linked package"
 - `apps/web/app/services/trpc/mswTrpc.test.ts` — nuxt/test-utils: "In the nuxt environment `fetch` and `Request` are happy-dom's while `Headers` stays Node's, so a library mixing the globals (msw 3) loses requests and headers"
-- `apps/web/app/composables/auth/useAuthSession.ts` — better-auth/better-auth: "Vue client: `useSession(useFetch)` no longer typechecks on Nuxt 5, whose `useFetch` overloads are generic over the route"
 - `apps/web/modules/servePublicDirectory.ts` — nuxt/nuxt: "With `nitroViteEnvironment`, `nuxt dev` runs Vite's transform on every script in `public/`, serving it as a module exporting its own URL"
 - `pnpm-workspace.yaml` — nitrojs/nitro: "A storage mount's unstorage fs driver loads `chokidar`, which nothing declares"
 - `knip.config.ts` — the same nitrojs/nitro issue as `pnpm-workspace.yaml`'s row, on the app's `ignoreDependencies` entries for the packages they leave nothing in the app importing, and nuxt/scripts' `lru-cache`, which its storage driver loads undeclared; and webpro-nl/knip: "An `import.meta.glob` pattern resolves its alias through tsconfig `paths` only, never the manifest's `imports`, though a plain `#` import is followed"
