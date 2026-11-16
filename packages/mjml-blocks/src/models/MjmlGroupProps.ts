@@ -4,9 +4,9 @@ import type { BlockNodeProps } from "vue-block-editor-headless";
 
 // The props an MJML group node holds: its attributes as MJML takes them, its children
 export interface MjmlGroupProps extends BlockNodeProps {
-  "background-color"?: string;
+  "background-color"?: string | undefined;
   children: (MjmlColumnNode | MjmlRawNode)[];
-  direction?: string;
-  "vertical-align"?: string;
-  width?: string;
+  direction?: string | undefined;
+  "vertical-align"?: string | undefined;
+  width?: string | undefined;
 }

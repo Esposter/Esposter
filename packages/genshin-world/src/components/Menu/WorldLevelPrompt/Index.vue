@@ -12,7 +12,7 @@ interface Props {
   // The game's words in the reader's language
   gameText: GameText;
   // A state every choice is drawn in, forced by a fixture; a reader's pointer sets it itself
-  interactionState?: InteractionState;
+  interactionState?: InteractionState | undefined;
 }
 
 const { adjustPrompt, gameText } = defineProps<Props>();

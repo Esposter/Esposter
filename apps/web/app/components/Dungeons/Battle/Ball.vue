@@ -4,7 +4,7 @@ import { Curves, Math } from "phaser";
 import { PathFollower } from "vue-phaserjs";
 
 interface Props {
-  scale?: number;
+  scale?: number | undefined;
 }
 
 const { scale = 0.1 } = defineProps<Props>();

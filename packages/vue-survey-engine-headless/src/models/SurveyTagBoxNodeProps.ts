@@ -9,7 +9,7 @@ import { z } from "zod";
 
 // The props of a tag box: any number of choices of its list, picked as tags, with a bound on how many it takes
 export interface SurveyTagBoxNodeProps extends SurveyChoiceOptionsProps, SurveyQuestionBaseProps {
-  maxSelected?: number;
+  maxSelected?: number | undefined;
   placeholder: string;
 }
 

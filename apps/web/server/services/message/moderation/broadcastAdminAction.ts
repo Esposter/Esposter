@@ -7,7 +7,7 @@ import { getResultAsync, noop } from "@esposter/shared";
 // Behind the action, which has already landed: a failed broadcast costs the target the notice, never the action
 export const broadcastAdminAction = (
   roomId: string,
-  { durationMs, targetUserId, type }: { durationMs?: number; targetUserId: string; type: AdminActionType },
+  { durationMs, targetUserId, type }: { durationMs?: number | undefined; targetUserId: string; type: AdminActionType },
 ) =>
   getResultAsync(() =>
     useRoomObject(roomId).broadcastEvent(

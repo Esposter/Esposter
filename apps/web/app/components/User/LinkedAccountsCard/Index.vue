@@ -12,7 +12,7 @@ import { useAlertStore } from "#src/store/alert";
 import { RoutePath } from "@esposter/shared";
 
 interface Props {
-  section?: UserSettingsPageSection;
+  section?: undefined | UserSettingsPageSection;
 }
 
 defineProps<Props>();

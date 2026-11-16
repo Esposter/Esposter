@@ -3,14 +3,15 @@ import type { RenderTextureConfiguration } from "#src/models/configuration/Rende
 import type { RenderTextureEventEmitsOptions } from "#src/models/emit/RenderTextureEventEmitsOptions";
 import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
+import type { UndefinedOnPartial } from "type-fest";
 
 import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
 import { RenderTextureSetterMap } from "#src/services/setterMap/RenderTextureSetterMap";
 
 interface Props {
-  configuration: Partial<RenderTextureConfiguration>;
-  immediate?: true;
-  onComplete?: (scene: SceneWithPlugins, renderTexture: GameObjects.RenderTexture) => void;
+  configuration: UndefinedOnPartial<Partial<RenderTextureConfiguration>>;
+  immediate?: true | undefined;
+  onComplete?: ((scene: SceneWithPlugins, renderTexture: GameObjects.RenderTexture) => void) | undefined;
 }
 
 interface RenderTextureEmits extends /** @vue-ignore */ RenderTextureEventEmitsOptions {}

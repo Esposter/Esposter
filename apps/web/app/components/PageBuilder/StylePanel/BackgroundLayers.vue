@@ -8,7 +8,7 @@ interface Layer {
 }
 interface Props {
   // The background the node inherits while it sets no layer, shown as a note in place of the empty list
-  placeholder?: string;
+  placeholder?: string | undefined;
 }
 // The background-image value, its layers joined by commas. A background's colour is its own field beside the list
 const modelValue = defineModel<string>({ required: true });

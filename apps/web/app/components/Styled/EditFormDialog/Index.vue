@@ -13,9 +13,9 @@ interface Props<T> {
   // What the item is, as its title bar and its confirmations name it: a todo, a chart
   itemType: string;
   name: string;
-  originalItem?: T;
+  originalItem?: T | undefined;
   // Deleting the original item, offered only when there is one
-  remove?: () => Promisable<unknown>;
+  remove?: (() => Promisable<unknown>) | undefined;
   // Sent as the dialog closes; a refused save is answered by its rollback and alert (useDialogAnswer)
   save: () => Promisable<unknown>;
   schema: z.ZodType;

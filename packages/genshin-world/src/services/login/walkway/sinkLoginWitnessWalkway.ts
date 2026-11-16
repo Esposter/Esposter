@@ -23,7 +23,7 @@ export const sinkLoginWitnessWalkway = (
   walkwayRow: LoginScrollRow,
   group: Object3D,
   pieces: readonly LoginWalkwayPiece[],
-  { cameraZ, doorAheadOfCamera }: { cameraZ: number; doorAheadOfCamera?: number },
+  { cameraZ, doorAheadOfCamera }: { cameraZ: number; doorAheadOfCamera?: number | undefined },
 ): void => {
   group.getWorldPosition(groupPosition);
   for (const part of group.children) {

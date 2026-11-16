@@ -6,15 +6,15 @@ import type { GcsimHitbox } from "#src/models/genshinAssets/kits/gcsim/GcsimHitb
 // Constant-bounds loop has one delay per iteration, evaluated with the loop variable's value.
 // The `hold` parameter's value a call is read with, where its delay reads one, is its `holdValue`
 export interface GcsimQueuedAttack {
-  attackLine?: number;
-  attackName?: string;
-  delay?: number;
+  attackLine?: number | undefined;
+  attackName?: string | undefined;
+  delay?: number | undefined;
   delayLine: number;
   file: string;
-  hitbox?: GcsimHitbox;
-  holdValue?: number;
+  hitbox?: GcsimHitbox | undefined;
+  holdValue?: number | undefined;
   // The values of the constant loops' variables this call is in, one iteration's, where a call is in a loop
-  iterations?: Record<string, number>;
+  iterations?: Record<string, number> | undefined;
   // The line of the call's closing parenthesis, so the call covers every line from `line` through it
   lastLine: number;
   line: number;

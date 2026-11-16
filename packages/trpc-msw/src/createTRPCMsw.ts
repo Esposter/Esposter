@@ -12,6 +12,7 @@ import { UnhandledProcedureAction } from "#src/models/UnhandledProcedureAction";
 import { checkIsProcedureType } from "#src/services/checkIsProcedureType";
 import { createMockRouter } from "#src/services/createMockRouter";
 import { getProcedurePaths } from "#src/services/getProcedurePaths";
+import { omitUndefined } from "@esposter/shared";
 import { createTRPCRecursiveProxy } from "@trpc/server";
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { applyWSSHandler } from "@trpc/server/adapters/ws";
@@ -47,8 +48,7 @@ export const createTRPCMsw = <TRouter extends AnyTRPCRouter, TContext extends ob
 
       httpRouter ??= createMockRouter(t, procedureTypes, registrations, router);
       return fetchRequestHandler({
-        allowMethodOverride,
-        createContext,
+        ...omitUndefined({ allowMethodOverride, createContext }),
         endpoint: endpointPathname,
         req: request,
         router: httpRouter,
@@ -58,7 +58,7 @@ export const createTRPCMsw = <TRouter extends AnyTRPCRouter, TContext extends ob
   const createWebSocketServer = () => {
     const webSocketServer = new WebSocketServerAdapter<MswWebSocketAdapter>();
     applyWSSHandler({
-      createContext,
+      ...omitUndefined({ createContext }),
       router: createMockRouter(t, new Map(procedureTypes), registrations, router),
       // @TODO: https://github.com/trpc/trpc/issues/8057 — tRPC types `wss` and its clients as the `ws` classes, though
       // It reads only a few members of each, so a server that is not a `ws` one is cast until they are typed by those

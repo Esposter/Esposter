@@ -5,5 +5,5 @@ import type { BlockNodeProps } from "vue-block-editor-headless";
 export interface CountdownNodeProps extends BlockNodeProps {
   endsAt: string;
   endText: string;
-  style?: NodeStyle;
+  style?: NodeStyle | undefined;
 }

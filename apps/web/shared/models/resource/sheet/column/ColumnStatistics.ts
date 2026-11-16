@@ -5,20 +5,20 @@ import { columnTypeSchema } from "#shared/models/resource/sheet/column/ColumnTyp
 import { z } from "zod";
 
 export interface ColumnStatistics {
-  [ColumnStatisticName.Average]?: number;
-  [ColumnStatisticName.FalseCount]?: number;
-  [ColumnStatisticName.Maximum]?: number;
-  [ColumnStatisticName.Minimum]?: number;
-  [ColumnStatisticName.MostFrequentValue]?: string;
+  [ColumnStatisticName.Average]?: number | undefined;
+  [ColumnStatisticName.FalseCount]?: number | undefined;
+  [ColumnStatisticName.Maximum]?: number | undefined;
+  [ColumnStatisticName.Minimum]?: number | undefined;
+  [ColumnStatisticName.MostFrequentValue]?: string | undefined;
   [ColumnStatisticName.NullCount]: number;
-  [ColumnStatisticName.NullPercentage]?: number;
-  [ColumnStatisticName.StandardDeviation]?: number;
-  [ColumnStatisticName.Summation]?: number;
-  [ColumnStatisticName.TrueCount]?: number;
-  [ColumnStatisticName.UniqueCount]?: number;
+  [ColumnStatisticName.NullPercentage]?: number | undefined;
+  [ColumnStatisticName.StandardDeviation]?: number | undefined;
+  [ColumnStatisticName.Summation]?: number | undefined;
+  [ColumnStatisticName.TrueCount]?: number | undefined;
+  [ColumnStatisticName.UniqueCount]?: number | undefined;
   columnName: string;
   columnType: ColumnType;
-  topFrequencies?: readonly (readonly [string, number])[];
+  topFrequencies?: readonly (readonly [string, number])[] | undefined;
 }
 
 export const columnStatisticsSchema = z.object({

@@ -5,6 +5,7 @@ import { useRoomStore } from "#src/store/message/room/index";
 import { useRoleStore } from "#src/store/message/room/role";
 import { useUserStore } from "#src/store/message/user/index";
 import { useMemberStore } from "#src/store/message/user/member";
+import { omitUndefined } from "@esposter/shared";
 
 export const useReadMembers = () => {
   const { $trpc } = useNuxtApp();
@@ -30,7 +31,7 @@ export const useReadMembers = () => {
   const readMemberPage = async (roomId: string, cursor: string, signal?: AbortSignal) => {
     const cursorPaginationData = await $trpc.room.readMembers.query(
       { cursor, filter: searchedName.value ? { name: searchedName.value } : undefined, roomId },
-      { signal },
+      omitUndefined({ signal }),
     );
     await readMetadata(
       roomId,

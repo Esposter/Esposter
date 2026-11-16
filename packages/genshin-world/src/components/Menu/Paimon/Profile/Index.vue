@@ -15,7 +15,7 @@ import { GameTextKey } from "genshin-text";
 interface Props {
   // The signed-in account's avatar and name, which the profile card shows in place of the Traveler's disc and the
   // Default name when the player is signed out
-  accountAvatarUrl?: string;
+  accountAvatarUrl?: string | undefined;
   accountName: string;
   // The Adventure EXP's share of the rank's bar, and the rank and World Level the profile card shows
   adventureExpProgress: number;
@@ -28,9 +28,9 @@ interface Props {
   namecardItemId: number;
   namecards: ProfileNamecard[];
   // The signature the profile shows under the name, when the profile has one
-  signature?: string;
+  signature?: string | undefined;
   // The Traveler's birthday once it is set, which the row shows; until then the row offers the button that sets it
-  travelerBirthday?: TravelerBirthdaySave;
+  travelerBirthday?: TravelerBirthdaySave | undefined;
   // The World Level the row shows
   worldLevel: number;
 }

@@ -3,6 +3,7 @@ import { MenuTextStyle } from "#src/assets/dungeons/scene/inventory/styles/MenuT
 import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";
 import { WORD_PADDING } from "#src/services/dungeons/UI/constants";
 import { useInventoryInfoPanelStore } from "#src/store/dungeons/inventory/infoPanel";
+import { omitUndefined } from "@esposter/shared";
 import { onCreate, Text } from "vue-phaserjs";
 
 const inventoryInfoPanelStore = useInventoryInfoPanelStore();
@@ -31,7 +32,7 @@ watchImmediate(
       x: 25,
       y: 420,
       text: infoDialogMessage.text,
-      style: { ...MenuTextStyle, color: 'white', wordWrap: { width: wordWrapWidth } },
+      style: { ...MenuTextStyle, color: 'white', wordWrap: omitUndefined({ width: wordWrapWidth }) },
     }"
   />
 </template>

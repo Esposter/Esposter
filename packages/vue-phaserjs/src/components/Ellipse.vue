@@ -3,6 +3,7 @@ import type { EllipseConfiguration } from "#src/models/configuration/EllipseConf
 import type { EllipseEventEmitsOptions } from "#src/models/emit/EllipseEventEmitsOptions";
 import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
+import type { UndefinedOnPartial } from "type-fest";
 
 import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
 import { EllipseSetterMap } from "#src/services/setterMap/EllipseSetterMap";
@@ -10,9 +11,9 @@ import { EllipseSetterMap } from "#src/services/setterMap/EllipseSetterMap";
 interface EllipseEmits extends /** @vue-ignore */ EllipseEventEmitsOptions {}
 
 interface Props {
-  configuration: Partial<EllipseConfiguration>;
-  immediate?: true;
-  onComplete?: (scene: SceneWithPlugins, ellipse: GameObjects.Ellipse) => void;
+  configuration: UndefinedOnPartial<Partial<EllipseConfiguration>>;
+  immediate?: true | undefined;
+  onComplete?: ((scene: SceneWithPlugins, ellipse: GameObjects.Ellipse) => void) | undefined;
 }
 
 const { configuration, immediate, onComplete } = defineProps<Props>();

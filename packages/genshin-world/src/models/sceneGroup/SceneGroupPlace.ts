@@ -9,9 +9,9 @@ import { z } from "zod";
 // Its turn about the vertical in degrees where its source gives them (the official map gives neither), and the source
 // That placed it
 export interface SceneGroupPlace {
-  height?: number;
+  height?: number | undefined;
   position: GroundPoint;
-  rotationY?: number;
+  rotationY?: number | undefined;
   source: SceneGroupSource;
 }
 

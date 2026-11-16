@@ -11,7 +11,7 @@ export const findMovedFrozenPass = ({
   recordedRows,
   results,
 }: {
-  passAlone?: ParityPass;
+  passAlone?: ParityPass | undefined;
   recordedRows: readonly string[];
   results: readonly ParityPassResult[];
 }): ParityPass | undefined => {

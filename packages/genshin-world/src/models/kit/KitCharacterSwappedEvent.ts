@@ -4,5 +4,5 @@ import type { KitEventKind } from "#src/models/kit/KitEventKind";
 export interface KitCharacterSwappedEvent {
   characterId: number;
   kind: typeof KitEventKind.CharacterSwapped;
-  previousCharacterId?: number;
+  previousCharacterId?: number | undefined;
 }

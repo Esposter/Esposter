@@ -26,7 +26,7 @@ interface Props {
 // The settings the row shows and changes, which the host keeps on this device
 const settings = defineModel<GenshinSettings>("settings", { required: true });
 // The kind of the list that is open, which this row's own list is when the kind is its own
-const openedList = defineModel<SettingsRowKind>("openedList");
+const openedList = defineModel<SettingsRowKind | undefined>("openedList");
 defineProps<Props>();
 </script>
 

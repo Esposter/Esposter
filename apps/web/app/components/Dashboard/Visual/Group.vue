@@ -16,7 +16,7 @@ interface Props {
   collision: CollisionMode;
   compactType: CompactType;
   // Drawn for editing, where the grid takes edits and the header always shows, since it is the group's place to be grabbed
-  isEditable?: true;
+  isEditable?: true | undefined;
   visual: Visual;
 }
 

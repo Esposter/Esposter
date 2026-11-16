@@ -4,11 +4,11 @@ import type { UiToken } from "#src/models/ui/UiToken";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 interface Props {
-  meaning?: UiIconMeaning;
+  meaning?: UiIconMeaning | undefined;
   // Names the button inside it that takes it away, which only a chip with one draws: "Remove spam"
-  removeLabel?: string;
+  removeLabel?: string | undefined;
   // A colour that tells what kind of thing it names, such as a column's type: a block of it before the text
-  token?: UiToken;
+  token?: UiToken | undefined;
 }
 // A short reading set into the surface it sits on — a count, a size, a kind — rather than something to press. Its
 // Mark and its block are decoration beside the words, which say it all. One the reader added, such as a filtered

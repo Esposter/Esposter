@@ -4,7 +4,7 @@ import type { NuxtConfig } from "nuxt/schema";
 // Client-only pages that touch window/localStorage during setup stay out of SSR and indexing.
 // Defined globally because inline defineRouteRules (experimental.inlineRouteRules) is not
 // Reliably applied, leaving "window is not defined" SSR crashes.
-export const routeRules: NuxtConfig["routeRules"] = {
+export const routeRules: NonNullable<NuxtConfig["routeRules"]> = {
   // A public bucket's objects are read by every page and by other sites — an image in an email, a shared link — so they
   // Are served to any origin: the app's default resource policy is same-origin, which would block them on the app's own host
   "/assets/**": {

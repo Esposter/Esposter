@@ -24,12 +24,12 @@ interface Props {
   burstCooldown: number;
   burstCooldownSeconds: number;
   // The element the burst's fill and charged disc are coloured in, none for a member the roster's table gives none
-  element?: Element;
+  element?: Element | undefined;
   energy: number;
   energyCost: number;
   // The seconds left of the equipped gadget's cooldown, and its whole cooldown, none while no gadget is equipped
   gadgetCooldown: number;
-  gadgetCooldownSeconds?: number;
+  gadgetCooldownSeconds?: number | undefined;
   // The game's words in the reader's language
   gameText: GameText;
   input: Input;
@@ -40,7 +40,7 @@ interface Props {
   skillCooldownSeconds: number;
   // The member on the field's skill and burst icons, which the buttons carry, none until its kit is read or for a
   // Character the hosted icons lack, whose buttons stay bare
-  skillGlyphs?: SkillGlyphs;
+  skillGlyphs?: SkillGlyphs | undefined;
 }
 
 const { element, input } = defineProps<Props>();

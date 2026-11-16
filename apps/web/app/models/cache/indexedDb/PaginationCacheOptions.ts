@@ -25,9 +25,11 @@ export interface PaginationCacheOptions<
   getWriteItems?: (items: IndexedDbDatabaseSchema[TStore]["value"][]) => IndexedDbDatabaseSchema[TStore]["value"][];
   // The partition rides along, because a hydrate lands after its own await: companion state a consumer updates
   // From it (a member count, a user map) belongs to the partition that was read, not to whichever is current now
-  onHydrate?: (
-    items: IndexedDbDatabaseSchema[TStore]["value"][],
-    partitionKey: PartitionKey<TStore, TIndex>,
-  ) => Promisable<void>;
+  onHydrate?:
+    | ((
+        items: IndexedDbDatabaseSchema[TStore]["value"][],
+        partitionKey: PartitionKey<TStore, TIndex>,
+      ) => Promisable<void>)
+    | undefined;
   partitionKey: MaybeRefOrGetter<PartitionKey<TStore, TIndex> | undefined>;
 }

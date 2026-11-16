@@ -8,11 +8,11 @@ import { SurveyProgressBarPlacement, useSurveyRunner } from "vue-survey-engine-h
 interface Props {
   document: SurveyDocument;
   // The answers and page a respondent resumes from, when a draft was stored
-  initialAnswers?: SurveyAnswers;
-  initialPageIndex?: number;
-  isDisabled?: true;
+  initialAnswers?: SurveyAnswers | undefined;
+  initialPageIndex?: number | undefined;
+  isDisabled?: true | undefined;
   // What a shuffled choice list is ordered by, a resumed response's id, so a respondent sees one order across visits
-  seed?: string;
+  seed?: string | undefined;
 }
 
 const { document, initialAnswers, initialPageIndex, isDisabled = false, seed: initialSeed } = defineProps<Props>();

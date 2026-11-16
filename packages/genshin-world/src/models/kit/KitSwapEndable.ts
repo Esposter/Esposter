@@ -2,5 +2,5 @@
 // The one that cast it
 export interface KitSwapEndable {
   // Whether its character leaving the field ends it
-  isEndedOnSwap?: true;
+  isEndedOnSwap?: true | undefined;
 }

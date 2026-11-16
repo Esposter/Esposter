@@ -8,12 +8,12 @@ import type { Renderer, UniformNode } from "three/webgpu";
 // Under, and its occlusion's reach, which the witness's occlusion target draws with, none where the scene draws none
 export interface SceneContext {
   camera: Camera;
-  cloudLayer?: CloudLayerUniforms;
+  cloudLayer?: CloudLayerUniforms | undefined;
   fog?: FogUniforms;
   occlusionRadius: number;
   renderer: Renderer;
   scene: Scene;
-  sky?: SkyUniforms;
+  sky?: SkyUniforms | undefined;
   // The white balance the frame passes through before the tone curve, which a light solved off a reference is taken
   // Back through
   whiteBalance: UniformNode<"mat3", Matrix3>;

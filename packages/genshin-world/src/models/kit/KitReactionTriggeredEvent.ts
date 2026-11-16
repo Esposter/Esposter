@@ -7,10 +7,10 @@ import type { KitEventKind } from "#src/models/kit/KitEventKind";
 // A hit triggered reactions on an enemy: the reactions, the kind of attack of the strike that triggered them, none for a reaction
 // A reach carries, and the combatant that dealt the hit
 export interface KitReactionTriggeredEvent {
-  attackTag?: AttackTag;
+  attackTag?: AttackTag | undefined;
   enemy: Enemy;
   // Whether a summon's hit, a gadget in gcsim's terms, triggered them
-  isGadget?: true;
+  isGadget?: true | undefined;
   kind: typeof KitEventKind.ReactionTriggered;
   reactions: Reaction[];
   striker: Combatant;

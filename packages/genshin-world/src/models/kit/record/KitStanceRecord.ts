@@ -7,16 +7,16 @@ import { z } from "zod";
 
 // The actions a stance plays in place of its kit's, in a kit's record, each absent where the stance plays the kit's own
 export interface KitStanceRecord {
-  burst?: KitActionRecord;
-  chargedAttack?: KitActionRecord;
-  chargedAttackStamina?: KitParameter;
-  dash?: KitActionRecord;
-  jump?: KitActionRecord;
-  normalAttacks?: KitActionRecord[];
+  burst?: KitActionRecord | undefined;
+  chargedAttack?: KitActionRecord | undefined;
+  chargedAttackStamina?: KitParameter | undefined;
+  dash?: KitActionRecord | undefined;
+  jump?: KitActionRecord | undefined;
+  normalAttacks?: KitActionRecord[] | undefined;
   // The count the stance holds as it begins, which its dash and jump each drain by `drainPerAction`, and whose spending
   // To none ends the stance, if it holds one
-  resource?: { drainPerAction: KitParameter; startingCount: KitParameter };
-  skill?: KitActionRecord;
+  resource?: undefined | { drainPerAction: KitParameter; startingCount: KitParameter };
+  skill?: KitActionRecord | undefined;
 }
 
 export const kitStanceRecordSchema = z.strictObject({

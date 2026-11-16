@@ -5,7 +5,7 @@ export interface DumpedMainQuest {
   chapterId: number;
   descTextMapHash: number;
   id: number;
-  rewardIdList?: number[];
+  rewardIdList?: number[] | undefined;
   titleTextMapHash: number;
   type?: string;
 }

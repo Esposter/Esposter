@@ -11,9 +11,9 @@ interface Props {
   // The game's words in the reader's language
   gameText: GameText;
   // Whether the world behind the screen is blurred and washed, which the screen opts into
-  isWorldBlurred?: boolean;
+  isWorldBlurred?: boolean | undefined;
   // The glyph the close mark draws, the traced cross unless the screen's reference shows another
-  mark?: CloseButtonMark;
+  mark?: CloseButtonMark | undefined;
   // The screen's title in the reader's language
   title: string;
 }

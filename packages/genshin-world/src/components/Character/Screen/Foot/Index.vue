@@ -10,7 +10,7 @@ interface Props {
   // The tab the screen shows, whose Training Guide and UID the foot draws on the Attributes tab alone
   tab: CharacterMenuTab;
   // The player's UID, which the Attributes tab draws at the foot of the frame, none until the host gives it
-  uid?: number;
+  uid?: number | undefined;
 }
 
 defineProps<Props>();

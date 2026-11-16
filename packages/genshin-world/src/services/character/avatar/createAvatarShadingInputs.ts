@@ -8,6 +8,7 @@ import type {
 } from "genshin-engine";
 import type { Texture, Vector3Tuple, Vector4Tuple } from "three";
 
+import { omitUndefined } from "@esposter/shared";
 import { createFaceDraw, UNIT_OUTLINE_WIDTH_KNOTS } from "genshin-engine";
 
 type AvatarTextureSlot = (typeof AVATAR_TEXTURE_SLOTS)[number]["slot"];
@@ -88,13 +89,16 @@ export const createAvatarShadingInputs = (
 ): Partial<CharacterShadingInputs> => {
   const color: Vector3Tuple = readColour(colors, "_Color") ?? [1, 1, 1];
   const nameFloatMap = new Map(Object.entries(floats));
-  const inputs: Partial<CharacterShadingInputs> = {
+  // A key left undefined would override the shading's default with nothing, so only the keys the material holds stay
+  const shadingInputs: Partial<CharacterShadingInputs> = omitUndefined({
     color,
     coolShadowMultiplyColors: readRegionColors(colors, "_CoolShadowMultColor"),
-    faceDraw: createFaceDraw({
-      flipFactor: nameFloatMap.get("_FaceFlipFactor"),
-      rotateOffset: nameFloatMap.get("_FaceMapRotateOffset"),
-    }),
+    faceDraw: createFaceDraw(
+      omitUndefined({
+        flipFactor: nameFloatMap.get("_FaceFlipFactor"),
+        rotateOffset: nameFloatMap.get("_FaceMapRotateOffset"),
+      }),
+    ),
     faceMap: slotTextureMap.get("_FaceMapTex"),
     faceSoftness: nameFloatMap.get("_FaceMapSoftness"),
     isCoolShadow: readSwitch(nameFloatMap, "_UseCoolShadowColorOrTex"),
@@ -136,10 +140,6 @@ export const createAvatarShadingInputs = (
     shininess: nameFloatMap.get("_Shininess"),
     specularColor: readColour(colors, "_SpecularColor"),
     specularMultiplier: nameFloatMap.get("_SpecMulti"),
-  };
-  // A key left undefined would override the shading's default with nothing, so only the keys the material holds stay
-  const shadingInputs: Partial<CharacterShadingInputs> = {};
-  for (const key of Object.keys(inputs) as (keyof CharacterShadingInputs)[])
-    if (inputs[key] !== undefined) Object.assign(shadingInputs, { [key]: inputs[key] });
+  });
   return shadingInputs;
 };

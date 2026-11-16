@@ -1,6 +1,6 @@
 export interface DumpedPointer {
-  IsNull?: boolean;
+  IsNull?: boolean | undefined;
   m_FileID: number;
   m_PathID: string;
-  Name?: string;
+  Name?: string | undefined;
 }

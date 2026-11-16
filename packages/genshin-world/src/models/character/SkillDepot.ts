@@ -5,9 +5,9 @@ import { z } from "zod";
 // Cost and the element it deals, each left out where the set has no such skill or burst. A burst that costs no element
 // Has no element
 export interface SkillDepot {
-  burst?: { cooldownSeconds: number; element?: Element; energyCost: number };
+  burst?: undefined | { cooldownSeconds: number; element?: Element | undefined; energyCost: number };
   depotId: number;
-  skill?: { charges: number; cooldownSeconds: number };
+  skill?: undefined | { charges: number; cooldownSeconds: number };
 }
 
 export const skillDepotSchema = z.object({

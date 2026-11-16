@@ -16,9 +16,9 @@ interface Props {
   // The ores the Enhance tab offers, each with the count the bag holds and the count the player picked
   oreCells: { id: number; name: string; ownedCount: number; pickedCount: number }[];
   // The copy the Refine tab picked, which stands in for the material when it is set
-  pickedCopyId?: number;
+  pickedCopyId?: number | undefined;
   // The refinement material the Refine tab offers, with the count the bag holds of it
-  refinementMaterial?: { count: number; name: string };
+  refinementMaterial?: undefined | { count: number; name: string };
   // The ranks a weapon can still gain, each one a slot on the Refine tab
   refineSlotCount: number;
 }

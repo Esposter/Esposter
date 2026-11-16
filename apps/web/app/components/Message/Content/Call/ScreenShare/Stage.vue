@@ -1,6 +1,6 @@
 <script setup lang="ts">
 interface Props {
-  isInteractive?: false;
+  isInteractive?: false | undefined;
   presenterName: string;
   stream: MediaStream;
 }

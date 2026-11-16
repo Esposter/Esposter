@@ -7,7 +7,7 @@ import { projectWitnessPoint } from "#src/services/genshinParity/witness/project
 // On a part's silhouette, is pinned across and free along the silhouette, so only its distance across counts
 export const computeReprojectionErrors = (
   pose: readonly number[],
-  correspondences: readonly { isEdge?: boolean; pixel: Pixel; point: Readonly<Vector> }[],
+  correspondences: readonly { isEdge?: boolean | undefined; pixel: Pixel; point: Readonly<Vector> }[],
   width: number,
   height: number,
 ): [number, number][] =>

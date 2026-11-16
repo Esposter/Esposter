@@ -9,7 +9,7 @@ import { UiTabsVariant } from "#src/models/ui/UiTabsVariant";
 
 interface Props {
   annotations: PdfAnnotationsState;
-  pdfDocument?: PDFDocumentProxy;
+  pdfDocument?: PDFDocumentProxy | undefined;
   viewer: PdfViewerState;
 }
 

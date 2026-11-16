@@ -6,7 +6,7 @@ import { z } from "zod";
 // The Genshin blob: the save and the session that holds it, so the one blob's ETag covers both the save and the lease.
 // The session a start replaced is kept until the save is first written, so a retry of that start answers it again
 export interface GenshinSaveEnvelope {
-  previousSessionId?: string;
+  previousSessionId?: string | undefined;
   save: GenshinSave;
   sessionId: string;
 }

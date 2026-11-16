@@ -1,9 +1,9 @@
 export interface CorsHandlerOptions {
-  allowHeaders?: string[];
-  credentials?: boolean;
-  exposeHeaders?: string[];
-  maxAge?: string;
+  allowHeaders?: string[] | undefined;
+  credentials?: boolean | undefined;
+  exposeHeaders?: string[] | undefined;
+  maxAge?: string | undefined;
   methods: string[];
   origin: string | string[];
-  preflight?: { statusCode: number };
+  preflight?: undefined | { statusCode: number };
 }

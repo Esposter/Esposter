@@ -10,11 +10,11 @@ import { Container } from "vue-phaserjs";
 
 interface Props {
   barPercentage: number;
-  isSkipAnimations?: boolean;
+  isSkipAnimations?: boolean | undefined;
   position: Position;
-  scaleY?: number;
+  scaleY?: number | undefined;
   type: BarType;
-  width?: number;
+  width?: number | undefined;
 }
 
 const {

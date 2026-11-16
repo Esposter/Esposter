@@ -6,8 +6,8 @@ import { checkIsCaretAtEnd } from "#src/util/dom/checkIsCaretAtEnd";
 import { checkIsCaretAtStart } from "#src/util/dom/checkIsCaretAtStart";
 
 interface Props {
-  isAutofocus?: boolean;
-  isFocused?: boolean;
+  isAutofocus?: boolean | undefined;
+  isFocused?: boolean | undefined;
   isRequired: boolean;
   name: string;
 }

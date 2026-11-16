@@ -6,7 +6,7 @@ export interface ExcelShopGoodsRow {
   beginTime: string;
   buyLimit: number;
   costHcoin: number;
-  costItems: { count?: number; id?: number }[];
+  costItems: { count?: number | undefined; id?: number | undefined }[];
   costMcoin: number;
   costScoin: number;
   endTime: string;
@@ -14,7 +14,7 @@ export interface ExcelShopGoodsRow {
   itemCount: number;
   itemId: number;
   minPlayerLevel: number;
-  refreshType?: string;
+  refreshType?: string | undefined;
   rotateId: number;
   shopType: number;
   subTabId: number;

@@ -3,14 +3,15 @@ import type { TriangleConfiguration } from "#src/models/configuration/TriangleCo
 import type { TriangleEventEmitsOptions } from "#src/models/emit/TriangleEventEmitsOptions";
 import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
+import type { UndefinedOnPartial } from "type-fest";
 
 import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
 import { TriangleSetterMap } from "#src/services/setterMap/TriangleSetterMap";
 
 interface Props {
-  configuration: Partial<TriangleConfiguration>;
-  immediate?: true;
-  onComplete?: (scene: SceneWithPlugins, triangle: GameObjects.Triangle) => void;
+  configuration: UndefinedOnPartial<Partial<TriangleConfiguration>>;
+  immediate?: true | undefined;
+  onComplete?: ((scene: SceneWithPlugins, triangle: GameObjects.Triangle) => void) | undefined;
 }
 
 interface TriangleEmits extends /** @vue-ignore */ TriangleEventEmitsOptions {}

@@ -15,11 +15,11 @@ interface Props {
   // Whether the tile is the one the detail pane shows, which outlines it
   isSelected: boolean;
   // The defeats the tile counts beside its name, absent for an entry that counts none
-  kills?: number;
+  kills?: number | undefined;
   // The name the tile shows, which reads "?" while the entry is unopened
   name: string;
   // The entry's rarity in stars, which tints the tile and draws its stars, absent for an entry the weapon data gives none
-  rarity?: number;
+  rarity?: number | undefined;
 }
 
 const { rarity } = defineProps<Props>();

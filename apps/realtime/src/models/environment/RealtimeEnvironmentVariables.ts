@@ -5,8 +5,8 @@ import { z } from "zod";
 // Pulumi ESC as a Worker secret; every other one is a wrangler var in wrangler.jsonc
 // RealtimeKit is optional — a deployment without it runs calls with no media server — so its variables may be absent
 export interface RealtimeEnvironmentVariables {
-  REALTIMEKIT_API_TOKEN?: string;
-  REALTIMEKIT_APP_ID?: string;
+  REALTIMEKIT_API_TOKEN?: string | undefined;
+  REALTIMEKIT_APP_ID?: string | undefined;
 }
 
 export const realtimeEnvironmentVariablesSchema = z.object({

@@ -6,7 +6,7 @@ import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { checkIsDivider } from "#src/services/shared/checkIsDivider";
 
 interface Props {
-  editor?: Editor;
+  editor?: Editor | undefined;
   items: MenuItem[];
 }
 

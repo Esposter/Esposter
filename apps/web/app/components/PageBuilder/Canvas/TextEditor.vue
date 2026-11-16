@@ -9,7 +9,7 @@ import { autofocusEditor } from "#src/services/richTextEditor/autofocusEditor";
 import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
 import { usePageBuilderHistoryStore } from "#src/store/pageBuilder/history";
-import { noop } from "@esposter/shared";
+import { noop, omitUndefined } from "@esposter/shared";
 import { EditorContent, useEditor } from "@tiptap/vue-3";
 import { v7 } from "uuid";
 import { getBlockNode, updateBlockNodeProps } from "vue-block-editor-headless";
@@ -38,7 +38,7 @@ const getNodeContent = () => {
 const interactionId = v7();
 const mergeFieldColumns = useMergeFieldColumns(() => resourceId);
 const editor = useEditor({
-  content: getNodeContent(),
+  ...omitUndefined({ content: getNodeContent() }),
   extensions: [...getNoteExtensions(), MergeFieldExtension.configure({ getColumns: () => mergeFieldColumns.value })],
   // The edit begins at the end of the text the reader chose to edit
   onCreate: ({ editor: createdEditor }) => {
@@ -68,7 +68,7 @@ const onKeydown = (event: KeyboardEvent) => {
 
 <template>
   <div data-text-editor="true" @keydown="onKeydown($event)">
-    <EditorContent :editor />
+    <EditorContent :="omitUndefined({ editor })" />
     <RichTextEditorSuggestions :editor />
   </div>
 </template>

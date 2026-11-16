@@ -11,10 +11,10 @@ import type { ReferenceCollision } from "#src/models/genshinParity/reference/Ref
 export interface ReferenceEntryImage {
   bytesBefore: number;
   capturedAt?: Date;
-  collision?: Pick<ReferenceCollision, "committed" | "ours">;
-  image?: ParityReferenceManifestImage;
+  collision?: Pick<ReferenceCollision, "committed" | "ours"> | undefined;
+  image?: ParityReferenceManifestImage | undefined;
   isNew: boolean;
   read: () => Promise<Buffer>;
   sourceFormat?: string;
-  stored?: Buffer;
+  stored?: Buffer | undefined;
 }

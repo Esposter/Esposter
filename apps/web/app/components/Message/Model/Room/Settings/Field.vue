@@ -1,8 +1,8 @@
 <script setup lang="ts">
 interface Props {
-  hint?: string;
+  hint?: string | undefined;
   // Drawn above a control that draws no label of its own, such as a select; a text field names itself
-  title?: string;
+  title?: string | undefined;
 }
 
 defineSlots<{ default: () => VNode }>();

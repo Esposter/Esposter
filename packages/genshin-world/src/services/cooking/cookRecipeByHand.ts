@@ -38,7 +38,7 @@ export const cookRecipeByHand = (
     progress: CookingProgress;
     random: () => number;
     stopPosition: number;
-    talent?: CookingTalent;
+    talent?: CookingTalent | undefined;
     zones: CookingZones;
   },
 ): undefined | { inventory: Inventory; progress: CookingProgress } => {

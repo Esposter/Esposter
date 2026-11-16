@@ -23,7 +23,7 @@ interface Props {
   notAchievedLabel: string;
   // The request the keeper offers, its title and the button that takes it in the reader's language, or none where she
   // Offers none
-  offer?: { acceptLabel: string; title: string };
+  offer?: undefined | { acceptLabel: string; title: string };
   // The picked level's requirement, its coloured runs as the game words them, "[]" where the screen names none
   requirement: TextSegment[];
   // The title the game shows over the page, its nation's name filled in

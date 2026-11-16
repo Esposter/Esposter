@@ -2,7 +2,7 @@
 import { SITE_NAME } from "@esposter/shared";
 
 interface Props {
-  width?: string;
+  width?: string | undefined;
 }
 
 const { width = "2rem" } = defineProps<Props>();

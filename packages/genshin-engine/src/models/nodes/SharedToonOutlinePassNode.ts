@@ -20,7 +20,7 @@ export class SharedToonOutlinePassNode extends ToonOutlinePassNode {
   declare colorNode: Node<"vec3">;
   declare thicknessNode: Node<"float">;
   // One frame's draw answers every compile asked for before it
-  #drawn?: PromiseWithResolvers<void>;
+  #drawn?: PromiseWithResolvers<void> | undefined;
   readonly #edgeOutlineMaterials = new Map<string, NodeMaterial>();
   readonly #instancedOutlineMaterials = new WeakMap<Node<"mat4">, NodeMaterial>();
   #outlineMaterial?: NodeMaterial;

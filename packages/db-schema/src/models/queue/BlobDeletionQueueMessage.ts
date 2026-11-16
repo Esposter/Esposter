@@ -12,8 +12,8 @@ import { z } from "zod";
 // Prefix is published instead and the handler does the listing. That puts the walk where the retries and the
 // Time budget are, rather than blocking a mutation's response on it.
 export type BlobDeletionQueueMessage = (
-  | { blobNames: string[]; createdBefore?: never; decidedAt?: Date; prefix?: never }
-  | { blobNames?: never; createdBefore?: Date; decidedAt?: never; prefix: string }
+  | { blobNames: string[]; createdBefore?: never | undefined; decidedAt?: Date | undefined; prefix?: never | undefined }
+  | { blobNames?: never | undefined; createdBefore?: Date | undefined; decidedAt?: never | undefined; prefix: string }
 ) & { storageBucket: StorageBucket };
 
 export const blobDeletionQueueMessageSchema = z.union([

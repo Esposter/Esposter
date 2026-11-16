@@ -3,14 +3,15 @@ import type { StarConfiguration } from "#src/models/configuration/StarConfigurat
 import type { StarEventEmitsOptions } from "#src/models/emit/StarEventEmitsOptions";
 import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
+import type { UndefinedOnPartial } from "type-fest";
 
 import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
 import { StarSetterMap } from "#src/services/setterMap/StarSetterMap";
 
 interface Props {
-  configuration: Partial<StarConfiguration>;
-  immediate?: true;
-  onComplete?: (scene: SceneWithPlugins, star: GameObjects.Star) => void;
+  configuration: UndefinedOnPartial<Partial<StarConfiguration>>;
+  immediate?: true | undefined;
+  onComplete?: ((scene: SceneWithPlugins, star: GameObjects.Star) => void) | undefined;
 }
 
 interface StarEmits extends /** @vue-ignore */ StarEventEmitsOptions {}

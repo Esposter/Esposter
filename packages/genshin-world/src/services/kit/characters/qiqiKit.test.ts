@@ -51,7 +51,7 @@ describe(createQiqiKitBehaviour, () => {
     action.onStart?.(createKitTestContext(createQiqiCombatant(), { kitEffectState }));
     return kitEffectState.effects;
   };
-  const castHerald = (): { field?: KitField; summon?: KitSummon } => {
+  const castHerald = (): { field?: KitField | undefined; summon?: KitSummon | undefined } => {
     const effects = castEffects(QIQI_KIT.elementalSkill);
     return {
       field: effects.find((effect): effect is KitField => effect.kind === "field"),

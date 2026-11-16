@@ -7,21 +7,21 @@ import { getNextGridDate } from "#src/util/date/getNextGridDate";
 interface Props {
   // A span of days in the from and to models rather than one day: the first press sets its start and the second its
   // End, and a wide screen shows two months side by side so a span across a month's end is picked without paging
-  isRange?: true;
+  isRange?: true | undefined;
   // The grid's accessible name, which says what the day is for: "Due date", "Sent on or after"
   label: string;
   // Days that hold something, each as its ISO date, marked with a dot under the number as a navigator marks the days
   // With events
-  markedDates?: string[];
-  max?: Temporal.PlainDate;
-  min?: Temporal.PlainDate;
+  markedDates?: string[] | undefined;
+  max?: Temporal.PlainDate | undefined;
+  min?: Temporal.PlainDate | undefined;
 }
 // A month of days as the WAI-ARIA date grid draws one: a grid of buttons, one stop in the tab order on the focused day,
 // Walked by arrow a day or a week at a time, by Home and End to the week's ends and by Page Up and Page Down a month at a
 // Time, a year with Shift. Its days are plain dates, so a time zone never moves one
-const modelValue = defineModel<Temporal.PlainDate>();
-const from = defineModel<Temporal.PlainDate>("from");
-const to = defineModel<Temporal.PlainDate>("to");
+const modelValue = defineModel<Temporal.PlainDate | undefined>();
+const from = defineModel<Temporal.PlainDate | undefined>("from");
+const to = defineModel<Temporal.PlainDate | undefined>("to");
 const { isRange, markedDates = [], max, min } = defineProps<Props>();
 const headingId = useId();
 const root = useTemplateRef("root");

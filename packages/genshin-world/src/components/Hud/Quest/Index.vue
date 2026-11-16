@@ -24,10 +24,10 @@ interface Props {
   input: Input;
   // Where the navigated objective stands from the character, none while the tracker's quest is not navigated to or no
   // Region in reach places its objective
-  mark?: QuestMark;
+  mark?: QuestMark | undefined;
   // The quest on the tracker, and how far it has come, none for a quest just started
   quest: Quest;
-  questProgress?: QuestProgress;
+  questProgress?: QuestProgress | undefined;
   // The quests' own words in the reader's language, by the game's text id
   textMap: Readonly<Record<string, string>>;
 }

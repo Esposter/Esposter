@@ -32,7 +32,7 @@ export const autoCookRecipe = (
     inventory: Inventory;
     progress: CookingProgress;
     random: () => number;
-    talent?: CookingTalent;
+    talent?: CookingTalent | undefined;
   },
 ): Inventory | undefined => {
   const count = computeCookableCount(recipe, inventory);

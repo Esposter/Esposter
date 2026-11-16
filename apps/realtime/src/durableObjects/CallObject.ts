@@ -51,7 +51,7 @@ export class CallObject extends RealtimeObject<CallEvent> implements CallObjectR
   readonly #connectionUpdates = new Map<string, Promise<void>>();
   readonly #core = drizzle(this.env.CORE, { relations });
   // The meeting being made, shared by every join that arrives while the first one is still creating it
-  #meetingCreation?: Promise<string>;
+  #meetingCreation?: Promise<string> | undefined;
 
   admitKnocker({ callSessionId, knockerSessionId }: { callSessionId: string; knockerSessionId: string }): boolean {
     if (!this.#removeKnocker(knockerSessionId)) return false;

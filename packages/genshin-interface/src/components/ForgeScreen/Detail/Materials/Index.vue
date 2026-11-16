@@ -19,7 +19,7 @@ interface Props {
   totalTimeLabel: string;
 }
 
-const amount = defineModel<number>("amount");
+const amount = defineModel<number | undefined>("amount");
 defineProps<Props>();
 const emit = defineEmits<{ start: [] }>();
 </script>

@@ -13,7 +13,7 @@ import { DatabaseEntityType } from "@esposter/db-schema";
 import { checkIsDeepEqual } from "@esposter/shared";
 
 interface Props {
-  section?: UserSettingsPageSection;
+  section?: undefined | UserSettingsPageSection;
 }
 
 defineProps<Props>();

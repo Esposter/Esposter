@@ -13,7 +13,7 @@ import type { VerticalAlignment } from "#src/models/VerticalAlignment";
 // Or sticky note's fill, a shape's corners, an arrow's route, or the arrowhead at one of an arrow's ends, which is absent for none. A text's size and
 // Horizontal alignment, a shape's or sticky note's vertical alignment, whether a text box wraps its text, and the alt text an image holds
 export type PositionedElementProperty =
-  | { end: ArrowEndKey; property: "arrowhead"; value?: ArrowheadKind }
+  | { end: ArrowEndKey; property: "arrowhead"; value?: ArrowheadKind | undefined }
   | { property: "altText"; value: string }
   | { property: "color"; value: string }
   | { property: "cornerStyle"; value: CornerStyle }

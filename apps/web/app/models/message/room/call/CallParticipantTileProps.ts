@@ -6,5 +6,5 @@ export interface CallParticipantTileProps {
   isSelf: boolean;
   isSpeaking: boolean;
   participant: CallParticipant;
-  videoStream?: MediaStream;
+  videoStream?: MediaStream | undefined;
 }

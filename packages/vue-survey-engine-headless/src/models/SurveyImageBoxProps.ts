@@ -5,8 +5,8 @@ import { z } from "zod";
 // The props of the box a picture is drawn in: how the picture fills it, and its width and height in pixels when it is sized
 export interface SurveyImageBoxProps {
   imageFit: SurveyImageFit;
-  imageHeight?: number;
-  imageWidth?: number;
+  imageHeight?: number | undefined;
+  imageWidth?: number | undefined;
 }
 
 // Each size is optional, so a box left unsized takes the picture's own size

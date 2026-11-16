@@ -7,7 +7,7 @@ import { TextSetter } from "#src/models/setterMap/TextSetter";
 import { ComputedSizeSetterMap } from "#src/services/setterMap/components/ComputedSizeSetterMap";
 import { FlipSetterMap } from "#src/services/setterMap/components/FlipSetterMap";
 import { RenderableSetterMap } from "#src/services/setterMap/shared/RenderableSetterMap";
-import { omitUndefined } from "#src/services/shared/omitUndefined";
+import { omitUndefined } from "@esposter/shared";
 
 export const TextSetterMap: SetterMap<TextConfiguration, GameObjects.Text, TextEventEmitsOptions> = {
   [TextSetter.Padding]: (gameObject) => (value) => {

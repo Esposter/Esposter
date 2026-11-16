@@ -7,10 +7,10 @@ import type { UiToken } from "#src/models/ui/UiToken";
 // And the reaction row. Only the icon and the sentence differ between them.
 interface Props extends Pick<MessageComponentProps, "active" | "isPreview" | "message"> {
   // An icon class written whole, for a glyph no meaning names
-  icon?: string;
-  meaning?: UiIconMeaning;
+  icon?: string | undefined;
+  meaning?: UiIconMeaning | undefined;
   // A colour that says how it went, such as a call that ended
-  token?: UiToken;
+  token?: UiToken | undefined;
 }
 
 defineSlots<{ default: () => VNode }>();

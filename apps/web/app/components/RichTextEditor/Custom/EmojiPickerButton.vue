@@ -5,7 +5,7 @@ import type { Editor } from "@tiptap/core";
 import { getPickableEmojiContent } from "#src/services/message/emoji/getPickableEmojiContent";
 
 interface Props {
-  editor?: Editor;
+  editor?: Editor | undefined;
 }
 
 defineProps<Props>();

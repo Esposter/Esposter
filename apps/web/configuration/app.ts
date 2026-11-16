@@ -3,7 +3,7 @@ import type { NuxtConfig } from "nuxt/schema";
 import { TEMPORAL_POLYFILL_BASE_URL } from "#configuration/constants";
 import { PWA_PUBLIC_FOLDER_PATH } from "#shared/services/app/constants";
 
-export const app: NuxtConfig["app"] = {
+export const app: NonNullable<NuxtConfig["app"]> = {
   head: {
     htmlAttrs: { lang: "en" },
     link: [

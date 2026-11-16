@@ -16,7 +16,7 @@ export const presignStorageUrl = (
     expiresInMs,
     headers,
     searchParams,
-  }: { expiresInMs: number; headers?: Record<string, string>; searchParams?: Record<string, string> },
+  }: { expiresInMs: number; headers?: Record<string, string> | undefined; searchParams?: Record<string, string> },
 ): Promise<string> => {
   const encodedKey = objectKey
     .split("/")

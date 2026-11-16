@@ -2,7 +2,7 @@ import { listVisuals } from "#shared/services/dashboard/listVisuals";
 
 // The list holding a visual id, with the group owning that list, which is none for the dashboard's own list. An id is
 // Unique across the tree, so at most one list holds it
-export const findVisualList = <TVisual extends { id: string; visuals?: TVisual[] }>(
+export const findVisualList = <TVisual extends { id: string; visuals?: TVisual[] | undefined }>(
   visuals: TVisual[],
   id: TVisual["id"],
 ) => {

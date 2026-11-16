@@ -49,7 +49,7 @@ import { getResultAsync } from "@esposter/shared";
 // Whether the host holds the session back: the screen reads its tables all the same, and mounts the session once it is
 // No longer held, so a host can have the tables arrive while something else plays
 interface Props extends WorldScreenProps {
-  isHeld?: boolean;
+  isHeld?: boolean | undefined;
 }
 
 // The world, opened once the names and the game's tables it reads its save and runs its rules by have arrived, with the

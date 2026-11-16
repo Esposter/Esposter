@@ -2,7 +2,7 @@
 import type { MessageComponentProps } from "#src/models/message/MessageComponentProps";
 
 interface Props extends Pick<MessageComponentProps, "isPreview"> {
-  active?: boolean;
+  active?: boolean | undefined;
 }
 
 defineSlots<{ default: () => VNode; prepend?: () => VNode }>();

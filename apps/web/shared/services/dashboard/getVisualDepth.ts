@@ -3,7 +3,7 @@ import { NotFoundError } from "@esposter/shared";
 
 // How many groups a visual sits inside, the top level counting as none. The caller finds the visual first, since an
 // Id no visual holds is not a depth
-export const getVisualDepth = <TVisual extends { id: string; visuals?: TVisual[] }>(
+export const getVisualDepth = <TVisual extends { id: string; visuals?: TVisual[] | undefined }>(
   visuals: TVisual[],
   id: TVisual["id"],
 ): number => {

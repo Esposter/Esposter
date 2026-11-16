@@ -22,7 +22,7 @@ interface Props {
   // The game's words in the reader's language
   gameText: GameText;
   // The place of the pointer held still for a shot, where the indicator does not sweep; it sweeps from the opening when none is given
-  heldPointer?: number;
+  heldPointer?: number | undefined;
   // The game's material table by item id, which each dish is defined from
   materialDataMap: ReadonlyMap<number, MaterialData>;
   // The names of the items and recipes in the reader's language, by their game text ids
@@ -32,7 +32,7 @@ interface Props {
   // The dishes the cook knows, the one on the screen chosen from them
   recipes: readonly CookingRecipe[];
   // The cook's talent, if the character has one
-  talent?: CookingTalent;
+  talent?: CookingTalent | undefined;
 }
 
 const inventory = defineModel<Inventory>("inventory", { required: true });

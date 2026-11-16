@@ -7,7 +7,7 @@ interface Props {
   // The button that does what the dialog asks, in the reader's language
   confirmLabel: string;
   // Whether the dialog is the Gift Mail Box's warning, which sits in the mail's detail rather than over the screen
-  isGift?: true;
+  isGift?: true | undefined;
   // The text the dialog asks the player to read before it acts, in the reader's language
   text: string;
   // The line over the text, which the Gift Mail Box's warning has and the Delete Read dialog does not, "" for none

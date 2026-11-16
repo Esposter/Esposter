@@ -3,7 +3,7 @@ import { Switch } from "@vuetify/v0";
 
 interface Props {
   // The label drawn beside the switch; a switch in a row that already names it is named by its label alone
-  isLabelShown?: true;
+  isLabelShown?: true | undefined;
   // Its accessible name, and the text beside the switch where it is shown
   label: string;
 }

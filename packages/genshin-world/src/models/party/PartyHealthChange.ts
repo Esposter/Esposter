@@ -8,12 +8,12 @@ export interface PartyHealthChange {
   bondOfLifeShare: number;
   characterId: number;
   // The element of the attack that caused the change, none for a drain, a drown, a heal or an attack with no element
-  element?: Element;
+  element?: Element | undefined;
   healthShare: number;
   // Whether the change ran the member out of HP while it stood, so its fall is the kits' to end, none for any other change
-  isFall?: true;
+  isFall?: true | undefined;
   // Whether a kit refused the fall the change would have brought, leaving the member standing at the share it keeps
   isFallRefused: boolean;
   overflowHealthShare: number;
-  sourceCharacterId?: number;
+  sourceCharacterId?: number | undefined;
 }

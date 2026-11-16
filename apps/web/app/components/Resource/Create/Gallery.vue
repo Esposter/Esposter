@@ -5,7 +5,7 @@ import { ResourceTypeDescriptionMap } from "#src/services/resource/ResourceTypeD
 import { RoutePath } from "@esposter/shared";
 
 interface Props {
-  isDense?: true;
+  isDense?: true | undefined;
 }
 
 defineProps<Props>();

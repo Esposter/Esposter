@@ -15,7 +15,7 @@ interface Props {
   // The Materials tab's recipe list, in the game's order
   recipes: ForgeRecipeCell[];
   // The queue the Queues tab's detail shows, the one its row is outlined as, or none
-  selectedQueueId?: number;
+  selectedQueueId?: number | undefined;
   // The tab open, the Materials tab's recipes or the Queues tab's queues
   tab: ForgeTab;
 }

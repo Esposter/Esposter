@@ -21,13 +21,13 @@ import { GameTextKey } from "genshin-text";
 
 interface Props {
   // The entries drawn dimmed, by their id
-  dimmedEntryIds?: ReadonlySet<number>;
+  dimmedEntryIds?: ReadonlySet<number> | undefined;
   // The game's words in the reader's language
   gameText: GameText;
   // The defeats of each Living Being the Archive counts, by its entry's id
   killsMap: ArchiveKills;
   // The entries that wear a "New" badge, by their id
-  newEntryIds?: ReadonlySet<number>;
+  newEntryIds?: ReadonlySet<number> | undefined;
   // The entries the player has met, by section
   progressMap: ArchiveProgress;
   // The Archive's entries of each section, in the codex's order

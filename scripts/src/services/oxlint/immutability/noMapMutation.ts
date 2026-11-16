@@ -37,7 +37,7 @@ const getBoundNames = (parameter: ESTree.Node): string[] => {
 
 // The parameters a function binds, and the element one of them is when the function is a projecting callback
 interface Scope {
-  element?: string;
+  element?: string | undefined;
   names: string[];
 }
 

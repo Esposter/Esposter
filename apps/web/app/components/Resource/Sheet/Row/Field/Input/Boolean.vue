@@ -3,7 +3,7 @@ import type { BooleanColumn } from "#shared/models/resource/sheet/column/Boolean
 
 interface Props {
   column: BooleanColumn;
-  isInline?: true;
+  isInline?: true | undefined;
 }
 
 const modelValue = defineModel<boolean | null>({ required: true });

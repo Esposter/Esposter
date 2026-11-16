@@ -7,7 +7,7 @@ import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 interface Props {
   file: FileEntity;
   index: number;
-  uploadFileUrl?: UploadFileUrl;
+  uploadFileUrl?: undefined | UploadFileUrl;
 }
 
 const { uploadFileUrl = { progress: 1, url: "" } } = defineProps<Props>();

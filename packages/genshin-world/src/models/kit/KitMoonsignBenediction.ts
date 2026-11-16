@@ -5,6 +5,6 @@ import type { Combatant } from "#src/models/kit/Combatant";
 // Turns Lunar, none for a character that only counts toward the Moonsign, and the Base DMG Bonus it adds to the party's
 // Lunar damage of those reactions, given the character as it stands, if it adds one
 export interface KitMoonsignBenediction {
-  getBaseDamageBonus?: (combatant: Combatant) => number;
+  getBaseDamageBonus?: ((combatant: Combatant) => number) | undefined;
   lunarReactionTypes: LunarReactionType[];
 }

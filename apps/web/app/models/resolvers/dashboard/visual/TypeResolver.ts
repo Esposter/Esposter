@@ -12,7 +12,7 @@ export class TypeResolver extends AVisualTypeResolver {
 
   override handleConfiguration(apexOptions: ApexOptions, type: VisualType) {
     apexOptions.chart = defu(
-      { type: uncapitalize(type) as NonNullable<ApexOptions["chart"]>["type"] },
+      { type: uncapitalize(type) as NonNullable<NonNullable<ApexOptions["chart"]>["type"]> },
       apexOptions.chart,
     );
   }

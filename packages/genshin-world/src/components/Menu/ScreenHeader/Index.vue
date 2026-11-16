@@ -9,7 +9,7 @@ interface Props {
   // The game's words in the reader's language
   gameText: GameText;
   // The glyph the close disc draws, the traced cross unless the screen's reference shows another
-  mark?: CloseButtonMark;
+  mark?: CloseButtonMark | undefined;
   // The screen's title in the reader's language
   title: string;
 }

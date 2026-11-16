@@ -3,7 +3,7 @@ import type { NinesliceConfiguration } from "#src/models/configuration/Nineslice
 import type { NinesliceEventEmitsOptions } from "#src/models/emit/NinesliceEventEmitsOptions";
 import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
-import type { SetRequired } from "type-fest";
+import type { SetRequired, UndefinedOnPartial } from "type-fest";
 
 import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
 import { NinesliceSetterMap } from "#src/services/setterMap/NinesliceSetterMap";
@@ -11,9 +11,9 @@ import { NinesliceSetterMap } from "#src/services/setterMap/NinesliceSetterMap";
 interface NinesliceEmits extends /** @vue-ignore */ NinesliceEventEmitsOptions {}
 
 interface Props {
-  configuration: SetRequired<Partial<NinesliceConfiguration>, "texture">;
-  immediate?: true;
-  onComplete?: (scene: SceneWithPlugins, nineSlice: GameObjects.NineSlice) => void;
+  configuration: UndefinedOnPartial<SetRequired<Partial<NinesliceConfiguration>, "texture">>;
+  immediate?: true | undefined;
+  onComplete?: ((scene: SceneWithPlugins, nineSlice: GameObjects.NineSlice) => void) | undefined;
 }
 
 const { configuration, immediate, onComplete } = defineProps<Props>();

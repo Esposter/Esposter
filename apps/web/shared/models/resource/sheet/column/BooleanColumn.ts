@@ -7,8 +7,11 @@ import { booleanFormatSchema } from "#shared/models/resource/sheet/column/Boolea
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { z } from "zod";
 
-export class BooleanColumn extends AColumn<typeof ColumnType.Boolean> implements Partial<Format<BooleanFormat>> {
-  format?: BooleanFormat;
+export class BooleanColumn
+  extends AColumn<typeof ColumnType.Boolean>
+  implements Partial<Format<BooleanFormat | undefined>>
+{
+  format?: BooleanFormat | undefined;
   override readonly type = ColumnType.Boolean;
 
   constructor(init?: Partial<BooleanColumn>) {

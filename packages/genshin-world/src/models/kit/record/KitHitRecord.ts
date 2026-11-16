@@ -7,7 +7,7 @@ import { kitBubbleRecordSchema } from "#src/models/kit/record/KitBubbleRecord";
 
 // One hit of a kit's record, with the bubble it holds the enemy it strikes in, if it holds one
 export interface KitHitRecord extends BaseKitHitRecord {
-  bubble?: KitBubbleRecord;
+  bubble?: KitBubbleRecord | undefined;
 }
 
 export const kitHitRecordSchema = baseKitHitRecordSchema.extend({

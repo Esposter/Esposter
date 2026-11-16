@@ -49,7 +49,7 @@ export const readKitInputs = async ({
   isEveryPublishedKitRead = false,
   wikiCacheDirectory,
 }: {
-  characterIds?: readonly number[];
+  characterIds?: readonly number[] | undefined;
   gcsimDirectory: string;
   isEveryPublishedKitRead?: boolean;
   wikiCacheDirectory: string;

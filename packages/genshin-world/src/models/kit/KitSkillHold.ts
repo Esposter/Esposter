@@ -8,5 +8,5 @@ export interface KitSkillHold {
   cooldownSeconds: number;
   minimumHeldSeconds: number;
   // The action the hold plays instead while its check holds on the step it starts, such as a passive's or a field's
-  variant?: KitVariant;
+  variant?: KitVariant | undefined;
 }

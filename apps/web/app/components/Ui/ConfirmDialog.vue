@@ -8,15 +8,15 @@ import { UiDialogSize } from "#src/models/ui/UiDialogSize";
 
 interface Props {
   // Why answering waits for the server, from the closed set; without one the dialog closes as its write is sent
-  awaitedBecause?: AwaitedReason;
+  awaitedBecause?: AwaitedReason | undefined;
   // What answering does (useDialogAnswer)
   confirm: () => Promisable<unknown>;
   // What confirming does, in the danger variant: "Delete"
   confirmLabel: string;
   // What the reader types before the answer enables, for an act worth the pause: the name of what it destroys
-  confirmName?: string;
+  confirmName?: string | undefined;
   // How wide the dialog stands, Medium when none is named
-  size?: UiDialogSize;
+  size?: UiDialogSize | undefined;
   title: string;
 }
 // A question before something that cannot be undone: what it acts on, Cancel, and the one destructive answer. An alert

@@ -2,7 +2,7 @@
 import { checkIsCaretAtEnd } from "#src/util/dom/checkIsCaretAtEnd";
 
 interface Props {
-  isFocused?: boolean;
+  isFocused?: boolean | undefined;
 }
 
 const modelValue = defineModel<string>({ required: true });

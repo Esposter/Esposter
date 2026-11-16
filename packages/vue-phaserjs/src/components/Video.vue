@@ -3,14 +3,15 @@ import type { VideoConfiguration } from "#src/models/configuration/VideoConfigur
 import type { VideoEventEmitsOptions } from "#src/models/emit/VideoEventEmitsOptions";
 import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
+import type { UndefinedOnPartial } from "type-fest";
 
 import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
 import { VideoSetterMap } from "#src/services/setterMap/VideoSetterMap";
 
 interface Props {
-  configuration: Partial<VideoConfiguration>;
-  immediate?: true;
-  onComplete?: (scene: SceneWithPlugins, video: GameObjects.Video) => void;
+  configuration: UndefinedOnPartial<Partial<VideoConfiguration>>;
+  immediate?: true | undefined;
+  onComplete?: ((scene: SceneWithPlugins, video: GameObjects.Video) => void) | undefined;
 }
 
 interface VideoEmits extends /** @vue-ignore */ VideoEventEmitsOptions {}

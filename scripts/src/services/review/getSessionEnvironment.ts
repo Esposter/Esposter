@@ -4,7 +4,5 @@ import { CLAUDE_EXEMPT_VARIABLE, SECRET_VARIABLE_REGEX } from "#src/services/rev
 // Reads repository text it cannot trust, and `gh` is authenticated in the parent alone.
 export const getSessionEnvironment = (): NodeJS.ProcessEnv =>
   Object.fromEntries(
-    Object.entries(process.env).filter(
-      ([key]) => key === CLAUDE_EXEMPT_VARIABLE || !SECRET_VARIABLE_REGEX.test(String(key)),
-    ),
+    Object.entries(process.env).filter(([key]) => key === CLAUDE_EXEMPT_VARIABLE || !SECRET_VARIABLE_REGEX.test(key)),
   );

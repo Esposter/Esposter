@@ -6,13 +6,13 @@ import type { JsonSchema } from "@jsonforms/core";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { getSchemaFormVariantIndex } from "#src/services/ui/schemaForm/getSchemaFormVariantIndex";
 import { getSchemaFormVariantValue } from "#src/services/ui/schemaForm/getSchemaFormVariantValue";
+import { unsetRendererState } from "#src/services/ui/schemaForm/unsetRendererState";
+import { omitUndefined } from "@esposter/shared";
 import { createCombinatorRenderInfos, mapDispatchToControlProps, mapStateToOneOfProps } from "@jsonforms/core";
 
 interface Props extends UiSchemaFormRendererProps {}
-// JSON Forms derives whether a field is enabled or read only when the form leaves them unset, which a boolean prop
-// Would read as false
-const props = withDefaults(defineProps<Props>(), { enabled: undefined, readonly: undefined });
-const control = computed(() => ({ ...props, ...mapStateToOneOfProps(props.form.state, props) }));
+const props = withDefaults(defineProps<Props>(), unsetRendererState);
+const control = computed(() => ({ ...props, ...mapStateToOneOfProps(props.form.state, omitUndefined(props)) }));
 const { handleChange } = mapDispatchToControlProps(props.form.dispatch);
 const variants = computed(() => (control.value.schema.oneOf ?? []) as JsonSchema[]);
 const renderInfos = computed(() =>

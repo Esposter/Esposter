@@ -5,6 +5,6 @@ import type { Combatant } from "#src/models/kit/Combatant";
 // Reactions it enables for its party, and the Base DMG Bonus it adds to the party's Stellar damage, given the character as
 // It stands, if it adds one
 export interface KitStellarJubilee {
-  getBaseDamageBonus?: (combatant: Combatant) => number;
+  getBaseDamageBonus?: ((combatant: Combatant) => number) | undefined;
   stellarReactionTypes: StellarReactionType[];
 }

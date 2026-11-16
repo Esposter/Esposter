@@ -7,7 +7,7 @@ import type { EnergyDrop } from "#src/models/enemy/EnergyDrop";
 // It applied one, the energy the enemy dropped, whether it was a CRIT hit, the reactions it triggered on it, which a
 // Passive that follows reactions reads, and those of them that landed and reach round it
 export interface EnemyStrikeResult {
-  appliedElement?: Element;
+  appliedElement?: Element | undefined;
   energyDrops: EnergyDrop[];
   isCritical: boolean;
   reachingReactions: TransformativeReaction[];

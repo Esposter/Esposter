@@ -5,6 +5,6 @@ export interface DropTargetInput<TDocument, TType> {
   document: TDocument;
   draggedType: TType;
   getChildRect: (nodeId: string) => OverlayBox | undefined;
-  hoveredNodeId?: string;
+  hoveredNodeId?: string | undefined;
   pointer: { x: number; y: number };
 }

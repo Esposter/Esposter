@@ -43,7 +43,7 @@ const readResolveStacks = ({ effects }: KitEffectState): number | undefined =>
   effects.find((effect): effect is KitStatus => effect.kind === "status" && effect.id === "raiden-resolve")?.stacks;
 
 // The team's effects once the burst is cast with the Resolve stacks given, and the Musou Isshin stance it takes
-const castBurst = (stacks: number): { kitEffectState: KitEffectState; stance?: KitStance } => {
+const castBurst = (stacks: number): { kitEffectState: KitEffectState; stance?: KitStance | undefined } => {
   const kitEffectState: KitEffectState = {
     effects: [{ characterId: RAIDEN_CHARACTER_ID, id: "raiden-resolve", kind: "status", secondsRemaining: 1, stacks }],
   };

@@ -3,7 +3,7 @@ import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 interface Props {
   isCameraEnabled: boolean;
-  stream?: MediaStream;
+  stream?: MediaStream | undefined;
 }
 
 defineProps<Props>();

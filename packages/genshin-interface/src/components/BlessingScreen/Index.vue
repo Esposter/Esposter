@@ -13,7 +13,7 @@ interface BlessingMember {
   healthShare: number;
   id: number;
   // The member's level as the game writes it, when the host knows it
-  levelText?: string;
+  levelText?: string | undefined;
   // The member's name in the reader's language
   name: string;
 }
@@ -43,7 +43,7 @@ interface Props {
   // The title the game shows at the top of its panel, and the title of the Worship screen the screen switches to
   title: string;
   // The members of the teams not deployed, which the game lists as preparing for combat
-  waitingMembers?: BlessingMember[];
+  waitingMembers?: BlessingMember[] | undefined;
   worshipTitle: string;
 }
 

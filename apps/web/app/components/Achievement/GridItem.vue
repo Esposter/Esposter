@@ -9,8 +9,8 @@ import { prettify } from "#src/util/text/prettify";
 interface Props {
   achievementDefinition: AchievementDefinitionEntry;
   // The share of registered users who have unlocked it, as a percentage, once the rarity read has landed
-  rarity?: number;
-  userAchievement?: UserAchievementWithDefinition;
+  rarity?: number | undefined;
+  userAchievement?: undefined | UserAchievementWithDefinition;
 }
 
 const { achievementDefinition, rarity, userAchievement } = defineProps<Props>();

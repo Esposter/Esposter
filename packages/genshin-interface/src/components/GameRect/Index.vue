@@ -8,7 +8,7 @@ import { toCanvasRectStyle } from "#src/services/toCanvasRectStyle";
 
 interface Props {
   // The rect of the `GameRect` this piece is drawn in, which the game hangs it under; the canvas's when it is none
-  parent?: CanvasRect;
+  parent?: CanvasRect | undefined;
   // The piece's RectTransform as the screen's fit wrote it
   rect: FittedInterfaceRect;
 }

@@ -5,5 +5,5 @@ import type { BlockNodeProps } from "vue-block-editor-headless";
 export interface ButtonNodeProps extends BlockNodeProps {
   href: string;
   label: string;
-  style?: NodeStyle;
+  style?: NodeStyle | undefined;
 }

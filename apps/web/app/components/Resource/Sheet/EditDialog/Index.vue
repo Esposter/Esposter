@@ -7,7 +7,7 @@ import { checkIsDeepEqual } from "@esposter/shared";
 
 interface Props {
   editedValue: unknown;
-  isCreate?: true;
+  isCreate?: true | undefined;
   schema: z.ZodType;
   // A sheet command, applied on the spot and saved behind it, so the dialog goes the moment it is called
   submit: () => Promisable<unknown>;

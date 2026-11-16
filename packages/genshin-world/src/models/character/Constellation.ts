@@ -7,7 +7,7 @@ export interface Constellation {
   descriptionTextId: string;
   nameTextId: string;
   paramList: number[];
-  raise?: { levels: number; talent: CombatTalent };
+  raise?: undefined | { levels: number; talent: CombatTalent };
 }
 
 export const constellationSchema = z.object({

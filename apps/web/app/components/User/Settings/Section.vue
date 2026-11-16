@@ -5,7 +5,7 @@ import { UserSettingsPageSectionMap } from "#src/services/user/settings/UserSett
 
 interface Props {
   // Absent where a surface of its own already heads the card, as the room's user settings do
-  section?: UserSettingsPageSection;
+  section?: undefined | UserSettingsPageSection;
 }
 
 const slots = defineSlots<{ actions?: () => VNode; default: () => VNode }>();

@@ -3,6 +3,7 @@ import { NOTE_IMAGE_MIME_TYPES } from "#shared/services/resource/note/constants"
 import { getNoteExtensions } from "#shared/services/resource/note/getNoteExtensions";
 import { useNoteStore } from "#src/store/resource/note/index";
 import { ResourceType } from "@esposter/db-schema";
+import { omitUndefined } from "@esposter/shared";
 import { FileHandler } from "@tiptap/extension-file-handler";
 import { EditorContent, useEditor } from "@tiptap/vue-3";
 
@@ -45,7 +46,7 @@ useAdoptResourceContent(ResourceType.Note, () => {
   <div flex flex-col h-full>
     <ResourceNoteEditorMenuBar :editor px-2 ui-bar />
     <RichTextEditorSuggestions :editor />
-    <EditorContent class="rich-text-content" flex-1 of-y-auto :editor />
+    <EditorContent :="omitUndefined({ editor })" class="rich-text-content" flex-1 of-y-auto />
   </div>
 </template>
 

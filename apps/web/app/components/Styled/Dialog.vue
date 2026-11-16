@@ -9,22 +9,22 @@ import { DIALOG_BODY_TRANSITION_DURATION } from "#src/services/ui/constants";
 
 interface Props {
   // Why the confirm waits for the server, from the closed set; without one the dialog closes as its write is sent
-  awaitedBecause?: AwaitedReason;
+  awaitedBecause?: AwaitedReason | undefined;
   // What confirming does, closing the dialog as it is called unless it names a reason to wait (useDialogAnswer). A dialog
   // Whose confirm submits a form leaves it to the form's own submit
-  confirm?: () => Promisable<unknown>;
+  confirm?: (() => Promisable<unknown>) | undefined;
   // What confirming does, in the confirm variant: "Save". Absent when the dialog has nothing to confirm — a reference
   // Sheet. The whole actions row goes with it, cancel included: there is no pending change for cancel to abandon, and
   // The title bar's close button is the way out
-  confirmLabel?: string;
+  confirmLabel?: string | undefined;
   // The look of the confirm button, the accent when none is named, and danger for a confirm that destroys something
-  confirmVariant?: UiButtonVariant;
+  confirmVariant?: UiButtonVariant | undefined;
   // The form the confirm button submits, which makes it the form's submit rather than a click the shell answers
-  formId?: string;
-  isConfirmDisabled?: true;
-  isConfirmPending?: true;
+  formId?: string | undefined;
+  isConfirmDisabled?: true | undefined;
+  isConfirmPending?: true | undefined;
   // How wide the dialog stands, Medium when none is named
-  size?: UiDialogSize;
+  size?: UiDialogSize | undefined;
   title: string;
 }
 // What a call site passes goes to the dialog element, which it sizes

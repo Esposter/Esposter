@@ -10,15 +10,15 @@ import { createServer } from "node:http";
 import { afterAll, beforeAll, describe, expect, test, vi } from "vitest";
 
 describe(createTRPCWebSocketHandler, () => {
-  const t = initTRPC.context<{ url?: string }>().create();
+  const t = initTRPC.context<{ url?: string | undefined }>().create();
   const router = t.router({
     // oxlint-disable-next-line require-await -- A subscription is an AsyncIterable, which only an async generator yields
     count: t.procedure.subscription(async function* () {
       yield 0;
     }),
   });
-  let openedConnection = Promise.withResolvers<TRPCWebSocketConnection<{ url?: string }>>();
-  let closedConnection = Promise.withResolvers<TRPCWebSocketConnection<{ url?: string }>>();
+  let openedConnection = Promise.withResolvers<TRPCWebSocketConnection<{ url?: string | undefined }>>();
+  let closedConnection = Promise.withResolvers<TRPCWebSocketConnection<{ url?: string | undefined }>>();
   const { hooks } = createTRPCWebSocketHandler({
     createContext: ({ req }) => ({ url: req.url }),
     onClose: (connection) => {
@@ -85,7 +85,7 @@ describe(createTRPCWebSocketHandler, () => {
   ])("a context that %s closes its peer and opens no connection", async (_label, createContext) => {
     expect.hasAssertions();
 
-    const onOpen = vi.fn<(connection: TRPCWebSocketConnection<{ url?: string }>) => void>();
+    const onOpen = vi.fn<(connection: TRPCWebSocketConnection<{ url?: string | undefined }>) => void>();
     const { hooks: failingHooks } = createTRPCWebSocketHandler({ createContext, onOpen, router });
     const failingWebSocketAdapter = crossws({ hooks: failingHooks });
     const closed = Promise.withResolvers<void>();

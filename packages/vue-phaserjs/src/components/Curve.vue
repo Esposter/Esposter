@@ -3,6 +3,7 @@ import type { CurveConfiguration } from "#src/models/configuration/CurveConfigur
 import type { CurveEventEmitsOptions } from "#src/models/emit/CurveEventEmitsOptions";
 import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
+import type { UndefinedOnPartial } from "type-fest";
 
 import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
 import { CurveSetterMap } from "#src/services/setterMap/CurveSetterMap";
@@ -10,9 +11,9 @@ import { CurveSetterMap } from "#src/services/setterMap/CurveSetterMap";
 interface CurveEmits extends /** @vue-ignore */ CurveEventEmitsOptions {}
 
 interface Props {
-  configuration: Partial<CurveConfiguration>;
-  immediate?: true;
-  onComplete?: (scene: SceneWithPlugins, curve: GameObjects.Curve) => void;
+  configuration: UndefinedOnPartial<Partial<CurveConfiguration>>;
+  immediate?: true | undefined;
+  onComplete?: ((scene: SceneWithPlugins, curve: GameObjects.Curve) => void) | undefined;
 }
 
 const { configuration, immediate, onComplete } = defineProps<Props>();

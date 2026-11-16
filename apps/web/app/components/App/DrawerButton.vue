@@ -6,7 +6,7 @@ import { useLayoutStore } from "#src/store/layout";
 
 interface Props {
   // The right drawer's button rather than the left's
-  isEnd?: true;
+  isEnd?: true | undefined;
   label: string;
   meaning: UiIconMeaning;
 }

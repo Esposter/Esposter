@@ -17,7 +17,7 @@ import type { Object3D } from "three";
 export interface WorldDevHandleOptions {
   body: Object3D;
   catalogue: Catalogue;
-  devRegistry?: DevRegistry;
+  devRegistry?: DevRegistry | undefined;
   getCharacterName: (characterId: number) => string;
   getGameClock: () => GameClock | undefined;
   getInventory: () => Inventory;

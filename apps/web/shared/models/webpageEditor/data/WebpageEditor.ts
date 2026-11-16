@@ -18,7 +18,7 @@ export class WebpageEditor extends AItemEntity {
   content: WebpageNode[] = [];
   description = "";
   // The baked document of a published snapshot. The server renders it from the tree at publish, so no working copy holds it
-  html?: string;
+  html?: string | undefined;
   imageUrl = "";
   root: { props: WebpageRootProps } = { props: { lang: "en", tokens: {} } };
 

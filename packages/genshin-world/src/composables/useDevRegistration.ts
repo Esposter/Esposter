@@ -11,7 +11,7 @@ export const useDevRegistration = ({
   devRegistry,
 }: {
   createHandle: () => DevHandle | Promise<DevHandle>;
-  devRegistry?: DevRegistry;
+  devRegistry?: DevRegistry | undefined;
 }) => {
   let isActive = true;
   let unregister: (() => void) | undefined;

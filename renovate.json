@@ -60,11 +60,6 @@
       "matchPackageNames": ["miniflare", "wrangler"]
     },
     {
-      "allowedVersions": "<6",
-      "description": "`type-fest` from its next major supports only `exactOptionalPropertyTypes: true`, which this repo leaves off: the app passes `undefined` to an optional prop or field as its one absent form, and the flag turns that into thousands of type errors across the app and the packages. The major waits until the repo decides to turn the flag on, which is its own change, never a dependency bump's.",
-      "matchPackageNames": ["type-fest"]
-    },
-    {
       "allowedVersions": "<27",
       "description": "`.node-version` is the one node pin, and `@types/node` follows its major with its own minors lagging node's, so the two move in one branch. The pin stays on its major until every environment that runs node can run the next one, and `references/node-major.md` is the checklist that says when. The change that moves the pin with `pnpm update:node <major>` raises this cap to the next major beside it.",
       "groupName": "node",

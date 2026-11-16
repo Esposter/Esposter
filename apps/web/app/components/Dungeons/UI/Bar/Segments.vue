@@ -6,8 +6,8 @@ import { BarOrigin } from "#src/models/dungeons/UI/bar/BarOrigin";
 
 interface Props {
   imagePosition: ImagePosition;
-  isHiddenWhenEmpty?: true;
-  middleDisplayWidth?: number;
+  isHiddenWhenEmpty?: true | undefined;
+  middleDisplayWidth?: number | undefined;
   scaleY: number;
   textures: Record<BarOrigin, ImageKey>;
 }

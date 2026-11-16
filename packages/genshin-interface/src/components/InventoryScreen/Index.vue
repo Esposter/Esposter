@@ -80,7 +80,7 @@ interface Props {
   // The detail panel's button that uses the selected entry, in the reader's language
   useLabel: string;
   // The weapons' details by the entry's id, drawn by the detail panel while that entry is the one it shows
-  weaponDetails?: Record<string, InventoryWeaponDetails>;
+  weaponDetails?: Record<string, InventoryWeaponDetails> | undefined;
 }
 
 const category = defineModel<ItemCategory>("category", { required: true });

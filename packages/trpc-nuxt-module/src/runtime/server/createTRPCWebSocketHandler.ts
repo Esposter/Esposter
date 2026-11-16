@@ -6,7 +6,7 @@ import type { CreateWSSContextFnOptions, WSSHandlerOptions } from "@trpc/server/
 import { PeerWebSocketAdapter } from "#src/runtime/server/models/PeerWebSocketAdapter";
 import { WebSocketServerAdapter } from "#src/runtime/server/models/WebSocketServerAdapter";
 import { toIncomingMessage } from "#src/runtime/server/services/toIncomingMessage";
-import { getResultAsync, noop } from "@esposter/shared";
+import { getResultAsync, noop, omitUndefined } from "@esposter/shared";
 import { applyWSSHandler } from "@trpc/server/adapters/ws";
 
 interface PeerConnection<TContext> {
@@ -23,8 +23,11 @@ export const createTRPCWebSocketHandler = <TRouter extends AnyTRPCRouter>({
   ...options
 }: TRPCWebSocketHandlerOptions<TRouter>): TRPCWebSocketHandler => {
   const webSocketServer = new WebSocketServerAdapter<PeerWebSocketAdapter>();
+  // Four options tRPC types as optional, so one left unset is left out of the call rather than passed as undefined
+  const { dangerouslyDisablePong, experimental_encoder, keepAlive, prefix, ...baseOptions } = options;
   const { broadcastReconnectNotification } = applyWSSHandler({
-    ...options,
+    ...baseOptions,
+    ...omitUndefined({ dangerouslyDisablePong, experimental_encoder, keepAlive, prefix }),
     createContext,
     // @TODO: https://github.com/trpc/trpc/issues/8057 — tRPC types `wss` and its clients as the `ws` classes, though
     // It reads only a few members of each, so a server that is not a `ws` one is cast until they are typed by those

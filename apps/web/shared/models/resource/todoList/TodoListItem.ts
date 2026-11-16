@@ -17,17 +17,17 @@ import { z } from "zod";
 export class TodoListItem extends ANamedItemEntity {
   // When it was ticked, and absent while it is open: one field for both facts a completed row shows. Declared, so an
   // Item left open carries no key for it rather than an own `undefined` a parsed blob would not have
-  declare completedAt?: Date;
-  declare dueAt?: Date;
+  declare completedAt?: Date | undefined;
+  declare dueAt?: Date | undefined;
   // Starred, and absent otherwise, so an item nobody starred carries no key for it
-  declare isImportant?: true;
+  declare isImportant?: true | undefined;
   notes = "";
   // The repository and session a follow-up came from, and absent on every todo the owner wrote
-  declare origin?: TodoListItemOrigin;
+  declare origin?: TodoListItemOrigin | undefined;
   // Absent on a todo that does not repeat; one that does is rolled to its next due date when it is ticked
-  declare recurrence?: Recurrence;
+  declare recurrence?: Recurrence | undefined;
   // Its checklist, one level deep, and absent until it has a step, so an item without one carries no key for it
-  declare steps?: TodoListStep[];
+  declare steps?: TodoListStep[] | undefined;
 
   constructor(init?: Partial<TodoListItem>) {
     super();

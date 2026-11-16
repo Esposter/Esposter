@@ -8,7 +8,7 @@ import type { EnergyDropKind } from "#src/models/shared/EnergyDropKind";
 export interface KitEnergyParticleCollectedEvent {
   characterId: number;
   count: number;
-  element?: Element;
+  element?: Element | undefined;
   energyDropKind: EnergyDropKind;
   kind: typeof KitEventKind.EnergyParticleCollected;
 }

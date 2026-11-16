@@ -41,9 +41,9 @@ const readStarterEmail = () => {
 export class EmailEditor extends AItemEntity {
   content: MjmlNode[] = [];
   // The bound dataset whose columns become merge fields and drive personalised export
-  datasetReference?: DatasetReference;
+  datasetReference?: DatasetReference | undefined;
   // The compiled html of a published snapshot. The server compiles the document at publish, so no working copy holds it
-  html?: string;
+  html?: string | undefined;
   root: { props: MjmlRootProps } = { props: {} };
 
   constructor(init?: Partial<EmailEditor>) {

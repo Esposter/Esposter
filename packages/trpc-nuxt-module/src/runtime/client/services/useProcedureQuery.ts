@@ -15,16 +15,16 @@ export const useProcedureQuery = (
   path: string,
   input: MaybeRefOrGetter<unknown>,
   { queryKey, trpc, watch, ...options }: UseQueryOptions<TRPCResolverDef> = {},
-): QueryAsyncData<TRPCResolverDef, unknown, KeysOf<unknown>, undefined> =>
-  useAsyncData(
+): QueryAsyncData<TRPCResolverDef, unknown, KeysOf<unknown>, undefined> => {
+  // A fixed key no longer follows the input, so the input is watched in its place
+  const watchSources =
+    watch === false ? undefined : queryKey === undefined ? watch : [...(watch ?? []), () => toValue(input)];
+  return useAsyncData(
     // A getter, so the key follows the input and a changed input is fetched and cached under its own key rather than
     // Under the one the first input was
     () => queryKey ?? getProcedureKey(path, toValue(input)),
     (_nuxtApp, { signal }) =>
       client.query(path, toValue(input), { ...trpc, signal: mergeSignals(signal, trpc?.signal) }),
-    {
-      ...options,
-      // A fixed key no longer follows the input, so the input is watched in its place
-      watch: watch === false ? undefined : queryKey === undefined ? watch : [...(watch ?? []), () => toValue(input)],
-    },
+    { ...options, ...(watchSources === undefined ? {} : { watch: watchSources }) },
   );
+};

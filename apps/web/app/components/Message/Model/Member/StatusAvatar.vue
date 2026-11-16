@@ -8,9 +8,9 @@ interface Props {
   id: User["id"];
   image: User["image"];
   // The one picture a profile is about, rather than one beside a name in a row
-  isLarge?: true;
+  isLarge?: true | undefined;
   // An icon's size, for a row's mark column
-  isSmall?: true;
+  isSmall?: true | undefined;
   name: User["name"];
 }
 // A member's picture with their status as a dot on its corner. The dot is decoration: whatever shows the avatar says

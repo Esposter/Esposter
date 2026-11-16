@@ -11,8 +11,8 @@ import { z } from "zod";
 // Residual or bounds
 export interface RegionGround extends TerrainShape {
   features: TerrainFeature[];
-  maxHeight?: number;
-  minHeight?: number;
+  maxHeight?: number | undefined;
+  minHeight?: number | undefined;
 }
 
 export const regionGroundSchema = z.object({

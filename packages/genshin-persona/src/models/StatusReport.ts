@@ -18,6 +18,6 @@ export interface StatusReport {
   // The rung the engine settled on, "" before it has spoken
   voiceDevice: string;
   // The dub, absent until the voice verb has set one up
-  voiceLanguage?: VoiceLanguage;
+  voiceLanguage?: undefined | VoiceLanguage;
   volume: number;
 }

@@ -4,13 +4,13 @@ import type { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 interface Props {
   // What a read that returned nothing says, as UiEmptyState takes it. A list with no empty state of its own leaves it
   // Unset, and an empty read then draws nothing
-  emptyState?: { description: string; meaning: UiIconMeaning; title: string };
+  emptyState?: undefined | { description: string; meaning: UiIconMeaning; title: string };
   // The read's failure message, "" while it has none, which is what useQuery holds
   error: string;
   // The read has settled with nothing in it
-  isEmpty?: true;
+  isEmpty?: true | undefined;
   // The read is out with nothing to show yet. A caller keeps the rows a previous read left on screen by not setting it
-  isPending?: true;
+  isPending?: true | undefined;
 }
 
 // A list a read fills has four regions, and the one that applies is the one drawn. A failure shows over a pending flag,

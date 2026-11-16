@@ -7,14 +7,14 @@ import { mergeProps } from "vue";
 interface Props {
   // Why the button is unavailable now. It is drawn disabled but stays focusable and hoverable, so its tooltip can say the
   // Reason after its label; a click is still delivered, so the action it runs refuses it
-  disabledReason?: string;
-  isPending?: boolean;
+  disabledReason?: string | undefined;
+  isPending?: boolean | undefined;
   // Its accessible name and its tooltip at once, so an icon button is never left unnamed
   label: string;
   meaning: UiIconMeaning;
   // In Vuetify 0's hotkey syntax, drawn in the tooltip beside the label: the shortcut of the command the button runs
-  shortcut?: string;
-  variant?: UiButtonVariant;
+  shortcut?: string | undefined;
+  variant?: UiButtonVariant | undefined;
 }
 // The tooltip renders no element of its own, so what a call site passes goes to the button
 defineOptions({ inheritAttrs: false });

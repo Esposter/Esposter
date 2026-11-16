@@ -3,6 +3,7 @@ import type { ArcConfiguration } from "#src/models/configuration/ArcConfiguratio
 import type { ArcEventEmitsOptions } from "#src/models/emit/ArcEventEmitsOptions";
 import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
+import type { UndefinedOnPartial } from "type-fest";
 
 import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
 import { ArcSetterMap } from "#src/services/setterMap/ArcSetterMap";
@@ -10,9 +11,9 @@ import { ArcSetterMap } from "#src/services/setterMap/ArcSetterMap";
 interface CircleEmits extends /** @vue-ignore */ ArcEventEmitsOptions {}
 
 interface Props {
-  configuration: Partial<ArcConfiguration>;
-  immediate?: true;
-  onComplete?: (scene: SceneWithPlugins, circle: GameObjects.Arc) => void;
+  configuration: UndefinedOnPartial<Partial<ArcConfiguration>>;
+  immediate?: true | undefined;
+  onComplete?: ((scene: SceneWithPlugins, circle: GameObjects.Arc) => void) | undefined;
 }
 
 const { configuration, immediate, onComplete } = defineProps<Props>();

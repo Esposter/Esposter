@@ -8,5 +8,5 @@ export interface SnapshotRestoration {
   resource: ResourceInResource;
   // Absent when the working copy had no content blob to take a revision of, which is the one state a restore
   // Leaves nothing to undo to
-  undoRevisionVersion?: number;
+  undoRevisionVersion?: number | undefined;
 }

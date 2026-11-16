@@ -20,11 +20,11 @@ interface BaseMutationOptions {
   // The cached reads this write makes stale, named by tag so the write never learns which caches exist.
   // Dropped once the write has landed: a rejected or rolled-back write changed nothing, so it invalidates
   // Nothing. Writes only — a read has no reason to invalidate anything, which is why this is not on QueryOptions
-  invalidates?: CacheTag[];
-  isExclusive?: true;
-  isSupersede?: true;
+  invalidates?: CacheTag[] | undefined;
+  isExclusive?: true | undefined;
+  isSupersede?: true | undefined;
   key: PropertyKey;
-  onError?: (error: Error) => Promisable<void>;
+  onError?: ((error: Error) => Promisable<void>) | undefined;
 }
 
 // A write the screen shows when it is sent. `reconcile` takes what only the server issues, such as a version token the
@@ -36,9 +36,9 @@ interface OptimisticMutationOptions<TResult> extends BaseMutationOptions {
 }
 
 interface QueryOptions<TResult> {
-  isExclusive?: true;
+  isExclusive?: true | undefined;
   key: PropertyKey;
-  onError?: (error: Error) => Promisable<void>;
+  onError?: ((error: Error) => Promisable<void>) | undefined;
   onSuccess?: (result: TResult) => Promisable<void>;
 }
 
@@ -147,7 +147,7 @@ export const useMutation = () => {
       onSuccess,
     }: BaseMutationOptions & {
       applyOptimistic?: () => Promisable<() => void>;
-      onSuccess?: (result: TResult) => Promisable<void>;
+      onSuccess?: ((result: TResult) => Promisable<void>) | undefined;
     },
   ): Promise<MutationOutcome<TResult>> => {
     if (isExclusive && keyPendingCountMap.value.has(key)) return Promise.resolve({ status: MutationStatus.Dropped });

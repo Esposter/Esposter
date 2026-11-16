@@ -21,7 +21,7 @@ export const readReferenceLandmarks = async (
   witness: DerivedAssetComponent,
   landmarkNames?: readonly string[],
 ): Promise<{
-  correspondences: { isEdge?: boolean; pixel: Pixel; point: Vector }[];
+  correspondences: { isEdge?: boolean | undefined; pixel: Pixel; point: Vector }[];
   given: Pixel[];
   height: number;
   names: string[];

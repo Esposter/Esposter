@@ -68,14 +68,15 @@ export const executeSlashCommand = async (
       message = `(╯°□°）╯︵ ┻━┻`;
       break;
     case SlashCommandType.Topic: {
-      const { text } = command.parameterValues;
-      executeSlashCommandMutation(() => $trpc.room.updateRoom.mutate({ id: roomId, topic: text }), {
+      // An omitted text clears the topic, so it is sent as the column's empty value: a missing topic leaves it unchanged
+      const topic = command.parameterValues.text ?? "";
+      executeSlashCommandMutation(() => $trpc.room.updateRoom.mutate({ id: roomId, topic }), {
         // Read as the write is sent, so a rejected topic restores what the write ahead of it stored rather than
         // What was on screen when the command was typed — and of the room the command was typed in, which by the
         // Time a queued write is sent need not be the room on screen
         applyOptimistic: () => {
           const previousTopic = rooms.value.find(({ id }) => id === roomId)?.topic;
-          storeUpdateRoom({ id: roomId, topic: text });
+          storeUpdateRoom({ id: roomId, topic });
           return () => {
             if (previousTopic !== undefined) storeUpdateRoom({ id: roomId, topic: previousTopic });
           };

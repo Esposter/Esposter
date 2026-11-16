@@ -7,7 +7,7 @@ import type { RouteLocationRaw } from "vue-router";
 // Mark: what its icon says, drawn in the nearest style's glyph, a whole class for a glyph no meaning names, or a picture
 export type UiCommand = {
   // A line after the title saying more: a resource's type
-  description?: string;
+  description?: string | undefined;
   // What it is listed under, in the palette and in the shortcuts dialog: the surface that registered it
   group: string;
   id: string;
@@ -21,7 +21,7 @@ export type UiCommand = {
   // Enter: listed with its shortcut, never offered or bound
   run?: () => Promisable<void>;
   // In Vuetify 0's hotkey syntax: a chord joined by "+", a sequence by "-"
-  shortcut?: string;
+  shortcut?: string | undefined;
   title: string;
   // Where choosing it goes. A row with one is a real link, so it opens in a new tab like any other
   to?: RouteLocationRaw;

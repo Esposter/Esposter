@@ -10,5 +10,5 @@ export interface LedgerEvent {
   model: string;
   type: LedgerEventType;
   // The unit cell verbatim; a reopen may name a whole ledger instead
-  unit?: string;
+  unit?: string | undefined;
 }

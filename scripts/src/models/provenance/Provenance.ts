@@ -27,9 +27,9 @@ export interface Provenance {
 
 // A source an output was built from, by name, with the commit it was fetched at or the SHA-256 of its file where it has one
 export interface ProvenanceSource {
-  commit?: string;
+  commit?: string | undefined;
   name: string;
-  sha256?: string;
+  sha256?: string | undefined;
 }
 
 // A pinned tool a command ran, named and identified by the SHA-256 of its binary

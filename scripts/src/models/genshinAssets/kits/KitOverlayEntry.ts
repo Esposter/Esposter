@@ -13,7 +13,7 @@ import { z } from "zod";
 // Entry a range key expands to carries its hit's place in the run as `index`, which the cited line's list is read at,
 // And which no overlay file holds.
 export type KitOverlayEntry =
-  | { cause: KitProvisionalCause; donor?: KitDonor; value?: unknown }
+  | { cause: KitProvisionalCause; donor?: KitDonor | undefined; value?: unknown }
   | { file: string; index?: number; line: number; source: typeof KitSource.Gcsim; value?: unknown }
   | { page: string; row: number; source: typeof KitSource.Wiki; value?: unknown }
   | { source: typeof KitSource.Gcsim | typeof KitSource.Tables | typeof KitSource.Wiki; value?: unknown };

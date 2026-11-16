@@ -344,7 +344,7 @@ describe(createJahodaKitBehaviour, () => {
     expect.hasAssertions();
     const { context, pursuit } = createConstellation6Context(0, true);
     fillFlaskUntilDrained(pursuit, context);
-    const meowballs: { element?: Element; frame: number }[] = [];
+    const meowballs: { element?: Element | undefined; frame: number }[] = [];
     for (let frame = 1; frame <= 1300; frame++)
       for (const { hit, hitbox } of stepKitTestEffects(1 / 60, context))
         if (hitbox !== undefined) meowballs.push({ element: hit.element, frame });

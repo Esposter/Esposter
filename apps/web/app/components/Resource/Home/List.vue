@@ -6,7 +6,7 @@ import { RECENT_RESOURCES_LIMIT } from "#src/services/resource/constants";
 import { ResourceListSourceDefinitionMap } from "#src/services/resource/list/ResourceListSourceDefinitionMap";
 
 interface Props {
-  isPending?: boolean;
+  isPending?: boolean | undefined;
   resources: ResourceListItem[];
   source: ResourceListSource;
 }

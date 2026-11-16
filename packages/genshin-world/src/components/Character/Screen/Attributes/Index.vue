@@ -30,7 +30,7 @@ interface Props {
   // The element mark the panel draws beside its stars, empty where the character has no element yet
   elementMarkPath: string;
   // The Friendship Level the character has reached, which the panel's Friendship row draws, none until given
-  friendshipLevel?: number;
+  friendshipLevel?: number | undefined;
   // The game's words in the reader's language
   gameText: GameText;
   // The game's material table by item id, which the materials an ascension takes are named from

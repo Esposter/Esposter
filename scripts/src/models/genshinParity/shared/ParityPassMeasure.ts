@@ -5,7 +5,7 @@ import type { ParityPassReading } from "#src/models/genshinParity/shared/ParityP
 export interface ParityPassMeasure {
   // Set where the scene has nothing for the pass to read at all (no game sound matched to it, no part a clip moves), so
   // The run prints it not owed and goes on past it, where an empty reading alone stops the run at it
-  isNotOwed?: true;
+  isNotOwed?: true | undefined;
   notes: string[];
   readings: ParityPassReading[];
 }

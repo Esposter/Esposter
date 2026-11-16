@@ -8,7 +8,7 @@ import { REORDER_HANDLE_CLASS } from "#src/services/ui/constants";
 import { useRoomCategoryDialogStore } from "#src/store/message/roomCategoryDialog";
 
 interface Props {
-  category?: RoomCategoryInMessage;
+  category?: RoomCategoryInMessage | undefined;
   rooms: RoomInMessage[];
 }
 

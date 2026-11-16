@@ -12,7 +12,7 @@ import { WordFilterAction, WordFilterActions } from "@esposter/db-schema";
 import { checkIsDeepEqual, toRawDeep } from "@esposter/shared";
 
 interface Props {
-  filter?: RoomFilterInMessage;
+  filter?: RoomFilterInMessage | undefined;
   roomId: string;
 }
 

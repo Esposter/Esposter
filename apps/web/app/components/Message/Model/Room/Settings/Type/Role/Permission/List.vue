@@ -7,7 +7,7 @@ import { checkHasPermission, RoomPermission } from "@esposter/db-schema";
 
 interface Props {
   // The role is one the reader does not outrank, whose save is refused whole, so every switch is held
-  isDisabled?: true;
+  isDisabled?: true | undefined;
   roomId: RoomInMessage["id"];
 }
 

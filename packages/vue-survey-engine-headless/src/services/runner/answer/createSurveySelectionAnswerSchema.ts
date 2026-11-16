@@ -23,8 +23,8 @@ export const createSurveySelectionAnswerSchema = ({
   choices: SurveyChoice[];
   hasNone?: boolean;
   hasOther?: boolean;
-  maxSelected?: number;
-  minSelected?: number;
+  maxSelected?: number | undefined;
+  minSelected?: number | undefined;
 }): z.ZodArray<z.ZodType<number | string>> =>
   createUniqueArraySchema(createSurveyChoiceValueSchema({ choices, hasNone, hasOther }))
     .min(minSelected ?? 0, { error: SURVEY_TOO_FEW_SELECTED_MESSAGE })

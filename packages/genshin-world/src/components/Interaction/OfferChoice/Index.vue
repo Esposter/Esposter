@@ -7,7 +7,7 @@ import { GameTextKey } from "genshin-text";
 
 interface Props {
   // Whether a row restores Original Resin with a Fragile Resin, where the held Original Resin covers no claim
-  canRestore?: boolean;
+  canRestore?: boolean | undefined;
   // The text of the rows: the one that leaves the choice unmade, the two resins a row is paid in and the restore row
   gameText: GameText;
   // The claims the held resin affords, one row each

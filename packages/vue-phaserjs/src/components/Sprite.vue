@@ -3,15 +3,15 @@ import type { SpriteConfiguration } from "#src/models/configuration/SpriteConfig
 import type { SpriteEventEmitsOptions } from "#src/models/emit/SpriteEventEmitsOptions";
 import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
-import type { SetRequired } from "type-fest";
+import type { SetRequired, UndefinedOnPartial } from "type-fest";
 
 import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
 import { SpriteSetterMap } from "#src/services/setterMap/SpriteSetterMap";
 
 interface Props {
-  configuration: SetRequired<Partial<SpriteConfiguration>, "texture">;
-  immediate?: true;
-  onComplete?: (scene: SceneWithPlugins, sprite: GameObjects.Sprite) => void;
+  configuration: UndefinedOnPartial<SetRequired<Partial<SpriteConfiguration>, "texture">>;
+  immediate?: true | undefined;
+  onComplete?: ((scene: SceneWithPlugins, sprite: GameObjects.Sprite) => void) | undefined;
 }
 
 interface SpriteEmits extends /** @vue-ignore */ SpriteEventEmitsOptions {}

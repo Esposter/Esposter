@@ -6,7 +6,7 @@ import { parseDate } from "#shared/util/date/parseDate";
 
 interface Props {
   column: DateColumn;
-  isInline?: true;
+  isInline?: true | undefined;
 }
 
 const modelValue = defineModel<null | string>({ required: true });

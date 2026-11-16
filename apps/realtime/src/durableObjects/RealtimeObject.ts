@@ -56,7 +56,7 @@ export abstract class RealtimeObject<TEvent extends { type: string } = { type: s
 
   // A broadcast reaches every socket a tag names, or every socket when none is named, and
   // `excludeTag` skips the sockets that carry it, so a write's own device does not hear the echo of what it did
-  protected broadcast(event: TEvent, { excludeTag, tag }: { excludeTag?: string; tag?: string } = {}) {
+  protected broadcast(event: TEvent, { excludeTag, tag }: { excludeTag?: string | undefined; tag?: string } = {}) {
     const frame = JSON.stringify(event);
     for (const ws of this.ctx.getWebSockets(tag)) {
       if (excludeTag && this.ctx.getTags(ws).includes(excludeTag)) continue;

@@ -9,24 +9,24 @@ import type { KitHit } from "#src/models/kit/KitHit";
 export interface KitAction {
   // Whether the action may start as it is pressed, read from the state the team holds then: a cost it holds short of its
   // Amount refuses the start, which starts nothing and spends nothing
-  canStart?: (context: KitContext) => boolean;
+  canStart?: ((context: KitContext) => boolean) | undefined;
   // The seconds of its charge a charge skip takes off its start, if it has a charge to skip: the action starts that far in,
   // So its hitmarks and its end come that much sooner
-  chargeSeconds?: number;
+  chargeSeconds?: number | undefined;
   // Asked as a press of the action starts, whether that press ends the state the kit holds. Such a press plays none of the
   // Action's hits and sets no cooldown, as gcsim's press that leaves a state does
-  checkIsStateEndingPress?: (context: KitContext) => boolean;
+  checkIsStateEndingPress?: ((context: KitContext) => boolean) | undefined;
   // The length the action plays, if it is decided as it runs: once its seconds reach `atSeconds`, `decide` returns the
   // Seconds it plays from then on, from the state the team holds then, such as the Sourcewater Droplets a charge
   // Picks up
-  decideLength?: { atSeconds: number; decide: (context: KitContext) => number };
+  decideLength?: undefined | { atSeconds: number; decide: (context: KitContext) => number };
   hits: KitHit[];
   // Whether the action is an aimed shot, which turns the body to the camera's aim while the aim is held, not to a target
-  isAimed?: true;
+  isAimed?: true | undefined;
   // Run as the action starts, played by the character on the field at the enemy it targets, if it targets one
-  onStart?: (context: KitContext, target?: Enemy) => void;
+  onStart?: ((context: KitContext, target?: Enemy) => void) | undefined;
   seconds: number;
   // The stamina the action drains each second it plays, if it drains any
-  staminaPerSecond?: number;
+  staminaPerSecond?: number | undefined;
   targetingArea: AttackArea;
 }

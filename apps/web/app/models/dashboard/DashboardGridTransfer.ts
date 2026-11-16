@@ -6,5 +6,5 @@ import type { GridCell } from "vue-grid-layout-headless";
 export interface DashboardGridTransfer {
   cell: GridCell;
   id: Visual["id"];
-  targetGroupId?: Visual["id"];
+  targetGroupId?: undefined | Visual["id"];
 }

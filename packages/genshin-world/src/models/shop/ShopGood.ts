@@ -18,9 +18,9 @@ export interface ShopGood {
   itemId: number;
   minPlayerLevel: number;
   refresh: ShopRefresh;
-  reputationDiscountLevel?: number;
+  reputationDiscountLevel?: number | undefined;
   // The sub tab a good is shown on, where its shop has tabs: the Realm Depot's six, by the table's sub tab id
-  tabId?: number;
+  tabId?: number | undefined;
 }
 
 // What a good's limit is counted from: its id, its buy limit and the refresh the limit comes back on. A good with no sale

@@ -20,12 +20,12 @@ export interface Enemy {
   attackCooldownSeconds: number;
   // The combatant whose Pyro or Dendro last lit or fed its Burning, as its hit priced it, which the Burning ticks are
   // Priced from, none until one has
-  burningCombatant?: Combatant;
+  burningCombatant?: Combatant | undefined;
   campId: string;
   droppedThresholdCount: number;
   // The combatant whose Electro or Hydro last left it Electro-Charged, as its hit priced it, which the ticks are priced
   // From, none until one has
-  electroChargedCombatant?: Combatant;
+  electroChargedCombatant?: Combatant | undefined;
   // The pulses an enemy waits before a node's buff can return, set when a reaction depletes the buff, none while it can
   elementalNodePulsesLeft: number;
   // The reactions its elements brought on their own as they aged, held until the kit on the field prices them
@@ -50,7 +50,7 @@ export interface Enemy {
   poiseBrokenSeconds: number;
   position: GroundPoint;
   // The shield a kind holds on top of its health, none for a kind that holds none
-  shield?: EnemyShield;
+  shield?: EnemyShield | undefined;
   state: EnemyState;
   stateSeconds: number;
   statuses: EnemyStatus[];

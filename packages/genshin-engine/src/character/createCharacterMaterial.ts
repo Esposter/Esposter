@@ -40,7 +40,7 @@ export const createCharacterMaterial = ({
   texture: diffuseTexture,
   toonTexture,
 }: CharacterMaterialOptions): ToonNodeMaterial => {
-  const isTransparent = opacity !== 1 || isTextureTransparent;
+  const isTransparent = opacity !== 1 || isTextureTransparent === true;
   const color: [number, number, number] = [red, green, blue];
   const packToonTexture = isToonShared ? undefined : toonTexture;
   const shadingInputs = createCharacterShadingInputs({

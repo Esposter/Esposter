@@ -11,7 +11,7 @@ import { GameTextKey } from "genshin-text";
 
 interface Props {
   // The blessing of the Moon Spire's period the entry shows, and none in the Corridor, which runs no period
-  blessing?: AbyssPeriodBlessing;
+  blessing?: AbyssPeriodBlessing | undefined;
   // The floors the entry offers, each with its chambers, which a floor's button opens
   floors: AbyssFloor[];
   // The game's words in the reader's language

@@ -5,19 +5,19 @@ import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 // What a whiteboard's context menu runs, each the function the same command's shortcut runs, so the menu and the keys never disagree.
 // The stacking steps are absent when the selection cannot move that way, as the properties panel disables them
 export interface WhiteboardContextMenuCommands {
-  bringForward?: () => void;
-  bringToFront?: () => void;
+  bringForward?: (() => void) | undefined;
+  bringToFront?: (() => void) | undefined;
   copy: () => Promise<void>;
   cut: () => Promise<void>;
   deleteSelection: () => void;
   duplicate: () => void;
-  editText?: () => void;
+  editText?: (() => void) | undefined;
   fitToContent: () => void;
   paste: () => Promise<void>;
   resetZoom: () => void;
   selectAll: () => void;
-  sendBackward?: () => void;
-  sendToBack?: () => void;
+  sendBackward?: (() => void) | undefined;
+  sendToBack?: (() => void) | undefined;
 }
 
 // The items over a selection: the clipboard commands, the stacking of the selection, the text of an element that has some, and delete last in the

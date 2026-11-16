@@ -7,7 +7,7 @@ interface Props {
   count: number;
   index: number;
   // The noun the buttons' labels name the row by
-  noun?: string;
+  noun?: string | undefined;
 }
 
 const { noun = "row" } = defineProps<Props>();

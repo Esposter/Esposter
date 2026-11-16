@@ -19,7 +19,9 @@ const readXmlText = (xml: string, tag: string): string => {
 
 // The keys and write instants of one ListObjectsV2 page, and the token of the next page when this one is not the last.
 // No XML reader is a dependency of the scripts, and the listing's shape is fixed, so its tags are read directly
-export const parseListBucketResult = (xml: string): { nextContinuationToken?: string; objects: R2ListedObject[] } => ({
+export const parseListBucketResult = (
+  xml: string,
+): { nextContinuationToken?: string | undefined; objects: R2ListedObject[] } => ({
   nextContinuationToken: xml.includes("<IsTruncated>true</IsTruncated>")
     ? readXmlText(xml, "NextContinuationToken")
     : undefined,

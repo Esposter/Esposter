@@ -25,7 +25,7 @@ interface Props {
   lightUniforms: LightUniforms;
   rampTexture: DataTexture;
   // The point the animals run from, the character's feet, which none is given while no character stands in the world
-  target?: GroundPoint;
+  target?: GroundPoint | undefined;
   // The animals in the world, which the session's combat holds and this steps and draws, a struck one left out
   wildlifeList: Wildlife[];
 }

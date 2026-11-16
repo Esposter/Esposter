@@ -3,7 +3,7 @@ import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 interface Props {
-  isRemovable?: true;
+  isRemovable?: true | undefined;
   label: string;
   value: string;
 }

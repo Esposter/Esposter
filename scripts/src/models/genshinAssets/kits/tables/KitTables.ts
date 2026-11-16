@@ -5,7 +5,7 @@ import type { CombatTalent, Element, TalentMultiplierMap, WeaponType } from "gen
 // Talents' proud skill groups, their multipliers, and each group's labels
 export interface KitTables {
   characterId: number;
-  element?: Element;
+  element?: Element | undefined;
   labelMap: Map<number, KitTableLabel[]>;
   name: string;
   talentGroupIdMap: Record<CombatTalent, number>;

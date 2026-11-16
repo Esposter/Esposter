@@ -3,15 +3,15 @@ import type { TileSpriteConfiguration } from "#src/models/configuration/TileSpri
 import type { TileSpriteEventEmitsOptions } from "#src/models/emit/TileSpriteEventEmitsOptions";
 import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
-import type { SetRequired } from "type-fest";
+import type { SetRequired, UndefinedOnPartial } from "type-fest";
 
 import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
 import { TileSpriteSetterMap } from "#src/services/setterMap/TileSpriteSetterMap";
 
 interface Props {
-  configuration: SetRequired<Partial<TileSpriteConfiguration>, "texture">;
-  immediate?: true;
-  onComplete?: (scene: SceneWithPlugins, tileSprite: GameObjects.TileSprite) => void;
+  configuration: UndefinedOnPartial<SetRequired<Partial<TileSpriteConfiguration>, "texture">>;
+  immediate?: true | undefined;
+  onComplete?: ((scene: SceneWithPlugins, tileSprite: GameObjects.TileSprite) => void) | undefined;
 }
 
 interface TileSpriteEmits extends /** @vue-ignore */ TileSpriteEventEmitsOptions {}

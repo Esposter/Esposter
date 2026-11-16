@@ -2,7 +2,7 @@
 import type { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 interface Props {
-  icon?: UiIconMeaning;
+  icon?: UiIconMeaning | undefined;
   // Where the pointer is in the viewport, which the chip follows just below and to the right of
   point: { x: number; y: number };
   title: string;

@@ -11,7 +11,7 @@ import { BufferAttribute, BufferGeometry, DoubleSide, Mesh, MeshBasicMaterial } 
 
 interface Props {
   // The sight the screen turns on and off, whose trails are drawn only while it is on, none where no screen holds one
-  elementalSight?: ElementalSight;
+  elementalSight?: ElementalSight | undefined;
   // The ends the trails lead to on the ground, the courts of the Seelies still resting
   ends: GroundPoint[];
   // The world's ground at a point in its own coordinates, which each trail is sampled on
@@ -19,7 +19,7 @@ interface Props {
   // The scene the sight's mask is drawn from, which the trails are added to beside the sight's stand-ins
   sightScene: Scene;
   // The character's position, which every trail starts from, none where no character is drawn
-  target?: Vector3;
+  target?: undefined | Vector3;
 }
 
 const { elementalSight, ends, getGroundHeight, sightScene, target } = defineProps<Props>();

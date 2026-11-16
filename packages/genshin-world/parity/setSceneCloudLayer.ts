@@ -16,7 +16,7 @@ export const setSceneCloudLayer = async (
     settings = {},
     textures = {},
   }: {
-    coverage?: number;
+    coverage?: number | undefined;
     settings?: Partial<Record<keyof CloudLayerUniforms, number | number[]>>;
     textures?: Partial<Record<keyof CloudLayerUniforms, string>>;
   },

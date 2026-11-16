@@ -14,7 +14,7 @@ import { fillGameTextValues, GameTextKey } from "genshin-text";
 
 interface Props {
   // The bounty the keeper offers ahead of her request: its claim once its target is defeated, or one to take
-  bountyOffer?: ReputationBountyOffer;
+  bountyOffer?: ReputationBountyOffer | undefined;
   // The game's words in the reader's language
   gameText: GameText;
   // The game's material table by item id, whose rarity colours each reward's slot
@@ -22,7 +22,7 @@ interface Props {
   // The names of the items in the reader's language, by their game text ids
   nameText: Readonly<Record<string, string>>;
   // The request the keeper offers, its title in the reader's language, or none where she offers none
-  offerTitle?: string;
+  offerTitle?: string | undefined;
   // The nation's Reputation the player holds: its level, and the EXP toward the next
   progress: ReputationProgress;
   // The nation's levels and their rewards, as the game's table gives them

@@ -7,8 +7,8 @@ import { z } from "zod";
 // One step of a quest: the line the tracker and the quest screen show for it by text id ("Talk to Paimon"), the NPC its
 // Guide names where it has one, and the objectives that all have to be done before the quest moves on
 export interface QuestStep {
-  banType?: QuestBanType;
-  guideNpcId?: string;
+  banType?: QuestBanType | undefined;
+  guideNpcId?: string | undefined;
   id: string;
   objectives: QuestObjective[];
   textId: string;

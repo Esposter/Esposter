@@ -11,7 +11,7 @@ interface Props {
   // How far the quest's objective stands from the player in the reader's words, "" with no place to go to
   distance: string;
   // Whether it is a daily commission, which ends on the commission's star rather than a place's pin
-  isCommission?: boolean;
+  isCommission?: boolean | undefined;
   // The quest's title in the reader's language
   title: string;
 }

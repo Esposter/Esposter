@@ -11,11 +11,11 @@ import type { UserStatusInMessage } from "#src/schema/message/userStatusesInMess
 // The mentions a message names are read from its text by the object, so no sender can write a message whose mentions
 // Disagree with its text
 export interface CreateRoomMessageInput {
-  files?: FileEntity[];
+  files?: FileEntity[] | undefined;
   isForward?: boolean;
   linkPreviewResponse?: RoomMessage["linkPreviewResponse"];
   message: string;
-  replyToId?: number;
+  replyToId?: number | undefined;
   type: RoomMessage["type"];
 }
 
@@ -29,7 +29,7 @@ export interface CreateWebhookRoomMessageInput {
   files?: FileEntity[];
   message: string;
   replyToId?: number;
-  senderName?: string;
+  senderName?: string | undefined;
 }
 
 // Who a write is done as. The device, when named, is the one whose own socket is not sent the write's echo
@@ -53,7 +53,7 @@ export interface RoomObjectRpc {
   closeSession: (sessionId: string) => void;
   createMessage: (input: CreateRoomMessageInput, actor: RoomActor) => Promise<RoomMessage>;
   createScheduledMessage: (
-    input: { id: string; message: string; replyToId?: number; runAt: Date },
+    input: { id: string; message: string; replyToId?: number | undefined; runAt: Date },
     actor: RoomActor,
   ) => Promise<ScheduledRoomMessage>;
   createWebhookMessage: (input: CreateWebhookRoomMessageInput) => Promise<RoomMessage>;
@@ -69,21 +69,29 @@ export interface RoomObjectRpc {
   // One page of a person's erase in this room: their live messages after the id named, oldest first, each tombstoned.
   // Returns the page as it was before the delete, so the caller can remove the blobs its files named. A page shorter
   // Than the limit is the last one
-  deleteUserMessages: (input: { after?: number; limit: number; userId: string }) => Promise<RoomMessage[]>;
+  deleteUserMessages: (input: { after?: number | undefined; limit: number; userId: string }) => Promise<RoomMessage[]>;
   // One page of the reactions a person is a reactor of after the key named, each with the person taken off it. Returns
   // The page as it was before the removal, so the caller reads the next key off its last reaction
-  deleteUserReactions: (input: { after?: RoomReactionKey; limit: number; userId: string }) => RoomReaction[];
+  deleteUserReactions: (input: {
+    after?: RoomReactionKey | undefined;
+    limit: number;
+    userId: string;
+  }) => RoomReaction[];
   detachMember: (userId: string, status: UserStatusInMessage) => void;
   // A user's live messages in this room, oldest first, from the id after the cursor
-  exportUserMessages: (input: { after?: number; limit: number; userId: string }) => RoomMessage[];
+  exportUserMessages: (input: { after?: number | undefined; limit: number; userId: string }) => RoomMessage[];
   // One page of the reactions a user is one of the reactors of in this room, in key order after the key named
-  exportUserReactions: (input: { after?: RoomReactionKey; limit: number; userId: string }) => RoomReaction[];
+  exportUserReactions: (input: {
+    after?: RoomReactionKey | undefined;
+    limit: number;
+    userId: string;
+  }) => RoomReaction[];
   // A room-list event the room's own write raised, sent to each member online in the room through that member's object
   notifyOnlineMembers: (event: UserEvent) => Promise<void>;
   pinMessage: (id: number, actor: RoomActor) => null | RoomMessage;
   // The live messages after a page cursor in the room's message order, at most `limit` of them. A backward cursor reads the
   // Messages newer than its row, oldest first, which the caller turns back into the list's order
-  readMessages: (input: { cursor: PageCursor; isPinned?: boolean; limit: number }) => RoomMessage[];
+  readMessages: (input: { cursor: PageCursor; isPinned?: boolean | undefined; limit: number }) => RoomMessage[];
   readMessagesByIds: (ids: number[]) => RoomMessage[];
   readReactions: (messageIds: number[]) => RoomReaction[];
   // The scheduled messages of one person that are named, by their ids
@@ -102,11 +110,11 @@ export interface RoomObjectRpc {
   // The members the new text names are read from it by the object, as a send reads them
   updateMessage: (input: { id: number; message: string }, actor: RoomActor) => null | RoomMessage;
   updateScheduledMessage: (
-    input: { id: string; message: string; replyToId?: number; runAt: Date },
+    input: { id: string; message: string; replyToId?: number | undefined; runAt: Date },
     actor: RoomActor,
   ) => Promise<null | ScheduledRoomMessage>;
   // An option id votes, and no option id withdraws the actor's vote
-  votePoll: (input: { id: number; optionId?: string }, actor: RoomActor) => null | RoomMessage;
+  votePoll: (input: { id: number; optionId?: string | undefined }, actor: RoomActor) => null | RoomMessage;
 }
 
 // A reaction's key in its room: the message it is on and its emoji. Reactions are paged by this key, in its order

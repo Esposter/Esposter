@@ -11,7 +11,7 @@ import { getResultAsync } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 
 export interface SaveGenshinResult {
-  etag?: string;
+  etag?: string | undefined;
   serverNow: string;
 }
 

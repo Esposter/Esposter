@@ -6,7 +6,7 @@ import { ElementNebulaMap } from "#src/services/character/ElementNebulaMap";
 
 interface Props {
   // The element of the character the scene stands behind, Geo's when it has none
-  element?: Element;
+  element?: Element | undefined;
   // The open tab, whose frame each Geo tint is sampled from
   tab: CharacterMenuTab;
 }

@@ -9,7 +9,7 @@ import { getScene } from "#src/services/shared/getScene";
 
 interface Props {
   configuration: Types.Tilemaps.TilemapConfig;
-  onComplete?: (scene: SceneWithPlugins, tilemap: Tilemaps.Tilemap) => void;
+  onComplete?: ((scene: SceneWithPlugins, tilemap: Tilemaps.Tilemap) => void) | undefined;
 }
 
 defineSlots<{ default: () => VNode }>();

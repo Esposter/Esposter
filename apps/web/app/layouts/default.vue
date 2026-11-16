@@ -5,14 +5,14 @@ import { useLayoutStore } from "#src/store/layout";
 
 interface Props {
   // The right drawer's content draws its own title and close button, so a narrow screen's sheet draws neither
-  isRightTitleHidden?: true;
+  isRightTitleHidden?: true | undefined;
   // The page scrolls inside its own regions, so it is exactly the viewport tall and the window never scrolls
-  isViewportHeight?: true;
-  leftDrawerWidth?: number;
+  isViewportHeight?: true | undefined;
+  leftDrawerWidth?: number | undefined;
   // What the left and right drawers are, the title a narrow screen's sheet shows them under
-  leftTitle?: string;
-  rightDrawerWidth?: number;
-  rightTitle?: string;
+  leftTitle?: string | undefined;
+  rightDrawerWidth?: number | undefined;
+  rightTitle?: string | undefined;
 }
 
 const slots = defineSlots<{ default?: () => VNode; left?: () => VNode; right?: () => VNode }>();

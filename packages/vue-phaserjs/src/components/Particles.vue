@@ -3,6 +3,7 @@ import type { ParticlesConfiguration } from "#src/models/configuration/Particles
 import type { ParticlesEventEmitsOptions } from "#src/models/emit/ParticlesEventEmitsOptions";
 import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
+import type { UndefinedOnPartial } from "type-fest";
 
 import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
 import { ParticlesSetterMap } from "#src/services/setterMap/ParticlesSetterMap";
@@ -10,9 +11,9 @@ import { ParticlesSetterMap } from "#src/services/setterMap/ParticlesSetterMap";
 interface ParticlesEmits extends /** @vue-ignore */ ParticlesEventEmitsOptions {}
 
 interface Props {
-  configuration: Partial<ParticlesConfiguration>;
-  immediate?: true;
-  onComplete?: (scene: SceneWithPlugins, particles: GameObjects.Particles.ParticleEmitter) => void;
+  configuration: UndefinedOnPartial<Partial<ParticlesConfiguration>>;
+  immediate?: true | undefined;
+  onComplete?: ((scene: SceneWithPlugins, particles: GameObjects.Particles.ParticleEmitter) => void) | undefined;
 }
 
 const { configuration, immediate, onComplete } = defineProps<Props>();

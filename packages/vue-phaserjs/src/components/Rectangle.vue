@@ -3,14 +3,15 @@ import type { RectangleConfiguration } from "#src/models/configuration/Rectangle
 import type { RectangleEventEmitsOptions } from "#src/models/emit/RectangleEventEmitsOptions";
 import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
+import type { UndefinedOnPartial } from "type-fest";
 
 import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
 import { RectangleSetterMap } from "#src/services/setterMap/RectangleSetterMap";
 
 interface Props {
-  configuration: Partial<RectangleConfiguration>;
-  immediate?: true;
-  onComplete?: (scene: SceneWithPlugins, rectangle: GameObjects.Rectangle) => void;
+  configuration: UndefinedOnPartial<Partial<RectangleConfiguration>>;
+  immediate?: true | undefined;
+  onComplete?: ((scene: SceneWithPlugins, rectangle: GameObjects.Rectangle) => void) | undefined;
 }
 
 interface RectangleEmits extends /** @vue-ignore */ RectangleEventEmitsOptions {}

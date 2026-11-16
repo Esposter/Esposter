@@ -5,7 +5,10 @@ import { PACKAGES_DIRECTORY, PNPM_STATE_PATTERNS } from "#vite/services/constant
 
 // A build's cache: the files it reads tracked automatically, less the files it rewrites in its own package, which are
 // Resolved from the workspace root as the task belongs to it rather than to the package its `cwd` names
-export const createBuildCache = (directory: string, rewrittenPatterns: readonly string[]): RunTask["cache"] => ({
+export const createBuildCache = (
+  directory: string,
+  rewrittenPatterns: readonly string[],
+): NonNullable<RunTask["cache"]> => ({
   input: [
     { auto: true },
     ...PNPM_STATE_PATTERNS,

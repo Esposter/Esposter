@@ -28,7 +28,7 @@ interface Props {
   // The Obtain button of a queue with units ready, in the game's words
   obtainLabel: string;
   // The queue the Queues tab's detail shows
-  queueDetail?: ForgeQueueDetail;
+  queueDetail?: ForgeQueueDetail | undefined;
   // The forge queues, each open one or locked until its Adventure Rank
   queues: ForgeQueueCell[];
   // The Forge Queues tab's label with its open queues, the game's "Forge Queues (1/3)"

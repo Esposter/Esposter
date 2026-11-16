@@ -8,7 +8,7 @@ export const compareFamilyEnvelope = (
   second: FamilyEnvelope,
   width: number,
   height: number,
-): { depth?: number; normal?: number; outline: number } => {
+): { depth?: number | undefined; normal?: number | undefined; outline: number } => {
   let apart = 0;
   let outlineLength = 0;
   let depthGap = 0;

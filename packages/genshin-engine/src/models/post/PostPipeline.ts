@@ -8,6 +8,6 @@ import type { RenderPipeline } from "three/webgpu";
 export interface PostPipeline {
   compileAsync: () => Promise<void>;
   dispose: () => void;
-  godraysNode?: GodraysNode;
+  godraysNode?: GodraysNode | undefined;
   renderPipeline: RenderPipeline;
 }

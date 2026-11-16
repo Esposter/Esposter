@@ -38,7 +38,7 @@ export const setupMswTrpc = () => {
     vi.stubGlobal("fetch", async (input: RequestInfo | URL, init?: RequestInit) =>
       input instanceof Request
         ? nuxtFetch(input.url, {
-            body: input.body ? await input.arrayBuffer() : undefined,
+            ...(input.body ? { body: await input.arrayBuffer() } : {}),
             headers: [...input.headers],
             method: input.method,
           })

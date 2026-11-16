@@ -6,12 +6,12 @@ interface Props {
   // How many of the item, on the strip across the tile's foot: a number, or the range a reward rolls as words ("4~5")
   count: number | string;
   // The count's font size, in the tile's own units (cqh): a screen unit set outside the tile would resolve against the tile
-  countSize?: string;
+  countSize?: string | undefined;
   // The item's rarity in stars, which colours the tile
   rarity: number;
   // The look the quest screen's reward tiles draw: a face lit by its own gradients, and a translucent count strip.
   // The game's reward lists' look when none is given
-  variant?: "quest";
+  variant?: "quest" | undefined;
 }
 
 const { countSize = "30cqh", variant } = defineProps<Props>();

@@ -17,7 +17,7 @@ const isClosingFence = (content: string, opener: string) => {
 // That piece left open
 interface MessageReading {
   index: number;
-  opener?: string;
+  opener?: string | undefined;
 }
 // The spoken lines of each piece of a reply, in the order the pieces run. A fence can open in one piece and close in a
 // Later one, so the fence a message is inside is held per message from one of its pieces to the next. A piece that

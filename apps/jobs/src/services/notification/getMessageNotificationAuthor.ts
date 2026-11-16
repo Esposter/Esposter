@@ -10,10 +10,10 @@ export const getMessageNotificationAuthor = async ({
   roomId,
   userId,
 }: {
-  appUserId?: string;
+  appUserId?: string | undefined;
   roomId: string;
-  userId?: string;
-}): Promise<{ icon?: null | string; title: string }> => {
+  userId?: string | undefined;
+}): Promise<{ icon?: null | string | undefined; title: string }> => {
   if (userId) {
     const userToRoom = await db.query.usersToRoomsInMessage.findFirst({
       columns: { displayName: true },

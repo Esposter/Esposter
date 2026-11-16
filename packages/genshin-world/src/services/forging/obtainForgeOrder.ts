@@ -40,7 +40,7 @@ export const obtainForgeOrder = (
     wallet: Wallet;
     weapons: Map<number, Pick<ItemDefinition, "name"> & WeaponData>;
   },
-): { adventureExp: number; inventory: Inventory; order?: ForgeOrder; wallet: Wallet } => {
+): { adventureExp: number; inventory: Inventory; order?: ForgeOrder | undefined; wallet: Wallet } => {
   const collected = collectForgeOrder(recipe, order, { definitions, inventory, now, random, talents, weapons });
   const gain = gainAdventureExp(adventureRankTables, adventureExp, collected.adventureExp, completedMainQuestIds);
   return {

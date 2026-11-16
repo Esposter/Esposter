@@ -7,5 +7,5 @@ import type { SceneObject } from "#src/models/genshinAssets/shared/SceneObject";
 export interface RosterRenderer extends SkinnedRenderer {
   mesh: ResolvedObject;
   name: string;
-  object?: SceneObject;
+  object?: SceneObject | undefined;
 }

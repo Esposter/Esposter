@@ -2,7 +2,9 @@ import { z } from "zod";
 
 // The wiki's answer for its titles: each page with the main slot of its latest revision, which a missing title has none of
 export interface WikiPageResponse {
-  query: { pages: { missing?: true; revisions?: { slots: { main: { content: string } } }[] }[] };
+  query: {
+    pages: { missing?: true | undefined; revisions?: undefined | { slots: { main: { content: string } } }[] }[];
+  };
 }
 
 export const wikiPageResponseSchema: z.ZodType<WikiPageResponse> = z.object({

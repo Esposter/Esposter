@@ -10,13 +10,13 @@ interface Props {
   // The game's words in the reader's language, which the tag of the card's scope is read from
   gameText: GameText;
   // The glyph the card draws in its diamond, and none where the published record does not carry one
-  icon?: AbyssBenedictionIcon;
+  icon?: AbyssBenedictionIcon | undefined;
   // Whether the card is the lit one the pointer rests on, drawn lit at rest as the game lights it
   isLit: boolean;
   // The Benediction's name in the reader's language, and none where the names do not hold its text hash
-  name?: string;
+  name?: string | undefined;
   // Where the Benediction lasts, which its tag names, and none where the published record does not carry one
-  scope?: AbyssBenedictionScope;
+  scope?: AbyssBenedictionScope | undefined;
 }
 
 defineProps<Props>();

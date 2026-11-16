@@ -5,8 +5,8 @@ import type { Encoding } from "#src/models/Encoding";
 // Cell in the form Tiled deprecated. `chunked` is set when the data holds chunks, which take the cells instead
 export interface TMXDataSource {
   chunked: boolean;
-  compression?: Compression;
-  encoding?: Encoding;
+  compression?: Compression | undefined;
+  encoding?: Encoding | undefined;
   gids: number[];
   text: string;
 }

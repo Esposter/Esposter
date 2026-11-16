@@ -11,16 +11,16 @@ import { z } from "zod";
 // The game of Genius Invokation TCG it duels with when its talk offers one, the week game its weekly guest challenge offers,
 // And whether it is a nation's Reputation keeper, whose talk opens the nation's Reputation screen in place of the talk
 export interface Resident {
-  absentAtNight?: true;
+  absentAtNight?: true | undefined;
   areaId: string;
-  day?: ResidentSpot;
-  duelGameId?: number;
+  day?: ResidentSpot | undefined;
+  duelGameId?: number | undefined;
   id: string;
-  keepsReputation?: true;
+  keepsReputation?: true | undefined;
   nameTextId: string;
-  night?: ResidentSpot;
+  night?: ResidentSpot | undefined;
   talkId: string;
-  weekGame?: ResidentWeekGame;
+  weekGame?: ResidentWeekGame | undefined;
 }
 
 export const residentSchema = z.object({

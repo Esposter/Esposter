@@ -4,7 +4,7 @@ import type { RouteLocationRaw } from "vue-router";
 
 interface Props {
   to: RouteLocationRaw;
-  variant?: UiButtonVariant;
+  variant?: UiButtonVariant | undefined;
 }
 // Somewhere to go that reads as something to press: a real link, so it opens in a new tab like any other, in the
 // Button's look

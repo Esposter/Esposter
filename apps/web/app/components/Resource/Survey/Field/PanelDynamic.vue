@@ -16,7 +16,7 @@ import { takeOne } from "@esposter/shared";
 interface Props {
   error: string;
   // The runner's views of the template questions a row shows, read against the survey's values and the row's own answers
-  getRowViews?: (node: SurveyPanelDynamicNode, row: SurveyAnswers) => SurveyPanelRowView[];
+  getRowViews?: ((node: SurveyPanelDynamicNode, row: SurveyAnswers) => SurveyPanelRowView[]) | undefined;
   isDisabled: boolean;
   node: SurveyPanelDynamicNode;
   // What the panel's shuffled choices are ordered by, the session's seed, passed on to each question of the panel

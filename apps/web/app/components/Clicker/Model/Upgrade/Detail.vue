@@ -8,7 +8,7 @@ import { usePointStore } from "#src/store/clicker/point";
 import { useUpgradeStore } from "#src/store/clicker/upgrade";
 
 interface Props {
-  isBought?: true;
+  isBought?: true | undefined;
   upgrade: Upgrade;
 }
 

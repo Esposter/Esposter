@@ -10,7 +10,7 @@ import { describe } from "vitest";
 export const createMemoryR2BucketClient = () => {
   const store = new Map<
     string,
-    { body: Blob | Uint8Array<ArrayBuffer>; contentEncoding?: string; lastModified: Date }
+    { body: Blob | Uint8Array<ArrayBuffer>; contentEncoding?: string | undefined; lastModified: Date }
   >();
   const client: R2BucketClient = {
     delete: (key) => {

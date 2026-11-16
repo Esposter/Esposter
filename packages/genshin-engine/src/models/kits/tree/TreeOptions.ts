@@ -14,7 +14,7 @@ export interface TreeOptions {
   // The trunk or the limb it grows from
   limbs: readonly TreeTube[];
   // The leaves' normals as a field over the crown, where each card vertex takes its normal from; without one, from its cluster's centre
-  normalField?: TreeNormalField;
+  normalField?: TreeNormalField | undefined;
   // The surface roots spreading over the ground from the trunk's foot, each swept as a tube along its spline
   roots: readonly TreeTube[];
   seed: number;

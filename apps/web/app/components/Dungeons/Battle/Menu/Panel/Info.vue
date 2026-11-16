@@ -4,6 +4,7 @@ import { ActivePanel } from "#src/models/dungeons/scene/battle/menu/ActivePanel"
 import { WORD_PADDING } from "#src/services/dungeons/UI/constants";
 import { useBattleInfoPanelStore } from "#src/store/dungeons/battle/infoPanel";
 import { useBattleSceneStore } from "#src/store/dungeons/battle/scene";
+import { omitUndefined } from "@esposter/shared";
 import { onCreate, Text } from "vue-phaserjs";
 
 const battleSceneStore = useBattleSceneStore();
@@ -25,7 +26,7 @@ onCreate((scene) => {
         y: 468,
         // Display width derives from the set text, so we only need the @update:display-width listener.
         text: line1DialogMessage.text,
-        style: { ...DialogTextStyle, wordWrap: { width: wordWrapWidth } },
+        style: { ...DialogTextStyle, wordWrap: omitUndefined({ width: wordWrapWidth }) },
       }"
       @update:display-width="line1TextDisplayWidth = $event"
     />

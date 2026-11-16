@@ -1,6 +1,6 @@
 <script setup lang="ts">
 interface Props {
-  title?: string;
+  title?: string | undefined;
 }
 
 // The default slot is the body, which scrolls inside the frame between the title bar and the footer. The footer slot is

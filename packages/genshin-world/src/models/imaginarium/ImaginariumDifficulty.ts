@@ -5,7 +5,7 @@ import { z } from "zod";
 // Minimum and the extra it allows past that, absent where the game's table leaves it out
 export interface ImaginariumDifficulty {
   actCount: number;
-  alternateCastExtra?: number;
+  alternateCastExtra?: number | undefined;
   alternateCastMinimum: number;
   id: number;
   level: number;

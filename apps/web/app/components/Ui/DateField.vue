@@ -5,21 +5,21 @@ import { getZonedDateTime } from "@esposter/shared";
 
 interface Props {
   // A field that may be left empty, which draws a button that empties it
-  isClearable?: true;
+  isClearable?: true | undefined;
   // A field that cannot be changed, so it cannot be opened and offers no button that empties it
-  isDisabled?: true;
+  isDisabled?: true | undefined;
   // Named for assistive technology alone, where what surrounds the field already says what it is for: a cell being
   // Edited in its row
-  isLabelHidden?: true;
+  isLabelHidden?: true | undefined;
   // Marks the label with the required mark, which speech announces as required once
-  isRequired?: true;
+  isRequired?: true | undefined;
   // A moment rather than a day: the panel takes a time of day under the calendar
-  isTime?: true;
+  isTime?: true | undefined;
   label: string;
-  max?: Date;
-  min?: Date;
+  max?: Date | undefined;
+  min?: Date | undefined;
   // What the field reads while it holds nothing
-  placeholder?: string;
+  placeholder?: string | undefined;
 }
 // A day, or a day and a time, picked in the library's calendar from a field drawn as a select's trigger. What it holds
 // Is an instant, read and written in the reader's own time zone, so the day a reader picks is the day they see. A day
@@ -78,12 +78,7 @@ defineExpose({ element });
     @clear="modelValue = undefined as TModel"
   >
     <template #value>
-      <NuxtTime
-        v-if="modelValue"
-        :datetime="modelValue"
-        date-style="medium"
-        :time-style="isTime ? 'short' : undefined"
-      />
+      <NuxtTime v-if="modelValue" :datetime="modelValue" date-style="medium" :="isTime ? { timeStyle: 'short' } : {}" />
     </template>
     <UiCalendar
       :label

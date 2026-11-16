@@ -438,7 +438,12 @@ describe(stepActiveKit, () => {
     // A landing's action or its kind of attack and element, the one its event carries
     const readLandings = () =>
       onKitEvent.mock.calls.flatMap(
-        ([event]): { action?: KitAction; attackTag?: AttackTag; element?: Element; kind: KitEventKind }[] => {
+        ([event]): {
+          action?: KitAction;
+          attackTag?: AttackTag | undefined;
+          element?: Element | undefined;
+          kind: KitEventKind;
+        }[] => {
           if (event.kind === KitEventKind.NormalAttackLanded) return [{ action: event.action, kind: event.kind }];
           if (event.kind === KitEventKind.DamageTaken)
             return [{ attackTag: event.attackTag, element: event.hit.element, kind: event.kind }];

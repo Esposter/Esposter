@@ -5,8 +5,8 @@ import { Collapsible } from "@vuetify/v0";
 
 interface Props {
   // What the header row takes beside its trigger and actions, such as the props that open a context menu over it
-  headerAttrs?: Record<string, unknown>;
-  variant?: UiCollapsibleVariant;
+  headerAttrs?: Record<string, unknown> | undefined;
+  variant?: UiCollapsibleVariant | undefined;
 }
 // What acts on the whole of its content sits beside the trigger rather than inside it, since a button holds no other
 defineSlots<{ actions?: () => VNode; default: () => VNode; title: () => VNode }>();

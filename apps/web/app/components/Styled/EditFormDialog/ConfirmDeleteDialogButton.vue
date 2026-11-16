@@ -7,9 +7,9 @@ import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 interface Props<T> {
   itemType: string;
   name: string;
-  originalItem?: T;
+  originalItem?: T | undefined;
   // Awaited, so a failed delete keeps the dialog open to try again
-  remove?: () => Promisable<unknown>;
+  remove?: (() => Promisable<unknown>) | undefined;
 }
 
 defineProps<Props<T>>();

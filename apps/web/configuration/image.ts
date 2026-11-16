@@ -9,4 +9,4 @@ import type { NuxtConfig } from "nuxt/schema";
 // The rendered <img> carries a two-entry `srcset` whose entries are the same url, since the provider rewrites
 // Nothing and there is no 2x variant to point at. `densities: [1]` does not remove it — it is one fetch either
 // Way, so it is left alone rather than configured around.
-export const image: NuxtConfig["image"] = { provider: "none" };
+export const image: NonNullable<NuxtConfig["image"]> = { provider: "none" };

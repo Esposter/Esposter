@@ -15,5 +15,5 @@ export interface Card {
   // The character has no birthday
   note: string;
   // Absent for a character nobody has written a card for yet, which is a character the game data alone describes
-  personaCard?: PersonaCard;
+  personaCard?: PersonaCard | undefined;
 }

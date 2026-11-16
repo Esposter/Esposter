@@ -11,8 +11,8 @@ import type { DendroCoreKind } from "#src/models/kit/DendroCoreKind";
 export interface KitReaction {
   combatant: Combatant;
   // The kind of Dendro Core the reaction bursts from, if it is a core's burst
-  coreKind?: DendroCoreKind;
-  element?: Element;
+  coreKind?: DendroCoreKind | undefined;
+  element?: Element | undefined;
   enemy: Enemy;
   reactionType: ReactionType;
 }

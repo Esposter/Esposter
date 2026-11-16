@@ -6,7 +6,7 @@ import type { Character } from "#src/models/character/Character";
 export const equipCharacterArtifact = (
   character: Character,
   artifact: Artifact,
-): { character: Character; displaced?: Artifact } => {
+): { character: Character; displaced?: Artifact | undefined } => {
   const displaced = character.artifacts.find(({ slot }) => slot === artifact.slot);
   return {
     character: {

@@ -14,7 +14,7 @@ import { useContextMenuStore } from "#src/store/ui/contextMenu";
 interface Props {
   creator: Creator;
   message: ClientMessage;
-  nextMessage?: ClientMessage;
+  nextMessage?: ClientMessage | undefined;
 }
 
 const { message, nextMessage } = defineProps<Props>();

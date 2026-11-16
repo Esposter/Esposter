@@ -7,7 +7,7 @@ import { FieldInputTypeMap } from "#src/services/resource/sheet/column/FieldInpu
 
 interface Props {
   column: NumberColumn | StringColumn;
-  isInline?: true;
+  isInline?: true | undefined;
 }
 
 const modelValue = defineModel<null | number | string>({ required: true });

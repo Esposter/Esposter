@@ -3,6 +3,7 @@ import type { IsoBoxConfiguration } from "#src/models/configuration/IsoBoxConfig
 import type { IsoBoxEventEmitsOptions } from "#src/models/emit/IsoBoxEventEmitsOptions";
 import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
+import type { UndefinedOnPartial } from "type-fest";
 
 import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
 import { IsoBoxSetterMap } from "#src/services/setterMap/IsoBoxSetterMap";
@@ -10,9 +11,9 @@ import { IsoBoxSetterMap } from "#src/services/setterMap/IsoBoxSetterMap";
 interface IsoBoxEmits extends /** @vue-ignore */ IsoBoxEventEmitsOptions {}
 
 interface Props {
-  configuration: Partial<IsoBoxConfiguration>;
-  immediate?: true;
-  onComplete?: (scene: SceneWithPlugins, isoBox: GameObjects.IsoBox) => void;
+  configuration: UndefinedOnPartial<Partial<IsoBoxConfiguration>>;
+  immediate?: true | undefined;
+  onComplete?: ((scene: SceneWithPlugins, isoBox: GameObjects.IsoBox) => void) | undefined;
 }
 
 const { configuration, immediate, onComplete } = defineProps<Props>();

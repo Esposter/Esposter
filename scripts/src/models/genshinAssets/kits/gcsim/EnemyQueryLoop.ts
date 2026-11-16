@@ -5,5 +5,5 @@ import type { GcsimHitbox } from "#src/models/genshinAssets/kits/gcsim/GcsimHitb
 export interface EnemyQueryLoop {
   bodyEnd: number;
   bodyStart: number;
-  hitbox?: GcsimHitbox;
+  hitbox?: GcsimHitbox | undefined;
 }

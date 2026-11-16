@@ -15,7 +15,7 @@ import { CLOUDFLARE_ACCOUNT_ID } from "../../../packages/db-schema/src/services/
 // R2's S3 endpoint for the account: a private object's presigned URL names it, so the browser's PUTs and GETs go there
 const R2_ENDPOINT = `https://${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com`;
 
-export const security: NuxtConfig["security"] = {
+export const security: NonNullable<NuxtConfig["security"]> = {
   headers: {
     contentSecurityPolicy: {
       // Setting a fetch directive replaces its `default-src` fallback, so `'self'` is listed here for the app's

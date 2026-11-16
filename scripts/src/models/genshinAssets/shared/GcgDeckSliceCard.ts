@@ -7,9 +7,9 @@ export interface GcgDeckSliceCard {
   descriptionTextId: number;
   effects: string[];
   id: number;
-  isCompanion?: boolean;
+  isCompanion?: boolean | undefined;
   isLocation: boolean;
   kind: GcgCardKind;
   nameTextId: number;
-  weapon?: string;
+  weapon?: string | undefined;
 }

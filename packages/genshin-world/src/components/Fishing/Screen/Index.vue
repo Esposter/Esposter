@@ -6,7 +6,7 @@ import { GameScreen } from "genshin-interface";
 
 interface Props {
   // The cast as it stands: the tension held on the bar and the zone it is held in, or none while no line is out
-  view?: { tension: number; zone: FishingZone };
+  view?: undefined | { tension: number; zone: FishingZone };
 }
 
 defineProps<Props>();

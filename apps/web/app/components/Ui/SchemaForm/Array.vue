@@ -3,6 +3,8 @@ import type { UiSchemaFormRendererProps } from "#src/models/ui/schemaForm/UiSche
 
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { unsetRendererState } from "#src/services/ui/schemaForm/unsetRendererState";
+import { omitUndefined } from "@esposter/shared";
 import {
   composePaths,
   createDefaultValue,
@@ -13,10 +15,8 @@ import {
 } from "@jsonforms/core";
 
 interface Props extends UiSchemaFormRendererProps {}
-// JSON Forms derives whether a field is enabled or read only when the form leaves them unset, which a boolean prop
-// Would read as false
-const props = withDefaults(defineProps<Props>(), { enabled: undefined, readonly: undefined });
-const control = computed(() => ({ ...props, ...mapStateToArrayControlProps(props.form.state, props) }));
+const props = withDefaults(defineProps<Props>(), unsetRendererState);
+const control = computed(() => ({ ...props, ...mapStateToArrayControlProps(props.form.state, omitUndefined(props)) }));
 const { addItem, moveDown, moveUp, removeItems } = mapDispatchToArrayControlProps(props.form.dispatch);
 const items = computed<unknown[]>(() => control.value.data ?? []);
 const isMaxItems = computed(() => items.value.length >= (control.value.arraySchema.maxItems ?? Infinity));

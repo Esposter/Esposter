@@ -8,7 +8,7 @@ import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiDialogSize } from "#src/models/ui/UiDialogSize";
 import { UiDialogSizeClassMap } from "#src/services/ui/UiDialogSizeClassMap";
-import { noop } from "@esposter/shared";
+import { noop, omitUndefined } from "@esposter/shared";
 import { flushPromises, mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
@@ -35,7 +35,11 @@ describe("styledDialog", () => {
     slots?: Partial<Record<string, string>>,
     modelValue = true,
   ) => {
-    const component = mount(StyledDialog, { attachTo: document.body, props: { modelValue, title, ...props }, slots });
+    const component = mount(StyledDialog, {
+      attachTo: document.body,
+      props: { modelValue, title, ...props },
+      ...omitUndefined({ slots }),
+    });
     await flushPromises();
     return component;
   };

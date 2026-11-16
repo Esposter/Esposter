@@ -15,7 +15,7 @@ interface Props {
   // The game's words in the reader's language
   gameText: GameText;
   // The advance the dial opens at, in minutes: none as the game opens it, and the pointer turns it from there
-  initialAdvance?: number;
+  initialAdvance?: number | undefined;
 }
 
 const { clockMinutes, initialAdvance = 0 } = defineProps<Props>();

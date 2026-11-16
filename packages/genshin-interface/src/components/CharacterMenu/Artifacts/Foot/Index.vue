@@ -20,7 +20,7 @@ interface Props {
   // The Lock button's label, shown in the details while the picked worn artifact is unlocked
   lockLabel: string;
   // The picked slot's stats, undefined where the character wears no artifact there
-  selectedStats?: ArtifactSlotStats;
+  selectedStats?: ArtifactSlotStats | undefined;
   // Each slot's name in the game's order, which Switch counts through
   slotNames: string[];
   // The Switch button's label, which moves the picked slot on to the next one

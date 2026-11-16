@@ -7,7 +7,7 @@ import type { RouteLocationRaw } from "vue-router";
 // Colour. A mark that is a control of its own, a todo's checkbox, is the list's leading slot, drawn beside the row in
 // The mark's column since a row that is one button holds nothing interactive
 export type UiListItem<T extends string> = {
-  description?: string;
+  description?: string | undefined;
   // What it is listed under, drawn as the heading over the rows beside it that share it
   group?: string;
   // The row for where the reader is — the current page's link, or the panel a sidebar shows — which a list that

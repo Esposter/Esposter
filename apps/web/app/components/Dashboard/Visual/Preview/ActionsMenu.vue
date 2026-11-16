@@ -12,7 +12,7 @@ import { useVisualStore } from "#src/store/dashboard/visual";
 
 interface Props {
   // A bound visual that draws its rows has a dataset to export, and a demo or failed one has none
-  dataset?: Dataset;
+  dataset?: Dataset | undefined;
   visual: Visual;
 }
 

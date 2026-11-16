@@ -20,7 +20,7 @@ interface Props {
   // The element mark the panel draws beside its stars, empty where the character has no element yet
   elementMarkPath: string;
   // The Friendship Level the character has reached, which the Friendship row draws beside its word, none until given
-  friendshipLevel?: number;
+  friendshipLevel?: number | undefined;
   // The game's words in the reader's language
   gameText: GameText;
   // Whether the character can ascend now, at its level cap with the Adventure Rank, Mora and materials its next phase takes

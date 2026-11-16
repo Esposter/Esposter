@@ -21,30 +21,30 @@ import { z } from "zod";
 export interface BaseKitHitRecord {
   area: AttackArea;
   // The kind of attack the hit is dealt as where it names its own, rather than its action's
-  attackTag?: AttackTag;
-  convertedArea?: AttackArea;
-  convertedPoiseDamage?: number;
+  attackTag?: AttackTag | undefined;
+  convertedArea?: AttackArea | undefined;
+  convertedPoiseDamage?: number | undefined;
   // The DMG Bonus the hit carries of its own
-  damageBonus?: KitParameter;
-  element?: Element;
+  damageBonus?: KitParameter | undefined;
+  element?: Element | undefined;
   // The gauge the hit applies in units, where the wiki gives some hits 1.5 units, as Tri-Karma Purification's
-  gauge?: number;
-  healParty?: KitPartyHealRecord;
+  gauge?: number | undefined;
+  healParty?: KitPartyHealRecord | undefined;
   hitmarkFrames: number;
-  internalCooldownTag?: InternalCooldownTag;
+  internalCooldownTag?: InternalCooldownTag | undefined;
   // Whether the hit is blunt, as the builder reads the wiki's Blunt Attacks for its action, its wielder's weapon and
   // Its element (`checkIsBluntHit` reads it)
   isBlunt: boolean;
   // The Lunar reaction a direct Lunar hit deals its damage as
-  lunarReactionType?: LunarReactionType;
+  lunarReactionType?: LunarReactionType | undefined;
   multiplier: KitParameter;
   // A second table the multiplier is multiplied by, read at the level of the talent its proud skill group belongs to, as an
   // Enhanced normal attack is its normal attack's multiplier times its skill's
-  multiplierFactor?: KitParameter;
+  multiplierFactor?: KitParameter | undefined;
   poiseDamage: number;
   // The stat the multiplier is a share of, where it is not ATK
-  scalingAttribute?: Attribute;
-  stackedHit?: KitStackedHitRecord;
+  scalingAttribute?: Attribute | undefined;
+  stackedHit?: KitStackedHitRecord | undefined;
 }
 
 export const baseKitHitRecordSchema = z.strictObject({

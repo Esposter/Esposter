@@ -14,7 +14,7 @@ export interface GcgCharacterState {
   equipments: GcgZoneCard[];
   hp: number;
   isFrozen: boolean;
-  isSwitchedIn?: boolean;
+  isSwitchedIn?: boolean | undefined;
   shield: number;
   statuses: GcgZoneCard[];
 }

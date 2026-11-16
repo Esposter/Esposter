@@ -2,13 +2,13 @@
 import type { UiSchemaFormRendererProps } from "#src/models/ui/schemaForm/UiSchemaFormRendererProps";
 import type { Layout } from "@jsonforms/core";
 
+import { unsetRendererState } from "#src/services/ui/schemaForm/unsetRendererState";
+import { omitUndefined } from "@esposter/shared";
 import { mapStateToLayoutProps } from "@jsonforms/core";
 
 interface Props extends UiSchemaFormRendererProps<Layout> {}
-// JSON Forms derives whether a node is enabled or read only when the form leaves them unset, which a boolean prop
-// Would read as false
-const props = withDefaults(defineProps<Props>(), { enabled: undefined, readonly: undefined });
-const layout = computed(() => mapStateToLayoutProps(props.form.state, props));
+const props = withDefaults(defineProps<Props>(), unsetRendererState);
+const layout = computed(() => mapStateToLayoutProps(props.form.state, omitUndefined(props)));
 const isGroup = computed(() => props.uischema.type === "Group");
 const labelId = useId();
 </script>

@@ -6,7 +6,7 @@
 // Their values held
 export interface SpectralNoiseChannel {
   amplitudes: number[];
-  correlation?: { channel: number; share: number };
+  correlation?: undefined | { channel: number; share: number };
   mean: number;
-  quantiles?: number[][];
+  quantiles?: number[][] | undefined;
 }

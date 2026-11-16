@@ -6,5 +6,5 @@ import type { BlockNodeProps } from "vue-block-editor-headless";
 export interface TabNodeProps extends BlockNodeProps {
   children: WebpagePlaceableNode[];
   label: string;
-  style?: NodeStyle;
+  style?: NodeStyle | undefined;
 }

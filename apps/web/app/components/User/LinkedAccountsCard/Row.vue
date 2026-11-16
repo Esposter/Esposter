@@ -5,9 +5,9 @@ import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { toTitleCase } from "#src/util/text/toTitleCase";
 
 interface Props extends ButtonProps {
-  isLinked?: true;
+  isLinked?: true | undefined;
   // A link or unlink this row issued is still out, queued behind the other rows' or running
-  isPending?: true;
+  isPending?: true | undefined;
   linkedAccountCount: number;
 }
 

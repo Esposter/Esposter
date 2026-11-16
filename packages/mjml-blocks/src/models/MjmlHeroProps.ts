@@ -4,25 +4,25 @@ import type { BlockNodeProps } from "vue-block-editor-headless";
 
 // The props an MJML hero node holds: its attributes as MJML takes them, its children
 export interface MjmlHeroProps extends BlockNodeProps {
-  "background-color"?: string;
-  "background-height"?: string;
-  "background-position"?: string;
-  "background-url"?: string;
-  "background-width"?: string;
-  "border-radius"?: string;
+  "background-color"?: string | undefined;
+  "background-height"?: string | undefined;
+  "background-position"?: string | undefined;
+  "background-url"?: string | undefined;
+  "background-width"?: string | undefined;
+  "border-radius"?: string | undefined;
   children: (MjmlFlowNode | MjmlLeafNode)[];
-  height?: string;
-  "inner-background-color"?: string;
-  "inner-padding"?: string;
-  "inner-padding-bottom"?: string;
-  "inner-padding-left"?: string;
-  "inner-padding-right"?: string;
-  "inner-padding-top"?: string;
-  mode?: string;
-  padding?: string;
-  "padding-bottom"?: string;
-  "padding-left"?: string;
-  "padding-right"?: string;
-  "padding-top"?: string;
-  "vertical-align"?: string;
+  height?: string | undefined;
+  "inner-background-color"?: string | undefined;
+  "inner-padding"?: string | undefined;
+  "inner-padding-bottom"?: string | undefined;
+  "inner-padding-left"?: string | undefined;
+  "inner-padding-right"?: string | undefined;
+  "inner-padding-top"?: string | undefined;
+  mode?: string | undefined;
+  padding?: string | undefined;
+  "padding-bottom"?: string | undefined;
+  "padding-left"?: string | undefined;
+  "padding-right"?: string | undefined;
+  "padding-top"?: string | undefined;
+  "vertical-align"?: string | undefined;
 }

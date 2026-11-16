@@ -16,7 +16,7 @@ import { z } from "zod";
 // Resolves it, once, in the one place that already has to read the room.
 export interface MessageNotificationData extends ItemEntityType<typeof AppNotificationType.Message> {
   // A webhook message has no `userId`; this is the app user that posted on the webhook's behalf.
-  appUserId?: string;
+  appUserId?: string | undefined;
   message: Pick<RoomMessage, "id" | "message" | "userId"> & { roomId: string };
   // The integer id of the thread's root when this message is a reply — the follow key and the deep-link target.
   threadRootId: RoomMessage["replyToId"];

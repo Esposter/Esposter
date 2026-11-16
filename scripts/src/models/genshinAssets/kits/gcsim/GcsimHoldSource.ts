@@ -2,5 +2,5 @@
 // Numbers
 export interface GcsimHoldSource {
   framesName?: string;
-  hitmarks?: { file: string; line: number; name: string; values?: number[] };
+  hitmarks?: undefined | { file: string; line: number; name: string; values?: number[] | undefined };
 }

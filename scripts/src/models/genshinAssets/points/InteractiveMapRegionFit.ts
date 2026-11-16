@@ -5,5 +5,5 @@ export interface InteractiveMapRegionFit {
   oculusCount: number;
   oculusWikiCount: number;
   region: string;
-  residual?: number;
+  residual?: number | undefined;
 }

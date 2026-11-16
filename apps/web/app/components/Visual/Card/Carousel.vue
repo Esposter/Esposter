@@ -14,10 +14,10 @@ import { takeOne } from "@esposter/shared";
 
 interface Props {
   cards: Card[];
-  cardScaleYRatioLoss?: number;
-  cardTemplate?: Component;
-  duration?: number;
-  maxShownCards?: number;
+  cardScaleYRatioLoss?: number | undefined;
+  cardTemplate?: Component | undefined;
+  duration?: number | undefined;
+  maxShownCards?: number | undefined;
 }
 
 const {

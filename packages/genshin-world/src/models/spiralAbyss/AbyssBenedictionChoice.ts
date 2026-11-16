@@ -8,9 +8,9 @@ import { z } from "zod";
 export interface AbyssBenedictionChoice {
   descriptionTextHash: number;
   // The glyph its card draws in the diamond
-  icon?: AbyssBenedictionIcon;
+  icon?: AbyssBenedictionIcon | undefined;
   // Where it lasts: the floor it is chosen on, or the chamber alone
-  scope?: AbyssBenedictionScope;
+  scope?: AbyssBenedictionScope | undefined;
   towerBuffId: number;
   weight: number;
 }

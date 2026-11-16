@@ -1,6 +1,6 @@
 import type { NuxtConfig } from "nuxt/schema";
 
-export const vite: NuxtConfig["vite"] = {
+export const vite: NonNullable<NuxtConfig["vite"]> = {
   // A glTF model is imported for its URL like an image, which Vite knows as an asset only by this
   assetsInclude: ["**/*.gltf"],
   build: {
@@ -15,7 +15,7 @@ export const vite: NuxtConfig["vite"] = {
     // And kept off the externals so that bundle is the one loaded
     nitro: { optimizeDeps: { include: ["mjml"] }, resolve: { noExternal: ["mjml"] } },
   },
-  mode: process.env.APP_ENV,
+  ...(process.env.APP_ENV === undefined ? {} : { mode: process.env.APP_ENV }),
   optimizeDeps: {
     exclude: [
       // Three's inspector loads extension assets relative to import.meta.url, which breaks from Vite's cache.

@@ -44,7 +44,7 @@ export interface KitContext {
   // The enemy the character on the field's last action that targeted turned to, as gcsim's primary target is the one its
   // Attacks fall on, which a kit places a hit on that no action of its own targets. It outlasts its action and a swap, and
   // Is let go once it dies or leaves the world, none until an action targets one
-  primaryTarget?: Enemy;
+  primaryTarget?: Enemy | undefined;
   random: () => number;
   // The reactions the step's hits and ticks triggered on enemies, sent to the world once the step's strikes have landed
   reactionTriggers: KitReactionTrigger[];

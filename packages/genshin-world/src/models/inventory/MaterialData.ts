@@ -7,7 +7,7 @@ import { z } from "zod";
 // Holds, and the game's destroy rule for it where its row gives one. Its name is read by that text id from the names a
 // Caller holds, the game text or a name-text chunk
 export interface MaterialData {
-  destroyRule?: DestroyRule;
+  destroyRule?: DestroyRule | undefined;
   id: number;
   materialType: MaterialType;
   nameTextId: string;

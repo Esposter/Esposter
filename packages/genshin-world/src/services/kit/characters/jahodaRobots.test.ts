@@ -67,7 +67,7 @@ describe(startJahodaRobots, () => {
     frameCount: number,
     beforeFrame: (frame: number) => void = () => undefined,
   ) => {
-    const strikes: { element?: Element; frame: number; targetId?: string }[] = [];
+    const strikes: { element?: Element | undefined; frame: number; targetId?: string | undefined }[] = [];
     for (let frame = 1; frame <= frameCount; frame++) {
       beforeFrame(frame);
       for (const strike of stepKitTestEffects(FRAME_SECONDS, context))

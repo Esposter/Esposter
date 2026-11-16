@@ -40,18 +40,18 @@ interface Props {
   // The regions and their areas, whose drawn outlines the minimap shows
   catalogue: Catalogue;
   // The deployed team's characters' data, which the team stays hidden without until the stat tables arrive
-  characterDataMap?: ReadonlyMap<number, CharacterData>;
+  characterDataMap?: ReadonlyMap<number, CharacterData> | undefined;
   // The deployed team's skill and burst icons, by character id, each read with its character's kit
   characterIdSkillGlyphsMap: ReadonlyMap<number, SkillGlyphs>;
   // The world's frame: the stamina the meter fills by, where the follow camera's pivot stands, and the world's clock
   frame: HudFrame;
   // The whole cooldown of the equipped gadget, none while no gadget is equipped
-  gadgetCooldownSeconds?: number;
+  gadgetCooldownSeconds?: number | undefined;
   // The game's words in the reader's language
   gameText: GameText;
   input: Input;
   // The prompts beside the character, drawn as a row each beside the centre, absent where the HUD shows no list
-  interactionPrompts?: InteractionPrompts;
+  interactionPrompts?: InteractionPrompts | undefined;
   // The HUD's pieces' rects as the game's tree places them, read before the world opens
   interfaceRects: HudInterfaceRects;
   // Whether Z is held long enough to open the quick swap, which the menu is drawn for over the world's centre
@@ -63,25 +63,25 @@ interface Props {
   // The party's stamina pool, which the meter's arc holds whole
   maxStamina: number;
   // The field member's HP, level and cooldowns, hidden until the character on the field is known
-  member?: HudMember;
+  member?: HudMember | undefined;
   // The names the deployed team's text ids cite in the reader's language, which stay blank until they load
-  nameTextMap?: Readonly<Record<string, string>>;
+  nameTextMap?: Readonly<Record<string, string>> | undefined;
   nearOculusPlaces: OculusPlace[];
   party: Party;
   // Where the navigated objective stands from the character, none while no quest is navigated to or no region in reach
   // Places its objective
-  questMark?: QuestMark;
+  questMark?: QuestMark | undefined;
   // The tracked quest's progress, none for a quest just started
-  questProgress?: QuestProgress;
+  questProgress?: QuestProgress | undefined;
   // The quests' own words in the reader's language, by the game's text id
   questTextMap: Readonly<Record<string, string>>;
   // The quest on the tracker under the minimap, none while no quest is tracked
-  trackedQuest?: Quest;
+  trackedQuest?: Quest | undefined;
   // The name the player chose for the Traveler, which the party shows in place of the game's own, empty while none is
   // Chosen
   travelerName: string;
   // The seconds a character trial's clock has left, none outside a trial
-  trialSecondsRemaining?: number;
+  trialSecondsRemaining?: number | undefined;
 }
 
 defineSlots<{

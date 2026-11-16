@@ -12,7 +12,7 @@ export const useMicrophoneLevel = () => {
   const isTesting = ref(false);
   const level = ref(MIN_INPUT_SENSITIVITY_DECIBELS);
   const constraints = computed<MediaStreamConstraints>(() => ({
-    audio: { deviceId: inputDeviceId.value || undefined },
+    audio: inputDeviceId.value ? { deviceId: inputDeviceId.value } : {},
   }));
   const { start: startStream, stop: stopStream } = useUserMedia({ constraints });
   let audioContext: AudioContext | undefined;

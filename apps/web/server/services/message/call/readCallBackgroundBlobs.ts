@@ -4,6 +4,7 @@ import type { UserInAuth } from "@esposter/db-schema";
 
 import { getCallBackgroundPrefix } from "#server/services/message/call/getCallBackgroundPrefix";
 import { MAX_CALL_BACKGROUNDS } from "#shared/services/message/constants";
+import { omitUndefined } from "@esposter/shared";
 
 // The listing is the whole index. A slot's blob name holds its number, and the size the listing already carries is the
 // Size the background takes - so a background needs no row, no id and nothing to reconcile, and reading the set back
@@ -17,7 +18,7 @@ export const readCallBackgroundBlobs = async (
   let cursor: string | undefined;
   do {
     // oxlint-disable-next-line no-await-in-loop -- Pagination: each page's cursor is what the next page is requested with
-    const page = await bucket.list({ cursor, prefix });
+    const page = await bucket.list(omitUndefined({ cursor, prefix }));
     for (const { key, size } of page.objects) {
       const slotName = key.slice(prefix.length);
       const slot = Number(slotName);

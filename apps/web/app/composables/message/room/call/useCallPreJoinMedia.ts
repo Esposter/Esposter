@@ -8,10 +8,10 @@ export const useCallPreJoinMedia = () => {
   const voiceDeviceSettingsStore = useVoiceDeviceSettingsStore();
   const { cameraDeviceId, inputDeviceId } = storeToRefs(voiceDeviceSettingsStore);
   const cameraConstraints = computed<MediaStreamConstraints>(() => ({
-    video: { deviceId: cameraDeviceId.value || undefined },
+    video: cameraDeviceId.value ? { deviceId: cameraDeviceId.value } : {},
   }));
   const microphoneConstraints = computed<MediaStreamConstraints>(() => ({
-    audio: { deviceId: inputDeviceId.value || undefined },
+    audio: inputDeviceId.value ? { deviceId: inputDeviceId.value } : {},
   }));
   // `useUserMedia` retains the live camera stream and releases it on scope dispose.
   const {

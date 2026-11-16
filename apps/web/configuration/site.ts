@@ -9,7 +9,7 @@ const BASE_URL = process.env.BASE_URL ?? "";
 // The request instead, so an empty url costs nothing (its config stack drops "" exactly like an absent key).
 // Handing it localhost is what its validator rejects, and it rejects for anything that is not `nuxt dev` —
 // Typecheck, build and prepare all count — so a local .env warns on every one of them
-export const site: NuxtConfig["site"] = {
+export const site: NonNullable<NuxtConfig["site"]> = {
   description: SITE_DESCRIPTION,
   name: SITE_NAME,
   url: URL.parse(BASE_URL)?.hostname === LOCALHOST_HOSTNAME ? "" : BASE_URL,

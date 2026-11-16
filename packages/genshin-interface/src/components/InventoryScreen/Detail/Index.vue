@@ -19,7 +19,7 @@ interface Props {
   // The Unlock button's words, shown on a locked bag artifact
   unlockLabel: string;
   // The weapon's details the panel draws under its caption, undefined for any entry that is not a weapon with details
-  weapon?: InventoryWeaponDetails;
+  weapon?: InventoryWeaponDetails | undefined;
 }
 
 defineProps<Props>();

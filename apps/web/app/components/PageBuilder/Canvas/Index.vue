@@ -25,8 +25,8 @@ import { ResourceType } from "@esposter/db-schema";
 interface Props {
   announce: (message: string) => void;
   // The palette block type being dragged, which the canvas draws in the slot its drop target names
-  draggedType?: BlockNode["type"];
-  dropTarget?: DropTarget;
+  draggedType?: BlockNode["type"] | undefined;
+  dropTarget?: DropTarget | undefined;
   // The kind the resource's document is drawn through, which the shell passes beside the resource
   kind: AnyPageBuilderKind;
   resourceId: string;

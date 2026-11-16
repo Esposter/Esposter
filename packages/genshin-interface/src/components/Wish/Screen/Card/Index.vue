@@ -6,7 +6,7 @@ import RarityStars from "#src/components/RarityStars/Index.vue";
 
 interface Props {
   // The open event banner's card, "undefined" on a banner the game gives no card to here
-  bannerCard?: WishBannerCard;
+  bannerCard?: undefined | WishBannerCard;
   // The open banner's name in the reader's language, the tag over the card's title
   bannerLabel: string;
   // The five-star notice the open event banner's card gives, in the reader's language

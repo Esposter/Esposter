@@ -1,7 +1,7 @@
 import type { UpdateUserSettingsInput } from "#shared/models/db/userSettings/UpdateUserSettingsInput";
 import type { UserSettingsInMessage } from "@esposter/db-schema";
 
-import { noop } from "@esposter/shared";
+import { noop, omitUndefined } from "@esposter/shared";
 
 export const useUserSettingsStore = defineStore("message/user/settings", () => {
   const { $trpc } = useNuxtApp();
@@ -26,7 +26,7 @@ export const useUserSettingsStore = defineStore("message/user/settings", () => {
         if (!userSettingsValue) return noop;
 
         const snapshot = { ...userSettingsValue };
-        userSettings.value = { ...userSettingsValue, ...input };
+        userSettings.value = { ...userSettingsValue, ...omitUndefined(input) };
         return () => {
           userSettings.value = snapshot;
         };

@@ -5,5 +5,5 @@ import type { BlockNodeProps } from "vue-block-editor-headless";
 // The props a Text node holds: its rich text, written in the Note's writing kit, and the style it is drawn with
 export interface TextNodeProps extends BlockNodeProps {
   content: JSONContent;
-  style?: NodeStyle;
+  style?: NodeStyle | undefined;
 }

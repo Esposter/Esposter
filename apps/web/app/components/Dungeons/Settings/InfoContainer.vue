@@ -6,6 +6,7 @@ import {
   MENU_VERTICAL_PADDING,
 } from "#src/services/dungeons/scene/settings/constants";
 import { useSettingsSceneStore } from "#src/store/dungeons/settings/scene";
+import { omitUndefined } from "@esposter/shared";
 import { Container, onCreate, Text } from "vue-phaserjs";
 
 const settingsSceneStore = useSettingsSceneStore();
@@ -27,7 +28,7 @@ onCreate((scene) => {
         x: INITIAL_SETTINGS_POSITION.x,
         y: 8,
         text: infoText,
-        style: { ...MenuTextStyle, wordWrap: { width: wordWrapWidth } },
+        style: { ...MenuTextStyle, wordWrap: omitUndefined({ width: wordWrapWidth }) },
       }"
     />
   </Container>

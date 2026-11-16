@@ -6,14 +6,14 @@ import type { PoiseType } from "#src/models/enemy/PoiseType";
 // The Element its energy carries, none for an enemy whose energy is clear. Its attack element is the Element its attacks
 // Carry, none for an enemy whose attacks are all physical
 export interface EnemyKindTraits {
-  attackElement?: Element;
-  element?: Element;
+  attackElement?: Element | undefined;
+  element?: Element | undefined;
   energyDrops: EnergyDrop[];
   // Whether the kind is immune to Air staggers, so a launching hit that staggers it leaves it on the ground
-  isAirStaggerImmune?: true;
+  isAirStaggerImmune?: true | undefined;
   poiseType: PoiseType;
   // The share of its max HP the shield a kind holds on top of its health has, none for a kind with no shield
-  shieldHealthFraction?: number;
+  shieldHealthFraction?: number | undefined;
   // The boss's own drop its Trounce Blossom pays, none for a kind that leaves no blossom
-  uniqueDropId?: number;
+  uniqueDropId?: number | undefined;
 }

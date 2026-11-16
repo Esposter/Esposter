@@ -2,13 +2,13 @@
 interface Props {
   label: string;
   // What the field reads while it holds nothing
-  placeholder?: string;
+  placeholder?: string | undefined;
 }
 // A span of days, picked in the library's calendar in its range mode from one field drawn as a select's trigger, which
 // Reads the two days with a dash between them. The panel closes once the span has its end, and one button beside the
 // Field empties both. Its days are plain dates, so the call site decides which instant each bound means
-const from = defineModel<Temporal.PlainDate>("from");
-const to = defineModel<Temporal.PlainDate>("to");
+const from = defineModel<Temporal.PlainDate | undefined>("from");
+const to = defineModel<Temporal.PlainDate | undefined>("to");
 const { placeholder = "Pick dates" } = defineProps<Props>();
 const isOpen = ref(false);
 </script>

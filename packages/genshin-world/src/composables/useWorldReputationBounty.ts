@@ -20,7 +20,7 @@ interface Props {
   // The moments of the bounty claims the save holds, those before the week's reset no longer counted
   savedBountyClaimedAts: readonly Temporal.Instant[];
   // The bounty taken and not yet claimed, as the save holds it
-  savedBountyHunt?: ReputationBountyHunt;
+  savedBountyHunt?: ReputationBountyHunt | undefined;
 }
 
 // The Mondstadt bounty the player has taken, in progress until its claim pays, and the moments of the bounty claims made.

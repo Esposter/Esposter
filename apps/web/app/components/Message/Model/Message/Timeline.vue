@@ -4,7 +4,7 @@ import { getTimelineDateLabel } from "#src/util/date/getTimelineDateLabel";
 
 interface Props {
   messageDate: Date;
-  nextMessageDate?: Date;
+  nextMessageDate?: Date | undefined;
 }
 
 const { messageDate } = defineProps<Props>();

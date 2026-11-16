@@ -14,7 +14,7 @@ import { takeOne } from "@esposter/shared";
 interface Props {
   // The room's own uploads, passed in rather than read from a store: this panel is the app's one emoji picker and
   // Knows nothing about rooms — every surface that has a set hands it over
-  customEmojis?: CustomEmoji[];
+  customEmojis?: CustomEmoji[] | undefined;
 }
 
 defineSlots<{ footer?: () => VNode }>();

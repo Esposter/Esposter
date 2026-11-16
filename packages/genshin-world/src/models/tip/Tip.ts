@@ -4,11 +4,11 @@ import { z } from "zod";
 // Subtitle by their text ids, and the trigger its watcher gives, where the game's table gives one. A tip with no trigger in
 // The tables is shown by a script the dump does not hold, so the world never shows it
 export interface Tip {
-  codexId?: number;
+  codexId?: number | undefined;
   id: number;
   subtitleTextId: string;
   titleTextId: string;
-  trigger?: TipTrigger;
+  trigger?: TipTrigger | undefined;
 }
 
 // The watcher that shows a tip: the kind of trigger as the game's table spells it, and the parameters it is given, the

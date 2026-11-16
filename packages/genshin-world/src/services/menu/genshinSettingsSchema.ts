@@ -1,4 +1,5 @@
 import type { GenshinSettings } from "#src/models/menu/GenshinSettings";
+import type { UndefinedOnPartial } from "type-fest";
 
 import {
   CAMERA_DISTANCE_RANGE,
@@ -26,4 +27,4 @@ export const genshinSettingsSchema = z
     verticalSensitivity: sensitivitySchema,
     volume: volumeLevelSchema,
   })
-  .partial() satisfies z.ZodType<Partial<GenshinSettings>>;
+  .partial() satisfies z.ZodType<UndefinedOnPartial<Partial<GenshinSettings>>>;

@@ -4,7 +4,7 @@ import type { PostInPostWithRelations } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 
 interface Props {
-  isLink?: true;
+  isLink?: true | undefined;
   post: PostInPostWithRelations;
 }
 

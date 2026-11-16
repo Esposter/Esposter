@@ -9,7 +9,7 @@ interface Props {
   // Whether the bag is in its destroy mode, where a tick chooses an entry for a destroy rather than showing it
   isDestroying: boolean;
   // The entry the detail panel shows, which the grid presses, the open tab's first entry while none is chosen
-  selectedCell?: InventoryCell;
+  selectedCell?: InventoryCell | undefined;
 }
 
 defineProps<Props>();

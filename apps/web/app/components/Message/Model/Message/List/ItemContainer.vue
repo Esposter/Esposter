@@ -3,7 +3,7 @@ import type { ClientMessage } from "#src/models/message/ClientMessage";
 
 interface Props {
   message: ClientMessage;
-  nextMessage?: ClientMessage;
+  nextMessage?: ClientMessage | undefined;
 }
 
 const { message } = defineProps<Props>();

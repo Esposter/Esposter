@@ -5,38 +5,39 @@ import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { UiTextFieldType } from "#src/models/ui/UiTextFieldType";
 import { TEXT_FIELD_AUTOCOMPLETES } from "#src/services/ui/constants";
+import { omitUndefined } from "@esposter/shared";
 import { Input } from "@vuetify/v0";
 
 interface Props {
   // The most characters it takes, counted under it as the reader types
-  counter?: number;
+  counter?: number | undefined;
   // A message the form around the field found rather than one of its own rules, such as a schema's issue at the
   // Field's path, which marks it invalid and shows under it as a failing rule does
-  error?: string;
+  error?: string | undefined;
   // A line under the field saying how to fill it, which describes it to assistive technology and gives way to an error
-  hint?: string;
+  hint?: string | undefined;
   // Takes focus as it appears: the browser's own autofocus when a dialog opens onto it, and `useAutofocus` when it mounts
   // Into a page, which leaves a reader who is typing elsewhere alone
-  isAutofocus?: true;
+  isAutofocus?: true | undefined;
   // Shown at the disabled opacity and never focused or typed in, as a native disabled control is
-  isDisabled?: true;
+  isDisabled?: true | undefined;
   // Marks the field invalid with no message of its own, where a message the field's group shows stands for it
-  isInvalid?: true;
+  isInvalid?: true | undefined;
   // Named for assistive technology alone, where what surrounds the field already says what it is for: a column's
   // Filter under the column's name, a cell being edited in its row
-  isLabelHidden?: true;
+  isLabelHidden?: true | undefined;
   // Marks the label with the required mark, which speech announces as required once
-  isRequired?: true;
+  isRequired?: true | undefined;
   label: string;
   // The most characters it lets in, where the control stops the typing and counts it under the field as `counter` does
-  maxlength?: number;
+  maxlength?: number | undefined;
   // A hint inside a field whose label is hidden, never a label of its own: "Filter", "Minimum"
-  placeholder?: string;
+  placeholder?: string | undefined;
   // Lines of a field that takes several, which the reader can drag taller; a field of one line without it
-  rows?: number;
+  rows?: number | undefined;
   // Checked as the reader types, each a message or true; a form around the field counts its result
-  rules?: UiRule[];
-  type?: UiTextFieldType;
+  rules?: UiRule[] | undefined;
+  type?: UiTextFieldType | undefined;
 }
 
 const modelValue = defineModel<string>({ required: true });
@@ -65,7 +66,7 @@ defineExpose({ element });
     v-model="modelValue"
     :disabled="isDisabled"
     :rules="inputRules"
-    :type
+    :="omitUndefined({ type })"
     validate-on="input"
     flex
     flex-col

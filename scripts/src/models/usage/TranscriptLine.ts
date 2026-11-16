@@ -2,20 +2,24 @@ import { z } from "zod";
 
 // The fields a usage or prompt read takes from one transcript line, every other field left out
 export interface TranscriptLine {
-  message?: {
-    content?: unknown;
-    id?: string;
-    model?: string;
-    usage?: {
-      cache_creation_input_tokens?: number;
-      cache_read_input_tokens?: number;
-      input_tokens?: number;
-      output_tokens?: number;
-    };
-  };
-  requestId?: string;
-  timestamp?: string;
-  type?: string;
+  message?:
+    | undefined
+    | {
+        content?: unknown;
+        id?: string | undefined;
+        model?: string | undefined;
+        usage?:
+          | undefined
+          | {
+              cache_creation_input_tokens?: number | undefined;
+              cache_read_input_tokens?: number | undefined;
+              input_tokens?: number | undefined;
+              output_tokens?: number | undefined;
+            };
+      };
+  requestId?: string | undefined;
+  timestamp?: string | undefined;
+  type?: string | undefined;
 }
 
 export const transcriptLineSchema: z.ZodType<TranscriptLine> = z.object({

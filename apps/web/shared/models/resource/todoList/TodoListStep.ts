@@ -4,7 +4,7 @@ import { z } from "zod";
 
 // A line of a todo's checklist: a name, and when it was ticked, absent while it is open as its todo's own is
 export interface TodoListStep {
-  completedAt?: Date;
+  completedAt?: Date | undefined;
   id: string;
   name: string;
 }

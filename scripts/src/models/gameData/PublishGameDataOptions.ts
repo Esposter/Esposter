@@ -8,7 +8,7 @@ export interface PublishGameDataOptions {
   // Makes the buckets to publish to, absent for a dry run, which reads and writes no bucket and needs no credential. It is
   // Called only once a publication stores an object or drops a lock entry, so an empty publication that leaves the lock as it
   // Is makes no bucket and no credential
-  createBucketClientMap?: () => Record<CloudflareEnvironment, R2BucketClient>;
+  createBucketClientMap?: (() => Record<CloudflareEnvironment, R2BucketClient>) | undefined;
   // The lock as the working tree has it, which the publication replaces the scopes of
   currentLock: GameDataLock;
   publication: GameDataPublication;

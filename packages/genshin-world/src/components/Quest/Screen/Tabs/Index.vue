@@ -14,7 +14,7 @@ import { GameTextKey } from "genshin-text";
 
 interface Props {
   // The tab open, none for the first, which lists every quest
-  category?: QuestCategory;
+  category?: QuestCategory | undefined;
   // The game's words in the reader's language
   gameText: GameText;
 }

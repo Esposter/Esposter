@@ -8,28 +8,28 @@ import type { GcsimAttackIteration } from "#src/models/genshinAssets/kits/gcsim/
 // Assigned to with `:=`, which a call passes it by. Its `Abil` is the text the literal gives it, a string or a string constant
 // Of its file, as the attack's name
 export interface GcsimAttack {
-  abil?: string;
-  attackTag?: string;
+  abil?: string | undefined;
+  attackTag?: string | undefined;
   // The if or else the attack's `Mult` set sits in, or the literal's own, which a call after the branches fires per branch
-  branch?: GcsimAttackBranch;
-  durability?: number;
-  element?: string;
+  branch?: GcsimAttackBranch | undefined;
+  durability?: number | undefined;
+  element?: string | undefined;
   fieldLineMap: Partial<Record<string, number>>;
   file: string;
-  internalCooldownTag?: string;
+  internalCooldownTag?: string | undefined;
   // The loop iteration this variant applies to, where an if on a constant loop's variable sets a field on a copy, or a
   // Literal's element is a slice entry its loop variable indexes: a call takes it only in that iteration, and the copy's
   // Own attack, or the literal's other iterations, in the others
-  iteration?: GcsimAttackIteration;
+  iteration?: GcsimAttackIteration | undefined;
   line: number;
-  poiseDamage?: number;
-  poiseDamageVariable?: string;
+  poiseDamage?: number | undefined;
+  poiseDamageVariable?: string | undefined;
   // The function the attack is the value of, where its variable is the one the function returns, `return ai`, or the
   // Literal is returned directly, so a call bound to the function fires it
-  returnedBy?: string;
+  returnedBy?: string | undefined;
   // The line of the declaration the attack is made from: its literal's, or a copy's own line, shared by every `Mult` set
   // Under it, so the calls of one declaration can be told from another's
   siteLine: number;
-  talentVariable?: string;
-  variableName?: string;
+  talentVariable?: string | undefined;
+  variableName?: string | undefined;
 }

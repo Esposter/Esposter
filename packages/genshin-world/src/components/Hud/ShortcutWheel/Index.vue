@@ -16,7 +16,7 @@ interface Props {
   // The game's words in the reader's language, which name each entry
   gameText: GameText;
   // The entry the pointer points toward, or none when it is at the centre
-  pickedIndex?: number;
+  pickedIndex?: number | undefined;
 }
 
 const { directionCount, gameText, pickedIndex } = defineProps<Props>();

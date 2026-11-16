@@ -2,6 +2,6 @@
 // It names as the table spells it, and the parameters that effect is written with, as the table gives them
 export interface CookProudSkillRow {
   lifeEffectParams: string[];
-  lifeEffectType?: string;
+  lifeEffectType?: string | undefined;
   proudSkillGroupId: number;
 }

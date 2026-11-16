@@ -16,9 +16,9 @@ interface Props {
         type: typeof AttackGameObjectType.Sprite;
       }
     | { position?: Partial<Position>; type: typeof AttackGameObjectType.Container };
-  createAnimationConfigurations?: (scene: SceneWithPlugins) => Types.Animations.Animation[];
+  createAnimationConfigurations?: ((scene: SceneWithPlugins) => Types.Animations.Animation[]) | undefined;
   isToEnemy: boolean;
-  playAnimationKey?: SpritesheetKey;
+  playAnimationKey?: SpritesheetKey | undefined;
   spritesheetKey: SpritesheetKey;
 }
 

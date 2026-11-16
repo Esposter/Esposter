@@ -21,5 +21,5 @@ export interface ReferenceEntryPlan {
   packed: ReferencePackFile[];
   refused: boolean;
   restored: ReferenceEntryPath[];
-  row?: ParityReferenceManifestRow;
+  row?: ParityReferenceManifestRow | undefined;
 }

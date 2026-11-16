@@ -23,7 +23,7 @@ interface Props {
   label: string;
   // What a double click on an empty day or slot, or Enter on one, makes there, as Outlook's does. A prop rather than an
   // Emit, so a calendar nothing can be created on never draws its days as something to press
-  onCreate?: (start: Date) => void;
+  onCreate?: ((start: Date) => void) | undefined;
 }
 // Events laid out in time, as Outlook lays them out: a day, a work week or a week of hours, or a month of days, beside
 // A month navigator that marks the days holding events. It steps a view or a year at a time with today one press away,

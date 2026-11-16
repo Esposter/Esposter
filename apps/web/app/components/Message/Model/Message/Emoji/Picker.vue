@@ -8,7 +8,7 @@ import { useRoleStore } from "#src/store/message/room/role";
 import { RoomPermission } from "@esposter/db-schema";
 
 interface Props {
-  variant?: UiButtonVariant;
+  variant?: UiButtonVariant | undefined;
 }
 // What a call site passes goes to the picker, beside which the add-emoji dialog stands
 defineOptions({ inheritAttrs: false });

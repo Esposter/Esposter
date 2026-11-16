@@ -18,7 +18,7 @@ interface Props {
   // For a level that takes none), the rewards it pays and the state they are in on the Worship Statue
   level: {
     level: number;
-    oculus?: { count: number; name: string };
+    oculus?: undefined | { count: number; name: string };
     rewards: { count: number; name: string }[];
     staminaShare: number;
     state: WorshipLevelState;

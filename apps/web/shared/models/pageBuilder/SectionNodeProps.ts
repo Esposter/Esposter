@@ -6,6 +6,6 @@ import type { BlockNodeProps } from "vue-block-editor-headless";
 // The props a Section node holds: the semantic tag it renders under, the style it is drawn with, and the placeable nodes it holds
 export interface SectionNodeProps extends BlockNodeProps {
   children: WebpagePlaceableNode[];
-  style?: NodeStyle;
+  style?: NodeStyle | undefined;
   tag: (typeof SECTION_TAGS)[number];
 }

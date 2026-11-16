@@ -8,7 +8,7 @@ import { getListMenuItems } from "#src/services/richTextEditor/getListMenuItems"
 import { getTextFormatMenuItems } from "#src/services/richTextEditor/getTextFormatMenuItems";
 
 interface Props {
-  editor?: Editor;
+  editor?: Editor | undefined;
 }
 
 const { editor } = defineProps<Props>();

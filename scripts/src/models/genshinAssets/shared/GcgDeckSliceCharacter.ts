@@ -10,7 +10,7 @@ export interface GcgDeckSliceCharacter {
   id: number;
   maxEnergy: number;
   nameTextId: number;
-  nation?: string;
+  nation?: string | undefined;
   skills: GcgDeckSliceSkill[];
   weapon: string;
 }

@@ -9,7 +9,7 @@ export interface DamageOptions {
   criticalDamage?: number;
   damageBonus?: number;
   defense: number;
-  defenseIgnored?: number;
+  defenseIgnored?: number | undefined;
   defenseReduction?: number;
   isCritical?: boolean;
   resistance: number;

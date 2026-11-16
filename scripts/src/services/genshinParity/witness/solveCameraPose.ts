@@ -23,7 +23,7 @@ const DAMPING_FACTOR = 10;
 // Minimises the reprojection error from it (`computeReprojectionErrors`) over all six axes, the field of view among
 // Them, but for any held
 export const solveCameraPose = (
-  correspondences: readonly { isEdge?: boolean; pixel: Pixel; point: Readonly<Vector> }[],
+  correspondences: readonly { isEdge?: boolean | undefined; pixel: Pixel; point: Readonly<Vector> }[],
   width: number,
   height: number,
   start?: readonly number[],

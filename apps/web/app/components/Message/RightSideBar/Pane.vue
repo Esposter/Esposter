@@ -1,7 +1,7 @@
 <script setup lang="ts">
 interface Props {
   // A body that is one list which pads and scrolls itself draws bare, so the pane adds no second padding around it
-  isBodyBare?: true;
+  isBodyBare?: true | undefined;
   title: string;
 }
 

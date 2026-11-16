@@ -7,13 +7,13 @@ import { GameTextKey } from "genshin-text";
 
 interface Props {
   // The hand card the player has armed to play onto a Character, by its hand index
-  armedHandIndex?: number;
+  armedHandIndex?: number | undefined;
   // The side's hand, its cards in the order it holds them
   cards: GcgCard[];
   // The game's words in the reader's language
   gameText: GameText;
   // The Toss-Up card being played, by its hand index
-  rerollHandIndex?: number;
+  rerollHandIndex?: number | undefined;
   // The cards the player has picked to switch away in preparation, by their hand index
   switchedHandIndices: number[];
   // The names of the hand's cards in the reader's language, by their game text ids

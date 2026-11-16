@@ -29,7 +29,7 @@ interface Props {
 // The settings the button shows and changes, which the host keeps on this device
 const settings = defineModel<GenshinSettings>("settings", { required: true });
 // The kind of the list that is open, which this row's own list is when the kind is its own
-const openedList = defineModel<SettingsRowKind>("openedList");
+const openedList = defineModel<SettingsRowKind | undefined>("openedList");
 const { gameText, row } = defineProps<Props>();
 // The rows that open a list of the world's own, and the rows the player acts on: a list row opens its list and a toggle
 // Flips its setting

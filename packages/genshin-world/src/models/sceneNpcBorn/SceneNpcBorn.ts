@@ -8,7 +8,7 @@ export interface SceneNpcBorn {
   groupId: number;
   id: number;
   position: { x: number; y: number; z: number };
-  rotationY?: number;
+  rotationY?: number | undefined;
   suiteIds: number[];
 }
 

@@ -24,9 +24,9 @@ export interface ShapeElement extends BoxElement, ItemEntityType<typeof Position
   cornerStyle: CornerStyle;
   dashPattern: DashPattern;
   fill: string;
-  horizontalAlignment?: HorizontalAlignment;
+  horizontalAlignment?: HorizontalAlignment | undefined;
   kind: ShapeKind;
-  verticalAlignment?: VerticalAlignment;
+  verticalAlignment?: undefined | VerticalAlignment;
 }
 
 export const shapeElementSchema: z.ZodObject<

@@ -65,7 +65,7 @@ interface Props {
   // The scene the sight's mask is drawn from, which each enemy's stand-in is added to, lit in its element's colour
   sightScene: Scene;
   // The point the enemies target, the character's feet, which none is given while no character stands in the world
-  target?: GroundPoint;
+  target?: GroundPoint | undefined;
   // Each defeated boss's Trounce Blossom where it fell, which holds the boss until it is claimed or a teleport out of its
   // Area comes
   trounceBlossoms: ReadonlyMap<string, TrounceBlossom>;

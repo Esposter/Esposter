@@ -39,7 +39,7 @@ interface Props {
   offers: TalkOffer[];
   // Where the talk is held when it opens, on any of its lines and written out whole or not; its first line unwritten
   // When absent. The parity page holds a state the reference shows this way, the reveal's clock not running
-  startProgress?: TalkProgress;
+  startProgress?: TalkProgress | undefined;
   talk: Talk;
   // The talk's own words in the reader's language, by the game's text id
   textMap: Readonly<Record<string, string>>;

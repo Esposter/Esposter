@@ -5,5 +5,5 @@ import type { GoValue } from "#src/models/genshinAssets/kits/gcsim/GoValue";
 export interface FieldWrite {
   file: string;
   line: number;
-  value?: GoValue;
+  value?: GoValue | undefined;
 }

@@ -6,14 +6,14 @@ import { z } from "zod";
 // Sideways and forward metres, and a circle's radius and fan angle in degrees or a box's width and length. The line is
 // Where its name stands in the config
 export interface GcsimHitbox {
-  box?: [number, number];
+  box?: [number, number] | undefined;
   center: GcsimHitboxCenter;
-  fanAngle?: number;
-  file?: string;
+  fanAngle?: number | undefined;
+  file?: string | undefined;
   line: number;
   name: string;
-  offset?: [number, number];
-  radius?: number;
+  offset?: [number, number] | undefined;
+  radius?: number | undefined;
   shape: GcsimHitboxShape;
 }
 

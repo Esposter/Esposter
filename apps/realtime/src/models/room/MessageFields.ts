@@ -4,12 +4,12 @@ import type { FileEntity, LinkPreviewResponse, MessageType } from "@esposter/db-
 export interface MessageFields {
   appUserId?: string;
   appUserImage?: string;
-  files?: FileEntity[];
-  isForward?: boolean;
-  linkPreviewResponse?: LinkPreviewResponse | null;
+  files?: FileEntity[] | undefined;
+  isForward?: boolean | undefined;
+  linkPreviewResponse?: LinkPreviewResponse | null | undefined;
   message: string;
-  replyToId?: number;
-  senderName?: string;
+  replyToId?: number | undefined;
+  senderName?: string | undefined;
   type: MessageType;
   userId?: string;
   webhookDeliveryId?: string;

@@ -6,13 +6,13 @@ import type { Promisable } from "type-fest";
 
 interface Props {
   // Why the submit waits for the server, from the closed set; without one the dialog closes as its write is sent
-  awaitedBecause?: AwaitedReason;
+  awaitedBecause?: AwaitedReason | undefined;
   confirmLabel: string;
   // The look of the confirm button, the accent when none is named, and danger for a submit that destroys something
-  confirmVariant?: UiButtonVariant;
-  isConfirmDisabled?: true;
+  confirmVariant?: UiButtonVariant | undefined;
+  isConfirmDisabled?: true | undefined;
   // How wide the dialog stands, Medium when none is named: the base shell holds that default
-  size?: UiDialogSize;
+  size?: UiDialogSize | undefined;
   // What the valid form's submit does, closing the dialog as it is sent (useDialogAnswer). With `awaitedBecause`, a
   // Submit that resolves `false` keeps the dialog open so the user can retry without losing their draft
   submit: () => Promisable<unknown>;

@@ -1,13 +1,16 @@
 <script setup lang="ts">
 import type { UiSchemaFormRendererProps } from "#src/models/ui/schemaForm/UiSchemaFormRendererProps";
 
+import { unsetRendererState } from "#src/services/ui/schemaForm/unsetRendererState";
+import { omitUndefined } from "@esposter/shared";
 import { findUISchema, Generate, mapStateToControlWithDetailProps } from "@jsonforms/core";
 
 interface Props extends UiSchemaFormRendererProps {}
-// JSON Forms derives whether a field is enabled or read only when the form leaves them unset, which a boolean prop
-// Would read as false
-const props = withDefaults(defineProps<Props>(), { enabled: undefined, readonly: undefined });
-const control = computed(() => ({ ...props, ...mapStateToControlWithDetailProps(props.form.state, props) }));
+const props = withDefaults(defineProps<Props>(), unsetRendererState);
+const control = computed(() => ({
+  ...props,
+  ...mapStateToControlWithDetailProps(props.form.state, omitUndefined(props)),
+}));
 // An object's fields laid out as a group under its label, or stacked bare where the object is the form itself
 const detailUiSchema = computed(() =>
   findUISchema(

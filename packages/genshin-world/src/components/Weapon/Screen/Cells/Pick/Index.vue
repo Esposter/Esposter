@@ -5,9 +5,9 @@ interface Props {
   // The caption under the cell's plus, the level, count or "--" the cell shows beneath its art
   caption: number | string;
   // Whether the cell is greyed out and takes no pick, as an ore the player has picked as many of as the bag holds
-  isDisabled?: boolean;
+  isDisabled?: boolean | undefined;
   // Whether the cell is pressed, as the fodder, copy or material it stands for is picked
-  isPressed?: boolean;
+  isPressed?: boolean | undefined;
   // The cell's name, read aloud over the whole cell, which its art is not drawn over
   name: string;
 }

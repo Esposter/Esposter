@@ -3,6 +3,6 @@
 export interface AbyssChallenge {
   defeatedHalfCount: number;
   halfCount: number;
-  monolithPercent?: number;
+  monolithPercent?: number | undefined;
   secondsLeft: number;
 }

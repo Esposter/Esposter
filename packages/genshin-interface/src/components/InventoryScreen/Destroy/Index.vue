@@ -19,7 +19,7 @@ interface Props {
   // The destroy mode's quick selects on the open tab, each choosing every entry the bag may destroy of its rarity
   quickSelects: InventoryQuickSelect[];
   // The entry the detail panel shows, whose cannot-destroy warning shows when the bag never destroys it
-  selectedCell?: InventoryCell;
+  selectedCell?: InventoryCell | undefined;
 }
 
 defineProps<Props>();

@@ -1,5 +1,5 @@
 export interface DedentOptions {
-  alignValues?: boolean;
-  escapeSpecialCharacters?: boolean;
-  trimWhitespace?: boolean;
+  alignValues?: boolean | undefined;
+  escapeSpecialCharacters?: boolean | undefined;
+  trimWhitespace?: boolean | undefined;
 }

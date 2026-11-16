@@ -8,12 +8,12 @@ import { mergeProps } from "vue";
 
 interface Props {
   // The trigger's own text already reads the label, so no tooltip says it again: "Add filter"
-  isLabelShown?: true;
+  isLabelShown?: true | undefined;
   items: UiMenuItem<T>[];
   // The menu's accessible name, and its trigger's, since a trigger may show no more than a mark
   label: string;
-  positionArea?: string;
-  variant?: UiButtonVariant;
+  positionArea?: string | undefined;
+  variant?: UiButtonVariant | undefined;
 }
 // A trigger and the menu it opens are two elements, so what a call site passes goes to the trigger. The trigger opens
 // The menu natively through its popover target, so a click on it while the menu is open closes it rather than

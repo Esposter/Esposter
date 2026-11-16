@@ -2,7 +2,7 @@
 import type { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 interface Props {
-  description?: string;
+  description?: string | undefined;
   meaning: UiIconMeaning;
   title: string;
 }

@@ -14,7 +14,7 @@ import { splitStyleLength } from "#src/services/pageBuilder/splitStyleLength";
 interface Props {
   label: string;
   // The value the field inherits when it sets none, shown in its place, such as "from Desktop"
-  placeholder?: string;
+  placeholder?: string | undefined;
   // The property the value sets, which the browser checks the value against as it is typed
   property: StyleProperty;
 }

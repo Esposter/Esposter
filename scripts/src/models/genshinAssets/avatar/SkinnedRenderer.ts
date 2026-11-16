@@ -8,7 +8,7 @@ export interface SkinnedRenderer {
   bones: (ResolvedObject | undefined)[];
   file: string;
   materials: (ResolvedObject | undefined)[];
-  mesh?: ResolvedObject;
+  mesh?: ResolvedObject | undefined;
   renderer: DumpedSkinnedMeshRenderer;
-  rootBone?: ResolvedObject;
+  rootBone?: ResolvedObject | undefined;
 }

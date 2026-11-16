@@ -3,7 +3,7 @@
 export interface NoteEventTime {
   amplitude: number;
   durationSeconds: number;
-  pitchBends?: number[];
+  pitchBends?: number[] | undefined;
   pitchMidi: number;
   startTimeSeconds: number;
 }

@@ -3,6 +3,7 @@ import type { LineConfiguration } from "#src/models/configuration/LineConfigurat
 import type { LineEventEmitsOptions } from "#src/models/emit/LineEventEmitsOptions";
 import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
+import type { UndefinedOnPartial } from "type-fest";
 
 import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
 import { LineSetterMap } from "#src/services/setterMap/LineSetterMap";
@@ -10,9 +11,9 @@ import { LineSetterMap } from "#src/services/setterMap/LineSetterMap";
 interface LineEmits extends /** @vue-ignore */ LineEventEmitsOptions {}
 
 interface Props {
-  configuration: Partial<LineConfiguration>;
-  immediate?: true;
-  onComplete?: (scene: SceneWithPlugins, line: GameObjects.Line) => void;
+  configuration: UndefinedOnPartial<Partial<LineConfiguration>>;
+  immediate?: true | undefined;
+  onComplete?: ((scene: SceneWithPlugins, line: GameObjects.Line) => void) | undefined;
 }
 
 const { configuration, immediate, onComplete } = defineProps<Props>();

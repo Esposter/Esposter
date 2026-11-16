@@ -7,11 +7,11 @@ export interface DragReorderContext {
   // The slides a drop left waiting for the next frame, once the new order has been rendered
   pendingSlides: Set<() => void>;
   // The press in progress, or nothing between presses
-  press?: Press;
+  press?: Press | undefined;
   resumeAutoscroll: () => void;
   resumeSlides: () => void;
   startTouchDelay: () => void;
   // Swallows the click a release raises after a drag, until that click or the next press
-  stopSwallow?: () => void;
+  stopSwallow?: (() => void) | undefined;
   stopTouchDelay: () => void;
 }

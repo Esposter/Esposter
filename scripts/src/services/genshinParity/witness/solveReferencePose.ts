@@ -32,11 +32,11 @@ export const solveReferencePose = async (
     start,
     topRow = 0,
   }: {
-    families?: string[];
-    heldAxes?: number[];
-    landmarkNames?: string[];
+    families?: string[] | undefined;
+    heldAxes?: number[] | undefined;
+    landmarkNames?: string[] | undefined;
     refineIterations?: number;
-    start?: number[];
+    start?: number[] | undefined;
     topRow?: number;
   },
 ): Promise<{

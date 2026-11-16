@@ -15,11 +15,11 @@ export interface Combatant {
   constellationCount: number;
   // The element each deployed member is drawn in, in the team's order, none for a member with none, which a status or a
   // Hit reads as the team stands. A combatant built with no team holds none
-  deployedElements?: (Element | undefined)[];
-  element?: Element;
+  deployedElements?: (Element | undefined)[] | undefined;
+  element?: Element | undefined;
   elementalResonances: ElementalResonance[];
   kit: Kit;
   level: number;
-  regionId?: string;
-  weaponType?: WeaponType;
+  regionId?: string | undefined;
+  weaponType?: undefined | WeaponType;
 }

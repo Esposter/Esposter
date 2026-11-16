@@ -14,9 +14,9 @@ export interface CharacterMaterialOptions {
   // Has none, so its material takes every one from the file
   shadingInputs?: Partial<CharacterShadingInputs>;
   // The sphere map the material names, which a material naming none draws without
-  sphereTexture?: Texture;
+  sphereTexture?: Texture | undefined;
   // The texture the material names, which a material naming none draws without
-  texture?: Texture;
+  texture?: Texture | undefined;
   // The toon ramp the model's own texture list names, when the material names one there rather than a shared ramp
-  toonTexture?: Texture;
+  toonTexture?: Texture | undefined;
 }

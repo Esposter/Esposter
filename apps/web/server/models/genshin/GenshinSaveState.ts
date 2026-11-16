@@ -2,6 +2,6 @@ import type { GenshinSaveEnvelope } from "#server/models/genshin/GenshinSaveEnve
 
 // The blob's envelope and its ETag, the ETag the write that follows is conditioned on
 export interface GenshinSaveState {
-  envelope?: GenshinSaveEnvelope;
-  etag?: string;
+  envelope?: GenshinSaveEnvelope | undefined;
+  etag?: string | undefined;
 }

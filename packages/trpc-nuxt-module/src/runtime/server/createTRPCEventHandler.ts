@@ -22,8 +22,10 @@ export const createTRPCEventHandler = <TRouter extends AnyTRPCRouter>({
         createContext &&
         ((fetchCreateContextOptions: FetchCreateContextFnOptions) => createContext(event, fetchCreateContextOptions)),
       endpoint,
-      // The request h3 holds, whose signal aborts when the response closes before it finished — the client going away
-      req: event.req,
+      // The request h3 holds, whose signal aborts when the response closes before it finished — the client going away.
+      // Read as the platform's `Request`: under `exactOptionalPropertyTypes` the `clone()` h3 types through fetchdts
+      // Returns a request whose `cf` no longer matches the one Cloudflare's own `Request` declares
+      req: event.req as Request,
       // Whether tRPC demands a context callback is a conditional type over the router's context, which never resolves
       // While `TRouter` is open; the caller's options were checked against its own router at the call site
     } as FetchHandlerRequestOptions<TRouter>);

@@ -1,3 +1,4 @@
+import type { UndefinedOnPartial } from "type-fest";
 import type { PushSubscription } from "web-push";
 
 import {
@@ -7,6 +8,8 @@ import {
 import { URL_MAX_LENGTH } from "@esposter/db-schema";
 import { z } from "zod";
 
+// Zod's optional output admits `undefined`, and web-push's optional `expirationTime` does not, under
+// Exactly-optional types, so the constraint admits `undefined` for that one field
 export const pushSubscriptionInputSchema = z.object({
   endpoint: z.url().max(URL_MAX_LENGTH),
   expirationTime: z.number().nonnegative().nullish(),
@@ -14,4 +17,4 @@ export const pushSubscriptionInputSchema = z.object({
     auth: z.string().max(PUSH_SUBSCRIPTION_AUTH_MAX_LENGTH),
     p256dh: z.string().max(PUSH_SUBSCRIPTION_P256DH_MAX_LENGTH),
   }),
-}) satisfies z.ZodType<PushSubscription>;
+}) satisfies z.ZodType<UndefinedOnPartial<PushSubscription>>;

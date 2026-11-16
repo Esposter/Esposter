@@ -8,7 +8,7 @@ export interface MachineStateFile {
   at: string;
   cpuPercentage: number;
   freeGigabytes: number;
-  gpuPercentage?: number;
+  gpuPercentage?: number | undefined;
   minutesInState: number;
   processId: number;
   state: MachineState;

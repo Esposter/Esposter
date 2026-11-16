@@ -91,11 +91,11 @@ describe(usePdfViewer, () => {
   // The renderer's viewer components stand in for their real ones, which need a canvas and a worker.
   // The stubs keep the last viewer and link service they made, so a test can move the viewer or read what the composable asked of it
   const stubs: {
-    abortSignal?: AbortSignal;
+    abortSignal?: AbortSignal | undefined;
     editorModes: number[];
     eventBus?: EventBusStub;
     findEvents: unknown[];
-    imageResourcesPath?: string;
+    imageResourcesPath?: string | undefined;
     linkService?: LinkServiceStub;
     scaleWrites: unknown[];
     viewer?: PdfViewerStub;

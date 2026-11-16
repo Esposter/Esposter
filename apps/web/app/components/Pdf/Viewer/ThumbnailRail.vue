@@ -5,7 +5,7 @@ import type { PdfViewerState } from "vue-pdfjs-headless";
 import { usePdfThumbnails } from "vue-pdfjs-headless";
 
 interface Props {
-  pdfDocument?: PDFDocumentProxy;
+  pdfDocument?: PDFDocumentProxy | undefined;
   viewer: PdfViewerState;
 }
 

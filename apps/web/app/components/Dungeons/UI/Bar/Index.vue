@@ -12,7 +12,7 @@ import { Image, useTween } from "vue-phaserjs";
 interface Props {
   barPercentage: number;
   imagePosition: ImagePosition;
-  isSkipAnimations?: boolean;
+  isSkipAnimations?: boolean | undefined;
   scaleY: number;
   type: BarType;
   width: number;

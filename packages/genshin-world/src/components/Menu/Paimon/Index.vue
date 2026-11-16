@@ -28,7 +28,7 @@ import { GameTextKey } from "genshin-text";
 interface Props {
   // The signed-in account's avatar and name, which the profile card shows in place of the Traveler's disc and the
   // Default name when the player is signed out
-  accountAvatarUrl?: string;
+  accountAvatarUrl?: string | undefined;
   accountName: string;
   // The Adventure EXP's share of the rank's bar, and the rank and World Level the profile card shows
   adventureExpProgress: number;
@@ -43,7 +43,7 @@ interface Props {
   // The game's words in the reader's language
   gameText: GameText;
   // A state every entry is drawn in, forced by a fixture; a reader's pointer sets it itself
-  interactionState?: InteractionState;
+  interactionState?: InteractionState | undefined;
   // Whether the World Level can be lowered or restored at all, and whether it is lowered, for its dialog's button
   isWorldLevelAdjustable: boolean;
   isWorldLevelLowered: boolean;
@@ -51,14 +51,14 @@ interface Props {
   namecardItemId: number;
   namecards: ProfileNamecard[];
   // The server's clock minus this machine's, which the World Level's cooldown is read against
-  serverClockOffsetMs?: number;
+  serverClockOffsetMs?: number | undefined;
   // The signature the profile shows under the name, when the profile has one
-  signature?: string;
+  signature?: string | undefined;
   // The Traveler's birthday once it is set, which the row shows; until then the row offers the button that sets it
-  travelerBirthday?: TravelerBirthdaySave;
+  travelerBirthday?: TravelerBirthdaySave | undefined;
   // When the World Level last changed, for the cooldown its dialog's button waits on
   worldLevel: number;
-  worldLevelChangedAt?: Temporal.Instant;
+  worldLevelChangedAt?: Temporal.Instant | undefined;
 }
 
 const { gameText } = defineProps<Props>();

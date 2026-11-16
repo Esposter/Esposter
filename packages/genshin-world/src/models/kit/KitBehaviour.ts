@@ -47,7 +47,7 @@ export interface KitBehaviour extends Partial<
   plunges?: Partial<Record<KitPlunge, KitActionBehaviour>>;
   plungeVariants?: KitVariantBehaviour[];
   skill?: KitActionBehaviour;
-  skillChain?: KitActionBehaviour[];
-  skillHolds?: KitHoldBehaviour[];
+  skillChain?: KitActionBehaviour[] | undefined;
+  skillHolds?: KitHoldBehaviour[] | undefined;
   stellarJubilee?: Pick<KitStellarJubilee, "getBaseDamageBonus">;
 }

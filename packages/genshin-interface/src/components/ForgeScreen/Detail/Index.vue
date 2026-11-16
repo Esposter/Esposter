@@ -18,7 +18,7 @@ interface Props {
   // The Obtain button of a queue with units ready, in the game's words
   obtainLabel: string;
   // The queue the Queues tab's detail shows
-  queueDetail?: ForgeQueueDetail;
+  queueDetail?: ForgeQueueDetail | undefined;
   // The refusal words the game shows in place of Start for an order past the day's forge points, or none
   refusalLabel: string;
   // The coins the selected recipe costs for its amount

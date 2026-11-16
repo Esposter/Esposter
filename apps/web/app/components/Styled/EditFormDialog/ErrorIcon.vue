@@ -3,10 +3,10 @@ import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { z } from "zod";
 
 interface Props {
-  editedValue?: unknown;
+  editedValue?: undefined | unknown;
   // The form's own verdict, which counts every field's rules as the reader types
   isFormValid: boolean;
-  schema?: z.ZodType;
+  schema?: undefined | z.ZodType;
 }
 
 const { editedValue, isFormValid, schema } = defineProps<Props>();

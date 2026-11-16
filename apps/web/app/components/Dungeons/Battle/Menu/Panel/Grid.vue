@@ -17,7 +17,7 @@ interface Props {
   getText: (value: GridValue<TGrid>) => string;
   grid: Grid<TGrid>;
   isVisible: boolean;
-  x?: number;
+  x?: number | undefined;
 }
 
 const { x = 0 } = defineProps<Props>();

@@ -11,8 +11,8 @@ interface OpenGenshinChange {
   areas: string[];
   hasOpenTask: boolean;
   id: string;
-  phase?: number;
-  pickPhase?: number;
+  phase?: number | undefined;
+  pickPhase?: number | undefined;
 }
 
 const describeChange = ({ id, phase, pickPhase }: OpenGenshinChange): string =>

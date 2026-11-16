@@ -5,16 +5,16 @@ import type { Promisable } from "type-fest";
 // A glyph no meaning names. Every row leads with one, so a menu's titles line up and each reads at a glance
 export type Item = {
   [key: string]: unknown;
-  active?: boolean;
+  active?: boolean | undefined;
   badges?: { count: number; icon: string }[];
   // The actions a menu keeps under this one, shown and hidden by it: an item with children is a group's heading and
   // Runs nothing itself. One level deep
   children?: Item[];
   // Drawn after the title in the muted colour, and for a disabled action, the reason it cannot be taken
   description?: string;
-  disabled?: boolean;
+  disabled?: boolean | undefined;
   // A setting that is on or off, drawn with its mark while on, as a checkbox is: an item of its own, not a choice in a group
-  isChecked?: boolean;
+  isChecked?: boolean | undefined;
   // Drawn in the error colour, for an action that destroys what it acts on
   isDanger?: boolean;
   // Opens a divider-separated group in renderings that draw them; a flat menu ignores it
@@ -25,7 +25,7 @@ export type Item = {
   isSelectionFree?: boolean;
   loading?: boolean;
   // The event is optional so an item runs without one, from a suggestion's selection or a list's keys
-  onClick?: (event?: KeyboardEvent | MouseEvent) => Promisable<void>;
+  onClick?: ((event?: KeyboardEvent | MouseEvent) => Promisable<void>) | undefined;
   shortTitle?: string;
   title: string;
 } & ({ icon: string; meaning?: never } | { icon?: never; meaning: UiIconMeaning });

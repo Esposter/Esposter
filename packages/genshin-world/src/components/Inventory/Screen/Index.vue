@@ -56,7 +56,7 @@ interface Props {
   names: Readonly<Record<string, string>>;
   wallet: Wallet;
   // The weapons' details by the entry's id, for the entries whose weapon the bag can already read, the detail panel's stats
-  weaponDetails?: Record<string, InventoryWeaponDetails>;
+  weaponDetails?: Record<string, InventoryWeaponDetails> | undefined;
 }
 
 const {

@@ -11,8 +11,8 @@ import { z } from "zod";
 export interface KitActionRecord {
   animationFrames: number;
   hits: KitHitRecord[];
-  isAimed?: true;
-  staminaPerSecond?: KitParameter;
+  isAimed?: true | undefined;
+  staminaPerSecond?: KitParameter | undefined;
   targeting: KitTargeting;
 }
 

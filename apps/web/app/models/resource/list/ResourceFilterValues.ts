@@ -14,7 +14,7 @@ export interface ResourceFilterValues {
   tagName: string;
   tagValue: string;
   types: ResourceType[];
-  updatedAfter?: Date;
-  updatedBefore?: Date;
+  updatedAfter?: Date | undefined;
+  updatedBefore?: Date | undefined;
   updatedFilter: "" | ResourceUpdatedFilter;
 }

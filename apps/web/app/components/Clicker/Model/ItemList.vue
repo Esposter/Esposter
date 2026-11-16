@@ -2,7 +2,7 @@
 import type { ClickerListItem } from "#src/models/clicker/ClickerListItem";
 import type { UiListItem } from "#src/models/ui/UiListItem";
 
-import { ID_SEPARATOR } from "@esposter/shared";
+import { ID_SEPARATOR, omitUndefined } from "@esposter/shared";
 
 interface Props {
   items: T[];
@@ -42,7 +42,7 @@ const open = (id: string) => {
 <template>
   <UiList :get-row-props :items="listItems" :label select-none @select="open($event)">
     <template #mark="{ item: { item } }">
-      <NuxtImg size-6 object-contain :src="item.image" alt="" />
+      <NuxtImg :="omitUndefined({ src: item.image })" size-6 object-contain alt="" />
     </template>
     <template #title="{ item: { item } }">
       <ClickerModelItemListTitle :item />

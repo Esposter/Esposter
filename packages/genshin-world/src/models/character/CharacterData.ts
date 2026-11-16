@@ -18,13 +18,13 @@ export interface CharacterData {
   ascensionPhases: CharacterAscensionPhase[];
   attributeLines: AttributeLine[];
   bodyType: BodyType;
-  element?: Element;
+  element?: Element | undefined;
   growAttributes: GrowAttribute[];
   id: number;
   initialWeaponId: number;
   nameTextId: string;
   rarity: number;
-  regionId?: string;
+  regionId?: string | undefined;
   weaponType: WeaponType;
 }
 

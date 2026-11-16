@@ -5,8 +5,8 @@ import type { Element } from "#src/models/Element";
 // Deals none, the ids of the characters whose share stood in the Hydro a Lunar-Crystallize consumed, as it consumed it,
 // And the gauge a Swirl spreads its element at to the targets round it, or a Burning tick its Pyro at
 export interface Reaction {
-  element?: Element;
+  element?: Element | undefined;
   reactionType: ReactionType;
-  sourceIds?: number[];
-  spreadGauge?: number;
+  sourceIds?: number[] | undefined;
+  spreadGauge?: number | undefined;
 }

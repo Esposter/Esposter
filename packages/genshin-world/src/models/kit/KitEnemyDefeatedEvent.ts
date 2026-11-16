@@ -6,5 +6,5 @@ import type { KitEventKind } from "#src/models/kit/KitEventKind";
 export interface KitEnemyDefeatedEvent {
   enemy: Enemy;
   kind: typeof KitEventKind.EnemyDefeated;
-  striker?: Combatant;
+  striker?: Combatant | undefined;
 }

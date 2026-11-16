@@ -9,13 +9,13 @@ import type { KitRecord } from "genshin-world";
 // Its record, and what a reader could not read for it
 export interface KitInput {
   characterId: number;
-  gcsimFolder?: string;
+  gcsimFolder?: string | undefined;
   name: string;
   namedHitCandidateMap: NamedHitCandidateMap;
   notes: string[];
   overlay: KitOverlay;
   overlayName: string;
-  publishedRecord?: KitRecord;
+  publishedRecord?: KitRecord | undefined;
   sourceCandidateMap: Map<string, KitCandidate[]>;
   tables: KitTables;
 }

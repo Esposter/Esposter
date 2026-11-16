@@ -5,10 +5,10 @@ interface Props {
   // How far the pointer's disc reaches from its point, in the view's metres
   size: number;
   // The pointer's place in the view, from its projected catalogue point, in the view's metres
-  x?: number;
-  y?: number;
+  x?: number | undefined;
+  y?: number | undefined;
   // The yaw the view faces, in radians, as the camera turns it
-  yaw?: number;
+  yaw?: number | undefined;
 }
 
 const { x = 0, y = 0, yaw = 0 } = defineProps<Props>();

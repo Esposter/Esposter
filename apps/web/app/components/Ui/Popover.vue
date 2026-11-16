@@ -9,13 +9,13 @@ interface Props {
   // An element already on the page the panel hangs off, opened through the model: the row of a list that was pressed,
   // So one panel serves every row. Only the trigger slot draws a trigger, so a panel whose row is not there yet draws
   // No empty one in its place
-  anchor?: HTMLElement;
+  anchor?: HTMLElement | undefined;
   // The trigger's own text or a label beside it already reads the label, so no tooltip says it again: a date field
-  isLabelShown?: true;
+  isLabelShown?: true | undefined;
   // The panel's accessible name, and its trigger's, since a trigger may show no more than a mark
   label: string;
-  positionArea?: string;
-  variant?: UiButtonVariant;
+  positionArea?: string | undefined;
+  variant?: UiButtonVariant | undefined;
 }
 // A trigger and the panel it opens: a menu's shape for content that is not a list of actions, such as links grouped
 // Under headings. What a call site passes goes to the trigger, which opens the panel natively through its popover

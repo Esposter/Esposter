@@ -23,7 +23,7 @@ interface Props {
   closeLabel: string;
   // The picked place: its name, its description, the rewards it may pay, the durations it offers and the action its
   // Button takes. Absent while no place is picked, so the panel and its button are not drawn
-  detail?: ExpeditionPlaceDetail;
+  detail?: ExpeditionPlaceDetail | undefined;
   // The duration picked, in hours, which a send to the picked place takes
   hours: number;
   // The expedition limit in the reader's words, its count filled in: "Expedition Limit: 1/2"

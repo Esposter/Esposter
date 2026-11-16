@@ -7,7 +7,7 @@ import { z } from "zod";
 export interface DatasetColumn {
   name: string;
   // The header a file prints in place of the name, for a column whose name is not what a person reads
-  title?: string;
+  title?: string | undefined;
   type: DatasetColumnType;
 }
 

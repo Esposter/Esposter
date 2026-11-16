@@ -3,6 +3,7 @@ import type { IsoTriangleConfiguration } from "#src/models/configuration/IsoTria
 import type { IsoTriangleEventEmitsOptions } from "#src/models/emit/IsoTriangleEventEmitsOptions";
 import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
+import type { UndefinedOnPartial } from "type-fest";
 
 import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
 import { IsoTriangleSetterMap } from "#src/services/setterMap/IsoTriangleSetterMap";
@@ -10,9 +11,9 @@ import { IsoTriangleSetterMap } from "#src/services/setterMap/IsoTriangleSetterM
 interface IsoTriangleEmits extends /** @vue-ignore */ IsoTriangleEventEmitsOptions {}
 
 interface Props {
-  configuration: Partial<IsoTriangleConfiguration>;
-  immediate?: true;
-  onComplete?: (scene: SceneWithPlugins, isoTriangle: GameObjects.IsoTriangle) => void;
+  configuration: UndefinedOnPartial<Partial<IsoTriangleConfiguration>>;
+  immediate?: true | undefined;
+  onComplete?: ((scene: SceneWithPlugins, isoTriangle: GameObjects.IsoTriangle) => void) | undefined;
 }
 
 const { configuration, immediate, onComplete } = defineProps<Props>();

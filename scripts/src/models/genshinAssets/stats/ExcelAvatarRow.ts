@@ -15,6 +15,6 @@ export interface ExcelAvatarRow {
   propGrowCurves: { growCurve: string; type: string }[];
   qualityType: string;
   skillDepotId: number;
-  useType?: string;
+  useType?: string | undefined;
   weaponType: string;
 }

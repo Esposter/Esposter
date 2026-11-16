@@ -11,7 +11,7 @@ interface Props {
   columnLayout: number[];
   file: FileEntity;
   index: number;
-  isPreview?: boolean;
+  isPreview?: boolean | undefined;
   message: ClientMessage;
 }
 

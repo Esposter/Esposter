@@ -9,7 +9,7 @@ import { useRoomStore } from "#src/store/message/room/index";
 import { useSearchHistoryStore } from "#src/store/message/search/history";
 import { useSearchMessageStore } from "#src/store/message/search/index";
 import { useMessageLayoutStore } from "#src/store/message/ui/layout";
-import { getResultAsync, noop, withFinalizerAsync } from "@esposter/shared";
+import { getResultAsync, noop, omitUndefined, withFinalizerAsync } from "@esposter/shared";
 
 export const useReadSearchedMessages = () => {
   const { $trpc } = useNuxtApp();
@@ -39,7 +39,10 @@ export const useReadSearchedMessages = () => {
     { filters, query }: { filters: Filter[]; query: string },
     signal?: AbortSignal,
   ) => {
-    const page = await $trpc.message.searchMessages.query({ cursor, filters, query, roomId }, { signal });
+    const page = await $trpc.message.searchMessages.query(
+      { cursor, filters, query, roomId },
+      omitUndefined({ signal }),
+    );
     await readMessageCreators(roomId, page.items);
     return page;
   };

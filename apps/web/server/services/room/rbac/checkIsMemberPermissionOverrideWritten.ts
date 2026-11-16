@@ -16,8 +16,8 @@ export const checkIsMemberPermissionOverrideWritten = async (
     roomId,
     userId,
   }: {
-    current?: MemberPermissionOverride;
-    isMemberRow?: SQL;
+    current?: MemberPermissionOverride | undefined;
+    isMemberRow?: SQL | undefined;
     override: MemberPermissionOverride;
     roomId: string;
     userId: string;

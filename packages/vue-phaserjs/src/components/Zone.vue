@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import type { ZoneConfiguration } from "#src/models/configuration/ZoneConfiguration";
 import type { ZoneEventEmitsOptions } from "#src/models/emit/ZoneEventEmitsOptions";
-import type { SetRequired } from "type-fest";
+import type { SetRequired, UndefinedOnPartial } from "type-fest";
 
 import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
 import { ZoneSetterMap } from "#src/services/setterMap/ZoneSetterMap";
 
 interface Props {
-  configuration: SetRequired<Partial<ZoneConfiguration>, "height" | "width" | "x" | "y">;
+  configuration: UndefinedOnPartial<SetRequired<Partial<ZoneConfiguration>, "height" | "width" | "x" | "y">>;
 }
 
 interface ZoneEmits extends /** @vue-ignore */ ZoneEventEmitsOptions {}

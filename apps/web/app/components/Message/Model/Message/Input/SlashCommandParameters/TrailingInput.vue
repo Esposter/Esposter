@@ -4,7 +4,7 @@ import { useSlashCommandStore } from "#src/store/message/input/slashCommand";
 import { checkIsCaretAtStart } from "#src/util/dom/checkIsCaretAtStart";
 
 interface Props {
-  isFocused?: boolean;
+  isFocused?: boolean | undefined;
 }
 
 const { isFocused } = defineProps<Props>();

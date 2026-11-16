@@ -11,7 +11,7 @@ import { z } from "zod";
 // Bare ids like every cross-resource link — re-resolved on read so a deleted binding fails soft
 // Rather than stranding the program on a dangling foreign key
 export interface ProgramResource {
-  audience?: DatasetReference;
+  audience?: DatasetReference | undefined;
   emailId: string;
   keyColumn: string;
   surveyId: string;

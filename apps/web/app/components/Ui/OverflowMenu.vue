@@ -11,7 +11,7 @@ interface Props {
   // What the actions are of, such as "Post actions": the menu's name and its trigger's
   label: string;
   // The mark it opens from, where the actions are a kind of their own rather than one thing's: a sheet's data tools
-  meaning?: UiIconMeaning;
+  meaning?: UiIconMeaning | undefined;
 }
 // The actions of one thing behind one quiet mark: the same Item list its context menu opens, so the two never disagree
 const isOpen = defineModel<boolean>("isOpen", { default: false });

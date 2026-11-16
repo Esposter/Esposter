@@ -6,7 +6,7 @@ import type { Promisable } from "type-fest";
 // Each its own choice. A value is unique within its toolbar, since it keys the item and names the choice it makes
 export interface EditorToolbarItem {
   // The reason it cannot be used, which the item says as its description
-  description?: string;
+  description?: string | undefined;
   isDisabled?: boolean;
   // Held in the overflow menu at every width, for an occasional command the bar never draws, so it takes no room in the bar
   isInOverflow?: boolean;

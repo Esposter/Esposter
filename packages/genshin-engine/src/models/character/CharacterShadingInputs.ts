@@ -28,7 +28,7 @@ export interface CharacterShadingInputs {
   // The face's draw, its threshold and flip set each frame from the light, and the face map, read by the face kind, with
   // Its softness "_FaceMapSoftness"
   faceDraw: FaceDraw;
-  faceMap?: Texture;
+  faceMap?: Texture | undefined;
   faceSoftness: number;
   // Whether a cool shadow is on, "_CoolShadowColorOrTex"
   isCoolShadow: boolean;
@@ -47,17 +47,17 @@ export interface CharacterShadingInputs {
   lightArea: number;
   // The lightmap "_LightMapTex", whose red is the metal mask and the specular weight, green the shadow threshold, blue the
   // Specular gate and alpha the region
-  lightMapTexture?: Texture;
+  lightMapTexture?: Texture | undefined;
   // The main texture "_MainTex"
-  mainTexture?: Texture;
+  mainTexture?: Texture | undefined;
   // The matcap read where the metal mask holds, "_MTMap", and its two colours
   metalDarkColor: Vector3Tuple;
   metalLightColor: Vector3Tuple;
-  metalTexture?: Texture;
+  metalTexture?: Texture | undefined;
   // The outline's offset along the view ray, from the game's "_MaxOutlineZOffset", where a game model has one
-  outlineOffset?: { blockBChannel: number; size: number };
+  outlineOffset?: undefined | { blockBChannel: number; size: number };
   // A game model's outline colours by region, read per pixel; a pack's outline is its edge's one colour
-  outlineRegions?: OutlineRegions;
+  outlineRegions?: OutlineRegions | undefined;
   // The outline's width knots, "_OutlineWidthAdjustZs" and "_OutlineWidthAdjustScales", as the outline reads them
   outlineWidthKnots: OutlineWidthKnots;
   // The packed shadow ramp "_PackedShadowRampTex", read as its row, and the layout it is read by: the game's and the
@@ -77,7 +77,7 @@ export interface CharacterShadingInputs {
   specularMultiplier: number;
   // A PMX material's sphere map, laid over its diffuse as MMD lays it, multiplied or added, before the lit colour. It is not
   // The metal map: a PMX file has no lightmap for the metal gate to read, so the sphere never reaches that branch
-  sphere?: { mode: typeof PmxSphereMode.Add | typeof PmxSphereMode.Multiply; texture: Texture };
+  sphere?: undefined | { mode: typeof PmxSphereMode.Add | typeof PmxSphereMode.Multiply; texture: Texture };
   vertexAo: number;
   vertexRampWidth: number;
 }

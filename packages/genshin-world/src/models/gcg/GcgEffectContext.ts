@@ -6,9 +6,9 @@ import type { GcgSkill } from "#src/models/gcg/GcgSkill";
 // That skill is a Plunging Attack. The character a card is attached to, as an equipment or a status, is named too, for the
 // Hooks that act on that character
 export interface GcgEffectContext {
-  characterIndex?: number;
+  characterIndex?: number | undefined;
   duel: GcgDuel;
-  isPlunge?: boolean;
+  isPlunge?: boolean | undefined;
   sideIndex: number;
-  skill?: GcgSkill;
+  skill?: GcgSkill | undefined;
 }

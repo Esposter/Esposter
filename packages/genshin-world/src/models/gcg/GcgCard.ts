@@ -9,10 +9,10 @@ export interface GcgCard {
   effects: string[];
   id: number;
   // Whether a support card is a Companion Support Card, as the dump's ally tag marks it, and absent for other cards
-  isCompanion?: boolean;
+  isCompanion?: boolean | undefined;
   isLocation: boolean;
   kind: GcgCardKind;
   nameTextId: number;
   // The weapon kind a weapon card names, as a character's weapon is named (the tag's suffix), and no weapon for other cards
-  weapon?: string;
+  weapon?: string | undefined;
 }

@@ -44,7 +44,9 @@ const readStrikeMultipliers = ({ kitEffectState }: KitContext): number[] =>
 
 describe(createTartagliaKitBehaviour, () => {
   // The team's effects once the skill's press has changed into the Melee Stance, and the kit that stance plays
-  const enterMeleeStance = (combatant: Combatant): { kitEffectState: KitEffectState; stance?: KitStance } => {
+  const enterMeleeStance = (
+    combatant: Combatant,
+  ): { kitEffectState: KitEffectState; stance?: KitStance | undefined } => {
     const kitEffectState: KitEffectState = { effects: [] };
     TARTAGLIA_KIT.elementalSkill.onStart?.(createKitTestContext(combatant, { kitEffectState }));
     return {

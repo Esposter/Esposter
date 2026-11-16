@@ -3,8 +3,8 @@ import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 interface Props {
-  isServiceMenuShown?: true;
-  title?: string;
+  isServiceMenuShown?: true | undefined;
+  title?: string | undefined;
 }
 
 const slots = defineSlots<{

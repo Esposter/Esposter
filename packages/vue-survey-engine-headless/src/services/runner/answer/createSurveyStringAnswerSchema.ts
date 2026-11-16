@@ -11,8 +11,8 @@ export const createSurveyStringAnswerSchema = ({
   maxLength,
   minLength,
 }: {
-  maxLength?: number;
-  minLength?: number;
+  maxLength?: number | undefined;
+  minLength?: number | undefined;
 }): z.ZodString => {
   const bounded = z
     .string({ error: SURVEY_INVALID_ANSWER_MESSAGE })

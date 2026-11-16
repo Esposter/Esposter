@@ -6,11 +6,11 @@ import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 interface Props {
   id: string;
   // Whether the row is selected, in a list that holds a selection, which makes it an option; absent in any other
-  isSelected?: boolean;
+  isSelected?: boolean | undefined;
   isTabbable: boolean;
   item: UiListItem<T>;
   // Anything the row's own element takes beside what the list gives it, such as the props that open its context menu
-  rowProps?: Record<string, unknown>;
+  rowProps?: Record<string, unknown> | undefined;
 }
 // One row of a list, drawn the one way whichever the list is: an option of a listbox, marked at its end while selected,
 // Or a list item holding a link or a button, with the row's actions beside it

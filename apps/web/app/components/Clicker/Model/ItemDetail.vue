@@ -7,6 +7,7 @@ import { Target } from "#shared/models/clicker/data/Target";
 import { formatNumberLong } from "#src/services/clicker/formatNumberLong";
 import { MenuIconMap } from "#src/services/clicker/icon/MenuIconMap";
 import { UpgradeIconMap } from "#src/services/clicker/icon/UpgradeIconMap";
+import { omitUndefined } from "@esposter/shared";
 import { marked } from "marked";
 
 interface Props
@@ -31,9 +32,9 @@ const displayPrice = computed(() => formatNumberLong(price));
   <div w="[min(20rem,80dvw)]" flex flex-col gap-3>
     <header flex gap-2 items-center>
       <NuxtImg
+        :="omitUndefined({ src: type === Target.Building ? MenuIconMap[id] : UpgradeIconMap[id] })"
         size-8
         object-contain
-        :src="type === Target.Building ? MenuIconMap[id] : UpgradeIconMap[id]"
         alt=""
         aria-hidden="true"
       />

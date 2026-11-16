@@ -2,11 +2,11 @@
 import { Avatar } from "@vuetify/v0";
 
 interface Props {
-  image?: string;
+  image?: string | undefined;
   // The one picture a page is about, such as a profile's own, rather than one beside a name in a row
-  isLarge?: true;
+  isLarge?: true | undefined;
   // An icon's size, for a row's leading column, where it lines up with the rows marked by an icon
-  isSmall?: true;
+  isSmall?: true | undefined;
   // The alt text of the image, and the letter shown until it loads or when there is none
   name: string;
 }

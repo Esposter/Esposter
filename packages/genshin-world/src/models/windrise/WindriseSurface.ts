@@ -14,7 +14,7 @@ export interface WindriseSurface {
 // A part of a surface, its colour and its detail where it has its own
 interface WindriseSurfacePart {
   color: string;
-  detail?: SurfaceDetail;
+  detail?: SurfaceDetail | undefined;
 }
 // A tone of a surface's palette and the share of the surface it covers
 interface WindriseSurfaceTone {

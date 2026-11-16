@@ -43,7 +43,7 @@ export const useTerrainResidency = ({
 }: {
   // Whether the view the selection holds is settled with nothing in flight behind it, which the settled read answers
   checkIsSettled: () => boolean;
-  devRegistry?: DevRegistry;
+  devRegistry?: DevRegistry | undefined;
   postTile: (key: number, message: TerrainWorkerMessage) => void;
   postToEach: (message: TerrainWorkerMessage) => void;
   regionGrounds: MaybeRefOrGetter<RegionGround[]>;

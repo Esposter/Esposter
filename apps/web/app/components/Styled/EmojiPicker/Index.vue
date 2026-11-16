@@ -7,10 +7,10 @@ import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { EMOJI_PICKER_TOOLTIP_TEXT } from "#src/services/styled/constants";
 
 interface Props {
-  customEmojis?: CustomEmoji[];
+  customEmojis?: CustomEmoji[] | undefined;
   // The trigger's accessible name and its tooltip, and the panel's name
-  label?: string;
-  variant?: UiButtonVariant;
+  label?: string | undefined;
+  variant?: UiButtonVariant | undefined;
 }
 // What a call site passes goes to the trigger, which is the only element it can mean
 defineOptions({ inheritAttrs: false });

@@ -9,9 +9,9 @@ interface Props {
   inheritedValue: boolean;
   // The reader does not hold the permission, and the server refuses an allow of one they lack, so the segment is held
   // Unless the row already allows it, since that is the one state the reader can move away from
-  isAllowDisabled?: true;
+  isAllowDisabled?: true | undefined;
   // A member the reader cannot manage, who no write to their row is accepted for, so every segment is held
-  isDisabled?: true;
+  isDisabled?: true | undefined;
   title: string;
 }
 

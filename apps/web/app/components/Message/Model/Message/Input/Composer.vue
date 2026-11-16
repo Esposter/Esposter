@@ -5,7 +5,7 @@ import type { AnyExtension } from "@tiptap/vue-3";
 import { MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
 
 interface Props {
-  extraExtensions?: AnyExtension[];
+  extraExtensions?: AnyExtension[] | undefined;
   target: ComposerTarget;
 }
 

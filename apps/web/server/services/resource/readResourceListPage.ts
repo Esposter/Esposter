@@ -17,10 +17,10 @@ interface ReadResourceListPageOptions {
   cursor: PageCursor;
   limit: number;
   // Set when the list is a search: the words' expression, and the index hits that rank each row by bm25
-  search?: { expression: string; hits: ReturnType<typeof getResourceSearchHits> };
+  search?: undefined | { expression: string; hits: ReturnType<typeof getResourceSearchHits> };
   sort: PageSort<ResourceListColumnKey>;
   userId: string;
-  where?: SQL;
+  where?: SQL | undefined;
 }
 
 // One page of the owner's resources in the order the sort declares, with the cursor for the next. The read without a

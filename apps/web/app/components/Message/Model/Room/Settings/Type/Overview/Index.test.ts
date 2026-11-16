@@ -7,6 +7,7 @@ import MessageModelRoomSettingsTypeOverviewTopicField from "#src/components/Mess
 import { createRoom } from "#src/services/message/room/createRoom.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useRoomStore } from "#src/store/message/room/index";
+import { omitUndefined } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { assert, describe, expect, test } from "vitest";
@@ -40,7 +41,7 @@ describe("messageModelRoomSettingsTypeOverviewIndex", () => {
     trpcMsw.room.updateRoom.mutation(({ input }) => {
       inputs.push(input);
       resolveSaved();
-      return { ...room, ...input };
+      return { ...room, ...omitUndefined(input) };
     });
     const component = await mountSuspended(MessageModelRoomSettingsTypeOverviewIndex, { props: { room } });
     await component.setProps({ room: { ...room, topic: "a" } });
@@ -69,7 +70,7 @@ describe("messageModelRoomSettingsTypeOverviewIndex", () => {
       inputs.push(input);
       roomStore.storeUpdateRoom({ id: room.id, topic: "a" });
       resolveSaved();
-      return { ...room, ...input, topic: "a" };
+      return { ...room, ...omitUndefined(input), topic: "a" };
     });
     roomStore.pushRooms({ ...room });
     // Read back by id, since the list belongs to the app rather than to this test

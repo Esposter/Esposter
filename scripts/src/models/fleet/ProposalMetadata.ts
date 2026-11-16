@@ -5,7 +5,7 @@
 export interface ProposalMetadata {
   areas: string[];
   needs: string[];
-  phase?: number;
+  phase?: number | undefined;
   touches: string[];
   waiting: string;
 }

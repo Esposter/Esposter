@@ -7,7 +7,7 @@ import type { GenshinUnitState } from "#src/models/genshinProgress/GenshinUnitSt
 export interface GenshinUnit {
   blocker: string;
   kind: ComputeKind | GenshinProgressKind;
-  phase?: number;
+  phase?: number | undefined;
   quest?: string;
   state: GenshinUnitState;
 }

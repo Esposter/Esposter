@@ -6,8 +6,8 @@ import { getFileSize } from "#src/services/file/getFileSize";
 
 interface Props {
   // The file types it takes, as the native input's accept: MIME types, wildcards such as image/*, or extensions
-  accept?: string;
-  isMultiple?: true;
+  accept?: string | undefined;
+  isMultiple?: true | undefined;
   label: string;
 }
 // Files picked through the browser's own picker or dropped onto the field. The field is a button that opens the picker,

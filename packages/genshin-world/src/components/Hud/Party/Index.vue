@@ -25,7 +25,7 @@ interface Props {
   // Whether the rows are laid out for a touch screen, which caps no row with its key
   isTouch: boolean;
   // The names the text ids cite in the reader's language, which stay blank until they load
-  nameTextMap?: Readonly<Record<string, string>>;
+  nameTextMap?: Readonly<Record<string, string>> | undefined;
   party: Party;
   // The name the player chose for the Traveler, shown on the Traveler's row as the game shows it, the game's own name
   // While none is chosen

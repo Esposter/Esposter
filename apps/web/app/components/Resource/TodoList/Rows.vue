@@ -9,7 +9,7 @@ import { useTodoListStore } from "#src/store/resource/todoList/index";
 import { useTodoDialogStore } from "#src/store/resource/todoList/todoDialog";
 
 interface Props {
-  isReorderable?: true;
+  isReorderable?: true | undefined;
   items: UiListItem<TodoListItem["id"]>[];
   label: string;
 }

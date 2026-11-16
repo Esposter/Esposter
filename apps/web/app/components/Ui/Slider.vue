@@ -3,18 +3,18 @@ import { Slider } from "@vuetify/v0";
 
 interface Props {
   // Held at the disabled opacity, where the thumb takes no press and no key
-  isDisabled?: true;
+  isDisabled?: true | undefined;
   // Marks the thumb invalid for assistive technology and tints the track in the error colour, as an invalid text field is
-  isInvalid?: true;
+  isInvalid?: true | undefined;
   // Hides the label from sight, where it still names the thumb for speech
-  isLabelHidden?: true;
+  isLabelHidden?: true | undefined;
   // Marks the label with the required mark, which speech announces as required once
-  isRequired?: true;
+  isRequired?: true | undefined;
   label: string;
   // A live reading drawn along the track as a fraction of it, which the thumb is set against: a microphone's level
   // Under its sensitivity threshold. Said in words by its own label, since it is not the value being picked
-  level?: number;
-  levelLabel?: string;
+  level?: number | undefined;
+  levelLabel?: string | undefined;
   max: number;
   min: number;
   step: number;

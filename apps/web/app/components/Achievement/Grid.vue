@@ -5,7 +5,7 @@ import type { AchievementName } from "@esposter/db-schema";
 
 interface Props {
   achievementDefinitions: AchievementDefinitionEntry[];
-  achievementNameRarityMap?: Record<AchievementName, number>;
+  achievementNameRarityMap?: Record<AchievementName, number> | undefined;
   userAchievements: UserAchievementWithDefinition[];
 }
 

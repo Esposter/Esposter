@@ -3,7 +3,7 @@
 export interface ClickerListItem {
   amount?: number;
   id: string;
-  image?: string;
-  isAffordable?: boolean;
+  image?: string | undefined;
+  isAffordable?: boolean | undefined;
   price: number;
 }

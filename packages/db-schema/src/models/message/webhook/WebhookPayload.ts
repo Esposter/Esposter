@@ -5,9 +5,9 @@ import { sanitizeTextHtml } from "@esposter/shared";
 import { z } from "zod";
 
 export interface WebhookPayload {
-  avatar_url?: string;
+  avatar_url?: string | undefined;
   content: string;
-  username?: string;
+  username?: string | undefined;
 }
 
 // Discord's payload also takes `embeds`, but a message has nowhere to store one, so the schema refuses every key it

@@ -14,9 +14,9 @@ import { z } from "zod";
 export interface PuzzlePlace {
   id: string;
   kind: PuzzleKind;
-  monument?: MonumentPlace;
+  monument?: MonumentPlace | undefined;
   position: GroundPoint;
-  seelie?: SeeliePlace;
+  seelie?: SeeliePlace | undefined;
 }
 
 export const puzzlePlaceSchema = z.object({

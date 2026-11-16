@@ -6,5 +6,5 @@ import type { LuaOpcodeStatistic } from "#src/models/recreation/lua/LuaOpcodeSta
 export interface LuaOpcodeProposal {
   evidence: string;
   statistic: LuaOpcodeStatistic;
-  stockOpcode?: LuaOpcode;
+  stockOpcode?: LuaOpcode | undefined;
 }

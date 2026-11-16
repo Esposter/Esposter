@@ -5,7 +5,7 @@ import { VoxelDigitMap } from "#src/services/app/VoxelDigitMap";
 interface Props {
   description: string;
   // A block knocked out of the middle digit and lying on the floor beneath it: the page that is not there
-  isMissingBlock?: true;
+  isMissingBlock?: true | undefined;
   statusCode: number;
   title: string;
 }

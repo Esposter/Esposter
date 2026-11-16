@@ -4,21 +4,21 @@ import type { BlockNodeProps } from "vue-block-editor-headless";
 
 // The props an MJML accordion node holds: its attributes as MJML takes them, its children
 export interface MjmlAccordionProps extends BlockNodeProps {
-  border?: string;
+  border?: string | undefined;
   children: (MjmlAccordionElementNode | MjmlRawNode)[];
-  "container-background-color"?: string;
-  "font-family"?: string;
-  "icon-align"?: string;
-  "icon-height"?: string;
-  "icon-position"?: string;
-  "icon-unwrapped-alt"?: string;
-  "icon-unwrapped-url"?: string;
-  "icon-width"?: string;
-  "icon-wrapped-alt"?: string;
-  "icon-wrapped-url"?: string;
-  padding?: string;
-  "padding-bottom"?: string;
-  "padding-left"?: string;
-  "padding-right"?: string;
-  "padding-top"?: string;
+  "container-background-color"?: string | undefined;
+  "font-family"?: string | undefined;
+  "icon-align"?: string | undefined;
+  "icon-height"?: string | undefined;
+  "icon-position"?: string | undefined;
+  "icon-unwrapped-alt"?: string | undefined;
+  "icon-unwrapped-url"?: string | undefined;
+  "icon-width"?: string | undefined;
+  "icon-wrapped-alt"?: string | undefined;
+  "icon-wrapped-url"?: string | undefined;
+  padding?: string | undefined;
+  "padding-bottom"?: string | undefined;
+  "padding-left"?: string | undefined;
+  "padding-right"?: string | undefined;
+  "padding-top"?: string | undefined;
 }

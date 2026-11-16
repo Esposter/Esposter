@@ -7,7 +7,7 @@ import { FieldInputComponentMap } from "#src/services/resource/sheet/column/Fiel
 
 interface Props {
   column: ColumnTypeColumnMap[TColumnType];
-  isInline?: true;
+  isInline?: true | undefined;
 }
 
 const modelValue = defineModel<ColumnTypeModelValueMap[TColumnType]>({ required: true });

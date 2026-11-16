@@ -9,8 +9,8 @@ import { searchItems } from "#src/services/search/searchItems";
 import { useFriendStore } from "#src/store/message/user/friend";
 
 interface Props {
-  excludedUserIds?: PublicUser["id"][];
-  isMultiple?: TMultiple;
+  excludedUserIds?: PublicUser["id"][] | undefined;
+  isMultiple?: TMultiple | undefined;
 }
 
 const modelValue = defineModel<FriendPickerModelValue<TMultiple>>();

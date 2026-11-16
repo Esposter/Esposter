@@ -13,7 +13,7 @@ export interface FleetEntry {
   lane: string;
   line: string;
   needs: string[];
-  phase?: number;
+  phase?: number | undefined;
   touches: string[];
   waiting: string;
 }

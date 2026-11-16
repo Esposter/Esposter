@@ -9,11 +9,11 @@ type ExtendedListItem = TExtra & UiListItem<T>;
 
 interface Props {
   // Anything a row takes beside what the list gives it, such as the props that open its context menu
-  getRowProps?: (item: ExtendedListItem) => Record<string, unknown>;
+  getRowProps?: ((item: ExtendedListItem) => Record<string, unknown>) | undefined;
   // Lets more than one row be selected at once, in a list that holds a selection
-  isMultiple?: true;
+  isMultiple?: true | undefined;
   // Lets the rows be put in another order, by dragging a row or by Alt+Up and Alt+Down, each move within its group
-  isReorderable?: true;
+  isReorderable?: true | undefined;
   // A row may carry more than the list's own fields, which its slots then receive whole, as the list's item
   items: ExtendedListItem[];
   // The list's accessible name: what its rows are
@@ -33,7 +33,7 @@ defineSlots<{
   mark?: (props: { item: ExtendedListItem }) => VNode;
   title?: (props: { item: ExtendedListItem }) => VNode;
 }>();
-const modelValue = defineModel<T[]>();
+const modelValue = defineModel<T[] | undefined>();
 const { isMultiple, isReorderable, items } = defineProps<Props>();
 const emit = defineEmits<{ reorder: [values: T[]]; select: [value: T, event: KeyboardEvent | MouseEvent] }>();
 const listId = useId();
@@ -47,7 +47,7 @@ const { announce, announcement, getKeyedOrder } = useReorder();
 const getDragReorderProps = useDragReorder();
 // Rows sharing a group sit together under its heading, in the order they come
 const groups = computed(() => {
-  const rowGroups: { group?: string; items: ExtendedListItem[] }[] = [];
+  const rowGroups: { group?: string | undefined; items: ExtendedListItem[] }[] = [];
   for (const item of items) {
     const lastRowGroup = rowGroups.at(-1);
     if (lastRowGroup && lastRowGroup.group === item.group) lastRowGroup.items.push(item);

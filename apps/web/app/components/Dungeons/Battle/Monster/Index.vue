@@ -3,7 +3,7 @@ import { Image } from "vue-phaserjs";
 
 interface Props {
   // By default, this will be the player
-  isEnemy?: true;
+  isEnemy?: true | undefined;
 }
 
 const { isEnemy } = defineProps<Props>();

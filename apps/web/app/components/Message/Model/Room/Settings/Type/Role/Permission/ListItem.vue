@@ -2,7 +2,7 @@
 interface Props {
   description: string;
   // The reader could not save the role with this switch flipped, so it is held as the save would refuse it
-  isDisabled?: true;
+  isDisabled?: true | undefined;
   permission: bigint;
   title: string;
 }

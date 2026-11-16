@@ -8,22 +8,22 @@ import type { Element } from "#src/models/Element";
 // Its own schedule counts the seconds to its next tick, which the kit of the character that applied it answers
 export interface EnemyStatus {
   // The share of its ATK the enemy loses while it carries the status, if it lowers it
-  attackReduction?: number;
+  attackReduction?: number | undefined;
   damageTakenBonus: number;
   // The share of its DEF the enemy loses while it carries the status, if it lowers it. The defence a hit reads is the
   // Game's defence multiplier, (5A + 500) / ((1 - reduction) × (1 - ignored) × DEF + 5A + 500) for an attacker of level A,
   // As gcsim v2.47.2 (MIT) pkg/enemy/damage.go gives it with its DefMod summed into the enemy's level term
   // https://github.com/genshinsim/gcsim/blob/v2.47.2/pkg/enemy/damage.go
-  defenseReduction?: number;
+  defenseReduction?: number | undefined;
   id: string;
-  maxStacks?: number;
-  nextTickSeconds?: number;
-  physicalResistanceReduction?: number;
-  resistanceReduction?: Partial<Record<Element, number>>;
+  maxStacks?: number | undefined;
+  nextTickSeconds?: number | undefined;
+  physicalResistanceReduction?: number | undefined;
+  resistanceReduction?: Partial<Record<Element, number>> | undefined;
   secondsRemaining: number;
-  stacks?: number;
-  tickIntervalSeconds?: number;
+  stacks?: number | undefined;
+  tickIntervalSeconds?: number | undefined;
   // The Max HP the striker that applied the status had as it was applied, which a status whose tick scales with that Max
   // HP reads, so the tick does not read it as it stands when the tick falls
-  wielderMaxHealth?: number;
+  wielderMaxHealth?: number | undefined;
 }

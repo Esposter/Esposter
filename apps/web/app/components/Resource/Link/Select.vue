@@ -7,12 +7,12 @@ import { prependNoneSelectItem } from "#src/services/ui/prependNoneSelectItem";
 
 interface Props {
   // A required binding offers no None, since choosing it would leave the field with no resource at all
-  isRequired?: boolean;
+  isRequired?: boolean | undefined;
   // An unpublished binding is kept beside the list it is left out of, and said to be unpublished in its warning slot
-  isUnpublished?: boolean;
+  isUnpublished?: boolean | undefined;
   label: string;
   // Absent until the owner's resources of this type are read, since a binding cannot be told missing before then
-  resources?: Page<UiSelectItem<string>>;
+  resources?: Page<UiSelectItem<string>> | undefined;
 }
 
 const modelValue = defineModel<string>({ required: true });

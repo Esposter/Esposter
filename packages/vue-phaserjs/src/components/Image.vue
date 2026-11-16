@@ -3,7 +3,7 @@ import type { ImageConfiguration } from "#src/models/configuration/ImageConfigur
 import type { ImageEventEmitsOptions } from "#src/models/emit/ImageEventEmitsOptions";
 import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
-import type { SetRequired } from "type-fest";
+import type { SetRequired, UndefinedOnPartial } from "type-fest";
 
 import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
 import { ImageSetterMap } from "#src/services/setterMap/ImageSetterMap";
@@ -11,8 +11,8 @@ import { ImageSetterMap } from "#src/services/setterMap/ImageSetterMap";
 interface ImageEmits extends /** @vue-ignore */ ImageEventEmitsOptions {}
 
 interface Props {
-  configuration: SetRequired<Partial<ImageConfiguration>, "texture">;
-  onComplete?: (scene: SceneWithPlugins, image: GameObjects.Image) => void;
+  configuration: UndefinedOnPartial<SetRequired<Partial<ImageConfiguration>, "texture">>;
+  onComplete?: ((scene: SceneWithPlugins, image: GameObjects.Image) => void) | undefined;
 }
 
 const { configuration, onComplete } = defineProps<Props>();

@@ -32,7 +32,8 @@ useSeoMeta({
   appleMobileWebAppTitle: SITE_NAME,
   applicationName: SITE_NAME,
   description: SITE_DESCRIPTION,
-  fbAppId: runtimeConfig.public.facebook.clientId,
+  // An unset app id is the empty string, which would still draw an empty tag
+  ...(runtimeConfig.public.facebook.clientId ? { fbAppId: runtimeConfig.public.facebook.clientId } : {}),
   formatDetection: "telephone=no",
   mobileWebAppCapable: "yes",
   msapplicationConfig: "/browserconfig.xml",

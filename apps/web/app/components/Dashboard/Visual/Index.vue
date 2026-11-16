@@ -14,14 +14,14 @@ import { checkIsChartVisualType } from "#src/services/dashboard/checkIsChartVisu
 import { VisualTypeDemoDataMap } from "#src/services/dashboard/demo/VisualTypeDemoDataMap";
 import { exportDashboardVisualCsv } from "#src/services/dashboard/export/exportDashboardVisualCsv";
 import { useClipboardStore } from "#src/store/clipboard";
-import { takeOne } from "@esposter/shared";
+import { omitUndefined, takeOne } from "@esposter/shared";
 import { defu } from "defu";
 
 interface Props {
   collision: CollisionMode;
   compactType: CompactType;
   // Drawn in the editor, where a group's grid takes edits and its children are the editor's own tiles
-  isEditable?: true;
+  isEditable?: true | undefined;
   visual: Visual;
 }
 
@@ -49,13 +49,16 @@ const data = computed(() => visualPropsData.value ?? VisualTypeDemoDataMap[visua
 const options = useApexOptions(
   () => visual.chart,
   () => visual.type,
-  computed(() => ({ ...data.value.options, chart: { ...VISUAL_INTERACTION_CHART_OPTIONS, height: height.value } })),
+  computed(() => ({
+    ...data.value.options,
+    chart: { ...VISUAL_INTERACTION_CHART_OPTIONS, ...omitUndefined({ height: height.value }) },
+  })),
 );
 // Layered after the resolvers rather than ahead of them, because which visuals may be linked is decided by the
 // Chart type they resolve to — the same visual is an axis chart or a donut depending on its chart configuration
 const linkedOptions = computed(() => {
   const visualLinkChartOptions = getVisualLinkChartOptions(visual, options.value.chart?.type);
-  return defu({ chart: visualLinkChartOptions }, options.value);
+  return defu(omitUndefined({ chart: visualLinkChartOptions }), options.value);
 });
 const { applyView, getViewUrl } = useVisualPerspective(
   () => visual.id,

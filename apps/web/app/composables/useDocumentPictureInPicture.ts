@@ -90,9 +90,7 @@ export const useDocumentPictureInPicture = (options: UseDocumentPictureInPicture
   };
   const open = async () => {
     if (!isSupported.value || pictureInPictureWindow.value) return;
-    await getResultAsync(() =>
-      window.documentPictureInPicture.requestWindow({ height: options.height, width: options.width }),
-    ).match(async (target) => {
+    await getResultAsync(() => window.documentPictureInPicture.requestWindow(options)).match(async (target) => {
       // Once its owner is gone nothing is left to close a window, so it is closed rather than bridged or surfaced
       if (isDisposed) {
         target.close();

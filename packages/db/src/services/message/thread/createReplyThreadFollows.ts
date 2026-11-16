@@ -13,7 +13,7 @@ export const createReplyThreadFollows = async (
     message: { replyToId, userId },
     roomId,
     threadRootUserId,
-  }: { message: RoomMessage; roomId: string; threadRootUserId?: string },
+  }: { message: RoomMessage; roomId: string; threadRootUserId?: string | undefined },
 ): Promise<void> => {
   if (replyToId === null || !userId) return;
   // The root's author is followed alongside the replier: Discord tells you when someone replies to your

@@ -12,7 +12,7 @@ import { takeItemCounts } from "#src/services/inventory/takeItemCounts";
 export const startProcessing = (
   recipe: ProcessingRecipe,
   count: number,
-  { inventory, job, now }: { inventory: Inventory; job?: ProcessingJob; now: Temporal.Instant },
+  { inventory, job, now }: { inventory: Inventory; job?: ProcessingJob | undefined; now: Temporal.Instant },
 ): undefined | { inventory: Inventory; job: ProcessingJob } => {
   const queuedCount = job?.count ?? 0;
   if (

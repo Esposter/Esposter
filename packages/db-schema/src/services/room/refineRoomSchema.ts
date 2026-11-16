@@ -1,3 +1,4 @@
+import type { UndefinedOnPartial } from "type-fest";
 import type { z } from "zod";
 
 import { RoomType } from "#src/models/message/RoomType";
@@ -7,7 +8,9 @@ import { normalizeString } from "@esposter/shared";
 
 const roomNameSchema = createNameSchema(ROOM_NAME_MAX_LENGTH);
 
-export const refineRoomSchema = <TSchema extends z.ZodType<Partial<{ name: string; type: RoomType }>>>(
+export const refineRoomSchema = <
+  TSchema extends z.ZodType<UndefinedOnPartial<Partial<{ name: string; type: RoomType }>>>,
+>(
   schema: TSchema,
   roomType: RoomType = RoomType.Room,
 ): TSchema =>

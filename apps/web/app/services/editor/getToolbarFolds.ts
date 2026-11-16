@@ -12,7 +12,7 @@ export const getToolbarFolds = ({
   availableWidth: number;
   gap: number;
   isOverflowHeld: boolean;
-  items: { isPinned?: boolean; width: number }[];
+  items: { isPinned?: boolean | undefined; width: number }[];
   overflowWidth: number;
 }) => {
   // Each slot takes its width and the gap after it, and the bar's last gap is the room its availableWidth leaves over

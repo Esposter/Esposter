@@ -9,11 +9,11 @@ import { getBucket } from "#server/services/storage/getBucket";
 import { StorageBucket } from "@esposter/db-schema";
 
 export interface StartGenshinResult {
-  etag?: string;
+  etag?: string | undefined;
   // Whether no save existed before, so a guest save the browser holds is the one to upload
   isNew: boolean;
   // The session the save held before this start, which the start replaced
-  previousSessionId?: string;
+  previousSessionId?: string | undefined;
   save: GenshinSave;
   serverNow: string;
   sessionId: string;

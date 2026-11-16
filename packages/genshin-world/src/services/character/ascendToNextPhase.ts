@@ -1,5 +1,4 @@
-import type { AscensionCost } from "#src/models/character/AscensionCost";
-import type { AscensionPhase } from "#src/models/character/AscensionPhase";
+import type { CharacterAscensionPhase } from "#src/models/character/CharacterAscensionPhase";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Wallet } from "#src/models/inventory/Wallet";
 
@@ -16,7 +15,7 @@ import { takeInventoryItems } from "#src/services/inventory/takeInventoryItems";
 export const ascendToNextPhase = (
   ascension: number,
   level: number,
-  phases: (AscensionPhase & Partial<AscensionCost>)[],
+  phases: CharacterAscensionPhase[],
   { adventureRank, inventory, wallet }: { adventureRank: number; inventory: Inventory; wallet: Wallet },
 ): AscensionRefusal | { ascension: number; inventory: Inventory; wallet: Wallet } => {
   const nextPhase = getAscendableNextPhase(phases, ascension, level);

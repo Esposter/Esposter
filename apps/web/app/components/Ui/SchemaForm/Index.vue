@@ -11,7 +11,7 @@ import { Actions, configReducer, coreReducer, Generate, i18nReducer } from "@jso
 
 interface Props {
   // What only the dialog knows, whose keys a field names for the items it chooses among: a sheet's columns
-  context?: object;
+  context?: object | undefined;
   // The form's Zod schema, which lays the form out through its JSON Schema and validates the whole value on every
   // Change; each issue is shown on the field at its path
   schema: z.ZodType;

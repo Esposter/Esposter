@@ -3,7 +3,7 @@ import type { OperationDataKey } from "#src/models/shared/pagination/OperationDa
 import type { EntityTypeKey } from "@esposter/db-schema";
 
 import { getEntityIdEqualComparator } from "#src/services/entity/getEntityIdEqualComparator";
-import { Operation, takeOne, uncapitalize } from "@esposter/shared";
+import { omitUndefined, Operation, takeOne, uncapitalize } from "@esposter/shared";
 
 export const createOperationData = <
   TItem extends object,
@@ -29,14 +29,15 @@ export const createOperationData = <
     else if (isReversed) items.value.unshift(newItem);
     else items.value.push(newItem);
   };
-  const updateItem = (updatedItem: Partial<TItem>) => {
+  // A field handed undefined is not set, so it leaves the stored value as it was
+  const updateItem = (updatedItem: { [P in keyof TItem]?: TItem[P] | undefined }) => {
     // Built once and then searched with, rather than inside the callback: the comparator closes over the
     // Target, so constructing it per element rebuilds the same predicate for every row in the list
     const checkIsUpdatedItem = getEntityIdEqualComparator(idKeys as (keyof TItem & string)[], updatedItem);
     const index = items.value.findIndex((item) => checkIsUpdatedItem(item));
     if (index === -1) return;
 
-    Object.assign(takeOne(items.value, index), updatedItem);
+    Object.assign(takeOne(items.value, index), omitUndefined(updatedItem));
   };
   const deleteItem = (ids: { [P in keyof TItem & TIdKeys[number]]: TItem[P] }) => {
     const checkIsDeletedItem = getEntityIdEqualComparator(idKeys as (keyof TItem & string)[], ids as Partial<TItem>);

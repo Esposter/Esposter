@@ -8,17 +8,22 @@ interface Props {
   // Fills the height its parent gives it — a sheet, a dialog, a pane of a set size — rather than growing with its
   // Content: the tab list keeps its row and the selected panel takes the rest, scrolling whatever does not fit, so a
   // Short parent never pushes the content out past its edge
-  isFilling?: true;
+  isFilling?: true | undefined;
   items: UiTabItem<T>[];
   // The tab list's accessible name: what the tabs choose between
   label: string;
   // The look a set of tabs heads a sheet or a pane with. Unset, the tabs are the default look every other set takes
-  variant?: UiTabsVariant;
+  variant?: UiTabsVariant | undefined;
 }
 
 defineSlots<{ default: (props: { value: T }) => VNode }>();
 const modelValue = defineModel<T>({ required: true });
-defineProps<Props>();
+const { items } = defineProps<Props>();
+// The tabs hand back the selected tab's value untyped, so the model takes the item it names
+const selectItem = (value: unknown) => {
+  const item = items.find(({ value: itemValue }) => itemValue === value);
+  if (item) modelValue.value = item.value;
+};
 </script>
 
 <template>
@@ -26,15 +31,7 @@ defineProps<Props>();
     Own rows. Mandatory rather than forced: forcing selects the first tab as the tabs register, over the model's
     Own choice -->
   <div :class="isFilling ? 'grid rows-[auto_1fr] min-h-0' : 'contents'">
-    <Tabs.Root
-      :model-value
-      mandatory
-      @update:model-value="
-        (value) => {
-          if (typeof value === 'string') modelValue = value;
-        }
-      "
-    >
+    <Tabs.Root :model-value mandatory @update:model-value="(value) => selectItem(value)">
       <Tabs.List :label ui-tab-list>
         <Tabs.Item
           v-for="{ count, icon, meaning, title, value } of items"

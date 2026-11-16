@@ -10,9 +10,9 @@ import { z } from "zod";
 export interface SurveyTextNodeProps extends SurveyQuestionBaseProps {
   inputType: SurveyTextInputType;
   max: string;
-  maxLength?: number;
+  maxLength?: number | undefined;
   min: string;
-  minLength?: number;
+  minLength?: number | undefined;
   pattern: string;
   placeholder: string;
 }

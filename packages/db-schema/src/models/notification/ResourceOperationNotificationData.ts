@@ -12,8 +12,8 @@ import { z } from "zod";
 export interface ResourceOperationNotificationData extends ItemEntityType<
   typeof AppNotificationType.ResourceOperation
 > {
-  body?: string;
-  excludedSessionId?: string;
+  body?: string | undefined;
+  excludedSessionId?: string | undefined;
   path: string;
   title: string;
   userId: string;

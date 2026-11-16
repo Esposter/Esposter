@@ -25,7 +25,7 @@ interface Props {
   // The way back to the world in the reader's language
   backLabel: string;
   // The open event banner's card, "undefined" on a banner the game gives no card to here
-  bannerCard?: WishBannerCard;
+  bannerCard?: undefined | WishBannerCard;
   // The banners on offer, in the game's order, each with its id and its name in the runs of colour the game
   // Words it in
   banners: { id: string; label: TextSegment[] }[];
@@ -66,7 +66,7 @@ interface Props {
   trialLabel: string;
 }
 
-const bannerId = defineModel<string>("bannerId", { default: "" });
+const bannerId = defineModel<string | undefined>("bannerId", { default: "" });
 const { banners } = defineProps<Props>();
 const emit = defineEmits<{ buy: []; close: []; dismiss: []; startTrial: []; wish: [count: number] }>();
 // The Details popup the Details button opens over the screen

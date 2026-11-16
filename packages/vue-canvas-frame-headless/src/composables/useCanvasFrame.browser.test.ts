@@ -53,7 +53,7 @@ describe(useCanvasFrame, () => {
     const wrapper = mount(CanvasFrameTest, {
       attachTo: document.body,
       props,
-      slots: slotContent ? { default: slotContent } : undefined,
+      ...(slotContent ? { slots: { default: slotContent } } : {}),
     });
     onTestFinished(() => {
       wrapper.unmount();

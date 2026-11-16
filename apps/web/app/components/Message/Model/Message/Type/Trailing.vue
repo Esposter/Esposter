@@ -2,7 +2,7 @@
 import type { ClientMessage } from "#src/models/message/ClientMessage";
 
 interface Props {
-  isPreview?: boolean;
+  isPreview?: boolean | undefined;
   message: ClientMessage;
 }
 

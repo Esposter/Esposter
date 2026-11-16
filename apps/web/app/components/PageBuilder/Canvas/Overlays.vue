@@ -23,15 +23,15 @@ import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
 
 interface Props {
   checkIsHorizontalOwner: (ownerId: string) => boolean;
-  dropTarget?: DropTarget;
+  dropTarget?: DropTarget | undefined;
   getElement: (nodeId: string) => Element | null;
-  hoveredNodeId?: string;
+  hoveredNodeId?: string | undefined;
   resourceId: string;
   selectedNodeId: string;
 }
 
 // The box of the selected node, kept for the node toolbar placed in the app's own document
-const selectionBox = defineModel<OverlayBox>("selectionBox");
+const selectionBox = defineModel<OverlayBox | undefined>("selectionBox");
 const { checkIsHorizontalOwner, dropTarget, getElement, hoveredNodeId, resourceId, selectedNodeId } =
   defineProps<Props>();
 const pageBuilderDocumentStore = usePageBuilderDocumentStore();

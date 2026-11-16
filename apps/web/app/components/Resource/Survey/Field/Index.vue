@@ -14,7 +14,7 @@ import { SurveyNodeType } from "vue-survey-engine-headless";
 interface Props {
   error: string;
   // The runner's view of a dynamic panel's template questions for one row, given to a dynamic panel only. Absent where no runner decides a row
-  getRowViews?: (node: SurveyPanelDynamicNode, row: SurveyAnswers) => SurveyPanelRowView[];
+  getRowViews?: ((node: SurveyPanelDynamicNode, row: SurveyAnswers) => SurveyPanelRowView[]) | undefined;
   isDisabled: boolean;
   node: SurveyQuestionNode;
   seed: string;

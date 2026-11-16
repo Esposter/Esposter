@@ -2,13 +2,13 @@
 import type { UiSchemaFormRendererProps } from "#src/models/ui/schemaForm/UiSchemaFormRendererProps";
 import type { UISchemaElement } from "@jsonforms/core";
 
+import { unsetRendererState } from "#src/services/ui/schemaForm/unsetRendererState";
+import { omitUndefined } from "@esposter/shared";
 import { mapStateToJsonFormsRendererProps, NOT_APPLICABLE } from "@jsonforms/core";
 
 interface Props extends UiSchemaFormRendererProps<UISchemaElement> {}
-// JSON Forms derives whether a node is enabled or read only when the form leaves them unset, which a boolean prop
-// Would read as false
-const props = withDefaults(defineProps<Props>(), { enabled: undefined, readonly: undefined });
-const rawProps = computed(() => mapStateToJsonFormsRendererProps(props.form.state, props));
+const props = withDefaults(defineProps<Props>(), unsetRendererState);
+const rawProps = computed(() => mapStateToJsonFormsRendererProps(props.form.state, omitUndefined(props)));
 // The renderer whose tester ranks this node highest draws it, and a node no renderer ranks draws nothing
 const component = computed(() => {
   const { config, renderers = [], rootSchema } = rawProps.value;

@@ -5,19 +5,20 @@ import type { AnyExtension, FocusPosition } from "@tiptap/vue-3";
 import type { CSSProperties } from "vue";
 
 import { autofocusEditor } from "#src/services/richTextEditor/autofocusEditor";
+import { omitUndefined } from "@esposter/shared";
 import { FileHandler } from "@tiptap/extension-file-handler";
 import { CharacterCount, Placeholder } from "@tiptap/extensions";
 import { StarterKit } from "@tiptap/starter-kit";
 import { EditorContent, useEditor } from "@tiptap/vue-3";
 
 interface Props {
-  extensions?: AnyExtension[];
+  extensions?: AnyExtension[] | undefined;
   // Where the caret lands when the editor takes focus as it is created, which it does only from a reader who is not
   // Typing elsewhere; absent, it takes none
-  focusPosition?: FocusPosition;
-  height?: string;
+  focusPosition?: FocusPosition | undefined;
+  height?: string | undefined;
   limit: number;
-  placeholder?: string;
+  placeholder?: string | undefined;
 }
 
 const slots = defineSlots<{
@@ -87,7 +88,7 @@ watch(
       <RichTextEditorMenuBar :editor />
       <RichTextEditorSuggestions :editor />
       <slot name="prepend-inner-header" />
-      <EditorContent class="rich-text-content" :editor />
+      <EditorContent class="rich-text-content" :="omitUndefined({ editor })" />
       <RichTextEditorFooterBar :editor>
         <template #prepend="editorProps">
           <slot name="prepend-footer" :="editorProps" />

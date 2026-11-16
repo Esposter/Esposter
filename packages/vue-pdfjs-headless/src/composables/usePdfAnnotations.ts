@@ -21,7 +21,7 @@ interface UsePdfAnnotationsOptions {
   // Whether the comments are wanted. A document's comments are read the first time they are, and not before
   isCommentsWanted?: MaybeRefOrGetter<boolean>;
   // Called for each annotation the reader draws, with the mode it was drawn in and its page
-  onChange?: (change: PdfAnnotationChange) => void;
+  onChange?: ((change: PdfAnnotationChange) => void) | undefined;
   pdfDocument: MaybeRefOrGetter<PDFDocumentProxy | undefined>;
   viewer: PdfViewerState;
 }

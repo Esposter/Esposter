@@ -37,7 +37,7 @@ export type { ModuleOptions } from "#src/models/ModuleOptions";
 
 declare module "@nuxt/schema" {
   interface NuxtConfig {
-    security?: Partial<ModuleOptions>;
+    security?: Partial<ModuleOptions> | undefined;
   }
 }
 

@@ -15,7 +15,7 @@ import { ScreenKindGameTextKeyMap } from "#src/services/screen/ScreenKindGameTex
 
 interface Props {
   // The signed-in account's avatar and name, which the profile card shows over the Traveler's when the player is signed in
-  accountAvatarUrl?: string;
+  accountAvatarUrl?: string | undefined;
   accountName: string;
   // The Adventure EXP's share of the rank's bar, and the rank and World Level the profile card shows
   adventureExpProgress: number;
@@ -33,11 +33,11 @@ interface Props {
   namecardItemId: number;
   namecards: ProfileNamecard[];
   // The server's clock minus this machine's, which the World Level's cooldown is read against
-  serverClockOffsetMs?: number;
+  serverClockOffsetMs?: number | undefined;
   // The Traveler's birthday once it is set, which the profile card shows and its setter sets once
-  travelerBirthday?: TravelerBirthdaySave;
+  travelerBirthday?: TravelerBirthdaySave | undefined;
   worldLevel: number;
-  worldLevelChangedAt?: Temporal.Instant;
+  worldLevelChangedAt?: Temporal.Instant | undefined;
 }
 
 // Each built screen, by its kind, as its host draws it with what it needs and closes it by setting the world back

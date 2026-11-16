@@ -8,7 +8,7 @@ import { MeshToonNodeMaterial } from "three/webgpu";
 // Terrain, clears the flag while keeping the toon lighting. A material outlined with its own edge is drawn in that edge's
 // Colour and width, and its sphere map is held here so its image is released with the material
 export class ToonNodeMaterial extends MeshToonNodeMaterial {
-  edge?: ToonEdge;
+  edge?: ToonEdge | undefined;
   // The matrix a placed copy is drawn by, read by its outline as by its fill, so the two stay in one place
   instanceMatrix?: Node<"mat4">;
   readonly isMeshToonMaterial: boolean;

@@ -3,7 +3,7 @@ import type { PathFollowerConfiguration } from "#src/models/configuration/PathFo
 import type { PathFollowerEventEmitsOptions } from "#src/models/emit/PathFollowerEventEmitsOptions";
 import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
-import type { SetRequired } from "type-fest";
+import type { SetRequired, UndefinedOnPartial } from "type-fest";
 
 import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
 import { PathFollowerSetterMap } from "#src/services/setterMap/PathFollowerSetterMap";
@@ -11,8 +11,8 @@ import { PathFollowerSetterMap } from "#src/services/setterMap/PathFollowerSette
 interface PathFollowerEmits extends /** @vue-ignore */ PathFollowerEventEmitsOptions {}
 
 interface Props {
-  configuration: SetRequired<Partial<PathFollowerConfiguration>, "path" | "texture">;
-  onComplete?: (scene: SceneWithPlugins, pathFollower: GameObjects.PathFollower) => void;
+  configuration: UndefinedOnPartial<SetRequired<Partial<PathFollowerConfiguration>, "path" | "texture">>;
+  onComplete?: ((scene: SceneWithPlugins, pathFollower: GameObjects.PathFollower) => void) | undefined;
 }
 
 const { configuration, onComplete } = defineProps<Props>();

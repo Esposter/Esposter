@@ -3,7 +3,7 @@
 // Commands or mentions. Only the width differs, and each consumer sets that as a passthrough attribute on this component
 interface Props {
   isVisible: boolean;
-  selectedIndex?: number;
+  selectedIndex?: number | undefined;
   title: string;
 }
 

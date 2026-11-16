@@ -17,13 +17,13 @@ import {
 interface Props {
   // The state every button on the screen is drawn in in place of the pointer's, which a fixture sets to shoot a hover,
   // Screens drawn inside it included
-  interactionState?: InteractionState;
+  interactionState?: InteractionState | undefined;
   // Whether the screen is the mobile client's, a quarter larger, in place of what the window's pointer says, which a
   // Fixture sets to shoot the touch layout on a desktop
-  isTouch?: boolean;
+  isTouch?: boolean | undefined;
   // Whether the world behind the screen is blurred and washed as the game blurs it behind a full-screen menu, the screen's
   // Own pieces never blurred. Off unless a screen opts in, so every other screen draws what is behind it as it is
-  isWorldBlurred?: boolean;
+  isWorldBlurred?: boolean | undefined;
 }
 
 defineProps<Props>();

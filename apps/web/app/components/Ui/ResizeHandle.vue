@@ -4,9 +4,9 @@ import { RESIZE_HANDLE_KEYBOARD_STEP } from "#src/services/ui/constants";
 interface Props {
   // Sits on the pane's start edge and grows it as the pointer moves toward the start, as a right sidebar's handle does,
   // Or a bottom sheet's on its top edge
-  isReversed?: true;
+  isReversed?: true | undefined;
   // Sizes the pane's height from its top or bottom edge, rather than its width from a side
-  isVertical?: true;
+  isVertical?: true | undefined;
   // The pane it sizes, which names the separator: "Resize rooms"
   label: string;
   max: number;

@@ -7,9 +7,9 @@ import { UiStatusIconMeaningMap } from "#src/services/ui/UiStatusIconMeaningMap"
 
 interface Props {
   // How long it stays before it closes itself; without one it stays until its source takes it away
-  durationMs?: number;
+  durationMs?: number | undefined;
   // Whether the reader can put it away before then
-  isDismissible?: true;
+  isDismissible?: true | undefined;
   status: UiStatus;
 }
 

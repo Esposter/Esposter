@@ -28,7 +28,7 @@ export const getGestureCell = ({
 }: {
   columnNumber: number;
   columnPitch: number;
-  edge?: ResizeEdge;
+  edge?: ResizeEdge | undefined;
   offset: { x: number; y: number };
   origin: GridBlock;
   rowPitch: number;

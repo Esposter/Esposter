@@ -5,7 +5,7 @@ import { z } from "zod";
 // Ahead of them; it is absent for every area but the Darkgold Wolfbite's, whose circle sits ahead of the body
 export interface AttackArea {
   angle: number;
-  forward?: number;
+  forward?: number | undefined;
   height: number;
   radius: number;
 }

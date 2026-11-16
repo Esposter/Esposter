@@ -4,7 +4,7 @@
 // Whether the bag may use it and the most a Use takes where the use chooses an amount, whether it is an artifact the
 // Bag may lock and whether it is locked, and whether it is ticked for a destroy
 export interface InventoryCell {
-  amountMaximum?: number;
+  amountMaximum?: number | undefined;
   caption: string;
   id: string;
   isDestroyable: boolean;

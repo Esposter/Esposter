@@ -3,6 +3,7 @@ import type { ContainerConfiguration } from "#src/models/configuration/Container
 import type { ContainerEventEmitsOptions } from "#src/models/emit/ContainerEventEmitsOptions";
 import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
+import type { UndefinedOnPartial } from "type-fest";
 import type { VNode } from "vue";
 
 import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
@@ -12,8 +13,8 @@ import { InjectionKeyMap } from "#src/services/shared/InjectionKeyMap";
 interface ContainerEmits extends /** @vue-ignore */ ContainerEventEmitsOptions {}
 
 interface Props {
-  configuration?: Partial<ContainerConfiguration>;
-  onComplete?: (scene: SceneWithPlugins, container: GameObjects.Container) => void;
+  configuration?: undefined | UndefinedOnPartial<Partial<ContainerConfiguration>>;
+  onComplete?: ((scene: SceneWithPlugins, container: GameObjects.Container) => void) | undefined;
 }
 
 defineSlots<{ default: () => VNode }>();

@@ -4,13 +4,12 @@ import type { UiSelectItem } from "#src/models/ui/UiSelectItem";
 import type { JsonSchema } from "@jsonforms/core";
 
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { unsetRendererState } from "#src/services/ui/schemaForm/unsetRendererState";
 import { prettify } from "#src/util/text/prettify";
 import { toTitleCase } from "#src/util/text/toTitleCase";
 
 interface Props extends UiSchemaFormRendererProps {}
-// JSON Forms derives whether a field is enabled or read only when the form leaves them unset, which a boolean prop
-// Would read as false
-const props = withDefaults(defineProps<Props>(), { enabled: undefined, readonly: undefined });
+const props = withDefaults(defineProps<Props>(), unsetRendererState);
 const { change, control, issue, layout, uiSchemaFormConfiguration } = useSchemaFormControl(props);
 // An array of values is a choice of several from the same items
 const isMultiple = computed(() => control.value.schema.type === "array");

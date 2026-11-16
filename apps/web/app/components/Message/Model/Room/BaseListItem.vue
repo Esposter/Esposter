@@ -7,10 +7,10 @@ import { RoutePath } from "@esposter/shared";
 interface Props {
   // The room's actions, which a right-click, a long press or the menu key opens on the row
   contextMenuItems: Item[];
-  image?: RoomInMessage["image"];
+  image?: RoomInMessage["image"] | undefined;
   isActive: boolean;
   // Something new waits in it, so its name reads in the text colour rather than the muted one every quiet room takes
-  isUnread?: true;
+  isUnread?: true | undefined;
   name: string;
   roomId: RoomInMessage["id"];
 }

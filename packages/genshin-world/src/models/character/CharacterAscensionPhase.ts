@@ -1,5 +1,6 @@
 import type { AscensionCost } from "#src/models/character/AscensionCost";
 import type { AscensionPhase } from "#src/models/character/AscensionPhase";
+import type { UndefinedOnPartial } from "type-fest";
 import type { z } from "zod";
 
 import { ascensionCostSchema } from "#src/models/character/AscensionCost";
@@ -7,7 +8,7 @@ import { ascensionPhaseSchema } from "#src/models/character/AscensionPhase";
 
 // An ascension phase of a character: its attributes and cap as any phase has them, and what entering it costs. A table
 // Published before the costs were carries none, so an absent cost refuses the ascension rather than making it free
-export type CharacterAscensionPhase = AscensionPhase & Partial<AscensionCost>;
+export type CharacterAscensionPhase = AscensionPhase & UndefinedOnPartial<Partial<AscensionCost>>;
 
 export const characterAscensionPhaseSchema = ascensionPhaseSchema.extend(
   ascensionCostSchema.partial().shape,

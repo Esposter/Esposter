@@ -8,6 +8,6 @@ export interface ModuleOptions extends Partial<VitePWAOptions<VitePWAStrategy, S
   /**
    * Seconds between checks for a new service worker. Absent, only the browser's own navigation check runs.
    */
-  periodicSyncForUpdates?: number;
+  periodicSyncForUpdates?: number | undefined;
   pwaAssets?: never;
 }

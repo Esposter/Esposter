@@ -7,8 +7,8 @@ import type { Element } from "#src/models/Element";
 export interface GcgZoneCard {
   cardId: number;
   counter: number;
-  element?: Element;
-  elements?: Element[];
+  element?: Element | undefined;
+  elements?: Element[] | undefined;
   rounds: number;
   usages: number;
 }

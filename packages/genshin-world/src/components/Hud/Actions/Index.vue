@@ -25,7 +25,7 @@ interface Props {
   input: Input;
   // The kind of weapon the member on the field wields, whose normal attack's glyph the attack button carries and which
   // Gives a bow's wielder the aim button, none while the member on the field is unknown
-  weaponType?: WeaponType;
+  weaponType?: undefined | WeaponType;
 }
 
 const { gameText, input, weaponType } = defineProps<Props>();

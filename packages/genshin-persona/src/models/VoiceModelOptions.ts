@@ -6,5 +6,5 @@ export interface VoiceModelOptions {
   config: VoiceModelConfig;
   device: Record<string, string>;
   dtype: Record<string, string>;
-  progress_callback?: (progress: VoiceProgress) => void;
+  progress_callback?: ((progress: VoiceProgress) => void) | undefined;
 }

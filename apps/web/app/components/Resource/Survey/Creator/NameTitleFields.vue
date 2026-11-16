@@ -1,7 +1,7 @@
 <script setup lang="ts">
 interface Props {
   // The message the name is refused with, drawn beside the name, which an item or a column is told apart by
-  error?: string;
+  error?: string | undefined;
   item: { name: string; title: string };
 }
 

@@ -128,18 +128,18 @@ interface Props {
   catalogue: Catalogue;
   // What the character is drawn on, which the screen's controller moves in the world's own coordinates, so it is placed
   // Among everything in the world
-  characterBody?: Object3D;
+  characterBody?: Object3D | undefined;
   // How the character on the field moves, by the capsule and speeds of its body type
-  characterLocomotion?: Locomotion;
+  characterLocomotion?: Locomotion | undefined;
   // The readers of the published character packs by the character each is of.
   // The character on the field is drawn on the body from them.
   characterPackReaders: ReadonlyMap<number, CharacterPackReader>;
   createTerrainWorker: () => Worker;
   // The development registry the look registers its variables with, given in development alone
-  devRegistry?: DevRegistry;
+  devRegistry?: DevRegistry | undefined;
   // The sight the screen turns on and off, which the world spreads its range by and lights its things under, none where
   // No screen holds one
-  elementalSight?: ElementalSight;
+  elementalSight?: ElementalSight | undefined;
   // The enemies in the world by their spawn key, which the enemies write as camps load and enemies die
   enemyMap: Map<string, Enemy>;
   // The moments the defeated enemies come back, by their spawn keys, for the camps with no boss among them
@@ -160,7 +160,7 @@ interface Props {
   // The bends the character leaves as it walks through the grass, which the grass parts round
   grassTrail: GrassTrail;
   // The game's minute of the day the clock is held at, in place of its running from the region's start
-  heldMinutes?: number;
+  heldMinutes?: number | undefined;
   // The drops and the residents in the world, each a row of the prompts and drawn as a stand-in
   interactables: Interactable[];
   // Whether a screen over the world holds its clock, as the game's menus pause its time

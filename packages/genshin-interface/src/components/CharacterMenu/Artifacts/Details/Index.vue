@@ -3,9 +3,9 @@ import type { ArtifactSlotStats } from "#src/models/ArtifactSlotStats";
 
 interface Props {
   // The picked slot's stats, undefined where the character wears no artifact there
-  selectedStats?: ArtifactSlotStats;
+  selectedStats?: ArtifactSlotStats | undefined;
   // The picked slot's name, which the details name it by
-  slotName?: string;
+  slotName?: string | undefined;
 }
 
 defineProps<Props>();

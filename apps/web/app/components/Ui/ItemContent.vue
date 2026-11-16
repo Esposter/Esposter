@@ -3,17 +3,17 @@ import type { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 interface Props {
   // A line after the title saying more, in the muted colour
-  description?: string;
+  description?: string | undefined;
   // An icon class written whole, for a glyph no meaning names
-  icon?: string;
+  icon?: string | undefined;
   // A picture in the mark's place, or the title's first letter when it is empty: a room's
-  image?: string;
+  image?: string | undefined;
   // The mark sits beside the row rather than in it, a control of its own, so the row keeps no column for one
-  isMarkless?: true;
+  isMarkless?: true | undefined;
   // What the mark says, drawn in the nearest style's glyph
-  meaning?: UiIconMeaning;
+  meaning?: UiIconMeaning | undefined;
   // In Vuetify 0's hotkey syntax, drawn at the row's end
-  shortcut?: string;
+  shortcut?: string | undefined;
   title: string;
 }
 // What one row of a list shows, whichever list holds it: a mark, the title and its description, and at the end the

@@ -10,7 +10,7 @@ interface Props {
   event: UiCalendarEvent;
   // Drawn as a block filling the room it is placed in, its title over its time, as the hours draw one; otherwise a
   // Line, its time before its title, as a day of the month lists one
-  isBlock?: true;
+  isBlock?: true | undefined;
 }
 // One event as a block of the accent: its time and its title, its description on hover, opened by a click or Enter,
 // Dragged to move it, and moved by Alt and an arrow as well

@@ -9,15 +9,15 @@ import { fillGameTextValues, GameTextKey } from "genshin-text";
 
 interface Props {
   // The chamber the title names, counted from its floor's first; the title is absent until the screen is given it
-  chamber?: number;
+  chamber?: number | undefined;
   // The Benedictions the chamber's list offers, each with its description's text hash and its id in the buff table
   choices: AbyssBenedictionChoice[];
   // The floor the title names; the title is absent until the screen is given it
-  floor?: number;
+  floor?: number | undefined;
   // The game's words in the reader's language
   gameText: GameText;
   // The Benediction the pointer rests on, drawn lit at rest as the game lights it; a fixture sets the one its reference shows
-  litTowerBuffId?: number;
+  litTowerBuffId?: number | undefined;
   // The names in the reader's language, each by its text id
   nameText: TextChunk;
 }

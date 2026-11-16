@@ -2,11 +2,10 @@
 import type { UiSchemaFormRendererProps } from "#src/models/ui/schemaForm/UiSchemaFormRendererProps";
 
 import { UiTextFieldType } from "#src/models/ui/UiTextFieldType";
+import { unsetRendererState } from "#src/services/ui/schemaForm/unsetRendererState";
 
 interface Props extends UiSchemaFormRendererProps {}
-// JSON Forms derives whether a field is enabled or read only when the form leaves them unset, which a boolean prop
-// Would read as false
-const props = withDefaults(defineProps<Props>(), { enabled: undefined, readonly: undefined });
+const props = withDefaults(defineProps<Props>(), unsetRendererState);
 const { change, control, issue, layout } = useSchemaFormControl(props);
 const isNumber = computed(() => control.value.schema.type === "number" || control.value.schema.type === "integer");
 </script>

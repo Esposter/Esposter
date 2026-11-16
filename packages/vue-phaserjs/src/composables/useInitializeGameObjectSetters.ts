@@ -22,23 +22,29 @@ export const useInitializeGameObjectSetters = <
   const setters: ((gameObject: TGameObject) => void)[] = [];
   const setterWatchHandles: WatchHandle[] = [];
 
-  for (const [key, value] of Object.entries(toValue(configuration)) as [
-    keyof TConfiguration,
-    TConfiguration[keyof TConfiguration],
-  ][]) {
+  const initialConfiguration = toValue(configuration);
+  // Every property the game object has a setter for is watched, whether the configuration sets it, leaves it out or
+  // Hands it undefined, so a property given only later still reaches the game object
+  for (const key in setterMap) {
+    if (!Object.hasOwn(setterMap, key)) continue;
     const setter = setterMap[key];
     if (!setter) continue;
-    const updateEvent = getUpdateEvent(key as string);
-    // The one path a value takes into the game object, at setup and on each update, so the parent hears the same either way
-    const applyValue = (targetGameObject: TGameObject, nextValue: TConfiguration[keyof TConfiguration]) => {
-      setter(targetGameObject, emit)(nextValue);
-      if (nextValue !== undefined) emit(updateEvent, nextValue);
-      // If we haven't defined a proper value for the game object property,
-      // We should emit the intrinsic gameObject value so vue can grab it
-      else if (key in targetGameObject) emit(updateEvent, targetGameObject[key as keyof typeof targetGameObject]);
+    const value = initialConfiguration[key];
+    const updateEvent = getUpdateEvent(key);
+    // A property with no value reports the game object's own, so a parent binding it with v-model still reads one
+    const emitOwnValue = (targetGameObject: TGameObject) => {
+      if (key in targetGameObject) emit(updateEvent, targetGameObject[key as keyof typeof targetGameObject]);
     };
+    // The one path a value takes into the game object on each update, so the parent hears the same either way
+    const applyValue = (targetGameObject: TGameObject, nextValue: TConfiguration[typeof key] | undefined) => {
+      setter(targetGameObject, emit)(nextValue);
+      if (nextValue === undefined) emitOwnValue(targetGameObject);
+      else emit(updateEvent, nextValue);
+    };
+    // At setup a property with no value, left out or undefined alike, leaves the game object as Phaser created it
     setters.push((targetGameObject) => {
-      applyValue(targetGameObject, value);
+      if (value === undefined) emitOwnValue(targetGameObject);
+      else applyValue(targetGameObject, value);
     });
 
     setterWatchHandles.push(

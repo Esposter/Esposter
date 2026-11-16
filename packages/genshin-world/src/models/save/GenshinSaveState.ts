@@ -89,7 +89,7 @@ export interface GenshinSaveState {
   regionStatueProgressMap: ReadonlyMap<string, StatueRegionProgressSave>;
   reputation: ReputationProgress;
   reputationBountyClaimedAts: readonly Temporal.Instant[];
-  reputationBountyHunt?: ReputationBountyHunt;
+  reputationBountyHunt?: ReputationBountyHunt | undefined;
   reputationRequestClaimedAts: readonly Temporal.Instant[];
   settledSeelieIds: ReadonlySet<string>;
   shopPurchases: ShopPurchase[];
@@ -97,7 +97,7 @@ export interface GenshinSaveState {
   solvedPuzzleIds: ReadonlySet<string>;
   // The Abyss's progress by cycle, keyed as the save keys it
   spiralAbyssProgressMap: ReadonlyMap<string, AbyssProgress>;
-  travelerBirthday?: TravelerBirthdaySave;
+  travelerBirthday?: TravelerBirthdaySave | undefined;
   travelerName: string;
   // The Trounce Blossoms the defeated bosses left, each by the spawn key its boss fell under
   trounceBlossoms: ReadonlyMap<string, TrounceBlossom>;

@@ -5,7 +5,7 @@ import { findNearest } from "#src/services/genshinAssets/shared/findNearest";
 export const findNearestSample = (
   point: readonly number[],
   samples: readonly MeshSample[],
-): { distance: number; nearest?: MeshSample } => {
+): { distance: number; nearest?: MeshSample | undefined } => {
   const getSquaredDistance = (sample: MeshSample) =>
     (sample.point[0] - (point[0] ?? 0)) ** 2 +
     (sample.point[1] - (point[1] ?? 0)) ** 2 +

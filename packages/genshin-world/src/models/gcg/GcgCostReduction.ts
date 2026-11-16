@@ -5,6 +5,6 @@ import type { GcgCostKind } from "#src/models/gcg/GcgCostKind";
 // With a kind takes off only the cost lines of that kind, such as the Unaligned dice a Normal Attack's Void cost names
 export interface GcgCostReduction {
   count: number;
-  element?: Element;
+  element?: Element | undefined;
   kind?: GcgCostKind;
 }

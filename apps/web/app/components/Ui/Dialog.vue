@@ -10,21 +10,21 @@ import { Dialog } from "@vuetify/v0";
 
 interface Props {
   // A body that is one full-bleed child, such as a listbox, drops the body's padding and keeps its scroll
-  isBodyBare?: true;
+  isBodyBare?: true | undefined;
   // A decision about one thing, a confirmation, keeps its size: every other dialog standing in the page can be taken over
   // The whole page and back by a button beside its close, so whatever it holds can have all the room the reader gives it
-  isSizeFixed?: true;
+  isSizeFixed?: true | undefined;
   // Stands at a fixed height in the page rather than only being capped by it, so a two-pane body divides a height and
   // Each pane scrolls on its own. A drawer and the full screen already stand at their edge's height, so they ignore it
-  isTall?: true;
+  isTall?: true | undefined;
   // Drawn in a title bar with a close button beside it, or, where the content says what it is on its own, only the
   // Dialog's accessible name
-  isTitleHidden?: true;
+  isTitleHidden?: true | undefined;
   // What kind of thing the title names, drawn small above it: an editor's "Todo" over the todo's name
-  overline?: string;
-  placement?: UiDialogPlacement;
+  overline?: string | undefined;
+  placement?: UiDialogPlacement | undefined;
   // How wide it stands, for a placement that stands in the page; a drawer and the full screen keep their own width
-  size?: UiDialogSize;
+  size?: UiDialogSize | undefined;
   title: string;
 }
 // A modal in the browser's top layer, so everything outside it is inert while it is open. Only for content that is

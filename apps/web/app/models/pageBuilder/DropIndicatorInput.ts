@@ -4,5 +4,5 @@ export interface DropIndicatorInput {
   childBoxes: readonly (OverlayBox | undefined)[];
   index: number;
   isHorizontal: boolean;
-  ownerBox?: OverlayBox;
+  ownerBox?: OverlayBox | undefined;
 }

@@ -5,7 +5,7 @@ import type { SkinTone } from "#src/models/message/emoji/SkinTone";
 import { getEmojiShortcode } from "#src/services/message/emoji/getEmojiShortcode";
 
 interface Props {
-  emoji?: PickableEmoji;
+  emoji?: PickableEmoji | undefined;
 }
 
 defineSlots<{ default?: () => VNode }>();

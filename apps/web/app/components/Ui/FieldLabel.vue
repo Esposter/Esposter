@@ -1,7 +1,7 @@
 <script setup lang="ts">
 interface Props {
   // Marks the label with the required mark, which speech announces as required once
-  isRequired?: true;
+  isRequired?: true | undefined;
   label: string;
 }
 // The caption a control names itself by through aria-labelledby, so it is a span: a popover trigger or a slider has no

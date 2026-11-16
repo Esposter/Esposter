@@ -5,7 +5,7 @@ import { POPOVER_POSITION_TRY, TOOLTIP_NAMESPACE, TOOLTIP_POSITION_AREA } from "
 import { Tooltip } from "@vuetify/v0";
 
 interface Props {
-  isDisabled?: boolean;
+  isDisabled?: boolean | undefined;
   label: string;
 }
 // A short label beside what it names, opened by hovering it or reaching it by keyboard. The element is the caller's,

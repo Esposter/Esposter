@@ -12,7 +12,7 @@ interface Props {
   name: string;
   // The space the open overlay bars take at the top and bottom of the canvas. An overlay column starts below the top bars
   // And ends above the bottom ones, so it never claims a corner a bar claims. Any other region takes no inset
-  overlayInset?: { bottom: number; top: number };
+  overlayInset?: undefined | { bottom: number; top: number };
   // The name of each panel, keyed by panel id, which the tabs of a region holding several panels are titled by
   panelNameMap: Record<string, string>;
   region: ResolvedRegion;

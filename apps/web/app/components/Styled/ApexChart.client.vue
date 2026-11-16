@@ -15,9 +15,9 @@ import "apexcharts/features/measure";
 import "apexcharts/features/perspectives";
 
 interface Props {
-  options?: ApexOptions;
+  options?: ApexOptions | undefined;
   series: NonNullable<ApexOptions["series"]>;
-  type?: ApexChart["type"];
+  type?: ApexChart["type"] | undefined;
 }
 
 const { options = {}, series, type } = defineProps<Props>();

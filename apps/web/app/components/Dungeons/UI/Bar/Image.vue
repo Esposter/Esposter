@@ -5,10 +5,10 @@ import type { ImagePosition } from "#src/models/dungeons/ImagePosition";
 import { Image } from "vue-phaserjs";
 
 interface Props {
-  displayWidth?: number;
+  displayWidth?: number | undefined;
   imagePosition: ImagePosition;
   // The bar's own segments disappear as they empty, while the shadow behind them is always drawn
-  isHiddenWhenEmpty?: true;
+  isHiddenWhenEmpty?: true | undefined;
   scaleY: number;
   texture: ImageKey;
 }

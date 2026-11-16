@@ -4,9 +4,9 @@ import { UiRules } from "#src/services/ui/UiRules";
 import { ROOM_EMOJI_NAME_MAX_LENGTH, selectRoomEmojiInMessageSchema } from "@esposter/db-schema";
 
 interface Props {
-  isAutofocus?: true;
+  isAutofocus?: true | undefined;
   // Named for assistive technology alone, where the row the field sits in already says it is the emoji's name
-  isLabelHidden?: true;
+  isLabelHidden?: true | undefined;
 }
 
 const name = defineModel<string>({ required: true });

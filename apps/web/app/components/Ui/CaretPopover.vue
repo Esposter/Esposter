@@ -5,7 +5,7 @@ import { usePopover } from "@vuetify/v0";
 
 interface Props {
   // Where the caret is on the screen, which the panel opens over and flips under where there is no room above
-  rect?: DOMRect;
+  rect?: DOMRect | undefined;
 }
 // A panel over a caret in a document the reader keeps typing in — a composer's mention, emoji or command
 // Completions. Focus stays in the document, so the panel is a manual popover nothing light-dismisses, and it is

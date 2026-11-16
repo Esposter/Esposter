@@ -7,12 +7,12 @@ import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
 import { Image } from "vue-phaserjs";
 
 interface Props {
-  cursorImageKey?: Extract<ImageKey, "CursorWhite">;
+  cursorImageKey?: Extract<ImageKey, "CursorWhite"> | undefined;
   grid: Grid<TGrid>;
   initialPosition: Position;
   positionIncrement: Partial<Position>;
-  scale?: number;
-  tween?: ImageConfiguration["tween"];
+  scale?: number | undefined;
+  tween?: ImageConfiguration["tween"] | undefined;
 }
 
 const {

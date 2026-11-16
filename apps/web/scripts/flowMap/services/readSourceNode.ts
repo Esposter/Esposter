@@ -37,7 +37,7 @@ const resolveSpecifier = (path: string, specifier: string) => {
   );
 };
 
-const readComponentTags = (children: TemplateChildNode[]): { name?: string; tag: string }[] =>
+const readComponentTags = (children: TemplateChildNode[]): { name?: string | undefined; tag: string }[] =>
   children.flatMap((child) => {
     if (child.type !== NodeTypes.ELEMENT) return [];
     const nameProp = child.props.find((prop) => prop.type === NodeTypes.ATTRIBUTE && prop.name === "name");

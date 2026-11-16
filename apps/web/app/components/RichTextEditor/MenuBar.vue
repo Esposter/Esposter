@@ -5,7 +5,7 @@ import type { Editor } from "@tiptap/core";
 import { getRichTextMenuItems } from "#src/services/richTextEditor/getRichTextMenuItems";
 
 interface Props {
-  editor?: Editor;
+  editor?: Editor | undefined;
 }
 
 const { editor } = defineProps<Props>();

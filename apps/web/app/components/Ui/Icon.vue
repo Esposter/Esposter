@@ -5,7 +5,7 @@ import { UiIconMap } from "#src/services/ui/UiIconMap";
 
 interface Props {
   // The accessible name, for an icon that carries meaning its surroundings do not say; without one it is decoration
-  label?: string;
+  label?: string | undefined;
   meaning: UiIconMeaning;
 }
 

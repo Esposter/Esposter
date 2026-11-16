@@ -30,5 +30,5 @@ export const createContext = async (event: RequestEvent) => {
 export type Context = Awaited<ReturnType<typeof createContext>> & {
   // The key an agent's request came through, absent on a person's own request, so the activity trail can tell the two
   // Apart and name the key
-  apiKey?: AgentApiKey;
+  apiKey?: AgentApiKey | undefined;
 };

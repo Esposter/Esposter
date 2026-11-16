@@ -21,8 +21,8 @@ export interface StickyNoteElement
   color: string;
   dashPattern: DashPattern;
   fill: string;
-  horizontalAlignment?: HorizontalAlignment;
-  verticalAlignment?: VerticalAlignment;
+  horizontalAlignment?: HorizontalAlignment | undefined;
+  verticalAlignment?: undefined | VerticalAlignment;
 }
 
 export const stickyNoteElementSchema: z.ZodObject<

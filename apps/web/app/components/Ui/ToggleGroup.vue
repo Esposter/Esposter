@@ -7,17 +7,17 @@ import { Radio } from "@vuetify/v0";
 import { mergeProps } from "vue";
 
 interface Props {
-  isDisabled?: true;
+  isDisabled?: true | undefined;
   // Each choice shows its mark alone, its title its accessible name and its tooltip at once, as an icon button's
   // Label is: a rail of emoji categories
-  isIconOnly?: true;
+  isIconOnly?: true | undefined;
   // Stacked down rather than along, which the arrows walk the same way
-  isVertical?: true;
+  isVertical?: true | undefined;
   items: UiMenuItem<T>[];
   // The group's accessible name: what its buttons choose between
   label: string;
   // The look a toggle group that heads a view takes. Unset, the group is the segmented control every other one is
-  variant?: UiToggleGroupVariant;
+  variant?: UiToggleGroupVariant | undefined;
 }
 // One of a few ways to do the same thing, as a segmented control: quiet segments on a field's track, the chosen one
 // Filled. A radio group, so it is one stop in the tab order and the arrows move the choice along it. A choice is any

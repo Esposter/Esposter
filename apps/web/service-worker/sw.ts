@@ -3,6 +3,7 @@
 import type { PushNotificationPayload } from "@esposter/db-schema";
 import type { PrecacheEntry } from "@vite-pwa/workbox-swkit/precaching";
 
+import { omitUndefined } from "@esposter/shared";
 import { ExpirationPlugin } from "@vite-pwa/workbox-swkit/expiration";
 import { cleanupOutdatedCaches, precacheAndRoute } from "@vite-pwa/workbox-swkit/precaching";
 import { NavigationRoute, registerRoute } from "@vite-pwa/workbox-swkit/routing";
@@ -22,12 +23,17 @@ const NETWORK_TIMEOUT_SECONDS = 3;
 cleanupOutdatedCaches();
 // oxlint-disable-next-line no-underscore-dangle -- the build injects this name, and workbox reads it by it
 precacheAndRoute(self.__WB_MANIFEST);
+// @TODO: https://github.com/GoogleChrome/workbox/issues/3490 — a plugin class declares each hook it implements as
+// `WorkboxPlugin[hook]`, which carries `undefined` that the interface's optional hook refuses under
+// `exactOptionalPropertyTypes`. Both hooks are arrow-function fields, so they keep their instance without it
+const { cacheDidUpdate, cachedResponseWillBeUsed } = new ExpirationPlugin({ maxEntries: MAX_CACHED_PAGES });
+const expirationPlugin = omitUndefined({ cacheDidUpdate, cachedResponseWillBeUsed });
 registerRoute(
   new NavigationRoute(
     new NetworkFirst({
       cacheName: "pages",
       networkTimeoutSeconds: NETWORK_TIMEOUT_SECONDS,
-      plugins: [new ExpirationPlugin({ maxEntries: MAX_CACHED_PAGES })],
+      plugins: [expirationPlugin],
     }),
     { denylist: navigationDenylist },
   ),
@@ -50,7 +56,7 @@ self.addEventListener("push", (event) => {
       const clients = await self.clients.matchAll({ includeUncontrolled: true });
       // oxlint-disable-next-line unicorn/require-post-message-target-origin -- a Client takes no target origin: it is the matched window itself
       for (const client of clients) client.postMessage(payload);
-      await self.registration.showNotification(title ?? "", { body, data, icon: icon ?? undefined });
+      await self.registration.showNotification(title ?? "", { body, data, ...(icon ? { icon } : {}) });
     })(),
   );
 });

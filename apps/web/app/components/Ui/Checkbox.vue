@@ -4,9 +4,9 @@ import { Checkbox } from "@vuetify/v0";
 
 interface Props {
   // The label drawn beside the box; a box in a row of a table is named by its label alone
-  isLabelShown?: true;
+  isLabelShown?: true | undefined;
   // Some of what it stands for is checked and some is not, as a select-all over part of a list
-  isMixed?: true;
+  isMixed?: true | undefined;
   // Its accessible name, and the text beside the box where it is shown
   label: string;
 }

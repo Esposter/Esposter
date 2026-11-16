@@ -6,13 +6,13 @@ interface Props {
   // Whether a button beside the field empties it, shown while the field holds something
   isClearable: boolean;
   // Whether the field is disabled, so it cannot be opened
-  isDisabled?: true;
+  isDisabled?: true | undefined;
   // Whether the field holds nothing, so it reads its placeholder
   isEmpty: boolean;
   // Named for assistive technology alone, where what surrounds the field already says what it is for
-  isLabelHidden?: true;
+  isLabelHidden?: true | undefined;
   // Marks the label with the required mark, which speech announces as required once
-  isRequired?: true;
+  isRequired?: true | undefined;
   label: string;
   // What the field reads while it holds nothing
   placeholder: string;

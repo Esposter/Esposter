@@ -12,12 +12,12 @@ import { z } from "zod";
 export interface ParityReferenceManifestRow extends ParityReferenceManifestImage {
   attribution: ParityReferenceAttribution;
   capturedAt: string;
-  clientBuild?: string;
+  clientBuild?: string | undefined;
   id: string;
   kind: ParityReferenceKind;
-  language?: string;
-  plate?: ParityReferenceManifestImage;
-  source?: string;
+  language?: string | undefined;
+  plate?: ParityReferenceManifestImage | undefined;
+  source?: string | undefined;
   // The format the screenshot was sniffed as from its bytes, never from its file name
   sourceFormat: string;
 }

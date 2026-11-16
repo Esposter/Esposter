@@ -9,7 +9,7 @@ import type { MathExpressionValue } from "#src/models/function/MathExpressionVal
 export interface MathExpressionSignature {
   compute: (values: readonly MathExpressionValue[]) => null | number;
   // The scalar form of a signature of two numbers, which a call of two arguments and a binary operator compute with no array
-  computeBinary?: MathExpressionBinaryCompute;
+  computeBinary?: MathExpressionBinaryCompute | undefined;
   // The scalar form of a signature of one number, which a call of one argument and a unary operator compute with no array
   computeUnary?: MathExpressionUnaryCompute;
   maxArity: number;

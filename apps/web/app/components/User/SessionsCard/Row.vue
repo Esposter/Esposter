@@ -3,7 +3,7 @@ import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 interface Props {
   deviceLabel: string;
-  isCurrent?: true;
+  isCurrent?: true | undefined;
   updatedAt: Date;
 }
 

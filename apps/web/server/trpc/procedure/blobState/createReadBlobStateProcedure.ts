@@ -20,7 +20,7 @@ export const createReadBlobStateProcedure = <TData, TInit>(
 ) =>
   getTopicsProcedure(standardAuthedProcedure, ({ ctx }) => [getTopic(topicKind, ctx.user.id)]).query<{
     data: TData;
-    etag?: string;
+    etag?: string | undefined;
   }>(async ({ ctx }) => {
     const bucket = getBucket(container);
     const { etag, json } = await readBlobState(bucket, getSaveBlobName(ctx.user.id));

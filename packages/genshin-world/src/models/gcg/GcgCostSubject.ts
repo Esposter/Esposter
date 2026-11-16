@@ -7,9 +7,9 @@ import type { GcgSkill } from "#src/models/gcg/GcgSkill";
 // Pay after the reductions so far, and the element of the character paying, which its Matching dice follow. A switch names
 // The character it brings in, so the cards attached to that character reduce it too
 export interface GcgCostSubject {
-  card?: GcgCard;
+  card?: GcgCard | undefined;
   costs: GcgCost[];
   element: Element;
-  skill?: GcgSkill;
+  skill?: GcgSkill | undefined;
   switchTo?: number;
 }

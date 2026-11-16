@@ -4,7 +4,7 @@ import type { ProposalTask } from "#src/models/fleet/ProposalTask";
 // Task's phase
 export interface GenshinChange {
   needs: string[];
-  phase?: number;
+  phase?: number | undefined;
   tasks: ProposalTask[];
   waiting: string;
 }

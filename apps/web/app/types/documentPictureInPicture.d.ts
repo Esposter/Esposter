@@ -7,9 +7,9 @@ interface DocumentPictureInPicture extends EventTarget {
 
 interface DocumentPictureInPictureOptions {
   disallowReturnToOpener?: boolean;
-  height?: number;
+  height?: number | undefined;
   preferInitialWindowPlacement?: boolean;
-  width?: number;
+  width?: number | undefined;
 }
 
 interface Window {

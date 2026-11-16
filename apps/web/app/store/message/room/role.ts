@@ -20,7 +20,7 @@ import { getRestoredItems } from "#src/services/shared/getRestoredItems";
 import { useRoomStore } from "#src/store/message/room/index";
 import { useUserStore } from "#src/store/message/user/index";
 import { checkHasPermission } from "@esposter/db-schema";
-import { ID_SEPARATOR, noop } from "@esposter/shared";
+import { ID_SEPARATOR, noop, omitUndefined } from "@esposter/shared";
 import { v7 } from "uuid";
 
 export const useRoleStore = defineStore("message/room/role", () => {
@@ -254,7 +254,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
         const previousRole = getRoles(input.roomId).find(({ id }) => id === input.id);
         if (!previousRole) return noop;
 
-        setRole(input.roomId, { ...previousRole, ...input });
+        setRole(input.roomId, { ...previousRole, ...omitUndefined(input) });
         return () => {
           setRole(input.roomId, previousRole);
         };

@@ -11,7 +11,7 @@ import { trimFileExtension } from "#src/util/file/trimFileExtension";
 import { getResultAsync, takeOne } from "@esposter/shared";
 
 // The parsed content the create form saves right after createResource — unset while the form is name-only
-const sheetResource = defineModel<SheetResource>();
+const sheetResource = defineModel<SheetResource | undefined>();
 // Surfaced to the form rather than kept here, because a file that failed to parse has to block Create
 const error = defineModel<string>("error", { default: "" });
 // Surfaced too — submitting mid-parse would create an empty sheet and silently discard the import

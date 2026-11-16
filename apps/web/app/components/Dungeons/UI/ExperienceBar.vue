@@ -9,8 +9,8 @@ import { useExperienceBarStore } from "#src/store/dungeons/UI/experienceBar";
 interface Props {
   barPercentage: number;
   position: Position;
-  scaleY?: number;
-  width?: number;
+  scaleY?: number | undefined;
+  width?: number | undefined;
 }
 
 const { barPercentage: baseBarPercentage, scaleY = 0.4, width = BAR_WIDTH } = defineProps<Props>();

@@ -19,7 +19,7 @@ export type { Pwa } from "#src/runtime/models/Pwa";
 
 declare module "@nuxt/schema" {
   interface NuxtConfig {
-    pwa?: ModuleOptions;
+    pwa?: ModuleOptions | undefined;
   }
 }
 

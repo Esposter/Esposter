@@ -37,7 +37,7 @@ interface Props {
   // The kinds a witness render draws in place of ours, which stay mounted, unseen
   hiddenKinds: LandmarkKind[];
   // The witness family each kind's landmarks stand for, marked on their groups so a witness render draws ours of it
-  kindFamilyMap?: Partial<Record<LandmarkKind, string>>;
+  kindFamilyMap?: Partial<Record<LandmarkKind, string>> | undefined;
   // What the body and the camera collide with, given each landmark as it arrives
   landmarkCollider: LandmarkCollider;
   lightUniforms: LightUniforms;

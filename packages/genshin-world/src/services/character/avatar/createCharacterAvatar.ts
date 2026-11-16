@@ -32,7 +32,7 @@ const getMaterialKind = (materialName: string): CharacterMaterialKind => {
 
 // A material as the builder keeps it: the shaded material, and the face draw of a face, which the frame's light sets
 interface AvatarMaterialRecord {
-  faceDraw?: FaceDraw;
+  faceDraw?: FaceDraw | undefined;
   material: ToonNodeMaterial;
 }
 

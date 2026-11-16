@@ -1,7 +1,7 @@
 <script setup lang="ts">
 interface Props {
   // Drawn for sight alone, by a control that says it is required itself through aria-required, so speech says it once
-  isSilent?: true;
+  isSilent?: true | undefined;
 }
 
 defineProps<Props>();

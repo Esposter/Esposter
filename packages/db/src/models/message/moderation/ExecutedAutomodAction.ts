@@ -1,6 +1,6 @@
 import type { AdminActionType } from "@esposter/db-schema";
 
 export interface ExecutedAutomodAction {
-  durationMs?: number;
+  durationMs?: number | undefined;
   type: AdminActionType;
 }

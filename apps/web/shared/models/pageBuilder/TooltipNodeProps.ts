@@ -4,6 +4,6 @@ import type { BlockNodeProps } from "vue-block-editor-headless";
 // The props a Tooltip node holds: the button's label, the text shown on hover or focus, and the style it is drawn with
 export interface TooltipNodeProps extends BlockNodeProps {
   label: string;
-  style?: NodeStyle;
+  style?: NodeStyle | undefined;
   text: string;
 }

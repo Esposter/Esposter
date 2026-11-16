@@ -24,7 +24,7 @@ interface Props {
   // Starts one of the pool's workers, which the app builds with its bundler from the package's worker entry
   createTerrainWorker: () => Worker;
   // The development registry the settled read is registered with, given in development alone
-  devRegistry?: DevRegistry;
+  devRegistry?: DevRegistry | undefined;
   // Written each frame with the tiles drawn, for whatever else reads the ground, such as the grass's capture
   draws: TerrainSelection;
   // Whether every region in reach has arrived or failed, so no ground to lay over the terrain is still coming. The
@@ -42,7 +42,7 @@ interface Props {
   // The records each worker computes its tiles over, loaded into it as it starts
   terrainWorkerGround: TerrainWorkerGround;
   // The region's water, whose caustics shimmer on the ground under it
-  waterUniforms?: WaterUniforms;
+  waterUniforms?: undefined | WaterUniforms;
   // The wind the flowers scattered on the finest tiles sway in
   windUniforms: WindUniforms;
 }

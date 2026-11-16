@@ -5,8 +5,8 @@ import { GAME_CREAM, INTERACTION_HOVER_DURATION, INTERACTION_REST_DURATION } fro
 
 interface Props {
   // The characters either side of the chosen one, which the arrows at the frame's left and right edges step to
-  next?: CharacterMenuEntry;
-  previous?: CharacterMenuEntry;
+  next?: CharacterMenuEntry | undefined;
+  previous?: CharacterMenuEntry | undefined;
 }
 
 const { next, previous } = defineProps<Props>();

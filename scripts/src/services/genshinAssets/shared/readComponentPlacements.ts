@@ -20,7 +20,7 @@ import { readWorldPlacements } from "#src/services/genshinAssets/world/readWorld
 // Spawns at run time, is dropped rather than drawn at the origin
 export const readComponentPlacements = async (
   component: DerivedAssetComponent,
-  { isCopied = false, roots }: { isCopied?: boolean; roots?: readonly string[] } = {},
+  { isCopied = false, roots }: { isCopied?: boolean; roots?: readonly string[] | undefined } = {},
 ): Promise<AssetPlacement[]> => {
   const [{ gameObjectDrawingMap, objects }, worldPlacements, world] = await Promise.all([
     readComponentLayout(component),

@@ -14,7 +14,7 @@ interface Props {
   // The world's ground at a point in its own coordinates, which the landmark stands on
   getGroundHeight: (x: number, z: number) => number;
   // The locked landmark the HUD points to, none while it points to none
-  landmark?: PlaceLandmark;
+  landmark?: PlaceLandmark | undefined;
   // The world coordinate the scene's origin stands on, taken off the landmark's place before it is projected through
   // The camera
   origin: Vector3;

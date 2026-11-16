@@ -5,7 +5,7 @@ import type { TerrainResidualFade } from "#src/models/terrain/TerrainResidualFad
 // Whole everywhere without one
 export interface TerrainResidual {
   amplitude: number;
-  fade?: TerrainResidualFade;
+  fade?: TerrainResidualFade | undefined;
   octaves: number;
   scale: number;
   seed: number;

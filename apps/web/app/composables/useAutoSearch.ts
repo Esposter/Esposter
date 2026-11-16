@@ -1,9 +1,9 @@
 import { AUTO_SEARCH_THROTTLE_MS } from "#src/services/shared/constants";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
-import { getResultAsync, normalizeString } from "@esposter/shared";
+import { getResultAsync, normalizeString, omitUndefined } from "@esposter/shared";
 
 interface UseAutoSearchOptions {
-  isIncludeEmptySearchQuery?: true;
+  isIncludeEmptySearchQuery?: true | undefined;
   // Called when the query empties out so the consumer can drop stale results
   reset: () => void;
   search: (searchQuery: string, signal: AbortSignal) => Promise<void>;
@@ -68,7 +68,7 @@ export const useAutoSearch = (
     async (newSearchQuery) => {
       await throttledSearch(normalizeString(newSearchQuery));
     },
-    { immediate: isIncludeEmptySearchQuery },
+    omitUndefined({ immediate: isIncludeEmptySearchQuery }),
   );
   // The failed search again, as a retry button asks
   const retry = () => throttledSearch(normalizeString(searchQuery.value));

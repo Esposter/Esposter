@@ -3,7 +3,7 @@
 // Event five-stars running the promotional character came second, and on the weapon wish the weapon the Epitomized Path
 // Charts a course for, if any, and the Fate Points toward it
 export interface WishPity {
-  chartedWeaponId?: number;
+  chartedWeaponId?: number | undefined;
   fatePoints: number;
   fiveStarCount: number;
   fourStarCount: number;

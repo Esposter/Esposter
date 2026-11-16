@@ -5,12 +5,11 @@ import type { UiSelectItem } from "#src/models/ui/UiSelectItem";
 import ResourceLinkSelect from "#src/components/Resource/Link/Select.vue";
 import { getUnpublishedResourceMessage } from "#src/services/resource/getUnpublishedResourceMessage";
 import { getResourceLinkSource } from "#src/services/resource/link/getResourceLinkSource";
+import { unsetRendererState } from "#src/services/ui/schemaForm/unsetRendererState";
 import { MAX_READ_LIMIT } from "@esposter/shared";
 
 interface Props extends UiSchemaFormRendererProps {}
-// JSON Forms derives whether a field is enabled or read only when the form leaves them unset, which a boolean prop
-// Would read as false
-const props = withDefaults(defineProps<Props>(), { enabled: undefined, readonly: undefined });
+const props = withDefaults(defineProps<Props>(), unsetRendererState);
 const { change, control } = useSchemaFormControl(props);
 const { $trpc } = useNuxtApp();
 // The renderer is ranked only for a field whose link type has a source, so this is set wherever it is drawn

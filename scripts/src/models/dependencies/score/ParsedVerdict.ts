@@ -1,6 +1,6 @@
 import type { LedgerVerdict } from "#src/models/dependencies/score/LedgerVerdict";
 
 export interface ParsedVerdict {
-  kind?: LedgerVerdict;
+  kind?: LedgerVerdict | undefined;
   reason: string;
 }

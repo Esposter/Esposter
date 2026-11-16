@@ -10,7 +10,7 @@ export interface SnapshotVersion {
   isCurrent: boolean;
   // Why it was taken. A row is chosen by what it says it is, never by its ordinal, which is why this rides the
   // Listing. Absent on a published row, whose reason is that it was published
-  reason?: SnapshotReason;
+  reason?: SnapshotReason | undefined;
   // One line about what this version holds — "12 items", "3 columns · 40 rows" — so a row is choosable by
   // What it is rather than by an ordinal. Empty for a type that declares no summary
   summary: string;

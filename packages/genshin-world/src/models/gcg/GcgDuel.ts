@@ -14,7 +14,7 @@ export interface GcgDuel {
   cardModules: ReadonlyMap<number, GcgCardModule>;
   firstSideIndex: number;
   nextFirstSideIndex: number;
-  outcome?: GcgOutcome;
+  outcome?: GcgOutcome | undefined;
   phase: GcgPhase;
   // The seeded source the duel's dice are rolled from and its decks shuffled with, held here so every draw reads one source
   random: () => number;
@@ -22,5 +22,5 @@ export interface GcgDuel {
   rule: GcgRule;
   sides: [GcgSideState, GcgSideState];
   skillModules: ReadonlyMap<string, GcgSkillModule>;
-  winnerSideIndex?: number;
+  winnerSideIndex?: number | undefined;
 }

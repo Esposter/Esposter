@@ -31,9 +31,9 @@ interface Props {
   // The game's words in the reader's language
   gameText: GameText;
   // The glide held still at this many metres scrolled, for a reference taken at one moment of the title's loop
-  heldScrolled?: number;
+  heldScrolled?: number | undefined;
   // Whether the scene draws the game's bloom, which a reference of the frame without it turns off to read the bloom by
-  isBloomed?: false;
+  isBloomed?: false | undefined;
   // The scene alone, as the recordings idling with no interface show it, for a reference to be scored against, and
   // Silent
   isInterfaceHidden: boolean;
@@ -48,7 +48,7 @@ interface Props {
   // After it is done
   progress: number;
   // The tier the scene draws at, the client's own: the phone's draws no screen-space occlusion where the computer's does
-  qualityTier?: QualityTier;
+  qualityTier?: QualityTier | undefined;
   // Where the host serves the developer's own exports of the game's scenes, which the scene draws the login's from
   sceneExportBaseUrl: string;
   timeOfDay: LoginTimeOfDay;

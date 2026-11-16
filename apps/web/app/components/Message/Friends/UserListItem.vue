@@ -2,7 +2,7 @@
 import type { User } from "better-auth";
 
 interface Props {
-  image?: User["image"];
+  image?: undefined | User["image"];
   name: User["name"];
 }
 

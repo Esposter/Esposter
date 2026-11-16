@@ -170,7 +170,7 @@ export class RoomObject extends RealtimeObject<RoomEvent> implements RoomObjectR
   }
 
   async createScheduledMessage(
-    { id, message, replyToId, runAt }: { id: string; message: string; replyToId?: number; runAt: Date },
+    { id, message, replyToId, runAt }: { id: string; message: string; replyToId?: number | undefined; runAt: Date },
     actor: RoomActor,
   ): Promise<ScheduledRoomMessage> {
     const scheduledMessage = this.db
@@ -283,7 +283,7 @@ export class RoomObject extends RealtimeObject<RoomEvent> implements RoomObjectR
     limit,
     userId,
   }: {
-    after?: number;
+    after?: number | undefined;
     limit: number;
     userId: string;
   }): Promise<RoomMessage[]> {
@@ -297,7 +297,7 @@ export class RoomObject extends RealtimeObject<RoomEvent> implements RoomObjectR
     limit,
     userId,
   }: {
-    after?: RoomReactionKey;
+    after?: RoomReactionKey | undefined;
     limit: number;
     userId: string;
   }): RoomReaction[] {
@@ -311,7 +311,15 @@ export class RoomObject extends RealtimeObject<RoomEvent> implements RoomObjectR
     this.setMemberStatus(status);
   }
 
-  exportUserMessages({ after, limit, userId }: { after?: number; limit: number; userId: string }): RoomMessage[] {
+  exportUserMessages({
+    after,
+    limit,
+    userId,
+  }: {
+    after?: number | undefined;
+    limit: number;
+    userId: string;
+  }): RoomMessage[] {
     return this.#readUserMessagePage({ after, limit, userId });
   }
 
@@ -320,7 +328,7 @@ export class RoomObject extends RealtimeObject<RoomEvent> implements RoomObjectR
     limit,
     userId,
   }: {
-    after?: RoomReactionKey;
+    after?: RoomReactionKey | undefined;
     limit: number;
     userId: string;
   }): RoomReaction[] {
@@ -342,7 +350,15 @@ export class RoomObject extends RealtimeObject<RoomEvent> implements RoomObjectR
 
   // The live messages after the page cursor in the room's message order, at most `limit` of them. A backward cursor reads
   // The messages newer than its row, oldest first, which the caller turns back into the list's order
-  readMessages({ cursor, isPinned, limit }: { cursor: PageCursor; isPinned?: boolean; limit: number }): RoomMessage[] {
+  readMessages({
+    cursor,
+    isPinned,
+    limit,
+  }: {
+    cursor: PageCursor;
+    isPinned?: boolean | undefined;
+    limit: number;
+  }): RoomMessage[] {
     const sort = createPageSort({ id: messagesInRoom.id }, ROOM_MESSAGE_PAGE_SORT);
     return this.db
       .select(messageColumns)
@@ -498,7 +514,7 @@ export class RoomObject extends RealtimeObject<RoomEvent> implements RoomObjectR
   }
 
   async updateScheduledMessage(
-    { id, message, replyToId, runAt }: { id: string; message: string; replyToId?: number; runAt: Date },
+    { id, message, replyToId, runAt }: { id: string; message: string; replyToId?: number | undefined; runAt: Date },
     actor: RoomActor,
   ): Promise<null | ScheduledRoomMessage> {
     const scheduledMessage = this.db
@@ -516,7 +532,7 @@ export class RoomObject extends RealtimeObject<RoomEvent> implements RoomObjectR
     return scheduledMessage;
   }
 
-  votePoll({ id, optionId }: { id: number; optionId?: string }, actor: RoomActor): null | RoomMessage {
+  votePoll({ id, optionId }: { id: number; optionId?: string | undefined }, actor: RoomActor): null | RoomMessage {
     const poll = this.#readLiveMessage(id);
     if (!poll || poll.type !== MessageType.Poll) return null;
 
@@ -758,7 +774,15 @@ export class RoomObject extends RealtimeObject<RoomEvent> implements RoomObjectR
   }
 
   // A page of a person's live messages in the room, oldest first, from the id after the one named
-  #readUserMessagePage({ after, limit, userId }: { after?: number; limit: number; userId: string }): RoomMessage[] {
+  #readUserMessagePage({
+    after,
+    limit,
+    userId,
+  }: {
+    after?: number | undefined;
+    limit: number;
+    userId: string;
+  }): RoomMessage[] {
     const cursor: PageCursor = after === undefined ? START_PAGE_CURSOR : { isBackward: false, values: [after] };
     const sort = createPageSort({ id: messagesInRoom.id }, USER_MESSAGE_PAGE_SORT);
     return this.db
@@ -776,7 +800,7 @@ export class RoomObject extends RealtimeObject<RoomEvent> implements RoomObjectR
     limit,
     userId,
   }: {
-    after?: RoomReactionKey;
+    after?: RoomReactionKey | undefined;
     limit: number;
     userId: string;
   }): RoomReaction[] {

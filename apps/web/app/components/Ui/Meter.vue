@@ -3,10 +3,10 @@ import { METER_BLOCK_COUNT } from "#src/services/ui/constants";
 
 interface Props {
   // Past it the reading is at its worst, drawn in the danger colour, as a native meter's high mark
-  high?: number;
+  high?: number | undefined;
   label: string;
   // Past it the reading is getting worse, drawn in the warning colour, as a native meter's low mark
-  low?: number;
+  low?: number | undefined;
   // How much of the whole is used, out of a hundred
   value: number;
   // The reading in words, which a screen reader says in place of the number

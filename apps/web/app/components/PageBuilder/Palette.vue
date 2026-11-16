@@ -15,19 +15,15 @@ interface Props {
   announce: (message: string) => void;
   getDocument: () => AnyPageBuilderDocument | undefined;
   // Both are the editor's, so a palette with no canvas beside it, as on an empty page, takes clicks alone
-  getFrameGeometry?: () => FrameGeometry | undefined;
+  getFrameGeometry?: (() => FrameGeometry | undefined) | undefined;
   kind: AnyPageBuilderKind;
   resourceId: string;
-  startMergeFieldDrag?: (
-    columnName: string,
-    event: PointerEvent,
-    getFrameGeometry: () => FrameGeometry | undefined,
-  ) => void;
-  startPaletteDrag?: (
-    type: BlockNode["type"],
-    event: PointerEvent,
-    getFrameGeometry: () => FrameGeometry | undefined,
-  ) => void;
+  startMergeFieldDrag?:
+    | ((columnName: string, event: PointerEvent, getFrameGeometry: () => FrameGeometry | undefined) => void)
+    | undefined;
+  startPaletteDrag?:
+    | ((type: BlockNode["type"], event: PointerEvent, getFrameGeometry: () => FrameGeometry | undefined) => void)
+    | undefined;
 }
 const { announce, getDocument, getFrameGeometry, kind, resourceId, startMergeFieldDrag, startPaletteDrag } =
   defineProps<Props>();

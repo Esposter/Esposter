@@ -14,7 +14,7 @@ interface Props {
   // Whether the open tab offers the sort, as the weapons' and artifacts' do
   isSortable: boolean;
   // The entry the detail panel shows, whose Use pill shows on a usable one
-  selectedCell?: InventoryCell;
+  selectedCell?: InventoryCell | undefined;
   // The detail panel's button that uses the selected entry, in the reader's language
   useLabel: string;
 }

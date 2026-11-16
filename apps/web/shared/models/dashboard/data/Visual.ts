@@ -13,13 +13,13 @@ import { z } from "zod";
 
 export class Visual extends AItemEntity implements ItemEntityType<VisualType>, LayoutItem {
   chart = new Chart();
-  dataset?: VisualDatasetBinding;
+  dataset?: undefined | VisualDatasetBinding;
   h = 4;
   // Whether the visual takes its rows from the content it draws, rather than from its saved span
   isAutoHeight = false;
   type: VisualType = VisualType.Area;
   // The visuals a group holds, on a grid of its own. Absent on every other type, and a group always holds one
-  visuals?: Visual[];
+  visuals?: undefined | Visual[];
   w = 4;
   x = 0;
   y = 0;

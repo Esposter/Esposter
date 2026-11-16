@@ -11,7 +11,7 @@ import { fileURLToPath } from "node:url";
 // Page's ground behind the splash and the panel the address bar takes, as the theme colour meta tag does (`NuxtSEO`)
 const manifestPalette = UiPaletteMap[DEFAULT_UI_STYLE][ThemeMode.Light];
 
-export const pwa: NuxtConfig["pwa"] = {
+export const pwa: NonNullable<NuxtConfig["pwa"]> = {
   // The service worker is TypeScript in `service-worker/`, built by the module with its precache list injected
   buildSW: { swSrc: fileURLToPath(new URL("../service-worker/sw.ts", import.meta.url)) },
   manifest: {

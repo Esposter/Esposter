@@ -38,10 +38,10 @@ const artifactNotice = defineModel<string>("artifactNotice", { required: true })
 const characters = defineModel<Character[]>("characters", { required: true });
 const inventory = defineModel<Inventory>("inventory", { required: true });
 // The slots the picker overlays are open for, which this panel's Equip and Enhance buttons open
-const equipSlot = defineModel<ArtifactSlot>("equipSlot");
+const equipSlot = defineModel<ArtifactSlot | undefined>("equipSlot");
 const enhanceFodderIds = defineModel<number[]>("enhanceFodderIds", { required: true });
 const enhanceMaterialCounts = defineModel<Record<number, number>>("enhanceMaterialCounts", { required: true });
-const enhanceSlot = defineModel<ArtifactSlot>("enhanceSlot");
+const enhanceSlot = defineModel<ArtifactSlot | undefined>("enhanceSlot");
 const { character, gameText, nameText, reliquarySets, statTables } = defineProps<Props>();
 // Each artifact slot's stats in the game's order, undefined where the character wears no artifact there
 const artifactSlotStats = computed(() =>

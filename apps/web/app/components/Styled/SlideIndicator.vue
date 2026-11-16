@@ -13,7 +13,7 @@ interface Props {
 
 const { activeKeys } = defineProps<Props>();
 const indicator = useTemplateRef("indicator");
-const indicatorStyle = ref<{ height: string; transform: string; transitionDuration?: string }>();
+const indicatorStyle = ref<{ height: string; transform: string; transitionDuration?: string | undefined }>();
 // `isTracking` is a layout change moving the list under the bar — a group expanding, the drawer resizing — where
 // The bar has to follow exactly. Sliding toward a target that moves every frame never settles and reads as a
 // Stutter, so the slide is kept for the one thing it is for: the selection changing

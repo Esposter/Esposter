@@ -7,7 +7,7 @@ import { z } from "zod";
 
 // The props of a comment question: a box of text, sized in rows and optionally bounded in characters
 export interface SurveyCommentNodeProps extends SurveyQuestionBaseProps {
-  maxLength?: number;
+  maxLength?: number | undefined;
   placeholder: string;
   rows: number;
 }

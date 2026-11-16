@@ -3,7 +3,7 @@ interface Props {
   // The picked entry's description, drawn under its name, or "" for an entry without one or still unopened
   description: string;
   // The picked entry's name, absent while the section has no entry to pick
-  name?: string;
+  name?: string | undefined;
 }
 
 defineProps<Props>();

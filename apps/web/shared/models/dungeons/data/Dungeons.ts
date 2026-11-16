@@ -7,7 +7,7 @@ import { AItemEntity, aItemEntitySchema } from "#shared/models/entity/AItemEntit
 import { z } from "zod";
 
 export class Dungeons extends AItemEntity {
-  save?: Save;
+  save?: Save | undefined;
   settings = getInitialSettings();
 
   constructor(init?: Partial<Dungeons>) {

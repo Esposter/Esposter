@@ -40,6 +40,6 @@ export const nonVitestModules: NonNullable<NuxtConfig["modules"]> = [
   UNPLUGIN_PWA_NUXT_MODULE_PATH,
 ];
 // Allowlist instead of subtract: add a module to the Vitest branch only when a test needs it (then re-run).
-export const modules: NuxtConfig["modules"] = process.env.VITEST
+export const modules: NonNullable<NuxtConfig["modules"]> = process.env.VITEST
   ? ["@nuxt/image", "@nuxt/scripts", "@nuxt/test-utils/module", "@pinia/nuxt", "@vueuse/nuxt", trpcNuxtModule]
   : nonVitestModules;

@@ -5,7 +5,7 @@ import { usePdfPage } from "vue-pdfjs-headless";
 
 interface Props {
   isFailed: boolean;
-  pdfDocument?: PDFDocumentProxy;
+  pdfDocument?: PDFDocumentProxy | undefined;
 }
 
 const { pdfDocument } = defineProps<Props>();

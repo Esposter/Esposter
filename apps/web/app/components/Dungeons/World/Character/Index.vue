@@ -3,6 +3,7 @@ import type { CharacterProps } from "#src/components/Dungeons/World/Character/Ch
 import type { Position } from "grid-engine";
 import type { Subscription } from "rxjs";
 
+import { omitUndefined } from "@esposter/shared";
 import { Direction } from "grid-engine";
 import { filter } from "rxjs";
 import { Sprite } from "vue-phaserjs";
@@ -42,8 +43,7 @@ onUnmounted(unsubscribeAll);
           sprite,
           walkingAnimationMapping,
           startPosition: position,
-          facingDirection: direction,
-          speed,
+          ...omitUndefined({ facingDirection: direction, speed }),
         });
         if (onMovementStarted) {
           const baseOnMovementStarted = onMovementStarted;

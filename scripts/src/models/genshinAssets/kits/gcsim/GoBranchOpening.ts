@@ -2,7 +2,7 @@ import type { GoBranchPlace } from "#src/models/genshinAssets/kits/gcsim/GoBranc
 import type { GoSwitchFrame } from "#src/models/genshinAssets/kits/gcsim/GoSwitchFrame";
 
 export interface GoBranchOpening {
-  branch?: GoBranchPlace;
+  branch?: GoBranchPlace | undefined;
   openPosition: number;
-  switchFrame?: GoSwitchFrame;
+  switchFrame?: GoSwitchFrame | undefined;
 }

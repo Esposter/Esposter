@@ -3,7 +3,7 @@ import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 interface Props {
-  disabled?: boolean;
+  disabled?: boolean | undefined;
 }
 
 defineProps<Props>();

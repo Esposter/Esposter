@@ -6,11 +6,11 @@ import { checkIsDeepEqual } from "@esposter/shared";
 import { Select } from "@vuetify/v0";
 
 interface Props {
-  isDisabled?: boolean;
+  isDisabled?: boolean | undefined;
   items: UiMenuItem<T>[];
   label: string;
   // Drawn in the trigger, muted, while nothing is chosen, in place of the label; never one of the choices
-  placeholder?: string;
+  placeholder?: string | undefined;
 }
 // Bound to an array, it holds several choices: a pick toggles an option and the list stays open while the reader picks
 defineOptions({ inheritAttrs: false });

@@ -13,12 +13,12 @@ import { z } from "zod";
 // Current source holds is left out rather than guessed: an NPC's config id within its group and a trigger's region are
 // The group script's alone, and only the births name suites
 export interface SceneGroupMember {
-  configId?: number;
+  configId?: number | undefined;
   kind: SceneGroupMemberKind;
   objectId: number;
-  place?: SceneGroupPlace;
+  place?: SceneGroupPlace | undefined;
   source: SceneGroupSource;
-  suiteIds?: number[];
+  suiteIds?: number[] | undefined;
 }
 
 export const sceneGroupMemberSchema = z.object({

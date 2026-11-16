@@ -44,9 +44,9 @@ interface Props {
   // The kit each character's combat talents are read from, the proud skill group each of them names
   characterTalentKits: CharacterTalentKit[];
   // The Companionship EXP each character has earned, by its id, from which its Friendship Level is read
-  companionshipExpMap?: ReadonlyMap<number, number>;
+  companionshipExpMap?: ReadonlyMap<number, number> | undefined;
   // The Friendship Level each character has reached, by its id, which its Attributes tab's Friendship row shows
-  friendshipLevelMap?: ReadonlyMap<number, number>;
+  friendshipLevelMap?: ReadonlyMap<number, number> | undefined;
   // Where the host serves the game's published data, which the Profile tab reads its character's record from
   gameDataBaseUrl: string;
   // The game's words in the reader's language
@@ -56,7 +56,7 @@ interface Props {
   // Whether the device's main pointer is a finger, which the menu's keys are not drawn for
   isTouch: boolean;
   // The reader's game language, whose text the Profile tab shows
-  language?: GameLanguage;
+  language?: GameLanguage | undefined;
   // The game's material table by item id, which the materials a talent's next level takes are named from
   materialDataMap: ReadonlyMap<number, MaterialData>;
   // The party's stamina, which the Attributes tab shows with every character's own attributes
@@ -72,9 +72,9 @@ interface Props {
   // The bonuses the Traveler holds from the elements it resonated with, once Welkin Moon's Homecoming is done
   travelerBonusLines: AttributeLine[];
   // The element the Traveler holds from the statue it resonated with last, none before any resonance
-  travelerElement?: Element;
+  travelerElement?: Element | undefined;
   // The player's UID, which the Attributes tab draws at the foot of the frame, none until the host gives it
-  uid?: number;
+  uid?: number | undefined;
 }
 
 // What the host lays behind the screen, the scene the open tab is shown over, and over it for the character it shows,

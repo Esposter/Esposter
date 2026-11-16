@@ -25,7 +25,7 @@ export const createMusicPlayer = (
   destination: AudioNode = context.destination,
 ): MusicPlayer => {
   const output = new GainNode(context);
-  const instrumentSoundMap = new Map<Instrument, { noiseBuffer?: AudioBuffer; wave: PeriodicWave }>();
+  const instrumentSoundMap = new Map<Instrument, { noiseBuffer?: AudioBuffer | undefined; wave: PeriodicWave }>();
   let origin = 0;
   let scheduledUntil = 0;
   // The gain of each segment still being scheduled, by its start in the playlist

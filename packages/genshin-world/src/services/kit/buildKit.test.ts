@@ -234,7 +234,7 @@ describe(buildKit, () => {
         glide: { dash: createActionRecord(), jump: { ...createActionRecord([]), animationFrames: 60 } },
       },
     };
-    let stanceSeconds: { dash?: number; jump?: number } = {};
+    let stanceSeconds: { dash?: number | undefined; jump?: number | undefined } = {};
     let stanceSkill: unknown;
 
     const kit = buildKit(record, TALENT_MULTIPLIER_MAP, TALENT_LEVEL_MAP, ({ readStance }) => {

@@ -42,7 +42,7 @@ export const emailRouter = router({
       humanOnly: "The personalised export a person sends, which nothing recalls once it is sent",
       staticReason: "A one-off personalised export, which no reader keeps on screen",
     })
-    .query<{ datasetReference?: DatasetReference; html: string }>(async ({ input: { id } }) => {
+    .query<{ datasetReference?: DatasetReference | undefined; html: string }>(async ({ input: { id } }) => {
       const resourceContent = readResourceContent(emailEditorSchema, id);
       const content = await requireEntity(resourceContent, DatabaseEntityType.Resource, id);
 

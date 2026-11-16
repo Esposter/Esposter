@@ -8,6 +8,7 @@ import type { KitActionRecord } from "#src/models/kit/record/KitActionRecord";
 import type { KitHitRecord } from "#src/models/kit/record/KitHitRecord";
 import type { KitParameter } from "#src/models/kit/record/KitParameter";
 import type { KitRecord } from "#src/models/kit/record/KitRecord";
+import type { UndefinedOnPartial } from "type-fest";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { KitPlunge } from "#src/models/kit/record/KitPlunge";
@@ -38,8 +39,10 @@ const getScalingStat = (attribute: Attribute, { attributes }: Combatant): number
 };
 
 // A hit's stat other than ATK, where its multiplier is a share of one that is no Lunar hit's
-const getAdditiveScalingAttribute = ({ lunarReactionType, scalingAttribute }: Partial<KitHitRecord>) =>
-  lunarReactionType === undefined ? scalingAttribute : undefined;
+const getAdditiveScalingAttribute = ({
+  lunarReactionType,
+  scalingAttribute,
+}: UndefinedOnPartial<Partial<KitHitRecord>>) => (lunarReactionType === undefined ? scalingAttribute : undefined);
 
 // Resolves the values of a kit's record into its kit's, given the character's multipliers and the level each of its
 // Talents plays at: a parameter read off its talent's table at that level, a count of frames divided into seconds, a
@@ -55,7 +58,7 @@ export const createKitRecordResolver = (talentMultiplierMap: TalentMultiplierMap
       throw new InvalidOperationError(Operation.Read, `${proudSkillGroupId}`, "is not a talent of its kit");
     return getTalentMultiplier(talentMultiplierMap, proudSkillGroupId, level, index);
   };
-  const toHitFields = (hitRecord: Partial<KitHitRecord>): Partial<KitHit> => {
+  const toHitFields = (hitRecord: UndefinedOnPartial<Partial<KitHitRecord>>): Partial<KitHit> => {
     const { bubble, healParty, lunarReactionType, multiplier, multiplierFactor, scalingAttribute, stackedHit } =
       hitRecord;
     const additiveScalingAttribute = getAdditiveScalingAttribute(hitRecord);

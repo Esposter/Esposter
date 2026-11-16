@@ -4,7 +4,7 @@ import type { Item } from "#src/models/shared/Item";
 import type { Editor } from "@tiptap/core";
 
 interface Props {
-  editor?: Editor;
+  editor?: Editor | undefined;
 }
 
 const { editor } = defineProps<Props>();

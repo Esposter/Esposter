@@ -19,11 +19,10 @@ describe(createTRPCMsw, () => {
   const t = initTRPC.context<{ authorization: string }>().create({
     // Visible in every rejection below, which is what proves the real formatter ran rather than a copy of its shape. The
     // Stack is the call site of each host, so it is dropped to let a mock body equal the real server body
-    errorFormatter: ({ shape }) => ({
-      ...shape,
-      data: { ...shape.data, stack: undefined },
-      message: `formatted ${shape.message}`,
-    }),
+    errorFormatter: ({ shape }) => {
+      const { stack: _stack, ...data } = shape.data;
+      return { ...shape, data, message: `formatted ${shape.message}` };
+    },
     transformer: superjson,
   });
   // What the chained parsers below have done so far, in the order they did it

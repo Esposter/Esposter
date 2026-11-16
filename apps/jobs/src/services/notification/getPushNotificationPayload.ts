@@ -18,7 +18,7 @@ export const getPushNotificationPayload = ({
   type,
 }: {
   body: string;
-  icon?: null | string;
+  icon?: null | string | undefined;
   path: string;
   title?: null | string;
   type: AppNotificationType;

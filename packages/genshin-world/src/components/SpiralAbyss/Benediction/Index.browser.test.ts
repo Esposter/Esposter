@@ -1,7 +1,7 @@
 import { props } from "#src/components/SpiralAbyss/Benediction/Index.fixture";
 import SpiralAbyssBenediction from "#src/components/SpiralAbyss/Benediction/Index.vue";
 import { takeOne } from "@esposter/shared";
-import { describe, expect, test, vi } from "vitest";
+import { assert, describe, expect, test, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 import { page } from "vitest/browser";
 
@@ -11,7 +11,11 @@ describe("spiralAbyssBenediction", () => {
 
     const onChoose = vi.fn<(towerBuffId: number) => void>();
     await render(SpiralAbyssBenediction, { attrs: { onChoose }, props });
-    const names = props.choices.map(({ descriptionTextHash }) => props.nameText[String(descriptionTextHash)]);
+    const names = props.choices.map(({ descriptionTextHash }) => {
+      const name = props.nameText[String(descriptionTextHash)];
+      assert.exists(name);
+      return name;
+    });
     await Promise.all(
       names.map(async (name) => {
         await expect.element(page.getByRole("button", { exact: false, name })).toBeVisible();

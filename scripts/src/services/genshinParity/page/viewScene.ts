@@ -31,12 +31,12 @@ export const viewScene = async ({
 }: {
   camera: readonly [number, number, number, number, number, number];
   // How far each family stands off its laid-out place, in metres in three's axes, to try a row's phase
-  familyOffsets?: Record<string, Vector>;
+  familyOffsets?: Record<string, Vector> | undefined;
   // How many times each family's parts are drawn about their own places, to try a part's scale against a reference
-  familyScales?: Record<string, number>;
+  familyScales?: Record<string, number> | undefined;
   height: number;
   // Whether the scene draws without its fog, clouds and cloud sea, for a layout read from far off
-  isAlone?: boolean;
+  isAlone?: boolean | undefined;
   props: Record<string, unknown>;
   screen: string;
   width: number;

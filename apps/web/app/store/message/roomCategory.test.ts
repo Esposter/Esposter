@@ -5,7 +5,7 @@ import { createRoomCategory } from "#src/services/message/roomCategory/createRoo
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useAlertStore } from "#src/store/alert";
 import { useRoomCategoryStore } from "#src/store/message/roomCategory";
-import { takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
+import { omitUndefined, takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
@@ -85,7 +85,7 @@ describe(useRoomCategoryStore, () => {
       if (isFailing) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: name });
 
       isFailing = true;
-      return { ...createRoomCategory({ id }), ...input };
+      return { ...createRoomCategory({ id }), ...omitUndefined(input) };
     });
     const roomCategoryStore = useRoomCategoryStore();
     const { roomCategories } = storeToRefs(roomCategoryStore);

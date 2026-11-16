@@ -8,8 +8,13 @@ import { z } from "zod";
 // A Value a rule derives from gcsim's, as a box priced as a circle, carries the rule's shared cause beside the file
 export type KitValueSource =
   | { cause: KitProvisionalCause; source: typeof KitSource.Overlay }
-  | { cause?: KitProvisionalCause; donor?: number; rule: KitRule; source: typeof KitSource.Rule }
-  | { cause?: KitProvisionalCause; file: string; line: number; source: typeof KitSource.Gcsim }
+  | {
+      cause?: KitProvisionalCause | undefined;
+      donor?: number | undefined;
+      rule: KitRule;
+      source: typeof KitSource.Rule;
+    }
+  | { cause?: KitProvisionalCause | undefined; file: string; line: number; source: typeof KitSource.Gcsim }
   | { index: number; label: string; proudSkillGroupId: number; source: typeof KitSource.Tables }
   | { page: string; revisionId: number; row: number; source: typeof KitSource.Wiki };
 

@@ -23,10 +23,10 @@ interface Props {
   namecardItemId: number;
   namecards: ProfileNamecard[];
   // The server's clock minus this machine's, which the World Level's cooldown is read against
-  serverClockOffsetMs?: number;
+  serverClockOffsetMs?: number | undefined;
   // The World Level, and when it last changed, for the cooldown its dialog's button waits on
   worldLevel: number;
-  worldLevelChangedAt?: Temporal.Instant;
+  worldLevelChangedAt?: Temporal.Instant | undefined;
 }
 
 defineProps<Props>();

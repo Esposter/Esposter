@@ -13,7 +13,7 @@ interface ColorSwatch {
 interface Props {
   label: string;
   // The page's own colours, listed first as swatches; picking one stores a reference to it rather than its colour
-  swatches?: ColorSwatch[];
+  swatches?: ColorSwatch[] | undefined;
 }
 // A colour picked with the browser's own picker, which follows the page's colour scheme, shown as a swatch beside the
 // Hex value it holds. The swatch is the control, so its label names it

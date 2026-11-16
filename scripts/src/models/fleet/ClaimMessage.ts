@@ -7,6 +7,6 @@ export interface ClaimMessage extends ClaimHolder {
   claimedAt: string;
   entry: string;
   load: string;
-  miss?: string;
+  miss?: string | undefined;
   renewedAt: string;
 }

@@ -13,7 +13,7 @@ import { useListDialogStore } from "#src/store/resource/listDialog";
 import { RoutePath, takeOne } from "@esposter/shared";
 
 interface Props {
-  source?: ResourceListSource;
+  source?: ResourceListSource | undefined;
 }
 // Every menu entry renders this one surface pointed at a different set, so a capability built here — filters,
 // Columns, grouping, selection, export — appears on all of them at once

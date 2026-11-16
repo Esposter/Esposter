@@ -6,7 +6,7 @@ import { mergeProps } from "vue";
 
 interface Props {
   // While an answer is already on its way, as a poll's vote is
-  isDisabled?: boolean;
+  isDisabled?: boolean | undefined;
   items: Pick<UiMenuItem<T>, "description" | "title" | "value">[];
   // The group's accessible name: what its options choose between
   label: string;
@@ -16,7 +16,7 @@ interface Props {
 // Along it. What goes under an option's title, such as a poll's tally, fills the append slot
 defineOptions({ inheritAttrs: false });
 defineSlots<{ append?: (props: { value: T }) => VNode }>();
-const modelValue = defineModel<T>();
+const modelValue = defineModel<T | undefined>();
 const { isDisabled = false } = defineProps<Props>();
 const id = useId();
 </script>

@@ -990,7 +990,7 @@ useWorldSaveSync({
       @error="emit('ready')"
     >
       <TresPerspectiveCamera
-        v-if="cameraPose"
+        v-if="cameraPose && cameraRotation"
         :far="2000"
         :fov="cameraPose.fov"
         :position="cameraPose.position"

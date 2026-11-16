@@ -5,7 +5,7 @@ import { useUserSessionDialogStore } from "#src/store/user/sessionDialog";
 
 interface Props {
   deviceLabel: string;
-  isCurrent?: true;
+  isCurrent?: true | undefined;
   revoke: () => Promisable<unknown>;
 }
 

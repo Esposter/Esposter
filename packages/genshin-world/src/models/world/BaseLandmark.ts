@@ -10,7 +10,7 @@ import { z } from "zod";
 // Place a jump lands at it. A landmark nothing jumps to has none
 export interface BaseLandmark {
   areaId: string;
-  arrival?: LandmarkArrival;
+  arrival?: LandmarkArrival | undefined;
   heightOffset: number;
   id: string;
   position: GroundPoint;

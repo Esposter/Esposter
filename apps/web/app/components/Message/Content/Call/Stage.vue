@@ -2,7 +2,7 @@
 import { useMediaStore } from "#src/store/message/room/call/media";
 
 interface Props {
-  isDense?: true;
+  isDense?: true | undefined;
 }
 
 defineProps<Props>();

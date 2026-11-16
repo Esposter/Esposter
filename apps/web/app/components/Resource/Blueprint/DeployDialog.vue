@@ -16,7 +16,7 @@ import { RoutePath } from "@esposter/shared";
 
 interface Props {
   // Set while the manifest on screen differs from the saved one, since a deploy runs the saved manifest
-  isDisabled?: true;
+  isDisabled?: true | undefined;
 }
 
 defineProps<Props>();

@@ -8,7 +8,7 @@ import { z } from "zod";
 // `claude --resume`. A todo the owner wrote has none
 export interface TodoListItemOrigin {
   // Set once a drain hands it to the owner, and absent while an agent may still take it
-  handedBackAt?: Date;
+  handedBackAt?: Date | undefined;
   repository: string;
   sessionId: string;
 }

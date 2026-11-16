@@ -2,6 +2,6 @@
 // It names as `quest <id>`, absent when it names none
 export interface GenshinRoadmapItem {
   isDone: boolean;
-  phase?: number;
-  quest?: string;
+  phase?: number | undefined;
+  quest?: string | undefined;
 }

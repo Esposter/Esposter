@@ -5,6 +5,7 @@ import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.te
 import { executeSlashCommand } from "#src/services/message/slashCommands/executeSlashCommand";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useRoomStore } from "#src/store/message/room/index";
+import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { beforeEach, describe, expect, test } from "vitest";
@@ -43,6 +44,21 @@ describe(executeSlashCommand, () => {
     await flushPromises();
 
     expect(currentRoom.value?.topic).toBe(acceptedTopic);
+  });
+
+  // A missing topic would leave the stored one unchanged, so a cleared topic has to reach the server as its empty value
+  test("a member clears the topic", async () => {
+    expect.hasAssertions();
+
+    trpcMsw.room.updateRoom.mutation(({ input }) => ({ ...room, topic: input.topic ?? acceptedTopic }));
+    const roomStore = useRoomStore();
+    const { currentRoom } = storeToRefs(roomStore);
+    const { pushRooms } = roomStore;
+    pushRooms({ ...room, topic: acceptedTopic });
+    await executeSlashCommand({ parameterValues: {}, type: SlashCommandType.Topic });
+    await waitForSynchronizedFunctions();
+
+    expect(currentRoom.value?.topic).toBe("");
   });
 
   // The rollback restores the topic of the room the command was typed in, so it is read from that room rather than

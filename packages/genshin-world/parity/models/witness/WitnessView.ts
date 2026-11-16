@@ -4,11 +4,11 @@
 // And cloud sea; and how far each family of its parts stands off its laid-out place, in metres in three's axes, for a
 // Family's place to be solved on its edges (every family at its own place unless told)
 export interface WitnessView {
-  camera?: { fov: number; pitch: number; position: [number, number, number]; yaw: number };
+  camera?: undefined | { fov: number; pitch: number; position: [number, number, number]; yaw: number };
   families?: string[];
-  familyOffsets?: Record<string, [number, number, number]>;
+  familyOffsets?: Record<string, [number, number, number]> | undefined;
   // How many times each family's parts are scaled about their own places, each at once
-  familyScales?: Record<string, number>;
+  familyScales?: Record<string, number> | undefined;
   isAlone?: boolean;
   // Which half of the witness's leaf cards are drawn, each card in a half of its own (`applyLeafHalf`), every card unless told
   leafHalf?: 0 | 1;

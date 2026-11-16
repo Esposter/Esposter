@@ -9,8 +9,8 @@ import { z } from "zod";
 export interface PushNotificationPayload {
   body: string;
   data: { type: AppNotificationType; url: string };
-  icon?: null | string;
-  title?: null | string;
+  icon?: null | string | undefined;
+  title?: null | string | undefined;
 }
 
 // oxlint-disable-next-line typescript/no-unsafe-enum-assignment -- the data's type is a zod enum schema, which carries typeof AppNotificationType rather than the enum type the interface names, so the rule cannot see it in this value

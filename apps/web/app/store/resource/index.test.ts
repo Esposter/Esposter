@@ -4,6 +4,7 @@ import type { ResourceContent } from "#shared/models/resource/ResourceContent";
 import type { SheetResource } from "#shared/models/resource/sheet/SheetResource";
 import type { uploadFileToUrl } from "#src/services/file/uploadFileToUrl";
 import type { ResourceInResource, ResourcePublicationInResource, ResourceTags } from "@esposter/db-schema";
+import type { UndefinedOnPartial } from "type-fest";
 
 import { Row } from "#shared/models/resource/sheet/datasource/Row";
 import { MAX_REQUEST_SIZE } from "#shared/services/app/constants";
@@ -765,7 +766,7 @@ describe(useResourceStore, () => {
   test("sends only the field each metadata write owns", async () => {
     expect.hasAssertions();
 
-    const updateInputs: Partial<Pick<ResourceInResource, "name" | "tags">>[] = [];
+    const updateInputs: UndefinedOnPartial<Partial<Pick<ResourceInResource, "name" | "tags">>>[] = [];
     const { promise: areBothSent, resolve: onBothSent } = Promise.withResolvers<void>();
     trpcMsw.sheet.updateResource.mutation(({ input }) => {
       updateInputs.push({ name: input.name, tags: input.tags });

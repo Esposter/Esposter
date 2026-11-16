@@ -17,7 +17,7 @@ interface Props {
   // The game's words in the reader's language
   gameText: GameText;
   // The category the list opens on, the first category when absent
-  initialCategoryId?: number;
+  initialCategoryId?: number | undefined;
   progressMap: ReadonlyMap<number, AchievementProgress>;
   // The achievements' and categories' words in the reader's language, by the game's text id
   textMap: Readonly<Record<string, string>>;

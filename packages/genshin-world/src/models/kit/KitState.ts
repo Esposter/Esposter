@@ -8,7 +8,7 @@ import type { LocomotionState } from "genshin-engine";
 // Skill chain with the seconds since the last. While a plunge runs, its seconds count toward its next collision, as no
 // Action is playing. A swap starts the next character's afresh
 export interface KitState {
-  action?: KitAction;
+  action?: KitAction | undefined;
   // The seconds the action plays, which its `decideLength` may set as it runs in place of its own seconds
   actionLengthSeconds: number;
   actionSeconds: number;
@@ -23,7 +23,7 @@ export interface KitState {
   nextHitIndex: number;
   plungeStartHeight: number;
   // The dash or jump entered during an action, which starts once that action ends where the body can start it
-  queuedMovementAction?: KitAction;
+  queuedMovementAction?: KitAction | undefined;
   // The presses of a skill chain played so far, zero once none is open, and the seconds since the last of them
   skillChainCount: number;
   skillChainSeconds: number;

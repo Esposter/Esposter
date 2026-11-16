@@ -13,7 +13,7 @@ import { getSaveBlobName, getTopic } from "@esposter/db-schema";
 // Schema's optional-key check stays deferred, and tRPC then types the input as possibly undefined
 export const createSaveBlobStateProcedure = <TData, TDataInput>(
   container: StorageBucket,
-  inputSchema: z.ZodType<{ data: TData; etag?: string }, { data: TDataInput; etag?: string }>,
+  inputSchema: z.ZodType<{ data: TData; etag?: string | undefined }, { data: TDataInput; etag?: string | undefined }>,
   topicKind: TopicKind,
 ) =>
   getTopicsProcedure(standardAuthedProcedure.input(inputSchema), ({ ctx }) => [

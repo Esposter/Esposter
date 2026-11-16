@@ -6,7 +6,7 @@ import type { TalentUpgradeRefusal } from "#src/models/character/TalentUpgradeRe
 // It cannot rise now, or none when it can
 export interface TalentRow {
   level: number;
-  refusal?: TalentUpgradeRefusal;
+  refusal?: TalentUpgradeRefusal | undefined;
   talent: CombatTalent;
-  upgrade?: TalentUpgrade;
+  upgrade?: TalentUpgrade | undefined;
 }

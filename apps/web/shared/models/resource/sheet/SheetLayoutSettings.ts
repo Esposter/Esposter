@@ -6,7 +6,7 @@ import { z } from "zod";
 // Column's id, so a rename keeps it, and by its key for a column the table draws of its own. Absent until a column
 // Is resized
 export interface SheetLayoutSettings {
-  columnIdWidthMap?: Record<string, number>;
+  columnIdWidthMap?: Record<string, number> | undefined;
 }
 
 export const sheetLayoutSettingsSchema = z.object({

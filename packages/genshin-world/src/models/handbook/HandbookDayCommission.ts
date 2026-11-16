@@ -9,6 +9,6 @@ export interface HandbookDayCommission {
   isClaimed: boolean;
   nameTextId: string;
   progress: number;
-  regionTextKey?: GameTextKey;
+  regionTextKey?: GameTextKey | undefined;
   total: number;
 }

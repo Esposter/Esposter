@@ -9,8 +9,8 @@ import type { SceneKindTrace } from "#src/models/genshinParity/shared/SceneKindT
 // And the frames drawn with each kind of the scene's objects hidden, which the passes' times price each kind by
 export interface GpuTrace {
   calls: GpuCall[];
-  cpu?: CpuCapture;
-  kinds?: SceneKindTrace;
-  passes?: GpuPass[];
+  cpu?: CpuCapture | undefined;
+  kinds?: SceneKindTrace | undefined;
+  passes?: GpuPass[] | undefined;
   times: number[];
 }

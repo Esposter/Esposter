@@ -11,7 +11,7 @@ import { z } from "zod";
 // Set, or unwrapped in auto width, where its width is its widest line. It stores no height, since its height follows from the lines its text wraps to
 export interface TextElement extends ItemEntityType<typeof PositionedElementType.Text> {
   color: string;
-  horizontalAlignment?: HorizontalAlignment;
+  horizontalAlignment?: HorizontalAlignment | undefined;
   id: string;
   isWrapped: boolean;
   text: string;

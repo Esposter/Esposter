@@ -13,11 +13,11 @@ interface Props {
   filename: string;
   // The terms highlighted in the document when it loads, searched as one phrase with the terms joined by a space. A caller
   // Opening the viewer from a search passes the terms it searched for
-  highlightTerms?: string[];
+  highlightTerms?: string[] | undefined;
   isFailed: boolean;
   isPasswordRequested: boolean;
   isPasswordWrong: boolean;
-  pdfDocument?: PDFDocumentProxy;
+  pdfDocument?: PDFDocumentProxy | undefined;
 }
 
 const { highlightTerms = [], isFailed, isPasswordRequested, pdfDocument } = defineProps<Props>();

@@ -19,47 +19,47 @@ import { checkIsNestedInteraction } from "@esposter/shared";
 interface Props {
   columns: UiDataTableColumn<T, TSortKey>[];
   // Anything a cell takes beside what the table gives it, such as the handlers that select a range of cells
-  getCellProps?: (column: UiDataTableColumn<T, TSortKey>, item: T) => Record<string, unknown>;
+  getCellProps?: ((column: UiDataTableColumn<T, TSortKey>, item: T) => Record<string, unknown>) | undefined;
   // Anything a column's header cell takes, such as the props that open the column's context menu
-  getHeaderProps?: (column: UiDataTableColumn<T, TSortKey>) => Record<string, unknown>;
+  getHeaderProps?: ((column: UiDataTableColumn<T, TSortKey>) => Record<string, unknown>) | undefined;
   // What a row is called, which names the checkbox that selects it
   getItemTitle: (item: T) => string;
   // Anything a row takes beside what the table gives it, such as the props that open its context menu
-  getRowProps?: (item: T) => Record<string, unknown>;
+  getRowProps?: ((item: T) => Record<string, unknown>) | undefined;
   // Rows with the same value here are drawn under one header that opens and closes them
-  groupBy?: keyof T & string;
+  groupBy?: (keyof T & string) | undefined;
   // Its cells are walked as a spreadsheet's are, the WAI-ARIA grid: one stop in the tab order on the active cell, the
   // Arrows, Home and End, Page Up and Page Down moving it, and Enter handing it to `onEditCell`. Any other chord is
   // Left to the commands the page registers, so a surface's own keys stay on top of the grid's
-  isCellNavigable?: true;
+  isCellNavigable?: true | undefined;
   // The first column stays at the start while the rest scroll under it, with a shade along its edge once they do, so
   // A row's name stays in view beside its far columns
-  isFirstColumnSticky?: true;
+  isFirstColumnSticky?: true | undefined;
   // A header adds its column to the order rather than replacing it, as a spreadsheet sorts by one column then another
-  isMultiSort?: true;
-  isPending?: boolean;
+  isMultiSort?: true | undefined;
+  isPending?: boolean | undefined;
   // Lets the rows be put in another order, by the handle a call site draws in a column of its own with
   // `REORDER_HANDLE_CLASS` or by Alt+Up and Alt+Down, while the table is neither sorted, searched nor grouped
-  isReorderable?: true;
+  isReorderable?: true | undefined;
   // Each header carries a handle on its end edge that drags or steps its column's width
-  isResizable?: true;
-  isSelectable?: true;
+  isResizable?: true | undefined;
+  isSelectable?: true | undefined;
   // The page the server read, or every row where the table has them all
   items: T[];
   // How many rows there are across every page, which the server counts. Without it the table has every row and
   // Searches, sorts and pages them itself
-  itemsLength?: number;
+  itemsLength?: number | undefined;
   // The page sizes the reader picks from, -1 for every row; without them every row shows and there is no footer
-  itemsPerPageOptions?: number[];
+  itemsPerPageOptions?: number[] | undefined;
   // The table's accessible name
   label: string;
   // What Enter does to a grid's active cell: opens its editor
-  onEditCell?: (column: UiDataTableColumn<T, TSortKey>, item: T) => void;
+  onEditCell?: ((column: UiDataTableColumn<T, TSortKey>, item: T) => void) | undefined;
   // Where a row goes when it is clicked or takes Enter. A prop rather than an emit, so a table whose rows go nowhere,
   // Such as the recycle bin's, never draws them as something to press
-  onOpen?: (item: T) => void;
+  onOpen?: ((item: T) => void) | undefined;
   // What a table that has every row shows of them: those with a cell whose text holds it
-  search?: string;
+  search?: string | undefined;
 }
 // A page of rows the server reads: the page, its size, the order and which rows are selected are the call site's
 // Models, so it reads the page they describe and can keep them in the address. A row opens by a click or Enter where it

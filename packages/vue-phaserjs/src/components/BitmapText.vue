@@ -3,6 +3,7 @@ import type { BitmapTextConfiguration } from "#src/models/configuration/BitmapTe
 import type { BitmapTextEventEmitsOptions } from "#src/models/emit/BitmapTextEventEmitsOptions";
 import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
+import type { UndefinedOnPartial } from "type-fest";
 
 import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
 import { BitmapTextSetterMap } from "#src/services/setterMap/BitmapTextSetterMap";
@@ -10,9 +11,9 @@ import { BitmapTextSetterMap } from "#src/services/setterMap/BitmapTextSetterMap
 interface BitmapTextEmits extends /** @vue-ignore */ BitmapTextEventEmitsOptions {}
 
 interface Props {
-  configuration: Partial<BitmapTextConfiguration> & Pick<BitmapTextConfiguration, "font">;
-  immediate?: true;
-  onComplete?: (scene: SceneWithPlugins, bitmapText: GameObjects.BitmapText) => void;
+  configuration: Pick<BitmapTextConfiguration, "font"> & UndefinedOnPartial<Partial<BitmapTextConfiguration>>;
+  immediate?: true | undefined;
+  onComplete?: ((scene: SceneWithPlugins, bitmapText: GameObjects.BitmapText) => void) | undefined;
 }
 
 const { configuration, immediate, onComplete } = defineProps<Props>();

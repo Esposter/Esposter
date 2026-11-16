@@ -17,23 +17,23 @@ export interface GcgSideState {
   dice: (Element | GcgDieFace)[];
   drawPile: number[];
   // The rerolls a card grants the side past its one in the roll phase, each spent by a reroll of named dice
-  extraRerolls?: number;
+  extraRerolls?: number | undefined;
   hand: number[];
   // Whether the side's Normal Attacks this round are Charged Attacks, which they are when its Elemental Dice were even
   // In number before its Action Phase
-  hasChargedAttack?: boolean;
+  hasChargedAttack?: boolean | undefined;
   hasDeclaredEnd: boolean;
-  hasDefeatedCharacter?: boolean;
+  hasDefeatedCharacter?: boolean | undefined;
   hasPrepared: boolean;
   hasRolled: boolean;
   isReplacementPending: boolean;
   onstages: GcgZoneCard[];
   // The skills prepared for this side's next turn, each run by the character that prepared it
-  preparedSkills?: GcgPreparedSkill[];
+  preparedSkills?: GcgPreparedSkill[] | undefined;
   summons: GcgZoneCard[];
   supports: GcgZoneCard[];
   usedCardIds: number[];
   // The ids of the effects that run once a Match rather than once a Round, each recorded once it has run
-  usedMatchIds?: number[];
+  usedMatchIds?: number[] | undefined;
   usedSkillIds: number[];
 }

@@ -29,7 +29,7 @@ import { v7 } from "uuid";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 interface MockSessionValue {
-  data?: { user: { id: string } };
+  data?: undefined | { user: { id: string } };
 }
 
 describe(useDataStore, () => {

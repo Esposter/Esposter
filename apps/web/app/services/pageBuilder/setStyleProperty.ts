@@ -27,7 +27,7 @@ export const setStyleProperty = (
 
   return Object.fromEntries(
     Object.entries({ ...style, [breakpoint]: states }).filter(
-      ([, breakpointStates]) => !checkIsEmpty(breakpointStates ?? {}),
+      (entry): entry is [StyleBreakpoint, NonNullable<NodeStyle[StyleBreakpoint]>] => !checkIsEmpty(entry[1] ?? {}),
     ),
   );
 };

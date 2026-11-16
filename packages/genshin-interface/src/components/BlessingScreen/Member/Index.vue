@@ -5,7 +5,7 @@ interface Props {
   // The share of the member's Max HP it holds, which its health bar shows
   healthShare: number;
   // The member's level as the game writes it, when the host knows it
-  levelText?: string;
+  levelText?: string | undefined;
   // The member's name in the reader's language, which names the card for a screen reader since the card shows its portrait alone
   name: string;
 }

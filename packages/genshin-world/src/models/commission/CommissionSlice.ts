@@ -13,7 +13,7 @@ import { z } from "zod";
 // Which its tasks join the deal once is done. A region no quest is named for has none, so its tasks join as they are read
 export interface CommissionSlice {
   bonuses: RewardItem[][];
-  openingQuestId?: number;
+  openingQuestId?: number | undefined;
   rewardTiers: CommissionRewardTier[];
   tasks: Commission[];
 }

@@ -1,3 +1,4 @@
+import type { SetRequired } from "type-fest";
 import type { ViteUserConfig } from "vitest/config";
 
 import { BROWSER_TEST_GLOB, SOURCE_CONDITION } from "#src/services/constants";
@@ -14,7 +15,7 @@ import { configDefaults } from "vitest/config";
 export const getVitestConfiguration = (
   projectDirectory?: string,
   projectTestConfiguration: NonNullable<ViteUserConfig["test"]> = {},
-): ViteUserConfig => {
+): SetRequired<ViteUserConfig, "test"> => {
   const vueTestConfiguration = getVueTestConfiguration();
   return {
     resolve: {

@@ -59,6 +59,29 @@ describe(useInitializeGameObject, () => {
     expect(capturedSprite.depth).toBe(newDepth);
   });
 
+  test("applies a property the configuration left out at setup once it is given", async () => {
+    expect.hasAssertions();
+
+    let capturedSprite: GameObjects.Sprite | undefined;
+
+    const wrapper = mountGameObject(Sprite, {
+      props: {
+        configuration,
+        onComplete: (_scene: SceneWithPlugins, sprite: GameObjects.Sprite) => {
+          capturedSprite = sprite;
+        },
+      },
+    });
+
+    const scene = startTestScene(sceneKey);
+    assert.exists(capturedSprite);
+
+    await wrapper.setProps({ configuration: { ...configuration, depth: newDepth } });
+    stepScene(scene);
+
+    expect(capturedSprite.depth).toBe(newDepth);
+  });
+
   test("emits the game object's own value when a configuration property updates to undefined, as setup does", async () => {
     expect.hasAssertions();
 

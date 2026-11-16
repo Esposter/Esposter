@@ -32,7 +32,7 @@ export const useSurveyRunner = (
     pageIndex = 0,
     // A session's seed orders the choices of a question that shuffles them, so one respondent sees one order throughout
     seed: initialSeed = v7(),
-  }: { answers?: SurveyAnswers; pageIndex?: number; seed?: string } = {},
+  }: { answers?: SurveyAnswers | undefined; pageIndex?: number | undefined; seed?: string | undefined } = {},
 ): SurveyRunner => {
   const getDocument = () => toValue(document);
   // Refreshed by every action, so a date the expressions read is the moment of the answer or the move

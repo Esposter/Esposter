@@ -19,7 +19,7 @@ interface Props {
   isCreatable: boolean;
   isToday: boolean;
   // The slot a click last picked, on whichever day it is
-  selectedSlot?: Temporal.PlainDateTime;
+  selectedSlot?: Temporal.PlainDateTime | undefined;
 }
 // One day of hours: a slot per half hour to select, or to drop an event on, each event an hour tall at its time, events
 // In the same slot side by side, and on today a line in the accent at the current time. The hours outside the working

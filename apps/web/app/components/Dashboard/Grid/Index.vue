@@ -16,7 +16,7 @@ interface Props {
   collision: CollisionMode;
   columnNumber: number;
   compactType: CompactType;
-  isEditable?: true;
+  isEditable?: true | undefined;
   rowHeight: number;
   visuals: Visual[];
 }

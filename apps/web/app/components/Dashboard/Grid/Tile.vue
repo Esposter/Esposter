@@ -11,7 +11,7 @@ interface Props {
   // Takes its height from the content it draws, so the tile is as tall as that content and reports it, and it resizes its width only
   isAutoHeight: boolean;
   isDragged: boolean;
-  isEditable?: true;
+  isEditable?: true | undefined;
   label: string;
   offset: GridPoint;
 }

@@ -14,7 +14,7 @@ import { mergeProps } from "vue";
 
 interface Props {
   // A bookmark whose page can no longer be reached: drawn muted, and a press removes the bookmark rather than visiting
-  isUnavailable?: true;
+  isUnavailable?: true | undefined;
   page: PageLink;
 }
 

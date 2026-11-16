@@ -126,11 +126,11 @@ interface Props {
   // The door's pieces and their lifts, where it stands and its relief
   door: LoginDoor;
   // The glide held still at this many metres scrolled, for a reference taken at one moment of the title's loop
-  heldScrolled?: number;
+  heldScrolled?: number | undefined;
   // The bridges' and the pillars' hulls, and where each stands
   hulls: LoginHulls;
   // Whether the scene draws the game's bloom, which a reference of the frame without it turns off to read the bloom by
-  isBloomed?: false;
+  isBloomed?: false | undefined;
   isDoorLit: boolean;
   // The walkway's paving, carved and painted over its tops
   paving: LoginPavingData;

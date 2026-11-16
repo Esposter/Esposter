@@ -4,8 +4,8 @@ import type { FooterBarSlotProps } from "#src/components/RichTextEditor/FooterBa
 import { POST_DESCRIPTION_MAX_LENGTH } from "@esposter/db-schema";
 
 interface Props {
-  height?: string;
-  placeholder?: string;
+  height?: string | undefined;
+  placeholder?: string | undefined;
 }
 
 defineSlots<{ "append-footer": (props: FooterBarSlotProps) => VNode }>();

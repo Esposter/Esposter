@@ -6,7 +6,7 @@ import { UiDialogSize } from "#src/models/ui/UiDialogSize";
 import { computeColumnChartData } from "#src/services/resource/sheet/column/computeColumnChartData";
 
 interface Props {
-  columnStatistics?: ColumnStatistics;
+  columnStatistics?: ColumnStatistics | undefined;
 }
 
 const isOpen = defineModel<boolean>({ default: false });

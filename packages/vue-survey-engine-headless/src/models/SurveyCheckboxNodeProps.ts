@@ -13,8 +13,8 @@ import { z } from "zod";
 export interface SurveyCheckboxNodeProps
   extends SurveyChoiceOptionsProps, SurveyNoneChoiceProps, SurveyQuestionBaseProps {
   hasSelectAll: boolean;
-  maxSelected?: number;
-  minSelected?: number;
+  maxSelected?: number | undefined;
+  minSelected?: number | undefined;
   selectAllText: string;
 }
 

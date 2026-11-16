@@ -17,7 +17,7 @@ interface Props {
   // The game's words in the reader's language
   gameText: GameText;
   // The level of a character by its id, which its member's tab shows; none while the host does not know it
-  getLevel?: (characterId: number) => number | undefined;
+  getLevel?: ((characterId: number) => number | undefined) | undefined;
   // The Max HP of a character on the field, by its id
   getMaxHealth: (characterId: number) => number;
   // The name of a character in the reader's language, by its id

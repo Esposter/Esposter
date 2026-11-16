@@ -4,7 +4,7 @@ import type { GroundPoint } from "genshin-engine";
 // If the dump names one, its key in the dump's category, its place in the game's axes, its height, the point's `y`, and
 // The turn its arrival faces about the vertical in degrees
 export interface SceneTransportPoint {
-  area?: number;
+  area?: number | undefined;
   height: number;
   id: string;
   position: GroundPoint;

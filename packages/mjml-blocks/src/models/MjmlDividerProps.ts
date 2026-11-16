@@ -2,15 +2,15 @@ import type { BlockNodeProps } from "vue-block-editor-headless";
 
 // The props an MJML divider node holds: its attributes as MJML takes them
 export interface MjmlDividerProps extends BlockNodeProps {
-  align?: string;
-  "border-color"?: string;
-  "border-style"?: string;
-  "border-width"?: string;
-  "container-background-color"?: string;
-  padding?: string;
-  "padding-bottom"?: string;
-  "padding-left"?: string;
-  "padding-right"?: string;
-  "padding-top"?: string;
-  width?: string;
+  align?: string | undefined;
+  "border-color"?: string | undefined;
+  "border-style"?: string | undefined;
+  "border-width"?: string | undefined;
+  "container-background-color"?: string | undefined;
+  padding?: string | undefined;
+  "padding-bottom"?: string | undefined;
+  "padding-left"?: string | undefined;
+  "padding-right"?: string | undefined;
+  "padding-top"?: string | undefined;
+  width?: string | undefined;
 }

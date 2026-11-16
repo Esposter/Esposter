@@ -6,11 +6,11 @@ import { z } from "zod";
 // The heal a hit may give the whole party, in a kit's record: the shares of its striker's ATK, DEF and Max HP it adds
 // To its flat HP, and whether it rolls without a shield. The chance it rolls at is its module's
 export interface KitPartyHealRecord {
-  attackShare?: KitParameter;
+  attackShare?: KitParameter | undefined;
   defenseShare: KitParameter;
   flatHealth: KitParameter;
-  isUnshielded?: true;
-  maxHealthShare?: KitParameter;
+  isUnshielded?: true | undefined;
+  maxHealthShare?: KitParameter | undefined;
 }
 
 export const kitPartyHealRecordSchema = z.strictObject({

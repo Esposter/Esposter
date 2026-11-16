@@ -9,13 +9,13 @@ export interface WhiteboardGestureState {
   // Makes the id of a stroke at its press, so the reducer stays pure and a test can fix the id
   createId: () => string;
   document: PositionedDocument;
-  gesture?: WhiteboardGesture;
+  gesture?: undefined | WhiteboardGesture;
   // Whether Space is held, which makes a press pan the canvas whatever the tool
   isSpaceHeld: boolean;
   // Whether the tool stays in hand after a placement, rather than returning to select
   isToolLocked: boolean;
   // The document as the gesture in progress would leave it, drawn in place of the document while the gesture lasts
-  preview?: PositionedDocument;
+  preview?: PositionedDocument | undefined;
   selectedIds: string[];
   // The kind of shape the shape tool places
   shapeKind: ShapeKind;

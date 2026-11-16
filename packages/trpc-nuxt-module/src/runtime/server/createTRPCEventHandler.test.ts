@@ -1,7 +1,9 @@
+import type { getFetch } from "@trpc/client";
 import type { H3Event } from "nitro/h3";
 
 import { DEFAULT_ENDPOINT } from "#src/runtime/constants";
 import { createTRPCEventHandler } from "#src/runtime/server/createTRPCEventHandler";
+import { omitUndefined } from "@esposter/shared";
 import { createTRPCClient, httpBatchLink, httpLink } from "@trpc/client";
 import { initTRPC } from "@trpc/server";
 import { H3 } from "nitro/h3";
@@ -10,6 +12,10 @@ import { describe, expect, test } from "vitest";
 import { z } from "zod";
 
 const createContext = (event: H3Event) => ({ event });
+// The fetch tRPC calls takes the init of its own request, whose optional fields may hold undefined, where the app takes
+// The standard one
+type FetchEsque = ReturnType<typeof getFetch>;
+const toRequestInit = (init: Parameters<FetchEsque>[1]) => init && omitUndefined(init);
 
 describe(createTRPCEventHandler, () => {
   const t = initTRPC.context<{ event: H3Event }>().create({ transformer: superjson });
@@ -56,8 +62,7 @@ describe(createTRPCEventHandler, () => {
       ),
     );
   // The app answers in-process, so a client's abort reaches the handler as the request's own signal
-  const fetchInProcess = (input: Request | string | URL, init?: RequestInit) =>
-    Promise.resolve(app.request(input, init));
+  const fetchInProcess: FetchEsque = (input, init) => Promise.resolve(app.request(input, toRequestInit(init)));
 
   test("answers a batch through the transformer in both directions", async () => {
     expect.hasAssertions();
@@ -83,7 +88,7 @@ describe(createTRPCEventHandler, () => {
     const client = createTRPCClient<typeof router>({
       links: [
         httpLink({
-          fetch: (input, init) => Promise.resolve(readFirstApp.request(input, init)),
+          fetch: (input, init) => Promise.resolve(readFirstApp.request(input, toRequestInit(init))),
           transformer: superjson,
           url: DEFAULT_ENDPOINT,
         }),

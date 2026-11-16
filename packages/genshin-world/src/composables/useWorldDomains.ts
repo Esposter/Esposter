@@ -87,7 +87,7 @@ interface DomainChallengeRun {
   // The shield breaks the arena's enemy took since the last step, which Stormterror's fight counts
   pendingShieldBreaks: number;
   // Stormterror's fight, held only by a run whose arena holds Stormterror
-  stormterrorFight?: StormterrorFight;
+  stormterrorFight?: StormterrorFight | undefined;
   waveIndex: number;
 }
 

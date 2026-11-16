@@ -22,7 +22,7 @@ export const getConnectOperations = (
   document: PositionedDocument,
   source: ShapeElement,
   connectionIndex: number,
-  options: { arrowId: string; release: Point; shapeId: string; target?: ArrowBinding },
+  options: { arrowId: string; release: Point; shapeId: string; target?: ArrowBinding | undefined },
 ): JsonPatchOperation[] => {
   const { arrowId, release, shapeId, target } = options;
   // The arrow leaves the source and points at the joined shape, so only its end takes an arrowhead, as an arrow drawn by the tool does

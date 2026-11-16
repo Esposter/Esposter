@@ -57,11 +57,11 @@ export class MicrophoneProcessor {
     this.#postSettings();
   }
 
-  #audioContext?: AudioContext;
+  #audioContext?: AudioContext | undefined;
   #inputSensitivityDecibels = MIN_INPUT_SENSITIVITY_DECIBELS;
   #isPushToTalkKeyHeld = false;
   #microphoneVolumePercentage = 100;
-  #processor?: AudioWorkletNode;
+  #processor?: AudioWorkletNode | undefined;
   #voiceInputMode: VoiceInputMode = VoiceInputMode.VoiceActivity;
 
   // Held by reference, so RealtimeKit's add and remove both name the same middleware

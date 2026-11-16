@@ -2,7 +2,7 @@
 import { useDirectMessageStore } from "#src/store/message/room/directMessage";
 
 interface Props {
-  isCollapsed?: boolean;
+  isCollapsed?: boolean | undefined;
 }
 
 defineSlots<{ prepend: () => VNode }>();

@@ -26,7 +26,8 @@ const fixtures = import.meta.glob<ComponentFixture>("./**/Index.fixture.ts", { e
 const LAYOUT_COMPONENTS = new Set(["./GameRect/Index.vue", "./GameScreen/Index.vue", "./TwoColumnScreen/Index.vue"]);
 const COMPONENT_FILE = "/Index.vue";
 const STAGE_STYLE = { background: "#6b7280", display: "grid", placeItems: "center" };
-const cases: { component: Component; imageName: string; props: Record<string, unknown>; slot?: string }[] = [];
+const cases: { component: Component; imageName: string; props: Record<string, unknown>; slot?: string | undefined }[] =
+  [];
 for (const [path, { props, slot, variants = {} }] of Object.entries(fixtures)) {
   const componentPath = path.replace(/\.fixture\.ts$/u, ".vue");
   const component = components[componentPath];

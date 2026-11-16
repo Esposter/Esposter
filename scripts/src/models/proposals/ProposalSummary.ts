@@ -9,6 +9,6 @@ export interface ProposalSummary {
   id: string;
   keyFileCount: number;
   // The phase the change is picked at, the lowest among its open tasks, absent when none is open or none holds a phase
-  phase?: number;
+  phase?: number | undefined;
   signals: ProposalSignal[];
 }

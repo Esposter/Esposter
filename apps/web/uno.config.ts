@@ -21,14 +21,18 @@ const HTML_COMMENT_REGEX = /<!--[\s\S]*?-->/gu;
 const attributifyPreset = presetAttributify();
 const attributify = {
   ...attributifyPreset,
-  extractors: attributifyPreset.extractors?.map((extractor) => ({
-    ...extractor,
-    extract: (context: ExtractorContext) =>
-      extractor.extract?.({
-        ...context,
-        code: context.code.replaceAll(HTML_COMMENT_REGEX, (comment) => " ".repeat(comment.length)),
+  ...(attributifyPreset.extractors === undefined
+    ? {}
+    : {
+        extractors: attributifyPreset.extractors.map((extractor) => ({
+          ...extractor,
+          extract: (context: ExtractorContext) =>
+            extractor.extract?.({
+              ...context,
+              code: context.code.replaceAll(HTML_COMMENT_REGEX, (comment) => " ".repeat(comment.length)),
+            }),
+        })),
       }),
-  })),
 } satisfies Preset;
 // Forced colours drop every shadow, which is all the style's edges are, so under them each surface takes a transparent
 // Border the forced palette paints in, and a frame, a button and a field keep their outline. Only there, since a border

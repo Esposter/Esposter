@@ -4,13 +4,13 @@ import type { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { Button } from "@vuetify/v0";
 
 interface Props {
-  disabled?: boolean;
+  disabled?: boolean | undefined;
   // Takes focus as its dialog opens, which the browser's own autofocus does for it: a destructive confirmation's Cancel
-  isAutofocus?: true;
+  isAutofocus?: true | undefined;
   // A write it started is still out: pressing again would only send it twice, so it holds disabled with a spinner
   // Ahead of its content until the write settles
-  isPending?: boolean;
-  variant?: UiButtonVariant;
+  isPending?: boolean | undefined;
+  variant?: UiButtonVariant | undefined;
 }
 // The button is ours to render rather than the primitive's, which lays its own attributes over the ones passed to it:
 // A submit button's type and a toggle's pressed state are the call site's to set

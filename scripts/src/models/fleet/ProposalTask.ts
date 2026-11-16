@@ -3,5 +3,5 @@
 export interface ProposalTask {
   isDone: boolean;
   number: string;
-  phase?: number;
+  phase?: number | undefined;
 }

@@ -35,4 +35,13 @@ describe(corsHandler, () => {
 
     expect(corsHandler(createEvent("GET"), () => undefined)).toBeUndefined();
   });
+
+  test("a response exposes no header to the page when none is configured", () => {
+    expect.hasAssertions();
+
+    const event = createEvent("GET");
+    corsHandler(event, () => undefined);
+
+    expect(event.res.headers.get("access-control-expose-headers")).toBe("");
+  });
 });

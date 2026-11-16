@@ -11,7 +11,7 @@ export interface HudMember {
   // Whose skill and burst icons its buttons carry
   characterId: number;
   // The element its burst's button is coloured in, none for a character the roster's table gives none
-  element?: Element;
+  element?: Element | undefined;
   energy: number;
   energyCost: number;
   health: number;
@@ -19,5 +19,5 @@ export interface HudMember {
   maxHealth: number;
   skillCooldown: number;
   skillCooldownSeconds: number;
-  weaponType?: WeaponType;
+  weaponType?: undefined | WeaponType;
 }

@@ -6,7 +6,7 @@ import { RoutePath } from "@esposter/shared";
 
 interface Props {
   entry: PointsLeaderboardEntry;
-  isMyEntry?: true;
+  isMyEntry?: true | undefined;
 }
 
 defineProps<Props>();

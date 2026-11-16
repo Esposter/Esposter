@@ -6,9 +6,9 @@ import { UiRules } from "#src/services/ui/UiRules";
 import { POST_TITLE_MAX_LENGTH } from "@esposter/db-schema";
 
 interface Props {
-  initialValues?: Pick<PostInPost, "description" | "title">;
-  isCreate?: true;
-  isPending?: boolean;
+  initialValues?: Pick<PostInPost, "description" | "title"> | undefined;
+  isCreate?: true | undefined;
+  isPending?: boolean | undefined;
 }
 
 const { initialValues = { description: "", title: "" } } = defineProps<Props>();

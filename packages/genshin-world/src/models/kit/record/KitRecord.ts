@@ -7,6 +7,7 @@ import type { KitParameter } from "#src/models/kit/record/KitParameter";
 import type { KitSkillChainRecord } from "#src/models/kit/record/KitSkillChainRecord";
 import type { KitStanceRecord } from "#src/models/kit/record/KitStanceRecord";
 import type { KitStellarJubileeRecord } from "#src/models/kit/record/KitStellarJubileeRecord";
+import type { UndefinedOnPartial } from "type-fest";
 
 import { attackAreaSchema } from "#src/models/kit/AttackArea";
 import { kitActionRecordSchema } from "#src/models/kit/record/KitActionRecord";
@@ -31,34 +32,34 @@ const createNamedSchema = <T extends z.ZodType>(
 // Those slots, a list where it reads one name at several places, and the fields of each hit it builds as it
 // Plays. What the character does with them is its behaviour module's
 export interface KitRecord {
-  actions?: Record<string, KitActionRecord | KitActionRecord[]>;
-  areas?: Record<string, AttackArea | AttackArea[]>;
+  actions?: Record<string, KitActionRecord | KitActionRecord[]> | undefined;
+  areas?: Record<string, AttackArea | AttackArea[]> | undefined;
   burst: KitActionRecord;
   burstCooldownSeconds: KitParameter;
   // Absent where the burst draws on no Energy, as Mavuika's, which her Fighting Spirit readies instead
-  burstEnergyCost?: KitParameter;
-  burstVariant?: KitActionRecord;
+  burstEnergyCost?: KitParameter | undefined;
+  burstVariant?: KitActionRecord | undefined;
   chargedAttack: KitActionRecord;
   chargedAttackStamina: KitParameter;
-  chargedAttackVariant?: KitActionRecord;
-  frames?: Record<string, number | number[]>;
-  hitFields?: Record<string, Partial<KitHitRecord>>;
-  hits?: Record<string, KitHitRecord | KitHitRecord[]>;
-  moonsignBenediction?: KitMoonsignBenedictionRecord;
+  chargedAttackVariant?: KitActionRecord | undefined;
+  frames?: Record<string, number | number[]> | undefined;
+  hitFields?: Record<string, UndefinedOnPartial<Partial<KitHitRecord>>> | undefined;
+  hits?: Record<string, KitHitRecord | KitHitRecord[]> | undefined;
+  moonsignBenediction?: KitMoonsignBenedictionRecord | undefined;
   normalAttacks: KitActionRecord[];
-  parameters?: Record<string, KitParameter | KitParameter[]>;
+  parameters?: Record<string, KitParameter | KitParameter[]> | undefined;
   plungeCollision: KitHitRecord;
   plunges: Record<KitPlunge, KitActionRecord>;
   // The plunges a skill state turns the plunge into, the first holding one playing, each as its record's own action
-  plungeVariants?: KitActionRecord[];
+  plungeVariants?: KitActionRecord[] | undefined;
   skill: KitActionRecord;
-  skillChain?: KitSkillChainRecord;
-  skillCharges?: KitParameter;
+  skillChain?: KitSkillChainRecord | undefined;
+  skillCharges?: KitParameter | undefined;
   skillCooldownSeconds: KitParameter;
   skillHolds: KitHoldRecord[];
-  skillMaximumHeldSeconds?: KitParameter;
-  stances?: Record<string, KitStanceRecord>;
-  stellarJubilee?: KitStellarJubileeRecord;
+  skillMaximumHeldSeconds?: KitParameter | undefined;
+  stances?: Record<string, KitStanceRecord> | undefined;
+  stellarJubilee?: KitStellarJubileeRecord | undefined;
 }
 
 export const kitRecordSchema = z.strictObject({

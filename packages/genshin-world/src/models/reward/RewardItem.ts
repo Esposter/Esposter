@@ -4,7 +4,7 @@ import { z } from "zod";
 // A roll that may give nothing, as a reward preview's range spells it. An average, where the wiki gives one, is the count a
 // Claim draws to on average, and an item with one is drawn to that mean (see drawRewardItems)
 export interface RewardItem {
-  averageCount?: number;
+  averageCount?: number | undefined;
   itemId: number;
   maxCount: number;
   minCount: number;

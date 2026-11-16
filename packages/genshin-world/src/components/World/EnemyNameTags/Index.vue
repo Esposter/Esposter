@@ -23,7 +23,7 @@ interface Props {
   // The world's ground at a point in its own coordinates, which each enemy stands on
   getGroundHeight: (x: number, z: number) => number;
   // The game's names by text id in the reader's language, which an enemy's name is read from once they arrive
-  nameText?: Readonly<Record<string, string>>;
+  nameText?: Readonly<Record<string, string>> | undefined;
   // The world coordinate the scene's origin stands on, taken off each enemy's place before it is projected through the camera
   origin: Vector3;
 }

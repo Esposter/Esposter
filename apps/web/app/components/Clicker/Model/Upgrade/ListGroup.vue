@@ -9,7 +9,7 @@ import { usePointStore } from "#src/store/clicker/point";
 
 interface Props {
   // The inventory's, which has nothing left to pay
-  isBought?: true;
+  isBought?: true | undefined;
   upgrades: Upgrade[];
 }
 

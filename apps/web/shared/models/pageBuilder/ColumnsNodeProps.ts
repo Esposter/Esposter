@@ -5,5 +5,5 @@ import type { BlockNodeProps } from "vue-block-editor-headless";
 // The props a Columns node holds: the style it is drawn with, and the Column nodes making up its row
 export interface ColumnsNodeProps extends BlockNodeProps {
   children: ColumnNode[];
-  style?: NodeStyle;
+  style?: NodeStyle | undefined;
 }

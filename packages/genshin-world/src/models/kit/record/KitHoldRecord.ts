@@ -11,7 +11,7 @@ export interface KitHoldRecord {
   action: KitActionRecord;
   cooldownSeconds: KitParameter;
   minimumHeldSeconds: number;
-  variant?: KitActionRecord;
+  variant?: KitActionRecord | undefined;
 }
 
 export const kitHoldRecordSchema = z.strictObject({

@@ -3,7 +3,7 @@ import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 interface Props {
   // What it copies, as its name and tooltip say it: "Copy invite link"
-  label?: string;
+  label?: string | undefined;
   source: string;
 }
 

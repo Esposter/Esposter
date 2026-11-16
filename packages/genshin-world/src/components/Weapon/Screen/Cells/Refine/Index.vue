@@ -7,9 +7,9 @@ interface Props {
   // Whether the bag holds the refinement material at all, which a refinement can take in place of a copy
   isRefinementMaterialHeld: boolean;
   // The copy the Refine tab picked, which stands in for the material when it is set
-  pickedCopyId?: number;
+  pickedCopyId?: number | undefined;
   // The refinement material the Refine tab offers, with the count the bag holds of it
-  refinementMaterial?: { count: number; name: string };
+  refinementMaterial?: undefined | { count: number; name: string };
 }
 
 defineProps<Props>();

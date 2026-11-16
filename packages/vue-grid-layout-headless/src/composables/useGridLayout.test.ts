@@ -54,15 +54,15 @@ describe(useGridLayout, () => {
     onTransfer,
     spacing: gridSpacing = spacing,
   }: {
-    checkIsRefused?: GridRefusal;
-    checkIsSolid?: (item: GridItem) => boolean;
+    checkIsRefused?: GridRefusal | undefined;
+    checkIsSolid?: ((item: GridItem) => boolean) | undefined;
     collision?: CollisionMode;
     columnNumber?: number;
     compactType?: CompactType;
     isEditable?: boolean;
     items: GridItem[];
     onCommit: (commit: GridCommit) => void;
-    onTransfer?: (transfer: GridTransfer) => void;
+    onTransfer?: ((transfer: GridTransfer) => void) | undefined;
     spacing?: GridSpacing;
   }) => ({
     checkIsRefused,

@@ -10,7 +10,7 @@ interface Props {
   items: UiMenuItem<T>[];
   label: string;
   // Shown while nothing is chosen, in the muted text, in place of the label; never one of the options
-  placeholder?: string;
+  placeholder?: string | undefined;
 }
 
 const { items, label, placeholder } = defineProps<Props>();

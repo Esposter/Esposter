@@ -18,7 +18,7 @@ const genshinWorldDirectory = dirname(createRequire(import.meta.url).resolve("ge
 // The PDF renderer's own folder of character maps, fonts and decoders, served from its install rather than a copy
 const pdfjsDistDirectory = dirname(createRequire(import.meta.url).resolve("pdfjs-dist/package.json"));
 
-export const nitro: NuxtConfig["nitro"] = {
+export const nitro: NonNullable<NuxtConfig["nitro"]> = {
   // The Worker's own wrangler configuration, written beside the build. A build is made for one environment (CI sets
   // CLOUDFLARE_ENV by its branch, a local build is prod and the dev server development), so the file holds that
   // Environment alone: wrangler refuses `env` blocks in a configuration a tool generated. The app's stateful half is the

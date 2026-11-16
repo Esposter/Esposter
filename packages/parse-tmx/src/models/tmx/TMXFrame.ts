@@ -20,7 +20,12 @@ import type { TMXTagName } from "#src/models/tmx/TMXTagName";
 // Element's character data, which only some elements read.
 export type TMXFrame = (
   | { owner: TMXLayerParsed; tag: typeof TMXTagName.Data; target: TMXDataSource }
-  | { propertyType: PropertyType; tag: typeof TMXTagName.Property; target: TMXPropertyParsed; valueAttribute?: string }
+  | {
+      propertyType: PropertyType;
+      tag: typeof TMXTagName.Property;
+      target: TMXPropertyParsed;
+      valueAttribute?: string | undefined;
+    }
   | { tag: typeof TMXTagName.Animation; target: TMXAnimationParsed }
   | { tag: typeof TMXTagName.Chunk; target: TMXDataSource }
   | { tag: typeof TMXTagName.EditorSettings; target: TMXEditorSettingsParsed }

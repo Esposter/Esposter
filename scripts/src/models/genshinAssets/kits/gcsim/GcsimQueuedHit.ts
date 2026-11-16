@@ -6,8 +6,8 @@ export interface GcsimQueuedHit {
   callLine: number;
   delay: number;
   file: string;
-  hitbox?: GcsimHitbox;
+  hitbox?: GcsimHitbox | undefined;
   // The loop iteration a constant loop repeats the call in, where it is one: a repeated call is a tick of its attack
-  iterations?: Record<string, number>;
+  iterations?: Record<string, number> | undefined;
   line: number;
 }

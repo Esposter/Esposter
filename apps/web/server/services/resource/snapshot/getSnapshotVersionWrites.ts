@@ -2,6 +2,7 @@ import type { PreparedSnapshotVersion } from "#server/services/resource/snapshot
 import type { Context } from "#server/trpc/context";
 import type { ResourceInResource, ResourceVersionInResource, SnapshotChannel } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
+import type { UndefinedOnPartial } from "type-fest";
 
 import { resourceVersionAssetsInResource, resourceVersionsInResource } from "@esposter/db-schema";
 import { and, eq, sql } from "drizzle-orm";
@@ -17,7 +18,10 @@ export const getSnapshotVersionWrites = (
     channel,
     reason,
     version,
-  }: Partial<Pick<ResourceVersionInResource, "reason">> & { channel: SnapshotChannel; version: number | SQL<number> },
+  }: UndefinedOnPartial<Partial<Pick<ResourceVersionInResource, "reason">>> & {
+    channel: SnapshotChannel;
+    version: number | SQL<number>;
+  },
   { assetHashes, summary, writtenVersion }: PreparedSnapshotVersion,
 ) => {
   const { baseHash, hash, plaintextBytes, storedBytes } = writtenVersion;

@@ -45,10 +45,10 @@ const mjmlRichTextAttributesSchema = z.record(z.string(), mjmlRichTextAttributeV
 // The rich text document a test writes: a tree that parses as MjmlRichText, its recursion declared on the annotation
 const mjmlRichTextSchema: z.ZodType<MjmlRichText> = z.object({
   attrs: mjmlRichTextAttributesSchema.optional(),
-  content: z.array(z.lazy(() => mjmlRichTextSchema)).optional(),
-  marks: z.array(z.object({ attrs: mjmlRichTextAttributesSchema.optional(), type: z.string() })).optional(),
-  text: z.string().optional(),
-  type: z.string().optional(),
+  content: z.array(z.lazy(() => mjmlRichTextSchema)).exactOptional(),
+  marks: z.array(z.object({ attrs: mjmlRichTextAttributesSchema.exactOptional(), type: z.string() })).exactOptional(),
+  text: z.string().exactOptional(),
+  type: z.string().exactOptional(),
 });
 export const TEST_RICH_TEXT: MjmlRichTextDefinition = {
   parseHtml: (html) => ({ text: html }),

@@ -10,8 +10,8 @@ import { z } from "zod";
 // One end of an arrow: the point it sits at, its binding when it is bound to a shape, and the arrowhead it draws, which is absent for an end with none.
 // The end is strict, so a stored end that still holds the old arrowhead flag fails its parse until it is rewritten
 export interface ArrowEnd {
-  arrowhead?: ArrowheadKind;
-  binding?: ArrowBinding;
+  arrowhead?: ArrowheadKind | undefined;
+  binding?: ArrowBinding | undefined;
   point: Point;
 }
 

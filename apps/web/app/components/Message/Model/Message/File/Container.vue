@@ -4,7 +4,7 @@ import type { ClientMessage } from "#src/models/message/ClientMessage";
 import { getColumnLayout } from "#src/services/message/file/getColumnLayout";
 
 interface Props {
-  isPreview?: boolean;
+  isPreview?: boolean | undefined;
   message: ClientMessage;
 }
 

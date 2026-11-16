@@ -10,20 +10,24 @@ const attributesSchema = createRecordSchema(
   z.string().max(MAX_RESOURCE_CONTENT_SIZE),
   z.unknown(),
   MAX_RESOURCE_CONTENT_SIZE,
-).optional();
+);
 
 // The recursive structure keeps attrs and future extension fields the editor persists. The document schema below
-// Checks that each node and mark belongs to the writing kit this app actually loads.
+// Checks that each node and mark belongs to the writing kit this app actually loads. It mirrors tiptap's
+// `JSONContent` key for key: a node's attrs may be undefined, as `getJSON()` writes them, and every other optional key
+// Is set or missing, since tiptap never writes it undefined
 const jsonContentSchema: z.ZodType<JSONContent> = z.lazy(() =>
   z.looseObject({
-    attrs: attributesSchema,
-    content: z.array(jsonContentSchema).max(MAX_RESOURCE_CONTENT_SIZE).optional(),
+    attrs: attributesSchema.optional(),
+    content: z.array(jsonContentSchema).max(MAX_RESOURCE_CONTENT_SIZE).exactOptional(),
     marks: z
-      .array(z.looseObject({ attrs: attributesSchema, type: z.string().max(MAX_RESOURCE_CONTENT_SIZE) }))
+      .array(
+        z.looseObject({ attrs: attributesSchema.exactOptional(), type: z.string().max(MAX_RESOURCE_CONTENT_SIZE) }),
+      )
       .max(MAX_RESOURCE_CONTENT_SIZE)
-      .optional(),
-    text: z.string().max(MAX_RESOURCE_CONTENT_SIZE).optional(),
-    type: z.string().max(MAX_RESOURCE_CONTENT_SIZE).optional(),
+      .exactOptional(),
+    text: z.string().max(MAX_RESOURCE_CONTENT_SIZE).exactOptional(),
+    type: z.string().max(MAX_RESOURCE_CONTENT_SIZE).exactOptional(),
   }),
 );
 

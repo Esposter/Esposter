@@ -3,7 +3,7 @@ interface Props {
   count: number;
   // The accessible name, for a count nothing beside it says: "3 mentions". Without one it is decoration, as the count
   // An activator's own name already reads is
-  label?: string;
+  label?: string | undefined;
 }
 // How many of something wait on what it sits beside — unread notifications, a room's mentions — filled in the danger
 // Colour. Never narrower than it is tall, so one digit reads as a round mark and more digits widen it rather than

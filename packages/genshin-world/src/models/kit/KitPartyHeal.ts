@@ -7,12 +7,12 @@ import type { KitEffect } from "#src/models/kit/KitEffect";
 // Unless it is unshielded
 export interface KitPartyHeal {
   // The share of the striker's ATK the heal adds, if it scales with ATK
-  attackShare?: number;
+  attackShare?: number | undefined;
   chance: (striker: Combatant, effects: readonly KitEffect[]) => number;
   defenseShare: number;
   flatHealth: number;
   // Whether the heal rolls whether or not its striker's character holds a shield
-  isUnshielded?: true;
+  isUnshielded?: true | undefined;
   // The share of the striker's Max HP the heal adds, if it scales with Max HP
-  maxHealthShare?: number;
+  maxHealthShare?: number | undefined;
 }

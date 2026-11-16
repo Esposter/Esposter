@@ -6,5 +6,5 @@ export interface ImageNodeProps extends BlockNodeProps {
   alt: string;
   decorative: boolean;
   src: string;
-  style?: NodeStyle;
+  style?: NodeStyle | undefined;
 }

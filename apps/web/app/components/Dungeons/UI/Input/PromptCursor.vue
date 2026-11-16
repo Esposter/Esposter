@@ -5,7 +5,7 @@ import { useDialogStore } from "#src/store/dungeons/dialog";
 import { Image } from "vue-phaserjs";
 
 interface Props {
-  scale?: number;
+  scale?: number | undefined;
   y: number;
 }
 

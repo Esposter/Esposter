@@ -3,7 +3,7 @@ import { DEFAULT_PAGE_LIMIT } from "@esposter/db-schema";
 
 interface Props {
   hasMore: boolean;
-  isCollapsed?: boolean;
+  isCollapsed?: boolean | undefined;
   isPending: boolean;
 }
 

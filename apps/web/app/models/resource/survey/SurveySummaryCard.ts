@@ -7,5 +7,9 @@ export type SurveySummaryCard = BaseSurveySummaryCard &
   (
     | { answers: string[]; type: typeof SurveySummaryCardType.Text }
     | { average: number; maximum: number; minimum: number; type: typeof SurveySummaryCardType.Number }
-    | { average?: number; choices: { count: number; label: string }[]; type: typeof SurveySummaryCardType.Choice }
+    | {
+        average?: number | undefined;
+        choices: { count: number; label: string }[];
+        type: typeof SurveySummaryCardType.Choice;
+      }
   );

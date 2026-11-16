@@ -5,7 +5,7 @@ interface Props {
   // Whether the player holds no namecard to pick from, which draws the button disabled
   isDisabled: boolean;
   // The equipped namecard's name, which the button reads; none while the player has no namecard equipped
-  namecardName?: string;
+  namecardName?: string | undefined;
 }
 
 defineProps<Props>();
