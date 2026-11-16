@@ -36,7 +36,7 @@ export const typescript: NonNullable<NuxtConfig["typescript"]> = {
 // Nuxt gives the server the webworker and DOM libs, which declare the same `Headers` and `Response` as the Workers globals.
 // `defu` concatenates a config's arrays rather than replacing them, so `serverTsConfig` cannot take them away.
 // The hook sets the server's lib once Nuxt has computed it
-export const typescriptHooks: NuxtConfig["hooks"] = {
+export const typescriptHooks: NonNullable<NuxtConfig["hooks"]> = {
   "prepare:types": ({ serverTsConfig }) => {
     serverTsConfig.compilerOptions = { ...serverTsConfig.compilerOptions, lib: ["ESNext"] };
   },
