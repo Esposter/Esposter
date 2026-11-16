@@ -36,8 +36,8 @@ The surface is the slice R2 uses:
 | A literal `+` in a path read as a space                                       | Each segment decoded with `decodeURIComponent`, so `+` stays `+` | S3 reads `+` in a path literally                                                       |
 | A repeated query name keeps its first pair for S3                             | Every pair is kept, sorted by value                              | The request sends every pair, so every pair is signed                                  |
 | The method inferred from whether a body is present                            | The method is the caller's, `GET` when none is given             | An empty body is a body (#54)                                                          |
-| An `AwsClient` that takes a `Request`, clones bodies, and caches signing keys | Functions over a URL and headers; no `Request`, no cache         | No caller passes a `Request`; deriving a key is four HMACs beside a network round trip |
-| Session tokens, SigV2-era services, `appendSessionToken`                      | None                                                             | R2 tokens carry no session                                                             |
+| An "AwsClient" that takes a `Request`, clones bodies, and caches signing keys | Functions over a URL and headers; no `Request`, no cache         | No caller passes a `Request`; deriving a key is four HMACs beside a network round trip |
+| Session tokens, SigV2-era services, "appendSessionToken"                      | None                                                             | R2 tokens carry no session                                                             |
 
 Measured: aws4fetch was 64 KB installed across three packages' manifests; the signer is about 250 lines of our own code, comments included, in `@esposter/shared`, with no dependency.
 
