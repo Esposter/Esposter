@@ -34,6 +34,11 @@ interface Props {
 
 const { quest, questProgress } = defineProps<Props>();
 const step = computed(() => quest.steps[questProgress?.stepIndex ?? 0]);
+// How far the step's counted objective has come, held here so a move of the mark, which redraws the tracker, does not
+// Count the objectives again
+const stepCounter = computed(() =>
+  step.value ? getQuestCounter(step.value, questProgress?.objectiveCounts ?? []) : "",
+);
 </script>
 
 <template>
@@ -58,9 +63,7 @@ const step = computed(() => quest.steps[questProgress?.stepIndex ?? 0]);
       </template>
       {{ fillGameTextValues(gameText[GameTextKey.QuestDistance], Math.round(mark.distance)) }}
     </span>
-    <span v-if="step" class="step"
-      >{{ textMap[step.textId] }} {{ getQuestCounter(step, questProgress?.objectiveCounts ?? []) }}</span
-    >
+    <span v-if="step" class="step">{{ textMap[step.textId] }} {{ stepCounter }}</span>
   </button>
 </template>
 

@@ -36,20 +36,22 @@ const push = computed(() => Math.hypot(stick.x, stick.y));
 const isRunning = computed(() => push.value >= WALK_MOVE_MAGNITUDE);
 // The push's direction in degrees clockwise from up, which turns the mark on the stick's rim
 const markAngle = computed(() => (Math.atan2(stick.x, -stick.y) * 180) / Math.PI);
+// The group's rect size in canvas units, which its travel, its drawing and its style are all read against
+const groupSize = computed(() => interfaceRects[HudInterfaceRectName.MoveJoystickGroup].size);
 // How far the head's centre travels from the group's, in canvas units: the back's radius less the head's
 const headTravel = computed(() => {
-  const [backSize = 0] = interfaceRects[HudInterfaceRectName.MoveJoystickGroup].size;
+  const [backSize = 0] = groupSize.value;
   const [headSize = 0] = interfaceRects[HudInterfaceRectName.MoveJoystickHead].size;
   return (backSize - headSize) / 2;
 });
 // The same travel in the drawing's own units, which the group's canvas width spans the view box of
 const drawnHeadTravel = computed(() => {
-  const [backSize = 0] = interfaceRects[HudInterfaceRectName.MoveJoystickGroup].size;
+  const [backSize = 0] = groupSize.value;
   return (headTravel.value * STICK_VIEW_BOX_SIZE) / backSize;
 });
 // The group is drawn at its rect's size in canvas units, centred on the point it stands on, and fades in and out
 const groupStyle = computed(() => {
-  const [groupWidth = 0, groupHeight = 0] = interfaceRects[HudInterfaceRectName.MoveJoystickGroup].size;
+  const [groupWidth = 0, groupHeight = 0] = groupSize.value;
   return {
     height: `calc(var(--canvas-unit) * ${groupHeight})`,
     left: `${centre.x}px`,
@@ -64,12 +66,15 @@ const toArcPath = (radius: number) => {
   const end = radius * Math.SQRT1_2;
   return `M${-end} ${-end}A${radius} ${radius} 0 0 1 ${end} ${-end}`;
 };
+// The arcs the run's and the walk's marks are drawn on, which never change with the push
+const runArcPath = toArcPath(104);
+const walkArcPath = toArcPath(59);
 // A thumb landing on the screen's left half holds the stick. The group stands on the landing point, pulled in from each
 // Edge of the screen until its ring keeps the clearance, and the thumb's push is how far it moves from where it landed,
 // Over the reach: the head's travel in pixels, so a push past it is a full push in the thumb's direction
 useEventListener(area, "pointerdown", (event) => {
   if (stick.isHeld || !area.value || !group.value) return;
-  const [backSize = 0] = interfaceRects[HudInterfaceRectName.MoveJoystickGroup].size;
+  const [backSize = 0] = groupSize.value;
   const pixelsPerUnit = group.value.getBoundingClientRect().width / backSize;
   const areaRect = area.value.getBoundingClientRect();
   const clearanceX = TOUCH_STICK_CLEARANCE_X * pixelsPerUnit;
@@ -117,9 +122,9 @@ onUnmounted(() => {
     <svg ref="group" class="group" :style="groupStyle" aria-hidden="true" :viewBox>
       <circle v-if="stick.isHeld && isRunning" class="back" r="107" />
       <g v-if="stick.isHeld && push > 0" :transform="`rotate(${markAngle})`">
-        <path v-if="isRunning" class="run" :d="toArcPath(104)" />
+        <path v-if="isRunning" class="run" :d="runArcPath" />
         <path v-if="isRunning" class="arrow" d="M 0 -113 L 5 -107 L -5 -107 Z" />
-        <path v-else class="walk" :d="toArcPath(59)" />
+        <path v-else class="walk" :d="walkArcPath" />
       </g>
       <g :transform="`translate(${stick.x * drawnHeadTravel} ${stick.y * drawnHeadTravel})`">
         <circle class="head" r="22.5" />
