@@ -1,8 +1,8 @@
 import type { SceneLayout } from "genshin-engine";
 
-import { toHullPlacements } from "#src/services/genshinAssets/fit/fitRegionHulls";
-import { checkIsRockMesh } from "#src/services/genshinAssets/fit/fitRegionRocks";
-import { checkIsRuinMesh } from "#src/services/genshinAssets/fit/fitRegionRuins";
+import { checkIsRockMesh } from "#src/services/genshinAssets/fit/checkIsRockMesh";
+import { checkIsRuinMesh } from "#src/services/genshinAssets/fit/checkIsRuinMesh";
+import { toHullPlacements } from "#src/services/genshinAssets/fit/toHullPlacements";
 import { describe, expect, test } from "vitest";
 
 type WitnessPlacement = SceneLayout["placements"][number];
