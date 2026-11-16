@@ -2,7 +2,9 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "automergeType": "pr",
   "configMigration": true,
-  "dependencyDashboard": false,
+  "dependencyDashboard": {
+    "enabled": false
+  },
   "extends": ["config:recommended", ":semanticCommitTypeAll(chore)", "helpers:pinGitHubActionDigests"],
   "ignorePresets": [":prHourlyLimit2"],
   "lockFileMaintenance": { "automerge": true, "enabled": true },
