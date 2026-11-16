@@ -176,7 +176,6 @@
     "@vue/compiler-core": "catalog:",
     "@vue/test-utils": "catalog:",
     "@vueuse/nuxt": "catalog:",
-    "chokidar": "catalog:",
     "citty": "catalog:",
     "fake-indexeddb": "catalog:",
     "happy-dom": "catalog:",

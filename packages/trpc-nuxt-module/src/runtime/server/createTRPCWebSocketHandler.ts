@@ -26,8 +26,8 @@ export const createTRPCWebSocketHandler = <TRouter extends AnyTRPCRouter>({
   const { broadcastReconnectNotification } = applyWSSHandler({
     ...options,
     createContext,
-    // @TODO: no upstream issue — drop the cast once tRPC types `wss` by the two members `applyWSSHandler` reads
-    // TRPC types `wss` as the whole `ws.WebSocketServer`, and reads only `on` and `clients` of it
+    // @TODO: https://github.com/trpc/trpc/issues/8057 — tRPC types `wss` and its clients as the `ws` classes, though
+    // It reads only a few members of each, so a server that is not a `ws` one is cast until they are typed by those
     wss: webSocketServer as WSSHandlerOptions<TRouter>["wss"],
   });
   const peerConnections = new Map<string, PeerConnection<inferRouterContext<TRouter>>>();

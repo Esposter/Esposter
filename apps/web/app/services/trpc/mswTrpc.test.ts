@@ -4,7 +4,6 @@ import { rootConfig } from "#server/trpc/rootConfig";
 import { trpcRouter } from "#server/trpc/routers/index";
 import { TRPC_CLIENT_PATH } from "#src/services/trpc/constants";
 import { initTRPC } from "@trpc/server";
-import { Headers as HappyDomHeaders } from "happy-dom";
 import { setupServer } from "msw/node";
 import { createTRPCMsw } from "trpc-msw";
 import { afterAll, afterEach, beforeAll, describe, expect, vi } from "vitest";
@@ -33,10 +32,9 @@ export const setupMswTrpc = () => {
   });
 
   beforeAll(() => {
-    // @TODO: no upstream issue — the Nuxt test environment swaps in happy-dom's `fetch` and `Request` but leaves
-    // Node's `Headers`, and msw crosses that seam both ways: it sends a happy-dom `Request` through a `fetch` that
-    // Hands it to undici as is, and builds the intercepted request from a Node `Headers` that happy-dom's `Request`
-    // Reads as empty. Both are aligned here, before msw patches `fetch`
+    // @TODO: https://github.com/nuxt/test-utils/issues/1891 — the Nuxt test environment's `fetch` hands a happy-dom
+    // `Request` to Node's `fetch` as is, which reads it as `[object Request]`, and msw 3 sends every request as one. Its
+    // Parts are sent instead, before msw patches `fetch`
     vi.stubGlobal("fetch", async (input: RequestInfo | URL, init?: RequestInit) =>
       input instanceof Request
         ? nuxtFetch(input.url, {
@@ -46,7 +44,6 @@ export const setupMswTrpc = () => {
           })
         : nuxtFetch(input, init),
     );
-    vi.stubGlobal("Headers", HappyDomHeaders);
     server.listen({ onUnhandledFrame: "bypass" });
   });
 

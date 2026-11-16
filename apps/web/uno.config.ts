@@ -207,7 +207,8 @@ export default defineConfig({
   // So test files, which never opt in, are left out of the glob rather than opened and discarded. UnoCSS globs from the
   // Process's directory as well as the Vite root, and from there `node_modules` reaches every workspace package and its
   // Dependencies through their links: read at startup and each watched, they ran the dev server out of file descriptors
-  // @TODO: no upstream issue — unocss/unocss: drop the `node_modules` exclusion once its own content glob ignores it
+  // @TODO: https://github.com/unocss/unocss/issues/5478 — drop the `node_modules` exclusion once its own content glob
+  // Ignores it
   content: { filesystem: ["**/*.{ts,vue}", "!**/*.{bench,test,test-d}.ts", "!**/node_modules/**"] },
   outputToCssLayers: { cssLayerName: (layer) => (layer === "properties" ? null : `uno-${layer}`) },
   // Each design style's tokens as one rule on its `data-ui-style` value, written here so they are static CSS rather

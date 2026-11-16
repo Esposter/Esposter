@@ -38,16 +38,8 @@ A marker is revisited on every bump of the package it links and whenever its iss
 ## Reference pages
 
 - `references/revisiting.md` — when bumping a package a marker links, or a linked issue may have closed.
-- `references/upstream-reports.md` — when a gap only upstream can close is written up as a report for the owner to file: the proof steps, the section order and the plain-language rules.
+- `references/upstream-reports.md` — when a gap only upstream can close is written up and filed: the proof steps, the section order and the plain-language rules.
 
 ## Unfiled upstream issues
 
-Each row is a marker in the unfiled form, waiting for its issue to be filed: the file, where it goes, and its title. The repository's owner files them by hand when one is wanted, so a session leaves the list as it is and never asks to file one.
-
-- `apps/web/uno.config.ts` — unocss/unocss: "`content.filesystem` globs from `process.cwd()` with no `node_modules` ignore, and its watcher's `ignored` is a glob string chokidar 4 and later treat as a literal path, so a monorepo app watches every linked package"
-- `apps/web/app/services/trpc/mswTrpc.test.ts` — nuxt/test-utils: "In the nuxt environment `fetch` and `Request` are happy-dom's while `Headers` stays Node's, so a library mixing the globals (msw 3) loses requests and headers"
-- `apps/web/modules/servePublicDirectory.ts` — nuxt/nuxt: "With `nitroViteEnvironment`, `nuxt dev` runs Vite's transform on every script in `public/`, serving it as a module exporting its own URL"
-- `pnpm-workspace.yaml` — nitrojs/nitro: "A storage mount's unstorage fs driver loads `chokidar`, which nothing declares"
-- `knip.config.ts` — the same nitrojs/nitro issue as `pnpm-workspace.yaml`'s row, on the app's `ignoreDependencies` entries for the packages they leave nothing in the app importing, and nuxt/scripts' `lru-cache`, which its storage driver loads undeclared; and webpro-nl/knip: "An `import.meta.glob` pattern resolves its alias through tsconfig `paths` only, never the manifest's `imports`, though a plain `#` import is followed"
-- `packages/trpc-msw/src/createTRPCMsw.ts` — trpc/trpc: "`applyWSSHandler` types `wss` as the whole `ws.WebSocketServer` though it reads only `on` and `clients`, so a server that is not a `ws` one needs a cast"
-- `packages/trpc-nuxt-module/src/runtime/server/createTRPCWebSocketHandler.ts` — trpc/trpc: "`applyWSSHandler` types `wss` as the whole `ws.WebSocketServer` though it reads only `on` and `clients`, so a server that is not a `ws` one needs a cast"
+Each row is a marker in the unfiled form, waiting for its issue to be filed: the file, where it goes, and its title. A session files the issue once its minimal reproduction is proven and its tracker holds no issue with the same cause (`references/upstream-reports.md`); an open issue with the same cause gets a comment with the reproduction instead. The marker then links what it filed or found, and its row goes. The list is empty while every gap has its issue.

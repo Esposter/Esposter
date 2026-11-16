@@ -1,6 +1,6 @@
 # Writing an upstream report
 
-Read when a gap only upstream can close is written up for the owner to file by hand ("Unfiled upstream issues" in `SKILL.md`).
+Read when a gap only upstream can close is written up and filed ("Unfiled upstream issues" in `SKILL.md`).
 
 A report is a small, checked experiment that someone else can run in a minute. It does not describe this repository. It is written after the experiment is proven, never before.
 
@@ -8,8 +8,9 @@ A report is a small, checked experiment that someone else can run in a minute. I
 
 ## Where a draft lives
 
-- **A draft is a paste-ready markdown file** in a `reports` folder of the OpenSpec change that found the gap. The first line is the title and the rest is the body. One report per file. The owner files it by hand. Once it is filed, the file goes and the change links the issue.
-- **When the owner says to file it directly, this page still applies in full**: the section order, the cause at a quoted line, the nearest issues and the footer. Load it before the first `gh issue create`. Re-read a filed issue against it with `gh issue edit --body-file` when it was filed without.
+- **A draft is a markdown file in the session's scratchpad**, the title on its first line and the body after it, one report per file. It is filed with `gh issue create --body-file` once every check on this page holds, and is not kept in the repository: the filed issue is the record, and the marker links it.
+- **This page applies in full to every issue filed**: the section order, the cause at a quoted line, the nearest issues and the footer. Load it before the first `gh issue create`. Re-read a filed issue against it with `gh issue edit --body-file` when it was filed without.
+- **A form that requires a public reproduction link** takes a public gist of the reproduction's files (`gh gist create --public`), with a README that says where each file goes when the gist cannot hold folders.
 - **The target's own form decides the headings.** Read it first: `gh api repos/<owner>/<repo>/contents/.github/ISSUE_TEMPLATE` lists the forms. Keep its field names as headings, and add the sections below that the form lacks.
 - **Match the earlier reports I opened in the same repository** (`gh search issues --repo <owner>/<repo> --author <login>`): their title shape, their section order and how they quote an error.
 
@@ -74,7 +75,7 @@ After: "The mapper reports TS7053 when a component calls both macros."
 
 ## Footer
 
-- **Every draft ends with the footer line** `🤖 Generated with [Claude Code](https://claude.com/claude-code)`, after a blank line. The owner checks each report by hand before filing, and the footer says which reports were generated. A report is not filed without it.
+- **Every draft ends with the footer line** `🤖 Generated with [Claude Code](https://claude.com/claude-code)`, after a blank line. The footer says which reports were generated. A report is not filed without it.
 
 ## Keep out
 

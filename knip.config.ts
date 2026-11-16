@@ -4,8 +4,8 @@ const knipConfiguration: KnipConfig = {
   exclude: ["types"],
   ignoreBinaries: ["pwsh"],
   ignoreExportsUsedInFile: true,
-  // @TODO: no upstream issue — webpro-nl/knip: drop it once an `import.meta.glob` pattern resolves through the
-  // Manifest's subpath imports, the only users of the app's `#src/*.html`, `*.tsx` and `*.wasm` patterns
+  // @TODO: https://github.com/webpro-nl/knip/issues/2399 — drop it once an `import.meta.glob` pattern resolves
+  // Through the manifest's subpath imports, the only users of the app's `#src/*.html`, `*.tsx` and `*.wasm` patterns
   ignoreIssues: { "apps/web/package.json": ["subpaths"] },
   // A workspace's `entry` replaces knip's default `src/index.ts`, so a package that sets one lists its barrel too
   workspaces: {
@@ -36,12 +36,12 @@ const knipConfiguration: KnipConfig = {
         "server/types/cloudflare.d.ts",
         "server/services/devSession/postDevSession.ts",
         "service-worker/sw.ts",
-        // @TODO: no upstream issue — webpro-nl/knip: drop it once an `import.meta.glob` pattern resolves through the
-        // Manifest's subpath imports, which reach each worker and worklet
+        // @TODO: https://github.com/webpro-nl/knip/issues/2399 — drop it once an `import.meta.glob` pattern resolves
+        // Through the manifest's subpath imports, which reach each worker and worklet
         "app/workers/**/*.ts",
       ],
-      // @TODO: no upstream issue — webpro-nl/knip: drop `app/assets/**` once the tileset glob is followed, since knip
-      // Reads its Tiled `.tsx` definitions as unused source
+      // @TODO: https://github.com/webpro-nl/knip/issues/2399 — drop `app/assets/**` once the tileset glob is followed,
+      // Since knip reads its Tiled `.tsx` definitions as unused source
       ignore: ["app/assets/**", "public/**", "shared/generated/**"],
       ignoreDependencies: [
         "@iconify-json/.+",
@@ -53,12 +53,10 @@ const knipConfiguration: KnipConfig = {
         // The app declares it and nothing in the app imports it (vite-pwa/unplugin-pwa#48)
         "@vite-pwa/workbox-window",
         "@vueuse/router",
-        // @TODO: no upstream issue — unstorage 2's fs driver loads `chokidar` without declaring it, so the app declares
-        // It for Nitro 3's server bundle and nothing in the app imports it (nitrojs/nitro)
-        "chokidar",
-        // @TODO: no upstream issue — `@nuxt/scripts` mounts its `nuxt-scripts-cache` storage on unstorage's lru-cache
-        // Driver, which loads `lru-cache` without declaring it, so the app declares it and nothing in the app imports
-        // It; without it `nuxt prepare` installs it itself and rewrites the catalog under CI's install (nuxt/scripts)
+        // @TODO: https://github.com/nuxt/scripts/pull/946 — drop it once a stable `@nuxt/scripts` 2 ships it (it is in
+        // 2.0.0-beta.13). 1.x mounts its `nuxt-scripts-cache` storage on unstorage's lru-cache driver, which loads
+        // `lru-cache` without declaring it, so the app declares it, nothing in the app imports it, and without it
+        // `nuxt prepare` fails under CI's install
         "lru-cache",
         // @TODO: https://github.com/nuxt/nuxt/releases/tag/v5.0.0 — knip reads an `#app` import as the package it
         // Resolves to, which is the `nuxt-nightly` alias until the catalog's `nuxt` is a range again

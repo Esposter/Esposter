@@ -1,6 +1,6 @@
-// @TODO: no upstream issue — under Nuxt 5's Nitro Vite environment Nuxt turns Vite's `publicDir` off and never mounts
-// The dev handler that keeps Vite's transform off a URL outside its base, so a script in `public/` comes back as a
-// Module exporting its own URL and a classic head script throws "Cannot use import statement outside a module"
+// @TODO: https://github.com/nuxt/nuxt/issues/37057 — under Nuxt 5's Nitro Vite environment Nuxt turns Vite's
+// `publicDir` off, so a script in `public/` reaches the transform and comes back as a module exporting its own URL, and
+// A classic head script throws "Cannot use import statement outside a module"
 import { resolve } from "node:path";
 import { defineNuxtModule } from "nuxt/kit";
 import sirv from "sirv";
