@@ -16,7 +16,8 @@ The About page is for anyone browsing the site, so it says what Esposter is and 
 
 | Path                                           | Role                                                                |
 | :--------------------------------------------- | :------------------------------------------------------------------ |
-| `apps/web/app/pages/about.vue`                 | the page: the sections in order and the globe's gate                |
+| `apps/web/app/pages/about.vue`                 | the page: the sections in order                                     |
+| `apps/web/app/components/About/Globe.vue`      | the globe's section and the gate that loads it                      |
 | `apps/web/app/components/About/Header.vue`     | the hero: the logo, the name, the description and its pronunciation |
 | `apps/web/app/components/About/Products.vue`   | the launcher's groups as side-by-side columns of cards              |
 | `apps/web/app/components/About/Content.vue`    | the one line on why and who made it, with the gem beside it         |
