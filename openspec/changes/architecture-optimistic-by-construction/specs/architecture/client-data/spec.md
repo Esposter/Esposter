@@ -1,15 +1,3 @@
-## MODIFIED Requirements
-
-### Requirement: A visible create shows a placeholder that becomes the real row in place
-
-A create whose row is visible when created SHALL draw its row at once under the id the client gave it, and the server's confirmation SHALL leave the row where it stands.
-
-#### Scenario: A sent message keeps its place when the server confirms it
-
-- **GIVEN** a message the reader sends
-- **WHEN** the server confirms it
-- **THEN** the message is in the same position in the list, under the same id
-
 ## REMOVED Requirements
 
 ### Requirement: A write waits for the server only where the server decides the result
@@ -18,7 +6,23 @@ A create whose row is visible when created SHALL draw its row at once under the 
 
 **Migration**: A content save applies at once and rolls back on a stale version, and a create draws its row under the client's id.
 
+### Requirement: A visible create shows a placeholder that becomes the real row in place
+
+**Reason**: A create draws its row under the id the client generated, so there is no placeholder to swap for the server's id.
+
+**Migration**: A visible create draws its row at once under a client-generated id, as the requirement below states.
+
 ## ADDED Requirements
+
+### Requirement: A visible create draws its row at once under the client's id
+
+A create whose row is visible when created SHALL draw its row at once under the id the client gave it, and the server's confirmation SHALL leave the row where it stands.
+
+#### Scenario: A sent message keeps its place when the server confirms it
+
+- **GIVEN** a message the reader sends
+- **WHEN** the server confirms it
+- **THEN** the message is in the same position in the list, under the same id
 
 ### Requirement: A write waits for the server only for a reason the server alone can answer
 
