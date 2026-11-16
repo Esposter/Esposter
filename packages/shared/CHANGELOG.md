@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.12.0](https://github.com/Esposter/Esposter/compare/v4.11.0...v4.12.0) (2026-11-16)
+
+### Bug Fixes
+
+* CI's invariant suites follow the deleted message model and the popover rule ([f3d2b0d](https://github.com/Esposter/Esposter/commit/f3d2b0d44034f2b184ba5dd272f870cf0b48938b))
+* CI's reds on the pagination push — codemod template types, a lone-consumer export and a count re-read ([7144205](https://github.com/Esposter/Esposter/commit/7144205e2e602c663f29522d5178f3afbb22597b))
+* **notifications:** a message notification names its thread root by id ([136fd91](https://github.com/Esposter/Esposter/commit/136fd91ec3a9d46e4c1d67e18afa6f9faf9b5b50))
+* **security:** bearer credentials are 256 random bits, never a uuid ([fa6283b](https://github.com/Esposter/Esposter/commit/fa6283ba5ea84687c1acb1484677aeed90542d4a))
+* **shared:** a query pair with an empty name stays in the SigV4 canonical query, as the request sends it ([a4f5ef7](https://github.com/Esposter/Esposter/commit/a4f5ef7212b6cfb57f1b41d0b3ca37fc6bf5b2f3))
+* **shared:** mergeObjectsStrict refuses a key any two of its sets share, in its type and at load ([8e37e34](https://github.com/Esposter/Esposter/commit/8e37e34d6a4799744675d83cfed380863bbaa181))
+* **shared:** MergeObjectsStrict's types in the order the module sort asks ([673c64f](https://github.com/Esposter/Esposter/commit/673c64fe1f5a856eefdcb25ab1b257709e8a2664))
+* **shared:** the intl constants carry explicit types, so isolated declarations build again ([740b9dc](https://github.com/Esposter/Esposter/commit/740b9dc84a0b2ef1ecf7043c6c7e050c2f39f011))
+* **shared:** the secret token schema is typed as zod's base64url, not a string ([7a0111f](https://github.com/Esposter/Esposter/commit/7a0111fefcd84c156b85842fb42c8fbf519eb392))
+
+### Features
+
+* **deps:** uuid's v7 is the one id generator ([dace175](https://github.com/Esposter/Esposter/commit/dace175acce9970f90967fcb4af1f940f90922f2))
+* **jobs:** publish to live subscriptions through the server object ([1ab4865](https://github.com/Esposter/Esposter/commit/1ab4865550f9fad1f3e47e9849628cbeabc22ab0))
+* **jobs:** scheduled jobs on a Scheduler object, not Service Bus ([ea4fc91](https://github.com/Esposter/Esposter/commit/ea4fc91fe343ce5181f4cff447a4b2e08c5b9ce0))
+* **realtime:** the room object's message, reaction and RPC contracts, and the search expression is shared ([30a8923](https://github.com/Esposter/Esposter/commit/30a8923689eb2e4bef345b79f143c64416f6b45f))
+* **shared:** SigV4 signing absorbs aws4fetch, and the UnoCSS glob test and its tinyglobby go ([c221ee9](https://github.com/Esposter/Esposter/commit/c221ee9dccf568404e8ca934b1a5e3784ce8ae9f)), closes [#39](https://github.com/Esposter/Esposter/issues/39) [#55](https://github.com/Esposter/Esposter/issues/55) [#36](https://github.com/Esposter/Esposter/issues/36) [#73](https://github.com/Esposter/Esposter/issues/73) [#52](https://github.com/Esposter/Esposter/issues/52)
+* **webhooks:** a webhook's credential is stored as its hash and shown once ([188c260](https://github.com/Esposter/Esposter/commit/188c260f03fff5ca442c310d75cd2c9ae1b5fd9c))
+
 # [4.11.0](https://github.com/Esposter/Esposter/compare/v4.10.1...v4.11.0) (2026-11-14)
 
 **Note:** Version bump only for package @esposter/shared

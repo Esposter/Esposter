@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.12.0](https://github.com/Esposter/Esposter/compare/v4.11.0...v4.12.0) (2026-11-16)
+
+### Bug Fixes
+
+* CI's lint and coverage reds on ai/queue ([01bb2f2](https://github.com/Esposter/Esposter/commit/01bb2f25a25bdd9fa4e4ffdfb0ad61a56da09f61))
+* **configuration:** the focus rule exempts a Tiptap chain whatever command runs before its focus ([2a5a6ff](https://github.com/Esposter/Esposter/commit/2a5a6ff99cc50fd9902b745e6f56f0b0a777adb9))
+* **configuration:** the oxfmt export is declared where tsdown generates the manifest's exports ([b56122f](https://github.com/Esposter/Esposter/commit/b56122fdfef71f518a4ef41a7ba83937a672254e))
+* **web:** a note renders to HTML through tiptap's static renderer, which runs in the Worker ([a8a8a09](https://github.com/Esposter/Esposter/commit/a8a8a098524a97f1c782ab629be30746bd3eb534))
+
+### Features
+
+* **configuration:** exact optional property types are on, and a missing key and an undefined one mean the same ([82a62de](https://github.com/Esposter/Esposter/commit/82a62deea47571cfa22dfce1b29edb35fea0fdb9))
+* **db-mock:** the test database runs on Miniflare's D1, R2 and Queues ([388a354](https://github.com/Esposter/Esposter/commit/388a35482c7b1c4d9c6a8048fd827f67f86b4701))
+* **web:** one route for a control that asks for focus, and a composite field in one state ([35cdc48](https://github.com/Esposter/Esposter/commit/35cdc48797c58996b524ce11a17ed83486f823c3))
+
 # [4.11.0](https://github.com/Esposter/Esposter/compare/v4.10.1...v4.11.0) (2026-11-14)
 
 **Note:** Version bump only for package @esposter/configuration

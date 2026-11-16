@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.12.0](https://github.com/Esposter/Esposter/compare/v4.11.0...v4.12.0) (2026-11-16)
+
+### Features
+
+* **deps:** uuid's v7 is the one id generator ([dace175](https://github.com/Esposter/Esposter/commit/dace175acce9970f90967fcb4af1f940f90922f2))
+
 # [4.11.0](https://github.com/Esposter/Esposter/compare/v4.10.1...v4.11.0) (2026-11-14)
 
 **Note:** Version bump only for package vue-survey-engine-headless

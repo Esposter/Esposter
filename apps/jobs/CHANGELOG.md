@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.12.0](https://github.com/Esposter/Esposter/compare/v4.11.0...v4.12.0) (2026-11-16)
+
+### Bug Fixes
+
+* **cutover:** the routes compare against the validated secret, and a re-armed reminder converges ([8c665e0](https://github.com/Esposter/Esposter/commit/8c665e01726f1b2a81ff6f89d8a36c22633fbdb6))
+* **export:** a never-uploaded asset no longer fails the archive, and an orphaned archive is removed ([6334124](https://github.com/Esposter/Esposter/commit/633412499b9439ed58dbbb530c8a31fd074c4d0e))
+* **infra:** the user assets buckets delete data export archives after their retention ([0999fa0](https://github.com/Esposter/Esposter/commit/0999fa0544591786d1f83aa5f4b705242be739ce))
+* **jobs:** an account erase takes back its messages' mention counts member by member, best-effort ([86a424d](https://github.com/Esposter/Esposter/commit/86a424d98c8558c4738e7b8407bdeb08ec56e494))
+* **jobs:** the cutover's TodoList reschedule reads each content blob through its compressed frame ([f381594](https://github.com/Esposter/Esposter/commit/f3815941e903f92c09458b1e8a7cec9c70df9041))
+* **jobs:** the resource asset loop's directive names bounded concurrency, its one-at-a-time shape ([3cad49b](https://github.com/Esposter/Esposter/commit/3cad49bebdca64fb2ffe6acd2056ce6d7fece63b))
+
+### Features
+
+* **app:** a bookmark follows what it points at ([1439aa5](https://github.com/Esposter/Esposter/commit/1439aa551bd9425d311606ccd2bad822a1ed9916))
+* **live-queries:** a finished export tells its owner's panel to refetch ([4b5711d](https://github.com/Esposter/Esposter/commit/4b5711d985470ad49f2af5e1d23f3d542fd73f8a))
+* **live-queries:** a notification tells its recipient's bell to refetch ([704d9ed](https://github.com/Esposter/Esposter/commit/704d9ed4642eb809442e9b6ac8cea2fbba04a8d4))
+* **scripts:** sequential-loops/require-loop-shape, every no-await-in-loop reason names its shape, and three polls go ([bde5ef5](https://github.com/Esposter/Esposter/commit/bde5ef553b4ddd3a25aed4e54f9d8533b36dc614))
+* the cutover tool is deleted with its routes and the room object's import ([17c54c4](https://github.com/Esposter/Esposter/commit/17c54c455cd3b00d7538f2d47fa9d159647fe116))
+
 # [4.11.0](https://github.com/Esposter/Esposter/compare/v4.10.1...v4.11.0) (2026-11-14)
 
 **Note:** Version bump only for package @esposter/functions

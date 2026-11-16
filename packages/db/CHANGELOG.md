@@ -3,6 +3,36 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.12.0](https://github.com/Esposter/Esposter/compare/v4.11.0...v4.12.0) (2026-11-16)
+
+### Bug Fixes
+
+* **db:** a presigned url names the bucket the environment's resource name gives it ([18f9da4](https://github.com/Esposter/Esposter/commit/18f9da4ac8c9756e81f3ce0f23951b3864e7a4cd))
+* **db:** a thread follow is keyed by its room's integer thread root id ([5bf9aea](https://github.com/Esposter/Esposter/commit/5bf9aea42c49592909dc8c7491fd5ed914c44de6))
+* **db:** an empty content type leaves a presigned PUT's type open, and the signed type is pinned by a test ([7cec0db](https://github.com/Esposter/Esposter/commit/7cec0dba905ff95e375c7dd0d92acb6243d2b19b))
+* **db:** link previews come from link-preview-js's undici-free entry, so the realtime Worker loads ([37dd485](https://github.com/Esposter/Esposter/commit/37dd485eb434c2867c6544cee64df40aa29030ef))
+* **db:** restore the mention-count increment, which createUserMessage still calls over usersToRooms ([daea760](https://github.com/Esposter/Esposter/commit/daea760609c30c7138988cafa27c2091ed6d7865))
+* **db:** the ledger's wave delete keeps its lint suppression beside the awaited call ([cb969c2](https://github.com/Esposter/Esposter/commit/cb969c2776f8f2fe6f11303a036b57c6d6ef122e))
+* **db:** the release's batch result is typed as its two statements ([2b8507c](https://github.com/Esposter/Esposter/commit/2b8507c5f792f0334be3eadc5c0761661e62d12d))
+* **db:** the suites read the mock's database, the presigned PUT signs its type, the clause suite uses SQLiteDialect ([1b55dc1](https://github.com/Esposter/Esposter/commit/1b55dc164ddc313b567526969aefd680a6053541))
+* **db:** the timeout and storage writers take SQLite's MAX, and the Azure search index definition is deleted ([e7824e4](https://github.com/Esposter/Esposter/commit/e7824e4e18b9f26a6ed0838b68d8561c535c8a9c))
+* **storage:** a reconcile that loses its race runs again rather than failing the save ([e226514](https://github.com/Esposter/Esposter/commit/e22651401bcf95f9ab84a70d636ea8271e96066f))
+
+### Features
+
+* **db:** the blob services run on R2 bindings, and presigned urls are signed with the R2 token ([c932e91](https://github.com/Esposter/Esposter/commit/c932e91747cc583efaa0b5741dd5d6da4ba25f83))
+* **deps:** uuid's v7 is the one id generator ([dace175](https://github.com/Esposter/Esposter/commit/dace175acce9970f90967fcb4af1f940f90922f2))
+* **infra:** spec the Cloudflare program and lay its SQLite foundation ([f579c44](https://github.com/Esposter/Esposter/commit/f579c44ae7ac3ef95d4812c50d2daa6f7ec43529))
+* **jobs:** publish to live subscriptions through the server object ([1ab4865](https://github.com/Esposter/Esposter/commit/1ab4865550f9fad1f3e47e9849628cbeabc22ab0))
+* **jobs:** scheduled jobs on a Scheduler object, not Service Bus ([ea4fc91](https://github.com/Esposter/Esposter/commit/ea4fc91fe343ce5181f4cff447a4b2e08c5b9ce0))
+* **live-queries:** a notification tells its recipient's bell to refetch ([704d9ed](https://github.com/Esposter/Esposter/commit/704d9ed4642eb809442e9b6ac8cea2fbba04a8d4))
+* **pagination:** one keyset pagination, specified, with its primitives ([46a4599](https://github.com/Esposter/Esposter/commit/46a459987bcff37712bee6099430a8c32671c5d6))
+* **realtime:** the room object's contract takes a message's mentions and read paging by pin ([2ee9db7](https://github.com/Esposter/Esposter/commit/2ee9db77325b676fa7d36edf856cb68f69c451d8))
+* **scripts:** async-recursion/no-async-self-call, and the twenty loops written as recursion become loops ([0ff0c58](https://github.com/Esposter/Esposter/commit/0ff0c58e052b38271f772eff7cfb6ca7dd37f0e1))
+* **scripts:** sequential-loops/require-loop-shape, every no-await-in-loop reason names its shape, and three polls go ([bde5ef5](https://github.com/Esposter/Esposter/commit/bde5ef553b4ddd3a25aed4e54f9d8533b36dc614))
+* **shared:** SigV4 signing absorbs aws4fetch, and the UnoCSS glob test and its tinyglobby go ([c221ee9](https://github.com/Esposter/Esposter/commit/c221ee9dccf568404e8ca934b1a5e3784ce8ae9f)), closes [#39](https://github.com/Esposter/Esposter/issues/39) [#55](https://github.com/Esposter/Esposter/issues/55) [#36](https://github.com/Esposter/Esposter/issues/36) [#73](https://github.com/Esposter/Esposter/issues/73) [#52](https://github.com/Esposter/Esposter/issues/52)
+* **web:** message search reads the FTS5 index, and the Azure Search client is gone ([fb1f6c5](https://github.com/Esposter/Esposter/commit/fb1f6c56e990cf501c0821ed3e6d7a8024b82243))
+
 # [4.11.0](https://github.com/Esposter/Esposter/compare/v4.10.1...v4.11.0) (2026-11-14)
 
 **Note:** Version bump only for package @esposter/db

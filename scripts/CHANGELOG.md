@@ -3,6 +3,66 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.12.0](https://github.com/Esposter/Esposter/compare/v4.11.0...v4.12.0) (2026-11-16)
+
+### Bug Fixes
+
+* CI's lint and coverage reds on ai/queue ([01bb2f2](https://github.com/Esposter/Esposter/commit/01bb2f25a25bdd9fa4e4ffdfb0ad61a56da09f61))
+* CI's reds on the pagination push — codemod template types, a lone-consumer export and a count re-read ([7144205](https://github.com/Esposter/Esposter/commit/7144205e2e602c663f29522d5178f3afbb22597b))
+* **cutover:** a blob Azure lists with an empty encoding is uncompressed ([a421529](https://github.com/Esposter/Esposter/commit/a421529d0c394309082cd4c3ac29cf7d6eec7316))
+* **cutover:** a blob listed with an empty MD5 has no digest, so it is hashed from its bytes ([b669fae](https://github.com/Esposter/Esposter/commit/b669faec91320c45832bac4245235e704b1f38a0))
+* **cutover:** a copied poll's options get UUIDv7 ids, and a scheduled message is never empty ([2117155](https://github.com/Esposter/Esposter/commit/211715509704481fa6fd7ec47c1788721ca9031e))
+* **cutover:** a permission bitfield copies as its decimal text, as its column stores it ([edaade3](https://github.com/Esposter/Esposter/commit/edaade37cbd61651fc6ba3c95eb19b47045d1924))
+* **cutover:** a real column is drizzle's `number double`, so posts' ranking copies ([a7a105f](https://github.com/Esposter/Esposter/commit/a7a105f3e4205362a88c4d0226b16ddfcc649ddf))
+* **cutover:** a room's highest message number is folded, not spread into one call ([37b5fe5](https://github.com/Esposter/Esposter/commit/37b5fe5f395f57bb2566232d567206e58d4a0747))
+* **cutover:** a textual blob is skipped only when R2 holds its rewritten bytes ([a7b738f](https://github.com/Esposter/Esposter/commit/a7b738fa53f30e252468a75ba711bd867d3f1a4e))
+* **cutover:** a zstd JSON blob is rewritten inside its frame and keeps its encoding ([56c5c8e](https://github.com/Esposter/Esposter/commit/56c5c8e6bf2584288565c9560a69e63a4e7d124b))
+* **cutover:** copy-objects survives R2's compressed HEAD and dropped connections ([3024c64](https://github.com/Esposter/Esposter/commit/3024c6498485d584d0636b65f6ddd0d21b387739))
+* **cutover:** core rows read Postgres by its own column names, and thread roots copy as their message numbers ([026dd89](https://github.com/Esposter/Esposter/commit/026dd89f2761ee06e24df59611c48bb873b684d1))
+* **cutover:** every old UUIDv4 becomes a UUIDv7, invite codes persist, and anonymous answers survive ([ddfadad](https://github.com/Esposter/Esposter/commit/ddfadad52f6e4c9f06a391680978191124adcebd))
+* **cutover:** Postgres steps read only the tables Postgres holds, and an Azure table the estate never made is empty ([eaabcb9](https://github.com/Esposter/Esposter/commit/eaabcb9747403259844b3a354d744e98111bc6d5))
+* **cutover:** production's legacy rooms read a VoiceCall as a Call and a reaction's short name as its emoji ([9f191c1](https://github.com/Esposter/Esposter/commit/9f191c1e572d2cf747abb88f808311131f347474))
+* **cutover:** the copy refuses a D1 table that keeps the readable token column ([54a7d06](https://github.com/Esposter/Esposter/commit/54a7d068850b76d67adf2bf7770c67149a3440bc))
+* **cutover:** the reschedule route arms only TodoList reminders; pending scheduled messages are imported into their room objects with the messages ([b422ba8](https://github.com/Esposter/Esposter/commit/b422ba8e0b1f1e7706edb982f37252c950a4df6a))
+* **cutover:** the room import refuses to run while pending scheduled messages have no source ([604b76e](https://github.com/Esposter/Esposter/commit/604b76e32476229323828fd947b811bc09aa6f20))
+* **cutover:** verify keys the typed tables by their new partition ids, and the ledger charges each rewritten blob its stored size ([777d2d6](https://github.com/Esposter/Esposter/commit/777d2d6cc1a0686ca5a4f124fb20a5009ee7649b))
+* **genshin:** the game data mirror and verify read under the bucket's app name ([00e7455](https://github.com/Esposter/Esposter/commit/00e745583eca2b93e23e2ffac76912693a342006))
+* knip follows the app's glob-only files, the last vpx comments go, and the UnoCSS and knip gaps carry TODOs ([1e7a048](https://github.com/Esposter/Esposter/commit/1e7a048ac970b7ebb46733b83bb01c2d81657f9b))
+* **lint:** knip reaches the object schemas' drizzle configs, the dead plugin's models go, and a test waits with setImmediate ([e2d2bea](https://github.com/Esposter/Esposter/commit/e2d2bea13b873a52199bf9786a15bda60e58ef46))
+* **realtimekit:** a failed ESC read throws instead of reading as an absent token ([85c432c](https://github.com/Esposter/Esposter/commit/85c432cb97a9c4703d2df6936527e8c9fb3142d5))
+* **scripts:** a component's music segments are read a bounded number at a time ([6982738](https://github.com/Esposter/Esposter/commit/6982738d40d194eb1405d4052335846d30da05a3))
+* **scripts:** forEachConcurrently rejects with the failure that came first ([16b5c93](https://github.com/Esposter/Esposter/commit/16b5c931293830cc1e73a730c2a49eda36308cc1))
+* **scripts:** no-async-self-call reads the callee's binding, so a parameter named as its function is not a self-call ([0888184](https://github.com/Esposter/Esposter/commit/0888184e54139a74dd3380d5c3bb5b5b856e545b))
+* **scripts:** the build bench lists only the packages that have a build script ([0fc1e1c](https://github.com/Esposter/Esposter/commit/0fc1e1cbb9559db37538c8562449aa3b0b5cbd0b))
+* **scripts:** the cutover issues a re-issued token's hash synchronously ([f1f3b41](https://github.com/Esposter/Esposter/commit/f1f3b41a7c6a8aabc56ac97040d0580cf62d2e44))
+* **scripts:** the measure envelope's directive states the device once ([a8710a3](https://github.com/Esposter/Esposter/commit/a8710a3a56ecb8a98105b8bbadb5f2c4c8efd277))
+* **scripts:** the R2 client's put options and body are typed ([9ed5dcf](https://github.com/Esposter/Esposter/commit/9ed5dcf203dee6132d0ec8062744b08399251f9b))
+* **scripts:** the tool's tsconfig opts out of isolatedDeclarations, as apps/functions does ([239f6af](https://github.com/Esposter/Esposter/commit/239f6af9c26327d5eedb3c0693a3f7da09b9f1d9))
+* the value-set casing rule's four relation configs and the game data key map carry its sanctioned disable ([943ba51](https://github.com/Esposter/Esposter/commit/943ba51dd64439861a379fd515e07375a4db5342))
+
+### Features
+
+* **cutover:** rows are re-keyed to UUIDv7, old ids rewritten in one pass, and messages imported into rooms ([6c3e691](https://github.com/Esposter/Esposter/commit/6c3e691bfbc6da32383245872771fe300c7fb095))
+* **cutover:** the old estate's pending scheduled messages and reminders move inside the freeze ([56a1114](https://github.com/Esposter/Esposter/commit/56a1114e4a407a026a80b07887d305ae94adffaa))
+* **db-mock:** the test database runs on Miniflare's D1, R2 and Queues ([388a354](https://github.com/Esposter/Esposter/commit/388a35482c7b1c4d9c6a8048fd827f67f86b4701))
+* **db-schema:** the core D1 database ids are one committed map keyed by environment ([d4638b1](https://github.com/Esposter/Esposter/commit/d4638b16bee71e0ca668db42a25d8307f10ba053))
+* **deps:** uuid's v7 is the one id generator ([dace175](https://github.com/Esposter/Esposter/commit/dace175acce9970f90967fcb4af1f940f90922f2))
+* **functions:** the cutover's reschedule re-arms the TodoList reminders from their content in R2 ([f90da02](https://github.com/Esposter/Esposter/commit/f90da0255547392f895e33b5e9bb64156bde4bb2))
+* **infra:** the Azure estate is torn down ([ea00884](https://github.com/Esposter/Esposter/commit/ea00884bf6eac9d40576ec3c45d72f859dab1da9))
+* **infra:** the queue consumers and the deploy target the jobs and realtime Workers ([95d7d38](https://github.com/Esposter/Esposter/commit/95d7d383a5905bbece87f0378ee87aacca5ae7a5))
+* **program:** a participant's link is stored as its hash and shown once ([21cff53](https://github.com/Esposter/Esposter/commit/21cff53478c7a86e75fcd102bd5e626a5c7f0b17))
+* **scripts:** a file's repeated next-line disables collapse into one file-level directive ([d6fc284](https://github.com/Esposter/Esposter/commit/d6fc28436d8b30c3a6cddd33f5757ab4c955e665))
+* **scripts:** async-recursion/no-async-self-call, and the twenty loops written as recursion become loops ([0ff0c58](https://github.com/Esposter/Esposter/commit/0ff0c58e052b38271f772eff7cfb6ca7dd37f0e1))
+* **scripts:** copy-tables copies all eight former Azure Tables into their typed tables, and verify counts each per partition ([b08096c](https://github.com/Esposter/Esposter/commit/b08096c7190ae6ff7f0641de5b8d5e9ad7fc3a4e))
+* **scripts:** copy-tables copies the messages and their emoji reactions into the typed tables, and verify counts them room by room ([a38dd9d](https://github.com/Esposter/Esposter/commit/a38dd9d026002a8b45d7268f280ee022811c090d))
+* **scripts:** realtimekit:provision creates each environment's RealtimeKit app, presets, webhook and token ([0efe968](https://github.com/Esposter/Esposter/commit/0efe9687815c6cac8bb7a64cbd87c6fcc4333ce1))
+* **scripts:** sequential-loops/require-loop-shape, every no-await-in-loop reason names its shape, and three polls go ([bde5ef5](https://github.com/Esposter/Esposter/commit/bde5ef553b4ddd3a25aed4e54f9d8533b36dc614))
+* **scripts:** the cutover command moves the Azure and Railway data onto Cloudflare, each step idempotent ([a6111cd](https://github.com/Esposter/Esposter/commit/a6111cd6c04b71e4a1267fa6ddb72f929b72ce48))
+* **scripts:** the game data publish writes to R2 through the S3 API ([4f90e56](https://github.com/Esposter/Esposter/commit/4f90e56e50b0212490c1630cd81bb0607aae78d5))
+* **scripts:** the server bundle a Worker uploads, summed against its 64 MiB code limit ([50b9264](https://github.com/Esposter/Esposter/commit/50b92642fc560ca57be9e8059e1ae63c852d409a))
+* **shared:** SigV4 signing absorbs aws4fetch, and the UnoCSS glob test and its tinyglobby go ([c221ee9](https://github.com/Esposter/Esposter/commit/c221ee9dccf568404e8ca934b1a5e3784ce8ae9f)), closes [#39](https://github.com/Esposter/Esposter/issues/39) [#55](https://github.com/Esposter/Esposter/issues/55) [#36](https://github.com/Esposter/Esposter/issues/36) [#73](https://github.com/Esposter/Esposter/issues/73) [#52](https://github.com/Esposter/Esposter/issues/52)
+* the cutover tool is deleted with its routes and the room object's import ([17c54c4](https://github.com/Esposter/Esposter/commit/17c54c455cd3b00d7538f2d47fa9d159647fe116))
+
 # [4.11.0](https://github.com/Esposter/Esposter/compare/v4.10.1...v4.11.0) (2026-11-14)
 
 ### Bug Fixes

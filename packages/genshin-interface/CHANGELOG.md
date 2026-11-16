@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.12.0](https://github.com/Esposter/Esposter/compare/v4.11.0...v4.12.0) (2026-11-16)
+
+### Features
+
+* **scripts:** sequential-loops/require-loop-shape, every no-await-in-loop reason names its shape, and three polls go ([bde5ef5](https://github.com/Esposter/Esposter/commit/bde5ef553b4ddd3a25aed4e54f9d8533b36dc614))
+
 # [4.11.0](https://github.com/Esposter/Esposter/compare/v4.10.1...v4.11.0) (2026-11-14)
 
 **Note:** Version bump only for package genshin-interface

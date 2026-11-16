@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.12.0](https://github.com/Esposter/Esposter/compare/v4.11.0...v4.12.0) (2026-11-16)
+
+### Bug Fixes
+
+* CI's lint and coverage reds on ai/queue ([01bb2f2](https://github.com/Esposter/Esposter/commit/01bb2f25a25bdd9fa4e4ffdfb0ad61a56da09f61))
+* **genshin:** the game data mirror and verify read under the bucket's app name ([00e7455](https://github.com/Esposter/Esposter/commit/00e745583eca2b93e23e2ffac76912693a342006))
+* the value-set casing rule's four relation configs and the game data key map carry its sanctioned disable ([943ba51](https://github.com/Esposter/Esposter/commit/943ba51dd64439861a379fd515e07375a4db5342))
+
+### Features
+
+* **deps:** uuid's v7 is the one id generator ([dace175](https://github.com/Esposter/Esposter/commit/dace175acce9970f90967fcb4af1f940f90922f2))
+* **scripts:** sequential-loops/require-loop-shape, every no-await-in-loop reason names its shape, and three polls go ([bde5ef5](https://github.com/Esposter/Esposter/commit/bde5ef553b4ddd3a25aed4e54f9d8533b36dc614))
+* **scripts:** the game data publish writes to R2 through the S3 API ([4f90e56](https://github.com/Esposter/Esposter/commit/4f90e56e50b0212490c1630cd81bb0607aae78d5))
+
 # [4.11.0](https://github.com/Esposter/Esposter/compare/v4.10.1...v4.11.0) (2026-11-14)
 
 **Note:** Version bump only for package genshin-world

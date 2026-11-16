@@ -1,6 +1,6 @@
 {
   "name": "@esposter/jobs",
-  "version": "4.11.0",
+  "version": "4.12.0",
   "private": true,
   "description": "The jobs Worker: a queue consumer for each job, and the nightly purge on its Cron Trigger.",
   "homepage": "https://github.com/Esposter/Esposter/blob/main/apps/jobs#readme",

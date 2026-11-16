@@ -1,6 +1,6 @@
 {
   "name": "@esposter/realtime",
-  "version": "4.11.0",
+  "version": "4.12.0",
   "private": true,
   "description": "The realtime Worker: the room, call and person objects that hold live state and the sockets that carry it.",
   "homepage": "https://github.com/Esposter/Esposter/blob/main/apps/realtime#readme",

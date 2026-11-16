@@ -3,6 +3,40 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.12.0](https://github.com/Esposter/Esposter/compare/v4.11.0...v4.12.0) (2026-11-16)
+
+### Bug Fixes
+
+* **db:** the timeout and storage writers take SQLite's MAX, and the Azure search index definition is deleted ([e7824e4](https://github.com/Esposter/Esposter/commit/e7824e4e18b9f26a6ed0838b68d8561c535c8a9c))
+* **infra:** no billing alert in the program, since the provider cannot declare the account's spend filter ([96c18ae](https://github.com/Esposter/Esposter/commit/96c18aee9e85b487a9204911f7eb09b7c75f3a80))
+* **infra:** the buckets a browser reaches by presigned url answer CORS, and the public asset route allows any origin ([f074f9e](https://github.com/Esposter/Esposter/commit/f074f9efedae1a38871a1fa21e0f8a3377dabf2e))
+* **infra:** the dead-letter prefix has an explicit type ([10f9b9f](https://github.com/Esposter/Esposter/commit/10f9b9f9a409298f11380d2e2d68914638d4d880))
+* **infra:** the live Azure estate keeps frozen copies of the names the app retired, so the stack builds until teardown ([12617b3](https://github.com/Esposter/Esposter/commit/12617b3b2dd1e59317189110588f35d746946eae))
+* **infra:** the send-todo-reminder queue, its dead-letter queue and consumer unprotect before their removal ([e7ce675](https://github.com/Esposter/Esposter/commit/e7ce67545561a78572fc1f9bbada0cc36476837a))
+* **infra:** the user assets buckets delete data export archives after their retention ([0999fa0](https://github.com/Esposter/Esposter/commit/0999fa0544591786d1f83aa5f4b705242be739ce))
+* **web:** public assets load cross-origin on their own host, and the CSP allows Cloudflare's analytics beacon ([76bb414](https://github.com/Esposter/Esposter/commit/76bb41465cc724e3843e9d5d5f67f539d709de1b))
+
+### Features
+
+* **infra:** each environment's private cutover archive bucket ([cd5ef9c](https://github.com/Esposter/Esposter/commit/cd5ef9c3ef81776a8432203c58a9a70fa63001d4))
+* **infra:** esposter.com is the production web Worker's custom domain ([3ba1a0a](https://github.com/Esposter/Esposter/commit/3ba1a0af42d9669b9f9ee532af41da1686e57f0e))
+* **infra:** every Cloudflare resource name built by the naming functions ([2f20a53](https://github.com/Esposter/Esposter/commit/2f20a534e08fcf1ec7889926dee5226e9b8d56c5))
+* **infra:** every dead-letter queue has a consumer on the functions Worker ([1af41e7](https://github.com/Esposter/Esposter/commit/1af41e7eeb9afcbe6a3b7b7b47fb1c409b337c01))
+* **infra:** JavaScript detections off with Bot Fight Mode, their only reader on the free plan ([91ebb7e](https://github.com/Esposter/Esposter/commit/91ebb7ecab583fd87d5a97df3ce72ed01b887126))
+* **infra:** one Cloudflare naming rule, environment-first like Azure's, built by a function both Pulumi and the Workers call ([2489d27](https://github.com/Esposter/Esposter/commit/2489d2743afd3782679612e4a1c1df533cec98c2))
+* **infra:** queue consumers take their retries from QueueJobMaxRetriesMap ([68f3af3](https://github.com/Esposter/Esposter/commit/68f3af3dc160c0ec97d09e0059f2020b86f92d91))
+* **infra:** spec the Cloudflare program and lay its SQLite foundation ([f579c44](https://github.com/Esposter/Esposter/commit/f579c44ae7ac3ef95d4812c50d2daa6f7ec43529))
+* **infra:** the Azure estate is torn down ([ea00884](https://github.com/Esposter/Esposter/commit/ea00884bf6eac9d40576ec3c45d72f859dab1da9))
+* **infra:** the Cloudflare resources in Pulumi ([45fcbfe](https://github.com/Esposter/Esposter/commit/45fcbfe89baa40de0551fb817c9098b48c83df6c))
+* **infra:** the cutover's archive buckets and next.esposter.com staging host are deleted ([3c1d3c1](https://github.com/Esposter/Esposter/commit/3c1d3c1f399408ec836454c8e5303d5293bb4d53))
+* **infra:** the esposter.com zone, its DNS and redirect ruleset in Pulumi ([fa23043](https://github.com/Esposter/Esposter/commit/fa23043c709aae8de6e96cf6563b2e3edc959703))
+* **infra:** the queue consumers and the deploy target the jobs and realtime Workers ([95d7d38](https://github.com/Esposter/Esposter/commit/95d7d383a5905bbece87f0378ee87aacca5ae7a5))
+* **infra:** the zone's bot settings declared — Bot Fight Mode off, AI-bot blocking off, JS detections on ([f8e52f2](https://github.com/Esposter/Esposter/commit/f8e52f250dd198489170e91ce2c5706288b0441d))
+* **live-queries:** a finished export tells its owner's panel to refetch ([4b5711d](https://github.com/Esposter/Esposter/commit/4b5711d985470ad49f2af5e1d23f3d542fd73f8a))
+* **realtime:** reminders are rows in the person's object, and the scheduled-job queue, Scheduler and table go ([5f02a8d](https://github.com/Esposter/Esposter/commit/5f02a8d06cbf1d5e9cc49376798f3c27b8b73806))
+* **scripts:** realtimekit:provision creates each environment's RealtimeKit app, presets, webhook and token ([0efe968](https://github.com/Esposter/Esposter/commit/0efe9687815c6cac8bb7a64cbd87c6fcc4333ce1))
+* the cutover tool is deleted with its routes and the room object's import ([17c54c4](https://github.com/Esposter/Esposter/commit/17c54c455cd3b00d7538f2d47fa9d159647fe116))
+
 # [4.11.0](https://github.com/Esposter/Esposter/compare/v4.10.1...v4.11.0) (2026-11-14)
 
 **Note:** Version bump only for package @esposter/infra

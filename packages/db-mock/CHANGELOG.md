@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.12.0](https://github.com/Esposter/Esposter/compare/v4.11.0...v4.12.0) (2026-11-16)
+
+### Bug Fixes
+
+* **db-mock,db-schema,functions:** the streams database stays until its last reader moves, and the account tests load again ([86f9cb5](https://github.com/Esposter/Esposter/commit/86f9cb5a280296e687c3b3f6149d931fea1fa7f5))
+* **db-mock:** the dev seed keys its D1 file by the database id the dev server opens ([f7c548a](https://github.com/Esposter/Esposter/commit/f7c548a5c3047aae4eb1b4fe96f9cd9c5ea2f374))
+* **db-mock:** the migration folders resolve from the repository root, since the test environment serves modules over http ([dcf0ac3](https://github.com/Esposter/Esposter/commit/dcf0ac3e3824ab00cd681ce70ef1e882cc0b9ccc))
+* **db-mock:** the mock bucket is the Workers R2Bucket, and its constants are annotated ([88b6f67](https://github.com/Esposter/Esposter/commit/88b6f67af2340b4b1518fef2869edfdb81e11cd9))
+* **db-mock:** the mock Worker's compatibility date is one every clock accepts ([4d722d0](https://github.com/Esposter/Esposter/commit/4d722d004b2bf2b135e9529777ae755ea7d86ba4))
+
+### Features
+
+* **db-mock:** the test database runs on Miniflare's D1, R2 and Queues ([388a354](https://github.com/Esposter/Esposter/commit/388a35482c7b1c4d9c6a8048fd827f67f86b4701))
+* **db:** the blob services run on R2 bindings, and presigned urls are signed with the R2 token ([c932e91](https://github.com/Esposter/Esposter/commit/c932e91747cc583efaa0b5741dd5d6da4ba25f83))
+* **deps:** uuid's v7 is the one id generator ([dace175](https://github.com/Esposter/Esposter/commit/dace175acce9970f90967fcb4af1f940f90922f2))
+* **infra:** spec the Cloudflare program and lay its SQLite foundation ([f579c44](https://github.com/Esposter/Esposter/commit/f579c44ae7ac3ef95d4812c50d2daa6f7ec43529))
+
 # [4.11.0](https://github.com/Esposter/Esposter/compare/v4.10.1...v4.11.0) (2026-11-14)
 
 **Note:** Version bump only for package @esposter/db-mock
