@@ -13,11 +13,10 @@ interface Props {
   userAchievement?: undefined | UserAchievementWithDefinition;
 }
 
-const { achievementDefinition, rarity, userAchievement } = defineProps<Props>();
+const { achievementDefinition, userAchievement } = defineProps<Props>();
 const displayName = computed(() => prettify(achievementDefinition.name));
 const amount = computed(() => userAchievement?.amount ?? 0);
 const targetAmount = computed(() => achievementDefinition.amount ?? 1);
-const isRare = computed(() => rarity !== undefined && rarity < RARE_ACHIEVEMENT_THRESHOLD);
 </script>
 
 <template>
@@ -48,7 +47,9 @@ const isRare = computed(() => rarity !== undefined && rarity < RARE_ACHIEVEMENT_
     </div>
     <p text-muted>{{ achievementDefinition.description }}</p>
     <p v-if="rarity !== undefined" text-sm text-muted>
-      {{ Math.round(rarity * 10) / 10 }}% of users<span v-if="isRare" text-warning> · Rare</span>
+      {{ Math.round(rarity * 10) / 10 }}% of users<span v-if="rarity < RARE_ACHIEVEMENT_THRESHOLD" text-warning>
+        · Rare</span
+      >
     </p>
     <div flex-1 />
     <p v-if="checkIsUnlockedUserAchievement(userAchievement)" text-sm text-success>

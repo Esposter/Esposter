@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import type { VisualDatasetBinding } from "#shared/models/dashboard/data/VisualDatasetBinding";
 
-import { DatasetAggregationType, DatasetAggregationTypes } from "#shared/models/dataset/DatasetAggregationType";
-import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregationType";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { authClient } from "#src/services/auth/authClient";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
@@ -21,11 +20,6 @@ const readBindingKey = Symbol("readBindingDataset");
 const columnItems = computed(
   () => dataset.value?.columns.map(({ name }) => ({ meaning: UiIconMeaning.Columns, title: name, value: name })) ?? [],
 );
-const aggregationItems = DatasetAggregationTypes.map((value) => ({
-  meaning: UiIconMeaning.Aggregate,
-  title: value,
-  value,
-}));
 </script>
 
 <template>
@@ -68,23 +62,15 @@ const aggregationItems = DatasetAggregationTypes.map((value) => ({
         <span text-sm text-muted>X column</span>
         <UiSelect v-model="modelValue.query.xColumn" :items="columnItems" label="X column" />
       </div>
-      <div v-for="(series, index) of modelValue.query.series" :key="index" flex flex-wrap gap-2 items-end>
-        <div flex flex-col gap-1 w-64>
-          <span text-sm text-muted>Series column</span>
-          <UiSelect v-model="series.column" :items="columnItems" label="Series column" />
-        </div>
-        <div flex flex-col gap-1 w-48>
-          <span text-sm text-muted>Aggregation</span>
-          <UiSelect v-model="series.aggregation" :items="aggregationItems" label="Aggregation" />
-        </div>
-        <UiIconButton
-          :disabled="modelValue.query.series.length === 1"
-          label="Remove series"
-          :meaning="UiIconMeaning.Delete"
-          :variant="UiButtonVariant.Quiet"
-          @click="modelValue.query.series = modelValue.query.series.toSpliced(index, 1)"
-        />
-      </div>
+      <!-- A row edits its series in place, so the bound query holds each change without a write back -->
+      <DashboardVisualPreviewDatasetBindingFormSeries
+        v-for="(series, index) of modelValue.query.series"
+        :key="index"
+        :model-value="series"
+        :column-items
+        :is-only="modelValue.query.series.length === 1"
+        @remove="modelValue.query.series = modelValue.query.series.toSpliced(index, 1)"
+      />
       <UiButton
         self-start
         @click="

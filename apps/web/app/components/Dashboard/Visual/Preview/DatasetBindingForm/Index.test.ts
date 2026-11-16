@@ -3,7 +3,7 @@ import type { VisualDatasetBinding } from "#shared/models/dashboard/data/VisualD
 
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
-import DashboardVisualPreviewDatasetBindingForm from "#src/components/Dashboard/Visual/Preview/DatasetBindingForm.vue";
+import DashboardVisualPreviewDatasetBindingForm from "#src/components/Dashboard/Visual/Preview/DatasetBindingForm/Index.vue";
 import DatasetReferencePicker from "#src/components/Dataset/ReferencePicker.vue";
 import { useSession } from "#src/services/auth/authClient.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";

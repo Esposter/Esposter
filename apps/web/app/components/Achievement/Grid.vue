@@ -9,7 +9,14 @@ interface Props {
   userAchievements: UserAchievementWithDefinition[];
 }
 
-defineProps<Props>();
+const { userAchievements } = defineProps<Props>();
+// Each achievement's first row, found once for the list rather than searched for again by every definition drawn
+const userAchievementMap = computed(() => {
+  const map = new Map<string, UserAchievementWithDefinition>();
+  for (const userAchievement of userAchievements)
+    if (!map.has(userAchievement.achievement.name)) map.set(userAchievement.achievement.name, userAchievement);
+  return map;
+});
 </script>
 
 <template>
@@ -19,7 +26,7 @@ defineProps<Props>();
       :key="achievementDefinition.name"
       :achievement-definition
       :rarity="achievementNameRarityMap?.[achievementDefinition.name]"
-      :user-achievement="userAchievements.find(({ achievement }) => achievement.name === achievementDefinition.name)"
+      :user-achievement="userAchievementMap.get(achievementDefinition.name)"
     />
   </ul>
 </template>

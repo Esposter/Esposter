@@ -43,8 +43,6 @@ const { error, isPending, refresh, resolvedDataset, truncation, visualPropsData 
 // The rows a visual draws, which the editor's menu and a viewer's export both take, and nothing for a demo or a failed read
 const drawnDataset = computed(() => (visualPropsData.value ? resolvedDataset.value : undefined));
 const isGroup = computed(() => visual.type === VisualType.Group);
-// A chart draws its own toolbar along the top right of the tile, so the tile's marks start below it
-const isChart = computed(() => !isGroup.value && checkIsChartVisualType(visual.type));
 const data = computed(() => visualPropsData.value ?? VisualTypeDemoDataMap[visual.type](visual.chart.type));
 const options = useApexOptions(
   () => visual.chart,
@@ -111,7 +109,7 @@ const { copy } = clipboardStore;
       the top is the whole handle, since the cap's percentage has no height to resolve against on an auto-height
       tile, or below a chart's own toolbar -->
     <div
-      :top="isChart ? '9' : '[var(--dashboard-handle)]'"
+      :top="!isGroup && checkIsChartVisualType(visual.type) ? '9' : '[var(--dashboard-handle)]'"
       right="[var(--dashboard-cap)]"
       flex
       gap-1

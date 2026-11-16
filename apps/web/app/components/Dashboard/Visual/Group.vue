@@ -32,7 +32,6 @@ const groupTitle = computed(() => getGroupTitle(visual));
 const visuals = computed(() => visual.visuals ?? []);
 // The editor's grid is the full twelve columns, and a published group reflows by its own width, as the dashboard does
 const columnNumber = computed(() => (isEditable ? DASHBOARD_NO_COLUMNS : getBreakpointColumnNumber(width.value)));
-const rowHeight = computed(() => (isEditable ? DASHBOARD_EDITOR_ROW_HEIGHT : DASHBOARD_PUBLISHED_ROW_HEIGHT));
 </script>
 
 <template>
@@ -63,7 +62,7 @@ const rowHeight = computed(() => (isEditable ? DASHBOARD_EDITOR_ROW_HEIGHT : DAS
         :is-editable
         min-h-full
         pointer-events-auto
-        :row-height
+        :row-height="isEditable ? DASHBOARD_EDITOR_ROW_HEIGHT : DASHBOARD_PUBLISHED_ROW_HEIGHT"
         :visuals
         @commit="(changes) => emit('commit', changes)"
         @open="(child) => emit('open', child)"

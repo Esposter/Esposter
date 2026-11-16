@@ -63,7 +63,8 @@ The published page draws the visuals and its own controls, and no editor region.
 | `apps/web/app/components/Dashboard/Editor/VisualForm.vue`               | the inspector's entry for a selected visual                                                                             |
 | `apps/web/app/components/Dashboard/Editor/VisualFormFields.vue`         | the visual's form, which writes a valid draft onto the visual as it changes                                             |
 | `apps/web/app/components/Dashboard/Editor/GroupForm.vue`                | the inspector's entry for a selected group: its title                                                                   |
-| `apps/web/app/components/Dashboard/Editor/Content.vue`                  | the grid and the delete confirm, mounted once for the editor                                                            |
+| `apps/web/app/components/Dashboard/Editor/Content.vue`                  | the grid, which mounts the editor's dialogs once                                                                        |
+| `apps/web/app/components/Dashboard/Editor/Dialogs.vue`                  | the delete confirm and the move dialog, mounted once for the editor                                                     |
 | `apps/web/app/components/Dashboard/Visual/Preview/ActionsMenu.vue`      | the visual's menu, which holds Edit beside the occasional actions                                                       |
 | `apps/web/app/store/dashboard/visual.ts`                                | the visuals, the selection and the form draft applied to its visual                                                     |
 | `apps/web/app/store/dashboard/dialog.ts`                                | the delete and move targets                                                                                             |

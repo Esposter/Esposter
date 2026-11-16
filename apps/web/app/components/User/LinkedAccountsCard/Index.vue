@@ -27,7 +27,6 @@ const { data: accounts, error, refresh } = useQuery(() => requireAuthData(listAc
 // The provider issued and `allowDifferentEmails` is off, so a second account of the same provider would have to
 // Carry the same verified address as the first — which no provider issues twice
 const providerIdAccountIdMap = computed(() => new Map(accounts.value?.map(({ id, providerId }) => [providerId, id])));
-const linkedAccountCount = computed(() => accounts.value?.length ?? 0);
 // The account leaves the list as its unlink is sent, and comes back if the server refuses it
 const omitAccount = (accountId: string) =>
   applyOptimisticReplacement(accounts, (previousAccounts) => previousAccounts.filter(({ id }) => id !== accountId));
@@ -60,7 +59,7 @@ if (typeof linkError === "string") {
           :="loginButtonProps"
           :is-linked="providerIdAccountIdMap.has(loginButtonProps.provider) ? true : undefined"
           :is-pending="checkIsPending(loginButtonProps.provider) ? true : undefined"
-          :linked-account-count
+          :linked-account-count="accounts?.length ?? 0"
           @link="
             executeMutation(
               () =>
