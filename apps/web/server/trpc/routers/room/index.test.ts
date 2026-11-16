@@ -1,8 +1,8 @@
-/* oxlint-disable no-await-in-loop -- Pagination: each page is requested with the nextCursor the one before it answered; Bounded concurrency: each chunk waits for the last, so the proxy never holds them all */
+/* oxlint-disable no-await-in-loop -- Bounded concurrency: each chunk waits for the last, so the proxy never holds them all */
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { R2Bucket } from "@cloudflare/workers-types";
-import type { BlobDeletionQueueMessage, Page } from "@esposter/db-schema";
+import type { BlobDeletionQueueMessage } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { roomObjectCalls, roomObjectFailures } from "#server/composables/realtime/useRoomObject.test";
@@ -23,6 +23,7 @@ import { TEST_ORIGIN } from "#shared/services/pageBuilder/constants.test";
 import { readTopicsHeader } from "#shared/services/realtime/readTopicsHeader";
 import { INVITE_MAX_USES_OPTIONS } from "#shared/services/room/invite/constants";
 import { InviteExpireAfterMinutesMap } from "#shared/services/room/invite/InviteExpireAfterMinutesMap";
+import { readAllResourcePages } from "#src/services/resource/readAllResourcePages";
 import { deleteDirectory } from "@esposter/db";
 import { createMockBucket } from "@esposter/db-mock";
 import {
@@ -50,18 +51,6 @@ import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, t
 const uploadPublicUserAssetBlob = async (blobName: string) => {
   const bucket = getBucket(StorageBucket.PublicUserAssets);
   await bucket.put(blobName, Buffer.alloc(0));
-};
-
-// Every id a read lists, one page after another from its cursor until the list ends
-const listEveryId = async (readPage: (cursor: string) => Promise<Page<{ id: string }>>): Promise<string[]> => {
-  const ids: string[] = [];
-  let cursor = "";
-  do {
-    const page = await readPage(cursor);
-    ids.push(...page.items.map(({ id }) => id));
-    cursor = page.nextCursor;
-  } while (cursor);
-  return ids;
 };
 
 describe("roomRouter", () => {
@@ -674,7 +663,9 @@ describe("roomRouter", () => {
     const firstRoom = await roomCaller.createRoom({ name });
     const secondRoom = await roomCaller.createRoom({ name });
     const thirdRoom = await roomCaller.createRoom({ name });
-    const listedIds = await listEveryId((cursor) => roomCaller.readRooms({ cursor, limit: 1 }));
+    const listedIds = (await readAllResourcePages((cursor) => roomCaller.readRooms({ cursor, limit: 1 }))).map(
+      ({ id }) => id,
+    );
 
     expect(listedIds).toStrictEqual([thirdRoom.id, secondRoom.id, firstRoom.id]);
   });
@@ -879,7 +870,9 @@ describe("roomRouter", () => {
       .update(usersToRoomsInMessage)
       .set({ displayName: "Tied" })
       .where(eq(usersToRoomsInMessage.roomId, newRoom.id));
-    const listedIds = await listEveryId((cursor) => roomCaller.readMembers({ cursor, limit: 1, roomId: newRoom.id }));
+    const listedIds = (
+      await readAllResourcePages((cursor) => roomCaller.readMembers({ cursor, limit: 1, roomId: newRoom.id }))
+    ).map(({ id }) => id);
 
     expect(listedIds).toStrictEqual(
       [getMockSession().user.id, firstMember.id, secondMember.id].toSorted((firstId, secondId) =>
