@@ -12,10 +12,12 @@ const position = ref<Position>();
 
 onUpdate((scene) => {
   if (!isMenuVisible.value) return;
-  position.value = {
-    x: scene.cameras.main.worldView.right - MENU_PADDING * 2 - MENU_WIDTH,
-    y: scene.cameras.main.worldView.top + MENU_PADDING * 2,
-  };
+  const x = scene.cameras.main.worldView.right - MENU_PADDING * 2 - MENU_WIDTH;
+  const y = scene.cameras.main.worldView.top + MENU_PADDING * 2;
+  // The camera moves in small steps, so most frames land on the position already shown, and a new object for it would
+  // Re-render the menu every frame for nothing
+  if (position.value?.x === x && position.value.y === y) return;
+  position.value = { x, y };
 });
 </script>
 

@@ -14,10 +14,13 @@ interface Props {
 
 const leftCapDisplayWidth = defineModel<number | undefined>("leftCapDisplayWidth");
 const rightCapDisplayWidth = defineModel<number | undefined>("rightCapDisplayWidth");
-const { imagePosition } = defineProps<Props>();
+const { imagePosition, middleDisplayWidth } = defineProps<Props>();
 // Each segment begins where the one before it ends. The caps report their own texture's width back through
 // Their models, so the offsets are read off the rendered images rather than declared anywhere
 const middleX = computed(() => imagePosition.x + (leftCapDisplayWidth.value ?? 0));
+// Computed so a segment keeps its position object until its own x moves, rather than receiving a new one every render
+const middleImagePosition = computed(() => ({ ...imagePosition, x: middleX.value }));
+const rightImagePosition = computed(() => ({ ...imagePosition, x: middleX.value + (middleDisplayWidth ?? 0) }));
 </script>
 
 <template>
@@ -29,7 +32,7 @@ const middleX = computed(() => imagePosition.x + (leftCapDisplayWidth.value ?? 0
     :is-hidden-when-empty
   />
   <DungeonsUIBarImage
-    :image-position="{ ...imagePosition, x: middleX }"
+    :image-position="middleImagePosition"
     :display-width="middleDisplayWidth"
     :texture="textures[BarOrigin.Middle]"
     :scale-y
@@ -37,7 +40,7 @@ const middleX = computed(() => imagePosition.x + (leftCapDisplayWidth.value ?? 0
   />
   <DungeonsUIBarImage
     v-model:display-width="rightCapDisplayWidth"
-    :image-position="{ ...imagePosition, x: middleX + (middleDisplayWidth ?? 0) }"
+    :image-position="rightImagePosition"
     :texture="textures[BarOrigin.Right]"
     :scale-y
     :is-hidden-when-empty
