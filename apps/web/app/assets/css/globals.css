@@ -62,10 +62,8 @@
     --ui-field-background: color-mix(in srgb, var(--ui-text) 6%, transparent);
     /* An invalid field's tint: the error colour a step into the field, derived on each theme scope as the field is */
     --ui-field-invalid-background: color-mix(in srgb, var(--ui-error) 12%, var(--ui-field-background));
-    /* How far the buttons inside a composite field recede while the reader is not in it; a step short of the disabled */
-    /* Opacity, since they still work and must stay readable. The lowest step that keeps an icon at 3:1 against the field */
-    /* In every palette on every surface, a muted icon and a pressed one alike */
-    --ui-field-rest-opacity: 0.8;
+    /* The stronger fill focus gives a text field to make it active */
+    --ui-field-active-background: color-mix(in srgb, var(--ui-text) 12%, transparent);
     accent-color: var(--ui-accent);
     caret-color: var(--ui-accent);
     scrollbar-color: var(--ui-border) var(--ui-background);

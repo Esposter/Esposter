@@ -50,13 +50,6 @@ useAdoptResourceContent(ResourceType.Note, () => {
 </template>
 
 <style scoped>
-/* The ring belongs to the scroller, whose edge stays put: drawn on the document it would scroll away with a long note,
-  And inside the edge, since the scroller around it would cut off a ring drawn outside */
-.rich-text-content:focus-within {
-  outline: var(--ui-focus-ring);
-  outline-offset: var(--ui-focus-inset);
-}
-
 :deep(.ProseMirror) {
   padding: 1rem;
   min-height: 100%;

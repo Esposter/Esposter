@@ -1,5 +1,6 @@
 // @vitest-environment nuxt
 import RichTextEditor from "#src/components/RichTextEditor/Index.client.vue";
+import { waitForEditorRender } from "#src/services/richTextEditor/waitForEditorRender.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { Editor } from "@tiptap/core";
 import { afterEach, describe, expect, test, vi } from "vitest";
@@ -38,5 +39,23 @@ describe("richTextEditor", () => {
     editor.view.dispatch(editor.state.tr.insertText("b"));
 
     expect(editor.getText()).toBe("a");
+  });
+
+  // Formatting acts on the selection, which exists only while the editor is focused
+  test("enables the formatting buttons only while the editor is focused", async () => {
+    expect.hasAssertions();
+
+    const component = await mountSuspended(RichTextEditor, {
+      attachTo: document.body,
+      props: { limit: 100, modelValue: "" },
+    });
+    const bold = component.get('[aria-label="Bold"]');
+    const isRestDisabled = bold.attributes("disabled") !== undefined;
+    component.get<HTMLElement>(".ProseMirror").element.focus();
+    await waitForEditorRender();
+    const isFocusedDisabled = bold.attributes("disabled") !== undefined;
+
+    expect(isRestDisabled).toBe(true);
+    expect(isFocusedDisabled).toBe(false);
   });
 });

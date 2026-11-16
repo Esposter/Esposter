@@ -14,6 +14,6 @@ const items = computed<MenuItem[]>(() => getRichTextMenuItems(editor));
 
 <template>
   <div p-1 flex flex-wrap gap-1 w-full ui-bar items-center>
-    <RichTextEditorMenuBarButtons :items />
+    <RichTextEditorMenuBarButtons :editor :items />
   </div>
 </template>

@@ -41,13 +41,15 @@ describe("unoConfig", () => {
               },
               {
                 "$$symbol-selector": [Function],
-                "background-color": "color-mix(in srgb, var(--ui-tint) 10%, var(--ui-field-background))",
-                "outline": "var(--ui-focus-ring)",
+                "background-color": "var(--ui-field-active-background)",
+                "outline": "var(--ui-focus-width) solid transparent",
                 "outline-offset": "var(--ui-focus-inset)",
               },
               {
                 "$$symbol-selector": [Function],
-                "opacity": "var(--ui-field-rest-opacity)",
+                "background-color": "color-mix(in srgb, var(--ui-tint) 10%, var(--ui-field-background))",
+                "outline": "var(--ui-focus-ring)",
+                "outline-offset": "var(--ui-focus-inset)",
               },
               {
                 "$$symbol-parent": "@media (forced-colors: active)",
