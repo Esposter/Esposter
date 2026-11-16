@@ -103,7 +103,6 @@ import { MAP_REFERENCE_ZOOM_METRES, TELEPORT_FADE_IN_MS, TELEPORT_FADE_OUT_MS } 
 import { findAreaAt } from "#src/services/map/findAreaAt";
 import { findNearestTeleportWaypoint } from "#src/services/map/findNearestTeleportWaypoint";
 import { GENSHIN_SETTINGS_DEFAULTS } from "#src/services/menu/constants";
-import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
 import { readGenshinSave } from "#src/services/save/readGenshinSave";
 import { createTresRenderer } from "#src/services/scene/createTresRenderer";
@@ -190,6 +189,8 @@ const settingsDefaults = { ...GENSHIN_SETTINGS_DEFAULTS, language, qualityTier }
 const settings = useStoredGenshinSettings(settingsDefaults);
 const worldQualityTier = settings.value.qualityTier;
 const { maxPixelRatio } = QualityTierSettingsMap[worldQualityTier];
+// The canvas's pixel ratio, held as one value so the canvas keeps its prop identity across the root's renders
+const canvasDpr: [number, number] = [1, maxPixelRatio];
 // The world on its own canvas: the camera circling Windrise's oak, and the scene it looks at. It is ready once the
 // Scene has the ground and the landmarks of its first view, which keep loading while the world is paused. A world that
 // Cannot start, where neither WebGPU nor WebGL 2 is available, is ready all the same, so a host waiting on it moves on
@@ -285,6 +286,8 @@ onUnmounted(stopAchievements);
 // Holds. They start before the save watches them, as the chests do
 const worldCookingStore = useWorldCookingStore();
 const { start: startCooking, stop: stopCooking } = worldCookingStore;
+// The cooking recipes and the stove's place as the world starts. A used stove opens the cooking screen on a recipe, which
+// Is held here while the screen is open
 const {
   cookingProgress,
   cookingRecipe,
@@ -372,6 +375,7 @@ startAdventureRank(adventureRankTables, {
   worldLevelAdjustment: savedState.worldLevelAdjustment,
 });
 onUnmounted(stopAdventureRank);
+// The Mondstadt Reputation the player holds, which the exploration thresholds a statue's unlock crosses raise
 const worldReputationStore = useWorldReputationStore();
 const { reputation, reputationCity, requestClaimedAts } = storeToRefs(worldReputationStore);
 const { start: startReputation, stop: stopReputation } = worldReputationStore;
@@ -483,7 +487,7 @@ const abyssBonusLines = shallowRef<AttributeLine[]>([]);
 const { characterIdConstellationsMap, stellaFortunaNameTextIdMap } = useWorldConstellations();
 // The roster the player fields, which the combat and every feature that reads the team are started over
 const worldPartyStore = useWorldPartyStore();
-const { activeCharacterId, characterIdSkillGlyphsMap, characters } = storeToRefs(worldPartyStore);
+const { activeCharacterId, characterIdSkillGlyphsMap, characters, deployedCharacterIds } = storeToRefs(worldPartyStore);
 const { party, start: startParty, stop: stopParty } = worldPartyStore;
 startParty({
   characterDataMap: statTables.characterDataMap,
@@ -549,8 +553,6 @@ const { grantRewards } = useWorldQuestRewards({
 });
 // The dishes' uses, read as the world starts. A food the bag uses is eaten by the character on the field, through its use
 const { dishUseMap } = useWorldDishes();
-// The cooking recipes and the stove's place as the world starts. A used stove opens the cooking screen on a recipe, which
-// Is held here while the screen is open
 const {
   blacksmithPlace,
   forgeAmount,
@@ -605,7 +607,6 @@ const {
   getResidents,
   getResidentSpot: (residentId) => windrise.value?.residentSpots.get(residentId),
 });
-// The Mondstadt Reputation the player holds, which the exploration thresholds a statue's unlock crosses raise
 const shopId = shallowRef(0);
 const shopPurchases = shallowRef<ShopPurchase[]>(savedState.shopPurchases);
 // The Spiral Abyss on the world: its entry, its chambers in the arena beside the entrance, and the Benediction a Corridor chamber offers
@@ -693,7 +694,7 @@ const { characterPassiveGroupIdMap, downCharacterIds, expeditionCharacters, expe
 const craftingArtifactDropTables = { artifactMainAffixPools, artifactRarityDataMap, reliquarySets };
 // The party's crafters, each named by the game's text, and the one on the field, who is picked as the bench opens
 const crafting = computed(() =>
-  computeCraftingCrafters(getDeployedCharacterIds(party), activeCharacterId.value, getCharacterName),
+  computeCraftingCrafters(deployedCharacterIds.value, activeCharacterId.value, getCharacterName),
 );
 // The ley line outcrops the world draws: a touch starts a blossom's fight, a camp's last enemy reveals it, and F claims it
 // With resin, and each day's are drawn at the daily reset
@@ -736,9 +737,6 @@ const {
   enemyKindMap: enemyTables.enemyKindMap,
   savedState,
 });
-// What the character can act on in the world: each drop, named by its item, each resident of the regions in reach
-// Whose talk the world holds, named by its text, each locked jump landmark, a domain entrance among them, which it
-// Resonates with, and the Crafting bench, named by its title. Each stands on the ground beneath its point
 const {
   challengeWeeklyBoss,
   chooseDomainTreeClaim,
@@ -802,6 +800,9 @@ const { dispatchInteraction } = useWorldInteractionDispatch({
   trounceBlossoms,
   unlockedDomainEntrances,
 });
+// What the character can act on in the world: each drop, named by its item, each resident of the regions in reach
+// Whose talk the world holds, named by its text, each locked jump landmark, a domain entrance among them, which it
+// Resonates with, and the Crafting bench, named by its title. Each stands on the ground beneath its point
 // The prompts beside the character, joined from every source that offers one
 const { interactables, interactionPrompts, pressInteractable, readInteraction } = useWorldInteractables({
   blacksmithPlace,
@@ -903,6 +904,8 @@ const getCharacter = () => {
   return phase && maxHealth !== undefined ? { maxHealth, phase } : undefined;
 };
 const getAntiColdRatio = () => getTeamAntiColdRatio(kitContext.kitEffectState.effects);
+// The max health the Blessing screen heals a member up to, zero while the member has no combatant built
+const getStatueMaxHealth = (characterId: number) => getMemberMaxHealth(characterId) ?? 0;
 // Where the quests' targets stand from the character, which the quest screen and the tracker read
 const { questDistanceMap, questMark } = useWorldQuestTargets({ mapCamera, windrise });
 defineExpose({ jumpTo, readCameraPosition });
@@ -975,7 +978,7 @@ useWorldSaveSync({
   <div ref="worldScreen" class="world-screen">
     <TresCanvas
       ref="canvas"
-      :dpr="[1, maxPixelRatio]"
+      :dpr="canvasDpr"
       :renderer="createTresRenderer"
       :render-mode="isPaused ? 'manual' : 'always'"
       :tone-mapping="GENSHIN_TONE_MAPPING"
@@ -1535,7 +1538,7 @@ useWorldSaveSync({
       v-model:auto-recover="autoRecoverSetting"
       v-model:power="restorativePower"
       :game-text
-      :get-max-health="(characterId) => getMemberMaxHealth(characterId) ?? 0"
+      :get-max-health="getStatueMaxHealth"
       :get-name="getCharacterName"
       :get-now="getWorldNow"
       :party
@@ -1656,7 +1659,7 @@ useWorldSaveSync({
       :inventory
       :is-in-realm="false"
       :now="forgeNow"
-      :party-character-ids="getDeployedCharacterIds(party)"
+      :party-character-ids="deployedCharacterIds"
       :random="kitContext.random"
       :recipes="forgeRecipes"
       :wallet
