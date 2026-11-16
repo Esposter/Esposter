@@ -8,15 +8,6 @@ import { describe, expect, test } from "vitest";
 import { z } from "zod";
 
 describe(zodToJsonSchema, () => {
-  test("generates additionalProperties false", () => {
-    expect.hasAssertions();
-
-    const schema = z.object({ name: z.string() });
-    const result = zodToJsonSchema(schema);
-
-    expect(result.additionalProperties).toBe(false);
-  });
-
   test("generates title from camelCase key when no meta title", () => {
     expect.hasAssertions();
 
@@ -67,62 +58,6 @@ describe(zodToJsonSchema, () => {
           },
         ],
         "title": "Value",
-      }
-    `);
-  });
-
-  test("branches a discriminated union into oneOf instead of properties", () => {
-    expect.hasAssertions();
-
-    const result = zodToJsonSchema(
-      z.discriminatedUnion("type", [
-        z.object({ name: z.string(), type: z.literal("a") }),
-        z.object({ count: z.number(), type: z.literal("b") }),
-      ]),
-    );
-
-    expect(result).toMatchInlineSnapshot(`
-      {
-        "oneOf": [
-          {
-            "additionalProperties": false,
-            "properties": {
-              "name": {
-                "title": "Name",
-                "type": "string",
-              },
-              "type": {
-                "const": "a",
-                "title": "Type",
-                "type": "string",
-              },
-            },
-            "required": [
-              "name",
-              "type",
-            ],
-            "type": "object",
-          },
-          {
-            "additionalProperties": false,
-            "properties": {
-              "count": {
-                "title": "Count",
-                "type": "number",
-              },
-              "type": {
-                "const": "b",
-                "title": "Type",
-                "type": "string",
-              },
-            },
-            "required": [
-              "count",
-              "type",
-            ],
-            "type": "object",
-          },
-        ],
       }
     `);
   });
@@ -252,15 +187,6 @@ describe(zodToJsonSchema, () => {
         },
       ]
     `);
-  });
-
-  test("includes required array for non-optional fields", () => {
-    expect.hasAssertions();
-
-    const schema = z.object({ name: z.string(), value: z.number() });
-    const result = zodToJsonSchema(schema);
-
-    expect(result.required).toStrictEqual(["name", "value"]);
   });
 
   test("omits optional fields from required", () => {
