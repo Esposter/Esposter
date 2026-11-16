@@ -30,7 +30,6 @@ bail: false
 
 catalog:
   "@arethetypeswrong/core": ^0.18.5
-  "@azure/identity": ^4.14.1
   "@better-auth/api-key": ^1.7.25
   "@better-auth/drizzle-adapter": ^1.7.25
   "@cloudflare/realtimekit": ^2.0.4

@@ -88,7 +88,6 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@azure/identity": "catalog:",
     "@esposter/configuration": "workspace:*",
     "@esposter/db": "workspace:*",
     "@esposter/db-mock": "workspace:*",
