@@ -10,7 +10,7 @@ describe(getPageLabel, () => {
   test("names a product's page by the product, whatever title was recorded for it", () => {
     expect.hasAssertions();
 
-    expect(getPageLabel(RoutePath.MessagesIndex, "")).toBe(MESSAGE_DISPLAY_NAME);
+    expect(getPageLabel(RoutePath.MessagesIndex, " ")).toBe(MESSAGE_DISPLAY_NAME);
   });
 
   test("falls back to the recorded title, then the path", () => {

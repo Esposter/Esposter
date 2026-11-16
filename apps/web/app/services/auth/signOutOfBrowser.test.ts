@@ -68,7 +68,7 @@ describe(signOutOfBrowser, () => {
     signOut.mockResolvedValue();
     await signOutOfBrowser();
 
-    expect(reloadMock).toHaveBeenCalledTimes(1);
+    expect(reloadMock).toHaveBeenCalledExactlyOnceWith();
   });
 
   // The session is already gone server-side by the time a caller reaches here, so a cookie clear that fails
