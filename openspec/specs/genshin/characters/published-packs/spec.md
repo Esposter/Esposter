@@ -40,9 +40,9 @@ The publish SHALL upload every file to the public game data container in the dev
 
 ### Requirement: A dry run changes no account
 
-The publish SHALL, under the dry-run switch, report the files and bytes it would publish and make no request to either account.
+The publish SHALL, under the dry-run switch, report the files and bytes it would publish and write to neither account.
 
-#### Scenario: Dry run makes no request
+#### Scenario: Dry run writes to no account
 
 - **GIVEN** the dry-run switch is set
 - **WHEN** the publish runs
