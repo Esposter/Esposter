@@ -16,6 +16,7 @@ import UiRadioGroup from "#src/components/Ui/RadioGroup.vue";
 import UiTextField from "#src/components/Ui/TextField.vue";
 import { DashboardEditorRegion } from "#src/models/dashboard/DashboardEditorRegion";
 import { DashboardSelectionKind } from "#src/models/dashboard/DashboardSelectionKind";
+import { useSession } from "#src/services/auth/authClient.test";
 import { DashboardEditorRegistry } from "#src/services/dashboard/editor/DashboardEditorRegistry";
 import { DashboardLayout } from "#src/services/dashboard/editor/DashboardLayout";
 import { stubGridWidth } from "#src/services/dashboard/grid/stubGridWidth.test";
@@ -77,6 +78,8 @@ describe("resourceDashboardEditor", () => {
     display.isCompact = false;
     display.isMobile = false;
     localStorage.clear();
+    // A visual's dataset form reads the session, and a signed-out one is all the editor's own checks need
+    useSession.mockReturnValue(ref({ data: null }));
     Object.assign(useRouter().currentRoute.value.params, { id: resourceId });
     trpcMsw.resource.readResource.query(() => ({ ...createResource(), publication: null }));
     trpcMsw.dashboard.readResourcePublication.query(() => undefined);

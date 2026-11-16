@@ -20,9 +20,12 @@ vi.mock(import("#src/services/getFoo"), () => ({ getFoo: () => fooMock.current()
 (better-auth) resolves its methods through a `Proxy`, so `useSession` is not a configurable own property and
 `vi.spyOn(authClient, "useSession")` throws rather than replacing anything. Its colocated
 `app/services/auth/authClient.test.ts` is that seam: it exports the loosely typed `useSession`/`signOut` doubles
-beside the cast `authClient`, so a suite registers `vi.mock(import("#src/services/auth/authClient"), () =>
-import("#src/services/auth/authClient.test"))` and drives the method it imported from the mock file — never a
-per-file factory that re-rolls the cast. A Proxy no colocated file covers yet gets one, on the same shape.
+beside the cast `authClient`, and `shared/test/setup.ts` registers it for every suite, so a suite drives the method
+it imported from the mock file and registers nothing — never a per-file factory that re-rolls the cast. The
+registration is global because the real client's session store outlives the component that read it: nanostores runs
+its cleanup on a timer, and a suite that mounted such a component unmocked saw that cleanup fire after the
+environment was torn down, as an unhandled `removeEventListener is not a function`. A suite that mounts a component
+reading the session sets `useSession`'s return in a `beforeEach`. A Proxy no colocated file covers yet gets one, on the same shape.
 
 ## Placement and export
 

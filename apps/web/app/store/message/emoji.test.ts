@@ -11,7 +11,6 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 interface MockSessionValue {
   data?: { user: { id: string } };
 }
-vi.mock(import("#src/services/auth/authClient"), () => import("#src/services/auth/authClient.test"));
 
 describe(useEmojiStore, () => {
   const { trpcMsw } = setupMswTrpc();

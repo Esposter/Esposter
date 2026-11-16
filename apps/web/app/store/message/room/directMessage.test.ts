@@ -9,9 +9,7 @@ import { useDirectMessageStore } from "#src/store/message/room/directMessage";
 import { MessageType, RoomType } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
 import { v7 } from "uuid";
-import { describe, expect, test, vi } from "vitest";
-
-vi.mock(import("#src/services/auth/authClient"), () => import("#src/services/auth/authClient.test"));
+import { describe, expect, test } from "vitest";
 
 describe(useDirectMessageStore, () => {
   const { trpcMsw } = setupMswTrpc();

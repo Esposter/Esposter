@@ -30,7 +30,6 @@ import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vi
 interface MockSessionValue {
   data?: { user: { id: string } };
 }
-vi.mock(import("#src/services/auth/authClient"), () => import("#src/services/auth/authClient.test"));
 
 describe(useDataStore, () => {
   const { trpcMsw } = setupMswTrpc();

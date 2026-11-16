@@ -12,9 +12,7 @@ import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { EMPTY_GENSHIN_SAVE } from "genshin-world/save";
 import { v7 } from "uuid";
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-
-vi.mock(import("#src/services/auth/authClient"), () => import("#src/services/auth/authClient.test"));
+import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
 describe(useGenshinSave, () => {
   const { trpcMsw } = setupMswTrpc();

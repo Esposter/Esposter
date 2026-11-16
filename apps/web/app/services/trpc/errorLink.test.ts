@@ -20,8 +20,6 @@ const { navigateTo } = vi.hoisted(() => ({
 // The global, which the resolved import never reads. The alert store is the real one, as in useMutation's suite
 vi.mock(import("#app/composables/router"), async (importOriginal) => ({ ...(await importOriginal()), navigateTo }));
 
-vi.mock(import("#src/services/auth/authClient"), () => import("#src/services/auth/authClient.test"));
-
 describe(errorLink, () => {
   const message = "";
   const userId = v7();

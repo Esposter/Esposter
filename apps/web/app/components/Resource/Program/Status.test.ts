@@ -28,7 +28,6 @@ vi.mock(import("@esposter/shared"), async (importOriginal) => ({
   ...(await importOriginal()),
   downloadFile: vi.fn<typeof downloadFile>(),
 }));
-vi.mock(import("#src/services/auth/authClient"), () => import("#src/services/auth/authClient.test"));
 
 // Each guard answers before any file is built, so a refused export names what the owner must fix and downloads
 // Nothing. The notices are the whole visible outcome, so they are what each test reads back

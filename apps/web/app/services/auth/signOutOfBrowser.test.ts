@@ -12,8 +12,6 @@ import { createUser } from "#src/services/message/user/createUser.test";
 import { noop, RoutePath, SITE_NAME, takeOne, toRawDeep } from "@esposter/shared";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("#src/services/auth/authClient"), () => import("#src/services/auth/authClient.test"));
-
 // Rows an earlier page load left in the database, written straight to IndexedDB so this module never opens it
 const writeEarlierPageRows = (message: ClientMessage) =>
   new Promise<void>((resolve, reject) => {

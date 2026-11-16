@@ -10,9 +10,7 @@ import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
-import { describe, expect, test, vi } from "vitest";
-
-vi.mock(import("#src/services/auth/authClient"), () => import("#src/services/auth/authClient.test"));
+import { describe, expect, test } from "vitest";
 
 describe("datasetReferencePicker", () => {
   const { trpcMsw } = setupMswTrpc();

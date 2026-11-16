@@ -8,9 +8,7 @@ import { listAccounts } from "#src/services/auth/authClient.test";
 import { LoginButtonItems } from "#src/services/login/LoginButtonItems";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
-import { describe, expect, test, vi } from "vitest";
-
-vi.mock(import("#src/services/auth/authClient"), () => import("#src/services/auth/authClient.test"));
+import { describe, expect, test } from "vitest";
 
 const mountCard = () =>
   mountSuspended(UserLinkedAccountsCard, { props: { section: UserSettingsPageSection.LinkedAccounts } });

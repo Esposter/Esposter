@@ -10,8 +10,6 @@ import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("#src/services/auth/authClient"), () => import("#src/services/auth/authClient.test"));
-
 describe("messageModelStatusPickerForm", () => {
   const { trpcMsw } = setupMswTrpc();
   const userId = v7();

@@ -9,9 +9,7 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCClientError } from "@trpc/client";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-
-vi.mock(import("#src/services/auth/authClient"), () => import("#src/services/auth/authClient.test"));
+import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
 describe(useReadData, () => {
   const message = "";

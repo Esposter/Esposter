@@ -18,8 +18,6 @@ import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("#src/services/auth/authClient"), () => import("#src/services/auth/authClient.test"));
-
 const writeGuestSave = (clicker: Clicker) => {
   localStorage.setItem(LocalStorageKey.ClickerStore, JSON.stringify(toClickerSave(clicker)));
 };

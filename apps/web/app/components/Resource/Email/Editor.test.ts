@@ -17,9 +17,7 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { MjmlNodeType } from "mjml-blocks";
 import { v7 } from "uuid";
-import { beforeEach, describe, expect, test, vi } from "vitest";
-
-vi.mock(import("#src/services/auth/authClient"), () => import("#src/services/auth/authClient.test"));
+import { beforeEach, describe, expect, test } from "vitest";
 
 describe("resourceEmailEditor", () => {
   const { trpcMsw } = setupMswTrpc();

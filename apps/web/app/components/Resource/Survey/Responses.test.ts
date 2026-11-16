@@ -13,10 +13,8 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
-import { assert, beforeEach, describe, expect, test, vi } from "vitest";
+import { assert, beforeEach, describe, expect, test } from "vitest";
 import { createSurveyDocument, SurveyNodeType, surveyNodeTypeDefinitionMap } from "vue-survey-engine-headless";
-
-vi.mock(import("#src/services/auth/authClient"), () => import("#src/services/auth/authClient.test"));
 
 describe("resourceSurveyResponses", () => {
   const { trpcMsw } = setupMswTrpc();

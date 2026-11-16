@@ -4,9 +4,7 @@ import { useSession } from "#src/services/auth/authClient.test";
 import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
 import { MessageType } from "@esposter/db-schema";
 import { v7 } from "uuid";
-import { beforeEach, describe, expect, test, vi } from "vitest";
-
-vi.mock(import("#src/services/auth/authClient"), () => import("#src/services/auth/authClient.test"));
+import { beforeEach, describe, expect, test } from "vitest";
 
 describe(useIsCreator, () => {
   const roomId = v7();

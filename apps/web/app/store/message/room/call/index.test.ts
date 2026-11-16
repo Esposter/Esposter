@@ -18,7 +18,6 @@ import { TRPCError } from "@trpc/server";
 import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("#src/services/auth/authClient"), () => import("#src/services/auth/authClient.test"));
 vi.mock(
   import("#src/services/realtime/openRealtimeSocket"),
   () => import("#src/services/realtime/openRealtimeSocket.test"),

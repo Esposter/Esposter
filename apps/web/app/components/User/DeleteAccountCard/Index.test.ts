@@ -12,7 +12,6 @@ import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, assert, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("#src/services/auth/authClient"), () => import("#src/services/auth/authClient.test"));
 vi.mock(import("#src/services/auth/signOutOfBrowser"));
 
 const getDialog = () => {

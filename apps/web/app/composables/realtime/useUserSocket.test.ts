@@ -9,8 +9,6 @@ import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("#src/services/auth/authClient"), () => import("#src/services/auth/authClient.test"));
-
 describe(useUserSocket, () => {
   let wrapper: undefined | VueWrapper;
 

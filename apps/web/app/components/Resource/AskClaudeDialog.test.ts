@@ -6,9 +6,7 @@ import { getAssistantPrompt } from "#src/services/resource/getAssistantPrompt";
 import { McpScope } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
-import { afterEach, describe, expect, test, vi } from "vitest";
-
-vi.mock(import("#src/services/auth/authClient"), () => import("#src/services/auth/authClient.test"));
+import { afterEach, describe, expect, test } from "vitest";
 
 describe("resourceAskClaudeDialog", () => {
   afterEach(() => {

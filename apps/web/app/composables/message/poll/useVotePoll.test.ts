@@ -9,8 +9,6 @@ import { MessageType } from "@esposter/db-schema";
 import { v7 } from "uuid";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("#src/services/auth/authClient"), () => import("#src/services/auth/authClient.test"));
-
 describe(useVotePoll, () => {
   const { trpcMsw } = setupMswTrpc();
   const roomId = v7();
