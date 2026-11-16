@@ -194,7 +194,7 @@
       <td valign="top">
         <h3><a href="https://developers.cloudflare.com/">Cloudflare</a></h3>
         <p>
-          Hosting, DNS and data: <a href="https://developers.cloudflare.com/workers/">Workers</a> for the web, realtime and jobs Workers, <a href="https://developers.cloudflare.com/d1/">D1</a> for the relational database, <a href="https://developers.cloudflare.com/r2/">R2</a> for files, <a href="https://developers.cloudflare.com/queues/">Queues</a> for async jobs, <a href="https://developers.cloudflare.com/durable-objects/">Durable Objects</a> for the live state of each room, call and person, and <a href="https://developers.cloudflare.com/realtime/realtimekit/">RealtimeKit</a> for calls.
+          Hosting, the domain's registration and DNS, and data: <a href="https://developers.cloudflare.com/workers/">Workers</a> for the web, realtime and jobs Workers, <a href="https://developers.cloudflare.com/d1/">D1</a> for the relational database, <a href="https://developers.cloudflare.com/r2/">R2</a> for files, <a href="https://developers.cloudflare.com/queues/">Queues</a> for async jobs, <a href="https://developers.cloudflare.com/durable-objects/">Durable Objects</a> for the live state of each room, call and person, and <a href="https://developers.cloudflare.com/realtime/realtimekit/">RealtimeKit</a> for calls.
         </p>
       </td>
     </tr>
@@ -209,33 +209,6 @@
         <h3><a href="https://www.pulumi.com/docs/">Pulumi</a></h3>
         <p>
           Infrastructure as Code in any programming language.
-        </p>
-      </td>
-    </tr>
-  </tbody>
-</table>
-
-### Domain Registrar
-
-<table>
-  <thead>
-    <tr>
-      <th width="2000" colspan="2">
-      </th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td width="80" align="center" valign="top">
-        <br />
-        <a href="https://www.namecheap.com">
-          <img src="./.github/assets/namecheap/logo.svg" />
-        </a>
-      </td>
-      <td valign="top">
-        <h3><a href="https://www.namecheap.com/support/knowledgebase/">Namecheap</a></h3>
-        <p>
-          The registrar for esposter.com, whose nameservers point at Cloudflare.
         </p>
       </td>
     </tr>

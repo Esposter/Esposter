@@ -1,0 +1,5 @@
+schema: spec-driven
+affected_areas: [infra]
+skip_specs: true
+x-model: claude-sonnet-5-5
+x-waiting: "tasks 2.1 to 2.4 wait on the registrar transfer completing"
