@@ -37,6 +37,8 @@ const beamMaterial = new MeshBasicMaterial({
   transparent: true,
 });
 const isVisible = ref(false);
+// The beam's place, held as a computed so the mesh keeps its prop identity across renders
+const beamPosition = computed((): [number, number, number] => [position.x, 0, position.z]);
 // The game raises its beam only once the objective is far enough off to need finding
 onBeforeRender(() => {
   const activeCamera = camera.value;
@@ -56,10 +58,5 @@ onUnmounted(() => {
 
 <template>
   <!-- The navigated objective's beam, a column of light over it, placed in the floating origin's world group -->
-  <TresMesh
-    :geometry="beamGeometry"
-    :material="beamMaterial"
-    :position="[position.x, 0, position.z]"
-    :visible="isVisible"
-  />
+  <TresMesh :geometry="beamGeometry" :material="beamMaterial" :position="beamPosition" :visible="isVisible" />
 </template>

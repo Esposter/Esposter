@@ -11,14 +11,15 @@ interface Props {
   isDisabled: boolean;
 }
 
-defineProps<Props>();
+const { costs } = defineProps<Props>();
 const emit = defineEmits<{ select: [] }>();
+const diceCost = computed(() => countGcgDiceCost(costs));
 </script>
 
 <template>
   <!-- A skill coin of the active character, its dice cost in a token beneath it -->
   <button class="skill" :disabled="isDisabled" type="button" @click="emit('select')">
-    <span class="skill-cost">{{ countGcgDiceCost(costs) }}</span>
+    <span class="skill-cost">{{ diceCost }}</span>
   </button>
 </template>
 
