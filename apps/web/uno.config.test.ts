@@ -1,5 +1,6 @@
 import unoConfig from "#uno.config";
 import { globSync, readFileSync } from "node:fs";
+import { glob } from "tinyglobby";
 import { createGenerator } from "unocss";
 import { assert, describe, expect, test } from "vitest";
 
@@ -300,6 +301,19 @@ describe("unoConfig", () => {
     expect(
       Array.from(forcedColorsBlock.matchAll(/^\[(?<name>ui-[a-z]+)=""\]/gmu), ({ groups }) => groups?.name),
     ).toStrictEqual(surfaceNames);
+  });
+
+  // UnoCSS globs `content.filesystem` with tinyglobby, which follows `node_modules`' links into every workspace package
+  // And its dependencies, and watches each file it reads: from the app that ran the dev server out of descriptors
+  test("reads no file under node_modules", async () => {
+    expect.hasAssertions();
+
+    const files = await glob(unoConfig.content?.filesystem ?? [], {
+      cwd: import.meta.dirname,
+      expandDirectories: false,
+    });
+
+    expect(files.filter((file) => file.includes("node_modules/"))).toStrictEqual([]);
   });
 
   // The pipeline scans components but not plain TypeScript, so a .ts file naming an icon opts in with the magic

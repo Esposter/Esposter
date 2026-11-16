@@ -131,3 +131,12 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+
+      # A server render and its client bundle disagreeing shows only between the deployed server and a browser, so every
+      # page the sitemap lists is loaded at a desktop and a phone size once the web Worker is live
+      # (`openspec/specs/architecture/hydration/design.md`). Headless Chromium is the one browser it launches
+      - name: 🎭 Install the hydration check's browser
+        run: pnpm -C apps/web hydration:browser
+
+      - name: 💧 Check every sitemap page hydrates cleanly
+        run: pnpm -C apps/web hydration:check --origin "$BASE_URL"

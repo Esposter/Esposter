@@ -11,6 +11,7 @@ Typecheck cannot see layout, so the question of what proves a visual change is r
 
 - **A screenshot suite against approved baselines** (`@nuxt/test-utils`' end-to-end mode, `createPage`, a Playwright-driven browser). Every run pays a production build of the whole app, many minutes before the first capture, and the captures find nothing the user's own look does not. The Genshin world package's visual suite is not this: it renders its own screens on plain Vite in seconds, with no app build (`genshin-parity` skill).
 - **"Never a browser the agent drives over the app."** Rejected by one run that drove the dev server in Chrome and found three defects the suites and lint had passed: a drag rule that made the whole calendar inert, a second visit to the dungeons that threw, and a WebSocket upgrade answered twice. A claim whose evidence is hit-testing, drag and drop, a remount, or the real browser's lifecycle is checked in one, as `references/driven-browser.md` sets out.
+- **Reading the hydration check as this suite.** The Deploy workflow loads every sitemap page in a browser after each deploy, but it pays no build (the deploy built) and captures nothing: it fails only on a hydration message Vue logs (`openspec/specs/architecture/hydration/design.md`).
 - **A component gallery** (Storybook, Histoire) — the same cost, plus a second app to keep working with Nuxt and stories that rot.
 
 ## Genshin parity
