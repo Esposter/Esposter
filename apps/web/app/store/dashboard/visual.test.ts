@@ -282,6 +282,31 @@ describe(useVisualStore, () => {
     expect(takeOne(visuals.value).isAutoHeight).toBe(false);
   });
 
+  // A refused fit height is taken back only by its own write, so a later toggle that chose the same value is kept
+  test("a refused fit height keeps a later toggle that chose the same value", async () => {
+    expect.hasAssertions();
+
+    const visualStore = await setupStore();
+    const { setAutoHeight } = visualStore;
+    const { visuals } = storeToRefs(visualStore);
+    const { id } = takeOne(visuals.value);
+    let saveCount = 0;
+    const { promise: isLastSaved, resolve: resolveLastSave }: PromiseWithResolvers<void> = Promise.withResolvers();
+    trpcMsw.dashboard.saveResourceContent.mutation(() => {
+      saveCount++;
+      if (saveCount === 1) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+      if (saveCount === 3) resolveLastSave();
+      return createResource(saveCount);
+    });
+    setAutoHeight({ id }, true);
+    setAutoHeight({ id }, false);
+    setAutoHeight({ id }, true);
+    await isLastSaved;
+    await flushPromises();
+
+    expect(takeOne(visuals.value).isAutoHeight).toBe(true);
+  });
+
   // A refused delete of an unselected visual keeps the selection, and a selection the reader makes while the save is in flight
   // Survives the refusal rather than being rolled back to the one the delete never touched
   test("keeps a selection made while a refused delete's save is in flight", async () => {

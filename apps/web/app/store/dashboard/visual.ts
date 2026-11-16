@@ -110,16 +110,21 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
     });
     return true;
   };
-  // Fit height is a flag written on its own, so it is saved and taken back on a refusal like an edit, but opens no form
+  // Fit height is a flag written on its own, so it is saved and taken back on a refusal like an edit, but opens no form.
+  // Each visual records the write that last set its flag, so a refused save takes back only its own write: a later toggle
+  // Of the same visual is that write's to keep, even when it lands back on the value this one replaced
+  let autoHeightWriteCount = 0;
+  const autoHeightWriteCounts = new WeakMap<Visual, number>();
   const setAutoHeight = (ids: { id: Visual["id"] }, isAutoHeight: boolean) => {
     const visual = findVisual(visuals.value, ids);
     if (!visual) return;
 
     const previousIsAutoHeight = visual.isAutoHeight;
+    const writeCount = ++autoHeightWriteCount;
+    autoHeightWriteCounts.set(visual, writeCount);
     Object.assign(visual, { isAutoHeight });
-    // A later toggle of the same visual is that write's to keep
     saveDashboard(() => {
-      if (visual.isAutoHeight === isAutoHeight) visual.isAutoHeight = previousIsAutoHeight;
+      if (autoHeightWriteCounts.get(visual) === writeCount) visual.isAutoHeight = previousIsAutoHeight;
     });
   };
   // Same write path: remove locally, persist the dashboard, revert on failure so a failed delete keeps the visual. A

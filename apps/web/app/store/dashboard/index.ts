@@ -14,14 +14,16 @@ export const useDashboardStore = defineStore("dashboard", () => {
     (data) => new Dashboard(data as Partial<Dashboard> | undefined),
   );
   // The layout settings are written onto the dashboard they were chosen on, and taken back there if the save is refused.
-  // Saves queue, so a setting a later write changed since is that write's to keep
+  // Saves queue, so a refused save takes back only when no later write has set the layout since: comparing values would
+  // Undo a later write that chose the same ones. Every write sets both settings, so one count covers them
+  let layoutWriteCount = 0;
   const setLayout = (layout: Pick<Dashboard, "collision" | "compactType">) => {
     const target = dashboard.value;
     const previousLayout = { collision: target.collision, compactType: target.compactType };
+    const writeCount = ++layoutWriteCount;
     Object.assign(target, layout);
     saveDashboard(() => {
-      if (target.collision === layout.collision) target.collision = previousLayout.collision;
-      if (target.compactType === layout.compactType) target.compactType = previousLayout.compactType;
+      if (writeCount === layoutWriteCount) Object.assign(target, previousLayout);
     });
   };
   return { dashboard, loadContent, saveDashboard, setLayout };
