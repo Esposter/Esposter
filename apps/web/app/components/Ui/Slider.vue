@@ -29,9 +29,11 @@ const emit = defineEmits<{ end: [value: number] }>();
 const labelId = useId();
 // Vuetify 0 scopes `end` to the pointer drag by design
 // (https://github.com/vuetifyjs/0/blob/v1.3.2/apps/docs/src/pages/components/forms/slider.md#L229), so a change
-// While no pointer is down is a key's and settles at once. The flag is raised in the capture phase, ahead of the track setting the value it was pressed at
+// While no pointer is down is a key's and settles at once.
+// The flag is raised in the capture phase, ahead of the track setting the value it was pressed at
 const isPointerDown = ref(false);
-// Vuetify 0 never ends a press in the band around the track, since it never begins a drag, so its release clears the flag
+// Vuetify 0 never ends a press in the band around the track, since it never begins a drag.
+// So its release clears the flag
 useEventListener(["pointerup", "pointercancel"], () => {
   isPointerDown.value = false;
 });
