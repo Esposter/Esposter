@@ -1,4 +1,4 @@
-/* oxlint-disable no-await-in-loop -- one package is held open at a time; a package's banks are read in turn from its one handle; a package's sounds are read in turn from its one handle; vgmstream decodes the sound once it is written; the WAV is whole once vgmstream exits; the encoded sound is dropped once its WAV is written */
+/* oxlint-disable no-await-in-loop -- Async iteration: each sound is yielded before the next is decoded, so a caller deletes it first; Bounded concurrency: one package is held open at a time, and its banks and sounds are read in turn from its one handle; Each step reads the last: vgmstream decodes the sound once it is written, the WAV is whole once vgmstream exits, and the encoded sound is dropped once its WAV is written */
 import { parseSoundBankSounds } from "#src/services/genshinAssets/music/parseSoundBankSounds";
 import { readFileRange } from "#src/services/genshinAssets/music/readFileRange";
 import { readGameAudioPackages } from "#src/services/genshinAssets/music/readGameAudioPackages";

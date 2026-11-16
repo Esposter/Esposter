@@ -49,7 +49,7 @@ export const runReviewSettle = async (): Promise<void> => {
     checkoutQueue();
 
     console.info(`settler on #${issue.number}`);
-    // oxlint-disable-next-line no-await-in-loop -- Settlers run one at a time, so each one lands before the next starts
+    // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: each settler starts clean on the queue's tip the one before it landed on, so no two settlers conflict
     const outcome: SettleOutcome = await getResultAsync(() => runSettler(issue)).match(
       (dispositions): SettleOutcome => ({ dispositions }),
       (error): SettleOutcome => ({ error }),

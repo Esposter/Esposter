@@ -6,13 +6,13 @@ one of them rather than arguing afresh.
 
 The rule comes from oxlint's `perf` category, which `oxlint.config.ts` turns on as a whole (`categories.perf`), naming no rule — and it reaches
 suites and benches too: a suite's wall time is the one every run of it pays. A loop it reports is either converted or
-carries `// oxlint-disable-next-line no-await-in-loop -- <shape>: <why here>`. In a suite, setup a later step reads (a
+carries `// oxlint-disable-next-line no-await-in-loop -- <shape>: <why here>`, the shape one of the "Keep" table's, each `; `-separated clause of a file-level directive opening on its own (`sequential-loops/require-loop-shape`, whose `SEQUENTIAL_LOOP_SHAPES` is the table's names: a new shape is argued in the table and added there in the same change). In a suite, setup a later step reads (a
 row created before the one that references it) is the "each step reads the last" shape; a loop of independent
 fixtures is converted like any other.
 
 A sequence is never written as recursion: an async function calling itself from its own body is the same loop with a
 pending promise held per level, and a list built as `[...page, ...(await next())]` copied again on each one.
-`async-recursion/no-async-self-call` (`scripts/src/oxlint/asyncRecursion.ts`) reports it, and the fix is the loop with
+`sequential-loops/no-async-self-call` (`scripts/src/oxlint/sequentialLoops.ts`) reports it, and the fix is the loop with
 its shape's directive. A walk whose branches run together from a callback (`Promise.all(children.map(walk))`) is not a
 sequence, and the rule leaves it alone.
 
@@ -35,18 +35,18 @@ one wrote and nothing depends on the order they land in:
 
 ## Keep — a real dependency between iterations
 
-| Shape                    | Why it stays sequential                                                                                     | Example                                                        |
-| ------------------------ | ----------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
-| Retry                    | The next attempt exists only because the last one failed                                                    | `withResourceObjectLock`, `createCallSessionId`, the invite id |
-| Pagination               | The next page's cursor is the last page's `nextCursor`                                                      | the user data export (`writeRoomEntries`), the CSV export      |
-| Committed prefix         | A failure must stop the chunks behind it, and everything before it stays durable for a redelivery to resume | `publishBlobDeletion`, the dead-letter replay                  |
-| Order is the contract    | The iterations land in an order something else reads                                                        | new messages entering the list, SQL statements of a migration  |
-| Lock order               | Rows are locked in a sorted order so two transactions cannot deadlock                                       | `releaseStorageLedgerEntriesByWhere`                           |
-| Each step reads the last | An iteration's check or input is what the ones before it wrote                                              | adding direct-message participants, a topological deploy       |
-| Stop at the first        | The loop ends at the first iteration that answers, and the rest must not run                                | an interaction handler that consumes the input                 |
-| Bounded concurrency      | A pool or a wave is the concurrency, set by a constant, and each worker takes one task at a time            | the registry pool, `deleteDirectory`'s waves, `settleAll`      |
-| Async iteration          | An async generator yields in order, and a stream is read chunk by chunk                                     | the paged bucket listings, a response body reader              |
-| One device               | The work shares a resource that runs one job at a time                                                      | voice synthesis on the GPU, audio playback                     |
+| Shape                    | Why it stays sequential                                                                                                                                                                                               | Example                                                                            |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| Retry                    | The next attempt exists only because the last one failed                                                                                                                                                              | `withResourceObjectLock`, `createCallSessionId`, the invite id                     |
+| Pagination               | The next page's cursor is the last page's `nextCursor`                                                                                                                                                                | the user data export (`writeRoomEntries`), the CSV export                          |
+| Committed prefix         | A failure must stop the chunks behind it, and everything before it stays durable for a redelivery to resume                                                                                                           | `publishBlobDeletion`, the dead-letter replay                                      |
+| Order is the contract    | The iterations land in an order something else reads                                                                                                                                                                  | new messages entering the list, SQL statements of a migration                      |
+| Lock order               | Rows are locked in a sorted order so two transactions cannot deadlock                                                                                                                                                 | `releaseStorageLedgerEntriesByWhere`                                               |
+| Each step reads the last | An iteration's check or input is what the ones before it wrote                                                                                                                                                        | adding direct-message participants, a topological deploy                           |
+| Stop at the first        | The loop ends at the first iteration that answers, and the rest must not run                                                                                                                                          | an interaction handler that consumes the input                                     |
+| Bounded concurrency      | A pool or a wave is the concurrency, set by a constant or at one, and each worker takes one task at a time; one at a time names what it bounds (a mesh held in memory, an API's request rate, a Worker's subrequests) | the registry pool, `deleteDirectory`'s waves, `settleAll`, one mesh read at a time |
+| Async iteration          | An async generator yields in order, and a stream is read chunk by chunk                                                                                                                                               | the paged bucket listings, a response body reader                                  |
+| One device               | The work shares a resource that runs one job at a time                                                                                                                                                                | voice synthesis on the GPU, audio playback                                         |
 
 **A count is not a reason.** "There are only a few" makes a sequence cheap, not correct, and the rule exists so the
 next caller does not have to measure it again — convert it.

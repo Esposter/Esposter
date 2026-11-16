@@ -1,4 +1,4 @@
-/* oxlint-disable no-await-in-loop -- the clock moves until the frame is drawn; read after the clock moved; the page draws one frame after another */
+/* oxlint-disable no-await-in-loop -- Each step reads the last: the clock moves until the page draws one more frame, and the frame is read after the clock moved; Order is the contract: the page draws one frame after another, and the lift is timed from the last rest frame before it */
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { ParityPassMeasure } from "#src/models/genshinParity/shared/ParityPassMeasure";
 

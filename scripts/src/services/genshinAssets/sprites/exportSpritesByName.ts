@@ -1,4 +1,4 @@
-/* oxlint-disable no-await-in-loop -- One block at a time, in the order the index lists them; One atlas at a time, each cut into all its sprites before the next */
+/* oxlint-disable no-await-in-loop -- One device: AnimeStudio runs one block at a time in the order the index lists them, and each block's dumps and atlases sit in folders the blocks share until they are cut; Bounded concurrency: one atlas at a time, each decoded whole and cut into all its sprites before the next */
 import type { IndexedAsset } from "#src/models/recreation/animeStudio/IndexedAsset";
 
 import { AnimeStudioExportType } from "#src/models/genshinAssets/shared/AnimeStudioExportType";

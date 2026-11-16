@@ -35,6 +35,5 @@ export const OOZ_LIBRARY_FILE_NAME = "libAnimeStudio.Ooz.dll.dylib";
 export const TEXTURE2DDECODER_LIBRARY_FILE_NAME = "libTexture2DDecoderNative.dylib";
 export const ACL_MHY_LIBRARY_FILE_NAME = "libAnimeStudio.ACL.MHY.dylib";
 export const ACL_MHY_DIRECTORY = "AnimeStudio.ACL/AnimeStudio.ACL.MHY";
-// The available memory an AnimeStudio run waits for, in gigabytes, and how long it waits between readings, in milliseconds
-export const MIN_AVAILABLE_MEMORY_GIGABYTES = 4;
-export const MEMORY_WAIT_MILLISECONDS = 30_000;
+// The memory one AnimeStudio run takes for its blocks, in gigabytes, which bounds how many a map runs at once
+export const ANIMESTUDIO_RUN_MEMORY_GIGABYTES = 4;

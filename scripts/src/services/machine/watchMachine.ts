@@ -1,4 +1,4 @@
-/* oxlint-disable no-await-in-loop -- Each reading is one minute after the last, so the waits cannot overlap; Each reader runs once per minute, after the last */
+/* oxlint-disable no-await-in-loop -- Each step reads the last: each reading's CPU share is taken from the totals and window the one before it left, so each reading is one minute after the last */
 import type { CpuTotals } from "#src/models/machine/CpuTotals";
 import type { MachineState } from "#src/models/machine/MachineState";
 

@@ -48,7 +48,7 @@ export const readSceneLayout = async (layoutDirectory: string): Promise<SceneLay
   for (const { block, fileLists } of blockFileLists)
     for (const file of new Set(fileLists.flat())) {
       const readType = <T>(type: AssetType): Promise<T[]> => readAll<T>(join(getTypeDirectory(block, type), file));
-      // oxlint-disable-next-line no-await-in-loop -- one file's dump is read at a time, holding its thousands of files
+      // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one file's dump is read at a time, holding its thousands of files
       const [gameObjects, transforms, meshFilters, meshRenderers, skinnedMeshRenderers] = await Promise.all([
         readType<DumpedGameObject>(AssetType.GameObject),
         readType<DumpedTransform>(AssetType.Transform),

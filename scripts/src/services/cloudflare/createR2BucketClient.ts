@@ -1,11 +1,10 @@
 import type { R2BucketClient } from "#src/models/cloudflare/R2BucketClient";
 import type { R2PutOptions } from "#src/models/cloudflare/R2PutOptions";
-import type { R2ListedObject } from "@esposter/db";
 import type { CloudflareEnvironment, StorageBucket } from "@esposter/db-schema";
 
 import { R2_REQUEST_TIMEOUT_MS } from "#src/services/cloudflare/constants";
 import { createR2Transport } from "#src/services/cloudflare/createR2Transport";
-import { parseListBucketResult } from "@esposter/db";
+import { listBucketObjects } from "@esposter/db";
 import { CloudflareAssetType, getCloudflareResourceName } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
@@ -31,20 +30,6 @@ export const createR2BucketClient = (
       .join("/")}`;
   const send = (url: string, init: RequestInit = {}): Promise<Response> =>
     transport.fetch(url, { ...init, signal: AbortSignal.timeout(R2_REQUEST_TIMEOUT_MS) });
-  // A ListObjectsV2 page and the pages after it, each one following the token the last one returned
-  const listPage = async (prefix: string, continuationToken?: string): Promise<R2ListedObject[]> => {
-    const url = new URL(bucketUrl);
-    url.searchParams.set("list-type", "2");
-    url.searchParams.set("prefix", prefix);
-    if (continuationToken !== undefined) url.searchParams.set("continuation-token", continuationToken);
-    const response = await send(url.toString());
-    throwUnlessOk(response, url.toString());
-    const page = parseListBucketResult(await response.text());
-    return page.nextContinuationToken === undefined
-      ? page.objects
-      : [...page.objects, ...(await listPage(prefix, page.nextContinuationToken))];
-  };
-
   return {
     delete: async (key) => {
       const response = await send(getObjectUrl(key), { method: "DELETE" });
@@ -64,7 +49,7 @@ export const createR2BucketClient = (
       throwUnlessOk(response, key);
       return true;
     },
-    list: (prefix) => listPage(prefix),
+    list: (prefix) => listBucketObjects(send, bucketUrl, prefix),
     put: async (key, body, { cacheControl, contentEncoding, contentType, createOnly = false }: R2PutOptions = {}) => {
       const headers = new Headers();
       if (cacheControl !== undefined) headers.set("Cache-Control", cacheControl);

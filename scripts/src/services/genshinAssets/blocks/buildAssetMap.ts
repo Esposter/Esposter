@@ -1,3 +1,4 @@
+import { getMemoryBoundedShardCount } from "#src/services/genshinAssets/blocks/getMemoryBoundedShardCount";
 import { getShardDirectory } from "#src/services/genshinAssets/blocks/getShardDirectory";
 import { getShardMapName } from "#src/services/genshinAssets/blocks/getShardMapName";
 import { linkInstalledBlocks } from "#src/services/genshinAssets/blocks/linkInstalledBlocks";
@@ -17,7 +18,6 @@ import {
   GENSHIN_ASSETS_PRODUCER_PATHS,
   INSTALLED_BLOCKS_DIRECTORY,
 } from "#src/services/genshinAssets/shared/constants";
-import { getPerformanceCoreCount } from "#src/services/genshinAssets/shared/getPerformanceCoreCount";
 import { writeStampedFiles } from "#src/services/provenance/writeStampedFiles";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { readFile, rm, writeFile } from "node:fs/promises";
@@ -25,10 +25,11 @@ import { join } from "node:path";
 
 // Maps every asset in the blocks the game loads by name, type and block, which a patch or a hotfix changes and so is
 // Rebuilt once each. The blocks are linked as the game loads them (`linkInstalledBlocks`), then cut into `shardCount`
-// Shards of consecutive files of about equal bytes, each mapped by its own AnimeStudio run at once, then merged into
+// Shards of consecutive files of about equal bytes, as many as the cores and the memory allow, each mapped by its own
+// AnimeStudio run at once, then merged into
 // The one CAB map and asset map a single run would have written, and the index is written from it
-export const buildAssetMap = async (shardCount: number = getPerformanceCoreCount()): Promise<void> => {
-  const shards = partitionBlockFiles(await linkInstalledBlocks(), shardCount);
+export const buildAssetMap = async (shardCount?: number): Promise<void> => {
+  const shards = partitionBlockFiles(await linkInstalledBlocks(), shardCount ?? (await getMemoryBoundedShardCount()));
   const indices = shards.map((_shard, index) => index);
   const settled = await Promise.allSettled(shards.map((files, index) => mapShard(files, index)));
   const failures = settled.flatMap((result) =>

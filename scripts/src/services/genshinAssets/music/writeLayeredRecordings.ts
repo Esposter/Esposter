@@ -1,4 +1,4 @@
-/* oxlint-disable no-await-in-loop -- one recording is fetched at a time; one recording is encoded at a time */
+/* oxlint-disable no-await-in-loop -- Each step reads the last: a file's reach is the furthest the recordings before it read, and a library file one recording fetches is found in the cache by the next that names it; One device: each encode is one synchronous FFmpeg run, so the recordings are encoded in turn */
 import type { SampledVoiceSolution } from "#src/models/genshinAssets/music/SampledVoiceSolution";
 import type { Music } from "genshin-engine";
 

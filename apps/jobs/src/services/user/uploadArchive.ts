@@ -25,7 +25,7 @@ const uploadParts = async (
   for await (const chunk of archive) {
     chunks.push(chunk);
     bufferedBytes += chunk.byteLength;
-    // oxlint-disable-next-line no-await-in-loop -- the parts are sent in order, so each waits for the one before it
+    // oxlint-disable-next-line no-await-in-loop -- Order is the contract: each part's number is the count of the parts before it, so each waits for the one before it
     if (bufferedBytes >= MIN_UPLOAD_PART_BYTES) await uploadBufferedPart();
   }
   // The last part is the one under the minimum, and the archive always ends in a zip record, so there is always one

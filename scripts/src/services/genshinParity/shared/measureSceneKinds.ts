@@ -1,4 +1,4 @@
-/* oxlint-disable no-await-in-loop -- each kind is hidden alone, one after another; each kind is read against the frames either side of it */
+/* oxlint-disable no-await-in-loop -- One device: each kind is hidden alone on the one page, and restored before the next is hidden; Order is the contract: each kind is read against the frames either side of it, in the order the page drew them */
 /* oxlint-disable no-underscore-dangle -- the names are the page's own globals, which the kinds script sets */
 
 import type { FrameRange } from "#src/models/genshinParity/shared/FrameRange";

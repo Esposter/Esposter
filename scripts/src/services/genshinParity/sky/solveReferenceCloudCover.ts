@@ -1,4 +1,4 @@
-/* oxlint-disable no-await-in-loop -- each page is opened in turn, so one that fails leaves the opened ones to close; read on the page just opened; each round's heights are solved under the shares the last solved; the shares are solved again under the heights just solved */
+/* oxlint-disable no-await-in-loop -- One device: each page is opened and read in turn, so no two browsers run at once and one that fails leaves the opened ones to close; Each step reads the last: each round's heights are solved under the shares the last solved, and the shares are solved again under the heights just solved */
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { SetCloudCover } from "#src/models/genshinParity/sky/SetCloudCover";
 import type { SetCloudHeights } from "#src/models/genshinParity/sky/SetCloudHeights";

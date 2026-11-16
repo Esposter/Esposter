@@ -15,12 +15,12 @@ export const readGameMusicSegments = async (
 ): Promise<{ game: Float32Array; id: number; index: number }[]> => {
   const { music } = getComponentDirectory(component);
   const { segments } = parseMachineJson<ComponentPlaylist>(await readFile(join(music, "playlist.json"), "utf8"));
-  const games: { game: Float32Array; id: number; index: number }[] = [];
-  for (const [index, segment] of segments.entries()) {
-    if (segment.clips.length === 0) continue;
-    // oxlint-disable-next-line no-await-in-loop -- one segment is read at a time
-    const game = await readGameMusicSegment(music, segment, LISTEN_SAMPLE_RATE);
-    games.push({ game, id: segment.id, index });
-  }
-  return games;
+  const playing = [...segments.entries()].filter(([, segment]) => segment.clips.length > 0);
+  return Promise.all(
+    playing.map(async ([index, segment]) => ({
+      game: await readGameMusicSegment(music, segment, LISTEN_SAMPLE_RATE),
+      id: segment.id,
+      index,
+    })),
+  );
 };

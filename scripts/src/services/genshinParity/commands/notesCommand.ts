@@ -60,7 +60,7 @@ export const notesCommand: SubCommandsDef[string] = defineCommand({
             ]),
           );
           for (const { index, spectrogram } of games) {
-            // oxlint-disable-next-line no-await-in-loop -- the page renders one segment at a time
+            // oxlint-disable-next-line no-await-in-loop -- One device: the one parity page renders one segment at a time, on the renderer every render shares
             const ours = await renderMusicOnPage(page, index, true, segmentVoicesMap.get(index));
             const oursSpectrogram = computeSpectrogram(
               ours,

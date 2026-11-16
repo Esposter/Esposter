@@ -1,4 +1,4 @@
-/* oxlint-disable no-await-in-loop -- Bounded concurrency: one room at a time, its emoji read beside its record; The archive takes one entry at a time, so its entries stay in order; Bounded concurrency: one room at a time, as its record is written */
+/* oxlint-disable no-await-in-loop -- Order is the contract: the archive takes one entry at a time, so each room's record, images and emoji blobs are written in order, with its emoji read beside its record */
 import type { UserDataArchive } from "#src/models/user/UserDataArchive";
 import type { UserInAuth } from "@esposter/db-schema";
 

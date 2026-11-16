@@ -25,7 +25,7 @@ export const scoreSampledSolos = async (
   );
   const voiceSolosList: SampledSolo[][] = voiceNotesList.map(() => []);
   for (const instrument of catalogue) {
-    // oxlint-disable-next-line no-await-in-loop -- one instrument's recordings are held at a time
+    // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one instrument's recordings are held at a time
     const regionSamplesMap = await readInstrumentRecordings(instrument, voiceNotesList.flat());
     const regionOnsetMap = new Map(
       Array.from(regionSamplesMap, ([region, samples]) => [region, computeRecordingOnset(samples, AUDIO_SAMPLE_RATE)]),

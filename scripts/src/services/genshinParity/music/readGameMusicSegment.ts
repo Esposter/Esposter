@@ -13,7 +13,7 @@ export const readGameMusicSegment = async (
   const game = new Float32Array(Math.ceil((duration / 1000) * sampleRate));
   const toSample = (milliseconds: number): number => Math.round((milliseconds / 1000) * sampleRate);
   for (const { beginTrim, duration: sourceDuration, endTrim, playAt, sourceId } of clips) {
-    // oxlint-disable-next-line no-await-in-loop -- one source is read at a time
+    // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one source's samples are held in memory at a time, each mixed into the segment as it is read
     const source = await readAudioSamples(join(directory, `${sourceId}.wav`), sampleRate);
     for (let sample = toSample(beginTrim); sample < toSample(sourceDuration + endTrim); sample++) {
       const at = toSample(playAt) + sample;

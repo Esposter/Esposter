@@ -13,7 +13,7 @@ import { toSkyReadings } from "#src/services/genshinParity/sky/toSkyReadings";
 export const measureAtmosphere = async (component: DerivedAssetComponent): Promise<ParityPassMeasure> => {
   const measures: ParityPassMeasure[] = [];
   for (const referenceId of getCurrentBuildReferenceIds(component)) {
-    // oxlint-disable-next-line no-await-in-loop -- one browser is open at a time
+    // oxlint-disable-next-line no-await-in-loop -- One device: each reference's sky is read from its own browser render on the GPU, and parallel renders exhaust the free memory each holds
     const { distance, ours, reference, skyCount, spread } = await readCloudStatistics(referenceId, component);
     measures.push({
       notes: [`${referenceId}: ${skyCount} pixels of sky; ${formatSkyComparison(ours, reference)}`],

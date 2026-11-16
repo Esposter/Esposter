@@ -1,11 +1,12 @@
 import { resolveFfmpeg } from "#src/services/recreation/video/resolveFfmpeg";
-import { execFileSync } from "@esposter/shared-node/child-process";
+import { execFileAsync } from "@esposter/shared-node/child-process";
 
 // Any audio FFmpeg reads, a recording's or a decoded sound's, as one channel of 32-bit samples at a rate, its channels
-// Averaged, from `startFrame` counted at the audio's own rate on, since FFmpeg resamples only after its filters
+// Averaged, from `startFrame` counted at the audio's own rate on, since FFmpeg resamples only after its filters. FFmpeg
+// Runs as its own process, so callers decoding several sources overlap them
 export const readAudioSamples = async (path: string, sampleRate: number, startFrame = 0): Promise<Float32Array> => {
   const ffmpegPath = await resolveFfmpeg();
-  const output = execFileSync(
+  const { stdout: output } = await execFileAsync(
     ffmpegPath,
     [
       "-hide_banner",
@@ -23,7 +24,7 @@ export const readAudioSamples = async (path: string, sampleRate: number, startFr
       "f32le",
       "pipe:1",
     ],
-    { maxBuffer: 1024 ** 3 },
+    { encoding: "buffer", maxBuffer: 1024 ** 3 },
   );
   // Copied out, since a buffer Node pools may start where a float cannot
   return new Float32Array(output.buffer.slice(output.byteOffset, output.byteOffset + output.byteLength));

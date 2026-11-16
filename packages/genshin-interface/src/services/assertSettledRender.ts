@@ -1,4 +1,4 @@
-/* oxlint-disable no-await-in-loop -- each frame is waited on after the one before it; each capture is taken once the frames before it have settled */
+/* oxlint-disable no-await-in-loop -- Order is the contract: each frame lands after the one before it, so the frames are waited on in turn; Each step reads the last: each capture is taken once the frames before it have settled */
 // The locator's screenshot as base64, which is all the guard compares
 interface ScreenshotLocator {
   screenshot: (options: { base64: true }) => Promise<{ base64: string }>;

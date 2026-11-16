@@ -22,7 +22,7 @@ export const downloadCharacterPackFiles = (
     };
     const fetchFiles = async (): Promise<void> => {
       for (const file of fileIterator)
-        // oxlint-disable-next-line no-await-in-loop -- each worker fetches one file at a time, bounding the concurrency
+        // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: CHARACTER_PACK_DOWNLOAD_CONCURRENCY workers share one iterator, and each fetches one file at a time
         await downloadCharacterPackFile(cache, file, reportDeltaBytes).match(noop, () => {
           failedPaths.push(file.path);
         });

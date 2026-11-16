@@ -3,7 +3,7 @@ import type { NextLineRule } from "#src/models/oxlint/comments/NextLineRule";
 import type { Comment, Fix, Fixer, Range } from "@oxlint/plugins";
 
 import { buildRuleKey } from "#src/services/oxlint/comments/buildRuleKey";
-import { BACK_REFERENCE_REASON_REGEX } from "#src/services/oxlint/comments/constants";
+import { BACK_REFERENCE_REASON_REGEX, REASON_CLAUSE_SEPARATOR } from "#src/services/oxlint/comments/constants";
 
 // One fix for the whole file: each repeated rule's next-line disables go, and one file-level directive per rule takes
 // Their place at the top, after a shebang. Every report of the file carries this same fix, and oxlint keeps the first.
@@ -55,5 +55,5 @@ const buildFileDirective = ({ directives, prefix, rule }: NextLineRule): string 
       .filter((reason) => reason !== "" && !BACK_REFERENCE_REASON_REGEX.test(reason)),
   );
   const directive = `/* ${prefix}-disable ${rule}`;
-  return reasons.size === 0 ? `${directive} */` : `${directive} -- ${[...reasons].join("; ")} */`;
+  return reasons.size === 0 ? `${directive} */` : `${directive} -- ${[...reasons].join(REASON_CLAUSE_SEPARATOR)} */`;
 };

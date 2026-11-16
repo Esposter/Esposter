@@ -44,7 +44,7 @@ export const exportWeaponRoots = async (): Promise<string> => {
   const blocks = [...new Set([...prefabBlockMap.values()].flat())];
   const absentBlocks = blocks.filter((block) => !existsSync(join(INSTALLED_BLOCKS_DIRECTORY, block)));
   for (const block of blocks.filter((installable) => !absentBlocks.includes(installable)))
-    // oxlint-disable-next-line no-await-in-loop -- AnimeStudio reads one block at a time
+    // oxlint-disable-next-line no-await-in-loop -- One device: AnimeStudio reads one block at a time, each run blocking the thread
     await exportBlockBySource(block, LAYOUT_ASSET_TYPES, AnimeStudioExportType.Json, layout);
   const sceneLayout = await readSceneLayout(layout);
   const { roots, unreachedMeshes } = deriveWeaponRoots(sceneLayout, cabMap, heldMeshes);

@@ -1,4 +1,4 @@
-/* oxlint-disable no-await-in-loop -- Each write reads the map the one before it wrote, so the scales go in turn */
+/* oxlint-disable no-await-in-loop -- Each step reads the last: each write reads the map the one before it wrote, so the scales go in turn */
 import { traceInk } from "#src/services/genshinParity/shared/traceImage";
 import { writeTracedPath } from "#src/services/genshinParity/shared/writeTracedPath";
 import { InvalidOperationError } from "@esposter/shared";

@@ -1,4 +1,4 @@
-/* oxlint-disable no-await-in-loop -- each attempt pulls the queue the one before it failed to land on; each attempt pushes onto the queue the one before it found taken */
+/* oxlint-disable no-await-in-loop -- Retry: each attempt pulls the queue the one before it failed to land on, and pushes onto the queue the one before it found taken */
 import { checkIsRebaseInProgress } from "#src/services/land/checkIsRebaseInProgress";
 import { LANDING_EXIT_STATUS, MAX_LANDING_ATTEMPTS } from "#src/services/land/constants";
 import { readRebaseStopLines } from "#src/services/land/readRebaseStopLines";

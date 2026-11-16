@@ -1,4 +1,4 @@
-/* oxlint-disable no-await-in-loop -- each read waits for the one before it to find no run yet; the run is created after the push, with no event to wait on */
+/* oxlint-disable no-await-in-loop -- Retry: a read is taken again only because the one before it found no run yet, and the run is created after the push with no event to wait on */
 import type { CiRun } from "#src/models/ci/CiRun";
 
 import { CI_RUN_FIELDS, CI_WORKFLOW_FILE, RUN_CREATION_ATTEMPTS, RUN_CREATION_WAIT } from "#src/services/ci/constants";

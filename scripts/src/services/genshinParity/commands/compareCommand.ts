@@ -122,7 +122,7 @@ export const compareCommand: SubCommandsDef[string] = defineCommand({
               continue;
             }
           }
-          // oxlint-disable-next-line no-await-in-loop -- the parity page shoots one screen at a time
+          // oxlint-disable-next-line no-await-in-loop -- One device: the parity page shoots one screen at a time on the GPU, and parallel renders exhaust the free memory each holds
           const comparisonResult = await getResultAsync(() => compareScreen(referenceId, args.witness, pageRoot));
           comparisonResult.match(
             ({ cells, score }) => {

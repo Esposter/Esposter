@@ -9,6 +9,3 @@ export const INSTALL_OFFLINE_ARGUMENTS: readonly string[] = ["i", "--offline"];
 // A folder and a branch take the name, so it is kept to the lowercase characters a branch and a folder both allow
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex literal would otherwise infer
 export const WORKTREE_NAME_REGEX: RegExp = /^[\da-z][\da-z-]*$/u;
-// The memory gate is waited on for this long, sampled every poll, before the command gives up and creates nothing
-export const MEMORY_GATE_WAIT_MILLISECONDS: number = Temporal.Duration.from({ minutes: 2 }).total("milliseconds");
-export const MEMORY_GATE_POLL_MILLISECONDS: number = Temporal.Duration.from({ seconds: 10 }).total("milliseconds");

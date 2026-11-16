@@ -25,3 +25,6 @@ export const NEXT_LINE_DIRECTIVE_REGEX: RegExp =
 export const BACK_REFERENCE_REASON_REGEX: RegExp = /^as above$/iu;
 export const buildRepeatedDisableMessage = (prefix: string, rule: string): string =>
   `\`${rule}\` is disabled on several lines of this file. Collapse them into one file-level \`/* ${prefix}-disable ${rule} -- reason */\` at the top of the file, which the autofix writes. See the oxlint skill.`;
+// The separator between the reasons a file-level directive collects from the next-line ones it replaces, each of which
+// A rule reading a reason may check on its own
+export const REASON_CLAUSE_SEPARATOR = "; ";

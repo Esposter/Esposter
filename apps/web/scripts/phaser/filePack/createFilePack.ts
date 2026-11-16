@@ -1,3 +1,4 @@
+/* oxlint-disable no-await-in-loop -- Stop at the first: a missing object throws, and the objects behind it are not read */
 import type { Types } from "phaser";
 
 import { ContentTypePhaserMethodMap, PHASER_ROOT_DIRECTORY } from "#scripts/phaser/constants";
@@ -5,7 +6,7 @@ import { outputFile } from "#scripts/services/outputFile";
 import { createValueSetString } from "#scripts/util/createValueSetString";
 import { trimFileExtension } from "#src/util/file/trimFileExtension";
 import formatterConfiguration from "@esposter/configuration/oxfmt";
-import { parseListBucketResult } from "@esposter/db";
+import { listBucketObjects } from "@esposter/db";
 import {
   CLOUDFLARE_ACCOUNT_ID,
   CloudflareAssetType,
@@ -15,25 +16,6 @@ import {
 import { createSigV4Fetch, InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync } from "node:fs";
 import { format } from "oxfmt";
-
-// The names of every object in the bucket, one ListObjectsV2 page after another, each page read by the shared listing parser
-const listObjectNames = async (
-  signedFetch: ReturnType<typeof createSigV4Fetch>,
-  bucketUrl: string,
-  continuationToken?: string,
-): Promise<string[]> => {
-  const url = new URL(bucketUrl);
-  url.searchParams.set("list-type", "2");
-  if (continuationToken !== undefined) url.searchParams.set("continuation-token", continuationToken);
-  const response = await signedFetch(url);
-  // A refused listing answers an error document with no entries, which would otherwise read as an empty bucket
-  if (!response.ok) throw new InvalidOperationError(Operation.Read, bucketUrl, `responds ${response.status}`);
-  const { nextContinuationToken, objects } = parseListBucketResult(await response.text());
-  const names = objects.map(({ key }) => key);
-  return nextContinuationToken === undefined
-    ? names
-    : [...names, ...(await listObjectNames(signedFetch, bucketUrl, nextContinuationToken))];
-};
 
 export const createFilePack = async () => {
   if (existsSync(".env")) process.loadEnvFile();
@@ -49,8 +31,7 @@ export const createFilePack = async () => {
   const valueSetName = "FileKey";
 
   // A listing carries no content type, so each object's type is read from its own headers
-  for (const name of await listObjectNames(signedFetch, bucketUrl)) {
-    // oxlint-disable-next-line no-await-in-loop -- Stop at the first: a missing object throws, and the objects behind it are not read
+  for (const { key: name } of await listBucketObjects(signedFetch, bucketUrl)) {
     const response = await signedFetch(
       `${bucketUrl}/${name
         .split("/")

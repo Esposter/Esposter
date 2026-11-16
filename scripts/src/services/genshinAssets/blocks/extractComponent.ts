@@ -65,7 +65,7 @@ export const extractComponent = async (component: DerivedAssetComponent): Promis
     for (const block of blocks) {
       if (dumpedBlocks.has(block)) continue;
       dumpedBlocks.add(block);
-      // oxlint-disable-next-line no-await-in-loop -- AnimeStudio reads one block at a time
+      // oxlint-disable-next-line no-await-in-loop -- One device: AnimeStudio reads one block at a time, each read a blocking run that finishes before the next block starts
       await exportBlockBySource(block, LAYOUT_ASSET_TYPES, AnimeStudioExportType.Json, directory.layout);
     }
   };

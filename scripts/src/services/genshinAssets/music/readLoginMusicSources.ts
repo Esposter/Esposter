@@ -17,7 +17,7 @@ export const readLoginMusicSources = async function* (): AsyncGenerator<LoginMus
   for (const { clips, id } of segments)
     for (const { sourceId } of clips) {
       const wavePath = join(directory, `${sourceId}.wav`);
-      // oxlint-disable-next-line no-await-in-loop -- one source's samples are held at a time
+      // oxlint-disable-next-line no-await-in-loop -- Async iteration: each source is fitted when the consumer takes it, so one source's samples are held at a time
       const { samples, splits, voiceFits, voiceNotesList } = await fitMusicSource(wavePath);
       yield {
         samples,

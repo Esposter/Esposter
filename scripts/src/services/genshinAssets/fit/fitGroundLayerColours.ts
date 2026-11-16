@@ -28,7 +28,7 @@ export const fitGroundLayerColours = async (
   for (const { cells, column, name, resolution, row } of tiles) {
     const baseMap = join(textureDirectory, `${name}${TERRAIN_BASE_MAP_SUFFIX}.png`);
     if (!existsSync(baseMap)) continue;
-    // oxlint-disable-next-line no-await-in-loop -- one tile's base map is held at a time
+    // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one tile's base map is decoded and held at a time, so the tiles' raw buffers never stack in memory
     const { data, info } = await sharp(baseMap).raw().toBuffer({ resolveWithObject: true });
     const cellMetres = TERRAIN_TILE_SIZE / resolution;
     const sums = new Float64Array(cells.length * 3);

@@ -46,7 +46,7 @@ const waitForLoadStep = (name: string, since: number): Promise<void> =>
 
 const waitForFrames = async (frameCount: number): Promise<void> => {
   for (let frame = 0; frame < frameCount; frame++)
-    // oxlint-disable-next-line no-await-in-loop -- each frame is waited on after the one before it
+    // oxlint-disable-next-line no-await-in-loop -- Order is the contract: each frame lands after the one before it, so the frames are waited on in turn
     await new Promise((resolve) => {
       requestAnimationFrame(resolve);
     });

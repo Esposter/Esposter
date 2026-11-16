@@ -127,7 +127,7 @@ export const fitLoginScene = async (only: readonly string[], options: DryRunOpti
     sounds: async () => {
       const effects: Record<string, SoundEffect> = {};
       for (const [name, { pattern, sounds }] of Object.entries(DerivedAssetSoundEffectMap[DerivedAssetComponent.Login]))
-        // oxlint-disable-next-line no-await-in-loop -- each effect's sounds are decoded into one folder in turn
+        // oxlint-disable-next-line no-await-in-loop -- One device: each effect's sounds are decoded through one vgmstream run at a time into one shared folder, in turn
         effects[name] = await fitSoundEffect(pattern, sounds);
       return { notes: [], objects: { [`${GameDataset.Login}/sounds`]: effects } };
     },

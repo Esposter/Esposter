@@ -1,4 +1,4 @@
-/* oxlint-disable no-await-in-loop -- each distance is drawn on the one page in turn; read after the view it drew */
+/* oxlint-disable no-await-in-loop -- One device: each distance is drawn on the one page in turn, and read after the view it drew, since the page holds one view at a time */
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 
 import { solveReferenceCamera } from "#src/services/genshinParity/passes/solveReferenceCamera";

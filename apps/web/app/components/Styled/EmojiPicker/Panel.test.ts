@@ -1,4 +1,4 @@
-/* oxlint-disable no-await-in-loop -- Each press moves the tab stop the next press starts from; The focus move settles before the next press reads it */
+/* oxlint-disable no-await-in-loop -- Each step reads the last: each press moves the tab stop the next press starts from, and the focus settles before the next press reads it */
 // @vitest-environment nuxt
 import type { CustomEmoji } from "#src/models/message/emoji/CustomEmoji";
 import type { VueWrapper } from "@vue/test-utils";

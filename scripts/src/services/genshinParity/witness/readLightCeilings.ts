@@ -196,7 +196,7 @@ export const readLightCeilings = async ({
   const drawn = await score(exports);
   const rows: { frame: number; name: string }[] = [];
   for (const [name, corrected] of corrections)
-    // oxlint-disable-next-line no-await-in-loop -- each correction is encoded and scored in turn, holding one map
+    // oxlint-disable-next-line no-await-in-loop -- One device: FLIP's scoring runs on the one thread, so each correction is encoded and scored in turn, holding one map
     rows.push({ frame: await score(corrected), name });
   return { depthEdges: TABLE_DEPTH_EDGES, drawn, heightBands, ratioMap, rows };
 };

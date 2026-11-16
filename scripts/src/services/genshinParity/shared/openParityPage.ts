@@ -1,4 +1,4 @@
-/* oxlint-disable no-await-in-loop -- the page draws one frame after another until it is ready; read after the frame it drew */
+/* oxlint-disable no-await-in-loop -- Each step reads the last: the page draws one frame after another until it is ready, and its readiness is read after the frame it drew */
 import type { ParityPageOptions } from "#src/models/genshinParity/shared/ParityPageOptions";
 import type { Page } from "playwright";
 

@@ -1,4 +1,4 @@
-/* oxlint-disable no-await-in-loop -- The buckets are pruned one after the other, so a failure names one */
+/* oxlint-disable no-await-in-loop -- Committed prefix: a destructive prune that fails stops the environments behind it, so nothing is deleted after the failure, the deletes already made before it stay, and the one that failed is the one named */
 import type { SubCommandsDef } from "citty";
 
 import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";

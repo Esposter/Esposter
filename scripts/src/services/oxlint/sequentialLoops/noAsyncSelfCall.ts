@@ -1,6 +1,6 @@
 import type { ESTree, Rule } from "@oxlint/plugins";
 
-import { MESSAGE } from "#src/services/oxlint/asyncRecursion/constants";
+import { ASYNC_SELF_CALL_MESSAGE } from "#src/services/oxlint/sequentialLoops/constants";
 import { defineRule } from "@oxlint/plugins";
 
 type FunctionNode = ESTree.ArrowFunctionExpression | ESTree.Function;
@@ -34,7 +34,7 @@ export const noAsyncSelfCall: Rule = defineRule({
         if (!current?.async || node.callee.type !== "Identifier") return;
         const reference = sourceCode.getScope(node).references.find(({ identifier }) => identifier === node.callee);
         if (reference?.resolved && checkIsOwnBinding(reference.resolved.defs, current))
-          context.report({ message: MESSAGE, node });
+          context.report({ message: ASYNC_SELF_CALL_MESSAGE, node });
       },
       FunctionDeclaration: enter,
       "FunctionDeclaration:exit": exit,

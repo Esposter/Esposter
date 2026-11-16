@@ -26,7 +26,7 @@ export const resolveParityPageRoot = async (
 ): Promise<string> => {
   for (let port = firstPort; port < firstPort + PARITY_PORT_COUNT; port++) {
     const root = `http://localhost:${port}/parity/`;
-    // oxlint-disable-next-line no-await-in-loop -- the first port that answers is the page, so each probe waits on the last
+    // oxlint-disable-next-line no-await-in-loop -- Stop at the first: the first port that answers is the page, so the ports after it are not probed
     if (await checkIsParityPage(root)) return root;
   }
   throw new InvalidOperationError(

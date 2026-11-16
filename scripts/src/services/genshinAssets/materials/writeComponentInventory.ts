@@ -1,4 +1,4 @@
-/* oxlint-disable no-await-in-loop -- one texture is decoded at a time; one mesh is read at a time; one shader's folder is read at a time */
+/* oxlint-disable no-await-in-loop -- Bounded concurrency: one texture is decoded and one mesh read at a time, each held whole in memory, and one shader folder is open at a time across the hundreds a component holds */
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";

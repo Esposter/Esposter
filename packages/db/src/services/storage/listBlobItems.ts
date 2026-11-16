@@ -7,7 +7,7 @@ export const listBlobItems = async (bucket: R2Bucket, prefix: string): Promise<L
   const blobItems: ListedBlobItem[] = [];
   let cursor: string | undefined;
   do {
-    // oxlint-disable-next-line no-await-in-loop -- Each page's cursor is what the next page is requested with
+    // oxlint-disable-next-line no-await-in-loop -- Pagination: each page's cursor is what the next page is requested with
     const page = await bucket.list({ cursor, prefix });
     blobItems.push(...page.objects.map(({ key, uploaded }) => ({ name: key, uploaded })));
     cursor = page.truncated ? page.cursor : undefined;

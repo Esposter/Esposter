@@ -1,4 +1,4 @@
-/* oxlint-disable no-await-in-loop -- the page draws one direction's shadows at a time */
+/* oxlint-disable no-await-in-loop -- One device: the page draws one direction's shadows at a time, so the probes, the grid and each simplex's steps wait their turn on it */
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { PricedDirection } from "#src/models/genshinParity/witness/PricedDirection";
 import type { SetLights } from "#src/models/genshinParity/witness/SetLights";

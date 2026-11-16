@@ -1,4 +1,4 @@
-/* oxlint-disable no-await-in-loop -- AnimeStudio reads one block at a time; one block's scripts are read at a time; one file's scripts are listed at a time; one script's bytes are read at a time */
+/* oxlint-disable no-await-in-loop -- One device: AnimeStudio reads one block at a time, each run blocking the thread; Bounded concurrency: one script file is open at a time, since the blocks hold more than the descriptors a process may open at once */
 import type { ComponentBehaviour } from "#src/models/genshinAssets/scene/ComponentBehaviour";
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { ObjectPointer } from "#src/models/genshinAssets/shared/ObjectPointer";

@@ -10,6 +10,5 @@ import { setTimeout as sleep } from "node:timers/promises";
 export const waitBeforeRetry = async (stderr: string, attempt: number, maxAttempts: number): Promise<void> => {
   if (!checkIsRetryablePush(stderr) || attempt >= maxAttempts)
     throw new InvalidOperationError(Operation.Update, QUEUE_BRANCH, readRejectionLine(stderr));
-  // oxlint-disable-next-line no-await-in-loop -- the landing loop is the only caller, and each attempt waits for the one before it
   await sleep(PUSH_RETRY_MILLISECONDS);
 };

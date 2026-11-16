@@ -19,7 +19,7 @@ export const readWitnessTargets = async (
   const { families, height, parts, width } = await readWitnessTargetsInCall(page, [], isScene, lightDirection);
   const targets: Partial<Record<WitnessTargetName, Float32Array>> = {};
   for (const name of names) {
-    // oxlint-disable-next-line no-await-in-loop -- one target is drawn and read back before the next is drawn into it
+    // oxlint-disable-next-line no-await-in-loop -- One device: the page's one renderer draws one target at a time, so each is drawn and read back before the next is drawn into it
     const { targets: callTargets } = await readWitnessTargetsInCall(page, [name], isScene, lightDirection);
     Object.assign(targets, callTargets);
   }

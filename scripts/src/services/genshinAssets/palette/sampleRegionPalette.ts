@@ -28,7 +28,7 @@ export const sampleRegionPalette = async (region: PaletteRegion): Promise<GameDa
       notes.push(`${region} ${field}: no diffuse texture of its families in the extraction, left provisional`);
       continue;
     }
-    // oxlint-disable-next-line no-await-in-loop -- one field's textures are read at a time
+    // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one field's decoded texels are held in memory at a time
     const texels = await readFamilyTexels(texturePaths);
     // Where every texel is transparent the field has no colour to read, so it is left provisional as one with no texture is
     if (texels.length === 0) {

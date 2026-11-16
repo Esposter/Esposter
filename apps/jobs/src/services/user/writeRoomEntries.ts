@@ -1,4 +1,4 @@
-/* oxlint-disable no-await-in-loop -- Bounded concurrency: one room at a time, one page and one attachment held at once; The archive takes one entry at a time, so its entries stay in order */
+/* oxlint-disable no-await-in-loop -- Pagination: each page is requested after the last id the one before it held; Async iteration: the messages stream a page at a time, so one page and one attachment are held at once; Order is the contract: the archive takes one entry at a time, so each room's entries stay in order */
 import type { UserDataArchive } from "#src/models/user/UserDataArchive";
 import type { RoomMessage, UserInAuth } from "@esposter/db-schema";
 

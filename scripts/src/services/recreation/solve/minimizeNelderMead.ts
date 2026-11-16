@@ -1,4 +1,4 @@
-/* oxlint-disable no-await-in-loop -- each vertex is one evaluation, and evaluations run one at a time */
+/* oxlint-disable no-await-in-loop -- Each step reads the last: each move is priced from the vertices the iteration before it left sorted; One device: each evaluation is a render on a page the caller shares, so evaluations run one at a time */
 import { combine } from "#src/services/recreation/solve/combine";
 
 // The Nelder–Mead simplex's coefficients: reflection, expansion, contraction and shrink, as the method sets them

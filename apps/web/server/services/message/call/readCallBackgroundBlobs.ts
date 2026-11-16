@@ -16,7 +16,7 @@ export const readCallBackgroundBlobs = async (
   const callBackgroundBlobs: CallBackgroundBlob[] = [];
   let cursor: string | undefined;
   do {
-    // oxlint-disable-next-line no-await-in-loop -- Each page's cursor is what the next page is requested with
+    // oxlint-disable-next-line no-await-in-loop -- Pagination: each page's cursor is what the next page is requested with
     const page = await bucket.list({ cursor, prefix });
     for (const { key, size } of page.objects) {
       const slotName = key.slice(prefix.length);

@@ -18,7 +18,7 @@ export const readMeshDumps = async (
   directory: string,
 ): Promise<Map<string, DumpedMesh>> => {
   for (const block of new Set(meshes.map((mesh) => mesh.block)))
-    // oxlint-disable-next-line no-await-in-loop -- AnimeStudio exports one block at a time
+    // oxlint-disable-next-line no-await-in-loop -- One device: AnimeStudio exports one block at a time, each export a blocking run that finishes before the next block starts
     await exportBlockBySource(block, [AssetType.Mesh], AnimeStudioExportType.Json, directory);
   const entries = await Promise.all(
     meshes.map(async (mesh): Promise<[string, DumpedMesh]> => {

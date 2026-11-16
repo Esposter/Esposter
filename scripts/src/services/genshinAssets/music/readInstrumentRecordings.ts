@@ -1,4 +1,4 @@
-/* oxlint-disable no-await-in-loop -- one recording is fetched and decoded at a time */
+/* oxlint-disable no-await-in-loop -- Each step reads the last: a region already decoded is skipped, and a library file one region fetched is found in the cache by the next that names it, so one recording is fetched and decoded at a time */
 import type { CataloguedInstrument } from "#src/models/genshinAssets/music/CataloguedInstrument";
 import type { SampleRegion } from "#src/models/genshinAssets/music/SampleRegion";
 import type { NoteEventTime } from "pitch-transcription/notes";

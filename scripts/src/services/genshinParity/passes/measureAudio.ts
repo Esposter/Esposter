@@ -30,7 +30,7 @@ export const measureAudio = async (component: DerivedAssetComponent): Promise<Pa
     const effect = fitted[name];
     if (!effect) throw new InvalidOperationError(Operation.Read, soundsPath, `holds no effect ${name}`);
     const ours = computeSoundEffectSamples(effect, SOUND_SAMPLE_RATE);
-    // oxlint-disable-next-line no-await-in-loop -- each effect's sounds are decoded into one folder in turn
+    // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: each effect's sounds are decoded into the one folder in turn, and a sound an earlier effect wrote there is read rather than decoded again
     const { bandBiases, correlation, distance } = scoreSoundEffect(ours, await readGameSoundEffect(pattern, sounds));
     const grain = scoreSoundEffect(computeSoundEffectSamples(effect, SOUND_SAMPLE_RATE, GRAIN_SEED), ours).distance;
     measures.push({

@@ -1,4 +1,4 @@
-/* oxlint-disable no-await-in-loop -- AnimeStudio exports one block at a time; a file's shaders are read one at a time, each up to megabytes */
+/* oxlint-disable no-await-in-loop -- One device: AnimeStudio exports one block at a time, each run blocking the thread; Each step reads the last: a copy of a shader merges its names into the ones the copies before it hold, and a file's shaders are read one at a time, each up to megabytes */
 import type { ShaderColorNames } from "#src/models/genshinAssets/shared/ShaderColorNames";
 
 import { ShaderPropertyType } from "#src/models/genshinAssets/materials/ShaderPropertyType";

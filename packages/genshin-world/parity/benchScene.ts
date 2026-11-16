@@ -22,7 +22,7 @@ export const benchScene = async (context: SceneContext | undefined, frameCount: 
   info.autoReset = false;
   info.reset();
   for (let frame = 0; frame < frameCount; frame++) {
-    // oxlint-disable-next-line no-await-in-loop -- one frame is timed after another
+    // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: each frame's interval is measured from the frame before it, so the frames are timed in order
     const time = await new Promise<number>((resolve) => {
       window.requestAnimationFrame((frameTime) => {
         resolve(frameTime);

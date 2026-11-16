@@ -1,4 +1,4 @@
-/* oxlint-disable no-await-in-loop -- one browser is open at a time */
+/* oxlint-disable no-await-in-loop -- One device: each reference's stone and shadow reads are taken from its own browser render on the GPU, and parallel renders exhaust the free memory each holds */
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { ParityPassMeasure } from "#src/models/genshinParity/shared/ParityPassMeasure";
 import type { StoneLight } from "genshin-engine";

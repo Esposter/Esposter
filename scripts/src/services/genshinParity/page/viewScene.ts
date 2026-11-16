@@ -1,4 +1,4 @@
-/* oxlint-disable no-await-in-loop -- one view is drawn and shot before the next; the shot belongs to the view just set */
+/* oxlint-disable no-await-in-loop -- One device: the one page holds one view at a time, so each view is drawn and shot before the next is set, and the shot belongs to the view just set */
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { Vector } from "#src/models/shared/Vector";
 

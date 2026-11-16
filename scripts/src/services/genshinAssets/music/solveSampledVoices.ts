@@ -75,7 +75,7 @@ export const solveSampledVoices = async (
     agreement: -Infinity,
   }));
   for (const instrument of catalogue) {
-    // oxlint-disable-next-line no-await-in-loop -- one instrument's recordings are held at a time
+    // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: a voice's nearest instrument is replaced only by one that agrees better than the nearest the earlier instruments left; Bounded concurrency: one instrument's recordings are held at a time
     const regionSamplesMap = await readInstrumentRecordings(instrument, voiceNotesList.flat());
     for (const [voice, voiceNotes] of voiceNotesList.entries()) {
       const reference = references[voice];

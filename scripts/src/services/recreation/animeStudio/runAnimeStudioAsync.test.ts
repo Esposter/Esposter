@@ -11,9 +11,6 @@ vi.mock(import("@esposter/shared-node/child-process"), async (importOriginal) =>
   ...(await importOriginal()),
   spawn: spawnMock as unknown as typeof spawn,
 }));
-vi.mock(import("#src/services/recreation/animeStudio/waitForFreeMemory"), () => ({
-  waitForFreeMemory: () => Promise.resolve(undefined),
-}));
 
 describe(runAnimeStudioAsync, () => {
   // AnimeStudio skips what throws and exits 0 all the same, so a clean exit whose output names an exception still fails

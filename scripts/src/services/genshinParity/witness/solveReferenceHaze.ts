@@ -26,7 +26,7 @@ export const solveReferenceHaze = async (
   witness: DerivedAssetComponent,
 ): Promise<{ haze: Haze; noneResidual: number; residual: number; sceneResidual: number }> => {
   const readings: StoneLightReading[] = [];
-  // oxlint-disable-next-line no-await-in-loop -- one browser is open at a time
+  // oxlint-disable-next-line no-await-in-loop -- One device: one browser is open at a time, and each reference's page is closed before the next one opens
   for (const referenceId of referenceIds) readings.push(await readStoneLightReading(referenceId, witness));
   const [firstReading] = readings;
   if (!firstReading) throw new InvalidOperationError(Operation.Read, "references", "none given");

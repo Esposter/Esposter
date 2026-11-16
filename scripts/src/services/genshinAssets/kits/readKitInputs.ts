@@ -81,7 +81,7 @@ export const readKitInputs = async ({
     const gcsimFolder = findGcsimFolder(tagCharacterMap, tables.name);
     const gcsim = gcsimFolder === undefined ? undefined : tagCharacterMap.get(gcsimFolder);
     if (gcsim === undefined) notes.push(`no gcsim folder at ${GCSIM_TAG}`);
-    // oxlint-disable-next-line no-await-in-loop -- one category request at a time, which the wiki asks of a client
+    // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one wiki category request is made at a time, which the wiki asks of a client
     const pages = await readWikiTalentPages(tables.name, wikiCacheDirectory);
     if (pages.length === 0) notes.push("no wiki talent pages");
     const overlay = readKitOverlay(overlayName);

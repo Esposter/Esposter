@@ -194,7 +194,7 @@ describe("pageBuilderEmailPreview", () => {
     const edits = ["a", "aa", "aaa"].map((preview) => ({ ...emailDocument, root: { props: { preview } } }));
     vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
     for (const edit of edits)
-      // oxlint-disable-next-line no-await-in-loop -- each edit is its own watcher flush, the way a keystroke is
+      // oxlint-disable-next-line no-await-in-loop -- Order is the contract: each edit is its own watcher flush, the way a keystroke is, and the last one is the document compiled
       await wrapper.setProps({ emailDocument: edit });
 
     await vi.advanceTimersByTimeAsync(RESOURCE_AUTOSAVE_DEBOUNCE_MS);

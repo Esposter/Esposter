@@ -1,4 +1,4 @@
-/* oxlint-disable no-await-in-loop -- one page is paused at one time and shot before the next, in order; the shot belongs to the time just set, before the next one is */
+/* oxlint-disable no-await-in-loop -- One device: one page is paused at one time and shot before the next, in order, since the shot belongs to the time just set, before the next one is */
 import type { ShootOptions } from "#src/models/genshinParity/shared/ShootOptions";
 
 import { ParityMotion } from "#src/models/genshinParity/shared/ParityMotion";

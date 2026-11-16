@@ -10,7 +10,7 @@ export const printDirectoryFiles = async (parityDirectory: string, directories: 
   // One directory is read at a time, its stats already batched within it, so a long list never holds every directory
   // Open at once, and each listing prints in input order as it is read
   for (const directory of directories) {
-    // oxlint-disable-next-line no-await-in-loop -- A directory is read before the next opens, so the open handles never stack
+    // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one directory is read at a time, so no two open directory handles stack, and each listing prints in input order as it is read
     const { files } = await readDirectory(join(parityDirectory, directory));
     console.info(JSON.stringify({ directory, files }));
   }

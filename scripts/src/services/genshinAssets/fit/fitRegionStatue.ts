@@ -68,7 +68,7 @@ export const fitRegionStatue = async (component: DerivedAssetComponent): Promise
     if (!material || !diffusePath)
       throw new InvalidOperationError(Operation.Read, placement.mesh, "has no exported diffuse texture to colour it");
     const [tintRed, tintGreen, tintBlue] = readMaterialTint(material);
-    // oxlint-disable-next-line no-await-in-loop -- one mesh of thousands of vertices is read at a time
+    // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one mesh of thousands of vertices is read at a time, so the meshes' vertices never stack in memory
     const [{ faces, faceUvs, uvs, vertices: meshVertices }, texture] = await Promise.all([
       readObjMesh(join(meshDirectory, `${placement.mesh}.obj`)),
       readTexture(diffusePath),

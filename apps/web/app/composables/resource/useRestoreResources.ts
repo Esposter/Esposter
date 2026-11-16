@@ -24,7 +24,7 @@ export const useRestoreResources = (refresh?: () => Promise<void>) => {
       async () => {
         // Chunked to the server's per-call cap as the delete that binned them was
         for (let offset = 0; offset < ids.length; offset += MAX_READ_LIMIT)
-          // oxlint-disable-next-line no-await-in-loop -- Committed prefix, as the delete's chunks are
+          // oxlint-disable-next-line no-await-in-loop -- Committed prefix: a chunk the server rejects stops the ones after it, and the ones before it stay restored, as the delete's chunks are
           await $trpc.resource.restoreResources.mutate({ ids: ids.slice(offset, offset + MAX_READ_LIMIT) });
       },
       {

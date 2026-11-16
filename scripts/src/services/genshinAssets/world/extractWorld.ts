@@ -1,4 +1,4 @@
-/* oxlint-disable no-await-in-loop -- one tile at a time, each some megabytes */
+/* oxlint-disable no-await-in-loop -- Bounded concurrency: one tile at a time, each some megabytes */
 import type { ComponentDirectory } from "#src/models/genshinAssets/shared/ComponentDirectory";
 import type { WorldOptions } from "#src/models/genshinAssets/world/WorldOptions";
 

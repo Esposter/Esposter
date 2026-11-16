@@ -235,7 +235,6 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
   plugins: ["import", "oxc", "promise", "typescript", "unicorn", "vitest", "vue"],
   rules: {
     ...PINIA_RULES,
-    "async-recursion/no-async-self-call": "error",
     "class-methods-use-this": "off",
     "comments/no-capitalized-identifier": "error",
     "comments/no-repeated-disable-next-line": "error",
@@ -369,6 +368,8 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     // Reads a function returning a promise as awaited, so the core copy is off
     "require-await": "off",
     "routing/no-route-literal": "error",
+    "sequential-loops/no-async-self-call": "error",
+    "sequential-loops/require-loop-shape": "error",
     "setup-scope/no-detached-mutation": "error",
     "sort-imports": "off",
     "sort-keys": "off",

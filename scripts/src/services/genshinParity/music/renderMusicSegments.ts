@@ -24,7 +24,7 @@ export const renderMusicSegments = async (
     async () => {
       const renders: { game: Float32Array; id: number; index: number; ours: Float32Array }[] = [];
       for (const { game, id, index } of games) {
-        // oxlint-disable-next-line no-await-in-loop -- the page renders one segment at a time
+        // oxlint-disable-next-line no-await-in-loop -- One device: the one parity page renders one segment at a time, on the renderer every render shares
         const ours = await renderMusicOnPage(page, index, isLayered, segmentVoicesMap.get(index));
         renders.push({ game, id, index, ours });
       }

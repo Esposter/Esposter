@@ -1,4 +1,4 @@
-/* oxlint-disable no-await-in-loop -- one browser is open at a time; each reference's solve is read in turn */
+/* oxlint-disable no-await-in-loop -- One device: one browser is open at a time, and each reference's samples are read and solved before the next browser opens */
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { ParityPassMeasure } from "#src/models/genshinParity/shared/ParityPassMeasure";
 

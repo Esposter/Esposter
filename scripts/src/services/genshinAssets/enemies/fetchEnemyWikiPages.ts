@@ -17,7 +17,7 @@ export const fetchEnemyWikiPages = async (
     else if (isDryRun) lines.push(`${title}: not cached`);
     else {
       mkdirSync(cacheDirectory, { recursive: true });
-      // oxlint-disable-next-line no-await-in-loop -- one page at a time, so the wiki is asked for no more than one at once
+      // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one page is fetched at a time, so the wiki is asked for no more than one at once
       await fetchWikiPage(title, cachePath);
       lines.push(`${title}: fetched`);
     }

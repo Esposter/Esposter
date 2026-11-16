@@ -8,7 +8,7 @@ export const readFileRange = async (file: FileHandle, path: string, offset: numb
   const buffer = Buffer.alloc(size);
   let length = 0;
   while (length < size) {
-    // oxlint-disable-next-line no-await-in-loop -- each read starts where the last one stopped
+    // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: each read starts where the last one stopped, as a read may return fewer bytes than it asks
     const { bytesRead } = await file.read(buffer, length, size - length, offset + length);
     if (bytesRead === 0) throw new InvalidOperationError(Operation.Read, path, `ends before byte ${offset + size}`);
     length += bytesRead;

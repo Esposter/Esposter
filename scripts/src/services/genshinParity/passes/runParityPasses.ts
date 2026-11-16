@@ -23,7 +23,7 @@ export const runParityPasses = async (
       results.push({ isHeld: false, measure: { notes: ["no measure yet"], readings: [] }, pass });
       break;
     }
-    // oxlint-disable-next-line no-await-in-loop -- each pass runs only once every pass before it holds
+    // oxlint-disable-next-line no-await-in-loop -- Stop at the first: a pass runs only once the passes before it hold, since a pass begun over a failing one absorbs its error
     const measure = await measurePass(component);
     if (measure.isNotOwed) {
       console.log(`${pass}: not owed for ${component}`);

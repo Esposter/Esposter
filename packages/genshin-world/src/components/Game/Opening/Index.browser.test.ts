@@ -145,7 +145,7 @@ describe("gameOpening", () => {
       for (let splash = 0; splash < splashCount; splash++) {
         expect(container.querySelector(".splash-sequence")).not.toBeNull();
 
-        // oxlint-disable-next-line no-await-in-loop -- each splash mounts only once the one before it has played
+        // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: each splash mounts only once the one before it has played, and the check reads the splash that play mounted
         await playAnimations(requestRealFrame);
       }
       const loginScreen = container.querySelector<HTMLElement>(".login-screen");

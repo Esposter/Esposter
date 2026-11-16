@@ -15,6 +15,6 @@ export const writeSaveEntries = async (archive: UserDataArchive, userId: UserInA
     }),
   );
   for (const { game, save } of saves)
-    // oxlint-disable-next-line no-await-in-loop -- The archive takes one entry at a time, so its entries stay in order
+    // oxlint-disable-next-line no-await-in-loop -- Order is the contract: the archive takes one entry at a time, so its entries stay in order
     if (save) await archive.addEntry(`saves/${game}/save.json`, save);
 };

@@ -1,4 +1,4 @@
-/* oxlint-disable no-await-in-loop -- each run is watched only once the one before it was superseded; the runs after this one are read only once it was superseded */
+/* oxlint-disable no-await-in-loop -- Each step reads the last: a run is watched only once the one before it was superseded, its conclusion choosing the next run; Stop at the first: the watch ends at the first run that carries a verdict, so the runs after it are never read */
 import type { CiCompletedRun } from "#src/models/ci/CiCompletedRun";
 
 import { FAILED_JOB_CONCLUSIONS, UNSETTLED_CONCLUSIONS } from "#src/services/ci/constants";

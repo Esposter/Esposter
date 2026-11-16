@@ -4,11 +4,11 @@ import { buildDistributions } from "#src/services/worktree/create/buildDistribut
 import { createWorktree } from "#src/services/worktree/create/createWorktree";
 import { installWorktree } from "#src/services/worktree/create/installWorktree";
 import { readBuildDirectories } from "#src/services/worktree/create/readBuildDirectories";
-import { waitForMemoryGate } from "#src/services/worktree/create/waitForMemoryGate";
+import { readMemoryGateShortfall } from "#src/services/worktree/create/readMemoryGateShortfall";
 import { defineCommand } from "citty";
 
 // `pnpm ai:worktree:create <name> [package...]` — a worktree on ai/queue, installed for the scripts package and the packages
-// Named, and built beside them. The free-memory gate is waited on first, so a shut gate creates nothing (the `throughput`
+// Named, and built beside them. The free-memory gate is read first, so a shut gate creates nothing (the `throughput`
 // Skill, `references/machine-efficiency.md`)
 await runCommand(
   defineCommand({
@@ -25,7 +25,7 @@ await runCommand(
       name: "ai:worktree:create",
     },
     run: async ({ args }) => {
-      const shortfall = await waitForMemoryGate();
+      const shortfall = await readMemoryGateShortfall();
       if (shortfall !== undefined) {
         console.info(shortfall);
         process.exitCode = 4;

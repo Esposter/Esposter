@@ -29,8 +29,6 @@ export const LOAD_SAMPLE_MILLISECONDS: number = Temporal.Duration.from({ seconds
 export const MACHINE_PROFILE_PATH: string = join(homedir(), `.${SITE_NAME.toLowerCase()}`, "machine.json");
 // A running hold has one file per entry here, which a release deletes to stop the hold on this machine at once
 export const HOLDS_DIRECTORY: string = join(homedir(), `.${SITE_NAME.toLowerCase()}`, "holds");
-// How often a hold checks its entry's file between renewals, so a local release is seen within this interval
-export const LOCAL_HOLD_POLL_MILLISECONDS: number = Temporal.Duration.from({ seconds: 5 }).total("milliseconds");
 // The areas a machine holds when its profile is new: every area, until the user lends it fewer
 export const ALL_AREAS: readonly string[] = ["*"];
 // The one area the owner works in, which every machine is lent for until the owner decides otherwise
