@@ -1,92 +1,204 @@
 {
   "files": [
     {
-      "filepath": "scripts/src/workspace/buildPackages.bench.ts",
+      "filepath": "src/workspace/buildPackages.bench.ts",
       "groups": [
         {
           "benchmarks": [
             {
-              "mean": 4271.120233333334,
+              "mean": 255.18230566666657,
               "name": "@esposter/configuration",
-              "p99": 4301.227200000001,
-              "rme": 2.9869751568508893,
+              "p99": 263.66638500000903,
+              "rme": 7.386916498297946,
               "sampleCount": 3
             },
             {
-              "mean": 3779.740900000002,
-              "name": "@esposter/shared",
-              "p99": 3802.9956999999995,
-              "rme": 2.5923565983071675,
-              "sampleCount": 3
-            },
-            {
-              "mean": 3660.0753999999993,
-              "name": "@esposter/azure",
-              "p99": 3725.902599999994,
-              "rme": 4.06088304679885,
-              "sampleCount": 3
-            },
-            {
-              "mean": 571.7601666666669,
-              "name": "@esposter/shared-node",
-              "p99": 587.8804000000018,
-              "rme": 6.088636628270469,
-              "sampleCount": 3
-            },
-            {
-              "mean": 4688.100033333336,
-              "name": "azure-mock",
-              "p99": 4778.068800000008,
-              "rme": 4.230970595902071,
-              "sampleCount": 3
-            },
-            {
-              "mean": 4251.831166666666,
-              "name": "@esposter/db-schema",
-              "p99": 4334.041299999997,
-              "rme": 4.278315431390245,
-              "sampleCount": 3
-            },
-            {
-              "mean": 3837.8003333333377,
-              "name": "parse-tmx",
-              "p99": 3874.223100000003,
-              "rme": 2.8383194785903276,
-              "sampleCount": 3
-            },
-            {
-              "mean": 3878.3742000000107,
+              "mean": 345.13305533333914,
               "name": "@esposter/db-mock",
-              "p99": 3915.7928000000247,
-              "rme": 3.3076432589481586,
+              "p99": 345.38985750001217,
+              "rme": 0.16502775768199224,
               "sampleCount": 3
             },
             {
-              "mean": 10208.925666666668,
-              "name": "@esposter/infra",
-              "p99": 10254.0521,
-              "rme": 1.109789815260311,
-              "sampleCount": 3
-            },
-            {
-              "mean": 13864.683733333348,
-              "name": "vue-phaserjs",
-              "p99": 13994.162100000016,
-              "rme": 2.139281668066535,
-              "sampleCount": 3
-            },
-            {
-              "mean": 4598.741100000024,
+              "mean": 459.98726433332195,
               "name": "@esposter/db",
-              "p99": 4627.539600000018,
-              "rme": 1.367753534326117,
+              "p99": 477.34402783997825,
+              "rme": 8.731211591008957,
               "sampleCount": 3
             },
             {
-              "mean": 7008.210833333335,
-              "name": "@esposter/azure-functions",
-              "p99": 7121.729500000016,
-              "rme": 4.166943541141542,
+              "mean": 525.5658890000001,
+              "name": "vue-canvas-frame-headless",
+              "p99": 533.2000308399798,
+              "rme": 3.521984587868701,
+              "sampleCount": 3
+            },
+            {
+              "mean": 544.7947083333274,
+              "name": "unplugin-pwa-nuxt",
+              "p99": 550.84273833999,
+              "rme": 2.4892506602733153,
+              "sampleCount": 3
+            },
+            {
+              "mean": 551.94573633333,
+              "name": "@esposter/shared-node",
+              "p99": 555.4783803399984,
+              "rme": 2.727482336703782,
+              "sampleCount": 3
+            },
+            {
+              "mean": 553.5595973333305,
+              "name": "tresjs-nuxt",
+              "p99": 562.4319331600022,
+              "rme": 5.211351571525673,
+              "sampleCount": 3
+            },
+            {
+              "mean": 561.6924163333412,
+              "name": "keyframe-store",
+              "p99": 565.0990908200008,
+              "rme": 1.8027509266186892,
+              "sampleCount": 3
+            },
+            {
+              "mean": 597.7798750000075,
+              "name": "vue-grid-layout-headless",
+              "p99": 620.5938123200187,
+              "rme": 9.182938107638309,
+              "sampleCount": 3
+            },
+            {
+              "mean": 615.7151106666619,
+              "name": "parse-tmx",
+              "p99": 646.1302426799963,
+              "rme": 11.876642701195445,
+              "sampleCount": 3
+            },
+            {
+              "mean": 618.6473890000003,
+              "name": "pitch-transcription",
+              "p99": 628.4254449999892,
+              "rme": 4.06185509624222,
+              "sampleCount": 3
+            },
+            {
+              "mean": 629.5910976666783,
+              "name": "vue-editor-layout-headless",
+              "p99": 637.5259781600238,
+              "rme": 2.7962214474673788,
+              "sampleCount": 3
+            },
+            {
+              "mean": 631.975597333328,
+              "name": "vue-pdfjs-headless",
+              "p99": 659.7240699999902,
+              "rme": 9.955482808238852,
+              "sampleCount": 3
+            },
+            {
+              "mean": 641.6102643333337,
+              "name": "genshin-text",
+              "p99": 650.445185340002,
+              "rme": 4.753605697399901,
+              "sampleCount": 3
+            },
+            {
+              "mean": 660.5375416666599,
+              "name": "trpc-nuxt-module",
+              "p99": 666.9612653199938,
+              "rme": 2.5409163523916,
+              "sampleCount": 3
+            },
+            {
+              "mean": 677.8376666666687,
+              "name": "@esposter/db-schema",
+              "p99": 715.329696019998,
+              "rme": 14.393979721983266,
+              "sampleCount": 3
+            },
+            {
+              "mean": 696.5220553333347,
+              "name": "nuxt-security-module",
+              "p99": 716.7505138399958,
+              "rme": 7.465625070550229,
+              "sampleCount": 3
+            },
+            {
+              "mean": 712.7688329999995,
+              "name": "trpc-msw",
+              "p99": 722.7629051799735,
+              "rme": 4.419751139510896,
+              "sampleCount": 3
+            },
+            {
+              "mean": 942.1477640000036,
+              "name": "mjml-blocks",
+              "p99": 951.3711166600214,
+              "rme": 3.020624502411209,
+              "sampleCount": 3
+            },
+            {
+              "mean": 959.8703193333349,
+              "name": "survey-expression",
+              "p99": 1056.681202680008,
+              "rme": 22.36907919100342,
+              "sampleCount": 3
+            },
+            {
+              "mean": 1016.0349863333298,
+              "name": "vue-block-editor-headless",
+              "p99": 1054.7038640000164,
+              "rme": 8.848733320403865,
+              "sampleCount": 3
+            },
+            {
+              "mean": 1028.1914166666684,
+              "name": "math-expression-compiler",
+              "p99": 1048.5671238400153,
+              "rme": 4.772160059528818,
+              "sampleCount": 3
+            },
+            {
+              "mean": 1136.3824166666698,
+              "name": "vue-survey-engine-headless",
+              "p99": 1152.0738738400123,
+              "rme": 5.020319374167281,
+              "sampleCount": 3
+            },
+            {
+              "mean": 1437.8050553333403,
+              "name": "@esposter/shared",
+              "p99": 1454.405207999986,
+              "rme": 3.415923467323551,
+              "sampleCount": 3
+            },
+            {
+              "mean": 1835.2068056666758,
+              "name": "genshin-interface",
+              "p99": 1888.4522183400068,
+              "rme": 8.239106165767511,
+              "sampleCount": 3
+            },
+            {
+              "mean": 2129.09855533334,
+              "name": "genshin-engine",
+              "p99": 2239.888683320013,
+              "rme": 12.984018007154866,
+              "sampleCount": 3
+            },
+            {
+              "mean": 2848.720875333335,
+              "name": "vue-phaserjs",
+              "p99": 2995.3951033400044,
+              "rme": 11.495294366153203,
+              "sampleCount": 3
+            },
+            {
+              "mean": 77366.09570833335,
+              "name": "genshin-world",
+              "p99": 78598.13889833998,
+              "rme": 4.1577641189909285,
               "sampleCount": 3
             }
           ],
