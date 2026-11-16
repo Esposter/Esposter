@@ -1,11 +1,15 @@
 // @vitest-environment nuxt
+import { useSession } from "#src/services/auth/authClient.test";
 import { createRoom } from "#src/services/message/room/createRoom.test";
 import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useRoomDialogStore } from "#src/store/message/room/dialog";
 import { useRoomStore } from "#src/store/message/room/index";
+import { getRouteParam } from "#src/util/router/getRouteParam";
+import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(useRoomStore, () => {
@@ -90,5 +94,63 @@ describe(useRoomStore, () => {
     await flushPromises();
 
     expect(rooms.value).toStrictEqual([first]);
+  });
+
+  // The reader is in the room the leave takes them out of, so the refusal puts them back in it rather than leaving them
+  // In the room the leave navigated them to
+  test("a refused leave brings the reader back to the room", async () => {
+    expect.hasAssertions();
+
+    // The route's auth middleware reads the session in the nuxt shape, so the reader is answered as signed in
+    const session = { user: { id: v7() } };
+    useSession.mockImplementation((fetcher) => (fetcher ? { data: ref(session) } : ref({ data: session })));
+    // The navigation the leave starts is not held by the drain, since the room's page and middleware load on first use,
+    // So the refusal waits until the reader has landed in the room the leave sent them to, as it does in the app
+    const router = useRouter();
+    const { promise: isInSecond, resolve: onInSecond } = Promise.withResolvers<true>();
+    const removeLandingListener = router.afterEach((to) => {
+      if (getRouteParam(to.params, "id") !== second.id) return;
+      removeLandingListener();
+      onInSecond(true);
+    });
+    trpcMsw.room.leaveRoom.mutation(async () => {
+      await isInSecond;
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
+    const roomStore = useRoomStore();
+    const { leaveRoom, pushRooms } = roomStore;
+    const { currentRoom, currentRoomId } = storeToRefs(roomStore);
+    pushRooms(first, second);
+    setCurrentRoomId(first.id);
+    leaveRoom(first.id);
+    await waitForSynchronizedFunctions();
+    // The refusal's rollback starts the navigation back as it lands, after the drain above took its snapshot
+    await waitForSynchronizedFunctions();
+
+    expect(currentRoomId.value).toBe(first.id);
+    expect(currentRoom.value).toStrictEqual(first);
+  });
+
+  // A refusal can land before the navigation away has, while the reader still reads as in the room, and the navigation
+  // Back is what cancels the one still on its way
+  test("a leave refused before its navigation lands keeps the reader in the room", async () => {
+    expect.hasAssertions();
+
+    const session = { user: { id: v7() } };
+    useSession.mockImplementation((fetcher) => (fetcher ? { data: ref(session) } : ref({ data: session })));
+    trpcMsw.room.leaveRoom.mutation(() => {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
+    const roomStore = useRoomStore();
+    const { leaveRoom, pushRooms } = roomStore;
+    const { currentRoomId } = storeToRefs(roomStore);
+    pushRooms(first, second);
+    setCurrentRoomId(first.id);
+    leaveRoom(first.id);
+    await waitForSynchronizedFunctions();
+    // The navigations the removal and its rollback start are drained once the write that started them has settled
+    await waitForSynchronizedFunctions();
+
+    expect(currentRoomId.value).toBe(first.id);
   });
 });

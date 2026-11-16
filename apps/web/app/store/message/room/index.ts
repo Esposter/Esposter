@@ -94,7 +94,9 @@ export const useRoomStore = defineStore("message/room", () => {
       navigateFromDeletedRoomInBackground(roomId);
       return () => {
         if (removedRoom) storeCreateRoom(removedRoom);
-        if (isCurrent && currentRoomId.value === landingRoomId) navigateToRoomInBackground(roomId);
+        // Still in the room means the navigation away has not landed yet, and a navigation back supersedes it
+        if (isCurrent && (currentRoomId.value === roomId || currentRoomId.value === landingRoomId))
+          navigateToRoomInBackground(roomId);
       };
     },
     key: roomId,

@@ -197,7 +197,7 @@ describe(useLikeOperations, () => {
     await until(readCount).toBe(1);
   });
 
-  test("a count the server refuses to move goes back to what it was", async () => {
+  test("a failed vote restores the count", async () => {
     expect.hasAssertions();
 
     const heldWrite = Promise.withResolvers<void>();
@@ -208,24 +208,32 @@ describe(useLikeOperations, () => {
 
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
-    // The refusal reads the count back, and the server never moved it
-    serveLikeCount(1);
+    // The read the refusal sends is held, so the count is seen restored before it answers. It answers with another
+    // Viewer's vote, which only a read back can show
+    const heldRead = Promise.withResolvers<void>();
+    const isReadReceived = Promise.withResolvers<void>();
+    trpcMsw.post.readPostCounts.query(async () => {
+      isReadReceived.resolve();
+      await heldRead.promise;
+      return [{ commentCount: 0, id: postId, likeCount: 2 }];
+    });
     const post = createPost({ id: postId, likeCount: 1 });
     const postStore = usePostStore();
     const { items } = storeToRefs(postStore);
     items.value = [post];
     const { createLike: sendLike } = useLikeOperations(items);
     sendLike({ postId, value: 1 });
-
-    // The count is drawn while the refusal is held, so the wait is for the refusal's rollback to put it back
     await isWriteReceived.promise;
-
-    expect(post.likeCount).toBe(2);
-
+    const optimisticLikeCount = takeOne(items.value).likeCount;
     heldWrite.resolve();
+    await isReadReceived.promise;
+    const restoredLikeCount = takeOne(items.value).likeCount;
+    heldRead.resolve();
     await waitForSynchronizedFunctions();
 
-    expect(takeOne(items.value).likeCount).toBe(1);
+    expect(optimisticLikeCount).toBe(2);
+    expect(restoredLikeCount).toBe(1);
+    expect(takeOne(items.value).likeCount).toBe(2);
   });
 
   test("the count shows the read-back value once the write settles", async () => {

@@ -9,7 +9,7 @@ import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useResourceStore } from "#src/store/resource/index";
 import { useTodoListStore } from "#src/store/resource/todoList/index";
 import { ResourceType } from "@esposter/db-schema";
-import { takeOne, toRawDeep } from "@esposter/shared";
+import { takeOne, toRawDeep, waitForSynchronizedFunctions } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
@@ -252,18 +252,27 @@ describe(useTodoListStore, () => {
   });
 
   // The field above the list adds with no dialog to hold a draft, so a refused save has to take the new row back out
-  test("takes out a todo added by name when the server refuses it", async () => {
+  // The field above the list clears as a todo is added, so a name a todo cannot take and a save the server refuses both
+  // Hand its text back through `onRefused`, and the refused todo leaves the list
+  test("a refused add hands the field its name back", async () => {
     expect.hasAssertions();
 
+    const onRefused = vi.fn<() => void>();
     trpcMsw.todoList.saveResourceContent.mutation(() => {
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
     const todoListStore = await setupStore();
     const { addItem } = todoListStore;
     const { items } = storeToRefs(todoListStore);
-    addItem(newItemName);
-    await flushPromises();
+    addItem(" ", onRefused);
 
+    expect(onRefused).toHaveBeenCalledTimes(1);
+    expect(items.value.map(({ name }) => name)).toStrictEqual([itemName]);
+
+    addItem(newItemName, onRefused);
+    await waitForSynchronizedFunctions();
+
+    expect(onRefused).toHaveBeenCalledTimes(2);
     expect(items.value.map(({ name }) => name)).toStrictEqual([itemName]);
   });
 

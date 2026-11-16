@@ -10,6 +10,8 @@ import { useEmailEditorStore } from "#src/store/emailEditor/index";
 import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
 import { useResourceStore } from "#src/store/resource/index";
 import { ResourceType } from "@esposter/db-schema";
+import { waitForSynchronizedFunctions } from "@esposter/shared";
+import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { beforeEach, describe, expect, test, vi } from "vitest";
@@ -83,5 +85,22 @@ describe(useEmailEditorStore, () => {
     await flushPromises();
 
     expect(saveResourceContent).not.toHaveBeenCalled();
+  });
+
+  test("a refused dataset binding puts the previous binding back", async () => {
+    expect.hasAssertions();
+
+    const previousDatasetReference = { id: v7(), type: DatasetProviderType.Sheet };
+    content = new EmailEditor({ content: [], datasetReference: previousDatasetReference, root: { props: {} } });
+    trpcMsw.email.saveResourceContent.mutation(() => {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
+    const emailEditorStore = useEmailEditorStore();
+    const { loadContent, saveDatasetReference } = emailEditorStore;
+    await loadContent();
+    saveDatasetReference({ id: v7(), type: DatasetProviderType.Sheet });
+    await waitForSynchronizedFunctions();
+
+    expect(emailEditorStore.datasetReference).toStrictEqual(previousDatasetReference);
   });
 });

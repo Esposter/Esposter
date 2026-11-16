@@ -40,13 +40,15 @@ export const useEmailEditorStore = defineStore("emailEditor", () => {
     emailEditor.value.root = document.root;
     saveContent();
   };
-  // A refused save unbinds the dataset again, unless a later binding has replaced it since
+  // A refused save unbinds the dataset again, unless a later binding has replaced it since. The binding is read back
+  // After the write, since the content is reactive and hands back a proxy of the object written, never the object itself
   const saveDatasetReference = (newDatasetReference: DatasetReference | undefined) => {
     const target = emailEditor.value;
     const previousDatasetReference = target.datasetReference;
     target.datasetReference = newDatasetReference;
+    const writtenDatasetReference = target.datasetReference;
     saveContent(() => {
-      if (target.datasetReference === newDatasetReference) target.datasetReference = previousDatasetReference;
+      if (target.datasetReference === writtenDatasetReference) target.datasetReference = previousDatasetReference;
     });
   };
   return { datasetReference, loadContent, saveDatasetReference, saveEmail };

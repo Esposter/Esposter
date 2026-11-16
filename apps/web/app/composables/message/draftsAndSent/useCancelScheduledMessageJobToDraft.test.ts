@@ -1,8 +1,10 @@
 // @vitest-environment nuxt
 import { useCancelScheduledMessageJobToDraft } from "#src/composables/message/draftsAndSent/useCancelScheduledMessageJobToDraft";
 import { createScheduledMessageJob } from "#src/services/message/draftsAndSent/createScheduledMessageJob.test";
+import { getScheduledMessageJobText } from "#src/services/message/draftsAndSent/getScheduledMessageJobText";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useInputStore } from "#src/store/message/input/index";
+import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
@@ -56,5 +58,33 @@ describe(useCancelScheduledMessageJobToDraft, () => {
     await flushPromises();
 
     expect(drafts.value.get(scheduledMessageJob.roomId)?.content).toBe(previousContent);
+  });
+
+  // The composer's debounced save rewrites the draft as the same text while the cancel is held, so a refused cancel
+  // Still gives back the earlier draft, under the stamp it was written with
+  test("gives the composer back its earlier draft under its original updatedAt when a re-save lands before the cancel is rejected", async () => {
+    expect.hasAssertions();
+
+    const scheduledMessageJob = createScheduledMessageJob();
+    const earlierDraft = { content: "a", updatedAt: new Date(0) };
+    const heldCancel = Promise.withResolvers<void>();
+    const isCancelReceived = Promise.withResolvers<void>();
+    trpcMsw.message.scheduledMessageJob.cancelScheduledMessageJob.mutation(async () => {
+      isCancelReceived.resolve();
+      await heldCancel.promise;
+
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
+    const inputStore = useInputStore();
+    const { drafts } = storeToRefs(inputStore);
+    drafts.value.set(scheduledMessageJob.roomId, earlierDraft);
+    useCancelScheduledMessageJobToDraft()(scheduledMessageJob);
+
+    await isCancelReceived.promise;
+    inputStore.setDraft(scheduledMessageJob.roomId, getScheduledMessageJobText(scheduledMessageJob));
+    heldCancel.resolve();
+    await waitForSynchronizedFunctions();
+
+    expect(drafts.value.get(scheduledMessageJob.roomId)).toStrictEqual(earlierDraft);
   });
 });

@@ -2,11 +2,14 @@
 import { useSession } from "#src/services/auth/authClient.test";
 import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
 import { createRoom } from "#src/services/message/room/createRoom.test";
+import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { createUser } from "#src/services/message/user/createUser.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useAlertStore } from "#src/store/alert";
 import { useDirectMessageStore } from "#src/store/message/room/directMessage";
+import { getRouteParam } from "#src/util/router/getRouteParam";
 import { MessageType, RoomType } from "@esposter/db-schema";
+import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
@@ -131,5 +134,67 @@ describe(useDirectMessageStore, () => {
         type: MessageType.Message,
       },
     ]);
+  });
+
+  // The reader is in the conversation the hide takes out of the list, so the refusal puts them back in it rather than
+  // Leaving them in the conversation the hide navigated them to
+  test("a refused hide brings the reader back to the conversation", async () => {
+    expect.hasAssertions();
+
+    // The route's auth middleware reads the session in the nuxt shape, so the reader is answered as signed in
+    const session = { user: { id: v7() } };
+    useSession.mockImplementation((fetcher) => (fetcher ? { data: ref(session) } : ref({ data: session })));
+    const hiddenDirectMessage = createRoom("", RoomType.DirectMessage);
+    const landingDirectMessage = createRoom("", RoomType.DirectMessage);
+    // The navigation the hide starts is not held by the drain, since the room's page and middleware load on first use,
+    // So the refusal waits until the reader has landed in the conversation the hide sent them to, as it does in the app
+    const router = useRouter();
+    const { promise: isInLanding, resolve: onInLanding } = Promise.withResolvers<true>();
+    const removeLandingListener = router.afterEach((to) => {
+      if (getRouteParam(to.params, "id") !== landingDirectMessage.id) return;
+      removeLandingListener();
+      onInLanding(true);
+    });
+    trpcMsw.room.directMessage.hideDirectMessage.mutation(async () => {
+      await isInLanding;
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
+    const directMessageStore = useDirectMessageStore();
+    const { hideDirectMessage, pushDirectMessages } = directMessageStore;
+    const { currentDirectMessage, currentDirectMessageId } = storeToRefs(directMessageStore);
+    pushDirectMessages(hiddenDirectMessage, landingDirectMessage);
+    setCurrentRoomId(hiddenDirectMessage.id);
+    hideDirectMessage(hiddenDirectMessage.id);
+    await waitForSynchronizedFunctions();
+    // The refusal's rollback starts the navigation back as it lands, after the drain above took its snapshot
+    await waitForSynchronizedFunctions();
+
+    expect(currentDirectMessageId.value).toBe(hiddenDirectMessage.id);
+    expect(currentDirectMessage.value).toStrictEqual(hiddenDirectMessage);
+  });
+
+  // A refusal can land before the navigation away has, while the reader still reads as in the conversation, and the
+  // Navigation back is what cancels the one still on its way
+  test("a hide refused before its navigation lands keeps the reader in the conversation", async () => {
+    expect.hasAssertions();
+
+    const session = { user: { id: v7() } };
+    useSession.mockImplementation((fetcher) => (fetcher ? { data: ref(session) } : ref({ data: session })));
+    const hiddenDirectMessage = createRoom("", RoomType.DirectMessage);
+    const landingDirectMessage = createRoom("", RoomType.DirectMessage);
+    trpcMsw.room.directMessage.hideDirectMessage.mutation(() => {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
+    const directMessageStore = useDirectMessageStore();
+    const { hideDirectMessage, pushDirectMessages } = directMessageStore;
+    const { currentDirectMessageId } = storeToRefs(directMessageStore);
+    pushDirectMessages(hiddenDirectMessage, landingDirectMessage);
+    setCurrentRoomId(hiddenDirectMessage.id);
+    hideDirectMessage(hiddenDirectMessage.id);
+    await waitForSynchronizedFunctions();
+    // The navigations the removal and its rollback start are drained once the write that started them has settled
+    await waitForSynchronizedFunctions();
+
+    expect(currentDirectMessageId.value).toBe(hiddenDirectMessage.id);
   });
 });

@@ -29,13 +29,20 @@ A reply SHALL make the replier and the author of the root message followers of t
 
 ### Requirement: A member may follow or unfollow a thread from its menu
 
-A member SHALL be able to turn reply notifications for a thread on or off from the thread's menu.
+A member SHALL be able to turn reply notifications for a thread on or off from the thread's menu, whether or not the thread's replies have loaded.
 
 #### Scenario: a member turns notifications off
 
 - **GIVEN** a member following a thread
 - **WHEN** the member turns reply notifications off from the thread's menu
 - **THEN** the member no longer receives notifications for replies in that thread
+
+#### Scenario: a member follows a thread whose replies have not loaded
+
+- **GIVEN** a thread pane that has not read its root message yet
+- **WHEN** the member follows the thread
+- **THEN** the thread is followed
+- **AND** Followed Threads lists it once the follow lands
 
 ### Requirement: A member's unfollow holds against other members' replies
 

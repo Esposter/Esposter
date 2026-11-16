@@ -8,7 +8,7 @@ import { createUser } from "#src/services/message/user/createUser.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useThreadFollowStore } from "#src/store/message/threadFollow";
 import { MessageType } from "@esposter/db-schema";
-import { Operation } from "@esposter/shared";
+import { Operation, waitForSynchronizedFunctions } from "@esposter/shared";
 import { v7 } from "uuid";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -87,5 +87,23 @@ describe(useThreadFollowStore, () => {
     await readFollowedThreads(roomId);
 
     expect(creator.value?.id).toBe(author.id);
+  });
+
+  // The thread pane holds only the id until its replies load, so the follow goes out with the id alone and the drawer
+  // Reads its list again once the follow lands
+  test("a member follows a thread whose replies have not loaded", async () => {
+    expect.hasAssertions();
+
+    trpcMsw.message.followThread.mutation(() => undefined);
+    trpcMsw.message.readFollowedThreads.query(() => ({ threadRootIds: [threadRootId], threads: [root] }));
+    trpcMsw.room.readUsersByIds.query(() => []);
+    const threadFollowStore = useThreadFollowStore();
+    const { checkIsFollowing, followThread } = threadFollowStore;
+    const { followedThreads } = storeToRefs(threadFollowStore);
+    followThread(roomId, threadRootId);
+    await waitForSynchronizedFunctions();
+
+    expect(checkIsFollowing(roomId, threadRootId)).toBe(true);
+    expect(followedThreads.value).toStrictEqual([root]);
   });
 });

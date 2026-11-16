@@ -18,6 +18,7 @@ describe(useRoomCategoryStore, () => {
   const name = "name";
   const updatedName = "updatedName";
   const rejectedName = "rejectedName";
+  const serverPosition = 1;
 
   test("a new category is drawn under the id the client gave it", async () => {
     expect.hasAssertions();
@@ -36,6 +37,24 @@ describe(useRoomCategoryStore, () => {
     await flushPromises();
 
     expect(roomCategories.value.map((roomCategory) => roomCategory.id)).toStrictEqual([sentId]);
+  });
+
+  // The client draws a new category at the position it expects the server to append it at, and the position the server
+  // Stored is the one the next read sorts by, so the row takes it once the create lands
+  test("a created category takes the position the server stored", async () => {
+    expect.hasAssertions();
+
+    useSession.mockReturnValue(ref({ data: { user: { id: getMockSession().user.id } } }));
+    trpcMsw.room.category.createRoomCategory.mutation(({ input }) =>
+      createRoomCategory({ ...input, position: serverPosition }),
+    );
+    const roomCategoryStore = useRoomCategoryStore();
+    const { roomCategories } = storeToRefs(roomCategoryStore);
+    const { createRoomCategory: storeCreateRoomCategory } = roomCategoryStore;
+    storeCreateRoomCategory({ name });
+    await waitForSynchronizedFunctions();
+
+    expect(roomCategories.value.map(({ position }) => position)).toStrictEqual([serverPosition]);
   });
 
   test("a rejected optimistic delete restores the list and shows an error", async () => {

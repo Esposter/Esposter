@@ -155,7 +155,11 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
       );
     return () => {
       if (removedDirectMessage) storeCreateDirectMessage(removedDirectMessage);
-      if (isCurrent && currentDirectMessageId.value === landingDirectMessageId)
+      // Still in the conversation means the navigation away has not landed yet, and a navigation back supersedes it
+      if (
+        isCurrent &&
+        (currentDirectMessageId.value === roomId || currentDirectMessageId.value === landingDirectMessageId)
+      )
         navigateToDirectMessage(RoutePath.Messages(roomId));
     };
   };

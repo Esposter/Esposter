@@ -13,7 +13,8 @@ export const applyOptimisticReplacement = <T>(
 
   const nextValue = getNextValue(previousValue);
   source.value = nextValue;
+  // Raw, since a deep ref hands back a proxy of the value written rather than the value itself
   return () => {
-    if (source.value === nextValue) source.value = previousValue;
+    if (toRaw(source.value) === nextValue) source.value = previousValue;
   };
 };

@@ -38,7 +38,7 @@ A page whose data is the reason to render SHALL block rendering and show not-fou
 
 ### Requirement: A user write applies at once and rolls back when rejected
 
-Every user write SHALL apply its change to the screen when it is sent, and SHALL restore the previous state when the server rejects it.
+Every user write SHALL apply its change to the screen when it is sent, and SHALL restore the previous state when the server rejects it. A rollback SHALL undo only the change its own write made, and only while the screen still shows it: a value a later write, a read or the reader has replaced since is left standing. What the write draws SHALL be what the server will store.
 
 #### Scenario: A rejected write reverts the screen and shows the server's message
 
@@ -52,6 +52,17 @@ Every user write SHALL apply its change to the screen when it is sent, and SHALL
 - **WHEN** the subscription echoes the same value back
 - **THEN** the screen shows the same value and nothing changes
 
+#### Scenario: A refused save leaves a later change standing
+
+- **GIVEN** a save that is still in flight and a later write that changed the same setting
+- **WHEN** the server refuses the first save
+- **THEN** the setting shows the later write's value
+
+#### Scenario: A blank display name shows the account's name at once
+
+- **WHEN** a member saves a blank display name
+- **THEN** the member's row shows the account's own name before the server answers
+
 ### Requirement: A visible create draws its row at once and keeps its place when the server confirms it
 
 A create whose row is visible when created SHALL draw its row at once, and the server's confirmation SHALL leave the row where it stands. A row the server keys by a text id SHALL be drawn under the id the client gave it. A message, which its room numbers, SHALL be drawn as a placeholder that becomes the real message in place.
@@ -61,6 +72,12 @@ A create whose row is visible when created SHALL draw its row at once, and the s
 - **WHEN** the reader creates a room category
 - **THEN** the category is listed at once under the id the client gave it
 - **AND** the server stores it under that id
+
+#### Scenario: A created category takes the position the server stored
+
+- **GIVEN** a category drawn at the position the client expects
+- **WHEN** the server confirms it at another position
+- **THEN** the category is listed at the position the server stored
 
 #### Scenario: A sent message keeps its place when the server confirms it
 
@@ -180,7 +197,7 @@ A count the server derives from many rows SHALL be re-read from the server on ev
 
 ### Requirement: A vote's effect on a displayed count shows at once, and every other count holds until its write settles
 
-A count the server derives SHALL show the viewer's own vote's effect on it before the write that changes it has settled, and SHALL be restored to the count it held if the write fails. Once the write settles, the count shows the value the server reads back. Every other count SHALL keep its displayed value until the write that changes it has settled. The viewer's own mark MAY change at once, since the client holds it exactly.
+A count the server derives SHALL show the viewer's own vote's effect on it before the write that changes it has settled, and SHALL be restored to the count it held and read back from the server if the write fails. Once the write settles, the count shows the value the server reads back. Every other count SHALL keep its displayed value until the write that changes it has settled. The viewer's own mark MAY change at once, since the client holds it exactly.
 
 #### Scenario: A vote moves the count at once
 
@@ -193,6 +210,7 @@ A count the server derives SHALL show the viewer's own vote's effect on it befor
 - **GIVEN** a post whose like count moved for a vote the server then refuses
 - **WHEN** the write settles with an error
 - **THEN** the like count shows the value it held before the vote
+- **AND** the like count is then read back from the server
 
 #### Scenario: The count shows the read-back value once the write settles
 
@@ -247,7 +265,7 @@ A write SHALL wait for the server's answer before the screen changes only when w
 
 ### Requirement: Nothing the screen does because of a write waits for the server's answer
 
-A step the screen takes because of a write, such as closing a dialog, moving a row, ending an edit, clearing a field or navigating to a known place, SHALL run when the write is sent. Only the rollback and its alert SHALL follow the server's answer.
+A step the screen takes because of a write, such as closing a dialog, moving a row, ending an edit, clearing a field or navigating to a known place, SHALL run when the write is sent. Only the rollback and its alert SHALL follow the server's answer. A refused write SHALL hand back what its step took from the reader, the text it cleared from a field and the place it navigated them away from, unless the reader has typed again or moved on since.
 
 #### Scenario: A ticked todo moves under Completed while its save is in flight
 
@@ -267,3 +285,15 @@ A step the screen takes because of a write, such as closing a dialog, moving a r
 - **WHEN** the server refuses the update
 - **THEN** the comment shows its text from before the edit
 - **AND** an alert shows the server's message
+
+#### Scenario: A refused add hands the field its name back
+
+- **GIVEN** a todo name the field cleared as the todo was added
+- **WHEN** the save is refused, or the name is one a todo cannot take
+- **THEN** the field shows the name again
+
+#### Scenario: A refused leave brings the reader back to the room
+
+- **GIVEN** a reader who left the room they were in and was sent to another
+- **WHEN** the server refuses the leave
+- **THEN** the room is listed again and the reader is back in it
