@@ -1,4 +1,4 @@
-/* oxlint-disable no-await-in-loop -- One device: one half is drawn after the other on one page; One device: one half is read after the other on one page */
+/* oxlint-disable no-await-in-loop -- One device: one half is drawn after the other, and one half is read after the other, on one page */
 import type { Targets } from "#src/models/genshinParity/passes/Targets";
 import type { WitnessTargetsRead } from "#src/models/genshinParity/passes/WitnessTargetsRead";
 import type { ParityPassReading } from "#src/models/genshinParity/shared/ParityPassReading";
