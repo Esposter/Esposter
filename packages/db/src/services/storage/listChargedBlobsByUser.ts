@@ -1,8 +1,8 @@
 import type { Database, StorageBucket, UserInAuth } from "@esposter/db-schema";
 
 // The exact list of blobs a user is charged for, read from the storage ledger rather than from a listing of names:
-// The ledger holds one row per charged blob with its container and owner, so a sweep removes what it was charged for
-// And nothing else. Grouped by container, so each container's blobs go out together.
+// The ledger holds one row per charged blob with its bucket and owner, so a sweep removes what it was charged for
+// And nothing else. Grouped by bucket, so each bucket's blobs go out together.
 export const listChargedBlobsByUser = async (
   db: Database,
   userId: UserInAuth["id"],
@@ -11,12 +11,12 @@ export const listChargedBlobsByUser = async (
     columns: { blobName: true, storageBucket: true },
     where: { userId: { eq: userId } },
   });
-  const containerStorageLedgerEntriesMap = Map.groupBy(storageLedgerEntries, ({ storageBucket }) => storageBucket);
+  const storageBucketStorageLedgerEntriesMap = Map.groupBy(storageLedgerEntries, ({ storageBucket }) => storageBucket);
   return new Map(
     Array.from(
-      containerStorageLedgerEntriesMap,
-      ([storageBucket, storageLedgerEntriesInContainer]) =>
-        [storageBucket, storageLedgerEntriesInContainer.map(({ blobName }) => blobName)] as const,
+      storageBucketStorageLedgerEntriesMap,
+      ([storageBucket, storageLedgerEntriesInBucket]) =>
+        [storageBucket, storageLedgerEntriesInBucket.map(({ blobName }) => blobName)] as const,
     ),
   );
 };
