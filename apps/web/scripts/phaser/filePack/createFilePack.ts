@@ -4,6 +4,7 @@ import { ContentTypePhaserMethodMap, PHASER_ROOT_DIRECTORY } from "#scripts/phas
 import { outputFile } from "#scripts/services/outputFile";
 import { createValueSetString } from "#scripts/util/createValueSetString";
 import { trimFileExtension } from "#src/util/file/trimFileExtension";
+import formatterConfiguration from "@esposter/configuration/oxfmt";
 import { parseListBucketResult } from "@esposter/db";
 import {
   CLOUDFLARE_ACCOUNT_ID,
@@ -15,8 +16,6 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { AwsClient } from "aws4fetch";
 import { existsSync } from "node:fs";
 import { format } from "oxfmt";
-
-import formatterConfiguration from "../../../../../oxfmt.config.ts";
 
 // The names of every object in the bucket, one ListObjectsV2 page after another, each page read by the shared listing parser
 const listObjectNames = async (client: AwsClient, bucketUrl: string, continuationToken?: string): Promise<string[]> => {

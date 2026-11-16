@@ -69,21 +69,34 @@ const PACKAGE_ALIAS_IMPORT_PATTERN: RestrictedImportPattern = {
 const SUBPATH_QUERY_IMPORT_PATTERN: RestrictedImportPattern = {
   message:
     'A `#` name takes no query — the manifest pattern swallows it. Pass it as a glob option: `import.meta.glob("#src/…", { eager: true, import: "default", query: "?raw" })`. See the file-organization skill, references/import-aliases.md.',
-  regex: "^#[^?]*\\?",
+  regex: String.raw`^#[^?]*\?`,
 };
-// The web app's own source is named by its manifest's subpath imports, which Node resolves as Nuxt does
-export const WEB_IMPORT_PATTERNS: RestrictedImportPattern[] = [
+const RELATIVE_IMPORT_GROUP = ["./*", "./**", "../*", "../**"];
+const RELATIVE_IMPORT_MESSAGE =
+  "A package addresses its own source through the subpath imports its manifest declares (`#src/*`; the root config's folders `#oxlint/*` and `#vite/*`; the web app's `#shared/*`, `#server/*`, `#scripts/*`, `#configuration/*`), never a relative specifier — a relative path breaks the moment the file moves, and a `#` name is resolved from the importing file's own package.json, so it survives being compiled by a sibling. See the file-organization skill, references/import-aliases.md.";
+// The web app's own source is named by its manifest's subpath imports, which Node resolves as Nuxt does. Every tree
+// Refuses Nuxt's aliases and a query on a `#` name, since a root file and the shared configuration's lint entries
+// Reach out of their package by path and only the app's own files refuse a relative import
+export const WEB_ALIAS_IMPORT_PATTERNS: RestrictedImportPattern[] = [
   {
     group: ["@/**", "@@/**", "~/**", "~~/**"],
     message:
-      "The web app addresses its own source through the subpath imports its manifest declares — `#src/*` for `app/`, `#shared/*`, `#server/*`, `#scripts/*`, `#configuration/*` — each naming its file (`/index` for a folder), so a script runs under bare `node`. See the file-organization skill, references/import-aliases.md.",
+      "The web app addresses its own source through the subpath imports its manifest declares — `#src/*` for `app/`, `#shared/*`, `#server/*`, `#scripts/*`, `#configuration/*`, `#modules/*` — each naming its file (`/index` for a folder), so a script runs under bare `node`. See the file-organization skill, references/import-aliases.md.",
   },
   SUBPATH_QUERY_IMPORT_PATTERN,
 ];
+// The app's configuration and scripts reach `db-schema`'s source by path, its one relative import: Nuxt loads them at
+// Install, before any workspace package is built, and a subpath import never targets a file outside its own package
+export const WEB_IMPORT_PATTERNS: RestrictedImportPattern[] = [
+  ...WEB_ALIAS_IMPORT_PATTERNS,
+  {
+    group: [...RELATIVE_IMPORT_GROUP, "!../../../packages/db-schema/src/**", "!../../../../packages/db-schema/src/**"],
+    message: RELATIVE_IMPORT_MESSAGE,
+  },
+];
 const PACKAGE_RELATIVE_IMPORT_PATTERN: RestrictedImportPattern = {
-  group: ["./*", "./**", "../*", "../**"],
-  message:
-    "A package addresses its own source through `#src/*` (the root config's folders through `#oxlint/*` and `#vite/*`), never a relative specifier — a relative path breaks the moment the file moves, and `#src` is resolved from the importing file's own package.json so it survives being compiled by a sibling. See openspec/specs/architecture/build-pipeline/design.md.",
+  group: RELATIVE_IMPORT_GROUP,
+  message: RELATIVE_IMPORT_MESSAGE,
 };
 export const PACKAGE_IMPORT_PATTERNS: RestrictedImportPattern[] = [
   PACKAGE_ALIAS_IMPORT_PATTERN,

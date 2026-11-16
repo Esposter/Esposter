@@ -1,11 +1,11 @@
-import type { ResolvedThemeMode } from "../app/models/ui/ResolvedThemeMode.ts";
+import type { ResolvedThemeMode } from "#src/models/ui/ResolvedThemeMode";
 
-import { ThemeMode } from "../app/models/ui/ThemeMode.ts";
-import { UiStyle } from "../app/models/ui/UiStyle.ts";
-import { UiToken } from "../app/models/ui/UiToken.ts";
+import { ThemeMode } from "#src/models/ui/ThemeMode";
+import { UiStyle } from "#src/models/ui/UiStyle";
+import { UiToken } from "#src/models/ui/UiToken";
 
 // The UI library's palette: one entry per token for each design style in each mode. The UnoCSS config reads it as well
-// As the app, and it loads before any alias resolves, so it lives beside it. Every palette uses the same token names,
+// As the app, so it lives in the configuration folder beside the style map. Every palette uses the same token names,
 // So a component never knows which one is selected. Voxel's dark palette is dusk, and its light one is dawn, authored
 // Beside it rather than computed from it. Voxel lifts nothing by tone and draws its
 // Lines in the edge colour, so its lifted panel is its panel and its divider its border

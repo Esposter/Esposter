@@ -1,7 +1,7 @@
 import type { NuxtConfig } from "nuxt/schema";
 import type { ModuleOptions } from "trpc-nuxt-module";
 
-import { TRPC_CLIENT_PATH } from "../app/services/trpc/constants.ts";
+import { TRPC_CLIENT_PATH } from "#src/services/trpc/constants";
 
 // The workspace's own modules are registered by their source rather than their package name: `nuxt prepare` loads every
 // Module from the app's `postinstall`, before any workspace package is built, and a name resolves to the `dist` a fresh

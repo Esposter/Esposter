@@ -1,8 +1,7 @@
+import unoConfig from "#uno.config";
 import { globSync, readFileSync } from "node:fs";
 import { createGenerator } from "unocss";
 import { assert, describe, expect, test } from "vitest";
-
-import unoConfig from "./uno.config";
 
 describe("unoConfig", () => {
   const { rules, safelist, shortcuts, theme } = unoConfig;

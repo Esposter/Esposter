@@ -1,8 +1,7 @@
+import { security } from "#configuration/security";
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
-
-import { security } from "./security.ts";
 
 // The security module denies every powerful feature unless the app opens it, so a call the policy denies fails only
 // In the browser, and only on the screen that makes it: the Genshin world's `getGamepads` threw a SecurityError

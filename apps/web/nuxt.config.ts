@@ -1,25 +1,25 @@
-import { app } from "./configuration/app.ts";
-import { build } from "./configuration/build.ts";
-import { compatibilityDate } from "./configuration/compatibilityDate.ts";
-import { css } from "./configuration/css.ts";
-import { devtools } from "./configuration/devtools.ts";
-import { experimental } from "./configuration/experimental.ts";
-import { fonts } from "./configuration/fonts.ts";
-import { ignore } from "./configuration/ignore.ts";
-import { image } from "./configuration/image.ts";
-import { imports } from "./configuration/imports.ts";
-import { modules } from "./configuration/modules.ts";
-import { nitro } from "./configuration/nitro.ts";
-import { ogImage } from "./configuration/ogImage.ts";
-import { pwa } from "./configuration/pwa.ts";
-import { router } from "./configuration/router.ts";
-import { routeRules } from "./configuration/routeRules.ts";
-import { runtimeConfig } from "./configuration/runtimeConfig.ts";
-import { security } from "./configuration/security.ts";
-import { site } from "./configuration/site.ts";
-import { skewProtection } from "./configuration/skewProtection.ts";
-import { typescript, typescriptHooks } from "./configuration/typescript.ts";
-import { vite, viteHooks } from "./configuration/vite.ts";
+import { app } from "#configuration/app";
+import { build } from "#configuration/build";
+import { compatibilityDate } from "#configuration/compatibilityDate";
+import { css } from "#configuration/css";
+import { devtools } from "#configuration/devtools";
+import { experimental } from "#configuration/experimental";
+import { fonts } from "#configuration/fonts";
+import { ignore } from "#configuration/ignore";
+import { image } from "#configuration/image";
+import { imports } from "#configuration/imports";
+import { modules } from "#configuration/modules";
+import { nitro } from "#configuration/nitro";
+import { ogImage } from "#configuration/ogImage";
+import { pwa } from "#configuration/pwa";
+import { router } from "#configuration/router";
+import { routeRules } from "#configuration/routeRules";
+import { runtimeConfig } from "#configuration/runtimeConfig";
+import { security } from "#configuration/security";
+import { site } from "#configuration/site";
+import { skewProtection } from "#configuration/skewProtection";
+import { typescript, typescriptHooks } from "#configuration/typescript";
+import { vite, viteHooks } from "#configuration/vite";
 
 export default defineNuxtConfig({
   app,

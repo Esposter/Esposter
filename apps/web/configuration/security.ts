@@ -1,16 +1,16 @@
 import type { NuxtConfig } from "nuxt/schema";
 
-import { createHash } from "node:crypto";
-
-import { CLOUDFLARE_ACCOUNT_ID } from "../../../packages/db-schema/src/services/cloudflare/constants.ts";
-import { BASE_URL } from "../app/services/desmos/constants.ts";
-import { MAX_REQUEST_SIZE } from "../shared/services/app/constants.ts";
 import {
   CLOUDFLARE_INSIGHTS_BEACON_URL,
   CLOUDFLARE_INSIGHTS_URL,
   NUXT_IMAGE_ERROR_HANDLER,
   REALTIME_ASSETS_URL,
-} from "./constants.ts";
+} from "#configuration/constants";
+import { MAX_REQUEST_SIZE } from "#shared/services/app/constants";
+import { BASE_URL } from "#src/services/desmos/constants";
+import { createHash } from "node:crypto";
+
+import { CLOUDFLARE_ACCOUNT_ID } from "../../../packages/db-schema/src/services/cloudflare/constants.ts";
 
 // R2's S3 endpoint for the account: a private object's presigned URL names it, so the browser's PUTs and GETs go there
 const R2_ENDPOINT = `https://${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com`;

@@ -29,6 +29,13 @@ import eslintConfiguration from "@esposter/configuration/eslint/index.typescript
 export default eslintConfiguration.append({ ignores: ["dist"] });
 ```
 
+```ts
+// oxfmt.config.ts — the formatter's settings, which a generator formatting its own output reads too
+import oxfmtConfiguration from "@esposter/configuration/oxfmt";
+
+export default oxfmtConfiguration;
+```
+
 Inside this monorepo, a package composes the pieces itself instead, because each configuration extends the Nuxt-generated configuration that the app emits. Copy `packages/db/eslint.config.js`. Do not write this wiring from scratch.
 
 ## <a name="license">⚖️ License</a>

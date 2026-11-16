@@ -16,6 +16,8 @@
   "type": "module",
   "imports": {
     "#configuration/*": "./configuration/*.ts",
+    "#modules/*": "./modules/*.ts",
+    "#nuxt/*": "./.nuxt/*",
     "#package.json": "./package.json",
     "#scripts/*": "./scripts/*.ts",
     "#server/*": "./server/*.ts",

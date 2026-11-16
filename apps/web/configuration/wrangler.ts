@@ -1,3 +1,5 @@
+import { Environment } from "#shared/models/environment/Environment";
+
 import { CloudflareAssetType } from "../../../packages/db-schema/src/models/cloudflare/CloudflareAssetType.ts";
 import { CloudflareDatabaseRole } from "../../../packages/db-schema/src/models/cloudflare/CloudflareDatabaseRole.ts";
 import {
@@ -18,7 +20,6 @@ import { getCloudflareResourceName } from "../../../packages/db-schema/src/servi
 import { RateLimiterNamespaceIdMap } from "../../../packages/db-schema/src/services/cloudflare/RateLimiterNamespaceIdMap.ts";
 import { RateLimiterPointsMap } from "../../../packages/db-schema/src/services/cloudflare/RateLimiterPointsMap.ts";
 import { getStorageBucketBindingName } from "../../../packages/db-schema/src/services/storage/getStorageBucketBindingName.ts";
-import { Environment } from "../shared/models/environment/Environment.ts";
 
 // The environment a build is for: CI sets CLOUDFLARE_ENV by its branch, and a build without it is prod. Any other value is
 // A typo that would deploy one environment's bindings under another's name, so it fails the build

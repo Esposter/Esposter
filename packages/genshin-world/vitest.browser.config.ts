@@ -1,5 +1,4 @@
 import { regionDataPlugin } from "#parity/regionDataPlugin";
-import { terrainWorkerAlias } from "#parity/terrainWorkerAlias";
 import { gameDataMirrorPlugin } from "#scripts/gameData/mirror/gameDataMirrorPlugin";
 import { tresCustomElements } from "#scripts/tres/tresCustomElements";
 import {
@@ -29,7 +28,7 @@ export default defineConfig({
     regionDataPlugin,
   ],
   // Its siblings from their source, as the page reads them
-  resolve: { alias: terrainWorkerAlias, conditions: [SOURCE_CONDITION, ...defaultClientConditions] },
+  resolve: { conditions: [SOURCE_CONDITION, ...defaultClientConditions] },
   test: {
     browser,
     // The visual suite, and the screens' behaviour where only a browser runs it: the Web Animations and CSS

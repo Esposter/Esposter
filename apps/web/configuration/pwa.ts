@@ -1,12 +1,11 @@
 import type { NuxtConfig } from "nuxt/schema";
 
+import { DEFAULT_UI_STYLE } from "#configuration/constants";
+import { UiPaletteMap } from "#configuration/UiPaletteMap";
+import { PWA_PUBLIC_FOLDER_PATH, SITE_DESCRIPTION, SITE_NAME } from "#shared/services/app/constants";
+import { ThemeMode } from "#src/models/ui/ThemeMode";
+import { UiToken } from "#src/models/ui/UiToken";
 import { fileURLToPath } from "node:url";
-
-import { ThemeMode } from "../app/models/ui/ThemeMode.ts";
-import { UiToken } from "../app/models/ui/UiToken.ts";
-import { PWA_PUBLIC_FOLDER_PATH, SITE_DESCRIPTION, SITE_NAME } from "../shared/services/app/constants.ts";
-import { DEFAULT_UI_STYLE } from "./constants.ts";
-import { UiPaletteMap } from "./UiPaletteMap.ts";
 
 // A manifest holds one colour of each, so an install's splash and title bar take the default style's light palette: the
 // Page's ground behind the splash and the panel the address bar takes, as the theme colour meta tag does (`NuxtSEO`)

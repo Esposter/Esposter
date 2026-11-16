@@ -1,9 +1,8 @@
+import serveGenshinExtractions from "#modules/serveGenshinExtractions";
+import { GENSHIN_SCENE_EXPORT_BASE_URL } from "#shared/services/genshin/constants";
 import { join } from "node:path";
 import { addServerHandler } from "nuxt/kit";
 import { describe, expect, test, vi } from "vitest";
-
-import { GENSHIN_SCENE_EXPORT_BASE_URL } from "../shared/services/genshin/constants.ts";
-import serveGenshinExtractions from "./serveGenshinExtractions.ts";
 
 vi.mock(import("nuxt/kit"), async (importOriginal) => ({
   ...(await importOriginal()),

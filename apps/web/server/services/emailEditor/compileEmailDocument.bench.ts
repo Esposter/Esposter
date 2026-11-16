@@ -1,3 +1,4 @@
+import { compileEmailDocument } from "#server/services/emailEditor/compileEmailDocument";
 import { TEST_ORIGIN } from "#shared/services/pageBuilder/constants.test";
 import { MAX_EMAIL_NODES } from "#shared/services/pageBuilder/email/constants";
 import { emailBodyChildrenSchema } from "#shared/services/pageBuilder/email/emailNodeSchema";
@@ -7,8 +8,6 @@ import { STARTER_EMAIL_SOURCE } from "#shared/services/pageBuilder/email/starter
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { parseMjmlDocument, renderMjmlDocument } from "mjml-blocks";
 import { describe, test } from "vitest";
-
-import { compileEmailDocument } from "./compileEmailDocument";
 
 // The starter email as a reader's compile sees it: the whole compile, against the MJML render alone so the report shows what the compile spends its time on
 describe(compileEmailDocument, () => {

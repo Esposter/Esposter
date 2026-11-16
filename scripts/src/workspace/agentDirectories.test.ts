@@ -1,11 +1,10 @@
-/* oxlint-disable no-restricted-imports -- the repo-root formatter config, which no `#` map can reach; the repo-root linter config, which no `#` map can reach */
+/* oxlint-disable no-restricted-imports -- the repo-root linter config, which no `#` map can reach */
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { AGENT_ALIAS_DIRECTORY, AGENT_WORKTREES_DIRECTORY } from "@esposter/configuration";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, test } from "vitest";
 
-import formatterConfiguration from "../../../oxfmt.config.ts";
 import oxlintConfiguration from "../../../oxlint.config.ts";
 
 const readGitignorePatterns = (): string[] =>
@@ -14,8 +13,8 @@ const readGitignorePatterns = (): string[] =>
     .map((line) => line.trim());
 
 /**
- * The configs below cannot import the constants — `.gitignore` has no imports, and the oxlint and oxfmt configs are
- * loaded by their tool before any workspace package is built — so they repeat the literal and these
+ * The configs below cannot import the constants — `.gitignore` has no imports, and the oxlint config is loaded by its
+ * tool from the repository root, outside any package's import map — so they repeat the literal and these
  * tests are the only thing holding the copies to the owner — two of them have already been un-excluded once by an
  * unrelated edit widening a glob. ESLint states neither literal: the shared config bridges `oxlint.config.ts`'s
  * `ignorePatterns` into flat-config global `ignores` through `eslint-plugin-oxlint`, so the oxlint assertions
@@ -34,14 +33,6 @@ describe("agentDirectories", () => {
     expect.hasAssertions();
 
     expect(oxlintConfiguration.ignorePatterns).toContain(AGENT_WORKTREES_DIRECTORY);
-  });
-
-  // A format run reaches further than a lint run: oxfmt rewrites what it walks, so a live worktree would have
-  // Another branch's files reformatted in place.
-  test("excludes the worktrees from the formatter", () => {
-    expect.hasAssertions();
-
-    expect(formatterConfiguration.ignorePatterns).toContain(AGENT_WORKTREES_DIRECTORY);
   });
 
   // The agent harness writes `.git/info/exclude`, which is machine-local — no clone or CI runner has it, so the

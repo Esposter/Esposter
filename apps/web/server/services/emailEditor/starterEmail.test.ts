@@ -1,3 +1,4 @@
+import { compileEmailDocument } from "#server/services/emailEditor/compileEmailDocument";
 import { TEST_ORIGIN } from "#shared/services/pageBuilder/constants.test";
 import { MAX_EMAIL_NODES } from "#shared/services/pageBuilder/email/constants";
 import { emailBodyChildrenSchema } from "#shared/services/pageBuilder/email/emailNodeSchema";
@@ -6,8 +7,6 @@ import { noteRichText } from "#shared/services/pageBuilder/email/noteRichText";
 import { STARTER_EMAIL_SOURCE } from "#shared/services/pageBuilder/email/starterEmailSource";
 import { parseMjmlDocument } from "mjml-blocks";
 import { describe, expect, test } from "vitest";
-
-import { compileEmailDocument } from "./compileEmailDocument";
 
 describe("starterEmail", () => {
   test("the starter email compiles under strict validation", async () => {

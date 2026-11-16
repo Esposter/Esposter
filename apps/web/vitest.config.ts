@@ -1,8 +1,7 @@
+import { getNuxtEnvironmentOptions } from "#configuration/nuxtEnvironmentOptions";
 import { getVitestConfiguration } from "@esposter/configuration";
 import { defineVitestProject } from "@nuxt/test-utils/config";
 import { mergeAlias } from "vite";
-
-import { getNuxtEnvironmentOptions } from "./configuration/nuxtEnvironmentOptions.ts";
 
 // `defineVitestProject` builds its own config rather than taking the shared factory's, so the factory's test options
 // Are handed in and only the app's own are written here: the project name every member is addressed by, the

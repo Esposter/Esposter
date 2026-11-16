@@ -1,7 +1,7 @@
+import { getBuildCloudflareEnvironment } from "#configuration/wrangler";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 import { CloudflareEnvironment } from "../../../packages/db-schema/src/models/cloudflare/CloudflareEnvironment.ts";
-import { getBuildCloudflareEnvironment } from "./wrangler.ts";
 
 describe(getBuildCloudflareEnvironment, () => {
   afterEach(() => {

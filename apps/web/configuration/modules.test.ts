@@ -1,7 +1,6 @@
+import { nonVitestModules } from "#configuration/modules";
 import packageJson from "#package.json" with { type: "json" };
 import { describe, expect, test } from "vitest";
-
-import { nonVitestModules } from "./modules.ts";
 
 const getModuleName = (nuxtModule: (typeof nonVitestModules)[number]) =>
   Array.isArray(nuxtModule) ? nuxtModule[0] : nuxtModule;

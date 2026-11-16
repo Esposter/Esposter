@@ -1,22 +1,17 @@
 /* oxlint-disable id-denylist -- `dir` is Nitro's own option name */
 import type { NuxtConfig } from "nuxt/schema";
 
-import { readdir, stat } from "node:fs/promises";
-import { createRequire } from "node:module";
-import { dirname, join } from "node:path";
-
-import {
-  PDF_CMAP_BASE_URL,
-  PDF_STANDARD_FONT_DATA_BASE_URL,
-  PDF_WASM_BASE_URL,
-} from "../app/services/pdf/constants.ts";
-import { MEGABYTE } from "../shared/services/app/constants.ts";
+import { TEMPORAL_POLYFILL_BASE_URL } from "#configuration/constants";
+import { getBuildCloudflareEnvironment, getEnvironmentWrangler } from "#configuration/wrangler";
+import { MEGABYTE } from "#shared/services/app/constants";
 import {
   GENSHIN_LOGIN_MUSIC_RECORDING_BASE_URL,
   GENSHIN_REGION_DATA_BASE_URL,
-} from "../shared/services/genshin/constants.ts";
-import { TEMPORAL_POLYFILL_BASE_URL } from "./constants.ts";
-import { getBuildCloudflareEnvironment, getEnvironmentWrangler } from "./wrangler.ts";
+} from "#shared/services/genshin/constants";
+import { PDF_CMAP_BASE_URL, PDF_STANDARD_FONT_DATA_BASE_URL, PDF_WASM_BASE_URL } from "#src/services/pdf/constants";
+import { readdir, stat } from "node:fs/promises";
+import { createRequire } from "node:module";
+import { dirname, join } from "node:path";
 
 // The world package's own folder, found through its manifest, which is there before any build
 const genshinWorldDirectory = dirname(createRequire(import.meta.url).resolve("genshin-world/package.json"));

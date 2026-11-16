@@ -17,6 +17,7 @@ import {
   SHARED_APP_IMPORT_PATTERN,
   VUETIFY_IMPORT_PATH,
   VUETIFY_IMPORT_PATTERN,
+  WEB_ALIAS_IMPORT_PATTERNS,
   WEB_IMPORT_PATTERNS,
   WORKSPACE_LIBRARY_IMPORT_PATTERN,
 } from "#oxlint/importRestrictions";
@@ -50,6 +51,19 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
   jsPlugins: JS_PLUGINS,
   options: { typeAware: true },
   overrides: [
+    // The app's own trees each narrow this further below
+    {
+      files: ["apps/web/**"],
+      rules: {
+        "no-restricted-imports": [
+          "error",
+          {
+            paths: [...RESTRICTED_IMPORT_PATHS, VUETIFY_IMPORT_PATH],
+            patterns: [VUETIFY_IMPORT_PATTERN, ...WEB_IMPORT_PATTERNS],
+          },
+        ],
+      },
+    },
     {
       files: ["**/*.d.ts", "**/*.d.mts", "**/*.d.cts"],
       rules: { "literal-union/no-string-literal-union": "off", "unicorn/require-module-specifiers": "off" },
@@ -290,7 +304,7 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
       "error",
       {
         paths: [...RESTRICTED_IMPORT_PATHS, VUETIFY_IMPORT_PATH],
-        patterns: [VUETIFY_IMPORT_PATTERN, ...WEB_IMPORT_PATTERNS],
+        patterns: [VUETIFY_IMPORT_PATTERN, ...WEB_ALIAS_IMPORT_PATTERNS],
       },
     ],
     "no-restricted-properties": [

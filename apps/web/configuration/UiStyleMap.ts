@@ -1,6 +1,6 @@
-import { UiStyle } from "../app/models/ui/UiStyle.ts";
-import { UiStyleToken } from "../app/models/ui/UiStyleToken.ts";
-import { STANDARD_TONAL_MIX_PERCENTAGE } from "./constants.ts";
+import { STANDARD_TONAL_MIX_PERCENTAGE } from "#configuration/constants";
+import { UiStyle } from "#src/models/ui/UiStyle";
+import { UiStyleToken } from "#src/models/ui/UiStyleToken";
 
 const PIXEL_FACE = "VT323, monospace";
 const SANS_FACE = "Inter, ui-sans-serif, system-ui, sans-serif";

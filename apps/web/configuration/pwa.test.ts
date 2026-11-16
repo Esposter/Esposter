@@ -1,8 +1,7 @@
+import { pwa } from "#configuration/pwa";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
-
-import { pwa } from "./pwa.ts";
 
 // A manifest names its icons by path, and a renamed or removed file fails nowhere but the install prompt, so each
 // Icon the manifest lists is checked against the public folder it is served from

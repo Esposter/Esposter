@@ -1,9 +1,8 @@
+import devSession from "#modules/devSession";
+import { DEV_SESSION_ROUTE } from "#server/services/devSession/constants";
 import { join } from "node:path";
 import { addServerHandler } from "nuxt/kit";
 import { describe, expect, test, vi } from "vitest";
-
-import { DEV_SESSION_ROUTE } from "../server/services/devSession/constants.ts";
-import devSession from "./devSession.ts";
 
 vi.mock(import("nuxt/kit"), async (importOriginal) => ({
   ...(await importOriginal()),

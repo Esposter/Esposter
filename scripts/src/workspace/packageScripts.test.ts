@@ -130,7 +130,7 @@ describe("packageScripts", () => {
         if (specifier.startsWith(prefix) && specifier.endsWith(suffix) && specifier.length >= key.length - 1)
           return join(
             manifestDirectory,
-            target.replace("*", specifier.slice(prefix.length, specifier.length - suffix.length)),
+            target.replaceAll("*", specifier.slice(prefix.length, specifier.length - suffix.length)),
           );
       }
       return undefined;

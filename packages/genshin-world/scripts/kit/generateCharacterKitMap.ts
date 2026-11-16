@@ -3,8 +3,7 @@ import { globSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:f
 import { join } from "node:path";
 import { format } from "oxfmt";
 
-// oxlint-disable-next-line no-restricted-imports -- the repo-root formatter config, which no `#` map can reach
-import formatterConfiguration from "../../../../oxfmt.config.ts";
+import formatterConfiguration from "@esposter/configuration/oxfmt";
 
 const GENERATED_DIRECTORY = join("src", "generated", "characterKitMap");
 const MAP_NAME = "CharacterIdCreateKitBehaviourMap";

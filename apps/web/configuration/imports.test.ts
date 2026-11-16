@@ -1,8 +1,7 @@
+import nuxtTsconfig from "#nuxt/tsconfig.app.json" with { type: "json" };
 import packageJson from "#package.json" with { type: "json" };
 import { dirname, join, relative } from "node:path";
 import { describe, expect, test } from "vitest";
-
-import nuxtTsconfig from "../.nuxt/tsconfig.app.json" with { type: "json" };
 
 describe("imports", () => {
   // Nuxt and Vite resolve `#shared` and `#server` through Nuxt's own aliases before the manifest, and Node through the

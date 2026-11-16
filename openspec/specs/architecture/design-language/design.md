@@ -20,7 +20,7 @@ flowchart TD
 - **Every foreground token meets WCAG AA on every surface token in every palette.** A test computes the contrast ratio of each pair, including standard's translucent field and tonal fills composed over every surface, and holds it at the AA threshold.
 - **Vuetify 0's theme plugin writes the tokens.** It renders one rule per theme, each token a custom property such as "--ui-accent" keyed on the root's "data-theme" attribute, and the root's colour scheme from the selected theme. Its Unhead adapter puts all of it in the first HTML response, so a page never paints in the wrong theme before hydration; the default adapter writes adopted stylesheets, which exist only in the browser.
 - **UnoCSS's colours are the tokens.** Each token is a theme colour whose value is its custom property, so `bg-panel` or `text-muted` follows the selected theme at runtime. There are no other colour names: a colour a template writes is a token, or the heading colour.
-- **The palette lives in `apps/web/configuration/`**, beside the style map and the breakpoint scale, because the UnoCSS config reads them and loads before any `#src/` name resolves. It imports its value sets relatively, as the other configuration files do.
+- **The palette lives in `apps/web/configuration/`**, beside the style map and the breakpoint scale, because the UnoCSS config reads them, and the configuration folder is where a config's own inputs live; it reaches its value sets through `#src/`, as every configuration file does.
 
 ### Colour rules
 

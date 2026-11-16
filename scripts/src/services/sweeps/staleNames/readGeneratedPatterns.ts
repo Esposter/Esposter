@@ -1,5 +1,4 @@
-// oxlint-disable-next-line no-restricted-imports -- the repo-root formatter config, which no `#` map can reach
-import formatterConfiguration from "../../../../../oxfmt.config.ts";
+import formatterConfiguration from "@esposter/configuration/oxfmt";
 
 // A generated file vouches for nothing its generator's source does not, and an old one vouches for what that source
 // Since dropped — a migration snapshot still spells every column a later migration removed. The formatter's ignore

@@ -1,3 +1,4 @@
+import { CLOUDFLARE_INSIGHTS_URL, NUXT_IMAGE_ERROR_HANDLER } from "#configuration/constants";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
@@ -5,7 +6,6 @@ import { dirname, join } from "node:path";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 import { CLOUDFLARE_ACCOUNT_ID } from "../../../packages/db-schema/src/services/cloudflare/constants.ts";
-import { CLOUDFLARE_INSIGHTS_URL, NUXT_IMAGE_ERROR_HANDLER } from "./constants.ts";
 
 describe("security", () => {
   afterEach(() => {
@@ -18,7 +18,7 @@ describe("security", () => {
     expect.hasAssertions();
 
     vi.resetModules();
-    const { security } = await import("./security.ts");
+    const { security } = await import("#configuration/security");
 
     const contentSecurityPolicy = security?.headers ? security.headers.contentSecurityPolicy || undefined : undefined;
 
@@ -31,7 +31,7 @@ describe("security", () => {
 
     vi.stubEnv("PUBLIC_ASSETS_BASE_URL", "https://assets.esposter.com");
     vi.resetModules();
-    const { security } = await import("./security.ts");
+    const { security } = await import("#configuration/security");
 
     const contentSecurityPolicy = security?.headers ? security.headers.contentSecurityPolicy || undefined : undefined;
 
@@ -61,7 +61,7 @@ describe("security", () => {
 
     vi.stubEnv("PUBLIC_ASSETS_BASE_URL", undefined);
     vi.resetModules();
-    const { security } = await import("./security.ts");
+    const { security } = await import("#configuration/security");
 
     const contentSecurityPolicy = security?.headers ? security.headers.contentSecurityPolicy || undefined : undefined;
 
@@ -87,7 +87,7 @@ describe("security", () => {
     expect.hasAssertions();
 
     vi.resetModules();
-    const { security } = await import("./security.ts");
+    const { security } = await import("#configuration/security");
 
     const contentSecurityPolicy = security?.headers ? security.headers.contentSecurityPolicy || undefined : undefined;
     const hash = createHash("sha256").update(NUXT_IMAGE_ERROR_HANDLER).digest("base64");

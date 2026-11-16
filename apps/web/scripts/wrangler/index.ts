@@ -1,8 +1,8 @@
+import { getEnvironmentWrangler } from "#configuration/wrangler";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 import { CloudflareEnvironment } from "../../../../packages/db-schema/src/models/cloudflare/CloudflareEnvironment.ts";
-import { getEnvironmentWrangler } from "../../configuration/wrangler.ts";
 
 // The wrangler configuration `predev` applies the core migrations with: the development environment's bindings, with the
 // Migrations folder Drizzle writes. It is written under `.wrangler`, which is git-ignored, and not beside the app, because
