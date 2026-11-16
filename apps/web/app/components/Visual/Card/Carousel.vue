@@ -67,6 +67,8 @@ const state = computed<CardStackState>(() => ({
   inactiveCardId: inactiveCardId.value,
   maxShownCards,
 }));
+// Each card's place in the stack, which its row reads its style and class by
+const cardPositions = computed(() => cards.map((_card, index) => cardIds.value.indexOf(index)));
 const classes = computed(() => cardIds.value.map((cardId) => getCardStackClass(cardId, state.value)));
 const normalCardStyles = computed(() => getNormalCardStyles(geometry.value));
 const cardStyles = computed(() => getCardStyles(cardIds.value, normalCardStyles.value));
@@ -81,8 +83,8 @@ const inactiveCardStyle = computed<CardStyleVariables>(() => ({ scaleY: getInact
     <div
       v-for="(card, index) of cards"
       :key="index"
-      :style="cardStyles[cardIds.indexOf(index)]"
-      :class="classes[cardIds.indexOf(index)]"
+      :style="cardStyles[takeOne(cardPositions, index)]"
+      :class="classes[takeOne(cardPositions, index)]"
       row="start-1"
       col="start-2"
     >
