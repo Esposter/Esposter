@@ -12,7 +12,6 @@ interface Props extends UiSchemaFormRendererProps {}
 const props = withDefaults(defineProps<Props>(), unsetRendererState);
 const { change, control, issue, layout, uiSchemaFormConfiguration } = useSchemaFormControl(props);
 // An array of values is a choice of several from the same items
-const isMultiple = computed(() => control.value.schema.type === "array");
 // The items a field names from its dialog's context, or else its schema's own options: an enum's values, or the
 // Titled constants of an enum written as one of several literals. An option the schema names carries no mark of its own,
 // So each takes the one mark an option does
@@ -46,7 +45,7 @@ const items = computed<UiSelectItem<string>[]>(() => {
     <UiSelect
       :items
       :label="control.label"
-      :model-value="isMultiple ? (control.data ?? []) : (control.data ?? '')"
+      :model-value="control.schema.type === 'array' ? (control.data ?? []) : (control.data ?? '')"
       @update:model-value="change($event)"
     />
     <span v-if="issue" role="alert" text-sm text-error>{{ issue }}</span>

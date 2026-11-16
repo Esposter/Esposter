@@ -20,7 +20,7 @@ interface Props {
 // One day of a month, a cell of the month's grid: its number, which opens the day, the first of its events and a count
 // Of the rest, which opens it too. A click on its empty space selects it, and an event dragged over it tints it and
 // Dropped there moves onto it. A weekend is shaded, as Outlook shades the days outside the work week
-const { day, events } = defineProps<Props>();
+const { events } = defineProps<Props>();
 const emit = defineEmits<{
   create: [];
   dragStart: [id: string];
@@ -30,7 +30,6 @@ const emit = defineEmits<{
   select: [];
   showDay: [];
 }>();
-const isWeekend = computed(() => day.dayOfWeek > CALENDAR_WORK_WEEK_DAY_COUNT);
 // The events the cell draws, held as a computed so a drag over the cell, which re-renders it without moving its events,
 // Does not take the slice again
 const visibleEvents = computed(() => events.slice(0, CALENDAR_DAY_EVENT_LIMIT));
@@ -47,7 +46,7 @@ const isDropTarget = ref(false);
     :data-outside="isOutside || undefined"
     :data-selected="isSelected || undefined"
     :data-today="isToday || undefined"
-    :data-weekend="isWeekend || undefined"
+    :data-weekend="day.dayOfWeek > CALENDAR_WORK_WEEK_DAY_COUNT || undefined"
     :class="{ 'cursor-cell': isCreatable }"
     role="gridcell"
     :tabindex="isFocused ? 0 : -1"

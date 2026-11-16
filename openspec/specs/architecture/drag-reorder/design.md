@@ -451,11 +451,12 @@ Most of the failures come from SortableJS doing nothing on a mouse in the harnes
 | `apps/web/app/composables/ui/useDragReorder.ts`         | The drag: the press, the follow, autoscroll and the settle                                                     |
 | `apps/web/app/composables/ui/useDragReorder.test.ts`    | The suite, with a regression test for each class named by its lead item                                        |
 | `apps/web/app/composables/ui/useReorder.ts`             | The keyboard half: Alt and an arrow, and the live region                                                       |
+| `apps/web/app/composables/ui/useDataTableReorder.ts`    | A table's two halves joined: the drag props over its page's rows and the keys on the focused row               |
 | `apps/web/app/services/shared/getMovedItems.ts`         | One item moved to another place, the one move the drag and the keys make                                       |
 | `apps/web/app/services/ui/constants.ts`                 | The start distance, the touch delay, the autoscroll edge and speed, the handle and ghost classes and the slide |
 | `apps/web/app/assets/css/globals.css`                   | The held row's lifted look, `.reorder-ghost`                                                                   |
 | `apps/web/app/components/Ui/List/Index.vue`             | A list's rows, dragged within their group                                                                      |
-| `apps/web/app/components/Ui/DataTable.vue`              | A table's rows, dragged by their handle                                                                        |
+| `apps/web/app/components/Ui/DataTable/Index.vue`        | A table's rows, dragged by their handle                                                                        |
 | `apps/web/app/components/Message/LeftSideBar/Rooms.vue` | The room categories, dragged by their headers' handles                                                         |
 
 ## Sources

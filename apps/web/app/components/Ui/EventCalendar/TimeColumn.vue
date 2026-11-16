@@ -26,7 +26,6 @@ interface Props {
 // Day and the whole of a weekend are shaded, as Outlook shades them
 const { day, events, focusedSlot, selectedSlot } = defineProps<Props>();
 const emit = defineEmits<UiCalendarSlotEmits & { select: [start: Temporal.PlainDateTime] }>();
-const isWeekend = computed(() => day.dayOfWeek > CALENDAR_WORK_WEEK_DAY_COUNT);
 const midnight = Temporal.PlainTime.from({ hour: 0 });
 const slotMinutes = CALENDAR_SLOT_DURATION.total("minutes");
 const slotStarts = Array.from(
@@ -59,7 +58,14 @@ const nowSlotOffset = computed(() => getSlotOffset(now.value.toPlainTime()));
 </script>
 
 <template>
-  <div class="column" :data-date="day.toString()" :data-weekend="isWeekend || undefined" role="row" ui-guide relative>
+  <div
+    class="column"
+    :data-date="day.toString()"
+    :data-weekend="day.dayOfWeek > CALENDAR_WORK_WEEK_DAY_COUNT || undefined"
+    role="row"
+    ui-guide
+    relative
+  >
     <!-- eslint-disable-next-line vuejs-accessibility/interactive-supports-focus -- the grid's roving focus sets the cell's tabindex -->
     <div
       v-for="({ slotName, slotStart }, index) of slots"

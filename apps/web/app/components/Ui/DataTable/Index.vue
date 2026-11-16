@@ -3,16 +3,13 @@ import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { UiDataTableCell } from "#src/models/ui/UiDataTableCell";
 import type { UiDataTableColumn } from "#src/models/ui/UiDataTableColumn";
 
-import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiDataTableDensity } from "#src/models/ui/UiDataTableDensity";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import {
   DATA_TABLE_SKELETON_ROW_COUNT,
   MAX_DATA_TABLE_COLUMN_WIDTH,
   MIN_DATA_TABLE_COLUMN_WIDTH,
-  REORDER_HANDLE_CLASS,
 } from "#src/services/ui/constants";
-import { getNextGridCellPosition } from "#src/services/ui/getNextGridCellPosition";
 import { SortOrder } from "@esposter/db-schema";
 import { checkIsNestedInteraction } from "@esposter/shared";
 
@@ -94,7 +91,6 @@ const {
   isSelectable,
   items,
   itemsLength,
-  itemsPerPageOptions,
   search = "",
 } = defineProps<Props>();
 const emit = defineEmits<{ reorder: [ids: T["id"][]] }>();
@@ -144,20 +140,6 @@ const pageCount = computed(() =>
 watch(totalLength, (newTotalLength) => {
   if (newTotalLength > 0 && page.value > pageCount.value) page.value = pageCount.value;
 });
-const rangeText = computed(() => {
-  if (totalLength.value === 0) return "0 of 0";
-  else if (itemsPerPage.value === -1) return `1–${totalLength.value} of ${totalLength.value}`;
-  const start = (page.value - 1) * itemsPerPage.value + 1;
-  const stop = Math.min(page.value * itemsPerPage.value, totalLength.value);
-  return `${start}–${stop} of ${totalLength.value}`;
-});
-const itemsPerPageValue = computed({
-  get: () => String(itemsPerPage.value),
-  set: (value) => {
-    itemsPerPage.value = Number(value);
-    page.value = 1;
-  },
-});
 const pageIds = computed(() => pageItems.value.map(({ id }) => id));
 const selectedPageIdCount = computed(() => pageIds.value.filter((id) => selectedIds.value.includes(id)).length);
 const isPageSelected = computed(() => pageIds.value.length > 0 && selectedPageIdCount.value === pageIds.value.length);
@@ -168,13 +150,6 @@ const groups = computed(() => {
   return Array.from(groupMap, ([value, groupItems]) => ({ items: groupItems, value }));
 });
 const closedGroupValues = ref(new Set<unknown>());
-const itemsPerPageItems = computed(() =>
-  (itemsPerPageOptions ?? []).map((option) => ({
-    meaning: UiIconMeaning.Rows,
-    title: option === -1 ? "All" : String(option),
-    value: String(option),
-  })),
-);
 // A search changes which rows there are, so the reader starts again from the first of them
 watch(
   () => search,
@@ -247,72 +222,21 @@ const getColumnWidth = (key: string) =>
 const navigableItems = computed(() =>
   groups.value.flatMap((group) => (closedGroupValues.value.has(group.value) ? [] : group.items)),
 );
-const navigableItemIdIndexMap = computed(() => new Map(navigableItems.value.map(({ id }, index) => [id, index])));
-// The one cell a tab lands on: the active one while it is drawn, otherwise the first
-const tabStopCell = computed(() => {
-  if (
-    activeCell.value &&
-    navigableItemIdIndexMap.value.has(activeCell.value.itemId) &&
-    columns.some(({ key }) => key === activeCell.value?.columnKey)
-  )
-    return activeCell.value;
-  const firstItem = navigableItems.value.at(0);
-  const firstColumn = columns.at(0);
-  return firstItem && firstColumn ? { columnKey: firstColumn.key, itemId: firstItem.id } : undefined;
-});
 // A drag or a key reorders only rows shown in their own order, one group of them, so a move lands where it is seen
 const isReorderActive = computed(() => isReorderable && sortBy.value.length === 0 && !search && !groupBy);
-const { announce, announcement, getKeyedOrder } = useReorder();
-const getDragReorderProps = useDragReorder();
-// What the one body takes while it drags: the page's rows by their handle, and their new order handed back as ids
-const reorderProps = computed(() =>
-  getDragReorderProps(
-    pageIds.value,
-    (ids) => {
-      emit("reorder", ids);
-    },
-    `.${REORDER_HANDLE_CLASS}`,
-  ),
+const { announcement, onReorderKeydown, reorderProps } = useDataTableReorder<T>(
+  () => isReorderActive.value,
+  pageIds,
+  (ids) => {
+    emit("reorder", ids);
+  },
 );
-// The page's rows in their new order; a key's move is read out, and the focus the moved row held is put back, since
-// Re-rendered in its new place the row is a moved element that lost it on the way
-const onReorderKeydown = async (event: KeyboardEvent) => {
-  if (!isReorderActive.value || !(event.target instanceof HTMLElement)) return;
-  const id = event.target.closest<HTMLElement>("[data-reorder-id]")?.dataset.reorderId;
-  if (id === undefined) return;
-  const keyedOrder = getKeyedOrder(event, pageIds.value, pageIds.value.indexOf(id));
-  if (!keyedOrder) return;
-  event.preventDefault();
-  emit("reorder", keyedOrder);
-  announce(keyedOrder, id);
-  const focusedElement = event.target;
-  await nextTick();
-  focusedElement.focus();
-};
-const onGridKeydown = useGridKeyboard({
-  // A row's id and a column's key are the page's own, so each is escaped before it goes into a selector
-  getCellSelector: ({ columnKey, itemId }) =>
-    `[role="gridcell"][data-item-id="${CSS.escape(itemId)}"][data-column-key="${CSS.escape(columnKey)}"]`,
-  getFocusedCell: () => tabStopCell.value,
-  getNextCell: (event, { columnKey, itemId }) => {
-    const nextPosition = getNextGridCellPosition(
-      event,
-      {
-        columnIndex: columns.findIndex(({ key }) => key === columnKey),
-        rowIndex: navigableItemIdIndexMap.value.get(itemId) ?? 0,
-      },
-      { columnCount: columns.length, rowCount: navigableItems.value.length },
-    );
-    if (!nextPosition) return undefined;
-    const nextItem = navigableItems.value.at(nextPosition.rowIndex);
-    const nextColumn = columns.at(nextPosition.columnIndex);
-    return nextItem && nextColumn ? { columnKey: nextColumn.key, itemId: nextItem.id } : undefined;
-  },
-  root: scrollContainer,
-  setFocusedCell: (cell) => {
-    activeCell.value = cell;
-  },
-});
+const { onGridKeydown, tabStopCell } = useDataTableGrid<T, TSortKey>(
+  activeCell,
+  () => columns,
+  navigableItems,
+  scrollContainer,
+);
 </script>
 
 <template>
@@ -530,35 +454,15 @@ const onGridKeydown = useGridKeyboard({
         </tfoot>
       </table>
     </div>
-    <footer v-if="itemsPerPageOptions" px-3 py-1 flex gap-3 ui-bar items-center justify-end>
-      <div w-24>
-        <UiSelect v-model="itemsPerPageValue" :items="itemsPerPageItems" label="Rows per page" />
-      </div>
-      <UiIconButton
-        :aria-pressed="density === UiDataTableDensity.Compact"
-        label="Compact rows"
-        :meaning="UiIconMeaning.Collapse"
-        :variant="UiButtonVariant.Quiet"
-        @click="
-          density = density === UiDataTableDensity.Compact ? UiDataTableDensity.Comfortable : UiDataTableDensity.Compact
-        "
-      />
-      <span text-muted text-nowrap>{{ rangeText }}</span>
-      <UiIconButton
-        :disabled="page <= 1"
-        label="Previous page"
-        :meaning="UiIconMeaning.Previous"
-        :variant="UiButtonVariant.Quiet"
-        @click="page -= 1"
-      />
-      <UiIconButton
-        :disabled="page >= pageCount"
-        label="Next page"
-        :meaning="UiIconMeaning.Next"
-        :variant="UiButtonVariant.Quiet"
-        @click="page += 1"
-      />
-    </footer>
+    <UiDataTableFooter
+      v-if="itemsPerPageOptions"
+      v-model:density="density"
+      v-model:items-per-page="itemsPerPage"
+      v-model:page="page"
+      :items-per-page-options
+      :page-count
+      :total-length
+    />
     <div v-if="isReorderable" aria-live="polite" sr-only>{{ announcement }}</div>
   </div>
 </template>

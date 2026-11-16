@@ -268,6 +268,7 @@ flowchart TD
 | `apps/web/app/services/ui/constants.ts`               | The spinner's frames, the loading bar's blocks, the typeahead's pause and where a popover opens                      |
 | `apps/web/app/services/ui/getNextGridCellPosition.ts` | Where a key moves a data table grid's active cell                                                                    |
 | `apps/web/app/composables/ui/useGridKeyboard.ts`      | One tab stop in a grid, walked by the keys each grid maps; the calendars and the data table share it                 |
+| `apps/web/app/composables/ui/useDataTableGrid.ts`     | A data table's tab stop and the keys that walk its drawn cells, over `useGridKeyboard`                               |
 | `apps/web/app/plugins/ui.ts`                          | Vuetify 0's hydration, breakpoints and theme plugins                                                                 |
 | `apps/web/app/composables/ui/useUiDisplay.ts`         | The library's reading of Vuetify 0's breakpoints                                                                     |
 | `apps/web/uno.config.ts`                              | The icons preset, the app's own icon set and the body and footer shortcuts every container shares                    |

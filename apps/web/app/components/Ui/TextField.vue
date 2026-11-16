@@ -54,8 +54,6 @@ useAutofocus(element, () => isAutofocus);
 const errorId = useId();
 // A search says what it searches inside itself, so its label is the hint and stays its accessible name
 const isSearch = computed(() => type === UiTextFieldType.Search);
-// An email, a telephone number or a URL offers the browser's autofill for it
-const autocomplete = computed(() => (type ? TEXT_FIELD_AUTOCOMPLETES[type] : undefined));
 
 defineExpose({ element });
 </script>
@@ -89,6 +87,7 @@ defineExpose({ element });
       />
       <Input.Control #default="{ attrs }" renderless>
         <!-- eslint-disable vue/no-restricted-syntax -- the library's own control renders the browser's autofocus for its dialog, which call sites ask for with is-autofocus -->
+        <!-- An email, a telephone number or a URL offers the browser's autofill for it -->
         <component
           :is="rows ? 'textarea' : 'input'"
           ref="element"
@@ -96,7 +95,7 @@ defineExpose({ element });
           :aria-describedby="error && errors.length === 0 ? errorId : attrs['aria-describedby']"
           :aria-invalid="error || isInvalid ? true : attrs['aria-invalid']"
           :aria-required="isRequired || undefined"
-          :autocomplete
+          :autocomplete="type ? TEXT_FIELD_AUTOCOMPLETES[type] : undefined"
           :autofocus="isAutofocus || undefined"
           :class="{ 'ui-pill pl-10 pr-10': isSearch }"
           :maxlength

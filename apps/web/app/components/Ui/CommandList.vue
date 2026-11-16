@@ -32,8 +32,6 @@ const highlightFirst = () => {
   else clear();
 };
 const highlightedIndex = computed(() => commands.findIndex(({ id }) => id === highlightedId.value));
-// The highlighted option's element, which the field names as its active descendant while focus stays in it
-const highlightedOptionId = computed(() => (highlightedIndex.value === -1 ? "" : getOptionId(highlightedIndex.value)));
 const clickHighlighted = () => {
   if (highlightedIndex.value === -1) return;
   window.document.getElementById(getOptionId(highlightedIndex.value))?.click();
@@ -56,10 +54,11 @@ watch(
   <div flex flex-col min-h-0>
     <div p-2 flex gap-2 items-center>
       <slot name="prepend" />
+      <!-- The highlighted option's element, which the field names as its active descendant while focus stays in it -->
       <input
         ref="field"
         v-model="query"
-        :aria-activedescendant="highlightedOptionId"
+        :aria-activedescendant="highlightedIndex === -1 ? '' : getOptionId(highlightedIndex)"
         :aria-controls="listboxId"
         :aria-label="label"
         aria-autocomplete="list"
