@@ -47,7 +47,7 @@ const readBuildOrder = (): { directory: string; packageName: string }[] =>
     "exec",
     "node",
     "-e",
-    "console.log(JSON.stringify([require('./package.json').name, process.cwd()]))",
+    "const { name, scripts } = require('./package.json'); if (scripts?.build) console.log(JSON.stringify([name, process.cwd()]))",
   ])
     .split("\n")
     .flatMap((line) => {
