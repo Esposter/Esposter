@@ -35,7 +35,7 @@ catalog:
   "@better-auth/drizzle-adapter": ^1.7.25
   "@cloudflare/realtimekit": ^2.0.4
   "@cloudflare/realtimekit-virtual-background": ^0.0.3
-  "@cloudflare/workers-types": ^5.20261114.1
+  "@cloudflare/workers-types": ^5.20261115.1
   "@codemirror/lang-vue": ^0.1.3
   "@codemirror/language": ^6.13.1
   "@codemirror/language-data": ^6.5.2
@@ -91,8 +91,8 @@ catalog:
   "@tiptap/vue-3": ^3.34.0
   "@tresjs/cientos": ^5.11.0
   "@tresjs/core": ^5.11.0
-  "@trpc/client": ^11.28.2
-  "@trpc/server": ^11.28.2
+  "@trpc/client": ^11.28.3
+  "@trpc/server": ^11.28.3
   "@tsdown/css": ^0.23.7
   "@types/mjml": ^5.4.2
   "@types/node": ^26.6.6
@@ -116,11 +116,11 @@ catalog:
   "@vitest/snapshot": ^5.1.0
   "@vitest/spy": ^5.1.0
   "@vitest/utils": ^5.1.0
-  "@vizejs/native": ^0.751.0
-  "@vizejs/unplugin": ^0.751.0
-  "@vizejs/vite-plugin": ^0.751.0
+  "@vizejs/native": ^0.762.0
+  "@vizejs/unplugin": ^0.762.0
+  "@vizejs/vite-plugin": ^0.762.0
   "@vue/compiler-core": ^3.5.45
-  "@vue/test-utils": ^2.5.1
+  "@vue/test-utils": ^2.6.0
   "@vuetify/v0": ^1.3.2
   "@vueuse/core": ^15.0.0
   "@vueuse/nuxt": ^15.0.0
@@ -144,7 +144,7 @@ catalog:
   eslint-plugin-depend: ^1.5.0
   eslint-plugin-jsonc: ^3.4.2
   eslint-plugin-oxlint: ^1.93.0
-  eslint-plugin-perfectionist: ^5.13.0
+  eslint-plugin-perfectionist: ^5.14.0
   eslint-plugin-pinia: ^0.4.2
   eslint-plugin-vuejs-accessibility: ^2.6.3
   fake-indexeddb: ^6.2.8
@@ -215,7 +215,7 @@ catalog:
   vite-plus: ^1.6.0
   vitest: ^5.1.0
   vitest-browser-vue: ^3.1.0
-  vize: ^0.751.0
+  vize: ^0.762.0
   vue: ^3.5.45
   vue-eslint-parser: ^10.4.2
   vue-router: ^5.5.1
