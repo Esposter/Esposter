@@ -1,4 +1,4 @@
-/* oxlint-disable no-await-in-loop -- Order is the contract: the archive takes one entry at a time, so each resource's entries stay in order; Async iteration: each asset's body streams into the archive as it is read, so one asset is held at a time */
+/* oxlint-disable no-await-in-loop -- Order is the contract: the archive takes one entry at a time, so each resource's entries stay in order; Bounded concurrency: each asset's body streams into the archive as it is read, so one asset is held at a time */
 import type { UserDataArchive } from "#src/models/user/UserDataArchive";
 import type { UserInAuth } from "@esposter/db-schema";
 
