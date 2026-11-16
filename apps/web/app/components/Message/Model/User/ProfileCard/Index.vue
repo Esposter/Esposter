@@ -2,9 +2,7 @@
 import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
 import type { MemberDialogType } from "#src/models/message/user/MemberDialogType";
 
-import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
-import { useModerationNoteStore } from "#src/store/message/moderation/note";
 import { useRoomStore } from "#src/store/message/room/index";
 import { useRoleStore } from "#src/store/message/room/role";
 import { useFriendStore } from "#src/store/message/user/friend";
@@ -30,20 +28,9 @@ const friendStore = useFriendStore();
 const { checkIsFriend } = friendStore;
 const friendRequestStore = useFriendRequestStore();
 const { checkHasSentFriendRequest } = friendRequestStore;
-const moderationNoteStore = useModerationNoteStore();
-const { currentTargetUserId } = storeToRefs(moderationNoteStore);
 const isSelf = computed(() => session.value?.user.id === user.id);
 const isFriend = computed(() => checkIsFriend(user.id));
 const hasSentFriendRequest = computed(() => checkHasSentFriendRequest(user.id));
-const { copyUserIdItem, friendItem, isKickable, moderationItems } = useMemberActionItems(
-  () => user,
-  currentRoomId,
-  (type) => {
-    emit("open:dialog", type);
-  },
-);
-// Discord leads with adding a stranger or messaging a friend beside the avatar, and keeps the rest under More
-const overflowItems = computed(() => [copyUserIdItem, ...moderationItems.value]);
 // The card must appear the moment it is opened, so the mutual rooms load behind it rather than blocking setup — the
 // Section simply appears once they land
 const { data: mutualRooms } = useQuery(() => $trpc.room.readMutualRooms.query({ userId: user.id }));
@@ -57,13 +44,6 @@ if (currentRoomId.value)
       console.error,
     ),
   )();
-const { readModerationNotes } = useReadModerationNotes(currentRoomId.value, () => user.id);
-// The notes action counts them before it is opened, so a moderator who may read them has them read with the card
-watchImmediate(isKickable, async (newIsKickable) => {
-  if (!newIsKickable) return;
-  currentTargetUserId.value = user.id;
-  await readModerationNotes();
-});
 </script>
 
 <template>
@@ -71,12 +51,7 @@ watchImmediate(isKickable, async (newIsKickable) => {
     <div flex gap-2 items-start>
       <MessageModelMemberStatusAvatar :id="user.id" :image="user.image" :name="user.displayName" is-large />
       <div flex-1 />
-      <template v-if="!isSelf">
-        <UiButton v-if="friendItem" :variant="UiButtonVariant.Accent" @click="friendItem.onClick?.($event)">
-          {{ friendItem.title }}
-        </UiButton>
-        <UiOverflowMenu :items="overflowItems" :label="`${user.displayName} actions`" />
-      </template>
+      <MessageModelUserProfileCardActions :is-self :user @open:dialog="(type) => emit('open:dialog', type)" />
     </div>
     <div flex flex-col>
       <h2 truncate ui-heading>{{ user.displayName }}</h2>
