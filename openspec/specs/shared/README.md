@@ -11,3 +11,4 @@
 - [HTML sanitiser](sanitize-html/design.md) — `sanitizeHtml` over parse5, replacing `sanitize-html`.
 - [Bounded history](bounded-history/design.md) — the undo and redo stack the editor core's documents and the sheet's commands share.
 - [Pan and zoom](panzoom/design.md) — `createPanzoom`, the element dragged and zoomed by a CSS transform, replacing `@panzoom/panzoom`.
+- [SigV4 signing](sigv4/design.md) — the signer for R2's S3 API, its presigned URLs and its retrying fetch, replacing `aws4fetch`.

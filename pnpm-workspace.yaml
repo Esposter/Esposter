@@ -126,7 +126,6 @@ catalog:
   "@vueuse/router": ^15.0.0
   "@webgpu/types": ^0.1.74
   apexcharts: ^8.8.2
-  aws4fetch: ^1.0.20
   better-auth: ^1.7.25
   bowser: ^2.15.0
   citty: ^0.2.2
@@ -197,7 +196,6 @@ catalog:
   temporal-polyfill: ^1.0.8
   three: ^0.187.0
   three-mesh-bvh: ^0.9.18
-  tinyglobby: ^0.2.17
   tsdown: ^0.23.7
   tsrs: ^0.25.0-ts7.1.0-beta
   type-fest: ^5.10.0

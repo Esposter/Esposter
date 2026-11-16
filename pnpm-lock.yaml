@@ -441,9 +441,6 @@ catalogs:
     apexcharts:
       specifier: ^8.8.2
       version: 8.8.2
-    aws4fetch:
-      specifier: ^1.0.20
-      version: 1.0.20
     better-auth:
       specifier: ^1.7.25
       version: 1.7.25
@@ -645,9 +642,6 @@ catalogs:
     three-mesh-bvh:
       specifier: ^0.9.18
       version: 0.9.18
-    tinyglobby:
-      specifier: ^0.2.17
-      version: 0.2.17
     tsdown:
       specifier: ^0.23.7
       version: 0.23.7
@@ -1020,9 +1014,6 @@ importers:
       apexcharts:
         specifier: 'catalog:'
         version: 8.8.2
-      aws4fetch:
-        specifier: 'catalog:'
-        version: 1.0.20
       better-auth:
         specifier: 'catalog:'
         version: 1.7.25(@opentelemetry/api@1.9.1)(drizzle-kit@1.0.0-rc.5(drizzle-orm@1.0.0-rc.5(@cloudflare/workers-types@5.20261116.1)(@opentelemetry/api@1.9.1)(valibot@1.5.0(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2))(zod@4.6.7)))(drizzle-orm@1.0.0-rc.5(@cloudflare/workers-types@5.20261116.1)(@opentelemetry/api@1.9.1)(valibot@1.5.0(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2))(zod@4.6.7))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(vitest@5.1.0)(vue@3.5.45(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2))
@@ -1264,9 +1255,6 @@ importers:
       sirv:
         specifier: 'catalog:'
         version: 3.0.2
-      tinyglobby:
-        specifier: 'catalog:'
-        version: 0.2.17
       tresjs-nuxt:
         specifier: workspace:*
         version: link:../../packages/tresjs-nuxt
@@ -1390,9 +1378,6 @@ importers:
       '@esposter/shared':
         specifier: workspace:*
         version: link:../shared
-      aws4fetch:
-        specifier: 'catalog:'
-        version: 1.0.20
       drizzle-orm:
         specifier: 'catalog:'
         version: 1.0.0-rc.5(@cloudflare/workers-types@5.20261116.1)(@opentelemetry/api@1.9.1)(valibot@1.5.0(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2))(zod@4.6.7)
@@ -2352,9 +2337,6 @@ importers:
       '@webgpu/types':
         specifier: 'catalog:'
         version: 0.1.74
-      aws4fetch:
-        specifier: 'catalog:'
-        version: 1.0.20
       genshin-engine:
         specifier: workspace:*
         version: link:../packages/genshin-engine
@@ -17107,7 +17089,8 @@ snapshots:
       '@babel/types': 8.1.2
       ast-kit: 3.0.1
 
-  aws4fetch@1.0.20: {}
+  aws4fetch@1.0.20:
+    optional: true
 
   balanced-match@4.0.4: {}
 

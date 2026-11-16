@@ -16,7 +16,7 @@ const throwUnlessOk = (response: Response, subject: string): void => {
 
 // One bucket of the account's R2, reached through its S3 API, the one a script can use since a Worker's binding exists only
 // Inside a Worker. The bucket is the one Pulumi created under its environment's name. Requests are signed with the account's
-// R2 token, and each carries its own timeout. aws4fetch signs an S3 body as UNSIGNED-PAYLOAD, so a file streams unhashed
+// R2 token, and each carries its own timeout. The payload is left unsigned, so a file is sent without being hashed first
 export const createR2BucketClient = (
   environment: CloudflareEnvironment,
   storageBucket: StorageBucket,

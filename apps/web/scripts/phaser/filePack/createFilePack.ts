@@ -12,30 +12,33 @@ import {
   getCloudflareResourceName,
   StorageBucket,
 } from "@esposter/db-schema";
-import { InvalidOperationError, Operation } from "@esposter/shared";
-import { AwsClient } from "aws4fetch";
+import { createSigV4Fetch, InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync } from "node:fs";
 import { format } from "oxfmt";
 
 // The names of every object in the bucket, one ListObjectsV2 page after another, each page read by the shared listing parser
-const listObjectNames = async (client: AwsClient, bucketUrl: string, continuationToken?: string): Promise<string[]> => {
+const listObjectNames = async (
+  signedFetch: ReturnType<typeof createSigV4Fetch>,
+  bucketUrl: string,
+  continuationToken?: string,
+): Promise<string[]> => {
   const url = new URL(bucketUrl);
   url.searchParams.set("list-type", "2");
   if (continuationToken !== undefined) url.searchParams.set("continuation-token", continuationToken);
-  const response = await client.fetch(url);
+  const response = await signedFetch(url);
   // A refused listing answers an error document with no entries, which would otherwise read as an empty bucket
   if (!response.ok) throw new InvalidOperationError(Operation.Read, bucketUrl, `responds ${response.status}`);
   const { nextContinuationToken, objects } = parseListBucketResult(await response.text());
   const names = objects.map(({ key }) => key);
   return nextContinuationToken === undefined
     ? names
-    : [...names, ...(await listObjectNames(client, bucketUrl, nextContinuationToken))];
+    : [...names, ...(await listObjectNames(signedFetch, bucketUrl, nextContinuationToken))];
 };
 
 export const createFilePack = async () => {
   if (existsSync(".env")) process.loadEnvFile();
   const bucketUrl = `https://${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com/${getCloudflareResourceName(process.env.CLOUDFLARE_ENVIRONMENT, CloudflareAssetType.R2Bucket, StorageBucket.PublicDungeonsAssets)}`;
-  const client = new AwsClient({
+  const signedFetch = createSigV4Fetch({
     accessKeyId: process.env.R2_ACCESS_KEY_ID,
     region: "auto",
     secretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
@@ -46,9 +49,9 @@ export const createFilePack = async () => {
   const valueSetName = "FileKey";
 
   // A listing carries no content type, so each object's type is read from its own headers
-  for (const name of await listObjectNames(client, bucketUrl)) {
+  for (const name of await listObjectNames(signedFetch, bucketUrl)) {
     // oxlint-disable-next-line no-await-in-loop -- Stop at the first: a missing object throws, and the objects behind it are not read
-    const response = await client.fetch(
+    const response = await signedFetch(
       `${bucketUrl}/${name
         .split("/")
         .map((segment) => encodeURIComponent(segment))
