@@ -35,16 +35,13 @@ describe(getDetectedUserStatus, () => {
 
   // A status the member never set and one whose window has closed are the same thing to the reader: neither is a
   // Choice any more, so both fall back to whether the socket is up
-  test.each([
+  test.each<[string, Partial<UserStatusInMessage>]>([
     ["expired", { expiresAt: new Date(0) }],
     ["removed", { status: null }],
-  ] as [string, Partial<UserStatusInMessage>][])(
-    "detects a %s status from the connection alone",
-    (_description, overrides) => {
-      expect.hasAssertions();
+  ])("detects a %s status from the connection alone", (_description, overrides) => {
+    expect.hasAssertions();
 
-      expect(getDetectedUserStatus(createStatus({ ...overrides, isConnected: true }))).toBe(UserStatus.Online);
-      expect(getDetectedUserStatus(createStatus({ ...overrides, isConnected: false }))).toBe(UserStatus.Offline);
-    },
-  );
+    expect(getDetectedUserStatus(createStatus({ ...overrides, isConnected: true }))).toBe(UserStatus.Online);
+    expect(getDetectedUserStatus(createStatus({ ...overrides, isConnected: false }))).toBe(UserStatus.Offline);
+  });
 });

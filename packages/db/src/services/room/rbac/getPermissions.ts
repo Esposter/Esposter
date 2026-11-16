@@ -60,9 +60,9 @@ export const getPermissions: GetPermissions = (async (
   const roomIdPermissionsMap = new Map<string, bigint>();
   for (const { permissions, roomId } of rows)
     roomIdPermissionsMap.set(roomId, (roomIdPermissionsMap.get(roomId) ?? 0n) | permissions);
-  // The member's own row is the last word over the roles' union, deny before allow, so the effective bitfield is
-  // Already the answer and every consumer reads it as one. Administrator stays with the roles: it is never masked
-  // Out of the union, so an Administrator keeps every bit whatever a row says
+  // The member's own row is the last word over the roles' union, deny before allow
+  // So the effective bitfield is already the answer, and every consumer reads it as one
+  // Administrator stays with the roles: never masked out of the union, it keeps every bit whatever a row says
   for (const { allow, deny, roomId } of overrideRows)
     roomIdPermissionsMap.set(
       roomId,
