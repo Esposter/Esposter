@@ -31,7 +31,8 @@ describe("resourceTodoListItems", () => {
     const content: TodoListResource = { items: [new TodoListItem({ name: itemName })] };
     trpcMsw.resource.readResource.query(() => ({ ...createResource(), publication: null }));
     trpcMsw.todoList.readResourceContent.query(() => content);
-    const { readResource } = useResourceStore();
+    const resourceStore = useResourceStore();
+    const { readResource } = resourceStore;
     await readResource();
   });
 
