@@ -21,6 +21,8 @@ export type Item = {
   isGroupStart?: boolean;
   // The member of a group of choices the reader has now, which makes each of the group's rows a radio
   isSelected?: boolean;
+  // An action that needs no selection, such as an image picker or undo, stays enabled while its editor is unfocused
+  isSelectionFree?: boolean;
   loading?: boolean;
   // The event is optional so an item runs without one, from a suggestion's selection or a list's keys
   onClick?: (event?: KeyboardEvent | MouseEvent) => Promisable<void>;

@@ -5,7 +5,6 @@ import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetU
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { getNoteExtensions } from "#shared/services/resource/note/getNoteExtensions";
 import ResourceNoteEditor from "#src/components/Resource/Note/Editor.vue";
-import { waitForEditorRender } from "#src/services/richTextEditor/waitForEditorRender.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useResourceStore } from "#src/store/resource/index";
 import { getResourceFileBlobName, ResourceType } from "@esposter/db-schema";
@@ -78,10 +77,7 @@ describe("resourceNoteEditor", () => {
 
     uploadResourceFileMock.mockResolvedValue(assetUrl);
     choosesFile(file);
-    // The menu acts only while the note is focused, so the reader is in it first
     const component = await mountSuspended(ResourceNoteEditor, { attachTo: document.body });
-    component.get<HTMLElement>(".ProseMirror").element.focus();
-    await waitForEditorRender();
     await component.get('[aria-label="Image"]').trigger("click");
     await flushPromises();
 

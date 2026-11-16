@@ -21,12 +21,13 @@ const items = computed<MenuItem[]>(() => [
   ...getNoteBlockMenuItems(editor),
   {
     icon: "i-mdi:table",
+    isSelectionFree: true,
     onClick: () => {
       editor?.chain().focus().insertTable({ cols: 3, rows: 3, withHeaderRow: true }).run();
     },
     title: "Table",
   },
-  { icon: "i-mdi:image", onClick: () => openImagePicker(), title: "Image" },
+  { icon: "i-mdi:image", isSelectionFree: true, onClick: () => openImagePicker(), title: "Image" },
   { isDivider: true },
   ...getTextFormatMenuItems(editor),
   {

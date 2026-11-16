@@ -22,6 +22,7 @@ export const getRichTextMenuItems = (editor: Editor | undefined): MenuItem[] => 
   {
     disabled: !editor?.can().undo(),
     icon: "i-mdi:undo",
+    isSelectionFree: true,
     onClick: () => {
       editor?.chain().focus().undo().run();
     },
@@ -30,6 +31,7 @@ export const getRichTextMenuItems = (editor: Editor | undefined): MenuItem[] => 
   {
     disabled: !editor?.can().redo(),
     icon: "i-mdi:redo",
+    isSelectionFree: true,
     onClick: () => {
       editor?.chain().focus().redo().run();
     },
