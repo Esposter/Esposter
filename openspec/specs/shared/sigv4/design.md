@@ -12,11 +12,11 @@ Nothing Cloudflare provides signs a request: a browser uploads straight to R2 th
 
 ```mermaid
 flowchart LR
-  request["method, URL, headers, signedAt"] --> canonical["getCanonicalRequest<br/>path decoded and encoded once per segment,<br/>query sorted, every header signed"]
-  canonical --> signature["getSigV4Signature<br/>signing key: secret → day → region → service → aws4_request"]
+  request["method, URL, headers, signedAt"] --> canonical["getCanonicalRequest<br/>path, sorted query, every header"]
+  canonical --> signature["getSigV4Signature<br/>signing key derived per day"]
   signature --> header["signSigV4Request<br/>Authorization header"]
   signature --> query["presignSigV4Url<br/>X-Amz-* query, sent as signed"]
-  header --> fetch["createSigV4Fetch<br/>signed afresh per attempt, 5xx and 429 retried"]
+  header --> fetch["createSigV4Fetch<br/>5xx and 429 retried"]
 ```
 
 The surface is the slice R2 uses:
