@@ -316,6 +316,11 @@
 | `scripts/src/services/genshinAssets/expeditions`                                          | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/exploration`                                          | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fishing`                                              | 2026-10-25 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/checkIsRockMesh.ts`                               | —                       |       |
+| `scripts/src/services/genshinAssets/fit/checkIsRuinMesh.ts`                               | —                       |       |
+| `scripts/src/services/genshinAssets/fit/countWitnessPlantsAtPlaces.ts`                    | —                       |       |
+| `scripts/src/services/genshinAssets/fit/createRegionHullsFit.ts`                          | —                       |       |
+| `scripts/src/services/genshinAssets/fit/createRegionPlantsFit.ts`                         | —                       |       |
 | `scripts/src/services/genshinAssets/fit/DerivedAssetFitMap.ts`                            | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/LoginStoneFamilyMaterialRegexMap.ts`              | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/RegionCapitalMap.ts`                              | 2026-10-29 · Haiku 5.5  |       |
@@ -442,11 +447,9 @@
 | `scripts/src/services/genshinAssets/fit/fitRegionCamps.ts`                                | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/fitRegionCapitals.ts`                             | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/fitRegionGroundPieces.ts`                         | 2026-10-29 · Haiku 5.5  |       |
-| `scripts/src/services/genshinAssets/fit/fitRegionHulls.test.ts`                           | —                       |       |
 | `scripts/src/services/genshinAssets/fit/fitRegionHulls.ts`                                | —                       |       |
 | `scripts/src/services/genshinAssets/fit/fitRegionLandmarks.ts`                            | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/fitRegionOutcrops.ts`                             | 2026-11-01 · Haiku 5.5  |       |
-| `scripts/src/services/genshinAssets/fit/fitRegionPlants.test.ts`                          | —                       |       |
 | `scripts/src/services/genshinAssets/fit/fitRegionPlants.ts`                               | —                       |       |
 | `scripts/src/services/genshinAssets/fit/fitRegionRocks.ts`                                | —                       |       |
 | `scripts/src/services/genshinAssets/fit/fitRegionRuins.ts`                                | —                       |       |
@@ -518,7 +521,6 @@
 | `scripts/src/services/genshinAssets/fit/readMeshInThree.ts`                               | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/readOptionalTexture.ts`                           | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/readPair.ts`                                      | 2026-10-29 · Haiku 5.5  |       |
-| `scripts/src/services/genshinAssets/fit/readPlantPlacements.ts`                           | —                       |       |
 | `scripts/src/services/genshinAssets/fit/readRegionAreas.ts`                               | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/readRegionGroundFits.ts`                          | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/readRegionLandmarks.test.ts`                      | —                       |       |
@@ -567,7 +569,11 @@
 | `scripts/src/services/genshinAssets/fit/toDistance.ts`                                    | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/toEdgeKey.ts`                                     | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/toFaceEdges.ts`                                   | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/toFittedPlants.test.ts`                           | —                       |       |
+| `scripts/src/services/genshinAssets/fit/toFittedPlants.ts`                                | —                       |       |
 | `scripts/src/services/genshinAssets/fit/toGroundPiece.ts`                                 | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/toHullPlacements.test.ts`                         | —                       |       |
+| `scripts/src/services/genshinAssets/fit/toHullPlacements.ts`                              | —                       |       |
 | `scripts/src/services/genshinAssets/fit/toLevels.ts`                                      | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/toMatrix.ts`                                      | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/toNodeSpan.ts`                                    | 2026-10-29 · Haiku 5.5  |       |
@@ -859,6 +865,7 @@
 | `scripts/src/services/genshinAssets/shared/readMusicSourceNotes.ts`                       | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/shared/readObjMesh.ts`                                | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/shared/readObjectNames.ts`                            | 2026-11-01 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/shared/readPlantPlacements.ts`                        | —                       |       |
 | `scripts/src/services/genshinAssets/shared/readPublishedRegionGround.ts`                  | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/shared/readRegionGroundFiles.ts`                      | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/shared/readRegionLandmarkSources.ts`                  | 2026-11-01 · Haiku 5.5  |       |
