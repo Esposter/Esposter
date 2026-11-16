@@ -75,10 +75,7 @@ export class CallObject extends RealtimeObject<CallEvent> implements CallObjectR
 
   dismissKnocker({ callSessionId, knockerSessionId }: { callSessionId: string; knockerSessionId: string }): boolean {
     if (!this.#removeKnocker(knockerSessionId)) return false;
-    this.broadcast(
-      { data: { callSessionId, knockerSessionId }, type: "knockerDismissed" },
-      { tag: `session:${knockerSessionId}` },
-    );
+    this.#broadcastKnockerDismissed(callSessionId, knockerSessionId);
     return true;
   }
 
@@ -310,6 +307,14 @@ export class CallObject extends RealtimeObject<CallEvent> implements CallObjectR
     return isFirstJoiner;
   }
 
+  // A dismissed knocker hears of it on its own session's socket, the one it knocked with
+  #broadcastKnockerDismissed(callSessionId: string, knockerSessionId: string): void {
+    this.broadcast(
+      { data: { callSessionId, knockerSessionId }, type: "knockerDismissed" },
+      { tag: `session:${knockerSessionId}` },
+    );
+  }
+
   #checkHasParticipants(): boolean {
     return this.db.select({ id: participants.id }).from(participants).limit(1).all().length > 0;
   }
@@ -340,10 +345,7 @@ export class CallObject extends RealtimeObject<CallEvent> implements CallObjectR
     const { startedAt } = this.#readCallState();
     const callDurationSeconds = startedAt ? Math.round((Date.now() - startedAt.getTime()) / 1000) : 0;
     for (const { id } of this.db.delete(knockers).returning({ id: knockers.id }).all())
-      this.broadcast(
-        { data: { callSessionId, knockerSessionId: id }, type: "knockerDismissed" },
-        { tag: `session:${id}` },
-      );
+      this.#broadcastKnockerDismissed(callSessionId, id);
     this.db.delete(admittedSessions).run();
     this.#writeCallState({ startedAt: null });
     return callDurationSeconds;

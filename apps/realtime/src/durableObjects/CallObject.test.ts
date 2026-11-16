@@ -184,6 +184,49 @@ describe(CallObject, () => {
     expect(bystanderSocket.send).not.toHaveBeenCalled();
   });
 
+  test("a dismissed knock tells only the knocker's own session", () => {
+    expect.hasAssertions();
+
+    const state = createMockObjectState(callSessionId);
+    const callObject = createCallObject(state);
+    const doorkeeper = createParticipant();
+    const knocker = createParticipant();
+    const doorkeeperSocket = createSocket();
+    const knockerSocket = createSocket();
+    state.ctx.acceptWebSocket(doorkeeperSocket, [`user:${doorkeeper.userId}`, `session:${doorkeeper.id}`]);
+    state.ctx.acceptWebSocket(knockerSocket, [`user:${knocker.userId}`, `session:${knocker.id}`]);
+
+    callObject.knockCall({ callSessionId, doorkeeperUserId: doorkeeper.userId, knocker });
+    callObject.dismissKnocker({ callSessionId, knockerSessionId: knocker.id });
+
+    expect(callObject.readAccess({ sessionId: knocker.id }).isKnocking).toBe(false);
+    expect(readFrames(knockerSocket)).toStrictEqual([
+      { data: { callSessionId, knockerSessionId: knocker.id }, type: "knockerDismissed" },
+    ]);
+    expect(readFrames(doorkeeperSocket)).toStrictEqual([{ data: { callSessionId, knocker }, type: "knockCall" }]);
+  });
+
+  test("the call ending dismisses each knock on its own session", () => {
+    expect.hasAssertions();
+
+    const state = createMockObjectState(callSessionId);
+    const callObject = createCallObject(state);
+    const member = createParticipant();
+    const knocker = createParticipant();
+    const knockerSocket = createSocket();
+
+    callObject.participantJoined({ callSessionId, participant: member });
+    state.ctx.acceptWebSocket(knockerSocket, [`user:${knocker.userId}`, `session:${knocker.id}`]);
+    callObject.knockCall({ callSessionId, doorkeeperUserId: member.userId, knocker });
+    callObject.leaveCall({ callSessionId, sessionId: member.id });
+
+    expect(callObject.readAccess({ sessionId: knocker.id }).isKnocking).toBe(false);
+    expect(readFrames(knockerSocket)).toStrictEqual([
+      { data: { callSessionId, id: member.id }, type: "leaveCall" },
+      { data: { callSessionId, knockerSessionId: knocker.id }, type: "knockerDismissed" },
+    ]);
+  });
+
   test("refuses the socket of a session neither in the call nor knocking on it", async () => {
     expect.hasAssertions();
 

@@ -118,15 +118,10 @@ export class RoomObject extends RealtimeObject<RoomEvent> implements RoomObjectR
     }
     if (existingReaction.userIds.includes(actor.userId)) return existingReaction;
 
-    const userIds = [...existingReaction.userIds, actor.userId];
-    const reaction = this.db
-      .update(messageEmojisInRoom)
-      .set({ userIds })
-      .where(and(eq(messageEmojisInRoom.messageId, messageId), eq(messageEmojisInRoom.emojiTag, emojiTag)))
-      .returning()
-      .get();
-    if (reaction) this.broadcast({ data: reaction, type: "updateEmoji" }, getSendOptions(actor));
-    return reaction ?? null;
+    return (
+      this.#setReactors({ emojiTag, messageId }, [...existingReaction.userIds, actor.userId], getSendOptions(actor)) ??
+      null
+    );
   }
 
   // One alarm serves three jobs: the scheduled messages that have come due, the room-activity wave a message owes, and
@@ -843,13 +838,11 @@ export class RoomObject extends RealtimeObject<RoomEvent> implements RoomObjectR
       return;
     }
 
-    const updatedReaction = this.db
-      .update(messageEmojisInRoom)
-      .set({ userIds: reaction.userIds.filter((reactorId) => reactorId !== userId) })
-      .where(and(eq(messageEmojisInRoom.messageId, messageId), eq(messageEmojisInRoom.emojiTag, emojiTag)))
-      .returning()
-      .get();
-    if (updatedReaction) this.broadcast({ data: updatedReaction, type: "updateEmoji" }, sendOptions);
+    this.#setReactors(
+      { emojiTag, messageId },
+      reaction.userIds.filter((reactorId) => reactorId !== userId),
+      sendOptions,
+    );
   }
 
   // The sent messages whose sender's index has not taken them are asked again once their retry is due. An index that takes
@@ -965,6 +958,22 @@ export class RoomObject extends RealtimeObject<RoomEvent> implements RoomObjectR
   #setPinned(id: number, isPinned: boolean, actor: RoomActor): null | RoomMessage {
     const updatedMessage = this.#updateLiveMessage(id, { isPinned }, new Date());
     return this.#broadcastMessageUpdate(updatedMessage, getSendOptions(actor));
+  }
+
+  // Writes a reaction's reactors and tells the room they changed, so every change to a reaction is broadcast the same way
+  #setReactors(
+    { emojiTag, messageId }: { emojiTag: string; messageId: number },
+    userIds: string[],
+    sendOptions: SendOptions,
+  ): RoomReaction | undefined {
+    const reaction = this.db
+      .update(messageEmojisInRoom)
+      .set({ userIds })
+      .where(and(eq(messageEmojisInRoom.messageId, messageId), eq(messageEmojisInRoom.emojiTag, emojiTag)))
+      .returning()
+      .get();
+    if (reaction) this.broadcast({ data: reaction, type: "updateEmoji" }, sendOptions);
+    return reaction;
   }
 
   // A deleted message keeps its row, so a reply still names a root that exists.
