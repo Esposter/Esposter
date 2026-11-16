@@ -6,7 +6,7 @@ import {
   resetIndexedDb,
 } from "#src/services/cache/indexedDb/openIndexedDb";
 import { getRequestError, openDatabase, Operation } from "@esposter/shared";
-import { afterEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(openIndexedDb, () => {
   // A tab that deletes the database is held back by this page's connection until the connection closes, so the
@@ -30,6 +30,10 @@ describe(openIndexedDb, () => {
 });
 
 describe(resetIndexedDb, () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+  });
+
   afterEach(() => {
     vi.useRealTimers();
   });
@@ -40,7 +44,6 @@ describe(resetIndexedDb, () => {
 
     await openIndexedDb();
     const otherTabDatabase = await openDatabase(DATABASE_NAME, DATABASE_VERSION);
-    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
 
     const reset = resetIndexedDb();
     await Promise.all([
@@ -60,7 +63,6 @@ describe(resetIndexedDb, () => {
     const otherTabDatabase = await openDatabase(DATABASE_NAME, DATABASE_VERSION);
     indexedDB.deleteDatabase(DATABASE_NAME);
     const queuedOpen = openIndexedDb();
-    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
 
     const reset = resetIndexedDb();
     await Promise.all([

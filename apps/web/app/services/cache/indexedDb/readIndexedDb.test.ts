@@ -17,7 +17,7 @@ describe(readIndexedDb, () => {
 
     const result = await readIndexedDb(MessageIndexedDbStoreConfiguration, message1.roomId);
 
-    expect(result).toHaveLength(0);
+    expect(result).toStrictEqual([]);
   });
 
   test("only returns items for the requested room", async () => {
