@@ -171,7 +171,7 @@ catalog:
   ohash: ^2.0.12
   onnxruntime-common: ^1.31.1
   onnxruntime-node: ^1.31.1
-  oxc-parser: ^0.158.0
+  oxc-parser: ^0.159.0
   oxfmt: ^0.78.0
   oxlint: ^1.93.0
   oxlint-tsgolint: ^7.0.2007
