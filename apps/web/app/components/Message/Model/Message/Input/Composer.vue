@@ -16,7 +16,7 @@ const slots = defineSlots<{
 const input = defineModel<string>({ required: true });
 const { extraExtensions = [], target } = defineProps<Props>();
 const { checkIsInputValid, extensions, sendComposerMessage, uploadFiles } = await useComposer(() => target);
-const editorExtensions = computed(() => [...extensions, ...extraExtensions]);
+const editorExtensions = computed(() => [...extensions.value, ...extraExtensions]);
 </script>
 
 <template>
