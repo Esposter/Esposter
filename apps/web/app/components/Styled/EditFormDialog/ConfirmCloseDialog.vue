@@ -7,8 +7,10 @@ interface Props {
 }
 
 const isOpen = defineModel<boolean>({ required: true });
-defineProps<Props>();
+const { itemType } = defineProps<Props>();
 const emit = defineEmits<{ discard: []; save: [] }>();
+// Derived here rather than in the template, which re-renders on every open and close of the dialog
+const itemLabel = computed(() => prettify(itemType));
 </script>
 
 <template>
@@ -20,8 +22,8 @@ const emit = defineEmits<{ discard: []; save: [] }>();
     title="Confirm Changes"
     :confirm="() => emit('save')"
   >
-    You have modified this {{ prettify(itemType) }}. You can save your changes, discard your changes, or cancel to
-    continue editing.
+    You have modified this {{ itemLabel }}. You can save your changes, discard your changes, or cancel to continue
+    editing.
     <template #prepend-confirm>
       <UiButton
         @click="

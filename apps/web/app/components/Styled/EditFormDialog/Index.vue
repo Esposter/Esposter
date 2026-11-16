@@ -26,11 +26,13 @@ interface Props<T> {
 defineSlots<{ default: () => VNode; "prepend-actions"?: () => VNode }>();
 const isOpen = defineModel<boolean>({ required: true });
 const isEditFormValid = defineModel<boolean>("isEditFormValid", { required: true });
-const { isDirty } = defineProps<Props<T>>();
+const { isDirty, itemType } = defineProps<Props<T>>();
 const emit = defineEmits<{ close: [] }>();
 const { answer, isPending } = useDialogAnswer(isOpen);
 const isConfirmCloseDialogOpen = ref(false);
 const formId = useId();
+// Derived here rather than in the template, which re-renders on every open, close and validity change of the dialog
+const overline = computed(() => prettify(itemType));
 const errorIcon = useTemplateRef("errorIcon");
 // Instantiated at setup rather than per close: a composable created inside a watch callback sits outside the
 // Component's effect scope, so its timer outlives unmount and emits into a destroyed component
@@ -60,7 +62,7 @@ watch(isOpen, (newIsOpen) => {
     The dialog's full screen and close. A close asked for while there are unsaved changes asks first -->
   <UiDialog
     :model-value="isOpen"
-    :overline="prettify(itemType)"
+    :overline
     :title
     :size="UiDialogSize.Large"
     @update:model-value="

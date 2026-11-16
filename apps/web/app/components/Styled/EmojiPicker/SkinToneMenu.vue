@@ -9,8 +9,9 @@ const modelValue = defineModel<SkinTone>({ required: true });
 // One tone for every emoji that supports one, chosen once and persisted, rather than a per-emoji long-press
 const skinToneEmoji = getEmojiIndex().slugEmojiMap.get(SKIN_TONE_PREVIEW_EMOJI_SLUG);
 // Keyed by the tone's name, since the untoned default's modifier is the empty string
+const skinToneEntries = Object.entries(SkinTone);
 const skinToneItems = skinToneEmoji
-  ? Object.entries(SkinTone).map(([name, skinTone]) => ({
+  ? skinToneEntries.map(([name, skinTone]) => ({
       description: name,
       title: applySkinTone(skinToneEmoji, skinTone),
       value: name,
@@ -28,7 +29,7 @@ const skinToneItems = skinToneEmoji
     px-0
     @select="
       (name) => {
-        const skinTone = Object.entries(SkinTone).find(([skinToneName]) => skinToneName === name)?.[1];
+        const skinTone = skinToneEntries.find(([skinToneName]) => skinToneName === name)?.[1];
         if (skinTone !== undefined) modelValue = skinTone;
       }
     "

@@ -3,6 +3,8 @@ interface Props {
   isActive: boolean;
 }
 
+// The default slot replaces the loader whole and gets no isLoading prop, so its content shows whenever the waypoint
+// Is active, as the pagination skill's waypoint page documents
 defineSlots<{ default: () => VNode }>();
 const { isActive } = defineProps<Props>();
 const emit = defineEmits<{ change: [onComplete: () => void] }>();
