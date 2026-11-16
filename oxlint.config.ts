@@ -235,6 +235,7 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
   plugins: ["import", "oxc", "promise", "typescript", "unicorn", "vitest", "vue"],
   rules: {
     ...PINIA_RULES,
+    "async-recursion/no-async-self-call": "error",
     "class-methods-use-this": "off",
     "comments/no-capitalized-identifier": "error",
     "comments/no-repeated-disable-next-line": "error",

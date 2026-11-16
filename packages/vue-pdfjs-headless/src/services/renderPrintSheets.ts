@@ -16,20 +16,20 @@ export const renderPrintSheets = async (
   printRoot.append(style);
   // The next batch starts once this one has landed, so a batch limits how many pages render at the same time.
   // Every page's image stays in the print root until afterprint, so by the end of a print every page is held there
-  const renderBatch = async (firstPageNumber: number): Promise<void> => {
-    if (checkIsCancelled() || firstPageNumber > pdfDocument.numPages) return;
-
+  for (
+    let firstPageNumber = 1;
+    !checkIsCancelled() && firstPageNumber <= pdfDocument.numPages;
+    firstPageNumber += PDF_PRINT_BATCH_SIZE
+  ) {
     const lastPageNumber = Math.min(firstPageNumber + PDF_PRINT_BATCH_SIZE - 1, pdfDocument.numPages);
     const pageNumbers = Array.from(
       { length: lastPageNumber - firstPageNumber + 1 },
       (_value, index) => firstPageNumber + index,
     );
-    printRoot.append(
-      ...(await Promise.all(pageNumbers.map((pageNumber) => renderPrintImage(pdfDocument, pageNumber)))),
-    );
-    await renderBatch(lastPageNumber + 1);
-  };
-  await renderBatch(1);
+    // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: a batch of PDF_PRINT_BATCH_SIZE pages renders together, and the next batch waits for it to land
+    const images = await Promise.all(pageNumbers.map((pageNumber) => renderPrintImage(pdfDocument, pageNumber)));
+    printRoot.append(...images);
+  }
 
   return checkIsCancelled() ? undefined : printRoot;
 };

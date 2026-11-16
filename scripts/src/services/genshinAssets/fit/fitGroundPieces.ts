@@ -1,6 +1,7 @@
 import type { GroundPiece } from "#src/models/genshinAssets/fit/GroundPiece";
 import type { GroundPiecesFit } from "#src/models/genshinAssets/fit/GroundPiecesFit";
 import type { GroundSource } from "#src/models/genshinAssets/fit/GroundSource";
+import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
 
 import { mergeGameDataBuilds } from "#src/services/gameData/mergeGameDataBuilds";
 import { fitGroundPiece } from "#src/services/genshinAssets/fit/fitGroundPiece";
@@ -10,19 +11,22 @@ import { GROUND_GATE_SAMPLES } from "#src/services/genshinAssets/shared/constant
 // A piece fitted, and where its bar misses its gate, its four quarters fitted the same way, until each holds its gate or
 // Reads on fewer samples than a gate needs. A piece reading on fewer samples than that is refused in place
 export const fitGroundPieces = async (piece: GroundPiece, source: GroundSource): Promise<GroundPiecesFit> => {
-  const fit = await fitGroundPiece(piece, source);
-  if (fit.isHeld) return { build: fit.build, isRefused: false };
-  if (fit.sampleCount < GROUND_GATE_SAMPLES) return { build: fit.build, isRefused: true };
-  const quarters: GroundPiecesFit[] = [];
-  for (const quarter of splitGroundPiece(piece))
-    // oxlint-disable-next-line no-await-in-loop -- one piece at a time, as runFits fits one at a time: a piece's compute holds the thread
-    quarters.push(await fitGroundPieces(quarter, source));
-  return {
-    build: mergeGameDataBuilds([
-      fit.build,
-      { notes: [`${piece.key}: refused, split into its four quarters`], objects: {} },
-      ...quarters.map(({ build }) => build),
-    ]),
-    isRefused: quarters.some(({ isRefused }) => isRefused),
-  };
+  const builds: GameDataBuild[] = [];
+  let isRefused = false;
+  // Depth first over the split, so a refused piece's quarters are pushed in reverse and the first of them is fitted next
+  const pending = [piece];
+  for (let next = pending.pop(); next !== undefined; next = pending.pop()) {
+    // oxlint-disable-next-line no-await-in-loop -- Order is the contract: the build's notes and records keep the depth-first order the walk fits them in, as runFits fits one piece at a time
+    const fit = await fitGroundPiece(next, source);
+    builds.push(fit.build);
+    if (fit.isHeld) continue;
+    if (fit.sampleCount < GROUND_GATE_SAMPLES) {
+      isRefused = true;
+      continue;
+    }
+
+    builds.push({ notes: [`${next.key}: refused, split into its four quarters`], objects: {} });
+    pending.push(...splitGroundPiece(next).toReversed());
+  }
+  return { build: mergeGameDataBuilds(builds), isRefused };
 };

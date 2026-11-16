@@ -35,10 +35,12 @@ export const useAutosaveFunction = (save: () => Promisable<unknown>) => {
   // Changes the one it names, since a leave guard alone misses a change of id within the same route. An edit typed
   // While that write is in flight is still held for the route the guard runs on, so the guard writes until none is left
   const writeHeldEdits = async (): Promise<void> => {
-    if (pendingResourceId === undefined) return;
+    for (;;) {
+      if (pendingResourceId === undefined) return;
 
-    await writePending();
-    await writeHeldEdits();
+      // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: an edit typed while a write is in flight is held for the next one
+      await writePending();
+    }
   };
   tryOnScopeDispose(beforeEach(writeHeldEdits));
 

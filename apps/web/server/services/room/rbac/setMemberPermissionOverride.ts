@@ -1,3 +1,4 @@
+/* oxlint-disable no-await-in-loop -- Retry: a concurrent override that got there first makes this one lose, so each attempt reads the row that beat it */
 import type { Context } from "#server/trpc/context";
 import type { MemberPermissionOverride } from "#shared/models/db/role/MemberPermissionOverride";
 import type { UpsertMemberPermissionOverrideInput } from "#shared/models/db/role/UpsertMemberPermissionOverrideInput";
@@ -16,7 +17,6 @@ const MAX_MEMBER_PERMISSION_OVERRIDE_ATTEMPTS = 3;
 export const setMemberPermissionOverride = async (
   db: Context["db"],
   input: UpsertMemberPermissionOverrideInput,
-  attempt = 1,
 ): Promise<MemberPermissionOverride> => {
   const { roomId, userId } = input;
   const {
@@ -26,20 +26,21 @@ export const setMemberPermissionOverride = async (
     userId: userIdColumn,
   } = roomMemberPermissionsInMessage;
   const isMemberRow = and(eq(roomIdColumn, roomId), eq(userIdColumn, userId));
-  const [current] = await db
-    .select({ allow: allowColumn, deny: denyColumn })
-    .from(roomMemberPermissionsInMessage)
-    .where(isMemberRow);
-  const override = mergeMemberPermissionOverride(current ?? { allow: 0n, deny: 0n }, input);
-  const isWritten = await checkIsMemberPermissionOverrideWritten(db, {
-    current,
-    isMemberRow,
-    override,
-    roomId,
-    userId,
-  });
-  if (isWritten) return override;
-  if (attempt >= MAX_MEMBER_PERMISSION_OVERRIDE_ATTEMPTS)
-    throw new TRPCError({ code: "CONFLICT", message: "The member's permissions changed while this was written" });
-  return setMemberPermissionOverride(db, input, attempt + 1);
+  for (let attempt = 0; attempt < MAX_MEMBER_PERMISSION_OVERRIDE_ATTEMPTS; attempt++) {
+    const [current] = await db
+      .select({ allow: allowColumn, deny: denyColumn })
+      .from(roomMemberPermissionsInMessage)
+      .where(isMemberRow);
+    const override = mergeMemberPermissionOverride(current ?? { allow: 0n, deny: 0n }, input);
+    const isWritten = await checkIsMemberPermissionOverrideWritten(db, {
+      current,
+      isMemberRow,
+      override,
+      roomId,
+      userId,
+    });
+    if (isWritten) return override;
+  }
+
+  throw new TRPCError({ code: "CONFLICT", message: "The member's permissions changed while this was written" });
 };

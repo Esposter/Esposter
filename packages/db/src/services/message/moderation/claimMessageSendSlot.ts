@@ -1,3 +1,4 @@
+/* oxlint-disable no-await-in-loop -- Retry: a claim lost to a racing send decides again on the clock that won, so each attempt waits on the one before it */
 import type { MessageCreationRejection } from "#src/models/message/moderation/MessageCreationRejection";
 import type { Database } from "@esposter/db-schema";
 
@@ -16,26 +17,27 @@ export const claimMessageSendSlot = async (
   message: string | undefined,
   now: Date,
 ): Promise<MessageCreationRejection | undefined> => {
-  const member = await db.query.usersToRoomsInMessage.findFirst({
-    columns: { lastMessageAt: true },
-    where: { roomId: { eq: roomId }, userId: { eq: userId } },
-  });
-  const rejection = await getMessageCreationRejection(db, userId, roomId, message);
-  if (rejection) return rejection;
+  for (;;) {
+    const member = await db.query.usersToRoomsInMessage.findFirst({
+      columns: { lastMessageAt: true },
+      where: { roomId: { eq: roomId }, userId: { eq: userId } },
+    });
+    const rejection = await getMessageCreationRejection(db, userId, roomId, message);
+    if (rejection) return rejection;
 
-  const claimed = await db
-    .update(usersToRoomsInMessage)
-    .set({ lastMessageAt: now })
-    .where(
-      and(
-        eq(usersToRoomsInMessage.roomId, roomId),
-        eq(usersToRoomsInMessage.userId, userId),
-        member?.lastMessageAt
-          ? eq(usersToRoomsInMessage.lastMessageAt, member.lastMessageAt)
-          : isNull(usersToRoomsInMessage.lastMessageAt),
-      ),
-    )
-    .returning({ userId: usersToRoomsInMessage.userId });
-  if (claimed.length > 0) return undefined;
-  return claimMessageSendSlot(db, userId, roomId, message, now);
+    const claimed = await db
+      .update(usersToRoomsInMessage)
+      .set({ lastMessageAt: now })
+      .where(
+        and(
+          eq(usersToRoomsInMessage.roomId, roomId),
+          eq(usersToRoomsInMessage.userId, userId),
+          member?.lastMessageAt
+            ? eq(usersToRoomsInMessage.lastMessageAt, member.lastMessageAt)
+            : isNull(usersToRoomsInMessage.lastMessageAt),
+        ),
+      )
+      .returning({ userId: usersToRoomsInMessage.userId });
+    if (claimed.length > 0) return undefined;
+  }
 };

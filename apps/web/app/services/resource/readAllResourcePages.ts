@@ -9,9 +9,13 @@ export const readAllResourcePages = async <TItem>(
   cursor = "",
   items: TItem[] = [],
 ): Promise<TItem[]> => {
-  const page = await readPage(cursor);
-  items.push(...page.items);
-  return page.nextCursor && items.length < maxItemCount
-    ? readAllResourcePages(readPage, maxItemCount, page.nextCursor, items)
-    : items;
+  let pageCursor = cursor;
+  let page: Page<TItem>;
+  do {
+    // oxlint-disable-next-line no-await-in-loop -- Pagination: each page starts from the cursor the one before it answered
+    page = await readPage(pageCursor);
+    items.push(...page.items);
+    pageCursor = page.nextCursor;
+  } while (page.nextCursor && items.length < maxItemCount);
+  return items;
 };

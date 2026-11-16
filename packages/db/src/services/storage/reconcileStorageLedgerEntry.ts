@@ -1,3 +1,4 @@
+/* oxlint-disable no-await-in-loop -- Retry: a reconcile that lost its conditional write runs again from the row as the winning write left it */
 import type { ReconcileStorageLedgerEntryResult } from "#src/models/storage/ReconcileStorageLedgerEntryResult";
 import type { Database, StorageBucket, StorageLedgerEntryInStorage } from "@esposter/db-schema";
 
@@ -29,72 +30,73 @@ export const reconcileStorageLedgerEntry = async (
   actualBytes: number,
   sequencer?: string,
 ): Promise<ReconcileStorageLedgerEntryResult> => {
-  const storageLedgerEntryWhere = and(
-    eq(storageLedgerInStorage.containerName, containerName),
-    eq(storageLedgerInStorage.blobName, blobName),
-  );
-  const [storageLedgerEntry] = await db
-    .select({
-      countedBytes: storageLedgerInStorage.countedBytes,
-      sequencer: storageLedgerInStorage.sequencer,
-      userId: storageLedgerInStorage.userId,
-    })
-    .from(storageLedgerInStorage)
-    .where(storageLedgerEntryWhere);
-  // A blob nothing reserved — a published or duplicated clone, or anything written outside the upload
-  // Chokepoints. Not an error: it is simply not accounted to anyone
-  if (!storageLedgerEntry) return { isMatched: false };
+  for (;;) {
+    const storageLedgerEntryWhere = and(
+      eq(storageLedgerInStorage.containerName, containerName),
+      eq(storageLedgerInStorage.blobName, blobName),
+    );
+    const [storageLedgerEntry] = await db
+      .select({
+        countedBytes: storageLedgerInStorage.countedBytes,
+        sequencer: storageLedgerInStorage.sequencer,
+        userId: storageLedgerInStorage.userId,
+      })
+      .from(storageLedgerInStorage)
+      .where(storageLedgerEntryWhere);
+    // A blob nothing reserved — a published or duplicated clone, or anything written outside the upload
+    // Chokepoints. Not an error: it is simply not accounted to anyone
+    if (!storageLedgerEntry) return { isMatched: false };
 
-  const { countedBytes, sequencer: countedSequencer, userId } = storageLedgerEntry;
-  // A stale event is dropped here and still answers matched — the caller has no other blob-name form to try,
-  // And there is nothing left to do with an event older than the one already applied, which happens because
-  // The newer write's event can land first.
-  //
-  // A charge passes no sequencer and is applied whatever the row has already seen. It cannot yield to the
-  // Last event that spoke: the blob it measures is rewritten under one name on every save, so a charge that
-  // Stood down after the blob's first event would leave every save after the first counted only by its own
-  // Event — seconds later, from the jobs worker, and not at all in the request the owner is watching.
-  // What that trades is a charge delayed past a *newer* write's event putting its own size back; the next
-  // Save's charge corrects it rather than stranding it, because the same name is written again. The one
-  // Charge whose figure is a guess about a write the server did not make — a clone — is charged before its
-  // Copy, so its own event always lands behind it and measures over it.
-  // `?? undefined` because a nullable column reads back as `null` — drizzle's boundary, not a shape we pass on
-  if (sequencer !== undefined && !checkIsNewerSequencer(sequencer, countedSequencer ?? undefined))
-    return { isMatched: true };
+    const { countedBytes, sequencer: countedSequencer, userId } = storageLedgerEntry;
+    // A stale event is dropped here and still answers matched — the caller has no other blob-name form to try,
+    // And there is nothing left to do with an event older than the one already applied, which happens because
+    // The newer write's event can land first.
+    //
+    // A charge passes no sequencer and is applied whatever the row has already seen. It cannot yield to the
+    // Last event that spoke: the blob it measures is rewritten under one name on every save, so a charge that
+    // Stood down after the blob's first event would leave every save after the first counted only by its own
+    // Event — seconds later, from the jobs worker, and not at all in the request the owner is watching.
+    // What that trades is a charge delayed past a *newer* write's event putting its own size back; the next
+    // Save's charge corrects it rather than stranding it, because the same name is written again. The one
+    // Charge whose figure is a guess about a write the server did not make — a clone — is charged before its
+    // Copy, so its own event always lands behind it and measures over it.
+    // `?? undefined` because a nullable column reads back as `null` — drizzle's boundary, not a shape we pass on
+    if (sequencer !== undefined && !checkIsNewerSequencer(sequencer, countedSequencer ?? undefined))
+      return { isMatched: true };
 
-  const isReadState = and(
-    storageLedgerEntryWhere,
-    eq(storageLedgerInStorage.countedBytes, countedBytes),
-    countedSequencer === null
-      ? isNull(storageLedgerInStorage.sequencer)
-      : eq(storageLedgerInStorage.sequencer, countedSequencer),
-  );
-  const [, updatedStorageLedgerEntries] = await db.batch([
-    // The counter moves by the difference, and only while the row still holds the state it was computed from
-    db
-      .update(usersInAuth)
-      .set({ storageBytesUsed: sql`MAX(0, ${usersInAuth.storageBytesUsed} + ${actualBytes - countedBytes})` })
-      .where(
-        and(
-          eq(usersInAuth.id, userId),
-          exists(
-            db
-              .select({ one: sql`1` })
-              .from(storageLedgerInStorage)
-              .where(isReadState),
+    const isReadState = and(
+      storageLedgerEntryWhere,
+      eq(storageLedgerInStorage.countedBytes, countedBytes),
+      countedSequencer === null
+        ? isNull(storageLedgerInStorage.sequencer)
+        : eq(storageLedgerInStorage.sequencer, countedSequencer),
+    );
+    const [, updatedStorageLedgerEntries] = await db.batch([
+      // The counter moves by the difference, and only while the row still holds the state it was computed from
+      db
+        .update(usersInAuth)
+        .set({ storageBytesUsed: sql`MAX(0, ${usersInAuth.storageBytesUsed} + ${actualBytes - countedBytes})` })
+        .where(
+          and(
+            eq(usersInAuth.id, userId),
+            exists(
+              db
+                .select({ one: sql`1` })
+                .from(storageLedgerInStorage)
+                .where(isReadState),
+            ),
           ),
         ),
-      ),
-    // A charge writes no sequencer rather than a null one, so the column keeps meaning "an event has spoken"
-    db
-      .update(storageLedgerInStorage)
-      .set({ countedBytes: actualBytes, reconciledAt: new Date(), ...(sequencer !== undefined && { sequencer }) })
-      .where(isReadState)
-      .returning({ userId: storageLedgerInStorage.userId }),
-  ]);
-  if (updatedStorageLedgerEntries.length === 0)
-    return reconcileStorageLedgerEntry(db, containerName, blobName, actualBytes, sequencer);
-  if (actualBytes === countedBytes) return { isMatched: true };
+      // A charge writes no sequencer rather than a null one, so the column keeps meaning "an event has spoken"
+      db
+        .update(storageLedgerInStorage)
+        .set({ countedBytes: actualBytes, reconciledAt: new Date(), ...(sequencer !== undefined && { sequencer }) })
+        .where(isReadState)
+        .returning({ userId: storageLedgerInStorage.userId }),
+    ]);
+    if (updatedStorageLedgerEntries.length === 0) continue;
+    if (actualBytes === countedBytes) return { isMatched: true };
 
-  return { chargedUserId: userId, isMatched: true };
+    return { chargedUserId: userId, isMatched: true };
+  }
 };

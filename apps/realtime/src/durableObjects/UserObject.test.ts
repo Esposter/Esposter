@@ -1,6 +1,7 @@
 import type { RoomObject } from "#src/durableObjects/RoomObject";
 import type { MockSocket } from "#src/services/durableObject/createMockObjectState.test";
 import type {
+  Page,
   PageCursor,
   PageSort,
   RoomObjectRpc,
@@ -85,9 +86,17 @@ const readAll = async <TItem extends Record<TKey, unknown>, TKey extends string>
   limit: number,
   encodedCursor = "",
 ): Promise<TItem[]> => {
-  const cursor = createPageInputSchema(sort).parse({ cursor: encodedCursor, limit }).cursor;
-  const page = toPage(await read({ cursor, limit: limit + 1 }), sort, cursor, limit);
-  return page.nextCursor ? [...page.items, ...(await readAll(sort, read, limit, page.nextCursor))] : page.items;
+  const items: TItem[] = [];
+  let encodedPageCursor = encodedCursor;
+  let page: Page<TItem>;
+  do {
+    const cursor = createPageInputSchema(sort).parse({ cursor: encodedPageCursor, limit }).cursor;
+    // oxlint-disable-next-line no-await-in-loop -- Pagination: the next page's cursor is the one the last page answered
+    page = toPage(await read({ cursor, limit: limit + 1 }), sort, cursor, limit);
+    items.push(...page.items);
+    encodedPageCursor = page.nextCursor;
+  } while (page.nextCursor);
+  return items;
 };
 
 describe(UserObject, () => {

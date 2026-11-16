@@ -1,3 +1,4 @@
+/* oxlint-disable no-await-in-loop -- Retry: a save that landed in between makes this update stale, so each attempt reads the content that save left */
 import type { AuthedContext } from "#server/models/auth/AuthedContext";
 import type { ResourceContentUpdate } from "#server/models/resource/ResourceContentUpdate";
 import type { SavedResourceContentUpdate } from "#server/models/resource/SavedResourceContentUpdate";
@@ -21,34 +22,36 @@ export const updateResourceContent = async <T>(
   resource: ResourceInResource,
   update: (storedContent: unknown) => ResourceContentUpdate<T>,
   contentVersion?: number,
-  attempt = 1,
 ): Promise<SavedResourceContentUpdate<T>> => {
   if (contentVersion !== undefined && contentVersion !== resource.contentVersion)
     throw new TRPCError({ code: "BAD_REQUEST", message: STALE_CONTENT_VERSION_ERROR_MESSAGE });
 
-  const storedResourceContent = await readStoredResourceContent(resource.id);
-  const { content, result } = update(storedResourceContent);
-  const savedResource = await getResultAsync(() =>
-    saveResourceContent(ctx, {
-      activityType: ResourceActivityType.ContentSaved,
-      content,
-      contentVersion: resource.contentVersion,
-      resource,
-    }),
-  ).match<ResourceInResource | undefined>(
-    (updatedResource) => updatedResource,
-    (error) => {
-      if (
-        contentVersion === undefined &&
-        attempt < MAX_CONTENT_UPDATE_ATTEMPTS &&
-        error.message === STALE_CONTENT_VERSION_ERROR_MESSAGE
-      )
-        return undefined;
-      throw error;
-    },
-  );
-  if (savedResource) return { resource: savedResource, result };
+  let latestResource = resource;
+  for (let attempt = 1; ; attempt++) {
+    const attemptResource = latestResource;
+    const storedResourceContent = await readStoredResourceContent(attemptResource.id);
+    const { content, result } = update(storedResourceContent);
+    const savedResource = await getResultAsync(() =>
+      saveResourceContent(ctx, {
+        activityType: ResourceActivityType.ContentSaved,
+        content,
+        contentVersion: attemptResource.contentVersion,
+        resource: attemptResource,
+      }),
+    ).match<ResourceInResource | undefined>(
+      (updatedResource) => updatedResource,
+      (error) => {
+        if (
+          contentVersion === undefined &&
+          attempt < MAX_CONTENT_UPDATE_ATTEMPTS &&
+          error.message === STALE_CONTENT_VERSION_ERROR_MESSAGE
+        )
+          return undefined;
+        throw error;
+      },
+    );
+    if (savedResource) return { resource: savedResource, result };
 
-  const latestResource = await requireOwnedResource(ctx, resource.id, resource.type);
-  return updateResourceContent(ctx, latestResource, update, contentVersion, attempt + 1);
+    latestResource = await requireOwnedResource(ctx, attemptResource.id, attemptResource.type);
+  }
 };

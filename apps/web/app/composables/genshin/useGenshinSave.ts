@@ -1,3 +1,4 @@
+/* oxlint-disable no-await-in-loop -- Retry: each attempt runs only because the one before it failed, and the wait between them is its backoff */
 /* eslint-disable no-restricted-syntax -- the offline save system's writer half, kept beside the reader above; the journal is the offline save system's, read imperatively the way `readGuestSave` reads the guest's copy */
 /* oxlint-disable typescript/no-floating-promises -- loadAccountSave retries until the save loads and settles every failure itself, so the promise it returns cannot reject and nothing waits on it; persist settles every failure itself, so the promise it returns cannot reject and nothing waits on it */
 import type { GenshinSave } from "genshin-world/save";
@@ -93,20 +94,20 @@ export const useGenshinSave = async () => {
   // As the same start, which the server answers without taking the lease again
   const startUntilStarted = async (
     startSessionId: string,
-    attempt: number,
   ): Promise<NonNullable<Awaited<ReturnType<typeof startLease>>> | undefined> => {
-    if (isLeft) return undefined;
+    for (let attempt = 0; ; attempt++) {
+      if (isLeft) return undefined;
 
-    const start = await startLease(startSessionId);
-    if (start) {
-      isStartRetrying.value = false;
-      return start;
+      const start = await startLease(startSessionId);
+      if (start) {
+        isStartRetrying.value = false;
+        return start;
+      }
+
+      isStartRetrying.value = true;
+      const genshinStartRetryDelayMs = getGenshinStartRetryDelayMs(attempt);
+      await waitForStartRetry(genshinStartRetryDelayMs);
     }
-
-    isStartRetrying.value = true;
-    const genshinStartRetryDelayMs = getGenshinStartRetryDelayMs(attempt);
-    await waitForStartRetry(genshinStartRetryDelayMs);
-    return startUntilStarted(startSessionId, attempt + 1);
   };
   const retryStart = () => {
     retryStartNow?.();
@@ -183,7 +184,7 @@ export const useGenshinSave = async () => {
   };
   const loadAccountSave = async (accountUserId: string) => {
     const guestSave = readGuestSave();
-    const start = await startUntilStarted(v7(), 0);
+    const start = await startUntilStarted(v7());
     if (!start) return;
     // The journal is read from the browser as it stands now, not from the copy this page cached when it was keyed, since
     // Another window of the browser may have written it since. It is adopted only by the start that replaced the session

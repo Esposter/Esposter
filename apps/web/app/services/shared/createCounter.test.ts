@@ -6,9 +6,11 @@ export const createCounter = () => {
   let value = 0;
   let changed = Promise.withResolvers<void>();
   const reach = async (target: number): Promise<void> => {
-    if (value < target) {
+    for (;;) {
+      if (!(value < target)) return;
+
+      // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: each wait ends on an increment, and the check after it reads the count that increment moved
       await changed.promise;
-      await reach(target);
     }
   };
   return {

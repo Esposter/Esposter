@@ -10,12 +10,18 @@ export const deleteUserMessagesInPages = async (
   userId: string,
   after?: number,
 ): Promise<RoomMessage[]> => {
-  const messages = await useRoomObject(roomId).deleteUserMessages({
-    after,
-    limit: DELETE_USER_MESSAGES_PAGE_LIMIT,
-    userId,
-  });
-  if (messages.length < DELETE_USER_MESSAGES_PAGE_LIMIT) return messages;
-
-  return [...messages, ...(await deleteUserMessagesInPages(roomId, userId, messages.at(-1)?.id))];
+  const deletedMessages: RoomMessage[] = [];
+  let cursor = after;
+  let page: RoomMessage[];
+  do {
+    // oxlint-disable-next-line no-await-in-loop -- Pagination: the next page continues after the last message the room answered
+    page = await useRoomObject(roomId).deleteUserMessages({
+      after: cursor,
+      limit: DELETE_USER_MESSAGES_PAGE_LIMIT,
+      userId,
+    });
+    deletedMessages.push(...page);
+    cursor = page.at(-1)?.id;
+  } while (page.length >= DELETE_USER_MESSAGES_PAGE_LIMIT);
+  return deletedMessages;
 };

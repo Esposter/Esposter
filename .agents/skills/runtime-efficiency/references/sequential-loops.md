@@ -10,6 +10,12 @@ carries `// oxlint-disable-next-line no-await-in-loop -- <shape>: <why here>`. I
 row created before the one that references it) is the "each step reads the last" shape; a loop of independent
 fixtures is converted like any other.
 
+A sequence is never written as recursion: an async function calling itself from its own body is the same loop with a
+pending promise held per level, and a list built as `[...page, ...(await next())]` copied again on each one.
+`async-recursion/no-async-self-call` (`scripts/src/oxlint/asyncRecursion.ts`) reports it, and the fix is the loop with
+its shape's directive. A walk whose branches run together from a callback (`Promise.all(children.map(walk))`) is not a
+sequence, and the rule leaves it alone.
+
 ## Convert — the iterations are independent
 
 Map the set to promises and `await Promise.all(...)`. The shape is independent when no iteration reads what an earlier

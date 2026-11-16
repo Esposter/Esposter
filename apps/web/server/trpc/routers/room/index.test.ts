@@ -1,3 +1,4 @@
+/* oxlint-disable no-await-in-loop -- Pagination: each page is requested with the nextCursor the one before it answered; Bounded concurrency: each chunk waits for the last, so the proxy never holds them all */
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { R2Bucket } from "@cloudflare/workers-types";
@@ -51,6 +52,18 @@ const uploadPublicUserAssetBlob = async (blobName: string) => {
   await bucket.put(blobName, Buffer.alloc(0));
 };
 
+// Every id a read lists, one page after another from its cursor until the list ends
+const listEveryId = async (readPage: (cursor: string) => Promise<Page<{ id: string }>>): Promise<string[]> => {
+  const ids: string[] = [];
+  let cursor = "";
+  do {
+    const page = await readPage(cursor);
+    ids.push(...page.items.map(({ id }) => id));
+    cursor = page.nextCursor;
+  } while (cursor);
+  return ids;
+};
+
 describe("roomRouter", () => {
   let mockContext: Context;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
@@ -71,16 +84,6 @@ describe("roomRouter", () => {
   // A link that never lapses, which is what every test not about expiry or exhaustion joins through
   const createUnlimitedInvite = (inviteRoomId: string) =>
     inviteCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: inviteRoomId });
-  // Every id a read lists, one page after another from its cursor until the list ends
-  const listEveryId = async (
-    readPage: (cursor: string) => Promise<Page<{ id: string }>>,
-    cursor = "",
-    listedIds: string[] = [],
-  ): Promise<string[]> => {
-    const page = await readPage(cursor);
-    const ids = [...listedIds, ...page.items.map(({ id }) => id)];
-    return page.nextCursor ? listEveryId(readPage, page.nextCursor, ids) : ids;
-  };
 
   beforeAll(async () => {
     ({ bucket: messageAssets, dispose: disposeMessageAssets } = await createMockBucket(StorageBucket.MessageAssets));
@@ -485,7 +488,6 @@ describe("roomRouter", () => {
     );
     // Fifty at a time: Miniflare's local proxy resets its connections when hundreds of writes open at once
     for (const blobNameChunk of chunk(blobNames, 50))
-      // oxlint-disable-next-line no-await-in-loop -- each chunk waits for the last, so the proxy never holds them all
       await Promise.all(blobNameChunk.map((blobName) => putBlob(blobName)));
     await roomCaller.deleteRoom(newRoom.id);
     const blobDeletionEvents = MockJobQueueDatabase.get(QueueJob.ProcessBlobDeletion);

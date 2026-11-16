@@ -50,25 +50,29 @@ export const createReplyQueue = <T extends ReplyPiece>(
     reading = indexes.length > 0 ? { messageId, nextIndex: Math.min(...indexes), turnId } : undefined;
     drain = drainAfter(drain);
   };
+  // Whether a piece of another turn waits, which the piece running asks as it reads
+  const createCheckIsSuperseded = (piece: T) => () =>
+    waiting.some((entry) => entry.piece.turnId && entry.piece.turnId !== piece.turnId);
   const drainNext = async (): Promise<void> => {
-    const next = takeNext();
-    if (!next) {
-      if (waiting.length > 0) hold ??= setTimeout(skipMissing, holdMs);
-      return;
-    }
+    for (;;) {
+      const next = takeNext();
+      if (!next) {
+        if (waiting.length > 0) hold ??= setTimeout(skipMissing, holdMs);
+        return;
+      }
 
-    clearTimeout(hold);
-    hold = undefined;
-    waiting = waiting.filter((entry) => entry !== next);
-    const { piece } = next;
-    if (piece.turnId)
-      reading = piece.isFinal
-        ? undefined
-        : { messageId: piece.messageId, nextIndex: piece.index + 1, turnId: piece.turnId };
-    next.resolve(
-      await run(piece, () => waiting.some((entry) => entry.piece.turnId && entry.piece.turnId !== piece.turnId)),
-    );
-    return drainNext();
+      clearTimeout(hold);
+      hold = undefined;
+      waiting = waiting.filter((entry) => entry !== next);
+      const { piece } = next;
+      if (piece.turnId)
+        reading = piece.isFinal
+          ? undefined
+          : { messageId: piece.messageId, nextIndex: piece.index + 1, turnId: piece.turnId };
+      // oxlint-disable-next-line no-await-in-loop -- Order is the contract: a message's pieces are read in their index order, one piece at a time
+      const status = await run(piece, createCheckIsSuperseded(piece));
+      next.resolve(status);
+    }
   };
 
   return (piece) => {

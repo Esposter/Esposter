@@ -15,9 +15,13 @@ const enabledModsAtom = atom({ key: "enabledMods", plugin: "genshin-mods" } as c
 
 // The nearest folder at or above `folder` holding a `.git`, a worktree's file included, undefined when none does
 const findCheckoutRoot = async ($: EngineInterface, folder: string): Promise<string | undefined> => {
-  if (await $.fs.exists(`${folder}/.git`)) return folder;
-  const parent = getParentFolder(folder);
-  return parent === undefined ? undefined : findCheckoutRoot($, parent);
+  let current: string | undefined = folder;
+  while (current !== undefined) {
+    // oxlint-disable-next-line no-await-in-loop -- Stop at the first: the nearest folder holding a `.git` is the checkout, and the walk ends there
+    if (await $.fs.exists(`${current}/.git`)) return current;
+    current = getParentFolder(current);
+  }
+  return undefined;
 };
 
 // The checkout a session's git commands run in: the folder with the `.git`, or the session's own folder where none is

@@ -40,15 +40,20 @@ export const createVoiceSynthesizer = async (
       progress_callback: onProgress,
     });
   // The bottom rung's rejection is the load's, with the reason the runtime gives
-  const load = async (rung: VoiceDeviceRung, rungsBelow: VoiceDeviceRung[]): Promise<LoadedVoiceModel> => {
-    const [nextRung, ...rungsBelowNext] = rungsBelow;
-    if (!nextRung) return { model: await loadRung(rung), rung, rungsBelow };
+  const load = async (firstRung: VoiceDeviceRung, firstRungsBelow: VoiceDeviceRung[]): Promise<LoadedVoiceModel> => {
+    let rung = firstRung;
+    let rungsBelow = firstRungsBelow;
+    for (;;) {
+      const [nextRung, ...rungsBelowNext] = rungsBelow;
+      if (!nextRung) return { model: await loadRung(rung), rung, rungsBelow };
 
-    const [outcome] = await Promise.allSettled([loadRung(rung)]);
-    if (outcome?.status === "fulfilled") return { model: outcome.value, rung, rungsBelow };
+      const [outcome] = await Promise.allSettled([loadRung(rung)]);
+      if (outcome?.status === "fulfilled") return { model: outcome.value, rung, rungsBelow };
 
-    onFallback?.(`${rung.name} did not load the engine: ${String(outcome?.reason)}`);
-    return load(nextRung, rungsBelowNext);
+      onFallback?.(`${rung.name} did not load the engine: ${String(outcome?.reason)}`);
+      rung = nextRung;
+      rungsBelow = rungsBelowNext;
+    }
   };
   const deviceLadder = getVoiceDeviceLadder();
   const startIndex = Math.max(

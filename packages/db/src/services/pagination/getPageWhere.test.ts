@@ -49,9 +49,16 @@ describe(getPageWhere, () => {
     bound: BoundPageSort<TKey>,
     encodedCursor = "",
   ): Promise<UserInAuth[]> => {
-    const cursor = createPageInputSchema(bound).parse({ cursor: encodedCursor, limit }).cursor;
-    const page = await readPage(bound, cursor);
-    return page.nextCursor ? [...page.items, ...(await readAll(bound, page.nextCursor))] : page.items;
+    const items: UserInAuth[] = [];
+    let nextEncodedCursor = encodedCursor;
+    do {
+      const cursor = createPageInputSchema(bound).parse({ cursor: nextEncodedCursor, limit }).cursor;
+      // oxlint-disable-next-line no-await-in-loop -- Pagination: each page is requested with the nextCursor the one before it answered
+      const page = await readPage(bound, cursor);
+      items.push(...page.items);
+      nextEncodedCursor = page.nextCursor;
+    } while (nextEncodedCursor);
+    return items;
   };
 
   beforeAll(async () => {
