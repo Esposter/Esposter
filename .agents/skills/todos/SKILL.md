@@ -43,3 +43,5 @@ A marker is revisited on every bump of the package it links and whenever its iss
 ## Unfiled upstream issues
 
 Each row is a marker in the unfiled form, waiting for its issue to be filed: the file, where it goes, and its title. A session files the issue once its minimal reproduction is proven and its tracker holds no issue with the same cause (`references/upstream-reports.md`); an open issue with the same cause gets a comment with the reproduction instead. The marker then links what it filed or found, and its row goes. The list is empty while every gap has its issue.
+
+- `apps/web/configuration/vite.ts` — unjs/env-runner: "The Miniflare runner's module fallback serves a `require`d `.json` file as CommonJS source"
