@@ -4,9 +4,9 @@ import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedA
 import { createCharacterFit } from "#src/services/genshinAssets/fit/createCharacterFit";
 import { createInterfaceRectsFit } from "#src/services/genshinAssets/fit/createInterfaceRectsFit";
 import { createRegionFit } from "#src/services/genshinAssets/fit/createRegionFit";
+import { createRegionPlantsFit } from "#src/services/genshinAssets/fit/createRegionPlantsFit";
 import { fitLoginScene } from "#src/services/genshinAssets/fit/fitLoginScene";
 import { fitProps } from "#src/services/genshinAssets/fit/fitProps";
-import { createRegionPlantsFit } from "#src/services/genshinAssets/fit/fitRegionPlants";
 import { createRegionRocksFit } from "#src/services/genshinAssets/fit/fitRegionRocks";
 import { createRegionRuinsFit } from "#src/services/genshinAssets/fit/fitRegionRuins";
 import { fitRegionStatue } from "#src/services/genshinAssets/fit/fitRegionStatue";

@@ -1,6 +1,6 @@
 import type { WorldPlacement } from "#src/models/genshinAssets/world/WorldPlacement";
 
-import { toFittedPlants } from "#src/services/genshinAssets/fit/fitRegionPlants";
+import { toFittedPlants } from "#src/services/genshinAssets/fit/toFittedPlants";
 import { describe, expect, test } from "vitest";
 
 const grass = (position: [number, number, number]): WorldPlacement => ({

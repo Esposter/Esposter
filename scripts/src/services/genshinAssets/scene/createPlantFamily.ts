@@ -3,8 +3,8 @@ import type { FittedPlants } from "#src/models/genshinAssets/scene/FittedPlants"
 import type { Vector } from "#src/models/shared/Vector";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
-import { readPlantPlacements } from "#src/services/genshinAssets/fit/readPlantPlacements";
 import { toRegionPlace } from "#src/services/genshinAssets/fit/toRegionPlace";
+import { readPlantPlacements } from "#src/services/genshinAssets/shared/readPlantPlacements";
 import { readWorldData } from "#src/services/genshinAssets/shared/readWorldData";
 import { toWorldQuaternion } from "#src/services/genshinAssets/world/toWorldQuaternion";
 
