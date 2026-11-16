@@ -15,6 +15,9 @@ interface Props {
 
 const modelValue = defineModel<FriendPickerModelValue<TMultiple>>();
 const { excludedUserIds = [], isMultiple } = defineProps<Props>();
+// The prop's type is the generic, so Vue gives it no Boolean runtime type and a bare `is-multiple` arrives as `""`. Present
+// Is on, as for an HTML attribute; only an absent or bound-false prop picks one
+const isMultipleMode = computed(() => isMultiple !== undefined && isMultiple !== false);
 const friendStore = useFriendStore();
 const { friends } = storeToRefs(friendStore);
 const searchQuery = ref("");
@@ -29,14 +32,14 @@ const friendItems = computed(() =>
 // The single/multiple split is the component's generic, which the template cannot narrow — so the two shapes of
 // The model are read and written here, in one place, rather than cast at every binding
 const selectedUserIds = computed(() =>
-  isMultiple
+  isMultipleMode.value
     ? ((modelValue.value as string[] | undefined) ?? [])
     : modelValue.value
       ? [modelValue.value as string]
       : [],
 );
 const toggleFriend = (id: string) => {
-  if (isMultiple)
+  if (isMultipleMode.value)
     modelValue.value = (
       selectedUserIds.value.includes(id)
         ? selectedUserIds.value.filter((userId) => userId !== id)
@@ -66,7 +69,7 @@ await readFriends();
          picker of one as well as of several -->
     <UiList
       v-if="friendItems.length > 0"
-      :is-multiple="isMultiple ? true : undefined"
+      :is-multiple="isMultipleMode ? true : undefined"
       :items="friendItems"
       label="Friends"
       :model-value="selectedUserIds"

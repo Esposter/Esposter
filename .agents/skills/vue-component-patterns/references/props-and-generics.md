@@ -24,6 +24,7 @@ const modelValue = defineModel<ModelValueMap[TKey]>({ required: true });
 - The map type drives inference at call sites where the key type is statically known.
 - For `as const satisfies` maps, use `Record<Exclude<TValueSet, ExcludedVariant>, ValueType>` to exclude variants using a different component path (e.g. Boolean → checkbox, not text field).
 - If TypeScript can't narrow `TKey` in template `v-if`/`v-else` branches (correlated generics limitation), fall back to the union of all possible values (e.g. `FooValue`) for `defineModel` — the prop type still provides call-site inference.
+- **A boolean prop typed by the generic gets no Boolean runtime type.** Vue's compiler cannot resolve `TMultiple extends boolean` to `Boolean`, so it declares the prop `{ type: null }`, and a bare `is-multiple` arrives as `""`, which reads false. The component reads the prop by presence instead, `isMultiple !== undefined && isMultiple !== false`, as `FriendPicker.vue` does, so a bare attribute and a bound `true` both turn it on.
 
 ## Per-variant type correctness
 
