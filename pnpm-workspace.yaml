@@ -120,7 +120,7 @@ catalog:
   "@vizejs/unplugin": ^0.751.0
   "@vizejs/vite-plugin": ^0.751.0
   "@vue/compiler-core": ^3.5.45
-  "@vue/test-utils": ^2.5.1
+  "@vue/test-utils": ^2.6.0
   "@vuetify/v0": ^1.3.2
   "@vueuse/core": ^15.0.0
   "@vueuse/nuxt": ^15.0.0
