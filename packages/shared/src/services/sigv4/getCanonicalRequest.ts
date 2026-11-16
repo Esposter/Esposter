@@ -17,9 +17,10 @@ export const getCanonicalRequest = (
     .split("/")
     .map((segment) => encodeSigV4Component(decodeURIComponent(segment)))
     .join("/");
-  const canonicalQuery = [...url.searchParams]
-    .filter(([name]) => name !== "")
-    .map(([name, value]) => [encodeSigV4Component(name), encodeSigV4Component(value)] as const)
+  const canonicalQuery = Array.from(
+    url.searchParams,
+    ([name, value]) => [encodeSigV4Component(name), encodeSigV4Component(value)] as const,
+  )
     .toSorted(([firstName, firstValue], [secondName, secondValue]) =>
       firstName === secondName ? compareCodeUnits(firstValue, secondValue) : compareCodeUnits(firstName, secondName),
     )

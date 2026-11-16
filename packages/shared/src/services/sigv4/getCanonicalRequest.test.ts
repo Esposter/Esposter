@@ -17,6 +17,19 @@ describe(getCanonicalRequest, () => {
     expect(canonicalRequest.split("\n")[1]).toBe("/a%2Bb.txt");
   });
 
+  test("keeps a pair with an empty name, since the request sends it and S3 signs it", () => {
+    expect.hasAssertions();
+
+    const { canonicalQuery } = getCanonicalRequest(
+      "GET",
+      new URL("https://a.example.com/a?=v"),
+      new Headers(),
+      payloadHash,
+    );
+
+    expect(canonicalQuery).toBe("=v");
+  });
+
   test("keeps every pair of a repeated query name, sorted by value", () => {
     expect.hasAssertions();
 
