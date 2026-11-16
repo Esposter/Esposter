@@ -1338,9 +1338,7 @@ useWorldSaveSync({
             <CharacterScene :element :tab />
           </template>
           <template #default="{ characterId }">
-            <div class="character-terms">
-              <CharacterTerms :key="characterId" :character-id :character-pack-readers />
-            </div>
+            <CharacterTerms :key="characterId" :character-id :character-pack-readers />
           </template>
         </CharacterScreen>
       </template>
@@ -1711,24 +1709,6 @@ useWorldSaveSync({
   position: relative;
   width: 100%;
   height: 100%;
-}
-
-/* The terms of the character's model, beside its foot, read as its release carries them */
-.character-terms {
-  position: absolute;
-  right: calc(var(--unit) * 120);
-  bottom: calc(var(--unit) * 48);
-  max-width: calc(var(--unit) * 720);
-  max-height: calc(var(--unit) * 300);
-  overflow: auto;
-  color: v-bind(GAME_CREAM);
-  font-size: calc(var(--unit) * 22);
-}
-
-.character-terms > pre {
-  margin: 0;
-  font: inherit;
-  white-space: pre-wrap;
 }
 
 /* The teleport's fade to the loading screen's background and back, its durations read off the teleport clip */

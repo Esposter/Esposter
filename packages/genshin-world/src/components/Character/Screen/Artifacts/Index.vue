@@ -69,9 +69,6 @@ const artifactSetBonusGroups = computed(() =>
     },
   ),
 );
-const noSetBonusLabel = computed(() =>
-  activeArtifactSetBonuses.value.length === 0 ? gameText[GameTextKey.ArtifactSetBonusNone] : "",
-);
 const formatTotal = (difference: number) => `+${formatWholeNumber(difference)}`;
 // The attribute totals the worn artifacts add: each stat the character reaches with them less the one it reaches without
 const artifactTotals = computed(() => {
@@ -104,7 +101,7 @@ const equipDisabledSlots = computed(() =>
     :equip-label="gameText[GameTextKey.ArtifactActionEquip]"
     :fast-equip-label="gameText[GameTextKey.ArtifactActionFastEquip]"
     :lock-label="gameText[GameTextKey.ArtifactActionLock]"
-    :no-set-bonus-label
+    :no-set-bonus-label="activeArtifactSetBonuses.length === 0 ? gameText[GameTextKey.ArtifactSetBonusNone] : ''"
     :set-bonus-heading="gameText[GameTextKey.ArtifactSetBonusHeading]"
     :sets="artifactSetBonusGroups"
     :slot-names="artifactSlotNames"

@@ -234,7 +234,9 @@ const { characterElement, characterName, elementMarkPath, elementName, menuEntri
       :mark="CloseButtonMark.Cross"
       @click="emit('close')"
     />
-    <slot :character-id />
+    <div v-if="$slots.default" class="character-terms">
+      <slot :character-id />
+    </div>
   </GameScreen>
 </template>
 
@@ -254,5 +256,23 @@ const { characterElement, characterName, elementMarkPath, elementName, menuEntri
   background: v-bind(GAME_CREAM);
   color: v-bind(GAME_REPLY_HOVER_INK);
   cursor: inherit;
+}
+
+/* The terms of the character's model, beside its foot, read as its release carries them */
+.character-terms {
+  position: absolute;
+  right: calc(var(--unit) * 120);
+  bottom: calc(var(--unit) * 48);
+  max-width: calc(var(--unit) * 720);
+  max-height: calc(var(--unit) * 300);
+  overflow: auto;
+  color: v-bind(GAME_CREAM);
+  font-size: calc(var(--unit) * 22);
+}
+
+.character-terms > :deep(pre) {
+  margin: 0;
+  font: inherit;
+  white-space: pre-wrap;
 }
 </style>
