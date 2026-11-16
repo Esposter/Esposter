@@ -161,7 +161,7 @@ All three over-report — `:style="{ color }"` on a plain element binds to no ch
 array is not work, and most `getX` helpers are a property read. The rule decides; these only narrow what to open.
 
 The first recipe's largest cluster is the `Dungeons` `:configuration` literals, and none is a finding:
-`useInitializeGameObjectSetters` watches `() => configuration[key]` **per key**, so the wrapper never reads the
+`useInitializeGameObjectSetters` watches `() => configuration[key]` **per setter key**, so the wrapper never reads the
 object's identity and a fresh one costs nothing. Its siblings in that list are static literals, which the
 compiler hoists. What remains after those two are subtracted is the real set.
 

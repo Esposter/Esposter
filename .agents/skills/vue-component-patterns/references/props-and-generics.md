@@ -39,7 +39,7 @@ const modelValue = defineModel<ModelValueMap[TKey]>({ required: true });
 ```ts
 // Foo.vue — defaults false → only `true` is meaningful
 interface Props {
-  isDense?: true;
+  isDense?: true | undefined;
 }
 defineProps<Props>(); // the template reads isDense as true | undefined
 ```
@@ -47,7 +47,7 @@ defineProps<Props>(); // the template reads isDense as true | undefined
 ```ts
 // Bar.vue — defaults true → only `false` is meaningful
 interface Props {
-  isInteractive?: false /* ... */;
+  isInteractive?: false | undefined /* ... */;
 }
 const { isInteractive = true } = defineProps<Props>(); // boolean at runtime
 ```
@@ -55,7 +55,7 @@ const { isInteractive = true } = defineProps<Props>(); // boolean at runtime
 A **derived/computed** value still fits the literal type as long as it can only be the default or its opposite — map the default branch to `undefined` instead of widening to `boolean`:
 
 ```vue
-<!-- isDense ? false : undefined → type `false | undefined`, matches `isInteractive?: false` -->
+<!-- isDense ? false : undefined → type `false | undefined`, matches `isInteractive?: false | undefined` -->
 <Bar :is-interactive="isDense ? false : undefined" />
 ```
 

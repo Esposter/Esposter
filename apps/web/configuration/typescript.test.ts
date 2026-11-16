@@ -14,7 +14,7 @@ describe("typescript", () => {
 
   // The packages get these from `tsconfig.base.json`, which no generated tsconfig extends: `erasableSyntaxOnly` is what
   // Refuses an enum, so a value set stays an object Node's type stripping can load
-  test.each(["erasableSyntaxOnly", "noUnusedLocals"] as const)(
+  test.each(["erasableSyntaxOnly", "exactOptionalPropertyTypes", "noUnusedLocals"] as const)(
     "keeps %s on in the generated tsconfig, which the app typechecks against",
     (compilerOption) => {
       expect.hasAssertions();

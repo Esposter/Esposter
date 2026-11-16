@@ -32,23 +32,9 @@ Every game object component follows the same 5-file pattern, split across five t
 
 A new component's configuration `Pick`s from the Phaser game object type, and a setter returning a fluent value is wrapped in braces, never `void` (`references/adding-a-component.md`).
 
-## Configuration Keys Must All Be Present at Setup
+## Configuration Keys
 
-A `configuration` object must carry **every key it will ever want to update**, even when the value is `undefined`. `useInitializeGameObjectSetters` enumerates `Object.entries(toValue(configuration))` once during setup and registers a setter plus a watcher only for the keys present at that moment. A key absent then gets neither, for the lifetime of the game object — later values are silently dropped with no error.
-
-`key: undefined` is fine and explicitly handled: the setter still runs, and the composable emits the intrinsic game object value instead of the missing one.
-
-So build configurations as complete inline object literals, and never spread an optional-prop object straight into one:
-
-```vue
-<!-- correct — displayWidth is always a key, undefined or not -->
-<Image :configuration="{ visible: isVisible, ...imagePosition, texture, displayWidth, scaleY, tween }" />
-
-<!-- wrong — an omitted optional prop leaves the key absent, so it never gets a watcher -->
-<Image :configuration="props" />
-```
-
-A `displayWidth?: number` props declaration is still correct; the component just has to name the key when it builds the configuration.
+`useInitializeGameObjectSetters` watches every key its setter map names, whatever the configuration held at setup, so a key may be left out, handed `undefined` or given a value later, and the game object follows it. A key with no value leaves the game object as Phaser made it, and the component emits that intrinsic value so a `v-model` still reads one; a missing key and an `undefined` one are the same thing here, as everywhere (the `absent-values` skill).
 
 ## Phaser Objects in Pinia Stores
 

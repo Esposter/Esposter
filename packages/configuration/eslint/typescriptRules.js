@@ -129,10 +129,12 @@ export default {
     },
     {
       // The child combinators are load-bearing — they match only the property's own annotation, so
-      // `Ref<T | undefined>`, `(T | undefined)[]`, tuple members and function params are untouched.
-      message: "Declare the property optional (`field?: T`) instead of `field: T | undefined`.",
+      // `Ref<T | undefined>`, `(T | undefined)[]`, tuple members and function params are untouched. Only a required
+      // Property is matched, since under `exactOptionalPropertyTypes` an optional one a value may hand `undefined` is
+      // `field?: T | undefined`: a property that may be absent is optional
+      message: "Declare the property optional (`field?: T | undefined`) instead of `field: T | undefined`.",
       selector:
-        ":matches(TSPropertySignature, PropertyDefinition, TSAbstractPropertyDefinition) > TSTypeAnnotation > TSUnionType > TSUndefinedKeyword",
+        ":matches(TSPropertySignature, PropertyDefinition, TSAbstractPropertyDefinition):not([optional=true]) > TSTypeAnnotation > TSUnionType > TSUndefinedKeyword",
     },
     {
       // An app-owned string is `string` with `""` as its empty sentinel, checked by truthiness — a bare
@@ -349,6 +351,16 @@ export default {
       message:
         "Model an absent value with `.optional()`, never `.nullable()` — null belongs to an external boundary. See the absent-values skill.",
       selector: "CallExpression[callee.property.name='nullable']",
+    },
+    {
+      // A missing key and an explicit `undefined` mean the same thing everywhere, so no schema of ours tells them apart:
+      // A field `.exactOptional()` makes would refuse the `undefined` a client or superjson sends for "not set". A
+      // Schema mirroring a library's type, whose optional key takes no `undefined`, names that type in its annotation,
+      // And the compiler holds the mirror to it, so a declaration with a type annotation is left to it
+      message:
+        "Use `.optional()`, never `.exactOptional()` — a missing key and an explicit `undefined` mean the same thing. Only a schema annotated with the library type it mirrors may use it. See the absent-values skill.",
+      selector:
+        "CallExpression[callee.property.name='exactOptional']:not(VariableDeclarator[id.typeAnnotation] CallExpression)",
     },
     {
       // A spread replaces each key outright, so every nested option the factory set on `deps`, `dts` or `exports` is

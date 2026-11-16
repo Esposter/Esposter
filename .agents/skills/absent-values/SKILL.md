@@ -16,7 +16,7 @@ description: Apply when a value can be empty or missing — an optional field, p
 - **The sentinel is checked by truthiness**, never compared with `=== ""` — that one shape is the reason it was chosen — save where falsy values diverge: a `number | ""` union, or `""` handled apart from an omitted value (`references/string-sentinel.md`).
 - **A sentinel travels unchanged** from ref to input to row to read: the input declares it required with the sentinel in its value space, and a read hands it on to another procedure only after dropping it (`references/sentinel-propagation.md`).
 - **An optional column carries the sentinel itself** — `.notNull().default("")`, or `.default(0)` where `0` means nothing (`references/sentinel-columns.md`).
-- **`undefined` only where absence differs from every real value**, an absent property is `field?: T`, and `null` stays only inside an external boundary's own shape (`references/null-vs-undefined.md`).
+- **`undefined` only where absence differs from every real value**, an absent property is optional (`field?: T`, or `field?: T | undefined` where a value may hand it `undefined`, a `.vue` prop always), and `null` stays only inside an external boundary's own shape (`references/null-vs-undefined.md`).
 - **"Not loaded yet" is `useQuery`'s `isPending`**, never a third absent value (`references/null-vs-undefined.md`).
 - Value sets never take a `None` member for absence — the `typescript` skill (`references/value-sets.md`).
 

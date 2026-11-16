@@ -9,7 +9,7 @@ import type { NuxtConfig } from "nuxt/schema";
 // The Tiled tilesets are XML under `app/assets/`, where Nuxt's `app/**` include would compile them as TSX
 // `vize` is the content mapper that turns `.vue` files into TypeScript for `tsrs -b`, and `useTemplateRef` is named as
 // Vue's because the auto-import declaration is ambient
-export const typescript: NuxtConfig["typescript"] = {
+export const typescript: NonNullable<NuxtConfig["typescript"]> = {
   // Nuxt includes each local module's whole `runtime/server` folder, tests too; a package's tests are its own program's,
   // Typechecked by the package against its own globals, which the Workers ones would change here
   serverTsConfig: {
@@ -22,7 +22,12 @@ export const typescript: NuxtConfig["typescript"] = {
   // The Workers globals are the server's alone, because loaded into the browser program their `Request` and `Response`
   // Replace the DOM's, so the server tsconfig names the package and the app and shared code never see it
   tsConfig: {
-    compilerOptions: { customConditions: ["source"], erasableSyntaxOnly: true, noUnusedLocals: true },
+    compilerOptions: {
+      customConditions: ["source"],
+      erasableSyntaxOnly: true,
+      exactOptionalPropertyTypes: true,
+      noUnusedLocals: true,
+    },
     contentMappers: [{ extensions: [".vue"], package: "vize" }],
     exclude: ["../app/assets/**/*.tsx"],
     vueCompilerOptions: { composables: { useTemplateRef: ["useTemplateRef"] } },

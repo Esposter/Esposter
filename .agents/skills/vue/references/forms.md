@@ -18,8 +18,8 @@ When a form handles both create and edit, use an explicit `isCreate` prop (defau
 
 ```ts
 interface Props {
-  initialValues?: Pick<Foo, "bar" | "baz">;
-  isCreate?: true;
+  initialValues?: Pick<Foo, "bar" | "baz"> | undefined;
+  isCreate?: true | undefined;
 }
 const { initialValues = { bar: "", baz: "" }, isCreate } = defineProps<Props>();
 const { cloned: values } = useCloned(() => initialValues);
