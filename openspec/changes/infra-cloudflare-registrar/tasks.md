@@ -2,7 +2,7 @@
 
 ## 1. Nothing names the old registrar
 
-- [x] 1.1 Remove the old registrar from the README, the README logo sources and the logo asset. Verify: `git grep -il namecheap -- ":!openspec/changes/archive"` prints nothing.
+- [x] 1.1 Remove the old registrar from the README, the README logo sources and the logo asset. Verify: `git grep -il namecheap -- ":!openspec/changes/archive" ":!openspec/changes/infra-cloudflare-registrar"` prints nothing.
 
 ## 2. After the transfer
 
