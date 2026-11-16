@@ -43,7 +43,7 @@ Measured: aws4fetch was 64 KB installed across three packages' manifests; the si
 
 ## Upstream
 
-Every issue and pull request of [mhart/aws4fetch](https://github.com/mhart/aws4fetch) (85: 24 open, 61 closed) has one verdict. The in-scope rows are below; a regression test is named by its issue number. The defects marked "fails upstream" were reproduced against aws4fetch 1.0.20 by a probe before the rewrite, since its API differs from ours and the test cannot be pointed at it unchanged.
+Every issue and pull request of [mhart/aws4fetch](https://github.com/mhart/aws4fetch) (85: 24 open, 61 closed) has one verdict. The in-scope rows are below; a regression test is named by its issue number. Each defect's Proof names its regression test, which runs against this signer. The table does not record which defects a probe reproduced against aws4fetch 1.0.20 before the rewrite, since that API differs from ours and the test cannot be pointed at it unchanged; the Verdict is the tracker's report, not a probe's result.
 
 | Issue                                               | Verdict             | Proof                                                                                                                |
 | :-------------------------------------------------- | :------------------ | :------------------------------------------------------------------------------------------------------------------- |
