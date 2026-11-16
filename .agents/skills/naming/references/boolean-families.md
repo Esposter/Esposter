@@ -33,8 +33,9 @@ a surface treats as one (`StyledWaypoint`, a sheet's first render).
 An alias between them (`isPending: isLoading`) means one of the two names is wrong: pick the one that describes
 what is actually being waited on.
 
-Per-operation flags follow the `pinia` skill's `is{Operation}Pending` (`references/mutation-actions.md`). **A local flag naming its verb — `isAdmitting`,
-`isDismissing`, `isCreating` — is `isPending` wherever the surface has only one action that can be in flight.**
-The verb earns its place only when there is more than one, so the name says which is pending: a knocker row that
-admits and dismisses cannot tell the two apart with a single `isPending`. One action, one flag, and it is
+Per-operation flags follow the `pinia` skill's `is{Operation}Pending` (`references/mutation-actions.md`). **A local flag
+naming its verb, such as "isAdmitting" or "isJoining", is `isPending` wherever the surface has only one action that can be in
+flight.** The verb earns its place only when there is more than one awaited action, so the name says which is pending:
+a row that both admits and dismisses on the server's answer cannot tell the two apart with a single `isPending`. An
+optimistic action shows no pending at all, so it never counts towards that. One awaited action, one flag, and it is
 `isPending` like everything else.

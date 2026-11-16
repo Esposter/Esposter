@@ -16,17 +16,17 @@ const callStore = useCallStore();
 const { activeCallSessionId } = storeToRefs(callStore);
 const knockerStore = useKnockerStore();
 const { admitKnocker, dismissKnocker } = knockerStore;
-const isAdmitting = ref(false);
+const isPending = ref(false);
 // The server decides the admission, so the button is pending until it answers, and clears whichever way it ends so a
 // Failed admit does not leave its spinner running
 const admitCallKnocker = async () => {
   const callSessionId = activeCallSessionId.value;
   if (!callSessionId) return;
-  isAdmitting.value = true;
+  isPending.value = true;
   await withFinalizerAsync(
     () => admitKnocker(callSessionId, knocker.id),
     () => {
-      isAdmitting.value = false;
+      isPending.value = false;
     },
   );
 };
@@ -41,7 +41,7 @@ const dismissCallKnocker = () => {
   <div ui-row>
     <UiItemContent :image="knocker.image ?? undefined" :title="`${knocker.name} wants to join`">
       <template #append>
-        <UiButton :is-pending="isAdmitting" @click="admitCallKnocker()"> Let in </UiButton>
+        <UiButton :is-pending @click="admitCallKnocker()"> Let in </UiButton>
         <UiIconButton
           label="Dismiss"
           :meaning="UiIconMeaning.Close"
