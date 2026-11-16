@@ -9,7 +9,10 @@ import { describe, vi } from "vitest";
 // The cast is what standing in for the Proxy's full surface costs, and this is the one place it is paid
 export const getSession = vi.fn<() => Promise<unknown>>();
 export const signOut = vi.fn<() => Promise<void>>();
-export const useSession = vi.fn<(fetcher?: unknown) => unknown>();
+// A suite that never names a session reads a signed-out one, in the shape of the call form it used
+export const useSession = vi.fn<(fetcher?: unknown) => unknown>((fetcher) =>
+  fetcher === undefined ? ref({ data: null }) : { data: ref<null>(null) },
+);
 export const apiKeyList = vi.fn<() => Promise<unknown>>();
 export const listAccounts = vi.fn<() => Promise<unknown>>();
 export const authClient = {

@@ -72,11 +72,6 @@ vi.mock(import("#server/services/storage/getBucket"), () => import("#server/serv
 // The better-auth session is registered here rather than beside the context helpers: it reached a suite only when that
 // Module happened to load before the suite's router did.
 vi.mock(import("#server/auth"), () => import("#server/auth.test"));
-// The browser's better-auth client is registered here for the same reason, and for a second one: its session store
-// Outlives the component that asked for it, since nanostores runs the store's cleanup on a timer after the last listener
-// Leaves, so a suite that mounts a component reading the session without mocking it lets the real store's cleanup fire
-// After the environment is torn down, where `window` no longer has `removeEventListener`
-vi.mock(import("#src/services/auth/authClient"), () => import("#src/services/auth/authClient.test"));
 // The global database reads its Worker binding when its module loads, before a suite has made the mock database that
 // Fills the binding, so it is registered over a double that reads the binding on first use
 vi.mock(import("#server/db/index"), () => import("#server/db/index.test"));

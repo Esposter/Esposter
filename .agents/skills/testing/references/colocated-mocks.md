@@ -20,7 +20,7 @@ vi.mock(import("#src/services/getFoo"), () => ({ getFoo: () => fooMock.current()
 (better-auth) resolves its methods through a `Proxy`, so `useSession` is not a configurable own property and
 `vi.spyOn(authClient, "useSession")` throws rather than replacing anything. Its colocated
 `app/services/auth/authClient.test.ts` is that seam: it exports the loosely typed `useSession`/`signOut` doubles
-beside the cast `authClient`, and `shared/test/setup.ts` registers it for every suite, so a suite drives the method
+beside the cast `authClient`, and `app/test/setup.ts` registers it for every suite, so a suite drives the method
 it imported from the mock file and registers nothing — never a per-file factory that re-rolls the cast. The
 registration is global because the real client's session store outlives the component that read it: nanostores runs
 its cleanup on a timer, and a suite that mounted such a component unmocked saw that cleanup fire after the
@@ -49,7 +49,7 @@ describe.todo("getFoo");
 vi.mock(import("#src/services/getFoo"), () => import("#src/services/getFoo.test"));
 ```
 
-**A mock every suite wants is registered once in the package's vitest `setupFiles`, never per file.** A `vi.mock` is hoisted only within the file that writes it, so one written in a shared helper module (e.g. `context.test.ts`) intercepts a test file's own direct import of the same module only when the helper happens to evaluate first — reorder the imports, or move one out of the suite file, and the module is silently unmocked. That dependence on import order is the reason a registration tends to get copied verbatim into every suite that reads through it. A setup file runs before the test module is imported, so it covers every path regardless of order. In this repo the shared registrations are made in `apps/web/shared/test/setup.ts`, the one place they are registered; a test file adds its own `vi.mock` only for a double that is specific to it (an inline factory over local state).
+**A mock every suite wants is registered once in the package's vitest `setupFiles`, never per file.** A `vi.mock` is hoisted only within the file that writes it, so one written in a shared helper module (e.g. `context.test.ts`) intercepts a test file's own direct import of the same module only when the helper happens to evaluate first — reorder the imports, or move one out of the suite file, and the module is silently unmocked. That dependence on import order is the reason a registration tends to get copied verbatim into every suite that reads through it. A setup file runs before the test module is imported, so it covers every path regardless of order. In this repo the shared registrations are made in `apps/web/shared/test/setup.ts`, and the client's in its twin `apps/web/app/test/setup.ts`, since `shared/` may not import the app tree; those are the two places they are registered. A registered double answers the shape a suite that never names it reads (the auth client's `useSession` is signed out); a test file adds its own `vi.mock` only for a double that is specific to it (an inline factory over local state).
 
 When a test needs to call the mock directly (assert on calls / read mock state), import from the **real path** — Vitest intercepts it and returns the mock:
 
