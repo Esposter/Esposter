@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { pluralize } from "#shared/util/text/pluralize";
-import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { getEntityNotFoundStatusMessage } from "#src/services/shared/error/getEntityNotFoundStatusMessage";
-import { useRoomStore } from "#src/store/message/room/index";
 import { getRouteParam } from "#src/util/router/getRouteParam";
 import { DatabaseEntityType, selectInviteInMessageSchema } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
@@ -23,10 +21,6 @@ const invite = await $trpc.invite.readInvite.query(code);
 if (!invite)
   throw createError({ status: 404, statusText: getEntityNotFoundStatusMessage(DatabaseEntityType.Invite, code) });
 else if (invite.isMember) await navigateTo(RoutePath.Messages(invite.roomId));
-
-const roomStore = useRoomStore();
-const { isJoinRoomPending } = storeToRefs(roomStore);
-const { joinRoom } = roomStore;
 </script>
 
 <!-- The invite is the page, so it stands in the middle of it rather than in a modal over nothing: who asks, where to,
@@ -47,9 +41,7 @@ const { joinRoom } = roomStore;
             {{ pluralize("Member", invite.room.memberCount) }}
           </p>
         </div>
-        <UiButton :is-pending="isJoinRoomPending" w-full :variant="UiButtonVariant.Accent" @click="joinRoom(code)">
-          Accept Invite
-        </UiButton>
+        <MessageModelRoomInviteAcceptButton :code />
       </section>
     </div>
   </NuxtLayout>
