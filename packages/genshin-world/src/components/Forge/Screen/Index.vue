@@ -91,10 +91,6 @@ const findRecipe = (id: number) => recipes.find((recipe) => recipe.id === id);
 const pickedRecipe = computed(() => findRecipe(recipeId.value));
 // The most a recipe's queue holds, the one ceiling the amount is kept under
 const getAmountMaximum = (recipe: ForgeRecipe | undefined) => recipe?.queueSize ?? 1;
-const amountMaximum = computed(() => getAmountMaximum(pickedRecipe.value));
-const requiredCoins = computed(() => (pickedRecipe.value?.mora ?? 0) * amount.value);
-const totalSeconds = computed(() => (pickedRecipe.value?.seconds ?? 0) * amount.value);
-const yieldCount = computed(() => (pickedRecipe.value ? takeOne(pickedRecipe.value.results, 0).count : 0));
 // The Materials box's count under the first material the picked recipe takes: the bag's count of it over what one unit takes
 const materialCountLabel = computed(() => {
   if (!pickedRecipe.value) return "";
@@ -238,7 +234,7 @@ const obtain = (queueId: number) => {
       v-model:tab="tab"
       :recipe-id
       :amount-label="fillGameTextValues(gameText[GameTextKey.ForgeAmount], amount)"
-      :amount-maximum
+      :amount-maximum="getAmountMaximum(pickedRecipe)"
       :close-label="gameText[GameTextKey.Back]"
       :coins="wallet[Currency.Mora]"
       :material-count-label
@@ -250,13 +246,15 @@ const obtain = (queueId: number) => {
       :queues-label
       :recipes="recipeCells"
       :refusal-label
-      :required-coins
+      :required-coins="(pickedRecipe?.mora ?? 0) * amount"
       :required-label="gameText[GameTextKey.CraftingRequired]"
       :start-label="gameText[GameTextKey.ForgeStart]"
       :support-label="gameText[GameTextKey.ForgeSupportCharacter]"
-      :yield-count
+      :yield-count="pickedRecipe ? takeOne(pickedRecipe.results, 0).count : 0"
       :title="gameText[GameTextKey.ForgeTitle]"
-      :total-time-label="fillGameTextValues(gameText[GameTextKey.ForgeTotalTime], formatForgeTime(totalSeconds))"
+      :total-time-label="
+        fillGameTextValues(gameText[GameTextKey.ForgeTotalTime], formatForgeTime((pickedRecipe?.seconds ?? 0) * amount))
+      "
       @close="emit('close')"
       @obtain="(queueId) => obtain(queueId)"
       @start="start()"
