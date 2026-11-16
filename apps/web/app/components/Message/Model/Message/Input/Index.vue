@@ -21,6 +21,7 @@ const dataStore = useDataStore();
 const { items } = storeToRefs(dataStore);
 // Slash commands are the room composer's alone, so they ride on top of the shared stack rather than in it
 const slashCommandExtension = useSlashCommandExtension();
+const extraExtensions = [slashCommandExtension];
 const inputStore = useInputStore();
 const { input } = storeToRefs(inputStore);
 const replyStore = useReplyStore();
@@ -48,7 +49,7 @@ useCommands(MessageInputCommands);
       v-model="input"
       :focus-position="isTouchScreen ? undefined : 'end'"
       :placeholder="`Message ${roomName}`"
-      :extra-extensions="[slashCommandExtension]"
+      :extra-extensions
       :target
     >
       <template #prepend-footer="{ uploadFiles }">

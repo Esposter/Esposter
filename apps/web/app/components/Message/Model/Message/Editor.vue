@@ -41,6 +41,7 @@ const keyboardExtension = new Extension({
 // Registered so the editor parses a custom emoji node back out of the stored markup — without it an edit
 // Silently drops every emoji in the message
 const customEmojiExtension = useCustomEmojiExtension();
+const editorExtensions = [keyboardExtension, MentionExtension, customEmojiExtension];
 </script>
 
 <template>
@@ -48,7 +49,7 @@ const customEmojiExtension = useCustomEmojiExtension();
     v-model="editedMessageHtml"
     focus-position="end"
     placeholder="Edit message"
-    :extensions="[keyboardExtension, MentionExtension, customEmojiExtension]"
+    :extensions="editorExtensions"
     :limit="MESSAGE_MAX_LENGTH"
     @keydown.esc="emit('update:update-mode', false)"
   >

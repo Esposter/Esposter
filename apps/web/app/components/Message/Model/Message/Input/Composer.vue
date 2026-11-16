@@ -16,13 +16,14 @@ const slots = defineSlots<{
 const input = defineModel<string>({ required: true });
 const { extraExtensions = [], target } = defineProps<Props>();
 const { checkIsInputValid, extensions, sendComposerMessage, uploadFiles } = await useComposer(() => target);
+const editorExtensions = computed(() => [...extensions, ...extraExtensions]);
 </script>
 
 <template>
   <RichTextEditor
     v-model="input"
     :limit="MESSAGE_MAX_LENGTH"
-    :extensions="[...extensions, ...extraExtensions]"
+    :extensions="editorExtensions"
     @paste="(_editor, files) => uploadFiles(files)"
   >
     <template #prepend-inner-header>
