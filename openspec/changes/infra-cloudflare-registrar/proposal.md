@@ -8,7 +8,7 @@
 
 - The README, the README logo sources and the logo asset stop naming the old registrar. This is done.
 - Once the transfer completes, the program declares the zone's DNSSEC, and a no-mail baseline for a domain that sends no mail: a null MX, an SPF record that authorises no sender, and a DMARC record that rejects.
-- The cost and security posture page gains the rows for what stays outside the program: the registration, its renewal and expiry warnings, and the account's own sign-in security.
+- The cost and security posture page gains the rows for what stays outside the program: the registration and its renewal and expiry warnings, and the account's sign-in, where no two-factor enforcement is declared.
 
 ## Capabilities
 
@@ -20,4 +20,4 @@ The transfer completing. Cloudflare's transfer guide gives its total time as up 
 
 ## Impact
 
-Adds four small Pulumi resources and a folder for the DNSSEC resource's type. No Worker, table or queue changes.
+Adds a few small Pulumi resources and a folder for the DNSSEC resource's type. No Worker, table or queue changes.
