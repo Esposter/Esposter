@@ -1,7 +1,7 @@
 import type { MockDatabase } from "#src/models/MockDatabase";
 
 import { env } from "#src/cloudflareWorkers";
-import { COMPATIBILITY_DATE, CORE_BINDING } from "#src/services/constants";
+import { CORE_BINDING } from "#src/services/constants";
 import { emptyD1Database } from "#src/services/emptyD1Database";
 import { emptyR2Bucket } from "#src/services/emptyR2Bucket";
 import { getMockBindings } from "#src/services/getMockBindings";
@@ -24,7 +24,10 @@ export const createMockDatabase = async (
     workers: [
       {
         config: {
-          compatibilityDate: COMPATIBILITY_DATE,
+          // The Worker is a stand-in with no code of its own, so the date only has to be one the installed workerd accepts.
+          // Miniflare refuses a date later than the machine's clock, so a date long past, the one its own fallback uses,
+          // Is the one every clock accepts
+          compatibilityDate: "2000-01-01",
           env: getMockBindings(),
           manifest: { mainModule: "index.js", modules: { "index.js": { contents: MOCK_WORKER_MODULE, type: "esm" } } },
           name: "db-mock",
