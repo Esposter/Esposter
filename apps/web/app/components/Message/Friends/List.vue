@@ -1,69 +1,27 @@
 <script setup lang="ts">
-import type { Item } from "#src/models/shared/Item";
-import type { PublicUser } from "@esposter/db-schema";
-
 import { compareCreatedAt } from "#shared/util/date/compareCreatedAt";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
-import { useBlockStore } from "#src/store/message/user/block";
 import { useFriendStore } from "#src/store/message/user/friend";
-import { useFriendDialogStore } from "#src/store/message/user/friendDialog";
 
 const friendStore = useFriendStore();
 const { friends } = storeToRefs(friendStore);
-const friendDialogStore = useFriendDialogStore();
-const { invitingUserId, removingUserId } = storeToRefs(friendDialogStore);
-const blockStore = useBlockStore();
-const { createBlock } = blockStore;
 const { getContextMenuProps } = useContextMenu();
-const { invitableRooms } = useInvitableRooms();
 const displayFriends = computed(() =>
   friends.value.toSorted((firstFriend, secondFriend) => compareCreatedAt(secondFriend, firstFriend)),
 );
-// What a friend's row does, behind its overflow mark and its context menu alike, as Discord keeps them under More
-const getFriendItems = (userId: PublicUser["id"]): Item[] => [
-  ...(invitableRooms.value.length > 0
-    ? [
-        {
-          meaning: UiIconMeaning.Invite,
-          onClick: () => {
-            invitingUserId.value = userId;
-          },
-          title: "Invite to room",
-        },
-      ]
-    : []),
-  {
-    meaning: UiIconMeaning.Remove,
-    onClick: () => {
-      removingUserId.value = userId;
-    },
-    title: "Remove friend",
-  },
-  {
-    isDanger: true,
-    meaning: UiIconMeaning.Block,
-    onClick: async () => {
-      await createBlock(userId);
-    },
-    title: "Block",
-  },
-];
 </script>
 
 <template>
   <MessageFriendsSection :title="`Friends — ${displayFriends.length}`">
     <ul v-if="displayFriends.length > 0" flex flex-col>
-      <MessageFriendsUserListItem
+      <MessageFriendsFriendListItem
         v-for="{ id, name, image } of displayFriends"
+        :id
         :key="id"
-        :="getContextMenuProps(id, () => getFriendItems(id))"
+        :get-context-menu-props
         :image
         :name
-      >
-        <template #append>
-          <UiOverflowMenu :items="getFriendItems(id)" :label="`${name} actions`" />
-        </template>
-      </MessageFriendsUserListItem>
+      />
     </ul>
     <UiEmptyState
       v-else

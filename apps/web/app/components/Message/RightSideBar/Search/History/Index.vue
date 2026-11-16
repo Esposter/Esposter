@@ -27,10 +27,7 @@ const listItems = computed(() =>
   <section v-if="isPending || items.length > 0" flex flex-col gap-1>
     <h3 text-sm text-muted px-2>History</h3>
     <div v-if="isPending" aria-busy="true" flex flex-col>
-      <div v-for="i in 3" :key="i" ui-row>
-        <UiSkeleton shrink-0 size-6 />
-        <UiSkeleton flex-1 h-4 />
-      </div>
+      <MessageRightSideBarSearchListItemSkeleton v-for="i in 3" :key="i" />
     </div>
     <template v-else>
       <UiList

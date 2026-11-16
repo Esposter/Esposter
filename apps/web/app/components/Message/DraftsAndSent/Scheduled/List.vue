@@ -10,7 +10,14 @@ import { RoutePath } from "@esposter/shared";
 
 const { readMoreScheduledMessageJobs } = useReadScheduledMessageJobs();
 const scheduledMessageJobStore = useScheduledMessageJobStore();
+const { cancelScheduledMessageJob } = scheduledMessageJobStore;
 const { hasMore, isLoaded, items } = storeToRefs(scheduledMessageJobStore);
+// The job the delete confirm is open for, as its id
+const deletingScheduledMessageJobId = ref("");
+const { isOpen: isDeleteOpen, item: deletingScheduledMessageJob } = useSingletonDialog(
+  deletingScheduledMessageJobId,
+  () => items.value.find(({ id }) => id === deletingScheduledMessageJobId.value),
+);
 // A job leads with what it will do, post a message or remind, and opens the room it runs in
 const getRow = (scheduledMessageJob: ScheduledMessageJobWithRoom): UiListItem<string> => ({
   description: getScheduledMessageJobText(scheduledMessageJob),
@@ -19,14 +26,18 @@ const getRow = (scheduledMessageJob: ScheduledMessageJobWithRoom): UiListItem<st
   to: RoutePath.Messages(scheduledMessageJob.roomId),
   value: scheduledMessageJob.id,
 });
+const getDate = ({ runAt }: ScheduledMessageJobWithRoom) => runAt;
 </script>
 
 <template>
   <div v-if="items.length > 0" flex flex-col>
-    <MessageDraftsAndSentTimelineList :get-date="({ runAt }) => runAt" :get-row :items label="Scheduled messages">
+    <MessageDraftsAndSentTimelineList :get-date :get-row :items label="Scheduled messages">
       <template #actions="{ item }">
         <MessageDraftsAndSentScheduledSendButton :scheduled-message-job="item" />
-        <MessageDraftsAndSentScheduledMoreMenu :scheduled-message-job="item" />
+        <MessageDraftsAndSentScheduledMoreMenu
+          :scheduled-message-job="item"
+          @delete="deletingScheduledMessageJobId = item.id"
+        />
       </template>
     </MessageDraftsAndSentTimelineList>
     <StyledWaypoint :is-active="hasMore" @change="(onComplete) => readMoreScheduledMessageJobs(onComplete)" />
@@ -38,4 +49,12 @@ const getRow = (scheduledMessageJob: ScheduledMessageJobWithRoom): UiListItem<st
     title="No scheduled messages"
   />
   <MessageDraftsAndSentListSkeleton v-else />
+  <MessageDraftsAndSentDeleteConfirmDialog
+    v-if="deletingScheduledMessageJob"
+    v-model="isDeleteOpen"
+    title="Delete message"
+    :confirm="() => deletingScheduledMessageJob && cancelScheduledMessageJob(deletingScheduledMessageJob)"
+  >
+    <p>Are you sure you want to delete this scheduled message?</p>
+  </MessageDraftsAndSentDeleteConfirmDialog>
 </template>

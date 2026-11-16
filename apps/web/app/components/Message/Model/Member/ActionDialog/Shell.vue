@@ -13,6 +13,7 @@ interface Props {
   title: string;
 }
 
+defineSlots<{ default: () => VNode }>();
 const isOpen = defineModel<boolean>({ default: false });
 defineProps<Props>();
 const executeAdminAction = useExecuteAdminAction();

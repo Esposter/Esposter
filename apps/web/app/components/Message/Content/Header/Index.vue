@@ -8,7 +8,6 @@ const roomStore = useRoomStore();
 const { currentRoom, isCreator } = storeToRefs(roomStore);
 const roomDialogStore = useRoomDialogStore();
 const { isEditRoomDialogOpen } = storeToRefs(roomDialogStore);
-const roomName = useRoomName(() => currentRoom.value?.id ?? "");
 </script>
 
 <!-- The room's name and topic on one line, as a channel's header has them, and the room's tools at its end. Its creator
@@ -26,17 +25,13 @@ const roomName = useRoomName(() => currentRoom.value?.id ?? "");
         min-w-0
         @click="isEditRoomDialogOpen = true"
       >
-        <UiAvatar :image="currentRoom.image" :name="roomName" is-small />
-        <span text-heading-color truncate>{{ roomName }}</span>
-        <span v-if="currentRoom.topic" class="hidden sm:inline" text-muted truncate>{{ currentRoom.topic }}</span>
+        <MessageContentHeaderRoomTitle :room="currentRoom" />
         <UiIcon :meaning="UiIconMeaning.Edit" op-0 group-focus-visible:op-100 group-hover:op-100 />
       </UiButton>
     </UiTooltip>
     <!-- Only its creator may edit it, so for anyone else the name is only read -->
     <div v-else px-3 flex gap-2 min-w-0 items-center>
-      <UiAvatar :image="currentRoom.image" :name="roomName" is-small />
-      <span text-heading-color truncate>{{ roomName }}</span>
-      <span v-if="currentRoom.topic" class="hidden sm:inline" text-muted truncate>{{ currentRoom.topic }}</span>
+      <MessageContentHeaderRoomTitle :room="currentRoom" />
     </div>
     <div flex-1 />
     <div flex shrink-0 gap-1 items-center>

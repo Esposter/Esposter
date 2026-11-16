@@ -5,15 +5,13 @@ import type { Item } from "#src/models/shared/Item";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { getDraftItemRoute } from "#src/services/message/draftsAndSent/getDraftItemRoute";
 import { useDraftsAndSentScheduleDialogStore } from "#src/store/message/draftsAndSent/scheduleDialog";
-import { useInputStore } from "#src/store/message/input/index";
 
 interface Props {
   draftItem: DraftItem;
 }
 
 const { draftItem } = defineProps<Props>();
-const inputStore = useInputStore();
-const { clearComposer } = inputStore;
+const emit = defineEmits<{ delete: [] }>();
 const draftsAndSentScheduleDialogStore = useDraftsAndSentScheduleDialogStore();
 const { open } = draftsAndSentScheduleDialogStore;
 const items = computed<Item[]>(() => [
@@ -37,9 +35,8 @@ const items = computed<Item[]>(() => [
 <template>
   <MessageDraftsAndSentMoreMenu
     :actions="items"
-    :confirm-delete="() => clearComposer({ roomId: draftItem.room.id, threadRootId: draftItem.threadRootId })"
     delete-label="Delete draft"
-    delete-message="Are you sure you want to delete this draft?"
     label="Draft actions"
+    @delete="emit('delete')"
   />
 </template>

@@ -5,7 +5,6 @@ import type { Item } from "#src/models/shared/Item";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { getScheduledMessageJobText } from "#src/services/message/draftsAndSent/getScheduledMessageJobText";
 import { useDraftsAndSentScheduleDialogStore } from "#src/store/message/draftsAndSent/scheduleDialog";
-import { useScheduledMessageJobStore } from "#src/store/message/scheduledMessageJob";
 import { ScheduledMessageJobType } from "@esposter/db-schema";
 import { getSynchronizedFunction, RoutePath } from "@esposter/shared";
 
@@ -14,8 +13,7 @@ interface Props {
 }
 
 const { scheduledMessageJob } = defineProps<Props>();
-const scheduledMessageJobStore = useScheduledMessageJobStore();
-const { cancelScheduledMessageJob } = scheduledMessageJobStore;
+const emit = defineEmits<{ delete: [] }>();
 const cancelScheduledMessageJobToDraft = useCancelScheduledMessageJobToDraft();
 const draftsAndSentScheduleDialogStore = useDraftsAndSentScheduleDialogStore();
 const { open } = draftsAndSentScheduleDialogStore;
@@ -69,9 +67,8 @@ const items = computed<Item[]>(() => [
 <template>
   <MessageDraftsAndSentMoreMenu
     :actions="items"
-    :confirm-delete="() => cancelScheduledMessageJob(scheduledMessageJob)"
     delete-label="Delete message"
-    delete-message="Are you sure you want to delete this scheduled message?"
     label="Scheduled message actions"
+    @delete="emit('delete')"
   />
 </template>

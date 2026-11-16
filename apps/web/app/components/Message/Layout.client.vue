@@ -18,7 +18,6 @@ const { leftSideBarWidth, rightSideBarWidth, splitRightDrawer } = storeToRefs(me
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const roomName = useRoomName(currentRoomId);
-const leftDrawerWidth = computed(() => (isDesktop.value ? leftSideBarWidth.value : LEFT_DRAWER_WIDTH));
 const rightDrawerWidth = computed(() => {
   if (!isDesktop.value) return RIGHT_DRAWER_WIDTH;
   else if (splitRightDrawer.value) return rightSideBarWidth.value * 2;
@@ -32,7 +31,7 @@ const rightDrawerWidth = computed(() => {
   <NuxtLayout
     is-right-title-hidden
     is-viewport-height
-    :left-drawer-width
+    :left-drawer-width="isDesktop ? leftSideBarWidth : LEFT_DRAWER_WIDTH"
     left-title="Rooms"
     :right-drawer-width
     right-title="Side panel"

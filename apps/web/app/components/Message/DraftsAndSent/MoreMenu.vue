@@ -6,14 +6,12 @@ import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 interface Props {
   // The actions before Delete, which always closes the menu
   actions: Item[];
-  confirmDelete: () => unknown;
   deleteLabel: string;
-  deleteMessage: string;
   label: string;
 }
 
 const { actions, deleteLabel } = defineProps<Props>();
-const isDeleteOpen = ref(false);
+const emit = defineEmits<{ delete: [] }>();
 const items = computed<Item[]>(() => [
   ...actions,
   {
@@ -21,7 +19,7 @@ const items = computed<Item[]>(() => [
     isGroupStart: true,
     meaning: UiIconMeaning.Delete,
     onClick: () => {
-      isDeleteOpen.value = true;
+      emit("delete");
     },
     title: deleteLabel,
   },
@@ -30,12 +28,4 @@ const items = computed<Item[]>(() => [
 
 <template>
   <UiOverflowMenu :items :label />
-  <MessageDraftsAndSentDeleteConfirmDialog
-    v-if="isDeleteOpen"
-    v-model="isDeleteOpen"
-    :title="deleteLabel"
-    :confirm="confirmDelete"
-  >
-    <p>{{ deleteMessage }}</p>
-  </MessageDraftsAndSentDeleteConfirmDialog>
 </template>
