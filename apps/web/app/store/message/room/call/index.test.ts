@@ -288,6 +288,27 @@ describe(useCallStore, () => {
     expect(isLeaving.value).toBe(false);
   });
 
+  // A teardown step that throws still lets the server know the participant has left, so the leave is not skipped
+  test("sends the leave when a teardown step throws", async () => {
+    expect.hasAssertions();
+
+    const leaveCall = vi.fn<() => void>();
+    trpcMsw.callSession.leaveCall.mutation(() => {
+      leaveCall();
+    });
+    const mediaStore = useMediaStore();
+    vi.spyOn(mediaStore, "resetCallMedia").mockImplementation(() => {
+      throw new Error(" ");
+    });
+    const callStore = useCallStore();
+    const { activeCallSessionId } = storeToRefs(callStore);
+    activeCallSessionId.value = callSessionId;
+    callStore.leaveCall();
+    await flushPromises();
+
+    expect(leaveCall).toHaveBeenCalledTimes(1);
+  });
+
   test("clears the leaving flag when the disconnect is rejected", async () => {
     expect.hasAssertions();
 

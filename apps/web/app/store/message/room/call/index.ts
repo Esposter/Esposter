@@ -9,7 +9,7 @@ import { useParticipantStore } from "#src/store/message/room/call/participant";
 import { useRealtimeStore } from "#src/store/message/room/realtime";
 import { useConnectionStore } from "#src/store/realtime/connection";
 import { AdminActionType } from "@esposter/db-schema";
-import { getResultAsync, noop, RoutePath } from "@esposter/shared";
+import { getResultAsync, noop, RoutePath, withFinalizerAsync } from "@esposter/shared";
 
 export const useCallStore = defineStore("message/room/call", () => {
   const { $trpc } = useNuxtApp();
@@ -235,16 +235,20 @@ export const useCallStore = defineStore("message/room/call", () => {
     const callSessionId = activeCallSessionId.value;
     if (!callSessionId) return;
     executeLeaveCallMutation(
-      async () => {
-        resetKnockerState();
-        closeCall();
-        resetCallMedia();
-        // A rejected disconnect is reported rather than thrown, so it cannot strand the call's notices and speakers
-        await getResultAsync(() => disconnect()).match(noop, console.error);
-        clearJoinNotice();
-        clearSpeakers();
-        await $trpc.callSession.leaveCall.mutate({ callSessionId });
-      },
+      () =>
+        // Sent even when a teardown step throws, so the server never keeps a participant the screen has let go of
+        withFinalizerAsync(
+          async () => {
+            resetKnockerState();
+            closeCall();
+            resetCallMedia();
+            // A rejected disconnect is reported rather than thrown, so it cannot strand the call's notices and speakers
+            await getResultAsync(() => disconnect()).match(noop, console.error);
+            clearJoinNotice();
+            clearSpeakers();
+          },
+          () => $trpc.callSession.leaveCall.mutate({ callSessionId }),
+        ),
       {
         applyOptimistic: () => {
           if (participantStore.sessionId) deleteCallParticipant(callSessionId, participantStore.sessionId);
