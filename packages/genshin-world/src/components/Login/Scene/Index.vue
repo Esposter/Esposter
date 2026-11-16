@@ -76,10 +76,8 @@ import { loginStoneLight } from "#src/services/login/scene/loginStoneLight";
 import { computeLoginTowerAtlas } from "#src/services/login/tower/computeLoginTowerAtlas";
 import { createLoginTowerFacade } from "#src/services/login/tower/createLoginTowerFacade";
 import { createLoginTowersGeometry } from "#src/services/login/tower/createLoginTowersGeometry";
-import { LOGIN_WALKWAY_RISE_DEPTH, LOGIN_WALKWAY_SUNK_DISTANCE } from "#src/services/login/walkway/constants";
-import { createLoginPaving } from "#src/services/login/walkway/createLoginPaving";
-import { createLoginWalkwayPieces } from "#src/services/login/walkway/createLoginWalkwayPieces";
-import { getLoginWalkwaySink } from "#src/services/login/walkway/getLoginWalkwaySink";
+import { LOGIN_WALKWAY_SUNK_DISTANCE } from "#src/services/login/walkway/constants";
+import { createLoginWalkway } from "#src/services/login/walkway/createLoginWalkway";
 import { sinkLoginWitnessWalkway } from "#src/services/login/walkway/sinkLoginWitnessWalkway";
 import { SCENE_FAMILY_KEY } from "#src/services/scene/constants";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
@@ -101,7 +99,7 @@ import {
   StoneNodeMaterial,
   synthesizeCloudLayerTextures,
 } from "genshin-engine";
-import { BatchedMesh, DirectionalLight, Euler, Group, HemisphereLight, Matrix4, Mesh } from "three";
+import { DirectionalLight, Euler, Group, HemisphereLight, Matrix4, Mesh } from "three";
 import {
   abs,
   color,
@@ -311,11 +309,6 @@ towersMaterial.colorNode = towerFacade.shade.mul(color(stone.towers.albedo));
 towersMaterial.opacityNode = towerFacade.solid;
 towersMaterial.alphaTest = 0.5;
 const bridgesMaterial = createStoneMaterial(stone.bridges, loginStoneLight);
-const walkwayMaterial = createStoneMaterial(stone.walkway, loginStoneLight);
-// The walkway's tops painted in its textures' tones and carved with its paving, its rims tilted to the light
-const walkwayPaving = createLoginPaving(paving);
-walkwayMaterial.colorNode = walkwayPaving.shade.mul(color(stone.walkway.albedo));
-walkwayMaterial.normalNode = walkwayPaving.normalNode;
 const doorFrameMaterial = createStoneMaterial(stone.door, loginStoneLight);
 const doorMaterial = createStoneMaterial(stone.doorPanel, loginStoneLight, doorLightNode);
 // The door's front painted with its panel's raised bands and its feet's gilding over its stone
@@ -327,32 +320,9 @@ const towersUserData = { [SCENE_FAMILY_KEY]: LoginPartFamily.Towers };
 const bridgesUserData = { [SCENE_FAMILY_KEY]: LoginPartFamily.Bridges };
 const towersGeometry = createLoginTowersGeometry(towers, towerAtlas);
 const hullsGeometry = createLoginHullsGeometry(hulls);
-const walkwayPieces = createLoginWalkwayPieces(walkway);
-// The walkway's row drawn as one batch, every piece of every copy an instance of its own, so each rises into place on
-// Its own in one draw, and the toon outline, which places a batch's instances before it extrudes them, follows it. The
-// Batch itself scrolls with the row, so only a rising piece's own place changes
-const walkwayBatch = new BatchedMesh(
-  walkwayRow.count * walkwayPieces.length,
-  walkwayPieces.reduce((total, { geometry }) => total + geometry.getAttribute("position").count, 0),
-  0,
-  walkwayMaterial,
-);
-walkwayBatch.castShadow = true;
-walkwayBatch.receiveShadow = true;
-// The batch's own bounding sphere is read once and never follows its instances as they move, so the batch is never
-// Culled as one; each piece is still culled on its own
-walkwayBatch.frustumCulled = false;
-walkwayBatch.userData[SCENE_FAMILY_KEY] = LoginPartFamily.Walkway;
-const walkwayInstances = walkwayPieces.flatMap(({ depth, geometry, seed }) => {
-  const geometryId = walkwayBatch.addGeometry(geometry);
-  return Array.from({ length: walkwayRow.count }, (_value, copy) => ({
-    copy,
-    depth,
-    instanceId: walkwayBatch.addInstance(geometryId),
-    seed,
-  }));
-});
-const walkwayMatrix = new Matrix4();
+// The walkway's row as one batch its facade places each frame, and the pieces its witness copies are sunk from
+const walkwayFacade = createLoginWalkway(walkway, walkwayRow, paving, stone.walkway);
+const { batch: walkwayBatch, pieces: walkwayPieces } = walkwayFacade;
 // The door's pieces, each carried along its own lift as the door rises, off Vue's reactivity: a part a piece holds none
 // Of is left out, and none is culled, as the door is not
 const doorPieceGeometries = createLoginDoorGeometry(door);
@@ -442,6 +412,13 @@ let glide = getStartGlide();
 // The towers' row, scrolled with the glide each frame off Vue's reactivity, which would otherwise draw the
 // Template anew
 const towersGroup = new Group();
+// Each copy's place along the towers' row, one array per copy that the towers and the bridges drawn at it both take, so
+// Each mesh keeps its prop identity across renders
+const towersCopyPositions: [number, number, number][] = Array.from({ length: towersRow.count }, (_value, index) => [
+  0,
+  0,
+  index * towersRow.length,
+]);
 // How far past its place of rest the door is, riding on the walkway's copy it comes to rest on
 const doorAhead = shallowRef(0);
 const doorPosition = computed((): [number, number, number] => {
@@ -485,15 +462,10 @@ onRender(({ delta: frameDelta }) => {
       });
     } else if (group.name === LoginPartFamily.Door) followLoginWitnessDoor(group, doorPieces, doorRest);
   }
-  walkwayBatch.position.z = -walkwayScrolled;
-  for (const { copy, depth, instanceId, seed } of walkwayInstances) {
-    const z = copy * walkwayRow.length;
-    const ahead = walkwayBatch.position.z + z + depth - cameraZ.value;
-    const sink = getLoginWalkwaySink(ahead, seed);
-    // A piece stands only once it has begun to rise, so neither it nor its shadow shows before its turn
-    walkwayBatch.setVisibleAt(instanceId, sink < LOGIN_WALKWAY_RISE_DEPTH && (!isDoorDue || ahead < doorAheadOfCamera));
-    walkwayBatch.setMatrixAt(instanceId, walkwayMatrix.makeTranslation(0, -sink, z));
-  }
+  walkwayFacade.update(walkwayScrolled, {
+    cameraZ: cameraZ.value,
+    doorAheadOfCamera: isDoorDue ? doorAheadOfCamera : undefined,
+  });
   cloudSeaScrolled.value = scrolled;
   loginClouds.scroll(scrolled);
   light.target.position.set(0, 0, cameraZ.value + LOGIN_SHADOW_EXTENT / 2);
@@ -540,12 +512,10 @@ onUnmounted(() => {
   ])
     value.dispose();
   towerFacade.dispose();
-  for (const material of [towersMaterial, bridgesMaterial, walkwayMaterial, doorFrameMaterial, doorMaterial])
-    material.dispose();
+  for (const material of [towersMaterial, bridgesMaterial, doorFrameMaterial, doorMaterial]) material.dispose();
   cloudSeaMaterial.dispose();
   loginClouds.dispose();
-  for (const { geometry } of walkwayPieces) geometry.dispose();
-  walkwayBatch.dispose();
+  walkwayFacade.dispose();
   towersGeometry.dispose();
   hullsGeometry.dispose();
   for (const { frame, panel } of doorPieceGeometries) {
@@ -573,7 +543,7 @@ onUnmounted(() => {
   <primitive v-if="isWalkwayDrawn" :object="walkwayBatch" />
   <!-- The towers' row, with their bridges and pillars, each copy its length ahead of the last -->
   <primitive :object="towersGroup">
-    <template v-for="copy in towersRow.count" :key="copy">
+    <template v-for="(copyPosition, index) in towersCopyPositions" :key="index">
       <TresMesh
         v-if="isTowersDrawn"
         :geometry="towersGeometry"
@@ -581,7 +551,7 @@ onUnmounted(() => {
         cast-shadow
         receive-shadow
         :material="towersMaterial"
-        :position="[0, 0, (copy - 1) * towersRow.length]"
+        :position="copyPosition"
       />
       <TresMesh
         v-if="isBridgesDrawn"
@@ -590,7 +560,7 @@ onUnmounted(() => {
         cast-shadow
         receive-shadow
         :material="bridgesMaterial"
-        :position="[0, 0, (copy - 1) * towersRow.length]"
+        :position="copyPosition"
       />
     </template>
   </primitive>

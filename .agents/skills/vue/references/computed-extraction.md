@@ -11,8 +11,9 @@ ref either way — only the expression body is saved.
 
 Any one is enough.
 
-**Reuse** — the same derived value binds to 2+ props, or appears 2+ times in the template. Name it to match the
-prop so the `:prop` shorthand works.
+**Reuse** — the same derived value binds to 2+ props, which must agree. Name it to match the prop so the `:prop`
+shorthand works. A cheap expression written twice in the template is not this: it is read twice per render either
+way, so the computed only adds its bookkeeping.
 
 **Work** — the expression parses, formats, filters, maps, sorts, reduces, or otherwise walks a collection.
 
