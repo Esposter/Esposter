@@ -2,14 +2,14 @@ import type { UserDataArchive } from "#src/models/user/UserDataArchive";
 import type { UserInAuth } from "@esposter/db-schema";
 
 import { getBucket } from "#src/services/storage/getBucket";
-import { SAVE_GAME_CONTAINERS } from "#src/services/user/constants";
+import { SAVE_GAME_BUCKETS } from "#src/services/user/constants";
 import { readJsonBlob } from "@esposter/db";
 import { getSaveBlobName } from "@esposter/db-schema";
 
 // Each game's save for the person, as the JSON its blob holds. A game the person never saved in has no entry
 export const writeSaveEntries = async (archive: UserDataArchive, userId: UserInAuth["id"]): Promise<void> => {
   const saves = await Promise.all(
-    Object.entries(SAVE_GAME_CONTAINERS).map(async ([game, storageBucket]) => {
+    Object.entries(SAVE_GAME_BUCKETS).map(async ([game, storageBucket]) => {
       const bucket = getBucket(storageBucket);
       return { game, save: await readJsonBlob(bucket, getSaveBlobName(userId)) };
     }),

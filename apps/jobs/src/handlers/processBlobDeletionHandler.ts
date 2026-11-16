@@ -10,9 +10,9 @@ import { blobDeletionQueueMessageSchema, QueueJob } from "@esposter/db-schema";
 // As a message and retried here until it lands, rather than logged away at the call site. A throw is that retry.
 export const processBlobDeletionHandler = async (body: unknown): Promise<void> => {
   const data = blobDeletionQueueMessageSchema.parse(body);
-  // Log the container, not the payload: a deletion message can carry hundreds of blob names, so the full array would be
+  // Log the bucket, not the payload: a deletion message can carry hundreds of blob names, so the full array would be
   // Written out verbatim on every delivery.
-  console.log(`${QueueJob.ProcessBlobDeletion} processing container:`, data.storageBucket);
+  console.log(`${QueueJob.ProcessBlobDeletion} processing bucket:`, data.storageBucket);
   const bucket = getBucket(data.storageBucket);
   // A prefix message carries an unbounded set the publisher could not afford to enumerate on its request path,
   // So the walk happens here — where a retry costs nothing and the time budget is the worker's, not a user's.
