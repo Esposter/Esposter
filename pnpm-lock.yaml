@@ -546,9 +546,6 @@ catalogs:
     mlly:
       specifier: ^1.8.2
       version: 1.8.2
-    mocked-exports:
-      specifier: ^0.1.1
-      version: 0.1.1
     msw:
       specifier: ^3.0.6
       version: 3.0.6
@@ -1243,9 +1240,6 @@ importers:
       happy-dom:
         specifier: 'catalog:'
         version: 21.0.4
-      mocked-exports:
-        specifier: 'catalog:'
-        version: 0.1.1
       msw:
         specifier: 'catalog:'
         version: 3.0.6(@types/node@26.6.6)(supports-color@8.1.1)(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))

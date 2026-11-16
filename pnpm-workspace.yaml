@@ -166,9 +166,6 @@ catalog:
   mjml: ^5.4.1
   mjml-preset-core: ^5.4.1
   mlly: ^1.8.2
-  # @TODO: no upstream issue — Nitro 3 resolves `@nuxt/nitro-server`'s `mocked-exports/proxy` alias from the app
-  # Remove this dependency when Nitro resolves the alias from Nuxt (nuxt/nuxt)
-  mocked-exports: ^0.1.1
   msw: ^3.0.6
   natural-orderby: ^5.0.0
   neverthrow: ^8.2.0
@@ -192,7 +189,7 @@ catalog:
   publint: ^0.3.25
   re2js: ^2.10.0
   read-excel-file: ^9.3.17
-  # @TODO: no upstream issue — waits on a vite release that depends on the next rolldown minor; the reason is the `renovate.json` rule's description
+  # @TODO: https://github.com/vitejs/vite/pull/24028 — drop the pin once a vite release ships it (rolldown ~1.3); the reason is the `renovate.json` rule's description
   rolldown: ~1.2.19
   rollup-plugin-visualizer: ^7.1.3
   rou3: ^1.0.0

@@ -27,9 +27,9 @@ const modelValue = defineModel<number>({ required: true });
 defineProps<Props>();
 const emit = defineEmits<{ end: [value: number] }>();
 const labelId = useId();
-// @TODO: no upstream issue — Vuetify 0's slider emits end for a drag alone, so a key's change settles here
-// Vuetify 0 says a drag ended but not that a key moved the thumb, so a change while no pointer is down is a key's and
-// Settles at once. The flag is raised in the capture phase, ahead of the track setting the value it was pressed at
+// Vuetify 0 scopes `end` to the pointer drag by design
+// (https://github.com/vuetifyjs/0/blob/v1.3.2/apps/docs/src/pages/components/forms/slider.md#L229), so a change
+// While no pointer is down is a key's and settles at once. The flag is raised in the capture phase, ahead of the track setting the value it was pressed at
 const isPointerDown = ref(false);
 // Vuetify 0 never ends a press in the band around the track, since it never begins a drag, so its release clears the flag
 useEventListener(["pointerup", "pointercancel"], () => {

@@ -60,9 +60,6 @@ const knipConfiguration: KnipConfig = {
         // Driver, which loads `lru-cache` without declaring it, so the app declares it and nothing in the app imports
         // It; without it `nuxt prepare` installs it itself and rewrites the catalog under CI's install (nuxt/scripts)
         "lru-cache",
-        // @TODO: no upstream issue — Nitro 3 resolves `@nuxt/nitro-server`'s `mocked-exports/proxy` alias from the app
-        // Remove this ignore entry when Nitro resolves the alias from Nuxt (nuxt/nuxt)
-        "mocked-exports",
         // @TODO: https://github.com/nuxt/nuxt/releases/tag/v5.0.0 — knip reads an `#app` import as the package it
         // Resolves to, which is the `nuxt-nightly` alias until the catalog's `nuxt` is a range again
         "nuxt-nightly",
