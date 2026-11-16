@@ -32,7 +32,7 @@ catalog:
   "@arethetypeswrong/core": ^0.18.5
   "@better-auth/api-key": ^1.7.25
   "@better-auth/drizzle-adapter": ^1.7.25
-  "@cloudflare/realtimekit": ^2.0.4
+  "@cloudflare/realtimekit": ^2.1.0
   "@cloudflare/realtimekit-virtual-background": ^0.0.3
   "@cloudflare/workers-types": ^5.20261116.1
   "@codemirror/lang-vue": ^0.1.3
@@ -52,8 +52,8 @@ catalog:
   "@iconify-json/pixelarticons": ^1.2.10
   "@jsonforms/core": ^3.8.0
   "@kjanat/actionlint": ^1.17.1
-  "@lerna-lite/cli": ^5.8.0
-  "@lerna-lite/publish": ^5.8.0
+  "@lerna-lite/cli": ^5.9.0
+  "@lerna-lite/publish": ^5.9.0
   "@lezer/highlight": ^1.2.5
   "@modelcontextprotocol/sdk": ^1.32.2
   "@nuxt/eslint": ^1.17.0
@@ -67,7 +67,7 @@ catalog:
   "@nuxt/scripts": ^1.3.12
   "@nuxt/test-utils": ^4.4.0
   "@nuxtjs/seo": ^6.0.1
-  "@oxlint/plugins": ^1.93.0
+  "@oxlint/plugins": ^1.94.0
   "@pinia/nuxt": ^1.0.3
   "@pulumi/cloudflare": ^6.24.0
   "@pulumi/github": ^6.15.1
@@ -115,9 +115,9 @@ catalog:
   "@vitest/snapshot": ^5.1.0
   "@vitest/spy": ^5.1.0
   "@vitest/utils": ^5.1.0
-  "@vizejs/native": ^0.762.0
-  "@vizejs/unplugin": ^0.762.0
-  "@vizejs/vite-plugin": ^0.762.0
+  "@vizejs/native": ^0.772.0
+  "@vizejs/unplugin": ^0.772.0
+  "@vizejs/vite-plugin": ^0.772.0
   "@vue/compiler-core": ^3.5.45
   "@vue/test-utils": ^2.6.0
   "@vuetify/v0": ^1.3.2
@@ -138,7 +138,7 @@ catalog:
   eslint: ^10.15.0
   eslint-plugin-depend: ^1.5.0
   eslint-plugin-jsonc: ^3.4.2
-  eslint-plugin-oxlint: ^1.93.0
+  eslint-plugin-oxlint: ^1.94.0
   eslint-plugin-perfectionist: ^5.14.0
   eslint-plugin-pinia: ^0.4.2
   eslint-plugin-vuejs-accessibility: ^2.6.3
@@ -154,9 +154,9 @@ catalog:
   linkifyjs: ^4.4.0
   lowlight: ^3.3.0
   lru-cache: ^11.5.3
-  marked: ^18.2.0
+  marked: ^18.2.1
   mime-db: ^1.54.0
-  miniflare: 5.20261113.0-beta
+  miniflare: 5.20261116.0-beta
   minisearch: ^7.2.0
   mjml: ^5.4.1
   mjml-preset-core: ^5.4.1
@@ -171,9 +171,9 @@ catalog:
   ohash: ^2.0.12
   onnxruntime-common: ^1.31.1
   onnxruntime-node: ^1.31.1
-  oxc-parser: ^0.158.0
-  oxfmt: ^0.78.0
-  oxlint: ^1.93.0
+  oxc-parser: ^0.159.0
+  oxfmt: ^0.79.0
+  oxlint: ^1.94.0
   oxlint-tsgolint: ^7.0.2007
   parse5: ^8.1.1
   pdfjs-dist: ^6.5.438
@@ -209,12 +209,12 @@ catalog:
   vite-plus: ^1.6.0
   vitest: ^5.1.0
   vitest-browser-vue: ^3.1.0
-  vize: ^0.762.0
+  vize: ^0.772.0
   vue: ^3.5.45
   vue-eslint-parser: ^10.4.2
   vue-router: ^5.5.1
   web-push: ^4.0.0
-  wrangler: ^4.162.0
+  wrangler: ^4.163.0
   write-excel-file: ^4.1.1
   zod: ^4.6.7
 

@@ -2,7 +2,7 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "automergeType": "pr",
   "configMigration": true,
-  "dependencyDashboard": false,
+  "dependencyDashboard": { "enabled": false },
   "extends": ["config:recommended", ":semanticCommitTypeAll(chore)", "helpers:pinGitHubActionDigests"],
   "ignorePresets": [":prHourlyLimit2"],
   "lockFileMaintenance": { "automerge": true, "enabled": true },
@@ -58,6 +58,11 @@
       "description": "`wrangler` depends on one exact `miniflare` build, and `@esposter/db-mock` runs the tests on `miniflare` directly, so the catalog holds `miniflare` at the exact version the installed `wrangler` names, beta tag included. A `miniflare` bump alone installs a second copy beside wrangler's, so the two move in one branch.",
       "groupName": "wrangler",
       "matchPackageNames": ["miniflare", "wrangler"]
+    },
+    {
+      "allowedVersions": "<6",
+      "description": "`type-fest` from its next major supports only `exactOptionalPropertyTypes: true`, which this repo leaves off: the app passes `undefined` to an optional prop or field as its one absent form, and the flag turns that into thousands of type errors across the app and the packages. The major waits until the repo decides to turn the flag on, which is its own change, never a dependency bump's.",
+      "matchPackageNames": ["type-fest"]
     },
     {
       "allowedVersions": "<27",
