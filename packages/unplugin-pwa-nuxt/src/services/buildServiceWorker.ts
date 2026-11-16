@@ -2,6 +2,7 @@ import type { PwaContext } from "#src/models/PwaContext";
 import type { Nuxt } from "@nuxt/schema";
 import type { Nitro } from "nitro/types";
 
+import { BUILD_META_DIRECTORY } from "#src/services/constants";
 import { createManifestTransform } from "#src/services/createManifestTransform";
 import { getImmutableAssets } from "#src/services/getImmutableAssets";
 import { getNitroNavigationDenylist } from "#src/services/getNitroNavigationDenylist";
@@ -25,7 +26,11 @@ export const buildServiceWorker = async (context: PwaContext, nuxt: Nuxt, nitro:
     // A payload exists only for a prerendered page, and workbox fails a pattern that matches nothing
     const payloadPatterns =
       globSync(PAYLOAD_PATTERN, { cwd: nitro.options.output.publicDir }).length > 0 ? [PAYLOAD_PATTERN] : [];
-    options.globPatterns ??= ["**/*.{js,css,html}", ...payloadPatterns, `${immutableAssets}/builds/meta/*.json`];
+    options.globPatterns ??= [
+      "**/*.{js,css,html}",
+      ...payloadPatterns,
+      `${immutableAssets}/${BUILD_META_DIRECTORY}/*.json`,
+    ];
     options.manifestTransforms ??= [createManifestTransform(baseURL, `${immutableAssets}/`)];
   }
   const { generateSW } = context.resolvedOptions;

@@ -1,3 +1,4 @@
+import type { PwaContext } from "#src/models/PwaContext";
 import type { Plugin } from "vite";
 
 import { BuildPwaAssetsPlugin } from "@unplugin-pwa/vite/plugins/build-pwa-assets";
@@ -6,8 +7,6 @@ import { DevMiddlewarePlugin } from "@unplugin-pwa/vite/plugins/dev-middleware";
 import { InfoPlugin } from "@unplugin-pwa/vite/plugins/info";
 import { MainPlugin } from "@unplugin-pwa/vite/plugins/main";
 import { VirtualModulesPlugin } from "@unplugin-pwa/vite/plugins/virtual-modules";
-
-type PwaContext = Parameters<typeof MainPlugin>[0];
 
 // The engine's plugins less the three this module owns and the two that serve the icon generator the module does not
 // Carry: the worker is built when Nitro has the app's files, not when the client bundle closes, nothing injects a

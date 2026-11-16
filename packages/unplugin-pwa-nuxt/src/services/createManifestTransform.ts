@@ -1,5 +1,7 @@
 import type { ManifestTransform } from "@vite-pwa/workbox-build/types";
 
+import { BUILD_META_DIRECTORY } from "#src/services/constants";
+
 const HTML_SUFFIX_REGEX = /(?:^|\/)index\.html$|\.html$/u;
 
 /**
@@ -15,7 +17,7 @@ export const createManifestTransform =
         const route = entry.url.replace(HTML_SUFFIX_REGEX, "");
         return { ...entry, url: route === "" ? baseURL : route };
       }
-      if (entry.url.startsWith(`${buildAssetsDirectory}builds/meta/`)) return { ...entry, revision: null };
+      if (entry.url.startsWith(`${buildAssetsDirectory}${BUILD_META_DIRECTORY}/`)) return { ...entry, revision: null };
       return entry;
     }),
     warnings: [],
