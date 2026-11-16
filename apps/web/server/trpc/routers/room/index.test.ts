@@ -288,7 +288,7 @@ describe("roomRouter", () => {
     expect(blobDeletionEvents).toHaveLength(1);
     expect(takeOne(blobDeletionEvents) as BlobDeletionQueueMessage).toStrictEqual({
       blobNames: [blobName],
-      containerName: StorageBucket.PublicUserAssets,
+      storageBucket: StorageBucket.PublicUserAssets,
     });
     await expect(publicUserAssets.head(blobName)).resolves.not.toBeNull();
   });
@@ -357,7 +357,7 @@ describe("roomRouter", () => {
 
     expect(takeOne(blobDeletionEvents) as BlobDeletionQueueMessage).toStrictEqual({
       blobNames: [blobName],
-      containerName: StorageBucket.PublicUserAssets,
+      storageBucket: StorageBucket.PublicUserAssets,
     });
     await expect(publicUserAssets.head(inFlightBlobName)).resolves.not.toBeNull();
   });
@@ -484,8 +484,8 @@ describe("roomRouter", () => {
 
     expect(blobDeletionEvents).toHaveLength(1);
     expect(takeOne(blobDeletionEvents) as BlobDeletionQueueMessage).toStrictEqual({
-      containerName: StorageBucket.MessageAssets,
       prefix: newRoom.id,
+      storageBucket: StorageBucket.MessageAssets,
     });
   });
 
@@ -501,13 +501,13 @@ describe("roomRouter", () => {
 
     // Profile images stay a resolved list, since they are a handful. The room's attachments go out as the prefix event
     const profileImageDeletionEvents = blobDeletionEvents.filter(
-      (blobDeletion) => (blobDeletion as BlobDeletionQueueMessage).containerName === StorageBucket.PublicUserAssets,
+      (blobDeletion) => (blobDeletion as BlobDeletionQueueMessage).storageBucket === StorageBucket.PublicUserAssets,
     );
 
     expect(profileImageDeletionEvents).toHaveLength(1);
     expect(takeOne(profileImageDeletionEvents) as BlobDeletionQueueMessage).toStrictEqual({
       blobNames: [blobName],
-      containerName: StorageBucket.PublicUserAssets,
+      storageBucket: StorageBucket.PublicUserAssets,
     });
   });
 

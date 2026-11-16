@@ -538,8 +538,8 @@ describe(saveResourceContent, () => {
     await expect(readWorkingAssetHashes(webpage.id)).resolves.toStrictEqual([assetHash]);
     expect(takeOne(MockJobQueueDatabase.get(QueueJob.ProcessBlobDeletion) ?? [])).toStrictEqual({
       blobNames: [getResourceFileBlobName(webpage.id, otherAssetHash)],
-      containerName: StorageBucket.ResourceAssets,
       decidedAt: new Date(Date.now() - ASSET_DECISION_CLOCK_MARGIN_MS),
+      storageBucket: StorageBucket.ResourceAssets,
     });
   });
 

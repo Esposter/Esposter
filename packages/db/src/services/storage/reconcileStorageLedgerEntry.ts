@@ -25,14 +25,14 @@ import { and, eq, exists, isNull, sql } from "drizzle-orm";
 // The retry is here rather than the queue's.
 export const reconcileStorageLedgerEntry = async (
   db: Database,
-  containerName: StorageBucket,
+  storageBucket: StorageBucket,
   blobName: StorageLedgerEntryInStorage["blobName"],
   actualBytes: number,
   sequencer?: string,
 ): Promise<ReconcileStorageLedgerEntryResult> => {
   for (;;) {
     const storageLedgerEntryWhere = and(
-      eq(storageLedgerInStorage.containerName, containerName),
+      eq(storageLedgerInStorage.storageBucket, storageBucket),
       eq(storageLedgerInStorage.blobName, blobName),
     );
     const [storageLedgerEntry] = await db

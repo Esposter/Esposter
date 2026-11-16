@@ -10,10 +10,10 @@ import { deleteStorageBlobs, listChargedBlobsByUser } from "@esposter/db";
 // Ledger rows go with them
 export const deleteAccountChargedBlobs = async (userId: UserInAuth["id"]): Promise<void> => {
   const containerBlobNamesMap = await listChargedBlobsByUser(db, userId);
-  for (const [containerName, blobNames] of containerBlobNamesMap) {
-    const bucket = getBucket(containerName);
+  for (const [storageBucket, blobNames] of containerBlobNamesMap) {
+    const bucket = getBucket(storageBucket);
     // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one container at a time, its blobs in waves
-    await deleteStorageBlobs(db, bucket, containerName, blobNames, (releasedUserIds) =>
+    await deleteStorageBlobs(db, bucket, storageBucket, blobNames, (releasedUserIds) =>
       broadcastStorageUsage(releasedUserIds),
     );
   }

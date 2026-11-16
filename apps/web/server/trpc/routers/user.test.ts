@@ -364,7 +364,7 @@ describe("userRouter", () => {
     expect(callBackgrounds).toStrictEqual([]);
     expect(takeOne(blobDeletionEvents) as BlobDeletionQueueMessage).toStrictEqual({
       blobNames: [getCallBackgroundBlobName(userId, 0)],
-      containerName: StorageBucket.UserAssets,
+      storageBucket: StorageBucket.UserAssets,
     });
   });
 
@@ -414,9 +414,9 @@ describe("userRouter", () => {
 
     // The bound is what stops a redelivered delete taking the image that replaced the one it named
     expect(takeOne(blobDeletionEvents) as BlobDeletionQueueMessage).toStrictEqual({
-      containerName: StorageBucket.UserAssets,
       createdBefore: new Date(0),
       prefix: getCallBackgroundBlobName(userId, 0),
+      storageBucket: StorageBucket.UserAssets,
     });
   });
 

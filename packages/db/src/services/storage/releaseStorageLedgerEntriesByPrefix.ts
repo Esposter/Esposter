@@ -12,13 +12,13 @@ import { and, eq, sql } from "drizzle-orm";
 // That would silently widen the release to a sibling directory, and SQLite has no `starts_with` to reach for instead.
 export const releaseStorageLedgerEntriesByPrefix = (
   db: Database,
-  containerName: StorageBucket,
+  storageBucket: StorageBucket,
   prefix: string,
 ): Promise<UserInAuth["id"][]> =>
   releaseStorageLedgerEntriesByWhere(
     db,
     and(
-      eq(storageLedgerInStorage.containerName, containerName),
+      eq(storageLedgerInStorage.storageBucket, storageBucket),
       sql`substr(${storageLedgerInStorage.blobName}, 1, length(${prefix})) = ${prefix}`,
     ),
   );

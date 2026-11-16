@@ -4,7 +4,7 @@ import { getBucket } from "#src/services/storage/getBucket";
 import { listBlobNames } from "@esposter/db";
 import { describe } from "vitest";
 
-export const readBlobNames = async (containerName: StorageBucket): Promise<string[]> =>
-  listBlobNames(getBucket(containerName), "");
+export const readBlobNames = async (storageBucket: StorageBucket): Promise<string[]> =>
+  listBlobNames(getBucket(storageBucket), "");
 
 describe.todo("readBlobNames");

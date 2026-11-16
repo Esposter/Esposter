@@ -17,10 +17,10 @@ describe(listChargedBlobsByUser, () => {
   const fileId = v7();
   // A ledger row is what a charge leaves behind, so the rows are written as the counter writes them and the sweep
   // Reads them back by owner — no blob listing is involved
-  const createLedgerEntry = (ownerId: string, containerName: StorageBucket, blobName: string) =>
+  const createLedgerEntry = (ownerId: string, storageBucket: StorageBucket, blobName: string) =>
     db
       .insert(storageLedgerInStorage)
-      .values({ blobName, containerName, countedBytes: 0, declaredBytes: 1, expiresAt: new Date(0), userId: ownerId });
+      .values({ blobName, countedBytes: 0, declaredBytes: 1, expiresAt: new Date(0), storageBucket, userId: ownerId });
 
   beforeAll(async () => {
     db = (await createMockDb()).db;

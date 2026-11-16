@@ -9,8 +9,8 @@ import { getSaveBlobName } from "@esposter/db-schema";
 // Each game's save for the person, as the JSON its blob holds. A game the person never saved in has no entry
 export const writeSaveEntries = async (archive: UserDataArchive, userId: UserInAuth["id"]): Promise<void> => {
   const saves = await Promise.all(
-    Object.entries(SAVE_GAME_CONTAINERS).map(async ([game, containerName]) => {
-      const bucket = getBucket(containerName);
+    Object.entries(SAVE_GAME_CONTAINERS).map(async ([game, storageBucket]) => {
+      const bucket = getBucket(storageBucket);
       return { game, save: await readJsonBlob(bucket, getSaveBlobName(userId)) };
     }),
   );

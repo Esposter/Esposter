@@ -350,7 +350,7 @@ describe("messageRouter", () => {
     expect(MockJobQueueDatabase.get(QueueJob.ProcessBlobDeletion)).toStrictEqual([
       {
         blobNames: [getBlobName(`${roomId}/${file.id}`, filename), getThumbnailBlobName(roomId, file.id)],
-        containerName: StorageBucket.MessageAssets,
+        storageBucket: StorageBucket.MessageAssets,
       },
     ]);
   });

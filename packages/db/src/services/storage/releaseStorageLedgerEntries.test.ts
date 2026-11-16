@@ -17,7 +17,7 @@ import { afterEach, beforeAll, describe, expect, test } from "vitest";
 describe(releaseStorageLedgerEntries, () => {
   let db: Database;
   const userId = v7();
-  const containerName = StorageBucket.ResourceAssets;
+  const storageBucket = StorageBucket.ResourceAssets;
   const resourceId = v7();
   const blobName = `${resourceId}/blobName`;
   const declaredBytes = 3;
@@ -34,7 +34,7 @@ describe(releaseStorageLedgerEntries, () => {
   const createStorageLedgerEntry = () =>
     db
       .insert(storageLedgerInStorage)
-      .values({ blobName, containerName, countedBytes: 0, declaredBytes, expiresAt: new Date(0), userId });
+      .values({ blobName, countedBytes: 0, declaredBytes, expiresAt: new Date(0), storageBucket, userId });
 
   beforeAll(async () => {
     db = (await createMockDb()).db;
@@ -53,8 +53,8 @@ describe(releaseStorageLedgerEntries, () => {
 
     await createStorageLedgerEntry();
     await Promise.all([
-      reconcileStorageLedgerEntry(db, containerName, blobName, actualBytes),
-      reconcileStorageLedgerEntry(db, containerName, blobName, overwrittenBytes),
+      reconcileStorageLedgerEntry(db, storageBucket, blobName, actualBytes),
+      reconcileStorageLedgerEntry(db, storageBucket, blobName, overwrittenBytes),
     ]);
     const { countedBytes } = takeOne(await db.query.storageLedgerInStorage.findMany());
 
@@ -66,7 +66,7 @@ describe(releaseStorageLedgerEntries, () => {
 
     await createStorageLedgerEntry();
 
-    await expect(reconcileStorageLedgerEntry(db, containerName, blobName, actualBytes)).resolves.toStrictEqual({
+    await expect(reconcileStorageLedgerEntry(db, storageBucket, blobName, actualBytes)).resolves.toStrictEqual({
       chargedUserId: userId,
       isMatched: true,
     });
@@ -83,8 +83,8 @@ describe(releaseStorageLedgerEntries, () => {
     expect.hasAssertions();
 
     await createStorageLedgerEntry();
-    await reconcileStorageLedgerEntry(db, containerName, blobName, actualBytes);
-    await reconcileStorageLedgerEntry(db, containerName, blobName, actualBytes);
+    await reconcileStorageLedgerEntry(db, storageBucket, blobName, actualBytes);
+    await reconcileStorageLedgerEntry(db, storageBucket, blobName, actualBytes);
 
     await expect(readStorageBytesUsed()).resolves.toBe(actualBytes);
   });
@@ -93,10 +93,10 @@ describe(releaseStorageLedgerEntries, () => {
     expect.hasAssertions();
 
     await createStorageLedgerEntry();
-    await reconcileStorageLedgerEntry(db, containerName, blobName, actualBytes);
+    await reconcileStorageLedgerEntry(db, storageBucket, blobName, actualBytes);
     // The presigned url outlives one PUT, so a second upload replaces the blob — the counter must follow it rather
     // Than keep charging for the size the first one had
-    await reconcileStorageLedgerEntry(db, containerName, blobName, overwrittenBytes);
+    await reconcileStorageLedgerEntry(db, storageBucket, blobName, overwrittenBytes);
 
     await expect(readStorageBytesUsed()).resolves.toBe(overwrittenBytes);
   });
@@ -108,11 +108,11 @@ describe(releaseStorageLedgerEntries, () => {
     expect.hasAssertions();
 
     await createStorageLedgerEntry();
-    await reconcileStorageLedgerEntry(db, containerName, blobName, overwrittenBytes, laterSequencer);
+    await reconcileStorageLedgerEntry(db, storageBucket, blobName, overwrittenBytes, laterSequencer);
     // The earlier write's event, delayed past the one that superseded it
     // Matched, but no owner comes back: nothing moved, so there is nothing to tell a meter about
     await expect(
-      reconcileStorageLedgerEntry(db, containerName, blobName, actualBytes, sequencer),
+      reconcileStorageLedgerEntry(db, storageBucket, blobName, actualBytes, sequencer),
     ).resolves.toStrictEqual({ isMatched: true });
 
     await expect(readStorageBytesUsed()).resolves.toBe(overwrittenBytes);
@@ -127,11 +127,11 @@ describe(releaseStorageLedgerEntries, () => {
     expect.hasAssertions();
 
     await createStorageLedgerEntry();
-    await reconcileStorageLedgerEntry(db, containerName, blobName, actualBytes, sequencer);
+    await reconcileStorageLedgerEntry(db, storageBucket, blobName, actualBytes, sequencer);
 
     await expect(readStorageBytesUsed()).resolves.toBe(actualBytes);
 
-    await reconcileStorageLedgerEntry(db, containerName, blobName, overwrittenBytes, laterSequencer);
+    await reconcileStorageLedgerEntry(db, storageBucket, blobName, overwrittenBytes, laterSequencer);
 
     await expect(readStorageBytesUsed()).resolves.toBe(overwrittenBytes);
   });
@@ -143,9 +143,9 @@ describe(releaseStorageLedgerEntries, () => {
   test("counts each save that follows the blob's first event", async () => {
     expect.hasAssertions();
 
-    await chargeStorageLedgerEntry(db, userId, containerName, blobName, actualBytes);
-    await reconcileStorageLedgerEntry(db, containerName, blobName, actualBytes, sequencer);
-    await chargeStorageLedgerEntry(db, userId, containerName, blobName, overwrittenBytes);
+    await chargeStorageLedgerEntry(db, userId, storageBucket, blobName, actualBytes);
+    await reconcileStorageLedgerEntry(db, storageBucket, blobName, actualBytes, sequencer);
+    await chargeStorageLedgerEntry(db, userId, storageBucket, blobName, overwrittenBytes);
 
     await expect(readStorageBytesUsed()).resolves.toBe(overwrittenBytes);
     // The write order is untouched: a charge claims no position, so the next event is still ranked against the
@@ -161,7 +161,7 @@ describe(releaseStorageLedgerEntries, () => {
   test("counts a blob the server wrote for itself", async () => {
     expect.hasAssertions();
 
-    await chargeStorageLedgerEntry(db, userId, containerName, blobName, actualBytes);
+    await chargeStorageLedgerEntry(db, userId, storageBucket, blobName, actualBytes);
 
     await expect(readStorageBytesUsed()).resolves.toBe(actualBytes);
     const storageLedgerEntry = takeOne(await db.query.storageLedgerInStorage.findMany());
@@ -173,9 +173,9 @@ describe(releaseStorageLedgerEntries, () => {
   test("corrects rather than adds when the server rewrites the same blob", async () => {
     expect.hasAssertions();
 
-    await chargeStorageLedgerEntry(db, userId, containerName, blobName, actualBytes);
+    await chargeStorageLedgerEntry(db, userId, storageBucket, blobName, actualBytes);
     // Every save rewrites one blob name, so a second charge that summed would grow the counter without bound
-    await chargeStorageLedgerEntry(db, userId, containerName, blobName, overwrittenBytes);
+    await chargeStorageLedgerEntry(db, userId, storageBucket, blobName, overwrittenBytes);
 
     await expect(readStorageBytesUsed()).resolves.toBe(overwrittenBytes);
   });
@@ -183,8 +183,8 @@ describe(releaseStorageLedgerEntries, () => {
   test("gives a server-written blob back with the directory it sits in", async () => {
     expect.hasAssertions();
 
-    await chargeStorageLedgerEntry(db, userId, containerName, blobName, actualBytes);
-    await releaseStorageLedgerEntriesByPrefix(db, containerName, `${resourceId}/`);
+    await chargeStorageLedgerEntry(db, userId, storageBucket, blobName, actualBytes);
+    await releaseStorageLedgerEntriesByPrefix(db, storageBucket, `${resourceId}/`);
 
     await expect(readStorageBytesUsed()).resolves.toBe(0);
     await expect(db.query.storageLedgerInStorage.findMany()).resolves.toStrictEqual([]);
@@ -193,7 +193,7 @@ describe(releaseStorageLedgerEntries, () => {
   test("accounts a blob nothing reserved to nobody", async () => {
     expect.hasAssertions();
 
-    await expect(reconcileStorageLedgerEntry(db, containerName, blobName, actualBytes)).resolves.toStrictEqual({
+    await expect(reconcileStorageLedgerEntry(db, storageBucket, blobName, actualBytes)).resolves.toStrictEqual({
       isMatched: false,
     });
     await expect(readStorageBytesUsed()).resolves.toBe(0);
@@ -203,10 +203,10 @@ describe(releaseStorageLedgerEntries, () => {
     expect.hasAssertions();
 
     await createStorageLedgerEntry();
-    await reconcileStorageLedgerEntry(db, containerName, blobName, actualBytes);
+    await reconcileStorageLedgerEntry(db, storageBucket, blobName, actualBytes);
     // The owners come back because the release runs in the jobs worker, which has no way to reach their
     // Meters except by being told whose counter it just moved
-    await expect(releaseStorageLedgerEntries(db, containerName, [blobName])).resolves.toStrictEqual([userId]);
+    await expect(releaseStorageLedgerEntries(db, storageBucket, [blobName])).resolves.toStrictEqual([userId]);
 
     await expect(readStorageBytesUsed()).resolves.toBe(0);
     await expect(db.query.storageLedgerInStorage.findMany()).resolves.toStrictEqual([]);
@@ -216,11 +216,11 @@ describe(releaseStorageLedgerEntries, () => {
     expect.hasAssertions();
 
     await createStorageLedgerEntry();
-    await reconcileStorageLedgerEntry(db, containerName, blobName, actualBytes);
-    await releaseStorageLedgerEntries(db, containerName, [blobName]);
+    await reconcileStorageLedgerEntry(db, storageBucket, blobName, actualBytes);
+    await releaseStorageLedgerEntries(db, storageBucket, [blobName]);
     await db.update(usersInAuth).set({ storageBytesUsed: actualBytes }).where(eq(usersInAuth.id, userId));
     // The row is what carries the amount, so a redelivered deletion event finds nothing left to give back
-    await releaseStorageLedgerEntries(db, containerName, [blobName]);
+    await releaseStorageLedgerEntries(db, storageBucket, [blobName]);
 
     await expect(readStorageBytesUsed()).resolves.toBe(actualBytes);
   });
@@ -229,7 +229,7 @@ describe(releaseStorageLedgerEntries, () => {
     expect.hasAssertions();
 
     await createStorageLedgerEntry();
-    await releaseStorageLedgerEntries(db, containerName, [blobName]);
+    await releaseStorageLedgerEntries(db, storageBucket, [blobName]);
 
     await expect(readStorageBytesUsed()).resolves.toBe(0);
     await expect(db.query.storageLedgerInStorage.findMany()).resolves.toStrictEqual([]);
@@ -239,8 +239,8 @@ describe(releaseStorageLedgerEntries, () => {
     expect.hasAssertions();
 
     await createStorageLedgerEntry();
-    await reconcileStorageLedgerEntry(db, containerName, blobName, actualBytes);
-    await releaseStorageLedgerEntriesByPrefix(db, containerName, `${resourceId}/`);
+    await reconcileStorageLedgerEntry(db, storageBucket, blobName, actualBytes);
+    await releaseStorageLedgerEntriesByPrefix(db, storageBucket, `${resourceId}/`);
 
     await expect(readStorageBytesUsed()).resolves.toBe(0);
     await expect(db.query.storageLedgerInStorage.findMany()).resolves.toStrictEqual([]);
@@ -250,7 +250,7 @@ describe(releaseStorageLedgerEntries, () => {
     expect.hasAssertions();
 
     await createStorageLedgerEntry();
-    await reconcileStorageLedgerEntry(db, containerName, blobName, actualBytes);
+    await reconcileStorageLedgerEntry(db, storageBucket, blobName, actualBytes);
     await releaseStorageLedgerEntries(db, StorageBucket.MessageAssets, [blobName]);
 
     await expect(readStorageBytesUsed()).resolves.toBe(actualBytes);

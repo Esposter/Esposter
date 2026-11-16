@@ -14,21 +14,20 @@ import { z } from "zod";
 export type BlobDeletionQueueMessage = (
   | { blobNames: string[]; createdBefore?: never; decidedAt?: Date; prefix?: never }
   | { blobNames?: never; createdBefore?: Date; decidedAt?: never; prefix: string }
-) & { containerName: StorageBucket };
+) & { storageBucket: StorageBucket };
 
 export const blobDeletionQueueMessageSchema = z.union([
   z.object({
     ...queueMessageEnvelopeSchema.shape,
     blobNames: createUniqueArraySchema(z.string()).min(1).max(MAX_BLOB_DELETION_MESSAGE_BLOB_NAMES),
-    containerName: storageBucketSchema,
     // The instant the publisher decided these names were unreferenced. Delivery is at-least-once and a retry can
     // Arrive long after that decision, so a blob written since — a re-upload or a re-copy the decision never saw — is
     // Kept rather than deleted. Omitted by a named deletion that carries no such judgement, which deletes as it always has
     decidedAt: z.coerce.date().optional(),
+    storageBucket: storageBucketSchema,
   }),
   z.object({
     ...queueMessageEnvelopeSchema.shape,
-    containerName: storageBucketSchema,
     // The listing happens at delivery time, but the set the publisher meant is the one that existed when it
     // Published. Delivery is at-least-once and a dead-lettered message can be retried hours later, so without
     // This bound a redelivery would enumerate — and delete — blobs written after the deletion was decided.
@@ -37,5 +36,6 @@ export const blobDeletionQueueMessageSchema = z.union([
     // Whose presigned write url was still live when the owner deleted
     createdBefore: z.coerce.date().optional(),
     prefix: z.string().min(1),
+    storageBucket: storageBucketSchema,
   }),
 ]) satisfies z.ZodType<BlobDeletionQueueMessage>;

@@ -829,8 +829,8 @@ describe(createResourceProcedures, () => {
     expect(blobDeletionEvents).toStrictEqual([
       {
         blobNames: [blobName],
-        containerName: StorageBucket.ResourceAssets,
         decidedAt: new Date(Date.now() - ASSET_DECISION_CLOCK_MARGIN_MS),
+        storageBucket: StorageBucket.ResourceAssets,
       },
     ]);
     await expect(bucket.head(blobName)).resolves.not.toBeNull();

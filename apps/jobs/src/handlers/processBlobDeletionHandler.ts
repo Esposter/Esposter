@@ -12,8 +12,8 @@ export const processBlobDeletionHandler = async (body: unknown): Promise<void> =
   const data = blobDeletionQueueMessageSchema.parse(body);
   // Log the container, not the payload: a deletion message can carry hundreds of blob names, so the full array would be
   // Written out verbatim on every delivery.
-  console.log(`${QueueJob.ProcessBlobDeletion} processing container:`, data.containerName);
-  const bucket = getBucket(data.containerName);
+  console.log(`${QueueJob.ProcessBlobDeletion} processing container:`, data.storageBucket);
+  const bucket = getBucket(data.storageBucket);
   // A prefix message carries an unbounded set the publisher could not afford to enumerate on its request path,
   // So the walk happens here — where a retry costs nothing and the time budget is the worker's, not a user's.
   // Bounded by the publisher's own instant, so a retry deletes the set that existed when the deletion was
@@ -29,8 +29,8 @@ export const processBlobDeletionHandler = async (body: unknown): Promise<void> =
     );
   // The delete and the release of the bytes it frees are one operation, waved and retried together — see
   // `deleteStorageBlobs` and openspec/specs/resource/storage-quotas/design.md
-  await deleteStorageBlobs(db, bucket, data.containerName, blobNames, (releasedUserIds) =>
+  await deleteStorageBlobs(db, bucket, data.storageBucket, blobNames, (releasedUserIds) =>
     broadcastStorageUsage(releasedUserIds),
   );
-  console.log(`${QueueJob.ProcessBlobDeletion} deleted ${blobNames.length} blobs from ${data.containerName}.`);
+  console.log(`${QueueJob.ProcessBlobDeletion} deleted ${blobNames.length} blobs from ${data.storageBucket}.`);
 };

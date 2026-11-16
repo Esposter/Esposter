@@ -13,11 +13,11 @@ import { createPresignedPutUrl } from "@esposter/db";
 export const generateReservedWritePresignedUrl = async (
   db: Context["db"],
   userId: UserInAuth["id"],
-  containerName: StorageBucket,
+  storageBucket: StorageBucket,
   blobName: string,
   declaredBytes: number,
 ): Promise<string> => {
-  const presignedUrl = await createPresignedPutUrl(getStorageCredentials(), containerName, blobName, MimeType.Gzip);
-  await reserveStorageBytes(db, userId, containerName, [{ blobName, declaredBytes }]);
+  const presignedUrl = await createPresignedPutUrl(getStorageCredentials(), storageBucket, blobName, MimeType.Gzip);
+  await reserveStorageBytes(db, userId, storageBucket, [{ blobName, declaredBytes }]);
   return presignedUrl;
 };

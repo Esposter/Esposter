@@ -38,11 +38,11 @@ describe(deleteAccountChargedBlobs, () => {
     await disposeMockBuckets();
   });
 
-  const seedChargedBlob = async (userId: string, containerName: StorageBucket, blobName: string) => {
-    await seedBlob(containerName, blobName);
+  const seedChargedBlob = async (userId: string, storageBucket: StorageBucket, blobName: string) => {
+    await seedBlob(storageBucket, blobName);
     await mockDb
       .insert(storageLedgerInStorage)
-      .values({ blobName, containerName, countedBytes, declaredBytes: countedBytes, expiresAt: new Date(0), userId });
+      .values({ blobName, countedBytes, declaredBytes: countedBytes, expiresAt: new Date(0), storageBucket, userId });
   };
 
   test("removes the blobs the account is charged for through the ledger, and no blob another account is charged for", async () => {

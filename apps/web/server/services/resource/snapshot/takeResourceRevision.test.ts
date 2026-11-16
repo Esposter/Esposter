@@ -199,7 +199,7 @@ describe(takeResourceRevision, () => {
 
     expect(takeOne(blobDeletionEvents, blobDeletionEvents.length - 1) as BlobDeletionQueueMessage).toStrictEqual({
       blobNames: [getSnapshotObjectBlobName(resource.id, evictedVersion.hash)],
-      containerName: StorageBucket.ResourceAssets,
+      storageBucket: StorageBucket.ResourceAssets,
     });
   });
 

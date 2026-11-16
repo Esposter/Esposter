@@ -15,13 +15,13 @@ import { getResultAsync } from "@esposter/shared";
 // After the decision, and a bound on a prefix nothing will ever own again permanently strands every blob that
 // Landed after it (an upload holding a still-valid presigned write url when its room was deleted has no later sweep).
 export const publishBlobPrefixDeletion = (
-  containerName: StorageBucket,
+  storageBucket: StorageBucket,
   prefix: string,
   createdBefore: Date | undefined,
 ) =>
   getResultAsync(async () => {
     // Stamped at publish time, not at delivery: the handler must only ever delete what the caller was looking at.
     // Spread rather than assigned, so an unbounded sweep sends no key at all instead of an undefined one
-    const data: BlobDeletionQueueMessage = { containerName, prefix, ...(createdBefore && { createdBefore }) };
+    const data: BlobDeletionQueueMessage = { prefix, storageBucket, ...(createdBefore && { createdBefore }) };
     await getJobQueue(QueueJob.ProcessBlobDeletion).send(data);
   });

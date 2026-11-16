@@ -29,7 +29,7 @@ import { and, eq, gt, isNull, lte, ne, or, sql } from "drizzle-orm";
 export const reserveStorageBytes = async (
   db: Context["db"],
   userId: UserInAuth["id"],
-  containerName: StorageBucket,
+  storageBucket: StorageBucket,
   reservations: StorageBlobReservation[],
 ): Promise<void> => {
   if (reservations.length === 0) return;
@@ -50,7 +50,7 @@ export const reserveStorageBytes = async (
     isNull(storageLedgerInStorage.reconciledAt),
     gt(storageLedgerInStorage.expiresAt, now),
     or(
-      ne(storageLedgerInStorage.containerName, containerName),
+      ne(storageLedgerInStorage.storageBucket, storageBucket),
       notInJsonArray(storageLedgerInStorage.blobName, blobNames),
     ),
   );
@@ -81,7 +81,6 @@ export const reserveStorageBytes = async (
         db
           .select({
             blobName: sql<string>`json_extract(reservation.value, '$.blobName')`.as("blobName"),
-            containerName: sql<StorageBucket>`${containerName}`.as("containerName"),
             // Nothing is counted against the user until storage reports what actually landed. Until then the
             // Row's own `declaredBytes` is what holds the space, through the pending sum above
             countedBytes: sql<number>`0`.as("countedBytes"),
@@ -91,6 +90,7 @@ export const reserveStorageBytes = async (
             expiresAt: sql<Date>`${expiresAt.getTime()}`.as("expiresAt"),
             reconciledAt: sql<Date | null>`NULL`.as("reconciledAt"),
             sequencer: sql<null | string>`NULL`.as("sequencer"),
+            storageBucket: sql<StorageBucket>`${storageBucket}`.as("storageBucket"),
             updatedAt: sql<Date>`${now.getTime()}`.as("updatedAt"),
             userId: sql<string>`${userId}`.as("userId"),
           })
@@ -106,7 +106,7 @@ export const reserveStorageBytes = async (
           expiresAt: sql`excluded.${sql.identifier(storageLedgerInStorage.expiresAt.name)}`,
           reconciledAt: null,
         },
-        target: [storageLedgerInStorage.containerName, storageLedgerInStorage.blobName],
+        target: [storageLedgerInStorage.storageBucket, storageLedgerInStorage.blobName],
       })
       .returning({ blobName: storageLedgerInStorage.blobName }),
   ]);

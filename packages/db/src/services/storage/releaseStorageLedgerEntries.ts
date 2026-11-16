@@ -9,7 +9,7 @@ import { and, eq } from "drizzle-orm";
 // It expands to — deleteStorageBlobs, the only caller, hands it one deletion wave at a time.
 export const releaseStorageLedgerEntries = (
   db: Database,
-  containerName: StorageBucket,
+  storageBucket: StorageBucket,
   blobNames: string[],
 ): Promise<UserInAuth["id"][]> => {
   if (blobNames.length === 0) return Promise.resolve([]);
@@ -17,7 +17,7 @@ export const releaseStorageLedgerEntries = (
     return releaseStorageLedgerEntriesByWhere(
       db,
       and(
-        eq(storageLedgerInStorage.containerName, containerName),
+        eq(storageLedgerInStorage.storageBucket, storageBucket),
         inJsonArray(storageLedgerInStorage.blobName, blobNames),
       ),
     );

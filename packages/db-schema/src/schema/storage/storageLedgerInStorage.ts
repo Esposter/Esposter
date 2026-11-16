@@ -22,7 +22,6 @@ export const storageLedgerInStorage = sqliteTable(
   "storageLedger",
   {
     blobName: text().notNull(),
-    containerName: createEnumColumn(StorageBucket).notNull(),
     // What the counter is holding for this blob right now — zero until reconciliation reads the stored object's
     // Real size back, because nothing is charged before then and `declaredBytes` is what holds the space in the
     // Meantime. Kept separate so the adjustment is a difference, never a re-read.
@@ -35,13 +34,14 @@ export const storageLedgerInStorage = sqliteTable(
     // Counted. Held here so a reconcile can reject an event older than the one already applied. Null until the
     // First event lands — a provisional charge writes bytes without one, having no ordering to claim.
     sequencer: text(),
+    storageBucket: createEnumColumn(StorageBucket).notNull(),
     userId: text()
       .notNull()
       .references(() => usersInAuth.id, { onDelete: "cascade" }),
   },
   {
-    extraConfig: ({ blobName, containerName, countedBytes, declaredBytes, reconciledAt, userId }) => [
-      primaryKey({ columns: [containerName, blobName] }),
+    extraConfig: ({ blobName, countedBytes, declaredBytes, reconciledAt, storageBucket, userId }) => [
+      primaryKey({ columns: [storageBucket, blobName] }),
       check("storageLedger_declaredBytes_check", createMinimumCheckSql(declaredBytes, 0)),
       check("storageLedger_countedBytes_check", createMinimumCheckSql(countedBytes, 0)),
       // Backs the outstanding-reservation cap and the expired-hold collection, both of which lead with the

@@ -12,7 +12,7 @@ import { getResultAsync } from "@esposter/shared";
 // Listing can hold more names than one message may carry — a send that fails midway still made every chunk before it
 // Durable.
 export const publishBlobDeletion = (
-  containerName: StorageBucket,
+  storageBucket: StorageBucket,
   blobNames: (() => Promise<string[]>) | string[],
   // The instant the names were judged unreferenced, forwarded so the handler keeps any blob written after it
   decidedAt?: Date,
@@ -29,7 +29,7 @@ export const publishBlobDeletion = (
       // Spread rather than assigned, so a deletion without a decision sends no key at all instead of an undefined one
       const data: BlobDeletionQueueMessage = {
         blobNames: blobNamesChunk,
-        containerName,
+        storageBucket,
         ...(decidedAt && { decidedAt }),
       };
       // oxlint-disable-next-line no-await-in-loop -- Committed prefix: a failed chunk stops the ones behind it, and every chunk before it stays durable for a redelivery

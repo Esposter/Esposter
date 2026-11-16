@@ -247,7 +247,7 @@ describe("emojiRouter", () => {
     await expect(roomEmojiCaller.readRoomEmojis({ roomId })).resolves.toStrictEqual([]);
     expect(takeOne(blobDeletionEvents) as BlobDeletionQueueMessage).toStrictEqual({
       blobNames: [getRoomEmojiBlobName(roomId, roomEmoji.id)],
-      containerName: StorageBucket.MessageAssets,
+      storageBucket: StorageBucket.MessageAssets,
     });
     expect(roomObjectCalls).toContainEqual({
       args: [{ data: { id: roomEmoji.id, roomId }, type: "deleteRoomEmoji" }, {}],

@@ -8,15 +8,15 @@ export const listChargedBlobsByUser = async (
   userId: UserInAuth["id"],
 ): Promise<Map<StorageBucket, string[]>> => {
   const storageLedgerEntries = await db.query.storageLedgerInStorage.findMany({
-    columns: { blobName: true, containerName: true },
+    columns: { blobName: true, storageBucket: true },
     where: { userId: { eq: userId } },
   });
-  const containerStorageLedgerEntriesMap = Map.groupBy(storageLedgerEntries, ({ containerName }) => containerName);
+  const containerStorageLedgerEntriesMap = Map.groupBy(storageLedgerEntries, ({ storageBucket }) => storageBucket);
   return new Map(
     Array.from(
       containerStorageLedgerEntriesMap,
-      ([containerName, storageLedgerEntriesInContainer]) =>
-        [containerName, storageLedgerEntriesInContainer.map(({ blobName }) => blobName)] as const,
+      ([storageBucket, storageLedgerEntriesInContainer]) =>
+        [storageBucket, storageLedgerEntriesInContainer.map(({ blobName }) => blobName)] as const,
     ),
   );
 };

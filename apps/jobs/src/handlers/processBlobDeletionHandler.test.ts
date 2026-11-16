@@ -43,10 +43,10 @@ const readContainer = () => readBlobNames(StorageBucket.MessageAssets);
 const createBlobDeletionEvent = (data: BlobDeletionQueueMessage) => data;
 
 const createEvent = (blobNames: string[]) =>
-  createBlobDeletionEvent({ blobNames, containerName: StorageBucket.MessageAssets });
+  createBlobDeletionEvent({ blobNames, storageBucket: StorageBucket.MessageAssets });
 
 const createPrefixEvent = (prefix: string, createdBefore: Date) =>
-  createBlobDeletionEvent({ containerName: StorageBucket.MessageAssets, createdBefore, prefix });
+  createBlobDeletionEvent({ createdBefore, prefix, storageBucket: StorageBucket.MessageAssets });
 
 // The bucket the handler reads once, with only the delete under test: the handler's other reads are the mock's own
 const createDeletingBucket = (deleteNames: (names: string | string[]) => Promise<void>) =>
@@ -70,11 +70,11 @@ describe(processBlobDeletionHandler, () => {
       .insert(storageLedgerInStorage)
       .values({
         blobName: name,
-        containerName: StorageBucket.MessageAssets,
         countedBytes,
         declaredBytes: countedBytes,
         expiresAt: new Date(0),
         reconciledAt: new Date(0),
+        storageBucket: StorageBucket.MessageAssets,
         userId,
       });
   const readStorageBytesUsed = async () =>
@@ -126,8 +126,8 @@ describe(processBlobDeletionHandler, () => {
     await processBlobDeletionHandler(
       createBlobDeletionEvent({
         blobNames: [blobName],
-        containerName: StorageBucket.MessageAssets,
         decidedAt: new Date(0),
+        storageBucket: StorageBucket.MessageAssets,
       }),
     );
 
@@ -142,8 +142,8 @@ describe(processBlobDeletionHandler, () => {
     await processBlobDeletionHandler(
       createBlobDeletionEvent({
         blobNames: [blobName],
-        containerName: StorageBucket.MessageAssets,
         decidedAt: new Date(Date.now() + Temporal.Duration.from({ days: 1 }).total("milliseconds")),
+        storageBucket: StorageBucket.MessageAssets,
       }),
     );
 
@@ -241,11 +241,11 @@ describe(processBlobDeletionHandler, () => {
           .insert(storageLedgerInStorage)
           .values({
             blobName: name,
-            containerName: StorageBucket.MessageAssets,
             countedBytes,
             declaredBytes: countedBytes,
             expiresAt: new Date(0),
             reconciledAt: new Date(0),
+            storageBucket: StorageBucket.MessageAssets,
             userId,
           }),
       ),

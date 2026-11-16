@@ -50,11 +50,11 @@ vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/s
 vi.mock(import("#src/services/room/getRoomObject"), () => import("#src/services/room/getRoomObject.test"));
 vi.mock(import("#src/services/user/getUserObject"), () => import("#src/services/user/getUserObject.test"));
 
-const readBlobNamesUnder = async (containerName: StorageBucket, prefix: string) =>
-  (await readBlobNames(containerName)).filter((blobName) => blobName.startsWith(prefix));
+const readBlobNamesUnder = async (storageBucket: StorageBucket, prefix: string) =>
+  (await readBlobNames(storageBucket)).filter((blobName) => blobName.startsWith(prefix));
 const readLedgerRows = (userId: string) =>
   mockDb
-    .select({ blobName: storageLedgerInStorage.blobName, containerName: storageLedgerInStorage.containerName })
+    .select({ blobName: storageLedgerInStorage.blobName, storageBucket: storageLedgerInStorage.storageBucket })
     .from(storageLedgerInStorage)
     .where(eq(storageLedgerInStorage.userId, userId));
 const readUserRows = (userId: string) =>
@@ -119,9 +119,9 @@ describe(deleteAccountHandler, () => {
     await disposeMockBuckets();
   });
 
-  const seedChargedBlob = async (userId: string, containerName: StorageBucket, blobName: string) => {
-    await seedBlob(containerName, blobName);
-    await chargeStorageLedgerEntry(mockDb, userId, containerName, blobName, countedBytes);
+  const seedChargedBlob = async (userId: string, storageBucket: StorageBucket, blobName: string) => {
+    await seedBlob(storageBucket, blobName);
+    await chargeStorageLedgerEntry(mockDb, userId, storageBucket, blobName, countedBytes);
   };
 
   test("removes every store the inventory keys to the account, keeps the activity it left on another's resource, and leaves the other account's data as it was", async () => {
@@ -354,7 +354,7 @@ describe(deleteAccountHandler, () => {
       otherUserRowBefore,
     );
     await expect(readLedgerRows(otherUserId)).resolves.toStrictEqual([
-      { blobName: otherMemberRoomAttachmentBlobName, containerName: StorageBucket.MessageAssets },
+      { blobName: otherMemberRoomAttachmentBlobName, storageBucket: StorageBucket.MessageAssets },
     ]);
   });
 });

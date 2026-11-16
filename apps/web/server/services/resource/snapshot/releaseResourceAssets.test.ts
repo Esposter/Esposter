@@ -174,8 +174,8 @@ describe(releaseResourceAssets, () => {
 
     expect(takeOne(MockJobQueueDatabase.get(QueueJob.ProcessBlobDeletion) ?? [])).toStrictEqual({
       blobNames: [getResourceFileBlobName(resource.id, assetHash)],
-      containerName: StorageBucket.ResourceAssets,
       decidedAt: new Date(Date.now() - ASSET_DECISION_CLOCK_MARGIN_MS),
+      storageBucket: StorageBucket.ResourceAssets,
     });
   });
 
@@ -205,8 +205,8 @@ describe(releaseResourceAssets, () => {
 
     expect(takeOne(MockJobQueueDatabase.get(QueueJob.ProcessBlobDeletion) ?? [])).toStrictEqual({
       blobNames: [getResourceFileBlobName(resource.id, assetHash)],
-      containerName: StorageBucket.ResourceAssets,
       decidedAt: new Date(Date.now() - ASSET_DECISION_CLOCK_MARGIN_MS),
+      storageBucket: StorageBucket.ResourceAssets,
     });
   });
 

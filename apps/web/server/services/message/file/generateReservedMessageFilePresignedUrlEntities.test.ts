@@ -59,7 +59,7 @@ describe(generateReservedMessageFilePresignedUrlEntities, () => {
       ledgerEntries.map(({ declaredBytes }) => declaredBytes).toSorted((left, right) => left - right),
     ).toStrictEqual([size, MAX_THUMBNAIL_BYTES].toSorted((left, right) => left - right));
     expect(ledgerEntries.every((entry) => entry.userId === userId)).toBe(true);
-    expect(ledgerEntries.every((entry) => entry.containerName === StorageBucket.MessageAssets)).toBe(true);
+    expect(ledgerEntries.every((entry) => entry.storageBucket === StorageBucket.MessageAssets)).toBe(true);
   });
 
   test("reserves only the original of a file that has no thumbnail", async () => {

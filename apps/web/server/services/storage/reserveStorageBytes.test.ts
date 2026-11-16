@@ -19,7 +19,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vi
 describe(reserveStorageBytes, () => {
   let mockContext: Context;
   let userId: string;
-  const containerName = StorageBucket.ResourceAssets;
+  const storageBucket = StorageBucket.ResourceAssets;
   const blobName = "blobName";
   const declaredBytes = 1;
   const quotaBytes = StorageTierQuotaMap[StorageTier.Free];
@@ -49,7 +49,7 @@ describe(reserveStorageBytes, () => {
   test("holds the space in the ledger without counting it against the user", async () => {
     expect.hasAssertions();
 
-    await reserveStorageBytes(mockContext.db, userId, containerName, [{ blobName, declaredBytes }]);
+    await reserveStorageBytes(mockContext.db, userId, storageBucket, [{ blobName, declaredBytes }]);
 
     // Nothing is stored yet, so nothing is charged — storage reporting the blob is what moves the counter
     await expect(readStorageBytesUsed()).resolves.toBe(0);
@@ -59,7 +59,7 @@ describe(reserveStorageBytes, () => {
 
     expect(storageLedgerEntries).toHaveLength(1);
     expect(storageLedgerEntry.blobName).toBe(blobName);
-    expect(storageLedgerEntry.containerName).toBe(containerName);
+    expect(storageLedgerEntry.storageBucket).toBe(storageBucket);
     expect(storageLedgerEntry.countedBytes).toBe(0);
     expect(storageLedgerEntry.declaredBytes).toBe(declaredBytes);
     expect(storageLedgerEntry.reconciledAt).toBeNull();
@@ -69,7 +69,7 @@ describe(reserveStorageBytes, () => {
   test("does nothing when there is nothing to reserve", async () => {
     expect.hasAssertions();
 
-    await reserveStorageBytes(mockContext.db, userId, containerName, []);
+    await reserveStorageBytes(mockContext.db, userId, storageBucket, []);
 
     await expect(mockContext.db.query.storageLedgerInStorage.findMany()).resolves.toStrictEqual([]);
   });
@@ -80,7 +80,7 @@ describe(reserveStorageBytes, () => {
     await mockContext.db.update(usersInAuth).set({ storageBytesUsed: quotaBytes }).where(eq(usersInAuth.id, userId));
 
     await expect(
-      reserveStorageBytes(mockContext.db, userId, containerName, [{ blobName, declaredBytes }]),
+      reserveStorageBytes(mockContext.db, userId, storageBucket, [{ blobName, declaredBytes }]),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: You have run out of storage.]`);
     // The whole transaction rolls back, so a rejected reserve leaves no hold behind either
     await expect(mockContext.db.query.storageLedgerInStorage.findMany()).resolves.toStrictEqual([]);
@@ -89,12 +89,12 @@ describe(reserveStorageBytes, () => {
   test("counts a hold that has not landed yet against the quota", async () => {
     expect.hasAssertions();
 
-    await reserveStorageBytes(mockContext.db, userId, containerName, [{ blobName, declaredBytes: quotaBytes }]);
+    await reserveStorageBytes(mockContext.db, userId, storageBucket, [{ blobName, declaredBytes: quotaBytes }]);
 
     // The counter is still zero, so only the outstanding hold can be what rejects this
     await expect(readStorageBytesUsed()).resolves.toBe(0);
     await expect(
-      reserveStorageBytes(mockContext.db, userId, containerName, [{ blobName: `${blobName} `, declaredBytes }]),
+      reserveStorageBytes(mockContext.db, userId, storageBucket, [{ blobName: `${blobName} `, declaredBytes }]),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: You have run out of storage.]`);
   });
 
@@ -106,8 +106,8 @@ describe(reserveStorageBytes, () => {
 
     await mockContext.db
       .insert(storageLedgerInStorage)
-      .values({ blobName, containerName, countedBytes: 0, declaredBytes: quotaBytes, expiresAt: new Date(0), userId });
-    await reserveStorageBytes(mockContext.db, userId, containerName, [{ blobName: `${blobName} `, declaredBytes }]);
+      .values({ blobName, countedBytes: 0, declaredBytes: quotaBytes, expiresAt: new Date(0), storageBucket, userId });
+    await reserveStorageBytes(mockContext.db, userId, storageBucket, [{ blobName: `${blobName} `, declaredBytes }]);
 
     const storageLedgerEntries = await mockContext.db.query.storageLedgerInStorage.findMany();
 
@@ -119,11 +119,11 @@ describe(reserveStorageBytes, () => {
 
     await mockContext.db
       .insert(storageLedgerInStorage)
-      .values({ blobName, containerName, countedBytes: 0, declaredBytes: quotaBytes, expiresAt: new Date(0), userId });
+      .values({ blobName, countedBytes: 0, declaredBytes: quotaBytes, expiresAt: new Date(0), storageBucket, userId });
     // An upload that was never made, past the last moment storage could still be telling us otherwise — a PUT
     // The presigned url authorized at the final instant has had its whole completion allowance and its event's retries
     vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(QUEUE_DELIVERY_TTL_MS + WRITE_PRESIGNED_URL_DURATION_MS));
-    await reserveStorageBytes(mockContext.db, userId, containerName, [{ blobName: `${blobName} `, declaredBytes }]);
+    await reserveStorageBytes(mockContext.db, userId, storageBucket, [{ blobName: `${blobName} `, declaredBytes }]);
 
     const storageLedgerEntries = await mockContext.db.query.storageLedgerInStorage.findMany();
 
@@ -138,14 +138,14 @@ describe(reserveStorageBytes, () => {
       .insert(storageLedgerInStorage)
       .values({
         blobName,
-        containerName,
         countedBytes: declaredBytes,
         declaredBytes: 0,
         expiresAt: new Date(0),
         reconciledAt: new Date(0),
+        storageBucket,
         userId,
       });
-    await reserveStorageBytes(mockContext.db, userId, containerName, [{ blobName, declaredBytes: quotaBytes }]);
+    await reserveStorageBytes(mockContext.db, userId, storageBucket, [{ blobName, declaredBytes: quotaBytes }]);
 
     const storageLedgerEntry = takeOne(await mockContext.db.query.storageLedgerInStorage.findMany());
 
@@ -159,8 +159,8 @@ describe(reserveStorageBytes, () => {
   test("leaves the hold it takes over out of the pending sum", async () => {
     expect.hasAssertions();
 
-    await reserveStorageBytes(mockContext.db, userId, containerName, [{ blobName, declaredBytes: quotaBytes }]);
-    await reserveStorageBytes(mockContext.db, userId, containerName, [{ blobName, declaredBytes: quotaBytes }]);
+    await reserveStorageBytes(mockContext.db, userId, storageBucket, [{ blobName, declaredBytes: quotaBytes }]);
+    await reserveStorageBytes(mockContext.db, userId, storageBucket, [{ blobName, declaredBytes: quotaBytes }]);
 
     await expect(mockContext.db.query.storageLedgerInStorage.findMany()).resolves.toHaveLength(1);
   });
@@ -171,9 +171,9 @@ describe(reserveStorageBytes, () => {
 
     await mockContext.db
       .insert(storageLedgerInStorage)
-      .values({ blobName, containerName, countedBytes: declaredBytes, declaredBytes, expiresAt: new Date(0), userId });
+      .values({ blobName, countedBytes: declaredBytes, declaredBytes, expiresAt: new Date(0), storageBucket, userId });
     vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(QUEUE_DELIVERY_TTL_MS + WRITE_PRESIGNED_URL_DURATION_MS));
-    await reserveStorageBytes(mockContext.db, userId, containerName, [{ blobName: `${blobName} `, declaredBytes }]);
+    await reserveStorageBytes(mockContext.db, userId, storageBucket, [{ blobName: `${blobName} `, declaredBytes }]);
 
     const storageLedgerEntries = await mockContext.db.query.storageLedgerInStorage.findMany();
 
@@ -187,10 +187,10 @@ describe(reserveStorageBytes, () => {
       { length: MAX_UNRECONCILED_STORAGE_LEDGER_ENTRIES },
       (_value, index) => ({ blobName: `${blobName}${index}`, declaredBytes }),
     );
-    await reserveStorageBytes(mockContext.db, userId, containerName, outstandingReservations);
+    await reserveStorageBytes(mockContext.db, userId, storageBucket, outstandingReservations);
 
     await expect(
-      reserveStorageBytes(mockContext.db, userId, containerName, [{ blobName, declaredBytes }]),
+      reserveStorageBytes(mockContext.db, userId, storageBucket, [{ blobName, declaredBytes }]),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Too many uploads are still in flight — wait for them to finish.]`,
     );

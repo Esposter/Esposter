@@ -135,10 +135,10 @@ describe(deleteAccountHandler, () => {
       .insert(storageLedgerInStorage)
       .values({
         blobName: `${memberRoom.id}/${fileId}`,
-        containerName: StorageBucket.MessageAssets,
         countedBytes,
         declaredBytes: countedBytes,
         expiresAt: new Date(0),
+        storageBucket: StorageBucket.MessageAssets,
         userId,
       });
     await mockDb.update(usersInAuth).set({ storageBytesUsed: countedBytes }).where(eq(usersInAuth.id, userId));

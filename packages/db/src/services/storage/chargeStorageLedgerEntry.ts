@@ -24,7 +24,7 @@ import { storageLedgerInStorage } from "@esposter/db-schema";
 export const chargeStorageLedgerEntry = async (
   db: Database,
   userId: UserInAuth["id"],
-  containerName: StorageBucket,
+  storageBucket: StorageBucket,
   blobName: StorageLedgerEntryInStorage["blobName"],
   actualBytes: number,
 ): Promise<void> => {
@@ -34,7 +34,7 @@ export const chargeStorageLedgerEntry = async (
   // And takes the same path.
   await db
     .insert(storageLedgerInStorage)
-    .values({ blobName, containerName, countedBytes: 0, declaredBytes: 0, expiresAt: new Date(), userId })
+    .values({ blobName, countedBytes: 0, declaredBytes: 0, expiresAt: new Date(), storageBucket, userId })
     .onConflictDoNothing();
-  await reconcileStorageLedgerEntry(db, containerName, blobName, actualBytes);
+  await reconcileStorageLedgerEntry(db, storageBucket, blobName, actualBytes);
 };

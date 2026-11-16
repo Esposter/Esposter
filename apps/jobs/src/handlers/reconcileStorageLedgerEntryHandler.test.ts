@@ -44,11 +44,11 @@ const createBucketWith = (methods: Partial<R2Bucket>) => methods as R2Bucket;
 
 describe(reconcileStorageLedgerEntryHandler, () => {
   const userId = v7();
-  const containerName = StorageBucket.ResourceAssets;
+  const storageBucket = StorageBucket.ResourceAssets;
   const blobName = " ";
   const contentLength = 1;
   const eventTime = new Date(0).toISOString();
-  const createObjectCreatedMessage = (key: string, bucket: StorageBucket = containerName) =>
+  const createObjectCreatedMessage = (key: string, bucket: StorageBucket = storageBucket) =>
     ({ bucket, eventTime, object: { key, size: contentLength } }) satisfies R2ObjectCreatedQueueMessage;
   const readStorageBytesUsed = async () =>
     (await mockDb.query.usersInAuth.findFirst({ columns: { storageBytesUsed: true }, where: { id: { eq: userId } } }))
@@ -83,7 +83,7 @@ describe(reconcileStorageLedgerEntryHandler, () => {
   };
 
   const createStorageLedgerEntry = (
-    entry: { blobName: string; containerName: StorageBucket } = { blobName, containerName },
+    entry: { blobName: string; storageBucket: StorageBucket } = { blobName, storageBucket },
   ) =>
     mockDb
       .insert(storageLedgerInStorage)
@@ -111,9 +111,9 @@ describe(reconcileStorageLedgerEntryHandler, () => {
     expect.hasAssertions();
 
     const messageBlobName = getBlobName(`${resourceId}/${v7()}`, "filename");
-    const messageContainerName = StorageBucket.MessageAssets;
-    await createStorageLedgerEntry({ blobName: messageBlobName, containerName: messageContainerName });
-    await reconcileStorageLedgerEntryHandler(createObjectCreatedMessage(messageBlobName, messageContainerName));
+    const messageStorageBucket = StorageBucket.MessageAssets;
+    await createStorageLedgerEntry({ blobName: messageBlobName, storageBucket: messageStorageBucket });
+    await reconcileStorageLedgerEntryHandler(createObjectCreatedMessage(messageBlobName, messageStorageBucket));
 
     await expect(readStorageBytesUsed()).resolves.toBe(contentLength);
     expect(userObjectCalls).toStrictEqual([
