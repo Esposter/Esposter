@@ -14,6 +14,12 @@ describe("asyncRecursion", () => {
       source: "export async function a(b: number) {\n  if (b > 0) return a(b - 1);\n}",
       violations: 1,
     },
+    // A parameter that shares the function's name is another binding, so calling it is not a self-call
+    {
+      name: "parameterShadowsName",
+      source: "export const run = async (run: () => Promise<void>): Promise<void> => {\n  await run();\n};",
+      violations: 0,
+    },
     {
       name: "namedFunctionExpression",
       source: "export const a = async function b() {\n  await b();\n};",
