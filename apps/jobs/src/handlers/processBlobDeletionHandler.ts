@@ -1,8 +1,7 @@
-import { db } from "#src/services/shared/db";
-import { broadcastStorageUsage } from "#src/services/storage/broadcastStorageUsage";
+import { deleteStorageBlobsAndBroadcast } from "#src/services/storage/deleteStorageBlobsAndBroadcast";
 import { dropBlobNamesWrittenAfter } from "#src/services/storage/dropBlobNamesWrittenAfter";
 import { getBucket } from "#src/services/storage/getBucket";
-import { deleteStorageBlobs, listBlobNames } from "@esposter/db";
+import { listBlobNames } from "@esposter/db";
 import { blobDeletionQueueMessageSchema, QueueJob } from "@esposter/db-schema";
 
 // A presigned read url outlives the delete request that should have invalidated it, so a blob whose delete was dropped stays
@@ -29,8 +28,6 @@ export const processBlobDeletionHandler = async (body: unknown): Promise<void> =
     );
   // The delete and the release of the bytes it frees are one operation, waved and retried together — see
   // `deleteStorageBlobs` and openspec/specs/resource/storage-quotas/design.md
-  await deleteStorageBlobs(db, bucket, data.storageBucket, blobNames, (releasedUserIds) =>
-    broadcastStorageUsage(releasedUserIds),
-  );
+  await deleteStorageBlobsAndBroadcast(bucket, data.storageBucket, blobNames);
   console.log(`${QueueJob.ProcessBlobDeletion} deleted ${blobNames.length} blobs from ${data.storageBucket}.`);
 };

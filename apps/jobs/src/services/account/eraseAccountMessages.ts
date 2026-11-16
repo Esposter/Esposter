@@ -5,12 +5,11 @@ import { getAccountMemberRoomIds } from "#src/services/account/getAccountMemberR
 import { takeBackErasedMentionCounts } from "#src/services/account/takeBackErasedMentionCounts";
 import { getRoomObject } from "#src/services/room/getRoomObject";
 import { OBJECT_READ_PAGE_LIMIT } from "#src/services/shared/constants";
-import { db } from "#src/services/shared/db";
 import { readPagesToEnd } from "#src/services/shared/readPagesToEnd";
-import { broadcastStorageUsage } from "#src/services/storage/broadcastStorageUsage";
+import { deleteStorageBlobsAndBroadcast } from "#src/services/storage/deleteStorageBlobsAndBroadcast";
 import { getBucket } from "#src/services/storage/getBucket";
 import { getUserObject } from "#src/services/user/getUserObject";
-import { deleteStorageBlobs, getFilesBlobNames, toPageCursorValue } from "@esposter/db";
+import { getFilesBlobNames, toPageCursorValue } from "@esposter/db";
 import { SCHEDULED_MESSAGE_JOB_PAGE_SORT, START_PAGE_CURSOR, StorageBucket } from "@esposter/db-schema";
 
 // The account's messages are erased in every room it is a member of, a page at a time. An erased message loses its text,
@@ -32,9 +31,7 @@ export const eraseAccountMessages = async (userId: UserInAuth["id"]): Promise<vo
           roomId,
           erasedMessages.flatMap(({ files }) => files),
         );
-        await deleteStorageBlobs(db, bucket, StorageBucket.MessageAssets, blobNames, (releasedUserIds) =>
-          broadcastStorageUsage(releasedUserIds),
-        );
+        await deleteStorageBlobsAndBroadcast(bucket, StorageBucket.MessageAssets, blobNames);
         await takeBackErasedMentionCounts(roomId, userId, erasedMessages);
       },
     );

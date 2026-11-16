@@ -1,24 +1,13 @@
-/* oxlint-disable no-await-in-loop -- Pagination: each page is requested after the last id the one before it held; Async iteration: the messages stream a page at a time, so one page and one attachment are held at once; Order is the contract: the archive takes one entry at a time, so each room's entries stay in order */
+/* oxlint-disable no-await-in-loop -- Async iteration: the messages stream a page at a time, so one page and one attachment are held at once; Order is the contract: the archive takes one entry at a time, so each room's entries stay in order */
 import type { UserDataArchive } from "#src/models/user/UserDataArchive";
 import type { RoomMessage, UserInAuth } from "@esposter/db-schema";
 
 import { getAccountMemberRoomIds } from "#src/services/account/getAccountMemberRoomIds";
 import { getRoomObject } from "#src/services/room/getRoomObject";
 import { OBJECT_READ_PAGE_LIMIT } from "#src/services/shared/constants";
+import { readPages } from "#src/services/shared/readPages";
 import { readPagesToEnd } from "#src/services/shared/readPagesToEnd";
 import { writeRoomFileEntries } from "#src/services/user/writeRoomFileEntries";
-
-// The person's messages in a room, one page of the room's object at a time, oldest first.
-// The cursor is the last id a page holds, so a page is never read twice and never skipped.
-const readRoomMessagePages = async function* (roomId: string, userId: string): AsyncGenerator<RoomMessage[]> {
-  let after: number | undefined;
-  let page: RoomMessage[];
-  do {
-    page = await getRoomObject(roomId).exportUserMessages({ after, limit: OBJECT_READ_PAGE_LIMIT, userId });
-    yield page;
-    after = page.at(-1)?.id;
-  } while (page.length === OBJECT_READ_PAGE_LIMIT);
-};
 
 // The messages as one JSON array, encoded page by page as the archive reads them, so the array is never held whole
 const encodeMessagesJson = async function* (pages: AsyncIterable<RoomMessage[]>): AsyncGenerator<Uint8Array> {
@@ -39,7 +28,13 @@ const encodeMessagesJson = async function* (pages: AsyncIterable<RoomMessage[]>)
 export const writeRoomEntries = async (archive: UserDataArchive, userId: UserInAuth["id"]): Promise<void> => {
   const roomIds = await getAccountMemberRoomIds(userId);
   for (const roomId of roomIds) {
-    await archive.addEntry(`rooms/${roomId}/messages.json`, encodeMessagesJson(readRoomMessagePages(roomId, userId)));
+    // The person's messages in the room, one page of the room's object at a time, oldest first
+    const messagePages = readPages(
+      (after, limit) => getRoomObject(roomId).exportUserMessages({ after, limit, userId }),
+      ({ id }: RoomMessage) => id,
+      OBJECT_READ_PAGE_LIMIT,
+    );
+    await archive.addEntry(`rooms/${roomId}/messages.json`, encodeMessagesJson(messagePages));
     await readPagesToEnd(
       (after, limit) => getRoomObject(roomId).exportUserMessages({ after, limit, userId }),
       ({ id }: RoomMessage) => id,

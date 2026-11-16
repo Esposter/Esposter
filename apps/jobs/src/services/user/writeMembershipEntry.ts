@@ -43,11 +43,10 @@ export const writeMembershipEntry = async (archive: UserDataArchive, userId: Use
       : [];
   await archive.addJsonEntry(
     "memberships.json",
-    memberships.map(({ roomId, ...membership }) =>
-      Object.assign(membership, {
-        roles: roles.filter((role) => role.roomId === roomId).map(({ id, name }) => ({ id, name })),
-        roomId,
-      }),
-    ),
+    memberships.map(({ roomId, ...membership }) => ({
+      ...membership,
+      roles: roles.filter((role) => role.roomId === roomId).map(({ id, name }) => ({ id, name })),
+      roomId,
+    })),
   );
 };
