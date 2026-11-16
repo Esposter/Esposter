@@ -3,7 +3,6 @@ import type { RoomInMessage } from "@esposter/db-schema";
 
 import { checkIsMemberManageable } from "#shared/services/room/rbac/checkIsMemberManageable";
 import { PermissionOverrideState } from "#src/models/message/room/role/PermissionOverrideState";
-import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { RoomPermissionCategoryItems } from "#src/services/message/room/role/RoomPermissionCategoryItems";
 import { useRoomStore } from "#src/store/message/room/index";
 import { useRoleStore } from "#src/store/message/room/role";
@@ -21,7 +20,6 @@ const { rooms } = storeToRefs(roomStore);
 const roleStore = useRoleStore();
 const {
   checkHasMyPermission,
-  deleteMemberPermissionOverride,
   getMemberPermissionOverride,
   getMemberRoles,
   getMyPermissions,
@@ -61,7 +59,6 @@ const inheritedPermissions = computed(() =>
   ),
 );
 const override = computed(() => getMemberPermissionOverride(roomId, userId));
-const isRemoveOpen = ref(false);
 const getState = (permission: bigint) => {
   if (override.value.allow & permission) return PermissionOverrideState.Allow;
   else if (override.value.deny & permission) return PermissionOverrideState.Deny;
@@ -84,17 +81,7 @@ const setState = (permission: bigint, state: PermissionOverrideState) =>
   <div flex flex-col gap-4>
     <div flex gap-4 items-center>
       <h3 flex-1 truncate ui-heading>{{ memberName }}</h3>
-      <UiButton v-if="isManageable" :variant="UiButtonVariant.Quiet" @click="isRemoveOpen = true">
-        Remove override
-      </UiButton>
-      <UiConfirmDialog
-        v-model="isRemoveOpen"
-        confirm-label="Remove"
-        :confirm="() => deleteMemberPermissionOverride({ roomId, userId })"
-        :title="`Remove ${memberName}'s overrides?`"
-      >
-        Their roles decide every permission again.
-      </UiConfirmDialog>
+      <MessageModelRoomSettingsTypeRoleMemberEditorRemoveButton :is-manageable :member-name :room-id :user-id />
     </div>
     <div flex flex-col gap-6>
       <section v-for="{ category, permissions } of categories" :key="category" flex flex-col>

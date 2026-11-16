@@ -21,10 +21,9 @@ const { room } = defineProps<Props>();
 const emit = defineEmits<{ "open:delete": [] }>();
 const roleStore = useRoleStore();
 const { checkHasMyPermission, getMyPermissions } = roleStore;
-const myPermissions = computed(() => getMyPermissions(room.id));
 // Deleting a room is guarded by ownership rather than by a permission, and a member who cannot delete it can
 // Still leave it — the same row, doing the thing this reader is allowed to do
-const isRoomOwner = computed(() => myPermissions.value?.isRoomOwner ?? false);
+const isRoomOwner = computed(() => getMyPermissions(room.id)?.isRoomOwner ?? false);
 const checkIsVisible = (settingsType: SettingsType) => {
   const permission = SettingsPermissionMap[settingsType];
   if (permission) return checkHasMyPermission(room.id, permission);
@@ -57,23 +56,15 @@ const onClick = (settingsType: SettingsType) => {
 <template>
   <MessageModelSettingsLeftSideBar v-model:open="isDrawerOpen">
     <nav aria-label="Room settings" p-2 flex flex-col gap-1 ui-body>
-      <UiCollapsible
+      <MessageModelRoomSettingsLeftSideBarCategory
         v-for="{ category, items } of visibleCategories"
         :key="category"
-        :model-value="openedCategories.includes(category)"
-        @update:model-value="
-          (isOpen) => {
-            openedCategories = isOpen
-              ? [...openedCategories, category]
-              : openedCategories.filter((openedCategory) => openedCategory !== category);
-          }
-        "
-      >
-        <template #title>
-          <span text-sm text-muted truncate uppercase>{{ getCategoryTitle(category) }}</span>
-        </template>
-        <UiList :items :label="getCategoryTitle(category)" @select="(settingsType) => onClick(settingsType)" />
-      </UiCollapsible>
+        v-model="openedCategories"
+        :category
+        :items
+        :title="getCategoryTitle(category)"
+        @select="(settingsType) => onClick(settingsType)"
+      />
       <div my-1 bg-divider h="[var(--ui-border-width)]" />
       <!-- The destructive row says what it does to this reader: the owner deletes the room, everyone else leaves it -->
       <button type="button" text-error ui-item @click="onClick(SettingsType.Delete)">

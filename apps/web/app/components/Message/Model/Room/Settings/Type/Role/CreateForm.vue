@@ -18,11 +18,6 @@ const memberStore = useMemberStore();
 const { members } = storeToRefs(memberStore);
 const name = ref("");
 const isNameValid = computed(() => createRoleInputSchema.shape.name.safeParse(name.value).success);
-const submit = () => {
-  const newName = name.value;
-  name.value = "";
-  createRole({ name: newName, permissions: 0n, position: 0, roomId });
-};
 // The members loaded into the room's list, each offered once a role-or-member pick is made from them
 const memberItems = computed(() =>
   members.value.map(({ id, name: memberName }) => ({ meaning: UiIconMeaning.Person, title: memberName, value: id })),
@@ -33,7 +28,18 @@ const memberItems = computed(() =>
      the whole of it at creation, and one that exists before it has one shows up in every member's role list as
      "new role" until someone finishes the job. A member is added by picking them, which opens their entry to set -->
 <template>
-  <UiForm flex gap-2 items-start @submit="submit()">
+  <UiForm
+    flex
+    gap-2
+    items-start
+    @submit="
+      () => {
+        const newName = name;
+        name = '';
+        createRole({ name: newName, permissions: 0n, position: 0, roomId });
+      }
+    "
+  >
     <UiTextField
       v-model="name"
       is-label-hidden

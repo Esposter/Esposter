@@ -64,5 +64,5 @@ The member editor leaves out the Administrator bit, which no override can hold.
 | `packages/db-schema/src/models/realtime/RoomEvent.ts`                                           | the `updateMemberPermissionOverride` room event and its schema        |
 | `apps/web/app/store/message/room/role.ts`                                                       | the override map, its reads and writes                                |
 | `apps/web/app/composables/message/events/useRoleEvents.ts`                                      | applies the override event and re-reads the member's own permissions  |
-| `apps/web/app/components/Message/Model/Room/Settings/Type/Role/MemberEditor.vue`                | the member editor                                                     |
+| `apps/web/app/components/Message/Model/Room/Settings/Type/Role/MemberEditor/Index.vue`          | the member editor                                                     |
 | `apps/web/app/components/Message/Model/Room/Settings/Type/Role/Permission/OverrideListItem.vue` | the three-state row                                                   |

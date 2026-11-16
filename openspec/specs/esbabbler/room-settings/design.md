@@ -26,7 +26,7 @@ Gating lives in `SettingsPermissionMap` — a panel with an entry is hidden from
 
 ```mermaid
 flowchart LR
-  Dialog["Settings/Dialog.vue<br/>(singleton, settingsRoomId)"] --> LeftSideBar["LeftSideBar.vue<br/>UiCollapsible per SettingsCategory"]
+  Dialog["Settings/Dialog.vue<br/>(singleton, settingsRoomId)"] --> LeftSideBar["LeftSideBar/Index.vue<br/>Category per SettingsCategory (UiCollapsible)"]
   Dialog --> Content["Content.vue<br/>Suspense + skeleton"]
   LeftSideBar -- "select SettingsType (closes drawer on mobile)" --> Content
   Content -- "SettingsContentMap[settingsType]" --> Panel["Type/*/Index.vue<br/>lazy async panel"]
