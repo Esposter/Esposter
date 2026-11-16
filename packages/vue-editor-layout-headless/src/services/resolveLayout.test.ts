@@ -14,6 +14,11 @@ import { describe, expect, test } from "vitest";
 describe(resolveLayout, () => {
   const context: Context = { mode: "a", selectionCount: 1, selectionKind: "a", tool: "a" };
   const readerState = getDefaultReaderState();
+  const compactSheetPresentationMap = {
+    [SizeClass.Compact]: RegionPresentation.Sheet,
+    [SizeClass.Expanded]: RegionPresentation.Docked,
+    [SizeClass.Medium]: RegionPresentation.Docked,
+  };
 
   test("a panel is present only while its condition holds", () => {
     expect.hasAssertions();
@@ -78,15 +83,7 @@ describe(resolveLayout, () => {
     const layout = {
       canvasId: "b",
       panels: [createPanel()],
-      regions: [
-        createRegion({
-          sizeClassPresentationMap: {
-            [SizeClass.Compact]: RegionPresentation.Sheet,
-            [SizeClass.Expanded]: RegionPresentation.Docked,
-            [SizeClass.Medium]: RegionPresentation.Docked,
-          },
-        }),
-      ],
+      regions: [createRegion({ sizeClassPresentationMap: compactSheetPresentationMap })],
     };
 
     expect(
@@ -117,15 +114,11 @@ describe(resolveLayout, () => {
   test("a sheet waits for the reader", () => {
     expect.hasAssertions();
 
-    const properties = createRegion({
+    const withContentRegion = createRegion({
       opening: RegionOpening.WithContent,
-      sizeClassPresentationMap: {
-        [SizeClass.Compact]: RegionPresentation.Sheet,
-        [SizeClass.Expanded]: RegionPresentation.Docked,
-        [SizeClass.Medium]: RegionPresentation.Docked,
-      },
+      sizeClassPresentationMap: compactSheetPresentationMap,
     });
-    const layout = { canvasId: "b", panels: [createPanel()], regions: [properties] };
+    const layout = { canvasId: "b", panels: [createPanel()], regions: [withContentRegion] };
 
     expect(
       resolveLayout(layout, context, SizeClass.Compact, readerState).regions.map((region) => ({
@@ -138,15 +131,11 @@ describe(resolveLayout, () => {
   test("a docked region opens with its content", () => {
     expect.hasAssertions();
 
-    const properties = createRegion({
+    const withContentRegion = createRegion({
       opening: RegionOpening.WithContent,
-      sizeClassPresentationMap: {
-        [SizeClass.Compact]: RegionPresentation.Sheet,
-        [SizeClass.Expanded]: RegionPresentation.Docked,
-        [SizeClass.Medium]: RegionPresentation.Docked,
-      },
+      sizeClassPresentationMap: compactSheetPresentationMap,
     });
-    const layout = { canvasId: "b", panels: [createPanel()], regions: [properties] };
+    const layout = { canvasId: "b", panels: [createPanel()], regions: [withContentRegion] };
 
     expect(
       resolveLayout(layout, context, SizeClass.Expanded, readerState).regions.map((region) => region.isOpen),
