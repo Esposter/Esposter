@@ -9,8 +9,8 @@ Stickers are a different feature and deliberately not this one — a sticker is 
 ```mermaid
 flowchart TD
   footer["Picker footer — Add Emoji, on ManageEmojis"] --> dialog["Add Emoji dialog"]
-  dialog -->|"generateUploadRoomEmojiPresignedUrlEntity"| sas["Presigned PUT for {roomId}/emoji/{id} — mime signed as the content type"]
-  sas --> put["Client PUTs the image to the message-assets bucket"]
+  dialog -->|"generateUploadRoomEmojiPresignedUrlEntity"| presign["Presigned PUT for {roomId}/emoji/{id} — mime signed as the content type"]
+  presign --> put["Client PUTs the image to the message-assets bucket"]
   put -->|"createRoomEmoji — id, name"| guard{"object landed, name free, under the cap?"}
   guard -->|no| reject["Invalid operation — nothing is stored"]
   guard -->|yes| row[("roomEmojis row")]

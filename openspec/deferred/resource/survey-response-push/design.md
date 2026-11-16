@@ -1,6 +1,6 @@
 # Survey response push notifications
 
-Push a notification to the survey owner when a respondent submits — the same EventGrid → push pipeline esbabbler messages use, fired from `createSurveyResponse`.
+Push a notification to the survey owner when a respondent submits — the same notification queue and push delivery esbabbler messages use, fired from `createSurveyResponse`.
 
 ## Why deferred
 

@@ -80,7 +80,7 @@ The `message` router merges its base procedures with the `emoji`, `moderation`, 
 | `readMySentMessages`              | authed | Cross-room sent list from the user object's sent index, read per room                                                                                                                                   |
 | Live events, not subscriptions    | —      | The room object's `RoomEvent` frames, handled by `useMessageEvents`                                                                                                                                     |
 | `createTyping`                    | member | Typing indicator, broadcast as a `createTyping` room event — the typist and the name shown (room display name, else account name) are resolved server-side from the session, never taken from the input |
-| `generate*FileSas*`               | member | Presigned R2 upload and download URLs (the procedure names keep the `Sas` form)                                                                                                                         |
+| `generate*FilePresignedUrl*`      | member | Presigned R2 upload and download URLs                                                                                                                                                                   |
 
 ## Key files
 

@@ -19,8 +19,8 @@ flowchart TD
   inline --> validate
   read["readContent"] --> size{"contentSize under MAX_REQUEST_SIZE?"}
   size -->|yes| query["tRPC query — the server reads and parses the object"]
-  size -->|no| sas["presigned read URL — the browser downloads the frame and receives the JSON"]
-  sas --> seed["the bytes are the next save's delta baseline"]
+  size -->|no| presign["presigned read URL — the browser downloads the frame and receives the JSON"]
+  presign --> seed["the bytes are the next save's delta baseline"]
 ```
 
 ## Where the server still holds the document, and why
@@ -57,8 +57,8 @@ flowchart TD
   body -->|no| delta{"delta saves — a confirmed baseline, and a delta that applies?"}
   delta -->|yes| door
   delta -->|no| gzip["gzip through CompressionStream, SHA-256 of the gzip"]
-  gzip --> sas["generateUploadContentPresignedUrl — a reserved presigned PUT"]
-  sas --> put["PUT straight to R2"]
+  gzip --> presign["generateUploadContentPresignedUrl — a reserved presigned PUT"]
+  presign --> put["PUT straight to R2"]
   put --> commit["saveStagedResourceContent — id, contentVersion, hash"]
   commit --> verify{"size under the limit, hash matches, inflates within the limit?"}
   verify -->|no| reject["rejected — version unchanged"]

@@ -93,7 +93,7 @@ Every feature is described under `openspec/`, and where its folder lives says wh
 | :--------------------------------------------------------------------------------- | :---------------------------------------------------------- |
 | Storage split, Cloudflare service map, queues, alarms, Durable Objects, R2 buckets | `openspec/specs/architecture/cloudflare-services/design.md` |
 | Real-time — typed events over the room, call and user objects' sockets             | `openspec/specs/architecture/cloudflare-services/design.md` |
-| Notifications — the one event, Function and delivery path                          | `openspec/specs/architecture/notifications/design.md`       |
+| Notifications — the one message, queue and delivery path                           | `openspec/specs/architecture/notifications/design.md`       |
 | RBAC — permission bitfield, hierarchy, the service functions                       | `openspec/specs/esbabbler/rbac/design.md`                   |
 | Moderation — `AdminActionType` and every place it touches                          | `openspec/specs/esbabbler/moderation/design.md`             |
 | Message types — `MessageComponentMap` and the shared shells                        | `openspec/specs/esbabbler/message-list-rendering/design.md` |

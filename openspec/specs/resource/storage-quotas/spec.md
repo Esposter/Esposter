@@ -1,6 +1,6 @@
 ## Purpose
 
-Per-user blob-storage quotas (Free = 10 GiB) held atomically at SAS issuance, charged by Storage's own BlobCreated event for client uploads and at write time for the server's own, with a usage meter in the resource explorer's header.
+Per-user blob-storage quotas (Free = 10 GiB) held atomically when a presigned upload URL is issued, charged by the bucket's own object-create event for client uploads and at write time for the server's own, with a usage meter in the resource explorer's header.
 
 ## Requirements
 
