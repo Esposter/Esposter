@@ -7,6 +7,7 @@ import { createUser } from "#src/services/message/user/createUser.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useBanStore } from "#src/store/message/user/ban";
 import { TRPCError } from "@trpc/server";
+import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { beforeEach, describe, expect, test } from "vitest";
 
@@ -43,7 +44,9 @@ describe(useBanStore, () => {
     const { items } = storeToRefs(banStore);
     const { deleteBan, getSlice } = banStore;
     getSlice(roomId).items.value = [createBan(first), createBan(second)];
-    await Promise.all([deleteBan({ roomId, userId: first.id }), deleteBan({ roomId, userId: second.id })]);
+    deleteBan({ roomId, userId: first.id });
+    deleteBan({ roomId, userId: second.id });
+    await flushPromises();
 
     expect(items.value.map(({ userId }) => userId)).toStrictEqual([first.id]);
   });
@@ -61,7 +64,8 @@ describe(useBanStore, () => {
     const { items } = storeToRefs(banStore);
     const { deleteBan, getSlice } = banStore;
     getSlice(roomId).items.value = [createBan(first)];
-    await deleteBan({ roomId, userId: first.id });
+    deleteBan({ roomId, userId: first.id });
+    await flushPromises();
 
     expect(items.value).toStrictEqual([]);
     expect(getSlice(roomId).items.value).toStrictEqual([createBan(first)]);
@@ -83,7 +87,8 @@ describe(useBanStore, () => {
       createBan(second, new Date(2)),
       createBan(third, new Date(1)),
     ];
-    await deleteBan({ roomId, userId: second.id });
+    deleteBan({ roomId, userId: second.id });
+    await flushPromises();
 
     expect(items.value.map(({ userId }) => userId)).toStrictEqual([first.id, second.id, third.id]);
   });

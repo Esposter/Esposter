@@ -1,10 +1,11 @@
 import type { RTKParticipant, RTKSelf } from "@cloudflare/realtimekit";
+import type { Promisable } from "type-fest";
 
 import { MicrophoneProcessor } from "#src/models/message/room/call/MicrophoneProcessor";
 import { ConnectionQuality } from "#src/models/message/room/realtime/ConnectionQuality";
 import { ConnectionState } from "#src/models/message/room/realtime/ConnectionState";
 import { RemoteAudioSource } from "#src/models/message/room/realtime/RemoteAudioSource";
-import { MutationStatus } from "#src/models/shared/MutationStatus";
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import {
   DEFAULT_PARTICIPANT_VOLUME_PERCENTAGE,
   SCREEN_SHARE_CONSTRAINTS,
@@ -34,7 +35,7 @@ const getRemoteAudioKey = (identity: string, source: RemoteAudioSource) => `${id
 
 export const useRealtimeStore = defineStore("message/room/realtime", () => {
   let activeMeeting: RealtimeKitClient | undefined;
-  let disconnectHandler: (() => Promise<void>) | undefined;
+  let disconnectHandler: (() => Promisable<void>) | undefined;
   let hasVirtualBackground = false;
   let microphoneProcessor: MicrophoneProcessor | undefined;
   let pushToTalkReleaseTimeoutId: number | undefined;
@@ -242,7 +243,7 @@ export const useRealtimeStore = defineStore("message/room/realtime", () => {
     // A user who chose a background last session never touched the picker this one. Applied rather than set:
     // Restoring a selection is not the user making it again, so it owes the settings row no write
     const virtualBackground = mediaStore.selectedVirtualBackground || userSettingsStore.userSettings?.virtualBackground;
-    if (virtualBackground && !hasVirtualBackground) await applyVirtualBackground(virtualBackground);
+    if (virtualBackground && !hasVirtualBackground) applyVirtualBackground(virtualBackground, noop);
   };
   const setMicrophone = async (isMicrophoneEnabled: boolean) => {
     if (!activeMeeting) return;
@@ -256,62 +257,77 @@ export const useRealtimeStore = defineStore("message/room/realtime", () => {
   };
   // Local media pipeline work rather than a server write: clicking through the background picker means only
   // The last pick matters, and the picks before it have nothing to unwind, so they supersede rather than queue
-  const applyVirtualBackground = async (virtualBackground: string) => {
-    const outcome = await executeSetVirtualBackgroundMutation(
-      async (checkIsStale) => {
-        mediaStore.selectedVirtualBackground = virtualBackground;
-        const meeting = activeMeeting;
-        if (!meeting?.self.videoEnabled) return;
-        else if (!RealtimeKitVideoBackgroundTransformer.isSupported()) {
-          console.warn("Virtual backgrounds are not supported in this browser.");
-          return;
-        }
+  const applyVirtualBackgroundPipeline = async (virtualBackground: string, checkIsStale: () => boolean) => {
+    const meeting = activeMeeting;
+    if (!meeting?.self.videoEnabled) return;
+    else if (!RealtimeKitVideoBackgroundTransformer.isSupported()) {
+      console.warn("Virtual backgrounds are not supported in this browser.");
+      return;
+    }
 
-        // Held for this operation, since leaving the call or switching the camera off clears the store's ref while one
-        // Of the awaits below is open. Once the store no longer points at this meeting, the operation has nothing left
-        // To write to
-        const checkIsCurrent = () => checkIsStale() || meeting !== activeMeeting;
-        const transformer =
-          videoBackgroundTransformer ?? (await RealtimeKitVideoBackgroundTransformer.init({ meeting }));
-        // A transformer built for a meeting that has since been left belongs to nothing, so it is released here
-        if (meeting !== activeMeeting) {
-          transformer.destruct();
-          return;
-        }
-        videoBackgroundTransformer = transformer;
-        if (checkIsStale()) return;
-        const imagePath = await readVirtualBackgroundImagePath(virtualBackground);
-        if (checkIsCurrent()) return;
-        else if (!imagePath) {
-          // A slot that has been deleted resolves to nothing, which lands here as the same no-background the None entry
-          // Selects - a missing image must never leave a call with a broken video track
-          await meeting.self.removeAllVideoMiddlewares();
-          hasVirtualBackground = false;
-          setLocalVideo(meeting.self);
-          return;
-        }
-        // Only the presets are SVGs; an uploaded slot arrives as a signed url the middleware can take directly
-        const resolvedPath = imagePath.endsWith(".svg") ? await rasterizeSvg(imagePath) : imagePath;
-        if (checkIsCurrent() || !resolvedPath) return;
-        const middleware = await transformer.createStaticBackgroundVideoMiddleware(resolvedPath);
-        if (checkIsCurrent()) return;
-        // The middleware is replaced rather than stacked, so one pick never composites over another
-        await meeting.self.removeAllVideoMiddlewares();
-        await meeting.self.addVideoMiddleware(middleware);
-        hasVirtualBackground = true;
-        setLocalVideo(meeting.self);
-      },
-      { isSupersede: true, key: "virtualBackground" },
-    );
-    return outcome.status === MutationStatus.Succeeded;
+    // Held for this operation, since leaving the call or switching the camera off clears the store's ref while one
+    // Of the awaits below is open. Once the store no longer points at this meeting, the operation has nothing left
+    // To write to
+    const checkIsCurrent = () => checkIsStale() || meeting !== activeMeeting;
+    const transformer = videoBackgroundTransformer ?? (await RealtimeKitVideoBackgroundTransformer.init({ meeting }));
+    // A transformer built for a meeting that has since been left belongs to nothing, so it is released here
+    if (meeting !== activeMeeting) {
+      transformer.destruct();
+      return;
+    }
+    videoBackgroundTransformer = transformer;
+    if (checkIsStale()) return;
+    const imagePath = await readVirtualBackgroundImagePath(virtualBackground);
+    if (checkIsCurrent()) return;
+    else if (!imagePath) {
+      // A slot that has been deleted resolves to nothing, which lands here as the same no-background the None entry
+      // Selects - a missing image must never leave a call with a broken video track
+      await meeting.self.removeAllVideoMiddlewares();
+      hasVirtualBackground = false;
+      setLocalVideo(meeting.self);
+      return;
+    }
+    // Only the presets are SVGs; an uploaded slot arrives as a signed url the middleware can take directly
+    const resolvedPath = imagePath.endsWith(".svg") ? await rasterizeSvg(imagePath) : imagePath;
+    if (checkIsCurrent() || !resolvedPath) return;
+    const middleware = await transformer.createStaticBackgroundVideoMiddleware(resolvedPath);
+    if (checkIsCurrent()) return;
+    // The middleware is replaced rather than stacked, so one pick never composites over another
+    await meeting.self.removeAllVideoMiddlewares();
+    await meeting.self.addVideoMiddleware(middleware);
+    hasVirtualBackground = true;
+    setLocalVideo(meeting.self);
   };
-  // The pick the user actually made, which is the only one worth remembering. Persisted after the pipeline has
-  // Taken it, and only if it is still the pick in force: these supersede rather than queue, so a slow
-  // Selection can resolve after a later one has already applied - writing it then would leave the settings row
-  // Naming a background the call is not showing, and restore it on the next camera start
-  const setVirtualBackground = async (virtualBackground: string) => {
-    const isVirtualBackgroundApplied = await applyVirtualBackground(virtualBackground);
-    if (isVirtualBackgroundApplied) await updateUserSettings({ virtualBackground });
+  // The pick is drawn as it is made, and a pipeline that refuses it puts back the one it replaced. `onApplied` runs once the
+  // Pipeline has taken the pick, and only while it is still the pick in force: these supersede rather than queue, so a slow
+  // Selection can resolve after a later one has already applied, and writing it then would leave the settings row naming a
+  // Background the call is not showing
+  const applyVirtualBackground = (virtualBackground: string, onApplied: () => void) => {
+    executeSetVirtualBackgroundMutation(
+      async (checkIsStale) => {
+        await applyVirtualBackgroundPipeline(virtualBackground, checkIsStale);
+        if (!checkIsStale()) onApplied();
+      },
+      {
+        applyOptimistic: () => {
+          const previousVirtualBackground = mediaStore.selectedVirtualBackground;
+          mediaStore.selectedVirtualBackground = virtualBackground;
+          return () => {
+            // A later pick may already hold the screen, and it is not this refused one's to put back over
+            if (mediaStore.selectedVirtualBackground === virtualBackground)
+              mediaStore.selectedVirtualBackground = previousVirtualBackground;
+          };
+        },
+        isSupersede: true,
+        key: "virtualBackground",
+      },
+    );
+  };
+  // The pick the user actually made is the only one worth remembering, so it is persisted once the pipeline has taken it
+  const setVirtualBackground = (virtualBackground: string) => {
+    applyVirtualBackground(virtualBackground, () => {
+      updateUserSettings({ virtualBackground });
+    });
   };
   // Selecting a device just writes the persisted ref (via setActiveDevice); these watchers hand the pick to the
   // Meeting, which switches the live device of that kind
@@ -331,7 +347,7 @@ export const useRealtimeStore = defineStore("message/room/realtime", () => {
     );
   const connect = async (
     authToken: string,
-    newDisconnectHandler: () => Promise<void>,
+    newDisconnectHandler: () => Promisable<void>,
     isMicrophoneEnabled: boolean,
   ) => {
     await disconnect();
@@ -404,7 +420,12 @@ export const useRealtimeStore = defineStore("message/room/realtime", () => {
         if (isCameraEnabled) await setCamera(true);
         setLocalScreenShare(false, {});
       },
-      { key: "rejoin", onError: console.error },
+      {
+        // The server's revoke decides the connection that replaces this one, so the rejoin waits on that answer
+        awaitedBecause: AwaitedReason.ServerDecidedOutcome,
+        key: "rejoin",
+        onError: console.error,
+      },
     ),
   );
   watch(

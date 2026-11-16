@@ -2,6 +2,7 @@
 import type { UnparameterizedAdminActionInput } from "#shared/models/db/moderation/UnparameterizedAdminActionInput";
 import type { Item } from "#src/models/shared/Item";
 
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { useCallStore } from "#src/store/message/room/call/index";
 import { useParticipantStore } from "#src/store/message/room/call/participant";
 import { useRoleStore } from "#src/store/message/room/role";
@@ -32,9 +33,10 @@ export const useCallParticipantActions = () => {
     ): Extract<Item, { icon: string }> => ({
       icon,
       onClick: async () => {
+        // The server decides what a moderation action does to the target, so the item waits on its answer
         await executeAdminActionMutation(
           () => $trpc.message.moderation.executeAdminAction.mutate({ roomId, targetUserId: userId, type }),
-          { key: userId },
+          { awaitedBecause: AwaitedReason.ServerDecidedOutcome, key: userId },
         );
       },
       title,
@@ -43,8 +45,8 @@ export const useCallParticipantActions = () => {
     if (isForceMuteable.value && isHandRaised)
       items.push({
         icon: "i-mdi:hand-back-right-off",
-        onClick: async () => {
-          await executeLowerHandMutation(
+        onClick: () => {
+          executeLowerHandMutation(
             () => $trpc.callSession.setHandRaised.mutate({ callSessionId, isHandRaised: false, participantId }),
             {
               applyOptimistic: () => {

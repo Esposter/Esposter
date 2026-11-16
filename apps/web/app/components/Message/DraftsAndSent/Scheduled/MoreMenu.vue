@@ -7,7 +7,7 @@ import { getScheduledMessageJobText } from "#src/services/message/draftsAndSent/
 import { useDraftsAndSentScheduleDialogStore } from "#src/store/message/draftsAndSent/scheduleDialog";
 import { useScheduledMessageJobStore } from "#src/store/message/scheduledMessageJob";
 import { ScheduledMessageJobType } from "@esposter/db-schema";
-import { RoutePath } from "@esposter/shared";
+import { getSynchronizedFunction, RoutePath } from "@esposter/shared";
 
 interface Props {
   scheduledMessageJob: ScheduledMessageJobWithRoom;
@@ -19,6 +19,10 @@ const { cancelScheduledMessageJob } = scheduledMessageJobStore;
 const cancelScheduledMessageJobToDraft = useCancelScheduledMessageJobToDraft();
 const draftsAndSentScheduleDialogStore = useDraftsAndSentScheduleDialogStore();
 const { open } = draftsAndSentScheduleDialogStore;
+// Leaving for the room is at once, beside the cancel rather than after it
+const navigateToRoom = getSynchronizedFunction(async () => {
+  await navigateTo(RoutePath.Messages(scheduledMessageJob.roomId));
+});
 // Only a scheduled message reschedules, and it keeps the thread it was scheduled into. A reminder posts no message to
 // Move, so it is set again instead
 const threadRootId =
@@ -28,10 +32,11 @@ const threadRootId =
 const items = computed<Item[]>(() => [
   {
     meaning: UiIconMeaning.Edit,
-    onClick: async () => {
-      // A cancel the server rejected leaves the job scheduled, so the page stays where it is
-      if (await cancelScheduledMessageJobToDraft(scheduledMessageJob))
-        await navigateTo(RoutePath.Messages(scheduledMessageJob.roomId));
+    onClick: () => {
+      // The job's text takes the room's composer as the cancel is sent, and the page goes there with it. A cancel the
+      // Server refuses gives the job back and the composer its own text
+      cancelScheduledMessageJobToDraft(scheduledMessageJob);
+      navigateToRoom();
     },
     title: "Edit scheduled message",
   },
@@ -53,8 +58,8 @@ const items = computed<Item[]>(() => [
     : []),
   {
     meaning: UiIconMeaning.Save,
-    onClick: async () => {
-      await cancelScheduledMessageJobToDraft(scheduledMessageJob);
+    onClick: () => {
+      cancelScheduledMessageJobToDraft(scheduledMessageJob);
     },
     title: "Cancel schedule and save to drafts",
   },

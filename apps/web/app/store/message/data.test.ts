@@ -24,6 +24,7 @@ import { useThreadFollowStore } from "#src/store/message/threadFollow";
 import { MessageType } from "@esposter/db-schema";
 import { Operation, takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
+import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -333,6 +334,26 @@ describe(useDataStore, () => {
 
   // A successful create also mirrors the server's thread auto-follow, so the reply's root is followed locally
   // Without the round trip the drawer would otherwise need
+  test("a sent message keeps its place when the server confirms it", async () => {
+    expect.hasAssertions();
+
+    signIn();
+    const dataStore = useDataStore();
+    const { items } = storeToRefs(dataStore);
+    const { createMessage } = dataStore;
+    const { promise, resolve } = Promise.withResolvers<ClientMessage>();
+    trpcMsw.message.createMessage.mutation(() => promise);
+    const isCreated = createMessage({ files: [], message, replyToId: null, roomId, type: MessageType.Message });
+    await flushPromises();
+    const placeholder = takeOne(items.value);
+    resolve({ ...createRoomMessage(roomId, message), userId });
+    await isCreated;
+
+    expect(items.value).toHaveLength(1);
+    expect(takeOne(items.value)).toBe(placeholder);
+    expect(placeholder.id).toBe(roomMessageId);
+  });
+
   test("createMessage mirrors the thread auto-follow of a reply", async () => {
     expect.hasAssertions();
 
@@ -447,10 +468,9 @@ describe(useDataStore, () => {
     };
     getSlice(newMessage.roomId).items.value = [newMessage];
     const messageKey = { id: newMessage.id, roomId: newMessage.roomId };
-    await Promise.all([
-      updateMessage({ ...messageKey, message: updatedMessage }),
-      updateMessage({ ...messageKey, message: rejectedMessage }),
-    ]);
+    updateMessage({ ...messageKey, message: updatedMessage });
+    updateMessage({ ...messageKey, message: rejectedMessage });
+    await flushPromises();
 
     expect(takeOne(items.value).message).toBe(updatedMessage);
   });
@@ -471,7 +491,8 @@ describe(useDataStore, () => {
       id: roomMessageId,
     };
     getSlice(newMessage.roomId).items.value = [newMessage];
-    await updateMessage({ id: newMessage.id, message: rejectedMessage, roomId: newMessage.roomId });
+    updateMessage({ id: newMessage.id, message: rejectedMessage, roomId: newMessage.roomId });
+    await flushPromises();
 
     expect(takeOne(items.value).message).toBe("");
   });
@@ -508,10 +529,9 @@ describe(useDataStore, () => {
     };
     getSlice(newMessage.roomId).items.value = [newMessage];
     const messageKey = { id: newMessage.id, roomId: newMessage.roomId };
-    await Promise.all([
-      deleteFile({ ...messageKey, fileId: acceptedFileId }),
-      deleteFile({ ...messageKey, fileId: rejectedFileId }),
-    ]);
+    deleteFile({ ...messageKey, fileId: acceptedFileId });
+    deleteFile({ ...messageKey, fileId: rejectedFileId });
+    await flushPromises();
 
     expect(takeOne(items.value).files.map(({ id }) => id)).toStrictEqual([keptFileId, rejectedFileId]);
   });

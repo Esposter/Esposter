@@ -32,7 +32,6 @@ const { isOpen, item: deletingRowIds } = useSingletonDialog(deletingIds, () =>
         return deletingRowIds.length === 1 && firstId ? deleteRow(firstId) : deleteRows(deletingRowIds);
       }
     "
-    is-optimistic
   >
     <p>
       Delete {{ deletingRowIds.length === 1 ? "this row" : `${deletingRowIds.length} rows` }}? The toolbar's Undo brings

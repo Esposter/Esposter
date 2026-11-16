@@ -37,10 +37,10 @@ const nameRules = [
       min-w-0
       :rules="nameRules"
       @focusout="
-        async () => {
+        () => {
           if (!isDirty || !selectWebhookInMessageSchema.shape.name.safeParse(editedName).success) return;
 
-          await updateWebhook(roomId, { id: webhook.id, name: editedName });
+          updateWebhook(roomId, { id: webhook.id, name: editedName });
           settle();
         }
       "

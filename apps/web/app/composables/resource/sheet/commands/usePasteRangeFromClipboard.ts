@@ -28,7 +28,7 @@ export const usePasteRangeFromClipboard = () => {
       const targetColumnNames = displayColumns.value.map((column) => column.name);
       switch (pasteMode) {
         case PasteMode.Overwrite: {
-          await pasteRange(anchorRowIndex, anchorColumnIndex, pastedValues, targetColumnNames);
+          pasteRange(anchorRowIndex, anchorColumnIndex, pastedValues, targetColumnNames);
           break;
         }
         case PasteMode.ShiftDown: {
@@ -36,7 +36,7 @@ export const usePasteRangeFromClipboard = () => {
           const rows = pastedValues.map(
             (pastedRow) => new Row({ data: createPastedRowData(dataSourceValue.columns, targetColumns, pastedRow) }),
           );
-          await createRows(rows, anchorRowIndex);
+          createRows(rows, anchorRowIndex);
           break;
         }
         default:

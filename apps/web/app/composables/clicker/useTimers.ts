@@ -1,16 +1,14 @@
 import { applyGameTick } from "#src/services/clicker/applyGameTick";
 import { AUTOSAVE_INTERVAL_MS, GAME_TICK_INTERVAL_MS } from "#src/services/clicker/constants";
 import { useClickerStore } from "#src/store/clicker/index";
-import { getResultAsync, noop } from "@esposter/shared";
 
 export const useTimers = () => {
   const clickerStore = useClickerStore();
   const { saveClicker } = clickerStore;
   const { clicker } = storeToRefs(clickerStore);
-  // A failed autosave is logged and the next tick tries again
+  // A failed autosave is reported by the save itself, and the next tick tries again
   useWorkerInterval(() => {
-    // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and a tick has nothing to await it
-    getResultAsync(() => saveClicker()).match(noop, console.error);
+    saveClicker();
   }, AUTOSAVE_INTERVAL_MS);
   useWorkerInterval(() => {
     applyGameTick(clicker.value);

@@ -24,12 +24,12 @@ const {
 } = useStoredDraft(() => room.allowedMimeCategories);
 const maxFileSizeMegabytes = MAX_FILE_REQUEST_SIZE / MEGABYTE;
 const maxFileSizeRules = [UiRules.minValue(1), UiRules.maxValue(maxFileSizeMegabytes)];
-const save = async () => {
+const save = () => {
   if (!isMaxFileSizeBytesDirty.value && !isAllowedMimeCategoriesDirty.value) return;
 
   // The fields this session edited and no others, so one another client changed since the panel opened is not written
   // Back with the value this panel was opened on
-  await saveRoom({
+  saveRoom({
     ...(isAllowedMimeCategoriesDirty.value && { allowedMimeCategories: editedAllowedMimeCategories.value }),
     ...(isMaxFileSizeBytesDirty.value && { maxFileSizeBytes: editedMaxFileSizeBytes.value }),
   });

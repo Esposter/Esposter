@@ -145,13 +145,7 @@ if (editState.value.document.elements.length > 0)
         </template>
       </ResourceWhiteboardEditorCanvas>
     </EditorShell>
-    <UiConfirmDialog
-      v-model="isDeleteOpen"
-      confirm-label="Delete"
-      is-optimistic
-      title="Delete"
-      :confirm="confirmDelete"
-    >
+    <UiConfirmDialog v-model="isDeleteOpen" confirm-label="Delete" title="Delete" :confirm="confirmDelete">
       <p>Arrows bound only to what is deleted are deleted with it.</p>
     </UiConfirmDialog>
   </div>

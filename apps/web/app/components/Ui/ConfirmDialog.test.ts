@@ -3,6 +3,7 @@ import type { VueWrapper } from "@vue/test-utils";
 
 import UiConfirmDialog from "#src/components/Ui/ConfirmDialog.vue";
 import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiDialogSize } from "#src/models/ui/UiDialogSize";
 import { UiStyles } from "#src/models/ui/UiStyle";
@@ -67,10 +68,10 @@ describe("uiConfirmDialog", () => {
       ).toStrictEqual([UiDialogSizeClassMap[expected]]);
     });
 
-    test("holds its answer pending until it settles, then closes", async () => {
+    test("the dialog stays locked while the delete is pending", async () => {
       expect.hasAssertions();
 
-      const { component, resolve } = await mountAnswering();
+      const { component, resolve } = await mountAnswering({ awaitedBecause: AwaitedReason.ServerDecidedOutcome });
 
       expect(getConfirmButton(component).attributes("disabled")).toBe("");
 
@@ -80,10 +81,10 @@ describe("uiConfirmDialog", () => {
       expect(component.emitted("update:modelValue")).toStrictEqual([[false]]);
     });
 
-    test("closes an optimistic answer before it settles", async () => {
+    test("an optimistic delete closes as soon as it is confirmed", async () => {
       expect.hasAssertions();
 
-      const { component, confirm } = await mountAnswering({ isOptimistic: true });
+      const { component, confirm } = await mountAnswering();
 
       expect(confirm).toHaveBeenCalledTimes(1);
       expect(component.emitted("update:modelValue")).toStrictEqual([[false]]);
@@ -93,7 +94,7 @@ describe("uiConfirmDialog", () => {
       expect.hasAssertions();
 
       const confirm = vi.fn<() => void>(noop);
-      const component = await mountDialog({ confirm, isOptimistic: true });
+      const component = await mountDialog({ confirm });
       // Two presses before the dialog re-renders, as a double click lands inside its close transition
       const confirmButton = getConfirmButton(component).element;
       confirmButton.click();
@@ -115,10 +116,10 @@ describe("uiConfirmDialog", () => {
       expect(getConfirmButton(component).attributes("disabled")).toBeUndefined();
     });
 
-    test("stays open to try again when the answer fails", async () => {
+    test("a refused or failed delete leaves the dialog open to try again", async () => {
       expect.hasAssertions();
 
-      const { component, resolve } = await mountAnswering();
+      const { component, resolve } = await mountAnswering({ awaitedBecause: AwaitedReason.ServerDecidedOutcome });
       resolve(false);
       await flushPromises();
 

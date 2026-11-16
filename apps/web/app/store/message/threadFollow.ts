@@ -2,13 +2,15 @@ import type { ClientMessage } from "#src/models/message/ClientMessage";
 
 import { messageHolderRegistry } from "#src/services/message/messageHolderRegistry";
 import { MessageHookMap } from "#src/services/message/MessageHookMap";
+import { getRestoredItems } from "#src/services/shared/getRestoredItems";
 import { useRoomStore } from "#src/store/message/room/index";
-import { Operation } from "@esposter/shared";
+import { ID_SEPARATOR, Operation } from "@esposter/shared";
 
 export const useThreadFollowStore = defineStore("message/threadFollow", () => {
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
   const readMessageCreators = useReadMessageCreators();
+  const { executeMutation } = useMutation();
   const {
     data: followedThreads,
     getData: getFollowedThreads,
@@ -72,21 +74,68 @@ export const useThreadFollowStore = defineStore("message/threadFollow", () => {
 
     setFollowedThreadRootIds(roomId, [...threadRootIds, threadRootId]);
   };
-  const followThread = async (roomId: string, threadRootId: ClientMessage["id"]) => {
-    await $trpc.message.followThread.mutate({ roomId, threadRootId });
-    // Re-read rather than mirror locally: the drawer lists the root message, which only the server resolves.
-    await refetchFollowedThreads(roomId);
+  // The drawer lists each followed root as a copy of its message. A caller holding that message has the follow draw it
+  // In the drawer at once; one whose thread has not read its root yet has the drawer read again once the follow lands,
+  // Since only the server can hand back the root then. Exclusive per thread, so a second toggle while the first is out
+  // Is dropped rather than flipping the follow back
+  const followThread = (roomId: string, threadRootId: ClientMessage["id"], threadRoot?: ClientMessage) => {
+    executeMutation(() => $trpc.message.followThread.mutate({ roomId, threadRootId }), {
+      applyOptimistic: () => {
+        const isFollowingBefore = checkIsFollowing(roomId, threadRootId);
+        const isListedBefore = (getFollowedThreads(roomId) ?? []).some(({ id }) => id === threadRootId);
+        storeFollowThread(roomId, threadRootId);
+        if (threadRoot && !isListedBefore)
+          setFollowedThreads(roomId, [...(getFollowedThreads(roomId) ?? []), { ...threadRoot }]);
+        return () => {
+          if (!isFollowingBefore)
+            setFollowedThreadRootIds(
+              roomId,
+              (getFollowedThreadRootIds(roomId) ?? []).filter(
+                (followedThreadRootId) => followedThreadRootId !== threadRootId,
+              ),
+            );
+          if (threadRoot && !isListedBefore)
+            setFollowedThreads(
+              roomId,
+              (getFollowedThreads(roomId) ?? []).filter(({ id }) => id !== threadRootId),
+            );
+        };
+      },
+      isExclusive: true,
+      key: `${roomId}${ID_SEPARATOR}${threadRootId}`,
+      reconcile: async () => {
+        if (!threadRoot) await refetchFollowedThreads(roomId);
+      },
+    });
   };
-  const unfollowThread = async (roomId: string, threadRootId: ClientMessage["id"]) => {
-    await $trpc.message.unfollowThread.mutate({ roomId, threadRootId });
-    setFollowedThreads(
-      roomId,
-      (getFollowedThreads(roomId) ?? []).filter(({ id }) => id !== threadRootId),
-    );
-    setFollowedThreadRootIds(
-      roomId,
-      (getFollowedThreadRootIds(roomId) ?? []).filter((followedThreadRootId) => followedThreadRootId !== threadRootId),
-    );
+  const unfollowThread = (roomId: string, threadRootId: ClientMessage["id"]) => {
+    executeMutation(() => $trpc.message.unfollowThread.mutate({ roomId, threadRootId }), {
+      applyOptimistic: () => {
+        const followedRoots = getFollowedThreads(roomId) ?? [];
+        const followedThreadRootIds = getFollowedThreadRootIds(roomId) ?? [];
+        const unfollowedIndex = followedRoots.findIndex(({ id }) => id === threadRootId);
+        const unfollowedRoot = followedRoots[unfollowedIndex];
+        const isFollowingBefore = followedThreadRootIds.includes(threadRootId);
+        setFollowedThreads(
+          roomId,
+          followedRoots.filter(({ id }) => id !== threadRootId),
+        );
+        setFollowedThreadRootIds(
+          roomId,
+          followedThreadRootIds.filter((followedThreadRootId) => followedThreadRootId !== threadRootId),
+        );
+        return () => {
+          if (isFollowingBefore) storeFollowThread(roomId, threadRootId);
+          if (unfollowedRoot)
+            setFollowedThreads(
+              roomId,
+              getRestoredItems(getFollowedThreads(roomId) ?? [], unfollowedRoot, unfollowedIndex),
+            );
+        };
+      },
+      isExclusive: true,
+      key: `${roomId}${ID_SEPARATOR}${threadRootId}`,
+    });
   };
 
   return {

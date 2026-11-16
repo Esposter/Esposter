@@ -15,12 +15,12 @@ export const useSettingsStore = defineStore("dungeons/settings", () => {
   });
   // Generic in the option so its value is typed by that option alone, and a value belonging to another cannot be
   // Passed with it
-  const setSettings = async <TSettingsOption extends keyof Settings>(
+  const setSettings = <TSettingsOption extends keyof Settings>(
     settingsOption: TSettingsOption,
     value: Settings[TSettingsOption],
   ) => {
     settings.value[settingsOption] = value;
-    await saveDungeons();
+    saveDungeons();
   };
   const isSkipAnimations = computed(() => settings.value[SettingsOption.Animations] === AnimationsSetting.Off);
   const isSkipEncounters = ref(false);

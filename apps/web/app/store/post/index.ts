@@ -4,6 +4,7 @@ import type { UpdatePostInput } from "#shared/models/db/post/UpdatePostInput";
 import type { PostInPostWithRelations } from "@esposter/db-schema";
 
 import { PostSortType } from "#shared/models/post/PostSortType";
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { MutationStatus } from "#src/models/shared/MutationStatus";
 import { applyPostCounts } from "#src/services/post/applyPostCounts";
 import { postCountHooks } from "#src/services/post/postCountHooks";
@@ -30,6 +31,8 @@ export const usePostStore = defineStore("post", () => {
   const { executeMutation: executeDeletePostMutation } = useMutation();
   const createPost = async (input: CreatePostInput) => {
     const outcome = await executeCreatePostMutation(() => $trpc.post.createPost.mutate(input), {
+      // The row is drawn with its counts and author from the server, and the id it opens by is the server's
+      awaitedBecause: AwaitedReason.ServerIssuedValue,
       key: Symbol("createPost"),
       onSuccess: (newPost) => {
         storeCreatePost(newPost);
@@ -40,8 +43,8 @@ export const usePostStore = defineStore("post", () => {
     // There — its alert has already been raised, so the caller's only job is to stay put
     return outcome.status === MutationStatus.Succeeded ? outcome.result : undefined;
   };
-  const updatePost = async (input: UpdatePostInput) => {
-    const outcome = await executeUpdatePostMutation(() => $trpc.post.updatePost.mutate(input), {
+  const updatePost = (input: UpdatePostInput) => {
+    executeUpdatePostMutation(() => $trpc.post.updatePost.mutate(input), {
       // Read when the write is sent rather than when it was issued, and scoped to the one post this write
       // Edits: a second edit of a post queues behind the first, so its rollback has to restore what that one
       // Stored — and the same list is also appended to by the feed's own paging, which a whole-list restore
@@ -56,18 +59,15 @@ export const usePostStore = defineStore("post", () => {
         };
       },
       key: input.id,
-      onSuccess: async (updatedPost) => {
+      // The server's copy of the post replaces the edit once it is kept, and the counts are read back beside it
+      reconcile: async (updatedPost) => {
         storeUpdatePost(updatedPost);
         await refreshPostCounts([updatedPost.id]);
       },
     });
-    // Same contract as the create: the page leaves for the post only once the edit is on the server. A rejected
-    // Edit has already been rolled back on the feed, so navigating away would show the reader the old title and
-    // Throw away the one they wrote
-    return outcome.status === MutationStatus.Succeeded ? outcome.result : undefined;
   };
-  const deletePost = async (input: DeletePostInput) => {
-    await executeDeletePostMutation(() => $trpc.post.deletePost.mutate(input), {
+  const deletePost = (input: DeletePostInput) => {
+    executeDeletePostMutation(() => $trpc.post.deletePost.mutate(input), {
       applyOptimistic: () => {
         const deletedPost = items.value.find(({ id }) => id === input);
         storeDeletePost({ id: input });

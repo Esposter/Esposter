@@ -83,8 +83,8 @@ export const useMessageActionItems = (message: ClientMessage, isEditable: Ref<bo
     message.isPinned
       ? {
           meaning: UiIconMeaning.Unpin,
-          onClick: async () => {
-            await executeUnpinMessageMutation(
+          onClick: () => {
+            executeUnpinMessageMutation(
               () => $trpc.message.unpinMessage.mutate({ id: message.id, roomId: message.roomId }),
               {
                 // Read as the write is sent rather than assumed: a pin that landed — or was itself rolled back —
@@ -127,10 +127,10 @@ export const useMessageActionItems = (message: ClientMessage, isEditable: Ref<bo
   };
   const markUnreadFromHereItem: Item = {
     meaning: UiIconMeaning.Unread,
-    onClick: async () => {
+    onClick: () => {
       const lastReadAt = new Date(message.createdAt.getTime() - 1);
       const roomId = message.roomId;
-      await executeMarkUnreadMutation(() => $trpc.userToRoom.updateUserToRoom.mutate({ lastReadAt, roomId }), {
+      executeMarkUnreadMutation(() => $trpc.userToRoom.updateUserToRoom.mutate({ lastReadAt, roomId }), {
         // Read as the write is sent, so a rejected mark-unread restores the marker the write ahead of it stored
         // Rather than the one on screen when the user clicked
         applyOptimistic: () => {

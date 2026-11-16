@@ -30,7 +30,6 @@ const isEqual = computed(() => checkIsDeepEqual(value, editedValue));
     v-model="modelValue"
     confirm-label="Save & Close"
     :is-confirm-disabled="!(errorIcon?.isValid ?? true) || (!isCreate && isEqual) || undefined"
-    is-optimistic
     :submit
     :title
   >

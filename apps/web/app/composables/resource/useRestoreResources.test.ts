@@ -32,10 +32,16 @@ describe(useRestoreResources, () => {
     const favoriteStore = useFavoriteStore();
     const { readFavorites: readCachedFavorites } = favoriteStore;
     await readCachedFavorites();
-    const refresh = vi.fn<() => Promise<void>>(() => Promise.resolve());
+    const { promise: isRefreshed, resolve: onRefreshed } = Promise.withResolvers<void>();
+    const refresh = vi.fn<() => Promise<void>>(() => {
+      onRefreshed();
+      return Promise.resolve();
+    });
     const resources = Array.from({ length: MAX_READ_LIMIT + 1 }, () => createResourceListItem());
-    await useRestoreResources(refresh).restoreResources(resources);
+    useRestoreResources(refresh).restoreResources(resources);
 
+    // The refresh is the error path's last step, and it runs after the invalidation has re-read the favorites
+    await isRefreshed;
     expect(readFavorites).toHaveBeenCalledTimes(2);
     expect(refresh).toHaveBeenCalledExactlyOnceWith();
   });

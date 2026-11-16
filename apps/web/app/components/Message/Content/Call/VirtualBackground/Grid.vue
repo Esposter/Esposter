@@ -132,7 +132,6 @@ onMounted(async () => {
       confirm-label="Delete"
       title="Delete background"
       :confirm="() => deletingCallBackground && deleteCallBackground(deletingCallBackground.slot)"
-      is-optimistic
     >
       <p>Delete this uploaded background?</p>
     </UiConfirmDialog>

@@ -28,7 +28,7 @@ describe("categoryRouter", () => {
   test("reads room categories", async () => {
     expect.hasAssertions();
 
-    const newRoomCategory = await roomCategoryCaller.createRoomCategory({ name });
+    const newRoomCategory = await roomCategoryCaller.createRoomCategory({ id: v7(), name });
     const roomCategories = await roomCategoryCaller.readRoomCategories();
     const roomCategory = takeOne(roomCategories);
 
@@ -37,11 +37,20 @@ describe("categoryRouter", () => {
     expect(roomCategory.name).toBe(name);
   });
 
+  test("creates a room category under the id the client gives it", async () => {
+    expect.hasAssertions();
+
+    const id = v7();
+    const newRoomCategory = await roomCategoryCaller.createRoomCategory({ id, name });
+
+    expect(newRoomCategory.id).toBe(id);
+  });
+
   test("creates appended below the existing drag-assigned order", async () => {
     expect.hasAssertions();
 
-    const first = await roomCategoryCaller.createRoomCategory({ name });
-    const second = await roomCategoryCaller.createRoomCategory({ name: updatedName });
+    const first = await roomCategoryCaller.createRoomCategory({ id: v7(), name });
+    const second = await roomCategoryCaller.createRoomCategory({ id: v7(), name: updatedName });
 
     expect(first.position).toBe(0);
     expect(second.position).toBe(1);
@@ -50,7 +59,7 @@ describe("categoryRouter", () => {
       { id: first.id, position: 1 },
       { id: second.id, position: 0 },
     ]);
-    const third = await roomCategoryCaller.createRoomCategory({ name });
+    const third = await roomCategoryCaller.createRoomCategory({ id: v7(), name });
 
     expect(third.position).toBe(2);
   });
@@ -58,7 +67,7 @@ describe("categoryRouter", () => {
   test("updates", async () => {
     expect.hasAssertions();
 
-    const newRoomCategory = await roomCategoryCaller.createRoomCategory({ name });
+    const newRoomCategory = await roomCategoryCaller.createRoomCategory({ id: v7(), name });
     const updatedRoomCategory = await roomCategoryCaller.updateRoomCategory({
       id: newRoomCategory.id,
       name: updatedName,
@@ -73,8 +82,8 @@ describe("categoryRouter", () => {
   test("reorders in one statement", async () => {
     expect.hasAssertions();
 
-    const first = await roomCategoryCaller.createRoomCategory({ name });
-    const second = await roomCategoryCaller.createRoomCategory({ name: updatedName });
+    const first = await roomCategoryCaller.createRoomCategory({ id: v7(), name });
+    const second = await roomCategoryCaller.createRoomCategory({ id: v7(), name: updatedName });
     const reorderedRoomCategories = await roomCategoryCaller.reorderRoomCategories([
       { id: first.id, position: 1 },
       { id: second.id, position: 0 },
@@ -90,7 +99,7 @@ describe("categoryRouter", () => {
   test("moves nothing when a row is not owned", async () => {
     expect.hasAssertions();
 
-    const newRoomCategory = await roomCategoryCaller.createRoomCategory({ name });
+    const newRoomCategory = await roomCategoryCaller.createRoomCategory({ id: v7(), name });
     const missingId = v7();
 
     await expect(
@@ -110,7 +119,7 @@ describe("categoryRouter", () => {
   test("deletes", async () => {
     expect.hasAssertions();
 
-    const newRoomCategory = await roomCategoryCaller.createRoomCategory({ name });
+    const newRoomCategory = await roomCategoryCaller.createRoomCategory({ id: v7(), name });
     const deletedRoomCategory = await roomCategoryCaller.deleteRoomCategory(newRoomCategory.id);
     const roomCategories = await roomCategoryCaller.readRoomCategories();
 

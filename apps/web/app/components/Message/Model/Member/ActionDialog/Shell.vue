@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { ExecuteAdminActionInput } from "#shared/models/db/moderation/ExecuteAdminActionInput";
 
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
 import { UiDialogSize } from "#src/models/ui/UiDialogSize";
@@ -21,7 +22,13 @@ const { answer, isPending } = useDialogAnswer(isOpen);
 <template>
   <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" :title is-size-fixed :size="UiDialogSize.Medium">
     <template #default="{ formId }">
-      <UiForm :id="formId" flex flex-col gap-3 @submit="answer(() => executeAdminAction(getInput))">
+      <UiForm
+        :id="formId"
+        flex
+        flex-col
+        gap-3
+        @submit="answer(() => executeAdminAction(getInput), AwaitedReason.ServerDecidedOutcome)"
+      >
         <slot />
       </UiForm>
     </template>

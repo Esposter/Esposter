@@ -2,11 +2,11 @@ import type { ItemMetadata } from "#shared/models/shared/ItemMetadata";
 import type { z } from "zod";
 
 import { ItemMetadataPropertyNames } from "#shared/models/shared/ItemMetadataPropertyNames";
-import { MutationStatus } from "#src/models/shared/MutationStatus";
 import { authClient } from "#src/services/auth/authClient";
 import { saveItemMetadata } from "#src/services/shared/metadata/saveItemMetadata";
 import { checkIsTRPCConflict } from "#src/services/trpc/checkIsTRPCConflict";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
+import { noop } from "@esposter/shared";
 
 // What saving stamps, which every saved state carries whether it is a content item or a row
 type SavedMetadata = Pick<ItemMetadata, "updatedAt">;
@@ -46,31 +46,30 @@ export const useSave = <TState extends SavedMetadata, T extends SavedMetadata = 
   const getSaveValue = (): T => (toSave ? toSave(state.value) : (state.value as never));
   // Snapshot of the last persisted state — save() skips the API call/localStorage write when nothing changed
   let lastSavedJson = getSnapshotJson(getSaveValue());
-  const save = async () => {
+  const save = () => {
     const value = getSaveValue();
     const valueJson = getSnapshotJson(value);
-    if (valueJson === lastSavedJson) return true;
+    if (valueJson === lastSavedJson) return;
 
     saveItemMetadata(value);
-    let isSuccessful = false;
-    if (session.value.data && auth) {
-      // This composable persists a single state, so its saves queue behind one another under a stable key
-      const outcome = await executeSaveMutation(() => auth.save(value, etag), {
+    if (session.value.data && auth)
+      // This composable persists a single state, so its saves queue behind one another under a stable key. The save
+      // Is read at send time, so a save queued behind another is sent under the etag that one answered
+      executeSaveMutation(() => auth.save(value, etag), {
+        applyOptimistic: () => noop,
         key: "save",
         // Another session wrote the save since it was read, so the page reloads and takes the server's copy
         onError: (error) => {
           if (checkIsTRPCConflict(error)) window.location.reload();
           else createErrorAlert(error);
         },
-        onSuccess: (result) => {
+        // The etag the save answers is the one the next save is sent under, and only a kept save counts as persisted
+        reconcile: (result) => {
           etag = result.etag;
+          lastSavedJson = valueJson;
         },
       });
-      isSuccessful = outcome.status === MutationStatus.Succeeded;
-    } else if (unauth) isSuccessful = saveToLocalStorage(unauth.key, unauth.schema, value);
-
-    if (isSuccessful) lastSavedJson = valueJson;
-    return isSuccessful;
+    else if (unauth && saveToLocalStorage(unauth.key, unauth.schema, value)) lastSavedJson = valueJson;
   };
   // Loading a persisted state must go through here so the snapshot resets — load-triggered watches/autosave ticks then
   // Skip

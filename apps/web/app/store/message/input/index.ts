@@ -71,6 +71,11 @@ export const useInputStore = defineStore("message/input", () => {
   const setDraft = (composerKey: string, content: string) => {
     setInput(composerKey, syncDraft(composerKey, content)?.content ?? "");
   };
+  // Puts back a draft a refused write took out of the composer, under the stamp it was written with so the Drafts list
+  // Keeps its order. No draft is the empty composer
+  const restoreDraft = (composerKey: string, draft: Draft | undefined) => {
+    setInput(composerKey, syncDraft(composerKey, draft?.content ?? "", draft?.updatedAt)?.content ?? "");
+  };
   // The target is one of the watched sources, so switching it inside the debounce window cancels the pending
   // Save and reschedules it against the composer the user moved to. The outgoing keystrokes are still in the
   // Map, so nothing looks wrong until a reload finds they were never persisted — flush them under their own key
@@ -131,6 +136,7 @@ export const useInputStore = defineStore("message/input", () => {
     drafts,
     getComposerInput,
     input,
+    restoreDraft,
     setDraft,
     threadInput,
     threadTarget,

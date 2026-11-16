@@ -16,13 +16,13 @@ describe(useCreateColumn, () => {
 
   setupCommandTest();
 
-  test("appends a new column with null values for all rows", async () => {
+  test("appends a new column with null values for all rows", () => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDataSource();
     const createColumn = useCreateColumn();
     const newColumn = new StringColumn({ name: "a", sourceName: "a" });
-    await createColumn(newColumn);
+    createColumn(newColumn);
 
     expect(dataSource.columns.map(({ name }) => name)).toStrictEqual(["", " ", "a"]);
     expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([
@@ -31,14 +31,14 @@ describe(useCreateColumn, () => {
     ]);
   });
 
-  test("creates a unique id when the same column instance is passed multiple times", async () => {
+  test("creates a unique id when the same column instance is passed multiple times", () => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDataSource();
     const createColumn = useCreateColumn();
     const newColumn = new StringColumn({ name: "a", sourceName: "a" });
-    await createColumn(newColumn);
-    await createColumn(newColumn);
+    createColumn(newColumn);
+    createColumn(newColumn);
 
     const firstColumn = takeOne(dataSource.columns, 2);
     const secondColumn = takeOne(dataSource.columns, 3);
@@ -54,7 +54,7 @@ describe(useCreateColumn, () => {
     );
   });
 
-  test("adds a computed column to the data source", async () => {
+  test("adds a computed column to the data source", () => {
     expect.hasAssertions();
 
     const sourceColumn = baseCreateColumn(sourceColumnName);
@@ -70,7 +70,7 @@ describe(useCreateColumn, () => {
         type: ColumnTransformationType.ConvertTo,
       },
     });
-    await createColumn(newColumn);
+    createColumn(newColumn);
 
     const createdColumn = takeOne(dataSource.columns, 1);
 

@@ -7,6 +7,7 @@ import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useRoomStore } from "#src/store/message/room/index";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
+import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 
 // Every panel saves through the store's row rather than the object it was handed, so the composable is given a
@@ -53,7 +54,8 @@ describe(useSaveRoom, () => {
       storeUpdateRoom({ id: room.id, topic });
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
-    await saveRoom?.({ name: savedName });
+    saveRoom?.({ name: savedName });
+    await flushPromises();
 
     expect(getRoom()?.name).toBe(name);
     expect(getRoom()?.topic).toBe(topic);
@@ -65,7 +67,8 @@ describe(useSaveRoom, () => {
     const room = createRoom(name);
     const { getRoom, saveRoom } = await mountSaveRoom(room);
     trpcMsw.room.updateRoom.mutation(() => ({ ...room, name: savedName }));
-    await saveRoom?.({ name: savedName });
+    saveRoom?.({ name: savedName });
+    await flushPromises();
 
     expect(getRoom()?.name).toBe(savedName);
   });

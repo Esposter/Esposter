@@ -3,6 +3,7 @@ import type { DeleteSearchHistoryInput } from "#shared/models/db/searchHistory/D
 import type { UpdateSearchHistoryInput } from "#shared/models/db/searchHistory/UpdateSearchHistoryInput";
 import type { SearchHistoryInMessage } from "@esposter/db-schema";
 
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { createOperationData } from "#src/services/shared/createOperationData";
 import { useRoomStore } from "#src/store/message/room/index";
 import { DatabaseEntityType } from "@esposter/db-schema";
@@ -24,6 +25,8 @@ export const useSearchHistoryStore = defineStore("message/search/history", () =>
   const createSearchHistory = async (input: CreateSearchHistoryInput) => {
     const { createSearchHistory: baseCreateSearchHistory } = getRoomOperationData(input.roomId);
     await executeCreateSearchHistoryMutation(() => $trpc.searchHistory.createSearchHistory.mutate(input), {
+      // The entry's id is the server's to mint, so the entry is drawn once the server answers with it
+      awaitedBecause: AwaitedReason.ServerIssuedValue,
       key: Symbol("createSearchHistory"),
       onSuccess: (newSearchHistory) => {
         baseCreateSearchHistory(newSearchHistory);
@@ -32,10 +35,10 @@ export const useSearchHistoryStore = defineStore("message/search/history", () =>
   };
   // The row being edited is one the reader is looking at, so the room it belongs to is the room open right now —
   // Resolved here rather than in the callbacks, which run once the write has been out to the server and back
-  const updateSearchHistory = async (input: UpdateSearchHistoryInput) => {
+  const updateSearchHistory = (input: UpdateSearchHistoryInput) => {
     const { items: roomItems } = getSlice(roomStore.currentRoomId);
     const { updateSearchHistory: baseUpdateSearchHistory } = getRoomOperationData(roomStore.currentRoomId);
-    await executeUpdateSearchHistoryMutation(() => $trpc.searchHistory.updateSearchHistory.mutate(input), {
+    executeUpdateSearchHistoryMutation(() => $trpc.searchHistory.updateSearchHistory.mutate(input), {
       // Only the fields this write overwrites, on the one row it touches, and read as the write is sent — rows
       // Are keyed per history entry and never queue against each other
       applyOptimistic: () => {
@@ -47,16 +50,16 @@ export const useSearchHistoryStore = defineStore("message/search/history", () =>
         };
       },
       key: input.id,
-      onSuccess: (updatedSearchHistory) => {
+      reconcile: (updatedSearchHistory) => {
         baseUpdateSearchHistory(updatedSearchHistory);
       },
     });
   };
-  const deleteSearchHistory = async (input: DeleteSearchHistoryInput) => {
+  const deleteSearchHistory = (input: DeleteSearchHistoryInput) => {
     const { items: roomItems } = getSlice(roomStore.currentRoomId);
     const { createSearchHistory: baseCreateSearchHistory, deleteSearchHistory: baseDeleteSearchHistory } =
       getRoomOperationData(roomStore.currentRoomId);
-    await executeDeleteSearchHistoryMutation(() => $trpc.searchHistory.deleteSearchHistory.mutate(input), {
+    executeDeleteSearchHistoryMutation(() => $trpc.searchHistory.deleteSearchHistory.mutate(input), {
       // Only the one row this write removes — see `updateSearchHistory`. It comes back at the end of the list
       // Rather than where it stood, a cosmetic loss taken over dropping a row
       applyOptimistic: () => {

@@ -18,24 +18,24 @@ import { assert, describe, expect, test } from "vitest";
 describe(useUpdateColumn, () => {
   setupCommandTest();
 
-  test("sets description on column", async () => {
+  test("sets description on column", () => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDataSource();
     const updateColumn = useUpdateColumn();
     const column = takeOne(dataSource.columns);
-    await updateColumn("", createUpdatedColumn(column, { description: " " }));
+    updateColumn("", createUpdatedColumn(column, { description: " " }));
 
     expect(takeOne(dataSource.columns).description).toBe(" ");
   });
 
-  test("renames column and updates row keys", async () => {
+  test("renames column and updates row keys", () => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDataSource();
     const updateColumn = useUpdateColumn();
     const column = takeOne(dataSource.columns);
-    await updateColumn("", createUpdatedColumn(column, { name: "a" }));
+    updateColumn("", createUpdatedColumn(column, { name: "a" }));
 
     expect(dataSource.columns.map(({ name }) => name)).toStrictEqual(["a", " "]);
     expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([
@@ -44,7 +44,7 @@ describe(useUpdateColumn, () => {
     ]);
   });
 
-  test("preserves row.data key order after rename", async () => {
+  test("preserves row.data key order after rename", () => {
     expect.hasAssertions();
 
     const initialDataSource = createDataSource(
@@ -56,7 +56,7 @@ describe(useUpdateColumn, () => {
     const sheetHistoryStore = useSheetHistoryStore();
     const { undo } = sheetHistoryStore;
     const column = takeOne(dataSource.columns, 1);
-    await updateColumn("b", createUpdatedColumn(column, { name: "d" }));
+    updateColumn("b", createUpdatedColumn(column, { name: "d" }));
 
     expect(Object.keys(takeOne(dataSource.rows).data)).toStrictEqual(["a", "d", "c"]);
 
@@ -65,7 +65,7 @@ describe(useUpdateColumn, () => {
     expect(Object.keys(takeOne(dataSource.rows).data)).toStrictEqual(["a", "b", "c"]);
   });
 
-  test("reformats date values when format changes", async () => {
+  test("reformats date values when format changes", () => {
     expect.hasAssertions();
 
     // The second row is the epoch's next day, so the reformat's day-month order is read off its output
@@ -80,7 +80,7 @@ describe(useUpdateColumn, () => {
     const sheetHistoryStore = useSheetHistoryStore();
     const { undo } = sheetHistoryStore;
     const column = takeOne(dataSource.columns);
-    await updateColumn("", createUpdatedColumn(column, { format: DateFormat["DD/MM/YYYY"] }));
+    updateColumn("", createUpdatedColumn(column, { format: DateFormat["DD/MM/YYYY"] }));
 
     expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ "": "01/01/1970" }, { "": "02/01/1970" }]);
     expect(takeOne(dataSource.columns).size).toBe(24);
@@ -94,7 +94,7 @@ describe(useUpdateColumn, () => {
     expect(restoredColumn.format).toBe(DateFormat["YYYY-MM-DD"]);
   });
 
-  test("recasts String values to Number when type changes", async () => {
+  test("recasts String values to Number when type changes", () => {
     expect.hasAssertions();
 
     const initialDataSource = createDataSource([createColumn("a")], [createRow({ a: "0" }), createRow({ a: "1" })]);
@@ -103,7 +103,7 @@ describe(useUpdateColumn, () => {
     const sheetHistoryStore = useSheetHistoryStore();
     const { undo } = sheetHistoryStore;
     const column = takeOne(dataSource.columns);
-    await updateColumn("a", createUpdatedColumn(column, { type: ColumnType.Number }));
+    updateColumn("a", createUpdatedColumn(column, { type: ColumnType.Number }));
 
     expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ a: 0 }, { a: 1 }]);
 
@@ -115,7 +115,7 @@ describe(useUpdateColumn, () => {
 
   // A computed column stores nothing, so a column turned into one keeps no values under its name — and turned back,
   // It recasts the nothing it held into empty cells rather than the text "undefined"
-  test("drops a column's values when it becomes computed and restores them on undo", async () => {
+  test("drops a column's values when it becomes computed and restores them on undo", () => {
     expect.hasAssertions();
 
     const initialDataSource = createDataSource([createColumn("a"), createColumn("b")], [createRow({ a: "0", b: "1" })]);
@@ -125,7 +125,7 @@ describe(useUpdateColumn, () => {
     const { undo } = sheetHistoryStore;
     const column = takeOne(dataSource.columns, 1);
     const computedColumn = createComputedColumn("b", takeOne(dataSource.columns).id);
-    await updateColumn(
+    updateColumn(
       "b",
       createUpdatedColumn(column, { transformation: computedColumn.transformation, type: ColumnType.Computed }),
     );
@@ -137,7 +137,7 @@ describe(useUpdateColumn, () => {
     expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ a: "0", b: "1" }]);
   });
 
-  test("recasts a computed column turned stored into empty cells", async () => {
+  test("recasts a computed column turned stored into empty cells", () => {
     expect.hasAssertions();
 
     const sourceColumn = createColumn("a");
@@ -148,24 +148,24 @@ describe(useUpdateColumn, () => {
     const { dataSource } = setupWithDataSource(initialDataSource);
     const updateColumn = useUpdateColumn();
     const column = takeOne(dataSource.columns, 1);
-    await updateColumn("b", createUpdatedColumn(column, { type: ColumnType.String }));
+    updateColumn("b", createUpdatedColumn(column, { type: ColumnType.String }));
 
     expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ a: "0", b: null }]);
   });
 
-  test("recasts Number values to String when type changes", async () => {
+  test("recasts Number values to String when type changes", () => {
     expect.hasAssertions();
 
     const initialDataSource = createDataSource([createNumberColumn("a")], [createRow({ a: 0 }), createRow({ a: 1 })]);
     const { dataSource } = setupWithDataSource(initialDataSource);
     const updateColumn = useUpdateColumn();
     const column = takeOne(dataSource.columns);
-    await updateColumn("a", createUpdatedColumn(column, { type: ColumnType.String }));
+    updateColumn("a", createUpdatedColumn(column, { type: ColumnType.String }));
 
     expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ a: "0" }, { a: "1" }]);
   });
 
-  test("does not recast values when type is unchanged", async () => {
+  test("does not recast values when type is unchanged", () => {
     expect.hasAssertions();
 
     const initialDataSource = createDataSource([createNumberColumn("a")], [createRow({ a: 0 })]);
@@ -173,13 +173,13 @@ describe(useUpdateColumn, () => {
     const updateColumn = useUpdateColumn();
     const column = takeOne(dataSource.columns);
     const originalSize = column.size;
-    await updateColumn("a", createUpdatedColumn(column, { description: " " }));
+    updateColumn("a", createUpdatedColumn(column, { description: " " }));
 
     expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ a: 0 }]);
     expect(takeOne(dataSource.columns).size).toBe(originalSize);
   });
 
-  test("snapshot immutability - mutating passed object after call does not affect undo history", async () => {
+  test("snapshot immutability - mutating passed object after call does not affect undo history", () => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDataSource();
@@ -188,7 +188,7 @@ describe(useUpdateColumn, () => {
     const { redo, undo } = sheetHistoryStore;
     const column = takeOne(dataSource.columns);
     const updatedColumn = reactive(createUpdatedColumn(column, { name: "a" }));
-    await updateColumn("", updatedColumn);
+    updateColumn("", updatedColumn);
     updatedColumn.name = "b";
     undo(dataSource);
 

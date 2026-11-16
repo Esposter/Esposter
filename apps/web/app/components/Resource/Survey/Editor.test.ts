@@ -23,7 +23,7 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 import { checkSurveyDocument } from "vue-survey-engine-headless";
 
 const { sweepMock, trackMock } = vi.hoisted(() => ({
-  sweepMock: vi.fn<(document: SurveyDocument) => Promise<void>>(),
+  sweepMock: vi.fn<(document: SurveyDocument) => void>(),
   trackMock: vi.fn<(document: SurveyDocument) => void>(),
 }));
 

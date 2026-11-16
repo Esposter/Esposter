@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { DATA_EXPORT_MUTATION_KEY } from "#src/services/user/constants";
 
@@ -18,6 +19,8 @@ const link = ref("");
     :is-pending="checkIsPending(DATA_EXPORT_MUTATION_KEY)"
     @click="
       executeMutation(() => $trpc.user.generateDataExportLink.mutate(dataExportId), {
+        // The download address is signed by the server, so the button waits for it before it draws the link
+        awaitedBecause: AwaitedReason.ServerIssuedValue,
         key: DATA_EXPORT_MUTATION_KEY,
         onSuccess: (url) => {
           link = url;

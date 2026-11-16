@@ -48,24 +48,35 @@ On failure `data` stays `undefined`, so the component falls back to its empty st
 ```ts
 const { executeMutation, checkIsPending, isPending } = useMutation();
 
-await executeMutation(mutate, {
+// The optimistic form: returns nothing, so nothing can wait on the answer
+executeMutation(mutate, {
   applyOptimistic: () => {
-    // write the change to the store now
+    // write the change to the store now, and run every screen step it causes
     return () => {
       // rollback closure — undo the write
     };
   },
   key: input.id,
-  onSuccess: (result) => {
-    // rare: write a server-authoritative result
+  reconcile: (result) => {
+    // rare: take a value only the server issues, such as a version token
+  },
+});
+
+// The awaited form: names why it waits, and resolves to its outcome
+const outcome = await executeMutation(mutate, {
+  awaitedBecause: AwaitedReason.ServerIssuedValue,
+  key: Symbol("createInvite"),
+  onSuccess: (invite) => {
+    // show the value only the server could mint
   },
 });
 ```
 
 - `mutate` — the tRPC call.
 - `key` — **required**: the identity of the mutation's target. It scopes the write queue, the pending state, and exclusivity; calls with different keys are fully independent. How to choose one is in [Async operations](../async-operations/design.md#targets). Never call `useMutation()` inside an action to fake isolation — that leaks a detached effect scope, and the `setup-scope` lint plugin fails the call; key the shared store-root instance instead.
-- `applyOptimistic` — the normal path. Apply the local change and return its rollback closure. It runs when the write is sent, so a queued write snapshots the state its predecessor stored. On failure the rollback runs. Where the entity has a live event, the confirming server state also arrives through it and idempotently re-applies the same value — but not every mutation has one, so the rollback is what the correctness rests on, never the echo.
-- `onSuccess` — the rare path, for mutations whose result the client can't predict (server-generated ids/tokens like `createInvite`). Omit `applyOptimistic` and take the server result here.
+- `applyOptimistic` — the normal path. Apply the local change and return its rollback closure. It runs when the write is sent, so a queued write snapshots the state its predecessor stored. On failure the rollback runs. Where the entity has a live event, the confirming server state also arrives through it and idempotently re-applies the same value — but not every mutation has one, so the rollback is what the correctness rests on, never the echo. A write with nothing to show, such as a push subscription's registration, passes `() => noop`.
+- `reconcile` — optional on the optimistic form, for a value only the server issues that a later write or read needs: a `contentVersion`, an `etag`, a server timestamp. It never closes a dialog, moves a row, clears a field or navigates; those run beside the write.
+- `awaitedBecause` — the awaited form, and the only way a caller gets a `MutationOutcome` to wait on. It names one of the three reasons in [Optimistic by default](#optimistic-by-default), and `onSuccess` then acts on the server's result. A write may still pass `applyOptimistic` for the part of its change it can show at once.
 - `onError` — replaces the default alert, only for surfaces that own a different error channel: the platform resource operations route failures into the [notifications bell](../../resource/notifications/design.md), including the stale-`contentVersion` warning with its Refresh action. Everything else omits it and gets the alert.
 
 **A rollback restores the store row, never the control the value was typed into.** Whether the form's own copy follows it back is a separate decision, and it is made by asking whether the surface holding that copy is still on screen when the rejection lands. A settings panel is: it keeps the entered value, stays dirty, and the next save retries it. A menu or dialog that closed on submit is not, so its draft re-seeds from the row — otherwise it reopens showing a value the server refused, beside a readout of the row that never took it. The `vue` skill's watch decision tree owns the mechanics.
@@ -78,7 +89,7 @@ flowchart TD
   Apply -->|writes change now| Store[(Store)]
   Apply -->|returns rollback closure| Mutate[tRPC mutate]
   Mutate -->|rejects| Rollback[Run rollback closure]
-  Mutate -->|resolves| Success[onSuccess — server-authoritative result]
+  Mutate -->|resolves| Success[reconcile — a value only the server issues]
   Rollback --> Store
   Rollback --> Alert[createAlert with the real Error.message]
   Success --> Store
@@ -88,7 +99,7 @@ flowchart TD
 
 Call `useMutation()` once per logical action — each instance owns its own queue and pending bookkeeping, so two independent actions must **never** share one. A shared instance makes unrelated actions on the same entity id contend for one target: fire `deleteRole` while `createRole` is in flight and the delete waits behind a create it has nothing to do with, while `isPending` disables both surfaces. In a store with several mutations, declare one named instance per action via destructure renames (`const { executeMutation: executeCreateRoleMutation } = useMutation();`, with `isPending: isCreateRolePending` where the pending state is consumed); a single flow that branches into two tRPC calls (create-or-update save) correctly shares one instance, because its successive calls are successive writes to one target. One instance serving many sibling **items** of the same action is the `key` case, not a reason for per-item instances.
 
-**Placeholder creates stay on the shared store-root instance with a per-call `Symbol` key** (`createRoomCategory`). Each call owns a distinct placeholder object, so successive creates are genuinely independent operations — a shared key would serialize them behind one another for no reason, and every create is free to run at once.
+**A create is keyed by the id the client gives it**, on the shared store-root instance (`createRole`, `createComment`). Each call owns a distinct id, so successive creates are genuinely independent operations, and a shared key would serialize them behind one another for no reason. The exception is a create the server places after the last row it stored (`createRoomCategory`): two in flight at once would tie, so those queue on one key, and `reconcile` takes the position the server chose.
 
 ## In-flight guarding
 
@@ -105,34 +116,38 @@ flowchart TD
   item -->|no| button["UiButton or UiIconButton"]
 ```
 
-- **Dialogs** — free. `UiConfirmDialog`, `StyledDialog` and `StyledFormDialog` answer through `useDialogAnswer`, which early-returns a re-entrant answer and drives the confirm button's spinner and `disabled`. Consumers wire nothing. An optimistic write passes `isOptimistic`, and the dialog closes the moment it is called.
+- **Dialogs** — free. `UiConfirmDialog`, `StyledDialog`, `StyledFormDialog` and `StyledEditFormDialog` answer through `useDialogAnswer`, which closes the dialog the moment its write is called, so a second press finds it closed. Consumers wire nothing. A dialog whose write waits passes `awaited-because` with its reason, and only then does the answer drive the confirm button's spinner and `disabled`, closing once the write settles unless it settled `false`.
 - **Plain buttons firing a non-optimistic write** (save, delete, publish, duplicate, deploy, generate, restore) — bind the instance's `isPending` as the button's `is-pending` — `UiButton` and `UiIconButton` own the rest of the pending state (the `ui-library` skill's buttons page), so no call site draws its own spinner or folds the pending flag into `:disabled`. When the mutation lives in a store or composable, it exposes the ref under a name that says which write is pending (`isPublicationPending`, `isDuplicatePending`) and that name threads down as an ordinary prop; overflow/action list items bind it as `disabled`. For per-item surfaces (each table row has its own button), bind `checkIsPending(item.id)` instead so one row's in-flight write doesn't disable its siblings.
 - **Per-item creates through a shared instance** — `key` + `isExclusive` (`createLike`), so one item's in-flight create drops only its own duplicates while sibling items stay live.
 - **Optimistic writes** — no guard. The state flips synchronously, so a second click reads the new state and means something new (a favorite toggle un-favorites); disabling the control would swallow real intent, and the second write simply queues behind the first.
 - **Fields that commit on blur and on Enter** — guard with a dirty check against the value last stored (`isDirty`), so the second emit for an unchanged field never issues a write at all.
-- **Synchronous unmount** — closing/unmounting the triggering control before the round trip (an `isOptimistic` dialog, a selection toolbar cleared on click) is a complete guard by construction; don't add a second one. Where the mutation resolves its own target from the dialog store target (`renamingId` → the list row), **call it before the close and await the promise after** — closing first clears the target out from under it, and the mutation silently no-ops. `useDialogAnswer` calls an optimistic answer in that order.
+- **Synchronous unmount** — closing/unmounting the triggering control before the round trip (a dialog's answer, a selection toolbar cleared on click) is a complete guard by construction; don't add a second one. Where the mutation resolves its own target from the dialog store target (`renamingId` → the list row), **call it before the close and await the promise after** — closing first clears the target out from under it, and the mutation silently no-ops. `useDialogAnswer` calls every answer that names no reason in that order.
 
 ## Optimistic by default
 
 **Every `useMutation` write applies optimistically (`applyOptimistic`) unless it falls into a documented exception below.** Waiting for the server round-trip before the UI reflects a change is a bug, not a default — the user acted, so the UI updates now and rolls back only if the server rejects it. When a live event echoes the change back to the caller (most room/message/friend/role actions), the optimistic apply and the idempotent echo coexist: apply immediately, the echo re-applies the same value on success, the rollback undoes it on failure.
 
-A **server-generated id alone is not an exception.** When the created row appears in an on-screen list **and the client can faithfully build it**, insert a **temp placeholder row** optimistically and reconcile the real row in `onSuccess` — the `createMessage` flow in `store/message/data.ts` is the reference, and `createRoomCategory` follows it for its flat row. The client invents a throwaway `crypto.randomUUID()` id (the store keys by id), then `Object.assign(placeholder, serverRow)` swaps in the real one on the **same reactive object**, so the row keeps its list position instead of being removed and re-appended. The placeholder must be `reactive()` — `createItem` pushes the raw object into a `ref([])`, and mutating a raw target there wouldn't trigger the re-render.
+**A create draws its row under the id the client gives it.** A create whose row appears in an on-screen list and is keyed by a text id takes a `uuidv7()` id from the client, and the procedure's input picks `id` from the row's own select schema, so the same `z.uuidv7()` checks it. The row is drawn at once under its real id, and the server's answer and the room's echo land on the row already drawn: `createRoomCategory`, `createRole` and `createComment` work this way. A row the server fills with relations is built from what the client holds: the reader is a comment's author, it inherits its parent's chain and depth, a new reply has no votes or replies, and its ranking is `getPostRanking` (`apps/web/shared/services/post/getPostRanking.ts`), the server's own sort key. The counts it moves on the posts above it are re-read in `reconcile`, by the aggregate rule below.
 
-Two tests gate this, and both must pass — otherwise the ceremony is pure cost:
+A message is the exception, because its room numbers it: that integer orders the room and keys its search index. The send draws a `reactive()` placeholder under a negative id (`createOptimisticMessage`), and `Object.assign(placeholder, serverRow)` swaps in the room's row on the **same reactive object**, so the bubble keeps its list position instead of being removed and re-appended.
 
-1. **Faithful** — if the placeholder would have to guess server-computed or relational fields the client doesn't have, it renders **wrong data** for a frame (see the relational-row exception below).
-2. **On-screen** — the list must actually be visible when the create fires (see the off-screen exception below).
+A create that opens the page of what it created keeps the server's id and waits: `createPost`, `createRoom`, resource create and `duplicate` navigate to a page whose loader reads the new row from the server, so the row must exist before the page loads. A create the server deduplicates against existing rows (`createSearchHistory`, `requestDataExport`, `createDirectMessage`) waits for the same reason the table below gives: the row it answers with is the server's to pick.
 
-A mutation may skip `applyOptimistic` **only** in these cases (surface the result via `onSuccess`/`onError` instead):
+**A write waits for the server only for a reason the server alone can answer, and it names that reason.** `executeMutation`'s awaited form takes `awaitedBecause`, one value of `AwaitedReason` (`apps/web/app/models/shared/AwaitedReason.ts`); options naming neither an optimistic apply nor a reason do not compile, so a new write cannot wait by default.
 
-- **Relational / server-computed row** — the created row carries fields the client cannot faithfully fabricate: aggregate counts + author/relation graphs (`createPost`, `createComment`) or a server-assigned ordinal/permission bitfield (`createRole`). A guessed placeholder would flash incorrect data, and where the create also has a live event echo (`createRole`, `sendFriendRequest`) the server-id row races the temp-id placeholder into a transient duplicate. Take the real row in `onSuccess`; the echo (if any) reconciles the other clients.
-- **Off-screen create** — the created row lands in a view that isn't visible at creation time, so an optimistic apply updates a list nobody can see and buys nothing. `scheduleMessage`/`scheduleReminder` land in the drafts/sent list on another view. `createSearchHistory` is the subtler case: it fires from `useReadSearchedMessages` at the moment the right drawer switches to **results**, while the history list itself lives in the search field's panel (`UiTokenField`) — which is closed by then. Hand-fabricating the row there would cost ~20 lines for zero perceived UX. Use `onSuccess`.
-- **The server-generated value _is_ the visible result** — the mutation exists to reveal data the client cannot predict: a secret token or share link (`createInvite`, `createWebhook`, `webhook.regenerateToken`), or a dedup-resolved id used only to navigate (`joinRoom`, `createDirectMessage`, resource `duplicate`). There is no on-screen state to pre-apply.
-- **Optimistic-concurrency writes** — the server returns a bumped version token that drives the _next_ write, and a stale token must surface a refresh prompt: `saveResourceContent` (`contentVersion`), survey `createSurveyResponse`/`updateSurveyResponse` (`modelVersion`), resource `publish` (`publishVersion`). Handle the conflict in `onError`.
-- **Server-authoritative outcome** — moderation (`executeAdminAction`): the effect shape (ban / mute / kick / timeout) is decided server-side and applied via the live event echo, so there is nothing correct to apply before the server responds.
-- **Rapid-fire integrity hazard** — `createLike`: a temp local like lets a rapid second click fire another `createLike` and hit the likes primary-key constraint; guarded single-flight with `{ isExclusive: true, key: postId }` instead of an optimistic row.
+| Reason                 | When                                                                                                                                                       | Examples                                                                                                    |
+| :--------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------- |
+| `ServerIssuedValue`    | What the reader sees next is a value only the server mints: a token, a link, a presigned URL, server-rendered output, or an id resolved against other rows | `createInvite`, `createWebhook`, `regenerateToken`, `joinRoom`, `createDirectMessage`, resource `duplicate` |
+| `ServerDecidedOutcome` | The server decides what happens, so nothing correct can be drawn first                                                                                     | `executeAdminAction`, call admission, a blueprint deploy, a survey response                                 |
+| `IrreversibleStep`     | The step after the write cannot be rolled back if the write is refused                                                                                     | Signing out after the account delete, the reload that takes back a game lease                               |
 
-Any new non-optimistic mutation must justify itself against this list; if it doesn't fit, it is optimistic.
+What is not a reason:
+
+- **A version token.** A stale `contentVersion`, `modelVersion` or `publishVersion` is a refusal like any other: the rollback undoes the save and `onError` shows the refresh prompt, while the bumped token arrives through `reconcile`.
+- **A row nobody can see.** A create landing in a list that is not on screen (`scheduleMessage`) still applies at once, and the dialog that sent it closes; its apply simply changes nothing visible.
+- **A single-flight hazard.** `createLike` draws the viewer's like at once and keeps `{ isExclusive: true, key: postId }`, so a rapid second click drops instead of creating a second like.
+
+A content store's save follows the same rule one level up. `createContentData`'s `saveContent(rollback)` returns nothing: the store changes its content first, then hands over the closure that undoes that change, and the resource store's success stays private to it. So no component can close a dialog or move a row on a content save's answer.
 
 ## Server-side effects a mutation does not return
 
@@ -141,7 +156,7 @@ A mutation often changes more than the row it was asked to change: creating a re
 The rule is per side effect, decided by who can construct the result:
 
 - **The client can construct it** → mirror it locally at the call site that caused it, through a `store*` function that takes only what the caller holds (`storeFollowThread(roomId, threadRootId)`). No round trip, and the mirror is idempotent so a subscription echo re-applying the same value is a no-op.
-- **Only the server can construct it** (it resolves an entity, an ordinal, or an aggregate the client never had) → re-read that slice after the write, and say so in a comment. Following a thread from the drawer re-reads because the drawer lists the **root message entity**, which the button holds no copy of.
+- **Only the server can construct it** (it resolves an entity, an ordinal, or an aggregate the client never had) → re-read that slice after the write, and say so in a comment. Following a thread is the other shape: the button holds the loaded root message, so the follow mirrors it into the drawer's list at once, and a follow before the root loads does nothing.
 
 Both shapes are correct; what is never correct is leaving the state stale because the mutation "was only about something else". An asymmetry between two neighbouring actions (one mirrors, one re-reads) is a deliberate consequence of this rule, not an oversight.
 

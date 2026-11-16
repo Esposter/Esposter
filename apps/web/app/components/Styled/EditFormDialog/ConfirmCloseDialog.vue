@@ -18,7 +18,6 @@ const emit = defineEmits<{ discard: []; save: [] }>();
     confirm-label="Save changes"
     :is-confirm-disabled="!isSavable || undefined"
     title="Confirm Changes"
-    is-optimistic
     :confirm="() => emit('save')"
   >
     You have modified this {{ prettify(itemType) }}. You can save your changes, discard your changes, or cancel to

@@ -165,8 +165,7 @@ describe(useCachedRead, () => {
     expect(query).toHaveBeenCalledTimes(1);
   });
 
-  // What followThread calls: only the server can resolve the root entity the drawer lists, so the cache is
-  // Re-read rather than mirrored — and the re-read re-caches, so the next mount still reads nothing
+  // What the threads drawer calls on open: the re-read re-caches, so the next mount still reads nothing
   test("re-reads unconditionally on refetch", async () => {
     expect.hasAssertions();
 

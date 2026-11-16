@@ -1,7 +1,7 @@
 import type { Context } from "#server/trpc/context";
 import type { PostInPost } from "@esposter/db-schema";
 
-import { getPostRanking } from "#server/services/post/getPostRanking";
+import { getPostRanking } from "#shared/services/post/getPostRanking";
 import { postsInPost } from "@esposter/db-schema";
 import { and, eq } from "drizzle-orm";
 

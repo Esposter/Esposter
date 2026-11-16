@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
 import { UiDialogSize } from "#src/models/ui/UiDialogSize";
 import { useResourceStore } from "#src/store/resource/index";
@@ -40,8 +41,8 @@ const { answer, importingResourceId, isImporting, saveResourceRevision } = useIm
             const dataSource = previewDataSource;
             const setDataSource = getDataSourceSetter();
             if (!dataSource || !(await saveResourceRevision())) return false;
-            await setDataSource(dataSource);
-          })
+            setDataSource(dataSource);
+          }, AwaitedReason.ServerDecidedOutcome)
         "
       />
     </template>

@@ -1,10 +1,12 @@
 // @vitest-environment nuxt
+import { getMockSession } from "#server/trpc/context.test";
 import { PostSortType } from "#shared/models/post/PostSortType";
+import { useSession } from "#src/services/auth/authClient.test";
 import { createPost } from "#src/services/post/createPost.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useCommentStore } from "#src/store/post/comment/index";
 import { usePostStore } from "#src/store/post/index";
-import { takeOne } from "@esposter/shared";
+import { takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
@@ -22,20 +24,26 @@ describe(useCommentStore, () => {
   test("rolls a failed edit back to the edit ahead of it", async () => {
     expect.hasAssertions();
 
+    const isFailingEditReceived = Promise.withResolvers<void>();
     trpcMsw.post.updateComment.mutation(({ input }) => {
-      if (input.description === failingDescription)
+      if (input.description === failingDescription) {
+        isFailingEditReceived.resolve();
         throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+      }
 
       return createPost({ ...input, depth: 1, parentId: postId });
     });
+    // The edit ahead of it reads the counts back once the server keeps it, so that read needs an answer too
+    trpcMsw.post.readPostCounts.query(() => [{ commentCount: 0, id: comment.id, likeCount: 0 }]);
     const commentStore = useCommentStore();
     const { getSlice, updateComment } = commentStore;
     getSlice(postId).items.value = [createPost({ depth: 1, id: comment.id, parentId: postId })];
-    await Promise.all([
-      updateComment({ description: newDescription, id: comment.id }, postId),
-      updateComment({ description: failingDescription, id: comment.id }, postId),
-    ]);
+    updateComment({ description: newDescription, id: comment.id }, postId);
+    updateComment({ description: failingDescription, id: comment.id }, postId);
 
+    // The edit ahead of it already shows the same description, so the wait is for the refused edit's rollback to restore it
+    await isFailingEditReceived.promise;
+    await until(() => takeOne(getSlice(postId).items.value).description).toBe(newDescription);
     expect(takeOne(getSlice(postId).items.value).description).toBe(newDescription);
   });
 
@@ -51,20 +59,28 @@ describe(useCommentStore, () => {
     // The rollback restores the comment with the count it held when the delete was sent.
     // The count the server holds is read back over it: a count that moved while the comment was out of the thread
     // Reached no copy
-    trpcMsw.post.readPostCounts.query(() => [
-      { commentCount: 1, id: postId, likeCount: 0 },
-      { commentCount: 0, id: comment.id, likeCount: 3 },
-    ]);
+    const readCount = ref(0);
+    trpcMsw.post.readPostCounts.query(() => {
+      readCount.value += 1;
+      return [
+        { commentCount: 1, id: postId, likeCount: 0 },
+        { commentCount: 0, id: comment.id, likeCount: 3 },
+      ];
+    });
     const parentPost = createPost({ commentCount: 2, id: postId });
     const commentStore = useCommentStore();
     const { currentPost } = storeToRefs(commentStore);
     const { deleteComment, getSlice } = commentStore;
     currentPost.value = parentPost;
     getSlice(postId).items.value = [comment, otherComment];
-    await Promise.all([deleteComment(comment.id, postId), deleteComment(otherComment.id, postId)]);
+    deleteComment(comment.id, postId);
+    deleteComment(otherComment.id, postId);
 
+    // Each delete reads the counts back once it is answered, and the restored comment takes its count from the read
+    // That follows the rejected delete's rollback, so the wait is for both reads and then for that count
+    await until(readCount).toBe(2);
+    await until(() => takeOne(getSlice(postId).items.value).likeCount).toBe(3);
     expect(getSlice(postId).items.value).toStrictEqual([comment]);
-    expect(takeOne(getSlice(postId).items.value).likeCount).toBe(3);
     expect(parentPost.commentCount).toBe(1);
   });
 
@@ -85,8 +101,10 @@ describe(useCommentStore, () => {
     getSlice(postId).items.value = [comment];
     getSlice(comment.id).items.value = [reply];
 
-    await deleteComment(comment.id, postId);
+    deleteComment(comment.id, postId);
 
+    // The rows go at once, and the post's count is only known once the server has answered the delete
+    await until(() => currentPost.value?.commentCount).toBe(0);
     expect(getSlice(postId).items.value).toStrictEqual([]);
     expect(getSlice(comment.id).items.value).toStrictEqual([]);
     expect(parentPost.commentCount).toBe(0);
@@ -102,6 +120,12 @@ describe(useCommentStore, () => {
     trpcMsw.post.deleteComment.mutation(() => {
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
+    // The rejected delete reads the comment's counts back once its rollback has put the comment in the thread
+    const readCount = ref(0);
+    trpcMsw.post.readPostCounts.query(() => {
+      readCount.value += 1;
+      return [{ commentCount: 0, id: comment.id, likeCount: 0 }];
+    });
     const commentStore = useCommentStore();
     const { currentPost } = storeToRefs(commentStore);
     const { deleteComment, getSlice } = commentStore;
@@ -110,8 +134,10 @@ describe(useCommentStore, () => {
     const replyBranch = getSlice(comment.id);
     replyBranch.initializeCursorPaginationData({ items: [reply], nextCursor: "" });
 
-    await deleteComment(comment.id, postId);
+    deleteComment(comment.id, postId);
 
+    // The comment is out of the thread until the rejected delete is answered, and its rollback is what sends the read
+    await until(readCount).toBe(1);
     expect(getSlice(postId).items.value).toStrictEqual([comment]);
     expect(replyBranch.items.value).toStrictEqual([]);
     expect(replyBranch.isLoaded.value).toBe(false);
@@ -126,7 +152,11 @@ describe(useCommentStore, () => {
     // Into the rows it is handed
     const repliedToComment = createPost({ commentCount: 0, depth: 1, parentId: postId });
     const reply = createPost({ depth: 2, parentId: repliedToComment.id });
-    trpcMsw.post.createComment.mutation(() => ({ ancestorIds: [postId, repliedToComment.id], comment: reply }));
+    useSession.mockReturnValue(ref({ data: { user: getMockSession().user } }));
+    trpcMsw.post.createComment.mutation(({ input }) => ({
+      ancestorIds: [postId, repliedToComment.id],
+      comment: { ...reply, id: input.id },
+    }));
     trpcMsw.post.readPostCounts.query(() => [
       { commentCount: 2, id: postId, likeCount: 0 },
       { commentCount: 1, id: repliedToComment.id, likeCount: 0 },
@@ -138,9 +168,10 @@ describe(useCommentStore, () => {
     currentPost.value = parentPost;
     getSlice(postId).items.value = [repliedToComment];
 
-    await createComment({ description: "a", parentId: repliedToComment.id });
+    createComment({ description: "a", parentId: repliedToComment.id });
+    await waitForSynchronizedFunctions();
 
-    expect(getSlice(repliedToComment.id).items.value).toStrictEqual([reply]);
+    expect(getSlice(repliedToComment.id).items.value).toHaveLength(1);
     expect(takeOne(getSlice(postId).items.value).commentCount).toBe(1);
     expect(parentPost.commentCount).toBe(2);
   });
@@ -150,7 +181,11 @@ describe(useCommentStore, () => {
     expect.hasAssertions();
 
     const reply = createPost({ depth: 1, parentId: postId });
-    trpcMsw.post.createComment.mutation(() => ({ ancestorIds: [postId], comment: reply }));
+    useSession.mockReturnValue(ref({ data: { user: getMockSession().user } }));
+    trpcMsw.post.createComment.mutation(({ input }) => ({
+      ancestorIds: [postId],
+      comment: { ...reply, id: input.id },
+    }));
     trpcMsw.post.readPostCounts.query(() => [{ commentCount: 1, id: postId, likeCount: 0 }]);
     const feedPost = createPost({ commentCount: 0, id: postId });
     const postStore = usePostStore();
@@ -158,7 +193,8 @@ describe(useCommentStore, () => {
     items.value = [feedPost];
 
     const commentStore = useCommentStore();
-    await commentStore.createComment({ description: "a", parentId: postId });
+    commentStore.createComment({ description: "a", parentId: postId });
+    await waitForSynchronizedFunctions();
 
     expect(feedPost.commentCount).toBe(1);
   });
@@ -171,13 +207,20 @@ describe(useCommentStore, () => {
     trpcMsw.post.updateComment.mutation(({ input }) =>
       createPost({ ...input, commentCount: 0, depth: 1, parentId: postId }),
     );
-    trpcMsw.post.readPostCounts.query(() => [{ commentCount: 1, id: editedComment.id, likeCount: 0 }]);
+    const readCount = ref(0);
+    trpcMsw.post.readPostCounts.query(() => {
+      readCount.value += 1;
+      return [{ commentCount: 1, id: editedComment.id, likeCount: 0 }];
+    });
     const commentStore = useCommentStore();
     const { getSlice, updateComment } = commentStore;
     getSlice(postId).items.value = [editedComment];
 
-    await updateComment({ description: "a", id: editedComment.id }, postId);
+    updateComment({ description: "a", id: editedComment.id }, postId);
 
+    // The server's copy reads 0 here, so the wait is for the read after it to land its 1 on the comment
+    await until(readCount).toBe(1);
+    await until(() => takeOne(getSlice(postId).items.value).commentCount).toBe(1);
     expect(takeOne(getSlice(postId).items.value).commentCount).toBe(1);
   });
 

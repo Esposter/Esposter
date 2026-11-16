@@ -13,9 +13,9 @@ export const useRoomInviteStore = defineStore("message/room/roomInvite", () => {
   // Keyed by room: a read for the room the reader just left is filed under it rather than over the list on screen
   const { getSlice, getSliceOperationData } = useCursorPaginationDataMap<InviteInMessageWithCreator>();
 
-  const revokeInvite = async (input: RevokeInviteInput) => {
+  const revokeInvite = (input: RevokeInviteInput) => {
     const { items } = getSlice(input.roomId);
-    await executeMutation(() => $trpc.invite.revokeInvite.mutate(input), {
+    executeMutation(() => $trpc.invite.revokeInvite.mutate(input), {
       applyOptimistic: () => {
         const revokedInvite = items.value.find(({ id }) => id === input.id);
         items.value = items.value.filter(({ id }) => id !== input.id);
@@ -24,7 +24,9 @@ export const useRoomInviteStore = defineStore("message/room/roomInvite", () => {
         const myInvite = inviteStore.invites.get(input.roomId);
         if (myInvite?.id === input.id) setInvite(input.roomId, undefined);
         return () => {
-          if (revokedInvite) items.value = [revokedInvite, ...items.value];
+          // One invite per member, so a link minted for the member since keeps the place the revoked one would take
+          if (revokedInvite && !items.value.some(({ userId }) => userId === revokedInvite.userId))
+            items.value = [revokedInvite, ...items.value];
           if (myInvite?.id === input.id) setInvite(input.roomId, myInvite);
         };
       },

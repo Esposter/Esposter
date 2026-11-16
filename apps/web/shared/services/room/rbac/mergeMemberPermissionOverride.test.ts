@@ -1,4 +1,4 @@
-import { mergeMemberPermissionOverride } from "#server/services/room/rbac/mergeMemberPermissionOverride";
+import { mergeMemberPermissionOverride } from "#shared/services/room/rbac/mergeMemberPermissionOverride";
 import { RoomPermission } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 

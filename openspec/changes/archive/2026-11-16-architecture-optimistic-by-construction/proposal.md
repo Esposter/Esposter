@@ -15,7 +15,7 @@ Optimism moves from a rule a reader must remember to a shape the compiler holds,
 2. **A write that waits names its reason.** The only other form takes `awaitedBecause`, one value of a closed `AwaitedReason` set. That makes every wait visible by name and leaves no third form to forget.
 3. **Dialogs answer optimistically by default.** `useDialogAnswer` closes the dialog when its write is sent. A dialog that must wait carries `awaited-because`, and `is-optimistic` is deleted.
 4. **Content stores keep their success to themselves.** `saveContent` takes the rollback and returns nothing, so no store action can hand `isSuccessful` to a caller.
-5. **A create names its own id.** Every create a reader sees in a list takes a client-generated id, so its row is drawn at once, without a placeholder swapped for the server's row.
+5. **A create names its own id.** Every create a reader sees in a list whose row the server keys by a text id takes a client-generated id, so its row is drawn at once, without a placeholder swapped for the server's row. A message keeps its placeholder, since its room numbers it.
 
 Every site the audit found is converted, and every wait that is left is one the server alone can answer.
 

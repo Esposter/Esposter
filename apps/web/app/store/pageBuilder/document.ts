@@ -45,15 +45,6 @@ export const usePageBuilderDocumentStore = defineStore("pageBuilder/document", (
   const setEmailDocument = (resourceId: string, kind: EmailKind, document: EmailDocument) => {
     documentMap.value.set(resourceId, { document, kind: markRaw(kind), type: ResourceType.Email });
   };
-  // Nothing is written for a resource whose document is not held, since there is no document to write
-  const saveDocument = async (resourceId: string, writeDocument: (document: WebpageDocument) => Promise<void>) => {
-    const document = getDocument(resourceId);
-    if (document) await writeDocument(document);
-  };
-  const saveEmailDocument = async (resourceId: string, writeDocument: (document: EmailDocument) => Promise<void>) => {
-    const document = getEmailDocument(resourceId);
-    if (document) await writeDocument(document);
-  };
   // The merge fields an email offers, which are the columns of the dataset it is bound to. Its blade holds them under its
   // Resource while mounted and clears them on unmount, so an email with no dataset bound offers none
   const mergeFieldColumnsMap = ref(new Map<string, string[]>());
@@ -73,8 +64,6 @@ export const usePageBuilderDocumentStore = defineStore("pageBuilder/document", (
     getHeldDocument,
     getMergeFieldColumnsRef,
     getOpenDocument,
-    saveDocument,
-    saveEmailDocument,
     setDocument,
     setEmailDocument,
     setMergeFieldColumns,

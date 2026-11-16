@@ -6,6 +6,7 @@ import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useKnockerStore } from "#src/store/message/room/call/knocker";
 import { CALL_ID_LENGTH } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
+import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 
@@ -76,9 +77,9 @@ describe(useKnockerStore, () => {
     const { createKnocker, dismissKnocker } = knockerStore;
     const { knockers } = storeToRefs(knockerStore);
     createKnocker(first);
-    const dismissal = dismissKnocker(callSessionId, first.id);
+    dismissKnocker(callSessionId, first.id);
     createKnocker(second);
-    await dismissal;
+    await flushPromises();
 
     expect(knockers.value).toStrictEqual([first, second]);
   });

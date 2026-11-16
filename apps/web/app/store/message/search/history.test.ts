@@ -6,6 +6,7 @@ import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useSearchHistoryStore } from "#src/store/message/search/history";
 import { takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
+import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { beforeEach, describe, expect, test } from "vitest";
 
@@ -46,10 +47,9 @@ describe(useSearchHistoryStore, () => {
     const { items } = storeToRefs(searchHistoryStore);
     const { getSlice, updateSearchHistory } = searchHistoryStore;
     getSlice(roomId).items.value = [createSearchHistory(originalQuery)];
-    await Promise.all([
-      updateSearchHistory({ id, query: acceptedQuery }),
-      updateSearchHistory({ id, query: rejectedQuery }),
-    ]);
+    updateSearchHistory({ id, query: acceptedQuery });
+    updateSearchHistory({ id, query: rejectedQuery });
+    await flushPromises();
 
     expect(takeOne(items.value, 0).query).toBe(acceptedQuery);
   });
@@ -71,7 +71,9 @@ describe(useSearchHistoryStore, () => {
       createSearchHistory(originalQuery),
       { ...createSearchHistory(originalQuery), id: otherId },
     ];
-    await Promise.all([deleteSearchHistory(otherId), deleteSearchHistory(id)]);
+    deleteSearchHistory(otherId);
+    deleteSearchHistory(id);
+    await flushPromises();
 
     expect(items.value.map((searchHistory) => searchHistory.id)).toStrictEqual([id]);
   });
@@ -96,7 +98,9 @@ describe(useSearchHistoryStore, () => {
       createSearchHistory(originalQuery),
       { ...createSearchHistory(originalQuery), id: otherId },
     ];
-    await Promise.all([updateSearchHistory({ id, query: rejectedQuery }), deleteSearchHistory(otherId)]);
+    updateSearchHistory({ id, query: rejectedQuery });
+    deleteSearchHistory(otherId);
+    await flushPromises();
 
     expect(items.value.map((searchHistory) => searchHistory.id)).toStrictEqual([id]);
     expect(takeOne(items.value).query).toBe(originalQuery);
@@ -118,7 +122,9 @@ describe(useSearchHistoryStore, () => {
       createSearchHistory(originalQuery),
       { ...createSearchHistory(originalQuery), id: otherId },
     ];
-    await Promise.all([deleteSearchHistory(id), deleteSearchHistory(otherId)]);
+    deleteSearchHistory(id);
+    deleteSearchHistory(otherId);
+    await flushPromises();
 
     expect(items.value.map((searchHistory) => searchHistory.id)).toStrictEqual([id]);
   });

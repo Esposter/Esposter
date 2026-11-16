@@ -1,6 +1,7 @@
 import type { SurveyResponseInResource } from "@esposter/db-schema";
 import type { SurveyAnswers } from "vue-survey-engine-headless";
 
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { MutationStatus } from "#src/models/shared/MutationStatus";
 import { LocalStorageKey } from "#src/services/shared/LocalStorageKey";
 import { getResultAsync } from "@esposter/shared";
@@ -21,9 +22,9 @@ export const useSurveyResponse = (resourceId: string, participantToken: string) 
   const seed = surveyResponseId.value || v7();
   let surveyResponse: SurveyResponseInResource | undefined;
   const { executeMutation } = useMutation();
-  // Server-generated response row (modelVersion) — non-optimistic, applied in onSuccess.
-  // Resolves to whether the answers are persisted, so a caller can never show a thank-you page for a
-  // Response the server never took. Only the save that completes the runner carries isSubmitting
+  // Server-generated response row (modelVersion) — awaited, applied in onSuccess. Resolves to whether the answers are
+  // Persisted, so a caller can never show a thank-you page for a response the server never took. Only the save that
+  // Completes the runner carries isSubmitting
   const saveSurveyResponse = async ({
     answers,
     isSubmitting,
@@ -68,6 +69,8 @@ export const useSurveyResponse = (resourceId: string, participantToken: string) 
           });
       },
       {
+        // Whether the answers were taken is the server's decision, and the next page or the thank-you page waits on it
+        awaitedBecause: AwaitedReason.ServerDecidedOutcome,
         // One live response per participant per survey, so every save queues against that one target — a
         // Submit issued while the create is still in flight is exactly such a save
         key: resourceId,

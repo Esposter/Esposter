@@ -4,6 +4,7 @@ import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { usePostStore } from "#src/store/post/index";
 import { takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
+import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 
 describe(usePostStore, () => {
@@ -54,15 +55,10 @@ describe(usePostStore, () => {
     const { items } = storeToRefs(postStore);
     const { updatePost } = postStore;
     items.value = [createPost({ id: post.id })];
-    const [updatedPost, failedPost] = await Promise.all([
-      updatePost({ id: post.id, title: newTitle }),
-      updatePost({ id: post.id, title: failingTitle }),
-    ]);
+    updatePost({ id: post.id, title: newTitle });
+    updatePost({ id: post.id, title: failingTitle });
+    await flushPromises();
 
-    expect(updatedPost?.id).toBe(post.id);
-    expect(updatedPost?.title).toBe(newTitle);
-    // Nothing back from the rejected edit, so the page it was submitted from stays on the draft
-    expect(failedPost).toBeUndefined();
     expect(takeOne(items.value).title).toBe(newTitle);
   });
 
@@ -75,12 +71,21 @@ describe(usePostStore, () => {
 
       return [otherPost.id];
     });
+    // The rejected delete reads the post's count back once its rollback has put the post on the feed
+    const readCount = ref(0);
+    trpcMsw.post.readPostCounts.query(() => {
+      readCount.value += 1;
+      return [{ commentCount: 0, id: post.id, likeCount: 0 }];
+    });
     const postStore = usePostStore();
     const { items } = storeToRefs(postStore);
     const { deletePost } = postStore;
     items.value = [post, otherPost];
-    await Promise.all([deletePost(post.id), deletePost(otherPost.id)]);
+    deletePost(post.id);
+    deletePost(otherPost.id);
 
+    // Both posts are off the feed until the rejected delete is answered, and its rollback is what sends the read
+    await until(readCount).toBe(1);
     expect(items.value).toStrictEqual([post]);
   });
 });

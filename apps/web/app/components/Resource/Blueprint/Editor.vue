@@ -19,7 +19,7 @@ await loadContent();
 useConfirmBeforeNavigation(isManifestDirty);
 onUnmounted(discardManifest);
 const errorMessage = ref("");
-const save = async () => {
+const save = () => {
   errorMessage.value = "";
   const parsedManifest = getResult(() => parseBlueprintManifest(manifestJson.value))
     .orTee((error) => {
@@ -28,7 +28,7 @@ const save = async () => {
     .unwrapOr(undefined);
   if (!parsedManifest) return;
 
-  await saveBlueprint(parsedManifest);
+  saveBlueprint(parsedManifest);
 };
 </script>
 

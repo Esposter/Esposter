@@ -2,29 +2,23 @@ import type { Editor } from "@tiptap/core";
 import type { SetupContext } from "vue";
 
 import { EMPTY_TEXT_REGEX } from "#src/util/text/constants";
-import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
+import { getResult, noop } from "@esposter/shared";
 
 export type SaveRichTextEditEmit = SetupContext<{
   "update:delete-mode": [value: true];
   "update:update-mode": [value: false];
 }>["emit"];
 // Editing away the last character is how a message or comment is deleted, so an emptied editor hands off to
-// Delete mode rather than saving nothing. Leaving edit mode runs on every path, including the failed update, so
-// It never depends on the write landing — a rejected save reverts to what is on the server. No finalizer is
-// Needed for that: the chain is terminated first, so it resolves rather than rejecting and the lines after the
-// Await always run
-export const useSaveRichTextEdit = (
-  edited: Ref<string>,
-  getOriginal: () => string,
-  update: () => Promise<unknown>,
-  emit: SaveRichTextEditEmit,
-) =>
-  getSynchronizedFunction(async (editor: Editor) => {
-    await getResultAsync(async () => {
+// Delete mode rather than saving nothing. The update is sent and edit mode ends at once, so the screen never waits on
+// The write: a refused write is undone by its own rollback, which puts the stored text back on screen
+export const useSaveRichTextEdit =
+  (edited: Ref<string>, getOriginal: () => string, update: () => void, emit: SaveRichTextEditEmit) =>
+  (editor: Editor) => {
+    getResult(() => {
       if (edited.value === getOriginal()) return;
       else if (EMPTY_TEXT_REGEX.test(editor.getText())) emit("update:delete-mode", true);
-      else await update();
+      else update();
     }).match(noop, console.error);
     emit("update:update-mode", false);
     edited.value = getOriginal();
-  });
+  };

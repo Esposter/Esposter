@@ -21,6 +21,7 @@ import {
 } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
+import { v7 } from "uuid";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("userToRoomRouter", () => {
@@ -155,6 +156,7 @@ describe("userToRoomRouter", () => {
     const moderator = await createRoomMember(mockContext, newRoom.id);
     const member = await createRoomMember(mockContext, newRoom.id);
     const role = await roleCaller.createRole({
+      id: v7(),
       name,
       permissions: RoomPermission.ManageDisplayNames,
       position,
@@ -197,10 +199,13 @@ describe("userToRoomRouter", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const ownerCategory = await categoryCaller.createRoomCategory({ name });
+    const ownerCategory = await categoryCaller.createRoomCategory({ id: v7(), name });
     const member = await createRoomMember(mockContext, newRoom.id);
     const memberContext = await createUserContext(member);
-    const memberCategory = await createCallerFactory(categoryRouter)(memberContext).createRoomCategory({ name });
+    const memberCategory = await createCallerFactory(categoryRouter)(memberContext).createRoomCategory({
+      id: v7(),
+      name,
+    });
     const memberUserToRoomCaller = createCallerFactory(userToRoomRouter)(memberContext);
     const updatedUserToRoom = await memberUserToRoomCaller.updateUserToRoom({
       categoryId: memberCategory.id,
@@ -226,8 +231,14 @@ describe("userToRoomRouter", () => {
     const secondMember = await createRoomMember(mockContext, newRoom.id);
     const firstMemberContext = await createUserContext(firstMember);
     const secondMemberContext = await createUserContext(secondMember);
-    const firstCategory = await createCallerFactory(categoryRouter)(firstMemberContext).createRoomCategory({ name });
-    const secondCategory = await createCallerFactory(categoryRouter)(secondMemberContext).createRoomCategory({ name });
+    const firstCategory = await createCallerFactory(categoryRouter)(firstMemberContext).createRoomCategory({
+      id: v7(),
+      name,
+    });
+    const secondCategory = await createCallerFactory(categoryRouter)(secondMemberContext).createRoomCategory({
+      id: v7(),
+      name,
+    });
     await createCallerFactory(userToRoomRouter)(firstMemberContext).updateUserToRoom({
       categoryId: firstCategory.id,
       roomId: newRoom.id,

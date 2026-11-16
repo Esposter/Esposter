@@ -11,28 +11,28 @@ import { describe, expect, test } from "vitest";
 describe(useDeleteColumns, () => {
   setupCommandTest();
 
-  test("removes all specified columns by id", async () => {
+  test("removes all specified columns by id", () => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDataSource();
     const deleteColumns = useDeleteColumns();
-    await deleteColumns([takeOne(dataSource.columns).id, takeOne(dataSource.columns, 1).id]);
+    deleteColumns([takeOne(dataSource.columns).id, takeOne(dataSource.columns, 1).id]);
 
     expect(dataSource.columns).toStrictEqual([]);
   });
 
-  test("removes only the specified column", async () => {
+  test("removes only the specified column", () => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDataSource();
     const deleteColumns = useDeleteColumns();
-    await deleteColumns([takeOne(dataSource.columns).id]);
+    deleteColumns([takeOne(dataSource.columns).id]);
 
     expect(dataSource.columns.map(({ name }) => name)).toStrictEqual([" "]);
     expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ " ": 1 }, { " ": 3 }]);
   });
 
-  test("undo preserves row.data key order when restoring multiple deleted columns", async () => {
+  test("undo preserves row.data key order when restoring multiple deleted columns", () => {
     expect.hasAssertions();
 
     const initialDataSource = createDataSource(
@@ -43,7 +43,7 @@ describe(useDeleteColumns, () => {
     const deleteColumns = useDeleteColumns();
     const sheetHistoryStore = useSheetHistoryStore();
     const { undo } = sheetHistoryStore;
-    await deleteColumns([takeOne(dataSource.columns, 1).id, takeOne(dataSource.columns, 3).id]);
+    deleteColumns([takeOne(dataSource.columns, 1).id, takeOne(dataSource.columns, 3).id]);
     undo(dataSource);
 
     expect(Object.keys(takeOne(dataSource.rows).data)).toStrictEqual(["a", "b", "c", "d"]);

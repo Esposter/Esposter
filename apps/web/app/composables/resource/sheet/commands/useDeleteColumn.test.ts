@@ -11,18 +11,18 @@ import { describe, expect, test } from "vitest";
 describe(useDeleteColumn, () => {
   setupCommandTest();
 
-  test("removes column by name", async () => {
+  test("removes column by name", () => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDataSource();
     const deleteColumn = useDeleteColumn();
-    await deleteColumn("");
+    deleteColumn("");
 
     expect(dataSource.columns.map(({ name }) => name)).toStrictEqual([" "]);
     expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ " ": 1 }, { " ": 3 }]);
   });
 
-  test("undo preserves row.data key order after restore", async () => {
+  test("undo preserves row.data key order after restore", () => {
     expect.hasAssertions();
 
     const initialDataSource = createDataSource(
@@ -33,7 +33,7 @@ describe(useDeleteColumn, () => {
     const deleteColumn = useDeleteColumn();
     const sheetHistoryStore = useSheetHistoryStore();
     const { undo } = sheetHistoryStore;
-    await deleteColumn("b");
+    deleteColumn("b");
     undo(dataSource);
 
     expect(Object.keys(takeOne(dataSource.rows).data)).toStrictEqual(["a", "b", "c"]);

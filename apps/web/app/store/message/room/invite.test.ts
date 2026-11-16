@@ -6,6 +6,7 @@ import { createUser } from "#src/services/message/user/createUser.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useInviteStore } from "#src/store/message/room/invite";
 import { SECRET_TOKEN_LENGTH } from "@esposter/shared";
+import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
@@ -24,6 +25,28 @@ describe(useInviteStore, () => {
     userId: v7(),
     uses: 0,
   };
+
+  test("a create whose link only the server mints waits for the server", async () => {
+    expect.hasAssertions();
+
+    const { promise, resolve } = Promise.withResolvers<void>();
+    trpcMsw.invite.createInvite.mutation(async () => {
+      await promise;
+      return { ...invite, user: creator };
+    });
+    const inviteStore = useInviteStore();
+    const { createInvite } = inviteStore;
+    const { invites } = storeToRefs(inviteStore);
+    const inviteCreation = createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId });
+    await flushPromises();
+
+    expect(invites.value.get(roomId)).toBeUndefined();
+
+    resolve();
+    await inviteCreation;
+
+    expect(invites.value.get(roomId)).toStrictEqual({ ...invite, user: creator });
+  });
 
   test("seeds", () => {
     expect.hasAssertions();

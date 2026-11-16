@@ -2,6 +2,7 @@
 import type { MemberActionTarget } from "#src/models/message/member/MemberActionTarget";
 import type { AdminActionType } from "@esposter/db-schema";
 
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { AdminActionTitleMap } from "#src/services/message/moderation/AdminActionTitleMap";
 
 interface Props {
@@ -23,6 +24,7 @@ const executeAdminAction = useExecuteAdminAction();
 <template>
   <UiConfirmDialog
     v-model="isOpen"
+    :awaited-because="AwaitedReason.ServerDecidedOutcome"
     :confirm-label="AdminActionTitleMap[type]"
     :title
     :confirm="() => executeAdminAction((roomId) => ({ roomId, targetUserId: user.id, type }))"

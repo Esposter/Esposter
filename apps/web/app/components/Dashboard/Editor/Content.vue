@@ -101,7 +101,6 @@ const { isOpen: isMoveOpen, item: movingVisual } = useSingletonDialog(movingVisu
         return deleteVisual({ id: deletingVisual.id });
       }
     "
-    is-optimistic
   >
     <p>{{ getVisualDeleteDescription(deletingVisual) }}</p>
   </UiConfirmDialog>

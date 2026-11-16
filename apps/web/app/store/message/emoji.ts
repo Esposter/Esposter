@@ -53,11 +53,11 @@ export const useEmojiStore = defineStore("message/emoji", () => {
     if (userIds.length > 0) storeEmoji(roomId, { emojiTag, messageId, userIds });
     else storeDeleteEmoji(roomId, { emojiTag, messageId });
   };
-  const createEmoji = async (input: AddReactionInput) => {
+  const createEmoji = (input: AddReactionInput) => {
     if (!session.value.data) return;
 
     const { id: userId } = session.value.data.user;
-    await executeMutation(() => $trpc.message.emoji.addReaction.mutate(input), {
+    executeMutation(() => $trpc.message.emoji.addReaction.mutate(input), {
       applyOptimistic: () => {
         storeReactor(input.roomId, input, userId, true);
         return () => {
@@ -67,16 +67,16 @@ export const useEmojiStore = defineStore("message/emoji", () => {
       // Keyed per emoji identity so reacting with two emojis in quick succession never queues behind the other
       key: getEmojiKey(input),
       // The room does not echo a write back to the device that made it, so the row the server settled is applied here
-      onSuccess: (result) => {
+      reconcile: (result) => {
         storeEmoji(input.roomId, result);
       },
     });
   };
-  const deleteEmoji = async (input: RemoveReactionInput) => {
+  const deleteEmoji = (input: RemoveReactionInput) => {
     if (!session.value.data) return;
 
     const { id: userId } = session.value.data.user;
-    await executeMutation(() => $trpc.message.emoji.removeReaction.mutate(input), {
+    executeMutation(() => $trpc.message.emoji.removeReaction.mutate(input), {
       applyOptimistic: () => {
         storeReactor(input.roomId, input, userId, false);
         return () => {
@@ -87,12 +87,12 @@ export const useEmojiStore = defineStore("message/emoji", () => {
     });
   };
   // Reacting again removes this user's own reaction; the last one to leave takes the reaction itself with it
-  const toggleEmoji = async (roomId: string, emoji: RoomReaction) => {
+  const toggleEmoji = (roomId: string, emoji: RoomReaction) => {
     if (!session.value.data) return;
 
     const { emojiTag, messageId } = emoji;
-    if (emoji.userIds.includes(session.value.data.user.id)) await deleteEmoji({ emojiTag, messageId, roomId });
-    else await createEmoji({ emojiTag, messageId, roomId });
+    if (emoji.userIds.includes(session.value.data.user.id)) deleteEmoji({ emojiTag, messageId, roomId });
+    else createEmoji({ emojiTag, messageId, roomId });
   };
 
   const storeDeleteEmoji = (roomId: string, input: Pick<RoomReaction, "emojiTag" | "messageId">) => {

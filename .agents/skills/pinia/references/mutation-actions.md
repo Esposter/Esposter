@@ -7,9 +7,10 @@ Read when a store action calls a tRPC mutation, or when picking its `useMutation
 - **Declare every instance at the store root** — `const { executeMutation } = useMutation()`. Never inside an action (detached effect scope leak) — `setup-scope/no-detached-mutation` fails the lint on one.
 - **One `useMutation()` instance per mutation**, via destructure renames (`executeCreateFooMutation`, plus `isPending: isCreateFooPending` / `checkIsPending: checkIsFooPending` when consumed), so one action's queue and pending state can't hold up another's. **Two mutations that end the same row share one instance instead**, named for the target — the rule and the test for which case you are in are in `openspec/specs/architecture/async-operations/design.md` § A key queues only within one `useMutation()` instance.
 - **Never hand-roll the alert/rollback/pending wiring** — it surfaces errors via `createErrorAlert` unless you pass `onError`, and runs writes to one `key` one at a time so two actions writing different fields of the same entity both land. Destructure `isPending` only where a control consumes it; the in-flight guard decision tree lives in `openspec/specs/architecture/client-data/design.md` § In-flight guarding.
-- **`applyOptimistic`** applies the change immediately and **returns its rollback**, which runs automatically on failure.
-- **`onSuccess`** is for server-generated results that can't be predicted client-side (a created entity with its id).
-- **Whether the write landed is the outcome's `status`, never a flag `onSuccess` flips.** Both entry points resolve to a `MutationOutcome`, so an action or dialog that answers "did it save" reads `outcome.status === MutationStatus.Succeeded` (the `post` store's `createPost` is the shape); a `let isSuccessful = false` closed over by `onSuccess` restates that discriminant by hand.
+- **`applyOptimistic`** applies the change immediately and **returns its rollback**, which runs automatically on failure. Every screen step the write causes (close, clear, move, navigate) runs here or beside the call, never after the answer: the optimistic form returns `void`, so there is nothing to wait on.
+- **`reconcile`** takes a value only the server issues that a later write reads (a version token, an etag) — never a place to close, clear or navigate.
+- **`awaitedBecause`** is the other form, for one of the three reasons in `openspec/specs/architecture/client-data/design.md` § Optimistic by default; its `onSuccess` acts on the server's value. Options naming neither do not compile.
+- **Whether an awaited write landed is the outcome's `status`, never a flag `onSuccess` flips.** An awaited action behind a dialog returns `outcome.status === MutationStatus.Succeeded` (`createRoomEmoji` is the shape), so the dialog stays open on `false`; a `let isSuccessful = false` closed over by `onSuccess` restates that discriminant by hand. An optimistic action returns nothing.
 
 ## A store never orders its own async work
 
@@ -29,11 +30,11 @@ No promise chained onto the previous one, no `Map<id, Promise>` of in-flight rea
 // A write whose event reaches the caller's own socket needs no store action: the caller runs the write through its own
 // instance, which surfaces the rejection and owns the pending state
 const { executeMutation } = useMutation();
-await executeMutation(() => $trpc.foo.deleteFoo.mutate(id), { key: id });
+executeMutation(() => $trpc.foo.deleteFoo.mutate(id), { applyOptimistic: () => noop, key: id });
 
 // store action justified — optimistic local state with automatic rollback
-const deleteFoo = async (input: DeleteFooInput) => {
-  await executeMutation(() => $trpc.foo.deleteFoo.mutate(input), {
+const deleteFoo = (input: DeleteFooInput) => {
+  executeMutation(() => $trpc.foo.deleteFoo.mutate(input), {
     applyOptimistic: () => {
       // The one row this write removes, not a copy of the list: a rejected delete must not undo the
       // delete running beside it under another key, nor drop a row an event delivered meanwhile.
@@ -52,18 +53,23 @@ const deleteFoo = async (input: DeleteFooInput) => {
 };
 ```
 
-A create whose result can't be predicted client-side applies in `onSuccess` instead, and that is also where store-owned selection is updated:
+A create gives its row the id, so it is drawn and selected at once, and its procedure's input picks `id` from the row's select schema (`createRole` is the shape):
 
 ```ts
-const createFoo = async (input: CreateFooInput) => {
-  await executeCreateFooMutation(() => $trpc.foo.createFoo.mutate(input), {
-    // no natural key yet — the id only exists once the server answers, and creates must not queue
-    // behind their siblings
-    key: Symbol("createFoo"),
-    onSuccess: (newFoo) => {
+const createFoo = (input: Except<CreateFooInput, "id">) => {
+  const newFoo: Foo = { ...input, createdAt: new Date(), deletedAt: null, id: v7(), updatedAt: new Date() };
+  executeCreateFooMutation(() => $trpc.foo.createFoo.mutate({ ...input, id: newFoo.id }), {
+    applyOptimistic: () => {
       setFoos(input.parentId, [newFoo, ...getFoos(input.parentId)]);
       setSelectedFooId(input.parentId, newFoo.id);
+      return () => {
+        setFoos(
+          input.parentId,
+          getFoos(input.parentId).filter(({ id }) => id !== newFoo.id),
+        );
+      };
     },
+    key: newFoo.id,
   });
 };
 ```
@@ -73,7 +79,7 @@ const createFoo = async (input: CreateFooInput) => {
 Same key = same target, so those writes queue behind each other.
 
 - **Per-entity operations** → the entity id or its natural composite (`key: input.id`, `` key: `${parentId}${ID_SEPARATOR}${childId}` ``). The separator is the `naming` skill's `ID_SEPARATOR` (`references/composite-keys.md`) and never a hand-written hyphen, since a uuid contains hyphens and such a key cannot be split back apart.
-- **Creates with no natural key** → a per-call `Symbol("createFoo")`, since every create is independent and must not wait behind its siblings. Use a stable key plus `isExclusive` instead when duplicate fires must drop.
+- **Creates** → the id the client gave the row, so every create is independent and never waits behind its siblings. An awaited create with no id of its own takes a per-call `Symbol("createFoo")`. Use a stable key plus `isExclusive` instead when duplicate fires must drop.
 - **Singleton targets** → the scope's id or a stable target name.
 
 Full rationale: `openspec/specs/architecture/async-operations/design.md` (concurrency) and `openspec/specs/architecture/client-data/design.md` (optimistic apply, in-flight guarding).

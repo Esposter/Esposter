@@ -1,9 +1,13 @@
 // @vitest-environment nuxt
+import { getMockSession } from "#server/trpc/context.test";
+import { useSession } from "#src/services/auth/authClient.test";
 import { createRoomCategory } from "#src/services/message/roomCategory/createRoomCategory.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useAlertStore } from "#src/store/alert";
 import { useRoomCategoryStore } from "#src/store/message/roomCategory";
-import { takeOne } from "@esposter/shared";
+import { takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
+import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
@@ -14,6 +18,43 @@ describe(useRoomCategoryStore, () => {
   const name = "name";
   const updatedName = "updatedName";
   const rejectedName = "rejectedName";
+
+  test("a new category is drawn under the id the client gave it", async () => {
+    expect.hasAssertions();
+
+    const { promise, resolve } = Promise.withResolvers<string>();
+    useSession.mockReturnValue(ref({ data: { user: { id: getMockSession().user.id } } }));
+    trpcMsw.room.category.createRoomCategory.mutation(({ input }) => {
+      resolve(input.id);
+      return createRoomCategory(input);
+    });
+    const roomCategoryStore = useRoomCategoryStore();
+    const { roomCategories } = storeToRefs(roomCategoryStore);
+    const { createRoomCategory: storeCreateRoomCategory } = roomCategoryStore;
+    storeCreateRoomCategory({ name });
+    const sentId = await promise;
+    await flushPromises();
+
+    expect(roomCategories.value.map((roomCategory) => roomCategory.id)).toStrictEqual([sentId]);
+  });
+
+  test("a rejected optimistic delete restores the list and shows an error", async () => {
+    expect.hasAssertions();
+
+    trpcMsw.room.category.deleteRoomCategory.mutation(() => {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: name });
+    });
+    const alertStore = useAlertStore();
+    const roomCategoryStore = useRoomCategoryStore();
+    const { roomCategories } = storeToRefs(roomCategoryStore);
+    const { deleteRoomCategory } = roomCategoryStore;
+    roomCategories.value = [createRoomCategory({ id })];
+    deleteRoomCategory(id);
+    await waitForSynchronizedFunctions();
+
+    expect(roomCategories.value.map((roomCategory) => roomCategory.id)).toStrictEqual([id]);
+    expect(alertStore.alerts).toHaveLength(1);
+  });
 
   // Two renames of one room category queue under its id, so the second one's rollback has to undo its own write
   // Rather than what the user typed over — nothing reconciles a dropped rename until a reload
@@ -32,11 +73,12 @@ describe(useRoomCategoryStore, () => {
     const { updateRoomCategory } = roomCategoryStore;
     roomCategories.value = [createRoomCategory({ id })];
     const storedRoomCategory = takeOne(roomCategories.value);
-    await Promise.all([updateRoomCategory({ id, name: updatedName }), updateRoomCategory({ id, name: rejectedName })]);
+    updateRoomCategory({ id, name: updatedName });
+    updateRoomCategory({ id, name: rejectedName });
+    await flushPromises();
 
     expect(takeOne(roomCategories.value).name).toBe(updatedName);
-    // Restored in place rather than by swapping the list for copies, so the create placeholder a list may still
-    // Hold keeps the identity its own onSuccess reconciles the server row onto
+    // Restored in place rather than by swapping the list for copies, so a holder of the row keeps reading it
     expect(takeOne(roomCategories.value)).toBe(storedRoomCategory);
   });
 
@@ -56,7 +98,9 @@ describe(useRoomCategoryStore, () => {
     const { roomCategories } = storeToRefs(roomCategoryStore);
     const { deleteRoomCategory } = roomCategoryStore;
     roomCategories.value = [createRoomCategory({ id }), createRoomCategory({ id: otherId })];
-    await Promise.all([deleteRoomCategory(id), deleteRoomCategory(id)]);
+    deleteRoomCategory(id);
+    deleteRoomCategory(id);
+    await flushPromises();
 
     expect(roomCategories.value.map(({ id: roomCategoryId }) => roomCategoryId)).toStrictEqual([otherId]);
   });
@@ -74,7 +118,9 @@ describe(useRoomCategoryStore, () => {
     const { roomCategories } = storeToRefs(roomCategoryStore);
     const { deleteRoomCategory } = roomCategoryStore;
     roomCategories.value = [createRoomCategory({ id }), createRoomCategory({ id: otherId })];
-    await Promise.all([deleteRoomCategory(id), deleteRoomCategory(otherId)]);
+    deleteRoomCategory(id);
+    deleteRoomCategory(otherId);
+    await flushPromises();
 
     expect(roomCategories.value.map(({ id: roomCategoryId }) => roomCategoryId)).toStrictEqual([id]);
   });
@@ -95,7 +141,8 @@ describe(useRoomCategoryStore, () => {
     const first = { ...createRoomCategory({ id }), position: 0 };
     const second = { ...createRoomCategory({ id: otherId }), position: 1 };
     roomCategories.value = [first, second];
-    await reorderRoomCategories([second, first]);
+    reorderRoomCategories([second, first]);
+    await flushPromises();
 
     expect(roomCategories.value.map(({ id: roomCategoryId }) => roomCategoryId)).toStrictEqual([id, otherId, thirdId]);
     expect(roomCategories.value.map(({ position }) => position)).toStrictEqual([0, 1, 2]);
@@ -113,11 +160,13 @@ describe(useRoomCategoryStore, () => {
     const { reorderRoomCategories, updateRoomCategory } = roomCategoryStore;
     trpcMsw.room.category.reorderRoomCategories.mutation(() => []);
     trpcMsw.room.category.updateRoomCategory.mutation(async () => {
-      await reorderRoomCategories([second, first]);
+      reorderRoomCategories([second, first]);
+      await flushPromises();
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: name });
     });
     roomCategories.value = [first, second];
-    await updateRoomCategory({ id, name: rejectedName });
+    updateRoomCategory({ id, name: rejectedName });
+    await flushPromises();
 
     expect(
       roomCategories.value.map(({ id: roomCategoryId, position }) => ({ id: roomCategoryId, position })),

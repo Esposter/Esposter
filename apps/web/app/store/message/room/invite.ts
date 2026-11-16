@@ -3,6 +3,7 @@ import type { InviteInMessage, RoomInMessage } from "@esposter/db-schema";
 
 import { checkIsInviteUsable } from "#shared/services/room/invite/checkIsInviteUsable";
 import { DEFAULT_INVITE_EXPIRE_AFTER_MINUTES, INVITE_MAX_USES_OPTIONS } from "#shared/services/room/invite/constants";
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { getInviteLink } from "#src/services/message/room/invite/getInviteLink";
 import { inviteCreateHooks } from "#src/services/message/room/invite/inviteCreateHooks";
 
@@ -27,6 +28,8 @@ export const useInviteStore = defineStore("message/room/invite", () => {
     // Keyed per room — one live invite per room, so regenerating from either option select or the copy
     // Button queues against that one target, while invites for different rooms stay independent
     await executeMutation(() => $trpc.invite.createInvite.mutate(input), {
+      // The link is the server's to mint, so it is shown once the server issues it
+      awaitedBecause: AwaitedReason.ServerIssuedValue,
       key: input.roomId,
       onSuccess: async (newInvite) => {
         setInvite(input.roomId, newInvite);

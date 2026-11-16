@@ -28,13 +28,13 @@ export const useCallIdSubscribables = async (callId: string) => {
   useCallJoinedSubscribables(onlineSubscribableContext);
   useCallKnockingSubscribables(callId, onlineSubscribableContext);
 
-  onUnmounted(async () => {
+  onUnmounted(() => {
     // Popping out keeps a standalone call alive while the user navigates away; the PiP window owns the call surface.
     if (isPoppedOut.value) return;
     if (!activeCallSessionId.value && knockingCallSessionId.value === callId) cancelKnock();
     // A socket a knock opened has no joined call whose leave would close it
     if (!activeCallSessionId.value) closeCall();
-    await leaveCall();
+    leaveCall();
   }, onlineSubscribableContext.instance);
   return callSession;
 };

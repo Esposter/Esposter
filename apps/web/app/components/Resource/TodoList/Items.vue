@@ -62,7 +62,13 @@ const completedListItems = computed(() => {
   return sortedItems.map((item) => toListItem(item));
 });
 const checkIsCompleted = (id: TodoListItem["id"]) => Boolean(items.value.find((item) => item.id === id)?.completedAt);
-const toggle = async (id: TodoListItem["id"]) => {
+// Ends the hold a tick took after its time, and only that hold: a todo unticked and ticked again inside the hold keeps
+// Its own
+const endHold = async (id: TodoListItem["id"], hold: symbol) => {
+  await promiseTimeout(TODO_COMPLETION_HOLD_MS);
+  if (holdingIds.value.get(id) === hold) holdingIds.value.delete(id);
+};
+const toggle = (id: TodoListItem["id"]) => {
   const isCompleting = !checkIsCompleted(id);
   const hold = Symbol("completionHold");
   // An untick during the hold cancels the move, since the todo it was holding is open again
@@ -72,12 +78,8 @@ const toggle = async (id: TodoListItem["id"]) => {
   } else holdingIds.value.delete(id);
   // The hold runs beside the save rather than after it, so the row moves on the hold's clock and never waits on the
   // Server. A refused save unticks the todo, which puts it back among the open ones from wherever it is by then
-  const endHold = async () => {
-    await promiseTimeout(TODO_COMPLETION_HOLD_MS);
-    // Only the hold this tick took is ended, so a todo unticked and ticked again inside the hold keeps its own
-    if (holdingIds.value.get(id) === hold) holdingIds.value.delete(id);
-  };
-  await Promise.all(isCompleting ? [toggleCompleted(id), endHold()] : [toggleCompleted(id)]);
+  toggleCompleted(id);
+  if (isCompleting) endHold(id, hold);
 };
 const completedActions = computed<Item[]>(() => [
   {

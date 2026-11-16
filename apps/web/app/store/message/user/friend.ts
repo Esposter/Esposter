@@ -30,8 +30,8 @@ export const useFriendStore = defineStore("message/user/friend", () => {
   // Affordance asks it, and each one deriving its own predicate is how the profile card and the search
   // Results end up disagreeing about the same pair
   const checkIsFriend = (userId: PublicUser["id"]) => friends.value.some(({ id }) => id === userId);
-  const deleteFriend = async (friendId: PublicUser["id"]) => {
-    await executeMutation(() => $trpc.friend.deleteFriend.mutate(friendId), {
+  const deleteFriend = (friendId: PublicUser["id"]) => {
+    executeMutation(() => $trpc.friend.deleteFriend.mutate(friendId), {
       // The one row this write removes — removals are keyed per friend and never queue against each other
       applyOptimistic: () => {
         const deletedFriend = friends.value.find(({ id }) => id === friendId);

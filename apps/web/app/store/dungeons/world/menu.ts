@@ -39,7 +39,7 @@ export const useWorldMenuStore = defineStore("dungeons/world/menu", () => {
           launchScene(scene, SceneKey.MonsterParty);
           break;
         case MenuOption.Save:
-          await saveData();
+          saveData();
           await showMessages(scene, [{ text: "Game has been saved." }]);
           break;
         default:

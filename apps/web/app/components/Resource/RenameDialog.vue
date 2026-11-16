@@ -5,7 +5,7 @@ import { UiRules } from "#src/services/ui/UiRules";
 import { RESOURCE_NAME_MAX_LENGTH } from "@esposter/db-schema";
 
 interface Props {
-  rename: (name: string) => Promise<void>;
+  rename: (name: string) => void;
   resource: ResourceInResource;
 }
 
@@ -17,13 +17,7 @@ const nameRules = [UiRules.required(), UiRules.maxLength(RESOURCE_NAME_MAX_LENGT
 </script>
 
 <template>
-  <StyledFormDialog
-    v-model="isOpen"
-    confirm-label="Save"
-    is-optimistic
-    :submit="() => rename(editedName)"
-    title="Rename resource"
-  >
+  <StyledFormDialog v-model="isOpen" confirm-label="Save" :submit="() => rename(editedName)" title="Rename resource">
     <UiTextField v-model="editedName" is-autofocus label="Name" :rules="nameRules" />
   </StyledFormDialog>
 </template>

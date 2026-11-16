@@ -11,6 +11,7 @@ import { useUserToRoomStore } from "#src/store/message/room/userToRoom";
 import { MessageType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
+import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { assert, beforeAll, describe, expect, test } from "vitest";
 
@@ -68,7 +69,9 @@ describe(useMessageActionItems, () => {
     const messageEntity = createMessage(epoch);
     const item = await mountActionItem(messageEntity, "Unpin Message");
     const otherItem = await mountActionItem(messageEntity, "Unpin Message");
-    await Promise.all([item.onClick?.(new MouseEvent("click")), otherItem.onClick?.(new MouseEvent("click"))]);
+    item.onClick?.(new MouseEvent("click"));
+    otherItem.onClick?.(new MouseEvent("click"));
+    await flushPromises();
 
     expect(messageEntity.isPinned).toBe(false);
   });
@@ -92,7 +95,9 @@ describe(useMessageActionItems, () => {
     setMyUserToRoom(roomId, userToRoom);
     const item = await mountActionItem(createMessage(nextDay), "Mark Unread From Here");
     const rejectedItem = await mountActionItem(createMessage(dayAfter), "Mark Unread From Here");
-    await Promise.all([item.onClick?.(new MouseEvent("click")), rejectedItem.onClick?.(new MouseEvent("click"))]);
+    item.onClick?.(new MouseEvent("click"));
+    rejectedItem.onClick?.(new MouseEvent("click"));
+    await flushPromises();
 
     expect(acceptedLastReadAt).toBeDefined();
     expect(getMyUserToRoom(roomId)?.lastReadAt).toStrictEqual(acceptedLastReadAt);

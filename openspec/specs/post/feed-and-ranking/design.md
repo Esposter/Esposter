@@ -27,7 +27,7 @@ flowchart LR
 sign(likes) × log10(max(|likes|, 1)) + max(0, createdAtMs − 1.5e12) / 45e6
 ```
 
-Here `1.5e12` is `POST_RANKING_EPOCH_MS` and `45e6` is `POST_RANKING_AGE_PER_ORDER_OF_MAGNITUDE_MS`, both declared in `apps/web/server/services/post/constants.ts`.
+Here `1.5e12` is `POST_RANKING_EPOCH_MS` and `45e6` is `POST_RANKING_AGE_PER_ORDER_OF_MAGNITUDE_MS`, both declared in `apps/web/shared/services/post/constants.ts`.
 
 The log term means early likes matter most; the time term gives newer posts a constant head start (each ~12.5 hours of age is worth one order of magnitude of likes). Because age is baked in as an absolute offset, scores never need recomputation — newer posts simply start higher. Every like create/update/delete and comment create recomputes the score in the same transaction that updates the counters.
 
@@ -53,7 +53,7 @@ Paths relative to `apps/web`, except `packages/`, which is relative to the repos
 | `app/store/post/index.ts`                         | feed items store + `sortType`                                     |
 | `shared/services/post/PostSortTypePageSortMap.ts` | sort → declared page sort, Old included                           |
 | `server/trpc/routers/post.ts`                     | `readPosts` / `readPost`                                          |
-| `server/services/post/getPostRanking.ts`          | the hot score                                                     |
+| `shared/services/post/getPostRanking.ts`          | the hot score                                                     |
 | `packages/db/src/services/pagination/`            | createPageSort, getPageWhere, getPageOrderBy, toPage              |
 
 ## Notes

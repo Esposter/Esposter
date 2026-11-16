@@ -10,7 +10,6 @@ interface Props {
 
 defineProps<Props>();
 const commentStore = useCommentStore();
-const { isCreateCommentPending } = storeToRefs(commentStore);
 const { createComment } = commentStore;
 const description = ref("");
 </script>
@@ -21,17 +20,17 @@ const description = ref("");
       <UiButton
         v-if="editor"
         :disabled="EMPTY_TEXT_REGEX.test(description)"
-        :is-pending="isCreateCommentPending"
         :variant="UiButtonVariant.Accent"
         @click="
-          async () => {
-            // The editor stays live while the comment is pending, so text typed meanwhile is not the comment's to clear
+          () => {
+            // The comment is drawn as it is sent, so the editor clears at once. A refused comment hands its text back,
+            // Unless the reader has started another one since
             const submittedDescription = description;
-            if (
-              (await createComment({ parentId, description: submittedDescription })) &&
-              description === submittedDescription
-            )
-              editor?.commands.clearContent(true);
+            editor?.commands.clearContent(true);
+            createComment({ parentId, description: submittedDescription }, () => {
+              if (EMPTY_TEXT_REGEX.test(description))
+                editor?.commands.setContent(submittedDescription, { emitUpdate: true });
+            });
           }
         "
       >

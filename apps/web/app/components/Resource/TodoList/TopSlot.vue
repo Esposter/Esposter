@@ -41,12 +41,12 @@ const sortItems = computed<Item[]>(() =>
       min-w-0
       @keydown.esc="name = ''"
       @submit.prevent="
-        async () => {
-          const addedName = name;
+        () => {
+          const submittedName = name;
           name = '';
-          const isSuccessful = await addItem(addedName);
-          // Nothing typed is lost to a refused save, unless the next todo is already being typed over it
-          if (!isSuccessful && !name) name = addedName;
+          addItem(submittedName, () => {
+            if (!name) name = submittedName;
+          });
         }
       "
     >

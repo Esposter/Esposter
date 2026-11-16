@@ -2,12 +2,14 @@
 import type { LikeInPost } from "@esposter/db-schema";
 
 import { useLikeOperations } from "#src/composables/post/useLikeOperations";
+import { useSession } from "#src/services/auth/authClient.test";
 import { createPost } from "#src/services/post/createPost.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { usePostStore } from "#src/store/post/index";
+import { takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { v7 } from "uuid";
-import { describe, expect, test } from "vitest";
+import { beforeEach, describe, expect, test } from "vitest";
 
 describe(useLikeOperations, () => {
   const { trpcMsw } = setupMswTrpc();
@@ -22,9 +24,20 @@ describe(useLikeOperations, () => {
     value,
   });
 
-  // The count the server holds once the votes settle, as a read of it returns it
+  // A new vote is drawn for the signed-in viewer, so every test here signs one in
+  beforeEach(() => {
+    useSession.mockReturnValue({ value: { data: { user: { id: userId } } } });
+  });
+
+  // The count the server holds once the votes settle, as a read of it returns it. Each read counts itself on the ref
+  // Returned, so a test can wait for the reads its votes send
   const serveLikeCount = (likeCount: number) => {
-    trpcMsw.post.readPostCounts.query(() => [{ commentCount: 0, id: postId, likeCount }]);
+    const readCount = ref(0);
+    trpcMsw.post.readPostCounts.query(() => {
+      readCount.value += 1;
+      return [{ commentCount: 0, id: postId, likeCount }];
+    });
+    return readCount;
   };
 
   // Two quick votes on one post queue under the same key, so the second's rollback has to undo its own vote. The
@@ -33,8 +46,12 @@ describe(useLikeOperations, () => {
   test("rolls a failed vote back to the vote ahead of it", async () => {
     expect.hasAssertions();
 
+    const isFailingVoteReceived = Promise.withResolvers<void>();
     trpcMsw.like.updateLike.mutation(({ input }) => {
-      if (input.value === 1) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+      if (input.value === 1) {
+        isFailingVoteReceived.resolve();
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+      }
 
       return createLike(input.value);
     });
@@ -44,7 +61,12 @@ describe(useLikeOperations, () => {
     const { items } = storeToRefs(postStore);
     items.value = [post];
     const { updateLike } = useLikeOperations(items);
-    await Promise.all([updateLike({ postId, value: -1 }), updateLike({ postId, value: 1 })]);
+    updateLike({ postId, value: -1 });
+    updateLike({ postId, value: 1 });
+
+    // The refused vote stays drawn until its rollback runs, and the drain is the sign it and its read-back have landed
+    await isFailingVoteReceived.promise;
+    await waitForSynchronizedFunctions();
 
     expect(post.viewerLike).toStrictEqual(createLike(-1));
     expect(post.likeCount).toBe(-1);
@@ -56,19 +78,43 @@ describe(useLikeOperations, () => {
     expect.hasAssertions();
 
     trpcMsw.like.deleteLike.mutation(() => createLike(1));
-    serveLikeCount(0);
+    const readCount = serveLikeCount(0);
     const post = createPost({ id: postId, likeCount: 1, viewerLike: createLike(1) });
     const postStore = usePostStore();
     const { items } = storeToRefs(postStore);
     items.value = [post];
     const { deleteLike } = useLikeOperations(items);
-    await Promise.all([deleteLike(postId), deleteLike(postId)]);
+    deleteLike(postId);
+    deleteLike(postId);
 
+    // Each kept withdrawal reads the count back, so the wait is for both reads
+    await until(readCount).toBe(2);
     expect(post.viewerLike).toBeUndefined();
     expect(post.likeCount).toBe(0);
   });
 
   // The vote's own effect on the count is known to the client, so the count moves before the server answers
+  test("a rapid second click on a like creates only one like", async () => {
+    expect.hasAssertions();
+
+    const receivedValues: number[] = [];
+    trpcMsw.like.createLike.mutation(({ input }) => {
+      receivedValues.push(input.value);
+      return createLike(input.value);
+    });
+    serveLikeCount(1);
+    const post = createPost({ id: postId, likeCount: 0 });
+    const postStore = usePostStore();
+    const { items } = storeToRefs(postStore);
+    items.value = [post];
+    const { createLike: sendLike } = useLikeOperations(items);
+    sendLike({ postId, value: 1 });
+    sendLike({ postId, value: 1 });
+    await waitForSynchronizedFunctions();
+
+    expect(receivedValues).toStrictEqual([1]);
+  });
+
   test("a count moves at once while its write is in flight", async () => {
     expect.hasAssertions();
 
@@ -80,20 +126,20 @@ describe(useLikeOperations, () => {
 
       return createLike(input.value);
     });
-    serveLikeCount(2);
+    const readCount = serveLikeCount(2);
     const post = createPost({ id: postId, likeCount: 1 });
     const postStore = usePostStore();
     const { items } = storeToRefs(postStore);
     items.value = [post];
     const { createLike: sendLike } = useLikeOperations(items);
-    const pendingLike = sendLike({ postId, value: 1 });
+    sendLike({ postId, value: 1 });
 
     await isWriteReceived.promise;
 
     expect(post.likeCount).toBe(2);
 
     heldWrite.resolve();
-    await pendingLike;
+    await until(readCount).toBe(1);
   });
 
   test("a flipped vote moves the count by both its sides and the read-back settles it", async () => {
@@ -107,22 +153,21 @@ describe(useLikeOperations, () => {
 
       return createLike(input.value);
     });
-    serveLikeCount(-1);
+    serveLikeCount(0);
     const post = createPost({ id: postId, likeCount: 1, viewerLike: createLike(1) });
     const postStore = usePostStore();
     const { items } = storeToRefs(postStore);
     items.value = [post];
     const { updateLike } = useLikeOperations(items);
-    const pendingVote = updateLike({ postId, value: -1 });
+    updateLike({ postId, value: -1 });
 
     await isWriteReceived.promise;
 
     expect(post.likeCount).toBe(-1);
 
     heldWrite.resolve();
-    await pendingVote;
-
-    expect(post.likeCount).toBe(-1);
+    await until(() => takeOne(items.value).likeCount).toBe(0);
+    expect(takeOne(items.value).likeCount).toBe(0);
   });
 
   test("a withdrawn vote takes its value off the count at once", async () => {
@@ -136,66 +181,68 @@ describe(useLikeOperations, () => {
 
       return createLike(1);
     });
-    serveLikeCount(0);
+    const readCount = serveLikeCount(0);
     const post = createPost({ id: postId, likeCount: 1, viewerLike: createLike(1) });
     const postStore = usePostStore();
     const { items } = storeToRefs(postStore);
     items.value = [post];
     const { deleteLike } = useLikeOperations(items);
-    const pendingDelete = deleteLike(postId);
+    deleteLike(postId);
 
     await isWriteReceived.promise;
 
     expect(post.likeCount).toBe(0);
 
     heldWrite.resolve();
-    await pendingDelete;
+    await until(readCount).toBe(1);
   });
 
   test("a count the server refuses to move goes back to what it was", async () => {
     expect.hasAssertions();
 
-    const heldRead = Promise.withResolvers<void>();
-    const isReadReceived = Promise.withResolvers<void>();
-    trpcMsw.like.createLike.mutation(() => {
+    const heldWrite = Promise.withResolvers<void>();
+    const isWriteReceived = Promise.withResolvers<void>();
+    trpcMsw.like.createLike.mutation(async () => {
+      isWriteReceived.resolve();
+      await heldWrite.promise;
+
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
-    trpcMsw.post.readPostCounts.query(async () => {
-      isReadReceived.resolve();
-      await heldRead.promise;
-
-      return [{ commentCount: 0, id: postId, likeCount: 1 }];
-    });
+    // The refusal reads the count back, and the server never moved it
+    serveLikeCount(1);
     const post = createPost({ id: postId, likeCount: 1 });
     const postStore = usePostStore();
     const { items } = storeToRefs(postStore);
     items.value = [post];
     const { createLike: sendLike } = useLikeOperations(items);
-    const pendingSend = sendLike({ postId, value: 1 });
+    sendLike({ postId, value: 1 });
 
-    // The read-back is only sent after the failed write has run its rollback, so the count seen while it is held is
-    // The one the copy is left with, before the server's answer could mask a missing rollback
-    await isReadReceived.promise;
-    const likeCountWhileReadIsHeld = post.likeCount;
-    heldRead.resolve();
-    await pendingSend;
+    // The count is drawn while the refusal is held, so the wait is for the refusal's rollback to put it back
+    await isWriteReceived.promise;
 
-    expect(likeCountWhileReadIsHeld).toBe(1);
+    expect(post.likeCount).toBe(2);
+
+    heldWrite.resolve();
+    await waitForSynchronizedFunctions();
+
+    expect(takeOne(items.value).likeCount).toBe(1);
   });
 
   test("the count shows the read-back value once the write settles", async () => {
     expect.hasAssertions();
 
     trpcMsw.like.createLike.mutation(({ input }) => createLike(input.value));
-    serveLikeCount(2);
+    serveLikeCount(3);
     const post = createPost({ id: postId, likeCount: 1 });
     const postStore = usePostStore();
     const { items } = storeToRefs(postStore);
     items.value = [post];
     const { createLike: sendLike } = useLikeOperations(items);
-    await sendLike({ postId, value: 1 });
+    sendLike({ postId, value: 1 });
 
-    expect(post.likeCount).toBe(2);
+    // The vote draws the count to 2 at once, so the wait is for the read-back to replace it with the server's 3
+    await until(() => takeOne(items.value).likeCount).toBe(3);
+    expect(takeOne(items.value).likeCount).toBe(3);
   });
 
   // The viewer's own vote is held exactly by the client, so it may change before the server answers
@@ -210,17 +257,17 @@ describe(useLikeOperations, () => {
 
       return createLike(input.value);
     });
-    serveLikeCount(1);
+    const readCount = serveLikeCount(1);
     const post = createPost({ id: postId, likeCount: 1, viewerLike: createLike(1) });
     const postStore = usePostStore();
     const { items } = storeToRefs(postStore);
     items.value = [post];
     const { updateLike } = useLikeOperations(items);
-    const pendingVote = updateLike({ postId, value: -1 });
+    updateLike({ postId, value: -1 });
 
     await isWriteReceived.promise;
     expect(post.viewerLike).toStrictEqual(createLike(-1));
     heldWrite.resolve();
-    await pendingVote;
+    await until(readCount).toBe(1);
   });
 });

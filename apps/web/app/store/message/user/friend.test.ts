@@ -4,6 +4,7 @@ import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useAlertStore } from "#src/store/alert";
 import { useFriendStore } from "#src/store/message/user/friend";
 import { TRPCError } from "@trpc/server";
+import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 
 describe(useFriendStore, () => {
@@ -24,7 +25,9 @@ describe(useFriendStore, () => {
     const { friends } = storeToRefs(friendStore);
     const { deleteFriend } = friendStore;
     friends.value = [first, second];
-    await Promise.all([deleteFriend(first.id), deleteFriend(second.id)]);
+    deleteFriend(first.id);
+    deleteFriend(second.id);
+    await flushPromises();
 
     expect(friends.value).toStrictEqual([second]);
     expect(alertStore.alerts).toHaveLength(1);
@@ -41,7 +44,9 @@ describe(useFriendStore, () => {
     const { friends } = storeToRefs(friendStore);
     const { deleteFriend } = friendStore;
     friends.value = [first, second];
-    await Promise.all([deleteFriend(first.id), deleteFriend(second.id)]);
+    deleteFriend(first.id);
+    deleteFriend(second.id);
+    await flushPromises();
 
     expect(friends.value).toStrictEqual([first]);
   });

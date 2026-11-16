@@ -5,6 +5,7 @@ import type { UpdateWebhookInput } from "#shared/models/db/webhook/UpdateWebhook
 import type { IssuedWebhookInMessage, PublicWebhookInMessage, RoomInMessage } from "@esposter/db-schema";
 import type { Except } from "type-fest";
 
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { createOperationData } from "#src/services/shared/createOperationData";
 import { getRestoredItems } from "#src/services/shared/getRestoredItems";
 import { useRoomStore } from "#src/store/message/room/index";
@@ -46,6 +47,8 @@ export const useWebhookStore = defineStore("message/room/webhook", () => {
   const createWebhook = async (roomId: RoomInMessage["id"], input: Except<CreateWebhookInput, "roomId">) => {
     const { createWebhook: storeCreateWebhook } = getRoomOperationData(roomId);
     await executeCreateWebhookMutation(() => $trpc.webhook.createWebhook.mutate({ ...input, roomId }), {
+      // The webhook's token is the server's to mint, so the webhook is drawn once the server issues it
+      awaitedBecause: AwaitedReason.ServerIssuedValue,
       key: Symbol("createWebhook"),
       onSuccess: (issuedWebhook) => {
         storeCreateWebhook(issuedWebhook.webhook, true);
@@ -53,10 +56,10 @@ export const useWebhookStore = defineStore("message/room/webhook", () => {
       },
     });
   };
-  const updateWebhook = async (roomId: RoomInMessage["id"], input: Except<UpdateWebhookInput, "roomId">) => {
+  const updateWebhook = (roomId: RoomInMessage["id"], input: Except<UpdateWebhookInput, "roomId">) => {
     const { items: roomItems } = getSlice(roomId);
     const { updateWebhook: storeUpdateWebhook } = getRoomOperationData(roomId);
-    await executeUpdateWebhookMutation(() => $trpc.webhook.updateWebhook.mutate({ ...input, roomId }), {
+    executeUpdateWebhookMutation(() => $trpc.webhook.updateWebhook.mutate({ ...input, roomId }), {
       // Snapshot when the write is sent rather than when it was issued: a row's name field and its active
       // Switch write different fields of the same webhook, so the second must roll back to what the first stored.
       // Only the fields this write names: a regeneration is its own write, and touches no field of the row it is shown on
@@ -74,7 +77,7 @@ export const useWebhookStore = defineStore("message/room/webhook", () => {
       },
       // Keyed per webhook so writes to one row queue while different webhooks stay independent
       key: input.id,
-      onSuccess: (updatedWebhook) => {
+      reconcile: (updatedWebhook) => {
         storeUpdateWebhook(updatedWebhook);
       },
     });
@@ -82,6 +85,8 @@ export const useWebhookStore = defineStore("message/room/webhook", () => {
   const regenerateToken = async (roomId: RoomInMessage["id"], input: Except<RegenerateTokenInput, "roomId">) => {
     const { updateWebhook: storeUpdateWebhook } = getRoomOperationData(roomId);
     await executeRegenerateTokenMutation(() => $trpc.webhook.regenerateToken.mutate({ ...input, roomId }), {
+      // The token is the server's to mint, and the URL that carries it is shown once the server issues it
+      awaitedBecause: AwaitedReason.ServerIssuedValue,
       key: input.id,
       onSuccess: (regeneratedWebhook) => {
         storeUpdateWebhook(regeneratedWebhook.webhook);
@@ -89,10 +94,10 @@ export const useWebhookStore = defineStore("message/room/webhook", () => {
       },
     });
   };
-  const deleteWebhook = async (roomId: RoomInMessage["id"], input: Except<DeleteWebhookInput, "roomId">) => {
+  const deleteWebhook = (roomId: RoomInMessage["id"], input: Except<DeleteWebhookInput, "roomId">) => {
     const { items: roomItems } = getSlice(roomId);
     const { deleteWebhook: storeDeleteWebhook } = getRoomOperationData(roomId);
-    await executeDeleteWebhookMutation(() => $trpc.webhook.deleteWebhook.mutate({ ...input, roomId }), {
+    executeDeleteWebhookMutation(() => $trpc.webhook.deleteWebhook.mutate({ ...input, roomId }), {
       applyOptimistic: () => {
         const deletedIndex = roomItems.value.findIndex(({ id }) => id === input.id);
         const deletedWebhook = roomItems.value[deletedIndex];

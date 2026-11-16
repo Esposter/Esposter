@@ -3,6 +3,7 @@ import type { RoomInMessage } from "@esposter/db-schema";
 
 import { MAX_ROOM_EMOJI_SIZE_BYTES, MAX_ROOM_EMOJIS } from "#shared/services/message/constants";
 import { pluralize } from "#shared/util/text/pluralize";
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { UiToken } from "#src/models/ui/UiToken";
 import { getFileSize } from "#src/services/file/getFileSize";
 import { validateFile } from "#src/services/file/validateFile";
@@ -37,6 +38,7 @@ const isNameValid = computed(() => selectRoomEmojiInMessageSchema.shape.name.saf
 <template>
   <StyledFormDialog
     v-model="modelValue"
+    :awaited-because="AwaitedReason.ServerIssuedValue"
     confirm-label="Save"
     :is-confirm-disabled="isFull || !fileValidation?.isValid || !isNameValid || undefined"
     title="Add Emoji"
@@ -44,7 +46,7 @@ const isNameValid = computed(() => selectRoomEmojiInMessageSchema.shape.name.saf
       async () => {
         if (!file) return false;
 
-        await createRoomEmoji(roomId, file, { name });
+        if (!(await createRoomEmoji(roomId, file, { name }))) return false;
         name = '';
         files = [];
       }

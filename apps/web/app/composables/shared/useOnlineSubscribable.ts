@@ -37,8 +37,8 @@ export function useOnlineSubscribable(
     let currentCleanup: (() => Promisable<void>) | undefined;
     let isActive = true;
 
-    const resubscribe = getSynchronizedFunction(async (value: unknown, isOnline: boolean) => {
-      await executeMutation(
+    const resubscribe = (value: unknown, isOnline: boolean) => {
+      executeMutation(
         async () => {
           const previousCleanup = currentCleanup;
           currentCleanup = undefined;
@@ -53,9 +53,10 @@ export function useOnlineSubscribable(
         },
         // A subscription that cannot be established is a background failure of a connection that retries on the
         // Next online or source change, not something to put in front of the user
-        { key, onError: console.error },
+        // Nothing is drawn ahead of the subscription, which is a connection rather than a value on screen
+        { applyOptimistic: () => noop, key, onError: console.error },
       );
-    });
+    };
     const { trigger } = watchTriggerable(sources, (values) => {
       const isOnline = online.value;
       // `online` is watched alongside the caller's own sources, so it is dropped again before the value reaches

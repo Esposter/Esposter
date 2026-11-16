@@ -21,7 +21,6 @@ const { deleteRoom, leaveRoom } = roomStore;
     v-model="isOpen"
     :confirm-label="isCreator ? 'Delete' : 'Leave'"
     :confirm-name="isCreator ? room.name : undefined"
-    :is-optimistic="isCreator ? undefined : true"
     :title="isCreator ? 'Delete room' : 'Leave room'"
     :confirm="() => (isCreator ? deleteRoom(room.id) : leaveRoom(room.id))"
   >

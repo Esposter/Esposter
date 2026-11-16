@@ -1,4 +1,5 @@
 // @vitest-environment nuxt
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { MutationStatus } from "#src/models/shared/MutationStatus";
 import { useAlertStore } from "#src/store/alert";
 import { noop } from "@esposter/shared";
@@ -17,7 +18,8 @@ describe(useMutation, () => {
     const rollback = vi.fn<() => void>();
     const applyOptimistic = vi.fn<() => () => void>(() => rollback);
     const { executeMutation } = useMutation();
-    await executeMutation(() => Promise.resolve(), { applyOptimistic, key });
+    executeMutation(() => Promise.resolve(), { applyOptimistic, key });
+    await flushPromises();
 
     expect(applyOptimistic).toHaveBeenCalledTimes(1);
     expect(rollback).not.toHaveBeenCalled();
@@ -28,9 +30,29 @@ describe(useMutation, () => {
 
     const onSuccess = vi.fn<(result: string) => void>();
     const { executeMutation } = useMutation();
-    await executeMutation(() => Promise.resolve(result), { key, onSuccess });
+    await executeMutation(() => Promise.resolve(result), {
+      awaitedBecause: AwaitedReason.ServerIssuedValue,
+      key,
+      onSuccess,
+    });
 
     expect(onSuccess).toHaveBeenCalledExactlyOnceWith(result);
+  });
+
+  test("reconcile receives the server's result once the write lands", async () => {
+    expect.hasAssertions();
+
+    const reconcile = vi.fn<(result: string) => void>();
+    const { promise: mutatePromise, resolve: resolveMutate } = Promise.withResolvers<string>();
+    const { executeMutation } = useMutation();
+    executeMutation(() => mutatePromise, { applyOptimistic: () => noop, key, reconcile });
+    await flushPromises();
+    expect(reconcile).not.toHaveBeenCalled();
+
+    resolveMutate(result);
+    await flushPromises();
+
+    expect(reconcile).toHaveBeenCalledExactlyOnceWith(result);
   });
 
   test("rolls back and alerts on failure", async () => {
@@ -41,7 +63,8 @@ describe(useMutation, () => {
     const { executeMutation } = useMutation();
     const alertStore = useAlertStore();
     const { alerts } = storeToRefs(alertStore);
-    await executeMutation(() => Promise.reject(error), { applyOptimistic, key });
+    executeMutation(() => Promise.reject(error), { applyOptimistic, key });
+    await flushPromises();
 
     expect(rollback).toHaveBeenCalledTimes(1);
     expect(alerts.value).toHaveLength(1);
@@ -54,7 +77,8 @@ describe(useMutation, () => {
     const { executeMutation } = useMutation();
     const alertStore = useAlertStore();
     const { alerts } = storeToRefs(alertStore);
-    await executeMutation(() => Promise.reject(error), { key, onError });
+    executeMutation(() => Promise.reject(error), { applyOptimistic: () => noop, key, onError });
+    await flushPromises();
 
     expect(onError).toHaveBeenCalledExactlyOnceWith(error);
     expect(alerts.value).toHaveLength(0);
@@ -66,24 +90,24 @@ describe(useMutation, () => {
     const startOrder: string[] = [];
     const { executeMutation } = useMutation();
     const { promise: firstPromise, resolve: resolveFirst } = Promise.withResolvers<void>();
-    const first = executeMutation(
+    executeMutation(
       () => {
         startOrder.push("first");
         return firstPromise;
       },
-      { key },
+      { applyOptimistic: () => noop, key },
     );
-    const second = executeMutation(
+    executeMutation(
       () => {
         startOrder.push("second");
         return Promise.resolve();
       },
-      { key },
+      { applyOptimistic: () => noop, key },
     );
     await flushPromises();
     const startOrderWhileFirstInFlight = [...startOrder];
     resolveFirst();
-    await Promise.all([first, second]);
+    await flushPromises();
 
     expect(startOrderWhileFirstInFlight).toStrictEqual(["first"]);
     expect(startOrder).toStrictEqual(["first", "second"]);
@@ -96,8 +120,16 @@ describe(useMutation, () => {
     const secondOnSuccess = vi.fn<() => void>();
     const { executeMutation } = useMutation();
     const { promise: firstPromise, resolve: resolveFirst } = Promise.withResolvers<void>();
-    const first = executeMutation(() => firstPromise, { key, onSuccess: firstOnSuccess });
-    const second = executeMutation(() => Promise.resolve(), { key, onSuccess: secondOnSuccess });
+    const first = executeMutation(() => firstPromise, {
+      awaitedBecause: AwaitedReason.ServerIssuedValue,
+      key,
+      onSuccess: firstOnSuccess,
+    });
+    const second = executeMutation(() => Promise.resolve(), {
+      awaitedBecause: AwaitedReason.ServerIssuedValue,
+      key,
+      onSuccess: secondOnSuccess,
+    });
     await flushPromises();
     resolveFirst();
     await Promise.all([first, second]);
@@ -114,11 +146,11 @@ describe(useMutation, () => {
     const alertStore = useAlertStore();
     const { alerts } = storeToRefs(alertStore);
     const { promise: firstPromise, resolve: resolveFirst } = Promise.withResolvers<void>();
-    const first = executeMutation(() => firstPromise, { key });
-    const second = executeMutation(() => Promise.reject(error), { applyOptimistic: () => rollback, key });
+    executeMutation(() => firstPromise, { applyOptimistic: () => noop, key });
+    executeMutation(() => Promise.reject(error), { applyOptimistic: () => rollback, key });
     await flushPromises();
     resolveFirst();
-    await Promise.all([first, second]);
+    await flushPromises();
 
     expect(rollback).toHaveBeenCalledTimes(1);
     expect(alerts.value).toHaveLength(1);
@@ -130,12 +162,12 @@ describe(useMutation, () => {
     const mutate = vi.fn<() => Promise<void>>(() => Promise.resolve());
     const { executeMutation } = useMutation();
     const { promise: firstPromise, reject: rejectFirst } = Promise.withResolvers<void>();
-    const first = executeMutation(() => firstPromise, { key, onError: noop });
-    const second = executeMutation(mutate, { key });
+    executeMutation(() => firstPromise, { applyOptimistic: () => noop, key, onError: noop });
+    executeMutation(mutate, { applyOptimistic: () => noop, key });
     await flushPromises();
     const isSecondStartedWhileFirstInFlight = mutate.mock.calls.length > 0;
     rejectFirst(error);
-    await Promise.all([first, second]);
+    await flushPromises();
 
     expect(isSecondStartedWhileFirstInFlight).toBe(false);
     expect(mutate).toHaveBeenCalledTimes(1);
@@ -147,24 +179,24 @@ describe(useMutation, () => {
     const startOrder: string[] = [];
     const { executeMutation } = useMutation();
     const { promise: firstPromise, resolve: resolveFirst } = Promise.withResolvers<void>();
-    const first = executeMutation(
+    executeMutation(
       () => {
         startOrder.push("first");
         return firstPromise;
       },
-      { key },
+      { applyOptimistic: () => noop, key },
     );
-    const second = executeMutation(
+    executeMutation(
       () => {
         startOrder.push("second");
         return Promise.resolve();
       },
-      { key: otherKey },
+      { applyOptimistic: () => noop, key: otherKey },
     );
     await flushPromises();
     const startOrderWhileFirstInFlight = [...startOrder];
     resolveFirst();
-    await Promise.all([first, second]);
+    await flushPromises();
 
     expect(startOrderWhileFirstInFlight).toStrictEqual(["first", "second"]);
   });
@@ -177,14 +209,11 @@ describe(useMutation, () => {
     const alertStore = useAlertStore();
     const { alerts } = storeToRefs(alertStore);
     const { promise: supersededPromise, reject: rejectSuperseded } = Promise.withResolvers<void>();
-    const supersededWrite = executeMutation(() => supersededPromise, {
-      applyOptimistic: () => rollback,
-      isSupersede: true,
-      key,
-    });
-    await executeMutation(() => Promise.resolve(), { isSupersede: true, key });
+    executeMutation(() => supersededPromise, { applyOptimistic: () => rollback, isSupersede: true, key });
+    executeMutation(() => Promise.resolve(), { applyOptimistic: () => noop, isSupersede: true, key });
+    await flushPromises();
     rejectSuperseded(error);
-    await supersededWrite;
+    await flushPromises();
 
     expect(rollback).toHaveBeenCalledTimes(1);
     expect(alerts.value).toHaveLength(1);
@@ -198,11 +227,17 @@ describe(useMutation, () => {
     const { executeMutation } = useMutation();
     const { promise: supersededPromise, resolve: resolveSuperseded } = Promise.withResolvers<void>();
     const supersededWrite = executeMutation(() => supersededPromise, {
+      awaitedBecause: AwaitedReason.ServerIssuedValue,
       isSupersede: true,
       key,
       onSuccess: supersededOnSuccess,
     });
-    await executeMutation(() => Promise.resolve(), { isSupersede: true, key, onSuccess: freshOnSuccess });
+    await executeMutation(() => Promise.resolve(), {
+      awaitedBecause: AwaitedReason.ServerIssuedValue,
+      isSupersede: true,
+      key,
+      onSuccess: freshOnSuccess,
+    });
     resolveSuperseded();
 
     await expect(supersededWrite).resolves.toStrictEqual({ status: MutationStatus.Stale });
@@ -341,13 +376,13 @@ describe(useMutation, () => {
 
     const { checkIsPending, executeMutation, isPending } = useMutation();
     const { promise: mutatePromise, resolve: resolveMutate } = Promise.withResolvers<void>();
-    const pendingWrite = executeMutation(() => mutatePromise, { key });
+    executeMutation(() => mutatePromise, { applyOptimistic: () => noop, key });
     const isPendingWhileInFlight = isPending.value;
     const isKeyPendingWhileInFlight = checkIsPending(key);
     const isOtherKeyPendingWhileInFlight = checkIsPending(otherKey);
     await flushPromises();
     resolveMutate();
-    await pendingWrite;
+    await flushPromises();
 
     expect(isPendingWhileInFlight).toBe(true);
     expect(isKeyPendingWhileInFlight).toBe(true);
@@ -363,6 +398,7 @@ describe(useMutation, () => {
 
     await expect(
       executeMutation(() => Promise.resolve(), {
+        awaitedBecause: AwaitedReason.ServerIssuedValue,
         key,
         onSuccess: () => {
           throw error;
@@ -381,6 +417,7 @@ describe(useMutation, () => {
 
     await expect(
       executeMutation(() => Promise.reject(error), {
+        awaitedBecause: AwaitedReason.ServerIssuedValue,
         key,
         onError: () => {
           throw error;
@@ -402,6 +439,7 @@ describe(useMutation, () => {
         applyOptimistic: () => {
           throw error;
         },
+        awaitedBecause: AwaitedReason.ServerIssuedValue,
         key,
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
@@ -418,13 +456,15 @@ describe(useMutation, () => {
 
     await expect(
       executeMutation(() => Promise.resolve(), {
+        awaitedBecause: AwaitedReason.ServerIssuedValue,
         key,
         onSuccess: () => {
           throw error;
         },
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
-    await executeMutation(mutate, { key });
+    executeMutation(mutate, { applyOptimistic: () => noop, key });
+    await flushPromises();
 
     expect(mutate).toHaveBeenCalledTimes(1);
   });
@@ -433,7 +473,10 @@ describe(useMutation, () => {
     expect.hasAssertions();
 
     const { executeMutation } = useMutation();
-    const outcome = await executeMutation(() => Promise.resolve(result), { key });
+    const outcome = await executeMutation(() => Promise.resolve(result), {
+      awaitedBecause: AwaitedReason.ServerIssuedValue,
+      key,
+    });
 
     expect(outcome).toStrictEqual({ result, status: MutationStatus.Succeeded });
   });
@@ -442,7 +485,11 @@ describe(useMutation, () => {
     expect.hasAssertions();
 
     const { executeMutation } = useMutation();
-    const outcome = await executeMutation(() => Promise.reject(error), { key, onError: noop });
+    const outcome = await executeMutation(() => Promise.reject(error), {
+      awaitedBecause: AwaitedReason.ServerIssuedValue,
+      key,
+      onError: noop,
+    });
 
     expect(outcome).toStrictEqual({ error, status: MutationStatus.Failed });
   });
@@ -454,11 +501,15 @@ describe(useMutation, () => {
     const { promise: firstPromise, resolve: resolveFirst } = Promise.withResolvers<void>();
     const mutate = vi.fn<() => Promise<void>>();
     mutate.mockReturnValueOnce(firstPromise);
-    const first = executeMutation(mutate, { isExclusive: true, key });
+    executeMutation(mutate, { applyOptimistic: () => noop, isExclusive: true, key });
     await flushPromises();
-    const outcome = await executeMutation(mutate, { isExclusive: true, key });
+    const outcome = await executeMutation(mutate, {
+      awaitedBecause: AwaitedReason.ServerIssuedValue,
+      isExclusive: true,
+      key,
+    });
     resolveFirst();
-    await first;
+    await flushPromises();
 
     expect(outcome).toStrictEqual({ status: MutationStatus.Dropped });
     expect(mutate).toHaveBeenCalledTimes(1);
@@ -471,8 +522,16 @@ describe(useMutation, () => {
     const secondOnSuccess = vi.fn<() => void>();
     const { executeMutation } = useMutation();
     const { promise: firstPromise, resolve: resolveFirst } = Promise.withResolvers<void>();
-    const first = executeMutation(() => firstPromise, { key, onSuccess: firstOnSuccess });
-    await executeMutation(() => Promise.resolve(), { key: otherKey, onSuccess: secondOnSuccess });
+    const first = executeMutation(() => firstPromise, {
+      awaitedBecause: AwaitedReason.ServerIssuedValue,
+      key,
+      onSuccess: firstOnSuccess,
+    });
+    await executeMutation(() => Promise.resolve(), {
+      awaitedBecause: AwaitedReason.ServerIssuedValue,
+      key: otherKey,
+      onSuccess: secondOnSuccess,
+    });
     resolveFirst();
     await first;
 

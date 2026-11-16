@@ -17,7 +17,7 @@ import { MAX_RESOURCE_CONTENT_SIZE, STALE_CONTENT_VERSION_ERROR_MESSAGE } from "
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { CacheTag } from "#src/models/cache/CacheTag";
 import { ResourceSaveState } from "#src/models/resource/ResourceSaveState";
-import { MutationStatus } from "#src/models/shared/MutationStatus";
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { getFileSize } from "#src/services/file/getFileSize";
 import { copyLinkToClipboard } from "#src/services/resource/copyLinkToClipboard";
 import { readStoredResourceContent } from "#src/services/resource/readStoredResourceContent";
@@ -29,7 +29,7 @@ import { getRequestBodyByteLength } from "#src/services/trpc/getRequestBodyByteL
 import { useNotificationStore } from "#src/store/notification";
 import { getRouteParam } from "#src/util/router/getRouteParam";
 import { NotificationSeverity } from "@esposter/db-schema";
-import { noop, RoutePath, toRawDeep, withFinalizerAsync } from "@esposter/shared";
+import { getSynchronizedFunction, noop, RoutePath, toRawDeep, withFinalizerAsync } from "@esposter/shared";
 
 // The resource the blade has open — its row, its publication and the bookkeeping its content saves need.
 // One resource is open at a time, so the page shell, the toolbar and whichever content store the type's editor
@@ -37,7 +37,11 @@ import { noop, RoutePath, toRawDeep, withFinalizerAsync } from "@esposter/shared
 // Them. Blade-scoped: the store is app-lifetime, this state is not, so the page clears it on unmount
 export const useResourceStore = defineStore("resource", () => {
   const { $trpc } = useNuxtApp();
-  const { checkIsPending: checkIsSaveContentPending, executeMutation: executeSaveContentMutation } = useMutation();
+  const {
+    checkIsPending: checkIsSaveContentPending,
+    executeMutation: executeSaveContentMutation,
+    whenSettled: whenContentSaved,
+  } = useMutation();
   const { executeMutation: executeRenameMutation } = useMutation();
   const { executeMutation: executeUpdateTagsMutation } = useMutation();
   const { executeMutation: executeDeleteMutation } = useMutation();
@@ -49,9 +53,13 @@ export const useResourceStore = defineStore("resource", () => {
   // Yet — leaving a resource the server has published showing as a draft
   const { executeMutation: executePublicationMutation, isPending: isPublicationPending } = useMutation();
   const notificationStore = useNotificationStore();
-  const { createErrorNotification, createNotification } = notificationStore;
+  const { createErrorNotification, createNotification, dismissNotification } = notificationStore;
   const getResourceRouter = useResourceRouter();
   const { currentRoute } = useRouter();
+  // Leaving the deleted resource is fire-and-forget: the blade moves on at once and nothing waits for the route to settle
+  const navigateToExplorer = getSynchronizedFunction(async () => {
+    await navigateTo(RoutePath.ResourceExplorerAll);
+  });
   const resource = ref<ResourceInResource>();
   // The key a view's state is filed under — a sheet's page, a panel's list — so it is the loaded resource's own
   // And a switch to another reads that one's instead of carrying this one's across
@@ -289,13 +297,19 @@ export const useResourceStore = defineStore("resource", () => {
     isContentStale.value = false;
     await ResourceContentHookMap.Keep.run(resourceValue.type);
   };
-  const saveContent = async (content: ResourceContent<ResourceType>) => {
+  // The content is already on screen, so the save gives its caller nothing to await: `rollback` undoes the caller's
+  // Change when the save is refused, whether here before it is sent or by the server. An autosave of typing passes
+  // None, since the reader's text stays and the state reads Not saved
+  const saveContent = (content: ResourceContent<ResourceType>, rollback?: () => void) => {
     const resourceValue = resource.value;
     // Only content read for this resource is written. A debounced autosave can fire after readResource() swapped
     // In another resource but before the content store has re-seeded its content ref, and the content in hand is
     // Then still the previous resource's; a store that never read at all holds its empty default. Either write
     // Would replace this resource's document with one that is not its own, under this one's id and version
-    if (!resourceValue || isContentStale.value || !checkIsContentRead()) return false;
+    if (!resourceValue || isContentStale.value || !checkIsContentRead()) {
+      rollback?.();
+      return;
+    }
     // Cleared here rather than by whichever trigger armed it, because this is the one door every save comes
     // Through — a dialog's Save arms nothing, and a debounce clearing its own would call a save it then refuses
     // Saved (openspec/specs/resource/resource-save-state/design.md). The unchanged-content path below is a save all the same: it
@@ -307,7 +321,7 @@ export const useResourceStore = defineStore("resource", () => {
     if (contentJson === persistedContentJson && !checkIsSaveContentPending(resourceValue.id)) {
       // The server already holds this content, so a failed or refused save before it is superseded and nothing is left unsaved
       isSaveContentFailed.value = false;
-      return true;
+      return;
     }
     // The serialization already made for the dirty check is what sizes the document, so a document no resource
     // May hold is refused here rather than sent — the server would refuse it after the whole upload
@@ -318,7 +332,8 @@ export const useResourceStore = defineStore("resource", () => {
         severity: NotificationSeverity.Error,
         title: `"${resourceValue.name}" is ${getFileSize(contentBytes.byteLength)}, over the ${getFileSize(MAX_RESOURCE_CONTENT_SIZE)} a resource can hold — it was not saved`,
       });
-      return false;
+      rollback?.();
+      return;
     }
     // A body under the request limit sends the content object, so it sends the content this save was issued with
     // Rather than the object as it stands when a save queued behind another comes up. Otherwise the server would
@@ -329,7 +344,7 @@ export const useResourceStore = defineStore("resource", () => {
     // Baseline — is its own resource's. Applied to whichever resource is loaded now, it strands that one behind a
     // Refresh prompt or a version the server never issued for it. The notifications are not scoped: the write
     // Failed for the owner either way (openspec/specs/resource/resource-save-state/design.md)
-    const outcome = await executeSaveContentMutation(
+    executeSaveContentMutation(
       async () => {
         // Read when the write is sent rather than when it was issued: a save that queued behind another must
         // Carry the contentVersion that one wrote back, or the server rejects our own overlapping saves as a
@@ -360,6 +375,8 @@ export const useResourceStore = defineStore("resource", () => {
         return savedResource;
       },
       {
+        // The caller changed its content before saving, so the apply is that change already made, and its undo
+        applyOptimistic: () => rollback ?? noop,
         // Content saves of one resource share its id, so they queue instead of overlapping
         key: resourceValue.id,
         onError: (error) => {
@@ -381,7 +398,7 @@ export const useResourceStore = defineStore("resource", () => {
             createErrorNotification(error);
           }
         },
-        onSuccess: (newResource) => {
+        reconcile: (newResource) => {
           if (!getActiveResource(resourceValue.id)) return;
 
           mergeResource(resourceValue.id, {
@@ -393,7 +410,6 @@ export const useResourceStore = defineStore("resource", () => {
         },
       },
     );
-    return outcome.status === MutationStatus.Succeeded;
   };
   // An editor's own check refused the save before it reached saveContent, so no write was issued and the edit it held
   // Is dropped rather than landed. The state reads Not saved, and the held edit is cleared as a write would clear it, so
@@ -402,10 +418,10 @@ export const useResourceStore = defineStore("resource", () => {
     if (unwrittenContentResourceId.value === currentResourceId.value) unwrittenContentResourceId.value = "";
     isSaveContentFailed.value = true;
   };
-  const renameResource = async (name: string) => {
+  const renameResource = (name: string) => {
     const resourceValue = resource.value;
     if (!resourceValue) return;
-    await executeRenameMutation(
+    executeRenameMutation(
       () => getResourceRouter(resourceValue.type).updateResource.mutate({ id: resourceValue.id, name }),
       {
         // Read when the write is sent rather than when it was issued: renames of one resource queue, so a
@@ -425,20 +441,20 @@ export const useResourceStore = defineStore("resource", () => {
         invalidates: [CacheTag.Resources],
         key: resourceValue.id,
         onError: createErrorNotification,
-        onSuccess: (newResource) => {
+        reconcile: (newResource) => {
           mergeResource(resourceValue.id, { name: newResource.name, updatedAt: newResource.updatedAt });
         },
       },
     );
   };
   // Whole-record replace, which is Azure's own tag update semantics — the dialog always sends every tag
-  const updateResourceTags = async (tags: ResourceTags) => {
+  const updateResourceTags = (tags: ResourceTags) => {
     const resourceValue = resource.value;
     if (!resourceValue) return;
     // A tag edit keeps its own executor rather than queueing behind a rename because the two own disjoint
     // Fields — which is only true if the write carries nothing but the tags. Sending the name alongside them
     // Would make a tag edit that overlaps a rename put the pre-rename name back on the server
-    await executeUpdateTagsMutation(
+    executeUpdateTagsMutation(
       () => getResourceRouter(resourceValue.type).updateResource.mutate({ id: resourceValue.id, tags }),
       {
         // Same as the rename above: the row is read when the write is sent and only the tags are merged, so a
@@ -456,38 +472,48 @@ export const useResourceStore = defineStore("resource", () => {
         invalidates: [CacheTag.Resources],
         key: resourceValue.id,
         onError: createErrorNotification,
-        onSuccess: (newResource) => {
+        reconcile: (newResource) => {
           mergeResource(resourceValue.id, { tags: newResource.tags, updatedAt: newResource.updatedAt });
         },
       },
     );
   };
-  const deleteResource = async () => {
+  const deleteResource = () => {
     const resourceValue = resource.value;
-    if (!resourceValue) return false;
-    const outcome = await executeDeleteMutation(
-      () => getResourceRouter(resourceValue.type).deleteResource.mutate({ id: resourceValue.id }),
-      {
-        // A second delete of the same resource while the first is out is dropped rather than sent
-        isExclusive: true,
-        key: resourceValue.id,
-        onError: createErrorNotification,
-        onSuccess: () => {
-          createNotification({
-            // The same undo the list's delete leaves, spent once the restore lands
-            action: { handler: () => restoreResources([resourceValue]), isSingleUse: true, title: "Restore" },
-            severity: NotificationSeverity.Success,
-            title: ResourceOperationTitleMap[ResourceOperationType.Deleted](resourceValue.name, 1),
-          });
-        },
+    if (!resourceValue) return;
+    executeDeleteMutation(() => getResourceRouter(resourceValue.type).deleteResource.mutate({ id: resourceValue.id }), {
+      // The blade leaves the deleted resource at once, since every action it would send after this is refused
+      applyOptimistic: () => {
+        navigateToExplorer();
+        const notificationId = createNotification({
+          // The same undo the list's delete leaves, spent once the restore lands
+          action: {
+            handler: () => {
+              restoreResources([resourceValue]);
+            },
+            isSingleUse: true,
+            title: "Restore",
+          },
+          severity: NotificationSeverity.Success,
+          title: ResourceOperationTitleMap[ResourceOperationType.Deleted](resourceValue.name, 1),
+        });
+        // The resource was never removed, so its Restore is withdrawn
+        return () => {
+          dismissNotification(notificationId);
+        };
       },
-    );
-    return outcome.status === MutationStatus.Succeeded;
+      // A second delete of the same resource while the first is out is dropped rather than sent
+      isExclusive: true,
+      key: resourceValue.id,
+      onError: createErrorNotification,
+    });
   };
   const duplicateResource = async () => {
     const resourceValue = resource.value;
     if (!resourceValue) return;
     await executeDuplicateMutation(() => $trpc.resource.duplicateResource.mutate({ id: resourceValue.id }), {
+      // The page opens the copy by the id the server gives it
+      awaitedBecause: AwaitedReason.ServerIssuedValue,
       key: Symbol("duplicateResource"),
       onError: createErrorNotification,
       onSuccess: async (newResource) => {
@@ -500,15 +526,17 @@ export const useResourceStore = defineStore("resource", () => {
       },
     });
   };
-  const publishResource = async () => {
+  const publishResource = () => {
     const resourceValue = resource.value;
     if (!resourceValue || !checkHasCapability(resourceValue.type, "publishable")) return;
 
     const resourceRouter = getResourceRouter(resourceValue.type);
-    await executePublicationMutation(() => resourceRouter.publishResource.mutate({ id: resourceValue.id }), {
+    executePublicationMutation(() => resourceRouter.publishResource.mutate({ id: resourceValue.id }), {
+      // Nothing is drawn ahead of the answer: the publication's version is the server's, and the row is built from it
+      applyOptimistic: () => noop,
       key: resourceValue.id,
       onError: createErrorNotification,
-      onSuccess: (newPublication) => {
+      reconcile: (newPublication) => {
         if (getActiveResource(resourceValue.id)) publication.value = newPublication;
         createNotification({
           action: {
@@ -524,32 +552,30 @@ export const useResourceStore = defineStore("resource", () => {
       },
     });
   };
-  const unpublishResource = async () => {
+  const unpublishResource = () => {
     const resourceValue = resource.value;
     if (!resourceValue || !checkHasCapability(resourceValue.type, "publishable")) return;
 
     const resourceRouter = getResourceRouter(resourceValue.type);
-    await executePublicationMutation(() => resourceRouter.unpublishResource.mutate({ id: resourceValue.id }), {
+    executePublicationMutation(() => resourceRouter.unpublishResource.mutate({ id: resourceValue.id }), {
       // Read when the write is sent rather than when it was issued: a second unpublish queues behind the first
       // And finds nothing left to withdraw, so a rejection restores that — captured at click time it would put
       // The publication the first unpublish already removed back on screen, complete with its public link
       applyOptimistic: () => {
-        if (!getActiveResource(resourceValue.id)) return noop;
-
+        const notificationId = createNotification({
+          severity: NotificationSeverity.Success,
+          title: ResourceOperationTitleMap[ResourceOperationType.Unpublished](resourceValue.name),
+        });
         const previousPublication = publication.value;
-        publication.value = undefined;
+        const isActive = Boolean(getActiveResource(resourceValue.id));
+        if (isActive) publication.value = undefined;
         return () => {
-          if (getActiveResource(resourceValue.id)) publication.value = previousPublication;
+          dismissNotification(notificationId);
+          if (isActive && getActiveResource(resourceValue.id)) publication.value = previousPublication;
         };
       },
       key: resourceValue.id,
       onError: createErrorNotification,
-      onSuccess: () => {
-        createNotification({
-          severity: NotificationSeverity.Success,
-          title: ResourceOperationTitleMap[ResourceOperationType.Unpublished](resourceValue.name),
-        });
-      },
     });
   };
   return {
@@ -580,5 +606,6 @@ export const useResourceStore = defineStore("resource", () => {
     unpublishResource,
     unwrittenContentResourceId,
     updateResourceTags,
+    whenContentSaved,
   };
 });

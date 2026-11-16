@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { SnapshotVersion } from "#shared/models/resource/SnapshotVersion";
 
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
 import { UiDialogSize } from "#src/models/ui/UiDialogSize";
@@ -41,7 +42,9 @@ const { answer, isPending } = useDialogAnswer(isOpen);
     </p>
     <template #footer>
       <UiButton is-autofocus :variant="UiButtonVariant.Quiet" @click="isOpen = false">Cancel</UiButton>
-      <UiButton :is-pending :variant="UiButtonVariant.Accent" @click="answer(restore)"> Restore </UiButton>
+      <UiButton :is-pending :variant="UiButtonVariant.Accent" @click="answer(restore, AwaitedReason.ServerIssuedValue)">
+        Restore
+      </UiButton>
     </template>
   </UiDialog>
 </template>

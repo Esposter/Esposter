@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import type { UserSettingsPageSection } from "#src/models/user/UserSettingsPageSection";
 
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { signOutOfBrowser } from "#src/services/auth/signOutOfBrowser";
+import { applyOptimisticReplacement } from "#src/services/shared/applyOptimisticReplacement";
 import { SESSIONS_MUTATION_KEY } from "#src/services/user/constants";
 import { useUserSessionDialogStore } from "#src/store/user/sessionDialog";
 import { RoutePath } from "@esposter/shared";
@@ -23,23 +25,41 @@ const { item: revokingSession } = useSingletonDialog(revokingId, () =>
 );
 const otherSessionCount = computed(() => sessions.value?.filter(({ isCurrent }) => !isCurrent).length ?? 0);
 const sessionRows = computed(() => sessions.value ?? []);
+// The rows leave the listing as their revoke is sent, and come back if the server refuses it
+const removeSessions = (ids: string[]) =>
+  applyOptimisticReplacement(sessions, (previousSessions) => previousSessions.filter(({ id }) => !ids.includes(id)));
+// Read as the write is sent rather than as the button was pressed, so the rows it takes out are the ones listed then
+const signOutOtherSessions = () =>
+  executeMutation(() => $trpc.session.deleteOtherSessions.mutate(), {
+    applyOptimistic: () => removeSessions(sessionRows.value.filter(({ isCurrent }) => !isCurrent).map(({ id }) => id)),
+    key: SESSIONS_MUTATION_KEY,
+  });
+const revokeSession = () => {
+  const session = revokingSession.value;
+  if (!session) return;
+
+  const { id, isCurrent } = session;
+  const mutate = () => $trpc.session.deleteSession.mutate(id);
+  const applyOptimistic = () => removeSessions([id]);
+  // Revoking your own session leaves the page authenticated against a session that no longer exists, and only the sign
+  // Out clears the cookie and the fetched session, so it signs this browser out. That cannot be taken back, so it waits
+  // For the server to keep the revoke. Its row still leaves the listing at once
+  if (isCurrent)
+    return executeMutation(mutate, {
+      applyOptimistic,
+      awaitedBecause: AwaitedReason.IrreversibleStep,
+      key: SESSIONS_MUTATION_KEY,
+      onSuccess: () => signOutOfBrowser(RoutePath.Login),
+    });
+
+  return executeMutation(mutate, { applyOptimistic, key: SESSIONS_MUTATION_KEY });
+};
 </script>
 
 <template>
   <UserSettingsSection :section>
     <template v-if="otherSessionCount > 0" #actions>
-      <UserSessionsCardSignOutOtherSessionsButton
-        :other-session-count
-        :sign-out="
-          () =>
-            executeMutation(() => $trpc.session.deleteOtherSessions.mutate(), {
-              key: SESSIONS_MUTATION_KEY,
-              onSuccess: async () => {
-                await refresh();
-              },
-            })
-        "
-      />
+      <UserSessionsCardSignOutOtherSessionsButton :other-session-count :sign-out="signOutOtherSessions" />
     </template>
     <!-- Keyed on the sessions rather than a pending flag: an empty list would read as an account nothing is
          signed in to, while the reader is looking at it from one of the rows it is missing -->
@@ -63,22 +83,6 @@ const sessionRows = computed(() => sessions.value ?? []);
     v-if="revokingSession"
     :device-label="revokingSession.deviceLabel"
     :is-current="revokingSession.isCurrent ? true : undefined"
-    :revoke="
-      async () => {
-        if (!revokingSession) return;
-        const { id, isCurrent } = revokingSession;
-        await executeMutation(() => $trpc.session.deleteSession.mutate(id), {
-          key: SESSIONS_MUTATION_KEY,
-          onSuccess: async () => {
-            // Revoking your own session leaves the page authenticated against a session that no longer
-            // Exists, so it signs this browser out on the way to the login route instead of refreshing a
-            // Listing it cannot read — the revoke deleted the row, and only the sign out clears the cookie
-            // And the fetched session that would otherwise go on rendering a signed-in account
-            if (isCurrent) await signOutOfBrowser(RoutePath.Login);
-            else await refresh();
-          },
-        });
-      }
-    "
+    :revoke="revokeSession"
   />
 </template>

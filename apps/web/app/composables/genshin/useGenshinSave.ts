@@ -3,6 +3,7 @@
 /* oxlint-disable typescript/no-floating-promises -- loadAccountSave retries until the save loads and settles every failure itself, so the promise it returns cannot reject and nothing waits on it; persist settles every failure itself, so the promise it returns cannot reject and nothing waits on it */
 import type { GenshinSave } from "genshin-world/save";
 
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { MutationStatus } from "#src/models/shared/MutationStatus";
 import { AUTOSAVE_INTERVAL_MS } from "#src/services/clicker/constants";
 import { getGenshinStartRetryDelayMs } from "#src/services/genshin/getGenshinStartRetryDelayMs";
@@ -68,6 +69,8 @@ export const useGenshinSave = async () => {
   const startLease = async (startSessionId: string) => {
     const sentAt = Date.now();
     const outcome = await executeMutation(() => $trpc.genshin.startGenshin.mutate({ sessionId: startSessionId }), {
+      // The session, its etag and the clock are the server's, and the page holds its loading screen until the start takes
+      awaitedBecause: AwaitedReason.ServerIssuedValue,
       key: "startGenshin",
     });
     if (outcome.status === MutationStatus.Failed) console.error(outcome.error);
@@ -160,7 +163,12 @@ export const useGenshinSave = async () => {
     const outcome = await executeMutation(
       () =>
         $trpc.genshin.saveGenshin.mutate({ etag: currentEtag, save: parsedResult.data, sessionId: currentSessionId }),
-      { key: "saveGenshin" },
+      {
+        // The etag this save answers is the one the next save is conditioned on, and the single flight holds that next
+        // Save until it arrives, so the answer is awaited
+        awaitedBecause: AwaitedReason.ServerIssuedValue,
+        key: "saveGenshin",
+      },
     );
     if (outcome.status === MutationStatus.Succeeded) {
       persistedJson = saveJson;
@@ -260,6 +268,8 @@ export const useGenshinSave = async () => {
   // The game is taken back by a new start, and the page reloads to resume the save that start holds
   const takeBack = async () => {
     const outcome = await executeMutation(() => $trpc.genshin.startGenshin.mutate({ sessionId: v7() }), {
+      // The reload resumes the save the new start holds, and a reload cannot be taken back once it is sent
+      awaitedBecause: AwaitedReason.IrreversibleStep,
       key: "startGenshin",
     });
     if (outcome.status === MutationStatus.Succeeded) window.location.reload();

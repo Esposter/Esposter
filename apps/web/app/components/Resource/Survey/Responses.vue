@@ -67,6 +67,12 @@ const getActionItems = (responseId: string): Item[] => [
 // A cell's menu reads its commands from one map, so the list is not rebuilt for every row on every render
 const actionItemsMap = computed(() => new Map(items.value.map(({ id: itemId }) => [itemId, getActionItems(itemId)])));
 const truncation = computed(() => (records.value ? getDatasetTruncation(records.value) : undefined));
+// A deleted response leaves the table as its delete is sent, so the table does not wait on a read to drop it
+const dropResponse = (responseId: string) => {
+  if (!records.value) return;
+
+  records.value = { ...records.value, rows: records.value.rows.filter((row) => row.responseId !== responseId) };
+};
 
 await refreshResponses();
 </script>
@@ -120,7 +126,11 @@ await refreshResponses();
         </template>
       </UiTabs>
       <ResourceSurveyResponseDetailDialog :columns="records?.columns ?? []" :items="records?.rows ?? []" />
-      <ResourceSurveyResponseDeleteDialog :survey-id="id" @delete="refreshResponses()" />
+      <ResourceSurveyResponseDeleteDialog
+        :survey-id="id"
+        @delete="(responseId) => dropResponse(responseId)"
+        @refresh="refreshResponses()"
+      />
     </template>
   </div>
 </template>

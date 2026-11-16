@@ -6,6 +6,7 @@ import { executeSlashCommand } from "#src/services/message/slashCommands/execute
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useRoomStore } from "#src/store/message/room/index";
 import { TRPCError } from "@trpc/server";
+import { flushPromises } from "@vue/test-utils";
 import { beforeEach, describe, expect, test } from "vitest";
 
 describe(executeSlashCommand, () => {
@@ -25,18 +26,21 @@ describe(executeSlashCommand, () => {
   test("rolls a queued topic back to the topic the command ahead of it stored", async () => {
     expect.hasAssertions();
 
+    const { promise: rejected, resolve: signalRejected } = Promise.withResolvers<void>();
     trpcMsw.room.updateRoom.mutation(({ input }) => {
-      if (input.topic === rejectedTopic) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-      return { ...room, topic: input.topic ?? "" };
+      if (input.topic !== rejectedTopic) return { ...room, topic: input.topic ?? "" };
+
+      signalRejected();
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
     const roomStore = useRoomStore();
     const { currentRoom } = storeToRefs(roomStore);
     const { pushRooms } = roomStore;
     pushRooms({ ...room });
-    await Promise.all([
-      executeSlashCommand({ parameterValues: { text: acceptedTopic }, type: SlashCommandType.Topic }),
-      executeSlashCommand({ parameterValues: { text: rejectedTopic }, type: SlashCommandType.Topic }),
-    ]);
+    await executeSlashCommand({ parameterValues: { text: acceptedTopic }, type: SlashCommandType.Topic });
+    await executeSlashCommand({ parameterValues: { text: rejectedTopic }, type: SlashCommandType.Topic });
+    await rejected;
+    await flushPromises();
 
     expect(currentRoom.value?.topic).toBe(acceptedTopic);
   });
@@ -47,8 +51,10 @@ describe(executeSlashCommand, () => {
     expect.hasAssertions();
 
     const { promise: updateGate, resolve: releaseUpdate } = Promise.withResolvers<void>();
+    const { promise: rejected, resolve: signalRejected } = Promise.withResolvers<void>();
     trpcMsw.room.updateRoom.mutation(async () => {
       await updateGate;
+      signalRejected();
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
     const roomStore = useRoomStore();
@@ -62,6 +68,8 @@ describe(executeSlashCommand, () => {
     setCurrentRoomId(otherRoom.id);
     releaseUpdate();
     await pendingCommand;
+    await rejected;
+    await flushPromises();
 
     expect(rooms.value.find(({ id }) => id === room.id)?.topic).toBe(acceptedTopic);
   });

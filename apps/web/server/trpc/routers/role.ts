@@ -89,7 +89,7 @@ export const roleRouter = router({
   createRole: getTopicsProcedure(
     getPermissionsProcedure(RoomPermission.ManageRoles, createRoleInputSchema, "roomId"),
     getRoomTopics,
-  ).mutation<RoomRoleInMessage>(async ({ ctx, input: { color, name, permissions, position, roomId } }) => {
+  ).mutation<RoomRoleInMessage>(async ({ ctx, input: { color, id, name, permissions, position, roomId } }) => {
     const actorUserId = ctx.user.id;
     const actorAuthority = await getRoomMemberAuthority(ctx.db, actorUserId, roomId);
 
@@ -97,7 +97,9 @@ export const roleRouter = router({
     await assertCanGrantPermissions(ctx.db, actorUserId, roomId, permissions, actorAuthority.isOwner);
 
     const newRole = requireMutation(
-      (await ctx.db.insert(roomRolesInMessage).values({ color, name, permissions, position, roomId }).returning())[0],
+      (
+        await ctx.db.insert(roomRolesInMessage).values({ color, id, name, permissions, position, roomId }).returning()
+      )[0],
       Operation.Create,
       DatabaseEntityType.RoomRole,
       JSON.stringify({ name, roomId }),

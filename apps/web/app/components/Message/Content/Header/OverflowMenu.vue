@@ -20,27 +20,24 @@ const userToRoomStore = useUserToRoomStore();
 const { getMyUserToRoom, setMyUserToRoom } = userToRoomStore;
 const { myUserToRoom } = storeToRefs(userToRoomStore);
 const { executeMutation } = useMutation();
-const updateNotificationType = async (newNotificationType: NotificationType) => {
+const updateNotificationType = (newNotificationType: NotificationType) => {
   const roomId = currentRoomId.value;
   if (!roomId || !myUserToRoom.value) return;
-  await executeMutation(
-    () => $trpc.userToRoom.updateUserToRoom.mutate({ notificationType: newNotificationType, roomId }),
-    {
-      applyOptimistic: () => {
-        const previousUserToRoom = getMyUserToRoom(roomId);
-        if (!previousUserToRoom) return noop;
+  executeMutation(() => $trpc.userToRoom.updateUserToRoom.mutate({ notificationType: newNotificationType, roomId }), {
+    applyOptimistic: () => {
+      const previousUserToRoom = getMyUserToRoom(roomId);
+      if (!previousUserToRoom) return noop;
 
-        const { notificationType: previousNotificationType } = previousUserToRoom;
-        setMyUserToRoom(roomId, { ...previousUserToRoom, notificationType: newNotificationType });
-        return () => {
-          const currentUserToRoom = getMyUserToRoom(roomId);
-          if (currentUserToRoom)
-            setMyUserToRoom(roomId, { ...currentUserToRoom, notificationType: previousNotificationType });
-        };
-      },
-      key: roomId,
+      const { notificationType: previousNotificationType } = previousUserToRoom;
+      setMyUserToRoom(roomId, { ...previousUserToRoom, notificationType: newNotificationType });
+      return () => {
+        const currentUserToRoom = getMyUserToRoom(roomId);
+        if (currentUserToRoom)
+          setMyUserToRoom(roomId, { ...currentUserToRoom, notificationType: previousNotificationType });
+      };
     },
-  );
+    key: roomId,
+  });
 };
 const items = computed<Item[]>(() => [
   { meaning: UiIconMeaning.Comment, onClick: () => openRightDrawer(RightDrawer.Threads), title: "Followed Threads" },

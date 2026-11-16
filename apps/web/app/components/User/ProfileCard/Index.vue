@@ -19,15 +19,24 @@ interface Props {
 defineProps<Props>();
 const { data: session } = await useAuthSession();
 const { updateUser } = authClient;
-const { executeMutation, isPending } = useMutation();
+const { executeMutation } = useMutation();
+// The profile a save sent, shown in place of the session's until the session reads it back
+const savedProfile = shallowRef<Pick<NonNullable<typeof session.value>["user"], "biography" | "image" | "name">>();
+watch(
+  () => session.value?.user,
+  () => {
+    savedProfile.value = undefined;
+  },
+);
 const profileCardRows = computed(() => {
   if (!session.value)
     throw createError({ statusText: getEntityNotFoundStatusMessage(DatabaseEntityType.User), status: 404 });
 
+  const { biography, image, name } = savedProfile.value ?? session.value.user;
   return {
-    name: { type: RowValueType.Text, value: session.value.user.name },
-    biography: { type: RowValueType.Textarea, value: session.value.user.biography },
-    image: { type: RowValueType.Image, value: session.value.user.image },
+    name: { type: RowValueType.Text, value: name },
+    biography: { type: RowValueType.Textarea, value: biography },
+    image: { type: RowValueType.Image, value: image },
   } as const;
 });
 // `Object.fromEntries` types its result as a plain record, so the key-to-value correspondence the rows
@@ -44,29 +53,36 @@ const isEditFormValid = ref(true);
 const disabled = computed(
   () => !isEditFormValid.value || checkIsDeepEqual(profileCardRowValues.value, editedProfileCardRows.value),
 );
+// The form closes as the save is sent, and the card shows what it sent. A refused save puts the session's profile back
+// And reopens the form on the edits it could not persist
+const saveProfile = () => {
+  const editedProfile = structuredClone(toRaw(editedProfileCardRows.value));
+  executeMutation(() => requireAuthData(updateUser(editedProfile)), {
+    applyOptimistic: () => {
+      savedProfile.value = editedProfile;
+      isEditMode.value = false;
+      return () => {
+        if (savedProfile.value === editedProfile) savedProfile.value = undefined;
+        // A form the reader has opened again since holds their new draft, which the refused one does not replace
+        if (isEditMode.value) return;
+
+        isEditMode.value = true;
+        editedProfileCardRows.value = structuredClone(editedProfile);
+      };
+    },
+    key: PROFILE_MUTATION_KEY,
+  });
+};
 </script>
 
 <template>
-  <UiForm
-    v-model:is-valid="isEditFormValid"
-    @submit="
-      async () => {
-        await executeMutation(() => requireAuthData(updateUser(editedProfileCardRows)), {
-          key: PROFILE_MUTATION_KEY,
-          // A rejected save leaves the form open on the edits it could not persist — closing it would drop them
-          onSuccess: () => {
-            isEditMode = false;
-          },
-        });
-      }
-    "
-  >
+  <UiForm v-model:is-valid="isEditFormValid" @submit="saveProfile()">
     <!-- The form holds the section, so its Save stays a submit while sitting beside the heading it acts on -->
     <UserSettingsSection :section>
       <template #actions>
         <template v-if="isEditMode">
           <UiButton :variant="UiButtonVariant.Quiet" @click="isEditMode = false">Cancel</UiButton>
-          <UiButton type="submit" :disabled :is-pending :variant="UiButtonVariant.Accent">Save</UiButton>
+          <UiButton type="submit" :disabled :variant="UiButtonVariant.Accent">Save</UiButton>
         </template>
         <UiButton v-else :variant="UiButtonVariant.Accent" @click="isEditMode = true">
           <UiIcon :meaning="UiIconMeaning.Edit" />

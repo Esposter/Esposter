@@ -1,6 +1,7 @@
 import type { FriendUserIdInput } from "#shared/models/db/friend/FriendUserIdInput";
 import type { PublicUser } from "@esposter/db-schema";
 
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { useFriendStore } from "#src/store/message/user/friend";
 import { useFriendRequestStore } from "#src/store/message/user/friendRequest";
 
@@ -42,8 +43,9 @@ export const useBlockStore = defineStore("message/user/block", () => {
           for (const deletedFriendRequest of deletedFriendRequests) storeCreateFriendRequest(deletedFriendRequest);
         };
       },
+      // The blocked user's row is resolved by the server from the id, so it is listed once the server answers with it
+      awaitedBecause: AwaitedReason.ServerIssuedValue,
       key: userId,
-      // The blocked-user row is server-resolved, so it lands in onSuccess rather than optimistically
       onSuccess: (user) => {
         recordReadingPush(blockedUsersReadKey, { item: user, type: "set" });
         if (!blockedUsers.value.some(({ id }) => id === userId)) blockedUsers.value = [user, ...blockedUsers.value];
@@ -51,8 +53,8 @@ export const useBlockStore = defineStore("message/user/block", () => {
     });
   };
 
-  const deleteBlock = async (blockedUserId: FriendUserIdInput) => {
-    await executeUserPairMutation(() => $trpc.block.deleteBlock.mutate(blockedUserId), {
+  const deleteBlock = (blockedUserId: FriendUserIdInput) => {
+    executeUserPairMutation(() => $trpc.block.deleteBlock.mutate(blockedUserId), {
       // The one row this write removes — unblocks of different users never queue against each other. It comes
       // Back at the end rather than where it stood, which is a cosmetic loss
       applyOptimistic: () => {

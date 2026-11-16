@@ -14,12 +14,12 @@ const userToRoomStore = useUserToRoomStore();
 const { setMyUserToRoom } = userToRoomStore;
 const { executeMutation } = useMutation();
 const editedDisplayName = ref(userToRoom.displayName);
-const save = async () => {
+const save = () => {
   // The field emits save from both blur and Enter, so the same value would otherwise be written twice
   if (editedDisplayName.value === userToRoom.displayName) return;
 
   const newDisplayName = editedDisplayName.value;
-  await executeMutation(() => $trpc.userToRoom.updateUserToRoom.mutate({ displayName: newDisplayName, roomId }), {
+  executeMutation(() => $trpc.userToRoom.updateUserToRoom.mutate({ displayName: newDisplayName, roomId }), {
     applyOptimistic: () => {
       const oldDisplayName = userToRoom.displayName;
       setMyUserToRoom(roomId, { ...userToRoom, displayName: newDisplayName });

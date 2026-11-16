@@ -2,6 +2,7 @@
 import { useSession } from "#src/services/auth/authClient.test";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { TRPCClientError } from "@trpc/client";
+import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/trpc/createErrorAlert"));
@@ -37,9 +38,11 @@ describe(useSave, () => {
       .mockResolvedValueOnce({ etag: "second" });
     const { save: saveState } = useSave(state, { auth: { save } });
     state.value.count = 1;
-    await saveState();
+    saveState();
+    await flushPromises();
     state.value.count = 2;
-    await saveState();
+    saveState();
+    await flushPromises();
 
     expect(save.mock.calls.map(([, etag]) => etag)).toStrictEqual([undefined, "first"]);
   });
@@ -56,7 +59,8 @@ describe(useSave, () => {
     const loaded = { ...createCounter(), count: 5 };
     setState(loaded, "read");
     state.value.count = 6;
-    await saveState();
+    saveState();
+    await flushPromises();
 
     expect(save).toHaveBeenCalledExactlyOnceWith({ ...loaded, count: 6 }, "read");
   });
@@ -72,7 +76,8 @@ describe(useSave, () => {
     );
     const { save: saveState } = useSave(state, { auth: { save } });
     state.value.count = 1;
-    await saveState();
+    saveState();
+    await flushPromises();
 
     expect(reload).toHaveBeenCalledTimes(1);
   });
@@ -89,7 +94,8 @@ describe(useSave, () => {
     );
     const { save: saveState } = useSave(state, { auth: { save } });
     state.value.count = 1;
-    await saveState();
+    saveState();
+    await flushPromises();
 
     expect(createErrorAlert).toHaveBeenCalledTimes(1);
     expect(reload).not.toHaveBeenCalled();

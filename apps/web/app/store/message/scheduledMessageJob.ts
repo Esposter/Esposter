@@ -1,6 +1,5 @@
 import type { ScheduledMessageJobWithRoom } from "#shared/models/db/message/scheduledMessageJob/ScheduledMessageJobWithRoom";
 
-import { MutationStatus } from "#src/models/shared/MutationStatus";
 import { getRestoredItems } from "#src/services/shared/getRestoredItems";
 
 // A scheduled item is named by its id and its room, which is what both of its writes take
@@ -47,19 +46,30 @@ export const useScheduledMessageJobStore = defineStore("message/scheduledMessage
       items.value = getRestoredItems(items.value, deletedScheduledMessageJob, deletedIndex);
     };
   };
-  const cancelScheduledMessageJob = async ({ id, roomId }: ScheduledMessageJobKey) => {
-    const outcome = await executeScheduledMessageJobMutation(
+  // A cancel is drawn at once: the job leaves the page as the cancel is sent. A refused cancel puts the job back where it
+  // Stood, and then runs `rollback` for whatever the caller drew beside it
+  const cancelScheduledMessageJob = ({ id, roomId }: ScheduledMessageJobKey, rollback?: () => void) => {
+    const applyOptimisticDelete = getApplyOptimisticDelete(id);
+    executeScheduledMessageJobMutation(
       () => $trpc.message.scheduledMessageJob.cancelScheduledMessageJob.mutate({ id, roomId }),
-      { applyOptimistic: getApplyOptimisticDelete(id), key: id, onSuccess: readScheduledMessageJobCount },
+      {
+        applyOptimistic: () => {
+          const undoDelete = applyOptimisticDelete();
+          return () => {
+            undoDelete();
+            rollback?.();
+          };
+        },
+        key: id,
+        reconcile: readScheduledMessageJobCount,
+      },
     );
-    // A rejected cancel rolls the row back, so the job is still scheduled and a caller must not treat it as cancelled
-    return outcome.status === MutationStatus.Succeeded;
   };
   // A reminder posts nothing, so only a scheduled message is sent now, through the room it is held by
-  const sendScheduledMessageNow = async ({ id, roomId }: ScheduledMessageJobKey) => {
-    await executeScheduledMessageJobMutation(
+  const sendScheduledMessageNow = ({ id, roomId }: ScheduledMessageJobKey) => {
+    executeScheduledMessageJobMutation(
       () => $trpc.message.scheduledMessage.sendScheduledMessageNow.mutate({ id, roomId }),
-      { applyOptimistic: getApplyOptimisticDelete(id), key: id, onSuccess: readScheduledMessageJobCount },
+      { applyOptimistic: getApplyOptimisticDelete(id), key: id, reconcile: readScheduledMessageJobCount },
     );
   };
   return {

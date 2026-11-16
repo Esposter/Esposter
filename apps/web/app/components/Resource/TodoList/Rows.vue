@@ -34,8 +34,8 @@ const getTodoItems = (id: TodoListItem["id"]): Item[] => [
   },
   {
     meaning: UiIconMeaning.Favorite,
-    onClick: async () => {
-      await toggleImportant(id);
+    onClick: () => {
+      toggleImportant(id);
     },
     title: checkIsImportant(id) ? "Remove importance" : "Mark as important",
   },

@@ -5,15 +5,14 @@ import { useCallStore } from "#src/store/message/room/call/index";
 import { useThreadStore } from "#src/store/message/thread";
 import { useThreadFollowStore } from "#src/store/message/threadFollow";
 import { useMessageLayoutStore } from "#src/store/message/ui/layout";
-import { ID_SEPARATOR, RoutePath } from "@esposter/shared";
+import { RoutePath } from "@esposter/shared";
 
 // The thread pane's overflow menu. Everything here acts on the thread the pane is showing, so nothing is
 // Passed in — the store already names it, and a prop would only be a second copy that can disagree
 export const useThreadActionItems = () => {
-  const { executeMutation } = useMutation();
   const copyMessageLink = useCopyMessageLink();
   const threadStore = useThreadStore();
-  const { activeRoomId, activeThreadRootId } = storeToRefs(threadStore);
+  const { activeRoomId, activeThreadRootId, threadMessages } = storeToRefs(threadStore);
   const threadFollowStore = useThreadFollowStore();
   const { checkIsFollowing, followThread, unfollowThread } = threadFollowStore;
   const callStore = useCallStore();
@@ -32,16 +31,19 @@ export const useThreadActionItems = () => {
   return computed<Item[]>(() => [
     {
       icon: isFollowing.value ? "i-mdi:bell-off" : "i-mdi:bell",
-      onClick: async () => {
+      onClick: () => {
         const roomId = activeRoomId.value;
         const threadRootId = activeThreadRootId.value;
         if (!threadRootId) return;
-
-        await executeMutation(
-          () => (isFollowing.value ? unfollowThread(roomId, threadRootId) : followThread(roomId, threadRootId)),
-          // Single-flight per thread: the menu closes on click, so a second toggle is a double-fire rather
-          // Than an intent to flip back
-          { isExclusive: true, key: `${roomId}${ID_SEPARATOR}${threadRootId}` },
+        if (isFollowing.value) {
+          unfollowThread(roomId, threadRootId);
+          return;
+        }
+        // The drawer lists the thread's root, which the pane holds once its replies have read
+        followThread(
+          roomId,
+          threadRootId,
+          threadMessages.value.find(({ id }) => id === threadRootId),
         );
       },
       title: isFollowing.value ? "Turn off notifications for replies" : "Turn on notifications for replies",
@@ -62,7 +64,7 @@ export const useThreadActionItems = () => {
       icon: isInThreadCall.value ? "i-mdi:phone-hangup" : "i-mdi:phone",
       isGroupStart: true,
       onClick: async () => {
-        if (isInThreadCall.value) await leaveCall();
+        if (isInThreadCall.value) leaveCall();
         else await joinCallByRoomId(activeRoomId.value, activeThreadRootId.value);
       },
       title: isInThreadCall.value ? "Leave call in thread" : "Start call in thread",

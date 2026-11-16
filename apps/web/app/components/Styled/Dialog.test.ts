@@ -4,6 +4,7 @@ import StyledDialog from "#src/components/Styled/Dialog.vue";
 import StyledFormDialog from "#src/components/Styled/FormDialog.vue";
 import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
 import UiTextField from "#src/components/Ui/TextField.vue";
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiDialogSize } from "#src/models/ui/UiDialogSize";
 import { UiDialogSizeClassMap } from "#src/services/ui/UiDialogSizeClassMap";
@@ -120,12 +121,12 @@ describe("styledDialog", () => {
     expect(component.get("footer button:last-child").attributes("data-variant")).toBe(expected);
   });
 
-  test("closes once the confirm settles", async () => {
+  test("a confirmed dialog closes while its write is in flight", async () => {
     expect.hasAssertions();
 
-    const component = await mountDialog({ confirm: noop, confirmLabel });
+    const { promise } = Promise.withResolvers<void>();
+    const component = await mountDialog({ confirm: () => promise, confirmLabel });
     await component.get("footer button:last-child").trigger("click");
-    await flushPromises();
 
     expect(component.emitted("update:modelValue")).toStrictEqual([[false]]);
   });
@@ -201,14 +202,14 @@ describe("styledFormDialog", () => {
     expect(submit).toHaveBeenCalledTimes(1);
   });
 
-  // A failed write keeps the dialog open over the draft
-  test("a failed submit keeps the dialog open", async () => {
+  // A dialog that waits for the server keeps the draft open when the write is refused
+  test("a refused answer keeps the draft", async () => {
     expect.hasAssertions();
 
     const submit = vi.fn<() => boolean>(() => false);
     const component = mount(StyledFormDialog, {
       attachTo: document.body,
-      props: { confirmLabel, modelValue: true, submit, title },
+      props: { awaitedBecause: AwaitedReason.ServerIssuedValue, confirmLabel, modelValue: true, submit, title },
       slots: { default: "<p>a</p>" },
     });
     await flushPromises();

@@ -18,7 +18,7 @@ import { getBlockNode } from "vue-block-editor-headless";
 import { surveyDocumentSchema, surveyNodeChildren, SurveyNodeType } from "vue-survey-engine-headless";
 
 const { deleteFile, uploadFile } = vi.hoisted(() => ({
-  deleteFile: vi.fn<(url: string) => Promise<void>>(() => Promise.resolve()),
+  deleteFile: vi.fn<(url: string) => void>(),
   uploadFile: vi.fn<(file: File) => Promise<string>>(),
 }));
 
@@ -195,7 +195,7 @@ describe("resourceSurveyCreatorImageChoicesEditor", () => {
     await component.get('[aria-label="Remove choice 1"]').trigger("click");
     await getButtonByText(component, "Remove")?.trigger("click");
     await flushPromises();
-    await sweep(surveyDocument.value);
+    sweep(surveyDocument.value);
 
     expect(getChoices(surveyDocument.value, pointer)).toStrictEqual([]);
     expect(deleteFile).toHaveBeenCalledExactlyOnceWith(url);

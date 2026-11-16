@@ -4,25 +4,31 @@
 
 **Reason**: A version token and a row the server fills in are no longer reasons to wait. The requirement is replaced by one whose reasons are the closed set the client's write primitive holds.
 
-**Migration**: A content save applies at once and rolls back on a stale version, and a create draws its row under the client's id.
+**Migration**: A content save applies at once and rolls back on a stale version, and a create draws its row at once, under the client's id where the server keys the row by a text id.
 
 ### Requirement: A visible create shows a placeholder that becomes the real row in place
 
-**Reason**: A create draws its row under the id the client generated, so there is no placeholder to swap for the server's id.
+**Reason**: A row the server keys by a text id is drawn under the id the client generated, so only a message, which its room numbers, still swaps a placeholder for the server's row.
 
-**Migration**: A visible create draws its row at once under a client-generated id, as the requirement below states.
+**Migration**: A visible create draws its row at once, as the requirement below states.
 
 ## ADDED Requirements
 
-### Requirement: A visible create draws its row at once under the client's id
+### Requirement: A visible create draws its row at once and keeps its place when the server confirms it
 
-A create whose row is visible when created SHALL draw its row at once under the id the client gave it, and the server's confirmation SHALL leave the row where it stands.
+A create whose row is visible when created SHALL draw its row at once, and the server's confirmation SHALL leave the row where it stands. A row the server keys by a text id SHALL be drawn under the id the client gave it. A message, which its room numbers, SHALL be drawn as a placeholder that becomes the real message in place.
+
+#### Scenario: A new category is drawn under the id the client gave it
+
+- **WHEN** the reader creates a room category
+- **THEN** the category is listed at once under the id the client gave it
+- **AND** the server stores it under that id
 
 #### Scenario: A sent message keeps its place when the server confirms it
 
 - **GIVEN** a message the reader sends
 - **WHEN** the server confirms it
-- **THEN** the message is in the same position in the list, under the same id
+- **THEN** the placeholder becomes the real message in the same position in the list
 
 ### Requirement: A write waits for the server only for a reason the server alone can answer
 

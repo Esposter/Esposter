@@ -36,9 +36,13 @@ describe(useLikeStore, () => {
     const likeStore = useLikeStore();
     const { createLike } = likeStore;
     items.value = [createPost({ id: postId })];
-    currentPost.value = createPost({ id: postId });
-    await createLike({ postId, value: 1 });
+    const pagePost = createPost({ id: postId });
+    currentPost.value = pagePost;
+    createLike({ postId, value: 1 });
 
-    expect([takeOne(items.value).likeCount, currentPost.value.likeCount]).toStrictEqual([like.value, like.value]);
+    // Nothing shows the vote until the server has kept it and its count is read back, so the wait is for both copies
+    await until(() => takeOne(items.value).likeCount).toBe(like.value);
+    await until(() => currentPost.value?.likeCount).toBe(like.value);
+    expect([takeOne(items.value).likeCount, pagePost.likeCount]).toStrictEqual([like.value, like.value]);
   });
 });

@@ -34,7 +34,6 @@ const { isOpen, item: deletingColumns } = useSingletonDialog(deletingColumnIds, 
           : deleteColumns(deletingColumns.map(({ id }) => id));
       }
     "
-    is-optimistic
   >
     <p>
       Delete {{ deletingColumns.length === 1 ? deletingColumns[0]?.name : `${deletingColumns.length} columns` }} and

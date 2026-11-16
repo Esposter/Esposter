@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { UserSettingsPageSection } from "#src/models/user/UserSettingsPageSection";
 
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { MutationStatus } from "#src/models/shared/MutationStatus";
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { signOutOfBrowser } from "#src/services/auth/signOutOfBrowser";
@@ -17,10 +18,11 @@ const { data: session } = await useAuthSession();
 const { $trpc } = useNuxtApp();
 const { executeMutation } = useMutation();
 const isOpen = ref(false);
-// A refused deletion answers false, which keeps the confirmation open with the typed name still in it; the mutation's
-// Own toast says why. The sign out waits for the answer, so a deletion that failed leaves the session where it was
+// The sign out is the step that cannot be taken back, so the confirmation waits for the server to keep the deletion. A
+// Refused one leaves the session where it was and the dialog open on the typed name, and the mutation's alert says why
 const deleteAccount = async () => {
   const outcome = await executeMutation(() => $trpc.user.deleteAccount.mutate(), {
+    awaitedBecause: AwaitedReason.IrreversibleStep,
     key: ACCOUNT_DELETION_MUTATION_KEY,
     onSuccess: () => signOutOfBrowser(RoutePath.Login),
   });
@@ -40,6 +42,7 @@ const deleteAccount = async () => {
     v-if="session"
     v-model="isOpen"
     confirm-label="Delete account"
+    :awaited-because="AwaitedReason.IrreversibleStep"
     :confirm="deleteAccount"
     :confirm-name="session.user.name"
     title="Delete account"

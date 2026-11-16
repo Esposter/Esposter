@@ -11,12 +11,12 @@ import { describe, expect, test } from "vitest";
 describe(useCreateRow, () => {
   setupCommandTest();
 
-  test("appends a new row with null values for all columns", async () => {
+  test("appends a new row with null values for all columns", () => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDataSource();
     const createRow = useCreateRow();
-    await createRow();
+    createRow();
 
     expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([
       { "": 0, " ": 1 },
@@ -27,23 +27,23 @@ describe(useCreateRow, () => {
 
   // A computed column's value is never stored, so a null under its name is a cell nothing wrote — and one that reads
   // As empty to anything walking the row, however full the columns it derives from are
-  test("stores nothing for a computed column", async () => {
+  test("stores nothing for a computed column", () => {
     expect.hasAssertions();
 
     const column = createNumberColumn("");
     const { dataSource } = setupWithDataSource(createDataSource([column, createComputedColumn(" ", column.id)], []));
     const createRow = useCreateRow();
-    await createRow();
+    createRow();
 
     expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ "": null }]);
   });
 
-  test("appends a pre-built row with provided data", async () => {
+  test("appends a pre-built row with provided data", () => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDataSource();
     const createRow = useCreateRow();
-    await createRow(new Row({ data: { "": 0, " ": 1 } }));
+    createRow(new Row({ data: { "": 0, " ": 1 } }));
 
     expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([
       { "": 0, " ": 1 },
@@ -52,14 +52,14 @@ describe(useCreateRow, () => {
     ]);
   });
 
-  test("creates a unique id when the same row instance is passed multiple times", async () => {
+  test("creates a unique id when the same row instance is passed multiple times", () => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDataSource();
     const createRow = useCreateRow();
     const row = new Row({ data: { "": 0, " ": 1 } });
-    await createRow(row);
-    await createRow(row);
+    createRow(row);
+    createRow(row);
 
     const firstRow = takeOne(dataSource.rows, 2);
     const secondRow = takeOne(dataSource.rows, 3);

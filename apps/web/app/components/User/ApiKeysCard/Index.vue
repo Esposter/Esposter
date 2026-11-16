@@ -2,10 +2,12 @@
 import type { UserSettingsPageSection } from "#src/models/user/UserSettingsPageSection";
 
 import { getApiKeyScopes } from "#shared/services/auth/getApiKeyScopes";
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { MutationStatus } from "#src/models/shared/MutationStatus";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { authClient } from "#src/services/auth/authClient";
 import { requireAuthData } from "#src/services/auth/requireAuthData";
+import { applyOptimisticReplacement } from "#src/services/shared/applyOptimisticReplacement";
 import { API_KEYS_MUTATION_KEY } from "#src/services/user/constants";
 import { useUserApiKeyDialogStore } from "#src/store/user/apiKeyDialog";
 
@@ -23,6 +25,12 @@ const userApiKeyDialogStore = useUserApiKeyDialogStore();
 const { deletingId } = storeToRefs(userApiKeyDialogStore);
 const { data, error, refresh } = useQuery(() => requireAuthData(list()), { isInlineError: true });
 const apiKeys = computed(() => data.value?.apiKeys ?? []);
+// The key leaves the list as its delete is sent, and comes back if the server refuses it
+const removeApiKey = (id: string) =>
+  applyOptimisticReplacement(data, (previousData) => ({
+    ...previousData,
+    apiKeys: previousData.apiKeys.filter((apiKey) => apiKey.id !== id),
+  }));
 const emptyState = {
   description: "An agent such as a Claude Code session reaches your follow-ups or your resources with one",
   meaning: UiIconMeaning.Terminal,
@@ -41,6 +49,8 @@ const { item: deletingApiKey } = useSingletonDialog(deletingId, () =>
         :create="
           async (input) => {
             const outcome = await executeMutation(() => $trpc.user.createApiKey.mutate(input), {
+              // The key is minted by the server and shown once, so the dialog waits for it before it draws it
+              awaitedBecause: AwaitedReason.ServerIssuedValue,
               key: API_KEYS_MUTATION_KEY,
               onSuccess: async () => {
                 await refresh();
@@ -80,11 +90,9 @@ const { item: deletingApiKey } = useSingletonDialog(deletingId, () =>
       () => {
         if (!deletingApiKey) return;
         const { id } = deletingApiKey;
-        return executeMutation(() => requireAuthData(deleteApiKey({ keyId: id })), {
+        executeMutation(() => requireAuthData(deleteApiKey({ keyId: id })), {
+          applyOptimistic: () => removeApiKey(id),
           key: API_KEYS_MUTATION_KEY,
-          onSuccess: async () => {
-            await refresh();
-          },
         });
       }
     "

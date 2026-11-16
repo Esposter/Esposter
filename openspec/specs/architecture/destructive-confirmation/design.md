@@ -6,15 +6,15 @@ Every delete asks first, through one shape of dialog: `UiConfirmDialog`, the UI 
 
 The dialog shows what the action is about in its default slot, then Cancel and one answer in the danger variant, named by `confirmLabel` (`Delete`, `Leave`, `Revoke`). It opens onto Cancel, or the guarded variant onto its name field, so a stray Enter never destroys anything. The answer is the `confirm` prop, a function the dialog calls and owns the outcome of through `useDialogAnswer`, so no caller decides when it closes:
 
-- **Awaited**, the default: the answer is pending and the dialog locked until the function settles. It closes then, unless the function resolved `false`, which keeps it open with the answer ready to try again. Deleting a room waits for the server this way.
-- **Optimistic**, with `isOptimistic`: the dialog calls the function and closes at once, because an [optimistic](../client-data/design.md) write has already changed the list, and a rejection is answered by the write's rollback and error toast. The dialog calls the function first and closes second, since closing a singleton dialog clears the target its handler reads. A press once the dialog is closed is ignored, so a double click inside the close transition sends one write, never two.
+- **Optimistic**, the default: the dialog calls the function and closes at once, because an [optimistic](../client-data/design.md) write has already changed the list, and a rejection is answered by the write's rollback and error toast. The dialog calls the function first and closes second, since closing a singleton dialog clears the target its handler reads. A press once the dialog is closed is ignored, so a double click inside the close transition sends one write, never two.
+- **Awaited**, with `awaited-because` naming one of the client data standard's reasons: the answer is pending and the dialog locked until the function settles. It closes then, unless the function resolved `false`, which keeps it open with the answer ready to try again. A moderation action waits this way, since the server decides what it does.
 
 ```mermaid
 flowchart TD
   PRESS["a delete pressed"] --> DIALOG["UiConfirmDialog :confirm"]
-  DIALOG --> WRITE{"is the write optimistic"}
-  WRITE -->|"yes"| CLOSE["close on the answer — a rejection rolls back and toasts"]
-  WRITE -->|"no"| WAIT["pending until it settles<br/>closes, or stays open on false"]
+  DIALOG --> WRITE{"does it name a reason to wait"}
+  WRITE -->|"no"| CLOSE["close on the answer — a rejection rolls back and toasts"]
+  WRITE -->|"yes"| WAIT["pending until it settles<br/>closes, or stays open on false"]
   CLOSE --> UNDO{"can the app undo it"}
   WAIT --> UNDO
   UNDO -->|"yes — the recycle bin, the sheet's undo"| OFFER["offer the undo too — the toast's Restore, the toolbar's Undo"]
@@ -33,7 +33,6 @@ High-stakes deletes add the type-the-name guard by passing `confirmName`, as the
   :confirm="() => purge(resource)"
   confirm-label="Delete forever"
   :confirm-name="resource.name"
-  is-optimistic
   title="Delete forever"
 >
   Permanently deleting this resource destroys its contents. This cannot be undone.

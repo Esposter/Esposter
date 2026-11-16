@@ -156,10 +156,10 @@ export const useDataStore = defineStore("message/data", () => {
       },
     );
   };
-  const updateMessage = async (input: UpdateMessageInput) => {
+  const updateMessage = (input: UpdateMessageInput) => {
     const { items: roomItems } = getSlice(input.roomId);
     const { updateMessage: baseStoreUpdateMessage } = getRoomOperationData(input.roomId);
-    await executeMutation(() => $trpc.message.updateMessage.mutate(input), {
+    executeMutation(() => $trpc.message.updateMessage.mutate(input), {
       // Apply only the raw reactive field change — the subscription echo re-runs MessageHookMap on success,
       // So calling storeUpdateMessage here would double-fire the update hooks. Read as the write is sent, so a
       // Rejected edit restores the body the edit ahead of it stored rather than the one on screen at the click
@@ -175,13 +175,13 @@ export const useDataStore = defineStore("message/data", () => {
       key: input.id,
     });
   };
-  const deleteFile = async ({ fileId, ...messageKey }: DeleteFileInput) => {
+  const deleteFile = ({ fileId, ...messageKey }: DeleteFileInput) => {
     const { items: roomItems } = getSlice(messageKey.roomId);
     const { updateMessage: baseStoreUpdateMessage } = getRoomOperationData(messageKey.roomId);
     const message = roomItems.value.find(getEntityIdEqualComparator(["id"], messageKey));
     if (!message) return;
 
-    await executeMutation(() => $trpc.message.deleteFile.mutate({ fileId, ...messageKey }), {
+    executeMutation(() => $trpc.message.deleteFile.mutate({ fileId, ...messageKey }), {
       // Apply only the raw reactive change — the subscription echo re-runs MessageHookMap on success. Read as the
       // Write is sent, and unwound one attachment at a time
       applyOptimistic: () => {

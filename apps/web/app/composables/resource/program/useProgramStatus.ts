@@ -4,6 +4,8 @@ import type { ProgramStatusRow } from "#shared/models/resource/program/ProgramSt
 import { MimeType } from "#shared/models/file/MimeType";
 import { ProgramInviteScope } from "#shared/models/resource/program/ProgramInviteScope";
 import { pluralize } from "#shared/util/text/pluralize";
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
+import { MutationStatus } from "#src/models/shared/MutationStatus";
 import { formatTruncationCount } from "#src/services/dataset/formatTruncationCount";
 import { exportPersonalizedHtml } from "#src/services/emailEditor/exportPersonalizedHtml";
 import { createParticipantLink } from "#src/services/resource/program/createParticipantLink";
@@ -51,6 +53,8 @@ export const useProgramStatus = () => {
     // Named before the await, so the file is named after the program the command was run on
     const filename = getProgramParticipantsFilename(resource.value?.name ?? "");
     await executeMutation(() => $trpc.program.generateProgramParticipants.mutate({ id: id.value }), {
+      // The links in the file just downloaded are minted by the server, so the file is the answer the owner waits on
+      awaitedBecause: AwaitedReason.ServerIssuedValue,
       key: id.value,
       onError: createErrorNotification,
       onSuccess: async ({ audienceTruncation, participants }) => {
@@ -111,17 +115,22 @@ export const useProgramStatus = () => {
     const missingBindings = getMissingProgramInviteBindings(programResource.value);
     if (missingBindings.length > 0) {
       createWarningNotification(`Bind ${missingBindings.join(", ")} on the Setup blade before exporting invites`);
-      return;
+      return false;
     }
     if (statusRows.value.length === 0) {
       createWarningNotification("Generate participants before exporting invites");
-      return;
+      return false;
     }
-    await getResultAsync(() => $trpc.program.issueProgramInvites.mutate({ id: id.value, scope })).match(
+    // Whether the server issued them, so the dialog that asked stays open over a refusal
+    return getResultAsync(() => $trpc.program.issueProgramInvites.mutate({ id: id.value, scope })).match(
       (programInvites) => {
         exportInviteFiles(scope, programInvites);
+        return true;
       },
-      createErrorNotification,
+      (error) => {
+        createErrorNotification(error);
+        return false;
+      },
     );
   };
 
@@ -133,11 +142,13 @@ export const useProgramStatus = () => {
     const { surveyId } = programResource.value;
     if (!surveyId) {
       createWarningNotification("Bind a survey on the Setup blade before regenerating a link");
-      return;
+      return false;
     }
-    await executeRegenerateLinkMutation(
+    const outcome = await executeRegenerateLinkMutation(
       () => $trpc.program.regenerateProgramParticipantToken.mutate({ id: id.value, keyValue }),
       {
+        // The new link's token is minted by the server, so the link it makes exists only once the server has answered
+        awaitedBecause: AwaitedReason.ServerIssuedValue,
         key: keyValue,
         onError: createErrorNotification,
         onSuccess: ({ token }) => {
@@ -145,6 +156,8 @@ export const useProgramStatus = () => {
         },
       },
     );
+    // Whether the server issued it, so the dialog that asked stays open over a refusal
+    return outcome.status === MutationStatus.Succeeded;
   };
 
   return {

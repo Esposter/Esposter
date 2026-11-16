@@ -17,11 +17,11 @@ const { isOpen, item: message } = useSingletonDialog(pinningMessageId, () =>
 );
 const creator = useCreator(message);
 const { executeMutation } = useMutation();
-const pinMessage = async () => {
+const pinMessage = () => {
   const target = getMessageWriteTarget(message.value, getSlice);
   if (!target) return;
   const { messageId, roomId, roomItems } = target;
-  await executeMutation(() => $trpc.message.pinMessage.mutate({ id: messageId, roomId }), {
+  executeMutation(() => $trpc.message.pinMessage.mutate({ id: messageId, roomId }), {
     applyOptimistic: () => {
       const pinnedMessage = roomItems.value.find(getEntityIdEqualComparator(["id"], { id: messageId }));
       if (!pinnedMessage) return noop;
@@ -45,7 +45,6 @@ const pinMessage = async () => {
     v-model="isOpen"
     confirm-label="Oh yeah. Pin it"
     :confirm="pinMessage"
-    is-optimistic
     title="Pin It. Pin It Good."
   >
     <p>Hey, just double-checking that you want to pin this message to the current room for posterity and greatness?</p>

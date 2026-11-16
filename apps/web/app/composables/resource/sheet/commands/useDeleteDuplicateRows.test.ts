@@ -11,7 +11,7 @@ import { describe, expect, test } from "vitest";
 describe(useDeleteDuplicateRows, () => {
   setupCommandTest();
 
-  test("removes duplicate rows keeping first occurrence", async () => {
+  test("removes duplicate rows keeping first occurrence", () => {
     expect.hasAssertions();
 
     const initialDataSource = createDataSource(
@@ -20,12 +20,12 @@ describe(useDeleteDuplicateRows, () => {
     );
     const { dataSource } = setupWithDataSource(initialDataSource);
     const deleteDuplicateRows = useDeleteDuplicateRows();
-    await deleteDuplicateRows();
+    deleteDuplicateRows();
 
     expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ "": 0, " ": 1 }]);
   });
 
-  test("removes duplicate rows keeping last occurrence", async () => {
+  test("removes duplicate rows keeping last occurrence", () => {
     expect.hasAssertions();
 
     const initialDataSource = createDataSource(
@@ -34,12 +34,12 @@ describe(useDeleteDuplicateRows, () => {
     );
     const { dataSource } = setupWithDataSource(initialDataSource);
     const deleteDuplicateRows = useDeleteDuplicateRows();
-    await deleteDuplicateRows(KeepDuplicateMode.Last);
+    deleteDuplicateRows(KeepDuplicateMode.Last);
 
     expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ a: 2 }, { a: 1 }]);
   });
 
-  test("keeps rows that differ in at least one column", async () => {
+  test("keeps rows that differ in at least one column", () => {
     expect.hasAssertions();
 
     const initialDataSource = createDataSource(
@@ -50,7 +50,7 @@ describe(useDeleteDuplicateRows, () => {
     const deleteDuplicateRows = useDeleteDuplicateRows();
     const sheetHistoryStore = useSheetHistoryStore();
     const { isUndoable } = storeToRefs(sheetHistoryStore);
-    await deleteDuplicateRows();
+    deleteDuplicateRows();
 
     expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([
       { "": 0, " ": 1 },

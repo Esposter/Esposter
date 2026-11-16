@@ -114,7 +114,6 @@ describe("resourceDashboardEditor", () => {
     vi.spyOn(dashboardStore, "loadContent").mockResolvedValue(undefined);
     vi.spyOn(dashboardStore, "saveDashboard").mockImplementation(() => {
       savedVisualTypes.push(dashboard.value.visuals.map(({ type }) => type));
-      return Promise.resolve(true);
     });
     await mountSuspended(ResourceDashboardEditor);
     // oxlint-disable-next-line testing/no-faked-set-timeout -- the autosave debounce is counted by the clock; the afterEach above restores the real timers before the harness waits a turn on setTimeout

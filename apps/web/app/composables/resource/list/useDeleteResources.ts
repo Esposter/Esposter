@@ -7,7 +7,7 @@ import { useCacheStore } from "#src/store/cache";
 import { useNotificationStore } from "#src/store/notification";
 import { getRouteParam } from "#src/util/router/getRouteParam";
 import { NotificationSeverity } from "@esposter/db-schema";
-import { MAX_READ_LIMIT, RoutePath, takeOne } from "@esposter/shared";
+import { getSynchronizedFunction, MAX_READ_LIMIT, RoutePath, takeOne } from "@esposter/shared";
 
 export const useDeleteResources = (
   items: Ref<ResourceInResource[]>,
@@ -16,15 +16,18 @@ export const useDeleteResources = (
 ) => {
   const { $trpc } = useNuxtApp();
   const router = useRouter();
+  const navigateToExplorer = getSynchronizedFunction(async () => {
+    await navigateTo(RoutePath.ResourceExplorerAll);
+  });
   const cacheStore = useCacheStore();
   const { invalidateTags } = cacheStore;
   const notificationStore = useNotificationStore();
-  const { createErrorNotification, createNotification } = notificationStore;
+  const { createErrorNotification, createNotification, dismissNotification } = notificationStore;
   const { executeMutation: executeDeleteResourcesMutation } = useMutation();
   const { restoreResources } = useRestoreResources(refresh);
   // Owned by the list rather than by whatever triggers it — a row's menu, the selection, a context menu — because the
   // Rows it removes and puts back are the list's, and the write outlives the menu that fired it
-  const deleteResources = async (resources: ResourceInResource[]) => {
+  const deleteResources = (resources: ResourceInResource[]) => {
     const ids = resources.map(({ id }) => id);
     // Read up front — the optimistic removal drops the rows before the notification fires
     const deletedNotificationTitle = ResourceOperationTitleMap[ResourceOperationType.Deleted](
@@ -33,7 +36,7 @@ export const useDeleteResources = (
     );
     // The batch procedure with one id shares the exact cleanup path (row + publication + blob directory).
     // Selection accumulates across pages, so the ids are chunked to the server's per-call cap and sent in order
-    await executeDeleteResourcesMutation(
+    executeDeleteResourcesMutation(
       async () => {
         for (let offset = 0; offset < ids.length; offset += MAX_READ_LIMIT)
           // oxlint-disable-next-line no-await-in-loop -- Committed prefix: a chunk the server rejects stops the ones after it
@@ -45,7 +48,27 @@ export const useDeleteResources = (
         applyOptimistic: () => {
           const deletedItems = items.value.filter(({ id }) => ids.includes(id));
           items.value = items.value.filter(({ id }) => !ids.includes(id));
+          const notificationId = createNotification({
+            // The undo toast: a delete of one resource or of a whole selection is one click away from coming back, no
+            // Bin trip needed. Single-use: once the restore lands, a second fire from the bell would target resources
+            // No longer in the bin, so the action consumes itself on success
+            action: {
+              handler: () => {
+                restoreResources(resources);
+              },
+              isSingleUse: true,
+              title: "Restore",
+            },
+            severity: NotificationSeverity.Success,
+            title: deletedNotificationTitle,
+          });
+          // This list also drives the blade's Explorer, so deleting the resource the blade is open on has to
+          // Leave it — every later blade action hits requireOwnedResource with deletedAt isNull and throws,
+          // So the user sits in an editor that error-toasts on every autosave. The blade's own delete already
+          // Routes here, and a delete must not navigate from one entry point and not the other
+          if (ids.includes(getRouteParam(router.currentRoute.value.params, "id"))) navigateToExplorer();
           return () => {
+            dismissNotification(notificationId);
             // Only this write's own rows are put back. A refresh, a page turn or a delete running beside this one
             // Replaces `items` wholesale, so reinstating a copy of the list would undo it — and a mid-flight
             // Refresh has already re-read the rows this failed delete never removed, so only the ones still
@@ -67,27 +90,11 @@ export const useDeleteResources = (
           await invalidateTags([CacheTag.Resources]);
           await refresh();
         },
-        onSuccess: async () => {
-          // The total is the server's count over the whole filter, not this page's length, so it is only ever
-          // Written by a read: nudged by the rows this write removed it would land on top of a refresh that had
-          // Already re-counted, and the rollback would add back rows that count never held. The re-read also
-          // Refills the page the optimistic removal left short
-          await refresh();
-          createNotification({
-            // The undo toast: a delete of one resource or of a whole selection is one click away from coming back, no
-            // Bin trip needed. Single-use: once the restore lands, a second fire from the bell would target resources
-            // No longer in the bin, so the action consumes itself on success
-            action: { handler: () => restoreResources(resources), isSingleUse: true, title: "Restore" },
-            severity: NotificationSeverity.Success,
-            title: deletedNotificationTitle,
-          });
-          // This list also drives the blade's Explorer, so deleting the resource the blade is open on has to
-          // Leave it — every later blade action hits requireOwnedResource with deletedAt isNull and throws,
-          // So the user sits in an editor that error-toasts on every autosave. The blade's own delete already
-          // Routes here, and a delete must not navigate from one entry point and not the other
-          if (ids.includes(getRouteParam(router.currentRoute.value.params, "id")))
-            await navigateTo(RoutePath.ResourceExplorerAll);
-        },
+        // The total is the server's count over the whole filter, not this page's length, so it is only ever
+        // Written by a read: nudged by the rows this write removed it would land on top of a refresh that had
+        // Already re-counted, and the rollback would add back rows that count never held. The re-read also
+        // Refills the page the optimistic removal left short
+        reconcile: refresh,
       },
     );
   };

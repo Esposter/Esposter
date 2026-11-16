@@ -8,14 +8,13 @@ import { RESOURCE_AUTOSAVE_DEBOUNCE_MS } from "#src/services/resource/constants"
 import { useSurveyCreatorStore } from "#src/store/survey/creator";
 import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { createSurveyDocument } from "vue-survey-engine-headless";
 
 describe(useSurveyCreatorAutosave, () => {
   const resourceId = v7();
-  let save: ReturnType<typeof vi.fn<(document: SurveyDocument) => Promise<boolean>>>;
+  let save: ReturnType<typeof vi.fn<(document: SurveyDocument) => void>>;
   let wrapper: VueWrapper;
   const autosaveHost = defineComponent({
     render: () => h("div"),
@@ -32,7 +31,7 @@ describe(useSurveyCreatorAutosave, () => {
   };
 
   beforeEach(() => {
-    save = vi.fn<(document: SurveyDocument) => Promise<boolean>>().mockResolvedValue(true);
+    save = vi.fn<(document: SurveyDocument) => void>();
     const surveyCreatorStore = useSurveyCreatorStore();
     const { load } = surveyCreatorStore;
     load(createSurveyDocument());
@@ -57,32 +56,5 @@ describe(useSurveyCreatorAutosave, () => {
     await waitForSynchronizedFunctions();
 
     expect(save).toHaveBeenCalledExactlyOnceWith(document.value);
-  });
-
-  test("holds an edit made during a save until that save settles, then saves the latest document", async () => {
-    expect.hasAssertions();
-
-    const surveyCreatorStore = useSurveyCreatorStore();
-    const { document } = storeToRefs(surveyCreatorStore);
-    const firstSave = Promise.withResolvers<boolean>();
-    save.mockReturnValueOnce(firstSave.promise);
-    await mountAutosave();
-    const { updateRootProps } = useSurveyCreatorCommands();
-    updateRootProps({ title: "a" });
-    await nextTick();
-    vi.advanceTimersByTime(RESOURCE_AUTOSAVE_DEBOUNCE_MS);
-    await flushPromises();
-    updateRootProps({ title: "ab" });
-    await nextTick();
-    vi.advanceTimersByTime(RESOURCE_AUTOSAVE_DEBOUNCE_MS);
-    await flushPromises();
-
-    expect(save).toHaveBeenCalledTimes(1);
-
-    firstSave.resolve(true);
-    await waitForSynchronizedFunctions();
-
-    expect(save).toHaveBeenCalledTimes(2);
-    expect(save).toHaveBeenLastCalledWith(document.value);
   });
 });

@@ -2,6 +2,7 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 
 import { ProgramInviteScope } from "#shared/models/resource/program/ProgramInviteScope";
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { RESOURCE_DATE_TIME_ATTRIBUTES } from "#src/services/resource/constants";
@@ -131,6 +132,7 @@ await Promise.all([readStatus(), programResource.value.surveyId ? refreshSurveyC
     </UiDataTable>
     <UiConfirmDialog
       v-model="isExportConfirmOpen"
+      :awaited-because="AwaitedReason.ServerIssuedValue"
       confirm-label="Export"
       :title="exportScope === ProgramInviteScope.Awaiting ? 'Export reminders' : 'Export invites'"
       :confirm="() => exportInvites(exportScope)"
@@ -142,6 +144,7 @@ await Promise.all([readStatus(), programResource.value.surveyId ? refreshSurveyC
     </UiConfirmDialog>
     <UiConfirmDialog
       v-model="isRegenerateConfirmOpen"
+      :awaited-because="AwaitedReason.ServerIssuedValue"
       confirm-label="Regenerate"
       title="Regenerate link"
       :confirm="() => regenerateParticipantLink(regeneratingKeyValue)"

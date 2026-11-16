@@ -37,7 +37,7 @@ describe("resourceTodoListItems", () => {
   });
 
   // The save is held in flight, so the move is shown to come from the tick rather than from the server's answer
-  test("moves a ticked todo under Completed once its hold ends, while the save is still in flight", async () => {
+  test("a ticked todo moves under Completed while its save is in flight", async () => {
     expect.hasAssertions();
 
     const { promise, resolve } = Promise.withResolvers<ResourceInResource>();

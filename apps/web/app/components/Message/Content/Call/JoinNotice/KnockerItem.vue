@@ -17,25 +17,24 @@ const { activeCallSessionId } = storeToRefs(callStore);
 const knockerStore = useKnockerStore();
 const { admitKnocker, dismissKnocker } = knockerStore;
 const isAdmitting = ref(false);
-const isDismissing = ref(false);
-// The pending flag clears whichever way the call ends, so a failed admit does not leave its spinner running
-const getKnockerAction = (isRunning: Ref<boolean>, action: (callSessionId: string) => Promise<void>) => async () => {
+// The server decides the admission, so the button is pending until it answers, and clears whichever way it ends so a
+// Failed admit does not leave its spinner running
+const admitCallKnocker = async () => {
   const callSessionId = activeCallSessionId.value;
   if (!callSessionId) return;
-  isRunning.value = true;
+  isAdmitting.value = true;
   await withFinalizerAsync(
-    async () => {
-      await action(callSessionId);
-    },
+    () => admitKnocker(callSessionId, knocker.id),
     () => {
-      isRunning.value = false;
+      isAdmitting.value = false;
     },
   );
 };
-// Bound here rather than in the template, where a ref is already unwrapped and the flag would arrive as a
-// Boolean the helper cannot set
-const admitCallKnocker = getKnockerAction(isAdmitting, (callSessionId) => admitKnocker(callSessionId, knocker.id));
-const dismissCallKnocker = getKnockerAction(isDismissing, (callSessionId) => dismissKnocker(callSessionId, knocker.id));
+// The knocker leaves the list as the dismissal is sent
+const dismissCallKnocker = () => {
+  const callSessionId = activeCallSessionId.value;
+  if (callSessionId) dismissKnocker(callSessionId, knocker.id);
+};
 </script>
 
 <template>
@@ -44,7 +43,6 @@ const dismissCallKnocker = getKnockerAction(isDismissing, (callSessionId) => dis
       <template #append>
         <UiButton :is-pending="isAdmitting" @click="admitCallKnocker()"> Let in </UiButton>
         <UiIconButton
-          :disabled="isDismissing"
           label="Dismiss"
           :meaning="UiIconMeaning.Close"
           :variant="UiButtonVariant.Quiet"

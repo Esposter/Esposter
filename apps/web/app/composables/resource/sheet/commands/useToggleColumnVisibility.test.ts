@@ -10,23 +10,23 @@ import { describe, expect, test } from "vitest";
 describe(useToggleColumnVisibility, () => {
   setupCommandTest();
 
-  test("hides a visible column", async () => {
+  test("hides a visible column", () => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDataSource();
     const toggleColumnVisibility = useToggleColumnVisibility();
-    await toggleColumnVisibility(takeOne(dataSource.columns).id);
+    toggleColumnVisibility(takeOne(dataSource.columns).id);
 
     expect(takeOne(dataSource.columns).isHidden).toBe(true);
   });
 
-  test("shows a hidden column", async () => {
+  test("shows a hidden column", () => {
     expect.hasAssertions();
 
     const hiddenColumn = new StringColumn({ isHidden: true, name: "" });
     const { dataSource } = setupWithDataSource(createDataSource([hiddenColumn], [createRow({ "": 0 })]));
     const toggleColumnVisibility = useToggleColumnVisibility();
-    await toggleColumnVisibility(hiddenColumn.id);
+    toggleColumnVisibility(hiddenColumn.id);
 
     expect(takeOne(dataSource.columns).isHidden).toBe(false);
   });

@@ -22,31 +22,28 @@ describe("messageModelMemberActionDialogDisplayName", () => {
       props: { displayName, modelValue: true, roomId, user },
     });
 
-  // A save reads the row back once the write has landed, so the read is the last request it makes. The test awaits that
-  // Read rather than a flush, since a test that ends first leaves the read in flight
+  // The write is the save's only request, and the test awaits its arrival rather than a flush, since a test that ends
+  // First leaves the request in flight
   const setupUpdate = () => {
-    const { promise: readBack, resolve: signalReadBack } = Promise.withResolvers<void>();
+    const { promise: written, resolve: signalWritten } = Promise.withResolvers<void>();
     const updateUserToRoom = vi.fn<(input: UpdateUserToRoomInput) => void>();
     trpcMsw.userToRoom.updateUserToRoom.mutation(({ input }) => {
       updateUserToRoom(input);
+      signalWritten();
       return createUserToRoom({ displayName: newDisplayName, roomId, userId: user.id });
     });
-    trpcMsw.room.readUsersByIds.query(() => {
-      signalReadBack();
-      return [{ ...user, displayName: newDisplayName, isMember: true }];
-    });
-    return { readBack, updateUserToRoom };
+    return { updateUserToRoom, written };
   };
 
   // The member is the target, not the actor, so the write carries their id beside the name typed for them
   test("saves the typed name against the member the dialog was opened on", async () => {
     expect.hasAssertions();
 
-    const { readBack, updateUserToRoom } = setupUpdate();
+    const { updateUserToRoom, written } = setupUpdate();
     const component = await mountDialog();
     await component.get("input").setValue(newDisplayName);
     await component.get("input").trigger("keydown", { key: "Enter" });
-    await readBack;
+    await written;
 
     expect(updateUserToRoom).toHaveBeenCalledExactlyOnceWith({
       displayName: newDisplayName,
@@ -59,11 +56,11 @@ describe("messageModelMemberActionDialogDisplayName", () => {
   test("saves the typed name from the footer's Save", async () => {
     expect.hasAssertions();
 
-    const { readBack, updateUserToRoom } = setupUpdate();
+    const { updateUserToRoom, written } = setupUpdate();
     const component = await mountDialog();
     await component.get("input").setValue(newDisplayName);
     await component.get('button[type="submit"]').trigger("click");
-    await readBack;
+    await written;
 
     expect(updateUserToRoom).toHaveBeenCalledExactlyOnceWith({
       displayName: newDisplayName,
@@ -75,11 +72,11 @@ describe("messageModelMemberActionDialogDisplayName", () => {
   test("clears the member's display name on an empty save", async () => {
     expect.hasAssertions();
 
-    const { readBack, updateUserToRoom } = setupUpdate();
+    const { updateUserToRoom, written } = setupUpdate();
     const component = await mountDialog();
     await component.get("input").setValue("");
     await component.get("input").trigger("keydown", { key: "Enter" });
-    await readBack;
+    await written;
 
     expect(updateUserToRoom).toHaveBeenCalledExactlyOnceWith({ displayName: "", roomId, targetUserId: user.id });
   });
@@ -90,13 +87,13 @@ describe("messageModelMemberActionDialogDisplayName", () => {
   test("writes nothing when the name is saved as it stands", async () => {
     expect.hasAssertions();
 
-    const { readBack, updateUserToRoom } = setupUpdate();
+    const { updateUserToRoom, written } = setupUpdate();
     const component = await mountDialog();
     await component.get("input").trigger("keydown", { key: "Enter" });
     await flushPromises();
     await component.get("input").setValue(newDisplayName);
     await component.get("input").trigger("keydown", { key: "Enter" });
-    await readBack;
+    await written;
 
     expect(updateUserToRoom).toHaveBeenCalledExactlyOnceWith({
       displayName: newDisplayName,

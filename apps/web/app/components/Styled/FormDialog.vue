@@ -1,18 +1,20 @@
 <script setup lang="ts">
+import type { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import type { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import type { UiDialogSize } from "#src/models/ui/UiDialogSize";
 import type { Promisable } from "type-fest";
 
 interface Props {
+  // Why the submit waits for the server, from the closed set; without one the dialog closes as its write is sent
+  awaitedBecause?: AwaitedReason;
   confirmLabel: string;
   // The look of the confirm button, the accent when none is named, and danger for a submit that destroys something
   confirmVariant?: UiButtonVariant;
   isConfirmDisabled?: true;
-  isOptimistic?: true;
   // How wide the dialog stands, Medium when none is named: the base shell holds that default
   size?: UiDialogSize;
-  // What the valid form's submit does, awaited unless the write is optimistic (useDialogAnswer): a failed one keeps
-  // The dialog open so the user can retry without losing their draft
+  // What the valid form's submit does, closing the dialog as it is sent (useDialogAnswer). With `awaitedBecause`, a
+  // Submit that resolves `false` keeps the dialog open so the user can retry without losing their draft
   submit: () => Promisable<unknown>;
   title: string;
 }
@@ -44,7 +46,7 @@ defineExpose({ isValid });
     :title
     :="$attrs"
   >
-    <UiForm :id="formId" v-model:is-valid="isValid" flex flex-col gap-4 @submit="answer(submit, isOptimistic)">
+    <UiForm :id="formId" v-model:is-valid="isValid" flex flex-col gap-4 @submit="answer(submit, awaitedBecause)">
       <slot />
     </UiForm>
     <!-- Guarded, not forwarded outright: the shell reads the presence of these slots to decide whether there is an

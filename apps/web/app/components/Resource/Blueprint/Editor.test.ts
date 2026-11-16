@@ -79,9 +79,13 @@ describe("resourceBlueprintEditor", () => {
     vi.mocked(showOpenFilePicker).mockResolvedValue([
       { getFile: () => Promise.resolve(new File([JSON.stringify(importedManifest)], "Launch.json")) },
     ] as never);
-    trpcMsw.blueprint.saveResourceContent.mutation(() =>
-      createResourceListItem({ id: resourceId, type: ResourceType.Blueprint }),
-    );
+    const { promise: saveRequested, resolve: signalSaveRequested } = Promise.withResolvers<void>();
+    const { promise: saveReleased, resolve: releaseSave } = Promise.withResolvers<void>();
+    trpcMsw.blueprint.saveResourceContent.mutation(async () => {
+      signalSaveRequested();
+      await saveReleased;
+      return createResourceListItem({ id: resourceId, type: ResourceType.Blueprint });
+    });
     const component = await mountSuspended(ResourceBlueprintEditor);
     const blueprintStore = useBlueprintStore();
     const { isManifestDirty } = storeToRefs(blueprintStore);
@@ -98,14 +102,17 @@ describe("resourceBlueprintEditor", () => {
     const saveButton = component.findAll("button").find((button) => button.text() === "Save");
     assert.exists(saveButton);
     await saveButton.trigger("click");
-    // The store adopts the saved manifest only once the write's answer is read and its content hashed, which is more
-    // Turns than a flush covers, so the test awaits the adoption itself
-    await until(isManifestDirty).toBe(false);
+    // The save is held in flight, so the Deploy button turns on from the manifest the store adopted as the save was sent
+    await saveRequested;
     await nextTick();
     const savedDeployButton = findDeployButton();
     assert.exists(savedDeployButton);
 
+    expect(isManifestDirty.value).toBe(false);
     expect(savedDeployButton.attributes("disabled")).toBeUndefined();
+
+    releaseSave();
+    await flushPromises();
   });
 
   // The import takes a revision of the manifest it replaces before it fills the Editor, so the save that follows

@@ -19,7 +19,6 @@ const { isOpen, item: blockedUser } = useSingletonDialog(unblockingUserId, () =>
     confirm-label="Unblock"
     :title="`Unblock ${blockedUser.name}`"
     :confirm="() => blockedUser && deleteBlock(blockedUser.id)"
-    is-optimistic
   >
     <p>Are you sure you want to unblock {{ blockedUser.name }}? They will be able to message you again.</p>
   </UiConfirmDialog>

@@ -34,8 +34,8 @@ export const useFavoriteStore = defineStore("resource/favorite", () => {
     // MAX_READ_LIMIT — only the server knows which row backfills the one that left, so it is re-read, not edited
     tags: [CacheTag.Resources],
   });
-  const toggleFavorite = async (resource: ResourceInResource) => {
-    await executeToggleFavoriteMutation(() => $trpc.resource.toggleFavorite.mutate({ id: resource.id }), {
+  const toggleFavorite = (resource: ResourceInResource) => {
+    executeToggleFavoriteMutation(() => $trpc.resource.toggleFavorite.mutate({ id: resource.id }), {
       // The entry is read here rather than at click time, because this runs when the write is sent: a second
       // Click on one star queues behind the first, so a state captured at click time is the one from before the
       // Write ahead of it landed, and rolling back to it would leave the star reading a toggle stale
@@ -61,7 +61,7 @@ export const useFavoriteStore = defineStore("resource/favorite", () => {
       // True post-toggle state. A list that went stale (another tab starred this first) flips the wrong way
       // Optimistically and nothing else reconciles it — the star would read starred here while being
       // Unstarred on every other device and after a reload
-      onSuccess: (isFavorite) => {
+      reconcile: (isFavorite) => {
         if (isFavorite === favoriteIds.value.has(resource.id)) return;
 
         const remainingFavorites = favorites.value.filter(({ id }) => id !== resource.id);

@@ -13,7 +13,7 @@ interface Props {
 
 defineProps<Props>();
 const dataStore = useDataStore();
-const { createMessage } = dataStore;
+const { sendMessage } = dataStore;
 const inputStore = useInputStore();
 const { clearComposer } = inputStore;
 </script>
@@ -24,17 +24,15 @@ const { clearComposer } = inputStore;
     :meaning="UiIconMeaning.Send"
     :variant="UiButtonVariant.Quiet"
     @click="
-      async () => {
-        if (
-          await createMessage({
-            files: [],
-            message: draftItem.content,
-            replyToId: draftItem.threadRootId || null,
-            roomId: draftItem.room.id,
-            type: MessageType.Message,
-          })
-        )
-          clearComposer({ roomId: draftItem.room.id, threadRootId: draftItem.threadRootId });
+      () => {
+        sendMessage({
+          files: [],
+          message: draftItem.content,
+          replyToId: draftItem.threadRootId || null,
+          roomId: draftItem.room.id,
+          type: MessageType.Message,
+        });
+        clearComposer({ roomId: draftItem.room.id, threadRootId: draftItem.threadRootId });
       }
     "
   />

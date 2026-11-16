@@ -8,14 +8,14 @@ import { describe, expect, test } from "vitest";
 describe(useCreateRows, () => {
   setupCommandTest();
 
-  test("appends at the end when no start index is given", async () => {
+  test("appends at the end when no start index is given", () => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDataSource();
     const createRows = useCreateRows();
     const sheetHistoryStore = useSheetHistoryStore();
     const { undo } = sheetHistoryStore;
-    await createRows([new Row({ data: { "": 4, " ": 5 } }), new Row({ data: { "": 6, " ": 7 } })]);
+    createRows([new Row({ data: { "": 4, " ": 5 } }), new Row({ data: { "": 6, " ": 7 } })]);
 
     expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([
       { "": 0, " ": 1 },
@@ -32,14 +32,14 @@ describe(useCreateRows, () => {
     ]);
   });
 
-  test("no-op when there are no rows to create", async () => {
+  test("no-op when there are no rows to create", () => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDataSource();
     const createRows = useCreateRows();
     const sheetHistoryStore = useSheetHistoryStore();
     const { isUndoable } = storeToRefs(sheetHistoryStore);
-    await createRows([]);
+    createRows([]);
 
     expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([
       { "": 0, " ": 1 },

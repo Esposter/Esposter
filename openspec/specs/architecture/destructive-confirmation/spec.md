@@ -51,29 +51,29 @@ The confirmation dialog SHALL open with focus on Cancel, so a stray Enter destro
 
 ### Requirement: An awaited delete keeps the dialog open until it settles
 
-An awaited confirmation SHALL keep the dialog locked until the delete settles, and SHALL keep the dialog open when the delete is refused or fails.
+A confirmation SHALL wait for its delete only when the delete names a reason the server alone can answer, and then SHALL keep the dialog locked until the delete settles and keep it open when the delete is refused or fails.
 
 #### Scenario: The dialog stays locked while the delete is pending
 
-- **GIVEN** the reader confirms a delete that waits on the server
+- **GIVEN** the reader confirms a delete that names a reason to wait on the server
 - **WHEN** the delete is pending
 - **THEN** the answer button shows pending
 - **AND** the dialog cannot be dismissed
 
 #### Scenario: A refused or failed delete leaves the dialog open to try again
 
-- **GIVEN** the reader confirms a delete that waits on the server
+- **GIVEN** the reader confirms a delete that names a reason to wait on the server
 - **WHEN** the delete is refused or fails
 - **THEN** the dialog stays open with its answer ready to try again
 - **AND** a failure raises an error alert
 
 ### Requirement: An optimistic delete closes at once and rolls back on rejection
 
-An optimistic confirmation SHALL close at once, and a rejected write SHALL be answered by rolling back the list and showing an error.
+A confirmation SHALL be optimistic unless it names a reason to wait: it SHALL close at once, and a rejected write SHALL be answered by rolling back the list and showing an error.
 
 #### Scenario: An optimistic delete closes as soon as it is confirmed
 
-- **GIVEN** a delete is optimistic
+- **GIVEN** a delete that names no reason to wait
 - **WHEN** the reader confirms it
 - **THEN** the dialog closes at once
 - **AND** the list already shows the removal

@@ -44,7 +44,9 @@ describe(useBlockStore, () => {
     const { blockedUsers } = storeToRefs(blockStore);
     const { deleteBlock } = blockStore;
     blockedUsers.value = [first, second];
-    await Promise.all([deleteBlock(first.id), deleteBlock(second.id)]);
+    deleteBlock(first.id);
+    deleteBlock(second.id);
+    await flushPromises();
 
     expect(blockedUsers.value).toStrictEqual([first]);
   });
@@ -65,12 +67,13 @@ describe(useBlockStore, () => {
     const { blockedUsers } = storeToRefs(blockStore);
     const { createBlock, deleteBlock } = blockStore;
     blockedUsers.value = [first];
-    const unblock = deleteBlock(first.id);
+    deleteBlock(first.id);
     const block = createBlock(first.id);
     // Long enough for a block that was never held back to land, which is what the queue has to prevent
     await flushPromises();
     releaseUnblock();
-    await Promise.all([unblock, block]);
+    await block;
+    await flushPromises();
 
     expect(blockedUsers.value).toStrictEqual([first]);
   });
@@ -89,7 +92,7 @@ describe(useBlockStore, () => {
     trpcMsw.block.deleteBlock.mutation(({ input: blockedUserId }) => blockedUserId);
     trpcMsw.block.readBlockedUsers.query(async () => {
       await blockStore.createBlock(added.id);
-      await blockStore.deleteBlock(removed.id);
+      blockStore.deleteBlock(removed.id);
       return [first, removed];
     });
     await blockStore.readBlockedUsers(() => $trpc.block.readBlockedUsers.query());

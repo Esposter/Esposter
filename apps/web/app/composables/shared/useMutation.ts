@@ -1,19 +1,38 @@
 import type { CacheTag } from "#src/models/cache/CacheTag";
+import type { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import type { MutationOutcome } from "#src/models/shared/MutationOutcome";
 import type { Promisable } from "type-fest";
 
 import { MutationStatus } from "#src/models/shared/MutationStatus";
 import { settleOperation } from "#src/services/shared/settleOperation";
 import { useCacheStore } from "#src/store/cache";
-import { withFinalizerAsync } from "@esposter/shared";
+import { getSynchronizedFunction, withFinalizerAsync } from "@esposter/shared";
 
-interface MutationOptions<TResult> extends QueryOptions<TResult> {
+// A write that waits for the server's answer before the screen changes names why, from the closed set, and gets the
+// Outcome to act on. It may still apply part of its change at once
+interface AwaitedMutationOptions<TResult> extends BaseMutationOptions {
   applyOptimistic?: () => Promisable<() => void>;
+  awaitedBecause: AwaitedReason;
+  onSuccess?: (result: TResult) => Promisable<void>;
+}
+
+interface BaseMutationOptions {
   // The cached reads this write makes stale, named by tag so the write never learns which caches exist.
   // Dropped once the write has landed: a rejected or rolled-back write changed nothing, so it invalidates
   // Nothing. Writes only — a read has no reason to invalidate anything, which is why this is not on QueryOptions
   invalidates?: CacheTag[];
+  isExclusive?: true;
   isSupersede?: true;
+  key: PropertyKey;
+  onError?: (error: Error) => Promisable<void>;
+}
+
+// A write the screen shows when it is sent. `reconcile` takes what only the server issues, such as a version token the
+// Next write reads, and is never where a dialog closes or a row moves
+interface OptimisticMutationOptions<TResult> extends BaseMutationOptions {
+  applyOptimistic: () => Promisable<() => void>;
+  awaitedBecause?: never;
+  reconcile?: (result: TResult) => Promisable<void>;
 }
 
 interface QueryOptions<TResult> {
@@ -80,6 +99,9 @@ export const useMutation = () => {
       return run();
     }, release);
   };
+  // Resolves once every write already queued for a target has settled. Only a read of what those writes store on the
+  // Server needs it, such as an export the server compiles from the saved copy; the screen never waits on it
+  const whenSettled = (key: PropertyKey) => keyQueueMap.get(key) ?? Promise.resolve();
   // Reads are latest-wins per target: the caller wants the freshest data, and a superseded response has
   // Nothing to unwind — discarding it loses no information
   const executeQuery = <TResult>(
@@ -113,9 +135,20 @@ export const useMutation = () => {
   };
   // Writes queue per target: discarding one loses its error and its rollback, so it is never dropped by
   // Default — a caller opts into latest-wins with isSupersede where dropping the earlier call is the intent
-  const executeMutation = <TResult>(
+  const runMutation = <TResult>(
     mutate: (checkIsStale: () => boolean) => Promise<TResult>,
-    { applyOptimistic, invalidates, isExclusive, isSupersede, key, onError, onSuccess }: MutationOptions<TResult>,
+    {
+      applyOptimistic,
+      invalidates,
+      isExclusive,
+      isSupersede,
+      key,
+      onError,
+      onSuccess,
+    }: BaseMutationOptions & {
+      applyOptimistic?: () => Promisable<() => void>;
+      onSuccess?: (result: TResult) => Promisable<void>;
+    },
   ): Promise<MutationOutcome<TResult>> => {
     if (isExclusive && keyPendingCountMap.value.has(key)) return Promise.resolve({ status: MutationStatus.Dropped });
 
@@ -147,5 +180,25 @@ export const useMutation = () => {
       },
     );
   };
-  return { checkIsPending, executeMutation, executeQuery, isPending, supersedeKey };
+  // The two forms of a write, the optimistic one last. It hands its caller nothing, so no step the screen takes can
+  // Wait on its answer: the write still runs on its key's queue, and whatever the answer brings is the rollback's,
+  // The alert's or `reconcile`'s. It floats as a synchronized function, so a test or a shutdown that needs every write
+  // Landed drains it with the rest
+  function executeMutation<TResult>(
+    mutate: (checkIsStale: () => boolean) => Promise<TResult>,
+    options: AwaitedMutationOptions<TResult>,
+  ): Promise<MutationOutcome<TResult>>;
+  function executeMutation<TResult>(
+    mutate: (checkIsStale: () => boolean) => Promise<TResult>,
+    options: OptimisticMutationOptions<TResult>,
+  ): void;
+  function executeMutation<TResult>(
+    mutate: (checkIsStale: () => boolean) => Promise<TResult>,
+    options: AwaitedMutationOptions<TResult> | OptimisticMutationOptions<TResult>,
+  ) {
+    if (options.awaitedBecause) return runMutation(mutate, options);
+    getSynchronizedFunction(() => runMutation(mutate, { ...options, onSuccess: options.reconcile }))();
+    return undefined;
+  }
+  return { checkIsPending, executeMutation, executeQuery, isPending, supersedeKey, whenSettled };
 };

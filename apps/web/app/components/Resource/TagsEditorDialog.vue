@@ -13,7 +13,7 @@ import { v7 } from "uuid";
 
 interface Props {
   tags: ResourceTags;
-  updateTags: (tags: ResourceTags) => Promise<void>;
+  updateTags: (tags: ResourceTags) => void;
 }
 
 const isOpen = defineModel<boolean>({ default: false });
@@ -32,7 +32,6 @@ const rows = ref(Object.keys(tags).length > 0 ? getTagRows(tags).map((row) => cr
   <StyledFormDialog
     v-model="isOpen"
     confirm-label="Save"
-    is-optimistic
     :submit="() => updateTags(getResourceTags(rows))"
     title="Edit tags"
     :size="UiDialogSize.Large"

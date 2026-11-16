@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { MutationStatus } from "#src/models/shared/MutationStatus";
+import { getComposerKey } from "#src/services/message/composer/getComposerKey";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useDraftsAndSentScheduleDialogStore } from "#src/store/message/draftsAndSent/scheduleDialog";
 import { useInputStore } from "#src/store/message/input/index";
@@ -10,15 +10,18 @@ const { $trpc } = useNuxtApp();
 const draftsAndSentScheduleDialogStore = useDraftsAndSentScheduleDialogStore();
 const { isOpen, minScheduledAt, scheduledAt, target } = storeToRefs(draftsAndSentScheduleDialogStore);
 const inputStore = useInputStore();
-const { clearComposer } = inputStore;
+const { clearComposer, getComposerInput, restoreDraft } = inputStore;
+const { drafts } = storeToRefs(inputStore);
 const { readScheduledMessageJobs } = useReadScheduledMessageJobs();
 const displayText = computed(() => (target.value ? parse(target.value.content).textContent : ""));
 const { executeMutation } = useMutation();
-// Server-scheduled job — non-optimistic, store refresh in onSuccess
-const scheduleMessage = async () => {
+// The dialog closes, and a new message leaves the composer, at once as the schedule is sent. A refused schedule hands the
+// Composer its draft back while it is still empty, and the job list is read again once the server has the job
+const scheduleMessage = () => {
   const targetValue = target.value;
-  if (!targetValue) return true;
-  const outcome = await executeMutation(
+  if (!targetValue) return;
+
+  executeMutation(
     () =>
       targetValue.scheduledMessageJobId
         ? $trpc.message.scheduledMessage.updateScheduledMessage.mutate({
@@ -35,20 +38,24 @@ const scheduleMessage = async () => {
             runAt: scheduledAt.value,
           }),
     {
-      key: targetValue.scheduledMessageJobId || Symbol("scheduleMessage"),
-      onSuccess: async () => {
-        if (!targetValue.scheduledMessageJobId)
-          clearComposer({ roomId: targetValue.roomId, threadRootId: targetValue.threadRootId });
-        // The job is already scheduled by the time this runs, so the refresh reports its own failure rather
-        // Than throwing: a rejection here rejects the write's outcome, and the dialog would sit submitting
-        // Over a message the server took
-        await getResultAsync(readScheduledMessageJobs).match(noop, createErrorAlert);
+      applyOptimistic: () => {
         target.value = undefined;
+        if (targetValue.scheduledMessageJobId) return noop;
+
+        const composerTarget = { roomId: targetValue.roomId, threadRootId: targetValue.threadRootId };
+        const composerKey = getComposerKey(composerTarget);
+        const previousDraft = drafts.value.get(composerKey);
+        clearComposer(composerTarget);
+        return () => {
+          if (!getComposerInput(composerTarget)) restoreDraft(composerKey, previousDraft);
+        };
       },
+      key: targetValue.scheduledMessageJobId || Symbol("scheduleMessage"),
+      // The refresh reports its own failure rather than throwing, so a read that fails once the schedule has landed is an
+      // Alert and not a rejection of the write
+      reconcile: () => getResultAsync(readScheduledMessageJobs).match(noop, createErrorAlert),
     },
   );
-  // A failed schedule keeps the dialog open with the chosen time intact so the user can retry
-  return outcome.status === MutationStatus.Succeeded;
 };
 </script>
 

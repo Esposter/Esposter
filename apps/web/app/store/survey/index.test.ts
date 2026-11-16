@@ -9,6 +9,8 @@ import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useResourceStore } from "#src/store/resource/index";
 import { useSurveyStore } from "#src/store/survey/index";
 import { ResourceType, SurveyResponseMode } from "@esposter/db-schema";
+import { TRPCError } from "@trpc/server";
+import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { createSurveyDocument } from "vue-survey-engine-headless";
@@ -57,9 +59,9 @@ describe(useSurveyStore, () => {
     expect.hasAssertions();
 
     const { saveDocument } = await setupStore();
-    const isSuccessful = await saveDocument(document);
+    saveDocument(document);
+    await flushPromises();
 
-    expect(isSuccessful).toBe(true);
     expect(saveResourceContent).not.toHaveBeenCalled();
   });
 
@@ -69,38 +71,48 @@ describe(useSurveyStore, () => {
     const surveyStore = await setupStore();
     const { saveDocument } = surveyStore;
     const { document: storedDocument } = storeToRefs(surveyStore);
-    await saveDocument(newDocument);
-    await saveDocument(newDocument);
+    const resourceStore = useResourceStore();
+    const { resource } = storeToRefs(resourceStore);
+    saveDocument(newDocument);
+    // The first save's answer is the version it leaves the resource on, which is what the second save is checked against
+    await until(() => resource.value?.contentVersion).toBe(1);
+    await flushPromises();
+    saveDocument(newDocument);
+    await flushPromises();
 
     expect(storedDocument.value).toStrictEqual(newDocument);
     expect(saveResourceContent).toHaveBeenCalledTimes(1);
   });
 
-  // The save is keyed by the survey it writes, so it can land after the blade opened another survey — taken as the
-  // Content then, that survey would show this one's document and its next settings save would write it back
-  test("leaves the survey opened since alone when a save lands late", async () => {
+  // The save is keyed by the survey it writes, so it can be refused after the blade opened another survey. Its rollback
+  // Then puts back the content of the survey it wrote into, which would show this one's document, and the next settings
+  // Save would write it back
+  test("leaves the survey opened since alone when a refused save lands late", async () => {
     expect.hasAssertions();
 
     const otherResourceId = v7();
     const otherContent = { document: createSurveyDocument(), settings: surveySettingsSchema.parse({}) };
     const { promise: saveGate, resolve: releaseSave } = Promise.withResolvers<void>();
+    const { promise: isSaveReached, resolve: onSaveReached } = Promise.withResolvers<void>();
     trpcMsw.resource.readResource.query(({ input }) => ({ ...createResource(), id: input.id, publication: null }));
     trpcMsw.survey.readResourceContent.query(({ input }) => (input.id === resourceId ? content : otherContent));
     trpcMsw.survey.saveResourceContent.mutation(async () => {
+      onSaveReached();
       await saveGate;
-      return createResource(1);
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
     const surveyStore = await setupStore();
     const { loadContent, saveDocument } = surveyStore;
     const { document: storedDocument } = storeToRefs(surveyStore);
-    const save = saveDocument(newDocument);
+    saveDocument(newDocument);
     Object.assign(useRouter().currentRoute.value.params, { id: otherResourceId });
     const resourceStore = useResourceStore();
     const { readResource } = resourceStore;
     await readResource();
     await loadContent();
+    await isSaveReached;
     releaseSave();
-    await save;
+    await flushPromises();
 
     expect(storedDocument.value).toStrictEqual(otherContent.document);
   });
@@ -113,8 +125,19 @@ describe(useSurveyStore, () => {
     const surveyStore = await setupStore();
     const { saveDocument, saveSettings } = surveyStore;
     const { settings } = storeToRefs(surveyStore);
-    await saveDocument(newDocument);
-    await saveSettings({ ...settings.value, responseMode: SurveyResponseMode.Identified });
+    const resourceStore = useResourceStore();
+    const { resource } = storeToRefs(resourceStore);
+    saveDocument(newDocument);
+    await until(() => resource.value?.contentVersion).toBe(1);
+    await flushPromises();
+    const { promise: isSettingsSaveReached, resolve: onSettingsSaveReached } = Promise.withResolvers<void>();
+    saveResourceContent.mockImplementationOnce(() => {
+      onSettingsSaveReached();
+      return createResource(1);
+    });
+    saveSettings({ ...settings.value, responseMode: SurveyResponseMode.Identified });
+    await isSettingsSaveReached;
+    await flushPromises();
 
     expect(settings.value.responseMode).toBe(SurveyResponseMode.Identified);
     expect(saveResourceContent).toHaveBeenCalledTimes(2);
@@ -131,10 +154,16 @@ describe(useSurveyStore, () => {
     const surveyStore = await setupStore();
     const { saveDocument, saveSettings } = surveyStore;
     const { document: storedDocument, settings } = storeToRefs(surveyStore);
-    await Promise.all([
-      saveDocument(newDocument),
-      saveSettings({ ...settings.value, responseMode: SurveyResponseMode.Identified }),
-    ]);
+    // The settings save queues behind the document's, so its request is the second one the mock answers
+    const { promise: isSettingsSaveReached, resolve: onSettingsSaveReached } = Promise.withResolvers<void>();
+    saveResourceContent.mockReturnValueOnce(createResource(1)).mockImplementationOnce(() => {
+      onSettingsSaveReached();
+      return createResource(1);
+    });
+    saveDocument(newDocument);
+    saveSettings({ ...settings.value, responseMode: SurveyResponseMode.Identified });
+    await isSettingsSaveReached;
+    await flushPromises();
 
     expect(storedDocument.value).toStrictEqual(newDocument);
     expect(saveResourceContent.mock.lastCall?.[0].input.content).toStrictEqual(identifiedNewDocumentContent);
@@ -240,22 +269,27 @@ describe(useSurveyStore, () => {
     expect.hasAssertions();
 
     const { promise: saveGate, resolve: releaseSave } = Promise.withResolvers<void>();
+    const { promise: isSettingsSaveReached, resolve: onSettingsSaveReached } = Promise.withResolvers<void>();
+    let saveCount = 0;
     trpcMsw.survey.saveResourceContent.mutation(async (options) => {
+      saveCount++;
+      if (saveCount === 2) onSettingsSaveReached();
       await saveGate;
       return saveResourceContent(options);
     });
     const surveyStore = await setupStore();
     const { loadContent, saveDocument, saveSettings } = surveyStore;
     const { settings } = storeToRefs(surveyStore);
-    const pendingDocumentSave = saveDocument(newDocument);
+    saveDocument(newDocument);
     const resourceStore = useResourceStore();
     const { clearResource, readResource } = resourceStore;
     clearResource(resourceId);
     await readResource();
     await loadContent();
-    const pendingSettingsSave = saveSettings({ ...settings.value, responseMode: SurveyResponseMode.Identified });
+    saveSettings({ ...settings.value, responseMode: SurveyResponseMode.Identified });
     releaseSave();
-    await Promise.all([pendingDocumentSave, pendingSettingsSave]);
+    await isSettingsSaveReached;
+    await flushPromises();
 
     expect(saveResourceContent.mock.lastCall?.[0].input.content).toStrictEqual({
       document,

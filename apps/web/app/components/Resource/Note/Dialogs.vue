@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { renderNoteHtml } from "#shared/services/resource/note/renderNoteHtml";
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
 import { UiDialogSize } from "#src/models/ui/UiDialogSize";
 import { ResourceContentHookMap } from "#src/services/resource/ResourceContentHookMap";
@@ -48,10 +49,10 @@ const html = computed(() => (previewDoc.value ? renderNoteHtml(previewDoc.value)
             if (!doc || !(await saveResourceRevision())) return false;
             if (!writeContent({ doc })) return false;
 
-            await saveNote();
+            saveNote();
             // The editor holds its own copy of the document, which would write the replaced one back on its next edit
             await ResourceContentHookMap.Adopt.run(ResourceType.Note);
-          })
+          }, AwaitedReason.ServerDecidedOutcome)
         "
       />
     </template>

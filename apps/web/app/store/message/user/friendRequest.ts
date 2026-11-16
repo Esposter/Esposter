@@ -1,5 +1,6 @@
 import type { FriendRequestInSocialWithRelations, PublicUser } from "@esposter/db-schema";
 
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { authClient } from "#src/services/auth/authClient";
 import { createOperationData } from "#src/services/shared/createOperationData";
 import { useFriendStore } from "#src/store/message/user/friend";
@@ -62,10 +63,11 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
     readWithReplayedPushes(friendRequestsReadKey, read, (newFriendRequests) => {
       friendRequests.value = newFriendRequests;
     });
-  // Non-optimistic: the row carries the sender's user the client can't faithfully fabricate, and a
-  // Temp-id placeholder would race the echo's server-id row into a transient duplicate.
+  // Awaited because the row is the server's: it carries the sender's user, which the client cannot faithfully fabricate,
+  // And a temp-id placeholder would race the echo's server-id row into a transient duplicate.
   const sendFriendRequest = async (receiverId: PublicUser["id"]) => {
     await executeSendFriendRequestMutation(() => $trpc.friendRequest.sendFriendRequest.mutate(receiverId), {
+      awaitedBecause: AwaitedReason.ServerIssuedValue,
       key: receiverId,
       // The sendFriendRequest event on the user socket covers the caller for a newly created request, but the
       // Already-exists conflict path returns the existing row WITHOUT emitting, so this write is the only one
@@ -75,8 +77,8 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
       },
     });
   };
-  const acceptFriendRequest = async (sender: PublicUser) => {
-    await executeUserPairMutation(() => $trpc.friendRequest.acceptFriendRequest.mutate(sender.id), {
+  const acceptFriendRequest = (sender: PublicUser) => {
+    executeUserPairMutation(() => $trpc.friendRequest.acceptFriendRequest.mutate(sender.id), {
       applyOptimistic: () => {
         const resolvedFriendRequests = getFriendRequestsByUser(sender.id);
         storeAcceptFriendRequest(sender);
@@ -88,8 +90,8 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
       key: sender.id,
     });
   };
-  const declineFriendRequest = async (senderId: PublicUser["id"]) => {
-    await executeUserPairMutation(() => $trpc.friendRequest.declineFriendRequest.mutate(senderId), {
+  const declineFriendRequest = (senderId: PublicUser["id"]) => {
+    executeUserPairMutation(() => $trpc.friendRequest.declineFriendRequest.mutate(senderId), {
       applyOptimistic: () => {
         const resolvedFriendRequests = getFriendRequestsByUser(senderId);
         storeDeleteFriendRequestsByUser(senderId);

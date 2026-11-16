@@ -7,6 +7,7 @@ import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useCacheStore } from "#src/store/cache";
 import { useFavoriteStore } from "#src/store/resource/favorite";
 import { TRPCError } from "@trpc/server";
+import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test, vi } from "vitest";
 
 describe(useFavoriteStore, () => {
@@ -23,7 +24,8 @@ describe(useFavoriteStore, () => {
     const favoriteStore = useFavoriteStore();
     const { favorites } = storeToRefs(favoriteStore);
     const { toggleFavorite } = favoriteStore;
-    await toggleFavorite(resource);
+    toggleFavorite(resource);
+    await flushPromises();
 
     expect(favorites.value).toStrictEqual([]);
   });
@@ -37,7 +39,8 @@ describe(useFavoriteStore, () => {
     const { favorites } = storeToRefs(favoriteStore);
     const { readFavorites, toggleFavorite } = favoriteStore;
     await readFavorites();
-    await toggleFavorite(resource);
+    toggleFavorite(resource);
+    await flushPromises();
 
     expect(favorites.value).toStrictEqual([resource]);
   });
@@ -57,7 +60,9 @@ describe(useFavoriteStore, () => {
     const favoriteStore = useFavoriteStore();
     const { favorites } = storeToRefs(favoriteStore);
     const { toggleFavorite } = favoriteStore;
-    await Promise.all([toggleFavorite(resource), toggleFavorite(resource)]);
+    toggleFavorite(resource);
+    toggleFavorite(resource);
+    await flushPromises();
 
     expect(favorites.value).toStrictEqual([resource]);
   });
@@ -85,7 +90,8 @@ describe(useFavoriteStore, () => {
     const { favorites } = storeToRefs(favoriteStore);
     const { readFavorites, toggleFavorite } = favoriteStore;
     await readFavorites();
-    await toggleFavorite(resource);
+    toggleFavorite(resource);
+    await flushPromises();
 
     expect(favorites.value).toStrictEqual([otherResource]);
   });

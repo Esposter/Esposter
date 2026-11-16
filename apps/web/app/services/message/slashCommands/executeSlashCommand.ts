@@ -69,7 +69,7 @@ export const executeSlashCommand = async (
       break;
     case SlashCommandType.Topic: {
       const { text } = command.parameterValues;
-      await executeSlashCommandMutation(() => $trpc.room.updateRoom.mutate({ id: roomId, topic: text }), {
+      executeSlashCommandMutation(() => $trpc.room.updateRoom.mutate({ id: roomId, topic: text }), {
         // Read as the write is sent, so a rejected topic restores what the write ahead of it stored rather than
         // What was on screen when the command was typed — and of the room the command was typed in, which by the
         // Time a queued write is sent need not be the room on screen

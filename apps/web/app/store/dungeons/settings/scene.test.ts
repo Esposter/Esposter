@@ -43,7 +43,7 @@ describe(useSettingsSceneStore, () => {
   });
 
   // Selecting the Volume row once saved its empty value, which made the volume non-finite and the save fail
-  test("selecting the volume row saves no value", async () => {
+  test("selecting the volume row saves no value", () => {
     expect.hasAssertions();
 
     const settingsStore = useSettingsStore();
@@ -51,14 +51,14 @@ describe(useSettingsSceneStore, () => {
     const settingsSceneStore = useSettingsSceneStore();
     const { selectSettingsPosition } = settingsSceneStore;
     const volumeRow = getRowPosition(SettingsOption.VolumePercentage);
-    await selectSettingsPosition(volumeRow);
+    selectSettingsPosition(volumeRow);
 
     expect(settingsStore.settings[SettingsOption.VolumePercentage]).toBe(40);
     expect(SettingsOptionGrid.position.value).toStrictEqual(volumeRow);
     expect(saveDungeons).not.toHaveBeenCalled();
   });
 
-  test("left and right step through a row's values, saving each one they land on", async () => {
+  test("left and right step through a row's values, saving each one they land on", () => {
     expect.hasAssertions();
 
     const settingsStore = useSettingsStore();
@@ -66,22 +66,22 @@ describe(useSettingsSceneStore, () => {
     const { onPlayerInput, restSettingsCursor } = settingsSceneStore;
     settingsStore.settings[SettingsOption["Text Speed"]] = TextSpeedSetting.Mid;
     restSettingsCursor();
-    await onPlayerInput(scene, Direction.RIGHT, Direction.RIGHT, 0);
+    onPlayerInput(scene, Direction.RIGHT, Direction.RIGHT, 0);
 
     expect(settingsStore.settings[SettingsOption["Text Speed"]]).toBe(TextSpeedSetting.Fast);
     // Past the last value, right changes nothing and saves nothing
-    await onPlayerInput(scene, Direction.RIGHT, Direction.RIGHT, 0);
+    onPlayerInput(scene, Direction.RIGHT, Direction.RIGHT, 0);
 
     expect(settingsStore.settings[SettingsOption["Text Speed"]]).toBe(TextSpeedSetting.Fast);
-    await onPlayerInput(scene, Direction.LEFT, Direction.LEFT, 0);
-    await onPlayerInput(scene, Direction.LEFT, Direction.LEFT, 0);
+    onPlayerInput(scene, Direction.LEFT, Direction.LEFT, 0);
+    onPlayerInput(scene, Direction.LEFT, Direction.LEFT, 0);
 
     expect(settingsStore.settings[SettingsOption["Text Speed"]]).toBe(TextSpeedSetting.Slow);
     // Mid to Fast, Fast to Mid, Mid to Slow: the edge press is not one of the three
     expect(saveDungeons).toHaveBeenCalledTimes(3);
   });
 
-  test("up and down rest on each row's saved value and save nothing", async () => {
+  test("up and down rest on each row's saved value and save nothing", () => {
     expect.hasAssertions();
 
     const settingsStore = useSettingsStore();
@@ -89,7 +89,7 @@ describe(useSettingsSceneStore, () => {
     const { onPlayerInput, restSettingsCursor } = settingsSceneStore;
     settingsStore.settings[SettingsOption.Animations] = AnimationsSetting.Off;
     restSettingsCursor();
-    await onPlayerInput(scene, Direction.DOWN, Direction.DOWN, 0);
+    onPlayerInput(scene, Direction.DOWN, Direction.DOWN, 0);
 
     const animationsRow = getRowPosition(SettingsOption.Animations);
     expect(SettingsOptionGrid.position.value).toStrictEqual({
@@ -101,20 +101,20 @@ describe(useSettingsSceneStore, () => {
     expect(saveDungeons).not.toHaveBeenCalled();
   });
 
-  test("clicking a value saves it, and clicking a name only moves to its row", async () => {
+  test("clicking a value saves it, and clicking a name only moves to its row", () => {
     expect.hasAssertions();
 
     const settingsStore = useSettingsStore();
     const settingsSceneStore = useSettingsSceneStore();
     const { selectSettingsPosition } = settingsSceneStore;
     const textSpeedRow = getRowPosition(SettingsOption["Text Speed"]);
-    await selectSettingsPosition({
+    selectSettingsPosition({
       x: SettingsOptionGrid.getPositionX(TextSpeedSetting.Fast, textSpeedRow.y) ?? 0,
       y: textSpeedRow.y,
     });
 
     expect(settingsStore.settings[SettingsOption["Text Speed"]]).toBe(TextSpeedSetting.Fast);
-    await selectSettingsPosition({ x: 0, y: textSpeedRow.y });
+    selectSettingsPosition({ x: 0, y: textSpeedRow.y });
 
     expect(settingsStore.settings[SettingsOption["Text Speed"]]).toBe(TextSpeedSetting.Fast);
     expect(SettingsOptionGrid.position.value.x).toBe(

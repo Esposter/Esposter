@@ -25,8 +25,9 @@ import { useNotificationStore } from "#src/store/notification";
 import { useResourceStore } from "#src/store/resource/index";
 import { useSheetHistoryStore } from "#src/store/resource/sheet/history/index";
 import { ResourceType } from "@esposter/db-schema";
-import { noop, takeOne, withFinalizerAsync } from "@esposter/shared";
+import { noop, takeOne, waitForSynchronizedFunctions, withFinalizerAsync } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
+import { flushPromises } from "@vue/test-utils";
 import { http, HttpResponse } from "msw";
 import { v7 } from "uuid";
 import { assert, beforeEach, describe, expect, test, vi } from "vitest";
@@ -54,6 +55,15 @@ const createLargeSheetResource = (name: string) => {
   const content = createDefaultSheetResource();
   content.data.metadata.name = name.padEnd(MAX_REQUEST_SIZE);
   return content;
+};
+
+// A save's state reads Saving until the write it issued is answered. The write floats with every other fire-and-forget,
+// So the drain is the sign it has landed, and the state it settled in is what a save reports now that a call returns
+// Nothing
+const settleSave = async () => {
+  await waitForSynchronizedFunctions();
+  const resourceStore = useResourceStore();
+  return resourceStore.saveState;
 };
 
 describe(useResourceStore, () => {
@@ -92,6 +102,19 @@ describe(useResourceStore, () => {
     return { generateUploadContentPresignedUrl, saveStagedResourceContent };
   };
 
+  // A write for a resource that is no longer the loaded one has no state to wait on, so the wait is for its request to be
+  // Answered: msw reports the request's end, and the client applies the answer once the promises it chained have run
+  const settleRequest = async () => {
+    await new Promise<void>((resolve) => {
+      const onRequestEnd = () => {
+        server.events.removeListener("request:end", onRequestEnd);
+        resolve();
+      };
+      server.events.on("request:end", onRequestEnd);
+    });
+    await flushPromises();
+  };
+
   beforeEach(() => {
     setRouteId(resourceId);
     readResourceQuery = vi.fn<(options: { input: { id: string } }) => ReadResourceResult>(({ input }) => ({
@@ -116,9 +139,10 @@ describe(useResourceStore, () => {
     await readContent(noop);
     setRouteId(otherResourceId);
     await readResource();
-    const isSuccessful = await saveContent(createDefaultSheetResource());
+    const rollback = vi.fn<() => void>();
+    saveContent(createDefaultSheetResource(), rollback);
 
-    expect(isSuccessful).toBe(false);
+    expect(rollback).toHaveBeenCalledExactlyOnceWith();
     expect(saveResourceContent).not.toHaveBeenCalled();
   });
 
@@ -129,9 +153,10 @@ describe(useResourceStore, () => {
     const resourceStore = useResourceStore();
     const { readResource, saveContent } = resourceStore;
     await readResource();
-    const isSuccessful = await saveContent(createDefaultSheetResource());
+    const rollback = vi.fn<() => void>();
+    saveContent(createDefaultSheetResource(), rollback);
 
-    expect(isSuccessful).toBe(false);
+    expect(rollback).toHaveBeenCalledExactlyOnceWith();
     expect(saveResourceContent).not.toHaveBeenCalled();
   });
 
@@ -204,9 +229,10 @@ describe(useResourceStore, () => {
     setRouteId(otherResourceId);
     await readResource();
     await readContent(noop);
-    const isSuccessful = await saveContent(createDefaultSheetResource());
+    saveContent(createDefaultSheetResource());
+    const settledState = await settleSave();
 
-    expect(isSuccessful).toBe(true);
+    expect(settledState).toBe(ResourceSaveState.Saved);
     expect(saveResourceContent).toHaveBeenCalledTimes(1);
   });
 
@@ -235,10 +261,11 @@ describe(useResourceStore, () => {
     await readContent(noop);
     const content = createDefaultSheetResource();
     enlarge(content);
-    const isSuccessful = await saveContent(content);
+    saveContent(content);
+    const settledState = await settleSave();
     const { input } = takeOne(saveStagedResourceContent.mock.calls, 0)[0];
 
-    expect(isSuccessful).toBe(true);
+    expect(settledState).toBe(ResourceSaveState.Saved);
     expect(saveResourceContent).not.toHaveBeenCalled();
     expect(takeOne(generateUploadContentPresignedUrl.mock.calls, 0)[0].input.size).toBeLessThan(MAX_REQUEST_SIZE);
     expect(input).toStrictEqual({ contentVersion: 0, hash: expect.stringMatching(/^[\da-f]{64}$/u), id: resourceId });
@@ -260,8 +287,10 @@ describe(useResourceStore, () => {
     const { readContent, readResource, saveContent } = resourceStore;
     await readResource();
     await readContent(noop);
-    await saveContent(firstContent);
-    await saveContent(createLargeSheetResource("a"));
+    saveContent(firstContent);
+    await settleSave();
+    saveContent(createLargeSheetResource("a"));
+    await settleSave();
     const { input } = takeOne(saveResourceContentDelta.mock.calls, 0)[0];
 
     expect(saveStagedResourceContent).toHaveBeenCalledTimes(1);
@@ -300,7 +329,8 @@ describe(useResourceStore, () => {
     const applyContent = vi.fn<(content: ResourceContent<typeof ResourceType.Sheet> | undefined) => void>();
     await readResource();
     await readContent<typeof ResourceType.Sheet>(applyContent);
-    await saveContent(createLargeSheetResource("a"));
+    saveContent(createLargeSheetResource("a"));
+    await settleSave();
 
     expect(takeOne(applyContent.mock.calls, 0)[0]?.data.metadata.name).toBe(loadedContent.data.metadata.name);
     expect(takeOne(saveResourceContentDelta.mock.calls, 0)[0].input.baselineHash).toBe(contentHash);
@@ -321,10 +351,11 @@ describe(useResourceStore, () => {
     const { readContent, readResource, saveContent } = resourceStore;
     await readResource();
     await readContent(noop);
-    await saveContent(firstContent);
-    const isSuccessful = await saveContent(createLargeSheetResource("a"));
+    saveContent(firstContent);
+    await settleSave();
+    saveContent(createLargeSheetResource("a"));
+    await settleSave();
 
-    expect(isSuccessful).toBe(true);
     expect(saveStagedResourceContent).toHaveBeenCalledTimes(2);
     expect(saveState.value).toBe(ResourceSaveState.Saved);
   });
@@ -341,8 +372,10 @@ describe(useResourceStore, () => {
     const { readContent, readResource, saveContent } = resourceStore;
     await readResource();
     await readContent(noop);
-    await saveContent(createLargeSheetResource(" "));
-    await saveContent(createLargeSheetResource("a"));
+    saveContent(createLargeSheetResource(" "));
+    await settleSave();
+    saveContent(createLargeSheetResource("a"));
+    await settleSave();
 
     expect(saveResourceContentDelta).not.toHaveBeenCalled();
     expect(saveStagedResourceContent).toHaveBeenCalledTimes(2);
@@ -360,9 +393,8 @@ describe(useResourceStore, () => {
     await readContent(noop);
     const content = createDefaultSheetResource();
     content.data.metadata.name = " ".repeat(MAX_RESOURCE_CONTENT_SIZE);
-    const isSuccessful = await saveContent(content);
+    saveContent(content);
 
-    expect(isSuccessful).toBe(false);
     expect(saveResourceContent).not.toHaveBeenCalled();
     expect(notifications.value).toHaveLength(1);
     expect(saveState.value).toBe(ResourceSaveState.Failed);
@@ -376,8 +408,10 @@ describe(useResourceStore, () => {
     await readResource();
     await readContent(noop);
     const content = createDefaultSheetResource();
-    await saveContent(content);
-    await saveContent(content);
+    saveContent(content);
+    await settleSave();
+    saveContent(content);
+    await settleSave();
 
     expect(saveResourceContent).toHaveBeenCalledTimes(1);
   });
@@ -395,9 +429,9 @@ describe(useResourceStore, () => {
     await readContent(noop);
     setPersistedContent(createDefaultSheetResource());
     unwrittenContentResourceId.value = resourceStore.currentResourceId;
-    const isSuccessful = await saveContent(createDefaultSheetResource());
+    saveContent(createDefaultSheetResource());
+    await settleSave();
 
-    expect(isSuccessful).toBe(true);
     expect(saveResourceContent).not.toHaveBeenCalled();
     expect(saveState.value).toBe(ResourceSaveState.Saved);
   });
@@ -418,9 +452,9 @@ describe(useResourceStore, () => {
 
     expect(saveState.value).toBe(ResourceSaveState.Failed);
 
-    const isSuccessful = await saveContent(createDefaultSheetResource());
+    saveContent(createDefaultSheetResource());
+    await settleSave();
 
-    expect(isSuccessful).toBe(true);
     expect(saveResourceContent).not.toHaveBeenCalled();
     expect(saveState.value).toBe(ResourceSaveState.Saved);
   });
@@ -463,13 +497,14 @@ describe(useResourceStore, () => {
     const { readContent, readResource, saveContent } = resourceStore;
     await readResource();
     await readContent(noop);
-    const save = saveContent(createDefaultSheetResource());
+    saveContent(createDefaultSheetResource());
     setRouteId(otherResourceId);
     await readResource();
     await readContent(noop);
+    const saveSettled = settleRequest();
     resolveNavigated();
+    await saveSettled;
 
-    await expect(save).resolves.toBe(true);
     expect(resource.value?.id).toBe(otherResourceId);
     expect(resource.value?.contentVersion).toBe(0);
   });
@@ -490,15 +525,16 @@ describe(useResourceStore, () => {
     const { readContent, readResource, saveContent } = resourceStore;
     await readResource();
     await readContent(noop);
-    const save = saveContent(createDefaultSheetResource());
+    saveContent(createDefaultSheetResource());
     setRouteId(otherResourceId);
     await readResource();
     await readContent(noop);
 
     expect(saveState.value).toBe(ResourceSaveState.Saved);
 
+    const saveSettled = settleRequest();
     resolveNavigated();
-    await save;
+    await saveSettled;
   });
 
   // Autosave fires again while the previous save is still in flight, and the row is read when the write is sent
@@ -516,7 +552,9 @@ describe(useResourceStore, () => {
     const { readContent, readResource, saveContent } = resourceStore;
     await readResource();
     await readContent(noop);
-    await Promise.all([saveContent(createDefaultSheetResource()), saveContent(createDefaultSheetResource())]);
+    saveContent(createDefaultSheetResource());
+    saveContent(createDefaultSheetResource());
+    await settleSave();
 
     expect(contentVersions).toStrictEqual([0, 1]);
   });
@@ -546,14 +584,14 @@ describe(useResourceStore, () => {
     const { readContent, readResource, saveContent } = resourceStore;
     await readResource();
     await readContent(noop);
-    const firstSave = saveContent(createDefaultSheetResource());
+    saveContent(createDefaultSheetResource());
     const content = createDefaultSheetResource();
     content.data.metadata.name = " ";
-    const queuedSave = saveContent(content);
+    saveContent(content);
     content.data.metadata.name = "";
     releaseFirstSave();
 
-    await Promise.all([firstSave, queuedSave]);
+    await settleSave();
 
     expect(savedNames).toStrictEqual(["", " "]);
   });
@@ -572,11 +610,11 @@ describe(useResourceStore, () => {
     setPersistedContent(createDefaultSheetResource());
     const content = createDefaultSheetResource();
     content.data.metadata.name = " ";
-    const firstSave = saveContent(content);
-    const revertedSave = saveContent(createDefaultSheetResource());
+    saveContent(content);
+    saveContent(createDefaultSheetResource());
     releaseFirstSave();
 
-    await Promise.all([firstSave, revertedSave]);
+    await settleSave();
 
     expect(savedNames).toStrictEqual([" ", ""]);
   });
@@ -597,18 +635,39 @@ describe(useResourceStore, () => {
     const { readContent, readResource, saveContent } = resourceStore;
     await readResource();
     await readContent(noop);
-    await saveContent(createDefaultSheetResource());
+    saveContent(createDefaultSheetResource());
+    await settleSave();
 
     expect(saveState.value).toBe(ResourceSaveState.Failed);
 
     isSaveRejected = false;
-    await saveContent(createDefaultSheetResource());
+    saveContent(createDefaultSheetResource());
+    await settleSave();
 
     expect(saveState.value).toBe(ResourceSaveState.Saved);
   });
 
   // Every retry after a stale rejection is a guaranteed rejection, so the state latches: the remedy is a reload,
   // Not waiting, and the owner has to be able to see that after the warning is gone
+  test("a stale version rolls the save back and prompts a refresh", async () => {
+    expect.hasAssertions();
+
+    trpcMsw.sheet.saveResourceContent.mutation(() => {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: STALE_CONTENT_VERSION_ERROR_MESSAGE });
+    });
+    const notificationStore = useNotificationStore();
+    const resourceStore = useResourceStore();
+    const { readContent, readResource, saveContent } = resourceStore;
+    await readResource();
+    await readContent(noop);
+    const rollback = vi.fn<() => void>();
+    saveContent(createDefaultSheetResource(), rollback);
+    await settleSave();
+
+    expect(rollback).toHaveBeenCalledTimes(1);
+    expect(notificationStore.notifications.map(({ action }) => action?.title)).toStrictEqual(["Refresh"]);
+  });
+
   test("reports a stale save as out of date until the next read", async () => {
     expect.hasAssertions();
 
@@ -620,7 +679,8 @@ describe(useResourceStore, () => {
     const { readContent, readResource, saveContent } = resourceStore;
     await readResource();
     await readContent(noop);
-    await saveContent(createDefaultSheetResource());
+    saveContent(createDefaultSheetResource());
+    await settleSave();
 
     expect(saveState.value).toBe(ResourceSaveState.Stale);
 
@@ -644,7 +704,9 @@ describe(useResourceStore, () => {
     const { resource } = storeToRefs(resourceStore);
     const { readResource, renameResource } = resourceStore;
     await readResource();
-    await Promise.all([renameResource(newName), renameResource(failingName)]);
+    renameResource(newName);
+    renameResource(failingName);
+    await waitForSynchronizedFunctions();
 
     expect(resource.value?.name).toBe(newName);
   });
@@ -659,9 +721,10 @@ describe(useResourceStore, () => {
     const notificationStore = useNotificationStore();
     const { notifications } = storeToRefs(notificationStore);
     await readResource();
-    const isDeleted = await deleteResource();
+    const deleteSettled = settleRequest();
+    deleteResource();
+    await deleteSettled;
 
-    expect(isDeleted).toBe(true);
     const { action } = takeOne(notifications.value);
     assert.exists(action);
     const { handler, ...restAction } = action;
@@ -684,12 +747,13 @@ describe(useResourceStore, () => {
     const { resource } = storeToRefs(resourceStore);
     const { readResource, renameResource } = resourceStore;
     await readResource();
-    const rename = renameResource(newName);
+    renameResource(newName);
     setRouteId(otherResourceId);
     await readResource();
     const { name } = createResource(otherResourceId);
+    const renameSettled = settleRequest();
     resolveNavigated();
-    await rename;
+    await renameSettled;
 
     expect(resource.value?.id).toBe(otherResourceId);
     expect(resource.value?.name).toBe(name);
@@ -702,14 +766,18 @@ describe(useResourceStore, () => {
     expect.hasAssertions();
 
     const updateInputs: Partial<Pick<ResourceInResource, "name" | "tags">>[] = [];
+    const { promise: areBothSent, resolve: onBothSent } = Promise.withResolvers<void>();
     trpcMsw.sheet.updateResource.mutation(({ input }) => {
       updateInputs.push({ name: input.name, tags: input.tags });
+      if (updateInputs.length === 2) onBothSent();
       return createResource(resourceId);
     });
     const resourceStore = useResourceStore();
     const { readResource, renameResource, updateResourceTags } = resourceStore;
     await readResource();
-    await Promise.all([renameResource(newName), updateResourceTags(tags)]);
+    renameResource(newName);
+    updateResourceTags(tags);
+    await areBothSent;
 
     expect(updateInputs).toStrictEqual([
       { name: newName, tags: undefined },
@@ -727,7 +795,10 @@ describe(useResourceStore, () => {
     const resourceStore = setupNoteResource();
     const { publication: loadedPublication } = storeToRefs(resourceStore);
     const { readResource, unpublishResource } = resourceStore;
-    trpcMsw.note.readResourcePublication.query(() => publication);
+    trpcMsw.resource.readResource.query(({ input }) => ({
+      ...createResource(input.id, ResourceType.Note),
+      publication,
+    }));
     trpcMsw.note.unpublishResource.mutation(() => {
       if (isFailing) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
 
@@ -735,7 +806,9 @@ describe(useResourceStore, () => {
       return createResource(resourceId, ResourceType.Note);
     });
     await readResource();
-    await Promise.all([unpublishResource(), unpublishResource()]);
+    unpublishResource();
+    unpublishResource();
+    await waitForSynchronizedFunctions();
 
     expect(loadedPublication.value).toBeUndefined();
   });
@@ -761,7 +834,9 @@ describe(useResourceStore, () => {
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
     await readResource();
-    await Promise.all([publishResource(), unpublishResource()]);
+    publishResource();
+    unpublishResource();
+    await waitForSynchronizedFunctions();
 
     expect(loadedPublication.value).toStrictEqual(publication);
   });
@@ -780,11 +855,12 @@ describe(useResourceStore, () => {
       return publication;
     });
     await readResource();
-    const publish = publishResource();
+    publishResource();
     setRouteId(otherResourceId);
     await readResource();
+    const publishSettled = settleRequest();
     resolveNavigated();
-    await publish;
+    await publishSettled;
 
     expect(loadedPublication.value).toBeUndefined();
   });
@@ -850,11 +926,14 @@ describe(useResourceStore, () => {
     trpcMsw.note.publishResource.mutation(() => publication);
     trpcMsw.note.unpublishResource.mutation(() => createResource(resourceId, ResourceType.Note));
     await readResource();
-    await publishResource();
+    publishResource();
+    await waitForSynchronizedFunctions();
 
     expect(loadedPublication.value).toStrictEqual(publication);
 
-    await unpublishResource();
+    const unpublishSettled = settleRequest();
+    unpublishResource();
+    await unpublishSettled;
 
     expect(loadedPublication.value).toBeUndefined();
   });
@@ -974,12 +1053,11 @@ describe(useResourceStore, () => {
       () => resourceStore.storeSaveResourceContent({ apiKeyName: "", contentVersion: contentVersion + 1 }),
       unregisterReload,
     );
-    const isSaved = await resourceStore.saveContent(createDefaultSheetResource());
+    resourceStore.saveContent(createDefaultSheetResource());
 
     expect(reload).not.toHaveBeenCalled();
     expect(heldSave.value).toStrictEqual({ apiKeyName: "", contentVersion: contentVersion + 1 });
     expect(saveState.value).toBe(ResourceSaveState.Stale);
-    expect(isSaved).toBe(false);
     expect(saveResourceContent).not.toHaveBeenCalled();
   });
 
@@ -1077,7 +1155,7 @@ describe(useResourceStore, () => {
 
     const { dataSource } = setupWithDataSource();
     const deleteRow = useDeleteRow();
-    await deleteRow(takeOne(dataSource.rows, 0).id);
+    deleteRow(takeOne(dataSource.rows, 0).id);
     const sheetHistoryStore = useSheetHistoryStore();
     const { isUndoable } = storeToRefs(sheetHistoryStore);
     const resourceStore = useResourceStore();
@@ -1104,7 +1182,8 @@ describe(useResourceStore, () => {
     await resourceStore.storeSaveResourceContent({ apiKeyName: "", contentVersion: resource.value.contentVersion + 1 });
     await nextTick();
     const isUndoableAfterAdoption = isUndoable.value;
-    await saveContent(createLargeSheetResource("a"));
+    saveContent(createLargeSheetResource("a"));
+    await settleSave();
 
     expect(isUndoableAfterAdoption).toBe(false);
     expect(saveResourceContentDelta).not.toHaveBeenCalled();

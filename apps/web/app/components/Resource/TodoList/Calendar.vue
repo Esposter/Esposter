@@ -32,11 +32,11 @@ await loadContent();
         }
       "
       @move="
-        async (id, start) => {
+        (id, start) => {
           const item = items.find((todoListItem) => todoListItem.id === id);
           if (!item) return;
           setDueAt(item, start);
-          await saveTodoList();
+          saveTodoList();
         }
       "
       @open="editItem({ id: $event })"

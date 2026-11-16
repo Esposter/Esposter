@@ -23,7 +23,7 @@ import { usePageBuilderHistoryStore } from "#src/store/pageBuilder/history";
 import { InvalidOperationError, JsonPatchOperationType, noop, Operation } from "@esposter/shared";
 import { parseMjmlDocument } from "mjml-blocks";
 import { v7 } from "uuid";
-import { describe, expect, test, vi } from "vitest";
+import { describe, expect, test } from "vitest";
 import { applyBlockEdit, moveBlockNode, updateBlockNodeProps } from "vue-block-editor-headless";
 
 const insertAtFirstIndex = (id: string): JsonPatchOperation[] => [
@@ -253,31 +253,6 @@ describe(usePageBuilderHistoryStore, () => {
 
     expect(getDocument(resourceId)).toStrictEqual(editedDocument);
     expect(getUndoLabel(resourceId)).toBe("");
-  });
-
-  test("a save stores the whole document after edits", async () => {
-    expect.hasAssertions();
-
-    const resourceId = setupDocument();
-    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    const { getDocument, saveDocument } = pageBuilderDocumentStore;
-    const pageBuilderHistoryStore = usePageBuilderHistoryStore();
-    const { applyEdit } = pageBuilderHistoryStore;
-    applyEdit(resourceId, moveFirstToEnd(), TEST_MOVE_LABEL).match(noop, (error) => {
-      throw error;
-    });
-    applyEdit(
-      resourceId,
-      updateBlockNodeProps<ButtonNodeProps>("/content/0", { label: TEST_EDITED_LABEL }),
-      TEST_LABEL_LABEL,
-    ).match(noop, (error) => {
-      throw error;
-    });
-    const editedDocument = getDocument(resourceId);
-    const writeDocument = vi.fn<(document: WebpageDocument) => Promise<void>>().mockResolvedValue(undefined);
-    await saveDocument(resourceId, writeDocument);
-
-    expect(writeDocument).toHaveBeenCalledExactlyOnceWith(editedDocument);
   });
 
   test("an edit whose operations cannot apply changes neither the document nor the history", () => {

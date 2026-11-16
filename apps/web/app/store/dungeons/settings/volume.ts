@@ -14,14 +14,14 @@ export const useVolumeStore = defineStore("dungeons/settings/volume", () => {
   const volumeDelta = ref(0);
   const volumeIncrementCooldown = ref(0);
   const volumeSlider = ref<Slider>();
-  const setVolume = async (baseVolumePercentage: number, isUpdateSlider = true) => {
+  const setVolume = (baseVolumePercentage: number, isUpdateSlider = true) => {
     const clampedVolumePercentage = clamp(baseVolumePercentage, 0, 100);
-    await setSettings(SettingsOption.VolumePercentage, clampedVolumePercentage);
+    setSettings(SettingsOption.VolumePercentage, clampedVolumePercentage);
 
     if (!(volumeSlider.value && isUpdateSlider)) return;
     volumeSlider.value.value = clampedVolumePercentage / 100;
   };
-  const updateVolume = async (direction: Direction, delta: number) => {
+  const updateVolume = (direction: Direction, delta: number) => {
     volumeDelta.value += delta / Temporal.Duration.from({ seconds: 1 }).total("milliseconds");
     const incrementSpeed = step(volumeDelta.value, [
       { speed: 0.1, threshold: 1 },
@@ -39,7 +39,7 @@ export const useVolumeStore = defineStore("dungeons/settings/volume", () => {
           ? Math.min(volumePercentage.value + increment, 100)
           : undefined;
     if (newVolumePercentage === undefined) return;
-    await setVolume(newVolumePercentage);
+    setVolume(newVolumePercentage);
     volumeIncrementCooldown.value += increment;
   };
   const checkIsUpdateVolume = (input: PlayerInput, settingsOption: SettingsOption): input is Direction => {

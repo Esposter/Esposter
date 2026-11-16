@@ -11,11 +11,11 @@ export const useRenameResource = (resource: Ref<ResourceInResource | undefined>,
   const { createErrorNotification } = notificationStore;
   const { executeMutation: executeRenameResourceMutation } = useMutation();
   const getResourceRouter = useResourceRouter();
-  return async (name: string) => {
+  return (name: string) => {
     const resourceValue = resource.value;
     if (!resourceValue) return;
 
-    await executeRenameResourceMutation(
+    executeRenameResourceMutation(
       () => getResourceRouter(resourceValue.type).updateResource.mutate({ id: resourceValue.id, name }),
       {
         // Applied without a local rollback: the name to restore would be whatever this call happened to read,
@@ -33,8 +33,9 @@ export const useRenameResource = (resource: Ref<ResourceInResource | undefined>,
           createErrorNotification(error);
           await refresh();
         },
-        // A rename reorders a name-sorted page and moves updatedAt, neither of which the client can resolve
-        onSuccess: refresh,
+        // A rename reorders a name-sorted page and moves updatedAt, neither of which the client can resolve, so the page
+        // Is read again once the rename is kept
+        reconcile: refresh,
       },
     );
   };

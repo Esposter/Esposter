@@ -11,6 +11,7 @@ import { useTodoListStore } from "#src/store/resource/todoList/index";
 import { ResourceType } from "@esposter/db-schema";
 import { takeOne, toRawDeep } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
+import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { assert, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -51,9 +52,9 @@ describe(useTodoListStore, () => {
     expect.hasAssertions();
 
     const { saveTodoList } = await setupStore();
-    const isSuccessful = await saveTodoList();
+    saveTodoList();
+    await flushPromises();
 
-    expect(isSuccessful).toBe(true);
     expect(saveResourceContent).not.toHaveBeenCalled();
   });
 
@@ -79,9 +80,9 @@ describe(useTodoListStore, () => {
     const { editedItem, items } = storeToRefs(todoListStore);
     await editItem({ id: takeOne(items.value).id });
     editedItem.value = new TodoListItem({ name: newItemName });
-    const isSuccessful = await saveItem();
+    saveItem();
+    await flushPromises();
 
-    expect(isSuccessful).toBe(true);
     expect(items.value.map(({ name }) => name)).toStrictEqual([itemName, newItemName]);
   });
 
@@ -96,14 +97,14 @@ describe(useTodoListStore, () => {
     assert.exists(editedItem.value);
 
     editedItem.value.name = newItemName;
-    await saveItem();
+    saveItem();
+    await flushPromises();
 
     expect(items.value.map(({ name }) => name)).toStrictEqual([newItemName]);
   });
 
-  // The blob is persisted wholesale, so a rejected write has to leave the list showing what the server still
-  // Has — and the dialog open, or the user's draft is gone with no way to retry it
-  test("reverts the list and keeps the dialog open when the save fails", async () => {
+  // The blob is persisted wholesale, so a rejected write has to leave the list showing what the server still has
+  test("reverts the list when the save fails", async () => {
     expect.hasAssertions();
 
     trpcMsw.todoList.saveResourceContent.mutation(() => {
@@ -111,14 +112,12 @@ describe(useTodoListStore, () => {
     });
     const todoListStore = await setupStore();
     const { saveItem } = todoListStore;
-    const { editedItem, isEditFormDialogOpen, items } = storeToRefs(todoListStore);
+    const { editedItem, items } = storeToRefs(todoListStore);
     editedItem.value = new TodoListItem({ name: newItemName });
-    isEditFormDialogOpen.value = true;
-    const isSuccessful = await saveItem();
+    saveItem();
+    await flushPromises();
 
-    expect(isSuccessful).toBe(false);
     expect(items.value.map(({ name }) => name)).toStrictEqual([itemName]);
-    expect(isEditFormDialogOpen.value).toBe(true);
   });
 
   // The list is ordered by the user, so where an item sits is content of its own — a rejected delete that lands
@@ -134,9 +133,9 @@ describe(useTodoListStore, () => {
     const { editItem, saveItem } = todoListStore;
     const { items } = storeToRefs(todoListStore);
     await editItem({ id: takeOne(items.value).id });
-    const isSuccessful = await saveItem(true);
+    saveItem(true);
+    await flushPromises();
 
-    expect(isSuccessful).toBe(false);
     expect(items.value.map(({ name }) => name)).toStrictEqual([itemName, newItemName]);
   });
 
@@ -152,10 +151,10 @@ describe(useTodoListStore, () => {
     const resourceStore = useResourceStore();
     const { storeSaveResourceContent } = resourceStore;
     await storeSaveResourceContent({ apiKeyName: "", contentVersion: 1 });
-    const isSuccessful = await saveTodoList();
+    saveTodoList();
+    await flushPromises();
 
     expect(items.value.map(({ name }) => name)).toStrictEqual([newItemName]);
-    expect(isSuccessful).toBe(true);
     expect(saveResourceContent).not.toHaveBeenCalled();
   });
 
@@ -175,9 +174,9 @@ describe(useTodoListStore, () => {
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
     editedItem.value = new TodoListItem({ name: newItemName });
-    const isSuccessful = await saveItem();
+    saveItem();
+    await flushPromises();
 
-    expect(isSuccessful).toBe(false);
     expect(items.value.map(({ name }) => name)).toStrictEqual([adoptedItemName]);
   });
 
@@ -198,9 +197,9 @@ describe(useTodoListStore, () => {
       await reloadResourceContent();
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
-    const isSuccessful = await toggleCompleted(id);
+    toggleCompleted(id);
+    await flushPromises();
 
-    expect(isSuccessful).toBe(false);
     expect(takeOne(items.value).completedAt).toStrictEqual(reloadedItem.completedAt);
   });
 
@@ -219,9 +218,9 @@ describe(useTodoListStore, () => {
       await reloadResourceContent();
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
-    const isSuccessful = await reorderItems(reloadedItems.map(({ id }) => id));
+    reorderItems(reloadedItems.map(({ id }) => id));
+    await flushPromises();
 
-    expect(isSuccessful).toBe(false);
     expect(items.value.map(({ name }) => name)).toStrictEqual([newItemName, itemName]);
   });
 
@@ -234,14 +233,18 @@ describe(useTodoListStore, () => {
     const { items } = storeToRefs(todoListStore);
     const resourceStore = useResourceStore();
     const { unwrittenContentResourceId } = storeToRefs(resourceStore);
-    const saveKept = vi.fn<(options: { input: { contentVersion: number; id: string } }) => ResourceInResource>(() =>
-      createResource(2),
-    );
+    const { promise: isKeptSaveReached, resolve: onKeptSaveReached } = Promise.withResolvers<void>();
+    const saveKept = vi.fn<(options: { input: { contentVersion: number; id: string } }) => ResourceInResource>(() => {
+      onKeptSaveReached();
+      return createResource(2);
+    });
     trpcMsw.todoList.saveResourceContent.mutation(saveKept);
     items.value = [new TodoListItem({ name: newItemName })];
     unwrittenContentResourceId.value = resourceId;
     await resourceStore.storeSaveResourceContent({ apiKeyName: "", contentVersion: 1 });
     await resourceStore.keepUnwrittenContent();
+    await isKeptSaveReached;
+    await flushPromises();
 
     expect(
       saveKept.mock.calls.map(([{ input }]) => ({ contentVersion: input.contentVersion, id: input.id })),
@@ -258,9 +261,9 @@ describe(useTodoListStore, () => {
     const todoListStore = await setupStore();
     const { addItem } = todoListStore;
     const { items } = storeToRefs(todoListStore);
-    const isSuccessful = await addItem(newItemName);
+    addItem(newItemName);
+    await flushPromises();
 
-    expect(isSuccessful).toBe(false);
     expect(items.value.map(({ name }) => name)).toStrictEqual([itemName]);
   });
 
@@ -275,9 +278,9 @@ describe(useTodoListStore, () => {
     const todoListStore = await setupStore();
     const { reorderItems } = todoListStore;
     const { items } = storeToRefs(todoListStore);
-    const isSuccessful = await reorderItems(items.value.map(({ id }) => id).toReversed());
+    reorderItems(items.value.map(({ id }) => id).toReversed());
+    await flushPromises();
 
-    expect(isSuccessful).toBe(false);
     expect(items.value.map(({ name }) => name)).toStrictEqual([itemName, newItemName]);
   });
 
@@ -291,9 +294,9 @@ describe(useTodoListStore, () => {
     const todoListStore = await setupStore();
     const { toggleCompleted } = todoListStore;
     const { items } = storeToRefs(todoListStore);
-    const isSuccessful = await toggleCompleted(takeOne(items.value).id);
+    toggleCompleted(takeOne(items.value).id);
+    await flushPromises();
 
-    expect(isSuccessful).toBe(false);
     expect(takeOne(items.value).completedAt).toBeUndefined();
   });
 
@@ -315,10 +318,10 @@ describe(useTodoListStore, () => {
     const todoListStore = await setupStore();
     const { toggleCompleted } = todoListStore;
     const { items } = storeToRefs(todoListStore);
-    const isSuccessful = await toggleCompleted(takeOne(items.value).id);
+    toggleCompleted(takeOne(items.value).id);
+    await flushPromises();
     const item = takeOne(items.value);
 
-    expect(isSuccessful).toBe(true);
     expect(item.completedAt).toBeUndefined();
     expect(item.dueAt).toStrictEqual(new Date(Temporal.Duration.from({ days: 7 }).total("milliseconds")));
     expect(item.steps).toStrictEqual([{ id: stepId, name: itemName }]);
@@ -341,9 +344,9 @@ describe(useTodoListStore, () => {
     const todoListStore = await setupStore();
     const { deleteItems } = todoListStore;
     const { items } = storeToRefs(todoListStore);
-    const isSuccessful = await deleteItems(items.value.filter(({ name }) => name !== newItemName).map(({ id }) => id));
+    deleteItems(items.value.filter(({ name }) => name !== newItemName).map(({ id }) => id));
+    await flushPromises();
 
-    expect(isSuccessful).toBe(false);
     expect(items.value.map(({ name }) => name)).toStrictEqual([itemName, newItemName, adoptedItemName]);
   });
 

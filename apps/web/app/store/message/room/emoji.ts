@@ -6,6 +6,8 @@ import type { RoomEmojiWithPresignedUrl, RoomInMessage } from "@esposter/db-sche
 import type { Except } from "type-fest";
 
 import { EmojiType } from "#src/models/message/emoji/EmojiType";
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
+import { MutationStatus } from "#src/models/shared/MutationStatus";
 import { getSingleFilePresignedUrlEntities } from "#src/services/file/getSingleFilePresignedUrlEntities";
 import { uploadFilesToPresignedUrls } from "#src/services/file/uploadFilesToPresignedUrls";
 import { createOperationData } from "#src/services/shared/createOperationData";
@@ -77,7 +79,7 @@ export const useRoomEmojiStore = defineStore("message/room/emoji", () => {
     file: File,
     { name }: Except<CreateRoomEmojiInput, "id" | "roomId">,
   ) => {
-    await executeCreateRoomEmojiMutation(
+    const outcome = await executeCreateRoomEmojiMutation(
       async () => {
         const { id, presignedUrl } = await $trpc.room.emoji.generateUploadRoomEmojiPresignedUrlEntity.query({
           mimetype: file.type,
@@ -91,15 +93,19 @@ export const useRoomEmojiStore = defineStore("message/room/emoji", () => {
         return $trpc.room.emoji.createRoomEmoji.mutate({ id, name, roomId });
       },
       {
+        // The emoji's id and the write it is uploaded to are the server's, so the emoji is drawn once the server has it
+        awaitedBecause: AwaitedReason.ServerIssuedValue,
         key: Symbol("createRoomEmoji"),
         onSuccess: (newRoomEmoji) => {
           storeCreateRoomEmoji(roomId, newRoomEmoji);
         },
       },
     );
+    // Whether the server kept it, so the dialog that asked stays open over a refusal
+    return outcome.status === MutationStatus.Succeeded;
   };
-  const updateRoomEmoji = async (roomId: RoomInMessage["id"], input: Except<UpdateRoomEmojiInput, "roomId">) => {
-    await executeUpdateRoomEmojiMutation(() => $trpc.room.emoji.updateRoomEmoji.mutate({ ...input, roomId }), {
+  const updateRoomEmoji = (roomId: RoomInMessage["id"], input: Except<UpdateRoomEmojiInput, "roomId">) => {
+    executeUpdateRoomEmojiMutation(() => $trpc.room.emoji.updateRoomEmoji.mutate({ ...input, roomId }), {
       // Snapshot when the write is sent rather than when it was issued, and only this row: the same list is
       // Appended to by the room's own subscription, which a whole-list restore would undo
       applyOptimistic: () => {
@@ -111,13 +117,13 @@ export const useRoomEmojiStore = defineStore("message/room/emoji", () => {
         };
       },
       key: input.id,
-      onSuccess: (updatedRoomEmoji) => {
+      reconcile: (updatedRoomEmoji) => {
         storeUpdateRoomEmoji(roomId, updatedRoomEmoji);
       },
     });
   };
-  const deleteRoomEmoji = async (roomId: RoomInMessage["id"], input: Except<DeleteRoomEmojiInput, "roomId">) => {
-    await executeDeleteRoomEmojiMutation(() => $trpc.room.emoji.deleteRoomEmoji.mutate({ ...input, roomId }), {
+  const deleteRoomEmoji = (roomId: RoomInMessage["id"], input: Except<DeleteRoomEmojiInput, "roomId">) => {
+    executeDeleteRoomEmojiMutation(() => $trpc.room.emoji.deleteRoomEmoji.mutate({ ...input, roomId }), {
       applyOptimistic: () => {
         const { items: roomItems } = getSlice(roomId);
         const deletedIndex = roomItems.value.findIndex(({ id }) => id === input.id);

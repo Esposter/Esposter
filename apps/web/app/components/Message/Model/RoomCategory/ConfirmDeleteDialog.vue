@@ -18,7 +18,6 @@ const { isOpen, item: category } = useSingletonDialog(deletingId, () =>
     v-model="isOpen"
     confirm-label="Delete"
     title="Delete category"
-    is-optimistic
     :confirm="() => category && deleteRoomCategory(category.id)"
   >
     <p>Are you sure you want to delete {{ category.name }}? Its rooms stay, outside any category.</p>

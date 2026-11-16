@@ -15,18 +15,18 @@ const createThreeColumnDataSource = () =>
 describe(useReorderColumns, () => {
   setupCommandTest();
 
-  test("moves column forward (index 0 to 1)", async () => {
+  test("moves column forward (index 0 to 1)", () => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDataSource();
     const reorderColumns = useReorderColumns();
     const newColumns = [takeOne(dataSource.columns, 1), takeOne(dataSource.columns)] as StringColumn[];
-    await reorderColumns(newColumns);
+    reorderColumns(newColumns);
 
     expect(dataSource.columns.map(({ name }) => name)).toStrictEqual([" ", ""]);
   });
 
-  test("moves column backward (index 1 to 0) with three columns", async () => {
+  test("moves column backward (index 1 to 0) with three columns", () => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDataSource(createThreeColumnDataSource());
@@ -36,12 +36,12 @@ describe(useReorderColumns, () => {
       takeOne(dataSource.columns),
       takeOne(dataSource.columns, 2),
     ] as StringColumn[];
-    await reorderColumns(newColumns);
+    reorderColumns(newColumns);
 
     expect(dataSource.columns.map(({ name }) => name)).toStrictEqual(["b", "a", "c"]);
   });
 
-  test("moves column forward non-adjacent (index 0 to 2) with three columns", async () => {
+  test("moves column forward non-adjacent (index 0 to 2) with three columns", () => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDataSource(createThreeColumnDataSource());
@@ -51,7 +51,7 @@ describe(useReorderColumns, () => {
       takeOne(dataSource.columns, 2),
       takeOne(dataSource.columns),
     ] as StringColumn[];
-    await reorderColumns(newColumns);
+    reorderColumns(newColumns);
 
     expect(dataSource.columns.map(({ name }) => name)).toStrictEqual(["b", "c", "a"]);
   });

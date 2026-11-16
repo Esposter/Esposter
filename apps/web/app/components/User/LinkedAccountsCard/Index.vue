@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import type { UserSettingsPageSection } from "#src/models/user/UserSettingsPageSection";
 
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { AccountLinkErrorMessageMap } from "#src/services/auth/AccountLinkErrorMessageMap";
 import { authClient } from "#src/services/auth/authClient";
 import { requireAuthData } from "#src/services/auth/requireAuthData";
 import { LoginButtonItems } from "#src/services/login/LoginButtonItems";
+import { applyOptimisticReplacement } from "#src/services/shared/applyOptimisticReplacement";
 import { LINKED_ACCOUNTS_MUTATION_KEY } from "#src/services/user/constants";
 import { useAlertStore } from "#src/store/alert";
 import { RoutePath } from "@esposter/shared";
@@ -18,10 +20,7 @@ const router = useRouter();
 const { linkSocial, listAccounts, unlinkAccount } = authClient;
 const alertStore = useAlertStore();
 const { createAlert } = alertStore;
-const { executeMutation } = useMutation();
-// The card's writes share one key so they queue, and each is wrapped in a write keyed by its provider so the row that
-// Issued it is the one that reads pending, including while it waits behind the other
-const { checkIsPending, executeMutation: executeProviderMutation } = useMutation();
+const { checkIsPending, executeMutation } = useMutation();
 const { data: accounts, error, refresh } = useQuery(() => requireAuthData(listAccounts()), { isInlineError: true });
 // Keyed by provider because that is what a row knows about itself, valued with the account row's own id
 // Because that is what unlinking takes. One provider holds at most one row here: linking keys on the identity
@@ -29,8 +28,11 @@ const { data: accounts, error, refresh } = useQuery(() => requireAuthData(listAc
 // Carry the same verified address as the first — which no provider issues twice
 const providerIdAccountIdMap = computed(() => new Map(accounts.value?.map(({ id, providerId }) => [providerId, id])));
 const linkedAccountCount = computed(() => accounts.value?.length ?? 0);
-// A link the provider or the callback rejects comes back as a redirect carrying `?error=<code>`, so its
-// Outcome never reaches the promise the button awaited
+// The account leaves the list as its unlink is sent, and comes back if the server refuses it
+const omitAccount = (accountId: string) =>
+  applyOptimisticReplacement(accounts, (previousAccounts) => previousAccounts.filter(({ id }) => id !== accountId));
+// A link the provider or the callback rejects comes back as a redirect carrying `?error=<code>`, so its outcome never
+// Reaches the write that issued it
 const linkError = router.currentRoute.value.query.error;
 if (typeof linkError === "string") {
   createAlert(AccountLinkErrorMessageMap[linkError] ?? "Your account could not be linked.", "error");
@@ -60,38 +62,29 @@ if (typeof linkError === "string") {
           :is-pending="checkIsPending(loginButtonProps.provider) ? true : undefined"
           :linked-account-count
           @link="
-            async () => {
-              await executeProviderMutation(
-                () =>
-                  executeMutation(
-                    () =>
-                      requireAuthData(
-                        linkSocial({
-                          callbackURL: RoutePath.UserSettings,
-                          errorCallbackURL: RoutePath.UserSettings,
-                          provider: loginButtonProps.provider,
-                        }),
-                      ),
-                    { key: LINKED_ACCOUNTS_MUTATION_KEY },
-                  ),
-                { key: loginButtonProps.provider },
-              );
-            }
+            executeMutation(
+              () =>
+                requireAuthData(
+                  linkSocial({
+                    callbackURL: RoutePath.UserSettings,
+                    errorCallbackURL: RoutePath.UserSettings,
+                    provider: loginButtonProps.provider,
+                  }),
+                ),
+              // The provider's address is minted by the server, and the browser is sent to it once it arrives. Keyed by
+              // The provider, so the row that asked is the one that reads pending
+              { awaitedBecause: AwaitedReason.ServerIssuedValue, key: loginButtonProps.provider },
+            )
           "
           @unlink="
-            async () => {
+            () => {
               const accountId = providerIdAccountIdMap.get(loginButtonProps.provider);
               if (!accountId) return;
-              await executeProviderMutation(
-                () =>
-                  executeMutation(() => requireAuthData(unlinkAccount({ accountId })), {
-                    key: LINKED_ACCOUNTS_MUTATION_KEY,
-                    onSuccess: async () => {
-                      await refresh();
-                    },
-                  }),
-                { key: loginButtonProps.provider },
-              );
+              executeMutation(() => requireAuthData(unlinkAccount({ accountId })), {
+                applyOptimistic: () => omitAccount(accountId),
+                // Unlinks share one queue, so the server's check that one account is left reads the one before it
+                key: LINKED_ACCOUNTS_MUTATION_KEY,
+              });
             }
           "
         />

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { MutationStatus } from "#src/models/shared/MutationStatus";
 import { getEarliestScheduledAt } from "#src/services/message/getEarliestScheduledAt";
 import { UiRules } from "#src/services/ui/UiRules";
 import { useScheduledMessageJobDialogStore } from "#src/store/message/input/scheduledMessageJobDialog";
 import { useRoomStore } from "#src/store/message/room/index";
 import { ScheduledMessageJobType } from "@esposter/db-schema";
+import { noop } from "@esposter/shared";
 import { marked } from "marked";
 
 const textRules = [UiRules.required()];
@@ -23,12 +23,13 @@ const setDefaultScheduledAt = () => {
   minScheduledAt.value = new Date(scheduledAt.value);
 };
 const { executeMutation } = useMutation();
-// Server-scheduled job — non-optimistic
-const scheduleJob = async () => {
+// The dialog closes as the job is sent. A refused schedule is the write's alert, and the text stays in the dialog, so
+// Opening it again retries from the earliest time
+const scheduleJob = () => {
   const roomId = currentRoomId.value;
-  if (!roomId) return true;
+  if (!roomId) return;
 
-  const outcome = await executeMutation(
+  executeMutation(
     async () =>
       isReminder.value
         ? await $trpc.message.scheduledMessageJob.scheduleReminder.mutate({
@@ -42,10 +43,8 @@ const scheduleJob = async () => {
             roomId,
             runAt: scheduledAt.value,
           }),
-    { key: Symbol("scheduleJob") },
+    { applyOptimistic: () => noop, key: Symbol("scheduleJob") },
   );
-  // A failed schedule keeps the dialog open with the time and text intact so the user can retry
-  return outcome.status === MutationStatus.Succeeded;
 };
 
 watch(isOpen, (newIsOpen) => {

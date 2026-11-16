@@ -15,12 +15,12 @@ export const useRestoreResources = (refresh?: () => Promise<void>) => {
   const cacheStore = useCacheStore();
   const { invalidateTags } = cacheStore;
   const notificationStore = useNotificationStore();
-  const { createErrorNotification, createNotification } = notificationStore;
+  const { createErrorNotification, createNotification, dismissNotification } = notificationStore;
   const { checkIsPending: checkIsRestorePending, executeMutation: executeRestoreResourcesMutation } = useMutation();
-  const restoreResources = async (resources: ResourceInResource[]) => {
+  const restoreResources = (resources: ResourceInResource[]) => {
     const ids = resources.map(({ id }) => id);
     const firstResource = takeOne(resources);
-    await executeRestoreResourcesMutation(
+    executeRestoreResourcesMutation(
       async () => {
         // Chunked to the server's per-call cap as the delete that binned them was
         for (let offset = 0; offset < ids.length; offset += MAX_READ_LIMIT)
@@ -28,6 +28,20 @@ export const useRestoreResources = (refresh?: () => Promise<void>) => {
           await $trpc.resource.restoreResources.mutate({ ids: ids.slice(offset, offset + MAX_READ_LIMIT) });
       },
       {
+        // The toast shows at once, while the rows it brings back are the server's to return, in its order
+        applyOptimistic: () => {
+          const notificationId = createNotification({
+            // A batch is back in the list it was deleted from, so only a single resource names where it went
+            ...(resources.length === 1
+              ? { action: { title: "Go to resource", to: RoutePath.Resource(firstResource.id) } }
+              : {}),
+            severity: NotificationSeverity.Success,
+            title: ResourceOperationTitleMap[ResourceOperationType.Restored](firstResource.name, resources.length),
+          });
+          return () => {
+            dismissNotification(notificationId);
+          };
+        },
         // The rows are reachable again, so every cache of which resources are live is stale — the stars and the
         // Recently-opened set reconcile themselves off this tag
         invalidates: [CacheTag.Resources],
@@ -41,15 +55,8 @@ export const useRestoreResources = (refresh?: () => Promise<void>) => {
           await invalidateTags([CacheTag.Resources]);
           await refresh?.();
         },
-        onSuccess: async () => {
-          createNotification({
-            // A batch is back in the list it was deleted from, so only a single resource names where it went
-            ...(resources.length === 1
-              ? { action: { title: "Go to resource", to: RoutePath.Resource(firstResource.id) } }
-              : {}),
-            severity: NotificationSeverity.Success,
-            title: ResourceOperationTitleMap[ResourceOperationType.Restored](firstResource.name, resources.length),
-          });
+        // The list re-reads once the restore is kept, since where the restored rows sort is the server's to say
+        reconcile: async () => {
           await refresh?.();
         },
       },

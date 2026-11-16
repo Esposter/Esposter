@@ -25,7 +25,6 @@ const { isOpen, item: role } = useSingletonDialog(deletingId, () =>
     confirm-label="Delete"
     title="Delete role"
     :confirm="() => role && deleteRole({ roomId, id: role.id })"
-    is-optimistic
   >
     <p>Are you sure you want to delete {{ role.name }}?</p>
   </UiConfirmDialog>

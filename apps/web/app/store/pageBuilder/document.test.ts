@@ -5,7 +5,7 @@ import { TEST_LANG } from "#shared/services/pageBuilder/constants.test";
 import { webpageKind } from "#src/services/pageBuilder/webpageKind";
 import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
 import { v7 } from "uuid";
-import { describe, expect, test, vi } from "vitest";
+import { describe, expect, test } from "vitest";
 
 describe(usePageBuilderDocumentStore, () => {
   const TEST_OTHER_LANG = "a";
@@ -27,30 +27,5 @@ describe(usePageBuilderDocumentStore, () => {
 
     expect(getDocument(firstResourceId)).toStrictEqual(changedDocument);
     expect(getDocument(secondResourceId)).toStrictEqual(secondDocument);
-  });
-
-  test("a save hands the writer the document held for its resource", async () => {
-    expect.hasAssertions();
-
-    const resourceId = v7();
-    const document: WebpageDocument = { content: [], root: { props: { lang: TEST_LANG, tokens: {} } } };
-    const writeDocument = vi.fn<(document: WebpageDocument) => Promise<void>>().mockResolvedValue(undefined);
-    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    const { saveDocument, setDocument } = pageBuilderDocumentStore;
-    setDocument(resourceId, webpageKind, document);
-    await saveDocument(resourceId, writeDocument);
-
-    expect(writeDocument).toHaveBeenCalledExactlyOnceWith(document);
-  });
-
-  test("a save writes nothing for a resource whose document is not held", async () => {
-    expect.hasAssertions();
-
-    const writeDocument = vi.fn<(document: WebpageDocument) => Promise<void>>().mockResolvedValue(undefined);
-    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    const { saveDocument } = pageBuilderDocumentStore;
-    await saveDocument(v7(), writeDocument);
-
-    expect(writeDocument).not.toHaveBeenCalled();
   });
 });

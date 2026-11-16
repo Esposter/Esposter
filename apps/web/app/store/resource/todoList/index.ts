@@ -43,10 +43,10 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
     computed(() => items.value),
     ["id"],
   );
-  // One write path: item edits mutate the content blob, then persist it wholesale (revert on failure).
-  // The dialog closes only on success so a failed save/delete keeps the user's draft open for retry.
-  const saveItem = async (isDeleteAction?: true) => {
-    if (!editedItem.value) return false;
+  // One write path: item edits mutate the content blob, then persist it wholesale, and a refused save reverts the item.
+  // The dialog closes as the save is sent, so a refused edit is not held open as a draft for a retry.
+  const saveItem = (isDeleteAction?: true) => {
+    if (!editedItem.value) return;
 
     const { id } = editedItem.value;
     // The unwind is this write's own item rather than a copy of the whole blob: another device's save is
@@ -65,75 +65,83 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
     else if (previousItem) updateItem(editedItem.value);
     else createItem(editedItem.value);
 
-    const isSuccessful = await saveTodoList();
-    if (isSuccessful) isEditFormDialogOpen.value = false;
-    else if (!previousItem) deleteItem({ id });
-    // Against the list as it stands — another device's save reloads the list mid-flight, and that content is kept
-    else if (isDeleteAction) items.value = getRestoredItems(items.value, previousItem, previousIndex);
-    // Reloaded content never held this edit, so its copy of the item is left as that device saved it
-    else if (todoList.value === writtenTodoList) updateItem(previousItem);
-    return isSuccessful;
+    saveTodoList(() => {
+      // A refused create takes its row back out, and a refused edit puts the item back as it was
+      if (!previousItem) deleteItem({ id });
+      // Against the list as it stands — another device's save reloads the list mid-flight, and that content is kept
+      else if (isDeleteAction) items.value = getRestoredItems(items.value, previousItem, previousIndex);
+      // Reloaded content never held this edit, so its copy of the item is left as that device saved it
+      else if (todoList.value === writtenTodoList) updateItem(previousItem);
+    });
   };
   // A todo added by its name alone, from the field above the list, at the foot of the list as the dialog's add is. A
   // Name of only whitespace, or past the limit the dialog's name field holds, adds nothing, and a refused save takes
   // The new todo back out
-  const addItem = async (name: string) => {
+  // `onRefused` hands the field its text back, whether the name is one a todo cannot take or the save is refused
+  const addItem = (name: string, onRefused?: () => void) => {
     const normalizedName = normalizeString(name);
-    if (!normalizedName || normalizedName.length > ITEM_NAME_MAX_LENGTH) return false;
+    if (!normalizedName || normalizedName.length > ITEM_NAME_MAX_LENGTH) {
+      onRefused?.();
+      return;
+    }
 
     const item = new TodoListItem({ name: normalizedName });
     createItem(item);
-    const isSuccessful = await saveTodoList();
-    if (!isSuccessful) deleteItem({ id: item.id });
-    return isSuccessful;
+    saveTodoList(() => {
+      deleteItem({ id: item.id });
+      onRefused?.();
+    });
   };
   // One field of one todo written from its row, with no dialog, and a refused save puts back the value it had — unless
   // Another device's content was reloaded mid-flight, which replaces the rows and never held this write
-  const setItemValue = async <TKey extends keyof TodoListItem>(
+  const setItemValue = <TKey extends keyof TodoListItem>(
     id: TodoListItem["id"],
     key: TKey,
     getValue: (item: TodoListItem) => TodoListItem[TKey],
   ) => {
     const item = items.value.find((todo) => todo.id === id);
-    if (!item) return false;
+    if (!item) return;
 
     const previousValue = item[key];
     const writtenTodoList = todoList.value;
     item[key] = getValue(item);
-    const isSuccessful = await saveTodoList();
-    if (!isSuccessful && todoList.value === writtenTodoList) item[key] = previousValue;
-    return isSuccessful;
+    saveTodoList(() => {
+      if (todoList.value === writtenTodoList) item[key] = previousValue;
+    });
   };
   // A tick or an untick: completedAt is set to now or cleared — except the tick of a repeating todo, which rolls to its
   // Next due date in the browser's time zone. A refused save puts both back, unless another device's content was
   // Reloaded mid-flight
-  const toggleCompleted = async (id: TodoListItem["id"]) => {
+  const toggleCompleted = (id: TodoListItem["id"]) => {
     const item = items.value.find((todo) => todo.id === id);
-    if (!item || !checkRollsOnTick(item))
-      return setItemValue(id, "completedAt", ({ completedAt }) => (completedAt ? undefined : new Date()));
+    if (!item || !checkRollsOnTick(item)) {
+      setItemValue(id, "completedAt", ({ completedAt }) => (completedAt ? undefined : new Date()));
+      return;
+    }
 
     const { dueAt, steps } = item;
     const writtenTodoList = todoList.value;
     rollRecurringItem(item, Intl.DateTimeFormat().resolvedOptions().timeZone);
-    const isSuccessful = await saveTodoList();
-    if (!isSuccessful && todoList.value === writtenTodoList) {
-      item.dueAt = dueAt;
-      if (steps) item.steps = steps;
-    }
-    return isSuccessful;
+    saveTodoList(() => {
+      if (todoList.value === writtenTodoList) {
+        item.dueAt = dueAt;
+        if (steps) item.steps = steps;
+      }
+    });
   };
-  const toggleImportant = (id: TodoListItem["id"]) =>
+  const toggleImportant = (id: TodoListItem["id"]) => {
     setItemValue(id, "isImportant", ({ isImportant }) => (isImportant ? undefined : true));
+  };
   // Some todos put in a new order, by a drag or a key, each taking the next of the places they held; a refused save
   // Puts them back in the order they had, over whatever the list holds by then — unless that is another device's
   // Content, reloaded mid-flight, whose order never held this one
-  const reorderItems = async (orderedIds: TodoListItem["id"][]) => {
+  const reorderItems = (orderedIds: TodoListItem["id"][]) => {
     const previousIds = items.value.filter(({ id }) => orderedIds.includes(id)).map(({ id }) => id);
     const writtenTodoList = todoList.value;
     items.value = getReorderedItems(items.value, orderedIds);
-    const isSuccessful = await saveTodoList();
-    if (!isSuccessful && todoList.value === writtenTodoList) items.value = getReorderedItems(items.value, previousIds);
-    return isSuccessful;
+    saveTodoList(() => {
+      if (todoList.value === writtenTodoList) items.value = getReorderedItems(items.value, previousIds);
+    });
   };
   // How the viewer sorts the open todos, a view over the list that never reorders it
   const sort = useLocalStorage<TodoListSort>(
@@ -142,13 +150,12 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
   );
   // A confirmed delete from outside the dialog — one todo's context menu, or Delete completed — putting each refused
   // Row back where it stood, in the order they stood, so every later index lands where it was
-  const deleteItems = async (ids: TodoListItem["id"][]) => {
+  const deleteItems = (ids: TodoListItem["id"][]) => {
     const removedItems = items.value.flatMap((item, index) => (ids.includes(item.id) ? [{ index, item }] : []));
     items.value = items.value.filter(({ id }) => !ids.includes(id));
-    const isSuccessful = await saveTodoList();
-    if (!isSuccessful)
+    saveTodoList(() => {
       for (const { index, item } of removedItems) items.value = getRestoredItems(items.value, item, index);
-    return isSuccessful;
+    });
   };
   return {
     addItem,

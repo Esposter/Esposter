@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { MAX_BLUEPRINT_ENTRIES } from "#shared/services/resource/blueprint/constants";
 import { pluralize } from "#shared/util/text/pluralize";
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { MutationStatus } from "#src/models/shared/MutationStatus";
 import { UiRules } from "#src/services/ui/UiRules";
 import { useNotificationStore } from "#src/store/notification";
@@ -35,6 +36,7 @@ onUnmounted(() => {
 <template>
   <StyledFormDialog
     v-model="isOpen"
+    :awaited-because="AwaitedReason.ServerIssuedValue"
     confirm-label="Create"
     :is-confirm-disabled="overLimitCount > 0 || undefined"
     title="Save as blueprint"
@@ -43,6 +45,7 @@ onUnmounted(() => {
         const outcome = await executeMutation(
           () => $trpc.blueprint.captureBlueprint.mutate({ ids: captureIds, name }),
           {
+            awaitedBecause: AwaitedReason.ServerIssuedValue,
             key: Symbol('captureBlueprint'),
             onError: createErrorNotification,
             onSuccess: async (newBlueprint) => {

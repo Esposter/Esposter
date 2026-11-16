@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { UserStatus } from "@esposter/db-schema";
 
-import { MutationStatus } from "#src/models/shared/MutationStatus";
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { authClient } from "#src/services/auth/authClient";
 import { SelectableStatusDefinitionList } from "#src/services/message/user/status/SelectableStatusDefinitionList";
 import { StatusIconMap } from "#src/services/message/user/status/StatusIconMap";
 import { StatusTokenMap } from "#src/services/message/user/status/StatusTokenMap";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { UiRules } from "#src/services/ui/UiRules";
 import { useStatusStore } from "#src/store/message/user/status";
 import { STATUS_MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
@@ -37,7 +37,7 @@ const statusItems = SelectableStatusDefinitionList.map(({ label, status, subtitl
 const selectedStatuses = computed(() => [editedStatus.value.status]);
 const isValid = ref(true);
 const { executeMutation } = useMutation();
-const save = async () => {
+const save = () => {
   // Every piece of bookkeeping below is keyed by the user: the queue key, the optimistic read, the row the
   // Rollback restores. Without a session there is no key to write under, and the mutation would only be
   // Refused anyway — so the save is not attempted rather than filed against `""`
@@ -45,9 +45,9 @@ const save = async () => {
 
   emit("save");
   const input = { ...editedStatus.value };
-  const { status } = await executeMutation(() => $trpc.user.upsertStatus.mutate(input), {
+  executeMutation(() => $trpc.user.upsertStatus.mutate(input), {
     // Nothing is applied when there is no record yet — the row carries fields only the server can fill in, so a
-    // First status is left to onSuccess
+    // First status is left to reconcile
     applyOptimistic: () => {
       const previousStatus = getStoredUserStatus(userId.value);
       if (!previousStatus) return noop;
@@ -61,13 +61,17 @@ const save = async () => {
       };
     },
     key: userId.value,
-    onSuccess: ({ userId: upsertedUserId, ...rest }) => {
+    // A rollback moves the row and the clone follows it, but a first status the server refuses leaves no row to roll
+    // Back — re-seed from the row either way, or that one case reopens the popover showing a refused value
+    onError: (error) => {
+      createErrorAlert(error);
+      syncEditedStatus();
+    },
+    // The row the server answers with is stored once it lands, which is the only copy of a first status
+    reconcile: ({ userId: upsertedUserId, ...rest }) => {
       storeStatus(upsertedUserId, rest);
     },
   });
-  // A rollback moves the row and the clone follows it, but a first status the server refuses leaves no row to
-  // Roll back — re-seed from the row either way, or that one case reopens the popover showing a refused value
-  if (status === MutationStatus.Failed) syncEditedStatus();
 };
 </script>
 

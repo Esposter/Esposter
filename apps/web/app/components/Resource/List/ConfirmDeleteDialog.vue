@@ -5,7 +5,7 @@ import { pluralize } from "#shared/util/text/pluralize";
 import { useListDialogStore } from "#src/store/resource/listDialog";
 
 interface Props {
-  deleteResources: (resources: ResourceInResource[]) => Promise<void>;
+  deleteResources: (resources: ResourceInResource[]) => void;
   resources: ResourceInResource[];
 }
 
@@ -25,7 +25,6 @@ const { isOpen, item: deletingResources } = useSingletonDialog(deletingIds, () =
     confirm-label="Delete"
     title="Delete resources"
     :confirm="() => deletingResources && deleteResources(deletingResources)"
-    is-optimistic
   >
     <p>
       Move

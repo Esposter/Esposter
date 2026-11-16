@@ -27,85 +27,85 @@ describe(useVolumeStore, () => {
     saveDungeons.mockClear();
   });
 
-  test("setVolume clamps the volume to the range it can take and saves it", async () => {
+  test("setVolume clamps the volume to the range it can take and saves it", () => {
     expect.hasAssertions();
 
     const settingsStore = useSettingsStore();
     const volumeStore = useVolumeStore();
-    await volumeStore.setVolume(120);
+    volumeStore.setVolume(120);
 
     expect(settingsStore.settings[SettingsOption.VolumePercentage]).toBe(100);
 
-    await volumeStore.setVolume(-5);
+    volumeStore.setVolume(-5);
 
     expect(settingsStore.settings[SettingsOption.VolumePercentage]).toBe(0);
     expect(saveDungeons).toHaveBeenCalledTimes(2);
   });
 
-  test("a held direction changes the volume once per cooldown, not once per call", async () => {
+  test("a held direction changes the volume once per cooldown, not once per call", () => {
     expect.hasAssertions();
 
     const settingsStore = useSettingsStore();
     const volumeStore = useVolumeStore();
-    await volumeStore.updateVolume(Direction.LEFT, 0);
+    volumeStore.updateVolume(Direction.LEFT, 0);
 
     expect(settingsStore.settings[SettingsOption.VolumePercentage]).toBe(39);
 
-    await volumeStore.updateVolume(Direction.LEFT, 0);
+    volumeStore.updateVolume(Direction.LEFT, 0);
 
     expect(settingsStore.settings[SettingsOption.VolumePercentage]).toBe(39);
   });
 
-  test("right raises the volume and left lowers it, stopping at the bottom", async () => {
+  test("right raises the volume and left lowers it, stopping at the bottom", () => {
     expect.hasAssertions();
 
     const settingsStore = useSettingsStore();
     const volumeStore = useVolumeStore();
     settingsStore.settings[SettingsOption.VolumePercentage] = 0;
-    await volumeStore.updateVolume(Direction.LEFT, 0);
+    volumeStore.updateVolume(Direction.LEFT, 0);
 
     expect(settingsStore.settings[SettingsOption.VolumePercentage]).toBe(0);
     expect(saveDungeons).not.toHaveBeenCalled();
 
-    await volumeStore.updateVolume(Direction.RIGHT, 0);
+    volumeStore.updateVolume(Direction.RIGHT, 0);
 
     expect(settingsStore.settings[SettingsOption.VolumePercentage]).toBe(1);
   });
 
-  test("right stops at the top of the volume range without saving", async () => {
+  test("right stops at the top of the volume range without saving", () => {
     expect.hasAssertions();
 
     const settingsStore = useSettingsStore();
     const volumeStore = useVolumeStore();
     settingsStore.settings[SettingsOption.VolumePercentage] = 100;
-    await volumeStore.updateVolume(Direction.RIGHT, 0);
+    volumeStore.updateVolume(Direction.RIGHT, 0);
 
     expect(settingsStore.settings[SettingsOption.VolumePercentage]).toBe(100);
     expect(saveDungeons).not.toHaveBeenCalled();
   });
 
-  test("up and down leave the volume alone", async () => {
+  test("up and down leave the volume alone", () => {
     expect.hasAssertions();
 
     const settingsStore = useSettingsStore();
     const volumeStore = useVolumeStore();
-    await volumeStore.updateVolume(Direction.UP, 0);
-    await volumeStore.updateVolume(Direction.DOWN, 0);
+    volumeStore.updateVolume(Direction.UP, 0);
+    volumeStore.updateVolume(Direction.DOWN, 0);
 
     expect(settingsStore.settings[SettingsOption.VolumePercentage]).toBe(40);
     expect(saveDungeons).not.toHaveBeenCalled();
   });
 
-  test("lifting the key starts the next hold at once rather than waiting out the old cooldown", async () => {
+  test("lifting the key starts the next hold at once rather than waiting out the old cooldown", () => {
     expect.hasAssertions();
 
     const settingsStore = useSettingsStore();
     const volumeStore = useVolumeStore();
-    await volumeStore.updateVolume(Direction.LEFT, 0);
+    volumeStore.updateVolume(Direction.LEFT, 0);
 
     expect(volumeStore.checkIsUpdateVolume(Direction.UP, SettingsOption.VolumePercentage)).toBe(false);
 
-    await volumeStore.updateVolume(Direction.LEFT, 0);
+    volumeStore.updateVolume(Direction.LEFT, 0);
 
     expect(settingsStore.settings[SettingsOption.VolumePercentage]).toBe(38);
   });

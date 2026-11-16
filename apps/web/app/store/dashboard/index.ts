@@ -13,14 +13,16 @@ export const useDashboardStore = defineStore("dashboard", () => {
     // Strips methods), so the class is rebuilt here rather than assumed — see the ToData note on the schema
     (data) => new Dashboard(data as Partial<Dashboard> | undefined),
   );
-  // The layout settings are written onto the dashboard they were chosen on, and taken back there if the save is refused
-  const setLayout = async (layout: Pick<Dashboard, "collision" | "compactType">) => {
+  // The layout settings are written onto the dashboard they were chosen on, and taken back there if the save is refused.
+  // Saves queue, so a setting a later write changed since is that write's to keep
+  const setLayout = (layout: Pick<Dashboard, "collision" | "compactType">) => {
     const target = dashboard.value;
     const previousLayout = { collision: target.collision, compactType: target.compactType };
     Object.assign(target, layout);
-    const isSuccessful = await saveDashboard();
-    if (!isSuccessful) Object.assign(target, previousLayout);
-    return isSuccessful;
+    saveDashboard(() => {
+      if (target.collision === layout.collision) target.collision = previousLayout.collision;
+      if (target.compactType === layout.compactType) target.compactType = previousLayout.compactType;
+    });
   };
   return { dashboard, loadContent, saveDashboard, setLayout };
 });

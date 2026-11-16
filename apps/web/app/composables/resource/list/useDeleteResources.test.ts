@@ -10,6 +10,16 @@ import { RoutePath } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
+// The refresh a write runs once it settles, announcing its call so a test awaits that rather than polling for it
+const createRefresh = () => {
+  const { promise: isCalled, resolve: onCalled } = Promise.withResolvers<void>();
+  const refresh = vi.fn<() => Promise<void>>(() => {
+    onCalled();
+    return Promise.resolve();
+  });
+  return { isCalled, refresh };
+};
+
 describe(useDeleteResources, () => {
   const { trpcMsw } = setupMswTrpc();
   let router: Router;
@@ -34,10 +44,18 @@ describe(useDeleteResources, () => {
     expect.hasAssertions();
 
     Object.assign(router.currentRoute.value.params, { id: resource.id });
-    const push = vi.spyOn(router, "push").mockResolvedValue(undefined);
-    await useDeleteResources(ref([resource]), ref(1), () => Promise.resolve())([resource]);
+    const { promise: isPushed, resolve: onPushed } = Promise.withResolvers<void>();
+    const push = vi.spyOn(router, "push").mockImplementation(() => {
+      onPushed();
+      return Promise.resolve(undefined);
+    });
+    const { isCalled, refresh } = createRefresh();
+    useDeleteResources(ref([resource]), ref(1), refresh)([resource]);
 
+    // The navigation is made by the removal, and the refresh runs once the delete is kept, so both are awaited
+    await Promise.all([isPushed, isCalled]);
     expect(push).toHaveBeenCalledExactlyOnceWith(RoutePath.ResourceExplorerAll);
+    expect(refresh).toHaveBeenCalledTimes(1);
   });
 
   // The ids go out chunk-by-chunk and each chunk commits independently, so a failure still leaves earlier
@@ -57,9 +75,11 @@ describe(useDeleteResources, () => {
     const favoriteStore = useFavoriteStore();
     const { readFavorites: readCachedFavorites } = favoriteStore;
     await readCachedFavorites();
-    const refresh = vi.fn<() => Promise<void>>(() => Promise.resolve());
-    await useDeleteResources(ref([resource]), ref(1), refresh)([resource]);
+    const { isCalled, refresh } = createRefresh();
+    useDeleteResources(ref([resource]), ref(1), refresh)([resource]);
 
+    // The refresh is the error path's last step, and it runs after the invalidation has re-read the favorites
+    await isCalled;
     expect(readFavorites).toHaveBeenCalledTimes(2);
     expect(refresh).toHaveBeenCalledExactlyOnceWith();
   });
@@ -77,9 +97,21 @@ describe(useDeleteResources, () => {
     });
     const items = ref([resource, otherResource]);
     const count = ref(2);
-    const deleteResources = useDeleteResources(items, count, () => Promise.resolve());
-    await Promise.all([deleteResources([resource]), deleteResources([otherResource])]);
+    // Each write refreshes once it has settled, the failed one from its rollback's error path and the kept one from its
+    // Reconcile, so both have settled once the refresh has run twice
+    const { promise: isBothSettled, resolve: onBothSettled } = Promise.withResolvers<void>();
+    let settledCount = 0;
+    const refresh = vi.fn<() => Promise<void>>(() => {
+      settledCount += 1;
+      if (settledCount === 2) onBothSettled();
+      return Promise.resolve();
+    });
+    const deleteResources = useDeleteResources(items, count, refresh);
+    deleteResources([resource]);
+    deleteResources([otherResource]);
 
+    // The failed delete's rollback is the last change, once both removals have been applied
+    await isBothSettled;
     expect(items.value).toStrictEqual([resource]);
     // Untouched by either write, failed or landed: the total belongs to whatever read last counted it
     expect(count.value).toBe(2);
@@ -94,13 +126,16 @@ describe(useDeleteResources, () => {
     const items = ref([resource, otherResource]);
     const count = ref(2);
     // The rows on other pages are what makes the total more than this page's length
+    const { promise: isRefreshed, resolve: onRefreshed } = Promise.withResolvers<void>();
     const refresh = vi.fn<() => Promise<void>>(() => {
       count.value = 3;
+      onRefreshed();
       return Promise.resolve();
     });
-    await useDeleteResources(items, count, refresh)([resource]);
+    useDeleteResources(items, count, refresh)([resource]);
 
-    expect(refresh).toHaveBeenCalledExactlyOnceWith();
+    await isRefreshed;
+    expect(refresh).toHaveBeenCalledTimes(1);
     expect(count.value).toBe(3);
   });
 
@@ -109,8 +144,11 @@ describe(useDeleteResources, () => {
 
     Object.assign(router.currentRoute.value.params, { id: resource.id });
     const push = vi.spyOn(router, "push").mockResolvedValue(undefined);
-    await useDeleteResources(ref([otherResource]), ref(1), () => Promise.resolve())([otherResource]);
+    const { isCalled, refresh } = createRefresh();
+    useDeleteResources(ref([otherResource]), ref(1), refresh)([otherResource]);
 
+    // The navigation decision is made when the removal is applied, before the refresh that the kept delete runs
+    await isCalled;
     expect(push).not.toHaveBeenCalled();
   });
 });

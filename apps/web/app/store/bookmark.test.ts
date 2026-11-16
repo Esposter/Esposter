@@ -2,6 +2,7 @@
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useBookmarkStore } from "#src/store/bookmark";
 import { TRPCError } from "@trpc/server";
+import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 
 describe(useBookmarkStore, () => {
@@ -18,7 +19,8 @@ describe(useBookmarkStore, () => {
     const bookmarkStore = useBookmarkStore();
     const { bookmarks } = storeToRefs(bookmarkStore);
     const { toggleBookmark } = bookmarkStore;
-    await toggleBookmark({ path, title });
+    toggleBookmark({ path, title });
+    await flushPromises();
 
     expect(bookmarks.value).toStrictEqual([]);
   });
@@ -36,7 +38,9 @@ describe(useBookmarkStore, () => {
     const bookmarkStore = useBookmarkStore();
     const { bookmarks } = storeToRefs(bookmarkStore);
     const { toggleBookmark } = bookmarkStore;
-    await Promise.all([toggleBookmark({ path, title }), toggleBookmark({ path, title })]);
+    toggleBookmark({ path, title });
+    toggleBookmark({ path, title });
+    await flushPromises();
 
     expect(bookmarks.value).toStrictEqual([{ isAvailable: true, path, title }]);
   });

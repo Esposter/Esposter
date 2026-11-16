@@ -32,15 +32,22 @@ export const useEmailEditorStore = defineStore("emailEditor", () => {
   const datasetReference = computed(() => emailEditor.value.datasetReference);
   // The document the page builder holds is written back as the content's body and head, with the dataset binding the
   // Content keeps beside them. Nothing is written for a resource whose document is not held
-  const saveEmail = (resourceId: string) =>
-    pageBuilderDocumentStore.saveEmailDocument(resourceId, async (document) => {
-      emailEditor.value.content = document.content;
-      emailEditor.value.root = document.root;
-      await saveContent();
+  const saveEmail = (resourceId: string) => {
+    const document = pageBuilderDocumentStore.getEmailDocument(resourceId);
+    if (!document) return;
+
+    emailEditor.value.content = document.content;
+    emailEditor.value.root = document.root;
+    saveContent();
+  };
+  // A refused save unbinds the dataset again, unless a later binding has replaced it since
+  const saveDatasetReference = (newDatasetReference: DatasetReference | undefined) => {
+    const target = emailEditor.value;
+    const previousDatasetReference = target.datasetReference;
+    target.datasetReference = newDatasetReference;
+    saveContent(() => {
+      if (target.datasetReference === newDatasetReference) target.datasetReference = previousDatasetReference;
     });
-  const saveDatasetReference = async (newDatasetReference: DatasetReference | undefined) => {
-    emailEditor.value.datasetReference = newDatasetReference;
-    await saveContent();
   };
   return { datasetReference, loadContent, saveDatasetReference, saveEmail };
 });

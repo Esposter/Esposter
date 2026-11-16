@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import type { Promisable } from "type-fest";
 
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
@@ -6,15 +7,14 @@ import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
 import { UiDialogSize } from "#src/models/ui/UiDialogSize";
 
 interface Props {
-  // What answering does, awaited unless the write is optimistic (useDialogAnswer)
+  // Why answering waits for the server, from the closed set; without one the dialog closes as its write is sent
+  awaitedBecause?: AwaitedReason;
+  // What answering does (useDialogAnswer)
   confirm: () => Promisable<unknown>;
   // What confirming does, in the danger variant: "Delete"
   confirmLabel: string;
   // What the reader types before the answer enables, for an act worth the pause: the name of what it destroys
   confirmName?: string;
-  // The write shows on screen before the server answers, so waiting for it would only hold a dialog over a change
-  // Already made; a rejection is answered by its rollback and toast
-  isOptimistic?: true;
   // How wide the dialog stands, Medium when none is named
   size?: UiDialogSize;
   title: string;
@@ -49,7 +49,7 @@ watch(isOpen, (newIsOpen) => {
         :disabled="typedName !== confirmName"
         :is-pending
         :variant="UiButtonVariant.Danger"
-        @click="answer(confirm, isOptimistic)"
+        @click="answer(confirm, awaitedBecause)"
       >
         {{ confirmLabel }}
       </UiButton>

@@ -7,7 +7,7 @@ import type { DatabaseIndexName } from "@esposter/shared";
 import { getCachedItems } from "#src/services/cache/indexedDb/getCachedItems";
 import { readIndexedDb } from "#src/services/cache/indexedDb/readIndexedDb";
 import { writeIndexedDb } from "#src/services/cache/indexedDb/writeIndexedDb";
-import { getSynchronizedFunction } from "@esposter/shared";
+import { getSynchronizedFunction, noop } from "@esposter/shared";
 
 export const usePaginationCache = <
   TStore extends IndexedDbStoreName,
@@ -26,15 +26,19 @@ export const usePaginationCache = <
   // Neither half of the cache is something the user acted on — one mirrors a list they are already looking at,
   // The other restores what they already had — so a failure is logged, never alerted
   const onError = console.error;
-  // Both operations are fired from a watcher, so each is adapted to that sync slot rather than floated
-  const writeCachedItems = getSynchronizedFunction(
-    async (newItems: IndexedDbDatabaseSchema[TStore]["value"][], partitionKeyValue: PartitionKey<TStore, TIndex>) => {
-      await executeMutation(() => writeIndexedDb(configuration, newItems, partitionKeyValue), {
-        key: partitionKeyValue,
-        onError,
-      });
-    },
-  );
+  // Nothing on screen waits on the cache, so a write applies nothing at once: the partition's queue alone keeps its
+  // Rewrites in order
+  const writeCachedItems = (
+    newItems: IndexedDbDatabaseSchema[TStore]["value"][],
+    partitionKeyValue: PartitionKey<TStore, TIndex>,
+  ) => {
+    executeMutation(() => writeIndexedDb(configuration, newItems, partitionKeyValue), {
+      applyOptimistic: () => noop,
+      key: partitionKeyValue,
+      onError,
+    });
+  };
+  // The read is fired from a watcher, so it is adapted to that sync slot rather than floated
   const readCachedItems = getSynchronizedFunction(async (newPartitionKey: PartitionKey<TStore, TIndex>) => {
     await executeQuery(() => readIndexedDb(configuration, newPartitionKey), {
       key: newPartitionKey,
@@ -91,6 +95,6 @@ export const usePaginationCache = <
 
     readCachedItems(newPartitionKey);
   });
-  // Nothing to return: both operations are fire-and-forget through getSynchronizedFunction, so a caller that
-  // Needs them landed awaits waitForSynchronizedFunctions() — the drain that already covers every one of them
+  // Nothing to return: both operations are fire-and-forget, so a caller that needs them landed awaits the drain that
+  // Covers every one of them, `waitForSynchronizedFunctions()`
 };

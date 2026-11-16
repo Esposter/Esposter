@@ -12,6 +12,7 @@ import {
   NoiseSuppressionMode,
   VoiceInputMode,
 } from "@esposter/db-schema";
+import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 
@@ -46,7 +47,9 @@ describe(useUserSettingsStore, () => {
     const userSettingsStore = useUserSettingsStore();
     const { readUserSettings, updateUserSettings } = userSettingsStore;
     await readUserSettings();
-    await Promise.all([updateUserSettings({ isMuteOnJoin: true }), updateUserSettings({ isDeafenOnJoin: true })]);
+    updateUserSettings({ isMuteOnJoin: true });
+    updateUserSettings({ isDeafenOnJoin: true });
+    await flushPromises();
 
     expect(userSettingsStore.userSettings).toStrictEqual({ ...userSettings, isDeafenOnJoin: true, isMuteOnJoin: true });
   });

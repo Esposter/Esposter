@@ -4,6 +4,7 @@ import { z } from "zod";
 export const createRoleInputSchema = z.object({
   ...roomIdSchema.shape,
   color: selectRoomRoleInMessageSchema.shape.color.optional(),
+  id: selectRoomRoleInMessageSchema.shape.id,
   name: selectRoomRoleInMessageSchema.shape.name,
   permissions: selectRoomRoleInMessageSchema.shape.permissions.default(0n),
   position: selectRoomRoleInMessageSchema.shape.position.default(0),

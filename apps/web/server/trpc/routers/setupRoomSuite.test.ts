@@ -8,6 +8,7 @@ import { createRoomMember } from "#server/trpc/routers/createRoomMember.test";
 import { roleRouter } from "#server/trpc/routers/role";
 import { roomRouter } from "#server/trpc/routers/room/index";
 import { roomsInMessage } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { afterEach, assert, beforeAll, beforeEach, describe } from "vitest";
 
 // Room-suite fixture: owns the mock context, room/role callers, a fresh room per test, and the
@@ -52,7 +53,7 @@ export const setupRoomSuite = () => {
 
   const setupMemberWithRole = async (permissions: bigint, position: number) => {
     const member = await createMember();
-    const role = await roleCaller.createRole({ name, permissions, position, roomId });
+    const role = await roleCaller.createRole({ id: v7(), name, permissions, position, roomId });
     await roleCaller.assignRole({ roleId: role.id, roomId, userId: member.id });
     return { member, role };
   };

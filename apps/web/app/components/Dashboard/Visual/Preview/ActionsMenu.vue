@@ -35,8 +35,8 @@ const items = computed<Item[]>(() => [
   },
   {
     meaning: UiIconMeaning.Copy,
-    onClick: async () => {
-      await duplicateVisual({ id: visual.id });
+    onClick: () => {
+      duplicateVisual({ id: visual.id });
     },
     title: "Duplicate visual",
   },
@@ -54,8 +54,8 @@ const items = computed<Item[]>(() => [
         {
           isSelected: visual.isAutoHeight,
           meaning: UiIconMeaning.FitToContent,
-          onClick: async () => {
-            await setAutoHeight({ id: visual.id }, !visual.isAutoHeight);
+          onClick: () => {
+            setAutoHeight({ id: visual.id }, !visual.isAutoHeight);
           },
           title: "Fit height to content",
         },

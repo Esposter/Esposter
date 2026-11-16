@@ -11,7 +11,7 @@ import { assert, describe, expect, test } from "vitest";
 describe(useSetDataSource, () => {
   setupCommandTest();
 
-  test("sets the data section", async () => {
+  test("sets the data section", () => {
     expect.hasAssertions();
 
     setupWithDataSource();
@@ -19,12 +19,12 @@ describe(useSetDataSource, () => {
     const getDataSourceSetter = useSetDataSource();
     const setDataSource = getDataSourceSetter();
     const newDataSource = createDataSource();
-    await setDataSource(newDataSource);
+    setDataSource(newDataSource);
 
     expect(sheetStore.dataSource).toStrictEqual(newDataSource);
   });
 
-  test("clears undo and redo history after setting data source", async () => {
+  test("clears undo and redo history after setting data source", () => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDataSource();
@@ -34,7 +34,7 @@ describe(useSetDataSource, () => {
     const sheetHistoryStore = useSheetHistoryStore();
     const { isRedoable, isUndoable } = storeToRefs(sheetHistoryStore);
     const { undo } = sheetHistoryStore;
-    await deleteRow(takeOne(dataSource.rows).id);
+    deleteRow(takeOne(dataSource.rows).id);
 
     expect(isUndoable.value).toBe(true);
 
@@ -42,7 +42,7 @@ describe(useSetDataSource, () => {
 
     expect(isRedoable.value).toBe(true);
 
-    await setDataSource(createDataSource());
+    setDataSource(createDataSource());
 
     expect(isUndoable.value).toBe(false);
     expect(isRedoable.value).toBe(false);
@@ -50,7 +50,7 @@ describe(useSetDataSource, () => {
 
   // An import awaits a revision or a dataset read before it writes, so the reader can have opened another sheet by
   // Then — written there, one sheet's import would replace another's data
-  test("writes nothing once the sheet it was started on is no longer open", async () => {
+  test("writes nothing once the sheet it was started on is no longer open", () => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDataSource();
@@ -61,7 +61,7 @@ describe(useSetDataSource, () => {
     const { clearResource } = resourceStore;
     assert.exists(resource.value);
     clearResource(resource.value.id);
-    await setDataSource(createDataSource([], []));
+    setDataSource(createDataSource([], []));
     const sheetStore = useSheetStore();
 
     expect(sheetStore.dataSource).toStrictEqual(dataSource);

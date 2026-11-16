@@ -5,6 +5,7 @@ import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useEmojiStore } from "#src/store/message/emoji";
 import { noop, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
+import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -72,7 +73,8 @@ describe(useEmojiStore, () => {
     const { setEmojis, toggleEmoji } = emojiStore;
     const emoji = createReaction(isReactor ? [userId] : []);
     setEmojis(roomId, messageId, [emoji]);
-    await toggleEmoji(roomId, emoji);
+    toggleEmoji(roomId, emoji);
+    await flushPromises();
 
     expect(calledProcedures).toStrictEqual([expectedProcedure]);
   });
@@ -92,7 +94,8 @@ describe(useEmojiStore, () => {
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
     setEmojis(roomId, messageId, [createReaction([otherUserId])]);
-    await createEmoji({ emojiTag, messageId, roomId });
+    createEmoji({ emojiTag, messageId, roomId });
+    await flushPromises();
 
     expect(takeOne(getEmojis(roomId, messageId)).userIds).toStrictEqual([otherUserId]);
   });
@@ -117,11 +120,11 @@ describe(useEmojiStore, () => {
       );
     });
     trpcMsw.message.emoji.removeReaction.mutation(() => undefined);
-    const createPromise = createEmoji({ emojiTag, messageId, roomId });
+    createEmoji({ emojiTag, messageId, roomId });
     await addStarted;
-    const deletePromise = deleteEmoji({ emojiTag, messageId, roomId });
+    deleteEmoji({ emojiTag, messageId, roomId });
     resolveAdd(createReaction([userId]));
-    await Promise.all([createPromise, deletePromise]);
+    await flushPromises();
 
     expect(getEmojis(roomId, messageId)).toStrictEqual([]);
   });

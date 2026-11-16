@@ -29,8 +29,8 @@ const isRoleManageable = computed(() => checkIsRoleManageable(roomId, role.posit
       v-if="isDirty"
       @reset="reset()"
       @save="
-        async () => {
-          await updateRole({ id: role.id, permissions, roomId });
+        () => {
+          updateRole({ id: role.id, permissions, roomId });
           settle();
         }
       "

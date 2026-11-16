@@ -3,6 +3,7 @@ import type { SheetResource } from "#shared/models/resource/sheet/SheetResource"
 import type { CreatableResourceType } from "#src/models/resource/CreatableResourceType";
 
 import { ResourceBladeSlug } from "#src/models/resource/ResourceBladeSlug";
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { MutationStatus } from "#src/models/shared/MutationStatus";
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { getResourceBladePath } from "#src/services/resource/getResourceBladePath";
@@ -40,6 +41,8 @@ const submit = async () => {
   if (isDisabled.value) return;
 
   await executeMutation(() => createResource(type, name.value), {
+    // The page navigates to the id the server mints, so the create is awaited for it
+    awaitedBecause: AwaitedReason.ServerIssuedValue,
     // Exclusive, so Enter re-firing the form while the first create is in flight is dropped rather than creating
     // A duplicate resource
     isExclusive: true,
@@ -52,6 +55,7 @@ const submit = async () => {
         return;
       }
 
+      // Which blade the reader lands on depends on whether the server kept the import, so the save is awaited for it
       const saveOutcome = await executeSaveMutation(
         () =>
           $trpc.sheet.saveResourceContent.mutate({
@@ -59,7 +63,7 @@ const submit = async () => {
             contentVersion: resource.contentVersion,
             id: resource.id,
           }),
-        { key: resource.id, onError: createErrorNotification },
+        { awaitedBecause: AwaitedReason.ServerDecidedOutcome, key: resource.id, onError: createErrorNotification },
       );
       // They came to see their rows, so a successful import lands on the Data blade rather than Overview
       await navigateTo(

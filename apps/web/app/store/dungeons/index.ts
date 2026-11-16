@@ -22,9 +22,9 @@ export const useDungeonsStore = defineStore("dungeons", () => {
   });
 
   const save = ref(new Save());
-  const saveData = async () => {
+  const saveData = () => {
     dungeons.value.save = save.value;
-    await saveDungeons();
+    saveDungeons();
   };
 
   const fadeSwitchToScene = (

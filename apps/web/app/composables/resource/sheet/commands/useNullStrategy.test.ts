@@ -13,18 +13,18 @@ describe(useNullStrategy, () => {
   setupCommandTest();
 
   // A null and an empty string are the same "no value" to the strategy, so both spellings take the same branch
-  test.each([null, ""])(`${NullStrategy.ReplaceWithNA} rewrites a %j cell`, async (value) => {
+  test.each([null, ""])(`${NullStrategy.ReplaceWithNA} rewrites a %j cell`, (value) => {
     expect.hasAssertions();
 
     const initialDataSource = createDataSource([createColumn("")], [createRow({ "": value })]);
     const { dataSource } = setupWithDataSource(initialDataSource);
     const nullStrategy = useNullStrategy();
-    await nullStrategy(NullStrategy.ReplaceWithNA);
+    nullStrategy(NullStrategy.ReplaceWithNA);
 
     expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ "": NULL_STRATEGY_NA_VALUE }]);
   });
 
-  test.each([null, ""])(`${NullStrategy.DropRow} drops a row holding a %j cell`, async (value) => {
+  test.each([null, ""])(`${NullStrategy.DropRow} drops a row holding a %j cell`, (value) => {
     expect.hasAssertions();
 
     const initialDataSource = createDataSource(
@@ -33,14 +33,14 @@ describe(useNullStrategy, () => {
     );
     const { dataSource } = setupWithDataSource(initialDataSource);
     const nullStrategy = useNullStrategy();
-    await nullStrategy(NullStrategy.DropRow);
+    nullStrategy(NullStrategy.DropRow);
 
     expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ "": " ", " ": " " }]);
   });
 
   test.each([NullStrategy.ReplaceWithNA, NullStrategy.DropRow])(
     "%s is a no-op when every cell has a value",
-    async (strategy) => {
+    (strategy) => {
       expect.hasAssertions();
 
       const initialDataSource = createDataSource([createColumn("")], [createRow({ "": " " })]);
@@ -48,13 +48,13 @@ describe(useNullStrategy, () => {
       const nullStrategy = useNullStrategy();
       const sheetHistoryStore = useSheetHistoryStore();
       const { isUndoable } = storeToRefs(sheetHistoryStore);
-      await nullStrategy(strategy);
+      nullStrategy(strategy);
 
       expect(isUndoable.value).toBe(false);
     },
   );
 
-  test("description includes the strategy", async () => {
+  test("description includes the strategy", () => {
     expect.hasAssertions();
 
     const initialDataSource = createDataSource([createColumn("")], [createRow({ "": null })]);
@@ -62,7 +62,7 @@ describe(useNullStrategy, () => {
     const nullStrategy = useNullStrategy();
     const sheetHistoryStore = useSheetHistoryStore();
     const { undoDescription } = storeToRefs(sheetHistoryStore);
-    await nullStrategy(NullStrategy.ReplaceWithNA);
+    nullStrategy(NullStrategy.ReplaceWithNA);
 
     expect(undoDescription.value).toBe(`Null Strategy (${NullStrategy.ReplaceWithNA})`);
   });

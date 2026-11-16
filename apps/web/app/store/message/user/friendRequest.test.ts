@@ -9,6 +9,7 @@ import { useBlockStore } from "#src/store/message/user/block";
 import { useFriendStore } from "#src/store/message/user/friend";
 import { useFriendRequestStore } from "#src/store/message/user/friendRequest";
 import { TRPCError } from "@trpc/server";
+import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 interface MockSessionValue {
@@ -101,7 +102,9 @@ describe(useFriendRequestStore, () => {
     const { friendRequests } = storeToRefs(friendRequestStore);
     const { declineFriendRequest } = friendRequestStore;
     friendRequests.value = [firstFriendRequest, secondFriendRequest];
-    await Promise.all([declineFriendRequest(first.id), declineFriendRequest(second.id)]);
+    declineFriendRequest(first.id);
+    declineFriendRequest(second.id);
+    await flushPromises();
 
     expect(friendRequests.value).toStrictEqual([secondFriendRequest]);
     expect(alertStore.alerts).toHaveLength(1);
@@ -118,7 +121,9 @@ describe(useFriendRequestStore, () => {
     const { friendRequests } = storeToRefs(friendRequestStore);
     const { declineFriendRequest } = friendRequestStore;
     friendRequests.value = [firstFriendRequest, secondFriendRequest];
-    await Promise.all([declineFriendRequest(first.id), declineFriendRequest(second.id)]);
+    declineFriendRequest(first.id);
+    declineFriendRequest(second.id);
+    await flushPromises();
 
     expect(friendRequests.value).toStrictEqual([firstFriendRequest]);
   });
@@ -138,7 +143,9 @@ describe(useFriendRequestStore, () => {
     const { friendRequests } = storeToRefs(friendRequestStore);
     const { acceptFriendRequest, declineFriendRequest } = friendRequestStore;
     friendRequests.value = [firstFriendRequest, secondFriendRequest];
-    await Promise.all([acceptFriendRequest(first), declineFriendRequest(second.id)]);
+    acceptFriendRequest(first);
+    declineFriendRequest(second.id);
+    await flushPromises();
 
     expect(friendRequests.value).toStrictEqual([firstFriendRequest]);
     expect(friends.value).toStrictEqual([]);
@@ -158,7 +165,9 @@ describe(useFriendRequestStore, () => {
     const { friendRequests } = storeToRefs(friendRequestStore);
     const { acceptFriendRequest, declineFriendRequest } = friendRequestStore;
     friendRequests.value = [firstFriendRequest, secondFriendRequest];
-    await Promise.all([acceptFriendRequest(first), declineFriendRequest(first.id)]);
+    acceptFriendRequest(first);
+    declineFriendRequest(first.id);
+    await flushPromises();
 
     expect(friendRequests.value).toStrictEqual([secondFriendRequest]);
   });
@@ -181,9 +190,10 @@ describe(useFriendRequestStore, () => {
     const { createBlock } = blockStore;
     friendRequests.value = [firstFriendRequest];
     const block = createBlock(first.id);
-    const decline = declineFriendRequest(first.id);
+    declineFriendRequest(first.id);
     releaseBlock();
-    await Promise.all([block, decline]);
+    await block;
+    await flushPromises();
 
     expect(friendRequests.value).toStrictEqual([]);
   });

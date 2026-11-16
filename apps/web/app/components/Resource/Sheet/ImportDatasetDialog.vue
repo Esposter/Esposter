@@ -4,6 +4,7 @@ import type { ResourceInResource } from "@esposter/db-schema";
 
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { getDatasetTruncation } from "#shared/services/dataset/getDatasetTruncation";
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { MutationStatus } from "#src/models/shared/MutationStatus";
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
@@ -105,15 +106,16 @@ watch(isOpen, async (newIsOpen) => {
                   id: survey.id,
                   type: DatasetProviderType.SurveyResponses,
                 });
-                await setDataSource(datasetToDataSource(dataset, DatasetProviderType.SurveyResponses, survey.name));
+                setDataSource(datasetToDataSource(dataset, DatasetProviderType.SurveyResponses, survey.name));
                 // The sheet now looks like the whole survey, so a capped copy has to say so on the way in
                 const truncation = getDatasetTruncation(dataset);
                 if (truncation) createAlert(getImportTruncationMessage(truncation), 'warning');
               },
-              { key: selectedSurveyId },
+              // The rows the sheet takes are the server's, read before the sheet is written, so the import waits for them
+              { awaitedBecause: AwaitedReason.ServerIssuedValue, key: selectedSurveyId },
             );
             return outcome.status === MutationStatus.Succeeded;
-          })
+          }, AwaitedReason.ServerIssuedValue)
         "
       >
         Import

@@ -17,9 +17,10 @@ export const useOfflineProgressStore = defineStore("clicker/offlineProgress", ()
     awardedPoints.value = 0;
     elapsedMs.value = 0;
   };
-  // Awards capped production for the time elapsed since the save was last stamped.
+  // Awards capped production for the time elapsed since the save was last stamped. The dialog shows the award at once,
+  // Without waiting for the save that stamps it.
   // Guard elapsed > 0 against clock skew; the dialog is skipped for absences under a minute.
-  const applyOfflineProgress = async () => {
+  const applyOfflineProgress = () => {
     const newElapsedMs = Date.now() - clickerStore.clicker.updatedAt.getTime();
     if (newElapsedMs <= 0) return;
 
@@ -34,7 +35,7 @@ export const useOfflineProgressStore = defineStore("clicker/offlineProgress", ()
       boughtBuilding.producedValue += getBoughtBuildingPower(boughtBuilding) * cappedSeconds * OFFLINE_RATE;
     // The award only touches fields the autosave watcher excludes, so persist here to stamp updatedAt —
     // Otherwise reloading before the next autosave re-awards the same offline window indefinitely
-    await saveClicker();
+    saveClicker();
 
     if (newElapsedMs < MIN_OFFLINE_DIALOG_ELAPSED_MS) return;
 

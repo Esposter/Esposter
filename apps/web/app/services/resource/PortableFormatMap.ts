@@ -49,16 +49,18 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
         const alertStore = useAlertStore();
         const { createAlert } = alertStore;
         const resourceStore = useResourceStore();
+        const { whenContentSaved } = resourceStore;
         const resourceId = resourceStore.currentResourceId;
-        // The open editor's latest edit reaches the stored copy first, so the export compiles what the reader sees. With
-        // No editor open nothing is held and the save is a no-op
+        // The open editor's latest edit reaches the stored copy first, so the export compiles what the reader sees: the
+        // Export is the server's output, so it waits for the save to land. With no editor open nothing is held
         const emailEditorStore = useEmailEditorStore();
         const { saveEmail } = emailEditorStore;
         const emailExportDialogStore = useEmailExportDialogStore();
         const { setPendingDataset } = emailExportDialogStore;
 
         await getResultAsync(async () => {
-          await saveEmail(resourceId);
+          saveEmail(resourceId);
+          await whenContentSaved(resourceId);
           const { datasetReference, html } = await compileStoredEmail(resourceId);
           if (!datasetReference) {
             createAlert("Bind a dataset before exporting personalized HTML", "warning");

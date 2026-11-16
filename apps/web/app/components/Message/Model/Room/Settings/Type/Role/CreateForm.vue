@@ -14,15 +14,14 @@ interface Props {
 const { roomId } = defineProps<Props>();
 const roleStore = useRoleStore();
 const { createRole, selectMember } = roleStore;
-const { isCreateRolePending } = storeToRefs(roleStore);
 const memberStore = useMemberStore();
 const { members } = storeToRefs(memberStore);
 const name = ref("");
 const isNameValid = computed(() => createRoleInputSchema.shape.name.safeParse(name.value).success);
-const submit = async () => {
+const submit = () => {
   const newName = name.value;
   name.value = "";
-  await createRole({ name: newName, permissions: 0n, position: 0, roomId });
+  createRole({ name: newName, permissions: 0n, position: 0, roomId });
 };
 // The members loaded into the room's list, each offered once a role-or-member pick is made from them
 const memberItems = computed(() =>
@@ -45,7 +44,6 @@ const memberItems = computed(() =>
     />
     <UiIconButton
       :disabled="!isNameValid"
-      :is-pending="isCreateRolePending"
       label="Create role"
       :meaning="UiIconMeaning.Create"
       type="submit"

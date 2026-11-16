@@ -73,7 +73,7 @@ Two things `isExclusive` deliberately does **not** do:
 
 ## Writes — `executeMutation`
 
-`executeMutation(mutate, { applyOptimistic, isExclusive, isSupersede, key, onError, onSuccess })` queues per key. `applyOptimistic` runs when the write is **sent**, not when it was issued, so its snapshot reflects whatever the write ahead of it stored — a queued write builds on its predecessor's outcome instead of on a stale copy of the screen. For the same reason, a write that reads a version token or resolves a create-or-update branch does that **inside** `mutate`, not before the call.
+`executeMutation(mutate, { applyOptimistic, isExclusive, isSupersede, key, onError, reconcile })` queues per key, and returns nothing: its promise floats through `getSynchronizedFunction`, so `waitForSynchronizedFunctions()` drains it with every other fire-and-forget. The awaited form takes `awaitedBecause` and `onSuccess` in place of `reconcile`, and resolves to its outcome ([client data](../client-data/design.md#optimistic-by-default)). `applyOptimistic` runs when the write is **sent**, not when it was issued, so its snapshot reflects whatever the write ahead of it stored — a queued write builds on its predecessor's outcome instead of on a stale copy of the screen. For the same reason, a write that reads a version token or resolves a create-or-update branch does that **inside** `mutate`, not before the call.
 
 Two opt-ins narrow this, and nothing else does:
 
@@ -101,9 +101,9 @@ The test is not "does this fetch" but **"does discarding this lose information?"
 
 ## Outcomes
 
-The operation's own rejection never escapes: both entry points resolve to an outcome discriminated on `MutationStatus`, which is the only signal a call did not land.
+The operation's own rejection never escapes: a read and an awaited write resolve to an outcome discriminated on `MutationStatus`, which is the only signal a call did not land. An optimistic write hands its caller nothing, so its outcome is the rollback's and the alert's alone.
 
-A **callback** is the exception. A throw from `applyOptimistic`, from the rollback it returns, or from `onSuccess`/`onError` rejects the promise the entry point returned, and nothing catches it — the pending bookkeeping still unwinds, but the caller gets a rejection instead of an outcome, and a caller that stored the promise without a rejection handler gets an unhandled rejection. A callback body that can fail therefore produces its own result rather than throwing.
+A **callback** is the exception. A throw from `applyOptimistic`, from the rollback it returns, or from `onSuccess`/`reconcile`/`onError` rejects the promise the entry point returned, and nothing catches it — the pending bookkeeping still unwinds, but the caller gets a rejection instead of an outcome, and a caller that stored the promise without a rejection handler gets an unhandled rejection. A callback body that can fail therefore produces its own result rather than throwing.
 
 | Status      | For a read                                                                                                                 | For a write                                                                                                                     |
 | ----------- | -------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |

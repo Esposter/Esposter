@@ -27,6 +27,29 @@ const isNoteValid = computed(() => createModerationNoteInputSchema.shape.note.sa
 currentTargetUserId.value = user.id;
 const { isPending } = useQuery(readModerationNotes);
 const { executeMutation, isPending: isCreatePending } = useMutation();
+// The note is sent and the field clears at once, and the list is read again once the server has the note. A refused
+// Note goes back into the field, unless the reader has typed a new one since
+const submitNote = () => {
+  const sentNote = note.value;
+  executeMutation(
+    () => $trpc.message.moderation.createModerationNote.mutate({ note: sentNote, roomId, targetUserId: user.id }),
+    {
+      applyOptimistic: () => {
+        note.value = "";
+        return () => {
+          if (note.value === "") note.value = sentNote;
+        };
+      },
+      key: Symbol("createModerationNote"),
+      onError: (error) => {
+        createErrorAlert(error);
+      },
+      reconcile: async () => {
+        await readModerationNotes();
+      },
+    },
+  );
+};
 </script>
 
 <template>
@@ -56,27 +79,7 @@ const { executeMutation, isPending: isCreatePending } = useMutation();
         title="No notes yet"
       />
       <!-- Adding a note keeps the dialog open, so a moderator can keep reviewing while writing -->
-      <UiForm
-        :id="formId"
-        flex
-        flex-col
-        gap-3
-        @submit="
-          executeMutation(
-            () => $trpc.message.moderation.createModerationNote.mutate({ note, roomId, targetUserId: user.id }),
-            {
-              key: Symbol('createModerationNote'),
-              onError: (error) => {
-                createErrorAlert(error);
-              },
-              onSuccess: async () => {
-                note = '';
-                await readModerationNotes();
-              },
-            },
-          )
-        "
-      >
+      <UiForm :id="formId" flex flex-col gap-3 @submit="submitNote()">
         <UiTextField
           v-model="note"
           :counter="MODERATION_NOTE_MAX_LENGTH"

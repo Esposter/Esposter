@@ -6,13 +6,20 @@ import { useScheduledMessageJobStore } from "#src/store/message/scheduledMessage
 
 export const useCancelScheduledMessageJobToDraft = () => {
   const inputStore = useInputStore();
-  const { setDraft } = inputStore;
+  const { restoreDraft, setDraft } = inputStore;
   const scheduledMessageJobStore = useScheduledMessageJobStore();
   const { cancelScheduledMessageJob } = scheduledMessageJobStore;
-  return async (scheduledMessageJob: ScheduledMessageJobWithRoom) => {
-    const isCancelled = await cancelScheduledMessageJob(scheduledMessageJob);
-    // A rejected cancel leaves the job scheduled, so a draft written now would let a send post a second copy
-    if (isCancelled) setDraft(scheduledMessageJob.roomId, getScheduledMessageJobText(scheduledMessageJob));
-    return isCancelled;
+  return (scheduledMessageJob: ScheduledMessageJobWithRoom) => {
+    const { roomId } = scheduledMessageJob;
+    // What the composer held before the job's text took its place, which a refused cancel puts back
+    const previousDraft = inputStore.drafts.get(roomId);
+    setDraft(roomId, getScheduledMessageJobText(scheduledMessageJob));
+    const writtenContent = inputStore.drafts.get(roomId)?.content;
+    // A rejected cancel leaves the job scheduled, so the composer gives its draft back, and only while it still holds the
+    // Text written here. The composer's own save rewrites the draft as the same text, so the text is what is compared: a
+    // Reader who has typed into it since keeps what they typed
+    cancelScheduledMessageJob(scheduledMessageJob, () => {
+      if (inputStore.drafts.get(roomId)?.content === writtenContent) restoreDraft(roomId, previousDraft);
+    });
   };
 };

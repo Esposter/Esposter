@@ -111,22 +111,23 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
     return true;
   };
   // Fit height is a flag written on its own, so it is saved and taken back on a refusal like an edit, but opens no form
-  const setAutoHeight = async (ids: { id: Visual["id"] }, isAutoHeight: boolean) => {
+  const setAutoHeight = (ids: { id: Visual["id"] }, isAutoHeight: boolean) => {
     const visual = findVisual(visuals.value, ids);
-    if (!visual) return false;
+    if (!visual) return;
 
     const previousIsAutoHeight = visual.isAutoHeight;
     Object.assign(visual, { isAutoHeight });
-    const isSuccessful = await saveDashboard();
-    if (!isSuccessful) Object.assign(visual, { isAutoHeight: previousIsAutoHeight });
-    return isSuccessful;
+    // A later toggle of the same visual is that write's to keep
+    saveDashboard(() => {
+      if (visual.isAutoHeight === isAutoHeight) visual.isAutoHeight = previousIsAutoHeight;
+    });
   };
   // Same write path: remove locally, persist the dashboard, revert on failure so a failed delete keeps the visual. A
   // Group removes every visual it holds with it, and the removed visual itself is put back into its list
-  const deleteVisual = async (ids: { id: Visual["id"] }) => {
+  const deleteVisual = (ids: { id: Visual["id"] }) => {
     const dashboard = dashboardStore.dashboard;
     const location = findVisualLocation(dashboard.visuals, ids.id);
-    if (!location) return false;
+    if (!location) return;
 
     const previousSelectedVisualId = selectedVisualId.value;
     removeVisualFromList(dashboard, location.group, ids.id);
@@ -134,16 +135,14 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
     const isSelectionCleared = Boolean(findVisual([location.visual], { id: selectedVisualId.value }));
     if (isSelectionCleared) clearSelection();
     const selectionWriteCountAfterDelete = selectionWriteCount;
-    const isSuccessful = await saveDashboard();
     // A refused save also restores the selection the delete cleared, and its form with it, so the store is as it was before the
     // Delete. A selection made while the save was in flight is the reader's, so it is kept, even when it lands back on the value
     // The delete left
-    if (!isSuccessful) {
+    saveDashboard(() => {
       getVisualList(dashboard, location.group).push(location.visual);
       if (isSelectionCleared && selectionWriteCount === selectionWriteCountAfterDelete)
-        await editItem({ id: previousSelectedVisualId });
-    }
-    return isSuccessful;
+        getSynchronizedFunction(editItem)({ id: previousSelectedVisualId });
+    });
   };
   // A copy of one visual and of every visual it holds, each under a fresh id: its type, chart, binding and fit height,
   // Never a publish snapshot. The copy sits below the original at its size, saved through the same write path and taken
@@ -162,17 +161,17 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
       y,
     });
   };
-  const duplicateVisual = async (ids: { id: Visual["id"] }) => {
+  const duplicateVisual = (ids: { id: Visual["id"] }) => {
     const dashboard = dashboardStore.dashboard;
     const location = findVisualLocation(dashboard.visuals, ids.id);
-    if (!location) return false;
+    if (!location) return;
 
     const duplicatedVisual = copyVisual(structuredClone(toRawDeep(location.visual)));
     duplicatedVisual.y = location.visual.y + location.visual.h;
     getVisualList(dashboard, location.group).push(duplicatedVisual);
-    const isSuccessful = await saveDashboard();
-    if (!isSuccessful) removeVisualFromList(dashboard, location.group, duplicatedVisual.id);
-    return isSuccessful;
+    saveDashboard(() => {
+      removeVisualFromList(dashboard, location.group, duplicatedVisual.id);
+    });
   };
   // Moves a visual, with every visual it holds, into another group's list, or into the dashboard's own list when there is
   // No target group. It lands at the cell given, or at the first free cell of the list it moves into when none is given.

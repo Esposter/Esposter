@@ -22,10 +22,10 @@ const container = useTemplateRef("container");
 const isHovered = useElementHover(container);
 const isConfirmDialogOpen = ref(false);
 const { executeMutation } = useMutation();
-const deleteLinkPreviewResponse = async () => {
+const deleteLinkPreviewResponse = () => {
   // The message's own room rather than the one on screen — the thread pane renders another room's messages too
   const { items } = getSlice(roomId);
-  await executeMutation(() => $trpc.message.deleteLinkPreviewResponse.mutate({ id: messageId, roomId }), {
+  executeMutation(() => $trpc.message.deleteLinkPreviewResponse.mutate({ id: messageId, roomId }), {
     // Apply only the raw reactive change — the subscription echo re-runs MessageHookMap on success. The row and
     // Its embeds are read as the write is sent, so a rejected removal restores what the write ahead of it stored
     // Rather than what was on screen when the user confirmed
@@ -59,7 +59,6 @@ const deleteLinkPreviewResponse = async () => {
       v-model="isConfirmDialogOpen"
       confirm-label="Remove All Embeds"
       title="Are you sure?"
-      is-optimistic
       :confirm="deleteLinkPreviewResponse"
     >
       This will remove all embeds on this message for everyone.

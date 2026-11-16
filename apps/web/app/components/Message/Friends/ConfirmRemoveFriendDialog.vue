@@ -19,7 +19,6 @@ const { isOpen, item: friend } = useSingletonDialog(removingUserId, () =>
     confirm-label="Remove friend"
     :title="`Remove ${friend.name}`"
     :confirm="() => friend && deleteFriend(friend.id)"
-    is-optimistic
   >
     <p>Are you sure you want to remove {{ friend.name }} from your friends?</p>
   </UiConfirmDialog>

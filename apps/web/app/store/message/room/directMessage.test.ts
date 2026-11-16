@@ -8,6 +8,7 @@ import { useAlertStore } from "#src/store/alert";
 import { useDirectMessageStore } from "#src/store/message/room/directMessage";
 import { MessageType, RoomType } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
+import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
@@ -36,12 +37,13 @@ describe(useDirectMessageStore, () => {
     const { deleteDirectMessageParticipant, getDirectMessageParticipants, storeDirectMessageParticipants } =
       directMessageStore;
     storeDirectMessageParticipants(roomId, [first, second, third]);
-    const rejectedDeleteDirectMessageParticipant = deleteDirectMessageParticipant(roomId, second.id);
+    deleteDirectMessageParticipant(roomId, second.id);
     // A second call issued in the same tick would share the first one's batch and settle with it
     await isSecondCalled;
-    await deleteDirectMessageParticipant(roomId, first.id);
+    deleteDirectMessageParticipant(roomId, first.id);
+    await flushPromises();
     onFirstDeleted(true);
-    await rejectedDeleteDirectMessageParticipant;
+    await flushPromises();
 
     expect(getDirectMessageParticipants(roomId).map(({ id }) => id)).toStrictEqual([second.id, third.id]);
     expect(alertStore.alerts).toHaveLength(1);
@@ -56,7 +58,8 @@ describe(useDirectMessageStore, () => {
     const { deleteDirectMessageParticipant, getDirectMessageParticipants, storeDirectMessageParticipants } =
       directMessageStore;
     storeDirectMessageParticipants(roomId, [first, second, third]);
-    await deleteDirectMessageParticipant(roomId, second.id);
+    deleteDirectMessageParticipant(roomId, second.id);
+    await flushPromises();
 
     expect(getDirectMessageParticipants(roomId).map(({ id }) => id)).toStrictEqual([first.id, third.id]);
     expect(alertStore.alerts).toHaveLength(0);
@@ -82,12 +85,13 @@ describe(useDirectMessageStore, () => {
     const { hideDirectMessage, pushDirectMessages } = directMessageStore;
     const { directMessages } = storeToRefs(directMessageStore);
     pushDirectMessages(firstDirectMessage, secondDirectMessage);
-    const rejectedHideDirectMessage = hideDirectMessage(firstDirectMessage.id);
+    hideDirectMessage(firstDirectMessage.id);
     // Held the same way as the removal above
     await isFirstCalled;
-    await hideDirectMessage(secondDirectMessage.id);
+    hideDirectMessage(secondDirectMessage.id);
+    await flushPromises();
     onSecondHidden(true);
-    await rejectedHideDirectMessage;
+    await flushPromises();
 
     expect(directMessages.value).toStrictEqual([firstDirectMessage]);
   });
@@ -114,6 +118,7 @@ describe(useDirectMessageStore, () => {
     const { directMessages } = storeToRefs(directMessageStore);
     const { inviteFriend } = directMessageStore;
     await inviteFriend(second.id, inviteLink);
+    await flushPromises();
 
     expect(directMessages.value).toStrictEqual([friendDirectMessage]);
     expect(sentMessages).toStrictEqual([

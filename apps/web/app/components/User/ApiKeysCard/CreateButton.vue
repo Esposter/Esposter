@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { CreateApiKeyInput, McpScope } from "@esposter/db-schema";
 
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
 import { UiDialogSize } from "#src/models/ui/UiDialogSize";
@@ -62,7 +63,7 @@ const { answer } = useDialogAnswer(isOpen);
           answer(async () => {
             createdKey = await create({ mcpScopes, name });
             return false;
-          })
+          }, AwaitedReason.ServerIssuedValue)
         "
       >
         <UiTextField

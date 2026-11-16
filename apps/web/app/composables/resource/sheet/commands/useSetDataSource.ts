@@ -16,11 +16,11 @@ export const useSetDataSource = () => {
   return () => {
     const writeContent = getContentWriter();
     const previousDataSource = sheetResource.value.data;
-    return async (value: DataSource) => {
+    return (value: DataSource) => {
       reconcileDataSource(value, previousDataSource);
       if (!writeContent({ ...sheetResource.value, data: value })) return;
       clear();
-      await saveSheet();
+      saveSheet();
     };
   };
 };

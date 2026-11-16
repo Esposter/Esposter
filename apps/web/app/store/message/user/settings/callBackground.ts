@@ -2,6 +2,7 @@ import type { CallBackground } from "#shared/models/message/call/CallBackground"
 import type { UserSettingsInMessage } from "@esposter/db-schema";
 
 import { MAX_CALL_BACKGROUNDS } from "#shared/services/message/constants";
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { getSingleFilePresignedUrlEntities } from "#src/services/file/getSingleFilePresignedUrlEntities";
 import { uploadFilesToPresignedUrls } from "#src/services/file/uploadFilesToPresignedUrls";
 import { CallVirtualBackgroundDefinitions } from "#src/services/message/room/call/CallVirtualBackgroundDefinitions";
@@ -46,6 +47,8 @@ export const useCallBackgroundStore = defineStore("message/user/settings/callBac
         });
       },
       {
+        // The upload target is the server's to issue, so the slot is listed once the upload is confirmed
+        awaitedBecause: AwaitedReason.ServerIssuedValue,
         key: CALL_BACKGROUND_UPLOAD_KEY,
         // Re-read rather than appended optimistically: the listing is the index, and it is also where the size
         // A presigned write url could not bound is checked - so a slot that landed over the cap never reaches the picker
@@ -53,8 +56,8 @@ export const useCallBackgroundStore = defineStore("message/user/settings/callBac
       },
     );
   };
-  const deleteCallBackground = async (slot: CallBackground["slot"]) => {
-    await executeMutation(() => $trpc.user.deleteCallBackground.mutate({ slot }), {
+  const deleteCallBackground = (slot: CallBackground["slot"]) => {
+    executeMutation(() => $trpc.user.deleteCallBackground.mutate({ slot }), {
       // The blob is reclaimed by a worker rather than inline, so the listing would hold the slot for as long as
       // That takes. Dropping it here is what the user asked for, and the next listing agrees
       applyOptimistic: () => {

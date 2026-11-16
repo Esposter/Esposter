@@ -8,22 +8,31 @@ interface Props {
 }
 
 const { surveyId } = defineProps<Props>();
-const emit = defineEmits<{ delete: [] }>();
+// The response leaves the table as its delete is sent. The table is read again once the delete settles either way: the
+// Summary counts are the server's, and a refused delete comes back with the read
+const emit = defineEmits<{ delete: [responseId: string]; refresh: [] }>();
 const { $trpc } = useNuxtApp();
 const surveyResponseDialogStore = useSurveyResponseDialogStore();
 const { deletingResponseId } = storeToRefs(surveyResponseDialogStore);
 const notificationStore = useNotificationStore();
-const { createErrorNotification, createNotification } = notificationStore;
+const { createErrorNotification, createNotification, dismissNotification } = notificationStore;
 const { executeMutation: executeDeleteMutation } = useMutation();
 const { isOpen } = useSingletonDialog(deletingResponseId);
-const deleteSurveyResponse = async () => {
+const deleteSurveyResponse = () => {
   const responseId = deletingResponseId.value;
-  await executeDeleteMutation(() => $trpc.survey.deleteSurveyResponse.mutate({ id: surveyId, responseId }), {
+  executeDeleteMutation(() => $trpc.survey.deleteSurveyResponse.mutate({ id: surveyId, responseId }), {
+    applyOptimistic: () => {
+      const notificationId = createNotification({ severity: NotificationSeverity.Success, title: "Deleted response" });
+      emit("delete", responseId);
+      return () => {
+        dismissNotification(notificationId);
+        emit("refresh");
+      };
+    },
     key: responseId,
     onError: createErrorNotification,
-    onSuccess: () => {
-      createNotification({ severity: NotificationSeverity.Success, title: "Deleted response" });
-      emit("delete");
+    reconcile: () => {
+      emit("refresh");
     },
   });
 };

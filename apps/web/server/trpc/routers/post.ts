@@ -6,7 +6,6 @@ import type { RelationsFilter } from "drizzle-orm";
 import { ownedBy } from "#server/services/db/ownedBy";
 import { bindPostSort } from "#server/services/post/bindPostSort";
 import { getNotBlockedWhere } from "#server/services/post/getNotBlockedWhere";
-import { getPostRanking } from "#server/services/post/getPostRanking";
 import { getPostSubtreeWhere } from "#server/services/post/getPostSubtreeWhere";
 import { getPostWithViewerLike } from "#server/services/post/getPostWithViewerLike";
 import { getViewerPostRelations } from "#server/services/post/getViewerPostRelations";
@@ -28,6 +27,7 @@ import { readPostInputSchema } from "#shared/models/db/post/ReadPostInput";
 import { readPostsInputSchema } from "#shared/models/db/post/ReadPostsInput";
 import { updateCommentInputSchema } from "#shared/models/db/post/UpdateCommentInput";
 import { updatePostInputSchema } from "#shared/models/db/post/UpdatePostInput";
+import { getPostRanking } from "#shared/services/post/getPostRanking";
 import { getPageOrderBy, getPageWhere, inJsonArray, toPage } from "@esposter/db";
 import {
   DatabaseEntityType,

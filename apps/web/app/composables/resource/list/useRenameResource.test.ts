@@ -8,6 +8,16 @@ import { useFavoriteStore } from "#src/store/resource/favorite";
 import { TRPCError } from "@trpc/server";
 import { describe, expect, test, vi } from "vitest";
 
+// The refresh a write runs once it settles, announcing its call so a test awaits that rather than polling for it
+const createRefresh = () => {
+  const { promise: isCalled, resolve: onCalled } = Promise.withResolvers<void>();
+  const refresh = vi.fn<() => Promise<void>>(() => {
+    onCalled();
+    return Promise.resolve();
+  });
+  return { isCalled, refresh };
+};
+
 describe(useRenameResource, () => {
   const { trpcMsw } = setupMswTrpc();
   const name = "name";
@@ -18,12 +28,13 @@ describe(useRenameResource, () => {
     expect.hasAssertions();
 
     const resource = createResource();
-    const refresh = vi.fn<() => Promise<void>>(() => Promise.resolve());
+    const { isCalled, refresh } = createRefresh();
     trpcMsw.sheet.updateResource.mutation(() => ({ ...resource.value, name: newName }));
-    await useRenameResource(resource, refresh)(newName);
+    useRenameResource(resource, refresh)(newName);
 
+    await isCalled;
     expect(resource.value.name).toBe(newName);
-    // Called once, not called with nothing: the success path is `onSuccess: refresh`, so the mutation hands it
+    // Called once, not called with nothing: the success path is `reconcile: refresh`, so the mutation hands it
     // The server row that `refresh` ignores
     expect(refresh).toHaveBeenCalledTimes(1);
   });
@@ -35,12 +46,13 @@ describe(useRenameResource, () => {
     expect.hasAssertions();
 
     const resource = createResource();
-    const refresh = vi.fn<() => Promise<void>>(() => Promise.resolve());
+    const { isCalled, refresh } = createRefresh();
     trpcMsw.sheet.updateResource.mutation(() => {
       throw new TRPCError({ code: "BAD_REQUEST", message: " " });
     });
-    await useRenameResource(resource, refresh)(newName);
+    useRenameResource(resource, refresh)(newName);
 
+    await isCalled;
     expect(refresh).toHaveBeenCalledExactlyOnceWith();
   });
 
@@ -60,11 +72,13 @@ describe(useRenameResource, () => {
     const { favorites } = storeToRefs(favoriteStore);
     const { readFavorites } = favoriteStore;
     await readFavorites();
-    await useRenameResource(
+    useRenameResource(
       resource,
       vi.fn<() => Promise<void>>(() => Promise.resolve()),
     )(newName);
 
+    // The favorites are re-read once the invalidation the rename makes lands, so the new name is the one change to await
+    await until(() => favorites.value[0]?.name).toBe(newName);
     expect(favorites.value.map((favorite) => favorite.name)).toStrictEqual([newName]);
   });
 });

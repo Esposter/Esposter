@@ -11,12 +11,12 @@ const userSettingsStore = useUserSettingsStore();
 const { updateUserSettings } = userSettingsStore;
 const isCapturingKeybind = ref(false);
 // Held for as long as it acts rather than pressed once, so it is recorded here rather than bound as a shortcut
-useEventListener("keydown", async (event) => {
+useEventListener("keydown", (event) => {
   if (!isCapturingKeybind.value) return;
   event.preventDefault();
   isCapturingKeybind.value = false;
   if (event.code === "Escape") return;
-  await updateUserSettings({ pushToTalkKeybind: event.code });
+  updateUserSettings({ pushToTalkKeybind: event.code });
 });
 </script>
 

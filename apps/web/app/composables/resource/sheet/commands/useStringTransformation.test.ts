@@ -11,7 +11,7 @@ import { describe, expect, test } from "vitest";
 describe(useStringTransformation, () => {
   setupCommandTest();
 
-  test(`${StringTransformationType.Trim} strips whitespace from all string cells`, async () => {
+  test(`${StringTransformationType.Trim} strips whitespace from all string cells`, () => {
     expect.hasAssertions();
 
     const initialDataSource = createDataSource(
@@ -20,7 +20,7 @@ describe(useStringTransformation, () => {
     );
     const { dataSource } = setupWithDataSource(initialDataSource);
     const stringTransformation = useStringTransformation();
-    await stringTransformation(StringTransformationType.Trim);
+    stringTransformation(StringTransformationType.Trim);
 
     expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([
       { "": "", " ": "" },
@@ -28,40 +28,40 @@ describe(useStringTransformation, () => {
     ]);
   });
 
-  test(`${StringTransformationType.LowerCase} lowercases all string cells`, async () => {
+  test(`${StringTransformationType.LowerCase} lowercases all string cells`, () => {
     expect.hasAssertions();
 
     const initialDataSource = createDataSource([createColumn("")], [createRow({ "": "A" })]);
     const { dataSource } = setupWithDataSource(initialDataSource);
     const stringTransformation = useStringTransformation();
-    await stringTransformation(StringTransformationType.LowerCase);
+    stringTransformation(StringTransformationType.LowerCase);
 
     expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ "": "a" }]);
   });
 
-  test(`${StringTransformationType.UpperCase} uppercases all string cells`, async () => {
+  test(`${StringTransformationType.UpperCase} uppercases all string cells`, () => {
     expect.hasAssertions();
 
     const initialDataSource = createDataSource([createColumn("")], [createRow({ "": "a" })]);
     const { dataSource } = setupWithDataSource(initialDataSource);
     const stringTransformation = useStringTransformation();
-    await stringTransformation(StringTransformationType.UpperCase);
+    stringTransformation(StringTransformationType.UpperCase);
 
     expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ "": "A" }]);
   });
 
-  test(`${StringTransformationType.TitleCase} title-cases all string cells`, async () => {
+  test(`${StringTransformationType.TitleCase} title-cases all string cells`, () => {
     expect.hasAssertions();
 
     const initialDataSource = createDataSource([createColumn("")], [createRow({ "": "a b" })]);
     const { dataSource } = setupWithDataSource(initialDataSource);
     const stringTransformation = useStringTransformation();
-    await stringTransformation(StringTransformationType.TitleCase);
+    stringTransformation(StringTransformationType.TitleCase);
 
     expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ "": "A B" }]);
   });
 
-  test("no-op when no string cell changes", async () => {
+  test("no-op when no string cell changes", () => {
     expect.hasAssertions();
 
     const initialDataSource = createDataSource([createColumn("")], [createRow({ "": null })]);
@@ -69,12 +69,12 @@ describe(useStringTransformation, () => {
     const stringTransformation = useStringTransformation();
     const sheetHistoryStore = useSheetHistoryStore();
     const { isUndoable } = storeToRefs(sheetHistoryStore);
-    await stringTransformation(StringTransformationType.Trim);
+    stringTransformation(StringTransformationType.Trim);
 
     expect(isUndoable.value).toBe(false);
   });
 
-  test("description includes the transform", async () => {
+  test("description includes the transform", () => {
     expect.hasAssertions();
 
     const initialDataSource = createDataSource([createColumn("")], [createRow({ "": " " })]);
@@ -82,7 +82,7 @@ describe(useStringTransformation, () => {
     const stringTransformation = useStringTransformation();
     const sheetHistoryStore = useSheetHistoryStore();
     const { undoDescription } = storeToRefs(sheetHistoryStore);
-    await stringTransformation(StringTransformationType.Trim);
+    stringTransformation(StringTransformationType.Trim);
 
     expect(undoDescription.value).toBe(`Format Strings (${StringTransformationType.Trim})`);
   });

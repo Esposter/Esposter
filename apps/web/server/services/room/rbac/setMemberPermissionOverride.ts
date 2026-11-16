@@ -4,7 +4,7 @@ import type { MemberPermissionOverride } from "#shared/models/db/role/MemberPerm
 import type { UpsertMemberPermissionOverrideInput } from "#shared/models/db/role/UpsertMemberPermissionOverrideInput";
 
 import { checkIsMemberPermissionOverrideWritten } from "#server/services/room/rbac/checkIsMemberPermissionOverrideWritten";
-import { mergeMemberPermissionOverride } from "#server/services/room/rbac/mergeMemberPermissionOverride";
+import { mergeMemberPermissionOverride } from "#shared/services/room/rbac/mergeMemberPermissionOverride";
 import { roomMemberPermissionsInMessage } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";

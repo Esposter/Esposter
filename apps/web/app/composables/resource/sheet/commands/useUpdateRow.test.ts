@@ -9,13 +9,13 @@ import { describe, expect, test } from "vitest";
 describe(useUpdateRow, () => {
   setupCommandTest();
 
-  test("updates row data at given index", async () => {
+  test("updates row data at given index", () => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDataSource();
     const updateRow = useUpdateRow();
     const originalRow = takeOne(dataSource.rows);
-    await updateRow(createUpdatedRow(originalRow, { data: { "": 2, " ": 3 } }));
+    updateRow(createUpdatedRow(originalRow, { data: { "": 2, " ": 3 } }));
 
     expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([
       { "": 2, " ": 3 },
@@ -23,7 +23,7 @@ describe(useUpdateRow, () => {
     ]);
   });
 
-  test("snapshot immutability - mutating passed object after call does not affect undo history", async () => {
+  test("snapshot immutability - mutating passed object after call does not affect undo history", () => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDataSource();
@@ -32,7 +32,7 @@ describe(useUpdateRow, () => {
     const { redo, undo } = sheetHistoryStore;
     const originalRow = takeOne(dataSource.rows);
     const updatedRow = reactive(createUpdatedRow(originalRow, { data: { "": 2, " ": 3 } }));
-    await updateRow(updatedRow);
+    updateRow(updatedRow);
     updatedRow.data[""] = 4;
     updatedRow.data[" "] = 4;
     undo(dataSource);

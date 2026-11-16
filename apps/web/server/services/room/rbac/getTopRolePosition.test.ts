@@ -1,6 +1,7 @@
 import { getTopRolePosition } from "#server/services/room/rbac/getTopRolePosition";
 import { getMockSession } from "#server/trpc/context.test";
 import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(getTopRolePosition, () => {
@@ -25,7 +26,7 @@ describe(getTopRolePosition, () => {
     const owner = getMockSession().user;
     const roleCaller = getRoleCaller();
     const roomId = getRoomId();
-    const role = await roleCaller.createRole({ name, position, roomId });
+    const role = await roleCaller.createRole({ id: v7(), name, position, roomId });
     await roleCaller.assignRole({ roleId: role.id, roomId, userId: owner.id });
 
     const topPosition = await getTopRolePosition(getMockContext().db, owner.id, roomId);
@@ -39,8 +40,8 @@ describe(getTopRolePosition, () => {
     const owner = getMockSession().user;
     const roleCaller = getRoleCaller();
     const roomId = getRoomId();
-    const moderatorRole = await roleCaller.createRole({ name, position, roomId });
-    const seniorRole = await roleCaller.createRole({ name: updatedName, position: updatedPosition, roomId });
+    const moderatorRole = await roleCaller.createRole({ id: v7(), name, position, roomId });
+    const seniorRole = await roleCaller.createRole({ id: v7(), name: updatedName, position: updatedPosition, roomId });
     await roleCaller.assignRole({ roleId: moderatorRole.id, roomId, userId: owner.id });
     await roleCaller.assignRole({ roleId: seniorRole.id, roomId, userId: owner.id });
 
@@ -56,8 +57,9 @@ describe(getTopRolePosition, () => {
     const roleCaller = getRoleCaller();
     const roomId = getRoomId();
     const otherRoom = await getRoomCaller().createRoom({ name: updatedName });
-    const role = await roleCaller.createRole({ name, position, roomId });
+    const role = await roleCaller.createRole({ id: v7(), name, position, roomId });
     const otherRole = await roleCaller.createRole({
+      id: v7(),
       name: updatedName,
       position: updatedPosition,
       roomId: otherRoom.id,

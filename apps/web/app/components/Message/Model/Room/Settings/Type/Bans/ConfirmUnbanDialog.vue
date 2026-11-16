@@ -19,7 +19,6 @@ const { isOpen, item: ban } = useSingletonDialog(unbanningUserId, () =>
     confirm-label="Unban"
     title="Unban user"
     :confirm="() => ban && deleteBan({ roomId: ban.roomId, userId: ban.userId })"
-    is-optimistic
   >
     <p>Are you sure you want to unban {{ ban.user.displayName }}?</p>
   </UiConfirmDialog>

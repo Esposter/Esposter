@@ -15,7 +15,7 @@ import { useDungeonsStore } from "#src/store/dungeons/index";
 import { useColorPickerStore } from "#src/store/dungeons/settings/colorPicker";
 import { useSettingsStore } from "#src/store/dungeons/settings/index";
 import { useVolumeStore } from "#src/store/dungeons/settings/volume";
-import { exhaustiveGuard, getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
+import { exhaustiveGuard, getResult, InvalidOperationError, noop, Operation } from "@esposter/shared";
 import { clamp } from "@vueuse/core";
 import { Direction } from "grid-engine";
 
@@ -56,11 +56,11 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
     return { x: restingX ?? 1, y: rowIndex };
   };
   // The one place a value is saved: only the cursor's own value cell calls it, so an option with no cells cannot write
-  const saveSelectedValue = async () => {
+  const saveSelectedValue = () => {
     // Close is the one option without a value to save, so the cursor can never be on a cell that would save for it
     if (selectedSettingsOption.value === SettingsOption.Close) return;
 
-    await setSettings(
+    setSettings(
       selectedSettingsOption.value,
       SettingsOptionGrid.value as (typeof settingsStore.settings)[keyof typeof settingsStore.settings],
     );
@@ -73,7 +73,7 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
     SettingsOptionGrid.position.value = getRestingPosition(rowIndex);
   };
 
-  const moveSettingsColumn = async (direction: Direction) => {
+  const moveSettingsColumn = (direction: Direction) => {
     const { x, y } = SettingsOptionGrid.position.value;
     if (!checkHasValueCells(y)) return;
 
@@ -81,10 +81,10 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
     if (nextX === x) return;
 
     SettingsOptionGrid.position.value = { x: nextX, y };
-    await saveSelectedValue();
+    saveSelectedValue();
   };
 
-  const selectSettingsPosition = async (position: Position) => {
+  const selectSettingsPosition = (position: Position) => {
     const { x, y } = position;
     if (SettingsOptionGrid.getValue({ x, y }) === undefined) return;
     // The name column moves to its row without choosing a value
@@ -94,24 +94,24 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
     }
 
     SettingsOptionGrid.position.value = { x, y };
-    await saveSelectedValue();
+    saveSelectedValue();
   };
   // The saved values may have loaded after the cursor last moved, so the scene rests the cursor on them when it opens
   const restSettingsCursor = () => {
     SettingsOptionGrid.position.value = getRestingPosition(SettingsOptionGrid.position.value.y);
   };
 
-  const onPlayerInput = (scene: SceneWithPlugins, justDownInput: PlayerInput, input: PlayerInput, delta: number) =>
-    getResultAsync(async () => {
+  const onPlayerInput = (scene: SceneWithPlugins, justDownInput: PlayerInput, input: PlayerInput, delta: number) => {
+    getResult(() => {
       if (checkIsPlayerSpecialInput(justDownInput)) onPlayerSpecialInput(scene, justDownInput);
       // Handle special cases first with player direction input
-      else if (checkIsUpdateVolume(input, selectedSettingsOption.value)) await updateVolume(input, delta);
+      else if (checkIsUpdateVolume(input, selectedSettingsOption.value)) updateVolume(input, delta);
       else if (checkIsUpdateThemeModeSetting(justDownInput, selectedSettingsOption.value))
-        await updateThemeModeSetting(justDownInput);
+        updateThemeModeSetting(justDownInput);
       else if (justDownInput === Direction.UP || justDownInput === Direction.DOWN) moveSettingsRow(justDownInput);
-      else if (justDownInput === Direction.LEFT || justDownInput === Direction.RIGHT)
-        await moveSettingsColumn(justDownInput);
+      else if (justDownInput === Direction.LEFT || justDownInput === Direction.RIGHT) moveSettingsColumn(justDownInput);
     }).match(noop, console.error);
+  };
 
   const onPlayerSpecialInput = (scene: SceneWithPlugins, playerSpecialInput: PlayerSpecialInput) => {
     switch (playerSpecialInput) {

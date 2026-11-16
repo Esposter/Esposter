@@ -12,7 +12,7 @@ describe(useSheetCommand, () => {
     vi.restoreAllMocks();
   });
 
-  test("saves once for the command it pushes", async () => {
+  test("saves once for the command it pushes", () => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDataSource();
@@ -21,14 +21,14 @@ describe(useSheetCommand, () => {
     const sheetHistoryStore = useSheetHistoryStore();
     const { isUndoable } = storeToRefs(sheetHistoryStore);
     const createRow = useCreateRow();
-    await createRow();
+    createRow();
 
     expect(dataSource.rows).toHaveLength(3);
     expect(isUndoable.value).toBe(true);
     expect(saveSheet).toHaveBeenCalledExactlyOnceWith();
   });
 
-  test("does not save when no command is created", async () => {
+  test("does not save when no command is created", () => {
     expect.hasAssertions();
 
     setupWithDataSource();
@@ -37,7 +37,7 @@ describe(useSheetCommand, () => {
     const sheetHistoryStore = useSheetHistoryStore();
     const { isUndoable } = storeToRefs(sheetHistoryStore);
     const deleteRow = useDeleteRow();
-    await deleteRow("-1");
+    deleteRow("-1");
 
     expect(isUndoable.value).toBe(false);
     expect(saveSheet).not.toHaveBeenCalled();

@@ -19,7 +19,7 @@ describe("resourceSheetRowCreateDialogButton", () => {
     const { dataSource } = setupWithDataSource(createDataSource([createColumn("")], []));
     const wrapper = await mountSuspended(ResourceSheetRowCreateDialogButton);
     const updateColumn = useUpdateColumn();
-    await updateColumn("", createUpdatedColumn(takeOne(dataSource.columns), { name: " " }));
+    updateColumn("", createUpdatedColumn(takeOne(dataSource.columns), { name: " " }));
     await nextTick();
     const editDialogButton = wrapper.findComponent(ResourceSheetEditDialogButton);
     await editDialogButton.props("submit")();

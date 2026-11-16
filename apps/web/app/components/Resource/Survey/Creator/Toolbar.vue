@@ -179,13 +179,7 @@ const groups = computed<EditorToolbarGroup[]>(() => [
         }
       "
     />
-    <UiConfirmDialog
-      v-model="isClearOpen"
-      confirm-label="Clear"
-      :confirm="() => clearSurvey()"
-      is-optimistic
-      title="Clear survey"
-    >
+    <UiConfirmDialog v-model="isClearOpen" confirm-label="Clear" :confirm="() => clearSurvey()" title="Clear survey">
       <p>Replace every page of this survey with an empty one? Undo brings it back.</p>
     </UiConfirmDialog>
   </div>

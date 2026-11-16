@@ -21,6 +21,7 @@ import {
 } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";
+import { v7 } from "uuid";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("postRouter", () => {
@@ -96,11 +97,21 @@ describe("postRouter", () => {
     );
   });
 
+  test("creates a comment under the id the client gives it", async () => {
+    expect.hasAssertions();
+
+    const id = v7();
+    const newPost = await postCaller.createPost({ title });
+    const { comment: newComment } = await postCaller.createComment({ description, id, parentId: newPost.id });
+
+    expect(newComment.id).toBe(id);
+  });
+
   test("fails update with comment id", async () => {
     expect.hasAssertions();
 
     const newPost = await postCaller.createPost({ title });
-    const { comment: newComment } = await postCaller.createComment({ description, parentId: newPost.id });
+    const { comment: newComment } = await postCaller.createComment({ description, id: v7(), parentId: newPost.id });
 
     await expect(postCaller.updatePost({ description, id: newComment.id })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.Post, newComment.id).message}]`,
@@ -111,7 +122,7 @@ describe("postRouter", () => {
     expect.hasAssertions();
 
     const newPost = await postCaller.createPost({ title });
-    const { comment: newComment } = await postCaller.createComment({ description, parentId: newPost.id });
+    const { comment: newComment } = await postCaller.createComment({ description, id: v7(), parentId: newPost.id });
     MockPublishedTopics.length = 0;
     const removedIds = await postCaller.deletePost(newPost.id);
 
@@ -140,7 +151,7 @@ describe("postRouter", () => {
     expect.hasAssertions();
 
     const newPost = await postCaller.createPost({ title });
-    const { comment: newComment } = await postCaller.createComment({ description, parentId: newPost.id });
+    const { comment: newComment } = await postCaller.createComment({ description, id: v7(), parentId: newPost.id });
     const post = await postCaller.readPost(newPost.id);
     const comment = await postCaller.readPost(newComment.id);
 
@@ -154,7 +165,7 @@ describe("postRouter", () => {
 
     const newPost = await postCaller.createPost({ title });
     const otherPost = await postCaller.createPost({ title });
-    await postCaller.createComment({ description, parentId: newPost.id });
+    await postCaller.createComment({ description, id: v7(), parentId: newPost.id });
     const postCounts = await postCaller.readPostCounts([newPost.id, otherPost.id]);
 
     expect(Object.fromEntries(postCounts.map(({ commentCount, id }) => [id, commentCount]))).toStrictEqual({
@@ -167,7 +178,7 @@ describe("postRouter", () => {
     expect.hasAssertions();
 
     const newPost = await postCaller.createPost({ title });
-    const { comment: newComment } = await postCaller.createComment({ description, parentId: newPost.id });
+    const { comment: newComment } = await postCaller.createComment({ description, id: v7(), parentId: newPost.id });
     const updatedComment = await postCaller.updateComment({ description: updatedDescription, id: newComment.id });
 
     expect(updatedComment.description).toBe(updatedDescription);
@@ -177,7 +188,7 @@ describe("postRouter", () => {
     expect.hasAssertions();
 
     const newPost = await postCaller.createPost({ title });
-    const { comment: newComment } = await postCaller.createComment({ description, parentId: newPost.id });
+    const { comment: newComment } = await postCaller.createComment({ description, id: v7(), parentId: newPost.id });
     const wrongUserCaller = await createMockCaller(postRouter, await createMockAuthSession(mockContext.db));
 
     await expect(
@@ -201,7 +212,7 @@ describe("postRouter", () => {
     expect.hasAssertions();
 
     const newPost = await postCaller.createPost({ title });
-    const { comment: newComment } = await postCaller.createComment({ description, parentId: newPost.id });
+    const { comment: newComment } = await postCaller.createComment({ description, id: v7(), parentId: newPost.id });
     const deletedComment = await postCaller.deleteComment(newComment.id);
     const post = await postCaller.readPost(newPost.id);
 
@@ -215,8 +226,8 @@ describe("postRouter", () => {
     expect.hasAssertions();
 
     const newPost = await postCaller.createPost({ title });
-    const { comment: newComment } = await postCaller.createComment({ description, parentId: newPost.id });
-    const { comment: newReply } = await postCaller.createComment({ description, parentId: newComment.id });
+    const { comment: newComment } = await postCaller.createComment({ description, id: v7(), parentId: newPost.id });
+    const { comment: newReply } = await postCaller.createComment({ description, id: v7(), parentId: newComment.id });
     const post = await postCaller.readPost(newPost.id);
     const comment = await postCaller.readPost(newComment.id);
 
@@ -231,9 +242,9 @@ describe("postRouter", () => {
     expect.hasAssertions();
 
     const newPost = await postCaller.createPost({ title });
-    const { comment: newComment } = await postCaller.createComment({ description, parentId: newPost.id });
-    const { comment: newReply } = await postCaller.createComment({ description, parentId: newComment.id });
-    await postCaller.createComment({ description, parentId: newReply.id });
+    const { comment: newComment } = await postCaller.createComment({ description, id: v7(), parentId: newPost.id });
+    const { comment: newReply } = await postCaller.createComment({ description, id: v7(), parentId: newComment.id });
+    await postCaller.createComment({ description, id: v7(), parentId: newReply.id });
 
     MockPublishedTopics.length = 0;
     const deletedComment = await postCaller.deleteComment(newComment.id);
@@ -249,7 +260,7 @@ describe("postRouter", () => {
     expect.hasAssertions();
 
     const newPost = await postCaller.createPost({ title });
-    const { comment: newComment } = await postCaller.createComment({ description, parentId: newPost.id });
+    const { comment: newComment } = await postCaller.createComment({ description, id: v7(), parentId: newPost.id });
     await postCaller.deletePost(newPost.id);
 
     await expect(postCaller.readPost(newComment.id)).rejects.toThrowErrorMatchingInlineSnapshot(
@@ -261,7 +272,7 @@ describe("postRouter", () => {
     expect.hasAssertions();
 
     const newPost = await postCaller.createPost({ title });
-    const { comment: newComment } = await postCaller.createComment({ description, parentId: newPost.id });
+    const { comment: newComment } = await postCaller.createComment({ description, id: v7(), parentId: newPost.id });
     const wrongUserCaller = await createMockCaller(postRouter, await createMockAuthSession(mockContext.db));
 
     await expect(wrongUserCaller.deleteComment(newComment.id)).rejects.toThrowErrorMatchingInlineSnapshot(
@@ -321,7 +332,7 @@ describe("postRouter", () => {
     const newPost = await postCaller.createPost({ title });
     const blockedAuthSession = await createMockAuthSession(mockContext.db);
     const blockedCaller = await createMockCaller(postRouter, blockedAuthSession);
-    await blockedCaller.createComment({ description, parentId: newPost.id });
+    await blockedCaller.createComment({ description, id: v7(), parentId: newPost.id });
     await blockCaller.createBlock(blockedAuthSession.user.id);
     const { items: comments } = await postCaller.readPosts({ parentId: newPost.id });
     const post = await postCaller.readPost(newPost.id);
@@ -338,7 +349,7 @@ describe("postRouter", () => {
     const authorAuthSession = await createMockAuthSession(mockContext.db);
     const authorCaller = await createMockCaller(postRouter, authorAuthSession);
     const authorPost = await authorCaller.createPost({ title });
-    await authorCaller.createComment({ description, parentId: newPost.id });
+    await authorCaller.createComment({ description, id: v7(), parentId: newPost.id });
     const { items } = await postCaller.readPosts({ userId: authorAuthSession.user.id });
 
     expect(items.map(({ id }) => id)).toStrictEqual([authorPost.id]);
@@ -400,7 +411,10 @@ describe("postRouter", () => {
   // Three replies, so each is known to exist by its position
   const createReplies = async (parentId: string) => {
     const replyIds = await Promise.all(
-      Array.from({ length: 3 }, async () => (await postCaller.createComment({ description, parentId })).comment.id),
+      Array.from(
+        { length: 3 },
+        async () => (await postCaller.createComment({ description, id: v7(), parentId })).comment.id,
+      ),
     );
     return [takeOne(replyIds, 0), takeOne(replyIds, 1), takeOne(replyIds, 2)] as const;
   };

@@ -45,7 +45,6 @@ const createPoll = async () => {
     v-model="isOpen"
     confirm-label="Create Poll"
     :is-confirm-disabled="!isPollValid || undefined"
-    is-optimistic
     :submit="createPoll"
     title="Create Poll"
   >

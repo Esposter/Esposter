@@ -6,20 +6,20 @@ import { useSheetHistoryStore } from "#src/store/resource/sheet/history/index";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const setupWithDeletedRow = async (index = 0) => {
+const setupWithDeletedRow = (index = 0) => {
   const { dataSource } = setupWithDataSource();
   const deleteRow = useDeleteRow();
-  await deleteRow(takeOne(dataSource.rows, index).id);
+  deleteRow(takeOne(dataSource.rows, index).id);
   return { dataSource, deleteRow };
 };
 
 describe(useSheetHistoryStore, () => {
   setupCommandTest();
 
-  test("becomes undoable after an operation", async () => {
+  test("becomes undoable after an operation", () => {
     expect.hasAssertions();
 
-    await setupWithDeletedRow();
+    setupWithDeletedRow();
     const sheetHistoryStore = useSheetHistoryStore();
     const { isRedoable, isUndoable } = storeToRefs(sheetHistoryStore);
 
@@ -27,10 +27,10 @@ describe(useSheetHistoryStore, () => {
     expect(isRedoable.value).toBe(false);
   });
 
-  test("becomes redoable after undo", async () => {
+  test("becomes redoable after undo", () => {
     expect.hasAssertions();
 
-    const { dataSource } = await setupWithDeletedRow();
+    const { dataSource } = setupWithDeletedRow();
     const sheetHistoryStore = useSheetHistoryStore();
     const { isRedoable, isUndoable } = storeToRefs(sheetHistoryStore);
     const { undo } = sheetHistoryStore;
@@ -68,10 +68,10 @@ describe(useSheetHistoryStore, () => {
     expect(isRedoable.value).toBe(false);
   });
 
-  test("new operation after undo clears redo history", async () => {
+  test("new operation after undo clears redo history", () => {
     expect.hasAssertions();
 
-    const { dataSource, deleteRow } = await setupWithDeletedRow();
+    const { dataSource, deleteRow } = setupWithDeletedRow();
     const sheetHistoryStore = useSheetHistoryStore();
     const { isRedoable } = storeToRefs(sheetHistoryStore);
     const { undo } = sheetHistoryStore;
@@ -79,7 +79,7 @@ describe(useSheetHistoryStore, () => {
 
     expect(isRedoable.value).toBe(true);
 
-    await deleteRow(takeOne(dataSource.rows).id);
+    deleteRow(takeOne(dataSource.rows).id);
 
     expect(isRedoable.value).toBe(false);
   });
@@ -94,10 +94,10 @@ describe(useSheetHistoryStore, () => {
     expect(undoDescription.value).toBe("");
   });
 
-  test("undoDescription reflects last command", async () => {
+  test("undoDescription reflects last command", () => {
     expect.hasAssertions();
 
-    await setupWithDeletedRow();
+    setupWithDeletedRow();
     const sheetHistoryStore = useSheetHistoryStore();
     const { undoDescription } = storeToRefs(sheetHistoryStore);
 
@@ -114,10 +114,10 @@ describe(useSheetHistoryStore, () => {
     expect(redoDescription.value).toBe("");
   });
 
-  test("redoDescription reflects undone command", async () => {
+  test("redoDescription reflects undone command", () => {
     expect.hasAssertions();
 
-    const { dataSource } = await setupWithDeletedRow();
+    const { dataSource } = setupWithDeletedRow();
     const sheetHistoryStore = useSheetHistoryStore();
     const { redoDescription } = storeToRefs(sheetHistoryStore);
     const { undo } = sheetHistoryStore;
@@ -126,13 +126,13 @@ describe(useSheetHistoryStore, () => {
     expect(redoDescription.value).toBe("Delete Row 1");
   });
 
-  test("multiple undo operations reverse in order", async () => {
+  test("multiple undo operations reverse in order", () => {
     expect.hasAssertions();
 
-    const { dataSource, deleteRow } = await setupWithDeletedRow(1);
+    const { dataSource, deleteRow } = setupWithDeletedRow(1);
     const sheetHistoryStore = useSheetHistoryStore();
     const { undo } = sheetHistoryStore;
-    await deleteRow(takeOne(dataSource.rows).id);
+    deleteRow(takeOne(dataSource.rows).id);
 
     expect(dataSource.rows).toStrictEqual([]);
 
@@ -148,14 +148,14 @@ describe(useSheetHistoryStore, () => {
     ]);
   });
 
-  test("mixed operations undo/redo correctly", async () => {
+  test("mixed operations undo/redo correctly", () => {
     expect.hasAssertions();
 
-    const { dataSource } = await setupWithDeletedRow();
+    const { dataSource } = setupWithDeletedRow();
     const deleteColumn = useDeleteColumn();
     const sheetHistoryStore = useSheetHistoryStore();
     const { redo, undo } = sheetHistoryStore;
-    await deleteColumn(" ");
+    deleteColumn(" ");
 
     expect(dataSource.rows).toHaveLength(1);
     expect(dataSource.columns).toHaveLength(1);
@@ -177,7 +177,7 @@ describe(useSheetHistoryStore, () => {
     expect(dataSource.columns).toHaveLength(1);
   });
 
-  test("undoes only the MAX_HISTORY_SIZE most recent commands", async () => {
+  test("undoes only the MAX_HISTORY_SIZE most recent commands", () => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDataSource();
@@ -186,8 +186,7 @@ describe(useSheetHistoryStore, () => {
     const { isUndoable } = storeToRefs(sheetHistoryStore);
     const { undo } = sheetHistoryStore;
     const rowCountBefore = dataSource.rows.length;
-    // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: every row pushes onto the stack the last one left
-    for (let index = 0; index < MAX_HISTORY_SIZE + 1; index++) await createRow();
+    for (let index = 0; index < MAX_HISTORY_SIZE + 1; index++) createRow();
     const undoableBeforeEachUndo: boolean[] = [];
     for (let index = 0; index < MAX_HISTORY_SIZE; index++) {
       undoableBeforeEachUndo.push(isUndoable.value);
@@ -199,14 +198,14 @@ describe(useSheetHistoryStore, () => {
     expect(dataSource.rows).toHaveLength(rowCountBefore + 1);
   });
 
-  test("clear resets undo and redo state", async () => {
+  test("clear resets undo and redo state", () => {
     expect.hasAssertions();
 
-    const { dataSource, deleteRow } = await setupWithDeletedRow();
+    const { dataSource, deleteRow } = setupWithDeletedRow();
     const sheetHistoryStore = useSheetHistoryStore();
     const { isRedoable, isUndoable, redoDescription, undoDescription } = storeToRefs(sheetHistoryStore);
     const { clear, undo } = sheetHistoryStore;
-    await deleteRow(takeOne(dataSource.rows).id);
+    deleteRow(takeOne(dataSource.rows).id);
     undo(dataSource);
     clear();
 

@@ -2,12 +2,14 @@ import type { DirectMessageParticipant } from "#shared/models/db/room/DirectMess
 import type { HideDirectMessageInput } from "#shared/models/db/room/HideDirectMessageInput";
 import type { PublicUser, RoomInMessage } from "@esposter/db-schema";
 
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
+import { MutationStatus } from "#src/models/shared/MutationStatus";
 import { authClient } from "#src/services/auth/authClient";
 import { createOperationData } from "#src/services/shared/createOperationData";
 import { useDataStore } from "#src/store/message/data";
 import { useRoomStore } from "#src/store/message/room/index";
 import { DerivedDatabaseEntityType, MessageType } from "@esposter/db-schema";
-import { ID_SEPARATOR, RoutePath, takeOne } from "@esposter/shared";
+import { getSynchronizedFunction, ID_SEPARATOR, noop, RoutePath, takeOne } from "@esposter/shared";
 
 export const useDirectMessageStore = defineStore("message/room/directMessage", () => {
   const { $trpc } = useNuxtApp();
@@ -61,37 +63,48 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
   const { executeMutation: executeLeaveDirectMessageMutation } = useMutation();
   const session = authClient.useSession();
   const createDirectMessage = async (userIds: string[]) => {
-    await executeCreateDirectMessageMutation(() => $trpc.room.directMessage.createDirectMessage.mutate(userIds), {
-      key: Symbol("createDirectMessage"),
-      onSuccess: async (room) => {
-        const existingDirectMessage = directMessages.value.find(({ id }) => id === room.id);
-        if (!existingDirectMessage) storeCreateDirectMessage(room, true);
-        await navigateTo(RoutePath.Messages(room.id));
+    const outcome = await executeCreateDirectMessageMutation(
+      () => $trpc.room.directMessage.createDirectMessage.mutate(userIds),
+      {
+        // The conversation is the server's to name, so it is drawn once the server answers with its room
+        awaitedBecause: AwaitedReason.ServerIssuedValue,
+        key: Symbol("createDirectMessage"),
+        onSuccess: async (room) => {
+          const existingDirectMessage = directMessages.value.find(({ id }) => id === room.id);
+          if (!existingDirectMessage) storeCreateDirectMessage(room, true);
+          await navigateTo(RoutePath.Messages(room.id));
+        },
       },
-    });
+    );
+    // Whether the server kept it, so the dialog that asked stays open over a refusal
+    return outcome.status === MutationStatus.Succeeded;
   };
   // The link goes into a conversation the reader is already in, so unlike inviteFriend there is no direct message
   // To create first, and the message is the reader's own
-  const inviteDirectMessage = async (roomId: string, inviteLink: string) => {
-    await executeInviteDirectMessageMutation(
+  const inviteDirectMessage = (roomId: string, inviteLink: string) => {
+    executeInviteDirectMessageMutation(
       () => createMessage({ files: [], message: inviteLink, replyToId: null, roomId, type: MessageType.Message }),
-      { key: roomId },
+      // The message's bubble is drawn at once by createMessage, which owns its own rollback, so this write applies nothing
+      // Of its own. Its key is what the invite's pending state reads
+      { applyOptimistic: () => noop, key: roomId },
     );
   };
   // The invite a friend is sent: the direct message is created where none exists, and the reader stays on the
   // Screen they are on, so unlike createDirectMessage this does not navigate. The message is the reader's own
   const inviteFriend = async (friendId: PublicUser["id"], inviteLink: string) => {
     await executeInviteFriendMutation(() => $trpc.room.directMessage.createDirectMessage.mutate([friendId]), {
+      // The room the friend's conversation is in is the server's, so the invite is sent once the server names it
+      awaitedBecause: AwaitedReason.ServerIssuedValue,
       key: friendId,
-      onSuccess: async (room) => {
+      onSuccess: (room) => {
         const existingDirectMessage = directMessages.value.find(({ id }) => id === room.id);
         if (!existingDirectMessage) storeCreateDirectMessage(room, true);
-        await inviteDirectMessage(room.id, inviteLink);
+        inviteDirectMessage(room.id, inviteLink);
       },
     });
   };
-  const deleteDirectMessageParticipant = async (roomId: string, userId: string) => {
-    await executeDeleteDirectMessageParticipantMutation(
+  const deleteDirectMessageParticipant = (roomId: string, userId: string) => {
+    executeDeleteDirectMessageParticipantMutation(
       () => $trpc.room.directMessage.deleteDirectMessageParticipant.mutate({ roomId, userId }),
       {
         applyOptimistic: () => {
@@ -124,42 +137,42 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
       },
     );
   };
-  // Hiding and leaving both take the conversation out of the list. Restore only this conversation: the list is
-  // Sorted for display, so where it lands in it is not observable
+  // Started rather than awaited: the removal's apply runs the screen steps the write causes as the write is sent
+  const navigateToDirectMessage = getSynchronizedFunction(async (path: string) => {
+    await navigateTo(path, { replace: true });
+  });
+  // Hiding and leaving both take the conversation out of the list, and a reader in it is handed to the conversation at
+  // The top. A refusal restores only this conversation, since the list is sorted for display, and puts the reader back
+  // In it unless they have moved on from where the removal sent them
   const applyOptimisticRemoveDirectMessage = (roomId: string) => {
     const removedDirectMessage = items.value.find(({ id }) => id === roomId);
+    const isCurrent = currentDirectMessageId.value === roomId;
     storeDeleteDirectMessage({ id: roomId });
+    const landingDirectMessageId = directMessages.value.length > 0 ? takeOne(directMessages.value).id : "";
+    if (isCurrent)
+      navigateToDirectMessage(
+        landingDirectMessageId ? RoutePath.Messages(landingDirectMessageId) : RoutePath.MessagesIndex,
+      );
     return () => {
       if (removedDirectMessage) storeCreateDirectMessage(removedDirectMessage);
+      if (isCurrent && currentDirectMessageId.value === landingDirectMessageId)
+        navigateToDirectMessage(RoutePath.Messages(roomId));
     };
   };
-  // Read once the removal has landed, so the conversation the user is handed to is one that is still there
-  const navigateFromRemovedDirectMessage = async (roomId: string) => {
-    if (currentDirectMessageId.value !== roomId) return;
-    await navigateTo(
-      directMessages.value.length > 0 ? RoutePath.Messages(takeOne(directMessages.value).id) : RoutePath.MessagesIndex,
-      { replace: true },
-    );
-  };
-  const hideDirectMessage = async (input: HideDirectMessageInput) => {
-    await executeHideDirectMessageMutation(() => $trpc.room.directMessage.hideDirectMessage.mutate(input), {
+  const hideDirectMessage = (input: HideDirectMessageInput) => {
+    executeHideDirectMessageMutation(() => $trpc.room.directMessage.hideDirectMessage.mutate(input), {
       applyOptimistic: () => applyOptimisticRemoveDirectMessage(input),
       // Keyed per room so hiding two conversations in quick succession never queues behind the other
       key: input,
-      onSuccess: () => navigateFromRemovedDirectMessage(input),
     });
   };
   // Removing yourself is leaving: the participant list never holds the reader, so it is the conversation that goes
-  const leaveDirectMessage = async (roomId: string) => {
+  const leaveDirectMessage = (roomId: string) => {
     const userId = session.value.data?.user.id;
     if (!userId) return;
-    await executeLeaveDirectMessageMutation(
+    executeLeaveDirectMessageMutation(
       () => $trpc.room.directMessage.deleteDirectMessageParticipant.mutate({ roomId, userId }),
-      {
-        applyOptimistic: () => applyOptimisticRemoveDirectMessage(roomId),
-        key: roomId,
-        onSuccess: () => navigateFromRemovedDirectMessage(roomId),
-      },
+      { applyOptimistic: () => applyOptimisticRemoveDirectMessage(roomId), key: roomId },
     );
   };
 

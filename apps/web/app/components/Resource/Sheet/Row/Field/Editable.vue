@@ -7,7 +7,7 @@ import { checkIsEditableColumnValue } from "#shared/services/resource/sheet/colu
 import { useCellStore } from "#src/store/resource/sheet/cell";
 import { useColumnStore } from "#src/store/resource/sheet/column";
 import { useRowStore } from "#src/store/resource/sheet/row";
-import { getSynchronizedFunction, takeOne, toRawDeep } from "@esposter/shared";
+import { takeOne, toRawDeep } from "@esposter/shared";
 
 interface Props {
   column: EditableColumnValue;
@@ -29,9 +29,9 @@ const editableColumns = computed(() =>
 );
 const editedValue = ref<ColumnValue>(takeOne(item.data, column.name) ?? null);
 let isSubmitted = false;
-// Fire-and-forget: focusCell focuses the next cell straight after this, and awaiting the row save
-// Would stall focus behind the network round-trip on every keyboard move.
-const submitEdit = getSynchronizedFunction(async () => {
+// The row is written as the edit is left, and focusCell focuses the next cell straight after this, so the write is never
+// Waited on and the focus never stalls behind it
+const submitEdit = () => {
   if (isSubmitted) return;
   isSubmitted = true;
   clearFocus();
@@ -39,8 +39,8 @@ const submitEdit = getSynchronizedFunction(async () => {
   const editedRow = Object.assign(structuredClone(toRawDeep(item)), {
     data: { ...item.data, [column.name]: editedValue.value },
   });
-  await updateRow(new Row(editedRow));
-});
+  updateRow(new Row(editedRow));
+};
 
 const focusCell = (targetRowIndex: number, targetColumnName: string) => {
   submitEdit();

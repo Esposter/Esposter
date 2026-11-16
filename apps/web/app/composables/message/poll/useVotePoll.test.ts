@@ -6,6 +6,7 @@ import { useSession } from "#src/services/auth/authClient.test";
 import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { MessageType } from "@esposter/db-schema";
+import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -43,7 +44,8 @@ describe(useVotePoll, () => {
       () => ({ ...pollContent, votes: { [userId]: optionId } }),
       false,
     );
-    await vote("");
+    vote("");
+    await flushPromises();
 
     expect(votePoll).toHaveBeenCalledExactlyOnceWith({ id: message.id, optionId: "", roomId });
   });
@@ -67,7 +69,7 @@ describe(useVotePoll, () => {
       () => pollContent,
       false,
     );
-    const voting = vote(optionId);
+    vote(optionId);
 
     expect(isVoting.value).toBe(true);
 
@@ -76,7 +78,7 @@ describe(useVotePoll, () => {
     expect(isVoting.value).toBe(false);
 
     releaseVote();
-    await voting;
+    await flushPromises();
 
     expect(isVoting.value).toBe(false);
   });

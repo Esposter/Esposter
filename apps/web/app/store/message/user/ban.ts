@@ -18,10 +18,10 @@ export const useBanStore = defineStore("message/user/ban", () => {
   const getRoomOperationData = (roomId: RoomInMessage["id"]) =>
     createOperationData(getSlice(roomId).items, ["roomId", "userId"], DatabaseEntityType.Ban);
 
-  const deleteBan = async (input: DeleteBanInput) => {
+  const deleteBan = (input: DeleteBanInput) => {
     const { items: roomItems } = getSlice(input.roomId);
     const { deleteBan: storeDeleteBan } = getRoomOperationData(input.roomId);
-    await executeMutation(() => $trpc.message.moderation.deleteBan.mutate(input), {
+    executeMutation(() => $trpc.message.moderation.deleteBan.mutate(input), {
       // The one row this write lifts — unbans are keyed per ban and never queue against each other
       applyOptimistic: () => {
         const deletedBan = roomItems.value.find(({ userId }) => userId === input.userId);

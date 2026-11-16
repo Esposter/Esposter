@@ -39,10 +39,10 @@ const saveEditedDocument = (newDocument: SurveyDocument) => {
   if (issue) {
     createAlert(`${issue.pointer}: ${issue.message}`, "error");
     refuseSaveContent();
-    return Promise.resolve(false);
+    return;
   }
 
-  return saveDocument(newDocument);
+  saveDocument(newDocument);
 };
 // Set once the document is loaded, so the load itself is not autosaved back
 useSurveyCreatorAutosave(saveEditedDocument);

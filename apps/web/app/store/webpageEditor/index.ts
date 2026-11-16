@@ -29,11 +29,13 @@ export const useWebpageEditorStore = defineStore("webpageEditor", () => {
   );
   // The document the page builder holds is written back as the content's tree and root, with the identity and share
   // Preview the content keeps beside them. Nothing is written for a resource whose document is not held
-  const saveWebpage = (resourceId: string) =>
-    pageBuilderDocumentStore.saveDocument(resourceId, async (document) => {
-      webpageEditor.value.content = document.content;
-      webpageEditor.value.root = document.root;
-      await saveContent();
-    });
+  const saveWebpage = (resourceId: string) => {
+    const document = pageBuilderDocumentStore.getDocument(resourceId);
+    if (!document) return;
+
+    webpageEditor.value.content = document.content;
+    webpageEditor.value.root = document.root;
+    saveContent();
+  };
   return { loadContent, saveWebpage, webpageEditor };
 });

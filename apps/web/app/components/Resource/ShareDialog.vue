@@ -2,7 +2,6 @@
 import type { UiSelectItem } from "#src/models/ui/UiSelectItem";
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { MutationStatus } from "#src/models/shared/MutationStatus";
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
 import { UiDialogSize } from "#src/models/ui/UiDialogSize";
@@ -20,7 +19,7 @@ const isOpen = defineModel<boolean>({ default: false });
 const { resource } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
 const notificationStore = useNotificationStore();
-const { createErrorNotification, createNotification } = notificationStore;
+const { createErrorNotification, createNotification, dismissNotification } = notificationStore;
 const { executeMutation } = useMutation();
 const { answer, isPending } = useDialogAnswer(isOpen);
 const roomItems = ref<UiSelectItem<string>[]>([]);
@@ -45,11 +44,11 @@ onMounted(async () => {
   }).match(noop, createErrorNotification);
   isLoadingRooms.value = false;
 });
-const share = async () => {
+const share = () => {
   const room = roomItems.value.find(({ value }) => value === roomId.value);
-  if (!room) return false;
+  if (!room) return;
   // The caller's own message in their own room — RBAC, rate limits and the message pipeline apply unchanged
-  const outcome = await executeMutation(
+  executeMutation(
     () =>
       $trpc.message.createMessage.mutate({
         message: shareMessage.value,
@@ -57,18 +56,20 @@ const share = async () => {
         timeZone: Temporal.Now.timeZoneId(),
       }),
     {
-      key: Symbol("shareResource"),
-      onError: createErrorNotification,
-      onSuccess: () => {
-        createNotification({
+      applyOptimistic: () => {
+        const notificationId = createNotification({
           action: { title: "Open room", to: RoutePath.Messages(room.value) },
           severity: NotificationSeverity.Success,
           title: `Shared to ${room.title}`,
         });
+        return () => {
+          dismissNotification(notificationId);
+        };
       },
+      key: Symbol("shareResource"),
+      onError: createErrorNotification,
     },
   );
-  return outcome.status === MutationStatus.Succeeded;
 };
 </script>
 

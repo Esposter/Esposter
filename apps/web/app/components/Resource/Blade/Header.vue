@@ -9,7 +9,6 @@ import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { exportDatasetCsv } from "#src/services/dataset/exportDatasetCsv";
 import { getResourceBladeItems } from "#src/services/resource/getResourceBladeItems";
 import { useResourceStore } from "#src/store/resource/index";
-import { RoutePath } from "@esposter/shared";
 
 interface Props {
   resource: ResourceInResource;
@@ -114,16 +113,7 @@ const items = computed<Item[]>(() =>
     <ResourceRenameDialog v-if="isRenameOpen" v-model="isRenameOpen" :rename="renameResource" :resource />
     <ResourceShareDialog v-if="isShareOpen" v-model="isShareOpen" :resource />
     <ResourceAskClaudeDialog v-if="isAskClaudeOpen" v-model="isAskClaudeOpen" :resource />
-    <UiConfirmDialog
-      v-model="isDeleteOpen"
-      confirm-label="Delete"
-      title="Delete resource"
-      :confirm="
-        async () => {
-          if (await deleteResource()) await navigateTo(RoutePath.ResourceExplorerAll);
-        }
-      "
-    >
+    <UiConfirmDialog v-model="isDeleteOpen" confirm-label="Delete" title="Delete resource" :confirm="deleteResource">
       <p>Move {{ resource.name }} to the recycle bin? You can restore it from there.</p>
       <!-- The confirmation stays mounted while closed, so the read waits for it to open -->
       <ResourceConsumersWarning v-if="isDeleteOpen" :ids />

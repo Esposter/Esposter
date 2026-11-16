@@ -4,6 +4,7 @@ import type { BlueprintDeployment } from "#shared/models/resource/blueprint/Blue
 import { buildBlueprintDeployReviews } from "#shared/services/resource/blueprint/buildBlueprintDeployReviews";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { pluralize } from "#shared/util/text/pluralize";
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
 import { UiDialogSize } from "#src/models/ui/UiDialogSize";
@@ -46,9 +47,11 @@ const deploy = async () => {
   const resourceValue = resource.value;
   if (!resourceValue) return;
 
+  // The results list what the server created, so the deploy is awaited for them
   await executeMutation(
     () => $trpc.blueprint.deployBlueprint.mutate({ id: resourceValue.id, parameterValues: parameterValues.value }),
     {
+      awaitedBecause: AwaitedReason.ServerDecidedOutcome,
       key: resourceValue.id,
       onError: createErrorNotification,
       onSuccess: (newDeployments) => {

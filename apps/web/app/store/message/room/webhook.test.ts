@@ -10,6 +10,7 @@ import { useAlertStore } from "#src/store/alert";
 import { useWebhookStore } from "#src/store/message/room/webhook";
 import { useWebhookDialogStore } from "#src/store/message/room/webhookDialog";
 import { TRPCError } from "@trpc/server";
+import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { beforeEach, describe, expect, test } from "vitest";
 
@@ -73,10 +74,9 @@ describe(useWebhookStore, () => {
     const { updateWebhook } = webhookStore;
     const alertStore = useAlertStore();
     const { alerts } = storeToRefs(alertStore);
-    await Promise.all([
-      updateWebhook(roomId, { id: first.id, name: "name" }),
-      updateWebhook(roomId, { id: first.id, isActive: false }),
-    ]);
+    updateWebhook(roomId, { id: first.id, name: "name" });
+    updateWebhook(roomId, { id: first.id, isActive: false });
+    await flushPromises();
 
     expect(alerts.value.map(({ text }) => text)).toStrictEqual(["1", "2"]);
   });
@@ -95,7 +95,9 @@ describe(useWebhookStore, () => {
     const { items } = storeToRefs(webhookStore);
     // Copies, since an optimistic update assigns onto the stored row in place
     getSlice(roomId).items.value = [{ ...first }, { ...second }];
-    await Promise.all([updateWebhook(roomId, { id: first.id, name: " " }), deleteWebhook(roomId, { id: second.id })]);
+    updateWebhook(roomId, { id: first.id, name: " " });
+    deleteWebhook(roomId, { id: second.id });
+    await flushPromises();
 
     expect(items.value).toStrictEqual([first]);
   });
@@ -111,7 +113,9 @@ describe(useWebhookStore, () => {
     const { deleteWebhook, getSlice } = webhookStore;
     const { items } = storeToRefs(webhookStore);
     getSlice(roomId).items.value = [{ ...first }, { ...second }];
-    await Promise.all([deleteWebhook(roomId, { id: first.id }), deleteWebhook(roomId, { id: second.id })]);
+    deleteWebhook(roomId, { id: first.id });
+    deleteWebhook(roomId, { id: second.id });
+    await flushPromises();
 
     expect(items.value).toStrictEqual([first]);
   });
@@ -133,7 +137,8 @@ describe(useWebhookStore, () => {
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
     getSlice(roomId).items.value = [{ ...first }];
-    await updateWebhook(roomId, { id: first.id, name: rejectedName });
+    updateWebhook(roomId, { id: first.id, name: rejectedName });
+    await flushPromises();
 
     expect(items.value).toStrictEqual([first]);
     expect(webhookDialogStore.issuedUrl).toBe(

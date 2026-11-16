@@ -12,7 +12,7 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 import { surveyDocumentSchema, SurveyProgressBarPlacement } from "vue-survey-engine-headless";
 
 const { deleteFile, uploadFile } = vi.hoisted(() => ({
-  deleteFile: vi.fn<(url: string) => Promise<void>>(() => Promise.resolve()),
+  deleteFile: vi.fn<(url: string) => void>(),
   uploadFile: vi.fn<(file: File) => Promise<string>>(),
 }));
 
@@ -121,7 +121,7 @@ describe("resourceSurveyCreatorTheme", () => {
         .find((button) => button.text() === "Remove logo")
         ?.trigger("click");
       await flushPromises();
-      await sweep(surveyDocument.value);
+      sweep(surveyDocument.value);
 
       expect(deleteFile).toHaveBeenCalledExactlyOnceWith(url);
     });

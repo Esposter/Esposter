@@ -15,6 +15,7 @@ import { useRealtimeStore } from "#src/store/message/room/realtime";
 import { AdminActionType, CALL_ID_LENGTH } from "@esposter/db-schema";
 import { RoutePath, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
+import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -49,8 +50,8 @@ describe(useCallStore, () => {
   });
 
   // The camera flag is a participant row like any other, so the primitive unwinds and reports its rejection.
-  // Rethrowing lets a rejected server write cancel the local work it is composed with — the picked background
-  // Never reaches the camera that is in fact running, and the same throw inside joinCall tears down a live call
+  // The camera write is drawn at once and rolled back if the server refuses it, but the picked background is applied
+  // Regardless: a refused camera write must not leave the picked background unapplied
   test("applies a virtual background when the camera write is rejected", async () => {
     expect.hasAssertions();
 
@@ -64,6 +65,7 @@ describe(useCallStore, () => {
     const { activeCallSessionId } = storeToRefs(callStore);
     activeCallSessionId.value = callSessionId;
     await selectVirtualBackground(imagePath);
+    await flushPromises();
 
     expect(selectedVirtualBackground.value).toBe(imagePath);
     expect(isCameraEnabled.value).toBe(false);
@@ -264,7 +266,7 @@ describe(useCallStore, () => {
     expect(callRoute.value).toBe(RoutePath.Calls(callSessionId));
   });
 
-  // The call stays up until the server answers the leave, so a second press lands while the first is still out
+  // The screen lets go of the call as the leave is sent, so a second press finds no call left to leave and sends nothing
   test("sends one leave for a second press while the first is out", async () => {
     expect.hasAssertions();
 
@@ -275,11 +277,12 @@ describe(useCallStore, () => {
     const callStore = useCallStore();
     const { activeCallSessionId, isLeaving } = storeToRefs(callStore);
     activeCallSessionId.value = callSessionId;
-    const firstLeave = callStore.leaveCall();
+    callStore.leaveCall();
 
     expect(isLeaving.value).toBe(true);
 
-    await Promise.all([firstLeave, callStore.leaveCall()]);
+    callStore.leaveCall();
+    await flushPromises();
 
     expect(leaveCall).toHaveBeenCalledTimes(1);
     expect(isLeaving.value).toBe(false);
@@ -294,7 +297,8 @@ describe(useCallStore, () => {
     const callStore = useCallStore();
     const { activeCallSessionId, isLeaving } = storeToRefs(callStore);
     activeCallSessionId.value = callSessionId;
-    await callStore.leaveCall();
+    callStore.leaveCall();
+    await flushPromises();
 
     expect(isLeaving.value).toBe(false);
   });

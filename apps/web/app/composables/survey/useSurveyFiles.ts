@@ -6,7 +6,7 @@ import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useResourceStore } from "#src/store/resource/index";
 import { useSurveyFilesStore } from "#src/store/survey/files";
 import { ResourceType } from "@esposter/db-schema";
-import { getResultAsync, noop } from "@esposter/shared";
+import { getResultAsync } from "@esposter/shared";
 
 // The files of one survey's editor. A file is deleted only when the editor closes and its document no longer references
 // It, since an edit the owner undoes would otherwise leave a picture broken. Only a file the editor's session held is
@@ -19,10 +19,11 @@ export const useSurveyFiles = () => {
   const surveyFilesStore = useSurveyFilesStore();
   const { fileUrls, isClosed } = storeToRefs(surveyFilesStore);
   const { addFileUrl, closeSession, openSession } = surveyFilesStore;
-  // The editor is gone by the time a file is deleted, so nothing can alert: a file that fails to delete is logged, and the
+  // The editor is gone by the time a file is deleted, so nothing can alert: each delete logs its own failure, and the
   // Rest still go
-  const deleteUrls = (urls: string[]) =>
-    getResultAsync(() => Promise.all(urls.map((url) => deleteFile(url)))).match(noop, console.error);
+  const deleteUrls = (urls: string[]) => {
+    for (const url of urls) deleteFile(url);
+  };
   // A file is validated before the upload, and a rejected one alerts itself, so the undefined it leaves uploads nothing.
   // A file that lands after the editor closed is deleted at once, since the close has already swept, and is handed back
   // To nothing
@@ -31,7 +32,7 @@ export const useSurveyFiles = () => {
 
     const url = await uploadFile(file);
     if (isClosed.value) {
-      await deleteUrls([url]);
+      deleteUrls([url]);
       return undefined;
     }
 
@@ -53,11 +54,11 @@ export const useSurveyFiles = () => {
   const track = (document: SurveyDocument) => {
     openSession(collectSurveyFileUrls(document));
   };
-  const sweep = async (document: SurveyDocument) => {
+  const sweep = (document: SurveyDocument) => {
     const referencedUrls = new Set(collectSurveyFileUrls(document));
     const orphanUrls = [...fileUrls.value].filter((url) => !referencedUrls.has(url));
     closeSession();
-    await deleteUrls(orphanUrls);
+    deleteUrls(orphanUrls);
   };
 
   return { sweep, track, upload, uploadPicked };

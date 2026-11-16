@@ -27,8 +27,8 @@ const overlapItems = [
       :items="packingItems"
       :model-value="dashboard.compactType"
       @update:model-value="
-        async (compactType) => {
-          if (compactType) await setLayout({ collision: dashboard.collision, compactType });
+        (compactType) => {
+          if (compactType) setLayout({ collision: dashboard.collision, compactType });
         }
       "
     />
@@ -38,8 +38,8 @@ const overlapItems = [
       :items="overlapItems"
       :model-value="dashboard.collision"
       @update:model-value="
-        async (collision) => {
-          if (collision) await setLayout({ collision, compactType: dashboard.compactType });
+        (collision) => {
+          if (collision) setLayout({ collision, compactType: dashboard.compactType });
         }
       "
     />

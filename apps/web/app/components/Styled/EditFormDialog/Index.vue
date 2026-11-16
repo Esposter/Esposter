@@ -16,7 +16,7 @@ interface Props<T> {
   originalItem?: T;
   // Deleting the original item, offered only when there is one
   remove?: () => Promisable<unknown>;
-  // Awaited with Save pending, so a failed save keeps the dialog and its draft to try again (useDialogAnswer)
+  // Sent as the dialog closes; a refused save is answered by its rollback and alert (useDialogAnswer)
   save: () => Promisable<unknown>;
   schema: z.ZodType;
   // What the item is called as it is being edited, so the title follows the name field as the reader types

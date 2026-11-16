@@ -55,8 +55,8 @@ const { isVoting, vote } = await useVotePoll(
         :items="pollOptionItems"
         :label="pollContent.question"
         @update:model-value="
-          async (optionId) => {
-            if (optionId) await vote(optionId);
+          (optionId) => {
+            if (optionId) vote(optionId);
           }
         "
       >

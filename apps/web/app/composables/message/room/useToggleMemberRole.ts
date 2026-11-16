@@ -22,10 +22,10 @@ export const useToggleMemberRole = (
       return checkIsManageable(myPermissions.topRolePosition, toValue(role).position, myPermissions.isRoomOwner);
     else return false;
   });
-  const toggleRole = async () => {
+  const toggleRole = () => {
     const input = { roleId: toValue(role).id, roomId: toValue(roomId), userId: toValue(userId) };
-    if (hasRole.value) await revokeRole(input);
-    else await assignRole(input);
+    if (hasRole.value) revokeRole(input);
+    else assignRole(input);
   };
   return { hasRole, isManageable, toggleRole };
 };

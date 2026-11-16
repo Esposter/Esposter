@@ -8,17 +8,11 @@ import { toRawDeep } from "@esposter/shared";
 const surveyStore = useSurveyStore();
 const { saveSettings } = surveyStore;
 const { settings } = storeToRefs(surveyStore);
-// Edited on a local copy so a failed save leaves the store showing what the server still has.
-// The store ref hands over a reactive proxy, which structuredClone refuses outright — unwrap it first
-const { cloned: editedSettings, sync: resetSettings } = useCloned(settings, {
-  clone: (source) => structuredClone(toRawDeep(source)),
-});
-const isPending = ref(false);
-const save = async () => {
-  isPending.value = true;
-  const isSuccessful = await saveSettings(structuredClone(toRawDeep(editedSettings.value)));
-  if (!isSuccessful) resetSettings();
-  isPending.value = false;
+// Edited on a local copy that follows the store's settings, so a refused save the store rolls back brings the copy
+// Back with it. The store ref hands over a reactive proxy, which structuredClone refuses outright — unwrap it first
+const { cloned: editedSettings } = useCloned(settings, { clone: (source) => structuredClone(toRawDeep(source)) });
+const save = () => {
+  saveSettings(structuredClone(toRawDeep(editedSettings.value)));
 };
 </script>
 
@@ -27,7 +21,6 @@ const save = async () => {
     <h2 ui-heading>Collection</h2>
     <UiSwitch
       v-model="editedSettings.isAcceptingResponses"
-      :disabled="isPending"
       is-label-shown
       label="Accepting responses"
       @update:model-value="save()"

@@ -33,9 +33,9 @@ const roomParticipantMap = useCallRoomParticipantMap();
       <UiButton
         :variant="UiButtonVariant.Danger"
         @click="
-          async () => {
+          () => {
             close();
-            await leaveCall();
+            leaveCall();
           }
         "
       >

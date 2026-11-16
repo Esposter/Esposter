@@ -67,7 +67,6 @@ const isLeaveOpen = ref(false);
           removingParticipant &&
           deleteDirectMessageParticipant(currentDirectMessage.id, removingParticipant.id)
       "
-      is-optimistic
     >
       <p>Remove {{ removingParticipant.name }} from this conversation?</p>
     </UiConfirmDialog>
@@ -76,7 +75,6 @@ const isLeaveOpen = ref(false);
       confirm-label="Leave"
       :title="`Leave ${directMessageName}`"
       :confirm="() => currentDirectMessage && leaveDirectMessage(currentDirectMessage.id)"
-      is-optimistic
     >
       <p>Leave this conversation? You will not get it back unless someone adds you again.</p>
     </UiConfirmDialog>

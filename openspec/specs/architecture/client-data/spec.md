@@ -52,31 +52,15 @@ Every user write SHALL apply its change to the screen when it is sent, and SHALL
 - **WHEN** the subscription echoes the same value back
 - **THEN** the screen shows the same value and nothing changes
 
-### Requirement: A write waits for the server only where the server decides the result
+### Requirement: A visible create draws its row at once and keeps its place when the server confirms it
 
-A write SHALL skip applying its change before the server answers only when the result is computed by the server, is a version conflict, is an outcome decided by the server, is off screen, or would be an integrity hazard if repeated.
+A create whose row is visible when created SHALL draw its row at once, and the server's confirmation SHALL leave the row where it stands. A row the server keys by a text id SHALL be drawn under the id the client gave it. A message, which its room numbers, SHALL be drawn as a placeholder that becomes the real message in place.
 
-#### Scenario: A create whose row needs server-computed fields waits for the server
+#### Scenario: A new category is drawn under the id the client gave it
 
-- **GIVEN** a create whose row carries counts and relations the client cannot know
-- **WHEN** the create is sent
-- **THEN** the row appears only once the server has answered
-
-#### Scenario: A stale version prompts a refresh instead of a silent overwrite
-
-- **GIVEN** a save that carries the content version it was made against
-- **WHEN** the server reports that version is stale
-- **THEN** the reader is asked to refresh and the save is not applied
-
-#### Scenario: A rapid second click on a like creates only one like
-
-- **GIVEN** a like that is already being created
-- **WHEN** the reader clicks the like again
-- **THEN** no second like is created
-
-### Requirement: A visible create shows a placeholder that becomes the real row in place
-
-A create whose row the client can build faithfully and that is visible when created SHALL show a placeholder row that becomes the real row where it stands.
+- **WHEN** the reader creates a room category
+- **THEN** the category is listed at once under the id the client gave it
+- **AND** the server stores it under that id
 
 #### Scenario: A sent message keeps its place when the server confirms it
 
@@ -237,3 +221,49 @@ A read made in a test SHALL settle without waiting for another read sent in the 
 - **GIVEN** a test that holds one read open with a deferred answer
 - **WHEN** a second read is sent in the same tick
 - **THEN** the second read settles while the first is still held
+
+### Requirement: A write waits for the server only for a reason the server alone can answer
+
+A write SHALL wait for the server's answer before the screen changes only when what the reader sees next is a value only the server issues, an outcome the server decides, or a step that cannot be rolled back. A write that carries a version token SHALL apply at once like any other.
+
+#### Scenario: A create whose link only the server mints waits for the server
+
+- **GIVEN** a create whose result is a link only the server mints
+- **WHEN** the create is sent
+- **THEN** the link appears only once the server has answered
+
+#### Scenario: A stale version rolls the save back and prompts a refresh
+
+- **GIVEN** a save that carries the content version it was made against, already shown on screen
+- **WHEN** the server reports that version is stale
+- **THEN** the screen reverts to the content before the save
+- **AND** the reader is asked to refresh
+
+#### Scenario: A rapid second click on a like creates only one like
+
+- **GIVEN** a like that is already being created
+- **WHEN** the reader clicks the like again
+- **THEN** no second like is created
+
+### Requirement: Nothing the screen does because of a write waits for the server's answer
+
+A step the screen takes because of a write, such as closing a dialog, moving a row, ending an edit, clearing a field or navigating to a known place, SHALL run when the write is sent. Only the rollback and its alert SHALL follow the server's answer.
+
+#### Scenario: A ticked todo moves under Completed while its save is in flight
+
+- **GIVEN** an open todo and a save that has not answered
+- **WHEN** the reader ticks it and its hold ends
+- **THEN** the todo is under Completed
+
+#### Scenario: An edited comment leaves edit mode while its save is in flight
+
+- **GIVEN** a comment in edit mode and an update that has not answered
+- **WHEN** the reader saves the edit
+- **THEN** the comment shows its new text outside edit mode
+
+#### Scenario: A refused write puts the screen back
+
+- **GIVEN** an edit that has left edit mode with its new text shown
+- **WHEN** the server refuses the update
+- **THEN** the comment shows its text from before the edit
+- **AND** an alert shows the server's message

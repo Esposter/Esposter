@@ -1,28 +1,13 @@
 import type { SurveyDocument } from "vue-survey-engine-headless";
 
-import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useSurveyCreatorStore } from "#src/store/survey/creator";
 
-// Saves the creator's document on the shared autosave cadence each time it changes. The saves are one write queue under one
-// Key, so no two run at once, and each saves the document as it stands when its turn comes, so an edit made during a save is
-// Written by the save after it rather than dropped
-export const useSurveyCreatorAutosave = (save: (document: SurveyDocument) => Promise<boolean>) => {
+// Hands the creator's document to `save` on the shared autosave cadence each time it changes. `save` writes at once and
+// Queues behind any write before it under its own key, so an edit made during a save is written by the save after it
+export const useSurveyCreatorAutosave = (save: (document: SurveyDocument) => void) => {
   const surveyCreatorStore = useSurveyCreatorStore();
   const { document } = storeToRefs(surveyCreatorStore);
-  const { executeMutation, isPending } = useMutation();
-  const hasError = ref(false);
-  const write = () =>
-    executeMutation(() => save(document.value), {
-      key: "save",
-      onError: (error) => {
-        hasError.value = true;
-        createErrorAlert(error);
-      },
-      onSuccess: (isSaved) => {
-        hasError.value = !isSaved;
-      },
-    });
-  watchAutosave(document, write);
-
-  return { hasError, isSaving: isPending };
+  watchAutosave(document, () => {
+    save(document.value);
+  });
 };

@@ -5,6 +5,7 @@ import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useRoomDialogStore } from "#src/store/message/room/dialog";
 import { useRoomStore } from "#src/store/message/room/index";
 import { TRPCError } from "@trpc/server";
+import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 
 describe(useRoomStore, () => {
@@ -53,12 +54,13 @@ describe(useRoomStore, () => {
     const { deleteRoom, pushRooms } = roomStore;
     const { rooms } = storeToRefs(roomStore);
     pushRooms(first, second);
-    const rejectedDeleteRoom = deleteRoom(first.id);
+    deleteRoom(first.id);
     // A second call issued in the same tick would share the first one's batch and settle with it
     await isFirstCalled;
-    await deleteRoom(second.id);
+    deleteRoom(second.id);
+    await flushPromises();
     onSecondDeleted(true);
-    await rejectedDeleteRoom;
+    await flushPromises();
 
     expect(rooms.value).toStrictEqual([first]);
   });
@@ -79,12 +81,13 @@ describe(useRoomStore, () => {
     const { leaveRoom, pushRooms } = roomStore;
     const { rooms } = storeToRefs(roomStore);
     pushRooms(first, second);
-    const rejectedLeaveRoom = leaveRoom(first.id);
+    leaveRoom(first.id);
     // A second call issued in the same tick would share the first one's batch and settle with it
     await isFirstCalled;
-    await leaveRoom(second.id);
+    leaveRoom(second.id);
+    await flushPromises();
     onSecondLeft(true);
-    await rejectedLeaveRoom;
+    await flushPromises();
 
     expect(rooms.value).toStrictEqual([first]);
   });

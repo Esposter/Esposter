@@ -826,7 +826,7 @@ describe("roomRouter", () => {
 
     expect(rolelessCounts).toStrictEqual([]);
 
-    const newRole = await roleCaller.createRole({ name, roomId: newRoom.id });
+    const newRole = await roleCaller.createRole({ id: v7(), name, roomId: newRoom.id });
     await roleCaller.assignRole({ roleId: newRole.id, roomId: newRoom.id, userId: getMockSession().user.id });
     const counts = await roomCaller.readMemberCountsByTopRole({ roomId: newRoom.id });
 

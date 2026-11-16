@@ -10,7 +10,7 @@ import { createSurveyDocument } from "vue-survey-engine-headless";
 
 export const useSurveyStore = defineStore("survey", () => {
   const resourceStore = useResourceStore();
-  const { getOpening, saveContent } = resourceStore;
+  const { saveContent } = resourceStore;
   const { content, getContentWriter, loadContent } = createContentData(
     ResourceType.Survey,
     (data) => data ?? { document: createSurveyDocument(), settings: surveySettingsSchema.parse({}) },
@@ -20,27 +20,26 @@ export const useSurveyStore = defineStore("survey", () => {
   // Collection settings share the survey's single content blob, so the Overview toggle and the editor
   // Save through the same path and the same contentVersion
   const settings = computed(() => content.value.settings);
-  // The content the latest save of this resource carries. Saves queue, so a half saved while the other half's
-  // Write is still in flight builds on that write rather than on `content`, which would send the other half back
-  // As it was before and undo it. Cleared once the latest save settles, so a failed half no later save carried
-  // Is dropped rather than riding into the next one. Scoped to the opening that issued it, since a reopening of the
-  // Same resource reads its own content and a save the first opening left in flight is not built on that
-  let pendingSave: undefined | { content: SurveyResource; opening: symbol };
-  const getLatestContent = () => (pendingSave?.opening === getOpening() ? pendingSave.content : content.value);
-  // A half is taken only once the write lands, through a writer bound before the write goes out, so a save that
-  // Lands after the blade moved on is not taken as the content open by then
-  const saveSurvey = async (newContent: SurveyResource) => {
-    if (!resourceStore.resource) return false;
+  // The content is written at once, so a half saved while the other half's write is still in flight builds on that
+  // Write, and `content` is always the latest content. A refused save puts back the content it replaced, through a
+  // Writer bound before the write goes out so a rollback that lands after the blade moved on is not taken as the
+  // Content open by then. A later save that wrote over this one keeps its own content
+  const saveSurvey = (newContent: SurveyResource) => {
+    if (!resourceStore.resource) return;
 
     const writeContent = getContentWriter();
-    const newPendingSave = { content: newContent, opening: getOpening() };
-    pendingSave = newPendingSave;
-    const isSuccessful = await saveContent(newContent);
-    if (pendingSave === newPendingSave) pendingSave = undefined;
-    if (isSuccessful) writeContent(newContent);
-    return isSuccessful;
+    const previousContent = content.value;
+    writeContent(newContent);
+    const writtenContent = content.value;
+    saveContent(newContent, () => {
+      if (content.value === writtenContent) writeContent(previousContent);
+    });
   };
-  const saveDocument = (newDocument: SurveyDocument) => saveSurvey({ ...getLatestContent(), document: newDocument });
-  const saveSettings = (newSettings: SurveySettings) => saveSurvey({ ...getLatestContent(), settings: newSettings });
+  const saveDocument = (newDocument: SurveyDocument) => {
+    saveSurvey({ ...content.value, document: newDocument });
+  };
+  const saveSettings = (newSettings: SurveySettings) => {
+    saveSurvey({ ...content.value, settings: newSettings });
+  };
   return { document, loadContent, saveDocument, saveSettings, settings };
 });

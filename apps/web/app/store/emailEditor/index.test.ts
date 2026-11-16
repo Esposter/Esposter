@@ -10,6 +10,7 @@ import { useEmailEditorStore } from "#src/store/emailEditor/index";
 import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
 import { useResourceStore } from "#src/store/resource/index";
 import { ResourceType } from "@esposter/db-schema";
+import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -49,7 +50,8 @@ describe(useEmailEditorStore, () => {
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const { setEmailDocument } = pageBuilderDocumentStore;
     setEmailDocument(resourceId, emailKind, { content: [], root: { props: { attributes: {} } } });
-    await saveEmail(resourceId);
+    saveEmail(resourceId);
+    await flushPromises();
 
     expect(savedContents[0]).toStrictEqual({ content: [], id: content.id });
   });
@@ -65,7 +67,8 @@ describe(useEmailEditorStore, () => {
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const { setEmailDocument } = pageBuilderDocumentStore;
     setEmailDocument(resourceId, emailKind, { content: [], root: { props: {} } });
-    await saveEmail(resourceId);
+    saveEmail(resourceId);
+    await flushPromises();
 
     expect(emailEditorStore.datasetReference).toStrictEqual(datasetReference);
   });
@@ -76,7 +79,8 @@ describe(useEmailEditorStore, () => {
     const emailEditorStore = useEmailEditorStore();
     const { loadContent, saveEmail } = emailEditorStore;
     await loadContent();
-    await saveEmail(resourceId);
+    saveEmail(resourceId);
+    await flushPromises();
 
     expect(saveResourceContent).not.toHaveBeenCalled();
   });

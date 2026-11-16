@@ -20,9 +20,9 @@ export const useBookmarkStore = defineStore("bookmark", () => {
       bookmarks.value = newBookmarks;
     },
   });
-  const toggleBookmark = async (input: ToggleBookmarkInput) => {
+  const toggleBookmark = (input: ToggleBookmarkInput) => {
     const { path } = input;
-    await executeMutation(() => $trpc.bookmark.toggleBookmark.mutate(input), {
+    executeMutation(() => $trpc.bookmark.toggleBookmark.mutate(input), {
       // Read when the write is sent rather than at click time: a second click queues behind the first, and the
       // State it rolls back to has to be the one the write ahead of it left
       applyOptimistic: () => {
@@ -39,7 +39,7 @@ export const useBookmarkStore = defineStore("bookmark", () => {
       key: path,
       onError: createErrorNotification,
       // The server's answer is the true state: a list gone stale in another tab flips the wrong way optimistically
-      onSuccess: (isBookmarked) => {
+      reconcile: (isBookmarked) => {
         if (isBookmarked === bookmarkPaths.value.has(path)) return;
 
         const remainingBookmarks = bookmarks.value.filter((bookmark) => bookmark.path !== path);

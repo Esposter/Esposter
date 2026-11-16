@@ -15,6 +15,7 @@ import { useResourceStore } from "#src/store/resource/index";
 import { ResourceType } from "@esposter/db-schema";
 import { takeOne, toRawDeep } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
+import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { assert, beforeEach, describe, expect, test } from "vitest";
 
@@ -100,10 +101,10 @@ describe(useVisualStore, () => {
     const { duplicateVisual } = visualStore;
     const { visuals } = storeToRefs(visualStore);
     const visual = takeOne(visuals.value);
-    const isSuccessful = await duplicateVisual({ id: visual.id });
+    duplicateVisual({ id: visual.id });
+    await flushPromises();
     const duplicatedVisual = takeOne(visuals.value, 1);
 
-    expect(isSuccessful).toBe(true);
     expect(duplicatedVisual.id).not.toBe(visual.id);
     expect(duplicatedVisual.dataset).toStrictEqual(dataset);
     expect(duplicatedVisual.y).toBe(visual.y + visual.h);
@@ -116,10 +117,10 @@ describe(useVisualStore, () => {
     const visualStore = await setupStore();
     const { duplicateVisual } = visualStore;
     const { visuals } = storeToRefs(visualStore);
-    const isSuccessful = await duplicateVisual({ id: takeOne(visuals.value).id });
+    duplicateVisual({ id: takeOne(visuals.value).id });
+    await flushPromises();
     const duplicatedVisual = takeOne(visuals.value, 1);
 
-    expect(isSuccessful).toBe(true);
     expect(duplicatedVisual.isAutoHeight).toBe(true);
   });
 
@@ -150,9 +151,9 @@ describe(useVisualStore, () => {
       createVisual();
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
-    const isSuccessful = await deleteVisual({ id });
+    deleteVisual({ id });
+    await flushPromises();
 
-    expect(isSuccessful).toBe(false);
     expect(visuals.value).toHaveLength(2);
     expect(visuals.value.some((visual) => visual.id === id)).toBe(true);
   });
@@ -169,7 +170,8 @@ describe(useVisualStore, () => {
     trpcMsw.dashboard.saveResourceContent.mutation(() => {
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
-    await deleteVisual({ id });
+    deleteVisual({ id });
+    await flushPromises();
 
     expect({ editedItemId: editedItem.value?.id, selectedVisualId: selectedVisualId.value }).toStrictEqual({
       editedItemId: id,
@@ -199,19 +201,21 @@ describe(useVisualStore, () => {
     const otherResourceId = v7();
     const otherContent = new Dashboard();
     const { promise: saveGate, resolve: releaseSave } = Promise.withResolvers<void>();
+    const { promise: isSaveReached, resolve: onSaveReached } = Promise.withResolvers<void>();
     trpcMsw.resource.readResource.query(({ input }) => ({
       ...createResourceListItem({ id: input.id, type: ResourceType.Dashboard }),
       publication: null,
     }));
     trpcMsw.dashboard.readResourceContent.query(({ input }) => (input.id === resourceId ? content : otherContent));
     trpcMsw.dashboard.saveResourceContent.mutation(async () => {
+      onSaveReached();
       await saveGate;
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
     const visualStore = await setupStore();
     const { deleteVisual } = visualStore;
     const { visuals } = storeToRefs(visualStore);
-    const deletion = deleteVisual({ id: takeOne(visuals.value).id });
+    deleteVisual({ id: takeOne(visuals.value).id });
     Object.assign(useRouter().currentRoute.value.params, { id: otherResourceId });
     const resourceStore = useResourceStore();
     const { readResource } = resourceStore;
@@ -219,8 +223,9 @@ describe(useVisualStore, () => {
     const dashboardStore = useDashboardStore();
     const { loadContent } = dashboardStore;
     await loadContent();
+    await isSaveReached;
     releaseSave();
-    await deletion;
+    await flushPromises();
 
     expect(visuals.value).toStrictEqual([]);
   });
@@ -251,13 +256,13 @@ describe(useVisualStore, () => {
     const { setAutoHeight } = visualStore;
     const { visuals } = storeToRefs(visualStore);
     const { id } = takeOne(visuals.value);
-    const isSuccessful = await setAutoHeight({ id }, false);
+    setAutoHeight({ id }, false);
+    await flushPromises();
 
-    expect({
-      h: takeOne(visuals.value).h,
-      isAutoHeight: takeOne(visuals.value).isAutoHeight,
-      isSuccessful,
-    }).toStrictEqual({ h: 5, isAutoHeight: false, isSuccessful: true });
+    expect({ h: takeOne(visuals.value).h, isAutoHeight: takeOne(visuals.value).isAutoHeight }).toStrictEqual({
+      h: 5,
+      isAutoHeight: false,
+    });
   });
 
   // A fit height the server refuses is taken back, so the menu shows the flag the saved visual has
@@ -271,9 +276,9 @@ describe(useVisualStore, () => {
     trpcMsw.dashboard.saveResourceContent.mutation(() => {
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
-    const isSuccessful = await setAutoHeight({ id }, true);
+    setAutoHeight({ id }, true);
+    await flushPromises();
 
-    expect(isSuccessful).toBe(false);
     expect(takeOne(visuals.value).isAutoHeight).toBe(false);
   });
 
@@ -294,11 +299,13 @@ describe(useVisualStore, () => {
       selectedVisualId.value = reselected.id;
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
-    const isSuccessful = await deleteVisual({ id: removed.id });
+    deleteVisual({ id: removed.id });
+    await flushPromises();
 
-    expect({ isSuccessful, selectedVisualId: selectedVisualId.value, visualCount: visuals.value.length }).toStrictEqual(
-      { isSuccessful: false, selectedVisualId: reselected.id, visualCount: 3 },
-    );
+    expect({ selectedVisualId: selectedVisualId.value, visualCount: visuals.value.length }).toStrictEqual({
+      selectedVisualId: reselected.id,
+      visualCount: 3,
+    });
   });
 
   // The delete clears the selection to none, and a reader who presses another visual then the empty canvas during the save
@@ -318,11 +325,13 @@ describe(useVisualStore, () => {
       clearSelection();
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
-    const isSuccessful = await deleteVisual({ id: selected.id });
+    deleteVisual({ id: selected.id });
+    await flushPromises();
 
-    expect({ isSuccessful, selectedVisualId: selectedVisualId.value, visualCount: visuals.value.length }).toStrictEqual(
-      { isSuccessful: false, selectedVisualId: "", visualCount: 2 },
-    );
+    expect({ selectedVisualId: selectedVisualId.value, visualCount: visuals.value.length }).toStrictEqual({
+      selectedVisualId: "",
+      visualCount: 2,
+    });
   });
 
   // The delete clears the selection to none, and a press on the empty canvas during the save writes none again. That write
@@ -340,11 +349,13 @@ describe(useVisualStore, () => {
       clearSelection();
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
-    const isSuccessful = await deleteVisual({ id: selected.id });
+    deleteVisual({ id: selected.id });
+    await flushPromises();
 
-    expect({ isSuccessful, selectedVisualId: selectedVisualId.value, visualCount: visuals.value.length }).toStrictEqual(
-      { isSuccessful: false, selectedVisualId: "", visualCount: 1 },
-    );
+    expect({ selectedVisualId: selectedVisualId.value, visualCount: visuals.value.length }).toStrictEqual({
+      selectedVisualId: "",
+      visualCount: 1,
+    });
   });
 
   // A group takes the visual into its own list, and the dashboard's own list is left as it was
@@ -385,9 +396,9 @@ describe(useVisualStore, () => {
     const visualStore = await setupStore();
     const { deleteVisual } = visualStore;
     const { visuals } = storeToRefs(visualStore);
-    const isSuccessful = await deleteVisual({ id: takeOne(visuals.value).id });
+    deleteVisual({ id: takeOne(visuals.value).id });
+    await flushPromises();
 
-    expect(isSuccessful).toBe(true);
     expect(visuals.value).toStrictEqual([]);
   });
 
@@ -401,7 +412,8 @@ describe(useVisualStore, () => {
     const { id } = takeOne(visuals.value);
     await editItem({ id });
     const selectedVisualIdBeforeDelete = selectedVisualId.value;
-    await deleteVisual({ id });
+    deleteVisual({ id });
+    await flushPromises();
 
     expect({ after: selectedVisualId.value, before: selectedVisualIdBeforeDelete }).toStrictEqual({
       after: "",
@@ -438,10 +450,10 @@ describe(useVisualStore, () => {
     const visualStore = await setupStore();
     const { duplicateVisual } = visualStore;
     const { visuals } = storeToRefs(visualStore);
-    const isSuccessful = await duplicateVisual({ id: takeOne(visuals.value).id });
+    duplicateVisual({ id: takeOne(visuals.value).id });
+    await flushPromises();
     const treeVisuals = listVisuals(visuals.value);
 
-    expect(isSuccessful).toBe(true);
     expect(treeVisuals.map(({ type }) => type)).toStrictEqual([
       VisualType.Group,
       VisualType.Bar,

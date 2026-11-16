@@ -53,10 +53,10 @@ const roomCategoryReorderProps = computed(() =>
   getDragReorderProps(displayRoomCategories.value, reorderRoomCategories, `.${REORDER_HANDLE_CLASS}`),
 );
 // Undefined means the move cannot happen — already at the edge it is moving towards — so nothing is persisted
-const moveRoomCategory = async (roomCategoryId: RoomCategoryInMessage["id"], direction: -1 | 1) => {
+const moveRoomCategory = (roomCategoryId: RoomCategoryInMessage["id"], direction: -1 | 1) => {
   const index = displayRoomCategories.value.findIndex(({ id }) => id === roomCategoryId);
   const reorderedRoomCategories = getMovedItems(displayRoomCategories.value, index, index + direction);
-  if (reorderedRoomCategories) await reorderRoomCategories(reorderedRoomCategories);
+  if (reorderedRoomCategories) reorderRoomCategories(reorderedRoomCategories);
 };
 </script>
 

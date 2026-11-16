@@ -4,6 +4,7 @@ import type { AppNotification } from "#src/models/notification/AppNotification";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useNotificationStore } from "#src/store/notification";
 import { NotificationSeverity } from "@esposter/db-schema";
+import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { assert, beforeEach, describe, expect, test } from "vitest";
 
@@ -44,14 +45,14 @@ describe(useNotificationStore, () => {
     expect(snackbarNotification.value?.title).toBe(title);
   });
 
-  test("deletes a notification and its queued snackbar", async () => {
+  test("deletes a notification and its queued snackbar", () => {
     expect.hasAssertions();
 
     const { createNotification, dismissNotification } = notificationStore;
     createNotification({ severity: NotificationSeverity.Info, title });
     const notification = notifications.value.find(({ title: notificationTitle }) => notificationTitle === title);
     assert.exists(notification);
-    await dismissNotification(notification.id);
+    dismissNotification(notification.id);
 
     expect(notifications.value).toStrictEqual([]);
     expect(snackbarNotification.value).toBeUndefined();
@@ -73,10 +74,12 @@ describe(useNotificationStore, () => {
   test("deletes all notifications", async () => {
     expect.hasAssertions();
 
+    trpcMsw.notification.deleteNotifications.mutation(() => 0);
     const { createNotification, dismissNotifications } = notificationStore;
     createNotification({ severity: NotificationSeverity.Success, title });
     createNotification({ severity: NotificationSeverity.Error, title });
-    await dismissNotifications();
+    dismissNotifications();
+    await flushPromises();
 
     expect(notifications.value).toStrictEqual([]);
     expect(unreadCount.value).toBe(0);
@@ -114,13 +117,14 @@ describe(useNotificationStore, () => {
     assert.exists(localNotification);
     dismissSnackbar(localNotification.id);
 
-    await storeDeliveredNotifications(() => {
+    storeDeliveredNotifications(() => {
       initializeCursorPaginationData({
         items: [newestNotification, tiedNotification, heldNotification],
         nextCursor: "",
       });
       return Promise.resolve();
     });
+    await flushPromises();
 
     expect(snackbarNotification.value?.id).toBe(tiedNotification.id);
 
@@ -148,22 +152,23 @@ describe(useNotificationStore, () => {
     // Visible: two toasts for one row otherwise collapse when either is dismissed
     const { promise: firstResponse, resolve: completeFirstRead } = Promise.withResolvers<void>();
     const { promise: secondResponse, resolve: completeSecondRead } = Promise.withResolvers<void>();
-    const firstStore = storeDeliveredNotifications(async () => {
+    storeDeliveredNotifications(async () => {
       await firstResponse;
       storePushedPage();
     });
-    const secondStore = storeDeliveredNotifications(async () => {
+    storeDeliveredNotifications(async () => {
       await secondResponse;
       storePushedPage();
     });
     completeFirstRead();
-    await firstStore;
+    await flushPromises();
 
     expect(snackbarNotification.value?.id).toBe(pushedNotification.id);
 
     dismissSnackbar(pushedNotification.id);
     completeSecondRead();
-    await secondStore;
+    // Nothing the second read waits on is I/O once released, so one flush runs it to its end before the check
+    await flushPromises();
 
     expect(snackbarNotification.value).toBeUndefined();
   });
@@ -177,18 +182,19 @@ describe(useNotificationStore, () => {
     const { initializeCursorPaginationData, setUnreadDeliveredCount } = notificationStore;
     initializeCursorPaginationData({ items: [notification], nextCursor: "" });
     setUnreadDeliveredCount(1);
-    await notificationStore.dismissNotification(notification.id);
+    notificationStore.dismissNotification(notification.id);
+    await flushPromises();
 
     expect(unreadCount.value).toBe(5);
   });
 
-  test("marks all notifications as read", async () => {
+  test("marks all notifications as read", () => {
     expect.hasAssertions();
 
     const { createNotification, markAllAsRead } = notificationStore;
     createNotification({ severity: NotificationSeverity.Success, title });
     createNotification({ severity: NotificationSeverity.Info, title });
-    await markAllAsRead();
+    markAllAsRead();
 
     expect(unreadCount.value).toBe(0);
     expect(notifications.value.every(({ isRead }) => isRead)).toBe(true);

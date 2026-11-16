@@ -19,16 +19,14 @@ const name = ref("");
     :variant="UiButtonVariant.Quiet"
     @click.stop="isOpen = true"
   />
-  <!-- The category appears in the list as a placeholder the moment it is asked for, so the dialog goes with it -->
+  <!-- The category appears in the list the moment it is asked for, so the dialog goes with it -->
   <StyledFormDialog
     v-model="isOpen"
     confirm-label="Create category"
-    is-optimistic
     :submit="
       () => {
-        const createdRoomCategory = createRoomCategory({ name });
+        createRoomCategory({ name });
         name = '';
-        return createdRoomCategory;
       }
     "
     title="New category"

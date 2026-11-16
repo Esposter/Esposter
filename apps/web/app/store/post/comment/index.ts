@@ -2,19 +2,25 @@ import type { CreateCommentInput } from "#shared/models/db/post/CreateCommentInp
 import type { DeleteCommentInput } from "#shared/models/db/post/DeleteCommentInput";
 import type { UpdateCommentInput } from "#shared/models/db/post/UpdateCommentInput";
 import type { PostInPostWithRelations } from "@esposter/db-schema";
+import type { Except } from "type-fest";
 
 import { PostSortType } from "#shared/models/post/PostSortType";
-import { MutationStatus } from "#src/models/shared/MutationStatus";
+import { getPostRanking } from "#shared/services/post/getPostRanking";
+import { authClient } from "#src/services/auth/authClient";
 import { applyPostCounts } from "#src/services/post/applyPostCounts";
 import { postCountHooks } from "#src/services/post/postCountHooks";
 import { createOperationData } from "#src/services/shared/createOperationData";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { usePostCountStore } from "#src/store/post/count";
+import { usePostStore } from "#src/store/post/index";
 import { EMPTY_TEXT_REGEX } from "#src/util/text/constants";
 import { DerivedDatabaseEntityType } from "@esposter/db-schema";
+import { v7 } from "uuid";
 
 export const useCommentStore = defineStore("post/comment", () => {
   const { $trpc } = useNuxtApp();
+  const session = authClient.useSession();
+  const postStore = usePostStore();
   const postCountStore = usePostCountStore();
   const { refreshPostCounts } = postCountStore;
   const currentPost = ref<PostInPostWithRelations>();
@@ -66,27 +72,73 @@ export const useCommentStore = defineStore("post/comment", () => {
     setCommentSortType(PostSortType.Hot);
   };
 
-  const { executeMutation: executeCreateCommentMutation, isPending: isCreateCommentPending } = useMutation();
+  const { executeMutation: executeCreateCommentMutation } = useMutation();
   const { executeMutation: executeUpdateCommentMutation } = useMutation();
   const { executeMutation: executeDeleteCommentMutation } = useMutation();
-  const createComment = async (input: CreateCommentInput) => {
-    if (EMPTY_TEXT_REGEX.test(input.description)) return false;
+  // The comment is created under the id the client gives it and drawn at once: the reader is its author, it inherits
+  // Its parent's chain, and a new reply has no votes or replies of its own. The counts it moves on the posts above it
+  // Are the server's, so they are read back once it lands. `onRefused` hands the composer its text back
+  const createComment = (input: Except<CreateCommentInput, "id">, onRefused?: () => void) => {
+    if (EMPTY_TEXT_REGEX.test(input.description)) return;
+
+    const user = session.value.data?.user;
+    // Signed out while composing, so nothing is sent and the composer keeps its text
+    if (!user) {
+      onRefused?.();
+      return;
+    }
     // Bound when the write is issued, so a reply landing after the reader opened another thread is filed under
     // The comment it was written against rather than under whatever is on screen
-    const { createComment: storeCreateComment } = getCommentOperationData(input.parentId);
-    const outcome = await executeCreateCommentMutation(() => $trpc.post.createComment.mutate(input), {
-      key: Symbol("createComment"),
-      onSuccess: async ({ ancestorIds, comment }) => {
-        storeCreateComment(comment);
+    const {
+      createComment: storeCreateComment,
+      deleteComment: storeDeleteComment,
+      updateComment: storeUpdateComment,
+    } = getCommentOperationData(input.parentId);
+    const parent = [...allComments.value, ...postStore.items].find(({ id }) => id === input.parentId);
+    const createdAt = new Date();
+    const newComment: PostInPostWithRelations = {
+      ancestorIds: parent ? [...parent.ancestorIds, parent.id] : [input.parentId],
+      commentCount: 0,
+      createdAt,
+      deletedAt: null,
+      depth: parent ? parent.depth + 1 : 1,
+      description: input.description,
+      id: v7(),
+      likeCount: 0,
+      parentId: input.parentId,
+      ranking: getPostRanking(0, createdAt),
+      title: "",
+      updatedAt: createdAt,
+      user: {
+        biography: user.biography,
+        createdAt: user.createdAt,
+        deletedAt: null,
+        id: user.id,
+        image: user.image ?? "",
+        name: user.name,
+        updatedAt: user.updatedAt,
+      },
+      userId: user.id,
+    };
+    executeCreateCommentMutation(() => $trpc.post.createComment.mutate({ ...input, id: newComment.id }), {
+      applyOptimistic: () => {
+        storeCreateComment(newComment);
+        return () => {
+          storeDeleteComment({ id: newComment.id });
+          onRefused?.();
+        };
+      },
+      key: newComment.id,
+      reconcile: async ({ ancestorIds, comment }) => {
+        storeUpdateComment(comment);
         await refreshPostCounts(ancestorIds);
       },
     });
-    return outcome.status === MutationStatus.Succeeded;
   };
-  const updateComment = async (input: UpdateCommentInput, parentId: string) => {
+  const updateComment = (input: UpdateCommentInput, parentId: string) => {
     const { items: branchItems } = getSlice(parentId);
     const { updateComment: storeUpdateComment } = getCommentOperationData(parentId);
-    await executeUpdateCommentMutation(() => $trpc.post.updateComment.mutate(input), {
+    executeUpdateCommentMutation(() => $trpc.post.updateComment.mutate(input), {
       // Scoped to the one comment this write edits: a second edit of it queues behind the first, so its rollback
       // Has to restore what that one stored, and a whole-list restore would undo the branch's own paging
       applyOptimistic: () => {
@@ -98,16 +150,17 @@ export const useCommentStore = defineStore("post/comment", () => {
         };
       },
       key: input.id,
-      onSuccess: async (updatedComment) => {
+      // The server's copy of the row replaces the edit once it is kept, and the counts are read back beside it
+      reconcile: async (updatedComment) => {
         storeUpdateComment(updatedComment);
         await refreshPostCounts([updatedComment.id]);
       },
     });
   };
-  const deleteComment = async (input: DeleteCommentInput, parentId: string) => {
+  const deleteComment = (input: DeleteCommentInput, parentId: string) => {
     const { items: branchItems } = getSlice(parentId);
     const { createComment: storeCreateComment, deleteComment: storeDeleteComment } = getCommentOperationData(parentId);
-    await executeDeleteCommentMutation(() => $trpc.post.deleteComment.mutate(input), {
+    executeDeleteCommentMutation(() => $trpc.post.deleteComment.mutate(input), {
       // The rows go at once and the counters when the server answers: a delete cascades, so how many rows it
       // Takes is only knowable there — whatever happens to be expanded here is short by every reply nobody opened
       applyOptimistic: () => {
@@ -129,7 +182,7 @@ export const useCommentStore = defineStore("post/comment", () => {
         // A count that moved since reached no copy, because the comment was not in the thread then
         await refreshPostCounts([input]);
       },
-      onSuccess: async ({ ancestorIds }) => {
+      reconcile: async ({ ancestorIds }) => {
         await refreshPostCounts(ancestorIds);
       },
     });
@@ -144,7 +197,6 @@ export const useCommentStore = defineStore("post/comment", () => {
     expandedCommentIds,
     getSlice,
     getSliceOperationData,
-    isCreateCommentPending,
     openPost,
     setCommentSortType,
     toggleCommentExpanded,

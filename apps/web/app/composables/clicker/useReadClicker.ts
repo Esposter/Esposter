@@ -26,12 +26,12 @@ export const useReadClicker = async () => {
   // Read did not reach, so a change before then is not saved. Each reader clears the flag before it starts, so a
   // Signed-in read that fails after a guest's read does not leave the guest's flag set
   let isRead = false;
-  watch(virtualClicker, async () => {
-    if (isRead) await saveClicker();
+  watch(virtualClicker, () => {
+    if (isRead) saveClicker();
   });
 
   await useReadData(
-    async () => {
+    () => {
       isRead = false;
       // eslint-disable-next-line no-restricted-syntax -- the offline save system reads and writes this key imperatively through `useSaveToLocalStorage`; a ref would be a second owner of it — see openspec/specs/architecture/browser-execution/design.md
       const clickerJson = window.localStorage.getItem(LocalStorageKey.ClickerStore);
@@ -39,7 +39,7 @@ export const useReadClicker = async () => {
       const savedClicker = clickerJson ? parseJsonWithSchema(clickerJson, clickerSaveSchema) : undefined;
       setClicker(savedClicker ? toClicker(savedClicker) : createClicker());
       isRead = true;
-      await applyOfflineProgress();
+      applyOfflineProgress();
     },
     async () => {
       isRead = false;
@@ -47,7 +47,7 @@ export const useReadClicker = async () => {
       const { data, etag } = await $trpc.clicker.readClicker.query();
       setClicker(toClicker(data), etag);
       isRead = true;
-      await applyOfflineProgress();
+      applyOfflineProgress();
     },
   );
 };

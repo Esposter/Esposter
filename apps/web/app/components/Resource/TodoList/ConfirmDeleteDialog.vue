@@ -26,7 +26,6 @@ const { isOpen, item: deletingItems } = useSingletonDialog(deletingIds, () =>
     "
     :title="deletingItems.length === 1 ? 'Delete todo' : 'Delete todos'"
     :confirm="() => deletingItems && deleteItems(deletingItems.map(({ id }) => id))"
-    is-optimistic
   >
     <p>
       Delete

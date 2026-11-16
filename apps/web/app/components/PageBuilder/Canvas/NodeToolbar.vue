@@ -54,13 +54,7 @@ onBeforeUnmount(() => {
     <UiIconButton label="Duplicate" :meaning="UiIconMeaning.Copy" @click="duplicateSelected()" />
     <UiIconButton label="Delete" :meaning="UiIconMeaning.Delete" @click="isDeleteOpen = true" />
   </div>
-  <UiConfirmDialog
-    v-model="isDeleteOpen"
-    confirm-label="Delete"
-    is-optimistic
-    title="Delete node"
-    :confirm="() => deleteSelected()"
-  >
+  <UiConfirmDialog v-model="isDeleteOpen" confirm-label="Delete" title="Delete node" :confirm="() => deleteSelected()">
     <p>Delete this node and everything in it from the page?</p>
   </UiConfirmDialog>
 </template>

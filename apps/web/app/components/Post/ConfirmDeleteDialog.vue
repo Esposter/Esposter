@@ -29,12 +29,11 @@ const { isOpen, item: post } = useSingletonDialog(
     v-model="isOpen"
     confirm-label="Delete"
     title="Delete post"
-    is-optimistic
     :confirm="
       async () => {
         if (!post) return;
         const postId = post.id;
-        await deletePost(postId);
+        deletePost(postId);
         await navigateTo(RoutePath.Index);
       }
     "

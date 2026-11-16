@@ -7,12 +7,12 @@ import { describe, expect, test } from "vitest";
 describe(useDeleteRow, () => {
   setupCommandTest();
 
-  test("removes row at given index", async () => {
+  test("removes row at given index", () => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDataSource();
     const deleteRow = useDeleteRow();
-    await deleteRow(takeOne(dataSource.rows).id);
+    deleteRow(takeOne(dataSource.rows).id);
 
     expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ "": 2, " ": 3 }]);
   });

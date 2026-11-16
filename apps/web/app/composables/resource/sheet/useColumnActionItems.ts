@@ -29,8 +29,8 @@ export const useColumnActionItems = () => {
       : []),
     {
       meaning: column.isHidden ? UiIconMeaning.Show : UiIconMeaning.Hide,
-      onClick: async () => {
-        await toggleColumnVisibility(column.id);
+      onClick: () => {
+        toggleColumnVisibility(column.id);
       },
       title: getToggleColumnVisibilityDescription(column.name, column.isHidden),
     },

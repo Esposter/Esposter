@@ -1,4 +1,5 @@
 import type { ClientMessage } from "#src/models/message/ClientMessage";
+import type { Promisable } from "type-fest";
 
 import { AdminActionHookMap } from "#src/services/message/moderation/AdminActionHookMap";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
@@ -8,7 +9,7 @@ import { useParticipantStore } from "#src/store/message/room/call/participant";
 import { useRealtimeStore } from "#src/store/message/room/realtime";
 import { useConnectionStore } from "#src/store/realtime/connection";
 import { AdminActionType } from "@esposter/db-schema";
-import { getResultAsync, noop, RoutePath, withFinalizerAsync } from "@esposter/shared";
+import { getResultAsync, noop, RoutePath } from "@esposter/shared";
 
 export const useCallStore = defineStore("message/room/call", () => {
   const { $trpc } = useNuxtApp();
@@ -66,13 +67,13 @@ export const useCallStore = defineStore("message/room/call", () => {
   usePushToTalk(isInCall);
   const isHandRaised = computed(() => selfParticipant.value?.isHandRaised ?? false);
   const isMuted = computed(() => selfParticipant.value?.isMuted ?? false);
-  const setHandRaised = async (newIsHandRaised: boolean, targetSessionId?: string) => {
+  const setHandRaised = (newIsHandRaised: boolean, targetSessionId?: string) => {
     const callSessionId = activeCallSessionId.value;
     const sessionId = participantStore.sessionId;
     const participantSessionId = targetSessionId ?? sessionId;
     if (!callSessionId || !sessionId || !participantSessionId) return;
 
-    await executeSetHandRaisedMutation(
+    executeSetHandRaisedMutation(
       () =>
         $trpc.callSession.setHandRaised.mutate({
           callSessionId,
@@ -94,12 +95,12 @@ export const useCallStore = defineStore("message/room/call", () => {
       },
     );
   };
-  const setCameraEnabled = async (newIsCameraEnabled: boolean) => {
+  const setCameraEnabled = (newIsCameraEnabled: boolean) => {
     const callSessionId = activeCallSessionId.value;
     const sessionId = participantStore.sessionId;
     if (!callSessionId || !sessionId) return;
 
-    await executeSetCameraMutation(
+    executeSetCameraMutation(
       () => $trpc.callSession.setCameraEnabled.mutate({ callSessionId, isCameraEnabled: newIsCameraEnabled }),
       {
         applyOptimistic: () => {
@@ -115,12 +116,12 @@ export const useCallStore = defineStore("message/room/call", () => {
       },
     );
   };
-  const setMuted = async (newIsMuted: boolean) => {
+  const setMuted = (newIsMuted: boolean) => {
     const callSessionId = activeCallSessionId.value;
     const sessionId = participantStore.sessionId;
     if (!callSessionId || !sessionId) return;
 
-    await executeSetMuteMutation(() => $trpc.callSession.setMuted.mutate({ callSessionId, isMuted: newIsMuted }), {
+    executeSetMuteMutation(() => $trpc.callSession.setMuted.mutate({ callSessionId, isMuted: newIsMuted }), {
       applyOptimistic: () => {
         const oldIsMuted = isMuted.value;
         setParticipantMuted(callSessionId, sessionId, newIsMuted);
@@ -144,7 +145,7 @@ export const useCallStore = defineStore("message/room/call", () => {
   // The room and thread refs are cleared unconditionally — no call is active on this path, so they hold at most
   // What the attempt put there
   const unwindJoin = async (isJoined: boolean, error: Error) => {
-    if (isJoined) await leaveCall();
+    if (isJoined) leaveCall();
     else {
       callRoomId.value = "";
       callThreadRootId.value = 0;
@@ -156,8 +157,12 @@ export const useCallStore = defineStore("message/room/call", () => {
 
     createErrorAlert(error);
   };
+  // Exclusive per call, so a second press while the first leave is out is dropped rather than sent
+  const { executeMutation: executeLeaveCallMutation, isPending: isLeaving } = useMutation();
   const joinCall = async (id: string) => {
     if (activeCallSessionId.value) return activeCallSessionId.value;
+    // A leave still taking its socket down would close the one this join opens
+    if (isLeaving.value) return undefined;
     isConnecting.value = true;
     let isJoined = false;
     let joinedCallSessionId: string | undefined;
@@ -180,12 +185,12 @@ export const useCallStore = defineStore("message/room/call", () => {
       activeCallSessionId.value = callSessionId;
       joinedCallSessionId = callSessionId;
       isJoined = true;
-      // The call is connected by here, so these only sync the participant row and report their own
-      // Failures — a rejected flag must not tear down a call that is already up
-      if (!isMicrophoneEnabled) await setMuted(true);
+      // The call is connected by here, so these only sync the participant row, which is drawn at once and unwinds itself
+      // If it is refused — a rejected flag must not tear down a call that is already up
+      if (!isMicrophoneEnabled) setMuted(true);
       if (isCameraEnabled) {
         await setCamera(true);
-        await setCameraEnabled(true);
+        setCameraEnabled(true);
       }
     }).match(noop, (error) => unwindJoin(isJoined, error));
     // Set after the await rather than through a finalizer: the chain above resolves to a Result rather than
@@ -222,62 +227,59 @@ export const useCallStore = defineStore("message/room/call", () => {
     }).match(noop, (error) => unwindJoin(isJoined, error));
     isConnecting.value = false;
   };
-  // Exclusive per call, since the call stays up until the server answers: a second press while the first leave is out
-  // Is dropped rather than sent
-  const { executeMutation: executeLeaveCallMutation, isPending: isLeaving } = useMutation();
-  // The teardown is the finalizer because it has to run whether or not the server accepted the leave — by the
-  // Time it answers, the local call is already down. A rejected leave is then bookkeeping the user cannot act
-  // On, and the session reaps the participant row on its own, so it logs rather than alerting a call that
-  // Visibly ended
-  const leaveCall = async () => {
+  // The screen lets go of the call as the leave is sent: the call view closes and the joined call is forgotten, and the
+  // Socket and the media come down before the server is told, so no teardown is left to land on a call joined after it.
+  // A refused leave changes nothing back: the local call is already down, and the session reaps the participant row on
+  // Its own, so the refusal is logged rather than alerting a call that visibly ended
+  const leaveCall = () => {
     const callSessionId = activeCallSessionId.value;
     if (!callSessionId) return;
-    await executeLeaveCallMutation(
-      () =>
-        withFinalizerAsync(
-          async () => {
-            if (participantStore.sessionId) deleteCallParticipant(callSessionId, participantStore.sessionId);
-            await $trpc.callSession.leaveCall.mutate({ callSessionId });
-          },
-          async () => {
-            callRoomId.value = "";
-            callThreadRootId.value = 0;
-            resetKnockerState();
-            isDoorkeeper.value = false;
-            activeCallSessionId.value = "";
-            closeCall();
-            isCallViewOpen.value = false;
-            resetCallMedia();
-            // A rejected disconnect is reported rather than thrown, so it cannot strand the call's notices and speakers
-            await getResultAsync(() => disconnect()).match(noop, console.error);
-            clearJoinNotice();
-            clearSpeakers();
-          },
-        ),
-      { isExclusive: true, key: callSessionId, onError: console.error },
+    executeLeaveCallMutation(
+      async () => {
+        resetKnockerState();
+        closeCall();
+        resetCallMedia();
+        // A rejected disconnect is reported rather than thrown, so it cannot strand the call's notices and speakers
+        await getResultAsync(() => disconnect()).match(noop, console.error);
+        clearJoinNotice();
+        clearSpeakers();
+        await $trpc.callSession.leaveCall.mutate({ callSessionId });
+      },
+      {
+        applyOptimistic: () => {
+          if (participantStore.sessionId) deleteCallParticipant(callSessionId, participantStore.sessionId);
+          callRoomId.value = "";
+          callThreadRootId.value = 0;
+          isDoorkeeper.value = false;
+          activeCallSessionId.value = "";
+          isCallViewOpen.value = false;
+          return noop;
+        },
+        isExclusive: true,
+        key: callSessionId,
+        onError: console.error,
+      },
     );
   };
   const selectVirtualBackground = async (imagePath: string) => {
     if (imagePath && !mediaStore.isCameraEnabled) {
-      // Only the local device call decides whether to go on: a camera that never turned on has nothing to
-      // Composite a background onto, while the participant-row write reports and unwinds itself
-      const isEnabled = await getResultAsync(async () => {
-        await setCamera(true);
-        await setCameraEnabled(true);
-      })
+      // Only the local device call decides whether to go on: a camera that never turned on has nothing to composite a
+      // Background onto. The participant row's write is drawn as it is sent, so the background does not wait on it
+      const isEnabled = await getResultAsync(() => setCamera(true))
         .map(() => true)
         .orTee(console.error)
         .unwrapOr(false);
       if (!isEnabled) return;
+      setCameraEnabled(true);
     }
 
-    await setVirtualBackground(imagePath);
+    setVirtualBackground(imagePath);
   };
   const toggleCamera = async () => {
     const newIsCameraEnabled = !mediaStore.isCameraEnabled;
     await getResultAsync(async () => {
       await setCamera(newIsCameraEnabled);
-      await setCameraEnabled(newIsCameraEnabled);
+      setCameraEnabled(newIsCameraEnabled);
     }).match(noop, console.error);
   };
   const toggleDeafen = () => {
@@ -288,10 +290,12 @@ export const useCallStore = defineStore("message/room/call", () => {
     const newIsMuted = !isMuted.value;
     await getResultAsync(async () => {
       await setMicrophone(!newIsMuted);
-      await setMuted(newIsMuted);
+      setMuted(newIsMuted);
     }).match(noop, console.error);
   };
-  const toggleHandRaised = () => setHandRaised(!isHandRaised.value);
+  const toggleHandRaised = () => {
+    setHandRaised(!isHandRaised.value);
+  };
   const toggleScreenShare = async () => {
     const newIsScreenSharing = !mediaStore.isScreenSharing;
     await getResultAsync(async () => {
@@ -306,7 +310,7 @@ export const useCallStore = defineStore("message/room/call", () => {
   };
   // The room is checked first, so an admin action taken in a room whose call the user is not in never reaches the
   // Call they are in: a force mute from there would otherwise mark them muted while their microphone stays live
-  const registerCallAdminActionHook = (adminActionType: AdminActionType, handler: () => Promise<void>) =>
+  const registerCallAdminActionHook = (adminActionType: AdminActionType, handler: () => Promisable<void>) =>
     AdminActionHookMap[adminActionType].register(async (roomId) => {
       if (callRoomId.value !== roomId) return;
       await handler();

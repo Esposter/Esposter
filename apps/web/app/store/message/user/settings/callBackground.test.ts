@@ -6,6 +6,7 @@ import { getCallBackgroundSelection } from "#src/services/message/room/call/getC
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useCallBackgroundStore } from "#src/store/message/user/settings/callBackground";
 import { takeOne } from "@esposter/shared";
+import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test, vi } from "vitest";
 
 describe(useCallBackgroundStore, () => {
@@ -82,7 +83,9 @@ describe(useCallBackgroundStore, () => {
     const callBackgroundStore = useCallBackgroundStore();
     const { deleteCallBackground, readCallBackgrounds } = callBackgroundStore;
     await readCallBackgrounds();
-    await Promise.all([deleteCallBackground(1), deleteCallBackground(0)]);
+    deleteCallBackground(1);
+    deleteCallBackground(0);
+    await flushPromises();
 
     // Slot 1's delete landed, so only slot 0 — whose delete was rejected — comes back
     expect(callBackgroundStore.callBackgrounds).toStrictEqual([callBackground]);

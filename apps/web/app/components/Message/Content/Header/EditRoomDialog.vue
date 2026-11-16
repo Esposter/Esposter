@@ -30,11 +30,11 @@ const isUnchanged = computed(
     editedImage.value === room.image,
 );
 const { executeMutation } = useMutation();
-const updateRoom = async () => {
+const updateRoom = () => {
   const { id } = room;
   const name = editedName.value;
   const image = editedImage.value;
-  await executeMutation(() => $trpc.room.updateRoom.mutate({ id, image, name }), {
+  executeMutation(() => $trpc.room.updateRoom.mutate({ id, image, name }), {
     applyOptimistic: () => {
       const storedRoom = rooms.value.find(({ id: roomId }) => roomId === id);
       if (!storedRoom) return noop;
@@ -55,7 +55,6 @@ const updateRoom = async () => {
     v-model="isEditRoomDialogOpen"
     confirm-label="Save"
     :is-confirm-disabled="isUnchanged || undefined"
-    is-optimistic
     :submit="updateRoom"
     title="Edit Room"
   >

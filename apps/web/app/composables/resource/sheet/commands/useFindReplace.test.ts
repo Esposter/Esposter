@@ -11,7 +11,7 @@ import { describe, expect, test } from "vitest";
 describe(useFindReplace, () => {
   setupCommandTest();
 
-  test("replaces all matching cells across rows and columns", async () => {
+  test("replaces all matching cells across rows and columns", () => {
     expect.hasAssertions();
 
     const initialDataSource = createDataSource(
@@ -20,7 +20,7 @@ describe(useFindReplace, () => {
     );
     const { dataSource } = setupWithDataSource(initialDataSource);
     const findReplace = useFindReplace();
-    await findReplace(" ", "");
+    findReplace(" ", "");
 
     expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([
       { "": "", " ": "" },
@@ -28,18 +28,18 @@ describe(useFindReplace, () => {
     ]);
   });
 
-  test("replaces substrings within cell values", async () => {
+  test("replaces substrings within cell values", () => {
     expect.hasAssertions();
 
     const initialDataSource = createDataSource([createColumn("")], [createRow({ "": "a " })]);
     const { dataSource } = setupWithDataSource(initialDataSource);
     const findReplace = useFindReplace();
-    await findReplace(" ", "");
+    findReplace(" ", "");
 
     expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ "": "a" }]);
   });
 
-  test("replaces only the specific cell when specificCell is provided", async () => {
+  test("replaces only the specific cell when specificCell is provided", () => {
     expect.hasAssertions();
 
     const initialDataSource = createDataSource(
@@ -48,23 +48,23 @@ describe(useFindReplace, () => {
     );
     const { dataSource } = setupWithDataSource(initialDataSource);
     const findReplace = useFindReplace();
-    await findReplace(" ", "", { columnName: "", rowIndex: 0 });
+    findReplace(" ", "", { columnName: "", rowIndex: 0 });
 
     expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ "": "", " ": " " }]);
   });
 
-  test("preserves number type after replace", async () => {
+  test("preserves number type after replace", () => {
     expect.hasAssertions();
 
     const initialDataSource = createDataSource([createNumberColumn("")], [createRow({ "": 1 })]);
     const { dataSource } = setupWithDataSource(initialDataSource);
     const findReplace = useFindReplace();
-    await findReplace("1", "2");
+    findReplace("1", "2");
 
     expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ "": 2 }]);
   });
 
-  test("description shows row number when replacing a single occurrence", async () => {
+  test("description shows row number when replacing a single occurrence", () => {
     expect.hasAssertions();
 
     const initialDataSource = createDataSource([createColumn("")], [createRow({ "": " " }), createRow({ "": 0 })]);
@@ -72,12 +72,12 @@ describe(useFindReplace, () => {
     const findReplace = useFindReplace();
     const sheetHistoryStore = useSheetHistoryStore();
     const { undoDescription } = storeToRefs(sheetHistoryStore);
-    await findReplace(" ", "", { columnName: "", rowIndex: 0 });
+    findReplace(" ", "", { columnName: "", rowIndex: 0 });
 
     expect(undoDescription.value).toBe(`Find & Replace " " → "" on row 1`);
   });
 
-  test("description shows all when replacing across multiple rows", async () => {
+  test("description shows all when replacing across multiple rows", () => {
     expect.hasAssertions();
 
     const initialDataSource = createDataSource([createColumn("")], [createRow({ "": " " }), createRow({ "": " " })]);
@@ -85,7 +85,7 @@ describe(useFindReplace, () => {
     const findReplace = useFindReplace();
     const sheetHistoryStore = useSheetHistoryStore();
     const { undoDescription } = storeToRefs(sheetHistoryStore);
-    await findReplace(" ", "");
+    findReplace(" ", "");
 
     expect(undoDescription.value).toBe(`Find & Replace " " → "" (all)`);
   });

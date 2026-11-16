@@ -9,15 +9,15 @@ export const useSheetHistory = () => {
   const sheetHistoryStore = useSheetHistoryStore();
   const { redo, undo } = sheetHistoryStore;
   const { isRedoable, isUndoable } = storeToRefs(sheetHistoryStore);
-  const redoSheet = async () => {
+  const redoSheet = () => {
     if (!isRedoable.value) return;
     redo(dataSource.value);
-    await saveSheet();
+    saveSheet();
   };
-  const undoSheet = async () => {
+  const undoSheet = () => {
     if (!isUndoable.value) return;
     undo(dataSource.value);
-    await saveSheet();
+    saveSheet();
   };
   return { redoSheet, undoSheet };
 };

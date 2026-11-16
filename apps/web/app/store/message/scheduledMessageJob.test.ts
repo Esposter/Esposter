@@ -6,6 +6,7 @@ import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useScheduledMessageJobStore } from "#src/store/message/scheduledMessageJob";
 import { MessageType } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
+import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
@@ -29,7 +30,8 @@ describe(useScheduledMessageJobStore, () => {
     const { cancelScheduledMessageJob } = scheduledMessageJobStore;
     items.value = [createJob(id), createJob(otherId)];
     scheduledMessageJobCount.value = 2;
-    await cancelScheduledMessageJob(createJob(id));
+    cancelScheduledMessageJob(createJob(id));
+    await flushPromises();
 
     expect(items.value.map((scheduledMessageJob) => scheduledMessageJob.id)).toStrictEqual([otherId]);
     expect(scheduledMessageJobCount.value).toBe(5);
@@ -49,7 +51,8 @@ describe(useScheduledMessageJobStore, () => {
     const earlierJob = { ...createJob(id), runAt: new Date(1) };
     const laterJob = { ...createJob(otherId), runAt: new Date(2) };
     items.value = [earlierJob, laterJob];
-    await cancelScheduledMessageJob(earlierJob);
+    cancelScheduledMessageJob(earlierJob);
+    await flushPromises();
 
     expect(items.value.map((scheduledMessageJob) => scheduledMessageJob.id)).toStrictEqual([id, otherId]);
   });
@@ -69,7 +72,8 @@ describe(useScheduledMessageJobStore, () => {
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
     items.value = [job, laterJob];
-    await cancelScheduledMessageJob(job);
+    cancelScheduledMessageJob(job);
+    await flushPromises();
 
     expect(items.value.map((scheduledMessageJob) => scheduledMessageJob.id)).toStrictEqual([id, otherId]);
   });
@@ -88,7 +92,9 @@ describe(useScheduledMessageJobStore, () => {
     const { cancelScheduledMessageJob } = scheduledMessageJobStore;
     items.value = [createJob(id), createJob(otherId)];
     scheduledMessageJobCount.value = 2;
-    await Promise.all([cancelScheduledMessageJob(createJob(id)), cancelScheduledMessageJob(createJob(otherId))]);
+    cancelScheduledMessageJob(createJob(id));
+    cancelScheduledMessageJob(createJob(otherId));
+    await flushPromises();
 
     expect(items.value.map((scheduledMessageJob) => scheduledMessageJob.id)).toStrictEqual([id]);
     expect(scheduledMessageJobCount.value).toBe(1);
@@ -112,7 +118,9 @@ describe(useScheduledMessageJobStore, () => {
     const { cancelScheduledMessageJob, sendScheduledMessageNow } = scheduledMessageJobStore;
     items.value = [createJob(id), createJob(otherId)];
     scheduledMessageJobCount.value = 2;
-    await Promise.all([cancelScheduledMessageJob(createJob(id)), sendScheduledMessageNow(createJob(id))]);
+    cancelScheduledMessageJob(createJob(id));
+    sendScheduledMessageNow(createJob(id));
+    await flushPromises();
 
     expect(items.value.map((scheduledMessageJob) => scheduledMessageJob.id)).toStrictEqual([otherId]);
     expect(scheduledMessageJobCount.value).toBe(1);

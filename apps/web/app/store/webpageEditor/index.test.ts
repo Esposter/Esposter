@@ -20,6 +20,7 @@ import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
 import { useResourceStore } from "#src/store/resource/index";
 import { useWebpageEditorStore } from "#src/store/webpageEditor/index";
 import { ResourceType } from "@esposter/db-schema";
+import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -62,7 +63,8 @@ describe(useWebpageEditorStore, () => {
       content: [{ props: { href: TEST_URL, id: TEST_ID, label: TEST_LABEL }, type: WebpageNodeType.Button }],
       root: TEST_ROOT,
     });
-    await saveWebpage(resourceId);
+    saveWebpage(resourceId);
+    await flushPromises();
 
     expect(savedContents[0]).toStrictEqual({
       content: [{ props: { href: TEST_URL, id: TEST_ID, label: TEST_LABEL }, type: WebpageNodeType.Button }],
@@ -78,7 +80,8 @@ describe(useWebpageEditorStore, () => {
     const webpageEditorStore = useWebpageEditorStore();
     const { loadContent, saveWebpage } = webpageEditorStore;
     await loadContent();
-    await saveWebpage(resourceId);
+    saveWebpage(resourceId);
+    await flushPromises();
 
     expect(webpageEditorStore.webpageEditor.description).toBe(description);
     expect(webpageEditorStore.webpageEditor.imageUrl).toBe(TEST_URL);
@@ -102,7 +105,8 @@ describe(useWebpageEditorStore, () => {
       root: TEST_ROOT,
     };
     setDocument(resourceId, webpageKind, webpageDocument);
-    await saveWebpage(resourceId);
+    saveWebpage(resourceId);
+    await flushPromises();
     const critiqueFindings = critiqueWebpage(webpageDocument, {
       lookupSurveyPublishState: () => SurveyPublishState.Published,
       readColor: readBrowserColor,
@@ -125,7 +129,8 @@ describe(useWebpageEditorStore, () => {
     const webpageEditorStore = useWebpageEditorStore();
     const { loadContent, saveWebpage } = webpageEditorStore;
     await loadContent();
-    await saveWebpage(resourceId);
+    saveWebpage(resourceId);
+    await flushPromises();
 
     expect(saveResourceContent).not.toHaveBeenCalled();
   });

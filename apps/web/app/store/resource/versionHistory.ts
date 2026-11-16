@@ -1,6 +1,7 @@
 import type { SnapshotVersion } from "#shared/models/resource/SnapshotVersion";
 import type { ResourceInResource } from "@esposter/db-schema";
 
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { MutationStatus } from "#src/models/shared/MutationStatus";
 import { getSnapshotVersionTitle } from "#src/services/resource/getSnapshotVersionTitle";
 import { useNotificationStore } from "#src/store/notification";
@@ -63,6 +64,8 @@ export const useVersionHistoryStore = defineStore("resource/versionHistory", () 
     await executeRestoreMutation(
       () => $trpc.resource.restoreSnapshotVersion.mutate({ channel, id: resource.id, version }),
       {
+        // The restored draft and the Undo's revision are the server's, and the reload brings the draft down from it
+        awaitedBecause: AwaitedReason.ServerIssuedValue,
         // Every restore overwrites this resource's single working draft, so it keys by the resource id
         key: resource.id,
         onError: createErrorNotification,
@@ -101,7 +104,13 @@ export const useVersionHistoryStore = defineStore("resource/versionHistory", () 
 
     const outcome = await executeSaveRevisionMutation(
       () => $trpc.resource.saveResourceRevision.mutate({ id: resource.id }),
-      { key: resource.id, onError: createErrorNotification, onSuccess: () => readSnapshotHistory(resource) },
+      {
+        // The caller replaces the draft only once the revision the server took is in place, so the server's answer decides
+        awaitedBecause: AwaitedReason.ServerDecidedOutcome,
+        key: resource.id,
+        onError: createErrorNotification,
+        onSuccess: () => readSnapshotHistory(resource),
+      },
     );
     return outcome.status === MutationStatus.Succeeded;
   };

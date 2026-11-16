@@ -6,6 +6,7 @@ import { useCallBackgroundStore } from "#src/store/message/user/settings/callBac
 import RealtimeKitClient from "@cloudflare/realtimekit";
 import RealtimeKitVideoBackgroundTransformer from "@cloudflare/realtimekit-virtual-background";
 import { waitForSynchronizedFunctions } from "@esposter/shared";
+import { flushPromises } from "@vue/test-utils";
 import { EventEmitter } from "node:events";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
@@ -113,11 +114,11 @@ describe(useRealtimeStore, () => {
     const { connect, setCamera, setVirtualBackground } = realtimeStore;
     await connect("authToken", vi.fn<() => Promise<void>>(), false);
     await setCamera(true);
-    const applying = setVirtualBackground(imagePath);
+    setVirtualBackground(imagePath);
     await readStarted.promise;
     await setCamera(false);
     imagePathRead.resolve(imagePath);
-    await applying;
+    await flushPromises();
 
     expect(alerts.value).toHaveLength(0);
   });

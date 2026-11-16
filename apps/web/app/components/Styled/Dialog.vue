@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import type { Promisable } from "type-fest";
 
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
@@ -7,8 +8,10 @@ import { UiDialogSize } from "#src/models/ui/UiDialogSize";
 import { DIALOG_BODY_TRANSITION_DURATION } from "#src/services/ui/constants";
 
 interface Props {
-  // What confirming does, awaited unless the write is optimistic (useDialogAnswer). A dialog whose confirm submits a
-  // Form leaves it to the form's own submit
+  // Why the confirm waits for the server, from the closed set; without one the dialog closes as its write is sent
+  awaitedBecause?: AwaitedReason;
+  // What confirming does, closing the dialog as it is called unless it names a reason to wait (useDialogAnswer). A dialog
+  // Whose confirm submits a form leaves it to the form's own submit
   confirm?: () => Promisable<unknown>;
   // What confirming does, in the confirm variant: "Save". Absent when the dialog has nothing to confirm — a reference
   // Sheet. The whole actions row goes with it, cancel included: there is no pending change for cancel to abandon, and
@@ -20,7 +23,6 @@ interface Props {
   formId?: string;
   isConfirmDisabled?: true;
   isConfirmPending?: true;
-  isOptimistic?: true;
   // How wide the dialog stands, Medium when none is named
   size?: UiDialogSize;
   title: string;
@@ -69,7 +71,7 @@ const hasActions = computed(() => Boolean(confirmLabel || slots["prepend-actions
             :variant="confirmVariant"
             @click="
               async () => {
-                if (!formId && confirm) await answer(confirm, isOptimistic);
+                if (!formId && confirm) await answer(confirm, awaitedBecause);
               }
             "
           >

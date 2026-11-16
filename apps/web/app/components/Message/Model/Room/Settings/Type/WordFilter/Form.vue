@@ -43,12 +43,12 @@ const isDirty = computed(
     (isTimeout.value && editedFormData.value.timeoutDurationMs !== initialFormData.value.timeoutDurationMs),
 );
 const { executeMutation } = useMutation();
-const saveFilter = async () => {
+const saveFilter = () => {
   // The edit as it stood when the save was issued, and the filter it was made against: both are taken before the
   // Optimistic apply moves the form's own baseline to the edit
   const issuedFormData = structuredClone(toRawDeep(editedFormData.value));
   const baseFormData = initialFormData.value;
-  await executeMutation(
+  executeMutation(
     async () => {
       // Read when the write is sent, since another moderator may have changed the words since this form read them.
       // The write keeps those changes and applies only the words and fields the reader changed
@@ -74,7 +74,9 @@ const saveFilter = async () => {
         };
       },
       key: roomId,
-      onSuccess: (updatedFilter) => {
+      // The saved filter is the server's, and it may hold other moderators' words the write merged in, so it becomes the
+      // Baseline once it answers
+      reconcile: (updatedFilter) => {
         initialFormData.value = getWordFilterFormData(updatedFilter);
         sync();
       },

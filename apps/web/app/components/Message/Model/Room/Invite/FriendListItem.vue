@@ -39,7 +39,7 @@ const checkIsRecipientPending = ({ id, isGroup }: InviteRecipient) =>
           async () => {
             const inviteLink = await getUsableInviteLink(room);
             if (!inviteLink) return;
-            if (recipient.isGroup) await inviteDirectMessage(recipient.id, inviteLink);
+            if (recipient.isGroup) inviteDirectMessage(recipient.id, inviteLink);
             else await inviteFriend(recipient.id, inviteLink);
           }
         "

@@ -17,11 +17,11 @@ const { isOpen, item: message } = useSingletonDialog(deletingMessageId, () =>
 );
 const creator = useCreator(message);
 const { executeMutation } = useMutation();
-const deleteMessage = async () => {
+const deleteMessage = () => {
   const target = getMessageWriteTarget(message.value, getSlice);
   if (!target) return;
   const { messageId, roomId, roomItems } = target;
-  await executeMutation(() => $trpc.message.deleteMessage.mutate({ id: messageId, roomId }), {
+  executeMutation(() => $trpc.message.deleteMessage.mutate({ id: messageId, roomId }), {
     applyOptimistic: async () => {
       const deletedMessage = roomItems.value.find(getEntityIdEqualComparator(["id"], { id: messageId }));
       await storeDeleteMessage({ id: messageId, roomId });
@@ -44,7 +44,6 @@ const deleteMessage = async () => {
     v-model="isOpen"
     confirm-label="Delete"
     title="Delete Message"
-    is-optimistic
     :confirm="deleteMessage"
   >
     <p>Are you sure you want to delete this message?</p>

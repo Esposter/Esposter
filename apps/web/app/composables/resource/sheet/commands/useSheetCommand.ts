@@ -14,11 +14,11 @@ export const useSheetCommand = <TArgs extends unknown[]>(
   const { saveSheet } = sheetStore;
   const sheetHistoryStore = useSheetHistoryStore();
   const { push } = sheetHistoryStore;
-  return async (...args: TArgs) => {
+  return (...args: TArgs) => {
     const command = createCommand(dataSource.value, ...args);
     if (!command) return;
     command.execute(dataSource.value);
     push(command);
-    await saveSheet();
+    saveSheet();
   };
 };

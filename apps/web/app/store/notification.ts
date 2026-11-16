@@ -3,7 +3,7 @@ import type { Except, SetOptional } from "type-fest";
 
 import { compareCreatedAt } from "#shared/util/date/compareCreatedAt";
 import { DatabaseEntityType, NotificationSeverity } from "@esposter/db-schema";
-import { checkIsServer } from "@esposter/shared";
+import { checkIsServer, noop } from "@esposter/shared";
 import { v7 } from "uuid";
 
 // A read row is the row itself; an unread one is copied with it marked read, so each row a read changes is a new row
@@ -53,7 +53,7 @@ export const useNotificationStore = defineStore("notification", () => {
   // Compared after it, so two overlapping calls would snapshot the same list and both claim the row the first
   // Read brought back, re-toasting it after it was dismissed. Queued, the second reads a list that already holds
   // It — and still reads, so a row written while the first was in flight arrives rather than being joined away
-  const storeDeliveredNotifications = (readDeliveredNotifications: () => Promise<unknown>) =>
+  const storeDeliveredNotifications = (readDeliveredNotifications: () => Promise<unknown>) => {
     executeNotificationMutation(
       async () => {
         const [previousNewestNotification] = deliveredNotifications.value;
@@ -74,6 +74,8 @@ export const useNotificationStore = defineStore("notification", () => {
           createSnackbar(id);
       },
       {
+        // Nothing is drawn ahead of the read, since the read itself is what puts the rows it brings back on the bell
+        applyOptimistic: () => noop,
         key: DatabaseEntityType.Notification,
         // Nobody asked for this read — it rides a push — so a failure is logged rather than put in front of
         // Someone who did nothing to cause it
@@ -82,10 +84,12 @@ export const useNotificationStore = defineStore("notification", () => {
         },
       },
     );
+  };
+  // Hands back the notification's id, so an optimistic write that raised it can dismiss it when its rollback runs
   const createNotification = (
     newNotification: SetOptional<Except<AppNotification, "createdAt" | "id" | "isRead">, "body" | "path">,
   ) => {
-    if (checkIsServer()) return;
+    if (checkIsServer()) return "";
 
     const notification: AppNotification = {
       body: "",
@@ -97,6 +101,7 @@ export const useNotificationStore = defineStore("notification", () => {
     };
     localNotifications.value = [notification, ...localNotifications.value];
     createSnackbar(notification.id);
+    return notification.id;
   };
   // The one shape every mutation error surfaces as, so call sites don't restate it
   const createErrorNotification = (error: Error) => {
@@ -133,7 +138,7 @@ export const useNotificationStore = defineStore("notification", () => {
       },
     };
   };
-  const dismissNotification = async (id: string) => {
+  const dismissNotification = (id: string) => {
     dismissSnackbar(id);
     const localNotification = localNotifications.value.find((notification) => notification.id === id);
     // A local notification has no row to delete, so dismissing it is the whole operation
@@ -142,7 +147,7 @@ export const useNotificationStore = defineStore("notification", () => {
       return;
     }
 
-    await executeNotificationMutation(() => $trpc.notification.deleteNotification.mutate(id), {
+    executeNotificationMutation(() => $trpc.notification.deleteNotification.mutate(id), {
       applyOptimistic: () => {
         const { previousNotifications, previousUnreadDeliveredCount, restore } = snapshotDeliveredNotifications();
         deliveredNotifications.value = previousNotifications.filter((notification) => notification.id !== id);
@@ -152,13 +157,13 @@ export const useNotificationStore = defineStore("notification", () => {
         return restore;
       },
       key: DatabaseEntityType.Notification,
-      onSuccess: setUnreadDeliveredCount,
+      reconcile: setUnreadDeliveredCount,
     });
   };
-  const dismissNotifications = async () => {
+  const dismissNotifications = () => {
     localNotifications.value = [];
     snackbarIds.value = [];
-    await executeNotificationMutation(() => $trpc.notification.deleteNotifications.mutate(), {
+    executeNotificationMutation(() => $trpc.notification.deleteNotifications.mutate(), {
       applyOptimistic: () => {
         const { restore } = snapshotDeliveredNotifications();
         deliveredNotifications.value = [];
@@ -166,17 +171,17 @@ export const useNotificationStore = defineStore("notification", () => {
         return restore;
       },
       key: DatabaseEntityType.Notification,
-      onSuccess: setUnreadDeliveredCount,
+      reconcile: setUnreadDeliveredCount,
     });
   };
-  const markAllAsRead = async () => {
+  const markAllAsRead = () => {
     // Copy-on-write is the point: the array and every changed row are replaced so the computed re-evaluates
     localNotifications.value = localNotifications.value.map((notification) => markRead(notification));
     // The statement marks every unread row read, on the loaded pages and beyond them, so the total it clears is
     // The server's one — which is also the only thing that says there is anything to clear at all
     if (unreadDeliveredCount.value === 0) return;
 
-    await executeNotificationMutation(() => $trpc.notification.updateNotificationsReadStatus.mutate(), {
+    executeNotificationMutation(() => $trpc.notification.updateNotificationsReadStatus.mutate(), {
       applyOptimistic: () => {
         const { previousNotifications, restore } = snapshotDeliveredNotifications();
         deliveredNotifications.value = previousNotifications.map((notification) => markRead(notification));
@@ -184,7 +189,7 @@ export const useNotificationStore = defineStore("notification", () => {
         return restore;
       },
       key: DatabaseEntityType.Notification,
-      onSuccess: setUnreadDeliveredCount,
+      reconcile: setUnreadDeliveredCount,
     });
   };
   return {

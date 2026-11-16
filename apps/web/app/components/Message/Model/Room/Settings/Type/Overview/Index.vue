@@ -60,9 +60,9 @@ const categoryItems = computed<UiSelectItem<string>[]>(() =>
 );
 const isRoomDirty = computed(() => isReadOnlyDirty.value || isSlowmodeMsDirty.value || isTopicDirty.value);
 // The category is written to the reader's own membership, which the room's shared row does not carry
-const saveCategory = async () => {
+const saveCategory = () => {
   const categoryId = editedCategoryId.value;
-  await executeMutation(() => $trpc.userToRoom.updateUserToRoom.mutate({ categoryId, roomId: room.id }), {
+  executeMutation(() => $trpc.userToRoom.updateUserToRoom.mutate({ categoryId, roomId: room.id }), {
     applyOptimistic: () => {
       const previousUserToRoom = getMyUserToRoom(room.id);
       if (!previousUserToRoom) return noop;
@@ -81,9 +81,9 @@ const saveCategory = async () => {
 // Each write goes to the procedure that owns its field, and only when that field moved. The room row is sent with the
 // Fields this session edited and no others, so a field another client changed since the panel opened is not written
 // Back with the value this panel was opened on
-const save = async () => {
+const save = () => {
   if (isRoomDirty.value) {
-    await saveRoom({
+    saveRoom({
       ...(isReadOnlyDirty.value && { isReadOnly: editedIsReadOnly.value }),
       ...(isSlowmodeMsDirty.value && { slowmodeMs: editedSlowmodeMs.value }),
       ...(isTopicDirty.value && { topic: editedTopic.value }),
@@ -92,7 +92,7 @@ const save = async () => {
     settleSlowmodeMs();
     settleTopic();
   }
-  if (isCategoryDirty.value) await saveCategory();
+  if (isCategoryDirty.value) saveCategory();
 };
 </script>
 

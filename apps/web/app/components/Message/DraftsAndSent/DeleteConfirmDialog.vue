@@ -14,7 +14,7 @@ defineProps<Props>();
 </script>
 
 <template>
-  <UiConfirmDialog v-model="isOpen" confirm-label="Delete" :title is-optimistic :confirm>
+  <UiConfirmDialog v-model="isOpen" confirm-label="Delete" :title :confirm>
     <slot />
   </UiConfirmDialog>
 </template>

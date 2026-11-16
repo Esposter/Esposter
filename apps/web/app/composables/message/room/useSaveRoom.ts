@@ -11,10 +11,10 @@ export const useSaveRoom = (room: MaybeRefOrGetter<RoomInMessage>) => {
   const roomStore = useRoomStore();
   const { storeUpdateRoom } = roomStore;
   const { executeMutation } = useMutation();
-  return async (fields: Except<UpdateRoomInput, "id">) => {
+  return (fields: Except<UpdateRoomInput, "id">) => {
     const { id } = toValue(room);
     const input = { ...fields, id };
-    await executeMutation(() => $trpc.room.updateRoom.mutate(input), {
+    executeMutation(() => $trpc.room.updateRoom.mutate(input), {
       applyOptimistic: () => {
         const currentRoom = toValue(room);
         // Object.keys widens its result to string, so the row is indexed back through the input's own key type —

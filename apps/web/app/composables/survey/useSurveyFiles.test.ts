@@ -5,7 +5,7 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 import { surveyDocumentSchema, SurveyNodeType } from "vue-survey-engine-headless";
 
 const { deleteFile, uploadFile } = vi.hoisted(() => ({
-  deleteFile: vi.fn<(url: string) => Promise<void>>(() => Promise.resolve()),
+  deleteFile: vi.fn<(url: string) => void>(),
   uploadFile: vi.fn<(file: File) => Promise<string>>(),
 }));
 
@@ -29,12 +29,12 @@ describe(useSurveyFiles, () => {
     vi.clearAllMocks();
   });
 
-  test("a picture the editor opened on is deleted at the close once the document drops it", async () => {
+  test("a picture the editor opened on is deleted at the close once the document drops it", () => {
     expect.hasAssertions();
 
     const { sweep, track } = useSurveyFiles();
     track(createDocument("a", ""));
-    await sweep(createDocument("", ""));
+    sweep(createDocument("", ""));
 
     expect(deleteFile).toHaveBeenCalledExactlyOnceWith("a");
   });
@@ -46,7 +46,7 @@ describe(useSurveyFiles, () => {
     track(createDocument("", "a"));
     uploadFile.mockResolvedValue("b");
     await upload(new File(["a"], "a"));
-    await sweep(createDocument("", "b"));
+    sweep(createDocument("", "b"));
 
     expect(deleteFile).toHaveBeenCalledExactlyOnceWith("a");
   });
@@ -58,17 +58,17 @@ describe(useSurveyFiles, () => {
     track(createDocument("", ""));
     uploadFile.mockResolvedValue("c");
     await upload(new File(["a"], "a"));
-    await sweep(createDocument("", ""));
+    sweep(createDocument("", ""));
 
     expect(deleteFile).toHaveBeenCalledExactlyOnceWith("c");
   });
 
-  test("a file the document still references is kept at the close", async () => {
+  test("a file the document still references is kept at the close", () => {
     expect.hasAssertions();
 
     const { sweep, track } = useSurveyFiles();
     track(createDocument("a", ""));
-    await sweep(createDocument("a", ""));
+    sweep(createDocument("a", ""));
 
     expect(deleteFile).not.toHaveBeenCalled();
   });
@@ -81,7 +81,7 @@ describe(useSurveyFiles, () => {
     const { promise, resolve } = Promise.withResolvers<string>();
     uploadFile.mockReturnValueOnce(promise);
     const uploading = upload(new File(["a"], "a"));
-    await sweep(createDocument("", ""));
+    sweep(createDocument("", ""));
     resolve("c");
     const url = await uploading;
 

@@ -19,7 +19,6 @@ const { isOpen, item: comment } = useSingletonDialog(deletingId, () =>
     v-model="isOpen"
     confirm-label="Delete"
     title="Delete comment"
-    is-optimistic
     :confirm="() => comment && deleteComment(comment.id, deletingParentId)"
   >
     <p>

@@ -3,6 +3,7 @@ import { createRoomRole } from "#src/services/message/member/createRoomRole.test
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useRoleStore } from "#src/store/message/room/role";
 import { TRPCError } from "@trpc/server";
+import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
@@ -23,7 +24,9 @@ describe(useRoleStore, () => {
     const roleStore = useRoleStore();
     const { deleteRole, getRoles, setRoles, updateRole } = roleStore;
     setRoles(roomId, [first, second]);
-    await Promise.all([updateRole({ id: first.id, name: "renamed", roomId }), deleteRole({ id: second.id, roomId })]);
+    updateRole({ id: first.id, name: "renamed", roomId });
+    deleteRole({ id: second.id, roomId });
+    await flushPromises();
 
     expect(getRoles(roomId)).toStrictEqual([first]);
   });
@@ -38,7 +41,9 @@ describe(useRoleStore, () => {
     const roleStore = useRoleStore();
     const { deleteRole, getRoles, setRoles } = roleStore;
     setRoles(roomId, [first, second]);
-    await Promise.all([deleteRole({ id: first.id, roomId }), deleteRole({ id: second.id, roomId })]);
+    deleteRole({ id: first.id, roomId });
+    deleteRole({ id: second.id, roomId });
+    await flushPromises();
 
     expect(getRoles(roomId)).toStrictEqual([first]);
   });
@@ -57,7 +62,9 @@ describe(useRoleStore, () => {
     const roleStore = useRoleStore();
     const { deleteRole, getRoles, setRoles, updateRole } = roleStore;
     setRoles(roomId, [first, second]);
-    await Promise.all([updateRole({ id: first.id, name: "renamed", roomId }), deleteRole({ id: first.id, roomId })]);
+    updateRole({ id: first.id, name: "renamed", roomId });
+    deleteRole({ id: first.id, roomId });
+    await flushPromises();
 
     expect(getRoles(roomId)).toStrictEqual([first, second]);
   });
@@ -74,10 +81,9 @@ describe(useRoleStore, () => {
     const roleStore = useRoleStore();
     const { getMemberRoles, revokeRole, setMemberRoles } = roleStore;
     setMemberRoles(roomId, userId, [first, second]);
-    await Promise.all([
-      revokeRole({ roleId: first.id, roomId, userId }),
-      revokeRole({ roleId: second.id, roomId, userId }),
-    ]);
+    revokeRole({ roleId: first.id, roomId, userId });
+    revokeRole({ roleId: second.id, roomId, userId });
+    await flushPromises();
 
     expect(getMemberRoles(roomId, userId)).toStrictEqual([first]);
   });
@@ -97,10 +103,9 @@ describe(useRoleStore, () => {
     const roleStore = useRoleStore();
     const { assignRole, getMemberRoles, revokeRole, setRoles } = roleStore;
     setRoles(roomId, [first, second]);
-    await Promise.all([
-      assignRole({ roleId: first.id, roomId, userId }),
-      revokeRole({ roleId: first.id, roomId, userId }),
-    ]);
+    assignRole({ roleId: first.id, roomId, userId });
+    revokeRole({ roleId: first.id, roomId, userId });
+    await flushPromises();
 
     expect(getMemberRoles(roomId, userId)).toStrictEqual([]);
   });

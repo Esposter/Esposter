@@ -37,24 +37,24 @@ describe(useSelectEmoji, () => {
 
   // A reaction is stored as the emoji itself, so two tones of one emoji are two reactions with their own
   // Counts — Discord and Slack both behave this way, and any normalisation reintroduced here would break it
-  test("treats a differently toned emoji as its own reaction", async () => {
+  test("treats a differently toned emoji as its own reaction", () => {
     expect.hasAssertions();
 
     const selectEmoji = useSelectEmoji(message);
-    await selectEmoji(THUMBS_UP);
+    selectEmoji(THUMBS_UP);
     emojis.push({ emojiTag: THUMBS_UP, userIds: [userId] });
-    await selectEmoji(THUMBS_UP_MEDIUM);
+    selectEmoji(THUMBS_UP_MEDIUM);
 
     expect(createEmoji.mock.calls.map(([{ emojiTag }]) => emojiTag)).toStrictEqual([THUMBS_UP, THUMBS_UP_MEDIUM]);
   });
 
-  test("toggles the existing reaction when the same emoji comes back", async () => {
+  test("toggles the existing reaction when the same emoji comes back", () => {
     expect.hasAssertions();
 
     const foundEmoji = { emojiTag: THUMBS_UP, userIds: [userId] };
     emojis.push(foundEmoji);
     const selectEmoji = useSelectEmoji(message);
-    await selectEmoji(THUMBS_UP);
+    selectEmoji(THUMBS_UP);
 
     expect(createEmoji).not.toHaveBeenCalled();
     expect(toggleEmoji).toHaveBeenCalledExactlyOnceWith(message.roomId, foundEmoji);

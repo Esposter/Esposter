@@ -46,7 +46,6 @@ const deleteDuplicates = () => deleteDuplicateRows(keepMode.value);
     :confirm="deleteDuplicates"
     :confirm-variant="UiButtonVariant.Danger"
     :is-confirm-disabled="duplicateCount === 0 || undefined"
-    is-optimistic
     :size="UiDialogSize.Large"
     title="Duplicate rows"
   >

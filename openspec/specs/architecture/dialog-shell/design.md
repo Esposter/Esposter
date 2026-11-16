@@ -22,9 +22,9 @@ flowchart TD
   FORM -->|"no"| ANSWER["confirm calls the consumer's confirm function"]
   FORM -->|"yes"| SUBMIT["form submit"]
   SUBMIT --> ANSWER
-  ANSWER --> MODE{"is the write optimistic"}
-  MODE -->|"yes"| GONE["closes at once — a rejection rolls back and toasts"]
-  MODE -->|"no"| PENDING["pending until it settles<br/>closes, or stays open on false"]
+  ANSWER --> MODE{"does it name a reason to wait"}
+  MODE -->|"no"| GONE["closes at once — a rejection rolls back and toasts"]
+  MODE -->|"yes"| PENDING["pending until it settles<br/>closes, or stays open on false"]
 ```
 
 ## The rules the shell enforces
@@ -35,7 +35,7 @@ flowchart TD
 
 **The confirm button comes from the shell, not from the caller.** It is the library's button in the accent, the dialog's one action, and says what it does in `confirmLabel`. A destructive answer is not drawn here at all: it is the danger button of a [destructive confirmation](../destructive-confirmation/design.md).
 
-**Confirming is a function the dialog awaits, and the dialog closes itself.** `StyledDialog` takes `confirm`, `StyledFormDialog` takes `submit` and `StyledEditFormDialog` takes `save`, and all three answer through `useDialogAnswer`, as `UiConfirmDialog` does. The answer runs through `useMutation`, so a function that rejects keeps the dialog open and raises the error alert any other write does. Which answer mode a consumer picks, and when the dialog closes under each, is owned by [destructive confirmation](../destructive-confirmation/design.md).
+**Confirming is a function the dialog calls, and the dialog closes itself.** `StyledDialog` takes `confirm`, `StyledFormDialog` takes `submit` and `StyledEditFormDialog` takes `save`, and all three answer through `useDialogAnswer`, as `UiConfirmDialog` does. The dialog closes as the function is called, since its write has already changed the screen. Only a dialog given `awaitedBecause` waits: its answer runs through `useMutation`, so a function that rejects keeps the dialog open and raises the error alert any other write does. Which answer mode a consumer picks, and when the dialog closes under each, is owned by [destructive confirmation](../destructive-confirmation/design.md).
 
 ## Dialogs with nothing to confirm
 

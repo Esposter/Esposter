@@ -29,7 +29,7 @@ const { item: purgingResource } = useSingletonDialog(purgingId, () =>
   items.value.find(({ id }) => id === purgingId.value),
 );
 const { checkIsRestorePending, restoreResources } = useRestoreResources(refresh);
-const purgeResource = usePurgeResource(refresh);
+const purgeResource = usePurgeResource(items, refresh);
 const { getContextMenuProps } = useContextMenu();
 const page = ref(1);
 const itemsPerPage = ref(RESOURCE_LIST_ITEMS_PER_PAGE);

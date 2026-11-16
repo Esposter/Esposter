@@ -1,7 +1,7 @@
 import type { JoinCallOptions } from "#src/models/message/room/call/JoinCallOptions";
 import type { CallParticipant } from "@esposter/db-schema";
 
-import { MutationStatus } from "#src/models/shared/MutationStatus";
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { getDefaultJoinCallOptions } from "#src/services/message/room/call/getDefaultJoinCallOptions";
 import { getRestoredItems } from "#src/services/shared/getRestoredItems";
 import { useConnectionStore } from "#src/store/realtime/connection";
@@ -16,7 +16,7 @@ export const useKnockerStore = defineStore("message/room/call/knocker", () => {
   // Knocking targets one call session at a time, so every knock shares one executor and one target
   const { executeMutation: executeKnockCallMutation } = useMutation();
   const knockCall = async (callId: string) => {
-    const outcome = await executeKnockCallMutation(() => $trpc.callSession.knocker.knockCall.mutate({ id: callId }), {
+    await executeKnockCallMutation(() => $trpc.callSession.knocker.knockCall.mutate({ id: callId }), {
       // Read as the write is sent: knocks share one target and queue, so a rejected one must unwind to the
       // Session the knock ahead of it stored rather than to the one held when the user clicked
       applyOptimistic: () => {
@@ -26,13 +26,15 @@ export const useKnockerStore = defineStore("message/room/call/knocker", () => {
           knockingCallSessionId.value = previousKnockingCallSessionId;
         };
       },
+      // The server decides whether the knock is recorded, so the call's socket waits for that answer
+      awaitedBecause: AwaitedReason.ServerDecidedOutcome,
       // Only one knock is active at a time, so it is a singleton target: a stable key, and knocks run one after
       // The other against it
       key: "knockCall",
+      // The call's socket opens once the knock is recorded, since the server takes a knocker's connection only then. The
+      // Admission that follows reuses this socket rather than reconnecting
+      onSuccess: () => openCall(callId),
     });
-    // The call's socket opens once the knock is recorded, since the server takes a knocker's connection only then. The
-    // Admission that follows reuses this socket rather than reconnecting
-    if (outcome.status === MutationStatus.Succeeded) await openCall(callId);
   };
   const cancelKnock = () => {
     knockingCallSessionId.value = "";
@@ -58,15 +60,16 @@ export const useKnockerStore = defineStore("message/room/call/knocker", () => {
     key: sessionId,
   });
   const { executeMutation: executeAdmitKnockerMutation } = useMutation();
+  // Admitting is the server's decision: it can refuse a knocker the room no longer holds, so the lobby waits on it
   const admitKnocker = async (callSessionId: string, sessionId: string) => {
     await executeAdmitKnockerMutation(
       () => $trpc.callSession.knocker.admitKnocker.mutate({ callSessionId, sessionId }),
-      getResolveKnockerOptions(sessionId),
+      { ...getResolveKnockerOptions(sessionId), awaitedBecause: AwaitedReason.ServerDecidedOutcome },
     );
   };
   const { executeMutation: executeDismissKnockerMutation } = useMutation();
-  const dismissKnocker = async (callSessionId: string, sessionId: string) => {
-    await executeDismissKnockerMutation(
+  const dismissKnocker = (callSessionId: string, sessionId: string) => {
+    executeDismissKnockerMutation(
       () => $trpc.callSession.knocker.dismissKnocker.mutate({ callSessionId, sessionId }),
       getResolveKnockerOptions(sessionId),
     );

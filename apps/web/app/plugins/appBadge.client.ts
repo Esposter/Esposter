@@ -1,4 +1,5 @@
 import { useNotificationStore } from "#src/store/notification";
+import { noop } from "@esposter/shared";
 
 // The installed app's icon badge mirrors the bell's unread count, so an install that is not in the foreground
 // Still shows what is waiting. Only the count the running tab knows about: a push that arrives while the app is
@@ -20,12 +21,14 @@ export default defineNuxtPlugin(() => {
   const { executeMutation } = useMutation();
   // Immediate because the store is session-scoped, so a launch starts at zero — which is exactly the badge a
   // Previous session left behind and never got to clear
-  watchImmediate(unreadCount, async (newUnreadCount) => {
-    await executeMutation(
+  watchImmediate(unreadCount, (newUnreadCount) => {
+    executeMutation(
       () =>
         // Clearing rather than badging zero: the two are equivalent per spec, but only one of them says so
         newUnreadCount > 0 ? window.navigator.setAppBadge(newUnreadCount) : window.navigator.clearAppBadge(),
       {
+        // Nothing is drawn ahead of the badge: the icon is the platform's, and it is the write that sets it
+        applyOptimistic: () => noop,
         key: "appBadge",
         onError: (error) => {
           console.error(error);

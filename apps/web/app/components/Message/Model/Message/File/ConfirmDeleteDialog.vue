@@ -22,7 +22,6 @@ const { isOpen, item: file } = useSingletonDialog(deletingFileId, () =>
     :confirm="
       () => file && deletingMessageId && deleteFile({ fileId: file.id, id: deletingMessageId, roomId: deletingRoomId })
     "
-    is-optimistic
   >
     <p>Are you sure you want to remove {{ file.filename }}? This cannot be undone.</p>
   </UiConfirmDialog>
