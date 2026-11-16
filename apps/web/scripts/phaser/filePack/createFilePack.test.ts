@@ -21,7 +21,7 @@ describe(createFilePack, () => {
     );
 
     await expect(createFilePack()).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Read, name: https://33d16cc4281c2845398ddb2fbd29829b.r2.cloudflarestorage.com/dev-r2-esposter-public-dungeons-assets, responds 403]`,
+      `[InvalidOperationError: Invalid operation: Read, name: https://33d16cc4281c2845398ddb2fbd29829b.r2.cloudflarestorage.com/dev-r2-esposter-public-dungeons-assets?list-type=2, responds 403]`,
     );
   });
 });
