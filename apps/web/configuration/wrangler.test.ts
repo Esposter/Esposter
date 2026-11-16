@@ -1,9 +1,9 @@
-import { getBuildCloudflareEnvironment } from "#configuration/wrangler";
+import { getCloudflareEnvironment } from "#configuration/wrangler";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 import { CloudflareEnvironment } from "../../../packages/db-schema/src/models/cloudflare/CloudflareEnvironment.ts";
 
-describe(getBuildCloudflareEnvironment, () => {
+describe(getCloudflareEnvironment, () => {
   afterEach(() => {
     vi.unstubAllEnvs();
   });
@@ -12,8 +12,18 @@ describe(getBuildCloudflareEnvironment, () => {
     expect.hasAssertions();
 
     vi.stubEnv("CLOUDFLARE_ENV", undefined);
+    vi.stubEnv("NODE_ENV", "production");
 
-    expect(getBuildCloudflareEnvironment()).toBe(CloudflareEnvironment.Production);
+    expect(getCloudflareEnvironment()).toBe(CloudflareEnvironment.Production);
+  });
+
+  test("binds the development environment under the dev server when no environment is named", () => {
+    expect.hasAssertions();
+
+    vi.stubEnv("CLOUDFLARE_ENV", undefined);
+    vi.stubEnv("NODE_ENV", "development");
+
+    expect(getCloudflareEnvironment()).toBe(CloudflareEnvironment.Development);
   });
 
   test("builds the environment CI names", () => {
@@ -21,7 +31,7 @@ describe(getBuildCloudflareEnvironment, () => {
 
     vi.stubEnv("CLOUDFLARE_ENV", CloudflareEnvironment.Development);
 
-    expect(getBuildCloudflareEnvironment()).toBe(CloudflareEnvironment.Development);
+    expect(getCloudflareEnvironment()).toBe(CloudflareEnvironment.Development);
   });
 
   test("refuses an environment that does not exist", () => {
@@ -29,7 +39,7 @@ describe(getBuildCloudflareEnvironment, () => {
 
     vi.stubEnv("CLOUDFLARE_ENV", "staging");
 
-    expect(() => getBuildCloudflareEnvironment()).toThrowErrorMatchingInlineSnapshot(
+    expect(() => getCloudflareEnvironment()).toThrowErrorMatchingInlineSnapshot(
       `[Error: CLOUDFLARE_ENV must be one of dev, prod, got staging]`,
     );
   });

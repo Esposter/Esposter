@@ -97,4 +97,4 @@ A text id for an entity other tables reference, a text natural key, a composite 
 ## Migrations
 
 - **`db:gen` (from `packages/db-schema/`) is the only way to produce a migration, and `snapshot.json` is machine state, never hand-cloned** — a copied snapshot forks the chain the instant two migrations descend from one parent (`references/migrations.md`).
-- **`db:gen` is never run as an unprompted side effect** of a schema edit — note the pending migration and let the user decide. Migrations apply to `core` through `pnpm --filter @esposter/db-schema db:migrate`, and `apps/web`'s `predev` applies them locally with `wrangler d1 migrations apply CORE --local`.
+- **`db:gen` is never run as an unprompted side effect** of a schema edit — note the pending migration and let the user decide. Migrations apply to `core` through `pnpm --filter @esposter/db-schema db:migrate`, and `apps/web`'s `pnpm dev` applies them locally through the dev seed (`pnpm -C scripts dev:seed`), Drizzle's migrator over the dev server's Miniflare D1.

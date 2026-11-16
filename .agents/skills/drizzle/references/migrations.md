@@ -18,7 +18,7 @@ pnpm db:up    # upgrades snapshot metadata to a newer drizzle-kit format, never 
 - `db:gen` reads no database: the diff is schema-vs-snapshot, never the live D1 database. `drizzle.config.ts` reads `CLOUDFLARE_ENVIRONMENT` and `CLOUDFLARE_API_TOKEN` into `dbCredentials` when it loads, but `generate` never uses them, so an unset environment is no database rather than an error.
 - **Rename the generated codename folder** descriptively, keeping drizzle's timestamp prefix, then rerun `db:gen` — it must report `No schema changes, nothing to migrate`.
 - Generation surfaces real drift a hand-written chain silently missed. Check a surprising diff against the migrations folder before calling it wrong.
-- **Applying** goes to the `core` D1 database through `pnpm --filter @esposter/db-schema db:migrate`, which uses D1's HTTP API. Local development applies the same folder with `wrangler d1 migrations apply CORE --local`, which `apps/web`'s `predev` runs.
+- **Applying** goes to the `core` D1 database through `pnpm --filter @esposter/db-schema db:migrate`, which uses D1's HTTP API. Local development applies the same folder with Drizzle's migrator over the dev server's Miniflare D1, through the dev seed `apps/web`'s `pnpm dev` runs before the server starts (`scripts/src/services/devSeed/runDevSeed.ts`).
 
 ## One generation at a time
 

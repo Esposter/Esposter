@@ -48,7 +48,7 @@ Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/
 - Node.js: the version in the root `.node-version` file.
 - pnpm: the version in the `packageManager` field of the root `package.json`.
 - Cloudflare values in `.env` for R2 presigned URLs and RealtimeKit: `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `REALTIMEKIT_APP_ID` and `REALTIMEKIT_API_TOKEN`.
-- The local D1 database needs no account. `pnpm dev` applies its migrations with wrangler.
+- The local D1 database needs no account. `pnpm dev` migrates and seeds it before the server starts.
 
 ### Database
 
@@ -61,7 +61,7 @@ pnpm db:up      # upgrade snapshot metadata to a newer drizzle-kit format
 pnpm db:studio  # open Drizzle Studio UI
 ```
 
-`pnpm dev` applies pending migrations to the local D1 with wrangler. CI's deploy job applies them to the remote D1 with `pnpm --filter @esposter/db-schema db:migrate`.
+`pnpm dev` applies pending migrations to the local D1 through the dev seed, before the server starts. CI's deploy job applies them to the remote D1 with `pnpm --filter @esposter/db-schema db:migrate`.
 
 ## <a name="commands">⌨️ Commands</a>
 

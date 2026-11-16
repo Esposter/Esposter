@@ -20,6 +20,8 @@ Which Cloudflare services the app runs on, what each one owns, and which package
 
 Every binding comes from `cloudflare:workers`'s `env`. A helper reads its binding when it is called (`getBucket`, `getJobQueue`, `getUserObject`, `consumeAddressRateLimit`), not once at load. The exception is the D1 `db`, built once at module scope from `env.CORE` in `apps/web/server/db/index.ts` and `apps/jobs/src/services/shared/db.ts`. A test passes Miniflare's bindings by having `createMockDb` copy them into the `env` stand-in.
 
+Under `nuxt dev` the app runs in Nitro's Miniflare runner, which binds the development environment's D1, buckets and rate limiters from `apps/web/configuration/wrangler.ts` but drops the bindings to the realtime Worker's objects, since they name another script, and Nitro passes no Miniflare options through to bind them again ([nitrojs/nitro#4621](https://github.com/nitrojs/nitro/issues/4621)). Pages render and read their data locally, and live sockets, presence and calls work only in a deployed environment. Cloudflare's own tools reach another Worker's objects locally through the dev registry, which a Nitro option passing Miniflare's options through would make available here.
+
 ## Where each kind of data lives
 
 | Data                                                                                   | Holder                                      | Why there                                                                                                                   |

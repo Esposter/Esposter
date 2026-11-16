@@ -21,10 +21,14 @@ import { RateLimiterNamespaceIdMap } from "../../../packages/db-schema/src/servi
 import { RateLimiterPointsMap } from "../../../packages/db-schema/src/services/cloudflare/RateLimiterPointsMap.ts";
 import { getStorageBucketBindingName } from "../../../packages/db-schema/src/services/storage/getStorageBucketBindingName.ts";
 
-// The environment a build is for: CI sets CLOUDFLARE_ENV by its branch, and a build without it is prod. Any other value is
-// A typo that would deploy one environment's bindings under another's name, so it fails the build
-export const getBuildCloudflareEnvironment = (): CloudflareEnvironment => {
-  const value = process.env.CLOUDFLARE_ENV ?? CloudflareEnvironment.Production;
+// The environment the app's bindings are for: CI sets CLOUDFLARE_ENV by its branch, and without it `nuxt dev` binds the
+// Development environment, which Nuxt marks by setting NODE_ENV before it loads this configuration, and a build binds prod.
+// The dev server, the dev seed and the tests' mock database then open one local D1 file, the development database's. Any
+// Other value is a typo that would deploy one environment's bindings under another's name, so it fails the build
+export const getCloudflareEnvironment = (): CloudflareEnvironment => {
+  const value =
+    process.env.CLOUDFLARE_ENV ??
+    (process.env.NODE_ENV === "development" ? CloudflareEnvironment.Development : CloudflareEnvironment.Production);
   const environment = CloudflareEnvironments.find((cloudflareEnvironment) => cloudflareEnvironment === value);
   if (!environment)
     // oxlint-disable-next-line error-handling/no-bare-error -- the Nuxt configuration loads before `@esposter/shared` is built

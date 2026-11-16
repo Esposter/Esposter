@@ -2,7 +2,7 @@
 import type { NuxtConfig } from "nuxt/schema";
 
 import { TEMPORAL_POLYFILL_BASE_URL } from "#configuration/constants";
-import { getBuildCloudflareEnvironment, getEnvironmentWrangler } from "#configuration/wrangler";
+import { getCloudflareEnvironment, getEnvironmentWrangler } from "#configuration/wrangler";
 import { MEGABYTE } from "#shared/services/app/constants";
 import {
   GENSHIN_LOGIN_MUSIC_RECORDING_BASE_URL,
@@ -19,14 +19,14 @@ const genshinWorldDirectory = dirname(createRequire(import.meta.url).resolve("ge
 const pdfjsDistDirectory = dirname(createRequire(import.meta.url).resolve("pdfjs-dist/package.json"));
 
 export const nitro: NuxtConfig["nitro"] = {
-  // The Worker's own wrangler configuration, written beside the build. A build is made for one environment — CI sets
-  // CLOUDFLARE_ENV by its branch before building, and a local build is prod — so the file holds that environment alone:
-  // Wrangler refuses `env` blocks in a configuration a tool generated. The app's stateful half is the realtime Worker's
-  // Durable Objects, which the bindings in `wrangler.ts` reach by that Worker's script name
+  // The Worker's own wrangler configuration, written beside the build. A build is made for one environment (CI sets
+  // CLOUDFLARE_ENV by its branch, a local build is prod and the dev server development), so the file holds that
+  // Environment alone: wrangler refuses `env` blocks in a configuration a tool generated. The app's stateful half is the
+  // Realtime Worker's Durable Objects, which the bindings in `wrangler.ts` reach by that Worker's script name
   cloudflare: {
     deployConfig: true,
     nodeCompat: true,
-    wrangler: { compatibility_date: "2026-11-01", ...getEnvironmentWrangler(getBuildCloudflareEnvironment()) },
+    wrangler: { compatibility_date: "2026-11-01", ...getEnvironmentWrangler(getCloudflareEnvironment()) },
   },
   hooks: {
     // Nitro's Vite builder, the one Nuxt 5 builds through, dropped the size summary its Rollup builder prints, so each

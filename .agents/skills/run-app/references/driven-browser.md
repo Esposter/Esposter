@@ -18,11 +18,7 @@ The app's pages that need a person to be signed in are reached through a develop
 
 A run seeds the local D1 files the dev server reads, and nothing it does reaches a remote database. The seed's bindings are Miniflare's local files under `DEV_SEED_PERSIST_ROOT` (`scripts/src/services/devSeed/constants.ts`, the local Wrangler state the dev server reads), the same state the dev server reads, so the rows a run writes are the local dev data itself. `<scratch>` is a directory outside the tree for the run's logs and screenshots.
 
-1. **Seed the local database**, from the repo root. The seed migrates the local core D1 database and writes the dataset into it, and a rerun converges on the same rows:
-
-   ```bash
-   pnpm -C scripts dev:seed
-   ```
+1. **The local database is seeded by `pnpm dev`**, which runs the seed after building the packages and before the server starts. The seed migrates the local core D1 database and writes the dataset into it, and a rerun converges on the same rows; `pnpm -C scripts dev:seed` runs it alone against a server already up.
 
 2. **Start the dev server** on the port the reference names, in the background:
 
@@ -38,6 +34,6 @@ A run seeds the local D1 files the dev server reads, and nothing it does reaches
    await page.goto("http://[::1]:3001/messages");
    ```
 
-   The pages a signed-in driver check opens are `/messages` (the room and its messages), `/messages/friends`, `/messages/draftsandsent`, `/resource-explorer` and `/achievements`. A refused POST answers `404`, the answer a server without the route gives, so a `404` is read against the server's `APP_ENV`, its `BASE_URL` and whether it started after the route was added.
+   The pages a signed-in driver check opens are `/messages` (the room and its messages), `/messages/friends`, `/messages/draftsandsent`, `/resource-explorer` and `/achievements`. A refused POST answers `404`, the answer a server without the route gives, so a `404` is read against the server's `APP_ENV`, its `BASE_URL` and whether it started after the route was added. Their sockets fail to connect under `nuxt dev`, a 500 on `/ws/*`, because Nitro's dev runner drops the realtime Worker's object bindings (`openspec/specs/architecture/cloudflare-services/design.md`); a claim about live updates is checked on the deployed development environment.
 
 **Leave nothing behind:** stop the dev server by its PID tree and delete `<scratch>`. The seeded local D1 files stay in the local Wrangler state the dev server reads, and the next run's seed converges on them.

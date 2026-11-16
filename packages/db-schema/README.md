@@ -48,7 +48,7 @@ After you edit a schema file, generate the migration:
 
 `pnpm db:gen` generates the `core` migrations and then each object's, from `drizzle.room.config.ts`, `drizzle.call.config.ts` and `drizzle.user.config.ts`. The room, call and user objects have their own SQLite schemas in `packages/db-schema/src/objects/<object>/schema.ts`, and their migrations in `packages/db-schema/src/objects/<object>/migrations/`.
 
-`pnpm dev` in `apps/web/` applies the `core` migrations to the local D1 with wrangler. CI's deploy job applies them to the remote D1 with `pnpm --filter @esposter/db-schema db:migrate`.
+`pnpm dev` in `apps/web/` applies the `core` migrations to the local D1 through the dev seed. CI's deploy job applies them to the remote D1 with `pnpm --filter @esposter/db-schema db:migrate`.
 
 ## <a name="license">⚖️ License</a>
 
