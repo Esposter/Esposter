@@ -104,5 +104,5 @@ A choice is `{ value, text }`, where `value` is a string or a number and `text` 
 ## Sources
 
 - [SurveyJS — API reference: Rating Scale question model](https://surveyjs.io/form-library/documentation/api-reference/rating-scale-question-model) — `rateMin`, default 1, the first rate value of the generated sequence: the first step a scale takes as an input, which applies while no custom rate values are set.
-- [SurveyJS — API reference: Checkbox question model](https://surveyjs.io/form-library/documentation/api-reference/checkbox-question-model) — `minSelectedChoices`, default 0 (unlimited), the minimum number of selected choices, which constrains only what a respondent picks.
-- [SurveyJS — API reference: Dropdown Tag Box model](https://surveyjs.io/form-library/documentation/api-reference/dropdown-tag-box-model) — the same `minSelectedChoices` on the tag box, default 0 (unlimited), bounded by the tag box's maximum.
+- [SurveyJS — API reference: Checkbox question model](https://surveyjs.io/form-library/documentation/api-reference/checkbox-question-model) — "minSelectedChoices", default 0 (unlimited), the minimum number of selected choices, which constrains only what a respondent picks.
+- [SurveyJS — API reference: Dropdown Tag Box model](https://surveyjs.io/form-library/documentation/api-reference/dropdown-tag-box-model) — the same "minSelectedChoices" on the tag box, default 0 (unlimited), bounded by the tag box's maximum.
