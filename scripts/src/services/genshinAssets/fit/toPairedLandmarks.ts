@@ -2,26 +2,23 @@ import type { InteractiveMapPoint } from "#src/models/genshinAssets/points/Inter
 import type { SimilarityTransform } from "#src/models/genshinAssets/points/SimilarityTransform";
 import type { SceneTransportPoint } from "#src/models/genshinAssets/world/SceneTransportPoint";
 import type { GroundPoint } from "genshin-engine";
-import type { WaypointLandmark } from "genshin-world";
+import type { LandmarkKind, StatueOfTheNewMoonLandmark, WaypointLandmark } from "genshin-world";
 
 import { findAreaId } from "#src/services/genshinAssets/fit/findAreaId";
-import {
-  GROUND_LAYER,
-  INTERACTIVE_MAP_FIT_BAR,
-  INTERACTIVE_MAP_WAYPOINT_LABEL_ID,
-} from "#src/services/genshinAssets/points/constants";
+import { GROUND_LAYER, INTERACTIVE_MAP_FIT_BAR } from "#src/services/genshinAssets/points/constants";
 import { matchPairs } from "#src/services/genshinAssets/points/matchPairs";
 import { toLandmarkArrival } from "#src/services/genshinAssets/shared/toLandmarkArrival";
-import { LandmarkKind } from "genshin-world";
 
-// The waypoints of a region as landmarks of their own kind. A ground waypoint on the official map is a waypoint where it
-// Pairs with a transport point of the scene within the fit's bar, and each such point is placed as the landmark's arrival,
-// Its place and turn carried round the origin as the region's other places are. Its id is its region and the point's own
-// Id, which the first-unlock rewards are keyed by too. A map point that is no ground waypoint, and a transport point no
-// Waypoint pairs with, give none
-export const toWaypointLandmarks = ({
+// The landmarks of one kind the official map labels on the ground, each paired with a transport point of the scene within
+// The fit's bar and placed at that point's arrival: its place and turn carried round the origin as the region's other places
+// Are, its id the region, the kind's word and the point's own id, which the first-unlock rewards are keyed by too. A map
+// Point of another label or on an underground layer, and a transport point no label pairs with, give none
+export const toPairedLandmarks = ({
   areas,
   getWorldHeight,
+  idWord,
+  kind,
+  labelId,
   mapPoints,
   origin,
   region,
@@ -30,18 +27,19 @@ export const toWaypointLandmarks = ({
 }: {
   areas: readonly { id: string; outline: readonly GroundPoint[] }[];
   getWorldHeight: (x: number, z: number) => number;
+  idWord: string;
+  kind: typeof LandmarkKind.StatueOfTheNewMoon | typeof LandmarkKind.TeleportWaypoint;
+  labelId: number;
   mapPoints: readonly InteractiveMapPoint[];
   origin: readonly [number, number, number];
   region: string;
   transform: SimilarityTransform;
   transportPoints: readonly SceneTransportPoint[];
-}): WaypointLandmark[] => {
-  const waypoints = mapPoints.filter(
-    ({ label_id, z_level }) => label_id === INTERACTIVE_MAP_WAYPOINT_LABEL_ID && z_level === GROUND_LAYER,
-  );
+}): (StatueOfTheNewMoonLandmark | WaypointLandmark)[] => {
+  const labelled = mapPoints.filter(({ label_id, z_level }) => label_id === labelId && z_level === GROUND_LAYER);
   const pairedIndexes = new Set(
     matchPairs(
-      waypoints.map(({ x_pos, y_pos }) => ({ x: x_pos, z: y_pos })),
+      labelled.map(({ x_pos, y_pos }) => ({ x: x_pos, z: y_pos })),
       transportPoints.map(({ position }) => position),
       transform,
       INTERACTIVE_MAP_FIT_BAR,
@@ -55,8 +53,8 @@ export const toWaypointLandmarks = ({
         areaId: findAreaId(areas, arrival.position),
         arrival,
         heightOffset: arrival.heightOffset,
-        id: `${region}-waypoint-${point.id}`,
-        kind: LandmarkKind.TeleportWaypoint,
+        id: `${region}-${idWord}-${point.id}`,
+        kind,
         position: arrival.position,
         rotation: arrival.rotation,
       };

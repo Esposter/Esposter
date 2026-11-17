@@ -8,7 +8,7 @@ export const waypointsCommand: SubCommandsDef[string] = defineCommand({
   args: { ...dryRunArgs },
   meta: {
     description:
-      "Write each Teleport Waypoint of the official map, paired with the scene's transport point it stands at, into its region's landmarks",
+      "Write each Teleport Waypoint and Statue of the New Moon of the official map, paired with the scene's transport point it stands at, into its region's landmarks",
     name: "waypoints",
   },
   run: async ({ args }) => {

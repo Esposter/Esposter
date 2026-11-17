@@ -1,9 +1,17 @@
 import type { DryRunOptions } from "#src/models/shared/DryRunOptions";
 
-import { toWaypointLandmarks } from "#src/services/genshinAssets/fit/toWaypointLandmarks";
+import { toPairedLandmarks } from "#src/services/genshinAssets/fit/toPairedLandmarks";
+import {
+  INTERACTIVE_MAP_STATUE_LABEL_ID,
+  INTERACTIVE_MAP_WAYPOINT_LABEL_ID,
+} from "#src/services/genshinAssets/points/constants";
 import { InteractiveMapRegionMap } from "#src/services/genshinAssets/points/InteractiveMapRegionMap";
 import { readFittedRegions } from "#src/services/genshinAssets/residents/readFittedRegions";
-import { CATALOGUE_PATH, WAYPOINT_REGIONS } from "#src/services/genshinAssets/shared/constants";
+import {
+  CATALOGUE_PATH,
+  NEW_MOON_STATUE_REGIONS,
+  WAYPOINT_REGIONS,
+} from "#src/services/genshinAssets/shared/constants";
 import { readWorldGroundHeight } from "#src/services/genshinAssets/shared/readWorldGroundHeight";
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
 import { readSceneTransportPoints } from "#src/services/genshinAssets/world/readSceneTransportPoints";
@@ -12,9 +20,24 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { catalogueSchema, LandmarkKind } from "genshin-world";
 import { readFile } from "node:fs/promises";
 
-// The Teleport Waypoints of each region in WAYPOINT_REGIONS, written into its region's data as landmarks of their own kind,
-// Replacing the waypoints an earlier run wrote. Each is paired with the scene's transport point it stands at, and only the
-// Official map points of the region's own map area are paired. A dry run counts them and writes nothing
+// The kinds the official map's labels pair, each with the label it is read from and the word its id carries. A Statue of
+// The Seven's label holds the Statues of the New Moon of Nod-Krai's map area, as the map files them
+const WAYPOINT_PAIRING = {
+  idWord: "waypoint",
+  kind: LandmarkKind.TeleportWaypoint,
+  labelId: INTERACTIVE_MAP_WAYPOINT_LABEL_ID,
+} as const;
+const NEW_MOON_STATUE_PAIRING = {
+  idWord: "new-moon-statue",
+  kind: LandmarkKind.StatueOfTheNewMoon,
+  labelId: INTERACTIVE_MAP_STATUE_LABEL_ID,
+} as const;
+const PAIRED_LANDMARK_KINDS = new Set<string | undefined>([WAYPOINT_PAIRING.kind, NEW_MOON_STATUE_PAIRING.kind]);
+
+// The Teleport Waypoints of each region in WAYPOINT_REGIONS and the Statues of the New Moon of each in NEW_MOON_STATUE_REGIONS,
+// Written into its region's data as landmarks of their own kinds, replacing the ones an earlier run wrote. Each is paired
+// With the scene's transport point it stands at, and only the official map points of the region's own map area are paired.
+// A dry run counts them and writes nothing
 export const fitRegionWaypoints = async ({ isDryRun }: DryRunOptions): Promise<string> => {
   const [{ origin, points, regionFiles, transform }, getWorldHeight, transportPoints] = await Promise.all([
     readFittedRegions(),
@@ -24,28 +47,33 @@ export const fitRegionWaypoints = async ({ isDryRun }: DryRunOptions): Promise<s
   const catalogue = catalogueSchema.parse(parseMachineJson(await readFile(CATALOGUE_PATH, "utf8")));
   const reports = await Promise.all(
     regionFiles
-      .filter(({ region }) => WAYPOINT_REGIONS.includes(region))
+      .filter(({ region }) => WAYPOINT_REGIONS.includes(region) || NEW_MOON_STATUE_REGIONS.includes(region))
       .map(async ({ data, file, region }) => {
         const mapRegion = InteractiveMapRegionMap[region];
         if (!mapRegion) throw new InvalidOperationError(Operation.Read, region, "has no region on the official map");
         const areas = catalogue.regions.find(({ id }) => id === region)?.areas;
         if (!areas) throw new InvalidOperationError(Operation.Read, CATALOGUE_PATH, `has no region ${region}`);
-        const waypoints = toWaypointLandmarks({
-          areas,
-          getWorldHeight,
-          mapPoints: points.filter(({ area_id }) => area_id === mapRegion.areaId),
-          origin,
-          region,
-          transform,
-          transportPoints,
-        });
+        const pair = (pairing: typeof WAYPOINT_PAIRING | typeof NEW_MOON_STATUE_PAIRING) =>
+          toPairedLandmarks({
+            ...pairing,
+            areas,
+            getWorldHeight,
+            mapPoints: points.filter(({ area_id }) => area_id === mapRegion.areaId),
+            origin,
+            region,
+            transform,
+            transportPoints,
+          });
+        const waypoints = WAYPOINT_REGIONS.includes(region) ? pair(WAYPOINT_PAIRING) : [];
+        const statues = NEW_MOON_STATUE_REGIONS.includes(region) ? pair(NEW_MOON_STATUE_PAIRING) : [];
         const landmarks = [
-          ...data.landmarks.filter(({ kind }) => kind !== LandmarkKind.TeleportWaypoint),
+          ...data.landmarks.filter(({ kind }) => !PAIRED_LANDMARK_KINDS.has(kind)),
           ...waypoints,
+          ...statues,
         ];
         if (JSON.stringify(landmarks) !== JSON.stringify(data.landmarks) && !isDryRun)
           await writeWorldData(file, { ...data, landmarks });
-        return `${region}: ${waypoints.length} waypoints placed`;
+        return `${region}: ${waypoints.length} waypoints and ${statues.length} Statues of the New Moon placed`;
       }),
   );
   return isDryRun ? [...reports, "nothing written"].join("\n") : reports.join("\n");

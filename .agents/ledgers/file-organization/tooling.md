@@ -589,8 +589,8 @@
 | `scripts/src/services/genshinAssets/fit/toShade.ts`                                       | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/toStackMesh.ts`                                   | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/toTexel.ts`                                       | 2026-11-01 · Haiku 5.5  |       |
-| `scripts/src/services/genshinAssets/fit/toWaypointLandmarks.test.ts`                      | 2026-10-29 · Haiku 5.5  |       |
-| `scripts/src/services/genshinAssets/fit/toWaypointLandmarks.ts`                           | 2026-11-01 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/toPairedLandmarks.test.ts`                        | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/toPairedLandmarks.ts`                             | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/toWorldVertices.ts`                               | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/traceCellLoops.test.ts`                           | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/traceCellLoops.ts`                                | 2026-11-01 · Haiku 5.5  |       |

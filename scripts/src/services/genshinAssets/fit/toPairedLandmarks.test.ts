@@ -2,7 +2,7 @@ import type { InteractiveMapPoint } from "#src/models/genshinAssets/points/Inter
 import type { SceneTransportPoint } from "#src/models/genshinAssets/world/SceneTransportPoint";
 import type { GroundPoint } from "genshin-engine";
 
-import { toWaypointLandmarks } from "#src/services/genshinAssets/fit/toWaypointLandmarks";
+import { toPairedLandmarks } from "#src/services/genshinAssets/fit/toPairedLandmarks";
 import {
   GROUND_LAYER,
   INTERACTIVE_MAP_STATUE_LABEL_ID,
@@ -21,7 +21,7 @@ const createMapPoint = (overrides: Partial<InteractiveMapPoint>): InteractiveMap
   ...overrides,
 });
 
-describe(toWaypointLandmarks, () => {
+describe(toPairedLandmarks, () => {
   const ORIGIN = [100, 20, 200] as const;
   const IDENTITY_TRANSFORM = { mirrored: false, offset: { x: 0, z: 0 }, scale: 1, turn: 0 };
   const AREA_OUTLINE: GroundPoint[] = [
@@ -31,8 +31,14 @@ describe(toWaypointLandmarks, () => {
     { x: -100, z: 100 },
   ];
   const TRANSPORT_POINT: SceneTransportPoint = { height: 30, id: "7", position: { x: 150, z: 300 }, turnDegrees: 90 };
+  const WAYPOINT_PAIRING = {
+    idWord: "waypoint",
+    kind: LandmarkKind.TeleportWaypoint,
+    labelId: INTERACTIVE_MAP_WAYPOINT_LABEL_ID,
+  } as const;
   const landmarksAt = (mapPoints: InteractiveMapPoint[]) =>
-    toWaypointLandmarks({
+    toPairedLandmarks({
+      ...WAYPOINT_PAIRING,
       areas: [],
       getWorldHeight: () => 5,
       mapPoints,
@@ -47,7 +53,8 @@ describe(toWaypointLandmarks, () => {
 
     expect({
       jumpTarget: JUMP_LANDMARK_KINDS.includes(LandmarkKind.TeleportWaypoint),
-      landmarks: toWaypointLandmarks({
+      landmarks: toPairedLandmarks({
+        ...WAYPOINT_PAIRING,
         areas: [{ id: "starfell-valley", outline: AREA_OUTLINE }],
         getWorldHeight: () => 5,
         mapPoints: [createMapPoint({})],
@@ -65,6 +72,39 @@ describe(toWaypointLandmarks, () => {
           heightOffset: 5,
           id: "mondstadt-waypoint-7",
           kind: LandmarkKind.TeleportWaypoint,
+          position: { x: 50, z: -100 },
+          rotation: -1.5708,
+        },
+      ],
+    });
+  });
+
+  test("a Statue of the New Moon is paired from the Statue of The Seven's label, and is a jump target", () => {
+    expect.hasAssertions();
+
+    expect({
+      jumpTarget: JUMP_LANDMARK_KINDS.includes(LandmarkKind.StatueOfTheNewMoon),
+      landmarks: toPairedLandmarks({
+        areas: [{ id: "starfell-valley", outline: AREA_OUTLINE }],
+        getWorldHeight: () => 5,
+        idWord: "new-moon-statue",
+        kind: LandmarkKind.StatueOfTheNewMoon,
+        labelId: INTERACTIVE_MAP_STATUE_LABEL_ID,
+        mapPoints: [createMapPoint({ label_id: INTERACTIVE_MAP_STATUE_LABEL_ID })],
+        origin: ORIGIN,
+        region: "mondstadt",
+        transform: IDENTITY_TRANSFORM,
+        transportPoints: [TRANSPORT_POINT],
+      }),
+    }).toStrictEqual({
+      jumpTarget: true,
+      landmarks: [
+        {
+          areaId: "starfell-valley",
+          arrival: { heightOffset: 5, position: { x: 50, z: -100 }, rotation: -1.5708 },
+          heightOffset: 5,
+          id: "mondstadt-new-moon-statue-7",
+          kind: LandmarkKind.StatueOfTheNewMoon,
           position: { x: 50, z: -100 },
           rotation: -1.5708,
         },

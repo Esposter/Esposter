@@ -453,6 +453,9 @@ export const REGION_MAX_DISTANCE = 100;
 // The regions whose Teleport Waypoints the waypoints command writes into their region data: Mondstadt, and the others as
 // Each one's map fit is checked
 export const WAYPOINT_REGIONS: readonly string[] = [DerivedAssetComponent.Mondstadt];
+// The regions whose Statues of the New Moon the waypoints command writes: Nod-Krai, whose statues the official map labels
+// As Statues of The Seven in its own map area, each paired with the scene's transport point it stands at
+export const NEW_MOON_STATUE_REGIONS: readonly string[] = [DerivedAssetComponent.NodKrai];
 // The regions whose ley line blossoms are placed as their outcrop places, for now Mondstadt alone
 export const OUTCROP_REGIONS: readonly string[] = [DerivedAssetComponent.Mondstadt];
 // A cloud atlas holds its painted clouds in two columns of four rows, each traced on a grid of four texels and kept
