@@ -4,6 +4,10 @@ import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedA
 import { LOGIN_DOOR_MESH, SCENE_POINT_CATEGORY, SCENE_POINT_FILE } from "#src/services/genshinAssets/shared/constants";
 import { readWeaponRoots } from "#src/services/genshinAssets/weapons/readWeaponRoots";
 
+// The one definition every capital and sub-area of the open world shares: a part derived from its place,
+// with no root of its own
+const DERIVED_WORLD_OPTIONS: DerivedAssetComponentOptions = { isCapitalWorld: true, roots: [], screen: "WorldScreen" };
+
 // Each component's roots, which `extract` follows every pointer from, and the assets no pointer from them reaches by
 // The name the game gives them, which the asset index turns into the blocks holding them. The login screen's roots are
 // Its own scene, `LoginScene`, and the prefabs its `MonoLoginScene` spawns into the empty anchors under `SceneObj`: the
@@ -15,6 +19,19 @@ import { readWeaponRoots } from "#src/services/genshinAssets/weapons/readWeaponR
 // And the door's; `Start` and `End`, a name the whole game reuses, are left to its reference. Its music is the playlist
 // `genshin:assets music` found over a recording of its title: two pieces with a rest after each, looping forever
 export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAssetComponentOptions> = {
+  // Each sub-area with a catalogued extent: a catalogue area the game outlines, derived the way a capital is, from the centre
+  // Of its outline's box (`readDerivedWorldPlace`) and the terrain tiles its outline reaches. An area with no outline is no
+  // Component, so it keeps its region's ground
+  [DerivedAssetComponent.ArdraviValley]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.AshavanRealm]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.AshveilPeak]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.Atocpan]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.AvidyaForest]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.BasinOfUnnumberedFlames]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.BelleauRegion]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.BerylRegion]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.BishuiPlain]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.BrightcrownMountains]: DERIVED_WORLD_OPTIONS,
   // The character screen's page is the `AvatarInfoDialogV2` GameObject, the Animator beside `AvatarInfoDescDialog`, the
   // Details dialog, and `AvatarLevelUpDialog`. A tree that names none of the tabs is the wrong page
   [DerivedAssetComponent.Character]: {
@@ -22,6 +39,15 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
     roots: [],
     screen: "CharacterScreen",
   },
+  [DerivedAssetComponent.ChenyuValeSouthernMountain]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.ChenyuValeUpperVale]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.CoatepecMountain]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.CourtOfFontaineRegion]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.DesertOfHadramaveth]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.Dragonspine]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.EasybreezeHolidayResort]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.ErinnyesForest]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.EverfrozenEarth]: DERIVED_WORLD_OPTIONS,
   // A region's open world is derived from its capital's place (`deriveCapitalWorld`), so no region is rooted at its
   // Capital's index. Each `Area_<code>_City_Index` is the StreamGen chunk index of the capital's own area blob, a
   // MonoBehaviour holding a blob's chunk offsets and no game object: a root that is one walks to nothing, since the
@@ -33,6 +59,10 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
     roots: [],
     screen: "WorldScreen",
   },
+  [DerivedAssetComponent.FontaineResearchInstituteOfKineticEnergyEngineeringRegion]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.GalesongHill]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.GavirehLajavard]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.HiisiIsland]: DERIVED_WORLD_OPTIONS,
   // The in-level HUD: its page is the `InLevelMainPage` GameObject, holding the minimap, the party and the skill buttons.
   // Its anchor is `TeamBtn_MP`, an Animator in no other block, since `GrpMainPage` is in four
   [DerivedAssetComponent.Hud]: {
@@ -41,8 +71,15 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
     roots: [],
     screen: "HudScreen",
   },
-  [DerivedAssetComponent.Inazuma]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.Liyue]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
+  [DerivedAssetComponent.HypostyleDesert]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.Inazuma]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.Kannazuka]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.LandOfLowerSetekh]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.LandOfUpperSetekh]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.LempoIsle]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.LiffeyRegion]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.Lisha]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.Liyue]: DERIVED_WORLD_OPTIONS,
   [DerivedAssetComponent.Login]: {
     clipPattern: "^(Ani_LoginMainPage_|Ani_LoginProgressBar_|Ani_Login_Lift$|Ani_LogginScene_Door01_)",
     interface: { anchorPattern: "^Ani_LoginMainPage_Waiting", root: "LoginMainPage" },
@@ -76,9 +113,18 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
       },
     ],
   },
-  [DerivedAssetComponent.Mondstadt]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.Natlan]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.NodKrai]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
+  [DerivedAssetComponent.LokapalaJungle]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.LostNursery]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.Minlin]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.Mondstadt]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.MorteRegion]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.MtLaixin]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.NarukamiIsland]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.Natlan]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.NodKrai]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.NostoiRegion]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.Ochkanatlan]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.PahaIsle]: DERIVED_WORLD_OPTIONS,
   // Lumine, the player's girl avatar: her model prefab in the character block, rooted at its game object, so `extract`
   // Walks her skinned renderers and their materials the way it walks a scene's. No parity screen draws her yet
   [DerivedAssetComponent.PlayerGirl]: {
@@ -88,8 +134,18 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
   // The props and gadgets the world places. It roots and names no pattern: the asset index has no GameObject rows, so a
   // Prefab's name finds nothing there, and each kind's export names the assets of its own prefab
   [DerivedAssetComponent.Props]: { roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.Snezhnaya]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.Sumeru]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
+  [DerivedAssetComponent.QiongjiEstuary]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.QuahuacanCliff]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.RealmOfFarakhkert]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.SeaOfClouds]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.SeiraiIsland]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.Snezhnaya]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.StarfellValley]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.Sumeru]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.TequemecanValley]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.TezcatepetoncoRange]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.TheChasm]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.ToyacSprings]: DERIVED_WORLD_OPTIONS,
   // The Traveler's four locomotion clips, the standing, walk, run and sprint cycles of `Ani_Avatar_Girl_`, in the character
   // Block `00/00035183.blk` the asset index names. Her model is rooted by PlayerGirl's entry, so this one roots nothing
   [DerivedAssetComponent.Traveler]: {
@@ -97,6 +153,12 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
     roots: [],
     screen: "WorldScreen",
   },
+  [DerivedAssetComponent.TsurumiIsland]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.Vanarana]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.VissudhaField]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.VoidseaOutlook]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.WatatsumiIsland]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.WavechaserPlain]: DERIVED_WORLD_OPTIONS,
   // The weapons' screen. Its roots are the prefabs whose renderers draw the held weapons' meshes, which `weapon-roots`
   // Derives from the layouts of the blocks the asset index puts those meshes in and writes to a record beside this map.
   // The icons its fit traces are exported by `weapon-icons` from the weapon table. Read on access, not at import, so the
@@ -107,6 +169,7 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
     },
     screen: "WeaponScreen",
   },
+  [DerivedAssetComponent.WindrestPeak]: DERIVED_WORLD_OPTIONS,
   // Windrise is the open world's (World/Screen/Index.reference.ts): the statue's gadget prefab at its scene point, the
   // Oak's prefab at the one placement of Windrise's own area, the oak's finest meshes, which no prefab holds, and the
   // Four terrain tiles under the valley and the slopes north of it, with their base maps, and the windmill's tower and
@@ -203,69 +266,6 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
       ],
     },
   },
-  // Each sub-area with a catalogued extent: a catalogue area the game outlines, derived the way a capital is, from the centre
-  // Of its outline's box (`readDerivedWorldPlace`) and the terrain tiles its outline reaches. An area with no outline is no
-  // Component, so it keeps its region's ground
-  [DerivedAssetComponent.ArdraviValley]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.AshavanRealm]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.AshveilPeak]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.Atocpan]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.AvidyaForest]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.BasinOfUnnumberedFlames]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.BelleauRegion]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.BerylRegion]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.BishuiPlain]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.BrightcrownMountains]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.ChenyuValeSouthernMountain]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.ChenyuValeUpperVale]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.CoatepecMountain]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.CourtOfFontaineRegion]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.DesertOfHadramaveth]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.Dragonspine]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.EasybreezeHolidayResort]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.ErinnyesForest]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.EverfrozenEarth]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.FontaineResearchInstituteOfKineticEnergyEngineeringRegion]: {
-    isCapitalWorld: true,
-    roots: [],
-    screen: "WorldScreen",
-  },
-  [DerivedAssetComponent.GalesongHill]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.GavirehLajavard]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.HiisiIsland]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.HypostyleDesert]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.Kannazuka]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.LandOfLowerSetekh]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.LandOfUpperSetekh]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.LempoIsle]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.LiffeyRegion]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.Lisha]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.LokapalaJungle]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.LostNursery]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.Minlin]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.MorteRegion]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.MtLaixin]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.NarukamiIsland]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.NostoiRegion]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.Ochkanatlan]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.PahaIsle]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.QiongjiEstuary]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.QuahuacanCliff]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.RealmOfFarakhkert]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.SeaOfClouds]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.SeiraiIsland]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.StarfellValley]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.TequemecanValley]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.TezcatepetoncoRange]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.TheChasm]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.ToyacSprings]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.TsurumiIsland]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.Vanarana]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.VissudhaField]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.VoidseaOutlook]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.WatatsumiIsland]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.WavechaserPlain]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.WindrestPeak]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.WindwailHighland]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
-  [DerivedAssetComponent.YashioriIsland]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
+  [DerivedAssetComponent.WindwailHighland]: DERIVED_WORLD_OPTIONS,
+  [DerivedAssetComponent.YashioriIsland]: DERIVED_WORLD_OPTIONS,
 };
