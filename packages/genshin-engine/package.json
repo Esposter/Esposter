@@ -67,8 +67,7 @@
     "@esposter/shared-node": "workspace:*",
     "@types/node": "catalog:",
     "@types/three": "catalog:",
-    "tsdown": "catalog:",
-    "vite": "catalog:"
+    "tsdown": "catalog:"
   },
   "peerDependencies": {
     "three": "catalog:"

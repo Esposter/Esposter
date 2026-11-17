@@ -11,7 +11,7 @@ import { createEmptyPage, getTopic, TopicKind } from "@esposter/db-schema";
 import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(
   import("#src/services/realtime/openRealtimeSocket"),
@@ -65,7 +65,8 @@ describe(useCursorPaginationOperationData, () => {
     // The payload rides to the client as plain data, so the fixture is the shape hydration really reads
     const serverPage: Page<string> = { items: [item], nextCursor: "" };
     const topic = getTopic(TopicKind.Feed, "posts");
-    useConnectionStore().openUser();
+    const connectionStore = useConnectionStore();
+    connectionStore.openUser();
     await mountSuspended(
       defineComponent({
         render: () => h("div"),
@@ -111,28 +112,25 @@ describe(useCursorPaginationOperationData, () => {
     const topic = getTopic(TopicKind.Feed, "posts");
     const firstRow: Row = { description: "before", id: "first" };
     const laterRow: Row = { description: "later", id: "later" };
-    useConnectionStore().openUser();
+    const connectionStore = useConnectionStore();
+    connectionStore.openUser();
     const [, onFrame] = vi.mocked(openRealtimeSocket).mock.lastCall ?? [];
-    let rowItems: ReturnType<typeof useCursorPaginationOperationData<Row>>["items"];
-    let rowReadItems: ReturnType<typeof useCursorPaginationOperationData<Row>>["readItems"];
-    let rowReadMoreItems: ReturnType<typeof useCursorPaginationOperationData<Row>>["readMoreItems"];
+    let rowOperationData: ReturnType<typeof useCursorPaginationOperationData<Row>> | undefined;
     await mountSuspended(
       defineComponent({
         render: () => h("div"),
         setup: () => {
           const cursorPaginationData = ref(createEmptyPage<Row>());
           const isLoadedSource = ref(false);
-          ({
-            items: rowItems,
-            readItems: rowReadItems,
-            readMoreItems: rowReadMoreItems,
-          } = useCursorPaginationOperationData(
+          rowOperationData = useCursorPaginationOperationData(
             () => cursorPaginationData,
             () => isLoadedSource,
-          ));
+          );
         },
       }),
     );
+    assert.exists(rowOperationData);
+    const { items: rowItems, readItems: rowReadItems, readMoreItems: rowReadMoreItems } = rowOperationData;
     let description = firstRow.description;
     await rowReadItems(() => {
       readActiveTopics()?.push(topic);

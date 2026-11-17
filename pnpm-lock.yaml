@@ -1495,9 +1495,6 @@ importers:
       tsdown:
         specifier: 'catalog:'
         version: 0.23.7(@arethetypeswrong/core@0.18.5)(@tsdown/css@0.23.7)(oxc-resolver@11.24.2)(publint@0.3.25)(tsrs@0.25.0-ts7.1.0-beta)(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)
-      vite:
-        specifier: ^8.4.0-beta.1
-        version: 8.4.0-beta.1(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1)
 
   packages/genshin-interface:
     dependencies:
