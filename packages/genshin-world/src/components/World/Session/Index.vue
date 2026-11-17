@@ -22,7 +22,6 @@ import ExpeditionLoader from "#src/components/Expedition/Loader/Index.vue";
 import FishingScreen from "#src/components/Fishing/Screen/Index.vue";
 import ForgeScreen from "#src/components/Forge/Screen/Index.vue";
 import GameOverScreen from "#src/components/GameOver/Index.vue";
-import GcgSession from "#src/components/Gcg/Session/Index.vue";
 import HandbookScreen from "#src/components/Handbook/Screen/Index.vue";
 import HudNavigation from "#src/components/Hud/Navigation/Index.vue";
 import HudScreen from "#src/components/Hud/Screen/Index.vue";
@@ -186,6 +185,8 @@ const {
 // The achievements' progress, which the host saves once per tick, and a save is every change to what the world holds,
 // Which the host saves on its own cadence
 const emit = defineEmits<{ grant: []; quit: []; ready: []; save: [save: GenshinSave] }>();
+// The card game's session loads when a duel opens, so the world's first screen does not load the game's modules
+const GcgSession = defineAsyncComponent(() => import("#src/components/Gcg/Session/Index.vue"));
 // The settings the device keeps, read over the host's defaults. The world renders at the quality tier it started with,
 // Since its renderer and grass take the tier at setup, so a tier chosen in Settings is kept for the next start
 const settingsDefaults = { ...GENSHIN_SETTINGS_DEFAULTS, language, qualityTier };

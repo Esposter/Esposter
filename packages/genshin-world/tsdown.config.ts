@@ -15,6 +15,8 @@ import { mergeConfig } from "tsdown";
 // The kit map loads each through an `import()` of its own as its character joins the party
 // The Traveler's game model is loaded on demand in development, so the barrel leaves its modules out and they stay a chunk
 const AVATAR_MODULE_DIRECTORY = "services/character/avatar";
+// The card game's service and session, which the world's session loads on a duel's opening rather than with the world
+const GCG_MODULE_DIRECTORIES = ["services/gcg", "components/Gcg"];
 // The parity page's modules the tooling in `scripts` imports as types. The page writes to `window` when it loads, so
 // No wildcard reaches its modules
 const PARITY_EXPORT_NAMES = [
@@ -49,7 +51,11 @@ const tsdownConfiguration: UserConfig = mergeConfig(getTsdownConfigurationVue({ 
   hooks: {
     "build:prepare": async ({ options: { cwd } }) => {
       await generateCharacterKitMap(cwd);
-      generateExports(cwd, ExportsGeneration.Vue, [KIT_MODULE_DIRECTORY, AVATAR_MODULE_DIRECTORY]);
+      generateExports(cwd, ExportsGeneration.Vue, [
+        KIT_MODULE_DIRECTORY,
+        AVATAR_MODULE_DIRECTORY,
+        ...GCG_MODULE_DIRECTORIES,
+      ]);
     },
   },
 });

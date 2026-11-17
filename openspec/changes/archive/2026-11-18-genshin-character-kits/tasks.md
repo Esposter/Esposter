@@ -23,7 +23,7 @@
 
 ## 6. Size
 
-- [ ] 6.1 [phase 7] Cut the world's entry to a smaller size. The cut shows as a drop in the `genshin-world` rows of `bundle-sizes.md`. Verify: `pnpm bundle-sizes:gen` after a build shows the smaller size in the `genshin-world` rows, and the bundle-sizes test passes against it. Blocked: a cut to a smaller size is a separate open item, not decided here, so this box stays open for it; measuring a cut needs a build.
+- [x] 6.1 [phase 7] Cut the world's entry to a smaller size. The cut shows as a drop in the `genshin-world` rows of `bundle-sizes.md`. Verify: `pnpm bundle-sizes:gen` after a build shows the smaller size in the `genshin-world` rows, and the bundle-sizes test passes against it. Built: the card game's session loads when a duel opens and the barrels leave its directories out, so `dist/index.js` goes from 376,894 to 332,246 bytes (design.md, Decisions and Data and measures).
 
 ## 7. Decisions
 

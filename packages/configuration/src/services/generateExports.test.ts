@@ -75,6 +75,22 @@ describe(generateExports, () => {
     expect(readFileSync(join(sourceDirectory, "index.ts"), "utf8")).toBe(`export * from "./${TEST_FILENAME}.ts";\n`);
   });
 
+  // A component under a lazy directory is loaded by its own `import()` as its source is, so the component barrel leaves it out
+  test("leaves the components of a lazy directory out of the component barrel", () => {
+    expect.hasAssertions();
+
+    const componentsDirectory = join(sourceDirectory, "components");
+    mkdirSync(join(componentsDirectory, "lazy"), { recursive: true });
+    writeFileSync(join(componentsDirectory, `${TEST_FILENAME}.vue`), "<template><i /></template>");
+    writeFileSync(join(componentsDirectory, "lazy", `${TEST_FILENAME}.vue`), "<template><i /></template>");
+    generateExports(packageDirectory, ExportsGeneration.Vue, ["components/lazy"]);
+
+    expect(readFileSync(join(componentsDirectory, "index.ts"), "utf8")).toBe(
+      `export { default as ${getComponentName(`${TEST_FILENAME}.vue`)} } from "./${TEST_FILENAME}.vue";
+`,
+    );
+  });
+
   // A sibling's watcher vendoring this source reads the barrel while it is being written, so an unchanged one is left
   test("leaves an unchanged barrel unwritten", () => {
     expect.hasAssertions();
