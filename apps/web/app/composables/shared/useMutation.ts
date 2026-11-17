@@ -1,9 +1,11 @@
 import type { CacheTag } from "#src/models/cache/CacheTag";
 import type { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import type { MutationOutcome } from "#src/models/shared/MutationOutcome";
+import type { Topic } from "@esposter/db-schema";
 import type { Promisable } from "type-fest";
 
 import { MutationStatus } from "#src/models/shared/MutationStatus";
+import { collectTopics } from "#src/services/realtime/collectTopics";
 import { settleOperation } from "#src/services/shared/settleOperation";
 import { useCacheStore } from "#src/store/cache";
 import { getSynchronizedFunction, withFinalizerAsync } from "@esposter/shared";
@@ -102,12 +104,16 @@ export const useMutation = () => {
   // Resolves once every write already queued for a target has settled. Only a read of what those writes store on the
   // Server needs it, such as an export the server compiles from the saved copy; the screen never waits on it
   const whenSettled = (key: PropertyKey) => keyQueueMap.get(key) ?? Promise.resolve();
+  // A read stays live: the topics its answer came from are watched for as long as this instance's scope lives, and a
+  // Write that changed one runs the same read again — which is why every read of a query procedure goes through here
+  const watchTopics = useWatchTopics();
   // Reads are latest-wins per target: the caller wants the freshest data, and a superseded response has
   // Nothing to unwind — discarding it loses no information
   const executeQuery = <TResult>(
     query: (checkIsStale: () => boolean) => Promise<TResult>,
-    { isExclusive, key, onError, onSuccess }: QueryOptions<TResult>,
+    options: QueryOptions<TResult>,
   ): Promise<MutationOutcome<TResult>> => {
+    const { isExclusive, key, onError, onSuccess } = options;
     const sharedQuery = isExclusive ? keySharedQueryMap.get(key) : undefined;
     // The call already in flight applies the state and runs the callbacks for this target, so awaiting it is
     // The whole read — the joiner sees the same data and the same outcome one request later
@@ -119,8 +125,30 @@ export const useMutation = () => {
     // A stale response applies no state and runs no callback, and a later caller joining it would resolve
     // Holding nothing. It issues its own read instead
     keySharedQueryMap.delete(key);
+    let topics: Topic[] = [];
     const outcome = withFinalizerAsync(
-      () => settleOperation(query, { checkIsStale, isSilentWhenStale: true, onError, onSuccess }),
+      () =>
+        settleOperation(
+          async () => {
+            const read = await collectTopics(() => query(checkIsStale));
+            topics = read.topics;
+            return read.result;
+          },
+          {
+            checkIsStale,
+            isSilentWhenStale: true,
+            onError,
+            // Only the latest read of a target reaches here, so only it decides what the target watches
+            onSuccess: async (result) => {
+              await onSuccess?.(result);
+              watchTopics(
+                key,
+                topics,
+                getSynchronizedFunction(() => executeQuery(query, options)),
+              );
+            },
+          },
+        ),
       () => {
         releaseKey(key);
         // Only this call's own entry is dropped: the read that superseded it registers its own, and clearing

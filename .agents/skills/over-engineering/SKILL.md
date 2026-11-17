@@ -23,6 +23,10 @@ A helper whose body is one expression with no logic, invariant or default only r
 
 A cache, a runner, a dependency order, a concurrency limit or a filter that an installed tool already provides is used as that tool documents it, and a hand-rolled one is deleted. Before designing any of them, the installed tool's own docs are read for the feature.
 
+## A list kept by hand beside what the code already declares — owned here
+
+A guard that needs a list of names to stay in step with a declaration elsewhere (the procedures that are live, the files that are exempt, the fields that are counts) is one more place every change must remember, and a test holding the two equal makes the reminder cost compute on every run. Before adding one, ask whether the list filters anything: where it names nearly all of what it guards, the guard is written without it and its few exceptions disable it with a reason. Where it does filter, the list is derived from the declaration it mirrors, never kept beside it by a test that fails until someone edits it.
+
 ## The catalogue
 
 | Shape                                                                                               | The owner                                                                                                                                      |
@@ -44,6 +48,7 @@ A cache, a runner, a dependency order, a concurrency limit or a filter that an i
 | A durable mechanism — an outbox, a queue, a sweep — for a failure the next write repairs on its own | `openspec/specs/resource/storage-quotas/design.md`                                                                                             |
 | A script bent to fit a runner, or a shim built so a runner fits the script                          | the `package-scripts` skill (`references/typescript-scripts.md`)                                                                               |
 | A lint rule or test kept for a shape that can no longer be written                                  | the `invariants` skill (`references/retiring-an-enforcer.md`)                                                                                  |
+| A hand-kept list mirroring a declaration, held equal by a test                                      | this page ("A list kept by hand beside what the code already declares")                                                                        |
 
 ## Reading a finding against this list
 

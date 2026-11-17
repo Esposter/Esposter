@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
 import { readActiveTopics } from "#src/services/realtime/collectTopics";
-import { sendRealtimeFrame } from "#src/services/realtime/openRealtimeSocket.test";
+import { openRealtimeSocket, sendRealtimeFrame } from "#src/services/realtime/openRealtimeSocket.test";
 import { useAlertStore } from "#src/store/alert";
 import { useConnectionStore } from "#src/store/realtime/connection";
 import { getTopic, TopicKind } from "@esposter/db-schema";
@@ -94,6 +94,31 @@ describe(useQuery, () => {
 
     expect(error.value).toBe("");
     expect(data.value).toBe(result);
+  });
+
+  // A read is live by going through the primitive: the write that changed a topic its answer came from reads it again
+  test("reads again when a topic its answer came from is invalidated", async () => {
+    expect.hasAssertions();
+
+    const connectionStore = useConnectionStore();
+    connectionStore.openUser();
+    const [, onFrame] = vi.mocked(openRealtimeSocket).mock.lastCall ?? [];
+    const topic = getTopic(TopicKind.Post, v7());
+    let value = result;
+    const scope = effectScope();
+    const query = scope.run(() =>
+      useQuery(() => {
+        readActiveTopics()?.push(topic);
+        return Promise.resolve(value);
+      }),
+    );
+    await waitForSynchronizedFunctions();
+    value = "updated";
+    onFrame?.(JSON.stringify({ data: { topic }, type: "invalidate" }));
+    await waitForSynchronizedFunctions();
+    scope.stop();
+
+    expect(query?.data.value).toBe("updated");
   });
 
   // A read still in flight when its surface unmounts answers into nothing, so it must not watch the topics it names

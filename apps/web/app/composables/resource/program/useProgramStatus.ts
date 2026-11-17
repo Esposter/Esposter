@@ -37,11 +37,18 @@ export const useProgramStatus = () => {
   const statusRows = ref<ProgramStatusRow[]>([]);
   // Set when the response scan hit its cap, which makes every count on this blade a floor rather than a total
   const isRespondedPartial = ref(false);
+  // Live while the blade is open, so a response landing elsewhere moves its counts without a refresh
+  const { executeQuery: executeReadStatusQuery } = useMutation();
   const readStatus = async () => {
-    await getResultAsync(() => $trpc.program.readProgramStatus.query({ id: id.value })).match((programStatus) => {
-      isRespondedPartial.value = programStatus.isRespondedPartial;
-      statusRows.value = programStatus.rows;
-    }, createErrorNotification);
+    const programId = id.value;
+    await executeReadStatusQuery(() => $trpc.program.readProgramStatus.query({ id: programId }), {
+      key: programId,
+      onError: createErrorNotification,
+      onSuccess: (programStatus) => {
+        isRespondedPartial.value = programStatus.isRespondedPartial;
+        statusRows.value = programStatus.rows;
+      },
+    });
   };
   const generateParticipants = async () => {
     // A participant's link opens the bound survey, so without one there is nothing to hand the owner

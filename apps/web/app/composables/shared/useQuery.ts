@@ -1,9 +1,5 @@
-import type { Topic } from "@esposter/db-schema";
-
-import { collectTopics } from "#src/services/realtime/collectTopics";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
-import { useConnectionStore } from "#src/store/realtime/connection";
-import { getSynchronizedFunction, ID_SEPARATOR, noop } from "@esposter/shared";
+import { getSynchronizedFunction } from "@esposter/shared";
 
 interface QueryOptions<TResult> {
   // The surface renders the failure itself, as UiErrorState with its retry, so the toast is dropped
@@ -15,8 +11,8 @@ interface QueryOptions<TResult> {
   onSuccess?: (result: TResult) => void;
 }
 
-// A read that stays live: the topics its answer came from, which each query procedure sends back with it, are watched
-// Over the user socket while the surface is mounted, and a write that changed one refetches it
+// A read for a surface: fetched without blocking setup, held as reactive data, and live through `executeQuery` — the
+// Topics its answer came from are watched while the surface is mounted, and a write that changed one refreshes it
 export const useQuery = <TResult>(
   query: () => Promise<TResult>,
   { isInlineError, isLazy, onSuccess }: QueryOptions<TResult> = {},
@@ -30,40 +26,22 @@ export const useQuery = <TResult>(
   // One instance reads one target, so every refresh supersedes the fetch before it and a slower earlier
   // Response can never overwrite a newer one
   const key = Symbol("useQuery");
-  // The topics the last answer came from. Watched again only when they change, so a refetch that reads the same topics
-  // Keeps its subscriptions rather than dropping and retaking them
-  const connectionStore = import.meta.client ? useConnectionStore() : undefined;
-  let watchedTopicsKey = "";
-  let unwatchTopics = noop;
-  // A read can answer after its surface has gone, and a watch taken then would outlive it with nothing left to let go
-  let isDisposed = false;
   const refresh = async () => {
     error.value = "";
-    await executeQuery(() => collectTopics(query), {
+    await executeQuery(query, {
       key,
       onError: (readError) => {
         error.value = readError.message;
         if (!isInlineError) createErrorAlert(readError);
       },
-      onSuccess: ({ result, topics }) => {
+      onSuccess: (result) => {
+        // A refresh the topics ran lands without passing through the one above
+        error.value = "";
         data.value = result;
         onSuccess?.(result);
-        watchTopics(topics);
       },
     });
   };
-  const watchTopics = (topics: Topic[]) => {
-    const topicsKey = [...new Set(topics)].toSorted().join(ID_SEPARATOR);
-    if (!connectionStore || isDisposed || topicsKey === watchedTopicsKey) return;
-    unwatchTopics();
-    watchedTopicsKey = topicsKey;
-    unwatchTopics = topics.length > 0 ? connectionStore.watchTopics(topics, getSynchronizedFunction(refresh)) : noop;
-  };
-  if (connectionStore)
-    onScopeDispose(() => {
-      isDisposed = true;
-      unwatchTopics();
-    });
   // Fetch on setup without blocking it — no Suspense boundary, unlike a top-level awaited query
   if (!isLazy) getSynchronizedFunction(refresh)();
   return { data, error, isPending, refresh };

@@ -36,6 +36,33 @@ On failure `data` stays `undefined`, so the component falls back to its empty st
 
 `useQuery`'s data is **per instance**, so two components calling it fetch twice. A read that several surfaces share, and that should be read once per session, is `useCachedRead` on a store instead — see [caching](../caching/design.md).
 
+## Live reads
+
+A query procedure names the topics its answer came from, or a `staticReason` when nothing outside its own write changes it, so the server decides whether a read is live and no call site does. A read stays current by going through the primitives that watch those topics, never by an event written for it:
+
+- **`executeQuery`** collects the topics its answer names and watches them for as long as the scope of the `useMutation()` instance lives — the surface that called it, or the store it was created in. A write that changed one runs the same read again, on the same key, so a newer answer supersedes an older one as it does for any read. `useQuery`, `useCachedRead` and every read built on `executeQuery` are live through it, with nothing at their own call sites.
+- **`readItems`** does the same for a paged list's first page. The write's invalidation reads that page again and updates, by id, the rows it names, so a reader who has paged on keeps their place: the later pages and the cursor are left as they are. A row another writer added or removed waits for the next refresh. A server render puts the topics in the payload beside its page, so a hydrated list is watched without a second read.
+- **A read made with no scope** takes no watch, since nothing would release it, and a read that answers after its scope has gone takes none either.
+
+```mermaid
+flowchart TD
+  Read[A read goes through executeQuery or readItems] --> Collect[Collect the topics its answer names]
+  Collect --> Scope{Is a scope there to release the watch?}
+  Scope -->|no| Once[The read is one-shot]
+  Scope -->|yes| Watch[Watch the topics until the scope ends]
+  Watch -->|a write publishes a topic| Again[Run the same read again]
+  Again --> Watch
+```
+
+The watch itself is `useWatchTopics`: one watch per target, kept while a refreshed read names the same topics, with the newest refetch being the one that runs.
+
+Four alternatives lost, each for a reason that still holds:
+
+- **A query cache keyed by path and input, replacing the stores' own copies.** The stores already are the client's cache, and they carry what a query cache would have to be taught: the optimistic apply and its rollback, the typed events' echoes, and the offline copy. A second cache beside them would disagree with them, and one in place of them is the whole client rewritten for the dedupe of identical reads, which the batching link already gives a tick's worth of.
+- **A topic per row for the feed.** The feed's one topic costs one cheap D1 read per change per watcher, inside the coalescing window. A topic per row would trade that for a subscription on a Topic object and a storage write for every row on every tab, which is the dearer side of the Cloudflare bill.
+- **A lint ban on a raw `$trpc` read outside the primitives.** A selector cannot tell a raw read from one handed to a primitive under another name (a page function `readItems` calls later, a renamed `executeQuery`), from a read composed into a write, or from a room read its events keep current, so most of what it flags would carry a disable — a roster of exceptions, which no enforcer is allowed to carry. A surface that shows a stale read is fixed by moving that read onto a primitive, as the post page, the program status blade and the survey responses were.
+- **A hand-kept list of the live query paths, to narrow that ban.** Nearly every query procedure declares topics, so the list would filter almost nothing, and a test holding it equal to the router would be one more thing to update with every procedure.
+
 ## useMutation
 
 `useMutation` (`apps/web/app/composables/shared/useMutation.ts`) returns `{ checkIsPending, executeMutation, executeQuery, isPending, supersedeKey }` and bundles the four things every write needs:
@@ -214,7 +241,7 @@ Each entry names a shape to avoid and the shape that takes its place. The check 
 
 ## When not to use them
 
-`useQuery` is the wrapper for a one-shot fetch, on setup or — `isLazy` — on the first `refresh`, and an inline error panel is its `isInlineError` option rather than a reason to leave it. A read whose state shape differs — its own cursor, a page that accumulates — skips the wrapper but still goes through `executeQuery` on a `useMutation()` instance of its own (`useDataset`, `useReadResourcesPage`), so it inherits the latest-wins guarding and the pending flag without owning either. These stay off both wrappers entirely:
+`useQuery` is the wrapper for a fetch on setup or — `isLazy` — on the first `refresh`, and an inline error panel is its `isInlineError` option rather than a reason to leave it. A read whose state shape differs — its own cursor, a page that accumulates — skips the wrapper but still goes through `executeQuery` on a `useMutation()` instance of its own (`useDataset`, `useReadResourcesPage`) or through `readItems` for a paged list, so it inherits the latest-wins guarding, the pending flag and the [live watch](#live-reads) without owning any of them. These stay off both wrappers entirely:
 
 - **Search-as-you-type reads** go through `useAutoSearch` (see [Search](../search/design.md)) — it shares the `getResultAsync` → `createAlert` error stack but cancels the superseded request with an `AbortController` instead of merely ignoring its result.
 - **Background bookkeeping writes** (mark-read + mention-count clear on room enter, typing pings, push-subscription registration) — the user didn't act, so surfacing a failure as an alert would be noise; they stay raw fire-and-forget calls. The one that does go through `executeMutation` is the [offline cache](../../esbabbler/offline-cache/design.md) write, because it needs the per-partition queue — and it passes `onError: console.error` for exactly this reason. Wanting the ordering is not wanting the alert.
@@ -225,12 +252,14 @@ Each entry names a shape to avoid and the shape that takes its place. The check 
 
 ## Key files
 
-| File                                                   | Role                                                                                      |
-| ------------------------------------------------------ | ----------------------------------------------------------------------------------------- |
-| `apps/web/app/composables/shared/useQuery.ts`          | The read primitive                                                                        |
-| `apps/web/app/composables/shared/useMutation.ts`       | The write primitive, with `applyOptimistic` and the rollback it returns                   |
-| `apps/web/app/services/shared/createBatchedRefresh.ts` | The batched re-read every server-owned count is read back through                         |
-| `apps/web/app/composables/post/useLikeOperations.ts`   | The like store: a vote moves its count at once, and the read-back settles it              |
-| `apps/web/app/services/trpc/createHttpBatchingLink.ts` | The batch choice: production batches a tick's calls, the test build sends each as its own |
-| `packages/configuration/eslint/serverCountFields.js`   | The one list of server-derived count fields, read by the selectors                        |
-| `packages/configuration/eslint/restrictedSyntaxes.js`  | The `no-restricted-syntax` selectors that fail a delta on a count field                   |
+| File                                                                                  | Role                                                                                                                                 |
+| ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `apps/web/app/composables/shared/useQuery.ts`                                         | The read primitive                                                                                                                   |
+| `apps/web/app/composables/shared/useMutation.ts`                                      | The write primitive, with `applyOptimistic` and the rollback it returns, and `executeQuery`, the read every live read passes through |
+| `apps/web/app/composables/shared/useWatchTopics.ts`                                   | The watch a read takes on its topics, released with the scope that read it                                                           |
+| `apps/web/app/composables/data/pagination/cursor/useCursorPaginationOperationData.ts` | `readItems`, which watches a paged list's first page and updates its rows by id                                                      |
+| `apps/web/app/services/shared/createBatchedRefresh.ts`                                | The batched re-read every server-owned count is read back through                                                                    |
+| `apps/web/app/composables/post/useLikeOperations.ts`                                  | The like store: a vote moves its count at once, and the read-back settles it                                                         |
+| `apps/web/app/services/trpc/createHttpBatchingLink.ts`                                | The batch choice: production batches a tick's calls, the test build sends each as its own                                            |
+| `packages/configuration/eslint/serverCountFields.js`                                  | The one list of server-derived count fields, read by the selectors                                                                   |
+| `packages/configuration/eslint/restrictedSyntaxes.js`                                 | The `no-restricted-syntax` selectors that fail a delta on a count field                                                              |
