@@ -446,6 +446,7 @@ onRender(({ delta: frameDelta }) => {
   doorAhead.value = stopAt - scrolled;
   // Once the door is due the walkway ends at it, and nothing past it is built
   const doorAheadOfCamera = doorRestPosition[2] + doorAhead.value - cameraZ.value;
+  const dueDoorAheadOfCamera = isDoorDue ? doorAheadOfCamera : undefined;
   // The exported parts ride the glide with ours, off by whatever offset a witness tool sets them: their towers and
   // Bridges the row and their walkway the walkway's copies, assembling as ours does. Their door rides ours, its copies
   // At the offset too
@@ -456,16 +457,10 @@ onRender(({ delta: frameDelta }) => {
       group.position.add(towersGroup.position);
     else if (group.name === LoginPartFamily.Walkway) {
       group.position.z -= walkwayScrolled;
-      sinkLoginWitnessWalkway(walkwayRow, group, walkwayPieces, {
-        cameraZ: cameraZ.value,
-        doorAheadOfCamera: isDoorDue ? doorAheadOfCamera : undefined,
-      });
+      sinkLoginWitnessWalkway(walkwayRow, group, walkwayPieces, cameraZ.value, dueDoorAheadOfCamera);
     } else if (group.name === LoginPartFamily.Door) followLoginWitnessDoor(group, doorPieces, doorRest);
   }
-  walkwayFacade.update(walkwayScrolled, {
-    cameraZ: cameraZ.value,
-    doorAheadOfCamera: isDoorDue ? doorAheadOfCamera : undefined,
-  });
+  walkwayFacade.update(walkwayScrolled, cameraZ.value, dueDoorAheadOfCamera);
   cloudSeaScrolled.value = scrolled;
   loginClouds.scroll(scrolled);
   light.target.position.set(0, 0, cameraZ.value + LOGIN_SHADOW_EXTENT / 2);

@@ -7,8 +7,5 @@ export interface LoginWalkwayFacade {
   batch: BatchedMesh;
   dispose: () => void;
   pieces: LoginWalkwayPiece[];
-  update: (
-    walkwayScrolled: number,
-    { cameraZ, doorAheadOfCamera }: { cameraZ: number; doorAheadOfCamera?: number | undefined },
-  ) => void;
+  update: (walkwayScrolled: number, cameraZ: number, doorAheadOfCamera: number | undefined) => void;
 }

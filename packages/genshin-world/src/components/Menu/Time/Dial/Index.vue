@@ -10,7 +10,7 @@ interface Props {
 }
 
 // How far the pointer has dialled the advance, in minutes, which the screen counts the target from
-const advance = defineModel<number>({ required: true });
+const modelValue = defineModel<number>({ required: true });
 defineProps<Props>();
 const dial = useTemplateRef("dial");
 let pointerAngle: number | undefined;
@@ -29,7 +29,7 @@ const onDialPointerDown = (event: PointerEvent) => {
 const onDialPointerMove = (event: PointerEvent) => {
   if (pointerAngle === undefined || !dial.value) return;
   const angle = getPointerAngle(event, dial.value);
-  advance.value = stepTimeDialAdvance(advance.value, pointerAngle, angle);
+  modelValue.value = stepTimeDialAdvance(modelValue.value, pointerAngle, angle);
   pointerAngle = angle;
 };
 const onDialPointerUp = () => {

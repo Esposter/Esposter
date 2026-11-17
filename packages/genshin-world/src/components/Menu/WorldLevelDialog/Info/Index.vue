@@ -2,7 +2,7 @@
 import type { GameText } from "genshin-text";
 
 import MenuScrollTrack from "#src/components/Menu/ScrollTrack/Index.vue";
-import { useResizeObserver } from "@vueuse/core";
+import { useScrollThumb } from "#src/composables/useScrollThumb";
 import { GameTextKey, splitGameTextColors } from "genshin-text";
 
 interface Props {
@@ -14,20 +14,7 @@ const { gameText } = defineProps<Props>();
 const body = useTemplateRef("body");
 const info = useTemplateRef("info");
 const infoSegments = computed(() => splitGameTextColors(gameText[GameTextKey.WorldLevelInfo]));
-// The scroll thumb's share of the track and how far down it stands, from the body's scroll as it stands
-const scrollThumb = shallowRef({ offset: 1, share: 1 });
-const updateScrollThumb = () => {
-  if (!body.value) return;
-  const { clientHeight, scrollHeight, scrollTop } = body.value;
-  const scrollRange = scrollHeight - clientHeight;
-  // The body scrolls from its end, so its top reads the negative of the range and its end 0
-  scrollThumb.value = {
-    offset: scrollRange > 0 ? 1 + scrollTop / scrollRange : 1,
-    share: Math.min(clientHeight / scrollHeight, 1),
-  };
-};
-
-useResizeObserver(info, updateScrollThumb);
+const { scrollThumb, updateScrollThumb } = useScrollThumb(body, info, { isReversed: true });
 </script>
 
 <template>

@@ -60,7 +60,7 @@ export const createLoginWalkway = (
       material.dispose();
     },
     pieces,
-    update: (walkwayScrolled, { cameraZ, doorAheadOfCamera }) => {
+    update: (walkwayScrolled, cameraZ, doorAheadOfCamera) => {
       batch.position.z = -walkwayScrolled;
       for (const { copy, depth, instanceId, seed } of instances) {
         const z = copy * row.length;

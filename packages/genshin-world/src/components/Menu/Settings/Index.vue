@@ -8,6 +8,7 @@ import MenuGlyph from "#src/components/Menu/Glyph/Index.vue";
 import MenuScrollTrack from "#src/components/Menu/ScrollTrack/Index.vue";
 import MenuSettingsRow from "#src/components/Menu/Settings/Row/Index.vue";
 import MenuSettingsTabs from "#src/components/Menu/Settings/Tabs/Index.vue";
+import { useScrollThumb } from "#src/composables/useScrollThumb";
 import { useSettingsGameText } from "#src/composables/useSettingsGameText";
 import { useSettingsRowList } from "#src/composables/useSettingsRowList";
 import { MenuFrameIcon } from "#src/models/menu/MenuFrameIcon";
@@ -16,7 +17,6 @@ import { getMenuFrameMark } from "#src/services/menu/getMenuFrameMark";
 import { MenuFrameGlyphMap } from "#src/services/menu/MenuFrameGlyphMap";
 import { SettingsTabGameTextKeyMap } from "#src/services/menu/SettingsTabGameTextKeyMap";
 import { SettingsTabSectionsMap } from "#src/services/menu/SettingsTabSectionsMap";
-import { useResizeObserver } from "@vueuse/core";
 import { GameButton, GameButtonKind, GameScreen } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
@@ -51,19 +51,7 @@ const { openedOptions, qualityValue } = useSettingsRowList(
   shownGameText,
   () => defaultQualityTier,
 );
-// The scroll thumb's share of the track and how far down it stands, from the page's scroll as it stands
-const scrollThumb = shallowRef({ offset: 0, share: 1 });
-const updateScrollThumb = () => {
-  if (!page.value) return;
-  const { clientHeight, scrollHeight, scrollTop } = page.value;
-  const scrollRange = scrollHeight - clientHeight;
-  scrollThumb.value = {
-    offset: scrollRange > 0 ? scrollTop / scrollRange : 0,
-    share: Math.min(clientHeight / scrollHeight, 1),
-  };
-};
-
-useResizeObserver(content, updateScrollThumb);
+const { scrollThumb, updateScrollThumb } = useScrollThumb(page, content);
 
 // The screen is a dialog over the world, so focus starts inside it, on the open tab's page, which the keyboard scrolls
 onMounted(() => {

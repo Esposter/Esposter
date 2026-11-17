@@ -36,22 +36,20 @@ const push = computed(() => Math.hypot(stick.x, stick.y));
 const isRunning = computed(() => push.value >= WALK_MOVE_MAGNITUDE);
 // The push's direction in degrees clockwise from up, which turns the mark on the stick's rim
 const markAngle = computed(() => (Math.atan2(stick.x, -stick.y) * 180) / Math.PI);
-// The group's rect size in canvas units, which its travel, its drawing and its style are all read against
-const groupSize = computed(() => interfaceRects[HudInterfaceRectName.MoveJoystickGroup].size);
 // How far the head's centre travels from the group's, in canvas units: the back's radius less the head's
 const headTravel = computed(() => {
-  const [backSize = 0] = groupSize.value;
+  const [backSize = 0] = interfaceRects[HudInterfaceRectName.MoveJoystickGroup].size;
   const [headSize = 0] = interfaceRects[HudInterfaceRectName.MoveJoystickHead].size;
   return (backSize - headSize) / 2;
 });
 // The same travel in the drawing's own units, which the group's canvas width spans the view box of
 const drawnHeadTravel = computed(() => {
-  const [backSize = 0] = groupSize.value;
+  const [backSize = 0] = interfaceRects[HudInterfaceRectName.MoveJoystickGroup].size;
   return (headTravel.value * STICK_VIEW_BOX_SIZE) / backSize;
 });
 // The group is drawn at its rect's size in canvas units, centred on the point it stands on, and fades in and out
 const groupStyle = computed(() => {
-  const [groupWidth = 0, groupHeight = 0] = groupSize.value;
+  const [groupWidth = 0, groupHeight = 0] = interfaceRects[HudInterfaceRectName.MoveJoystickGroup].size;
   return {
     height: `calc(var(--canvas-unit) * ${groupHeight})`,
     left: `${centre.x}px`,
@@ -74,7 +72,7 @@ const walkArcPath = toArcPath(59);
 // Over the reach: the head's travel in pixels, so a push past it is a full push in the thumb's direction
 useEventListener(area, "pointerdown", (event) => {
   if (stick.isHeld || !area.value || !group.value) return;
-  const [backSize = 0] = groupSize.value;
+  const [backSize = 0] = interfaceRects[HudInterfaceRectName.MoveJoystickGroup].size;
   const pixelsPerUnit = group.value.getBoundingClientRect().width / backSize;
   const areaRect = area.value.getBoundingClientRect();
   const clearanceX = TOUCH_STICK_CLEARANCE_X * pixelsPerUnit;
