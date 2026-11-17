@@ -1,16 +1,23 @@
 ## 1. Recordings
 
 - [ ] 1.1 Find the Japanese and Korean PC launch recordings, `japanese-launch.mkv` and `korean-launch.mkv`, in published material: `pnpm -C scripts recreation search <query>` lists the public videos, and `pnpm -C scripts genshin:parity recordings clip` fetches a section of one into `captures` with its manifest row, each from the client's first frame, 30 seconds at most. Save each as the file the clip prints, tick its source and that file on its References sought item in the roadmap, then read the Japanese and Korean splashes, notices and doors from it. A search the roadmap already records as none found is not run again, and a launch no published clip shows ships provisional, its item left open. Verify: each still is cut from its recording to its scratch path with the seek before the input and the colour filter `cutRecordingFrame` applies (`scripts/src/services/genshinParity/reference/cutRecordingFrame.ts`), since no command writes a cut and the still-cutting form is the ffmpeg line `.agents/skills/genshin-parity/references/toolbox.md` gives for a labelled screenshot; it is packed by `pnpm -C scripts genshin:parity references pack`, named in `ParityReferenceMap` (`scripts/src/services/genshinParity/shared/ParityReferenceMap.ts`) by its `source` in place of any `pending` its entry holds, and `pnpm -C scripts genshin:parity verify` passes each one against its recording.
+  - Korean: not found. Searched on YouTube, 2026-11-18, with the lead's queries: `원신 PC 시작 화면`, `원신 실행 화면`, `Genshin Impact Korean client startup`. Candidates that show a Korean PC client from its first frame: none. The Korean videos listed open on an opening cinematic, a login-screen compilation (2019 to 2020), a Steam Deck or gameplay video, and `PcHC3IG8G8g`, already checked. `A56cORYbZOs` (ShinGamJa, 2020) is in-world gameplay at its first frame. Left open: no published clip shows the Korean PC launch.
+  - Japanese: not found. Searched on YouTube, 2026-11-18, with the lead's queries: `原神 起動`, `原神 PC 起動画面`, `原神 タイトル画面 PC`, `Genshin Impact Japanese launch screen PC`. Candidates that show a Japanese PC client from its first frame: none. `v71sf5TpYSQ` (KONO GAME, title screen BGM) opens on an in-world scene, and `Zy6yuxOBjxU` (2020 CBT title BGM) on a night scene, both with no splash, notice or door. Left open: no published clip shows the Japanese PC launch. The local capture `captures/session-2.mp4` (3440 by 1440, 60 frames a second, 187 seconds) shows the Japanese PC launch from its first frame, the publisher splash, the 原神 logo, the health notice, then the door, and existing references already cite it (`health-notice-japanese`, `splash-title-japanese`). It is not a published clip, so whether it stands as the Japanese launch reference is the lead's call.
+  - Clip tool: `recordings clip` prints ENOENT on a `.mp4.part` path under `~/Esposter` even when its file is whole, then exits 1 with the manifest row already written, so its probe rows were reverted by hand.
 
 ## 2. Measuring the differences
 
 - [ ] 2.1 Measure the publisher's logo, its place and the text's sizes and wraps for each client against the English reference. Verify: a test named after the scenario "A client with a different publisher shows its own logo", written first and seen failing.
+  - Waits on: the Korean PC launch recording (`korean-launch.mkv`), which no published clip shows. The Japanese measurement waits on the lead's call on `session-2.mp4` (see 1.1).
 
 ## 3. Layouts keyed by language
 
 - [ ] 3.1 Key a screen's layout by language only where its recording differs, and use the English layout everywhere else. Verify: tests named after the scenarios "A language without a differing recording uses the English layout" and "A language whose recording differs uses its own layout", written first and seen failing.
+  - Waits on: the Korean PC launch recording, as 2.1; the Japanese layout waits on the lead's call on `session-2.mp4`.
 - [ ] 3.2 Add a visual suite image only for each language whose screen differs. Verify: tests named after the scenario "The visual suite gains an image for a differing language" and "The visual suite gains no image for a language that matches English", written first and seen failing.
+  - Waits on: 3.1.
 
 ## 4. Localized references
 
 - [ ] 4.1 Compare each localized reference in its client's words, starting with the mainland health notice. Verify: a test named after the scenario "The mainland health notice is compared in its own words", written first and seen failing.
+  - Waits on: the Korean PC launch recording for its Korean reference; the mainland health notice is already compared in its own words, and the Japanese one waits on the lead's call on `session-2.mp4`.

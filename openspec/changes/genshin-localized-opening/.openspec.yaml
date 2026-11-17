@@ -4,3 +4,4 @@ x-phase: 7
 x-model: claude-opus-5-5
 x-needs: [media-engine]
 x-touches: ["scripts/src/services/genshinParity/shared/ParityReferenceMap.ts"]
+x-waiting: "The Korean PC launch recording, korean-launch.mkv, which no published clip shows; the Japanese PC launch is only the local capture captures/session-2.mp4, whose use as the Japanese reference is the lead's call."
