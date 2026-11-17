@@ -41,7 +41,7 @@ flowchart TD
 
 ## Passives
 
-A passive has no level. It is open where the character's ascension phase has reached the phase its kit holds for it, and the kit keeps the phase beside the group. Nothing reads that yet: no code tests a passive's phase, and the kit modules gate on the character's ascension directly. The [character kits change](../../../changes/genshin-character-kits/design.md), still open, adds each passive at the phase its talent table names.
+A passive has no level. It is open where the character's ascension phase has reached the phase its kit holds for it, and the kit keeps the phase beside the group. Nothing reads that yet: no code tests a passive's phase, and the kit modules gate on the character's ascension directly. The [character kits change](../kits/README.md), still open, adds each passive at the phase its talent table names.
 
 ## Not built
 

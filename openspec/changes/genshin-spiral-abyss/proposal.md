@@ -2,7 +2,7 @@
 
 ## Why
 
-The Spiral Abyss is the game's standing combat challenge at Musk Reef: twelve floors of three chambers each, cleared against the clock for stars and Primogems. Its rules are built as pure rules, so nothing yet enters a chamber, fights one or shows the Abyss. A chamber is fought with the character kits and the party's teams and entered as a domain is, so the Abyss waits on those as well.
+The Spiral Abyss is the game's standing combat challenge at Musk Reef: twelve floors of three chambers each, cleared against the clock for stars and Primogems. Its rules are built as pure rules, so nothing yet enters a chamber, fights one or shows the Abyss. A chamber is fought with the character kits and the party's teams and entered as a domain is, so the Abyss waits on the domains as well.
 
 ## What Changes
 
@@ -21,7 +21,7 @@ The player can enter the Abyss's chambers, fight their two halves, claim the rew
 
 ## Waiting on
 
-- `openspec/changes/genshin-character-kits/`: the chambers are fought with the character kits.
+- `openspec/specs/genshin/kits/`: the chambers are fought with the character kits.
 - `openspec/changes/genshin-party/`: the chambers are fought with the party's teams.
 - `openspec/changes/genshin-domains/`: a chamber is entered as a domain is, and its enemies are placed in its domain scene.
 - A source for each Moon Spire period's blessing wording: the wiki refused the read when the rules were built.

@@ -111,7 +111,7 @@ These gaps are owned by an open change, a roadmap item or a built spec's own ope
 - **G16, the parity row.** The roadmap's Phase 0 item "Every Genshin component is held to a reference, or says what judges it" owns the character model's reference.
 - **G17, the 2D portraits and card art.** The roadmap's Phase 2 asset items for the statue's and the party's team portraits, Paimon's Bargains card art, and the duel board's character card art.
 - **The parity page.** The roadmap's Phase 0 item "The parity page draws no characters" owns its packs' preload.
-- **The attack timings.** The [character kits](../genshin-character-kits/design.md) design, at its reference entries, reads the attack timings from `genshin:assets timings`. This change fits the motion; the kit keeps the durations.
+- **The attack timings.** The [character kits](../../specs/genshin/kits/README.md) design, at its reference entries, reads the attack timings from `genshin:assets timings`. This change fits the motion; the kit keeps the durations.
 - **The packs' publish.** The [published packs](../../specs/genshin/characters/published-packs/design.md) design owns the command and its not-built items. The owner's supply of each pack is the input G1 waits on.
 - **Residents' places.** The [resident schedules](../genshin-resident-schedules/design.md) change places residents and their hours. It names no body, so G12 is not in its scope.
 - **Every family's shipping check.** The [derived assets](../../specs/genshin/derived-assets/spec.md) Open items hold the check that the deployed build holds no game mesh, texture or export. The Traveler's game model is drawn only in development, and that check is the one that keeps it so.

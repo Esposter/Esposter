@@ -20,7 +20,7 @@ Constellations can be activated from the character screen, and each active const
 
 ## Waiting on
 
-- `openspec/changes/genshin-character-kits/`: the character kit modules that each constellation's effect is written in.
+- `openspec/specs/genshin/kits/`: the character kit modules that each constellation's effect is written in.
 - The sources that unlock each Traveler set, which each come with the page that builds it.
 
 ## Impact

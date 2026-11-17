@@ -33,7 +33,7 @@ flowchart TD
 - **The Samplers and their Sampler RES shred are not built.** A Blessing's Samplers shred an enemy's RES to the elements the party's other members carry, by the table's 0.09 each (`10332` index 1), with Geo standing in for any element outside Pyro, Hydro, Cryo and Electro (`{data-root}/cache/gcsim-v2.47.2/internal/characters/xilonen/xilonen.go` lines 59 to 64). The Samplers wait on the Blessing, and their count on a kit step that reads the deployed team's elements, which the step context does not yet carry.
 - **Ocelotlicue Point's heal is not built.** With two or more Samplers in the party, the burst heals the active member on a schedule, through eight ticks at each 1.5 seconds (`{data-root}/cache/gcsim-v2.47.2/internal/characters/xilonen/burst.go` line 16, hitmarks at 185 to 805 frames), instead of its damage. The heal waits on the kit step reading the team's elements, and on a timed heal to the active member.
 - **Her skill high plunge is not built.** A plunge that follows her Yohual's Scratch lands at 39 frames (`{data-root}/cache/gcsim-v2.47.2/internal/characters/xilonen/plunge.go` line 28), a skill-only variant that waits on a plunge gate that reads the last action, as the [Chiori](../chiori/design.md) page's low plunge does.
-- **Her Ascension bonuses and Constellations 2 and 6 are not built.** The [constellations](../../../../changes/genshin-constellations/design.md) page holds the second and the [character kits proposal](../../../../changes/genshin-character-kits/design.md) the first.
+- **Her Ascension bonuses and Constellations 2 and 6 are not built.** The [constellations](../../../../changes/genshin-constellations/design.md) page holds the second and the [character kits proposal](../README.md) the first.
 
 ## Key files
 

@@ -1,6 +1,6 @@
 # Puzzles
 
-Much of the game's exploration is puzzles: monuments lit by an element, Seelies led to their courts, timed challenges, sealed shrines, and every region's own devices. Solving one opens a door, raises a platform or spawns a chest. The mechanisms stand at the [spawned places](../genshin-spawned-places/design.md), they are struck by the [character kits](../genshin-character-kits/design.md), and they unlock the [chests](../genshin-chests/design.md) beside them, so this page waits on all three. The [as-built page](../../specs/genshin/puzzles/README.md) holds its places and the state machines of the monument, the Seelie and the Time Trial Challenge; what follows is what remains.
+Much of the game's exploration is puzzles: monuments lit by an element, Seelies led to their courts, timed challenges, sealed shrines, and every region's own devices. Solving one opens a door, raises a platform or spawns a chest. The mechanisms stand at the [spawned places](../genshin-spawned-places/design.md), they are struck by the [character kits](../../specs/genshin/kits/README.md), and they unlock the [chests](../genshin-chests/design.md) beside them, so this page waits on all three. The [as-built page](../../specs/genshin/puzzles/README.md) holds its places and the state machines of the monument, the Seelie and the Time Trial Challenge; what follows is what remains.
 
 ## Decisions
 

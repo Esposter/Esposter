@@ -21,7 +21,7 @@ The weapon screen shows a weapon the player holds and spends on it through the w
 
 ## Waiting on
 
-- `openspec/changes/genshin-character-kits/`: a weapon's passive takes effect through the kits' shared effects, so the passive's effect waits on the kits, whose tasks are not yet started. The three actions do not wait on them. The passive's name and per-rank descriptions are the weapon enhancement's requirement, shown on this screen once it lands.
+- `openspec/specs/genshin/kits/`: a weapon's passive takes effect through the kits' shared effects. The passive's name and per-rank descriptions are the weapon enhancement's requirement, shown on this screen once it lands.
 
 ## Impact
 

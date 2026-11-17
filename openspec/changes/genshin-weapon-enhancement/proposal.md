@@ -2,7 +2,7 @@
 
 ## Why
 
-Levelling, ascension and refinement are built, and a weapon's refinement rank is kept and paid for. Nothing yet reads a weapon's refinement as a passive: each rank changes what the weapon does, and the passive's names and numbers sit in the game's affix table, which is not read. A passive acts through the character kits, so this change waits on them.
+Levelling, ascension and refinement are built, and a weapon's refinement rank is kept and paid for. Nothing yet reads a weapon's refinement as a passive: each rank changes what the weapon does, and the passive's names and numbers sit in the game's affix table, which is not read. A passive acts through the character kits' shared effects.
 
 ## What Changes
 
@@ -18,7 +18,7 @@ Each weapon shows its passive at every refinement rank, and the passive takes ef
 
 ## Waiting on
 
-- `openspec/changes/genshin-character-kits/`: a passive acts through the kits' shared effects.
+- `openspec/specs/genshin/kits/`: a passive acts through the kits' shared effects.
 - Game data: `game-exports` (per the change's needs).
 
 ## Impact

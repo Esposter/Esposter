@@ -1,6 +1,6 @@
 # Domains
 
-A domain is the kind of instance the [domains](../../specs/genshin/domains/design.md) page defines: a challenge in a scene of its own, cleared for a reward. Challenge domains give artifacts, talent materials and weapon ascension materials, the materials every growth page here spends; one-time domains reward their first clear; the trounce domains, where the weekly bosses wait, are the bosses' page, which enters them as this page enters any. A domain's reward is claimed with [Original Resin](../../specs/genshin/original-resin/design.md) and the domains open by [Adventure Rank](../archive/2026-10-22-genshin-adventure-rank/design.md), both built, and they are fought with the [character kits](../genshin-character-kits/design.md), which this page waits on.
+A domain is the kind of instance the [domains](../../specs/genshin/domains/design.md) page defines: a challenge in a scene of its own, cleared for a reward. Challenge domains give artifacts, talent materials and weapon ascension materials, the materials every growth page here spends; one-time domains reward their first clear; the trounce domains, where the weekly bosses wait, are the bosses' page, which enters them as this page enters any. A domain's reward is claimed with [Original Resin](../../specs/genshin/original-resin/design.md) and the domains open by [Adventure Rank](../archive/2026-10-22-genshin-adventure-rank/design.md), both built, and they are fought with the [character kits](../../specs/genshin/kits/README.md), which this page waits on.
 
 The [domains page](../../specs/genshin/domains/design.md) holds the opening rules, each kind by its Adventure Rank and by the day of the week. What is left here is the world's side of a domain and its challenge.
 
@@ -56,7 +56,7 @@ scripts/src/services/genshinAssets/domains/
 3. **The days' schedule and the levels by rank**, read from the tables item 1 fetches. The days' rule is built.
 4. **Entering a domain's scene and leaving it**, on the jump's fade.
 5. **The challenge**, its waves, time limit and failure, with the first domain of Mastery carried. A domain's scene is laid out from its own scene data, which waits on the scene export the other machine is making.
-6. **Ley line disorders**: the constant, reaction-triggered and HP-triggered bonuses over the kits' buffs, from one table; the Nightsoul ones wait on the kits' primitive.
+6. **Ley line disorders**: the constant, reaction-triggered and HP-triggered bonuses over the kits' buffs, from one table; the Nightsoul ones over the kits' Nightsoul blessing.
 7. **One-time domains.**
 
 ## Data and measures

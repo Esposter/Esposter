@@ -23,7 +23,7 @@ Bosses fight by their own moves and leave a claimable reward in place of the dro
 
 - `openspec/specs/genshin/original-resin/`: the claim that a Trounce Blossom is paid through.
 - `openspec/changes/genshin-domains/`: the scenes that the trounce domains are.
-- `openspec/changes/genshin-character-kits/`: the character kits that fight the bosses.
+- `openspec/specs/genshin/kits/`: the character kits that fight the bosses.
 
 ## Impact
 
