@@ -30,8 +30,13 @@ The check runs on the server before substitution, with the same list the dialog 
 
 ## Key files
 
-| File                                                                         | Role                                            |
-| ---------------------------------------------------------------------------- | ----------------------------------------------- |
-| `apps/web/shared/models/resource/blueprint/BlueprintParameter.ts`            | the optional list and the default-in-list rule  |
-| `apps/web/app/components/Resource/Blueprint/DeployDialog.vue`                | draws a choice for a parameter that has a list  |
-| `apps/web/shared/services/resource/blueprint/buildBlueprintDeployReviews.ts` | the review a deploy shows, from the same values |
+| File                                                                         | Role                                                                                                        |
+| ---------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `apps/web/shared/models/resource/blueprint/BlueprintParameter.ts`            | the optional list and the default-in-list rule                                                              |
+| `apps/web/app/components/Resource/Blueprint/DeployDialog.vue`                | draws a choice for a parameter that has a list                                                              |
+| `apps/web/shared/services/resource/blueprint/buildBlueprintDeployReviews.ts` | the review a deploy shows, from the same values                                                             |
+| `apps/web/server/services/blueprint/deployBlueprint.ts`                      | the deploy, which checks each listed parameter's value against its list before any substitution or creation |
+
+## Sources
+
+- [Microsoft — Parameters in templates](https://learn.microsoft.com/en-us/azure/azure-resource-manager/templates/parameters) — `allowedValues` is an array of the values a parameter accepts, and the deployment fails during validation when a value passed in is not one of them.

@@ -23,9 +23,9 @@ A checkbox holds `minSelected` and `maxSelected`, and the save check refuses a m
 - **The summary's bars follow the scale.** A rating card's bars run from `rateMin`. Rejected: keeping the summary one-based, which would drop every zero answer from the counts with no sign of it.
 - **No stored answer is rewritten.** The default is one, so existing ratings keep their values and labels. Rejected: a backfill, which the default makes unnecessary.
 
-## Rejected
+## Not built
 
-- Custom rate values. They need a value model of their own, and a separate design owns that.
+- Custom rate values (SurveyJS `rateValues`) need a value model of their own, so the scale stays numbered from its first step. The [custom rate values page](../../deferred/resource/survey-rating-custom-values/design.md) holds the revisit trigger.
 
 ## Flow
 
@@ -45,10 +45,6 @@ flowchart TD
 - A reader this change misses keeps counting or drawing the scale from one. The four readers, the answer schema, the field, the summary and the matrix call site, each have a test in the tasks.
 - The Creator's form draws `rateMin` through the schema form's one-of path as a select of its two literals. If that path draws a number field instead, an owner can type a value the schema refuses, and the form test in the tasks catches it.
 
-## Open questions
-
-- Tasks 2.1 and 2.3 name scenarios that already hold on the current code. The rating schema caps a move at the scale's last step, so 'A stored rating above a shortened scale blocks the move' passes before the change, and the summary labels a rating's steps from one, so 'A rating that starts at one is counted as before' passes too. The change owner decides whether each stays a test-first task, becomes a guard that holds the behaviour, or is dropped.
-
 ## Key files
 
 | File                                                                                               | Role                                                                      |
@@ -64,3 +60,9 @@ flowchart TD
 | `apps/web/app/components/Resource/Survey/Field/MatrixDynamic.vue`                                  | the matrix's rating cells: passes the one-based first step                |
 | `apps/web/app/components/Ui/Rating.vue`                                                            | the step scale: nothing chosen reads as the step below its first          |
 | `apps/web/app/services/survey/summary/getSurveyDocumentSummaryCards.ts`                            | the rating card's bars, from the scale's first step                       |
+
+## Sources
+
+- [SurveyJS — API reference: Rating Scale question model](https://surveyjs.io/form-library/documentation/api-reference/rating-scale-question-model) — `rateMin`, default 1, "Specifies the first rate value in the generated sequence of rate values": the first step a scale takes as an input, which applies only while `rateValues` is empty.
+- [SurveyJS — API reference: Checkbox question model](https://surveyjs.io/form-library/documentation/api-reference/checkbox-question-model) — `minSelectedChoices`, default 0 (unlimited), "Specifies the minimum number of selected choices", which the docs say constrains only what a user picks: the minimum a checkbox holds, as the tag box takes one.
+- [SurveyJS — API reference: Dropdown Tag Box model](https://surveyjs.io/form-library/documentation/api-reference/dropdown-tag-box-model) — the same `minSelectedChoices` on the tag box (`QuestionTagboxModel`), default 0 (unlimited): the tag box's minimum, bounded by its maximum.

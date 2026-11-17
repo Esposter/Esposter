@@ -33,18 +33,19 @@ The webpage's style panel edits a fixed list of CSS properties, grouped into sec
 
 ## Key files
 
-| File                                                          | Role                                                                                         |
-| ------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| `apps/web/shared/services/pageBuilder/constants.ts`           | the property names and the sectors, where each new property is listed and placed             |
-| `apps/web/shared/models/pageBuilder/StyleProperty.ts`         | the property schema, derived from the names, so a new name is accepted without a second list |
-| `apps/web/shared/models/pageBuilder/NodeStyle.ts`             | the node's style schema, which refuses a property outside the list on save                   |
-| `apps/web/shared/services/pageBuilder/getNodeStyleCss.ts`     | the renderer's loop over the property names, which emits each new property like the others   |
-| `apps/web/app/components/PageBuilder/StylePanel/Index.vue`    | the webpage's sectors, drawn from the sector list                                            |
-| `apps/web/app/services/pageBuilder/getStyleInheritance.ts`    | the inherited value a field shows as its placeholder, for a new property as for any other    |
-| `apps/web/app/composables/pageBuilder/useEmailStyle.ts`       | the email's fields and the setter each field writes through                                  |
-| `apps/web/app/components/PageBuilder/Email/StylePanel.vue`    | the email's style panel, drawn as a flat list today and as sectors after this change         |
-| `apps/web/app/components/PageBuilder/Email/StyleField.vue`    | one email field, drawn the same in a sector as in the flat list                              |
-| `packages/mjml-blocks/src/services/getMjmlAttributeFields.ts` | the attribute descriptors the email's sectors are a view over                                |
+| File                                                          | Role                                                                                               |
+| ------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `apps/web/shared/services/pageBuilder/constants.ts`           | `STYLE_PROPERTY_NAMES`, the property names, where each new property is listed                      |
+| `apps/web/app/services/pageBuilder/constants.ts`              | `STYLE_SECTORS`, the sectors the panel groups its properties in, where each new property is placed |
+| `apps/web/shared/models/pageBuilder/StyleProperty.ts`         | the property schema, derived from the names, so a new name is accepted without a second list       |
+| `apps/web/shared/models/pageBuilder/NodeStyle.ts`             | the node's style schema, which refuses a property outside the list on save                         |
+| `apps/web/shared/services/pageBuilder/getNodeStyleCss.ts`     | the renderer's loop over the property names, which emits each new property like the others         |
+| `apps/web/app/components/PageBuilder/StylePanel/Index.vue`    | the webpage's sectors, drawn from the sector list                                                  |
+| `apps/web/app/services/pageBuilder/getStyleInheritance.ts`    | the inherited value a field shows as its placeholder, for a new property as for any other          |
+| `apps/web/app/composables/pageBuilder/useEmailStyle.ts`       | the email's fields and the setter each field writes through                                        |
+| `apps/web/app/components/PageBuilder/Email/StylePanel.vue`    | the email's style panel, drawn as a flat list today and as sectors after this change               |
+| `apps/web/app/components/PageBuilder/Email/StyleField.vue`    | one email field, drawn the same in a sector as in the flat list                                    |
+| `packages/mjml-blocks/src/services/getMjmlAttributeFields.ts` | the attribute descriptors the email's sectors are a view over                                      |
 
 ## New code lands here
 
@@ -54,4 +55,4 @@ apps/web/app/services/pageBuilder/email/attributeSector.ts   the attribute name 
 
 ## Sources
 
-- [GrapesJS, Style Manager](https://github.com/GrapesJS/grapesjs/blob/dev/docs/modules/Style-manager.md): the default sectors the reference groups its properties in, read for the grouping the webpage's sectors already follow.
+- [GrapesJS — Style Manager config](https://github.com/GrapesJS/grapesjs/blob/dev/packages/core/src/style_manager/config/config.ts) — the default configuration's sectors, General, Flex, Dimension, Typography, Decorations and Extra, which the Rejected section weighs against the panel's own titles.

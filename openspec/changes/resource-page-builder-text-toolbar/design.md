@@ -31,18 +31,18 @@ The node toolbar is an app-document control placed beside the selected node by t
 
 ## Key files
 
-| File                                                             | Role                                                                                  |
-| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| `apps/web/app/components/PageBuilder/Canvas/TextEditor.vue`      | the text editor mounted in the frame, which the toolbar's controls act on             |
-| `apps/web/app/components/PageBuilder/Canvas/NodeToolbar.vue`     | the node toolbar, which the text toolbar takes the place of while the text is edited  |
-| `apps/web/app/services/pageBuilder/getToolbarPlacement.ts`       | the placement the text toolbar shares with the node toolbar                           |
-| `apps/web/app/components/Resource/Note/EditorMenuBar.vue`        | the note's writing kit, whose shared items the text toolbar draws                     |
-| `apps/web/app/components/Resource/Note/LinkMenuButton.vue`       | the link control the text toolbar reuses                                              |
-| `apps/web/app/services/richTextEditor/getTextFormatMenuItems.ts` | the text marks the toolbar offers                                                     |
-| `apps/web/app/services/richTextEditor/getListMenuItems.ts`       | the bullet and numbered list items the toolbar offers                                 |
-| `apps/web/app/services/resource/note/getNoteBlockMenuItems.ts`   | the paragraph, heading and blockquote items the toolbar offers, without the task list |
-| `apps/web/shared/services/resource/note/getNoteExtensions.ts`    | the extension set the text editor is built on, which the toolbar's marks must match   |
+| File                                                             | Role                                                                                                                    |
+| ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `apps/web/app/components/PageBuilder/Canvas/TextEditor.vue`      | the text editor mounted in the frame, which the toolbar's controls act on                                               |
+| `apps/web/app/components/PageBuilder/Canvas/NodeToolbar.vue`     | the node toolbar, which the text toolbar takes the place of while the text is edited                                    |
+| `apps/web/app/services/pageBuilder/getToolbarPlacement.ts`       | the placement the text toolbar shares with the node toolbar                                                             |
+| `apps/web/app/components/Resource/Note/EditorMenuBar.vue`        | the note's writing kit, whose shared items the text toolbar draws                                                       |
+| `apps/web/app/components/Resource/Note/LinkMenuButton.vue`       | the link control the text toolbar reuses                                                                                |
+| `apps/web/app/services/richTextEditor/getTextFormatMenuItems.ts` | the text marks the toolbar offers                                                                                       |
+| `apps/web/app/services/richTextEditor/getListMenuItems.ts`       | the bullet and numbered list items the toolbar offers                                                                   |
+| `apps/web/app/services/resource/note/getNoteBlockMenuItems.ts`   | the note's block items, paragraph, headings, task list and blockquote, of which the toolbar takes all but the task list |
+| `apps/web/shared/services/resource/note/getNoteExtensions.ts`    | the extension set the text editor is built on, which the toolbar's marks must match                                     |
 
 ## Sources
 
-- [GrapesJS, Rich text editor](https://github.com/GrapesJS/grapesjs/blob/dev/docs/api/rich_text_editor.md) — the rich text actions, which include a link action, taken as the reference for a link control on a text block.
+- [GrapesJS — Rich text editor](https://github.com/GrapesJS/grapesjs/blob/dev/docs/api/rich_text_editor.md) — the `rte.add` method adds actions such as a link to the built-in toolbar, and the page lists no default link action, so the link control is a reference for an added action rather than a default one.

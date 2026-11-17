@@ -38,4 +38,4 @@ The directive comes from the published snapshot, so an unpublished change to the
 
 ## Sources
 
-- [Webflow University — SEO checklist](https://university.webflow.com/resources/checklists/seo-checklist) — crawling is controlled with noindex tags per page, folder or site.
+- [Webflow University — Control how search engines index your site](https://university.webflow.com/course-lesson/control-how-search-engines-index-your-site) — every page has an Indexing toggle in Page settings, on to appear in search results and off to be excluded from search, the per-page control the switch copies.

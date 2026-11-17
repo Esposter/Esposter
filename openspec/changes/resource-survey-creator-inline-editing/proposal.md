@@ -9,7 +9,6 @@ The creator draws every question on the design surface with its controls switche
 - The selected element carries an adorner bar with its required flag, a kind switch, duplicate, delete and move, and a rating question's rate type.
 - A question's kind is changed in place, keeping what the new kind has and dropping what it has not.
 - The surface ends with an add-question button and a skeleton for a new page.
-- One shared adorner and one shared in-place text field are added to the UI library, so the whiteboard and the page builder reuse them.
 
 ## Capabilities
 

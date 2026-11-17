@@ -36,23 +36,23 @@ The webpage's critique is one pure function over the webpage document: it walks 
 
 ## Key files
 
-| File                                                                    | Role                                                                                      |
-| ----------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| `apps/web/shared/services/pageBuilder/critique/getContrastRatio.ts`     | the contrast ratio the email's contrast check reuses, rounded to the same scale           |
-| `apps/web/shared/services/pageBuilder/critique/getRelativeLuminance.ts` | the luminance the ratio is computed from, shared with the webpage                         |
-| `apps/web/shared/services/pageBuilder/critique/constants.ts`            | the contrast threshold and the default colours a page or an email without one is drawn in |
-| `apps/web/shared/services/pageBuilder/critique/critiqueWebpage.ts`      | the webpage walk, the model for the email's walk and its order of findings                |
-| `apps/web/shared/models/pageBuilder/CritiqueFinding.ts`                 | the finding kinds, which gain the email's link, heading and unchecked-colour kinds        |
-| `apps/web/app/services/pageBuilder/getCritiqueEditorFinding.ts`         | the editor's row for a finding, a warning naming its node                                 |
-| `apps/web/app/services/shared/readBrowserColor.ts`                      | the editor's colour reader, a probe the browser computes its value on                     |
-| `apps/web/app/components/Editor/Problems.vue`                           | the problems surface, which lists the email's rows and selects the node a row names       |
-| `apps/web/app/components/Resource/Email/Editor.vue`                     | the email editor, which mounts the email's findings beside the validator's messages       |
-| `apps/web/server/services/emailEditor/getEmailValidatorMessages.ts`     | the validator's messages, which stay findings of their own severity beside the critique   |
-| `apps/web/server/services/resource/ResourceCritiqueMap.ts`              | the critique of each type, which gains the email's entry                                  |
-| `apps/web/server/services/resource/readCritiqueSources.ts`              | the server's sources, which read no colour for an email                                   |
-| `packages/mjml-blocks/src/services/constants.ts`                        | the all-types key the head's defaults are read under                                      |
-| `packages/mjml-blocks/src/services/components/mjButton.ts`              | the button's address and label, the attributes the link check reads                       |
-| `packages/mjml-blocks/src/services/components/mjNavbarLink.ts`          | the navbar link's address and label                                                       |
+| File                                                                    | Role                                                                                                                                               |
+| ----------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `apps/web/shared/services/pageBuilder/critique/getContrastRatio.ts`     | the contrast ratio the email's contrast check reuses, rounded to the same scale                                                                    |
+| `apps/web/shared/services/pageBuilder/critique/getRelativeLuminance.ts` | the luminance the ratio is computed from, shared with the webpage                                                                                  |
+| `apps/web/shared/services/pageBuilder/critique/constants.ts`            | the contrast threshold and the default colours a page or an email without one is drawn in                                                          |
+| `apps/web/shared/services/pageBuilder/critique/critiqueWebpage.ts`      | the webpage walk, the model for the email's walk and its order of findings                                                                         |
+| `apps/web/shared/models/pageBuilder/CritiqueFinding.ts`                 | the finding kinds, which gain the email's link and heading kinds; an email text the check cannot read reuses the existing `UncheckedContrast` kind |
+| `apps/web/app/services/pageBuilder/getCritiqueEditorFinding.ts`         | the editor's row for a finding, a warning naming its node                                                                                          |
+| `apps/web/app/services/shared/readBrowserColor.ts`                      | the editor's colour reader, a probe the browser computes its value on                                                                              |
+| `apps/web/app/components/Editor/Problems.vue`                           | the problems surface, which lists the email's rows and selects the node a row names                                                                |
+| `apps/web/app/components/Resource/Email/Editor.vue`                     | the email editor, which mounts the email's findings beside the validator's messages                                                                |
+| `apps/web/server/services/emailEditor/getEmailValidatorMessages.ts`     | the validator's messages, which stay findings of their own severity beside the critique                                                            |
+| `apps/web/server/services/resource/ResourceCritiqueMap.ts`              | the critique of each type, which gains the email's entry                                                                                           |
+| `apps/web/server/services/resource/readCritiqueSources.ts`              | the server's sources, which read no colour for an email                                                                                            |
+| `packages/mjml-blocks/src/services/constants.ts`                        | the all-types key the head's defaults are read under                                                                                               |
+| `packages/mjml-blocks/src/services/components/mjButton.ts`              | the button's address and label, the attributes the link check reads                                                                                |
+| `packages/mjml-blocks/src/services/components/mjNavbarLink.ts`          | the navbar link's address and label                                                                                                                |
 
 ## New code lands here
 

@@ -1,0 +1,9 @@
+schema: spec-driven
+affected_areas: [resource]
+x-model: claude-haiku-5-5
+x-touches:
+  [
+    "apps/web/app/services/whiteboard/style/**",
+    "apps/web/app/store/resource/whiteboard/styleClipboard.ts",
+    "apps/web/app/composables/whiteboard/useWhiteboardStyleKeyboard.ts",
+  ]

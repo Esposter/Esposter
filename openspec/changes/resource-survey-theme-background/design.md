@@ -59,3 +59,7 @@ flowchart TD
 | `apps/web/app/composables/survey/useSurveyFiles.ts`                 | the upload every picked picture runs through, validation first                |
 | `apps/web/app/components/Resource/Survey/Editor.vue`                | the sweep on unmount, which deletes a picture the document no longer holds    |
 | `apps/web/app/components/Ui/FileField.vue`                          | the file field the picture's upload uses, as the logo's does                  |
+
+## Sources
+
+- [SurveyJS — API reference: ITheme interface](https://surveyjs.io/form-library/documentation/api-reference/itheme) — `backgroundImage`, "An image to display as survey background", taking a hyperlink or a data URL; its fit (`backgroundImageFit`: `auto`, `contain`, `cover`) and its opacity (`backgroundOpacity`, a number from 0 to 1) are the look settings this change leaves out.

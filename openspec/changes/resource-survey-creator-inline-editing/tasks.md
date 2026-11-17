@@ -1,9 +1,9 @@
 # Tasks
 
-## 1. The shared primitives
+## 1. The surface's primitives
 
-- [ ] 1.1 Add the library's in-place text field, which commits on Enter or blur and cancels on Escape. Verify: tests named after the scenarios 'Escape restores the title' and 'Editing a question's title on the surface' written first and seen failing.
-- [ ] 1.2 Add the library's adorner bar anchored to an element's box. Verify: a test named after the scenario 'Nothing selected shows no adorner' written first and seen failing.
+- [ ] 1.1 Add the in-place text field to the surface, which commits on Enter or blur and cancels on Escape. Verify: tests named after the scenarios 'Escape restores the title' and 'Editing a question's title on the surface' written first and seen failing.
+- [ ] 1.2 Add the adorner bar anchored to the selected element's box. Verify: a test named after the scenario 'Nothing selected shows no adorner' written first and seen failing.
 
 ## 2. Text on the surface
 

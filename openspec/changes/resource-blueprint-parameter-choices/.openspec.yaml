@@ -1,4 +1,4 @@
 schema: spec-driven
 affected_areas: [resource]
-x-model: claude-sonnet-5-5
+x-model: claude-haiku-5-5
 x-touches: ["apps/web/shared/models/resource/blueprint/BlueprintParameter.ts"]

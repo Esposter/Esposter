@@ -5,15 +5,15 @@
 - [ ] 1.1 Add the new-tab choice to the button and render its target, with the safe relationship a new-tab link always carries. Verify: tests named after the scenarios 'A same-tab button publishes no new-tab attribute', and 'A new-tab button publishes with a safe relationship' written first and seen failing.
 - [ ] 1.2 Refuse a target outside the two choices on save. Verify: a test named after the scenario 'A target outside the two choices is refused on save' written first and seen failing.
 
-## 2. The element id and title
+## 2. The element id
 
-- [ ] 2.1 Add an element id and a title to every webpage node and write them onto the node's published element, leaving out an empty id. Verify: tests named after the scenarios 'An element id links to its element from a button', 'A title shows as the tooltip of its element' and 'An empty element id publishes no id' written first and seen failing.
-- [ ] 2.2 Refuse on save an element id outside letters, digits, hyphens and underscores or past sixty-four characters, and two nodes that share one element id. Verify: tests named after the scenarios 'An element id with an unreachable character is refused on save' and 'Two nodes with one element id are refused on save' written first and seen failing.
+- [ ] 2.1 Add an element id to every webpage node and write it onto the node's published element, leaving out an empty id. Verify: tests named after the scenarios 'An element id links to its element from a button' and 'An empty element id publishes no id' written first and seen failing.
+- [ ] 2.2 Refuse on save an element id that does not take a node id's characters and length, and two nodes that share one element id. Verify: tests named after the scenarios 'An element id with an unreachable character is refused on save' and 'Two nodes with one element id are refused on save' written first and seen failing.
 
 ## 3. The Content panel
 
 - [ ] 3.1 Edit the button's new-tab choice in the Content panel. Verify: a test named after the scenario 'The Content panel sets a button to open in a new tab' written first and seen failing.
-- [ ] 3.2 Edit a node's element id and title in the Content panel. Verify: a test named after the scenario 'The Content panel sets an element id and title' written first and seen failing.
+- [ ] 3.2 Edit a node's element id in the Content panel. Verify: a test named after the scenario 'The Content panel sets an element id' written first and seen failing.
 
 ## 4. The record
 

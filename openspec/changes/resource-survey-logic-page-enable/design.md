@@ -57,3 +57,7 @@ flowchart TD
 | `apps/web/app/services/resource/survey/constants.ts`                                 | the condition sections the Logic tab draws, including Enabled if                                 |
 | `apps/web/app/components/Resource/Survey/Creator/LogicBuilder.vue`                   | draws the conditions the selected node holds, a page included                                    |
 | `apps/web/app/components/Resource/Survey/RunnerElement.vue`                          | draws a view disabled when the view is not enabled                                               |
+
+## Sources
+
+- [SurveyJS — API reference: Page model](https://surveyjs.io/form-library/documentation/api-reference/page-model) — `enableIf`, listed on the page model and inherited from the panel base, described as "A Boolean expression. If it evaluates to false, this panel/page becomes read-only.": the enable condition a page takes as its own prop, as a panel does.

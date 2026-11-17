@@ -1,6 +1,6 @@
 ## Why
 
-A preview ends nowhere. The Creator hands the runner a completion listener that does nothing, so a completed preview stays on its last page with its Complete button. An owner who wants to see what a respondent's answers would store, or to run the survey again, has to leave the preview and come back to it. The reference product shows a completed preview's results as a table or as JSON, with a button to run the preview again.
+A preview ends nowhere. The Creator binds no completion listener to the runner, so a completed preview stays on its last page with its Complete button. An owner who wants to see what a respondent's answers would store, or to run the survey again, has to leave the preview and come back to it. The reference product shows a completed preview's results as a table or as JSON, with a button to run the preview again.
 
 ## What Changes
 

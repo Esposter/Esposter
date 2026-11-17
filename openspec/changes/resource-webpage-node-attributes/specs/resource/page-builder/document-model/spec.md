@@ -23,21 +23,15 @@ A webpage button SHALL open its link in the same tab or in a new tab, as its tar
 - **WHEN** the owner saves the document
 - **THEN** the save is refused
 
-### Requirement: A webpage node takes an element id and a title
+### Requirement: A webpage node takes an element id
 
-A webpage node SHALL take an element id and a title, which its published element carries. An element id SHALL be letters, digits, hyphens and underscores within sixty-four characters.
+A webpage node SHALL take an element id, which its published element carries. An element id SHALL take the characters and the length a node id takes.
 
 #### Scenario: An element id links to its element from a button
 
 - **GIVEN** a section with the element id pricing and a button whose address is the fragment pricing
 - **WHEN** the reader follows the button
 - **THEN** the page moves to the section
-
-#### Scenario: A title shows as the tooltip of its element
-
-- **GIVEN** an image with the title Logo
-- **WHEN** the webpage is published
-- **THEN** the published image carries the title Logo
 
 #### Scenario: An empty element id publishes no id
 

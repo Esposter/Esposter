@@ -30,12 +30,13 @@ The sort runs over the aggregated values, never the rows, so a series order rank
 
 ## Key files
 
-| File                                                                       | Role                                    |
-| -------------------------------------------------------------------------- | --------------------------------------- |
-| `apps/web/shared/models/dataset/DatasetQuery.ts`                           | the optional order and its schema       |
-| `apps/web/app/services/dashboard/dataset/computeDatasetVisualPropsData.ts` | orders the categories before the series |
-| `apps/web/app/components/Dashboard/Editor/VisualFormFields.vue`            | the Order control in the binding form   |
+| File                                                                            | Role                                                                                               |
+| ------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `apps/web/shared/models/dataset/DatasetQuery.ts`                                | the optional order and its schema                                                                  |
+| `apps/web/app/services/dashboard/dataset/computeDatasetVisualPropsData.ts`      | orders the categories before the series                                                            |
+| `apps/web/app/components/Dashboard/Editor/VisualFormFields.vue`                 | the visual's form, which mounts the binding form for a bound visual                                |
+| `apps/web/app/components/Dashboard/Visual/Preview/DatasetBindingForm/Index.vue` | the binding form, which draws the X column and the series rows and gains the Order row beside them |
 
 ## Sources
 
-- [Microsoft — Key Performance Indicator (KPI) visuals](https://learn.microsoft.com/en-us/power-bi/visuals/power-bi-visualization-kpi) — its steps sort a visual's axis by a field and choose ascending.
+- [Microsoft — Change How a Chart Is Sorted in a Report](https://learn.microsoft.com/en-us/power-bi/consumer/end-user-change-sort) — a visual is sorted by a chosen field in an ascending or descending direction, the choice the Order control takes by its category or series.

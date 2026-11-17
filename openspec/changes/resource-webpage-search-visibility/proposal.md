@@ -1,6 +1,6 @@
 ## Why
 
-A published webpage is open to search engines the moment it is published, and its owner has no way to say otherwise. A page shared by link to a client, or a draft of a landing page published to be previewed, turns up in search results. The reference controls crawling per page with a noindex tag.
+A published webpage is open to search engines the moment it is published, and its owner has no way to say otherwise. A page shared by link to a client, or a draft of a landing page published to be previewed, turns up in search results. The reference gives each page an indexing toggle in its Page settings.
 
 ## What Changes
 

@@ -34,15 +34,15 @@ The email's root props are read from and written to the document's head and body
 
 ## Key files
 
-| File                                                                | Role                                                                                                     |
-| ------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| `apps/web/shared/services/pageBuilder/email/emailRootFormSchema.ts` | the root form, which holds the settings fields the panel draws                                           |
-| `apps/web/app/services/emailEditor/emailLayout.ts`                  | the email's layout, whose nothing-selected state offers the settings beside the prompt                   |
-| `apps/web/app/components/Resource/Email/Editor.vue`                 | the blade that binds the panels to the document's root and the selection                                 |
-| `apps/web/app/components/PageBuilder/Editor.vue`                    | the webpage's host, whose Page tab is the model for the email's settings panel                           |
-| `apps/web/app/models/pageBuilder/WebpageRootForm.ts`                | the webpage's root form, the model for the email's form over the shared root schema                      |
-| `packages/mjml-blocks/src/services/mjmlRootPropsSchema.ts`          | the root props the settings write: language, direction, title, fonts, body                               |
-| `packages/mjml-blocks/src/services/createMjmlRootPropsSchema.ts`    | the root check that refuses a body attribute and a font address the grammar or the scheme does not allow |
+| File                                                                | Role                                                                                                          |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `apps/web/shared/services/pageBuilder/email/emailRootFormSchema.ts` | the root form, which holds the settings fields the panel draws                                                |
+| `apps/web/app/services/emailEditor/emailLayout.ts`                  | the email's layout, whose nothing-selected state offers the settings beside the prompt                        |
+| `apps/web/app/components/Resource/Email/Editor.vue`                 | the blade that binds the panels to the document's root and the selection                                      |
+| `apps/web/app/services/pageBuilder/webpageLayout.ts`                | the webpage's arrangement, whose Page panel drawn with nothing selected is the model for the email's settings |
+| `apps/web/app/models/pageBuilder/WebpageRootForm.ts`                | the webpage's root form, the model for the email's form over the shared root schema                           |
+| `packages/mjml-blocks/src/services/mjmlRootPropsSchema.ts`          | the root props the settings write: language, direction, title, fonts, body                                    |
+| `packages/mjml-blocks/src/services/createMjmlRootPropsSchema.ts`    | the root check that refuses a body attribute and a font address the grammar or the scheme does not allow      |
 
 ## New code lands here
 
