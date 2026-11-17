@@ -90,6 +90,9 @@ watch(
   },
   { flush: "post" },
 );
+// The editor of the text being edited, which the text toolbar formats in place of the node toolbar
+const textEditor = useTemplateRef("textEditor");
+const editingEditor = computed(() => textEditor.value?.editor);
 // The arrows and Escape, unmodified, are the canvas's own: the next node, the previous one and the parent. Every other key is
 // Handed to the editor, and a text edit's own keys stay with it, so an Alt chord still reaches the editor's commands
 const frameKeyActions: Partial<Record<string, () => void>> = {
@@ -183,7 +186,13 @@ const CanvasNodes = (props: { open: OpenPageBuilderDocument; origin: string }) =
     >
       <CanvasNodes v-if="renderedOpen" :open="renderedOpen" :origin />
       <Teleport v-if="editingElement && editingNodeId" :to="editingElement">
-        <PageBuilderCanvasTextEditor :key="editingNodeId" :kind :node-id="editingNodeId" :resource-id />
+        <PageBuilderCanvasTextEditor
+          ref="textEditor"
+          :key="editingNodeId"
+          :kind
+          :node-id="editingNodeId"
+          :resource-id
+        />
       </Teleport>
       <PageBuilderCanvasOverlays
         v-model:selection-box="selectionBox"
@@ -197,13 +206,19 @@ const CanvasNodes = (props: { open: OpenPageBuilderDocument; origin: string }) =
       />
     </div>
   </PageBuilderCanvasFrame>
+  <!-- A text being edited takes the text toolbar in place of the node toolbar, so the two are never stacked over the text -->
   <PageBuilderCanvasNodeToolbar
-    v-if="selectedNodeId && toolbarPosition"
+    v-if="selectedNodeId && !editingNodeId && toolbarPosition"
     v-model:is-delete-open="isDeleteOpen"
     :announce
     :kind
     :position="toolbarPosition"
     :resource-id
     @drag="(event) => startNodeDrag(selectedNodeId, event, getFrameGeometry)"
+  />
+  <PageBuilderCanvasTextToolbar
+    v-if="editingEditor && toolbarPosition"
+    :editor="editingEditor"
+    :position="toolbarPosition"
   />
 </template>

@@ -30,14 +30,6 @@ const items = computed<MenuItem[]>(() => [
   { icon: "i-mdi:image", isSelectionFree: true, onClick: () => openImagePicker(), title: "Image" },
   { isDivider: true },
   ...getTextFormatMenuItems(editor),
-  {
-    active: editor?.isActive("code"),
-    icon: "i-mdi:code-tags",
-    onClick: () => {
-      editor?.chain().focus().toggleCode().run();
-    },
-    title: "Code",
-  },
   { isDivider: true },
   ...getListMenuItems(editor),
 ]);

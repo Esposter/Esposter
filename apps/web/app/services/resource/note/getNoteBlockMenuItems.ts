@@ -3,8 +3,12 @@ import type { MenuItem } from "#src/models/shared/MenuItem";
 import type { Editor } from "@tiptap/core";
 
 // The block-level items the Note's menu bar and its slash menu both offer, in the order both draw them. The list items
-// Are the shared ones, and the text marks are the composer's, so only the Note's own blocks are listed here
-export const getNoteBlockMenuItems = (editor: Editor | undefined): MenuItem[] => [
+// Are the shared ones, and the text marks are the composer's, so only the Note's own blocks are listed here. A text block
+// Takes every block but the task list, which needs a block of its own, so its toolbar passes `isTaskListOffered: false`
+export const getNoteBlockMenuItems = (
+  editor: Editor | undefined,
+  { isTaskListOffered = true }: { isTaskListOffered?: boolean } = {},
+): MenuItem[] => [
   {
     active: editor?.isActive("paragraph"),
     icon: "i-mdi:format-paragraph",
@@ -37,14 +41,18 @@ export const getNoteBlockMenuItems = (editor: Editor | undefined): MenuItem[] =>
     },
     title: "Heading 3",
   },
-  {
-    active: editor?.isActive("taskList"),
-    icon: "i-mdi:format-list-checks",
-    onClick: () => {
-      editor?.chain().focus().toggleTaskList().run();
-    },
-    title: "Task List",
-  },
+  ...(isTaskListOffered
+    ? [
+        {
+          active: editor?.isActive("taskList"),
+          icon: "i-mdi:format-list-checks",
+          onClick: () => {
+            editor?.chain().focus().toggleTaskList().run();
+          },
+          title: "Task List",
+        },
+      ]
+    : []),
   {
     active: editor?.isActive("blockquote"),
     icon: "i-mdi:format-quote-close",

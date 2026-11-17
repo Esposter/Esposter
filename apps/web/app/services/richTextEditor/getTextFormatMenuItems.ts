@@ -2,7 +2,7 @@
 import type { MenuItem } from "#src/models/shared/MenuItem";
 import type { Editor } from "@tiptap/core";
 
-// The two marks every editor menu here offers, in the order both menus draw them.
+// The three marks every editor menu here offers, in the order each menu draws them.
 export const getTextFormatMenuItems = (editor: Editor | undefined): MenuItem[] => [
   {
     active: editor?.isActive("bold"),
@@ -19,5 +19,13 @@ export const getTextFormatMenuItems = (editor: Editor | undefined): MenuItem[] =
       editor?.chain().focus().toggleItalic().run();
     },
     title: "Italic",
+  },
+  {
+    active: editor?.isActive("code"),
+    icon: "i-mdi:code-tags",
+    onClick: () => {
+      editor?.chain().focus().toggleCode().run();
+    },
+    title: "Code",
   },
 ];

@@ -64,6 +64,8 @@ const onKeydown = (event: KeyboardEvent) => {
   event.stopPropagation();
   setEditingNodeId(resourceId, "");
 };
+// The canvas's text toolbar formats the text this editor holds, and sits outside the frame the editor is mounted in
+defineExpose({ editor });
 </script>
 
 <template>
