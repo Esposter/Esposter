@@ -37,39 +37,14 @@ describe(useParticipantStore, () => {
   const { trpcMsw } = setupMswTrpc();
   const callSessionId = createId(CALL_ID_LENGTH);
 
-  test("createSpeaker adds the id to speakingIds", () => {
-    expect.hasAssertions();
-
-    const participantStore = useParticipantStore();
-    const { createSpeaker } = participantStore;
-    const { speakingIds } = storeToRefs(participantStore);
-    const sessionId = getMockSession().session.id;
-    createSpeaker(sessionId);
-
-    expect(speakingIds.value).toStrictEqual([sessionId]);
-  });
-
-  test("createSpeaker is idempotent", () => {
-    expect.hasAssertions();
-
-    const participantStore = useParticipantStore();
-    const { createSpeaker } = participantStore;
-    const { speakingIds } = storeToRefs(participantStore);
-    const sessionId = getMockSession().session.id;
-    createSpeaker(sessionId);
-    createSpeaker(sessionId);
-
-    expect(speakingIds.value).toHaveLength(1);
-  });
-
   test("deleteSpeaker removes the id from speakingIds", () => {
     expect.hasAssertions();
 
     const participantStore = useParticipantStore();
-    const { createSpeaker, deleteSpeaker } = participantStore;
+    const { deleteSpeaker } = participantStore;
     const { speakingIds } = storeToRefs(participantStore);
     const sessionId = getMockSession().session.id;
-    createSpeaker(sessionId);
+    speakingIds.value = [sessionId];
     deleteSpeaker(sessionId);
 
     expect(speakingIds.value).toStrictEqual([]);

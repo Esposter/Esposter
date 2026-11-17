@@ -12,7 +12,7 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 
 describe("messageModelStatusPickerForm", () => {
   const { trpcMsw } = setupMswTrpc();
-  const userId = v7();
+  let userId = v7();
   const message = "message";
   const draftMessage = "draftMessage";
   const rejectedMessage = "rejectedMessage";
@@ -34,12 +34,9 @@ describe("messageModelStatusPickerForm", () => {
   };
 
   beforeEach(() => {
+    // Every test in the file shares the nuxt app's pinia, so each files its status under a user no earlier test wrote
+    userId = v7();
     useSession.mockReturnValue(ref({ data: { user: { id: userId } } }));
-    // Every test in the file shares the nuxt app's pinia, so each starts from a user whose status is whatever
-    // This seeds
-    const statusStore = useStatusStore();
-    const { statusMap } = storeToRefs(statusStore);
-    statusMap.value.clear();
   });
 
   // The picker closes on submit, so a draft that outlived a rejection would come back on the next open showing

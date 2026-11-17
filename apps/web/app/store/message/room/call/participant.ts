@@ -58,10 +58,6 @@ export const useParticipantStore = defineStore("message/room/call/participant", 
     if (!participant) return;
     participant.isHandRaised = isHandRaised;
   };
-  const createSpeaker = (id: string) => {
-    if (speakingIds.value.includes(id)) return;
-    speakingIds.value = [...speakingIds.value, id];
-  };
   const deleteSpeaker = (id: string) => {
     speakingIds.value = speakingIds.value.filter((speakingId) => speakingId !== id);
   };
@@ -77,7 +73,6 @@ export const useParticipantStore = defineStore("message/room/call/participant", 
     clearJoinNotice,
     clearSpeakers,
     createCallParticipant,
-    createSpeaker,
     deleteCallParticipant,
     deleteSpeaker,
     joinNoticeParticipant,

@@ -14,5 +14,5 @@ export const useStatusStore = defineStore("message/user/status", () => {
   const storeStatuses = (userStatuses: (Pick<UserStatusInMessage, "userId"> & StoredUserStatus)[]) => {
     for (const { userId, ...userStatus } of userStatuses) storeStatus(userId, userStatus);
   };
-  return { getStatusMessage, getStoredUserStatus, getUserStatus, statusMap, storeStatus, storeStatuses };
+  return { getStatusMessage, getStoredUserStatus, getUserStatus, storeStatus, storeStatuses };
 });

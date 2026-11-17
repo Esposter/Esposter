@@ -1,4 +1,3 @@
-/* oxlint-disable typescript/no-unsafe-enum-assignment -- the option is a runtime name, so its setting is the union of every setting's type, wider than the grid's value union that the lookup needs; setSettings is generic over the option, but the grid's value is the union of every cell's value, so no type relates the two without the assertion */
 import type { PlayerInput } from "#src/models/dungeons/UI/input/PlayerInput";
 import type { Position } from "grid-engine";
 import type { SceneWithPlugins } from "vue-phaserjs";

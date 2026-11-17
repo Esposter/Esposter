@@ -1,5 +1,6 @@
 // @vitest-environment nuxt
 import { createRoomRole } from "#src/services/message/member/createRoomRole.test";
+import { serveMemberRoles } from "#src/services/message/member/serveMemberRoles.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useRoleStore } from "#src/store/message/room/role";
 import { TRPCError } from "@trpc/server";
@@ -79,8 +80,9 @@ describe(useRoleStore, () => {
       if (roleId === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
     const roleStore = useRoleStore();
-    const { getMemberRoles, revokeRole, setMemberRoles } = roleStore;
-    setMemberRoles(roomId, userId, [first, second]);
+    const { getMemberRoles, readMemberRoles, revokeRole } = roleStore;
+    serveMemberRoles(trpcMsw, roomId, userId, [first, second]);
+    await readMemberRoles({ roomId, userIds: [userId] });
     revokeRole({ roleId: first.id, roomId, userId });
     revokeRole({ roleId: second.id, roomId, userId });
     await flushPromises();

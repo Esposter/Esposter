@@ -1,4 +1,7 @@
 // @vitest-environment nuxt
+import { createMeeting } from "#src/services/message/room/realtime/createMeeting.test";
+import { createParticipant } from "#src/services/message/room/realtime/createParticipant.test";
+import { spyOnMeetingInit } from "#src/services/message/room/realtime/spyOnMeetingInit.test";
 import { useAlertStore } from "#src/store/alert";
 import { useMediaStore } from "#src/store/message/room/call/media";
 import { useRealtimeStore } from "#src/store/message/room/realtime";
@@ -7,72 +10,7 @@ import RealtimeKitClient from "@cloudflare/realtimekit";
 import RealtimeKitVideoBackgroundTransformer from "@cloudflare/realtimekit-virtual-background";
 import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { flushPromises } from "@vue/test-utils";
-import { EventEmitter } from "node:events";
 import { afterEach, describe, expect, test, vi } from "vitest";
-
-// The SDK's meeting is replaced by an emitter holding the methods the store calls, so each test drives the events
-// The SDK would emit and reads the spies it needs
-const createMeeting = () => {
-  const joinedEvents = new EventEmitter();
-  const joined = Object.assign(new Map<string, EventEmitter>(), {
-    on: (event: string, listener: (...args: unknown[]) => void) => {
-      joinedEvents.on(event, listener);
-    },
-  });
-  const self = Object.assign(new EventEmitter(), {
-    addAudioMiddleware: vi.fn<() => Promise<{ message: string; success: boolean }>>(() =>
-      Promise.resolve({ message: "", success: true }),
-    ),
-    addVideoMiddleware: vi.fn<() => Promise<{ message: string; success: boolean }>>(() =>
-      Promise.resolve({ message: "", success: true }),
-    ),
-    disableAudio: vi.fn<() => Promise<void>>(() => Promise.resolve()),
-    disableScreenShare: vi.fn<() => Promise<void>>(() => Promise.resolve()),
-    disableVideo: vi.fn<() => Promise<void>>(() => Promise.resolve()),
-    enableAudio: vi.fn<() => Promise<void>>(() => Promise.resolve()),
-    enableScreenShare: vi.fn<() => Promise<void>>(() => Promise.resolve()),
-    enableVideo: vi.fn<() => Promise<void>>(() => Promise.resolve()),
-    rawAudioTrack: { applyConstraints: vi.fn<() => Promise<void>>(() => Promise.resolve()) },
-    removeAllVideoMiddlewares: vi.fn<() => Promise<{ message: string; success: boolean }>>(() =>
-      Promise.resolve({ message: "", success: true }),
-    ),
-    setDevice: vi.fn<() => Promise<void>>(() => Promise.resolve()),
-    videoEnabled: false,
-    videoTrack: {} as MediaStreamTrack,
-  });
-  // The camera's state follows the calls that switch it, as the SDK's does
-  self.enableVideo.mockImplementation(() => {
-    self.videoEnabled = true;
-    return Promise.resolve();
-  });
-  self.disableVideo.mockImplementation(() => {
-    self.videoEnabled = false;
-    return Promise.resolve();
-  });
-  const meeting = {
-    join: vi.fn<() => Promise<void>>(() => Promise.resolve()),
-    leave: vi.fn<() => Promise<void>>(() => Promise.resolve()),
-    meta: new EventEmitter(),
-    participants: Object.assign(new EventEmitter(), { joined }),
-    self,
-  };
-  return { joinedEvents, meeting };
-};
-
-// A participant is the emitter the SDK hands out, carrying the fields the store reads on attach
-const createParticipant = (customParticipantId: string) =>
-  Object.assign(new EventEmitter(), {
-    audioEnabled: true,
-    audioTrack: {} as MediaStreamTrack,
-    customParticipantId,
-    screenShareEnabled: false,
-    screenShareTracks: {},
-    videoEnabled: false,
-    videoTrack: {} as MediaStreamTrack,
-  });
-
-const useMeeting = (meeting: ReturnType<typeof createMeeting>["meeting"]) =>
-  vi.spyOn(RealtimeKitClient, "init").mockResolvedValue(meeting as unknown as RealtimeKitClient);
 
 describe(useRealtimeStore, () => {
   const imagePath = "imagePath";
@@ -109,7 +47,7 @@ describe(useRealtimeStore, () => {
     const alertStore = useAlertStore();
     const { alerts } = storeToRefs(alertStore);
     const { meeting } = createMeeting();
-    useMeeting(meeting);
+    spyOnMeetingInit(meeting);
     const realtimeStore = useRealtimeStore();
     const { connect, setCamera, setVirtualBackground } = realtimeStore;
     await connect("authToken", vi.fn<() => Promise<void>>(), false);
@@ -132,7 +70,7 @@ describe(useRealtimeStore, () => {
       .mockRejectedValueOnce(new DOMException("", "NotAllowedError"))
       .mockResolvedValue();
     const { joinedEvents, meeting } = createMeeting();
-    useMeeting(meeting);
+    spyOnMeetingInit(meeting);
     const realtimeStore = useRealtimeStore();
     const { connect, startAudio } = realtimeStore;
     const { isAudioPlaybackBlocked } = storeToRefs(realtimeStore);
@@ -156,7 +94,7 @@ describe(useRealtimeStore, () => {
     const mediaStore = useMediaStore();
     mediaStore.isDeafened = true;
     const { joinedEvents, meeting } = createMeeting();
-    useMeeting(meeting);
+    spyOnMeetingInit(meeting);
     const realtimeStore = useRealtimeStore();
     const { connect } = realtimeStore;
     await connect("authToken", vi.fn<() => Promise<void>>(), false);
@@ -170,7 +108,7 @@ describe(useRealtimeStore, () => {
 
     vi.spyOn(HTMLMediaElement.prototype, "play").mockResolvedValue();
     const { joinedEvents, meeting } = createMeeting();
-    useMeeting(meeting);
+    spyOnMeetingInit(meeting);
     const realtimeStore = useRealtimeStore();
     const { connect } = realtimeStore;
     await connect("authToken", vi.fn<() => Promise<void>>(), false);
@@ -187,7 +125,7 @@ describe(useRealtimeStore, () => {
       expect.hasAssertions();
 
       const { meeting } = createMeeting();
-      const init = useMeeting(meeting);
+      const init = spyOnMeetingInit(meeting);
       const realtimeStore = useRealtimeStore();
       const { connect } = realtimeStore;
       await connect("authToken", vi.fn<() => Promise<void>>(), isMicrophoneEnabled);
@@ -225,7 +163,7 @@ describe(useRealtimeStore, () => {
     expect.hasAssertions();
 
     const { meeting } = createMeeting();
-    useMeeting(meeting);
+    spyOnMeetingInit(meeting);
     const realtimeStore = useRealtimeStore();
     const { connect } = realtimeStore;
     const disconnectHandler = vi.fn<() => Promise<void>>();

@@ -346,7 +346,6 @@ export const useRoleStore = defineStore("message/room/role", () => {
     selectMember,
     selectRole,
     setMemberPermissionOverride,
-    setMemberRoles,
     setRoles,
     updateRole,
     upsertMemberPermissionOverride,

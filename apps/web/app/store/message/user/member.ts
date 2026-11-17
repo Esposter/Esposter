@@ -92,7 +92,6 @@ export const useMemberStore = defineStore("message/user/member", () => {
     for (const member of readMembers) getRoomOperationData(roomId).updateMember(member);
   };
   return {
-    getMemberCountsRef,
     getSlice,
     memberCount,
     memberCountsByTopRole,

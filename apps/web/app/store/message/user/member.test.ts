@@ -4,6 +4,7 @@ import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
 import type { RoomRoleInMessage } from "@esposter/db-schema";
 
 import { createRoomRole } from "#src/services/message/member/createRoomRole.test";
+import { serveMemberRoles } from "#src/services/message/member/serveMemberRoles.test";
 import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { createUser } from "#src/services/message/user/createUser.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
@@ -12,21 +13,6 @@ import { useMemberStore } from "#src/store/message/user/member";
 import { TRPCError } from "@trpc/server";
 import { v7 } from "uuid";
 import { beforeEach, describe, expect, test, vi } from "vitest";
-
-// Resolves on the next write of the room's group totals, the store's own signal that a re-read has landed
-const waitForCounts = (readRoomId: string) => {
-  const memberStore = useMemberStore();
-  const { getMemberCountsRef } = memberStore;
-  return new Promise<void>((resolve) => {
-    const stopWatching = watch(
-      () => getMemberCountsRef(readRoomId).value.countsByTopRole,
-      () => {
-        stopWatching();
-        resolve();
-      },
-    );
-  });
-};
 
 describe(useMemberStore, () => {
   const { trpcMsw } = setupMswTrpc();
@@ -44,17 +30,7 @@ describe(useMemberStore, () => {
 
   // Reads the member's roles the way the member list does, so the store knows what they hold
   const loadMemberRoles = async (readRoomId: string, memberRoles: RoomRoleInMessage[]) => {
-    trpcMsw.role.readMemberRoles.query(() =>
-      memberRoles.map((memberRole) => ({
-        createdAt: memberRole.createdAt,
-        deletedAt: memberRole.deletedAt,
-        role: memberRole,
-        roleId: memberRole.id,
-        roomId: readRoomId,
-        updatedAt: memberRole.updatedAt,
-        userId: member.id,
-      })),
-    );
+    serveMemberRoles(trpcMsw, readRoomId, member.id, memberRoles);
     const roleStore = useRoleStore();
     await roleStore.readMemberRoles({ roomId: readRoomId, userIds: [member.id] });
   };
@@ -68,17 +44,16 @@ describe(useMemberStore, () => {
     expect.hasAssertions();
 
     const memberStore = useMemberStore();
-    const { getMemberCountsRef, storeDeleteMember } = memberStore;
+    const { refreshMemberCounts, storeDeleteMember } = memberStore;
     const { memberCount, memberCountsByTopRole } = storeToRefs(memberStore);
     // The member list headers derive the roleless group as memberCount - sum(role groups), so a departure that
     // Drops only the total leaves the leaver in their role group and takes the remainder negative
     await loadMemberRoles(roomId, [role]);
-    getMemberCountsRef(roomId).value.memberCount = 1;
-    getMemberCountsRef(roomId).value.countsByTopRole = [{ count: 1, roleId: role.id }];
+    serveCounts(1, [{ count: 1, roleId: role.id }]);
+    await refreshMemberCounts([roomId]);
     serveCounts(0, [{ count: 0, roleId: role.id }]);
-    const countsWritten = waitForCounts(roomId);
     storeDeleteMember(roomId, member.id);
-    await countsWritten;
+    await refreshMemberCounts([roomId]);
 
     expect(memberCount.value).toBe(0);
     expect(memberCountsByTopRole.value).toStrictEqual([{ count: 0, roleId: role.id }]);
@@ -90,14 +65,13 @@ describe(useMemberStore, () => {
     expect.hasAssertions();
 
     const memberStore = useMemberStore();
-    const { getMemberCountsRef, storeDeleteMember } = memberStore;
+    const { refreshMemberCounts, storeDeleteMember } = memberStore;
     const { memberCount, memberCountsByTopRole } = storeToRefs(memberStore);
-    getMemberCountsRef(roomId).value.memberCount = 2;
-    getMemberCountsRef(roomId).value.countsByTopRole = [{ count: 2, roleId: role.id }];
+    serveCounts(2, [{ count: 2, roleId: role.id }]);
+    await refreshMemberCounts([roomId]);
     serveCounts(1, [{ count: 1, roleId: role.id }]);
-    const countsWritten = waitForCounts(roomId);
     storeDeleteMember(roomId, member.id);
-    await countsWritten;
+    await refreshMemberCounts([roomId]);
 
     expect(memberCount.value).toBe(1);
     expect(memberCountsByTopRole.value).toStrictEqual([{ count: 1, roleId: role.id }]);
@@ -110,15 +84,15 @@ describe(useMemberStore, () => {
     expect.hasAssertions();
 
     const memberStore = useMemberStore();
-    const { getMemberCountsRef, storeDeleteMember } = memberStore;
+    const { refreshMemberCounts, storeDeleteMember } = memberStore;
     const { memberCount, memberCountsByTopRole } = storeToRefs(memberStore);
+    serveCounts(2, [{ count: 2, roleId: role.id }]);
+    await refreshMemberCounts([roomId]);
     const { promise: isFailureLogged, resolve: onFailureLogged } = Promise.withResolvers<void>();
     const consoleError = vi.spyOn(console, "error").mockImplementation(() => {
       onFailureLogged();
     });
     let isGroupReadFailed = false;
-    getMemberCountsRef(roomId).value.memberCount = 2;
-    getMemberCountsRef(roomId).value.countsByTopRole = [{ count: 2, roleId: role.id }];
     trpcMsw.room.readMembersCount.query(() => 1);
     trpcMsw.room.readMemberCountsByTopRole.query(() => {
       if (isGroupReadFailed) return [{ count: 1, roleId: role.id }];
@@ -132,7 +106,7 @@ describe(useMemberStore, () => {
     expect(memberCount.value).toBe(2);
     expect(memberCountsByTopRole.value).toStrictEqual([{ count: 2, roleId: role.id }]);
 
-    await waitForCounts(roomId);
+    await refreshMemberCounts([roomId]);
 
     expect(memberCount.value).toBe(1);
     expect(memberCountsByTopRole.value).toStrictEqual([{ count: 1, roleId: role.id }]);
@@ -145,18 +119,18 @@ describe(useMemberStore, () => {
 
     const otherRole = createRoomRole({ roomId });
     const memberStore = useMemberStore();
-    const { getMemberCountsRef } = memberStore;
+    const { refreshMemberCounts } = memberStore;
     const { memberCountsByTopRole } = storeToRefs(memberStore);
     const roleStore = useRoleStore();
     const { mutateMemberRoles } = roleStore;
-    getMemberCountsRef(roomId).value.countsByTopRole = [{ count: 1, roleId: role.id }];
+    serveCounts(1, [{ count: 1, roleId: role.id }]);
+    await refreshMemberCounts([roomId]);
     serveCounts(1, [
       { count: 0, roleId: role.id },
       { count: 1, roleId: otherRole.id },
     ]);
-    const countsWritten = waitForCounts(roomId);
     mutateMemberRoles(roomId, member.id, [otherRole]);
-    await countsWritten;
+    await refreshMemberCounts([roomId]);
 
     expect(memberCountsByTopRole.value).toStrictEqual([
       { count: 0, roleId: role.id },
@@ -170,18 +144,16 @@ describe(useMemberStore, () => {
     expect.hasAssertions();
 
     const memberStore = useMemberStore();
-    const { getMemberCountsRef, storeCreateMember, storeDeleteMember } = memberStore;
+    const { refreshMemberCounts, storeCreateMember, storeDeleteMember } = memberStore;
     const { memberCount, memberCountsByTopRole, members } = storeToRefs(memberStore);
     await loadMemberRoles(roomId, [role]);
     await loadMemberRoles(otherRoomId, []);
-    getMemberCountsRef(roomId).value.countsByTopRole = [{ count: 1, roleId: role.id }];
     serveCounts(1, [{ count: 1, roleId: role.id }]);
-    const joinCountsWritten = waitForCounts(roomId);
+    await refreshMemberCounts([roomId]);
     storeCreateMember(roomId, member);
-    await joinCountsWritten;
-    const otherRoomCountsWritten = waitForCounts(otherRoomId);
+    await refreshMemberCounts([roomId]);
     storeDeleteMember(otherRoomId, member.id);
-    await otherRoomCountsWritten;
+    await refreshMemberCounts([otherRoomId]);
 
     expect(members.value).toStrictEqual([member]);
     expect(memberCount.value).toBe(1);
@@ -192,12 +164,11 @@ describe(useMemberStore, () => {
     expect.hasAssertions();
 
     const memberStore = useMemberStore();
-    const { storeCreateMember } = memberStore;
+    const { refreshMemberCounts, storeCreateMember } = memberStore;
     const { memberCount, members } = storeToRefs(memberStore);
     serveCounts(1, []);
-    const otherRoomCountsWritten = waitForCounts(otherRoomId);
     storeCreateMember(otherRoomId, member);
-    await otherRoomCountsWritten;
+    await refreshMemberCounts([otherRoomId]);
 
     expect(members.value).toStrictEqual([]);
     expect(memberCount.value).toBeUndefined();
@@ -209,11 +180,10 @@ describe(useMemberStore, () => {
     expect.hasAssertions();
 
     const memberStore = useMemberStore();
-    const { storeCreateMember } = memberStore;
+    const { refreshMemberCounts, storeCreateMember } = memberStore;
     const { members } = storeToRefs(memberStore);
-    const countsWritten = waitForCounts(roomId);
     storeCreateMember(roomId, member);
-    await countsWritten;
+    await refreshMemberCounts([roomId]);
 
     expect(members.value).toStrictEqual([member]);
 
@@ -241,11 +211,10 @@ describe(useMemberStore, () => {
     expect.hasAssertions();
 
     const memberStore = useMemberStore();
-    const { storeCreateMember } = memberStore;
+    const { refreshMemberCounts, storeCreateMember } = memberStore;
     const { members } = storeToRefs(memberStore);
-    const countsWritten = waitForCounts(roomId);
     storeCreateMember(roomId, { ...member, displayName: "displayName" });
-    await countsWritten;
+    await refreshMemberCounts([roomId]);
 
     expect(members.value).toStrictEqual([{ ...member, displayName: "displayName" }]);
   });
@@ -254,15 +223,14 @@ describe(useMemberStore, () => {
     expect.hasAssertions();
 
     const memberStore = useMemberStore();
-    const { getMemberCountsRef, storeDeleteMember } = memberStore;
+    const { refreshMemberCounts, storeDeleteMember } = memberStore;
     const { memberCount, memberCountsByTopRole } = storeToRefs(memberStore);
     await loadMemberRoles(roomId, []);
-    getMemberCountsRef(roomId).value.memberCount = 2;
-    getMemberCountsRef(roomId).value.countsByTopRole = [{ count: 1, roleId: role.id }];
+    serveCounts(2, [{ count: 1, roleId: role.id }]);
+    await refreshMemberCounts([roomId]);
     serveCounts(1, [{ count: 1, roleId: role.id }]);
-    const countsWritten = waitForCounts(roomId);
     storeDeleteMember(roomId, member.id);
-    await countsWritten;
+    await refreshMemberCounts([roomId]);
 
     expect(memberCount.value).toBe(1);
     expect(memberCountsByTopRole.value).toStrictEqual([{ count: 1, roleId: role.id }]);
