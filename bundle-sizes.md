@@ -4,20 +4,20 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 
 | Package                    | File                     |   Bytes |    KiB |
 | :------------------------- | :----------------------- | ------: | -----: |
-| genshin-world              | **/*.js                  | 3996618 | 3902.9 |
-| genshin-world              | **/*.d.ts                | 3059649 | 2987.9 |
+| genshin-world              | **/*.js                  | 4000709 | 3906.9 |
+| genshin-world              | **/*.d.ts                | 3078066 | 3005.9 |
 | @esposter/db               | **/*.js                  |  760027 |  742.2 |
 | genshin-text               | **/*.js                  |  687686 |  671.6 |
-| genshin-world              | index.d.ts               |  425744 |  415.8 |
-| genshin-world              | index.js                 |  376594 |  367.8 |
+| genshin-world              | index.d.ts               |  424840 |  414.9 |
+| genshin-world              | index.js                 |  376373 |  367.6 |
 | genshin-engine             | **/*.js                  |  343523 |  335.5 |
 | genshin-interface          | **/*.d.ts                |  316456 |  309.0 |
 | vue-phaserjs               | **/*.d.ts                |  314685 |  307.3 |
-| genshin-world              | style.css                |  307128 |  299.9 |
+| genshin-world              | style.css                |  307236 |  300.0 |
 | genshin-interface          | **/*.js                  |  267290 |  261.0 |
 | @esposter/db-schema        | **/*.js                  |  206979 |  202.1 |
-| genshin-interface          | style.css                |  193919 |  189.4 |
-| genshin-engine             | **/*.d.ts                |  127710 |  124.7 |
+| genshin-interface          | style.css                |  194081 |  189.5 |
+| genshin-engine             | **/*.d.ts                |  127722 |  124.7 |
 | @esposter/shared           | **/*.js                  |  126517 |  123.6 |
 | math-expression-compiler   | **/*.js                  |  112181 |  109.6 |
 | vue-survey-engine-headless | **/*.js                  |  106706 |  104.2 |
@@ -72,8 +72,8 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | trpc-msw                   | **/*.d.ts                |    6246 |    6.1 |
 | parse-tmx                  | **/*.d.ts                |    6013 |    5.9 |
 | vue-grid-layout-headless   | **/*.d.ts                |    5533 |    5.4 |
+| genshin-interface          | **/*.css                 |    5200 |    5.1 |
 | pitch-transcription        | **/*.d.ts                |    5170 |    5.0 |
-| genshin-interface          | **/*.css                 |    5146 |    5.0 |
 | @esposter/db-mock          | **/*.js                  |    4804 |    4.7 |
 | nuxt-security-module       | index.js                 |    4787 |    4.7 |
 | trpc-msw                   | **/*.js                  |    4360 |    4.3 |
@@ -154,4 +154,4 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | genshin-engine             | constants.d.ts           |      36 |    0.0 |
 | genshin-world              | terrainTileWorker.d.ts   |       9 |    0.0 |
 
-**Total:** 149 files, 13381744 bytes, 13068.1 KiB, 12.76 MiB
+**Total:** 149 files, 13403463 bytes, 13089.3 KiB, 12.78 MiB
