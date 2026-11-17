@@ -16,6 +16,15 @@
   stroke-width: 3;
 }
 
+.coin {
+  display: inline-block;
+  width: calc(var(--unit) * 26);
+  height: calc(var(--unit) * 26);
+  flex: none;
+  border-radius: 50%;
+  background: radial-gradient(circle, #f6d77a 0 35%, #c99a2e 36% 100%);
+}
+
 .price-icon {
   width: calc(var(--unit) * 18);
   height: calc(var(--unit) * 18);
