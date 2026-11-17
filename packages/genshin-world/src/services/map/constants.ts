@@ -1,9 +1,10 @@
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
 
 // The landmarks a jump lands at, as the game teleports to its waypoints, statues and unlocked domain entrances and
-// Nowhere else
+// Nowhere else. A Statue of the New Moon is one of the statues, a waypoint in exploring once it is discovered
 export const JUMP_LANDMARK_KINDS: readonly LandmarkKind[] = [
   LandmarkKind.DomainEntrance,
+  LandmarkKind.StatueOfTheNewMoon,
   LandmarkKind.StatueOfTheSeven,
   LandmarkKind.TeleportWaypoint,
 ];

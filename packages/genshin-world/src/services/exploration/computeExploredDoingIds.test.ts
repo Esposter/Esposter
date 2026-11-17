@@ -1,5 +1,6 @@
 import type { ExplorationArea } from "#src/models/exploration/ExplorationArea";
 import type { StatueLandmark } from "#src/models/world/StatueLandmark";
+import type { StatueOfTheNewMoonLandmark } from "#src/models/world/StatueOfTheNewMoonLandmark";
 
 import { ExplorationKind } from "#src/models/exploration/ExplorationKind";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
@@ -39,6 +40,22 @@ describe(computeExploredDoingIds, () => {
     expect.hasAssertions();
 
     expect(computeExploredDoingIds(area, [statue], new Set())).toStrictEqual(new Set([WAYPOINT_ID]));
+  });
+
+  test("a discovered Statue of the New Moon is the area's waypoint too", () => {
+    expect.hasAssertions();
+
+    const newMoonStatue: StatueOfTheNewMoonLandmark = {
+      areaId: AREA_ID,
+      arrival: { heightOffset: 0, position: { x: 0, z: 0 }, rotation: 0 },
+      heightOffset: 0,
+      id: "",
+      kind: LandmarkKind.StatueOfTheNewMoon,
+      position: { x: 0, z: 0 },
+      rotation: 0,
+    };
+
+    expect(computeExploredDoingIds(area, [newMoonStatue], new Set())).toStrictEqual(new Set([WAYPOINT_ID]));
   });
 
   test("a doing repeated adds its weight only once", () => {

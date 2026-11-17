@@ -4,6 +4,7 @@ export const LandmarkKind = {
   Building: "Building",
   DomainEntrance: "DomainEntrance",
   Rock: "Rock",
+  StatueOfTheNewMoon: "StatueOfTheNewMoon",
   StatueOfTheSeven: "StatueOfTheSeven",
   TeleportWaypoint: "TeleportWaypoint",
   Tree: "Tree",

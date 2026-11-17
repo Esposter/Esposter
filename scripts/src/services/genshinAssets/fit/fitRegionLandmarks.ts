@@ -40,7 +40,9 @@ export const fitRegionLandmarks = async (
     if (!place) throw new InvalidOperationError(Operation.Read, component, `places ${landmark.id}'s prefab nowhere`);
     const { position, rotation } = toRegionPlace(place, origin);
     const heightOffset = toHeightOffset(place.position[1], originY, position, getWorldHeight);
-    if (landmark.kind !== LandmarkKind.StatueOfTheSeven) return { ...landmark, heightOffset, position, rotation };
+    const isStatue =
+      landmark.kind === LandmarkKind.StatueOfTheSeven || landmark.kind === LandmarkKind.StatueOfTheNewMoon;
+    if (!isStatue) return { ...landmark, heightOffset, position, rotation };
     const scenePointId = DerivedAssetComponentMap[component].world?.points.find(
       ({ prefab }) => prefab.pathId === regionLandmark.pathId,
     )?.id;

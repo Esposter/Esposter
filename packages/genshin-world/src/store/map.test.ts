@@ -6,6 +6,7 @@ import type { ReputationCity } from "#src/models/reputation/ReputationCity";
 import type { DomainEntranceLandmark } from "#src/models/world/DomainEntranceLandmark";
 import type { RegionData } from "#src/models/world/RegionData";
 import type { StatueLandmark } from "#src/models/world/StatueLandmark";
+import type { StatueOfTheNewMoonLandmark } from "#src/models/world/StatueOfTheNewMoonLandmark";
 import type { WaypointLandmark } from "#src/models/world/WaypointLandmark";
 import type { PlacedDoing } from "#src/services/exploration/placeExplorationDoings";
 
@@ -478,6 +479,28 @@ describe(useWorldMapStore, () => {
     await waitForReads();
 
     expect(unlockedLandmarks.value).toStrictEqual([waypoint]);
+  });
+
+  test("a discovered Statue of the New Moon is a waypoint", async () => {
+    expect.hasAssertions();
+
+    // A Statue of the New Moon stands where other regions have a Statue of The Seven, and jumps to its own arrival
+    const newMoonStatue: StatueOfTheNewMoonLandmark = {
+      areaId: AREA_ID,
+      arrival: { heightOffset: 0, position: { x: 700, z: 0 }, rotation: 0 },
+      heightOffset: 0,
+      id: "first-new-moon-statue",
+      kind: LandmarkKind.StatueOfTheNewMoon,
+      position: { x: 700, z: 0 },
+      rotation: 0,
+    };
+    vi.mocked(readRegionData).mockResolvedValue({ ...region, landmarks: [newMoonStatue] });
+    const { activateLandmark, unlockedLandmarks } = createWorldMap();
+    await waitForReads();
+
+    activateLandmark(newMoonStatue.id);
+
+    expect(unlockedLandmarks.value).toStrictEqual([newMoonStatue]);
   });
 
   test("a hidden waypoint is not offered before its step", async () => {
