@@ -65,7 +65,7 @@ The kind's document type is the union of the two node types the registry holds, 
 | `apps/web/app/services/pageBuilder/email/canvasDrawing/EmailCanvasDrawingMap.ts` | the drawing map, keyed by email node type, naming the drawing each type is drawn with                                  |
 | `apps/web/app/components/PageBuilder/Email/StylePanel.vue`                       | the style panel: the node's sectors, each a collapsible over its fields, and the image's upload and picker in Other    |
 | `apps/web/app/components/PageBuilder/Email/StyleField.vue`                       | one style field: the control its attribute's kind draws, and its reset                                                 |
-| `apps/web/app/services/pageBuilder/email/attributeSector.ts`                     | the sector each attribute is drawn under, Other for one no sector names                                                |
+| `apps/web/app/services/pageBuilder/email/getAttributeSectorTitle.ts`             | the sector each attribute is drawn under, Other for one no sector names                                                |
 | `apps/web/app/services/pageBuilder/email/getEmailStyleSections.ts`               | the sections a node's fields fall under, in the webpage's sector order with Other last, and only those with a field    |
 | `apps/web/app/models/pageBuilder/EmailStyleSection.ts`                           | a section of a node's style fields, its title and its fields                                                           |
 | `apps/web/app/composables/pageBuilder/useEmailStyle.ts`                          | the selected node's style sections and the edit that sets or clears one                                                |
