@@ -15,7 +15,6 @@
 - [ ] 3.1 Key a screen's layout by language only where its recording differs, and use the English layout everywhere else. Verify: tests named after the scenarios "A language without a differing recording uses the English layout" and "A language whose recording differs uses its own layout", written first and seen failing.
   - Waits on: the Korean PC launch recording, as 2.1; the Japanese layout waits on the lead's call on `session-2.mp4`.
 - [ ] 3.2 Add a visual suite image only for each language whose screen differs. Verify: tests named after the scenario "The visual suite gains an image for a differing language" and "The visual suite gains no image for a language that matches English", written first and seen failing.
-  - Waits on: 3.1.
 
 ## 4. Localized references
 
