@@ -5,6 +5,23 @@ import type { Page } from "playwright";
 
 import { decodeTarget } from "#src/services/genshinParity/shared/decodeTarget";
 
+declare global {
+  interface Window {
+    renderWitnessTargets: (
+      targetNames: readonly string[],
+      isScene: boolean,
+      lightDirection?: Readonly<Vector>,
+    ) => Promise<{
+      families: string[];
+      height: number;
+      parts: WitnessGbuffer["parts"];
+      positionLift: number;
+      targets: Partial<Record<WitnessTargetName, string>>;
+      width: number;
+    }>;
+  }
+}
+
 // One call of the witness page's `renderWitnessTargets`, drawing the names given and reading them back as floats: each
 // Handed over as base64 and decoded here, along with the parts and the view's size the page draws them at
 export const readWitnessTargetsInCall = async (
@@ -18,21 +35,7 @@ export const readWitnessTargetsInCall = async (
   }
 > => {
   const { families, height, parts, positionLift, targets, width } = await page.evaluate(
-    ([targetNames, isSceneDrawn, direction]) =>
-      (
-        Reflect.get(window, "renderWitnessTargets") as (
-          targetNames: readonly string[],
-          isScene: boolean,
-          lightDirection?: Readonly<Vector>,
-        ) => Promise<{
-          families: string[];
-          height: number;
-          parts: WitnessGbuffer["parts"];
-          positionLift: number;
-          targets: Partial<Record<WitnessTargetName, string>>;
-          width: number;
-        }>
-      )(targetNames, isSceneDrawn, direction),
+    ([targetNames, isSceneDrawn, direction]) => window.renderWitnessTargets(targetNames, isSceneDrawn, direction),
     [[...names], isScene, lightDirection] as const,
   );
   return {

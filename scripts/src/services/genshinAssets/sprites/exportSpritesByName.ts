@@ -1,5 +1,6 @@
 /* oxlint-disable no-await-in-loop -- One device: AnimeStudio runs one block at a time in the order the index lists them, and each block's dumps and atlases sit in folders the blocks share until they are cut; Bounded concurrency: one atlas at a time, each decoded whole and cut into all its sprites before the next */
 import type { IndexedAsset } from "#src/models/recreation/animeStudio/IndexedAsset";
+import type { Promisable } from "type-fest";
 
 import { AnimeStudioExportType } from "#src/models/genshinAssets/shared/AnimeStudioExportType";
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
@@ -47,7 +48,7 @@ export const describeSpriteAssets = async (names: readonly string[], block?: str
 const exportBlocksOf = async (
   assets: readonly IndexedAsset[],
   type: AssetType,
-  exportBlock: (block: string, blockAssets: IndexedAsset[]) => Promise<void> | void,
+  exportBlock: (block: string, blockAssets: IndexedAsset[]) => Promisable<void>,
 ): Promise<void> => {
   for (const [block, blockAssets] of Map.groupBy(
     assets.filter((asset) => asset.type === type),

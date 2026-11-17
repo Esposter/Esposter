@@ -1,4 +1,5 @@
 import type { ProvenanceOptions } from "#src/models/provenance/ProvenanceOptions";
+import type { Promisable } from "type-fest";
 
 import { buildProvenance } from "#src/services/provenance/buildProvenance";
 import { getSidecarPath } from "#src/services/provenance/getSidecarPath";
@@ -11,7 +12,7 @@ import { writeJsonFile } from "#src/services/shared/writeJsonFile";
 export const writeStampedFiles = async (
   files: readonly string[],
   options: ProvenanceOptions,
-  write: () => Promise<void> | void,
+  write: () => Promisable<void>,
 ): Promise<void> => {
   await removeFileProvenance(files);
   await write();

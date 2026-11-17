@@ -13,6 +13,15 @@ import { WITNESS_LAYOUT_FILE_NAME } from "genshin-world/sceneExport";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
+declare global {
+  interface Window {
+    claimWitnessRenderers: (
+      placements: Pick<ScenePlacement, "materials" | "mesh">[],
+      witnessComponent: string,
+    ) => WitnessClaim[];
+  }
+}
+
 // The inventory pass: every renderer of the component's exports claimed by a part of the scene, drawn or named as not
 // Drawn yet, as its screen's fixture claims them on the parity page. The page is handed the placements' names and loads
 // None of the exports: a capital's run to over a gigabyte of meshes and textures, which this process serves the page
@@ -32,13 +41,7 @@ export const measureInventory = async (component: DerivedAssetComponent): Promis
   return withFinalizerAsync(
     async () => {
       const claims = await page.evaluate(
-        ([renderers, witnessComponent]) =>
-          (
-            Reflect.get(window, "claimWitnessRenderers") as (
-              placements: Pick<ScenePlacement, "materials" | "mesh">[],
-              witnessComponent: string,
-            ) => WitnessClaim[]
-          )(renderers, witnessComponent),
+        ([renderers, witnessComponent]) => window.claimWitnessRenderers(renderers, witnessComponent),
         [placements.map(({ materials, mesh }) => ({ materials, mesh })), component] as const,
       );
       const unclaimed = claims.filter(({ claim }) => !claim);

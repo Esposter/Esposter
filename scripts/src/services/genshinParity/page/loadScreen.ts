@@ -6,6 +6,12 @@ import { crossScreen } from "#src/services/genshinParity/page/crossScreen";
 import { openParityPage } from "#src/services/genshinParity/shared/openParityPage";
 import { withFinalizerAsync } from "@esposter/shared";
 
+declare global {
+  interface Window {
+    loadAtReady: LoadReading;
+  }
+}
+
 // A screen's load on the parity page, opened cold and read the moment it signals ready: the milliseconds from navigation
 // Start to that moment, then the page's load bench, which reads the load steps' measures, the requests and the scene.
 // Given a crossing, the screen is then moved and its crossing read once settled
@@ -14,7 +20,7 @@ export const loadScreen = async (options: ParityPageOptions, crossing?: ScreenCr
   return withFinalizerAsync(
     async () => {
       // The page takes both readings as it signals ready, so a fetch it issues after the signal is not in them
-      const { bench, readyMs } = await page.evaluate(() => Reflect.get(window, "loadAtReady") as LoadReading);
+      const { bench, readyMs } = await page.evaluate(() => window.loadAtReady);
       if (!crossing) return { bench, readyMs };
       return { bench, crossing: await crossScreen(page, crossing), readyMs };
     },

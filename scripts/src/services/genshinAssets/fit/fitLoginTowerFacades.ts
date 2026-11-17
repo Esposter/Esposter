@@ -39,6 +39,7 @@ import { readAssetNames } from "#src/services/genshinAssets/shared/readAssetName
 import { readObjMesh } from "#src/services/genshinAssets/shared/readObjMesh";
 import { LUMINANCE } from "#src/services/genshinParity/shared/constants";
 import { computeUpperMedian } from "#src/services/recreation/statistics/computeUpperMedian";
+import { mapVector } from "#src/services/shared/mapVector";
 import { toLinear } from "#src/services/shared/toLinear";
 import { settleAll } from "@esposter/shared";
 import { join } from "node:path";
@@ -133,9 +134,7 @@ export const fitLoginTowerFacades = async (
       const textures = materialTextures[Number(/_(?<index>\d+)$/u.exec(groups[tag] ?? "")?.groups?.index ?? -1)];
       const uv: [number, number] = [values[cell * 2] ?? 0, values[cell * 2 + 1] ?? 0];
       const diffuse = textures?.diffuse;
-      colors.push(
-        diffuse ? ([0, 1, 2].map((channel) => toLinear(getTexel(diffuse, uv, channel))) as Vector) : [0, 0, 0],
-      );
+      colors.push(diffuse ? mapVector((channel) => toLinear(getTexel(diffuse, uv, channel))) : [0, 0, 0]);
       metals.push(textures?.mask ? getTexel(textures.mask, uv, 1) : 0);
     }
     const toRow = (cell: number): number => Math.floor(cell / width);

@@ -1,4 +1,4 @@
-import type { ESTree, Rule } from "@oxlint/plugins";
+import type { Definition, ESTree, Rule } from "@oxlint/plugins";
 
 import { ASYNC_SELF_CALL_MESSAGE } from "#src/services/oxlint/sequentialLoops/constants";
 import { defineRule } from "@oxlint/plugins";
@@ -7,11 +7,13 @@ type FunctionNode = ESTree.ArrowFunctionExpression | ESTree.Function;
 
 // A call resolves to the function's own binding, its declared name or the variable an anonymous one is assigned to. A
 // Parameter or a local that shares the name resolves to its own binding instead, so it is a different function
-const checkIsOwnBinding = (definitions: { node: unknown; type: string }[], node: FunctionNode): boolean =>
+const checkIsOwnBinding = (definitions: Definition[], node: FunctionNode): boolean =>
   definitions.some((definition) =>
     definition.type === "FunctionName"
       ? definition.node === node
-      : definition.type === "Variable" && (definition.node as ESTree.VariableDeclarator).init === node,
+      : definition.type === "Variable" &&
+        definition.node.type === "VariableDeclarator" &&
+        definition.node.init === node,
   );
 
 // Reports a call to an async function from its own body. A call from a callback nested inside it — a `map` over a

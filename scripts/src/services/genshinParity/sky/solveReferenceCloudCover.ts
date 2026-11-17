@@ -15,6 +15,12 @@ import { toShare } from "#src/services/genshinParity/sky/toShare";
 import { minimizeNelderMead } from "#src/services/recreation/solve/minimizeNelderMead";
 import { withFinalizerAsync } from "@esposter/shared";
 
+declare global {
+  interface Window {
+    setSceneCloudHeights: SetCloudHeights;
+  }
+}
+
 // Each share starts at three in four, the simplex's first step in its logit as wide as from there to even odds and
 // Past: the cover steps by whole clouds, so a search with no gradient finds its way where a descent's Jacobian stalls
 const START_LOGIT = Math.log(3);
@@ -70,7 +76,7 @@ export const solveReferenceCloudCover = async (
         const bandNames = await readPageFunction<ReturnType<SetCloudCover>>(page, "setSceneCloudCover");
         await page.evaluate(
           (clearCovers) => {
-            (Reflect.get(window, "setSceneCloudCover") as SetCloudCover)(clearCovers);
+            window.setSceneCloudCover(clearCovers);
           },
           Object.fromEntries(bandNames.map((band) => [band, 0])),
         );
@@ -81,8 +87,8 @@ export const solveReferenceCloudCover = async (
           readOurs: async (covers, heights) => {
             await page.evaluate(
               ([pageCovers, pageHeights]) => {
-                (Reflect.get(window, "setSceneCloudCover") as SetCloudCover)(pageCovers);
-                (Reflect.get(window, "setSceneCloudHeights") as SetCloudHeights)(pageHeights);
+                window.setSceneCloudCover(pageCovers);
+                window.setSceneCloudHeights(pageHeights);
               },
               [covers, heights] as const,
             );

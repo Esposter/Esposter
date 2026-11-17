@@ -1,12 +1,5 @@
 import { z } from "zod";
 
-// The platform, release and build the command ran on
-export interface OperatingSystem {
-  platform: string;
-  release: string;
-  version: string;
-}
-
 // The repository commit a command's code was at, whether its producer's paths held uncommitted changes then, and those paths
 export interface ProducerVersion {
   commit: string;
@@ -32,8 +25,15 @@ export interface ProvenanceSource {
   sha256?: string | undefined;
 }
 
+// The platform, release and build the command ran on
+interface OperatingSystem {
+  platform: string;
+  release: string;
+  version: string;
+}
+
 // A pinned tool a command ran, named and identified by the SHA-256 of its binary
-export interface ToolDigest {
+interface ToolDigest {
   name: string;
   sha256: string;
 }

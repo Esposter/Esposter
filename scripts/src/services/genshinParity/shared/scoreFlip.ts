@@ -16,6 +16,7 @@ import { toHuntLab } from "#src/services/genshinParity/shared/toHuntLab";
 import { xyzToLinear } from "#src/services/genshinParity/shared/xyzToLinear";
 import { xyzToYcxcz } from "#src/services/genshinParity/shared/xyzToYcxcz";
 import { ycxczToXyz } from "#src/services/genshinParity/shared/ycxczToXyz";
+import { mapVector } from "#src/services/shared/mapVector";
 import { toLinear } from "#src/services/shared/toLinear";
 import { toXyz } from "#src/services/shared/toXyz";
 
@@ -38,9 +39,7 @@ export const scoreFlip = (
   const toYcxcz = (image: Float32Array): Float32Array => {
     const converted = new Float32Array(pixelCount * 3);
     for (let pixel = 0; pixel < pixelCount; pixel++) {
-      const linear: Vector = [0, 1, 2].map((channel) =>
-        toLinear(clamp(image[pixel * 3 + channel] ?? 0, 0, 1)),
-      ) as Vector;
+      const linear: Vector = mapVector((channel) => toLinear(clamp(image[pixel * 3 + channel] ?? 0, 0, 1)));
       converted.set(xyzToYcxcz(toXyz(linear)), pixel * 3);
     }
     return converted;
@@ -87,8 +86,8 @@ export const scoreFlip = (
       sumCz1 += w1 * (alongX[source + 2] ?? 0);
       sumCz2 += w2 * (alongX[source + 3] ?? 0);
     }
-    const linear = xyzToLinear(ycxczToXyz([sumY, sumCx, sumCz1 + sumCz2])).map((value) => clamp(value, 0, 1)) as Vector;
-    return toHuntLab(linear);
+    const linearValues = xyzToLinear(ycxczToXyz([sumY, sumCx, sumCz1 + sumCz2]));
+    return toHuntLab(mapVector((channel) => clamp(linearValues[channel], 0, 1)));
   };
   const colorDifferences = new Float32Array(pixelCount);
   const pcMax = PC * MAX_DISTANCE;

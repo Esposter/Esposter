@@ -6,6 +6,7 @@ import { clusterColours } from "#src/services/genshinAssets/fit/clusterColours";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { traceCellLoops } from "#src/services/genshinAssets/fit/traceCellLoops";
 import { GILDING_RED_BLUE_RATIO } from "#src/services/genshinAssets/shared/constants";
+import { mapVector } from "#src/services/shared/mapVector";
 import { toLab } from "#src/services/shared/toLab";
 import { toXyz } from "#src/services/shared/toXyz";
 
@@ -28,13 +29,13 @@ export const fitPlanTones = (
 ): PlanTones => {
   const { width } = grid;
   const computeShade = (cells: readonly number[]): Vector =>
-    ([0, 1, 2] as const).map((channel) =>
+    mapVector((channel) =>
       roundFitted(
         cells.reduce((sum, cell) => sum + (colors[cell]?.[channel] ?? 0), 0) /
           Math.max(cells.length, 1) /
           (stone[channel] || 1),
       ),
-    ) as Vector;
+    );
   const drawn = Array.from({ length: colors.length }, (_value, cell) => cell).filter((cell) => (tags[cell] ?? -1) >= 0);
   const checkIsGilded = (cell: number): boolean => {
     const [red = 0, , blue = 0] = colors[cell] ?? [];

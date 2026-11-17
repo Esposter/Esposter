@@ -1,9 +1,9 @@
 import type { FamilyEnvelope } from "#src/models/genshinParity/passes/FamilyEnvelope";
-import type { Vector } from "#src/models/shared/Vector";
 
 import { closeFamilyMask } from "#src/services/genshinParity/passes/closeFamilyMask";
 import { readFamilyMask } from "#src/services/genshinParity/passes/readFamilyMask";
 import { computeBoxSums } from "#src/services/recreation/image/computeBoxSums";
+import { mapVector } from "#src/services/shared/mapVector";
 
 export const computeFamilyEnvelope = (
   targets: { depth: Float32Array; normal: Float32Array; part: Float32Array },
@@ -34,7 +34,7 @@ export const computeFamilyEnvelope = (
     const count = counts[pixel] ?? 0;
     if (count === 0) continue;
     depth[pixel] = (depthSums[pixel] ?? 0) / count;
-    const [x, y, z] = normalSums.map((sums) => sums[pixel] ?? 0) as Vector;
+    const [x, y, z] = mapVector((channel) => normalSums[channel]?.[pixel] ?? 0);
     const length = Math.hypot(x, y, z) || 1;
     normal.set([x / length, y / length, z / length], pixel * 3);
   }

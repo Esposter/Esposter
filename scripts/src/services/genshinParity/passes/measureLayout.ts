@@ -20,6 +20,12 @@ import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessP
 import { withFinalizerAsync } from "@esposter/shared";
 import sharp from "sharp";
 
+declare global {
+  interface Window {
+    getSceneCamera: () => NonNullable<WitnessView["camera"]>;
+  }
+}
+
 // The layout pass: each ratio its references show between parts that meet against the fitted data's, each fitted
 // Family's furthest part from the exports' objects it stands for, and how far across and up the scene stands each
 // Family of the witness off its laid-out place past what the game's own data explains (along the glide is its motion);
@@ -42,9 +48,7 @@ export const measureLayout = async (component: DerivedAssetComponent): Promise<P
     const referenceFamilies = await withFinalizerAsync(
       async () => {
         const [camera, offsets, { height, width }] = await Promise.all([
-          referencePage.evaluate(() =>
-            (Reflect.get(window, "getSceneCamera") as () => NonNullable<WitnessView["camera"]>)(),
-          ),
+          referencePage.evaluate(() => window.getSceneCamera()),
           readFamilyOffsets(referencePage),
           sharp(await getReferencePath(referenceId)).metadata(),
         ]);

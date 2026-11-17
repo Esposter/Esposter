@@ -24,6 +24,14 @@ import { LoginStage } from "genshin-world";
 import { join } from "node:path";
 import { Box3, Matrix4, Vector3 } from "three";
 
+declare global {
+  interface Window {
+    frameTimes: number[];
+    getScenePieces: (family: string) => number[][];
+    recordFrame: FrameRequestCallback;
+  }
+}
+
 // The family whose pieces a clip moves, and the stages the scene stands still in and plays it at
 const DOOR_FAMILY = "Door";
 
@@ -59,15 +67,14 @@ export const measureMotion = async (component: DerivedAssetComponent): Promise<P
       // A function named in the page's code would be wrapped in a helper the page lacks
       await page.evaluate(() => {
         const frameTimes: number[] = [];
-        Reflect.set(window, "frameTimes", frameTimes);
-        Reflect.set(window, "recordFrame", (time: number) => {
+        window.frameTimes = frameTimes;
+        window.recordFrame = (time: number) => {
           frameTimes.push(time);
-          requestAnimationFrame(Reflect.get(window, "recordFrame") as FrameRequestCallback);
-        });
-        requestAnimationFrame(Reflect.get(window, "recordFrame") as FrameRequestCallback);
+          requestAnimationFrame(window.recordFrame);
+        };
+        requestAnimationFrame(window.recordFrame);
       });
-      const readFrameTimes = (): Promise<number[]> =>
-        page.evaluate(() => [...(Reflect.get(window, "frameTimes") as number[])]);
+      const readFrameTimes = (): Promise<number[]> => page.evaluate(() => [...window.frameTimes]);
       // The clock moved a millisecond at a time until the page draws one more frame, so no frame passes unread, and the
       // Pieces as that frame left them with its time
       const drawFrame = async (): Promise<{ pieces: number[][]; time: number }> => {
@@ -77,10 +84,7 @@ export const measureMotion = async (component: DerivedAssetComponent): Promise<P
           await page.clock.runFor(1);
           frameTimes = await readFrameTimes();
         }
-        const pieces = await page.evaluate(
-          (family) => (Reflect.get(window, "getScenePieces") as (family: string) => number[][])(family),
-          DOOR_FAMILY,
-        );
+        const pieces = await page.evaluate((family) => window.getScenePieces(family), DOOR_FAMILY);
         return { pieces, time: frameTimes.at(-1) ?? 0 };
       };
       // Until the lift begins every piece stands where its first sample has it, frame after frame, so the lift's moment
@@ -88,7 +92,7 @@ export const measureMotion = async (component: DerivedAssetComponent): Promise<P
       const { pieces: startPieces, time: startTime } = await drawFrame();
       const startElements = JSON.stringify(startPieces);
       await page.evaluate((stage) => {
-        (Reflect.get(window, "setScreenProps") as (props: Record<string, unknown>) => void)({ stage });
+        window.setScreenProps({ stage });
       }, LoginStage.Door);
       const liftFrameCount = Math.ceil((duration * 1000) / PARITY_FRAME_MS);
       const read: { pieces: number[][]; riseMs: number }[] = [];

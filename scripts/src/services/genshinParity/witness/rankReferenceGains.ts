@@ -18,6 +18,13 @@ import { toLinear } from "#src/services/shared/toLinear";
 import { getOrCreate, withFinalizerAsync } from "@esposter/shared";
 import { Matrix4 } from "three";
 
+declare global {
+  interface Window {
+    getSceneSky: () => { matrixWorld: number[]; projectionMatrixInverse: number[] };
+    setSceneLights: SetLights;
+  }
+}
+
 // The depths a part's pixels are split by, near, middle and far, where the light, then the haze, decides their colour
 const DEPTH_BANDS: [string, number][] = [
   ["near", 20],
@@ -54,14 +61,9 @@ export const rankReferenceGains = async (
     async () => {
       const families = await readWitnessFamilies(page);
       await setPageWitnessView(page, { families });
-      const { direction } = await page.evaluate(
-        () => (Reflect.get(window, "setSceneLights") as SetLights)({}),
-        undefined,
-      );
+      const { direction } = await page.evaluate(() => window.setSceneLights({}), undefined);
       const { depth, families: layerFamilies, normal, part, width } = await readWitnessGbuffer(page);
-      const sky = await page.evaluate(() =>
-        (Reflect.get(window, "getSceneSky") as () => { matrixWorld: number[]; projectionMatrixInverse: number[] })(),
-      );
+      const sky = await page.evaluate(() => window.getSceneSky());
       const matrices = {
         matrixWorld: new Matrix4().fromArray(sky.matrixWorld),
         projectionMatrixInverse: new Matrix4().fromArray(sky.projectionMatrixInverse),

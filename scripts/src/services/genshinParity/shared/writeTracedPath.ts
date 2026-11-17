@@ -9,7 +9,7 @@ const PATH_DECIMALS = 2;
 
 // A traced path, whose numbers are in the enlarged pixels its trace was made at, divided by that scale into the
 // Reference's own pixels, each to a hundredth of one
-export const toReferencePath = (path: string, scale: number): string =>
+const toReferencePath = (path: string, scale: number): string =>
   path.replaceAll(NUMBER_REGEX, (value) => String(Number((Number(value) / scale).toFixed(PATH_DECIMALS))));
 
 // Writes a traced path into the keyed record its map source declares, as the entry under `key`, divided by its scale into

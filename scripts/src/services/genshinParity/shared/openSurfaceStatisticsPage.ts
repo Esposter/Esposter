@@ -4,6 +4,12 @@ import { resolveParityPageRoot } from "#src/services/genshinParity/shared/resolv
 import { getResultAsync } from "@esposter/shared";
 import { chromium } from "playwright";
 
+declare global {
+  interface Window {
+    computeSurfaceStatistics: (input: unknown) => Promise<number[]>;
+  }
+}
+
 // The parity page's root, where the GPU reductions a surface's structure is scored by are served. The caller closes the
 // Page with `close`, which closes the browser it launched
 export const openSurfaceStatisticsPage = async (): Promise<SurfaceStatisticsPage> => {
@@ -19,16 +25,13 @@ export const openSurfaceStatisticsPage = async (): Promise<SurfaceStatisticsPage
     return {
       close,
       computeStatistics: (values, mask, width, height, sigmas) =>
-        page.evaluate(
-          (input) => (Reflect.get(window, "computeSurfaceStatistics") as (input: unknown) => Promise<number[]>)(input),
-          {
-            height,
-            mask: Buffer.from(mask.buffer, mask.byteOffset, mask.byteLength).toString("base64"),
-            sigmas: [...sigmas],
-            values: Buffer.from(values.buffer, values.byteOffset, values.byteLength).toString("base64"),
-            width,
-          },
-        ),
+        page.evaluate((input) => window.computeSurfaceStatistics(input), {
+          height,
+          mask: Buffer.from(mask.buffer, mask.byteOffset, mask.byteLength).toString("base64"),
+          sigmas: [...sigmas],
+          values: Buffer.from(values.buffer, values.byteOffset, values.byteLength).toString("base64"),
+          width,
+        }),
     };
   }).match(
     (value) => value,

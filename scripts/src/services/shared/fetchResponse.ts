@@ -5,7 +5,7 @@ interface FetchResponseOptions {
   body?: string | undefined;
   headers?: Record<string, string> | undefined;
   method?: string;
-  timeoutMs?: number | undefined;
+  timeoutMs?: number;
 }
 
 // Every request a script makes, bounded in one place: a fetch with no timeout hangs a release run on a registry that

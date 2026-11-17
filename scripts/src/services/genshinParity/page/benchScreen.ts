@@ -5,6 +5,12 @@ import { getQuantile } from "#src/services/genshinParity/page/getQuantile";
 import { openParityPage } from "#src/services/genshinParity/shared/openParityPage";
 import { withFinalizerAsync } from "@esposter/shared";
 
+declare global {
+  interface Window {
+    benchScene: (frameCount: number) => Promise<SceneBench>;
+  }
+}
+
 // A scene's cost on the parity page, warmed until its pipelines have compiled: its frame time's median, its slow
 // Tenth's and its slowest, against the main thread's busy time a frame, which tells a scene held up on the CPU from one
 // Held up on the GPU; then the renderer's passes, draw calls and triangles a frame, and the pipelines, geometries and
@@ -25,10 +31,7 @@ export const benchScreen = async ({
         return metrics.find(({ name }) => name === "TaskDuration")?.value ?? 0;
       };
       const startTaskSeconds = await readTaskSeconds();
-      const bench = await page.evaluate(
-        (count) => (Reflect.get(window, "benchScene") as (frameCount: number) => Promise<SceneBench>)(count),
-        frameCount,
-      );
+      const bench = await page.evaluate((count) => window.benchScene(count), frameCount);
       const taskMs = ((await readTaskSeconds()) - startTaskSeconds) * 1000;
       const sorted = bench.intervals.toSorted((firstInterval, secondInterval) => firstInterval - secondInterval);
       const median = getQuantile(sorted, 0.5);

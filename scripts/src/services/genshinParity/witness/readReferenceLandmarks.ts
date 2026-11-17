@@ -10,6 +10,12 @@ import { snapToCorner } from "#src/services/genshinParity/witness/snapToCorner";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import sharp from "sharp";
 
+declare global {
+  interface Window {
+    computeWitnessPoints: (landmarks: unknown) => Vector[];
+  }
+}
+
 // How far, in the reference's pixels, a landmark read by eye may move to the corner it snaps to
 const SNAP_RADIUS = 6;
 // A reference's landmarks, all of them or the ones named, matched to the witness's own parts on its open page: each
@@ -45,10 +51,7 @@ export const readReferenceLandmarks = async (
     .toBuffer({ resolveWithObject: true });
   const grey = Float32Array.from(data);
   const { height, width } = info;
-  const points = await page.evaluate(
-    (landmarks) => (Reflect.get(window, "computeWitnessPoints") as (landmarks: unknown) => Vector[])(landmarks),
-    definitions,
-  );
+  const points = await page.evaluate((landmarks) => window.computeWitnessPoints(landmarks), definitions);
   const correspondences = landmarkEntries.map(([, pixel], index) => {
     const definition = definitions[index];
     return {

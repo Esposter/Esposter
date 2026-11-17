@@ -9,10 +9,10 @@ export interface GcsimHitSource {
   areaHitbox?: GcsimHitbox | undefined;
   attack?: GcsimAttack | undefined;
   // The constellation a named hit's variant is read at, which its multiplier names
-  constellation?: number | undefined;
+  constellation?: number;
   hitmark?: undefined | { file: string; line: number; value: number };
   // The multiplier key the talent leaf writes, `multiplierFactor` for a stance's skill table multiplied into its normal attack
-  multiplierKey?: GcsimMultiplierKey | undefined;
+  multiplierKey?: GcsimMultiplierKey;
   // The poise the attack's poise variable gives this hit, by its place in its string
   poiseDamage?: undefined | { line: number; value: number };
   talentLeaf?: GcsimTalentLeaf | undefined;

@@ -1,5 +1,7 @@
 import type { Vector } from "#src/models/shared/Vector";
 
+import { computeCellMean } from "#src/services/genshinAssets/fit/computeCellMean";
+
 // A plan's colours averaged over each block of so many cells a side and over every repeat of its rows, so a surface
 // Painted in a pattern that repeats along the plan is read once, past the speckle each repeat paints differently: each
 // Folded cell the mean of the drawn cells under it that carry the tag most of them do, and tagged -1 where none is drawn
@@ -30,9 +32,7 @@ export const foldPlanRepeats = (
         [...tagCellsMap].toSorted(([, firstCells], [, secondCells]) => secondCells.length - firstCells.length)[0] ?? [];
       const folded = row * foldedWidth + column;
       foldedTags[folded] = tag;
-      foldedColors[folded] = ([0, 1, 2] as const).map(
-        (channel) => cells.reduce((sum, cell) => sum + (colors[cell]?.[channel] ?? 0), 0) / Math.max(cells.length, 1),
-      ) as Vector;
+      foldedColors[folded] = computeCellMean(colors, cells);
     }
   return { colors: foldedColors, height: foldedHeight, tags: foldedTags, width: foldedWidth };
 };

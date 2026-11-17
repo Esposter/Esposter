@@ -461,8 +461,6 @@
 | `scripts/src/services/genshinAssets/fit/fitRigidPieces.ts`                                | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/fitRiverCourses.test.ts`                          | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/fitRiverCourses.ts`                               | 2026-10-29 · Haiku 5.5  |       |
-| `scripts/src/services/genshinAssets/fit/fitSilhouette.test.ts`                            | 2026-10-29 · Haiku 5.5  |       |
-| `scripts/src/services/genshinAssets/fit/fitSilhouette.ts`                                 | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/fitSkyGradient.test.ts`                           | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/fitSkyGradient.ts`                                | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/fitSlopeHeight.ts`                                | 2026-11-01 · Haiku 5.5  |       |

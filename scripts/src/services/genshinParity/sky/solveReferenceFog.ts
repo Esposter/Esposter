@@ -6,7 +6,6 @@ import type { SceneFog } from "genshin-world/parity/models/SceneFog";
 import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import { getToneSlope } from "#src/services/genshinParity/display/getToneSlope";
 import { computePixelPoint } from "#src/services/genshinParity/shared/computePixelPoint";
-import { CHANNELS } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { readPageFunction } from "#src/services/genshinParity/shared/readPageFunction";
 import { readRawRgb } from "#src/services/genshinParity/shared/readRawRgb";
@@ -20,6 +19,7 @@ import { getPixelSceneColor } from "#src/services/genshinParity/sky/getPixelScen
 import { solveFogColors } from "#src/services/genshinParity/sky/solveFogColors";
 import { toDisplayHex } from "#src/services/genshinParity/sky/toDisplayHex";
 import { computeUpperMedian } from "#src/services/recreation/statistics/computeUpperMedian";
+import { mapVector } from "#src/services/shared/mapVector";
 import { getOrCreate } from "@esposter/shared";
 import { Matrix4, Vector3 } from "three";
 
@@ -105,11 +105,11 @@ export const solveReferenceFog = async (
           ? []
           : [
               {
-                lit: CHANNELS.map((channel) => computeUpperMedian(binPoints.map(({ lit }) => lit[channel]))) as Vector,
+                lit: mapVector((channel) => computeUpperMedian(binPoints.map(({ lit }) => lit[channel]))),
                 points: binPoints.map(({ point }) => point),
-                reference: CHANNELS.map((channel) =>
+                reference: mapVector((channel) =>
                   computeUpperMedian(binPoints.map(({ reference: color }) => color[channel])),
-                ) as Vector,
+                ),
                 scatter: scatters.reduce((sum, value) => sum + value, 0) / scatters.length,
               },
             ],
@@ -129,7 +129,7 @@ export const solveReferenceFog = async (
         })),
       );
     const refine = (bins: ReturnType<typeof computeBins>): ReturnType<typeof solveFogColors> & { density: number } => {
-      let [low, high] = DENSITY_RANGE.map((density) => Math.log(density)) as [number, number];
+      let [low, high] = [Math.log(DENSITY_RANGE[0]), Math.log(DENSITY_RANGE[1])];
       for (let step = 0; step < GOLDEN_STEPS; step++) {
         const first = high - GOLDEN_SHARE * (high - low);
         const second = low + GOLDEN_SHARE * (high - low);

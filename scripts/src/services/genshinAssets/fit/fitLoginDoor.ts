@@ -16,6 +16,7 @@ import { toTexel } from "#src/services/genshinAssets/fit/toTexel";
 import { LOGIN_DOOR_MESH } from "#src/services/genshinAssets/shared/constants";
 import { toRightHanded } from "#src/services/genshinAssets/shared/toRightHanded";
 import { BYTE } from "#src/services/shared/constants";
+import { mapVector } from "#src/services/shared/mapVector";
 import { toLinear } from "#src/services/shared/toLinear";
 import { join } from "node:path";
 import sharp from "sharp";
@@ -107,7 +108,7 @@ export const fitLoginDoor = async (
     const colors = Array.from({ length: width * height }, (_value, cell): Vector => {
       const [column, row] = toTexel([values[cell * 2] ?? 0, values[cell * 2 + 1] ?? 0], info);
       const texel = (row * info.width + column) * info.channels;
-      return [0, 1, 2].map((channel) => toLinear((data[texel + channel] ?? 0) / BYTE)) as Vector;
+      return mapVector((channel) => toLinear((data[texel + channel] ?? 0) / BYTE));
     });
     // Three reads a hex as sRGB and holds it linear, as the scene's material reads the stone's
     const stone = new Color(await fitAlbedo([join(textureDirectory, DOOR_TEXTURE)]));

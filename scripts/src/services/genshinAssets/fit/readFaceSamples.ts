@@ -7,6 +7,7 @@ import { computeTriangleArea } from "#src/services/genshinAssets/fit/computeTria
 import { computeUvTexels } from "#src/services/genshinAssets/fit/computeUvTexels";
 import { sampleFaceUvs } from "#src/services/genshinAssets/fit/sampleFaceUvs";
 import { sampleSurfaceTexture } from "#src/services/genshinAssets/fit/sampleSurfaceTexture";
+import { mapVector } from "#src/services/shared/mapVector";
 
 // A face's submesh, named for its index among its renderer's materials
 const SUBMESH_REGEX = /_(?<submesh>\d+)$/u;
@@ -22,20 +23,18 @@ export const readFaceSamples = (
   diffuses: (Texture | undefined)[],
   part: string,
   checkKept: (centroid: Vector) => boolean = () => true,
-): { area: number; diffuse: Texture; samples: SurfaceSample[]; texels: number }[] =>
-  faces.flatMap(([firstIndex, secondIndex, thirdIndex], face) => {
+): { area: number; diffuse: Texture; samples: SurfaceSample[]; texels: number }[] => {
+  // The UV pair a corner names, or the origin where the corner names none
+  const uvAt = (index: number): [number, number] => uvs[index] ?? [0, 0];
+  return faces.flatMap(([firstIndex, secondIndex, thirdIndex], face) => {
     const [first, second, third] = [world[firstIndex], world[secondIndex], world[thirdIndex]];
     const submesh = Number(SUBMESH_REGEX.exec(faceGroups[face] ?? "")?.groups?.submesh ?? 0);
     const diffuse = diffuses[submesh];
     if (!first || !second || !third || !diffuse) return [];
-    const centroid = ([0, 1, 2] as const).map((axis) => (first[axis] + second[axis] + third[axis]) / 3) as Vector;
+    const centroid = mapVector((axis) => (first[axis] + second[axis] + third[axis]) / 3);
     if (!checkKept(centroid)) return [];
-    const [firstUv, secondUv, thirdUv] = (faceUvs[face] ?? [0, 0, 0]).map((index) => uvs[index] ?? [0, 0]) as [
-      [number, number],
-      [number, number],
-      [number, number],
-    ];
-    const uvTriangle = [firstUv, secondUv, thirdUv] as const;
+    const [firstUvIndex, secondUvIndex, thirdUvIndex] = faceUvs[face] ?? [0, 0, 0];
+    const uvTriangle = [uvAt(firstUvIndex), uvAt(secondUvIndex), uvAt(thirdUvIndex)] as const;
     const points = sampleFaceUvs(uvTriangle, diffuse.info);
     const area = computeTriangleArea(first, second, third);
     const samples = points.map((uv) => {
@@ -44,3 +43,4 @@ export const readFaceSamples = (
     });
     return [{ area, diffuse, samples, texels: computeUvTexels(uvTriangle, diffuse.info) }];
   });
+};

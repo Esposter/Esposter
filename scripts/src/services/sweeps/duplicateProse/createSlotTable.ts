@@ -2,7 +2,7 @@
 const KEY_BITS = 53;
 const MIN_TABLE_BITS = 4;
 
-export interface SlotTable {
+interface SlotTable {
   get: (key: number) => number | undefined;
   set: (key: number, slot: number) => void;
 }

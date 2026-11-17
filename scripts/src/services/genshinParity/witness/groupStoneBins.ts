@@ -3,8 +3,8 @@ import type { StoneLightSample } from "#src/models/genshinParity/witness/StoneLi
 import type { Vector } from "#src/models/shared/Vector";
 import type { Matrix3 } from "three";
 
-import { CHANNELS } from "#src/services/genshinParity/shared/constants";
 import { MIN_BIN_COUNT } from "#src/services/genshinParity/witness/constants";
+import { mapVector } from "#src/services/shared/mapVector";
 import { ID_SEPARATOR, InvalidOperationError, Operation } from "@esposter/shared";
 import { toSceneColor } from "genshin-engine";
 import { Color } from "three";
@@ -19,9 +19,9 @@ export const groupStoneBins = (samples: readonly StoneLightSample[], whiteBalanc
   const bins = [...binSampleMap.values()]
     .filter((binSamples) => binSamples.length >= MIN_BIN_COUNT)
     .map((binSamples) => {
-      const displayColor = CHANNELS.map(
+      const displayColor = mapVector(
         (channel) => binSamples.reduce((sum, { display }) => sum + display[channel], 0) / binSamples.length,
-      ) as Vector;
+      );
       const { b, g, r } = toSceneColor(new Color(...displayColor)).applyMatrix3(inverseWhiteBalance);
       return { displayColor, samples: binSamples, sceneColor: [r, g, b] satisfies Vector };
     });

@@ -15,7 +15,7 @@ export interface KitInput {
   notes: string[];
   overlay: KitOverlay;
   overlayName: string;
-  publishedRecord?: KitRecord | undefined;
+  publishedRecord?: KitRecord;
   sourceCandidateMap: Map<string, KitCandidate[]>;
   tables: KitTables;
 }

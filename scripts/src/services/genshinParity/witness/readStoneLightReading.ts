@@ -1,5 +1,4 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
-import type { SetLights } from "#src/models/genshinParity/witness/SetLights";
 import type { StoneLightPixel } from "#src/models/genshinParity/witness/StoneLightPixel";
 import type { StoneLightReading } from "#src/models/genshinParity/witness/StoneLightReading";
 import type { SceneFog } from "genshin-world/parity/models/SceneFog";
@@ -68,7 +67,7 @@ export const readStoneLightReading = async (
     );
     const fog = await readPageFunction<SceneFog>(page, "getSceneFog");
     const whiteBalance = new Matrix3().fromArray(await readPageFunction<number[]>(page, "getSceneWhiteBalance"));
-    const { direction } = await page.evaluate(() => (Reflect.get(window, "setSceneLights") as SetLights)({}));
+    const { direction } = await page.evaluate(() => window.setSceneLights({}));
     const source = isSelf
       ? await shootWitnessFamilies(page, await readWitnessFamilies(page), { height, width })
       : image;

@@ -112,18 +112,20 @@ export const fitSurfaceColours = async <Family extends string>(
   };
   return Object.fromEntries(
     await Promise.all(
-      (Object.entries(meshRegexMap) as [Family, RegExp][]).map(async ([family, regex]) => {
-        const reads = await readFamilySurfaces(regex);
-        const samples = reads.flatMap((read) => read.samples);
-        if (!samples.some(({ weight }) => weight > 0))
-          throw new InvalidOperationError(
-            Operation.Read,
-            family,
-            "has no placed mesh or terrain tile whose covered faces can be read",
-          );
-        const familySurface = withDetail(computeSurfaceTones(samples), reads);
-        return [family, { ...familySurface, parts: withPartDetails(computePartSurfaces(samples), reads) }] as const;
-      }),
+      (Object.entries(meshRegexMap) as [Family, RegExp][]).map(
+        async ([family, regex]): Promise<[Family, FittedFamily]> => {
+          const reads = await readFamilySurfaces(regex);
+          const samples = reads.flatMap((read) => read.samples);
+          if (!samples.some(({ weight }) => weight > 0))
+            throw new InvalidOperationError(
+              Operation.Read,
+              family,
+              "has no placed mesh or terrain tile whose covered faces can be read",
+            );
+          const familySurface = withDetail(computeSurfaceTones(samples), reads);
+          return [family, { ...familySurface, parts: withPartDetails(computePartSurfaces(samples), reads) }];
+        },
+      ),
     ),
-  ) as Record<Family, FittedFamily>;
+  );
 };

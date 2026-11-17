@@ -2,6 +2,7 @@ import type { NormalField } from "#src/models/genshinAssets/fit/NormalField";
 import type { Vector } from "#src/models/shared/Vector";
 
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
+import { mapVector } from "#src/services/shared/mapVector";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // A point's normal, sampled where its own cell stands: a cell the points fall in averages their normals, each cell
@@ -12,23 +13,19 @@ export const computeNormalField = (
   cellSize: number,
 ): NormalField => {
   if (samples.length === 0) throw new InvalidOperationError(Operation.Read, "normal field", "has no samples");
-  const origin = [0, 1, 2].map((axis) => Math.min(...samples.map(({ position }) => position[axis] ?? 0))) as Vector;
-  const maximum = [0, 1, 2].map((axis) => Math.max(...samples.map(({ position }) => position[axis] ?? 0))) as Vector;
-  const size = [0, 1, 2].map(
-    (axis) => Math.floor(((maximum[axis] ?? 0) - (origin[axis] ?? 0)) / cellSize) + 1,
-  ) as Vector;
+  const origin = mapVector((axis) => Math.min(...samples.map(({ position }) => position[axis])));
+  const maximum = mapVector((axis) => Math.max(...samples.map(({ position }) => position[axis])));
+  const size = mapVector((axis) => Math.floor((maximum[axis] - origin[axis]) / cellSize) + 1);
   const [sizeX, sizeY, sizeZ] = size;
   const cellIndex = (ix: number, iy: number, iz: number): number => (ix * sizeY + iy) * sizeZ + iz;
   const cellCount = sizeX * sizeY * sizeZ;
   const sums = new Float64Array(cellCount * 3);
   const counts = new Uint32Array(cellCount);
   for (const { normal, position } of samples) {
-    const cell = ([0, 1, 2] as const).map((axis) =>
-      Math.min(size[axis] - 1, Math.floor((position[axis] - origin[axis]) / cellSize)),
-    ) as Vector;
+    const cell = mapVector((axis) => Math.min(size[axis] - 1, Math.floor((position[axis] - origin[axis]) / cellSize)));
     const index = cellIndex(cell[0], cell[1], cell[2]);
     counts[index] = (counts[index] ?? 0) + 1;
-    for (const axis of [0, 1, 2] as const) sums[index * 3 + axis] = (sums[index * 3 + axis] ?? 0) + (normal[axis] ?? 0);
+    for (const axis of [0, 1, 2] as const) sums[index * 3 + axis] = (sums[index * 3 + axis] ?? 0) + normal[axis];
   }
   const normals = new Float64Array(cellCount * 3);
   const visited = new Uint8Array(cellCount);
@@ -36,7 +33,7 @@ export const computeNormalField = (
   for (const index of counts.keys()) {
     const count = counts[index] ?? 0;
     if (count === 0) continue;
-    const [x = 0, y = 0, z = 0] = [0, 1, 2].map((axis) => (sums[index * 3 + axis] ?? 0) / count);
+    const [x, y, z] = mapVector((axis) => (sums[index * 3 + axis] ?? 0) / count);
     const length = Math.hypot(x, y, z) || 1;
     normals.set([x / length, y / length, z / length], index * 3);
     visited[index] = 1;
@@ -70,7 +67,7 @@ export const computeNormalField = (
   return {
     cellSize,
     normals: Array.from(normals, (value) => roundFitted(value)),
-    origin: origin.map((value) => roundFitted(value)) as NormalField["origin"],
+    origin: mapVector((axis) => roundFitted(origin[axis])),
     size,
   };
 };

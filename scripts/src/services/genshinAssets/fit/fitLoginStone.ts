@@ -51,50 +51,52 @@ export const fitLoginStone = async (
     return path && existsSync(path) ? path : undefined;
   };
   const entries = await Promise.all(
-    Object.entries(LoginStoneFamilyMaterialRegexMap).map(async ([family, regex]) => {
-      const familyMaterials = materials.filter(({ name }) => regex.test(name));
-      const diffusePaths = [
-        ...new Set(familyMaterials.flatMap((material) => getTexturePath(material, MAIN_TEXTURE_SLOT) ?? [])),
-      ];
-      const smoothnesses = await Promise.all(
-        familyMaterials.map(async (material) => {
-          const path = getTexturePath(material, MASK_SLOT);
-          if (!path) return [];
-          const { data, info } = await sharp(path)
-            .resize(MASK_SAMPLE_SIZE, MASK_SAMPLE_SIZE, { fit: "fill" })
-            .raw()
-            .toBuffer({ resolveWithObject: true });
-          const scale = material.floats[GLOSS_MAP_SCALE_KEY] ?? 1;
-          return Array.from(
-            { length: info.width * info.height },
-            (_value, texel) => ((data[texel * info.channels] ?? 0) / BYTE) * scale,
-          );
-        }),
-      );
-      const getColors = (key: string): Vector[] =>
-        familyMaterials.flatMap(({ colors }) => {
-          const color = colors[key];
-          return color ? [[color[0], color[1], color[2]] satisfies Vector] : [];
-        });
-      const computeMeanFloat = (key: string): number =>
-        computeMeanValue(familyMaterials.flatMap(({ floats }) => (floats[key] === undefined ? [] : [floats[key]])));
-      // A material whose variant compiles no rim glow draws none, whatever its strength holds
-      const rimStrengths = familyMaterials.map(({ floats, keywords }) =>
-        keywords.includes(RIM_GLOW_KEYWORD) ? (floats[RIM_STRENGTH_KEY] ?? 0) : 0,
-      );
-      return [
-        family,
-        {
-          albedo: await fitAlbedo(diffusePaths),
-          glowRange: computeMeanFloat("_EmissionRange"),
-          rimColor: computeVectorMean(getColors("_RGColor")),
-          rimPower: computeMeanFloat("_RGPower"),
-          rimStrength: roundFitted(computeMeanValue(rimStrengths) * (GLOW_SCALES[family] ?? 1)),
-          smoothness: roundFitted(computeUpperMedian(smoothnesses.flat())),
-          specularColor: computeVectorMean(getColors("_SpecColor")),
-        },
-      ] as const;
-    }),
+    Object.entries(LoginStoneFamilyMaterialRegexMap).map(
+      async ([family, regex]): Promise<[keyof typeof LoginStoneFamilyMaterialRegexMap, FittedStone]> => {
+        const familyMaterials = materials.filter(({ name }) => regex.test(name));
+        const diffusePaths = [
+          ...new Set(familyMaterials.flatMap((material) => getTexturePath(material, MAIN_TEXTURE_SLOT) ?? [])),
+        ];
+        const smoothnesses = await Promise.all(
+          familyMaterials.map(async (material) => {
+            const path = getTexturePath(material, MASK_SLOT);
+            if (!path) return [];
+            const { data, info } = await sharp(path)
+              .resize(MASK_SAMPLE_SIZE, MASK_SAMPLE_SIZE, { fit: "fill" })
+              .raw()
+              .toBuffer({ resolveWithObject: true });
+            const scale = material.floats[GLOSS_MAP_SCALE_KEY] ?? 1;
+            return Array.from(
+              { length: info.width * info.height },
+              (_value, texel) => ((data[texel * info.channels] ?? 0) / BYTE) * scale,
+            );
+          }),
+        );
+        const getColors = (key: string): Vector[] =>
+          familyMaterials.flatMap(({ colors }) => {
+            const color = colors[key];
+            return color ? [[color[0], color[1], color[2]] satisfies Vector] : [];
+          });
+        const computeMeanFloat = (key: string): number =>
+          computeMeanValue(familyMaterials.flatMap(({ floats }) => (floats[key] === undefined ? [] : [floats[key]])));
+        // A material whose variant compiles no rim glow draws none, whatever its strength holds
+        const rimStrengths = familyMaterials.map(({ floats, keywords }) =>
+          keywords.includes(RIM_GLOW_KEYWORD) ? (floats[RIM_STRENGTH_KEY] ?? 0) : 0,
+        );
+        return [
+          family,
+          {
+            albedo: await fitAlbedo(diffusePaths),
+            glowRange: computeMeanFloat("_EmissionRange"),
+            rimColor: computeVectorMean(getColors("_RGColor")),
+            rimPower: computeMeanFloat("_RGPower"),
+            rimStrength: roundFitted(computeMeanValue(rimStrengths) * (GLOW_SCALES[family] ?? 1)),
+            smoothness: roundFitted(computeUpperMedian(smoothnesses.flat())),
+            specularColor: computeVectorMean(getColors("_SpecColor")),
+          },
+        ];
+      },
+    ),
   );
-  return Object.fromEntries(entries) as Record<keyof typeof LoginStoneFamilyMaterialRegexMap, FittedStone>;
+  return Object.fromEntries(entries);
 };

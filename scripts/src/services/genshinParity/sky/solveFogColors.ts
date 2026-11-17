@@ -3,6 +3,7 @@ import type { Vector } from "#src/models/shared/Vector";
 import { accumulateNormalEquations } from "#src/services/genshinParity/shared/accumulateNormalEquations";
 import { CHANNELS } from "#src/services/genshinParity/shared/constants";
 import { solveLinearSystem } from "#src/services/recreation/solve/solveLinearSystem";
+import { mapVector } from "#src/services/shared/mapVector";
 
 // The sunward colour is settled only where the points looking toward the sun weigh at least this share of the rest
 const MIN_SCATTER_WEIGHT_SHARE = 0.001;
@@ -45,8 +46,8 @@ export const solveFogColors = (
     const [own = 0, sunward = own] = solveLinearSystem(normal, right) ?? [];
     return { color: own, scatterColor: sunward };
   });
-  const color = CHANNELS.map((channel) => solved[channel]?.color ?? 0) as Vector;
-  const scatterColor = CHANNELS.map((channel) => solved[channel]?.scatterColor ?? 0) as Vector;
+  const color = mapVector((channel) => solved[channel]?.color ?? 0);
+  const scatterColor = mapVector((channel) => solved[channel]?.scatterColor ?? 0);
   let [squared, totalWeight] = [0, 0];
   for (const { lit, opacity, reference, scatter, slope, weight } of samples)
     for (const channel of CHANNELS) {

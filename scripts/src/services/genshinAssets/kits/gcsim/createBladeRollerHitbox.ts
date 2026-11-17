@@ -11,13 +11,8 @@ export const createBladeRollerHitbox = (
   offsetY: number,
   line: number,
 ): GcsimHitbox => {
-  const base = {
-    center: GcsimHitboxCenter.Player,
-    file: "attack.go",
-    line,
-    name: `roller${strikeIndex + 1}`,
-    offset: [0, offsetY] as [number, number],
-  };
+  const offset: [number, number] = [0, offsetY];
+  const base = { center: GcsimHitboxCenter.Player, file: "attack.go", line, name: `roller${strikeIndex + 1}`, offset };
   return strikeIndex === 0 || strikeIndex === 3
     ? { ...base, fanAngle: second, radius: first, shape: GcsimHitboxShape.Circle }
     : { ...base, box: [first, second], shape: GcsimHitboxShape.Box };

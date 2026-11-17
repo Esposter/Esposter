@@ -1,13 +1,13 @@
 import type { GroundLayerCellTile } from "#src/models/genshinAssets/fit/GroundLayerCellTile";
 import type { SurfaceSample } from "#src/models/genshinAssets/fit/SurfaceSample";
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
-import type { Vector } from "#src/models/shared/Vector";
 import type { GroundLayer } from "genshin-engine";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { computeSurfaceTones } from "#src/services/genshinAssets/fit/computeSurfaceTones";
 import { TERRAIN_BASE_MAP_SUFFIX, TERRAIN_TILE_SIZE } from "#src/services/genshinAssets/shared/constants";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
+import { mapVector } from "#src/services/shared/mapVector";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import sharp from "sharp";
@@ -49,7 +49,7 @@ export const fitGroundLayerColours = async (
     for (const [cell, layer] of cells.entries()) {
       const count = counts[cell] ?? 0;
       if (count === 0) continue;
-      const colour = [0, 1, 2].map((channel) => (sums[cell * 3 + channel] ?? 0) / count) as Vector;
+      const colour = mapVector((channel) => (sums[cell * 3 + channel] ?? 0) / count);
       const layerSamples = layerSamplesMap.get(layer) ?? [];
       layerSamples.push({ colour, part: "", weight: count });
       layerSamplesMap.set(layer, layerSamples);

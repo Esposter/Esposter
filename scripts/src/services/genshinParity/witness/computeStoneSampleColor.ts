@@ -2,8 +2,8 @@ import type { StoneLightSample } from "#src/models/genshinParity/witness/StoneLi
 import type { Vector } from "#src/models/shared/Vector";
 import type { StoneLight } from "genshin-engine";
 
-import { CHANNELS } from "#src/services/genshinParity/shared/constants";
 import { writeStoneRampWeights } from "#src/services/genshinParity/witness/writeStoneRampWeights";
+import { mapVector } from "#src/services/shared/mapVector";
 import { computeStoneDarkening, STONE_HEIGHT_FALLOFF, STONE_RAMP_KNOT_COUNT } from "genshin-engine";
 
 // The scene colour a stone light casts on one sample, as `solveStoneLight` models the deferred pass: its albedo times
@@ -18,12 +18,12 @@ export const computeStoneSampleColor = (
   writeStoneRampWeights(rampCoordinate, weights);
   const fade = Math.exp(-height * STONE_HEIGHT_FALLOFF);
   const darkening = computeStoneDarkening(height, heightDarkening);
-  return CHANNELS.map((channel) => {
+  return mapVector((channel) => {
     const rampLight = weights.reduce((sum, weight, knot) => sum + weight * (ramp[knot]?.[channel] ?? 0), 0);
     const skyLight = terms.reduce((sum, term, index) => sum + term * (harmonics[index]?.[channel] ?? 0), 0);
     const light = (rampLight + skyLight + (heightFade[channel] ?? 0) * fade) * darkening;
     const through = occlusion * (1 - opacity);
     const haze = (1 - scatter) * (hazeColor[channel] ?? 0) + scatter * (hazeScatterColor[channel] ?? 0);
     return (albedo[channel] * light + emission[channel]) * through + opacity * haze;
-  }) as Vector;
+  });
 };

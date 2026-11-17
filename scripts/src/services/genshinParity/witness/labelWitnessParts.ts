@@ -13,6 +13,12 @@ import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import sharp from "sharp";
 
+declare global {
+  interface Window {
+    computeWitnessParts: (family: string) => WitnessPart[];
+  }
+}
+
 // Each part of a family the witness draws at a reference's view, numbered where the top of it lands, over the reference
 // And over the witness's own render side by side, so a part is matched to what the reference shows by eye and named as
 // A landmark by its mesh and where it stands. The list is printed with each part's pixel in the reference's own pixels
@@ -29,13 +35,11 @@ export const labelWitnessParts = async (
   return withFinalizerAsync(
     async () => {
       await setPageWitnessView(page, { camera });
-      const parts = (
-        await page.evaluate(
-          (familyName) => (Reflect.get(window, "computeWitnessParts") as (family: string) => WitnessPart[])(familyName),
-          family,
-        )
-      ).map((part) =>
-        Object.assign(part, { pixel: [part.screen[0] * width, part.screen[1] * height] as [number, number] }),
+      const parts = (await page.evaluate((familyName) => window.computeWitnessParts(familyName), family)).map(
+        (part) => {
+          const pixel: [number, number] = [part.screen[0] * width, part.screen[1] * height];
+          return Object.assign(part, { pixel });
+        },
       );
       const shot = await sharp(await page.screenshot())
         .resize(width, height)

@@ -2,6 +2,7 @@ import type { Vector } from "#src/models/shared/Vector";
 
 import { TONE_CURVE_BLACK_BYTE } from "#src/services/genshinParity/display/constants";
 import { CHANNELS } from "#src/services/genshinParity/shared/constants";
+import { mapVector } from "#src/services/shared/mapVector";
 
 // The share of a raw RGB frame's pixels holding a channel darker than the tone curve shows a scene colour of none, and
 // Each channel's own share, which tells a matrix before the curve taking one channel of a saturated colour under none
@@ -21,7 +22,7 @@ export const computeUnderBlackShare = (data: Buffer): { blackByte: number; chann
   const total = Math.max(counted, 1);
   return {
     blackByte: TONE_CURVE_BLACK_BYTE,
-    channelShares: channelCounts.map((count) => count / total) as Vector,
+    channelShares: mapVector((channel) => channelCounts[channel] / total),
     share: under / total,
   };
 };

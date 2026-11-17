@@ -4,6 +4,7 @@ import type { ParityPassMeasure } from "#src/models/genshinParity/shared/ParityP
 import type { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import type { WitnessView } from "genshin-world/parity/models/witness/WitnessView";
 import type { Page } from "playwright";
+import type { Promisable } from "type-fest";
 
 import { SHAPE_WIDTH } from "#src/services/genshinParity/passes/constants";
 import { getCurrentBuildReferenceIds } from "#src/services/genshinParity/passes/getCurrentBuildReferenceIds";
@@ -26,7 +27,7 @@ export const measureFamilyTargets = async (
     oursRead: WitnessTargetsRead,
     page: Page,
     camera: NonNullable<WitnessView["camera"]>,
-  ) => ParityPassMeasure | Promise<ParityPassMeasure>,
+  ) => Promisable<ParityPassMeasure>,
 ): Promise<ParityPassMeasure> => {
   await fetchReferences();
   return measureEachReference(

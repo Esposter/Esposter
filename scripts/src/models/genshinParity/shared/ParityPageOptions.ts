@@ -9,11 +9,11 @@ export interface ParityPageOptions {
   height: number;
   // Whether the backdrop is the reference's own frame, which holds the game's blur and wash of the world already, so the
   // Screen's own world blur and wash are not drawn over it a second time
-  isBackdropBlurred?: boolean | undefined;
+  isBackdropBlurred?: boolean;
   // Whether the page's clock is faked, moved on only by the caller, and its timers and frames with it
-  isClockFaked?: boolean | undefined;
+  isClockFaked?: boolean;
   // Whether frames are drawn as fast as they can be rather than at the display's refresh, for a frame's time to be read
-  isFrameRateUnlimited?: boolean | undefined;
+  isFrameRateUnlimited?: boolean;
   // The motion the page holds at its start, for a shot at times
   motion?: ParityMotion | undefined;
   // The page's address up to its query: the dev server's by default, a preview server's when a load run measures a build

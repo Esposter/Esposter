@@ -21,6 +21,7 @@ import { toRightHanded } from "#src/services/genshinAssets/shared/toRightHanded"
 import { computeOtsuThreshold } from "#src/services/recreation/statistics/computeOtsuThreshold";
 import { computeUpperMedian } from "#src/services/recreation/statistics/computeUpperMedian";
 import { BYTE } from "#src/services/shared/constants";
+import { mapVector } from "#src/services/shared/mapVector";
 import { toLinear } from "#src/services/shared/toLinear";
 import { join } from "node:path";
 import sharp from "sharp";
@@ -155,7 +156,7 @@ export const fitLoginPaving = async (
     if (!texture) return [0, 0, 0];
     const [column, row] = toTexel([values[cell * 2] ?? 0, values[cell * 2 + 1] ?? 0], texture.info);
     const texel = (row * texture.info.width + column) * texture.info.channels;
-    return [0, 1, 2].map((channel) => toLinear((texture.data[texel + channel] ?? 0) / BYTE)) as Vector;
+    return mapVector((channel) => toLinear((texture.data[texel + channel] ?? 0) / BYTE));
   });
   const paint = foldPlanRepeats(colors, tags, { block: PAINT_BLOCK_CELLS, height, repeats: PAINT_REPEATS, width });
   // Three reads a hex as sRGB and holds it linear, as the scene's material reads the stone's

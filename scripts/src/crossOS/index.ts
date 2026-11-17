@@ -25,12 +25,10 @@ await runCommand(
     },
     run: ({ args }) => {
       const { platform } = process;
-      const packageJson = parseMachineJson<Record<string, unknown>>(
+      const packageJson = parseMachineJson<{ crossOS: Record<string, Partial<Record<NodeJS.Platform, string>>> }>(
         readFileSync(join(REPOSITORY_ROOT, PACKAGE_JSON_FILENAME), "utf8"),
       );
-      const command = (packageJson[CROSS_OS_PROPERTY] as Record<string, Partial<Record<string, string>>>)[
-        args.script
-      ]?.[platform];
+      const command = packageJson[CROSS_OS_PROPERTY][args.script]?.[platform];
       if (!command)
         throw new InvalidOperationError(
           Operation.Read,

@@ -32,20 +32,22 @@ export const fitWalkwayPiece = async (
   const heightCounts = new Map<number, number>();
   const world = toWorldVertices(vertices, placement);
   for (const [, y] of world) heightCounts.set(roundFitted(y), (heightCounts.get(roundFitted(y)) ?? 0) + 1);
-  const triangles = faces.flatMap(([first, second, third]) => {
-    const a = world[first];
-    const b = world[second];
-    const c = world[third];
-    return a && b && c
-      ? [
-          [
-            [a[0], a[2]],
-            [b[0], b[2]],
-            [c[0], c[2]],
-          ] as [[number, number], [number, number], [number, number]],
-        ]
-      : [];
-  });
+  const triangles: [[number, number], [number, number], [number, number]][] = faces.flatMap(
+    ([first, second, third]) => {
+      const a = world[first];
+      const b = world[second];
+      const c = world[third];
+      return a && b && c
+        ? [
+            [
+              [a[0], a[2]],
+              [b[0], b[2]],
+              [c[0], c[2]],
+            ],
+          ]
+        : [];
+    },
+  );
   const outline = fitFootprintOutline(triangles, {
     cellSize: WALKWAY_CELL_SIZE,
     tolerance: WALKWAY_OUTLINE_TOLERANCE,

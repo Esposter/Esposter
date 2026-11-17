@@ -1,7 +1,6 @@
 /* oxlint-disable no-await-in-loop -- One device: the page draws one direction's shadows at a time, so the probes, the grid and each simplex's steps wait their turn on it */
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { PricedDirection } from "#src/models/genshinParity/witness/PricedDirection";
-import type { SetLights } from "#src/models/genshinParity/witness/SetLights";
 import type { Vector } from "#src/models/shared/Vector";
 
 import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
@@ -102,7 +101,7 @@ export const solveReferenceShadows = async (
         targets: { albedo = new Float32Array(), normal = new Float32Array(), part = new Float32Array() },
         width,
       } = await readWitnessTargets(page, [WitnessTargetName.Albedo, WitnessTargetName.Normal, WitnessTargetName.Part]);
-      const { direction } = await page.evaluate(() => (Reflect.get(window, "setSceneLights") as SetLights)({}));
+      const { direction } = await page.evaluate(() => window.setSceneLights({}));
       const shot = await sharp(image).resize(width, height, { fit: "fill" }).removeAlpha().raw().toBuffer();
       const isReceiver = Uint8Array.from({ length: width * height }, (_value, pixel) =>
         Number(

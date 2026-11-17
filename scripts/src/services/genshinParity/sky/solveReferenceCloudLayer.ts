@@ -2,7 +2,6 @@ import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/Der
 import type { ParityPassMeasure } from "#src/models/genshinParity/shared/ParityPassMeasure";
 import type { CloudLayer } from "#src/models/genshinParity/sky/CloudLayer";
 import type { SetCloudColors } from "#src/models/genshinParity/sky/SetCloudColors";
-import type { SetCloudCover } from "#src/models/genshinParity/sky/SetCloudCover";
 import type { SetCloudLayer } from "#src/models/genshinParity/sky/SetCloudLayer";
 
 import { CLOUDS_WIDTH, WITNESS_PATH_PREFIX } from "#src/services/genshinParity/shared/constants";
@@ -18,6 +17,13 @@ import { writeCloudSheet } from "#src/services/genshinParity/sky/writeCloudSheet
 import { minimizeNelderMead } from "#src/services/recreation/solve/minimizeNelderMead";
 import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
 import { Color } from "three";
+
+declare global {
+  interface Window {
+    setSceneCloudColors: SetCloudColors;
+    setSceneCloudLayer: SetCloudLayer;
+  }
+}
 
 // The game's own textures the cloud layer's program samples, by its slot (Login/Scene/Index.reference.ts, source
 // `cloudLayerShader`), served from the extraction with the witness's exports: a reference the layer is drawn over to read
@@ -73,10 +79,7 @@ export const solveReferenceCloudLayer = async (
         { checkIsScored, height, image },
       );
       if (!isOurTextures)
-        await page.evaluate(
-          (textures) => (Reflect.get(window, "setSceneCloudLayer") as SetCloudLayer)({ textures }),
-          GAME_CLOUD_LAYER_TEXTURES,
-        );
+        await page.evaluate((textures) => window.setSceneCloudLayer({ textures }), GAME_CLOUD_LAYER_TEXTURES);
       const shoot = async (drawn: Record<string, number | number[]>): Promise<Buffer> => {
         const entries = Object.entries(drawn);
         const covers = Object.fromEntries(
@@ -88,7 +91,7 @@ export const solveReferenceCloudLayer = async (
         );
         const coverage = drawn[COVERAGE_SETTING];
         const layer: CloudLayer = {
-          coverage: typeof coverage === "number" ? coverage : undefined,
+          ...(typeof coverage === "number" ? { coverage } : {}),
           settings: Object.fromEntries(
             entries.filter(
               ([name]) =>
@@ -106,9 +109,9 @@ export const solveReferenceCloudLayer = async (
         ) as Parameters<SetCloudColors>[0];
         await page.evaluate(
           async ([pageLayer, pageCovers, pageColors]) => {
-            await (Reflect.get(window, "setSceneCloudLayer") as SetCloudLayer)(pageLayer);
-            (Reflect.get(window, "setSceneCloudCover") as SetCloudCover)(pageCovers);
-            (Reflect.get(window, "setSceneCloudColors") as SetCloudColors)(pageColors);
+            await window.setSceneCloudLayer(pageLayer);
+            window.setSceneCloudCover(pageCovers);
+            window.setSceneCloudColors(pageColors);
           },
           [layer, covers, colors] as const,
         );

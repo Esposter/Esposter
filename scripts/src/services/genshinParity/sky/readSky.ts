@@ -14,6 +14,12 @@ import { readCloudSky } from "#src/services/genshinParity/sky/readCloudSky";
 import { withFinalizerAsync } from "@esposter/shared";
 import { Matrix4, Vector3, Vector4 } from "three";
 
+declare global {
+  interface Window {
+    setSceneCloudCover: SetCloudCover;
+  }
+}
+
 // The least a ray looks up to be read as sky, clear of the cloud sea and the haze over the horizon
 const MIN_SKY_HEIGHT = 0.02;
 
@@ -54,7 +60,7 @@ export const readSky = async (referenceId: string, witness: DerivedAssetComponen
         }
       const bands = await readPageFunction<ReturnType<SetCloudCover>>(page, "setSceneCloudCover");
       await page.evaluate(
-        (covers) => (Reflect.get(window, "setSceneCloudCover") as SetCloudCover)(covers),
+        (covers) => window.setSceneCloudCover(covers),
         Object.fromEntries(bands.map((band) => [band, 0])),
       );
       await setPageWitnessView(page, { families: [] });

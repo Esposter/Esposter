@@ -1,5 +1,4 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
-import type { WitnessView } from "genshin-world/parity/models/witness/WitnessView";
 import type { Page } from "playwright";
 
 import { CAMERA_POSE_AXES } from "#src/services/genshinParity/shared/constants";
@@ -17,9 +16,7 @@ export const solveReferenceCamera = async (
   referenceId: string,
   component: DerivedAssetComponent,
 ): Promise<{ errors: number[]; names: string[]; pose: number[]; rms: number }> => {
-  const camera = await page.evaluate(() =>
-    (Reflect.get(window, "getSceneCamera") as () => NonNullable<WitnessView["camera"]>)(),
-  );
+  const camera = await page.evaluate(() => window.getSceneCamera());
   const { correspondences, height, names, width } = await readReferenceLandmarks(page, referenceId, component);
   return { names, ...solveCameraPose(correspondences, width, height, fromPageCamera(camera), HELD_AXES) };
 };

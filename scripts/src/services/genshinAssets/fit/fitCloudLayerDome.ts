@@ -60,9 +60,8 @@ export const fitCloudLayerDome = ({
     MathUtils.radToDeg(Math.atan2(m_Vertices[vertex * 3 + 2] ?? 0, m_Vertices[vertex * 3] ?? 0));
   const projections = (["m_UV1", "m_UV2"] as const).map((name) => {
     const values = { m_UV1, m_UV2 }[name];
-    const center = [0, 1].map((axis) =>
-      computeMean(horizon.vertices.map((vertex) => readPair(values, vertex, name)[axis] ?? 0)),
-    ) as [number, number];
+    const pairs = horizon.vertices.map((vertex) => readPair(values, vertex, name));
+    const center: [number, number] = [computeMean(pairs.map(([u]) => u)), computeMean(pairs.map(([, v]) => v))];
     const readOffset = (vertex: number): [number, number] => {
       const [u, v] = readPair(values, vertex, name);
       return [u - center[0], v - center[1]];
@@ -98,7 +97,7 @@ export const fitCloudLayerDome = ({
     values.map((value) => roundFitted(value, PROFILE_DECIMALS));
   return {
     dome: {
-      center: near.center.map((value) => roundFitted(value, PROFILE_DECIMALS)) as [number, number],
+      center: [roundFitted(near.center[0], PROFILE_DECIMALS), roundFitted(near.center[1], PROFILE_DECIMALS)],
       elevations: roundProfile(sortedRings.map(({ elevations }) => computeMean(elevations))),
       far: roundProfile(far.radii),
       near: roundProfile(near.radii),

@@ -10,6 +10,7 @@ import { scoreStructure } from "#src/services/genshinParity/reference/scoreStruc
 import { STRUCTURE_WIDTH } from "#src/services/genshinParity/shared/constants";
 import { readFlipErrorMap } from "#src/services/genshinParity/shared/readFlipErrorMap";
 import { BYTE } from "#src/services/shared/constants";
+import { mapVector } from "#src/services/shared/mapVector";
 import { toLab } from "#src/services/shared/toLab";
 import { toLinear } from "#src/services/shared/toLinear";
 import { toXyz } from "#src/services/shared/toXyz";
@@ -46,7 +47,7 @@ export const scoreLayers = async (
       for (const channel of [0, 1, 2] as const) sum[channel] += toLinear((pixels[pixel * 3 + channel] ?? 0) / BYTE);
       count++;
     }
-    return toLab(toXyz(sum.map((value) => value / Math.max(count, 1)) as Vector));
+    return toLab(toXyz(mapVector((channel) => sum[channel] / Math.max(count, 1))));
   };
   return Promise.all(
     masks.map(async ({ mask, name }) => {

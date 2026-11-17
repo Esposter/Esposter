@@ -15,8 +15,11 @@ export const fitLoginClouds = async (
 ): Promise<Record<keyof typeof CLOUD_ATLAS_BAND_MAP, CloudAtlas>> => {
   const entries = await Promise.all(
     Object.entries(CLOUD_ATLAS_BAND_MAP).map(
-      async ([band, atlas]) => [band, await fitCloudSprites(join(textureDirectory, `${atlas}.png`))] as const,
+      async ([band, atlas]): Promise<[keyof typeof CLOUD_ATLAS_BAND_MAP, CloudAtlas]> => [
+        band,
+        await fitCloudSprites(join(textureDirectory, `${atlas}.png`)),
+      ],
     ),
   );
-  return Object.fromEntries(entries) as Record<keyof typeof CLOUD_ATLAS_BAND_MAP, CloudAtlas>;
+  return Object.fromEntries(entries);
 };

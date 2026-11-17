@@ -15,6 +15,7 @@ import { readSky } from "#src/services/genshinParity/sky/readSky";
 import { toDisplayHex } from "#src/services/genshinParity/sky/toDisplayHex";
 import { toShape } from "#src/services/genshinParity/sky/toShape";
 import { minimizeNelderMead } from "#src/services/recreation/solve/minimizeNelderMead";
+import { mapVector } from "#src/services/shared/mapVector";
 import { toneMapGenshin } from "genshin-engine";
 import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
@@ -86,9 +87,9 @@ export const solveReferenceSky = async (
       let modelError = 0;
       for (const { direction, pixel } of pixels) {
         const weights = computeSkyWeights(direction, sky, gradient, shape);
-        const modelColor = CHANNELS.map((channel) =>
+        const modelColor = mapVector((channel) =>
           weights.reduce((sum, weight, term) => sum + weight * (colors[term]?.[channel] ?? 0), 0),
-        ) as Vector;
+        );
         const shown = toneMapGenshin(modelColor);
         const { b, g, r } = new Color(...shown).convertLinearToSRGB();
         const [x, y] = [pixel % width, Math.floor(pixel / width)];

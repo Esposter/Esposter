@@ -86,10 +86,10 @@ export const compareKits = async (inputs: readonly KitInput[]): Promise<string[]
     ).match(
       ({ record }) => ({
         gapPaths: getKitGapPaths(record, publishedRecord, tables.talentMultiplierMap),
-        overlayFailures: [] as string[],
+        overlayFailures: [],
       }),
       (error) => ({
-        gapPaths: [] as string[],
+        gapPaths: [],
         overlayFailures: [`the committed overlay fails to build: ${error.message.split("\n")[0]}`],
       }),
     );

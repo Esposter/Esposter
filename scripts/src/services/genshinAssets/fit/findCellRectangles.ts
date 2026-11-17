@@ -31,7 +31,7 @@ export const findCellRectangles = (
         openRectangle.rows[1] = row + 1;
         nextOpenRectangleMap.set(key, openRectangle);
       } else {
-        const rectangle = { cells: [...run], columns, rows: [row, row + 1] as [number, number], value };
+        const rectangle: (typeof rectangles)[number] = { cells: [...run], columns, rows: [row, row + 1], value };
         rectangles.push(rectangle);
         nextOpenRectangleMap.set(key, rectangle);
       }

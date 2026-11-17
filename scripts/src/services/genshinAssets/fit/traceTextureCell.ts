@@ -2,14 +2,14 @@ import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { traceCoveredGrid } from "#src/services/genshinAssets/fit/traceCoveredGrid";
 
 // A rectangle of a decoded texture in texels: its left edge, its foot counted from the texture's top, and its size
-export interface TextureCell {
+interface TextureCell {
   foot: number;
   height: number;
   left: number;
   width: number;
 }
 
-export interface TraceTextureCellOptions {
+interface TraceTextureCellOptions {
   cell: TextureCell;
   // Whether the texel at this offset of the raw buffer is painted
   checkPainted: (texel: number) => boolean;
