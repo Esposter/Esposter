@@ -89,7 +89,7 @@ catalog:
   "@tiptap/suggestion": ^3.34.0
   "@tiptap/vue-3": ^3.34.0
   "@tresjs/cientos": ^5.11.0
-  "@tresjs/core": ^5.11.0
+  "@tresjs/core": ^5.12.0
   "@trpc/client": ^11.28.3
   "@trpc/server": ^11.28.3
   "@tsdown/css": ^0.23.7
