@@ -47,6 +47,7 @@ useAdoptResourceContent(ResourceType.Note, () => {
     <ResourceNoteEditorMenuBar :editor px-2 ui-bar />
     <RichTextEditorSuggestions :editor />
     <EditorContent :="omitUndefined({ editor })" class="rich-text-content" flex-1 of-y-auto />
+    <ResourceNoteCountLine :editor />
   </div>
 </template>
 

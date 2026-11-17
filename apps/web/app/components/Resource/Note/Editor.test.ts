@@ -4,6 +4,7 @@ import { EMPTY_NOTE_DOC } from "#shared/services/resource/constants";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { getNoteExtensions } from "#shared/services/resource/note/getNoteExtensions";
+import ResourceNoteCountLine from "#src/components/Resource/Note/CountLine.vue";
 import ResourceNoteEditor from "#src/components/Resource/Note/Editor.vue";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useResourceStore } from "#src/store/resource/index";
@@ -110,5 +111,17 @@ describe("resourceNoteEditor", () => {
     const component = await mountSuspended(ResourceNoteEditor);
 
     expect(component.findAll(".ProseMirror img").map((image) => image.attributes("src"))).toStrictEqual([assetUrl]);
+  });
+
+  // The line is drawn from the note the editor opens with, so the counts show before any edit
+  test("the line shows the note's counts", async () => {
+    expect.hasAssertions();
+
+    const savedEditor = new Editor({ content: "<p>a b</p><p>c</p>", extensions: getNoteExtensions() });
+    trpcMsw.note.readResourceContent.query(() => ({ doc: savedEditor.getJSON() }));
+    const component = await mountSuspended(ResourceNoteEditor);
+    await flushPromises();
+
+    expect(component.findComponent(ResourceNoteCountLine).text()).toBe("3 words · 5 characters");
   });
 });
