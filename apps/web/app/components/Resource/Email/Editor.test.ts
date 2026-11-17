@@ -3,11 +3,12 @@ import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
 import { EmailValidationLevel } from "#shared/models/pageBuilder/EmailValidationLevel";
 import { PageBuilderDevice } from "#shared/models/pageBuilder/PageBuilderDevice";
 import { DEVICE_WIDTH_MAP } from "#shared/services/pageBuilder/constants";
-import { TEST_ID, TEST_LABEL, TEST_THIRD_ID } from "#shared/services/pageBuilder/constants.test";
+import { TEST_THIRD_ID } from "#shared/services/pageBuilder/constants.test";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import ResourceEmailEditor from "#src/components/Resource/Email/Editor.vue";
 import { useSession } from "#src/services/auth/authClient.test";
 import { TEST_ROOT_TEXT_ID, TEST_SECTION_ID, TEST_TEXT_CONTENT } from "#src/services/pageBuilder/constants.test";
+import { createEmailButtonSection } from "#src/services/pageBuilder/email/createEmailButtonSection.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
 import { useResourceStore } from "#src/store/resource/index";
@@ -18,28 +19,6 @@ import { flushPromises } from "@vue/test-utils";
 import { MjmlNodeType } from "mjml-blocks";
 import { v7 } from "uuid";
 import { beforeEach, describe, expect, test } from "vitest";
-
-// A section holding one column, which holds a button whose address is written when given
-const createEmailButtonSection = (href: string | undefined) => ({
-  props: {
-    children: [
-      {
-        props: {
-          children: [
-            {
-              props: { content: TEST_LABEL, id: TEST_ID, ...(href === undefined ? {} : { href }) },
-              type: MjmlNodeType.Button,
-            },
-          ],
-          id: TEST_THIRD_ID,
-        },
-        type: MjmlNodeType.Column,
-      },
-    ],
-    id: TEST_SECTION_ID,
-  },
-  type: MjmlNodeType.Section,
-});
 
 describe("resourceEmailEditor", () => {
   const { trpcMsw } = setupMswTrpc();
