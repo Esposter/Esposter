@@ -25,6 +25,14 @@ flowchart LR
 - The health notice and login screen's layout where a recording shows a difference.
 - The Japanese and Korean layouts, keyed by language only on a screen whose compare above reads a mean further off than the English reference's own row in the parity reference snapshot.
 
+## Decisions
+
+- **The owner's capture is a primary source, so `session-2.mp4` is the Japanese launch recording.** The published-clip search found none, so `captures/session-2.mp4`, the owner's 3440 by 1440 capture of the Japanese PC client from its first frame, stands in for `japanese-launch.mkv`. The Korean launch has no such capture, so it stays open.
+- **No client shows a publisher logo that differs from the English one, so the publisher splash keeps its one logo.** The Japanese launch's splash matches the English reference (`publisher-splash`, compared at score 0.07 against a bar of 1). The mainland launch shows no publisher logo at all: its first 1.6 seconds are blank white, luminance 235 throughout, then the Genshin logo. The opening already leaves the publisher stage out for the mainland client (`Sequence`'s client map), so no logo asset is added and no test is written for the scenario, since no recording shows the client it describes.
+- **The Japanese title splash uses the English layout.** `splash-title-japanese` compares at score 0.16 against the bar of 1, so the logo's place and size match the English title's.
+- **The mainland title splash differs and stays open.** `title-splash-mainland` compares at 1.89 against the bar of 1. Its worst cells are the licence's four lines and the logo's edge, a sub-pixel offset in the licence's text rather than a missing element, so the fix is a layout measure still to be settled.
+- **The health notice's layout is not keyed by language yet.** The English notice itself compares at 6.17, the Japanese at 8.38 and the mainland at 4.71, all against the bar of 1. The English gap is the notice's open face item in the roadmap, so no language's layout can be keyed until that item settles.
+
 ## Key files
 
 | File                                                               | Role after the change                            |

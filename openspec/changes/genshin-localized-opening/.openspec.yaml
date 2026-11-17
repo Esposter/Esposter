@@ -4,4 +4,4 @@ x-phase: 7
 x-model: claude-opus-5-5
 x-needs: [media-engine]
 x-touches: ["scripts/src/services/genshinParity/shared/ParityReferenceMap.ts"]
-x-waiting: "2.1, 3.1 and 4.1 wait on the Korean PC launch recording, korean-launch.mkv (1.1); their Japanese parts wait on the lead's call on captures/session-2.mp4 (1.1)"
+x-waiting: "1.2 waits on korean-launch.mkv, which no published clip shows; 2.1, 3.1 and 4.1 wait on 1.2 for their Korean parts, and 3.1 and 4.1 also wait on the mainland title's licence lines (1.89 against a bar of 1) and the health notice's open face"
