@@ -25,7 +25,7 @@ const waterfallGeometries = computed(() => {
   return drawnWaterfalls.map((waterfall) => createWaterfallGeometry(waterfall));
 });
 
-watch(waterfallGeometries, (oldWaterfallGeometries) => {
+watch(waterfallGeometries, (_geometries, oldWaterfallGeometries) => {
   for (const geometry of oldWaterfallGeometries) geometry.dispose();
 });
 onUnmounted(() => {

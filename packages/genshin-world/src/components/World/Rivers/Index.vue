@@ -26,7 +26,7 @@ const riverGeometries = computed(() =>
   ),
 );
 
-watch(riverGeometries, (oldRiverGeometries) => {
+watch(riverGeometries, (_geometries, oldRiverGeometries) => {
   for (const geometry of oldRiverGeometries) geometry.dispose();
 });
 onUnmounted(() => {
