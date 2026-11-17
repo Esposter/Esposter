@@ -5,6 +5,7 @@ import { getComponentDirectory } from "#src/services/genshinAssets/shared/getCom
 import { readGameVersion } from "#src/services/genshinAssets/shared/readGameVersion";
 import { readVouchedFileProvenance } from "#src/services/provenance/readVouchedFileProvenance";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
+import { sceneLayoutSchema } from "genshin-world";
 import { WITNESS_LAYOUT_FILE_NAME } from "genshin-world/sceneExport";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
@@ -14,5 +15,5 @@ import { join } from "node:path";
 export const readWitnessLayout = async (component: DerivedAssetComponent): Promise<SceneLayout> => {
   const path = join(getComponentDirectory(component).root, WITNESS_LAYOUT_FILE_NAME);
   await readVouchedFileProvenance(path, await readGameVersion());
-  return parseMachineJson<SceneLayout>(await readFile(path, "utf8"));
+  return sceneLayoutSchema.parse(parseMachineJson(await readFile(path, "utf8")));
 };

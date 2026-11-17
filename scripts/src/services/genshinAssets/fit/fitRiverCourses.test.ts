@@ -25,11 +25,12 @@ describe(fitRiverCourses, () => {
   test("writes the course of each water surface that is a river as the region's rivers, and no other placement", async () => {
     expect.hasAssertions();
 
-    const placement = { position: [0, 0, 0], rotation: [0, 0, 0, 1], scale: [1, 1, 1] };
+    const placement = { materials: [], position: [0, 0, 0], rotation: [0, 0, 0, 1], scale: [1, 1, 1] };
     const pond = [0, 4].flatMap((x) => [0, 4].map((z) => [x, 0, z]));
     vi.mocked(readFile)
       .mockResolvedValueOnce(
         JSON.stringify({
+          materials: {},
           placements: [
             { ...placement, mesh: "Eff_Model_WaterFall_A" },
             { ...placement, mesh: "Area_Ly_Water_LYG_Slums_02_Vo" },
@@ -56,13 +57,14 @@ describe(fitRiverCourses, () => {
     expect.hasAssertions();
 
     const placement = {
+      materials: [],
       mesh: "Area_Ly_Water_LYG_Slums_02_Vo",
       position: [0, 0, 0],
       rotation: [0, 0, 0, 1],
       scale: [1, 1, 1],
     };
     vi.mocked(readFile)
-      .mockResolvedValueOnce(JSON.stringify({ placements: [placement] }))
+      .mockResolvedValueOnce(JSON.stringify({ materials: {}, placements: [placement] }))
       .mockResolvedValueOnce(JSON.stringify({ enemyCamps: [] }));
     vi.mocked(readObjMesh).mockResolvedValueOnce({ vertices: river } as Awaited<ReturnType<typeof readObjMesh>>);
     vi.mocked(writeWorldData).mockResolvedValueOnce("regions/liyue.json");

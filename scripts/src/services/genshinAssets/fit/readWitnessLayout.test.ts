@@ -25,17 +25,15 @@ vi.mock(import("#src/services/genshinAssets/shared/constants"), async (importOri
 describe(readWitnessLayout, () => {
   const INSTALL_VERSION = "a";
   const OTHER_VERSION = "b";
-  const LAYOUT = {
-    placements: [
-      {
-        materials: [],
-        mesh: "Area_Dq_Rock_Common_Full_M_07_Lod0",
-        position: [10, 2, -5],
-        rotation: [0, 0, 0, 1],
-        scale: [1, 1, 1],
-      },
-    ],
+  const WITNESS_COMMAND = "witness inazuma";
+  const PLACEMENT = {
+    materials: [],
+    mesh: "Area_Dq_Rock_Common_Full_M_07_Lod0",
+    position: [10, 2, -5],
+    rotation: [0, 0, 0, 1],
+    scale: [1, 1, 1],
   };
+  const LAYOUT = { materials: {}, placements: [PLACEMENT] };
   const LAYOUT_PATH = join(EXTRACTED_ROOT, DerivedAssetComponent.Inazuma, WITNESS_LAYOUT_FILE_NAME);
 
   beforeEach(() => {
@@ -52,7 +50,7 @@ describe(readWitnessLayout, () => {
     expect.hasAssertions();
 
     readGameVersion.mockResolvedValueOnce(OTHER_VERSION);
-    await writeStampedFiles([LAYOUT_PATH], { command: "witness inazuma", producerPaths: [] }, () => {});
+    await writeStampedFiles([LAYOUT_PATH], { command: WITNESS_COMMAND, producerPaths: [] }, () => {});
 
     await expect(readWitnessLayout(DerivedAssetComponent.Inazuma)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: witness.json, is stamped with game b, not the install's a]`,
@@ -70,8 +68,32 @@ describe(readWitnessLayout, () => {
   test("a witness layout whose sidecar names the install's game version is read", async () => {
     expect.hasAssertions();
 
-    await writeStampedFiles([LAYOUT_PATH], { command: "witness inazuma", producerPaths: [] }, () => {});
+    await writeStampedFiles([LAYOUT_PATH], { command: WITNESS_COMMAND, producerPaths: [] }, () => {});
 
     await expect(readWitnessLayout(DerivedAssetComponent.Inazuma)).resolves.toStrictEqual(LAYOUT);
+  });
+
+  test("a witness layout whose placement names no mesh is refused, even with a sidecar that vouches for it", async () => {
+    expect.hasAssertions();
+
+    writeJsonFile(LAYOUT_PATH, { ...LAYOUT, placements: [{ ...PLACEMENT, mesh: "" }] });
+    await writeStampedFiles([LAYOUT_PATH], { command: WITNESS_COMMAND, producerPaths: [] }, () => {});
+
+    await expect(readWitnessLayout(DerivedAssetComponent.Inazuma)).rejects.toThrowErrorMatchingInlineSnapshot(`
+      [ZodError: [
+        {
+          "origin": "string",
+          "code": "too_small",
+          "minimum": 1,
+          "inclusive": true,
+          "path": [
+            "placements",
+            0,
+            "mesh"
+          ],
+          "message": "Too small: expected string to have >=1 characters"
+        }
+      ]]
+    `);
   });
 });

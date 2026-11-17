@@ -1,5 +1,4 @@
 import type { SubCommandsDef } from "citty";
-import type { AvatarManifest } from "genshin-world/sceneExport";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { formatMeasurement } from "#src/services/genshinAssets/commands/formatMeasurement";
@@ -9,6 +8,8 @@ import { EXTRACTED_DIRECTORY } from "#src/services/genshinAssets/shared/constant
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { defineCommand } from "citty";
 import { parsePmx } from "genshin-engine";
+import { avatarManifestSchema } from "genshin-world";
+import { AVATAR_BINARY_FILE_NAME, AVATAR_MANIFEST_FILE_NAME } from "genshin-world/sceneExport";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
@@ -30,8 +31,10 @@ export const measureCommand: SubCommandsDef[string] = defineCommand({
     name: "measure",
   },
   run: async ({ args }) => {
-    const manifest = parseMachineJson<AvatarManifest>(await readFile(join(args.model, "avatar.json"), "utf8"));
-    const binary = await readFile(join(args.model, "avatar.bin"));
+    const manifest = avatarManifestSchema.parse(
+      parseMachineJson(await readFile(join(args.model, AVATAR_MANIFEST_FILE_NAME), "utf8")),
+    );
+    const binary = await readFile(join(args.model, AVATAR_BINARY_FILE_NAME));
     const pmx = parsePmx(Uint8Array.from(await readFile(args.pmx)).buffer);
     const modelHeight = measureAvatarHeight(manifest, binary);
     const pmxHeight = measureVerticalExtent([pmx.vertices.positions]);

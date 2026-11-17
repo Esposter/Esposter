@@ -1,5 +1,3 @@
-import type { SurveyNode } from "#src/models/SurveyNode";
-
 import { SurveyNodeType } from "#src/models/SurveyNodeType";
 import { surveyDocumentSchema } from "#src/services/surveyDocumentSchema";
 import { surveyNodeSchema } from "#src/services/surveyNodeSchema";
@@ -9,7 +7,7 @@ import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 // A minimal node of a type: its definition's default props, its slots empty, and a fresh id
-const createNode = (type: SurveyNodeType, id = v7()): unknown => {
+const createNode = (type: SurveyNodeType, id = v7()): { props: Record<string, unknown>; type: SurveyNodeType } => {
   const definition = surveyNodeTypeDefinitionMap[type];
   const slots = Object.fromEntries(Object.keys(definition.slots).map((slot) => [slot, []]));
   return { props: { ...definition.createDefaultProps(), ...slots, id }, type };
@@ -36,7 +34,7 @@ describe("surveyNodeSchema", () => {
   ])("%s accepts an expression at the limit and refuses one past it", (_title, type, createProps) => {
     expect.hasAssertions();
 
-    const node = createNode(type) as SurveyNode;
+    const node = createNode(type);
     const parses = (expression: string) =>
       surveyNodeSchema.safeParse({ ...node, props: { ...node.props, ...createProps(expression) } }).success;
 
@@ -52,7 +50,7 @@ describe("surveyDocumentSchema", () => {
     expect.hasAssertions();
 
     const panel = createNode(SurveyNodeType.Panel);
-    const page = createNode(SurveyNodeType.Page) as SurveyNode;
+    const page = createNode(SurveyNodeType.Page);
     const document = {
       content: [
         {
@@ -72,8 +70,8 @@ describe("surveyDocumentSchema", () => {
   test("a dynamic panel's template refuses a dynamic panel", () => {
     expect.hasAssertions();
 
-    const dynamic = createNode(SurveyNodeType.PanelDynamic) as SurveyNode;
-    const page = createNode(SurveyNodeType.Page) as SurveyNode;
+    const dynamic = createNode(SurveyNodeType.PanelDynamic);
+    const page = createNode(SurveyNodeType.Page);
     const nested = { ...dynamic, props: { ...dynamic.props, template: [createNode(SurveyNodeType.PanelDynamic)] } };
     const document = {
       content: [{ ...page, props: { ...page.props, children: [nested] } }],

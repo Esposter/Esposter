@@ -51,15 +51,21 @@ pnpm ai:triage:label
 pnpm ai:usage
 pnpm ai:voice-match
 pnpm ai:worktree:remove
+pnpm bench:types
+pnpm bundle-sizes:gen
 pnpm crossOS
+pnpm dev:seed
 pnpm genshin:animestudio:build
 pnpm genshin:assets
 pnpm genshin:data
 pnpm genshin:parity
 pnpm genshin:text
+pnpm genshin:version
 pnpm graph:gen
 pnpm outdated:dependencies
+pnpm realtimekit:provision
 pnpm recreation
+pnpm server-bundle:check
 pnpm update:node
 ```
 

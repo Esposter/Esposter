@@ -23,9 +23,15 @@ describe(fitWaterfallSheets, () => {
   test("a fall stands at the game's lip", async () => {
     expect.hasAssertions();
 
-    const placement = { mesh: "Eff_Model_WaterFall_A", position: [0, 0, 10], rotation: [0, 0, 0, 1], scale: [1, 1, 1] };
+    const placement = {
+      materials: [],
+      mesh: "Eff_Model_WaterFall_A",
+      position: [0, 0, 10],
+      rotation: [0, 0, 0, 1],
+      scale: [1, 1, 1],
+    };
     vi.mocked(readFile)
-      .mockResolvedValueOnce(JSON.stringify({ placements: [placement] }))
+      .mockResolvedValueOnce(JSON.stringify({ materials: {}, placements: [placement] }))
       .mockResolvedValueOnce(JSON.stringify({ enemyCamps: [] }));
     vi.mocked(readObjMesh).mockResolvedValueOnce({
       vertices: [
@@ -48,9 +54,15 @@ describe(fitWaterfallSheets, () => {
   test("a dry run writes no region data and says nothing was written", async () => {
     expect.hasAssertions();
 
-    const placement = { mesh: "Eff_Model_WaterFall_A", position: [0, 0, 10], rotation: [0, 0, 0, 1], scale: [1, 1, 1] };
+    const placement = {
+      materials: [],
+      mesh: "Eff_Model_WaterFall_A",
+      position: [0, 0, 10],
+      rotation: [0, 0, 0, 1],
+      scale: [1, 1, 1],
+    };
     vi.mocked(readFile)
-      .mockResolvedValueOnce(JSON.stringify({ placements: [placement] }))
+      .mockResolvedValueOnce(JSON.stringify({ materials: {}, placements: [placement] }))
       .mockResolvedValueOnce(JSON.stringify({ enemyCamps: [] }));
     vi.mocked(readObjMesh).mockResolvedValueOnce({
       vertices: [
