@@ -73,7 +73,7 @@ flowchart TD
 | `apps/web/app/components/Resource/Survey/Creator/Toolbar.vue`       | the bar, drawn by the editor's toolbar and problems components                                 |
 | `apps/web/app/components/Resource/Survey/Creator/Layers.vue`        | the outline, registered as the Outline tab                                                     |
 | `apps/web/app/components/Resource/Survey/Creator/Palette.vue`       | the palette, registered as the Add tab and the survey's insertion menu                         |
-| `apps/web/app/components/Resource/Survey/Creator/Canvas.vue`        | the page canvas                                                                                |
+| `apps/web/app/components/Resource/Survey/Creator/Canvas/Index.vue`  | the page canvas                                                                                |
 | `apps/web/app/components/Resource/Survey/Runner.vue`                | the runner Preview draws                                                                       |
 | `apps/web/app/store/survey/creator.ts`                              | the document, history, preview flag and selection, from which the context is read              |
 | `apps/web/app/composables/survey/useSurveyCreatorCommands.ts`       | the commands the bar and the menus call                                                        |

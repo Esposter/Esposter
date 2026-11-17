@@ -12,6 +12,9 @@ const { deletingIds } = storeToRefs(todoDialogStore);
 const { isOpen, item: deletingItems } = useSingletonDialog(deletingIds, () =>
   items.value.filter(({ id }) => deletingIds.value.includes(id)),
 );
+const deletingCount = computed(() => deletingItems.value?.length ?? 0);
+const isSingleTodo = computed(() => deletingCount.value === 1);
+const deletingCountText = computed(() => `${deletingCount.value} ${pluralize("todo", deletingCount.value)}`);
 </script>
 
 <!-- Nothing in the list brings a deleted todo back, so the answer names how many go -->
@@ -19,21 +22,13 @@ const { isOpen, item: deletingItems } = useSingletonDialog(deletingIds, () =>
   <UiConfirmDialog
     v-if="deletingItems?.length"
     v-model="isOpen"
-    :confirm-label="
-      deletingItems.length === 1
-        ? 'Delete'
-        : `Delete ${deletingItems.length} ${pluralize('todo', deletingItems.length)}`
-    "
-    :title="deletingItems.length === 1 ? 'Delete todo' : 'Delete todos'"
+    :confirm-label="isSingleTodo ? 'Delete' : `Delete ${deletingCountText}`"
+    :title="isSingleTodo ? 'Delete todo' : 'Delete todos'"
     :confirm="() => deletingItems && deleteItems(deletingItems.map(({ id }) => id))"
   >
     <p>
       Delete
-      {{
-        deletingItems.length === 1
-          ? deletingItems[0]?.name
-          : `${deletingItems.length} ${pluralize("todo", deletingItems.length)}`
-      }}? This can't be undone.
+      {{ isSingleTodo ? deletingItems[0]?.name : deletingCountText }}? This can't be undone.
     </p>
   </UiConfirmDialog>
 </template>

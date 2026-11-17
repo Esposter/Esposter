@@ -32,10 +32,6 @@ const whiteboardEditorStore = useWhiteboardEditorStore();
 const { setCanvasRect } = whiteboardEditorStore;
 const { viewport } = storeToRefs(whiteboardEditorStore);
 const insertImages = useInsertWhiteboardImages();
-const transform = computed(
-  () =>
-    `translate(${-viewport.value.x * viewport.value.scale} ${-viewport.value.y * viewport.value.scale}) scale(${viewport.value.scale})`,
-);
 watch([height, width, x, y], ([newHeight, newWidth, newX, newY]) => {
   setCanvasRect({ height: newHeight, width: newWidth, x: newX, y: newY });
 });
@@ -106,7 +102,9 @@ const emitWheel = (event: WheelEvent) => {
     "
   >
     <svg text-text size-full block>
-      <g :transform>
+      <g
+        :transform="`translate(${-viewport.x * viewport.scale} ${-viewport.y * viewport.scale}) scale(${viewport.scale})`"
+      >
         <ResourceWhiteboardElement v-for="element in displayedDocument.elements" :key="element.id" :element />
         <slot name="overlay" />
       </g>

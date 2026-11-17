@@ -28,15 +28,15 @@ flowchart LR
 
 ## Key files
 
-| File                                                               | Role                           |
-| ------------------------------------------------------------------ | ------------------------------ |
-| `apps/web/server/services/survey/getSurveyResponsesWhere.ts`       | submitted rows only            |
-| `apps/web/server/services/survey/readSurveyResponsesCount.ts`      | the capped count               |
-| `apps/web/server/services/survey/readSurveyResponseRecords.ts`     | rows + their ids from one read |
-| `apps/web/app/components/Resource/Survey/Responses.vue`            | row actions                    |
-| `apps/web/app/components/Resource/Survey/ResponseDetailDialog.vue` | the detail dialog              |
-| `apps/web/app/components/Resource/Survey/ResponseDeleteDialog.vue` | the destructive confirm        |
-| `apps/web/app/components/Resource/Survey/Overview.vue`             | count + blade link             |
+| File                                                                | Role                           |
+| ------------------------------------------------------------------- | ------------------------------ |
+| `apps/web/server/services/survey/getSurveyResponsesWhere.ts`        | submitted rows only            |
+| `apps/web/server/services/survey/readSurveyResponsesCount.ts`       | the capped count               |
+| `apps/web/server/services/survey/readSurveyResponseRecords.ts`      | rows + their ids from one read |
+| `apps/web/app/components/Resource/Survey/Responses.vue`             | row actions                    |
+| `apps/web/app/components/Resource/Survey/Response/DetailDialog.vue` | the detail dialog              |
+| `apps/web/app/components/Resource/Survey/Response/DeleteDialog.vue` | the destructive confirm        |
+| `apps/web/app/components/Resource/Survey/Overview.vue`              | count + blade link             |
 
 ## Notes
 

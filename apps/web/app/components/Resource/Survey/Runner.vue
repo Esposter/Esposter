@@ -10,12 +10,11 @@ interface Props {
   // The answers and page a respondent resumes from, when a draft was stored
   initialAnswers?: SurveyAnswers | undefined;
   initialPageIndex?: number | undefined;
-  isDisabled?: true | undefined;
   // What a shuffled choice list is ordered by, a resumed response's id, so a respondent sees one order across visits
   seed?: string | undefined;
 }
 
-const { document, initialAnswers, initialPageIndex, isDisabled = false, seed: initialSeed } = defineProps<Props>();
+const { document, initialAnswers, initialPageIndex, seed: initialSeed } = defineProps<Props>();
 const emit = defineEmits<{
   change: [value: { answers: SurveyAnswers; pageIndex: number }];
   complete: [answers: SurveyAnswers];
@@ -88,7 +87,6 @@ const submit = () => {
         :answers="state.answers"
         :error-by-pointer
         :get-row-views
-        :is-disabled
         :question-numbers
         :seed
         :view
@@ -103,7 +101,6 @@ const submit = () => {
     <div flex gap-2 justify-end>
       <UiButton
         v-if="!isFirstPage"
-        :disabled="isDisabled"
         @click="
           previous();
           emitChange();
@@ -111,12 +108,11 @@ const submit = () => {
       >
         {{ rootProps.pagePrevText || "Previous" }}
       </UiButton>
-      <UiButton v-if="isLastPage" :disabled="isDisabled" :variant="UiButtonVariant.Accent" @click="submit()">
+      <UiButton v-if="isLastPage" :variant="UiButtonVariant.Accent" @click="submit()">
         {{ rootProps.completeText || "Complete" }}
       </UiButton>
       <UiButton
         v-else
-        :disabled="isDisabled"
         :variant="UiButtonVariant.Accent"
         @click="
           next();

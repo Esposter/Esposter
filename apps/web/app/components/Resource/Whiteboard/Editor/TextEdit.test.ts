@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-import ResourceWhiteboardEditorTextEdit from "#src/components/Resource/Whiteboard/EditorTextEdit.vue";
+import ResourceWhiteboardEditorTextEdit from "#src/components/Resource/Whiteboard/Editor/TextEdit.vue";
 import { WHITEBOARD_PROCESS } from "#src/services/whiteboard/constants.test";
 import { useWhiteboardEditorStore } from "#src/store/resource/whiteboard/editor";
 import { mount } from "@vue/test-utils";

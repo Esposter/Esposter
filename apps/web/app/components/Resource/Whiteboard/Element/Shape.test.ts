@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-import ResourceWhiteboardElementShape from "#src/components/Resource/Whiteboard/ElementShape.vue";
+import ResourceWhiteboardElementShape from "#src/components/Resource/Whiteboard/Element/Shape.vue";
 import { mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
 import { v7 } from "uuid";

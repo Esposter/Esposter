@@ -6,8 +6,8 @@ import type { ArrowElement, Point, ShapeElement } from "vue-block-editor-headles
 
 import { MimeType } from "#shared/models/file/MimeType";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
-import ResourceWhiteboardEditor from "#src/components/Resource/Whiteboard/Editor.vue";
-import ResourceWhiteboardEditorPropertiesArrow from "#src/components/Resource/Whiteboard/EditorPropertiesArrow.vue";
+import ResourceWhiteboardEditor from "#src/components/Resource/Whiteboard/Editor/Index.vue";
+import ResourceWhiteboardEditorPropertiesArrow from "#src/components/Resource/Whiteboard/Editor/Properties/Arrow.vue";
 import UiConfirmDialog from "#src/components/Ui/ConfirmDialog.vue";
 import UiPalette from "#src/components/Ui/Palette/Index.vue";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";

@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import ResourceCreateForm from "#src/components/Resource/Create/Form.vue";
-import ResourceWhiteboardEditor from "#src/components/Resource/Whiteboard/Editor.vue";
+import ResourceWhiteboardEditor from "#src/components/Resource/Whiteboard/Editor/Index.vue";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useResourceStore } from "#src/store/resource/index";
 import { useWhiteboardStore } from "#src/store/resource/whiteboard/index";

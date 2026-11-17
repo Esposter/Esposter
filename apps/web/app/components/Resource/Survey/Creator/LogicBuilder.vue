@@ -57,6 +57,16 @@ const writeCondition = (prop: SurveyConditionProp, text: string): void => {
   drafts.set(prop, { base: getSavedText(prop), fault: fault ?? SURVEY_REFUSED_MESSAGE, text });
 };
 const getRows = (prop: SurveyConditionProp) => parseSurveyConditionRows(getSavedText(prop));
+// Each section's rows are parsed once per change to the conditions, since the template reads them several times a render
+const propRowsMap = computed(
+  () =>
+    new Map(
+      sections.value.map(({ prop }): [SurveyConditionProp, ReturnType<typeof parseSurveyConditionRows>] => [
+        prop,
+        parseSurveyConditionRows(getSavedText(prop)),
+      ]),
+    ),
+);
 // A row is rebuilt into the condition's text from the rows its saved text reads, so the text stays the one source
 const editRow = (prop: SurveyConditionProp, index: number, change: Partial<SurveyConditionRow>): void => {
   const parsedRows = getRows(prop);
@@ -113,8 +123,8 @@ const getOperatorItems = (questionName: string) =>
     <p v-if="selectedNode === undefined" text-muted>Select an element to set its conditions.</p>
     <section v-for="{ label, prop } of sections" :key="prop" flex flex-col gap-3>
       <h3 ui-title>{{ label }}</h3>
-      <div v-if="getRows(prop)" flex flex-col gap-3>
-        <div v-for="(row, index) of getRows(prop)?.rows" :key="index" flex flex-wrap gap-2 items-end>
+      <div v-if="propRowsMap.get(prop)" flex flex-col gap-3>
+        <div v-for="(row, index) of propRowsMap.get(prop)?.rows" :key="index" flex flex-wrap gap-2 items-end>
           <UiSelect
             :items="answerItems"
             label="Question"
@@ -145,10 +155,10 @@ const getOperatorItems = (questionName: string) =>
           <UiIconButton label="Remove condition" :meaning="UiIconMeaning.Remove" @click="askRemoveRow(prop, index)" />
         </div>
         <UiToggleGroup
-          v-if="(getRows(prop)?.rows.length ?? 0) > 1"
+          v-if="(propRowsMap.get(prop)?.rows.length ?? 0) > 1"
           :items="SURVEY_CONDITION_JOIN_ITEMS"
           label="Join"
-          :model-value="getRows(prop)?.join ?? SurveyConditionJoin.And"
+          :model-value="propRowsMap.get(prop)?.join ?? SurveyConditionJoin.And"
           @update:model-value="(newJoin) => editJoin(prop, newJoin)"
         />
         <UiButton :disabled="answers.length === 0" @click="addRow(prop)">Add a condition</UiButton>

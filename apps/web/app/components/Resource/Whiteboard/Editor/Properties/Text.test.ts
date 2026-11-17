@@ -2,7 +2,7 @@
 import type { VueWrapper } from "@vue/test-utils";
 import type { TextElement } from "vue-block-editor-headless";
 
-import ResourceWhiteboardEditorPropertiesText from "#src/components/Resource/Whiteboard/EditorPropertiesText.vue";
+import ResourceWhiteboardEditorPropertiesText from "#src/components/Resource/Whiteboard/Editor/Properties/Text.vue";
 import {
   createWhiteboardEditState,
   WHITEBOARD_ARROW,

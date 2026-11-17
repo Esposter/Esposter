@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
 import type { ArrowElement } from "vue-block-editor-headless";
 
-import ResourceWhiteboardEditorPropertiesArrow from "#src/components/Resource/Whiteboard/EditorPropertiesArrow.vue";
+import ResourceWhiteboardEditorPropertiesArrow from "#src/components/Resource/Whiteboard/Editor/Properties/Arrow.vue";
 import {
   createWhiteboardEditState,
   WHITEBOARD_ARROW,

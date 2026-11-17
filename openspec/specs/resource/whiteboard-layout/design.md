@@ -71,33 +71,33 @@ flowchart TD
 
 ## Key files
 
-| File                                                                           | Role                                                                                                  |
-| :----------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------- |
-| `apps/web/app/components/Resource/Whiteboard/Editor.vue`                       | the component the shell is handed, which wires the gestures, the keys and the text edit to the stores |
-| `apps/web/app/components/Resource/Whiteboard/EditorToolbar.vue`                | the tool groups as toolbar items, with the image input and the lock toggle                            |
-| `apps/web/app/components/Resource/Whiteboard/EditorControls.vue`               | the view's buttons: undo and redo, disabled while their history is empty, then zoom and fit           |
-| `apps/web/app/components/Resource/Whiteboard/EditorPropertiesPanel.vue`        | the panel for one element, shown for every kind except an arrow and a selection of several            |
-| `apps/web/app/components/Resource/Whiteboard/EditorPropertiesArrowPanel.vue`   | the arrow's panel, with the route, the arrowheads and the detach of each bound end                    |
-| `apps/web/app/components/Resource/Whiteboard/EditorPropertiesSeveralPanel.vue` | the several-element panel, titled by its count and holding the fill the elements share                |
-| `apps/web/app/components/Resource/Whiteboard/EditorPropertiesFooter.vue`       | the buttons every panel's footer holds: duplicate, and delete behind a confirmation                   |
-| `apps/web/app/services/whiteboard/layout/constants.ts`                         | the regions of the layout, the panels that open over them, and the region names a screen reader hears |
-| `apps/web/app/services/whiteboard/layout/WhiteboardContentComponentMap.ts`     | the registry: which component each content key draws                                                  |
-| `apps/web/app/services/whiteboard/layout/getWhiteboardSelectionKind.ts`        | the kind a selection is keyed by in the layout: one element's type, several, or nothing               |
-| `apps/web/app/composables/whiteboard/useWhiteboardGesture.ts`                  | passes each pointer event through the gesture reducer and writes the result to the stores             |
-| `apps/web/app/composables/whiteboard/useWhiteboardKeyboard.ts`                 | binds the whiteboard's commands: tool keys, history, nudges and the delete request                    |
-| `apps/web/app/composables/whiteboard/useInsertWhiteboardImages.ts`             | uploads picked or pasted images, then inserts each one centred on the canvas                          |
-| `apps/web/app/components/Ui/HiddenFileInput.vue`                               | the hidden file input that the toolbar's image button activates                                       |
-| `apps/web/app/services/whiteboard/gesture/reduceWhiteboardGesture.ts`          | the one gesture reducer, which hands each gesture to the phase it is in                               |
-| `apps/web/app/services/whiteboard/gesture/startPlacingGesture.ts`              | a press with a placing tool, which holds the element it would place                                   |
-| `apps/web/app/services/whiteboard/gesture/reducePlacingGesture.ts`             | the placing phase: a click places the default size, a drag sizes the element, and the tool returns    |
-| `apps/web/app/services/whiteboard/tool/WhiteboardToolItemMap.ts`               | each toolbar tool with its mark, title and key                                                        |
-| `apps/web/app/services/whiteboard/tool/WhiteboardShapeItemMap.ts`              | the shape slot's variants, each with a mark, a title and, where it has one, a key                     |
-| `apps/web/app/services/whiteboard/tool/constants.ts`                           | the constant the shape slot reads, and the image types the picker takes                               |
-| `apps/web/app/services/whiteboard/palette/constants.ts`                        | the default size, fill and text each placed element starts with                                       |
-| `apps/web/app/store/resource/whiteboard/editor.ts`                             | the tool in hand, its lock, the shape kind, the selection and the viewport                            |
-| `apps/web/app/store/resource/whiteboard/index.ts`                              | the whiteboard store: the saved document, the history over it, and the commit every edit goes through |
-| `apps/web/app/components/Editor/Toolbar.vue`                                   | the shared toolbar, which records each slot's variant as the tool in hand moves                       |
-| `openspec/specs/resource/whiteboard/design.md`                                 | the whiteboard's design, which holds the document, its commands and its export                        |
+| File                                                                             | Role                                                                                                  |
+| :------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------- |
+| `apps/web/app/components/Resource/Whiteboard/Editor/Index.vue`                   | the component the shell is handed, which wires the gestures, the keys and the text edit to the stores |
+| `apps/web/app/components/Resource/Whiteboard/Editor/Toolbar.vue`                 | the tool groups as toolbar items, with the image input and the lock toggle                            |
+| `apps/web/app/components/Resource/Whiteboard/Editor/Controls.vue`                | the view's buttons: undo and redo, disabled while their history is empty, then zoom and fit           |
+| `apps/web/app/components/Resource/Whiteboard/Editor/Properties/Panel.vue`        | the panel for one element, shown for every kind except an arrow and a selection of several            |
+| `apps/web/app/components/Resource/Whiteboard/Editor/Properties/ArrowPanel.vue`   | the arrow's panel, with the route, the arrowheads and the detach of each bound end                    |
+| `apps/web/app/components/Resource/Whiteboard/Editor/Properties/SeveralPanel.vue` | the several-element panel, titled by its count and holding the fill the elements share                |
+| `apps/web/app/components/Resource/Whiteboard/Editor/Properties/Footer.vue`       | the buttons every panel's footer holds: duplicate, and delete behind a confirmation                   |
+| `apps/web/app/services/whiteboard/layout/constants.ts`                           | the regions of the layout, the panels that open over them, and the region names a screen reader hears |
+| `apps/web/app/services/whiteboard/layout/WhiteboardContentComponentMap.ts`       | the registry: which component each content key draws                                                  |
+| `apps/web/app/services/whiteboard/layout/getWhiteboardSelectionKind.ts`          | the kind a selection is keyed by in the layout: one element's type, several, or nothing               |
+| `apps/web/app/composables/whiteboard/useWhiteboardGesture.ts`                    | passes each pointer event through the gesture reducer and writes the result to the stores             |
+| `apps/web/app/composables/whiteboard/useWhiteboardKeyboard.ts`                   | binds the whiteboard's commands: tool keys, history, nudges and the delete request                    |
+| `apps/web/app/composables/whiteboard/useInsertWhiteboardImages.ts`               | uploads picked or pasted images, then inserts each one centred on the canvas                          |
+| `apps/web/app/components/Ui/HiddenFileInput.vue`                                 | the hidden file input that the toolbar's image button activates                                       |
+| `apps/web/app/services/whiteboard/gesture/reduceWhiteboardGesture.ts`            | the one gesture reducer, which hands each gesture to the phase it is in                               |
+| `apps/web/app/services/whiteboard/gesture/startPlacingGesture.ts`                | a press with a placing tool, which holds the element it would place                                   |
+| `apps/web/app/services/whiteboard/gesture/reducePlacingGesture.ts`               | the placing phase: a click places the default size, a drag sizes the element, and the tool returns    |
+| `apps/web/app/services/whiteboard/tool/WhiteboardToolItemMap.ts`                 | each toolbar tool with its mark, title and key                                                        |
+| `apps/web/app/services/whiteboard/tool/WhiteboardShapeItemMap.ts`                | the shape slot's variants, each with a mark, a title and, where it has one, a key                     |
+| `apps/web/app/services/whiteboard/tool/constants.ts`                             | the constant the shape slot reads, and the image types the picker takes                               |
+| `apps/web/app/services/whiteboard/palette/constants.ts`                          | the default size, fill and text each placed element starts with                                       |
+| `apps/web/app/store/resource/whiteboard/editor.ts`                               | the tool in hand, its lock, the shape kind, the selection and the viewport                            |
+| `apps/web/app/store/resource/whiteboard/index.ts`                                | the whiteboard store: the saved document, the history over it, and the commit every edit goes through |
+| `apps/web/app/components/Editor/Toolbar.vue`                                     | the shared toolbar, which records each slot's variant as the tool in hand moves                       |
+| `openspec/specs/resource/whiteboard/design.md`                                   | the whiteboard's design, which holds the document, its commands and its export                        |
 
 ## Sources
 

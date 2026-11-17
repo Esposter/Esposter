@@ -25,7 +25,7 @@ Built on [completion](../todolist-completion/design.md). A list with no way to s
 | `apps/web/app/store/resource/todoList/index.ts`                | `toggleImportant`, unwound on a refused save, and the kept sort |
 | `apps/web/app/services/resource/todoList/sortTodoListItems.ts` | Every sort, stable over the list's own order                    |
 | `apps/web/app/components/Resource/TodoList/Rows.vue`           | The star trailing each row and its context-menu twin            |
-| `apps/web/app/components/Resource/TodoList/TopSlot.vue`        | The Sort menu                                                   |
+| `apps/web/app/components/Resource/TodoList/TopSlot/Index.vue`  | The Sort menu                                                   |
 | `apps/web/app/components/Resource/TodoList/Items.vue`          | The open todos in the chosen sort                               |
 | `apps/web/app/components/Resource/TodoList/EditForm.vue`       | The star beside the name in the dialog                          |
 

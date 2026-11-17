@@ -30,7 +30,7 @@ flowchart LR
 | `apps/web/app/services/resource/survey/getSurveyPaletteGroups.ts` | the survey's groups, from the icon map           |
 | `apps/web/app/components/Resource/Survey/Creator/Palette.vue`     | the survey palette                               |
 | `apps/web/app/components/PageBuilder/Palette.vue`                 | the page builder palette                         |
-| `apps/web/app/components/Resource/Whiteboard/Editor.vue`          | the whiteboard editor, drawn by the editor shell |
+| `apps/web/app/components/Resource/Whiteboard/Editor/Index.vue`    | the whiteboard editor, drawn by the editor shell |
 | `apps/web/app/components/Editor/Toolbar.vue`                      | the toolbar a tool region draws, with its fold   |
 | `apps/web/app/components/Resource/Survey/Creator/Toolbar.vue`     | the survey's bar, drawn by the shared toolbar    |
 | `apps/web/app/components/Ui/Tabs.vue`                             | the shared tab panel and its padding             |

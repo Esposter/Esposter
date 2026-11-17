@@ -4,7 +4,7 @@ Built on [task rows](../todolist-task-rows/design.md). A todo is usually a few w
 
 ## How it works
 
-- **The field leads the Items blade.** `ResourceTodoListTopSlot` holds an **Add a todo** `UiTextField`, its label hidden and its placeholder saying what it does. It sits in a `form`, so Enter submits it natively.
+- **The field leads the Items blade.** `ResourceTodoListTopSlotAddForm` holds an **Add a todo** `UiTextField`, its label hidden and its placeholder saying what it does, and `ResourceTodoListTopSlot` mounts it beside the search and the sort. It sits in a `form`, so Enter submits it natively.
 - **Enter adds** through the store's `addItem`: the name is normalized, a name of only whitespace adds nothing, and the new `TodoListItem` is appended to `items`, so it lands at the foot of the open group, as Microsoft To Do adds a task to the bottom of its list. The field empties at once and keeps focus for the next todo. A name past `ITEM_NAME_MAX_LENGTH`, the limit the dialog's name field counts, is refused with the field's error rather than cut short, and the field shows no count until then, so it lines up with the search button beside it.
 - **Escape** empties the field.
 - **A refused save** takes the new todo back out of the list, and the typed name goes back into the field so nothing is lost — unless the next todo is already being typed there.
@@ -20,10 +20,11 @@ The field is labelled _Add a todo_ rather than To Do's _Add a task_, since every
 
 ## Key files
 
-| File                                                    | Role                                           |
-| ------------------------------------------------------- | ---------------------------------------------- |
-| `apps/web/app/components/Resource/TodoList/TopSlot.vue` | The Add a todo field and the folding search    |
-| `apps/web/app/store/resource/todoList/index.ts`         | `addItem`, a create by name unwound on refusal |
+| File                                                            | Role                                           |
+| --------------------------------------------------------------- | ---------------------------------------------- |
+| `apps/web/app/components/Resource/TodoList/TopSlot/AddForm.vue` | The Add a todo field                           |
+| `apps/web/app/components/Resource/TodoList/TopSlot/Index.vue`   | The folding search, beside the add field       |
+| `apps/web/app/store/resource/todoList/index.ts`                 | `addItem`, a create by name unwound on refusal |
 
 ## Sources
 

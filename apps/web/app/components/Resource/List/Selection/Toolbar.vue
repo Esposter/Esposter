@@ -17,7 +17,7 @@ const { captureIds } = storeToRefs(blueprintCaptureDialogStore);
 const { exportResourcesCsv } = useExportResourcesCsv();
 // Delete is what a selection is most often made for, so it stays out; the rest wait in the overflow menu, which keeps
 // The bar on one line however narrow the screen
-const items = computed<Item[]>(() => [
+const items: Item[] = [
   {
     meaning: UiIconMeaning.Download,
     onClick: async () => {
@@ -32,7 +32,7 @@ const items = computed<Item[]>(() => [
     },
     title: "Save as blueprint",
   },
-]);
+];
 </script>
 
 <!-- Stands where the filters were while rows are selected, since what is done to a selection comes first then. It leads

@@ -54,8 +54,8 @@ flowchart TD
 | `apps/web/app/services/resource/survey/SurveyEditorRegistry.ts`            | the component each content key draws                                                                    |
 | `apps/web/app/components/Resource/Survey/Creator/Layers.vue`               | the layers tree: selection, drag and the row menu                                                       |
 | `apps/web/app/components/Resource/Survey/Creator/Palette.vue`              | the kinds the palette inserts                                                                           |
-| `apps/web/app/components/Resource/Survey/Creator/Canvas.vue`               | the canvas of pages                                                                                     |
-| `apps/web/app/components/Resource/Survey/Creator/CanvasNode.vue`           | one element on the canvas, selectable                                                                   |
+| `apps/web/app/components/Resource/Survey/Creator/Canvas/Index.vue`         | the canvas of pages                                                                                     |
+| `apps/web/app/components/Resource/Survey/Creator/Canvas/Node.vue`          | one element on the canvas, selectable                                                                   |
 | `apps/web/app/components/Resource/Survey/Runner.vue`                       | the runner the preview draws                                                                            |
 | `apps/web/app/store/survey/creator.ts`                                     | the document, history, preview flag and selection                                                       |
 | `apps/web/app/composables/survey/useSurveyCreatorCommands.ts`              | one core command per gesture, applied as patches                                                        |

@@ -1,17 +1,18 @@
 // @vitest-environment nuxt
 import type { ImageElement } from "vue-block-editor-headless";
 
-import ResourceWhiteboardEditorPropertiesAltText from "#src/components/Resource/Whiteboard/EditorPropertiesAltText.vue";
+import ResourceWhiteboardEditorPropertiesAltText from "#src/components/Resource/Whiteboard/Editor/Properties/AltText.vue";
+import ResourceWhiteboardElementImage from "#src/components/Resource/Whiteboard/Element/Image.vue";
 import { createWhiteboardEditState } from "#src/services/whiteboard/constants.test";
 import { createWhiteboardImageElement } from "#src/services/whiteboard/createWhiteboardImageElement";
 import { useWhiteboardStore } from "#src/store/resource/whiteboard/index";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 
-describe("resourceWhiteboardEditorPropertiesAltText", () => {
+describe("resourceWhiteboardElementImage", () => {
   const FILE_ID = "0".repeat(64);
 
-  test("enter commits the alt text as one edit", async () => {
+  test("setting alt text from the properties panel names the image", async () => {
     expect.hasAssertions();
 
     const image = createWhiteboardImageElement(FILE_ID, { x: 0, y: 0 });
@@ -22,40 +23,27 @@ describe("resourceWhiteboardEditorPropertiesAltText", () => {
     });
 
     await panel.get("input").setValue("Quarterly chart");
-    await panel.get("input").trigger("keydown.enter");
+    await panel.get("input").trigger("focusout");
 
-    expect(whiteboardStore.editState.document).toStrictEqual({ elements: [{ ...image, altText: "Quarterly chart" }] });
+    const namedImage: ImageElement = { ...image, altText: "Quarterly chart" };
+    expect(whiteboardStore.editState.document).toStrictEqual({ elements: [namedImage] });
+    const canvasImage = await mountSuspended(ResourceWhiteboardElementImage, { props: { image: namedImage } });
+    expect(canvasImage.get("image").attributes("role")).toBe("img");
+    expect(canvasImage.get("image").attributes("aria-label")).toBe("Quarterly chart");
   });
 
-  test("leaving the field with its alt text unchanged makes no edit", async () => {
+  test("a new image starts with no alt text", async () => {
     expect.hasAssertions();
 
     const image = createWhiteboardImageElement(FILE_ID, { x: 0, y: 0 });
     const whiteboardStore = useWhiteboardStore();
     whiteboardStore.editState = createWhiteboardEditState({ elements: [image] });
-    const editStateBefore = whiteboardStore.editState;
     const panel = await mountSuspended(ResourceWhiteboardEditorPropertiesAltText, {
       props: { element: image, index: 0 },
     });
-
-    await panel.get("input").trigger("focusout");
-
-    expect(whiteboardStore.editState).toBe(editStateBefore);
-  });
-
-  test("an undo that changes the stored alt text shows in the field", async () => {
-    expect.hasAssertions();
-
-    const image = createWhiteboardImageElement(FILE_ID, { x: 0, y: 0 });
-    const namedImage: ImageElement = { ...image, altText: "Quarterly chart" };
-    const panel = await mountSuspended(ResourceWhiteboardEditorPropertiesAltText, {
-      props: { element: namedImage, index: 0 },
-    });
-
-    expect((panel.get("input").element as HTMLInputElement).value).toBe("Quarterly chart");
-
-    await panel.setProps({ element: image });
+    const canvasImage = await mountSuspended(ResourceWhiteboardElementImage, { props: { image } });
 
     expect((panel.get("input").element as HTMLInputElement).value).toBe("");
+    expect(canvasImage.get("image").attributes("aria-label")).toBeUndefined();
   });
 });

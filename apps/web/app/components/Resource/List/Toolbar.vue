@@ -18,7 +18,7 @@ defineProps<Props>();
 const emit = defineEmits<{ export: []; refresh: [] }>();
 // The two views of the list are toggles that say whether they are on, so they stay out on every width; what is done
 // Now and then waits in the overflow menu
-const items = computed<Item[]>(() => [
+const items: Item[] = [
   { meaning: UiIconMeaning.Download, onClick: () => emit("export"), title: "Export CSV" },
   { meaning: UiIconMeaning.Refresh, onClick: () => emit("refresh"), title: "Refresh" },
   {
@@ -29,7 +29,7 @@ const items = computed<Item[]>(() => [
     },
     title: "Recycle bin",
   },
-]);
+];
 </script>
 
 <template>

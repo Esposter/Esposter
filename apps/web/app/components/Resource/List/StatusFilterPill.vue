@@ -6,6 +6,7 @@ import { ResourceStatusFilterItems } from "#src/services/resource/list/ResourceS
 
 const modelValue = defineModel<"" | ResourceStatusFilter>({ required: true });
 const emit = defineEmits<{ remove: [] }>();
+const selectedValues = computed(() => [modelValue.value]);
 </script>
 
 <template>
@@ -19,7 +20,7 @@ const emit = defineEmits<{ remove: [] }>();
     <ResourceListFilterOptions
       :items="ResourceStatusFilterItems"
       :meaning="UiIconMeaning.Publish"
-      :selected-values="[modelValue]"
+      :selected-values
       @toggle="
         (value) => {
           modelValue = value;

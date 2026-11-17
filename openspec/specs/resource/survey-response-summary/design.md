@@ -56,7 +56,7 @@ A response's answer becomes one cell through `toDatasetColumnValue`. A flat list
 | File                                                                                    | Role                                                                               |
 | --------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
 | `apps/web/app/components/Resource/Survey/Responses.vue`                                 | The Summary and Individual views, and the empty state both share                   |
-| `apps/web/app/components/Resource/Survey/ResponseSummaryCard.vue`                       | One question's card                                                                |
+| `apps/web/app/components/Resource/Survey/Response/SummaryCard.vue`                      | One question's card                                                                |
 | `apps/web/app/services/survey/summary/getSurveyDocumentSummaryCards.ts`                 | The cards, one per answering question, drawn by the question's kind                |
 | `apps/web/app/services/survey/summary/getSurveyDocumentSummaryCards.test.ts`            | The cards' tests over the typed question kinds                                     |
 | `apps/web/app/services/resource/survey/getSurveyDocumentResponseSummaryCards.ts`        | The questions the records hold a column for, read from the document, for the cards |

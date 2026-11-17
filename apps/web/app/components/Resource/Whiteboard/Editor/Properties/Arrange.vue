@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { useWhiteboardSelectionOperations } from "#src/composables/whiteboard/useWhiteboardSelectionOperations";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
-import { AlignEdge } from "#src/models/whiteboard/AlignEdge";
 import { DistributeAxis } from "#src/models/whiteboard/DistributeAxis";
+import { WHITEBOARD_ALIGN_ITEMS } from "#src/services/whiteboard/arrange/constants";
 import { getAlignOperations } from "#src/services/whiteboard/arrange/getAlignOperations";
 import { getDistributeOperations } from "#src/services/whiteboard/arrange/getDistributeOperations";
 
@@ -17,40 +17,12 @@ const { checkIsDisabled: checkIsDistributeDisabled, commit: distribute } =
   <div flex flex-col gap-1>
     <div flex gap-1>
       <UiIconButton
-        label="Align left"
-        :meaning="UiIconMeaning.AlignLeft"
-        :disabled="checkIsAlignDisabled(AlignEdge.Left)"
-        @click="align(AlignEdge.Left)"
-      />
-      <UiIconButton
-        label="Align centre"
-        :meaning="UiIconMeaning.AlignCentre"
-        :disabled="checkIsAlignDisabled(AlignEdge.Centre)"
-        @click="align(AlignEdge.Centre)"
-      />
-      <UiIconButton
-        label="Align right"
-        :meaning="UiIconMeaning.AlignRight"
-        :disabled="checkIsAlignDisabled(AlignEdge.Right)"
-        @click="align(AlignEdge.Right)"
-      />
-      <UiIconButton
-        label="Align top"
-        :meaning="UiIconMeaning.AlignTop"
-        :disabled="checkIsAlignDisabled(AlignEdge.Top)"
-        @click="align(AlignEdge.Top)"
-      />
-      <UiIconButton
-        label="Align middle"
-        :meaning="UiIconMeaning.AlignMiddle"
-        :disabled="checkIsAlignDisabled(AlignEdge.Middle)"
-        @click="align(AlignEdge.Middle)"
-      />
-      <UiIconButton
-        label="Align bottom"
-        :meaning="UiIconMeaning.AlignBottom"
-        :disabled="checkIsAlignDisabled(AlignEdge.Bottom)"
-        @click="align(AlignEdge.Bottom)"
+        v-for="{ edge, label, meaning } in WHITEBOARD_ALIGN_ITEMS"
+        :key="edge"
+        :disabled="checkIsAlignDisabled(edge)"
+        :label
+        :meaning
+        @click="align(edge)"
       />
     </div>
     <div flex gap-1>

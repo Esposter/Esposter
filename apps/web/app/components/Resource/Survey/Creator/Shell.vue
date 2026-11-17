@@ -16,7 +16,6 @@ import { SurveyEditorRegionNameMap } from "#src/services/resource/survey/SurveyE
 import { SurveyEditorRegistry } from "#src/services/resource/survey/SurveyEditorRegistry";
 import { getHistoryCommands } from "#src/services/ui/getHistoryCommands";
 import { useSurveyCreatorStore } from "#src/store/survey/creator";
-import { noop } from "@esposter/shared";
 
 const surveyCreatorStore = useSurveyCreatorStore();
 const { document: surveyDocument, isPreview, selectedNode, selectedPointer } = storeToRefs(surveyCreatorStore);
@@ -90,7 +89,7 @@ useCommands([
     :region-name-map="SurveyEditorRegionNameMap"
     :registry="SurveyEditorRegistry"
   >
-    <ResourceSurveyRunner v-if="isPreview" :document="surveyDocument" :on-complete="noop" />
+    <ResourceSurveyRunner v-if="isPreview" :document="surveyDocument" />
     <ResourceSurveyCreatorCanvas v-else />
   </EditorShell>
 </template>

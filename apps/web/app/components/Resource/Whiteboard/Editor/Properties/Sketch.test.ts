@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
 import type { ShapeElement } from "vue-block-editor-headless";
 
-import ResourceWhiteboardEditorPropertiesSketch from "#src/components/Resource/Whiteboard/EditorPropertiesSketch.vue";
+import ResourceWhiteboardEditorPropertiesSketch from "#src/components/Resource/Whiteboard/Editor/Properties/Sketch.vue";
 import { createWhiteboardEditState, WHITEBOARD_PROCESS } from "#src/services/whiteboard/constants.test";
 import { useWhiteboardStore } from "#src/store/resource/whiteboard/index";
 import { mountSuspended } from "@nuxt/test-utils/runtime";

@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import ResourceSurveyCreatorCanvas from "#src/components/Resource/Survey/Creator/Canvas.vue";
+import ResourceSurveyCreatorCanvas from "#src/components/Resource/Survey/Creator/Canvas/Index.vue";
 import ResourceSurveyCreatorShell from "#src/components/Resource/Survey/Creator/Shell.vue";
 import ResourceSurveyRunner from "#src/components/Resource/Survey/Runner.vue";
 import { SurveyEditorRegion } from "#src/models/resource/survey/SurveyEditorRegion";

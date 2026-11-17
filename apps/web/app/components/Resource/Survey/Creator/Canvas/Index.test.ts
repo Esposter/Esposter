@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import ResourceSurveyCreatorCanvas from "#src/components/Resource/Survey/Creator/Canvas.vue";
+import ResourceSurveyCreatorCanvas from "#src/components/Resource/Survey/Creator/Canvas/Index.vue";
 import { useSurveyCreatorStore } from "#src/store/survey/creator";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";

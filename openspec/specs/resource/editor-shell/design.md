@@ -147,7 +147,7 @@ A reader's state outlives the editor that holds it, so it sits in a store. VueUs
 | `apps/web/app/components/Ui/ToggleGroup.vue`                             | the pressed-state group a toolbar's tools use                                                               |
 | `apps/web/app/components/Ui/IconButton.vue`                              | a toolbar's command item                                                                                    |
 | `apps/web/app/store/message/ui/layout.ts`                                | the precedent for sizes held in a store over local storage, which the editor reader states follow           |
-| `apps/web/app/components/Resource/Whiteboard/Editor.vue`                 | the whiteboard, drawn by the shell from its layout                                                          |
+| `apps/web/app/components/Resource/Whiteboard/Editor/Index.vue`           | the whiteboard, drawn by the shell from its layout                                                          |
 | `apps/web/app/components/Resource/Survey/Creator/Shell.vue`              | the survey, drawn by the shell from its layout                                                              |
 | `apps/web/app/components/Resource/Email/Editor.vue`                      | the email, drawn by the shell from its layout                                                               |
 | `apps/web/app/components/PageBuilder/Editor.vue`                         | the webpage, drawn by the shell from its layout                                                             |

@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import ResourceWhiteboardEditorToolbar from "#src/components/Resource/Whiteboard/EditorToolbar.vue";
+import ResourceWhiteboardEditorToolbar from "#src/components/Resource/Whiteboard/Editor/Toolbar.vue";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 

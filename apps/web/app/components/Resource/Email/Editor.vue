@@ -84,7 +84,6 @@ const {
 const preview = useTemplateRef("preview");
 // The problems the compile found, which the bar lists in both modes
 const findings = computed<EditorFinding[]>(() => preview.value?.findings ?? []);
-const device = computed(() => getDevice(resourceId));
 // What the shell resolves the layout for: the mode, and whether a node is selected, which the inspector's tabs follow
 const context = computed<Context>(() => {
   const nodeId = getSelectedNodeId(resourceId);
@@ -154,7 +153,6 @@ const registry: Record<EmailContentKey, Component> = {
         <PageBuilderEmptyPage v-if="emailDocument?.content.length === 0" />
         <PageBuilderCanvas
           v-else
-          ref="canvas"
           v-model:is-delete-open="isDeleteOpen"
           :announce
           :dragged-type
@@ -168,7 +166,7 @@ const registry: Record<EmailContentKey, Component> = {
         v-if="emailDocument"
         v-show="view === EmailView.Preview"
         ref="preview"
-        :device
+        :device="getDevice(resourceId)"
         :email-document
       />
     </EditorShell>

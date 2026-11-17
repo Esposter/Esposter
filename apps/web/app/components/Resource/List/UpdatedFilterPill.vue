@@ -10,6 +10,7 @@ const updatedBefore = defineModel<Date | undefined>("updatedBefore", { required:
 const emit = defineEmits<{ remove: [] }>();
 // The range picks days and the bounds are instants: each bound is its day's start where the reader is, and the fetch
 // Extends the end to the close of its day
+const selectedValues = computed(() => (updatedFilter.value ? [updatedFilter.value] : []));
 const createDayBound = (bound: Ref<Date | undefined>) =>
   computed({
     get: () => (bound.value ? getZonedDateTime(bound.value).toPlainDate() : undefined),
@@ -26,7 +27,7 @@ const updatedBeforeDay = createDayBound(updatedBefore);
     <ResourceListFilterOptions
       :items="ResourceUpdatedFilterItems"
       :meaning="UiIconMeaning.Recent"
-      :selected-values="updatedFilter ? [updatedFilter] : []"
+      :selected-values
       @toggle="
         (preset) => {
           updatedFilter = preset;

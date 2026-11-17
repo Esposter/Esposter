@@ -9,7 +9,7 @@ interface Props {
 
 const { editor } = defineProps<Props>();
 const isTableActive = ref(false);
-const items = computed<Item[]>(() => [
+const items: Item[] = [
   {
     icon: "i-mdi:table-row-plus-before",
     onClick: () => {
@@ -76,7 +76,7 @@ const items = computed<Item[]>(() => [
     },
     title: "Delete table",
   },
-]);
+];
 
 watchImmediate(
   () => editor,

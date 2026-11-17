@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
 import { MimeType } from "#shared/models/file/MimeType";
-import ResourceWhiteboardEditorCanvas from "#src/components/Resource/Whiteboard/EditorCanvas.vue";
+import ResourceWhiteboardEditorCanvas from "#src/components/Resource/Whiteboard/Editor/Canvas.vue";
 import { getSha256Hex } from "#src/services/shared/getSha256Hex";
 import { WHITEBOARD_IMAGE_SIZE } from "#src/services/whiteboard/palette/constants";
 import { useWhiteboardStore } from "#src/store/resource/whiteboard/index";
