@@ -6,8 +6,8 @@
 
 ## 2. The archived tick
 
-- [x] 2.1 The owner decides whether the archived change's task 3.1 stays ticked, reading its Result's "no stored page" as the true state, or is shown unticked here with a note. Verify: the decision is written into this change's Result, and the archive is left as it is.
+- [ ] 2.1 The owner decides whether the archived change's task 3.1 stays ticked, reading its Result's "no stored page" as the true state, or is shown unticked here with a note. Verify: the decision is written into this change's Result, and the archive is left as it is.
 
 ## Result
 
-The read had no page to read: dev and prod each hold zero webpage resources and zero webpage publications, so neither procedure was called. The archived change's task 3.1 stays ticked, since its Result already states that no stored page existed, which is the true state; the archive is left as it is.
+The read had no page to read: dev and prod each hold zero webpage resources and zero webpage publications, so neither procedure was called. The session's reading is that the archived change's task 3.1 stays ticked, since its Result already states that no stored page existed; that is a recommendation only. The owner's decision on 2.1 is not recorded here, so 2.1 stays open, and the archive is left as it is.
