@@ -1,9 +1,9 @@
 // @vitest-environment nuxt
 import { useSurveyCanvasSelection } from "#src/composables/survey/useSurveyCanvasSelection";
+import { createSurveyOnePageTestDocument } from "#src/services/survey/createSurveyOnePageTestDocument.test";
 import { useSurveyCreatorStore } from "#src/store/survey/creator";
 import { createPinia, setActivePinia } from "pinia";
 import { describe, expect, test } from "vitest";
-import { surveyDocumentSchema, SurveyNodeType } from "vue-survey-engine-headless";
 
 describe(useSurveyCanvasSelection, () => {
   test("a click chooses its element, and Enter chooses it only from the element itself", () => {
@@ -12,12 +12,7 @@ describe(useSurveyCanvasSelection, () => {
     setActivePinia(createPinia());
     const surveyCreatorStore = useSurveyCreatorStore();
     // The selection is read off the document, so the element's pointer names a page the document holds
-    surveyCreatorStore.load(
-      surveyDocumentSchema.parse({
-        content: [{ props: { children: [], enableIf: "", id: "page" }, type: SurveyNodeType.Page }],
-        root: { props: { backgroundImage: "" } },
-      }),
-    );
+    surveyCreatorStore.load(createSurveyOnePageTestDocument([]));
     const { getSelectionBindings } = useSurveyCanvasSelection();
     const pointer = "/content/0";
     const bindings = getSelectionBindings(pointer);
