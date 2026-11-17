@@ -24,14 +24,15 @@ const whiteboardEditorStore = useWhiteboardEditorStore();
 const { selectedIds, tool, viewport } = storeToRefs(whiteboardEditorStore);
 const padding = computed(() => WHITEBOARD_SELECTION_PADDING / viewport.value.scale);
 const handleSize = computed(() => WHITEBOARD_HANDLE_SIZE / viewport.value.scale);
-const frames = computed(() =>
-  displayedDocument.value.elements
-    .filter(({ id }) => selectedIds.value.includes(id))
-    .map((element) => ({ bounds: getElementBounds(element), id: element.id })),
-);
 // The box of a selection of several, which its handles sit around, and which is framed as an element's box is
 const selectionBounds = computed(() => getSelectionBounds(displayedDocument.value, selectedIds.value));
 const groupBounds = computed(() => (selectedIds.value.length > 1 ? selectionBounds.value : undefined));
+const frames = computed(() => [
+  ...displayedDocument.value.elements
+    .filter(({ id }) => selectedIds.value.includes(id))
+    .map((element) => ({ bounds: getElementBounds(element), key: `element-${element.id}` })),
+  ...(groupBounds.value ? [{ bounds: groupBounds.value, key: "group" }] : []),
+]);
 // The connection and free end handles show on the select tool alone, since a press on them is a select-tool gesture. A bound end and an annotation show none
 const isSelectTool = computed(() => tool.value === GestureTool.Select);
 const connectionHandles = computed(() =>
@@ -49,12 +50,17 @@ const handles = computed(() => {
     point: getResizeHandlePoint(bounds, handle),
   }));
 });
+// The resize handles and the free end handles are both squares centred on a point
+const squareHandles = computed(() => [
+  ...handles.value.map(({ handle, point }) => ({ key: handle, point })),
+  ...endHandles.value.map(({ endKey, point }) => ({ key: `end-${endKey}`, point })),
+]);
 </script>
 
 <template>
   <rect
-    v-for="{ bounds, id } in frames"
-    :key="id"
+    v-for="{ bounds, key } in frames"
+    :key
     :x="bounds.x - padding"
     :y="bounds.y - padding"
     :width="bounds.width + 2 * padding"
@@ -65,19 +71,8 @@ const handles = computed(() => {
     vector-effect="non-scaling-stroke"
   />
   <rect
-    v-if="groupBounds"
-    :x="groupBounds.x - padding"
-    :y="groupBounds.y - padding"
-    :width="groupBounds.width + 2 * padding"
-    :height="groupBounds.height + 2 * padding"
-    fill="none"
-    stroke="var(--ui-accent)"
-    :stroke-width="WHITEBOARD_OVERLAY_STROKE_WIDTH"
-    vector-effect="non-scaling-stroke"
-  />
-  <rect
-    v-for="{ handle, point } in handles"
-    :key="handle"
+    v-for="{ key, point } in squareHandles"
+    :key
     :x="point.x - handleSize / 2"
     :y="point.y - handleSize / 2"
     :width="handleSize"
@@ -93,18 +88,6 @@ const handles = computed(() => {
     :cx="point.x"
     :cy="point.y"
     :r="handleSize / 2"
-    fill="var(--ui-background)"
-    stroke="var(--ui-accent)"
-    :stroke-width="WHITEBOARD_OVERLAY_STROKE_WIDTH"
-    vector-effect="non-scaling-stroke"
-  />
-  <rect
-    v-for="{ endKey, point } in endHandles"
-    :key="`end-${endKey}`"
-    :x="point.x - handleSize / 2"
-    :y="point.y - handleSize / 2"
-    :width="handleSize"
-    :height="handleSize"
     fill="var(--ui-background)"
     stroke="var(--ui-accent)"
     :stroke-width="WHITEBOARD_OVERLAY_STROKE_WIDTH"
