@@ -11,7 +11,7 @@ import { SurveyEditorRegistry } from "#src/services/resource/survey/SurveyEditor
 import { useSurveyCreatorStore } from "#src/store/survey/creator";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { checkLayout } from "vue-editor-layout-headless";
 import { surveyDocumentSchema, SurveyNodeType } from "vue-survey-engine-headless";
 
@@ -60,6 +60,10 @@ describe("resourceSurveyCreatorShell", () => {
   const secondQuestionPointer = "/content/0/props/children/1";
   const structureSelector = 'aside[aria-label="Structure"]';
   const inspectorSelector = 'aside[aria-label="Inspector"]';
+
+  beforeAll(async () => {
+    await import("#src/components/Resource/Survey/Field/Text.vue");
+  });
 
   beforeEach(() => {
     display.isCompact = false;
@@ -122,6 +126,33 @@ describe("resourceSurveyCreatorShell", () => {
     expect(component.findComponent(ResourceSurveyRunner).exists()).toBe(true);
     expect(component.findAll(structureSelector)).toHaveLength(0);
     expect(component.findAll(inspectorSelector)).toHaveLength(0);
+
+    component.unmount();
+  });
+
+  test("leaving the preview clears its results", async () => {
+    expect.hasAssertions();
+
+    const surveyCreatorStore = loadSurvey();
+    const component = await mountSuspended(ResourceSurveyCreatorShell);
+    surveyCreatorStore.isPreview = true;
+    await nextTick();
+    await component
+      .findAll("button")
+      .find((button) => button.text() === "Complete")
+      ?.trigger("click");
+    await flushPromises();
+
+    expect(component.find("table").exists()).toBe(true);
+
+    surveyCreatorStore.isPreview = false;
+    await nextTick();
+    surveyCreatorStore.isPreview = true;
+    await nextTick();
+    await flushPromises();
+
+    expect(component.find("table").exists()).toBe(false);
+    expect(component.get<HTMLInputElement>("input").element.value).toBe("");
 
     component.unmount();
   });

@@ -36,11 +36,16 @@ const getColumnType = (question: SurveyQuestionNode): DatasetColumnType => {
   }
 };
 
-// A dynamic panel is one question, so its one column is the answer of the whole panel rather than one per template question
-export const getSurveyDocumentDatasetColumns = (document: SurveyDocument): DatasetColumn[] =>
-  flattenSurveyQuestions(document.content)
+// A dynamic panel is one question, so its one column is the answer of the whole panel rather than one per template question.
+// A calculated value flagged for the result is written into each completed response, so it has a column beside the questions
+export const getSurveyDocumentDatasetColumns = (document: SurveyDocument): DatasetColumn[] => [
+  ...flattenSurveyQuestions(document.content)
     .filter((question) => checkIsSurveyAnsweringNode(question))
     .map((question) => {
       const { name, title } = question.props;
       return { name, type: getColumnType(question), ...(title && { title }) };
-    });
+    }),
+  ...document.root.props.calculatedValues
+    .filter(({ includeIntoResult }) => includeIntoResult)
+    .map(({ name }) => ({ name, type: ColumnType.String })),
+];

@@ -1,4 +1,4 @@
-import { toDatasetColumnValue } from "#server/services/dataset/surveyResponses/toDatasetColumnValue";
+import { toDatasetColumnValue } from "#shared/services/dataset/surveyResponses/toDatasetColumnValue";
 import { CHECKBOX_ANSWER_SEPARATOR } from "#shared/services/resource/survey/constants";
 import { describe, expect, test } from "vitest";
 

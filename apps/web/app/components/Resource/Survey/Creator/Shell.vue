@@ -89,7 +89,7 @@ useCommands([
     :region-name-map="SurveyEditorRegionNameMap"
     :registry="SurveyEditorRegistry"
   >
-    <ResourceSurveyRunner v-if="isPreview" :document="surveyDocument" />
+    <ResourceSurveyCreatorPreviewRun v-if="isPreview" :document="surveyDocument" />
     <ResourceSurveyCreatorCanvas v-else />
   </EditorShell>
 </template>

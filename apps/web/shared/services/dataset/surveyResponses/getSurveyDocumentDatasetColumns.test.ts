@@ -1,7 +1,7 @@
 import type { SurveyDocument, SurveyPageNode, SurveyPlaceableNode } from "vue-survey-engine-headless";
 
-import { getSurveyDocumentDatasetColumns } from "#server/services/dataset/surveyResponses/getSurveyDocumentDatasetColumns";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
+import { getSurveyDocumentDatasetColumns } from "#shared/services/dataset/surveyResponses/getSurveyDocumentDatasetColumns";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 import {

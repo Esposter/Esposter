@@ -38,7 +38,7 @@ flowchart LR
 
 ## The dataset's columns
 
-The survey's dataset provider reads its columns from the same typed document, through `getSurveyDocumentDatasetColumns`. It gives one column per answering question, in the order a respondent meets them, so a descriptive element has none. A dynamic panel is one question and so one column for the whole panel, not one per template question.
+The survey's dataset provider reads its columns from the same typed document, through `getSurveyDocumentDatasetColumns`. It gives one column per answering question, in the order a respondent meets them, so a descriptive element has none. A calculated value flagged for the result follows them as a string column, since a value in the survey's root carries no display format. A dynamic panel is one question and so one column for the whole panel, not one per template question.
 
 A column's type follows the question. `boolean` is a boolean column. `rating`, `slider`, a `text` with a number input and an `expression` shown as a number are number columns. A `text` with a date or datetime input is a date column. Every other kind is a string column. A question with a title carries it as the column's title.
 
@@ -64,8 +64,8 @@ A response's answer becomes one cell through `toDatasetColumnValue`. A flat list
 | `apps/web/app/models/resource/survey/SurveySummaryCardType.ts`                          | The three card types                                                               |
 | `packages/vue-survey-engine-headless/src/services/flattenSurveyQuestions.ts`            | The questions in the order a respondent meets them                                 |
 | `packages/vue-survey-engine-headless/src/services/runner/checkIsSurveyAnsweringNode.ts` | Excludes the descriptive elements that collect no answer, shared with the runner   |
-| `apps/web/server/services/dataset/surveyResponses/getSurveyDocumentDatasetColumns.ts`   | The dataset's columns, read from the typed document                                |
-| `apps/web/server/services/dataset/surveyResponses/toDatasetColumnValue.ts`              | A flat or non-flat answer as one cell                                              |
+| `apps/web/shared/services/dataset/surveyResponses/getSurveyDocumentDatasetColumns.ts`   | The dataset's columns, read from the typed document                                |
+| `apps/web/shared/services/dataset/surveyResponses/toDatasetColumnValue.ts`              | A flat or non-flat answer as one cell                                              |
 
 ## Sources
 

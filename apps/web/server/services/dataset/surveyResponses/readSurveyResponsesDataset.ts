@@ -4,10 +4,10 @@ import type { DatasetColumn } from "#shared/models/dataset/DatasetColumn";
 import { SurveyResponseDatasetColumnName } from "#server/models/dataset/surveyResponses/SurveyResponseDatasetColumnName";
 import { readSurveyRespondents } from "#server/services/dataset/surveyResponses/readSurveyRespondents";
 import { readSurveyResponseDatasetSource } from "#server/services/dataset/surveyResponses/readSurveyResponseDatasetSource";
-import { toDatasetColumnValue } from "#server/services/dataset/surveyResponses/toDatasetColumnValue";
-import { toSurveyResponseDatasetRow } from "#server/services/dataset/surveyResponses/toSurveyResponseDatasetRow";
 import { readSurveySettings } from "#server/services/survey/readSurveySettings";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
+import { toDatasetColumnValue } from "#shared/services/dataset/surveyResponses/toDatasetColumnValue";
+import { toSurveyResponseDatasetRow } from "#shared/services/dataset/surveyResponses/toSurveyResponseDatasetRow";
 import { SurveyResponseMode } from "@esposter/db-schema";
 
 // A question can take either name, so a reserved column that collides with one takes a suffix no question has
