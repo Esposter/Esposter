@@ -34,7 +34,7 @@
 | `scripts/src/models/genshinAssets/crafting`                                               | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/genshinAssets/domains`                                                | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/genshinAssets/enemies`                                                | 2026-10-29 · Haiku 5.5  |       |
-| `scripts/src/models/genshinAssets/enemies/LuaTokenKind.ts`                                | —                       |       |
+| `scripts/src/models/genshinAssets/enemies/LuaTokenKind.ts`                                | 2026-11-17 · Opus 5.5   |       |
 | `scripts/src/models/genshinAssets/expeditions`                                            | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/genshinAssets/exploration`                                            | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/genshinAssets/fishing`                                                | 2026-10-29 · Haiku 5.5  |       |
@@ -316,11 +316,11 @@
 | `scripts/src/services/genshinAssets/expeditions`                                          | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/exploration`                                          | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fishing`                                              | 2026-10-25 · Haiku 5.5  |       |
-| `scripts/src/services/genshinAssets/fit/checkIsRockMesh.ts`                               | —                       |       |
-| `scripts/src/services/genshinAssets/fit/checkIsRuinMesh.ts`                               | —                       |       |
-| `scripts/src/services/genshinAssets/fit/countWitnessPlantsAtPlaces.ts`                    | —                       |       |
-| `scripts/src/services/genshinAssets/fit/createRegionHullsFit.ts`                          | —                       |       |
-| `scripts/src/services/genshinAssets/fit/createRegionPlantsFit.ts`                         | —                       |       |
+| `scripts/src/services/genshinAssets/fit/checkIsRockMesh.ts`                               | 2026-11-17 · Opus 5.5   |       |
+| `scripts/src/services/genshinAssets/fit/checkIsRuinMesh.ts`                               | 2026-11-17 · Opus 5.5   |       |
+| `scripts/src/services/genshinAssets/fit/countWitnessPlantsAtPlaces.ts`                    | 2026-11-17 · Opus 5.5   |       |
+| `scripts/src/services/genshinAssets/fit/createRegionHullsFit.ts`                          | 2026-11-17 · Opus 5.5   |       |
+| `scripts/src/services/genshinAssets/fit/createRegionPlantsFit.ts`                         | 2026-11-17 · Opus 5.5   |       |
 | `scripts/src/services/genshinAssets/fit/createRegionRocksFit.ts`                          | —                       |       |
 | `scripts/src/services/genshinAssets/fit/createRegionRuinsFit.ts`                          | —                       |       |
 | `scripts/src/services/genshinAssets/fit/DerivedAssetFitMap.ts`                            | 2026-10-29 · Haiku 5.5  |       |
@@ -405,8 +405,8 @@
 | `scripts/src/services/genshinAssets/fit/findNearestSample.ts`                             | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/findOakPlacement.ts`                              | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/findOpenLoops.ts`                                 | 2026-10-29 · Haiku 5.5  |       |
-| `scripts/src/services/genshinAssets/fit/findStatueRoot.test.ts`                           | —                       |       |
-| `scripts/src/services/genshinAssets/fit/findStatueRoot.ts`                                | —                       |       |
+| `scripts/src/services/genshinAssets/fit/findStatueRoot.test.ts`                           | 2026-11-17 · Opus 5.5   |       |
+| `scripts/src/services/genshinAssets/fit/findStatueRoot.ts`                                | 2026-11-17 · Opus 5.5   |       |
 | `scripts/src/services/genshinAssets/fit/fitAlbedo.ts`                                     | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/fitAreaOutlines.ts`                               | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/fitBlades.ts`                                     | 2026-10-29 · Haiku 5.5  |       |
@@ -440,7 +440,7 @@
 | `scripts/src/services/genshinAssets/fit/fitLoginTowerFacades.ts`                          | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/fitLoginTowers.ts`                                | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/fitLoginWalkway.ts`                               | 2026-11-01 · Haiku 5.5  |       |
-| `scripts/src/services/genshinAssets/fit/fitMeshHulls.ts`                                  | —                       |       |
+| `scripts/src/services/genshinAssets/fit/fitMeshHulls.ts`                                  | 2026-11-17 · Opus 5.5   |       |
 | `scripts/src/services/genshinAssets/fit/fitPavingStoneShape.test.ts`                      | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/fitPavingStoneShape.ts`                           | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/fitPlanTones.ts`                                  | 2026-11-01 · Haiku 5.5  |       |
@@ -449,12 +449,12 @@
 | `scripts/src/services/genshinAssets/fit/fitRegionCamps.ts`                                | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/fitRegionCapitals.ts`                             | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/fitRegionGroundPieces.ts`                         | 2026-10-29 · Haiku 5.5  |       |
-| `scripts/src/services/genshinAssets/fit/fitRegionHulls.ts`                                | —                       |       |
+| `scripts/src/services/genshinAssets/fit/fitRegionHulls.ts`                                | 2026-11-17 · Opus 5.5   |       |
 | `scripts/src/services/genshinAssets/fit/fitRegionLandmarks.ts`                            | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/fitRegionOutcrops.ts`                             | 2026-11-01 · Haiku 5.5  |       |
-| `scripts/src/services/genshinAssets/fit/fitRegionPlants.ts`                               | —                       |       |
-| `scripts/src/services/genshinAssets/fit/fitRegionStatue.test.ts`                          | —                       |       |
-| `scripts/src/services/genshinAssets/fit/fitRegionStatue.ts`                               | —                       |       |
+| `scripts/src/services/genshinAssets/fit/fitRegionPlants.ts`                               | 2026-11-17 · Opus 5.5   |       |
+| `scripts/src/services/genshinAssets/fit/fitRegionStatue.test.ts`                          | 2026-11-17 · Opus 5.5   |       |
+| `scripts/src/services/genshinAssets/fit/fitRegionStatue.ts`                               | 2026-11-17 · Opus 5.5   |       |
 | `scripts/src/services/genshinAssets/fit/fitRegionWaypoints.ts`                            | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/fitReliefLayers.ts`                               | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/fitRigidPieces.test.ts`                           | 2026-10-29 · Haiku 5.5  |       |
@@ -521,21 +521,21 @@
 | `scripts/src/services/genshinAssets/fit/readPair.ts`                                      | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/readRegionAreas.ts`                               | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/readRegionGroundFits.ts`                          | 2026-10-29 · Haiku 5.5  |       |
-| `scripts/src/services/genshinAssets/fit/readRegionLandmarks.test.ts`                      | —                       |       |
+| `scripts/src/services/genshinAssets/fit/readRegionLandmarks.test.ts`                      | 2026-11-17 · Opus 5.5   |       |
 | `scripts/src/services/genshinAssets/fit/readRegionLandmarks.ts`                           | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/readRelativeLuminance.ts`                         | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/readSurface.ts`                                   | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/readTexture.ts`                                   | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/readTowerProfiles.ts`                             | 2026-11-01 · Haiku 5.5  |       |
-| `scripts/src/services/genshinAssets/fit/readWitnessLayout.test.ts`                        | —                       |       |
-| `scripts/src/services/genshinAssets/fit/readWitnessLayout.ts`                             | —                       |       |
-| `scripts/src/services/genshinAssets/fit/readWitnessPlacements.ts`                         | —                       |       |
+| `scripts/src/services/genshinAssets/fit/readWitnessLayout.test.ts`                        | 2026-11-17 · Opus 5.5   |       |
+| `scripts/src/services/genshinAssets/fit/readWitnessLayout.ts`                             | 2026-11-17 · Opus 5.5   |       |
+| `scripts/src/services/genshinAssets/fit/readWitnessPlacements.ts`                         | 2026-11-17 · Opus 5.5   |       |
 | `scripts/src/services/genshinAssets/fit/readWitnessWorldMeshes.ts`                        | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/rotateLeft.ts`                                    | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/roundFitted.ts`                                   | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/roundInstrument.ts`                               | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/roundPair.ts`                                     | 2026-10-29 · Haiku 5.5  |       |
-| `scripts/src/services/genshinAssets/fit/roundRotation.ts`                                 | —                       |       |
+| `scripts/src/services/genshinAssets/fit/roundRotation.ts`                                 | 2026-11-17 · Opus 5.5   |       |
 | `scripts/src/services/genshinAssets/fit/roundStack.ts`                                    | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/roundStatue.ts`                                   | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/runFits.test.ts`                                  | 2026-10-29 · Haiku 5.5  |       |
@@ -567,11 +567,11 @@
 | `scripts/src/services/genshinAssets/fit/toDistance.ts`                                    | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/toEdgeKey.ts`                                     | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/toFaceEdges.ts`                                   | 2026-10-29 · Haiku 5.5  |       |
-| `scripts/src/services/genshinAssets/fit/toFittedPlants.test.ts`                           | —                       |       |
-| `scripts/src/services/genshinAssets/fit/toFittedPlants.ts`                                | —                       |       |
+| `scripts/src/services/genshinAssets/fit/toFittedPlants.test.ts`                           | 2026-11-17 · Opus 5.5   |       |
+| `scripts/src/services/genshinAssets/fit/toFittedPlants.ts`                                | 2026-11-17 · Opus 5.5   |       |
 | `scripts/src/services/genshinAssets/fit/toGroundPiece.ts`                                 | 2026-10-29 · Haiku 5.5  |       |
-| `scripts/src/services/genshinAssets/fit/toHullPlacements.test.ts`                         | —                       |       |
-| `scripts/src/services/genshinAssets/fit/toHullPlacements.ts`                              | —                       |       |
+| `scripts/src/services/genshinAssets/fit/toHullPlacements.test.ts`                         | 2026-11-17 · Opus 5.5   |       |
+| `scripts/src/services/genshinAssets/fit/toHullPlacements.ts`                              | 2026-11-17 · Opus 5.5   |       |
 | `scripts/src/services/genshinAssets/fit/toLevels.ts`                                      | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/toMatrix.ts`                                      | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/toNodeSpan.ts`                                    | 2026-10-29 · Haiku 5.5  |       |
@@ -801,7 +801,7 @@
 | `scripts/src/services/genshinAssets/scene`                                                | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/sceneGroups`                                          | 2026-10-25 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/sceneNpcBorn`                                         | 2026-10-25 · Haiku 5.5  |       |
-| `scripts/src/services/genshinAssets/shared/CityIdRegionMap.ts`                            | —                       |       |
+| `scripts/src/services/genshinAssets/shared/CityIdRegionMap.ts`                            | 2026-11-17 · Opus 5.5   |       |
 | `scripts/src/services/genshinAssets/shared/DerivedAssetComponentMap.test.ts`              | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/shared/DerivedAssetComponentMap.ts`                   | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/shared/applySpawns.test.ts`                           | 2026-11-01 · Haiku 5.5  |       |
@@ -863,7 +863,7 @@
 | `scripts/src/services/genshinAssets/shared/readMusicSourceNotes.ts`                       | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/shared/readObjMesh.ts`                                | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/shared/readObjectNames.ts`                            | 2026-11-01 · Haiku 5.5  |       |
-| `scripts/src/services/genshinAssets/shared/readPlantPlacements.ts`                        | —                       |       |
+| `scripts/src/services/genshinAssets/shared/readPlantPlacements.ts`                        | 2026-11-17 · Opus 5.5   |       |
 | `scripts/src/services/genshinAssets/shared/readPublishedRegionGround.ts`                  | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/shared/readRegionGroundFiles.ts`                      | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/shared/readRegionLandmarkSources.ts`                  | 2026-11-01 · Haiku 5.5  |       |
@@ -1518,8 +1518,8 @@
 | `scripts/src/services/shared/computeSymmetricEigen.ts`                                    | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/shared/constants.test.ts`                                           | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/shared/constants.ts`                                                | 2026-10-29 · Haiku 5.5  |       |
-| `scripts/src/services/shared/fetchGitHubTree.test.ts`                                     | —                       |       |
-| `scripts/src/services/shared/fetchGitHubTree.ts`                                          | —                       |       |
+| `scripts/src/services/shared/fetchGitHubTree.test.ts`                                     | 2026-11-17 · Opus 5.5   |       |
+| `scripts/src/services/shared/fetchGitHubTree.ts`                                          | 2026-11-17 · Opus 5.5   |       |
 | `scripts/src/services/shared/fetchJson.ts`                                                | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/shared/fetchOk.ts`                                                  | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/shared/fetchRegistry.ts`                                            | 2026-10-29 · Haiku 5.5  |       |
