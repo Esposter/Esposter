@@ -11,7 +11,7 @@ interface Props {
   roomId: RoomInMessage["id"];
 }
 
-const { roomId } = defineProps<Props>();
+defineProps<Props>();
 const roleStore = useRoleStore();
 const { createRole, selectMember } = roleStore;
 const memberStore = useMemberStore();

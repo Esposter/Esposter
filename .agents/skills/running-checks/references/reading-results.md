@@ -14,6 +14,8 @@ and it arrives without being asked for, which is what makes it worth naming: a r
 green light to keep building on the change that broke it, and the next check says the same thing.
 So open the log. `tail -1` is the appended line; anything else is the command's own output and proves nothing. For the same reason a check is never piped into `tail` and several are never chained with `&&` in one call: a pipeline's status is the last command's, so the appended line describes `tail`, and every later link in the chain runs on top of a failure that was never read.
 
+**A green exit over nothing is not a pass.** A run that prints `No test files found` (exit 0 under `--passWithNoTests`), or a formatter or linter finishing `on 0 files` or on one, checked no file the change touched. The usual cause on macOS is zsh, which does not split an unquoted `$VAR` holding several paths, so the whole list reaches the command as one path that matches nothing; the paths go in literally, as an array (`"${files[@]}"`), or as `${=VAR}`. Read the file and test counts against the paths passed before taking the exit line.
+
 **A red result is an edit, then a fresh background run** — of that check alone when the fix cannot reach the others,
 of the full pass when it can. The exception is the regression proof, run with its fix reverted on purpose: its red is the expected result, and what follows it is the `testing` skill's ("What to Test"). Never hand-fix what `lint:fix` fixes, and never chase an error in a file the change
 never touched before diffing against a clean tree (the `context-efficiency` skill, `references/pre-existing-errors.md`).

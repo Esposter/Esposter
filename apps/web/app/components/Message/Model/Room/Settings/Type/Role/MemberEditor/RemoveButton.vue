@@ -11,7 +11,7 @@ interface Props {
   userId: string;
 }
 
-const { isManageable, memberName, roomId, userId } = defineProps<Props>();
+defineProps<Props>();
 const roleStore = useRoleStore();
 const { deleteMemberPermissionOverride } = roleStore;
 const isRemoveOpen = ref(false);
