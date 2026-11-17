@@ -22,8 +22,10 @@ interface Props {
   getMaxHealth: (characterId: number) => number;
   // The name of a character in the reader's language, by its id
   getName: (characterId: number) => string;
-  // The world's clock now, which the pool refills to
+  // The world's clock now, which a heal spends the pool at
   getNow: () => Temporal.Instant;
+  // The world's clock as its ticks set it, which the pool is shown refilled to, so the figure moves as time passes
+  now: Temporal.Instant;
   // The party, whose deployed members a click on the Blessing heals
   party: Party;
   // The Statues of The Seven unlocked, each adding its share to the pool's maximum
@@ -34,9 +36,10 @@ interface Props {
 const power = defineModel<RestorativePower>("power", { required: true });
 // Auto-recover's switch and threshold, which the screen sets and the Session's stand by a statue reads
 const autoRecover = defineModel<AutoRecoverSetting>("autoRecover", { required: true });
-const { gameText, getLevel, getMaxHealth, getName, getNow, party, statueCount } = defineProps<Props>();
+const { gameText, getLevel, getMaxHealth, getName, getNow, now, party, statueCount } = defineProps<Props>();
 const emit = defineEmits<{ close: []; worship: [] }>();
-const regeneratePower = () => regenerateRestorativePower(power.value, statueCount, getNow());
+// The pool as the world's clock last ticked it, so the figure refills on the screen as time passes
+const pool = computed(() => regenerateRestorativePower(power.value, statueCount, now));
 const toggleAutoRecover = () => {
   autoRecover.value = { ...autoRecover.value, isOn: !autoRecover.value.isOn };
 };
@@ -65,8 +68,14 @@ const waitingMembers = computed(() => {
     .filter((id) => !deployedIds.includes(id))
     .map((id) => toMember(id));
 });
+// A heal spends the pool at the exact clock, not the last tick the screen shows it at
 const heal = (characterId: number) => {
-  power.value = healPartyMemberWithPower(party, characterId, getMaxHealth(characterId), regeneratePower());
+  power.value = healPartyMemberWithPower(
+    party,
+    characterId,
+    getMaxHealth(characterId),
+    regenerateRestorativePower(power.value, statueCount, getNow()),
+  );
 };
 </script>
 
@@ -79,7 +88,7 @@ const heal = (characterId: number) => {
       :in-combat-label="gameText[GameTextKey.InCombat]"
       :is-auto-recover-on="autoRecover.isOn"
       :members
-      :pool-amount="regeneratePower().amount"
+      :pool-amount="pool.amount"
       :pool-label="gameText[GameTextKey.RestorativePower]"
       :pool-maximum="statueCount * RESTORATIVE_POWER_PER_STATUE"
       :preparing-label="gameText[GameTextKey.PreparingForCombat]"

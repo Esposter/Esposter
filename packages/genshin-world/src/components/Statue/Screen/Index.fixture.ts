@@ -46,6 +46,7 @@ export const props = {
   getMaxHealth: () => 10_000,
   getName: (characterId: number) => characterNameMap.get(characterId) ?? "",
   getNow: () => NOW,
+  now: NOW,
   party,
   power: { amount: 10_000, changedAt: NOW },
   statueCount: 2,

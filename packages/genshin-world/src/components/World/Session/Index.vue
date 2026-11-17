@@ -1539,6 +1539,7 @@ useWorldSaveSync({
       :get-max-health="getStatueMaxHealth"
       :get-name="getCharacterName"
       :get-now="getWorldNow"
+      :now="worldNow"
       :party
       :statue-count="resonatedRegionIds.length"
       @close="closeScreen()"
