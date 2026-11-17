@@ -44,19 +44,21 @@ import { z } from "zod";
 
 // A feed card shows a post's counters and the feed is ranked by them, so every change to a post reaches the feed too
 const feedPostsTopic = getTopic(TopicKind.Feed, "posts");
-// The topics of the posts a write changed, each under its own name, together with the feed they are all shown in
-const getPostTopics = (...postIds: string[]) => [
-  ...postIds.map((postId) => getTopic(TopicKind.Post, postId)),
-  feedPostsTopic,
-];
-// The posts whose counters a comment's write moved, as the write's output names them
-const getAncestorIds = (output: unknown) =>
-  selectPostInPostSchema.pick({ ancestorIds: true }).parse(output).ancestorIds;
+const postIdentitySchema = selectPostInPostSchema.pick({ ancestorIds: true, id: true });
+// A thread is named by its root post's topic, which every page in the thread watches beside its own. A write anywhere in
+// A thread so publishes one topic for the whole of it, however deep or large, and a write's publish stays a few
+// Subrequests however many posts it moved
+const getThreadTopic = (postId: string, ancestorIds: string[]) => getTopic(TopicKind.Post, ancestorIds[0] ?? postId);
+// A post's own topic and its thread's, read from the post a procedure answered with
+const getPostThreadTopics = (post: unknown) => {
+  const { ancestorIds, id } = postIdentitySchema.parse(post);
+  return [...new Set([getTopic(TopicKind.Post, id), getThreadTopic(id, ancestorIds)])];
+};
 
 export const postRouter = router({
   createComment: getTopicsProcedure(
     getProfanityFilterProcedure(createCommentInputSchema, ["description"]),
-    ({ output }) => getPostTopics(...getAncestorIds(output)),
+    ({ output }) => [...getPostThreadTopics(z.object({ comment: z.unknown() }).parse(output).comment), feedPostsTopic],
   ).mutation<CreatedComment>(async ({ ctx, input }) => {
     const parentPost = await requireEntity(
       ctx.db.query.postsInPost.findFirst({
@@ -119,12 +121,10 @@ export const postRouter = router({
 
     return readPostWithRelations(ctx.db, newPost.id, DatabaseEntityType.Post, ctx.user.id);
   }),
-  // The comment's own page and each reply's beneath it go with the delete, so every removed post's topic is published
-  deleteComment: getTopicsProcedure(standardAuthedProcedure.input(deleteCommentInputSchema), ({ output }) => {
-    const { ancestorIds, removedIds } = z
-      .object({ ancestorIds: z.array(z.string()), removedIds: z.array(z.string()) })
-      .parse(output);
-    return getPostTopics(...removedIds, ...ancestorIds);
+  // The comment's own page, and each reply's beneath it, watch the thread the delete is published to
+  deleteComment: getTopicsProcedure(standardAuthedProcedure.input(deleteCommentInputSchema), ({ input, output }) => {
+    const { ancestorIds } = selectPostInPostSchema.pick({ ancestorIds: true }).parse(output);
+    return [getTopic(TopicKind.Post, input), getThreadTopic(input, ancestorIds), feedPostsTopic];
   }).mutation<DeletedComment>(async ({ ctx, input }) => {
     const userId = ctx.user.id;
     const ownedComment = and(ownedBy(postsInPost, input, userId), isNotNull(postsInPost.parentId));
@@ -162,10 +162,11 @@ export const postRouter = router({
     requireMutation(deletedCommentRows[0], Operation.Delete, DerivedDatabaseEntityType.Comment, input);
     return { ancestorIds, removedIds: removedRows.map(({ id }: Pick<PostInPost, "id">) => id) };
   }),
-  // The post and every reply the cascade removes beneath it, each of whose pages goes with the delete
-  deletePost: getTopicsProcedure(standardAuthedProcedure.input(deletePostInputSchema), ({ output }) =>
-    getPostTopics(...z.array(z.string()).parse(output)),
-  ).mutation<PostInPost["id"][]>(async ({ ctx, input }) => {
+  // The post is its thread's root, so every reply the cascade removes has a page watching this one topic
+  deletePost: getTopicsProcedure(standardAuthedProcedure.input(deletePostInputSchema), ({ input }) => [
+    getTopic(TopicKind.Post, input),
+    feedPostsTopic,
+  ]).mutation<PostInPost["id"][]>(async ({ ctx, input }) => {
     const ownedPost = and(ownedBy(postsInPost, input, ctx.user.id), isNull(postsInPost.parentId));
     // Read in the batch with the delete, so a reply landing in between is either named or never written
     const [removedRows, deletedPostRows] = await ctx.db.batch([
@@ -178,9 +179,9 @@ export const postRouter = router({
     requireMutation(deletedPostRows[0], Operation.Delete, DatabaseEntityType.Post, input);
     return removedRows.map(({ id }: Pick<PostInPost, "id">) => id);
   }),
-  readPost: getTopicsProcedure(standardRateLimitedProcedure.input(readPostInputSchema), ({ input }) => [
-    getTopic(TopicKind.Post, input),
-  ])
+  readPost: getTopicsProcedure(standardRateLimitedProcedure.input(readPostInputSchema), ({ output }) =>
+    getPostThreadTopics(output),
+  )
     // The procedure is rate-limited, so a session may be absent — no viewer means no like lookup at all
     .query<PostInPostWithRelations>(({ ctx, input }) =>
       readPostWithRelations(ctx.db, input, DatabaseEntityType.Post, ctx.user?.id),
@@ -222,7 +223,7 @@ export const postRouter = router({
   }),
   updateComment: getTopicsProcedure(
     getProfanityFilterProcedure(updateCommentInputSchema, ["description"]),
-    ({ input }) => getPostTopics(input.id),
+    ({ output }) => [...getPostThreadTopics(output), feedPostsTopic],
   ).mutation<PostInPostWithRelations>(async ({ ctx, input: { id, ...rest } }) => {
     const updatedComment = requireMutation(
       (
@@ -241,7 +242,7 @@ export const postRouter = router({
   }),
   updatePost: getTopicsProcedure(
     getProfanityFilterProcedure(updatePostInputSchema, ["title", "description"]),
-    ({ input }) => getPostTopics(input.id),
+    ({ input }) => [getTopic(TopicKind.Post, input.id), feedPostsTopic],
   ).mutation<PostInPostWithRelations>(async ({ ctx, input: { id, ...rest } }) => {
     const updatedPost = requireMutation(
       (

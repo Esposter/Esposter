@@ -10,6 +10,8 @@ import { blockRouter } from "#server/trpc/routers/block";
 import { likeRouter } from "#server/trpc/routers/like";
 import { postRouter } from "#server/trpc/routers/post";
 import { PostSortType } from "#shared/models/post/PostSortType";
+import { TOPICS_HEADER } from "#shared/services/realtime/constants";
+import { readTopicsHeader } from "#shared/services/realtime/readTopicsHeader";
 import {
   blocksInSocial,
   DatabaseEntityType,
@@ -129,8 +131,11 @@ describe("postRouter", () => {
     expect(removedIds.toSorted((firstId, secondId) => firstId.localeCompare(secondId))).toStrictEqual(
       [newComment.id, newPost.id].toSorted((firstId, secondId) => firstId.localeCompare(secondId)),
     );
-    // A reply's own page goes with the cascade, so its topic is published with the post's
-    expect(MockPublishedTopics).toContain(getTopic(TopicKind.Post, newComment.id));
+    // A reply's page watches its thread's root, so the post's own topic reaches it however many replies the cascade took
+    expect(MockPublishedTopics).toStrictEqual([
+      getTopic(TopicKind.Post, newPost.id),
+      getTopic(TopicKind.Feed, "posts"),
+    ]);
     await expect(postCaller.readPost(newPost.id)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new NotFoundError(DatabaseEntityType.Post, newPost.id).message}]`,
     );
@@ -252,8 +257,28 @@ describe("postRouter", () => {
 
     expect(deletedComment.removedIds).toHaveLength(3);
     expect(post.commentCount).toBe(0);
-    // A reply's own page goes with the cascade, so its topic is published with the comment's
-    expect(MockPublishedTopics).toContain(getTopic(TopicKind.Post, newReply.id));
+    // The thread's topic stands for every page in it, so the publish stays three topics however deep the subtree went
+    expect(MockPublishedTopics).toStrictEqual([
+      getTopic(TopicKind.Post, newComment.id),
+      getTopic(TopicKind.Post, newPost.id),
+      getTopic(TopicKind.Feed, "posts"),
+    ]);
+  });
+
+  // Every page in a thread watches its root, which is what lets a write publish the thread as one topic
+  test("names a reply's thread among the topics its read watches", async () => {
+    expect.hasAssertions();
+
+    const newPost = await postCaller.createPost({ title });
+    const { comment: newComment } = await postCaller.createComment({ description, id: v7(), parentId: newPost.id });
+    const { comment: newReply } = await postCaller.createComment({ description, id: v7(), parentId: newComment.id });
+    mockContext.responseHeaders.delete(TOPICS_HEADER);
+    await postCaller.readPost(newReply.id);
+
+    expect(readTopicsHeader(mockContext.responseHeaders, "readPost")).toStrictEqual([
+      getTopic(TopicKind.Post, newReply.id),
+      getTopic(TopicKind.Post, newPost.id),
+    ]);
   });
 
   test("deletes comment with deleting post", async () => {
