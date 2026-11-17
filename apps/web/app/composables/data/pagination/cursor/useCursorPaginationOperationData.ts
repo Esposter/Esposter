@@ -78,25 +78,35 @@ export const useCursorPaginationOperationData = <TItem>(
       // Absorbs onComplete errors so data already set above is never lost
       await Promise.allSettled([onComplete?.(data)]);
     };
+    // One read of the first page: `apply` lands its rows, then its topics are watched. A read issued against data
+    // A reset has retired answers a partition that no longer holds that data, so it lands nothing and watches nothing
+    const readFirstPage = (
+      apply: (read: { issued: Page<TItem>; page: Page<TItem>; topics: Topic[] }) => Promisable<void>,
+    ) => {
+      const issuedCursorPaginationData = boundCursorPaginationData.value;
+      return getResultAsync(async () => {
+        const { result: page, topics } = await collectTopics(query);
+        // Answers a reset that landed while the read was in flight: the rows are of the order the reset left behind
+        if (retiredCursorPaginationData.has(issuedCursorPaginationData)) return;
+
+        await apply({ issued: issuedCursorPaginationData, page, topics });
+        watchTopics(topicsTarget, topics, getSynchronizedFunction(refreshRows));
+      });
+    };
     // A write that changed a topic the first page came from reads it again and updates, by id, the rows it names: a
     // Reader who has paged on keeps their place, since the later pages and the cursor are left as they are. A row
     // Another writer added or removed waits for the next refresh
     const refreshRows = async () => {
-      const issuedCursorPaginationData = boundCursorPaginationData.value;
-      await getResultAsync(async () => {
-        const { result: page, topics } = await collectTopics(query);
-        if (retiredCursorPaginationData.has(issuedCursorPaginationData)) return;
-
+      await readFirstPage(({ issued, page }) => {
         const idRowMap = new Map<unknown, TItem>();
         for (const item of page.items) {
           const id = getRowId(item);
           if (id !== undefined) idRowMap.set(id, item);
         }
-        issuedCursorPaginationData.items = issuedCursorPaginationData.items.map((item) => {
+        issued.items = issued.items.map((item) => {
           const id = getRowId(item);
           return id === undefined ? item : (idRowMap.get(id) ?? item);
         });
-        watchTopics(topicsTarget, topics, getSynchronizedFunction(refreshRows));
       }).match(noop, console.error);
     };
     // A failed read is recorded rather than thrown, so component setup never fails on it and a retry is a plain call;
@@ -104,17 +114,11 @@ export const useCursorPaginationOperationData = <TItem>(
     const refresh = async () => {
       isPending.value = true;
       isError.value = false;
-      const issuedCursorPaginationData = boundCursorPaginationData.value;
-      await getResultAsync(async () => {
-        const { result: data, topics } = await collectTopics(query);
-        // Answers a reset that landed while the read was in flight: the rows are of the order the reset left behind
-        if (retiredCursorPaginationData.has(issuedCursorPaginationData)) return;
-
-        await storeCursorPaginationData(data);
-        watchTopics(topicsTarget, topics, getSynchronizedFunction(refreshRows));
+      await readFirstPage(async ({ page, topics }) => {
+        await storeCursorPaginationData(page);
         // The page the html was rendered from rides to the client with the topics it came from, so hydration adopts
         // The rows already on screen, and watches those topics, rather than fetching a second copy of them
-        if (key && checkIsServer()) nuxtApp.payload.data[key] = { page: data, topics } satisfies HydratedPage<TItem>;
+        if (key && checkIsServer()) nuxtApp.payload.data[key] = { page, topics } satisfies HydratedPage<TItem>;
       }).match(noop, () => {
         isError.value = true;
       });
