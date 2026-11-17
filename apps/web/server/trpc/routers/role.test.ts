@@ -8,7 +8,7 @@ import { createMockAuthSession, createMockCaller, createMockUser } from "#server
 import { roleRouter } from "#server/trpc/routers/role";
 import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
 import { DEVICE_ID_HEADER } from "#shared/models/realtime/DeviceId";
-import { DatabaseEntityType, RoomPermission } from "@esposter/db-schema";
+import { DatabaseEntityType, getDeviceSocketTag, RoomPermission } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { v7 } from "uuid";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
@@ -81,7 +81,7 @@ describe("roleRouter", () => {
     expect(roomObjectCalls).toContainEqual({
       args: [
         { data: { ...role, permissions: role.permissions.toString() }, type: "createRole" },
-        { excludeTag: `device:${deviceId}` },
+        { excludeTag: getDeviceSocketTag(deviceId) },
       ],
       method: "broadcastEvent",
       roomId,

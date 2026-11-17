@@ -4,7 +4,13 @@ import { roomObjectCalls } from "#server/composables/realtime/useRoomObject.test
 import { executeAutomodAction } from "#server/services/message/moderation/executeAutomodAction";
 import { getRoomMembershipWhere } from "#server/services/room/getRoomMembershipWhere";
 import { createMockContext, getMockSession } from "#server/trpc/context.test";
-import { AdminActionType, roomsInMessage, usersToRoomsInMessage, WordFilterAction } from "@esposter/db-schema";
+import {
+  AdminActionType,
+  getUserSocketTag,
+  roomsInMessage,
+  usersToRoomsInMessage,
+  WordFilterAction,
+} from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -92,7 +98,7 @@ describe(executeAutomodAction, () => {
             data: { durationMs: timeoutDurationMs, roomId, targetUserId: userId, type: AdminActionType.TimeoutUser },
             type: "adminAction",
           },
-          { tag: `user:${userId}` },
+          { tag: getUserSocketTag(userId) },
         ],
         method: "broadcastEvent",
         roomId,

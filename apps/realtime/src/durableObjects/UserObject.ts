@@ -20,6 +20,7 @@ import type {
 import { RealtimeObject } from "#src/durableObjects/RealtimeObject";
 import { createDurableObjectDatabase } from "#src/services/durableObject/createDurableObjectDatabase";
 import { getObjectName } from "#src/services/durableObject/getObjectName";
+import { getJobQueue } from "#src/services/queue/getJobQueue";
 import { readSocketIdentity } from "#src/services/realtime/readSocketIdentity";
 import { REMINDER_RETRY_DELAY_MS } from "#src/services/reminder/constants";
 import { sendTodoReminder } from "#src/services/todoReminder/sendTodoReminder";
@@ -30,8 +31,10 @@ import { setUserStatusInRooms } from "#src/services/user/setUserStatusInRooms";
 import { createPageSort, getPageOrderBy, getPageWhere } from "@esposter/db";
 import {
   AppNotificationType,
+  getDeviceSocketTag,
   joinedCallsInUser,
   publishNotification,
+  QueueJob,
   remindersInUser,
   SCHEDULED_MESSAGE_JOB_PAGE_SORT,
   scheduledMessagesInUser,
@@ -287,7 +290,7 @@ export class UserObject extends RealtimeObject<UserEvent> implements UserObjectR
   ): Promise<void> {
     return this.broadcastEvent(
       { data: content, type: "saveResourceContent" },
-      deviceId ? { excludeTag: `device:${deviceId}` } : {},
+      deviceId ? { excludeTag: getDeviceSocketTag(deviceId) } : {},
     );
   }
 
@@ -423,7 +426,7 @@ export class UserObject extends RealtimeObject<UserEvent> implements UserObjectR
     await Promise.all(
       dueReminders.map(async (reminder) => {
         const isSent = await getResultAsync(() =>
-          publishNotification(this.env.PROCESS_NOTIFICATION_QUEUE, {
+          publishNotification(getJobQueue(QueueJob.ProcessNotification), {
             roomId: reminder.roomId,
             text: reminder.text,
             type: AppNotificationType.Reminder,

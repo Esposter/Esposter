@@ -22,6 +22,7 @@ import {
   AdminActionType,
   bansInMessage,
   DatabaseEntityType,
+  getUserSocketTag,
   MessageType,
   RoomPermission,
   usersInAuth,
@@ -485,7 +486,7 @@ describe("moderationRouter", () => {
 
     expect(roomObject.broadcastEvent).toHaveBeenLastCalledWith(
       { data: { roomId, targetUserId: member.id, type: AdminActionType.KickFromCall }, type: "adminAction" },
-      { tag: `user:${member.id}` },
+      { tag: getUserSocketTag(member.id) },
     );
   });
 

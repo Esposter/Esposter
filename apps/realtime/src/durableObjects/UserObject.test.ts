@@ -18,6 +18,7 @@ import {
   createSocket,
   readFrames,
 } from "#src/services/durableObject/createMockObjectState.test";
+import { MockJobQueueDatabase } from "#src/services/queue/getJobQueue.test";
 import { createOnlineStatus } from "#src/services/room/createOnlineStatus.test";
 import { createUser } from "#src/services/shared/createUser.test";
 import { sendTodoReminder } from "#src/services/todoReminder/sendTodoReminder";
@@ -27,6 +28,7 @@ import {
   AppNotificationType,
   createPageInputSchema,
   MAX_FRAME_TOPICS,
+  QueueJob,
   roomsInMessage,
   SCHEDULED_MESSAGE_JOB_PAGE_SORT,
   SENT_MESSAGE_PAGE_SORT,
@@ -62,6 +64,8 @@ const { getRoomStub, roomStubs } = vi.hoisted(() => {
 vi.mock(import("#src/services/room/getRoomObject"), () => ({
   getRoomObject: (roomId: string) => getRoomStub(roomId) as unknown as DurableObjectStub<RoomObject>,
 }));
+
+vi.mock(import("#src/services/queue/getJobQueue"), () => import("#src/services/queue/getJobQueue.test"));
 
 vi.mock(import("#src/services/todoReminder/sendTodoReminder"), () => ({
   sendTodoReminder: vi.fn<(reminder: TodoReminder) => Promise<void>>(() => Promise.resolve()),
@@ -120,7 +124,7 @@ describe(UserObject, () => {
     return stub;
   };
   const topicNamespace = { get: (topic: string) => getTopicStub(topic), idFromName: (topic: string) => topic };
-  let environment = { TOPIC: topicNamespace } as unknown as Cloudflare.Env;
+  const environment = { TOPIC: topicNamespace } as unknown as Cloudflare.Env;
 
   const createUserObject = () => {
     const state = createMockObjectState(userId);
@@ -187,6 +191,7 @@ describe(UserObject, () => {
     vi.useRealTimers();
     roomStubs.clear();
     topicStubs.clear();
+    MockJobQueueDatabase.clear();
     await mockDatabase.reset();
   });
 
@@ -319,8 +324,6 @@ describe(UserObject, () => {
   test("the reminder alarm notifies the person of each due reminder once, and re-arms for the one after", async () => {
     expect.hasAssertions();
 
-    const queue = { send: vi.fn<(message: unknown) => Promise<void>>(() => Promise.resolve()) };
-    environment = { ...environment, PROCESS_NOTIFICATION_QUEUE: queue } as unknown as Cloudflare.Env;
     const { object, state } = createUserObject();
     const roomId = v7();
     const dueAt = new Date(Temporal.Duration.from({ minutes: 1 }).total("milliseconds"));
@@ -333,20 +336,19 @@ describe(UserObject, () => {
     await object.alarm();
     await object.alarm();
 
-    expect(queue.send).toHaveBeenCalledExactlyOnceWith({
-      roomId,
-      text: "due",
-      type: AppNotificationType.Reminder,
-      userId,
-    });
+    expect(MockJobQueueDatabase.get(QueueJob.ProcessNotification)).toStrictEqual([
+      { roomId, text: "due", type: AppNotificationType.Reminder, userId },
+    ]);
     await expect(object.readReminders(firstPage)).resolves.toHaveLength(1);
     await expect(state.ctx.storage.getAlarm()).resolves.toBe(laterRunAt.getTime());
 
     vi.setSystemTime(laterRunAt);
     await object.alarm();
 
-    expect(queue.send).toHaveBeenLastCalledWith({ roomId, text: "later", type: AppNotificationType.Reminder, userId });
-    expect(queue.send).toHaveBeenCalledTimes(2);
+    expect(MockJobQueueDatabase.get(QueueJob.ProcessNotification)).toStrictEqual([
+      { roomId, text: "due", type: AppNotificationType.Reminder, userId },
+      { roomId, text: "later", type: AppNotificationType.Reminder, userId },
+    ]);
     await expect(state.ctx.storage.getAlarm()).resolves.toBeNull();
   });
 

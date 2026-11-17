@@ -25,6 +25,7 @@ import type {
 import { RealtimeObject } from "#src/durableObjects/RealtimeObject";
 import { createDurableObjectDatabase } from "#src/services/durableObject/createDurableObjectDatabase";
 import { getObjectName } from "#src/services/durableObject/getObjectName";
+import { getJobQueue } from "#src/services/queue/getJobQueue";
 import { applyPollVote } from "#src/services/room/applyPollVote";
 import {
   MESSAGE_REPLAY_LIMIT,
@@ -52,12 +53,14 @@ import {
   AppNotificationType,
   appUsersInMessage,
   DatabaseEntityType,
+  getUserSocketTag,
   MESSAGE_BATCH_MAX_LENGTH,
   messageEmojisInRoom,
   messagesInRoom,
   MessageType,
   onlineMembersInRoom,
   publishNotification,
+  QueueJob,
   relations,
   ROOM_MESSAGE_PAGE_SORT,
   ROOM_SEARCH_NEWEST_PAGE_SORT,
@@ -414,7 +417,7 @@ export class RoomObject extends RealtimeObject<RoomEvent> implements RoomObjectR
   // A member who is no longer in the room is no longer online in it, and their sockets here are dropped
   removeMember(userId: string): void {
     this.db.delete(onlineMembersInRoom).where(eq(onlineMembersInRoom.userId, userId)).run();
-    for (const webSocket of this.ctx.getWebSockets(`user:${userId}`))
+    for (const webSocket of this.ctx.getWebSockets(getUserSocketTag(userId)))
       webSocket.close(ROOM_MEMBER_REMOVED_CODE, "Removed from the room");
   }
 
@@ -698,7 +701,7 @@ export class RoomObject extends RealtimeObject<RoomEvent> implements RoomObjectR
   // A failed publish costs one notification, never the message that landed
   async #publishMessageNotification(message: RoomMessage): Promise<void> {
     await getResultAsync(() =>
-      publishNotification(this.env.PROCESS_NOTIFICATION_QUEUE, {
+      publishNotification(getJobQueue(QueueJob.ProcessNotification), {
         appUserId: message.appUserId ?? undefined,
         message: { id: message.id, message: message.message, roomId: this.#roomId, userId: message.userId },
         threadRootId: message.replyToId,

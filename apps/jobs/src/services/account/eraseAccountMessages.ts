@@ -1,15 +1,15 @@
 /* oxlint-disable no-await-in-loop -- Bounded concurrency: one room at a time, one page of its messages at a time, and one scheduled message at a time */
 import type { PageCursor, RoomMessage, ScheduledMessageInUser, UserInAuth } from "@esposter/db-schema";
 
-import { getAccountMemberRoomIds } from "#src/services/account/getAccountMemberRoomIds";
 import { takeBackErasedMentionCounts } from "#src/services/account/takeBackErasedMentionCounts";
 import { getRoomObject } from "#src/services/room/getRoomObject";
 import { OBJECT_READ_PAGE_LIMIT } from "#src/services/shared/constants";
+import { db } from "#src/services/shared/db";
 import { readPagesToEnd } from "#src/services/shared/readPagesToEnd";
 import { deleteStorageBlobsAndBroadcast } from "#src/services/storage/deleteStorageBlobsAndBroadcast";
 import { getBucket } from "#src/services/storage/getBucket";
 import { getUserObject } from "#src/services/user/getUserObject";
-import { getFilesBlobNames, toPageCursorValue } from "@esposter/db";
+import { getFilesBlobNames, getMemberRoomIds, toPageCursorValue } from "@esposter/db";
 import { SCHEDULED_MESSAGE_JOB_PAGE_SORT, START_PAGE_CURSOR, StorageBucket } from "@esposter/db-schema";
 
 // The account's messages are erased in every room it is a member of, a page at a time. An erased message loses its text,
@@ -18,7 +18,7 @@ import { SCHEDULED_MESSAGE_JOB_PAGE_SORT, START_PAGE_CURSOR, StorageBucket } fro
 // The scheduled messages are named by the account's own index, so each is reached in the room it was set in, member or not.
 // The index is cleared after this, so this step runs before the user object is erased
 export const eraseAccountMessages = async (userId: UserInAuth["id"]): Promise<void> => {
-  const memberRoomIds = await getAccountMemberRoomIds(userId);
+  const memberRoomIds = await getMemberRoomIds(db, userId);
   const bucket = getBucket(StorageBucket.MessageAssets);
   for (const roomId of memberRoomIds) {
     const roomObject = getRoomObject(roomId);

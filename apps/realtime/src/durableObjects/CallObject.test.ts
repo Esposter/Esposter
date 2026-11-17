@@ -8,7 +8,13 @@ import {
   readFrames,
 } from "#src/services/durableObject/createMockObjectState.test";
 import { REALTIMEKIT_API_ORIGIN } from "#src/services/realtimeKit/constants";
-import { CLOUDFLARE_ACCOUNT_ID, PublishSource, SOCKET_IDENTITY_HEADER } from "@esposter/db-schema";
+import {
+  CLOUDFLARE_ACCOUNT_ID,
+  getSessionSocketTag,
+  getUserSocketTag,
+  PublishSource,
+  SOCKET_IDENTITY_HEADER,
+} from "@esposter/db-schema";
 import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -78,8 +84,8 @@ describe(CallObject, () => {
     const bystander = createParticipant();
     const joinerSocket = createSocket();
     const bystanderSocket = createSocket();
-    state.ctx.acceptWebSocket(joinerSocket, [`user:${joiner.userId}`, `session:${joiner.id}`]);
-    state.ctx.acceptWebSocket(bystanderSocket, [`user:${bystander.userId}`, `session:${bystander.id}`]);
+    state.ctx.acceptWebSocket(joinerSocket, [getUserSocketTag(joiner.userId), getSessionSocketTag(joiner.id)]);
+    state.ctx.acceptWebSocket(bystanderSocket, [getUserSocketTag(bystander.userId), getSessionSocketTag(bystander.id)]);
 
     await callObject.joinCall({ callSessionId, isAdmissionRequired: false, participant: joiner });
 
@@ -104,8 +110,8 @@ describe(CallObject, () => {
     await callObject.joinCall({ callSessionId, isAdmissionRequired: false, participant: remainer });
     const leaverSocket = createSocket();
     const remainerSocket = createSocket();
-    state.ctx.acceptWebSocket(leaverSocket, [`user:${leaver.userId}`, `session:${leaver.id}`]);
-    state.ctx.acceptWebSocket(remainerSocket, [`user:${remainer.userId}`, `session:${remainer.id}`]);
+    state.ctx.acceptWebSocket(leaverSocket, [getUserSocketTag(leaver.userId), getSessionSocketTag(leaver.id)]);
+    state.ctx.acceptWebSocket(remainerSocket, [getUserSocketTag(remainer.userId), getSessionSocketTag(remainer.id)]);
 
     const leave = callObject.leaveCall({ callSessionId, sessionId: leaver.id });
 
@@ -139,8 +145,8 @@ describe(CallObject, () => {
     await callObject.joinCall({ callSessionId, isAdmissionRequired: false, participant: remainer });
     const revokedSocket = createSocket();
     const remainerSocket = createSocket();
-    state.ctx.acceptWebSocket(revokedSocket, [`user:${revoked.userId}`, `session:${revoked.id}`]);
-    state.ctx.acceptWebSocket(remainerSocket, [`user:${remainer.userId}`, `session:${remainer.id}`]);
+    state.ctx.acceptWebSocket(revokedSocket, [getUserSocketTag(revoked.userId), getSessionSocketTag(revoked.id)]);
+    state.ctx.acceptWebSocket(remainerSocket, [getUserSocketTag(remainer.userId), getSessionSocketTag(remainer.id)]);
     fetchMock.mockClear();
 
     const leave = await callObject.closeSession(revoked.id);
@@ -166,9 +172,12 @@ describe(CallObject, () => {
     const doorkeeperSocket = createSocket();
     const knockerSocket = createSocket();
     const bystanderSocket = createSocket();
-    state.ctx.acceptWebSocket(doorkeeperSocket, [`user:${doorkeeper.userId}`, `session:${doorkeeper.id}`]);
-    state.ctx.acceptWebSocket(knockerSocket, [`user:${knocker.userId}`, `session:${knocker.id}`]);
-    state.ctx.acceptWebSocket(bystanderSocket, [`user:${bystander.userId}`, `session:${bystander.id}`]);
+    state.ctx.acceptWebSocket(doorkeeperSocket, [
+      getUserSocketTag(doorkeeper.userId),
+      getSessionSocketTag(doorkeeper.id),
+    ]);
+    state.ctx.acceptWebSocket(knockerSocket, [getUserSocketTag(knocker.userId), getSessionSocketTag(knocker.id)]);
+    state.ctx.acceptWebSocket(bystanderSocket, [getUserSocketTag(bystander.userId), getSessionSocketTag(bystander.id)]);
 
     callObject.knockCall({ callSessionId, doorkeeperUserId: doorkeeper.userId, knocker });
     const knockingAccess = callObject.readAccess({ sessionId: knocker.id });
@@ -193,8 +202,11 @@ describe(CallObject, () => {
     const knocker = createParticipant();
     const doorkeeperSocket = createSocket();
     const knockerSocket = createSocket();
-    state.ctx.acceptWebSocket(doorkeeperSocket, [`user:${doorkeeper.userId}`, `session:${doorkeeper.id}`]);
-    state.ctx.acceptWebSocket(knockerSocket, [`user:${knocker.userId}`, `session:${knocker.id}`]);
+    state.ctx.acceptWebSocket(doorkeeperSocket, [
+      getUserSocketTag(doorkeeper.userId),
+      getSessionSocketTag(doorkeeper.id),
+    ]);
+    state.ctx.acceptWebSocket(knockerSocket, [getUserSocketTag(knocker.userId), getSessionSocketTag(knocker.id)]);
 
     callObject.knockCall({ callSessionId, doorkeeperUserId: doorkeeper.userId, knocker });
     callObject.dismissKnocker({ callSessionId, knockerSessionId: knocker.id });
@@ -216,7 +228,7 @@ describe(CallObject, () => {
     const knockerSocket = createSocket();
 
     callObject.participantJoined({ callSessionId, participant: member });
-    state.ctx.acceptWebSocket(knockerSocket, [`user:${knocker.userId}`, `session:${knocker.id}`]);
+    state.ctx.acceptWebSocket(knockerSocket, [getUserSocketTag(knocker.userId), getSessionSocketTag(knocker.id)]);
     callObject.knockCall({ callSessionId, doorkeeperUserId: member.userId, knocker });
     callObject.leaveCall({ callSessionId, sessionId: member.id });
 
@@ -259,8 +271,8 @@ describe(CallObject, () => {
     await callObject.joinCall({ callSessionId, isAdmissionRequired: false, participant });
     const userSocket = createSocket();
     const bystanderSocket = createSocket();
-    state.ctx.acceptWebSocket(userSocket, [`user:${participant.userId}`, `session:${participant.id}`]);
-    state.ctx.acceptWebSocket(bystanderSocket, [`user:${bystander.userId}`, `session:${bystander.id}`]);
+    state.ctx.acceptWebSocket(userSocket, [getUserSocketTag(participant.userId), getSessionSocketTag(participant.id)]);
+    state.ctx.acceptWebSocket(bystanderSocket, [getUserSocketTag(bystander.userId), getSessionSocketTag(bystander.id)]);
     // The kick answers with no data, and the participant added back answers with the token it rejoins with
     fetchMock
       .mockResolvedValueOnce(respondWith(null))

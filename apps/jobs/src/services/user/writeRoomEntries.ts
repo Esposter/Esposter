@@ -2,12 +2,13 @@
 import type { UserDataArchive } from "#src/models/user/UserDataArchive";
 import type { RoomMessage, UserInAuth } from "@esposter/db-schema";
 
-import { getAccountMemberRoomIds } from "#src/services/account/getAccountMemberRoomIds";
 import { getRoomObject } from "#src/services/room/getRoomObject";
 import { OBJECT_READ_PAGE_LIMIT } from "#src/services/shared/constants";
+import { db } from "#src/services/shared/db";
 import { readPages } from "#src/services/shared/readPages";
 import { readPagesToEnd } from "#src/services/shared/readPagesToEnd";
 import { writeRoomFileEntries } from "#src/services/user/writeRoomFileEntries";
+import { getMemberRoomIds } from "@esposter/db";
 
 // The messages as one JSON array, encoded page by page as the archive reads them, so the array is never held whole
 const encodeMessagesJson = async function* (pages: AsyncIterable<RoomMessage[]>): AsyncGenerator<Uint8Array> {
@@ -26,7 +27,7 @@ const encodeMessagesJson = async function* (pages: AsyncIterable<RoomMessage[]>)
 // Each is written as its messages.json, streamed from the room's object, and then the attachments those messages name.
 // Membership is the only index from a person to a room, so a room they have left is not in the archive
 export const writeRoomEntries = async (archive: UserDataArchive, userId: UserInAuth["id"]): Promise<void> => {
-  const roomIds = await getAccountMemberRoomIds(userId);
+  const roomIds = await getMemberRoomIds(db, userId);
   for (const roomId of roomIds) {
     // The person's messages in the room, one page of the room's object at a time, oldest first
     const readMessagePage = (after: RoomMessage["id"] | undefined, limit: number) =>

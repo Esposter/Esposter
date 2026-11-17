@@ -1,5 +1,6 @@
 import { RESERVED_CLOSE_CODES } from "#src/services/durableObject/constants";
 import { readSocketIdentity } from "#src/services/realtime/readSocketIdentity";
+import { getDeviceSocketTag, getSessionSocketTag, getUserSocketTag } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 import { DurableObject } from "cloudflare:workers";
 
@@ -33,9 +34,9 @@ export abstract class RealtimeObject<TEvent extends { type: string } = { type: s
 
     const { 0: client, 1: server } = new WebSocketPair();
     this.ctx.acceptWebSocket(server, [
-      `user:${identity.userId}`,
-      `session:${identity.sessionId}`,
-      `device:${identity.deviceId}`,
+      getUserSocketTag(identity.userId),
+      getSessionSocketTag(identity.sessionId),
+      getDeviceSocketTag(identity.deviceId),
       `${SESSION_EXPIRES_AT_TAG_PREFIX}${identity.sessionExpiresAt}`,
     ]);
     this.onSocketAccepted(server, request);
@@ -68,7 +69,7 @@ export abstract class RealtimeObject<TEvent extends { type: string } = { type: s
   // A revoked session's sockets on this object close, and no other session's do. The revoke is also recorded, so an
   // Upgrade that read the session before the revoke is refused when it arrives
   protected closeRevokedSession(sessionId: string): void {
-    this.closeSockets(`session:${sessionId}`, SESSION_ENDED_CLOSE_CODE, "Session revoked");
+    this.closeSockets(getSessionSocketTag(sessionId), SESSION_ENDED_CLOSE_CODE, "Session revoked");
     this.ctx.waitUntil(
       getResultAsync(() => this.#recordRevokedSession(sessionId)).match(noop, (error) => {
         console.error("Revoked session failed to record", { error, sessionId });

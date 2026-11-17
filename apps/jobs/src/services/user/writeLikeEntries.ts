@@ -2,11 +2,11 @@ import type { UserDataArchive } from "#src/models/user/UserDataArchive";
 import type { RoomReaction, UserInAuth } from "@esposter/db-schema";
 
 import { ArchiveLikeKind } from "#src/models/user/ArchiveLikeKind";
-import { getAccountMemberRoomIds } from "#src/services/account/getAccountMemberRoomIds";
 import { getRoomObject } from "#src/services/room/getRoomObject";
 import { OBJECT_READ_PAGE_LIMIT } from "#src/services/shared/constants";
 import { db } from "#src/services/shared/db";
 import { readPagesToEnd } from "#src/services/shared/readPagesToEnd";
+import { getMemberRoomIds } from "@esposter/db";
 
 // The person's likes and dislikes of posts, and their emoji reactions in the rooms they are a member of.
 // Each entry names its target and carries no counts, and no other person's reaction is listed.
@@ -17,7 +17,7 @@ export const writeLikeEntries = async (archive: UserDataArchive, userId: UserInA
     columns: { createdAt: true, postId: true, value: true },
     where: { userId: { eq: userId } },
   });
-  const roomIds = await getAccountMemberRoomIds(userId);
+  const roomIds = await getMemberRoomIds(db, userId);
   const emojiReactions: { emojiTag: string; kind: ArchiveLikeKind; roomId: string; targetId: number }[] = [];
   for (const roomId of roomIds)
     // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one room at a time, and one page of its reactions at a time

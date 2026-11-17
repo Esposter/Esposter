@@ -26,6 +26,8 @@ import {
   admittedSessions,
   callSessionsInMessage,
   callState,
+  getSessionSocketTag,
+  getUserSocketTag,
   knockers,
   participants,
   PublishSource as PublishSourceEnum,
@@ -59,7 +61,7 @@ export class CallObject extends RealtimeObject<CallEvent> implements CallObjectR
     this.db.insert(admittedSessions).values({ sessionId: knockerSessionId }).onConflictDoNothing().run();
     this.broadcast(
       { data: { callSessionId, knockerSessionId }, type: "knockerAdmitted" },
-      { tag: `session:${knockerSessionId}` },
+      { tag: getSessionSocketTag(knockerSessionId) },
     );
     return true;
   }
@@ -124,7 +126,10 @@ export class CallObject extends RealtimeObject<CallEvent> implements CallObjectR
   }): void {
     this.db.insert(knockers).values(knocker).onConflictDoUpdate({ set: knocker, target: knockers.id }).run();
     // Only the doorkeeper hears of a knock: the knocker hears of its own admission or dismissal on its own socket
-    this.broadcast({ data: { callSessionId, knocker }, type: "knockCall" }, { tag: `user:${doorkeeperUserId}` });
+    this.broadcast(
+      { data: { callSessionId, knocker }, type: "knockCall" },
+      { tag: getUserSocketTag(doorkeeperUserId) },
+    );
   }
 
   leaveCall({ callSessionId, sessionId }: { callSessionId: string; sessionId: string }): CallLeave | null {
@@ -303,7 +308,7 @@ export class CallObject extends RealtimeObject<CallEvent> implements CallObjectR
         data: { callSessionId, participant: joinedParticipant, sessionId: participant.id, type: "join" },
         type: "joinCall",
       },
-      { excludeTag: `session:${participant.id}` },
+      { excludeTag: getSessionSocketTag(participant.id) },
     );
     return isFirstJoiner;
   }
@@ -312,7 +317,7 @@ export class CallObject extends RealtimeObject<CallEvent> implements CallObjectR
   #broadcastKnockerDismissed(callSessionId: string, knockerSessionId: string): void {
     this.broadcast(
       { data: { callSessionId, knockerSessionId }, type: "knockerDismissed" },
-      { tag: `session:${knockerSessionId}` },
+      { tag: getSessionSocketTag(knockerSessionId) },
     );
   }
 
@@ -437,9 +442,9 @@ export class CallObject extends RealtimeObject<CallEvent> implements CallObjectR
     this.db.delete(realtimeKitParticipants).where(eq(realtimeKitParticipants.sessionId, sessionId)).run();
     this.broadcast(
       { data: { callSessionId, id: sessionId }, type: "leaveCall" },
-      { excludeTag: `session:${sessionId}` },
+      { excludeTag: getSessionSocketTag(sessionId) },
     );
-    this.closeSockets(`session:${sessionId}`, 1000, "Left the call");
+    this.closeSockets(getSessionSocketTag(sessionId), 1000, "Left the call");
     // A person's last session out of the call takes it off the calls their object closes a revoked session on
     if (this.#readSessionIdsOf(participant.userId).length === 0)
       this.ctx.waitUntil(
@@ -533,7 +538,7 @@ export class CallObject extends RealtimeObject<CallEvent> implements CallObjectR
               },
               type: "joinCall",
             },
-            { tag: `session:${sessionId}` },
+            { tag: getSessionSocketTag(sessionId) },
           );
         },
         () => {

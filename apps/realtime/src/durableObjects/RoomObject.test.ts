@@ -7,6 +7,7 @@ import {
   createSocket,
   readFrames,
 } from "#src/services/durableObject/createMockObjectState.test";
+import { MockJobQueueDatabase } from "#src/services/queue/getJobQueue.test";
 import { ROOM_ACTIVITY_DELAY_MS, ROOM_MEMBER_REMOVED_CODE, WRITE_RETRY_DELAY_MS } from "#src/services/room/constants";
 import { createUser } from "#src/services/shared/createUser.test";
 import { toMergedPage } from "@esposter/db";
@@ -15,8 +16,12 @@ import {
   AppNotificationType,
   appUsersInMessage,
   createPageInputSchema,
+  getDeviceSocketTag,
   getRoomSearchPageSort,
+  getSessionSocketTag,
+  getUserSocketTag,
   MessageType,
+  QueueJob,
   RoomPermission,
   roomRolesInMessage,
   roomsInMessage,
@@ -30,6 +35,8 @@ import { takeOne } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
 import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+
+vi.mock(import("#src/services/queue/getJobQueue"), () => import("#src/services/queue/getJobQueue.test"));
 
 type UserStub = Record<
   | "addScheduledMessage"
@@ -173,6 +180,7 @@ describe(RoomObject, () => {
     vi.unstubAllGlobals();
     vi.useRealTimers();
     userStubs.clear();
+    MockJobQueueDatabase.clear();
     await mockDatabase.reset();
   });
 
@@ -186,8 +194,8 @@ describe(RoomObject, () => {
     const { object, state } = createRoomObject();
     const senderSocket = createSocket();
     const bystanderSocket = createSocket();
-    state.ctx.acceptWebSocket(senderSocket, [`user:${userId}`, `device:${deviceId}`]);
-    state.ctx.acceptWebSocket(bystanderSocket, [`user:${otherUserId}`, `device:${otherDeviceId}`]);
+    state.ctx.acceptWebSocket(senderSocket, [getUserSocketTag(userId), getDeviceSocketTag(deviceId)]);
+    state.ctx.acceptWebSocket(bystanderSocket, [getUserSocketTag(otherUserId), getDeviceSocketTag(otherDeviceId)]);
 
     const message = await sendMessage(object, "hello");
 
@@ -230,8 +238,6 @@ describe(RoomObject, () => {
   test("a webhook message is notified once, however many times its delivery is made", async () => {
     expect.hasAssertions();
 
-    const queue = { send: vi.fn<(message: unknown) => Promise<void>>(() => Promise.resolve()) };
-    environment = { ...environment, PROCESS_NOTIFICATION_QUEUE: queue } as unknown as Cloudflare.Env;
     const appUserId = v7();
     await mockDatabase.db.insert(appUsersInMessage).values({ id: appUserId, image: "" });
     const { object } = createRoomObject();
@@ -239,12 +245,14 @@ describe(RoomObject, () => {
     const message = await object.createWebhookMessage(input);
     await object.createWebhookMessage(input);
 
-    expect(queue.send).toHaveBeenCalledExactlyOnceWith({
-      appUserId,
-      message: { id: message.id, message: "from a hook", roomId, userId: null },
-      threadRootId: null,
-      type: AppNotificationType.Message,
-    });
+    expect(MockJobQueueDatabase.get(QueueJob.ProcessNotification)).toStrictEqual([
+      {
+        appUserId,
+        message: { id: message.id, message: "from a hook", roomId, userId: null },
+        threadRootId: null,
+        type: AppNotificationType.Message,
+      },
+    ]);
   });
 
   test("a viewer of the room is sent the tombstone of each message an erase removes, and keeps it as deleted", async () => {
@@ -252,7 +260,7 @@ describe(RoomObject, () => {
 
     const { object, state } = createRoomObject();
     const viewerSocket = createSocket();
-    state.ctx.acceptWebSocket(viewerSocket, [`user:${otherUserId}`, `device:${otherDeviceId}`]);
+    state.ctx.acceptWebSocket(viewerSocket, [getUserSocketTag(otherUserId), getDeviceSocketTag(otherDeviceId)]);
     const message = await sendMessage(object, "erased soon");
 
     await object.deleteUserMessages({ limit: 10, userId });
@@ -506,8 +514,6 @@ describe(RoomObject, () => {
   test("a scheduled reply is notified to its thread's followers once it is sent", async () => {
     expect.hasAssertions();
 
-    const queue = { send: vi.fn<(message: unknown) => Promise<void>>(() => Promise.resolve()) };
-    environment = { ...environment, PROCESS_NOTIFICATION_QUEUE: queue } as unknown as Cloudflare.Env;
     const { object } = createRoomObject();
     const root = await sendMessage(object, "root", otherActor);
     const reply = await object.createScheduledMessage(
@@ -519,11 +525,14 @@ describe(RoomObject, () => {
     await object.alarm();
 
     const sentReply = takeOne(object.readMessages({ cursor: START_PAGE_CURSOR, limit: 1 }));
-    expect(queue.send).toHaveBeenCalledExactlyOnceWith({
-      message: { id: sentReply.id, message: "reply", roomId, userId },
-      threadRootId: root.id,
-      type: AppNotificationType.Message,
-    });
+    expect(MockJobQueueDatabase.get(QueueJob.ProcessNotification)).toStrictEqual([
+      {
+        appUserId: undefined,
+        message: { id: sentReply.id, message: "reply", roomId, userId },
+        threadRootId: root.id,
+        type: AppNotificationType.Message,
+      },
+    ]);
   });
 
   test("a scheduled message is dropped, not sent, when its sender has left the room by the time it comes due", async () => {
@@ -836,7 +845,7 @@ describe(RoomObject, () => {
 
     const { object, state } = createRoomObject();
     const socket = createSocket();
-    state.ctx.acceptWebSocket(socket, [`user:${userId}`, `device:${deviceId}`]);
+    state.ctx.acceptWebSocket(socket, [getUserSocketTag(userId), getDeviceSocketTag(deviceId)]);
     await sendMessage(object, "hello");
 
     await object.deleteAll(actor);
@@ -972,7 +981,7 @@ describe(RoomObject, () => {
 
     const { object, state } = createRoomObject();
     const socket = createSocket();
-    state.ctx.acceptWebSocket(socket, [`user:${userId}`, `device:${deviceId}`]);
+    state.ctx.acceptWebSocket(socket, [getUserSocketTag(userId), getDeviceSocketTag(deviceId)]);
     const connectedStatus = createStatus(otherUserId, true);
     const disconnectedStatus = createStatus(otherUserId, false);
 
@@ -991,8 +1000,8 @@ describe(RoomObject, () => {
     const { object, state } = createRoomObject();
     const memberSocket = createSocket();
     const bystanderSocket = createSocket();
-    state.ctx.acceptWebSocket(memberSocket, [`user:${otherUserId}`, `device:${otherDeviceId}`]);
-    state.ctx.acceptWebSocket(bystanderSocket, [`user:${userId}`, `device:${deviceId}`]);
+    state.ctx.acceptWebSocket(memberSocket, [getUserSocketTag(otherUserId), getDeviceSocketTag(otherDeviceId)]);
+    state.ctx.acceptWebSocket(bystanderSocket, [getUserSocketTag(userId), getDeviceSocketTag(deviceId)]);
 
     object.removeMember(otherUserId);
 
@@ -1008,13 +1017,21 @@ describe(RoomObject, () => {
     const revokedSocket = createSocket();
     const revokedOtherDeviceSocket = createSocket();
     const otherSessionSocket = createSocket();
-    state.ctx.acceptWebSocket(revokedSocket, [`user:${userId}`, `session:${revokedSessionId}`, `device:${deviceId}`]);
-    state.ctx.acceptWebSocket(revokedOtherDeviceSocket, [
-      `user:${userId}`,
-      `session:${revokedSessionId}`,
-      `device:${otherDeviceId}`,
+    state.ctx.acceptWebSocket(revokedSocket, [
+      getUserSocketTag(userId),
+      getSessionSocketTag(revokedSessionId),
+      getDeviceSocketTag(deviceId),
     ]);
-    state.ctx.acceptWebSocket(otherSessionSocket, [`user:${userId}`, `session:${v7()}`, `device:${v7()}`]);
+    state.ctx.acceptWebSocket(revokedOtherDeviceSocket, [
+      getUserSocketTag(userId),
+      getSessionSocketTag(revokedSessionId),
+      getDeviceSocketTag(otherDeviceId),
+    ]);
+    state.ctx.acceptWebSocket(otherSessionSocket, [
+      getUserSocketTag(userId),
+      getSessionSocketTag(v7()),
+      getDeviceSocketTag(v7()),
+    ]);
 
     object.closeSession(revokedSessionId);
 

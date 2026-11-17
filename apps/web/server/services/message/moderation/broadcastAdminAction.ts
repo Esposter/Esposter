@@ -1,6 +1,7 @@
 import type { AdminActionType } from "@esposter/db-schema";
 
 import { useRoomObject } from "#server/composables/realtime/useRoomObject";
+import { getUserSocketTag } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 
 // The action a member took against another member, sent to that member's own sockets in the room. It is best-effort
@@ -12,6 +13,6 @@ export const broadcastAdminAction = (
   getResultAsync(() =>
     useRoomObject(roomId).broadcastEvent(
       { data: { durationMs, roomId, targetUserId, type }, type: "adminAction" },
-      { tag: `user:${targetUserId}` },
+      { tag: getUserSocketTag(targetUserId) },
     ),
   ).match(noop, console.error);
