@@ -36,7 +36,7 @@ describe("pageBuilderStylePanel", () => {
 
     // A mandatory toggle group may pick its first choice on mount, which an edit would then record against the node
     expect(component.text()).toContain("column");
-    expect(pageBuilderHistoryStore.historyMap.get(resourceId)).toBeUndefined();
+    expect(pageBuilderHistoryStore.getUndoLabel(resourceId)).toBe("");
   });
 
   test("a refused draft is not shown on the node selected after it", async () => {

@@ -11,7 +11,6 @@ interface Props {
 const { dataSource } = defineProps<Props>();
 const columnDialogStore = useColumnDialogStore();
 const { deletingColumnIds } = storeToRefs(columnDialogStore);
-const deleteColumn = useDeleteColumn();
 const deleteColumns = useDeleteColumns();
 // The columns still in the sheet, so one an edit elsewhere removed meanwhile is not counted
 const { isOpen, item: deletingColumns } = useSingletonDialog(deletingColumnIds, () =>
@@ -28,10 +27,7 @@ const { isOpen, item: deletingColumns } = useSingletonDialog(deletingColumnIds, 
     :confirm="
       () => {
         if (!deletingColumns) return;
-        const [firstColumn] = deletingColumns;
-        return deletingColumns.length === 1 && firstColumn
-          ? deleteColumn(firstColumn.name)
-          : deleteColumns(deletingColumns.map(({ id }) => id));
+        deleteColumns(deletingColumns.map(({ id }) => id));
       }
     "
   >

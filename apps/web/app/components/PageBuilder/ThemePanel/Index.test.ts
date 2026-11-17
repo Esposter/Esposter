@@ -26,6 +26,6 @@ describe("pageBuilderThemePanel", () => {
     await component.get(`input[id="${forId}"]`).setValue("");
 
     expect(pageBuilderDocumentStore.getDocument(TEST_ID)?.root.props.tokens).toStrictEqual({ "font-body": "serif" });
-    expect(pageBuilderHistoryStore.historyMap.get(TEST_ID)).toBeUndefined();
+    expect(pageBuilderHistoryStore.getUndoLabel(TEST_ID)).toBe("");
   });
 });

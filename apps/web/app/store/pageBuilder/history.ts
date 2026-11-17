@@ -96,5 +96,5 @@ export const usePageBuilderHistoryStore = defineStore("pageBuilder/history", () 
     moveHistory(resourceId, entry.inverses, history);
   };
 
-  return { applyEdit, clearHistory, getPreview, getRedoLabel, getUndoLabel, historyMap, redo, setPreview, undo };
+  return { applyEdit, clearHistory, getPreview, getRedoLabel, getUndoLabel, redo, setPreview, undo };
 });

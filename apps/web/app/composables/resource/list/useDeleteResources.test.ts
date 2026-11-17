@@ -50,7 +50,7 @@ describe(useDeleteResources, () => {
       return Promise.resolve(undefined);
     });
     const { isCalled, refresh } = createRefresh();
-    useDeleteResources(ref([resource]), ref(1), refresh)([resource]);
+    useDeleteResources(ref([resource]), refresh)([resource]);
 
     // The navigation is made by the removal, and the refresh runs once the delete is kept, so both are awaited
     await Promise.all([isPushed, isCalled]);
@@ -76,7 +76,7 @@ describe(useDeleteResources, () => {
     const { readFavorites: readCachedFavorites } = favoriteStore;
     await readCachedFavorites();
     const { isCalled, refresh } = createRefresh();
-    useDeleteResources(ref([resource]), ref(1), refresh)([resource]);
+    useDeleteResources(ref([resource]), refresh)([resource]);
 
     // The refresh is the error path's last step, and it runs after the invalidation has re-read the favorites
     await isCalled;
@@ -96,7 +96,6 @@ describe(useDeleteResources, () => {
       return [];
     });
     const items = ref([resource, otherResource]);
-    const count = ref(2);
     // Each write refreshes once it has settled, the failed one from its rollback's error path and the kept one from its
     // Reconcile, so both have settled once the refresh has run twice
     const { promise: isBothSettled, resolve: onBothSettled } = Promise.withResolvers<void>();
@@ -106,37 +105,13 @@ describe(useDeleteResources, () => {
       if (settledCount === 2) onBothSettled();
       return Promise.resolve();
     });
-    const deleteResources = useDeleteResources(items, count, refresh);
+    const deleteResources = useDeleteResources(items, refresh);
     deleteResources([resource]);
     deleteResources([otherResource]);
 
     // The failed delete's rollback is the last change, once both removals have been applied
     await isBothSettled;
     expect(items.value).toStrictEqual([resource]);
-    // Untouched by either write, failed or landed: the total belongs to whatever read last counted it
-    expect(count.value).toBe(2);
-  });
-
-  // The total is the server's count over the whole filter, so a delete that nudged it would land on top of a
-  // Refresh that had already re-counted, and its rollback would then add back rows that count never held
-  test("takes the total from a re-read rather than nudging it", async () => {
-    expect.hasAssertions();
-
-    Object.assign(router.currentRoute.value.params, { id: "" });
-    const items = ref([resource, otherResource]);
-    const count = ref(2);
-    // The rows on other pages are what makes the total more than this page's length
-    const { promise: isRefreshed, resolve: onRefreshed } = Promise.withResolvers<void>();
-    const refresh = vi.fn<() => Promise<void>>(() => {
-      count.value = 3;
-      onRefreshed();
-      return Promise.resolve();
-    });
-    useDeleteResources(items, count, refresh)([resource]);
-
-    await isRefreshed;
-    expect(refresh).toHaveBeenCalledTimes(1);
-    expect(count.value).toBe(3);
   });
 
   test("stays put when the deleted resources are not the open one", async () => {
@@ -145,7 +120,7 @@ describe(useDeleteResources, () => {
     Object.assign(router.currentRoute.value.params, { id: resource.id });
     const push = vi.spyOn(router, "push").mockResolvedValue(undefined);
     const { isCalled, refresh } = createRefresh();
-    useDeleteResources(ref([otherResource]), ref(1), refresh)([otherResource]);
+    useDeleteResources(ref([otherResource]), refresh)([otherResource]);
 
     // The navigation decision is made when the removal is applied, before the refresh that the kept delete runs
     await isCalled;

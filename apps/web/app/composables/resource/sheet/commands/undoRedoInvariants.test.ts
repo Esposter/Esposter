@@ -55,8 +55,8 @@ describe("undoRedoInvariants", () => {
     createCase("useCreateRows: inserts rows at an index", createInvariantDataSource(), () => {
       useCreateRows()([createRow({ a: " ", b: " ", c: " " })], 1);
     }),
-    createCase("useDeleteColumn: removes a column", createInvariantDataSource(), () => {
-      useDeleteColumn()("b");
+    createCase("useDeleteColumns: removes a column", createInvariantDataSource(), ({ columns }) => {
+      useDeleteColumns()([takeOne(columns, 1).id]);
     }),
     createCase("useDeleteColumns: removes non-adjacent columns", createInvariantDataSource(), ({ columns }) => {
       useDeleteColumns()([takeOne(columns).id, takeOne(columns, 2).id]);

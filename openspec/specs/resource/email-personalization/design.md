@@ -23,7 +23,7 @@ flowchart LR
 | `app/services/emailEditor/toMergeField.ts`                 | canonical `{{columnName}}` token                                                                |
 | `app/services/pageBuilder/email/createMergeFieldNode.ts`   | bound column → a text node carrying the escaped token                                           |
 | `app/services/pageBuilder/MergeFieldExtension.ts`          | the two-brace suggestion over the bound dataset's columns                                       |
-| `app/composables/pageBuilder/useMergeFieldColumns.ts`      | the bound dataset's columns, provided by the shell                                              |
+| `app/store/pageBuilder/document.ts`                        | the bound dataset's columns, provided by the shell                                              |
 | `app/services/emailEditor/substituteMergeFields.ts`        | per-row substitution, HTML-escaped                                                              |
 | `server/services/emailEditor/compileEmailContent.ts`       | the one compile of the stored document, shared with the [web view](../email-web-view/design.md) |
 | `app/services/emailEditor/exportPersonalizedHtml.ts`       | personalized HTML files → one zip, shared with the program's invites                            |

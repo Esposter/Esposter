@@ -9,6 +9,7 @@ import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { MERGE_FIELD_KIND_PREFIX } from "#src/services/pageBuilder/constants";
 import { createMergeFieldNode } from "#src/services/pageBuilder/email/createMergeFieldNode";
 import { getMergeFieldColumnName } from "#src/services/pageBuilder/getMergeFieldColumnName";
+import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
 import { MjmlNodeType } from "mjml-blocks";
 
 interface Props {
@@ -29,7 +30,9 @@ const { announce, getDocument, getFrameGeometry, kind, resourceId, startMergeFie
   defineProps<Props>();
 const { getInsertable, insert } = usePageBuilderInsert(kind, getDocument, () => resourceId, announce);
 // The columns of the dataset an email is bound to, which an email's blade holds in the store, so a webpage lists none
-const mergeFieldColumns = useMergeFieldColumns(() => resourceId);
+const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+const { getMergeFieldColumnsRef } = pageBuilderDocumentStore;
+const mergeFieldColumns = getMergeFieldColumnsRef(() => resourceId);
 const insertMergeField = (columnName: string) =>
   insert(MjmlNodeType.Text, (id) => createMergeFieldNode(columnName, id));
 // A press starts a drag only where a frame can take the block or the column, so a press that has no frame stays a click

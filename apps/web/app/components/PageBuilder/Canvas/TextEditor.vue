@@ -25,7 +25,7 @@ const { kind, nodeId, resourceId } = defineProps<Props>();
 const pageBuilderCanvasStore = usePageBuilderCanvasStore();
 const pageBuilderDocumentStore = usePageBuilderDocumentStore();
 const pageBuilderHistoryStore = usePageBuilderHistoryStore();
-const { getHeldDocument } = pageBuilderDocumentStore;
+const { getHeldDocument, getMergeFieldColumnsRef } = pageBuilderDocumentStore;
 const { setEditingNodeId } = pageBuilderCanvasStore;
 const { applyEdit } = pageBuilderHistoryStore;
 const getNodeContent = () => {
@@ -36,7 +36,7 @@ const getNodeContent = () => {
 };
 // Each session is its own interaction, so its changes are one history entry and the next session is another one
 const interactionId = v7();
-const mergeFieldColumns = useMergeFieldColumns(() => resourceId);
+const mergeFieldColumns = getMergeFieldColumnsRef(() => resourceId);
 const editor = useEditor({
   ...omitUndefined({ content: getNodeContent() }),
   extensions: [...getNoteExtensions(), MergeFieldExtension.configure({ getColumns: () => mergeFieldColumns.value })],

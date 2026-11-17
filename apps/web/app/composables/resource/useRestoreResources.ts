@@ -3,10 +3,11 @@ import type { ResourceInResource } from "@esposter/db-schema";
 import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
 import { CacheTag } from "#src/models/cache/CacheTag";
+import { sendIdsInChunks } from "#src/services/resource/sendIdsInChunks";
 import { useCacheStore } from "#src/store/cache";
 import { useNotificationStore } from "#src/store/notification";
 import { NotificationSeverity } from "@esposter/db-schema";
-import { MAX_READ_LIMIT, RoutePath, takeOne } from "@esposter/shared";
+import { RoutePath, takeOne } from "@esposter/shared";
 
 // A restore returns a Draft, so the rows reappear in the list but their publications do not come back. A surface with
 // No list of its own to re-read, such as the blade, passes no refresh and leaves the caches to the invalidation
@@ -20,13 +21,9 @@ export const useRestoreResources = (refresh?: () => Promise<void>) => {
   const restoreResources = (resources: ResourceInResource[]) => {
     const ids = resources.map(({ id }) => id);
     const firstResource = takeOne(resources);
+    // Chunked to the server's per-call cap as the delete that binned them was
     executeRestoreResourcesMutation(
-      async () => {
-        // Chunked to the server's per-call cap as the delete that binned them was
-        for (let offset = 0; offset < ids.length; offset += MAX_READ_LIMIT)
-          // oxlint-disable-next-line no-await-in-loop -- Committed prefix: a chunk the server rejects stops the ones after it, and the ones before it stay restored, as the delete's chunks are
-          await $trpc.resource.restoreResources.mutate({ ids: ids.slice(offset, offset + MAX_READ_LIMIT) });
-      },
+      () => sendIdsInChunks(ids, (chunkIds) => $trpc.resource.restoreResources.mutate({ ids: chunkIds })),
       {
         // The toast shows at once, while the rows it brings back are the server's to return, in its order
         applyOptimistic: () => {

@@ -3,17 +3,14 @@ import type { ResourceInResource } from "@esposter/db-schema";
 import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
 import { CacheTag } from "#src/models/cache/CacheTag";
+import { sendIdsInChunks } from "#src/services/resource/sendIdsInChunks";
 import { useCacheStore } from "#src/store/cache";
 import { useNotificationStore } from "#src/store/notification";
 import { getRouteParam } from "#src/util/router/getRouteParam";
 import { NotificationSeverity } from "@esposter/db-schema";
-import { getSynchronizedFunction, MAX_READ_LIMIT, RoutePath, takeOne } from "@esposter/shared";
+import { getSynchronizedFunction, RoutePath, takeOne } from "@esposter/shared";
 
-export const useDeleteResources = (
-  items: Ref<ResourceInResource[]>,
-  count: Ref<number>,
-  refresh: () => Promise<void>,
-) => {
+export const useDeleteResources = (items: Ref<ResourceInResource[]>, refresh: () => Promise<void>) => {
   const { $trpc } = useNuxtApp();
   const router = useRouter();
   const navigateToExplorer = getSynchronizedFunction(async () => {
@@ -37,11 +34,7 @@ export const useDeleteResources = (
     // The batch procedure with one id shares the exact cleanup path (row + publication + blob directory).
     // Selection accumulates across pages, so the ids are chunked to the server's per-call cap and sent in order
     executeDeleteResourcesMutation(
-      async () => {
-        for (let offset = 0; offset < ids.length; offset += MAX_READ_LIMIT)
-          // oxlint-disable-next-line no-await-in-loop -- Committed prefix: a chunk the server rejects stops the ones after it
-          await $trpc.resource.deleteResources.mutate({ ids: ids.slice(offset, offset + MAX_READ_LIMIT) });
-      },
+      () => sendIdsInChunks(ids, (chunkIds) => $trpc.resource.deleteResources.mutate({ ids: chunkIds })),
       {
         // Read here rather than at call time, since this runs when the write is sent: rows captured when the
         // User clicked are the ones from before whatever landed in between

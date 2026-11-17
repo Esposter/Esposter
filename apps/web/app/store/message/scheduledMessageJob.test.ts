@@ -64,11 +64,11 @@ describe(useScheduledMessageJobStore, () => {
 
     const scheduledMessageJobStore = useScheduledMessageJobStore();
     const { items } = storeToRefs(scheduledMessageJobStore);
-    const { cancelScheduledMessageJob, initializeCursorPaginationData } = scheduledMessageJobStore;
+    const { cancelScheduledMessageJob, readItems } = scheduledMessageJobStore;
     const job = createJob(id);
     const laterJob = createJob(otherId);
-    trpcMsw.message.scheduledMessageJob.cancelScheduledMessageJob.mutation(() => {
-      initializeCursorPaginationData({ items: [job, laterJob], nextCursor: "" });
+    trpcMsw.message.scheduledMessageJob.cancelScheduledMessageJob.mutation(async () => {
+      await readItems(() => Promise.resolve({ items: [job, laterJob], nextCursor: "" }));
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
     items.value = [job, laterJob];

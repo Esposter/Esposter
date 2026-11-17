@@ -79,7 +79,7 @@ describe(usePageBuilderStyle, () => {
 
     usePageBuilderStyle(resourceId).resetField("color");
 
-    expect(pageBuilderHistoryStore.historyMap.get(resourceId)).toBeUndefined();
+    expect(pageBuilderHistoryStore.getUndoLabel(resourceId)).toBe("");
   });
 
   test("dragging an opacity slider records one undoable change", () => {
@@ -99,14 +99,17 @@ describe(usePageBuilderStyle, () => {
     previewField("opacity", "0.5");
     previewField("opacity", "0.4");
 
-    expect(pageBuilderHistoryStore.historyMap.get(resourceId)?.past.length ?? 0).toBe(0);
+    expect(pageBuilderHistoryStore.getUndoLabel(resourceId)).toBe("");
     expect(pageBuilderHistoryStore.getPreview(resourceId)?.content[0]?.props.style).toStrictEqual({
       [StyleBreakpoint.Base]: { [StyleState.Default]: { opacity: "0.4" } },
     });
 
     setField("opacity", "0.4");
 
-    expect(pageBuilderHistoryStore.historyMap.get(resourceId)?.past).toHaveLength(1);
+    expect(pageBuilderHistoryStore.getUndoLabel(resourceId)).not.toBe("");
     expect(pageBuilderHistoryStore.getPreview(resourceId)).toBeUndefined();
+    pageBuilderHistoryStore.undo(resourceId);
+
+    expect(pageBuilderHistoryStore.getUndoLabel(resourceId)).toBe("");
   });
 });

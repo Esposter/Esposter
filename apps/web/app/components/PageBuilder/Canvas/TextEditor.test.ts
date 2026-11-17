@@ -97,7 +97,6 @@ describe("pageBuilderCanvasTextEditor", () => {
       root: TEST_ROOT,
     });
     pageBuilderCanvasStore.setEditingNodeId(resourceId, TEST_ROOT_TEXT_ID);
-    const pastLengthBefore = pageBuilderHistoryStore.historyMap.get(resourceId)?.past.length ?? 0;
     const component = await mountSuspended(PageBuilderCanvasTextEditor, {
       props: { kind: webpageKind, nodeId: TEST_ROOT_TEXT_ID, resourceId },
     });
@@ -111,10 +110,13 @@ describe("pageBuilderCanvasTextEditor", () => {
     await component.trigger("keydown", { key: "Escape" });
 
     expect(pageBuilderCanvasStore.getEditingNodeId(resourceId)).toBe("");
-    expect(pageBuilderHistoryStore.historyMap.get(resourceId)?.past.length).toBe(pastLengthBefore + 1);
     expect(pageBuilderDocumentStore.getDocument(resourceId)?.content).toStrictEqual([
       { props: { content: editor.getJSON(), id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
     ]);
+    expect(pageBuilderHistoryStore.getUndoLabel(resourceId)).toBe("Edit text");
+    pageBuilderHistoryStore.undo(resourceId);
+
+    expect(pageBuilderHistoryStore.getUndoLabel(resourceId)).toBe("");
     component.unmount();
   });
 
@@ -128,7 +130,6 @@ describe("pageBuilderCanvasTextEditor", () => {
       content: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text }],
       root: TEST_ROOT,
     });
-    const pastLengthBefore = pageBuilderHistoryStore.historyMap.get(resourceId)?.past.length ?? 0;
     const editSession = async (text: string) => {
       const component = await mountSuspended(PageBuilderCanvasTextEditor, {
         props: { kind: webpageKind, nodeId: TEST_ROOT_TEXT_ID, resourceId },
@@ -144,8 +145,13 @@ describe("pageBuilderCanvasTextEditor", () => {
 
     await editSession("a");
     await editSession("b");
+    // Each session is its own entry, so two undos take both back and no third is left
+    pageBuilderHistoryStore.undo(resourceId);
 
-    expect(pageBuilderHistoryStore.historyMap.get(resourceId)?.past.length).toBe(pastLengthBefore + 2);
+    expect(pageBuilderHistoryStore.getUndoLabel(resourceId)).toBe("Edit text");
+    pageBuilderHistoryStore.undo(resourceId);
+
+    expect(pageBuilderHistoryStore.getUndoLabel(resourceId)).toBe("");
   });
 
   test("typing two braces offers the dataset's columns", async () => {

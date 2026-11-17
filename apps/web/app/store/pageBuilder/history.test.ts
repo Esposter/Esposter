@@ -121,11 +121,11 @@ describe(usePageBuilderHistoryStore, () => {
         TEST_TEXT_LABEL,
         interactionId,
       ).match(noop, console.error);
-    const pastLength = pageBuilderHistoryStore.historyMap.get(resourceId)?.past.length;
+    expect(pageBuilderHistoryStore.getUndoLabel(resourceId)).toBe(TEST_TEXT_LABEL);
     undo(resourceId);
 
-    expect(pastLength).toBe(1);
     expect(getDocument(resourceId)).toStrictEqual(textDocument);
+    expect(pageBuilderHistoryStore.getUndoLabel(resourceId)).toBe("");
   });
 
   test("two inserts at one index in one interaction are two undo entries", () => {

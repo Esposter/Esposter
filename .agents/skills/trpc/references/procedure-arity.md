@@ -21,7 +21,7 @@ exactly the ways a batch differs: which rows the guard admits, what the notifica
   binned rows. A row outside that scope is skipped and absent from the result, never an error, since one foreign id
   must not fail the rest of the set.
 - **The caller chunks to the cap.** The input caps its ids at `MAX_READ_LIMIT`, and a selection that spans pages
-  sends its ids in order, chunk by chunk (`useDeleteResources`, `useRestoreResources`).
+  sends its ids in order, chunk by chunk (`sendIdsInChunks`, which `useDeleteResources` and `useRestoreResources` call).
 - **Its words take a count.** A title or notification the single form wrote for one name takes the count too
   (`ResourceOperationTitleMap`), so a one-item batch reads exactly as the single form did.
 - **Its input keeps a file of its own.** Two batch procedures over the same shape still take one input schema each

@@ -42,10 +42,6 @@ export const useCursorPaginationOperationData = <TItem>(
   const nextCursor = getPropertyComputed(cursorPaginationData, "nextCursor");
   // A list goes on while it has a cursor to continue from
   const hasMore = computed(() => Boolean(nextCursor.value));
-  const initializeCursorPaginationData = (data: Page<TItem>) => {
-    cursorPaginationData.value = data;
-    isLoaded.value = true;
-  };
   const resetCursorPaginationData = () => {
     emptyCursorPaginationData(cursorPaginationData, isLoaded);
   };
@@ -113,13 +109,5 @@ export const useCursorPaginationOperationData = <TItem>(
     }, onComplete);
   };
 
-  return {
-    hasMore,
-    initializeCursorPaginationData,
-    isLoaded,
-    items,
-    readItems,
-    readMoreItems,
-    resetCursorPaginationData,
-  };
+  return { hasMore, isLoaded, items, readItems, readMoreItems, resetCursorPaginationData };
 };

@@ -152,10 +152,10 @@ describe(useSheetHistoryStore, () => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDeletedRow();
-    const deleteColumn = useDeleteColumn();
+    const deleteColumns = useDeleteColumns();
     const sheetHistoryStore = useSheetHistoryStore();
     const { redo, undo } = sheetHistoryStore;
-    deleteColumn(" ");
+    deleteColumns([takeOne(dataSource.columns, 1).id]);
 
     expect(dataSource.rows).toHaveLength(1);
     expect(dataSource.columns).toHaveLength(1);

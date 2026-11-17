@@ -35,6 +35,9 @@ describe(usePageBuilderContent, () => {
     setFormValue({ href: TEST_URL, label: "O" });
     setFormValue({ href: TEST_URL, label: "Op" });
 
-    expect(pageBuilderHistoryStore.historyMap.get(resourceId)?.past).toHaveLength(1);
+    expect(pageBuilderHistoryStore.getUndoLabel(resourceId)).not.toBe("");
+    pageBuilderHistoryStore.undo(resourceId);
+
+    expect(pageBuilderHistoryStore.getUndoLabel(resourceId)).toBe("");
   });
 });

@@ -15,6 +15,7 @@ import { datasetToDataSource } from "#src/services/resource/sheet/dataSource/dat
 import { useAlertStore } from "#src/store/alert";
 import { useResourceStore } from "#src/store/resource/index";
 import { useSheetPortableDialogStore } from "#src/store/resource/sheet/portableDialog";
+import { MAX_READ_LIMIT } from "@esposter/shared";
 
 const isOpen = defineModel<boolean>({ default: false });
 const alertStore = useAlertStore();
@@ -24,7 +25,6 @@ const { currentResourceId } = storeToRefs(resourceStore);
 const sheetPortableDialogStore = useSheetPortableDialogStore();
 const { closeSurveyImport } = sheetPortableDialogStore;
 const { $trpc } = useNuxtApp();
-const { readSurveyResources } = useReadSurveys();
 const getDataSourceSetter = useSetDataSource();
 const { checkIsPending, executeMutation, executeQuery } = useMutation();
 const importingResourceId = ref("");
@@ -46,7 +46,7 @@ const selectedSurveyId = ref("");
 const getImportTruncationMessage = (truncation: DatasetTruncation) =>
   `${getDatasetTruncationText(truncation)} — the remaining ${truncation.hiddenRows} were not imported`;
 const readSurveys = () =>
-  executeQuery(() => readSurveyResources(), {
+  executeQuery(() => $trpc.survey.readResources.query({ limit: MAX_READ_LIMIT }), {
     isExclusive: true,
     key: "survey/readResources",
     onError: (error) => {

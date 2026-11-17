@@ -106,24 +106,21 @@ describe(useNotificationStore, () => {
   test("toasts every delivered row a push brought back, oldest first", async () => {
     expect.hasAssertions();
 
-    const { createNotification, dismissSnackbar, initializeCursorPaginationData, storeDeliveredNotifications } =
-      notificationStore;
+    const { createNotification, dismissSnackbar, readItems, storeDeliveredNotifications } = notificationStore;
     const heldNotification = createDeliveredNotification(v7(), epoch);
     const tiedNotification = createDeliveredNotification(v7(), epoch);
     const newestNotification = createDeliveredNotification(v7(), nextDay);
-    initializeCursorPaginationData({ items: [heldNotification], nextCursor: "" });
+    await readItems(() => Promise.resolve({ items: [heldNotification], nextCursor: "" }));
     createNotification({ severity: NotificationSeverity.Info, title });
     const [localNotification] = notifications.value;
     assert.exists(localNotification);
     dismissSnackbar(localNotification.id);
 
-    storeDeliveredNotifications(() => {
-      initializeCursorPaginationData({
-        items: [newestNotification, tiedNotification, heldNotification],
-        nextCursor: "",
-      });
-      return Promise.resolve();
-    });
+    storeDeliveredNotifications(() =>
+      readItems(() =>
+        Promise.resolve({ items: [newestNotification, tiedNotification, heldNotification], nextCursor: "" }),
+      ),
+    );
     await flushPromises();
 
     expect(snackbarNotification.value?.id).toBe(tiedNotification.id);
@@ -139,13 +136,12 @@ describe(useNotificationStore, () => {
   test("does not re-toast a dismissed row when two pushes overlap", async () => {
     expect.hasAssertions();
 
-    const { dismissSnackbar, initializeCursorPaginationData, storeDeliveredNotifications } = notificationStore;
+    const { dismissSnackbar, readItems, storeDeliveredNotifications } = notificationStore;
     const heldNotification = createDeliveredNotification(v7(), epoch);
-    initializeCursorPaginationData({ items: [heldNotification], nextCursor: "" });
+    await readItems(() => Promise.resolve({ items: [heldNotification], nextCursor: "" }));
     const pushedNotification = createDeliveredNotification(v7(), nextDay);
-    const storePushedPage = () => {
-      initializeCursorPaginationData({ items: [pushedNotification, heldNotification], nextCursor: "" });
-    };
+    const storePushedPage = () =>
+      readItems(() => Promise.resolve({ items: [pushedNotification, heldNotification], nextCursor: "" }));
     // Both reads are held open, and each stores its page only once its own response lands — the shape a network
     // Read has, and the one that lets the second call snapshot the list before the first has grown it. The second
     // Response is released after the dismissal below, which is the only interleaving where a duplicate enqueue is
@@ -154,11 +150,11 @@ describe(useNotificationStore, () => {
     const { promise: secondResponse, resolve: completeSecondRead } = Promise.withResolvers<void>();
     storeDeliveredNotifications(async () => {
       await firstResponse;
-      storePushedPage();
+      await storePushedPage();
     });
     storeDeliveredNotifications(async () => {
       await secondResponse;
-      storePushedPage();
+      await storePushedPage();
     });
     completeFirstRead();
     await flushPromises();
@@ -179,8 +175,8 @@ describe(useNotificationStore, () => {
 
     const notification = createDeliveredNotification(v7(), epoch);
     trpcMsw.notification.deleteNotification.mutation(() => 5);
-    const { initializeCursorPaginationData, setUnreadDeliveredCount } = notificationStore;
-    initializeCursorPaginationData({ items: [notification], nextCursor: "" });
+    const { readItems, setUnreadDeliveredCount } = notificationStore;
+    await readItems(() => Promise.resolve({ items: [notification], nextCursor: "" }));
     setUnreadDeliveredCount(1);
     notificationStore.dismissNotification(notification.id);
     await flushPromises();

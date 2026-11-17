@@ -18,7 +18,6 @@ export const useNotificationStore = defineStore("notification", () => {
   const { $trpc } = useNuxtApp();
   const {
     hasMore,
-    initializeCursorPaginationData,
     isLoaded,
     items: deliveredNotifications,
     readItems,
@@ -208,7 +207,6 @@ export const useNotificationStore = defineStore("notification", () => {
     dismissNotifications,
     dismissSnackbar,
     hasMore,
-    initializeCursorPaginationData,
     isLoaded,
     isPanelOpen,
     markAllAsRead,
