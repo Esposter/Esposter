@@ -52,6 +52,40 @@ describe("webpageDocumentSchema", () => {
     ]);
   });
 
+  test("a button that takes a tab panel's generated element id is refused on save", () => {
+    expect.hasAssertions();
+
+    const result = webpageDocumentSchema.safeParse({
+      content: [
+        {
+          props: {
+            children: [
+              { props: { children: [], elementId: "", id: TEST_ID, label: TEST_LABEL }, type: WebpageNodeType.Tab },
+            ],
+            elementId: "",
+            id: "t",
+          },
+          type: WebpageNodeType.Tabs,
+        },
+        {
+          props: {
+            elementId: `${TEST_ID}-panel`,
+            href: TEST_URL,
+            id: TEST_OTHER_ID,
+            label: TEST_LABEL,
+            target: ButtonTarget.SameTab,
+          },
+          type: WebpageNodeType.Button,
+        },
+      ],
+      root: TEST_ROOT,
+    });
+
+    expect(result.error?.issues.map(({ message, path }) => ({ message, path }))).toStrictEqual([
+      { message: "repeats an element id", path: ["content", 1, "props", "elementId"] },
+    ]);
+  });
+
   test("an element id with an unreachable character is refused on save", () => {
     expect.hasAssertions();
 

@@ -1,10 +1,13 @@
 import type { WebpageNode } from "#shared/models/pageBuilder/WebpageNode";
 import type { z } from "zod";
 
+import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
+import { getTabPanelId } from "#shared/services/pageBuilder/getTabPanelId";
 import { webpageNodeChildren } from "#shared/services/pageBuilder/webpageNodeChildren";
 import { getBlockSlots } from "vue-block-editor-headless";
 
 // Refuses an element id an earlier node holds, in any slot, since a fragment link goes to the first element with that id.
+// A tab publishes its panel's id, which falls back to a generated one, so that is the id it holds.
 // Its callers refine only a parse that raised no issue, so the nodes it is handed are the schema's typed output
 export const checkWebpageElementIds = (
   context: z.RefinementCtx,
@@ -14,7 +17,7 @@ export const checkWebpageElementIds = (
 ): void => {
   for (const [index, node] of nodes.entries()) {
     const nodeSegments = [...segments, index];
-    const { elementId } = node.props;
+    const elementId = node.type === WebpageNodeType.Tab ? getTabPanelId(node) : node.props.elementId;
     if (elementId && elementIds.has(elementId))
       context.addIssue({
         code: "custom",
