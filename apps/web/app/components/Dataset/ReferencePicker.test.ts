@@ -10,7 +10,7 @@ import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
-import { describe, expect, test } from "vitest";
+import { assert, describe, expect, test } from "vitest";
 
 describe("datasetReferencePicker", () => {
   const { trpcMsw } = setupMswTrpc();
@@ -31,13 +31,15 @@ describe("datasetReferencePicker", () => {
     useSession.mockReturnValue(ref({ data: { user: { id: v7() } } }));
     const wrapper = await mountSuspended(DatasetReferencePicker, { props: { error: "", modelValue: undefined } });
     const [typeSelect, sourceSelect] = wrapper.findAllComponents(UiSelect);
-    typeSelect?.vm.$emit("update:modelValue", DatasetProviderType.Sheet);
+    assert.exists(typeSelect);
+    assert.exists(sourceSelect);
+    typeSelect.vm.$emit("update:modelValue", DatasetProviderType.Sheet);
     await flushPromises();
     releaseRead();
     await flushPromises();
 
-    expect(
-      (sourceSelect?.props() as undefined | { items?: UiSelectItem<string>[] })?.items?.map(({ value }) => value),
-    ).toStrictEqual(["", sheet.id]);
+    expect((sourceSelect.props() as { items?: UiSelectItem<string>[] }).items?.map(({ value }) => value)).toStrictEqual(
+      ["", sheet.id],
+    );
   });
 });

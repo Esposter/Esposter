@@ -26,6 +26,12 @@ import { POLLING_MESSAGE, USE_ROUTER_PAGE_MESSAGE } from "#oxlint/messages";
 import pinia from "eslint-plugin-pinia";
 import { defineConfig } from "oxlint";
 
+// The type-aware rules run on `tsrs-lint`, which refuses a tsconfig naming a content mapper (Nuxt's generated one, and
+// The Vue packages' `tsconfig.vue.json`) unless it may run the mapper, and oxlint passes it no flags. Every `vp lint`
+// Loads this file before oxlint starts its backend, so this is the one place the switch is set
+// @TODO: https://github.com/voidzero-dev/vite-plus/issues/3476
+process.env.TSRS_LINT_RUN_EXTERNAL_CODE = "1";
+
 // The Tiled tileset `.tsx` files are XML, not code. ESLint's ignores import this glob too,
 // So the two passes never ignore different trees.
 export const TILESET_IGNORE_PATTERN = "**/assets/dungeons/tilesets/**/*.tsx";
@@ -225,9 +231,8 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
       files: ["packages/genshin-mods/**/*.ts", "packages/genshin-persona/mod/**/*.ts"],
       rules: {
         "no-restricted-imports": ["error", { paths: RESTRICTED_IMPORT_PATHS, patterns: [MOD_IMPORT_PATTERN] }],
-        // Asking whether an async hook fits the engine's `On` overloads costs tsgolint tens of seconds a file and tens of
-        // Gigabytes, the whole pass's peak, where tsc checks the program in a second. See openspec/specs/architecture/lint-toolchain/design.md
-        "typescript/no-misused-promises": "off",
+        // Asking whether an async hook fits the engine's `On` overloads costs this rule tens of seconds over these trees
+        // Alone, where tsrs checks the program in under a second. See openspec/specs/architecture/lint-toolchain/design.md
         "typescript/strict-void-return": "off",
       },
     },

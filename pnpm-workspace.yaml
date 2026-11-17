@@ -115,9 +115,9 @@ catalog:
   "@vitest/snapshot": ^5.1.0
   "@vitest/spy": ^5.1.0
   "@vitest/utils": ^5.1.0
-  "@vizejs/native": ^0.772.0
-  "@vizejs/unplugin": ^0.772.0
-  "@vizejs/vite-plugin": ^0.772.0
+  "@vizejs/native": ^0.777.0
+  "@vizejs/unplugin": ^0.777.0
+  "@vizejs/vite-plugin": ^0.777.0
   "@vue/compiler-core": ^3.5.45
   "@vue/test-utils": ^2.6.0
   "@vuetify/v0": ^1.3.2
@@ -174,7 +174,6 @@ catalog:
   oxc-parser: ^0.159.0
   oxfmt: ^0.79.0
   oxlint: ^1.94.0
-  oxlint-tsgolint: ^7.0.2007
   parse5: ^8.1.1
   pdfjs-dist: ^6.5.438
   phaser: ^4.2.1
@@ -196,7 +195,9 @@ catalog:
   three: ^0.187.0
   three-mesh-bvh: ^0.9.18
   tsdown: ^0.23.7
-  tsrs: ^0.25.0-ts7.1.0-beta
+  # @TODO: https://github.com/oxc-project/tsrs/releases — back to a range once the `7.1.0-beta.tsrs` line reaches `latest`:
+  # Until then `latest` still names the `0.25.0` line, and vite-plus 1.7 runs `tsrs-lint` from `next`
+  tsrs: npm:tsrs@next
   type-fest: ^6.0.0
   typescript: 6.0.3
   unicode-emoji-json: ^0.9.0
@@ -205,10 +206,10 @@ catalog:
   uuid: ^14.0.3
   vite: ^8.4.0-beta.1
   vite-plugin-glsl: ^1.6.3
-  vite-plus: ^1.6.0
+  vite-plus: ^1.7.0
   vitest: ^5.1.0
   vitest-browser-vue: ^3.1.0
-  vize: ^0.772.0
+  vize: ^0.777.0
   vue: ^3.5.45
   vue-eslint-parser: ^10.4.2
   vue-router: ^5.5.1
@@ -254,7 +255,7 @@ overrides:
   "vite-plus>@vitest/utils": "catalog:"
   vite-plus>oxfmt: "catalog:"
   vite-plus>oxlint: "catalog:"
-  vite-plus>oxlint-tsgolint: "catalog:"
+  vite-plus>tsrs: "catalog:"
   vite-plus>vitest: "catalog:"
 
 permissions:
