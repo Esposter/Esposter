@@ -15,7 +15,7 @@
 
 - [ ] 3.1 Key a screen's layout by language only where its recording differs, and use the English layout everywhere else. Verify: tests named after the scenarios "A language without a differing recording uses the English layout" and "A language whose recording differs uses its own layout", written first and seen failing.
   - The Japanese title uses the English layout (`splash-title-japanese`, score 0.16).
-  - Waits on: the mainland title splash, which compares at 1.89 against the bar of 1, its licence lines a sub-pixel offset ([design](design.md) Decisions). The health notice's layout waits on its open face item in the roadmap, since the English notice itself compares at 6.17. The Korean layout waits on 1.2.
+  - Waits on: the mainland title splash's layout measure, its licence lines a sub-pixel offset ([design](design.md) Decisions). The health notice's layout waits on its open face item in the roadmap, since the English notice itself is over the bar ([design](design.md) Decisions). The Korean layout waits on 1.2.
 - [ ] 3.2 Add a visual suite image only for each language whose screen differs. Verify: tests named after the scenario "The visual suite gains an image for a differing language" and "The visual suite gains no image for a language that matches English", written first and seen failing.
   - The Japanese title matches English, so its variant image under `components/Splash/Title/` is the one to drop once 3.1 settles.
 
