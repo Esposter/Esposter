@@ -5,11 +5,10 @@ import type { SurveyNodeType, SurveyPlaceableNode } from "vue-survey-engine-head
 import { useSurveyCreatorCommands } from "#src/composables/survey/useSurveyCreatorCommands";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { getSurveyKindChangeTypes } from "#src/services/resource/survey/getSurveyKindChangeTypes";
-import { SurveyNodeTypeIconMap } from "#src/services/resource/survey/SurveyNodeTypeIconMap";
+import { getSurveyKindItems } from "#src/services/resource/survey/getSurveyKindItems";
 import {
   checkIsSurveyAnsweringNode,
   convertSurveyNodeKind,
-  surveyNodeTypeDefinitionMap,
   SurveyNodeType as SurveyNodeTypeValue,
   SurveyRatingType,
 } from "vue-survey-engine-headless";
@@ -37,13 +36,7 @@ const chooseKind = (type: SurveyNodeType) => {
     isKindChangeOpen.value = true;
   } else convertNodeKind(pointer, type);
 };
-const kindItems = computed<Item[]>(() =>
-  getSurveyKindChangeTypes(node).map((type) => ({
-    meaning: SurveyNodeTypeIconMap[type],
-    onClick: () => chooseKind(type),
-    title: surveyNodeTypeDefinitionMap[type].label,
-  })),
-);
+const kindItems = computed<Item[]>(() => getSurveyKindItems(getSurveyKindChangeTypes(node), chooseKind));
 const rateTypeItems = computed<Item[]>(() =>
   Object.values(SurveyRatingType).map((rateType) => ({
     meaning: UiIconMeaning.Star,

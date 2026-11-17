@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import type { Item } from "#src/models/shared/Item";
-
 import { useSurveyCreatorCommands } from "#src/composables/survey/useSurveyCreatorCommands";
 import { SURVEY_ANSWERING_PALETTE_TYPES } from "#src/services/resource/survey/constants";
 import { getSurveyDropSlots } from "#src/services/resource/survey/getSurveyDropSlots";
+import { getSurveyKindItems } from "#src/services/resource/survey/getSurveyKindItems";
 import { SurveyNodeTypeIconMap } from "#src/services/resource/survey/SurveyNodeTypeIconMap";
 import { useSurveyCreatorStore } from "#src/store/survey/creator";
 import { SurveyNodeType, surveyNodeTypeDefinitionMap } from "vue-survey-engine-headless";
@@ -21,14 +20,10 @@ registerSlots(() => getSurveyDropSlots(canvas.value ?? undefined, surveyDocument
 const getPagePointer = (pageIndex: number) => `/content/${pageIndex}`;
 const getSlotPointer = (pageIndex: number) => `${getPagePointer(pageIndex)}/props/children`;
 // The ellipsis beside a page's add control offers the kinds a question can be added as, each inserted at the end of that page
-const getKindItems = (pageIndex: number, childrenCount: number): Item[] =>
-  SURVEY_ANSWERING_PALETTE_TYPES.map((type) => ({
-    meaning: SurveyNodeTypeIconMap[type],
-    onClick: () => {
-      insertNodeAt(type, getSlotPointer(pageIndex), childrenCount);
-    },
-    title: surveyNodeTypeDefinitionMap[type].label,
-  }));
+const getKindItems = (pageIndex: number, childrenCount: number) =>
+  getSurveyKindItems(SURVEY_ANSWERING_PALETTE_TYPES, (type) => {
+    insertNodeAt(type, getSlotPointer(pageIndex), childrenCount);
+  });
 </script>
 
 <template>
