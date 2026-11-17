@@ -91,15 +91,21 @@ export const useMutation = () => {
   };
   // Chains a target's writes so each starts only after the previous settles, which is what makes a write
   // Build on the state the write ahead of it stored. A rejection neither blocks the queue nor leaks to the
-  // Calls behind it
+  // Calls behind it. The key is released before the queue is, so a caller awaiting the queue reads it settled
   const enqueue = <TResult>(key: PropertyKey, run: () => Promise<TResult>) => {
     const previous = keyQueueMap.get(key) ?? Promise.resolve();
     const { promise, resolve: release } = Promise.withResolvers<void>();
     keyQueueMap.set(key, promise);
-    return withFinalizerAsync(async () => {
-      await previous;
-      return run();
-    }, release);
+    return withFinalizerAsync(
+      async () => {
+        await previous;
+        return run();
+      },
+      () => {
+        releaseKey(key);
+        release();
+      },
+    );
   };
   // Resolves once every write already queued for a target has settled. Only a read of what those writes store on the
   // Server needs it, such as an export the server compiles from the saved copy; the screen never waits on it
@@ -201,12 +207,11 @@ export const useMutation = () => {
       });
     // The finalizer guarantees pending and queue bookkeeping unwind even when applyOptimistic or a callback
     // Throws, so a thrown callback can never strand the key as permanently pending or wedge its queue
-    return withFinalizerAsync(
-      () => (isSupersede ? run() : enqueue(key, run)),
-      () => {
-        releaseKey(key);
-      },
-    );
+    return isSupersede
+      ? withFinalizerAsync(run, () => {
+          releaseKey(key);
+        })
+      : enqueue(key, run);
   };
   // The two forms of a write, the optimistic one last. It hands its caller nothing, so no step the screen takes can
   // Wait on its answer: the write still runs on its key's queue, and whatever the answer brings is the rollback's,

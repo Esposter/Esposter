@@ -515,6 +515,18 @@ describe(useMutation, () => {
     expect(mutate).toHaveBeenCalledTimes(1);
   });
 
+  // A read of what a write stored, such as an export the server compiles from the saved copy, awaits the queue and then
+  // Reads the write's outcome, so the key must read as settled by the time the queue resolves
+  test("a target's writes have settled once its queue resolves", async () => {
+    expect.hasAssertions();
+
+    const { checkIsPending, executeMutation, whenSettled } = useMutation();
+    executeMutation(() => Promise.resolve(), { applyOptimistic: () => noop, key });
+    await whenSettled(key);
+
+    expect(checkIsPending(key)).toBe(false);
+  });
+
   test("runs onSuccess for overlapping calls with different keys", async () => {
     expect.hasAssertions();
 
