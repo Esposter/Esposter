@@ -11,8 +11,8 @@
 
 ## 3. The check
 
-- [x] 3.1 Read one previously stored webpage on dev and one published on prod through the `readResourceContent` and `readPublishedResourceContent` procedures, called on a tRPC caller as `createResourceProcedures.test.ts` does. Both are procedure keys, not exported service functions, so no function of those names is imported. Verify: both parse and return the page, with the owner's read and the public read both succeeding.
+- [ ] 3.1 Read one previously stored webpage on dev and one published on prod through the `readResourceContent` and `readPublishedResourceContent` procedures, called on a tRPC caller as `createResourceProcedures.test.ts` does. Both are procedure keys, not exported service functions, so no function of those names is imported. Verify: both parse and return the page, with the owner's read and the public read both succeeding.
 
 ## Result
 
-The scan found no webpage in either database: dev and prod each hold zero webpage resources and zero webpage publications, so no stored document lacked either field, nothing was written, and no script was kept. The read check had no stored page to read.
+The scan found no webpage in either database: dev and prod each hold zero webpage resources and zero webpage publications, so no stored document lacked either field, nothing was written, and no script was kept. Task 3.1 is left unticked: its verify condition needs a stored page to read on each database, and none exists, so neither the owner's read nor the public read ran.
