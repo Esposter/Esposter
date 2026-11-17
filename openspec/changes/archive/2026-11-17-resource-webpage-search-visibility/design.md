@@ -17,10 +17,10 @@ The directive comes from the published snapshot, so an unpublished change to the
 
 ## Gap analysis
 
-| Feature                                      | Verdict                                                                                                            |
-| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| Exclude a page from search results           | Built as the switch.                                                                                               |
-| Sitemap, favicon, 404 page, global canonical | Rejected as site-level settings: [webpage site settings](../../rejected/resource/webpage-site-settings/design.md). |
+| Feature                                      | Verdict                                                                                                               |
+| -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| Exclude a page from search results           | Built as the switch.                                                                                                  |
+| Sitemap, favicon, 404 page, global canonical | Rejected as site-level settings: [webpage site settings](../../../rejected/resource/webpage-site-settings/design.md). |
 
 ## Decisions
 
