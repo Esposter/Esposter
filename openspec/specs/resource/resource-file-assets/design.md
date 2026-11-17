@@ -2,7 +2,7 @@
 
 The **FileAssets capability**: hosted binary assets for the resource types that need them. A type declaring `fileAssets: true` gets owner-only procedures for uploading and removing objects under its own `{id}/files/…` prefix, and the webpage's Settings blade uploads its share image through them — so an image a resource carries is a hosted URL, never a base64 blob inlined into the content.
 
-Adopters: Survey (image questions, logos, theme backgrounds), Note (inline images), Webpage (share image), Whiteboard (inline images), Email (the page builder's image style fields). The adopters clear the capability admission rule of two or more ([resources](../../architecture/resource/design.md)).
+Adopters: Survey (image questions, logos, theme backgrounds), Note (inline images), Webpage (share image, and the image and video sources of its nodes), Whiteboard (inline images), Email (the page builder's image style fields). The adopters clear the capability admission rule of two or more ([resources](../../architecture/resource/design.md)).
 
 ## How it works
 
@@ -52,27 +52,32 @@ The parser accepts one shape, `{resourceId}/files/{hash}`, with a uuid resource 
 | ---------------------------------------- | ----- | ------------------------------------------ |
 | `generateUploadFilePresignedUrlEntities` | owner | presigned PUT targets under `{id}/files/…` |
 | `deleteFile`                             | owner | remove one asset object                    |
+| `readResourceFiles`                      | owner | the files under `{id}/files/…`, each typed |
 
-Reads have no procedure — they go through the `/api/resource-assets` endpoint.
+A file is read through the `/api/resource-assets` endpoint, which takes no procedure. The owner's listing of a resource's files is `readResourceFiles`: it reads the resource's files directory and answers each file with the type and size its signed upload declared, read off the object itself, so no row is kept beside an object.
 
 ## Key files
 
-| File                                                                       | Role                                                                   |
-| -------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| `apps/web/shared/services/resource/getResourceAssetUrl.ts`                 | object key → stable url (closed charset)                               |
-| `apps/web/shared/services/resource/parseResourceAssetPath.ts`              | the single decoder/validator                                           |
-| `apps/web/server/api/resource-assets/[...path].get.ts`                     | authorize + 302 to a minutes-scale presigned GET                       |
-| `apps/web/server/services/resource/cloneContentAssets.ts`                  | duplicate's copy of the files its urls and bare ids name + url rewrite |
-| `apps/web/server/services/resource/checkIsResourceAssetReadable.ts`        | may this caller read this asset path                                   |
-| `apps/web/server/services/resource/readResourceAccess.ts`                  | the resource's ownership and publication, read once per resource       |
-| `apps/web/shared/services/resource/ResourceDefinitionMap.ts`               | `fileAssets` declarations                                              |
-| `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts`      | conditionally spread asset procedures                                  |
-| `packages/db-schema/src/services/storage/getResourceFilesDirectoryName.ts` | the `{id}/files` prefix, spelled once for both apps                    |
-| `packages/db-schema/src/services/storage/getResourceFileBlobName.ts`       | the `{id}/files/{hash}` object key, spelled once for both apps         |
-| `apps/web/app/composables/resource/useUploadResourceFile.ts`               | upload round-trip, returns the stable url                              |
-| `apps/web/app/composables/resource/useDeleteResourceFile.ts`               | stable url to object key, then `deleteFile`                            |
+| File                                                                       | Role                                                                                      |
+| -------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `apps/web/shared/services/resource/getResourceAssetUrl.ts`                 | object key → stable url (closed charset)                                                  |
+| `apps/web/shared/services/resource/parseResourceAssetPath.ts`              | the single decoder/validator                                                              |
+| `apps/web/server/api/resource-assets/[...path].get.ts`                     | authorize + 302 to a minutes-scale presigned GET                                          |
+| `apps/web/server/services/resource/cloneContentAssets.ts`                  | duplicate's copy of the files its urls and bare ids name + url rewrite                    |
+| `apps/web/server/services/resource/checkIsResourceAssetReadable.ts`        | may this caller read this asset path                                                      |
+| `apps/web/server/services/resource/readResourceAccess.ts`                  | the resource's ownership and publication, read once per resource                          |
+| `apps/web/shared/services/resource/ResourceDefinitionMap.ts`               | `fileAssets` declarations                                                                 |
+| `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts`      | conditionally spread asset procedures                                                     |
+| `apps/web/server/services/resource/listResourceFiles.ts`                   | the listing: every file under the files directory, each with the type its upload declared |
+| `apps/web/app/components/PageBuilder/FilePicker/Index.vue`                 | the picker over a resource's files, filtered to the kind a field takes                    |
+| `packages/db-schema/src/services/storage/getResourceFilesDirectoryName.ts` | the `{id}/files` prefix, spelled once for both apps                                       |
+| `packages/db-schema/src/services/storage/getResourceFileBlobName.ts`       | the `{id}/files/{hash}` object key, spelled once for both apps                            |
+| `apps/web/app/composables/resource/useUploadResourceFile.ts`               | upload round-trip, returns the stable url                                                 |
+| `apps/web/app/composables/resource/useDeleteResourceFile.ts`               | stable url to object key, then `deleteFile`                                               |
 
 ## Notes
+
+- A video plays from its asset address, which redirects to a signed read address. No unit test covers the browser's ranged playback through that redirect.
 
 - Content that embeds a signed storage url instead of the stable url is neither read, converged nor migrated — latest-shape-only applies ([persisted data — latest shape only](../../architecture/persisted-data-latest-shape-only/design.md)), so such a draft renders its assets broken until they are re-added in the editor, and that is accepted. [converge-on-read](../../architecture/content-token-rewriting/design.md) governs future changes to the stable url's own form.
 - A standalone Asset or Image-library resource type was rejected: assets are meaningless outside their owning resource, die with it, and need no name, list or blades — an identity row per image is pure overhead. Cross-resource asset reuse has no demonstrated need; revisit only with a [brand kit](../../../deferred/resource/brand-kit-resource/design.md).
@@ -80,3 +85,8 @@ Reads have no procedure — they go through the `/api/resource-assets` endpoint.
 - Blueprint capture/deploy carries asset urls untouched (only whole-string resource ids are aliased), so deployed content references the _source_ resource's objects; deleting a captured source strands those references — accepted, identical to deleting any referenced resource.
 - Asset uploads count against the owner's [storage quota](../storage-quotas/design.md): the upload procedure's input carries a `size` per file, which holds space before the presigned PUT is returned, and the R2 object-create event, read through the reconcile queue, is what charges the real size. A held address reserves nothing. Duplicate's copies are the exception to the reserve: they are written server-side, and each is charged to the copying owner before it is made.
 - Three shapes of the duplicate clone and the serving path read as waste and are kept deliberately. **The clone walks the content three times** (relativize, collect, rewrite) rather than folding the strip into the single final replace: the relativized value is what both later passes must agree on, and the walks are cheap next to the storage round trip per asset that follows them. **`cloneAsset` probes the source before every copy**, doubling the requests per asset, because a dangling reference must be treated as data rather than as an error, and distinguishing a missing source from a genuine copy failure by the error the storage call throws is a guess about the service where the probe is a fact. **The asset endpoint spells out the rate-limit block** that `getRateLimitedMiddleware` spells out for tRPC, because it consumes a different limiter under a different key (see `RATE_LIMITER_ASSET`) and a shared helper would have to be parameterised by both plus the transport's own error shape; the consequence is that a change to bypass or 429 behaviour has to be made in both places, and nothing enforces it.
+
+## Not built
+
+- Videos above the file request size limit. The reservation the quota takes is sized by the one input schema every file asset shares, so a larger limit needs that reservation redesigned.
+- A video poster. A poster is a second file for each video.

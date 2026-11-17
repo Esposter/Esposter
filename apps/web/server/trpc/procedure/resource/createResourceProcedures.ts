@@ -5,6 +5,7 @@ import type { FileAssetsResourceType } from "#shared/models/resource/FileAssetsR
 import type { PublishableResourceType } from "#shared/models/resource/PublishableResourceType";
 import type { PublishedResourceContent } from "#shared/models/resource/PublishedResourceContent";
 import type { ResourceContent } from "#shared/models/resource/ResourceContent";
+import type { ResourceFile } from "#shared/models/resource/ResourceFile";
 import type { ResourceFilePresignedUrlEntity } from "#shared/models/resource/ResourceFilePresignedUrlEntity";
 import type { ResourceListPage } from "#shared/models/resource/ResourceListPage";
 import type { ResourceInResource, ResourcePublicationInResource, ResourceType } from "@esposter/db-schema";
@@ -23,6 +24,7 @@ import { getResourcesWhere } from "#server/services/resource/getResourcesWhere";
 import { getResourceTopics } from "#server/services/resource/getResourceTopics";
 import { getStagingContentBlobName } from "#server/services/resource/getStagingContentBlobName";
 import { incrementResourceViewCount } from "#server/services/resource/incrementResourceViewCount";
+import { listResourceFiles } from "#server/services/resource/listResourceFiles";
 import { readResourceContent } from "#server/services/resource/readResourceContent";
 import { readResourceContentDelta } from "#server/services/resource/readResourceContentDelta";
 import { readResourceListPage } from "#server/services/resource/readResourceListPage";
@@ -42,6 +44,7 @@ import { softDeleteResources } from "#server/services/resource/softDeleteResourc
 import { updateResourceRow } from "#server/services/resource/updateResourceRow";
 import { writeResourceActivity } from "#server/services/resource/writeResourceActivity";
 import { generateReservedWritePresignedUrl } from "#server/services/storage/generateReservedWritePresignedUrl";
+import { getBucket } from "#server/services/storage/getBucket";
 import { getStorageCredentials } from "#server/services/storage/getStorageCredentials";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
@@ -262,6 +265,9 @@ export const createResourceProcedures = <TType extends ResourceType>(
       .query<ResourceFilePresignedUrlEntity[]>(({ ctx, input: { files, id } }) =>
         generateReservedResourceAssetPresignedUrlEntities(ctx.db, ctx.user.id, id, files),
       ),
+    readResourceFiles: getOwnerProcedure(type, resourceIdInputSchema, "id").query<ResourceFile[]>(({ input: { id } }) =>
+      listResourceFiles(getBucket(StorageBucket.ResourceAssets), id),
+    ),
   };
   const publishProcedures = {
     publishResource: getTopicsProcedure(

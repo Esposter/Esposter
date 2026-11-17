@@ -809,6 +809,33 @@ describe(createResourceProcedures, () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
+  test("reads the files a resource holds, each with the type it was uploaded as", async () => {
+    expect.hasAssertions();
+
+    const newResource = await webpageCaller.createResource({ name });
+    const directory = getResourceFilesDirectoryName(newResource.id);
+    await bucket.put(`${directory}/a`, Buffer.alloc(1), { httpMetadata: { contentType: MimeType.Png } });
+    await bucket.put(`${directory}/b`, Buffer.alloc(2), { httpMetadata: { contentType: MimeType.VideoMp4 } });
+
+    await expect(webpageCaller.readResourceFiles({ id: newResource.id })).resolves.toStrictEqual([
+      { mimetype: MimeType.Png, size: 1, url: getResourceAssetUrl(`${directory}/a`) },
+      { mimetype: MimeType.VideoMp4, size: 2, url: getResourceAssetUrl(`${directory}/b`) },
+    ]);
+  });
+
+  test("a resource the owner does not hold lists no files", async () => {
+    expect.hasAssertions();
+
+    const newResource = await webpageCaller.createResource({ name });
+    const otherUserAuthSession = await createMockAuthSession(mockContext.db);
+
+    await expect(
+      createCallerFactory(webpageRouter)(await createMockContext(otherUserAuthSession)).readResourceFiles({
+        id: newResource.id,
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+  });
+
   // The file's blob is named by its hash and the delete hands that hash to the release path. No row names the file, so
   // The release decides to delete it and publishes the deletion; the Function performs it, so the blob is still here
   test("deleting a file no row names publishes its deletion", async () => {
@@ -884,7 +911,7 @@ describe(createResourceProcedures, () => {
     const nonFileAssetsProcedures = new Set(Object.keys(dashboardRouter._def.procedures));
 
     expect(fileAssetsProcedures.difference(nonFileAssetsProcedures)).toStrictEqual(
-      new Set(["deleteFile", "generateUploadFilePresignedUrlEntities"]),
+      new Set(["deleteFile", "generateUploadFilePresignedUrlEntities", "readResourceFiles"]),
     );
     expect(nonFileAssetsProcedures.difference(fileAssetsProcedures)).toStrictEqual(new Set());
   });

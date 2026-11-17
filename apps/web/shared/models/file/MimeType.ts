@@ -11,6 +11,8 @@ export const MimeType = {
   PlainText: "text/plain",
   Png: "image/png",
   Svg: "image/svg+xml",
+  VideoMp4: "video/mp4",
+  VideoWebm: "video/webm",
   Webp: "image/webp",
   Xfdf: "application/vnd.adobe.xfdf",
   Xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",

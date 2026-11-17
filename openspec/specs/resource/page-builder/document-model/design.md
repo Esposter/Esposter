@@ -55,6 +55,8 @@ A cross-resource reference is a prop declared with `createResourceLinkSchema`, s
 | Extra    | Countdown, Tabs of Tab, Tooltip, Typed text                                                                   |
 | Survey   | Survey invite, a link to a published survey, whose survey prop is declared through `createResourceLinkSchema` |
 
+An Image and a Video take their source as a file the owner uploads or as a typed address. The Content panel draws the upload above the selected node's form, with a picker over the page's own files beside it, so the upload is the first control and the address field sits below it. A picked file sets the source to its address, and the source is checked by the URL rule like any URL prop; a typed address has no allowlist of hosts. The node that was selected when the file was picked takes the address, even when the selection has moved on by the time the upload lands.
+
 Each type's contract makes its published output accessible by construction rather than by review. An Image requires its `alt` or an explicit decorative flag, which publishes as an empty `alt` with `role="presentation"`. A Video requires a title as its accessible name. Tabs publish with the tablist pattern and the arrow keys in their script. Typed text keeps its whole text in the accessible name and stands still under reduced motion. A Countdown is a timer whose live region stays off, and a Button is a real link.
 
 Every URL prop passes `checkIsAllowedUrl` in its schema, so a `javascript:` address is refused at save, including behind a leading space or another case. Custom HTML is stored raw, with no cleaning at save, and `sanitizeHtml` cleans it where it is rendered for publish, so whatever was stored is cleaned on the way out. Custom HTML is the one type whose stored markup is raw.
@@ -95,39 +97,41 @@ The document store, `usePageBuilderDocumentStore`, holds each open document unde
 
 ## Key files
 
-| File                                                                           | Role                                                                                                |
-| ------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------- |
-| `apps/web/shared/models/resource/note/NoteDocument.ts`                         | the Note's ProseMirror document schema, the text node's                                             |
-| `apps/web/shared/models/pageBuilder/WebpageDocument.ts`                        | the webpage document, the core's document over its root                                             |
-| `apps/web/shared/models/pageBuilder/NodeTypeDefinition.ts`                     | the shared half of a webpage node type                                                              |
-| `apps/web/shared/services/pageBuilder/webpageRegistry.ts`                      | the webpage registry                                                                                |
-| `apps/web/shared/services/pageBuilder/webpageNodeChildren.ts`                  | the webpage's children port, one exhaustive switch over its node types                              |
-| `apps/web/shared/services/pageBuilder/webpageNodeSchema.ts`                    | the webpage's node union, built statically from one schema per node type                            |
-| `apps/web/shared/models/pageBuilder/ButtonTarget.ts`                           | the button's target, the same tab or a new tab                                                      |
-| `apps/web/shared/services/pageBuilder/elementIdSchema.ts`                      | the element id every webpage node holds, the node id's length and characters, or empty              |
-| `apps/web/shared/services/pageBuilder/getTabPanelId.ts`                        | the id a tab's panel and the button that controls it both take                                      |
-| `apps/web/shared/services/pageBuilder/checkWebpageElementIds.ts`               | the walk that refuses an element id an earlier node holds                                           |
-| `apps/web/shared/services/pageBuilder/webpageDocumentSchema.ts`                | the webpage's document schema                                                                       |
-| `apps/web/shared/services/pageBuilder/renderWebpageDocument.ts`                | the webpage renderer                                                                                |
-| `apps/web/shared/services/pageBuilder/serializeHtml.ts`                        | the serialiser every render goes through                                                            |
-| `apps/web/shared/services/pageBuilder/email/emailRegistry.ts`                  | the email registry                                                                                  |
-| `apps/web/shared/services/pageBuilder/email/emailNodeChildren.ts`              | the email's children port: the survey invite's leaf, then MJML's built-in port                      |
-| `apps/web/shared/services/pageBuilder/email/emailNodeSchema.ts`                | the email's node union, built statically over MJML's node schema and the survey invite              |
-| `apps/web/shared/services/pageBuilder/email/emailDocumentSchema.ts`            | the email's document schema                                                                         |
-| `apps/web/shared/services/pageBuilder/email/emailSurveyInviteType.ts`          | the survey invite as an MJML button                                                                 |
-| `apps/web/shared/services/pageBuilder/email/noteRichText.ts`                   | the Note's writing kit as the email's rich text                                                     |
-| `apps/web/shared/services/resource/note/renderNoteHtml.ts`                     | the sanitised HTML of a note document                                                               |
-| `apps/web/server/services/emailEditor/compileEmailDocument.ts`                 | the server's strict MJML compile                                                                    |
-| `apps/web/app/store/pageBuilder/document.ts`                                   | the open documents, keyed by resource                                                               |
-| `packages/vue-block-editor-headless/src/services/createBlockDocumentSchema.ts` | the generic document schema each editor passes its root content schema, registry, port and limit to |
-| `packages/mjml-blocks/src/services/mjmlNodeChildren.ts`                        | the email's built-in nodes read through MJML's children, held exhaustive over the node union        |
-| `packages/mjml-blocks/src/services/mjmlNodeSchema.ts`                          | MJML's node union, built statically with one branch per built-in type                               |
-| `packages/mjml-blocks/src/services/createMjmlDocumentSchema.ts`                | the email's document schema: the core's over the registry's port and root schema                    |
-| `packages/mjml-blocks/src/services/renderMjmlDocument.ts`                      | the email's render to MJML's JSON form                                                              |
-| `packages/shared/src/services/sanitizeHtml/escapeText.ts`                      | escapes every text node the serialiser writes                                                       |
-| `packages/shared/src/services/sanitizeHtml/escapeAttribute.ts`                 | escapes every attribute value the serialiser writes                                                 |
-| `packages/shared/src/services/sanitizeHtml/checkIsAllowedUrl.ts`               | the check every URL prop's schema runs                                                              |
-| `packages/shared/src/services/sanitizeHtml/sanitizeHtml.ts`                    | what the raw-HTML type publishes its stored markup through                                          |
+| File                                                                           | Role                                                                                                                                     |
+| ------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `apps/web/shared/models/resource/note/NoteDocument.ts`                         | the Note's ProseMirror document schema, the text node's                                                                                  |
+| `apps/web/shared/models/pageBuilder/WebpageDocument.ts`                        | the webpage document, the core's document over its root                                                                                  |
+| `apps/web/shared/models/pageBuilder/NodeTypeDefinition.ts`                     | the shared half of a webpage node type                                                                                                   |
+| `apps/web/shared/services/pageBuilder/webpageRegistry.ts`                      | the webpage registry                                                                                                                     |
+| `apps/web/shared/services/pageBuilder/webpageNodeChildren.ts`                  | the webpage's children port, one exhaustive switch over its node types                                                                   |
+| `apps/web/shared/services/pageBuilder/webpageNodeSchema.ts`                    | the webpage's node union, built statically from one schema per node type                                                                 |
+| `apps/web/app/components/PageBuilder/ContentPanel.vue`                         | the Content panel: the media field above a selected image's or video's form, and the write of a picked file's address to the node picked |
+| `apps/web/app/components/PageBuilder/MediaField.vue`                           | the upload and the picker a webpage image or video draws, refusing a file of the wrong kind or over the upload limit                     |
+| `apps/web/shared/models/pageBuilder/ButtonTarget.ts`                           | the button's target, the same tab or a new tab                                                                                           |
+| `apps/web/shared/services/pageBuilder/elementIdSchema.ts`                      | the element id every webpage node holds, the node id's length and characters, or empty                                                   |
+| `apps/web/shared/services/pageBuilder/getTabPanelId.ts`                        | the id a tab's panel and the button that controls it both take                                                                           |
+| `apps/web/shared/services/pageBuilder/checkWebpageElementIds.ts`               | the walk that refuses an element id an earlier node holds                                                                                |
+| `apps/web/shared/services/pageBuilder/webpageDocumentSchema.ts`                | the webpage's document schema                                                                                                            |
+| `apps/web/shared/services/pageBuilder/renderWebpageDocument.ts`                | the webpage renderer                                                                                                                     |
+| `apps/web/shared/services/pageBuilder/serializeHtml.ts`                        | the serialiser every render goes through                                                                                                 |
+| `apps/web/shared/services/pageBuilder/email/emailRegistry.ts`                  | the email registry                                                                                                                       |
+| `apps/web/shared/services/pageBuilder/email/emailNodeChildren.ts`              | the email's children port: the survey invite's leaf, then MJML's built-in port                                                           |
+| `apps/web/shared/services/pageBuilder/email/emailNodeSchema.ts`                | the email's node union, built statically over MJML's node schema and the survey invite                                                   |
+| `apps/web/shared/services/pageBuilder/email/emailDocumentSchema.ts`            | the email's document schema                                                                                                              |
+| `apps/web/shared/services/pageBuilder/email/emailSurveyInviteType.ts`          | the survey invite as an MJML button                                                                                                      |
+| `apps/web/shared/services/pageBuilder/email/noteRichText.ts`                   | the Note's writing kit as the email's rich text                                                                                          |
+| `apps/web/shared/services/resource/note/renderNoteHtml.ts`                     | the sanitised HTML of a note document                                                                                                    |
+| `apps/web/server/services/emailEditor/compileEmailDocument.ts`                 | the server's strict MJML compile                                                                                                         |
+| `apps/web/app/store/pageBuilder/document.ts`                                   | the open documents, keyed by resource                                                                                                    |
+| `packages/vue-block-editor-headless/src/services/createBlockDocumentSchema.ts` | the generic document schema each editor passes its root content schema, registry, port and limit to                                      |
+| `packages/mjml-blocks/src/services/mjmlNodeChildren.ts`                        | the email's built-in nodes read through MJML's children, held exhaustive over the node union                                             |
+| `packages/mjml-blocks/src/services/mjmlNodeSchema.ts`                          | MJML's node union, built statically with one branch per built-in type                                                                    |
+| `packages/mjml-blocks/src/services/createMjmlDocumentSchema.ts`                | the email's document schema: the core's over the registry's port and root schema                                                         |
+| `packages/mjml-blocks/src/services/renderMjmlDocument.ts`                      | the email's render to MJML's JSON form                                                                                                   |
+| `packages/shared/src/services/sanitizeHtml/escapeText.ts`                      | escapes every text node the serialiser writes                                                                                            |
+| `packages/shared/src/services/sanitizeHtml/escapeAttribute.ts`                 | escapes every attribute value the serialiser writes                                                                                      |
+| `packages/shared/src/services/sanitizeHtml/checkIsAllowedUrl.ts`               | the check every URL prop's schema runs                                                                                                   |
+| `packages/shared/src/services/sanitizeHtml/sanitizeHtml.ts`                    | what the raw-HTML type publishes its stored markup through                                                                               |
 
 ## Sources
 

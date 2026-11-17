@@ -1,5 +1,6 @@
 import type { WebpagePlaceableNode } from "#shared/models/pageBuilder/WebpagePlaceableNode";
 
+import { MimeType } from "#shared/models/file/MimeType";
 import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { PageBuilderDevice } from "#shared/models/pageBuilder/PageBuilderDevice";
 import { StyleBreakpoint } from "#shared/models/pageBuilder/StyleBreakpoint";
@@ -107,3 +108,5 @@ export const NO_SURVEY_ID = ZERO_UUID;
 // The picture an inserted image or video shows until its author chooses a file. It is the app's own file, so a page that is
 // Only opened in the editor requests no third-party origin
 export const PLACEHOLDER_MEDIA_URL = "/page-builder/placeholder.svg";
+// The video types a webpage video takes, which its upload and its picker both accept
+export const WEBPAGE_VIDEO_MIME_TYPES: string[] = [MimeType.VideoMp4, MimeType.VideoWebm];

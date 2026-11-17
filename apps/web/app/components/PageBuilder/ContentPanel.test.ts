@@ -1,5 +1,8 @@
 // @vitest-environment nuxt
+import type { ImageNode } from "#shared/models/pageBuilder/ImageNode";
+import type { VideoNode } from "#shared/models/pageBuilder/VideoNode";
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
+import type { ResourceFile } from "#shared/models/resource/ResourceFile";
 import type { EmailDocument } from "#src/models/pageBuilder/EmailDocument";
 import type { ResourcePublicationInResource } from "@esposter/db-schema";
 import type { MjmlColumnNode } from "mjml-blocks";
@@ -7,8 +10,10 @@ import type { MjmlColumnNode } from "mjml-blocks";
 import { ButtonTarget } from "#shared/models/pageBuilder/ButtonTarget";
 import { EmailNodeType } from "#shared/models/pageBuilder/EmailNodeType";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
-import { NO_SURVEY_ID } from "#shared/services/pageBuilder/constants";
+import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
+import { NO_SURVEY_ID, PLACEHOLDER_MEDIA_URL } from "#shared/services/pageBuilder/constants";
 import {
+  createTestImageNode,
   TEST_CONTEXT,
   TEST_ID,
   TEST_LABEL,
@@ -20,8 +25,12 @@ import {
 import { webpageDocumentSchema } from "#shared/services/pageBuilder/webpageDocumentSchema";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import PageBuilderContentPanel from "#src/components/PageBuilder/ContentPanel.vue";
+import PageBuilderFilePicker from "#src/components/PageBuilder/FilePicker/Index.vue";
+import PageBuilderMediaField from "#src/components/PageBuilder/MediaField.vue";
 import ResourceLinkSelect from "#src/components/Resource/Link/Select.vue";
+import UiFileField from "#src/components/Ui/FileField.vue";
 import UiSchemaForm from "#src/components/Ui/SchemaForm/Index.vue";
+import UiSelect from "#src/components/Ui/Select/Index.vue";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { TEST_EMAIL, TEST_NESTED_TEXT_ID } from "#src/services/pageBuilder/constants.test";
 import { emailKind } from "#src/services/pageBuilder/emailKind";
@@ -29,14 +38,15 @@ import { renderCanvasVNodes } from "#src/services/pageBuilder/renderCanvasVNodes
 import { webpageKind } from "#src/services/pageBuilder/webpageKind";
 import { getUnpublishedResourceMessage } from "#src/services/resource/getUnpublishedResourceMessage";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useAlertStore } from "#src/store/alert";
 import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
 import { createEmptyPage, ResourceType } from "@esposter/db-schema";
-import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { mockNuxtImport, mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises, mount } from "@vue/test-utils";
 import { MjmlNodeType } from "mjml-blocks";
 import { v7 } from "uuid";
-import { describe, expect, test } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
 const createButtonDocument = (): WebpageDocument => ({
   content: [
@@ -81,8 +91,44 @@ const createEmailSurveyInviteDocument = (surveyId: string): EmailDocument =>
 const createEmailButtonDocument = (content: string): EmailDocument =>
   createEmailLeafDocument({ props: { content, id: TEST_ID }, type: MjmlNodeType.Button });
 
+const { uploadFileMock } = vi.hoisted(() => ({ uploadFileMock: vi.fn<(file: File) => Promise<string>>() }));
+
+mockNuxtImport("useUploadResourceFile", () => () => uploadFileMock);
+
+const createFile = (mimetype: string, size?: number) => {
+  const file = new File([""], "a", { type: mimetype });
+  if (size !== undefined) Object.defineProperty(file, "size", { value: size });
+  return file;
+};
+const createVideoNode = (src: string): VideoNode => ({
+  props: { elementId: "", id: TEST_OTHER_ID, src, title: TEST_LABEL },
+  type: WebpageNodeType.Video,
+});
+// The panel of a selected media node, mounted over a document that holds it alone
+const mountMediaPanel = async (resourceId: string, node: ImageNode | VideoNode) => {
+  const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+  pageBuilderDocumentStore.setDocument(resourceId, webpageKind, { content: [node], root: TEST_ROOT });
+  const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+  pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_OTHER_ID);
+
+  const component = await mountSuspended(PageBuilderContentPanel, { props: { kind: webpageKind, resourceId } });
+  await flushPromises();
+  return component;
+};
+const getMediaSource = (resourceId: string) => {
+  const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+  const { getDocument } = pageBuilderDocumentStore;
+  const node = getDocument(resourceId)?.content[0];
+  return node && "src" in node.props ? node.props.src : undefined;
+};
+
 describe("pageBuilderContentPanel", () => {
   const { trpcMsw } = setupMswTrpc();
+  // The picker reads the resource's files as it mounts, so each test answers that read with none unless it says otherwise
+  beforeEach(() => {
+    uploadFileMock.mockReset();
+    trpcMsw.webpage.readResourceFiles.query(() => []);
+  });
 
   test("editing a button's label in the content panel shows on the canvas", async () => {
     expect.hasAssertions();
@@ -352,5 +398,107 @@ describe("pageBuilderContentPanel", () => {
     ]);
 
     component.unmount();
+  });
+
+  const TEST_UPLOADED_URL = "/api/resource-assets/a/files/b";
+  const IMAGE_FILE: ResourceFile = { mimetype: "image/png", size: 2048, url: "/api/resource-assets/c" };
+  const VIDEO_FILE: ResourceFile = { mimetype: "video/mp4", size: 4096, url: "/api/resource-assets/d" };
+
+  test("uploading an image sets the image source", async () => {
+    expect.hasAssertions();
+
+    const resourceId = v7();
+    uploadFileMock.mockResolvedValueOnce(TEST_UPLOADED_URL);
+    const component = await mountMediaPanel(resourceId, createTestImageNode(PLACEHOLDER_MEDIA_URL, TEST_OTHER_ID));
+    const file = createFile("image/png");
+    component.findComponent(UiFileField).vm.$emit("update:modelValue", [file]);
+    await flushPromises();
+
+    expect(uploadFileMock).toHaveBeenCalledExactlyOnceWith(file);
+    expect(getMediaSource(resourceId)).toBe(TEST_UPLOADED_URL);
+  });
+
+  test("a failed upload leaves the image unchanged", async () => {
+    expect.hasAssertions();
+
+    const resourceId = v7();
+    uploadFileMock.mockRejectedValueOnce(new Error(" "));
+    const component = await mountMediaPanel(resourceId, createTestImageNode(TEST_URL, TEST_OTHER_ID));
+    component.findComponent(UiFileField).vm.$emit("update:modelValue", [createFile("image/png")]);
+    await flushPromises();
+
+    const alertStore = useAlertStore();
+    const { alerts } = storeToRefs(alertStore);
+    expect(getMediaSource(resourceId)).toBe(TEST_URL);
+    expect(alerts.value).toHaveLength(1);
+  });
+
+  test("a file that is not an image is refused before upload", async () => {
+    expect.hasAssertions();
+
+    const resourceId = v7();
+    const component = await mountMediaPanel(resourceId, createTestImageNode(TEST_URL, TEST_OTHER_ID));
+    component.findComponent(UiFileField).vm.$emit("update:modelValue", [createFile("text/plain")]);
+    await flushPromises();
+
+    expect(uploadFileMock).not.toHaveBeenCalled();
+    expect(getMediaSource(resourceId)).toBe(TEST_URL);
+  });
+
+  test("uploading a video sets the video source", async () => {
+    expect.hasAssertions();
+
+    const resourceId = v7();
+    uploadFileMock.mockResolvedValueOnce(TEST_UPLOADED_URL);
+    const component = await mountMediaPanel(resourceId, createVideoNode(PLACEHOLDER_MEDIA_URL));
+    component.findComponent(UiFileField).vm.$emit("update:modelValue", [createFile("video/mp4")]);
+    await flushPromises();
+
+    expect(getMediaSource(resourceId)).toBe(TEST_UPLOADED_URL);
+  });
+
+  test("a video over the upload size limit is refused", async () => {
+    expect.hasAssertions();
+
+    const resourceId = v7();
+    const component = await mountMediaPanel(resourceId, createVideoNode(TEST_URL));
+    component
+      .findComponent(UiFileField)
+      .vm.$emit("update:modelValue", [createFile("video/mp4", MAX_FILE_REQUEST_SIZE + 1)]);
+    await flushPromises();
+
+    expect(uploadFileMock).not.toHaveBeenCalled();
+    expect(getMediaSource(resourceId)).toBe(TEST_URL);
+  });
+
+  test("choosing a listed image sets the image source", async () => {
+    expect.hasAssertions();
+
+    const resourceId = v7();
+    trpcMsw.webpage.readResourceFiles.query(() => [IMAGE_FILE, VIDEO_FILE]);
+    const component = await mountMediaPanel(resourceId, createTestImageNode(PLACEHOLDER_MEDIA_URL, TEST_OTHER_ID));
+    component
+      .findComponent(PageBuilderFilePicker)
+      .findComponent(UiSelect)
+      .vm.$emit("update:modelValue", IMAGE_FILE.url);
+    await flushPromises();
+
+    expect(component.findComponent(PageBuilderMediaField).exists()).toBe(true);
+    expect(getMediaSource(resourceId)).toBe(IMAGE_FILE.url);
+  });
+
+  test("choosing a listed video sets the video source", async () => {
+    expect.hasAssertions();
+
+    const resourceId = v7();
+    trpcMsw.webpage.readResourceFiles.query(() => [IMAGE_FILE, VIDEO_FILE]);
+    const component = await mountMediaPanel(resourceId, createVideoNode(PLACEHOLDER_MEDIA_URL));
+    component
+      .findComponent(PageBuilderFilePicker)
+      .findComponent(UiSelect)
+      .vm.$emit("update:modelValue", VIDEO_FILE.url);
+    await flushPromises();
+
+    expect(getMediaSource(resourceId)).toBe(VIDEO_FILE.url);
   });
 });

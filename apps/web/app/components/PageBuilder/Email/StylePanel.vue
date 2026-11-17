@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { UiCollapsibleVariant } from "#src/models/ui/UiCollapsibleVariant";
+import { MimeCategory, ResourceType } from "@esposter/db-schema";
 
 interface Props {
   resourceId: string;
@@ -37,6 +38,13 @@ const setSectionOpen = (title: string, isOpen: boolean) => {
           v-if="section.fields.some((field) => field.name === 'src')"
           :resource-id
           @update="(src: string, nodeId: string) => setField('src', src, nodeId)"
+        />
+        <PageBuilderFilePicker
+          v-if="section.fields.some((field) => field.name === 'src')"
+          :category="MimeCategory.Image"
+          :resource-id
+          :type="ResourceType.Email"
+          @update="(src) => setField('src', src)"
         />
       </div>
     </UiCollapsible>

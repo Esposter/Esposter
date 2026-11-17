@@ -1,4 +1,5 @@
 // @vitest-environment nuxt
+import type { UiMenuItem } from "#src/models/ui/UiMenuItem";
 import type { MjmlDocument } from "mjml-blocks";
 
 import {
@@ -10,14 +11,40 @@ import {
 } from "#shared/services/pageBuilder/constants.test";
 import PageBuilderEmailImageUploadField from "#src/components/PageBuilder/Email/ImageUploadField.vue";
 import PageBuilderEmailStylePanel from "#src/components/PageBuilder/Email/StylePanel.vue";
+import PageBuilderFilePicker from "#src/components/PageBuilder/FilePicker/Index.vue";
+import { getFieldInput } from "#src/components/PageBuilder/StylePanel/getFieldInput.test";
 import { getSectorTitle } from "#src/components/PageBuilder/StylePanel/getSectorTitle.test";
+import UiSelect from "#src/components/Ui/Select/Index.vue";
 import { emailKind } from "#src/services/pageBuilder/emailKind";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { flushPromises } from "@vue/test-utils";
 import { MjmlNodeType } from "mjml-blocks";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
+
+const createImageDocument = (): MjmlDocument => ({
+  content: [
+    {
+      props: {
+        children: [
+          {
+            props: {
+              children: [{ props: { alt: "a", id: TEST_OTHER_ID, src: "" }, type: MjmlNodeType.Image }],
+              id: TEST_THIRD_ID,
+            },
+            type: MjmlNodeType.Column,
+          },
+        ],
+        id: v7(),
+      },
+      type: MjmlNodeType.Section,
+    },
+  ],
+  root: { props: { lang: "", title: "" } },
+});
 
 const createButtonDocument = (): MjmlDocument => ({
   content: [
@@ -43,6 +70,7 @@ const createButtonDocument = (): MjmlDocument => ({
 });
 
 describe("pageBuilderEmailStylePanel", () => {
+  const { trpcMsw } = setupMswTrpc();
   const TEXT_CONTENT = { content: [{ content: [{ text: "a", type: "text" }], type: "paragraph" }], type: "doc" };
   const createTextDocument = (fontSize: string, rootFontSize: string): MjmlDocument => ({
     content: [
@@ -113,6 +141,9 @@ describe("pageBuilderEmailStylePanel", () => {
   test("an uploaded image becomes the image's source", async () => {
     expect.hasAssertions();
 
+    const resourceId = v7();
+    trpcMsw.email.readResourceFiles.query(() => []);
+
     const imageDocument: MjmlDocument = {
       content: [
         {
@@ -134,12 +165,13 @@ describe("pageBuilderEmailStylePanel", () => {
       root: { props: { lang: "", title: "" } },
     };
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setEmailDocument(TEST_ID, emailKind, imageDocument);
+    pageBuilderDocumentStore.setEmailDocument(resourceId, emailKind, imageDocument);
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-    pageBuilderCanvasStore.setSelectedNodeId(TEST_ID, TEST_OTHER_ID);
+    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_OTHER_ID);
 
-    const component = await mountSuspended(PageBuilderEmailStylePanel, { props: { resourceId: TEST_ID } });
+    const component = await mountSuspended(PageBuilderEmailStylePanel, { props: { resourceId } });
     component.getComponent(PageBuilderEmailImageUploadField).vm.$emit("update", TEST_URL, TEST_OTHER_ID);
+    await flushPromises();
     await nextTick();
     const forId = component
       .findAll("label")
@@ -189,5 +221,48 @@ describe("pageBuilderEmailStylePanel", () => {
     const component = await mountSuspended(PageBuilderEmailStylePanel, { props: { resourceId: TEST_ID } });
 
     expect(getSectorTitle(component, "href")).toBe("Other");
+  });
+
+  test("the email picker lists the images the email already holds", async () => {
+    expect.hasAssertions();
+
+    const resourceId = v7();
+    trpcMsw.email.readResourceFiles.query(() => [
+      { mimetype: "image/png", size: 2048, url: TEST_URL },
+      { mimetype: "image/gif", size: 1024, url: TEST_URL },
+    ]);
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    pageBuilderDocumentStore.setEmailDocument(resourceId, emailKind, createImageDocument());
+    const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_OTHER_ID);
+
+    const component = await mountSuspended(PageBuilderEmailStylePanel, { props: { resourceId } });
+    await flushPromises();
+
+    expect(
+      (
+        component.findComponent(PageBuilderFilePicker).findComponent(UiSelect).props() as {
+          items: UiMenuItem<string>[];
+        }
+      ).items,
+    ).toHaveLength(2);
+  });
+
+  test("choosing a listed email image sets the picked node source", async () => {
+    expect.hasAssertions();
+
+    const resourceId = v7();
+    trpcMsw.email.readResourceFiles.query(() => [{ mimetype: "image/png", size: 2048, url: TEST_URL }]);
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    pageBuilderDocumentStore.setEmailDocument(resourceId, emailKind, createImageDocument());
+    const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_OTHER_ID);
+
+    const component = await mountSuspended(PageBuilderEmailStylePanel, { props: { resourceId } });
+    await flushPromises();
+    component.findComponent(PageBuilderFilePicker).findComponent(UiSelect).vm.$emit("update:modelValue", TEST_URL);
+    await flushPromises();
+
+    expect((getFieldInput(component, "src").element as HTMLInputElement).value).toBe(TEST_URL);
   });
 });
