@@ -11,4 +11,4 @@
 
 ## 3. The check
 
-- [ ] 3.1 Read one previously stored webpage on dev and one published on prod through `readResourceContent` and `readPublishedResourceContent`. Verify: both parse and return the page, with the owner's read and the public read both succeeding.
+- [ ] 3.1 Read one previously stored webpage on dev and one published on prod through the `readResourceContent` and `readPublishedResourceContent` procedures, called on a tRPC caller as `createResourceProcedures.test.ts` does. Both are procedure keys, not exported service functions, so no function of those names is imported. Verify: both parse and return the page, with the owner's read and the public read both succeeding.
