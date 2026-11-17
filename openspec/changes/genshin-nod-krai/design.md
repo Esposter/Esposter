@@ -4,10 +4,10 @@ This region is built on [terrain](../../specs/genshin/terrain/design.md) and its
 
 ## Decisions
 
-- **The moon is part of its sky.** Nod-Krai's deep connection to the moons makes the moon a larger, brighter element of its night sky, a regional override of the [sky](../../specs/genshin/sky-and-time/design.md)'s moon. Its captures at night set how large and how bright.
+- **The moon is part of its sky.** Nod-Krai's deep connection to the moons makes the moon a larger, brighter element of its night sky, a regional override of the [sky](../../specs/genshin/sky-and-time/design.md)'s moon. Its captures at night set how large and how bright. Until a measured reference exists, the override is `NOD_KRAI_MOON` (`packages/genshin-world/src/services/nod-krai/constants.ts`) at the standard moon's size and brightness, read through `getRegionMoon` (`packages/genshin-world/src/services/sky/getRegionMoon.ts`), which gives every other region the standard moon. The reference is missing: `{data-root}/genshin-parity/captures/nasha-town-night.png` is a cinematic frame whose moon is a dotted particle ring, not the sky's disc, so it measures neither size nor brightness. The sky draws its disc at a fixed size (`MOON_DISC_COSINE` in `packages/genshin-engine/src/nodes/createSkyNode.ts`) and `moonSize` scales only the glow, so a larger disc needs the disc sized by the shape, a change to the engine that waits on the measured value.
 - **An archipelago of distinct isles.** Lempo Isle, Hiisi Island and Paha Isle are separate islands with their own outlines in the [world map](../../specs/genshin/world-map/design.md), joined by the Moontide Sea. The sea between them is part of the region, as it is for Inazuma.
 - **Two kits: the dieselpunk and the Scions'.** The first builds the ports, towns and Fatui works: riveted iron, pipework, cranes, smokestacks and timber sheds. The second builds the Frostmoon Scions' enclaves and stone circles. Both are fitted against their own exports, since no earlier region's kit carries over.
-- **Statues of the New Moon.** Nod-Krai's statues stand where other regions have Statues of The Seven. They are a landmark kind of their own and act as waypoints in [exploring](../../specs/genshin/exploring/design.md).
+- **Statues of the New Moon.** Nod-Krai's statues stand where other regions have Statues of The Seven. They are a landmark kind of their own (`StatueOfTheNewMoon`, its arrival required) and act as waypoints in [exploring](../../specs/genshin/exploring/design.md). Their places are the official map's labels of Nod-Krai's map area (area 13) under the Statue of The Seven label, seven in all. Each pairs with a transport point of scene 3's file within the fit's bar, the same pairing the Teleport Waypoints use (`toPairedLandmarks`), and takes that point's arrival, so the seven sit in `packages/genshin-world/src/data/regions/nod-krai.json` from `pnpm -C scripts genshin:assets waypoints`. Their points are gadgets 70130009 to 70130011 (`TransPointFirst`, named `NKGoddess`), in areas 70 to 76. Their first unlock is keyed by the point their id ends in, as a waypoint's is. They are not drawn yet: the world draws a landmark by its kind's kit, and no kit draws this kind, so each stands in the world with no model until one is built.
 
 ## How it works
 
@@ -32,13 +32,19 @@ Nasha Town's port and main street, a Statue of the New Moon, the Frostmoon Encla
 
 ## Key files
 
-| File                                                      | Role after the change                     |
-| :-------------------------------------------------------- | :---------------------------------------- |
-| `packages/genshin-engine/src/noise/createSimplexNoise.ts` | The detail noise each isle's ground tunes |
+| File                                                                    | Role after the change                                                    |
+| :---------------------------------------------------------------------- | :----------------------------------------------------------------------- |
+| `packages/genshin-engine/src/noise/createSimplexNoise.ts`               | The detail noise each isle's ground tunes                                |
+| `packages/genshin-world/src/models/world/StatueOfTheNewMoonLandmark.ts` | The Statue of the New Moon landmark, its arrival required                |
+| `packages/genshin-world/src/services/sky/getRegionMoon.ts`              | A region's night moon: its own override, or the standard moon            |
+| `packages/genshin-world/src/services/nod-krai/constants.ts`             | `NOD_KRAI_MOON`, the Nod-Krai moon at the standard values until measured |
+| `scripts/src/services/genshinAssets/fit/toPairedLandmarks.ts`           | Pairs a map label's ground points with transport points, by kind         |
+| `scripts/src/services/genshinAssets/fit/fitRegionWaypoints.ts`          | Writes each region's waypoints and Statues of the New Moon               |
+| `scripts/src/services/genshinAssets/shared/constants.ts`                | `NEW_MOON_STATUE_REGIONS`, the regions whose statues are written         |
 
 **Still to build, in order:**
 
-1. **The kits' fitted values**, as the passes after the inventory read them.
+1. **The kits' fitted values**, as the passes after the inventory read them. Waits on the queue items in `openspec/specs/genshin/compute/nod-krai/design.md`.
 
 ## Sources
 

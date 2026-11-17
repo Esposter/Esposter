@@ -4,3 +4,4 @@ x-phase: 5
 x-model: claude-opus-5-5
 x-needs: [game-exports, parity-page]
 x-touches: ["packages/genshin-world/src/services/nod-krai/**"]
+x-waiting: "1.1 waits on a measured night moon, 1.2 on the Moontide Sea's outline, and 2.1 to 2.3 and 3.2 on the dieselpunk and Scions' kit fits and the Nod-Krai passes."
