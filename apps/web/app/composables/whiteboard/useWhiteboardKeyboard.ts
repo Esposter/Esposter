@@ -1,9 +1,9 @@
 import type { UiCommand } from "#src/models/ui/UiCommand";
+import type { GestureTool } from "#src/models/whiteboard/GestureTool";
 import type { WhiteboardEditState } from "#src/models/whiteboard/WhiteboardEditState";
-import type { Point, ShapeKind } from "vue-block-editor-headless";
+import type { Point } from "vue-block-editor-headless";
 
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
-import { GestureTool } from "#src/models/whiteboard/GestureTool";
 import { getHistoryCommands } from "#src/services/ui/getHistoryCommands";
 import { applyWhiteboardEdit } from "#src/services/whiteboard/edit/applyWhiteboardEdit";
 import { deleteWhiteboardElements } from "#src/services/whiteboard/edit/deleteWhiteboardElements";
@@ -36,11 +36,10 @@ export const useWhiteboardKeyboard = (
   selectedIds: Ref<string[]>,
   deletingIds: Ref<string[]>,
   tool: Ref<GestureTool>,
-  shapeKind: Ref<ShapeKind>,
 ) => {
   const { isOpen: isDeleteOpen } = useSingletonDialog(deletingIds);
   const whiteboardEditorStore = useWhiteboardEditorStore();
-  const { toggleToolLock } = whiteboardEditorStore;
+  const { chooseShape, toggleToolLock } = whiteboardEditorStore;
 
   // Deletes the elements as one edit, and drops them from the selection
   const removeElements = (elementIds: string[]) => {
@@ -209,8 +208,7 @@ export const useWhiteboardKeyboard = (
         id: `whiteboard-shape-${value}`,
         meaning,
         run: () => {
-          tool.value = GestureTool.Shape;
-          shapeKind.value = value;
+          chooseShape(value);
         },
         shortcut,
         title: `${title} tool`,

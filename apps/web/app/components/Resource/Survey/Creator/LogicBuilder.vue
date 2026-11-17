@@ -63,7 +63,7 @@ const propRowsMap = computed(
     new Map(
       sections.value.map(({ prop }): [SurveyConditionProp, ReturnType<typeof parseSurveyConditionRows>] => [
         prop,
-        parseSurveyConditionRows(getSavedText(prop)),
+        getRows(prop),
       ]),
     ),
 );

@@ -5,7 +5,7 @@ import { getStackOperations } from "#src/services/whiteboard/arrange/getStackOpe
 
 // The stacking of the selection, which is the one element when one is selected: one step forward or back, or to the front or the back. Each is one
 // Commit, so one undo step, and each is disabled when the selection cannot move that way
-const { checkIsDisabled: isStackDisabled, commit: stack } = useWhiteboardSelectionOperations(getStackOperations);
+const { checkIsDisabled: checkIsStackDisabled, commit: stack } = useWhiteboardSelectionOperations(getStackOperations);
 </script>
 
 <template>
@@ -13,7 +13,7 @@ const { checkIsDisabled: isStackDisabled, commit: stack } = useWhiteboardSelecti
     <UiIconButton
       v-for="{ label, meaning, move } in WHITEBOARD_STACK_ITEMS"
       :key="move"
-      :disabled="isStackDisabled(move)"
+      :disabled="checkIsStackDisabled(move)"
       :label
       :meaning
       @click="stack(move)"

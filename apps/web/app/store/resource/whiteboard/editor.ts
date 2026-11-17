@@ -29,6 +29,11 @@ export const useWhiteboardEditorStore = defineStore("resource/whiteboard/editor"
   const setCanvasRect = (rect: CanvasRect) => {
     canvasRect.value = rect;
   };
+  // A shape chosen is the shape tool in hand, placing that kind
+  const chooseShape = (kind: ShapeKind) => {
+    tool.value = GestureTool.Shape;
+    shapeKind.value = kind;
+  };
   const selectElement = (id: string) => {
     selectedIds.value = [id];
   };
@@ -53,6 +58,7 @@ export const useWhiteboardEditorStore = defineStore("resource/whiteboard/editor"
   };
   return {
     canvasRect,
+    chooseShape,
     fitTo,
     fitToElements,
     gesture,

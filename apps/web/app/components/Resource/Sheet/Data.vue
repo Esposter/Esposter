@@ -52,8 +52,8 @@ await loadContent();
         </div>
       </UiCollapsible>
     </template>
-    <!-- Naming a format here would tie the empty state to the type set in Settings, which is exactly the hidden
-      dependency Import lost — and what a reader with nothing in the sheet needs is where importing happens -->
+    <!-- Naming a format here would tie the empty state to the type set in Settings, and what a reader with nothing in the sheet
+      needs is where importing happens -->
     <UiEmptyState
       v-else
       description="Import a file from the menu beside the title to get started"

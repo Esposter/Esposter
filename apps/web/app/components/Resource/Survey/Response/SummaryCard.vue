@@ -32,6 +32,16 @@ const chart = computed(() => {
     series: [{ data: choices.map(({ count }) => count), name: "Responses" }],
   };
 });
+// The three figures of a number card, each as its term and its value
+const numberRows = computed(() => {
+  if (card.type !== SurveySummaryCardType.Number) return [];
+
+  return [
+    ["Minimum", card.minimum],
+    ["Average", card.average],
+    ["Maximum", card.maximum],
+  ] as const;
+});
 </script>
 
 <template>
@@ -43,14 +53,7 @@ const chart = computed(() => {
       <StyledApexChart :options="chart.options" :series="chart.series" type="bar" />
     </template>
     <dl v-else-if="card.type === SurveySummaryCardType.Number" flex flex-wrap gap-6>
-      <div
-        v-for="[term, value] of [
-          ['Minimum', card.minimum],
-          ['Average', card.average],
-          ['Maximum', card.maximum],
-        ] as const"
-        :key="term"
-      >
+      <div v-for="[term, value] of numberRows" :key="term">
         <dt text-sm text-muted>{{ term }}</dt>
         <dd>{{ NUMBER_FORMATTER.format(value) }}</dd>
       </div>

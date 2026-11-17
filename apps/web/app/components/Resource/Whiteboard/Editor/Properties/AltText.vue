@@ -14,21 +14,16 @@ interface Props {
 const { element, index } = defineProps<Props>();
 const whiteboardStore = useWhiteboardStore();
 const { updateElementProperty } = whiteboardStore;
-const draft = ref(element.altText);
-watch(
-  () => element.altText,
-  (newAltText) => {
-    draft.value = newAltText;
-  },
-);
+const { cloned: editedAltText } = useCloned(() => element.altText);
 const commit = () => {
-  if (draft.value !== element.altText) updateElementProperty(index, { property: "altText", value: draft.value });
+  if (editedAltText.value !== element.altText)
+    updateElementProperty(index, { property: "altText", value: editedAltText.value });
 };
 </script>
 
 <template>
   <UiTextField
-    v-model="draft"
+    v-model="editedAltText"
     hint="Read by assistive technology in place of the picture"
     label="Alt text"
     placeholder="Describe the image"

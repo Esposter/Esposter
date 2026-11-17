@@ -27,7 +27,7 @@ const { editState, whiteboard } = storeToRefs(whiteboardStore);
 await loadContent();
 watchAutosave(whiteboard, saveWhiteboard);
 const whiteboardEditorStore = useWhiteboardEditorStore();
-const { canvasRect, selectedIds, shapeKind, tool, viewport } = storeToRefs(whiteboardEditorStore);
+const { canvasRect, selectedIds, tool, viewport } = storeToRefs(whiteboardEditorStore);
 const { fitToElements, setTextEditElementId } = whiteboardEditorStore;
 const { onPointer, onWheel } = useWhiteboardGesture();
 useWhiteboardViewportKeyboard();
@@ -42,7 +42,7 @@ const {
   isDeleteOpen,
   pasteClipboardText,
   selectAll,
-} = useWhiteboardKeyboard(editState, selectedIds, deletingIds, tool, shapeKind);
+} = useWhiteboardKeyboard(editState, selectedIds, deletingIds, tool);
 useWhiteboardArrangeKeyboard(editState, selectedIds, isDeleteOpen);
 const {
   draft,

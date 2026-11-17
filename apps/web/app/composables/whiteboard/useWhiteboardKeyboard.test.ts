@@ -20,7 +20,6 @@ import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, describe, expect, onTestFinished, test, vi } from "vitest";
-import { ShapeKind } from "vue-block-editor-headless";
 
 // The keyboard mounted as a surface, so its commands are bound for as long as the mount lasts and unbound when it unmounts
 const mountKeyboard = (
@@ -28,12 +27,11 @@ const mountKeyboard = (
   selectedIds: Ref<string[]>,
   deletingIds: Ref<string[]>,
   tool: Ref<GestureTool> = ref<GestureTool>(GestureTool.Select),
-  shapeKind: Ref<ShapeKind> = ref<ShapeKind>(ShapeKind.Rectangle),
 ) =>
   mountSuspended(
     defineComponent({
       render: () => h("div"),
-      setup: () => useWhiteboardKeyboard(editState, selectedIds, deletingIds, tool, shapeKind),
+      setup: () => useWhiteboardKeyboard(editState, selectedIds, deletingIds, tool),
     }),
   );
 

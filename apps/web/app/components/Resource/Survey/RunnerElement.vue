@@ -53,7 +53,6 @@ const titleId = useId();
       :answers
       :error-by-pointer
       :get-row-views
-      :is-disabled="!view.isEnabled"
       :question-numbers
       :seed
       :view="child"

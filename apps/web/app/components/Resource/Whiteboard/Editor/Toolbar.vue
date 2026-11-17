@@ -20,7 +20,7 @@ import { useWhiteboardEditorStore } from "#src/store/resource/whiteboard/editor"
 // The slot draws that kind, and a choice in it or by a key sets both
 const whiteboardEditorStore = useWhiteboardEditorStore();
 const { isToolLocked, shapeKind, tool } = storeToRefs(whiteboardEditorStore);
-const { toggleToolLock } = whiteboardEditorStore;
+const { chooseShape, toggleToolLock } = whiteboardEditorStore;
 const insertImages = useInsertWhiteboardImages();
 const imageInput = useTemplateRef("imageInput");
 const toolbarValue = computed({
@@ -28,10 +28,8 @@ const toolbarValue = computed({
   set: (value) => {
     const shapeItem = Object.values(WhiteboardShapeItemMap).find((item) => item.value === value);
     const toolItem = Object.values(WhiteboardToolItemMap).find((item) => item.value === value);
-    if (shapeItem) {
-      tool.value = GestureTool.Shape;
-      shapeKind.value = shapeItem.value;
-    } else if (toolItem) tool.value = toolItem.value;
+    if (shapeItem) chooseShape(shapeItem.value);
+    else if (toolItem) tool.value = toolItem.value;
   },
 });
 const groups = computed<EditorToolbarGroup[]>(() => [

@@ -192,6 +192,19 @@ describe("resourceWhiteboardEditor", () => {
     expect(canvas.findAll('rect[fill="var(--ui-background)"]')).toHaveLength(6);
   });
 
+  test("a selection's resize handles show only under the select tool", async () => {
+    expect.hasAssertions();
+
+    const component = await mountEditor([WHITEBOARD_PROCESS]);
+    await flushPromises();
+    const canvas = getCanvas(component);
+    await sendPointer(canvas, "pointerdown", { x: 50, y: 50 });
+    await sendPointer(canvas, "pointerup", { x: 50, y: 50 });
+    await component.get('button[aria-label="Freehand"]').trigger("click");
+
+    expect(canvas.findAll('rect[fill="var(--ui-background)"]')).toHaveLength(0);
+  });
+
   test("a right-click on an unselected element selects it and opens its menu", async () => {
     expect.hasAssertions();
 

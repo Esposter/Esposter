@@ -33,7 +33,8 @@ const frames = computed(() => [
     .map((element) => ({ bounds: getElementBounds(element), key: `element-${element.id}` })),
   ...(groupBounds.value ? [{ bounds: groupBounds.value, key: "group" }] : []),
 ]);
-// The connection and free end handles show on the select tool alone, since a press on them is a select-tool gesture. A bound end and an annotation show none
+// The resize, connection and free end handles show on the select tool alone, since a press on them is a select-tool
+// Gesture. A bound end and an annotation show none
 const isSelectTool = computed(() => tool.value === GestureTool.Select);
 const connectionHandles = computed(() =>
   isSelectTool.value ? getConnectionHandleItems(displayedDocument.value, selectedIds.value, viewport.value.scale) : [],
@@ -43,7 +44,7 @@ const endHandles = computed(() =>
 );
 const handles = computed(() => {
   const bounds = selectionBounds.value;
-  if (bounds === undefined) return [];
+  if (!isSelectTool.value || bounds === undefined) return [];
 
   return getSelectionResizeHandles(displayedDocument.value, selectedIds.value).map((handle) => ({
     handle,

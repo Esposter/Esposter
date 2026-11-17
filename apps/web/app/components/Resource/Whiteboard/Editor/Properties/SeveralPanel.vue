@@ -20,25 +20,9 @@ const title = computed(() => {
 const fill = computed(() =>
   getMixedValue(selectedElements.value.flatMap(({ element }) => ("fill" in element ? [element.fill] : []))),
 );
-const changeFill = (value: string) => {
-  commitOperations(
-    selectedElements.value.flatMap(({ element, index }) =>
-      "fill" in element ? updatePositionedElementProperty(whiteboard.value, index, { property: "fill", value }) : [],
-    ),
-  );
-};
 const hasShapeFill = computed(() =>
   selectedElements.value.some(({ element }) => element.type === PositionedElementType.Shape && element.fill),
 );
-const clearFill = () => {
-  commitOperations(
-    selectedElements.value.flatMap(({ element, index }) =>
-      element.type === PositionedElementType.Shape
-        ? updatePositionedElementProperty(whiteboard.value, index, { property: "fill", value: "" })
-        : [],
-    ),
-  );
-};
 </script>
 
 <template>
@@ -47,10 +31,35 @@ const clearFill = () => {
       <UiColorField
         :model-value="fill.isMixed ? '' : fill.value"
         label="Fill"
-        @update:model-value="(value) => changeFill(value)"
+        @update:model-value="
+          (value) => {
+            commitOperations(
+              selectedElements.flatMap(({ element, index }) =>
+                'fill' in element
+                  ? updatePositionedElementProperty(whiteboard, index, { property: 'fill', value })
+                  : [],
+              ),
+            );
+          }
+        "
       />
       <span v-if="fill.isMixed" ui-body>Mixed</span>
-      <UiButton v-if="hasShapeFill" @click="clearFill()">No fill</UiButton>
+      <UiButton
+        v-if="hasShapeFill"
+        @click="
+          () => {
+            commitOperations(
+              selectedElements.flatMap(({ element, index }) =>
+                element.type === PositionedElementType.Shape
+                  ? updatePositionedElementProperty(whiteboard, index, { property: 'fill', value: '' })
+                  : [],
+              ),
+            );
+          }
+        "
+      >
+        No fill
+      </UiButton>
     </div>
     <ResourceWhiteboardEditorPropertiesArrange />
     <ResourceWhiteboardEditorPropertiesOrder />

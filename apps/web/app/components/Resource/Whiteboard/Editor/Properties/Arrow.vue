@@ -42,7 +42,7 @@ const setArrowhead = (arrowEndKey: ArrowEndKey, arrowhead?: ArrowheadKind) =>
       "
     />
     <UiToggleGroup
-      v-if="arrow.start.arrowhead !== undefined"
+      v-if="arrow.start.arrowhead"
       :model-value="arrow.start.arrowhead"
       label="Start head"
       :items="WHITEBOARD_ARROWHEAD_ITEMS"
@@ -57,7 +57,7 @@ const setArrowhead = (arrowEndKey: ArrowEndKey, arrowhead?: ArrowheadKind) =>
       "
     />
     <UiToggleGroup
-      v-if="arrow.end.arrowhead !== undefined"
+      v-if="arrow.end.arrowhead"
       :model-value="arrow.end.arrowhead"
       label="End head"
       :items="WHITEBOARD_ARROWHEAD_ITEMS"

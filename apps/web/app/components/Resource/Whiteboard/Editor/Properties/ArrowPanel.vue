@@ -9,26 +9,12 @@ const selected = useWhiteboardSelectedElement();
 
 <template>
   <EditorContextualPanel v-if="selected" :title="getWhiteboardElementTitle(selected.element)">
-    <ResourceWhiteboardEditorPropertiesArrow
-      v-if="selected.element.type === PositionedElementType.Arrow"
-      :arrow="selected.element"
-      :index="selected.index"
-    />
-    <ResourceWhiteboardEditorPropertiesStroke
-      v-if="selected.element.type === PositionedElementType.Arrow"
-      :element="selected.element"
-      :index="selected.index"
-    />
-    <ResourceWhiteboardEditorPropertiesSketch
-      v-if="selected.element.type === PositionedElementType.Arrow"
-      :element="selected.element"
-      :index="selected.index"
-    />
-    <ResourceWhiteboardEditorPropertiesText
-      v-if="selected.element.type === PositionedElementType.Arrow"
-      :element="selected.element"
-      :index="selected.index"
-    />
+    <template v-if="selected.element.type === PositionedElementType.Arrow">
+      <ResourceWhiteboardEditorPropertiesArrow :arrow="selected.element" :index="selected.index" />
+      <ResourceWhiteboardEditorPropertiesStroke :element="selected.element" :index="selected.index" />
+      <ResourceWhiteboardEditorPropertiesSketch :element="selected.element" :index="selected.index" />
+      <ResourceWhiteboardEditorPropertiesText :element="selected.element" :index="selected.index" />
+    </template>
     <ResourceWhiteboardEditorPropertiesOrder />
     <ResourceWhiteboardEditorPropertiesFooter />
   </EditorContextualPanel>

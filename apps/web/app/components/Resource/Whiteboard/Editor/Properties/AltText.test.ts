@@ -25,6 +25,7 @@ describe("resourceWhiteboardEditorPropertiesAltText", () => {
     await panel.get("input").trigger("keydown.enter");
 
     expect(whiteboardStore.editState.document).toStrictEqual({ elements: [{ ...image, altText: "Quarterly chart" }] });
+    expect(whiteboardStore.editState.history.past).toHaveLength(1);
   });
 
   test("leaving the field with its alt text unchanged makes no edit", async () => {
