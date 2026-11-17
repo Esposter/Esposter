@@ -13,5 +13,5 @@ export const ResourceEditorComponentMap: Partial<Record<ResourceType, Component>
   [ResourceType.Note]: defineAsyncComponent(() => import("#src/components/Resource/Note/Editor.vue")),
   [ResourceType.Survey]: defineAsyncComponent(() => import("#src/components/Resource/Survey/Editor.vue")),
   [ResourceType.Webpage]: defineAsyncComponent(() => import("#src/components/Resource/Webpage/Editor.vue")),
-  [ResourceType.Whiteboard]: defineAsyncComponent(() => import("#src/components/Resource/Whiteboard/Editor.vue")),
+  [ResourceType.Whiteboard]: defineAsyncComponent(() => import("#src/components/Resource/Whiteboard/Editor/Index.vue")),
 };
