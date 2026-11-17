@@ -45,7 +45,7 @@ The trade is memory for wall-clock: the Go state shares the Node process, so pea
 
 **One solution build over the packages is not adopted.** Each package's `typecheck` stays its own process, run in parallel by pnpm, as `apps/web` is the one place a solution file is used. Why, and what brings the question back, are in the [deferred record](../../../rejected/architecture/typecheck-project-graph/design.md).
 
-`oxlint-tsgolint` is unaffected either way — it ships its own Go binaries as optional dependencies and never loads the `typescript` package, so the type-aware lint pass neither gains nor loses from the override.
+`tsrs` is unaffected either way — it ships its own native binaries as optional dependencies and declares no `typescript` dependency, so the typecheck and the type-aware lint pass, both `tsrs` binaries, neither gain nor lose from the override.
 
 ## Recursive script orchestration
 

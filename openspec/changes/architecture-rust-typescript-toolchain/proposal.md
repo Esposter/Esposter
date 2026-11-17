@@ -15,7 +15,7 @@ The migration runs in phases. Each phase ends at a gate that decides whether the
 
 ## Out of scope
 
-- Replacing `oxlint-tsgolint` or the type-aware lint pass. That is the `lint-toolchain` spec's, and it already runs the Go type checker natively.
+- Replacing the type-aware lint pass. That is the `lint-toolchain` spec's, and it already runs its type-aware rules on a native linter.
 - The `apps/web` Vue typecheck, which the [Vue typecheck change](../archive/2026-11-05-architecture-vize-vue-typecheck/proposal.md) moved from `nuxt typecheck` onto `tsrs` with the vize mapper.
 - The one-interface-per-file sweep of the zod model files. That is the `schemas` ledger's, and it does not depend on this change.
 
