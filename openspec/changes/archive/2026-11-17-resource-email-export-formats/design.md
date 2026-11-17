@@ -15,7 +15,7 @@ The email's export formats are declared in the portable format map. Its one entr
 - **The MJML source comes from the saved document.** Both exports save first, so the file holds the email as the server stores it. Rejected: writing the source from the editor's held state without saving, which would download an email the server does not hold.
 - **A refused save stops both downloads.** A save that the server refuses leaves the stored copy behind the editor, so a download would ignore the author's latest edit without saying so. Rejected: exporting the last saved copy after a refusal, which is the silent case, and exporting the editor's state, which is the first decision's rejected alternative.
 - **Merge fields stay as their tokens in the HTML file.** A file with no dataset is a template, and its tokens are what the author wrote. Rejected: refusing an email with merge fields when no dataset is bound, which would stop the template export, and blanking the tokens, which would hide them.
-- **Images keep their app addresses.** An image in the HTML file loads only with the owner's session, as the personalized export's images do. Rejected: embedding each image as data in the file, since a file holding every image of an email is large and becomes the only copy of its bytes outside the app. Durable public addresses wait for the [email sending](../../deferred/resource/email-sending/design.md) idea.
+- **Images keep their app addresses.** An image in the HTML file loads only with the owner's session, as the personalized export's images do. Rejected: embedding each image as data in the file, since a file holding every image of an email is large and becomes the only copy of its bytes outside the app. Durable public addresses wait for the [email sending](../../../deferred/resource/email-sending/design.md) idea.
 - **One menu offers the three exports.** The personalized export keeps its place, and the two new ones sit beside it. Rejected: a separate export dialog per format, which would make an author look for each one.
 
 ## Rejected
@@ -29,7 +29,7 @@ The email's export formats are declared in the portable format map. Its one entr
 
 ## Not built
 
-- Images embedded in the HTML file, and durable public image addresses. Both wait on the [email sending](../../deferred/resource/email-sending/design.md) idea, which owns the public addresses.
+- Images embedded in the HTML file, and durable public image addresses. Both wait on the [email sending](../../../deferred/resource/email-sending/design.md) idea, which owns the public addresses.
 
 ## Key files
 
@@ -38,8 +38,8 @@ The email's export formats are declared in the portable format map. Its one entr
 | `apps/web/app/services/resource/PortableFormatMap.ts`         | the email's export entries, which gain the HTML and MJML source formats beside the personalized one |
 | `apps/web/app/services/emailEditor/compileStoredEmail.ts`     | the compile of the saved email, which the HTML file downloads                                       |
 | `apps/web/app/services/emailEditor/exportPersonalizedRows.ts` | the download the personalized export makes, whose file naming the new exports share                 |
-| `apps/web/app/store/emailEditor/index.ts`                     | the save the exports run first, whose refusal stops the download                                    |
-| `apps/web/app/services/emailEditor/saveEmailForExport.ts`     | the save the exports run first, which stops the download when the save is refused                   |
+| `apps/web/app/store/emailEditor/index.ts`                     | the store action that queues the open email's save, which the export helper awaits                  |
+| `apps/web/app/services/emailEditor/saveEmailForExport.ts`     | the save the exports run first, whose refusal stops the download                                    |
 | `apps/web/app/services/emailEditor/getEmailMjmlSource.ts`     | the saved document's MJML source, written through the package's serialiser                          |
 | `apps/web/server/trpc/routers/email.ts`                       | the router that serves the compile                                                                  |
 | `apps/web/server/services/emailEditor/compileEmailContent.ts` | the compile the preview, the web view and the exports share                                         |
