@@ -9,7 +9,7 @@
 ## 2. Tribes
 
 - [ ] 2.1 Build the tribe-variant building kit's platforms, walls, roofs and murals, with each tribe's parameters and palette. Verify: a test named after the scenario 'Settlements of two tribes look different', and each tribe fitted against its own exports.
-      Blocked: the extraction exports building meshes of two codes only, `Area_Nt_Build_YLL_*` (52) and `Area_Nt_Build_Common_*` (20), while the layout names buildings of fifteen codes, none exported, so one tribe at most has exports to fit against. It waits on the tribe-exports item in the compute page's Open.
+      Blocked: the extraction's building exports cover too few tribes to fit each one against its own exports. The evidence is in the compute page's Open item on the other tribes' building exports, which this waits on.
 - [ ] 2.2 Fit the Children of Echoes' canyon terraces and the other tribes' settlements, one tribe at a time. Verify: a test named after the scenario 'The Children of Echoes' lands are built in canyon terraces' passes.
       Blocked: waits on 2.1's exports, since no tribe's settlement is fitted yet.
 
