@@ -25,6 +25,7 @@ export const blueprintParameterSchema = z
     allowedValues: createUniqueArraySchema(
       createNormalizedStringSchema(MAX_BLUEPRINT_PARAMETER_TEXT_LENGTH, z.string().min(1)),
     )
+      .min(1)
       .max(MAX_BLUEPRINT_PARAMETER_CHOICES)
       .optional(),
     defaultValue: createNormalizedStringSchema(MAX_BLUEPRINT_PARAMETER_TEXT_LENGTH).default(""),
