@@ -16,4 +16,4 @@ A file's listed type is read off the object it is stored as. A held upload is an
 
 ## Impact
 
-`readResourceFiles` (its comment), `generateReservedResourceAssetPresignedUrlEntities` and `checkIsResourceAssetHeld` (the declared type reaches the held path), and `touchResourceAssetBlob` (writes the declared content type). No stored data changes shape; a file whose type is rewritten is the one a re-upload touched.
+`readResourceFiles` (its comment), `generateReservedResourceAssetPresignedUrlEntities` and `checkIsResourceAssetHeld` (the declared type reaches the held path), and `touchResourceAssetBlob` (writes the declared content type when one is passed). Its second caller, `touchSnapshotAssets`, passes no declared type and so keeps the stored type: a snapshot touch never changes what a file is. No stored data changes shape; a file whose type is rewritten is the one a re-upload touched.

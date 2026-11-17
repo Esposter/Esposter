@@ -7,4 +7,5 @@ x-touches:
     "apps/web/server/services/resource/checkIsResourceAssetHeld.ts",
     "apps/web/server/services/resource/touchResourceAssetBlob.ts",
     "apps/web/server/services/resource/generateReservedResourceAssetPresignedUrlEntities.ts",
+    "apps/web/server/services/resource/snapshot/touchSnapshotAssets.ts",
   ]
