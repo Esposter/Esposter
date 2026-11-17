@@ -27,9 +27,9 @@ import pinia from "eslint-plugin-pinia";
 import { defineConfig } from "oxlint";
 
 // The type-aware rules run on `tsrs-lint`, which oxlint launches with no flags, so its switches are set through the
-// Environment it inherits. Every `vp lint` loads this file before oxlint starts its backend, so this is the one place
-// They are set, the same two the typecheck scripts pass as `--runExternalCode` and `--fast`: running the content mapper
-// That Nuxt's generated tsconfig and the Vue packages' `tsconfig.vue.json` name, and the fast preset
+// Environment it inherits. Every `vp lint` loads this file before oxlint starts its backend, so this is the one place.
+// They are `--runExternalCode` and `--fast`, the two the typecheck scripts pass. The first runs the content mapper that
+// Nuxt's generated tsconfig and the Vue packages' `tsconfig.vue.json` name, and the second is the fast preset.
 // @TODO: https://github.com/voidzero-dev/vite-plus/issues/3476
 process.env.TSRS_FAST = "1";
 process.env.TSRS_LINT_RUN_EXTERNAL_CODE = "1";
