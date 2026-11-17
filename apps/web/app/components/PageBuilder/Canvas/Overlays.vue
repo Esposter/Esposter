@@ -14,7 +14,7 @@ import {
   OVERLAY_LAYER_STYLE,
   OVERLAY_SELECTION_STYLE,
 } from "#src/services/pageBuilder/constants";
-import { getAccent } from "#src/services/pageBuilder/getAccent";
+import { getAppToken } from "#src/services/pageBuilder/getAppToken";
 import { getDropIndicatorBox } from "#src/services/pageBuilder/getDropIndicatorBox";
 import { getDropSlotChildIds } from "#src/services/pageBuilder/getDropSlotChildIds";
 import { getNodeTitleById } from "#src/services/pageBuilder/getNodeTitleById";
@@ -56,13 +56,15 @@ const hoverBox = shallowRef<OverlayBox>();
 // The box of a palette block being dragged, drawn where the canvas previews it in its slot
 const previewBox = shallowRef<OverlayBox>();
 const dropIndicator = shallowRef<DropIndicator>();
-// The library's accent, read from the app's own document each time the theme or style that sets it changes, since the
-// Frame holds none of the app's tokens and the layer passes it on to the boxes it draws
+// The library's accent and the background it pairs with for text, read from the app's own document each time the theme
+// Or style that sets them changes, since the frame holds none of the app's tokens and the layer passes them on to its boxes
 const accent = shallowRef("");
-const readAccent = () => {
-  accent.value = getAccent();
+const background = shallowRef("");
+const readTokens = () => {
+  accent.value = getAppToken("--ui-accent");
+  background.value = getAppToken("--ui-background");
 };
-useMutationObserver(() => window.document.documentElement, readAccent, {
+useMutationObserver(() => window.document.documentElement, readTokens, {
   attributeFilter: ["data-theme"],
   attributes: true,
 });
@@ -134,7 +136,7 @@ watch([() => hoveredNodeId, () => selectedNodeId, () => dropTarget, () => dragge
   flush: "post",
 });
 onMounted(() => {
-  readAccent();
+  readTokens();
   scheduleRedraw();
 });
 onScopeDispose(() => cancelAnimationFrame(pendingFrame));
@@ -142,7 +144,7 @@ onScopeDispose(() => cancelAnimationFrame(pendingFrame));
 
 <!-- The layer covers the content it outlines, so its own box is the box the outlines are placed in -->
 <template>
-  <div ref="layer" :style="{ ...OVERLAY_LAYER_STYLE, '--ui-accent': accent }">
+  <div ref="layer" :style="{ ...OVERLAY_LAYER_STYLE, '--ui-accent': accent, '--ui-background': background }">
     <div v-if="hoverBox" data-outline="hover" :style="{ ...OVERLAY_HOVER_STYLE, ...toBoxStyle(hoverBox) }" />
     <div
       v-if="hoverBox"

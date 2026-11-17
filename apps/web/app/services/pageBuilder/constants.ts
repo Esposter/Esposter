@@ -188,7 +188,7 @@ export const OVERLAY_HOVER_STYLE = {
 // The name a hovered node's outline carries, set at the outline's top left inside it, so a node at the top of the frame keeps its name
 export const OVERLAY_HOVER_LABEL_STYLE = {
   background: OVERLAY_ACCENT,
-  color: "white",
+  color: "var(--ui-background, white)",
   fontSize: "0.75rem",
   lineHeight: "1",
   padding: "0.125rem 0.25rem",
