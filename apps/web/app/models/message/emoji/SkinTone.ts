@@ -12,3 +12,5 @@ export const SkinTone = {
 export type SkinTone = (typeof SkinTone)[keyof typeof SkinTone];
 
 export const SkinTones = Object.values(SkinTone);
+// Keyed by the tone's name, since the untoned default's modifier is the empty string
+export const SkinToneEntries = Object.entries(SkinTone);

@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { SkinTone } from "#src/models/message/emoji/SkinTone";
+import type { SkinTone } from "#src/models/message/emoji/SkinTone";
+
+import { SkinToneEntries } from "#src/models/message/emoji/SkinTone";
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { applySkinTone } from "#src/services/message/emoji/applySkinTone";
 import { SKIN_TONE_PREVIEW_EMOJI_SLUG } from "#src/services/message/emoji/constants";
@@ -8,10 +10,8 @@ import { getEmojiIndex } from "#src/services/message/emoji/getEmojiIndex";
 const modelValue = defineModel<SkinTone>({ required: true });
 // One tone for every emoji that supports one, chosen once and persisted, rather than a per-emoji long-press
 const skinToneEmoji = getEmojiIndex().slugEmojiMap.get(SKIN_TONE_PREVIEW_EMOJI_SLUG);
-// Keyed by the tone's name, since the untoned default's modifier is the empty string
-const skinToneEntries = Object.entries(SkinTone);
 const skinToneItems = skinToneEmoji
-  ? skinToneEntries.map(([name, skinTone]) => ({
+  ? SkinToneEntries.map(([name, skinTone]) => ({
       description: name,
       title: applySkinTone(skinToneEmoji, skinTone),
       value: name,
@@ -29,7 +29,7 @@ const skinToneItems = skinToneEmoji
     px-0
     @select="
       (name) => {
-        const skinTone = skinToneEntries.find(([skinToneName]) => skinToneName === name)?.[1];
+        const skinTone = SkinToneEntries.find(([skinToneName]) => skinToneName === name)?.[1];
         if (skinTone !== undefined) modelValue = skinTone;
       }
     "

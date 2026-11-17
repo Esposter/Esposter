@@ -6,8 +6,10 @@ A code file attached to a message opens in a read-only CodeMirror view. The file
 
 ```mermaid
 flowchart TD
-  F["setup, or the url's arrival<br/>fetch the text once"] --> M["onMounted<br/>view created on the text"]
+  F["setup, with a url<br/>fetch the text once"] --> M["onMounted<br/>view created on the text"]
+  A["the url's arrival, when setup had none<br/>fetch the text once"] --> W["url watch<br/>view created on the text"]
   M --> C["basicSetup<br/>app extensions in one Compartment"]
+  W --> C
   G["grammar load<br/>on first use of its language"] -->|"after the view exists"| R["compartment reconfigured<br/>document and scroll kept"]
   C --> R
   R --> U{"the attachment is removed"}

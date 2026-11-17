@@ -15,7 +15,7 @@ flowchart LR
   VIS --> CORNER2["Copy link · Refresh"]
   CONTAINER -->|"click, not drag, or Edit"| EDIT["the visual selected, its form drafted in the inspector"]
   CORNER -->|"Delete names its visual"| TARGET["dashboard dialog store"]
-  TARGET --> CONFIRM["Content.vue: the one delete confirm"]
+  TARGET --> CONFIRM["Dialogs.vue: the one delete confirm"]
   PUB["/view/Dashboard/[id]"] --> VIS2["DashboardVisual — snapshot, interactive"]
 ```
 
@@ -41,7 +41,8 @@ flowchart LR
 | `apps/web/app/components/Dashboard/Visual/Index.vue`               | the one renderer for the editor and the published page; exposes the `actions` slot                                          |
 | `apps/web/app/components/Dashboard/Visual/Preview/Container.vue`   | the editor tile: inert visual and corner actions                                                                            |
 | `apps/web/app/components/Dashboard/Visual/Preview/ActionsMenu.vue` | the corner's menu: Edit, Duplicate, Export CSV, Fit height, Move to and Delete, which name their visual in the dialog store |
-| `apps/web/app/components/Dashboard/Editor/Content.vue`             | passes each tile its visual; mounts the editor's one delete confirm                                                         |
+| `apps/web/app/components/Dashboard/Editor/Content.vue`             | passes each tile its visual; mounts the editor's dialogs                                                                    |
+| `apps/web/app/components/Dashboard/Editor/Dialogs.vue`             | the editor's one delete confirm and move dialog, which resolve the dialog store's targets                                   |
 | `apps/web/app/components/Dashboard/Editor/VisualFormFields.vue`    | the inspector's form for the selected visual, which writes a valid draft onto the visual as it changes                      |
 | `apps/web/app/store/dashboard/dialog.ts`                           | the delete target, `deletingVisualId`                                                                                       |
 

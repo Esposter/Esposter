@@ -121,6 +121,7 @@ const sortedItems = computed(() => {
       const result = compare(firstItem, secondItem);
       if (result !== 0) return result;
     }
+
     return 0;
   });
 });

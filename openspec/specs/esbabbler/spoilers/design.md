@@ -4,7 +4,7 @@ Text between `||` markers, text submitted through `/spoiler`, and marked image o
 
 ## Text
 
-The composer turns `||text||` into a Tiptap spoiler mark as the closing bars are typed. **Ctrl+Shift+S** toggles the mark on the selection. `/spoiler <text>` submits text already wrapped in the spoiler mark. The rendered `data-spoiler` span is a focusable button; click, Enter, or Space toggles its reveal state.
+The composer turns `||text||` into a Tiptap spoiler mark as the closing bars are typed. **Ctrl+Shift+S** toggles the mark on the selection; that is strikethrough's default key, so in the composer strikethrough moves to **Ctrl+Shift+X**. `/spoiler <text>` submits text already wrapped in the spoiler mark. The rendered `data-spoiler` span is a focusable button; click, Enter, or Space toggles its reveal state.
 
 The HTML sanitizer preserves the mark attribute. Push notification text replaces spoiler content with blocks, while message search continues to match the original text. Link previews are not made for URLs inside a spoiler.
 
