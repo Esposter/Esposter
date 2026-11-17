@@ -39,6 +39,14 @@ describe("blueprintRouter", () => {
     parameters: [],
   };
 
+  // A parameter with a list takes one of its values: the region allows North and South, and defaults to South
+  const choiceManifest: BlueprintResource = {
+    entries: [{ key: "a", name: "{{parameter:region}}", type: ResourceType.Webpage }],
+    parameters: [
+      { allowedValues: ["North", "South"], defaultValue: "South", description: "", key: "region", title: "" },
+    ],
+  };
+
   beforeAll(() => {
     caller = getCaller();
     programCaller = createCallerFactory(programRouter)(getMockContext());
@@ -265,5 +273,73 @@ describe("blueprintRouter", () => {
 
     // The deployed funnel binds the deployed audience — the original wiring, not the original ids
     expect(funnelContent?.emailId).toBe(deployedAudience.resource.id);
+  });
+
+  test("a value in the list deploys", async () => {
+    expect.hasAssertions();
+
+    const blueprint = await createBlueprint(choiceManifest);
+    const deployment = takeOne(
+      await caller.deployBlueprint({ id: blueprint.id, parameterValues: { region: "North" } }),
+    );
+
+    expect(deployment.resource.name).toBe("North");
+  });
+
+  test("a value outside the list is refused and nothing is created", async () => {
+    expect.hasAssertions();
+
+    const blueprint = await createBlueprint(choiceManifest);
+
+    await expect(
+      caller.deployBlueprint({ id: blueprint.id, parameterValues: { region: "East" } }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.Resource, "invalid value for parameter region").message}]`,
+    );
+
+    const webpages = await webpageCaller.readResources();
+
+    // The value is checked before anything is substituted or inserted, so a refused deploy creates no webpage
+    expect(webpages.items).toStrictEqual([]);
+  });
+
+  test("a default outside the list is refused", async () => {
+    expect.hasAssertions();
+
+    const blueprint = await caller.createResource({ name });
+    const region = takeOne(choiceManifest.parameters);
+
+    await expect(
+      caller.saveResourceContent({
+        content: { ...choiceManifest, parameters: [{ ...region, defaultValue: "East" }] },
+        contentVersion: blueprint.contentVersion,
+        id: blueprint.id,
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`
+      [TRPCError: [
+        {
+          "code": "custom",
+          "path": [
+            "content",
+            "parameters",
+            0,
+            "defaultValue"
+          ],
+          "message": "A default must be one of the allowed values"
+        }
+      ]]
+    `);
+  });
+
+  test("a parameter with no list stays free text", async () => {
+    expect.hasAssertions();
+
+    const blueprint = await createBlueprint({
+      entries: [{ key: "a", name: "{{parameter:region}}", type: ResourceType.Webpage }],
+      parameters: [{ defaultValue: "", description: "", key: "region", title: "" }],
+    });
+    const deployment = takeOne(await caller.deployBlueprint({ id: blueprint.id, parameterValues: { region: "East" } }));
+
+    expect(deployment.resource.name).toBe("East");
   });
 });

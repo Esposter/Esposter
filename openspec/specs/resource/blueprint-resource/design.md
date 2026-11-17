@@ -9,7 +9,9 @@ The shape is the industry-standard declarative template (CloudFormation, Backsta
 ```mermaid
 flowchart LR
   ED["Editor blade<br/>manifest JSON"] -->|saveResourceContent| OBJ[("R2 {id}/content.json<br/>manifest")]
-  CMD["Deploy command<br/>parameter form dialog"] -->|"deployBlueprint { id, parameterValues }"| SUB["substitute {{parameter:key}}<br/>in names and content strings"]
+  CMD["Deploy command<br/>parameter form dialog"] -->|"deployBlueprint { id, parameterValues }"| CHOICE["each listed parameter's value<br/>is one of its allowed values"]
+  CHOICE -->|"a value outside its list"| REJECT
+  CHOICE --> SUB["substitute {{parameter:key}}<br/>in names and content strings"]
   SUB --> VAL["pre-validate every entry<br/>against its type contentSchema"]
   VAL --> TOPO["topo-sort entries by<br/>{{entry:key}} references"]
   TOPO -->|"per entry: insert resources row +<br/>write content object (real ids substituted)"| RES[("created resources")]
@@ -22,47 +24,49 @@ flowchart LR
   ```ts
   interface BlueprintResource {
     entries: { content?: unknown; key: string; name: string; type: ResourceType }[];
-    parameters: { defaultValue: string; description: string; key: string; title: string }[];
+    parameters: { allowedValues?: string[]; defaultValue: string; description: string; key: string; title: string }[];
   }
   ```
 
   `key` is the entry's **local alias**, unique within the manifest. `name` becomes the created resource's name. `content` is the entry type's normal content shape — validated against `ResourceDefinitionMap[type].contentSchema` after substitution, so a blueprint can never deploy content the type's own save path would reject.
 
+- **Parameter choices** — a parameter with `allowedValues` takes one of those values. Its form offers them, its default must be one of them (a save whose default is not is refused), and a deploy refuses a value outside them before anything is substituted or created. A list holds at most 50 values, each distinct and non-empty. A parameter without a list stays free text.
+
 - **Token grammar** — two tokens, both plain string substitution over the JSON's string values:
   - `{{parameter:<key>}}` — replaced with the deploy-time parameter value (in entry names and any content string). All parameters are strings; typed parameters would extend the parameter object, not redesign it.
   - `{{entry:<key>}}` — replaced with the **created resource id** of that entry. This is how a dashboard entry binds the sheet entry's dataset, or a program entry binds its email and survey — the same bare-id linking every cross-resource reference already uses ([resources](../../architecture/resource/design.md)), just late-bound.
 
-- **Deploy** (`deployBlueprint`, owner): substitute parameters → pre-validate every entry's substituted name and content, with placeholder UUIDs standing in for `{{entry:*}}` (so a bad manifest rejects before anything is created, rather than mid-loop against a database constraint) → topologically sort entries by the `{{entry:*}}` references that validation walk already collected (cycles and unknown references reject) → create each entry in order via the standard primitives (`resources` insert + content object write + the type's registered after-save hook, exactly what `createResource` + `saveResourceContent` do) with real ids substituted. A mid-deploy failure deletes the rows and objects it already created — best-effort all-or-nothing. Returns the alias → created-resource pairs; the Deploy dialog shows links to everything it made.
+- **Deploy** (`deployBlueprint`, owner): refuse a listed parameter's value outside its list → substitute parameters → pre-validate every entry's substituted name and content, with placeholder UUIDs standing in for `{{entry:*}}` (so a bad manifest rejects before anything is created, rather than mid-loop against a database constraint) → topologically sort entries by the `{{entry:*}}` references that validation walk already collected (cycles and unknown references reject) → create each entry in order via the standard primitives (`resources` insert + content object write + the type's registered after-save hook, exactly what `createResource` + `saveResourceContent` do) with real ids substituted. A mid-deploy failure deletes the rows and objects it already created — best-effort all-or-nothing. Returns the alias → created-resource pairs; the Deploy dialog shows links to everything it made.
 
 - **An entry with no content** deploys to a resource with no content blob. That is the state a resource is genuinely in until its first save, so [capture](../blueprint-capture/design.md) records the absence rather than standing an empty object in — most types' schemas reject `{}`, and one unparseable entry rejects every deploy of the whole manifest.
 
 - **Blueprints of blueprints**: an entry may itself be `type: Blueprint` — deploying creates the child Blueprint resource with its manifest as content, like any other entry (it is **not** recursively deployed; recursive composition is [deferred](../../../deferred/resource/blueprint-recursive-deploy/design.md)). A `Blueprint` entry's content is therefore **opaque to the outer deploy**: its `{{entry:*}}` and `{{parameter:*}}` tokens name the child's own entries and parameters, so nothing walks into it — no dependency edges, no substitution, no id rewriting on capture. One module (`apps/web/shared/services/resource/blueprint/isOuterGrammarEntry.ts`) owns that decision: its rewrite form, `mapBlueprintEntryContentStrings`, and its scanning form, `visitBlueprintEntryContentStrings`, both go through it, so a new pass cannot be written that forgets.
 
-- **Blades**: Overview and the **Editor** — the manifest edited as schema-validated JSON (the escape hatch, since [capture](../blueprint-capture/design.md) is the primary authoring path), with **Save** and a **Deploy** command opening the parameter form dialog (plain text fields generated from `parameters`, defaults prefilled). The manifest saves on Save alone, not on a timer like the canvas editors, so leaving the blade with unsaved text asks first, and Deploy — which always runs the saved manifest — is disabled until the text on screen is saved. Under the fields the dialog lists every entry as the name it will be created with, resolved live from the fields by the same substitution deploy runs; an undeclared `{{parameter:…}}` is marked on its row without blocking, since deploy leaves it as its literal text, and a name left empty disables Deploy with its row saying so. An entry whose content holds `{{entry:…}}` shows the link as `binds <key>`. The manifest also moves as a JSON file through the Portable capability, which exports the saved copy and imports one into the Editor as unsaved text ([blueprint portability](../blueprint-portability/design.md)).
+- **Blades**: Overview and the **Editor** — the manifest edited as schema-validated JSON (the escape hatch, since [capture](../blueprint-capture/design.md) is the primary authoring path), with **Save** and a **Deploy** command opening the parameter form dialog (a choice of values for each parameter with allowed values, a plain text field for the rest, defaults prefilled). The manifest saves on Save alone, not on a timer like the canvas editors, so leaving the blade with unsaved text asks first, and Deploy — which always runs the saved manifest — is disabled until the text on screen is saved. Under the fields the dialog lists every entry as the name it will be created with, resolved live from the fields by the same substitution deploy runs; an undeclared `{{parameter:…}}` is marked on its row without blocking, since deploy leaves it as its literal text, and a name left empty disables Deploy with its row saying so. An entry whose content holds `{{entry:…}}` shows the link as `binds <key>`. The manifest also moves as a JSON file through the Portable capability, which exports the saved copy and imports one into the Editor as unsaved text ([blueprint portability](../blueprint-portability/design.md)).
 
 ## Procedures
 
 `blueprint` router = `createResourceProcedures(ResourceType.Blueprint)` plus:
 
-| Procedure         | Auth  | Input                                             | Purpose                                                         |
-| ----------------- | ----- | ------------------------------------------------- | --------------------------------------------------------------- |
-| `deployBlueprint` | owner | `{ id, parameterValues: Record<string, string> }` | substitute → validate → topo-create → return alias→resource map |
+| Procedure         | Auth  | Input                                             | Purpose                                                                               |
+| ----------------- | ----- | ------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `deployBlueprint` | owner | `{ id, parameterValues: Record<string, string> }` | check listed values → substitute → validate → topo-create → return alias→resource map |
 
 Its twin, [`captureBlueprint`](../blueprint-capture/design.md), joins the same router.
 
 ## Key files
 
-| File                                                                         | Role                                                                 |
-| ---------------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| `packages/db-schema` `ResourceType.Blueprint` + migration                    | type value                                                           |
-| `apps/web/shared/models/resource/blueprint/`                                 | manifest schema (entries, parameters)                                |
-| `apps/web/shared/services/resource/blueprint/`                               | token grammar, and the resolvers dialog and deploy share             |
-| `apps/web/shared/services/resource/ResourceDefinitionMap.ts`                 | Blueprint entry                                                      |
-| `apps/web/server/trpc/routers/blueprint.ts`                                  | factory + `deployBlueprint` + `captureBlueprint`                     |
-| `apps/web/server/services/blueprint/`                                        | substitution, validation, topo-sort, cleanup                         |
-| `apps/web/app/components/Resource/Blueprint/Editor.vue`                      | manifest editor blade                                                |
-| `apps/web/shared/services/resource/blueprint/buildBlueprintDeployReviews.ts` | what each entry is created as, and the notes the Deploy dialog shows |
-| `apps/web/app/components/Resource/Blueprint/DeployDialog.vue`                | parameter form, review list, created-resources result                |
+| File                                                                         | Role                                                                                   |
+| ---------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `packages/db-schema` `ResourceType.Blueprint` + migration                    | type value                                                                             |
+| `apps/web/shared/models/resource/blueprint/`                                 | manifest schema (entries, parameters)                                                  |
+| `apps/web/shared/services/resource/blueprint/`                               | token grammar, and the resolvers dialog and deploy share                               |
+| `apps/web/shared/services/resource/ResourceDefinitionMap.ts`                 | Blueprint entry                                                                        |
+| `apps/web/server/trpc/routers/blueprint.ts`                                  | factory + `deployBlueprint` + `captureBlueprint`                                       |
+| `apps/web/server/services/blueprint/`                                        | substitution, validation, topo-sort, cleanup                                           |
+| `apps/web/app/components/Resource/Blueprint/Editor.vue`                      | manifest editor blade                                                                  |
+| `apps/web/shared/services/resource/blueprint/buildBlueprintDeployReviews.ts` | what each entry is created as, and the notes the Deploy dialog shows                   |
+| `apps/web/app/components/Resource/Blueprint/DeployDialog.vue`                | parameter form, a choice for a listed parameter, review list, created-resources result |
 
 ## Notes
 
@@ -73,3 +77,7 @@ Its twin, [`captureBlueprint`](../blueprint-capture/design.md), joins the same r
 - Deployed resources are ordinary resources with no live link back to the blueprint — editing the blueprint never mutates past deployments (the same template/deployment split cloud resource managers use).
 - The canonical motivating manifest: **survey funnel wave** — audience Sheet + Identified Survey + tokened Email + Program + funnel Dashboard, one `client` parameter in names and email subject. Deploy per client; each wave lands fully wired.
 - **Agentic by design.** A manifest is pure schema-validated JSON deployed through ordinary procedures — the ideal unit for AI authoring: an agent emits a manifest, the platform validates it against every entry type's contentSchema, and deploy is the only side-effectful step. Every schema decision here (explicit tokens, no hidden state, validation before creation) keeps that path open: whatever creates resources — human, form, or model — goes through this same front door.
+
+## Sources
+
+- [Microsoft — Parameters in templates](https://learn.microsoft.com/en-us/azure/azure-resource-manager/templates/parameters) — `allowedValues` is an array of the values a parameter accepts, and the deployment fails during validation when a value passed in is not one of them.

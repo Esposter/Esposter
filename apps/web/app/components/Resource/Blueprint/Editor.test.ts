@@ -1,6 +1,9 @@
 // @vitest-environment nuxt
+import type { UiMenuItem } from "#src/models/ui/UiMenuItem";
+
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import ResourceBlueprintEditor from "#src/components/Resource/Blueprint/Editor.vue";
+import UiSelect from "#src/components/Ui/Select/Index.vue";
 import { showOpenFilePicker } from "#src/services/file/showOpenFilePicker";
 import { createEmptyBlueprint } from "#src/services/resource/blueprint/createEmptyBlueprint";
 import { PortableFormatMap } from "#src/services/resource/PortableFormatMap";
@@ -146,5 +149,29 @@ describe("resourceBlueprintEditor", () => {
     await isContentSaved;
 
     expect(writes).toStrictEqual(["revision", "save"]);
+  });
+
+  // A listed parameter is drawn as a choice of its values with its default chosen, where a text field would take any text
+  test("the dialog offers a listed parameter as a choice", async () => {
+    expect.hasAssertions();
+
+    trpcMsw.blueprint.readResourceContent.query(() => ({
+      entries: [{ key: "a", name: "{{parameter:region}}", type: ResourceType.Webpage }],
+      parameters: [
+        { allowedValues: ["North", "South"], defaultValue: "North", description: "", key: "region", title: "" },
+      ],
+    }));
+    const component = await mountSuspended(ResourceBlueprintEditor);
+    const deployButton = component.findAll("button").find((button) => button.text() === "Deploy");
+    assert.exists(deployButton);
+    await deployButton.trigger("click");
+    await flushPromises();
+    const choice = component.findComponent(UiSelect).props() as { items: UiMenuItem<string>[]; modelValue: string };
+
+    expect(choice.items).toStrictEqual([
+      { title: "North", value: "North" },
+      { title: "South", value: "South" },
+    ]);
+    expect(choice.modelValue).toBe("North");
   });
 });

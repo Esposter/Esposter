@@ -77,8 +77,16 @@ const deploy = async () => {
         <p v-if="blueprint.parameters.length === 0" text-muted>
           This blueprint has no parameters. Deploy creates every entry as a new, fully wired resource.
         </p>
-        <div v-for="{ description, key, title } of blueprint.parameters" :key flex flex-col gap-1>
+        <div v-for="{ allowedValues, description, key, title } of blueprint.parameters" :key flex flex-col gap-1>
+          <UiSelect
+            v-if="allowedValues"
+            :items="allowedValues.map((value) => ({ title: value, value }))"
+            :label="title || key"
+            :model-value="parameterValues[key] ?? ''"
+            @update:model-value="parameterValues[key] = $event"
+          />
           <UiTextField
+            v-else
             :label="title || key"
             :model-value="parameterValues[key] ?? ''"
             @update:model-value="parameterValues[key] = $event"

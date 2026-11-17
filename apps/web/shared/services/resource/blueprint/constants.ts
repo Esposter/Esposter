@@ -2,6 +2,7 @@
 // Deploy call from fanning out into an unbounded batch of resource creates
 export const MAX_BLUEPRINT_ENTRIES = 50;
 export const MAX_BLUEPRINT_PARAMETERS = 20;
+export const MAX_BLUEPRINT_PARAMETER_CHOICES = 50;
 export const MAX_BLUEPRINT_KEY_LENGTH = 100;
 export const MAX_BLUEPRINT_PARAMETER_TEXT_LENGTH = 500;
 // `{{parameter:<key>}}` — replaced with the deploy-time parameter value in entry names and content strings.

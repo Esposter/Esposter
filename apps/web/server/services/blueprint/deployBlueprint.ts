@@ -6,6 +6,7 @@ import type { BlueprintResource } from "#shared/models/resource/blueprint/Bluepr
 import { sortBlueprintEntriesTopologically } from "#server/services/blueprint/sortBlueprintEntriesTopologically";
 import { substituteBlueprintEntryAliasTokens } from "#server/services/blueprint/substituteBlueprintEntryAliasTokens";
 import { validateBlueprintEntries } from "#server/services/blueprint/validateBlueprintEntries";
+import { validateBlueprintParameterValues } from "#server/services/blueprint/validateBlueprintParameterValues";
 import { createResourceRow } from "#server/services/resource/createResourceRow";
 import { saveResourceContent } from "#server/services/resource/saveResourceContent";
 import { withResourceRollback } from "#server/services/resource/withResourceRollback";
@@ -25,6 +26,7 @@ export const deployBlueprint = async (
     ...blueprint.parameters.map(({ defaultValue, key }) => [key, defaultValue] as const),
     ...Object.entries(parameterValues),
   ]);
+  validateBlueprintParameterValues(blueprint.parameters, resolvedParameters);
   const substitutedEntries = blueprint.entries.map((entry) => ({
     ...entry,
     content: mapBlueprintEntryContentStrings(entry, (value) =>
