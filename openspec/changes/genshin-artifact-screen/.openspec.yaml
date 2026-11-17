@@ -2,3 +2,4 @@ schema: spec-driven
 affected_areas: [genshin]
 x-phase: 2
 x-model: claude-haiku-5-5
+x-waiting: "Task 5.4: the panel's parity compare (character-artifacts) measures 2.86% mean difference against its 1% bar, so the image is not approved; the worst cells are the top band's portraits and the set bonus text on the right, and it waits on those coming under the bar."
