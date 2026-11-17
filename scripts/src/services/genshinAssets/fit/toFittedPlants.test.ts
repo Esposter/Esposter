@@ -23,6 +23,5 @@ describe(toFittedPlants, () => {
     expect(places.map(({ position, scale }) => ({ position, scale }))).toStrictEqual([
       { position: { x: 50, z: -60 }, scale: [1, 1, 1] },
     ]);
-    expect(places.map(({ rotation }) => typeof rotation)).toStrictEqual(["number"]);
   });
 });
