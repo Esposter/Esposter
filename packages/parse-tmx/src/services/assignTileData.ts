@@ -12,7 +12,7 @@ export const assignTileData = async (pending: TMXPendingTileData[], translateFli
       if (source.chunked) return;
 
       const tiles = await decodeTileData(source);
-      if (expectedCount !== undefined && tiles.length !== expectedCount)
+      if (tiles.length !== expectedCount)
         throw new InvalidOperationError(
           Operation.Read,
           "TMXLayer",

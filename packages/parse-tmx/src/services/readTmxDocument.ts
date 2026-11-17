@@ -8,7 +8,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import sax from "sax";
 
 // A byte order mark is not part of the document, and sax would refuse it
-const BYTE_ORDER_MARK_REGEX = /^﻿/u;
+const BYTE_ORDER_MARK_REGEX = /^\uFEFF/u;
 
 // One sax pass over the document, each element opening its frame and closing into it, and the root's frame is what it
 // Returns. sax reports malformed input through `onerror`, which throws so the first error is the one the caller

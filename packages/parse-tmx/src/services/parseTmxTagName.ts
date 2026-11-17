@@ -1,4 +1,5 @@
 import { TMXTagName } from "#src/models/tmx/TMXTagName";
+import { checkIsEnumValue } from "@esposter/shared";
 
 export const parseTmxTagName = (name: string): TMXTagName | undefined =>
-  Object.values(TMXTagName).find((tagName) => tagName === name);
+  checkIsEnumValue(TMXTagName, name) ? name : undefined;

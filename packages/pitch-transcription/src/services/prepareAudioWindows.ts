@@ -1,7 +1,7 @@
 import { AUDIO_WINDOW_SAMPLES, OVERLAP_SAMPLES, WINDOW_HOP_SAMPLES } from "#src/constants";
 import { Tensor } from "onnxruntime-common";
 
-export interface AudioWindows {
+interface AudioWindows {
   count: number;
   getWindow: (index: number) => Tensor;
 }
