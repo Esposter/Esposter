@@ -32,7 +32,7 @@ flowchart LR
 
 ## Notes
 
-- Export surfaces through the **Portable** capability (`PortableFormatMap[Email]` personalized-HTML `export()`), rendered as Import/Export entries in the resource command bar.
+- Export surfaces through the **Portable** capability (`PortableFormatMap[Email]`), rendered as Import/Export entries in the resource command bar: HTML, MJML source and personalized HTML, in that order. Each saves the open email first, through `saveEmailForExport`, and downloads nothing when that save is refused or the export fails. The HTML file is the server's compile of the saved email, with or without a bound dataset. The MJML source is written by the package's `serializeMjml` from the saved document, its first caller, so the file reads back into the same email.
 - Merge-field palette entries read the bound dataset's columns on render, so no per-item re-sync is kept. The survey invite is bound from a picker of the owner's published surveys, the one the [webpage survey invite](../webpage-survey-invite-blocks/design.md) uses.
 - Tokens are inserted escaped and substitution matches the escaped form only, since the canvas entity-encodes special characters (e.g. a "P&L" column) on serialization.
 - Export is one download, so no directory permission prompt stands between the sender and the artifact.

@@ -1,141 +1,167 @@
 // @vitest-environment nuxt
-import type { JSONContent } from "@tiptap/core";
-
-import { MimeType } from "#shared/models/file/MimeType";
-import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
-import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
+import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
+import { TEST_ID, TEST_LABEL } from "#shared/services/pageBuilder/constants.test";
+import { MAX_EMAIL_NODES } from "#shared/services/pageBuilder/email/constants";
+import { emailBodyChildrenSchema } from "#shared/services/pageBuilder/email/emailNodeSchema";
+import { emailRegistry } from "#shared/services/pageBuilder/email/emailRegistry";
+import { noteRichText } from "#shared/services/pageBuilder/email/noteRichText";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
-import { showOpenFilePicker } from "#src/services/file/showOpenFilePicker";
-import { getResourceBladeItems } from "#src/services/resource/getResourceBladeItems";
+import { emailKind } from "#src/services/pageBuilder/emailKind";
 import { PortableFormatMap } from "#src/services/resource/PortableFormatMap";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useAlertStore } from "#src/store/alert";
+import { useEmailEditorStore } from "#src/store/emailEditor/index";
+import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
 import { useResourceStore } from "#src/store/resource/index";
 import { ResourceType } from "@esposter/db-schema";
-import { downloadFile, noop } from "@esposter/shared";
+import { downloadFile, takeOne } from "@esposter/shared";
+import { TRPCError } from "@trpc/server";
+import { parseMjmlDocument, renderMjmlDocument, serializeMjml } from "mjml-blocks";
 import { v7 } from "uuid";
-import { assert, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@esposter/shared"), async (importOriginal) => ({
   ...(await importOriginal()),
   downloadFile: vi.fn<typeof downloadFile>(),
 }));
 
-vi.mock(import("#src/services/file/showOpenFilePicker"), () => ({
-  showOpenFilePicker: vi.fn<typeof showOpenFilePicker>(),
-}));
+const parseEmail = (source: string) => {
+  const result = parseMjmlDocument(source, emailRegistry, emailBodyChildrenSchema, noteRichText, MAX_EMAIL_NODES);
+  if (!result.success) throw new Error("the test email should parse");
+
+  return result.data;
+};
+// The exports write each file as its text, so a download's body is the string the export gave
+const readDownloads = () => vi.mocked(downloadFile).mock.calls as [string, string, string][];
 
 describe("portableFormatMap", () => {
   const { trpcMsw } = setupMswTrpc();
   const resourceId = v7();
-  const resource = createResourceListItem({ id: resourceId, name: "Meeting", type: ResourceType.Note });
-  const commands = {
-    delete: noop,
-    duplicate: noop,
-    exportDatasetCsv: noop,
-    read: noop,
-    rename: noop,
-    unpublish: noop,
-    versionHistory: noop,
-  };
-  const doc: JSONContent = {
-    content: [
-      { attrs: { level: 1 }, content: [{ text: "Meeting", type: "text" }], type: "heading" },
-      {
-        content: [{ content: [{ content: [{ text: "one", type: "text" }], type: "paragraph" }], type: "listItem" }],
-        type: "bulletList",
-      },
-    ],
-    type: "doc",
-  };
+  const createResource = (contentVersion = 0) =>
+    createResourceListItem({ contentVersion, id: resourceId, name: TEST_LABEL, type: ResourceType.Email });
+  const emailExportFormats = PortableFormatMap[ResourceType.Email];
+  const exportFormat = (label: string) => {
+    const format = emailExportFormats.find((candidate) => candidate.label === label);
+    if (!format?.export) throw new Error(`${label} should export`);
 
-  beforeEach(() => {
+    return format.export;
+  };
+  beforeEach(async () => {
+    vi.mocked(downloadFile).mockClear();
     Object.assign(useRouter().currentRoute.value.params, { id: resourceId });
-    trpcMsw.resource.readResource.query(() => ({ ...resource, publication: null }));
-    trpcMsw.note.readResourceContent.query(() => ({ doc }));
-  });
-
-  // The export is the note as it is held, so a reader sees the same heading and list in the file as in the note
-  test("exporting a note downloads a Markdown file", async () => {
-    expect.hasAssertions();
-
+    trpcMsw.resource.readResource.query(() => ({ ...createResource(), publication: null }));
+    trpcMsw.email.readResourceContent.query(
+      () => new EmailEditor({ content: [], root: { props: { lang: "", title: "" } } }),
+    );
+    trpcMsw.email.readResourcePublication.query(() => undefined);
+    trpcMsw.email.saveResourceContent.mutation(() => createResource(1));
     const resourceStore = useResourceStore();
     const { readResource } = resourceStore;
     await readResource();
-    const [markdownFormat] = PortableFormatMap[ResourceType.Note];
-    assert.exists(markdownFormat?.export);
-    await markdownFormat.export();
-
-    expect(downloadFile).toHaveBeenCalledExactlyOnceWith("Meeting.md", "# Meeting\n\n- one\n", MimeType.Markdown);
+    const emailEditorStore = useEmailEditorStore();
+    const { loadContent } = emailEditorStore;
+    await loadContent();
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { setEmailDocument } = pageBuilderDocumentStore;
+    setEmailDocument(
+      resourceId,
+      emailKind,
+      parseEmail(
+        `<mjml><mj-body><mj-section><mj-column><mj-text>a</mj-text></mj-column></mj-section></mj-body></mjml>`,
+      ),
+    );
   });
 
-  // A file over the app's file limit is refused before it is read, so no preview opens over the note for it
-  test("an import over the file size limit opens no preview", async () => {
+  test("the email offers its three exports", () => {
     expect.hasAssertions();
 
-    const resourceStore = useResourceStore();
-    const { readResource } = resourceStore;
-    await readResource();
-    const oversizedFile = new File([new Uint8Array(MAX_FILE_REQUEST_SIZE + 1)], "Meeting.md");
-    const readFile = vi.spyOn(oversizedFile, "text");
-    vi.mocked(showOpenFilePicker).mockResolvedValue([{ getFile: () => Promise.resolve(oversizedFile) }] as never);
-    const [markdownFormat] = PortableFormatMap[ResourceType.Note];
-    assert.exists(markdownFormat?.import);
-    await markdownFormat.import();
-
-    expect(readFile).not.toHaveBeenCalled();
+    expect(emailExportFormats.map(({ label }) => label)).toStrictEqual(["HTML", "MJML source", "Personalized HTML"]);
   });
 
-  // The overflow menu takes its import and export commands from the formats, so a note gets both beside its others
-  test("the overflow menu lists the Markdown commands", () => {
+  test("an unbound email downloads as one HTML file", async () => {
     expect.hasAssertions();
 
-    const { exportFormats, importFormats } = usePortableFormats(() => resource);
-    const titles = getResourceBladeItems(resource, {
-      commands,
-      exportFormats: exportFormats.value,
-      importFormats: importFormats.value,
-      isDuplicatePending: false,
-      isPending: false,
-      isPublicationPending: false,
-      isPublished: false,
-    }).map(({ title }) => title);
+    trpcMsw.email.generateEmailHtml.query(() => ({ html: "<p>a</p>" }));
 
-    expect(titles).toContain("Export Markdown");
-    expect(titles).toContain("Import Markdown");
+    await exportFormat("HTML")();
+
+    const alertStore = useAlertStore();
+    expect(alertStore.alerts.map(({ text }) => text)).toStrictEqual([]);
+    expect(readDownloads()).toStrictEqual([[`${TEST_LABEL}.html`, "<p>a</p>", "text/html"]]);
   });
 
-  // A picture cannot restore a dashboard, so its menu gains the page image and no import beside it
-  test("the dashboard's overflow menu lists Export PNG and no import", () => {
+  test("an email that fails strict validation is not downloaded", async () => {
     expect.hasAssertions();
 
-    const dashboard = createResourceListItem({ id: v7(), name: "Sales", type: ResourceType.Dashboard });
-    const { exportFormats, importFormats } = usePortableFormats(() => dashboard);
-    const titles = getResourceBladeItems(dashboard, {
-      commands,
-      exportFormats: exportFormats.value,
-      importFormats: importFormats.value,
-      isDuplicatePending: false,
-      isPending: false,
-      isPublicationPending: false,
-      isPublished: false,
-    }).map(({ title }) => title);
+    trpcMsw.email.generateEmailHtml.query(() => {
+      throw new TRPCError({ code: "BAD_REQUEST", message: "mj-text is not allowed here" });
+    });
 
-    expect(titles).toContain("Export PNG");
-    expect(titles.filter((title) => title?.startsWith("Import"))).toStrictEqual([]);
+    await exportFormat("HTML")();
+
+    const alertStore = useAlertStore();
+    expect(readDownloads()).toHaveLength(0);
+    expect(alertStore.alerts.map(({ text }) => text)).toStrictEqual(["mj-text is not allowed here"]);
   });
 
-  // XML is one more entry in the sheet's format list, so the export submenu lists it after the others it sits beside
-  test("the format is offered beside the others", () => {
+  test("a merge field stays as its token in the file", async () => {
     expect.hasAssertions();
 
-    const sheet = createResourceListItem({ id: v7(), type: ResourceType.Sheet });
-    const { exportFormats } = usePortableFormats(() => sheet);
+    trpcMsw.email.generateEmailHtml.query(() => ({ html: "<p>{{name}}</p>" }));
 
-    expect(exportFormats.value.map(({ label }) => label)).toStrictEqual([
-      DataSourceType.Csv,
-      DataSourceType.Json,
-      DataSourceType.Xlsx,
-      DataSourceType.Xml,
-    ]);
+    await exportFormat("HTML")();
+
+    expect(takeOne(readDownloads())[1]).toBe("<p>{{name}}</p>");
+  });
+
+  test("an image in the HTML file needs a signed-in session", async () => {
+    expect.hasAssertions();
+
+    trpcMsw.email.generateEmailHtml.query(() => ({ html: `<img src="/api/resource-assets/${TEST_ID}">` }));
+
+    await exportFormat("HTML")();
+
+    expect(takeOne(readDownloads())[1]).toContain(`${window.location.origin}/api/resource-assets/${TEST_ID}`);
+  });
+
+  test("a refused save stops the download", async () => {
+    expect.hasAssertions();
+
+    trpcMsw.email.saveResourceContent.mutation(() => {
+      throw new TRPCError({ code: "BAD_REQUEST", message: "the email was refused" });
+    });
+    trpcMsw.email.generateEmailHtml.query(() => ({ html: "<p>a</p>" }));
+
+    await exportFormat("HTML")();
+
+    const alertStore = useAlertStore();
+    expect(readDownloads()).toHaveLength(0);
+    expect(alertStore.alerts.length).toBeGreaterThan(0);
+  });
+
+  test("the mjml source downloads as one file", async () => {
+    expect.hasAssertions();
+
+    await exportFormat("MJML source")();
+
+    const [fileName, source, mimeType] = takeOne(readDownloads());
+    expect([fileName, mimeType]).toStrictEqual([`${TEST_LABEL}.mjml`, "text/plain"]);
+    expect(source).toContain("<mj-text><p>a</p></mj-text>");
+  });
+
+  test("the mjml source imports back to the same email", async () => {
+    expect.hasAssertions();
+
+    await exportFormat("MJML source")();
+
+    const source = takeOne(readDownloads())[1];
+    expect(
+      serializeMjml(
+        renderMjmlDocument(parseEmail(source), emailRegistry, {
+          context: { origin: window.location.origin },
+          isStampingIds: false,
+        }),
+      ),
+    ).toBe(source);
   });
 });

@@ -103,7 +103,7 @@ const { html } = await mjml2html(json, { validationLevel: "strict" });
 | `MjmlDocument`       | a document whose head is the root's props, typed by the registry                                    |
 | `parseMjmlDocument`  | MJML source read back into a document, refusing a tag, attribute or value the package does not take |
 | `renderMjmlDocument` | a checked document rendered to MJML's JSON form                                                     |
-| `serializeMjml`      | MJML's JSON form written as MJML source                                                             |
+| `serializeMjml`      | MJML's JSON form written as MJML source, which the email's MJML source export downloads             |
 
 ## <a name="license">⚖️ License</a>
 

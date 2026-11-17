@@ -79,7 +79,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Dashboard grid](dashboard-grid/design.md) — the dashboard's own placement and drag grid: resize from any edge, keyboard steps, a palette drop, fit height and the Layout settings, one write per gesture, and each published visual's name for a screen reader
 - [Dashboard card and table visuals](dashboard-card-and-table-visuals/design.md) — a card's one aggregated number and a table of exact values beside the charts, over the same binding
 - [Dashboard export](dashboard-export/design.md) — the dashboard page as a PNG and each visual's drawn rows as CSV, read from the published snapshot for a viewer
-- [Email personalization](email-personalization/design.md) — merge fields, survey invite blocks, personalized HTML export
+- [Email personalization](email-personalization/design.md) — merge fields, survey invite blocks, the HTML, MJML source and personalized HTML exports
 - [Dataset row-cap warning](dataset-row-cap-warning/design.md) — "showing N of M" wherever a dataset read hits the dataset row cap
 - [Dataset CSV export](dataset-csv-export/design.md) — Export CSV on any dataset-serving resource: survey answers with question titles as headers, formula cells neutralised
 - [Email preview text](email-preview-text/design.md) — the inbox line under the subject, written into the MJML as its `mj-preview`

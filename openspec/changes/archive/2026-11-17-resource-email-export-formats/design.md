@@ -39,6 +39,8 @@ The email's export formats are declared in the portable format map. Its one entr
 | `apps/web/app/services/emailEditor/compileStoredEmail.ts`     | the compile of the saved email, which the HTML file downloads                                       |
 | `apps/web/app/services/emailEditor/exportPersonalizedRows.ts` | the download the personalized export makes, whose file naming the new exports share                 |
 | `apps/web/app/store/emailEditor/index.ts`                     | the save the exports run first, whose refusal stops the download                                    |
+| `apps/web/app/services/emailEditor/saveEmailForExport.ts`     | the save the exports run first, which stops the download when the save is refused                   |
+| `apps/web/app/services/emailEditor/getEmailMjmlSource.ts`     | the saved document's MJML source, written through the package's serialiser                          |
 | `apps/web/server/trpc/routers/email.ts`                       | the router that serves the compile                                                                  |
 | `apps/web/server/services/emailEditor/compileEmailContent.ts` | the compile the preview, the web view and the exports share                                         |
 | `packages/mjml-blocks/src/services/serializeMjml.ts`          | the MJML source writer, which gains its first caller                                                |

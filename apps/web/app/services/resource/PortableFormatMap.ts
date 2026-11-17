@@ -2,13 +2,17 @@
 import type { PortableFormat } from "#src/models/resource/PortableFormat";
 import type { PortableResourceType } from "#src/models/resource/PortableResourceType";
 
+import { MimeType } from "#shared/models/file/MimeType";
 import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
 import { getDatasetTruncation } from "#shared/services/dataset/getDatasetTruncation";
 import { WhiteboardExportFormat } from "#src/models/whiteboard/WhiteboardExportFormat";
 import { exportDashboardPng } from "#src/services/dashboard/export/exportDashboardPng";
 import { getDatasetErrorMessage } from "#src/services/dataset/getDatasetErrorMessage";
 import { compileStoredEmail } from "#src/services/emailEditor/compileStoredEmail";
+import { createSavedEmailExport } from "#src/services/emailEditor/createSavedEmailExport";
 import { exportPersonalizedRows } from "#src/services/emailEditor/exportPersonalizedRows";
+import { getEmailMjmlSource } from "#src/services/emailEditor/getEmailMjmlSource";
+import { saveEmailForExport } from "#src/services/emailEditor/saveEmailForExport";
 import { exportWebpageHtml } from "#src/services/pageBuilder/exportWebpageHtml";
 import { createBlueprintPortableFormat } from "#src/services/resource/createBlueprintPortableFormat";
 import { createNoteMarkdownPortableFormat } from "#src/services/resource/createNoteMarkdownPortableFormat";
@@ -17,7 +21,6 @@ import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { exportWhiteboard } from "#src/services/whiteboard/export/exportWhiteboard";
 import { useAlertStore } from "#src/store/alert";
 import { useEmailExportDialogStore } from "#src/store/emailEditor/exportDialog";
-import { useEmailEditorStore } from "#src/store/emailEditor/index";
 import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
 import { useResourceStore } from "#src/store/resource/index";
 import { useSheetStore } from "#src/store/resource/sheet/index";
@@ -25,7 +28,7 @@ import { useSheetPortableDialogStore } from "#src/store/resource/sheet/portableD
 import { useTodoListStore } from "#src/store/resource/todoList/index";
 import { useTodoListPrintDialogStore } from "#src/store/resource/todoList/printDialog";
 import { ResourceType } from "@esposter/db-schema";
-import { getResult, getResultAsync, noop } from "@esposter/shared";
+import { downloadFile, getResult, getResultAsync, noop } from "@esposter/shared";
 
 // Import/export formats per portable type
 export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> = {
@@ -44,23 +47,40 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
   ],
   [ResourceType.Email]: [
     {
+      // The email as one file, the compile the preview draws, with or without a bound dataset
+      export: createSavedEmailExport(async (filename, resourceId) => {
+        const { html } = await compileStoredEmail(resourceId);
+        downloadFile(`${filename}.html`, html, MimeType.Html);
+      }),
+      icon: "i-mdi:language-html5",
+      label: "HTML",
+    },
+    {
+      // The saved document's MJML source, which the package reads back into the same email
+      export: createSavedEmailExport((filename, resourceId) => {
+        const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+        const { getEmailDocument } = pageBuilderDocumentStore;
+        const document = getEmailDocument(resourceId);
+        if (document) downloadFile(`${filename}.mjml`, getEmailMjmlSource(document), MimeType.PlainText);
+      }),
+      icon: "i-mdi:code-tags",
+      label: "MJML source",
+    },
+    {
       export: async () => {
         const { $trpc } = useNuxtApp();
         const alertStore = useAlertStore();
         const { createAlert } = alertStore;
         const resourceStore = useResourceStore();
-        const { whenContentSaved } = resourceStore;
         const resourceId = resourceStore.currentResourceId;
         // The open editor's latest edit reaches the stored copy first, so the export compiles what the reader sees: the
         // Export is the server's output, so it waits for the save to land. With no editor open nothing is held
-        const emailEditorStore = useEmailEditorStore();
-        const { saveEmail } = emailEditorStore;
         const emailExportDialogStore = useEmailExportDialogStore();
         const { setPendingDataset } = emailExportDialogStore;
 
         await getResultAsync(async () => {
-          saveEmail(resourceId);
-          await whenContentSaved(resourceId);
+          if (!(await saveEmailForExport(resourceId))) return;
+
           const { datasetReference, html } = await compileStoredEmail(resourceId);
           if (!datasetReference) {
             createAlert("Bind a dataset before exporting personalized HTML", "warning");
