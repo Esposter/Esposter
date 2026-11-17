@@ -57,12 +57,22 @@ const save = () => {
       title="Allowed attachment types"
     >
       <div role="group" aria-label="Allowed attachment types" flex flex-col gap-2>
-        <MessageModelRoomSettingsTypeAttachmentsCategoryCheckbox
+        <UiCheckbox
           v-for="category of MimeCategories"
           :key="category"
-          v-model="editedAllowedMimeCategories"
-          :category
-          @save="save()"
+          is-label-shown
+          :label="category"
+          :model-value="editedAllowedMimeCategories.includes(category)"
+          @update:model-value="
+            (isAllowed) => {
+              editedAllowedMimeCategories = isAllowed
+                ? MimeCategories.filter(
+                    (mimeCategory) => mimeCategory === category || editedAllowedMimeCategories.includes(mimeCategory),
+                  )
+                : editedAllowedMimeCategories.filter((mimeCategory) => mimeCategory !== category);
+              save();
+            }
+          "
         />
       </div>
     </MessageModelRoomSettingsField>

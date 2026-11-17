@@ -59,11 +59,17 @@ const onClick = (settingsType: SettingsType) => {
       <MessageModelRoomSettingsLeftSideBarCategory
         v-for="{ category, items } of visibleCategories"
         :key="category"
-        v-model="openedCategories"
-        :category
+        :is-open="openedCategories.includes(category)"
         :items
         :title="getCategoryTitle(category)"
         @select="(settingsType) => onClick(settingsType)"
+        @update:is-open="
+          (isOpen) => {
+            openedCategories = isOpen
+              ? [...openedCategories, category]
+              : openedCategories.filter((openedCategory) => openedCategory !== category);
+          }
+        "
       />
       <div my-1 bg-divider h="[var(--ui-border-width)]" />
       <!-- The destructive row says what it does to this reader: the owner deletes the room, everyone else leaves it -->

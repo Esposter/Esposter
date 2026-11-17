@@ -1,30 +1,19 @@
 <script setup lang="ts">
-import type { SettingsCategory } from "#src/models/message/room/SettingsCategory";
 import type { SettingsType } from "#src/models/message/room/SettingsType";
 import type { UiListItem } from "#src/models/ui/UiListItem";
 
 interface Props {
-  category: SettingsCategory;
+  isOpen: boolean;
   items: UiListItem<SettingsType>[];
   title: string;
 }
 
-const openedCategories = defineModel<SettingsCategory[]>({ required: true });
-const { category, items, title } = defineProps<Props>();
-const emit = defineEmits<{ select: [settingsType: SettingsType] }>();
+defineProps<Props>();
+const emit = defineEmits<{ select: [settingsType: SettingsType]; "update:isOpen": [isOpen: boolean] }>();
 </script>
 
 <template>
-  <UiCollapsible
-    :model-value="openedCategories.includes(category)"
-    @update:model-value="
-      (isOpen) => {
-        openedCategories = isOpen
-          ? [...openedCategories, category]
-          : openedCategories.filter((openedCategory) => openedCategory !== category);
-      }
-    "
-  >
+  <UiCollapsible :model-value="isOpen" @update:model-value="(value) => emit('update:isOpen', value)">
     <template #title>
       <span text-sm text-muted truncate uppercase>{{ title }}</span>
     </template>

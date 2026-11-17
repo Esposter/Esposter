@@ -12,7 +12,7 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 
 describe("messageModelStatusPickerForm", () => {
   const { trpcMsw } = setupMswTrpc();
-  let userId = v7();
+  let userId: string;
   const message = "message";
   const draftMessage = "draftMessage";
   const rejectedMessage = "rejectedMessage";

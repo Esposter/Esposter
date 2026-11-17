@@ -6,7 +6,6 @@ import type { WebpageKind } from "#src/models/pageBuilder/WebpageKind";
 import { ResourceType } from "@esposter/db-schema";
 
 export type OpenPageBuilderDocument = OpenEmailDocument | OpenWebpageDocument;
-
 // An email held beside its kind, the same as a webpage, so a resource's document and its kind are always opened together
 interface OpenEmailDocument {
   document: EmailDocument;

@@ -10,6 +10,7 @@ import { createUser } from "#src/services/message/user/createUser.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useRoleStore } from "#src/store/message/room/role";
 import { useMemberStore } from "#src/store/message/user/member";
+import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { v7 } from "uuid";
 import { beforeEach, describe, expect, test, vi } from "vitest";
@@ -53,7 +54,8 @@ describe(useMemberStore, () => {
     await refreshMemberCounts([roomId]);
     serveCounts(0, [{ count: 0, roleId: role.id }]);
     storeDeleteMember(roomId, member.id);
-    await refreshMemberCounts([roomId]);
+    // The departure's own re-read lands the totals, so the test awaits it rather than making one of its own
+    await waitForSynchronizedFunctions();
 
     expect(memberCount.value).toBe(0);
     expect(memberCountsByTopRole.value).toStrictEqual([{ count: 0, roleId: role.id }]);
@@ -71,7 +73,7 @@ describe(useMemberStore, () => {
     await refreshMemberCounts([roomId]);
     serveCounts(1, [{ count: 1, roleId: role.id }]);
     storeDeleteMember(roomId, member.id);
-    await refreshMemberCounts([roomId]);
+    await waitForSynchronizedFunctions();
 
     expect(memberCount.value).toBe(1);
     expect(memberCountsByTopRole.value).toStrictEqual([{ count: 1, roleId: role.id }]);
@@ -130,7 +132,8 @@ describe(useMemberStore, () => {
       { count: 1, roleId: otherRole.id },
     ]);
     mutateMemberRoles(roomId, member.id, [otherRole]);
-    await refreshMemberCounts([roomId]);
+    // The role change's own re-read lands the totals, so the test awaits it rather than making one of its own
+    await waitForSynchronizedFunctions();
 
     expect(memberCountsByTopRole.value).toStrictEqual([
       { count: 0, roleId: role.id },
@@ -230,7 +233,7 @@ describe(useMemberStore, () => {
     await refreshMemberCounts([roomId]);
     serveCounts(1, [{ count: 1, roleId: role.id }]);
     storeDeleteMember(roomId, member.id);
-    await refreshMemberCounts([roomId]);
+    await waitForSynchronizedFunctions();
 
     expect(memberCount.value).toBe(1);
     expect(memberCountsByTopRole.value).toStrictEqual([{ count: 1, roleId: role.id }]);

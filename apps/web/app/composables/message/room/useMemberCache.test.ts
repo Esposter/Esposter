@@ -4,7 +4,7 @@ import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
 import type { Page } from "@esposter/db-schema";
 
 import { flushCache } from "#src/composables/cache/indexedDb/flushCache.test";
-import { goOffline } from "#src/composables/shared/network.test";
+import { goOffline, goOnline } from "#src/composables/shared/network.test";
 import { MemberIndexedDbStoreConfiguration } from "#src/services/cache/indexedDb/configurations/MemberIndexedDbStoreConfiguration";
 import { resetIndexedDb } from "#src/services/cache/indexedDb/openIndexedDb";
 import { writeIndexedDb } from "#src/services/cache/indexedDb/writeIndexedDb";
@@ -69,7 +69,10 @@ describe(useMemberCache, () => {
     // Refetched offline, and the room being switched into must not inherit either
     trpcMsw.room.readMembersCount.query(() => 1);
     trpcMsw.room.readMemberCountsByTopRole.query(() => [{ count: 1, roleId: v7() }]);
+    goOnline();
     await refreshMemberCounts([partitionKey]);
+    expect(memberCount.value).toBe(1);
+    goOffline();
     setCurrentRoomId(secondPartitionKey);
     await flushCache();
 

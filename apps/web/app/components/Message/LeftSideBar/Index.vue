@@ -14,9 +14,7 @@ const { drafts } = storeToRefs(inputStore);
 // The count is the store's, so a job scheduled or cancelled moves this badge as it moves the Scheduled tab
 const scheduledMessageJobStore = useScheduledMessageJobStore();
 const { scheduledMessageJobCount } = storeToRefs(scheduledMessageJobStore);
-// A badge is an ancillary read, so the sidebar renders before its count lands, and the count fills the store when it does
 const { readScheduledMessageJobCount } = useReadScheduledMessageJobs();
-onMounted(readScheduledMessageJobCount);
 const items = computed<UiListItem<string>[]>(() => [
   {
     isCurrent: currentRoute.value.path === RoutePath.MessagesFriends,
@@ -43,6 +41,9 @@ const badges = computed(() =>
     }))
     .filter(({ count }) => count > 0),
 );
+
+// A badge is an ancillary read, so the sidebar renders before its count lands, and the count fills the store when it does
+onMounted(() => readScheduledMessageJobCount());
 </script>
 
 <template>
