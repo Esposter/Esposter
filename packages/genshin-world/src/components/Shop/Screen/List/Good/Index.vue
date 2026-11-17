@@ -32,15 +32,6 @@ const emit = defineEmits<{ pick: [] }>();
 <style scoped src="genshin-interface/styles/shopScreen.css"></style>
 
 <style scoped>
-.coin {
-  display: inline-block;
-  width: calc(var(--unit) * 26);
-  height: calc(var(--unit) * 26);
-  flex: none;
-  border-radius: 50%;
-  background: radial-gradient(circle, #f6d77a 0 35%, #c99a2e 36% 100%);
-}
-
 .good {
   position: absolute;
   top: 0;

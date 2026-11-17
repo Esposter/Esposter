@@ -141,15 +141,6 @@ const shownGood = computed(() => pickedGood.value ?? goods[0]);
   list-style: none;
 }
 
-.coin {
-  display: inline-block;
-  width: calc(var(--unit) * 26);
-  height: calc(var(--unit) * 26);
-  flex: none;
-  border-radius: 50%;
-  background: radial-gradient(circle, #f6d77a 0 35%, #c99a2e 36% 100%);
-}
-
 .balance {
   display: flex;
   align-items: center;
