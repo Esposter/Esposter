@@ -1,19 +1,23 @@
 <script setup lang="ts">
+import type { FileAssetsResourceType } from "#shared/models/resource/FileAssetsResourceType";
+
 import { MAX_FILE_REQUEST_SIZE, MEGABYTE } from "#shared/services/app/constants";
 import { WEBPAGE_VIDEO_MIME_TYPES } from "#shared/services/pageBuilder/constants";
 import { NOTE_IMAGE_MIME_TYPES } from "#shared/services/resource/note/constants";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useAlertStore } from "#src/store/alert";
 import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
-import { MimeCategory, ResourceType } from "@esposter/db-schema";
+import { MimeCategory } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
 
 interface Props {
   // The kind of file the field takes: an image or a video
   category: MimeCategory;
   resourceId: string;
+  // The resource whose own files the upload is stored among and the picker lists
+  type: FileAssetsResourceType;
 }
-const { category, resourceId } = defineProps<Props>();
+const { category, resourceId, type } = defineProps<Props>();
 // The picked file's address goes to the node that was selected when the file was picked, since an upload can land after
 // The selection has moved on. A file the field does not take, or one over the upload limit, is refused before it is sent
 const emit = defineEmits<{ update: [src: string, nodeId: string] }>();
@@ -22,7 +26,7 @@ const pageBuilderCanvasStore = usePageBuilderCanvasStore();
 const { getSelectedNodeId } = pageBuilderCanvasStore;
 const alertStore = useAlertStore();
 const { createAlert } = alertStore;
-const uploadFile = useUploadResourceFile(ResourceType.Webpage, () => resourceId);
+const uploadFile = useUploadResourceFile(type, () => resourceId);
 const onPick = async (files: File[]) => {
   const [file] = files;
   if (!file) return;
@@ -52,7 +56,7 @@ const onPick = async (files: File[]) => {
     <PageBuilderFilePicker
       :category
       :resource-id
-      :type="ResourceType.Webpage"
+      :type
       @update="(src) => emit('update', src, getSelectedNodeId(resourceId))"
     />
   </div>

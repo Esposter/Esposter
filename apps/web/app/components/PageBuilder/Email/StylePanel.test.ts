@@ -9,9 +9,9 @@ import {
   TEST_THIRD_ID,
   TEST_URL,
 } from "#shared/services/pageBuilder/constants.test";
-import PageBuilderEmailImageUploadField from "#src/components/PageBuilder/Email/ImageUploadField.vue";
 import PageBuilderEmailStylePanel from "#src/components/PageBuilder/Email/StylePanel.vue";
 import PageBuilderFilePicker from "#src/components/PageBuilder/FilePicker/Index.vue";
+import PageBuilderMediaField from "#src/components/PageBuilder/MediaField.vue";
 import { getFieldInput } from "#src/components/PageBuilder/StylePanel/getFieldInput.test";
 import { getSectorTitle } from "#src/components/PageBuilder/StylePanel/getSectorTitle.test";
 import UiSelect from "#src/components/Ui/Select/Index.vue";
@@ -170,7 +170,7 @@ describe("pageBuilderEmailStylePanel", () => {
     pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_OTHER_ID);
 
     const component = await mountSuspended(PageBuilderEmailStylePanel, { props: { resourceId } });
-    component.getComponent(PageBuilderEmailImageUploadField).vm.$emit("update", TEST_URL, TEST_OTHER_ID);
+    component.getComponent(PageBuilderMediaField).vm.$emit("update", TEST_URL, TEST_OTHER_ID);
     await flushPromises();
     await nextTick();
     const forId = component

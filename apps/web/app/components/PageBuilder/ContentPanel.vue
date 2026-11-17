@@ -7,7 +7,7 @@ import { getNodePointer } from "#src/services/pageBuilder/getNodePointer";
 import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
 import { usePageBuilderHistoryStore } from "#src/store/pageBuilder/history";
-import { MimeCategory } from "@esposter/db-schema";
+import { MimeCategory, ResourceType } from "@esposter/db-schema";
 import { JsonPatchOperationType, noop } from "@esposter/shared";
 import { getBlockNode } from "vue-block-editor-headless";
 import { z } from "zod";
@@ -65,6 +65,7 @@ const setSource = (nodeId: string, src: string) => {
       v-if="mediaCategory"
       :category="mediaCategory"
       :resource-id
+      :type="ResourceType.Webpage"
       @update="(src, nodeId) => setSource(nodeId, src)"
     />
     <UiSchemaForm

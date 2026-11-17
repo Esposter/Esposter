@@ -34,17 +34,12 @@ const setSectionOpen = (title: string, isOpen: boolean) => {
           @reset="setField(field.name, '')"
           @update="(value) => setField(field.name, value)"
         />
-        <PageBuilderEmailImageUploadField
-          v-if="section.fields.some((field) => field.name === 'src')"
-          :resource-id
-          @update="(src: string, nodeId: string) => setField('src', src, nodeId)"
-        />
-        <PageBuilderFilePicker
+        <PageBuilderMediaField
           v-if="section.fields.some((field) => field.name === 'src')"
           :category="MimeCategory.Image"
           :resource-id
           :type="ResourceType.Email"
-          @update="(src) => setField('src', src)"
+          @update="(src: string, nodeId: string) => setField('src', src, nodeId)"
         />
       </div>
     </UiCollapsible>
