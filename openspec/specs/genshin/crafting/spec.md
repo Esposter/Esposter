@@ -1,6 +1,6 @@
 ## Purpose
 
-The bench's recipes are read from the game's combine table into the world's data, and the rules of crafting run over them: which recipes a player has open, how many of a recipe the bag and wallet pay for, a batch crafted whole or refused, and a recipe learned from its instruction.
+The bench's recipes are read from the game's combine table into the world's data, and the rules of crafting run over them: which recipes a player has open, how many of a recipe the bag and wallet pay for, a batch crafted whole or refused.
 
 ## Requirements
 
@@ -25,30 +25,6 @@ A recipe SHALL be offered only once the player's Adventure Rank reaches its rank
 - **GIVEN** a recipe an instruction opens and not yet learned
 - **WHEN** the bench is opened
 - **THEN** the recipe is not offered
-
-### Requirement: An instruction teaches its recipe once
-
-Using an instruction SHALL take one from the bag and teach the recipe it names, once, and only when the recipe names that instruction and the bag holds it.
-
-#### Scenario: Using an instruction teaches its recipe
-
-- **GIVEN** an instruction in the bag that names a recipe not yet learned
-- **WHEN** the instruction is used
-- **THEN** one instruction is taken from the bag
-- **AND** the recipe is learned
-
-#### Scenario: An instruction for a recipe already learned is refused
-
-- **GIVEN** an instruction in the bag naming a recipe already learned
-- **WHEN** the instruction is used
-- **THEN** the use is refused
-- **AND** the bag is unchanged
-
-#### Scenario: An instruction the recipe does not name is refused
-
-- **GIVEN** an instruction in the bag that the recipe does not name
-- **WHEN** the instruction is used for that recipe
-- **THEN** the use is refused
 
 ### Requirement: A craft is paid and given whole or refused
 

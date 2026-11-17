@@ -30,7 +30,7 @@ flowchart LR
 
 ## The tables
 
-`pnpm -C scripts genshin:assets home` builds two records from the game's tables in the dump and publishes them to the hosted game data as its blueprints and levels records, which `readHomeBlueprints` and `readHomeLevels` fetch by key `scripts/src/services/genshinAssets/home/buildHomeRules.ts`, `packages/genshin-world/src/services/home/readHomeBlueprints.ts`, `packages/genshin-world/src/services/home/readHomeLevels.ts`. Three of them are pulled from the AnimeGameData repository into the dump and kept out of the commit, as the [forging](../forging/design.md) tables are `scripts/src/services/genshinAssets/home/constants.ts`.
+`pnpm -C scripts genshin:assets home` builds the home dataset's records from the game's tables in the dump and publishes them to the hosted game data as `home/blueprints`, `home/levels`, `home/gardens`, `home/areas`, `home/events` and `home/furnishings`. The `buildHome*` builders beside `scripts/src/services/genshinAssets/home/buildHomeRules.ts` each build one or more of them, and the command gathers their output into one publication (`scripts/src/services/genshinAssets/commands/homeCommand.ts`). No reader reads them yet. Three of those tables are pulled from the AnimeGameData repository into the dump and kept out of the commit, as the [forging](../forging/design.md) tables are `scripts/src/services/genshinAssets/home/constants.ts`.
 
 - **Blueprints.** `FurnitureMakeExcelConfigData`: each furnishing, its materials, its seconds and the Trust EXP its first making gives. The seconds are the table's `makeTime` read as seconds `scripts/src/services/genshinAssets/home/toHomeBlueprint.ts`: between ten and twenty hours, the first blueprint fourteen `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/FurnitureMakeExcelConfigData.json`. Each order makes one furnishing `packages/genshin-world/src/services/home/startHomeMake.ts`.
 - **Diagrams.** The material table's `ITEM_USE_UNLOCK_FURNITURE_FORMULA` uses. Each diagram names the furnishing it opens by its item id, and 1,301 of the dump's 1,340 blueprints have one in the material table (`{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/MaterialExcelConfigData.json`, its `itemUse` rows) the [game data formats](../game-data-formats/design.md) page names. The 39 that no diagram names are open from the start, a blueprint with no unlock item being open (`packages/genshin-world/src/services/home/startHomeMake.ts`).
@@ -63,16 +63,14 @@ The furnishings' own table, "HomeWorldFurnitureExcelConfigData", is not read yet
 | `packages/genshin-world/src/services/home/computeHomeTrustRank.ts`   | The Trust Rank a total of Trust EXP reaches                               |
 | `packages/genshin-world/src/services/home/computeHomeAdeptalRank.ts` | The Adeptal Energy rank a realm's comfort reaches                         |
 | `packages/genshin-world/src/services/home/computeHomeAccrued.ts`     | The amount a store holds at `now`, capped, and the instant it accrued to  |
-| `packages/genshin-world/src/services/home/learnHomeBlueprint.ts`     | A blueprint learned by using its diagram                                  |
-| `packages/genshin-world/src/services/shared/learnByDiagram.ts`       | The one diagram-learning rule the forge's recipes share                   |
-| `packages/genshin-world/src/services/home/readHomeBlueprints.ts`     | The furnishings Tubby makes, fetched by their blueprints record key       |
-| `packages/genshin-world/src/services/home/readHomeLevels.ts`         | The Trust and Adeptal Energy ranks, fetched by their levels record key    |
+| `packages/genshin-world/src/services/shared/learnByDiagram.ts`       | The one diagram-learning rule the recipes share                           |
 
 ## Notes
 
 - **The bag does not hold the furnishings yet.** A finished furnishing is taken into the bag as an item the caller defines `packages/genshin-world/src/services/home/collectHomeOrder.ts`, since the Furnishings tab and its item definitions are not built.
 - **Realm Currency is in the wallet.** It is a store of the realm's progress, which the game's text says accumulates as the Adeptal Energy Rank rises (`{data-root}/genshin-parity/text/TextMap/TextMap_MediumEN.json`, text ids 1089342864 and 3750993256), counted as every currency is (`packages/genshin-world/src/models/inventory/Wallet.ts`, `packages/genshin-world/src/services/save/toWalletSave.ts`), and its game text name is mapped to `GameTextKey.RealmCurrency` (`packages/genshin-world/src/services/inventory/CurrencyGameTextKeyMap.ts`'s `Currency.RealmCurrency` entry).
 - **The rates are read forward from a claim.** The caller settles a store at the rank in force before the rank changes, since a store accrues at the rank it was last claimed at `packages/genshin-world/src/services/home/settleHomeStores.ts`.
+- **A blueprint's diagram is not spent yet.** Nothing calls the diagram rule for a blueprint, so a blueprint a diagram names stays closed, as the realm has no path that spends one (`packages/genshin-world/src/services/shared/learnByDiagram.ts`).
 
 ## Sources
 

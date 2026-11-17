@@ -72,7 +72,6 @@ flowchart TD
 | `packages/genshin-world/src/services/forging/checkIsForgeDailyCapReached.ts`      | Whether an order would pass the game day's forge points                     |
 | `packages/genshin-world/src/services/forging/getBlacksmithPlace.ts`               | The blacksmith's place on the map                                           |
 | `packages/genshin-world/src/services/forging/computeForgeQueueCount.ts`           | The queues an Adventure Rank opens                                          |
-| `packages/genshin-world/src/services/forging/learnForgeRecipe.ts`                 | A recipe learned from a diagram in the bag                                  |
 | `packages/genshin-world/src/services/forging/readForgeRecipes.ts`                 | The blacksmith's recipes, fetched by their `forging/recipes` key            |
 | `packages/genshin-world/src/services/inventory/constants.ts`                      | The wallet's item ids, each currency's among them                           |
 | `packages/genshin-text/src/models/GameTextKey.ts`                                 | The enhancement ores' refusal words                                         |
@@ -89,6 +88,7 @@ flowchart TD
 - **Names of the forge's items are the name-text chunks'.** The billets and ores the weapons need name their text ids, which the game text has no key for, so `genshin:text names` writes them into the name-text chunks like the other names the world cites. A weapon's name is the same chunk's, read by its weapon's text id, and the bag reads a material's name the same way, so every item of the forge is named by its text id.
 - **The wallet's currencies are no items.** Mora, Primogems, the Genesis Crystal, the Fates and Stardust, Masterless Stella Fortuna and Original Resin are held by the wallet, and Adventure EXP is returned by the collection. The items writer leaves each of their ids out, so a result or a drop naming one is a wallet grant.
 - **The enhancement ores are materials of their own type.** Their table type is the weapon exp stone, which the bag files among its Materials.
+- **Learning a recipe from its diagram is not built yet.** Nothing spends a diagram, so a recipe a diagram opens stays closed, and the diagram rule the recipes share (`packages/genshin-world/src/services/shared/learnByDiagram.ts`) is not called for one.
 
 ## Sources
 

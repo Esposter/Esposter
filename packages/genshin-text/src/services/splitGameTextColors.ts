@@ -10,9 +10,9 @@ export const splitGameTextColors = (text: string): GameTextSegment[] => {
   let plainStart = 0;
   for (const match of text.matchAll(COLOR_TAG_REGEX)) {
     const { color = "", text: coloredText = "" } = match.groups ?? {};
-    segments.push({ text: text.slice(plainStart, match.index) }, { color, text: coloredText });
+    segments.push({ color: "", text: text.slice(plainStart, match.index) }, { color, text: coloredText });
     plainStart = match.index + match[0].length;
   }
-  segments.push({ text: text.slice(plainStart) });
+  segments.push({ color: "", text: text.slice(plainStart) });
   return segments.filter(({ text: segmentText }) => segmentText !== "");
 };

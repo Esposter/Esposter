@@ -1,12 +1,12 @@
 ## Purpose
 
-The Serenitea Pot's rules from the game's tables — Tubby's furnishings made from blueprints in one queue per Trust Rank over real time, Trust EXP from each first making, the Adeptal Energy rank read off a realm's comfort, and Realm Currency and Realm Bounty accruing per real hour into stores capped by Trust Rank. The realm's scene, the placement editor and its load, the depot, gardens, ponds, the Adeptal Mirror and the companions' invitations are not built yet.
+The Serenitea Pot's rules from the game's tables — Tubby's furnishings made from blueprints in one queue per Trust Rank over real time, Trust EXP from each first making, the Adeptal Energy rank read off a realm's comfort, and Realm Currency and Realm Bounty accruing per real hour into stores capped by Trust Rank. The realm's scene, the placement editor and its load, the depot, gardens, ponds, the Adeptal Mirror, the companions' invitations and learning a blueprint from its diagram are not built yet.
 
 ## Requirements
 
 ### Requirement: A furnishing is made only once its blueprint is open
 
-A furnishing SHALL be started only when its blueprint is open, either from the start or by learning its diagram.
+A furnishing SHALL be started only when its blueprint is open, which a blueprint is from the start unless a diagram names it.
 
 #### Scenario: A furnishing with an open blueprint can be started
 

@@ -1,6 +1,6 @@
 ## Purpose
 
-The blacksmith's recipes from the game's forge table — enhancement ores and four-star weapons forged from their billets (the first ten open at Adventure Rank five, the rest at rank ten once their diagrams are learned), the Mystic Enhancement Ore drawn from its random table, each order queued in a queue the Adventure Rank opens, its units finishing over real time and collected at any blacksmith, the enhancement ores' forge points held to 400,000 a game day, the forging talents of five characters, and the Serenitea Pot's refusal of Magical Crystal Chunks. The blacksmith's place is not built yet.
+The blacksmith's recipes from the game's forge table — enhancement ores and four-star weapons forged from their billets (the first ten open at Adventure Rank five, the rest at rank ten once their diagrams are learned), the Mystic Enhancement Ore drawn from its random table, each order queued in a queue the Adventure Rank opens, its units finishing over real time and collected at any blacksmith, the enhancement ores' forge points held to 400,000 a game day, the forging talents of five characters, and the Serenitea Pot's refusal of Magical Crystal Chunks. The blacksmith's mark on the map, and learning a recipe from its diagram, are not built yet.
 
 ## Requirements
 
@@ -13,12 +13,6 @@ A forge recipe SHALL be refused an order until the player's Adventure Rank reach
 - **GIVEN** the player's Adventure Rank is below the rank a recipe opens at
 - **WHEN** the player orders that recipe
 - **THEN** the order is refused
-
-#### Scenario: Using a diagram learns its recipe
-
-- **GIVEN** a recipe's diagram is in the bag
-- **WHEN** the player uses the diagram
-- **THEN** the diagram leaves the bag and the recipe is learned
 
 #### Scenario: Order for an unlearned recipe is refused
 

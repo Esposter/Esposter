@@ -40,7 +40,7 @@ An ore's respawn is its own, from the wiki's Reset page: an Iron Chunk at the ga
 
 That page is tagged a stub asking for its timers and respawns to be verified (`{data-root}/cache/genshin-wiki/Page_Reset.json`, line 1), so the midnight of both, and the Electro Crystal's two days, rest on the wiki alone.
 
-A point is kept as picked with the instant of the pick, and stands again once its respawn has come (`packages/genshin-world/src/services/gathering/checkIsGatheringPlaceStanding.ts`). Nothing runs while the page is closed: each look at the clock compares the instant with its respawn, and the page's clock looks every `GATHERING_CLOCK_INTERVAL_MS` while it is open.
+A point is kept as picked with the instant of the pick, and stands again once its respawn has come (`packages/genshin-world/src/services/gathering/checkIsGatheringPlaceStanding.ts`). Nothing runs while the page is closed: each look at the clock compares the instant with its respawn, and the page's clock looks once each game minute while it is open (`WORLD_CLOCK_INTERVAL_MS`).
 
 ## The ores' rules
 

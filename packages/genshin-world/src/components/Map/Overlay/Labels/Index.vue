@@ -45,9 +45,13 @@ defineProps<Props>();
       :x
       :y="y + metres * MAP_PROGRESS_OFFSET_SHARE"
     >
-      <tspan v-for="({ color, text }, index) of progressSegments" :key="index" :fill="color" :stroke="color">{{
-        text
-      }}</tspan>
+      <tspan
+        v-for="({ color, text }, index) of progressSegments"
+        :key="index"
+        :fill="color || undefined"
+        :stroke="color || undefined"
+        >{{ text }}</tspan
+      >
     </text>
   </template>
 </template>

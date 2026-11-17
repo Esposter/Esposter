@@ -22,12 +22,13 @@ Every builder is a `pnpm -C scripts` command, and every one takes `--dry-run`. A
 
 The keys a dataset publishes are the lock's own (`packages/genshin-world/src/generated/gameDataLock.json`, its `indexes` and `objects`), and the `GameDataset` value set (`packages/genshin-world/src/models/data/GameDataset.ts`) names the datasets. Which builder publishes each one, and which reader reads it, are the `genshin:assets` commands and the functions under `packages/genshin-world/src/services/` and `scripts/src/services/genshinAssets/` that name them. The code shows a reader's absence only by search, so the datasets whose reader has no caller, or that has no reader, are listed here:
 
-| Dataset                                                                   | Status                           |
-| :------------------------------------------------------------------------ | :------------------------------- |
-| `stats`, `readWeaponLevelRequiredExps`                                    | the reader has no caller yet     |
-| `kitSources`                                                              | no reader yet, and no caller yet |
-| `home`, `readHomeBlueprints` and `readHomeLevels`                         | the readers have no caller yet   |
-| `imaginarium`, `readImaginariumSeasons` and `readImaginariumDifficulties` | the readers have no caller yet   |
+| Dataset                                | Status                           |
+| :------------------------------------- | :------------------------------- |
+| `stats`, `readWeaponLevelRequiredExps` | the reader has no caller yet     |
+| `kitSources`                           | no reader yet, and no caller yet |
+| `home`                                 | no reader yet                    |
+| `imaginarium`                          | no reader yet                    |
+| `expeditions/bonuses`                  | no reader yet                    |
 
 ## What stays in the package
 

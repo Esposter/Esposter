@@ -5,16 +5,16 @@ describe(splitGameTextColors, () => {
   test("a string with no colour tag is one plain run", () => {
     expect.hasAssertions();
 
-    expect(splitGameTextColors("Lower")).toStrictEqual([{ text: "Lower" }]);
+    expect(splitGameTextColors("Lower")).toStrictEqual([{ color: "", text: "Lower" }]);
   });
 
   test("each coloured run keeps its colour, between the plain runs around it", () => {
     expect.hasAssertions();
 
     expect(splitGameTextColors("to <color=#F39000FF>24</color> hours")).toStrictEqual([
-      { text: "to " },
+      { color: "", text: "to " },
       { color: "#F39000FF", text: "24" },
-      { text: " hours" },
+      { color: "", text: " hours" },
     ]);
   });
 
@@ -33,7 +33,7 @@ describe(splitGameTextColors, () => {
   test("a tag of neither six nor eight hex digits stays plain text", () => {
     expect.hasAssertions();
 
-    expect(splitGameTextColors("<color=#123>1</color>")).toStrictEqual([{ text: "<color=#123>1</color>" }]);
+    expect(splitGameTextColors("<color=#123>1</color>")).toStrictEqual([{ color: "", text: "<color=#123>1</color>" }]);
   });
 
   test("a tag at the start and the end leaves no empty run", () => {
