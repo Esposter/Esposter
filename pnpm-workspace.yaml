@@ -195,6 +195,8 @@ catalog:
   three: ^0.187.0
   three-mesh-bvh: ^0.9.18
   tsdown: ^0.23.7
+  # @TODO: https://github.com/oxc-project/tsrs/releases — the prerelease pin goes once `latest` names the `7.1.0-beta` line:
+  # Until then `latest` still names the `0.25.0` line, and vite-plus 1.7 depends on `7.1.0-beta.tsrs2` exactly
   tsrs: ^7.1.0-beta.tsrs2
   type-fest: ^6.0.1
   typescript: 6.0.3
