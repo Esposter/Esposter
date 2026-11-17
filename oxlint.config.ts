@@ -26,10 +26,12 @@ import { POLLING_MESSAGE, USE_ROUTER_PAGE_MESSAGE } from "#oxlint/messages";
 import pinia from "eslint-plugin-pinia";
 import { defineConfig } from "oxlint";
 
-// The type-aware rules run on `tsrs-lint`, which refuses a tsconfig naming a content mapper (Nuxt's generated one, and
-// The Vue packages' `tsconfig.vue.json`) unless it may run the mapper, and oxlint passes it no flags. Every `vp lint`
-// Loads this file before oxlint starts its backend, so this is the one place the switch is set
+// The type-aware rules run on `tsrs-lint`, which oxlint launches with no flags, so its switches are set through the
+// Environment it inherits. Every `vp lint` loads this file before oxlint starts its backend, so this is the one place
+// They are set, the same two the typecheck scripts pass as `--runExternalCode` and `--fast`: running the content mapper
+// That Nuxt's generated tsconfig and the Vue packages' `tsconfig.vue.json` name, and the fast preset
 // @TODO: https://github.com/voidzero-dev/vite-plus/issues/3476
+process.env.TSRS_FAST = "1";
 process.env.TSRS_LINT_RUN_EXTERNAL_CODE = "1";
 
 // The Tiled tileset `.tsx` files are XML, not code. ESLint's ignores import this glob too,
