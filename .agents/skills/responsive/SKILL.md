@@ -19,7 +19,7 @@ A region shown from a breakpoint takes the `hidden` **class** (`class="hidden md
 
 ## Occasional commands wait in the overflow menu
 
-A surface shows its toggles, its one lead action and its close mark, and keeps every occasional command in a `UiOverflowMenu` **on every width** — nothing swaps at a breakpoint, so there is no second presentation of the same commands to drift from the first. The menu takes an `Item[]`, and every item carries a mark (`meaning`, or a whole `icon` class) beside its `title`: a menu is a list of labelled rows, never a grid of naked icons. The resource list's toolbar (`apps/web/app/components/Resource/List/Toolbar.vue`):
+A surface shows its toggles, its one lead action and its close mark, and keeps every occasional command in a `UiOverflowMenu` **on every width** — nothing swaps at a breakpoint, so there is no second presentation of the same commands to drift from the first. The one exception is a header too narrow for its toggles where the drawers do not dock (`openspec/specs/architecture/responsive/design.md`, the header bullet under "One component for every device"). The menu takes an `Item[]`, and every item carries a mark (`meaning`, or a whole `icon` class) beside its `title`: a menu is a list of labelled rows, never a grid of naked icons. The resource list's toolbar (`apps/web/app/components/Resource/List/Toolbar.vue`):
 
 ```vue
 <script setup lang="ts">
@@ -65,7 +65,7 @@ const items = computed<Item[]>(() => [
 - **Close / dismiss (`✕`)** — the escape hatch must never be buried inside a menu.
 - **A control that is already its own dropdown** (the column chooser in the toolbar example under "Occasional commands wait in the overflow menu" on this page). It is already one tap to a list; nesting a menu inside a menu is worse than leaving it out. Leave it beside the `…`.
 - **The primary action of the screen**, when the screen has exactly one.
-- **A toggle**, which says whether it is on — a state a menu row hides until it is opened.
+- **A toggle**, which says whether it is on — a state a menu row hides until it is opened — except in a header below the cut where the drawers dock, where it becomes a checked row (`isChecked`) of the header's one menu, as the room header's search and member list do.
 
 ### Dialogs live outside the menu
 

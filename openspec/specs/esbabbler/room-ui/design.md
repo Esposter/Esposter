@@ -53,16 +53,16 @@ The library's `UiEmptyState` (a mark named by its meaning, a title, a line on ho
 
 ## One room header at every width
 
-The room header is the same component on a phone and on a desktop, and there is no second bar of buttons above the composer. It holds the room-list toggle while the rooms are not docked, the room's name (the topic beside it from `sm` up), and at its end the call, the search and member-list toggles, and the room's overflow menu. The overflow menu holds what is read now and then — the followed threads and the pinned messages, each opening its pane in the side panel — and the notification level as a group of radios, marked with the level the reader has. Pinned messages are a pane rather than a popover off the header, as Slack's are, so a phone reads them in the same sheet as the members.
+The room header is the same component on a phone and on a desktop, and there is no second bar of buttons above the composer. It holds the room-list toggle while the rooms are not docked, the room's name (the topic beside it from `sm` up), and at its end the room's overflow menu. Where the rooms dock, the call and the search and member-list toggles sit out beside the menu; where they do not, the room-list toggle takes their place and they lead the menu as rows, the two toggles checked while their pane is open, so a phone's header holds the name and two marks. The overflow menu holds what is read now and then — the followed threads and the pinned messages, each opening its pane in the side panel — and the notification level as a group of radios, marked with the level the reader has. Pinned messages are a pane rather than a popover off the header, as Slack's are, so a phone reads them in the same sheet as the members.
 
 ```mermaid
 flowchart LR
   header["MessageContentHeader<br/>every width"]
   header --> rooms["Rooms toggle<br/>(only while the rooms are not docked)"]
   header --> name["Name, topic from sm up<br/>(the creator edits from it)"]
-  header --> call["Call"]
-  header --> search["Search toggle"] --> panel["Side panel pane"]
-  header --> members["Member list toggle"] --> panel
+  header --> call["Call<br/>(out where the rooms dock, a menu row elsewhere)"]
+  header --> search["Search toggle<br/>(out where the rooms dock, a checked row elsewhere)"] --> panel["Side panel pane"]
+  header --> members["Member list toggle<br/>(out where the rooms dock, a checked row elsewhere)"] --> panel
   header --> overflow["Room actions menu"]
   overflow --> threads["Followed Threads"] --> panel
   overflow --> pinned["Pinned Messages"] --> panel
@@ -83,28 +83,28 @@ The category is set from the Category field in the room settings' Overview panel
 
 ## Key files
 
-| File                                                                           | Role                                                                              |
-| ------------------------------------------------------------------------------ | --------------------------------------------------------------------------------- |
-| `apps/web/app/services/message/member/getMemberGroups.ts`                      | Discord-style member grouping by top role                                         |
-| `apps/web/app/services/message/member/getMemberListItems.ts`                   | The member list's rows, each under its group's heading                            |
-| `apps/web/app/services/message/member/getMemberGroupTitle.ts`                  | A group's heading: its role's name and how many hold it                           |
-| `apps/web/app/services/message/member/getRolelessMemberCount.ts`               | The roleless group's count: the total less the role groups                        |
-| `apps/web/app/services/message/member/getMemberDescription.ts`                 | A row's account name, when the room shows another, and status                     |
-| `apps/web/app/services/message/member/getTopRole.ts`                           | Top hoisted role for grouping + name tint                                         |
-| `apps/web/app/services/message/member/memberRoleChangeHooks.ts`                | Role store → member store totals re-read hook                                     |
-| `apps/web/shared/models/db/room/MemberCountByTopRole.ts`                       | Per-top-role count row from the server                                            |
-| `apps/web/app/store/message/ui/layout.ts`                                      | Persisted sidebar widths + right drawer selection                                 |
-| `apps/web/app/components/Ui/ResizeHandle.vue`                                  | A sidebar's edge, dragged or stepped by the arrows to size it                     |
-| `apps/web/app/store/message/ui/appearance.ts`                                  | Persisted message display density                                                 |
-| `apps/web/app/components/Message/Model/User/Settings/Type/Appearance/`         | Appearance settings panel (Message Display)                                       |
-| `apps/web/app/components/Ui/EmptyState.vue`                                    | The library's mark/title/description empty state                                  |
-| `apps/web/app/components/Message/Content/Header/Index.vue`                     | The one room header, at every width                                               |
-| `apps/web/app/components/Message/Content/Header/OverflowMenu.vue`              | The room's occasional panes and its notification level                            |
-| `apps/web/app/services/message/roomCategory/getRoomCategoryPositionUpdates.ts` | Position diff for category reorder persistence                                    |
-| `apps/web/app/services/message/roomCategory/resolveRoomCategoryId.ts`          | The category a room is listed under, resolved against the reader's own categories |
-| `apps/web/app/components/Message/LeftSideBar/Rooms.vue`                        | The sidebar's room groups, each room under the reader's own category              |
-| `apps/web/app/components/Message/Model/Room/Settings/Type/Overview/Index.vue`  | The Category field, saved on the reader's own membership                          |
-| `apps/web/server/services/message/updateUserToRoom.ts`                         | Writes a member's own row, refusing a category the caller does not own            |
+| File                                                                           | Role                                                                                                         |
+| ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------ |
+| `apps/web/app/services/message/member/getMemberGroups.ts`                      | Discord-style member grouping by top role                                                                    |
+| `apps/web/app/services/message/member/getMemberListItems.ts`                   | The member list's rows, each under its group's heading                                                       |
+| `apps/web/app/services/message/member/getMemberGroupTitle.ts`                  | A group's heading: its role's name and how many hold it                                                      |
+| `apps/web/app/services/message/member/getRolelessMemberCount.ts`               | The roleless group's count: the total less the role groups                                                   |
+| `apps/web/app/services/message/member/getMemberDescription.ts`                 | A row's account name, when the room shows another, and status                                                |
+| `apps/web/app/services/message/member/getTopRole.ts`                           | Top hoisted role for grouping + name tint                                                                    |
+| `apps/web/app/services/message/member/memberRoleChangeHooks.ts`                | Role store → member store totals re-read hook                                                                |
+| `apps/web/shared/models/db/room/MemberCountByTopRole.ts`                       | Per-top-role count row from the server                                                                       |
+| `apps/web/app/store/message/ui/layout.ts`                                      | Persisted sidebar widths + right drawer selection                                                            |
+| `apps/web/app/components/Ui/ResizeHandle.vue`                                  | A sidebar's edge, dragged or stepped by the arrows to size it                                                |
+| `apps/web/app/store/message/ui/appearance.ts`                                  | Persisted message display density                                                                            |
+| `apps/web/app/components/Message/Model/User/Settings/Type/Appearance/`         | Appearance settings panel (Message Display)                                                                  |
+| `apps/web/app/components/Ui/EmptyState.vue`                                    | The library's mark/title/description empty state                                                             |
+| `apps/web/app/components/Message/Content/Header/Index.vue`                     | The one room header, at every width                                                                          |
+| `apps/web/app/components/Message/Content/Header/OverflowMenu.vue`              | The room's occasional panes and its notification level, and below the dock cut the header's call and toggles |
+| `apps/web/app/services/message/roomCategory/getRoomCategoryPositionUpdates.ts` | Position diff for category reorder persistence                                                               |
+| `apps/web/app/services/message/roomCategory/resolveRoomCategoryId.ts`          | The category a room is listed under, resolved against the reader's own categories                            |
+| `apps/web/app/components/Message/LeftSideBar/Rooms.vue`                        | The sidebar's room groups, each room under the reader's own category                                         |
+| `apps/web/app/components/Message/Model/Room/Settings/Type/Overview/Index.vue`  | The Category field, saved on the reader's own membership                                                     |
+| `apps/web/server/services/message/updateUserToRoom.ts`                         | Writes a member's own row, refusing a category the caller does not own                                       |
 
 ## Notes
 
