@@ -68,7 +68,7 @@
   },
   "inlinedDependencies": {
     "tagged-tag": "1.0.0",
-    "type-fest": "6.0.0",
-    "vize": "0.777.0"
+    "type-fest": "6.0.1",
+    "vize": "0.778.0"
   }
 }
