@@ -20,12 +20,12 @@ const emit = defineEmits<{ loadMore: [onComplete: () => void] }>();
       <div flex flex-col min-h-0 of-hidden>
         <!-- A room row's own shape while the first page is on its way: a picture's mark and a name -->
         <template v-if="isPending">
-          <MessageModelRoomRowSkeleton v-for="index of DEFAULT_PAGE_LIMIT" :key="index" />
+          <UiListRowSkeleton v-for="index of DEFAULT_PAGE_LIMIT" :key="index" />
         </template>
         <template v-else>
           <slot />
           <StyledWaypoint :is-active="hasMore" @change="emit('loadMore', $event)">
-            <MessageModelRoomRowSkeleton v-for="index of DEFAULT_PAGE_LIMIT" :key="index" />
+            <UiListRowSkeleton v-for="index of DEFAULT_PAGE_LIMIT" :key="index" />
           </StyledWaypoint>
         </template>
       </div>

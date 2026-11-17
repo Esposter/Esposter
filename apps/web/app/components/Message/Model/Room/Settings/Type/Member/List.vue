@@ -50,13 +50,13 @@ await readMemberCounts();
     <UiTextField v-model="searchQuery" label="Search members" :type="UiTextFieldType.Search" />
     <!-- A member row's own shape while a search is out: the picture and the name -->
     <div v-if="isPending" flex flex-col>
-      <MessageModelRoomRowSkeleton v-for="index of DEFAULT_PAGE_LIMIT" :key="index" />
+      <UiListRowSkeleton v-for="index of DEFAULT_PAGE_LIMIT" :key="index" />
     </div>
     <template v-else>
       <UiList v-if="memberItems.length > 0" v-model="selectedMemberIds" :items="memberItems" label="Members" />
       <UiEmptyState v-else :meaning="UiIconMeaning.Person" title="No member goes by that name." />
       <StyledWaypoint :is-active="hasMore" @change="(onComplete) => readMoreMembers(onComplete)">
-        <MessageModelRoomRowSkeleton v-for="index of DEFAULT_PAGE_LIMIT" :key="index" />
+        <UiListRowSkeleton v-for="index of DEFAULT_PAGE_LIMIT" :key="index" />
       </StyledWaypoint>
     </template>
   </div>

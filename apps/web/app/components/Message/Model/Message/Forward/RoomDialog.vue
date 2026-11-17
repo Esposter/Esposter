@@ -48,13 +48,13 @@ const {
     />
     <div v-else aria-label="Rooms" role="list" flex flex-col>
       <template v-if="isPending && rooms.length === 0">
-        <MessageModelRoomRowSkeleton v-for="index in DEFAULT_PAGE_LIMIT" :key="index" aria-hidden="true" />
+        <UiListRowSkeleton v-for="index in DEFAULT_PAGE_LIMIT" :key="index" aria-hidden="true" />
       </template>
       <div v-for="room of rooms" :key="room.id" role="listitem">
         <MessageModelMessageForwardRoomListItem :room />
       </div>
       <StyledWaypoint :is-active="hasMore" @change="(onComplete) => readMoreSearchedItems(onComplete)">
-        <MessageModelRoomRowSkeleton v-for="index in DEFAULT_PAGE_LIMIT" :key="index" />
+        <UiListRowSkeleton v-for="index in DEFAULT_PAGE_LIMIT" :key="index" />
       </StyledWaypoint>
     </div>
     <div py-2 ui-frame>

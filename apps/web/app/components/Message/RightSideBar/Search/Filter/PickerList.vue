@@ -14,12 +14,12 @@ const emit = defineEmits<{ readMore: [onComplete: () => void] }>();
 <template>
   <div flex flex-col of-y-auto>
     <div v-if="isPending" aria-busy="true" flex flex-col>
-      <MessageRightSideBarSearchListItemSkeleton v-for="i in DEFAULT_PAGE_LIMIT" :key="i" />
+      <UiListRowSkeleton v-for="i in DEFAULT_PAGE_LIMIT" :key="i" />
     </div>
     <template v-else>
       <slot />
       <StyledWaypoint :is-active="hasMore" @change="emit('readMore', $event)">
-        <MessageRightSideBarSearchListItemSkeleton v-for="i in DEFAULT_PAGE_LIMIT" :key="i" />
+        <UiListRowSkeleton v-for="i in DEFAULT_PAGE_LIMIT" :key="i" />
       </StyledWaypoint>
     </template>
   </div>
