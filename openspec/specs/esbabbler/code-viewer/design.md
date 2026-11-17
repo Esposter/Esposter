@@ -6,7 +6,7 @@ A code file attached to a message opens in a read-only CodeMirror view. The file
 
 ```mermaid
 flowchart TD
-  F["setup<br/>fetch the text once"] --> M["onMounted<br/>view created on the text"]
+  F["setup, or the url's arrival<br/>fetch the text once"] --> M["onMounted<br/>view created on the text"]
   M --> C["basicSetup<br/>app extensions in one Compartment"]
   G["grammar load<br/>on first use of its language"] -->|"after the view exists"| R["compartment reconfigured<br/>document and scroll kept"]
   C --> R
@@ -19,11 +19,12 @@ flowchart TD
 - **The grammar loads on first use.** `getLanguageExtension` looks the language up in `EXTENDED_LANGUAGES`: the list `@codemirror/language-data` ships, with a Vue entry appended because that package has none. A file's grammar loads when a file of that kind first opens, not with the page, and its arrival reconfigures the view that already shows the text.
 - **The colours are the app's own.** `uiEditorExtensions` sets the chrome, meaning the transparent background, the text, the selection, the cursor and the gutters, in the UI library's tokens. `uiHighlightSpecs` sets the highlight styles in the same tokens. No bundled theme is loaded, so the viewer follows the app's themes like the rest of the UI.
 - **A failed fetch shows an empty file.** The text falls back to empty and the error is logged, so a broken link never blocks the message.
+- **The text waits for the attachment's url.** A sent attachment's bubble mounts before the store mints its read url, and a read of an empty url fetches the page the code is shown in. So nothing is read until a url is there, and the view is made when the first one lands, with its text. A url minted again after that is no change to the file, so the text is read once per view.
 - **A preview is capped.** In a message preview the view takes at most `PREVIEW_MAX_HEIGHT`, and pointer events and selection are enabled on it.
 
 ## Decisions
 
-- **The text is the view's document from creation, and nothing writes it afterwards.** The wrapper's model watch replaced the whole document on every external write, which history recorded (#121) and which reset the cursor (#229). The text is fetched before the view exists and never changes, so there is no model, watch or emit to keep. Rejected: keeping `v-model` for parity with the wrapper, since no caller writes the text after it loads.
+- **The text is the view's document from creation, and nothing writes it afterwards.** The wrapper's model watch replaced the whole document on every external write, which history recorded (#121) and which reset the cursor (#229). The text is fetched before the view exists and never changes, so there is no model, watch or emit to keep. The view waits for its url rather than being written after it (see "The text waits for the attachment's url"). Rejected: keeping `v-model` for parity with the wrapper, since no caller writes the text after it loads.
 - **`basicSetup` from `codemirror`, then the app's extensions in one `Compartment`.** The wrapper applied `basicSetup` to every view, so the line numbers, folding and search a reader sees stay. The grammar arrives after the view exists, so the language and the app's chrome sit in one compartment that a watch reconfigures.
 - **Read-only is `EditorView.editable` set to false with `EditorState.readOnly` set to true**, the two facets the wrapper's `disabled` set.
 - **The preview cap is a theme on the view.** `EditorView.theme` holds the editor at the preview height with pointer events and selection enabled, which is what the wrapper's `style` prop did through the same theme.

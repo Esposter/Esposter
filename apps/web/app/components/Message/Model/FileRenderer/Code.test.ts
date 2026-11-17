@@ -33,7 +33,7 @@ describe("messageModelFileRendererCode", () => {
   const languageName = "Vue";
   const scrollTop = 40;
   const text = "attachment";
-  const url = "";
+  const url = "/attachment.txt";
   const file = new FileEntity({ filename: "filename", id: v7(), mimetype: MimeType.PlainText, size: 1 });
   const props = { file, isPreview: false, language: languageName, url };
   const mountCode = (propsOverride?: Partial<typeof props>) =>
@@ -160,5 +160,32 @@ describe("messageModelFileRendererCode", () => {
     expect(view.state.facet(language)).toBe(grammar);
     expect(view.state.doc).toBe(documentBefore);
     expect(view.scrollDOM.scrollTop).toBe(scrollTopBefore);
+  });
+
+  // A sent attachment's bubble mounts before its url is minted, and a read of an empty url fetches the page itself, so
+  // Nothing is read until the url lands, and the view is then made with the text
+  test("the text waits for the attachment's url", async () => {
+    expect.hasAssertions();
+
+    const component = await mountCode({ url: "" });
+
+    expect(vi.mocked(fetch)).not.toHaveBeenCalled();
+
+    await component.setProps({ url });
+    await flushPromises();
+
+    expect(vi.mocked(fetch)).toHaveBeenCalledExactlyOnceWith(url);
+    expect(findView().state.doc.toString()).toBe(text);
+  });
+
+  // A url minted again after the text is read is no change to the file, so the view is not read a second time
+  test("a re-minted url keeps the text on screen", async () => {
+    expect.hasAssertions();
+
+    const component = await mountCode();
+    await component.setProps({ url: `${url}?sig=` });
+    await flushPromises();
+
+    expect(vi.mocked(fetch)).toHaveBeenCalledExactlyOnceWith(url);
   });
 });

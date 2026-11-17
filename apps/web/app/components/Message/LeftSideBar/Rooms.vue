@@ -22,7 +22,7 @@ const userToRoomStore = useUserToRoomStore();
 const { getMyUserToRoom } = userToRoomStore;
 const getDragReorderProps = useDragReorder();
 const { readMoreRooms, readRooms } = await useReadRooms();
-const [{ isPending }] = await Promise.all([readRooms(), readRoomCategories()]);
+const [{ isError, isPending, refresh }] = await Promise.all([readRooms(), readRoomCategories()]);
 const categoryIdRoomsMap = computed(() => {
   const newCategoryIdRoomsMap = new Map<null | string, RoomInMessage[]>();
   // The category a room is listed under is the reader's own for it: another member's assignment is theirs alone
@@ -70,8 +70,10 @@ const moveRoomCategory = (roomCategoryId: RoomCategoryInMessage["id"], direction
         </template>
       </MessageLeftSideBarCollapsibleHeader>
     </template>
+    <!-- A failed read is not a reader with no rooms: it says so and tries again, as the message list does -->
+    <UiErrorState v-if="isError" error="The rooms could not be loaded." @retry="refresh()" />
     <UiEmptyState
-      v-if="rooms.length === 0"
+      v-else-if="rooms.length === 0"
       description="Create a room or join one with an invite link."
       :meaning="UiIconMeaning.Comment"
       title="No rooms yet"

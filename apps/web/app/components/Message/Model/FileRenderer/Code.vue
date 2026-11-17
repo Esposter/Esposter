@@ -13,32 +13,32 @@ interface Props extends FileRendererComponentProps {
 }
 
 const { isPreview, language, url } = defineProps<Props>();
-const code = await getResultAsync(async () => {
-  const response = await fetch(url);
-  if (!response.ok)
-    throw new InvalidOperationError(Operation.Read, url, `HTTP ${response.status} ${response.statusText}`);
-  return response.text();
-})
-  .orTee(console.error)
-  .unwrapOr("");
+const readCode = (fileUrl: string) =>
+  getResultAsync(async () => {
+    const response = await fetch(fileUrl);
+    if (!response.ok)
+      throw new InvalidOperationError(Operation.Read, fileUrl, `HTTP ${response.status} ${response.statusText}`);
+    return response.text();
+  })
+    .orTee(console.error)
+    .unwrapOr("");
+// The text is read before the view exists, and the view is made with it, so nothing writes the document afterwards.
+// A sent attachment's bubble mounts before the store mints its url, and a read of an empty url fetches the page the
+// Code is shown in, so the read waits for a url and the view is made when the first one lands
+let code: string | undefined = url ? await readCode(url) : undefined;
 const languageExtensions = computedAsync(() => getLanguageExtension(language), []);
 const extensions = computed(() => [...languageExtensions.value, ...uiEditorExtensions]);
 const container = useTemplateRef("container");
 const compartment = new Compartment();
 let view: EditorView | undefined;
 
-watch(
-  () => extensions.value,
-  (value) => view?.dispatch({ effects: compartment.reconfigure(value) }),
-);
-
-onMounted(() => {
+const createView = (doc: string) => {
   if (!container.value) return;
 
   view = new EditorView({
     parent: container.value,
     state: EditorState.create({
-      doc: code,
+      doc,
       extensions: [
         basicSetup,
         compartment.of(extensions.value),
@@ -50,6 +50,25 @@ onMounted(() => {
       ],
     }),
   });
+};
+
+watch(
+  () => extensions.value,
+  (value) => view?.dispatch({ effects: compartment.reconfigure(value) }),
+);
+watch(
+  () => url,
+  async (newUrl) => {
+    // A url re-minted after the text is read is no change to the file, so the text on screen stays where it is
+    if (code !== undefined || !newUrl) return;
+
+    code = await readCode(newUrl);
+    if (!view) createView(code);
+  },
+);
+
+onMounted(() => {
+  if (code !== undefined) createView(code);
 });
 
 // A leave transition keeps the attachment on screen after its component unmounts, and destroying the view would empty
