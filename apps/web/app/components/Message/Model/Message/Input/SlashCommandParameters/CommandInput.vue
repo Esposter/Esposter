@@ -31,7 +31,7 @@ useFocusWhenActive(input, () => isFocused);
       @keydown.delete="!modelValue && emit('delete')"
       @keydown.right.exact="
         (event) => {
-          if (checkIsCaretAtEnd(event.target as HTMLInputElement)) {
+          if (checkIsCaretAtEnd(event.target)) {
             event.preventDefault();
             emit('navigate:next');
           }

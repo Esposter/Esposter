@@ -1,7 +1,6 @@
 // @vitest-environment nuxt
 import type { MemberCountByTopRole } from "#shared/models/db/room/MemberCountByTopRole";
 import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
-import type { Page } from "@esposter/db-schema";
 
 import { flushCache } from "#src/composables/cache/indexedDb/flushCache.test";
 import { goOffline, goOnline } from "#src/composables/shared/network.test";
@@ -12,7 +11,6 @@ import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.te
 import { createUser } from "#src/services/message/user/createUser.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useMemberStore } from "#src/store/message/user/member";
-import { createEmptyPage } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { v7 } from "uuid";
@@ -23,7 +21,7 @@ describe(useMemberCache, () => {
   let memberCount: ComputedRef<number | undefined>;
   let memberCountsByTopRole: ComputedRef<MemberCountByTopRole[]>;
   let members: Ref<MemberInRoom[]>;
-  let initializeCursorPaginationData: (data: Page<MemberInRoom>) => void;
+  let resetCursorPaginationData: () => void;
   let refreshMemberCounts: ReturnType<typeof useMemberStore>["refreshMemberCounts"];
   const partitionKey = v7();
   const secondPartitionKey = v7();
@@ -37,11 +35,11 @@ describe(useMemberCache, () => {
           setCurrentRoomId(initialRouteId);
           const memberStore = useMemberStore();
           ({ memberCount, memberCountsByTopRole, members } = storeToRefs(memberStore));
-          ({ initializeCursorPaginationData, refreshMemberCounts } = memberStore);
+          ({ refreshMemberCounts, resetCursorPaginationData } = memberStore);
           useMemberCache();
 
           onUnmounted(() => {
-            initializeCursorPaginationData(createEmptyPage<MemberInRoom>());
+            resetCursorPaginationData();
           });
         },
       }),

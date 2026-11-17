@@ -16,7 +16,7 @@ interface Props {
 
 const { room } = defineProps<Props>();
 const saveRoom = useSaveRoom(() => room);
-const readRoomCategories = useReadRoomCategories();
+const { isError: isRoomCategoriesError, readRoomCategories } = useReadRoomCategories();
 await readRoomCategories();
 
 const roomCategoryStore = useRoomCategoryStore();
@@ -98,6 +98,12 @@ const save = () => {
 <!-- The panel's name is the header's, so the fields start at the top, one column across the panel -->
 <template>
   <div flex flex-col gap-6>
+    <!-- Without the categories the field can only offer none, which would read as the room being uncategorized -->
+    <UiErrorState
+      v-if="isRoomCategoriesError"
+      error="The room categories could not be loaded."
+      @retry="readRoomCategories()"
+    />
     <MessageModelRoomSettingsTypeOverviewCategoryField
       v-model="editedCategoryId"
       :items="categoryItems"

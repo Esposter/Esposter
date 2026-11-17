@@ -14,10 +14,7 @@ const {
     <!-- Ranked players' own rows while the read is out -->
     <template #loading>
       <div aria-busy="true" flex flex-col>
-        <div v-for="index of 5" :key="index" ui-row>
-          <UiSkeleton shrink-0 size-6 />
-          <UiSkeleton h-4 w="1/3" />
-        </div>
+        <UiListRowSkeleton v-for="index of 5" :key="index" is-text-short />
       </div>
     </template>
     <AchievementLeaderboardCard v-if="leaderboard" :leaderboard />

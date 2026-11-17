@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { UiSchemaFormRendererProps } from "#src/models/ui/schemaForm/UiSchemaFormRendererProps";
 import type { UiSelectItem } from "#src/models/ui/UiSelectItem";
-import type { JsonSchema } from "@jsonforms/core";
 
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { getSchemaFormVariantIndex } from "#src/services/ui/schemaForm/getSchemaFormVariantIndex";
@@ -14,7 +13,7 @@ interface Props extends UiSchemaFormRendererProps {}
 const props = withDefaults(defineProps<Props>(), unsetRendererState);
 const control = computed(() => ({ ...props, ...mapStateToOneOfProps(props.form.state, omitUndefined(props)) }));
 const { handleChange } = mapDispatchToControlProps(props.form.dispatch);
-const variants = computed(() => (control.value.schema.oneOf ?? []) as JsonSchema[]);
+const variants = computed(() => control.value.schema.oneOf ?? []);
 const renderInfos = computed(() =>
   createCombinatorRenderInfos(
     variants.value,

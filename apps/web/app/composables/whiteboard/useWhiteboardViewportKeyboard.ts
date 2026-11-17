@@ -52,19 +52,18 @@ export const useWhiteboardViewportKeyboard = () => {
     },
   ];
   useCommands(commands);
-  // Casts (not instanceof) as usePushToTalk does, since the window's key events are typed as Event here
-  useEventListener(defaultWindow, "keydown", (event) => {
-    const keyboardEvent = event as KeyboardEvent;
-    const { target } = keyboardEvent;
-    if (keyboardEvent.code !== "Space" || checkIsEditableTarget(target)) return;
+  // Annotated, not instanceof-checked, as usePushToTalk does, since the window's key events are typed as Event here
+  useEventListener(defaultWindow, "keydown", (event: KeyboardEvent) => {
+    const { target } = event;
+    if (event.code !== "Space" || checkIsEditableTarget(target)) return;
     // A focused button or link is pressed by Space, which a pan must not take from it
     if (checkIsElementTarget(target) && target.closest("button, a[href], summary, [role='button']")) return;
 
-    keyboardEvent.preventDefault();
+    event.preventDefault();
     isSpaceHeld.value = true;
   });
-  useEventListener(defaultWindow, "keyup", (event) => {
-    if ((event as KeyboardEvent).code === "Space") isSpaceHeld.value = false;
+  useEventListener(defaultWindow, "keyup", (event: KeyboardEvent) => {
+    if (event.code === "Space") isSpaceHeld.value = false;
   });
   // A key released while the window is blurred is never seen, so the pan ends with the window
   useEventListener(defaultWindow, "blur", () => {

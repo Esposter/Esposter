@@ -9,6 +9,7 @@ import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useRoomStore } from "#src/store/message/room/index";
 import { omitUndefined } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { assert, describe, expect, test } from "vitest";
 
@@ -28,6 +29,20 @@ describe("messageModelRoomSettingsTypeOverviewIndex", () => {
     expect(component.findComponent(MessageModelRoomSettingsTypeOverviewTopicField).get("input").element.value).toBe(
       "a",
     );
+  });
+
+  // A failed read of the categories leaves the field offering only none, which reads as an uncategorized room
+  // So the panel says the categories did not load rather than showing that
+  test("says so when the room categories could not be read", async () => {
+    expect.hasAssertions();
+
+    trpcMsw.room.category.readRoomCategories.query(() => {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
+    const component = await mountSuspended(MessageModelRoomSettingsTypeOverviewIndex, { props: { room } });
+    await flushPromises();
+
+    expect(component.text()).toContain("The room categories could not be loaded.");
   });
 
   // A save writes the field the reader edited and no other. The topic another admin set since the panel opened is

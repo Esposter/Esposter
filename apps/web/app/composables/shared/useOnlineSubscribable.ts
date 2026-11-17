@@ -31,7 +31,7 @@ export function useOnlineSubscribable(
   // It creates are made inside the captured one and stopped with it
   const setup = () => {
     const online = useOnline();
-    const sources = (Array.isArray(source) ? [...source, online] : [source, online]) as MultiWatchSources;
+    const sources: MultiWatchSources = Array.isArray(source) ? [...source, online] : [source, online];
     const key = "subscription";
 
     let currentCleanup: (() => Promisable<void>) | undefined;

@@ -24,6 +24,6 @@ defineExpose({
     aria-hidden="true"
     tabindex="-1"
     hidden
-    @change="(event) => emit('select', (event.target as HTMLInputElement).files?.[0])"
+    @change="emit('select', input?.files?.[0])"
   />
 </template>

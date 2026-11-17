@@ -46,9 +46,7 @@ useFocusWhenActive(input, () => isFocused);
       @blur="emit('blur')"
       @keydown="
         (event) => {
-          const target = event.target as HTMLInputElement;
-
-          if (event.key === 'ArrowLeft' && checkIsCaretAtStart(target)) {
+          if (event.key === 'ArrowLeft' && checkIsCaretAtStart(event.target)) {
             event.preventDefault();
             emit('navigate:previous');
             return;

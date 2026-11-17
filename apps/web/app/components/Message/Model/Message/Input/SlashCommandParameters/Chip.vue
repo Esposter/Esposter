@@ -60,7 +60,7 @@ useFocusWhenActive(input, () => Boolean(isFocused || isAutofocus));
       @keydown.delete="!modelValue && emit('delete')"
       @keydown.left.exact="
         (event) => {
-          if (checkIsCaretAtStart(event.target as HTMLInputElement)) {
+          if (checkIsCaretAtStart(event.target)) {
             event.preventDefault();
             emit('navigate:previous');
           }
@@ -68,7 +68,7 @@ useFocusWhenActive(input, () => Boolean(isFocused || isAutofocus));
       "
       @keydown.right.exact="
         (event) => {
-          if (checkIsCaretAtEnd(event.target as HTMLInputElement)) {
+          if (checkIsCaretAtEnd(event.target)) {
             event.preventDefault();
             emit('navigate:next');
           }

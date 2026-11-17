@@ -4,7 +4,7 @@ import type { Expression } from "#src/models/desmos/Expression";
 import { withDefaultExpressionColor } from "#src/services/visual/withDefaultExpressionColor";
 import { useThemeModeStore } from "#src/store/ui/themeMode";
 import { ignoreWarn } from "#src/util/console/ignoreWarn";
-import { takeOne } from "@esposter/shared";
+import { NotFoundError, takeOne } from "@esposter/shared";
 
 interface Props {
   expressions: Expression[];
@@ -28,7 +28,8 @@ const { isFailed, loaded: calculator } = useLazyLoad(async (signal) => {
   // A drawing unmounted while the script loaded has no element of its own to draw into, and the element its id names
   // May be a remount's, so it stops here rather than building a second calculator into it
   signal.throwIfAborted();
-  const element = window.document.getElementById(id) as HTMLDivElement;
+  const element = window.document.getElementById(id);
+  if (!(element instanceof HTMLDivElement)) throw new NotFoundError("DisplayGraph", id);
   const newCalculator = await GraphingCalculator(element, {
     border: false,
     expressionsCollapsed: true,

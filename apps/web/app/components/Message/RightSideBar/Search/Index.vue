@@ -12,7 +12,9 @@ const { isSearching } = storeToRefs(searchMessageStore);
      — so a tab for it was a second way to ask the same question, with its own result slice to keep apart -->
 <template>
   <MessageRightSideBarPane title="Search" is-body-bare @close="isRightDrawerOpen = false">
-    <MessageRightSideBarSearchHeader />
+    <template #header>
+      <MessageRightSideBarSearchHeader />
+    </template>
     <MessageRightSideBarSearchMessageList v-if="!isSearching" />
   </MessageRightSideBarPane>
 </template>

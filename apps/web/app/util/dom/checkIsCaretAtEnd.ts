@@ -1,2 +1,4 @@
-export const checkIsCaretAtEnd = (target: HTMLInputElement) =>
-  target.selectionStart === target.value.length && target.selectionEnd === target.value.length;
+export const checkIsCaretAtEnd = (target: EventTarget | null) =>
+  target instanceof HTMLInputElement &&
+  target.selectionStart === target.value.length &&
+  target.selectionEnd === target.value.length;

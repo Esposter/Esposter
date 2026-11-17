@@ -20,18 +20,17 @@ export const usePushToTalk = (isInCall: MaybeRefOrGetter<boolean>, target?: Mayb
       Boolean(pushToTalkKeybind.value) &&
       userSettings.value?.voiceInputMode === VoiceInputMode.PushToTalk,
   );
-  // Casts (not instanceof) — PiP window events come from another realm with its own KeyboardEvent
-  useEventListener(listenerTarget, "keydown", (event) => {
-    const keyboardEvent = event as KeyboardEvent;
-    if (!isActive.value || keyboardEvent.code !== pushToTalkKeybind.value || keyboardEvent.repeat) return;
+  // Annotated rather than instanceof-checked — PiP window events come from another realm with its own KeyboardEvent
+  useEventListener(listenerTarget, "keydown", (event: KeyboardEvent) => {
+    if (!isActive.value || event.code !== pushToTalkKeybind.value || event.repeat) return;
     // Typing in the composer must not transmit — Discord behaviour
-    if (checkIsEditableTarget(keyboardEvent.target)) return;
-    keyboardEvent.preventDefault();
+    if (checkIsEditableTarget(event.target)) return;
+    event.preventDefault();
     setPushToTalkKeyHeld(true);
   });
   // Keyup always closes the gate (even from an editable element) so focus changes can't leave it stuck open
-  useEventListener(listenerTarget, "keyup", (event) => {
-    if ((event as KeyboardEvent).code !== pushToTalkKeybind.value) return;
+  useEventListener(listenerTarget, "keyup", (event: KeyboardEvent) => {
+    if (event.code !== pushToTalkKeybind.value) return;
     setPushToTalkKeyHeld(false);
   });
   // Key releases outside a blurred window are invisible — close the gate on blur

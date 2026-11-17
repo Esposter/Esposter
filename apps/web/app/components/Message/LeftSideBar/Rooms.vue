@@ -12,7 +12,7 @@ import { useRoomCategoryStore } from "#src/store/message/roomCategory";
 import { getOrCreate } from "@esposter/shared";
 
 const isCollapsed = useLocalStorage(LocalStorageKey.MessageSidebarRoomsCollapsed, false);
-const readRoomCategories = useReadRoomCategories();
+const { isError: isRoomCategoriesError, readRoomCategories } = useReadRoomCategories();
 const roomCategoryStore = useRoomCategoryStore();
 const { roomCategories } = storeToRefs(roomCategoryStore);
 const { reorderRoomCategories } = roomCategoryStore;
@@ -77,6 +77,13 @@ const moveRoomCategory = (roomCategoryId: RoomCategoryInMessage["id"], direction
       description="Create a room or join one with an invite link."
       :meaning="UiIconMeaning.Comment"
       title="No rooms yet"
+    />
+    <!-- The categories are the headers the rooms group under, so a failed read leaves every room listed and says
+         what is missing -->
+    <UiErrorState
+      v-if="isRoomCategoriesError"
+      error="The room categories could not be loaded."
+      @retry="readRoomCategories()"
     />
     <MessageModelRoomCategoryRoomGroup :rooms="uncategorizedRooms" />
     <div :="roomCategoryReorderProps">
