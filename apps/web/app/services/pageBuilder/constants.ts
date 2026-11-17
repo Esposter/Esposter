@@ -123,6 +123,7 @@ export const STYLE_LENGTH_PROPERTIES: readonly StyleProperty[] = [
   "width",
   "height",
   "max-width",
+  "min-height",
   "top",
   "right",
   "bottom",
@@ -140,7 +141,10 @@ export const STYLE_BORDER_WIDTH_UNITS = STYLE_LENGTH_UNITS.filter((lengthUnit) =
 export const DEFAULT_LENGTH_UNIT = "px";
 // The sectors the style panel groups its properties in, in the order it draws them
 export const STYLE_SECTORS = [
-  { properties: ["display", "flex-direction", "justify-content", "align-items", "gap"], title: "Layout" },
+  {
+    properties: ["display", "flex-direction", "flex-wrap", "justify-content", "align-items", "gap", "float"],
+    title: "Layout",
+  },
   {
     properties: [
       "margin-top",
@@ -154,25 +158,29 @@ export const STYLE_SECTORS = [
     ],
     title: "Spacing",
   },
-  { properties: ["width", "height", "max-width"], title: "Size" },
-  { properties: ["position", "top", "right", "bottom", "left"], title: "Position" },
+  { properties: ["width", "height", "max-width", "min-height", "overflow"], title: "Size" },
+  { properties: ["position", "top", "right", "bottom", "left", "z-index"], title: "Position" },
   {
     properties: [
       "font-family",
       "font-size",
       "font-weight",
+      "font-style",
       "line-height",
       "letter-spacing",
       "text-align",
       "text-decoration",
+      "text-transform",
       "color",
     ],
     title: "Typography",
   },
   { properties: ["background-color", "background-image"], title: "Background" },
   { properties: ["border-width", "border-style", "border-color", "border-radius"], title: "Border" },
-  { properties: ["opacity", "box-shadow"], title: "Effects" },
+  { properties: ["opacity", "box-shadow", "transform", "transition", "cursor"], title: "Effects" },
 ] satisfies { properties: StyleProperty[]; title: string }[];
+// The title of the sector an email attribute that no webpage sector names is drawn under, after every sector that holds one
+export const OTHER_STYLE_SECTOR_TITLE = "Other";
 // The accent every box the overlay draws is coloured by, read from the layer's own custom property
 const OVERLAY_ACCENT = "var(--ui-accent, currentColor)";
 const OVERLAY_HAIRLINE_WIDTH = "0.0625rem";

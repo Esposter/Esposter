@@ -1,5 +1,11 @@
 // @vitest-environment nuxt
+import type { NodeStyle } from "#shared/models/pageBuilder/NodeStyle";
+import type { SectionNode } from "#shared/models/pageBuilder/SectionNode";
+
 import { ButtonTarget } from "#shared/models/pageBuilder/ButtonTarget";
+import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
+import { StyleBreakpoint } from "#shared/models/pageBuilder/StyleBreakpoint";
+import { StyleState } from "#shared/models/pageBuilder/StyleState";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import {
   createTestImageNode,
@@ -10,16 +16,30 @@ import {
   TEST_THIRD_ID,
   TEST_URL,
 } from "#shared/services/pageBuilder/constants.test";
+import { createButton } from "#shared/services/pageBuilder/createButton.test";
+import { getFieldInput } from "#src/components/PageBuilder/StylePanel/getFieldInput.test";
+import { getSectorTitle } from "#src/components/PageBuilder/StylePanel/getSectorTitle.test";
 import PageBuilderStylePanel from "#src/components/PageBuilder/StylePanel/Index.vue";
 import { webpageKind } from "#src/services/pageBuilder/webpageKind";
 import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
 import { usePageBuilderHistoryStore } from "#src/store/pageBuilder/history";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
-import { describe, expect, test } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
+
+// A section holding the style given at the base breakpoint in its default state
+const createSection = (id: string, style: NodeStyle): SectionNode => ({
+  props: { children: [], elementId: "", id, style, tag: HtmlTag.Section },
+  type: WebpageNodeType.Section,
+});
 
 describe("pageBuilderStylePanel", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
   test("drawing a node whose choices are unset records no edit", async () => {
     expect.hasAssertions();
 
@@ -70,5 +90,71 @@ describe("pageBuilderStylePanel", () => {
     await component.vm.$nextTick();
 
     expect((getWidthInput().element as HTMLInputElement).value).toBe("");
+  });
+
+  test("a property the sectors lacked is set in its sector", async () => {
+    expect.hasAssertions();
+
+    vi.stubGlobal("CSS", { supports: () => true });
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    pageBuilderDocumentStore.setDocument(TEST_ID, webpageKind, {
+      content: [
+        createSection(TEST_OTHER_ID, { [StyleBreakpoint.Base]: { [StyleState.Default]: { display: "flex" } } }),
+      ],
+      root: TEST_ROOT,
+    });
+    const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    pageBuilderCanvasStore.setSelectedNodeId(TEST_ID, TEST_OTHER_ID);
+
+    const component = await mountSuspended(PageBuilderStylePanel, { props: { resourceId: TEST_ID } });
+    await getFieldInput(component, "flex-wrap").setValue("wrap");
+
+    expect(getSectorTitle(component, "flex-wrap")).toBe("Layout");
+    expect(pageBuilderDocumentStore.getDocument(TEST_ID)?.content[0]?.props.style).toStrictEqual({
+      [StyleBreakpoint.Base]: { [StyleState.Default]: { display: "flex", "flex-wrap": "wrap" } },
+    });
+  });
+
+  test("the Effects sector sets a transform", async () => {
+    expect.hasAssertions();
+
+    vi.stubGlobal("CSS", { supports: () => true });
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    pageBuilderDocumentStore.setDocument(TEST_ID, webpageKind, {
+      content: [createButton(TEST_OTHER_ID)],
+      root: TEST_ROOT,
+    });
+    const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    pageBuilderCanvasStore.setSelectedNodeId(TEST_ID, TEST_OTHER_ID);
+
+    const component = await mountSuspended(PageBuilderStylePanel, { props: { resourceId: TEST_ID } });
+    await getFieldInput(component, "transform").setValue("rotate(10deg)");
+
+    expect(getSectorTitle(component, "transform")).toBe("Effects");
+    expect(pageBuilderDocumentStore.getDocument(TEST_ID)?.content[0]?.props.style).toStrictEqual({
+      [StyleBreakpoint.Base]: { [StyleState.Default]: { transform: "rotate(10deg)" } },
+    });
+  });
+
+  test("an unsupported value for a new property is not saved", async () => {
+    expect.hasAssertions();
+
+    vi.stubGlobal("CSS", { supports: () => false });
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    pageBuilderDocumentStore.setDocument(TEST_ID, webpageKind, {
+      content: [createSection(TEST_OTHER_ID, { [StyleBreakpoint.Base]: { [StyleState.Default]: { "z-index": "2" } } })],
+      root: TEST_ROOT,
+    });
+    const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    pageBuilderCanvasStore.setSelectedNodeId(TEST_ID, TEST_OTHER_ID);
+
+    const component = await mountSuspended(PageBuilderStylePanel, { props: { resourceId: TEST_ID } });
+    await getFieldInput(component, "z-index").setValue("2px");
+    await flushPromises();
+
+    expect(component.text()).toContain("z-index does not take this value");
+    expect(pageBuilderDocumentStore.getDocument(TEST_ID)?.content[0]?.props.style).toStrictEqual({
+      [StyleBreakpoint.Base]: { [StyleState.Default]: { "z-index": "2" } },
+    });
   });
 });

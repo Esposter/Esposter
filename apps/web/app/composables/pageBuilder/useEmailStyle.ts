@@ -3,6 +3,7 @@ import type { EmailStyleField } from "#src/models/pageBuilder/EmailStyleField";
 import { emailRegistry } from "#shared/services/pageBuilder/email/emailRegistry";
 import { getEmailAttributeValue } from "#shared/services/pageBuilder/email/getEmailAttributeValue";
 import { getEmailAttributeOperation } from "#src/services/pageBuilder/email/getEmailAttributeOperation";
+import { getEmailStyleSections } from "#src/services/pageBuilder/email/getEmailStyleSections";
 import { emailKind } from "#src/services/pageBuilder/emailKind";
 import { getNodePointer } from "#src/services/pageBuilder/getNodePointer";
 import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
@@ -50,6 +51,7 @@ export const useEmailStyle = (resourceId: MaybeRefOrGetter<string>) => {
       };
     });
   });
+  const sections = computed(() => getEmailStyleSections(fields.value));
   // A write lands on the node it names, which is the selected one unless the caller names the node its value was picked for
   const setField = (attribute: string, value: string, nodeId = getSelectedNodeId(toValue(resourceId))) => {
     const writeTarget = getTarget(nodeId);
@@ -64,5 +66,5 @@ export const useEmailStyle = (resourceId: MaybeRefOrGetter<string>) => {
     ).match(noop, console.error);
   };
 
-  return { fields, hasNode: computed(() => target.value !== undefined), setField };
+  return { hasNode: computed(() => target.value !== undefined), sections, setField };
 };

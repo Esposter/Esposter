@@ -1,9 +1,16 @@
 // @vitest-environment nuxt
 import type { MjmlDocument } from "mjml-blocks";
 
-import { TEST_ID, TEST_OTHER_ID, TEST_THIRD_ID, TEST_URL } from "#shared/services/pageBuilder/constants.test";
+import {
+  TEST_ID,
+  TEST_LABEL,
+  TEST_OTHER_ID,
+  TEST_THIRD_ID,
+  TEST_URL,
+} from "#shared/services/pageBuilder/constants.test";
 import PageBuilderEmailImageUploadField from "#src/components/PageBuilder/Email/ImageUploadField.vue";
 import PageBuilderEmailStylePanel from "#src/components/PageBuilder/Email/StylePanel.vue";
+import { getSectorTitle } from "#src/components/PageBuilder/StylePanel/getSectorTitle.test";
 import { emailKind } from "#src/services/pageBuilder/emailKind";
 import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
@@ -11,6 +18,29 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { MjmlNodeType } from "mjml-blocks";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
+
+const createButtonDocument = (): MjmlDocument => ({
+  content: [
+    {
+      props: {
+        children: [
+          {
+            props: {
+              children: [
+                { props: { content: TEST_LABEL, href: TEST_URL, id: TEST_OTHER_ID }, type: MjmlNodeType.Button },
+              ],
+              id: TEST_THIRD_ID,
+            },
+            type: MjmlNodeType.Column,
+          },
+        ],
+        id: v7(),
+      },
+      type: MjmlNodeType.Section,
+    },
+  ],
+  root: { props: { lang: "", title: "" } },
+});
 
 describe("pageBuilderEmailStylePanel", () => {
   const TEXT_CONTENT = { content: [{ content: [{ text: "a", type: "text" }], type: "paragraph" }], type: "doc" };
@@ -117,5 +147,47 @@ describe("pageBuilderEmailStylePanel", () => {
       ?.attributes("for");
 
     expect(component.get<HTMLInputElement>(`#${forId}`).element.value).toBe(TEST_URL);
+  });
+
+  test("a text's fields are grouped by sector", async () => {
+    expect.hasAssertions();
+
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    pageBuilderDocumentStore.setEmailDocument(TEST_ID, emailKind, createTextDocument("20px", "16px"));
+    const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    pageBuilderCanvasStore.setSelectedNodeId(TEST_ID, TEST_OTHER_ID);
+
+    const component = await mountSuspended(PageBuilderEmailStylePanel, { props: { resourceId: TEST_ID } });
+
+    expect(getSectorTitle(component, "font-size")).toBe("Typography");
+    expect(getSectorTitle(component, "padding")).toBe("Spacing");
+  });
+
+  test("a sector with no field for the node is not drawn", async () => {
+    expect.hasAssertions();
+
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    pageBuilderDocumentStore.setEmailDocument(TEST_ID, emailKind, createButtonDocument());
+    const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    pageBuilderCanvasStore.setSelectedNodeId(TEST_ID, TEST_OTHER_ID);
+
+    const component = await mountSuspended(PageBuilderEmailStylePanel, { props: { resourceId: TEST_ID } });
+    const sectorTitles = component.findAll("button").map((button) => button.text());
+
+    expect(sectorTitles).toContain("Spacing");
+    expect(sectorTitles).not.toContain("Position");
+  });
+
+  test("a field no sector names is grouped under Other", async () => {
+    expect.hasAssertions();
+
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    pageBuilderDocumentStore.setEmailDocument(TEST_ID, emailKind, createButtonDocument());
+    const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    pageBuilderCanvasStore.setSelectedNodeId(TEST_ID, TEST_OTHER_ID);
+
+    const component = await mountSuspended(PageBuilderEmailStylePanel, { props: { resourceId: TEST_ID } });
+
+    expect(getSectorTitle(component, "href")).toBe("Other");
   });
 });

@@ -9,9 +9,9 @@ A style belongs to the node it styles. Each webpage node carries a `style` prop:
 - **Breakpoints** are three, after Webflow's: base, tablet at `TABLET_BREAKPOINT_WIDTH` and below, mobile at `MOBILE_BREAKPOINT_WIDTH` and below, read from the module the canvas names its device widths in. The device toggle is the active breakpoint: editing at tablet writes the tablet override. Base is desktop and names no width, so the canvas's desktop frame shows it.
 - **States** are default and hover. Hover on a type a reader can focus emits for `:focus-visible` too, so no hover-only affordance ships.
 - **Tokens** are the page's own, on the root: named colours and font stacks, emitted as custom properties and edited in the Theme panel. A colour field lists the colours as swatches first and a free colour second, and picking one stores `var(--color-name)`, so editing the token recolours everything that uses it. A font stack is named `font-` and checked as a `font-family` value; the typography sector's font family offers the stacks as a choice, which stores `var(--font-name)`, and an emptied stack is not saved. These are the page's tokens, not the app's palette: the app's tokens theme the editor around the canvas, while a published page has one look of its author's.
-- **Values** are free CSS within the property, checked with `CSS.supports` as they are typed; an invalid value stays in its field with the field's error and writes nothing. At the schema, a value is length-limited and excludes `<`, `{` and `}`, as [the canvas](../canvas/design.md) section says, and `/*` and `*/`.
+- **Values** are free CSS within the property, checked with `CSS.supports` as they are typed whatever the property's kind, so a z-index with a unit is refused as a colour is; an invalid value stays in its field with the field's error and writes nothing. At the schema, a value is length-limited and excludes `<`, `{` and `}`, as [the canvas](../canvas/design.md) section says, and `/*` and `*/`.
 
-The panel is grouped in the sectors `STYLE_SECTORS` declares, each a `UiCollapsible` titled with its name: layout and flex, spacing as its eight margin and padding fields, size, position, typography, background, border, and effects. Background is a colour and a list of image and gradient layers. Each layer is a text field checked as a `background-image` value, and the list joins its layers with commas into the one `background-image` value, so a gradient's own commas stay inside its layer. Add a layer adds an empty one, which is not written until it holds a value, and Remove drops a layer. Each field shows the value at the active breakpoint and state, or the inherited one as a placeholder saying where it comes from ("from Desktop"), with a reset that removes the override. The controls are the library's: `UiTextField` with a unit `UiSelect` for a length, where the arrows step the number and keep the unit, Shift by ten, and a border's width leaves the percentage out of its units, since a border is never a share of its box; `UiToggleGroup` for the properties with a fixed set of values, one segment per value titled as the value it sets; `UiColorField` with the token swatches; `UiSlider` for opacity. A drag on a slider previews in the canvas without writing history and commits one entry when it settles, which the slider's `end` already reports for a key too. Copy style and Paste style are commands, the reuse a shared class would otherwise give.
+The panel is grouped in the sectors `STYLE_SECTORS` declares, each a `UiCollapsible` titled with its name: layout, which holds the flex direction, flex wrap and float beside the flex alignment and gap; spacing as its eight margin and padding fields; size, which holds the minimum height and overflow beside the width, height and maximum width; position, which holds the z-index beside the offsets; typography, which holds the font style and text transform beside the font, size, weight, spacing and colour; background; border; and effects, which holds the transform, transition and cursor beside the opacity and box shadow. Background is a colour and a list of image and gradient layers. Each layer is a text field checked as a `background-image` value, and the list joins its layers with commas into the one `background-image` value, so a gradient's own commas stay inside its layer. Add a layer adds an empty one, which is not written until it holds a value, and Remove drops a layer. Each field shows the value at the active breakpoint and state, or the inherited one as a placeholder saying where it comes from ("from Desktop"), with a reset that removes the override. The controls are the library's: `UiTextField` with a unit `UiSelect` for a length, where the arrows step the number and keep the unit, Shift by ten, and a border's width leaves the percentage out of its units, since a border is never a share of its box; `UiToggleGroup` for the properties with a fixed set of values, one segment per value titled as the value it sets; `UiColorField` with the token swatches; `UiSlider` for opacity. A drag on a slider previews in the canvas without writing history and commits one entry when it settles, which the slider's `end` already reports for a key too. Copy style and Paste style are commands, the reuse a shared class would otherwise give.
 
 The field components take a value and its inherited placeholder, with no breakpoint of their own, so the [email editor](../email/design.md) draws its attribute fields with them.
 
@@ -26,17 +26,25 @@ flowchart TD
   EMIT --> SHEET["the canvas's stylesheet"]
 ```
 
+## Decisions
+
+- **Each property sits in the sector whose title it fits.** Flex wrap and float are layout, minimum height and overflow are size, z-index is position, font style and text transform are typography, and transform, transition and cursor are effects. Rejected: a sector of its own for each group, which adds sectors an author must scan for a handful of fields.
+- **A new property is a text field checked by the browser, as every property is.** Rejected: a number field for z-index, which would need a second check beside the browser's.
+- **The panel keeps its own sector titles.** Rejected: the reference's names, which would be a second vocabulary beside the one the panel's authors already read.
+- **Background size, position and repeat are not offered.** Each takes one value per background layer, and the layer list writes one `background-image` value, so a plain property would apply one value to every layer it cannot describe. Rejected: adding the three as plain properties. See Not built.
+
 ## Key files
 
-| File                                                                  | Role                                                                              |
-| --------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| `apps/web/app/components/PageBuilder/StylePanel/Index.vue`            | the sectors, the Default and Hover state toggle, and the Reset button             |
-| `apps/web/app/components/PageBuilder/StylePanel/Field.vue`            | a length field: its number, its unit and the arrow and Shift steps                |
-| `apps/web/app/components/PageBuilder/StylePanel/BackgroundLayers.vue` | the background's layer list, joined into one `background-image`                   |
-| `apps/web/app/components/Ui/ColorField.vue`                           | the page's token swatches before a free colour                                    |
-| `apps/web/app/components/Ui/Slider.vue`                               | its `end` commits a drag's one history entry                                      |
-| `apps/web/app/services/pageBuilder/constants.ts`                      | `STYLE_SECTORS`, `STYLE_COLOR_PROPERTIES` and `STYLE_CHOICES`, the panel's fields |
-| `apps/web/shared/models/webpageEditor/data/WebpageEditor.ts`          | the root's tokens beside the content                                              |
+| File                                                                  | Role                                                                                                         |
+| --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `apps/web/app/components/PageBuilder/StylePanel/Index.vue`            | the sectors, the Default and Hover state toggle, and the Reset button                                        |
+| `apps/web/app/components/PageBuilder/StylePanel/Field.vue`            | a length field: its number, its unit and the arrow and Shift steps                                           |
+| `apps/web/app/components/PageBuilder/StylePanel/BackgroundLayers.vue` | the background's layer list, joined into one `background-image`                                              |
+| `apps/web/app/components/Ui/ColorField.vue`                           | the page's token swatches before a free colour                                                               |
+| `apps/web/app/components/Ui/Slider.vue`                               | its `end` commits a drag's one history entry                                                                 |
+| `apps/web/shared/services/pageBuilder/constants.ts`                   | `STYLE_PROPERTY_NAMES`, every property the panel offers, which the schema and the renderer read              |
+| `apps/web/app/services/pageBuilder/constants.ts`                      | `STYLE_SECTORS`, `STYLE_COLOR_PROPERTIES`, `STYLE_CHOICES` and `STYLE_LENGTH_PROPERTIES`, the panel's fields |
+| `apps/web/shared/models/webpageEditor/data/WebpageEditor.ts`          | the root's tokens beside the content                                                                         |
 
 New code lands here:
 
@@ -48,6 +56,11 @@ apps/web/app/components/PageBuilder/StylePanel/      the sectors and their field
 apps/web/app/components/PageBuilder/ThemePanel/      the page's colours and font stacks
 ```
 
+## Not built
+
+- Background size, position and repeat per background layer. Each takes one value per layer, so the layer list has to write one value per layer before a field can set it.
+
 ## Sources
 
 - [Webflow — Design for even larger screens with 3 new breakpoints](https://webflow.com/updates/design-for-even-larger-screens-with-3-new-breakpoints) — a desktop base that applies everywhere unless overridden, tablet at 991 pixels and below and mobile portrait at 478 and below, the cascade and breakpoints the style panel takes.
+- [GrapesJS — Style Manager config](https://github.com/GrapesJS/grapesjs/blob/dev/packages/core/src/style_manager/config/config.ts) — the default configuration's sectors, General, Flex, Dimension, Typography, Decorations and Extra, which the panel's own titles were weighed against and kept over.
