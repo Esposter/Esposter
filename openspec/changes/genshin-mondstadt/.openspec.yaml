@@ -4,3 +4,4 @@ x-phase: 4
 x-model: claude-opus-5-5
 x-needs: [game-exports, parity-page]
 x-touches: ["packages/genshin-world/src/services/mondstadt/**"]
+x-waiting: "The windmill (1.2) waits on the Windrise and Mondstadt extracts in the compute queue, the city landmarks (2.1) on cathedral and plaza references, the areas (3.1 to 3.3) on their scenes and Dawn Winery's grape rows, Stormterror's Lair (1.3) on the owner's weather outline, and Dragonspine (4.1) on snow weather."
