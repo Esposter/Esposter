@@ -36,7 +36,7 @@ const BODY: string[] = [
   '<script>window.__NUXT__={config:{app:{baseURL:"/"}}};</script>',
 ];
 
-export const PAGE_SECTIONS: Record<"body" | "bodyAppend" | "bodyPrepend" | "head", string[]> = {
+const PAGE_SECTIONS: Record<"body" | "bodyAppend" | "bodyPrepend" | "head", string[]> = {
   body: BODY,
   bodyAppend: [],
   bodyPrepend: [],

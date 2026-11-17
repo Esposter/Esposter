@@ -1,4 +1,4 @@
-import type { SecurityRouteRules } from "#src/models/SecurityRouteRules";
+import type { SecurityRules } from "#src/models/SecurityRules";
 
 import { getDefaultModuleOptions } from "#src/services/getDefaultModuleOptions";
 import { getRouteSecurityRules } from "#src/services/getRouteSecurityRules";
@@ -21,7 +21,7 @@ describe(getRouteSecurityRules, () => {
   test("basicAuth is refused in a route rule, so no credential is written into a route the requests read", () => {
     expect.hasAssertions();
 
-    const security: SecurityRouteRules = { basicAuth: { name: "user", pass: "secret" } };
+    const security: SecurityRules = { basicAuth: { name: "user", pass: "secret" } };
 
     expect(() => getRouteSecurityRules({ [ROUTE]: { security } }, options)).toThrowErrorMatchingInlineSnapshot(
       `[TypeError: nuxt-security-module: route /api/**: basicAuth cannot be set in a route rule]`,

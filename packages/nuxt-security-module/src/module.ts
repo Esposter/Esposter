@@ -2,7 +2,7 @@
 // A module outside a Nuxt app does not load that augmentation.
 /// <reference types="@nuxt/nitro-server" />
 import type { ModuleOptions } from "#src/models/ModuleOptions";
-import type { SecurityRouteRules } from "#src/models/SecurityRouteRules";
+import type { SecurityRules } from "#src/models/SecurityRules";
 import type { NuxtModule } from "@nuxt/schema";
 
 import {
@@ -46,7 +46,7 @@ declare module "@nuxt/schema" {
 // Re-export it, and an augmentation of a re-export declares a new interface that never reaches a consumer's `routeRules`
 declare module "h3/rules" {
   interface RouteRuleConfig {
-    security?: SecurityRouteRules;
+    security?: SecurityRules;
   }
 }
 

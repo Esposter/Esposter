@@ -1,5 +1,5 @@
 import type { ModuleOptions } from "#src/models/ModuleOptions";
-import type { SecurityRouteRules } from "#src/models/SecurityRouteRules";
+import type { SecurityRules } from "#src/models/SecurityRules";
 import type { RouteRuleConfig } from "h3/rules";
 
 import { moduleOptionsSchema } from "#src/schemas/moduleOptionsSchema";
@@ -12,8 +12,8 @@ import { mergeModuleOptions } from "#src/services/mergeModuleOptions";
 export const getRouteSecurityRules = (
   routeRules: Record<string, RouteRuleConfig>,
   options: ModuleOptions,
-): Record<string, SecurityRouteRules> => {
-  const routeSecurityRules: Record<string, SecurityRouteRules> = {};
+): Record<string, SecurityRules> => {
+  const routeSecurityRules: Record<string, SecurityRules> = {};
   for (const [route, { security }] of Object.entries(routeRules)) {
     if (security === undefined) continue;
 
