@@ -57,17 +57,11 @@ const columnsLabelId = useId();
   >
     <div role="group" :aria-labelledby="columnsLabelId" flex flex-col gap-2>
       <p :id="columnsLabelId" text-muted>Columns to export</p>
-      <UiCheckbox
-        v-for="{ id, name } of dataSource.columns"
-        :key="id"
-        is-label-shown
-        :label="name"
-        :model-value="selectedColumnIds.includes(id)"
-        @update:model-value="
-          selectedColumnIds = $event
-            ? [...selectedColumnIds, id]
-            : selectedColumnIds.filter((selectedColumnId) => selectedColumnId !== id)
-        "
+      <ResourceSheetExportDialogColumnCheckbox
+        v-for="column of dataSource.columns"
+        :key="column.id"
+        v-model="selectedColumnIds"
+        :column
       />
     </div>
   </StyledDialog>

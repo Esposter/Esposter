@@ -19,18 +19,22 @@ const booleanValue = computed<BooleanFilterValue>({
     modelValue.value = value ? { type: ColumnType.Boolean, value } : undefined;
   },
 });
+// A number range is one filter while either bound is set, and none once both are cleared
+const setNumberRange = (minimum: string, maximum: string) => {
+  modelValue.value = minimum !== "" || maximum !== "" ? { maximum, minimum, type: ColumnType.Number } : undefined;
+};
 const minimumValue = computed({
   get: () => (modelValue.value?.type === ColumnType.Number ? modelValue.value.minimum : ""),
   set: (minimum) => {
     const maximum = modelValue.value?.type === ColumnType.Number ? modelValue.value.maximum : "";
-    modelValue.value = minimum !== "" || maximum !== "" ? { maximum, minimum, type: ColumnType.Number } : undefined;
+    setNumberRange(minimum, maximum);
   },
 });
 const maximumValue = computed({
   get: () => (modelValue.value?.type === ColumnType.Number ? modelValue.value.maximum : ""),
   set: (maximum) => {
     const minimum = modelValue.value?.type === ColumnType.Number ? modelValue.value.minimum : "";
-    modelValue.value = minimum !== "" || maximum !== "" ? { maximum, minimum, type: ColumnType.Number } : undefined;
+    setNumberRange(minimum, maximum);
   },
 });
 const stringValue = computed({

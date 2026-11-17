@@ -17,6 +17,7 @@ const deleteColumns = useDeleteColumns();
 const { isOpen, item: deletingColumns } = useSingletonDialog(deletingColumnIds, () =>
   dataSource.columns.filter(({ id }) => deletingColumnIds.value.includes(id)),
 );
+const isSingleColumn = computed(() => deletingColumns.value?.length === 1);
 </script>
 
 <template>
@@ -36,9 +37,9 @@ const { isOpen, item: deletingColumns } = useSingletonDialog(deletingColumnIds, 
     "
   >
     <p>
-      Delete {{ deletingColumns.length === 1 ? deletingColumns[0]?.name : `${deletingColumns.length} columns` }} and
-      {{ deletingColumns.length === 1 ? "its" : "their" }} values? The toolbar's Undo brings
-      {{ deletingColumns.length === 1 ? "it" : "them" }} back.
+      Delete {{ isSingleColumn ? deletingColumns[0]?.name : `${deletingColumns.length} columns` }} and
+      {{ isSingleColumn ? "its" : "their" }} values? The toolbar's Undo brings
+      {{ isSingleColumn ? "it" : "them" }} back.
     </p>
   </UiConfirmDialog>
 </template>
