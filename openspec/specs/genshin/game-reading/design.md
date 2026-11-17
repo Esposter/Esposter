@@ -89,7 +89,7 @@ The client holds no scene group script; those are the server's, and leaked serve
 ### Porting a shader
 
 1. **Inventory.** `genshin:assets inventory <component>` names each material's shader, keywords, texture slots and values (`scripts/src/services/genshinAssets/materials/writeComponentInventory.ts`).
-2. **Pick the variant.** A material's keywords select its programs from `programs.tsv` (`scripts/src/services/genshinAssets/materials/extractComponentShaders.ts`). An engine-wide keyword is run-time state the material does not set, so the base variant is chosen by the [character shading](../characters/shading/design.md) page's rule.
+2. **Pick the variant.** A material's keywords select its programs from `programs.tsv` (`scripts/src/services/genshinAssets/materials/extractShader.ts`). An engine-wide keyword is run-time state the material does not set, so the base variant is chosen by the [character shading](../characters/shading/design.md) page's rule.
    - A scene's stone shader only writes the G-buffer. Its light is the deferred pass's, read beside it ([game data formats](../game-data-formats/design.md), "Shaders").
 3. **Read the programs.** `shaders <component>` writes each program's assembly beside it, headed by the names of the constants its registers hold (`annotateProgramConstants`, `scripts/src/services/genshinAssets/materials/annotateProgramConstants.ts`).
    - A DXBC program is disassembled on any machine (`scripts/src/services/genshinAssets/materials/disassembleDxbcDirectory.ts`).

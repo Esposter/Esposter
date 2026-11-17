@@ -35,7 +35,7 @@ flowchart TD
 - **The range spreads, then holds.** The radius grows at the spread speed from where the sight was turned on, and stops at the reach (`packages/genshin-world/src/services/elementalSight/stepElementalSight.ts`).
 - **A walk past the limit turns it off.** The check is on the ground from the point it was turned on. Standing still keeps it on (`packages/genshin-world/src/services/elementalSight/stepElementalSight.ts`). The wiki says it deactivates after moving a short distance (`{data-root}/cache/genshin-wiki/Page_Elemental_Sight.json` wikitext line 20).
 - **A press turns it off** at once, wherever the character stands (`packages/genshin-world/src/services/elementalSight/stepElementalSight.ts`).
-- **A screen over the world turns it off.** The menus, the map and a talk end the sight, which a press turns on again (`packages/genshin-world/src/components/World/Session/Index.vue`).
+- **A screen over the world turns it off.** The menus, the map and a talk end the sight, which a press turns on again (`packages/genshin-world/src/composables/useWorldFrame.ts`).
 
 ## Decisions
 

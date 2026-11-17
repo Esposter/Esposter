@@ -87,7 +87,7 @@ flowchart LR
   Map[useWorldMapStore] -->|questEvent| Quests
 ```
 
-The edges are emitted by `packages/genshin-world/src/store/pickups.ts`, `useWorldCombat.ts`, `useWorldSave.ts`, `packages/genshin-world/src/store/map.ts` and `packages/genshin-world/src/store/quests.ts`, and `packages/genshin-world/src/composables/useWorldTalks.ts` raises none.
+The edges are emitted by `packages/genshin-world/src/store/pickups.ts`, `useWorldCombat.ts`, `packages/genshin-world/src/store/map.ts` and `packages/genshin-world/src/store/quests.ts`. The Save's edge is the bag's `setInventory` in `packages/genshin-world/src/store/session.ts`, which `useWorldSave.ts` calls. `packages/genshin-world/src/composables/useWorldTalks.ts` raises the talk-to quest event as a talk ends, an edge the diagram leaves out.
 
 ## Key files
 

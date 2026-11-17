@@ -11,7 +11,7 @@ The synthesizer is `genshin-engine`'s audio module `packages/genshin-engine/src/
 
 ## The player
 
-- **`createMusicPlayer` schedules ahead of the clock.** It schedules the notes due in the next two seconds every half second `packages/genshin-engine/src/audio/constants.ts`, and loops the playlist.
+- **`createMusicPlayer` schedules ahead of the clock.** It schedules the notes due in the next two seconds every half second `packages/genshin-engine/src/audio/constants.ts`, and loops the playlist while its `isLooping` holds.
 - **`renderMusicSegment` renders one segment offline** through the same notes, so the parity page scores what the player plays `packages/genshin-engine/src/audio/renderMusicSegment.ts`.
 - **Each segment has its own expression gain.** The segment plays its notes through a gain of its own, which the [expression](../expression/design.md) ramps between the windows' centres (`scheduleMusicExpression`) `packages/genshin-engine/src/audio/scheduleMusicExpression.ts`. A chord ringing past its segment's end fades from the level it ended at rather than jumping to the next segment's `packages/genshin-engine/src/audio/createMusicPlayer.ts`.
 

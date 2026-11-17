@@ -12,13 +12,17 @@ The book is scored over what the page draws against `handbook-experience`, the w
 
 ## Key files
 
-| File                                                                        | Role                                                        |
-| :-------------------------------------------------------------------------- | :---------------------------------------------------------- |
-| `packages/genshin-world/src/components/Handbook/Screen/Index.vue`           | The book's frame, which mounts its tabs and its three pages |
-| `packages/genshin-world/src/components/Handbook/Screen/<Part>/Index.vue`    | The tab bar, the close ribbon and each page with its rows   |
-| `packages/genshin-world/src/services/handbook/constants.ts`                 | The tabs in the English client's order, and the rows' pitch |
-| `packages/genshin-world/src/services/handbook/HandbookTabGameTextKeyMap.ts` | Each tab's name in the game's words                         |
-| `packages/genshin-interface/src/components/ItemTile/Index.vue`              | A reward's tile, coloured by its rarity                     |
+| File                                                                          | Role                                                        |
+| :---------------------------------------------------------------------------- | :---------------------------------------------------------- |
+| `packages/genshin-world/src/components/Handbook/Screen/Index.vue`             | The book's frame, which mounts its tabs and its three pages |
+| `packages/genshin-world/src/components/Handbook/Screen/Tabs/Index.vue`        | The tab bar down the left edge                              |
+| `packages/genshin-world/src/components/Handbook/Screen/Close/Index.vue`       | The close ribbon                                            |
+| `packages/genshin-world/src/components/Handbook/Screen/Experience/Index.vue`  | The Experience page: its header, its panel and its rows     |
+| `packages/genshin-world/src/components/Handbook/Screen/Commissions/Index.vue` | The Commissions page and its rows                           |
+| `packages/genshin-world/src/components/Handbook/Screen/Domains/Index.vue`     | The Domains page and its rows                               |
+| `packages/genshin-world/src/services/handbook/constants.ts`                   | The tabs in the English client's order, and the rows' pitch |
+| `packages/genshin-world/src/services/handbook/HandbookTabGameTextKeyMap.ts`   | Each tab's name in the game's words                         |
+| `packages/genshin-interface/src/components/ItemTile/Index.vue`                | A reward's tile, coloured by its rarity                     |
 
 ## Notes
 

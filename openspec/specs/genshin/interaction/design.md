@@ -64,26 +64,26 @@ Provisional and unmeasured: the pill's right end (the column's 318 units, since 
 
 ## Key files
 
-| File                                                                           | Role                                                                                 |
-| :----------------------------------------------------------------------------- | :----------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/interaction/computeInteractionPrompts.ts` | The rows in reach, the selection kept by id, and the scrolled window                 |
-| `packages/genshin-world/src/services/interaction/stepInteractionSelection.ts`  | The mouse wheel's step through the rows                                              |
-| `packages/genshin-world/src/services/interaction/getHeldPickUp.ts`             | What each repeat of a held F picks up                                                |
-| `packages/genshin-world/src/services/interaction/placeDroppedItems.ts`         | The items a source drops, laid at its point                                          |
-| `packages/genshin-world/src/services/enemy/getEnemyDroppedItems.ts`            | What a defeat leaves: its Mora as one pile and each material piece                   |
-| `packages/genshin-world/src/services/interaction/pickUpDroppedItem.ts`         | A pick up into the wallet or the bag, and what the bag leaves behind                 |
-| `packages/genshin-world/src/services/interaction/constants.ts`                 | The reach, the window's rows, the held F's interval and the stand-ins                |
-| `packages/genshin-world/src/composables/useInteraction.ts`                     | The prompts read each frame, a press and a held F's repeat                           |
-| `packages/genshin-world/src/composables/useWorldInteractables.ts`              | Every source's rows joined into the one list the prompts are read from               |
-| `packages/genshin-world/src/composables/useWorldInteractionDispatch.ts`        | What F does on the selected row: each kind's action, or the screen it opens          |
-| `packages/genshin-world/src/models/interaction/Interactable.ts`                | A thing the character can act on: its prompt and its place                           |
-| `packages/genshin-world/src/models/world/WorldDrop.ts`                         | A drop lying on the ground: its item, count, id and point                            |
-| `packages/genshin-world/src/components/World/Session/Index.vue`                | Holds the drops, the residents and the jump landmarks, and hands the selected row on |
-| `packages/genshin-world/src/components/World/Interactables/Index.vue`          | The drops' and the residents' stand-ins                                              |
-| `packages/genshin-world/src/components/Interaction/PromptList/Index.vue`       | The window's rows, drawn in the HUD 138 units right of the centre                    |
-| `packages/genshin-world/src/components/Hud/Screen/Index.vue`                   | The `interactionPrompts` prop the list is drawn from, beside the centre              |
-| `packages/genshin-interface/src/models/InteractionKind.ts`                     | The eight kinds of interaction                                                       |
-| `packages/genshin-interface/src/components/InteractionPrompts/Index.vue`       | The rows as buttons, F's cap on the selected one, and none on touch                  |
+| File                                                                           | Role                                                                                |
+| :----------------------------------------------------------------------------- | :---------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/interaction/computeInteractionPrompts.ts` | The rows in reach, the selection kept by id, and the scrolled window                |
+| `packages/genshin-world/src/services/interaction/stepInteractionSelection.ts`  | The mouse wheel's step through the rows                                             |
+| `packages/genshin-world/src/services/interaction/getHeldPickUp.ts`             | What each repeat of a held F picks up                                               |
+| `packages/genshin-world/src/services/interaction/placeDroppedItems.ts`         | The items a source drops, laid at its point                                         |
+| `packages/genshin-world/src/services/enemy/getEnemyDroppedItems.ts`            | What a defeat leaves: its Mora as one pile and each material piece                  |
+| `packages/genshin-world/src/services/interaction/pickUpDroppedItem.ts`         | A pick up into the wallet or the bag, and what the bag leaves behind                |
+| `packages/genshin-world/src/services/interaction/constants.ts`                 | The reach, the window's rows, the held F's interval and the stand-ins               |
+| `packages/genshin-world/src/composables/useInteraction.ts`                     | The prompts read each frame, a press and a held F's repeat                          |
+| `packages/genshin-world/src/composables/useWorldInteractables.ts`              | Every source's rows joined into the one list the prompts are read from              |
+| `packages/genshin-world/src/composables/useWorldInteractionDispatch.ts`        | What F does on the selected row: each kind's action, or the screen it opens         |
+| `packages/genshin-world/src/models/interaction/Interactable.ts`                | A thing the character can act on: its prompt and its place                          |
+| `packages/genshin-world/src/models/world/WorldDrop.ts`                         | A drop lying on the ground: its item, count, id and point                           |
+| `packages/genshin-world/src/components/World/Session/Index.vue`                | Feeds the residents and shrines to the interactables, and the dispatch to the frame |
+| `packages/genshin-world/src/components/World/Interactables/Index.vue`          | The drops' and the residents' stand-ins                                             |
+| `packages/genshin-world/src/components/Interaction/PromptList/Index.vue`       | The window's rows, drawn in the HUD 138 units right of the centre                   |
+| `packages/genshin-world/src/components/Hud/Screen/Index.vue`                   | The `interactionPrompts` prop the list is drawn from, beside the centre             |
+| `packages/genshin-interface/src/models/InteractionKind.ts`                     | The eight kinds of interaction                                                      |
+| `packages/genshin-interface/src/components/InteractionPrompts/Index.vue`       | The rows as buttons, F's cap on the selected one, and none on touch                 |
 
 ## Notes
 
