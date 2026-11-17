@@ -45,9 +45,9 @@ import { z } from "zod";
 // A feed card shows a post's counters and the feed is ranked by them, so every change to a post reaches the feed too
 const feedPostsTopic = getTopic(TopicKind.Feed, "posts");
 const postIdentitySchema = selectPostInPostSchema.pick({ ancestorIds: true, id: true });
-// A thread is named by its root post's topic, which every page in the thread watches beside its own. A write anywhere in
-// A thread so publishes one topic for the whole of it, however deep or large, and a write's publish stays a few
-// Subrequests however many posts it moved
+// A thread is named by its root post's topic, which every page in the thread watches beside its own.
+// So a thread publishes one topic for the whole of it, however deep or large.
+// And a write's publish stays a few subrequests however many posts it moved.
 const getThreadTopic = (postId: string, ancestorIds: string[]) => getTopic(TopicKind.Post, ancestorIds[0] ?? postId);
 // A post's own topic and its thread's, read from the post a procedure answered with
 const getPostThreadTopics = (post: unknown) => {
