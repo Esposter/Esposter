@@ -43,6 +43,7 @@ const loadSurvey = () => {
               { props: { id: "first", name: "first" }, type: SurveyNodeType.Text },
               { props: { id: "second", name: "second" }, type: SurveyNodeType.Text },
             ],
+            enableIf: "",
             id: "page",
           },
           type: SurveyNodeType.Page,

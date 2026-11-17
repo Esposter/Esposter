@@ -16,7 +16,10 @@ const createPicker = (imageLinks: string[]) => ({
   },
   type: SurveyNodeType.ImagePicker,
 });
-const createPage = (children: unknown[]) => ({ props: { children, id: v7() }, type: SurveyNodeType.Page });
+const createPage = (children: unknown[]) => ({
+  props: { children, enableIf: "", id: v7() },
+  type: SurveyNodeType.Page,
+});
 
 describe(collectSurveyFileUrls, () => {
   test("a survey's files are its logo and its pictures, sorted, each once and without the empty ones", () => {

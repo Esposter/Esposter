@@ -1,6 +1,6 @@
 # Survey Logic Builder
 
-The Logic tab of the [Creator](../survey-creator/design.md), over the [expression language](../survey-expression/design.md). It edits the three conditions an element holds, which are visibility, enablement and required, and the survey's calculated values.
+The Logic tab of the [Creator](../survey-creator/design.md), over the [expression language](../survey-expression/design.md). It edits the conditions a node holds: an element holds visibility, enablement and required, and a page or a panel holds visibility and enablement, and the survey's calculated values are edited there too.
 
 ## How it works
 

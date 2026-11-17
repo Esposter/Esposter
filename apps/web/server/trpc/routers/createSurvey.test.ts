@@ -35,7 +35,7 @@ export const createPublishedSurvey = async (
 // A survey document whose one page holds the elements given, parsed so a fixture is a document a save would accept
 export const createPageDocument = (children: unknown[]): SurveyDocument =>
   surveyDocumentSchema.parse({
-    content: [{ props: { children, id: v7() }, type: SurveyNodeType.Page }],
+    content: [{ props: { children, enableIf: "", id: v7() }, type: SurveyNodeType.Page }],
     root: { props: {} },
   });
 

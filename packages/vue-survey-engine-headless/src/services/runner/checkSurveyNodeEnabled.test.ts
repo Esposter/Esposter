@@ -34,7 +34,7 @@ describe(checkSurveyNodeEnabled, () => {
   test("a page has no enabling condition and is enabled", () => {
     expect.hasAssertions();
 
-    const node = surveyNodeSchema.parse({ props: { children: [], id: "a" }, type: SurveyNodeType.Page });
+    const node = surveyNodeSchema.parse({ props: { children: [], enableIf: "", id: "a" }, type: SurveyNodeType.Page });
 
     expect(checkSurveyNodeEnabled(node, {}, now)).toBe(true);
   });

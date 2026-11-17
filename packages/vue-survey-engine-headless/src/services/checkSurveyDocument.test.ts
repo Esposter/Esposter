@@ -57,8 +57,8 @@ const createDynamicPanel = (name: string, template: SurveyTemplateNode[]): Surve
   type: SurveyNodeType.PanelDynamic,
 });
 
-const createPage = (children: SurveyPlaceableNode[], visibleIf = ""): SurveyPageNode => ({
-  props: { ...surveyPageNodeType.createDefaultProps(), children, id: v7(), visibleIf },
+const createPage = (children: SurveyPlaceableNode[], visibleIf = "", enableIf = ""): SurveyPageNode => ({
+  props: { ...surveyPageNodeType.createDefaultProps(), children, enableIf, id: v7(), visibleIf },
   type: SurveyNodeType.Page,
 });
 
@@ -216,6 +216,19 @@ describe(checkSurveyDocument, () => {
       {
         message: expect.stringMatching(/^The visibility condition does not parse: /u),
         pointer: "/content/0/props/children/0/props/visibleIf",
+      },
+    ]);
+  });
+
+  test("a malformed enable condition on a page is refused at the page's enableIf, naming the condition", () => {
+    expect.hasAssertions();
+
+    const document = createDocument([createPage([createText("a")], "", "{a} =")]);
+
+    expect(checkSurveyDocument(document)).toStrictEqual([
+      {
+        message: expect.stringMatching(/^The enable condition does not parse: /u),
+        pointer: "/content/0/props/enableIf",
       },
     ]);
   });

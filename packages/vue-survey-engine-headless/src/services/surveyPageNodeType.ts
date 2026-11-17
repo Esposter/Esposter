@@ -14,7 +14,7 @@ export const surveyPageNodeType: {
   slots: SurveyNodeTypeDefinition<SurveyPageNode>["slots"];
   type: typeof SurveyNodeType.Page;
 } = {
-  createDefaultProps: () => surveyPageNodePropsSchema.parse({}),
+  createDefaultProps: () => surveyPageNodePropsSchema.parse({ enableIf: "" }),
   formSchema: surveyPageNodePropsSchema,
   label: "Page",
   propsSchema: surveyPageNodePropsSchema,

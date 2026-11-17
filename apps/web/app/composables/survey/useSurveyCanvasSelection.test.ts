@@ -14,7 +14,7 @@ describe(useSurveyCanvasSelection, () => {
     // The selection is read off the document, so the element's pointer names a page the document holds
     surveyCreatorStore.load(
       surveyDocumentSchema.parse({
-        content: [{ props: { children: [], id: "page" }, type: SurveyNodeType.Page }],
+        content: [{ props: { children: [], enableIf: "", id: "page" }, type: SurveyNodeType.Page }],
         root: { props: {} },
       }),
     );

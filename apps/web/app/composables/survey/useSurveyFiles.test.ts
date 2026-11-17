@@ -17,7 +17,11 @@ const createDocument = (imageLink: string, logo: string) =>
   surveyDocumentSchema.parse({
     content: [
       {
-        props: { children: [{ props: { id: v7(), imageLink, name: "image" }, type: SurveyNodeType.Image }], id: v7() },
+        props: {
+          children: [{ props: { id: v7(), imageLink, name: "image" }, type: SurveyNodeType.Image }],
+          enableIf: "",
+          id: v7(),
+        },
         type: SurveyNodeType.Page,
       },
     ],

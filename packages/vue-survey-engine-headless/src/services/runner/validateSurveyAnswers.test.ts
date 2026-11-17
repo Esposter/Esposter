@@ -15,6 +15,21 @@ import { describe, expect, test } from "vitest";
 describe(validateSurveyAnswers, () => {
   const now = new Date(0);
 
+  test("a submit leaves a disabled page's required question empty", () => {
+    expect.hasAssertions();
+
+    const document = createSurveyRunnerDocument([
+      createSurveyPage([{ props: { id: "a", name: "a" }, type: SurveyNodeType.Text }]),
+      createSurveyPage(
+        [{ props: { id: "b", isRequired: true, name: "b" }, type: SurveyNodeType.Text }],
+        "",
+        "{a} = 'yes'",
+      ),
+    ]);
+
+    expect(validateSurveyAnswers(document, { a: "no" }, SurveyAnswerValidationMode.Submit, now)).toStrictEqual([]);
+  });
+
   test("a response that answers each visible question validly has no issues", () => {
     expect.hasAssertions();
 

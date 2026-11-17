@@ -41,6 +41,7 @@ const createDocument = (imageLinks: string[]) =>
               type: SurveyNodeType.ImagePicker,
             },
           ],
+          enableIf: "",
           id: v7(),
         },
         type: SurveyNodeType.Page,

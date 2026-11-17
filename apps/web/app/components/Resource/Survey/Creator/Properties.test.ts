@@ -43,7 +43,11 @@ const createSurveyDocument = (type: SurveyNodeType = SurveyNodeType.RadioGroup, 
   surveyDocumentSchema.parse({
     content: [
       {
-        props: { children: [{ props: { id: "question", name: "question", ...props }, type }], id: "page" },
+        props: {
+          children: [{ props: { id: "question", name: "question", ...props }, type }],
+          enableIf: "",
+          id: "page",
+        },
         type: SurveyNodeType.Page,
       },
     ],
@@ -424,7 +428,7 @@ describe("resourceSurveyCreatorProperties", () => {
         "visibleIf",
       ],
     ],
-    [SurveyNodeType.Page, ["description", "title", "visibleIf"]],
+    [SurveyNodeType.Page, ["description", "enableIf", "title", "visibleIf"]],
     [SurveyNodeType.Panel, ["description", "enableIf", "title", "visibleIf"]],
     [
       SurveyNodeType.PanelDynamic,

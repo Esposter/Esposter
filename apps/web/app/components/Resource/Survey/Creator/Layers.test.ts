@@ -28,6 +28,7 @@ const loadSurvey = () => {
                 type: SurveyNodeType.Panel,
               },
             ],
+            enableIf: "",
             id: "page",
           },
           type: SurveyNodeType.Page,

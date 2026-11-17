@@ -24,7 +24,7 @@ describe("resourceSurveyCreatorToolbar", () => {
     const surveyCreatorStore = useSurveyCreatorStore();
     surveyCreatorStore.load(
       surveyDocumentSchema.parse({
-        content: [{ props: { children: [], id: "page" }, type: SurveyNodeType.Page }],
+        content: [{ props: { children: [], enableIf: "", id: "page" }, type: SurveyNodeType.Page }],
         root: { props: {} },
       }),
     );

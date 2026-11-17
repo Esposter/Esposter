@@ -3,11 +3,13 @@ import type { SurveyElementView } from "#src/models/SurveyElementView";
 import type { SurveyLogicContext } from "survey-expression";
 
 import { SurveyNodeType } from "#src/models/SurveyNodeType";
+import { checkSurveyNodeEnabled } from "#src/services/runner/checkSurveyNodeEnabled";
 import { checkSurveyNodeVisible } from "#src/services/runner/checkSurveyNodeVisible";
 import { getSurveyElementViews } from "#src/services/runner/getSurveyElementViews";
 import { getBlockPropPointer } from "vue-block-editor-headless";
 
 // The views of the page at an index: none when the index names no page or the page is hidden, and otherwise the views of its elements
+// Its elements are enabled only while the page's own enable condition holds
 export const getSurveyPageViews = (
   document: SurveyDocument,
   pageIndex: number,
@@ -22,6 +24,6 @@ export const getSurveyPageViews = (
     getBlockPropPointer(`/content/${pageIndex}`, "children"),
     values,
     now,
-    true,
+    checkSurveyNodeEnabled(page, values, now),
   );
 };

@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
 import type { VueWrapper } from "@vue/test-utils";
-import type { SurveyDocument, SurveyPlaceableNode } from "vue-survey-engine-headless";
+import type { SurveyDocument, SurveyPageNode, SurveyPlaceableNode } from "vue-survey-engine-headless";
 
 import { getButtonByText } from "#src/components/Resource/Survey/Creator/getButtonByText.test";
 import LogicBuilder from "#src/components/Resource/Survey/Creator/LogicBuilder.vue";
@@ -27,6 +27,12 @@ const createSurveyTestDocument = (questions: SurveyPlaceableNode[]): SurveyDocum
   root: { props: surveyRootPropsSchema.parse({}) },
 });
 
+// A page of the given questions, which its enable condition holds
+const createPageNode = (children: SurveyPlaceableNode[], enableIf = ""): SurveyPageNode => ({
+  props: { ...surveyNodeTypeDefinitionMap[SurveyNodeType.Page].createDefaultProps(), children, enableIf, id: v7() },
+  type: SurveyNodeType.Page,
+});
+
 const createQuestion = (name: string, visibleIf: string): SurveyPlaceableNode => ({
   props: { ...surveyNodeTypeDefinitionMap[SurveyNodeType.Text].createDefaultProps(), id: v7(), name, visibleIf },
   type: SurveyNodeType.Text,
@@ -41,7 +47,55 @@ const getFieldByLabel = (component: VueWrapper, label: string) => {
   return component.get(`[id="${id}"]`);
 };
 
+// The field of a section the Logic tab draws, found by the section's heading and the label the field names
+const getSectionField = (component: VueWrapper, sectionLabel: string, label: string) => {
+  const section = component.findAll("section").find((item) => item.get("h3").text() === sectionLabel);
+  assert.exists(section);
+  const id = section
+    .findAll("label")
+    .find((item) => item.text() === label)
+    ?.attributes("for");
+  return section.get(`[id="${id}"]`);
+};
+
 describe("resourceSurveyCreatorLogicBuilder", () => {
+  test("owner sets an enable condition on a page", async () => {
+    expect.hasAssertions();
+
+    const surveyCreatorStore = useSurveyCreatorStore();
+    surveyCreatorStore.load({
+      content: [createPageNode([createQuestion("a", "")]), createPageNode([])],
+      root: { props: surveyRootPropsSchema.parse({}) },
+    });
+    surveyCreatorStore.selectedPointer = "/content/1";
+    const component = await mountSuspended(LogicBuilder);
+
+    await getSectionField(component, "Enabled if", "Expression").setValue("{a} = 1");
+
+    expect(surveyCreatorStore.document.content[1]?.props.enableIf).toBe("{a} = 1");
+
+    component.unmount();
+  });
+
+  test("a page's enable condition that does not parse shows its error and saves nothing", async () => {
+    expect.hasAssertions();
+
+    const surveyCreatorStore = useSurveyCreatorStore();
+    surveyCreatorStore.load({
+      content: [createPageNode([createQuestion("a", "")]), createPageNode([], "{a} = 1")],
+      root: { props: surveyRootPropsSchema.parse({}) },
+    });
+    surveyCreatorStore.selectedPointer = "/content/1";
+    const component = await mountSuspended(LogicBuilder);
+
+    await getSectionField(component, "Enabled if", "Expression").setValue("{a} =");
+
+    expect(component.get('[role="alert"]').text()).toBe("Expected an expression at character 6");
+    expect(surveyCreatorStore.document.content[1]?.props.enableIf).toBe("{a} = 1");
+
+    component.unmount();
+  });
+
   test("adding a row and typing its value writes the condition the row reads", async () => {
     expect.hasAssertions();
 

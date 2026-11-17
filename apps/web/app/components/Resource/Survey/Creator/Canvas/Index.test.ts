@@ -11,7 +11,11 @@ const loadSurvey = () => {
     surveyDocumentSchema.parse({
       content: [
         {
-          props: { children: [{ props: { id: "question", name: "question" }, type: SurveyNodeType.Text }], id: "page" },
+          props: {
+            children: [{ props: { id: "question", name: "question" }, type: SurveyNodeType.Text }],
+            enableIf: "",
+            id: "page",
+          },
           type: SurveyNodeType.Page,
         },
       ],

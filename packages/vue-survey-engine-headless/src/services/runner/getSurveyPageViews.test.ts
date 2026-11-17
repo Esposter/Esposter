@@ -25,6 +25,28 @@ describe(getSurveyPageViews, () => {
     expect(getSurveyPageViews(document, 0, {}, now)).toStrictEqual([]);
   });
 
+  test("a page disabled by its condition draws its questions disabled", () => {
+    expect.hasAssertions();
+
+    const document = createSurveyRunnerDocument([
+      createSurveyPage([{ props: { id: "a", name: "a" }, type: SurveyNodeType.Text }]),
+      createSurveyPage([{ props: { id: "b", name: "b" }, type: SurveyNodeType.Text }], "", "{a} = 'yes'"),
+    ]);
+
+    expect(getSurveyPageViews(document, 1, { a: "no" }, now).map(({ isEnabled }) => isEnabled)).toStrictEqual([false]);
+  });
+
+  test("answering yes enables the second page's questions", () => {
+    expect.hasAssertions();
+
+    const document = createSurveyRunnerDocument([
+      createSurveyPage([{ props: { id: "a", name: "a" }, type: SurveyNodeType.Text }]),
+      createSurveyPage([{ props: { id: "b", name: "b" }, type: SurveyNodeType.Text }], "", "{a} = 'yes'"),
+    ]);
+
+    expect(getSurveyPageViews(document, 1, { a: "yes" }, now).map(({ isEnabled }) => isEnabled)).toStrictEqual([true]);
+  });
+
   test("a visible page's views name each element by its pointer under the page", () => {
     expect.hasAssertions();
 

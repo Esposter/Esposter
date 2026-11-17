@@ -2,6 +2,7 @@ import type { SurveyDocumentIssue } from "#src/models/SurveyDocumentIssue";
 import type { SurveyNode } from "#src/models/SurveyNode";
 
 import { SurveyNodeType } from "#src/models/SurveyNodeType";
+import { checkSurveyEnableIf } from "#src/services/checkSurveyEnableIf";
 import { checkSurveyMinimumWithinMaximum } from "#src/services/checkSurveyMinimumWithinMaximum";
 import { checkSurveyNoneChoice } from "#src/services/checkSurveyNoneChoice";
 import { checkSurveyOptionalExpression } from "#src/services/checkSurveyOptionalExpression";
@@ -59,17 +60,9 @@ export const checkSurveyNodes = (
         checkSurveyVisibility(node.props.visibleIf, nodePointer, issues);
         break;
       case SurveyNodeType.Page:
-        checkSurveyVisibility(node.props.visibleIf, nodePointer, issues);
-        checkSurveyNodes(node.props.children, getBlockPropPointer(nodePointer, "children"), names, issues);
-        break;
       case SurveyNodeType.Panel:
         checkSurveyVisibility(node.props.visibleIf, nodePointer, issues);
-        checkSurveyOptionalExpression(
-          node.props.enableIf,
-          "enable condition",
-          getBlockPropPointer(nodePointer, "enableIf"),
-          issues,
-        );
+        checkSurveyEnableIf(node.props.enableIf, nodePointer, issues);
         checkSurveyNodes(node.props.children, getBlockPropPointer(nodePointer, "children"), names, issues);
         break;
       case SurveyNodeType.PanelDynamic:

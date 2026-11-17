@@ -30,6 +30,26 @@ describe(goToNextSurveyPage, () => {
     ]);
   });
 
+  test("a required question on a disabled page does not block the move", () => {
+    expect.hasAssertions();
+
+    const document = createSurveyRunnerDocument([
+      createSurveyPage([{ props: { id: "a", name: "a" }, type: SurveyNodeType.Text }]),
+      createSurveyPage(
+        [{ props: { id: "b", isRequired: true, name: "b" }, type: SurveyNodeType.Text }],
+        "",
+        "{a} = 'yes'",
+      ),
+      createSurveyPage([{ props: { id: "c", name: "c" }, type: SurveyNodeType.Text }]),
+    ]);
+    const state = createSurveyRunnerState(document, { a: "no" }, 1);
+
+    const move = goToNextSurveyPage(document, state, now);
+
+    expect(move.errors).toStrictEqual([]);
+    expect(move.state.pageIndex).toBe(2);
+  });
+
   test("a required question that is hidden does not block the move", () => {
     expect.hasAssertions();
 
