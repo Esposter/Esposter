@@ -186,7 +186,7 @@ describe("pageBuilderCanvasTextEditor", () => {
           type: MjmlNodeType.Section,
         },
       ],
-      root: { props: {} },
+      root: { props: { lang: "", title: "" } },
     });
     const { setMergeFieldColumns } = pageBuilderDocumentStore;
     setMergeFieldColumns(resourceId, ["first_name", "last_name"]);

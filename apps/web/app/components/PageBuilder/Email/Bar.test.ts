@@ -70,7 +70,10 @@ describe("pageBuilderEmailBar", () => {
     expect.hasAssertions();
 
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setEmailDocument(TEST_ID, emailKind, { content: [], root: { props: {} } });
+    pageBuilderDocumentStore.setEmailDocument(TEST_ID, emailKind, {
+      content: [],
+      root: { props: { lang: "", title: "" } },
+    });
     const component = await mountBar();
     await component.get("input").setValue(message);
 
@@ -81,7 +84,10 @@ describe("pageBuilderEmailBar", () => {
     expect.hasAssertions();
 
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setEmailDocument(TEST_ID, emailKind, { content: [], root: { props: {} } });
+    pageBuilderDocumentStore.setEmailDocument(TEST_ID, emailKind, {
+      content: [],
+      root: { props: { lang: "", title: "" } },
+    });
     const component = await mountBar();
 
     expect(component.text()).toContain(`0 / ${MAX_EMAIL_PREVIEW_LENGTH}`);

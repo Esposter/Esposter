@@ -119,7 +119,7 @@ describe("pageBuilderPalette", () => {
           type: MjmlNodeType.Section,
         },
       ],
-      root: { props: {} },
+      root: { props: { lang: "", title: "" } },
     });
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     pageBuilderCanvasStore.setSelectedNodeId(TEST_ID, columnId);

@@ -7,8 +7,10 @@ export interface MjmlRootProps {
   breakpoint?: undefined | { width: string };
   direction?: MjmlDirection | undefined;
   fonts?: undefined | { href: string; name: string }[];
-  lang?: string | undefined;
+  // Empty when the email sets no language, so no language attribute is written
+  lang: string;
   preview?: string | undefined;
   styles?: undefined | { css: string; inline: boolean }[];
-  title?: string | undefined;
+  // Empty when the email sets no title, so no title element is written
+  title: string;
 }

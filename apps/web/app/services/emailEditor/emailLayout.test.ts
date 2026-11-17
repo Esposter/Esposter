@@ -64,13 +64,14 @@ describe("emailLayout", () => {
     expect(previewLayout.regions.map(({ id }) => id)).toStrictEqual([barRegionId]);
   });
 
-  test("nothing selected keeps the inspector, which holds the prompt", () => {
+  test("nothing selected asks for a selection", () => {
     expect.hasAssertions();
 
     const resolvedLayout = resolveLayout(emailLayout, designContext, SizeClass.Expanded, readerState);
 
     expect(getRegion(resolvedLayout, inspectorRegionId).panels).toStrictEqual([
       { contentKey: EmailContentKey.Prompt, id: "prompt" },
+      { contentKey: EmailContentKey.Content, id: "settings" },
     ]);
   });
 

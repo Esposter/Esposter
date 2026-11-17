@@ -117,7 +117,7 @@ describe(usePageBuilderDrag, () => {
           type: MjmlNodeType.Section,
         },
       ],
-      root: { props: {} },
+      root: { props: { lang: "", title: "" } },
     };
     pageBuilderDocumentStore.setEmailDocument(RESOURCE_ID, emailKind, EMAIL_TEXT_DOCUMENT);
     const announce = vi.fn<(message: string) => void>();
@@ -175,7 +175,7 @@ describe(usePageBuilderDrag, () => {
           type: MjmlNodeType.Section,
         },
       ],
-      root: { props: {} },
+      root: { props: { lang: "", title: "" } },
     });
     expect(announce).toHaveBeenCalledExactlyOnceWith(`Inserted merge field ${COLUMN_NAME}`);
   });

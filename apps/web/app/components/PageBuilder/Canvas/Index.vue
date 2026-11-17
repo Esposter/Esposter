@@ -12,6 +12,7 @@ import { getPresentDefinitions } from "#shared/services/pageBuilder/getPresentDe
 import { getWebpageCss } from "#shared/services/pageBuilder/getWebpageCss";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { PAGE_BUILDER_COMMAND_GROUP } from "#src/services/pageBuilder/constants";
+import { getEmailColumnWidth } from "#src/services/pageBuilder/email/getEmailColumnWidth";
 import { renderEmailCanvasVNodes } from "#src/services/pageBuilder/email/renderEmailCanvasVNodes";
 import { getNodeIdFromElement } from "#src/services/pageBuilder/getNodeIdFromElement";
 import { renderCanvasVNodes } from "#src/services/pageBuilder/renderCanvasVNodes";
@@ -149,7 +150,7 @@ const css = computed(() => {
   return `${pageCss}${editingCss}\n${previewCss}`;
 });
 const device = computed(() => getDevice(resourceId));
-// An email is drawn at the width of its device, in the column an email is read in, which the body-width wrapper gives it
+// An email is drawn at the width of its device, which its sections' breakpoints follow
 const emailWidth = computed(() =>
   device.value === PageBuilderDevice.Desktop ? DESKTOP_MIN_WIDTH : DEVICE_WIDTH_MAP[device.value],
 );
@@ -158,7 +159,7 @@ const CanvasNodes = (props: { open: OpenPageBuilderDocument; origin: string }) =
   if (props.open.type === ResourceType.Email)
     return h(
       "div",
-      { style: { margin: "0 auto", maxWidth: "37.5rem" } },
+      { style: { margin: "0 auto", maxWidth: getEmailColumnWidth(props.open.document) } },
       renderEmailCanvasVNodes(props.open.kind, props.open.document, emailWidth.value),
     );
 

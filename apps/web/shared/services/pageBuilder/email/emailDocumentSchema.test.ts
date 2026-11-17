@@ -18,7 +18,10 @@ describe("emailDocumentSchema", () => {
   test("a document with a duplicate node id is refused", () => {
     expect.hasAssertions();
 
-    const document: MjmlDocument = { content: [createRawNode(TEST_ID), createRawNode(TEST_ID)], root: { props: {} } };
+    const document: MjmlDocument = {
+      content: [createRawNode(TEST_ID), createRawNode(TEST_ID)],
+      root: { props: { lang: "", title: "" } },
+    };
     const result = emailDocumentSchema.safeParse(document);
 
     expect(result.error?.issues.map(({ message, path }) => ({ message, path }))).toStrictEqual([
@@ -36,7 +39,7 @@ describe("emailDocumentSchema", () => {
           type: MjmlNodeType.Section,
         },
       ],
-      root: { props: {} },
+      root: { props: { lang: "", title: "" } },
     };
     const columnSlot = "/content/0/props/children/0/props/children";
     const surveyInvite: EmailSurveyInviteNode = {

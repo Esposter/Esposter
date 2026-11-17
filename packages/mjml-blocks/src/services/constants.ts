@@ -19,6 +19,8 @@ export const MJML_BODY_ATTRIBUTES: Record<string, string> = {
   id: "string",
   width: "unit(px)",
 };
+// The width MJML draws a body at when it sets none, which the design canvas draws an email's column at
+export const MJML_DEFAULT_BODY_WIDTH = "600px";
 export const MJML_BODY_CHILDREN: MjmlNodeType[] = [
   MjmlNodeType.Raw,
   MjmlNodeType.Section,

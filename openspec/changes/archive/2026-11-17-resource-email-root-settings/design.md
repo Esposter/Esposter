@@ -20,7 +20,7 @@ The email's root props are read from and written to the document's head and body
 - **A font address uses the check the root schema holds.** The schema refuses an address whose scheme is not allowed, and the field shows that refusal. The alternative was a second check in the field, which could disagree with the compile at its edge.
 - **The body width is a length in pixels, and its refusal is MJML's grammar.** The width is typed as a pixel length rather than as free text, and a value MJML's body grammar does not take is refused by the schema the field already reads. The alternative was free text, which would show MJML's grammar as a bare error.
 - **Direction is a choice of the three values MJML takes.** Auto, left to right and right to left are the values the root's direction holds, so the choice cannot write another.
-- **The font list refuses an add at its limit.** The root schema already caps the list, and the field shows the refusal rather than dropping the add silently.
+- **An empty title, language or body value is absent.** The title and the language are text the author types, so each is a string that is empty when the email sets none, and the compile writes no element or attribute for an empty one. A body width or background is an MJML attribute, so an empty one is absent from the body and no attribute is written for it, which is how a cleared field removes its value.
 
 ## Rejected
 
@@ -34,21 +34,25 @@ The email's root props are read from and written to the document's head and body
 
 ## Key files
 
-| File                                                                | Role                                                                                                          |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| `apps/web/shared/services/pageBuilder/email/emailRootFormSchema.ts` | the root form, which holds the settings fields the panel draws                                                |
-| `apps/web/app/services/emailEditor/emailLayout.ts`                  | the email's layout, whose nothing-selected state offers the settings beside the prompt                        |
-| `apps/web/app/components/Resource/Email/Editor.vue`                 | the blade that binds the panels to the document's root and the selection                                      |
-| `apps/web/app/services/pageBuilder/webpageLayout.ts`                | the webpage's arrangement, whose Page panel drawn with nothing selected is the model for the email's settings |
-| `apps/web/app/models/pageBuilder/WebpageRootForm.ts`                | the webpage's root form, the model for the email's form over the shared root schema                           |
-| `packages/mjml-blocks/src/services/mjmlRootPropsSchema.ts`          | the root props the settings write: language, direction, title, fonts, body                                    |
-| `packages/mjml-blocks/src/services/createMjmlRootPropsSchema.ts`    | the root check that refuses a body attribute and a font address the grammar or the scheme does not allow      |
+| File                                                                | Role                                                                                                                   |
+| ------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `apps/web/shared/services/pageBuilder/email/emailRootFormSchema.ts` | the root form, which picks the settings from the stored root schema and extends the body with its width and background |
+| `apps/web/app/services/pageBuilder/email/getEmailColumnWidth.ts`    | the width of the column an email is drawn in, which the body sets and MJML's default fills                             |
+| `packages/mjml-blocks/src/services/readMjmlRootProps.ts`            | the root props a document reads, with an absent language and title empty                                               |
+| `apps/web/app/services/emailEditor/emailLayout.ts`                  | the email's layout, whose nothing-selected state offers the settings beside the prompt                                 |
+| `apps/web/app/components/Resource/Email/Editor.vue`                 | the blade that binds the panels to the document's root and the selection                                               |
+| `apps/web/app/services/pageBuilder/webpageLayout.ts`                | the webpage's arrangement, whose Page panel drawn with nothing selected is the model for the email's settings          |
+| `apps/web/app/models/pageBuilder/WebpageRootForm.ts`                | the webpage's root form, the model for the email's form over the shared root schema                                    |
+| `packages/mjml-blocks/src/services/mjmlRootPropsSchema.ts`          | the root props the settings write: language, direction, title, fonts, body                                             |
+| `packages/mjml-blocks/src/services/createMjmlRootPropsSchema.ts`    | the root check that refuses a body attribute and a font address the grammar or the scheme does not allow               |
 
 ## New code lands here
 
 ```text
-apps/web/app/components/PageBuilder/Email/        the email's settings panel, drawn beside the prompt with nothing selected
-apps/web/shared/services/pageBuilder/email/       the settings' form schema over the root props
+apps/web/shared/services/pageBuilder/email/emailRootFormSchema.ts     the settings' form schema over the root props
+apps/web/app/services/pageBuilder/email/getEmailColumnWidth.ts        the canvas column's width, which the body sets
+packages/mjml-blocks/src/services/getFilledMjmlAttributes.ts          the body attributes that have a value, which are the ones checked and written
+packages/mjml-blocks/src/services/readMjmlRootProps.ts                the root props a document reads, with an absent language and title empty
 ```
 
 ## Sources

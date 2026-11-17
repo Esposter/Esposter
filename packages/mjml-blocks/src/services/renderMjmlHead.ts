@@ -7,8 +7,8 @@ import { escapeText } from "@esposter/shared";
 // The head components, each written only when the root's props set it, in the order MJML's head takes them
 export const renderMjmlHead = (rootProps: MjmlRootProps): MjmlJson[] => {
   const head: MjmlJson[] = [];
-  if (rootProps.title !== undefined)
-    head.push({ attributes: {}, content: escapeText(rootProps.title), tagName: "mj-title" });
+  // An empty title is no title, so the title is written only when it has text
+  if (rootProps.title) head.push({ attributes: {}, content: escapeText(rootProps.title), tagName: "mj-title" });
   if (rootProps.preview !== undefined)
     head.push({ attributes: {}, content: escapeText(rootProps.preview), tagName: "mj-preview" });
 

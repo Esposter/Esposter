@@ -156,3 +156,49 @@ Preview SHALL compile the email once after a run of edits settles, and SHALL NOT
 - **GIVEN** an email open in the editor
 - **WHEN** the owner types several characters in a row and stops
 - **THEN** one compile is requested once the edits settle
+
+### Requirement: The email settings edit its head and body
+
+The email settings SHALL edit the email's language, direction, title, font list, body width and body background, and each change SHALL show in the compiled email.
+
+#### Scenario: Editing the title sets the title of the compiled email
+
+- **GIVEN** an email open with nothing selected
+- **WHEN** the owner types a title in the settings
+- **THEN** the compiled email carries that title
+
+#### Scenario: The language setting sets the language of the email
+
+- **GIVEN** an email open with nothing selected
+- **WHEN** the owner sets the language to a language tag
+- **THEN** the compiled email declares that language
+
+#### Scenario: The direction setting turns the email right to left
+
+- **GIVEN** an email open with nothing selected
+- **WHEN** the owner chooses right to left
+- **THEN** the compiled email is right to left
+
+#### Scenario: A body width sets the width of the email
+
+- **GIVEN** an email open with nothing selected
+- **WHEN** the owner sets the body width to a pixel length
+- **THEN** the design canvas draws the email at that width
+
+#### Scenario: A font added to the list loads in the compiled email
+
+- **GIVEN** an email open with nothing selected
+- **WHEN** the owner adds a font with its name and stylesheet address
+- **THEN** the compiled email loads that stylesheet
+
+#### Scenario: Clearing a settings field removes it from the email
+
+- **GIVEN** an email whose title is set
+- **WHEN** the owner clears the title
+- **THEN** the compiled email has no title
+
+#### Scenario: A settings change is one undo step
+
+- **GIVEN** an email whose title was changed in the settings
+- **WHEN** the owner undoes once
+- **THEN** the title is its earlier value

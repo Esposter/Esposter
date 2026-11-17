@@ -458,7 +458,7 @@ describe(usePageBuilderHistoryStore, () => {
     pageBuilderDocumentStore.setEmailDocument(resourceId, emailKind, result.data);
     pageBuilderHistoryStore.applyEdit(
       resourceId,
-      [{ op: JsonPatchOperationType.Add, path: "/root/props/title", value: "e" }],
+      [{ op: JsonPatchOperationType.Replace, path: "/root/props/title", value: "e" }],
       "f",
     );
 
@@ -467,6 +467,6 @@ describe(usePageBuilderHistoryStore, () => {
 
     pageBuilderHistoryStore.undo(resourceId);
 
-    expect(pageBuilderDocumentStore.getEmailDocument(resourceId)?.root.props.title).toBeUndefined();
+    expect(pageBuilderDocumentStore.getEmailDocument(resourceId)?.root.props.title).toBe("");
   });
 });

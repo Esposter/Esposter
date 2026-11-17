@@ -53,7 +53,10 @@ const createSection = (children: ColumnChild[]): MjmlSectionNode => ({
   props: { children: [createColumn(children)], id: TEST_THIRD_ID },
   type: MjmlNodeType.Section,
 });
-const createDocument = (content: MjmlSectionNode[]): EmailDocumentInput => ({ content, root: { props: {} } });
+const createDocument = (content: MjmlSectionNode[]): EmailDocumentInput => ({
+  content,
+  root: { props: { lang: "", title: "" } },
+});
 
 describe(critiqueEmail, () => {
   const TEST_UNREADABLE_VALUE = "not-a-colour";

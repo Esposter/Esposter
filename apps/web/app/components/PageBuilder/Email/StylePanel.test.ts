@@ -37,7 +37,7 @@ describe("pageBuilderEmailStylePanel", () => {
         type: MjmlNodeType.Section,
       },
     ],
-    root: { props: { attributes: { [MjmlNodeType.Text]: { "font-size": rootFontSize } } } },
+    root: { props: { attributes: { [MjmlNodeType.Text]: { "font-size": rootFontSize } }, lang: "", title: "" } },
   });
 
   test("an email text has no breakpoint or state choice", async () => {
@@ -101,7 +101,7 @@ describe("pageBuilderEmailStylePanel", () => {
           type: MjmlNodeType.Section,
         },
       ],
-      root: { props: {} },
+      root: { props: { lang: "", title: "" } },
     };
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     pageBuilderDocumentStore.setEmailDocument(TEST_ID, emailKind, imageDocument);

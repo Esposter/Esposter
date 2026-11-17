@@ -27,7 +27,7 @@ describe("pageBuilderEmailPreview", () => {
   const html = "a";
   const message = "a";
   const warningMessage = "b";
-  const emailDocument: EmailDocument = { content: [], root: { props: {} } };
+  const emailDocument: EmailDocument = { content: [], root: { props: { lang: "", title: "" } } };
 
   test("preview shows the compiled email at mobile width", async () => {
     expect.hasAssertions();
@@ -62,7 +62,10 @@ describe("pageBuilderEmailPreview", () => {
       signalRefused();
       return { message, messages: [] };
     });
-    const editedEmailDocument: EmailDocument = { ...emailDocument, root: { props: { preview: html } } };
+    const editedEmailDocument: EmailDocument = {
+      ...emailDocument,
+      root: { props: { lang: "", preview: html, title: "" } },
+    };
     vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
     await wrapper.setProps({ emailDocument: editedEmailDocument });
     await vi.advanceTimersByTimeAsync(RESOURCE_AUTOSAVE_DEBOUNCE_MS);
@@ -145,7 +148,7 @@ describe("pageBuilderEmailPreview", () => {
           type: MjmlNodeType.Section,
         },
       ],
-      root: { props: {} },
+      root: { props: { lang: "", title: "" } },
     };
     const compile = vi.fn<(input: unknown) => void>();
     const requests: Request[] = [];
@@ -191,7 +194,10 @@ describe("pageBuilderEmailPreview", () => {
       signalCompiled();
       return { html };
     });
-    const edits = ["a", "aa", "aaa"].map((preview) => ({ ...emailDocument, root: { props: { preview } } }));
+    const edits = ["a", "aa", "aaa"].map((preview) => ({
+      ...emailDocument,
+      root: { props: { lang: "", preview, title: "" } },
+    }));
     vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
     for (const edit of edits)
       // oxlint-disable-next-line no-await-in-loop -- Order is the contract: each edit is its own watcher flush, the way a keystroke is, and the last one is the document compiled

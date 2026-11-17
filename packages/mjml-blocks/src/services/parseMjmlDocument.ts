@@ -8,6 +8,7 @@ import type { z } from "zod";
 import { MJML_HEAD_TEXT_TAGS } from "#src/services/constants";
 import { createMjmlDocumentSchema } from "#src/services/createMjmlDocumentSchema";
 import { readMjmlRoot } from "#src/services/readMjmlRoot";
+import { readMjmlRootProps } from "#src/services/readMjmlRootProps";
 import { readMjmlTopLevel } from "#src/services/readMjmlTopLevel";
 import { parse } from "node-html-parser";
 
@@ -34,6 +35,6 @@ export const parseMjmlDocument = <TContext, TContent extends MjmlRichText>(
   const candidate =
     mjml?.rawTagName === "mjml" && topLevelEntries.length === 0
       ? readMjmlRoot(mjml, registry, richText)
-      : { content: [], root: { props: Object.fromEntries(topLevelEntries) } };
+      : { content: [], root: { props: readMjmlRootProps(topLevelEntries) } };
   return createMjmlDocumentSchema(registry, bodyChildrenSchema, maxNodes).safeParse(candidate);
 };

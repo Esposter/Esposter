@@ -3,6 +3,7 @@ import type { MjmlBlockTypeDefinition } from "#src/models/MjmlBlockTypeDefinitio
 import { allowedAddressSchema } from "#src/services/allowedAddressSchema";
 import { checkMjmlAttributeValues } from "#src/services/checkMjmlAttributeValues";
 import { ALL_ATTRIBUTES_KEY, MJML_BODY_ATTRIBUTES, MJML_BREAKPOINT_ATTRIBUTES } from "#src/services/constants";
+import { getFilledMjmlAttributes } from "#src/services/getFilledMjmlAttributes";
 import { getMjmlAttributeSchema } from "#src/services/getMjmlAttributeSchema";
 import { mjmlRootPropsSchema } from "#src/services/mjmlRootPropsSchema";
 
@@ -11,7 +12,7 @@ export const createMjmlRootPropsSchema = (
   definitions: Pick<MjmlBlockTypeDefinition, "allowedAttributes" | "type">[],
 ): typeof mjmlRootPropsSchema =>
   mjmlRootPropsSchema.superRefine((props, context) => {
-    checkMjmlAttributeValues(props.body ?? {}, MJML_BODY_ATTRIBUTES, ["body"], context);
+    checkMjmlAttributeValues(getFilledMjmlAttributes(props.body ?? {}), MJML_BODY_ATTRIBUTES, ["body"], context);
     if (props.breakpoint)
       checkMjmlAttributeValues(props.breakpoint, MJML_BREAKPOINT_ATTRIBUTES, ["breakpoint"], context);
 

@@ -447,7 +447,7 @@ describe("programRouter", () => {
             type: MjmlNodeType.Section,
           },
         ],
-        root: { props: {} },
+        root: { props: { lang: "", title: "" } },
       }),
       contentVersion: email.contentVersion,
       id: email.id,

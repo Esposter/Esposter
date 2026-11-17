@@ -72,7 +72,7 @@ const createEmailLeafDocument = (leaf: MjmlColumnNode["props"]["children"][numbe
       type: MjmlNodeType.Section,
     },
   ],
-  root: { props: {} },
+  root: { props: { lang: "", title: "" } },
 });
 const createEmailSurveyInviteDocument = (surveyId: string): EmailDocument =>
   createEmailLeafDocument({ props: { id: TEST_ID, label: TEST_LABEL, surveyId }, type: EmailNodeType.SurveyInvite });

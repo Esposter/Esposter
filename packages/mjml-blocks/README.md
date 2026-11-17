@@ -89,7 +89,7 @@ const document = createMjmlDocumentSchema(registry, bodyChildrenSchema, Number.M
       type: "mj-section",
     },
   ],
-  root: { props: {} },
+  root: { props: { lang: "", title: "" } },
 });
 const json = renderMjmlDocument(document, registry, { context: undefined, isStampingIds: false });
 const { html } = await mjml2html(json, { validationLevel: "strict" });

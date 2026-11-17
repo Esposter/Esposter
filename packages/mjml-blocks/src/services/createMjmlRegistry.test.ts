@@ -42,7 +42,7 @@ describe(createMjmlRegistry, () => {
             type: MjmlNodeType.Section,
           },
         ],
-        root: { props: {} },
+        root: { props: { lang: "", title: "" } },
       }),
     ).toStrictEqual([["content", 0, "props", "children", 0, "type"]]);
   });
@@ -53,7 +53,7 @@ describe(createMjmlRegistry, () => {
     expect(
       getIssuePaths({
         content: [{ props: { content: { text: "" }, id: TEST_TEXT_ID }, type: MjmlNodeType.Text }],
-        root: { props: {} },
+        root: { props: { lang: "", title: "" } },
       }),
     ).toStrictEqual([["content", 0, "type"]]);
   });
@@ -85,7 +85,7 @@ describe(createMjmlRegistry, () => {
             type: MjmlNodeType.Section,
           },
         ],
-        root: { props: {} },
+        root: { props: { lang: "", title: "" } },
       }),
     ).toStrictEqual([["content", 0, "props", "children", 0, "props", "children", 0, "props", "padding"]]);
   });
@@ -112,7 +112,7 @@ describe(createMjmlRegistry, () => {
             type: MjmlNodeType.Section,
           },
         ],
-        root: { props: {} },
+        root: { props: { lang: "", title: "" } },
       }),
     ).toStrictEqual([["content", 0, "props", "children", 0, "props", "children", 0, "props", "alt"]]);
   });
@@ -148,7 +148,7 @@ describe(createMjmlRegistry, () => {
             type: MjmlNodeType.Section,
           },
         ],
-        root: { props: {} },
+        root: { props: { lang: "", title: "" } },
       }),
     ).toStrictEqual([
       ["content", 0, "props", "children", 0, "props", "children", 0, "props", "width"],
@@ -203,7 +203,7 @@ describe(createMjmlRegistry, () => {
             type: MjmlNodeType.Hero,
           },
         ],
-        root: { props: {} },
+        root: { props: { lang: "", title: "" } },
       }),
     ).toStrictEqual([]);
   });

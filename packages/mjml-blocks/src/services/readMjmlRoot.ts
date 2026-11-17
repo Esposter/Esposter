@@ -8,6 +8,7 @@ import { DIRECTION_ATTRIBUTE_KEY } from "#src/services/constants";
 import { getMjmlRefusalKey } from "#src/services/getMjmlRefusalKey";
 import { readMjmlHead } from "#src/services/readMjmlHead";
 import { readMjmlNodes } from "#src/services/readMjmlNodes";
+import { readMjmlRootProps } from "#src/services/readMjmlRootProps";
 import { readMjmlStrayText } from "#src/services/readMjmlStrayText";
 
 // The document's root props and body from its mjml element, the head read into the root's props and the body into its content
@@ -46,5 +47,5 @@ export const readMjmlRoot = <TContext, TContent extends MjmlRichText>(
     }
   }
 
-  return { content, root: { props: Object.fromEntries(entries) } };
+  return { content, root: { props: readMjmlRootProps(entries) } };
 };

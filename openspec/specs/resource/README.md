@@ -90,7 +90,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Editor guardrails](editor-guardrails/design.md) — the survey and the page builder refuse an edit that would break the document, say why where the reader is working and list the problems in one surface
 - [Whiteboard layout](whiteboard-layout/design.md) — every tool one press away in a single toolbar, and properties that appear only for what is selected
 - [Survey layout](survey-layout/design.md) — the survey's structure first, with the inspector and the logic beside the canvas and a sheet for each on a phone
-- [Email layout](email-layout/design.md) — a bar of the email's own controls, the blocks beside the canvas and an inspector that asks for a selection
+- [Email layout](email-layout/design.md) — a bar of the email's own controls, the blocks beside the canvas and an inspector that asks for a selection and offers the email's settings beside it
 - [Webpage layout](webpage-layout/design.md) — the blocks and the inspector docked around the canvas, and sheets behind buttons on a narrow window
 - [Dashboard layout](dashboard-layout/design.md) — the visuals and the inspector around the grid, with the grid kept as the canvas
 - [Editor compact chrome](editor-compact-chrome/design.md) — one grouped, searchable palette for the survey and the page builder, a whiteboard panel that floats over the canvas, a readable survey canvas and a toolbar that folds

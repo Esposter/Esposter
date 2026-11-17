@@ -29,7 +29,7 @@ describe(useEmailEditorStore, () => {
 
   beforeEach(async () => {
     Object.assign(useRouter().currentRoute.value.params, { id: resourceId });
-    content = new EmailEditor({ content: [], root: { props: {} } });
+    content = new EmailEditor({ content: [], root: { props: { lang: "", title: "" } } });
     savedContents = [];
     saveResourceContent = vi.fn<() => ResourceInResource>(() => createResource(1));
     trpcMsw.resource.readResource.query(() => ({ ...createResource(), publication: null }));
@@ -53,7 +53,7 @@ describe(useEmailEditorStore, () => {
     await loadContent();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const { setEmailDocument } = pageBuilderDocumentStore;
-    setEmailDocument(resourceId, emailKind, { content: [], root: { props: { attributes: {} } } });
+    setEmailDocument(resourceId, emailKind, { content: [], root: { props: { attributes: {}, lang: "", title: "" } } });
     saveEmail(resourceId);
     await flushPromises();
 
@@ -87,7 +87,7 @@ describe(useEmailEditorStore, () => {
           type: MjmlNodeType.Section,
         },
       ],
-      root: { props: {} },
+      root: { props: { lang: "", title: "" } },
     };
     setEmailDocument(resourceId, emailKind, document);
     saveEmail(resourceId);
@@ -100,13 +100,13 @@ describe(useEmailEditorStore, () => {
     expect.hasAssertions();
 
     const datasetReference = { id: v7(), type: DatasetProviderType.Sheet };
-    content = new EmailEditor({ content: [], datasetReference, root: { props: {} } });
+    content = new EmailEditor({ content: [], datasetReference, root: { props: { lang: "", title: "" } } });
     const emailEditorStore = useEmailEditorStore();
     const { loadContent, saveEmail } = emailEditorStore;
     await loadContent();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const { setEmailDocument } = pageBuilderDocumentStore;
-    setEmailDocument(resourceId, emailKind, { content: [], root: { props: {} } });
+    setEmailDocument(resourceId, emailKind, { content: [], root: { props: { lang: "", title: "" } } });
     saveEmail(resourceId);
     await flushPromises();
 
@@ -129,7 +129,11 @@ describe(useEmailEditorStore, () => {
     expect.hasAssertions();
 
     const previousDatasetReference = { id: v7(), type: DatasetProviderType.Sheet };
-    content = new EmailEditor({ content: [], datasetReference: previousDatasetReference, root: { props: {} } });
+    content = new EmailEditor({
+      content: [],
+      datasetReference: previousDatasetReference,
+      root: { props: { lang: "", title: "" } },
+    });
     trpcMsw.email.saveResourceContent.mutation(() => {
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });

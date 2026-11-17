@@ -72,7 +72,7 @@ describe(renderMjmlDocument, () => {
         type: MjmlNodeType.Section,
       },
     ],
-    root: { props: {} },
+    root: { props: { lang: "", title: "" } },
   };
 
   test("rendering where there is no document object model", () => {
@@ -82,7 +82,7 @@ describe(renderMjmlDocument, () => {
 
     const document = createMjmlDocumentSchema(TEST_REGISTRY, TEST_BODY_CHILDREN_SCHEMA, TEST_MAX_NODES).parse({
       content: [createTextSection()],
-      root: { props: {} },
+      root: { props: { lang: "", title: "" } },
     });
     expect(renderMjmlDocument(document, TEST_REGISTRY, TEST_RENDER_OPTIONS)).toStrictEqual({
       attributes: {},
@@ -139,7 +139,7 @@ describe(renderMjmlDocument, () => {
     const id = 'id"1';
     const document = createMjmlDocumentSchema(TEST_REGISTRY, TEST_BODY_CHILDREN_SCHEMA, TEST_MAX_NODES).parse({
       content: [{ props: { children: [], id }, type: MjmlNodeType.Section }],
-      root: { props: {} },
+      root: { props: { lang: "", title: "" } },
     });
     expect(renderMjmlDocument(document, TEST_REGISTRY, { context: undefined, isStampingIds: true })).toStrictEqual({
       attributes: {},
@@ -185,7 +185,7 @@ describe(renderMjmlDocument, () => {
           type: MjmlNodeType.Wrapper,
         },
       ],
-      root: { props: {} },
+      root: { props: { lang: "", title: "" } },
     });
     const json = renderMjmlDocument(document, TEST_REGISTRY, TEST_RENDER_OPTIONS);
     expect(json).toStrictEqual({
@@ -260,7 +260,7 @@ describe(renderMjmlDocument, () => {
           type: MjmlNodeType.Wrapper,
         },
       ],
-      root: { props: {} },
+      root: { props: { lang: "", title: "" } },
     });
     const { errors, html } = await mjml2html(renderMjmlDocument(document, TEST_REGISTRY, TEST_RENDER_OPTIONS), {
       validationLevel: "strict",
@@ -282,8 +282,10 @@ describe(renderMjmlDocument, () => {
       root: {
         props: {
           fonts: [{ href: "https://fonts.example.com/a.css", name: "Test" }],
+          lang: "",
           preview: "Preview",
           styles: [{ css: ".a{color:red}", inline: false }],
+          title: "",
         },
       },
     });
@@ -298,7 +300,7 @@ describe(renderMjmlDocument, () => {
 
     const document = createMjmlDocumentSchema(TEST_REGISTRY, TEST_BODY_CHILDREN_SCHEMA, TEST_MAX_NODES).parse({
       content: [{ props: { children: [createTextSection()], id: TEST_WRAPPER_ID }, type: MjmlNodeType.Wrapper }],
-      root: { props: { attributes: { "mj-all": { "font-family": "Arial" } } } },
+      root: { props: { attributes: { "mj-all": { "font-family": "Arial" } }, lang: "", title: "" } },
     });
     const { html } = await mjml2html(renderMjmlDocument(document, TEST_REGISTRY, TEST_RENDER_OPTIONS), {
       validationLevel: "strict",
@@ -311,7 +313,7 @@ describe(renderMjmlDocument, () => {
 
     const document = createMjmlDocumentSchema(TEST_REGISTRY, TEST_BODY_CHILDREN_SCHEMA, TEST_MAX_NODES).parse({
       content: [createTextSection()],
-      root: { props: { body: { width: "800px" } } },
+      root: { props: { body: { width: "800px" }, lang: "", title: "" } },
     });
     const { html } = await mjml2html(renderMjmlDocument(document, TEST_REGISTRY, TEST_RENDER_OPTIONS), {
       validationLevel: "strict",
@@ -349,7 +351,7 @@ describe(renderMjmlDocument, () => {
           type: MjmlNodeType.Section,
         },
       ],
-      root: { props: {} },
+      root: { props: { lang: "", title: "" } },
     };
 
     expect(renderMjmlDocument(document, registry, { context: origin, isStampingIds: false })).toStrictEqual({

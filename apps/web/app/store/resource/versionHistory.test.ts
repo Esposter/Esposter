@@ -125,7 +125,7 @@ describe(useVersionHistoryStore, () => {
     expect.hasAssertions();
 
     const email = createResourceListItem({ type: ResourceType.Email });
-    let content = new EmailEditor({ content: [], root: { props: {} } });
+    let content = new EmailEditor({ content: [], root: { props: { lang: "", title: "" } } });
     Object.assign(useRouter().currentRoute.value.params, { id: email.id });
     trpcMsw.resource.readResource.query(() => ({ ...email, publication: null }));
     trpcMsw.email.readResourceContent.query(() => content);
@@ -146,7 +146,7 @@ describe(useVersionHistoryStore, () => {
       throw error;
     });
     const undoLabelBeforeRestore = getUndoLabel(email.id);
-    const restoredEmail = new EmailEditor({ content: [], root: { props: { title: TEST_RESTORED_LABEL } } });
+    const restoredEmail = new EmailEditor({ content: [], root: { props: { lang: "", title: TEST_RESTORED_LABEL } } });
     content = restoredEmail;
     const versionHistoryStore = useVersionHistoryStore();
     const { restoreSnapshot } = versionHistoryStore;

@@ -141,7 +141,7 @@ describe("emailRouter", () => {
           type: MjmlNodeType.Section,
         },
       ],
-      root: { props: {} },
+      root: { props: { lang: "", title: "" } },
     });
 
     await expect(transformPublishedEmail({ ...getMockContext(), ...getMockSession() }, newResource, invalidEmail))
@@ -158,13 +158,13 @@ describe("emailRouter", () => {
     const datasetReference = { id: v7(), type: DatasetProviderType.SurveyResponses };
     const preview = "Your order has shipped";
     const savedResource = await caller.saveResourceContent({
-      content: new EmailEditor({ datasetReference, root: { props: { preview: name } } }),
+      content: new EmailEditor({ datasetReference, root: { props: { lang: "", preview: name, title: "" } } }),
       contentVersion: newResource.contentVersion,
       id: newResource.id,
     });
     // The second save is the latest edit, which the export compiles rather than the first
     await caller.saveResourceContent({
-      content: new EmailEditor({ datasetReference, root: { props: { preview } } }),
+      content: new EmailEditor({ datasetReference, root: { props: { lang: "", preview, title: "" } } }),
       contentVersion: savedResource.contentVersion,
       id: newResource.id,
     });
@@ -180,7 +180,7 @@ describe("emailRouter", () => {
     const newResource = await caller.createResource({ name });
     const preview = "Your order has shipped";
     await caller.saveResourceContent({
-      content: new EmailEditor({ html, root: { props: { preview } } }),
+      content: new EmailEditor({ html, root: { props: { lang: "", preview, title: "" } } }),
       contentVersion: newResource.contentVersion,
       id: newResource.id,
     });

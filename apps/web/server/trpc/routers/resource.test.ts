@@ -678,7 +678,10 @@ describe("resourceRouter", () => {
     const callAgentTool = await connectAgentKey(mockContext, [McpScope.Resources]);
     const emailResource = await caller.createResource({ name, type: ResourceType.Email });
     const savedResource = await emailCaller.saveResourceContent({
-      content: new EmailEditor({ content: [createEmailButtonSection(TEST_ID, undefined)], root: { props: {} } }),
+      content: new EmailEditor({
+        content: [createEmailButtonSection(TEST_ID, undefined)],
+        root: { props: { lang: "", title: "" } },
+      }),
       contentVersion: emailResource.contentVersion,
       id: emailResource.id,
     });
@@ -696,7 +699,10 @@ describe("resourceRouter", () => {
     const callAgentTool = await connectAgentKey(mockContext, [McpScope.Resources]);
     const emailResource = await caller.createResource({ name, type: ResourceType.Email });
     await emailCaller.saveResourceContent({
-      content: new EmailEditor({ content: [createEmailTextSection(TEST_ID, TEST_GREY_VALUE)], root: { props: {} } }),
+      content: new EmailEditor({
+        content: [createEmailTextSection(TEST_ID, TEST_GREY_VALUE)],
+        root: { props: { lang: "", title: "" } },
+      }),
       contentVersion: emailResource.contentVersion,
       id: emailResource.id,
     });

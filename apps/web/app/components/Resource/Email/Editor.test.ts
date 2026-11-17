@@ -52,7 +52,9 @@ describe("resourceEmailEditor", () => {
     Object.assign(useRouter().currentRoute.value.params, { id: resourceId });
     useSession.mockReturnValue({ data: null });
     trpcMsw.resource.readResource.query(() => ({ ...createResource(), publication: null }));
-    trpcMsw.email.readResourceContent.query(() => new EmailEditor({ content: [], root: { props: {} } }));
+    trpcMsw.email.readResourceContent.query(
+      () => new EmailEditor({ content: [], root: { props: { lang: "", title: "" } } }),
+    );
     trpcMsw.email.readResourcePublication.query(() => undefined);
     const resourceStore = useResourceStore();
     const { readResource } = resourceStore;
@@ -87,7 +89,8 @@ describe("resourceEmailEditor", () => {
 
     trpcMsw.email.compile.mutation(() => ({ html }));
     trpcMsw.email.readResourceContent.query(
-      () => new EmailEditor({ content: [createEmailButtonSection(undefined)], root: { props: {} } }),
+      () =>
+        new EmailEditor({ content: [createEmailButtonSection(undefined)], root: { props: { lang: "", title: "" } } }),
     );
     const component = await mountSuspended(ResourceEmailEditor);
     await waitForSynchronizedFunctions();
@@ -139,7 +142,7 @@ describe("resourceEmailEditor", () => {
               type: MjmlNodeType.Section,
             },
           ],
-          root: { props: {} },
+          root: { props: { lang: "", title: "" } },
         }),
     );
     pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);

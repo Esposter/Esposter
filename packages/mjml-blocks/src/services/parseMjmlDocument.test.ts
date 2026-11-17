@@ -213,7 +213,7 @@ describe(parseMjmlDocument, () => {
           type: MjmlNodeType.Section,
         },
       ],
-      root: { props: { body: {} } },
+      root: { props: { body: {}, lang: "", title: "" } },
     });
   });
 

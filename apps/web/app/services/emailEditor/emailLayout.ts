@@ -23,7 +23,8 @@ const BAR_SIZE = { defaultSize: EMAIL_BAR_SIZE, maximumSize: EMAIL_BAR_SIZE, min
 export const EMAIL_BLOCKS_REGION_ID = "blocks";
 export const EMAIL_STRUCTURE_PANEL_ID = "structure";
 // The email's arrangement: the bar over the canvas, the blocks at the start and the inspector at the end. The blocks and the
-// Inspector are drawn in Design alone, so Preview shows the compiled message with nothing editing beside it
+// Inspector are drawn in Design alone, so Preview shows the compiled message with nothing editing beside it. With nothing selected
+// The inspector asks for a selection and offers the email's settings beside that request
 export const emailLayout: Layout = {
   canvasId: "canvas",
   panels: [
@@ -54,6 +55,13 @@ export const emailLayout: Layout = {
       regionId: "inspector",
       selectionKindContentKeyMap: {},
       wildcardContentKey: EmailContentKey.Prompt,
+    },
+    {
+      condition: { modes: [EmailView.Design], selectionKinds: [PAGE_BUILDER_SELECTION_KIND_MAP.Nothing] },
+      id: "settings",
+      regionId: "inspector",
+      selectionKindContentKeyMap: {},
+      wildcardContentKey: EmailContentKey.Content,
     },
     {
       condition: { modes: [EmailView.Design], selectionKinds: [PAGE_BUILDER_SELECTION_KIND_MAP.Node] },
@@ -109,5 +117,6 @@ export const emailPanelNameMap: Record<string, string> = {
   content: PAGE_BUILDER_PANEL_NAME_MAP[PAGE_BUILDER_PANEL_ID_MAP.Content],
   [EMAIL_STRUCTURE_PANEL_ID]: "Structure",
   prompt: "Nothing selected",
+  settings: "Settings",
   style: PAGE_BUILDER_PANEL_NAME_MAP[PAGE_BUILDER_PANEL_ID_MAP.Style],
 };

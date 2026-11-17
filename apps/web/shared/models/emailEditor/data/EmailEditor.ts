@@ -44,7 +44,7 @@ export class EmailEditor extends AItemEntity {
   datasetReference?: DatasetReference | undefined;
   // The compiled html of a published snapshot. The server compiles the document at publish, so no working copy holds it
   html?: string | undefined;
-  root: { props: MjmlRootProps } = { props: {} };
+  root: { props: MjmlRootProps } = { props: { lang: "", title: "" } };
 
   constructor(init?: Partial<EmailEditor>) {
     super();

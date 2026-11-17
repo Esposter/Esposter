@@ -53,7 +53,7 @@ export const TEST_EMAIL: EmailDocument = {
       type: MjmlNodeType.Section,
     },
   ],
-  root: { props: {} },
+  root: { props: { lang: "", title: "" } },
 };
 
 // Three columns in a row of 200 pixels each, the last two wrapped onto a line below the first

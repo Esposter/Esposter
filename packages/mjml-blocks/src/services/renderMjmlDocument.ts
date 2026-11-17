@@ -5,6 +5,7 @@ import type { RenderMjmlDocumentOptions } from "#src/models/RenderMjmlDocumentOp
 
 import { DIRECTION_ATTRIBUTE_KEY } from "#src/services/constants";
 import { escapeMjmlAttributes } from "#src/services/escapeMjmlAttributes";
+import { getFilledMjmlAttributes } from "#src/services/getFilledMjmlAttributes";
 import { renderMjmlHead } from "#src/services/renderMjmlHead";
 import { stampNode } from "#src/services/stampNode";
 import { renderBlockNodes } from "vue-block-editor-headless";
@@ -27,14 +28,19 @@ export const renderMjmlDocument = <TContext>(
   );
   const head = renderMjmlHead(rootProps);
   const rootAttributes: Record<string, string> = {};
-  if (rootProps.lang !== undefined) rootAttributes.lang = rootProps.lang;
+  // An empty language is no language, so the attribute is written only when it has text
+  if (rootProps.lang) rootAttributes.lang = rootProps.lang;
   if (rootProps.direction !== undefined) rootAttributes[DIRECTION_ATTRIBUTE_KEY] = rootProps.direction;
 
   return {
     attributes: escapeMjmlAttributes(rootAttributes),
     children: [
       ...(head.length > 0 ? [{ attributes: {}, children: head, tagName: "mj-head" }] : []),
-      { attributes: escapeMjmlAttributes(rootProps.body ?? {}), children: content, tagName: "mj-body" },
+      {
+        attributes: escapeMjmlAttributes(getFilledMjmlAttributes(rootProps.body ?? {})),
+        children: content,
+        tagName: "mj-body",
+      },
     ],
     tagName: "mjml",
   };

@@ -35,7 +35,7 @@ describe(compileEmailDocument, () => {
           type: MjmlNodeType.Section,
         },
       ],
-      root: { props: {} },
+      root: { props: { lang: "", title: "" } },
     };
 
     await compileEmailDocument(document, TEST_CONTEXT).match(noop, (error) => {
@@ -78,7 +78,7 @@ describe(compileEmailDocument, () => {
           type: MjmlNodeType.Section,
         },
       ],
-      root: { props: {} },
+      root: { props: { lang: "", title: "" } },
     };
 
     await compileEmailDocument(document, TEST_CONTEXT).match(
@@ -123,7 +123,7 @@ describe(compileEmailDocument, () => {
           type: MjmlNodeType.Section,
         },
       ],
-      root: { props: {} },
+      root: { props: { lang: "", title: "" } },
     };
     const html = await compileEmailDocument(document, TEST_CONTEXT).match(
       (compiledHtml) => compiledHtml,
@@ -158,7 +158,7 @@ describe(compileEmailDocument, () => {
           type: MjmlNodeType.Section,
         },
       ],
-      root: { props: {} },
+      root: { props: { lang: "", title: "" } },
     };
 
     await compileEmailDocument(document, TEST_CONTEXT).match(noop, (error) => {

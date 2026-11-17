@@ -22,10 +22,10 @@ export const mjmlRootPropsSchema: z.ZodObject<
     breakpoint: z.ZodOptional<z.ZodObject<{ width: z.ZodString }, z.core.$strict>>;
     direction: z.ZodOptional<z.ZodEnum<typeof MjmlDirection>>;
     fonts: z.ZodOptional<z.ZodArray<z.ZodObject<{ href: z.ZodString; name: z.ZodString }, z.core.$strict>>>;
-    lang: z.ZodOptional<z.ZodString>;
+    lang: z.ZodString;
     preview: z.ZodOptional<z.ZodString>;
     styles: z.ZodOptional<z.ZodArray<z.ZodObject<{ css: z.ZodString; inline: z.ZodBoolean }, z.core.$strict>>>;
-    title: z.ZodOptional<z.ZodString>;
+    title: z.ZodString;
   },
   z.core.$strict
 > = z.strictObject({
@@ -41,7 +41,7 @@ export const mjmlRootPropsSchema: z.ZodObject<
     .array(z.strictObject({ href: rootValue, name: rootName }))
     .max(MJML_ROOT_LIST_MAX_LENGTH)
     .optional(),
-  lang: rootName.optional(),
+  lang: rootName,
   preview: rootValue.optional(),
   styles: z
     .array(
@@ -55,5 +55,5 @@ export const mjmlRootPropsSchema: z.ZodObject<
     )
     .max(MJML_ROOT_LIST_MAX_LENGTH)
     .optional(),
-  title: rootValue.optional(),
+  title: rootValue,
 }) satisfies z.ZodType<MjmlRootProps>;

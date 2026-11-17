@@ -28,32 +28,11 @@ The email settings SHALL edit the email's language, direction, title, font list,
 - **WHEN** the owner sets the body width to a pixel length
 - **THEN** the design canvas draws the email at that width
 
-#### Scenario: A body width that is not a pixel length is refused
-
-- **GIVEN** an email open with nothing selected
-- **WHEN** the owner types a body width that is not a pixel length
-- **THEN** the field shows the refusal
-- **AND** the email keeps its last width
-
 #### Scenario: A font added to the list loads in the compiled email
 
 - **GIVEN** an email open with nothing selected
 - **WHEN** the owner adds a font with its name and stylesheet address
 - **THEN** the compiled email loads that stylesheet
-
-#### Scenario: A font address with a script scheme is refused
-
-- **GIVEN** an email open with nothing selected
-- **WHEN** the owner adds a font whose address uses a scheme that is not allowed
-- **THEN** the field shows the refusal
-- **AND** the font is not added
-
-#### Scenario: A font beyond the list limit is refused
-
-- **GIVEN** an email whose font list is at its limit
-- **WHEN** the owner adds another font
-- **THEN** the add is refused
-- **AND** the list is unchanged
 
 #### Scenario: Clearing a settings field removes it from the email
 

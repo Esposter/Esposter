@@ -40,7 +40,7 @@ const createDocument = (href: string | undefined): EmailDocument => ({
       type: MjmlNodeType.Section,
     },
   ],
-  root: { props: {} },
+  root: { props: { lang: "", title: "" } },
 });
 
 describe("useEmailCritique", () => {
