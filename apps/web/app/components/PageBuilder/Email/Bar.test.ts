@@ -55,7 +55,7 @@ describe("pageBuilderEmailBar", () => {
     expect(menuItemTitles).toContain(importLabel);
   });
 
-  test("a message that names a node selects it", async () => {
+  test("choosing an email finding selects its node", async () => {
     expect.hasAssertions();
 
     const nodeId = v7();

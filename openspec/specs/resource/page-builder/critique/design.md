@@ -70,6 +70,8 @@ The critique takes each colour as a resolved sRGB value from its caller, so the 
 
 **A resource never saved answers an empty list.** It has no nodes, so no finding is in it, and the answer carries the content version it was read at. The alternative was to refuse it as having no content, which would refuse a draft with nothing to check.
 
+**The email has its own walk and shares only the contrast arithmetic.** An email's colours are attributes of MJML components, its containers hold background attributes, and its text is rich text whose headings sit inside the text's content, so the email's nodes and colours are read from places the webpage's walk does not read. The contrast ratio and the luminance are the webpage's, so the two editors cannot disagree about a ratio. The email's checks are a button or navbar link with no address or no text, a heading with no text or sitting more than one level below the heading before it in the whole email, and a text below 4.5 to 1 against the background its nearest container sets, else the body's, else white. A text whose colour a head default sets is reported unchecked, since the check cannot attribute that colour to the text. Every email finding is a warning, since the validator's errors already refuse a save, and a warning refusing one too would stop an email the compile accepts. The read tool answers an email's critique with its colour checks unchecked, as it does for a page.
+
 ## Procedures
 
 | Procedure                            | Auth                                               | Input           | Purpose                                                                            |
@@ -86,58 +88,71 @@ The critique is pure, so it has no retry. A survey lookup that fails leaves its 
 
 - **Theme tokens are not resolved.** A colour the style panel picks from the page's swatches is stored as a reference to the token, `var(--color-…)`. The probe reads that reference in the editor's own document, where the page's tokens are not declared: they are declared on the canvas frame's document only, which the page's css is adopted into. The browser computes the reference as undeclared, so a text coloured from a swatch is checked against the colour the editor inherits rather than the token's colour, and a background from a swatch reads as transparent and is reported unchecked. The critique does not read the page's tokens.
 - **The non-sRGB colour path is proven only against a mocked canvas.** The test environment rejects oklch, so the path that reads a colour the browser computes outside sRGB is tested by stubbing the canvas's 2D context to return fixed pixels. No test drives a real colour in another space through a browser.
-- **The email's checks are not built.** Only the webpage's definition declares a critique, so the read tool refuses an email by name and the problems surface lists a webpage's findings alone.
+- **Mail client and dark-mode colours are not simulated.** The email check reads the colours the author set, and a client that inverts them is not modelled. See the [deferred client and dark previews](../../../../deferred/resource/email-client-and-dark-previews/design.md) idea.
+- **Alternative text is not checked over an email.** The validator already refuses an image with none.
 
 ## Key files
 
-| File                                                                     | Role                                                                                                              |
-| ------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
-| `apps/web/shared/services/pageBuilder/critique/critiqueWebpage.ts`       | the critique: one pure function over a webpage document, from the page's own colours down through its nodes       |
-| `apps/web/shared/services/pageBuilder/critique/critiqueWebpageNodes.ts`  | the walk: each node's own checks, then its children's, through the children port                                  |
-| `apps/web/shared/services/pageBuilder/critique/checkTextContrast.ts`     | the contrast check: a text below the threshold, or one whose colours cannot be read                               |
-| `apps/web/shared/services/pageBuilder/critique/checkFixedWidth.ts`       | the fixed-width check at the phone width                                                                          |
-| `apps/web/shared/services/pageBuilder/critique/checkSurveyInvite.ts`     | the survey invite check, over the publish state a lookup answers                                                  |
-| `apps/web/shared/services/pageBuilder/critique/checkHasSurveyInvite.ts`  | the gate that asks whether a page holds an invite, so a survey lookup runs only for one                           |
-| `apps/web/shared/services/pageBuilder/critique/getEffectiveColors.ts`    | each node's background and text colour at the desktop breakpoint, inherited from its ancestors where it sets none |
-| `apps/web/shared/services/pageBuilder/critique/getEffectiveColor.ts`     | one colour: the node's own, read through the caller's reader, or else the one it inherits                         |
-| `apps/web/shared/services/pageBuilder/critique/getContrastRatio.ts`      | the WCAG contrast ratio of two colours, rounded to the fixed scale                                                |
-| `apps/web/shared/services/pageBuilder/critique/getRelativeLuminance.ts`  | the WCAG relative luminance of a colour                                                                           |
-| `apps/web/shared/services/pageBuilder/critique/getLinearChannel.ts`      | one sRGB channel on the linear scale its luminance is weighted on                                                 |
-| `apps/web/shared/services/pageBuilder/critique/getLengthInPixels.ts`     | a fixed width read in pixels, from px, rem and vw, or nothing for a length it cannot read                         |
-| `apps/web/shared/services/pageBuilder/critique/getNodeStyle.ts`          | the style a node sets, or nothing for a node whose type holds none                                                |
-| `apps/web/shared/services/pageBuilder/critique/constants.ts`             | the contrast threshold, the luminance weights, the page's default colours and the length units                    |
-| `apps/web/shared/services/pageBuilder/critique/critiqueWebpage.bench.ts` | the bench of the critique's compute at the node limit                                                             |
-| `apps/web/shared/models/pageBuilder/CritiqueFinding.ts`                  | the findings the critique reports, one variant per kind                                                           |
-| `apps/web/shared/models/pageBuilder/CritiqueFindingKind.ts`              | the kinds of finding: a failure, or a check that could not run                                                    |
-| `apps/web/shared/models/pageBuilder/CritiqueSources.ts`                  | what the critique reads from its caller: a colour reader and a survey lookup                                      |
-| `apps/web/shared/models/pageBuilder/EffectiveColors.ts`                  | the colours a node is drawn in, each absent where none could be read                                              |
-| `apps/web/shared/models/shared/SrgbColor.ts`                             | a colour as its sRGB channels                                                                                     |
-| `apps/web/shared/models/pageBuilder/SurveyPublishState.ts`               | a survey's publish state as a lookup answers it                                                                   |
-| `apps/web/shared/models/pageBuilder/WebpageDocument.ts`                  | the document the critique walks                                                                                   |
-| `apps/web/shared/models/pageBuilder/NodeStyle.ts`                        | the per-breakpoint, per-state style a node carries                                                                |
-| `apps/web/shared/models/pageBuilder/StyleBreakpoint.ts`                  | the breakpoints a node's style is set at                                                                          |
-| `apps/web/shared/models/pageBuilder/PageBuilderDevice.ts`                | the device widths, whose narrowest bounds the fixed-width check                                                   |
-| `apps/web/shared/models/pageBuilder/SurveyInviteNode.ts`                 | the survey invite node whose survey the lookup checks                                                             |
-| `apps/web/shared/models/pageBuilder/WebpageRootProps.ts`                 | the page's language and tokens, whose tokens the critique does not resolve                                        |
-| `apps/web/shared/services/pageBuilder/webpageNodeChildren.ts`            | the children port the walk goes through                                                                           |
-| `apps/web/shared/services/pageBuilder/getPresentDefinitions.ts`          | the existing document walk the invite gate reuses                                                                 |
-| `apps/web/shared/services/pageBuilder/getNodeStyleCss.ts`                | how a node's style becomes CSS, its breakpoints' media queries in the order the cascade applies them              |
-| `apps/web/shared/services/pageBuilder/constants.ts`                      | the device widths, the breakpoint order and the node limit the critique's compute is bounded by                   |
-| `apps/web/server/services/resource/ResourceCritiqueMap.ts`               | the critique of each type that has one, keyed by resource type                                                    |
-| `apps/web/shared/models/resource/ReadCritiqueResult.ts`                  | the read tool's answer: the findings and the content version they were read at                                    |
-| `apps/web/server/trpc/routers/resource.ts`                               | the generic resource router, which holds the read tool                                                            |
-| `apps/web/server/services/resource/readCritiqueSources.ts`               | the server's sources: survey publish state for a page holding an invite, and no colour                            |
-| `apps/web/server/services/resource/readStoredResourceContent.ts`         | the saved content the read tool answers from                                                                      |
-| `apps/web/server/services/mcp/getMcpTools.ts`                            | turns each procedure whose meta opts into MCP into a tool, so the read tool is listed under the Resources scope   |
-| `apps/web/app/composables/pageBuilder/usePageBuilderCritique.ts`         | the editor's critique: the open document's rows, with a survey lookup filled from the owner's published surveys   |
-| `apps/web/app/services/shared/readBrowserColor.ts`                       | a colour read off a probe element the browser computes its value on                                               |
-| `apps/web/app/services/shared/getCanvasSrgbColor.ts`                     | a colour the browser computes outside sRGB, read off a one-pixel canvas                                           |
-| `apps/web/app/services/shared/parseRgbColor.ts`                          | a computed rgb colour as its channels, or nothing when it is translucent                                          |
-| `apps/web/app/components/Editor/Problems.vue`                            | the problems surface: each finding as a row naming its node, and choosing a row selects that node                 |
-| `apps/web/app/components/PageBuilder/Bar.vue`                            | the bar over the canvas, holding the device toggle and the problems surface wired to the node selection           |
-| `apps/web/app/components/PageBuilder/Editor.vue`                         | the page builder's arrangement on the editor shell, whose bar lists the webpage's findings                        |
-| `apps/web/app/store/pageBuilder/document.ts`                             | the open, unsaved document the panel checks                                                                       |
-| `apps/web/app/store/pageBuilder/canvas.ts`                               | the selection a finding's row sets                                                                                |
+| File                                                                            | Role                                                                                                              |
+| ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `apps/web/shared/services/pageBuilder/critique/critiqueWebpage.ts`              | the critique: one pure function over a webpage document, from the page's own colours down through its nodes       |
+| `apps/web/shared/services/pageBuilder/critique/critiqueWebpageNodes.ts`         | the walk: each node's own checks, then its children's, through the children port                                  |
+| `apps/web/shared/services/pageBuilder/critique/checkTextContrast.ts`            | the contrast check: a text below the threshold, or one whose colours cannot be read                               |
+| `apps/web/shared/services/pageBuilder/critique/checkFixedWidth.ts`              | the fixed-width check at the phone width                                                                          |
+| `apps/web/shared/services/pageBuilder/critique/checkSurveyInvite.ts`            | the survey invite check, over the publish state a lookup answers                                                  |
+| `apps/web/shared/services/pageBuilder/critique/checkHasSurveyInvite.ts`         | the gate that asks whether a page holds an invite, so a survey lookup runs only for one                           |
+| `apps/web/shared/services/pageBuilder/critique/getEffectiveColors.ts`           | each node's background and text colour at the desktop breakpoint, inherited from its ancestors where it sets none |
+| `apps/web/shared/services/pageBuilder/critique/getEffectiveColor.ts`            | one colour: the node's own, read through the caller's reader, or else the one it inherits                         |
+| `apps/web/shared/services/pageBuilder/critique/getContrastRatio.ts`             | the WCAG contrast ratio of two colours, rounded to the fixed scale                                                |
+| `apps/web/shared/services/pageBuilder/critique/getRelativeLuminance.ts`         | the WCAG relative luminance of a colour                                                                           |
+| `apps/web/shared/services/pageBuilder/critique/getLinearChannel.ts`             | one sRGB channel on the linear scale its luminance is weighted on                                                 |
+| `apps/web/shared/services/pageBuilder/critique/getLengthInPixels.ts`            | a fixed width read in pixels, from px, rem and vw, or nothing for a length it cannot read                         |
+| `apps/web/shared/services/pageBuilder/critique/getNodeStyle.ts`                 | the style a node sets, or nothing for a node whose type holds none                                                |
+| `apps/web/shared/services/pageBuilder/critique/constants.ts`                    | the contrast threshold, the luminance weights, the page's default colours and the length units                    |
+| `apps/web/shared/services/pageBuilder/critique/critiqueWebpage.bench.ts`        | the bench of the critique's compute at the node limit                                                             |
+| `apps/web/shared/models/pageBuilder/CritiqueFinding.ts`                         | the findings the critique reports, one variant per kind                                                           |
+| `apps/web/shared/models/pageBuilder/CritiqueFindingKind.ts`                     | the kinds of finding: a failure, or a check that could not run                                                    |
+| `apps/web/shared/models/pageBuilder/CritiqueSources.ts`                         | what the critique reads from its caller: a colour reader and a survey lookup                                      |
+| `apps/web/shared/models/pageBuilder/EffectiveColors.ts`                         | the colours a node is drawn in, each absent where none could be read                                              |
+| `apps/web/shared/models/shared/SrgbColor.ts`                                    | a colour as its sRGB channels                                                                                     |
+| `apps/web/shared/models/pageBuilder/SurveyPublishState.ts`                      | a survey's publish state as a lookup answers it                                                                   |
+| `apps/web/shared/models/pageBuilder/WebpageDocument.ts`                         | the document the critique walks                                                                                   |
+| `apps/web/shared/models/pageBuilder/NodeStyle.ts`                               | the per-breakpoint, per-state style a node carries                                                                |
+| `apps/web/shared/models/pageBuilder/StyleBreakpoint.ts`                         | the breakpoints a node's style is set at                                                                          |
+| `apps/web/shared/models/pageBuilder/PageBuilderDevice.ts`                       | the device widths, whose narrowest bounds the fixed-width check                                                   |
+| `apps/web/shared/models/pageBuilder/SurveyInviteNode.ts`                        | the survey invite node whose survey the lookup checks                                                             |
+| `apps/web/shared/models/pageBuilder/WebpageRootProps.ts`                        | the page's language and tokens, whose tokens the critique does not resolve                                        |
+| `apps/web/shared/services/pageBuilder/webpageNodeChildren.ts`                   | the children port the walk goes through                                                                           |
+| `apps/web/shared/services/pageBuilder/getPresentDefinitions.ts`                 | the existing document walk the invite gate reuses                                                                 |
+| `apps/web/shared/services/pageBuilder/getNodeStyleCss.ts`                       | how a node's style becomes CSS, its breakpoints' media queries in the order the cascade applies them              |
+| `apps/web/shared/services/pageBuilder/constants.ts`                             | the device widths, the breakpoint order and the node limit the critique's compute is bounded by                   |
+| `apps/web/server/services/resource/ResourceCritiqueMap.ts`                      | the critique of each type that has one, keyed by resource type                                                    |
+| `apps/web/shared/models/resource/ReadCritiqueResult.ts`                         | the read tool's answer: the findings and the content version they were read at                                    |
+| `apps/web/server/trpc/routers/resource.ts`                                      | the generic resource router, which holds the read tool                                                            |
+| `apps/web/server/services/resource/readCritiqueSources.ts`                      | the server's sources: survey publish state for a page holding an invite, and no colour                            |
+| `apps/web/server/services/resource/readStoredResourceContent.ts`                | the saved content the read tool answers from                                                                      |
+| `apps/web/server/services/mcp/getMcpTools.ts`                                   | turns each procedure whose meta opts into MCP into a tool, so the read tool is listed under the Resources scope   |
+| `apps/web/app/composables/pageBuilder/usePageBuilderCritique.ts`                | the editor's critique: the open document's rows, with a survey lookup filled from the owner's published surveys   |
+| `apps/web/shared/services/pageBuilder/email/critique/critiqueEmail.ts`          | the email critique's entry: the body's background, then each node's checks and the headings in document order     |
+| `apps/web/shared/services/pageBuilder/email/critique/critiqueEmailNodes.ts`     | the email walk, which carries each node's background down its containers                                          |
+| `apps/web/shared/services/pageBuilder/email/critique/checkEmailLink.ts`         | a button or navbar link with no address or no text                                                                |
+| `apps/web/shared/services/pageBuilder/email/critique/readEmailHeadings.ts`      | the headings of each text block's rich text, in document order, and whether each holds any text                   |
+| `apps/web/shared/services/pageBuilder/email/critique/checkEmailHeadings.ts`     | the empty and the skipped-level headings, from the headings in document order                                     |
+| `apps/web/shared/services/pageBuilder/email/critique/checkEmailTextContrast.ts` | the contrast of a text against its background, read through the email's colour rules                              |
+| `apps/web/shared/services/pageBuilder/email/critique/getEmailTextColor.ts`      | a text's colour: its own, else black, and unchecked where a head default sets it                                  |
+| `apps/web/shared/services/pageBuilder/critique/checkColorContrast.ts`           | the contrast finding of a text's two colours, shared by the webpage's and the email's text checks                 |
+| `apps/web/shared/models/pageBuilder/EmailCritiqueSources.ts`                    | what the email critique reads from its caller: each colour, since an email has no survey invite                   |
+| `apps/web/app/composables/emailEditor/useEmailCritique.ts`                      | the open email's critique, unsaved edits included, as the findings the problems surface lists                     |
+| `apps/web/app/components/Resource/Email/Editor.vue`                             | the email editor, which lists the critique's findings beside the compile's messages in the bar                    |
+| `packages/mjml-blocks/src/services/constants.ts`                                | the all-types key a head's defaults are read under, which the text colour check looks up                          |
+| `apps/web/app/services/shared/readBrowserColor.ts`                              | a colour read off a probe element the browser computes its value on                                               |
+| `apps/web/app/services/shared/getCanvasSrgbColor.ts`                            | a colour the browser computes outside sRGB, read off a one-pixel canvas                                           |
+| `apps/web/app/services/shared/parseRgbColor.ts`                                 | a computed rgb colour as its channels, or nothing when it is translucent                                          |
+| `apps/web/app/components/Editor/Problems.vue`                                   | the problems surface: each finding as a row naming its node, and choosing a row selects that node                 |
+| `apps/web/app/components/PageBuilder/Bar.vue`                                   | the bar over the canvas, holding the device toggle and the problems surface wired to the node selection           |
+| `apps/web/app/components/PageBuilder/Editor.vue`                                | the page builder's arrangement on the editor shell, whose bar lists the webpage's findings                        |
+| `apps/web/app/store/pageBuilder/document.ts`                                    | the open, unsaved document the panel checks                                                                       |
+| `apps/web/app/store/pageBuilder/canvas.ts`                                      | the selection a finding's row sets                                                                                |
 
 ## Notes
 
@@ -146,6 +161,10 @@ The critique is pure, so it has no retry. A survey lookup that fails leaves its 
 - An agent that needs a contrast verdict reads the panel's findings in the editor, since the read tool does not give one. Fixed-width and survey findings do not depend on colour and are answered in full.
 - A colour that a mobile or tablet override sets is not checked, so a page can list no finding while a phone draws low contrast.
 
+- The server reads no colour for an email, so every colour check in an agent's read of an email is unchecked, never passing.
+- A heading is compared with the heading before it across the whole email, so a level one in one text block followed by a level three in the next is reported, though neither block skips a level on its own.
+
 ## Sources
 
+- [Unlayer's content audit](https://docs.unlayer.com/builder/content-settings/content-audit), read for the email's link check: missing links in buttons and menus is the check the link rule takes.
 - [WCAG 2.2, success criterion 1.4.3 Contrast (Minimum)](https://www.w3.org/TR/WCAG22/#contrast-minimum), read for this design: 4.5 to 1 for normal text, 3 to 1 for large text, large meaning 18 point or 14 point bold. The critique takes the 4.5 to 1 threshold for all text.

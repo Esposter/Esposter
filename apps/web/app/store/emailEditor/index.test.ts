@@ -3,6 +3,7 @@ import type { ResourceInResource } from "@esposter/db-schema";
 
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
+import { TEST_ID, TEST_LABEL, TEST_OTHER_ID, TEST_THIRD_ID } from "#shared/services/pageBuilder/constants.test";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { emailKind } from "#src/services/pageBuilder/emailKind";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
@@ -13,6 +14,7 @@ import { ResourceType } from "@esposter/db-schema";
 import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
+import { MjmlNodeType } from "mjml-blocks";
 import { v7 } from "uuid";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -56,6 +58,42 @@ describe(useEmailEditorStore, () => {
     await flushPromises();
 
     expect(savedContents[0]).toStrictEqual({ content: [], id: content.id });
+  });
+
+  test("a critique warning does not refuse an email save", async () => {
+    expect.hasAssertions();
+
+    const emailEditorStore = useEmailEditorStore();
+    const { loadContent, saveEmail } = emailEditorStore;
+    await loadContent();
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { setEmailDocument } = pageBuilderDocumentStore;
+    // A button with no address is a critique warning, which the save does not read
+    const document = {
+      content: [
+        {
+          props: {
+            children: [
+              {
+                props: {
+                  children: [{ props: { content: TEST_LABEL, id: TEST_ID }, type: MjmlNodeType.Button }],
+                  id: TEST_OTHER_ID,
+                },
+                type: MjmlNodeType.Column,
+              },
+            ],
+            id: TEST_THIRD_ID,
+          },
+          type: MjmlNodeType.Section,
+        },
+      ],
+      root: { props: {} },
+    };
+    setEmailDocument(resourceId, emailKind, document);
+    saveEmail(resourceId);
+    await flushPromises();
+
+    expect(savedContents[0]).toStrictEqual({ content: document.content, id: content.id });
   });
 
   test("carries the dataset binding across an email save", async () => {

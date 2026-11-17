@@ -82,8 +82,9 @@ const {
   () => editorShell.value?.setActivePanel(EMAIL_BLOCKS_REGION_ID, EMAIL_STRUCTURE_PANEL_ID),
 );
 const preview = useTemplateRef("preview");
-// The problems the compile found, which the bar lists in both modes
-const findings = computed<EditorFinding[]>(() => preview.value?.findings ?? []);
+// The critique of the open email beside the problems the compile found, both listed by the bar in each mode
+const critiqueFindings = useEmailCritique(resourceId);
+const findings = computed<EditorFinding[]>(() => [...(preview.value?.findings ?? []), ...critiqueFindings.value]);
 // What the shell resolves the layout for: the mode, and whether a node is selected, which the inspector's tabs follow
 const context = computed<Context>(() => {
   const nodeId = getSelectedNodeId(resourceId);

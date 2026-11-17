@@ -11,11 +11,19 @@ export const getCritiqueFindingSummary = (
   finding: CritiqueFinding,
 ): { description: string; meaning: UiIconMeaning } => {
   switch (finding.kind) {
+    case CritiqueFindingKind.EmptyHeading:
+      return { description: "Heading with no text", meaning: UiIconMeaning.Warning };
+    case CritiqueFindingKind.LinkWithoutAddress:
+      return { description: "Link with no address, so it goes nowhere", meaning: UiIconMeaning.Warning };
+    case CritiqueFindingKind.LinkWithoutText:
+      return { description: "Link with no text, so there is nothing to press", meaning: UiIconMeaning.Warning };
     case CritiqueFindingKind.LowContrast:
       return {
         description: `Contrast ${finding.contrastRatio.toFixed(2)} to 1, under the ${MIN_TEXT_CONTRAST_RATIO} to 1 a text needs`,
         meaning: UiIconMeaning.Warning,
       };
+    case CritiqueFindingKind.SkippedHeading:
+      return { description: "Heading more than one level below the heading before it", meaning: UiIconMeaning.Warning };
     case CritiqueFindingKind.UncheckedContrast:
       return { description: "Contrast not checked: a colour here cannot be read", meaning: UiIconMeaning.Info };
     case CritiqueFindingKind.UncheckedSurvey:

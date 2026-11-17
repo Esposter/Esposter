@@ -52,7 +52,7 @@ flowchart TD
 ## Not built
 
 - **Email client and dark-mode previews.** See the [deferred idea](../../../deferred/resource/email-client-and-dark-previews/design.md).
-- **New email checks.** The problems surface lists the validator's messages and no others: contrast, links and alternative text are not checked over an email.
+- **Alternative text beyond the validator.** The problems surface lists the validator's messages and the [email critique](../page-builder/critique/design.md)'s link, heading and contrast checks. Alternative text is not checked beyond the validator's refusal of an image with none.
 - **Sending, a subject line and a plain-text version.** Sending is its own [deferred idea](../../../deferred/resource/email-sending/design.md). The email has no subject line and no plain-text version. Stripo documents a subject and a preheader in a message-settings form and Klaviyo documents a plain-text version in a separate editor, so both are known shapes that no page here designs.
 
 ## Key files

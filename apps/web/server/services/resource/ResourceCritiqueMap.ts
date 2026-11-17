@@ -5,6 +5,7 @@ import type { ResourceInResource } from "@esposter/db-schema";
 import { readCritiqueSources } from "#server/services/resource/readCritiqueSources";
 import { readResourceContent } from "#server/services/resource/readResourceContent";
 import { critiqueWebpage } from "#shared/services/pageBuilder/critique/critiqueWebpage";
+import { critiqueEmail } from "#shared/services/pageBuilder/email/critique/critiqueEmail";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { ResourceType } from "@esposter/db-schema";
 
@@ -14,6 +15,13 @@ import { ResourceType } from "@esposter/db-schema";
 export const ResourceCritiqueMap: Partial<
   Record<ResourceType, (db: Context["db"], userId: string, id: ResourceInResource["id"]) => Promise<CritiqueFinding[]>>
 > = {
+  // An email's critique reads no colour on the server, so each colour it checks is unchecked, as a webpage's is
+  [ResourceType.Email]: async (_db, _userId, id) => {
+    const content = await readResourceContent(ResourceDefinitionMap[ResourceType.Email].contentSchema, id);
+    if (content === undefined) return [];
+
+    return critiqueEmail(content, { readColor: () => undefined });
+  },
   [ResourceType.Webpage]: async (db, userId, id) => {
     const content = await readResourceContent(ResourceDefinitionMap[ResourceType.Webpage].contentSchema, id);
     // A resource never saved has no nodes to check, so there is nothing to find in it

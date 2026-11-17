@@ -9,6 +9,7 @@ import type { R2Bucket } from "@cloudflare/workers-types";
 import type { ResourceInResource } from "@esposter/db-schema";
 import type { JsonPatchOperation } from "@esposter/shared";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
+import type { MjmlColumnNode, MjmlSectionNode } from "mjml-blocks";
 
 import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
 import { connectAgentKey } from "#server/services/mcp/connectAgentKey.test";
@@ -34,7 +35,14 @@ import { StyleState } from "#shared/models/pageBuilder/StyleState";
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { EN_US_COMPARATOR } from "#shared/services/intl/constants";
-import { createTestImageNode, TEST_ID, TEST_SURVEY_ID } from "#shared/services/pageBuilder/constants.test";
+import {
+  createTestImageNode,
+  TEST_ID,
+  TEST_LABEL,
+  TEST_OTHER_ID,
+  TEST_SURVEY_ID,
+  TEST_THIRD_ID,
+} from "#shared/services/pageBuilder/constants.test";
 import {
   createTestSectionNode,
   createTestSurveyInviteNode,
@@ -68,6 +76,7 @@ import {
   waitForSynchronizedFunctions,
 } from "@esposter/shared";
 import { eq } from "drizzle-orm";
+import { MjmlNodeType } from "mjml-blocks";
 import { createHash } from "node:crypto";
 import { v7 } from "uuid";
 import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
@@ -101,6 +110,28 @@ const createFilesBlobName = (id: ResourceInResource["id"]) =>
   getResourceFileBlobName(id, createHash("sha256").update(v7()).digest("hex"));
 const getAssetHash = (blobName: string) => blobName.slice(blobName.lastIndexOf("/") + 1);
 
+// An email's section holds one column, which holds the block under test as MJML nests it
+const createEmailSection = (child: MjmlColumnNode["props"]["children"][number]): MjmlSectionNode => ({
+  props: {
+    children: [{ props: { children: [child], id: TEST_THIRD_ID }, type: MjmlNodeType.Column }],
+    id: TEST_OTHER_ID,
+  },
+  type: MjmlNodeType.Section,
+});
+const createEmailButtonSection = (id: string, href: string | undefined): MjmlSectionNode =>
+  createEmailSection({
+    props: { content: TEST_LABEL, id, ...(href === undefined ? {} : { href }) },
+    type: MjmlNodeType.Button,
+  });
+const createEmailTextSection = (id: string, color: string): MjmlSectionNode =>
+  createEmailSection({
+    props: {
+      color,
+      content: { content: [{ content: [{ text: TEST_LABEL, type: "text" }], type: "paragraph" }], type: "doc" },
+      id,
+    },
+    type: MjmlNodeType.Text,
+  });
 describe("resourceRouter", () => {
   const { getMockContext } = setupResourceSuite(resourceRouter);
   let mockContext: Context;
@@ -639,6 +670,53 @@ describe("resourceRouter", () => {
     await expect(callAgentTool("resource_readCritique", { id: v7() })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[Error: UNAUTHORIZED]`,
     );
+  });
+
+  test("an agent reads a link finding of a saved email", async () => {
+    expect.hasAssertions();
+
+    const callAgentTool = await connectAgentKey(mockContext, [McpScope.Resources]);
+    const emailResource = await caller.createResource({ name, type: ResourceType.Email });
+    const savedResource = await emailCaller.saveResourceContent({
+      content: new EmailEditor({ content: [createEmailButtonSection(TEST_ID, undefined)], root: { props: {} } }),
+      contentVersion: emailResource.contentVersion,
+      id: emailResource.id,
+    });
+    const critique = await callAgentTool<ReadCritiqueResult>("resource_readCritique", { id: emailResource.id });
+
+    expect(critique).toStrictEqual({
+      contentVersion: savedResource.contentVersion,
+      findings: [{ kind: CritiqueFindingKind.LinkWithoutAddress, nodeId: TEST_ID }],
+    });
+  });
+
+  test("an agent reads email colour checks as unchecked", async () => {
+    expect.hasAssertions();
+
+    const callAgentTool = await connectAgentKey(mockContext, [McpScope.Resources]);
+    const emailResource = await caller.createResource({ name, type: ResourceType.Email });
+    await emailCaller.saveResourceContent({
+      content: new EmailEditor({ content: [createEmailTextSection(TEST_ID, TEST_GREY_VALUE)], root: { props: {} } }),
+      contentVersion: emailResource.contentVersion,
+      id: emailResource.id,
+    });
+    const critique = await callAgentTool<ReadCritiqueResult>("resource_readCritique", { id: emailResource.id });
+
+    expect(critique.findings).toStrictEqual([{ kind: CritiqueFindingKind.UncheckedContrast, nodeId: TEST_ID }]);
+  });
+
+  test("a resource the key does not own is refused for an email", async () => {
+    expect.hasAssertions();
+
+    const callAgentTool = await connectAgentKey(mockContext, [McpScope.Resources]);
+    const otherUserAuthSession = await createMockAuthSession(mockContext.db);
+    const otherUserResource = await createCallerFactory(resourceRouter)(
+      await createMockContext(otherUserAuthSession),
+    ).createResource({ name, type: ResourceType.Email });
+
+    await expect(
+      callAgentTool("resource_readCritique", { id: otherUserResource.id }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: UNAUTHORIZED]`);
   });
 
   test("a link written into a document appears in references", async () => {
