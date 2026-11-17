@@ -10,3 +10,14 @@
   font: inherit;
   text-align: left;
 }
+
+/* The list a picker scrolls: its rows stacked, shrinking to the height its picker leaves it and scrolling past that. Each
+   picker sets its own gap between the rows */
+.picker-list {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+}

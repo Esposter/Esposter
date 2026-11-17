@@ -1,3 +1,7 @@
+<script setup lang="ts">
+defineSlots<{ default: () => unknown; mark: () => unknown }>();
+</script>
+
 <template>
   <!-- The game's notice card, dropped at the top of a screen: white with rounded corners, 107 units high and at least
        537 across, a round mark at its left and its words in the game's near black. Measured from a 1440 high

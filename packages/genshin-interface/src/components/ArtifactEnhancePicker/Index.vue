@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Material from "#src/components/ArtifactEnhancePicker/Material/Index.vue";
 import GameButton from "#src/components/GameButton/Index.vue";
 import PickerShell from "#src/components/PickerShell/Index.vue";
 import { GameButtonKind } from "#src/models/GameButtonKind";
@@ -62,13 +63,13 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <PickerShell class="enhance-picker" :title>
+  <PickerShell :gap="12" :max-height="900" :title>
     <p class="summary">
       <span class="level">{{ levelLabel }}</span>
       <span class="mora">{{ moraLabel }} {{ moraCost }}</span>
     </p>
     <p v-if="notice" class="notice">{{ notice }}</p>
-    <ul class="fodders">
+    <ul class="fodders picker-list">
       <li v-for="{ caption, id, isSelected, name, rarity } of fodders" :key="id">
         <button
           class="option fill-tint"
@@ -82,22 +83,15 @@ const emit = defineEmits<{
         </button>
       </li>
     </ul>
-    <ul class="materials">
-      <li v-for="{ count, id, name, selectedCount } of materials" :key="id" class="material">
-        <span class="name">{{ name }}</span>
-        <span class="count">{{ selectedCount }}/{{ count }}</span>
-        <GameButton :disabled="selectedCount <= 0" :kind="GameButtonKind.Pill" tip="" @click="emit('material', id, -1)">
-          -
-        </GameButton>
-        <GameButton
-          :disabled="selectedCount >= count"
-          :kind="GameButtonKind.Pill"
-          tip=""
-          @click="emit('material', id, 1)"
-        >
-          +
-        </GameButton>
-      </li>
+    <ul class="materials picker-list">
+      <Material
+        v-for="{ count, id, name, selectedCount } of materials"
+        :key="id"
+        :count
+        :name
+        :selected-count
+        @material="(delta) => emit('material', id, delta)"
+      />
     </ul>
     <div class="actions">
       <GameButton :kind="GameButtonKind.Pill" tip="" @click="emit('autoAdd')">{{ autoAddLabel }}</GameButton>
@@ -112,11 +106,6 @@ const emit = defineEmits<{
 <style scoped src="../../styles/fillTint.css"></style>
 
 <style scoped>
-.enhance-picker {
-  max-height: calc(var(--unit) * 900);
-  gap: calc(var(--unit) * 12);
-}
-
 .summary,
 .notice {
   display: flex;
@@ -126,13 +115,7 @@ const emit = defineEmits<{
 
 .fodders,
 .materials {
-  display: flex;
-  flex-direction: column;
   gap: calc(var(--unit) * 6);
-  margin: 0;
-  padding: 0;
-  overflow-y: auto;
-  list-style: none;
 }
 
 .option {
@@ -151,16 +134,6 @@ const emit = defineEmits<{
 .option:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) {
   --state-duration: 0s;
   background-color: v-bind(GAME_ROW_PRESS);
-}
-
-.material {
-  display: flex;
-  align-items: center;
-  gap: calc(var(--unit) * 8);
-}
-
-.material .name {
-  flex: 1;
 }
 
 .actions {

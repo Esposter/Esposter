@@ -14,8 +14,7 @@ interface Props {
   variant?: "quest" | undefined;
 }
 
-const { countSize = "30cqh", variant } = defineProps<Props>();
-const faceGradientMap = computed(() => (variant ? ItemRarityQuestFaceGradientMap : ItemRarityFaceGradientMap));
+const { countSize = "30cqh" } = defineProps<Props>();
 </script>
 
 <template>
@@ -26,7 +25,10 @@ const faceGradientMap = computed(() => (variant ? ItemRarityQuestFaceGradientMap
        the screen's size rather than the tile's, so each screen passes its own as `countSize`. A two star tile is not
        measured yet and draws bare. The item's own art is the game's and does not ship -->
   <span class="item-tile" :data-rarity="rarity" :data-variant="variant">
-    <span class="face" :style="{ background: faceGradientMap[rarity] }">
+    <span
+      class="face"
+      :style="{ background: (variant ? ItemRarityQuestFaceGradientMap : ItemRarityFaceGradientMap)[rarity] }"
+    >
       <span class="count" aria-hidden="true" :style="{ fontSize: countSize }">{{ count }}</span>
     </span>
   </span>

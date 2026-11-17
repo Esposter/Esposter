@@ -26,8 +26,8 @@ const emit = defineEmits<{ choose: [id: string]; close: [] }>();
 </script>
 
 <template>
-  <PickerShell class="artifact-picker" :title>
-    <ul class="options">
+  <PickerShell :gap="16" :max-height="800" :title>
+    <ul class="options picker-list">
       <li v-for="{ caption, id, name, rarity } of options" :key="id">
         <Row :caption :name :rarity @choose="emit('choose', id)" />
       </li>
@@ -37,22 +37,13 @@ const emit = defineEmits<{ choose: [id: string]; close: [] }>();
 </template>
 
 <style scoped>
-.artifact-picker {
-  max-height: calc(var(--unit) * 800);
-  gap: calc(var(--unit) * 16);
-}
-
 .options {
-  display: flex;
-  flex-direction: column;
   gap: calc(var(--unit) * 8);
-  margin: 0;
-  padding: 0;
-  overflow-y: auto;
-  list-style: none;
 }
 
 .close {
   align-self: flex-end;
 }
 </style>
+
+<style scoped src="../../styles/artifactPicker.css"></style>

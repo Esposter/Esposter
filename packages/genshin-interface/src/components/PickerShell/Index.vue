@@ -1,5 +1,9 @@
 <script setup lang="ts">
 interface Props {
+  // The gap between the picker's regions, in units
+  gap: number;
+  // The tallest the picker grows to before its lists scroll, in units
+  maxHeight: number;
   // The picker's title, the action it is for, which also names the dialog to a reader
   title: string;
 }
@@ -23,6 +27,8 @@ defineProps<Props>();
   width: calc(var(--unit) * 640);
   display: flex;
   flex-direction: column;
+  gap: calc(var(--unit) * v-bind(gap));
+  max-height: calc(var(--unit) * v-bind(maxHeight));
   padding: calc(var(--unit) * 24);
   border-radius: calc(var(--unit) * 12);
   background: rgb(20 24 36 / 0.92);

@@ -1,12 +1,13 @@
 <script setup lang="ts">
+import AutoRecover from "#src/components/BlessingScreen/AutoRecover/Index.vue";
 import Member from "#src/components/BlessingScreen/Member/Index.vue";
+import Team from "#src/components/BlessingScreen/Team/Index.vue";
 import CloseButton from "#src/components/CloseButton/Index.vue";
 import GameButton from "#src/components/GameButton/Index.vue";
 import { BlessingMark } from "#src/models/BlessingMark";
 import { CloseButtonMark } from "#src/models/CloseButtonMark";
 import { GameButtonKind } from "#src/models/GameButtonKind";
 import { BlessingMarkPathMap } from "#src/services/BlessingMarkPathMap";
-import { INTERACTION_HOVER_DURATION, INTERACTION_REST_DURATION } from "#src/services/constants";
 
 interface BlessingMember {
   // The share of the member's Max HP it holds, which its health bar shows
@@ -81,65 +82,40 @@ const emit = defineEmits<{
         <path v-for="d of BlessingMarkPathMap[BlessingMark.Drop]" :key="d" fill-rule="evenodd" :d />
       </g>
     </svg>
-    <section class="section">
-      <span class="diamond" aria-hidden="true" />
-      <p class="heading" role="heading" aria-level="2">{{ inCombatLabel }}</p>
-      <p class="hint">{{ healHint }}</p>
+    <Team :heading="inCombatLabel" :hint="healHint">
       <ul class="members">
         <li v-for="{ healthShare, id, levelText, name } of members" :key="id">
           <Member :health-share :level-text :name @heal="emit('heal', id)" />
         </li>
       </ul>
-    </section>
-    <section v-if="waitingMembers.length" class="section waiting">
-      <span class="diamond" aria-hidden="true" />
-      <p class="heading" role="heading" aria-level="2">{{ preparingLabel }}</p>
+    </Team>
+    <Team v-if="waitingMembers.length" is-waiting :heading="preparingLabel">
       <ul class="members">
         <li v-for="{ healthShare, id, levelText, name } of waitingMembers" :key="id">
           <Member :health-share :level-text :name @heal="emit('heal', id)" />
         </li>
       </ul>
-    </section>
+    </Team>
     <svg class="statue" viewBox="0 0 150 174" aria-hidden="true">
       <path v-for="d of BlessingMarkPathMap[BlessingMark.Statue]" :key="d" fill="#82da74" fill-rule="evenodd" :d />
     </svg>
     <p class="title" role="heading" aria-level="1">{{ title }}</p>
     <CloseButton class="close" :label="closeLabel" :mark="CloseButtonMark.Cross" @click="emit('close')" />
-    <p class="pool">
-      <span class="pool-label">{{ poolLabel }}</span>
-      <span class="amount">{{ Math.floor(poolAmount) }}</span> / {{ poolMaximum }}
-    </p>
-    <div class="band" aria-hidden="true" />
-    <GameButton
-      class="switch"
-      :aria-pressed="isAutoRecoverOn"
-      :kind="GameButtonKind.Row"
-      tip=""
-      @click="emit('toggleAutoRecover')"
-    >
-      <span class="switch-label">{{ autoRecoverLabel }}</span>
-      <span :class="['toggle', { off: !isAutoRecoverOn }]" aria-hidden="true"><span class="knob" /></span>
-    </GameButton>
-    <button
-      class="step decrease ring-button"
-      type="button"
-      aria-label="Lower the threshold"
-      @click="emit('stepThreshold', -1)"
-    />
-    <span class="percent">{{ thresholdPercent }}%</span>
-    <button
-      class="step increase ring-button"
-      type="button"
-      aria-label="Raise the threshold"
-      @click="emit('stepThreshold', 1)"
+    <AutoRecover
+      :auto-recover-label
+      :is-auto-recover-on
+      :pool-amount
+      :pool-label
+      :pool-maximum
+      :threshold-percent
+      @step-threshold="(direction) => emit('stepThreshold', direction)"
+      @toggle-auto-recover="emit('toggleAutoRecover')"
     />
     <GameButton class="worship" :kind="GameButtonKind.Row" tip="" @click="emit('worship')">{{
       worshipTitle
     }}</GameButton>
   </div>
 </template>
-
-<style scoped src="../../styles/ringButton.css"></style>
 
 <style scoped>
 .blessing-screen {
@@ -239,62 +215,6 @@ const emit = defineEmits<{
   color: #3e4251;
 }
 
-.section {
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-/* The second section starts 261 units below the first, as the clip's two headings do */
-.waiting {
-  top: calc(var(--unit) * 261);
-}
-
-/* A heading's diamond stands at the head's left, the heading's words set after it */
-.diamond {
-  position: absolute;
-  top: calc(var(--unit) * 42.5);
-  left: calc(var(--unit) * 33.5);
-  width: calc(var(--unit) * 9);
-  height: calc(var(--unit) * 9);
-  background: #c9ccc4;
-  rotate: 45deg;
-}
-
-/* The words in the game's white heading face: the sections' headings, the pool's label and the switch's label */
-.heading,
-.pool-label,
-.switch-label {
-  color: #e5e7e1;
-  font-size: calc(var(--unit) * 28);
-  font-weight: 600;
-}
-
-/* A section's heading sits beside its diamond, and the hint beside the first heading is set in the gold the game gives
-   its instructions. Both are tracked to the reference's width, since its face sets wider than the one drawn here */
-.heading {
-  position: absolute;
-  top: calc(var(--unit) * 30);
-  left: calc(var(--unit) * 57);
-  margin: 0;
-  letter-spacing: calc(var(--unit) * 2.8);
-  line-height: calc(var(--unit) * 32);
-  white-space: nowrap;
-}
-
-.hint {
-  position: absolute;
-  top: calc(var(--unit) * 34);
-  left: calc(var(--unit) * 223);
-  margin: 0;
-  color: #cbbd8e;
-  font-size: calc(var(--unit) * 24);
-  font-weight: 600;
-  letter-spacing: calc(var(--unit) * 2.4);
-  line-height: calc(var(--unit) * 28);
-  white-space: nowrap;
-}
-
 /* Cards 120 units wide, 60 apart, from 58 units in */
 .members {
   position: absolute;
@@ -305,174 +225,6 @@ const emit = defineEmits<{
   margin: 0;
   padding: 0;
   list-style: none;
-}
-
-.pool {
-  position: absolute;
-  top: calc(var(--unit) * 593);
-  right: calc(var(--unit) * 30);
-  margin: 0;
-  color: #cdd7cf;
-  font-size: calc(var(--unit) * 32);
-  font-weight: 600;
-  line-height: calc(var(--unit) * 32);
-  letter-spacing: calc(var(--unit) * 1.2);
-  white-space: nowrap;
-}
-
-.amount {
-  color: #84dc88;
-}
-
-/* The pool's label, set in the heading face, tracked and spaced from the amount to the reference's width and place */
-.pool-label {
-  margin-right: calc(var(--unit) * 7.5);
-  letter-spacing: calc(var(--unit) * 2.4);
-}
-
-/* The band behind the switch and the threshold, a shade darker than the glass around it */
-.band,
-.switch {
-  position: absolute;
-  top: calc(var(--unit) * 708);
-  left: calc(var(--unit) * 1375);
-  width: calc(var(--unit) * 537);
-}
-
-.band {
-  height: calc(var(--unit) * 144);
-  background: rgb(0 0 0 / 16%);
-}
-
-.switch {
-  height: calc(var(--unit) * 80);
-  padding: calc(var(--unit) * 7) 0 0;
-  border: none;
-  background: none;
-  color: inherit;
-  font: inherit;
-  font-size: calc(var(--unit) * 26);
-  font-weight: 600;
-  line-height: calc(var(--unit) * 33);
-  text-align: center;
-}
-
-/* The switch's label, two lines centred on the switch's width with the toggle at its right, tracked and raised to the
-   reference's width and lines */
-.switch-label {
-  display: block;
-  width: calc(var(--unit) * 290);
-  margin: calc(var(--unit) * -1.3) auto 0;
-  letter-spacing: calc(var(--unit) * 1.7);
-  line-height: calc(var(--unit) * 31.5);
-}
-
-.toggle {
-  position: absolute;
-  top: calc(var(--unit) * 27);
-  right: calc(var(--unit) * 26);
-  width: calc(var(--unit) * 68);
-  height: calc(var(--unit) * 27);
-  border-radius: calc(var(--unit) * 14);
-  background: #153725;
-}
-
-.knob {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: calc(var(--unit) * 27);
-  height: calc(var(--unit) * 27);
-  border-radius: 50%;
-  background: #8ffa95;
-}
-
-/* The check the knob holds, an L turned on its corner */
-.knob::after {
-  position: absolute;
-  top: calc(var(--unit) * 8);
-  left: calc(var(--unit) * 10.5);
-  width: calc(var(--unit) * 6);
-  height: calc(var(--unit) * 11);
-  border: solid #fff;
-  border-width: 0 calc(var(--unit) * 3) calc(var(--unit) * 3) 0;
-  content: "";
-  rotate: 45deg;
-}
-
-/* Off, the knob sits at the track's left, unlit and unchecked. The clip shows only the switch on, so this is provisional */
-.toggle.off {
-  background: #2a3a32;
-}
-
-.toggle.off .knob {
-  right: auto;
-  left: 0;
-  background: #7d8a83;
-}
-
-.toggle.off .knob::after {
-  display: none;
-}
-
-/* The threshold's two round buttons either side of its figure, the figure centred on the panel */
-.step {
-  --hover-duration: v-bind(INTERACTION_HOVER_DURATION);
-  --state-duration: v-bind(INTERACTION_REST_DURATION);
-  position: absolute;
-  top: calc(var(--unit) * 798);
-  width: calc(var(--unit) * 40);
-  height: calc(var(--unit) * 40);
-  padding: 0;
-  border: none;
-  border-radius: 50%;
-  background: #d9ceb8;
-  box-shadow: 0 0 calc(var(--unit) * 3) rgb(0 0 0 / 30%);
-  outline: calc(var(--unit) * 1) solid transparent;
-}
-
-/* A threshold's round button lights a white ring when hovered or focused (`ringButton.css`), and a press dims it
-   At once */
-.step:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) {
-  --state-duration: 0s;
-  filter: brightness(0.9);
-}
-
-.decrease {
-  left: calc(var(--unit) * 1540);
-}
-
-.increase {
-  left: calc(var(--unit) * 1708);
-}
-
-.step::before,
-.increase::after {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: calc(var(--unit) * 18);
-  height: calc(var(--unit) * 5);
-  background: #3b3b3b;
-  content: "";
-  translate: -50% -50%;
-}
-
-.increase::after {
-  rotate: 90deg;
-}
-
-.percent {
-  position: absolute;
-  top: calc(var(--unit) * 803);
-  left: calc(var(--unit) * 1563);
-  width: calc(var(--unit) * 161);
-  color: #84dc88;
-  font-size: calc(var(--unit) * 28);
-  font-weight: 600;
-  line-height: calc(var(--unit) * 30);
-  pointer-events: none;
-  text-align: center;
 }
 
 /* The game draws no Worship switch on this screen, so the button stays at the screen's bottom left, out of the panel */

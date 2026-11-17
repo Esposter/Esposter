@@ -4,6 +4,7 @@ import type { WorshipLevelState } from "#src/models/WorshipLevelState";
 import CloseButton from "#src/components/CloseButton/Index.vue";
 import GameButton from "#src/components/GameButton/Index.vue";
 import Level from "#src/components/WorshipScreen/Level/Index.vue";
+import Offer from "#src/components/WorshipScreen/Offer/Index.vue";
 import { CloseButtonMark } from "#src/models/CloseButtonMark";
 import { GameButtonKind } from "#src/models/GameButtonKind";
 
@@ -84,26 +85,7 @@ const emit = defineEmits<{ blessing: []; claim: []; close: []; offer: [] }>();
           <span class="words">{{ requiredLabel }} {{ level.oculus.name }}</span>
           <span class="rule" />
         </div>
-        <div class="requirement">
-          <span class="requirement-icon" aria-hidden="true" />
-          <span class="owned-label">{{ ownedLabel }}</span>
-          <span class="owned">× {{ heldCount }}</span>
-          <span class="help" aria-hidden="true">?</span>
-        </div>
-        <GameButton class="offer" :disabled="heldCount === 0" :kind="GameButtonKind.Pill" tip="" @click="emit('offer')">
-          <span class="offer-icon" aria-hidden="true" />
-          <span class="offer-label">{{ offerLabel }}</span>
-        </GameButton>
-        <GameButton
-          class="offer-all"
-          :disabled="heldCount === 0"
-          :kind="GameButtonKind.Pill"
-          tip=""
-          @click="emit('offer')"
-        >
-          <span class="offer-icon" aria-hidden="true" />
-          <span class="offer-label">{{ offerAllLabel }}</span>
-        </GameButton>
+        <Offer :held-count :offer-all-label :offer-label :owned-label @offer="emit('offer')" />
       </template>
       <CloseButton class="close" :label="closeLabel" :mark="CloseButtonMark.Cross" @click="emit('close')" />
     </div>
@@ -265,110 +247,6 @@ const emit = defineEmits<{ blessing: []; claim: []; close: []; offer: [] }>();
   top: calc(var(--unit) * 296);
   left: calc(var(--unit) * 40);
   width: calc(var(--unit) * 536);
-}
-
-.requirement {
-  position: absolute;
-  top: calc(var(--unit) * 874);
-  left: calc(var(--unit) * 40);
-  width: calc(var(--unit) * 536);
-  height: calc(var(--unit) * 85);
-  background: #cdc5b2;
-}
-
-.requirement-icon {
-  position: absolute;
-  top: calc(var(--unit) * 10);
-  left: calc(var(--unit) * 11);
-  width: calc(var(--unit) * 65);
-  height: calc(var(--unit) * 65);
-  background: #7b7566;
-}
-
-.owned,
-.owned-label {
-  position: absolute;
-  left: calc(var(--unit) * 100);
-  color: #5f5b4f;
-  font-weight: 600;
-}
-
-.owned-label {
-  top: calc(var(--unit) * 9);
-  font-size: calc(var(--unit) * 22);
-  line-height: calc(var(--unit) * 26);
-}
-
-.owned {
-  top: calc(var(--unit) * 34);
-  font-size: calc(var(--unit) * 30);
-  line-height: calc(var(--unit) * 40);
-}
-
-.help {
-  position: absolute;
-  top: calc(var(--unit) * 23);
-  left: calc(var(--unit) * 478);
-  display: grid;
-  width: calc(var(--unit) * 38);
-  height: calc(var(--unit) * 38);
-  place-items: center;
-  border-radius: 50%;
-  background: #ebe6da;
-  color: #32352c;
-  font-size: calc(var(--unit) * 26);
-  font-weight: 700;
-  line-height: 1;
-}
-
-.offer,
-.offer-all {
-  position: absolute;
-  top: calc(var(--unit) * 991);
-  height: calc(var(--unit) * 58);
-}
-
-.offer {
-  left: calc(var(--unit) * 40);
-  width: calc(var(--unit) * 214);
-}
-
-.offer-all {
-  left: calc(var(--unit) * 307);
-  width: calc(var(--unit) * 268);
-}
-
-.offer:disabled,
-.offer-all:disabled {
-  opacity: 0.4;
-}
-
-.offer-icon {
-  position: absolute;
-  top: calc(var(--unit) * 8);
-  left: calc(var(--unit) * 8);
-  width: calc(var(--unit) * 42);
-  height: calc(var(--unit) * 42);
-  border-radius: 50%;
-  background: #d9c58f;
-}
-
-.offer-all .offer-icon {
-  left: calc(var(--unit) * 7);
-}
-
-/* Positioned, so the words show over the pill's press light, and drawn at three quarters of the pill's opacity, which fits
-   the faint words of the reference's disabled pills */
-.offer-label {
-  position: absolute;
-  top: calc(var(--unit) * 16);
-  left: calc(var(--unit) * 84);
-  font-size: calc(var(--unit) * 28);
-  font-weight: 600;
-  line-height: calc(var(--unit) * 28);
-  letter-spacing: calc(var(--unit) * 4);
-  white-space: nowrap;
-  opacity: 0.75;
 }
 
 .panel .close {
