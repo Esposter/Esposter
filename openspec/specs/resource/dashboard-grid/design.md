@@ -145,7 +145,7 @@ The consumers of a dashboard read its groups through `listVisuals`. A published 
 - **A group's form is its title.** A group has no chart type or dataset, so its form in the inspector is the title field alone, and the type list offers no group: the palette alone places one.
 - **The edit form is in the inspector, and a valid draft is written onto its visual as it changes.** A dialog covers the grid the change is seen on, and a Save button would make a change wait for a press. The form edits a draft, so a half-typed invalid value reaches neither the tile nor a save, and the autosave persists what is written. Rejected: the dialog, which covered the canvas, and a Save button, which a form change waited on.
 - **The published name is the alternative text, else the label.** A visual whose alternative text is empty still has a name, so the field refines a description and never gates one.
-- **An image role over a chart only.** A chart's drawing is what its name describes, so a chart takes the role that makes the name stand for it. A table's cells are its accessible form, and an image role over them would hide them, so a table keeps its own roles inside a named group, since a name needs a role that takes one. Rejected: no role on a table, which leaves the name on a container that takes none.
+- **An image role over a chart only.** The role rule is in How it works; its reason is that a chart's drawing is what its name describes. A table's cells are its accessible form, and an image role over them would hide them, so a table keeps its own roles inside a named group, since a name needs a role that takes one. Rejected: no role on a table, which leaves the name on a container that takes none.
 
 ## Notes
 
