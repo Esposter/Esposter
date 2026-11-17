@@ -38,3 +38,13 @@
   gap: calc(var(--unit) * 10);
   font-size: calc(var(--unit) * 24);
 }
+
+/* The coin a price and the balance are counted in */
+.coin {
+  display: inline-block;
+  width: calc(var(--unit) * 26);
+  height: calc(var(--unit) * 26);
+  flex: none;
+  border-radius: 50%;
+  background: radial-gradient(circle, #f6d77a 0 35%, #c99a2e 36% 100%);
+}
