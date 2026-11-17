@@ -5,7 +5,7 @@ import { describe, vi } from "vitest";
 
 // Every RPC a room's object was sent, in send order, with the room it was sent to. The object exists only inside the realtime
 // Worker, so this stands in for its stub: a suite asserts what the job asked of the room, and what the job did with the answer
-export interface RoomObjectCall {
+interface RoomObjectCall {
   args: unknown[];
   method: string;
   roomId: string;
@@ -14,7 +14,7 @@ const roomObjectCallsHolder = vi.hoisted(() => ({ roomObjectCalls: [] as RoomObj
 export const roomObjectCalls = roomObjectCallsHolder.roomObjectCalls;
 
 // The answer a test scripts for an RPC that returns data, as a function of the call's arguments and room
-export type RoomObjectReply = (args: unknown[], roomId: string) => unknown;
+type RoomObjectReply = (args: unknown[], roomId: string) => unknown;
 const roomObjectRepliesHolder = vi.hoisted(() => ({ roomObjectReplies: new Map<string, RoomObjectReply>() }));
 export const roomObjectReplies = roomObjectRepliesHolder.roomObjectReplies;
 

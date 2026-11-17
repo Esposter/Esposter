@@ -39,6 +39,8 @@ import { z } from "zod";
 
 // The one row the call keeps about itself
 const CALL_STATE_ID = 1;
+// The flags a participant's controls write, any of them in one update
+type ParticipantFlags = Partial<Pick<CallParticipant, "isCameraEnabled" | "isHandRaised" | "isMuted">>;
 
 // One Call object per call session. It holds who is in the call and who is knocking.
 // It also holds who has been let in and each joined connection's RealtimeKit participant, all in its own SQLite.
@@ -543,20 +545,13 @@ export class CallObject extends RealtimeObject<CallEvent> implements CallObjectR
   }
 
   // Writes one of a participant's flags, and broadcasts the event for it only when a participant was updated
-  #updateFlag(
-    sessionId: string,
-    values: Partial<Pick<CallParticipant, "isCameraEnabled" | "isHandRaised" | "isMuted">>,
-    event: CallEvent,
-  ): boolean {
+  #updateFlag(sessionId: string, values: ParticipantFlags, event: CallEvent): boolean {
     const isUpdated = this.#updateParticipant(sessionId, values);
     if (isUpdated) this.broadcast(event);
     return isUpdated;
   }
 
-  #updateParticipant(
-    sessionId: string,
-    values: Partial<Pick<CallParticipant, "isCameraEnabled" | "isHandRaised" | "isMuted">>,
-  ): boolean {
+  #updateParticipant(sessionId: string, values: ParticipantFlags): boolean {
     return this.db.update(participants).set(values).where(eq(participants.id, sessionId)).returning().all().length > 0;
   }
 

@@ -20,7 +20,7 @@ export const getPushNotificationPayload = ({
   body: string;
   icon?: null | string | undefined;
   path: string;
-  title?: null | string;
+  title?: string;
   type: AppNotificationType;
 }): string =>
   JSON.stringify({

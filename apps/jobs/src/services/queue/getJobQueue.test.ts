@@ -6,7 +6,7 @@ import { describe } from "vitest";
 // Every message sent to each job's queue, in send order.
 // It stands in for the producer binding, which only exists inside the Worker, so a test reads what a publisher sent.
 // A test needs no Workers runtime to read it.
-export const MockJobQueueDatabase: Map<QueueJob, unknown[]> = new Map<QueueJob, unknown[]>();
+export const MockJobQueueDatabase = new Map<QueueJob, unknown[]>();
 
 // The producer binding's own `Queue` interface, so the double is what `getJobQueue` returns.
 // Nothing is ever backed up here, so every backlog it reports is empty.

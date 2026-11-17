@@ -6,7 +6,7 @@ import { describe, vi } from "vitest";
 // Every RPC a person's object was sent, in order, with the person it was sent to.
 // It stands in for the stub, which exists only inside the Worker.
 // So a test asserts what was called rather than what the object then did.
-export interface UserObjectCall {
+interface UserObjectCall {
   args: unknown[];
   method: string;
   userId: string;
@@ -15,7 +15,7 @@ const userObjectCallsHolder = vi.hoisted(() => ({ userObjectCalls: [] as UserObj
 export const userObjectCalls = userObjectCallsHolder.userObjectCalls;
 
 // The answer a test scripts for an RPC that returns data, as a function of the call's arguments and person
-export type UserObjectReply = (args: unknown[], userId: string) => unknown;
+type UserObjectReply = (args: unknown[], userId: string) => unknown;
 const userObjectRepliesHolder = vi.hoisted(() => ({ userObjectReplies: new Map<string, UserObjectReply>() }));
 export const userObjectReplies = userObjectRepliesHolder.userObjectReplies;
 

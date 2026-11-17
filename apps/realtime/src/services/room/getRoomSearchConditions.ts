@@ -49,8 +49,8 @@ export const getRoomSearchConditions = (filters: Filter[]): SQL[] => {
   const conditions: SQL[] = [];
   for (const [type, typeFilters] of Object.entries(Object.groupBy(filters, ({ type: filterType }) => filterType)))
     if (type === FilterType.Mentions)
-      conditions.push(getMentionsCondition((typeFilters ?? []).map(({ value }) => getStringValue(type, value))));
-    else for (const { value } of typeFilters ?? []) conditions.push(...getFilterConditions(type, value));
+      conditions.push(getMentionsCondition(typeFilters.map(({ value }) => getStringValue(type, value))));
+    else for (const { value } of typeFilters) conditions.push(...getFilterConditions(type, value));
 
   return conditions;
 };
