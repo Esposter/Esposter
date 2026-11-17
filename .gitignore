@@ -41,6 +41,9 @@ logs
 # Agent tree (`.claude` is a symlink alias to `.agents`, so it needs no entry of its own)
 scheduled_tasks.lock
 .agents/worktrees
+# pnpm writes this beside the dependency skills it links, listing only what that install linked, so a filtered
+# worktree install rewrites it; each checkout keeps its own
+.agents/skills/.gitignore
 
 # OS
 .DS_Store
