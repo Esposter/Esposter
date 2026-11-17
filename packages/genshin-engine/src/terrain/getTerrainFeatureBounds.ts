@@ -5,9 +5,9 @@ import { TerrainFeatureKind } from "#src/models/terrain/TerrainFeatureKind";
 import { GAUSSIAN_REACH_WIDTHS } from "#src/terrain/constants";
 import { getSegmentBounds } from "#src/terrain/getSegmentBounds";
 
-// The rectangle a feature's height reaches past zero within
-// A case per kind, and a default that assigns the feature to `never`: a kind added to TerrainFeatureKind is not `never`
-// There, so it fails typecheck rather than falling through to another kind's bounds
+// Returns the rectangle a feature's height reaches past zero within.
+// Each kind has a case, and the default assigns the feature to `never`.
+// A kind added to TerrainFeatureKind is therefore a typecheck error, not a fall-through to another kind's bounds.
 export const getTerrainFeatureBounds = (feature: TerrainFeature): TerrainBounds => {
   switch (feature.kind) {
     case TerrainFeatureKind.Cliff: {
