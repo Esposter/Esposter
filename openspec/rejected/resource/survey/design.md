@@ -36,7 +36,7 @@ A card view that shows a survey with one question on each screen.
 
 A menu in the Creator that jumps to any page of a survey from a list, so an author does not scroll the design surface to reach one.
 
-**Why not:** Choosing a page row in the outline already selects that page, and the canvas scrolls to it ([inline-editing change](../../../changes/resource-survey-creator-inline-editing/design.md)). A second control listing the same pages beside the canvas would give an author two routes to one page. The inline-editing change rejects it for that reason, and the outline stays the one place a page is chosen.
+**Why not:** Choosing a page row in the outline already selects that page, and the canvas scrolls to it ([inline-editing change](../../../changes/archive/2026-11-18-resource-survey-creator-inline-editing/design.md)). A second control listing the same pages beside the canvas would give an author two routes to one page. The inline-editing change rejects it for that reason, and the outline stays the one place a page is chosen.
 
 ## Survey JSON editor tab
 

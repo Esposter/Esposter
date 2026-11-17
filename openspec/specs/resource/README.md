@@ -67,7 +67,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Survey response modes](survey-response-modes/design.md) — Anonymous or Identified identity, enforced at the write boundary
 - [Survey response summary](survey-response-summary/design.md) — the Responses blade opens on one chart, range or answer list per question
 - [Survey response management](survey-response-management/design.md) — response detail, owner delete, response count on Overview
-- [Survey creator](survey-creator/design.md) — the owner's editor over the typed survey document: a layers tree, a palette, a canvas, undo and redo as patches, and a preview that runs the survey and then shows its results
+- [Survey creator](survey-creator/design.md) — the owner's editor over the typed survey document: a layers tree, a palette, a canvas that edits in place with its adorners and add controls, undo and redo as patches, and a preview that runs the survey and then shows its results
 - [Survey logic builder](survey-logic-builder/design.md) — the Logic tab: conditions built from rows beside their raw expression, and the survey's calculated values
 - [Survey properties](survey-properties/design.md) — the Properties tab: each element's settings drawn from its props schema, and the choice, matrix column and item list editors
 - [Survey theme and files](survey-theme-files/design.md) — the logo, the background picture and colours on the survey's root, and the uploaded pictures swept when the editor closes

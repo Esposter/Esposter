@@ -31,7 +31,7 @@ The owner SHALL edit the title and description of the selected question, and of 
 
 ### Requirement: A choice question's choices are edited in place
 
-The owner SHALL edit the text of each choice of the selected choice question on the surface, add a choice after the last by pressing Enter in it, remove a choice, and reorder choices by drag or by Alt with the arrow keys. A choice left empty on commit SHALL be removed, and the last remaining choice SHALL NOT be removable.
+The owner SHALL edit the text of each choice of the selected choice question on the surface, add a choice after the last by pressing Enter in it, remove a choice, and reorder choices by Alt with the arrow keys. A choice left empty on commit SHALL be removed, and the last remaining choice SHALL NOT be removable.
 
 #### Scenario: Enter in the last choice adds one
 
@@ -59,7 +59,7 @@ The owner SHALL edit the text of each choice of the selected choice question on 
 
 ### Requirement: The selected element carries an adorner bar
 
-The selected element SHALL carry an adorner bar anchored to its box with its required flag, a kind switch, duplicate, delete and move, and for a rating question its rate type. Each adorner SHALL do what the same control in the property panel and the outline does.
+The selected element SHALL carry an adorner bar anchored to its box with its required flag, a kind switch, duplicate, delete, and for a rating question its rate type. Each adorner SHALL do what the same control in the property panel and the outline does. The element is moved by the drag handle the canvas draws on it, so the bar has no move control.
 
 #### Scenario: The required adorner toggles the flag
 
@@ -81,7 +81,7 @@ The selected element SHALL carry an adorner bar anchored to its box with its req
 
 ### Requirement: A question's kind is changed in place
 
-The owner SHALL change the selected question's kind from the adorner bar. The change SHALL keep the name, title, description, required flag and visibility condition, SHALL keep the choices when both kinds hold choices, and SHALL drop the other props. A change that drops a prop holding content SHALL ask first, and the change SHALL be one undo step.
+The owner SHALL change the selected question's kind from the adorner bar. The change SHALL keep the name, title, description, required flag and visibility condition, SHALL keep the choices when both kinds hold choices, and SHALL drop the other props. The kinds offered SHALL be the palette's answering kinds other than the question's own, each one the change can carry the question into. A change that drops a prop holding content SHALL ask first, and the change SHALL be one undo step.
 
 #### Scenario: A choice question becomes another choice kind with its choices
 

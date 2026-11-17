@@ -25,7 +25,13 @@ import {
   removeBlockNode,
   updateBlockNodeProps,
 } from "vue-block-editor-headless";
-import { surveyDocumentSchema, surveyNodeChildren, surveyNodeSchema, surveyRegistry } from "vue-survey-engine-headless";
+import {
+  convertSurveyNodeKind,
+  surveyDocumentSchema,
+  surveyNodeChildren,
+  surveyNodeSchema,
+  surveyRegistry,
+} from "vue-survey-engine-headless";
 
 // A question's name, which the survey keeps unique across its questions. A page or a panel holds none
 const getElementName = (node: SurveyNode | undefined) => (node && "name" in node.props ? node.props.name : undefined);
@@ -161,6 +167,17 @@ export const useSurveyCreatorCommands = () => {
     if (isRemoved && isSelectionRemoved) selectedPointer.value = focusPointer;
     return isRemoved;
   };
+  // The node a kind change makes of the question, written over it as one history entry. The question keeps its id and its place, so it stays selected
+  const convertNodeKind = (nodePointer: string, type: SurveyNodeType) => {
+    const node = getBlockNode(document.value, nodePointer, surveyNodeChildren);
+    const change = node && convertSurveyNodeKind(node, type);
+    if (change === undefined) return false;
+
+    return applyEdit(
+      [{ op: JsonPatchOperationType.Replace, path: nodePointer, value: change.node }],
+      "Change element kind",
+    );
+  };
   // A run of edits to the same props of one node, a field typed into key by key, is one interaction and so one undo step
   const updateNodeProps = (nodePointer: string, props: Record<string, unknown>) =>
     applyEdit(
@@ -183,6 +200,7 @@ export const useSurveyCreatorCommands = () => {
 
   return {
     applyEdit,
+    convertNodeKind,
     duplicateNode,
     insertNode,
     insertNodeAt,

@@ -8,7 +8,12 @@ import { SurveyConditionProp } from "#src/models/resource/survey/SurveyCondition
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { UiTextFieldType } from "#src/models/ui/UiTextFieldType";
 import { SurveyExpressionBinaryOperator } from "survey-expression";
-import { SurveyImageFit, SurveyNodeType, SurveyTextInputType } from "vue-survey-engine-headless";
+import {
+  checkIsSurveyAnsweringType,
+  SurveyImageFit,
+  SurveyNodeType,
+  SurveyTextInputType,
+} from "vue-survey-engine-headless";
 
 // The conditions a node's editor shows, each under its label, in the order the editor lists them
 export const SURVEY_CONDITION_SECTIONS: readonly { label: string; prop: SurveyConditionProp }[] = [
@@ -161,6 +166,10 @@ export const SURVEY_PALETTE_GROUPS: readonly { title: string; types: SurveyNodeT
   { title: "Content", types: [SurveyNodeType.Html, SurveyNodeType.Image, SurveyNodeType.Expression] },
   { title: "Layout", types: [SurveyNodeType.Panel] },
 ];
+// The palette's kinds a response holds a value for: the kinds a page's add control and a question's kind switch offer
+export const SURVEY_ANSWERING_PALETTE_TYPES: SurveyNodeType[] = SURVEY_PALETTE_GROUPS.flatMap(
+  ({ types }) => types,
+).filter((type) => checkIsSurveyAnsweringType(type));
 
 // The two views the toolbar switches between, titled and valued by the same name
 export const SURVEY_DESIGN_MODE = "Design";
