@@ -2,6 +2,7 @@
 import { useMemberActionItems } from "#src/composables/message/user/useMemberActionItems";
 import { useSession } from "#src/services/auth/authClient.test";
 import { createRoomRole } from "#src/services/message/member/createRoomRole.test";
+import { serveMemberRoles } from "#src/services/message/member/serveMemberRoles.test";
 import { createRoom } from "#src/services/message/room/createRoom.test";
 import { createUser } from "#src/services/message/user/createUser.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
@@ -29,9 +30,11 @@ describe(useMemberActionItems, () => {
     const roleStore = useRoleStore();
     await roleStore.readMyPermissions({ roomIds: [roomId] });
   };
-  const setupTargetRole = (targetUserId: string) => {
+  // The target's roles are read the way the member list reads them, so the item sees the roles the room holds
+  const setupTargetRole = async (targetUserId: string) => {
+    serveMemberRoles(trpcMsw, roomId, targetUserId, [createRoomRole({ position, roomId })]);
     const roleStore = useRoleStore();
-    roleStore.setMemberRoles(roomId, targetUserId, [createRoomRole({ position, roomId })]);
+    await roleStore.readMemberRoles({ roomId, userIds: [targetUserId] });
   };
 
   beforeEach(() => {
@@ -76,7 +79,7 @@ describe(useMemberActionItems, () => {
     expect.hasAssertions();
 
     await setupActor(RoomPermission.ManageDisplayNames);
-    setupTargetRole(member.id);
+    await setupTargetRole(member.id);
     const { moderationItems } = useMemberActionItems(member, roomId, vi.fn<() => void>());
 
     expect(moderationItems.value.map(({ title }) => title)).toContain(displayNameTitle);
@@ -86,7 +89,7 @@ describe(useMemberActionItems, () => {
     expect.hasAssertions();
 
     await setupActor(0n);
-    setupTargetRole(member.id);
+    await setupTargetRole(member.id);
     const { moderationItems } = useMemberActionItems(member, roomId, vi.fn<() => void>());
 
     expect(moderationItems.value.map(({ title }) => title)).not.toContain(displayNameTitle);
@@ -101,8 +104,6 @@ describe(useMemberActionItems, () => {
     const roomStore = useRoomStore();
     roomStore.pushRooms({ ...createRoom(name), id: roomId, userId: owner.id });
     await setupActor(RoomPermission.ManageDisplayNames);
-    const roleStore = useRoleStore();
-    roleStore.setMemberRoles(roomId, owner.id, []);
     const { moderationItems } = useMemberActionItems(owner, roomId, vi.fn<() => void>());
 
     expect(moderationItems.value.map(({ title }) => title)).not.toContain(displayNameTitle);
@@ -112,7 +113,7 @@ describe(useMemberActionItems, () => {
     expect.hasAssertions();
 
     await setupActor(RoomPermission.ManageDisplayNames);
-    setupTargetRole(userId);
+    await setupTargetRole(userId);
     const { moderationItems } = useMemberActionItems(
       { ...createUser({ id: userId }), displayName: "" },
       roomId,

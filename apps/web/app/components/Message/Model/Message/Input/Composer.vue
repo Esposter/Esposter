@@ -2,6 +2,7 @@
 import type { ComposerTarget } from "#src/models/message/ComposerTarget";
 import type { AnyExtension } from "@tiptap/vue-3";
 
+import { useInputStore } from "#src/store/message/input/index";
 import { MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
 
 interface Props {
@@ -15,8 +16,10 @@ const slots = defineSlots<{
 }>();
 const input = defineModel<string>({ required: true });
 const { extraExtensions = [], target } = defineProps<Props>();
-const { checkIsInputValid, extensions, sendComposerMessage, uploadFiles } = await useComposer(() => target);
-const editorExtensions = computed(() => [...extensions.value, ...extraExtensions]);
+const inputStore = useInputStore();
+const { checkIsInputValid } = inputStore;
+const { extensions, sendComposerMessage, uploadFiles } = await useComposer(() => target);
+const editorExtensions = computed(() => [...extensions, ...extraExtensions]);
 </script>
 
 <template>

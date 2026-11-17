@@ -1,29 +1,11 @@
-import type { AddReactionInput } from "#shared/models/db/message/reaction/AddReactionInput";
-import type { RoomReaction } from "@esposter/db-schema";
-
+// @vitest-environment nuxt
 import { useSelectEmoji } from "#src/composables/message/emoji/useSelectEmoji";
 import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
+import { useEmojiStore } from "#src/store/message/emoji";
 import { MessageType } from "@esposter/db-schema";
+import { noop } from "@esposter/shared";
 import { v7 } from "uuid";
-import { beforeEach, describe, expect, test, vi } from "vitest";
-
-// Hoisted above the imports by `vi.mock`, so unlike a plain constant these cannot live inside the describe
-const { createEmoji, emojis, toggleEmoji } = vi.hoisted(() => ({
-  createEmoji: vi.fn<(input: AddReactionInput) => Promise<void>>(),
-  // Only the two fields the composable matches on, so the double states its own contract
-  emojis: new Array<Pick<RoomReaction, "emojiTag" | "userIds">>(),
-  toggleEmoji: vi.fn<(roomId: string, emoji: RoomReaction) => Promise<void>>(),
-}));
-
-// The composable reads three members off the store and nothing else, so the double is those three — the cast is
-// What standing in for a Pinia store's full surface costs, and it is the only one this double needs
-vi.mock(import("#src/store/message/emoji"), () => ({
-  useEmojiStore: (() => ({
-    createEmoji,
-    getEmojis: () => emojis,
-    toggleEmoji,
-  })) as unknown as (typeof import("#src/store/message/emoji"))["useEmojiStore"],
-}));
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(useSelectEmoji, () => {
   const THUMBS_UP = "👍";
@@ -31,18 +13,24 @@ describe(useSelectEmoji, () => {
   const userId = v7();
   const message = createOptimisticMessage({ roomId: v7(), type: MessageType.Message }, userId);
 
-  beforeEach(() => {
-    emojis.length = 0;
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
+  // The composable reads the store's own state, so the test seeds that state through the store's setter rather than
+  // Doubling the reads. Only the two writes that reach the server are spied, and they record instead of running
   // A reaction is stored as the emoji itself, so two tones of one emoji are two reactions with their own
   // Counts — Discord and Slack both behave this way, and any normalisation reintroduced here would break it
   test("treats a differently toned emoji as its own reaction", () => {
     expect.hasAssertions();
 
+    const emojiStore = useEmojiStore();
+    const createEmoji = vi.spyOn(emojiStore, "createEmoji").mockImplementation(noop);
     const selectEmoji = useSelectEmoji(message);
     selectEmoji(THUMBS_UP);
-    emojis.push({ emojiTag: THUMBS_UP, userIds: [userId] });
+    emojiStore.setEmojis(message.roomId, message.id, [
+      { emojiTag: THUMBS_UP, messageId: message.id, userIds: [userId] },
+    ]);
     selectEmoji(THUMBS_UP_MEDIUM);
 
     expect(createEmoji.mock.calls.map(([{ emojiTag }]) => emojiTag)).toStrictEqual([THUMBS_UP, THUMBS_UP_MEDIUM]);
@@ -51,8 +39,11 @@ describe(useSelectEmoji, () => {
   test("toggles the existing reaction when the same emoji comes back", () => {
     expect.hasAssertions();
 
-    const foundEmoji = { emojiTag: THUMBS_UP, userIds: [userId] };
-    emojis.push(foundEmoji);
+    const foundEmoji = { emojiTag: THUMBS_UP, messageId: message.id, userIds: [userId] };
+    const emojiStore = useEmojiStore();
+    emojiStore.setEmojis(message.roomId, message.id, [foundEmoji]);
+    const createEmoji = vi.spyOn(emojiStore, "createEmoji").mockImplementation(noop);
+    const toggleEmoji = vi.spyOn(emojiStore, "toggleEmoji").mockImplementation(noop);
     const selectEmoji = useSelectEmoji(message);
     selectEmoji(THUMBS_UP);
 

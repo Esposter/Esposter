@@ -103,6 +103,7 @@ export const useMemberActionItems = (
   // The display name leads, since it is the one action here that punishes no one. The rest run mildest first, as Discord
   // Orders them: a note, a warning, a timeout, then the three that remove the member
   const moderationItems = computed(() => {
+    const noteCount = getModerationNoteCount(toValue(user).id);
     const items: Item[] = [
       ...(checkHasManageablePermission(RoomPermission.ManageDisplayNames)
         ? [
@@ -123,10 +124,7 @@ export const useMemberActionItems = (
                 openDialog(MemberDialogType.Notes);
               },
               // Counted once the member's notes have been read, which the profile does as it opens
-              title:
-                getModerationNoteCount(toValue(user).id) > 0
-                  ? `Notes (${getModerationNoteCount(toValue(user).id)})`
-                  : "Notes",
+              title: noteCount > 0 ? `Notes (${noteCount})` : "Notes",
             },
           ]
         : []),

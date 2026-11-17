@@ -2,6 +2,7 @@
 import type { ComposerTarget } from "#src/models/message/ComposerTarget";
 
 import { MessageInputCommands } from "#src/services/message/input/MessageInputCommands";
+import { SlashCommandExtension } from "#src/services/message/SlashCommandExtension";
 import { useLayoutStore } from "#src/store/layout";
 import { useDataStore } from "#src/store/message/data";
 import { useInputStore } from "#src/store/message/input/index";
@@ -20,8 +21,7 @@ const target = computed((): ComposerTarget => ({ roomId: currentRoomId.value, th
 const dataStore = useDataStore();
 const { items } = storeToRefs(dataStore);
 // Slash commands are the room composer's alone, so they ride on top of the shared stack rather than in it
-const slashCommandExtension = useSlashCommandExtension();
-const extraExtensions = [slashCommandExtension];
+const extraExtensions = [SlashCommandExtension];
 const inputStore = useInputStore();
 const { input } = storeToRefs(inputStore);
 const replyStore = useReplyStore();

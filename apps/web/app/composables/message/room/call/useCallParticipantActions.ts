@@ -15,6 +15,7 @@ export const useCallParticipantActions = () => {
   const callStore = useCallStore();
   const { activeCallSessionId, callRoomId } = storeToRefs(callStore);
   const participantStore = useParticipantStore();
+  const { callSessionParticipantsMap } = storeToRefs(participantStore);
   const { setParticipantHandRaised } = participantStore;
   const roleStore = useRoleStore();
   const { checkHasMyPermission } = roleStore;
@@ -51,8 +52,7 @@ export const useCallParticipantActions = () => {
             {
               applyOptimistic: () => {
                 const previousIsHandRaised =
-                  participantStore.callSessionParticipantsMap.get(callSessionId)?.get(participantId)?.isHandRaised ??
-                  false;
+                  callSessionParticipantsMap.value.get(callSessionId)?.get(participantId)?.isHandRaised ?? false;
                 setParticipantHandRaised(callSessionId, participantId, false);
                 return () => {
                   setParticipantHandRaised(callSessionId, participantId, previousIsHandRaised);

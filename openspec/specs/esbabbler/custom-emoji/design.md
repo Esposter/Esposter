@@ -95,7 +95,7 @@ Deleting an emoji removes the row first and then sends the object deletion, best
 | `apps/web/app/models/message/emoji/CustomEmoji.ts`                  | what a picking surface sees                                |
 | `apps/web/app/components/Styled/Emoji.vue`                          | one glyph component — a character or an image              |
 | `apps/web/app/components/Message/Model/Message/Emoji/Tag.vue`       | a stored reaction tag, resolved or placeheld               |
-| `apps/web/app/composables/message/emoji/useCustomEmojiExtension.ts` | the content node, carrying id and name and no url          |
+| `apps/web/app/services/message/CustomEmojiExtension.ts`             | the content node, carrying id and name and no url          |
 | `apps/web/app/composables/message/useMessageHtml.ts`                | the render pass — mentions and emoji, one parse            |
 | `apps/web/app/components/Message/Model/Room/Emoji/CreateDialog.vue` | the Add Emoji dialog the picker footer opens               |
 | `apps/web/app/components/Message/Model/Room/Emoji/NameField.vue`    | the one name field — colons as chrome, one rule set        |

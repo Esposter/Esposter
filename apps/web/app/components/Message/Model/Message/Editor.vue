@@ -2,6 +2,7 @@
 import type { ClientMessage } from "#src/models/message/ClientMessage";
 
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { CustomEmojiExtension } from "#src/services/message/CustomEmojiExtension";
 import { MentionExtension } from "#src/services/message/MentionExtension";
 import { useDataStore } from "#src/store/message/data";
 import { MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
@@ -40,8 +41,7 @@ const keyboardExtension = new Extension({
 });
 // Registered so the editor parses a custom emoji node back out of the stored markup — without it an edit
 // Silently drops every emoji in the message
-const customEmojiExtension = useCustomEmojiExtension();
-const editorExtensions = [keyboardExtension, MentionExtension, customEmojiExtension];
+const editorExtensions = [keyboardExtension, MentionExtension, CustomEmojiExtension];
 </script>
 
 <template>

@@ -62,5 +62,5 @@ export const useCallParticipantTiles = () => {
       }),
     );
   });
-  return { callParticipantMap, participantTilePropsMap, presenterName, sessionId };
+  return { callParticipantMap, participantTilePropsMap, presenterName };
 };

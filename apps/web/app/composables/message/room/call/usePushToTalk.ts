@@ -11,13 +11,14 @@ export const usePushToTalk = (isInCall: MaybeRefOrGetter<boolean>, target?: Mayb
   const realtimeStore = useRealtimeStore();
   const { setPushToTalkKeyHeld } = realtimeStore;
   const userSettingsStore = useUserSettingsStore();
+  const { userSettings } = storeToRefs(userSettingsStore);
   const listenerTarget = computed(() => (target ? toValue(target) : defaultWindow));
-  const pushToTalkKeybind = computed(() => userSettingsStore.userSettings?.pushToTalkKeybind ?? "");
+  const pushToTalkKeybind = computed(() => userSettings.value?.pushToTalkKeybind ?? "");
   const isActive = computed(
     () =>
       toValue(isInCall) &&
       Boolean(pushToTalkKeybind.value) &&
-      userSettingsStore.userSettings?.voiceInputMode === VoiceInputMode.PushToTalk,
+      userSettings.value?.voiceInputMode === VoiceInputMode.PushToTalk,
   );
   // Casts (not instanceof) — PiP window events come from another realm with its own KeyboardEvent
   useEventListener(listenerTarget, "keydown", (event) => {

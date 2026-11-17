@@ -18,9 +18,9 @@ export const useKeyboardShortcutsExtension = async (
   send: (editor: Editor) => Promisable<void>,
   messages: MaybeRefOrGetter<readonly ClientMessage[]>,
 ) => {
-  const { data: session } = await useAuthSession();
   const messageStore = useMessageStore();
   const { editingMessageId } = storeToRefs(messageStore);
+  const { data: session } = await useAuthSession();
   return new Extension({
     addKeyboardShortcuts() {
       return {

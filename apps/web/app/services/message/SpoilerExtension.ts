@@ -4,7 +4,7 @@ import { Mark, markInputRule, mergeAttributes } from "@tiptap/vue-3";
 // A mark over text a reader must click to read. Typing `||text||` marks the text as the closing bars are typed,
 // And Ctrl+Shift+S toggles the mark over the selection. The mark carries no attributes: the reveal is client
 // State, so nothing about it is written into the message
-const SpoilerMark = Mark.create({
+export const SpoilerExtension = Mark.create({
   addInputRules() {
     return [markInputRule({ find: /\|\|(?<text>[^|]+)\|\|$/u, type: this.type })];
   },
@@ -23,5 +23,3 @@ const SpoilerMark = Mark.create({
     return ["span", mergeAttributes(HTMLAttributes, { [SPOILER_ATTRIBUTE]: "" }), 0];
   },
 });
-
-export const useSpoilerExtension = () => SpoilerMark;

@@ -5,12 +5,12 @@ import type { Page } from "@esposter/db-schema";
 
 import { flushCache } from "#src/composables/cache/indexedDb/flushCache.test";
 import { goOffline } from "#src/composables/shared/network.test";
-import { MemberCounts } from "#src/models/message/user/MemberCounts";
 import { MemberIndexedDbStoreConfiguration } from "#src/services/cache/indexedDb/configurations/MemberIndexedDbStoreConfiguration";
 import { resetIndexedDb } from "#src/services/cache/indexedDb/openIndexedDb";
 import { writeIndexedDb } from "#src/services/cache/indexedDb/writeIndexedDb";
 import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { createUser } from "#src/services/message/user/createUser.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useMemberStore } from "#src/store/message/user/member";
 import { createEmptyPage } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
@@ -19,11 +19,12 @@ import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useMemberCache, () => {
+  const { trpcMsw } = setupMswTrpc();
   let memberCount: ComputedRef<number | undefined>;
   let memberCountsByTopRole: ComputedRef<MemberCountByTopRole[]>;
   let members: Ref<MemberInRoom[]>;
-  let getMemberCountsRef: ReturnType<typeof useMemberStore>["getMemberCountsRef"];
   let initializeCursorPaginationData: (data: Page<MemberInRoom>) => void;
+  let refreshMemberCounts: ReturnType<typeof useMemberStore>["refreshMemberCounts"];
   const partitionKey = v7();
   const secondPartitionKey = v7();
   const user = createUser();
@@ -36,12 +37,10 @@ describe(useMemberCache, () => {
           setCurrentRoomId(initialRouteId);
           const memberStore = useMemberStore();
           ({ memberCount, memberCountsByTopRole, members } = storeToRefs(memberStore));
-          ({ getMemberCountsRef, initializeCursorPaginationData } = memberStore);
+          ({ initializeCursorPaginationData, refreshMemberCounts } = memberStore);
           useMemberCache();
 
           onUnmounted(() => {
-            for (const roomId of [initialRouteId, secondPartitionKey])
-              getMemberCountsRef(roomId).value = new MemberCounts();
             initializeCursorPaginationData(createEmptyPage<MemberInRoom>());
           });
         },
@@ -68,8 +67,9 @@ describe(useMemberCache, () => {
     await mountCache();
     // Both totals are server-computed, so the room left behind is the last thing that set them. Neither can be
     // Refetched offline, and the room being switched into must not inherit either
-    getMemberCountsRef(partitionKey).value.memberCount = 1;
-    getMemberCountsRef(partitionKey).value.countsByTopRole = [{ count: 1, roleId: v7() }];
+    trpcMsw.room.readMembersCount.query(() => 1);
+    trpcMsw.room.readMemberCountsByTopRole.query(() => [{ count: 1, roleId: v7() }]);
+    await refreshMemberCounts([partitionKey]);
     setCurrentRoomId(secondPartitionKey);
     await flushCache();
 

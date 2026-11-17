@@ -12,9 +12,9 @@ export const useVotePoll = async (
   const { $trpc } = useNuxtApp();
   // Single-flight per poll: a second vote while one is in flight is dropped rather than racing it
   const { checkIsPending, executeMutation } = useMutation();
-  const { data: session } = await useAuthSession();
   const dataStore = useDataStore();
   const { storeUpdateMessage } = dataStore;
+  const { data: session } = await useAuthSession();
   // Scoped to the poll bound right now rather than to anything this instance has in flight — `message` is a
   // Getter, so the surface can re-point at another poll, and a whole-instance flag would disable a radio group
   // Whose own vote landed long ago

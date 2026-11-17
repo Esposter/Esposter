@@ -7,7 +7,7 @@ import { mergeAttributes, Node } from "@tiptap/vue-3";
 // Serializes its id and name and never a url — the image is a short-lived presigned read url resolved when the message is
 // Rendered, so storing one would persist a credential that expires. Its text content is the shortcode, which is
 // What the composer shows while typing and what a reader sees if the emoji is ever deleted
-const CustomEmojiNode = Node.create({
+export const CustomEmojiExtension = Node.create({
   addAttributes() {
     return {
       id: {
@@ -39,5 +39,3 @@ const CustomEmojiNode = Node.create({
     return ["span", mergeAttributes(HTMLAttributes), getEmojiShortcode(String(node.attrs.name ?? ""))];
   },
 });
-
-export const useCustomEmojiExtension = () => CustomEmojiNode;

@@ -8,11 +8,11 @@ The message input's suggestion extensions — emoji, mention and slash command �
 
 Paths differ per feature — there is no single `{feature}` folder convention:
 
-| Feature       | Extension composable                                                        | Suggestion config                                                       |
-| ------------- | --------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| Emoji         | `apps/web/app/composables/message/editor/useEmojiExtension.ts`              | `apps/web/app/services/message/emoji/EmojiSuggestion.ts`                |
-| Mention       | `apps/web/app/services/message/MentionExtension.ts`                         | `apps/web/app/services/message/MentionSuggestion.ts` (no subfolder)     |
-| Slash command | `apps/web/app/composables/message/slashCommand/useSlashCommandExtension.ts` | `apps/web/app/services/message/slashCommands/SlashCommandSuggestion.ts` |
+| Feature       | Extension                                                | Suggestion config                                                       |
+| ------------- | -------------------------------------------------------- | ----------------------------------------------------------------------- |
+| Emoji         | `apps/web/app/services/message/EmojiExtension.ts`        | `apps/web/app/services/message/emoji/EmojiSuggestion.ts`                |
+| Mention       | `apps/web/app/services/message/MentionExtension.ts`      | `apps/web/app/services/message/MentionSuggestion.ts` (no subfolder)     |
+| Slash command | `apps/web/app/services/message/SlashCommandExtension.ts` | `apps/web/app/services/message/slashCommands/SlashCommandSuggestion.ts` |
 
 List components are uniform: `apps/web/app/components/Message/Model/Message/Suggestion/{Feature}List.vue`.
 
@@ -35,16 +35,14 @@ export const EmojiSuggestion: Except<SuggestionOptions<PickableEmoji, PickableEm
 Every suggestion extension that is only a plugin is the same shell — an options slot the `configure` call fills and one `Suggestion` plugin built from it — so it is built by `createSuggestionExtension` (`apps/web/app/services/message/editor/createSuggestionExtension.ts`), never written out again. What differs lives in the suggestion config. Mention is the exception: it is a node rather than a bare plugin, so `MentionExtension` extends Tiptap's `Mention` to keep its `type` attribute and configures the suggestion on that — replacing it with the shell would drop every mention's type.
 
 ```ts
-const EmojiExtension = createSuggestionExtension("emoji");
-
-export const useEmojiExtension = () => EmojiExtension.configure({ suggestion: EmojiSuggestion });
+export const EmojiExtension = createSuggestionExtension("emoji").configure({ suggestion: EmojiSuggestion });
 ```
 
 ProseMirror is reached through tiptap's re-export, `@tiptap/pm/<module>`, never a `prosemirror-*` package of its own (`no-restricted-syntax`): the editor and the plugins it runs must share one copy of the state classes.
 
 ## Never inline extensions in components
 
-`new Extension(...)`, `Extension.create(...)`, or `addProseMirrorPlugins`/`new Plugin` belong in a `use*Extension` composable under `apps/web/app/composables/message/` (the per-feature folder is "Files per suggestion feature", on this page), never in a `.vue` `<script setup>`. An extension that reads no store, session or ref needs no composable and is a module constant under `apps/web/app/services/message/`, as Mention's is. The composable pulls its own stores/session/refs (make it `async` + `await` if it awaits). A reactive value the plugin reads/writes (e.g. a cursor `Ref` for CSS `v-bind`) is passed in and stored via `addOptions()`, then mutated as `this.options.x.value` — avoids hijacking another extension's options with `@ts-expect-error`.
+`new Extension(...)`, `Extension.create(...)`, or `addProseMirrorPlugins`/`new Plugin` belong in a `use*Extension` composable under `apps/web/app/composables/message/` (the keyboard and link ones sit in `editor/`), never in a `.vue` `<script setup>`. An extension that reads no store, session or ref needs no composable and is a module constant under `apps/web/app/services/message/`, as Mention's is. The composable pulls its own stores/session/refs (make it `async` + `await` if it awaits). A reactive value the plugin reads/writes (e.g. a cursor `Ref` for CSS `v-bind`) is passed in and stored via `addOptions()`, then mutated as `this.options.x.value` — avoids hijacking another extension's options with `@ts-expect-error`.
 
 An extension that wires nothing but its own component's callbacks stays inline in that component, as `apps/web/app/components/Message/Model/Message/Editor.vue`'s Enter and Esc do: a composable would only hand the callbacks back in.
 

@@ -2,7 +2,11 @@ import type { CreateMessageInput } from "#shared/models/db/message/CreateMessage
 import type { ComposerTarget } from "#src/models/message/ComposerTarget";
 import type { Editor } from "@tiptap/core";
 
+import { CodeBlockExtension } from "#src/services/message/CodeBlockExtension";
+import { CustomEmojiExtension } from "#src/services/message/CustomEmojiExtension";
+import { EmojiExtension } from "#src/services/message/EmojiExtension";
 import { MentionExtension } from "#src/services/message/MentionExtension";
+import { SpoilerExtension } from "#src/services/message/SpoilerExtension";
 import { useDataStore } from "#src/store/message/data";
 import { useInputStore } from "#src/store/message/input/index";
 import { useReplyStore } from "#src/store/message/input/reply";
@@ -23,6 +27,8 @@ export const useComposer = async (target: MaybeRefOrGetter<ComposerTarget>) => {
   const uploadFileStore = useUploadFileStore();
   const { getComposerFiles } = uploadFileStore;
   const replyStore = useReplyStore();
+  const { replyToId } = storeToRefs(replyStore);
+  const uploadFiles = useUploadFiles(target);
   // One send for both composers: the room's own, and the thread pane's, which differ only in whose text and
   // Attachments they take and in what the reply points at. A pane send always replies to the thread root — that
   // Is what puts it in the thread rather than merely in the room — where the room composer replies to whatever
@@ -34,7 +40,7 @@ export const useComposer = async (target: MaybeRefOrGetter<ComposerTarget>) => {
     const input: CreateMessageInput = {
       files: getComposerFiles(composerTarget),
       message: getComposerInput(composerTarget),
-      replyToId: threadRootId || replyStore.replyToId || null,
+      replyToId: threadRootId || replyToId.value || null,
       roomId,
       type: MessageType.Message,
     };
@@ -45,18 +51,13 @@ export const useComposer = async (target: MaybeRefOrGetter<ComposerTarget>) => {
     (editor) => sendComposerMessage(editor, toValue(target)),
     () => (toValue(target).threadRootId ? threadMessages.value : items.value),
   );
-  const codeBlockExtension = useCodeBlockExtension();
-  const emojiExtension = useEmojiExtension();
-  const customEmojiExtension = useCustomEmojiExtension();
-  const spoilerExtension = useSpoilerExtension();
-  // The mention extension restyles itself from the theme, so the stack is a computed rather than a fixed array
-  const extensions = computed(() => [
+  const extensions = [
     keyboardExtension,
-    codeBlockExtension,
-    emojiExtension,
-    customEmojiExtension,
-    spoilerExtension,
+    CodeBlockExtension,
+    EmojiExtension,
+    CustomEmojiExtension,
+    SpoilerExtension,
     MentionExtension,
-  ]);
-  return { checkIsInputValid, extensions, sendComposerMessage, uploadFiles: useUploadFiles(target) };
+  ];
+  return { extensions, sendComposerMessage, uploadFiles };
 };

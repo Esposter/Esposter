@@ -1,11 +1,10 @@
-import { getOtherUserId } from "#src/composables/message/subscribables/getOtherUserId";
+import { getOtherUserId } from "#src/services/message/user/getOtherUserId";
 import { useFriendStore } from "#src/store/message/user/friend";
 import { useFriendRequestStore } from "#src/store/message/user/friendRequest";
 import { useConnectionStore } from "#src/store/realtime/connection";
 
 export const useFriendSubscribables = async () => {
   const currentInstance = getCurrentInstance();
-  const { data: session } = await useAuthSession();
   const friendRequestStore = useFriendRequestStore();
   const { storeAcceptFriendRequest, storeCreateFriendRequest, storeDeleteFriendRequestsByUser } = friendRequestStore;
   const friendStore = useFriendStore();
@@ -13,6 +12,7 @@ export const useFriendSubscribables = async () => {
   const connectionStore = useConnectionStore();
   const { onUserEvent } = connectionStore;
   const readFriendLists = useReadFriends();
+  const { data: session } = await useAuthSession();
   const unregisters = [
     onUserEvent("sendFriendRequest", (friendRequest) => {
       storeCreateFriendRequest(friendRequest);

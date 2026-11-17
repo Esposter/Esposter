@@ -4,9 +4,9 @@ import { checkIsMessageAuthor } from "#shared/services/message/checkIsMessageAut
 import { useRoomStore } from "#src/store/message/room/index";
 
 export const useIsCreator = async (message: MaybeRefOrGetter<ClientMessage | undefined>) => {
-  const { data: session } = await useAuthSession();
   const roomStore = useRoomStore();
   const { isCreator } = storeToRefs(roomStore);
+  const { data: session } = await useAuthSession();
   return computed(() => {
     const messageValue = toValue(message);
     // Authorship is asked of the same helper getMessageProcedure asks, so the menu offers exactly the
