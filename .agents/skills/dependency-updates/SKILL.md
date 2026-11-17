@@ -34,7 +34,7 @@ Dependency versions live in the `catalog:` section of `pnpm-workspace.yaml` at t
 - **Every catalog entry has `^`, a prerelease included**, except the tilde or exact pin a hold pairs with its rule and an alias onto a dist-tag (`references/caret-rules.md`).
 - **A release shipped only under another package's name is an `npm:` alias onto its dist-tag**, moved by `pnpm refresh:lockfile` and back to a caret range when it reaches `latest` (`references/dist-tag-aliases.md`).
 - **An `overrides:` entry is a temporary force of a transitive dependency**, removed when upstream catches up (`references/overrides.md`).
-- **`tsrs` moves with its `next` alias, and the vitest pair updates normally**, each with something a bump watches (`references/tracked-issues.md`).
+- **`tsrs` is a caret pin on its `7.1.0-beta` prerelease until npm's `latest` names that line, and the vitest pair updates normally**, each with something a bump watches (`references/tracked-issues.md`).
 - **A new dependency is the current generation, checked before it enters the catalog** — against the `rou3`, `ufo` and `defu` the installed `h3`, `nitro` and `nuxt` use, and its npm page for a successor; `scripts/src/workspace/deprecatedPackages.test.ts` and `supersededPackages.test.ts` enforce what npm and the superseded map record.
 - **Which manifest lists a dependency, and what removing a library owes, are the `build` skill's** (`references/dependency-placement.md`).
 
