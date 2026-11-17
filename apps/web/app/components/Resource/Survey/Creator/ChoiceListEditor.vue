@@ -14,15 +14,7 @@ interface Props {
 const modelValue = defineModel<SurveyChoice[]>({ required: true });
 defineProps<Props>();
 const editor = useSurveyListEditor(modelValue, getSurveyChoiceListEditorOptions(surveyChoiceSchema));
-const { addItems, updateItem } = editor;
-const addText = ref("");
-const addFromField = () => {
-  const choices = parseChoiceLines(addText.value);
-  if (choices.length === 0) return;
-
-  addItems(choices);
-  addText.value = "";
-};
+const { addFromText, addItems, addText, updateItem } = editor;
 // A paste of several lines becomes a row each, which a single-line field would otherwise join into one
 const pasteLines = (event: ClipboardEvent) => {
   const text = event.clipboardData?.getData("text") ?? "";
@@ -57,7 +49,7 @@ const pasteLines = (event: ClipboardEvent) => {
         v-model="addText"
         label="Add a choice"
         placeholder="Value or value|text"
-        @add="addFromField()"
+        @add="addFromText(parseChoiceLines)"
         @paste="(event) => pasteLines(event)"
       />
     </template>

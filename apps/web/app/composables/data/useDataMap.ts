@@ -42,29 +42,13 @@ export const useDataMap = <TItem>(currentId: MaybeRefOrGetter<string>, defaultVa
   // What `data` cannot do — it would file that result under whatever happens to be current at write time.
   const getBoundData = () => getDataRef(toValue(currentId));
 
-  const initializeData = (newData: TItem) => {
-    data.value = newData;
-  };
-  // Forgets a key's slice outright, so a key that is discarded holds nothing once it is no longer asked about
-  const deleteData = (key: string) => {
-    dataMap.value.delete(key);
-  };
-  const resetData = () => {
-    const currentIdValue = toValue(currentId);
-    if (!currentIdValue) return;
-    deleteData(currentIdValue);
-  };
-
   return {
     data,
-    deleteData,
     getBoundData,
     getData,
     getDataRef,
-    initializeData,
     // Every key the map has been asked about, which is every key it holds — reading one creates its default
     keys: computed(() => [...dataMap.value.keys()]),
-    resetData,
     setData,
   };
 };

@@ -4,7 +4,7 @@ import type { SetupContext } from "vue";
 import { EMPTY_TEXT_REGEX } from "#src/util/text/constants";
 import { getResult, noop } from "@esposter/shared";
 
-export type SaveRichTextEditEmit = SetupContext<{
+type SaveRichTextEditEmit = SetupContext<{
   "update:delete-mode": [value: true];
   "update:update-mode": [value: false];
 }>["emit"];

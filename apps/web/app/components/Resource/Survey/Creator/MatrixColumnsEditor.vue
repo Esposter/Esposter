@@ -17,17 +17,8 @@ const editor = useSurveyListEditor(modelValue, {
   getItemError: (column) => surveyMatrixColumnSchema.safeParse(column).error?.issues[0]?.message,
   getKey: (column) => column.name,
 });
-const { addItems, updateItem } = editor;
+const { addFromText, addText, updateItem } = editor;
 const cellTypeItems = Object.values(SurveyMatrixCellType).map((cellType) => ({ title: cellType, value: cellType }));
-const addText = ref("");
-// A column added takes its title as its name, so it is refused where the name is not valid or repeats another's
-const addFromField = () => {
-  const column = toSurveyMatrixColumnFromText(addText.value);
-  if (!column) return;
-
-  addItems([column]);
-  addText.value = "";
-};
 const isChoiceCellType = (cellType: SurveyMatrixCellType) =>
   cellType === SurveyMatrixCellType.Checkbox || cellType === SurveyMatrixCellType.Dropdown;
 </script>
@@ -62,7 +53,7 @@ const isChoiceCellType = (cellType: SurveyMatrixCellType) =>
         v-model="addText"
         label="Add a column"
         placeholder="Column title"
-        @add="addFromField()"
+        @add="addFromText(toSurveyMatrixColumnFromText)"
       />
     </template>
   </ResourceSurveyCreatorListEditor>

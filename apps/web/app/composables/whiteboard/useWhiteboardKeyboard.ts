@@ -42,13 +42,6 @@ export const useWhiteboardKeyboard = (
   const whiteboardEditorStore = useWhiteboardEditorStore();
   const { toggleToolLock } = whiteboardEditorStore;
 
-  const chooseTool = (nextTool: GestureTool) => {
-    tool.value = nextTool;
-  };
-  const chooseShape = (nextShapeKind: ShapeKind) => {
-    tool.value = GestureTool.Shape;
-    shapeKind.value = nextShapeKind;
-  };
   // Deletes the elements as one edit, and drops them from the selection
   const removeElements = (elementIds: string[]) => {
     editState.value = deleteWhiteboardElements(editState.value, elementIds);
@@ -204,7 +197,7 @@ export const useWhiteboardKeyboard = (
       id: `whiteboard-tool-${value}`,
       meaning,
       run: () => {
-        chooseTool(value);
+        tool.value = value;
       },
       shortcut,
       title: `${title} tool`,
@@ -216,7 +209,8 @@ export const useWhiteboardKeyboard = (
         id: `whiteboard-shape-${value}`,
         meaning,
         run: () => {
-          chooseShape(value);
+          tool.value = GestureTool.Shape;
+          shapeKind.value = value;
         },
         shortcut,
         title: `${title} tool`,

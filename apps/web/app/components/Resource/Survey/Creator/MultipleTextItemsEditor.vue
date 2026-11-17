@@ -17,20 +17,11 @@ const editor = useSurveyListEditor(modelValue, {
   getItemError: (item) => surveyMultipleTextItemSchema.safeParse(item).error?.issues[0]?.message,
   getKey: (item) => item.name,
 });
-const { addItems, updateItem } = editor;
+const { addFromText, addText, updateItem } = editor;
 const inputTypeItems = Object.values(SurveyMultipleTextItemInputType).map((inputType) => ({
   title: inputType,
   value: inputType,
 }));
-const addText = ref("");
-// An item added takes its typed text as its name and its title, which the owner can then change
-const addFromField = () => {
-  const item = toSurveyMultipleTextItemFromText(addText.value);
-  if (!item) return;
-
-  addItems([item]);
-  addText.value = "";
-};
 </script>
 
 <template>
@@ -55,7 +46,7 @@ const addFromField = () => {
         v-model="addText"
         label="Add an item"
         placeholder="Item name"
-        @add="addFromField()"
+        @add="addFromText(toSurveyMultipleTextItemFromText)"
       />
     </template>
   </ResourceSurveyCreatorListEditor>

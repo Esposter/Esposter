@@ -118,7 +118,6 @@ export const useCursorPaginationOperationData = <TItem>(
     initializeCursorPaginationData,
     isLoaded,
     items,
-    nextCursor,
     readItems,
     readMoreItems,
     resetCursorPaginationData,

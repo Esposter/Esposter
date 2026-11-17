@@ -5,6 +5,7 @@ import type { SurveyPageNode, SurveyPlaceableNode, SurveyTextNode } from "vue-su
 import { useSurveyCreatorCommands } from "#src/composables/survey/useSurveyCreatorCommands";
 import { useSurveyCreatorDrag } from "#src/composables/survey/useSurveyCreatorDrag";
 import { useSurveyCreatorStore } from "#src/store/survey/creator";
+import { useSurveyCreatorDragStore } from "#src/store/survey/creatorDrag";
 import { createPinia, setActivePinia } from "pinia";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
@@ -81,15 +82,17 @@ describe(useSurveyCreatorDrag, () => {
   test("a cancelled drag leaves no history entry", () => {
     expect.hasAssertions();
 
-    const { document, isDragging, isUndoable, original, registerSlots, startPaletteDrag } = setup([
+    const { document, isUndoable, original, registerSlots, startPaletteDrag } = setup([
       createPage([createQuestion("question1"), createQuestion("question2")]),
     ]);
     registerSlots(() => [createPageSlot()]);
     startPaletteDrag(SurveyNodeType.Rating, createPointerEvent("pointerdown", 200, 10));
     window.dispatchEvent(createPointerEvent("pointermove", 200, 30));
     window.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
+    const surveyCreatorDragStore = useSurveyCreatorDragStore();
+    const { draggedType } = storeToRefs(surveyCreatorDragStore);
 
-    expect(isDragging.value).toBe(false);
+    expect(draggedType.value).toBeUndefined();
 
     window.dispatchEvent(createPointerEvent("pointerup", 200, 30));
 

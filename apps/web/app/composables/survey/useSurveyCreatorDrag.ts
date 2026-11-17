@@ -25,7 +25,7 @@ interface DragSource {
 // No slot, Escape or a cancel changes nothing
 export const useSurveyCreatorDrag = () => {
   const surveyCreatorDragStore = useSurveyCreatorDragStore();
-  const { draggedNodeId, draggedType, dragPoint, dropTarget, isDragging } = storeToRefs(surveyCreatorDragStore);
+  const { draggedNodeId, draggedType, dragPoint, dropTarget } = storeToRefs(surveyCreatorDragStore);
   const { clearDrag, clearSlotMeasurer, measureSlots, moveDrag, setDrag, setSlotMeasurer } = surveyCreatorDragStore;
   const surveyCreatorStore = useSurveyCreatorStore();
   const { document: surveyDocument } = storeToRefs(surveyCreatorStore);
@@ -118,14 +118,5 @@ export const useSurveyCreatorDrag = () => {
     });
   };
 
-  return {
-    draggedType,
-    dragPoint,
-    dropTarget,
-    isDragging,
-    previewNode,
-    registerSlots,
-    startNodeDrag,
-    startPaletteDrag,
-  };
+  return { draggedType, dragPoint, dropTarget, previewNode, registerSlots, startNodeDrag, startPaletteDrag };
 };

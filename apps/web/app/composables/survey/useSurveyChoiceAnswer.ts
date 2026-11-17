@@ -6,7 +6,7 @@ import { getSurveyChoiceText, getSurveyOrderedChoices, SURVEY_NONE_ANSWER } from
 
 // What a choice question offers beside its choices: the other option every choice question may add, and the none
 // Option a radio group may add. A dropdown has no none option, so its node leaves both out
-export type SurveyChoiceOptions = Partial<SurveyNoneChoiceProps> &
+type SurveyChoiceOptions = Partial<SurveyNoneChoiceProps> &
   Pick<SurveyChoiceOptionsProps, "choices" | "choicesOrder" | "hasOther" | "otherText">;
 
 // A choice question's answer as one pick among its choices: a choice gives its own value, the none option gives "none"

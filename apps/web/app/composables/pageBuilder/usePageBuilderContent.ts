@@ -116,10 +116,5 @@ export const usePageBuilderContent = <
       targetValue.interactionId,
     ).match(noop, console.error);
   };
-  return {
-    formSchema: computed(() => target.value?.formSchema),
-    formValue: draftValue,
-    pointer: computed(() => target.value?.pointer),
-    setFormValue,
-  };
+  return { formSchema: computed(() => target.value?.formSchema), formValue: draftValue, setFormValue };
 };

@@ -56,6 +56,16 @@ export const useSurveyListEditor = <T extends object>(modelValue: Ref<T[]>, opti
     rows.value = [...rows.value, ...items.map((item) => createRow(item))];
     commit();
   };
+  // The add field's text is held here, and a parse of it names one row, several or none. Text naming none adds nothing and
+  // Stays as typed, and the field clears once its rows land
+  const addText = ref("");
+  const addFromText = (parse: (text: string) => T | T[] | undefined) => {
+    const items = [parse(addText.value)].flat().filter((item): item is T => item !== undefined);
+    if (items.length === 0) return;
+
+    addItems(items);
+    addText.value = "";
+  };
   // Returns whether a row held the id, so a caller whose row an edit has since removed can tell its update landed nowhere
   const updateItem = (id: string, update: Partial<T>) => {
     const isApplied = rows.value.some((row) => row.id === id);
@@ -97,5 +107,5 @@ export const useSurveyListEditor = <T extends object>(modelValue: Ref<T[]>, opti
     if (target instanceof HTMLElement) target.focus();
   };
 
-  return { addItems, announcement, errors, moveItem, onRowKeydown, removeItem, rows, updateItem };
+  return { addFromText, addItems, addText, announcement, errors, moveItem, onRowKeydown, removeItem, rows, updateItem };
 };
