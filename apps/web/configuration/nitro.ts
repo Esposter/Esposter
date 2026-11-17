@@ -49,6 +49,10 @@ export const nitro: NonNullable<NuxtConfig["nitro"]> = {
       }
     },
   },
+  // A package resolves the build the Workers runtime runs, as wrangler's own bundler resolves it: a Worker is a web
+  // Runtime, so a package's browser build is taken over its Node one. The preset names `workerd` and `worker` alone, so
+  // Cheerio, which mjml reaches through juice, resolved its Node build, whose undici compiles WebAssembly the runtime refuses
+  exportConditions: ["workerd", "worker", "browser"],
   // The Workers runtime has no Temporal yet, and server modules read it as they load, so it is installed before the entry
   polyfills: ["temporal-polyfill/global"],
   preset: "cloudflare_module",

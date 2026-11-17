@@ -20,6 +20,8 @@ Which Cloudflare services the app runs on, what each one owns, and which package
 
 Every binding comes from `cloudflare:workers`'s `env`. A helper reads its binding when it is called (`getBucket`, `getJobQueue`, `getUserObject`, `consumeAddressRateLimit`), not once at load. The exception is the D1 `db`, built once at module scope from `env.CORE` in `apps/web/server/db/index.ts` and `apps/jobs/src/services/shared/db.ts`. A test passes Miniflare's bindings by having `createMockDb` copy them into the `env` stand-in.
 
+The web Worker resolves a package the way wrangler's own bundler does, by the `workerd`, `worker` and `browser` conditions (`exportConditions` in `apps/web/configuration/nitro.ts`), in the build and under `nuxt dev` alike. A Worker is a web runtime, so a package that ships a browser build and a Node build is given the browser one. Nitro's `cloudflare_module` preset names `workerd` and `worker` alone, which handed cheerio, reached from mjml through juice, its Node build. That build imports undici, whose HTTP parser compiles WebAssembly at load, which the Workers runtime refuses. The rejected alternative was stubbing the one package out, which would leave every other package a Worker imports on its Node build.
+
 Under `nuxt dev` the app runs in Nitro's Miniflare runner, which binds the development environment's D1, buckets and rate limiters from `apps/web/configuration/wrangler.ts` but drops the bindings to the realtime Worker's objects, since they name another script, and Nitro passes no Miniflare options through to bind them again ([nitrojs/nitro#4621](https://github.com/nitrojs/nitro/issues/4621), our case in [its comment](https://github.com/nitrojs/nitro/issues/4621#issuecomment-6907847372)). Pages render and read their data locally, and live sockets, presence and calls work only in a deployed environment. Cloudflare's own tools reach another Worker's objects locally through the dev registry, which a Nitro option passing Miniflare's options through would make available here.
 
 ## Where each kind of data lives
@@ -151,6 +153,8 @@ The decisions behind this split, and the alternatives they beat, are recorded in
 
 ## Sources
 
+- [Wrangler's build conditions](https://github.com/cloudflare/workers-sdk/blob/main/packages/wrangler/src/deployment-bundle/bundle.ts): wrangler resolves a Worker's packages by `workerd`, `worker` and `browser` unless told otherwise, the list the web Worker's build takes.
+- [Wrangler conditional exports](https://developers.cloudflare.com/workers/wrangler/bundling/): wrangler respects a package's conditional `exports` and loads its `workerd` key.
 - [WebSocket hibernation](https://developers.cloudflare.com/durable-objects/best-practices/websockets/): `acceptWebSocket` with tags, `getWebSockets`, no duration while hibernated.
 - [Durable Objects alarms](https://developers.cloudflare.com/durable-objects/api/alarms/): one alarm per object, at-least-once with retries, which is why the alarm runs every due row.
 - [D1 limits](https://developers.cloudflare.com/d1/platform/limits/) and [D1 SQL statements](https://developers.cloudflare.com/d1/sql-api/sql-statements/): the database limits, and FTS5 support.
