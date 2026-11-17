@@ -36,7 +36,7 @@ the spec sweep, the ledger row. The harness delivers a completion notification; 
 a one-file, "quick" suite too** — the habit that survives is the one applied without weighing it.
 
 Which paths, and from which directory, are the `package-scripts` skill's `references/check-suite.md`: the suites
-of the files touched and the workspace tests for a spec edit; a change that grows a bundle adds that package's own suite (`AGENTS.md`, "Finishing a change", step 4).
+of the files touched and the workspace tests for a spec edit; a change that grows a bundle adds that package's own suite (`AGENTS.md`, "Finishing a change", step 4). A change to a configuration every suite of a package loads — `apps/web/configuration/`, `nuxt.config.ts`, a Vitest config — touches each of those suites, since Vitest's nuxt environment reads the Nuxt and Nitro options too: its run is the package's suites, not a build alone.
 
 ## Never poll a backgrounded check
 
