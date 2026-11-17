@@ -68,7 +68,7 @@ A file is read through the `/api/resource-assets` endpoint, which takes no proce
 | `apps/web/server/services/resource/readResourceAccess.ts`                  | the resource's ownership and publication, read once per resource                          |
 | `apps/web/shared/services/resource/ResourceDefinitionMap.ts`               | `fileAssets` declarations                                                                 |
 | `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts`      | conditionally spread asset procedures                                                     |
-| `apps/web/server/services/resource/listResourceFiles.ts`                   | the listing: every file under the files directory, each with the type its upload declared |
+| `apps/web/server/services/resource/readResourceFiles.ts`                   | the listing: every file under the files directory, each with the type its upload declared |
 | `apps/web/app/components/PageBuilder/FilePicker/Index.vue`                 | the picker over a resource's files, filtered to the kind a field takes                    |
 | `packages/db-schema/src/services/storage/getResourceFilesDirectoryName.ts` | the `{id}/files` prefix, spelled once for both apps                                       |
 | `packages/db-schema/src/services/storage/getResourceFileBlobName.ts`       | the `{id}/files/{hash}` object key, spelled once for both apps                            |

@@ -41,7 +41,7 @@ our own key sitting beside a foreign one is named the way any other identifier i
   call site.
 - **A truncation they authored.** The no-abbreviations rule expands `Nav` to `Navigation` because that name is
   ours; a dependency's own truncation — Vue's `VNode` — is its name to keep.
-- **A verb on a thin wrapper.** `listBlobItems` pages R2's `list` on the bucket under the same verb, and is read beside
+- **A verb on a thin wrapper.** `listR2Objects` pages R2's `list` on the bucket under the same verb, and is read beside
   R2's documentation. The exemption is the operation's verb alone, and only while the dependency's call is the whole
   body — anything deriving an answer from a listing is a `read*` like every other fetch.
 - **A value off their wire.** A provider's error code read off a redirect query, or a field of a third-party

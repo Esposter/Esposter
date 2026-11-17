@@ -24,7 +24,7 @@ import { getResourcesWhere } from "#server/services/resource/getResourcesWhere";
 import { getResourceTopics } from "#server/services/resource/getResourceTopics";
 import { getStagingContentBlobName } from "#server/services/resource/getStagingContentBlobName";
 import { incrementResourceViewCount } from "#server/services/resource/incrementResourceViewCount";
-import { listResourceFiles } from "#server/services/resource/listResourceFiles";
+import { readResourceFiles } from "#server/services/resource/readResourceFiles";
 import { readResourceContent } from "#server/services/resource/readResourceContent";
 import { readResourceContentDelta } from "#server/services/resource/readResourceContentDelta";
 import { readResourceListPage } from "#server/services/resource/readResourceListPage";
@@ -266,7 +266,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
         generateReservedResourceAssetPresignedUrlEntities(ctx.db, ctx.user.id, id, files),
       ),
     readResourceFiles: getOwnerProcedure(type, resourceIdInputSchema, "id").query<ResourceFile[]>(({ input: { id } }) =>
-      listResourceFiles(getBucket(StorageBucket.ResourceAssets), id),
+      readResourceFiles(getBucket(StorageBucket.ResourceAssets), id),
     ),
   };
   const publishProcedures = {
