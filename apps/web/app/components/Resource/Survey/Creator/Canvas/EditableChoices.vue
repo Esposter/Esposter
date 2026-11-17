@@ -36,6 +36,11 @@ const updateText = (index: number, text: string) => {
   }
   writeChoices(currentChoices.toSpliced(index, 1, { ...choice, text }));
 };
+// A choice a row leaves with no text is removed as it is emptied. A blur that changes nothing reports no edit, so an added
+// Choice left empty would otherwise stay in the document
+const onChoiceFocusout = (index: number) => {
+  if (readChoices().at(index)?.text === "") updateText(index, "");
+};
 // The smallest number no choice holds as its value, so a new choice is one an answer can name
 const getNextValue = (currentChoices: SurveyChoice[]) => {
   const values = new Set(currentChoices.map(({ value }) => String(value)));
@@ -72,6 +77,7 @@ const onChoiceKeydown = (event: KeyboardEvent, index: number) => {
       gap-2
       items-center
       @keydown="(event: KeyboardEvent) => onChoiceKeydown(event, index)"
+      @focusout="onChoiceFocusout(index)"
     >
       <span text-muted aria-hidden="true">{{ index + 1 }}.</span>
       <ResourceSurveyCreatorCanvasEditableText

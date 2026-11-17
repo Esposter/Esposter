@@ -68,6 +68,20 @@ describe("resourceSurveyCreatorCanvasEditableChoices", () => {
     expect(surveyCreatorStore.document).toStrictEqual(createSurvey([{ text: "first", value: 1 }]));
   });
 
+  test("a choice added and left empty is removed on focus leaving it", async () => {
+    expect.hasAssertions();
+
+    const surveyCreatorStore = loadChoiceQuestion([{ text: "first", value: 1 }]);
+    const component = await mountSuspended(ResourceSurveyCreatorCanvas);
+    await findChoice(component, 1).trigger("click");
+    await component.get('input[aria-label="Choice 1"]').trigger("keydown", { key: "Enter" });
+    await flushPromises();
+    await component.get('input[aria-label="Choice 2"]').trigger("focusout");
+    await flushPromises();
+
+    expect(surveyCreatorStore.document).toStrictEqual(createSurvey([{ text: "first", value: 1 }]));
+  });
+
   test("the last choice cannot be removed", async () => {
     expect.hasAssertions();
 
