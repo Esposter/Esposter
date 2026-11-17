@@ -16,7 +16,6 @@ describe("searchHistoryRouter", () => {
   let searchHistoryCaller: DecorateRouterRecord<TRPCRouter["searchHistory"]>;
   let roomId: string;
   const query = "query";
-  const updatedQuery = "updatedQuery";
 
   beforeAll(() => {
     mockContext = getMockContext();
@@ -127,27 +126,5 @@ describe("searchHistoryRouter", () => {
 
     expect(filteredSearchHistory.filters).toStrictEqual(filters);
     expect(searchHistories.items).toHaveLength(2);
-  });
-
-  test("updates", async () => {
-    expect.hasAssertions();
-
-    const newSearchHistory = await searchHistoryCaller.createSearchHistory({ query, roomId });
-    const updatedSearchHistory = await searchHistoryCaller.updateSearchHistory({
-      id: newSearchHistory.id,
-      query: updatedQuery,
-    });
-
-    expect(updatedSearchHistory.id).toBe(newSearchHistory.id);
-    expect(updatedSearchHistory.query).toBe(updatedQuery);
-  });
-
-  test("deletes", async () => {
-    expect.hasAssertions();
-
-    const newSearchHistory = await searchHistoryCaller.createSearchHistory({ query, roomId });
-    const deletedSearchHistory = await searchHistoryCaller.deleteSearchHistory(newSearchHistory.id);
-
-    expect(deletedSearchHistory.id).toBe(newSearchHistory.id);
   });
 });

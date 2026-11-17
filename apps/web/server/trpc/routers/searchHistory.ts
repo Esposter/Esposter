@@ -1,16 +1,12 @@
 import type { Page, SearchHistoryInMessage, Topic } from "@esposter/db-schema";
 import type { User } from "better-auth";
 
-import { ownedBy } from "#server/services/db/ownedBy";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { router } from "#server/trpc/index";
 import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { getMemberProcedure } from "#server/trpc/procedure/room/getMemberProcedure";
-import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { createSearchHistoryInputSchema } from "#shared/models/db/searchHistory/CreateSearchHistoryInput";
-import { deleteSearchHistoryInputSchema } from "#shared/models/db/searchHistory/DeleteSearchHistoryInput";
 import { readSearchHistoriesInputSchema } from "#shared/models/db/searchHistory/ReadSearchHistoriesInput";
-import { updateSearchHistoryInputSchema } from "#shared/models/db/searchHistory/UpdateSearchHistoryInput";
 import { SEARCH_HISTORY_PAGE_SORT } from "#shared/services/searchHistory/constants";
 import { createPageSort, getPageOrderBy, getPageWhere, toPage } from "@esposter/db";
 import { DatabaseEntityType, getTopic, searchHistoriesInMessage, TopicKind } from "@esposter/db-schema";
@@ -51,24 +47,8 @@ export const searchHistoryRouter = router({
       JSON.stringify(input),
     );
   }),
-  deleteSearchHistory: getTopicsProcedure(
-    standardAuthedProcedure.input(deleteSearchHistoryInputSchema),
-    getSearchHistoryTopics,
-  ).mutation<SearchHistoryInMessage>(async ({ ctx, input }) =>
-    requireMutation(
-      (
-        await ctx.db
-          .delete(searchHistoriesInMessage)
-          .where(ownedBy(searchHistoriesInMessage, input, ctx.user.id))
-          .returning()
-      )[0],
-      Operation.Delete,
-      DatabaseEntityType.SearchHistory,
-      input,
-    ),
-  ),
-  // A search history is the caller's own, exactly as `ownedBy` scopes every write to it — membership only says which
-  // Room's searches may be read, never whose
+  // A search history is the caller's own, and the read filters on the caller's id as the create stamps it — membership
+  // Only says which Room's searches may be read, never whose
   readSearchHistories: getTopicsProcedure(
     getMemberProcedure(readSearchHistoriesInputSchema, "roomId"),
     getSearchHistoryTopics,
@@ -88,21 +68,4 @@ export const searchHistoryRouter = router({
       .limit(limit + 1);
     return toPage(rows, SEARCH_HISTORY_PAGE_SORT, cursor, limit);
   }),
-  updateSearchHistory: getTopicsProcedure(
-    standardAuthedProcedure.input(updateSearchHistoryInputSchema),
-    getSearchHistoryTopics,
-  ).mutation<SearchHistoryInMessage>(async ({ ctx, input: { id, query } }) =>
-    requireMutation(
-      (
-        await ctx.db
-          .update(searchHistoriesInMessage)
-          .set({ query })
-          .where(ownedBy(searchHistoriesInMessage, id, ctx.user.id))
-          .returning()
-      )[0],
-      Operation.Update,
-      DatabaseEntityType.SearchHistory,
-      id,
-    ),
-  ),
 });

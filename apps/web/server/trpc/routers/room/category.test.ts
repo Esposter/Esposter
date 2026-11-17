@@ -64,21 +64,6 @@ describe("categoryRouter", () => {
     expect(third.position).toBe(2);
   });
 
-  test("updates", async () => {
-    expect.hasAssertions();
-
-    const newRoomCategory = await roomCategoryCaller.createRoomCategory({ id: v7(), name });
-    const updatedRoomCategory = await roomCategoryCaller.updateRoomCategory({
-      id: newRoomCategory.id,
-      name: updatedName,
-      position: 1,
-    });
-
-    expect(updatedRoomCategory.id).toBe(newRoomCategory.id);
-    expect(updatedRoomCategory.name).toBe(updatedName);
-    expect(updatedRoomCategory.position).toBe(1);
-  });
-
   test("reorders in one statement", async () => {
     expect.hasAssertions();
 

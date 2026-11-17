@@ -5,7 +5,7 @@ import { createRoomCategory } from "#src/services/message/roomCategory/createRoo
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useAlertStore } from "#src/store/alert";
 import { useRoomCategoryStore } from "#src/store/message/roomCategory";
-import { omitUndefined, takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
+import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
@@ -16,8 +16,6 @@ describe(useRoomCategoryStore, () => {
   const id = v7();
   const otherId = v7();
   const name = "name";
-  const updatedName = "updatedName";
-  const rejectedName = "rejectedName";
   const serverPosition = 1;
 
   test("a new category is drawn under the id the client gave it", async () => {
@@ -73,32 +71,6 @@ describe(useRoomCategoryStore, () => {
 
     expect(roomCategories.value.map((roomCategory) => roomCategory.id)).toStrictEqual([id]);
     expect(alertStore.alerts).toHaveLength(1);
-  });
-
-  // Two renames of one room category queue under its id, so the second one's rollback has to undo its own write
-  // Rather than what the user typed over — nothing reconciles a dropped rename until a reload
-  test("rolls a failed update back to the state the update ahead of it stored", async () => {
-    expect.hasAssertions();
-
-    let isFailing = false;
-    trpcMsw.room.category.updateRoomCategory.mutation(({ input }) => {
-      if (isFailing) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: name });
-
-      isFailing = true;
-      return { ...createRoomCategory({ id }), ...omitUndefined(input) };
-    });
-    const roomCategoryStore = useRoomCategoryStore();
-    const { roomCategories } = storeToRefs(roomCategoryStore);
-    const { updateRoomCategory } = roomCategoryStore;
-    roomCategories.value = [createRoomCategory({ id })];
-    const storedRoomCategory = takeOne(roomCategories.value);
-    updateRoomCategory({ id, name: updatedName });
-    updateRoomCategory({ id, name: rejectedName });
-    await flushPromises();
-
-    expect(takeOne(roomCategories.value).name).toBe(updatedName);
-    // Restored in place rather than by swapping the list for copies, so a holder of the row keeps reading it
-    expect(takeOne(roomCategories.value)).toBe(storedRoomCategory);
   });
 
   // A double-confirmed delete queues under the same id, and the second one is refused because the row is already
@@ -165,33 +137,5 @@ describe(useRoomCategoryStore, () => {
 
     expect(roomCategories.value.map(({ id: roomCategoryId }) => roomCategoryId)).toStrictEqual([id, otherId, thirdId]);
     expect(roomCategories.value.map(({ position }) => position)).toStrictEqual([0, 1, 2]);
-  });
-
-  // A rename and a reorder are separate writes, so a reorder that lands while the rename is in flight moves a position
-  // The rename never wrote. The rejected rename puts back only the name it changed, and the reordered positions stay
-  test("keeps the positions a reorder moved while the rejected rename was in flight", async () => {
-    expect.hasAssertions();
-
-    const first = { ...createRoomCategory({ id }), position: 0 };
-    const second = { ...createRoomCategory({ id: otherId }), position: 1 };
-    const roomCategoryStore = useRoomCategoryStore();
-    const { roomCategories } = storeToRefs(roomCategoryStore);
-    const { reorderRoomCategories, updateRoomCategory } = roomCategoryStore;
-    trpcMsw.room.category.reorderRoomCategories.mutation(() => []);
-    trpcMsw.room.category.updateRoomCategory.mutation(async () => {
-      reorderRoomCategories([second, first]);
-      await flushPromises();
-      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: name });
-    });
-    roomCategories.value = [first, second];
-    updateRoomCategory({ id, name: rejectedName });
-    await flushPromises();
-
-    expect(
-      roomCategories.value.map(({ id: roomCategoryId, position }) => ({ id: roomCategoryId, position })),
-    ).toStrictEqual([
-      { id, position: 1 },
-      { id: otherId, position: 0 },
-    ]);
   });
 });

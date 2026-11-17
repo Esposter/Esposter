@@ -9,7 +9,6 @@ import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedPr
 import { createRoomCategoryInputSchema } from "#shared/models/db/roomCategory/CreateRoomCategoryInput";
 import { deleteRoomCategoryInputSchema } from "#shared/models/db/roomCategory/DeleteRoomCategoryInput";
 import { reorderRoomCategoriesInputSchema } from "#shared/models/db/roomCategory/ReorderRoomCategoriesInput";
-import { updateRoomCategoryInputSchema } from "#shared/models/db/roomCategory/UpdateRoomCategoryInput";
 import { roomCategoriesInMessage } from "@esposter/db-schema";
 import { Operation, takeOne } from "@esposter/shared";
 import { and, eq, max, sql } from "drizzle-orm";
@@ -100,20 +99,4 @@ export const categoryRouter = router({
     const idRoomCategoryMap = new Map(reorderedRoomCategories.map((roomCategory) => [roomCategory.id, roomCategory]));
     return input.map(({ id }) => requireRoomCategory(idRoomCategoryMap.get(id), Operation.Update, id, "NOT_FOUND"));
   }),
-  updateRoomCategory: getTopicsProcedure(standardAuthedProcedure.input(updateRoomCategoryInputSchema), ({ ctx }) =>
-    getRoomListTopics(ctx.user.id),
-  ).mutation<RoomCategoryInMessage>(async ({ ctx, input: { id, ...rest } }) =>
-    requireRoomCategory(
-      (
-        await ctx.db
-          .update(roomCategoriesInMessage)
-          .set(rest)
-          .where(ownedBy(roomCategoriesInMessage, id, ctx.user.id))
-          .returning()
-      )[0],
-      Operation.Update,
-      id,
-      "NOT_FOUND",
-    ),
-  ),
 });
