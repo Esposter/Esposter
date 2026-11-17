@@ -4,7 +4,7 @@ import { LayerName as HomeLayerName } from "#shared/generated/tiled/layers/Home/
 import { TilemapKey } from "#shared/generated/tiled/propertyTypes/enum/TilemapKey";
 import { createTilemapMetadata } from "#src/services/dungeons/tilemap/createTilemapMetadata";
 
-export const UseCreateTilemapMetadataMap = {
+export const TilemapMetadataMap = {
   [TilemapKey.Home]: () => {
     createTilemapMetadata(HomeLayerName);
   },

@@ -6,7 +6,7 @@ import { Chest } from "#shared/models/dungeons/data/world/Chest";
 import { TileProperty } from "#src/models/dungeons/tilemap/TileProperty";
 import { getPositionId } from "#src/services/dungeons/direction/getPositionId";
 import { getObjects } from "#src/services/dungeons/scene/world/getObjects";
-import { UseCreateTilemapMetadataMap } from "#src/services/dungeons/tilemap/UseCreateTilemapMetadataMap";
+import { TilemapMetadataMap } from "#src/services/dungeons/tilemap/TilemapMetadataMap";
 import { useWorldSceneStore } from "#src/store/dungeons/world/scene";
 import { NumberOfDirections } from "grid-engine";
 
@@ -15,7 +15,7 @@ export const createTilemapAssets = (scene: SceneWithPlugins, newTilemap: Tilemap
   const { objectLayerMap, tilemap, tilemapKey, worldData } = storeToRefs(worldSceneStore);
 
   tilemap.value = markRaw(newTilemap);
-  UseCreateTilemapMetadataMap[tilemapKey.value]();
+  TilemapMetadataMap[tilemapKey.value]();
   const chestObjectLayer = objectLayerMap.value?.get(ObjectgroupName.Chest);
   if (chestObjectLayer) {
     const chestObjects = getObjects(tilemap.value, chestObjectLayer);
