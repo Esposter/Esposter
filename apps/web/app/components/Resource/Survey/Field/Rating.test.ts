@@ -19,9 +19,9 @@ describe("resourceSurveyFieldRating", () => {
     const error = "error";
     const rateCount = 3;
     const title = "Favourite colour";
-    const createNode = (rateType: SurveyRatingType, count: number): SurveyRatingNode => ({
+    const createNode = (rateType: SurveyRatingType, count: number, rateMin: 0 | 1 = 1): SurveyRatingNode => ({
       props: {
-        ...surveyRatingNodePropsSchema.parse({ name: "question", rateCount: count, rateType, title }),
+        ...surveyRatingNodePropsSchema.parse({ name: "question", rateCount: count, rateMin, rateType, title }),
         id: v7(),
       },
       type: SurveyNodeType.Rating,
@@ -38,6 +38,22 @@ describe("resourceSurveyFieldRating", () => {
 
       expect(component.get('[role="radiogroup"]').attributes("aria-label")).toBe(title);
       expect(component.findAll('[role="radio"]')).toHaveLength(rateCount);
+    });
+
+    test("names its steps from the first step of a scale that starts at zero", async () => {
+      expect.hasAssertions();
+
+      const component = mount(ResourceSurveyFieldRating, {
+        props: {
+          error: "",
+          isDisabled: false,
+          modelValue: undefined,
+          node: createNode(SurveyRatingType.Labels, rateCount, 0),
+        },
+      });
+      await flushPromises();
+
+      expect(component.findAll('[role="radio"]').map((step) => step.text())).toStrictEqual(["0", "1", "2"]);
     });
 
     test("moves its step by the arrow keys", async () => {

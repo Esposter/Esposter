@@ -7,7 +7,7 @@ import { createSurveyChoiceValueSchema } from "#src/services/runner/answer/creat
 import { createSurveyRatingValueSchema } from "#src/services/runner/answer/createSurveyRatingValueSchema";
 import { createSurveySelectionAnswerSchema } from "#src/services/runner/answer/createSurveySelectionAnswerSchema";
 import { createSurveyStringAnswerSchema } from "#src/services/runner/answer/createSurveyStringAnswerSchema";
-import { MATRIX_CELL_RATING_COUNT } from "#src/services/runner/constants";
+import { MATRIX_CELL_RATING_COUNT, MATRIX_CELL_RATING_MIN } from "#src/services/runner/constants";
 import { exhaustiveGuard } from "@esposter/shared";
 
 // One cell of a dynamic matrix, checked by the kind of cell its column draws
@@ -23,7 +23,7 @@ export const createSurveyMatrixCellAnswerSchema = (column: SurveyMatrixColumn): 
     case SurveyMatrixCellType.Dropdown:
       return createSurveyChoiceValueSchema({ choices: column.choices });
     case SurveyMatrixCellType.Rating:
-      return createSurveyRatingValueSchema(MATRIX_CELL_RATING_COUNT);
+      return createSurveyRatingValueSchema(MATRIX_CELL_RATING_MIN, MATRIX_CELL_RATING_COUNT);
     default:
       return exhaustiveGuard(column.cellType);
   }

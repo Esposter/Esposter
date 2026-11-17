@@ -123,6 +123,14 @@ describe("resourceSurveyFieldMatrixDynamic", () => {
       expect(component.findAll('[role="radio"]')).toHaveLength(MATRIX_CELL_RATING_COUNT);
     });
 
+    test("names a rating cell's steps from one", () => {
+      expect.hasAssertions();
+
+      const component = mountMatrixDynamic(createNode(1, 0, 2, [createColumn(SurveyMatrixCellType.Rating)]));
+
+      expect(component.findAll('[role="radio"]').map((step) => step.text())).toStrictEqual(["1", "2", "3", "4", "5"]);
+    });
+
     test("writes the step pressed into its row as the number of that step", async () => {
       expect.hasAssertions();
 

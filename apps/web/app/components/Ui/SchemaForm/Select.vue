@@ -11,6 +11,14 @@ import { toTitleCase } from "#src/util/text/toTitleCase";
 interface Props extends UiSchemaFormRendererProps {}
 const props = withDefaults(defineProps<Props>(), unsetRendererState);
 const { change, control, issue, layout, uiSchemaFormConfiguration } = useSchemaFormControl(props);
+// The values a field's schema names for its options, in the schema's own type, so a pick writes the value as the schema holds it
+const schemaValues = computed<unknown[]>(() => {
+  const { enum: values, oneOf } = control.value.schema;
+  if (values) return values;
+  return (oneOf ?? []).map((option: JsonSchema) => option.const);
+});
+// A select picks by its text, so a text that names a schema value is written back as that value, and any other text as itself
+const getPickedValue = (text: string): unknown => schemaValues.value.find((value) => String(value) === text) ?? text;
 // The items a field names from its dialog's context, or else its schema's own options: an enum's values, or the
 // Titled constants of an enum written as one of several literals. An option the schema names carries no mark of its own,
 // So each takes the one mark an option does
@@ -44,8 +52,8 @@ const items = computed<UiSelectItem<string>[]>(() => {
     <UiSelect
       :items
       :label="control.label"
-      :model-value="control.schema.type === 'array' ? (control.data ?? []) : (control.data ?? '')"
-      @update:model-value="change($event)"
+      :model-value="control.schema.type === 'array' ? (control.data ?? []) : String(control.data ?? '')"
+      @update:model-value="change(Array.isArray($event) ? $event : getPickedValue($event))"
     />
     <span v-if="issue" role="alert" text-sm text-error>{{ issue }}</span>
   </div>

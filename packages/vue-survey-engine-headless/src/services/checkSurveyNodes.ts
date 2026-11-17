@@ -30,7 +30,7 @@ export const checkSurveyNodes = (
     const nodePointer = `${listPointer}/${index}`;
     if (node.type === SurveyNodeType.RadioGroup || node.type === SurveyNodeType.Checkbox)
       checkSurveyNoneChoice(node.props, nodePointer, issues);
-    if (node.type === SurveyNodeType.Checkbox)
+    if (node.type === SurveyNodeType.Checkbox || node.type === SurveyNodeType.TagBox)
       checkSurveyMinimumWithinMaximum(
         node.props.minSelected,
         node.props.maxSelected,

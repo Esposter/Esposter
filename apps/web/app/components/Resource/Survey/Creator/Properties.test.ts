@@ -7,6 +7,7 @@ import ResourceSurveyCreatorImageChoicesEditor from "#src/components/Resource/Su
 import ResourceSurveyCreatorImageUpload from "#src/components/Resource/Survey/Creator/ImageUpload.vue";
 import ResourceSurveyCreatorProperties from "#src/components/Resource/Survey/Creator/Properties.vue";
 import UiSchemaForm from "#src/components/Ui/SchemaForm/Index.vue";
+import UiSelect from "#src/components/Ui/Select/Index.vue";
 import { useSurveyCreatorStore } from "#src/store/survey/creator";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
@@ -24,12 +25,25 @@ const getDrawnKeys = (wrapper: VueWrapper) => {
   return Object.keys(schema.shape);
 };
 
+// The options a select is given, read from its props
+const getSelectItems = (uiSelect: VueWrapper) =>
+  (uiSelect.props() as { items: { title: string; value: string }[] }).items;
+
+// The select a rating's first step is drawn by: the one whose options include zero, which no other select of a rating offers
+const findFirstStepSelect = (wrapper: VueWrapper) =>
+  takeOne(
+    wrapper
+      .findAllComponents(UiSelect)
+      .filter((uiSelect) => getSelectItems(uiSelect).some(({ value }) => value === "0")),
+    0,
+  );
+
 // A page holding one question of the given kind, which the panel edits once it is selected
-const createSurveyDocument = (type: SurveyNodeType = SurveyNodeType.RadioGroup) =>
+const createSurveyDocument = (type: SurveyNodeType = SurveyNodeType.RadioGroup, props: Record<string, unknown> = {}) =>
   surveyDocumentSchema.parse({
     content: [
       {
-        props: { children: [{ props: { id: "question", name: "question" }, type }], id: "page" },
+        props: { children: [{ props: { id: "question", name: "question", ...props }, type }], id: "page" },
         type: SurveyNodeType.Page,
       },
     ],
@@ -101,6 +115,36 @@ describe("resourceSurveyCreatorProperties", () => {
       validators: [],
       visibleIf: "",
     });
+  });
+
+  test("a rating's form offers zero and one as its first step", async () => {
+    expect.hasAssertions();
+    const surveyCreatorStore = useSurveyCreatorStore();
+    const { load } = surveyCreatorStore;
+    load(createSurveyDocument(SurveyNodeType.Rating, { rateMin: 1 }));
+    const { select } = useSurveyCreatorCommands();
+    select("/content/0/props/children/0");
+    const wrapper = await mountSuspended(ResourceSurveyCreatorProperties);
+
+    expect(getSelectItems(findFirstStepSelect(wrapper)).map(({ title, value }) => ({ title, value }))).toStrictEqual([
+      { title: "0", value: "0" },
+      { title: "1", value: "1" },
+    ]);
+  });
+
+  test("choosing a first step writes it to the question as a number", async () => {
+    expect.hasAssertions();
+    const surveyCreatorStore = useSurveyCreatorStore();
+    const { document: surveyDocument } = storeToRefs(surveyCreatorStore);
+    const { load } = surveyCreatorStore;
+    load(createSurveyDocument(SurveyNodeType.Rating, { rateMin: 1 }));
+    const { select } = useSurveyCreatorCommands();
+    select("/content/0/props/children/0");
+    const wrapper = await mountSuspended(ResourceSurveyCreatorProperties);
+    findFirstStepSelect(wrapper).vm.$emit("update:modelValue", "0");
+    await wrapper.vm.$nextTick();
+
+    expect(Reflect.get(takeOne(takeOne(surveyDocument.value.content, 0).props.children, 0).props, "rateMin")).toBe(0);
   });
 
   test("a question's choices are drawn by the list editor, not the form", async () => {
@@ -446,6 +490,7 @@ describe("resourceSurveyCreatorProperties", () => {
         "minRateDescription",
         "name",
         "rateCount",
+        "rateMin",
         "rateType",
         "requiredErrorText",
         "requiredIf",
@@ -482,6 +527,7 @@ describe("resourceSurveyCreatorProperties", () => {
         "hasOther",
         "isRequired",
         "maxSelected",
+        "minSelected",
         "name",
         "otherText",
         "placeholder",

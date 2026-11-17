@@ -14,6 +14,14 @@ describe(createSurveyRatingAnswerSchema, () => {
     type: SurveyNodeType.Rating,
   };
 
+  test("a scale that starts at zero accepts zero", () => {
+    expect.hasAssertions();
+
+    const zeroBasedNode: SurveyRatingNode = { ...node, props: { ...node.props, rateMin: 0 } };
+
+    expect(createSurveyRatingAnswerSchema(zeroBasedNode).safeParse(0).success).toBe(true);
+  });
+
   test("accepts a whole rating within the scale its owner set", () => {
     expect.hasAssertions();
 

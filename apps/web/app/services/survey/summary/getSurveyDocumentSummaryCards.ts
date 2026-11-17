@@ -7,6 +7,7 @@ import type { SurveyChoice, SurveyQuestionNode } from "vue-survey-engine-headles
 import { getAverage } from "#shared/services/resource/sheet/column/getAverage";
 import { CHECKBOX_ANSWER_SEPARATOR } from "#shared/services/resource/survey/constants";
 import { SurveySummaryCardType } from "#src/models/resource/survey/SurveySummaryCardType";
+import { getSurveyRatingItems } from "#src/services/resource/survey/getSurveyRatingItems";
 import { SURVEY_SUMMARY_ANSWER_LIMIT } from "#src/services/survey/summary/constants";
 import {
   checkIsSurveyAnsweringNode,
@@ -37,9 +38,9 @@ const DEFAULT_OTHER_LABEL = "Other";
 const toChoiceOptions = (choices: SurveyChoice[]): ChoiceOption[] =>
   choices.map((choice) => ({ label: getSurveyChoiceText(choice), value: choice.value }));
 
-// A rating's steps run from one to its count, each labelled by its own value
-const toRatingOptions = (rateCount: number): ChoiceOption[] =>
-  Array.from({ length: rateCount }, (_value, index) => ({ label: String(index + 1), value: index + 1 }));
+// A rating's steps run from its first step up to its count, each labelled by its own value
+const toRatingOptions = (rateMin: number, rateCount: number): ChoiceOption[] =>
+  getSurveyRatingItems(rateMin, rateCount).map(({ title, value }) => ({ label: title, value }));
 
 // An other option is only offered by a question that has one, so the label is set only then
 const toOtherSource = ({
@@ -74,7 +75,7 @@ const getChoiceSource = (question: SurveyQuestionNode): ChoiceSource | undefined
     case SurveyNodeType.Ranking:
       return { isMultiple: true, options: toChoiceOptions(question.props.choices) };
     case SurveyNodeType.Rating:
-      return { isMultiple: false, options: toRatingOptions(question.props.rateCount) };
+      return { isMultiple: false, options: toRatingOptions(question.props.rateMin, question.props.rateCount) };
     default:
       return undefined;
   }

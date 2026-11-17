@@ -12,7 +12,7 @@ The blade is a `UiTabs` pair, **Summary** (the default) and **Individual**, whic
 | -------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
 | `radiogroup`, `dropdown`, `buttongroup`, `boolean`                         | a bar per choice, labelled with its count and its share of the responses answering |
 | `checkbox`, `tagbox`, `ranking`, a multi-select `imagepicker`              | the same; each share is of respondents, so together they can pass 100%             |
-| `rating`                                                                   | a bar per rating value, and the average                                            |
+| `rating`                                                                   | a bar per step, counted from the scale's first step, and the average               |
 | `slider`, a `text` with a numeric input, an `expression` shown as a number | minimum, average and maximum                                                       |
 | `text`, `comment` and every other kind that answers                        | the first answers as a list, and a button to the Individual view for the rest      |
 

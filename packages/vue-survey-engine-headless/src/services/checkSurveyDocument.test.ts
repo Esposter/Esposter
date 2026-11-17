@@ -9,6 +9,7 @@ import type { SurveyPanelDynamicNode } from "#src/models/SurveyPanelDynamicNode"
 import type { SurveyPanelNode } from "#src/models/SurveyPanelNode";
 import type { SurveyPlaceableNode } from "#src/models/SurveyPlaceableNode";
 import type { SurveyRadioGroupNode } from "#src/models/SurveyRadioGroupNode";
+import type { SurveyTagBoxNode } from "#src/models/SurveyTagBoxNode";
 import type { SurveyTemplateNode } from "#src/models/SurveyTemplateNode";
 import type { SurveyTextNode } from "#src/models/SurveyTextNode";
 import type { SurveyTextNodeProps } from "#src/models/SurveyTextNodeProps";
@@ -25,6 +26,7 @@ import { surveyPageNodeType } from "#src/services/surveyPageNodeType";
 import { surveyPanelDynamicNodeType } from "#src/services/surveyPanelDynamicNodeType";
 import { surveyPanelNodeType } from "#src/services/surveyPanelNodeType";
 import { surveyRadioGroupNodeType } from "#src/services/surveyRadioGroupNodeType";
+import { surveyTagBoxNodeType } from "#src/services/surveyTagBoxNodeType";
 import { surveyTextNodeType } from "#src/services/surveyTextNodeType";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
@@ -115,6 +117,22 @@ describe(checkSurveyDocument, () => {
     expect(checkSurveyDocument(createDocument([createPage([checkbox])]))).toStrictEqual([
       {
         message: "The minimum 3 is above the maximum 1, so no answer could meet both",
+        pointer: "/content/0/props/children/0/props/minSelected",
+      },
+    ]);
+  });
+
+  test("a tag box whose minimum is above its maximum is refused on save", () => {
+    expect.hasAssertions();
+
+    const tagBox: SurveyTagBoxNode = {
+      props: { ...surveyTagBoxNodeType.createDefaultProps(), id: v7(), maxSelected: 2, minSelected: 3, name: "a" },
+      type: SurveyNodeType.TagBox,
+    };
+
+    expect(checkSurveyDocument(createDocument([createPage([tagBox])]))).toStrictEqual([
+      {
+        message: "The minimum 3 is above the maximum 2, so no answer could meet both",
         pointer: "/content/0/props/children/0/props/minSelected",
       },
     ]);

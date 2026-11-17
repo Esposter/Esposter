@@ -11,11 +11,12 @@ describe("uiRating", () => {
 
     const count = 5;
     const label = "label";
-    const mountRating = (props: { isDisabled?: true; modelValue: number | string }) => {
+    const mountRating = (props: { firstStep?: number; isDisabled?: true; modelValue: number | string }) => {
       const component = mount(UiRating, {
         attachTo: document.body,
         props: {
           count,
+          firstStep: 1,
           label,
           ...props,
           "onUpdate:modelValue": (modelValue: number | string) => component.setProps({ modelValue }),
@@ -37,6 +38,16 @@ describe("uiRating", () => {
       expect(component.get('[role="radiogroup"]').attributes("aria-label")).toBe(label);
       expect(steps).toHaveLength(count);
       expect(steps[0]?.attributes("aria-label")).toBe("1");
+    });
+
+    test("a scale starting at zero with nothing chosen fills no step", async () => {
+      expect.hasAssertions();
+
+      const component = mountRating({ firstStep: 0, modelValue: "" });
+      await flushPromises();
+
+      expect(component.findAll('[role="radio"]')[0]?.attributes("aria-label")).toBe("0");
+      expect(getFilled(component)).toStrictEqual([false, false, false, false, false]);
     });
 
     test("fills the steps up to the one under the pointer until the pointer leaves", async () => {
@@ -95,7 +106,7 @@ describe("uiRating", () => {
       const attribute = "aria-invalid";
       const component = mount(UiRating, {
         attrs: { [attribute]: "true" },
-        props: { count, label, modelValue: "" },
+        props: { count, firstStep: 1, label, modelValue: "" },
         slots: { mark: () => h("i") },
       });
       await flushPromises();

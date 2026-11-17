@@ -4,8 +4,10 @@ import { Radio } from "@vuetify/v0";
 import { mergeProps } from "vue";
 
 interface Props {
-  // How many steps the scale has, each named by its number from one
+  // How many steps the scale has, each named by its number from the first step
   count: number;
+  // The number the scale's first step is named by, which the steps count up from
+  firstStep: number;
   // Held at the disabled opacity, where a step is neither chosen nor previewed
   isDisabled?: true | undefined;
   // The group's accessible name: what its steps choose between
@@ -13,14 +15,17 @@ interface Props {
 }
 // A scale of numbered steps, each drawn by the caller's mark, which is told whether its step is filled. The steps up to
 // The one under the pointer are filled while it rests there, and up to the chosen step otherwise. A radio group, so it is
-// One stop in the tab order and the arrows move the choice along it. No step is chosen while the choice is an empty string
+// One stop in the tab order and the arrows move the choice along it. No step is chosen while the choice is an empty string.
+// Nothing chosen fills up to the step below the first
 defineOptions({ inheritAttrs: false });
 defineSlots<{ mark: (props: { isOn: boolean; value: number }) => VNode }>();
 const modelValue = defineModel<number | string>({ required: true });
-const { count } = defineProps<Props>();
+const { count, firstStep } = defineProps<Props>();
 const hovered = ref<number>();
-const steps = computed(() => Array.from({ length: count }, (_value, index) => index + 1));
-const filledTo = computed(() => hovered.value ?? (typeof modelValue.value === "number" ? modelValue.value : 0));
+const steps = computed(() => Array.from({ length: count }, (_value, index) => firstStep + index));
+const filledTo = computed(
+  () => hovered.value ?? (typeof modelValue.value === "number" ? modelValue.value : firstStep - 1),
+);
 </script>
 
 <template>

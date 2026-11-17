@@ -809,7 +809,9 @@ describe("surveyRouter", () => {
 
     const survey = await createResponseSurvey(
       settings,
-      createPageDocument([{ props: { id: "rating", name: "rating", rateCount: 5 }, type: SurveyNodeType.Rating }]),
+      createPageDocument([
+        { props: { id: "rating", name: "rating", rateCount: 5, rateMin: 1 }, type: SurveyNodeType.Rating },
+      ]),
     );
     const ratingErrorMessage = new InvalidOperationError(
       Operation.Create,

@@ -21,7 +21,7 @@ describe(validateSurveyAnswers, () => {
     const document = createSurveyRunnerDocument([
       createSurveyPage([
         { props: { id: "a", name: "a" }, type: SurveyNodeType.Text },
-        { props: { id: "rating", name: "rating", rateCount: 5 }, type: SurveyNodeType.Rating },
+        { props: { id: "rating", name: "rating", rateCount: 5, rateMin: 1 }, type: SurveyNodeType.Rating },
       ]),
     ]);
 
@@ -139,7 +139,9 @@ describe(validateSurveyAnswers, () => {
     expect.hasAssertions();
 
     const document = createSurveyRunnerDocument([
-      createSurveyPage([{ props: { id: "rating", name: "rating", rateCount: 5 }, type: SurveyNodeType.Rating }]),
+      createSurveyPage([
+        { props: { id: "rating", name: "rating", rateCount: 5, rateMin: 1 }, type: SurveyNodeType.Rating },
+      ]),
     ]);
 
     expect(validateSurveyAnswers(document, { rating: 9 }, SurveyAnswerValidationMode.Draft, now)).toStrictEqual([

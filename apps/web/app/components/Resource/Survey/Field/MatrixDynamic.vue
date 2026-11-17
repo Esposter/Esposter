@@ -17,7 +17,12 @@ import { getSurveyRatingItems } from "#src/services/resource/survey/getSurveyRat
 import { getSurveyRatingStep } from "#src/services/resource/survey/getSurveyRatingStep";
 import { withSurveyAnswer } from "#src/services/resource/survey/withSurveyAnswer";
 import { takeOne } from "@esposter/shared";
-import { getSurveyChoiceText, MATRIX_CELL_RATING_COUNT, SurveyMatrixCellType } from "vue-survey-engine-headless";
+import {
+  getSurveyChoiceText,
+  MATRIX_CELL_RATING_COUNT,
+  MATRIX_CELL_RATING_MIN,
+  SurveyMatrixCellType,
+} from "vue-survey-engine-headless";
 
 interface Props {
   error: string;
@@ -44,7 +49,7 @@ const choiceItemsMap = computed(() =>
   ),
 );
 // A rating cell's steps are the numbers of its scale, since its column carries no choices to draw them from
-const ratingItems = getSurveyRatingItems(MATRIX_CELL_RATING_COUNT);
+const ratingItems = getSurveyRatingItems(MATRIX_CELL_RATING_MIN, MATRIX_CELL_RATING_COUNT);
 const getChoiceKey = (value: SurveyAnswerValue | undefined) =>
   typeof value === "number" || typeof value === "string" ? String(value) : "";
 // The value a picked key stands for, so a numeric choice is still a number in the answer

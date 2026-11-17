@@ -16,7 +16,7 @@ interface Props {
 
 const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
 const { node } = defineProps<Props>();
-const items = computed(() => getSurveyRatingItems(node.props.rateCount));
+const items = computed(() => getSurveyRatingItems(node.props.rateMin, node.props.rateCount));
 const rating = computed<number | string>({
   get: () => getSurveyRatingStep(answer.value),
   set: (value) => {
@@ -27,7 +27,7 @@ const rating = computed<number | string>({
 const getSmiley = (value: number) =>
   takeOne(
     SURVEY_SMILEY_MEANINGS,
-    Math.round(((value - 1) / (node.props.rateCount - 1)) * (SURVEY_SMILEY_MEANINGS.length - 1)),
+    Math.round(((value - node.props.rateMin) / (node.props.rateCount - 1)) * (SURVEY_SMILEY_MEANINGS.length - 1)),
   );
 </script>
 
@@ -51,6 +51,7 @@ const getSmiley = (value: number) =>
         :aria-invalid="error ? true : undefined"
         :aria-required="node.props.isRequired ? true : undefined"
         :count="node.props.rateCount"
+        :first-step="node.props.rateMin"
         :is-disabled="isDisabled || undefined"
         :label="title"
       >

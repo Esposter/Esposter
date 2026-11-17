@@ -2,7 +2,7 @@ import type { SurveyTagBoxNode } from "#src/models/SurveyTagBoxNode";
 
 import { SurveyNodeType } from "#src/models/SurveyNodeType";
 import { createSurveyTagBoxAnswerSchema } from "#src/services/runner/answer/createSurveyTagBoxAnswerSchema";
-import { SURVEY_TOO_MANY_SELECTED_MESSAGE } from "#src/services/runner/constants";
+import { SURVEY_TOO_FEW_SELECTED_MESSAGE, SURVEY_TOO_MANY_SELECTED_MESSAGE } from "#src/services/runner/constants";
 import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage";
 import { surveyTagBoxNodeType } from "#src/services/surveyTagBoxNodeType";
 import { v7 } from "uuid";
@@ -28,6 +28,24 @@ describe(createSurveyTagBoxAnswerSchema, () => {
     const result = createSurveyTagBoxAnswerSchema(node).safeParse(["a"]);
 
     expect(result.success).toBe(true);
+  });
+
+  test("a tag box below its minimum blocks the move", () => {
+    expect.hasAssertions();
+
+    const boundedNode: SurveyTagBoxNode = { ...node, props: { ...node.props, maxSelected: 2, minSelected: 2 } };
+
+    expect(getSurveyFirstMessage(createSurveyTagBoxAnswerSchema(boundedNode).safeParse(["a"]))).toBe(
+      SURVEY_TOO_FEW_SELECTED_MESSAGE,
+    );
+  });
+
+  test("a selection within its bounds moves on", () => {
+    expect.hasAssertions();
+
+    const boundedNode: SurveyTagBoxNode = { ...node, props: { ...node.props, maxSelected: 2, minSelected: 2 } };
+
+    expect(createSurveyTagBoxAnswerSchema(boundedNode).safeParse(["a", "b"]).success).toBe(true);
   });
 
   test("refuses more tags than the most its owner allows", () => {

@@ -32,7 +32,7 @@ Most fields draw their question through `Field/Shell.vue`, which draws the title
 | `checkbox`      | `Checkbox.vue`      | one `UiCheckbox` per choice, with select all (mixed while some are chosen), none and other, in a group                                                                                                                                                                                         |
 | `tagbox`        | `TagBox.vue`        | `UiSelect` in multiple mode over the choices, with its placeholder while nothing is picked, and an other option and its text field                                                                                                                                                             |
 | `buttongroup`   | `ButtonGroup.vue`   | `UiToggleGroup` over the choices                                                                                                                                                                                                                                                               |
-| `rating`        | `Rating.vue`        | `UiToggleGroup` of the numbers from one to the scale's count for labels; `UiRating` of stars, or of one face per step, for the other two types; the minimum and maximum descriptions beneath it in every type                                                                                  |
+| `rating`        | `Rating.vue`        | `UiToggleGroup` of the scale's steps, counted up from its first step, for labels; `UiRating` of stars, or of one face per step, for the other two types; the minimum and maximum descriptions beneath it in every type                                                                         |
 | `ranking`       | `Ranking.vue`       | a reorderable `UiList` of the choices in the answer's order, each row marked with its place; Alt with Up or Down moves the focused row, announced through the list's live region                                                                                                               |
 | `slider`        | `Slider.vue`        | `UiSlider`, disabled while the field is, with its value text when the question shows its value                                                                                                                                                                                                 |
 | `matrix`        | `Matrix.vue`        | a table with a row per row choice, each row a `UiRadioGroup` over the column choices, required when every row is                                                                                                                                                                               |
@@ -70,7 +70,7 @@ A dropdown and a tag box with a placeholder show it in the trigger while nothing
 - **A row's flags come from the runner.** A dynamic panel evaluates no condition of its own: the row views the runner gives carry each template question's visibility, enabled state and required flag, so a row and the page are decided by one function. Rejected: a panel that evaluates its template's conditions itself, a second evaluator beside the validator's.
 - **The required flag travels on the node, not beside it.** Every kind reads `node.props.isRequired`, so a required prop on each field would be read by every kind and passed by the canvas too. Rejected: that prop, since the one function that builds the effective node serves a top-level question and a row alike.
 - **A dynamic panel keys its rows by an id of its own.** An answer has no id to read a row's key from, so `PanelDynamic.vue` mints one per panel, splices it with the panel on add and remove, and keys a fresh set only when the count moves from outside the component. A panel that stays keeps the picks and text its fields hold while the panels before it are removed. Rejected: keying by index, which hands a removed panel's field state to the panel that takes its place.
-- **A matrix's rating cell draws the steps of the matrix's scale.** A rating column carries no choices, so its cell takes its steps from `MATRIX_CELL_RATING_COUNT` and holds the number of the step it presses; a dropdown cell keeps its column's choices. Rejected: giving a rating column a choice list.
+- **A matrix's rating cell draws the steps of the matrix's scale.** A rating column carries no choices, so its cell takes its steps from `MATRIX_CELL_RATING_MIN` and `MATRIX_CELL_RATING_COUNT` and holds the number of the step it presses; a dropdown cell keeps its column's choices. Rejected: giving a rating column a choice list.
 - **Markup is sanitised where it renders.** The html field passes its markup through `sanitizeHtml`, since an imported or agent-written document's markup renders in the app's origin.
 
 ## Notes
@@ -84,21 +84,21 @@ Every gap the library lacked is built, or kept field-local by a decision above, 
 
 ## Key files
 
-| File                                                               | Role                                                                                                  |
-| ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------- |
-| `apps/web/app/components/Resource/Survey/Field/`                   | one field and one component test per question kind, and `Index.vue` and `Shell.vue` beside them       |
-| `apps/web/app/components/Resource/Survey/Field/Index.vue`          | the chooser: the field for a node's kind, loaded behind a skeleton                                    |
-| `apps/web/app/components/Resource/Survey/Field/Shell.vue`          | the title, required mark, description and error of a field, and the ids the control is described by   |
-| `apps/web/app/services/resource/survey/SurveyFieldComponentMap.ts` | the field each kind is drawn with, loaded on demand                                                   |
-| `apps/web/app/composables/survey/useSurveyChoiceAnswer.ts`         | a choice question's pick, its other text and its ordered options                                      |
-| `apps/web/app/composables/survey/useSurveyRecordAnswer.ts`         | a record answer read as an object                                                                     |
-| `apps/web/app/services/resource/survey/getSurveyAnswerRows.ts`     | a list answer's rows, with the question's initial count of empty rows before any answer               |
-| `apps/web/app/services/resource/survey/getSurveyAnswerText.ts`     | the text an answer holds, or the empty text, read by a multiple text and a matrix's text cells        |
-| `apps/web/app/services/resource/survey/getSurveyRatingItems.ts`    | the steps of a rating scale, drawn by a rating field and a matrix's rating cells                      |
-| `apps/web/app/services/resource/survey/getSurveyRatingStep.ts`     | the step a rating answer holds, or the empty text, read by a rating field and a matrix's rating cells |
-| `apps/web/app/services/resource/survey/withSurveyRequired.ts`      | a question's node with the required flag the runner decides, which its field's mark reads             |
-| `apps/web/app/services/resource/survey/withSurveyAnswer.ts`        | a row's record with one answer set, or cleared                                                        |
-| `apps/web/app/components/Ui/`                                      | the UI library the fields are drawn from                                                              |
-| `apps/web/app/components/Ui/Rating.vue`                            | a rating scale of numbered steps, filled by the caller's mark up to the pointer or the choice         |
-| `apps/web/app/components/Ui/RequiredMark.vue`                      | the required mark a label carries: drawn for sight, and the word announced once beside the label      |
-| `apps/web/app/components/Ui/setupUiStyle.test.ts`                  | the helper that runs a field's component test once per design style                                   |
+| File                                                               | Role                                                                                                              |
+| ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
+| `apps/web/app/components/Resource/Survey/Field/`                   | one field and one component test per question kind, and `Index.vue` and `Shell.vue` beside them                   |
+| `apps/web/app/components/Resource/Survey/Field/Index.vue`          | the chooser: the field for a node's kind, loaded behind a skeleton                                                |
+| `apps/web/app/components/Resource/Survey/Field/Shell.vue`          | the title, required mark, description and error of a field, and the ids the control is described by               |
+| `apps/web/app/services/resource/survey/SurveyFieldComponentMap.ts` | the field each kind is drawn with, loaded on demand                                                               |
+| `apps/web/app/composables/survey/useSurveyChoiceAnswer.ts`         | a choice question's pick, its other text and its ordered options                                                  |
+| `apps/web/app/composables/survey/useSurveyRecordAnswer.ts`         | a record answer read as an object                                                                                 |
+| `apps/web/app/services/resource/survey/getSurveyAnswerRows.ts`     | a list answer's rows, with the question's initial count of empty rows before any answer                           |
+| `apps/web/app/services/resource/survey/getSurveyAnswerText.ts`     | the text an answer holds, or the empty text, read by a multiple text and a matrix's text cells                    |
+| `apps/web/app/services/resource/survey/getSurveyRatingItems.ts`    | the steps of a rating scale, drawn by a rating field and a matrix's rating cells                                  |
+| `apps/web/app/services/resource/survey/getSurveyRatingStep.ts`     | the step a rating answer holds, or the empty text, read by a rating field and a matrix's rating cells             |
+| `apps/web/app/services/resource/survey/withSurveyRequired.ts`      | a question's node with the required flag the runner decides, which its field's mark reads                         |
+| `apps/web/app/services/resource/survey/withSurveyAnswer.ts`        | a row's record with one answer set, or cleared                                                                    |
+| `apps/web/app/components/Ui/`                                      | the UI library the fields are drawn from                                                                          |
+| `apps/web/app/components/Ui/Rating.vue`                            | a rating scale of numbered steps from its first step, filled by the caller's mark up to the pointer or the choice |
+| `apps/web/app/components/Ui/RequiredMark.vue`                      | the required mark a label carries: drawn for sight, and the word announced once beside the label                  |
+| `apps/web/app/components/Ui/setupUiStyle.test.ts`                  | the helper that runs a field's component test once per design style                                               |

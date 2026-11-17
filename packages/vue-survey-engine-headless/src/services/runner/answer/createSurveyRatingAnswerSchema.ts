@@ -5,4 +5,4 @@ import { createSurveyRatingValueSchema } from "#src/services/runner/answer/creat
 
 // A rating's answer: a whole step of the scale its owner set
 export const createSurveyRatingAnswerSchema = (node: SurveyRatingNode): z.ZodType =>
-  createSurveyRatingValueSchema(node.props.rateCount);
+  createSurveyRatingValueSchema(node.props.rateMin, node.props.rateCount);

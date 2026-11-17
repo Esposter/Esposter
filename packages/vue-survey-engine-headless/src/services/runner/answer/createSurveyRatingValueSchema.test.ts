@@ -7,7 +7,7 @@ describe(createSurveyRatingValueSchema, () => {
   test("accepts a whole rating within its scale", () => {
     expect.hasAssertions();
 
-    const result = createSurveyRatingValueSchema(3).safeParse(3);
+    const result = createSurveyRatingValueSchema(1, 3).safeParse(3);
 
     expect(result.success).toBe(true);
   });
@@ -15,7 +15,7 @@ describe(createSurveyRatingValueSchema, () => {
   test("refuses a rating above the last step of its scale", () => {
     expect.hasAssertions();
 
-    const result = createSurveyRatingValueSchema(3).safeParse(4);
+    const result = createSurveyRatingValueSchema(1, 3).safeParse(4);
 
     expect(getSurveyFirstMessage(result)).toBe(SURVEY_OUT_OF_RANGE_MESSAGE);
   });

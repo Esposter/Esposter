@@ -9,11 +9,12 @@ import { z } from "zod";
 const MIN_SURVEY_RATE_COUNT = 2;
 const MAX_SURVEY_RATE_COUNT = 20;
 
-// The props of a rating question: the scale it is drawn as, how many steps it has and the text at either end of them
+// The props of a rating question: the scale it is drawn as, its first step, how many steps it has and the text at either end
 export interface SurveyRatingNodeProps extends SurveyQuestionBaseProps {
   maxRateDescription: string;
   minRateDescription: string;
   rateCount: number;
+  rateMin: 0 | 1;
   rateType: SurveyRatingType;
 }
 
@@ -23,6 +24,7 @@ export const surveyRatingNodePropsSchema: z.ZodObject<
     maxRateDescription: z.ZodDefault<z.ZodString>;
     minRateDescription: z.ZodDefault<z.ZodString>;
     rateCount: z.ZodDefault<z.ZodInt>;
+    rateMin: z.ZodLiteral<0 | 1>;
     rateType: z.ZodDefault<z.ZodEnum<typeof SurveyRatingType>>;
   }
 > = z.object({
@@ -30,5 +32,7 @@ export const surveyRatingNodePropsSchema: z.ZodObject<
   maxRateDescription: z.string().max(MAX_SURVEY_TEXT_LENGTH).default(""),
   minRateDescription: z.string().max(MAX_SURVEY_TEXT_LENGTH).default(""),
   rateCount: z.int().min(MIN_SURVEY_RATE_COUNT).max(MAX_SURVEY_RATE_COUNT).default(5),
+  // A scale starts at zero or at one, so a respondent never reads a negative or a large first step as a rating
+  rateMin: z.literal([0, 1]),
   rateType: z.enum(SurveyRatingType).default(SurveyRatingType.Labels),
 }) satisfies z.ZodType<OwnProps<SurveyRatingNodeProps>>;
