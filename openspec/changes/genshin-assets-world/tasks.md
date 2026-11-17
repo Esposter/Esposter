@@ -18,4 +18,4 @@
 
 ## 4. Art
 
-- [ ] 4.1 [phase 7] Write each row of the not-shippable table that no open item names into the roadmap as an Asset line under the item it blocks, with its stand-in named. Verify: `pnpm -C scripts exec vitest run src/workspace/openspecLinks.test.ts` passes, and each row whose last column names this task has an Asset line in `openspec/changes/genshin-roadmap/tasks.md`.
+- [x] 4.1 [phase 7] Write each row of the not-shippable table that no open item names into the roadmap as an Asset line under the item it blocks, with its stand-in named. Verify: `pnpm -C scripts exec vitest run src/workspace/openspecLinks.test.ts` passes, and each row whose last column names this task has an Asset line in `openspec/changes/genshin-roadmap/tasks.md`.
