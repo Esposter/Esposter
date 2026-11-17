@@ -32,13 +32,25 @@ export const checkBarrel = (packageDirectory: string, mainCheckoutRoot: string, 
   };
   const fullLines = generateBarrelLines(sourceDirectory, exportsGeneration, mainCheckoutRoot);
   const lazyDirectories = getLazyDirectories(fullLines.source, committedLines.source);
+  // The component barrel leaves out its own lazy directories, which the source barrel does not name, so they are read off
+  // The component lines the committed barrel holds, and the generator is handed them under `components`
+  const lazyComponentDirectories = getLazyDirectories(fullLines.components, committedLines.components);
   const findings = [
     ...getBarrelFindings(barrelLabel, getExpectedLines(fullLines.source, lazyDirectories), committedLines.source),
-    ...getBarrelFindings(componentsLabel, fullLines.components, committedLines.components),
+    ...getBarrelFindings(
+      componentsLabel,
+      getExpectedLines(fullLines.components, lazyComponentDirectories),
+      committedLines.components,
+    ),
   ];
   if (findings.length === 0) return { findings: [], regenerated: [] };
   if (fix) {
-    spawnGenerateExports(join(REPOSITORY_ROOT, packageDirectory), exportsGeneration, lazyDirectories, mainCheckoutRoot);
+    spawnGenerateExports(
+      join(REPOSITORY_ROOT, packageDirectory),
+      exportsGeneration,
+      [...lazyDirectories, ...lazyComponentDirectories.map((directory) => join(COMPONENTS_DIRECTORY, directory))],
+      mainCheckoutRoot,
+    );
     return { findings: [], regenerated: exportsGeneration === "vue" ? [barrelLabel, componentsLabel] : [barrelLabel] };
   }
   return { findings, regenerated: [] };

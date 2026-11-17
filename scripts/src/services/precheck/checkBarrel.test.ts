@@ -51,4 +51,21 @@ describe(checkBarrel, () => {
       `${PACKAGE_DIRECTORY}/src/components/index.ts extra export { default as Foo } from "./Foo.vue";`,
     ]);
   });
+
+  // A component under a lazy directory is left out of the component barrel as its source is, so a committed barrel that
+  // Holds none of its lines is current, and the precheck reads that directory as lazy rather than as missing lines
+  test("expects no component barrel line for a component under a lazy directory", () => {
+    expect.hasAssertions();
+
+    const PACKAGE_WITH_LAZY_COMPONENTS = "packages/lazy-barrel-package";
+    const packageRoot = join(repositoryRoot, PACKAGE_WITH_LAZY_COMPONENTS);
+    const componentsDirectory = join(packageRoot, "src", "components");
+    mkdirSync(join(componentsDirectory, "Kept"), { recursive: true });
+    mkdirSync(join(componentsDirectory, "Lazy"), { recursive: true });
+    writeFileSync(join(componentsDirectory, "Kept", "Index.vue"), "<template />");
+    writeFileSync(join(componentsDirectory, "Lazy", "Index.vue"), "<template />");
+    generateExports(packageRoot, "vue", ["components/Lazy"]);
+
+    expect(checkBarrel(PACKAGE_WITH_LAZY_COMPONENTS, repositoryRoot, false).findings).toStrictEqual([]);
+  });
 });
