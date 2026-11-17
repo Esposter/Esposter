@@ -51,8 +51,8 @@ const createArrow = (id: string, start: ArrowElement["start"], end: ArrowElement
 });
 
 describe(useWhiteboardStyleKeyboard, () => {
-  const COPY_KEYS: KeyboardEventInit = { altKey: true, bubbles: true, ctrlKey: true, key: "c" };
-  const PASTE_KEYS: KeyboardEventInit = { altKey: true, bubbles: true, ctrlKey: true, key: "v" };
+  const COPY_KEYS: KeyboardEventInit = { altKey: true, bubbles: true, code: "KeyC", ctrlKey: true, key: "c" };
+  const PASTE_KEYS: KeyboardEventInit = { altKey: true, bubbles: true, code: "KeyV", ctrlKey: true, key: "v" };
   const FIRST_ID = v7();
   const SECOND_ID = v7();
   const THIRD_ID = v7();

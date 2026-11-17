@@ -7,7 +7,7 @@ flowchart TD
   M[A surface mounts] --> REG[useCommands and useCommandScope]
   U[It unmounts] --> UN[Its entries and keys leave]
   REG --> S[The command store]
-  REG -->|a command with a shortcut and something to do| HK["Bind its key<br/>through Vuetify 0"]
+  REG -->|a command with a shortcut and something to do| HK["Bind its key<br/>through Vuetify 0, or by its place<br/>for an Alt chord on a letter"]
   K[Ctrl+K or the dock's command button] --> P{Is a scope registered?}
   P -->|yes| SC[The palette searches the scope]
   P -->|no| APP[The palette searches every offered command]
@@ -23,7 +23,7 @@ flowchart TD
 ## How it works
 
 - **A command is data.** A `UiCommand` has a title, a group — the surface that registered it — an icon or a picture, and somewhere to go, something to run, or neither. One with somewhere to go is drawn as a real link, which a reader can open in a second tab. One with neither is a key its surface handles itself, such as the composer's Enter: the shortcuts dialog lists it, and nothing binds or offers it.
-- **A surface registers for as long as it is mounted.** `useCommands` adds a surface's commands to the store and binds each shortcut through Vuetify 0's hotkey composable until the surface unmounts, so the shortcuts dialog never lists a key that does nothing and the palette only offers what the page can do. A sequence, such as the resource explorer's G then A, is a shortcut like any other. The composable only warns on a shortcut it cannot parse and binds nothing, so a key its syntax reserves is spelled by its alias — `slash` for `/` — and `useCommands.test.ts` binds every shortcut written in source and fails on one that does not bind. A shortcut never fires while a field has focus, where its keys are typing. A command whose surface has a state it only applies in — a sheet's cell commands while cells are selected — is registered only while that state holds.
+- **A surface registers for as long as it is mounted.** `useCommands` adds a surface's commands to the store and binds each shortcut through Vuetify 0's hotkey composable until the surface unmounts, so the shortcuts dialog never lists a key that does nothing and the palette only offers what the page can do. A sequence, such as the resource explorer's G then A, is a shortcut like any other. The composable only warns on a shortcut it cannot parse and binds nothing, so a key its syntax reserves is spelled by its alias — `slash` for `/` — and `useCommands.test.ts` binds every shortcut written in source and fails on one that does not bind. A shortcut never fires while a field has focus, where its keys are typing. An Alt chord on a letter, such as the whiteboard's Ctrl or Cmd with Alt and C, is bound by the letter's key rather than the character it types: Alt changes the character, Option with C typing ç on a Mac and Ctrl with Alt acting as AltGr on some layouts, and the hotkey composable compares characters, so it would never see the chord. Ctrl and Cmd are one modifier for such a chord, as the shortcut labels show them. A command whose surface has a state it only applies in — a sheet's cell commands while cells are selected — is registered only while that state holds.
 - **The app's own commands are the dock's.** Home, every product, the reader's bookmarked and recent pages and the entries of the dock's theme, style and account menus are registered app-wide, and those menus read the same lists, so the two never disagree. A bookmark whose page can no longer be reached is listed disabled, its description saying it is no longer available, so it is drawn muted and never chosen. A condition such as being signed in is part of the list, so it is re-read whenever the palette shows it. Choices among several — the design styles, the theme modes — are listed whole under their heading, the chosen one marked.
 - **A surface's search is a scope, not a second palette.** The docs, the room list and the resource explorer's home page keep their search stacks as the [search standard](../search/design.md) describes, and hand the palette their query and what it finds through `useCommandScope`. The palette opens in the scope of the surface in front, and Backspace on an empty query steps out to the whole app. Ctrl+K keeps its meaning on their pages, and everything else is one keystroke further.
 - **App-wide search is on the client.** The titles are in memory, so the palette searches them with MiniSearch, the search standard's client branch, and keeps each group together under its heading.
@@ -49,6 +49,7 @@ flowchart TD
 | `apps/web/app/models/ui/UiCommandScope.ts`                 | A surface's search, handed to the palette                                                     |
 | `apps/web/app/store/ui/command.ts`                         | The registered commands and scopes, and whether the palette and the shortcuts dialog are open |
 | `apps/web/app/composables/ui/useCommands.ts`               | Registers a surface's commands and binds their shortcuts while it is mounted                  |
+| `apps/web/app/services/ui/getAltLetterChordMatcher.ts`     | Matches an Alt chord on a letter by the letter's key, whatever character it types             |
 | `apps/web/app/composables/ui/useCommandScope.ts`           | Hands a surface's search to the palette while it is mounted                                   |
 | `apps/web/app/composables/ui/useCommandPaletteShortcut.ts` | The palette's own key, bound in a field too                                                   |
 | `apps/web/app/components/App/CommandPalette.vue`           | The palette, and the app's own commands                                                       |
@@ -57,5 +58,5 @@ flowchart TD
 
 ## Sources
 
-- [Hotkey](https://0.vuetifyjs.com/composables/system/use-hotkey), Vuetify 0: the hotkey composable every shortcut binds through, sequences included.
+- [Hotkey](https://0.vuetifyjs.com/composables/system/use-hotkey), Vuetify 0: the hotkey composable every shortcut but an Alt chord on a letter binds through, sequences included.
 - [MiniSearch](https://lucaong.github.io/minisearch/): the client index the app-wide palette searches.

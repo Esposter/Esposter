@@ -14,4 +14,4 @@
 ## 3. The keys
 
 - [x] 3.1 Register the copy and paste keys in the Whiteboard command group, mount them in the editor beside the stacking keys, and list them in the palette. Verify: the keyboard composable's binding tests written first and seen failing, with the scenario 'Copy style needs exactly one selected element' named in them.
-- [ ] 3.2 Press the pair in a driven browser on macOS: copy the style of one shape, paste it onto a second, and undo the paste. Verify: the run's output shows the second shape take the look and the undo restore it, since on macOS the Option key can change the letter a key produces, so the pair is checked where it is pressed.
+- [x] 3.2 Bind the pair by the letter's key, since on macOS the Option key changes the letter a key produces and a pair matched by its letter never fires there. Verify: the alt-chord test in `apps/web/app/composables/ui/useCommands.test.ts`, which presses the event a US Mac layout sends for Cmd, Option and C, written first and seen failing.

@@ -38,6 +38,33 @@ describe(useCommands, () => {
     expect(run).toHaveBeenCalledExactlyOnceWith();
   });
 
+  // Alt changes the character a letter types, Option with C typing ç on a Mac, so the chord is the key's place
+  test("an alt chord on a letter fires by the key, whatever character it types", async () => {
+    expect.hasAssertions();
+
+    const run = vi.fn<() => void>();
+    await mountSuspended(
+      defineComponent({
+        setup: () => {
+          useCommands([{ group: "group", icon: "", id: "id", run, shortcut: "cmd+alt+c", title: "title" }]);
+          return () => h("div");
+        },
+      }),
+    );
+    window.dispatchEvent(
+      new KeyboardEvent("keydown", {
+        altKey: true,
+        bubbles: true,
+        cancelable: true,
+        code: "KeyC",
+        key: "ç",
+        metaKey: true,
+      }),
+    );
+
+    expect(run).toHaveBeenCalledExactlyOnceWith();
+  });
+
   // The hotkey composable only warns on a shortcut it cannot parse and binds nothing, so every shortcut written in
   // Source is bound here: an interpolation stands in as a digit, which parses wherever a key does
   test("every shortcut in source is one the hotkey composable binds", () => {
