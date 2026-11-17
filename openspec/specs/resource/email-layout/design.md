@@ -22,12 +22,14 @@ flowchart TD
   EDIT -->|"an edit settles"| COMPILE["the compile runs on the server"]
   COMPILE --> MESSAGES["the validator's messages"]
   MESSAGES --> SURFACE["the problems surface in the bar"]
+  EDIT --> CRITIQUE["the email critique's link, heading and contrast checks"]
+  CRITIQUE --> SURFACE
   VIEW --> HTML["the last good html, kept when a compile is refused"]
   COMPILE -->|"refused"| HTML
   SURFACE -->|"a message that names a node"| SELECT["the node is selected"]
 ```
 
-**The compile's messages are findings.** The preview compiles the open document on the server and keeps the last good message when a compile is refused. Its validation messages are findings in the problems surface, in both modes, so an author in Design sees that an edit broke the markup without switching to Preview. A message that names a node selects it. A refused compile is listed as an error finding, and the preview still draws its last good html.
+**The compile's messages and the critique's checks are findings.** The preview compiles the open document on the server and keeps the last good message when a compile is refused. Its validation messages, and the email critique's link, heading and contrast checks, are findings in the problems surface, in both modes, so an author in Design sees that an edit broke the markup without switching to Preview. A message that names a node selects it. A refused compile is listed as an error finding, and the preview still draws its last good html.
 
 **The bar holds what the email needs at a glance.** The dataset picker and the preview text, which a recipient's inbox shows beside the subject, are fields of the email and stay one press away. The device toggle sits in the bar and applies to both modes, since the design canvas and the preview both draw at the chosen width. Import MJML is occasional and sits in the bar's overflow menu.
 

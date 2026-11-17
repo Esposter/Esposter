@@ -2,7 +2,7 @@
 
 ## Purpose
 
-The email editor's arrangement: Preview draws the compiled message alone at the chosen device width, the inspector follows the selection, and the compile's messages are findings the author can select from. It says where the email editor's regions and panes sit and what each mode shows, not what the email contains or how it compiles.
+The email editor's arrangement: Preview draws the compiled message alone at the chosen device width, the inspector follows the selection, and the compile's messages and the critique's checks are findings the author can select from. It says where the email editor's regions and panes sit and what each mode shows, not what the email contains or how it compiles.
 
 ## Requirements
 
@@ -44,15 +44,21 @@ The inspector SHALL ask for a selection with nothing selected and offer the emai
 - **WHEN** the inspector is drawn
 - **THEN** its tabs are Content and Style
 
-### Requirement: The compile's messages are findings
+### Requirement: The compile's messages and the critique's checks are findings
 
-The email editor SHALL list the compile's validation messages as findings in the problems surface in Design and in Preview, and SHALL keep the last good message when a compile is refused.
+The email editor SHALL list the compile's validation messages and the email critique's checks as findings in the problems surface in Design and in Preview, and SHALL keep the last good message when a compile is refused.
 
 #### Scenario: A validation message is a finding in Design
 
 - **GIVEN** an email edited in Design so that the compile reports a validation message
 - **WHEN** the edit settles
 - **THEN** the message is listed in the problems surface
+
+#### Scenario: A critique check is a finding in Design
+
+- **GIVEN** an email edited in Design so that a link has no address
+- **WHEN** the edit settles
+- **THEN** the link finding is listed in the problems surface
 
 #### Scenario: A refused compile keeps the last good message
 
