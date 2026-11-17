@@ -5,9 +5,8 @@ import type { SurveyLogicError } from "#src/models/SurveyLogicError";
 import type { Result } from "neverthrow";
 
 import { SurveyExpressionNodeType } from "#src/models/SurveyExpressionNodeType";
-import { getOwnValue } from "#src/services/shared/getOwnValue";
 import { SurveyExpressionPrefixOperatorMap } from "#src/services/SurveyExpressionPrefixOperatorMap";
-import { takeOne } from "@esposter/shared";
+import { getOwnValue, takeOne } from "@esposter/shared";
 import { err } from "neverthrow";
 
 // Takes the prefix operator at the cursor and the operand it applies to. A symbol that no prefix operator spells is not

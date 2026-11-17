@@ -3,9 +3,9 @@ import type { SurveyLogicArrayRow } from "#src/models/SurveyLogicArrayRow";
 import type { SurveyLogicValue } from "#src/models/SurveyLogicValue";
 
 import { checkIsSurveyReturnField } from "#src/services/shared/checkIsSurveyReturnField";
-import { getOwnValue } from "#src/services/shared/getOwnValue";
 import { getSurveyArrayItems } from "#src/services/shared/getSurveyArrayItems";
 import { toSurveyLogicNumber } from "#src/services/shared/toSurveyLogicNumber";
+import { getOwnValue } from "@esposter/shared";
 
 // Reads an array function's arguments: the array or matrix values, the field's name, and a third text that names a field to
 // Return when it holds no condition characters. An item counts only when its field reads as a number (R4). A filter is any

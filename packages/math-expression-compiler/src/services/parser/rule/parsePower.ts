@@ -7,7 +7,7 @@ import { PLACEHOLDER } from "#src/services/parser/constants";
 import { createBinaryNode } from "#src/services/parser/createBinaryNode";
 import { getMathExpressionToken } from "#src/services/parser/getMathExpressionToken";
 import { MathExpressionOperatorMap } from "#src/services/parser/MathExpressionOperatorMap";
-import { getOwnValue } from "#src/services/shared/getOwnValue";
+import { getOwnValue } from "@esposter/shared";
 
 // A power is right associative, and its exponent is a unary operand, so `2^-3^2` is `2^(-(3^2))`. Each power nests its
 // Exponent one level, so a long chain is refused at the depth limit rather than exhausting the stack

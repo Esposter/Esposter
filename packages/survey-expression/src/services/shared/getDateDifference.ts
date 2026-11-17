@@ -1,7 +1,6 @@
 import { addSurveyLogicMonths } from "#src/services/shared/addSurveyLogicMonths";
-import { getOwnValue } from "#src/services/shared/getOwnValue";
 import { getSurveyLogicDayNumber } from "#src/services/shared/getSurveyLogicDayNumber";
-import { MILLISECONDS_PER_SECOND } from "@esposter/shared";
+import { getOwnValue, MILLISECONDS_PER_SECOND } from "@esposter/shared";
 
 // The length of each time unit in milliseconds, counted on the wall clock
 const millisecondsPerUnitMap: Record<string, number> = {

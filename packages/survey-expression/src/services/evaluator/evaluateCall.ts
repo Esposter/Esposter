@@ -4,7 +4,7 @@ import type { SurveyLogicContext } from "#src/models/SurveyLogicContext";
 import type { SurveyLogicValue } from "#src/models/SurveyLogicValue";
 
 import { SurveyLogicFunctionMap } from "#src/services/functions/SurveyLogicFunctionMap";
-import { getOwnValue } from "#src/services/shared/getOwnValue";
+import { getOwnValue } from "@esposter/shared";
 
 // A call runs the function its lowercased name finds. A name with no function is empty, and its arguments are not read
 export const evaluateCall = (

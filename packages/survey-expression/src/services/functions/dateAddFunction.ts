@@ -1,11 +1,11 @@
 import type { SurveyLogicFunction } from "#src/models/SurveyLogicFunction";
 
 import { addSurveyLogicMonths } from "#src/services/shared/addSurveyLogicMonths";
-import { getOwnValue } from "#src/services/shared/getOwnValue";
 import { getSurveyDateUnit } from "#src/services/shared/getSurveyDateUnit";
 import { parseSurveyLogicDate } from "#src/services/shared/parseSurveyLogicDate";
 import { toSurveyLogicDate } from "#src/services/shared/toSurveyLogicDate";
 import { toSurveyLogicNumber } from "#src/services/shared/toSurveyLogicNumber";
+import { getOwnValue } from "@esposter/shared";
 
 // Each interval moves a date through its own unit: days by the calendar day, hours, minutes and seconds by the wall clock,
 // And months and years by whole calendar months

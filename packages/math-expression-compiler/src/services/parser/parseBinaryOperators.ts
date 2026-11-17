@@ -9,7 +9,7 @@ import { checkIsFactorStart } from "#src/services/parser/checkIsFactorStart";
 import { createBinaryOperation } from "#src/services/parser/createBinaryOperation";
 import { getMathExpressionToken } from "#src/services/parser/getMathExpressionToken";
 import { MathExpressionBinaryOperatorMap } from "#src/services/parser/MathExpressionBinaryOperatorMap";
-import { getOwnValue } from "#src/services/shared/getOwnValue";
+import { getOwnValue } from "@esposter/shared";
 
 // Parses the binary operators of at least the minimum power by precedence climbing: an operand is followed by each operator
 // That binds at least that tightly, and its right operand is parsed one power above it, so `a - b - c` is `(a - b) - c`.

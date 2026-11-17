@@ -5,7 +5,7 @@ import { MathExpressionGrammarRule } from "#src/models/parser/MathExpressionGram
 import { createLogicalNode } from "#src/services/parser/createLogicalNode";
 import { getMathExpressionToken } from "#src/services/parser/getMathExpressionToken";
 import { MathExpressionOperatorMap } from "#src/services/parser/MathExpressionOperatorMap";
-import { getOwnValue } from "#src/services/shared/getOwnValue";
+import { getOwnValue } from "@esposter/shared";
 
 // Nullish coalescing groups from the left, so `a ?? b ?? c` is `(a ?? b) ?? c`
 export const parseNullish: MathExpressionRuleParser = (state, parse): MathExpressionNode => {

@@ -6,10 +6,9 @@ import type { Result } from "neverthrow";
 
 import { SurveyExpressionNodeType } from "#src/models/SurveyExpressionNodeType";
 import { SurveyExpressionTokenType } from "#src/models/SurveyExpressionTokenType";
-import { getOwnValue } from "#src/services/shared/getOwnValue";
 import { SurveyExpressionBinaryOperatorMap } from "#src/services/SurveyExpressionBinaryOperatorMap";
 import { SurveyExpressionPostfixOperatorMap } from "#src/services/SurveyExpressionPostfixOperatorMap";
-import { takeOne } from "@esposter/shared";
+import { getOwnValue, takeOne } from "@esposter/shared";
 import { ok } from "neverthrow";
 
 // Takes each operator at the cursor that binds at least as tightly as the minimum power, with its right operand, so

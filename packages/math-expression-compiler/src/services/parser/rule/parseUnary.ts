@@ -7,7 +7,7 @@ import { checkCanMathExpressionNest } from "#src/services/parser/checkCanMathExp
 import { PLACEHOLDER } from "#src/services/parser/constants";
 import { getMathExpressionToken } from "#src/services/parser/getMathExpressionToken";
 import { MathExpressionOperatorMap } from "#src/services/parser/MathExpressionOperatorMap";
-import { getOwnValue } from "#src/services/shared/getOwnValue";
+import { getOwnValue } from "@esposter/shared";
 
 // A prefix operator applies to the unary operand after it, and a formula without one is a power
 export const parseUnary: MathExpressionRuleParser = (state, parse): MathExpressionNode => {

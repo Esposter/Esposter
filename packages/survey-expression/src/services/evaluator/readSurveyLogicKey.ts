@@ -1,6 +1,6 @@
 import type { SurveyLogicValue } from "#src/models/SurveyLogicValue";
 
-import { getOwnValue } from "#src/services/shared/getOwnValue";
+import { getOwnValue } from "@esposter/shared";
 
 const DIGITS_ONLY_REGEX = /^\d+$/u;
 

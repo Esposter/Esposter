@@ -2,7 +2,7 @@ import type { SurveyLogicValue } from "#src/models/SurveyLogicValue";
 
 import { checkIsSurveyLogicPrimitiveEqual } from "#src/services/shared/checkIsSurveyLogicPrimitiveEqual";
 import { checkIsSurveyLogicValueEmpty } from "#src/services/shared/checkIsSurveyLogicValueEmpty";
-import { getOwnValue } from "#src/services/shared/getOwnValue";
+import { getOwnValue } from "@esposter/shared";
 
 // The equality of two values (R7). Empty values equal each other and nothing else. Two lists are equal when each item of
 // The left pairs with a distinct equal item of the right, so their order does not matter. Two records are equal when each

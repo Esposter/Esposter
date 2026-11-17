@@ -2,7 +2,7 @@ import type { SurveyLogicContext } from "#src/models/SurveyLogicContext";
 import type { SurveyLogicValue } from "#src/models/SurveyLogicValue";
 
 import { readSurveyLogicPath } from "#src/services/evaluator/readSurveyLogicPath";
-import { getOwnValue } from "#src/services/shared/getOwnValue";
+import { getOwnValue } from "@esposter/shared";
 
 // A name reads the answer under its exact key first. Failing that, its first part may name a scope the caller passes.
 // The rest of the name is read inside that scope as a top-level name is read: its exact key, then its path.

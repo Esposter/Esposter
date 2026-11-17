@@ -6,7 +6,7 @@ import { SRCSET_ATTRIBUTE, URL_ATTRIBUTES } from "#src/services/sanitizeHtml/con
 import { filterClasses } from "#src/services/sanitizeHtml/filterClasses";
 import { filterSrcset } from "#src/services/sanitizeHtml/filterSrcset";
 import { filterStyle } from "#src/services/sanitizeHtml/filterStyle";
-import { getTagPolicy } from "#src/services/sanitizeHtml/getTagPolicy";
+import { getOwnValue } from "#src/util/object/getOwnValue";
 
 // A meta refresh navigates to the URL its content names, so that content is never kept: without it the refresh does nothing
 const checkIsMetaRefresh = (tagName: string, attributes: Record<string, string>): boolean =>
@@ -19,10 +19,10 @@ export const filterAttributes = (
   policy: SanitizePolicy,
 ): Record<string, string> => {
   const { tagName } = element;
-  const allowedAttributes = getTagPolicy(policy.allowedAttributes, tagName) ?? [];
+  const allowedAttributes = getOwnValue(policy.allowedAttributes, tagName) ?? [];
   const isClassAllowed = Object.hasOwn(policy.allowedClasses, tagName);
   const parsedAttributes = Object.fromEntries(element.attrs.map(({ name, value }) => [name, value]));
-  const transform = getTagPolicy(policy.transformAttributes, tagName);
+  const transform = getOwnValue(policy.transformAttributes, tagName);
   const attributes = transform ? transform(parsedAttributes) : parsedAttributes;
 
   const kept: Record<string, string> = {};
@@ -37,8 +37,8 @@ export const filterAttributes = (
 };
 
 const filterValue = (tagName: string, name: string, value: string, policy: SanitizePolicy): string | undefined => {
-  if (name === "style") return filterStyle(value, getTagPolicy(policy.allowedStyles, tagName));
-  if (name === "class") return filterClasses(value, getTagPolicy(policy.allowedClasses, tagName));
+  if (name === "style") return filterStyle(value, getOwnValue(policy.allowedStyles, tagName));
+  if (name === "class") return filterClasses(value, getOwnValue(policy.allowedClasses, tagName));
   if (name === SRCSET_ATTRIBUTE) return filterSrcset(value, policy.allowedSchemes);
   if (URL_ATTRIBUTES.includes(name)) return checkIsAllowedUrl(value, policy.allowedSchemes) ? value : undefined;
   return value;
