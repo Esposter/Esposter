@@ -4,27 +4,18 @@ import type { SurveyChoice } from "vue-survey-engine-headless";
 
 import ResourceSurveyCreatorCanvas from "#src/components/Resource/Survey/Creator/Canvas/Index.vue";
 import { useSurveyCreatorCommands } from "#src/composables/survey/useSurveyCreatorCommands";
+import { createSurveyOnePageTestDocument } from "#src/services/survey/createSurveyOnePageTestDocument.test";
 import { useSurveyCreatorStore } from "#src/store/survey/creator";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
-import { surveyDocumentSchema, SurveyNodeType } from "vue-survey-engine-headless";
+import { SurveyNodeType } from "vue-survey-engine-headless";
 
 // A one-page survey of one radio group with the given choices
 const createSurvey = (choices: SurveyChoice[]) =>
-  surveyDocumentSchema.parse({
-    content: [
-      {
-        props: {
-          children: [{ props: { choices, id: "question", name: "question" }, type: SurveyNodeType.RadioGroup }],
-          enableIf: "",
-          id: "page",
-        },
-        type: SurveyNodeType.Page,
-      },
-    ],
-    root: { props: { backgroundImage: "" } },
-  });
+  createSurveyOnePageTestDocument([
+    { props: { choices, id: "question", name: "question" }, type: SurveyNodeType.RadioGroup },
+  ]);
 const loadChoiceQuestion = (choices: SurveyChoice[]) => {
   const surveyCreatorStore = useSurveyCreatorStore();
   surveyCreatorStore.load(createSurvey(choices));

@@ -4,21 +4,16 @@ import type { SurveyChoice } from "vue-survey-engine-headless";
 
 import ResourceSurveyCreatorCanvas from "#src/components/Resource/Survey/Creator/Canvas/Index.vue";
 import { useSurveyCreatorCommands } from "#src/composables/survey/useSurveyCreatorCommands";
+import { createSurveyOnePageTestDocument } from "#src/services/survey/createSurveyOnePageTestDocument.test";
 import { useSurveyCreatorStore } from "#src/store/survey/creator";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { beforeAll, describe, expect, test } from "vitest";
-import { surveyDocumentSchema, SurveyNodeType, surveyNodeTypeDefinitionMap } from "vue-survey-engine-headless";
+import { SurveyNodeType, surveyNodeTypeDefinitionMap } from "vue-survey-engine-headless";
 
-// A one-page survey of the given questions
-const createSurvey = (children: object[]) =>
-  surveyDocumentSchema.parse({
-    content: [{ props: { children, enableIf: "", id: "page" }, type: SurveyNodeType.Page }],
-    root: { props: { backgroundImage: "" } },
-  });
 const loadSurvey = (children: object[]) => {
   const surveyCreatorStore = useSurveyCreatorStore();
-  surveyCreatorStore.load(createSurvey(children));
+  surveyCreatorStore.load(createSurveyOnePageTestDocument(children));
   useSurveyCreatorCommands().select("/content/0/props/children/0");
   return surveyCreatorStore;
 };
@@ -50,7 +45,9 @@ describe("resourceSurveyCreatorCanvasAdorner", () => {
     await flushPromises();
 
     expect(surveyCreatorStore.document).toStrictEqual(
-      createSurvey([{ props: { id: "first", isRequired: true, name: "first" }, type: SurveyNodeType.Text }]),
+      createSurveyOnePageTestDocument([
+        { props: { id: "first", isRequired: true, name: "first" }, type: SurveyNodeType.Text },
+      ]),
     );
   });
 
@@ -82,7 +79,9 @@ describe("resourceSurveyCreatorCanvasAdorner", () => {
     await flushPromises();
 
     expect(surveyCreatorStore.document).toStrictEqual(
-      createSurvey([{ props: { choices, id: "question", name: "question" }, type: SurveyNodeType.Checkbox }]),
+      createSurveyOnePageTestDocument([
+        { props: { choices, id: "question", name: "question" }, type: SurveyNodeType.Checkbox },
+      ]),
     );
   });
 
@@ -97,7 +96,7 @@ describe("resourceSurveyCreatorCanvasAdorner", () => {
     await findButton(component, "Cancel")?.trigger("click");
     await flushPromises();
 
-    expect(surveyCreatorStore.document).toStrictEqual(createSurvey([radioGroup]));
+    expect(surveyCreatorStore.document).toStrictEqual(createSurveyOnePageTestDocument([radioGroup]));
   });
 
   test("a kind change undoes as one step", async () => {
@@ -113,6 +112,6 @@ describe("resourceSurveyCreatorCanvasAdorner", () => {
     useSurveyCreatorCommands().undo();
     await flushPromises();
 
-    expect(surveyCreatorStore.document).toStrictEqual(createSurvey([radioGroup]));
+    expect(surveyCreatorStore.document).toStrictEqual(createSurveyOnePageTestDocument([radioGroup]));
   });
 });

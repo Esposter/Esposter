@@ -1,30 +1,19 @@
 // @vitest-environment nuxt
 import ResourceSurveyCreatorCanvas from "#src/components/Resource/Survey/Creator/Canvas/Index.vue";
 import { useSurveyCreatorCommands } from "#src/composables/survey/useSurveyCreatorCommands";
+import { createSurveyOnePageTestDocument } from "#src/services/survey/createSurveyOnePageTestDocument.test";
 import { useSurveyCreatorStore } from "#src/store/survey/creator";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { beforeAll, describe, expect, test } from "vitest";
-import { surveyDocumentSchema, SurveyNodeType } from "vue-survey-engine-headless";
+import { SurveyNodeType } from "vue-survey-engine-headless";
 
 // A one-page survey of two text questions
 const createSurvey = (titles: string[]) =>
-  surveyDocumentSchema.parse({
-    content: [
-      {
-        props: {
-          children: [
-            { props: { id: "first", name: "first", title: titles[0] }, type: SurveyNodeType.Text },
-            { props: { id: "second", name: "second", title: titles[1] }, type: SurveyNodeType.Text },
-          ],
-          enableIf: "",
-          id: "page",
-        },
-        type: SurveyNodeType.Page,
-      },
-    ],
-    root: { props: { backgroundImage: "" } },
-  });
+  createSurveyOnePageTestDocument([
+    { props: { id: "first", name: "first", title: titles[0] }, type: SurveyNodeType.Text },
+    { props: { id: "second", name: "second", title: titles[1] }, type: SurveyNodeType.Text },
+  ]);
 const loadSurvey = () => {
   const surveyCreatorStore = useSurveyCreatorStore();
   surveyCreatorStore.load(createSurvey(["", ""]));
