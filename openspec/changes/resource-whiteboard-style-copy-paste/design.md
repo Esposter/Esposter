@@ -23,13 +23,7 @@ The copy reads the one selected element into the session store, and writes nothi
 
 ## Decisions
 
-- **The look is the set of fields a copy carries.** A copy carries the outline colour, the outline width, the dash pattern, the sketch level, the fill, the corners, the text size, the horizontal and vertical alignments, and an arrow's arrowhead at each end. It leaves out an image's alt text, which describes the image and does not show it, a text box's wrap, which sets the width of an unwrapped box, and an arrow's route kind, which is the shape of that arrow and is drawn per arrow. Rejected: copying every field, which would carry an image's alt text onto another image and a text box's wrap onto a box it would resize.
-- **An alignment the source never set is not carried.** A text's alignment is absent until one is chosen, and a change can only set an alignment, not remove one, so the target keeps its own. Rejected: clearing the target's alignment, which would need a removal the change does not have.
-- **The holding rule is read by the copy and the paste alike.** The rule that decides which fields a kind holds already lives in the headless block editor's property update, and a paste applies it to each target. The copy reads the source through the same rule, so an ellipse carries no corners and an image carries no colour. This change exports the rule from that module. Rejected: a second table in the app of which kind holds which field, which would drift from the rule a paste applies.
-- **The copied look is held in a session store, not the system clipboard.** The store is app-wide, so a look copied on one whiteboard pastes onto another in the same session. Rejected: the system clipboard, since a copy of elements already writes there and a copy of style would overwrite the elements the owner may paste next.
-- **A copy takes one element, and a paste takes any selection.** A selection of several has no one look to copy, and the selected elements are read in document order, so taking the first of several would make the source a rule the owner cannot see. The copy keys are bound only while exactly one element is selected. Rejected: copying from the first of several.
-- **A paste is one edit over every selected element.** The operations of all the selected elements are committed through one edit, as the stacking keys commit a selection, so one undo reverts the paste. Rejected: one edit per element, which an undo would have to reverse one element at a time.
-- **The keys are Excalidraw's chords, Ctrl or Cmd with Alt and C for the copy and with Alt and V for the paste.** Excalidraw lists copy styles and paste styles on these chords in its help dialog. The chords do not collide with the whiteboard's Ctrl or Cmd keys, since a shortcut matches its Alt modifier exactly. Rejected: Ctrl or Cmd with Shift and C or V, since Shift with C opens the browser's element inspector on Windows and Linux and Shift with V pastes plain text in a browser.
+The decisions this change builds are recorded as built in `openspec/specs/resource/whiteboard/design.md`, under Decisions, and are not restated here.
 
 ## Notes
 
@@ -62,4 +56,4 @@ apps/web/app/composables/whiteboard/useWhiteboardStyleKeyboard.ts     registers 
 
 ## Sources
 
-- [Excalidraw — HelpDialog.tsx](https://github.com/excalidraw/excalidraw/blob/master/packages/excalidraw/components/HelpDialog.tsx) — lists Copy styles on Ctrl or Cmd with Alt and C, and Paste styles on Ctrl or Cmd with Alt and V, the chords this change takes.
+The sources this change draws on are recorded in `openspec/specs/resource/whiteboard/design.md`, under Sources.

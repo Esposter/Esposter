@@ -44,6 +44,7 @@ const {
   selectAll,
 } = useWhiteboardKeyboard(editState, selectedIds, deletingIds, tool);
 useWhiteboardArrangeKeyboard(editState, selectedIds, isDeleteOpen);
+useWhiteboardStyleKeyboard(editState, selectedIds, isDeleteOpen);
 const {
   draft,
   onBlur,
