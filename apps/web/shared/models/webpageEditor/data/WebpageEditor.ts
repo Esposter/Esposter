@@ -20,6 +20,8 @@ export class WebpageEditor extends AItemEntity {
   // The baked document of a published snapshot. The server renders it from the tree at publish, so no working copy holds it
   html?: string | undefined;
   imageUrl = "";
+  // Whether search engines may list the published page, on for a new webpage until its owner turns it off
+  isIndexable = true;
   root: { props: WebpageRootProps } = { props: { lang: "en", tokens: {} } };
 
   constructor(init?: Partial<WebpageEditor>) {
@@ -35,5 +37,6 @@ export const webpageEditorSchema = webpageDocumentSchema.and(
     description: z.string().max(WEBPAGE_DESCRIPTION_MAX_LENGTH),
     html: z.string().max(MAX_RESOURCE_CONTENT_SIZE).meta({ readOnly: true }).optional(),
     imageUrl: z.literal("").or(z.string().startsWith(RESOURCE_ASSETS_URL_PREFIX).max(URL_MAX_LENGTH)),
+    isIndexable: z.boolean(),
   }),
 ) satisfies z.ZodType<ToData<WebpageEditor>>;

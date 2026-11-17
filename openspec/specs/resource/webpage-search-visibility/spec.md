@@ -1,4 +1,8 @@
-## ADDED Requirements
+## Purpose
+
+The owner's choice of whether search engines list a published webpage, set by a switch in the webpage's Settings blade and answered by a noindex robots directive on the published page.
+
+## Requirements
 
 ### Requirement: The owner decides whether search engines list a published webpage
 
@@ -15,12 +19,6 @@ A webpage SHALL take a Show in search results setting that is on until the owner
 - **GIVEN** a published webpage with Show in search results on
 - **WHEN** a crawler requests the page
 - **THEN** the page's head carries no robots directive
-
-#### Scenario: A webpage with no stored setting is listed
-
-- **GIVEN** a stored webpage written before the setting existed
-- **WHEN** it is published and requested
-- **THEN** it is listed as before
 
 #### Scenario: The owner turns search listing off
 

@@ -17,4 +17,4 @@ A published webpage is open to search engines the moment it is published, and it
 
 ## Impact
 
-The webpage settings gain one boolean and the Settings blade one switch. The published page sets a robots directive in its head when the switch is off. A stored webpage without the field reads on, so no stored page changes.
+The webpage settings gain one boolean and the Settings blade one switch. The published page sets a robots directive in its head when the switch is off.

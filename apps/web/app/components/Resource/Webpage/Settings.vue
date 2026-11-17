@@ -66,6 +66,10 @@ await loadContent();
         Remove
       </UiButton>
     </UiFrame>
+    <UiFrame title="Search">
+      <p text-muted>Search engines list a published page unless this is off.</p>
+      <UiSwitch v-model="webpageEditor.isIndexable" is-label-shown label="Show in search results" />
+    </UiFrame>
     <p text-sm text-muted flex gap-2 items-center md:col-span-2>
       <UiIcon :meaning="UiIconMeaning.Info" />
       Changes save as you make them, and show in a shared link once the page is published again.

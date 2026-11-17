@@ -19,6 +19,8 @@ const srcdoc = content.html ?? "";
 // The image is a relative asset url, and an Open Graph image must be absolute, so it resolves against this request
 if (content.description) useSeoMeta({ description: content.description, ogDescription: content.description });
 if (content.imageUrl) useSeoMeta({ ogImage: new URL(content.imageUrl, useRequestURL()).href });
+// A page the owner hid from search asks crawlers not to list it; a listed page carries no robots directive
+if (!content.isIndexable) useSeoMeta({ robots: "noindex" });
 </script>
 
 <template>
