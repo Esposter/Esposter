@@ -29,10 +29,8 @@ export const GCG_OPEN_ADVENTURE_RANK = 32;
 // The main quest of the card game's tutorial: its finish is what starts the Player Level at one
 export const GCG_TUTORIAL_QUEST_ID = "70665";
 
-// The card game's items in the dump: its Player EXP, a virtual item the card game's rewards pay into its EXP, and the Lucky Coin
-// Its Card Shop prices in and its rewards pay
+// The card game's virtual item in the dump, which its rewards pay into its Player EXP
 export const GCG_PLAYER_EXP_ITEM_ID = 146;
-export const GCG_LUCKY_COIN_ITEM_ID = 107_021;
 export const GCG_CRYSTALLIZE_SHIELD = 1;
 // The damage a Frozen character takes more from a Pyro or Physical hit, which removes its Frozen status
 export const GCG_FROZEN_BONUS = 2;

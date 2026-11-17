@@ -21,6 +21,8 @@ export const DRAFF_SHOP_ID = 1017;
 export const DAY_VENDOR_SHOP_IDS: readonly number[] = [BROOK_SHOP_ID, DRAFF_SHOP_ID];
 // The shop Paimon's Bargains sells its Fates from, by the shop's id, which its screen reads the Fates of
 export const PAIMON_BARGAINS_SHOP_ID = 1001;
+// The Lucky Coin, which the Card Shop prices its cards in and the card game's weekly rewards pay
+export const GCG_LUCKY_COIN_ITEM_ID = 107_021;
 // Paimon's Bargains' tabs in the order the screen shows them, each by its id, the currency its goods are bought with and the
 // Key of its name. The Primogem tab's Fates are the inventory's, which the slice does not hold, so that tab is empty for now
 export const PAIMON_BARGAINS_TABS: readonly { currency: Currency; id: number; nameKey: GameTextKey }[] = [

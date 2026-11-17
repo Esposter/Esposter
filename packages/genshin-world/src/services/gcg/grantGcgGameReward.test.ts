@@ -2,10 +2,11 @@ import type { GcgRewardState } from "#src/models/gcg/GcgRewardState";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 
 import { MaterialType } from "#src/models/inventory/MaterialType";
-import { GCG_LUCKY_COIN_ITEM_ID, GCG_PLAYER_EXP_ITEM_ID } from "#src/services/gcg/constants";
+import { GCG_PLAYER_EXP_ITEM_ID } from "#src/services/gcg/constants";
 import { grantGcgGameReward } from "#src/services/gcg/grantGcgGameReward";
 import { EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
+import { GCG_LUCKY_COIN_ITEM_ID } from "#src/services/shop/constants";
 import { describe, expect, test } from "vitest";
 
 describe(grantGcgGameReward, () => {
