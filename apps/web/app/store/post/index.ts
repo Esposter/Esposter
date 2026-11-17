@@ -18,12 +18,12 @@ export const usePostStore = defineStore("post", () => {
   const postCountStore = usePostCountStore();
   const { refreshPostCounts } = postCountStore;
   const sortType = ref<PostSortType>(PostSortType.Hot);
-  const { items, ...restData } = useCursorPaginationData<PostInPostWithRelations>();
+  const { hasMore, items, readItems, readMoreItems, resetCursorPaginationData } =
+    useCursorPaginationData<PostInPostWithRelations>();
   const {
     createPost: storeCreatePost,
     deletePost: storeDeletePost,
     updatePost: storeUpdatePost,
-    ...restOperationData
   } = createOperationData(items, ["id"], DatabaseEntityType.Post);
 
   const { executeMutation: executeCreatePostMutation, isPending: isCreatePostPending } = useMutation();
@@ -92,12 +92,14 @@ export const usePostStore = defineStore("post", () => {
   return {
     createPost,
     deletePost,
+    hasMore,
     isCreatePostPending,
     isUpdatePostPending,
     items,
+    readItems,
+    readMoreItems,
+    resetCursorPaginationData,
     sortType,
     updatePost,
-    ...restOperationData,
-    ...restData,
   };
 });

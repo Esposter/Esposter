@@ -28,12 +28,12 @@ Scheduled rows come from `message.scheduledMessageJob.readMyScheduledMessageJobs
 
 Drafts themselves are held in the message input store as a reactive `Map<roomId, Draft>` with localStorage as persistence only — the store is the source of truth for reactivity.
 
-Three things write a draft — the composer's debounced autosave, an explicit `setDraft`/`clearDraft`, and the boot scan that restores what localStorage kept — and all three go through one writer, so sanitization and the "content that sanitizes to nothing removes the draft rather than storing an empty one" rule hold by construction rather than being restated per call site. An empty draft left stored would otherwise show up as a draft in the room list and in the Drafts tab.
+Three things write a draft — the composer's debounced autosave, an explicit `setDraft`/`clearComposer`, and the boot scan that restores what localStorage kept — and all three go through one writer, so sanitization and the "content that sanitizes to nothing removes the draft rather than storing an empty one" rule hold by construction rather than being restated per call site. An empty draft left stored would otherwise show up as a draft in the room list and in the Drafts tab.
 
 ```mermaid
 flowchart TD
   EDITOR["Composer input, per room"] -- "debounced autosave" --> SYNC
-  ACTION["setDraft / clearDraft"] --> SYNC
+  ACTION["setDraft / clearComposer"] --> SYNC
   RESTORE["Boot scan of stored draft keys"] --> SYNC
   SYNC["Sanitize the content"] -- "text survives" --> KEEP["Persist the draft"]
   SYNC -- "sanitizes to nothing" --> DROP["Remove the draft"]

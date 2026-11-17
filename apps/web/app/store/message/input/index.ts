@@ -132,7 +132,6 @@ export const useInputStore = defineStore("message/input", () => {
   return {
     checkIsInputValid,
     clearComposer,
-    clearDraft,
     drafts,
     getComposerInput,
     input,

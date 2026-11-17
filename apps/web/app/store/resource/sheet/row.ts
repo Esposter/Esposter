@@ -85,15 +85,11 @@ export const useRowStore = defineStore("resource/sheet/row", () => {
     },
   );
 
-  const navigateToCurrentOccurrence = () => {
+  watch([itemsPerPage, () => findReplaceStore.currentOccurrenceIndex, () => findReplaceStore.occurrences], () => {
     if (itemsPerPage.value === -1) return;
     const occurrence = findReplaceStore.occurrences.at(findReplaceStore.currentOccurrenceIndex);
     if (!occurrence) return;
     page.value = Math.floor(occurrence.rowIndex / itemsPerPage.value) + 1;
-  };
-
-  watch([itemsPerPage, () => findReplaceStore.currentOccurrenceIndex, () => findReplaceStore.occurrences], () => {
-    navigateToCurrentOccurrence();
   });
 
   return {

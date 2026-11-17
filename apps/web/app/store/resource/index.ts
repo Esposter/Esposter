@@ -258,11 +258,6 @@ export const useResourceStore = defineStore("resource", () => {
   const setPersistedContent = (content: ResourceContent<ResourceType>) => {
     persistedContentJson = JSON.stringify(content);
   };
-  // Another device saved this resource's content — adopting its contentVersion is what keeps this client's own
-  // Next save from being rejected as stale
-  const storeContentVersion = (contentVersion: ResourceInResource["contentVersion"]) => {
-    if (resource.value) resource.value.contentVersion = contentVersion;
-  };
   // Another device saved this resource. Taken through the two stages a restore runs, which the reload leaves to
   // Adopt the document (openspec/specs/architecture/ai-native-resources/live-edits/design.md)
   const storeSaveResourceContent = async ({ apiKeyName, contentVersion }: ResourceSave) => {
@@ -292,7 +287,7 @@ export const useResourceStore = defineStore("resource", () => {
     const resourceValue = resource.value;
     if (!resourceValue || !heldSave.value) return;
 
-    storeContentVersion(heldSave.value.contentVersion);
+    resourceValue.contentVersion = heldSave.value.contentVersion;
     heldSave.value = undefined;
     isContentStale.value = false;
     await ResourceContentHookMap.Keep.run(resourceValue.type);

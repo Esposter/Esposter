@@ -11,5 +11,5 @@ export const useAppUserStore = defineStore("message/user/appUser", () => {
   const storeAppUsers = (appUsers: NamedAppUserInMessage[]) => {
     for (const appUser of appUsers) storeAppUser(appUser);
   };
-  return { appUserMap, storeAppUser, storeAppUsers };
+  return { appUserMap, storeAppUsers };
 });

@@ -104,37 +104,37 @@ describe(useInputStore, () => {
     expect(drafts.value.get(roomId2)?.content).toBe(draftContent);
   });
 
-  test("clearDraft removes room from drafts", () => {
+  test("clearComposer removes room from drafts", () => {
     expect.hasAssertions();
 
     setStoredDraft(roomId1, draftContent);
     const inputStore = useInputStore();
     const { drafts } = storeToRefs(inputStore);
-    const { clearDraft } = inputStore;
-    clearDraft(roomId1);
+    const { clearComposer } = inputStore;
+    clearComposer({ roomId: roomId1, threadRootId: 0 });
 
     expect(drafts.value.has(roomId1)).toBe(false);
   });
 
-  test("clearDraft removes draft from localStorage", () => {
+  test("clearComposer removes draft from localStorage", () => {
     expect.hasAssertions();
 
     setStoredDraft(roomId1, draftContent);
     const inputStore = useInputStore();
-    const { clearDraft } = inputStore;
-    clearDraft(roomId1);
+    const { clearComposer } = inputStore;
+    clearComposer({ roomId: roomId1, threadRootId: 0 });
 
     expect(readStoredDraft(roomId1)).toBeUndefined();
   });
 
-  test("clearDraft clears input data for the room", () => {
+  test("clearComposer clears input data for the room", () => {
     expect.hasAssertions();
 
     setStoredDraft(roomId1, draftContent);
     const inputStore = useInputStore();
     const { input } = storeToRefs(inputStore);
-    const { clearDraft } = inputStore;
-    clearDraft(roomId1);
+    const { clearComposer } = inputStore;
+    clearComposer({ roomId: roomId1, threadRootId: 0 });
 
     expect(input.value).toBe("");
   });

@@ -9,12 +9,6 @@ export const useCellStore = defineStore("resource/sheet/cell", () => {
   // Selected or edited in — carried over, it would select or edit the same coordinates in the next sheet opened
   const { data: cellState } = useDataMap<CellState>(() => resourceStore.currentResourceId, { mode: CellMode.View });
 
-  const editingCell = computed(() =>
-    cellState.value.mode === CellMode.Edit
-      ? { columnName: cellState.value.columnName, rowIndex: cellState.value.rowIndex }
-      : undefined,
-  );
-
   const selectedCellRange = computed(() => {
     if (cellState.value.mode !== CellMode.Select) return undefined;
     const { anchor, focus } = cellState.value;
@@ -33,7 +27,9 @@ export const useCellStore = defineStore("resource/sheet/cell", () => {
     if (cellState.value.mode === CellMode.Edit) cellState.value = { mode: CellMode.View };
   };
   const checkIsEditingCell = (rowIndex: number, columnName: string) =>
-    editingCell.value?.rowIndex === rowIndex && editingCell.value.columnName === columnName;
+    cellState.value.mode === CellMode.Edit &&
+    cellState.value.rowIndex === rowIndex &&
+    cellState.value.columnName === columnName;
 
   const focusedCell = computed(() => (cellState.value.mode === CellMode.Select ? cellState.value.focus : undefined));
 
@@ -62,7 +58,6 @@ export const useCellStore = defineStore("resource/sheet/cell", () => {
     checkIsEditingCell,
     clearCellSelection,
     clearFocus,
-    editingCell,
     extendCellSelection,
     focusedCell,
     requestFocus,

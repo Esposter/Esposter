@@ -86,7 +86,6 @@ export const useMediaStore = defineStore("message/room/call/media", () => {
     isForceMuted,
     isPoppedOut,
     isScreenSharing,
-    localScreenShareStream,
     localVideoStream,
     participantVolumePercentageMap,
     pinnedParticipantId,

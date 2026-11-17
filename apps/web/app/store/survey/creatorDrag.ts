@@ -10,7 +10,6 @@ export const useSurveyCreatorDragStore = defineStore("survey/creatorDrag", () =>
   const draggedNodeId = ref("");
   const dragPoint = shallowRef({ x: 0, y: 0 });
   const dropTarget = shallowRef<DropTarget>();
-  const isDragging = computed(() => draggedType.value !== undefined);
   // The canvas's measuring of its slots. It is a plain function rather than state, since only a drag reads it.
   // A canvas holds it only while it is mounted
   let measureCanvasSlots: (() => SurveyDropSlot[]) | undefined;
@@ -43,7 +42,6 @@ export const useSurveyCreatorDragStore = defineStore("survey/creatorDrag", () =>
     draggedType,
     dragPoint,
     dropTarget,
-    isDragging,
     measureSlots,
     moveDrag,
     setDrag,

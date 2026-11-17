@@ -5,16 +5,16 @@ import type { WebpageKind } from "#src/models/pageBuilder/WebpageKind";
 
 import { ResourceType } from "@esposter/db-schema";
 
+export type OpenPageBuilderDocument = OpenEmailDocument | OpenWebpageDocument;
+
 // An email held beside its kind, the same as a webpage, so a resource's document and its kind are always opened together
-export interface OpenEmailDocument {
+interface OpenEmailDocument {
   document: EmailDocument;
   kind: EmailKind;
   type: typeof ResourceType.Email;
 }
-
-export type OpenPageBuilderDocument = OpenEmailDocument | OpenWebpageDocument;
 // A webpage held beside the kind it was opened as, which the shell reads the document through
-export interface OpenWebpageDocument {
+interface OpenWebpageDocument {
   document: WebpageDocument;
   kind: WebpageKind;
   type: typeof ResourceType.Webpage;

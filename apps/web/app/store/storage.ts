@@ -7,11 +7,7 @@ import type { StorageUsage } from "@esposter/db-schema";
 export const useStorageStore = defineStore("storage", () => {
   const { $trpc } = useNuxtApp();
   const storageUsage = ref<StorageUsage>();
-  const {
-    read: readStorageUsage,
-    refetch: refetchStorageUsage,
-    supersede,
-  } = useCachedRead(() => $trpc.storage.readUsage.query(), {
+  const { read: readStorageUsage, supersede } = useCachedRead(() => $trpc.storage.readUsage.query(), {
     onSuccess: (newStorageUsage) => {
       storageUsage.value = newStorageUsage;
     },
@@ -23,5 +19,5 @@ export const useStorageStore = defineStore("storage", () => {
     supersede();
     storageUsage.value = newStorageUsage;
   };
-  return { readStorageUsage, refetchStorageUsage, storageUsage, storeUpdateStorageUsage };
+  return { readStorageUsage, storageUsage, storeUpdateStorageUsage };
 });

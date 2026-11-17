@@ -16,7 +16,14 @@ const markRead = <T extends { isRead: boolean }>(notification: T): T =>
 // Reload, so it is never written down — which is also why only the delivered half is paginated.
 export const useNotificationStore = defineStore("notification", () => {
   const { $trpc } = useNuxtApp();
-  const { items: deliveredNotifications, ...restData } = useCursorPaginationData<AppNotification>();
+  const {
+    hasMore,
+    initializeCursorPaginationData,
+    isLoaded,
+    items: deliveredNotifications,
+    readItems,
+    readMoreItems,
+  } = useCursorPaginationData<AppNotification>();
   // Every write that answers the unread total queues on this one executor under one key, so an answer read before a
   // Later write's can never land after it
   const { executeMutation: executeNotificationMutation } = useMutation();
@@ -193,18 +200,21 @@ export const useNotificationStore = defineStore("notification", () => {
     });
   };
   return {
-    ...restData,
     consumeNotificationAction,
     createErrorNotification,
     createNotification,
-    createSnackbar,
     createWarningNotification,
     dismissNotification,
     dismissNotifications,
     dismissSnackbar,
+    hasMore,
+    initializeCursorPaginationData,
+    isLoaded,
     isPanelOpen,
     markAllAsRead,
     notifications,
+    readItems,
+    readMoreItems,
     setUnreadDeliveredCount,
     snackbarNotification,
     storeDeliveredNotifications,

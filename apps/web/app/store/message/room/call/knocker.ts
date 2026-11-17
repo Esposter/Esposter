@@ -84,7 +84,6 @@ export const useKnockerStore = defineStore("message/room/call/knocker", () => {
     admitKnocker,
     cancelKnock,
     createKnocker,
-    deleteKnocker,
     dismissKnocker,
     joinCallOptions,
     knockCall,

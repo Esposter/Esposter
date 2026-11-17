@@ -114,7 +114,6 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
     readFriendRequests,
     receivedFriendRequests,
     sendFriendRequest,
-    sentFriendRequests,
     storeAcceptFriendRequest,
     storeCreateFriendRequest,
     storeDeleteFriendRequestsByUser,
