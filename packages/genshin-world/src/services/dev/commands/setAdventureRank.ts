@@ -11,7 +11,7 @@ export const setAdventureRankArgumentsSchema = z.object({
   rank: z.coerce.number().int().min(1).max(MAX_ADVENTURE_RANK),
 });
 
-export type SetAdventureRankArguments = z.infer<typeof setAdventureRankArgumentsSchema>;
+type SetAdventureRankArguments = z.infer<typeof setAdventureRankArgumentsSchema>;
 
 // Sets the Adventure EXP that rank is reached at, read from the same rank table the game's rank rule reads.
 // So the rank the game shows is the one named, unless a main quest holds it lower.

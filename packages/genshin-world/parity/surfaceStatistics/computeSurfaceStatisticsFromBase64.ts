@@ -1,10 +1,11 @@
 import type { SurfaceStatisticsInput } from "#parity/surfaceStatistics/SurfaceStatisticsInput";
+import type { Except } from "type-fest";
 
 import { computeSurfaceStatistics } from "#parity/surfaceStatistics/computeSurfaceStatistics";
 import { decodeBase64 } from "#parity/surfaceStatistics/decodeBase64";
 
 // The host's form of the input: the values' and the mask's bytes, each base64, beside their sizes and sigmas
-export interface EncodedSurfaceStatisticsInput extends Omit<SurfaceStatisticsInput, "mask" | "values"> {
+interface EncodedSurfaceStatisticsInput extends Except<SurfaceStatisticsInput, "mask" | "values"> {
   mask: string;
   values: string;
 }

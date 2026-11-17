@@ -7,5 +7,5 @@ import type { KitEffect } from "#src/models/kit/KitEffect";
 // Step with another on it is a swap
 export interface KitEffectState {
   effects: KitEffect[];
-  fieldCharacterId?: number | undefined;
+  fieldCharacterId?: number;
 }

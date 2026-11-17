@@ -11,7 +11,7 @@ import { z } from "zod";
 // The `unlock` line: a region or a waypoint, and the name the game shows it under
 export const unlockLandmarkArgumentsSchema = z.object({ kind: z.enum(DevUnlockKind), name: z.string().min(1) });
 
-export type UnlockLandmarkArguments = z.infer<typeof unlockLandmarkArgumentsSchema>;
+type UnlockLandmarkArguments = z.infer<typeof unlockLandmarkArgumentsSchema>;
 
 // Unlocks a region's Statue of The Seven or a Teleport Waypoint the way the game's activation does.
 // Its landmark's id joins the landmarks the save holds unlocked.

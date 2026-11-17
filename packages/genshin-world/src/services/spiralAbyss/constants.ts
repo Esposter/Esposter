@@ -10,7 +10,7 @@ export const ABYSS_LONG_CLOCK_SECONDS = 600;
 export const ABYSS_CORRIDOR_LAST_FLOOR_INDEX = 8;
 // A floor's chambers, each paying its first clear's reward, and its star milestones at 3, 6 and 9 stars
 export const ABYSS_FLOOR_CHAMBER_COUNT = 3;
-export const ABYSS_STAR_MILESTONE_COUNT = 3;
+const ABYSS_STAR_MILESTONE_COUNT = 3;
 // The rewards one cycle can claim: each floor's chambers and milestones over the Corridor's eight floors, the most any
 // Cycle holds, as a Moon Spire period holds four
 export const MAX_ABYSS_CYCLE_REWARD_CLAIM_COUNT =

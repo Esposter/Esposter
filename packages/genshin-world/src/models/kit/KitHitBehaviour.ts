@@ -10,8 +10,8 @@ import type { KitStackedHit } from "#src/models/kit/KitStackedHit";
 export interface KitHitBehaviour extends Partial<
   Pick<KitHit, "additiveBaseDamageBonus" | "enemyStatus" | "healAttackShare" | "landsWhen" | "onStrike">
 > {
-  bubbleOmenId?: EnemyStatus["id"] | undefined;
-  healPartyChance?: KitPartyHeal["chance"] | undefined;
-  stackedHitStatusId?: KitStackedHit["statusId"] | undefined;
-  takesWielderElement?: boolean | undefined;
+  bubbleOmenId?: EnemyStatus["id"];
+  healPartyChance?: KitPartyHeal["chance"];
+  stackedHitStatusId?: KitStackedHit["statusId"];
+  takesWielderElement?: boolean;
 }

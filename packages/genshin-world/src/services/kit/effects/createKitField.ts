@@ -1,6 +1,6 @@
 import type { KitField } from "#src/models/kit/KitField";
 import type { GroundPoint } from "genshin-engine";
-import type { Except } from "type-fest";
+import type { Except, SetOptional } from "type-fest";
 
 import { UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
 
@@ -12,5 +12,5 @@ export const createKitField = (
   {
     radius = UNBOUNDED_FIELD_RADIUS,
     ...fields
-  }: Except<KitField, "centre" | "characterId" | "kind" | "radius" | "tickIndex"> & Partial<Pick<KitField, "radius">>,
+  }: SetOptional<Except<KitField, "centre" | "characterId" | "kind" | "tickIndex">, "radius">,
 ): KitField => ({ centre: { x, z }, characterId, kind: "field", radius, tickIndex: 0, ...fields });

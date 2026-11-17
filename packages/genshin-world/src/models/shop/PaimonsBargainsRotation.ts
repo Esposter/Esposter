@@ -32,7 +32,7 @@ export interface PaimonsBargainsRotation {
   weaponPrice: PaimonsBargainsPrice;
 }
 
-export const paimonsBargainsPriceSchema = z.object({
+const paimonsBargainsPriceSchema = z.object({
   buyLimit: z.int().nonnegative(),
   costs: z.array(shopGoodCostSchema).min(1),
   refresh: z.enum(ShopRefresh),

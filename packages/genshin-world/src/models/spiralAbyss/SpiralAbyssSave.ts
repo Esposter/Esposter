@@ -4,10 +4,10 @@ import { createRecordSchema } from "@esposter/shared";
 import { z } from "zod";
 
 // A chamber's progress in one cycle: whether it has been cleared, and the most stars any clear of it has held
-export const spiralAbyssChamberSaveSchema = z.object({ isCleared: z.boolean(), stars: z.int().min(0).max(3) });
+const spiralAbyssChamberSaveSchema = z.object({ isCleared: z.boolean(), stars: z.int().min(0).max(3) });
 
 // One cycle of the Abyss: its chambers by id, and the rewards its clears have claimed
-export const spiralAbyssCycleSaveSchema = z.object({
+const spiralAbyssCycleSaveSchema = z.object({
   chambers: createRecordSchema(
     z.string().max(MAX_SAVE_ID_LENGTH).regex(/^\d+$/u),
     spiralAbyssChamberSaveSchema,

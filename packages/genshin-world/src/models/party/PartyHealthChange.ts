@@ -11,9 +11,9 @@ export interface PartyHealthChange {
   element?: Element | undefined;
   healthShare: number;
   // Whether the change ran the member out of HP while it stood, so its fall is the kits' to end, none for any other change
-  isFall?: true | undefined;
+  isFall?: true;
   // Whether a kit refused the fall the change would have brought, leaving the member standing at the share it keeps
   isFallRefused: boolean;
   overflowHealthShare: number;
-  sourceCharacterId?: number | undefined;
+  sourceCharacterId?: number;
 }

@@ -28,15 +28,15 @@ export interface KitHit {
   // The bubble it holds each enemy it strikes in, if it casts one
   bubble?: KitBubbleSpec | undefined;
   // The cylinder the hit reaches while its attacks are converted by an infusion that converts them, if it reaches another
-  convertedHitArea?: AttackArea | undefined;
+  convertedHitArea?: AttackArea;
   // The poise the hit deals while its attacks are converted by an infusion that converts them, if it has one
-  convertedPoiseDamage?: number | undefined;
+  convertedPoiseDamage?: number;
   // The CRIT DMG the hit adds to its striker's as its critical damage is priced, if it carries one of its own
-  criticalDamageBonus?: number | undefined;
+  criticalDamageBonus?: number;
   // The CRIT Rate the hit adds to its striker's as its roll is made, as a passive prices it on the strike, if it carries one
-  criticalRateBonus?: number | undefined;
+  criticalRateBonus?: number;
   // The DMG Bonus the hit adds to its striker's as it is priced, if it carries one of its own
-  damageBonus?: number | undefined;
+  damageBonus?: number;
   // The share of its enemy's defence the hit ignores as it is dealt, if a constellation or a deployed member's kit gives it one
   defenseIgnored?: number | undefined;
   element?: Element | undefined;
@@ -49,38 +49,38 @@ export interface KitHit {
   // The share of its striker's ATK the hit heals its striker's character by for each enemy it strikes, given the striker
   healAttackShare?: ((combatant: Combatant) => number) | undefined;
   // The heal the party may take from the hit as it strikes, if the hit can give one
-  healParty?: KitPartyHeal | undefined;
+  healParty?: KitPartyHeal;
   hitArea: AttackArea;
   hitmarkSeconds: number;
   // The gauge the hit deals while an infusion takes it, if not the infused element's 1U: a plunge's collision's 0U
-  infusedGauge?: number | undefined;
-  internalCooldownTag?: InternalCooldownTag | undefined;
+  infusedGauge?: number;
+  internalCooldownTag?: InternalCooldownTag;
   // Whether the hit is blunt by its own record, or by the behaviour that builds it, which `checkIsBluntHit` reads with
   // The Geo rule for a hit that names no element of its own
-  isBlunt?: true | undefined;
+  isBlunt?: true;
   // Whether the hit always lands as a critical hit, which its strike rolls no CRIT Rate for
-  isForcedCritical?: true | undefined;
+  isForcedCritical?: true;
   // Whether the hit's stagger level is Air, as the wiki's impulse types 5 to 9 are, which launches an enemy it staggers
-  isLaunching?: true | undefined;
+  isLaunching?: true;
   // Whether the hit lands as its hitmark falls, given the context it lands in, for a hit a condition such as a Moonsign
   // Level gates. A hit with none always lands
   landsWhen?: ((context: KitContext) => boolean) | undefined;
   // The Lunar reaction the hit deals its damage as, if it is a direct Lunar hit, priced by the Lunar formula rather than
   // As a talent's hit
-  lunarHit?: KitLunarHit | undefined;
+  lunarHit?: KitLunarHit;
   // Run for each enemy the hit strikes, given the strike with the body it lands from and its striker, and the enemy it
   // Strikes, for a hit that gives its striker something back as it lands
   onStrike?: ((context: KitContext, strike: KitStrike, enemy: Enemy) => void) | undefined;
   poiseDamage: number;
   // The talent multiplier and poise the hit deals set by the stacks of a status on each enemy it strikes, if it has one
-  stackedHit?: KitStackedHit | undefined;
+  stackedHit?: KitStackedHit;
   // The Stellar Glimmer reaction the hit deals its damage as, if it is a direct Stellar hit, priced by the Glimmer
   // Formula rather than as a talent's hit, as a talent or constellation alone deals Stellar-Conduct DMG
-  stellarReactionType?: StellarReactionType | undefined;
+  stellarReactionType?: StellarReactionType;
   talentMultiplier: number;
   // The index of the one enemy the hit strikes among those its area reaches, wrapped to their count, instead of each of
   // Them, as a shell's hit takes its enemies in turn. None for a hit that strikes every enemy its area reaches
-  targetIndex?: number | undefined;
+  targetIndex?: number;
   // Whether the hit lands on an enemy's weak point, read as it lands: the strike sets it on an aimed hit to an enemy with weak points
-  weakPoint?: boolean | undefined;
+  weakPoint?: boolean;
 }

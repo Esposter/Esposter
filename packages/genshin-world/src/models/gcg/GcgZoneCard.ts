@@ -8,7 +8,7 @@ export interface GcgZoneCard {
   cardId: number;
   counter: number;
   element?: Element | undefined;
-  elements?: Element[] | undefined;
+  elements?: Element[];
   rounds: number;
   usages: number;
 }

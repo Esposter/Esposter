@@ -9,7 +9,7 @@ export interface FishProficient {
 
 // One reel gear of a proficiency: the number it is reached at, and how fast the tension rises and falls while the reel is
 // Held and released inside the zone (`inSpeed`) and outside it (`outSpeed`)
-export interface FishProficientGear {
+interface FishProficientGear {
   inSpeed: number;
   num: number;
   outSpeed: number;

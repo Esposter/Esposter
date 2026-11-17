@@ -18,7 +18,7 @@ export interface TipTrigger {
   triggerType: string;
 }
 
-export const tipTriggerSchema = z.object({
+const tipTriggerSchema = z.object({
   paramList: z.array(z.string()),
   triggerType: z.string().min(1),
 }) satisfies z.ZodType<TipTrigger>;

@@ -9,7 +9,7 @@ import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStat
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 
-export interface AttackInstancePassive {
+interface AttackInstancePassive {
   // The attack tags whose hits the status adds its share to, and whose hits count as its instances once it is obtained
   attackTags: AttackTag[];
   // Whether a hit the wielder deals obtains the status, when it is not holding the status and is off its cooldown

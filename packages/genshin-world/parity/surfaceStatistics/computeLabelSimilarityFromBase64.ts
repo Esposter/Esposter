@@ -1,18 +1,19 @@
 import type { LabelSimilarityInput } from "#parity/surfaceStatistics/LabelSimilarityInput";
 import type { LabelSimilarityOutput } from "#parity/surfaceStatistics/LabelSimilarityOutput";
+import type { Except } from "type-fest";
 
 import { computeLabelSimilarity } from "#parity/surfaceStatistics/computeLabelSimilarity";
 import { decodeBase64 } from "#parity/surfaceStatistics/decodeBase64";
 import { encodeBase64 } from "#parity/surfaceStatistics/encodeBase64";
 
 // The host's form of the input: each float array's bytes as base64, beside the sizes and label count
-export interface EncodedLabelSimilarityInput extends Omit<LabelSimilarityInput, "labels" | "reference" | "shot"> {
+interface EncodedLabelSimilarityInput extends Except<LabelSimilarityInput, "labels" | "reference" | "shot"> {
   labels: string;
   reference: string;
   shot: string;
 }
 // The host's form of the output: each term map's bytes as base64
-export interface EncodedLabelSimilarityOutput extends Omit<LabelSimilarityOutput, "termMaps"> {
+interface EncodedLabelSimilarityOutput extends Except<LabelSimilarityOutput, "termMaps"> {
   termMaps: { height: number; terms: string; width: number }[];
 }
 

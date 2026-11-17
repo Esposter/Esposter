@@ -14,12 +14,12 @@ export interface KitStrike {
   hit: KitHit;
   // The reach the hit's target gives it, when it reaches the enemies about its target in a hitbox rather than alone or by the
   // Body's area
-  hitbox?: KitHitbox | undefined;
+  hitbox?: KitHitbox;
   // Whether the hit is an aimed shot's, which takes an enemy's weak point when the enemy has one
-  isAimed?: true | undefined;
+  isAimed?: true;
   // Whether this is the first enemy the strike lands on, set on the copy its onStrike runs with
   // For an effect an attack gives once rather than on each enemy it strikes
-  isFirstEnemyStruck?: true | undefined;
+  isFirstEnemyStruck?: true;
   // Whether the hit is a summon's, a gadget in gcsim's terms, which a reaction it triggers carries as a gadget's
   isGadget?: true | undefined;
   // The one enemy the hit lands on, instead of each enemy its area reaches, if it lands on one

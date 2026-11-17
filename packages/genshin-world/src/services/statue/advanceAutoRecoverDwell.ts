@@ -2,7 +2,7 @@ import type { AutoRecoverDwell } from "#src/models/statue/AutoRecoverDwell";
 
 import { AUTO_RECOVER_DWELL_SECONDS } from "#src/services/statue/constants";
 
-export interface AdvancedAutoRecoverDwell {
+interface AdvancedAutoRecoverDwell {
   dwell: AutoRecoverDwell;
   isDue: boolean;
 }

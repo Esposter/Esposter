@@ -2,13 +2,13 @@ import { z } from "zod";
 
 // One level of a weekly boss's trounce domain as the game's tables set it: its boss dungeon, the enemies' level it fights at
 // And the recommended Adventure Rank it is set at
-export interface WeeklyBossLevel {
+interface WeeklyBossLevel {
   dungeonId: number;
   enemyLevel: number;
   recommendedRank: number;
 }
 
-export const weeklyBossLevelSchema = z.object({
+const weeklyBossLevelSchema = z.object({
   dungeonId: z.int().positive(),
   enemyLevel: z.int().positive(),
   recommendedRank: z.int().positive(),
@@ -19,7 +19,7 @@ export interface WeeklyBossDomain {
   levels: WeeklyBossLevel[];
 }
 
-export const weeklyBossDomainSchema = z.object({
+const weeklyBossDomainSchema = z.object({
   levels: z.array(weeklyBossLevelSchema),
 }) satisfies z.ZodType<WeeklyBossDomain>;
 

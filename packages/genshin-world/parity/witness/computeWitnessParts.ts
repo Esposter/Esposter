@@ -28,7 +28,7 @@ export const computeWitnessParts = (
         {
           mesh: part.name,
           position: part.getWorldPosition(new Vector3()).toArray(),
-          screen: [(projected.x + 1) / 2, (1 - projected.y) / 2] as [number, number],
+          screen: [(projected.x + 1) / 2, (1 - projected.y) / 2],
         },
       ];
   });

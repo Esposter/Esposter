@@ -18,11 +18,11 @@ export interface KitSummon extends KitSwapEndable {
   elapsedSeconds: number;
   hits: KitHit[];
   // The name its character's kit finds it by among the team's effects, if the kit reads it again
-  id?: string | undefined;
+  id?: string;
   // Whether the fall of its character, the one that cast it, ends it
-  isEndedOnFall?: true | undefined;
+  isEndedOnFall?: true;
   // Whether the summon moves with the body on the field, standing where that body stands on each step, whoever it is
-  isFollowing?: true | undefined;
+  isFollowing?: true;
   kind: "summon";
   // The index of its next hit to land, its hits being in the order their hitmarks fall
   nextHitIndex: number;
@@ -31,7 +31,7 @@ export interface KitSummon extends KitSwapEndable {
   onNormalAttackStart?: ((context: KitContext) => void) | undefined;
   secondsRemaining: number;
   // The seconds from its cast it appears on the field at, if not at once, which a kit asking whether it stands waits for
-  spawnSeconds?: number | undefined;
+  spawnSeconds?: number;
   // The Stellar Swirls a summon has taken, which its kit counts to level it up and to explode it
   stacks?: number | undefined;
   // The one enemy its hits land on, instead of each enemy their areas reach, if it lands on one

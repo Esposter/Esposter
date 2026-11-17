@@ -395,12 +395,12 @@ export const MAX_GENSHIN_SAVE_LENGTH: number =
   MAX_INVENTORY_ITEM_COUNT * LONGEST_INVENTORY_ITEM_LENGTH +
   QUICK_SWAP_GADGET_LIMIT * getListEntryLength(MAX_SAVE_NUMBER);
 // A new player's bag, which holds nothing until the world gives it something
-export const EMPTY_INVENTORY_SAVE: InventorySave = { items: [], nextId: 0, quickSwapItemIds: [] };
+const EMPTY_INVENTORY_SAVE: InventorySave = { items: [], nextId: 0, quickSwapItemIds: [] };
 // Mondstadt's Reputation at its first level, with no EXP toward the next
-export const EMPTY_REPUTATION_SAVE: ReputationProgress = { exp: 0, level: 1 };
+const EMPTY_REPUTATION_SAVE: ReputationProgress = { exp: 0, level: 1 };
 // A new player's party as the game starts one: the four default teams, the starting team deployed with its characters on
 // The field, and nobody down
-export const EMPTY_PARTY_SAVE: PartySave = {
+const EMPTY_PARTY_SAVE: PartySave = {
   activeIndex: 0,
   deployedTeamIndex: 0,
   downCharacterIds: [],

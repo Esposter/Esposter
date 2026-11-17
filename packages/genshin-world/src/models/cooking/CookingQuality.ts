@@ -2,10 +2,3 @@
 // Game's own words, and written in alphabetical order, since lint sorts an enum's members
 export const CookingQuality = { Delicious: "Delicious", Regular: "Regular", Suspicious: "Suspicious" } as const;
 export type CookingQuality = (typeof CookingQuality)[keyof typeof CookingQuality];
-
-// In the order the game lays a dish's results out, from the lowest quality to the highest
-export const CookingQualities: readonly CookingQuality[] = [
-  CookingQuality.Suspicious,
-  CookingQuality.Regular,
-  CookingQuality.Delicious,
-];

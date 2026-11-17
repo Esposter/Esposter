@@ -8,7 +8,7 @@ import type { GcgSkill } from "#src/models/gcg/GcgSkill";
 export interface GcgEffectContext {
   characterIndex?: number | undefined;
   duel: GcgDuel;
-  isPlunge?: boolean | undefined;
+  isPlunge?: boolean;
   sideIndex: number;
   skill?: GcgSkill | undefined;
 }

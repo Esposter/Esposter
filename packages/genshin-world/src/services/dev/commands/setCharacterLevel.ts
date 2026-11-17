@@ -11,7 +11,7 @@ export const setCharacterLevelArgumentsSchema = z.object({
   level: z.coerce.number().int().min(1),
 });
 
-export type SetCharacterLevelArguments = z.infer<typeof setCharacterLevelArgumentsSchema>;
+type SetCharacterLevelArguments = z.infer<typeof setCharacterLevelArgumentsSchema>;
 
 // Sets a held character's level, the save's own level field the game's level-ups write.
 // The level is clamped to the highest level its ascension allows.

@@ -7,9 +7,9 @@ import type { ItemCategory } from "genshin-interface/save";
 // Destroy rule, and a weapon or an artifact what a destroy returns; an entry without a rule is never destroyed
 export interface ItemDefinition {
   category?: ItemCategory | undefined;
-  destroyReturnMaterial?: number | undefined;
-  destroyReturnMaterialCount?: number | undefined;
-  destroyRule?: DestroyRule | undefined;
+  destroyReturnMaterial?: number;
+  destroyReturnMaterialCount?: number;
+  destroyRule?: DestroyRule;
   id: number;
   name: string;
   rank: number;

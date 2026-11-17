@@ -10,10 +10,10 @@ export interface EnemyKindTraits {
   element?: Element | undefined;
   energyDrops: EnergyDrop[];
   // Whether the kind is immune to Air staggers, so a launching hit that staggers it leaves it on the ground
-  isAirStaggerImmune?: true | undefined;
+  isAirStaggerImmune?: true;
   poiseType: PoiseType;
   // The share of its max HP the shield a kind holds on top of its health has, none for a kind with no shield
-  shieldHealthFraction?: number | undefined;
+  shieldHealthFraction?: number;
   // The boss's own drop its Trounce Blossom pays, none for a kind that leaves no blossom
-  uniqueDropId?: number | undefined;
+  uniqueDropId?: number;
 }

@@ -7,6 +7,6 @@ import type { Element } from "#src/models/Element";
 export interface Reaction {
   element?: Element | undefined;
   reactionType: ReactionType;
-  sourceIds?: number[] | undefined;
+  sourceIds?: number[];
   spreadGauge?: number | undefined;
 }

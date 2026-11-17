@@ -13,12 +13,12 @@ export interface ConstellationDepot {
 
 // The Stella Fortuna a set's constellations spend, one each: the game's id for its item, and the text id of its name, which
 // The names are read by. Every constellation of a set spends the one item
-export interface StellaFortuna {
+interface StellaFortuna {
   itemId: number;
   nameTextId: string;
 }
 
-export const stellaFortunaSchema = z.object({
+const stellaFortunaSchema = z.object({
   itemId: z.int().positive(),
   nameTextId: z.string(),
 }) satisfies z.ZodType<StellaFortuna>;

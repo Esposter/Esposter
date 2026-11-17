@@ -10,7 +10,7 @@ import {
 import { formatAttributeValue } from "#src/services/character/formatAttributeValue";
 import { GameTextKey } from "genshin-text";
 
-export interface AttributeDetailGroup {
+interface AttributeDetailGroup {
   rows: AttributeDetailRow[];
   title: string;
 }

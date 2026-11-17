@@ -1,5 +1,6 @@
 import type { DevHandle } from "#src/models/dev/DevHandle";
 import type { DevRegistry } from "#src/models/dev/DevRegistry";
+import type { Promisable } from "type-fest";
 
 import { onMounted, onUnmounted } from "vue";
 
@@ -10,7 +11,7 @@ export const useDevRegistration = ({
   createHandle,
   devRegistry,
 }: {
-  createHandle: () => DevHandle | Promise<DevHandle>;
+  createHandle: () => Promisable<DevHandle>;
   devRegistry?: DevRegistry | undefined;
 }) => {
   let isActive = true;

@@ -26,7 +26,7 @@ export interface Kit {
   burstEnergyCost: number;
   chargedAttack: KitAction;
   chargedAttackStamina: number;
-  chargedAttackVariant?: KitVariant | undefined;
+  chargedAttackVariant?: KitVariant;
   // Whether a skill starts whatever its cooldown is, while the kit's effects waive it, as a constellation's status does
   checkIsSkillCooldownWaived?: ((context: KitContext) => boolean) | undefined;
   // The action the body plays as it enters a dash, if the kit has one, which a stance may give in place of its own
@@ -34,17 +34,17 @@ export interface Kit {
   elementalBurst: KitAction;
   // The action the burst plays instead while its check holds on the step it starts, if it has one, such as a burst that
   // Hits harder at low HP
-  elementalBurstVariant?: KitVariant | undefined;
+  elementalBurstVariant?: KitVariant;
   elementalSkill: KitAction;
   // The presses a skill can take in a row after its first, if any, which the window of each press allows
-  elementalSkillChain?: KitSkillChain | undefined;
+  elementalSkillChain?: KitSkillChain;
   // The charges the skill holds, if more than one: each use spends one, and they come back one at a time, each on the
   // Skill's cooldown
-  elementalSkillCharges?: number | undefined;
+  elementalSkillCharges?: number;
   // The hold levels a skill has, ordered by their minimum seconds, if it has any. A skill with holds starts on its release
-  elementalSkillHolds?: KitSkillHold[] | undefined;
+  elementalSkillHolds?: KitSkillHold[];
   // The seconds a skill may be held before it is released by itself, if it has a maximum, as Violet Arc's hold is
-  elementalSkillMaximumHeldSeconds?: number | undefined;
+  elementalSkillMaximumHeldSeconds?: number;
   // The factor a charged attack's stamina is multiplied by as it starts, if a passive lowers it
   getChargedAttackStaminaMultiplier?: ((context: KitContext) => number) | undefined;
   // The attributes a stat converted from Max HP adds to the character's pricing, given the character as every ordinary
@@ -173,7 +173,7 @@ export interface Kit {
   plungeCollision: KitHit;
   // The plunges a character's skill state turns its plunge into while each one's check holds, the first holding one playing
   // In place of the standard plunge when the body lands, as Xianyun's Driftcloud Wave does at each Skyladder press
-  plungeVariants?: KitVariant[] | undefined;
+  plungeVariants?: KitVariant[];
   // Whether the kit refuses a fall its own character would take, given its own Combatant and the effects on it, which
   // Leaves the character at 1 HP while the check holds, and a constellation's refusal starts its cooldown here
   refusesFall?: ((combatant: Combatant, kitEffectState: KitEffectState) => boolean) | undefined;
@@ -182,5 +182,5 @@ export interface Kit {
   // For a character the index lacks
   skillGlyphs?: SkillGlyphs | undefined;
   // The character's Stellar Jubilee passive, if it has one, which enables Stellar reactions for its party
-  stellarJubilee?: KitStellarJubilee | undefined;
+  stellarJubilee?: KitStellarJubilee;
 }

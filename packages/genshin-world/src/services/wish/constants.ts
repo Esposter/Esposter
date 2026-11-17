@@ -68,7 +68,7 @@ export const STANDARD_WISH_CHARACTER_IDS: readonly number[] = [
 // The standard wish's five-star weapons by the game's ids, as the wiki lists them: Amos' Bow, Aquila Favonia, Lost Prayer to
 // The Sacred Winds, Primordial Jade Winged-Spear, Skyward Atlas, Skyward Blade, Skyward Harp, Skyward Pride, Skyward Spine
 // And Wolf's Gravestone
-export const STANDARD_WISH_FIVE_STAR_WEAPON_IDS: readonly number[] = [
+const STANDARD_WISH_FIVE_STAR_WEAPON_IDS: readonly number[] = [
   15_502, 11_501, 14_502, 13_505, 14_501, 11_502, 15_501, 12_501, 13_502, 12_502,
 ];
 // The standard wish's four-star and three-star weapons by the game's ids, as the wiki lists them: Dragon's Bane, Eye of
@@ -76,7 +76,7 @@ export const STANDARD_WISH_FIVE_STAR_WEAPON_IDS: readonly number[] = [
 // The Stringless and The Widsith at four; and Black Tassel, Bloodtainted Greatsword, Cool Steel, Debate Club, Emerald Orb,
 // Ferrous Shadow, Harbinger of Dawn, Magic Guide, Raven Bow, Sharpshooter's Oath, Skyrider Sword, Slingshot and Thrilling
 // Tales of Dragon Slayers at three
-export const STANDARD_WISH_FOUR_AND_THREE_STAR_WEAPON_IDS: readonly number[] = [
+const STANDARD_WISH_FOUR_AND_THREE_STAR_WEAPON_IDS: readonly number[] = [
   13_401, 14_409, 14_401, 12_401, 13_407, 11_401, 15_401, 11_405, 12_405, 15_405, 15_403, 14_403, 12_403, 11_403,
   12_402, 11_402, 15_402, 14_402, 13_303, 12_302, 11_301, 12_305, 14_304, 12_301, 11_302, 14_301, 15_301, 15_302,
   11_306, 15_304, 14_302,

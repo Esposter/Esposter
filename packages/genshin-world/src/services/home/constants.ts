@@ -10,9 +10,9 @@ export const HOME_RATE_PERIOD_SECONDS = 3600;
 // The bound's counts: eight realms, each with four exterior areas and seven interior ones, and the furnishings an area
 // Holds at most as the wiki's Load page gives them, 449 an exterior area and 149 a room. A save's placements are
 // Bounded by the most the realms' areas hold at those counts
-export const HOME_REALM_COUNT = 8;
-export const HOME_EXTERIOR_AREA_COUNT = 4;
-export const HOME_INTERIOR_AREA_COUNT = 7;
+const HOME_REALM_COUNT = 8;
+const HOME_EXTERIOR_AREA_COUNT = 4;
+const HOME_INTERIOR_AREA_COUNT = 7;
 export const HOME_EXTERIOR_FURNISHING_LIMIT = 449;
 export const HOME_INTERIOR_FURNISHING_LIMIT = 149;
 // The most placements a save holds. The dump's own scenes hold fewer, so this is a ceiling that every save the game

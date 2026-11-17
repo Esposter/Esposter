@@ -7,5 +7,5 @@ export interface KitActionBehaviour extends Pick<
   KitAction,
   "canStart" | "chargeSeconds" | "checkIsStateEndingPress" | "decideLength" | "onStart"
 > {
-  hits?: KitHitBehaviour[] | undefined;
+  hits?: KitHitBehaviour[];
 }

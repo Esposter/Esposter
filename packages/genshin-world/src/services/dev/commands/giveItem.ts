@@ -18,7 +18,7 @@ export const giveItemArgs = z.object({
   item: z.string().min(1),
 });
 
-export type GiveItemArguments = z.infer<typeof giveItemArgs>;
+type GiveItemArguments = z.infer<typeof giveItemArgs>;
 
 // Gives an item the way the game's reward act gives one: a wallet currency into the wallet, any other item into the bag.
 // The bag refuses the whole of an item when it cannot take all of it.
