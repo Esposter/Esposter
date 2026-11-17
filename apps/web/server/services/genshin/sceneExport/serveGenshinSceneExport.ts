@@ -24,7 +24,7 @@ export const serveGenshinSceneExport = async (encodedPath: string, directory: st
     return Response.json(await listSceneExportComponents(directory));
   if (!(await listSceneExportComponents(directory)).includes(component)) return new Response(null, { status: 404 });
   const path = pathParts.join("/");
-  const isRootFile = (SCENE_EXPORT_ROOT_FILE_NAMES as readonly string[]).includes(path);
+  const isRootFile = SCENE_EXPORT_ROOT_FILE_NAMES.some((fileName) => fileName === path);
   const componentDirectory = resolve(directory, component);
   const assetsDirectory = resolve(componentDirectory, SCENE_EXPORT_ASSETS_FOLDER);
   const filePath = isRootFile ? resolve(componentDirectory, path) : resolve(assetsDirectory, path);

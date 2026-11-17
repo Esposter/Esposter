@@ -1,5 +1,6 @@
 import type { AuthedContext } from "#server/models/auth/AuthedContext";
 import type { ResourceInResource } from "@esposter/db-schema";
+import type { Promisable } from "type-fest";
 
 // The read half of the snapshot boundary is not here: which parts of a type's content are live rather than
 // Frozen is declared in `ResourceLiveContentMap`, where every path that reconstitutes a snapshot reads it
@@ -12,5 +13,5 @@ export interface PublishableResourceProcedureOptions<TContent> {
     ctx: AuthedContext,
     resource: ResourceInResource,
     content: TContent,
-  ) => Promise<TContent> | TContent;
+  ) => Promisable<TContent>;
 }

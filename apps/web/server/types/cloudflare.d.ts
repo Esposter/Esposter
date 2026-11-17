@@ -17,6 +17,7 @@ import type {
   TopicObjectRpc,
   UserObjectRpc,
 } from "@esposter/db-schema";
+import type { ScreamingSnakeCase } from "type-fest";
 
 // One producer per job, read by getJobQueue under the job's binding name. The bindings are typed from the package's
 // Importable form, so the browser programs, which hold no Workers globals, type `env` the same way through
@@ -38,9 +39,6 @@ interface Bindings extends BucketBindings, RateLimiterBindings {
 type BucketBindings = { [Bucket in StorageBucket as ScreamingSnakeCase<Bucket>]: R2Bucket };
 // One rate limit per limiter, declared in `configuration/wrangler.ts` under the names `RateLimiterBinding` gives
 type RateLimiterBindings = Record<RateLimiterBinding, RateLimit>;
-type ScreamingSnakeCase<T extends string> = T extends `${infer Head}-${infer Tail}`
-  ? `${Uppercase<Head>}_${ScreamingSnakeCase<Tail>}`
-  : Uppercase<T>;
 
 declare global {
   namespace Cloudflare {

@@ -5,7 +5,7 @@ import { decompressJsonBlob } from "@esposter/db";
 // A blob's ETag and its stored JSON, from one download: the ETag and the body come off the same response, so the ETag is
 // The one that body was stored under, and a conditional write over it is refused once a later write replaces the body.
 // A blob that is not there has neither
-export interface BlobStateRead {
+interface BlobStateRead {
   etag?: string;
   json?: Buffer;
 }

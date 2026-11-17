@@ -9,9 +9,7 @@ import { pluralize } from "#shared/util/text/pluralize";
 
 // Each fingers upgrade multiplies the gain from the Thousand Fingers by its own value, so its description and effect are
 // Written once from that value
-const getFingersMultiplier = (
-  value: number,
-): Pick<Except<Upgrade<CursorUpgradeId>, "id">, "description" | "effects"> => ({
+const getFingersMultiplier = (value: number): Pick<Upgrade<CursorUpgradeId>, "description" | "effects"> => ({
   description: `Multiplies the gain from ${CursorUpgradeId["Thousand Fingers"]} by **${value}**.`,
   effects: [
     {
@@ -118,5 +116,3 @@ export const CursorUpgradeMap = {
     unlockConditions: [{ id: Target.Cursor, type: Target.Building, amount: 500 }],
   },
 } as const satisfies Record<CursorUpgradeId, Except<Upgrade<CursorUpgradeId>, "id">>;
-
-export const CursorUpgrades = Object.values(CursorUpgradeMap);

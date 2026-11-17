@@ -30,7 +30,7 @@ import { callSessionIdSchema, DatabaseEntityType, MessageType, RoomPermission } 
 import { noop } from "@esposter/shared";
 import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
 
-export const baseCallRouter = router({
+const baseCallRouter = router({
   createCall: standardAuthedProcedure
     .meta({
       staticReason:

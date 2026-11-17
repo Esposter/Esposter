@@ -8,7 +8,7 @@ import { GrandmaUpgradeId } from "#shared/models/clicker/data/upgrade/GrandmaUpg
 import { pluralize } from "#shared/util/text/pluralize";
 
 // Every grandma upgrade doubles the grandmas, so its description and effect are written once
-const getGrandmaMultiplier = (): Pick<Except<Upgrade<GrandmaUpgradeId>, "id">, "description" | "effects"> => ({
+const getGrandmaMultiplier = (): Pick<Upgrade<GrandmaUpgradeId>, "description" | "effects"> => ({
   description: `${pluralize(Target.Grandma)} are **twice** as efficient.`,
   effects: [{ value: 2, targets: [Target.Grandma], configuration: { type: EffectType.Multiplicative } }],
 });
@@ -105,5 +105,3 @@ export const GrandmaUpgradeMap = {
     unlockConditions: [{ type: Target.Building, id: Target.Grandma, amount: 550 }],
   },
 } as const satisfies Record<GrandmaUpgradeId, Except<Upgrade<GrandmaUpgradeId>, "id">>;
-
-export const GrandmaUpgrades = Object.values(GrandmaUpgradeMap);

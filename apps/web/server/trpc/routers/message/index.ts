@@ -94,7 +94,7 @@ const getThreadFollowTopics = ({ ctx }: { ctx: { user: User } }): Topic[] => [
   getTopic(TopicKind.ThreadFollow, ctx.user.id),
 ];
 
-export const baseMessageRouter = router({
+const baseMessageRouter = router({
   // The sender's time zone is the call's and never the message's, so it is dropped before the message is written
   createMessage: getMemberProcedure(zonedCreateMessageInputSchema, "roomId")
     .meta({ staticReason: "The room object pushes the new message to its sockets as a typed event" })

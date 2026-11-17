@@ -10,7 +10,7 @@ import { TOPICS_HEADER } from "#shared/services/realtime/constants";
 import { formatTopicsHeaderValue } from "#shared/services/realtime/formatTopicsHeaderValue";
 import { getResultAsync, noop } from "@esposter/shared";
 
-export interface TopicsOptions<TContextOverrides, TInput> {
+interface TopicsOptions<TContextOverrides, TInput> {
   ctx: Simplify<Overwrite<Context, TContextOverrides>>;
   input: TInput;
   // The resolver's result, for a topic only the result names: a created row's id, or the people a list shows. A

@@ -9,13 +9,13 @@ const toTableCell = (value: unknown) =>
     .replaceAll("|", String.raw`\|`)
     .replaceAll(LINE_BREAK_REGEX, " ");
 
-export const getRecordDifferenceDescription = (original: object, next: object) => {
+export const getRecordDifferenceDescription = (original: Record<string, unknown>, next: Record<string, unknown>) => {
   const keys = new Set([...Object.keys(original), ...Object.keys(next)]);
   const rows: string[] = [];
   for (const key of keys) {
     if (ITEM_METADATA_KEY_SET.has(key)) continue;
-    const originalValue = (original as Record<string, unknown>)[key];
-    const updatedValue = (next as Record<string, unknown>)[key];
+    const originalValue = original[key];
+    const updatedValue = next[key];
     if (originalValue === updatedValue) continue;
 
     rows.push([key, originalValue, updatedValue].map((cell) => toTableCell(cell)).join(" | "));

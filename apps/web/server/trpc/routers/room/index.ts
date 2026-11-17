@@ -79,7 +79,7 @@ import { alias } from "drizzle-orm/sqlite-core";
 import { v7 } from "uuid";
 import { z } from "zod";
 
-export const baseRoomRouter = router({
+const baseRoomRouter = router({
   createRoom: getTopicsProcedure(getProfanityFilterProcedure(createRoomInputSchema, ["name"]), ({ ctx }) =>
     getRoomListTopics(ctx.user.id),
   ).mutation<RoomInMessage>(async ({ ctx, input }) => {
