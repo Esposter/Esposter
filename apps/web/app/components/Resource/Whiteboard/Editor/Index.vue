@@ -18,7 +18,6 @@ import { WhiteboardContentComponentMap } from "#src/services/whiteboard/layout/W
 import { useWhiteboardDialogStore } from "#src/store/resource/whiteboard/dialog";
 import { useWhiteboardEditorStore } from "#src/store/resource/whiteboard/editor";
 import { useWhiteboardStore } from "#src/store/resource/whiteboard/index";
-import { getExportBounds } from "vue-block-editor-headless";
 
 // The whiteboard's editor, drawn by the editor shell over the whiteboard's layout and registry. The canvas is the shell's default slot.
 // Its events and its overlay and Html slots are wired here to the gesture, keyboard and text-edit logic. The delete confirmation is the one dialog it holds
@@ -29,7 +28,7 @@ await loadContent();
 watchAutosave(whiteboard, saveWhiteboard);
 const whiteboardEditorStore = useWhiteboardEditorStore();
 const { canvasRect, selectedIds, shapeKind, tool, viewport } = storeToRefs(whiteboardEditorStore);
-const { fitTo, setTextEditElementId } = whiteboardEditorStore;
+const { fitToElements, setTextEditElementId } = whiteboardEditorStore;
 const { onPointer, onWheel } = useWhiteboardGesture();
 useWhiteboardViewportKeyboard();
 const whiteboardDialogStore = useWhiteboardDialogStore();
@@ -100,7 +99,7 @@ const getElementIdAt = (screen: Point) =>
 // A document opened with content is fitted to the canvas once, when the canvas is first measured
 if (editState.value.document.elements.length > 0)
   watchOnce(canvasRect, () => {
-    fitTo(getExportBounds(editState.value.document));
+    fitToElements(editState.value.document.elements);
   });
 </script>
 

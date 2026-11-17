@@ -4,7 +4,6 @@ import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { WHITEBOARD_ZOOM_FACTOR } from "#src/services/whiteboard/viewport/constants";
 import { useWhiteboardEditorStore } from "#src/store/resource/whiteboard/editor";
 import { useWhiteboardStore } from "#src/store/resource/whiteboard/index";
-import { getExportBounds } from "vue-block-editor-headless";
 
 // Undo and redo, then zoom in and out about the middle of the canvas, and fit the whole document into it.
 // Undo and redo are disabled while their history has no edit to step to
@@ -12,7 +11,7 @@ const whiteboardStore = useWhiteboardStore();
 const { editState } = storeToRefs(whiteboardStore);
 const { redo, undo } = whiteboardStore;
 const whiteboardEditorStore = useWhiteboardEditorStore();
-const { fitTo, zoomBy } = whiteboardEditorStore;
+const { fitToElements, zoomBy } = whiteboardEditorStore;
 const isUndoAvailable = computed(() => editState.value.history.past.length > 0);
 const isRedoAvailable = computed(() => editState.value.history.future.length > 0);
 </script>
@@ -49,7 +48,7 @@ const isRedoAvailable = computed(() => editState.value.history.future.length > 0
       label="Fit to content"
       :meaning="UiIconMeaning.FitToContent"
       :variant="UiButtonVariant.Quiet"
-      @click="fitTo(getExportBounds(editState.document))"
+      @click="fitToElements(editState.document.elements)"
     />
   </div>
 </template>
