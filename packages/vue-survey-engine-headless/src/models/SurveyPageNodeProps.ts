@@ -14,8 +14,9 @@ export interface SurveyPageNodeProps extends BlockNodeProps {
   visibleIf: string;
 }
 
-// The own props, without the slot, which the node schema adds beside the id. The enable condition is the panel's, held as a required string
-export const surveyPageNodePropsSchema: z.ZodObject<typeof surveyContainerBasePropsShape & { enableIf: z.ZodString }> =
-  z.object({ ...surveyContainerBasePropsShape, enableIf: surveyConditionSchema.unwrap() }) satisfies z.ZodType<
-    OwnProps<SurveyPageNodeProps>
-  >;
+// The own props, without the slot, which the node schema adds beside the id. The enable condition is the panel's, and a page saved before it holds none
+export const surveyPageNodePropsSchema: z.ZodObject<
+  typeof surveyContainerBasePropsShape & { enableIf: typeof surveyConditionSchema }
+> = z.object({ ...surveyContainerBasePropsShape, enableIf: surveyConditionSchema }) satisfies z.ZodType<
+  OwnProps<SurveyPageNodeProps>
+>;

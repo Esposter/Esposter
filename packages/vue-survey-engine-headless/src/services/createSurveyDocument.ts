@@ -13,5 +13,5 @@ export const createSurveyDocument = (): SurveyDocument => {
     props: { ...surveyPageNodeType.createDefaultProps(), children: [], id: v7() },
     type: SurveyNodeType.Page,
   };
-  return { content: [page], root: { props: surveyRootPropsSchema.parse({ backgroundImage: "" }) } };
+  return { content: [page], root: { props: surveyRootPropsSchema.parse({}) } };
 };

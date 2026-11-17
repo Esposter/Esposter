@@ -64,7 +64,7 @@ const createPage = (children: SurveyPlaceableNode[], visibleIf = "", enableIf = 
 
 const createDocument = (content: SurveyPageNode[], calculatedValues: SurveyCalculatedValue[] = []): SurveyDocument => ({
   content,
-  root: { props: { ...surveyRootPropsSchema.parse({ backgroundImage: "" }), calculatedValues } },
+  root: { props: { ...surveyRootPropsSchema.parse({}), calculatedValues } },
 });
 
 describe(checkSurveyDocument, () => {

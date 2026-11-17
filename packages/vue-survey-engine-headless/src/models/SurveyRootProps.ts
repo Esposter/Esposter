@@ -35,7 +35,7 @@ export const surveyRootPropsSchema: z.ZodObject<
   {
     accentColor: z.ZodDefault<z.ZodString>;
     backgroundColor: z.ZodDefault<z.ZodString>;
-    backgroundImage: z.ZodString;
+    backgroundImage: z.ZodDefault<z.ZodString>;
     calculatedValues: z.ZodDefault<z.ZodArray<typeof surveyCalculatedValueSchema>>;
     completedHtml: z.ZodDefault<z.ZodString>;
     completeText: z.ZodDefault<z.ZodString>;
@@ -51,7 +51,7 @@ export const surveyRootPropsSchema: z.ZodObject<
 > = z.strictObject({
   accentColor: z.string().regex(HEX_COLOR_REGEX).default(""),
   backgroundColor: z.string().regex(HEX_COLOR_REGEX).default(""),
-  backgroundImage: z.string().max(MAX_SURVEY_URL_LENGTH),
+  backgroundImage: z.string().max(MAX_SURVEY_URL_LENGTH).default(""),
   calculatedValues: createUniqueArraySchema(surveyCalculatedValueSchema, "name")
     .max(MAX_SURVEY_CALCULATED_VALUE_COUNT)
     .default([]),

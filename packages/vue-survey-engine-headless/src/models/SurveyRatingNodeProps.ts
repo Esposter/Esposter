@@ -24,7 +24,7 @@ export const surveyRatingNodePropsSchema: z.ZodObject<
     maxRateDescription: z.ZodDefault<z.ZodString>;
     minRateDescription: z.ZodDefault<z.ZodString>;
     rateCount: z.ZodDefault<z.ZodInt>;
-    rateMin: z.ZodLiteral<0 | 1>;
+    rateMin: z.ZodDefault<z.ZodLiteral<0 | 1>>;
     rateType: z.ZodDefault<z.ZodEnum<typeof SurveyRatingType>>;
   }
 > = z.object({
@@ -33,6 +33,6 @@ export const surveyRatingNodePropsSchema: z.ZodObject<
   minRateDescription: z.string().max(MAX_SURVEY_TEXT_LENGTH).default(""),
   rateCount: z.int().min(MIN_SURVEY_RATE_COUNT).max(MAX_SURVEY_RATE_COUNT).default(5),
   // A scale starts at zero or at one, so a respondent never reads a negative or a large first step as a rating
-  rateMin: z.literal([0, 1]),
+  rateMin: z.literal([0, 1]).default(1),
   rateType: z.enum(SurveyRatingType).default(SurveyRatingType.Labels),
 }) satisfies z.ZodType<OwnProps<SurveyRatingNodeProps>>;
