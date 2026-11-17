@@ -25,7 +25,7 @@ export const POSE_CROSSFADE_SECONDS = 0.25;
 // The gaits: how far one full stride covers in metres, which sets its frequency from the state's speed, and how far its
 // Legs, knees, arms and elbows swing, in radians
 // Provisional: the strides and swings are read from a walk, a run and a sprint, not yet off the game's clips
-export interface PoseGait {
+interface PoseGait {
   armBendRadians: number;
   armSwingRadians: number;
   kneeBendRadians: number;
@@ -64,7 +64,7 @@ export const POSE_GAITS: Partial<Record<LocomotionState, PoseGait>> = {
 };
 // The airborne poses, each a fixed stance: how far the arms are lowered, how far the body leans forward and how much
 // The knees bend. A glide spreads its arms wide and leans into the glider
-export interface PoseAirStance {
+interface PoseAirStance {
   armLowerRadians: number;
   kneeBendRadians: number;
   leanRadians: number;

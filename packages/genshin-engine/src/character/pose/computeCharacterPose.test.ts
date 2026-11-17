@@ -3,6 +3,7 @@ import type { CharacterPoseRotations } from "#src/models/character/CharacterPose
 import { computeCharacterPose } from "#src/character/pose/computeCharacterPose";
 import { POSE_ARM_LOWER_RADIANS, POSE_GAITS } from "#src/character/pose/constants";
 import { createCharacterPoseRotations } from "#src/character/pose/createCharacterPoseRotations";
+import { expectRotation } from "#src/character/pose/expectRotation.test";
 import { MmdBoneName } from "#src/models/character/MmdBoneName";
 import { LocomotionState } from "#src/models/locomotion/LocomotionState";
 import { Quaternion, Vector3 } from "three";
@@ -15,12 +16,6 @@ const turnAfter = (xAngle: number, zAngle: number): Quaternion =>
     turnAbout(new Vector3(1, 0, 0), xAngle),
     turnAbout(new Vector3(0, 0, 1), zAngle),
   );
-// Quaternions compare component by component, since a turn by zero leaves a signed zero that a strict comparison splits
-const expectRotation = (rotation: Quaternion, expected: Quaternion): void => {
-  const expectedComponents = expected.toArray();
-  for (const [index, component] of rotation.toArray().entries())
-    expect(component).toBeCloseTo(expectedComponents[index] ?? Number.NaN);
-};
 const posedRotations = (state: LocomotionState, stridePhase: number): CharacterPoseRotations => {
   const rotations = createCharacterPoseRotations();
   computeCharacterPose({ elapsed: 0, state, stridePhase }, rotations);

@@ -1,4 +1,3 @@
-/// <reference types="vite/client" />
 import { GENSHIN_TONE_MAPPING } from "#src/renderer/constants";
 import { WebGPURenderer } from "three/webgpu";
 

@@ -1,6 +1,7 @@
 import type { Locomotion } from "#src/models/locomotion/Locomotion";
 
 import { createCharacterPoser } from "#src/character/pose/createCharacterPoser";
+import { expectRotation } from "#src/character/pose/expectRotation.test";
 import { MmdBoneName } from "#src/models/character/MmdBoneName";
 import { LocomotionState } from "#src/models/locomotion/LocomotionState";
 import { Bone, Quaternion, Skeleton, SkinnedMesh, Vector3 } from "three";
@@ -21,12 +22,6 @@ const createChain = (upperRest: Quaternion, headRest: Quaternion, names: [string
   mesh.add(upper);
   mesh.bind(new Skeleton([upper, head]));
   return mesh;
-};
-// Quaternions compare component by component, since a pose's slerp leaves rounding a strict comparison splits
-const expectRotation = (rotation: Quaternion, expected: Quaternion): void => {
-  const expectedComponents = expected.toArray();
-  for (const [index, component] of rotation.toArray().entries())
-    expect(component).toBeCloseTo(expectedComponents[index] ?? Number.NaN);
 };
 const getWorldRotation = (mesh: SkinnedMesh, name: string): Quaternion =>
   mesh.skeleton.getBoneByName(name)?.getWorldQuaternion(new Quaternion()) ?? new Quaternion();

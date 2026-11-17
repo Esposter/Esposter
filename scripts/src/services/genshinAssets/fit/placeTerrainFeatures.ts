@@ -2,7 +2,7 @@ import type { TerrainFeatureShape } from "#src/models/genshinAssets/fit/TerrainF
 import type { TerrainResidualGrid } from "#src/models/genshinAssets/fit/TerrainResidualGrid";
 import type { TerrainFeature } from "genshin-engine";
 
-import { TerrainFeatureKindBlendMap } from "genshin-engine";
+import { getTerrainFeatureBlend } from "genshin-engine";
 
 // The most features of one kind a fit places, and the least share of the residual's squared error a feature must take
 // Off to be placed: the deepest stop whose features still take as much error off for what they cost a vertex to read
@@ -51,12 +51,12 @@ export const placeTerrainFeatures = <TFeature extends TerrainFeature>(
         }
     if (!best || bestGain < MIN_GAIN_SHARE * squaresTotal) break;
     features.push(best);
-    const getBlend = TerrainFeatureKindBlendMap[best.kind];
     for (const [index, value] of values.entries()) {
       if (!Number.isFinite(value)) continue;
       const column = index % size;
       const row = Math.floor(index / size);
-      values[index] = value - best.height * getBlend(best as never, originX + column * step, originZ + row * step);
+      values[index] =
+        value - best.height * getTerrainFeatureBlend(best.kind, best, originX + column * step, originZ + row * step);
     }
   }
   return { features, remainder: { ...grid, values } };

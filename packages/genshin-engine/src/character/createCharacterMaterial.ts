@@ -1,8 +1,11 @@
 import type { CharacterMaterialOptions } from "#src/models/character/CharacterMaterialOptions";
+import type { CharacterShadingOverrides } from "#src/models/character/CharacterShadingOverrides";
+import type { Texture } from "three";
 
 import { checkIsPmxSphereDrawn } from "#src/character/checkIsPmxSphereDrawn";
 import { createCharacterShadingInputs } from "#src/character/createCharacterShadingInputs";
 import { getSharedToonRamp } from "#src/character/getSharedToonRamp";
+import { mergeDefined } from "#src/character/mergeDefined";
 import { createCharacterShadingNode } from "#src/character/shading/createCharacterShadingNode";
 import { createOutlineColorNode } from "#src/character/shading/createOutlineColorNode";
 import { getToneColour } from "#src/character/shading/getToneColour";
@@ -35,7 +38,7 @@ export const createCharacterMaterial = ({
     toonIndex,
   },
   rampTexture,
-  shadingInputs: gameShadingInputs,
+  shadingInputs: gameShadingInputs = {},
   sphereTexture,
   texture: diffuseTexture,
   toonTexture,
@@ -43,18 +46,22 @@ export const createCharacterMaterial = ({
   const isTransparent = opacity !== 1 || isTextureTransparent === true;
   const color: [number, number, number] = [red, green, blue];
   const packToonTexture = isToonShared ? undefined : toonTexture;
-  const shadingInputs = createCharacterShadingInputs({
-    color,
-    mainTexture: diffuseTexture,
-    // A pack's own toon is one column read down its rows, where the shared ramps and the world's are one row across
-    rampLayout: packToonTexture ? RampLayout.Vertical : RampLayout.Horizontal,
-    rampTexture: packToonTexture ?? (isToonShared ? getSharedToonRamp(toonIndex) : undefined) ?? rampTexture,
-    shininess: specularity,
-    specularColor,
-    sphere:
-      sphereTexture && checkIsPmxSphereDrawn(sphereMode) ? { mode: sphereMode, texture: sphereTexture } : undefined,
-    ...gameShadingInputs,
-  });
+  const shadingInputs = createCharacterShadingInputs(
+    mergeDefined<CharacterShadingOverrides & { rampTexture: Texture }>(
+      {
+        color,
+        mainTexture: diffuseTexture,
+        // A pack's own toon is one column read down its rows, where the shared ramps and the world's are one row across
+        rampLayout: packToonTexture ? RampLayout.Vertical : RampLayout.Horizontal,
+        rampTexture: packToonTexture ?? (isToonShared ? getSharedToonRamp(toonIndex) : undefined) ?? rampTexture,
+        shininess: specularity,
+        specularColor,
+        sphere:
+          sphereTexture && checkIsPmxSphereDrawn(sphereMode) ? { mode: sphereMode, texture: sphereTexture } : undefined,
+      },
+      gameShadingInputs,
+    ),
+  );
   const toned = getToneColour(
     new Vector3(red * edgeColor[0], green * edgeColor[1], blue * edgeColor[2]),
     shadingInputs.desaturateScale,

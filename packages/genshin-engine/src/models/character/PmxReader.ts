@@ -52,10 +52,6 @@ export class PmxReader {
     return value;
   }
 
-  readMaterialIndex(): number {
-    return this.#readIndex(this.materialIndexSize);
-  }
-
   readMirroredRotation(): Vector3Tuple {
     const x = this.readFloat32();
     const y = this.readFloat32();

@@ -25,6 +25,14 @@ describe(createCharacterShadingInputs, () => {
     expect(inputs.regionTints.five).toStrictEqual([0.2, 0.4, 0.6]);
   });
 
+  test("gives a key the caller leaves undefined its default, not the undefined", () => {
+    expect.hasAssertions();
+
+    const inputs = createCharacterShadingInputs({ brightness: undefined, rampTexture: new DataTexture() });
+
+    expect(inputs.brightness).toBe(1);
+  });
+
   test("keeps every input the caller supplies over its default", () => {
     expect.hasAssertions();
 

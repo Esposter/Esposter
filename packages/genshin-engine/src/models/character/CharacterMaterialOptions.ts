@@ -1,4 +1,4 @@
-import type { CharacterShadingInputs } from "#src/models/character/CharacterShadingInputs";
+import type { CharacterShadingOverrides } from "#src/models/character/CharacterShadingOverrides";
 import type { PmxMaterial } from "#src/models/character/PmxMaterial";
 import type { LightUniforms } from "#src/models/nodes/LightUniforms";
 import type { DataTexture, Texture } from "three";
@@ -12,7 +12,7 @@ export interface CharacterMaterialOptions {
   rampTexture: DataTexture;
   // The inputs a caller has from the game itself, each one it has, merged over the ones the PMX material gives. A pack
   // Has none, so its material takes every one from the file
-  shadingInputs?: Partial<CharacterShadingInputs>;
+  shadingInputs?: CharacterShadingOverrides;
   // The sphere map the material names, which a material naming none draws without
   sphereTexture?: Texture | undefined;
   // The texture the material names, which a material naming none draws without

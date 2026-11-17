@@ -1,8 +1,8 @@
 import type { TerrainFeature } from "#src/models/terrain/TerrainFeature";
 
 import { fileByCell } from "#src/terrain/fileByCell";
+import { getTerrainFeatureBlend } from "#src/terrain/getTerrainFeatureBlend";
 import { getTerrainFeatureBounds } from "#src/terrain/getTerrainFeatureBounds";
-import { TerrainFeatureKindBlendMap } from "#src/terrain/TerrainFeatureKindBlendMap";
 
 // The height the features add at any x and z, each feature filed under every cell its bounds cover as the hills are
 export const createTerrainFeaturesHeight = (
@@ -12,7 +12,7 @@ export const createTerrainFeaturesHeight = (
   return (x, z) => {
     let total = 0;
     for (const feature of getFeatures(x, z))
-      total += feature.height * TerrainFeatureKindBlendMap[feature.kind](feature as never, x, z);
+      total += feature.height * getTerrainFeatureBlend(feature.kind, feature, x, z);
     return total;
   };
 };

@@ -16,7 +16,7 @@ const rootAxisZ = new Vector3();
 export const createFaceDraw = ({
   flipFactor = 0,
   rotateOffset = 0,
-}: Partial<Pick<FaceDraw, "flipFactor" | "rotateOffset">> = {}): FaceDraw => ({
+}: { flipFactor?: number | undefined; rotateOffset?: number | undefined } = {}): FaceDraw => ({
   flip: uniform(0),
   flipFactor,
   rotateOffset,

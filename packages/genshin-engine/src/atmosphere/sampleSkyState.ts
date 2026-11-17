@@ -18,7 +18,7 @@ export const sampleSkyState = (
   let nextIndex = 0;
   while (nextIndex < skyKeyframes.length && (skyKeyframes[nextIndex]?.minutes ?? 0) <= minutes) nextIndex++;
   if (nextIndex === skyKeyframes.length) nextIndex = 0;
-  const previous = skyKeyframes.at(nextIndex - 1) ?? skyKeyframes[nextIndex];
+  const previous = skyKeyframes.at(nextIndex - 1);
   const next = skyKeyframes[nextIndex];
   if (!previous || !next) return skyState;
   const span = (next.minutes - previous.minutes + MINUTES_PER_DAY) % MINUTES_PER_DAY || MINUTES_PER_DAY;
