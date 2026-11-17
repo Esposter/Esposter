@@ -34,15 +34,17 @@ const emit = defineEmits<{ close: []; pick: [itemId: number] }>();
     >
       {{ name }}
     </GameButton>
-    <GameButton
-      class="close"
-      :aria-label="gameText[GameTextKey.Back]"
-      :kind="GameButtonKind.Plain"
-      tip=""
-      @click="emit('close')"
-    >
-      <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Close]" />
-    </GameButton>
+    <template #footer>
+      <GameButton
+        class="close"
+        :aria-label="gameText[GameTextKey.Back]"
+        :kind="GameButtonKind.Plain"
+        tip=""
+        @click="emit('close')"
+      >
+        <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Close]" />
+      </GameButton>
+    </template>
   </MenuDialog>
 </template>
 

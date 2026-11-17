@@ -79,26 +79,28 @@ const confirmSegments = computed(() => {
       <span v-for="({ color, text }, index) of confirmSegments" :key="index" :style="{ color }">{{ text }}</span>
     </p>
     <p v-if="birthday" class="warning">{{ gameText[GameTextKey.BirthdayConfirmWarning] }}</p>
-    <div class="actions">
-      <GameButton
-        class="confirm-button"
-        :disabled="!birthday"
-        :kind="GameButtonKind.Pill"
-        tip=""
-        @click="birthday && emit('confirm', birthday)"
-      >
-        {{ gameText[GameTextKey.Confirm] }}
-      </GameButton>
-      <GameButton
-        class="close"
-        :aria-label="gameText[GameTextKey.Back]"
-        :kind="GameButtonKind.Plain"
-        tip=""
-        @click="emit('close')"
-      >
-        <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Close]" />
-      </GameButton>
-    </div>
+    <template #footer>
+      <div class="actions">
+        <GameButton
+          class="confirm-button"
+          :disabled="!birthday"
+          :kind="GameButtonKind.Pill"
+          tip=""
+          @click="birthday && emit('confirm', birthday)"
+        >
+          {{ gameText[GameTextKey.Confirm] }}
+        </GameButton>
+        <GameButton
+          class="close"
+          :aria-label="gameText[GameTextKey.Back]"
+          :kind="GameButtonKind.Plain"
+          tip=""
+          @click="emit('close')"
+        >
+          <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Close]" />
+        </GameButton>
+      </div>
+    </template>
   </MenuDialog>
 </template>
 

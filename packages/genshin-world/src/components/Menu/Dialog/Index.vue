@@ -6,7 +6,8 @@ interface Props {
   title: string;
 }
 
-defineSlots<{ default: () => VNode }>();
+// The default slot is the body, which the panel scrolls with; the footer slot is the row drawn under it, in the same panel
+defineSlots<{ default: () => VNode; footer?: () => VNode }>();
 defineProps<Props>();
 </script>
 
@@ -14,6 +15,9 @@ defineProps<Props>();
   <div class="dialog" role="dialog" aria-modal="true" :aria-label="title">
     <p class="title" role="heading" aria-level="2">{{ title }}</p>
     <slot />
+    <div v-if="$slots.footer" class="footer">
+      <slot name="footer" />
+    </div>
   </div>
 </template>
 
@@ -31,6 +35,12 @@ defineProps<Props>();
   padding: calc(var(--unit) * 16);
   background: rgb(14 22 32 / 92%);
   transform: translate(-50%, -50%);
+}
+
+/* A column of its own, so a control the footer aligns to its end still sits at the panel's right */
+.footer {
+  display: flex;
+  flex-direction: column;
 }
 
 /* Provisional: the title's size and colour are the game's heading colour until the parity compare fits it */

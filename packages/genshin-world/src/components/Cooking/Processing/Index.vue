@@ -37,12 +37,10 @@ const counts = ref<Record<number, number>>({});
 const getDefinition = (itemId: number) => getItemDefinition(itemId, nameText, materialDataMap);
 const pickedCount = (recipe: ProcessingRecipe) => counts.value[recipe.id] ?? 1;
 const queuedCount = (recipe: ProcessingRecipe) => jobs.value[recipe.id]?.count ?? 0;
-const checkCanStart = (recipe: ProcessingRecipe) =>
-  startProcessing(recipe, pickedCount(recipe), {
-    inventory: inventory.value,
-    job: jobs.value[recipe.id],
-    now: now(),
-  }) !== undefined;
+// The start a picked count of the processing would make from the bag and the queue as they stand, undefined where it cannot
+const planStart = (recipe: ProcessingRecipe) =>
+  startProcessing(recipe, pickedCount(recipe), { inventory: inventory.value, job: jobs.value[recipe.id], now: now() });
+const checkCanStart = (recipe: ProcessingRecipe) => planStart(recipe) !== undefined;
 // The units done by now go into the bag, and the queues keep the rest, as the screen opens and while it is open
 const collect = () => {
   const collected = collectProcessingJobs(recipes, jobs.value, {
@@ -63,11 +61,7 @@ onBeforeUnmount(() => {
 });
 // Queue the picked units of a processing, their ingredients taken from the bag at once
 const start = (recipe: ProcessingRecipe) => {
-  const started = startProcessing(recipe, pickedCount(recipe), {
-    inventory: inventory.value,
-    job: jobs.value[recipe.id],
-    now: now(),
-  });
+  const started = planStart(recipe);
   if (!started) return;
   inventory.value = started.inventory;
   jobs.value = { ...jobs.value, [recipe.id]: started.job };
