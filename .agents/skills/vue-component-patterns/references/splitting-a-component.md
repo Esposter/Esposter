@@ -2,6 +2,10 @@
 
 Read when a `.vue` is several times past the file-length target and is about to be cut, by a session or by a delegated agent. What a component in normal form is, and why a long integration root is not exempt, is `references/normal-form.md`; this page is how one cut is made.
 
+## The length target is a guideline
+
+A file past the target is a reason to look, never a reason to cut. A long component whose structure is simple, one concern with a flat template and no region that holds state and actions of its own, is already in normal form, and splitting it only relocates lines into a child, a composable or an options list a reader now has to follow (the `over-engineering` skill). A cut is made only where a role with its own state or actions separates cleanly and the root and the child each read more simply than the one file did. The cut that earns its place is a real structural one: a container that takes its regions as named slots (`references/structured-containers.md`), a template region with its own markup and handlers, an item body rendered through a scoped slot. A child that only receives a long list of props, or a composable that only takes an options object and hands every name back, has moved the lines without changing the structure.
+
 ## The cut
 
 The goal is a root `Index.vue` that reads as a bill of materials: its `<script setup>` declares props and emits, calls a few composables, and its template mounts children. Each cut is decided by role, in this order:
@@ -57,4 +61,4 @@ A Genshin screen is compared pixel by pixel against reference images, so the ren
 
 ## Dating the ledger
 
-A row of the `vue-components` ledger lists several directories, so a pass dates it only once every file in it that is past the target has been cut. The commit that completes the row carries the `Ledger: vue-components | <unit>` trailer, never a cut that finished one file of several.
+A row of the `vue-components` ledger lists several directories, so a pass dates it only once every file in it that is past the target has been judged: cut where a role separates, or left whole because its structure is simple, with the reason in the commit body. The commit that completes the row carries the `Ledger: vue-components | <unit>` trailer, never a cut that finished one file of several.
