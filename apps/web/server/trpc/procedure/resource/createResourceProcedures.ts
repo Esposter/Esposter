@@ -265,9 +265,11 @@ export const createResourceProcedures = <TType extends ResourceType>(
       .query<ResourceFilePresignedUrlEntity[]>(({ ctx, input: { files, id } }) =>
         generateReservedResourceAssetPresignedUrlEntities(ctx.db, ctx.user.id, id, files),
       ),
-    readResourceFiles: getOwnerProcedure(type, resourceIdInputSchema, "id").query<ResourceFile[]>(({ input: { id } }) =>
-      readResourceFiles(getBucket(StorageBucket.ResourceAssets), id),
-    ),
+    // A file deleted, and the save that writes an uploaded file's address, publish the resource's topics, so an open listing reads the set again
+    readResourceFiles: getTopicsProcedure(
+      getOwnerProcedure(type, resourceIdInputSchema, "id"),
+      getResourceTopics,
+    ).query<ResourceFile[]>(({ input: { id } }) => readResourceFiles(getBucket(StorageBucket.ResourceAssets), id)),
   };
   const publishProcedures = {
     publishResource: getTopicsProcedure(
