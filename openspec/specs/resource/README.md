@@ -72,7 +72,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Survey properties](survey-properties/design.md) — the Properties tab: each element's settings drawn from its props schema, and the choice, matrix column and item list editors
 - [Survey theme and files](survey-theme-files/design.md) — the logo and colours on the survey's root, and the uploaded pictures swept when the editor closes
 - [Published view analytics](published-view-analytics/design.md) — best-effort view counts on public reads for every publishable type
-- [Dashboard data binding](dashboard-data-binding/design.md) — visuals bound to datasets with client aggregation and publish-time snapshots
+- [Dashboard data binding](dashboard-data-binding/design.md) — visuals bound to datasets with client aggregation, a category order and publish-time snapshots
 - [Dashboard duplicate visual](dashboard-duplicate-visual/design.md) — Duplicate on a tile's corner copies its chart settings and binding
 - [Dashboard live canvas](dashboard-live-canvas/design.md) — the editor draws each tile as its real visual over its bound data, not a stock icon
 - [Dashboard chart interaction](dashboard-chart-interaction/design.md) — the ApexCharts investigation surface on visuals: linked highlighting, shareable view state, annotations

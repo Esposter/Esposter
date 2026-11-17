@@ -4,6 +4,7 @@ import type { Dataset } from "#shared/models/dataset/Dataset";
 import { Visual } from "#shared/models/dashboard/data/Visual";
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
 import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregationType";
+import { DatasetOrderDirection } from "#shared/models/dataset/DatasetOrderDirection";
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { MimeType } from "#shared/models/file/MimeType";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
@@ -110,6 +111,34 @@ describe(exportDashboardVisualCsv, () => {
     expect(downloadFile).toHaveBeenCalledExactlyOnceWith(
       `${VisualType.Pie}.csv`,
       `${categoryColumn},${responseColumn}\na,2\nb,1`,
+      MimeType.Csv,
+    );
+  });
+
+  // A pie's order may rank its categories by a later series, so its file keeps the first series in that drawn order
+  test("a bound pie ordered by a later series writes its first series in that order", () => {
+    expect.hasAssertions();
+
+    const pie = new Visual({
+      dataset: {
+        query: {
+          order: { direction: DatasetOrderDirection.Ascending, seriesIndex: 1 },
+          series: [
+            { aggregation: DatasetAggregationType.Count, column: responseColumn },
+            { aggregation: DatasetAggregationType.Sum, column: scoreColumn },
+          ],
+          xColumn: categoryColumn,
+        },
+        reference,
+      },
+      type: VisualType.Pie,
+    });
+
+    exportDashboardVisualCsv(pie, dataset);
+
+    expect(downloadFile).toHaveBeenCalledExactlyOnceWith(
+      `${VisualType.Pie}.csv`,
+      `${categoryColumn},${responseColumn}\nb,1\na,2`,
       MimeType.Csv,
     );
   });

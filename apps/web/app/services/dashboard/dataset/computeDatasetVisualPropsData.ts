@@ -5,6 +5,7 @@ import type { VisualPropsData } from "#src/models/dashboard/VisualPropsData";
 
 import { VisualDatasetShape } from "#src/models/dashboard/VisualDatasetShape";
 import { DatasetAggregationComputeMap } from "#src/services/dashboard/dataset/DatasetAggregationComputeMap";
+import { getCategoryComparator } from "#src/services/dashboard/dataset/getCategoryComparator";
 import { VisualTypeDatasetShapeMap } from "#src/services/dashboard/dataset/VisualTypeDatasetShapeMap";
 import { exhaustiveGuard, getOrCreate, takeOne } from "@esposter/shared";
 
@@ -34,11 +35,19 @@ export const computeDatasetVisualPropsData = (
     const category = String(row[query.xColumn] ?? "");
     getOrCreate(categoryRowsMap, category, () => []).push(row);
   }
-  const categories = [...categoryRowsMap.keys()];
-  const series = query.series.map(({ aggregation, column }) => ({
-    data: Array.from(categoryRowsMap.values(), (rows) =>
+  const categoryEntries = Array.from(categoryRowsMap, ([category, rows]) => ({
+    category,
+    values: query.series.map(({ aggregation, column }) =>
       DatasetAggregationComputeMap[aggregation](rows.map((row) => row[column] ?? null)),
     ),
+  }));
+  // The order ranks the aggregated values, never the rows, and its sort is stable, so categories that tie keep their first-seen order
+  const orderedEntries = query.order
+    ? categoryEntries.toSorted(getCategoryComparator(categoryEntries, query.order))
+    : categoryEntries;
+  const categories = orderedEntries.map(({ category }) => category);
+  const series = query.series.map(({ column }, seriesIndex) => ({
+    data: orderedEntries.map(({ values }) => takeOne(values, seriesIndex)),
     name: column,
   }));
   switch (shape) {

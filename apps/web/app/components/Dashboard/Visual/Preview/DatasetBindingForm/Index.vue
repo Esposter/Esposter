@@ -4,6 +4,7 @@ import type { VisualDatasetBinding } from "#shared/models/dashboard/data/VisualD
 import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregationType";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { authClient } from "#src/services/auth/authClient";
+import { removeDatasetQuerySeries } from "#src/services/dashboard/dataset/removeDatasetQuerySeries";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useAlertStore } from "#src/store/alert";
 
@@ -63,14 +64,16 @@ const columnItems = computed(
         <UiSelect v-model="modelValue.query.xColumn" :items="columnItems" label="X column" />
       </div>
       <!-- A row edits its series in place, so the bound query holds each change without a write back -->
+      <!-- eslint-disable vue/no-restricted-syntax -- removes a series from the binding draft the form edits, which the store writes to the visual only once it is valid -->
       <DashboardVisualPreviewDatasetBindingFormSeries
         v-for="(series, index) of modelValue.query.series"
         :key="index"
         :model-value="series"
         :column-items
         :is-only="modelValue.query.series.length === 1"
-        @remove="modelValue.query.series = modelValue.query.series.toSpliced(index, 1)"
+        @remove="modelValue.query = removeDatasetQuerySeries(modelValue.query, index)"
       />
+      <!-- eslint-enable vue/no-restricted-syntax -->
       <UiButton
         self-start
         @click="
@@ -83,6 +86,10 @@ const columnItems = computed(
         <UiIcon :meaning="UiIconMeaning.Create" />
         Add series
       </UiButton>
+      <DashboardVisualPreviewDatasetBindingFormOrder
+        v-model="modelValue.query.order"
+        :series="modelValue.query.series"
+      />
     </template>
   </template>
 </template>

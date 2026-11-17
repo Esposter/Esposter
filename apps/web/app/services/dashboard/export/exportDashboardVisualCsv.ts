@@ -24,8 +24,7 @@ export const exportDashboardVisualCsv = (visual: Visual, dataset: Dataset) => {
   if (!query || shape === VisualDatasetShape.None) return;
 
   const drawnVisualType = shape === VisualDatasetShape.Single ? visual.type : VisualType.Table;
-  const drawnQuery = shape === VisualDatasetShape.Labels ? { ...query, series: [takeOne(query.series)] } : query;
-  const drawn = computeDatasetVisualPropsData(drawnVisualType, dataset, drawnQuery);
+  const drawn = computeDatasetVisualPropsData(drawnVisualType, dataset, query);
   if (!drawn || !checkIsAxisVisualPropsData(drawn)) return;
   // A capped read still downloads, since the rows read are the file, but the alert says they are not every row
   const truncation = getDatasetTruncation(dataset);
@@ -34,9 +33,10 @@ export const exportDashboardVisualCsv = (visual: Visual, dataset: Dataset) => {
     const { createAlert } = alertStore;
     createAlert(getDatasetTruncationText(truncation), "warning");
   }
+  const drawnSeries = shape === VisualDatasetShape.Labels ? [takeOne(drawn.series)] : drawn.series;
   downloadFile(
     `${visual.chart.configuration.title || visual.type}.csv`,
-    createDatasetCsv(createDrawnDataset(shape, query, drawn)),
+    createDatasetCsv(createDrawnDataset(shape, query, { ...drawn, series: drawnSeries })),
     MimeType.Csv,
   );
 };
