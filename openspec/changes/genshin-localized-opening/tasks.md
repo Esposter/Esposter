@@ -8,7 +8,7 @@
 ## 2. Measuring the differences
 
 - [ ] 2.1 Measure the publisher's logo, its place and the text's sizes and wraps for each client against the English reference. Verify: a test named after the scenario "A client with a different publisher shows its own logo", written first and seen failing.
-  - Measured for the Japanese and mainland clients: the Japanese splash matches the English one (`publisher-splash`, score 0.07 against a bar of 1). The mainland launch shows no publisher logo, its first 1.6 seconds blank, and the opening already leaves its publisher stage out. The publisher splash has no text. The scenario has no client in any recording to apply to, so no test is written: it would never fail honestly ([design](design.md) Decisions).
+  - Measured for the mainland client: it shows no publisher logo, its first 1.6 seconds blank, and the opening already leaves its publisher stage out. The Japanese launch is not yet compared with the English client: its one `publisher-splash` reference is cut from `session-2.mp4`, the Japanese capture itself, so the score of 0.07 is a self-comparison. That measure waits on the English publisher splash in the [roadmap](../genshin-roadmap/tasks.md). The publisher splash has no text. The scenario has no client in any recording to apply to, so no test is written: it would never fail honestly ([design](design.md) Decisions).
   - Waits on: 1.2, for the Korean client's measure.
 
 ## 3. Layouts keyed by language
