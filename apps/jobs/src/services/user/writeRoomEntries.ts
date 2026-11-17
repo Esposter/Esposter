@@ -29,14 +29,12 @@ export const writeRoomEntries = async (archive: UserDataArchive, userId: UserInA
   const roomIds = await getAccountMemberRoomIds(userId);
   for (const roomId of roomIds) {
     // The person's messages in the room, one page of the room's object at a time, oldest first
-    const messagePages = readPages(
-      (after, limit) => getRoomObject(roomId).exportUserMessages({ after, limit, userId }),
-      ({ id }: RoomMessage) => id,
-      OBJECT_READ_PAGE_LIMIT,
-    );
+    const readMessagePage = (after: number | undefined, limit: number) =>
+      getRoomObject(roomId).exportUserMessages({ after, limit, userId });
+    const messagePages = readPages(readMessagePage, ({ id }: RoomMessage) => id, OBJECT_READ_PAGE_LIMIT);
     await archive.addEntry(`rooms/${roomId}/messages.json`, encodeMessagesJson(messagePages));
     await readPagesToEnd(
-      (after, limit) => getRoomObject(roomId).exportUserMessages({ after, limit, userId }),
+      readMessagePage,
       ({ id }: RoomMessage) => id,
       OBJECT_READ_PAGE_LIMIT,
       (page) => writeRoomFileEntries(archive, roomId, page),
