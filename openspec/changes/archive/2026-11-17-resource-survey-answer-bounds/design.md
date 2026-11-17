@@ -25,7 +25,7 @@ A checkbox holds `minSelected` and `maxSelected`, and the save check refuses a m
 
 ## Not built
 
-- Custom rate values (SurveyJS `rateValues`) need a value model of their own, so the scale stays numbered from its first step. The [custom rate values page](../../deferred/resource/survey-rating-custom-values/design.md) holds the revisit trigger.
+- Custom rate values (SurveyJS `rateValues`) need a value model of their own, so the scale stays numbered from its first step. The [custom rate values page](../../../deferred/resource/survey-rating-custom-values/design.md) holds the revisit trigger.
 
 ## Flow
 
