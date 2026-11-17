@@ -24,7 +24,7 @@ export const useTitleSceneStore = defineStore("dungeons/title/scene", () => {
       isWrapping: true,
       validate(position) {
         const value = this.getValue(position);
-        return computed(() => value !== PlayerTitleMenuOption.Continue || Boolean(dungeonsStore.dungeons.save));
+        return value !== PlayerTitleMenuOption.Continue || Boolean(dungeonsStore.dungeons.save);
       },
     }),
   );
