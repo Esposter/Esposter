@@ -44,7 +44,8 @@ The page builder's edits are JSON Patch operations already, so an agent edits a 
 | `apps/web/shared/models/resource/sheet/commands/ADataSourceCommand.ts`  | the base the shared commands extend                                            |
 | `apps/web/shared/models/resource/sheet/commands/UpdateColumnCommand.ts` | the clearest case a patch cannot express                                       |
 | `apps/web/shared/models/resource/sheet/commands/UpdateRowCommand.ts`    | the row command an agent's cell edit runs, built from the row as it stands     |
-| `apps/web/app/store/resource/sheet/history/index.ts`                    | builds the same commands from shared                                           |
+| `apps/web/app/store/resource/sheet/history/index.ts`                    | keeps the undo and redo of the commands the browser runs                       |
+| `apps/web/app/composables/resource/sheet/commands/useUpdateColumn.ts`   | builds the column rename from shared, the class the server runs too            |
 | `apps/web/server/trpc/routers/sheet.ts`                                 | `runSheetCommand`, over `server/services/resource/sheet/runSheetCommand.ts`    |
 | `apps/web/server/trpc/routers/todoList.ts`                              | `toggleTodoCompleted`, beside the follow-ups                                   |
 | `apps/web/shared/services/resource/todoList/checkRollsOnTick.ts`        | the branch a tick takes, shared by the checkbox and the agent                  |

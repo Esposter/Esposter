@@ -20,7 +20,7 @@ Every issue and pull request on `siberiacancode/lodash-omitdeep` was read with i
 
 - **Key paths are not carried.** Upstream reads `"a.b"` as a path into a nested object. No caller uses it, so each argument is a literal key name.
 - **Keys are given as arguments only.** Upstream also accepts an array of keys. The replacement takes them as rest arguments, which is all the one caller passes.
-- **Class methods are typed but not copied.** A method on a class prototype is not an own enumerable property, so the walk drops it, while the type keeps a function-typed member. `Clicker` inherits `toJSON` this way, which is why `ToData` names `toJSON` explicitly.
+- **Class methods are typed but not copied.** A method on a class prototype is not an own enumerable property, so the walk drops it, while the type keeps a function-typed member. `ClickerSave` inherits `toJSON` this way, which is why `ToData` names `toJSON` explicitly.
 
 ## Key files
 

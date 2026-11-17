@@ -44,12 +44,12 @@ No cloud client is mocked. A service takes the binding it uses as a parameter, s
 
 **Identity helpers:**
 
-| Helper                                   | What it does                                                                                                                  |
-| ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| `getMockSession()`                       | The default identity the test acts as: one user and one session for the whole run.                                            |
-| `createMockAuthSession(db, user?)`       | A fresh user with a session row, or, given a user, a second session (device) of theirs. A context built over it acts as them. |
-| `createMockUser(db)`                     | A second user for the test to act on rather than act as.                                                                      |
-| `createMockCaller(router, authSession?)` | A router's caller over a fresh context acting as that caller: the default identity when none is named, signed out for `null`. |
+| Helper                                     | What it does                                                                                                                  |
+| ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- |
+| `getMockSession()`                         | The default identity the test acts as: one user and one session for the whole run.                                            |
+| `createMockAuthSession(db, existingUser?)` | A fresh user with a session row, or, given a user, a second session (device) of theirs. A context built over it acts as them. |
+| `createMockUser(db)`                       | A second user for the test to act on rather than act as.                                                                      |
+| `createMockCaller(router, authSession?)`   | A router's caller over a fresh context acting as that caller: the default identity when none is named, signed out for `null`. |
 
 Better-auth's own session read is still mocked in `shared/test/setup.ts` for the routes that read the cookie themselves (the socket routes and the asset route); the tRPC suites never reach it.
 
@@ -62,7 +62,7 @@ const caller = createCallerFactory(userRouter)(mockContext);
 await caller.readStatuses([userId]);
 ```
 
-`createCallerFactory` (from `#server/trpc`) returns a factory that binds a `Context` to a router, producing a callable object that matches the router's procedure signatures.
+`createCallerFactory` (from `#server/trpc/index`) returns a factory that binds a `Context` to a router, producing a callable object that matches the router's procedure signatures.
 
 ## Test lifecycle
 

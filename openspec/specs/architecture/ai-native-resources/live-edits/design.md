@@ -43,15 +43,15 @@ A save the server refuses is the one case the save stream did not deliver, so it
 
 ## Key files
 
-| File                                                                  | Role                                                                                               |
-| --------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| `apps/web/app/components/Resource/Explorer/Index.vue`                 | runs the open resource's save subscription, whatever its type                                      |
-| `apps/web/app/composables/resource/useResourceSaveSubscribable.ts`    | the one save subscription every type shares; no type keeps a subscribable of its own               |
-| `apps/web/app/store/resource/todoList/index.ts`                       | re-reads on another device's save in place of taking the streamed list                             |
-| `apps/web/app/store/resource/index.ts`                                | adopts or asks from its unwritten-edit state, and owns the notice and its answers                  |
-| `apps/web/app/services/resource/createContentData.ts`                 | its reload stage is the adoption; it registers the `Keep` stage, which saves the document it holds |
-| `apps/web/app/services/resource/ResourceContentHookMap.ts`            | the two stages a restore runs, and the `Keep` stage keep mine runs                                 |
-| `apps/web/app/store/resource/sheet/index.ts`                          | its history clears when the content ref is replaced, which adoption does.                          |
-| `apps/web/app/components/Resource/OtherSaveNotice.vue`                | the notice over an unwritten edit: names the saver, and takes theirs or keeps mine                 |
-| `packages/db-schema/src/models/realtime/UserEvent.ts`                 | the save event carries the key an agent wrote with, "" for a person's own save                     |
-| `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts` | the save stream carries the version and the device rather than the content                         |
+| File                                                               | Role                                                                                               |
+| ------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------- |
+| `apps/web/app/components/Resource/Explorer/Index.vue`              | runs the open resource's save subscription, whatever its type                                      |
+| `apps/web/app/composables/resource/useResourceSaveSubscribable.ts` | the one save subscription every type shares; no type keeps a subscribable of its own               |
+| `apps/web/app/store/resource/todoList/index.ts`                    | re-reads on another device's save in place of taking the streamed list                             |
+| `apps/web/app/store/resource/index.ts`                             | adopts or asks from its unwritten-edit state, and owns the notice and its answers                  |
+| `apps/web/app/services/resource/createContentData.ts`              | its reload stage is the adoption; it registers the `Keep` stage, which saves the document it holds |
+| `apps/web/app/services/resource/ResourceContentHookMap.ts`         | the two stages a restore runs, and the `Keep` stage keep mine runs                                 |
+| `apps/web/app/store/resource/sheet/index.ts`                       | its history clears when the content ref is replaced, which adoption does.                          |
+| `apps/web/app/components/Resource/OtherSaveNotice.vue`             | the notice over an unwritten edit: names the saver, and takes theirs or keeps mine                 |
+| `packages/db-schema/src/models/realtime/UserEvent.ts`              | the save event carries the key an agent wrote with, "" for a person's own save                     |
+| `apps/web/server/services/resource/saveResourceContent.ts`         | emits the save event: the version and the key's name, the writing device as its exclude            |

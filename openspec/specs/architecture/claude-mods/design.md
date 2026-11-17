@@ -1,6 +1,6 @@
 # Claude Code mods
 
-A **mod** is a Claude Code plugin whose hooks live in one TypeScript module, loaded into the engine's own process: `hooks/hooks.json` names the module under `modules`, and the module exports `register(on)`. A hook receives `$`, the engine's interface (`$.ui`, `$.session`, `$.model`, `$.fs` and the rest), the event's input, and `next`, which runs the rest of the chain. The repository's mods are the [genshin mods](../../infra/claude-interface/genshin-mods/README.md) and the [persona plugin](../../infra/claude-interface/persona-plugin/README.md)'s surfaces, and the `claude-mods` skill holds the rules below as one line each.
+A **mod** is a Claude Code plugin whose hooks live in one TypeScript module, loaded into the engine's own process: `hooks/hooks.json` names the module under `modules`, and the module exports `register(on)`. A hook receives `$`, the engine's interface (`$.ui`, `$.session`, `$.model`, `$.fs` and the rest), the event's input, and `next`, which runs the rest of the chain. The repository's mods are the [genshin mods](../../infra/claude-interface/genshin-mods/README.md) and the [persona plugin](../../infra/claude-interface/persona-plugin/README.md)'s surfaces, and the `claude-mods` skill points a session writing one at the rules below.
 
 The engine reads a module's source before it runs anything, and refuses a module that breaks one of its rules. Almost none of those rules are in its documentation; each was found by `claude plugin validate` refusing a first draft. This page records every one, with the shape it forces, so the next mod is written that shape from the start.
 
@@ -66,7 +66,7 @@ Validation comes before the typecheck because it is the engine's own reading and
 | `packages/genshin-mods/types/index.d.ts`                  | The state contract the engine validates the keys against; it imports nothing, so `src/models/stateContract.test-d.ts` pins its repeated value sets to the value sets they copy |
 | `packages/genshin-persona/mod/register.ts`                | A second mod's shape: a plugin's existing node scripts run as commands                                                                                                         |
 | `oxlint.config.ts`                                        | The mod trees' import rule: relative specifiers, never a subpath import                                                                                                        |
-| `.agents/skills/claude-mods/SKILL.md`                     | The rules above, one line each, for a session writing a mod                                                                                                                    |
+| `.agents/skills/claude-mods/SKILL.md`                     | The authoring procedure and the settled decisions, for a session writing a mod; the rules are the table above                                                                  |
 
 ## Notes
 

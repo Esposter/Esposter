@@ -66,7 +66,7 @@ Every issue of `apexcharts/vue3-apexcharts` has one verdict, open or closed, rea
 | `apps/web/app/services/styled/ApexChartMarkerShapes.ts`     | Which shape marks each series, so one reads apart without its colour   |
 | `packages/shared/src/util/object/clonePlainDeep.ts`         | The copy the engine is handed                                          |
 | `apps/web/app/components/Styled/ApexChart.test.ts`          | The lifecycle tests, each titled with its upstream issue               |
-| `apps/web/app/services/styled/getStyledApexOptions.test.ts` | The options tests, each titled with its upstream issue                 |
+| `apps/web/app/services/styled/getStyledApexOptions.test.ts` | The options tests, each titled by the behaviour it pins                |
 
 ## Sources
 

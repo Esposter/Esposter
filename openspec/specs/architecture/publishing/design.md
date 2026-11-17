@@ -8,7 +8,7 @@ A type opts in by declaring `publishable: true` in `ResourceDefinitionMap` ([lay
 
 Publish state lives in its own `resource_publications` table ([resources](../resource/design.md)) — a row exists iff the resource is currently published. This keeps publish attributes off resources that can't publish.
 
-- **Publish = snapshot copy.** `publishResource` upserts the `resource_publications` row (bumping `publishVersion` in SQL), then stores the content as a published version — a row and a content-addressed object ([resource version store](../../resource/resource-version-store/design.md)). The version's files are not copied: its reference rows name the files its content embeds, and those are the working copy's own files, addressed by content ([content-addressed assets](../../resource/content-addressed-assets/design.md)). Edits after publish are invisible until re-publish — that is the feature (a stable public artifact), not a limitation.
+- **Publish = snapshot copy.** `publishResource` stores the content as a content-addressed object first ([resource version store](../../resource/resource-version-store/design.md)), then in one batch writes the published version's row and upserts the `resource_publications` row (bumping `publishVersion` in SQL), so a failed store claims nothing. The version's files are not copied: its reference rows name the files its content embeds, and those are the working copy's own files, addressed by content ([content-addressed assets](../../resource/content-addressed-assets/design.md)). Edits after publish are invisible until re-publish — that is the feature (a stable public artifact), not a limitation.
 - **Public reads serve only the publish copy**, never the working copy, and are rate-limited with no auth. A resource with no publication row 404s publicly.
 - **Unpublish** removes the publication row and the published versions, releasing the files they named; the public URL 404s. A file the working copy or a revision still names stays.
 
@@ -21,8 +21,8 @@ sequenceDiagram
 
   Owner->>R: publishResource(id)
   R->>R: transformPublishedContent(ctx, resource, content)
-  R->>PG: upsert row, bump publishVersion
-  R->>BLOB: store published version {publishVersion}
+  R->>BLOB: store the content, content-addressed
+  R->>PG: one batch: upsert row, bump publishVersion, write the version {publishVersion}
   Note over BLOB: immutable snapshot — later edits invisible until re-publish
 
   actor Viewer

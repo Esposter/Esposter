@@ -100,9 +100,9 @@ An **API key** from better-auth's own plugin, `@better-auth/api-key`, never a to
 | `packages/db-schema/src/models/user/McpScope.ts`                    | the scopes a key may hold                                                               |
 | `apps/web/shared/services/auth/getApiKeyScopes.ts`                  | a verified key's scopes, none unless its permissions parse                              |
 | `apps/web/server/trpc/routers/user.ts`                              | `createApiKey`, the one place a key's scopes are set                                    |
-| `apps/web/server/trpc/context.ts`                                   | carries a session the route already authenticated, and the agent's key                  |
+| `apps/web/server/trpc/context.ts`                                   | reads the caller once from the session cookie, and carries the agent's key              |
 | `apps/web/server/services/resource/writeResourceActivity.ts`        | names the key on every activity entry an agent's write leaves                           |
-| `apps/web/server/trpc/middleware/getRateLimitedMiddleware.ts`       | takes that session before reading one from the cookie                                   |
+| `apps/web/server/trpc/middleware/getRateLimitedMiddleware.ts`       | the budget a call spends, keyed by the signed-in owner, so an agent's calls share it    |
 | `apps/web/server/services/auth/getAgentSession.ts`                  | the key owner's session, on the key's own device                                        |
 | `apps/web/server/services/auth/apiKeyPlugin.ts`                     | the API key plugin's options, shared with the adapter's test                            |
 | `apps/web/server/services/auth/drizzleAdapterConfiguration.test.ts` | runs better-auth's schema check with the plugin, covering `auth.apiKeys`                |

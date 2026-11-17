@@ -17,7 +17,7 @@ flowchart TD
 
 ## The writer and the reader
 
-- **`writeJsonBlob(bucket, blobName, serializedJson)`** compresses the document and uploads it with `Content-Encoding: zstd` and `Content-Type: application/json`, then returns the stored object, whose size is what its owner is charged, or null when `onlyIf` refused the write. It is `compressZstd` and `uploadCompressedJson` composed, and the two halves are exported for a caller that stores one frame in more than one bucket, or writes an object create-only with its own cache header.
+- **`writeJsonBlob(bucket, blobName, serializedJson, onlyIf?)`** compresses the document and uploads it with `Content-Encoding: zstd` and `Content-Type: application/json`, then returns the stored object, whose size is what its owner is charged, or null when `onlyIf` refused the write. It is `compressZstd` and `uploadCompressedJson` composed, and the two halves are exported for a caller that stores one frame in more than one bucket, or writes an object create-only.
 - **`readJsonBlob(bucket, blobName)`** downloads and decompresses the object, and reads a missing object as undefined, meaning nothing has been saved yet. Every other failure surfaces rather than passing for an empty document.
 - **A browser reading through a presigned URL needs neither.** R2 serves an object's stored `Content-Encoding` on every read, and the network stack decodes it before `fetch` returns the body. A large resource's read therefore still receives the JSON bytes that it hashes, parses and keeps as its delta baseline ([large documents](../large-documents/design.md)).
 
@@ -56,7 +56,7 @@ A save gains one compression, and every server read gains one decompression. Nei
 | -------------------------------------------------------------------- | ----------------------------------------------------------------------- |
 | `packages/db/src/services/storage/writeJsonBlob.ts`                  | async compress and upload with `Content-Encoding: zstd`                 |
 | `packages/db/src/services/storage/compressZstd.ts`                   | the one frame, of a document or any file, at the level the caller names |
-| `packages/db/src/services/storage/uploadCompressedJson.ts`           | a frame uploaded, with a cache header and create-only conditions        |
+| `packages/db/src/services/storage/uploadCompressedJson.ts`           | a frame uploaded, with the conditions its caller passes                 |
 | `packages/db/src/services/storage/readJsonBlob.ts`                   | download and async decompress, a missing object read as undefined       |
 | `packages/db/src/services/storage/decompressJsonBlob.ts`             | the zstd decode both readers share, a body read off a download included |
 | `packages/db/src/services/storage/constants.ts`                      | `JSON_BLOB_COMPRESSION_LEVEL` and the RFC 9659 window                   |

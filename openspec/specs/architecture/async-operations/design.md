@@ -78,7 +78,7 @@ Two things `isExclusive` deliberately does **not** do:
 Two opt-ins narrow this, and nothing else does:
 
 - **`isSupersede`** — latest-wins instead of queueing, for a control that fires per keystroke or per drag frame, where the earlier value is already replaced on screen by the later one and losing it costs nothing. A superseded write still runs its rollback and still surfaces its error: superseding drops the older **result**, never the older **failure**.
-- **`isExclusive`** — single-flight. While a write with the same key is in flight, further calls are **dropped** outright: nothing fires, nothing is queued, and the caller gets `Dropped`. For non-idempotent creates that must never double-fire, like `createLike`.
+- **`isExclusive`** — single-flight. While any call with the same key is pending — a read in flight, or a write queued or in flight — the call is **dropped** outright: nothing fires, nothing is queued, and the caller gets `Dropped`. For non-idempotent creates that must never double-fire, like `createLike`.
 
 Everything else queues. If a write is worth issuing, it is worth landing.
 
@@ -136,7 +136,7 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-  Action[User action] --> Exclusive{isExclusive and same key still in flight?}
+  Action[User action] --> Exclusive{isExclusive and a call on the same key pending?}
   Exclusive -->|yes| Dropped[Dropped — nothing fires]
   Exclusive -->|no| Bind[Bind to the target key]
   Bind --> Mode{isSupersede?}

@@ -103,21 +103,15 @@ A published page SHALL keep working when the owner later changes or removes the 
 - **WHEN** the owner deletes the original image
 - **THEN** the published page still shows the image
 
-### Requirement: A publish that finds its copies swept repairs them and reports any failed repair
+### Requirement: A publish names only files that are stored, or fails
 
-When a concurrent unpublish removes a publish's copied assets, the publish SHALL copy them again, and a repair that fails SHALL be reported to the owner rather than swallowed.
+A publish SHALL write its version and the rows naming its files in one transaction that holds a row only for a file stored at that moment, and SHALL fail rather than publish a page naming a file a concurrent delete removed, so no separate repair runs afterwards.
 
-#### Scenario: An unpublish lands during a publish
+#### Scenario: A stored version never names a missing asset
 
-- **GIVEN** an unpublish removes the assets a publish has just copied
-- **WHEN** the publish completes
-- **THEN** the publish copies the assets again so the page's images load
-
-#### Scenario: The repair fails
-
-- **GIVEN** repairing the copied assets fails
-- **WHEN** the publish finishes
-- **THEN** the owner is told the publish did not fully repair its assets
+- **GIVEN** a delete removes a file the content names by url before the publish's transaction runs
+- **WHEN** the publish writes its version
+- **THEN** the publish fails with "cannot store content naming a missing asset" and no version is written
 - **AND** publishing again repairs them
 
 ### Requirement: Each publishable type has a public view that unfurls with its name

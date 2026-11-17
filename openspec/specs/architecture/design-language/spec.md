@@ -119,12 +119,12 @@ Every focused control SHALL show a visible focus indicator that a keyboard reade
 - **WHEN** the button is focused
 - **THEN** an outline shows around the button
 
-#### Scenario: A focused text field shows an outline and a tint
+#### Scenario: A focused text field shows a stronger fill
 
 - **GIVEN** a keyboard reader moves focus to a text field
 - **WHEN** the field is focused
-- **THEN** an outline is drawn just inside the field
-- **AND** the field is shown with a tint beneath the outline
+- **THEN** the field is drawn a stronger step of its fill than at rest
+- **AND** no outline is drawn around it
 
 ### Requirement: Text uses four sizes, each set by the design style
 

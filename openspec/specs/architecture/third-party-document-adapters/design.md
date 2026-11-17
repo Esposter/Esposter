@@ -41,7 +41,7 @@ Register before the first `await` in an async composable. Past it the caller's s
 
 | File                                                           | Role                                                           |
 | -------------------------------------------------------------- | -------------------------------------------------------------- |
-| `apps/web/app/services/resource/ResourceContentHookMap.ts`     | the two stages                                                 |
+| `apps/web/app/services/resource/ResourceContentHookMap.ts`     | the restore's two stages, and the keep stage a held save runs  |
 | `apps/web/app/composables/resource/useAdoptResourceContent.ts` | what a blade registers, and its teardown                       |
 | `apps/web/app/store/resource/index.ts`                         | `reloadResourceContent` — the row re-read, then both stages    |
 | `apps/web/app/services/resource/createContentData.ts`          | the reload stage every content store gets for free             |

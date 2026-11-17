@@ -69,12 +69,12 @@ Each type owns one content schema (Zod, interface-first, one function per file) 
 
 A capability is a cross-cutting mechanism a resource type opts into via its definition. **Admission rule: a capability exists only when ≥2 resource types need the same mechanism, or when the type system must guarantee its absence** (a TodoList must not have publish endpoints). Anything used by exactly one type is type-specific code — promoting a single-consumer mechanism is over-engineering.
 
-| Capability          | Contract                                                                                                                                                                                                  |
-| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Publishable**     | versioned snapshot + publish procedures + `/view/[type]/[id]` route + Publish command → [publishing](../publishing/design.md)                                                                             |
-| **DatasetProvider** | registers a provider so `dataset.readDataset` resolves the type → [datasets](../dataset/design.md); a Program provides its participant status, a Survey its responses                                     |
-| **FileAssets**      | owner-only upload/download/delete of binary assets under `{id}/files/…` → [resource file assets](../../resource/resource-file-assets/design.md)                                                           |
-| **Portable**        | import/export via declared formats (self-contained `export()` / `import()`) + Import/Export commands; a format is offered per type, so an Email exports personalized html only and a TodoList prints only |
+| Capability          | Contract                                                                                                                                                                                                                        |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Publishable**     | versioned snapshot + publish procedures + `/view/[type]/[id]` route + Publish command → [publishing](../publishing/design.md)                                                                                                   |
+| **DatasetProvider** | registers a provider so `dataset.readDataset` resolves the type → [datasets](../dataset/design.md); a Program provides its participant status, a Survey its responses                                                           |
+| **FileAssets**      | owner-only upload/download/delete of binary assets under `{id}/files/…` → [resource file assets](../../resource/resource-file-assets/design.md)                                                                                 |
+| **Portable**        | import/export via declared formats (self-contained `export()` / `import()`) + Import/Export commands; a format is offered per type, so an Email exports its HTML, MJML source and personalized HTML, and a TodoList prints only |
 
 Which types declare each capability is `ResourceDefinitionMap`'s to say ([layer model](../layer-model/design.md#capabilities)). Explicitly **not** capabilities: collecting public responses (Survey-only — stays survey-specific code) and dataset _consumption_ (just calling `dataset.readDataset` from a component; no per-type wiring to declare).
 

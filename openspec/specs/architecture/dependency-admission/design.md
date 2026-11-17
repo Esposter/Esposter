@@ -175,7 +175,7 @@ flowchart TD
 
 ## Handing the standing part to the enforcer
 
-The recurring half of this work is already automated and should stay that way. `depend/ban-dependencies` runs over every `package.json` in the repo and fails lint on a dependency with a native or simpler replacement, with an explicit `allowed` list for the ones we have decided to keep anyway. That is the mechanism that stops the catalog re-growing, and it is why this page is a one-time analysis rather than a standing sweep.
+The recurring half of this work is already automated and should stay that way. `depend/ban-dependencies` runs over every `package.json` in the repo and fails lint on a dependency with a native or simpler replacement, and its `allowed` option names the ones we have decided to keep anyway. That is the mechanism that stops the catalog re-growing, and it is why this page is a one-time analysis rather than a standing sweep.
 
 So the follow-through from any decision here is an `allowed` entry carrying the reason, or nothing at all. A package we consciously keep against the enforcer's advice belongs on that list; a package we absorb disappears from it. Neither is a docs edit.
 
@@ -186,7 +186,7 @@ The catalog's own standing check is `scripts/src/workspace/deprecatedPackages.te
 | File                                              | Role                                                                      |
 | ------------------------------------------------- | ------------------------------------------------------------------------- |
 | `pnpm-workspace.yaml`                             | The catalog — every version in the workspace, under `catalogMode: strict` |
-| `packages/configuration/eslint/plugins/depend.js` | `depend/ban-dependencies` and its `allowed` escape hatch                  |
+| `packages/configuration/eslint/plugins/depend.js` | `depend/ban-dependencies`, and the `allowed` option that keeps a package  |
 | `packages/shared/src`                             | Where an absorbed utility lands                                           |
 | `scripts/src/services/dependencies/score`         | The absorb score, its dimensions and the disagreement filter              |
 | `apps/web/app/services/message/emoji`             | The precedent — data and search engine kept, behaviour taken back         |

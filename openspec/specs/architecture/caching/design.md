@@ -37,7 +37,8 @@ Two invariants the primitive exists to hold:
 A write declares what it changed; a cache declares what it depends on. Neither knows the other exists.
 
 ```ts
-await executeMutation(() => $trpc.resource.deleteResources.mutate({ ids }), {
+executeMutation(() => $trpc.resource.deleteResources.mutate({ ids }), {
+  applyOptimistic: () => () => {},
   invalidates: [CacheTag.Resources],
   key: Symbol("deleteResources"),
 });
