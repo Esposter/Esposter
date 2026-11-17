@@ -7,7 +7,7 @@ Commit `b3f5b82421` made `lang` and `title` required in `mjmlRootPropsSchema` (`
 ## What Changes
 
 - Every stored email working copy (`resource-assets`, `{resourceId}/content.json`) whose root props lack `lang` or `title` is rewritten with them set to an empty string, the value the model already means by "not set".
-- The backfill is a scratchpad script run per the `backfills` skill: a dry run, then dev, then prod, re-run until it reports nothing, then deleted. It commits nothing.
+- The backfill is a scratchpad script run per the `backfills` skill's run reference, which owns the order of the dry run, dev and prod. It commits nothing.
 - A published version of an email whose snapshot holds the old shape is checked before the prod run, per the persisted-stores reference.
 
 ## Capabilities
