@@ -2,7 +2,7 @@ import { QUEUE_BRANCH, REMOTE_NAME, REMOTE_QUEUE_REF } from "#src/services/share
 import { runGit } from "#src/services/shared/runGit";
 import { LOCKED_REF_REGEX, WORKTREE_NAME_REGEX } from "#src/services/worktree/create/constants";
 import { AGENT_WORKTREES_DIRECTORY } from "@esposter/configuration";
-import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
+import { getResult, InvalidOperationError, noop, Operation } from "@esposter/shared";
 import { join } from "node:path";
 
 // Creates a worktree on a branch of its own name, from ai/queue as origin holds it, under the main checkout's worktrees
@@ -17,7 +17,7 @@ export const createWorktree = (name: string, mainCheckoutRoot: string): string =
   const worktreePath = join(mainCheckoutRoot, AGENT_WORKTREES_DIRECTORY, name);
   // Two worktrees created at once fetch the same ref, and the one that loses its lock loses it to the other's fetch of
   // That ref, which leaves it current either way. Any other failure of the fetch is the create's to report
-  getResult(() => runGit(["fetch", "--quiet", REMOTE_NAME, QUEUE_BRANCH], mainCheckoutRoot)).mapErr((error) => {
+  getResult(() => runGit(["fetch", "--quiet", REMOTE_NAME, QUEUE_BRANCH], mainCheckoutRoot)).match(noop, (error) => {
     if (!LOCKED_REF_REGEX.test(error.message)) throw error;
   });
   runGit(["worktree", "add", "-b", name, worktreePath, REMOTE_QUEUE_REF], mainCheckoutRoot);
