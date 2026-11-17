@@ -15,6 +15,7 @@ import { bossDefeatSaveSchema } from "#src/models/enemy/BossDefeatSave";
 import { enemyRespawnSaveSchema } from "#src/models/enemy/EnemyRespawnSave";
 import { clearedCampSchema } from "#src/models/exploration/ClearedCamp";
 import { fishingCatchesSaveSchema } from "#src/models/fishing/FishingCatchesSave";
+import { forgingSaveSchema } from "#src/models/forging/ForgingSave";
 import { companionshipExpSaveSchema } from "#src/models/friendship/CompanionshipExpSave";
 import { minedOutcropSaveSchema } from "#src/models/gathering/MinedOutcropSave";
 import { cardGameExpSaveSchema } from "#src/models/gcg/CardGameExpSave";
@@ -96,6 +97,8 @@ export const genshinSaveSchema = z
     // The fish caught from each stock that are not yet back, by the stock's key, each held until its seventy-two hours have
     // Run. Absent while no fish is caught from any stock
     fishingCatchAts: fishingCatchesSaveSchema.optional(),
+    // The forge's learned recipe ids, absent until a recipe is learned from a diagram
+    forging: forgingSaveSchema.optional(),
     // The furnishings placed in the realm, each with the area it stands in and where, in the order they were placed
     homePlacements: homePlacementSaveSchema,
     // The seeds the realm's garden holds, each on its plot, with the instant it was planted at

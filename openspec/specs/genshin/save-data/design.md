@@ -14,6 +14,7 @@ A system the world holds is saved only when its slice is in the save's schema (`
 - the chests opened, by chest id `packages/genshin-world/src/models/save/GenshinSave.ts` ([chests](../chests/design.md));
 - each achievement's count and the moment it finished, by achievement id `packages/genshin-world/src/models/achievement/AchievementProgressSave.ts`;
 - the bench's recipes learned from instructions, and each recipe's crafted count, by recipe id ([crafting](../crafting/design.md));
+- the forge's recipes learned from diagrams, by recipe id `packages/genshin-world/src/models/forging/ForgingSave.ts` ([forging](../forging/design.md));
 - each kind of wish's counters `packages/genshin-world/src/models/wish/WishPityMapSave.ts`, and the wish history: each draw's banner kind, item and moment, kept for the window `WISH_HISTORY_WINDOW` sets (in `packages/genshin-world/src/services/wish/constants.ts`, applied by `packages/genshin-world/src/services/wish/appendWishHistory.ts`) ([wish](../wish/design.md));
 - the day's commissions `packages/genshin-world/src/models/save/GenshinSave.ts`: the four dealt, the moment they were dealt and the ones claimed ([commissions](../commissions/design.md));
 - each region's Statues of The Seven progress `packages/genshin-world/src/models/save/GenshinSave.ts` (the Oculi held toward its next level and the level reached), by region id, and the Oculi found, by id ([statues of the seven](../statues-of-the-seven/design.md));

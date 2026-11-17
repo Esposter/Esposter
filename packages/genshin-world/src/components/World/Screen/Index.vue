@@ -24,6 +24,7 @@ import { readCraftingStrongboxes } from "#src/services/crafting/readCraftingStro
 import { readMondstadtCraftingBenchPlace } from "#src/services/crafting/readMondstadtCraftingBenchPlace";
 import { readDomainChallengeLevels } from "#src/services/domains/readDomainChallengeLevels";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { readHomeBlueprints } from "#src/services/home/readHomeBlueprints";
 import { readHudInterfaceRects } from "#src/services/hud/readHudInterfaceRects";
 import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap";
 import { readCharacterKits } from "#src/services/kit/readCharacterKits";
@@ -106,6 +107,7 @@ getResultAsync(() =>
       measureLoadStep("catalogue", readCatalogue(props.gameDataBaseUrl)),
       measureLoadStep("wildlife-places", readMondstadtWildlifePlaces(props.gameDataBaseUrl)),
       measureLoadStep("frostbearing-tree-places", readMondstadtFrostbearingTreePlaces(props.gameDataBaseUrl)),
+      measureLoadStep("home-blueprints", readHomeBlueprints(props.gameDataBaseUrl)),
       measureLoadStep("crafting-recipes", readCraftingRecipes(props.gameDataBaseUrl)),
       measureLoadStep("crafting-strongboxes", readCraftingStrongboxes(props.gameDataBaseUrl)),
       measureLoadStep("crafting-bench-place", readMondstadtCraftingBenchPlace(props.gameDataBaseUrl)),
@@ -139,6 +141,7 @@ getResultAsync(() =>
     catalogue,
     wildlifePlaces,
     frostbearingTreePlaces,
+    homeBlueprints,
     craftingRecipes,
     craftingStrongboxes,
     craftingBenchPlace,
@@ -170,6 +173,7 @@ getResultAsync(() =>
       enemyTables,
       frostbearingTreeLevels,
       frostbearingTreePlaces,
+      homeBlueprints,
       hudInterfaceRects,
       materialDataMap,
       monumentPlaces: puzzlePlaces.filter(({ kind }) => kind === PuzzleKind.ElementalMonument),

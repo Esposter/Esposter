@@ -190,6 +190,28 @@ Every character except the Traveler SHALL stay usable in the party while on expe
 - **WHEN** the player sets the party
 - **THEN** the character can be chosen for the party
 
+### Requirement: The expedition bonus chance follows the sent character's level
+
+The chance of an expedition bonus SHALL rise with the level of the character sent.
+
+#### Scenario: A level 1 character has a 20 percent bonus chance
+
+- **GIVEN** a character at level 1 is sent on an expedition
+- **WHEN** the expedition is set
+- **THEN** its bonus chance is 20 percent
+
+#### Scenario: A level 21 character has a 40 percent bonus chance
+
+- **GIVEN** a character at level 21 is sent on an expedition
+- **WHEN** the expedition is set
+- **THEN** its bonus chance is 40 percent
+
+#### Scenario: A level 81 character has a 90 percent bonus chance
+
+- **GIVEN** a character at level 81 is sent on an expedition
+- **WHEN** the expedition is set
+- **THEN** its bonus chance is 90 percent
+
 ### Requirement: An expedition talent applies to the expedition its character is sent on
 
 A character's expedition talent SHALL apply to the expedition on which that character is sent.

@@ -36,13 +36,13 @@ import type { BannerKind } from "genshin-interface/save";
 // Quest's progress by its id, the ids of the landmarks resonated with, each achievement's progress by its id, the
 // Adventure EXP, Mondstadt's Reputation, each Character's Companionship EXP by its id, the characters held with each
 // One's copy count by its id, the day's Commissions with the moment they were dealt, each kind of wish's Counters, the
-// Wish history, the Bench's learned recipes and each recipe's Crafted count by its id, the Archive's opened entries by
-// Section and its defeat counts by entry id, the Frostbearing Tree's offering Progress, the furnishings placed in the
-// Realm, each Region's Statues of The Seven progress by the Region's id, the ids of the Oculi found, the ids of the
-// Seelies settled and the puzzles solved, the World Level adjustment, the name chosen for The Traveler, the party, the
-// Cooking progress and processing queues, the namecard the profile shows by its item id, and the purchases of each limited
-// Good that still count against its limit. Each defeated enemy's moment of coming back by its spawn key, in the camps with
-// No boss among them, the save's slices convert to and from these
+// Wish history, the Bench's learned recipes and each recipe's Crafted count by its id, the Blacksmith's learned
+// Recipes, the Archive's opened entries by Section and its defeat counts by entry id, the Frostbearing Tree's offering
+// Progress, the furnishings placed in the Realm, each Region's Statues of The Seven progress by the Region's id, the
+// Ids of the Oculi found, the ids of the Seelies settled and the puzzles solved, the World Level adjustment, the name
+// Chosen for The Traveler, the party, the Cooking progress and processing queues, the namecard the profile shows by its
+// Item id, and the purchases of each limited Good that still count against its limit. Each defeated enemy's moment of
+// Coming back by its spawn key, in the camps with No boss among them, the save's slices convert to and from these
 export interface GenshinSaveState {
   achievementProgressMap: ReadonlyMap<number, AchievementProgress>;
   adventureExp: number;
@@ -67,6 +67,7 @@ export interface GenshinSaveState {
   enemyRespawnMap: ReadonlyMap<string, string>;
   // The catches each stock holds that are not yet back, by the stock's key, so a stock refills fish by fish
   fishingCatchAts: ReadonlyMap<string, readonly Temporal.Instant[]>;
+  forgeLearnedRecipeIds: number[];
   foundOculusIds: ReadonlySet<string>;
   frostbearingTreeProgress: OfferingProgressSave;
   homePlacements: HomePlacement[];

@@ -2,8 +2,11 @@ import type { InventoryItem } from "#src/models/inventory/InventoryItem";
 
 import { englishNameText } from "#parity/englishNameText";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { createForgeProgress } from "#src/services/forging/createForgeProgress";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap";
+import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
+import { toHomeProgress } from "#src/services/save/toHomeProgress";
 import { InventorySort, ItemCategory } from "genshin-interface";
 import { ENGLISH_GAME_TEXT, GameTextKey } from "genshin-text";
 
@@ -41,11 +44,17 @@ const weapons: InventoryItem[] = Array.from({ length: WEAPON_COUNT }, (_value, i
 });
 
 export const props = {
-  // The weapons hold no cooking instruction and the cook has learned nothing, so the bag's Use check reads no dish
+  // The weapons hold no cooking instruction, diagram or blueprint, and nothing is learned, so the bag's Use check reads none
+  blueprintMap: new Map(),
   cookingProgress: { learnedRecipeIds: [], proficiencies: {} },
+  craftingProgress: { learnedRecipeIds: [] },
+  craftingRecipeMap: new Map(),
   dishUseMap: new Map(),
+  forgeProgress: createForgeProgress(Temporal.Instant.fromEpochMilliseconds(0)),
+  forgeRecipeMap: new Map(),
   gadgetRows: [],
   gameText: ENGLISH_GAME_TEXT,
+  homeProgress: toHomeProgress(EMPTY_GENSHIN_SAVE.homeProgress),
   initialCategory: ItemCategory.Weapon,
   initialSelectedId: String(EYE_OF_PERCEPTION_INDEX),
   initialSort: InventorySort.Quality,

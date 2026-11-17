@@ -6,9 +6,9 @@ import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { computeForgeDefinitions } from "#src/services/forging/computeForgeDefinitions";
 import { computeForgeWeapons } from "#src/services/forging/computeForgeWeapons";
 import { FIRST_FORGE_RECIPE_ID, FORGE_CLOCK_INTERVAL_MS } from "#src/services/forging/constants";
-import { createForgeProgress } from "#src/services/forging/createForgeProgress";
 import { readForgeRecipes } from "#src/services/forging/readForgeRecipes";
 import { readMondstadtBlacksmithPlace } from "#src/services/forging/readMondstadtBlacksmithPlace";
+import { createUnlockItemMap } from "#src/services/shared/createUnlockItemMap";
 import { useWorldScreenStore } from "#src/store/screen";
 import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync } from "@esposter/shared";
@@ -17,7 +17,8 @@ import { ForgeTab } from "genshin-interface";
 import { storeToRefs } from "pinia";
 import { computed, ref, shallowRef } from "vue";
 
-// The blacksmith's recipes and its place in Mondstadt as the world starts, each read from the hosted game data
+// The blacksmith's recipes and its place in Mondstadt as the world starts, each read from the hosted game data, and the
+// Recipe each diagram opens, by the diagram's item id
 export const useWorldForging = () => {
   const worldScreenStore = useWorldScreenStore();
   const { screenKind } = storeToRefs(worldScreenStore);
@@ -41,15 +42,15 @@ export const useWorldForging = () => {
       console.error(error);
     },
   );
-  // The forge's state for this session: the save holds no forge slice, so a reload empties it, and its clock is read
-  // Again each Interval while the forge screen is open so its queues' time left moves
+  // The forge's state for this session: the save holds the recipes learned, not the queues, so a reload empties them, and its
+  // Clock is read again each Interval while the forge screen is open so its queues' time left moves
   const forgeAmount = ref(1);
   const forgeDefinitions = computed(() =>
     computeForgeDefinitions(forgeRecipes.value, worldSessionStore.materialDataMap, worldSessionStore.nameText),
   );
   const forgeNow = shallowRef(getWorldNow());
-  const forgeProgress = shallowRef(createForgeProgress(getWorldNow()));
   const forgeRecipeId = ref(FIRST_FORGE_RECIPE_ID);
+  const forgeRecipeMap = computed(() => createUnlockItemMap(forgeRecipes.value));
   const forgeTab = ref(ForgeTab.Materials);
   const forgeWeapons = computed(() =>
     computeForgeWeapons(forgeRecipes.value, worldSessionStore.weaponDataMap, worldSessionStore.nameText),
@@ -62,8 +63,8 @@ export const useWorldForging = () => {
     forgeAmount,
     forgeDefinitions,
     forgeNow,
-    forgeProgress,
     forgeRecipeId,
+    forgeRecipeMap,
     forgeRecipes,
     forgeTab,
     forgeWeapons,

@@ -10,6 +10,7 @@ import type { CraftingRecipe } from "#src/models/crafting/CraftingRecipe";
 import type { CraftingStrongboxData } from "#src/models/crafting/CraftingStrongboxData";
 import type { DomainChallengeLevelMap } from "#src/models/domains/DomainChallengeLevelMap";
 import type { EnemyTables } from "#src/models/enemy/EnemyTables";
+import type { HomeBlueprint } from "#src/models/home/HomeBlueprint";
 import type { HudInterfaceRects } from "#src/models/hud/HudInterfaceRects";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Kit } from "#src/models/kit/Kit";
@@ -59,6 +60,8 @@ export interface WorldTables {
   frostbearingTreeLevels: OfferingLevel[];
   // The Frostbearing Trees' places in Mondstadt, each stood in the world
   frostbearingTreePlaces: FrostbearingTreePlace[];
+  // The Serenitea Pot's furnishings Tubby makes, each with the diagrams that open it, which a diagram's Use learns it from
+  homeBlueprints: HomeBlueprint[];
   // The HUD's pieces' rects as the game's tree places them
   hudInterfaceRects: HudInterfaceRects;
   // The game's material table by item id, which every item the bag takes in is defined from

@@ -147,6 +147,9 @@ const mergeTips = (account: TipSave, guest: TipSave): TipSave => {
 // Guest holds is kept. The learned dishes union.
 export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): GenshinSave => {
   const minedOutcrops = mergeMinedOutcrops(account.minedOutcrops ?? [], guest.minedOutcrops ?? []);
+  const forgeLearnedRecipeIds = [
+    ...new Set([...(account.forging?.learnedRecipeIds ?? []), ...(guest.forging?.learnedRecipeIds ?? [])]),
+  ];
   const reputationBountyHunt = account.reputationBountyHunt ?? guest.reputationBountyHunt;
   const achievements = { ...account.achievements };
   for (const [achievementId, guestProgress] of Object.entries(guest.achievements)) {
@@ -202,6 +205,7 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
     encounterPoints: mergeEncounterPoints(account.encounterPoints, guest.encounterPoints),
     enemyRespawns: account.enemyRespawns,
     ...(account.fishingCatchAts && { fishingCatchAts: account.fishingCatchAts }),
+    ...(forgeLearnedRecipeIds.length > 0 && { forging: { learnedRecipeIds: forgeLearnedRecipeIds } }),
     homePlacements: account.homePlacements,
     homePlantings: account.homePlantings,
     homeProgress: account.homeProgress,

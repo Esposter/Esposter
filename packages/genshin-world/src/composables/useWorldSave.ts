@@ -1,10 +1,13 @@
 import type { CraftingProgress } from "#src/models/crafting/CraftingProgress";
 import type { ClearedCamp } from "#src/models/exploration/ClearedCamp";
+import type { ForgeProgress } from "#src/models/forging/ForgeProgress";
+import type { HomeProgress } from "#src/models/home/HomeProgress";
 import type { InventoryDestruction } from "#src/models/inventory/InventoryDestruction";
 import type { OfferingProgressSave } from "#src/models/offering/OfferingProgressSave";
 import type { GenshinSaveState } from "#src/models/save/GenshinSaveState";
 import type { TravelerBirthdaySave } from "#src/models/save/TravelerBirthdaySave";
 
+import { createForgeProgress } from "#src/services/forging/createForgeProgress";
 import { setTravelerBirthday } from "#src/services/profile/setTravelerBirthday";
 import { withoutMapEntry } from "#src/services/shared/withoutMapEntry";
 import { useWorldAchievementsStore } from "#src/store/achievements";
@@ -32,7 +35,9 @@ export const useWorldSave = ({
     | "craftedCountMap"
     | "craftingProgress"
     | "enemyRespawnMap"
+    | "forgeLearnedRecipeIds"
     | "frostbearingTreeProgress"
+    | "homeProgress"
     | "namecardItemId"
     | "queuedTipIds"
     | "shownTipIds"
@@ -60,6 +65,13 @@ export const useWorldSave = ({
   const clearedDomainIds = shallowRef<ReadonlySet<string>>(savedState.clearedDomainIds);
   const craftedCountMap = shallowRef<ReadonlyMap<number, number>>(savedState.craftedCountMap);
   const craftingProgress = shallowRef<CraftingProgress>(savedState.craftingProgress);
+  // The forge's progress for the session: the recipes learned from diagrams are the save's, and the queues and forge points
+  // Start empty on each load, as the save does not hold them
+  const forgeProgress = shallowRef<ForgeProgress>({
+    ...createForgeProgress(worldSessionStore.getWorldNow()),
+    learnedRecipeIds: savedState.forgeLearnedRecipeIds,
+  });
+  const homeProgress = shallowRef<HomeProgress>(savedState.homeProgress);
   const bossDefeatMap = shallowRef<ReadonlyMap<string, string>>(savedState.bossDefeatMap);
   const enemyRespawnMap = shallowRef<ReadonlyMap<string, string>>(savedState.enemyRespawnMap);
   const frostbearingTreeProgress = shallowRef<OfferingProgressSave>(savedState.frostbearingTreeProgress);
@@ -78,8 +90,10 @@ export const useWorldSave = ({
       craftedCountMap,
       craftingProgress,
       enemyRespawnMap,
+      () => forgeProgress.value.learnedRecipeIds,
       () => worldStatuesStore.foundOculusIds,
       frostbearingTreeProgress,
+      homeProgress,
       () => worldChestsStore.openedChestIds,
       () => worldCookingStore.processingJobs,
       () => worldStatuesStore.regionStatueProgressMap,
@@ -127,8 +141,10 @@ export const useWorldSave = ({
     craftedCountMap,
     craftingProgress,
     enemyRespawnMap,
+    forgeProgress,
     forgetBossDefeat,
     frostbearingTreeProgress,
+    homeProgress,
     namecardItemId,
     queuedTipIds,
     setBossDefeatAt,

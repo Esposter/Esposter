@@ -2,9 +2,16 @@
 import type { CookingProgress } from "#src/models/cooking/CookingProgress";
 import type { CookingRecipe } from "#src/models/cooking/CookingRecipe";
 import type { DishUse } from "#src/models/cooking/DishUse";
+import type { CraftingProgress } from "#src/models/crafting/CraftingProgress";
+import type { CraftingRecipe } from "#src/models/crafting/CraftingRecipe";
+import type { ForgeProgress } from "#src/models/forging/ForgeProgress";
+import type { ForgeRecipe } from "#src/models/forging/ForgeRecipe";
 import type { GadgetRow } from "#src/models/gadget/GadgetRow";
+import type { HomeBlueprint } from "#src/models/home/HomeBlueprint";
+import type { HomeProgress } from "#src/models/home/HomeProgress";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { InventoryDestruction } from "#src/models/inventory/InventoryDestruction";
+import type { InventoryUseContext } from "#src/models/inventory/InventoryUseContext";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { InventoryCell, InventoryWeaponDetails } from "genshin-interface";
@@ -33,14 +40,22 @@ import { GameScreen, InventoryScreen, InventorySort, ItemCategories, ItemCategor
 import { fillGameTextValues, GameTextKey } from "genshin-text";
 
 interface Props {
+  // The blueprint each diagram item opens in the realm, by the item's id, and the progress each recipe and blueprint is
+  // Learned in, which a diagram's or an instruction's Use is offered from
+  blueprintMap: ReadonlyMap<number, HomeBlueprint>;
   // The cook's progress, which decides whether an instruction the bag holds is still to be used
   cookingProgress: CookingProgress;
+  craftingProgress: CraftingProgress;
+  craftingRecipeMap: ReadonlyMap<number, CraftingRecipe>;
   // The dishes' uses by the item id each is eaten from, which decides the entries the bag offers a Use
   dishUseMap: ReadonlyMap<number, DishUse>;
+  forgeProgress: ForgeProgress;
+  forgeRecipeMap: ReadonlyMap<number, ForgeRecipe>;
   // The widget config's gadgets, whose equipable ones the gadget tab offers to equip to the quick-use slot
   gadgetRows: readonly GadgetRow[];
   // The game's words in the reader's language
   gameText: GameText;
+  homeProgress: HomeProgress;
   // The tab the bag opens on
   initialCategory: ItemCategory;
   // The entry the detail panel opens on, by its id, the tab's first entry while none is named ("")
@@ -60,10 +75,16 @@ interface Props {
 }
 
 const {
+  blueprintMap,
   cookingProgress,
+  craftingProgress,
+  craftingRecipeMap,
   dishUseMap,
+  forgeProgress,
+  forgeRecipeMap,
   gadgetRows,
   gameText,
+  homeProgress,
   initialCategory,
   initialSelectedId,
   initialSort,
@@ -115,6 +136,17 @@ const capacity = computed(() => {
 // The open tab's entries, a weapon's level as the game writes one and an artifact's as its plus, a stack's count, and on
 // Precious Items the wish's currencies the player holds ahead of the bag's own
 const cells = computed((): InventoryCell[] => {
+  const bagUseContext: InventoryUseContext = {
+    blueprintMap,
+    cookingProgress,
+    craftingProgress,
+    craftingRecipeMap,
+    dishUseMap,
+    forgeProgress,
+    forgeRecipeMap,
+    homeProgress,
+    instructionRecipeMap,
+  };
   const itemCells = computeInventoryTab(inventory.items, category.value, {
     isDescending: isDescending.value,
     sort: sort.value,
@@ -140,7 +172,7 @@ const cells = computed((): InventoryCell[] => {
       isLockable: Boolean(item.artifact),
       isLocked: Boolean(item.artifact?.isLocked),
       isSelected: chosenIds.value.includes(String(id)),
-      isUsable: checkIsInventoryItemUsable(item, { cookingProgress, dishUseMap, instructionRecipeMap }),
+      isUsable: checkIsInventoryItemUsable(item, bagUseContext),
       name,
       rarity,
     };

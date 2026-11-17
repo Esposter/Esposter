@@ -40,6 +40,8 @@ describe(readGenshinSave, () => {
   const COMPANIONSHIP_EXP = 300;
   const RECIPE_ID = 22_007;
   const CRAFTED_COUNT = 4;
+  // A forge recipe a diagram opens: the first weapon row in the forge table that a diagram names
+  const FORGE_RECIPE_ID = 13_011;
   // A dish learned and brought to proficiency three, and a processing with two units queued from its first start
   const COOKING_RECIPE_ID = 2;
   const COOKING_PROFICIENCY = 3;
@@ -374,6 +376,14 @@ describe(readGenshinSave, () => {
     expect(toGenshinSave(readGenshinSave(fishingSave, NAMES, WEAPON_DATA_MAP, new Map(), new Map()))).toStrictEqual(
       fishingSave,
     );
+  });
+
+  test("a learned forge recipe survives a reload", () => {
+    expect.hasAssertions();
+    expect(
+      visit({ ...EMPTY_GENSHIN_SAVE, forging: { learnedRecipeIds: [FORGE_RECIPE_ID] } }).forgeLearnedRecipeIds,
+    ).toStrictEqual([FORGE_RECIPE_ID]);
+    expect(visit(EMPTY_GENSHIN_SAVE).forgeLearnedRecipeIds).toStrictEqual([]);
   });
 
   test("placements are kept across a return to the realm", () => {

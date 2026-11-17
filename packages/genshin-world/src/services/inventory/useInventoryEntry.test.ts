@@ -1,17 +1,31 @@
 import type { CookingProgress } from "#src/models/cooking/CookingProgress";
 import type { CookingRecipe } from "#src/models/cooking/CookingRecipe";
 import type { DishUse } from "#src/models/cooking/DishUse";
+import type { CraftingRecipe } from "#src/models/crafting/CraftingRecipe";
+import type { ForgeRecipe } from "#src/models/forging/ForgeRecipe";
+import type { HomeBlueprint } from "#src/models/home/HomeBlueprint";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { ShopGood } from "#src/models/shop/ShopGood";
 
-import { CookingFoodType } from "#src/models/cooking/CookingFoodType";
-import { CookingQuality } from "#src/models/cooking/CookingQuality";
 import { DishTarget } from "#src/models/cooking/DishTarget";
 import { Currency } from "#src/models/inventory/Currency";
 import { MaterialType } from "#src/models/inventory/MaterialType";
 import { ShopRefresh } from "#src/models/shop/ShopRefresh";
+import { createForgeProgress } from "#src/services/forging/createForgeProgress";
 import { CurrencyItemIdMap, EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
+import {
+  BLUEPRINT_DIAGRAM_ID,
+  COOKING_RECIPE,
+  CRAFTING_INSTRUCTION_ID,
+  CRAFTING_RECIPE,
+  DISH_ID,
+  FORGE_DIAGRAM_ID,
+  FORGE_RECIPE,
+  HOME_BLUEPRINT,
+  HOME_PROGRESS,
+  INSTRUCTION_ITEM_ID,
+} from "#src/services/inventory/constants.test";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { useInventoryEntry } from "#src/services/inventory/useInventoryEntry";
 import { FRAGILE_RESIN_ITEM_ID, FRAGILE_RESIN_RESTORE } from "#src/services/originalResin/constants";
@@ -23,33 +37,15 @@ import { ItemCategory } from "genshin-interface";
 import { assert, describe, expect, test } from "vitest";
 
 describe(useInventoryEntry, () => {
-  const DISH_ID = 108_011;
   const ENTRY_ID = 1;
   const EATER_ID = 10_001;
   const MAX_HEALTH = 1000;
   const NOW = Temporal.Instant.fromEpochMilliseconds(0);
   const dishUse: DishUse = { heal: { flat: 0, healthShare: 0.2 }, target: DishTarget.Selected };
-  const INSTRUCTION_ITEM_ID = 109_101;
-  const recipe: CookingRecipe = {
-    foodType: CookingFoodType.Heal,
-    id: 1,
-    ingredients: [],
-    isDefaultUnlocked: false,
-    maxProficiency: 2,
-    nameTextId: "1",
-    qteParam: [0.5, 0.4],
-    rankLevel: 1,
-    resultItemIds: {
-      [CookingQuality.Delicious]: DISH_ID,
-      [CookingQuality.Regular]: DISH_ID,
-      [CookingQuality.Suspicious]: DISH_ID,
-    },
-    specialties: [],
-    unlockItemIds: [INSTRUCTION_ITEM_ID],
-  };
-  const createInventory = (category: ItemCategory, quantity = 1): Inventory => ({
+  // The bag holding one entry of the item id and category the test gives it
+  const createInventory = (itemId: number, category: ItemCategory, quantity = 1): Inventory => ({
     items: [
-      { definition: { category, id: DISH_ID, name: "", rank: 0, rarity: 0, stackLimit: 99 }, id: ENTRY_ID, quantity },
+      { definition: { category, id: itemId, name: "", rank: 0, rarity: 0, stackLimit: 99 }, id: ENTRY_ID, quantity },
     ],
     nextId: 2,
     quickSwapItemIds: [],
@@ -61,10 +57,16 @@ describe(useInventoryEntry, () => {
     cookingProgress: CookingProgress = { learnedRecipeIds: [], proficiencies: {} },
     instructionRecipeMap: ReadonlyMap<number, CookingRecipe> = new Map(),
   ) => ({
+    blueprintMap: new Map<number, HomeBlueprint>(),
     cookingProgress,
+    craftingProgress: { learnedRecipeIds: [] },
+    craftingRecipeMap: new Map<number, CraftingRecipe>(),
     dishUseMap,
     eaterId: EATER_ID,
+    forgeProgress: createForgeProgress(NOW),
+    forgeRecipeMap: new Map<number, ForgeRecipe>(),
     getMaxHealth: () => MAX_HEALTH,
+    homeProgress: HOME_PROGRESS,
     instructionRecipeMap,
     kitEffectState: { effects: [] },
     now: NOW,
@@ -78,7 +80,7 @@ describe(useInventoryEntry, () => {
     const party = createParty([EATER_ID]);
     getPartyMember(party, EATER_ID).healthShare = 0.5;
     const use = useInventoryEntry(
-      createInventory(ItemCategory.Food),
+      createInventory(DISH_ID, ItemCategory.Food),
       ENTRY_ID,
       createContext(new Map([[DISH_ID, dishUse]]), party),
     );
@@ -92,7 +94,7 @@ describe(useInventoryEntry, () => {
 
     const party = createParty([EATER_ID]);
     getPartyMember(party, EATER_ID).healthShare = 0.5;
-    const use = useInventoryEntry(createInventory(ItemCategory.Food, 3), ENTRY_ID, {
+    const use = useInventoryEntry(createInventory(DISH_ID, ItemCategory.Food, 3), ENTRY_ID, {
       ...createContext(new Map([[DISH_ID, dishUse]]), party),
       count: 2,
     });
@@ -103,31 +105,14 @@ describe(useInventoryEntry, () => {
 
   test("using an instruction teaches its dish", () => {
     expect.hasAssertions();
-    const inventory: Inventory = {
-      items: [
-        {
-          definition: {
-            category: ItemCategory.Material,
-            id: INSTRUCTION_ITEM_ID,
-            name: "",
-            rank: 0,
-            rarity: 0,
-            stackLimit: 99,
-          },
-          id: ENTRY_ID,
-          quantity: 1,
-        },
-      ],
-      nextId: 2,
-      quickSwapItemIds: [],
-    };
+
     const use = useInventoryEntry(
-      inventory,
+      createInventory(INSTRUCTION_ITEM_ID, ItemCategory.Material),
       ENTRY_ID,
-      createContext(new Map(), undefined, undefined, undefined, new Map([[INSTRUCTION_ITEM_ID, recipe]])),
+      createContext(new Map(), undefined, undefined, undefined, new Map([[INSTRUCTION_ITEM_ID, COOKING_RECIPE]])),
     );
 
-    expect(use?.cookingProgress?.learnedRecipeIds).toStrictEqual([recipe.id]);
+    expect(use?.cookingProgress?.learnedRecipeIds).toStrictEqual([COOKING_RECIPE.id]);
     expect(use?.inventory.items).toStrictEqual([]);
   });
 
@@ -144,7 +129,7 @@ describe(useInventoryEntry, () => {
   const instructionNames = { [INSTRUCTION_NAME_TEXT_ID]: "Instructions" };
   const instructionMaterialDataMap = new Map([[INSTRUCTION_ITEM_ID, instructionMaterial]]);
   const createInstructionContext = () =>
-    createContext(new Map(), undefined, undefined, undefined, new Map([[INSTRUCTION_ITEM_ID, recipe]]));
+    createContext(new Map(), undefined, undefined, undefined, new Map([[INSTRUCTION_ITEM_ID, COOKING_RECIPE]]));
 
   test("an instruction the shop sells teaches its dish once it is in the bag", () => {
     expect.hasAssertions();
@@ -174,7 +159,7 @@ describe(useInventoryEntry, () => {
 
     const use = useInventoryEntry(bought.inventory, entry.id, createInstructionContext());
 
-    expect(use?.cookingProgress?.learnedRecipeIds).toStrictEqual([recipe.id]);
+    expect(use?.cookingProgress?.learnedRecipeIds).toStrictEqual([COOKING_RECIPE.id]);
     expect(use?.inventory.items).toStrictEqual([]);
   });
 
@@ -192,7 +177,43 @@ describe(useInventoryEntry, () => {
 
     const use = useInventoryEntry(granted.inventory, entry.id, createInstructionContext());
 
-    expect(use?.cookingProgress?.learnedRecipeIds).toStrictEqual([recipe.id]);
+    expect(use?.cookingProgress?.learnedRecipeIds).toStrictEqual([COOKING_RECIPE.id]);
+    expect(use?.inventory.items).toStrictEqual([]);
+  });
+
+  test("using a diagram learns its recipe", () => {
+    expect.hasAssertions();
+
+    const use = useInventoryEntry(createInventory(FORGE_DIAGRAM_ID, ItemCategory.Material), ENTRY_ID, {
+      ...createContext(new Map()),
+      forgeRecipeMap: new Map([[FORGE_DIAGRAM_ID, FORGE_RECIPE]]),
+    });
+
+    expect(use?.forgeProgress?.learnedRecipeIds).toStrictEqual([FORGE_RECIPE.id]);
+    expect(use?.inventory.items).toStrictEqual([]);
+  });
+
+  test("using a crafting instruction teaches its recipe", () => {
+    expect.hasAssertions();
+
+    const use = useInventoryEntry(createInventory(CRAFTING_INSTRUCTION_ID, ItemCategory.Material), ENTRY_ID, {
+      ...createContext(new Map()),
+      craftingRecipeMap: new Map([[CRAFTING_INSTRUCTION_ID, CRAFTING_RECIPE]]),
+    });
+
+    expect(use?.craftingProgress?.learnedRecipeIds).toStrictEqual([CRAFTING_RECIPE.id]);
+    expect(use?.inventory.items).toStrictEqual([]);
+  });
+
+  test("using a blueprint's diagram learns its blueprint", () => {
+    expect.hasAssertions();
+
+    const use = useInventoryEntry(createInventory(BLUEPRINT_DIAGRAM_ID, ItemCategory.Material), ENTRY_ID, {
+      ...createContext(new Map()),
+      blueprintMap: new Map([[BLUEPRINT_DIAGRAM_ID, HOME_BLUEPRINT]]),
+    });
+
+    expect(use?.homeProgress?.learnedBlueprintIds).toStrictEqual([HOME_BLUEPRINT.id]);
     expect(use?.inventory.items).toStrictEqual([]);
   });
 
@@ -204,7 +225,7 @@ describe(useInventoryEntry, () => {
 
     expect(
       useInventoryEntry(
-        createInventory(ItemCategory.Material),
+        createInventory(DISH_ID, ItemCategory.Material),
         ENTRY_ID,
         createContext(new Map([[DISH_ID, dishUse]]), party),
       ),
@@ -215,7 +236,9 @@ describe(useInventoryEntry, () => {
   test("a food the dish table gives no use is refused", () => {
     expect.hasAssertions();
 
-    expect(useInventoryEntry(createInventory(ItemCategory.Food), ENTRY_ID, createContext(new Map()))).toBeUndefined();
+    expect(
+      useInventoryEntry(createInventory(DISH_ID, ItemCategory.Food), ENTRY_ID, createContext(new Map())),
+    ).toBeUndefined();
   });
 
   test("using Fragile Resin restores sixty Original Resin", () => {

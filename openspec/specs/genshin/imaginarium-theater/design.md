@@ -19,7 +19,7 @@ flowchart TD
 
 ## The schedule and the difficulties
 
-`pnpm -C scripts genshin:assets imaginarium` builds two records from the role combat tables and publishes them to the hosted game data as `imaginarium/seasons` and `imaginarium/difficulties`. The two tables are missing from the community dump, so they were fetched from the AnimeGameData repository into the dump and never committed (`{data-root}/genshin-parity/text/ExcelBinOutput/RoleCombatScheduleExcelConfigData.json`, `{data-root}/genshin-parity/text/ExcelBinOutput/RoleCombatDifficultyExcelConfigData.json`). Whether the repository's master matches the dump's tower tables byte for byte is the open check below, so whether the two share a revision is unverified.
+`pnpm -C scripts genshin:assets imaginarium` builds two records from the role combat tables and publishes them to the hosted game data as `imaginarium/seasons` and `imaginarium/difficulties`, which `readImaginariumSeasons` and `readImaginariumDifficulties` fetch by key. The two tables are missing from the community dump, so they were fetched from the AnimeGameData repository into the dump and never committed (`{data-root}/genshin-parity/text/ExcelBinOutput/RoleCombatScheduleExcelConfigData.json`, `{data-root}/genshin-parity/text/ExcelBinOutput/RoleCombatDifficultyExcelConfigData.json`). Whether the repository's master matches the dump's tower tables byte for byte is the open check below, so whether the two share a revision is unverified.
 
 - **Seasons.** Every row of the schedule: its id, the moments it begins and ends in the game's time zone, the difficulty ids it runs and the reward group its Stellas draw from. The schedule ends with a season scheduled far ahead, which is not begun, so it is never played (`{data-root}/genshin-parity/text/ExcelBinOutput/RoleCombatScheduleExcelConfigData.json`, whose last row is `scheduleId` 101).
 - **Difficulties.** Every difficulty row: its id, its level from one to five, and its level floor. The floors are 60 for levels one and two and 70 for levels three to five (`{data-root}/genshin-parity/text/ExcelBinOutput/RoleCombatDifficultyExcelConfigData.json`, field `OHDBPBMODLP`).
@@ -60,10 +60,11 @@ A season names its difficulties by id, and the writer refuses a season that name
 | `packages/genshin-world/src/services/imaginarium/getImaginariumBlessingStats.ts`      | The stats a Blessing Level adds to one cast member                        |
 | `packages/genshin-world/src/services/imaginarium/applyImaginariumOpeningBonus.ts`     | An owned opening character's stats for the season                         |
 | `packages/genshin-world/src/services/imaginarium/countImaginariumStellaRewards.ts`    | The rewards a run's Stellas have earned                                   |
+| `packages/genshin-world/src/services/imaginarium/readImaginariumSeasons.ts`           | The schedule's seasons with their difficulty ids, fetched by key          |
+| `packages/genshin-world/src/services/imaginarium/readImaginariumDifficulties.ts`      | Every difficulty with its level and level floor, fetched by key           |
 
 ## Not built yet
 
-- **The schedule and the difficulties are not read.** The two records are published, but nothing in the app reads them, so the rules above are given no season or difficulty from the hosted game data.
 - **The cast's composition.** Which characters an Alternate Cast may hold, by element or as a special guest, and the season's elements and guests, are not named in the schedule's fields yet, so no cast is checked against a season.
 - **The opening characters and the trial versions.** The characters each season names are not read yet, so an owned opening character is given its bonus by the caller, and a trial version is not told apart from the character.
 - **The stage.** Nothing fights a stage, its enemies, or the health and energy every member starts it with.

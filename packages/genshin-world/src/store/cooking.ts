@@ -9,6 +9,7 @@ import { readCookingRecipes } from "#src/services/cooking/readCookingRecipes";
 import { readCookingTalents } from "#src/services/cooking/readCookingTalents";
 import { readMondstadtCookingStovePlace } from "#src/services/cooking/readMondstadtCookingStovePlace";
 import { readProcessingRecipes } from "#src/services/cooking/readProcessingRecipes";
+import { createUnlockItemMap } from "#src/services/shared/createUnlockItemMap";
 import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync, getSynchronizedFunction } from "@esposter/shared";
 import { defineStore } from "pinia";
@@ -41,14 +42,7 @@ export const useWorldCookingStore = defineStore("world/cooking", () => {
   // The dishes the cook knows at the stove, the one on the screen being the first of them when it opens
   const openCookingRecipes = shallowRef<CookingRecipe[]>([]);
   // The dish each instruction item teaches, by the item's id, read off the dishes' unlock items
-  const instructionRecipeMap = computed(
-    () =>
-      new Map(
-        cookingRecipes.value.flatMap((recipe) =>
-          recipe.unlockItemIds.map((itemId): [number, CookingRecipe] => [itemId, recipe]),
-        ),
-      ),
-  );
+  const instructionRecipeMap = computed(() => createUnlockItemMap(cookingRecipes.value));
   const start = (saved: { cookingProgress: CookingProgress; processingJobs: Record<number, ProcessingJob> }) => {
     ({ cookingProgress: cookingProgress.value, processingJobs: processingJobs.value } = saved);
     const { gameDataBaseUrl } = worldSessionStore;

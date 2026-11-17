@@ -124,6 +124,9 @@ export const MAX_CRAFTING_RECIPE_COUNT = 576;
 // The cook table's rows, dishes and processings alike, each named by its id once in the learned list and once in each of
 // The proficiency and queue maps, so the cooking slice is bounded by the table's rows
 export const MAX_COOKING_RECIPE_COUNT = 512;
+// The blacksmith's recipes are the rows of the forge table, each named by its id once in the learned list, so the cap
+// Is the table's rows with room to spare: the dump holds 56 of them, and 64 is the next power of two above them
+export const MAX_FORGE_RECIPE_COUNT = 64;
 // The game's achievement table keeps this many achievements, counted by `genshin:assets achievements` into the
 // World's data
 export const MAX_ACHIEVEMENT_COUNT: number = achievementCount.count;
@@ -249,6 +252,7 @@ const SKELETON_GENSHIN_SAVE_LENGTH = JSON.stringify({
   crafting: { craftedCounts: {}, learnedRecipeIds: [] },
   encounterPoints: { earnedOn: MAX_SAVE_INSTANT, halfPoints: MAX_ENCOUNTER_HALF_POINTS },
   enemyRespawns: {},
+  forging: { learnedRecipeIds: [] },
   homePlacements: [],
   homePlantings: [],
   homeProgress: {
@@ -349,6 +353,7 @@ export const MAX_GENSHIN_SAVE_LENGTH: number =
       getRecordEntryLength(MAX_SAVE_NUMBER) +
       getRecordEntryLength({ count: MAX_SAVE_NUMBER, startedAt: MAX_SAVE_INSTANT })) +
   MAX_CRAFTING_RECIPE_COUNT * (getRecordEntryLength(MAX_SAVE_NUMBER) + getListEntryLength(MAX_SAVE_NUMBER)) +
+  MAX_FORGE_RECIPE_COUNT * getListEntryLength(MAX_SAVE_NUMBER) +
   MAX_SHOP_PURCHASE_COUNT *
     getListEntryLength({ count: MAX_SAVE_NUMBER, goodsId: MAX_SAVE_NUMBER, lastPurchasedAt: MAX_SAVE_INSTANT }) +
   MAX_ENEMY_RESPAWN_COUNT * getRecordEntryLength(MAX_SAVE_INSTANT) +

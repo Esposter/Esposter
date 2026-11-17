@@ -14,6 +14,8 @@ describe(mergeGenshinSave, () => {
   const OTHER_COOKING_DISH_ID = 2;
   const PROCESSING_ID = 3;
   const OTHER_PROCESSING_ID = 4;
+  const FORGE_RECIPE_ID = 13_011;
+  const OTHER_FORGE_RECIPE_ID = 13_012;
   const EARLIER_START = Temporal.Instant.fromEpochMilliseconds(0).toString();
   const LATER_START = Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 1 }).toString();
   const LANDMARK_ID = "1";
@@ -732,6 +734,16 @@ describe(mergeGenshinSave, () => {
       COOKING_DISH_ID,
       OTHER_COOKING_DISH_ID,
     ]);
+  });
+
+  test("the learned forge recipes of both copies union", () => {
+    expect.hasAssertions();
+    const account = { ...EMPTY_GENSHIN_SAVE, forging: { learnedRecipeIds: [FORGE_RECIPE_ID] } };
+    const guest = { ...EMPTY_GENSHIN_SAVE, forging: { learnedRecipeIds: [OTHER_FORGE_RECIPE_ID] } };
+
+    expect(mergeGenshinSave(account, guest).forging).toStrictEqual({
+      learnedRecipeIds: [FORGE_RECIPE_ID, OTHER_FORGE_RECIPE_ID],
+    });
   });
 
   test("keeps the account's processing queues over the guest's, whichever copy started later", () => {

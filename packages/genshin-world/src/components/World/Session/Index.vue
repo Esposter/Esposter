@@ -107,6 +107,7 @@ import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
 import { readGenshinSave } from "#src/services/save/readGenshinSave";
 import { createTresRenderer } from "#src/services/scene/createTresRenderer";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
+import { createUnlockItemMap } from "#src/services/shared/createUnlockItemMap";
 import { getTeamAntiColdRatio } from "#src/services/sheerCold/getTeamAntiColdRatio";
 import { PAIMON_BARGAINS_SHOP_ID } from "#src/services/shop/constants";
 import { ABYSS_ENTRANCE_POSITION } from "#src/services/spiralAbyss/constants";
@@ -151,6 +152,7 @@ const {
   catalogue,
   characterTalentKits,
   craftingBenchPlace,
+  craftingRecipes,
   devRegistry,
   domainChallengeLevels,
   enemyTables,
@@ -158,6 +160,7 @@ const {
   frostbearingTreePlaces,
   gameDataBaseUrl,
   gameText,
+  homeBlueprints,
   isPaused,
   language,
   materialDataMap,
@@ -308,8 +311,10 @@ const {
   craftedCountMap,
   craftingProgress,
   enemyRespawnMap,
+  forgeProgress,
   forgetBossDefeat,
   frostbearingTreeProgress,
+  homeProgress,
   namecardItemId,
   queuedTipIds,
   setBossDefeatAt,
@@ -558,8 +563,8 @@ const {
   forgeAmount,
   forgeDefinitions,
   forgeNow,
-  forgeProgress,
   forgeRecipeId,
+  forgeRecipeMap,
   forgeRecipes,
   forgeTab,
   forgeWeapons,
@@ -579,8 +584,21 @@ const { claimCommission, claimKatheryneBonus, convertLongTermPoint, isLongTermPo
   });
 // The namecards the profile holds, which the profile's screen lists
 const { profileNamecards } = useWorldProfileNamecards();
+// The recipes and blueprints a diagram or an instruction opens, by the item's id, and the progress each is learned in
+const blueprintMap = computed(() => createUnlockItemMap(homeBlueprints));
+const craftingRecipeMap = computed(() => createUnlockItemMap(craftingRecipes));
 // Using an entry of the bag, which the bag's screen offers
-const { useBagEntry } = useWorldBagUse({ dishUseMap, getMemberMaxHealth, kitContext });
+const { useBagEntry } = useWorldBagUse({
+  blueprintMap,
+  craftingProgress,
+  craftingRecipeMap,
+  dishUseMap,
+  forgeProgress,
+  forgeRecipeMap,
+  getMemberMaxHealth,
+  homeProgress,
+  kitContext,
+});
 // The residents of the regions in reach, which the talks and a keeper's screen are read from
 const getResidents = () => [...(windrise.value?.regionDataMap.values() ?? [])].flatMap(({ residents }) => residents);
 // The card game's EXP and the games whose one-time reward is paid, which a won week game's duel pays into
@@ -935,11 +953,12 @@ useWorldSaveSync({
     encounterPoints: encounterPoints.value,
     enemyRespawnMap: enemyRespawnMap.value,
     fishingCatchAts: fishingCatchAts.value,
+    forgeLearnedRecipeIds: forgeProgress.value.learnedRecipeIds,
     foundOculusIds: foundOculusIds.value,
     frostbearingTreeProgress: frostbearingTreeProgress.value,
     homePlacements: savedState.homePlacements,
     homePlantings: savedState.homePlantings,
-    homeProgress: savedState.homeProgress,
+    homeProgress: homeProgress.value,
     inventory: inventory.value,
     investigationDay: savedState.investigationDay,
     lastTeleportAts: lastTeleportAts.value,
@@ -1344,10 +1363,16 @@ useWorldSaveSync({
       </template>
       <template #[ScreenKind.Inventory]>
         <InventoryScreen
+          :blueprint-map
           :cooking-progress
+          :crafting-progress
+          :crafting-recipe-map
           :dish-use-map
+          :forge-progress
+          :forge-recipe-map
           :game-text
           :gadget-rows
+          :home-progress
           :initial-category="ItemCategory.Weapon"
           initial-selected-id=""
           :initial-sort="InventorySort.Level"
