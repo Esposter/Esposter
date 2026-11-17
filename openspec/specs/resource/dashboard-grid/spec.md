@@ -549,7 +549,7 @@ A published group SHALL draw its visuals with no editing control, and a bound vi
 
 ### Requirement: A published visual has an accessible name
 
-The owner SHALL give a visual alternative text, and a published tile SHALL be named by it, or by the visual's label when it has none.
+The owner SHALL give a visual alternative text of at most 250 characters, and a published tile SHALL be named by it, or by the visual's label when it has none.
 
 #### Scenario: A published chart is named by its alternative text
 
