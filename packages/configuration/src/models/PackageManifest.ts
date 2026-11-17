@@ -10,4 +10,5 @@ export interface PackageManifest {
   peerDependencies?: Record<string, string>;
   peerDependenciesMeta?: Record<string, { optional?: boolean }>;
   private?: boolean;
+  scripts?: Record<string, string>;
 }
