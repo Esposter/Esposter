@@ -47,7 +47,7 @@ Each built task names the test it was written first in, and each test is a scena
 
 - [ ] 5.4 The panel's parity reference and its approval, once the reference frame is fetched and its compare is clean.
       The reference is `character-artifacts` (`session-2.mp4` at 157.5s, already committed beside `Index-artifacts`, and
-      `verify` passes it at 0.33%). Its compare measures 2.86% against the 1% bar, so the image is not approved. The worst
+      `verify` passes it). Its compare measures a mean difference above the 1% bar, so the image is not approved. The worst
       cells are the top band's portraits (columns 2 to 4 of row 0) and the set bonus text on the right (column 5, rows 1 to
       5). Waits on the panel's measured mean difference coming under the 1% bar.
 
