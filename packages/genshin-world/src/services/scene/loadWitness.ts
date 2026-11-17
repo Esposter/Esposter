@@ -1,8 +1,9 @@
 import type { LoadedWitness } from "#src/models/scene/LoadedWitness";
 import type { WitnessMaterialFactory } from "#src/models/scene/WitnessMaterialFactory";
-import type { SceneLayout } from "genshin-engine";
 import type { BufferGeometry, InstancedMesh, Material, Texture } from "three";
 
+import { exportedSkinSchema } from "#src/models/scene/ExportedSkin";
+import { sceneLayoutSchema } from "#src/models/scene/SceneLayout";
 import { WitnessProperty } from "#src/models/scene/WitnessProperty";
 import {
   MOVING_PART_FAMILIES,
@@ -31,10 +32,6 @@ import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
 
 // The slots whose textures are colours; every other slot holds data (a normal, a mask) and is read linearly
 const COLOR_SLOTS = new Set<string>([WitnessProperty.MainTexture]);
-// The skin of a mesh as its export's JSON holds it, the bones each vertex follows strongest first
-interface ExportedSkin {
-  m_Skin: { boneIndex: number[] }[];
-}
 // A component's exports laid out as `genshin:assets witness` wrote them, each mesh turned from the export's axes into
 // Three's (the export negates x, three negates z, together half a turn about y) and drawn at every placement with the
 // Material each of its submeshes names, laid over one the host makes, in a group per family of the scene's parts its
@@ -52,7 +49,7 @@ export const loadWitness = async (
 ): Promise<LoadedWitness> => {
   const getUrl = (path: string): string => new URL(path, new URL(layoutUrl, window.location.href)).href;
   const response = await fetch(layoutUrl);
-  const layout = (await response.json()) as SceneLayout;
+  const layout = sceneLayoutSchema.parse(await response.json());
   const familyEntries = Object.entries(familyMeshRegexMap);
   // A mesh no family names (the sky's dome, an effect's cone) is drawn by the scene's own shaders, not priced here
   const drawnPlacements = layout.placements.flatMap((placement) => {
@@ -84,7 +81,7 @@ export const loadWitness = async (
             `HTTP ${objResponse.status} ${objResponse.statusText}`,
           );
         const text = await objResponse.text();
-        const { m_Skin } = (await skinResponse.json()) as ExportedSkin;
+        const { m_Skin } = exportedSkinSchema.parse(await skinResponse.json());
         return {
           object: objLoader.parse(text),
           rigidPieces: {

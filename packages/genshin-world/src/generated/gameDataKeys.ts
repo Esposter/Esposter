@@ -1,4 +1,6 @@
 /* eslint-disable no-restricted-syntax -- a mirror of the lock's own keys, which a reader looks up by a dataset's name at runtime, so a key keeps the spelling the data gives it */
+import type { ValueOfDeep } from "type-fest";
+
 // The lock's keys as a nested constant, each path nested by its segments.
 // GameDataKey is the union of its leaf paths, which readers may use to name a key.
 // Generated from gameDataLock.json on every publish.
@@ -593,9 +595,6 @@ export const GameDataIndexKeys = {
   talentMultipliers: "talentMultipliers",
 } as const;
 
-export type GameDataIndexKey = LeafKeys<typeof GameDataIndexKeys>;
-export type GameDataKey = LeafKeys<typeof GameDataKeys>;
-export type GameDataKeyOf<D extends keyof typeof GameDataKeys> = LeafKeys<(typeof GameDataKeys)[D]>;
-
-// The keys a nested constant names, which are its leaves
-type LeafKeys<T> = T extends string ? T : { [K in keyof T]: LeafKeys<T[K]> }[keyof T];
+export type GameDataIndexKey = ValueOfDeep<typeof GameDataIndexKeys>;
+export type GameDataKey = ValueOfDeep<typeof GameDataKeys>;
+export type GameDataKeyOf<D extends keyof typeof GameDataKeys> = ValueOfDeep<(typeof GameDataKeys)[D]>;

@@ -68,3 +68,7 @@ export const CASTER_REDRAW_ANGLE = 0.1;
 // The game's effect meshes and stage planes, which the undrawn maps of every city's region share under any region's code
 export const UNDRAWN_EFFECTS_MESH_REGEX = /^Eff_/u;
 export const UNDRAWN_STAGE_PLANES_MESH_REGEX = /^Stages_(?:DecalCube|Plane)_/u;
+// The ceilings of the records holding a model's or a scene's materials, and of those holding a material's colours,
+// Floats or textures, well past what the exports hold
+export const MAX_MATERIAL_COUNT = 1024;
+export const MAX_MATERIAL_PROPERTY_COUNT = 512;

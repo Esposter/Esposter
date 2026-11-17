@@ -1,8 +1,8 @@
-import type { AvatarManifest } from "#src/models/avatar/AvatarManifest";
 import type { CharacterAvatar } from "#src/models/avatar/CharacterAvatar";
 import type { CharacterMaterialOptions } from "genshin-engine";
 import type { Texture } from "three";
 
+import { avatarManifestSchema } from "#src/models/avatar/AvatarManifest";
 import { AVATAR_TEXTURE_FOLDER, AVATAR_TEXTURE_SLOTS } from "#src/services/character/avatar/constants";
 import { createAvatarTexture } from "#src/services/character/avatar/createAvatarTexture";
 import { createCharacterAvatar } from "#src/services/character/avatar/createCharacterAvatar";
@@ -20,10 +20,9 @@ export const readCharacterAvatar = async (
 ): Promise<CharacterAvatar> => {
   const readBinary = async (): Promise<ArrayBuffer> =>
     (await readFileResponse(`${componentUrl}/${AVATAR_BINARY_FILE_NAME}`, DATA_FETCH_TIMEOUT_MS)).arrayBuffer();
-  const [manifest, buffer] = await Promise.all([
-    readJson(`${componentUrl}/${AVATAR_MANIFEST_FILE_NAME}`) as Promise<AvatarManifest>,
-    readBinary(),
-  ]);
+  const readManifest = async () =>
+    avatarManifestSchema.parse(await readJson(`${componentUrl}/${AVATAR_MANIFEST_FILE_NAME}`));
+  const [manifest, buffer] = await Promise.all([readManifest(), readBinary()]);
   const drawnMaterials = new Set(manifest.meshes.flatMap(({ submeshes }) => submeshes.map(({ material }) => material)));
   const textureFiles = new Set<string>();
   // A file is a colour where any slot holding it is a colour slot, so one texture decodes one way for every material
