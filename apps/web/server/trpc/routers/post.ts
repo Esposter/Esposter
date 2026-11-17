@@ -52,7 +52,7 @@ const getThreadTopic = (postId: string, ancestorIds: string[]) => getTopic(Topic
 // A post's own topic and its thread's, read from the post a procedure answered with
 const getPostThreadTopics = (post: unknown) => {
   const { ancestorIds, id } = postIdentitySchema.parse(post);
-  return [...new Set([getTopic(TopicKind.Post, id), getThreadTopic(id, ancestorIds)])];
+  return [...new Set([getThreadTopic(id, ancestorIds), getTopic(TopicKind.Post, id)])];
 };
 
 export const postRouter = router({

@@ -276,8 +276,8 @@ describe("postRouter", () => {
     await postCaller.readPost(newReply.id);
 
     expect(readTopicsHeader(mockContext.responseHeaders, "readPost")).toStrictEqual([
-      getTopic(TopicKind.Post, newReply.id),
       getTopic(TopicKind.Post, newPost.id),
+      getTopic(TopicKind.Post, newReply.id),
     ]);
   });
 
