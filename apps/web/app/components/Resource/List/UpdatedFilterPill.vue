@@ -8,9 +8,9 @@ const updatedFilter = defineModel<"" | ResourceUpdatedFilter>("updatedFilter", {
 const updatedAfter = defineModel<Date | undefined>("updatedAfter", { required: true });
 const updatedBefore = defineModel<Date | undefined>("updatedBefore", { required: true });
 const emit = defineEmits<{ remove: [] }>();
+const selectedValues = computed(() => (updatedFilter.value ? [updatedFilter.value] : []));
 // The range picks days and the bounds are instants: each bound is its day's start where the reader is, and the fetch
 // Extends the end to the close of its day
-const selectedValues = computed(() => (updatedFilter.value ? [updatedFilter.value] : []));
 const createDayBound = (bound: Ref<Date | undefined>) =>
   computed({
     get: () => (bound.value ? getZonedDateTime(bound.value).toPlainDate() : undefined),
