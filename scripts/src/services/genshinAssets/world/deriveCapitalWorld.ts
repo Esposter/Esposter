@@ -26,8 +26,8 @@ import { getTerrainTileNames } from "#src/services/genshinAssets/world/getTerrai
 import { getWorldTileName } from "#src/services/genshinAssets/world/getWorldTileName";
 import { readAssetPathNames } from "#src/services/genshinAssets/world/readAssetPathNames";
 import { readCityAreas } from "#src/services/genshinAssets/world/readCityAreas";
-import { readDerivedWorldPlace } from "#src/services/genshinAssets/world/readDerivedWorldPlace";
 import { readDerivedPathNames } from "#src/services/genshinAssets/world/readDerivedPathNames";
+import { readDerivedWorldPlace } from "#src/services/genshinAssets/world/readDerivedWorldPlace";
 import { readLodPathHashes } from "#src/services/genshinAssets/world/readLodPathHashes";
 import { readPrefabBlocks } from "#src/services/genshinAssets/world/readPrefabBlocks";
 import { readStreamPlacements } from "#src/services/genshinAssets/world/readStreamPlacements";
@@ -57,8 +57,8 @@ export const deriveCapitalWorld = async (
 ): Promise<{ lines: string[]; world: WorldOptions }> => {
   const windriseWorld = DerivedAssetComponentMap[DerivedAssetComponent.Windrise].world;
   if (!windriseWorld) throw new InvalidOperationError(Operation.Read, component, "has no origin to stand round");
-  const place = await readDerivedWorldPlace(component);
   const subarea = await readSubareaArea(component);
+  const place = await readDerivedWorldPlace(component, subarea);
   const lines: string[] = [];
   // Each covered tile's blob and index, then those of every city area the view reaches, by the names their path hash and
   // Index name give. A city area's blob holds the props and buildings the tiles do not
