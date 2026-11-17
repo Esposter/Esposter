@@ -78,11 +78,11 @@ The guard SHALL NOT be switchable by any command and SHALL refuse in every sessi
 
 ### Requirement: The guard covers Bash only
 
-The guard SHALL read Bash commands and SHALL NOT read PowerShell commands.
+The guard SHALL read Bash commands and SHALL NOT read the command of any other shell tool.
 
-#### Scenario: A recursive PowerShell listing of a drive
+#### Scenario: A recursive listing of a drive run through another shell tool
 
-- **GIVEN** a PowerShell command listing a drive recursively
+- **GIVEN** a shell command listing a drive recursively, run through a shell tool other than Bash
 - **WHEN** it is requested
 - **THEN** the guard does not refuse it
 

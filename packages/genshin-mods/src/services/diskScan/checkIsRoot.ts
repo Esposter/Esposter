@@ -5,4 +5,4 @@ import { normalizePath } from "./normalizePath";
 const ROOT_REGEX =
   /^(?:\/[a-z]?|\/(?:c\/)?Users(?:\/[^/]+)?|\/home(?:\/[^/]+)?|~|\$HOME|\$\{HOME\}|\$USERPROFILE|%USERPROFILE%)$/u;
 
-export const isRoot = (token: string) => ROOT_REGEX.test(normalizePath(token));
+export const checkIsRoot = (token: string): boolean => ROOT_REGEX.test(normalizePath(token));

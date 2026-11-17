@@ -52,6 +52,6 @@ The check is a regular expression over the command's text, a few microseconds pe
 
 ## Notes
 
-- The guard covers the Bash tool. A PowerShell command that scans a drive (`Get-ChildItem C:\ -Recurse`) is not read.
+- The guard covers the Bash tool alone. The engine's declarations for this build name no other shell tool, so no command from one reaches the guard.
 - No command turns it off: it refuses in every session where the plugin is enabled.
 - A scan the guard misses is still caught by the machine watcher, which stops an orphaned `find`, `du`, `grep` or `rg` once it has burnt half a minute of CPU.

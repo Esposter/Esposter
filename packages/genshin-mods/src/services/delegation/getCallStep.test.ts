@@ -6,12 +6,8 @@ import { getCallStep } from "./getCallStep";
 describe(getCallStep, () => {
   test.each([
     ["Read", { tool: "Read" }],
-    ["Grep", { tool: "Grep" }],
-    ["Glob", { tool: "Glob" }],
     ["WebFetch", { tool: "WebFetch" }],
     ["a lookup command", { command: "cat README.md", tool: "Bash" }],
-    ["a PowerShell lookup command", { command: "rg foo", tool: "PowerShell" }],
-    ["a PowerShell read cmdlet", { command: "Get-Content file.txt", tool: "PowerShell" }],
   ])("counts %s as a lookup", (_description, call) => {
     expect.hasAssertions();
 

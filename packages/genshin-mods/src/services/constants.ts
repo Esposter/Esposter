@@ -1,4 +1,4 @@
-/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer; `isolatedDeclarations` demands the annotation this pattern would otherwise infer */
+/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation a template literal or a pattern would otherwise infer */
 // The game's own interface gold, the accent wherever the persona publishes no character
 export const ACCENT_COLOR = "#d3bc8e";
 // The prompt cache's lifetime, which the engine chooses and does not report: an hour on a subscription
@@ -41,16 +41,16 @@ export const RESERVE_SECTION_ID = "genshin-mods-reserve";
 // The reserve's section ends on this instruction: the window's rest goes on cleanup a haiku agent can do cold
 export const MAINTENANCE_INSTRUCTION =
   "Until it resets, spend the rest of the window on haiku agents for cleanup: fix the findings of a code review of this window's own recent commits, drain an open sweep ledger, bring the docs and skills in line with the code changed this window, fix CI's typecheck and lint reds, and land the refactors, simplifications and optimisations the compute queue's runs surfaced; write a finding that needs judgement down as a follow-up (the follow-ups plugin's capture skill) rather than deciding it on haiku; keep the compute queue's runners going.";
-// The tools that look something up, the tools that change files, and the shells whose command decides which it is
-export const LOOKUP_TOOLS: readonly string[] = ["Glob", "Grep", "Read", "WebFetch"];
-export const RESET_TOOLS: readonly string[] = ["Agent", "Edit", "NotebookEdit", "Write"];
-export const SHELL_TOOLS: readonly string[] = ["Bash", "PowerShell"];
+// The tools that look something up, the tools that change files, and the shell whose command decides which it is
+export const LOOKUP_TOOLS = ["Read", "WebFetch"] as const;
+export const RESET_TOOLS = ["Agent", "Edit", "NotebookEdit", "Write"] as const;
+export const SHELL_TOOLS = ["Bash"] as const;
 // The `export` and `cd` a session chains ahead of its command, each stripped as one leading segment
 export const LEADING_SEGMENT_REGEX: RegExp = /^\s*(?:export\s[^&;]*&&|cd\s[^&;]*&&|cd\s[^&;]*;)\s*/u;
-// The commands that only read, a whole first word each so `catalog` is not `cat`. No interpreter is one, since what
-// It runs may write as readily as read; PowerShell's cmdlets are matched in any case, as PowerShell matches them
+// The commands that only read, a whole first word each so `catalog` is not `cat`. No interpreter is one, since what it
+// Runs may write as readily as read
 export const LOOKUP_COMMAND_REGEX: RegExp =
-  /^\s*(?:cat|sed|grep|rg|find|ls|head|tail|awk|wc|get-content|get-childitem|select-string|git\s+(?:show|log|diff)|gh\s+run\s+view)(?:\s|$)/iu;
+  /^\s*(?:cat|sed|grep|rg|find|ls|head|tail|awk|wc|git\s+(?:show|log|diff)|gh\s+run\s+view)(?:\s|$)/u;
 // The reads that write as well: sed's in-place edit, find's actions that write, and a redirection into a file, the
 // Stderr and stdout merges and the null device aside
 export const WRITING_LOOKUP_REGEX: RegExp =

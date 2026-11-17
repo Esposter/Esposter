@@ -7,7 +7,6 @@ describe(checkIsLookupCommand, () => {
     ["a bare read", "cat README.md"],
     ["a search with a flag", "rg -n foo src"],
     ["a git read", "git log --oneline"],
-    ["a PowerShell read in any case", "get-content README.md"],
     ["an export and a cd before it", 'export PATH="/x:$PATH" && cd "$W" && cat a.ts'],
     ["a cd ended by a semicolon", 'cd "$W"; grep -r foo .'],
     ["leading whitespace", "  ls -la"],

@@ -1,6 +1,6 @@
-import type { EngineInterface } from "claude-code";
+import type { Atom, ReadFunction } from "claude-code";
 
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { assert, beforeEach, describe, expect, test, vi } from "vitest";
 
 import type { WorkflowLaunch } from "../../models/WorkflowLaunch";
 
@@ -11,13 +11,20 @@ import { registerReserveGate } from "./registerReserveGate";
 // The engine's state, keyed as the gate's atoms are, set per test
 const { stateByKey } = vi.hoisted(() => ({ stateByKey: {} as Record<string, unknown> }));
 
+// The engine's `read` is overloaded over atoms, derived values and references, and no one signature answers all three,
+// So the double is cast to it for the atom path the gate takes
 vi.mock(import("claude-code"), () => ({
-  atom: ({ key }: { key: string }) => ({ key }),
-  read: (_$: unknown, { key }: { key: string }) => Promise.resolve(stateByKey[key]),
+  atom: <T>(ref: { key: string; plugin: string }, initial: T): Atom<T> => ({ initial, ref }),
+  read: ((_$: unknown, source: Atom<unknown>) => Promise.resolve(stateByKey[source.ref.key])) as ReadFunction,
 }));
 
-type Handler = (engine: EngineInterface, launch: WorkflowLaunch, next: Next) => Promise<{ deny?: string }>;
-type LetLaunchThrough = (engine: EngineInterface, launch: WorkflowLaunch, next: Next) => { deny?: string };
+// The clock and the files the gate reads, each as the gate calls them
+interface GateEngine {
+  clock: { now: () => Promise<number> };
+  fs: { exists: (path: string) => Promise<boolean>; read: (path: string) => Promise<string> };
+}
+type Handler = (engine: GateEngine, launch: WorkflowLaunch, next: Next) => Promise<{ deny?: string }>;
+type LetLaunchThrough = (engine: GateEngine, launch: WorkflowLaunch, next: Next) => { deny?: string };
 type Next = (launch: WorkflowLaunch) => { deny?: string };
 
 // The handler the gate registers on `tool.call`, and the catch its registration hands the failure to
@@ -38,11 +45,16 @@ describe("registerReserveGate", () => {
   const HAIKU_SCRIPT = "await agent('first', { model: 'haiku' });\nawait agent('second', { model: 'haiku' });";
   const MIXED_SCRIPT = "await agent('first', { model: 'haiku' });\nawait agent('second', { model: 'opus' });";
 
-  const createEngine = (files: Record<string, string>, now = NOW): EngineInterface => ({
+  // A file is read only once it exists, as the gate does, so a read of one that does not is a test's own mistake
+  const createEngine = (files: Record<string, string>, now = NOW): GateEngine => ({
     clock: { now: () => Promise.resolve(now) },
     fs: {
       exists: (path: string) => Promise.resolve(path in files),
-      read: (path: string) => Promise.resolve(files[path]),
+      read: (path: string) => {
+        const text = files[path];
+        assert.exists(text);
+        return Promise.resolve(text);
+      },
     },
   });
 
