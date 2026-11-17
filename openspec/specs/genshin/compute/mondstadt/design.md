@@ -2,7 +2,6 @@
 
 ## Queue
 
-- [ ] `[cpu]` {windrise-windmill-meshes} needs game-exports — **Windrise: the windmill's tower and blade meshes exported.** `pnpm -C scripts genshin:assets extract windrise`, with the game closed. Reads the game's windmill meshes that `DerivedAssetComponentMap`'s windrise `namePattern` names, `Property_Build_Windmill02_Bottom_Vo` and `Property_Build_Windmill02_Blade_Lod0`. Writes their OBJ and JSON pairs under `{data-root}/genshin-parity/extracted/windrise/assets/Mesh/`, since that folder holds no windmill OBJ on the Mac now. Bar: both files present, their vertex counts printed, and no mesh unresolved. — waits on the game being closed; the windmill's places are read by `mondstadt-world-lod` below, so task 1.2 stays open until both are held.
 - [ ] `[cpu]` {mondstadt-world-lod} needs game-exports — **Mondstadt: the capital world re-derived with its LOD table.** `pnpm -C scripts genshin:assets extract mondstadt`, with the game closed. Reads the capital's blocks and its city area's blob (`city-areas.json`), and writes the world's `LODFinInfoMap` beside its streams under `{data-root}/genshin-parity/extracted/mondstadt/world/MonoBehaviour/`, which is missing there now. Lets the placements of the city's LOD-grouped windmills be named, `Area_MdBuild_Windmill02_*` being in the community index under `ART/Stages/Area/Mengde/Building`. Bar: each windmill placement in the world's streams named, with its count printed. — waits on the game being closed.
 
 ## Waiting
