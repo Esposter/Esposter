@@ -5,10 +5,10 @@ import { createCharacterFit } from "#src/services/genshinAssets/fit/createCharac
 import { createInterfaceRectsFit } from "#src/services/genshinAssets/fit/createInterfaceRectsFit";
 import { createRegionFit } from "#src/services/genshinAssets/fit/createRegionFit";
 import { createRegionPlantsFit } from "#src/services/genshinAssets/fit/createRegionPlantsFit";
+import { createRegionRocksFit } from "#src/services/genshinAssets/fit/createRegionRocksFit";
+import { createRegionRuinsFit } from "#src/services/genshinAssets/fit/createRegionRuinsFit";
 import { fitLoginScene } from "#src/services/genshinAssets/fit/fitLoginScene";
 import { fitProps } from "#src/services/genshinAssets/fit/fitProps";
-import { createRegionRocksFit } from "#src/services/genshinAssets/fit/fitRegionRocks";
-import { createRegionRuinsFit } from "#src/services/genshinAssets/fit/fitRegionRuins";
 import { fitRegionStatue } from "#src/services/genshinAssets/fit/fitRegionStatue";
 import { fitRiverCourses } from "#src/services/genshinAssets/fit/fitRiverCourses";
 import { fitWaterfallSheets } from "#src/services/genshinAssets/fit/fitWaterfallSheets";

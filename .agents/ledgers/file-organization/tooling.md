@@ -321,6 +321,8 @@
 | `scripts/src/services/genshinAssets/fit/countWitnessPlantsAtPlaces.ts`                    | —                       |       |
 | `scripts/src/services/genshinAssets/fit/createRegionHullsFit.ts`                          | —                       |       |
 | `scripts/src/services/genshinAssets/fit/createRegionPlantsFit.ts`                         | —                       |       |
+| `scripts/src/services/genshinAssets/fit/createRegionRocksFit.ts`                          | —                       |       |
+| `scripts/src/services/genshinAssets/fit/createRegionRuinsFit.ts`                          | —                       |       |
 | `scripts/src/services/genshinAssets/fit/DerivedAssetFitMap.ts`                            | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/LoginStoneFamilyMaterialRegexMap.ts`              | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/RegionCapitalMap.ts`                              | 2026-10-29 · Haiku 5.5  |       |
@@ -451,8 +453,6 @@
 | `scripts/src/services/genshinAssets/fit/fitRegionLandmarks.ts`                            | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/fitRegionOutcrops.ts`                             | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/fitRegionPlants.ts`                               | —                       |       |
-| `scripts/src/services/genshinAssets/fit/fitRegionRocks.ts`                                | —                       |       |
-| `scripts/src/services/genshinAssets/fit/fitRegionRuins.ts`                                | —                       |       |
 | `scripts/src/services/genshinAssets/fit/fitRegionStatue.test.ts`                          | —                       |       |
 | `scripts/src/services/genshinAssets/fit/fitRegionStatue.ts`                               | —                       |       |
 | `scripts/src/services/genshinAssets/fit/fitRegionWaypoints.ts`                            | 2026-11-01 · Haiku 5.5  |       |

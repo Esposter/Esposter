@@ -19,6 +19,10 @@ describe(resolveLayout, () => {
     [SizeClass.Expanded]: RegionPresentation.Docked,
     [SizeClass.Medium]: RegionPresentation.Docked,
   };
+  const withContentRegion = createRegion({
+    opening: RegionOpening.WithContent,
+    sizeClassPresentationMap: compactSheetPresentationMap,
+  });
 
   test("a panel is present only while its condition holds", () => {
     expect.hasAssertions();
@@ -114,10 +118,6 @@ describe(resolveLayout, () => {
   test("a sheet waits for the reader", () => {
     expect.hasAssertions();
 
-    const withContentRegion = createRegion({
-      opening: RegionOpening.WithContent,
-      sizeClassPresentationMap: compactSheetPresentationMap,
-    });
     const layout = { canvasId: "b", panels: [createPanel()], regions: [withContentRegion] };
 
     expect(
@@ -131,10 +131,6 @@ describe(resolveLayout, () => {
   test("a docked region opens with its content", () => {
     expect.hasAssertions();
 
-    const withContentRegion = createRegion({
-      opening: RegionOpening.WithContent,
-      sizeClassPresentationMap: compactSheetPresentationMap,
-    });
     const layout = { canvasId: "b", panels: [createPanel()], regions: [withContentRegion] };
 
     expect(
