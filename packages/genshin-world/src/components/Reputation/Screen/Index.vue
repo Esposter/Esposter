@@ -47,6 +47,9 @@ const levels = computed<ReputationLevelCell[]>(() =>
       .join(" "),
   })),
 );
+const title = computed(() =>
+  fillGameTextValues(gameText[GameTextKey.ReputationReward], gameText[GameTextKey.Mondstadt]),
+);
 // The offer the keeper shows, its bounty's title and button's words in the game's, else her request's in the reader's
 const offer = computed(() => {
   if (bountyOffer === ReputationBountyOffer.Claim)
@@ -72,7 +75,7 @@ const offer = computed(() => {
       :not-achieved-label="gameText[GameTextKey.ReputationNotAchieved]"
       :offer
       :requirement="[]"
-      :title="fillGameTextValues(gameText[GameTextKey.ReputationReward], gameText[GameTextKey.Mondstadt])"
+      :title
       @accept="emit('accept')"
       @close="emit('close')"
     />

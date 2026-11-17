@@ -23,7 +23,7 @@ interface Props {
   status: CharacterPackPreloadStatus;
 }
 
-const { language, progress } = defineProps<Props>();
+const { language, loadedBytes, pendingBytes, progress } = defineProps<Props>();
 const emit = defineEmits<{ finish: []; retry: [] }>();
 // The game's startup screen: the seven marks in a row on white, pale until loading reaches them, then darkened by a
 // Wipe from the left that jumps as loading does, with no easing. The lit row is the pale one again, clipped to what
@@ -53,6 +53,8 @@ const megabyteFormat = computed(
     }),
 );
 const formatMegabytes = (bytes: number): string => megabyteFormat.value.format(bytes / BYTES_PER_MEGABYTE);
+// The download's bytes so far and in all, each in megabytes, which the notice reads while the packs download
+const downloadLabel = computed(() => `${formatMegabytes(loadedBytes)} / ${formatMegabytes(pendingBytes)}`);
 </script>
 
 <template>
@@ -81,7 +83,7 @@ const formatMegabytes = (bytes: number): string => megabyteFormat.value.format(b
       </p>
       <p v-else-if="status === CharacterPackPreloadStatus.Downloading && pendingBytes > 0">
         {{ gameText[GameTextKey.DownloadingResources] }}
-        {{ formatMegabytes(loadedBytes) }} / {{ formatMegabytes(pendingBytes) }}
+        {{ downloadLabel }}
       </p>
       <GameButton
         v-if="status === CharacterPackPreloadStatus.Failed"

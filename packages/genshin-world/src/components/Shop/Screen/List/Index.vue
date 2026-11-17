@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { CurrencyCount, ShopGoodCell } from "genshin-interface";
 
+import ShopScreenListDetail from "#src/components/Shop/Screen/List/Detail/Index.vue";
+import ShopScreenListGood from "#src/components/Shop/Screen/List/Good/Index.vue";
 import {
   GAME_CREAM,
   GAME_INK,
@@ -60,41 +62,10 @@ const shownGood = computed(() => pickedGood.value ?? goods[0]);
     <ShopScreenCloseButton :label="closeLabel" @click="emit('close')" />
     <ul class="goods">
       <li v-for="good of goods" :key="good.id">
-        <GameButton
-          class="good"
-          :aria-pressed="good.id === shownGood?.id"
-          :kind="GameButtonKind.Row"
-          tip=""
-          @click="goodId = good.id"
-        >
-          <span class="good-arrow" aria-hidden="true" />
-          <span class="good-icon" />
-          <span class="good-name">{{ good.name }}</span>
-          <span v-if="good.purchaseLabel" class="good-limit">{{ good.purchaseLabel }}</span>
-          <span class="good-costs">
-            <span v-for="cost of good.costs" :key="cost.name" class="good-price price-line">
-              <span class="coin" role="img" :aria-label="cost.name" />
-              {{ cost.count }}
-            </span>
-          </span>
-        </GameButton>
+        <ShopScreenListGood :good :is-picked="good.id === shownGood?.id" @pick="goodId = good.id" />
       </li>
     </ul>
-    <section v-if="shownGood" class="detail" :aria-label="shownGood.name">
-      <div class="detail-head">
-        <p class="detail-name">{{ shownGood.name }}</p>
-      </div>
-      <div class="detail-art">
-        <span class="detail-picture" />
-      </div>
-      <div class="detail-body">
-        <p class="detail-source-label">{{ sourceLabel }}</p>
-        <span class="detail-source" />
-      </div>
-      <div class="detail-owned">
-        <p class="detail-owned-count">{{ shownGood.ownedLabel }}</p>
-      </div>
-    </section>
+    <ShopScreenListDetail v-if="shownGood" :good="shownGood" :source-label />
     <div v-if="pickedGood" class="amount-picker">
       <input
         :aria-label="countLabel"
@@ -170,12 +141,6 @@ const shownGood = computed(() => pickedGood.value ?? goods[0]);
   list-style: none;
 }
 
-.balance {
-  display: flex;
-  align-items: center;
-  gap: calc(var(--unit) * 16);
-}
-
 .coin {
   display: inline-block;
   width: calc(var(--unit) * 26);
@@ -183,6 +148,12 @@ const shownGood = computed(() => pickedGood.value ?? goods[0]);
   flex: none;
   border-radius: 50%;
   background: radial-gradient(circle, #f6d77a 0 35%, #c99a2e 36% 100%);
+}
+
+.balance {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--unit) * 16);
 }
 
 .goods {
@@ -201,196 +172,6 @@ const shownGood = computed(() => pickedGood.value ?? goods[0]);
 .goods li {
   position: relative;
   height: calc(var(--unit) * 115.5);
-}
-
-.good {
-  position: absolute;
-  top: 0;
-  left: calc(var(--unit) * 42);
-  box-sizing: border-box;
-  width: calc(var(--unit) * 1127);
-  height: calc(var(--unit) * 104);
-  padding: 0;
-  border: calc(var(--unit) * 1) solid rgb(170 180 196 / 0.35);
-  background: rgb(62 73 91 / 0.92);
-  color: inherit;
-  text-align: left;
-  cursor: inherit;
-}
-
-.good[aria-pressed="true"] {
-  left: calc(var(--unit) * 19);
-  width: calc(var(--unit) * 1173);
-  height: calc(var(--unit) * 110);
-  border-color: #fbf8ef;
-  background: #ebe4d3;
-  color: #2b2a26;
-}
-
-/* The picked good's pointer, a triangle at its left edge, drawn in its own span so the good's lit tint keeps its pseudo-element */
-.good-arrow {
-  display: none;
-}
-
-.good[aria-pressed="true"] .good-arrow {
-  display: block;
-  position: absolute;
-  top: calc(var(--unit) * 46);
-  left: calc(var(--unit) * -19);
-  border-width: calc(var(--unit) * 8) 0 calc(var(--unit) * 8) calc(var(--unit) * 12);
-  border-style: solid;
-  border-color: transparent transparent transparent #f3eee2;
-}
-
-.good-icon {
-  position: absolute;
-  top: calc(var(--unit) * 5);
-  left: calc(var(--unit) * 5);
-  width: calc(var(--unit) * 96);
-  height: calc(var(--unit) * 96);
-  background: rgb(93 99 110);
-}
-
-.good[aria-pressed="true"] .good-icon {
-  background: rgb(145 146 147);
-}
-
-.good-name {
-  position: absolute;
-  top: calc(var(--unit) * 14);
-  left: calc(var(--unit) * 120);
-  font-size: calc(var(--unit) * 26);
-  line-height: calc(var(--unit) * 30);
-}
-
-.good-limit {
-  position: absolute;
-  top: calc(var(--unit) * 14);
-  right: calc(var(--unit) * 24);
-  box-sizing: border-box;
-  height: calc(var(--unit) * 34);
-  padding: 0 calc(var(--unit) * 11);
-  border: calc(var(--unit) * 2) solid rgb(235 230 215 / 0.75);
-  border-radius: calc(var(--unit) * 17);
-  font-size: calc(var(--unit) * 23);
-  line-height: calc(var(--unit) * 30);
-  letter-spacing: calc(var(--unit) * 1.2);
-}
-
-.good[aria-pressed="true"] .good-limit {
-  right: calc(var(--unit) * 14);
-  border-color: rgb(120 118 110 / 0.7);
-  color: #4a5164;
-}
-
-.good-costs {
-  position: absolute;
-  top: calc(var(--unit) * 60);
-  left: calc(var(--unit) * 118);
-  display: flex;
-  gap: calc(var(--unit) * 16);
-}
-
-.good-price {
-  line-height: calc(var(--unit) * 26);
-}
-
-.detail {
-  position: absolute;
-  top: calc(var(--unit) * 126);
-  left: calc(var(--unit) * 1308);
-  width: calc(var(--unit) * 492);
-  height: calc(var(--unit) * 834);
-}
-
-.detail-head {
-  position: absolute;
-  top: 0;
-  left: 0;
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  width: 100%;
-  height: calc(var(--unit) * 54);
-  padding: 0 calc(var(--unit) * 28);
-  border: calc(var(--unit) * 2) solid #a9b0c0;
-  background: rgb(113 118 138);
-  color: #f7f2e6;
-}
-
-.detail-name {
-  margin: 0;
-  font-size: calc(var(--unit) * 30);
-  font-weight: 600;
-  line-height: calc(var(--unit) * 34);
-}
-
-.detail-art {
-  position: absolute;
-  top: calc(var(--unit) * 54);
-  left: 0;
-  width: 100%;
-  height: calc(var(--unit) * 225);
-  background: linear-gradient(rgb(115 121 130), rgb(101 106 119));
-}
-
-.detail-picture {
-  position: absolute;
-  top: calc(var(--unit) * 36);
-  left: calc(var(--unit) * 312);
-  width: calc(var(--unit) * 110);
-  height: calc(var(--unit) * 150);
-  background: rgb(167 171 177);
-}
-
-.detail-body {
-  position: absolute;
-  top: calc(var(--unit) * 279);
-  left: 0;
-  width: 100%;
-  height: calc(var(--unit) * 330);
-  background: #ebe5d5;
-}
-
-.detail-source-label {
-  position: absolute;
-  top: calc(var(--unit) * 167);
-  left: calc(var(--unit) * 67);
-  margin: 0;
-  color: #4a5164;
-  font-size: calc(var(--unit) * 24);
-  font-weight: 600;
-  line-height: calc(var(--unit) * 26);
-  letter-spacing: calc(var(--unit) * 0.8);
-}
-
-.detail-source {
-  position: absolute;
-  top: calc(var(--unit) * 208);
-  left: calc(var(--unit) * 32);
-  box-sizing: border-box;
-  width: calc(var(--unit) * 428);
-  height: calc(var(--unit) * 62);
-  border: calc(var(--unit) * 2) solid #cdc4ae;
-}
-
-.detail-owned {
-  position: absolute;
-  top: calc(var(--unit) * 786);
-  left: 0;
-  width: 100%;
-  height: calc(var(--unit) * 48);
-  background: rgb(254 231 186);
-}
-
-.detail-owned-count {
-  margin: 0;
-  color: #4a5164;
-  font-size: calc(var(--unit) * 26);
-  font-weight: 600;
-  line-height: calc(var(--unit) * 48);
-  letter-spacing: calc(var(--unit) * 0.6);
-  text-align: center;
 }
 
 .amount-picker {

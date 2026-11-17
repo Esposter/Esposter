@@ -2,7 +2,7 @@
 import type { GameText } from "genshin-text";
 
 import MenuGlyph from "#src/components/Menu/Glyph/Index.vue";
-import MenuScrollTrack from "#src/components/Menu/ScrollTrack/Index.vue";
+import MenuWorldLevelDialogInfo from "#src/components/Menu/WorldLevelDialog/Info/Index.vue";
 import MenuWorldLevelPrompt from "#src/components/Menu/WorldLevelPrompt/Index.vue";
 import { MenuDialogIcon } from "#src/models/menu/MenuDialogIcon";
 import { MenuPromptIcon } from "#src/models/menu/MenuPromptIcon";
@@ -12,9 +12,9 @@ import { WORLD_LEVEL_COOLDOWN_CLOCK_INTERVAL_MS } from "#src/services/adventureR
 import { MENU_DIALOG_CORNER_SCALES } from "#src/services/menu/constants";
 import { MenuDialogGlyphMap } from "#src/services/menu/MenuDialogGlyphMap";
 import { MenuPromptGlyphMap } from "#src/services/menu/MenuPromptGlyphMap";
-import { useIntervalFn, useNow, useResizeObserver } from "@vueuse/core";
+import { useIntervalFn, useNow } from "@vueuse/core";
 import { GAME_GOLD, GameButton, GameButtonKind, GameScreen } from "genshin-interface";
-import { GameTextKey, splitGameTextColors } from "genshin-text";
+import { GameTextKey } from "genshin-text";
 
 interface Props {
   // The game's words in the reader's language
@@ -31,17 +31,9 @@ interface Props {
   worldLevelChangedAt?: Temporal.Instant | undefined;
 }
 
-const {
-  gameText,
-  isWorldLevelLowered,
-  serverClockOffsetMs = 0,
-  worldLevel,
-  worldLevelChangedAt,
-} = defineProps<Props>();
+const { isWorldLevelLowered, serverClockOffsetMs = 0, worldLevel, worldLevelChangedAt } = defineProps<Props>();
 const emit = defineEmits<{ close: []; toggleWorldLevel: [] }>();
 const frame = useTemplateRef("frame");
-const body = useTemplateRef("body");
-const info = useTemplateRef("info");
 // The Change World Level prompt the button opens over the dialog, which its Confirm makes the change through. The World
 // Level unlocked is the one played at, one higher while it is lowered
 const isAdjustPromptOpen = ref(false);
@@ -54,7 +46,6 @@ const confirmAdjustment = () => {
 };
 // The dividers above and below the body, each a hairline ending in a star and a diamond at either side
 const dividerTops = [74, 583];
-const infoSegments = computed(() => splitGameTextColors(gameText[GameTextKey.WorldLevelInfo]));
 // The button waits while the last change's cooldown runs, read as the dialog opens, at each look at the clock while it
 // Stays open, and again as a change is made
 const clock = useNow({ scheduler: (callback) => useIntervalFn(callback, WORLD_LEVEL_COOLDOWN_CLOCK_INTERVAL_MS) });
@@ -65,21 +56,6 @@ const isCoolingDown = computed(
       Temporal.Instant.fromEpochMilliseconds(clock.value.getTime() + serverClockOffsetMs),
     ) !== undefined,
 );
-// The scroll thumb's share of the track and how far down it stands, from the body's scroll as it stands
-const scrollThumb = shallowRef({ offset: 1, share: 1 });
-const updateScrollThumb = () => {
-  if (!body.value) return;
-  const { clientHeight, scrollHeight, scrollTop } = body.value;
-  const scrollRange = scrollHeight - clientHeight;
-  // The body scrolls from its end, so its top reads the negative of the range and its end 0
-  scrollThumb.value = {
-    offset: scrollRange > 0 ? 1 + scrollTop / scrollRange : 1,
-    share: Math.min(clientHeight / scrollHeight, 1),
-  };
-};
-
-useResizeObserver(info, updateScrollThumb);
-
 // The dialog is modal over the menu, so focus starts inside it, on its frame, as nothing in it is picked yet
 onMounted(() => {
   frame.value?.focus();
@@ -129,22 +105,7 @@ onMounted(() => {
         />
         <rect height="2" width="912" x="41.5" y="8" />
       </svg>
-      <!-- Focusable, so a keyboard scrolls back up the help text it opens at the end of -->
-      <div
-        ref="body"
-        class="body"
-        role="region"
-        :aria-label="gameText[GameTextKey.WorldLevel]"
-        tabindex="0"
-        @scroll="updateScrollThumb()"
-      >
-        <p ref="info" class="info">
-          <span v-for="({ color, text }, index) of infoSegments" :key="index" :style="{ color }">{{ text }}</span>
-        </p>
-      </div>
-      <MenuScrollTrack class="track" :offset="scrollThumb.offset" :share="scrollThumb.share" />
-      <svg class="caret up" aria-hidden="true" viewBox="0 0 10 5"><polyline points="1 4.25 5 0.75 9 4.25" /></svg>
-      <svg class="caret down" aria-hidden="true" viewBox="0 0 10 5"><polyline points="1 0.75 5 4.25 9 0.75" /></svg>
+      <MenuWorldLevelDialogInfo :game-text />
       <GameButton
         v-if="isWorldLevelAdjustable"
         class="adjust"
@@ -254,64 +215,6 @@ onMounted(() => {
   width: calc(var(--unit) * 995);
   height: calc(var(--unit) * 18);
   fill: #4d5361;
-}
-
-/* The body scrolls from its end, where the game opens it, so a column laid out in reverse starts there; its lines are
-   The recording's 32 units apart at a cap height of 20, spaced out to its lines' widths, and its last line's box ends
-   23.5 units above the track's foot */
-.body {
-  position: absolute;
-  top: calc(var(--unit) * 90);
-  left: calc(var(--unit) * 76);
-  display: flex;
-  width: calc(var(--unit) * 917);
-  height: calc(var(--unit) * 478);
-  flex-direction: column-reverse;
-  overflow-y: auto;
-  scrollbar-width: none;
-}
-
-.info {
-  margin: 0 0 auto;
-  padding-bottom: calc(var(--unit) * 23.5);
-  color: #e3e4e6;
-  font-size: calc(var(--unit) * 28);
-  font-weight: 600;
-  letter-spacing: 0.057em;
-  line-height: calc(var(--unit) * 32);
-  white-space: pre-line;
-}
-
-.track {
-  top: calc(var(--unit) * 105);
-  left: calc(var(--unit) * 1021);
-  width: calc(var(--unit) * 5);
-  height: calc(var(--unit) * 463);
-  background: #383d4e;
-}
-
-.track :deep(.thumb) {
-  left: 0;
-  width: calc(var(--unit) * 6);
-  background: #beb9b9;
-}
-
-.caret {
-  position: absolute;
-  left: calc(var(--unit) * 1018.5);
-  width: calc(var(--unit) * 10);
-  height: calc(var(--unit) * 5);
-  fill: none;
-  stroke: #5e6472;
-  stroke-width: 1.5;
-}
-
-.caret.up {
-  top: calc(var(--unit) * 98);
-}
-
-.caret.down {
-  top: calc(var(--unit) * 569.5);
 }
 
 .adjust {

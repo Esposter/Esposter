@@ -211,7 +211,6 @@ const quickSelect = (rarity: number) => {
 const destruction = computed(() =>
   destroyInventoryItems(inventory, wallet, chosenIds.value.map(Number), names, materialDataMap),
 );
-const isDestroyFull = computed(() => chosenIds.value.length > 0 && destruction.value === undefined);
 const confirmDestroy = () => {
   if (!destruction.value) return;
   emit("destroy", destruction.value);
@@ -248,7 +247,7 @@ const currencies = computed(() =>
       :destroy-confirm-button-label="gameText[GameTextKey.InventoryDestroyConfirmButton]"
       :destroy-confirm-list-label="gameText[GameTextKey.InventoryDestroyConfirmList]"
       :destroy-full-label="gameText[GameTextKey.BagFull]"
-      :is-destroy-full
+      :is-destroy-full="chosenIds.length > 0 && destruction === undefined"
       :destroy-confirm-title="gameText[GameTextKey.InventoryDestroyConfirmTitle]"
       :destroy-confirm-warning-label="gameText[GameTextKey.InventoryDestroyConfirmWarning]"
       :destroy-label="gameText[GameTextKey.InventoryDestroy]"
