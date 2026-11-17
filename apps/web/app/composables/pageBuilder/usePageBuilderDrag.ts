@@ -10,16 +10,21 @@ import { PAGE_BUILDER_COMMAND_GROUP } from "#src/services/pageBuilder/constants"
 import { freezeFrameGeometry } from "#src/services/pageBuilder/freezeFrameGeometry";
 import { getDropRefusal } from "#src/services/pageBuilder/getDropRefusal";
 import { getEdgeScrollVelocity } from "#src/services/pageBuilder/getEdgeScrollVelocity";
+import { getMoveAnnouncement } from "#src/services/pageBuilder/getMoveAnnouncement";
 import { getNodeIdAt } from "#src/services/pageBuilder/getNodeIdAt";
+import { getNodePointer } from "#src/services/pageBuilder/getNodePointer";
+import { getNodeSlotPointer } from "#src/services/pageBuilder/getNodeSlotPointer";
 import { insertAt } from "#src/services/pageBuilder/insertAt";
 import { insertMergeFieldAt } from "#src/services/pageBuilder/insertMergeFieldAt";
 import { resolveDropTarget } from "#src/services/pageBuilder/resolveDropTarget";
 import { toFramePoint } from "#src/services/pageBuilder/toFramePoint";
-import { noop } from "@esposter/shared";
-import { getBlockLayerRows } from "vue-block-editor-headless";
+import { usePageBuilderHistoryStore } from "#src/store/pageBuilder/history";
+import { noop, parseArrayIndex, parseJsonPointer } from "@esposter/shared";
+import { getBlockLayerRows, getBlockNode, moveBlockNode } from "vue-block-editor-headless";
 
 // The slot a block of the type dropped at a viewport point lands in, or none when the point is outside the frame, or when
-// The document is not held or no slot takes the type
+// The document is not held or no slot takes the type. A node a handle is moving is named by its id, which keeps it out of
+// The slots it cannot land in
 const getDropTargetAt = <
   TNode extends BlockNode,
   TRoot extends BlockRootProps,
@@ -31,6 +36,7 @@ const getDropTargetAt = <
   type: TNode["type"],
   point: { x: number; y: number },
   geometry: FrameGeometry | undefined,
+  draggedNodeId?: string,
 ): DropTarget | undefined => {
   if (!document || !geometry || !checkIsInsideBox(point, geometry.frameRect)) return undefined;
 
@@ -38,6 +44,7 @@ const getDropTargetAt = <
   return resolveDropTarget(kind, {
     checkIsHorizontalOwner: geometry.checkIsHorizontalOwner,
     document,
+    draggedNodeId,
     draggedType: type,
     getChildRect: geometry.getChildRect,
     hoveredNodeId: geometry.getNodeIdAt(pointer),
@@ -67,6 +74,10 @@ export const usePageBuilderDrag = <
   const dropTarget = shallowRef<DropTarget>();
   // The palette block type being dragged, which a merge field's drag leaves undefined, so only a block gets a ghost
   const draggedType = shallowRef<TNode["type"]>();
+  // The node a handle is moving on the canvas, which a palette drag leaves undefined
+  const draggedNodeId = shallowRef("");
+  const pageBuilderHistoryStore = usePageBuilderHistoryStore();
+  const { applyEdit } = pageBuilderHistoryStore;
   // The press's own state: whether it has passed the threshold, so the editor can let the pointer pass through the canvas frame,
   // Whose document would take it, and the viewport point the pointer is at, where the ghost is drawn
   const { cancel: cancelDrag, isDragging, point: dragPoint, startPress } = usePressDrag();
@@ -123,6 +134,7 @@ export const usePageBuilderDrag = <
         dropTarget.value = undefined;
         refusal.value = "";
         draggedType.value = undefined;
+        draggedNodeId.value = "";
       },
       onMove,
       onRelease,
@@ -203,5 +215,63 @@ export const usePageBuilderDrag = <
     });
   };
 
-  return { draggedType, dragPoint, dropTarget, isDragging, refusal, startMergeFieldDrag, startPaletteDrag };
+  // A node on the canvas moved by its handle lands in the slot under the pointer, through the palette drag's hit test. Over the
+  // Node itself or a node it holds there is no slot, so a release there, or where no slot takes the node, leaves it in place.
+  // A release back where the node stands changes nothing, and a landed move is one edit, announced as the keyboard move is
+  const startNodeDrag = (nodeId: string, event: PointerEvent, getFrameGeometry: () => FrameGeometry | undefined) => {
+    const document = getDocument();
+    if (!document) return;
+
+    const nodePointer = getNodePointer(kind, document, nodeId);
+    const node = nodePointer === undefined ? undefined : getBlockNode(document, nodePointer, kind.children);
+    if (node === undefined) return;
+
+    trackDrag(
+      event,
+      getFrameGeometry,
+      (point) => {
+        draggedNodeId.value = nodeId;
+        dropTarget.value = getDropTargetAt(kind, getDocument(), node.type, point, getFrameGeometry(), nodeId);
+      },
+      () => {
+        const landing = dropTarget.value;
+        const landedDocument = getDocument();
+        const landedPointer = landedDocument && getNodePointer(kind, landedDocument, nodeId);
+        if (landing === undefined || !landedDocument || landedPointer === undefined) return;
+
+        const index = parseArrayIndex(parseJsonPointer(landedPointer).at(-1) ?? "", Number.MAX_SAFE_INTEGER);
+        if (landing.slotPointer === getNodeSlotPointer(landedPointer) && landing.index === index) return;
+
+        const operations = moveBlockNode(
+          landedDocument,
+          kind.registry,
+          kind.children,
+          landedPointer,
+          landing.slotPointer,
+          landing.index,
+        );
+        if (operations.length === 0) return;
+
+        applyEdit(toValue(resourceId), operations, "Move block").match(() => {
+          const movedDocument = getDocument();
+          const movedPointer = movedDocument && getNodePointer(kind, movedDocument, nodeId);
+          const message =
+            movedDocument && movedPointer !== undefined ? getMoveAnnouncement(kind, movedDocument, movedPointer) : "";
+          if (message) announce(message);
+        }, console.error);
+      },
+    );
+  };
+
+  return {
+    draggedNodeId,
+    draggedType,
+    dragPoint,
+    dropTarget,
+    isDragging,
+    refusal,
+    startMergeFieldDrag,
+    startNodeDrag,
+    startPaletteDrag,
+  };
 };

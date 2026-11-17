@@ -5,14 +5,14 @@ import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } fr
 
 import { getCandidateSlotPointers } from "#src/services/pageBuilder/getCandidateSlotPointers";
 import { getDropIndex } from "#src/services/pageBuilder/getDropIndex";
+import { getDropSlotChildIds } from "#src/services/pageBuilder/getDropSlotChildIds";
 import { getNodePointer } from "#src/services/pageBuilder/getNodePointer";
-import { getSlotChildIds } from "#src/services/pageBuilder/getSlotChildIds";
 import { getSlotOwnerId } from "#src/services/pageBuilder/getSlotOwnerId";
 import { getAcceptedTypes } from "vue-block-editor-headless";
 
 // The slot a block dragged over a node drops into: the first candidate whose accepted types include the dragged type
 // The index is the one the pointer resolves to among that slot's children, along the axis its owner lays them out on,
-// And undefined when no slot accepts the type
+// And undefined when no slot accepts the type, or when the pointer is over the dragged node or a node it holds
 export const resolveDropTarget = <
   TNode extends BlockNode,
   TRoot extends BlockRootProps,
@@ -23,6 +23,7 @@ export const resolveDropTarget = <
   {
     checkIsHorizontalOwner,
     document,
+    draggedNodeId,
     draggedType,
     getChildRect,
     hoveredNodeId,
@@ -30,6 +31,14 @@ export const resolveDropTarget = <
   }: DropTargetInput<TDocument, TNode["type"]>,
 ): DropTarget | undefined => {
   const hoveredNodePointer = hoveredNodeId === undefined ? undefined : getNodePointer(kind, document, hoveredNodeId);
+  const draggedNodePointer = draggedNodeId ? getNodePointer(kind, document, draggedNodeId) : undefined;
+  if (
+    hoveredNodePointer !== undefined &&
+    draggedNodePointer !== undefined &&
+    (hoveredNodePointer === draggedNodePointer || hoveredNodePointer.startsWith(`${draggedNodePointer}/`))
+  )
+    return undefined;
+
   const candidateSlotPointers =
     hoveredNodePointer === undefined ? ["/content"] : getCandidateSlotPointers(kind, document, hoveredNodePointer);
   const slotPointer = candidateSlotPointers.find((candidate) =>
@@ -37,7 +46,9 @@ export const resolveDropTarget = <
   );
   if (slotPointer === undefined) return undefined;
 
-  const childRects = getSlotChildIds(kind, document, slotPointer).map((childId) => getChildRect(childId));
+  const childRects = getDropSlotChildIds(kind, document, slotPointer, draggedNodeId).map((childId) =>
+    getChildRect(childId),
+  );
   const isHorizontal = checkIsHorizontalOwner(getSlotOwnerId(kind, document, slotPointer));
   return { index: getDropIndex(childRects, pointer, isHorizontal), slotPointer };
 };

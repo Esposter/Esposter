@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { AnyPageBuilderKind } from "#src/models/pageBuilder/AnyPageBuilderKind";
 import type { DropTarget } from "#src/models/pageBuilder/DropTarget";
+import type { FrameGeometry } from "#src/models/pageBuilder/FrameGeometry";
 import type { OverlayBox } from "#src/models/pageBuilder/OverlayBox";
 import type { UiCommand } from "#src/models/ui/UiCommand";
 import type { OpenPageBuilderDocument } from "#src/store/pageBuilder/document";
@@ -25,12 +26,16 @@ import { ResourceType } from "@esposter/db-schema";
 
 interface Props {
   announce: (message: string) => void;
+  // The node a handle is moving, which the canvas leaves out of its slot's indicator
+  draggedNodeId?: string | undefined;
   // The palette block type being dragged, which the canvas draws in the slot its drop target names
   draggedType?: BlockNode["type"] | undefined;
   dropTarget?: DropTarget | undefined;
   // The kind the resource's document is drawn through, which the shell passes beside the resource
   kind: AnyPageBuilderKind;
   resourceId: string;
+  // Starts the drag of a node on the canvas, from the move handle in the node toolbar
+  startNodeDrag: (nodeId: string, event: PointerEvent, getFrameGeometry: () => FrameGeometry | undefined) => void;
 }
 
 const isDeleteOpen = defineModel<boolean>("isDeleteOpen", { default: false });
@@ -183,6 +188,7 @@ const CanvasNodes = (props: { open: OpenPageBuilderDocument; origin: string }) =
       <PageBuilderCanvasOverlays
         v-model:selection-box="selectionBox"
         :check-is-horizontal-owner
+        :dragged-node-id
         :get-element
         :drop-target
         :hovered-node-id
@@ -198,5 +204,6 @@ const CanvasNodes = (props: { open: OpenPageBuilderDocument; origin: string }) =
     :kind
     :position="toolbarPosition"
     :resource-id
+    @drag="(event) => startNodeDrag(selectedNodeId, event, getFrameGeometry)"
   />
 </template>

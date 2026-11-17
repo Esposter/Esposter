@@ -4,6 +4,7 @@ import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument
 import type { FrameGeometry } from "#src/models/pageBuilder/FrameGeometry";
 import type { MjmlDocument } from "mjml-blocks";
 
+import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { NO_SURVEY_ID } from "#shared/services/pageBuilder/constants";
 import { TEST_ID, TEST_OTHER_ID, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
@@ -18,6 +19,7 @@ import { webpageKind } from "#src/services/pageBuilder/webpageKind";
 import { TOUCH_DRAG_DELAY_MS } from "#src/services/ui/constants";
 import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
+import { usePageBuilderHistoryStore } from "#src/store/pageBuilder/history";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { MjmlNodeType } from "mjml-blocks";
 import { v7 } from "uuid";
@@ -391,5 +393,116 @@ describe(usePageBuilderDrag, () => {
     document.body.dispatchEvent(new MouseEvent("click", { bubbles: true }));
 
     expect(onClick).not.toHaveBeenCalled();
+  });
+
+  // Two columns in one row, each holding one text: the node handle moves a text from the first into the second
+  const COLUMN_TWO_SLOT = "/content/0/props/children/1/props/children";
+  const TWO_COLUMN_DOCUMENT: WebpageDocument = {
+    content: [
+      {
+        props: {
+          children: [
+            { props: { children: [createText(TEXT_ONE)], elementId: "", id: v7() }, type: WebpageNodeType.Column },
+            { props: { children: [createText(TEXT_TWO)], elementId: "", id: v7() }, type: WebpageNodeType.Column },
+          ],
+          elementId: "",
+          id: v7(),
+        },
+        type: WebpageNodeType.Columns,
+      },
+    ],
+    root: TEST_ROOT,
+  };
+  // A section holding a second section with a text in it, the outer section's handle dragged over that text
+  const OUTER_SECTION_ID = v7();
+  const NESTED_SECTION_DOCUMENT: WebpageDocument = {
+    content: [
+      {
+        props: {
+          children: [
+            {
+              props: { children: [createText(TEXT_ONE)], elementId: "", id: v7(), tag: HtmlTag.Section },
+              type: WebpageNodeType.Section,
+            },
+          ],
+          elementId: "",
+          id: OUTER_SECTION_ID,
+          tag: HtmlTag.Section,
+        },
+        type: WebpageNodeType.Section,
+      },
+    ],
+    root: TEST_ROOT,
+  };
+
+  test("dragging a node handle into another column moves it there", async () => {
+    expect.hasAssertions();
+    const { announce, drag, pageBuilderDocumentStore } = await setup(TWO_COLUMN_DOCUMENT);
+
+    drag.vm.startNodeDrag(TEXT_ONE, pointerAt("pointerdown", 0, 0), () => createGeometry(TEXT_TWO));
+    window.dispatchEvent(pointerAt("pointermove", 100, 70));
+    window.dispatchEvent(pointerAt("pointerup", 100, 70));
+
+    const document = pageBuilderDocumentStore.getDocument(RESOURCE_ID);
+
+    expect(document && getSlotChildIds(webpageKind, document, COLUMN_SLOT)).toStrictEqual([]);
+    expect(document && getSlotChildIds(webpageKind, document, COLUMN_TWO_SLOT)).toStrictEqual([TEXT_TWO, TEXT_ONE]);
+    // The moved text shares its slot with a text, so its title carries its position among them, as a keyboard move's does
+    expect(announce).toHaveBeenCalledExactlyOnceWith(`Moved ${TEXT_TITLE} 2 to position 2 of 2 in Columns › Column 2`);
+  });
+
+  test("escape cancels a node drag", async () => {
+    expect.hasAssertions();
+    const { announce, drag, pageBuilderDocumentStore } = await setup(TWO_COLUMN_DOCUMENT);
+
+    drag.vm.startNodeDrag(TEXT_ONE, pointerAt("pointerdown", 0, 0), () => createGeometry(TEXT_TWO));
+    window.dispatchEvent(pointerAt("pointermove", 100, 70));
+    await nextTick();
+    window.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
+    window.dispatchEvent(pointerAt("pointerup", 100, 70));
+
+    expect(pageBuilderDocumentStore.getDocument(RESOURCE_ID)).toStrictEqual(TWO_COLUMN_DOCUMENT);
+    expect(announce).not.toHaveBeenCalled();
+  });
+
+  test("a section cannot be dropped into a section it holds", async () => {
+    expect.hasAssertions();
+    const { announce, drag, pageBuilderDocumentStore } = await setup(NESTED_SECTION_DOCUMENT);
+
+    drag.vm.startNodeDrag(OUTER_SECTION_ID, pointerAt("pointerdown", 0, 0), () => createGeometry(TEXT_ONE));
+    window.dispatchEvent(pointerAt("pointermove", 100, 30));
+
+    expect(drag.vm.dropTarget).toBeUndefined();
+
+    window.dispatchEvent(pointerAt("pointerup", 100, 30));
+
+    expect(pageBuilderDocumentStore.getDocument(RESOURCE_ID)).toStrictEqual(NESTED_SECTION_DOCUMENT);
+    expect(announce).not.toHaveBeenCalled();
+  });
+
+  test("releasing a node where no slot accepts it leaves it in place", async () => {
+    expect.hasAssertions();
+    const { announce, drag, pageBuilderDocumentStore } = await setup(TWO_COLUMN_DOCUMENT);
+
+    // Outside the frame no slot lies under the pointer, and a text is accepted by every slot the frame offers
+    drag.vm.startNodeDrag(TEXT_ONE, pointerAt("pointerdown", 0, 0), () => createGeometry());
+    window.dispatchEvent(pointerAt("pointermove", 600, 30));
+    window.dispatchEvent(pointerAt("pointerup", 600, 30));
+
+    expect(pageBuilderDocumentStore.getDocument(RESOURCE_ID)).toStrictEqual(TWO_COLUMN_DOCUMENT);
+    expect(announce).not.toHaveBeenCalled();
+  });
+
+  test("undo returns a dragged node to its place", async () => {
+    expect.hasAssertions();
+    const { drag, pageBuilderDocumentStore } = await setup(TWO_COLUMN_DOCUMENT);
+    const pageBuilderHistoryStore = usePageBuilderHistoryStore();
+
+    drag.vm.startNodeDrag(TEXT_ONE, pointerAt("pointerdown", 0, 0), () => createGeometry(TEXT_TWO));
+    window.dispatchEvent(pointerAt("pointermove", 100, 70));
+    window.dispatchEvent(pointerAt("pointerup", 100, 70));
+    pageBuilderHistoryStore.undo(RESOURCE_ID);
+
+    expect(pageBuilderDocumentStore.getDocument(RESOURCE_ID)).toStrictEqual(TWO_COLUMN_DOCUMENT);
   });
 });

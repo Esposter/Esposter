@@ -43,6 +43,7 @@ describe("pageBuilderCanvasNodeToolbar", () => {
 
     expect(toolbarButtons.map((button) => button.attributes("aria-label"))).toStrictEqual([
       "Select parent",
+      "Drag to move",
       "Move up",
       "Move down",
       "Move to…",

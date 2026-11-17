@@ -17,6 +17,8 @@ interface Props {
 // The delete's confirm is held by the editor, which binds no key while it asks
 const isDeleteOpen = defineModel<boolean>("isDeleteOpen", { default: false });
 const { announce, kind, resourceId } = defineProps<Props>();
+// The press on the move handle, which the canvas starts the node's drag from, since the drag's state is held above the canvas
+const emit = defineEmits<{ drag: [event: PointerEvent] }>();
 const commandStore = useCommandStore();
 const { openCommandPalette } = commandStore;
 const pageBuilderDocumentStore = usePageBuilderDocumentStore();
@@ -38,6 +40,7 @@ onBeforeUnmount(() => {
 <template>
   <div p-1 b-border bg-background flex gap-1 fixed :style="{ left: `${position.left}px`, top: `${position.top}px` }">
     <UiIconButton label="Select parent" :meaning="UiIconMeaning.Collapse" @click="selectParent()" />
+    <UiIconButton label="Drag to move" :meaning="UiIconMeaning.Drag" @pointerdown="(event) => emit('drag', event)" />
     <UiIconButton
       label="Move up"
       :disabled-reason="getMoveUpRefusal()"

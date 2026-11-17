@@ -6,6 +6,7 @@ import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } fr
 
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { PAGE_BUILDER_COMMAND_GROUP } from "#src/services/pageBuilder/constants";
+import { getMoveAnnouncement } from "#src/services/pageBuilder/getMoveAnnouncement";
 import { getMoveIntoRefusal } from "#src/services/pageBuilder/getMoveIntoRefusal";
 import { getMoveOutRefusal } from "#src/services/pageBuilder/getMoveOutRefusal";
 import { getNodeIdAt } from "#src/services/pageBuilder/getNodeIdAt";
@@ -58,21 +59,14 @@ export const usePageBuilderMoves = <
   const { getEditingNodeId, getSelectedNodeId, setEditingNodeId, setSelectedNodeId } = pageBuilderCanvasStore;
   const pageBuilderHistoryStore = usePageBuilderHistoryStore();
   const { applyEdit } = pageBuilderHistoryStore;
-  // Announces where a moved node now sits: its title, its 1-based position among its slot's children and the slot's path
+  // Announces where a moved node now sits, the same message a handle's drag announces
   const announceMove = (
     movedKind: MoveKind<TNode, TRoot, TDefinition, TDocument>,
     document: TDocument,
     nodePointer: string,
   ) => {
-    const segments = parseJsonPointer(nodePointer);
-    const slotSegments = segments.slice(0, -1);
-    const siblings = readJsonValue(document, slotSegments);
-    const index = parseArrayIndex(segments.at(-1) ?? "", Number.MAX_SAFE_INTEGER);
-    const title = getNodeTitle(movedKind, document, segments);
-    if (!title || !Array.isArray(siblings) || index === undefined) return;
-
-    const path = getSlotPath(movedKind, document, getNodeSlotPointer(nodePointer));
-    announce(`Moved ${title} to position ${index + 1} of ${siblings.length} in ${path}`);
+    const message = getMoveAnnouncement(movedKind, document, nodePointer);
+    if (message) announce(message);
   };
   // Applies the operations a move makes to the selected node, and keeps that node selected once the edit lands
   const moveSelected = (

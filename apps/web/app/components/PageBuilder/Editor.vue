@@ -35,6 +35,7 @@ const editorShell = useTemplateRef("editorShell");
 const {
   announce,
   announcement,
+  draggedNodeId,
   draggedType,
   dragPoint,
   dropTarget,
@@ -46,6 +47,7 @@ const {
   isDragging,
   refusal,
   startMergeFieldDrag,
+  startNodeDrag,
   startPaletteDrag,
 } = usePageBuilderEditor(
   kind,
@@ -111,10 +113,12 @@ const registry: EditorRegistry = {
         ref="canvas"
         v-model:is-delete-open="isDeleteOpen"
         :announce
+        :dragged-node-id
         :dragged-type
         :drop-target
         :kind
         :resource-id
+        :start-node-drag
         @canvas-keydown="handleCanvasKeydown($event)"
       />
     </EditorShell>

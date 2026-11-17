@@ -9,20 +9,24 @@ import { DropIndicatorKind } from "#src/models/pageBuilder/DropIndicatorKind";
 import {
   OVERLAY_DROP_LINE_STYLE,
   OVERLAY_DROP_OUTLINE_STYLE,
+  OVERLAY_HOVER_LABEL_STYLE,
   OVERLAY_HOVER_STYLE,
   OVERLAY_LAYER_STYLE,
   OVERLAY_SELECTION_STYLE,
 } from "#src/services/pageBuilder/constants";
 import { getAccent } from "#src/services/pageBuilder/getAccent";
 import { getDropIndicatorBox } from "#src/services/pageBuilder/getDropIndicatorBox";
+import { getDropSlotChildIds } from "#src/services/pageBuilder/getDropSlotChildIds";
+import { getNodeTitleById } from "#src/services/pageBuilder/getNodeTitleById";
 import { getOverlayBox } from "#src/services/pageBuilder/getOverlayBox";
-import { getSlotChildIds } from "#src/services/pageBuilder/getSlotChildIds";
 import { getSlotOwnerId } from "#src/services/pageBuilder/getSlotOwnerId";
 import { DRAG_PREVIEW_NODE_ID } from "#src/services/pageBuilder/withDragPreview";
 import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
 
 interface Props {
   checkIsHorizontalOwner: (ownerId: string) => boolean;
+  // The node a handle is moving, which its slot's indicator counts the children without
+  draggedNodeId?: string | undefined;
   dropTarget?: DropTarget | undefined;
   getElement: (nodeId: string) => Element | null;
   hoveredNodeId?: string | undefined;
@@ -32,11 +36,21 @@ interface Props {
 
 // The box of the selected node, kept for the node toolbar placed in the app's own document
 const selectionBox = defineModel<OverlayBox | undefined>("selectionBox");
-const { checkIsHorizontalOwner, dropTarget, getElement, hoveredNodeId, resourceId, selectedNodeId } =
+const { checkIsHorizontalOwner, draggedNodeId, dropTarget, getElement, hoveredNodeId, resourceId, selectedNodeId } =
   defineProps<Props>();
 const pageBuilderDocumentStore = usePageBuilderDocumentStore();
 const { getHeldDocument } = pageBuilderDocumentStore;
 const pageOpen = computed(() => getHeldDocument(resourceId));
+// The name a hovered node's outline carries: the title the layers tree gives the node, read from the document the layer draws
+const hoverTitle = computed(() => {
+  const open = pageOpen.value;
+  if (!open || !hoveredNodeId) return "";
+
+  // The shell reads a document of either kind through the kind any of them assigns to, so the pair is typed as that
+  const document: AnyPageBuilderDocument = open.document;
+  const kind: AnyPageBuilderKind = open.kind;
+  return getNodeTitleById(kind, document, hoveredNodeId);
+});
 const layer = useTemplateRef("layer");
 const hoverBox = shallowRef<OverlayBox>();
 // The box of a palette block being dragged, drawn where the canvas previews it in its slot
@@ -91,7 +105,9 @@ const getDropIndicator = (): DropIndicator | undefined => {
   // The shell reads a document of either kind through the kind any of them assigns to, so the pair is typed as that
   const document: AnyPageBuilderDocument = open.document;
   const kind: AnyPageBuilderKind = open.kind;
-  const childBoxes = getSlotChildIds(kind, document, dropTarget.slotPointer).map((childId) => getNodeBox(childId));
+  const childBoxes = getDropSlotChildIds(kind, document, dropTarget.slotPointer, draggedNodeId).map((childId) =>
+    getNodeBox(childId),
+  );
   return getDropIndicatorBox({
     childBoxes,
     index: dropTarget.index,
@@ -114,7 +130,9 @@ const scheduleRedraw = () => {
 
 useEventListener(() => layer.value?.ownerDocument.defaultView, "scroll", scheduleRedraw, { passive: true });
 useResizeObserver(() => layer.value?.ownerDocument.body, scheduleRedraw);
-watch([() => hoveredNodeId, () => selectedNodeId, () => dropTarget, pageOpen], scheduleRedraw, { flush: "post" });
+watch([() => hoveredNodeId, () => selectedNodeId, () => dropTarget, () => draggedNodeId, pageOpen], scheduleRedraw, {
+  flush: "post",
+});
 onMounted(() => {
   readAccent();
   scheduleRedraw();
@@ -126,6 +144,13 @@ onScopeDispose(() => cancelAnimationFrame(pendingFrame));
 <template>
   <div ref="layer" :style="{ ...OVERLAY_LAYER_STYLE, '--ui-accent': accent }">
     <div v-if="hoverBox" data-outline="hover" :style="{ ...OVERLAY_HOVER_STYLE, ...toBoxStyle(hoverBox) }" />
+    <div
+      v-if="hoverBox"
+      data-outline-label
+      :style="{ ...OVERLAY_HOVER_LABEL_STYLE, left: `${hoverBox.left}px`, top: `${hoverBox.top}px` }"
+    >
+      {{ hoverTitle }}
+    </div>
     <div
       v-if="previewBox"
       data-outline="preview"

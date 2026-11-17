@@ -185,6 +185,16 @@ export const OVERLAY_HOVER_STYLE = {
   outline: `${OVERLAY_HAIRLINE_WIDTH} solid ${OVERLAY_ACCENT}`,
   position: "absolute",
 } as const;
+// The name a hovered node's outline carries, set at the outline's top left inside it, so a node at the top of the frame keeps its name
+export const OVERLAY_HOVER_LABEL_STYLE = {
+  background: OVERLAY_ACCENT,
+  color: "white",
+  fontSize: "0.75rem",
+  lineHeight: "1",
+  padding: "0.125rem 0.25rem",
+  position: "absolute",
+  whiteSpace: "nowrap",
+} as const;
 export const OVERLAY_DROP_LINE_STYLE = { background: OVERLAY_ACCENT, position: "absolute" } as const;
 export const OVERLAY_DROP_OUTLINE_STYLE = {
   border: `${OVERLAY_LINE_WIDTH} dashed ${OVERLAY_ACCENT}`,

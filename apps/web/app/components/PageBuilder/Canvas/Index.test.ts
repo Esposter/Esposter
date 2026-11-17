@@ -12,6 +12,7 @@ import { emailKind } from "#src/services/pageBuilder/emailKind";
 import { webpageKind } from "#src/services/pageBuilder/webpageKind";
 import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
+import { noop } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { parseMjmlDocument } from "mjml-blocks";
 import { describe, expect, test, vi } from "vitest";
@@ -40,7 +41,12 @@ describe("pageBuilderCanvas", () => {
     pageBuilderCanvasStore.setDevice(TEST_ID, PageBuilderDevice.Tablet);
 
     const component = await mountSuspended(PageBuilderCanvas, {
-      props: { announce: vi.fn<(message: string) => void>(), kind: webpageKind, resourceId: TEST_ID },
+      props: {
+        announce: vi.fn<(message: string) => void>(),
+        kind: webpageKind,
+        resourceId: TEST_ID,
+        startNodeDrag: noop,
+      },
     });
 
     expect(component.get<HTMLIFrameElement>("iframe").element.style.width).toBe(TABLET_WIDTH);
@@ -64,7 +70,12 @@ describe("pageBuilderCanvas", () => {
     pageBuilderCanvasStore.setDevice(TEST_ID, PageBuilderDevice.Tablet);
 
     const component = await mountSuspended(PageBuilderCanvas, {
-      props: { announce: vi.fn<(message: string) => void>(), kind: emailKind, resourceId: TEST_ID },
+      props: {
+        announce: vi.fn<(message: string) => void>(),
+        kind: emailKind,
+        resourceId: TEST_ID,
+        startNodeDrag: noop,
+      },
     });
 
     expect(component.get<HTMLIFrameElement>("iframe").element.style.width).toBe(TABLET_WIDTH);
@@ -74,7 +85,12 @@ describe("pageBuilderCanvas", () => {
     expect.hasAssertions();
 
     const component = await mountSuspended(PageBuilderCanvas, {
-      props: { announce: vi.fn<(message: string) => void>(), kind: webpageKind, resourceId: TEST_ID },
+      props: {
+        announce: vi.fn<(message: string) => void>(),
+        kind: webpageKind,
+        resourceId: TEST_ID,
+        startNodeDrag: noop,
+      },
     });
 
     expect(component.find("iframe").exists()).toBe(false);
