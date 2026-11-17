@@ -4,7 +4,7 @@ This region is built on [terrain](../../specs/genshin/terrain/design.md) and its
 
 ## Decisions
 
-- **Volcanism as material and light.** Lava is an emissive flow material on authored channels, with its glow in bloom and light spilling on the rock around it. Basalt and ash are ground layers. Steam rises from vents and springs. Eruptions are an area weather that suspends rain, as the game's volcano does.
+- **Volcanism as material and light.** Lava is an emissive flow material on authored channels, with its glow in bloom and light spilling on the rock around it. Basalt and ash are ground layers. Steam rises from vents and springs. Eruptions are an area weather that suspends rain, as the game's volcano does. The channels and vents are not hand-authored: the region record carries them from the game's own placements, as it carries rivers and waterfalls, so a flow or a vent is drawn only once a placement names it (the compute page's Open). Until then no channel is drawn, and no lava primitive is built ahead of the channel it would light.
 - **Six tribes, one kit, six variants.** Still to build on the [building kit](../../specs/genshin/buildings/design.md):
   - a stone or timber platform, and carved stone or woven walls, as materials
   - thatched roofs
