@@ -33,7 +33,7 @@ const columnBaseAttributes = {
   width: "unit(px,%)",
 };
 
-export const columnAttributes: typeof columnBaseAttributes & typeof MJML_PADDING_ATTRIBUTES = {
+const columnAttributes: typeof columnBaseAttributes & typeof MJML_PADDING_ATTRIBUTES = {
   ...columnBaseAttributes,
   ...MJML_PADDING_ATTRIBUTES,
 };

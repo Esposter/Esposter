@@ -21,7 +21,7 @@ const dividerBaseAttributes = {
   width: "unit(px,%)",
 };
 
-export const dividerAttributes: typeof dividerBaseAttributes & typeof MJML_PADDING_ATTRIBUTES = {
+const dividerAttributes: typeof dividerBaseAttributes & typeof MJML_PADDING_ATTRIBUTES = {
   ...dividerBaseAttributes,
   ...MJML_PADDING_ATTRIBUTES,
 };

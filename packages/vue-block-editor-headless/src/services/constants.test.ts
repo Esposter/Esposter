@@ -16,13 +16,7 @@ export interface HeadingNodeProps extends BlockNodeProps {
 }
 export type ImageNode = BlockNode<"image">;
 export type ItemNode = BlockNode<"item", ItemNodeProps>;
-export interface ItemNodeProps extends BlockNodeProps {
-  text: string;
-}
 export type ListNode = BlockNode<"list", ListNodeProps>;
-export interface ListNodeProps extends BlockNodeProps {
-  items: (HeadingNode | ItemNode)[];
-}
 export type SectionNode = BlockNode<"section", SectionNodeProps>;
 export interface SectionNodeProps extends BlockNodeProps {
   children: (HeadingNode | ListNode)[];
@@ -32,6 +26,12 @@ export type TestDocument = BlockDocument<TestNode, TestRootProps>;
 export type TestNode = HeadingNode | ImageNode | ItemNode | ListNode | SectionNode;
 export interface TestRootProps {
   title: string;
+}
+interface ItemNodeProps extends BlockNodeProps {
+  text: string;
+}
+interface ListNodeProps extends BlockNodeProps {
+  items: (HeadingNode | ItemNode)[];
 }
 
 export const TEST_SECTION_ID: string = v7();

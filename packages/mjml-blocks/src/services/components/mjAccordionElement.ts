@@ -10,7 +10,7 @@ import { renderMjmlNode } from "#src/services/renderMjmlNode";
 import { z } from "zod";
 
 // The attributes MJML takes on the accordion element component, each in MJML's grammar
-export const accordionElementAttributes = {
+const accordionElementAttributes = {
   "background-color": "color",
   border: "string",
   "font-family": "string",

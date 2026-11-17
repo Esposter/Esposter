@@ -13,8 +13,6 @@ export const MJML_VALUE_MAX_LENGTH = 2048;
 export const MJML_CONTENT_MAX_LENGTH = 100_000;
 // The most entries a root's list may hold: its fonts and its styles
 export const MJML_ROOT_LIST_MAX_LENGTH = 100;
-// The tags MJML's preset lists that the package leaves out: includes read the disk, and the other two target by selector
-export const EXCLUDED_MJML_TAGS: string[] = ["mj-include", "mj-html-attributes", "mj-class"];
 // The body's allowed children, and the attributes its own element takes, as MJML's preset lists them
 export const MJML_BODY_ATTRIBUTES: Record<string, string> = {
   "background-color": "color",

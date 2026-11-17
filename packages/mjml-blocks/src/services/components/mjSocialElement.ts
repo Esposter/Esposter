@@ -43,7 +43,7 @@ const socialElementBaseAttributes = {
   "vertical-align": "enum(top,middle,bottom)",
 };
 
-export const socialElementAttributes: typeof MJML_PADDING_ATTRIBUTES & typeof socialElementBaseAttributes = {
+const socialElementAttributes: typeof MJML_PADDING_ATTRIBUTES & typeof socialElementBaseAttributes = {
   ...socialElementBaseAttributes,
   ...MJML_PADDING_ATTRIBUTES,
 };

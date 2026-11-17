@@ -45,7 +45,7 @@ const buttonBaseAttributes = {
   width: "unit(px,%)",
 };
 
-export const buttonAttributes: typeof buttonBaseAttributes & typeof MJML_PADDING_ATTRIBUTES = {
+const buttonAttributes: typeof buttonBaseAttributes & typeof MJML_PADDING_ATTRIBUTES = {
   ...buttonBaseAttributes,
   ...MJML_PADDING_ATTRIBUTES,
 };

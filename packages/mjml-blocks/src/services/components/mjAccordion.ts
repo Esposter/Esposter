@@ -26,7 +26,7 @@ const accordionBaseAttributes = {
   padding: "unit(px,%){1,4}",
 };
 
-export const accordionAttributes: typeof accordionBaseAttributes & typeof MJML_PADDING_ATTRIBUTES = {
+const accordionAttributes: typeof accordionBaseAttributes & typeof MJML_PADDING_ATTRIBUTES = {
   ...accordionBaseAttributes,
   ...MJML_PADDING_ATTRIBUTES,
 };

@@ -55,7 +55,7 @@ export const TEST_RICH_TEXT: MjmlRichTextDefinition = {
   renderHtml: (content) => content.text ?? "",
   schema: mjmlRichTextSchema,
 };
-export const TEST_LEAF_NODE_SCHEMA: z.ZodObject<
+const TEST_LEAF_NODE_SCHEMA: z.ZodObject<
   { props: z.ZodObject<{ id: z.ZodString }, z.core.$strict>; type: z.ZodLiteral<"test-leaf"> },
   z.core.$strict
 > = z.strictObject({

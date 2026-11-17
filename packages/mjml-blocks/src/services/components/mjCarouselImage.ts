@@ -11,7 +11,7 @@ import { renderMjmlNode } from "#src/services/renderMjmlNode";
 import { z } from "zod";
 
 // The attributes MJML takes on the carousel image component, each in MJML's grammar
-export const carouselImageAttributes = {
+const carouselImageAttributes = {
   alt: "string",
   "border-radius": "string",
   href: "string",

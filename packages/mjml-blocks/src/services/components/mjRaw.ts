@@ -12,7 +12,7 @@ import { renderMjmlNode } from "#src/services/renderMjmlNode";
 import { z } from "zod";
 
 // The attributes MJML takes on the raw component, each in MJML's grammar
-export const rawAttributes = { position: "enum(file-start)" };
+const rawAttributes = { position: "enum(file-start)" };
 
 export const rawPropsSchema: z.ZodObject<
   { [K in keyof typeof rawAttributes]: MjmlAttributeSchema } & { content: z.ZodString },

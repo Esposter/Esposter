@@ -30,7 +30,7 @@ const navbarLinkBaseAttributes = {
   "text-transform": "string",
 };
 
-export const navbarLinkAttributes: typeof MJML_PADDING_ATTRIBUTES & typeof navbarLinkBaseAttributes = {
+const navbarLinkAttributes: typeof MJML_PADDING_ATTRIBUTES & typeof navbarLinkBaseAttributes = {
   ...navbarLinkBaseAttributes,
   ...MJML_PADDING_ATTRIBUTES,
 };

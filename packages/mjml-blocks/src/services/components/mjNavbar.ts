@@ -32,7 +32,7 @@ const navbarBaseAttributes = {
   padding: "unit(px,%){1,4}",
 };
 
-export const navbarAttributes: typeof MJML_PADDING_ATTRIBUTES & typeof navbarBaseAttributes = {
+const navbarAttributes: typeof MJML_PADDING_ATTRIBUTES & typeof navbarBaseAttributes = {
   ...navbarBaseAttributes,
   ...MJML_PADDING_ATTRIBUTES,
 };

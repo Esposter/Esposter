@@ -31,7 +31,7 @@ const tableBaseAttributes = {
   width: "unit(px,%,auto)",
 };
 
-export const tableAttributes: typeof MJML_PADDING_ATTRIBUTES & typeof tableBaseAttributes = {
+const tableAttributes: typeof MJML_PADDING_ATTRIBUTES & typeof tableBaseAttributes = {
   ...tableBaseAttributes,
   ...MJML_PADDING_ATTRIBUTES,
 };

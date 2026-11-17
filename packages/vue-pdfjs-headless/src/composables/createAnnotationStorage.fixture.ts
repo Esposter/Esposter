@@ -1,4 +1,4 @@
-export interface AnnotationStorage {
+interface AnnotationStorage {
   [Symbol.iterator]: () => MapIterator<[string, unknown]>;
   entries: Map<string, unknown>;
   remove: (key: string) => void;

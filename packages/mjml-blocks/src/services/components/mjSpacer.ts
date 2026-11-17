@@ -22,7 +22,7 @@ const spacerBaseAttributes = {
   padding: "unit(px,%){1,4}",
 };
 
-export const spacerAttributes: typeof MJML_PADDING_ATTRIBUTES & typeof spacerBaseAttributes = {
+const spacerAttributes: typeof MJML_PADDING_ATTRIBUTES & typeof spacerBaseAttributes = {
   ...spacerBaseAttributes,
   ...MJML_PADDING_ATTRIBUTES,
 };

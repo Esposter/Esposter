@@ -39,7 +39,7 @@ const imageBaseAttributes = {
   width: "unit(px)",
 };
 
-export const imageAttributes: typeof imageBaseAttributes & typeof MJML_PADDING_ATTRIBUTES = {
+const imageAttributes: typeof imageBaseAttributes & typeof MJML_PADDING_ATTRIBUTES = {
   ...imageBaseAttributes,
   ...MJML_PADDING_ATTRIBUTES,
 };

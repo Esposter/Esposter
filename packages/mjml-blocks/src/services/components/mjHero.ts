@@ -31,7 +31,7 @@ const heroBaseAttributes = {
   "vertical-align": "enum(top,bottom,middle)",
 };
 
-export const heroAttributes: typeof heroBaseAttributes & typeof MJML_PADDING_ATTRIBUTES = {
+const heroAttributes: typeof heroBaseAttributes & typeof MJML_PADDING_ATTRIBUTES = {
   ...heroBaseAttributes,
   ...MJML_PADDING_ATTRIBUTES,
 };

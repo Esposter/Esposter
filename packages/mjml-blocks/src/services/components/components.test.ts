@@ -1,15 +1,13 @@
-import {
-  EXCLUDED_MJML_TAGS,
-  MJML_BODY_ATTRIBUTES,
-  MJML_BODY_CHILDREN,
-  MJML_BREAKPOINT_ATTRIBUTES,
-} from "#src/services/constants";
+import { MJML_BODY_ATTRIBUTES, MJML_BODY_CHILDREN, MJML_BREAKPOINT_ATTRIBUTES } from "#src/services/constants";
 import { TEST_CHILDREN, TEST_REGISTRY, TEST_RICH_TEXT } from "#src/services/constants.test";
 import { createMjmlRegistry } from "#src/services/createMjmlRegistry";
 import { parse } from "node-html-parser";
 import { createRequire } from "node:module";
 import { assert, describe, expect, test } from "vitest";
 import { z } from "zod";
+
+// The tags MJML's preset lists that the package leaves out: includes read the disk, and the other two target by selector
+const EXCLUDED_MJML_TAGS: ReadonlySet<string> = new Set(["mj-class", "mj-html-attributes", "mj-include"]);
 
 // MJML writes some defaults as entities, which the read back decodes, so each default is compared as the character it names
 const decodeDefault = (value: string): string =>
@@ -69,7 +67,7 @@ describe("components", () => {
     expect.hasAssertions();
 
     const children = (z.array(z.string()).optional().parse(dependencies[type]) ?? []).filter(
-      (tag) => !EXCLUDED_MJML_TAGS.includes(tag),
+      (tag) => !EXCLUDED_MJML_TAGS.has(tag),
     );
     expect(definition.slots).toStrictEqual(children.length > 0 ? { children } : {});
   });
@@ -81,7 +79,7 @@ describe("components", () => {
       z
         .array(z.string())
         .parse(dependencies["mj-body"])
-        .filter((tag) => !EXCLUDED_MJML_TAGS.includes(tag)),
+        .filter((tag) => !EXCLUDED_MJML_TAGS.has(tag)),
     );
     expect(
       createMjmlRegistry({ children: TEST_CHILDREN, leafTypes: [], richText: TEST_RICH_TEXT }).root.content,

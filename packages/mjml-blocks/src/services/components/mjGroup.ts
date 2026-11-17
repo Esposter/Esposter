@@ -10,7 +10,7 @@ import { renderMjmlNode } from "#src/services/renderMjmlNode";
 import { z } from "zod";
 
 // The attributes MJML takes on the group component, each in MJML's grammar
-export const groupAttributes = {
+const groupAttributes = {
   "background-color": "color",
   direction: "enum(ltr,rtl)",
   "vertical-align": "enum(top,bottom,middle)",

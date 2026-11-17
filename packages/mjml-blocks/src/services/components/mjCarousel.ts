@@ -27,7 +27,7 @@ const carouselBaseAttributes = {
   thumbnails: "enum(visible,hidden,supported)",
 };
 
-export const carouselAttributes: typeof carouselBaseAttributes & typeof MJML_PADDING_ATTRIBUTES = {
+const carouselAttributes: typeof carouselBaseAttributes & typeof MJML_PADDING_ATTRIBUTES = {
   ...carouselBaseAttributes,
   ...MJML_PADDING_ATTRIBUTES,
 };

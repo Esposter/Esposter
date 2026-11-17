@@ -12,8 +12,8 @@ import { renderMjmlNode } from "#src/services/renderMjmlNode";
 import { z } from "zod";
 
 // The attributes the wrapper takes: its section's, and its gap
-export const wrapperGapAttributes = { gap: "unit(px)" };
-export const wrapperAttributes: typeof sectionAttributes.allowedAttributes & typeof wrapperGapAttributes = {
+const wrapperGapAttributes = { gap: "unit(px)" };
+const wrapperAttributes: typeof sectionAttributes.allowedAttributes & typeof wrapperGapAttributes = {
   ...sectionAttributes.allowedAttributes,
   ...wrapperGapAttributes,
 };
