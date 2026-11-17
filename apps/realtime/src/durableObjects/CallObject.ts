@@ -1,3 +1,4 @@
+import type { ParticipantFlags } from "#src/models/call/ParticipantFlags";
 import type { RealtimeKitCredentials } from "#src/models/realtimeKit/RealtimeKitCredentials";
 import type {
   CallAccess,
@@ -39,8 +40,6 @@ import { z } from "zod";
 
 // The one row the call keeps about itself
 const CALL_STATE_ID = 1;
-// The flags a participant's controls write, any of them in one update
-type ParticipantFlags = Partial<Pick<CallParticipant, "isCameraEnabled" | "isHandRaised" | "isMuted">>;
 
 // One Call object per call session. It holds who is in the call and who is knocking.
 // It also holds who has been let in and each joined connection's RealtimeKit participant, all in its own SQLite.

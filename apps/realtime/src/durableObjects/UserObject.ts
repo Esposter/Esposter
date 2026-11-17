@@ -1,3 +1,4 @@
+import type { TopicWatch } from "#src/models/user/TopicWatch";
 import type {
   FriendInSocial,
   FriendRequestInSocial,
@@ -43,12 +44,6 @@ import userMigrations from "@esposter/db-schema/objects/user/migrations/migratio
 import { getResult, getResultAsync, jsonDateParse, noop } from "@esposter/shared";
 import { and, asc, count, eq, gt, inArray, lte, sql } from "drizzle-orm";
 import { v7 } from "uuid";
-
-// A topic a tab watches, with the id of the tab's socket that watches it
-interface TopicWatch {
-  topic: Topic;
-  watchId: string;
-}
 
 // The storage key of one watch, by the tab's id and the topic it watches
 const getTopicWatchKey = (watchId: string, topic: Topic) => `${WATCHED_TOPIC_KEY_PREFIX}${watchId}:${topic}`;

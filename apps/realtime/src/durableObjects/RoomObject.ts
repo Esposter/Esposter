@@ -1,4 +1,5 @@
 /* oxlint-disable no-await-in-loop -- Each step reads the last: a send's slowmode check reads the clock an earlier send in the loop wrote, and messages enter the list in run order */
+import type { MessageUpdate } from "#src/models/room/MessageUpdate";
 import type { NewMessage } from "#src/models/room/NewMessage";
 import type { NotifyUser } from "#src/models/room/NotifyUser";
 import type { SendOptions } from "#src/models/room/SendOptions";
@@ -88,12 +89,6 @@ const USER_MESSAGE_PAGE_SORT = { keys: ["id"], order: SortOrder.Asc } as const s
 const REACTION_PAGE_SORT = { keys: ["messageId", "emojiTag"], order: SortOrder.Asc } as const satisfies PageSort<
   "emojiTag" | "messageId"
 >;
-// What a change to one live message sets, written by `#updateLiveMessage`, which moves its updatedAt. A delete tombstones
-// Its rows in a bulk update of its own, `#tombstoneMessages`
-type MessageUpdate = Partial<
-  Pick<NewMessage, "editedAt" | "filenames" | "files" | "isPinned" | "linkPreviewResponse" | "mentions" | "message">
->;
-
 // One Room object per room. Its SQLite holds the room's messages, their reactions and their search index.
 // It also holds the scheduled messages still to send and the members online. Its sockets are the room's viewers.
 // The caller authorises each write against D1 and names the actor.
@@ -962,7 +957,7 @@ export class RoomObject extends RealtimeObject<RoomEvent> implements RoomObjectR
 
   // Writes a reaction's reactors and tells the room they changed, so every change to a reaction is broadcast the same way
   #setReactors(
-    { emojiTag, messageId }: { emojiTag: string; messageId: number },
+    { emojiTag, messageId }: RoomReactionKey,
     userIds: string[],
     sendOptions: SendOptions,
   ): RoomReaction | undefined {
