@@ -12,6 +12,6 @@ export const readPersonaModule = async <T>(directory: string, name: string): Pro
   if (!existsSync(modulePath)) return undefined;
 
   // eslint-disable-next-line no-restricted-syntax -- the path is computed per character at runtime, so it cannot be a static import
-  const personaModule = (await import(pathToFileURL(modulePath).href)) as { default: T };
+  const personaModule: { default: T } = await import(pathToFileURL(modulePath).href);
   return personaModule.default;
 };

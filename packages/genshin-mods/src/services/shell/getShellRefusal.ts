@@ -16,7 +16,7 @@ const PATH_SEPARATOR_REGEX = /[/\\]/u;
 
 // The refusal of the first command in a Bash command that the given reader refuses, undefined when none does. A `cd`
 // Moves every command after it in the line; one to a home folder or back to the last is not followed
-export const getShellRefusal = <T = string>(
+export const getShellRefusal = <T>(
   command: string,
   getRefusal: CommandRefusal<T>,
   depth = 0,

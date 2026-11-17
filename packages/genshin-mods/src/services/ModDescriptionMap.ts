@@ -13,5 +13,3 @@ export const ModDescriptionMap: Record<keyof EnabledMods, string> = {
     "Ask before editing a file another session changed in the last half hour, and refuse a whole-index git command while one shares the checkout.",
   [ModName.Waypoints]: "Suggest the next steps after each answer, one press each.",
 };
-
-export const ModNames = Object.keys(ModDescriptionMap) as (keyof EnabledMods)[];

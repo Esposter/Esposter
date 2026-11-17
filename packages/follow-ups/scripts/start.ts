@@ -13,10 +13,8 @@ for await (const chunk of process.stdin) input += chunk;
 const listId = process.env.CLAUDE_PLUGIN_OPTION_LIST_ID ?? "";
 // oxlint-disable-next-line no-restricted-properties -- the hook input is the tool's to shape, and each field read is checked for its type
 const hookInput: unknown = input.trim() ? JSON.parse(input) : {};
-const { cwd, session_id: sessionId } = (typeof hookInput === "object" && hookInput ? hookInput : {}) as Record<
-  string,
-  unknown
->;
+const checkIsRecord = (value: unknown): value is Record<string, unknown> => typeof value === "object" && value !== null;
+const { cwd, session_id: sessionId }: Record<string, unknown> = checkIsRecord(hookInput) ? hookInput : {};
 if (listId && typeof sessionId === "string" && typeof cwd === "string") {
   const { stdout } = spawnSync("git", ["remote", "get-url", "origin"], { cwd, encoding: "utf8", windowsHide: true });
   const additionalContext = getSessionContext({

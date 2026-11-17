@@ -8,5 +8,5 @@ import { createRequire } from "node:module";
 // Never at link time
 export const readVoiceRuntime = (from: string): VoiceRuntime => {
   const requireModule = createRequire(from);
-  return requireModule("@huggingface/transformers") as VoiceRuntime;
+  return requireModule("@huggingface/transformers");
 };

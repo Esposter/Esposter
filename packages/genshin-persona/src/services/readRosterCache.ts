@@ -7,6 +7,6 @@ export const readRosterCache = (version: string, language: string): Character[] 
   const cachePath = getRosterCachePath(version, language);
   // The file is the plugin's own, written from the roster it is read back into, and holds no date
   // oxlint-disable-next-line no-restricted-properties -- this JSON holds no dates, so the reviver has nothing to revive
-  if (existsSync(cachePath)) return JSON.parse(readFileSync(cachePath, "utf8")) as Character[];
+  if (existsSync(cachePath)) return JSON.parse(readFileSync(cachePath, "utf8"));
   else return undefined;
 };

@@ -4,7 +4,7 @@ import { atom, read, update } from "claude-code";
 
 import type { EnabledMods } from "../../types";
 
-import { ModName } from "../models/ModName";
+import { ModName, ModNames } from "../models/ModName";
 import { SinStatusKind } from "../models/SinStatusKind";
 import { TaskStatus } from "../models/TaskStatus";
 import {
@@ -17,7 +17,7 @@ import {
   WAYPOINTS_QUESTION,
 } from "./constants";
 import { InitialState } from "./InitialState";
-import { ModDescriptionMap, ModNames } from "./ModDescriptionMap";
+import { ModDescriptionMap } from "./ModDescriptionMap";
 import { readHome } from "./readHome";
 import { getCacheRemainingMs } from "./resin/getCacheRemainingMs";
 import { getCacheWarningDelayMs } from "./resin/getCacheWarningDelayMs";

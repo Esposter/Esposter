@@ -35,7 +35,7 @@ export const VOICE_STATE_PATHS: string[] = [
   REFERENCES_DIRECTORY,
   VOICE_LOG_PATH,
 ];
-export const SOURCE_DIRECTORY: string = join(import.meta.dirname, "..");
+const SOURCE_DIRECTORY: string = join(import.meta.dirname, "..");
 const PLUGIN_DIRECTORY = join(SOURCE_DIRECTORY, "..");
 const SCRIPTS_DIRECTORY = join(PLUGIN_DIRECTORY, "scripts");
 // Copied into the runtime directory before `npm ci`; the plugin's own manifest never names the package, since the
@@ -46,7 +46,7 @@ export const VOICE_SERVER_SCRIPT_PATH: string = join(SCRIPTS_DIRECTORY, "voice.m
 export const VOICE_SOCKET_PATH: string =
   process.platform === "win32" ? String.raw`\\.\pipe\genshin-persona-voice` : join(STATE_DIRECTORY, "voice.sock");
 // What names the plugin's own files outside its state directory
-export const PLUGIN_MARKER = "genshin-persona";
+const PLUGIN_MARKER = "genshin-persona";
 // The WAV a sentence is played from carries the process, so two synthesizers on one machine never share a name.
 export const PLAYER_FILE_PREFIX: `${typeof PLUGIN_MARKER}-${number}-` = `${PLUGIN_MARKER}-${process.pid}-`;
 // How many of a character's lines the session holds for the prompt hint, and the length each tip is cut to, at the
@@ -226,5 +226,3 @@ export const LORE_PICK_INSTRUCTIONS =
 export const LORE_CHART_ROWS = 4;
 export const LORE_CHART_WIDTH = 20;
 export const LORE_CHART_GLYPH = "▇";
-// The longest line the chat page posts to the session, in characters
-export const MAX_CHANNEL_LINE_LENGTH = 4000;

@@ -8,3 +8,5 @@ export const ModName = {
   Waypoints: "waypoints",
 } as const;
 export type ModName = (typeof ModName)[keyof typeof ModName];
+
+export const ModNames: readonly ModName[] = Object.values(ModName);

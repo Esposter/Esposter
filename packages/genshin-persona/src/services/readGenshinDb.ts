@@ -8,5 +8,5 @@ import { createRequire } from "node:module";
 // Off the manifest instead, and no hook path loads it
 export const readGenshinDb = (): typeof GenshinDb => {
   const requireModule = createRequire(import.meta.url);
-  return requireModule("genshin-db") as typeof GenshinDb;
+  return requireModule("genshin-db");
 };
