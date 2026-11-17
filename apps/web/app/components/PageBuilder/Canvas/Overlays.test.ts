@@ -185,7 +185,7 @@ describe("pageBuilderCanvasOverlays", () => {
     });
     await nextTick();
 
-    expect(component.get("[data-outline-label]").text()).toBe(TEXT_TITLE);
+    expect(component.get("[data-outline='label']").text()).toBe(TEXT_TITLE);
   });
 
   test("a node at the top edge of the canvas shows its name", async () => {
@@ -212,7 +212,7 @@ describe("pageBuilderCanvasOverlays", () => {
     });
     await nextTick();
 
-    const label = component.get<HTMLElement>("[data-outline-label]").element;
+    const label = component.get<HTMLElement>("[data-outline='label']").element;
 
     expect(label.textContent).toBe(TEXT_TITLE);
     expect(label.style.left).toBe("120px");
@@ -243,11 +243,11 @@ describe("pageBuilderCanvasOverlays", () => {
     });
     await nextTick();
 
-    expect(component.get("[data-outline-label]").text()).toBe(TEXT_TITLE);
+    expect(component.get("[data-outline='label']").text()).toBe(TEXT_TITLE);
 
     await component.setProps({ hoveredNodeId: "" });
     await nextTick();
 
-    expect(component.find("[data-outline-label]").exists()).toBe(false);
+    expect(component.find("[data-outline='label']").exists()).toBe(false);
   });
 });

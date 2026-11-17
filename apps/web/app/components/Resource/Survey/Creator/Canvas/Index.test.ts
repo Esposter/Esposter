@@ -1,5 +1,6 @@
 // @vitest-environment nuxt
 import type { VueWrapper } from "@vue/test-utils";
+import type { surveyDocumentSchema } from "vue-survey-engine-headless";
 
 import ResourceSurveyCreatorCanvas from "#src/components/Resource/Survey/Creator/Canvas/Index.vue";
 import { createSurveyOnePageTestDocument } from "#src/services/survey/createSurveyOnePageTestDocument.test";
@@ -7,8 +8,6 @@ import { useSurveyCreatorStore } from "#src/store/survey/creator";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { beforeAll, describe, expect, test } from "vitest";
-import type { surveyDocumentSchema } from "vue-survey-engine-headless";
-
 import { SurveyNodeType } from "vue-survey-engine-headless";
 
 const findButton = (component: VueWrapper, text: string) =>

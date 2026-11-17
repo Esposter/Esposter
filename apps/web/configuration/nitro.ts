@@ -28,6 +28,12 @@ export const nitro: NonNullable<NuxtConfig["nitro"]> = {
     nodeCompat: true,
     wrangler: { compatibility_date: "2026-11-01", ...getEnvironmentWrangler(getCloudflareEnvironment()) },
   },
+  // A package resolves the build the Workers runtime runs, as wrangler's own bundler resolves it: a Worker is a web
+  // Runtime, so a package's browser build is taken over its Node one. The preset names `workerd` and `worker` alone, so
+  // Cheerio, which mjml reaches through juice, resolved its Node build, whose undici compiles WebAssembly the runtime refuses.
+  // Vitest runs the app in Node, where msw intercepts Node's own requests, so its suites keep the Node builds: under
+  // `browser`, msw's interceptors resolve their Node entries to nothing
+  exportConditions: process.env.VITEST ? [] : ["workerd", "worker", "browser"],
   hooks: {
     // Nitro's Vite builder, the one Nuxt 5 builds through, dropped the size summary its Rollup builder prints, so each
     // Output directory's size is logged once the build is written. Source maps are left out, since they are never uploaded
@@ -49,12 +55,6 @@ export const nitro: NonNullable<NuxtConfig["nitro"]> = {
       }
     },
   },
-  // A package resolves the build the Workers runtime runs, as wrangler's own bundler resolves it: a Worker is a web
-  // Runtime, so a package's browser build is taken over its Node one. The preset names `workerd` and `worker` alone, so
-  // Cheerio, which mjml reaches through juice, resolved its Node build, whose undici compiles WebAssembly the runtime refuses.
-  // Vitest runs the app in Node, where msw intercepts Node's own requests, so its suites keep the Node builds: under
-  // `browser`, msw's interceptors resolve their Node entries to nothing
-  exportConditions: process.env.VITEST ? [] : ["workerd", "worker", "browser"],
   // The Workers runtime has no Temporal yet, and server modules read it as they load, so it is installed before the entry
   polyfills: ["temporal-polyfill/global"],
   preset: "cloudflare_module",

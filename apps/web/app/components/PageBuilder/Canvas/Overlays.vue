@@ -148,7 +148,7 @@ onScopeDispose(() => cancelAnimationFrame(pendingFrame));
     <div v-if="hoverBox" data-outline="hover" :style="{ ...OVERLAY_HOVER_STYLE, ...toBoxStyle(hoverBox) }" />
     <div
       v-if="hoverBox"
-      data-outline-label
+      data-outline="label"
       :style="{ ...OVERLAY_HOVER_LABEL_STYLE, left: `${hoverBox.left}px`, top: `${hoverBox.top}px` }"
     >
       {{ hoverTitle }}
