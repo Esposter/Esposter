@@ -49,8 +49,7 @@ The FileAssets capability already hosts uploads for an email image, the note's i
 | `apps/web/app/components/PageBuilder/ContentPanel.vue`                              | the Content panel: the media field above a selected image's or video's form, and the write of a picked file's address to the node picked |
 | `apps/web/app/composables/resource/useUploadResourceFile.ts`                        | the upload round-trip every media field calls                                                                                            |
 | `apps/web/app/components/Resource/Webpage/Settings.vue`                             | the share image's upload, the model for a webpage field that uploads                                                                     |
-| `apps/web/app/components/PageBuilder/Email/ImageUploadField.vue`                    | the email's upload, beside which its picker is drawn                                                                                     |
-| `apps/web/app/components/PageBuilder/Email/StylePanel.vue`                          | the email's style panel, which draws the image upload and its picker                                                                     |
+| `apps/web/app/components/PageBuilder/Email/StylePanel.vue`                          | the email's style panel, which draws the image upload and its picker through the shared media field                                      |
 | `apps/web/shared/models/file/MimeType.ts`                                           | the content types, which gain the two video types                                                                                        |
 | `apps/web/app/components/PageBuilder/MediaField.vue`                                | the upload and the picker a webpage image or video draws above its form, refusing a file of the wrong kind or over the upload limit      |
 | `apps/web/shared/services/resource/note/constants.ts`                               | the four image types the webpage image takes, the note's constant                                                                        |
@@ -64,7 +63,7 @@ The FileAssets capability already hosts uploads for an email image, the note's i
 ```text
 apps/web/app/components/PageBuilder/FilePicker/          the picker over a resource's files, filtered to a kind
 apps/web/app/components/PageBuilder/MediaField.vue               the upload and picker a webpage image or video draws above its form
-apps/web/server/services/resource/listResourceFiles.ts   the owner's listing of the files under a resource
+apps/web/server/services/resource/readResourceFiles.ts   the owner's listing of the files under a resource
 ```
 
 ## Sources
