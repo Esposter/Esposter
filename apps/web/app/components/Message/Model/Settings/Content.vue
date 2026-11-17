@@ -9,7 +9,10 @@ defineSlots<{ default: () => VNode; header: () => VNode }>();
     <slot name="header" />
     <!-- The panel scrolls itself rather than the dialog, and the sidebar's scrollspy is bounded by it -->
     <div :id="SETTINGS_CONTENT_ID" p-3 ui-region-body relative>
-      <slot />
+      <!-- The scroll area owns its bottom breathing room, so no panel carries a trailing margin of its own -->
+      <div pb-8 flex flex-col gap-8>
+        <slot />
+      </div>
     </div>
   </div>
 </template>

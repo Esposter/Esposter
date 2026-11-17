@@ -17,14 +17,11 @@ const component = computed(() => UserSettingsContentMap[settingsType]);
     <template #header>
       <MessageModelSettingsHeader :title="settingsType" @open:drawer="isDrawerOpen = true" />
     </template>
-    <!-- The scroll area owns its bottom breathing room, so no panel carries a trailing margin of its own -->
-    <div pb-8 flex flex-col gap-8>
-      <Suspense v-if="component" :timeout="0">
-        <component :is="component" />
-        <template #fallback>
-          <MessageModelSettingsSkeleton />
-        </template>
-      </Suspense>
-    </div>
+    <Suspense v-if="component" :timeout="0">
+      <component :is="component" />
+      <template #fallback>
+        <MessageModelSettingsSkeleton />
+      </template>
+    </Suspense>
   </MessageModelSettingsContent>
 </template>
