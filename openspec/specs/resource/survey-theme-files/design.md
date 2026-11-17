@@ -37,21 +37,22 @@ flowchart TD
 
 ## Key files
 
-| File                                                                     | Role                                                                                                 |
-| ------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------- |
-| `apps/web/app/composables/survey/useSurveyFiles.ts`                      | the upload, the session's url set and the sweep of orphans                                           |
-| `apps/web/app/store/survey/files.ts`                                     | the session's file urls, shared by the Editor and the uploads                                        |
-| `apps/web/app/composables/survey/useSurveyTheme.ts`                      | root colours to the library's accent and background variables                                        |
-| `apps/web/app/services/resource/survey/collectSurveyFileUrls.ts`         | the urls a document references, its logo, its background picture and its pictures                    |
-| `apps/web/app/services/resource/survey/SurveyImageExtras.ts`             | the map from the image kinds to the editors the properties panel draws                               |
-| `apps/web/app/components/Resource/Survey/Creator/Theme.vue`              | the Theme tab: logo, background picture, colours, progress bar, question numbers, preview            |
-| `apps/web/app/components/Resource/Survey/Creator/ImageUpload.vue`        | one image question's picture, uploaded and removed                                                   |
-| `apps/web/app/components/Resource/Survey/Creator/ImageChoicesEditor.vue` | an image picker's choices, each with its picture                                                     |
-| `apps/web/app/components/Resource/Survey/Editor.vue`                     | the Editor, which tracks the files on open and sweeps them on unmount                                |
-| `apps/web/app/components/Resource/Survey/Runner.vue`                     | the runner that draws the logo and the background picture and applies the theme                      |
-| `apps/web/app/components/Resource/Survey/BackgroundPicture.vue`          | the background picture as the lowest layer of the runner and the Theme preview, under every question |
-| `apps/web/app/composables/resource/useUploadResourceFile.ts`             | the resource's file upload                                                                           |
-| `apps/web/app/composables/resource/useDeleteResourceFile.ts`             | the resource's file delete                                                                           |
-| `apps/web/app/services/file/validateFileWithAlert.ts`                    | the file validation every upload runs first                                                          |
-| `apps/web/app/components/Ui/ColorField.vue`                              | the colour field the accent and background use                                                       |
-| `apps/web/app/components/Ui/FileField.vue`                               | the file field the logo and picture uploads use                                                      |
+| File                                                                     | Role                                                                                                               |
+| ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| `apps/web/app/composables/survey/useSurveyFiles.ts`                      | the upload, the session's url set and the sweep of orphans                                                         |
+| `apps/web/app/store/survey/files.ts`                                     | the session's file urls, shared by the Editor and the uploads                                                      |
+| `apps/web/app/composables/survey/useSurveyTheme.ts`                      | root colours to the library's accent and background variables                                                      |
+| `apps/web/app/services/resource/survey/collectSurveyFileUrls.ts`         | the urls a document references, its logo, its background picture and its pictures                                  |
+| `apps/web/app/services/resource/survey/SurveyImageExtras.ts`             | the map from the image kinds to the editors the properties panel draws                                             |
+| `apps/web/app/components/Resource/Survey/Creator/Theme.vue`              | the Theme tab: logo, background picture, colours, progress bar, question numbers, preview                          |
+| `apps/web/app/components/Resource/Survey/Creator/ThemeClearRow.vue`      | one of the Theme tab's fields over its clear button, which is off while the root prop is empty and writes it empty |
+| `apps/web/app/components/Resource/Survey/Creator/ImageUpload.vue`        | one image question's picture, uploaded and removed                                                                 |
+| `apps/web/app/components/Resource/Survey/Creator/ImageChoicesEditor.vue` | an image picker's choices, each with its picture                                                                   |
+| `apps/web/app/components/Resource/Survey/Editor.vue`                     | the Editor, which tracks the files on open and sweeps them on unmount                                              |
+| `apps/web/app/components/Resource/Survey/Runner.vue`                     | the runner that draws the logo and the background picture and applies the theme                                    |
+| `apps/web/app/components/Resource/Survey/BackgroundPicture.vue`          | the background picture as the lowest layer of the runner and the Theme preview, under every question               |
+| `apps/web/app/composables/resource/useUploadResourceFile.ts`             | the resource's file upload                                                                                         |
+| `apps/web/app/composables/resource/useDeleteResourceFile.ts`             | the resource's file delete                                                                                         |
+| `apps/web/app/services/file/validateFileWithAlert.ts`                    | the file validation every upload runs first                                                                        |
+| `apps/web/app/components/Ui/ColorField.vue`                              | the colour field the accent and background use                                                                     |
+| `apps/web/app/components/Ui/FileField.vue`                               | the file field the logo and picture uploads use                                                                    |

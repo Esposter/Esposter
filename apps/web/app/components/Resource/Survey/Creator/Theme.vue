@@ -26,41 +26,31 @@ const progressBarItems: UiMenuItem<SurveyProgressBarPlacement>[] = [
 
 <template>
   <div flex flex-col gap-4>
-    <div flex flex-col gap-2>
+    <ResourceSurveyCreatorThemeClearRow clear-label="Remove logo" name="logo">
       <UiFileField accept="image/*" label="Logo" :model-value="[]" @update:model-value="(files) => onPickLogo(files)" />
-      <UiButton :disabled="!rootProps.logo" @click="updateRootProps({ logo: '' })">Remove logo</UiButton>
-    </div>
-    <div flex flex-col gap-2>
+    </ResourceSurveyCreatorThemeClearRow>
+    <ResourceSurveyCreatorThemeClearRow clear-label="Remove background picture" name="backgroundImage">
       <UiFileField
         accept="image/*"
         label="Background picture"
         :model-value="[]"
         @update:model-value="(files) => onPickBackground(files)"
       />
-      <UiButton :disabled="!rootProps.backgroundImage" @click="updateRootProps({ backgroundImage: '' })">
-        Remove background picture
-      </UiButton>
-    </div>
-    <div flex flex-col gap-2>
+    </ResourceSurveyCreatorThemeClearRow>
+    <ResourceSurveyCreatorThemeClearRow clear-label="Clear accent colour" name="accentColor">
       <UiColorField
         label="Accent colour"
         :model-value="rootProps.accentColor"
         @update:model-value="(accentColor) => updateRootProps({ accentColor })"
       />
-      <UiButton :disabled="!rootProps.accentColor" @click="updateRootProps({ accentColor: '' })">
-        Clear accent colour
-      </UiButton>
-    </div>
-    <div flex flex-col gap-2>
+    </ResourceSurveyCreatorThemeClearRow>
+    <ResourceSurveyCreatorThemeClearRow clear-label="Clear background colour" name="backgroundColor">
       <UiColorField
         label="Background colour"
         :model-value="rootProps.backgroundColor"
         @update:model-value="(backgroundColor) => updateRootProps({ backgroundColor })"
       />
-      <UiButton :disabled="!rootProps.backgroundColor" @click="updateRootProps({ backgroundColor: '' })">
-        Clear background colour
-      </UiButton>
-    </div>
+    </ResourceSurveyCreatorThemeClearRow>
     <div flex flex-col gap-2>
       <UiSelect
         :items="progressBarItems"
