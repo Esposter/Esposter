@@ -5,10 +5,10 @@ import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOp
 import { TextSpeedSetting } from "#shared/models/dungeons/data/settings/TextSpeedSetting";
 import { useSettingsOnGridClick } from "#src/composables/dungeons/scene/settings/useSettingsOnGridClick";
 import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";
-import { SettingsOptionGrid } from "#src/services/dungeons/scene/settings/SettingsOptionGrid";
 import { useControlsStore } from "#src/store/dungeons/controls";
+import { getRowPosition } from "#src/store/dungeons/settings/getRowPosition.test";
 import { useSettingsStore } from "#src/store/dungeons/settings/index";
-import { NotFoundError } from "@esposter/shared";
+import { useSettingsSceneStore } from "#src/store/dungeons/settings/scene";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -22,13 +22,6 @@ vi.mock("#src/store/dungeons/index", async () => {
   const dungeons = reactive(new Dungeons());
   return { useDungeonsStore: () => ({ dungeons, fadeSwitchToScene: vi.fn<() => void>(), saveDungeons }) };
 });
-
-const getRowPosition = (settingsOption: SettingsOption) => {
-  const position = SettingsOptionGrid.getPosition(settingsOption);
-  if (!position) throw new NotFoundError(getRowPosition.name, settingsOption);
-
-  return position;
-};
 
 describe(useSettingsOnGridClick, () => {
   let controls: Controls;
@@ -46,12 +39,14 @@ describe(useSettingsOnGridClick, () => {
   test("a second press on a value cell saves nothing and confirms nothing", () => {
     expect.hasAssertions();
 
-    const textSpeedRow = getRowPosition(SettingsOption["Text Speed"]);
+    const settingsSceneStore = useSettingsSceneStore();
+    const { settingsOptionGrid } = settingsSceneStore;
+    const textSpeedRow = getRowPosition(settingsOptionGrid, SettingsOption["Text Speed"]);
     const fastCell = {
-      x: SettingsOptionGrid.getPositionX(TextSpeedSetting.Fast, textSpeedRow.y) ?? 0,
+      x: settingsOptionGrid.getPositionX(TextSpeedSetting.Fast, textSpeedRow.y) ?? 0,
       y: textSpeedRow.y,
     };
-    SettingsOptionGrid.position.value = fastCell;
+    settingsOptionGrid.position.value = fastCell;
     useSettingsOnGridClick(fastCell)();
 
     expect(saveDungeons).not.toHaveBeenCalled();
@@ -61,8 +56,10 @@ describe(useSettingsOnGridClick, () => {
   test("a second press on Close confirms and saves nothing", () => {
     expect.hasAssertions();
 
-    const closeRow = getRowPosition(SettingsOption.Close);
-    SettingsOptionGrid.position.value = closeRow;
+    const settingsSceneStore = useSettingsSceneStore();
+    const { settingsOptionGrid } = settingsSceneStore;
+    const closeRow = getRowPosition(settingsOptionGrid, SettingsOption.Close);
+    settingsOptionGrid.position.value = closeRow;
     useSettingsOnGridClick(closeRow)();
 
     expect(controls.setInput).toHaveBeenCalledExactlyOnceWith(PlayerSpecialInput.Confirm);

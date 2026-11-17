@@ -1,5 +1,0 @@
-import { Grid } from "#src/models/dungeons/Grid";
-import { MenuOption } from "#src/models/dungeons/scene/world/MenuOption";
-
-const grid = [[MenuOption.Monsters], [MenuOption.Inventory], [MenuOption.Save], [MenuOption.Exit]] as const;
-export const WorldMenuOptionGrid = new Grid<typeof grid>({ grid, isWrapping: true });

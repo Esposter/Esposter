@@ -3,12 +3,14 @@ import type { Position } from "grid-engine";
 
 import { SceneMode } from "#src/models/dungeons/scene/monsterParty/SceneMode";
 import { getMenuPosition } from "#src/services/dungeons/UI/menu/getMenuPosition";
+import { useMonsterPartyMenuStore } from "#src/store/dungeons/monsterParty/menu";
 import { useMonsterPartySceneStore } from "#src/store/dungeons/monsterParty/scene";
 import { onCreate } from "vue-phaserjs";
 
 const monsterPartySceneStore = useMonsterPartySceneStore();
 const { sceneMode } = storeToRefs(monsterPartySceneStore);
-const monsterPartyMenuOptionGrid = useMonsterPartyMenuOptionGrid();
+const monsterPartyMenuStore = useMonsterPartyMenuStore();
+const { monsterPartyMenuOptionGrid } = monsterPartyMenuStore;
 const position = ref<Position>();
 const isMenuVisible = computed({
   get: () => sceneMode.value === SceneMode.Menu,

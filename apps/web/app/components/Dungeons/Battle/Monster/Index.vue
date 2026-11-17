@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useBattleMonsterStore } from "#src/composables/dungeons/scene/battle/monster/useBattleMonsterStore";
 import { Image } from "vue-phaserjs";
 
 interface Props {

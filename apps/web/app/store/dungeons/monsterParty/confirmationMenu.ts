@@ -1,11 +1,11 @@
 import type { PlayerInput } from "#src/models/dungeons/UI/input/PlayerInput";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
+import { Grid } from "#src/models/dungeons/Grid";
 import { ConfirmationMenuOption } from "#src/models/dungeons/scene/monsterParty/ConfirmationMenuOption";
 import { SceneMode } from "#src/models/dungeons/scene/monsterParty/SceneMode";
 import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";
 import { DEFAULT_INFO_DIALOG_MESSAGE } from "#src/services/dungeons/scene/monsterParty/constants";
-import { MonsterPartyConfirmationMenuOptionGrid } from "#src/services/dungeons/scene/monsterParty/MonsterPartyConfirmationMenuOptionGrid";
 import { checkIsMovingDirection } from "#src/services/dungeons/UI/input/checkIsMovingDirection";
 import { useMonsterPartyInfoPanelStore } from "#src/store/dungeons/monsterParty/infoPanel";
 import { useMonsterPartySceneStore } from "#src/store/dungeons/monsterParty/scene";
@@ -13,8 +13,12 @@ import { exhaustiveGuard, InvalidOperationError, Operation } from "@esposter/sha
 
 export const useConfirmationMenuStore = defineStore("dungeons/monsterParty/confirmationMenu", () => {
   const monsterPartySceneStore = useMonsterPartySceneStore();
-  const monsterPartyOptionGrid = useMonsterPartyOptionGrid();
+  const { monsterPartyOptionGrid } = monsterPartySceneStore;
   const monsterPartyInfoPanelStore = useMonsterPartyInfoPanelStore();
+  // Held by the store rather than at module scope, so each Pinia instance starts with its own cursor
+  const monsterPartyConfirmationMenuOptionGrid = markRaw(
+    new Grid({ grid: [[ConfirmationMenuOption.Yes], [ConfirmationMenuOption.No]] as const }),
+  );
 
   const onPlayerInput = (_scene: SceneWithPlugins, justDownInput: PlayerInput) => {
     if (
@@ -24,7 +28,7 @@ export const useConfirmationMenuStore = defineStore("dungeons/monsterParty/confi
       return false;
 
     if (justDownInput === PlayerSpecialInput.Confirm)
-      switch (MonsterPartyConfirmationMenuOptionGrid.value) {
+      switch (monsterPartyConfirmationMenuOptionGrid.value) {
         case ConfirmationMenuOption.No:
           onCancel();
           break;
@@ -39,10 +43,10 @@ export const useConfirmationMenuStore = defineStore("dungeons/monsterParty/confi
           break;
         }
         default:
-          exhaustiveGuard(MonsterPartyConfirmationMenuOptionGrid.value);
+          exhaustiveGuard(monsterPartyConfirmationMenuOptionGrid.value);
       }
     else if (justDownInput === PlayerSpecialInput.Enter || justDownInput === PlayerSpecialInput.Cancel) onCancel();
-    else if (checkIsMovingDirection(justDownInput)) MonsterPartyConfirmationMenuOptionGrid.move(justDownInput);
+    else if (checkIsMovingDirection(justDownInput)) monsterPartyConfirmationMenuOptionGrid.move(justDownInput);
 
     return true;
   };
@@ -52,5 +56,5 @@ export const useConfirmationMenuStore = defineStore("dungeons/monsterParty/confi
     monsterPartyInfoPanelStore.infoDialogMessage.text = DEFAULT_INFO_DIALOG_MESSAGE;
   };
 
-  return { onPlayerInput };
+  return { monsterPartyConfirmationMenuOptionGrid, onPlayerInput };
 });

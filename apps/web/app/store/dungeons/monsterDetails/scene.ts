@@ -6,6 +6,7 @@ import { SceneKey } from "#src/models/dungeons/keys/SceneKey";
 import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";
 import { ATTACK_DISPLAY_LIMIT } from "#src/services/dungeons/attack/constants";
 import { getAttack } from "#src/services/dungeons/attack/getAttack";
+import { transitionFrom } from "#src/services/dungeons/scene/transitionFrom";
 import { checkIsPlayerSpecialInput } from "#src/services/dungeons/UI/input/checkIsPlayerSpecialInput";
 import { exhaustiveGuard } from "@esposter/shared";
 
@@ -16,7 +17,7 @@ export const useMonsterDetailsSceneStore = defineStore("dungeons/monsterDetails/
       .slice(0, ATTACK_DISPLAY_LIMIT)
       .map(({ id }) => id),
   );
-  const { switchToPreviousScene } = usePreviousScene(SceneKey.MonsterDetails);
+  const { switchToPreviousScene } = transitionFrom(SceneKey.MonsterDetails);
 
   const onPlayerInput = (scene: SceneWithPlugins, justDownInput: PlayerInput) => {
     if (checkIsPlayerSpecialInput(justDownInput)) onPlayerSpecialInput(scene, justDownInput);

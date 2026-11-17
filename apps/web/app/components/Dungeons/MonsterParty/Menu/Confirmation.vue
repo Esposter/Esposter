@@ -3,8 +3,8 @@ import type { Position } from "grid-engine";
 
 import { SceneMode } from "#src/models/dungeons/scene/monsterParty/SceneMode";
 import { DEFAULT_INFO_DIALOG_MESSAGE } from "#src/services/dungeons/scene/monsterParty/constants";
-import { MonsterPartyConfirmationMenuOptionGrid } from "#src/services/dungeons/scene/monsterParty/MonsterPartyConfirmationMenuOptionGrid";
 import { getMenuPosition } from "#src/services/dungeons/UI/menu/getMenuPosition";
+import { useConfirmationMenuStore } from "#src/store/dungeons/monsterParty/confirmationMenu";
 import { useMonsterPartyInfoPanelStore } from "#src/store/dungeons/monsterParty/infoPanel";
 import { useMonsterPartySceneStore } from "#src/store/dungeons/monsterParty/scene";
 import { onCreate } from "vue-phaserjs";
@@ -13,6 +13,8 @@ const monsterPartySceneStore = useMonsterPartySceneStore();
 const { sceneMode } = storeToRefs(monsterPartySceneStore);
 const monsterPartyInfoPanelStore = useMonsterPartyInfoPanelStore();
 const { infoDialogMessage } = storeToRefs(monsterPartyInfoPanelStore);
+const confirmationMenuStore = useConfirmationMenuStore();
+const { monsterPartyConfirmationMenuOptionGrid } = confirmationMenuStore;
 const position = ref<Position>();
 const isMenuVisible = computed({
   get: () => sceneMode.value === SceneMode.Confirmation,
@@ -36,7 +38,7 @@ onCreate((scene) => {
   <DungeonsUIMenu
     v-if="position"
     v-model:is-visible="isMenuVisible"
-    :grid="MonsterPartyConfirmationMenuOptionGrid"
+    :grid="monsterPartyConfirmationMenuOptionGrid"
     :position
   />
 </template>

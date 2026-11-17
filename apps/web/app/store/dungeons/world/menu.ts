@@ -1,10 +1,11 @@
 import type { PlayerInput } from "#src/models/dungeons/UI/input/PlayerInput";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
+import { Grid } from "#src/models/dungeons/Grid";
 import { SceneKey } from "#src/models/dungeons/keys/SceneKey";
 import { MenuOption } from "#src/models/dungeons/scene/world/MenuOption";
 import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";
-import { WorldMenuOptionGrid } from "#src/services/dungeons/scene/world/WorldMenuOptionGrid";
+import { transitionFrom } from "#src/services/dungeons/scene/transitionFrom";
 import { checkIsMovingDirection } from "#src/services/dungeons/UI/input/checkIsMovingDirection";
 import { useDungeonsStore } from "#src/store/dungeons/index";
 import { useWorldDialogStore } from "#src/store/dungeons/world/dialog";
@@ -16,9 +17,16 @@ export const useWorldMenuStore = defineStore("dungeons/world/menu", () => {
   const worldDialogStore = useWorldDialogStore();
   const { showMessages } = worldDialogStore;
   const isMenuVisible = ref(false);
+  // Held by the store rather than at module scope, so each Pinia instance starts with its own cursor
+  const worldMenuOptionGrid = markRaw(
+    new Grid({
+      grid: [[MenuOption.Monsters], [MenuOption.Inventory], [MenuOption.Save], [MenuOption.Exit]] as const,
+      isWrapping: true,
+    }),
+  );
 
   const onPlayerInput = async (scene: SceneWithPlugins, justDownInput: PlayerInput) => {
-    const { launchScene } = usePreviousScene(scene.scene.key);
+    const { launchScene } = transitionFrom(scene.scene.key);
 
     if (!isMenuVisible.value)
       if (justDownInput === PlayerSpecialInput.Enter) {
@@ -27,7 +35,7 @@ export const useWorldMenuStore = defineStore("dungeons/world/menu", () => {
       } else return false;
 
     if (justDownInput === PlayerSpecialInput.Confirm)
-      switch (WorldMenuOptionGrid.value) {
+      switch (worldMenuOptionGrid.value) {
         case MenuOption.Exit:
           isMenuVisible.value = false;
           fadeSwitchToScene(scene, SceneKey.Title);
@@ -43,14 +51,14 @@ export const useWorldMenuStore = defineStore("dungeons/world/menu", () => {
           await showMessages(scene, [{ text: "Game has been saved." }]);
           break;
         default:
-          exhaustiveGuard(WorldMenuOptionGrid.value);
+          exhaustiveGuard(worldMenuOptionGrid.value);
       }
     else if (justDownInput === PlayerSpecialInput.Enter || justDownInput === PlayerSpecialInput.Cancel)
       isMenuVisible.value = false;
-    else if (checkIsMovingDirection(justDownInput)) WorldMenuOptionGrid.move(justDownInput);
+    else if (checkIsMovingDirection(justDownInput)) worldMenuOptionGrid.move(justDownInput);
 
     return true;
   };
 
-  return { isMenuVisible, onPlayerInput };
+  return { isMenuVisible, onPlayerInput, worldMenuOptionGrid };
 });

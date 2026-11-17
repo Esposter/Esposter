@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { getGridKey } from "#src/services/dungeons/getGridKey";
+import { useInventorySceneStore } from "#src/store/dungeons/inventory/scene";
 
-const itemOptionGrid = useItemOptionGrid();
+const inventorySceneStore = useInventorySceneStore();
+const { itemOptionGrid } = inventorySceneStore;
 </script>
 
 <template>

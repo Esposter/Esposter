@@ -2,7 +2,7 @@ import type { AttackId } from "#shared/models/dungeons/attack/AttackId";
 import type { Attack } from "#src/models/dungeons/attack/Attack";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { useSkippableAnimation } from "#src/composables/dungeons/animation/useSkippableAnimation";
+import { animateOrSkip } from "#src/services/dungeons/animation/animateOrSkip";
 import { getDungeonsSoundEffect } from "#src/services/dungeons/sound/getDungeonsSoundEffect";
 import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 import { sleepScene } from "vue-phaserjs";
@@ -18,7 +18,7 @@ export const useAttackManagerStore = defineStore("dungeons/battle/attackManager"
   let onComplete: (() => void) | undefined;
 
   const playAttack = (scene: SceneWithPlugins, attack: Attack, isAttackToEnemy: boolean) =>
-    useSkippableAnimation(
+    animateOrSkip(
       () =>
         new Promise<void>(
           getSynchronizedFunction(async (resolve) => {

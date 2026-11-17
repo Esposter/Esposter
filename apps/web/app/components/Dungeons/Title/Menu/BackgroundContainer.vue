@@ -6,15 +6,18 @@ import {
   MENU_BACKGROUND_HEIGHT,
   MENU_BACKGROUND_WIDTH,
 } from "#src/services/dungeons/scene/title/menu/constants";
-import { PlayerTitleMenuOptionGrid } from "#src/services/dungeons/scene/title/menu/PlayerTitleMenuOptionGrid";
+import { useTitleSceneStore } from "#src/store/dungeons/title/scene";
 import { Container } from "vue-phaserjs";
+
+const titleSceneStore = useTitleSceneStore();
+const { playerTitleMenuOptionGrid } = titleSceneStore;
 </script>
 
 <template>
   <Container>
     <DungeonsUIGlassPanelNineSlice :width="MENU_BACKGROUND_WIDTH" :height="MENU_BACKGROUND_HEIGHT" />
     <DungeonsUIInputCursor
-      :grid="PlayerTitleMenuOptionGrid"
+      :grid="playerTitleMenuOptionGrid"
       :initial-position="INITIAL_CURSOR_POSITION"
       :position-increment="CURSOR_POSITION_INCREMENT"
       :tween="{

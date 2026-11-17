@@ -5,6 +5,7 @@ import { ChestObjectProperty } from "#shared/generated/tiled/propertyTypes/class
 import { SoundEffectKey } from "#shared/models/dungeons/keys/sound/SoundEffectKey";
 import { getItem } from "#shared/services/dungeons/item/getItem";
 import { getPositionId } from "#src/services/dungeons/direction/getPositionId";
+import { getInteractiveObject } from "#src/services/dungeons/scene/world/interaction/getInteractiveObject";
 import { getDungeonsSoundEffect } from "#src/services/dungeons/sound/getDungeonsSoundEffect";
 import { getTiledObjectProperty } from "#src/services/dungeons/tilemap/getTiledObjectProperty";
 import { useInventorySceneStore } from "#src/store/dungeons/inventory/scene";
@@ -12,7 +13,7 @@ import { useWorldDialogStore } from "#src/store/dungeons/world/dialog";
 import { useWorldSceneStore } from "#src/store/dungeons/world/scene";
 
 export const chestInteractionEffect: Effect = async (scene, chestObjects) => {
-  const chestObject = useInteractiveObject(chestObjects);
+  const chestObject = getInteractiveObject(chestObjects);
   if (!chestObject) return false;
 
   const worldSceneStore = useWorldSceneStore();

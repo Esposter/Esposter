@@ -1,21 +1,40 @@
+import type { Attack } from "#src/models/dungeons/attack/Attack";
 import type { PlayerInput } from "#src/models/dungeons/UI/input/PlayerInput";
 import type { Direction } from "grid-engine";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
+import { Grid } from "#src/models/dungeons/Grid";
 import { ActivePanel } from "#src/models/dungeons/scene/battle/menu/ActivePanel";
 import { PlayerOption } from "#src/models/dungeons/scene/battle/menu/PlayerOption";
 import { StateName } from "#src/models/dungeons/state/battle/StateName";
 import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";
 import { battleStateMachine } from "#src/services/dungeons/scene/battle/battleStateMachine";
-import { PlayerBattleMenuOptionGrid } from "#src/services/dungeons/scene/battle/menu/PlayerBattleMenuOptionGrid";
 import { checkIsPlayerSpecialInput } from "#src/services/dungeons/UI/input/checkIsPlayerSpecialInput";
+import { useBattlePlayerStore } from "#src/store/dungeons/battle/player";
 import { useDialogStore } from "#src/store/dungeons/dialog";
 import { useExperienceBarStore } from "#src/store/dungeons/UI/experienceBar";
 import { exhaustiveGuard, getResultAsync, noop } from "@esposter/shared";
 
 export const useBattleSceneStore = defineStore("dungeons/battle/scene", () => {
   const dialogStore = useDialogStore();
-  const attackOptionGrid = useAttackOptionGrid();
+  const battlePlayerStore = useBattlePlayerStore();
+  // Held by the store rather than at module scope, so each Pinia instance starts with its own cursor
+  const attackOptionGrid = markRaw(
+    new Grid<[[Attack | undefined, Attack | undefined], [Attack | undefined, Attack | undefined]]>({
+      grid: computed(() => [
+        [battlePlayerStore.attacks[0], battlePlayerStore.attacks[1]],
+        [battlePlayerStore.attacks[2], battlePlayerStore.attacks[3]],
+      ]),
+    }),
+  );
+  const playerBattleMenuOptionGrid = markRaw(
+    new Grid<[[PlayerOption, PlayerOption], [PlayerOption, PlayerOption]]>({
+      grid: [
+        [PlayerOption.Fight, PlayerOption.Switch],
+        [PlayerOption.Item, PlayerOption.Flee],
+      ],
+    }),
+  );
   const activePanel = ref<ActivePanel>(ActivePanel.Info);
   const experienceBarStore = useExperienceBarStore();
   // The scene's update event is the frame loop, which drops whatever its listener returns — so the input this
@@ -48,12 +67,12 @@ export const useBattleSceneStore = defineStore("dungeons/battle/scene", () => {
   };
 
   const onPlayerDirectionInput = (direction: Direction) => {
-    if (activePanel.value === ActivePanel.Option) PlayerBattleMenuOptionGrid.move(direction);
+    if (activePanel.value === ActivePanel.Option) playerBattleMenuOptionGrid.move(direction);
     else if (activePanel.value === ActivePanel.AttackOption) attackOptionGrid.move(direction);
   };
 
   const onSelectPlayerOption = async () => {
-    switch (PlayerBattleMenuOptionGrid.value) {
+    switch (playerBattleMenuOptionGrid.value) {
       case PlayerOption.Fight:
         activePanel.value = ActivePanel.AttackOption;
         return;
@@ -67,9 +86,9 @@ export const useBattleSceneStore = defineStore("dungeons/battle/scene", () => {
         await battleStateMachine.setState(StateName.SwitchAttempt);
         return;
       default:
-        exhaustiveGuard(PlayerBattleMenuOptionGrid.value);
+        exhaustiveGuard(playerBattleMenuOptionGrid.value);
     }
   };
 
-  return { activePanel, onPlayerInput };
+  return { activePanel, attackOptionGrid, onPlayerInput, playerBattleMenuOptionGrid };
 });

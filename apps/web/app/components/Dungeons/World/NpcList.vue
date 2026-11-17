@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { readNpcs } from "#src/services/dungeons/scene/world/readNpcs";
 import { useNpcStore } from "#src/store/dungeons/world/npc";
 import { useWorldSceneStore } from "#src/store/dungeons/world/scene";
 import { takeOne } from "@esposter/shared";
@@ -13,12 +14,12 @@ const { items } = storeToRefs(npcStore);
 // The layers are rebuilt for each tilemap, so the NPCs are read once they exist. The tilemap key changes before them,
 // Which is why this follows the layers rather than the key
 watch(objectLayerMap, () => {
-  useReadNpcs();
+  readNpcs();
 });
 
 onCreate(() => {
   // Leaving the scene resets the NPCs, so returning to a map that is already built reads it again
-  if (objectLayerMap.value) useReadNpcs();
+  if (objectLayerMap.value) readNpcs();
 });
 
 onUnmounted(() => {

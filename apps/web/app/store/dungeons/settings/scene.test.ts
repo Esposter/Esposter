@@ -4,10 +4,9 @@ import { AnimationsSetting } from "#shared/models/dungeons/data/settings/Animati
 import { getInitialSettings } from "#shared/models/dungeons/data/settings/Settings";
 import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOption";
 import { TextSpeedSetting } from "#shared/models/dungeons/data/settings/TextSpeedSetting";
-import { SettingsOptionGrid } from "#src/services/dungeons/scene/settings/SettingsOptionGrid";
+import { getRowPosition } from "#src/store/dungeons/settings/getRowPosition.test";
 import { useSettingsStore } from "#src/store/dungeons/settings/index";
 import { useSettingsSceneStore } from "#src/store/dungeons/settings/scene";
-import { NotFoundError } from "@esposter/shared";
 import { Direction } from "grid-engine";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
@@ -24,13 +23,6 @@ vi.mock("#src/store/dungeons/index", async () => {
   return { useDungeonsStore: () => ({ dungeons, fadeSwitchToScene: vi.fn<() => void>(), saveDungeons }) };
 });
 
-const getRowPosition = (settingsOption: SettingsOption) => {
-  const position = SettingsOptionGrid.getPosition(settingsOption);
-  if (!position) throw new NotFoundError(getRowPosition.name, settingsOption);
-
-  return position;
-};
-
 describe(useSettingsSceneStore, () => {
   // The scene is only read for special inputs, which these tests never send
   const scene = {} as SceneWithPlugins;
@@ -39,7 +31,9 @@ describe(useSettingsSceneStore, () => {
     setActivePinia(createPinia());
     const settingsStore = useSettingsStore();
     settingsStore.settings = getInitialSettings();
-    SettingsOptionGrid.position.value = { x: 0, y: 0 };
+    const settingsSceneStore = useSettingsSceneStore();
+    const { settingsOptionGrid } = settingsSceneStore;
+    settingsOptionGrid.position.value = { x: 0, y: 0 };
   });
 
   // Selecting the Volume row once saved its empty value, which made the volume non-finite and the save fail
@@ -49,12 +43,12 @@ describe(useSettingsSceneStore, () => {
     const settingsStore = useSettingsStore();
     settingsStore.settings[SettingsOption.VolumePercentage] = 40;
     const settingsSceneStore = useSettingsSceneStore();
-    const { selectSettingsPosition } = settingsSceneStore;
-    const volumeRow = getRowPosition(SettingsOption.VolumePercentage);
+    const { selectSettingsPosition, settingsOptionGrid } = settingsSceneStore;
+    const volumeRow = getRowPosition(settingsOptionGrid, SettingsOption.VolumePercentage);
     selectSettingsPosition(volumeRow);
 
     expect(settingsStore.settings[SettingsOption.VolumePercentage]).toBe(40);
-    expect(SettingsOptionGrid.position.value).toStrictEqual(volumeRow);
+    expect(settingsOptionGrid.position.value).toStrictEqual(volumeRow);
     expect(saveDungeons).not.toHaveBeenCalled();
   });
 
@@ -86,14 +80,14 @@ describe(useSettingsSceneStore, () => {
 
     const settingsStore = useSettingsStore();
     const settingsSceneStore = useSettingsSceneStore();
-    const { onPlayerInput, restSettingsCursor } = settingsSceneStore;
+    const { onPlayerInput, restSettingsCursor, settingsOptionGrid } = settingsSceneStore;
     settingsStore.settings[SettingsOption.Animations] = AnimationsSetting.Off;
     restSettingsCursor();
     onPlayerInput(scene, Direction.DOWN, Direction.DOWN, 0);
 
-    const animationsRow = getRowPosition(SettingsOption.Animations);
-    expect(SettingsOptionGrid.position.value).toStrictEqual({
-      x: SettingsOptionGrid.getPositionX(AnimationsSetting.Off, animationsRow.y),
+    const animationsRow = getRowPosition(settingsOptionGrid, SettingsOption.Animations);
+    expect(settingsOptionGrid.position.value).toStrictEqual({
+      x: settingsOptionGrid.getPositionX(AnimationsSetting.Off, animationsRow.y),
       y: animationsRow.y,
     });
     expect(settingsStore.settings[SettingsOption.Animations]).toBe(AnimationsSetting.Off);
@@ -106,10 +100,10 @@ describe(useSettingsSceneStore, () => {
 
     const settingsStore = useSettingsStore();
     const settingsSceneStore = useSettingsSceneStore();
-    const { selectSettingsPosition } = settingsSceneStore;
-    const textSpeedRow = getRowPosition(SettingsOption["Text Speed"]);
+    const { selectSettingsPosition, settingsOptionGrid } = settingsSceneStore;
+    const textSpeedRow = getRowPosition(settingsOptionGrid, SettingsOption["Text Speed"]);
     selectSettingsPosition({
-      x: SettingsOptionGrid.getPositionX(TextSpeedSetting.Fast, textSpeedRow.y) ?? 0,
+      x: settingsOptionGrid.getPositionX(TextSpeedSetting.Fast, textSpeedRow.y) ?? 0,
       y: textSpeedRow.y,
     });
 
@@ -117,8 +111,8 @@ describe(useSettingsSceneStore, () => {
     selectSettingsPosition({ x: 0, y: textSpeedRow.y });
 
     expect(settingsStore.settings[SettingsOption["Text Speed"]]).toBe(TextSpeedSetting.Fast);
-    expect(SettingsOptionGrid.position.value.x).toBe(
-      SettingsOptionGrid.getPositionX(TextSpeedSetting.Fast, textSpeedRow.y),
+    expect(settingsOptionGrid.position.value.x).toBe(
+      settingsOptionGrid.getPositionX(TextSpeedSetting.Fast, textSpeedRow.y),
     );
     expect(saveDungeons).toHaveBeenCalledTimes(1);
   });

@@ -4,8 +4,8 @@ import { PlayerOption } from "#src/models/dungeons/scene/battle/menu/PlayerOptio
 import { StateName } from "#src/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "#src/services/dungeons/scene/battle/battleStateMachine";
 import { getAttackStatePriorityMap } from "#src/services/dungeons/scene/battle/getAttackStatePriorityMap";
-import { PlayerBattleMenuOptionGrid } from "#src/services/dungeons/scene/battle/menu/PlayerBattleMenuOptionGrid";
 import { useActionStore } from "#src/store/dungeons/battle/action";
+import { useBattleSceneStore } from "#src/store/dungeons/battle/scene";
 
 export const Battle: State<typeof StateName.Battle> = {
   name: StateName.Battle,
@@ -18,10 +18,12 @@ export const Battle: State<typeof StateName.Battle> = {
     // 5. Repeat for the other monster if necessary
     const actionStore = useActionStore();
     const { attackStatePriorityMap } = storeToRefs(actionStore);
-    attackStatePriorityMap.value = getAttackStatePriorityMap();
+    const battleSceneStore = useBattleSceneStore();
+    const { playerBattleMenuOptionGrid } = battleSceneStore;
+    attackStatePriorityMap.value = getAttackStatePriorityMap(playerBattleMenuOptionGrid.value);
 
     if (
-      PlayerBattleMenuOptionGrid.value === PlayerOption.Fight &&
+      playerBattleMenuOptionGrid.value === PlayerOption.Fight &&
       attackStatePriorityMap.value[StateName.Battle] === StateName.PlayerAttack
     )
       await battleStateMachine.setState(StateName.PlayerAttack);

@@ -39,7 +39,7 @@ A save is sent under its ETag, the rule the [conditional writes](../../architect
 
 ## The settings cursor
 
-The settings menu is one `SettingsOptionGrid`: a row per option, its name in column 0 and its value cells after it. The cursor is that grid's position, and four actions move it. Each decides for itself whether to save:
+The settings menu is one grid, `settingsOptionGrid` on the settings scene store, built from the rows in `SettingsOptionRows`: a row per option, its name in column 0 and its value cells after it. The cursor is that grid's position, and four actions move it. Each decides for itself whether to save:
 
 - **Up and down** (`moveSettingsRow`) move to the next row and rest there.
 - **Left and right** (`moveSettingsColumn`) step to the adjacent value cell and save it. In a row with no value cells they do nothing, because the Volume and Theme Mode controls take those inputs first.
@@ -52,7 +52,7 @@ The save is a consequence of an action, never of where the cursor happens to be.
 
 ## Animations off
 
-Animations off is one setting, read in one place. Every presentation that has an animated form passes its end state to `useSkippableAnimation` (`app/composables/dungeons/animation/useSkippableAnimation.ts`): with the setting on, the animation runs; with it off, the end state is applied and the call resolves at once. Apart from the three things kept outside it, listed below, no call site checks `isSkipAnimations` itself, so adding an animation means passing its end state, not adding a branch.
+Animations off is one setting, read in one place. Every presentation that has an animated form passes its end state to `animateOrSkip` (`app/services/dungeons/animation/animateOrSkip.ts`): with the setting on, the animation runs; with it off, the end state is applied and the call resolves at once. Apart from the three things kept outside it, listed below, no call site checks `isSkipAnimations` itself, so adding an animation means passing its end state, not adding a branch.
 
 Dialog text reveals through the same helper. Both forms wait for the same thing before resolving: Vue's next render, then the scene's next tick, since Vue's watchers hand a text change to Phaser on that tick.
 
@@ -71,9 +71,9 @@ Paths relative to `apps/web`.
 | `app/services/dungeons/toLocalDungeons.ts`                                    | the anonymous read, fresh on a bad value |
 | `app/store/dungeons/settings/`                                                | settings scene stores                    |
 | `app/store/dungeons/settings/scene.ts`                                        | the cursor's four actions                |
-| `app/services/dungeons/scene/settings/SettingsOptionGrid.ts`                  | the option grid and its cells            |
+| `app/services/dungeons/scene/settings/SettingsOptionRows.ts`                  | the option rows and their cells          |
 | `app/composables/dungeons/scene/settings/useSettingsOnGridClick.ts`           | a click on a row or cell                 |
-| `app/composables/dungeons/animation/useSkippableAnimation.ts`                 | the one Animations-off branch            |
+| `app/services/dungeons/animation/animateOrSkip.ts`                            | the one Animations-off branch            |
 | `shared/services/achievement/definitions/DungeonsAchievementDefinitionMap.ts` | achievements                             |
 
 ## Notes

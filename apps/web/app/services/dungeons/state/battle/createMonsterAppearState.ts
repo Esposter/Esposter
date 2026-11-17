@@ -2,6 +2,8 @@ import type { StateName } from "#src/models/dungeons/state/battle/StateName";
 import type { State } from "#src/models/dungeons/state/State";
 
 import { battleStateMachine } from "#src/services/dungeons/scene/battle/battleStateMachine";
+import { animateMonsterAppear } from "#src/services/dungeons/scene/battle/monster/animateMonsterAppear";
+import { animateMonsterInfoContainerAppear } from "#src/services/dungeons/scene/battle/monster/animateMonsterInfoContainerAppear";
 import { useBattleDialogStore } from "#src/store/dungeons/battle/dialog";
 import { useBattlePlayerStore } from "#src/store/dungeons/battle/player";
 import { prettify } from "#src/util/text/prettify";
@@ -23,8 +25,8 @@ export const createMonsterAppearState = <
     const battlePlayerStore = useBattlePlayerStore();
     const { activeMonster } = storeToRefs(battlePlayerStore);
 
-    await useMonsterAppearTween(false);
-    getSynchronizedFunction(() => useMonsterInfoContainerAppearTween(false))();
+    await animateMonsterAppear(false);
+    getSynchronizedFunction(() => animateMonsterInfoContainerAppear(false))();
     await showMessageNoInputRequired(scene, `Go ${prettify(activeMonster.value.key)}!`);
     await sleepScene(scene, Temporal.Duration.from({ seconds: 1 }).total("milliseconds"));
     await battleStateMachine.setState(nextStateName);

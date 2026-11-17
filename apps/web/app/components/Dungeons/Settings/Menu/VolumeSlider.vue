@@ -16,11 +16,15 @@ import {
 import { getSettingsOptionY } from "#src/services/dungeons/scene/settings/getSettingsOptionY";
 import { useVolumeStore } from "#src/store/dungeons/settings/volume";
 import { Input } from "phaser";
-import { Rectangle, Text } from "vue-phaserjs";
+import { onShutdown, Rectangle, Text } from "vue-phaserjs";
 
 const volumeStore = useVolumeStore();
 const { setVolume } = volumeStore;
 const { volumePercentage, volumeSlider } = storeToRefs(volumeStore);
+// The slider belongs to the scene, so a shutdown destroys it rather than this component unmounting
+onShutdown(() => {
+  volumeSlider.value?.destroy();
+});
 const baseY = getSettingsOptionY(SettingsOption.VolumePercentage);
 const baseSliderBarConfiguration: Partial<RectangleConfiguration> = {
   originX: 0,
@@ -58,7 +62,7 @@ const onSliderBarClick = ({ x }: Input.Pointer) => {
     :on-complete="
       (scene, rectangle) => {
         volumeSlider = markRaw(
-          useSlider(scene, rectangle, {
+          scene.sliderPlugin.add(rectangle, {
             endPoints: [
               { x: VOLUME_SLIDER_START_X, y: baseY + VOLUME_SLIDER_OFFSET_Y },
               { x: VOLUME_SLIDER_END_X, y: baseY + VOLUME_SLIDER_OFFSET_Y },

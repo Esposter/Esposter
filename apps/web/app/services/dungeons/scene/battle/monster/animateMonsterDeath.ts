@@ -1,0 +1,44 @@
+import { useBattleMonsterStore } from "#src/composables/dungeons/scene/battle/monster/useBattleMonsterStore";
+import { animateOrSkip } from "#src/services/dungeons/animation/animateOrSkip";
+import { getTweenRange } from "#src/services/dungeons/animation/getTweenRange";
+import { useTween } from "vue-phaserjs";
+
+export const animateMonsterDeath = (isEnemy: boolean) => {
+  const battleMonsterStore = useBattleMonsterStore(isEnemy);
+  const { monsterInfoContainerPosition, monsterInfoContainerTween, monsterPosition, monsterTween } =
+    storeToRefs(battleMonsterStore);
+  const monsterPositionYEnd = isEnemy ? monsterPosition.value.y - 400 : monsterPosition.value.y + 400;
+  const monsterInfoContainerPositionXEnd = isEnemy
+    ? monsterInfoContainerPosition.value.x - 600
+    : monsterInfoContainerPosition.value.x + 600;
+
+  return animateOrSkip(
+    () => {
+      const duration = Temporal.Duration.from({ seconds: 2 }).total("milliseconds");
+      useTween(monsterInfoContainerTween, {
+        delay: 0,
+        duration,
+        onComplete: () => {
+          monsterInfoContainerPosition.value.x = monsterInfoContainerPositionXEnd;
+        },
+        x: getTweenRange(monsterInfoContainerPosition.value.x, monsterInfoContainerPositionXEnd),
+      });
+
+      return new Promise<void>((resolve) => {
+        useTween(monsterTween, {
+          delay: 0,
+          duration,
+          onComplete: () => {
+            monsterPosition.value.y = monsterPositionYEnd;
+            resolve();
+          },
+          y: getTweenRange(monsterPosition.value.y, monsterPositionYEnd),
+        });
+      });
+    },
+    () => {
+      monsterPosition.value.y = monsterPositionYEnd;
+      monsterInfoContainerPosition.value.x = monsterInfoContainerPositionXEnd;
+    },
+  );
+};

@@ -1,7 +1,9 @@
 import type { Monster } from "#shared/models/dungeons/monster/Monster";
 
 import { MONSTER_PARTY_MAX_LENGTH } from "#shared/services/dungeons/constants";
+import { Grid } from "#src/models/dungeons/Grid";
 import { SceneMode } from "#src/models/dungeons/scene/monsterParty/SceneMode";
+import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";
 import { checkIsMonsterFainted } from "#src/services/dungeons/monster/checkIsMonsterFainted";
 import { COLUMN_SIZE } from "#src/services/dungeons/scene/monsterParty/constants";
 import { usePlayerStore } from "#src/store/dungeons/player";
@@ -21,7 +23,22 @@ export const useMonsterPartySceneStore = defineStore("dungeons/monsterParty/scen
       grid.push(monsters.value.slice(index, index + COLUMN_SIZE));
     return grid;
   });
+  // Held by the store rather than at module scope, so each Pinia instance starts with its own cursor
+  const monsterPartyOptionGrid = markRaw(
+    new Grid<(Monster | typeof PlayerSpecialInput.Cancel)[][]>({
+      grid: computed(() => {
+        const newGrid: (Monster | typeof PlayerSpecialInput.Cancel)[][] = [...monstersGrid.value];
+        const rowSize = monstersGrid.value[0]?.length ?? 0;
+        if (rowSize > 0)
+          newGrid.push(
+            Array.from<Monster | typeof PlayerSpecialInput.Cancel>({ length: rowSize }).fill(PlayerSpecialInput.Cancel),
+          );
+        return newGrid;
+      }),
+      isWrapping: true,
+    }),
+  );
   const sceneMode = ref<SceneMode>(SceneMode.Default);
   const monsterIdToMove = ref("");
-  return { isPlayerFainted, monsterIdToMove, monsters, monstersGrid, sceneMode };
+  return { isPlayerFainted, monsterIdToMove, monsterPartyOptionGrid, monsters, monstersGrid, sceneMode };
 });

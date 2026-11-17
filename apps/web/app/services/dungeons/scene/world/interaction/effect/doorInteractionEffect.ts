@@ -7,6 +7,7 @@ import { SoundEffectKey } from "#shared/models/dungeons/keys/sound/SoundEffectKe
 import { DirectionToGridDirectionMap } from "#src/services/dungeons/direction/DirectionToGridDirectionMap";
 import { getPositionAfterDirectionMovement } from "#src/services/dungeons/direction/getPositionAfterDirectionMovement";
 import { getObjects } from "#src/services/dungeons/scene/world/getObjects";
+import { getInteractiveObject } from "#src/services/dungeons/scene/world/interaction/getInteractiveObject";
 import { getDungeonsSoundEffect } from "#src/services/dungeons/sound/getDungeonsSoundEffect";
 import { getTiledObjectProperty } from "#src/services/dungeons/tilemap/getTiledObjectProperty";
 import { phaserEventEmitter } from "#src/services/phaser/phaserEventEmitter";
@@ -17,7 +18,7 @@ import { Cameras } from "phaser";
 import { useCameraStore } from "vue-phaserjs";
 
 export const doorInteractionEffect: Effect = (scene, teleportObjects) => {
-  const teleportObject = useInteractiveObject(teleportObjects);
+  const teleportObject = getInteractiveObject(teleportObjects);
   if (!teleportObject) return false;
 
   const teleportTargetTiledObjectProperty = getTiledObjectProperty<TeleportTarget>(

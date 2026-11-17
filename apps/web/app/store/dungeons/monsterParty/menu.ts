@@ -1,20 +1,44 @@
 import type { PlayerInput } from "#src/models/dungeons/UI/input/PlayerInput";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
+import { Grid } from "#src/models/dungeons/Grid";
 import { SceneKey } from "#src/models/dungeons/keys/SceneKey";
 import { MenuOption } from "#src/models/dungeons/scene/monsterParty/MenuOption";
 import { SceneMode } from "#src/models/dungeons/scene/monsterParty/SceneMode";
 import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";
+import { transitionFrom } from "#src/services/dungeons/scene/transitionFrom";
 import { checkIsMovingDirection } from "#src/services/dungeons/UI/input/checkIsMovingDirection";
 import { useMonsterDetailsSceneStore } from "#src/store/dungeons/monsterDetails/scene";
 import { useMonsterPartyInfoPanelStore } from "#src/store/dungeons/monsterParty/infoPanel";
 import { useMonsterPartySceneStore } from "#src/store/dungeons/monsterParty/scene";
+import { usePlayerStore } from "#src/store/dungeons/player";
 import { exhaustiveGuard } from "@esposter/shared";
 
 export const useMonsterPartyMenuStore = defineStore("dungeons/monsterParty/menu", () => {
+  const playerStore = usePlayerStore();
   const monsterPartySceneStore = useMonsterPartySceneStore();
-  const monsterPartyOptionGrid = useMonsterPartyOptionGrid();
-  const monsterPartyMenuOptionGrid = useMonsterPartyMenuOptionGrid();
+  const { monsterPartyOptionGrid } = monsterPartySceneStore;
+  const { previousSceneKey } = transitionFrom(SceneKey.MonsterParty);
+  // Held by the store rather than at module scope, so each Pinia instance starts with its own cursor
+  const monsterPartyMenuOptionGrid = markRaw(
+    new Grid<MenuOption[][]>({
+      grid: computed(() => {
+        switch (previousSceneKey.value) {
+          case SceneKey.Battle:
+            return [[MenuOption.Summary], [MenuOption.Cancel]];
+          case SceneKey.Inventory:
+            return playerStore.player.monsters.length > 1
+              ? [[MenuOption.Move], [MenuOption.Summary], [MenuOption.Release], [MenuOption.Cancel]]
+              : [[MenuOption.Summary], [MenuOption.Release], [MenuOption.Cancel]];
+          default:
+            return playerStore.player.monsters.length > 1
+              ? [[MenuOption.Move], [MenuOption.Release], [MenuOption.Cancel]]
+              : [[MenuOption.Release], [MenuOption.Cancel]];
+        }
+      }),
+      isWrapping: true,
+    }),
+  );
   const monsterPartyInfoPanelStore = useMonsterPartyInfoPanelStore();
   const onPlayerInput = (scene: SceneWithPlugins, justDownInput: PlayerInput) => {
     if (monsterPartyOptionGrid.value === PlayerSpecialInput.Cancel) return false;
@@ -47,7 +71,7 @@ export const useMonsterPartyMenuStore = defineStore("dungeons/monsterParty/menu"
           break;
         case MenuOption.Summary: {
           const monsterDetailsSceneStore = useMonsterDetailsSceneStore();
-          const { launchScene } = usePreviousScene(scene.scene.key);
+          const { launchScene } = transitionFrom(scene.scene.key);
           monsterDetailsSceneStore.selectedMonster = monsterPartyOptionGrid.value;
           launchScene(scene, SceneKey.MonsterDetails);
           break;
@@ -65,5 +89,5 @@ export const useMonsterPartyMenuStore = defineStore("dungeons/monsterParty/menu"
     monsterPartySceneStore.sceneMode = SceneMode.Default;
   };
 
-  return { onPlayerInput };
+  return { monsterPartyMenuOptionGrid, onPlayerInput };
 });

@@ -9,6 +9,7 @@ import { PANEL_BORDER_COLOR, PANEL_FILL_COLOR } from "#src/services/dungeons/UI/
 import { useControlsStore } from "#src/store/dungeons/controls";
 import { useDialogStore } from "#src/store/dungeons/dialog";
 import { useMonsterPartyInfoPanelStore } from "#src/store/dungeons/monsterParty/infoPanel";
+import { useMonsterPartySceneStore } from "#src/store/dungeons/monsterParty/scene";
 import { Input } from "phaser";
 import { Container, onCreate, Rectangle, Text } from "vue-phaserjs";
 
@@ -17,7 +18,8 @@ const { controls } = storeToRefs(controlsStore);
 // Access internals on confirm: the input source is ambiguous (this container or the monster panel).
 const dialogStore = useDialogStore();
 const { isWaitingForPlayerSpecialInput } = storeToRefs(dialogStore);
-const monsterPartyOptionGrid = useMonsterPartyOptionGrid();
+const monsterPartySceneStore = useMonsterPartySceneStore();
+const { monsterPartyOptionGrid } = monsterPartySceneStore;
 const monsterPartyInfoPanelStore = useMonsterPartyInfoPanelStore();
 const { infoDialogMessage, infoTextDisplayWidth } = storeToRefs(monsterPartyInfoPanelStore);
 const isCancelButtonActive = computed(() => monsterPartyOptionGrid.value === PlayerSpecialInput.Cancel);

@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { SettingsOptionGrid } from "#src/services/dungeons/scene/settings/SettingsOptionGrid";
 import { HIGHLIGHT_BORDER_COLOR } from "#src/services/dungeons/UI/constants";
+import { useSettingsSceneStore } from "#src/store/dungeons/settings/scene";
 import { Rectangle } from "vue-phaserjs";
 
-const { width, y, ...configuration } = useSettingsCursorDimensions(() => SettingsOptionGrid.position.value.y);
+const settingsSceneStore = useSettingsSceneStore();
+const { settingsOptionGrid } = settingsSceneStore;
+const { width, y, ...configuration } = useSettingsCursorDimensions(() => settingsOptionGrid.position.value.y);
 </script>
 
 <template>

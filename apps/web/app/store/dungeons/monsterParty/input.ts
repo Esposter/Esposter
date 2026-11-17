@@ -7,10 +7,12 @@ import { SceneMode } from "#src/models/dungeons/scene/monsterParty/SceneMode";
 import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";
 import { activateItem } from "#src/services/dungeons/item/activateItem";
 import { checkIsMonsterFainted } from "#src/services/dungeons/monster/checkIsMonsterFainted";
+import { transitionFrom } from "#src/services/dungeons/scene/transitionFrom";
 import { checkIsPlayerSpecialInput } from "#src/services/dungeons/UI/input/checkIsPlayerSpecialInput";
 import { phaserEventEmitter } from "#src/services/phaser/phaserEventEmitter";
 import { useBattlePlayerStore } from "#src/store/dungeons/battle/player";
 import { useDialogStore } from "#src/store/dungeons/dialog";
+import { useInventorySceneStore } from "#src/store/dungeons/inventory/scene";
 import { useMonsterDetailsSceneStore } from "#src/store/dungeons/monsterDetails/scene";
 import { useMonsterPartyInfoPanelStore } from "#src/store/dungeons/monsterParty/infoPanel";
 import { useMonsterPartySceneStore } from "#src/store/dungeons/monsterParty/scene";
@@ -19,11 +21,13 @@ import { exhaustiveGuard, InvalidOperationError, Operation } from "@esposter/sha
 export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/input", () => {
   const dialogStore = useDialogStore();
   const monsterPartySceneStore = useMonsterPartySceneStore();
-  const monsterPartyOptionGrid = useMonsterPartyOptionGrid();
+  const { monsterPartyOptionGrid } = monsterPartySceneStore;
+  const inventorySceneStore = useInventorySceneStore();
+  const { itemOptionGrid } = inventorySceneStore;
   const monsterPartyInfoPanelStore = useMonsterPartyInfoPanelStore();
   const battlePlayerStore = useBattlePlayerStore();
   const monsterDetailsSceneStore = useMonsterDetailsSceneStore();
-  const { launchScene, previousSceneKey, switchToPreviousScene } = usePreviousScene(SceneKey.MonsterParty);
+  const { launchScene, previousSceneKey, switchToPreviousScene } = transitionFrom(SceneKey.MonsterParty);
 
   const onPlayerInput = async (scene: SceneWithPlugins, justDownInput: PlayerInput) => {
     if (
@@ -68,7 +72,6 @@ export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/inpu
         }
         return;
       case SceneKey.Inventory: {
-        const itemOptionGrid = useItemOptionGrid();
         if (itemOptionGrid.value === PlayerSpecialInput.Cancel)
           throw new InvalidOperationError(Operation.Update, onPlayerConfirmInput.name, itemOptionGrid.value);
         await activateItem(scene, toRef(itemOptionGrid.value), toRef(value));

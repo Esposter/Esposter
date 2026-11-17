@@ -1,7 +1,7 @@
 import type { SceneKey } from "#src/models/dungeons/keys/SceneKey";
 
 export const useSceneStore = defineStore("dungeons/scene", () => {
-  // This is a stack of all the previous scene keys pushed by usePreviousScene
+  // This is a stack of all the previous scene keys pushed by transitionFrom
   const previousSceneKeyStack = ref<SceneKey[]>([]);
   // Undefined when nothing has been pushed, so a consumer has to handle the empty stack
   const previousSceneKey = computed(() => previousSceneKeyStack.value.at(-1));

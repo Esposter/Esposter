@@ -3,10 +3,12 @@ import type { Position } from "grid-engine";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOption";
+import { Grid } from "#src/models/dungeons/Grid";
 import { SceneKey } from "#src/models/dungeons/keys/SceneKey";
 import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";
+import { getSettingsOption } from "#src/services/dungeons/scene/settings/getSettingsOption";
 import { InfoContainerTextMap } from "#src/services/dungeons/scene/settings/InfoContainerTextMap";
-import { SettingsOptionGrid } from "#src/services/dungeons/scene/settings/SettingsOptionGrid";
+import { SettingsOptionRows } from "#src/services/dungeons/scene/settings/SettingsOptionRows";
 import { checkIsUpdateThemeModeSetting } from "#src/services/dungeons/settings/checkIsUpdateThemeModeSetting";
 import { checkIsPlayerSpecialInput } from "#src/services/dungeons/UI/input/checkIsPlayerSpecialInput";
 import { getDirectionStep } from "#src/services/dungeons/UI/input/getDirectionStep";
@@ -14,21 +16,9 @@ import { useDungeonsStore } from "#src/store/dungeons/index";
 import { useColorPickerStore } from "#src/store/dungeons/settings/colorPicker";
 import { useSettingsStore } from "#src/store/dungeons/settings/index";
 import { useVolumeStore } from "#src/store/dungeons/settings/volume";
-import { exhaustiveGuard, getResult, InvalidOperationError, noop, Operation } from "@esposter/shared";
+import { exhaustiveGuard, getResult, noop } from "@esposter/shared";
 import { clamp } from "@vueuse/core";
 import { Direction } from "grid-engine";
-
-// A row with only its name has no value cells: Volume and Theme Mode have their own controls, Close has no value
-const checkHasValueCells = (rowIndex: number) => SettingsOptionGrid.getColumnSize(rowIndex) > 1;
-const SETTINGS_OPTION_SET = new Set<unknown>(Object.values(SettingsOption));
-const checkIsSettingsOption = (value: unknown): value is SettingsOption => SETTINGS_OPTION_SET.has(value);
-// Column 0 holds each row's option name, so its value is an option; the grid's cell type is wider than that
-const getSettingsOption = (rowIndex: number): SettingsOption => {
-  const value = SettingsOptionGrid.getValue({ x: 0, y: rowIndex });
-  if (checkIsSettingsOption(value)) return value;
-
-  throw new InvalidOperationError(Operation.Read, getSettingsOption.name, `row index: ${rowIndex}`);
-};
 
 export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () => {
   const dungeonsStore = useDungeonsStore();
@@ -39,16 +29,28 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
   const { checkIsUpdateVolume, updateVolume } = volumeStore;
   const colorPickerStore = useColorPickerStore();
   const { updateThemeModeSetting } = colorPickerStore;
-  const selectedSettingsOption = computed(() => getSettingsOption(SettingsOptionGrid.position.value.y));
+  // Held by the store rather than at module scope, so each Pinia instance starts with its own cursor
+  const settingsOptionGrid = markRaw(
+    new Grid({
+      grid: SettingsOptionRows,
+      isWrapping: false,
+      position: ref({ x: 2, y: 0 }),
+      // Column 0 is the option's own name, so the cursor only lands on its values
+      validate: ({ x }) => x !== 0,
+    }),
+  );
+  const selectedSettingsOption = computed(() => getSettingsOption(settingsOptionGrid.position.value.y));
   const infoText = computed(() => InfoContainerTextMap[selectedSettingsOption.value]);
+  // A row with only its name has no value cells: Volume and Theme Mode have their own controls, Close has no value
+  const checkHasValueCells = (rowIndex: number) => settingsOptionGrid.getColumnSize(rowIndex) > 1;
   // A row with value cells rests on the cell holding its current setting, so the cursor's column always shows the value.
   // A row without them rests on its name
   const getRestingPosition = (rowIndex: number): Position => {
     if (!checkHasValueCells(rowIndex)) return { x: 0, y: rowIndex };
 
     const option = getSettingsOption(rowIndex);
-    const restingX = SettingsOptionGrid.getPositionX(
-      settingsStore.settings[option as keyof typeof settingsStore.settings] as typeof SettingsOptionGrid.value,
+    const restingX = settingsOptionGrid.getPositionX(
+      settingsStore.settings[option as keyof typeof settingsStore.settings] as typeof settingsOptionGrid.value,
       rowIndex,
     );
     // A saved value that matches no cell rests on the first, so the cursor stays on a value cell
@@ -61,43 +63,43 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
 
     setSettings(
       selectedSettingsOption.value,
-      SettingsOptionGrid.value as (typeof settingsStore.settings)[keyof typeof settingsStore.settings],
+      settingsOptionGrid.value as (typeof settingsStore.settings)[keyof typeof settingsStore.settings],
     );
   };
 
   const moveSettingsRow = (direction: Direction) => {
-    const rowIndex = SettingsOptionGrid.position.value.y + getDirectionStep(direction, Direction.UP);
-    if (SettingsOptionGrid.getValue({ x: 0, y: rowIndex }) === undefined) return;
+    const rowIndex = settingsOptionGrid.position.value.y + getDirectionStep(direction, Direction.UP);
+    if (settingsOptionGrid.getValue({ x: 0, y: rowIndex }) === undefined) return;
 
-    SettingsOptionGrid.position.value = getRestingPosition(rowIndex);
+    settingsOptionGrid.position.value = getRestingPosition(rowIndex);
   };
 
   const moveSettingsColumn = (direction: Direction) => {
-    const { x, y } = SettingsOptionGrid.position.value;
+    const { x, y } = settingsOptionGrid.position.value;
     if (!checkHasValueCells(y)) return;
 
-    const nextX = clamp(x + getDirectionStep(direction, Direction.LEFT), 1, SettingsOptionGrid.getColumnSize(y) - 1);
+    const nextX = clamp(x + getDirectionStep(direction, Direction.LEFT), 1, settingsOptionGrid.getColumnSize(y) - 1);
     if (nextX === x) return;
 
-    SettingsOptionGrid.position.value = { x: nextX, y };
+    settingsOptionGrid.position.value = { x: nextX, y };
     saveSelectedValue();
   };
 
   const selectSettingsPosition = (position: Position) => {
     const { x, y } = position;
-    if (SettingsOptionGrid.getValue({ x, y }) === undefined) return;
+    if (settingsOptionGrid.getValue({ x, y }) === undefined) return;
     // The name column moves to its row without choosing a value
     if (x === 0) {
-      SettingsOptionGrid.position.value = getRestingPosition(y);
+      settingsOptionGrid.position.value = getRestingPosition(y);
       return;
     }
 
-    SettingsOptionGrid.position.value = { x, y };
+    settingsOptionGrid.position.value = { x, y };
     saveSelectedValue();
   };
   // The saved values may have loaded after the cursor last moved, so the scene rests the cursor on them when it opens
   const restSettingsCursor = () => {
-    SettingsOptionGrid.position.value = getRestingPosition(SettingsOptionGrid.position.value.y);
+    settingsOptionGrid.position.value = getRestingPosition(settingsOptionGrid.position.value.y);
   };
 
   const onPlayerInput = (scene: SceneWithPlugins, justDownInput: PlayerInput, input: PlayerInput, delta: number) => {
@@ -127,5 +129,5 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
     }
   };
 
-  return { infoText, onPlayerInput, restSettingsCursor, selectSettingsPosition };
+  return { infoText, onPlayerInput, restSettingsCursor, selectSettingsPosition, settingsOptionGrid };
 });

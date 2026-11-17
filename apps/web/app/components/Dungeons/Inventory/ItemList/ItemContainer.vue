@@ -3,6 +3,7 @@ import type { Item } from "#shared/models/dungeons/item/Item";
 
 import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";
 import { CURSOR_POSITION_INCREMENT, INITIAL_CURSOR_POSITION } from "#src/services/dungeons/scene/inventory/constants";
+import { useInventorySceneStore } from "#src/store/dungeons/inventory/scene";
 import { Container } from "vue-phaserjs";
 
 interface Props {
@@ -12,7 +13,8 @@ interface Props {
 }
 
 const { columnIndex, rowIndex } = defineProps<Props>();
-const itemOptionGrid = useItemOptionGrid();
+const inventorySceneStore = useInventorySceneStore();
+const { itemOptionGrid } = inventorySceneStore;
 const onGridClick = useOnGridClick(itemOptionGrid, () => ({ x: columnIndex, y: rowIndex }));
 </script>
 

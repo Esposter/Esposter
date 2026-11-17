@@ -2,15 +2,16 @@ import { LayerName as HomeBuilding1LayerName } from "#shared/generated/tiled/lay
 import { LayerName as HomeBuilding2LayerName } from "#shared/generated/tiled/layers/Home/HomeBuilding2/LayerName";
 import { LayerName as HomeLayerName } from "#shared/generated/tiled/layers/Home/LayerName";
 import { TilemapKey } from "#shared/generated/tiled/propertyTypes/enum/TilemapKey";
+import { createTilemapMetadata } from "#src/services/dungeons/tilemap/createTilemapMetadata";
 
 export const UseCreateTilemapMetadataMap = {
   [TilemapKey.Home]: () => {
-    useCreateTilemapMetadata(HomeLayerName);
+    createTilemapMetadata(HomeLayerName);
   },
   [TilemapKey.HomeBuilding1]: () => {
-    useCreateTilemapMetadata(HomeBuilding1LayerName);
+    createTilemapMetadata(HomeBuilding1LayerName);
   },
   [TilemapKey.HomeBuilding2]: () => {
-    useCreateTilemapMetadata(HomeBuilding2LayerName);
+    createTilemapMetadata(HomeBuilding2LayerName);
   },
 } as const satisfies Record<TilemapKey, () => void>;

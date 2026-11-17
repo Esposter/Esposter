@@ -5,8 +5,8 @@ import {
   INITIAL_CURSOR_POSITION,
   MENU_BACKGROUND_WIDTH,
 } from "#src/services/dungeons/scene/title/menu/constants";
-import { PlayerTitleMenuOptionGrid } from "#src/services/dungeons/scene/title/menu/PlayerTitleMenuOptionGrid";
 import { DISABLED_OPACITY } from "#src/services/ui/constants";
+import { useTitleSceneStore } from "#src/store/dungeons/title/scene";
 import { Input } from "phaser";
 import { Text } from "vue-phaserjs";
 
@@ -17,7 +17,9 @@ interface Props {
 }
 
 const { columnIndex, rowIndex } = defineProps<Props>();
-const onGridClick = useOnGridClick(PlayerTitleMenuOptionGrid, () => ({ x: columnIndex, y: rowIndex }));
+const titleSceneStore = useTitleSceneStore();
+const { playerTitleMenuOptionGrid } = titleSceneStore;
+const onGridClick = useOnGridClick(playerTitleMenuOptionGrid, () => ({ x: columnIndex, y: rowIndex }));
 </script>
 
 <template>
@@ -28,7 +30,7 @@ const onGridClick = useOnGridClick(PlayerTitleMenuOptionGrid, () => ({ x: column
       origin: 0.5,
       text,
       style: MenuTextStyle,
-      alpha: unref(PlayerTitleMenuOptionGrid.validate({ x: columnIndex, y: rowIndex })) ? 1 : DISABLED_OPACITY,
+      alpha: unref(playerTitleMenuOptionGrid.validate({ x: columnIndex, y: rowIndex })) ? 1 : DISABLED_OPACITY,
     }"
     @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="onGridClick()"
   />

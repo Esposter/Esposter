@@ -6,13 +6,13 @@ The overworld: tile-based maps authored in Tiled Map Editor, walked with grid-en
 
 **Tiled pipeline** — maps live as `.tmx` files; `pnpm tiled:gen` (`scripts/tiled/index.ts`, built on the `parse-tmx` package) generates typed artifacts into `shared/generated/tiled/`: the `TilemapKey` value set (Home, HomeBuilding1, HomeBuilding2), per-map `LayerName` value sets, object-group names, and typed object-property classes (`TeleportObjectProperty`, `EncounterObjectProperty`, `NpcId`, `ItemId`, …). Map content changes are therefore compile-time-checked against the code that consumes them.
 
-**Movement** — the grid-engine Phaser plugin moves the player cell-by-cell; position/direction live in the player store and persist in the save. NPCs move by `MovementPattern` (idle or clockwise patrol) via `useMoveNpcs`.
+**Movement** — the grid-engine Phaser plugin moves the player cell-by-cell; position/direction live in the player store and persist in the save. NPCs move by `MovementPattern` (idle or clockwise patrol) via `moveNpcs`.
 
 **Interactions** — pressing Confirm facing an object walks `ObjectInteractionEffectMap`, keyed by Tiled object group:
 
 ```mermaid
 flowchart TD
-  confirm[Confirm input] --> gio[useInteractiveObject<br/>position + facing match]
+  confirm[Confirm input] --> gio[getInteractiveObject<br/>position + facing match]
   gio --> npc[NPC<br/>effect list]
   gio --> sign[Sign: message dialog]
   gio --> chest[Chest: grant item<br/>opened state → save world.chestMap]
@@ -31,10 +31,10 @@ Paths relative to `apps/web`.
 | ------------------------------------------------------------------------------------ | ------------------------------------------- |
 | `scripts/tiled/index.ts`                                                             | `pnpm tiled:gen` codegen entrypoint         |
 | `shared/generated/tiled/`                                                            | generated value sets + typed map properties |
-| `app/composables/dungeons/scene/world/tilemap/`                                      | tilemap asset/metadata creation             |
-| `app/composables/dungeons/scene/world/interaction/`                                  | interaction dispatch composables            |
+| `app/services/dungeons/tilemap/`                                                     | tilemap asset/metadata creation             |
+| `app/services/dungeons/scene/world/interaction/`                                     | interaction dispatch services               |
 | `app/services/dungeons/scene/world/interaction/effect/ObjectInteractionEffectMap.ts` | object group → effect                       |
-| `app/composables/dungeons/scene/world/useRandomEncounter.ts`                         | encounter roll + battle handoff             |
+| `app/services/dungeons/scene/world/rollRandomEncounter.ts`                           | encounter roll + battle handoff             |
 | `app/assets/dungeons/data/npcs.ts`                                                   | NPC content (dialog, effects, movement)     |
 | `app/assets/dungeons/data/encounterAreas.ts`                                         | weighted encounter tables + spawn levels    |
 | `app/services/dungeons/monster/createEncounteredMonster.ts`                          | level-scaled wild monster spawn             |

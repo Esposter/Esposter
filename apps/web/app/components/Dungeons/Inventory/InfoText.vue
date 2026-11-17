@@ -3,12 +3,14 @@ import { MenuTextStyle } from "#src/assets/dungeons/scene/inventory/styles/MenuT
 import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";
 import { WORD_PADDING } from "#src/services/dungeons/UI/constants";
 import { useInventoryInfoPanelStore } from "#src/store/dungeons/inventory/infoPanel";
+import { useInventorySceneStore } from "#src/store/dungeons/inventory/scene";
 import { omitUndefined } from "@esposter/shared";
 import { onCreate, Text } from "vue-phaserjs";
 
 const inventoryInfoPanelStore = useInventoryInfoPanelStore();
 const { infoDialogMessage } = storeToRefs(inventoryInfoPanelStore);
-const itemOptionGrid = useItemOptionGrid();
+const inventorySceneStore = useInventorySceneStore();
+const { itemOptionGrid } = inventorySceneStore;
 const wordWrapWidth = ref<number>();
 
 onCreate((scene) => {

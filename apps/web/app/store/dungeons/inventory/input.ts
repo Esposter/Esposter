@@ -6,15 +6,18 @@ import { ItemEffectType } from "#shared/models/dungeons/item/ItemEffectType";
 import { SceneKey } from "#src/models/dungeons/keys/SceneKey";
 import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";
 import { activateItem } from "#src/services/dungeons/item/activateItem";
+import { transitionFrom } from "#src/services/dungeons/scene/transitionFrom";
 import { checkIsPlayerSpecialInput } from "#src/services/dungeons/UI/input/checkIsPlayerSpecialInput";
 import { phaserEventEmitter } from "#src/services/phaser/phaserEventEmitter";
 import { useEnemyStore } from "#src/store/dungeons/battle/enemy";
+import { useInventorySceneStore } from "#src/store/dungeons/inventory/scene";
 import { exhaustiveGuard, getResultAsync, noop } from "@esposter/shared";
 
 export const useInventoryInputStore = defineStore("dungeons/inventory/input", () => {
   const enemyStore = useEnemyStore();
-  const itemOptionGrid = useItemOptionGrid();
-  const { launchScene, switchToPreviousScene } = usePreviousScene(SceneKey.Inventory);
+  const inventorySceneStore = useInventorySceneStore();
+  const { itemOptionGrid } = inventorySceneStore;
+  const { launchScene, switchToPreviousScene } = transitionFrom(SceneKey.Inventory);
 
   const onPlayerInput = (scene: SceneWithPlugins, justDownInput: PlayerInput) =>
     getResultAsync(async () => {

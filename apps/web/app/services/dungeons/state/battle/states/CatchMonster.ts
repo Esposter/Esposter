@@ -2,8 +2,10 @@ import type { State } from "#src/models/dungeons/state/State";
 
 import { CaptureResult } from "#src/models/dungeons/item/CaptureResult";
 import { StateName } from "#src/models/dungeons/state/battle/StateName";
+import { animateThrowBall } from "#src/services/dungeons/item/animateThrowBall";
 import { createCaptureResult } from "#src/services/dungeons/item/createCaptureResult";
 import { battleStateMachine } from "#src/services/dungeons/scene/battle/battleStateMachine";
+import { animateMonsterDeath } from "#src/services/dungeons/scene/battle/monster/animateMonsterDeath";
 import { useBattleDialogStore } from "#src/store/dungeons/battle/dialog";
 import { useEnemyStore } from "#src/store/dungeons/battle/enemy";
 import { useMonsterPartySceneStore } from "#src/store/dungeons/monsterParty/scene";
@@ -17,12 +19,12 @@ export const CatchMonster: State<typeof StateName.CatchMonster> = {
     const enemyStore = useEnemyStore();
     const { activeMonster } = storeToRefs(enemyStore);
     const captureResult = createCaptureResult(activeMonster.value);
-    await useThrowBallAnimation(scene, captureResult);
+    await animateThrowBall(scene, captureResult);
 
     if (captureResult === CaptureResult.Success) {
       const monsterPartySceneStore = useMonsterPartySceneStore();
       const { monsters } = storeToRefs(monsterPartySceneStore);
-      await useMonsterDeathTween(true);
+      await animateMonsterDeath(true);
       await showMessages(scene, [`You caught ${prettify(activeMonster.value.key)}.`]);
       // The caught monster joins the party before the battle's experience is shared out, so it takes its share
       monsters.value.push(activeMonster.value);

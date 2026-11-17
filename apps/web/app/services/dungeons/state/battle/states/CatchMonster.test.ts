@@ -25,11 +25,9 @@ vi.mock("#src/store/dungeons/battle/dialog", () => ({ useBattleDialogStore: () =
 
 // The ball's flight and the monster's fall are Phaser tweens, and the outcome the ball is thrown for is decided by the
 // Capture roll, which is tested apart
-vi.mock(import("#src/composables/dungeons/item/useThrowBallAnimation"), () => ({
-  useThrowBallAnimation: () => Promise.resolve(),
-}));
-vi.mock(import("#src/composables/dungeons/scene/battle/monster/useMonsterDeathTween"), () => ({
-  useMonsterDeathTween: () => Promise.resolve(),
+vi.mock(import("#src/services/dungeons/item/animateThrowBall"), () => ({ animateThrowBall: () => Promise.resolve() }));
+vi.mock(import("#src/services/dungeons/scene/battle/monster/animateMonsterDeath"), () => ({
+  animateMonsterDeath: () => Promise.resolve(),
 }));
 vi.mock(import("#src/services/dungeons/item/createCaptureResult"), () => ({
   createCaptureResult: vi.fn<() => CaptureResult>(() => CaptureResult.Failure),

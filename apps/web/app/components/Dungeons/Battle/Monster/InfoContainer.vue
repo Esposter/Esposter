@@ -2,6 +2,7 @@
 import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
 import { ExperienceLabelTextStyle } from "#src/assets/dungeons/styles/ExperienceLabelTextStyle";
 import { HealthLabelTextStyle } from "#src/assets/dungeons/styles/HealthLabelTextStyle";
+import { useBattleMonsterStore } from "#src/composables/dungeons/scene/battle/monster/useBattleMonsterStore";
 import { BarType } from "#src/models/dungeons/UI/bar/BarType";
 import { phaserEventEmitter } from "#src/services/phaser/phaserEventEmitter";
 import { prettify } from "#src/util/text/prettify";

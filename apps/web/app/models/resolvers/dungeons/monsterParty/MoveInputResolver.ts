@@ -15,7 +15,7 @@ export class MoveInputResolver extends AInputResolver {
   override handleInput(_scene: SceneWithPlugins, justDownInput: PlayerInput) {
     const monsterPartySceneStore = useMonsterPartySceneStore();
     const { monsterIdToMove, sceneMode } = storeToRefs(monsterPartySceneStore);
-    const monsterPartyOptionGrid = useMonsterPartyOptionGrid();
+    const { monsterPartyOptionGrid } = monsterPartySceneStore;
     const playerStore = usePlayerStore();
     const { player } = storeToRefs(playerStore);
 

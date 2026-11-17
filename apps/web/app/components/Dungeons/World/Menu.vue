@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import type { Position } from "grid-engine";
 
-import { WorldMenuOptionGrid } from "#src/services/dungeons/scene/world/WorldMenuOptionGrid";
 import { MENU_PADDING, MENU_WIDTH } from "#src/services/dungeons/UI/menu/constants";
 import { useWorldMenuStore } from "#src/store/dungeons/world/menu";
 import { onUpdate } from "vue-phaserjs";
 
 const worldMenuStore = useWorldMenuStore();
 const { isMenuVisible } = storeToRefs(worldMenuStore);
+const { worldMenuOptionGrid } = worldMenuStore;
 const position = ref<Position>();
 
 onUpdate((scene) => {
@@ -22,5 +22,5 @@ onUpdate((scene) => {
 </script>
 
 <template>
-  <DungeonsUIMenu v-if="position" v-model:is-visible="isMenuVisible" :grid="WorldMenuOptionGrid" :position />
+  <DungeonsUIMenu v-if="position" v-model:is-visible="isMenuVisible" :grid="worldMenuOptionGrid" :position />
 </template>

@@ -3,10 +3,12 @@ import type { State } from "#src/models/dungeons/state/State";
 import { StateName } from "#src/models/dungeons/state/battle/StateName";
 import { getDamage } from "#src/services/dungeons/monster/getDamage";
 import { battleStateMachine } from "#src/services/dungeons/scene/battle/battleStateMachine";
+import { takeDamage } from "#src/services/dungeons/scene/battle/takeDamage";
 import { useAttackManagerStore } from "#src/store/dungeons/battle/attackManager";
 import { useBattleDialogStore } from "#src/store/dungeons/battle/dialog";
 import { useEnemyStore } from "#src/store/dungeons/battle/enemy";
 import { useBattlePlayerStore } from "#src/store/dungeons/battle/player";
+import { useBattleSceneStore } from "#src/store/dungeons/battle/scene";
 import { prettify } from "#src/util/text/prettify";
 import { sleepScene } from "vue-phaserjs";
 
@@ -21,8 +23,8 @@ export const PlayerAttack: State<typeof StateName.PlayerAttack> = {
     const { activeMonster } = storeToRefs(battlePlayerStore);
     const enemyStore = useEnemyStore();
     const { activeMonster: enemyActiveMonster } = storeToRefs(enemyStore);
-    const attackOptionGrid = useAttackOptionGrid();
-    const takeDamage = useTakeDamage(true);
+    const battleSceneStore = useBattleSceneStore();
+    const { attackOptionGrid } = battleSceneStore;
     const attack = attackOptionGrid.value;
     if (!attack) return;
 
@@ -34,7 +36,7 @@ export const PlayerAttack: State<typeof StateName.PlayerAttack> = {
       attack.power,
       enemyActiveMonster.value.statistics.defense,
     );
-    await takeDamage(damage);
+    await takeDamage(true, damage);
     await battleStateMachine.setState(StateName.PlayerPostAttackCheck);
   },
 };

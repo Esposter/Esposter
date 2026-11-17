@@ -20,7 +20,7 @@ flowchart LR
   joystick[MobileJoystick<br/>parallel scene] -.->|controls| world & battle
 ```
 
-**Input** — scenes poll a `Controls` abstraction: `KeyboardControls` (cursor keys + enter/shift/etc.) on desktop, `JoystickControls` on mobile, chosen by `useInitializeControls` via `checkIsMobile`, which also launches the MobileJoystick parallel scene (rendered above the active scene; multi-touch enabled for move + confirm simultaneously). Both produce the same `PlayerInput` union (a `Direction` or a `PlayerSpecialInput` like Confirm/Cancel), so scene logic never branches on device. Movement is four-direction by design — [diagonal movement](../../../rejected/dungeons/diagonal-movement/design.md) is rejected.
+**Input** — scenes poll a `Controls` abstraction: `KeyboardControls` (cursor keys + enter/shift/etc.) on desktop, `JoystickControls` on mobile, chosen by `initializeControls` via `checkIsMobile`, which also launches the MobileJoystick parallel scene (rendered above the active scene; multi-touch enabled for move + confirm simultaneously). Both produce the same `PlayerInput` union (a `Direction` or a `PlayerSpecialInput` like Confirm/Cancel), so scene logic never branches on device. Movement is four-direction by design — [diagonal movement](../../../rejected/dungeons/diagonal-movement/design.md) is rejected.
 
 **Input resolvers** — scenes with layered UI (world menu vs movement vs dialog; monster party menu vs move mode) route input through ordered `AInputResolver` chains: each scene exposes `getActiveInputResolvers`, and the first resolver whose `handleInput` returns `true` consumes the input. Adding a UI layer means adding a resolver class, not another `if` ladder.
 
@@ -34,7 +34,7 @@ Paths relative to `apps/web/app`.
 | ------------------------------------------------- | ------------------------------------------------- |
 | `pages/dungeons.vue`                              | `<Game>` configuration + plugin registration      |
 | `services/dungeons/scene/SceneComponentMap.ts`    | scene key → async Vue component                   |
-| `composables/dungeons/useInitializeControls.ts`   | keyboard vs joystick selection                    |
+| `services/dungeons/scene/initializeControls.ts`   | keyboard vs joystick selection                    |
 | `models/dungeons/input/`                          | `Controls` implementations                        |
 | `models/resolvers/dungeons/AInputResolver.ts`     | resolver base; scene folders hold concrete chains |
 | `models/dungeons/Grid.ts`                         | menu option grid                                  |

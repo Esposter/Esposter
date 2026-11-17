@@ -5,7 +5,6 @@ import { Save } from "#shared/models/dungeons/data/Save";
 import { SceneKey } from "#src/models/dungeons/keys/SceneKey";
 import { PlayerTitleMenuOption } from "#src/models/dungeons/scene/title/menu/PlayerTitleMenuOption";
 import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";
-import { PlayerTitleMenuOptionGrid } from "#src/services/dungeons/scene/title/menu/PlayerTitleMenuOptionGrid";
 import { useDungeonsStore } from "#src/store/dungeons/index";
 import { useTitleSceneStore } from "#src/store/dungeons/title/scene";
 import { NotFoundError } from "@esposter/shared";
@@ -28,14 +27,18 @@ vi.mock("#src/store/dungeons/index", async () => {
 });
 
 const getOptionPosition = (option: PlayerTitleMenuOption) => {
-  const position = PlayerTitleMenuOptionGrid.getPosition(option);
+  const titleSceneStore = useTitleSceneStore();
+  const { playerTitleMenuOptionGrid } = titleSceneStore;
+  const position = playerTitleMenuOptionGrid.getPosition(option);
   if (!position) throw new NotFoundError(getOptionPosition.name, option);
 
   return position;
 };
 
 const selectOption = (option: PlayerTitleMenuOption) => {
-  PlayerTitleMenuOptionGrid.position.value = getOptionPosition(option);
+  const titleSceneStore = useTitleSceneStore();
+  const { playerTitleMenuOptionGrid } = titleSceneStore;
+  playerTitleMenuOptionGrid.position.value = getOptionPosition(option);
 };
 
 describe(useTitleSceneStore, () => {

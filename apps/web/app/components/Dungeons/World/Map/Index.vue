@@ -2,6 +2,7 @@
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { TilemapKey } from "#shared/generated/tiled/propertyTypes/enum/TilemapKey";
+import { createTilemapAssets } from "#src/services/dungeons/tilemap/createTilemapAssets";
 import { useWorldSceneStore } from "#src/store/dungeons/world/scene";
 import { getScene, onCreate, onShutdown, Tilemap, useInjectSceneKey } from "vue-phaserjs";
 
@@ -30,8 +31,5 @@ onShutdown((scene) => {
 </script>
 
 <template>
-  <Tilemap
-    :configuration="{ key: tilemapKey }"
-    @complete="(scene, tilemap) => useCreateTilemapAssets(scene, tilemap)"
-  />
+  <Tilemap :configuration="{ key: tilemapKey }" @complete="(scene, tilemap) => createTilemapAssets(scene, tilemap)" />
 </template>

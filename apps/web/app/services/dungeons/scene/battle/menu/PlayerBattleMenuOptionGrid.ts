@@ -1,8 +1,0 @@
-import { Grid } from "#src/models/dungeons/Grid";
-import { PlayerOption } from "#src/models/dungeons/scene/battle/menu/PlayerOption";
-
-const grid = [
-  [PlayerOption.Fight, PlayerOption.Switch],
-  [PlayerOption.Item, PlayerOption.Flee],
-] as const;
-export const PlayerBattleMenuOptionGrid = new Grid<typeof grid>({ grid });

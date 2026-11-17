@@ -6,6 +6,7 @@ import { CharacterId } from "#src/models/dungeons/scene/world/CharacterId";
 import { DirectionToGridDirectionMap } from "#src/services/dungeons/direction/DirectionToGridDirectionMap";
 import { GridDirectionToDirectionMap } from "#src/services/dungeons/direction/GridDirectionToDirectionMap";
 import { PlayerWalkingAnimationMapping } from "#src/services/dungeons/scene/world/constants";
+import { rollRandomEncounter } from "#src/services/dungeons/scene/world/rollRandomEncounter";
 import { getDungeonsSoundEffect } from "#src/services/dungeons/sound/getDungeonsSoundEffect";
 import { useMonsterPartySceneStore } from "#src/store/dungeons/monsterParty/scene";
 import { usePlayerStore } from "#src/store/dungeons/player";
@@ -104,7 +105,7 @@ onShutdown((scene) => {
         if (!tile) return;
 
         getDungeonsSoundEffect(scene, SoundEffectKey.StepGrass).play();
-        useRandomEncounter(scene);
+        rollRandomEncounter(scene);
       }
     "
     :on-complete="

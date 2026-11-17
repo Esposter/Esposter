@@ -5,14 +5,14 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 import { Save } from "#shared/models/dungeons/data/Save";
 import { MonsterKey } from "#shared/models/dungeons/keys/image/UI/MonsterKey";
 import { Monster } from "#shared/models/dungeons/monster/Monster";
-import { useMonsterPartyOptionGrid } from "#src/composables/dungeons/scene/monsterParty/useMonsterPartyOptionGrid";
-import { usePreviousScene } from "#src/composables/dungeons/usePreviousScene";
 import { SceneKey } from "#src/models/dungeons/keys/SceneKey";
 import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";
+import { transitionFrom } from "#src/services/dungeons/scene/transitionFrom";
 import { phaserEventEmitter } from "#src/services/phaser/phaserEventEmitter";
 import { useDungeonsStore } from "#src/store/dungeons/index";
 import { useMonsterPartyInfoPanelStore } from "#src/store/dungeons/monsterParty/infoPanel";
 import { useMonsterPartyInputStore } from "#src/store/dungeons/monsterParty/input";
+import { useMonsterPartySceneStore } from "#src/store/dungeons/monsterParty/scene";
 import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -33,21 +33,21 @@ vi.mock("#src/store/dungeons/index", async () => {
 });
 
 // The scene switch belongs to Phaser, so only its calls are recorded
-vi.mock(import("#src/composables/dungeons/usePreviousScene"), async () => {
+vi.mock(import("#src/services/dungeons/scene/transitionFrom"), async () => {
   const { SceneKey: MockSceneKey } = await import("#src/models/dungeons/keys/SceneKey");
   const { computed } = await import("vue");
-  const usePreviousSceneMock = {
+  const transitionFromMock = {
     launchScene: vi.fn<() => void>(),
     previousSceneKey: computed(() => MockSceneKey.Battle),
     removeScenesAbove: vi.fn<() => void>(),
     switchToPreviousScene: vi.fn<() => void>(),
   };
-  return { usePreviousScene: () => usePreviousSceneMock };
+  return { transitionFrom: () => transitionFromMock };
 });
 
 // Text animation drives Phaser's scene, and the dialog store only reaches it once a message is shown, which these tests
 // Never do
-vi.mock(import("#src/composables/dungeons/text/useAnimateText"), () => ({ useAnimateText: () => Promise.resolve() }));
+vi.mock(import("#src/services/dungeons/text/animateText"), () => ({ animateText: () => Promise.resolve() }));
 
 const setParty = (...monsters: Monster[]) => {
   const dungeonsStore = useDungeonsStore();
@@ -56,7 +56,9 @@ const setParty = (...monsters: Monster[]) => {
 
 // The party is read through reactive proxies, so a monster is found by its place in the party rather than by identity
 const selectPartyMonster = (partyIndex: number) => {
-  useMonsterPartyOptionGrid().position.value = { x: partyIndex, y: 0 };
+  const monsterPartySceneStore = useMonsterPartySceneStore();
+  const { monsterPartyOptionGrid } = monsterPartySceneStore;
+  monsterPartyOptionGrid.position.value = { x: partyIndex, y: 0 };
 };
 
 const getFaintedMonster = () => {
@@ -92,7 +94,7 @@ describe(useMonsterPartyInputStore, () => {
     const monsterPartyInfoPanelStore = useMonsterPartyInfoPanelStore();
 
     expect(monsterPartyInfoPanelStore.infoDialogMessage.text).toBe("Selected monster is fainted.");
-    expect(usePreviousScene(SceneKey.MonsterParty).switchToPreviousScene).not.toHaveBeenCalled();
+    expect(transitionFrom(SceneKey.MonsterParty).switchToPreviousScene).not.toHaveBeenCalled();
     expect(emitSpy).not.toHaveBeenCalledWith("switchMonster", expect.anything());
   });
 
@@ -120,7 +122,7 @@ describe(useMonsterPartyInputStore, () => {
     const { onPlayerInput } = monsterPartyInputStore;
     await onPlayerInput(scene, PlayerSpecialInput.Confirm);
 
-    expect(usePreviousScene(SceneKey.MonsterParty).switchToPreviousScene).toHaveBeenCalledWith(scene);
+    expect(transitionFrom(SceneKey.MonsterParty).switchToPreviousScene).toHaveBeenCalledWith(scene);
     expect(emitSpy).toHaveBeenCalledWith("switchMonster", bench);
   });
 
@@ -137,7 +139,7 @@ describe(useMonsterPartyInputStore, () => {
     const monsterPartyInfoPanelStore = useMonsterPartyInfoPanelStore();
 
     expect(monsterPartyInfoPanelStore.infoDialogMessage.text).toBe("You need to select a monster to switch to.");
-    expect(usePreviousScene(SceneKey.MonsterParty).switchToPreviousScene).not.toHaveBeenCalled();
+    expect(transitionFrom(SceneKey.MonsterParty).switchToPreviousScene).not.toHaveBeenCalled();
     expect(emitSpy).not.toHaveBeenCalledWith("unswitchMonster");
   });
 });

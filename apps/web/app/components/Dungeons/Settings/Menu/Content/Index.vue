@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import { getGridKey } from "#src/services/dungeons/getGridKey";
-import { SettingsOptionGrid } from "#src/services/dungeons/scene/settings/SettingsOptionGrid";
+import { useSettingsSceneStore } from "#src/store/dungeons/settings/scene";
+
+const settingsSceneStore = useSettingsSceneStore();
+const { settingsOptionGrid } = settingsSceneStore;
 </script>
 
 <template>
-  <template v-for="(row, rowIndex) of unref(SettingsOptionGrid.grid)" :key="rowIndex">
+  <template v-for="(row, rowIndex) of unref(settingsOptionGrid.grid)" :key="rowIndex">
     <DungeonsSettingsMenuContentClickableRow :row-index />
     <DungeonsSettingsMenuContentText
       v-for="(text, columnIndex) of row"

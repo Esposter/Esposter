@@ -5,7 +5,7 @@ import { useBattleSceneStore } from "#src/store/dungeons/battle/scene";
 
 const battleSceneStore = useBattleSceneStore();
 const { activePanel } = storeToRefs(battleSceneStore);
-const attackOptionGrid = useAttackOptionGrid();
+const { attackOptionGrid } = battleSceneStore;
 </script>
 
 <template>

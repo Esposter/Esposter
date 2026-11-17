@@ -4,6 +4,8 @@ import { SceneKey } from "#src/models/dungeons/keys/SceneKey";
 import { StateName } from "#src/models/dungeons/state/battle/StateName";
 import { checkIsMonsterFainted } from "#src/services/dungeons/monster/checkIsMonsterFainted";
 import { battleStateMachine } from "#src/services/dungeons/scene/battle/battleStateMachine";
+import { animateMonsterDeath } from "#src/services/dungeons/scene/battle/monster/animateMonsterDeath";
+import { transitionFrom } from "#src/services/dungeons/scene/transitionFrom";
 import { createPhaserSubscriptions } from "#src/services/phaser/createPhaserSubscriptions";
 import { useBattleDialogStore } from "#src/store/dungeons/battle/dialog";
 import { useBattlePlayerStore } from "#src/store/dungeons/battle/player";
@@ -39,7 +41,7 @@ export const SwitchAttempt: State<typeof StateName.SwitchAttempt> = {
           switchActiveMonster(monster.id);
           await battleStateMachine.setState(StateName.BringOutMonster);
         } else {
-          await useMonsterDeathTween(false);
+          await animateMonsterDeath(false);
           switchActiveMonster(monster.id);
           await battleStateMachine.setState(StateName.SwitchMonster);
         }
@@ -50,7 +52,7 @@ export const SwitchAttempt: State<typeof StateName.SwitchAttempt> = {
       getSynchronizedFunction(() => battleStateMachine.setState(StateName.PlayerInput)),
     );
 
-    const { launchScene } = usePreviousScene(scene.scene.key);
+    const { launchScene } = transitionFrom(scene.scene.key);
     launchScene(scene, SceneKey.MonsterParty);
   },
   onExit: () => {

@@ -2,9 +2,9 @@ import type { DialogMessage } from "#src/models/dungeons/UI/dialog/DialogMessage
 import type { DialogTarget } from "#src/models/dungeons/UI/dialog/DialogTarget";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { useAnimateText } from "#src/composables/dungeons/text/useAnimateText";
 import { SceneEventKey } from "#src/models/dungeons/scene/SceneEventKey";
 import { getDialogTargetText } from "#src/services/dungeons/dialog/getDialogTargetText";
+import { animateText } from "#src/services/dungeons/text/animateText";
 import { getSceneEventKey } from "#src/services/phaser/getSceneEventKey";
 import { phaserEventEmitter } from "#src/services/phaser/phaserEventEmitter";
 
@@ -15,5 +15,5 @@ export const animateDialogMessage = (scene: SceneWithPlugins, target: DialogTarg
   phaserEventEmitter.emit(getSceneEventKey(SceneEventKey.ShowMessage, scene.scene.key));
 
   target.message.value.title = message.title;
-  return useAnimateText(scene, getDialogTargetText(target), message.text);
+  return animateText(scene, getDialogTargetText(target), message.text);
 };

@@ -2,10 +2,12 @@
 import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
 import { ButtonTextStyle } from "#src/assets/dungeons/scene/monsterParty/styles/ButtonTextStyle";
 import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";
+import { useMonsterPartySceneStore } from "#src/store/dungeons/monsterParty/scene";
 import { Input } from "phaser";
 import { Container, Image, Text } from "vue-phaserjs";
 
-const monsterPartyOptionGrid = useMonsterPartyOptionGrid();
+const monsterPartySceneStore = useMonsterPartySceneStore();
+const { monsterPartyOptionGrid } = monsterPartySceneStore;
 const onGridClick = useOnGridClick(monsterPartyOptionGrid, () => ({
   x: monsterPartyOptionGrid.position.value.x,
   y: monsterPartyOptionGrid.rowSize - 1,
