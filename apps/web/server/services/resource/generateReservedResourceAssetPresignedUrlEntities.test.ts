@@ -4,6 +4,8 @@ import type { R2Bucket } from "@cloudflare/workers-types";
 import type { StorageCredentials } from "@esposter/db";
 
 import { generateReservedResourceAssetPresignedUrlEntities } from "#server/services/resource/generateReservedResourceAssetPresignedUrlEntities";
+import { readResourceFiles } from "#server/services/resource/readResourceFiles";
+import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { createMockBucket } from "@esposter/db-mock";
 import { FILES_DIRECTORY_SEGMENT, StorageBucket } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
@@ -99,6 +101,30 @@ describe(generateReservedResourceAssetPresignedUrlEntities, () => {
     expect(entity).toStrictEqual({ id: hash, isHeld: true, presignedUrl: "" });
     expect((await bucket.head(blobName))?.customMetadata).toStrictEqual({ touchedAt: new Date(0).toISOString() });
     expect(reserveStorageBytesMock).toHaveBeenCalledExactlyOnceWith(db, userId, StorageBucket.ResourceAssets, []);
+  });
+
+  test("held bytes re-uploaded as a video are listed as a video", async () => {
+    expect.hasAssertions();
+
+    await bucket.put(blobName, bytes, { httpMetadata: { contentType: "application/octet-stream" } });
+    await generateReservedResourceAssetPresignedUrlEntities(db, userId, resourceId, [
+      { ...file, mimetype: "video/mp4" },
+    ]);
+
+    await expect(readResourceFiles(bucket, resourceId)).resolves.toStrictEqual([
+      { mimetype: "video/mp4", size: bytes.byteLength, url: getResourceAssetUrl(blobName) },
+    ]);
+  });
+
+  test("held bytes re-uploaded with the same type keep it", async () => {
+    expect.hasAssertions();
+
+    await bucket.put(blobName, bytes, { httpMetadata: { contentType: file.mimetype } });
+    await generateReservedResourceAssetPresignedUrlEntities(db, userId, resourceId, [file]);
+
+    await expect(readResourceFiles(bucket, resourceId)).resolves.toStrictEqual([
+      { mimetype: file.mimetype, size: bytes.byteLength, url: getResourceAssetUrl(blobName) },
+    ]);
   });
 
   test("a held asset whose blob disappears before the touch is uploaded again", async () => {

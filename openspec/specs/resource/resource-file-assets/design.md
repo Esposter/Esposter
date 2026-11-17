@@ -54,26 +54,26 @@ The parser accepts one shape, `{resourceId}/files/{hash}`, with a uuid resource 
 | `deleteFile`                             | owner | remove one asset object                    |
 | `readResourceFiles`                      | owner | the files under `{id}/files/…`, each typed |
 
-A file is read through the `/api/resource-assets` endpoint, which takes no procedure. The owner's listing of a resource's files is `readResourceFiles`: it reads the resource's files directory and answers each file with the type and size its signed upload declared, read off the object itself, so no row is kept beside an object.
+A file is read through the `/api/resource-assets` endpoint, which takes no procedure. The owner's listing of a resource's files is `readResourceFiles`: it reads the resource's files directory and answers each file with its size and the type its latest upload declared, read off the object itself, so no row is kept beside an object. A signed upload stores its declared type with the bytes, and a re-upload of bytes the resource already holds sends no PUT, so the touch that restarts the held blob's grace window writes the newly declared type onto it instead. The touch a snapshot makes declares no type and keeps the stored one.
 
 ## Key files
 
-| File                                                                       | Role                                                                                      |
-| -------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| `apps/web/shared/services/resource/getResourceAssetUrl.ts`                 | object key → stable url (closed charset)                                                  |
-| `apps/web/shared/services/resource/parseResourceAssetPath.ts`              | the single decoder/validator                                                              |
-| `apps/web/server/api/resource-assets/[...path].get.ts`                     | authorize + 302 to a minutes-scale presigned GET                                          |
-| `apps/web/server/services/resource/cloneContentAssets.ts`                  | duplicate's copy of the files its urls and bare ids name + url rewrite                    |
-| `apps/web/server/services/resource/checkIsResourceAssetReadable.ts`        | may this caller read this asset path                                                      |
-| `apps/web/server/services/resource/readResourceAccess.ts`                  | the resource's ownership and publication, read once per resource                          |
-| `apps/web/shared/services/resource/ResourceDefinitionMap.ts`               | `fileAssets` declarations                                                                 |
-| `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts`      | conditionally spread asset procedures                                                     |
-| `apps/web/server/services/resource/readResourceFiles.ts`                   | the listing: every file under the files directory, each with the type its upload declared |
-| `apps/web/app/components/PageBuilder/FilePicker/Index.vue`                 | the picker over a resource's files, filtered to the kind a field takes                    |
-| `packages/db-schema/src/services/storage/getResourceFilesDirectoryName.ts` | the `{id}/files` prefix, spelled once for both apps                                       |
-| `packages/db-schema/src/services/storage/getResourceFileBlobName.ts`       | the `{id}/files/{hash}` object key, spelled once for both apps                            |
-| `apps/web/app/composables/resource/useUploadResourceFile.ts`               | upload round-trip, returns the stable url                                                 |
-| `apps/web/app/composables/resource/useDeleteResourceFile.ts`               | stable url to object key, then `deleteFile`                                               |
+| File                                                                       | Role                                                                                             |
+| -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `apps/web/shared/services/resource/getResourceAssetUrl.ts`                 | object key → stable url (closed charset)                                                         |
+| `apps/web/shared/services/resource/parseResourceAssetPath.ts`              | the single decoder/validator                                                                     |
+| `apps/web/server/api/resource-assets/[...path].get.ts`                     | authorize + 302 to a minutes-scale presigned GET                                                 |
+| `apps/web/server/services/resource/cloneContentAssets.ts`                  | duplicate's copy of the files its urls and bare ids name + url rewrite                           |
+| `apps/web/server/services/resource/checkIsResourceAssetReadable.ts`        | may this caller read this asset path                                                             |
+| `apps/web/server/services/resource/readResourceAccess.ts`                  | the resource's ownership and publication, read once per resource                                 |
+| `apps/web/shared/services/resource/ResourceDefinitionMap.ts`               | `fileAssets` declarations                                                                        |
+| `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts`      | conditionally spread asset procedures                                                            |
+| `apps/web/server/services/resource/readResourceFiles.ts`                   | the listing: every file under the files directory, each with the type its latest upload declared |
+| `apps/web/app/components/PageBuilder/FilePicker/Index.vue`                 | the picker over a resource's files, filtered to the kind a field takes                           |
+| `packages/db-schema/src/services/storage/getResourceFilesDirectoryName.ts` | the `{id}/files` prefix, spelled once for both apps                                              |
+| `packages/db-schema/src/services/storage/getResourceFileBlobName.ts`       | the `{id}/files/{hash}` object key, spelled once for both apps                                   |
+| `apps/web/app/composables/resource/useUploadResourceFile.ts`               | upload round-trip, returns the stable url                                                        |
+| `apps/web/app/composables/resource/useDeleteResourceFile.ts`               | stable url to object key, then `deleteFile`                                                      |
 
 ## Notes
 

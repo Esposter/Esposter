@@ -4,7 +4,7 @@
 
 ## Decision
 
-A re-uploaded file lists the type its latest upload declared. The touch that already rewrites a held blob writes the declared content type alongside the stored body, so the object and the listing agree after the upload. The touch takes the declared type as an optional argument: `checkIsResourceAssetHeld` passes the upload's declared type, while `touchSnapshotAssets` passes none and the blob keeps the type it is stored as. A snapshot touch therefore never changes a file's type. An empty declared type is no type, as it is for a presigned PUT: a browser reports `""` for a file it cannot name, so the touch writes a type only when the declared one is non-empty, and a blob with no declared type to write is never rewritten to an empty one.
+A re-uploaded file lists the type its latest upload declared. The touch that already rewrites a held blob writes the declared content type alongside the stored body, so the object and the listing agree after the upload. The touch takes the declared type as a string argument whose empty value means no type, as the `absent-values` skill sets for an app-owned string: `checkIsResourceAssetHeld` passes the upload's declared type, while `touchSnapshotAssets` passes `""` and the blob keeps the type it is stored as. A snapshot touch therefore never changes a file's type. An empty declared type is no type, as it is for a presigned PUT: a browser reports `""` for a file it cannot name, so the touch writes a type only when the declared one is non-empty, and a blob with no declared type to write is never rewritten to an empty one.
 
 The alternatives lost:
 
