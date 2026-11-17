@@ -1,5 +1,4 @@
 schema: spec-driven
 affected_areas: [resource]
 x-model: claude-haiku-5-5
-x-touches: ["apps/web/shared/models/webpageEditor/**", "apps/web/shared/services/pageBuilder/**"]
 skip_specs: true
