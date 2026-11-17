@@ -6,6 +6,8 @@ import { useFriendStore } from "#src/store/message/user/friend";
 const friendStore = useFriendStore();
 const { friends } = storeToRefs(friendStore);
 const { getContextMenuProps } = useContextMenu();
+const { invitableRooms } = useInvitableRooms();
+const hasInvitableRoom = computed(() => invitableRooms.value.length > 0);
 const displayFriends = computed(() =>
   friends.value.toSorted((firstFriend, secondFriend) => compareCreatedAt(secondFriend, firstFriend)),
 );
@@ -18,6 +20,7 @@ const displayFriends = computed(() =>
         v-for="{ id, name, image } of displayFriends"
         :id
         :key="id"
+        :has-invitable-room
         :get-context-menu-props
         :image
         :name

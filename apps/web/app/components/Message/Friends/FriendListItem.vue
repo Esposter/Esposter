@@ -10,20 +10,21 @@ import { useFriendDialogStore } from "#src/store/message/user/friendDialog";
 interface Props {
   // The list's own context menu, so one press is tracked across every friend's row
   getContextMenuProps: ReturnType<typeof useContextMenu>["getContextMenuProps"];
+  // Whether the reader has a room to invite this friend into, decided once by the list
+  hasInvitableRoom: boolean;
   id: PublicUser["id"];
   image: PublicUser["image"];
   name: PublicUser["name"];
 }
 
-const { id } = defineProps<Props>();
+const { hasInvitableRoom, id } = defineProps<Props>();
 const blockStore = useBlockStore();
 const { createBlock } = blockStore;
 const friendDialogStore = useFriendDialogStore();
 const { invitingUserId, removingUserId } = storeToRefs(friendDialogStore);
-const { invitableRooms } = useInvitableRooms();
 // What a friend's row does, behind its overflow mark and its context menu alike, as Discord keeps them under More
 const items = computed<Item[]>(() => [
-  ...(invitableRooms.value.length > 0
+  ...(hasInvitableRoom
     ? [
         {
           meaning: UiIconMeaning.Invite,
