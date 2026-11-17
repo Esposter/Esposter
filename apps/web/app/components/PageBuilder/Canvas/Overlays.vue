@@ -26,7 +26,7 @@ import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
 interface Props {
   checkIsHorizontalOwner: (ownerId: string) => boolean;
   // The node a handle is moving, which its slot's indicator counts the children without
-  draggedNodeId?: string | undefined;
+  draggedNodeId: string;
   dropTarget?: DropTarget | undefined;
   getElement: (nodeId: string) => Element | null;
   hoveredNodeId?: string | undefined;

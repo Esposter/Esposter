@@ -70,6 +70,7 @@ describe(resolveDropTarget, () => {
       resolveDropTarget(webpageKind, {
         checkIsHorizontalOwner: () => false,
         document: COLUMN_DOCUMENT,
+        draggedNodeId: "",
         draggedType: WebpageNodeType.Text,
         getChildRect: (nodeId) => RECTS[nodeId],
         hoveredNodeId: TEXT_ONE,
@@ -85,6 +86,7 @@ describe(resolveDropTarget, () => {
       resolveDropTarget(webpageKind, {
         checkIsHorizontalOwner: () => false,
         document: ROOT_DOCUMENT,
+        draggedNodeId: "",
         draggedType: WebpageNodeType.Column,
         getChildRect: (nodeId) => RECTS[nodeId],
         hoveredNodeId: TEXT_ONE,
@@ -100,6 +102,7 @@ describe(resolveDropTarget, () => {
       resolveDropTarget(webpageKind, {
         checkIsHorizontalOwner: () => false,
         document: ROOT_DOCUMENT,
+        draggedNodeId: "",
         draggedType: WebpageNodeType.Text,
         getChildRect: (nodeId) => RECTS[nodeId],
         hoveredNodeId: undefined,
@@ -116,6 +119,7 @@ describe(resolveDropTarget, () => {
       resolveDropTarget(webpageKind, {
         checkIsHorizontalOwner: (ownerId) => ownerId === COLUMNS_ID,
         document: LONE_COLUMN_DOCUMENT,
+        draggedNodeId: "",
         draggedType: WebpageNodeType.Column,
         getChildRect: (nodeId) => RECTS[nodeId],
         hoveredNodeId: LONE_COLUMN,

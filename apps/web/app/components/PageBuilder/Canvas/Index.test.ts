@@ -64,8 +64,10 @@ describe("pageBuilderCanvas", () => {
       global: { stubs: { PageBuilderCanvasFrame: FrameStub } },
       props: {
         announce: vi.fn<(message: string) => void>(),
+        draggedNodeId: "",
         kind: webpageKind,
         resourceId: TEST_ID,
+
         startNodeDrag: noop,
       },
     });
@@ -104,8 +106,10 @@ describe("pageBuilderCanvas", () => {
     const component = await mountSuspended(PageBuilderCanvas, {
       props: {
         announce: vi.fn<(message: string) => void>(),
+        draggedNodeId: "",
         kind: webpageKind,
         resourceId: TEST_ID,
+
         startNodeDrag: noop,
       },
     });
@@ -133,8 +137,10 @@ describe("pageBuilderCanvas", () => {
     const component = await mountSuspended(PageBuilderCanvas, {
       props: {
         announce: vi.fn<(message: string) => void>(),
+        draggedNodeId: "",
         kind: emailKind,
         resourceId: TEST_ID,
+
         startNodeDrag: noop,
       },
     });
@@ -148,8 +154,10 @@ describe("pageBuilderCanvas", () => {
     const component = await mountSuspended(PageBuilderCanvas, {
       props: {
         announce: vi.fn<(message: string) => void>(),
+        draggedNodeId: "",
         kind: webpageKind,
         resourceId: TEST_ID,
+
         startNodeDrag: noop,
       },
     });

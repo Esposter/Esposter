@@ -46,6 +46,8 @@ describe("pageBuilderCanvasOverlays", () => {
     const component = await mountSuspended(PageBuilderCanvasOverlays, {
       props: {
         checkIsHorizontalOwner: () => false,
+
+        draggedNodeId: "",
         getElement: () => element,
         hoveredNodeId: TEST_ID,
         resourceId: TEST_ID,
@@ -78,6 +80,8 @@ describe("pageBuilderCanvasOverlays", () => {
     const component = await mountSuspended(PageBuilderCanvasOverlays, {
       props: {
         checkIsHorizontalOwner: () => false,
+
+        draggedNodeId: "",
         getElement: () => element,
         hoveredNodeId: "",
         resourceId: TEST_ID,
@@ -110,6 +114,8 @@ describe("pageBuilderCanvasOverlays", () => {
       attachTo: document.body,
       props: {
         checkIsHorizontalOwner: () => false,
+
+        draggedNodeId: "",
         getElement: () => element,
         hoveredNodeId: TEST_ID,
         resourceId: TEST_ID,
@@ -140,6 +146,8 @@ describe("pageBuilderCanvasOverlays", () => {
     const component = await mountSuspended(PageBuilderCanvasOverlays, {
       props: {
         checkIsHorizontalOwner: () => false,
+
+        draggedNodeId: "",
         dropTarget: { index: 0, slotPointer: "/content" },
         getElement: (nodeId) => (nodeId === DRAG_PREVIEW_NODE_ID ? element : null),
         hoveredNodeId: "",
@@ -167,6 +175,8 @@ describe("pageBuilderCanvasOverlays", () => {
     const component = await mountSuspended(PageBuilderCanvasOverlays, {
       props: {
         checkIsHorizontalOwner: () => false,
+
+        draggedNodeId: "",
         getElement: () => element,
         hoveredNodeId: TEST_ID,
         resourceId: TEST_ID,
@@ -192,6 +202,8 @@ describe("pageBuilderCanvasOverlays", () => {
     const component = await mountSuspended(PageBuilderCanvasOverlays, {
       props: {
         checkIsHorizontalOwner: () => false,
+
+        draggedNodeId: "",
         getElement: () => element,
         hoveredNodeId: TEST_ID,
         resourceId: TEST_ID,
@@ -221,6 +233,8 @@ describe("pageBuilderCanvasOverlays", () => {
     const component = await mountSuspended(PageBuilderCanvasOverlays, {
       props: {
         checkIsHorizontalOwner: () => false,
+
+        draggedNodeId: "",
         getElement: () => element,
         hoveredNodeId: TEST_ID,
         resourceId: TEST_ID,

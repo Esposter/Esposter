@@ -27,7 +27,7 @@ import { ResourceType } from "@esposter/db-schema";
 interface Props {
   announce: (message: string) => void;
   // The node a handle is moving, which the canvas leaves out of its slot's indicator
-  draggedNodeId?: string | undefined;
+  draggedNodeId: string;
   // The palette block type being dragged, which the canvas draws in the slot its drop target names
   draggedType?: BlockNode["type"] | undefined;
   dropTarget?: DropTarget | undefined;

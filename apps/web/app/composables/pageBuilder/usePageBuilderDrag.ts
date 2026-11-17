@@ -36,7 +36,7 @@ const getDropTargetAt = <
   type: TNode["type"],
   point: { x: number; y: number },
   geometry: FrameGeometry | undefined,
-  draggedNodeId?: string,
+  draggedNodeId: string,
 ): DropTarget | undefined => {
   if (!document || !geometry || !checkIsInsideBox(point, geometry.frameRect)) return undefined;
 
@@ -74,7 +74,7 @@ export const usePageBuilderDrag = <
   const dropTarget = shallowRef<DropTarget>();
   // The palette block type being dragged, which a merge field's drag leaves undefined, so only a block gets a ghost
   const draggedType = shallowRef<TNode["type"]>();
-  // The node a handle is moving on the canvas, which a palette drag leaves undefined
+  // The node a handle is moving on the canvas, which a palette drag leaves empty
   const draggedNodeId = shallowRef("");
   const pageBuilderHistoryStore = usePageBuilderHistoryStore();
   const { applyEdit } = pageBuilderHistoryStore;
@@ -146,7 +146,7 @@ export const usePageBuilderDrag = <
   };
   // Resolves a block at the pointer, and where no slot takes it over the frame, says why it is refused
   const moveBlock = (type: TNode["type"], point: { x: number; y: number }, geometry: FrameGeometry | undefined) => {
-    const target = getDropTargetAt(kind, getDocument(), type, point, geometry);
+    const target = getDropTargetAt(kind, getDocument(), type, point, geometry, "");
     dropTarget.value = target;
     refusal.value =
       target === undefined && checkIsInsideBox(point, geometry?.frameRect) ? getDropRefusal(kind.titles[type]) : "";
