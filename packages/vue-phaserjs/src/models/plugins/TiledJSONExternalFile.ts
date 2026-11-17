@@ -86,7 +86,7 @@ export class TiledJSONExternalFile extends MultiFile {
 
     if (!(file.type === "json" && Object.hasOwn(file.data, "tilesets"))) return;
     //  Inspect the data for the files to now load
-    const tilesets = file.data.tilesets as TMXExternalTilesetParsed[];
+    const tilesets: TMXExternalTilesetParsed[] = file.data.tilesets;
     const config = this.config;
     const loader = this.loader;
     const currentBaseURL = loader.baseURL;
@@ -97,7 +97,7 @@ export class TiledJSONExternalFile extends MultiFile {
     const prefix = GetFastValue(config, "prefix", currentPrefix);
     const tilesetXhrSettings = GetFastValue(config, "tilesetXhrSettings");
 
-    const tilesetURLs = GetFastValue(config, "tilesetURLs") as Record<string, string> | undefined;
+    const tilesetURLs: Record<string, string> | undefined = GetFastValue(config, "tilesetURLs");
     // Every url is resolved before the loader changes, so a missing one throws with the loader as it was
     const tilesetSources = tilesets.map((tileset, tilesetIndex) => {
       // A tileset is named by its file, and the app supplies each one's url by import, so a tileset may live anywhere
