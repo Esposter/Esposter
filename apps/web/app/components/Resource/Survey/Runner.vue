@@ -64,7 +64,8 @@ const submit = () => {
 </script>
 
 <template>
-  <div ref="root" :style="themeStyle" bg-background flex flex-col gap-4 ui-body>
+  <div ref="root" :style="themeStyle" bg-background flex flex-col gap-4 relative isolate ui-body>
+    <ResourceSurveyBackgroundPicture :src="rootProps.backgroundImage" />
     <UiLoadingLine
       v-if="rootProps.showProgressBar === SurveyProgressBarPlacement.Top"
       :label="progressLabel"

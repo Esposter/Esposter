@@ -32,7 +32,7 @@ describe(getSurveyDocumentDatasetColumns, () => {
   });
   const createDocument = (...children: SurveyPlaceableNode[]): SurveyDocument => ({
     content: [createPage(children)],
-    root: { props: surveyRootPropsSchema.parse({}) },
+    root: { props: surveyRootPropsSchema.parse({ backgroundImage: "" }) },
   });
   const cases: { label: string; node: SurveyPlaceableNode; type: ColumnType }[] = [
     {

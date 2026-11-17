@@ -21,7 +21,7 @@ describe(getSurveyEditorFindings, () => {
       content: [createSurveyTestPage([createSurveyTestQuestion(name), duplicateQuestion])],
       root: {
         props: {
-          ...surveyRootPropsSchema.parse({}),
+          ...surveyRootPropsSchema.parse({ backgroundImage: "" }),
           calculatedValues: [{ expression: `{${name}}`, includeIntoResult: false, name }],
         },
       },

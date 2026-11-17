@@ -11,7 +11,7 @@ describe("resourceSurveyCreatorToolbar", () => {
     expect.hasAssertions();
 
     const surveyCreatorStore = useSurveyCreatorStore();
-    surveyCreatorStore.load(surveyDocumentSchema.parse({ content: [], root: { props: {} } }));
+    surveyCreatorStore.load(surveyDocumentSchema.parse({ content: [], root: { props: { backgroundImage: "" } } }));
     const component = await mountSuspended(ResourceSurveyCreatorToolbar);
 
     expect(component.get('[aria-label="Undo"]').attributes("aria-disabled")).toBe("true");
@@ -25,7 +25,7 @@ describe("resourceSurveyCreatorToolbar", () => {
     surveyCreatorStore.load(
       surveyDocumentSchema.parse({
         content: [{ props: { children: [], enableIf: "", id: "page" }, type: SurveyNodeType.Page }],
-        root: { props: {} },
+        root: { props: { backgroundImage: "" } },
       }),
     );
     const component = await mountSuspended(ResourceSurveyCreatorToolbar);
@@ -43,7 +43,7 @@ describe("resourceSurveyCreatorToolbar", () => {
     expect.hasAssertions();
 
     const surveyCreatorStore = useSurveyCreatorStore();
-    surveyCreatorStore.load(surveyDocumentSchema.parse({ content: [], root: { props: {} } }));
+    surveyCreatorStore.load(surveyDocumentSchema.parse({ content: [], root: { props: { backgroundImage: "" } } }));
     const component = await mountSuspended(ResourceSurveyCreatorToolbar);
 
     expect(component.find('[aria-label="Import"]').exists()).toBe(false);

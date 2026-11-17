@@ -11,10 +11,11 @@ import {
 import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
-// The props of a survey as a whole: its texts, logo and colours, how its pages show progress and numbering, and the values it calculates
+// The props of a survey as a whole: its texts, logo, background picture and colours, how its pages show progress and numbering, and the values it calculates
 export interface SurveyRootProps {
   accentColor: string;
   backgroundColor: string;
+  backgroundImage: string;
   calculatedValues: SurveyCalculatedValue[];
   completedHtml: string;
   completeText: string;
@@ -34,6 +35,7 @@ export const surveyRootPropsSchema: z.ZodObject<
   {
     accentColor: z.ZodDefault<z.ZodString>;
     backgroundColor: z.ZodDefault<z.ZodString>;
+    backgroundImage: z.ZodString;
     calculatedValues: z.ZodDefault<z.ZodArray<typeof surveyCalculatedValueSchema>>;
     completedHtml: z.ZodDefault<z.ZodString>;
     completeText: z.ZodDefault<z.ZodString>;
@@ -49,6 +51,7 @@ export const surveyRootPropsSchema: z.ZodObject<
 > = z.strictObject({
   accentColor: z.string().regex(HEX_COLOR_REGEX).default(""),
   backgroundColor: z.string().regex(HEX_COLOR_REGEX).default(""),
+  backgroundImage: z.string().max(MAX_SURVEY_URL_LENGTH),
   calculatedValues: createUniqueArraySchema(surveyCalculatedValueSchema, "name")
     .max(MAX_SURVEY_CALCULATED_VALUE_COUNT)
     .default([]),

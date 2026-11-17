@@ -33,7 +33,7 @@ const createDocument = (imageLink: string) =>
         type: SurveyNodeType.Page,
       },
     ],
-    root: { props: {} },
+    root: { props: { backgroundImage: "" } },
   });
 
 const getImageLink = (document: SurveyDocument, pointer: string) => {

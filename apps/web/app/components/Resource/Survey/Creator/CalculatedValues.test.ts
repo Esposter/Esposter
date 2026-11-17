@@ -37,6 +37,7 @@ const createSurveyTestDocument = (calculatedNames: string[]): SurveyDocument => 
     ],
     root: {
       props: surveyRootPropsSchema.parse({
+        backgroundImage: "",
         calculatedValues: calculatedNames.map((name) => ({ expression: "0", includeIntoResult: false, name })),
       }),
     },

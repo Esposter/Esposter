@@ -27,7 +27,18 @@ describe(collectSurveyFileUrls, () => {
 
     const document = surveyDocumentSchema.parse({
       content: [createPage([createImage("b"), createImage(""), createPicker(["a", "b"])])],
-      root: { props: { logo: "c" } },
+      root: { props: { backgroundImage: "", logo: "c" } },
+    });
+
+    expect(collectSurveyFileUrls(document)).toStrictEqual(["a", "b", "c"]);
+  });
+
+  test("a survey's background picture is one of its files, beside its logo", () => {
+    expect.hasAssertions();
+
+    const document = surveyDocumentSchema.parse({
+      content: [createPage([createImage("b")])],
+      root: { props: { backgroundImage: "a", logo: "c" } },
     });
 
     expect(collectSurveyFileUrls(document)).toStrictEqual(["a", "b", "c"]);
@@ -41,7 +52,10 @@ describe(collectSurveyFileUrls, () => {
       props: { id: v7(), name: "dynamic", template: [createImage("e")] },
       type: SurveyNodeType.PanelDynamic,
     };
-    const document = surveyDocumentSchema.parse({ content: [createPage([panel, dynamicPanel])], root: { props: {} } });
+    const document = surveyDocumentSchema.parse({
+      content: [createPage([panel, dynamicPanel])],
+      root: { props: { backgroundImage: "" } },
+    });
 
     expect(collectSurveyFileUrls(document)).toStrictEqual(["d", "e"]);
   });

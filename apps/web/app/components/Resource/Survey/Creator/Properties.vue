@@ -36,6 +36,7 @@ const rootFormSchema = surveyRootPropsSchema
   .omit({
     accentColor: true,
     backgroundColor: true,
+    backgroundImage: true,
     calculatedValues: true,
     isQuestionNumbersVisible: true,
     logo: true,

@@ -39,7 +39,7 @@ describe("resourceSurveyView", () => {
       content: {
         document: {
           ...createSurveyTestDocument([createSurveyTestPage([createSurveyTestQuestion("first")])]),
-          root: { props: surveyRootPropsSchema.parse({ completedHtml }) },
+          root: { props: surveyRootPropsSchema.parse({ backgroundImage: "", completedHtml }) },
         },
         settings: surveySettingsSchema.parse(settings),
       },

@@ -22,7 +22,7 @@ const createPage = (children: SurveyPlaceableNode[]): SurveyPageNode => ({
 });
 const createDocument = (children: SurveyPlaceableNode[]): SurveyDocument => ({
   content: [createPage(children)],
-  root: { props: surveyRootPropsSchema.parse({}) },
+  root: { props: surveyRootPropsSchema.parse({ backgroundImage: "" }) },
 });
 
 describe("surveyResourceSchema", () => {

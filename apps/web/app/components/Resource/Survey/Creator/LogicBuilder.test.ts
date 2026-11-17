@@ -24,7 +24,7 @@ const createSurveyTestDocument = (questions: SurveyPlaceableNode[]): SurveyDocum
       type: SurveyNodeType.Page,
     },
   ],
-  root: { props: surveyRootPropsSchema.parse({}) },
+  root: { props: surveyRootPropsSchema.parse({ backgroundImage: "" }) },
 });
 
 // A page of the given questions, which its enable condition holds
@@ -65,7 +65,7 @@ describe("resourceSurveyCreatorLogicBuilder", () => {
     const surveyCreatorStore = useSurveyCreatorStore();
     surveyCreatorStore.load({
       content: [createPageNode([createQuestion("a", "")]), createPageNode([])],
-      root: { props: surveyRootPropsSchema.parse({}) },
+      root: { props: surveyRootPropsSchema.parse({ backgroundImage: "" }) },
     });
     surveyCreatorStore.selectedPointer = "/content/1";
     const component = await mountSuspended(LogicBuilder);
@@ -83,7 +83,7 @@ describe("resourceSurveyCreatorLogicBuilder", () => {
     const surveyCreatorStore = useSurveyCreatorStore();
     surveyCreatorStore.load({
       content: [createPageNode([createQuestion("a", "")]), createPageNode([], "{a} = 1")],
-      root: { props: surveyRootPropsSchema.parse({}) },
+      root: { props: surveyRootPropsSchema.parse({ backgroundImage: "" }) },
     });
     surveyCreatorStore.selectedPointer = "/content/1";
     const component = await mountSuspended(LogicBuilder);

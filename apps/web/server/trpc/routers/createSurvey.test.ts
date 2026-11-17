@@ -36,7 +36,7 @@ export const createPublishedSurvey = async (
 export const createPageDocument = (children: unknown[]): SurveyDocument =>
   surveyDocumentSchema.parse({
     content: [{ props: { children, enableIf: "", id: v7() }, type: SurveyNodeType.Page }],
-    root: { props: {} },
+    root: { props: { backgroundImage: "" } },
   });
 
 // A survey document whose one page holds a question of each given name and kind. Each question takes its kind's

@@ -6,7 +6,7 @@ describe(useSurveyTheme, () => {
   test("a survey that sets no colour sets no style variable, so the design style's own tokens apply", () => {
     expect.hasAssertions();
 
-    const theme = useSurveyTheme(surveyRootPropsSchema.parse({}));
+    const theme = useSurveyTheme(surveyRootPropsSchema.parse({ backgroundImage: "" }));
 
     expect(theme.value).toStrictEqual({});
   });
@@ -15,7 +15,7 @@ describe(useSurveyTheme, () => {
     expect.hasAssertions();
 
     const accentColor = "#00ff00";
-    const theme = useSurveyTheme(surveyRootPropsSchema.parse({ accentColor }));
+    const theme = useSurveyTheme(surveyRootPropsSchema.parse({ accentColor, backgroundImage: "" }));
 
     expect(theme.value).toStrictEqual({ "--ui-accent": accentColor });
   });

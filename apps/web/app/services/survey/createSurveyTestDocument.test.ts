@@ -5,7 +5,7 @@ import { surveyRootPropsSchema } from "vue-survey-engine-headless";
 
 export const createSurveyTestDocument = (pages: SurveyPageNode[]): SurveyDocument => ({
   content: pages,
-  root: { props: surveyRootPropsSchema.parse({}) },
+  root: { props: surveyRootPropsSchema.parse({ backgroundImage: "" }) },
 });
 
 describe.todo("createSurveyTestDocument");

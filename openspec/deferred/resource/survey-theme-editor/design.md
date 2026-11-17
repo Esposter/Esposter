@@ -1,6 +1,6 @@
 # Survey Theme Editor
 
-SurveyJS's theme editor sets colours, fonts and backgrounds for the whole survey and for each page. The [survey form engine](../../../changes/archive/2026-11-04-resource-survey-form-engine-program/design.md) offers a logo, an accent colour and a background colour only, and a survey-wide background picture is built by the [survey theme background change](../../../changes/resource-survey-theme-background/design.md), so the deferred items are a typeface and a per-page background.
+SurveyJS's theme editor sets colours, fonts and backgrounds for the whole survey and for each page. The [survey form engine](../../../changes/archive/2026-11-04-resource-survey-form-engine-program/design.md) offers a logo, an accent colour and a background colour only, and a survey-wide background picture is built by the [survey theme background change](../../../changes/archive/2026-11-17-resource-survey-theme-background/design.md), so the deferred items are a typeface and a per-page background.
 
 ## Why deferred
 

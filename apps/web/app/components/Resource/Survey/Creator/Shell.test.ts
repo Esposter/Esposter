@@ -49,7 +49,7 @@ const loadSurvey = () => {
           type: SurveyNodeType.Page,
         },
       ],
-      root: { props: {} },
+      root: { props: { backgroundImage: "" } },
     }),
   );
   return surveyCreatorStore;

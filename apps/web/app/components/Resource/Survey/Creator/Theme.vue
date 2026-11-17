@@ -13,6 +13,9 @@ const rootProps = computed(() => surveyDocument.value.root.props);
 const themeStyle = useSurveyTheme(rootProps);
 // The logo is uploaded as it is picked, and its url written to the survey's root once the upload lands
 const onPickLogo = (files: File[]) => uploadPicked(files, (logo) => updateRootProps({ logo }));
+// The background picture is uploaded and written the same way, so the survey draws it behind the respondent page
+const onPickBackground = (files: File[]) =>
+  uploadPicked(files, (backgroundImage) => updateRootProps({ backgroundImage }));
 // The places the progress bar can be drawn, each named as the owner reads it
 const progressBarItems: UiMenuItem<SurveyProgressBarPlacement>[] = [
   { title: "No progress bar", value: SurveyProgressBarPlacement.Off },
@@ -26,6 +29,17 @@ const progressBarItems: UiMenuItem<SurveyProgressBarPlacement>[] = [
     <div flex flex-col gap-2>
       <UiFileField accept="image/*" label="Logo" :model-value="[]" @update:model-value="(files) => onPickLogo(files)" />
       <UiButton :disabled="!rootProps.logo" @click="updateRootProps({ logo: '' })">Remove logo</UiButton>
+    </div>
+    <div flex flex-col gap-2>
+      <UiFileField
+        accept="image/*"
+        label="Background picture"
+        :model-value="[]"
+        @update:model-value="(files) => onPickBackground(files)"
+      />
+      <UiButton :disabled="!rootProps.backgroundImage" @click="updateRootProps({ backgroundImage: '' })">
+        Remove background picture
+      </UiButton>
     </div>
     <div flex flex-col gap-2>
       <UiColorField
@@ -62,7 +76,20 @@ const progressBarItems: UiMenuItem<SurveyProgressBarPlacement>[] = [
       />
     </div>
     <!-- The preview draws with the survey's own colours, so it shows what a respondent will see of them -->
-    <section :style="themeStyle" aria-label="Preview" text-text p-4 bg-background flex flex-col gap-4 ui-body>
+    <section
+      :style="themeStyle"
+      aria-label="Preview"
+      text-text
+      p-4
+      bg-background
+      flex
+      flex-col
+      gap-4
+      relative
+      isolate
+      ui-body
+    >
+      <ResourceSurveyBackgroundPicture :src="rootProps.backgroundImage" />
       <p ui-heading>{{ rootProps.title }}</p>
       <UiButton :variant="UiButtonVariant.Accent">Next</UiButton>
     </section>

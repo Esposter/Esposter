@@ -51,7 +51,7 @@ const createSurveyDocument = (type: SurveyNodeType = SurveyNodeType.RadioGroup, 
         type: SurveyNodeType.Page,
       },
     ],
-    root: { props: { title: "Survey" } },
+    root: { props: { backgroundImage: "", title: "Survey" } },
   });
 
 describe("resourceSurveyCreatorProperties", () => {
@@ -225,10 +225,12 @@ describe("resourceSurveyCreatorProperties", () => {
 
     expect(rootKeys).toContain("title");
     expect(rootKeys).not.toContain("logo");
+    expect(rootKeys).not.toContain("backgroundImage");
     expect(rootKeys).not.toContain("calculatedValues");
     expect(surveyDocument.value.root.props).toStrictEqual({
       accentColor: "",
       backgroundColor: "",
+      backgroundImage: "",
       calculatedValues: [],
       completedHtml: "",
       completeText: "",
@@ -574,6 +576,7 @@ describe("resourceSurveyCreatorProperties", () => {
       [
         "accentColor",
         "backgroundColor",
+        "backgroundImage",
         "calculatedValues",
         "completedHtml",
         "completeText",

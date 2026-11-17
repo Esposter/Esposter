@@ -17,10 +17,11 @@ const collectNodeFileUrls = (nodes: readonly SurveyNode[]): string[] =>
     ...Object.values(surveyNodeChildren(node)).flatMap((childNodes) => collectNodeFileUrls(childNodes)),
   ]);
 
-// The urls of every file a survey references, its logo included: each once and sorted, without the empty ones a
-// Question with no picture holds, so a comparison of two documents' files is a comparison of two lists
+// The urls of every file a survey references, its logo and background picture included: each once and sorted, without
+// The empty ones a question with no picture holds, so a comparison of two documents' files is a comparison of two lists
 export const collectSurveyFileUrls = (document: SurveyDocument): string[] => {
-  const urls = [document.root.props.logo, ...collectNodeFileUrls(document.content)];
+  const { backgroundImage, logo } = document.root.props;
+  const urls = [logo, backgroundImage, ...collectNodeFileUrls(document.content)];
   return [...new Set(urls)]
     .filter((url) => url !== "")
     .toSorted((firstUrl, secondUrl) => Number(firstUrl > secondUrl) - Number(firstUrl < secondUrl));

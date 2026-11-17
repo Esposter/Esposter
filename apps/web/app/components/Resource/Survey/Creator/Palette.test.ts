@@ -52,7 +52,7 @@ describe("resourceSurveyCreatorPalette", () => {
             type: SurveyNodeType.Page,
           },
         ],
-        root: { props: {} },
+        root: { props: { backgroundImage: "" } },
       }),
     );
     const { select } = useSurveyCreatorCommands();

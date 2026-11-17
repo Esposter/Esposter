@@ -15,7 +15,7 @@ describe(useSurveyCanvasSelection, () => {
     surveyCreatorStore.load(
       surveyDocumentSchema.parse({
         content: [{ props: { children: [], enableIf: "", id: "page" }, type: SurveyNodeType.Page }],
-        root: { props: {} },
+        root: { props: { backgroundImage: "" } },
       }),
     );
     const { getSelectionBindings } = useSurveyCanvasSelection();

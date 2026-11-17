@@ -17,4 +17,4 @@ The Theme tab sets a logo, two colours, a progress bar and question numbers, but
 
 ## Impact
 
-One root prop is added, so a survey saved before this change reads no picture. The root form omits the new prop, as it omits the logo. No stored response, route or server read changes. The theme-files design's statement of the theme subset gains the picture. The survey-resource requirement stays as written, since it is true once this ships.
+One required root prop is added with no default, so a survey saved before this change needs its root's `backgroundImage` written as the empty text: a backfill the lead runs. The root form omits the new prop, as it omits the logo. No stored response, route or server read changes. The theme-files design's statement of the theme subset gains the picture. The survey-resource requirement stays as written, since it is true once this ships.

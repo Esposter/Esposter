@@ -39,7 +39,7 @@ flowchart TD
 
 ## Notes
 
-- A survey saved before this change reads its background picture as the empty text, which draws no picture, so no backfill is needed.
+- The background picture is a required root prop with no default, as the page's `enableIf` and the rating's `rateMin` are. A survey saved before this change has no `backgroundImage` on its root and fails the document schema until the key is written as the empty text: a backfill the lead runs, not one written here.
 - The survey-document design's root props and the theme-files design's subset are rewritten as built when the change is archived.
 
 ## Risks

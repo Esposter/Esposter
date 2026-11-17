@@ -1,6 +1,11 @@
 // @vitest-environment nuxt
 import type { VueWrapper } from "@vue/test-utils";
-import type { SurveyPanelDynamicNode, SurveyPanelNode, SurveyTemplateNode } from "vue-survey-engine-headless";
+import type {
+  SurveyPanelDynamicNode,
+  SurveyPanelNode,
+  SurveyRootProps,
+  SurveyTemplateNode,
+} from "vue-survey-engine-headless";
 
 import Runner from "#src/components/Resource/Survey/Runner.vue";
 import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
@@ -28,6 +33,12 @@ const createRowsDocument = (template: SurveyTemplateNode[]) => {
   };
 
   return createSurveyTestDocument([createSurveyTestPage([panel])]);
+};
+// A one-page survey of one question, whose root takes the given props over the defaults
+const createRootedDocument = (props: Partial<SurveyRootProps>) => {
+  const document = createSurveyTestDocument([createSurveyTestPage([createSurveyTestQuestion("first")])]);
+
+  return { ...document, root: { props: { ...document.root.props, ...props } } };
 };
 // A panel's row is a child of the dynamic panel's group, so the group's divs are the rows in order
 const findRows = (component: VueWrapper) => component.findAll('[role="group"] > div');
@@ -340,6 +351,29 @@ describe("runner", () => {
       });
 
       expect(component.find('[role="progressbar"]').exists()).toBe(false);
+    });
+
+    test("a background picture is drawn behind the respondent page's questions", async () => {
+      expect.hasAssertions();
+
+      const component = await mountSuspended(Runner, {
+        props: { document: createRootedDocument({ backgroundImage: "background.png" }) },
+      });
+
+      const picture = component.get("img");
+      expect(picture.attributes("src")).toContain("background.png");
+      expect(component.element.firstElementChild).toBe(picture.element);
+    });
+
+    test("a survey without a background picture draws its colour alone", async () => {
+      expect.hasAssertions();
+
+      const component = await mountSuspended(Runner, {
+        props: { document: createRootedDocument({ backgroundColor: "#112233" }) },
+      });
+
+      expect(component.find("img").exists()).toBe(false);
+      expect(component.attributes("style")).toBe("--ui-background: #112233;");
     });
   });
 });

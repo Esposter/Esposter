@@ -25,7 +25,7 @@ const createDocument = (imageLink: string, logo: string) =>
         type: SurveyNodeType.Page,
       },
     ],
-    root: { props: { logo } },
+    root: { props: { backgroundImage: "", logo } },
   });
 
 describe(useSurveyFiles, () => {
