@@ -2,3 +2,4 @@ schema: spec-driven
 affected_areas: [resource]
 x-model: claude-haiku-5-5
 skip_specs: true
+x-waiting: "1.1 to 1.4 wait on a session logged in to the dev and prod D1 and R2 stores with Cloudflare credentials (from Pulumi ESC), which no repository file holds, so the run is the owner's or a machine's that holds that access"
