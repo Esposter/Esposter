@@ -74,7 +74,8 @@ export const extractComponent = async (component: DerivedAssetComponent): Promis
       ({ block }) => block,
     ),
   );
-  // A capital's open world is derived before the closure, since the prefabs it places are roots the closure starts from
+  // A capital's or a sub-area's open world is derived before the closure, since the prefabs it places are roots the closure
+  // Starts from
   const derived = options.isCapitalWorld
     ? await deriveCapitalWorld(component, directory, dumpLayouts, cabMap)
     : undefined;

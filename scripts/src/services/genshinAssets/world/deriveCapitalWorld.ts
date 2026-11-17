@@ -25,12 +25,13 @@ import { getStreamBlobName } from "#src/services/genshinAssets/world/getStreamBl
 import { getTerrainTileNames } from "#src/services/genshinAssets/world/getTerrainTileNames";
 import { getWorldTileName } from "#src/services/genshinAssets/world/getWorldTileName";
 import { readAssetPathNames } from "#src/services/genshinAssets/world/readAssetPathNames";
-import { readCapitalWorldPlace } from "#src/services/genshinAssets/world/readCapitalWorldPlace";
 import { readCityAreas } from "#src/services/genshinAssets/world/readCityAreas";
+import { readDerivedWorldPlace } from "#src/services/genshinAssets/world/readDerivedWorldPlace";
 import { readDerivedPathNames } from "#src/services/genshinAssets/world/readDerivedPathNames";
 import { readLodPathHashes } from "#src/services/genshinAssets/world/readLodPathHashes";
 import { readPrefabBlocks } from "#src/services/genshinAssets/world/readPrefabBlocks";
 import { readStreamPlacements } from "#src/services/genshinAssets/world/readStreamPlacements";
+import { readSubareaArea } from "#src/services/genshinAssets/world/readSubareaArea";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
 import { resolvePrefabRoot } from "#src/services/genshinAssets/world/resolvePrefabRoot";
 import { selectCapitalPlacements } from "#src/services/genshinAssets/world/selectCapitalPlacements";
@@ -43,10 +44,11 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 // The placements those select (every one in view, and each architecture placement within the radius), each prefab of
 // Them rooted at the game object its name finds in the blocks that name its mesh or, for a building, hold its prefab
 // File (`readPrefabBlocks`) or, failing that, in any block dumped for the derivation (a game object's block need not
-// Index its own mesh), and the 2x2 of terrain tiles its capital stands in. Each step reads the game's own data (the asset index,
-// The CAB map, the blobs, the game's LOD table, the community's path names and the ones the asset index's own names
-// Hash to, the dumped layouts), so a region gives only its capital's place. Returns the block with the lines that
-// Report what did not resolve
+// Index its own mesh), and the 2x2 of terrain tiles its place stands in. A sub-area's place is its outline's centre, and
+// Its terrain is the tiles its outline reaches instead of the region's. Each step reads the game's own data (the asset
+// Index, the CAB map, the blobs, the game's LOD table, the community's path names and the ones the asset index's own
+// Names hash to, the dumped layouts), so a region or a sub-area gives only its own place. Returns the block with the
+// Lines that report what did not resolve
 export const deriveCapitalWorld = async (
   component: DerivedAssetComponent,
   directory: ComponentDirectory,
@@ -55,7 +57,8 @@ export const deriveCapitalWorld = async (
 ): Promise<{ lines: string[]; world: WorldOptions }> => {
   const windriseWorld = DerivedAssetComponentMap[DerivedAssetComponent.Windrise].world;
   if (!windriseWorld) throw new InvalidOperationError(Operation.Read, component, "has no origin to stand round");
-  const place = await readCapitalWorldPlace(component);
+  const place = await readDerivedWorldPlace(component);
+  const subarea = await readSubareaArea(component);
   const lines: string[] = [];
   // Each covered tile's blob and index, then those of every city area the view reaches, by the names their path hash and
   // Index name give. A city area's blob holds the props and buildings the tiles do not
@@ -64,7 +67,7 @@ export const deriveCapitalWorld = async (
   );
   const cityCodes = selectCityAreasInView(await readCityAreas(), place).map(({ code }) => code);
   lines.push(
-    `${cityCodes.length} city areas within ${ARCHITECTURE_VIEW_METRES} metres of the capital${cityCodes.length > 0 ? `: ${cityCodes.join(", ")}` : ""}`,
+    `${cityCodes.length} city areas within ${ARCHITECTURE_VIEW_METRES} metres of the place${cityCodes.length > 0 ? `: ${cityCodes.join(", ")}` : ""}`,
   );
   const streamNames = [...tileNames, ...cityCodes.map((code) => getCityStreamName(code))];
   const streamAssetNames = new Set(
@@ -157,12 +160,10 @@ export const deriveCapitalWorld = async (
       return prefab ? [{ prefab, prefabId }] : [];
     }),
   }));
-  // The terrain tiles the capital's 2x2 and every area outline reach, each TerrainData found in the blocks naming a tile
+  // The terrain tiles the place's 2x2 and every area outline reach, each TerrainData found in the blocks naming a tile
   const capitalTile = { column: Math.floor(place.x / TERRAIN_TILE_SIZE), row: Math.floor(place.z / TERRAIN_TILE_SIZE) };
-  const [groundPieceAreas, worldOrigin] = await Promise.all([
-    readGroundPieceAreas(component),
-    readWorldOrigin(component),
-  ]);
+  const groundPieceAreas = subarea ? [subarea] : await readGroundPieceAreas(component);
+  const worldOrigin = await readWorldOrigin(component);
   const terrainNames = getTerrainTileNames(capitalTile, groundPieceAreas, worldOrigin);
   const terrainAssets = await readIndexedAssets(
     ({ name }) => name.startsWith(TERRAIN_NAME_PREFIX),

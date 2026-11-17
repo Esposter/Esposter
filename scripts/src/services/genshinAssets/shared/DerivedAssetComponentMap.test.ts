@@ -63,4 +63,20 @@ describe("derived asset component map", () => {
       prefabId: 2_751_255_372,
     });
   });
+
+  test("a sub-area stands on its own ground", () => {
+    expect.hasAssertions();
+
+    expect(DerivedAssetComponentMap[DerivedAssetComponent.Dragonspine]).toStrictEqual({
+      isCapitalWorld: true,
+      roots: [],
+      screen: "WorldScreen",
+    });
+  });
+
+  test("a sub-area without a catalogued extent keeps its region's ground", () => {
+    expect.hasAssertions();
+
+    expect(Object.values(DerivedAssetComponent)).not.toContain("enkanomiya");
+  });
 });
