@@ -72,7 +72,6 @@
     "zod": "catalog:"
   },
   "inlinedDependencies": {
-    "tagged-tag": "1.0.0",
     "type-fest": "6.0.0"
   }
 }
