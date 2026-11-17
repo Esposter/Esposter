@@ -1,5 +1,6 @@
 import type { ButtonNode } from "#shared/models/pageBuilder/ButtonNode";
 
+import { ButtonTarget } from "#shared/models/pageBuilder/ButtonTarget";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { buttonNodeType } from "#shared/services/pageBuilder/buttonNodeType";
 import { TEST_ID, TEST_LABEL, TEST_ROOT, TEST_URL } from "#shared/services/pageBuilder/constants.test";
@@ -13,7 +14,16 @@ describe("buttonNodeType", () => {
 
     const result = webpageDocumentSchema.safeParse({
       content: [
-        { props: { href: " javascript:alert(1)", id: TEST_ID, label: TEST_LABEL }, type: WebpageNodeType.Button },
+        {
+          props: {
+            elementId: "",
+            href: " javascript:alert(1)",
+            id: TEST_ID,
+            label: TEST_LABEL,
+            target: ButtonTarget.SameTab,
+          },
+          type: WebpageNodeType.Button,
+        },
       ],
       root: TEST_ROOT,
     });
@@ -26,9 +36,24 @@ describe("buttonNodeType", () => {
 
     // The label is written as text and the link as an attribute, so each keeps the characters its own escape owns
     const buttons: ButtonNode[] = [
-      { props: { href: TEST_URL, id: TEST_ID, label: TEST_LABEL }, type: WebpageNodeType.Button },
-      { props: { href: `${TEST_URL}?a=1&b="2"`, id: TEST_ID, label: TEST_LABEL }, type: WebpageNodeType.Button },
-      { props: { href: TEST_URL, id: TEST_ID, label: "<b>&" }, type: WebpageNodeType.Button },
+      {
+        props: { elementId: "", href: TEST_URL, id: TEST_ID, label: TEST_LABEL, target: ButtonTarget.SameTab },
+        type: WebpageNodeType.Button,
+      },
+      {
+        props: {
+          elementId: "",
+          href: `${TEST_URL}?a=1&b="2"`,
+          id: TEST_ID,
+          label: TEST_LABEL,
+          target: ButtonTarget.SameTab,
+        },
+        type: WebpageNodeType.Button,
+      },
+      {
+        props: { elementId: "", href: TEST_URL, id: TEST_ID, label: "<b>&", target: ButtonTarget.SameTab },
+        type: WebpageNodeType.Button,
+      },
     ];
 
     expect(buttons.map((button) => serializeHtml([buttonNodeType.render(button)]))).toStrictEqual([
@@ -36,5 +61,47 @@ describe("buttonNodeType", () => {
       `<a class="button" href="${TEST_URL}?a=1&amp;b=&quot;2&quot;">${TEST_LABEL}</a>`,
       `<a class="button" href="${TEST_URL}">&lt;b&gt;&amp;</a>`,
     ]);
+  });
+
+  test("a same-tab button publishes no new-tab attribute", () => {
+    expect.hasAssertions();
+
+    const button: ButtonNode = {
+      props: { elementId: "", href: TEST_URL, id: TEST_ID, label: TEST_LABEL, target: ButtonTarget.SameTab },
+      type: WebpageNodeType.Button,
+    };
+
+    expect(serializeHtml([buttonNodeType.render(button)])).toBe(
+      `<a class="button" href="${TEST_URL}">${TEST_LABEL}</a>`,
+    );
+  });
+
+  test("a new-tab button publishes with a safe relationship", () => {
+    expect.hasAssertions();
+
+    const button: ButtonNode = {
+      props: { elementId: "", href: TEST_URL, id: TEST_ID, label: TEST_LABEL, target: ButtonTarget.NewTab },
+      type: WebpageNodeType.Button,
+    };
+
+    expect(serializeHtml([buttonNodeType.render(button)])).toBe(
+      `<a class="button" href="${TEST_URL}" rel="noopener" target="_blank">${TEST_LABEL}</a>`,
+    );
+  });
+
+  test("a target outside the two choices is refused on save", () => {
+    expect.hasAssertions();
+
+    const result = webpageDocumentSchema.safeParse({
+      content: [
+        {
+          props: { elementId: "", href: TEST_URL, id: TEST_ID, label: TEST_LABEL, target: "_top" },
+          type: WebpageNodeType.Button,
+        },
+      ],
+      root: TEST_ROOT,
+    });
+
+    expect(result.error?.issues.map(({ path }) => path)).toStrictEqual([["content", 0, "props", "target"]]);
   });
 });

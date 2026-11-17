@@ -14,7 +14,7 @@ describe("sectionNodeType", () => {
       SECTION_TAGS.map((tag) =>
         serializeHtml([
           sectionNodeType.render(
-            { props: { children: [], id: TEST_ID, tag }, type: WebpageNodeType.Section },
+            { props: { children: [], elementId: "", id: TEST_ID, tag }, type: WebpageNodeType.Section },
             { children: [] },
           ),
         ]),

@@ -8,10 +8,12 @@ import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { nodeStyleSchema } from "#shared/models/pageBuilder/NodeStyle";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { WEBPAGE_PLACEABLE_NODE_TYPES } from "#shared/services/pageBuilder/constants";
+import { elementIdSchema } from "#shared/services/pageBuilder/elementIdSchema";
+import { getTabPanelId } from "#shared/services/pageBuilder/getTabPanelId";
 import { nodeTextSchema } from "#shared/services/pageBuilder/nodeTextSchema";
 import { z } from "zod";
 
-const tabFormSchema = z.strictObject({ label: nodeTextSchema });
+const tabFormSchema = z.strictObject({ elementId: elementIdSchema, label: nodeTextSchema });
 const tabPropsSchema = z.object({ ...tabFormSchema.shape, style: nodeStyleSchema.optional() }) satisfies z.ZodType<
   OwnProps<TabNodeProps>
 >;
@@ -25,7 +27,7 @@ export const tabNodeType = {
   render: (node, slots) => ({
     attributes: {
       [HtmlAttributeName.AriaLabelledBy]: `${node.props.id}-tab`,
-      [HtmlAttributeName.Id]: `${node.props.id}-panel`,
+      [HtmlAttributeName.Id]: getTabPanelId(node),
       [HtmlAttributeName.Role]: "tabpanel",
     },
     children: slots.children,

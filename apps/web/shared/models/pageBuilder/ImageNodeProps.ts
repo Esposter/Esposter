@@ -5,6 +5,7 @@ import type { BlockNodeProps } from "vue-block-editor-headless";
 export interface ImageNodeProps extends BlockNodeProps {
   alt: string;
   decorative: boolean;
+  elementId: string;
   src: string;
   style?: NodeStyle | undefined;
 }

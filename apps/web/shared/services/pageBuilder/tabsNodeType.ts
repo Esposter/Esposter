@@ -6,6 +6,8 @@ import { HtmlAttributeName } from "#shared/models/pageBuilder/HtmlAttributeName"
 import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { containerPropsSchema } from "#shared/services/pageBuilder/containerPropsSchema";
+import { elementIdSchema } from "#shared/services/pageBuilder/elementIdSchema";
+import { getTabPanelId } from "#shared/services/pageBuilder/getTabPanelId";
 import { hidePanel } from "#shared/services/pageBuilder/hidePanel";
 import { z } from "zod";
 
@@ -52,20 +54,20 @@ export const tabsNodeType = {
   css: `.tabs [role="tablist"] { display: flex; gap: 0.25rem; border-bottom: 1px solid #ccc; }
 .tabs [role="tab"] { padding: 0.5rem 1rem; border: 0; background: none; cursor: pointer; }
 .tabs [role="tab"][aria-selected="true"] { font-weight: 600; }`,
-  formSchema: z.strictObject({}),
+  formSchema: z.strictObject({ elementId: elementIdSchema }),
   isFocusable: true,
   propsSchema: containerPropsSchema,
   render: (node, slots) => {
-    const buttons = node.props.children.map(({ props: { id, label } }, index): HtmlElement => ({
+    const buttons = node.props.children.map((tab, index): HtmlElement => ({
       attributes: {
-        [HtmlAttributeName.AriaControls]: `${id}-panel`,
+        [HtmlAttributeName.AriaControls]: getTabPanelId(tab),
         [HtmlAttributeName.AriaSelected]: String(index === 0),
-        [HtmlAttributeName.Id]: `${id}-tab`,
+        [HtmlAttributeName.Id]: `${tab.props.id}-tab`,
         [HtmlAttributeName.Role]: "tab",
         [HtmlAttributeName.Tabindex]: index === 0 ? "0" : "-1",
         [HtmlAttributeName.Type]: "button",
       },
-      children: [label],
+      children: [tab.props.label],
       tag: HtmlTag.Button,
     }));
     const panels = slots.children.map((panel, index) => (index === 0 ? panel : hidePanel(panel)));

@@ -29,6 +29,7 @@ describe("pageBuilderCanvas", () => {
         {
           props: {
             content: { content: [{ content: [{ text: "a", type: "text" }], type: "paragraph" }], type: "doc" },
+            elementId: "",
             id: TEST_OTHER_ID,
           },
           type: WebpageNodeType.Text,

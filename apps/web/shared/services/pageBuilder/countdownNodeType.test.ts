@@ -22,7 +22,7 @@ const endsAtOf = (year: number, month: number, day: number) => {
 };
 
 const createCountdown = (endsAt: string, endText = TEST_LABEL): CountdownNode => ({
-  props: { endsAt, endText, id: TEST_ID },
+  props: { elementId: "", endsAt, endText, id: TEST_ID },
   type: WebpageNodeType.Countdown,
 });
 

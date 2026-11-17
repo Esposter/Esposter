@@ -1,4 +1,5 @@
 // @vitest-environment nuxt
+import { ButtonTarget } from "#shared/models/pageBuilder/ButtonTarget";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import {
   createTestImageNode,
@@ -25,7 +26,12 @@ describe("pageBuilderStylePanel", () => {
     const resourceId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
-      content: [{ props: { href: TEST_URL, id: TEST_ID, label: TEST_LABEL }, type: WebpageNodeType.Button }],
+      content: [
+        {
+          props: { elementId: "", href: TEST_URL, id: TEST_ID, label: TEST_LABEL, target: ButtonTarget.SameTab },
+          type: WebpageNodeType.Button,
+        },
+      ],
       root: TEST_ROOT,
     });
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();

@@ -5,5 +5,6 @@ import type { BlockNodeProps } from "vue-block-editor-headless";
 // The props a Tabs node holds: the style it is drawn with and its tabs, in order
 export interface TabsNodeProps extends BlockNodeProps {
   children: TabNode[];
+  elementId: string;
   style?: NodeStyle | undefined;
 }

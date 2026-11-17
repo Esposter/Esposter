@@ -1,0 +1,21 @@
+# Tasks
+
+## 1. The button's target
+
+- [x] 1.1 Add the new-tab choice to the button and render its target, with the safe relationship a new-tab link always carries. Verify: tests named after the scenarios 'A same-tab button publishes no new-tab attribute', and 'A new-tab button publishes with a safe relationship' written first and seen failing.
+- [x] 1.2 Refuse a target outside the two choices on save. Verify: a test named after the scenario 'A target outside the two choices is refused on save' written first and seen failing.
+
+## 2. The element id
+
+- [x] 2.1 Add an element id to every webpage node and write it onto the node's published element, leaving out an empty id. Verify: tests named after the scenarios 'An element id links to its element from a button' and 'An empty element id publishes no id' written first and seen failing.
+- [x] 2.2 Refuse on save an element id that does not take a node id's characters and length, and two nodes that share one element id. Verify: tests named after the scenarios 'An element id with an unreachable character is refused on save' and 'Two nodes with one element id are refused on save' written first and seen failing.
+- [x] 2.3 Give a tab with an element id the panel its button controls, the one id both name. Verify: a test named after the scenario 'A tab with an element id still opens its panel' written first and seen failing.
+
+## 3. The Content panel
+
+- [x] 3.1 Edit the button's new-tab choice in the Content panel. Verify: a test named after the scenario 'The Content panel sets a button to open in a new tab' written first and seen failing.
+- [x] 3.2 Edit a node's element id in the Content panel. Verify: a test named after the scenario 'The Content panel sets an element id' written first and seen failing.
+
+## 4. The record
+
+- [x] 4.1 Update the document model design's webpage node types and the canvas design's Content panel paragraph to name the new fields as built. Verify: `pnpm exec openspec validate resource-webpage-node-attributes --strict --no-interactive` passes.

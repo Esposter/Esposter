@@ -10,12 +10,14 @@ import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { checkIsRealEndsAt } from "#shared/services/pageBuilder/checkIsRealEndsAt";
 import { MAX_NODE_TEXT_LENGTH } from "#shared/services/pageBuilder/constants";
 import { createCountdownUnit } from "#shared/services/pageBuilder/createCountdownUnit";
+import { elementIdSchema } from "#shared/services/pageBuilder/elementIdSchema";
 import { z } from "zod";
 
 // A date, or a date and a time, in the form the editor's inputs write
 const ENDS_AT_REGEX = /^(?<year>\d{4})-(?<month>\d{2})-(?<day>\d{2})(?:T(?<hour>\d{2}):(?<minute>\d{2}))?$/u;
 
 const countdownFormSchema = z.strictObject({
+  elementId: elementIdSchema,
   endsAt: z.string().regex(ENDS_AT_REGEX).refine(checkIsRealEndsAt, { error: "is not a real date and time" }),
   endText: z.string().max(MAX_NODE_TEXT_LENGTH),
 });

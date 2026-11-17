@@ -4,6 +4,7 @@ import type { EmailDocument } from "#src/models/pageBuilder/EmailDocument";
 import type { ResourcePublicationInResource } from "@esposter/db-schema";
 import type { MjmlColumnNode } from "mjml-blocks";
 
+import { ButtonTarget } from "#shared/models/pageBuilder/ButtonTarget";
 import { EmailNodeType } from "#shared/models/pageBuilder/EmailNodeType";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { NO_SURVEY_ID } from "#shared/services/pageBuilder/constants";
@@ -38,11 +39,16 @@ import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 const createButtonDocument = (): WebpageDocument => ({
-  content: [{ props: { href: TEST_URL, id: TEST_ID, label: TEST_LABEL }, type: WebpageNodeType.Button }],
+  content: [
+    {
+      props: { elementId: "", href: TEST_URL, id: TEST_ID, label: TEST_LABEL, target: ButtonTarget.SameTab },
+      type: WebpageNodeType.Button,
+    },
+  ],
   root: TEST_ROOT,
 });
 const createSurveyInviteDocument = (surveyId: string): WebpageDocument => ({
-  content: [{ props: { id: TEST_ID, label: TEST_LABEL, surveyId }, type: WebpageNodeType.SurveyInvite }],
+  content: [{ props: { elementId: "", id: TEST_ID, label: TEST_LABEL, surveyId }, type: WebpageNodeType.SurveyInvite }],
   root: TEST_ROOT,
 });
 // An email's invite sits in a column, as the email's document schema requires
@@ -93,7 +99,10 @@ describe("pageBuilderContentPanel", () => {
     const document = webpageDocumentSchema.parse(pageBuilderDocumentStore.getDocument(resourceId));
 
     expect(document.content).toStrictEqual([
-      { props: { href: TEST_URL, id: TEST_ID, label: "a" }, type: WebpageNodeType.Button },
+      {
+        props: { elementId: "", href: TEST_URL, id: TEST_ID, label: "a", target: ButtonTarget.SameTab },
+        type: WebpageNodeType.Button,
+      },
     ]);
     const canvas = mount(
       defineComponent({ render: () => h("div", renderCanvasVNodes(webpageKind, document, TEST_CONTEXT)) }),
@@ -288,6 +297,59 @@ describe("pageBuilderContentPanel", () => {
     expect(component.get('[role="status"]').text()).toBe("A survey must be published before it can be chosen");
     expect(component.findComponent({ name: "UiSelect" }).props("items")).toStrictEqual([]);
     expect(pageBuilderDocumentStore.getDocument(resourceId)?.content).toStrictEqual(document.content);
+
+    component.unmount();
+  });
+
+  test("the Content panel sets a button to open in a new tab", async () => {
+    expect.hasAssertions();
+
+    const resourceId = v7();
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, createButtonDocument());
+    const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ID);
+    const component = await mountSuspended(PageBuilderContentPanel, { props: { kind: webpageKind, resourceId } });
+
+    component
+      .getComponent(UiSchemaForm)
+      .vm.$emit("update:modelValue", { elementId: "", href: TEST_URL, label: TEST_LABEL, target: ButtonTarget.NewTab });
+
+    expect(pageBuilderDocumentStore.getDocument(resourceId)?.content).toStrictEqual([
+      {
+        props: { elementId: "", href: TEST_URL, id: TEST_ID, label: TEST_LABEL, target: ButtonTarget.NewTab },
+        type: WebpageNodeType.Button,
+      },
+    ]);
+
+    component.unmount();
+  });
+
+  test("the Content panel sets an element id", async () => {
+    expect.hasAssertions();
+
+    const resourceId = v7();
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, createButtonDocument());
+    const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ID);
+    const component = await mountSuspended(PageBuilderContentPanel, { props: { kind: webpageKind, resourceId } });
+
+    component
+      .getComponent(UiSchemaForm)
+      .vm.$emit("update:modelValue", {
+        elementId: "a",
+        href: TEST_URL,
+        label: TEST_LABEL,
+        target: ButtonTarget.SameTab,
+      });
+
+    expect(pageBuilderDocumentStore.getDocument(resourceId)?.content).toStrictEqual([
+      {
+        props: { elementId: "a", href: TEST_URL, id: TEST_ID, label: TEST_LABEL, target: ButtonTarget.SameTab },
+        type: WebpageNodeType.Button,
+      },
+    ]);
 
     component.unmount();
   });

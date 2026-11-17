@@ -1,3 +1,4 @@
+import { ButtonTarget } from "#shared/models/pageBuilder/ButtonTarget";
 import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { buttonNodeType } from "#shared/services/pageBuilder/buttonNodeType";
@@ -15,9 +16,22 @@ describe(getPresentDefinitions, () => {
         {
           props: {
             children: [
-              { props: { href: TEST_URL, id: TEST_ID, label: TEST_LABEL }, type: WebpageNodeType.Button },
-              { props: { href: TEST_URL, id: TEST_OTHER_ID, label: TEST_LABEL }, type: WebpageNodeType.Button },
+              {
+                props: { elementId: "", href: TEST_URL, id: TEST_ID, label: TEST_LABEL, target: ButtonTarget.SameTab },
+                type: WebpageNodeType.Button,
+              },
+              {
+                props: {
+                  elementId: "",
+                  href: TEST_URL,
+                  id: TEST_OTHER_ID,
+                  label: TEST_LABEL,
+                  target: ButtonTarget.SameTab,
+                },
+                type: WebpageNodeType.Button,
+              },
             ],
+            elementId: "",
             id: TEST_ID,
             tag: HtmlTag.Section,
           },

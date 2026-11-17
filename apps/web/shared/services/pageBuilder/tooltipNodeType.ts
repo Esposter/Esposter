@@ -7,10 +7,11 @@ import { HtmlAttributeName } from "#shared/models/pageBuilder/HtmlAttributeName"
 import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { nodeStyleSchema } from "#shared/models/pageBuilder/NodeStyle";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
+import { elementIdSchema } from "#shared/services/pageBuilder/elementIdSchema";
 import { nodeTextSchema } from "#shared/services/pageBuilder/nodeTextSchema";
 import { z } from "zod";
 
-const tooltipFormSchema = z.strictObject({ label: nodeTextSchema, text: nodeTextSchema });
+const tooltipFormSchema = z.strictObject({ elementId: elementIdSchema, label: nodeTextSchema, text: nodeTextSchema });
 const tooltipPropsSchema = z.object({
   ...tooltipFormSchema.shape,
   style: nodeStyleSchema.optional(),

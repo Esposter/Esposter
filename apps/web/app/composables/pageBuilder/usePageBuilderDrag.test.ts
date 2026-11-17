@@ -25,7 +25,7 @@ import { describe, expect, onTestFinished, test, vi } from "vitest";
 import { getBlockNode } from "vue-block-editor-headless";
 
 const createText = (id: string): TextNode => ({
-  props: { content: TEST_TEXT_CONTENT, id },
+  props: { content: TEST_TEXT_CONTENT, elementId: "", id },
   type: WebpageNodeType.Text,
 });
 
@@ -79,10 +79,11 @@ describe(usePageBuilderDrag, () => {
         props: {
           children: [
             {
-              props: { children: [createText(TEXT_ONE), createText(TEXT_TWO)], id: v7() },
+              props: { children: [createText(TEXT_ONE), createText(TEXT_TWO)], elementId: "", id: v7() },
               type: WebpageNodeType.Column,
             },
           ],
+          elementId: "",
           id: v7(),
         },
         type: WebpageNodeType.Columns,
@@ -265,7 +266,7 @@ describe(usePageBuilderDrag, () => {
     const document = pageBuilderDocumentStore.getDocument(RESOURCE_ID);
 
     expect(document && getBlockNode(document, `${COLUMN_SLOT}/1`, webpageKind.children)).toStrictEqual({
-      props: { id: insertedId, label: "Survey", surveyId: NO_SURVEY_ID },
+      props: { elementId: "", id: insertedId, label: "Survey", surveyId: NO_SURVEY_ID },
       type: WebpageNodeType.SurveyInvite,
     });
   });

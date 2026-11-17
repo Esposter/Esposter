@@ -1,3 +1,4 @@
+import { ButtonTarget } from "#shared/models/pageBuilder/ButtonTarget";
 import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { StyleBreakpoint } from "#shared/models/pageBuilder/StyleBreakpoint";
 import { StyleState } from "#shared/models/pageBuilder/StyleState";
@@ -18,11 +19,19 @@ describe("webpageNodeSchema", () => {
     // One node of every webpage type, each holding the props the editors store, its style included
     const result = z.array(webpageNodeSchema).safeParse([
       {
-        props: { href: "https://example.com/", id: "button", label: "Button", style: STYLE },
+        props: {
+          elementId: "",
+          href: "https://example.com/",
+          id: "button",
+          label: "Button",
+          style: STYLE,
+          target: ButtonTarget.SameTab,
+        },
         type: WebpageNodeType.Button,
       },
       {
         props: {
+          elementId: "",
           endsAt: Temporal.Instant.fromEpochMilliseconds(0).toZonedDateTimeISO("UTC").toPlainDate().toString(),
           endText: "",
           id: "countdown",
@@ -30,9 +39,16 @@ describe("webpageNodeSchema", () => {
         },
         type: WebpageNodeType.Countdown,
       },
-      { props: { html: "", id: "custom-html", style: STYLE }, type: WebpageNodeType.CustomHtml },
+      { props: { elementId: "", html: "", id: "custom-html", style: STYLE }, type: WebpageNodeType.CustomHtml },
       {
-        props: { alt: "Image", decorative: false, id: "image", src: "https://example.com/", style: STYLE },
+        props: {
+          alt: "Image",
+          decorative: false,
+          elementId: "",
+          id: "image",
+          src: "https://example.com/",
+          style: STYLE,
+        },
         type: WebpageNodeType.Image,
       },
       {
@@ -40,7 +56,10 @@ describe("webpageNodeSchema", () => {
           children: [
             {
               props: {
-                children: [{ props: { children: [], id: "column", style: STYLE }, type: WebpageNodeType.Column }],
+                children: [
+                  { props: { children: [], elementId: "", id: "column", style: STYLE }, type: WebpageNodeType.Column },
+                ],
+                elementId: "",
                 id: "columns",
                 style: STYLE,
               },
@@ -49,14 +68,19 @@ describe("webpageNodeSchema", () => {
             {
               props: {
                 children: [
-                  { props: { children: [], id: "tab", label: "Tab", style: STYLE }, type: WebpageNodeType.Tab },
+                  {
+                    props: { children: [], elementId: "", id: "tab", label: "Tab", style: STYLE },
+                    type: WebpageNodeType.Tab,
+                  },
                 ],
+                elementId: "",
                 id: "tabs",
                 style: STYLE,
               },
               type: WebpageNodeType.Tabs,
             },
           ],
+          elementId: "",
           id: "section",
           style: STYLE,
           tag: HtmlTag.Section,
@@ -64,17 +88,20 @@ describe("webpageNodeSchema", () => {
         type: WebpageNodeType.Section,
       },
       {
-        props: { id: "survey-invite", label: "Survey", style: STYLE, surveyId: NO_SURVEY_ID },
+        props: { elementId: "", id: "survey-invite", label: "Survey", style: STYLE, surveyId: NO_SURVEY_ID },
         type: WebpageNodeType.SurveyInvite,
       },
       {
-        props: { content: { content: [{ type: "paragraph" }], type: "doc" }, id: "text", style: STYLE },
+        props: { content: { content: [{ type: "paragraph" }], type: "doc" }, elementId: "", id: "text", style: STYLE },
         type: WebpageNodeType.Text,
       },
-      { props: { id: "tooltip", label: "Tooltip", style: STYLE, text: "Tooltip" }, type: WebpageNodeType.Tooltip },
-      { props: { id: "typed-text", style: STYLE, texts: ["Text"] }, type: WebpageNodeType.TypedText },
       {
-        props: { id: "video", src: "https://example.com/", style: STYLE, title: "Video" },
+        props: { elementId: "", id: "tooltip", label: "Tooltip", style: STYLE, text: "Tooltip" },
+        type: WebpageNodeType.Tooltip,
+      },
+      { props: { elementId: "", id: "typed-text", style: STYLE, texts: ["Text"] }, type: WebpageNodeType.TypedText },
+      {
+        props: { elementId: "", id: "video", src: "https://example.com/", style: STYLE, title: "Video" },
         type: WebpageNodeType.Video,
       },
     ]);

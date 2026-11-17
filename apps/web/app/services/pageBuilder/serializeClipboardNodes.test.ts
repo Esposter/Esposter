@@ -9,7 +9,10 @@ import { webpageKind } from "#src/services/pageBuilder/webpageKind";
 import { describe, expect, test } from "vitest";
 
 describe(serializeClipboardNodes, () => {
-  const TEST_NODE: WebpageNode = { props: { content: TEST_TEXT_CONTENT, id: TEST_ID }, type: WebpageNodeType.Text };
+  const TEST_NODE: WebpageNode = {
+    props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_ID },
+    type: WebpageNodeType.Text,
+  };
 
   test("a serialized node parses back to the same editor and nodes", () => {
     expect.hasAssertions();

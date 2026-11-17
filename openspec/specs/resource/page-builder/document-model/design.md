@@ -59,6 +59,8 @@ Each type's contract makes its published output accessible by construction rathe
 
 Every URL prop passes `checkIsAllowedUrl` in its schema, so a `javascript:` address is refused at save, including behind a leading space or another case. Custom HTML is stored raw, with no cleaning at save, and `sanitizeHtml` cleans it where it is rendered for publish, so whatever was stored is cleaned on the way out. Custom HTML is the one type whose stored markup is raw.
 
+Every webpage node holds an element id, which its published element carries as its `id` so a fragment link reaches it. An empty element id names no element and publishes no id. A tab's panel takes the tab's element id when it has one, and the tab's button controls that same id. A non-empty one takes the node id's length and characters, and the document refuses an element id that an earlier node holds, in any slot, since a link goes to the first element with that id. A Button holds a target, the same tab or a new tab; a new-tab link publishes with `target="_blank"` and `rel="noopener"`, and a same-tab link names no target. An email's survey invite holds no element id, since an email has no fragment for a link to reach.
+
 ## Rendering
 
 `render` returns a small element tree, a tag, typed attributes and children, or raw HTML the serialiser writes as it is. One serialiser, `serializeHtml`, turns a tree into HTML and escapes every text node and attribute value through the shared sanitiser's `escapeText` and `escapeAttribute`. Attribute names come from a typed set with no event handler in it. A render's context is the site's origin, which the survey invite's link to the published survey is written against.
@@ -101,6 +103,10 @@ The document store, `usePageBuilderDocumentStore`, holds each open document unde
 | `apps/web/shared/services/pageBuilder/webpageRegistry.ts`                      | the webpage registry                                                                                |
 | `apps/web/shared/services/pageBuilder/webpageNodeChildren.ts`                  | the webpage's children port, one exhaustive switch over its node types                              |
 | `apps/web/shared/services/pageBuilder/webpageNodeSchema.ts`                    | the webpage's node union, built statically from one schema per node type                            |
+| `apps/web/shared/models/pageBuilder/ButtonTarget.ts`                           | the button's target, the same tab or a new tab                                                      |
+| `apps/web/shared/services/pageBuilder/elementIdSchema.ts`                      | the element id every webpage node holds, the node id's length and characters, or empty              |
+| `apps/web/shared/services/pageBuilder/getTabPanelId.ts`                        | the id a tab's panel and the button that controls it both take                                      |
+| `apps/web/shared/services/pageBuilder/checkWebpageElementIds.ts`               | the walk that refuses an element id an earlier node holds                                           |
 | `apps/web/shared/services/pageBuilder/webpageDocumentSchema.ts`                | the webpage's document schema                                                                       |
 | `apps/web/shared/services/pageBuilder/renderWebpageDocument.ts`                | the webpage renderer                                                                                |
 | `apps/web/shared/services/pageBuilder/serializeHtml.ts`                        | the serialiser every render goes through                                                            |

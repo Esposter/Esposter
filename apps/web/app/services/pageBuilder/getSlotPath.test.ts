@@ -17,14 +17,16 @@ describe(getSlotPath, () => {
             {
               props: {
                 children: [
-                  { props: { children: [], id: TEST_ID }, type: WebpageNodeType.Column },
-                  { props: { children: [], id: TEST_OTHER_ID }, type: WebpageNodeType.Column },
+                  { props: { children: [], elementId: "", id: TEST_ID }, type: WebpageNodeType.Column },
+                  { props: { children: [], elementId: "", id: TEST_OTHER_ID }, type: WebpageNodeType.Column },
                 ],
+                elementId: "",
                 id: TEST_THIRD_ID,
               },
               type: WebpageNodeType.Columns,
             },
           ],
+          elementId: "",
           id: TEST_SECTION_ID,
           tag: HtmlTag.Section,
         },

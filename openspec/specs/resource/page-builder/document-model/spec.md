@@ -162,3 +162,60 @@ The registry's slot lists SHALL equal the child types the node schema accepts in
 - **GIVEN** the webpage registry and its static node schema
 - **WHEN** each slot's list is compared with the tags the schema accepts in that slot
 - **THEN** every slot's list equals its accepted tags
+
+### Requirement: A webpage button opens its link in the same tab or a new tab
+
+A webpage button SHALL open its link in the same tab or in a new tab, as its target chooses.
+
+#### Scenario: A same-tab button publishes no new-tab attribute
+
+- **GIVEN** a webpage button whose target is the same tab
+- **WHEN** the webpage is published
+- **THEN** the published link has no target attribute
+
+#### Scenario: A new-tab button publishes with a safe relationship
+
+- **GIVEN** a webpage button whose target is a new tab
+- **WHEN** the webpage is published
+- **THEN** the published link opens in a new tab
+- **AND** its relationship is noopener
+
+#### Scenario: A target outside the two choices is refused on save
+
+- **GIVEN** a webpage button whose target names a window other than the same tab or a new tab
+- **WHEN** the owner saves the document
+- **THEN** the save is refused
+
+### Requirement: A webpage node takes an element id
+
+A webpage node SHALL take an element id, which its published element carries. An element id SHALL take the characters and the length a node id takes.
+
+#### Scenario: An element id links to its element from a button
+
+- **GIVEN** a section with the element id pricing and a button whose address is the fragment pricing
+- **WHEN** the reader follows the button
+- **THEN** the page moves to the section
+
+#### Scenario: An empty element id publishes no id
+
+- **GIVEN** a node whose element id is empty
+- **WHEN** the webpage is published
+- **THEN** the published element carries no id attribute
+
+#### Scenario: An element id with an unreachable character is refused on save
+
+- **GIVEN** a node whose element id holds a space or a hash
+- **WHEN** the owner saves the document
+- **THEN** the save is refused
+
+#### Scenario: Two nodes with one element id are refused on save
+
+- **GIVEN** two nodes in one webpage with the element id pricing
+- **WHEN** the owner saves the document
+- **THEN** the save is refused
+
+#### Scenario: A tab with an element id still opens its panel
+
+- **GIVEN** a tab with the element id pricing in a set of tabs
+- **WHEN** the webpage is published
+- **THEN** the tab's button controls the element carrying the id pricing

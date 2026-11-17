@@ -24,7 +24,7 @@ vi.mock(import("#src/services/pageBuilder/refuseClipboardPaste"), async (importO
 });
 
 const createTextNode = (id: string): TextNode => ({
-  props: { content: TEST_TEXT_CONTENT, id },
+  props: { content: TEST_TEXT_CONTENT, elementId: "", id },
   type: WebpageNodeType.Text,
 });
 
@@ -102,7 +102,7 @@ describe(usePageBuilderClipboard, () => {
     const pastedNode = pageBuilderDocumentStore.getDocument(targetId)?.content[0];
 
     expect(pastedNode).toStrictEqual({
-      props: { content: TEST_TEXT_CONTENT, id: pastedNode?.props.id },
+      props: { content: TEST_TEXT_CONTENT, elementId: "", id: pastedNode?.props.id },
       type: WebpageNodeType.Text,
     });
     expect(pastedNode?.props.id).not.toBe(TEST_ROOT_TEXT_ID);

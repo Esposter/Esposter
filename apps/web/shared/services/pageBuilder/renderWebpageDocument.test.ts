@@ -1,3 +1,4 @@
+import { ButtonTarget } from "#shared/models/pageBuilder/ButtonTarget";
 import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { StyleBreakpoint } from "#shared/models/pageBuilder/StyleBreakpoint";
 import { StyleState } from "#shared/models/pageBuilder/StyleState";
@@ -27,8 +28,18 @@ describe(renderWebpageDocument, () => {
           {
             props: {
               children: [
-                { props: { href: TEST_URL, id: TEST_OTHER_ID, label: TEST_LABEL }, type: WebpageNodeType.Button },
+                {
+                  props: {
+                    elementId: "",
+                    href: TEST_URL,
+                    id: TEST_OTHER_ID,
+                    label: TEST_LABEL,
+                    target: ButtonTarget.SameTab,
+                  },
+                  type: WebpageNodeType.Button,
+                },
               ],
+              elementId: "",
               id: TEST_ID,
               tag: HtmlTag.Section,
             },
@@ -59,10 +70,12 @@ describe(renderWebpageDocument, () => {
         content: [
           {
             props: {
+              elementId: "",
               href: TEST_URL,
               id: TEST_ID,
               label: TEST_LABEL,
               style: { [StyleBreakpoint.Base]: { [StyleState.Default]: { color: "red" } } },
+              target: ButtonTarget.SameTab,
             },
             type: WebpageNodeType.Button,
           },
@@ -88,8 +101,14 @@ describe(renderWebpageDocument, () => {
         {
           content: [
             {
-              // oxlint-disable-next-line no-script-url -- the render is shown refusing this URL
-              props: { href: "javascript:alert(1)", id: TEST_ID, label: TEST_LABEL },
+              props: {
+                elementId: "",
+                // oxlint-disable-next-line no-script-url -- the render is shown refusing this URL
+                href: "javascript:alert(1)",
+                id: TEST_ID,
+                label: TEST_LABEL,
+                target: ButtonTarget.SameTab,
+              },
               type: WebpageNodeType.Button,
             },
           ],
@@ -122,10 +141,12 @@ describe(renderWebpageDocument, () => {
           content: [
             {
               props: {
+                elementId: "",
                 href: TEST_URL,
                 id: TEST_ID,
                 label: TEST_LABEL,
                 style: { [StyleBreakpoint.Base]: { [StyleState.Default]: { color: "red}</style><script>alert(1)" } } },
+                target: ButtonTarget.SameTab,
               },
               type: WebpageNodeType.Button,
             },
@@ -177,5 +198,97 @@ describe(renderWebpageDocument, () => {
     expect(positions).toStrictEqual(
       positions.toSorted((earlierPosition, laterPosition) => earlierPosition - laterPosition),
     );
+  });
+
+  test("an element id links to its element from a button", () => {
+    expect.hasAssertions();
+
+    const html = renderWebpageDocument(
+      {
+        content: [
+          {
+            props: {
+              children: [
+                {
+                  props: { elementId: "", href: "#a", id: TEST_OTHER_ID, label: TEST_LABEL, target: "_self" },
+                  type: WebpageNodeType.Button,
+                },
+              ],
+              elementId: "a",
+              id: TEST_ID,
+              tag: HtmlTag.Section,
+            },
+            type: WebpageNodeType.Section,
+          },
+        ],
+        root: TEST_ROOT,
+      },
+      TEST_CONTEXT,
+    );
+
+    expect(html.slice(html.indexOf("<body>"))).toBe(
+      `<body><section class="section" id="a"><a class="button" href="#a">${TEST_LABEL}</a></section></body></html>`,
+    );
+  });
+
+  test("an empty element id publishes no id", () => {
+    expect.hasAssertions();
+
+    const html = renderWebpageDocument(
+      {
+        content: [
+          {
+            props: {
+              children: [
+                {
+                  props: { elementId: "", href: TEST_URL, id: TEST_OTHER_ID, label: TEST_LABEL, target: "_self" },
+                  type: WebpageNodeType.Button,
+                },
+              ],
+              elementId: "",
+              id: TEST_ID,
+              tag: HtmlTag.Section,
+            },
+            type: WebpageNodeType.Section,
+          },
+        ],
+        root: TEST_ROOT,
+      },
+      TEST_CONTEXT,
+    );
+
+    expect(html.slice(html.indexOf("<body>"))).toBe(
+      `<body><section class="section"><a class="button" href="${TEST_URL}">${TEST_LABEL}</a></section></body></html>`,
+    );
+  });
+
+  test("a tab with an element id still opens its panel", () => {
+    expect.hasAssertions();
+
+    const html = renderWebpageDocument(
+      {
+        content: [
+          {
+            props: {
+              children: [
+                {
+                  props: { children: [], elementId: "a", id: TEST_OTHER_ID, label: TEST_LABEL },
+                  type: WebpageNodeType.Tab,
+                },
+              ],
+              elementId: "",
+              id: TEST_ID,
+            },
+            type: WebpageNodeType.Tabs,
+          },
+        ],
+        root: TEST_ROOT,
+      },
+      TEST_CONTEXT,
+    );
+    const controls = /aria-controls="(?<id>[^"]*)"/u.exec(html)?.groups?.id;
+    const panelId = /id="(?<id>[^"]*)" role="tabpanel"/u.exec(html)?.groups?.id;
+
+    expect({ controls, panelId }).toStrictEqual({ controls: "a", panelId: "a" });
   });
 });

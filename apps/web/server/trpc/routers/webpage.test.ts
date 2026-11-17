@@ -148,7 +148,12 @@ describe("webpageRouter", () => {
     const newResource = await caller.createResource({ name });
     await caller.saveResourceContent({
       content: new WebpageEditor({
-        content: [{ props: { id: v7(), label: name, surveyId: newSurvey.id }, type: WebpageNodeType.SurveyInvite }],
+        content: [
+          {
+            props: { elementId: "", id: v7(), label: name, surveyId: newSurvey.id },
+            type: WebpageNodeType.SurveyInvite,
+          },
+        ],
       }),
       contentVersion: newResource.contentVersion,
       id: newResource.id,

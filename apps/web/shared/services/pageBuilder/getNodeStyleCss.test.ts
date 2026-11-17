@@ -1,6 +1,7 @@
 import type { ButtonNode } from "#shared/models/pageBuilder/ButtonNode";
 import type { NodeStyle } from "#shared/models/pageBuilder/NodeStyle";
 
+import { ButtonTarget } from "#shared/models/pageBuilder/ButtonTarget";
 import { StyleBreakpoint } from "#shared/models/pageBuilder/StyleBreakpoint";
 import { StyleState } from "#shared/models/pageBuilder/StyleState";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
@@ -11,7 +12,7 @@ import { describe, expect, test } from "vitest";
 
 // A button node with the given id, holding the style when one is given
 const createButtonNode = (id: string, style?: NodeStyle): ButtonNode => ({
-  props: { href: TEST_URL, id, label: TEST_LABEL, style },
+  props: { elementId: "", href: TEST_URL, id, label: TEST_LABEL, style, target: ButtonTarget.SameTab },
   type: WebpageNodeType.Button,
 });
 

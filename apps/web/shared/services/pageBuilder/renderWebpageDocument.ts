@@ -26,17 +26,15 @@ export const renderWebpageDocument = (input: WebpageDocument, context: RenderCon
     webpageNodeChildren,
     (node, definition, slots) => {
       const rendered = renderWebpageNode(node, slots, context);
-      if (getNodeStyleCss(node, definition) === "" || typeof rendered === "string" || !("tag" in rendered))
-        return rendered;
+      if (typeof rendered === "string" || !("tag" in rendered)) return rendered;
 
-      return {
-        ...rendered,
-        attributes: {
-          ...rendered.attributes,
-          [HtmlAttributeName.Class]:
-            `${rendered.attributes[HtmlAttributeName.Class] ?? ""} ${getNodeStyleClass(node)}`.trim(),
-        },
-      };
+      const attributes = { ...rendered.attributes };
+      if (getNodeStyleCss(node, definition) !== "")
+        attributes[HtmlAttributeName.Class] =
+          `${attributes[HtmlAttributeName.Class] ?? ""} ${getNodeStyleClass(node)}`.trim();
+      // An element id is written only when the author gave one, so a node with none publishes no id attribute
+      if (node.props.elementId) attributes[HtmlAttributeName.Id] = node.props.elementId;
+      return { ...rendered, attributes };
     },
   );
   const definitions = getPresentDefinitions(document);

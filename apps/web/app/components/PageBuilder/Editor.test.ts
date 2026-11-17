@@ -1,6 +1,7 @@
 // @vitest-environment nuxt
 import type { ResourceListPage } from "#shared/models/resource/ResourceListPage";
 
+import { ButtonTarget } from "#shared/models/pageBuilder/ButtonTarget";
 import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { PageBuilderDevice } from "#shared/models/pageBuilder/PageBuilderDevice";
 import { StyleBreakpoint } from "#shared/models/pageBuilder/StyleBreakpoint";
@@ -99,7 +100,13 @@ describe("pageBuilderEditor", () => {
       content: [
         {
           props: {
-            children: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_NESTED_TEXT_ID }, type: WebpageNodeType.Text }],
+            children: [
+              {
+                props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_NESTED_TEXT_ID },
+                type: WebpageNodeType.Text,
+              },
+            ],
+            elementId: "",
             id: TEST_SECTION_ID,
             tag: HtmlTag.Section,
           },
@@ -136,7 +143,9 @@ describe("pageBuilderEditor", () => {
 
     const resourceId = v7();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
-      content: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text }],
+      content: [
+        { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
+      ],
       root: TEST_ROOT,
     });
     pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
@@ -170,7 +179,9 @@ describe("pageBuilderEditor", () => {
 
     const resourceId = v7();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
-      content: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text }],
+      content: [
+        { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
+      ],
       root: TEST_ROOT,
     });
     pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
@@ -193,7 +204,9 @@ describe("pageBuilderEditor", () => {
 
     const resourceId = v7();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
-      content: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text }],
+      content: [
+        { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
+      ],
       root: TEST_ROOT,
     });
     pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
@@ -220,7 +233,9 @@ describe("pageBuilderEditor", () => {
 
     const resourceId = v7();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
-      content: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text }],
+      content: [
+        { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
+      ],
       root: TEST_ROOT,
     });
     pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
@@ -364,8 +379,8 @@ describe("pageBuilderEditor", () => {
     const resourceId = v7();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
       content: [
-        { props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
-        { props: { content: TEST_TEXT_CONTENT, id: TEST_OTHER_ID }, type: WebpageNodeType.Text },
+        { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
+        { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_OTHER_ID }, type: WebpageNodeType.Text },
       ],
       root: TEST_ROOT,
     });
@@ -388,8 +403,8 @@ describe("pageBuilderEditor", () => {
     const resourceId = v7();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
       content: [
-        { props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
-        { props: { content: TEST_TEXT_CONTENT, id: TEST_OTHER_ID }, type: WebpageNodeType.Text },
+        { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
+        { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_OTHER_ID }, type: WebpageNodeType.Text },
       ],
       root: TEST_ROOT,
     });
@@ -411,8 +426,8 @@ describe("pageBuilderEditor", () => {
     const resourceId = v7();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
       content: [
-        { props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
-        { props: { content: TEST_TEXT_CONTENT, id: TEST_OTHER_ID }, type: WebpageNodeType.Text },
+        { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
+        { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_OTHER_ID }, type: WebpageNodeType.Text },
       ],
       root: TEST_ROOT,
     });
@@ -441,8 +456,8 @@ describe("pageBuilderEditor", () => {
     const resourceId = v7();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
       content: [
-        { props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
-        { props: { content: TEST_TEXT_CONTENT, id: TEST_OTHER_ID }, type: WebpageNodeType.Text },
+        { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
+        { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_OTHER_ID }, type: WebpageNodeType.Text },
       ],
       root: TEST_ROOT,
     });
@@ -464,7 +479,9 @@ describe("pageBuilderEditor", () => {
 
     const resourceId = v7();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
-      content: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text }],
+      content: [
+        { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
+      ],
       root: TEST_ROOT,
     });
     pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
@@ -482,7 +499,12 @@ describe("pageBuilderEditor", () => {
 
     const resourceId = v7();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
-      content: [{ props: { href: TEST_URL, id: TEST_ID, label: TEST_LABEL }, type: WebpageNodeType.Button }],
+      content: [
+        {
+          props: { elementId: "", href: TEST_URL, id: TEST_ID, label: TEST_LABEL, target: ButtonTarget.SameTab },
+          type: WebpageNodeType.Button,
+        },
+      ],
       root: TEST_ROOT,
     });
     pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ID);
@@ -500,7 +522,9 @@ describe("pageBuilderEditor", () => {
 
     const resourceId = v7();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
-      content: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text }],
+      content: [
+        { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
+      ],
       root: TEST_ROOT,
     });
     pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
@@ -518,7 +542,9 @@ describe("pageBuilderEditor", () => {
 
     const resourceId = v7();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
-      content: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text }],
+      content: [
+        { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
+      ],
       root: TEST_ROOT,
     });
     pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
@@ -540,7 +566,9 @@ describe("pageBuilderEditor", () => {
 
     const resourceId = v7();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
-      content: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text }],
+      content: [
+        { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
+      ],
       root: TEST_ROOT,
     });
     pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
@@ -569,8 +597,8 @@ describe("pageBuilderEditor", () => {
     const resourceId = v7();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
       content: [
-        { props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
-        { props: { content: TEST_TEXT_CONTENT, id: TEST_OTHER_ID }, type: WebpageNodeType.Text },
+        { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
+        { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_OTHER_ID }, type: WebpageNodeType.Text },
       ],
       root: TEST_ROOT,
     });
@@ -593,7 +621,9 @@ describe("pageBuilderEditor", () => {
 
     const resourceId = v7();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
-      content: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text }],
+      content: [
+        { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
+      ],
       root: TEST_ROOT,
     });
     pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
@@ -614,7 +644,9 @@ describe("pageBuilderEditor", () => {
 
     const resourceId = v7();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
-      content: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text }],
+      content: [
+        { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
+      ],
       root: TEST_ROOT,
     });
     pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);

@@ -2,6 +2,7 @@
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 import type { ResourceInResource } from "@esposter/db-schema";
 
+import { ButtonTarget } from "#shared/models/pageBuilder/ButtonTarget";
 import { StyleBreakpoint } from "#shared/models/pageBuilder/StyleBreakpoint";
 import { StyleState } from "#shared/models/pageBuilder/StyleState";
 import { SurveyPublishState } from "#shared/models/pageBuilder/SurveyPublishState";
@@ -60,14 +61,24 @@ describe(useWebpageEditorStore, () => {
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const { setDocument } = pageBuilderDocumentStore;
     setDocument(resourceId, webpageKind, {
-      content: [{ props: { href: TEST_URL, id: TEST_ID, label: TEST_LABEL }, type: WebpageNodeType.Button }],
+      content: [
+        {
+          props: { elementId: "", href: TEST_URL, id: TEST_ID, label: TEST_LABEL, target: ButtonTarget.SameTab },
+          type: WebpageNodeType.Button,
+        },
+      ],
       root: TEST_ROOT,
     });
     saveWebpage(resourceId);
     await flushPromises();
 
     expect(savedContents[0]).toStrictEqual({
-      content: [{ props: { href: TEST_URL, id: TEST_ID, label: TEST_LABEL }, type: WebpageNodeType.Button }],
+      content: [
+        {
+          props: { elementId: "", href: TEST_URL, id: TEST_ID, label: TEST_LABEL, target: ButtonTarget.SameTab },
+          type: WebpageNodeType.Button,
+        },
+      ],
       id: content.id,
     });
   });

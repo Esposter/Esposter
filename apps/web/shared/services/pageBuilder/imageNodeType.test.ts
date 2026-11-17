@@ -12,7 +12,12 @@ describe("imageNodeType", () => {
     expect.hasAssertions();
 
     const result = webpageDocumentSchema.safeParse({
-      content: [{ props: { alt: "", decorative: false, id: TEST_ID, src: TEST_URL }, type: WebpageNodeType.Image }],
+      content: [
+        {
+          props: { alt: "", decorative: false, elementId: "", id: TEST_ID, src: TEST_URL },
+          type: WebpageNodeType.Image,
+        },
+      ],
       root: TEST_ROOT,
     });
 
@@ -24,9 +29,15 @@ describe("imageNodeType", () => {
 
     // Alternative text is an attribute, so its quotes and ampersands are escaped where a label's would not be
     const images: ImageNode[] = [
-      { props: { alt: "", decorative: true, id: TEST_ID, src: TEST_URL }, type: WebpageNodeType.Image },
-      { props: { alt: TEST_LABEL, decorative: false, id: TEST_ID, src: TEST_URL }, type: WebpageNodeType.Image },
-      { props: { alt: `"&`, decorative: false, id: TEST_ID, src: TEST_URL }, type: WebpageNodeType.Image },
+      { props: { alt: "", decorative: true, elementId: "", id: TEST_ID, src: TEST_URL }, type: WebpageNodeType.Image },
+      {
+        props: { alt: TEST_LABEL, decorative: false, elementId: "", id: TEST_ID, src: TEST_URL },
+        type: WebpageNodeType.Image,
+      },
+      {
+        props: { alt: `"&`, decorative: false, elementId: "", id: TEST_ID, src: TEST_URL },
+        type: WebpageNodeType.Image,
+      },
     ];
 
     expect(images.map((image) => serializeHtml([imageNodeType.render(image)]))).toStrictEqual([

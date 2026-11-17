@@ -6,6 +6,7 @@ import type { TabNode } from "#shared/models/pageBuilder/TabNode";
 import type { TabsNode } from "#shared/models/pageBuilder/TabsNode";
 import type { WebpageNode } from "#shared/models/pageBuilder/WebpageNode";
 
+import { ButtonTarget } from "#shared/models/pageBuilder/ButtonTarget";
 import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import {
@@ -23,29 +24,41 @@ describe("webpageNodeChildren", () => {
     expect.hasAssertions();
 
     const button: ButtonNode = {
-      props: { href: TEST_URL, id: TEST_ID, label: TEST_LABEL },
+      props: { elementId: "", href: TEST_URL, id: TEST_ID, label: TEST_LABEL, target: ButtonTarget.SameTab },
       type: WebpageNodeType.Button,
     };
-    const column: ColumnNode = { props: { children: [button], id: TEST_OTHER_ID }, type: WebpageNodeType.Column };
-    const columns: ColumnsNode = { props: { children: [column], id: TEST_ID }, type: WebpageNodeType.Columns };
+    const column: ColumnNode = {
+      props: { children: [button], elementId: "", id: TEST_OTHER_ID },
+      type: WebpageNodeType.Column,
+    };
+    const columns: ColumnsNode = {
+      props: { children: [column], elementId: "", id: TEST_ID },
+      type: WebpageNodeType.Columns,
+    };
     const tab: TabNode = {
-      props: { children: [button], id: TEST_OTHER_ID, label: TEST_LABEL },
+      props: { children: [button], elementId: "", id: TEST_OTHER_ID, label: TEST_LABEL },
       type: WebpageNodeType.Tab,
     };
-    const tabs: TabsNode = { props: { children: [tab], id: TEST_ID }, type: WebpageNodeType.Tabs };
+    const tabs: TabsNode = { props: { children: [tab], elementId: "", id: TEST_ID }, type: WebpageNodeType.Tabs };
     const section: SectionNode = {
-      props: { children: [columns, tabs], id: TEST_OTHER_ID, tag: HtmlTag.Section },
+      props: { children: [columns, tabs], elementId: "", id: TEST_OTHER_ID, tag: HtmlTag.Section },
       type: WebpageNodeType.Section,
     };
     const leaves: WebpageNode[] = [
-      { props: { endsAt: "", endText: TEST_LABEL, id: TEST_ID }, type: WebpageNodeType.Countdown },
-      { props: { html: "", id: TEST_ID }, type: WebpageNodeType.CustomHtml },
-      { props: { alt: TEST_LABEL, decorative: false, id: TEST_ID, src: TEST_URL }, type: WebpageNodeType.Image },
-      { props: { id: TEST_ID, label: TEST_LABEL, surveyId: TEST_SURVEY_ID }, type: WebpageNodeType.SurveyInvite },
-      { props: { content: { type: "doc" }, id: TEST_ID }, type: WebpageNodeType.Text },
-      { props: { id: TEST_ID, label: TEST_LABEL, text: TEST_LABEL }, type: WebpageNodeType.Tooltip },
-      { props: { id: TEST_ID, texts: [TEST_LABEL] }, type: WebpageNodeType.TypedText },
-      { props: { id: TEST_ID, src: TEST_URL, title: TEST_LABEL }, type: WebpageNodeType.Video },
+      { props: { elementId: "", endsAt: "", endText: TEST_LABEL, id: TEST_ID }, type: WebpageNodeType.Countdown },
+      { props: { elementId: "", html: "", id: TEST_ID }, type: WebpageNodeType.CustomHtml },
+      {
+        props: { alt: TEST_LABEL, decorative: false, elementId: "", id: TEST_ID, src: TEST_URL },
+        type: WebpageNodeType.Image,
+      },
+      {
+        props: { elementId: "", id: TEST_ID, label: TEST_LABEL, surveyId: TEST_SURVEY_ID },
+        type: WebpageNodeType.SurveyInvite,
+      },
+      { props: { content: { type: "doc" }, elementId: "", id: TEST_ID }, type: WebpageNodeType.Text },
+      { props: { elementId: "", id: TEST_ID, label: TEST_LABEL, text: TEST_LABEL }, type: WebpageNodeType.Tooltip },
+      { props: { elementId: "", id: TEST_ID, texts: [TEST_LABEL] }, type: WebpageNodeType.TypedText },
+      { props: { elementId: "", id: TEST_ID, src: TEST_URL, title: TEST_LABEL }, type: WebpageNodeType.Video },
     ];
 
     expect(

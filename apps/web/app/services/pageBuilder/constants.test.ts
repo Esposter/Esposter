@@ -20,13 +20,16 @@ export const TEST_WEBPAGE: WebpageDocument = {
   content: [
     {
       props: {
-        children: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_NESTED_TEXT_ID }, type: WebpageNodeType.Text }],
+        children: [
+          { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_NESTED_TEXT_ID }, type: WebpageNodeType.Text },
+        ],
+        elementId: "",
         id: TEST_SECTION_ID,
         tag: HtmlTag.Section,
       },
       type: WebpageNodeType.Section,
     },
-    { props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
+    { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
   ],
   root: TEST_ROOT,
 };

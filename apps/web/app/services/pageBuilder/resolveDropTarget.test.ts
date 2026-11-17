@@ -10,7 +10,7 @@ import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 const createText = (id: string): TextNode => ({
-  props: { content: TEST_TEXT_CONTENT, id },
+  props: { content: TEST_TEXT_CONTENT, elementId: "", id },
   type: WebpageNodeType.Text,
 });
 
@@ -25,10 +25,11 @@ describe(resolveDropTarget, () => {
         props: {
           children: [
             {
-              props: { children: [createText(TEXT_ONE), createText(TEXT_TWO)], id: v7() },
+              props: { children: [createText(TEXT_ONE), createText(TEXT_TWO)], elementId: "", id: v7() },
               type: WebpageNodeType.Column,
             },
           ],
+          elementId: "",
           id: COLUMNS_ID,
         },
         type: WebpageNodeType.Columns,
@@ -41,7 +42,13 @@ describe(resolveDropTarget, () => {
     content: [
       {
         props: {
-          children: [{ props: { children: [createText(TEXT_ONE)], id: LONE_COLUMN }, type: WebpageNodeType.Column }],
+          children: [
+            {
+              props: { children: [createText(TEXT_ONE)], elementId: "", id: LONE_COLUMN },
+              type: WebpageNodeType.Column,
+            },
+          ],
+          elementId: "",
           id: COLUMNS_ID,
         },
         type: WebpageNodeType.Columns,

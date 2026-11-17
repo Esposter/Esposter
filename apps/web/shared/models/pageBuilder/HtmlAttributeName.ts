@@ -19,9 +19,11 @@ export const HtmlAttributeName = {
   Href: "href",
   Id: "id",
   Preload: "preload",
+  Rel: "rel",
   Role: "role",
   Src: "src",
   Tabindex: "tabindex",
+  Target: "target",
   Title: "title",
   Type: "type",
 } as const;

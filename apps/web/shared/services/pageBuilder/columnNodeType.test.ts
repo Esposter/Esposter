@@ -10,7 +10,7 @@ describe("columnNodeType", () => {
   test("a type's output matches for every edge value", () => {
     expect.hasAssertions();
 
-    const column: ColumnNode = { props: { children: [], id: TEST_ID }, type: WebpageNodeType.Column };
+    const column: ColumnNode = { props: { children: [], elementId: "", id: TEST_ID }, type: WebpageNodeType.Column };
     const markup = "<b>&";
 
     // A column holds its children as rendered, so markup in a child is escaped the way the child's own text is

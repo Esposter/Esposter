@@ -8,10 +8,11 @@ import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { nodeStyleSchema } from "#shared/models/pageBuilder/NodeStyle";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { MAX_NODE_HTML_LENGTH } from "#shared/services/pageBuilder/constants";
+import { elementIdSchema } from "#shared/services/pageBuilder/elementIdSchema";
 import { sanitizeHtml } from "@esposter/shared";
 import { z } from "zod";
 
-const customHtmlFormSchema = z.strictObject({ html: z.string().max(MAX_NODE_HTML_LENGTH) });
+const customHtmlFormSchema = z.strictObject({ elementId: elementIdSchema, html: z.string().max(MAX_NODE_HTML_LENGTH) });
 const customHtmlPropsSchema = z.object({
   ...customHtmlFormSchema.shape,
   style: nodeStyleSchema.optional(),

@@ -46,8 +46,8 @@ describe(usePageBuilderKeyCommands, () => {
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
       content: [
-        { props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
-        { props: { content: TEST_TEXT_CONTENT, id: TEST_OTHER_ID }, type: WebpageNodeType.Text },
+        { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
+        { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_OTHER_ID }, type: WebpageNodeType.Text },
       ],
       root: TEST_ROOT,
     });
@@ -91,8 +91,8 @@ describe(usePageBuilderKeyCommands, () => {
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
       content: [
-        { props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
-        { props: { content: TEST_TEXT_CONTENT, id: TEST_OTHER_ID }, type: WebpageNodeType.Text },
+        { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
+        { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_OTHER_ID }, type: WebpageNodeType.Text },
       ],
       root: TEST_ROOT,
     });

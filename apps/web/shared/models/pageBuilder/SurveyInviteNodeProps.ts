@@ -3,6 +3,7 @@ import type { BlockNodeProps } from "vue-block-editor-headless";
 
 // The props a SurveyInvite node holds: the link's text, the published survey it links to and the style it is drawn with
 export interface SurveyInviteNodeProps extends BlockNodeProps {
+  elementId: string;
   label: string;
   style?: NodeStyle | undefined;
   surveyId: string;

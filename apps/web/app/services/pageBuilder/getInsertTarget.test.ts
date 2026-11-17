@@ -13,7 +13,8 @@ describe(getInsertTarget, () => {
     content: [
       {
         props: {
-          children: [{ props: { children: [], id: TEST_ID }, type: WebpageNodeType.Columns }],
+          children: [{ props: { children: [], elementId: "", id: TEST_ID }, type: WebpageNodeType.Columns }],
+          elementId: "",
           id: TEST_SECTION_ID,
           tag: HtmlTag.Section,
         },

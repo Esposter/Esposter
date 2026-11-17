@@ -6,7 +6,9 @@ import { describe, expect, test } from "vitest";
 
 // Renders a custom HTML node holding the given markup, then writes the render out as the page would
 const renderCustomHtml = (html: string) =>
-  serializeHtml([customHtmlNodeType.render({ props: { html, id: TEST_ID }, type: WebpageNodeType.CustomHtml })]);
+  serializeHtml([
+    customHtmlNodeType.render({ props: { elementId: "", html, id: TEST_ID }, type: WebpageNodeType.CustomHtml }),
+  ]);
 
 describe("customHtmlNodeType", () => {
   test("custom html is cleaned before it is published", () => {

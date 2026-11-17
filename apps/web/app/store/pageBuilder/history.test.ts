@@ -103,7 +103,7 @@ describe(usePageBuilderHistoryStore, () => {
 
     const resourceId = v7();
     const textDocument: WebpageDocument = {
-      content: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_ID }, type: WebpageNodeType.Text }],
+      content: [{ props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_ID }, type: WebpageNodeType.Text }],
       root: TEST_ROOT,
     };
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();

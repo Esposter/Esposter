@@ -1,3 +1,4 @@
+import { ButtonTarget } from "#shared/models/pageBuilder/ButtonTarget";
 import { TEST_ID, TEST_ROOT, TEST_URL } from "#shared/services/pageBuilder/constants.test";
 import { createButton } from "#shared/services/pageBuilder/createButton.test";
 import { usePageBuilderContent } from "#src/composables/pageBuilder/usePageBuilderContent";
@@ -32,8 +33,8 @@ describe(usePageBuilderContent, () => {
     );
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
 
-    setFormValue({ href: TEST_URL, label: "O" });
-    setFormValue({ href: TEST_URL, label: "Op" });
+    setFormValue({ elementId: "", href: TEST_URL, label: "O", target: ButtonTarget.SameTab });
+    setFormValue({ elementId: "", href: TEST_URL, label: "Op", target: ButtonTarget.SameTab });
 
     expect(pageBuilderHistoryStore.getUndoLabel(resourceId)).not.toBe("");
     pageBuilderHistoryStore.undo(resourceId);

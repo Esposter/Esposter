@@ -50,3 +50,9 @@ A webpage node SHALL take an element id, which its published element carries. An
 - **GIVEN** two nodes in one webpage with the element id pricing
 - **WHEN** the owner saves the document
 - **THEN** the save is refused
+
+#### Scenario: A tab with an element id still opens its panel
+
+- **GIVEN** a tab with the element id pricing in a set of tabs
+- **WHEN** the webpage is published
+- **THEN** the tab's button controls the element carrying the id pricing

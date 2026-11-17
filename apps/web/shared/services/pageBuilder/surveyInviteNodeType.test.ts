@@ -20,7 +20,7 @@ describe("surveyInviteNodeType", () => {
     expect.hasAssertions();
 
     const invite: SurveyInviteNode = {
-      props: { id: TEST_ID, label: TEST_LABEL, surveyId: TEST_SURVEY_ID },
+      props: { elementId: "", id: TEST_ID, label: TEST_LABEL, surveyId: TEST_SURVEY_ID },
       type: WebpageNodeType.SurveyInvite,
     };
 
@@ -33,7 +33,7 @@ describe("surveyInviteNodeType", () => {
     expect.hasAssertions();
 
     const invite: SurveyInviteNode = {
-      props: { id: TEST_ID, label: "<b>&", surveyId: TEST_SURVEY_ID },
+      props: { elementId: "", id: TEST_ID, label: "<b>&", surveyId: TEST_SURVEY_ID },
       type: WebpageNodeType.SurveyInvite,
     };
 

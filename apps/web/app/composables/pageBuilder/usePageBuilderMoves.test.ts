@@ -23,15 +23,15 @@ import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 
 const createSection = (id: string, children: WebpagePlaceableNode[]): SectionNode => ({
-  props: { children, id, tag: HtmlTag.Section },
+  props: { children, elementId: "", id, tag: HtmlTag.Section },
   type: WebpageNodeType.Section,
 });
 const createColumns = (id: string, children: ColumnNode[]): ColumnsNode => ({
-  props: { children, id },
+  props: { children, elementId: "", id },
   type: WebpageNodeType.Columns,
 });
 const createColumn = (id: string, children: WebpagePlaceableNode[]): ColumnNode => ({
-  props: { children, id },
+  props: { children, elementId: "", id },
   type: WebpageNodeType.Column,
 });
 const createImage = (id: string): ImageNode => createTestImageNode(TEST_URL, id);

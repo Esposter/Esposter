@@ -25,7 +25,7 @@ export const TEST_EDIT_CONTENT = {
 };
 // An image node that loads from the address given, the way a page that names a file asset holds it
 export const createTestImageNode = (src: string, id: string = v7()): ImageNode => ({
-  props: { alt: "", decorative: true, id, src },
+  props: { alt: "", decorative: true, elementId: "", id, src },
   type: WebpageNodeType.Image,
 });
 

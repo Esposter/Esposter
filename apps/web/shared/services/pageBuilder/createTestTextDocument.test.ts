@@ -9,6 +9,7 @@ export const createTestTextDocument = (nodeCount: number): WebpageDocument => ({
   content: Array.from({ length: nodeCount }, (_value, index) => ({
     props: {
       content: { content: [{ content: [{ text: `node ${index}`, type: "text" }], type: "paragraph" }], type: "doc" },
+      elementId: "",
       id: `node-${index}`,
     },
     type: WebpageNodeType.Text,

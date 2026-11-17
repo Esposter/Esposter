@@ -1,5 +1,6 @@
 import type { NodeStyle } from "#shared/models/pageBuilder/NodeStyle";
 
+import { ButtonTarget } from "#shared/models/pageBuilder/ButtonTarget";
 import { StyleBreakpoint } from "#shared/models/pageBuilder/StyleBreakpoint";
 import { StyleState } from "#shared/models/pageBuilder/StyleState";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
@@ -27,7 +28,10 @@ describe(usePageBuilderStyle, () => {
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
       content: [
-        { props: { href: TEST_URL, id: TEST_ID, label: TEST_LABEL, style }, type: WebpageNodeType.Button },
+        {
+          props: { elementId: "", href: TEST_URL, id: TEST_ID, label: TEST_LABEL, style, target: ButtonTarget.SameTab },
+          type: WebpageNodeType.Button,
+        },
         createButton(TEST_OTHER_ID),
       ],
       root: TEST_ROOT,
@@ -58,9 +62,11 @@ describe(usePageBuilderStyle, () => {
     resetField("color");
 
     expect(pageBuilderDocumentStore.getDocument(resourceId)?.content[0]?.props).toStrictEqual({
+      elementId: "",
       href: TEST_URL,
       id: TEST_ID,
       label: TEST_LABEL,
+      target: ButtonTarget.SameTab,
     });
   });
 

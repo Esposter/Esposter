@@ -1,3 +1,4 @@
+import { ButtonTarget } from "#shared/models/pageBuilder/ButtonTarget";
 import { StyleBreakpoint } from "#shared/models/pageBuilder/StyleBreakpoint";
 import { StyleState } from "#shared/models/pageBuilder/StyleState";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
@@ -20,10 +21,12 @@ const getBrandPageCss = (brand: string) =>
       content: [
         {
           props: {
+            elementId: "",
             href: TEST_URL,
             id: TEST_ID,
             label: TEST_LABEL,
             style: { [StyleBreakpoint.Base]: { [StyleState.Default]: { color: "var(--color-brand)" } } },
+            target: ButtonTarget.SameTab,
           },
           type: WebpageNodeType.Button,
         },
@@ -54,13 +57,18 @@ describe(getWebpageCss, () => {
     const css = getWebpageCss(
       {
         content: [
-          { props: { href: TEST_URL, id: TEST_ID, label: TEST_LABEL }, type: WebpageNodeType.Button },
+          {
+            props: { elementId: "", href: TEST_URL, id: TEST_ID, label: TEST_LABEL, target: ButtonTarget.SameTab },
+            type: WebpageNodeType.Button,
+          },
           {
             props: {
+              elementId: "",
               href: TEST_URL,
               id: TEST_OTHER_ID,
               label: TEST_LABEL,
               style: { [StyleBreakpoint.Base]: { [StyleState.Default]: { color: "red" } } },
+              target: ButtonTarget.SameTab,
             },
             type: WebpageNodeType.Button,
           },

@@ -17,7 +17,10 @@ describe("typedTextNodeType", () => {
     vi.useFakeTimers();
     vi.stubGlobal("matchMedia", () => ({ matches: true }));
     document.body.innerHTML = serializeHtml([
-      typedTextNodeType.render({ props: { id: TEST_ID, texts: ["a", "b"] }, type: WebpageNodeType.TypedText }),
+      typedTextNodeType.render({
+        props: { elementId: "", id: TEST_ID, texts: ["a", "b"] },
+        type: WebpageNodeType.TypedText,
+      }),
     ]);
     typedTextNodeType.script?.();
 
@@ -34,16 +37,22 @@ describe("typedTextNodeType", () => {
     // The texts are written as a JSON attribute, so a quote in one is escaped twice: once as JSON and once as the attribute
     expect([
       serializeHtml([
-        typedTextNodeType.render({ props: { id: TEST_ID, texts: [TEST_LABEL] }, type: WebpageNodeType.TypedText }),
-      ]),
-      serializeHtml([
         typedTextNodeType.render({
-          props: { id: TEST_ID, texts: [TEST_LABEL, TEST_ID] },
+          props: { elementId: "", id: TEST_ID, texts: [TEST_LABEL] },
           type: WebpageNodeType.TypedText,
         }),
       ]),
       serializeHtml([
-        typedTextNodeType.render({ props: { id: TEST_ID, texts: ['"&'] }, type: WebpageNodeType.TypedText }),
+        typedTextNodeType.render({
+          props: { elementId: "", id: TEST_ID, texts: [TEST_LABEL, TEST_ID] },
+          type: WebpageNodeType.TypedText,
+        }),
+      ]),
+      serializeHtml([
+        typedTextNodeType.render({
+          props: { elementId: "", id: TEST_ID, texts: ['"&'] },
+          type: WebpageNodeType.TypedText,
+        }),
       ]),
     ]).toStrictEqual([
       `<span aria-label="${TEST_LABEL}" class="typed-text"><span aria-hidden="true" data-texts="[&quot;${TEST_LABEL}&quot;]">${TEST_LABEL}</span></span>`,

@@ -8,10 +8,11 @@ import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { nodeStyleSchema } from "#shared/models/pageBuilder/NodeStyle";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { noteDocumentSchema } from "#shared/models/resource/note/NoteDocument";
+import { elementIdSchema } from "#shared/services/pageBuilder/elementIdSchema";
 import { renderNoteHtml } from "#shared/services/resource/note/renderNoteHtml";
 import { z } from "zod";
 
-const textFormSchema = z.strictObject({ content: noteDocumentSchema });
+const textFormSchema = z.strictObject({ content: noteDocumentSchema, elementId: elementIdSchema });
 const textPropsSchema = z.object({ ...textFormSchema.shape, style: nodeStyleSchema.optional() }) satisfies z.ZodType<
   OwnProps<TextNodeProps>
 >;

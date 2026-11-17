@@ -19,7 +19,8 @@ describe(renderCanvasVNodes, () => {
           content: [
             {
               props: {
-                children: [{ props: { content, id: TEST_OTHER_ID }, type: WebpageNodeType.Text }],
+                children: [{ props: { content, elementId: "", id: TEST_OTHER_ID }, type: WebpageNodeType.Text }],
+                elementId: "",
                 id: TEST_ID,
                 tag: HtmlTag.Section,
               },
@@ -48,7 +49,10 @@ describe(renderCanvasVNodes, () => {
         webpageKind,
         {
           content: [
-            { props: { html: '<p onclick="alert(1)">a <b>b</b></p>', id: TEST_ID }, type: WebpageNodeType.CustomHtml },
+            {
+              props: { elementId: "", html: '<p onclick="alert(1)">a <b>b</b></p>', id: TEST_ID },
+              type: WebpageNodeType.CustomHtml,
+            },
           ],
           root: TEST_ROOT,
         },

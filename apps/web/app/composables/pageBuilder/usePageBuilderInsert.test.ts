@@ -68,14 +68,19 @@ describe("usePageBuilderInsert", () => {
     expect.hasAssertions();
 
     const { insert, insertedId, pageBuilderDocumentStore, resourceId } = setup(TEST_ID, [
-      { props: { children: [], id: TEST_ID, tag: HtmlTag.Section }, type: WebpageNodeType.Section },
+      { props: { children: [], elementId: "", id: TEST_ID, tag: HtmlTag.Section }, type: WebpageNodeType.Section },
     ]);
 
     insert(WebpageNodeType.Button);
 
     expect(pageBuilderDocumentStore.getDocument(resourceId)?.content).toStrictEqual([
       {
-        props: { children: [createWebpageNode(WebpageNodeType.Button, insertedId)], id: TEST_ID, tag: HtmlTag.Section },
+        props: {
+          children: [createWebpageNode(WebpageNodeType.Button, insertedId)],
+          elementId: "",
+          id: TEST_ID,
+          tag: HtmlTag.Section,
+        },
         type: WebpageNodeType.Section,
       },
     ]);
@@ -87,7 +92,13 @@ describe("usePageBuilderInsert", () => {
     const { announce, insert, pageBuilderDocumentStore, resourceId } = setup(TEST_ID, [
       {
         props: {
-          children: [{ props: { children: [createButton(TEST_OTHER_ID)], id: TEST_ID }, type: WebpageNodeType.Column }],
+          children: [
+            {
+              props: { children: [createButton(TEST_OTHER_ID)], elementId: "", id: TEST_ID },
+              type: WebpageNodeType.Column,
+            },
+          ],
+          elementId: "",
           id: TEST_THIRD_ID,
         },
         type: WebpageNodeType.Columns,

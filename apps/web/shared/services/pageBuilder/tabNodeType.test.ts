@@ -10,7 +10,10 @@ describe("tabNodeType", () => {
   test("a type's output matches for every edge value", () => {
     expect.hasAssertions();
 
-    const tab: TabNode = { props: { children: [], id: TEST_ID, label: TEST_LABEL }, type: WebpageNodeType.Tab };
+    const tab: TabNode = {
+      props: { children: [], elementId: "", id: TEST_ID, label: TEST_LABEL },
+      type: WebpageNodeType.Tab,
+    };
     const markup = "<b>&";
 
     // A panel's label is its tab button's, so only the panel's own children and its links to that button are written

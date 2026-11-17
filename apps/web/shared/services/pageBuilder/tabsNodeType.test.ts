@@ -9,7 +9,7 @@ import { tabsNodeType } from "#shared/services/pageBuilder/tabsNodeType";
 import { afterEach, describe, expect, test } from "vitest";
 
 const createTab = (id: string): TabNode => ({
-  props: { children: [], id, label: TEST_LABEL },
+  props: { children: [], elementId: "", id, label: TEST_LABEL },
   type: WebpageNodeType.Tab,
 });
 
@@ -24,7 +24,7 @@ describe("tabsNodeType", () => {
     const tabs = [createTab(TEST_ID), createTab(TEST_OTHER_ID)];
     document.body.innerHTML = serializeHtml([
       tabsNodeType.render(
-        { props: { children: tabs, id: "t" }, type: WebpageNodeType.Tabs },
+        { props: { children: tabs, elementId: "", id: "t" }, type: WebpageNodeType.Tabs },
         { children: tabs.map((tab) => tabNodeType.render(tab, { children: [] })) },
       ),
     ]);
@@ -44,16 +44,22 @@ describe("tabsNodeType", () => {
     expect.hasAssertions();
 
     // The first tab is selected and every other panel starts hidden; a label is text, so its markup is escaped
-    const markupTab: TabNode = { props: { children: [], id: TEST_OTHER_ID, label: "<b>&" }, type: WebpageNodeType.Tab };
+    const markupTab: TabNode = {
+      props: { children: [], elementId: "", id: TEST_OTHER_ID, label: "<b>&" },
+      type: WebpageNodeType.Tab,
+    };
     const tabs = [createTab(TEST_ID), markupTab];
 
     expect([
       serializeHtml([
-        tabsNodeType.render({ props: { children: [], id: TEST_ID }, type: WebpageNodeType.Tabs }, { children: [] }),
+        tabsNodeType.render(
+          { props: { children: [], elementId: "", id: TEST_ID }, type: WebpageNodeType.Tabs },
+          { children: [] },
+        ),
       ]),
       serializeHtml([
         tabsNodeType.render(
-          { props: { children: tabs, id: TEST_ID }, type: WebpageNodeType.Tabs },
+          { props: { children: tabs, elementId: "", id: TEST_ID }, type: WebpageNodeType.Tabs },
           { children: tabs.map((tab) => tabNodeType.render(tab, { children: [] })) },
         ),
       ]),

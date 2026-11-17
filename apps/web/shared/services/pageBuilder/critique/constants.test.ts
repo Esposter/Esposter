@@ -22,15 +22,15 @@ export const TEST_VALUE_COLOR_MAP = new Map<string, SrgbColor>([
   [TEST_LIGHT_VALUE, [245 / 255, 245 / 255, 245 / 255]],
 ]);
 export const createTestTextNode = (id: string, style: NodeStyle): TextNode => ({
-  props: { content: TEST_EDIT_CONTENT, id, style },
+  props: { content: TEST_EDIT_CONTENT, elementId: "", id, style },
   type: WebpageNodeType.Text,
 });
 export const createTestSectionNode = (id: string, children: WebpagePlaceableNode[], style: NodeStyle): SectionNode => ({
-  props: { children, id, style, tag: HtmlTag.Section },
+  props: { children, elementId: "", id, style, tag: HtmlTag.Section },
   type: WebpageNodeType.Section,
 });
 export const createTestSurveyInviteNode = (id: string, surveyId: string): SurveyInviteNode => ({
-  props: { id, label: TEST_LABEL, surveyId },
+  props: { elementId: "", id, label: TEST_LABEL, surveyId },
   type: WebpageNodeType.SurveyInvite,
 });
 

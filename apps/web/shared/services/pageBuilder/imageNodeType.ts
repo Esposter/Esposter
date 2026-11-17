@@ -8,6 +8,7 @@ import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { nodeStyleSchema } from "#shared/models/pageBuilder/NodeStyle";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { MAX_NODE_TEXT_LENGTH } from "#shared/services/pageBuilder/constants";
+import { elementIdSchema } from "#shared/services/pageBuilder/elementIdSchema";
 import { webpageUrlSchema } from "#shared/services/pageBuilder/webpageUrlSchema";
 import { z } from "zod";
 
@@ -20,7 +21,12 @@ export const refineImageAlternative = (
     context.addIssue({ code: "custom", message: "needs alternative text or a decorative flag", path: ["alt"] });
 };
 
-const imageShape = { alt: z.string().max(MAX_NODE_TEXT_LENGTH), decorative: z.boolean(), src: webpageUrlSchema };
+const imageShape = {
+  alt: z.string().max(MAX_NODE_TEXT_LENGTH),
+  decorative: z.boolean(),
+  elementId: elementIdSchema,
+  src: webpageUrlSchema,
+};
 const imageFormSchema = z.strictObject(imageShape).superRefine(refineImageAlternative);
 const imagePropsSchema = z
   .object({ ...imageShape, style: nodeStyleSchema.optional() })

@@ -1,6 +1,7 @@
 import type { ColumnNode } from "#shared/models/pageBuilder/ColumnNode";
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 
+import { ButtonTarget } from "#shared/models/pageBuilder/ButtonTarget";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { columnNodeType } from "#shared/services/pageBuilder/columnNodeType";
 import { columnsNodeType } from "#shared/services/pageBuilder/columnsNodeType";
@@ -20,7 +21,8 @@ describe("columnsNodeType", () => {
       content: [
         {
           props: {
-            children: [{ props: { children: [], id: TEST_OTHER_ID }, type: WebpageNodeType.Column }],
+            children: [{ props: { children: [], elementId: "", id: TEST_OTHER_ID }, type: WebpageNodeType.Column }],
+            elementId: "",
             id: TEST_ID,
           },
           type: WebpageNodeType.Columns,
@@ -33,13 +35,13 @@ describe("columnsNodeType", () => {
 
     expect(
       insertBlockNode(document, webpageRegistry, webpageNodeChildren, columnsSlot, 1, {
-        props: { href: TEST_URL, id: newId, label: TEST_LABEL },
+        props: { elementId: "", href: TEST_URL, id: newId, label: TEST_LABEL, target: ButtonTarget.SameTab },
         type: WebpageNodeType.Button,
       }),
     ).toStrictEqual([]);
     expect(
       insertBlockNode(document, webpageRegistry, webpageNodeChildren, columnsSlot, 1, {
-        props: { children: [], id: newId },
+        props: { children: [], elementId: "", id: newId },
         type: WebpageNodeType.Column,
       }),
     ).toHaveLength(1);
@@ -48,18 +50,21 @@ describe("columnsNodeType", () => {
   test("a type's output matches for every edge value", () => {
     expect.hasAssertions();
 
-    const column: ColumnNode = { props: { children: [], id: TEST_OTHER_ID }, type: WebpageNodeType.Column };
+    const column: ColumnNode = {
+      props: { children: [], elementId: "", id: TEST_OTHER_ID },
+      type: WebpageNodeType.Column,
+    };
 
     expect([
       serializeHtml([
         columnsNodeType.render(
-          { props: { children: [], id: TEST_ID }, type: WebpageNodeType.Columns },
+          { props: { children: [], elementId: "", id: TEST_ID }, type: WebpageNodeType.Columns },
           { children: [] },
         ),
       ]),
       serializeHtml([
         columnsNodeType.render(
-          { props: { children: [column], id: TEST_ID }, type: WebpageNodeType.Columns },
+          { props: { children: [column], elementId: "", id: TEST_ID }, type: WebpageNodeType.Columns },
           { children: [columnNodeType.render(column, { children: [] })] },
         ),
       ]),

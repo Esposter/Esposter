@@ -7,9 +7,10 @@ import { HtmlAttributeName } from "#shared/models/pageBuilder/HtmlAttributeName"
 import { nodeStyleSchema } from "#shared/models/pageBuilder/NodeStyle";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { SECTION_TAGS, WEBPAGE_PLACEABLE_NODE_TYPES } from "#shared/services/pageBuilder/constants";
+import { elementIdSchema } from "#shared/services/pageBuilder/elementIdSchema";
 import { z } from "zod";
 
-const sectionFormSchema = z.strictObject({ tag: z.enum(SECTION_TAGS) });
+const sectionFormSchema = z.strictObject({ elementId: elementIdSchema, tag: z.enum(SECTION_TAGS) });
 const sectionPropsSchema = z.object({
   ...sectionFormSchema.shape,
   style: nodeStyleSchema.optional(),

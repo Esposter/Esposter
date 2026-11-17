@@ -12,13 +12,14 @@ describe("textNodeType", () => {
 
     // A note's text is written as escaped text, and an empty note publishes as an empty block
     const texts: TextNode[] = [
-      { props: { content: { content: [], type: "doc" }, id: TEST_ID }, type: WebpageNodeType.Text },
+      { props: { content: { content: [], type: "doc" }, elementId: "", id: TEST_ID }, type: WebpageNodeType.Text },
       {
         props: {
           content: {
             content: [{ content: [{ text: `${TEST_LABEL} <b>&`, type: "text" }], type: "paragraph" }],
             type: "doc",
           },
+          elementId: "",
           id: TEST_ID,
         },
         type: WebpageNodeType.Text,

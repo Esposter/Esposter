@@ -3,6 +3,7 @@ import type { ButtonNodeProps } from "#shared/models/pageBuilder/ButtonNodeProps
 import type { WebpageNode } from "#shared/models/pageBuilder/WebpageNode";
 
 import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
+import { ButtonTarget } from "#shared/models/pageBuilder/ButtonTarget";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { TEST_URL } from "#shared/services/pageBuilder/constants.test";
@@ -74,7 +75,16 @@ describe(useVersionHistoryStore, () => {
     const buttonId = v7();
     // The restored draft's label differs from the one the undo would write back, so a surviving entry is visible
     const restoredContent: WebpageNode[] = [
-      { props: { href: TEST_URL, id: buttonId, label: TEST_RESTORED_LABEL }, type: WebpageNodeType.Button },
+      {
+        props: {
+          elementId: "",
+          href: TEST_URL,
+          id: buttonId,
+          label: TEST_RESTORED_LABEL,
+          target: ButtonTarget.SameTab,
+        },
+        type: WebpageNodeType.Button,
+      },
     ];
     let content = new WebpageEditor({ content: [createButton(buttonId)] });
     Object.assign(useRouter().currentRoute.value.params, { id: webpage.id });

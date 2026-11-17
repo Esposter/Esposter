@@ -12,8 +12,8 @@ describe("tooltipNodeType", () => {
 
     // The label and the tooltip are both text, so their markup is escaped where each is written
     const tooltips: TooltipNode[] = [
-      { props: { id: TEST_ID, label: TEST_LABEL, text: TEST_LABEL }, type: WebpageNodeType.Tooltip },
-      { props: { id: TEST_ID, label: "<b>&", text: "<b>&" }, type: WebpageNodeType.Tooltip },
+      { props: { elementId: "", id: TEST_ID, label: TEST_LABEL, text: TEST_LABEL }, type: WebpageNodeType.Tooltip },
+      { props: { elementId: "", id: TEST_ID, label: "<b>&", text: "<b>&" }, type: WebpageNodeType.Tooltip },
     ];
 
     expect(tooltips.map((tooltip) => serializeHtml([tooltipNodeType.render(tooltip)]))).toStrictEqual([

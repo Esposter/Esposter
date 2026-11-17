@@ -5,12 +5,13 @@ import { HtmlAttributeName } from "#shared/models/pageBuilder/HtmlAttributeName"
 import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { containerPropsSchema } from "#shared/services/pageBuilder/containerPropsSchema";
+import { elementIdSchema } from "#shared/services/pageBuilder/elementIdSchema";
 import { z } from "zod";
 
 // A row of Column nodes, which holds nothing else
 export const columnsNodeType = {
   css: ".columns { display: flex; flex-wrap: wrap; gap: 1rem; }",
-  formSchema: z.strictObject({}),
+  formSchema: z.strictObject({ elementId: elementIdSchema }),
   isFocusable: false,
   propsSchema: containerPropsSchema,
   render: (_node, slots) => ({

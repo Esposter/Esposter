@@ -3,6 +3,7 @@ import type { WebpageNode } from "#shared/models/pageBuilder/WebpageNode";
 import type { WebpageRootProps } from "#shared/models/pageBuilder/WebpageRootProps";
 import type { z } from "zod";
 
+import { checkWebpageElementIds } from "#shared/services/pageBuilder/checkWebpageElementIds";
 import { MAX_WEBPAGE_NODES } from "#shared/services/pageBuilder/constants";
 import { webpageNodeChildren } from "#shared/services/pageBuilder/webpageNodeChildren";
 import { webpagePlaceableNodeSchema } from "#shared/services/pageBuilder/webpageNodeSchema";
@@ -16,4 +17,9 @@ export const webpageDocumentSchema = createBlockDocumentSchema<WebpageNode, Webp
   webpageRegistry,
   webpageNodeChildren,
   MAX_WEBPAGE_NODES,
+).superRefine(
+  (document, context) => {
+    checkWebpageElementIds(context, document.content, ["content"], new Set());
+  },
+  { when: ({ issues }) => issues.length === 0 },
 ) satisfies z.ZodType<WebpageDocument>;

@@ -3,6 +3,7 @@ import type { BlockNodeProps } from "vue-block-editor-headless";
 
 // The props a TypedText node holds: the texts typed out in turn, and the style it is drawn with
 export interface TypedTextNodeProps extends BlockNodeProps {
+  elementId: string;
   style?: NodeStyle | undefined;
   texts: string[];
 }

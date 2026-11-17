@@ -20,7 +20,9 @@ const mountEditingText = async () => {
   const resourceId = v7();
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();
   pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
-    content: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text }],
+    content: [
+      { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
+    ],
     root: TEST_ROOT,
   });
   const component = await mountSuspended(PageBuilderCanvasTextEditor, {
@@ -72,7 +74,9 @@ describe("pageBuilderCanvasTextEditor", () => {
     const resourceId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
-      content: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text }],
+      content: [
+        { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
+      ],
       root: TEST_ROOT,
     });
 
@@ -93,7 +97,9 @@ describe("pageBuilderCanvasTextEditor", () => {
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
-      content: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text }],
+      content: [
+        { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
+      ],
       root: TEST_ROOT,
     });
     pageBuilderCanvasStore.setEditingNodeId(resourceId, TEST_ROOT_TEXT_ID);
@@ -111,7 +117,7 @@ describe("pageBuilderCanvasTextEditor", () => {
 
     expect(pageBuilderCanvasStore.getEditingNodeId(resourceId)).toBe("");
     expect(pageBuilderDocumentStore.getDocument(resourceId)?.content).toStrictEqual([
-      { props: { content: editor.getJSON(), id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
+      { props: { content: editor.getJSON(), elementId: "", id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
     ]);
     expect(pageBuilderHistoryStore.getUndoLabel(resourceId)).toBe("Edit text");
     pageBuilderHistoryStore.undo(resourceId);
@@ -127,7 +133,9 @@ describe("pageBuilderCanvasTextEditor", () => {
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
-      content: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text }],
+      content: [
+        { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
+      ],
       root: TEST_ROOT,
     });
     const editSession = async (text: string) => {

@@ -264,12 +264,19 @@ describe("pageBuilderPalette", () => {
             children: [
               {
                 props: {
-                  children: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_THIRD_ID }, type: WebpageNodeType.Text }],
+                  children: [
+                    {
+                      props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_THIRD_ID },
+                      type: WebpageNodeType.Text,
+                    },
+                  ],
+                  elementId: "",
                   id: TEST_OTHER_ID,
                 },
                 type: WebpageNodeType.Column,
               },
             ],
+            elementId: "",
             id: TEST_SECTION_ID,
           },
           type: WebpageNodeType.Columns,
