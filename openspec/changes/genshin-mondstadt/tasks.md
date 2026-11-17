@@ -9,7 +9,7 @@
 ## 2. City landmarks
 
 - [ ] 2.1 Build the wall generator and the city's gate bridge, walls, cathedral and statue plaza, each matched to its reference. Verify: tests named after the scenarios 'The cathedral front matches its reference' and 'The Anemo Archon statue plaza matches its reference'.
-      Blocked: `packages/genshin-world/parity/references/` holds 36 reference images, of which only `mondstadt-city-location.webp` is a Mondstadt city reference, with no cathedral front or statue plaza reference, so nothing is built.
+      Blocked: `packages/genshin-world/parity/references/` holds the reference images, of which only `mondstadt-city-location.webp` is a Mondstadt city reference, with no cathedral front or statue plaza reference, so nothing is built.
 
 ## 3. Areas
 
