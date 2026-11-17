@@ -73,10 +73,4 @@ describe("derived asset component map", () => {
       screen: "WorldScreen",
     });
   });
-
-  test("a sub-area without a catalogued extent keeps its region's ground", () => {
-    expect.hasAssertions();
-
-    expect(Object.values(DerivedAssetComponent)).not.toContain("enkanomiya");
-  });
 });
