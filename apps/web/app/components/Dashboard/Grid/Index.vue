@@ -4,6 +4,7 @@ import type { DashboardVisualEmits } from "#src/models/dashboard/DashboardVisual
 import type { CollisionMode, CompactType } from "vue-grid-layout-headless";
 
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
+import { checkIsChartVisualType } from "#src/services/dashboard/checkIsChartVisualType";
 import { DASHBOARD_GRID_MARGIN } from "#src/services/dashboard/constants";
 import { getGeometryStyle } from "#src/services/dashboard/grid/getGeometryStyle";
 import { checkIsMoveRefused } from "#src/services/dashboard/visual/checkIsMoveRefused";
@@ -53,8 +54,10 @@ const { gridHeight, placeholder, reportContentHeight, startGesture, stepItem, ti
     <DashboardGridTile
       v-for="{ geometry, isDragged, item, offset } of tiles"
       :key="item.id"
+      :alt-text="item.altText"
       :geometry
       :is-auto-height="item.isAutoHeight"
+      :is-chart="checkIsChartVisualType(item.type)"
       :is-dragged
       :is-editable
       :label="`${prettify(item.type)} visual`"

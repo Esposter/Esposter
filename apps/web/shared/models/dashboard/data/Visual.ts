@@ -7,11 +7,14 @@ import { layoutItemSchema } from "#shared/models/dashboard/data/LayoutItem";
 import { visualDatasetBindingSchema } from "#shared/models/dashboard/data/VisualDatasetBinding";
 import { VisualType, visualTypeSchema } from "#shared/models/dashboard/data/VisualType";
 import { AItemEntity, aItemEntitySchema } from "#shared/models/entity/AItemEntity";
+import { MAX_VISUAL_ALT_TEXT_LENGTH } from "#shared/services/dashboard/constants";
 import { MAX_RESOURCE_CONTENT_SIZE } from "#shared/services/resource/constants";
 import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
 
 export class Visual extends AItemEntity implements ItemEntityType<VisualType>, LayoutItem {
+  // What a screen reader reads for the visual on the published dashboard, in place of its label. Empty, the label stands
+  altText = "";
   chart = new Chart();
   dataset?: undefined | VisualDatasetBinding;
   h = 4;
@@ -36,6 +39,7 @@ export const visualSchema = z
     ...aItemEntitySchema.shape,
     ...createItemEntityTypeSchema(visualTypeSchema).shape,
     ...layoutItemSchema.shape,
+    altText: z.string().max(MAX_VISUAL_ALT_TEXT_LENGTH),
     chart: chartSchema,
     dataset: visualDatasetBindingSchema.optional(),
     isAutoHeight: z.boolean(),

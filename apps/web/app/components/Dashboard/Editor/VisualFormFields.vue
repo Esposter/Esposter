@@ -2,6 +2,7 @@
 import type { Visual } from "#shared/models/dashboard/data/Visual";
 
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
+import { MAX_VISUAL_ALT_TEXT_LENGTH } from "#shared/services/dashboard/constants";
 import { VisualDatasetShape } from "#src/models/dashboard/VisualDatasetShape";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { VisualTypeChartTypesMap } from "#src/services/dashboard/chart/VisualTypeChartTypesMap";
@@ -72,6 +73,12 @@ const chartTypeItems = computed(() =>
       v-else-if="editedItem.type === VisualType.Card"
       v-model="editedItem.chart.configuration.title"
       label="Label"
+    />
+    <UiTextField
+      v-model="editedItem.altText"
+      hint="Describes the visual to a screen reader, which reads its label while this is empty"
+      label="Alternative text"
+      :maxlength="MAX_VISUAL_ALT_TEXT_LENGTH"
     />
   </UiForm>
 </template>

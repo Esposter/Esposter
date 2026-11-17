@@ -546,3 +546,25 @@ A published group SHALL draw its visuals with no editing control, and a bound vi
 - **GIVEN** an untitled group on a published dashboard
 - **WHEN** a viewer opens it
 - **THEN** the group draws no header
+
+### Requirement: A published visual has an accessible name
+
+The owner SHALL give a visual alternative text, and a published tile SHALL be named by it, or by the visual's label when it has none.
+
+#### Scenario: A published chart is named by its alternative text
+
+- **GIVEN** a bar chart whose alternative text reads Sales by region, largest first
+- **WHEN** a reader opens the published dashboard
+- **THEN** the chart's tile is named Sales by region, largest first
+
+#### Scenario: A visual with no alternative text is named by its label
+
+- **GIVEN** a visual labelled Revenue with no alternative text
+- **WHEN** a reader opens the published dashboard
+- **THEN** the tile is named Revenue
+
+#### Scenario: The owner describes a visual
+
+- **GIVEN** a visual selected in the editor
+- **WHEN** the owner enters alternative text in the inspector
+- **THEN** the dashboard saves it with the visual

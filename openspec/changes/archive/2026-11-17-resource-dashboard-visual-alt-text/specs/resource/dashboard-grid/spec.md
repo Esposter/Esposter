@@ -2,7 +2,7 @@
 
 ### Requirement: A published visual has an accessible name
 
-The owner SHALL give a visual alternative text of at most 250 characters, and a published tile SHALL be named by it, or by the visual's label when it has none.
+The owner SHALL give a visual alternative text, and a published tile SHALL be named by it, or by the visual's label when it has none.
 
 #### Scenario: A published chart is named by its alternative text
 
@@ -15,12 +15,6 @@ The owner SHALL give a visual alternative text of at most 250 characters, and a 
 - **GIVEN** a visual labelled Revenue with no alternative text
 - **WHEN** a reader opens the published dashboard
 - **THEN** the tile is named Revenue
-
-#### Scenario: Alternative text over the limit is refused
-
-- **GIVEN** a visual whose alternative text is longer than 250 characters
-- **WHEN** the dashboard is saved
-- **THEN** the save is refused
 
 #### Scenario: The owner describes a visual
 

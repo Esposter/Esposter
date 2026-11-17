@@ -5,13 +5,16 @@ import { describe, expect, test, vi } from "vitest";
 import { ResizeEdge } from "vue-grid-layout-headless";
 
 describe("dashboardGridTile", () => {
+  const altText = "Sales by region, largest first";
   const geometry = { height: 80, left: 10, top: 10, width: 160 };
   const label = "Bar visual";
   const createTile = (props: object = {}) =>
     mount(DashboardGridTile, {
       props: {
+        altText: "",
         geometry,
         isAutoHeight: false,
+        isChart: false,
         isDragged: false,
         isEditable: true,
         label,
@@ -104,6 +107,23 @@ describe("dashboardGridTile", () => {
 
     expect(wrapper.emitted("step")).toBeUndefined();
     expect(wrapper.emitted("open")).toBeUndefined();
+  });
+
+  test("a published chart is named by its alternative text", () => {
+    expect.hasAssertions();
+
+    const wrapper = createTile({ altText, isChart: true, isEditable: undefined });
+
+    expect({ "aria-label": wrapper.attributes("aria-label"), role: wrapper.attributes("role") }).toStrictEqual({
+      "aria-label": altText,
+      role: "img",
+    });
+  });
+
+  test("a visual with no alternative text is named by its label", () => {
+    expect.hasAssertions();
+
+    expect(createTile({ isEditable: undefined }).attributes("aria-label")).toBe(label);
   });
 
   test("an auto-height visual reports the height its content draws", () => {

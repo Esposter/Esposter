@@ -7,9 +7,13 @@ import { takeOne } from "@esposter/shared";
 import { checkChangesHeight, ResizeEdge } from "vue-grid-layout-headless";
 
 interface Props {
+  // The visual's alternative text, which names the published tile in place of its label while it is empty
+  altText: string;
   geometry: GridGeometry;
   // Takes its height from the content it draws, so the tile is as tall as that content and reports it, and it resizes its width only
   isAutoHeight: boolean;
+  // A chart takes the image role on the published tile, so its name stands for the drawing rather than its cells
+  isChart: boolean;
   isDragged: boolean;
   isEditable?: true | undefined;
   label: string;
@@ -43,10 +47,10 @@ useResizeObserver(tile, (entries) => {
     ref="tile"
     class="dashboard-grid-tile"
     absolute
-    :aria-label="isEditable ? label : undefined"
+    :aria-label="isEditable ? label : altText || label"
     :data-editable="isEditable || undefined"
     :data-nested-interaction="isEditable || undefined"
-    :role="isEditable ? 'group' : undefined"
+    :role="isEditable || !isChart ? 'group' : 'img'"
     :tabindex="isEditable ? 0 : undefined"
     :style="{
       ...getGeometryStyle(geometry, isAutoHeight),
