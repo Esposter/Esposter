@@ -4,6 +4,7 @@ import type { UserConfig } from "tsdown";
 import { ExportsGeneration } from "#src/models/ExportsGeneration";
 import { STYLESHEET_REQUEST_REGEX, VUE_AUTO_IMPORTS } from "#src/services/constants";
 import { getTsdownConfiguration } from "#src/services/getTsdownConfiguration";
+import { mergeStylesheetsPlugin } from "#src/services/mergeStylesheetsPlugin";
 import { readPackageManifest } from "#src/services/readPackageManifest";
 import Vize from "@vizejs/unplugin/rolldown";
 import { mergeConfig } from "tsdown";
@@ -26,10 +27,15 @@ export const getTsdownConfigurationVue = (vizeOptions: VizeUnpluginOptions = {})
       : { dts: { generator: "tsrs", tsconfig: "tsconfig.build.json", tsrs: { runExternalCode: true } } }),
     // The package's stylesheets are merged into its one `style.css`, which a page imports once, and no module imports a
     // Stylesheet: Node loads this package's `dist` too, in the scripts and benchmarks that read its data, and cannot
-    // Load a `.css` file. An unbundled build splits CSS per module unless told not to
+    // Load a `.css` file. Splitting is off, since tsdown's manifest writer lists `./style.css` only for the unsplit file.
+    // `mergeStylesheetsPlugin` then puts that file's rules in module-id order, which tsdown's own join does not
     css: { splitting: false },
     // A stylesheet is compiled into this package's own CSS, a sibling package's that a style block's `src` names
     // Included. Left external, the built JS would import a `.css` file that Node cannot load in a script
     deps: { alwaysBundle: [STYLESHEET_REQUEST_REGEX] },
-    plugins: [AutoImport({ imports: [...VUE_AUTO_IMPORTS] }), Vize({ ...vizeOptions, isProduction: true })],
+    plugins: [
+      AutoImport({ imports: [...VUE_AUTO_IMPORTS] }),
+      Vize({ ...vizeOptions, isProduction: true }),
+      mergeStylesheetsPlugin(),
+    ],
   });
