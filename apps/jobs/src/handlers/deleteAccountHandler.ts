@@ -8,13 +8,12 @@ import { deleteAccountOwnedResources } from "#src/services/account/deleteAccount
 import { deleteAccountOwnedRooms } from "#src/services/account/deleteAccountOwnedRooms";
 import { eraseAccountMessages } from "#src/services/account/eraseAccountMessages";
 import { eraseAccountUserObject } from "#src/services/account/eraseAccountUserObject";
+import { eraseAccountUserRow } from "#src/services/account/eraseAccountUserRow";
 import { getAccountTopics } from "#src/services/account/getAccountTopics";
 import { removeAccountFromMemberRooms } from "#src/services/account/removeAccountFromMemberRooms";
 import { publishTopicsBestEffort } from "#src/services/realtime/publishTopicsBestEffort";
-import { db } from "#src/services/shared/db";
-import { deleteAccountQueueMessageSchema, usersInAuth } from "@esposter/db-schema";
+import { deleteAccountQueueMessageSchema } from "@esposter/db-schema";
 import { settleAll, withFinalizerAsync } from "@esposter/shared";
-import { eq } from "drizzle-orm";
 
 // The account deletion sweep, in the order each store depends on. Every step treats an already-gone target as done, so a
 // Run that fails anywhere is finished by the next one, and the message names the account by its user id, so a retry runs
@@ -37,7 +36,7 @@ export const deleteAccountHandler = async (body: unknown): Promise<void> => {
       await deleteAccountBlobDirectories(userId);
       await deleteAccountDataExportArchives(userId);
       await clearAccountModerationActor(userId);
-      await db.delete(usersInAuth).where(eq(usersInAuth.id, userId));
+      await eraseAccountUserRow(userId);
     },
     async () => {
       // Best-effort, as the topics of a write are: a failed publish costs a reader one refresh, never the sweep

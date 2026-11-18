@@ -56,7 +56,7 @@ The order is the mechanism. The user row goes last because its cascade removes t
 7. **User object prefixes.** `deleteUserDirectories` removes everything under `{userId}/` in `genshin-assets`, `public-user-assets`, `user-assets` and `clicker-assets`. It is a prefix delete that lists keys in pages and deletes them in batches of up to a thousand, and an empty prefix counts as done. The clicker and user-assets buckets each hold the person's save under the prefix.
 8. **Export archives.** `deleteAccountDataExportArchives` reads the object key of each `dataExports` row the account owns. It skips a row that names no object, which is a queued export with no archive yet, and deletes the named objects in `user-assets` through `deleteBlobs`. The archive is named by its export id under `exports/` and sits under no user prefix, so its row is the only way to find it. An archive an earlier attempt already removed counts as done.
 9. **Moderation actors.** `clearAccountModerationActor` sets the account's `actorUserId` to null on every moderation log row it took as a moderator, in every room, so each room keeps the record without the person's name. It is one D1 update served by the actor index, and a replay finds no rows left to blank.
-10. **User row.** The `usersInAuth` row is deleted last. Its cascade removes the `accounts` rows, the `dataExports` rows and the other rows that reference the user with a cascade. No step deletes those by hand.
+10. **User row.** `eraseAccountUserRow` deletes the `usersInAuth` row last, in one batch with the recount of the stored counts the cascade moves: each post's `likeCount` and each post's `commentCount`. The cascade removes the account's likes, its posts and the replies beneath them, the `accounts` rows, the `dataExports` rows and the other rows that reference the user with a cascade. No step deletes those by hand.
 
 A profile image's presigned upload URL outlives the request that minted it, so an image can land in `public-user-assets` after the sweep has passed. The landing's object-create notification sends it to the `DeleteOrphanedProfileImage` queue, and `deleteOrphanedProfileImageHandler` deletes it when the account row is gone or carries `deletionRequestedAt`, and keeps it for an account in use. It is the one reader of the marker outside the mutation.
 
@@ -84,6 +84,8 @@ Every step treats an already-gone target as done. A missing object's delete coun
 
 **The foreign keys cascade.** Each reference to a user or a room is a foreign key with its cascade, so deleting the row removes what references it, and no step deletes accounts or rooms' dependent rows by hand.
 
+**Counts are recounted in the batch that removes the row.** The cascade takes likes and replies without touching the counts they feed, since no trigger keeps them, so each post's `likeCount` and `commentCount` would keep the erased person's share. Each is recounted from the rows that remain, a set-based statement over the affected posts, never a subtraction: a subtraction is a delta, and the client-data design's aggregate rule forbids one. The recount excludes the rows the cascade will take, so it runs ahead of the delete in the same `db.batch`, which is one transaction. A replay that fails before the batch finds every count where it was, and one that finds the batch applied finds no erased rows left to count. A recount over the rows as they stand after the delete would need the affected posts captured before it, and a capture held only in memory is lost on a crash, so the batch takes the affected set from the rows themselves.
+
 ## Rejected
 
 - **Sweeping inside the mutation.** It makes the caller wait on storage listings and every room object, and a failure halfway leaves the answer unknown.
@@ -93,6 +95,7 @@ Every step treats an already-gone target as done. A missing object's delete coun
 ## Limits the spec states
 
 - The sweep finds a person's rooms through their memberships, so a message they wrote in a room they have since left stays attributed to them. Their scheduled messages are the exception, since the index names them whatever room they are in.
+- A post's stored `ranking` is a function of its like count, and the sweep does not recount it. The formula lives in `apps/web/shared/services/post/getPostRanking.ts`, which the jobs Worker cannot import, so a post whose like count the erasure moved keeps its pre-erasure ranking until its next vote. Moving the formula to a package both Workers import closes it.
 - Moderation records in other people's rooms where the user is the moderator, and resource activity on resources the user does not own, are kept as the platform's audit trail, with the moderator's id set to null by the sweep. Moderation records that name the user as target go with the account. Whether that retention is lawful is an owner decision.
 
 ## Key files
@@ -111,6 +114,7 @@ Every step treats an already-gone target as done. A missing object's delete coun
 | `apps/jobs/src/handlers/deleteAccountHandler.ts`                   | The sweep, in order                                                                                                            |
 | `apps/jobs/src/services/account/`                                  | One service per step                                                                                                           |
 | `apps/jobs/src/services/account/clearAccountModerationActor.ts`    | Blanks the moderator id on the account's moderation log rows                                                                   |
+| `apps/jobs/src/services/account/eraseAccountUserRow.ts`            | Deletes the user row in one batch with the recount of the post counts the cascade moves                                        |
 | `apps/jobs/src/handlers/deleteOrphanedProfileImageHandler.ts`      | Removes a profile image that lands after the sweep                                                                             |
 | `apps/realtime/src/durableObjects/RoomObject.ts`                   | The room object: `deleteAll`, `deleteUserReactions` and the reaction rule it shares with a member's own take-back, the erasure |
 | `packages/db/src/services/storage/listChargedBlobsByUser.ts`       | Reads the account's storage ledger rows                                                                                        |

@@ -16,6 +16,8 @@ import {
   friendsInSocial,
   getTopic,
   getUserProfileImageBlobName,
+  likesInPost,
+  postsInPost,
   resourcesInResource,
   ResourceType,
   roomsInMessage,
@@ -133,6 +135,58 @@ describe(deleteAccountHandler, () => {
     await deleteAccountHandler({ userId });
 
     expect(MockPublishedTopics).toContain(getTopic(TopicKind.Friend, friendUserId));
+  });
+
+  // A post's like count is the sum of its likes, so the erased person's like leaves it with the row that holds it
+  test("recounts a post's likes without the erased person's like", async () => {
+    expect.hasAssertions();
+
+    const userId = v7();
+    const otherUserId = v7();
+    const friendUserId = v7();
+    await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId), createUser(friendUserId)]);
+    const post = takeOne(
+      await mockDb.insert(postsInPost).values({ likeCount: 2, ranking: 0, userId: otherUserId }).returning(),
+    );
+    await mockDb.insert(likesInPost).values([
+      { postId: post.id, userId, value: 1 },
+      { postId: post.id, userId: friendUserId, value: 1 },
+    ]);
+
+    await deleteAccountHandler({ userId });
+
+    await expect(
+      mockDb.select({ likeCount: postsInPost.likeCount }).from(postsInPost).where(eq(postsInPost.id, post.id)),
+    ).resolves.toStrictEqual([{ likeCount: 1 }]);
+  });
+
+  // A post's comment count is the replies beneath it: the erased comment and every reply beneath it leave the count, and
+  // The reply that stays beneath the post stays in it
+  test("recounts a post's comments without the erased person's comment or the replies beneath it", async () => {
+    expect.hasAssertions();
+
+    const userId = v7();
+    const otherUserId = v7();
+    await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
+    const post = takeOne(
+      await mockDb.insert(postsInPost).values({ commentCount: 3, ranking: 0, userId: otherUserId }).returning(),
+    );
+    const comment = takeOne(
+      await mockDb
+        .insert(postsInPost)
+        .values({ ancestorIds: [post.id], depth: 1, parentId: post.id, ranking: 0, userId })
+        .returning(),
+    );
+    await mockDb.insert(postsInPost).values([
+      { ancestorIds: [post.id, comment.id], depth: 2, parentId: comment.id, ranking: 0, userId: otherUserId },
+      { ancestorIds: [post.id], depth: 1, parentId: post.id, ranking: 0, userId: otherUserId },
+    ]);
+
+    await deleteAccountHandler({ userId });
+
+    await expect(
+      mockDb.select({ commentCount: postsInPost.commentCount }).from(postsInPost).where(eq(postsInPost.id, post.id)),
+    ).resolves.toStrictEqual([{ commentCount: 1 }]);
   });
 
   test("a second run over a finished sweep finds nothing and succeeds", async () => {
