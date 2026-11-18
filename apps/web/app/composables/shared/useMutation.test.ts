@@ -1,10 +1,20 @@
 // @vitest-environment nuxt
 import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { MutationStatus } from "#src/models/shared/MutationStatus";
+import { readActiveTopicReads } from "#src/services/realtime/collectTopics";
+import { openRealtimeSocket } from "#src/services/realtime/openRealtimeSocket.test";
 import { useAlertStore } from "#src/store/alert";
-import { noop } from "@esposter/shared";
+import { useConnectionStore } from "#src/store/realtime/connection";
+import { getTopic, TopicKind } from "@esposter/db-schema";
+import { noop, waitForSynchronizedFunctions } from "@esposter/shared";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
+
+vi.mock(
+  import("#src/services/realtime/openRealtimeSocket"),
+  () => import("#src/services/realtime/openRealtimeSocket.test"),
+);
 
 describe(useMutation, () => {
   const key = "";
@@ -549,5 +559,27 @@ describe(useMutation, () => {
 
     expect(firstOnSuccess).toHaveBeenCalledTimes(1);
     expect(secondOnSuccess).toHaveBeenCalledTimes(1);
+  });
+
+  // A one-shot read takes no watch, so a change to the topics it named reads nothing: the screen that keeps the row live owns that
+  test("takes no topic watch for a read marked unwatched", async () => {
+    expect.hasAssertions();
+
+    const connectionStore = useConnectionStore();
+    connectionStore.openUser();
+    const [, onFrame] = vi.mocked(openRealtimeSocket).mock.lastCall ?? [];
+    const topic = getTopic(TopicKind.Post, v7());
+    const query = vi.fn<() => Promise<string>>(() => {
+      readActiveTopicReads()?.push({ readAt: 0, topics: [topic] });
+      return Promise.resolve(result);
+    });
+    const scope = effectScope();
+    const { executeQuery } = scope.run(() => useMutation()) ?? {};
+    await executeQuery?.(query, { isUnwatched: true, key });
+    onFrame?.(JSON.stringify({ data: { topic }, type: "invalidate" }));
+    await waitForSynchronizedFunctions();
+    scope.stop();
+
+    expect(query).toHaveBeenCalledTimes(1);
   });
 });

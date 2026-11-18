@@ -39,6 +39,9 @@ interface OptimisticMutationOptions<TResult> extends BaseMutationOptions {
 
 interface QueryOptions<TResult> {
   isExclusive?: true | undefined;
+  // A one-shot read keeps no watch on its topics: a read whose owner outlives the screen it serves, such as a store's,
+  // Would otherwise keep re-reading after the screen is gone. The screen that holds the read live watches it instead
+  isUnwatched?: true | undefined;
   key: PropertyKey;
   onError?: ((error: Error) => Promisable<void>) | undefined;
   onSuccess?: (result: TResult) => Promisable<void>;
@@ -119,7 +122,7 @@ export const useMutation = () => {
     query: (checkIsStale: () => boolean) => Promise<TResult>,
     options: QueryOptions<TResult>,
   ): Promise<MutationOutcome<TResult>> => {
-    const { isExclusive, key, onError, onSuccess } = options;
+    const { isExclusive, isUnwatched, key, onError, onSuccess } = options;
     const sharedQuery = isExclusive ? keySharedQueryMap.get(key) : undefined;
     // The call already in flight applies the state and runs the callbacks for this target, so awaiting it is
     // The whole read — the joiner sees the same data and the same outcome one request later
@@ -149,7 +152,7 @@ export const useMutation = () => {
               await onSuccess?.(result);
               watchTopics(
                 key,
-                topicRead,
+                isUnwatched ? undefined : topicRead,
                 getSynchronizedFunction(() => executeQuery(query, options)),
               );
             },

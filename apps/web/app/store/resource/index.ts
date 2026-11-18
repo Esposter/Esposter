@@ -176,6 +176,8 @@ export const useResourceStore = defineStore("resource", () => {
 
     await rethrowFailedRead(
       executeReloadQuery(() => $trpc.resource.readResource.query({ id }), {
+        // The store outlives the page, and the page's own read keeps the open row live, so this one-shot read holds no watch
+        isUnwatched: true,
         key: reloadKey,
         onSuccess: ({ publication: newPublication, ...newResource }) => {
           // Reads for two resources are not one target, so a navigation away can let the earlier one land last
