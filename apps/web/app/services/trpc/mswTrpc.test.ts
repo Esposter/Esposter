@@ -11,8 +11,8 @@ import { afterAll, afterEach, beforeAll, describe, expect, vi } from "vitest";
 // Client-side tRPC calls are answered at the network, not by replacing the client: the real plugin, its links and
 // Its transformer all run, and the mock router answers with the real server's transformer and error formatter.
 // Call at `describe` scope, then register per-test resolvers with `trpcMsw.<procedure>.<query|mutation|subscription>`.
-// Resolvers are forgotten between tests. A request no handler answers is an error naming its method and url, never a
-// Real socket, and a request a resolver holds fails the test that held it instead of hanging the hooks after it
+// Resolvers are forgotten between tests. A request no handler answers is an error naming its method and url.
+// It never reaches a real socket. A request a resolver holds fails the test that held it, not the hooks after it
 export const setupMswTrpc = () => {
   const { handlers, reset, trpc } = createTRPCMsw<TRPCRouter>({
     endpoint: `${window.location.origin}${TRPC_CLIENT_PATH}`,
