@@ -1,6 +1,7 @@
 // The name each record a screen reads is held under, the keys of ScreenRecords
 export const ScreenRecordKey = {
   CharacterTrials: "characterTrials",
+  CookingTalents: "cookingTalents",
   CraftingRecipes: "craftingRecipes",
   CraftingStrongboxes: "craftingStrongboxes",
   Dishes: "dishes",

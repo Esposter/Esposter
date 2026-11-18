@@ -3,6 +3,7 @@ import type { PaimonsBargainsRotation } from "#src/models/shop/PaimonsBargainsRo
 import type { readCraftingRecipes as readCraftingRecipesFn } from "#src/services/crafting/readCraftingRecipes";
 import type { readCraftingStrongboxes as readCraftingStrongboxesFn } from "#src/services/crafting/readCraftingStrongboxes";
 import type { readDomainChallengeLevels as readDomainChallengeLevelsFn } from "#src/services/domains/readDomainChallengeLevels";
+import type { readCookingTalents as readCookingTalentsFn } from "#src/services/cooking/readCookingTalents";
 import type { readDishes as readDishesFn } from "#src/services/cooking/readDishes";
 import type { readForgeRecipes as readForgeRecipesFn } from "#src/services/forging/readForgeRecipes";
 import type { readHomeBlueprints as readHomeBlueprintsFn } from "#src/services/home/readHomeBlueprints";
@@ -18,6 +19,7 @@ import { ShopRefresh } from "#src/models/shop/ShopRefresh";
 import { readCraftingRecipes } from "#src/services/crafting/readCraftingRecipes";
 import { readCraftingStrongboxes } from "#src/services/crafting/readCraftingStrongboxes";
 import { readDomainChallengeLevels } from "#src/services/domains/readDomainChallengeLevels";
+import { readCookingTalents } from "#src/services/cooking/readCookingTalents";
 import { readDishes } from "#src/services/cooking/readDishes";
 import { readForgeRecipes } from "#src/services/forging/readForgeRecipes";
 import { readHomeBlueprints } from "#src/services/home/readHomeBlueprints";
@@ -40,6 +42,9 @@ vi.mock(import("#src/services/crafting/readCraftingStrongboxes"), () => ({
 }));
 vi.mock(import("#src/services/domains/readDomainChallengeLevels"), () => ({
   readDomainChallengeLevels: vi.fn<typeof readDomainChallengeLevelsFn>(() => Promise.resolve({})),
+}));
+vi.mock(import("#src/services/cooking/readCookingTalents"), () => ({
+  readCookingTalents: vi.fn<typeof readCookingTalentsFn>(() => Promise.resolve({})),
 }));
 vi.mock(import("#src/services/cooking/readDishes"), () => ({
   readDishes: vi.fn<typeof readDishesFn>(() => Promise.resolve({})),
@@ -151,6 +156,19 @@ describe(useWorldScreenRecords, () => {
     await flushReads();
 
     expect(readForgeRecipes).toHaveBeenCalledExactlyOnceWith(gameDataBaseUrl);
+  });
+
+  test("reads the cooks' talents as the cooking screen opens", async () => {
+    expect.hasAssertions();
+
+    startTestWorldSession();
+    useWorldScreenRecords({ gameDataBaseUrl });
+    const worldScreenStore = useWorldScreenStore();
+    worldScreenStore.screenKind = ScreenKind.Cooking;
+    await nextTick();
+    await flushReads();
+
+    expect(readCookingTalents).toHaveBeenCalledExactlyOnceWith(gameDataBaseUrl);
   });
 
   test("reads the processings as the processing screen opens", async () => {

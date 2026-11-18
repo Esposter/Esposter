@@ -11,7 +11,6 @@ const recipe = { unlockItemIds: [ITEM_ID] } as CookingRecipe;
 vi.mock(import("#src/services/cooking/readCookingRecipes"), () => ({
   readCookingRecipes: () => Promise.resolve([recipe]),
 }));
-vi.mock(import("#src/services/cooking/readCookingTalents"), () => ({ readCookingTalents: () => Promise.resolve({}) }));
 vi.mock(import("#src/services/cooking/readMondstadtCookingStovePlace"), () => ({
   readMondstadtCookingStovePlace: () => Promise.resolve(undefined),
 }));

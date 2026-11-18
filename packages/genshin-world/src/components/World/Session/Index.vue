@@ -291,7 +291,7 @@ const worldCookingStore = useWorldCookingStore();
 const { start: startCooking, stop: stopCooking } = worldCookingStore;
 // The cooking recipes and the stove's place as the world starts. A used stove opens the cooking screen on a recipe, which
 // Is held here while the screen is open
-const { cookingProgress, cookingRecipe, cookingTalents, instructionRecipeMap, openCookingRecipes, processingJobs } =
+const { cookingProgress, cookingRecipe, instructionRecipeMap, openCookingRecipes, processingJobs } =
   storeToRefs(worldCookingStore);
 startCooking({ cookingProgress: savedState.cookingProgress, processingJobs: savedState.processingJobs });
 onUnmounted(stopCooking);
@@ -1628,7 +1628,7 @@ useWorldSaveSync({
       @choose="(towerBuffId) => chooseAbyssBenediction(towerBuffId)"
     />
     <CookingScreen
-      v-if="screenKind === ScreenKind.Cooking && cookingRecipe"
+      v-if="screenKind === ScreenKind.Cooking && cookingRecipe && records.cookingTalents"
       v-model:progress="cookingProgress"
       v-model:recipe="cookingRecipe"
       :avatar-id="activeCharacterId"
@@ -1638,7 +1638,7 @@ useWorldSaveSync({
       :name-text
       :random="kitContext.random"
       :recipes="openCookingRecipes"
-      :talent="cookingTalents[activeCharacterId]"
+      :talent="records.cookingTalents[activeCharacterId]"
       @close="closeScreen()"
       @update:inventory="(nextInventory) => setInventory(nextInventory)"
     />

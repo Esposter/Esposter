@@ -1,5 +1,6 @@
 import type { CraftingRecipe } from "#src/models/crafting/CraftingRecipe";
 import type { CraftingStrongboxData } from "#src/models/crafting/CraftingStrongboxData";
+import type { CookingTalent } from "#src/models/cooking/CookingTalent";
 import type { DishUse } from "#src/models/cooking/DishUse";
 import type { DomainChallengeLevelMap } from "#src/models/domains/DomainChallengeLevelMap";
 import type { ForgeRecipe } from "#src/models/forging/ForgeRecipe";
@@ -19,6 +20,8 @@ export interface ScreenRecords {
   domainChallengeLevels: DomainChallengeLevelMap;
   // The dishes' uses, each by the item its dish is eaten from, which the bag uses
   dishes: Record<string, DishUse>;
+  // The cooks' talents by character id, which the cooking screen shows the active character's of
+  cookingTalents: Record<string, CookingTalent>;
   // The blacksmith's recipes, which the forge offers and the bag learns from
   forgeRecipes: ForgeRecipe[];
   // The processings the cooks run, which the processing screen offers
