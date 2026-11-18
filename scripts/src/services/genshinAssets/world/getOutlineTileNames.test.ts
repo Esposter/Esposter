@@ -1,6 +1,7 @@
 import type { GroundPieceArea } from "#src/models/genshinAssets/shared/GroundPieceArea";
 
 import { getOutlineTileNames } from "#src/services/genshinAssets/world/getOutlineTileNames";
+import { WorldLayer } from "genshin-world";
 import { describe, expect, test } from "vitest";
 
 describe(getOutlineTileNames, () => {
@@ -12,6 +13,7 @@ describe(getOutlineTileNames, () => {
     const areas: GroundPieceArea[] = [
       {
         id: "far",
+        layer: WorldLayer.Surface,
         outline: [
           { x: 2100, z: -3100 },
           { x: 2200, z: -3100 },
@@ -29,6 +31,7 @@ describe(getOutlineTileNames, () => {
     const areas: GroundPieceArea[] = [
       {
         id: "first",
+        layer: WorldLayer.Surface,
         outline: [
           { x: 500, z: -500 },
           { x: 1500, z: -500 },
@@ -36,6 +39,7 @@ describe(getOutlineTileNames, () => {
       },
       {
         id: "second",
+        layer: WorldLayer.Surface,
         outline: [
           { x: 1000, z: -1000 },
           { x: 1100, z: -1100 },
