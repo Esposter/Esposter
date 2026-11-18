@@ -38,7 +38,7 @@ describe(fitRiverCourses, () => {
           ],
         }),
       )
-      .mockResolvedValueOnce(JSON.stringify({ enemyCamps: [] }));
+      .mockResolvedValueOnce(JSON.stringify({ enemyCamps: [], landmarks: [] }));
     vi.mocked(readObjMesh)
       .mockResolvedValueOnce({ vertices: river } as Awaited<ReturnType<typeof readObjMesh>>)
       .mockResolvedValueOnce({ vertices: pond } as Awaited<ReturnType<typeof readObjMesh>>);
@@ -49,6 +49,7 @@ describe(fitRiverCourses, () => {
     expect(vi.mocked(readObjMesh)).toHaveBeenCalledTimes(2);
     expect(vi.mocked(writeWorldData).mock.calls[0]?.[1]).toStrictEqual({
       enemyCamps: [],
+      landmarks: [],
       rivers: [Array.from({ length: 7 }, (_value, x) => ({ level: 10 - x / 2, width: 2, x, z: 0 }))],
     });
   });
@@ -65,7 +66,7 @@ describe(fitRiverCourses, () => {
     };
     vi.mocked(readFile)
       .mockResolvedValueOnce(JSON.stringify({ materials: {}, placements: [placement] }))
-      .mockResolvedValueOnce(JSON.stringify({ enemyCamps: [] }));
+      .mockResolvedValueOnce(JSON.stringify({ enemyCamps: [], landmarks: [] }));
     vi.mocked(readObjMesh).mockResolvedValueOnce({ vertices: river } as Awaited<ReturnType<typeof readObjMesh>>);
     vi.mocked(writeWorldData).mockResolvedValueOnce("regions/liyue.json");
 

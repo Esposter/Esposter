@@ -81,7 +81,10 @@ describe(writeDomainEntrances, () => {
 
     await writeDomainEntrances({ isDryRun: false });
 
-    expect(writeWorldData).toHaveBeenCalledExactlyOnceWith("regions/liyue.json", { landmarks: [entrance] });
+    expect(vi.mocked(writeWorldData).mock.calls).toStrictEqual([
+      ["regions/liyue.json", { landmarks: [entrance] }, { isDryRun: false }],
+      ["regions/liyue.landmarks.json", { landmarks: [entrance] }, { isDryRun: false }],
+    ]);
   });
 
   test("an entrance in a region the fit did not place is counted and left out", async () => {

@@ -32,7 +32,7 @@ describe(fitWaterfallSheets, () => {
     };
     vi.mocked(readFile)
       .mockResolvedValueOnce(JSON.stringify({ materials: {}, placements: [placement] }))
-      .mockResolvedValueOnce(JSON.stringify({ enemyCamps: [] }));
+      .mockResolvedValueOnce(JSON.stringify({ enemyCamps: [], landmarks: [] }));
     vi.mocked(readObjMesh).mockResolvedValueOnce({
       vertices: [
         [0, 0, 0],
@@ -47,6 +47,7 @@ describe(fitWaterfallSheets, () => {
 
     expect(vi.mocked(writeWorldData).mock.calls[0]?.[1]).toStrictEqual({
       enemyCamps: [],
+      landmarks: [],
       waterfalls: [{ across: { x: 1, y: 0, z: 0 }, drop: 5, lip: { x: 0.5, y: 5, z: 10 }, width: 1 }],
     });
   });
@@ -63,7 +64,7 @@ describe(fitWaterfallSheets, () => {
     };
     vi.mocked(readFile)
       .mockResolvedValueOnce(JSON.stringify({ materials: {}, placements: [placement] }))
-      .mockResolvedValueOnce(JSON.stringify({ enemyCamps: [] }));
+      .mockResolvedValueOnce(JSON.stringify({ enemyCamps: [], landmarks: [] }));
     vi.mocked(readObjMesh).mockResolvedValueOnce({
       vertices: [
         [0, 0, 0],
