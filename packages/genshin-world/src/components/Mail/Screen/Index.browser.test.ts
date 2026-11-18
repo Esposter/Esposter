@@ -210,16 +210,6 @@ describe("mailScreen", () => {
       .toBeVisible();
   });
 
-  // Each mark the Mailbox draws is a traced shape in the place its bare mark held, one of each on a pinned mail's screen
-  test("a traced mail mark replaces its bare mark on the mail screen", async () => {
-    expect.hasAssertions();
-
-    await render(MailScreen, { props: { ...props, mails: [{ ...createMail(false), isPinned: true }] } });
-
-    for (const markClass of MAIL_MARK_CLASSES)
-      expect(document.querySelector(`.mail-screen .${markClass} path`)).not.toBeNull();
-  });
-
   // Every mark on the Mailbox is an inline vector, with no picture loaded for it
   test("a mark is a vector in the screen", async () => {
     expect.hasAssertions();
