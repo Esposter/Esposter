@@ -158,6 +158,8 @@ export const fitGroundPiece = async (piece: GroundPiece, source: GroundSource): 
       const values = mapTerrainResidualGrid(grid, (x, z, value) =>
         getCentreDistance(x, z) < within ? value : Number.NaN,
       ).values.filter((sample) => Number.isFinite(sample));
+      // A band no sample reaches has nothing to measure, so it is said in words rather than averaged over none
+      if (values.length === 0) return `no samples within ${within}`;
       return `${roundFitted(compute([...values]))}${unit} within ${within}`;
     }).join(", ");
   const ground = { ...hills, features, ...computeGroundBounds(heightGrid.values), residual };
