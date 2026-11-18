@@ -29,13 +29,6 @@ Each mark, icon and ornament the app draws from the game SHALL be a shape traced
 - **THEN** the traced mark is drawn in the placeholder's place
 - **AND** no flat placeholder is drawn for it
 
-#### Scenario: A traced mail mark replaces its bare mark on the mail screen
-
-- **GIVEN** the mail screen draws a bare mark where a game mark stands
-- **WHEN** the screen is shown
-- **THEN** the traced mark is drawn in the bare mark's place
-- **AND** no bare mark is drawn for it
-
 ### Requirement: A stand-in takes the colour its picture measures
 
 A stand-in for a picture SHALL take the mean colour measured from that picture's art, so its place reads in the game's tone.
