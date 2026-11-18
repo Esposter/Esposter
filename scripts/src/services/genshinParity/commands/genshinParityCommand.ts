@@ -14,6 +14,7 @@ import { expressionCommand } from "#src/services/genshinParity/commands/expressi
 import { fetchCommand } from "#src/services/genshinParity/commands/fetchCommand";
 import { fixturesCommand } from "#src/services/genshinParity/commands/fixturesCommand";
 import { fogCommand } from "#src/services/genshinParity/commands/fogCommand";
+import { framesCommand } from "#src/services/genshinParity/commands/framesCommand";
 import { gbufferCommand } from "#src/services/genshinParity/commands/gbufferCommand";
 import { instrumentsCommand } from "#src/services/genshinParity/commands/instrumentsCommand";
 import { launchCommand } from "#src/services/genshinParity/commands/launchCommand";
@@ -99,6 +100,7 @@ export const genshinParityCommand: CommandDef = defineCommand({
     screens: screensCommand,
     fixtures: fixturesCommand,
     probe: probeCommand,
+    frames: framesCommand,
     verify: verifyCommand,
     recordings: recordingsCommand,
     references: referencesCommand,

@@ -1,7 +1,7 @@
-import type { ImageRegion } from "#src/models/recreation/image/ImageRegion";
 import type { SubCommandsDef } from "citty";
 
 import { ProbeSide } from "#src/models/genshinParity/probe/ProbeSide";
+import { readRegionArgs } from "#src/services/genshinParity/commands/readRegionArgs";
 import { regionArgs } from "#src/services/genshinParity/commands/regionArgs";
 import { probeRectangle } from "#src/services/genshinParity/probe/probeRectangle";
 import { defineCommand } from "citty";
@@ -23,12 +23,6 @@ export const probeCommand: SubCommandsDef[string] = defineCommand({
     name: "probe",
   },
   run: async ({ args }) => {
-    const rect: ImageRegion = {
-      height: Number(args.height),
-      width: Number(args.width),
-      x: Number(args.x),
-      y: Number(args.y),
-    };
-    console.log(JSON.stringify(await probeRectangle(args.reference, rect, args.side)));
+    console.log(JSON.stringify(await probeRectangle(args.reference, readRegionArgs(args), args.side)));
   },
 });
