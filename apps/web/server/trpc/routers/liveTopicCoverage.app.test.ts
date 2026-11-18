@@ -9,6 +9,7 @@ import { createLikeLiveTopicCalls } from "#server/trpc/routers/likeLiveTopicCall
 import { expectLiveTopicCoverage } from "#server/trpc/routers/liveTopicCoverage.test";
 import { createPostLiveTopicCalls } from "#server/trpc/routers/postLiveTopicCalls.test";
 import { createRoomLiveTopicCalls } from "#server/trpc/routers/room/liveTopicCalls.test";
+import { createWebhookLiveTopicCalls } from "#server/trpc/routers/webhookLiveTopicCalls.test";
 import { describe, expect, test } from "vitest";
 
 // Every migrated router's cases run together against the root router, so a write in one router is checked against the
@@ -28,6 +29,7 @@ describe("live topic coverage across the app", () => {
       await createPostLiveTopicCalls(context),
       await createLikeLiveTopicCalls(context),
       await createRoomLiveTopicCalls(context),
+      await createWebhookLiveTopicCalls(context),
     ];
     await expectLiveTopicCoverage(
       trpcRouter,

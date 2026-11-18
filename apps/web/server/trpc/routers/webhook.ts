@@ -11,7 +11,6 @@ import { inRoom } from "#server/services/db/inRoom";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { router } from "#server/trpc/index";
-import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { getMemberProcedure } from "#server/trpc/procedure/room/getMemberProcedure";
 import { getPermissionsProcedure } from "#server/trpc/procedure/room/getPermissionsProcedure";
 import { createWebhookInputSchema } from "#shared/models/db/webhook/CreateWebhookInput";
@@ -24,11 +23,9 @@ import { inJsonArray } from "@esposter/db";
 import {
   appUsersInMessage,
   DatabaseEntityType,
-  getTopic,
   roomIdSchema,
   RoomPermission,
   roomsInMessage,
-  TopicKind,
   WebhookInMessageRelations,
   webhooksInMessage,
 } from "@esposter/db-schema";
@@ -40,9 +37,11 @@ import { v7 } from "uuid";
 const { tokenHash: _tokenHash, ...publicWebhookColumns } = getColumns(webhooksInMessage);
 
 export const webhookRouter = router({
-  createWebhook: getTopicsProcedure(
-    getPermissionsProcedure(RoomPermission.ManageWebhooks, createWebhookInputSchema, "roomId", RateLimiterType.Slow),
-    ({ input }) => [getTopic(TopicKind.Webhook, input.roomId)],
+  createWebhook: getPermissionsProcedure(
+    RoomPermission.ManageWebhooks,
+    createWebhookInputSchema,
+    "roomId",
+    RateLimiterType.Slow,
   ).mutation<IssuedWebhookInMessage>(async ({ ctx, input: { name, roomId } }) => {
     const webhookContext = JSON.stringify({ name, roomId });
     // The webhook posts as its app user, so the app user's id is named up front. Both rows are selected from the room
@@ -88,9 +87,10 @@ export const webhookRouter = router({
       webhook: requireMutation(webhookRows[0], Operation.Create, DatabaseEntityType.Webhook, webhookContext),
     };
   }),
-  deleteWebhook: getTopicsProcedure(
-    getPermissionsProcedure(RoomPermission.ManageWebhooks, deleteWebhookInputSchema, "roomId"),
-    ({ input }) => [getTopic(TopicKind.Webhook, input.roomId)],
+  deleteWebhook: getPermissionsProcedure(
+    RoomPermission.ManageWebhooks,
+    deleteWebhookInputSchema,
+    "roomId",
   ).mutation<PublicWebhookInMessage>(async ({ ctx, input: { id, roomId } }) => {
     const webhook = await requireEntity(
       ctx.db.query.webhooksInMessage.findFirst({
@@ -100,29 +100,27 @@ export const webhookRouter = router({
       DatabaseEntityType.Webhook,
       id,
     );
-    // The webhook row is cascade-deleted with the app user it posts as, so the app user is the one delete
-    requireMutation(
-      (await ctx.db.delete(appUsersInMessage).where(eq(appUsersInMessage.id, webhook.userId)).returning())[0],
-      Operation.Delete,
-      DatabaseEntityType.AppUser,
-      webhook.userId,
-    );
+    // The app user's delete cascades to the webhook, but the cascade names the room's webhooks only table-wide, and a
+    // Reader of the room's list watches the room's rows. So the webhook's own delete rides in the same batch
+    const [, deletedAppUserRows] = await ctx.db.batch([
+      ctx.db.delete(webhooksInMessage).where(eq(webhooksInMessage.id, id)).returning(),
+      ctx.db.delete(appUsersInMessage).where(eq(appUsersInMessage.id, webhook.userId)).returning(),
+    ]);
+    requireMutation(deletedAppUserRows[0], Operation.Delete, DatabaseEntityType.AppUser, webhook.userId);
     return webhook;
   }),
-  readAppUsers: getTopicsProcedure(getMemberProcedure(readAppUsersInputSchema, "roomId"), ({ input }) => [
-    getTopic(TopicKind.Webhook, input.roomId),
-  ]).query<NamedAppUserInMessage[]>(({ ctx, input: { ids, roomId } }) =>
-    // The name is the webhook's, the row that renames the bot, so a rename reaches every message the bot posted
-    ctx.db
-      .select({ ...getColumns(appUsersInMessage), name: webhooksInMessage.name })
-      .from(appUsersInMessage)
-      .innerJoin(webhooksInMessage, eq(webhooksInMessage.userId, appUsersInMessage.id))
-      .where(and(eq(webhooksInMessage.roomId, roomId), inJsonArray(appUsersInMessage.id, ids))),
+  readAppUsers: getMemberProcedure(readAppUsersInputSchema, "roomId").query<NamedAppUserInMessage[]>(
+    ({ ctx, input: { ids, roomId } }) =>
+      // The name is the webhook's, the row that renames the bot, so a rename reaches every message the bot posted
+      ctx.db
+        .select({ ...getColumns(appUsersInMessage), name: webhooksInMessage.name })
+        .from(appUsersInMessage)
+        .innerJoin(webhooksInMessage, eq(webhooksInMessage.userId, appUsersInMessage.id))
+        .where(and(eq(webhooksInMessage.roomId, roomId), inJsonArray(appUsersInMessage.id, ids))),
   ),
-  readWebhooks: getTopicsProcedure(
-    getPermissionsProcedure(RoomPermission.ManageWebhooks, roomIdSchema, "roomId"),
-    ({ input }) => [getTopic(TopicKind.Webhook, input.roomId)],
-  ).query<WebhookInMessageWithRelations[]>(({ ctx, input: { roomId } }) =>
+  readWebhooks: getPermissionsProcedure(RoomPermission.ManageWebhooks, roomIdSchema, "roomId").query<
+    WebhookInMessageWithRelations[]
+  >(({ ctx, input: { roomId } }) =>
     ctx.db.query.webhooksInMessage.findMany({
       columns: { tokenHash: false },
       orderBy: { id: "desc" },
@@ -150,9 +148,10 @@ export const webhookRouter = router({
       );
       return { token, webhook };
     }),
-  updateWebhook: getTopicsProcedure(
-    getPermissionsProcedure(RoomPermission.ManageWebhooks, updateWebhookInputSchema, "roomId"),
-    ({ input }) => [getTopic(TopicKind.Webhook, input.roomId)],
+  updateWebhook: getPermissionsProcedure(
+    RoomPermission.ManageWebhooks,
+    updateWebhookInputSchema,
+    "roomId",
   ).mutation<PublicWebhookInMessage>(async ({ ctx, input: { id, roomId, ...rest } }) =>
     requireMutation(
       (
