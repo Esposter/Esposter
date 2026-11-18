@@ -36,7 +36,7 @@ flowchart TD
 | :----------------------------------------------------------------------- | :---------------------------------------------------------------------- |
 | `packages/genshin-world/src/models/puzzle/PuzzleKind.ts`                 | The five kinds the official map marks as puzzles                        |
 | `packages/genshin-world/src/models/puzzle/PuzzlePlace.ts`                | A placed puzzle mechanism: its id, kind and ground point                |
-| `packages/genshin-world/src/services/puzzle/constants.ts`                | The timed monument's lit time, and a Seelie's return and route times    |
+| `packages/genshin-world/src/services/puzzle/constants.ts`                | The puzzles' timings and reaches, and the chest kinds they spawn        |
 | `packages/genshin-world/src/services/puzzle/openShrineOfDepths.ts`       | A shrine opened by a key of its own region, and no other                |
 | `packages/genshin-world/src/composables/useWorldShrines.ts`              | The shut shrines offered beneath their points, and opened with a key    |
 | `packages/genshin-world/src/services/puzzle/computeShrineChestPlaces.ts` | The Luxurious chest an open shrine holds                                |
