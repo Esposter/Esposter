@@ -41,7 +41,7 @@ const createChests = (puzzleOptions: Parameters<ReturnType<typeof useWorldPuzzle
   worldPuzzlesStore.start(puzzleOptions);
   const worldAdventureRankStore = useWorldAdventureRankStore();
   vi.spyOn(worldAdventureRankStore, "gainWorldAdventureExp").mockImplementation(() => {});
-  // The scene's region chest map, which the session hands in as a getter and which each region's record enters as it arrives
+  // The scene's region chest map, which the session hands in as a getter and each record enters as it arrives
   const regionChestMap = shallowReactive(new Map<string, ChestPlace[]>());
   const worldChestsStore = useWorldChestsStore();
   worldChestsStore.start({ getRegionChestMap: () => regionChestMap, openedChestIds: new Set(), waterLevel: -1 });
@@ -84,7 +84,7 @@ describe(useWorldChestsStore, () => {
 
     datasetRecordsMap.set("chests/liyue", [{ id: LIYUE_CHEST_ID, kind: ChestKind.Common, position: { x: 0, z: 0 } }]);
     const { chestInteractables, regionChestMap } = createChests({ ...puzzleOptions, seelies: [] });
-    // Liyue's record is read once its region comes within reach, and the scene's region chest map holds it as it arrives
+    // Liyue's record is read once its region comes within reach, and the scene's region chest map holds it from then on
     // The store offers its chests from that map, with no copy of it kept beside it
     regionChestMap.set(LIYUE_REGION_ID, await readRegionChestPlaces("game-data", GameDataKeys.chests.liyue));
 
@@ -132,52 +132,69 @@ describe(useWorldChestsStore, () => {
     expect(chestInteractables.value.map(({ id }) => id)).toStrictEqual([]);
   });
 
-  test("an opened chest counts once toward its area's exploration", () => {
-    expect.hasAssertions();
-
-    const AREA_ID = "made-up-area";
-    // A made-up square of catalogue area around the origin, where the Liyue chest stands
-    const catalogue: Catalogue = {
-      regions: [
-        {
-          areas: [
-            {
-              id: AREA_ID,
-              layer: WorldLayer.Surface,
-              name: "Made-up Area",
-              outline: [
-                { x: -50, z: -50 },
-                { x: 50, z: -50 },
-                { x: 50, z: 50 },
-                { x: -50, z: 50 },
-              ],
-              subareas: [],
-              subregion: "",
-              weathers: [],
-            },
-          ],
-          id: LIYUE_REGION_ID,
-          name: "Made-up Region",
-        },
-      ],
-    };
-    const area: ExplorationArea = { areaId: AREA_ID, doings: [], reputationRatio: 0, total: 100 };
-    const { openChestById, regionChestMap } = createChests({ ...puzzleOptions, seelies: [] });
-    regionChestMap.set(LIYUE_REGION_ID, [{ id: LIYUE_CHEST_ID, kind: ChestKind.Common, position: { x: 0, z: 0 } }]);
-    // Opened, then opened again, which adds nothing to the count
-    openChestById(LIYUE_CHEST_ID, () => 0);
-    openChestById(LIYUE_CHEST_ID, () => 0);
-    // The doings the world places and the save records as done, counted the way the exploration progress counts them
+  // A made-up square of catalogue area around the origin, where the Liyue chest stands
+  const AREA_ID = "made-up-area";
+  const catalogue: Catalogue = {
+    regions: [
+      {
+        areas: [
+          {
+            id: AREA_ID,
+            layer: WorldLayer.Surface,
+            name: "Made-up Area",
+            outline: [
+              { x: -50, z: -50 },
+              { x: 50, z: -50 },
+              { x: 50, z: 50 },
+              { x: -50, z: 50 },
+            ],
+            subareas: [],
+            subregion: "",
+            weathers: [],
+          },
+        ],
+        id: LIYUE_REGION_ID,
+        name: "Made-up Region",
+      },
+    ],
+  };
+  const area: ExplorationArea = { areaId: AREA_ID, doings: [], reputationRatio: 0, total: 100 };
+  // The area's progress, counted the way the world counts its doings
+  // The chests the store places, and the ids it records as opened
+  const countAreaExploration = () => {
     const { placedDoings, recordedDoingIds } = useWorldDoings({
       clearedCamps: ref<ClearedCamp[]>([]),
       monumentPlaces: [],
       timeTrialPlaces: [],
     });
 
-    expect(
-      placeExplorationDoings([area], catalogue, placedDoings.value).map((placedArea) =>
-        computeExplorationProgress(placedArea, computeExploredDoingIds(placedArea, [], recordedDoingIds.value)),
-      ),
-    ).toStrictEqual([ExplorationKindWeightMap[ExplorationKind.Chest]]);
+    return placeExplorationDoings([area], catalogue, placedDoings.value).map((placedArea) =>
+      computeExplorationProgress(placedArea, computeExploredDoingIds(placedArea, [], recordedDoingIds.value)),
+    );
+  };
+
+  test("an opened chest counts once toward its area's exploration", () => {
+    expect.hasAssertions();
+
+    const { openChestById, regionChestMap } = createChests({ ...puzzleOptions, seelies: [] });
+    regionChestMap.set(LIYUE_REGION_ID, [{ id: LIYUE_CHEST_ID, kind: ChestKind.Common, position: { x: 0, z: 0 } }]);
+    openChestById(LIYUE_CHEST_ID, () => 0);
+
+    expect(countAreaExploration()).toStrictEqual([ExplorationKindWeightMap[ExplorationKind.Chest]]);
+  });
+
+  test("reopening a chest adds nothing to the count", () => {
+    expect.hasAssertions();
+
+    const { openChestById, regionChestMap } = createChests({ ...puzzleOptions, seelies: [] });
+    regionChestMap.set(LIYUE_REGION_ID, [{ id: LIYUE_CHEST_ID, kind: ChestKind.Common, position: { x: 0, z: 0 } }]);
+    openChestById(LIYUE_CHEST_ID, () => 0);
+    const countAfterOpening = countAreaExploration();
+    openChestById(LIYUE_CHEST_ID, () => 0);
+
+    expect({ afterOpening: countAfterOpening, afterReopening: countAreaExploration() }).toStrictEqual({
+      afterOpening: [ExplorationKindWeightMap[ExplorationKind.Chest]],
+      afterReopening: [ExplorationKindWeightMap[ExplorationKind.Chest]],
+    });
   });
 });
