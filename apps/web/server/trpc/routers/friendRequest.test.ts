@@ -12,6 +12,7 @@ import {
 import { createCallerFactory } from "#server/trpc/index";
 import { blockRouter } from "#server/trpc/routers/block";
 import { friendRequestRouter } from "#server/trpc/routers/friendRequest";
+import { expectLiveTopicCoverage } from "#server/trpc/routers/liveTopicCoverage.test";
 import {
   blocksInSocial,
   DatabaseEntityType,
@@ -241,5 +242,45 @@ describe("friendRequestRouter", () => {
     expect(allFriendRequests.map(({ receiverId, senderId }) => ({ receiverId, senderId }))).toStrictEqual([
       { receiverId: userId, senderId: user.id },
     ]);
+  });
+
+  test("every query reads the tables it touches, and each request change wakes the list it changes", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    const acceptedSenderAuthSession = await createMockAuthSession(mockContext.db);
+    const declinedSenderAuthSession = await createMockAuthSession(mockContext.db);
+    const receiverUser = await createMockUser(mockContext.db);
+    await (await createMockCaller(friendRequestRouter, acceptedSenderAuthSession)).sendFriendRequest(userId);
+    await (await createMockCaller(friendRequestRouter, declinedSenderAuthSession)).sendFriendRequest(userId);
+
+    await expectLiveTopicCoverage(
+      friendRequestRouter,
+      {
+        queries: [
+          {
+            call: (context) => createCallerFactory(friendRequestRouter)(context).readFriendRequests(),
+            path: "readFriendRequests",
+          },
+        ],
+        writes: [
+          {
+            call: (context) =>
+              createCallerFactory(friendRequestRouter)(context).acceptFriendRequest(acceptedSenderAuthSession.user.id),
+            path: "acceptFriendRequest",
+          },
+          {
+            call: (context) =>
+              createCallerFactory(friendRequestRouter)(context).declineFriendRequest(declinedSenderAuthSession.user.id),
+            path: "declineFriendRequest",
+          },
+          {
+            call: (context) => createCallerFactory(friendRequestRouter)(context).sendFriendRequest(receiverUser.id),
+            path: "sendFriendRequest",
+          },
+        ],
+      },
+      mockContext,
+    );
   });
 });
