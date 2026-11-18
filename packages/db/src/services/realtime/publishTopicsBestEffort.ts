@@ -9,7 +9,7 @@ import { getResultAsync, noop } from "@esposter/shared";
 // Throw from reading them, or a write set read from the statements a request awaited, is logged the same way
 export const publishTopicsBestEffort = <TId>(
   topicNamespace: TopicNamespace<TId>,
-  getTopics: () => Topic[] | Promise<Topic[]>,
+  getTopics: () => Promise<Topic[]> | Topic[],
   failure: string,
 ): Promise<void> =>
   getResultAsync(async () => publishTopics(topicNamespace, await getTopics())).match(noop, (error) => {
