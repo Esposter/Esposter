@@ -8,10 +8,10 @@ import { checkIsCurveWrapMode } from "#src/services/genshinAssets/scene/checkIsC
 import { checkIsGradientMode } from "#src/services/genshinAssets/scene/checkIsGradientMode";
 import { checkIsPlausible } from "#src/services/genshinAssets/scene/checkIsPlausible";
 import { checkIsSorted } from "#src/services/genshinAssets/scene/checkIsSorted";
-import { SERIALIZED_POINTER_BYTES } from "#src/services/genshinAssets/shared/constants";
+import { SERIALIZED_POINTER_BYTES, SERIALIZED_WORD_BYTES } from "#src/services/genshinAssets/shared/constants";
 import { readObjectPointer } from "#src/services/genshinAssets/shared/readObjectPointer";
 
-const WORD = 4;
+const WORD = SERIALIZED_WORD_BYTES;
 // A MonoBehaviour's own fields lead its bytes: its game object and its script as pointers, its enabled flag aligned to
 // Four bytes between them, then its name, a length and that many characters aligned to four
 const NAME_LENGTH_OFFSET = 28;
