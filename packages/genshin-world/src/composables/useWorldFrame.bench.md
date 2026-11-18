@@ -9,7 +9,7 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Commit: e432ba77b5
+- Commit: 463c97fab2
 - Node: v26.13.1
 - OS: darwin 27.0.0 (arm64)
 - CPU: Apple M1 × 8
@@ -19,4 +19,4 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 | task                         | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
 | ---------------------------- | ------- | --------- | ------ | -------- | ------- |
-| a walk of the world's frames | 1.00×   | 61.8016   | ±9.72% | 130.0942 | 40      |
+| a walk of the world's frames | 1.00×   | 17.3065   | ±4.82% | 23.5358  | 40      |

@@ -87,6 +87,17 @@ Measured on the Mac that runs the gate (Apple M1, 8 cores, 16 GiB, Node v26.13.1
 
 The gate for 4.2 is therefore: the frame by an interleaved A and B in one sitting, the mount by the median of three runs against the spread above, and the reads by their own figures within the sittings' spread.
 
+## Measured after task 1.2 (task 4.2)
+
+Measured on the committed state with task 1.2 landed, on the same Mac. Task 1.2 adds no build input on these paths. Its three files (the browser config, the session browser test and the driver fixture) sit in no build's import graph. A build with those three restored to their pre-1.2 contents gives the same package bytes and the same 1,270 parity-page files, so one set of runs measures both sides, and the figures below are read against the baseline above.
+
+- **Frame step.** Three sittings read 17.3, 17.6 and 17.0 ms (each within ±5%), within 3.5% of each other, on a host with a one-minute load near 2.5. The baseline's sittings sat at 24.7 to 93.3 ms under a load near 14, so this reading is below the baseline's band, not above it. The frame's own module moved by six lines since the baseline and the stores it reads moved in other commits, so the drop is the host and those commits, and this change touches no frame code. The committed report is the middle sitting.
+- **Mount.** `genshin:parity load WorldScreen` reads its time to ready at 4,572, 4,597 and 4,459 ms, a median of 4,572 ms inside the baseline's 4,403 to 6,149 ms. Its terrain step is 2.0 to 2.1 s, under the baseline's 2.7 to 3.5 s, again from the commits between the baseline and now.
+- **Bundle.** The package's dist on this Mac is 7,674,208 bytes, and with and without task 1.2's files every dist file is identical except the stylesheet, whose content is identical and whose rules are written in a build-dependent order. The bundle record's genshin-world rows are the Linux build's, and the bundle-sizes design says this package builds differently per platform, so a Mac build is not compared with them. Between the baseline's record and the current one the package's JavaScript moved from 3,913,225 to 4,084,854 bytes, from commits other than this change. Task 1.2 adds zero bytes.
+- **Flagged, not this change.** The world screen's load makes 858 requests (140 of them game data) against 379 at the baseline, and its request and game-data budgets (132 and 4,340 KB) fail on every run, as they did at the baseline. The parity page is byte-identical with and without task 1.2, so the rise is in the commits between `e432ba77b5` and `05e9a4e720`, and the budget's owner decides it.
+
+The verdict: the change adds no measured cost. The mount is inside the baseline's band, the frame is not slower, and the bundle is unchanged by task 1.2.
+
 ## The read bench
 
 The frame step reads the context a few dozen times at most, which costs under 0.02 ms against a sixteen-millisecond frame at the read costs above, so the guideline stands as written: per-frame state stays out of stores and is read once into a local where a loop needs it. The Linux container's report that first recorded these reads (commit `b01fd8b790`, about 0.34, 0.57 and 0.78 ms) is superseded by the Mac's, since a report compares only on its own host.
