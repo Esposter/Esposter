@@ -134,7 +134,7 @@ const mergeTips = (account: TipSave, guest: TipSave): TipSave => {
 // Domains cleared, the Adventure Rank rewards claimed, the statues' found Oculi and regions, whose Oculi came out of
 // The bag, the Reputation bounty and request claims, the Spiral Abyss's rewards claimed, the shop purchases, each
 // Processing's queue, the quests' progress, each kind of wish's pity and history, the enemies' respawns, the crafted
-// Counts, the cooking proficiencies, the Frostbearing Tree's progress, the investigation day and the puzzles. The bag,
+// Counts, the cooking proficiencies, the offerings' progress, the investigation day and the puzzles. The bag,
 // The party, the opened chests and the realm's placements are the account's copy too, and so is the wallet, but for a
 // Primogem refill count from the same game day, which takes the larger, as a count of refills within a day only grows.
 // Every other record merges by its own rule. The landmarks, the cleared camps, the learned recipes and the achievements

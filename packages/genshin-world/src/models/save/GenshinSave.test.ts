@@ -38,6 +38,7 @@ import {
   MAX_FOUND_OCULUS_COUNT,
   MAX_INVENTORY_ITEM_COUNT,
   MAX_OBJECTIVE_COUNT,
+  MAX_OFFERING_COUNT,
   MAX_OFFERING_ITEM_KIND_COUNT,
   MAX_OPENED_CHEST_COUNT,
   MAX_PARTY_TEAM_NAME_LENGTH,
@@ -237,17 +238,20 @@ describe("genshinSaveSchema", () => {
         isRead: false,
       })),
       namecardItemId: maxNumber,
-      offerings: {
-        frostbearingTree: {
-          heldCounts: Object.fromEntries(
-            Array.from({ length: MAX_OFFERING_ITEM_KIND_COUNT }, (_value, index) => [
-              String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),
-              maxNumber,
-            ]),
-          ),
-          level: maxNumber,
-        },
-      },
+      offerings: Object.fromEntries(
+        Array.from({ length: MAX_OFFERING_COUNT }, (_value, index) => [
+          String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),
+          {
+            heldCounts: Object.fromEntries(
+              Array.from({ length: MAX_OFFERING_ITEM_KIND_COUNT }, (_itemValue, itemIndex) => [
+                String(itemIndex).padStart(MAX_SAVE_ID_LENGTH, "0"),
+                maxNumber,
+              ]),
+            ),
+            level: maxNumber,
+          },
+        ]),
+      ),
       openedChests: Array.from({ length: MAX_OPENED_CHEST_COUNT }, (_value, index) =>
         String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),
       ),

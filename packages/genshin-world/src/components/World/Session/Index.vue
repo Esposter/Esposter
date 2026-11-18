@@ -96,6 +96,7 @@ import { useWorldTips } from "#src/composables/useWorldTips";
 import { useWorldTrials } from "#src/composables/useWorldTrials";
 import { useWorldTrounceBlossoms } from "#src/composables/useWorldTrounceBlossoms";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
+import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { computeCraftingCrafters } from "#src/services/crafting/computeCraftingCrafters";
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import { MAP_REFERENCE_ZOOM_METRES, TELEPORT_FADE_IN_MS, TELEPORT_FADE_OUT_MS } from "#src/services/map/constants";
@@ -314,9 +315,9 @@ const {
   enemyRespawnMap,
   forgeProgress,
   forgetBossDefeat,
-  frostbearingTreeProgress,
   homeProgress,
   namecardItemId,
+  offeringProgressMap,
   queuedTipIds,
   setBossDefeatAt,
   setEnemyRespawnAt,
@@ -475,9 +476,14 @@ const {
   worshipRegionId,
 } = storeToRefs(worldStatuesStore);
 const { claimWorship, getRegionProgress, getWorshipItemName, offerWorship } = worldStatuesStore;
-// The Frostbearing Tree the bag is offered to, whose levels are read from the game's table as it is offered to, and
-// Whose rewards the bag has no room for drop at the tree
-const { offerFrostbearingTree } = useWorldOfferings({ frostbearingTreeProgress });
+// The offerings the loaded regions stand in the world, each offered to from its point, whose levels are read from the
+// Game's table as it is offered to, and whose rewards the bag has no room for drop at the offering
+const offeringLandmarks = computed(() =>
+  [...(windrise.value?.regionDataMap.values() ?? [])].flatMap(({ landmarks }) =>
+    landmarks.flatMap((landmark) => (landmark.kind === LandmarkKind.Offering ? [landmark] : [])),
+  ),
+);
+const { offerOffering, offeringInteractables } = useWorldOfferings({ offeringLandmarks, offeringProgressMap });
 // The Traveler's resonated regions, Restorative Power and auto-recover, and the element and bonuses they give it
 const {
   autoRecoverSetting,
@@ -801,12 +807,13 @@ const { dispatchInteraction } = useWorldInteractionDispatch({
   forgeNow,
   frostbearingTreeLevels,
   frostbearingTreePlaces,
-  frostbearingTreeProgress,
   getGameClockMinutes: () => windrise.value?.gameClock.minutes,
   getResidents,
   getTalkDuelGameId,
   grantRewards,
-  offerFrostbearingTree,
+  offeringLandmarks,
+  offeringProgressMap,
+  offerOffering,
   openAbyssEntrance,
   openDomain,
   openDomainTreeClaim,
@@ -840,6 +847,7 @@ const { interactables, interactionPrompts, pressInteractable, readInteraction } 
   input,
   isDomainTreeRaised,
   isFishingOpen,
+  offeringInteractables,
   outcropInteractables,
   residentInteractables,
   shrineInteractables,
@@ -961,7 +969,7 @@ useWorldSaveSync({
     fishingCatchAts: fishingCatchAts.value,
     forgeLearnedRecipeIds: forgeProgress.value.learnedRecipeIds,
     foundOculusIds: foundOculusIds.value,
-    frostbearingTreeProgress: frostbearingTreeProgress.value,
+    offeringProgressMap: offeringProgressMap.value,
     homePlacements: savedState.homePlacements,
     homePlantings: savedState.homePlantings,
     homeProgress: homeProgress.value,

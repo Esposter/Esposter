@@ -83,6 +83,8 @@ export const MAX_CHARACTER_TRIAL_STAGE_COUNT = 256;
 // The regions a player's statues are held in, one entry each, bounded by the game's nations and borderlands with room
 // To spare
 export const MAX_STATUE_REGION_COUNT = 32;
+// The offerings a player holds progress in, one entry each, bounded by the game's offerings with room to spare
+export const MAX_OFFERING_COUNT = 32;
 // The kinds of item an offering holds at once, one entry each, bounded by the widest level's two kinds with room to spare
 export const MAX_OFFERING_ITEM_KIND_COUNT = 8;
 // The entries a section of the Archive holds open, one each, bounded by the codex's largest section with room to spare
@@ -274,7 +276,7 @@ const SKELETON_GENSHIN_SAVE_LENGTH = JSON.stringify({
   longTermEncounterPoints: { halfPoints: Number.MAX_SAFE_INTEGER, majorVersion: Number.MAX_SAFE_INTEGER },
   mails: [],
   namecardItemId: 0,
-  offerings: { frostbearingTree: { heldCounts: {}, level: MAX_SAVE_NUMBER } },
+  offerings: {},
   openedChests: [],
   party: { activeIndex: MAX_SAVE_NUMBER, deployedTeamIndex: MAX_SAVE_NUMBER, downCharacterIds: [], teams: [] },
   puzzles: { settledSeelieIds: [], solvedPuzzleIds: [] },
@@ -393,7 +395,8 @@ export const MAX_GENSHIN_SAVE_LENGTH: number =
   MAX_CHARACTER_COUNT * getListEntryLength(MAX_SAVE_NUMBER) +
   MAX_FOUND_OCULUS_COUNT * getListEntryLength(MAX_SAVE_ID) +
   MAX_STATUE_REGION_COUNT * getRecordEntryLength({ heldCount: MAX_SAVE_NUMBER, level: MAX_SAVE_NUMBER }) +
-  MAX_OFFERING_ITEM_KIND_COUNT * getRecordEntryLength(MAX_SAVE_NUMBER) +
+  MAX_OFFERING_COUNT * getRecordEntryLength({ heldCounts: {}, level: MAX_SAVE_NUMBER }) +
+  MAX_OFFERING_COUNT * MAX_OFFERING_ITEM_KIND_COUNT * getRecordEntryLength(MAX_SAVE_NUMBER) +
   Object.keys(ArchiveSection).length * MAX_ARCHIVE_ENTRY_COUNT * getListEntryLength(MAX_SAVE_NUMBER) +
   MAX_ARCHIVE_KILL_COUNT * getRecordEntryLength(MAX_SAVE_NUMBER) +
   MAX_SHOWN_TIP_COUNT * getListEntryLength(MAX_SAVE_NUMBER) +
@@ -459,7 +462,7 @@ export const EMPTY_GENSHIN_SAVE: GenshinSave = {
   longTermEncounterPoints: { halfPoints: 0, majorVersion: 0 },
   mails: [],
   namecardItemId: 0,
-  offerings: { frostbearingTree: { heldCounts: {}, level: 0 } },
+  offerings: {},
   openedChests: [],
   party: EMPTY_PARTY_SAVE,
   puzzles: { settledSeelieIds: [], solvedPuzzleIds: [] },

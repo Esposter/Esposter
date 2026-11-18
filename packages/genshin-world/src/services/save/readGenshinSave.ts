@@ -115,7 +115,7 @@ export const readGenshinSave = (
     ),
     forgeLearnedRecipeIds: forging?.learnedRecipeIds ?? [],
     foundOculusIds: new Set(statues.foundOculusIds),
-    frostbearingTreeProgress: offerings.frostbearingTree,
+    offeringProgressMap: new Map(Object.entries(offerings)),
     homePlacements,
     homePlantings: homePlantings.map((planting) => toHomePlanting(planting)),
     homeProgress: toHomeProgress(homeProgress),

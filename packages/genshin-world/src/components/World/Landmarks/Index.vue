@@ -12,6 +12,7 @@ import type { BufferGeometry, DataTexture } from "three";
 
 import WorldLandmarkBuilding from "#src/components/World/Landmark/Building/Index.vue";
 import WorldLandmarkDomainEntrance from "#src/components/World/Landmark/DomainEntrance/Index.vue";
+import WorldLandmarkOffering from "#src/components/World/Landmark/Offering/Index.vue";
 import WorldLandmarkRock from "#src/components/World/Landmark/Rock/Index.vue";
 import WorldLandmarkStatue from "#src/components/World/Landmark/Statue/Index.vue";
 import WorldLandmarkTree from "#src/components/World/Landmark/Tree/Index.vue";
@@ -187,6 +188,12 @@ onUnmounted(() => {
       />
       <WorldLandmarkDomainEntrance
         v-else-if="landmark.kind === LandmarkKind.DomainEntrance"
+        :get-ground-height
+        :landmark
+        :part-material
+      />
+      <WorldLandmarkOffering
+        v-else-if="landmark.kind === LandmarkKind.Offering"
         :get-ground-height
         :landmark
         :part-material

@@ -1,5 +1,6 @@
 import type { BuildingLandmark } from "#src/models/world/BuildingLandmark";
 import type { DomainEntranceLandmark } from "#src/models/world/DomainEntranceLandmark";
+import type { OfferingLandmark } from "#src/models/world/OfferingLandmark";
 import type { RockLandmark } from "#src/models/world/RockLandmark";
 import type { StatueLandmark } from "#src/models/world/StatueLandmark";
 import type { StatueOfTheNewMoonLandmark } from "#src/models/world/StatueOfTheNewMoonLandmark";
@@ -8,6 +9,7 @@ import type { WaypointLandmark } from "#src/models/world/WaypointLandmark";
 
 import { buildingLandmarkSchema } from "#src/models/world/BuildingLandmark";
 import { domainEntranceLandmarkSchema } from "#src/models/world/DomainEntranceLandmark";
+import { offeringLandmarkSchema } from "#src/models/world/OfferingLandmark";
 import { rockLandmarkSchema } from "#src/models/world/RockLandmark";
 import { statueLandmarkSchema } from "#src/models/world/StatueLandmark";
 import { statueOfTheNewMoonLandmarkSchema } from "#src/models/world/StatueOfTheNewMoonLandmark";
@@ -18,6 +20,7 @@ import { z } from "zod";
 export type Landmark =
   | BuildingLandmark
   | DomainEntranceLandmark
+  | OfferingLandmark
   | RockLandmark
   | StatueLandmark
   | StatueOfTheNewMoonLandmark
@@ -27,6 +30,7 @@ export type Landmark =
 export const landmarkSchema = z.discriminatedUnion("kind", [
   buildingLandmarkSchema,
   domainEntranceLandmarkSchema,
+  offeringLandmarkSchema,
   rockLandmarkSchema,
   statueLandmarkSchema,
   statueOfTheNewMoonLandmarkSchema,

@@ -1,7 +1,6 @@
 import type { ExcelOfferingLevelupRow } from "#src/models/genshinAssets/offerings/ExcelOfferingLevelupRow";
 import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
 
-import { OfferingKind } from "#src/models/genshinAssets/offerings/OfferingKind";
 import {
   BLAZING_FLINT_ORE_ITEM_ID,
   ENDED_OFFERING_IDS,
@@ -15,7 +14,7 @@ import { readRewardMap } from "#src/services/genshinAssets/rewards/readRewardMap
 import { toRewardItems } from "#src/services/genshinAssets/rewards/toRewardItems";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { GameDataset } from "genshin-world";
+import { GameDataset, OfferingKind } from "genshin-world";
 
 // Every offering's levels, each row's items and reward joined from the level table and the reward table, as one record per
 // Offering under its kind. A row at level 0 is the unstarted state and is left out. An offering id the kind map does not

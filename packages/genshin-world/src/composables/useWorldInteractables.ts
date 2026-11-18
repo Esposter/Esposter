@@ -47,6 +47,7 @@ export const useWorldInteractables = ({
   input,
   isDomainTreeRaised,
   isFishingOpen,
+  offeringInteractables,
   outcropInteractables,
   residentInteractables,
   shrineInteractables,
@@ -133,6 +134,7 @@ export const useWorldInteractables = ({
       ...outcropInteractables.value,
       ...trounceBlossomInteractables.value,
       ...frostbearingTrees,
+      ...offeringInteractables.value,
       ...viewpointInteractables.value,
       abyssEntrance,
       ...computeStatueInteractables(

@@ -2,11 +2,11 @@
 
 - [x] 1.1 Read each offering's levels, thresholds and rewards from its level table or the wiki's page, into the published data. Verify: tests named after the scenarios 'Offering the items for a level raises the offering' and 'Offering fewer items than the next threshold changes nothing', written first and seen failing.
 - [x] 1.2 Publish each region's offering points beside the Frostbearing Tree's places, from the official map's points. Verify: a test named 'an offering's label is placed at its map point' in `placeMapPoints.test.ts`.
-- [ ] 1.3 Stand each offering at its published point in the world, and offer to it from there. Verify: a test named after the scenario 'An offering appears at its map point', written first and seen failing.
+- [x] 1.3 Stand each offering at its published point in the world, and offer to it from there. Verify: a test named after the scenario 'An offering appears at its map point', written first and seen failing.
 
 ## 2. Items
 
-- [ ] 2.1 Place each offering's items at its spawned places, once the spawned places change exists. Verify: a test named after the scenario 'An item for an offering is found exploring its place'. Blocked: the spawned places change's fitted places do not reach the world yet (its task 1.2 is open, and nothing reads them), so there is no place for an offering's item to stand at, and no test or code places one.
+- [ ] 2.1 Place each offering's items at its spawned places, once the spawned places change exists. Verify: a test named after the scenario 'An item for an offering is found exploring its place'. Blocked: the spawned places change's fitted places do not reach the world yet (its task 1.2 is open, and nothing reads them), so there is no place for an offering's item to stand at, and no test or code places one. The items need definitions too: `buildItems` publishes only the Frostbearing Tree's items, so the bag cannot hold the other offerings' items until it reads every offering's levels.
 
 ## 3. Rule check
 

@@ -1,4 +1,4 @@
-import { OfferingKind } from "#src/models/genshinAssets/offerings/OfferingKind";
+import { OfferingKind } from "genshin-world";
 import { LabelIdOfferingKindMap } from "#src/services/genshinAssets/offerings/LabelIdOfferingKindMap";
 import { placeMapPoints } from "#src/services/genshinAssets/points/placeMapPoints";
 import { describe, expect, test } from "vitest";

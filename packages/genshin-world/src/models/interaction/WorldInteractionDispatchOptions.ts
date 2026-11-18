@@ -1,11 +1,14 @@
 import type { Talk } from "#src/models/dialogue/Talk";
 import type { HomeRealmToggleOptions } from "#src/models/home/HomeRealmToggleOptions";
 import type { FrostbearingTreePlace } from "#src/models/offering/FrostbearingTreePlace";
+import type { OfferingKind } from "#src/models/offering/OfferingKind";
 import type { OfferingLevel } from "#src/models/offering/OfferingLevel";
 import type { OfferingProgressSave } from "#src/models/offering/OfferingProgressSave";
 import type { QuestRewardItem } from "#src/models/quest/QuestRewardItem";
 import type { DomainEntranceLandmark } from "#src/models/world/DomainEntranceLandmark";
+import type { OfferingLandmark } from "#src/models/world/OfferingLandmark";
 import type { Resident } from "#src/models/world/Resident";
+import type { WorldDrop } from "#src/models/world/WorldDrop";
 import type { Object3D } from "three";
 import type { Ref } from "vue";
 
@@ -20,12 +23,13 @@ export interface WorldInteractionDispatchOptions {
   forgeNow: Ref<Temporal.Instant>;
   frostbearingTreeLevels: readonly OfferingLevel[];
   frostbearingTreePlaces: readonly FrostbearingTreePlace[];
-  frostbearingTreeProgress: Readonly<Ref<OfferingProgressSave>>;
   getGameClockMinutes: () => number | undefined;
   getResidents: () => Resident[];
   getTalkDuelGameId: (talkId: string) => number | undefined;
   grantRewards: (rewards: QuestRewardItem[]) => void;
-  offerFrostbearingTree: (frostbearingTreePlace: FrostbearingTreePlace) => void;
+  offeringLandmarks: Readonly<Ref<readonly OfferingLandmark[]>>;
+  offeringProgressMap: Readonly<Ref<ReadonlyMap<string, OfferingProgressSave>>>;
+  offerOffering: (offeringKind: OfferingKind, source: Pick<WorldDrop, "id" | "position">) => void;
   openAbyssEntrance: () => void;
   openDomain: (landmark: DomainEntranceLandmark) => void;
   openDomainTreeClaim: (now: Temporal.Instant) => void;

@@ -2,11 +2,13 @@ import type { AchievementEvent } from "#src/models/achievement/AchievementEvent"
 import type { DroppedItem } from "#src/models/enemy/DroppedItem";
 import type { FrostbearingTreePlace } from "#src/models/offering/FrostbearingTreePlace";
 import type { OfferingProgressSave } from "#src/models/offering/OfferingProgressSave";
+import type { OfferingLandmark } from "#src/models/world/OfferingLandmark";
 
 import { englishNameText } from "#parity/englishNameText";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { useWorldOfferings } from "#src/composables/useWorldOfferings";
 import { AchievementEventKind } from "#src/models/achievement/AchievementEventKind";
+import { OfferingKind } from "#src/models/offering/OfferingKind";
 import { computeBagObtainEvents } from "#src/services/achievement/computeBagObtainEvents";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
@@ -39,7 +41,9 @@ describe(useWorldOfferings, () => {
     );
     const { events } = worldSessionStore;
     const { inventory, wallet } = storeToRefs(worldSessionStore);
-    const frostbearingTreeProgress = shallowRef<OfferingProgressSave>({ heldCounts: {}, level: 1 });
+    const offeringProgressMap = shallowRef<ReadonlyMap<string, OfferingProgressSave>>(
+      new Map([[OfferingKind.FrostbearingTree, { heldCounts: {}, level: 1 }]]),
+    );
     const gainedAdventureExps: number[] = [];
     const frostbearingTreePlace: FrostbearingTreePlace = { id: "tree", position: { x: 1, z: 2 } };
     const placedDrops: [FrostbearingTreePlace, DroppedItem[]][] = [];
@@ -55,8 +59,11 @@ describe(useWorldOfferings, () => {
     vi.spyOn(worldPickupsStore, "placeWorldDrops").mockImplementation((source, droppedItems) => {
       placedDrops.push([source, droppedItems]);
     });
-    const { offerFrostbearingTree } = useWorldOfferings({ frostbearingTreeProgress });
-    const offer = offerFrostbearingTree(frostbearingTreePlace);
+    const { offerOffering } = useWorldOfferings({
+      offeringLandmarks: shallowRef<OfferingLandmark[]>([]),
+      offeringProgressMap,
+    });
+    const offer = offerOffering(OfferingKind.FrostbearingTree, frostbearingTreePlace);
     const offeredBag = {
       items: [{ definition, id: 0, quantity: offeringItem.itemCount }],
       nextId: 1,
@@ -72,7 +79,7 @@ describe(useWorldOfferings, () => {
     } = offerBagItems(
       inventory.value,
       wallet.value,
-      { ...frostbearingTreeProgress.value, levels },
+      { heldCounts: {}, level: 1, levels },
       englishNameText,
       materialDataMap,
     );
@@ -82,7 +89,10 @@ describe(useWorldOfferings, () => {
     expect(wallet.value).toStrictEqual(paidWallet);
     expect(gainedAdventureExps).toStrictEqual([adventureExp]);
     expect(placedDrops).toStrictEqual([[frostbearingTreePlace, overflowItems]]);
-    expect(frostbearingTreeProgress.value).toStrictEqual({ heldCounts: progress.heldCounts, level: progress.level });
+    expect(offeringProgressMap.value.get(OfferingKind.FrostbearingTree)).toStrictEqual({
+      heldCounts: progress.heldCounts,
+      level: progress.level,
+    });
     expect(achievementEvents).toStrictEqual([
       computeBagObtainEvents(offeredBag.items, offeredInventory.items),
       [

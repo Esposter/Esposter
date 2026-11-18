@@ -23,6 +23,7 @@ export interface WorldInteractablesOptions {
   input: Input;
   isDomainTreeRaised: Readonly<Ref<boolean>>;
   isFishingOpen: Readonly<Ref<boolean>>;
+  offeringInteractables: Readonly<Ref<Interactable[]>>;
   outcropInteractables: Readonly<Ref<Interactable[]>>;
   residentInteractables: Readonly<Ref<Interactable[]>>;
   shrineInteractables: Readonly<Ref<Interactable[]>>;

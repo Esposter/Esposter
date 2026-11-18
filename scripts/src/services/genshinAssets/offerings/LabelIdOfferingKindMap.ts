@@ -1,4 +1,4 @@
-import { OfferingKind } from "#src/models/genshinAssets/offerings/OfferingKind";
+import { OfferingKind } from "genshin-world";
 
 // The official map's label id of each offering that stands on it, from its label tree as the points were read, with the
 // Map's name for it. The Throne of the Primal Fire is where the Primal Flame Resonance stands, and the label Tonatiuh is

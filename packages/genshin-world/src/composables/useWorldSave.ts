@@ -36,9 +36,9 @@ export const useWorldSave = ({
     | "craftingProgress"
     | "enemyRespawnMap"
     | "forgeLearnedRecipeIds"
-    | "frostbearingTreeProgress"
     | "homeProgress"
     | "namecardItemId"
+    | "offeringProgressMap"
     | "queuedTipIds"
     | "shownTipIds"
     | "travelerBirthday"
@@ -74,7 +74,8 @@ export const useWorldSave = ({
   const homeProgress = shallowRef<HomeProgress>(savedState.homeProgress);
   const bossDefeatMap = shallowRef<ReadonlyMap<string, string>>(savedState.bossDefeatMap);
   const enemyRespawnMap = shallowRef<ReadonlyMap<string, string>>(savedState.enemyRespawnMap);
-  const frostbearingTreeProgress = shallowRef<OfferingProgressSave>(savedState.frostbearingTreeProgress);
+  // Each offering's progress by its kind, which an offering the player has not offered to holds none of
+  const offeringProgressMap = shallowRef<ReadonlyMap<string, OfferingProgressSave>>(savedState.offeringProgressMap);
   watch(
     [
       () => worldSessionStore.inventory,
@@ -92,7 +93,7 @@ export const useWorldSave = ({
       enemyRespawnMap,
       () => forgeProgress.value.learnedRecipeIds,
       () => worldStatuesStore.foundOculusIds,
-      frostbearingTreeProgress,
+      offeringProgressMap,
       homeProgress,
       () => worldChestsStore.openedChestIds,
       () => worldCookingStore.processingJobs,
@@ -143,9 +144,9 @@ export const useWorldSave = ({
     enemyRespawnMap,
     forgeProgress,
     forgetBossDefeat,
-    frostbearingTreeProgress,
     homeProgress,
     namecardItemId,
+    offeringProgressMap,
     queuedTipIds,
     setBossDefeatAt,
     setEnemyRespawnAt,

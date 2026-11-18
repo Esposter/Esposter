@@ -1,4 +1,4 @@
-import { OfferingKind } from "#src/models/genshinAssets/offerings/OfferingKind";
+import { OfferingKind } from "genshin-world";
 
 // The kind of each offering id the dump's level-up table names, by the id its open state gives it. Each id's levels are
 // Published under its kind, and an id this map does not hold is an error. Ids 1 to 3, 5 to 9, 16 and 19 are the offerings

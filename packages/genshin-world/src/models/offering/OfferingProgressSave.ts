@@ -1,4 +1,4 @@
-import { MAX_OFFERING_ITEM_KIND_COUNT, MAX_SAVE_ID_LENGTH } from "#src/services/save/constants";
+import { MAX_OFFERING_COUNT, MAX_OFFERING_ITEM_KIND_COUNT, MAX_SAVE_ID_LENGTH } from "#src/services/save/constants";
 import { createRecordSchema } from "@esposter/shared";
 import { z } from "zod";
 
@@ -15,3 +15,11 @@ export const offeringProgressSaveSchema = z.object({
 });
 
 export type OfferingProgressSave = z.infer<typeof offeringProgressSaveSchema>;
+
+// The offerings a player holds progress in, each by its kind's key in the hosted game data. An offering the player has not
+// Offered to is absent, and holds no progress
+export const offeringsSaveSchema = createRecordSchema(
+  z.string().min(1).max(MAX_SAVE_ID_LENGTH),
+  offeringProgressSaveSchema,
+  MAX_OFFERING_COUNT,
+);

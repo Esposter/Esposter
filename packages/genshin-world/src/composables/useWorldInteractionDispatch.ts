@@ -1,6 +1,7 @@
 import type { Interactable } from "#src/models/interaction/Interactable";
 import type { WorldInteractionDispatchOptions } from "#src/models/interaction/WorldInteractionDispatchOptions";
 
+import { OfferingKind } from "#src/models/offering/OfferingKind";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { getViewpointInteractableId } from "#src/services/archive/getViewpointInteractableId";
 import { COOKING_PROCESSING_INTERACTABLE_ID, COOKING_STOVE_INTERACTABLE_ID } from "#src/services/cooking/constants";
@@ -11,6 +12,7 @@ import { DOMAIN_LEAVE_INTERACTABLE_ID, DOMAIN_TREE_INTERACTABLE_ID } from "#src/
 import { checkIsExpeditionTalk } from "#src/services/expedition/checkIsExpeditionTalk";
 import { FORGE_INTERACTABLE_ID } from "#src/services/forging/constants";
 import { HOME_POT_GADGET_ID, HOME_TUBBY_NPC_ID } from "#src/services/home/constants";
+import { getOfferingProgress } from "#src/services/offering/getOfferingProgress";
 import { checkIsVendorHourOpen } from "#src/services/shop/checkIsVendorHourOpen";
 import { checkIsVendorShopOpen } from "#src/services/shop/checkIsVendorShopOpen";
 import { VendorShopTypeMap } from "#src/services/shop/VendorShopTypeMap";
@@ -42,12 +44,13 @@ export const useWorldInteractionDispatch = ({
   forgeNow,
   frostbearingTreeLevels,
   frostbearingTreePlaces,
-  frostbearingTreeProgress,
   getGameClockMinutes,
   getResidents,
   getTalkDuelGameId,
   grantRewards,
-  offerFrostbearingTree,
+  offeringLandmarks,
+  offeringProgressMap,
+  offerOffering,
   openAbyssEntrance,
   openDomain,
   openDomainTreeClaim,
@@ -109,7 +112,11 @@ export const useWorldInteractionDispatch = ({
     const gameClockMinutes = getGameClockMinutes();
     if (
       screenKind.value === ScreenKind.Shop &&
-      (!checkIsVendorShopOpen(shopId.value, frostbearingTreeProgress.value.level, frostbearingTreeLevels) ||
+      (!checkIsVendorShopOpen(
+        shopId.value,
+        getOfferingProgress(offeringProgressMap.value, OfferingKind.FrostbearingTree).level,
+        frostbearingTreeLevels,
+      ) ||
         gameClockMinutes === undefined ||
         !checkIsVendorHourOpen(shopId.value, gameClockMinutes))
     )
@@ -121,6 +128,7 @@ export const useWorldInteractionDispatch = ({
     const worldDrop = worldDrops.value.find(({ id }) => id === interactable?.id);
     const materialSource = materialSources.value.find(({ id }) => id === interactable?.id);
     const frostbearingTreePlace = frostbearingTreePlaces.find(({ id }) => id === interactable?.id);
+    const offeringLandmark = offeringLandmarks.value.find(({ id }) => id === interactable?.id);
     const offeredViewpoint = offeredViewpoints.value.find(
       ({ id }) => getViewpointInteractableId(id) === interactable?.id,
     );
@@ -140,7 +148,9 @@ export const useWorldInteractionDispatch = ({
     else if (interactable?.kind === InteractionKind.Claim) openOutcropClaim(Number(interactable.id), getWorldNow());
     else if (interactable?.kind === InteractionKind.Dig) digChestById(interactable.id);
     else if (interactable?.kind === InteractionKind.Activate && frostbearingTreePlace)
-      offerFrostbearingTree(frostbearingTreePlace);
+      offerOffering(OfferingKind.FrostbearingTree, frostbearingTreePlace);
+    else if (interactable?.kind === InteractionKind.Activate && offeringLandmark)
+      offerOffering(offeringLandmark.offeringKind, offeringLandmark);
     else if (interactable?.kind === InteractionKind.Activate && offeredViewpoint) viewViewpoint(offeredViewpoint.id);
     else if (interactable?.kind === InteractionKind.Activate && interactable.id === COOKING_STOVE_INTERACTABLE_ID) {
       openCookingRecipes.value = listOpenCookingRecipes(cookingRecipes.value, cookingProgress.value);

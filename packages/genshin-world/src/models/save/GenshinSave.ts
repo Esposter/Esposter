@@ -28,7 +28,7 @@ import { investigationDaySaveSchema } from "#src/models/investigation/Investigat
 import { mailSaveSchema } from "#src/models/mail/MailSave";
 import { lastTeleportsSaveSchema } from "#src/models/map/LastTeleportsSave";
 import { unlockedLandmarkSaveSchema } from "#src/models/map/UnlockedLandmarkSave";
-import { offeringProgressSaveSchema } from "#src/models/offering/OfferingProgressSave";
+import { offeringsSaveSchema } from "#src/models/offering/OfferingProgressSave";
 import { partySaveSchema } from "#src/models/party/PartySave";
 import { puzzleProgressSaveSchema } from "#src/models/puzzle/PuzzleProgressSave";
 import { questProgressSaveSchema } from "#src/models/quest/QuestProgressSave";
@@ -121,7 +121,7 @@ export const genshinSaveSchema = z
     minedOutcrops: createUniqueArraySchema(minedOutcropSaveSchema, "id").max(MAX_MINED_OUTCROP_COUNT).optional(),
     // The namecard the profile shows, by its item id
     namecardItemId: z.int().nonnegative(),
-    offerings: z.object({ frostbearingTree: offeringProgressSaveSchema }),
+    offerings: offeringsSaveSchema,
     openedChests: openedChestSaveSchema,
     // The party: its teams, the one deployed, the member on the field and the characters down
     party: partySaveSchema,
