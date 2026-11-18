@@ -77,7 +77,7 @@ flowchart LR
 
 ### Entry cuts
 
-Each cut is its own commit. Its bytes come from the clause-aware predictor over the entry's import lines (one per clause) and the names in its export line, on the entry as it stood before the series. The predictor started at 332,394 bytes, 100 above the record's 332,294; that gap is not attributed, since intermediate builds were not measured. Before the restore below, the final build measured 223,558: the prediction, plus one newline, plus the four `services/save` import lines that `src/save.ts` re-exports, which the predictor does not model.
+Each cut is its own commit. Its bytes come from the clause-aware predictor over the entry's import lines (one per clause) and the names in its export line, on the entry as it stood before the series. The predictor started at 332,394 bytes, 100 above the record's 332,294; that gap is not attributed, since intermediate builds were not measured. Before the restore below, the final build measured 223,558: the last predicted row (223,161), plus the four `services/save` import lines that `src/save.ts` re-exports (397 bytes), which the predictor does not model. 223,161 + 397 = 223,558.
 
 | Directory                | Commit       | Bytes off the entry | Entry after (predicted) |
 | :----------------------- | :----------- | ------------------: | ----------------------: |
