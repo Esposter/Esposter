@@ -3,3 +3,4 @@ affected_areas: [genshin]
 x-phase: 4
 x-model: claude-opus-5-5
 x-touches: ["packages/genshin-world/src/services/bosses/**", "packages/genshin-world/src/services/enemy/**"]
+x-waiting: "The Open-Eyed boss is not written: Mondstadt's camp data places no monster row for it, so its move list waits on the publish that places it."
