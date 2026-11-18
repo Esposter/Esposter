@@ -27,6 +27,7 @@ import { getResourceListTopics } from "#server/services/resource/getResourceList
 import { getResourcesWhere } from "#server/services/resource/getResourcesWhere";
 import { getResourceTopics } from "#server/services/resource/getResourceTopics";
 import { omitDerivedContent } from "#server/services/resource/omitDerivedContent";
+import { publishResourceBookmarkTopics } from "#server/services/resource/publishResourceBookmarkTopics";
 import { readContentAtPointer } from "#server/services/resource/readContentAtPointer";
 import { readResourceConsumers } from "#server/services/resource/readResourceConsumers";
 import { readResourceContent } from "#server/services/resource/readResourceContent";
@@ -133,6 +134,10 @@ export const resourceRouter = router({
           inJsonArray(resourcesInResource.id, ids),
           isNull(resourcesInResource.deletedAt),
         ),
+      );
+      await publishResourceBookmarkTopics(
+        ctx.db,
+        deletedResources.map(({ id }) => id),
       );
       if (deletedResources.length > 0)
         await publishResourceOperation(ctx, {
@@ -443,6 +448,10 @@ export const resourceRouter = router({
         ),
       )
       .returning();
+    await publishResourceBookmarkTopics(
+      ctx.db,
+      restoredResources.map(({ id }) => id),
+    );
     // Best-effort: a failed write loses the trail entries of this restore, never the restore.
     getSynchronizedFunction(writeResourceActivities)(ctx, {
       activityType: ResourceActivityType.Restored,

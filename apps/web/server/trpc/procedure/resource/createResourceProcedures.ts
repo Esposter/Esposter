@@ -24,6 +24,7 @@ import { getResourcesWhere } from "#server/services/resource/getResourcesWhere";
 import { getResourceTopics } from "#server/services/resource/getResourceTopics";
 import { getStagingContentBlobName } from "#server/services/resource/getStagingContentBlobName";
 import { incrementResourceViewCount } from "#server/services/resource/incrementResourceViewCount";
+import { publishResourceBookmarkTopics } from "#server/services/resource/publishResourceBookmarkTopics";
 import { readResourceContent } from "#server/services/resource/readResourceContent";
 import { readResourceContentDelta } from "#server/services/resource/readResourceContentDelta";
 import { readResourceFiles } from "#server/services/resource/readResourceFiles";
@@ -152,6 +153,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
         DatabaseEntityType.Resource,
         id,
       );
+      await publishResourceBookmarkTopics(ctx.db, [id]);
       await publishResourceOperation(ctx, {
         path: RoutePath.ResourceExplorerRecycleBin,
         title: ResourceOperationTitleMap[ResourceOperationType.Deleted](deletedResource.name, 1),
@@ -360,6 +362,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
         DatabaseEntityType.ResourcePublication,
         id,
       );
+      await publishResourceBookmarkTopics(ctx.db, [id]);
       // A version is stored bytes the owner keeps, charged for what its object cost. After the batch, never inside: the
       // Charge locks the ledger row and then the user's, and a batch held open across that waits on locks it is itself holding.
       // See openspec/specs/resource/storage-quotas/design.md
@@ -462,6 +465,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
       // Effect below it is a phantom, and an activity entry or a push to the owner's other devices would report a state
       // Change that never happened
       if (deletedPublications.length === 0) return ctx.resource;
+      await publishResourceBookmarkTopics(ctx.db, [id]);
       // The published channel's versions go with the publication, and the objects nothing else names go to the
       // Deletion path — the working copy's revisions may still share a keyframe with one, which collection keeps
       const assetHashes = [...new Set(referenceRows.map(({ assetHash }) => assetHash))];

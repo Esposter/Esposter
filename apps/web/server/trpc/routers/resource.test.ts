@@ -13,12 +13,14 @@ import type { MjmlColumnNode, MjmlSectionNode } from "mjml-blocks";
 
 import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
 import { connectAgentKey } from "#server/services/mcp/connectAgentKey.test";
+import { MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
 import { CONTENT_SAVED_COALESCE_WINDOW_MS, DUPLICATE_NAME_SUFFIX } from "#server/services/resource/constants";
 import { getSnapshotObjectBlobName } from "#server/services/resource/snapshot/getSnapshotObjectBlobName";
 import { getBucket } from "#server/services/storage/getBucket";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
-import { createMockAuthSession, createMockContext } from "#server/trpc/context.test";
+import { createMockAuthSession, createMockCaller, createMockContext } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
+import { bookmarkRouter } from "#server/trpc/routers/bookmark";
 import { dashboardRouter } from "#server/trpc/routers/dashboard";
 import { emailRouter } from "#server/trpc/routers/email";
 import { trpcRouter } from "#server/trpc/routers/index";
@@ -27,6 +29,7 @@ import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test
 import { sheetRouter } from "#server/trpc/routers/sheet";
 import { todoListRouter } from "#server/trpc/routers/todoList";
 import { webpageRouter } from "#server/trpc/routers/webpage";
+import { PageMarkType } from "#shared/models/app/PageMarkType";
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
 import { CritiqueFindingKind } from "#shared/models/pageBuilder/CritiqueFindingKind";
@@ -57,6 +60,7 @@ import {
   apiKeysInAuth,
   getResourceFileBlobName,
   getResourceFilesDirectoryName,
+  getTopic,
   McpScope,
   resourceActivitiesInResource,
   ResourceActivityType,
@@ -66,6 +70,7 @@ import {
   SnapshotChannel,
   SnapshotReason,
   StorageBucket,
+  TopicKind,
 } from "@esposter/db-schema";
 import {
   InvalidOperationError,
@@ -148,6 +153,8 @@ describe("resourceRouter", () => {
   const webpageEditor = new WebpageEditor({ description: "a" });
   const updatedWebpageEditor = new WebpageEditor({ description: "b" });
   const tags = { a: "" };
+  const path = "/path";
+  const title = "title";
   // The clock is pinned at the epoch, so the smallest future instant is all a reminder needs to be scheduled
   const dueAt = new Date(Temporal.Duration.from({ days: 1 }).total("milliseconds"));
 
@@ -171,6 +178,15 @@ describe("resourceRouter", () => {
       contentVersion: webpageResource.contentVersion + contentVersionOffset,
       id: webpageResource.id,
     });
+
+  // A bookmark reads its resource only while the resource is live and published, so the writes that move either change
+  // What the bookmarker's dock answers. The bookmarker is another user, whose dock is the one the topic has to reach
+  const bookmarkResourceByAnotherUser = async (resourceId: ResourceInResource["id"]) => {
+    const bookmarkerSession = await createMockAuthSession(mockContext.db);
+    const mark = { id: resourceId, resourceType: ResourceType.Webpage, type: PageMarkType.Resource };
+    await (await createMockCaller(bookmarkRouter, bookmarkerSession)).toggleBookmark({ mark, path, title });
+    return bookmarkerSession.user.id;
+  };
 
   beforeAll(async () => {
     ({ bucket, dispose } = await createMockBucket(StorageBucket.ResourceAssets));
@@ -1121,6 +1137,65 @@ describe("resourceRouter", () => {
     expect(restoredResource?.deletedAt).toBeNull();
     expect(liveCount).toBe(1);
     expect(deletedCount).toBe(0);
+  });
+
+  test("publishes the bookmarker's topic when a resource is moved to the bin", async () => {
+    expect.hasAssertions();
+
+    const webpageResource = await webpageCaller.createResource({ name });
+    const bookmarkerId = await bookmarkResourceByAnotherUser(webpageResource.id);
+    MockPublishedTopics.length = 0;
+    await caller.deleteResources({ ids: [webpageResource.id] });
+
+    expect(MockPublishedTopics).toContain(getTopic(TopicKind.Bookmark, bookmarkerId));
+  });
+
+  test("publishes the bookmarker's topic when a resource is deleted through its own procedure", async () => {
+    expect.hasAssertions();
+
+    const webpageResource = await webpageCaller.createResource({ name });
+    const bookmarkerId = await bookmarkResourceByAnotherUser(webpageResource.id);
+    MockPublishedTopics.length = 0;
+    await webpageCaller.deleteResource({ id: webpageResource.id });
+
+    expect(MockPublishedTopics).toContain(getTopic(TopicKind.Bookmark, bookmarkerId));
+  });
+
+  test("publishes the bookmarker's topic when a binned resource is restored", async () => {
+    expect.hasAssertions();
+
+    const webpageResource = await webpageCaller.createResource({ name });
+    const bookmarkerId = await bookmarkResourceByAnotherUser(webpageResource.id);
+    await caller.deleteResources({ ids: [webpageResource.id] });
+    MockPublishedTopics.length = 0;
+    await caller.restoreResources({ ids: [webpageResource.id] });
+
+    expect(MockPublishedTopics).toContain(getTopic(TopicKind.Bookmark, bookmarkerId));
+  });
+
+  test("publishes the bookmarker's topic when a resource is published", async () => {
+    expect.hasAssertions();
+
+    const webpageResource = await webpageCaller.createResource({ name });
+    await saveWebpageContent(webpageResource, webpageEditor);
+    const bookmarkerId = await bookmarkResourceByAnotherUser(webpageResource.id);
+    MockPublishedTopics.length = 0;
+    await webpageCaller.publishResource({ id: webpageResource.id });
+
+    expect(MockPublishedTopics).toContain(getTopic(TopicKind.Bookmark, bookmarkerId));
+  });
+
+  test("publishes the bookmarker's topic when a resource is unpublished", async () => {
+    expect.hasAssertions();
+
+    const webpageResource = await webpageCaller.createResource({ name });
+    await saveWebpageContent(webpageResource, webpageEditor);
+    await webpageCaller.publishResource({ id: webpageResource.id });
+    const bookmarkerId = await bookmarkResourceByAnotherUser(webpageResource.id);
+    MockPublishedTopics.length = 0;
+    await webpageCaller.unpublishResource({ id: webpageResource.id });
+
+    expect(MockPublishedTopics).toContain(getTopic(TopicKind.Bookmark, bookmarkerId));
   });
 
   test("a resource moved to the bin and restored comes back whole", async () => {
