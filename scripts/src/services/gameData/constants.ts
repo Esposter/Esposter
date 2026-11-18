@@ -30,10 +30,9 @@ export const GAME_DATA_RETENTION_MS: number = 90 * DAY_MS;
 export const GAME_DATA_REUSE_WINDOW_MS: number = GAME_DATA_RETENTION_MS / 2;
 // Every object is named by its content, so it never changes and may be cached for good
 export const GAME_DATA_CACHE_CONTROL = "public, max-age=31536000, immutable";
-// Requests in flight at once against one bucket, for the writes and the deletes a publish or a prune makes. Each opens its
-// Own connection, and a burst of more than about sixteen new connections times out behind a VPN whose IPv6 has no route,
-// While sixteen kept-alive connections already keep the upload busy
-export const MAX_CONCURRENT_OBJECT_REQUESTS = 16;
+// Object bodies a publish compresses and holds at once, a wave at a time, so the copies waiting for a connection stay bounded.
+// The connections themselves are bounded by the R2 transport, not here
+export const MAX_CONCURRENT_OBJECT_BODIES = 16;
 // Fetches in flight at once against one account, which keeps a check's memory bounded by one wave of objects
 export const MAX_CONCURRENT_VERIFY_FETCHES = 16;
 // Where a step reads what another step published: the dev environment's public bucket, which holds every object the lock

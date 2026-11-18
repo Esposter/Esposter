@@ -2,7 +2,6 @@ import type { R2BucketClient } from "#src/models/cloudflare/R2BucketClient";
 import type { CharacterPackFile } from "#src/models/genshinAssets/characterPacks/CharacterPackFile";
 import type { CloudflareEnvironment } from "@esposter/db-schema";
 
-import { MAX_CONCURRENT_OBJECT_REQUESTS } from "#src/services/gameData/constants";
 import { settleAll } from "@esposter/shared";
 import { openAsBlob } from "node:fs";
 
@@ -18,7 +17,6 @@ export const publishCharacterPacks = async (
         files.map(({ key, localPath }) => async () => {
           await bucketClient.put(key, await openAsBlob(localPath), { cacheControl: "no-cache" });
         }),
-        MAX_CONCURRENT_OBJECT_REQUESTS,
       ),
     ),
   );

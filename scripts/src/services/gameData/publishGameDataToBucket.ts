@@ -5,7 +5,7 @@ import type { GameDataRecord } from "#src/models/gameData/GameDataRecord";
 import {
   GAME_DATA_CACHE_CONTROL,
   GAME_DATA_REUSE_WINDOW_MS,
-  MAX_CONCURRENT_OBJECT_REQUESTS,
+  MAX_CONCURRENT_OBJECT_BODIES,
 } from "#src/services/gameData/constants";
 import { getGameDataObjectKey } from "#src/services/gameData/getGameDataObjectKey";
 import { toGameDataObjectKeys } from "#src/services/gameData/toGameDataObjectKeys";
@@ -46,11 +46,11 @@ export const publishGameDataToBucket = async (
   const indexWrites = writes.filter(({ record }) => record.isIndex);
   const leafResults = await settleAll(
     leafWrites.map((write) => () => writeRecord(write)),
-    MAX_CONCURRENT_OBJECT_REQUESTS,
+    MAX_CONCURRENT_OBJECT_BODIES,
   );
   const indexResults = await settleAll(
     indexWrites.map((write) => () => writeRecord(write)),
-    MAX_CONCURRENT_OBJECT_REQUESTS,
+    MAX_CONCURRENT_OBJECT_BODIES,
   );
   return [...leafResults, ...indexResults].filter(Boolean).length;
 };

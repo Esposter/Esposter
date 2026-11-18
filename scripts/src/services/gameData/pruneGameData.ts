@@ -3,7 +3,7 @@ import type { PruneGameDataOptions } from "#src/models/gameData/PruneGameDataOpt
 import type { R2ListedObject } from "@esposter/db";
 
 import { checkIsGameDataset } from "#src/services/gameData/checkIsGameDataset";
-import { GAME_DATA_RETENTION_MS, MAX_CONCURRENT_OBJECT_REQUESTS } from "#src/services/gameData/constants";
+import { GAME_DATA_RETENTION_MS } from "#src/services/gameData/constants";
 import { toGameDataObjectKeys } from "#src/services/gameData/toGameDataObjectKeys";
 import { settleAll } from "@esposter/shared";
 
@@ -31,10 +31,7 @@ export const pruneGameData = async ({
     const lastModified = listedAgain.get(key);
     return lastModified === undefined || lastModified < cutoff;
   });
-  await settleAll(
-    deletableKeys.map((key) => () => bucketClient.delete(key)),
-    MAX_CONCURRENT_OBJECT_REQUESTS,
-  );
+  await settleAll(deletableKeys.map((key) => () => bucketClient.delete(key)));
   return {
     candidateCount: candidateKeys.length,
     deletedCount: deletableKeys.length,

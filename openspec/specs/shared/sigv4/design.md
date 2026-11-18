@@ -79,15 +79,16 @@ The other 68 items, by class (10 + 7 + 25 + 43 = 85):
 
 ## Key files
 
-| File                                                        | Role                                           |
-| :---------------------------------------------------------- | :--------------------------------------------- |
-| `packages/shared/src/services/sigv4/getCanonicalRequest.ts` | The canonical path, query and headers          |
-| `packages/shared/src/services/sigv4/getSigV4Signature.ts`   | The signing key's derivation and the signature |
-| `packages/shared/src/services/sigv4/signSigV4Request.ts`    | The `Authorization` header                     |
-| `packages/shared/src/services/sigv4/presignSigV4Url.ts`     | The presigned URL, its query written as signed |
-| `packages/shared/src/services/sigv4/createSigV4Fetch.ts`    | The signed fetch and its retries               |
-| `packages/db/src/services/storage/presignStorageUrl.ts`     | The Worker's presigned R2 URLs                 |
-| `scripts/src/services/cloudflare/createR2Transport.ts`      | The tooling's R2 transport                     |
+| File                                                        | Role                                                               |
+| :---------------------------------------------------------- | :----------------------------------------------------------------- |
+| `packages/shared/src/services/sigv4/getCanonicalRequest.ts` | The canonical path, query and headers                              |
+| `packages/shared/src/services/sigv4/getSigV4Signature.ts`   | The signing key's derivation and the signature                     |
+| `packages/shared/src/services/sigv4/signSigV4Request.ts`    | The `Authorization` header                                         |
+| `packages/shared/src/services/sigv4/presignSigV4Url.ts`     | The presigned URL, its query written as signed                     |
+| `packages/shared/src/services/sigv4/createSigV4Fetch.ts`    | The signed fetch and its retries                                   |
+| `packages/db/src/services/storage/presignStorageUrl.ts`     | The Worker's presigned R2 URLs                                     |
+| `scripts/src/services/cloudflare/createR2Transport.ts`      | The tooling's R2 transport and its one limit on requests in flight |
+| `packages/shared/src/util/promise/createSemaphore.ts`       | The slot limit the transport queues requests behind                |
 
 ## Sources
 
