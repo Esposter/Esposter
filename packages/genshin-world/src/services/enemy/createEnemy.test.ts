@@ -1,8 +1,11 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { EnemyKindId } from "#src/models/enemy/EnemyKindId";
+import { EnemyKindMovesMap } from "#src/services/bosses/EnemyKindMovesMap";
 import { STORMTERROR_SHIELD_HP_FRACTION } from "#src/services/bosses/stormterror";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
+import { displaceEnemy } from "#src/services/enemy/displaceEnemy";
+import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { describe, expect, test } from "vitest";
 
@@ -27,5 +30,35 @@ describe(createEnemy, () => {
     expect.hasAssertions();
 
     expect(createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "").shield).toBeUndefined();
+  });
+
+  // Every boss written that the published kinds hold, so a boss a camp or a fight does not place yet is not checked
+  const BOSS_KIND_IDS = Object.values(EnemyKindId).filter(
+    (enemyKindId) => EnemyKindMovesMap[enemyKindId] !== undefined && enemyTables.enemyKindMap.has(enemyKindId),
+  );
+
+  test.each(BOSS_KIND_IDS)("a boss of kind %s spawns immune to Frozen and resists displacement", (enemyKindId) => {
+    expect.hasAssertions();
+
+    const enemy = createEnemy(enemyTables, [], { ...ENEMY_CAMP_MEMBER, enemyKindId }, "");
+
+    expect(enemy.elementalState.isFrozenImmune).toBe(true);
+    expect(
+      displaceEnemy(getEnemyKind(enemyTables.enemyKindMap, enemyKindId).enemyType, enemy.position, { x: 0.1, z: -1 }),
+    ).toStrictEqual(enemy.position);
+  });
+
+  test("a common enemy spawns open to Frozen and displacement", () => {
+    expect.hasAssertions();
+
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+
+    expect(enemy.elementalState.isFrozenImmune).toBe(false);
+    expect(
+      displaceEnemy(getEnemyKind(enemyTables.enemyKindMap, ENEMY_CAMP_MEMBER.enemyKindId).enemyType, enemy.position, {
+        x: 0.1,
+        z: -1,
+      }),
+    ).toStrictEqual({ x: 0.1, z: -1 });
   });
 });

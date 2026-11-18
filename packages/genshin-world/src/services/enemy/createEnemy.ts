@@ -4,6 +4,7 @@ import type { EnemyCampMember } from "#src/models/enemy/EnemyCampMember";
 import type { EnemyTables } from "#src/models/enemy/EnemyTables";
 
 import { EnemyState } from "#src/models/enemy/EnemyState";
+import { EnemyType } from "#src/models/enemy/EnemyType";
 import { computeSpawnLevel } from "#src/services/adventureRank/computeSpawnLevel";
 import { createElementalState } from "#src/services/combat/aura/createElementalState";
 import { computeEnemyStats } from "#src/services/enemy/computeEnemyStats";
@@ -26,13 +27,15 @@ export const createEnemy = (
   const traits = getEnemyKindTraits(enemyKindMap, enemyKindId);
   const { length } = PoiseTypeSettingsMap[traits.poiseType];
   const { shieldHealthFraction } = traits;
+  // A boss is immune to Frozen, which a common enemy is not
+  const isFrozenImmune = enemyKind.enemyType === EnemyType.Boss;
   return {
     attackCooldownSeconds: 0,
     campId,
     droppedThresholdCount: 0,
     elementalNodePulsesLeft: 0,
     elementalReactions: [],
-    elementalState: createElementalState(),
+    elementalState: createElementalState(isFrozenImmune),
     enemyFamily: enemyKind.enemyFamily,
     enemyKindId,
     heading: 0,
