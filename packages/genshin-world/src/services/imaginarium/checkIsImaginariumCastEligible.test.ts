@@ -15,6 +15,7 @@ describe(checkIsImaginariumCastEligible, () => {
     id: 1,
     openingCharacterIds: [1],
     rewardGroup: 1,
+    openingTrials: [],
     specialGuestIds: [2],
   };
   const difficulty: ImaginariumDifficulty = {

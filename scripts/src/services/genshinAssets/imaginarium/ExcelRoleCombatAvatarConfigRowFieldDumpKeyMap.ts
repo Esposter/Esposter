@@ -9,5 +9,6 @@ export const ExcelRoleCombatAvatarConfigRowFieldDumpKeyMap: Readonly<
   [ExcelRoleCombatAvatarConfigRowFieldDumpKey.AvatarConfigId]: "avatarConfigId",
   [ExcelRoleCombatAvatarConfigRowFieldDumpKey.ElementCodes]: "FMNCKJDCADH",
   [ExcelRoleCombatAvatarConfigRowFieldDumpKey.OpeningCharacterIds]: "MFNFDFPOAMC",
+  [ExcelRoleCombatAvatarConfigRowFieldDumpKey.OpeningTrialIds]: "GCLLBFHCLFK",
   [ExcelRoleCombatAvatarConfigRowFieldDumpKey.SpecialGuestIds]: "FKFHFHFGMEM",
 };

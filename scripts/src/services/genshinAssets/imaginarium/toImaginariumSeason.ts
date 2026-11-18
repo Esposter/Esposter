@@ -1,17 +1,20 @@
 import type { ExcelRoleCombatAvatarConfigRow } from "#src/models/genshinAssets/imaginarium/ExcelRoleCombatAvatarConfigRow";
 import type { ExcelRoleCombatScheduleRow } from "#src/models/genshinAssets/imaginarium/ExcelRoleCombatScheduleRow";
+import type { ExcelTrialAvatarRow } from "#src/models/genshinAssets/trials/ExcelTrialAvatarRow";
 import type { ImaginariumSeason } from "genshin-world";
 
 import { ElementCodeElementMap } from "#src/services/genshinAssets/imaginarium/constants";
+import { toImaginariumOpeningTrials } from "#src/services/genshinAssets/imaginarium/toImaginariumOpeningTrials";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // One season from its schedule row and the avatar config row it joins by: its id, the wall-clock moments it begins and ends
-// In the game's time zone, the reward Group its Stellas draw from, the difficulties it runs by id, its three elements, and
-// The avatar ids of its opening characters and special guests. A code the element map lacks is refused, and the trailing 0,
-// Which names no element, is dropped
+// In the game's time zone, the reward Group its Stellas draw from, the difficulties it runs by id, its three elements, the
+// Avatar ids of its opening characters and special guests, and the trial avatars its openers play as, read from the trial
+// Table. A code the element map lacks is refused, and the trailing 0, which names no element, is dropped
 export const toImaginariumSeason = (
   row: ExcelRoleCombatScheduleRow,
   avatarConfigRow: ExcelRoleCombatAvatarConfigRow,
+  trials: Map<number, ExcelTrialAvatarRow>,
 ): ImaginariumSeason => ({
   beginsAt: row.beginTimeStr.replace(" ", "T"),
   difficultyIds: row.difficultyIds,
@@ -30,6 +33,7 @@ export const toImaginariumSeason = (
   endsAt: row.endTimeStr.replace(" ", "T"),
   id: row.scheduleId,
   openingCharacterIds: avatarConfigRow.openingCharacterIds,
+  openingTrials: toImaginariumOpeningTrials(avatarConfigRow.openingTrialIds, trials),
   rewardGroup: row.rewardGroupId,
   specialGuestIds: avatarConfigRow.specialGuestIds,
 });

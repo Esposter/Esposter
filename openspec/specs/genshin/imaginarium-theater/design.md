@@ -52,6 +52,8 @@ A season names its difficulties by id, and the writer refuses a season that name
 | :------------------------------------------------------------------------------------ | :------------------------------------------------------------------------ |
 | `scripts/src/services/genshinAssets/imaginarium/buildImaginarium.ts`                  | The two records built from the role combat tables, for publishing         |
 | `scripts/src/services/genshinAssets/imaginarium/toImaginariumSeason.ts`               | One season from its schedule row                                          |
+| `scripts/src/services/genshinAssets/imaginarium/toImaginariumOpeningTrials.ts`        | A season's openers' trial avatars                                         |
+| `scripts/src/services/genshinAssets/imaginarium/checkIsOpeningTrialsMatched.ts`       | Whether the trials are the openers                                        |
 | `scripts/src/services/genshinAssets/imaginarium/toImaginariumDifficulty.ts`           | One difficulty and its level floor from its table row                     |
 | `packages/genshin-world/src/services/imaginarium/findImaginariumSeason.ts`            | The season played at a moment                                             |
 | `packages/genshin-world/src/services/shared/findLatestBegun.ts`                       | The item that began latest before a moment, the Theater's season's search |
@@ -67,7 +69,7 @@ A season names its difficulties by id, and the writer refuses a season that name
 ## Not built yet
 
 - **The cast's composition.** Which characters an Alternate Cast may hold, by element or as a special guest, and the season's elements and guests, are not named in the schedule's fields yet, so no cast is checked against a season.
-- **The opening characters and the trial versions.** The characters each season names are not read yet, so an owned opening character is given its bonus by the caller, and a trial version is not told apart from the character.
+- **The opening characters and the trial versions.** Each season's opening characters and their trial versions are read (`openingTrials`, each trial at its level), but no cast uses them yet: an owned opening character is given its bonus by the caller, and a trial version is not told apart from the character.
 - **The stage's enemies.** The stage's enemies are not read and nothing deals its damage, so the stage's progress is the caller's to state (`packages/genshin-world/src/services/imaginarium/fightImaginariumStage.ts`).
 - **The acts, the events and their costs.** The events between battles, the Battle Event, Companion, Brilliant Blessing and Mystery Cache, their Fantasia Flower costs and the rerolls are not read or built. The wiki could not be read, so their costs are the proposal's to settle.
 - **The rewind's count and the other limits.** The wiki gives no count of a run's rewinds, so the run states it. Only the Mystery Cache option that fully restores one character's Vigor is built, not the options that restore one Vigor.

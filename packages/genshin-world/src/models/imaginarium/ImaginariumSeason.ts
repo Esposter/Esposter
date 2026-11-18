@@ -1,8 +1,9 @@
 import type { Element } from "#src/models/Element";
+import type { TrialAvatar } from "#src/models/trial/TrialAvatar";
 
 // One season of the Imaginarium Theater: its id, the moments it begins and ends in the game's time zone, the difficulties it
-// Runs by id, the reward group its Stellas draw from, its three elements, and the avatar ids of its opening characters and
-// Special guests
+// Runs by id, the reward group its Stellas draw from, its three elements, the avatar ids of its opening characters and
+// Special guests, and the trial avatars its opening characters play as
 export interface ImaginariumSeason {
   beginsAt: string;
   difficultyIds: number[];
@@ -10,6 +11,7 @@ export interface ImaginariumSeason {
   endsAt: string;
   id: number;
   openingCharacterIds: number[];
+  openingTrials: TrialAvatar[];
   rewardGroup: number;
   specialGuestIds: number[];
 }

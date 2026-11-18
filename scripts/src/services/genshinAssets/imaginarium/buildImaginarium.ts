@@ -1,8 +1,10 @@
 import type { ExcelRoleCombatAvatarConfigRow } from "#src/models/genshinAssets/imaginarium/ExcelRoleCombatAvatarConfigRow";
 import type { ExcelRoleCombatDifficultyRow } from "#src/models/genshinAssets/imaginarium/ExcelRoleCombatDifficultyRow";
 import type { ExcelRoleCombatScheduleRow } from "#src/models/genshinAssets/imaginarium/ExcelRoleCombatScheduleRow";
+import type { ExcelTrialAvatarRow } from "#src/models/genshinAssets/trials/ExcelTrialAvatarRow";
 
 import { checkIsOpeningElementsMatched } from "#src/services/genshinAssets/imaginarium/checkIsOpeningElementsMatched";
+import { checkIsOpeningTrialsMatched } from "#src/services/genshinAssets/imaginarium/checkIsOpeningTrialsMatched";
 import {
   ROLE_COMBAT_AVATAR_CONFIG_TABLE_NAME,
   ROLE_COMBAT_DIFFICULTY_TABLE_NAME,
@@ -14,13 +16,14 @@ import { ExcelRoleCombatScheduleRowFieldDumpKeyMap } from "#src/services/genshin
 import { toImaginariumDifficulty } from "#src/services/genshinAssets/imaginarium/toImaginariumDifficulty";
 import { toImaginariumSeason } from "#src/services/genshinAssets/imaginarium/toImaginariumSeason";
 import { getCharacterDatas } from "#src/services/genshinAssets/stats/getCharacterDatas";
+import { TRIAL_AVATAR_TABLE_NAME } from "#src/services/genshinAssets/trials/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameDataset } from "genshin-world";
 
 // The Imaginarium Theater's seasons and difficulties from the role combat tables, each published as a record of the
 // Imaginarium dataset. A season names its difficulties by id, and a season whose opening characters do not hold its three
-// Elements, or that names a difficulty the table lacks, is refused
+// Elements, whose trial versions are not its openers', or that names a difficulty the table lacks, is refused
 export const buildImaginarium = (): Record<string, unknown> => {
   const difficulties = readExcelTable<ExcelRoleCombatDifficultyRow>(
     ROLE_COMBAT_DIFFICULTY_TABLE_NAME,
@@ -36,6 +39,9 @@ export const buildImaginarium = (): Record<string, unknown> => {
     ).map((row) => [row.avatarConfigId, row]),
   );
   const characterElementMap = new Map(getCharacterDatas([]).map(({ element, id }) => [id, element]));
+  const trials = new Map(
+    readExcelTable<ExcelTrialAvatarRow>(TRIAL_AVATAR_TABLE_NAME).map((row) => [row.trialAvatarId, row]),
+  );
   const seasons = readExcelTable<ExcelRoleCombatScheduleRow>(
     ROLE_COMBAT_SCHEDULE_TABLE_NAME,
     ExcelRoleCombatScheduleRowFieldDumpKeyMap,
@@ -48,7 +54,7 @@ export const buildImaginarium = (): Record<string, unknown> => {
           String(row.scheduleId),
           `joins avatar config ${row.avatarConfigId}, which the table lacks`,
         );
-      return toImaginariumSeason(row, avatarConfigRow);
+      return toImaginariumSeason(row, avatarConfigRow, trials);
     })
     .toSorted((firstSeason, secondSeason) => firstSeason.id - secondSeason.id);
   for (const season of seasons) {
@@ -65,6 +71,12 @@ export const buildImaginarium = (): Record<string, unknown> => {
         Operation.Read,
         String(season.id),
         "names openers whose elements are not its three",
+      );
+    if (!checkIsOpeningTrialsMatched(season.openingCharacterIds, season.openingTrials))
+      throw new InvalidOperationError(
+        Operation.Read,
+        String(season.id),
+        "names trial versions that are not its openers'",
       );
   }
   return { [`${GameDataset.Imaginarium}/difficulties`]: difficulties, [`${GameDataset.Imaginarium}/seasons`]: seasons };

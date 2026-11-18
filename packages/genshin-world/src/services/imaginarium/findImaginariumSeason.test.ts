@@ -14,6 +14,7 @@ describe(findImaginariumSeason, () => {
   const cast = {
     elements: [Element.Pyro, Element.Electro, Element.Cryo],
     openingCharacterIds: [1],
+    openingTrials: [],
     specialGuestIds: [2],
   };
   // Listed out of order, with a season scheduled ahead of the present as the table holds one

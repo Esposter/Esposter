@@ -174,3 +174,20 @@ The Imaginarium Theater SHALL open with its quest once the player reaches Advent
 - **GIVEN** the player's Adventure Rank is below 35
 - **WHEN** the player is in the world
 - **THEN** the Theater is not offered
+
+### Requirement: An opening character's trial version is read from its season
+
+A season's opening characters SHALL each have the trial version the season names, at the level that trial version holds, and a season whose trial versions are not its openers' SHALL fail its data run.
+
+#### Scenario: An opening character's trial version is read at its level
+
+- **GIVEN** a season names a trial version of each opening character
+- **WHEN** the data run reads the season
+- **THEN** each trial version gives its opening character at the level the trial version holds
+
+#### Scenario: A season whose trial versions are not its openers' fails its data run
+
+- **GIVEN** a season's trial versions are not the characters of its opening characters
+- **WHEN** the data run writes the season
+- **THEN** the run fails
+- **AND** no season is written
