@@ -10,7 +10,8 @@ await runCommand(
   defineCommand({
     args: {
       command: {
-        description: "The command to run, and the arguments it takes after it",
+        description:
+          "The command to run, and the arguments it takes after it; a flag in that command line follows `--`, so citty does not read it as this command's own",
         required: true,
         type: "positional",
       },
