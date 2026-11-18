@@ -40,7 +40,7 @@ export const fitRegionCamps = async ({ isDryRun }: DryRunOptions): Promise<strin
         const enemyCamps = buildEnemyCamps(region, places, areaIdAt);
         const enemyCount = enemyCamps.reduce((count, { members }) => count + members.length, 0);
         if (JSON.stringify(enemyCamps) !== JSON.stringify(data.enemyCamps ?? []) && !isDryRun)
-          await writeRegionData(file, replaceEnemyCamps(data, enemyCamps), { isDryRun });
+          await writeRegionData(file, replaceEnemyCamps(data, enemyCamps));
         return `${region}: ${enemyCamps.length} camps, ${enemyCount} enemies, ${places.length - enemyCount} in no area left out`;
       }),
   );

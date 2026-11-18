@@ -8,8 +8,8 @@ import { checkIsJumpKind, REGION_LANDMARKS_SUFFIX } from "genshin-world";
 // Cannot drift from the data it is cut from. Returns the data file's path
 export const writeRegionData = async (
   relativePath: string,
-  data: { landmarks: { kind?: string }[] } & Record<string, unknown>,
-  { isDryRun }: DryRunOptions,
+  data: Record<string, unknown> & { landmarks: { kind?: string }[] },
+  { isDryRun = false }: Partial<DryRunOptions> = {},
 ): Promise<string> => {
   const path = await writeWorldData(relativePath, data, { isDryRun });
   const landmarks = data.landmarks.filter(({ kind }) => kind !== undefined && checkIsJumpKind(kind));

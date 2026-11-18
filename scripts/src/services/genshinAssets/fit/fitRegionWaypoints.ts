@@ -73,7 +73,7 @@ export const fitRegionWaypoints = async ({ isDryRun }: DryRunOptions): Promise<s
           ...statues,
         ]);
         if (JSON.stringify(landmarks) !== JSON.stringify(data.landmarks) && !isDryRun)
-          await writeRegionData(file, { ...data, landmarks }, { isDryRun });
+          await writeRegionData(file, { ...data, landmarks });
         return `${region}: ${waypoints.length} waypoints and ${statues.length} Statues of the New Moon placed`;
       }),
   );

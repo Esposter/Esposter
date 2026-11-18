@@ -112,7 +112,6 @@ describe(writeResidents, () => {
             },
           ],
         },
-        { isDryRun: false },
       ],
     ]);
   });
@@ -170,7 +169,6 @@ describe(writeResidents, () => {
             },
           ],
         },
-        { isDryRun: false },
       ],
     ]);
   });
@@ -207,7 +205,6 @@ describe(writeResidents, () => {
             },
           ],
         },
-        { isDryRun: false },
       ],
     ]);
   });
@@ -217,10 +214,6 @@ describe(writeResidents, () => {
 
     await writeResidents({ isDryRun: false });
 
-    expect(writeRegionData).toHaveBeenCalledExactlyOnceWith(
-      REGION_FILE,
-      { ...region, residents: [] },
-      { isDryRun: false },
-    );
+    expect(writeRegionData).toHaveBeenCalledExactlyOnceWith(REGION_FILE, { ...region, residents: [] });
   });
 });

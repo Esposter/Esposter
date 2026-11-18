@@ -19,7 +19,7 @@ export const fitRegionOutcrops = async ({ isDryRun }: DryRunOptions): Promise<st
         if (!mapRegion) throw new InvalidOperationError(Operation.Read, region, "has no region on the official map");
         const outcropPlaces = toOutcropPlaces({ areaId: mapRegion.areaId, mapPoints: points, origin, transform });
         if (JSON.stringify(outcropPlaces) !== JSON.stringify(data.outcropPlaces ?? []) && !isDryRun)
-          await writeRegionData(file, { ...data, outcropPlaces }, { isDryRun });
+          await writeRegionData(file, { ...data, outcropPlaces });
         return `${region}: ${outcropPlaces.length} outcrop places placed`;
       }),
   );

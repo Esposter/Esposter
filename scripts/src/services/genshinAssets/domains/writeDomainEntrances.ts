@@ -68,7 +68,7 @@ export const writeDomainEntrances = async ({ isDryRun }: DryRunOptions): Promise
       const domainEntrances = placedMap.get(region) ?? [];
       const landmarks = orderLandmarks([...(otherLandmarksMap.get(region) ?? []), ...domainEntrances]);
       if (JSON.stringify(landmarks) !== JSON.stringify(data.landmarks) && !isDryRun)
-        await writeRegionData(file, { ...data, landmarks }, { isDryRun });
+        await writeRegionData(file, { ...data, landmarks });
       return `${region}: ${domainEntrances.length} domain entrances`;
     }),
   );

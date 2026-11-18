@@ -96,7 +96,7 @@ export const writeResidents = async ({ isDryRun }: DryRunOptions): Promise<strin
           ),
         );
       if (!isDryRun && JSON.stringify(residents) !== JSON.stringify(data.residents ?? []))
-        await writeRegionData(file, { ...data, residents }, { isDryRun });
+        await writeRegionData(file, { ...data, residents });
       const withNight = residents.filter(({ night }) => night !== undefined).length;
       return `${region}: ${residents.length} placed with talks, ${residents.length - withNight} with a day spot only, ${withNight} with a night spot`;
     }),
