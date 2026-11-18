@@ -26,6 +26,7 @@ import { enemyPagesCommand } from "#src/services/genshinAssets/commands/enemyPag
 import { expeditionsCommand } from "#src/services/genshinAssets/commands/expeditionsCommand";
 import { explorationCommand } from "#src/services/genshinAssets/commands/explorationCommand";
 import { extractCommand } from "#src/services/genshinAssets/commands/extractCommand";
+import { familyLabelsCommand } from "#src/services/genshinAssets/commands/familyLabelsCommand";
 import { fishingCommand } from "#src/services/genshinAssets/commands/fishingCommand";
 import { fitCommand } from "#src/services/genshinAssets/commands/fitCommand";
 import { forgingCommand } from "#src/services/genshinAssets/commands/forgingCommand";
@@ -157,6 +158,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     "outcrop-places": outcropPlacesCommand,
     "enemy-camps": enemyCampsCommand,
     "enemy-pages": enemyPagesCommand,
+    "family-labels": familyLabelsCommand,
     home: homeCommand,
     achievements: achievementsCommand,
     archive: archiveCommand,

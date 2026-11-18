@@ -22,6 +22,8 @@ export const INTERACTIVE_MAP_STATUE_LABEL_ID = 2;
 export const INTERACTIVE_MAP_WAYPOINT_LABEL_ID = 3;
 // The label of the Ley Line Blossoms, each ground point of which stands for one ley line outcrop's place
 export const INTERACTIVE_MAP_OUTCROP_LABEL_ID = 572;
+// The label of the enemy marks, whose children are the family labels a camp's enemies are marked with
+export const INTERACTIVE_MAP_ENEMY_CATEGORY_ID = 50;
 // A fit's residual is the root-mean-square distance of its matched pairs, in game units. Over this bar the map is not
 // The scene's and nothing is written: the points both place sit within about ten units of each other, so twenty is a
 // Second map's distance, not a rounding one
