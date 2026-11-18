@@ -18,18 +18,22 @@ describe(getTopicsProcedure, () => {
     getTopic(TopicKind.Post, input.id),
   ];
   const postProcedure = getTopicsProcedure(standardRateLimitedProcedure.input(postInputSchema), getPostTopics);
+  // The ids the write-then-fail mutation wrote before it threw
+  const written: string[] = [];
   const testRouter = router({
-    failPost: postProcedure.mutation<void>(() => {
-      throw new TRPCError({ code: "BAD_REQUEST", message: "Post failed" });
-    }),
     readPost: postProcedure.query<boolean>(() => true),
     updatePost: postProcedure.mutation<boolean>(() => true),
+    writeThenFailPost: postProcedure.mutation<void>(({ input }) => {
+      written.push(input.id);
+      throw new TRPCError({ code: "BAD_REQUEST", message: "Post failed" });
+    }),
   });
   const createTestCaller = createCallerFactory(testRouter);
   const id = "id";
 
   afterEach(() => {
     MockPublishedTopics.length = 0;
+    written.length = 0;
   });
 
   test("publishes a mutation's topics once it resolves", async () => {
@@ -53,13 +57,17 @@ describe(getTopicsProcedure, () => {
     expect(MockPublishedTopics).toStrictEqual([]);
   });
 
-  test("publishes nothing for a failed mutation", async () => {
+  // A mutation that fails after its write still publishes its topics, since the write landed before the failure
+  test("publishes a mutation's topics when it fails after its write", async () => {
     expect.hasAssertions();
 
     const caller = createTestCaller(await createMockContext());
-    await expect(caller.failPost({ id })).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Post failed]`);
+    await expect(caller.writeThenFailPost({ id })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Post failed]`,
+    );
 
-    expect(MockPublishedTopics).toStrictEqual([]);
+    expect(written).toStrictEqual([id]);
+    expect(MockPublishedTopics).toStrictEqual([getTopic(TopicKind.Post, id)]);
   });
 
   test("a mutation whose topics cannot be read still resolves, since its write has committed", async () => {

@@ -19,8 +19,8 @@ interface TopicsOptions<TContextOverrides, TInput> {
 
 // A procedure that declares its topics (the live queries design): what a query's result reads, or what a mutation
 // Changed. The builder is the procedure's own, so the topics read its parsed input and its context as the resolver
-// Does. A mutation's topics are published once it resolves, never for one that failed, and best-effort: the write has
-// Committed, so a failed publish costs readers one refresh, never the mutation
+// Does. A mutation's topics are published once it ends, whether it resolved or failed, since a write may land before a
+// Failure. The publish is best-effort: the write has committed, so a failed publish costs readers one refresh, never the mutation
 export const getTopicsProcedure = <
   TContextOverrides extends { user: null | User },
   TInputIn,
@@ -47,18 +47,21 @@ export const getTopicsProcedure = <
     // Taken before the read runs, so a publish that lands after it reaches the watch even when the answer misses it
     const readAt = Date.now();
     const result = await next();
-    if (!result.ok) return result;
-    // A query's topics travel back with its answer, so the client watches what the read it rendered came from
+    // A query's topics travel back with its answer, so the client watches what the read it rendered came from. A failed
+    // Query has no answer to send them with
     if (type === "query") {
-      const topics = getTopics({ ctx, input, output: result.data });
-      if (topics.length > 0)
-        ctx.responseHeaders.append(TOPICS_HEADER, formatTopicsHeaderValue(path, { readAt, topics }));
+      if (result.ok) {
+        const topics = getTopics({ ctx, input, output: result.data });
+        if (topics.length > 0)
+          ctx.responseHeaders.append(TOPICS_HEADER, formatTopicsHeaderValue(path, { readAt, topics }));
+      }
       return result;
     }
     if (type !== "mutation") return result;
 
+    // A failed mutation has no output, so a topic only its output names is left out of its publish, as a best-effort one
     await publishTopicsBestEffort(
-      () => getTopics({ ctx, input, output: result.data }),
+      () => getTopics({ ctx, input, output: result.ok ? result.data : undefined }),
       `Failed to publish the topics of "${path}":`,
     );
     return result;
