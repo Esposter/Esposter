@@ -2,13 +2,13 @@
 
 ## Why
 
-The statues' unlocking, the filled areas and the jumps are built. The rest of the game's places are built but one: Teleport Waypoints and domain entrances unlock by interaction, pay their first-unlock rewards, and point the player toward a locked waypoint nearby. A quest step that unlocks a waypoint outright is the part not yet built.
+The statues' unlocking, the filled areas and the jumps are built. The rest of the game's places are built as well: Teleport Waypoints and domain entrances unlock by interaction, pay their first-unlock rewards, and point the player toward a locked waypoint nearby. The game's data has no quest step that unlocks a waypoint outright, since its one unlock step names a point no waypoint holds, so this change builds none.
 
 ## What Changes
 
 Teleport Waypoints and domain entrances unlock by reaching them, pay their first-unlock rewards once, and a locked waypoint near the player is pointed to.
 
-- A Teleport Waypoint or domain entrance unlocks when the player interacts with it, and a few unlock with a quest's step instead.
+- A Teleport Waypoint or domain entrance unlocks when the player interacts with it, and a quest step that names a waypoint finishes once that waypoint is unlocked.
 - An unlocked waypoint is offered as a jump and as a place to revive.
 - Each waypoint's first unlock pays its Adventure EXP and Primogems, given once.
 - A waypoint the game hides stays hidden until the step that reveals it.

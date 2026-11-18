@@ -1,10 +1,10 @@
 # Map unlocking
 
-The [map unlocking](../../specs/genshin/map-unlocking/design.md) page holds the statues' unlocking, the filled areas and the jumps. What is left is a quest step that unlocks a waypoint outright. The waypoints are in from [exploring](../../specs/genshin/exploring/design.md), which makes Teleport Waypoints a landmark kind and lands a jump at the game's own arrival point. The unlock is made through the [interaction](../../specs/genshin/interaction/design.md) prompts a waypoint and a domain are unlocked through.
+The [map unlocking](../../specs/genshin/map-unlocking/design.md) page holds the statues' unlocking, the filled areas and the jumps. This change adds the rest of the game's places: the Teleport Waypoints and the domain entrances. The waypoints are in from [exploring](../../specs/genshin/exploring/design.md), which makes Teleport Waypoints a landmark kind and lands a jump at the game's own arrival point. The unlock is made through the [interaction](../../specs/genshin/interaction/design.md) prompts a waypoint and a domain are unlocked through.
 
 ## Decisions
 
-- **Reached, then unlocked.** A Teleport Waypoint or a domain's entrance is unlocked by interacting with it, as the statues are. An activation also emits the landmark's scene point as an Interact target, so a quest step that names a waypoint by its point (`QUEST_CONTENT_UNLOCK_TRANS_POINT`) finishes when the waypoint is unlocked. A step unlocking a waypoint outright is not built: the one `QUEST_EXEC_UNLOCK_POINT` in the quest data names point 7, probably the Starfell Lake statue's point, which `LandmarkIdStatuePointIdMap` does not hold (Windrise's is point 4), and point 6, Mondstadt's waypoint 6, appears only as a finish condition (quest 351, step 5), which the quest-step scenario covers. No region waypoint is point 7, so the data names no waypoint for an outright unlock to act on, and that step waits on the game data naming one.
+- **Reached, then unlocked.** A Teleport Waypoint or a domain's entrance is unlocked by interacting with it, as the statues are. An activation also emits the landmark's scene point as an Interact target, so a quest step that names a waypoint by its point (`QUEST_CONTENT_UNLOCK_TRANS_POINT`) finishes when the waypoint is unlocked. No quest step unlocks a waypoint outright, so the change builds none: the game's data has no such step. Its one `QUEST_EXEC_UNLOCK_POINT` (quest 352, step 6) names point 7, which no region waypoint holds and `LandmarkIdStatuePointIdMap` does not map (Windrise's statue is point 4); the wiki places the Starfell Lake statue, so point 7 is probably that statue's. Point 6, Mondstadt's waypoint 6, appears only as a finish condition (quest 351, step 5), which the quest-step scenario covers.
 - **A domain entrance unlocks as a waypoint does, and is a jump.** Mondstadt's region data places seven domain entrances as `DomainEntrance` landmarks, so each is unlocked by interacting with it and offered as a prompt row, and `JUMP_LANDMARK_KINDS` already lists the kind. The wiki says an unlocked domain acts as a waypoint, so it is a jump, landing at the landmark's `arrival` (`computeJumpPose`), which for each entrance is its own place. The scene points that carry a dungeon also carry a transfer position, which the fit would need to map into the region's frame as it does for waypoints; until that fit change lands, a domain lands at its own place.
 - **A waypoint's reward is keyed by the point its id ends in.** The fit names each waypoint `<region>-waypoint-<point>`, so `computeLandmarkPointId` reads the point from the id and finds its row. Of Mondstadt's 43 waypoints, 32 have a row in the published `transPoints/scene3` record; the 11 with points 1865 to 2051 have none, so they pay nothing on their first unlock.
 - **A first unlock is the only unlock that pays.** Each one's Adventure EXP and Primogems are its row in `TransPointRewardConfigData`, and `activateLandmark` pays a landmark's reward only when it was not already unlocked, so a landmark reached again pays nothing.
@@ -24,7 +24,7 @@ flowchart TD
 
 ## Scope and order
 
-**Still to build:** a quest step that unlocks a waypoint outright (task 2.1). It is blocked, as the [first decision](#decisions) says: the quest data's one unlock names a statue's point, so the step waits on the data naming a waypoint. The pointer, the hidden waypoints, the offers and the first-unlock rewards are built, and their tasks are checked.
+**Not built, by decision:** a quest step that unlocks a waypoint outright, since the game's data has none ([first decision](#decisions)). Everything else in the change is built, and its tasks are checked.
 
 **Not here:** the achievements `TRIGGER_UNLOCK_TRANS_POINT` and `TRIGGER_UNLOCK_AREA` rows count unlocks, and the achievements proposal wires them as their pages land. The wiki says "Brush of a Thousand Winds" is every Teleport Waypoint in Mondstadt except those of Dragonspine, Windrest Peak and the Temple of Space, so a watcher needs each waypoint's region as well as its point. An area trigger names the game's own area ids, which no catalogue area holds yet.
 
@@ -39,7 +39,7 @@ flowchart TD
 | File                                                   | Role after the change                                             |
 | :----------------------------------------------------- | :---------------------------------------------------------------- |
 | `packages/genshin-world/src/store/map.ts`              | Splits the unlocked jump landmarks off the ones the pointer reads |
-| `packages/genshin-world/src/services/map/constants.ts` | `JUMP_LANDMARK_KINDS` takes statues, waypoints, domain entrances  |
+| `packages/genshin-world/src/services/map/constants.ts` | The pointer's two distances and the mark's edge inset             |
 
 ## Sources
 
