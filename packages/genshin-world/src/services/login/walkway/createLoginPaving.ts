@@ -46,7 +46,7 @@ const blurChannel = (values: Float32Array, width: number, height: number, radius
 // Slopes across and along the walkway are the canvas's red and green about their middle. The normal tilts by the slopes
 // On the tops alone, a rim falling its fitted slope's and width's depth; the shade is the tones its textures paint the
 // Tops in, drawn once over the repeat of their pattern and read again along the copy (`createPlanTonesNode`)
-export const createLoginPaving = (paving: LoginPavingData): LoginPaving => {
+export const createLoginPaving = (paving: LoginPavingData, rimTiltShare: number): LoginPaving => {
   // The box a rim is blurred by, twice over: a quarter of the rim's width either side, and a pixel at the least
   const bevelPixels = Math.max(Math.round((paving.bevel.width * LOGIN_PAVING_PIXELS_PER_METRE) / 4), 1);
   // A step blurred twice by that box falls at most by one over the box's width a pixel
@@ -106,11 +106,12 @@ export const createLoginPaving = (paving: LoginPavingData): LoginPaving => {
     context.putImageData(image, 0, 0);
   });
   // A pocket's floor lies under its lane, so its depth rising across the walkway tilts the stone's normal that way:
-  // The rim's depth in metres, its slope over its width, by the share of it a pixel falls, in pixels a metre
+  // The rim's depth in metres, its slope over its width, by the share of it a pixel falls, in pixels a metre, leaning
+  // The normal by the share of that slope `rimTiltShare` keeps
   const slopes = sample.rg
     .mul(2)
     .sub(1)
-    .mul((paving.bevel.slope * paving.bevel.width * LOGIN_PAVING_PIXELS_PER_METRE) / bevelPeakPixels);
+    .mul((paving.bevel.slope * paving.bevel.width * LOGIN_PAVING_PIXELS_PER_METRE * rimTiltShare) / bevelPeakPixels);
   return {
     normalNode: mix(normalView, transformNormalToView(vec3(slopes.x, 1, slopes.y).normalize()), weight),
     shade: createPlanTonesNode({ ...plan, size: paving.paint.size }, paving.paint),

@@ -59,9 +59,9 @@ committed.
 | `loading-startup-none`                 | `LoadingStartup`            |  pending: the game's download state of the startup screen has no sampled frame |       |        |        |
 | `login-dawn-title`                     | `LoginScreen`               |                                                                         10.85% | 0.477 |  7.84% | 0.4432 |
 | `login-day-title`                      | `LoginScreen`               |                                                                         13.31% | 0.320 | 10.42% | 0.4842 |
-| `login-door`                           | `LoginScreen`               |                                                                         13.40% | 0.206 | 11.04% | 0.5124 |
+| `login-door`                           | `LoginScreen`               |                                                                         13.40% | 0.205 | 11.04% | 0.5123 |
 | `login-door-recording`                 | `LoginScreen`               |                                                                         17.24% | 0.357 | 12.35% | 0.6003 |
-| `login-door-session`                   | `LoginScreen`               |                                                                         12.27% | 0.417 |  8.41% | 0.4568 |
+| `login-door-session`                   | `LoginScreen`               |                                                                         12.27% | 0.417 |  8.42% | 0.4568 |
 | `login-interface-arriving`             | `LoginInterface`            |                                     pending: no screenshot of this variant yet |       |        |        |
 | `login-interface-door`                 | `LoginInterface`            |                                                                          0.46% | 0.992 |  0.20% | 0.0381 |
 | `login-interface-door-mainland`        | `LoginInterface`            |                                                                          0.57% | 0.975 |  0.38% | 0.0288 |
@@ -152,8 +152,8 @@ drawn away from the reference shows on its own row.
 | `login-day-title/Bridges`              |     1.8% |   3.92 |  5.01% | 0.4252 |
 | `login-day-title/Towers`               |    55.6% |   5.72 | 12.20% | 0.5507 |
 | `login-day-title/sky`                  |    34.1% |   3.39 |  7.88% | 0.3705 |
-| `login-door/frame`                     |   100.0% |   9.10 | 11.04% | 0.5124 |
-| `login-door/Walkway`                   |    20.4% |  14.83 | 10.15% | 0.5813 |
+| `login-door/frame`                     |   100.0% |   9.09 | 11.04% | 0.5123 |
+| `login-door/Walkway`                   |    20.4% |  14.81 | 10.16% | 0.5809 |
 | `login-door/Bridges`                   |     8.3% |  11.91 |  8.41% | 0.5026 |
 | `login-door/Towers`                    |    30.1% |   4.83 |  9.79% | 0.5010 |
 | `login-door/sky`                       |    41.3% |  12.58 | 12.92% | 0.4885 |
@@ -162,11 +162,11 @@ drawn away from the reference shows on its own row.
 | `login-door-recording/Bridges`         |     4.7% |  10.40 | 13.15% | 0.6144 |
 | `login-door-recording/Towers`          |    36.6% |   9.43 | 13.05% | 0.6399 |
 | `login-door-recording/sky`             |    51.7% |   5.44 | 12.17% | 0.5571 |
-| `login-door-session/frame`             |   100.0% |   0.94 |  8.41% | 0.4568 |
-| `login-door-session/Walkway`           |     4.7% |  34.65 | 14.44% | 0.7113 |
-| `login-door-session/Bridges`           |     2.5% |  12.04 |  6.40% | 0.5262 |
-| `login-door-session/Towers`            |    53.7% |   4.25 |  7.57% | 0.4297 |
-| `login-door-session/sky`               |    39.1% |   4.71 |  8.98% | 0.4592 |
+| `login-door-session/frame`             |   100.0% |   0.94 |  8.42% | 0.4568 |
+| `login-door-session/Walkway`           |     4.7% |  34.62 | 14.40% | 0.7110 |
+| `login-door-session/Bridges`           |     2.5% |  12.06 |  6.45% | 0.5273 |
+| `login-door-session/Towers`            |    53.7% |   4.26 |  7.57% | 0.4298 |
+| `login-door-session/sky`               |    39.1% |   4.69 |  8.99% | 0.4591 |
 | `login-night-title/frame`              |   100.0% |   5.28 |  7.01% | 0.3916 |
 | `login-night-title/Walkway`            |     9.9% |  24.24 | 12.21% | 0.5998 |
 | `login-night-title/Bridges`            |     2.5% |  18.95 |  7.52% | 0.5182 |

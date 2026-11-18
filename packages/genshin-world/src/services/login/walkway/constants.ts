@@ -13,3 +13,8 @@ export const LOGIN_WALKWAY_RISE_OVERSHOOT = 0.45;
 // The walkway's paving drawn into its texture at so many pixels a metre:
 // A rim a centimetre wide takes that many pixels to stand apart from its pocket
 export const LOGIN_PAVING_PIXELS_PER_METRE = 256;
+// The share of its rims' tilt the walkway's normals keep. Its exports' normal maps bend its normals 4.0000 degrees over its
+// Family, and its rims drawn at their full fitted slope bend them 4.3467, so the share is the root of the bend over the
+// Share, read by the Shape pass's surface detail reading: the secant through 1.0 (4.3467) and 0.92 (4.0385) lands at
+// 0.9100, and the pass reads 0.0006 degrees there, inside its gate of 0.0198. Detail on top would only raise the bend
+export const LOGIN_WALKWAY_RIM_TILT_SHARE = 0.91;
