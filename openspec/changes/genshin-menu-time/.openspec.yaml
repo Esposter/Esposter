@@ -10,4 +10,3 @@ x-touches:
     "packages/genshin-world/src/components/World/Session/**",
     "packages/genshin-world/src/components/World/Windrise/**",
   ]
-x-waiting: "4.1 waits on the owner's call on the Confirm pill: the game draws no pill, title or cross in any settled frame of its Time screen, and the pill's rectangle holds about half of the 1.53%; gating it to the dial's input would read about 0.8% but leave Confirm unreachable by pointer at rest."

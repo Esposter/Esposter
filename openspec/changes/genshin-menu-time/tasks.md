@@ -13,5 +13,4 @@
 
 ## 4. Check
 
-- [ ] 4.1 Compare the Time screen's fixture with its reference. Verify: `pnpm -C scripts genshin:parity compare menu-time` writes its row.
-      Open: the row reads 1.53% against the 1% bar. The Confirm pill's rectangle holds 0.74 of the 1.55 frame-mean points and the dial's right rim 0.44; the game draws no pill, title or cross in any settled frame of its Time screen (design.md, Decisions), so the pill stays the pointer's Confirm. The row clears the bar only if the owner decides to gate the pill to the dial's input, which reads about 0.8%.
+- [x] 4.1 Compare the Time screen's fixture with its reference. Verify: `pnpm -C scripts genshin:parity compare menu-time` writes its row, 0.70% against the 1% bar, with the three controls left out by the reference's mask (design.md, Decisions).
