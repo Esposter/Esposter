@@ -160,7 +160,6 @@ const {
   frostbearingTreePlaces,
   gameDataBaseUrl,
   gameText,
-  homeBlueprints,
   isPaused,
   language,
   materialDataMap,
@@ -594,7 +593,7 @@ const { profileNamecards } = useWorldProfileNamecards();
 // The records the screens read as they open, and the recipes and blueprints a diagram or an instruction opens, by the item's
 // Id, and the progress each is learned in
 const records = useWorldScreenRecords({ gameDataBaseUrl });
-const blueprintMap = computed(() => createUnlockItemMap(homeBlueprints));
+const blueprintMap = computed(() => createUnlockItemMap(records.homeBlueprints ?? []));
 const craftingRecipeMap = computed(() => createUnlockItemMap(records.craftingRecipes ?? []));
 // Using an entry of the bag, which the bag's screen offers
 const { useBagEntry } = useWorldBagUse({
@@ -1379,6 +1378,7 @@ useWorldSaveSync({
       </template>
       <template #[ScreenKind.Inventory]>
         <InventoryScreen
+          v-if="records.craftingRecipes && records.homeBlueprints"
           :blueprint-map
           :cooking-progress
           :crafting-progress

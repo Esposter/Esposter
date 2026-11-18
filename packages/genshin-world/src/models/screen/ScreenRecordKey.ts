@@ -2,5 +2,6 @@
 export const ScreenRecordKey = {
   CraftingRecipes: "craftingRecipes",
   CraftingStrongboxes: "craftingStrongboxes",
+  HomeBlueprints: "homeBlueprints",
 } as const;
 export type ScreenRecordKey = (typeof ScreenRecordKey)[keyof typeof ScreenRecordKey];

@@ -1,11 +1,13 @@
 import type { CraftingRecipe } from "#src/models/crafting/CraftingRecipe";
 import type { readCraftingRecipes as readCraftingRecipesFn } from "#src/services/crafting/readCraftingRecipes";
 import type { readCraftingStrongboxes as readCraftingStrongboxesFn } from "#src/services/crafting/readCraftingStrongboxes";
+import type { readHomeBlueprints as readHomeBlueprintsFn } from "#src/services/home/readHomeBlueprints";
 
 import { useWorldScreenRecords } from "#src/composables/useWorldScreenRecords";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { readCraftingRecipes } from "#src/services/crafting/readCraftingRecipes";
 import { readCraftingStrongboxes } from "#src/services/crafting/readCraftingStrongboxes";
+import { readHomeBlueprints } from "#src/services/home/readHomeBlueprints";
 import { flushReads } from "#src/services/shared/flushReads.test";
 import { useWorldScreenStore } from "#src/store/screen";
 import { startTestWorldSession } from "#src/store/session.fixture";
@@ -17,6 +19,9 @@ vi.mock(import("#src/services/crafting/readCraftingRecipes"), () => ({
 }));
 vi.mock(import("#src/services/crafting/readCraftingStrongboxes"), () => ({
   readCraftingStrongboxes: vi.fn<typeof readCraftingStrongboxesFn>(() => Promise.resolve([])),
+}));
+vi.mock(import("#src/services/home/readHomeBlueprints"), () => ({
+  readHomeBlueprints: vi.fn<typeof readHomeBlueprintsFn>(() => Promise.resolve([])),
 }));
 
 describe(useWorldScreenRecords, () => {
@@ -64,6 +69,7 @@ describe(useWorldScreenRecords, () => {
     await flushReads();
 
     expect(readCraftingRecipes).toHaveBeenCalledExactlyOnceWith(gameDataBaseUrl);
+    expect(readHomeBlueprints).toHaveBeenCalledExactlyOnceWith(gameDataBaseUrl);
     expect(records.craftingRecipes).toBe(recipes);
   });
 
