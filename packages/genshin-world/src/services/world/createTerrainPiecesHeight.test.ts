@@ -3,18 +3,17 @@ import type { GroundPoint, TerrainBounds } from "genshin-engine";
 import { createTerrainPiecesHeight } from "#src/services/world/createTerrainPiecesHeight";
 import { describe, expect, test } from "vitest";
 
-const BASE = 24;
-const BLEND_WIDTH = 6;
-
 const createOutline = ({ maxX, maxZ, minX, minZ }: TerrainBounds): GroundPoint[] => [
   { x: minX, z: minZ },
   { x: maxX, z: minZ },
   { x: maxX, z: maxZ },
   { x: minX, z: maxZ },
 ];
-const getBase = () => BASE;
-
 describe(createTerrainPiecesHeight, () => {
+  const BASE = 24;
+  const BLEND_WIDTH = 6;
+  const getBase = () => BASE;
+
   test("a point inside one piece's outline is that piece's surface, not the sum of the pieces laid over each other", () => {
     expect.hasAssertions();
 
