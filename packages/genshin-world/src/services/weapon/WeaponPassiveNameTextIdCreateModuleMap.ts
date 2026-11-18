@@ -174,6 +174,10 @@ import { createWindUnattainedPassiveModule } from "#src/services/weapon/passives
 import { createWithoutHeedForDayNorNightPassiveModule } from "#src/services/weapon/passives/createWithoutHeedForDayNorNightPassiveModule";
 import { createWolfishTrackerPassiveModule } from "#src/services/weapon/passives/createWolfishTrackerPassiveModule";
 
+// The Mastery Clock passive's Attack variant, shared by the weapons carrying it
+const createMasteryClockAttackPassiveModule = (params: number[]): PassiveModule =>
+  createMasteryClockPassiveModule(params, { attribute: Attribute.Attack, valueScale: 1 });
+
 // The Bane passives' modules, one named lambda per element pair, so each weapon carrying a pair shares its module
 const createBaneOfWaterAndIcePassiveModule = (params: number[]): PassiveModule =>
   createBaneOfElementsPassiveModule([Element.Hydro, Element.Cryo], params);
@@ -588,9 +592,9 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "815912395": (params) =>
     createMasteryClockPassiveModule(params, { attribute: Attribute.EnergyRecharge, valueScale: 0.01 }),
   // Desert Pavilion
-  "1388031387": (params) => createMasteryClockPassiveModule(params, { attribute: Attribute.Attack, valueScale: 1 }),
+  "1388031387": createMasteryClockAttackPassiveModule,
   // Wildling Nightstar
-  "3326699803": (params) => createMasteryClockPassiveModule(params, { attribute: Attribute.Attack, valueScale: 1 }),
+  "3326699803": createMasteryClockAttackPassiveModule,
   // Northwind Wolf
   "2361105603": createNorthwindWolfPassiveModule,
   // Honed Flow
