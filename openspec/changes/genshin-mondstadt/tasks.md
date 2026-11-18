@@ -2,7 +2,7 @@
 
 - [x] 1.1 Set the meadows' base wind and its gusts so they roll across the grass. Verify: a test named after the scenario 'Gusts roll across the meadows', written first and seen failing.
 - [ ] 1.2 Build the windmill with sails that turn in the wind. Verify: a test named after the scenario 'A windmill's sails turn in a gust'.
-      Blocked: its tower and blade meshes are not on disk (the queue's `windrise-windmill-meshes` item exports them), and its places are not in the Windrise streams, so they wait on the queue's `mondstadt-world-lod` item, and its reference is not yet found (see the design's Decisions). The sail angle (`computeWindmillSailAngle`) exists, its rate unfitted.
+      Blocked: its tower and blade meshes are not on disk (the queue's `windrise-windmill-meshes` item exports them), and its places are in neither the Windrise streams nor the six Mondstadt streams, so they wait on where the city's windmills are placed (the design's Decisions; the queue's `mondstadt-world-lod` item), and its reference is not yet found (see the design's Decisions). The sail angle (`computeWindmillSailAngle`) exists, its rate unfitted.
 - [ ] 1.3 Raise the wind at Stormterror's Lair to gale strength. Verify: a test named after the scenario 'Stormterror's Lair blows at gale strength'.
       Blocked until the Lair's approach reference gives the gale's strength, and the Lair's weather area outline comes from the PC's export so the wind switches on entry.
 
