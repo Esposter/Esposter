@@ -1,6 +1,7 @@
 import type { GroundPieceArea } from "#src/models/genshinAssets/shared/GroundPieceArea";
 
 import { getTerrainTileNames } from "#src/services/genshinAssets/world/getTerrainTileNames";
+import { WorldLayer } from "genshin-world";
 import { describe, expect, test } from "vitest";
 
 describe(getTerrainTileNames, () => {
@@ -23,6 +24,7 @@ describe(getTerrainTileNames, () => {
     const areas: GroundPieceArea[] = [
       {
         id: "far",
+        layer: WorldLayer.Surface,
         outline: [
           { x: 2100, z: -3100 },
           { x: 2200, z: -3100 },
@@ -46,6 +48,7 @@ describe(getTerrainTileNames, () => {
     const areas: GroundPieceArea[] = [
       {
         id: "near",
+        layer: WorldLayer.Surface,
         outline: [
           { x: 500, z: -500 },
           { x: 1500, z: -500 },
