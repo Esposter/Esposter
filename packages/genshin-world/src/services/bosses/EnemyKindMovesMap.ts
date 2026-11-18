@@ -13,6 +13,7 @@ import { MILLENNIAL_PEARL_SEAHORSE_MOVES } from "#src/services/bosses/millennial
 import { PERPETUAL_MECHANICAL_ARRAY_MOVES } from "#src/services/bosses/perpetualMechanicalArray";
 import { SECRET_SOURCE_AUTOMATON_CONFIGURATION_DEVICE_MOVES } from "#src/services/bosses/secretSourceAutomatonConfigurationDevice";
 import { STORMTERROR_MOVES } from "#src/services/bosses/stormterror";
+import { WAYWARD_HERMETIC_SPIRITSPEAKER_MOVES } from "#src/services/bosses/waywardHermeticSpiritspeaker";
 
 // The moves each boss makes in turn, by its kind. A kind with no entry is a common enemy that makes its basic attack
 export const EnemyKindMovesMap: Partial<Record<EnemyKindId, readonly BossMove[]>> = {
@@ -28,4 +29,5 @@ export const EnemyKindMovesMap: Partial<Record<EnemyKindId, readonly BossMove[]>
   [EnemyKindId.GluttonousYumkasaurMountainKing]: GLUTTONOUS_YUMKASAUR_MOUNTAIN_KING_MOVES,
   [EnemyKindId.GoldflameQucusaurTyrant]: GOLDFLAME_QUCUSAUR_TYRANT_MOVES,
   [EnemyKindId.SecretSourceAutomatonConfigurationDevice]: SECRET_SOURCE_AUTOMATON_CONFIGURATION_DEVICE_MOVES,
+  [EnemyKindId.WaywardHermeticSpiritspeaker]: WAYWARD_HERMETIC_SPIRITSPEAKER_MOVES,
 };
