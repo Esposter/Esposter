@@ -116,6 +116,7 @@ Phase 1 (tasks 1.1 to 1.3) settled the following, which the later phases build o
 - **Relational SQL.** Drizzle writes a relational query's aliases and column references as text, so a reference is read against the alias declared in its own parenthesised group.
 - **Known limits.** A later operand of a set operator names its column in the emitted SQL, not as a column, so its join is not read. Its scope equality is, and that equality covers every row the join would name; `searchUsers` is the case. A relation's nested select is not the read's select, so a join key only a relation selects is not a selected key.
 - **Against the spike's counts.** The `readPosts` read set names a join the table counts above do not list: a post's author, through the `user` relation. Whether that topic is per author or table-wide is for the naming step, and task 6.1 measures its fan-out.
+- **Known gaps from review.** The table-wide exclusion is keyed by table name across the whole statement, so a scope equality in a subquery also excludes the outer select's unscoped read of the same table, and that read misses another member's join (task 6.2 attributes each reference to its statement level). A write that moves a row out of a scope value publishes only the post-image's values, so a reader of the old value is not woken (task 6.3 decides the before-image).
 
 Phase 2 (tasks 2.1 and 2.2) settled the following.
 
