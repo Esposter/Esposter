@@ -18,6 +18,17 @@ describe(getOverrideEntries, () => {
     ).toStrictEqual([{ group: DependencyGroup.Overrides, packageName: "b", specifier: "^0.0.0" }]);
   });
 
+  test("names a scoped child whose package name starts with a digit under its parent", () => {
+    expect.hasAssertions();
+
+    expect(
+      getOverrideEntries(
+        [{ group: DependencyGroup.Overrides, packageName: "vite-plus>7zip-bin", specifier: "^1.0.0" }],
+        [],
+      ),
+    ).toStrictEqual([{ group: DependencyGroup.Overrides, packageName: "7zip-bin", specifier: "^1.0.0" }]);
+  });
+
   test("names an override whose key selects versions by its package alone", () => {
     expect.hasAssertions();
 

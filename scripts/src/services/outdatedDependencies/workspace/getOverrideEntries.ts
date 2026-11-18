@@ -3,8 +3,8 @@ import type { DependencyEntry } from "#src/models/outdatedDependencies/shared/De
 import { DependencyGroup } from "#src/models/outdatedDependencies/shared/DependencyGroup";
 
 const CATALOG_SPECIFIER = "catalog:";
-// A key's segments are split at a `>` that starts a package name, so a range's own `>=` stays in its segment
-const PARENT_SEPARATOR_REGEX = />(?=[@a-z])/u;
+// A key's segments are split at a `>` that follows a package name, so a range's own `>` (`@>=1`, `|| >2`) stays in its segment
+const PARENT_SEPARATOR_REGEX = /(?<![\s@])>/u;
 // The package a segment names, before the version selector it may carry (`minimatch@<11.0.1`)
 const PACKAGE_NAME_REGEX = /^(?:@[^/]+\/)?[^@]+/u;
 
