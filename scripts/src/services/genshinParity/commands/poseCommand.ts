@@ -53,20 +53,25 @@ export const poseCommand: SubCommandsDef[string] = defineCommand({
     name: "pose",
   },
   run: async ({ args }) => {
-    const { errors, imagePath, pose, refinement, rms } = await solveReferencePose(args.reference, args.witness, {
-      families: args.families?.split(","),
-      heldAxes: args.hold?.split(",").map((axis) => {
-        const index = POSE_AXIS_NAMES.indexOf(axis);
-        if (index === -1)
-          throw new InvalidOperationError(Operation.Read, axis, `not an axis: ${CAMERA_POSE_AXES.join(", ")}`);
-        return index;
-      }),
-      landmarkNames: args.landmarks?.split(","),
-      refineIterations: args.refine ? Number(args.refine) : 0,
-      start: args.start ? parseNumbers(args.start, "start", CAMERA_POSE_AXES.length) : undefined,
-      topRow: Number(args["top-row"] ?? 0),
-    });
+    const { errors, imagePath, pose, refinement, rms, waiting } = await solveReferencePose(
+      args.reference,
+      args.witness,
+      {
+        families: args.families?.split(","),
+        heldAxes: args.hold?.split(",").map((axis) => {
+          const index = POSE_AXIS_NAMES.indexOf(axis);
+          if (index === -1)
+            throw new InvalidOperationError(Operation.Read, axis, `not an axis: ${CAMERA_POSE_AXES.join(", ")}`);
+          return index;
+        }),
+        landmarkNames: args.landmarks?.split(","),
+        refineIterations: args.refine ? Number(args.refine) : 0,
+        start: args.start ? parseNumbers(args.start, "start", CAMERA_POSE_AXES.length) : undefined,
+        topRow: Number(args["top-row"] ?? 0),
+      },
+    );
     for (const [name, error] of Object.entries(errors)) console.log(`${name}: ${error.toFixed(2)} px`);
+    if (waiting.length > 0) console.log(`waiting, no mesh held for them yet: ${waiting.join(", ")}`);
     console.log(`reprojection ${rms.toFixed(2)} px root mean square`);
     if (refinement)
       console.log(`edges ${refinement.before.toFixed(2)} px to ${refinement.after.toFixed(2)} px from the reference's`);

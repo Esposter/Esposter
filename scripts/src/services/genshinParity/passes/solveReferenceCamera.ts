@@ -10,13 +10,16 @@ const GLIDE_AXIS = CAMERA_POSE_AXES.indexOf("z");
 const HELD_AXES = CAMERA_POSE_AXES.map((_axis, index) => index).filter((index) => index !== GLIDE_AXIS);
 // The camera a reference was drawn from, as the scene draws it on its open page in the reference's state, with the eye
 // Moved along the glide alone to where the reference's landmarks stand it, since how far the glide has come is the
-// Motion pass's: the pose, and each landmark's distance and their root mean square in the reference's pixels
+// Motion pass's: the pose, and each landmark's distance and their root mean square in the reference's pixels. Solved on
+// The landmarks the witness holds, the rest named in `waiting`; with none held there is nothing to solve, so the scene's
+// Own camera stands and `rms` is undefined
 export const solveReferenceCamera = async (
   page: Page,
   referenceId: string,
   component: DerivedAssetComponent,
-): Promise<{ errors: number[]; names: string[]; pose: number[]; rms: number }> => {
+): Promise<{ errors: number[]; names: string[]; pose: number[]; rms?: number | undefined; waiting: string[] }> => {
   const camera = await page.evaluate(() => window.getSceneCamera());
-  const { correspondences, height, names, width } = await readReferenceLandmarks(page, referenceId, component);
-  return { names, ...solveCameraPose(correspondences, width, height, fromPageCamera(camera), HELD_AXES) };
+  const { correspondences, height, names, waiting, width } = await readReferenceLandmarks(page, referenceId, component);
+  if (correspondences.length === 0) return { errors: [], names, pose: fromPageCamera(camera), rms: undefined, waiting };
+  return { names, waiting, ...solveCameraPose(correspondences, width, height, fromPageCamera(camera), HELD_AXES) };
 };

@@ -43,7 +43,7 @@ describe(measureCamera, () => {
       image: Buffer.alloc(0),
       page: {} as Page,
     });
-    solveReferenceCamera.mockResolvedValue({ errors: [], names: [], pose: [], rms: 5 });
+    solveReferenceCamera.mockResolvedValue({ errors: [], names: [], pose: [], rms: 5, waiting: [] });
 
     const { readings } = await measureCamera(DerivedAssetComponent.Windrise);
 
@@ -51,6 +51,30 @@ describe(measureCamera, () => {
       { gate: 7.5, name: "own-bar", unit: "px", value: 5 },
       { gate: FRAME_GATE_PIXELS, name: "global-bar", unit: "px", value: 5 },
     ]);
+  });
+
+  test("reads no camera, and names its landmarks waiting, for a reference the witness holds none of", async () => {
+    expect.hasAssertions();
+
+    openWitnessPage.mockResolvedValue({
+      checkIsScored: () => false,
+      close: () => Promise.resolve(),
+      height: 0,
+      image: Buffer.alloc(0),
+      page: {} as Page,
+    });
+    solveReferenceCamera.mockResolvedValue({
+      errors: [],
+      names: [],
+      pose: [],
+      rms: undefined,
+      waiting: ["houseFrontLeft"],
+    });
+
+    const { notes, readings } = await measureCamera(DerivedAssetComponent.Windrise);
+
+    expect(readings).toStrictEqual([]);
+    expect(notes).toStrictEqual(["own-bar waiting on houseFrontLeft", "global-bar waiting on houseFrontLeft"]);
   });
 
   test("opens each reference's witness page on the run's parity page root", async () => {
@@ -63,7 +87,7 @@ describe(measureCamera, () => {
       image: Buffer.alloc(0),
       page: {} as Page,
     });
-    solveReferenceCamera.mockResolvedValue({ errors: [], names: [], pose: [], rms: 5 });
+    solveReferenceCamera.mockResolvedValue({ errors: [], names: [], pose: [], rms: 5, waiting: [] });
 
     await measureCamera(DerivedAssetComponent.Windrise, "http://localhost:3013/parity/");
 

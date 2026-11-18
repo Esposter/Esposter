@@ -48,7 +48,7 @@ committed.
 | `hud-stamina-climb`                    | `HudScreen`                 |                                                                          0.62% | 0.787 |  0.75% | 0.0629 |
 | `hud-world-keys`                       | `HudScreen`                 |                                                                          2.07% | 0.983 |  1.52% | 0.1296 |
 | `hud-world-pickup`                     | `HudScreen`                 |                                                                          2.69% | 0.864 |  1.34% | 0.1277 |
-| `inazuma-city-location`                | `WorldScreen`               |                                                                         18.58% | 0.211 | 16.72% | 0.6033 |
+| `inazuma-city-location`                | `WorldScreen`               |                                                                         18.59% | 0.212 | 16.71% | 0.6035 |
 | `interaction-prompts-jueyun-chili`     | `InteractionPromptList`     |                                                                          4.63% | 0.954 |  1.79% | 0.2034 |
 | `interaction-prompts-pickup`           | `InteractionPromptList`     |                                                                          5.07% | 0.937 |  2.64% | 0.2181 |
 | `inventory-food`                       | `InventoryScreen`           |                                                                          3.00% | 0.994 |  1.96% | 0.1851 |
@@ -138,8 +138,8 @@ drawn away from the reference shows on its own row.
 | `court-of-fontaine-location/sky`       |   100.0% |  15.36 | 16.60% | 0.6788 |
 | `everfrozen-earth-location/frame`      |   100.0% |  25.24 | 19.17% | 0.6960 |
 | `everfrozen-earth-location/sky`        |   100.0% |  25.24 | 19.17% | 0.6960 |
-| `inazuma-city-location/frame`          |   100.0% |  12.19 | 16.72% | 0.6033 |
-| `inazuma-city-location/sky`            |   100.0% |  12.19 | 16.72% | 0.6033 |
+| `inazuma-city-location/frame`          |   100.0% |  12.18 | 16.71% | 0.6035 |
+| `inazuma-city-location/sky`            |   100.0% |  12.18 | 16.71% | 0.6035 |
 | `liyue-harbor-location/frame`          |   100.0% |  10.58 | 17.24% | 0.6757 |
 | `liyue-harbor-location/sky`            |   100.0% |  10.58 | 17.24% | 0.6757 |
 | `login-dawn-title/frame`               |   100.0% |   7.02 |  7.84% | 0.4432 |

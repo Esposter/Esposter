@@ -23,11 +23,15 @@ export const measureCamera = async (
     component,
     referenceIds,
     async (referenceId, { page }) => {
-      const { errors, names, pose, rms } = await solveReferenceCamera(page, referenceId, component);
+      const { errors, names, pose, rms, waiting } = await solveReferenceCamera(page, referenceId, component);
+      const waitingNotes = waiting.length > 0 ? [`${referenceId} waiting on ${waiting.join(", ")}`] : [];
+      // With no landmark held there is no camera solved, so the reference reads nothing and the pass waits on it
+      if (rms === undefined) return { notes: waitingNotes, readings: [] };
       return {
         notes: [
           `${referenceId} from ${CAMERA_POSE_AXES.map((axis, index) => `${axis} ${(pose[index] ?? 0).toFixed(3)}`).join(", ")}`,
           ...names.map((name, index) => `${referenceId} ${name}: ${(errors[index] ?? 0).toFixed(2)} px`),
+          ...waitingNotes,
         ],
         readings: [{ gate: getPoseBar(referenceId), name: referenceId, unit: "px", value: rms }],
       };

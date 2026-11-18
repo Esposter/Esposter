@@ -43,7 +43,8 @@ export const DerivedAssetLandmarkMap: Record<DerivedAssetComponent, Record<strin
   // (its second tier), each the one standing nearest the keep at (-5260, 150, 3320). The platform's corners, the
   // Pavilion's eaves and the houses' base and roof are dropped: no mesh near the capital is matched to them with
   // Confidence, and the house at the keep's base (Area_Dq_Build_MS_TsgHouse_07_Lod0) is a guess not read off the image.
-  // The pose could not run here (no parity page on localhost:3011), so these four are unmeasured
+  // Solved on these four alone, the camera pass misses its gate (72.40 px against 2, on 19 November), so the seven the
+  // Reference also names wait on their shares, which need a camera that tells the city's buildings apart
   [DerivedAssetComponent.Inazuma]: {
     keepEaveLeft: {
       isEdge: true,

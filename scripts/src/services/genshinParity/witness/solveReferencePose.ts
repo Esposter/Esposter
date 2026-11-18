@@ -45,6 +45,7 @@ export const solveReferencePose = async (
   pose: number[];
   refinement?: { after: number; before: number };
   rms: number;
+  waiting: string[];
 }> => {
   await fetchReferences();
   const {
@@ -55,7 +56,7 @@ export const solveReferencePose = async (
   } = await openWitnessPage(referenceId, witness, STRUCTURE_WIDTH, getLandmarkMeshes(witness));
   return withFinalizerAsync(
     async () => {
-      const { correspondences, given, height, names, width } = await readReferenceLandmarks(
+      const { correspondences, given, height, names, waiting, width } = await readReferenceLandmarks(
         page,
         referenceId,
         witness,
@@ -82,12 +83,12 @@ export const solveReferencePose = async (
         .png()
         .toFile(imagePath);
       const errors = Object.fromEntries(names.map((name, index) => [name, solved.errors[index] ?? 0]));
-      if (refineIterations === 0) return { errors, imagePath, pose: solved.pose, rms: solved.rms };
+      if (refineIterations === 0) return { errors, imagePath, pose: solved.pose, rms: solved.rms, waiting };
       const { after, before, pose } = await refineCameraPose(page, image, solved.pose, families, refineIterations, {
         heldAxes,
         topRow: (topRow * pageHeight) / height,
       });
-      return { errors, imagePath, pose, refinement: { after, before }, rms: solved.rms };
+      return { errors, imagePath, pose, refinement: { after, before }, rms: solved.rms, waiting };
     },
     () => close(),
   );

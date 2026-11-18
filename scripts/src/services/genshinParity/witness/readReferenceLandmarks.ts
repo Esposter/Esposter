@@ -20,7 +20,9 @@ declare global {
 const SNAP_RADIUS = 6;
 // A reference's landmarks, all of them or the ones named, matched to the witness's own parts on its open page: each
 // One's place in the world, and the pixel the reference names for it, snapped to the nearest corner unless it stands on
-// A silhouette or inside a face, where it is read as given. The caller fetches the references first
+// A silhouette or inside a face, where it is read as given. A landmark the witness holds no mesh for yet is waiting: the
+// Reference names its pixel, but it stays out of the solve, and is named in `waiting`, until its mesh is named. The
+// Caller fetches the references first
 export const readReferenceLandmarks = async (
   page: Page,
   referenceId: string,
@@ -31,19 +33,21 @@ export const readReferenceLandmarks = async (
   given: Pixel[];
   height: number;
   names: string[];
+  waiting: string[];
   width: number;
 }> => {
   const referenceLandmarks = ParityReferenceMap[referenceId]?.landmarks ?? {};
   for (const name of landmarkNames ?? [])
     if (!(name in referenceLandmarks))
       throw new InvalidOperationError(Operation.Read, name, `not a landmark of ${referenceId}`);
-  const landmarkEntries = Object.entries(referenceLandmarks).filter(
+  const namedEntries = Object.entries(referenceLandmarks).filter(
     ([name]) => !landmarkNames || landmarkNames.includes(name),
   );
-  const definitions = landmarkEntries.map(([name]) => {
-    const landmark = DerivedAssetLandmarkMap[witness][name];
-    if (!landmark) throw new InvalidOperationError(Operation.Read, name, `not a landmark of ${witness}`);
-    return landmark;
+  const witnessLandmarks = DerivedAssetLandmarkMap[witness];
+  const waiting = namedEntries.filter(([name]) => !witnessLandmarks[name]).map(([name]) => name);
+  const landmarkEntries = namedEntries.flatMap(([name, pixel]) => {
+    const definition = witnessLandmarks[name];
+    return definition ? [{ definition, name, pixel }] : [];
   });
   const { data, info } = await sharp(await getReferencePath(referenceId))
     .greyscale()
@@ -51,21 +55,25 @@ export const readReferenceLandmarks = async (
     .toBuffer({ resolveWithObject: true });
   const grey = Float32Array.from(data);
   const { height, width } = info;
-  const points = await page.evaluate((landmarks) => window.computeWitnessPoints(landmarks), definitions);
-  const correspondences = landmarkEntries.map(([, pixel], index) => {
-    const definition = definitions[index];
-    return {
-      isEdge: definition?.isEdge,
-      pixel:
-        definition?.isEdge || definition?.isInterior ? pixel : snapToCorner(grey, width, height, pixel, SNAP_RADIUS),
-      point: points[index] ?? [0, 0, 0],
-    };
-  });
+  // With none of its landmarks held there is no point to ask the scene for
+  const points: Vector[] =
+    landmarkEntries.length === 0
+      ? []
+      : await page.evaluate(
+          (landmarks) => window.computeWitnessPoints(landmarks),
+          landmarkEntries.map(({ definition }) => definition),
+        );
+  const correspondences = landmarkEntries.map(({ definition, pixel }, index) => ({
+    isEdge: definition.isEdge,
+    pixel: definition.isEdge || definition.isInterior ? pixel : snapToCorner(grey, width, height, pixel, SNAP_RADIUS),
+    point: points[index] ?? [0, 0, 0],
+  }));
   return {
     correspondences,
-    given: landmarkEntries.map(([, pixel]) => pixel),
+    given: landmarkEntries.map(({ pixel }) => pixel),
     height,
-    names: landmarkEntries.map(([name]) => name),
+    names: landmarkEntries.map(({ name }) => name),
+    waiting,
     width,
   };
 };
