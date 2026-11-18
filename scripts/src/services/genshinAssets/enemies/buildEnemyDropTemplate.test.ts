@@ -1,16 +1,11 @@
 import { buildEnemyDropTemplate } from "#src/services/genshinAssets/enemies/buildEnemyDropTemplate";
 import { DROPS_DATA_WIKI_TITLE, DROPS_TEMPLATE_WIKI_TITLE } from "#src/services/genshinAssets/enemies/constants";
-import { toWikiPageCachePath } from "#src/services/genshinAssets/enemies/toWikiPageCachePath";
-import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { AVATAR_OF_LAVA_DROPS_ENTRY, DROPS_TEMPLATE_PAGE } from "#src/services/genshinAssets/enemies/constants.test";
+import { writeWikiPage } from "#src/services/genshinAssets/enemies/writeWikiPage.test";
+import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
-
-const writeWikiPage = (cacheDirectory: string, title: string, content: string): Promise<void> =>
-  writeFile(
-    toWikiPageCachePath(cacheDirectory, title),
-    JSON.stringify({ query: { pages: [{ revisions: [{ slots: { main: { content } } }], title }] } }),
-  );
 
 describe(buildEnemyDropTemplate, () => {
   // The drops module's data as the wiki gives it, cut down to the entries these tests read: an entry whose members name
@@ -19,11 +14,7 @@ describe(buildEnemyDropTemplate, () => {
 	['Base_Info'] = { ['type-1'] = { Mora = '≤200', members = {'Vishap Hatchlings'} } },
 	['Custom_Enemies'] = {},
 	['Enemies'] = {
-		{
-			members = {'Avatar of Lava'},
-			MatSet1 = {'Ignited Stone' , 'Ignited Seed of Life' , 'Ignited Seeing Eye'},
-			artifacts = true
-		},
+		${AVATAR_OF_LAVA_DROPS_ENTRY},
 		{
 			members = {'Fungi'},
 			MatSet1 = {'Fungal Spores' , 'Luminescent Pollen' , 'Crystalline Cyst Dust'},
@@ -31,8 +22,6 @@ describe(buildEnemyDropTemplate, () => {
 		},
 	}
 }`;
-  const DROPS_TEMPLATE =
-    "<includeonly>{{#invoke:Drops|main}}</includeonly><noinclude>{{Documentation|type=Data}}</noinclude>";
   const NAME_ITEM_IDS_MAP = new Map<string, number[]>([
     ["Crystalline Cyst Dust", [113003]],
     ["Fungal Spores", [113001]],
@@ -46,7 +35,7 @@ describe(buildEnemyDropTemplate, () => {
 
   beforeEach(async () => {
     cacheDirectory = await mkdtemp(join(tmpdir(), "enemy-drop-templates-"));
-    await writeWikiPage(cacheDirectory, DROPS_TEMPLATE_WIKI_TITLE, DROPS_TEMPLATE);
+    await writeWikiPage(cacheDirectory, DROPS_TEMPLATE_WIKI_TITLE, DROPS_TEMPLATE_PAGE);
     await writeWikiPage(cacheDirectory, DROPS_DATA_WIKI_TITLE, DROPS_DATA);
   });
 

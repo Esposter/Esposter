@@ -4,18 +4,13 @@ import {
   DROPS_TABLE_WIKI_MODULE_TITLE,
   DROPS_TEMPLATE_WIKI_TITLE,
 } from "#src/services/genshinAssets/enemies/constants";
-import { toWikiPageCachePath } from "#src/services/genshinAssets/enemies/toWikiPageCachePath";
+import { AVATAR_OF_LAVA_DROPS_ENTRY, DROPS_TEMPLATE_PAGE } from "#src/services/genshinAssets/enemies/constants.test";
+import { writeWikiPage } from "#src/services/genshinAssets/enemies/writeWikiPage.test";
 import { EnemyKindId, EnemyType } from "genshin-world";
-import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
-
-const writeWikiPage = (cacheDirectory: string, title: string, content: string): Promise<void> =>
-  writeFile(
-    toWikiPageCachePath(cacheDirectory, title),
-    JSON.stringify({ query: { pages: [{ revisions: [{ slots: { main: { content } } }], title }] } }),
-  );
 
 describe(buildEnemyDropSources, () => {
   // The wiki's Enemies table in its own Lua, cut down to the families these tests join: a family whose article lists a
@@ -86,16 +81,10 @@ describe(buildEnemyDropSources, () => {
   const erodingAvatarOfLava = { enemyType: EnemyType.Common, id: EnemyKindId.ErodingAvatarOfLava, nameTextId: "4" };
   const anemoHypostasis = { enemyType: EnemyType.Boss, id: EnemyKindId.AnemoHypostasis, nameTextId: "5" };
   const hilichurlShooter = { enemyType: EnemyType.Common, id: EnemyKindId.HilichurlShooter, nameTextId: "6" };
-  // The Drops template module's entry for a template, and the template's own article
-  const DROPS_TEMPLATE =
-    "<includeonly>{{#invoke:Drops|main}}</includeonly><noinclude>{{Documentation|type=Data}}</noinclude>";
+  // The drops module's data, cut down to the one entry a template kind reads
   const DROPS_DATA = `return {
 	['Enemies'] = {
-		{
-			members = {'Avatar of Lava'},
-			MatSet1 = {'Ignited Stone' , 'Ignited Seed of Life' , 'Ignited Seeing Eye'},
-			artifacts = true
-		},
+		${AVATAR_OF_LAVA_DROPS_ENTRY},
 	}
 }`;
 
@@ -235,7 +224,7 @@ describe(buildEnemyDropSources, () => {
   test("a kind whose article names a Drops template takes the template's materials by tier, with no count", async () => {
     expect.hasAssertions();
     await writeWikiPage(cacheDirectory, "Eroding Avatar of Lava", ERODING_AVATAR_OF_LAVA_ARTICLE);
-    await writeWikiPage(cacheDirectory, DROPS_TEMPLATE_WIKI_TITLE, DROPS_TEMPLATE);
+    await writeWikiPage(cacheDirectory, DROPS_TEMPLATE_WIKI_TITLE, DROPS_TEMPLATE_PAGE);
     await writeWikiPage(cacheDirectory, DROPS_DATA_WIKI_TITLE, DROPS_DATA);
 
     expect(

@@ -1,6 +1,10 @@
 import type { EnemyTemplateMaterial } from "genshin-world";
 
-import { DROPS_DATA_WIKI_TITLE, DROPS_TEMPLATE_WIKI_TITLE } from "#src/services/genshinAssets/enemies/constants";
+import {
+  DROPS_DATA_WIKI_TITLE,
+  DROPS_MODULE_INVOCATION,
+  DROPS_TEMPLATE_WIKI_TITLE,
+} from "#src/services/genshinAssets/enemies/constants";
 import { parseLuaTable } from "#src/services/genshinAssets/enemies/parseLuaTable";
 import { readWikiPageContent } from "#src/services/genshinAssets/enemies/readWikiPageContent";
 import { toMaterialItemId } from "#src/services/genshinAssets/enemies/toMaterialItemId";
@@ -8,8 +12,6 @@ import { WIKI_CACHE_DIRECTORY } from "#src/services/genshinAssets/kits/constants
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { z } from "zod";
 
-// The call the Drops template makes, which is how it hands a name to the drops module
-const DROPS_MODULE_INVOCATION = "{{#invoke:Drops|main}}";
 // The drops module's Enemies table: each entry's members, the names a Drops template gives one of, and its material sets by
 // Tier. A set beside a named condition is a conditional set, which a template does not model
 const dropsDataSchema = z.object({

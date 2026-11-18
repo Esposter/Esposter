@@ -31,6 +31,8 @@ export const DROPS_TABLE_WIKI_MODULE_TITLE = "Module:Drops Table/data";
 // Template's materials are read from by the one entry that names it
 export const DROPS_TEMPLATE_WIKI_TITLE = "Template:Drops";
 export const DROPS_DATA_WIKI_TITLE = "Module:Drops/data";
+// The call a Drops template makes to the drops module, which the template's page must invoke to give its materials
+export const DROPS_MODULE_INVOCATION = "{{#invoke:Drops|main}}";
 // The block each monster's Animator controller is exported from, by the controller's name. A controller's block is found
 // Once, by scanning the monster-named blocks, and recorded here, so a run reads the record rather than scanning again. The
 // Asset index names no AnimatorController, so no index row finds it
