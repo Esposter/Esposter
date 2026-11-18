@@ -44,6 +44,7 @@ export const createKitTestContext = (combatant: Combatant, context: Partial<KitC
   stamina: createStamina(STAMINA_MAX),
   strikes: [],
   wildlifeList: [],
+  worldEffects: [],
   ...context,
 });
 

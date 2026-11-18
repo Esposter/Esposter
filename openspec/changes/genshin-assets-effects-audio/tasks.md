@@ -7,9 +7,9 @@
 
 ## 2. Combat feedback
 
-- [ ] 2.1 [phase 3] Draw a stand-in spark at the point of each landed hit, fired by the strike in `packages/genshin-world/src/services/kit/strikeEnemy.ts` and gone within its life, in the new effects folder of the world's components (gap G1). Its size and life stay provisional until task 1.1 reads them off the held world attacks capture. Verify: tests named after the scenarios 'A landed hit shows a spark where it struck' and 'A missed strike shows no spark', written first and seen failing.
-- [ ] 2.2 [phase 3] Show each landed hit's damage as a number that rises from its point and fades, in the interface's own type, fed by the damage the same strike deals (gap G2). Its digit layout is measured by task 1.1 against the held capture. Verify: a test named after the scenario 'A landed hit shows its damage as a number', written first and seen failing.
-- [ ] 2.3 [phase 3] Show a visual at a skill's or a burst's caster when the cast starts, and a flash at each enemy a reaction strikes (gap G3). Verify: tests named after the scenarios 'A skill or burst cast shows its visual at the caster' and 'A reaction flashes at the enemy it strikes', written first and seen failing.
+- [x] 2.1 [phase 3] Draw a stand-in spark at the point of each landed hit, fired by the strike in `packages/genshin-world/src/services/kit/strikeEnemy.ts` and gone within its life, in the new effects folder of the world's components (gap G1). Its size and life stay provisional until task 1.1 reads them off the held world attacks capture. Verify: tests named after the scenarios 'A landed hit shows a spark where it struck' and 'A missed strike shows no spark', written first and seen failing.
+- [x] 2.2 [phase 3] Show each landed hit's damage as a number that rises from its point and fades, in the interface's own type, fed by the damage the same strike deals (gap G2). Its digit layout is measured by task 1.1 against the held capture. Verify: a test named after the scenario 'A landed hit shows its damage as a number', written first and seen failing.
+- [x] 2.3 [phase 3] Show a visual at a skill's or a burst's caster when the cast starts, and a flash at each enemy a reaction strikes (gap G3). Verify: tests named after the scenarios 'A skill or burst cast shows its visual at the caster' and 'A reaction flashes at the enemy it strikes', written first and seen failing.
 
 ## 3. Effects and timings
 

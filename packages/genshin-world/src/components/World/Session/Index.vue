@@ -44,6 +44,7 @@ import StatueScreen from "#src/components/Statue/Screen/Index.vue";
 import StatueWorshipScreen from "#src/components/Statue/Worship/Index.vue";
 import WishScreen from "#src/components/Wish/Screen/Index.vue";
 import WorldCharacter from "#src/components/World/Character/Index.vue";
+import WorldEffects from "#src/components/World/Effects/Index.vue";
 import WorldEnemyNameTags from "#src/components/World/EnemyNameTags/Index.vue";
 import WorldFreeCamera from "#src/components/World/FreeCamera/Index.vue";
 import WorldMail from "#src/components/World/Mail/Index.vue";
@@ -1143,6 +1144,7 @@ useWorldSaveSync({
       :name-text
       :origin
     />
+    <WorldEffects :effects="kitContext.worldEffects" :get-camera :get-ground-height :origin />
     <div v-if="isShortcutWheelOpen" class="shortcut-wheel">
       <HudShortcutWheel
         :direction-count="shortcutWheelDirectionCount"

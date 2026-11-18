@@ -11,6 +11,7 @@ import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { StellarReactionType } from "#src/models/combat/StellarReactionType";
+import { WorldEffectKind } from "#src/models/effects/WorldEffectKind";
 import { Element } from "#src/models/Element";
 import { EnemyState } from "#src/models/enemy/EnemyState";
 import { WeaponType } from "#src/models/weapon/WeaponType";
@@ -31,6 +32,7 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { getEnemyResistance } from "#src/services/enemy/getEnemyResistance";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { SPARK_SECONDS } from "#src/services/effects/constants";
 import { RADIANCE_STELLAR_CONDUCT_STATUS_ID } from "#src/services/kit/constants";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
@@ -234,6 +236,38 @@ describe(strikeEnemy, () => {
 
     expect(strikeDamages(SEED)).toStrictEqual(strikeDamages(SEED));
     expect(strikeDamages(SEED)).not.toStrictEqual(strikeDamages(OTHER_SEED));
+  });
+
+  test("a landed hit shows a spark where it struck", () => {
+    expect.hasAssertions();
+
+    const enemy = { ...createSturdyEnemy(), position: { x: 2, z: -3 } };
+    const combatant = createCombatant();
+    const context = createKitTestContext(combatant, { enemyTables, random: NEVER_CRITICAL });
+    strikeEnemy(enemy, TRAVELER_KIT.plungeCollision, combatant, context);
+
+    expect(context.worldEffects.filter((effect) => effect.kind === WorldEffectKind.Spark)).toStrictEqual([
+      {
+        kind: WorldEffectKind.Spark,
+        position: { x: 2, z: -3 },
+        seconds: SPARK_SECONDS,
+        secondsRemaining: SPARK_SECONDS,
+      },
+    ]);
+  });
+
+  test("a landed hit shows its damage as a number", () => {
+    expect.hasAssertions();
+
+    const enemy = createSturdyEnemy();
+    const combatant = createCombatant();
+    const context = createKitTestContext(combatant, { enemyTables, random: NEVER_CRITICAL });
+    strikeEnemy(enemy, TRAVELER_KIT.plungeCollision, combatant, context);
+
+    const damageEffects = context.worldEffects.filter((effect) => effect.kind === WorldEffectKind.Damage);
+
+    expect(damageEffects).toHaveLength(1);
+    expect(takeOne(damageEffects).damage).toBeCloseTo(enemy.maxHealth - enemy.health);
   });
 
   test("deals a physical hit the damage of the general formula", () => {

@@ -4,7 +4,11 @@ import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitInput } from "#src/models/kit/KitInput";
 import type { KitState } from "#src/models/kit/KitState";
 
+import { WorldEffectKind } from "#src/models/effects/WorldEffectKind";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { addWorldEffect } from "#src/services/effects/addWorldEffect";
+import { FLASH_SECONDS } from "#src/services/effects/constants";
+import { stepWorldEffects } from "#src/services/effects/stepWorldEffects";
 import { checkIsEnemyStanding } from "#src/services/enemy/checkIsEnemyStanding";
 import { readOreHit } from "#src/services/gathering/readOreHit";
 import { burstKitDendroCores } from "#src/services/kit/burstKitDendroCores";
@@ -84,6 +88,7 @@ export const stepActiveKit = (
     random,
     strikes,
   } = context;
+  stepWorldEffects(context.worldEffects, stepSeconds);
   // A primary target that has died or left the world since is let go, so no kit places a hit on it
   if (context.primaryTarget && !checkIsEnemyStanding(enemyMap, context.primaryTarget))
     context.primaryTarget = undefined;
@@ -157,7 +162,15 @@ export const stepActiveKit = (
       { action, isFirstStrike: action === takeOne(kit.normalAttacks), kind: KitEventKind.NormalAttackStarted },
       context,
     );
-  if (isBurst || isSkill) lightAscendantGleam(kitEffectState, combatant, characterIdCombatantMap, party);
+  // A cast shows a flash at its caster, where the body stands as the cast starts
+  if (isBurst || isSkill) {
+    lightAscendantGleam(kitEffectState, combatant, characterIdCombatantMap, party);
+    addWorldEffect(context.worldEffects, {
+      kind: WorldEffectKind.Flash,
+      position: body.position,
+      seconds: FLASH_SECONDS,
+    });
+  }
   // A start keeps the body it began from, as a field or summon it casts ticks from where it began, not where the body
   // Has moved
   action?.onStart?.({ ...context, body: copyKitBody(body) }, target);
@@ -198,7 +211,15 @@ export const stepActiveKit = (
   // The ores the step's reactions reached are struck once every strike has landed, from where each reaction landed
   for (const oreStrike of oreStrikes) strikeOre(oreStrike.body, oreStrike.hit);
   oreStrikes.length = 0;
-  for (const { enemy, reactions } of context.reactionTriggers) triggerReaction(enemy, reactions);
+  // Every reaction the step triggered flashes at the enemy it struck, as it is sent to the world
+  for (const { enemy, reactions } of context.reactionTriggers) {
+    triggerReaction(enemy, reactions);
+    addWorldEffect(context.worldEffects, {
+      kind: WorldEffectKind.Flash,
+      position: enemy.position,
+      seconds: FLASH_SECONDS,
+    });
+  }
   context.reactionTriggers.length = 0;
   // The changes to the members' HP since the last step are sent last, so the step's own heals and drains are heard in
   // It, and a change a kit makes as it hears one is sent at the next step

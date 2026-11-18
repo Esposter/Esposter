@@ -122,6 +122,7 @@ export const replayScriptedMinute = ({
     stamina: createStamina(STAMINA_MAX),
     strikes: [],
     wildlifeList: [],
+    worldEffects: [],
   };
   const landedHits: KitHit[] = [];
   const turnStepCount = toStepCount(7.5);

@@ -10,6 +10,7 @@ import type { PartyMoonsign } from "#src/models/party/PartyMoonsign";
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { AuraType } from "#src/models/combat/AuraType";
+import { WorldEffectKind } from "#src/models/effects/WorldEffectKind";
 import { Element } from "#src/models/Element";
 import { EnemyState } from "#src/models/enemy/EnemyState";
 import { applyBluntHit } from "#src/services/combat/aura/applyBluntHit";
@@ -18,6 +19,8 @@ import { getDamage } from "#src/services/combat/damage/getDamage";
 import { applyKeyedInternalCooldown } from "#src/services/combat/internalCooldown/applyKeyedInternalCooldown";
 import { DEFAULT_INTERNAL_COOLDOWN_GROUP } from "#src/services/combat/internalCooldown/constants";
 import { InternalCooldownTagGroupMap } from "#src/services/combat/internalCooldown/InternalCooldownTagGroupMap";
+import { addWorldEffect } from "#src/services/effects/addWorldEffect";
+import { DAMAGE_NUMBER_SECONDS, SPARK_SECONDS } from "#src/services/effects/constants";
 import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
 import { computeEnemyStats } from "#src/services/enemy/computeEnemyStats";
 import { ENEMY_LAUNCHED_STATUS_ID, ENEMY_STAGGER_SECONDS } from "#src/services/enemy/constants";
@@ -43,7 +46,8 @@ import { ID_SEPARATOR } from "@esposter/shared";
 // Launching hit that staggers it leaves it launched unless its kind is immune to Air staggers.
 // Its element reacts as the party's Moonsign turns its reactions Lunar, and a direct Lunar hit is priced by the
 // Lunar formula from the Moonsign's bonuses instead, as a direct Stellar Hit is by the Glimmer formula.
-// It returns the energy the hit dropped, whether it was a CRIT hit, the reactions it
+// Where it struck, it leaves a spark and the number of the damage it dealt in the context's world effects. It returns the
+// Energy the hit dropped, whether it was a CRIT hit, the reactions it
 // Triggered and those of them that landed and reach round the enemy, and the element it applied at a gauge its cooldown
 // Let through
 export const strikeEnemy = (
@@ -183,13 +187,26 @@ export const strikeEnemy = (
             stat: attack,
             talentMultiplier,
           });
+  const damageDealt = damage + transformativeDamage;
   const energyDrops = dealKitEnemyDamage(
     enemy,
-    { damage: damage + transformativeDamage, poiseDamage: poiseDamage + reactionPoiseDamage },
+    { damage: damageDealt, poiseDamage: poiseDamage + reactionPoiseDamage },
     element !== undefined,
     combatant,
     context,
   );
+  // The hit is shown where it struck: a spark, and the number of the damage it dealt
+  addWorldEffect(context.worldEffects, {
+    kind: WorldEffectKind.Spark,
+    position: enemy.position,
+    seconds: SPARK_SECONDS,
+  });
+  addWorldEffect(context.worldEffects, {
+    damage: damageDealt,
+    kind: WorldEffectKind.Damage,
+    position: enemy.position,
+    seconds: DAMAGE_NUMBER_SECONDS,
+  });
   // A launching hit that staggers the enemy throws it airborne for as long as the stagger holds it, as the wiki's Air
   // Stagger level does an enemy whose poise is broken, unless its kind is immune to Air staggers
   if (kitHit.isLaunching && enemy.state === EnemyState.Stagger && !enemy.traits.isAirStaggerImmune)

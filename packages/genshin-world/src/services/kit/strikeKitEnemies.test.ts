@@ -244,6 +244,19 @@ describe(strikeKitEnemies, () => {
     ).toStrictEqual(["target", "reached"]);
   });
 
+  test("a missed strike shows no spark", () => {
+    expect.hasAssertions();
+    const combatant = createCombatant(undefined);
+    const hitbox: KitHitbox = { offset: { x: -2.5, z: 2.5 }, shape: { kind: "circle", radius: 4.5 } };
+    const target = createEnemy(enemyTables, [], { ...ENEMY_CAMP_MEMBER, id: "target", position: { x: 0, z: 0 } }, "");
+    const missed = createEnemy(enemyTables, [], { ...ENEMY_CAMP_MEMBER, id: "missed", position: { x: 0, z: -6 } }, "");
+    const context = createKitTestContext(combatant, { enemyMap: new Map([[missed.id, missed]]), enemyTables });
+
+    strikeKitEnemies([{ body: context.body, combatant, hit: KIT_HIT, hitbox, target }], context);
+
+    expect(context.worldEffects).toStrictEqual([]);
+  });
+
   test("sends the team's kits an enemy hit with no element for a hit that deals none", () => {
     expect.hasAssertions();
     const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();

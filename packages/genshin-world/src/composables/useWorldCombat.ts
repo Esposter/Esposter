@@ -154,6 +154,7 @@ export const useWorldCombat = ({
     stamina,
     strikes: [],
     wildlifeList: wildlifePlaces.map((wildlifePlace) => createWildlife(wildlifePlace)),
+    worldEffects: [],
   };
   // The field member's figures the HUD's health and skill buttons show, none until the character on the field is known.
   // A skill with charges counts down only while none of them stands

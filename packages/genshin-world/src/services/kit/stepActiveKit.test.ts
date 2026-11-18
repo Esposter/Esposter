@@ -15,6 +15,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { AuraType } from "#src/models/combat/AuraType";
 import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
+import { WorldEffectKind } from "#src/models/effects/WorldEffectKind";
 import { Element } from "#src/models/Element";
 import { EnemyState } from "#src/models/enemy/EnemyState";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -35,6 +36,7 @@ import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { readCharacterKits } from "#src/services/kit/readCharacterKits";
 import { stepActiveKit } from "#src/services/kit/stepActiveKit";
+import { FLASH_SECONDS } from "#src/services/effects/constants";
 import { createParty } from "#src/services/party/createParty";
 import { damagePartyMember } from "#src/services/party/damagePartyMember";
 import { getPartyMember } from "#src/services/party/getPartyMember";
@@ -487,6 +489,43 @@ describe(stepActiveKit, () => {
         event.kind === KitEventKind.DamageTaken ? [{ hit: event.hit, striker: event.striker }] : [],
       ),
     ).toStrictEqual([{ hit: lateHit, striker: lateCombatant }]);
+  });
+
+  test("a skill or burst cast shows its visual at the caster", () => {
+    expect.hasAssertions();
+    const controls = createControls();
+    controls.characterController.position.set(4, 0, -2);
+    const skillContext = createContext([createKitCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT)]);
+    stepActiveKit(createKitState(), { ...IDLE_INPUT, isSkillPressed: true }, 0.1, skillContext, controls);
+    const burstContext = createContext([createKitCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT)]);
+    getPartyMember(burstContext.party, TRAVELER_CHARACTER_ID).energy = TRAVELER_KIT.burstEnergyCost;
+    stepActiveKit(createKitState(), { ...IDLE_INPUT, isBurstPressed: true }, 0.1, burstContext, controls);
+
+    const casterFlash = {
+      kind: WorldEffectKind.Flash,
+      position: { x: 4, z: -2 },
+      seconds: FLASH_SECONDS,
+      secondsRemaining: FLASH_SECONDS,
+    };
+    expect([skillContext.worldEffects, burstContext.worldEffects]).toStrictEqual([[casterFlash], [casterFlash]]);
+  });
+
+  test("a reaction flashes at the enemy it strikes", () => {
+    expect.hasAssertions();
+    const context = createStrikeContext([createKitCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT)]);
+    const enemy = takeOne([...context.enemyMap.values()]);
+    enemy.elementalState.auras.set(AuraType.Pyro, { decayRate: 0, gauge: 4, isImmutable: true });
+    const hit = { ...takeOne(TRAVELER_KIT.elementalSkill.hits, 0), element: Element.Electro };
+    stepActiveKit(createKitState(), IDLE_INPUT, 0.1, context, { ...createControls(), landedHits: [hit] });
+
+    expect(context.worldEffects.filter(({ kind }) => kind === WorldEffectKind.Flash)).toStrictEqual([
+      {
+        kind: WorldEffectKind.Flash,
+        position: enemy.position,
+        seconds: FLASH_SECONDS,
+        secondsRemaining: FLASH_SECONDS,
+      },
+    ]);
   });
 
   test("strikes the ores an Overloaded's explosion reaches from the enemy it lands on, after the step's own hits", () => {

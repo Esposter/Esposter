@@ -1,3 +1,4 @@
+import type { WorldEffect } from "#src/models/effects/WorldEffect";
 import type { DroppedItem } from "#src/models/enemy/DroppedItem";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyTables } from "#src/models/enemy/EnemyTables";
@@ -54,4 +55,7 @@ export interface KitContext {
   strikes: KitStrike[];
   // The birds and beasts in the world, each struck down by a hit its area reaches, as the enemies are
   wildlifeList: Wildlife[];
+  // The visuals the world draws over its scene: a spark and a number at each hit, a flash at a cast and at a reaction. The
+  // Step runs each one's life down and drops it once that runs out, and the effects layer draws the rest
+  worldEffects: WorldEffect[];
 }
