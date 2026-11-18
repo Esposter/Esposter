@@ -1,11 +1,12 @@
 import type { Meta } from "#server/models/trpc/Meta";
 import type { Context } from "#server/trpc/context";
+import type { RecordedStatement } from "@esposter/db";
 import type { Topic } from "@esposter/db-schema";
 import type { AnyRouter } from "@trpc/server";
 
 import { MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
 import { readTopicsHeader } from "#shared/services/realtime/readTopicsHeader";
-import { getReadSet, getSchemaTables, recordStatements } from "@esposter/db";
+import { getReadSet, getReadTopics, getSchemaTables, getWriteTopics, recordStatements } from "@esposter/db";
 import { getTableName } from "drizzle-orm";
 import { SQLiteDialect } from "drizzle-orm/sqlite-core";
 import { expect } from "vitest";
@@ -25,8 +26,13 @@ export interface LiveTopicCalls {
 
 const compareStrings = (first: string, second: string) => first.localeCompare(second);
 
-// The answer each query gave, as its text, with the topics its response watched
-type Reads = Map<string, { answer: string; topics: Topic[] }>;
+// The answer each query gave, as its text, with the topics its response watched and the tables its statements read
+interface Read {
+  answer: string;
+  tables: Set<string>;
+  topics: Topic[];
+}
+type Reads = Map<string, Read>;
 
 // The paths of a router's procedures of one type, leaving out those that declare a static reason, and those that declare
 // Their topics by hand, which the cutover removes: until then their declaration is checked by nothing but themselves
@@ -43,6 +49,14 @@ const getPathsOf = (calls: LiveTopicCall[]) => calls.map(({ path }) => path).toS
 
 const getTopicsOf = (headers: Headers, path: string): Topic[] =>
   readTopicsHeader(headers, path).flatMap(({ topics }) => topics);
+
+// The tables a set of topics names, each the text before its colon. A read's topics and a write's name tables the same way
+const getTopicTables = (topics: string[]) => new Set(topics.map((topic) => topic.slice(0, topic.indexOf(":"))));
+
+// The tables a write touches: those its topics name, which include the rows its cascade removes, so a read of a table the
+// Cascade reached is rerun too
+export const getTouchedTables = async (statements: RecordedStatement[]) =>
+  getTopicTables(await getWriteTopics(statements));
 
 // A router's live topics, checked from the procedures it runs rather than from a list of the topics it names. Every
 // Procedure that declares no static reason has a case, every query's read set covers each table its SQL reads, and each
@@ -73,32 +87,40 @@ export const expectLiveTopicCoverage = async (
   );
   expect(uncoveredTables.toSorted(compareStrings).join(", ")).toBe("");
 
-  // Each write reads the rows the writes before it left, so the reads a write is checked against are the reads the write before
-  // It left behind: no write runs between the two, so a query runs once per write rather than once before and once after it
+  // Each write is checked against the reads it follows, and the reads it leaves are the ones the next write follows. A read
+  // Reruns only when the write touched a table it reads, since no other write can change its answer
+  const readQuery = async (query: LiveTopicCall): Promise<Read> => {
+    const { database, statements } = recordStatements(context.db);
+    const responseHeaders = new Headers();
+    const answer = await query.call({ ...context, db: database, responseHeaders });
+    const readTables = getTopicTables(await getReadTopics(statements));
+    return { answer: JSON.stringify(answer), tables: readTables, topics: getTopicsOf(responseHeaders, query.path) };
+  };
+
   const readQueries = async (): Promise<Reads> => {
     const reads: Reads = new Map();
-    await Promise.all(
-      queries.map(async (query) => {
-        const responseHeaders = new Headers();
-        const answer = await query.call({ ...context, responseHeaders });
-        reads.set(query.path, { answer: JSON.stringify(answer), topics: getTopicsOf(responseHeaders, query.path) });
-      }),
-    );
+    await Promise.all(queries.map(async (query) => reads.set(query.path, await readQuery(query))));
     return reads;
   };
 
   const unwokenReads: string[] = [];
-  // Each write is checked against the reads it follows, and the reads it leaves are the ones the next write follows
   const checkWrite = async (write: LiveTopicCall, readsBefore: Reads): Promise<Reads> => {
+    const { database, statements } = recordStatements(context.db);
     MockPublishedTopics.length = 0;
-    await write.call({ ...context, responseHeaders: new Headers() });
+    await write.call({ ...context, db: database, responseHeaders: new Headers() });
     const published = new Set(MockPublishedTopics);
-    const readsAfter = await readQueries();
-    for (const query of queries) {
-      const { answer, topics } = readsBefore.get(query.path) ?? { answer: "", topics: [] };
-      if (readsAfter.get(query.path)?.answer !== answer && !topics.some((topic) => published.has(topic)))
-        unwokenReads.push(`${write.path} -> ${query.path}`);
-    }
+    const touched = await getTouchedTables(statements);
+    const readsAfter: Reads = new Map();
+    await Promise.all(
+      queries.map(async (query) => {
+        const before = readsBefore.get(query.path);
+        const unchanged = before !== undefined && ![...before.tables].some((table) => touched.has(table));
+        const after = unchanged ? before : await readQuery(query);
+        readsAfter.set(query.path, after);
+        if (after.answer !== before?.answer && !before?.topics.some((topic) => published.has(topic)))
+          unwokenReads.push(`${write.path} -> ${query.path}`);
+      }),
+    );
     return readsAfter;
   };
 
