@@ -11,7 +11,7 @@ import {
 } from "#src/services/genshinAssets/shared/constants";
 import { runAnimeStudio } from "#src/services/recreation/animeStudio/runAnimeStudio";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { rmSync } from "node:fs";
+import { existsSync, rmSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { basename, join } from "node:path";
 
@@ -36,7 +36,8 @@ export const readMonsterControllerStates = async (controllerName: string): Promi
     ],
     GENSHIN_ANIMESTUDIO_OPTIONS,
   );
-  return parseControllerStates(
-    await readFile(join(directory, AssetType.AnimatorController, `${controllerName}.json`), "utf8"),
-  );
+  const exportPath = join(directory, AssetType.AnimatorController, `${controllerName}.json`);
+  if (!existsSync(exportPath))
+    throw new InvalidOperationError(Operation.Read, controllerName, `exports no controller from ${block}`);
+  return parseControllerStates(await readFile(exportPath, "utf8"));
 };
