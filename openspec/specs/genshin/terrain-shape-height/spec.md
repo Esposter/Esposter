@@ -76,7 +76,7 @@ The residual SHALL be drawn only where its fade was fitted, SHALL draw nothing o
 
 ### Requirement: Ground laid over another lifted onto its own base
 
-A ground laid over another SHALL be lifted onto its own base where its hills stand, and inside that level SHALL stand exactly as it is drawn alone.
+A ground laid over another SHALL be lifted onto its own base where its hills stand, and inside that level SHALL stand exactly as it is drawn alone. This is the composition of a base's own quarters, of a whole-region record and of a plateau.
 
 #### Scenario: Ground laid over keeps its own heights
 
@@ -89,3 +89,25 @@ A ground laid over another SHALL be lifted onto its own base where its hills sta
 - **GIVEN** a ground with no hills is laid over another ground
 - **WHEN** the composed ground is read
 - **THEN** its features stand on the first ground's base
+
+### Requirement: A region's piece is the surface of its own outline
+
+A piece laid over a base SHALL be the surface of its own domain alone at every point inside it, and SHALL NOT be summed with the other pieces' levels. Across the seam of each outline a band of the blend width either side SHALL mix each piece's surface by a share that is full a band's width inside and none a band's width outside, the base taking what the shares leave, and outside every outline the base SHALL show.
+
+#### Scenario: A point inside one piece's outline reads that piece's surface
+
+- **GIVEN** two pieces whose outlines overlap, with levels that differ
+- **WHEN** the height is read at a point inside one piece's outline and deeper than the band
+- **THEN** the height is that piece's surface alone, not the sum of the two
+
+#### Scenario: The height is continuous across an outline's seam
+
+- **GIVEN** a piece's outline with a neighbouring piece or the base on its far side
+- **WHEN** the height is read a millimetre either side of the seam
+- **THEN** the two heights differ by no more than the ground's slope over that millimetre
+
+#### Scenario: Outside every outline the base shows
+
+- **GIVEN** a point lies beyond the band of every piece's outline
+- **WHEN** the height is read there
+- **THEN** the height is the base's, with the plateaus laid over it

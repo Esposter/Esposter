@@ -96,7 +96,7 @@ The fit SHALL place every capital exactly at the median of its waypoints, and SH
 
 ### Requirement: Every plateau stays within the terrain's bounds
 
-Every plateau SHALL stay within the bounds the terrain stands between, and the check SHALL fail for any plateau or fitted ground outside them.
+Every plateau SHALL stay within the bounds the terrain stands between, and those bounds SHALL cover the record bounds of every ground laid over Windrise's base, so the check SHALL fail for any plateau outside them.
 
 #### Scenario: Plateau outside the bounds
 
