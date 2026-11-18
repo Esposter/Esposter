@@ -7,7 +7,7 @@
   - The reading is confirmed as real and not a broken measure: no statistic is zero on either side, so the share is not the all-zero 1.0000 of the earlier snapshot, and the same function returns the exports' own halves at 0.0369. Our Ground carries about twice the reference's variance and five to twenty-five times its band energies, so the shortfall is excess fine detail, not missing detail.
   - Decision on scope item 3: not built. Layers' detail adds energy to the terrain, and the miss is an excess at the fine bands, so layers' detail would widen it. The layers' step waits on the Ground's structure being re-read under the solved octave amplitudes, which needs the game exports (`x-needs`).
 - [ ] 1.4 Re-read the Ground's structure under the solved octave amplitudes (8fe537172a) against the game exports, with the same family mask and gate pair as task 1.3. Verify: the new dump and share are written under this task, and the layers' step in task 2.1 is decided on that reading.
-- [ ] 1.5 Prove each plant dome's detail draws at its own texture's metres per texel, the scale task 1.1 gives each surface. Verify: a test named after the scenario "A plant dome's detail reads at its own texture's scale", written beside the base-map test and seen failing with the shared 4-centimetre scale restored for the run, as the regression proof of the testing skill.
+- [x] 1.5 Prove each plant dome's detail draws at its own texture's metres per texel, the scale task 1.1 gives each surface. Verify: a test named after the scenario "A plant dome's detail reads at its own texture's scale", written beside the base-map test and seen failing with the shared 4-centimetre scale restored for the run, as the regression proof of the testing skill.
 
 ## 2. Windrise's layers
 
