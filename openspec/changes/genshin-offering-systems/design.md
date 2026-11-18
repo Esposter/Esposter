@@ -92,9 +92,6 @@ The published set is the page's eleven offerings (Primal Flame Resonance from th
 | `packages/genshin-world/src/models/world/LandmarkKind.ts`                      | Gains the offering                                                                                             |
 | `packages/genshin-world/src/models/world/OfferingLandmark.ts`                  | One offering a region stands, its kind and its point, the landmark its kit and prompt are built from           |
 | `packages/genshin-world/src/models/offering/OfferingPlaceRecord.ts`            | One offering place as the publish writes it: its id, its kind and its point                                    |
-| `packages/genshin-world/src/services/offering/readRegionOfferingLandmarks.ts`  | Reads a region's offering places as it comes within reach, as the landmarks the world stands them as           |
-| `packages/genshin-world/src/services/offering/computeOfferingInteractables.ts` | Each offering in reach as an `Activate` prompt on the ground beneath its point, named by its kind              |
-| `packages/genshin-world/src/services/offering/OfferingKindNameKeyMap.ts`       | The text each placed offering's prompt is named by                                                             |
 | `packages/genshin-world/src/services/offering/getOfferingProgress.ts`          | An offering's progress as the save holds it, an offering not yet offered to holding level zero                 |
 | `packages/genshin-world/src/services/offering/readOfferingLevels.ts`           | Reads any offering's levels by its kind's key, the one reader the tree's levels and the others' share          |
 | `packages/genshin-world/src/components/World/Landmark/Offering/Index.vue`      | The offering's stand-in at its point, a capsule on the ground until its model lands                            |
@@ -111,6 +108,8 @@ The published set is the page's eleven offerings (Primal Flame Resonance from th
 | `scripts/src/services/genshinAssets/offerings/getConsumedItems.ts`             | The item slots a level names, the zeroed empty slots dropped                                                   |
 | `scripts/src/services/genshinAssets/offerings/toLevelItems.ts`                 | Every item a level takes, as its item and its count                                                            |
 | `scripts/src/services/genshinAssets/offerings/toOfferingLevelRow.ts`           | One level's row: every item it takes, and the reward it pays, fixed or drawn from a pool                       |
+
+The landmark that stands an offering, its prompt and the text its kind is named by are built, and their Key files are the built page's, in [Offering systems](../../specs/genshin/offering-systems/design.md).
 
 `StatueLevelRow` keeps its own flat shape: the statues' levels are published flat and read by the world's statue levels, so the offering row's widening does not reach them.
 
