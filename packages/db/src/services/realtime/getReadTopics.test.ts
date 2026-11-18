@@ -32,6 +32,27 @@ const insertUser = (db: Database, id: string) =>
       updatedAt: new Date(0),
     });
 
+// A viewer alone in one room and sharing another with a second user, the shape the self-join tests read
+const seedSelfJoinRooms = async () => {
+  const { db } = await createMockDb();
+  const viewerId = v7();
+  const otherUserId = v7();
+  await insertUser(db, viewerId);
+  await insertUser(db, otherUserId);
+  const aloneRoomId = v7();
+  const sharedRoomId = v7();
+  await db.insert(roomsInMessage).values([
+    { id: aloneRoomId, name: aloneRoomId, type: RoomType.Room, userId: viewerId },
+    { id: sharedRoomId, name: sharedRoomId, type: RoomType.Room, userId: viewerId },
+  ]);
+  await db.insert(usersToRoomsInMessage).values([
+    { roomId: aloneRoomId, userId: viewerId },
+    { roomId: sharedRoomId, userId: viewerId },
+    { roomId: sharedRoomId, userId: otherUserId },
+  ]);
+  return { aloneRoomId, db, sharedRoomId, viewerId };
+};
+
 describe(getReadTopics, () => {
   // A scope equality names the rows its value selects, and a secret's value is named by its digest, not the secret. The
   // Table the read starts from is named by that equality alone
@@ -589,22 +610,7 @@ describe(getReadTopics, () => {
   test("a self-join's partner is named table-wide when the select returns only the partner's own room", async () => {
     expect.hasAssertions();
 
-    const { db } = await createMockDb();
-    const viewerId = v7();
-    const otherUserId = v7();
-    await insertUser(db, viewerId);
-    await insertUser(db, otherUserId);
-    const aloneRoomId = v7();
-    const sharedRoomId = v7();
-    await db.insert(roomsInMessage).values([
-      { id: aloneRoomId, name: aloneRoomId, type: RoomType.Room, userId: viewerId },
-      { id: sharedRoomId, name: sharedRoomId, type: RoomType.Room, userId: viewerId },
-    ]);
-    await db.insert(usersToRoomsInMessage).values([
-      { roomId: aloneRoomId, userId: viewerId },
-      { roomId: sharedRoomId, userId: viewerId },
-      { roomId: sharedRoomId, userId: otherUserId },
-    ]);
+    const { db, viewerId } = await seedSelfJoinRooms();
     const { database, statements } = recordStatements(db);
     const partner = alias(usersToRoomsInMessage, "partner");
 
@@ -627,22 +633,7 @@ describe(getReadTopics, () => {
   test("a self-join's partner is named by the viewer's rooms when the select returns them too", async () => {
     expect.hasAssertions();
 
-    const { db } = await createMockDb();
-    const viewerId = v7();
-    const otherUserId = v7();
-    await insertUser(db, viewerId);
-    await insertUser(db, otherUserId);
-    const aloneRoomId = v7();
-    const sharedRoomId = v7();
-    await db.insert(roomsInMessage).values([
-      { id: aloneRoomId, name: aloneRoomId, type: RoomType.Room, userId: viewerId },
-      { id: sharedRoomId, name: sharedRoomId, type: RoomType.Room, userId: viewerId },
-    ]);
-    await db.insert(usersToRoomsInMessage).values([
-      { roomId: aloneRoomId, userId: viewerId },
-      { roomId: sharedRoomId, userId: viewerId },
-      { roomId: sharedRoomId, userId: otherUserId },
-    ]);
+    const { aloneRoomId, db, sharedRoomId, viewerId } = await seedSelfJoinRooms();
     const { database, statements } = recordStatements(db);
     const partner = alias(usersToRoomsInMessage, "partner");
 
