@@ -83,6 +83,7 @@ import { createIwakuraSuccessionPassiveModule } from "#src/services/weapon/passi
 import { createJadeCirculationPassiveModule } from "#src/services/weapon/passives/createJadeCirculationPassiveModule";
 import { createJusticePassiveModule } from "#src/services/weapon/passives/createJusticePassiveModule";
 import { createKaguraDanceOfTheSacredSakuraPassiveModule } from "#src/services/weapon/passives/createKaguraDanceOfTheSacredSakuraPassiveModule";
+import { createKaidanRainfallEarthbinderPassiveModule } from "#src/services/weapon/passives/createKaidanRainfallEarthbinderPassiveModule";
 import { createLabyrinthLordsInstructionPassiveModule } from "#src/services/weapon/passives/createLabyrinthLordsInstructionPassiveModule";
 import { createLawsEquilibriumPassiveModule } from "#src/services/weapon/passives/createLawsEquilibriumPassiveModule";
 import { createLegacyOfLangGanPassiveModule } from "#src/services/weapon/passives/createLegacyOfLangGanPassiveModule";
@@ -95,6 +96,7 @@ import { createMistsplittersEdgePassiveModule } from "#src/services/weapon/passi
 import { createMillennialHymnPassiveModule } from "#src/services/weapon/passives/createMillennialHymnPassiveModule";
 import { createMindInBloomPassiveModule } from "#src/services/weapon/passives/createMindInBloomPassiveModule";
 import { createMournfulTributePassiveModule } from "#src/services/weapon/passives/createMournfulTributePassiveModule";
+import { createNetSnapperPassiveModule } from "#src/services/weapon/passives/createNetSnapperPassiveModule";
 import { createNocturnalDreamsPassiveModule } from "#src/services/weapon/passives/createNocturnalDreamsPassiveModule";
 import { createNorthwindWolfPassiveModule } from "#src/services/weapon/passives/createNorthwindWolfPassiveModule";
 import { createOathOfQhapaqNanPassiveModule } from "#src/services/weapon/passives/createOathOfQhapaqNanPassiveModule";
@@ -155,6 +157,8 @@ import { createUntaintedDesirePassiveModule } from "#src/services/weapon/passive
 import { createViperBalladPassiveModule } from "#src/services/weapon/passives/createViperBalladPassiveModule";
 import { createWanderingCloudsPassiveModule } from "#src/services/weapon/passives/createWanderingCloudsPassiveModule";
 import { createWavesplitterPassiveModule } from "#src/services/weapon/passives/createWavesplitterPassiveModule";
+import { createWanderingStrikerPassiveModule } from "#src/services/weapon/passives/createWanderingStrikerPassiveModule";
+import { createWayOfSunfirePassiveModule } from "#src/services/weapon/passives/createWayOfSunfirePassiveModule";
 import { createWeightOfFallingBranchesPassiveModule } from "#src/services/weapon/passives/createWeightOfFallingBranchesPassiveModule";
 import { createWhispersOfWindAndFlowerPassiveModule } from "#src/services/weapon/passives/createWhispersOfWindAndFlowerPassiveModule";
 import { createWhiteFairysQueeningPassiveModule } from "#src/services/weapon/passives/createWhiteFairysQueeningPassiveModule";
@@ -633,4 +637,16 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "1544097035": createCloudfallAxiomPassiveModule,
   // White Fairy's Queening (A Teaspoon of Transcendence)
   "1811953931": createWhiteFairysQueeningPassiveModule,
+  // Wandering Striker (Prized Isshin Blade)
+  "3685735523": (params) => createWanderingStrikerPassiveModule(params, { heals: true }),
+  // Wandering Striker (Prized Isshin Blade)
+  "3159145923": (params) => createWanderingStrikerPassiveModule(params, { heals: true }),
+  // Wandering Striker (Prized Isshin Blade)
+  "1307222387": (params) => createWanderingStrikerPassiveModule(params, { heals: false }),
+  // Kaidan: Rainfall Earthbinder (Toukabou Shigure)
+  "3451100379": createKaidanRainfallEarthbinderPassiveModule,
+  // Net Snapper (End of the Line)
+  "280615235": createNetSnapperPassiveModule,
+  // The Way of Sunfire (Scion of the Blazing Sun)
+  "3791123787": createWayOfSunfirePassiveModule,
 };
