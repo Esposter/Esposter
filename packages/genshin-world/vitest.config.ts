@@ -1,7 +1,7 @@
 import type { ViteUserConfig } from "vitest/config";
 
-import { getVitestConfiguration } from "@esposter/configuration";
 import { screenNamesPlugin } from "#parity/screenNamesPlugin";
+import { getVitestConfiguration } from "@esposter/configuration";
 
 // Every suite reads the hosted game data through the mirror's fetch route
 const vitestConfiguration: ViteUserConfig = getVitestConfiguration(import.meta.dirname, {

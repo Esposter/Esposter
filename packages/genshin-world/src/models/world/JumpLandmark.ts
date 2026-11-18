@@ -1,3 +1,8 @@
+import type { DomainEntranceLandmark } from "#src/models/world/DomainEntranceLandmark";
+import type { StatueLandmark } from "#src/models/world/StatueLandmark";
+import type { StatueOfTheNewMoonLandmark } from "#src/models/world/StatueOfTheNewMoonLandmark";
+import type { WaypointLandmark } from "#src/models/world/WaypointLandmark";
+
 import { domainEntranceLandmarkSchema } from "#src/models/world/DomainEntranceLandmark";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { statueLandmarkSchema } from "#src/models/world/StatueLandmark";
@@ -18,13 +23,14 @@ export const JUMP_LANDMARK_KINDS: readonly LandmarkKind[] = [
 export const checkIsJumpKind = (kind: string): kind is LandmarkKind =>
   JUMP_LANDMARK_KINDS.some((jumpKind) => jumpKind === kind);
 
+export type JumpLandmark = DomainEntranceLandmark | StatueLandmark | StatueOfTheNewMoonLandmark | WaypointLandmark;
+
 export const jumpLandmarkSchema = z.discriminatedUnion("kind", [
   domainEntranceLandmarkSchema,
   statueLandmarkSchema,
   statueOfTheNewMoonLandmarkSchema,
   waypointLandmarkSchema,
-]);
-export type JumpLandmark = z.infer<typeof jumpLandmarkSchema>;
+]) satisfies z.ZodType<JumpLandmark>;
 
 // A region's landmarks file, which sits beside its data file and holds the region's jump landmarks exactly as the data
 // File holds them. The world's start reads these, so it reads no region's whole data file

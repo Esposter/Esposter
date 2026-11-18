@@ -5,8 +5,8 @@ import type { TrialRoster } from "#src/models/world/TrialRoster";
 import type { WorldChallengeStep } from "#src/models/world/WorldChallengeStep";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 import type { CharacterTrialTables } from "#src/services/trial/readCharacterTrials";
-import type { Ref } from "vue";
 import type { Object3D } from "three";
+import type { Ref } from "vue";
 
 import { DomainChallengeOutcome } from "#src/models/domains/DomainChallengeOutcome";
 import { getPlayedTalentLevels } from "#src/services/character/getPlayedTalentLevels";

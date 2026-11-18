@@ -12,8 +12,8 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { getSpawnKey } from "#src/services/enemy/getSpawnKey";
 import { useWorldEnemyKindMovesStore } from "#src/store/enemyKindMoves";
-import { storeToRefs } from "pinia";
 import { watchImmediate } from "@vueuse/core";
+import { storeToRefs } from "pinia";
 import { toValue } from "vue";
 
 // A camp spawns as its region's data arrives, each member whose respawn time has come, and is dropped as it leaves,

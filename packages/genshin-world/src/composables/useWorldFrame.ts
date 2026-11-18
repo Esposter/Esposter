@@ -10,6 +10,7 @@ import { checkIsSpecialStoryModeActive } from "#src/services/quest/checkIsSpecia
 import { getNextScreenKind } from "#src/services/screen/getNextScreenKind";
 import { OCULUS_REGION_ID } from "#src/services/statue/constants";
 import { getStatueRegionId } from "#src/services/statue/getStatueRegionId";
+import { useWorldEnemyKindMovesStore } from "#src/store/enemyKindMoves";
 import { useWorldMapStore } from "#src/store/map";
 import { useWorldPuzzlesStore } from "#src/store/puzzles";
 import { useWorldQuestsStore } from "#src/store/quests";
@@ -19,7 +20,6 @@ import { useWorldStatuesStore } from "#src/store/statues";
 import { MILLISECONDS_PER_SECOND } from "@esposter/shared";
 import { InputAction } from "genshin-engine";
 import { InteractionKind } from "genshin-interface";
-import { useWorldEnemyKindMovesStore } from "#src/store/enemyKindMoves";
 import { storeToRefs } from "pinia";
 
 // The world's frame, run before each draw: the input is read, the screen it moves to is chosen, and each feature that

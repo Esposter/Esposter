@@ -12,16 +12,17 @@ const readRegionDataOnce = async (regionDataBaseUrl: string, id: string): Promis
 const regionDataReads = new Map<string, Promise<RegionData>>();
 
 // A region's data as the host serves it, rejected when its fetch fails, does not answer in time or fails its schema
-export const readRegionData = async (regionDataBaseUrl: string, id: string): Promise<RegionData> => {
+export const readRegionData = (regionDataBaseUrl: string, id: string): Promise<RegionData> => {
   const key = `${regionDataBaseUrl}/${id}`;
   const held = regionDataReads.get(key);
   if (held) return held;
   const read = readRegionDataOnce(regionDataBaseUrl, id);
   regionDataReads.set(key, read);
-  const result = await getResultAsync(() => read);
-  if (result.isErr()) {
-    regionDataReads.delete(key);
-    throw result.error;
-  }
-  return result.value;
+  return getResultAsync(() => read).match(
+    (regionData) => regionData,
+    (error) => {
+      regionDataReads.delete(key);
+      throw error;
+    },
+  );
 };
