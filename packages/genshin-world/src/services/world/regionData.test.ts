@@ -1,6 +1,11 @@
+import {
+  checkIsJumpKind,
+  JUMP_LANDMARK_KINDS,
+  REGION_LANDMARKS_SUFFIX,
+  regionLandmarksSchema,
+} from "#src/models/world/JumpLandmark";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { regionDataSchema } from "#src/models/world/RegionData";
-import { JUMP_LANDMARK_KINDS } from "#src/services/map/constants";
 import { jsonDateParse } from "@esposter/shared";
 import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
@@ -22,6 +27,25 @@ describe("regionData", () => {
     );
 
     expect(regionIds).toStrictEqual(filenames.map((filename) => filename.replace(/\.json$/u, "")));
+  });
+
+  test("every region's landmarks file holds its jump landmarks, as its data file does", async () => {
+    expect.hasAssertions();
+
+    const filenames = (await readdir(REGION_DIRECTORY)).filter((filename) => /^[^.]+\.json$/u.test(filename));
+    await Promise.all(
+      filenames.map(async (filename) => {
+        const { landmarks } = regionDataSchema.parse(
+          jsonDateParse(await readFile(join(REGION_DIRECTORY, filename), "utf8")),
+        );
+        const landmarksFile = filename.replace(/\.json$/u, REGION_LANDMARKS_SUFFIX);
+        const regionLandmarks = regionLandmarksSchema.parse(
+          jsonDateParse(await readFile(join(REGION_DIRECTORY, landmarksFile), "utf8")),
+        );
+
+        expect(regionLandmarks.landmarks).toStrictEqual(landmarks.filter(({ kind }) => checkIsJumpKind(kind)));
+      }),
+    );
   });
 
   test("a waypoint is listed as a jump target", async () => {

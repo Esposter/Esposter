@@ -8,7 +8,7 @@ import { findNearestLandmarkAreaId } from "#src/services/genshinAssets/residents
 import { readDialogSpeakers } from "#src/services/genshinAssets/residents/readDialogSpeakers";
 import { readFittedRegions } from "#src/services/genshinAssets/residents/readFittedRegions";
 import { writeResidents } from "#src/services/genshinAssets/residents/writeResidents";
-import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
+import { writeRegionData } from "#src/services/genshinAssets/shared/writeRegionData";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { readTalkConfigs } from "#src/services/genshinText/readTalkConfigs";
 import { SceneGroupSource } from "genshin-world";
@@ -18,7 +18,7 @@ vi.mock(import("#src/services/gameData/readPublishedGameData"));
 vi.mock(import("#src/services/genshinAssets/residents/findNearestLandmarkAreaId"));
 vi.mock(import("#src/services/genshinAssets/residents/readDialogSpeakers"));
 vi.mock(import("#src/services/genshinAssets/residents/readFittedRegions"));
-vi.mock(import("#src/services/genshinAssets/shared/writeWorldData"));
+vi.mock(import("#src/services/genshinAssets/shared/writeRegionData"));
 vi.mock(import("#src/services/genshinText/readExcelTable"));
 vi.mock(import("#src/services/genshinText/readTalkConfigs"));
 
@@ -45,7 +45,7 @@ describe(writeResidents, () => {
     vi.mocked(readDialogSpeakers).mockReturnValue([]);
     vi.mocked(readExcelTable).mockReturnValue([]);
     vi.mocked(readTalkConfigs).mockResolvedValue([]);
-    vi.mocked(writeWorldData).mockResolvedValue(REGION_FILE);
+    vi.mocked(writeRegionData).mockResolvedValue(REGION_FILE);
   });
 
   test("a dry run reports the residents it would write and writes no region data", async () => {
@@ -53,7 +53,7 @@ describe(writeResidents, () => {
 
     const report = await writeResidents({ isDryRun: true });
 
-    expect(writeWorldData).not.toHaveBeenCalled();
+    expect(writeRegionData).not.toHaveBeenCalled();
     expect(report).toStrictEqual(
       [
         `${REGION}: 0 placed with talks, 0 with a day spot only, 0 with a night spot`,
@@ -94,7 +94,7 @@ describe(writeResidents, () => {
 
     await writeResidents({ isDryRun: false });
 
-    expect(vi.mocked(writeWorldData).mock.calls).toStrictEqual([
+    expect(vi.mocked(writeRegionData).mock.calls).toStrictEqual([
       [
         REGION_FILE,
         {
@@ -112,6 +112,7 @@ describe(writeResidents, () => {
             },
           ],
         },
+        { isDryRun: false },
       ],
     ]);
   });
@@ -151,7 +152,7 @@ describe(writeResidents, () => {
 
     await writeResidents({ isDryRun: false });
 
-    expect(vi.mocked(writeWorldData).mock.calls).toStrictEqual([
+    expect(vi.mocked(writeRegionData).mock.calls).toStrictEqual([
       [
         REGION_FILE,
         {
@@ -169,6 +170,7 @@ describe(writeResidents, () => {
             },
           ],
         },
+        { isDryRun: false },
       ],
     ]);
   });
@@ -187,7 +189,7 @@ describe(writeResidents, () => {
 
     await writeResidents({ isDryRun: false });
 
-    expect(vi.mocked(writeWorldData).mock.calls).toStrictEqual([
+    expect(vi.mocked(writeRegionData).mock.calls).toStrictEqual([
       [
         REGION_FILE,
         {
@@ -205,6 +207,7 @@ describe(writeResidents, () => {
             },
           ],
         },
+        { isDryRun: false },
       ],
     ]);
   });
@@ -214,6 +217,10 @@ describe(writeResidents, () => {
 
     await writeResidents({ isDryRun: false });
 
-    expect(writeWorldData).toHaveBeenCalledExactlyOnceWith(REGION_FILE, { ...region, residents: [] });
+    expect(writeRegionData).toHaveBeenCalledExactlyOnceWith(
+      REGION_FILE,
+      { ...region, residents: [] },
+      { isDryRun: false },
+    );
   });
 });

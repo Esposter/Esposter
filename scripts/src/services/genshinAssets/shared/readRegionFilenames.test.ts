@@ -23,4 +23,12 @@ describe(readRegionFilenames, () => {
 
     expect((await readRegionFilenames(regionsDirectory)).toSorted()).toStrictEqual(["liyue.json", "mondstadt.json"]);
   });
+
+  test("a region's landmarks file is part of the region, so it is left out beside the region", async () => {
+    expect.hasAssertions();
+    await writeFile(join(regionsDirectory, "mondstadt.json"), "{}");
+    await writeFile(join(regionsDirectory, "mondstadt.landmarks.json"), "{}");
+
+    await expect(readRegionFilenames(regionsDirectory)).resolves.toStrictEqual(["mondstadt.json"]);
+  });
 });

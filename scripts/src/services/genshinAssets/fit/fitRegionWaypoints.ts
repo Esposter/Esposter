@@ -14,7 +14,7 @@ import {
 } from "#src/services/genshinAssets/shared/constants";
 import { orderLandmarks } from "#src/services/genshinAssets/shared/orderLandmarks";
 import { readWorldGroundHeight } from "#src/services/genshinAssets/shared/readWorldGroundHeight";
-import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
+import { writeRegionData } from "#src/services/genshinAssets/shared/writeRegionData";
 import { readSceneTransportPoints } from "#src/services/genshinAssets/world/readSceneTransportPoints";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -73,7 +73,7 @@ export const fitRegionWaypoints = async ({ isDryRun }: DryRunOptions): Promise<s
           ...statues,
         ]);
         if (JSON.stringify(landmarks) !== JSON.stringify(data.landmarks) && !isDryRun)
-          await writeWorldData(file, { ...data, landmarks });
+          await writeRegionData(file, { ...data, landmarks }, { isDryRun });
         return `${region}: ${waypoints.length} waypoints and ${statues.length} Statues of the New Moon placed`;
       }),
   );

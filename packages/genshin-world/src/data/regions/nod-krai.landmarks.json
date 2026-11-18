@@ -1,0 +1,115 @@
+{
+  "landmarks": [
+    {
+      "domainKind": "Mastery",
+      "entryId": 33,
+      "id": "domain-entrance-33",
+      "kind": "DomainEntrance",
+      "position": { "x": -57.45, "z": -11233.91 },
+      "rotation": 0.7242,
+      "titleTextKey": "UI_DUNGEON_ENTRY_1690",
+      "areaId": "lempo-isle",
+      "arrival": { "heightOffset": -26.8, "position": { "x": -57.45, "z": -11233.91 }, "rotation": 0.7242 },
+      "heightOffset": -26.8
+    },
+    {
+      "domainKind": "Forgery",
+      "entryId": 34,
+      "id": "domain-entrance-34",
+      "kind": "DomainEntrance",
+      "position": { "x": 46.4, "z": -12095.2 },
+      "rotation": -2.4606,
+      "titleTextKey": "UI_DUNGEON_ENTRY_1694",
+      "areaId": "hiisi-island",
+      "arrival": { "heightOffset": -17.67, "position": { "x": 46.4, "z": -12095.2 }, "rotation": -2.4606 },
+      "heightOffset": -17.67
+    },
+    {
+      "domainKind": "Blessing",
+      "entryId": 35,
+      "id": "domain-entrance-35",
+      "kind": "DomainEntrance",
+      "position": { "x": 1260.9, "z": -10642.23 },
+      "rotation": -0.3599,
+      "titleTextKey": "UI_DUNGEON_ENTRY_1692",
+      "areaId": "paha-isle",
+      "arrival": { "heightOffset": -22.58, "position": { "x": 1260.9, "z": -10642.23 }, "rotation": -0.3599 },
+      "heightOffset": -22.58
+    },
+    {
+      "domainKind": "Blessing",
+      "entryId": 36,
+      "id": "domain-entrance-36",
+      "kind": "DomainEntrance",
+      "position": { "x": 4048.71, "z": -11310.25 },
+      "rotation": -1.4603,
+      "titleTextKey": "UI_DUNGEON_ENTRY_1811",
+      "areaId": "ashveil-peak",
+      "arrival": { "heightOffset": -26.8, "position": { "x": 4048.71, "z": -11310.25 }, "rotation": -1.4603 },
+      "heightOffset": -26.8
+    },
+    {
+      "areaId": "paha-isle",
+      "arrival": { "heightOffset": -19.73, "position": { "x": 1161.82, "z": -10693.27 }, "rotation": -0.3004 },
+      "heightOffset": -19.73,
+      "id": "nod-krai-new-moon-statue-1515",
+      "kind": "StatueOfTheNewMoon",
+      "position": { "x": 1161.82, "z": -10693.27 },
+      "rotation": -0.3004
+    },
+    {
+      "areaId": "lempo-isle",
+      "arrival": { "heightOffset": -1.76, "position": { "x": -151.18, "z": -10752.74 }, "rotation": -1.0797 },
+      "heightOffset": -1.76,
+      "id": "nod-krai-new-moon-statue-1516",
+      "kind": "StatueOfTheNewMoon",
+      "position": { "x": -151.18, "z": -10752.74 },
+      "rotation": -1.0797
+    },
+    {
+      "areaId": "hiisi-island",
+      "arrival": { "heightOffset": -2.42, "position": { "x": -232.29, "z": -11683.59 }, "rotation": -0.8901 },
+      "heightOffset": -2.42,
+      "id": "nod-krai-new-moon-statue-1517",
+      "kind": "StatueOfTheNewMoon",
+      "position": { "x": -232.29, "z": -11683.59 },
+      "rotation": -0.8901
+    },
+    {
+      "areaId": "voidsea-outlook",
+      "arrival": { "heightOffset": -9.03, "position": { "x": 3086.82, "z": -10904.92 }, "rotation": -2.1325 },
+      "heightOffset": -9.03,
+      "id": "nod-krai-new-moon-statue-1613",
+      "kind": "StatueOfTheNewMoon",
+      "position": { "x": 3086.82, "z": -10904.92 },
+      "rotation": -2.1325
+    },
+    {
+      "areaId": "wavechaser-plain",
+      "arrival": { "heightOffset": -0.13, "position": { "x": 3674.53, "z": -10948.39 }, "rotation": -0.2972 },
+      "heightOffset": -0.13,
+      "id": "nod-krai-new-moon-statue-1614",
+      "kind": "StatueOfTheNewMoon",
+      "position": { "x": 3674.53, "z": -10948.39 },
+      "rotation": -0.2972
+    },
+    {
+      "areaId": "ashveil-peak",
+      "arrival": { "heightOffset": -3.97, "position": { "x": 4186.13, "z": -11137.17 }, "rotation": 0.555 },
+      "heightOffset": -3.97,
+      "id": "nod-krai-new-moon-statue-1615",
+      "kind": "StatueOfTheNewMoon",
+      "position": { "x": 4186.13, "z": -11137.17 },
+      "rotation": 0.555
+    },
+    {
+      "areaId": "voidsea-outlook",
+      "arrival": { "heightOffset": -30.33, "position": { "x": 3613.63, "z": -10227.66 }, "rotation": -3.1416 },
+      "heightOffset": -30.33,
+      "id": "nod-krai-new-moon-statue-1752",
+      "kind": "StatueOfTheNewMoon",
+      "position": { "x": 3613.63, "z": -10227.66 },
+      "rotation": -3.1416
+    }
+  ]
+}

@@ -12,7 +12,7 @@ import { OPEN_WORLD_SCENE_ID } from "#src/services/genshinAssets/shared/constant
 import { orderLandmarks } from "#src/services/genshinAssets/shared/orderLandmarks";
 import { readWorldGroundHeight } from "#src/services/genshinAssets/shared/readWorldGroundHeight";
 import { toHeightOffset } from "#src/services/genshinAssets/shared/toHeightOffset";
-import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
+import { writeRegionData } from "#src/services/genshinAssets/shared/writeRegionData";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { getOrCreate } from "@esposter/shared";
 import { LandmarkKind } from "genshin-world";
@@ -68,7 +68,7 @@ export const writeDomainEntrances = async ({ isDryRun }: DryRunOptions): Promise
       const domainEntrances = placedMap.get(region) ?? [];
       const landmarks = orderLandmarks([...(otherLandmarksMap.get(region) ?? []), ...domainEntrances]);
       if (JSON.stringify(landmarks) !== JSON.stringify(data.landmarks) && !isDryRun)
-        await writeWorldData(file, { ...data, landmarks });
+        await writeRegionData(file, { ...data, landmarks }, { isDryRun });
       return `${region}: ${domainEntrances.length} domain entrances`;
     }),
   );

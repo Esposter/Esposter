@@ -4,7 +4,7 @@ import type { QuestEvent } from "#src/models/quest/QuestEvent";
 import type { QuestProgress } from "#src/models/quest/QuestProgress";
 import type { ReputationCity } from "#src/models/reputation/ReputationCity";
 import type { DomainEntranceLandmark } from "#src/models/world/DomainEntranceLandmark";
-import type { RegionData } from "#src/models/world/RegionData";
+import type { RegionLandmarks } from "#src/models/world/JumpLandmark";
 import type { StatueLandmark } from "#src/models/world/StatueLandmark";
 import type { StatueOfTheNewMoonLandmark } from "#src/models/world/StatueOfTheNewMoonLandmark";
 import type { WaypointLandmark } from "#src/models/world/WaypointLandmark";
@@ -30,6 +30,7 @@ import { LandmarkIdStatuePointIdMap } from "#src/services/statue/LandmarkIdStatu
 import { readOpenWorldTransPointRewards } from "#src/services/transPoint/readOpenWorldTransPointRewards";
 import { readOpenWorldTransPointUnlocks } from "#src/services/transPoint/readOpenWorldTransPointUnlocks";
 import { readRegionData } from "#src/services/world/readRegionData";
+import { readRegionLandmarks } from "#src/services/world/readRegionLandmarks";
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
 import { useWorldMapStore } from "#src/store/map";
 import { useWorldQuestsStore } from "#src/store/quests";
@@ -46,6 +47,7 @@ vi.mock(import("#src/services/reputation/readMondstadtReputation"));
 vi.mock(import("#src/services/transPoint/readOpenWorldTransPointRewards"));
 vi.mock(import("#src/services/transPoint/readOpenWorldTransPointUnlocks"));
 vi.mock(import("#src/services/world/readRegionData"));
+vi.mock(import("#src/services/world/readRegionLandmarks"));
 
 // The reads the composable makes are in the background, so they settle on the next turn of the event loop
 const waitForReads = () =>
@@ -72,7 +74,7 @@ describe(useWorldMapStore, () => {
   beforeEach(() => {
     vi.stubGlobal("computed", computed);
     vi.stubGlobal("shallowRef", shallowRef);
-    vi.mocked(readRegionData).mockResolvedValue(region);
+    vi.mocked(readRegionLandmarks).mockResolvedValue(regionLandmarks);
     vi.mocked(readMondstadtExplorationAreas).mockResolvedValue(explorationAreas);
     vi.mocked(readMondstadtReputation).mockResolvedValue(reputationCity);
     vi.mocked(readOpenWorldTransPointRewards).mockResolvedValue([]);
@@ -144,16 +146,8 @@ describe(useWorldMapStore, () => {
     rotation: 0,
     titleTextKey: GameTextKey.DomainEntrance24,
   };
-  const region: RegionData = {
-    enemyCamps: [],
-    goToPlaces: [],
-    id: REGION_ID,
-    landmarks: [statue, waypoint, domainEntrance],
-    outcropPlaces: [],
-    residents: [],
-    rivers: [],
-    waterfalls: [],
-  };
+  // The region's landmarks file holds the region's jump landmarks, which are all of its landmarks here
+  const regionLandmarks: RegionLandmarks = { landmarks: [statue, waypoint, domainEntrance] };
   const explorationAreas: ExplorationArea[] = [
     {
       areaId: AREA_ID,
@@ -349,16 +343,16 @@ describe(useWorldMapStore, () => {
 
     // Every read is still pending when the statue is unlocked, so the unlock lands before the areas, the regions and the
     // Reputation are in
-    const regionRead = Promise.withResolvers<RegionData>();
+    const regionRead = Promise.withResolvers<RegionLandmarks>();
     const explorationAreasRead = Promise.withResolvers<ExplorationArea[]>();
     const reputationRead = Promise.withResolvers<ReputationCity>();
-    vi.mocked(readRegionData).mockReturnValue(regionRead.promise);
+    vi.mocked(readRegionLandmarks).mockReturnValue(regionRead.promise);
     vi.mocked(readMondstadtExplorationAreas).mockReturnValue(explorationAreasRead.promise);
     vi.mocked(readMondstadtReputation).mockReturnValue(reputationRead.promise);
     const { activateLandmark, reputation, wallet } = createWorldMap();
 
     activateLandmark(statue.id);
-    regionRead.resolve(region);
+    regionRead.resolve(regionLandmarks);
     explorationAreasRead.resolve(explorationAreas);
     reputationRead.resolve(reputationCity);
     await waitForReads();
@@ -494,7 +488,7 @@ describe(useWorldMapStore, () => {
       position: { x: 700, z: 0 },
       rotation: 0,
     };
-    vi.mocked(readRegionData).mockResolvedValue({ ...region, landmarks: [newMoonStatue] });
+    vi.mocked(readRegionLandmarks).mockResolvedValue({ landmarks: [newMoonStatue] });
     const { activateLandmark, unlockedLandmarks } = createWorldMap();
     await waitForReads();
 
@@ -605,13 +599,25 @@ describe(useWorldMapStore, () => {
     expect(domainEntryUnlocked).not.toHaveBeenCalled();
   });
 
+  test("the world's start reads each region's landmarks file and no region's whole file", async () => {
+    expect.hasAssertions();
+
+    // The start reads the jump list from each region's landmarks file. A region's whole data file is read only once the
+    // Player is in reach of it, which the start does not reach
+    createWorldMap();
+    await waitForReads();
+
+    expect(readRegionLandmarks).toHaveBeenCalledWith("region-data", REGION_ID);
+    expect(readRegionData).not.toHaveBeenCalled();
+  });
+
   test("a region read a stopped world began settles into nothing once the world restarts", async () => {
     expect.hasAssertions();
 
     // The first start's region read is still pending when the world stops and starts again, so it lands after
     // The second start has read every region
-    const staleRegionRead = Promise.withResolvers<RegionData>();
-    vi.mocked(readRegionData).mockReturnValueOnce(staleRegionRead.promise);
+    const staleRegionRead = Promise.withResolvers<RegionLandmarks>();
+    vi.mocked(readRegionLandmarks).mockReturnValueOnce(staleRegionRead.promise);
     startTestWorldSession(
       { gameDataBaseUrl: "game-data", getWorldNow: () => epoch },
       { inventory: { ...EMPTY_INVENTORY }, wallet: EMPTY_WALLET },
@@ -625,7 +631,7 @@ describe(useWorldMapStore, () => {
     const { isJumpLandmarksLoaded, jumpLandmarks } = storeToRefs(worldMapStore);
     const loadedLandmarkCount = jumpLandmarks.value.length;
 
-    staleRegionRead.resolve(region);
+    staleRegionRead.resolve(regionLandmarks);
     await waitForReads();
 
     expect(isJumpLandmarksLoaded.value).toBe(true);

@@ -23,7 +23,7 @@ import { readFittedRegions } from "#src/services/genshinAssets/residents/readFit
 import { toResidentPlace } from "#src/services/genshinAssets/residents/toResidentPlace";
 import { SCENE_GROUPS_KEY } from "#src/services/genshinAssets/sceneGroups/constants";
 import { REGION_MAX_DISTANCE } from "#src/services/genshinAssets/shared/constants";
-import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
+import { writeRegionData } from "#src/services/genshinAssets/shared/writeRegionData";
 import { NPC_TABLE_NAME } from "#src/services/genshinText/constants";
 import { mapNpcStandingTalkIds } from "#src/services/genshinText/mapNpcStandingTalkIds";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
@@ -96,7 +96,7 @@ export const writeResidents = async ({ isDryRun }: DryRunOptions): Promise<strin
           ),
         );
       if (!isDryRun && JSON.stringify(residents) !== JSON.stringify(data.residents ?? []))
-        await writeWorldData(file, { ...data, residents });
+        await writeRegionData(file, { ...data, residents }, { isDryRun });
       const withNight = residents.filter(({ night }) => night !== undefined).length;
       return `${region}: ${residents.length} placed with talks, ${residents.length - withNight} with a day spot only, ${withNight} with a night spot`;
     }),

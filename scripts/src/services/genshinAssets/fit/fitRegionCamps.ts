@@ -11,7 +11,7 @@ import { placeFittedMapPoints } from "#src/services/genshinAssets/points/placeFi
 import { readInteractiveMapLabels } from "#src/services/genshinAssets/points/readInteractiveMapLabels";
 import { readFittedRegions } from "#src/services/genshinAssets/residents/readFittedRegions";
 import { CATALOGUE_PATH } from "#src/services/genshinAssets/shared/constants";
-import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
+import { writeRegionData } from "#src/services/genshinAssets/shared/writeRegionData";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { catalogueSchema, findAreaAt } from "genshin-world";
 import { readFile } from "node:fs/promises";
@@ -40,7 +40,7 @@ export const fitRegionCamps = async ({ isDryRun }: DryRunOptions): Promise<strin
         const enemyCamps = buildEnemyCamps(region, places, areaIdAt);
         const enemyCount = enemyCamps.reduce((count, { members }) => count + members.length, 0);
         if (JSON.stringify(enemyCamps) !== JSON.stringify(data.enemyCamps ?? []) && !isDryRun)
-          await writeWorldData(file, replaceEnemyCamps(data, enemyCamps));
+          await writeRegionData(file, replaceEnemyCamps(data, enemyCamps), { isDryRun });
         return `${region}: ${enemyCamps.length} camps, ${enemyCount} enemies, ${places.length - enemyCount} in no area left out`;
       }),
   );

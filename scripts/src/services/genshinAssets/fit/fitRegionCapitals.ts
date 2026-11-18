@@ -13,6 +13,7 @@ import { checkIsRegionGroundFitted } from "#src/services/genshinAssets/shared/ch
 import { WORLD_AREAS_TABLE_NAME, WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { readWorldBaseGrounds } from "#src/services/genshinAssets/shared/readWorldBaseGrounds";
 import { readWorldRecord } from "#src/services/genshinAssets/shared/readWorldRecord";
+import { writeRegionData } from "#src/services/genshinAssets/shared/writeRegionData";
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
 import { readSceneTransportPoints } from "#src/services/genshinAssets/world/readSceneTransportPoints";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
@@ -48,14 +49,16 @@ export const fitRegionCapitals = async ({ isDryRun }: DryRunOptions): Promise<Ga
       Object.entries(RegionCapitalMap).map(async ([region, capital]) => {
         const { landmarkId } = capital;
         const regionFile = join(GameDataset.Regions, `${region}.json`);
-        const regionData = parseMachineJson<{ landmarks: { id: string }[] }>(await readWorldRecord(regionFile));
+        const regionData = parseMachineJson<{ landmarks: { id: string; kind: string }[] }>(
+          await readWorldRecord(regionFile),
+        );
         if (!regionData.landmarks.some(({ id }) => id === landmarkId))
           throw new InvalidOperationError(Operation.Read, regionFile, `has no landmark ${landmarkId}`);
         const writeLandmark = (position: GroundPoint) => {
           const landmarks = regionData.landmarks.map((landmark) =>
             landmark.id === landmarkId ? { ...landmark, position } : landmark,
           );
-          return writeWorldData(regionFile, { ...regionData, landmarks }, { isDryRun });
+          return writeRegionData(regionFile, { ...regionData, landmarks }, { isDryRun });
         };
         // A capital the dump holds no areas for stands at the place its entry sets, so only its landmark is written: its
         // Plateau's height is the region's own ground fit's, which no waypoint gives it

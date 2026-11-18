@@ -8,17 +8,15 @@ import { AchievementEventKind } from "#src/models/achievement/AchievementEventKi
 import { Currency } from "#src/models/inventory/Currency";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
-import { checkIsPlaceLandmark } from "#src/models/world/PlaceLandmark";
 import { checkIsWeeklyBossEntrance } from "#src/services/map/checkIsWeeklyBossEntrance";
 import { computeUnlockedJumpLandmarks } from "#src/services/map/computeUnlockedJumpLandmarks";
-import { JUMP_LANDMARK_KINDS } from "#src/services/map/constants";
 import { readMapSubareaLabels } from "#src/services/map/readMapSubareaLabels";
 import { LandmarkIdStatuePointIdMap } from "#src/services/statue/LandmarkIdStatuePointIdMap";
 import { computeHiddenTransPointIds } from "#src/services/transPoint/computeHiddenTransPointIds";
 import { computeLandmarkPointId } from "#src/services/transPoint/computeLandmarkPointId";
 import { readOpenWorldTransPointRewards } from "#src/services/transPoint/readOpenWorldTransPointRewards";
 import { readOpenWorldTransPointUnlocks } from "#src/services/transPoint/readOpenWorldTransPointUnlocks";
-import { readRegionData } from "#src/services/world/readRegionData";
+import { readRegionLandmarks } from "#src/services/world/readRegionLandmarks";
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
 import { useWorldQuestsStore } from "#src/store/quests";
 import { useWorldSessionStore } from "#src/store/session";
@@ -35,7 +33,7 @@ export const useWorldMapStore = defineStore("world/map", () => {
   const worldAdventureRankStore = useWorldAdventureRankStore();
   const { events, setWallet } = worldSessionStore;
   // Every landmark a jump lands at across the whole catalogue rather than the regions in reach, since the map shows the
-  // Whole continent: each region's data is read once, and a region that fails is logged and left off. The list is
+  // Whole continent: each region's landmarks file is read once, and a region that fails is logged and left off. The list is
   // Complete once every region has settled, read or failed, so isJumpLandmarksLoaded is the point a landmark can be
   // Counted in full. A domain entrance is a jump landmark like a statue or a waypoint, listed once the player has
   // Unlocked it. The map, the minimap, the jump list and a revive offer only the unlocked ones
@@ -86,15 +84,10 @@ export const useWorldMapStore = defineStore("world/map", () => {
     unsettledRegionCount.value = catalogue.regions.length;
     const readRegion = (id: string) => {
       getSynchronizedFunction(() =>
-        getResultAsync(() => readRegionData(regionDataBaseUrl, id)).match(
+        getResultAsync(() => readRegionLandmarks(regionDataBaseUrl, id)).match(
           ({ landmarks }) => {
             if (startedGeneration !== generation) return;
-            jumpLandmarks.value = [
-              ...jumpLandmarks.value,
-              ...landmarks
-                .filter((landmark) => checkIsPlaceLandmark(landmark))
-                .filter(({ kind }) => JUMP_LANDMARK_KINDS.includes(kind)),
-            ];
+            jumpLandmarks.value = [...jumpLandmarks.value, ...landmarks];
             unsettledRegionCount.value = (unsettledRegionCount.value ?? 0) - 1;
           },
           (error) => {

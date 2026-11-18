@@ -1,13 +1,3 @@
-import { LandmarkKind } from "#src/models/world/LandmarkKind";
-
-// The landmarks a jump lands at, as the game teleports to its waypoints, statues and unlocked domain entrances and
-// Nowhere else. A Statue of the New Moon is one of the statues, a waypoint in exploring once it is discovered
-export const JUMP_LANDMARK_KINDS: readonly LandmarkKind[] = [
-  LandmarkKind.DomainEntrance,
-  LandmarkKind.StatueOfTheNewMoon,
-  LandmarkKind.StatueOfTheSeven,
-  LandmarkKind.TeleportWaypoint,
-];
 // How near a locked jump landmark the HUD points to it, and how far it stays pointed to once the player is past the
 // Show distance, in metres, as the wiki gives the two. The gap between them keeps the pointer from flickering at the show distance
 export const NAVIGATION_POINTER_SHOW_DISTANCE = 30;

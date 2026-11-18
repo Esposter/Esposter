@@ -6,7 +6,7 @@ import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/Der
 import { readRegionLandmarkSources } from "#src/services/genshinAssets/shared/readRegionLandmarkSources";
 import { toHeightOffset } from "#src/services/genshinAssets/shared/toHeightOffset";
 import { toLandmarkArrival } from "#src/services/genshinAssets/shared/toLandmarkArrival";
-import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
+import { writeRegionData } from "#src/services/genshinAssets/shared/writeRegionData";
 import { readSceneTransportPoints } from "#src/services/genshinAssets/world/readSceneTransportPoints";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -52,5 +52,5 @@ export const fitRegionLandmarks = async (
     const arrival = toLandmarkArrival(transportPoint, origin, getWorldHeight);
     return { ...landmark, arrival, heightOffset, position, rotation };
   });
-  return writeWorldData(regionFile, { ...regionData, landmarks }, { isDryRun });
+  return writeRegionData(regionFile, { ...regionData, landmarks }, { isDryRun });
 };

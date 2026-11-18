@@ -2,7 +2,7 @@ import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/Der
 import type { DryRunOptions } from "#src/models/shared/DryRunOptions";
 
 import { readWorldRecord } from "#src/services/genshinAssets/shared/readWorldRecord";
-import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
+import { writeRegionData } from "#src/services/genshinAssets/shared/writeRegionData";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { GameDataset } from "genshin-world";
 import { join } from "node:path";
@@ -17,7 +17,7 @@ export const writeRegionKey = async (
   { isDryRun }: DryRunOptions,
 ): Promise<string> => {
   const regionFile = join(GameDataset.Regions, `${component}.json`);
-  const regionData = parseMachineJson<Record<string, unknown>>(await readWorldRecord(regionFile));
-  const path = await writeWorldData(regionFile, { ...regionData, [key]: value }, { isDryRun });
+  const regionData = parseMachineJson<{ landmarks: { kind?: string }[] }>(await readWorldRecord(regionFile));
+  const path = await writeRegionData(regionFile, { ...regionData, [key]: value }, { isDryRun });
   return `${path}: ${summary}${isDryRun ? ", nothing written" : ""}`;
 };
