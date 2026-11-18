@@ -1,8 +1,7 @@
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { GroundPoint } from "genshin-engine";
 
-const squaredDistance = (point: GroundPoint, other: GroundPoint): number =>
-  (point.x - other.x) ** 2 + (point.z - other.z) ** 2;
+import { computeGroundDistanceSquared } from "genshin-engine";
 
 // The living enemies nearest a point, the nearest first, as many as the count given
 export const getNearestLivingEnemies = (enemies: Iterable<Enemy>, point: GroundPoint, count: number): Enemy[] =>
@@ -10,6 +9,7 @@ export const getNearestLivingEnemies = (enemies: Iterable<Enemy>, point: GroundP
     .filter(({ health }) => health > 0)
     .toSorted(
       (firstEnemy, secondEnemy) =>
-        squaredDistance(firstEnemy.position, point) - squaredDistance(secondEnemy.position, point),
+        computeGroundDistanceSquared(firstEnemy.position, point) -
+        computeGroundDistanceSquared(secondEnemy.position, point),
     )
     .slice(0, count);

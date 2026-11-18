@@ -1,8 +1,7 @@
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { GroundPoint } from "genshin-engine";
 
-const squaredDistance = (point: GroundPoint, other: GroundPoint): number =>
-  (point.x - other.x) ** 2 + (point.z - other.z) ** 2;
+import { computeGroundDistanceSquared } from "genshin-engine";
 
 // The enemies the draw takes this frame, as many as its capacity, the nearest to the character first. The map holds every
 // Camp of every loaded region, so the nearest are kept in one pass, each inserted in order, rather than sorting them all.
@@ -15,7 +14,7 @@ export const selectDrawnEnemies = (
   if (target === undefined) return [...enemies].slice(0, capacity);
   let drawn: { distance: number; enemy: Enemy }[] = [];
   for (const enemy of enemies) {
-    const distance = squaredDistance(enemy.position, target);
+    const distance = computeGroundDistanceSquared(enemy.position, target);
     // Once the draw is full, an enemy no nearer than its farthest kept is not drawn
     const farthest = drawn.at(-1);
     if (drawn.length === capacity && farthest !== undefined && distance >= farthest.distance) continue;
