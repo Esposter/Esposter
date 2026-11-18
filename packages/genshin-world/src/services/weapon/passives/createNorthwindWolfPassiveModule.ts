@@ -21,26 +21,36 @@ export const createNorthwindWolfPassiveModule = (params: number[]): PassiveModul
   const burstMaximumStacks = takeOne(params, 5);
   const burstCriticalRate = takeOne(params, 6);
   const cooldownSeconds = takeOne(params, 7);
+  const skillStack = {
+    criticalRate: skillCriticalRate,
+    id: NORTHWIND_WOLF_SKILL_ID,
+    maximumStacks: skillMaximumStacks,
+    seconds: skillSeconds,
+  };
+  const burstStack = {
+    criticalRate: burstCriticalRate,
+    id: NORTHWIND_WOLF_BURST_ID,
+    maximumStacks: burstMaximumStacks,
+    seconds: burstSeconds,
+  };
   return {
     getStrikeDamageBonus: (strike) =>
       strike.attackTag === AttackTag.ElementalSkill || strike.attackTag === AttackTag.ElementalBurst ? damageBonus : 0,
     onKitEvent: (event, { kitEffectState }, combatant) => {
       if (event.kind !== KitEventKind.DamageTaken || event.striker.characterId !== combatant.characterId) return;
-      if (event.attackTag === AttackTag.ElementalSkill)
+      const stack =
+        event.attackTag === AttackTag.ElementalSkill
+          ? skillStack
+          : event.attackTag === AttackTag.ElementalBurst
+            ? burstStack
+            : undefined;
+      if (stack !== undefined)
         addPassiveStack(kitEffectState, combatant.characterId, {
           cooldownSeconds,
-          id: NORTHWIND_WOLF_SKILL_ID,
-          maximumStacks: skillMaximumStacks,
-          perStackBonuses: [{ amount: skillCriticalRate, attribute: Attribute.CriticalRate }],
-          seconds: skillSeconds,
-        });
-      else if (event.attackTag === AttackTag.ElementalBurst)
-        addPassiveStack(kitEffectState, combatant.characterId, {
-          cooldownSeconds,
-          id: NORTHWIND_WOLF_BURST_ID,
-          maximumStacks: burstMaximumStacks,
-          perStackBonuses: [{ amount: burstCriticalRate, attribute: Attribute.CriticalRate }],
-          seconds: burstSeconds,
+          id: stack.id,
+          maximumStacks: stack.maximumStacks,
+          perStackBonuses: [{ amount: stack.criticalRate, attribute: Attribute.CriticalRate }],
+          seconds: stack.seconds,
         });
     },
   };
