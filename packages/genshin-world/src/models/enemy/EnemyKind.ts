@@ -1,4 +1,7 @@
+import type { EnemyDropSource } from "#src/models/enemy/EnemyDropSource";
+
 import { Element } from "#src/models/Element";
+import { enemyDropSourceSchema } from "#src/models/enemy/EnemyDropSource";
 import { EnemyFamily } from "#src/models/enemy/EnemyFamily";
 import { EnemyType } from "#src/models/enemy/EnemyType";
 import { z } from "zod";
@@ -13,6 +16,8 @@ export interface EnemyKind {
   baseDefense: number;
   baseHealth: number;
   defenseCurve: string;
+  // Where the kind's defeat takes its drops from, as its wiki article names it, so the reader joins a family or a template to it
+  dropSource: EnemyDropSource;
   elementResistances: Record<Element, number>;
   enemyFamily: EnemyFamily;
   enemyType: EnemyType;
@@ -31,6 +36,7 @@ export const enemyKindSchema = z.object({
   baseDefense: z.number().nonnegative(),
   baseHealth: z.number().positive(),
   defenseCurve: z.string().min(1),
+  dropSource: enemyDropSourceSchema,
   elementResistances: z.record(z.enum(Element), z.number()),
   enemyFamily: z.enum(EnemyFamily) satisfies z.ZodType<EnemyFamily>,
   enemyType: z.enum(EnemyType) satisfies z.ZodType<EnemyType>,

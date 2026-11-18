@@ -1,18 +1,23 @@
+import type { ArticleDropSource } from "#src/services/genshinAssets/enemies/toArticleDropSource";
 import type {
   EnemyDropFamilyKindRow,
   EnemyDropFamilyRow,
+  EnemyDropSource,
   EnemyDropTable,
   EnemyKind,
   EnemyMaterialDrop,
 } from "genshin-world";
 
+import { buildEnemyDropTemplate } from "#src/services/genshinAssets/enemies/buildEnemyDropTemplate";
 import { DROPS_TABLE_WIKI_MODULE_TITLE } from "#src/services/genshinAssets/enemies/constants";
 import { parseLuaTable } from "#src/services/genshinAssets/enemies/parseLuaTable";
 import { readWikiPageContent } from "#src/services/genshinAssets/enemies/readWikiPageContent";
+import { toArticleDropSource } from "#src/services/genshinAssets/enemies/toArticleDropSource";
 import { toEnemyKindName } from "#src/services/genshinAssets/enemies/toEnemyKindName";
+import { toMaterialItemId } from "#src/services/genshinAssets/enemies/toMaterialItemId";
 import { WIKI_CACHE_DIRECTORY } from "#src/services/genshinAssets/kits/constants";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
-import { EnemyType, FAMILYLESS_ENEMY_KIND_IDS } from "genshin-world";
+import { EnemyType } from "genshin-world";
 import { z } from "zod";
 
 // One of a family's material sets: its material names and their counts, paired by position. A set the wiki gives a fixed
@@ -36,20 +41,6 @@ const dropsModuleSchema = z.object({
 type DropFamilyEntry = z.infer<typeof dropsModuleSchema>["Enemies"][number];
 type MatSet = z.infer<typeof matSetSchema>;
 
-// Each Drops Table an article lists, by the type it names, in the order the article lists them
-const DROPS_TABLE_TYPE_REGEX = /\{\{Drops Table\|type=(?<family>[^|}]+)/gu;
-
-const toItemId = (name: string, nameItemIdsMap: ReadonlyMap<string, number[]>): number => {
-  const itemIds = nameItemIdsMap.get(name) ?? [];
-  if (itemIds.length !== 1)
-    throw new InvalidOperationError(
-      Operation.Read,
-      name,
-      itemIds.length === 0 ? "names no material" : "names more than one material",
-    );
-  return takeOne(itemIds);
-};
-
 const toMaterialDrops = (
   dropFamily: string,
   { fixed, names, nums }: MatSet,
@@ -69,7 +60,7 @@ const toMaterialDrops = (
     );
   return names.map((name, tier) => ({
     expectedCount: takeOne(nums, tier),
-    itemId: toItemId(name, nameItemIdsMap),
+    itemId: toMaterialItemId(name, nameItemIdsMap),
     tier,
   }));
 };
@@ -85,18 +76,36 @@ const toDropTable = (
   mora,
 });
 
-// The drop families the non-boss kinds drop, and the family each kind drops, from the wiki. A kind's family is the first
-// Drops Table its article lists: a kind listing two is an enemy in two states, and the first is the one a defeat drops.
-// A kind whose article lists no Drops Table takes no family, and only a kind on the familyless list may take none. A boss
-// Drops nothing, so its article is not read. Families are keyed by the Drops Table type they are named by, and each
-// Material is resolved to the one item its English name is. Returns the family rows and the kind rows the enemies dataset
-// Publishes
-export const buildEnemyDropFamilies = (
-  enemyKinds: readonly Pick<EnemyKind, "enemyType" | "id" | "nameTextId">[],
+// The drop source a kind's article gives, joined to the kind. A template's materials are read through the drops module
+const toDropSource = (
+  articleSource: ArticleDropSource,
+  nameItemIdsMap: ReadonlyMap<string, number[]>,
+  cacheDirectory: string,
+): EnemyDropSource => {
+  if (articleSource.type === "template")
+    return {
+      materials: buildEnemyDropTemplate(articleSource.template, nameItemIdsMap, cacheDirectory),
+      type: "template",
+    };
+  if (articleSource.type === "family") return { type: "family" };
+  return { type: articleSource.type };
+};
+
+// Each kind's drop source, from its own wiki article, and the drop families the kinds of a family take, from the wiki's
+// Enemies table. A boss's article gives its reward or none, and a kind that is no boss gives a family or a Drops template.
+// A kind whose article lists two Drops Tables takes the first, the one its defeat drops. Families are keyed by
+// The Drops Table type they are named by, and each material is resolved to the one item its English name is. Returns the
+// Family rows, the rows joining each family kind to its family, and every kind with the drop source its article gives
+export const buildEnemyDropSources = <T extends Pick<EnemyKind, "enemyType" | "id" | "nameTextId">>(
+  enemyKinds: readonly T[],
   englishTextMap: ReadonlyMap<string, string>,
   nameItemIdsMap: ReadonlyMap<string, number[]>,
   cacheDirectory: string = WIKI_CACHE_DIRECTORY,
-): { dropFamilies: EnemyDropFamilyRow[]; dropFamilyKinds: EnemyDropFamilyKindRow[] } => {
+): {
+  dropFamilies: EnemyDropFamilyRow[];
+  dropFamilyKinds: EnemyDropFamilyKindRow[];
+  enemyKindRows: (T & { dropSource: EnemyDropSource })[];
+} => {
   const { Enemies: dropFamilies } = dropsModuleSchema.parse(
     parseLuaTable(readWikiPageContent(DROPS_TABLE_WIKI_MODULE_TITLE, cacheDirectory)),
   );
@@ -107,21 +116,30 @@ export const buildEnemyDropFamilies = (
         throw new InvalidOperationError(Operation.Read, member, "is a member of more than one drop family");
       memberDropFamilyMap.set(member, dropFamily);
     }
+  const kindArticleSources = enemyKinds.map((enemyKind) => {
+    const name = toEnemyKindName(enemyKind, englishTextMap);
+    const articleSource = toArticleDropSource(name, readWikiPageContent(name, cacheDirectory));
+    // A boss's article gives its reward or none, and a kind that is no boss gives a family or a template
+    const isBossSource = articleSource.type === "bossReward" || articleSource.type === "none";
+    if (enemyKind.enemyType === EnemyType.Boss && !isBossSource)
+      throw new InvalidOperationError(
+        Operation.Read,
+        name,
+        "is a boss whose article gives a drop family or a template",
+      );
+    if (enemyKind.enemyType !== EnemyType.Boss && isBossSource)
+      throw new InvalidOperationError(
+        Operation.Read,
+        name,
+        "is no boss, but its article gives no drop family or template",
+      );
+    return { articleSource, enemyKind };
+  });
   const dropFamilyRowMap = new Map<string, EnemyDropFamilyRow>();
   const dropFamilyKindRows: EnemyDropFamilyKindRow[] = [];
-  for (const enemyKind of enemyKinds) {
-    if (enemyKind.enemyType === EnemyType.Boss) continue;
-    const name = toEnemyKindName(enemyKind, englishTextMap);
-    const [firstDropsTable] = readWikiPageContent(name, cacheDirectory).matchAll(DROPS_TABLE_TYPE_REGEX);
-    const family = firstDropsTable?.groups?.family?.trim();
-    const isFamilyless = FAMILYLESS_ENEMY_KIND_IDS.has(enemyKind.id);
-    if (family === undefined) {
-      if (!isFamilyless)
-        throw new InvalidOperationError(Operation.Read, name, "has no Drops Table and is on no familyless list");
-      continue;
-    }
-    if (isFamilyless)
-      throw new InvalidOperationError(Operation.Read, name, "has a Drops Table, so it is on no familyless list");
+  for (const { articleSource, enemyKind } of kindArticleSources) {
+    if (articleSource.type !== "family") continue;
+    const { family } = articleSource;
     if (!dropFamilyRowMap.has(family)) {
       const dropFamily = memberDropFamilyMap.get(family);
       if (dropFamily === undefined)
@@ -137,5 +155,9 @@ export const buildEnemyDropFamilies = (
     dropFamilyKinds: dropFamilyKindRows.toSorted(
       (firstKindRow, secondKindRow) => firstKindRow.enemyKindId - secondKindRow.enemyKindId,
     ),
+    enemyKindRows: kindArticleSources.map(({ articleSource, enemyKind }) => ({
+      ...enemyKind,
+      dropSource: toDropSource(articleSource, nameItemIdsMap, cacheDirectory),
+    })),
   };
 };

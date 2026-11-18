@@ -86,14 +86,3 @@ export const EnemyKindId = {
   StormterrorDvalin: 29010104,
 } as const;
 export type EnemyKindId = (typeof EnemyKindId)[keyof typeof EnemyKindId];
-// The non-boss kinds no drop family is joined to, since each one's wiki article draws its drops from a Drops template and
-// Names no Drops Table: the kind takes no family, and its defeat drops only its Character EXP. A boss takes none either,
-// Its reward being claimed from its blossom, so every other non-boss kind must have a family
-export const FAMILYLESS_ENEMY_KIND_IDS: ReadonlySet<number> = new Set<number>([
-  // Biting-Cold Wayob Manifestation
-  EnemyKindId.BitingColdWayobManifestation,
-  // Eroding Avatar of Lava
-  EnemyKindId.ErodingAvatarOfLava,
-  // Secret Source Automaton: Hunter-Seeker
-  EnemyKindId.SecretSourceAutomatonHunterSeeker,
-]);

@@ -1,19 +1,22 @@
 import type { EnemyKind } from "genshin-world";
 
-import { DROPS_TABLE_WIKI_MODULE_TITLE } from "#src/services/genshinAssets/enemies/constants";
+import {
+  DROPS_DATA_WIKI_TITLE,
+  DROPS_TABLE_WIKI_MODULE_TITLE,
+  DROPS_TEMPLATE_WIKI_TITLE,
+} from "#src/services/genshinAssets/enemies/constants";
 import { toEnemyKindName } from "#src/services/genshinAssets/enemies/toEnemyKindName";
-import { EnemyType } from "genshin-world";
 
-// The wiki pages the enemies are read from, each once: the drops module, and the article of every kind that is not a
-// Boss, since a drop family is joined to a kind through its article
+// The wiki pages the enemies are read from: the drops modules and the drops template, then the article of every kind, a
+// Boss's among them, since each kind's drop source is read from its article
 export const toEnemyWikiPageTitles = (
-  enemyKinds: readonly Pick<EnemyKind, "enemyType" | "id" | "nameTextId">[],
+  enemyKinds: readonly Pick<EnemyKind, "id" | "nameTextId">[],
   englishTextMap: ReadonlyMap<string, string>,
 ): string[] => [
   ...new Set([
+    DROPS_DATA_WIKI_TITLE,
     DROPS_TABLE_WIKI_MODULE_TITLE,
-    ...enemyKinds
-      .filter(({ enemyType }) => enemyType !== EnemyType.Boss)
-      .map((enemyKind) => toEnemyKindName(enemyKind, englishTextMap)),
+    DROPS_TEMPLATE_WIKI_TITLE,
+    ...enemyKinds.map((enemyKind) => toEnemyKindName(enemyKind, englishTextMap)),
   ]),
 ];

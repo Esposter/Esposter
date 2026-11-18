@@ -50,7 +50,7 @@ describe(computeEnemyDrops, () => {
 
   test("a defeated enemy with no drop family drops no Mora or materials", () => {
     expect.hasAssertions();
-    // A kind on the familyless list, whose wiki article names no Drops Table, so the reader gives it no drop table
+    // A kind whose drop source is a Drops template, so the reader gives it no drop table
     const erodingAvatar = getEnemyKind(enemyTables.enemyKindMap, EnemyKindId.ErodingAvatarOfLava);
 
     expect(computeEnemyDrops(erodingAvatar, undefined, 1, () => 0)).toStrictEqual({

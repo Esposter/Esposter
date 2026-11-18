@@ -14,7 +14,7 @@ export const readWikiPageContent = (title: string, cacheDirectory: string = WIKI
     throw new InvalidOperationError(
       Operation.Read,
       title,
-      "is in no wiki cache, which `genshin:assets enemy-pages` fills with the drops module and the enemy articles, and `genshin:assets family-labels` with the enemy pages, outside a dry run",
+      "is in no wiki cache, which `genshin:assets enemy-pages` fills with the drops modules, the drops template and the enemy articles, and `genshin:assets family-labels` with the enemy pages, outside a dry run",
     );
   const [page] = wikiPageResponseSchema.parse(parseMachineJson(readFileSync(cachePath, "utf8"))).query.pages;
   const content = page?.revisions?.[0]?.slots.main.content;

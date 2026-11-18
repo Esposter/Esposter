@@ -2,7 +2,7 @@ import type { SubCommandsDef } from "citty";
 
 import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
 import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep";
-import { buildEnemyDropFamilies } from "#src/services/genshinAssets/enemies/buildEnemyDropFamilies";
+import { buildEnemyDropSources } from "#src/services/genshinAssets/enemies/buildEnemyDropSources";
 import { buildEnemyKinds } from "#src/services/genshinAssets/enemies/buildEnemyKinds";
 import { buildReactionPoise } from "#src/services/genshinAssets/enemies/buildReactionPoise";
 import { parseEnemyKinds } from "#src/services/genshinAssets/enemies/parseEnemyKinds";
@@ -17,14 +17,14 @@ export const enemiesCommand: SubCommandsDef[string] = defineCommand({
   args: { ...dryRunArgs },
   meta: {
     description:
-      "Publish the enemy kinds the regions' camps place and the Mondstadt bounties hunt, read from the game's monster, curve and archive tables in the text dump, and every level curve they name, the poise each transformative reaction deals, and the drop family each kind's defeat drops, joined from the wiki's Enemies table and the kinds' articles, to the game data",
+      "Publish the enemy kinds the regions' camps place and the Mondstadt bounties hunt, read from the game's monster, curve and archive tables in the text dump, each with the drop source its wiki article gives, a drop family, a Drops template's materials or a boss's reward, and every level curve they name, the poise each transformative reaction deals and each drop family's table, to the game data",
     name: "enemies",
   },
   run: async ({ args }) => {
     const enemyKindRecords = await buildEnemyKinds();
     const enemyKinds = parseEnemyKinds(enemyKindRecords);
     const englishTextMap = readTextMap(GameLanguage.English);
-    const { dropFamilies, dropFamilyKinds } = buildEnemyDropFamilies(
+    const { dropFamilies, dropFamilyKinds, enemyKindRows } = buildEnemyDropSources(
       enemyKinds,
       englishTextMap,
       readMaterialIdsByName(englishTextMap),
@@ -32,6 +32,7 @@ export const enemiesCommand: SubCommandsDef[string] = defineCommand({
     console.log(toDropFamilyLines(dropFamilies, dropFamilyKinds, enemyKinds, englishTextMap).join("\n"));
     const objects = {
       ...enemyKindRecords,
+      [`${GameDataset.Enemies}/kinds`]: enemyKindRows,
       ...buildReactionPoise(),
       [`${GameDataset.Enemies}/dropFamilies`]: dropFamilies,
       [`${GameDataset.Enemies}/dropFamilyKinds`]: dropFamilyKinds,

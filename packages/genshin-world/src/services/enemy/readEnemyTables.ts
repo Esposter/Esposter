@@ -3,9 +3,7 @@ import type { EnemyTables } from "#src/models/enemy/EnemyTables";
 import { enemyDropFamilyKindRowSchema } from "#src/models/enemy/EnemyDropFamilyKindRow";
 import { enemyDropFamilyRowSchema } from "#src/models/enemy/EnemyDropFamilyRow";
 import { enemyKindSchema } from "#src/models/enemy/EnemyKind";
-import { FAMILYLESS_ENEMY_KIND_IDS } from "#src/models/enemy/EnemyKindId";
 import { enemyLevelCurvesSchema } from "#src/models/enemy/EnemyLevelCurves";
-import { EnemyType } from "#src/models/enemy/EnemyType";
 import { reactionPoiseSchema } from "#src/models/enemy/ReactionPoise";
 import { readGameData } from "#src/services/data/readGameData";
 import { createUniqueArraySchema, InvalidOperationError, Operation } from "@esposter/shared";
@@ -39,18 +37,17 @@ export const readEnemyTables = async (gameDataBaseUrl: string): Promise<EnemyTab
       return [enemyKindId, dropTable] as const;
     }),
   );
-  // A boss has no drop table by design, and every other kind has one unless the familyless list names it. A kind with neither
-  // Is a gap in the record, and a kind with both a row the list should not name, so the read refuses either
-  for (const { enemyType, id } of enemyKinds) {
-    if (enemyType === EnemyType.Boss) continue;
-    const isFamilyless = FAMILYLESS_ENEMY_KIND_IDS.has(id);
-    if (enemyDropTableMap.has(id) === isFamilyless)
+  // A kind is joined to a drop family exactly when its drop source is one, so the read refuses a family kind in no family
+  // And a family row whose kind's article gives another source
+  for (const { dropSource, id } of enemyKinds) {
+    const isFamilyKind = dropSource.type === "family";
+    if (enemyDropTableMap.has(id) !== isFamilyKind)
       throw new InvalidOperationError(
         Operation.Read,
         String(id),
-        isFamilyless
-          ? "has a drop family, so it is on no familyless list"
-          : "has no drop family and is on no familyless list",
+        isFamilyKind
+          ? "takes a drop family, but is in no drop family"
+          : "is in a drop family its drop source does not give",
       );
   }
   return {

@@ -1,5 +1,9 @@
-import { buildEnemyDropFamilies } from "#src/services/genshinAssets/enemies/buildEnemyDropFamilies";
-import { DROPS_TABLE_WIKI_MODULE_TITLE } from "#src/services/genshinAssets/enemies/constants";
+import { buildEnemyDropSources } from "#src/services/genshinAssets/enemies/buildEnemyDropSources";
+import {
+  DROPS_DATA_WIKI_TITLE,
+  DROPS_TABLE_WIKI_MODULE_TITLE,
+  DROPS_TEMPLATE_WIKI_TITLE,
+} from "#src/services/genshinAssets/enemies/constants";
 import { toWikiPageCachePath } from "#src/services/genshinAssets/enemies/toWikiPageCachePath";
 import { EnemyKindId, EnemyType } from "genshin-world";
 import { mkdtemp, rm, writeFile } from "node:fs/promises";
@@ -13,7 +17,7 @@ const writeWikiPage = (cacheDirectory: string, title: string, content: string): 
     JSON.stringify({ query: { pages: [{ revisions: [{ slots: { main: { content } } }], title }] } }),
   );
 
-describe(buildEnemyDropFamilies, () => {
+describe(buildEnemyDropSources, () => {
   // The wiki's Enemies table in its own Lua, cut down to the families these tests join: a family whose article lists a
   // Drops Table of a member that is no family's first, one whose second member is its activated state, and one with a fixed count
   const DROPS_MODULE = `return {
@@ -65,6 +69,9 @@ describe(buildEnemyDropFamilies, () => {
     ["Dormant Fungal Nucleus", [113005]],
     ["Forbidden Curse Scroll", [113103]],
     ["Fungal Spores", [113001]],
+    ["Ignited Seed of Life", [112111]],
+    ["Ignited Seeing Eye", [112112]],
+    ["Ignited Stone", [112110]],
     ["Inactivated Fungal Nucleus", [113004]],
     ["Luminescent Pollen", [113002]],
     ["Ominous Mask", [112007]],
@@ -79,6 +86,18 @@ describe(buildEnemyDropFamilies, () => {
   const erodingAvatarOfLava = { enemyType: EnemyType.Common, id: EnemyKindId.ErodingAvatarOfLava, nameTextId: "4" };
   const anemoHypostasis = { enemyType: EnemyType.Boss, id: EnemyKindId.AnemoHypostasis, nameTextId: "5" };
   const hilichurlShooter = { enemyType: EnemyType.Common, id: EnemyKindId.HilichurlShooter, nameTextId: "6" };
+  // The Drops template module's entry for a template, and the template's own article
+  const DROPS_TEMPLATE =
+    "<includeonly>{{#invoke:Drops|main}}</includeonly><noinclude>{{Documentation|type=Data}}</noinclude>";
+  const DROPS_DATA = `return {
+	['Enemies'] = {
+		{
+			members = {'Avatar of Lava'},
+			MatSet1 = {'Ignited Stone' , 'Ignited Seed of Life' , 'Ignited Seeing Eye'},
+			artifacts = true
+		},
+	}
+}`;
 
   const HILICHURLS_ROW = {
     family: "Hilichurls",
@@ -115,13 +134,14 @@ describe(buildEnemyDropFamilies, () => {
   const FLOATING_ANEMO_FUNGUS_ARTICLE =
     "==Drops==\n{{Drops Table|type=Fungi (Small)}}\n{{Drops Table|type=Fungi (Small, Activated)|notice=0}}";
   const DENDRO_SAMACHURL_ARTICLE = "==Drops==\n{{Drops Table|type=Samachurls}}";
-  // The article of a kind whose drops come from a Drops template, which names no Drops Table, so the kind is familyless
+  // The article of a kind whose drops come from a Drops template, which names no Drops Table
   const ERODING_AVATAR_OF_LAVA_ARTICLE = "==Drops==\n{{Drops|Avatar of Lava}}";
+  const ANEMO_HYPOSTASIS_ARTICLE = "==Drops==\n===Items===\n{{World Boss Rewards\n|gem = Vayuda Turquoise\n}}";
 
   let cacheDirectory: string;
 
   beforeEach(async () => {
-    cacheDirectory = await mkdtemp(join(tmpdir(), "enemy-drop-families-"));
+    cacheDirectory = await mkdtemp(join(tmpdir(), "enemy-drop-sources-"));
     await writeWikiPage(cacheDirectory, DROPS_TABLE_WIKI_MODULE_TITLE, DROPS_MODULE);
   });
 
@@ -134,15 +154,24 @@ describe(buildEnemyDropFamilies, () => {
     await writeWikiPage(cacheDirectory, "Hilichurl Fighter", HILICHURL_FIGHTER_ARTICLE);
     await writeWikiPage(cacheDirectory, "Dendro Samachurl", DENDRO_SAMACHURL_ARTICLE);
 
-    expect(
-      buildEnemyDropFamilies([hilichurlFighter, dendroSamachurl], ENGLISH_TEXT_MAP, NAME_ITEM_IDS_MAP, cacheDirectory),
-    ).toStrictEqual({
+    const { dropFamilies, dropFamilyKinds, enemyKindRows } = buildEnemyDropSources(
+      [hilichurlFighter, dendroSamachurl],
+      ENGLISH_TEXT_MAP,
+      NAME_ITEM_IDS_MAP,
+      cacheDirectory,
+    );
+
+    expect({ dropFamilies, dropFamilyKinds }).toStrictEqual({
       dropFamilies: [HILICHURLS_ROW, SAMACHURLS_ROW],
       dropFamilyKinds: [
         { enemyKindId: EnemyKindId.HilichurlFighter, family: "Hilichurls" },
         { enemyKindId: EnemyKindId.DendroSamachurl, family: "Samachurls" },
       ],
     });
+    expect(enemyKindRows).toStrictEqual([
+      { ...hilichurlFighter, dropSource: { type: "family" } },
+      { ...dendroSamachurl, dropSource: { type: "family" } },
+    ]);
   });
 
   test("a kind whose article lists two Drops Tables takes the first, as Floating Anemo Fungus does", async () => {
@@ -150,56 +179,82 @@ describe(buildEnemyDropFamilies, () => {
     await writeWikiPage(cacheDirectory, "Floating Anemo Fungus", FLOATING_ANEMO_FUNGUS_ARTICLE);
 
     expect(
-      buildEnemyDropFamilies([floatingAnemoFungus], ENGLISH_TEXT_MAP, NAME_ITEM_IDS_MAP, cacheDirectory),
+      buildEnemyDropSources([floatingAnemoFungus], ENGLISH_TEXT_MAP, NAME_ITEM_IDS_MAP, cacheDirectory),
     ).toStrictEqual({
       dropFamilies: [FUNGI_SMALL_ROW],
       dropFamilyKinds: [{ enemyKindId: EnemyKindId.FloatingAnemoFungus, family: "Fungi (Small)" }],
+      enemyKindRows: [{ ...floatingAnemoFungus, dropSource: { type: "family" } }],
     });
   });
 
-  test("a boss drops nothing, so its article is not read and it takes no family", () => {
+  test("a boss takes its article's reward as its drop source, and no family", async () => {
     expect.hasAssertions();
+    await writeWikiPage(cacheDirectory, "Anemo Hypostasis", ANEMO_HYPOSTASIS_ARTICLE);
 
-    expect(
-      buildEnemyDropFamilies([anemoHypostasis], ENGLISH_TEXT_MAP, NAME_ITEM_IDS_MAP, cacheDirectory),
-    ).toStrictEqual({ dropFamilies: [], dropFamilyKinds: [] });
-  });
-
-  test("a kind whose article has no Drops Table is familyless only when the familyless list names it", async () => {
-    expect.hasAssertions();
-    await writeWikiPage(cacheDirectory, "Eroding Avatar of Lava", ERODING_AVATAR_OF_LAVA_ARTICLE);
-    await writeWikiPage(cacheDirectory, "Hilichurl Fighter", "==Drops==\n{{Drops|Hilichurl Fighter}}");
-
-    expect(
-      buildEnemyDropFamilies([erodingAvatarOfLava], ENGLISH_TEXT_MAP, NAME_ITEM_IDS_MAP, cacheDirectory),
-    ).toStrictEqual({ dropFamilies: [], dropFamilyKinds: [] });
-    expect(() =>
-      buildEnemyDropFamilies([hilichurlFighter], ENGLISH_TEXT_MAP, NAME_ITEM_IDS_MAP, cacheDirectory),
-    ).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Read, name: Hilichurl Fighter, has no Drops Table and is on no familyless list]`,
+    expect(buildEnemyDropSources([anemoHypostasis], ENGLISH_TEXT_MAP, NAME_ITEM_IDS_MAP, cacheDirectory)).toStrictEqual(
+      {
+        dropFamilies: [],
+        dropFamilyKinds: [],
+        enemyKindRows: [{ ...anemoHypostasis, dropSource: { type: "bossReward" } }],
+      },
     );
   });
 
-  test("every non-boss kind is given a family or is on the familyless list, and a boss is given none", async () => {
+  test("a boss whose article names no reward takes none, and a kind that is no boss takes none only by refusal", async () => {
     expect.hasAssertions();
-    await writeWikiPage(cacheDirectory, "Hilichurl Fighter", HILICHURL_FIGHTER_ARTICLE);
-    await writeWikiPage(cacheDirectory, "Floating Anemo Fungus", FLOATING_ANEMO_FUNGUS_ARTICLE);
-    await writeWikiPage(cacheDirectory, "Dendro Samachurl", DENDRO_SAMACHURL_ARTICLE);
-    await writeWikiPage(cacheDirectory, "Eroding Avatar of Lava", ERODING_AVATAR_OF_LAVA_ARTICLE);
+    await writeWikiPage(cacheDirectory, "Anemo Hypostasis", "==Stats==\nNone.");
+    await writeWikiPage(cacheDirectory, "Hilichurl Fighter", "==Stats==\nNone.");
 
     expect(
-      buildEnemyDropFamilies(
-        [hilichurlFighter, floatingAnemoFungus, dendroSamachurl, erodingAvatarOfLava, anemoHypostasis],
-        ENGLISH_TEXT_MAP,
-        NAME_ITEM_IDS_MAP,
-        cacheDirectory,
-      ),
+      buildEnemyDropSources([anemoHypostasis], ENGLISH_TEXT_MAP, NAME_ITEM_IDS_MAP, cacheDirectory).enemyKindRows,
+    ).toStrictEqual([{ ...anemoHypostasis, dropSource: { type: "none" } }]);
+    expect(() =>
+      buildEnemyDropSources([hilichurlFighter], ENGLISH_TEXT_MAP, NAME_ITEM_IDS_MAP, cacheDirectory),
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: Hilichurl Fighter, is no boss, but its article gives no drop family or template]`,
+    );
+  });
+
+  test("a boss whose article gives a family, and a kind that is no boss whose article gives a reward, are refused", async () => {
+    expect.hasAssertions();
+    await writeWikiPage(cacheDirectory, "Anemo Hypostasis", HILICHURL_FIGHTER_ARTICLE);
+    await writeWikiPage(cacheDirectory, "Hilichurl Fighter", ANEMO_HYPOSTASIS_ARTICLE);
+
+    expect(() =>
+      buildEnemyDropSources([anemoHypostasis], ENGLISH_TEXT_MAP, NAME_ITEM_IDS_MAP, cacheDirectory),
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: Anemo Hypostasis, is a boss whose article gives a drop family or a template]`,
+    );
+    expect(() =>
+      buildEnemyDropSources([hilichurlFighter], ENGLISH_TEXT_MAP, NAME_ITEM_IDS_MAP, cacheDirectory),
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: Hilichurl Fighter, is no boss, but its article gives no drop family or template]`,
+    );
+  });
+
+  test("a kind whose article names a Drops template takes the template's materials by tier, with no count", async () => {
+    expect.hasAssertions();
+    await writeWikiPage(cacheDirectory, "Eroding Avatar of Lava", ERODING_AVATAR_OF_LAVA_ARTICLE);
+    await writeWikiPage(cacheDirectory, DROPS_TEMPLATE_WIKI_TITLE, DROPS_TEMPLATE);
+    await writeWikiPage(cacheDirectory, DROPS_DATA_WIKI_TITLE, DROPS_DATA);
+
+    expect(
+      buildEnemyDropSources([erodingAvatarOfLava], ENGLISH_TEXT_MAP, NAME_ITEM_IDS_MAP, cacheDirectory),
     ).toStrictEqual({
-      dropFamilies: [FUNGI_SMALL_ROW, HILICHURLS_ROW, SAMACHURLS_ROW],
-      dropFamilyKinds: [
-        { enemyKindId: EnemyKindId.HilichurlFighter, family: "Hilichurls" },
-        { enemyKindId: EnemyKindId.DendroSamachurl, family: "Samachurls" },
-        { enemyKindId: EnemyKindId.FloatingAnemoFungus, family: "Fungi (Small)" },
+      dropFamilies: [],
+      dropFamilyKinds: [],
+      enemyKindRows: [
+        {
+          ...erodingAvatarOfLava,
+          dropSource: {
+            materials: [
+              { itemId: 112110, tier: 0 },
+              { itemId: 112111, tier: 1 },
+              { itemId: 112112, tier: 2 },
+            ],
+            type: "template",
+          },
+        },
       ],
     });
   });
@@ -213,7 +268,7 @@ describe(buildEnemyDropFamilies, () => {
     );
 
     expect(() =>
-      buildEnemyDropFamilies([hilichurlShooter], ENGLISH_TEXT_MAP, NAME_ITEM_IDS_MAP, cacheDirectory),
+      buildEnemyDropSources([hilichurlShooter], ENGLISH_TEXT_MAP, NAME_ITEM_IDS_MAP, cacheDirectory),
     ).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: Sumpter Beast (Hilichurls), has a material of a fixed count, which no drop table models]`,
     );

@@ -23,12 +23,28 @@ describe(parseLuaTable, () => {
     });
   });
 
-  test("fails on a table holding both named fields and positional values", () => {
+  test("keeps the positional values of a table that also names fields under their own indices", () => {
     expect.hasAssertions();
 
-    expect(() => parseLuaTable("return { name = 'a', 'b' }")).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Read, name: a Lua table, mixes named fields and positional values]`,
-    );
+    expect(parseLuaTable("return { 'Inactivated', 'Dormant', condition = 'Activated/Scorched' }")).toStrictEqual({
+      1: "Inactivated",
+      2: "Dormant",
+      condition: "Activated/Scorched",
+    });
+  });
+
+  test("reads a quoted key in brackets as a field, and true and false as booleans", () => {
+    expect.hasAssertions();
+
+    expect(
+      parseLuaTable(`return {
+        ['Base_Info'] = { ['type-1'] = { Mora = '≤200' } },
+        Enemies = { { members = {'Avatar of Lava'}, artifacts = true, hidden = false } },
+      }`),
+    ).toStrictEqual({
+      Base_Info: { "type-1": { Mora: "≤200" } },
+      Enemies: [{ artifacts: true, hidden: false, members: ["Avatar of Lava"] }],
+    });
   });
 
   test("a quoted brace is a string, not the end of its table", () => {

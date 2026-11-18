@@ -27,6 +27,10 @@ export const BOSS_KIND_IDS: EnemyKindId[] = [
 ];
 // The wiki module whose Enemies table gives each drop family's Mora and materials, by the members a Drops Table names
 export const DROPS_TABLE_WIKI_MODULE_TITLE = "Module:Drops Table/data";
+// The wiki page a Drops template is written as, which invokes the drops module, and the module's data, the Enemies table a
+// Template's materials are read from by the one entry that names it
+export const DROPS_TEMPLATE_WIKI_TITLE = "Template:Drops";
+export const DROPS_DATA_WIKI_TITLE = "Module:Drops/data";
 // The block each monster's Animator controller is exported from, by the controller's name. A controller's block is found
 // Once, by scanning the monster-named blocks, and recorded here, so a run reads the record rather than scanning again. The
 // Asset index names no AnimatorController, so no index row finds it

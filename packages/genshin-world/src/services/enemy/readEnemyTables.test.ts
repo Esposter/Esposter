@@ -1,23 +1,54 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { FAMILYLESS_ENEMY_KIND_IDS } from "#src/models/enemy/EnemyKindId";
-import { EnemyType } from "#src/models/enemy/EnemyType";
+import { EnemyKindId } from "#src/models/enemy/EnemyKindId";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { describe, expect, test } from "vitest";
 
 describe(readEnemyTables, () => {
-  // A non-boss kind with no drop table drops only its Character EXP, so the familyless list must name exactly those kinds of
-  // The pinned record, and the read refuses any other kind with no table
-  test("the kinds with no drop table are the familyless list's", async () => {
+  // A kind whose article names a Drops template takes the template's materials as its drop source, one tier each, and the
+  // Wiki gives them no count, so none is read
+  test.each([
+    {
+      enemyKindId: EnemyKindId.ErodingAvatarOfLava,
+      materials: [
+        { itemId: 112110, tier: 0 },
+        { itemId: 112111, tier: 1 },
+        { itemId: 112112, tier: 2 },
+      ],
+      name: "Eroding Avatar of Lava",
+    },
+    {
+      enemyKindId: EnemyKindId.SecretSourceAutomatonHunterSeeker,
+      materials: [
+        { itemId: 112113, tier: 0 },
+        { itemId: 112114, tier: 1 },
+        { itemId: 112115, tier: 2 },
+      ],
+      name: "Secret Source Automaton: Hunter-Seeker",
+    },
+    {
+      enemyKindId: EnemyKindId.BitingColdWayobManifestation,
+      materials: [
+        { itemId: 112107, tier: 0 },
+        { itemId: 112108, tier: 1 },
+        { itemId: 112109, tier: 2 },
+      ],
+      name: "Biting-Cold Wayob Manifestation",
+    },
+  ])("$name's drop source is its Drops template's materials by tier", async ({ enemyKindId, materials }) => {
     expect.hasAssertions();
 
     const { enemyDropTableMap, enemyKindMap } = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-    const kindIdsWithoutDropTable = [...enemyKindMap.values()]
-      .filter(({ enemyType, id }) => enemyType !== EnemyType.Boss && !enemyDropTableMap.has(id))
-      .map(({ id }) => id)
-      .toSorted((firstId, secondId) => firstId - secondId);
 
-    expect(kindIdsWithoutDropTable).toStrictEqual(
-      [...FAMILYLESS_ENEMY_KIND_IDS].toSorted((firstId, secondId) => firstId - secondId),
-    );
+    expect(enemyKindMap.get(enemyKindId)?.dropSource).toStrictEqual({ materials, type: "template" });
+    expect(enemyDropTableMap.has(enemyKindId)).toBe(false);
+  });
+
+  test("a boss's drop source is its reward, and it reads no drop table", async () => {
+    expect.hasAssertions();
+
+    const { enemyDropTableMap, enemyKindMap } = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
+
+    expect(enemyKindMap.get(EnemyKindId.AnemoHypostasis)?.dropSource).toStrictEqual({ type: "bossReward" });
+    expect(enemyDropTableMap.has(EnemyKindId.AnemoHypostasis)).toBe(false);
   });
 });

@@ -4,10 +4,9 @@ import type { EnemyKind } from "#src/models/enemy/EnemyKind";
 import type { EnemyLevelCurves } from "#src/models/enemy/EnemyLevelCurves";
 import type { ReactionPoise } from "#src/models/enemy/ReactionPoise";
 
-// The game's enemy tables, read as the world opens: every kind it places by its id, the drop table each kind's defeat
-// Drops by the kind's id, which is none for a boss and none for a familyless kind (the read refuses any other kind with no
-// Table), the level curves each kind's base stats are scaled along, and the poise each transformative reaction deals, by
-// The reaction
+// The game's enemy tables, read as the world opens: every kind it places by its id, with the drop source its article gives,
+// The drop table each family kind's defeat drops by the kind's id, which only a family kind has, the level curves each
+// Kind's base stats are scaled along, and the poise each transformative reaction deals, by the reaction
 export interface EnemyTables {
   enemyDropTableMap: ReadonlyMap<number, EnemyDropTable>;
   enemyKindMap: ReadonlyMap<number, EnemyKind>;
