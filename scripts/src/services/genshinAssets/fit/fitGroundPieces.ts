@@ -59,10 +59,10 @@ export const fitGroundPieces = async (piece: GroundPiece, source: GroundSource):
         return fit;
       },
     );
-    const groupPieces = groups.map(({ fit, indices }) => {
-      const members = indices.map((index) => takeOne(quarters, index).piece);
-      return { fit, piece: members.length === 1 ? takeOne(members, 0) : toJoinedPiece(indices) };
-    });
+    const groupPieces = groups.map(({ fit, indices }) => ({
+      fit,
+      piece: indices.length === 1 ? takeOne(quarters, indices[0]).piece : toJoinedPiece(indices),
+    }));
     const joinNotes = groups
       .filter(({ indices }) => indices.length > 1)
       .map(
