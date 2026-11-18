@@ -2,6 +2,7 @@ import type { BossMove } from "#src/models/bosses/BossMove";
 
 import { EnemyKindId } from "#src/models/enemy/EnemyKindId";
 import { ANEMO_HYPOSTASIS_MOVES } from "#src/services/bosses/anemoHypostasis";
+import { EXPERIMENTAL_FIELD_GENERATOR_MOVES } from "#src/services/bosses/experimentalFieldGenerator";
 import { PERPETUAL_MECHANICAL_ARRAY_MOVES } from "#src/services/bosses/perpetualMechanicalArray";
 import { STORMTERROR_MOVES } from "#src/services/bosses/stormterror";
 
@@ -10,4 +11,5 @@ export const EnemyKindMovesMap: Partial<Record<EnemyKindId, readonly BossMove[]>
   [EnemyKindId.AnemoHypostasis]: ANEMO_HYPOSTASIS_MOVES,
   [EnemyKindId.PerpetualMechanicalArray]: PERPETUAL_MECHANICAL_ARRAY_MOVES,
   [EnemyKindId.StormterrorDvalin]: STORMTERROR_MOVES,
+  [EnemyKindId.ExperimentalFieldGenerator]: EXPERIMENTAL_FIELD_GENERATOR_MOVES,
 };
