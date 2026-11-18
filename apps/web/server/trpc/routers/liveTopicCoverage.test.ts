@@ -25,6 +25,9 @@ export interface LiveTopicCalls {
 
 const compareStrings = (first: string, second: string) => first.localeCompare(second);
 
+// The answer each query gave, as its text, with the topics its response watched
+type Reads = Map<string, { answer: string; topics: Topic[] }>;
+
 // The paths of a router's procedures of one type, leaving out those that declare a static reason, and those that declare
 // Their topics by hand, which the cutover removes: until then their declaration is checked by nothing but themselves
 const getWatchedPaths = (procedures: AnyRouter["_def"]["procedures"], type: string) =>
@@ -70,38 +73,37 @@ export const expectLiveTopicCoverage = async (
   );
   expect(uncoveredTables.toSorted(compareStrings).join(", ")).toBe("");
 
-  // Each write reads the rows the writes before it left, so it runs after them and the check of each one reads the state
-  // The write before it produced
-  const checkWrite = async (write: LiveTopicCall): Promise<string[]> => {
-    const readsBefore = new Map<string, { answer: string; topics: Topic[] }>();
+  // Each write reads the rows the writes before it left, so the reads a write is checked against are the reads the write before
+  // It left behind: no write runs between the two, so a query runs once per write rather than once before and once after it
+  const readQueries = async (): Promise<Reads> => {
+    const reads: Reads = new Map();
     await Promise.all(
       queries.map(async (query) => {
         const responseHeaders = new Headers();
         const answer = await query.call({ ...context, responseHeaders });
-        readsBefore.set(query.path, {
-          answer: JSON.stringify(answer),
-          topics: getTopicsOf(responseHeaders, query.path),
-        });
+        reads.set(query.path, { answer: JSON.stringify(answer), topics: getTopicsOf(responseHeaders, query.path) });
       }),
     );
-
-    MockPublishedTopics.length = 0;
-    await write.call({ ...context, responseHeaders: new Headers() });
-    const published = new Set(MockPublishedTopics);
-    const unwoken = await Promise.all(
-      queries.map(async (query) => {
-        const { answer, topics } = readsBefore.get(query.path) ?? { answer: "", topics: [] };
-        const answerAfter = JSON.stringify(await query.call({ ...context, responseHeaders: new Headers() }));
-        return answerAfter !== answer && !topics.some((topic) => published.has(topic))
-          ? [`${write.path} -> ${query.path}`]
-          : [];
-      }),
-    );
-    return unwoken.flat();
+    return reads;
   };
 
   const unwokenReads: string[] = [];
-  // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: each write reads the rows the writes before it left
-  for (const write of writes) unwokenReads.push(...(await checkWrite(write)));
+  // Each write is checked against the reads it follows, and the reads it leaves are the ones the next write follows
+  const checkWrite = async (write: LiveTopicCall, readsBefore: Reads): Promise<Reads> => {
+    MockPublishedTopics.length = 0;
+    await write.call({ ...context, responseHeaders: new Headers() });
+    const published = new Set(MockPublishedTopics);
+    const readsAfter = await readQueries();
+    for (const query of queries) {
+      const { answer, topics } = readsBefore.get(query.path) ?? { answer: "", topics: [] };
+      if (readsAfter.get(query.path)?.answer !== answer && !topics.some((topic) => published.has(topic)))
+        unwokenReads.push(`${write.path} -> ${query.path}`);
+    }
+    return readsAfter;
+  };
+
+  let reads = await readQueries();
+  // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: each write runs after the one before it, and reads the rows that one left
+  for (const write of writes) reads = await checkWrite(write, reads);
   expect(unwokenReads.toSorted(compareStrings).join(", ")).toBe("");
 };
