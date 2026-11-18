@@ -9,6 +9,7 @@ import { createLikeLiveTopicCalls } from "#server/trpc/routers/likeLiveTopicCall
 import { expectLiveTopicCoverage } from "#server/trpc/routers/liveTopicCoverage.test";
 import { createPostLiveTopicCalls } from "#server/trpc/routers/postLiveTopicCalls.test";
 import { createCategoryLiveTopicCalls } from "#server/trpc/routers/room/categoryLiveTopicCalls.test";
+import { createFilterLiveTopicCalls } from "#server/trpc/routers/room/filterLiveTopicCalls.test";
 import { createRoomLiveTopicCalls } from "#server/trpc/routers/room/liveTopicCalls.test";
 import { createSearchHistoryLiveTopicCalls } from "#server/trpc/routers/searchHistoryLiveTopicCalls.test";
 import { createWebhookLiveTopicCalls } from "#server/trpc/routers/webhookLiveTopicCalls.test";
@@ -34,6 +35,7 @@ describe("live topic coverage across the app", () => {
       await createWebhookLiveTopicCalls(context),
       await createSearchHistoryLiveTopicCalls(context),
       await createCategoryLiveTopicCalls(context),
+      await createFilterLiveTopicCalls(context),
     ];
     await expectLiveTopicCoverage(
       trpcRouter,

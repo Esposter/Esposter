@@ -2,16 +2,13 @@ import type { RoomFilterInMessage } from "@esposter/db-schema";
 
 import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { router } from "#server/trpc/index";
-import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { getPermissionsProcedure } from "#server/trpc/procedure/room/getPermissionsProcedure";
 import { upsertRoomFilterInputSchema } from "#shared/models/db/room/UpsertRoomFilterInput";
 import {
   DatabaseEntityType,
-  getTopic,
   roomFiltersInMessage,
   roomIdSchema,
   RoomPermission,
-  TopicKind,
   WordFilterAction,
 } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
@@ -19,15 +16,13 @@ import { Operation } from "@esposter/shared";
 export const filterRouter = router({
   // Gated like the write it sits beside, rather than at membership: the banned words *are* the filter, so a
   // Member who can read them can spell around every one of them
-  readRoomFilter: getTopicsProcedure(
-    getPermissionsProcedure(RoomPermission.ManageRoom, roomIdSchema, "roomId"),
-    ({ input: { roomId } }) => [getTopic(TopicKind.Room, roomId)],
-  ).query<RoomFilterInMessage | undefined>(({ ctx, input: { roomId } }) =>
-    ctx.db.query.roomFiltersInMessage.findFirst({ where: { roomId: { eq: roomId } } }),
-  ),
-  upsertRoomFilter: getTopicsProcedure(
-    getPermissionsProcedure(RoomPermission.ManageRoom, upsertRoomFilterInputSchema, "roomId"),
-    ({ input: { roomId } }) => [getTopic(TopicKind.Room, roomId)],
+  readRoomFilter: getPermissionsProcedure(RoomPermission.ManageRoom, roomIdSchema, "roomId").query<
+    RoomFilterInMessage | undefined
+  >(({ ctx, input: { roomId } }) => ctx.db.query.roomFiltersInMessage.findFirst({ where: { roomId: { eq: roomId } } })),
+  upsertRoomFilter: getPermissionsProcedure(
+    RoomPermission.ManageRoom,
+    upsertRoomFilterInputSchema,
+    "roomId",
   ).mutation<RoomFilterInMessage>(async ({ ctx, input: { action, roomId, timeoutDurationMs, words } }) => {
     // A duration only belongs to a Timeout action — clear it for every other action so a stale value
     // Can never re-arm a timeout after the action is switched back.
