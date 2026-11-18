@@ -2,7 +2,6 @@
 // Categories, emojis and members, `roomList` the rooms a user is in, and `feed` the public post feed, whose id is the
 // Feed's name
 export const TopicKind = {
-  Achievement: "achievement",
   Block: "block",
   Bookmark: "bookmark",
   Clicker: "clicker",
@@ -10,10 +9,8 @@ export const TopicKind = {
   Feed: "feed",
   Friend: "friend",
   FriendRequest: "friendRequest",
-  Genshin: "genshin",
   Notification: "notification",
   Post: "post",
-  PushSubscription: "pushSubscription",
   Resource: "resource",
   ResourceList: "resourceList",
   Room: "room",
@@ -22,7 +19,6 @@ export const TopicKind = {
   SearchHistory: "searchHistory",
   Session: "session",
   ThreadFollow: "threadFollow",
-  TodoList: "todoList",
   User: "user",
   Webhook: "webhook",
 } as const;
