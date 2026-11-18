@@ -71,9 +71,9 @@ useRafFn(() => {
   pointer-events: none;
 }
 
+/* Each kind sets its own transform: a rule here would outrank theirs on specificity and cancel their growth and rise */
 .world-effects > div {
   position: absolute;
-  transform: translate(-50%, -50%);
 }
 
 /* Provisional: the spark and the flash are one disc that grows and fades, each with its own size and glow, until task 1.1
