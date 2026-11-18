@@ -1,10 +1,51 @@
 import type { GroundPiece } from "#src/models/genshinAssets/fit/GroundPiece";
 import type { GroundSource } from "#src/models/genshinAssets/fit/GroundSource";
+import type { DomainEntranceLandmark } from "genshin-world";
 
 import { fitGroundPiece } from "#src/services/genshinAssets/fit/fitGroundPiece";
+import { GameTextKey } from "genshin-text";
+import { DomainKind, LandmarkKind } from "genshin-world";
 import { describe, expect, test } from "vitest";
 
+const createDomainEntrance = (entryId: number, x: number): DomainEntranceLandmark => ({
+  areaId: "test-area",
+  arrival: { heightOffset: 0, position: { x, z: 0 }, rotation: 0 },
+  domainKind: DomainKind.Blessing,
+  entryId,
+  heightOffset: 0,
+  id: `domain-entrance-${entryId}`,
+  kind: LandmarkKind.DomainEntrance,
+  position: { x, z: 0 },
+  rotation: 0,
+  titleTextKey: GameTextKey.DomainEntrance24,
+});
+
 describe(fitGroundPiece, () => {
+  test("reads a place outside its piece's outline as outside its ground, never against the tiles under it", async () => {
+    expect.hasAssertions();
+
+    const piece: GroundPiece = {
+      centre: { x: 0, z: 0 },
+      // The piece's outline is the half of its square west of x = 0, as a neighbouring area's ground lies east of it
+      checkIsInside: (x) => x <= 0,
+      half: 300,
+      key: "ground/test/outline",
+    };
+    const source: GroundSource = {
+      getCityAreas: () => Promise.resolve([]),
+      getGameHeight: (x, z) => Math.sin(x / 90) * 3 + Math.cos(z / 70) * 2 + 50,
+      landmarks: [createDomainEntrance(1, -100), createDomainEntrance(2, 100)],
+      origin: [0, 0, 0],
+    };
+
+    const { build } = await fitGroundPiece(piece, source);
+    const clearedNote = build.notes.find((note) => note.includes("places cleared of the residual, "));
+
+    expect(clearedNote).toContain("domain-entrance-1 60 metres from the bar's radius, its residual ");
+    expect(clearedNote).toContain("domain-entrance-2 60 metres from the bar's radius, outside its ground");
+    expect(clearedNote).not.toContain("domain-entrance-2 60 metres from the bar's radius, its residual ");
+  });
+
   test("reports a band with no sample in words, never as NaN, where no terrain lies under the centre", async () => {
     expect.hasAssertions();
 

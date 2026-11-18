@@ -182,6 +182,9 @@ export const fitGroundPiece = async (piece: GroundPiece, source: GroundSource): 
         `${key}: composed ${getBandsReport(groundMisses, computeRootMeanSquare, " metres")}, ${roundFitted(computeRootMeanSquare(groundMisses.values))} over its samples and ${roundFitted(computeRootMeanSquare(unfadedMisses.values))} without its residual`,
         `${key}: places cleared of the residual, ${footprints
           .map(({ id: placeId, radius, source: radiusSource, x, z }) => {
+            // A place outside the piece's own outline stands on another area's ground, which this piece's hills only
+            // Extrapolate past their edge, so it is not read against the tiles
+            if (!checkIsInside(x, z)) return `${placeId} ${radius} metres from ${radiusSource}, outside its ground`;
             const tileHeight = getGameHeight(originX + x, originZ - z) - originY;
             // A place on another region's tiles, as Windrise's oak is inside Mondstadt's extent, has no tile here to stand over
             const overTiles = Number.isFinite(tileHeight)
