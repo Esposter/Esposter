@@ -19,7 +19,7 @@ const AVATAR_MODULE_DIRECTORY = "services/character/avatar";
 const GCG_MODULE_DIRECTORIES = ["services/gcg", "components/Gcg"];
 // Directories nothing in the repo imports from the package's barrel. The barrel leaves their modules out, so the
 // entry does not name them, and a module under one loads only when a module that reaches it does
-const UNREFERENCED_MODULE_DIRECTORIES = ["components/Weapon"];
+const UNREFERENCED_MODULE_DIRECTORIES = ["components/Weapon", "composables"];
 // The parity page's modules the tooling in `scripts` imports as types. The page writes to `window` when it loads, so
 // No wildcard reaches its modules
 const PARITY_EXPORT_NAMES = [
