@@ -3,3 +3,4 @@ affected_areas: [genshin]
 x-phase: 1
 x-model: claude-opus-5-5
 x-needs: [game-exports]
+x-waiting: "1.4 waits on the Windrise compute queue item windrise-ground-structure, which waits on the Shape pass holding, since the Surface pass is refused over its failing rows; 2.2 and 2.3 wait on 1.4 deciding the layers step, and 3.1 on each other region's base maps being exported."

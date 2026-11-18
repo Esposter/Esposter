@@ -7,15 +7,19 @@
   - The reading is confirmed as real and not a broken measure: no statistic is zero on either side, so the share is not the all-zero 1.0000 of the earlier snapshot, and the same function returns the exports' own halves at 0.0369. Our Ground carries about twice the reference's variance and five to twenty-five times its band energies, so the shortfall is excess fine detail, not missing detail.
   - Decision on scope item 3: not built. Layers' detail adds energy to the terrain, and the miss is an excess at the fine bands, so layers' detail would widen it. The layers' step waits on the Ground's structure being re-read under the solved octave amplitudes, which needs the game exports (`x-needs`).
 - [ ] 1.4 Re-read the Ground's structure under the solved octave amplitudes (8fe537172a) against the game exports, with the same family mask and gate pair as task 1.3. Verify: the new dump and share are written under this task, and the layers' step in task 2.1 is decided on that reading.
+  - Waits on the Windrise queue item `windrise-ground-structure` (Waiting). `passes windrise --pass Surface` is refused while the Shape pass fails (`runParityPasses`, the rule since 2192faebd7), and the snapshot's Shape rows fail (statue normal 14.60 against 10 degrees, Ground depth 0.0473 against 0.01, Ground outline 5.67 against 1 px). The run on this worktree died on a page load at 7.5 minutes while another agent's world render held the page, so it is a queue item, not an inline run. The 1.3 reading is pre-solve: 8fe537172a is an ancestor of HEAD but not of a327262a69, the commit that records it.
 - [x] 1.5 Prove each plant dome's detail draws at its own texture's metres per texel, the scale task 1.1 gives each surface. Verify: a test named after the scenario "A plant dome's detail reads at its own texture's scale", written beside the base-map test and seen failing with the shared 4-centimetre scale restored for the run, as the regression proof of the testing skill.
 
 ## 2. Windrise's layers
 
 - [x] 2.1 Decide how the layers' weights reach the terrain material: as vertex attributes morphed with the colour, or as the detail of the layer weighing most. Verify: the chosen option is recorded before task 2.3 starts, and this task decides nothing on its own.
 - [ ] 2.2 Export Windrise's splat layers' diffuse textures and fit each layer's detail at its repeat over its width. Verify: a test named after the scenario "A splat layer's texture repeats at the tile's repeat", written first and seen failing.
+  - Waits on 1.4: the layers' step is undecided (scope item 3 stays held), so neither the export nor the fit starts. No splat layer's diffuse texture is exported yet.
 - [ ] 2.3 Draw the terrain's detail from the layers by their weights, using the option chosen in 2.1. Verify: a test named after the scenario "A terrain point blends its layers' detail by their weights", written first and seen failing.
+  - Waits on 1.4 (the layers' step, which 2.1's option is for) and on 2.2's fit.
 
 ## 3. The other regions
 
 - [ ] 3.1 [phase 5] Export each other region's base maps and build its ground in its own layers, its field from its tiles' cells and its colours from its base maps. Verify: a test named after the scenario "A region's ground shows its own layers' detail", written first and seen failing.
+  - Waits on each other region's base maps being exported: no region's extract under `extracted/` holds a base map yet, and the change's proposal names that wait. Its detail also rests on the layers' step (1.4).
 - [x] 3.2 Confirm the base map adds no detail of its own to a ground. Verify: the terrain no longer takes `surfaces.Ground.detail` (`Windrise/Index.vue`), and the domes keep it. No test holds 'The base map adds no detail of its own to the ground', which this task confirms: genshin-world has no component harness, so no unit can fail on it.
