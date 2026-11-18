@@ -1,4 +1,5 @@
 import { computeAngleAutocorrelation } from "#src/services/genshinParity/passes/computeAngleAutocorrelation";
+import { computeMetresPerPixel } from "#src/services/genshinParity/passes/computeMetresPerPixel";
 import { SHAPE_NORMAL_RESOLUTION_DEGREES } from "#src/services/genshinParity/passes/constants";
 import { findDominantLag } from "#src/services/genshinParity/passes/findDominantLag";
 import { highPassAngles } from "#src/services/genshinParity/passes/highPassAngles";
@@ -39,5 +40,5 @@ export const computeSurfaceWavelength = ({
     return undefined;
   const lag = findDominantLag(computeAngleAutocorrelation(detail, width, maxLag));
   if (lag === undefined) return undefined;
-  return (lag * 2 * depth * Math.tan((fovDegrees * Math.PI) / 360)) / height;
+  return lag * computeMetresPerPixel({ depth, fovDegrees, height });
 };
