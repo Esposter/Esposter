@@ -1,11 +1,11 @@
 import { mergeStylesheets } from "#src/services/mergeStylesheets";
 import { describe, expect, test } from "vitest";
 
-const board = { id: "components/Board/Index.css", source: ".board{}\n" };
-const card = { id: "components/Card/Index.css", source: ".card{}\n" };
-const menu = { id: "components/Menu/Index.css", source: ".menu{}\n" };
-
 describe(mergeStylesheets, () => {
+  const board = { id: "components/Board/Index.css", source: ".board{}\n" };
+  const card = { id: "components/Card/Index.css", source: ".card{}\n" };
+  const menu = { id: "components/Menu/Index.css", source: ".menu{}\n" };
+
   test("gives the same bytes whichever order the stylesheets arrive in", () => {
     expect.hasAssertions();
 
