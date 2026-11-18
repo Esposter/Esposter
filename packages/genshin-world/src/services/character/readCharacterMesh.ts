@@ -21,14 +21,15 @@ import {
 // As a colour and as a toon ramp, since a toon is read differently. A material's shared toon ramp is the world's own, so
 // No file of it is read. A texture the pack does not hold draws its material without it, logged once for the model, and
 // A file the pack lists that fails to arrive rejects, so the model is drawn whole or not at all. The model stands at its
-// Character's unit of metres, which its id gives
+// Character's unit of metres, which the published measure gives its id
 export const readCharacterMesh = (
   characterPackReader: CharacterPackReader,
   {
     characterId,
+    gameDataBaseUrl,
     lightUniforms,
     rampTexture,
-  }: Pick<CharacterMaterialOptions, "lightUniforms" | "rampTexture"> & { characterId: number },
+  }: Pick<CharacterMaterialOptions, "lightUniforms" | "rampTexture"> & { characterId: number; gameDataBaseUrl: string },
 ): ReturnType<typeof getResultAsync<SkinnedMesh<BufferGeometry, ToonNodeMaterial[]>>> =>
   getResultAsync(async () => {
     const modelBlob = await characterPackReader.readFile(CHARACTER_MODEL_PATH);
@@ -84,5 +85,5 @@ export const readCharacterMesh = (
         toonTexture: pmxMaterial.isToonShared ? undefined : toonTextures[pmxMaterial.toonIndex],
       }),
     );
-    return createPmxMesh(pmxModel, materials, getCharacterPmxUnitMetres(characterId));
+    return createPmxMesh(pmxModel, materials, await getCharacterPmxUnitMetres(gameDataBaseUrl, characterId));
   });

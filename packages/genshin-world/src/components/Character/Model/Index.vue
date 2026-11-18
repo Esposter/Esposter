@@ -6,6 +6,7 @@ import type { BufferGeometry, DataTexture, SkinnedMesh } from "three";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { disposeCharacterMesh } from "#src/services/character/disposeCharacterMesh";
 import { readCharacterMesh } from "#src/services/character/readCharacterMesh";
+import { useWorldSessionStore } from "#src/store/session";
 
 interface Props {
   // The character whose model this is, which sets the metres its PMX unit stands for
@@ -18,11 +19,18 @@ interface Props {
 
 const { characterId, characterPackReader, lightUniforms, rampTexture } = defineProps<Props>();
 const emit = defineEmits<{ error: [characterId: number] }>();
+const worldSessionStore = useWorldSessionStore();
+const { gameDataBaseUrl } = storeToRefs(worldSessionStore);
 const mesh = shallowRef<SkinnedMesh<BufferGeometry, ToonNodeMaterial[]>>();
 let isUnmounted = false;
 // The character's model from its pack, drawn once it has all arrived. A failure is logged and emitted with its character,
 // So the field draws another model in its place, and a model arriving after its character has gone is released at once
-readCharacterMesh(characterPackReader, { characterId, lightUniforms, rampTexture }).match(
+readCharacterMesh(characterPackReader, {
+  characterId,
+  gameDataBaseUrl: gameDataBaseUrl.value,
+  lightUniforms,
+  rampTexture,
+}).match(
   (characterMesh) => {
     if (isUnmounted) disposeCharacterMesh(characterMesh);
     else mesh.value = characterMesh;

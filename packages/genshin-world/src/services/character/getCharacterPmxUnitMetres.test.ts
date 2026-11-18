@@ -1,25 +1,31 @@
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { GameDataKeys } from "#src/generated/gameDataKeys";
+import { characterScaleRecordSchema } from "#src/models/character/CharacterScale";
 import { CHARACTER_PMX_RECKONED_UNIT_METRES, TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { getCharacterPmxUnitMetres } from "#src/services/character/getCharacterPmxUnitMetres";
-import { describe, expect, test } from "vitest";
+import { readGameData } from "#src/services/data/readGameData";
+import { assert, describe, expect, test } from "vitest";
 
 describe(getCharacterPmxUnitMetres, () => {
-  // The Traveler's PMX stands 17.2332 units tall, and the game's own model of the Traveler 1.5667 metres, as the
-  // Measure reads them
-  const TRAVELER_PMX_HEIGHT_UNITS = 17.2332;
-  const TRAVELER_GAME_MODEL_HEIGHT_METRES = 1.5667;
-
-  test("the Traveler's height matches the game's model", () => {
+  test("the Traveler's model stands at its game model's height", async () => {
     expect.hasAssertions();
 
-    expect(TRAVELER_PMX_HEIGHT_UNITS * getCharacterPmxUnitMetres(TRAVELER_CHARACTER_ID)).toBeCloseTo(
-      TRAVELER_GAME_MODEL_HEIGHT_METRES,
-      3,
+    const scaleRecord = await readGameData(
+      GAME_DATA_LOCAL_BASE_URL,
+      GameDataKeys.characterModels.scale,
+      characterScaleRecordSchema,
     );
+    const travelerScale = scaleRecord[String(TRAVELER_CHARACTER_ID)];
+    assert.exists(travelerScale);
+
+    expect(travelerScale.pmxHeightUnits * travelerScale.metresPerUnit).toBeCloseTo(travelerScale.modelHeightMetres, 3);
   });
 
-  test("a character no measure holds keeps the reckoned unit", () => {
+  test("a character no measure holds keeps the reckoned unit", async () => {
     expect.hasAssertions();
 
-    expect(getCharacterPmxUnitMetres(0)).toBe(CHARACTER_PMX_RECKONED_UNIT_METRES);
+    await expect(getCharacterPmxUnitMetres(GAME_DATA_LOCAL_BASE_URL, 0)).resolves.toBe(
+      CHARACTER_PMX_RECKONED_UNIT_METRES,
+    );
   });
 });

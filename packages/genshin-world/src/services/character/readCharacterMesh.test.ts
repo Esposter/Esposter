@@ -2,6 +2,7 @@ import type { CharacterPackReader } from "#src/models/character/CharacterPackRea
 import type { PmxModel } from "genshin-engine";
 import type { BufferGeometry, SkinnedMesh } from "three";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { CHARACTER_MODEL_PATH, TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { getCharacterPmxUnitMetres } from "#src/services/character/getCharacterPmxUnitMetres";
 import { readCharacterMesh } from "#src/services/character/readCharacterMesh";
@@ -36,6 +37,7 @@ describe(readCharacterMesh, () => {
   const characterPackReader: CharacterPackReader = { characterId: TRAVELER_CHARACTER_ID, key: "", readFile };
   const meshOptions = {
     characterId: TRAVELER_CHARACTER_ID,
+    gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL,
     lightUniforms: createLightUniforms(),
     rampTexture: new DataTexture(),
   };
@@ -120,11 +122,8 @@ describe(readCharacterMesh, () => {
     vi.mocked(parsePmx).mockReturnValue(pmxModel);
 
     await readCharacterMesh(characterPackReader, meshOptions);
+    const unitMetres = await getCharacterPmxUnitMetres(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 
-    expect(createPmxMesh).toHaveBeenCalledExactlyOnceWith(
-      pmxModel,
-      [],
-      getCharacterPmxUnitMetres(TRAVELER_CHARACTER_ID),
-    );
+    expect(createPmxMesh).toHaveBeenCalledExactlyOnceWith(pmxModel, [], unitMetres);
   });
 });
