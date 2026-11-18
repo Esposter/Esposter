@@ -55,6 +55,7 @@ export const GameDataKeys = {
     Vietnamese: "archiveText/Vietnamese",
   },
   catalogue: { catalogue: "catalogue/catalogue" },
+  characterModels: { scale: "characterModels/scale" },
   characterPackIndex: { index: "characterPackIndex/index" },
   characterTrials: {
     avatars: "characterTrials/avatars",
