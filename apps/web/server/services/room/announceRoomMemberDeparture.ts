@@ -2,12 +2,15 @@ import type { UserEvent, UserToRoomInMessage } from "@esposter/db-schema";
 
 import { useRoomObject } from "#server/composables/realtime/useRoomObject";
 import { callUserObjects } from "#server/services/realtime/callUserObjects";
+import { publishTopics } from "#server/services/realtime/publishTopics";
 import { notifyOnlineRoomMembers } from "#server/services/room/notifyOnlineRoomMembers";
+import { getTopic, TopicKind } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 
 // Every departure from a room, a leave or a removal, drops the member's sockets on the room's object, then tells the
 // Members the room has online and the member's own tabs. The member is dropped first, so the members the room reaches
-// Are the ones who stayed
+// Are the ones who stayed. The member's bookmark dock is told too: a bookmark on the room reads as available only to
+// Its members, so the departure changes what that read answers
 export const announceRoomMemberDeparture = async ({
   roomId,
   userId,
@@ -20,4 +23,7 @@ export const announceRoomMemberDeparture = async ({
     notifyOnlineRoomMembers(roomId, event),
     callUserObjects([userId], (userObject) => userObject.broadcastEvent(event)),
   ]);
+  await getResultAsync(() => publishTopics([getTopic(TopicKind.Bookmark, userId)])).match(noop, (error) => {
+    console.error("Failed to publish the bookmarks of a departed member:", error);
+  });
 };

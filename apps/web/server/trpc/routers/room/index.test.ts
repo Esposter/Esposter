@@ -9,6 +9,7 @@ import { roomObjectCalls, roomObjectFailures } from "#server/composables/realtim
 import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
 import { banRoomMember } from "#server/services/message/moderation/banRoomMember";
 import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
+import { MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
 import { getRoomProfileImageBlobPrefix } from "#server/services/room/getRoomProfileImageBlobPrefix";
 import { getBucket } from "#server/services/storage/getBucket";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
@@ -566,6 +567,20 @@ describe("roomRouter", () => {
     expect(joinedRoom).toStrictEqual(newRoom);
   });
 
+  // A bookmark on the room reads as available only to its members, so the joiner's bookmark dock is told of the join
+  test("publishes the joiner's bookmark topic, since a bookmark on the room reads as available to its members", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const newInvite = await createUnlimitedInvite(newRoom.id);
+    const strangerSession = await createMockAuthSession(mockContext.db);
+    const strangerRoomCaller = await createMockCaller(roomRouter, strangerSession);
+    MockPublishedTopics.length = 0;
+    await strangerRoomCaller.joinRoom(newInvite.id);
+
+    expect(MockPublishedTopics).toContain(getTopic(TopicKind.Bookmark, strangerSession.user.id));
+  });
+
   test("joining consumes a use", async () => {
     expect.hasAssertions();
 
@@ -807,6 +822,19 @@ describe("roomRouter", () => {
     expect(roomObjectCalls).toContainEqual({ args: [member.id], method: "removeMember", roomId: newRoom.id });
     expect(roomObjectCalls).toContainEqual({ args: [leaveEvent], method: "notifyOnlineMembers", roomId: newRoom.id });
     expect(userObjectCalls).toContainEqual({ args: [leaveEvent], method: "broadcastEvent", userId: member.id });
+  });
+
+  test("publishes the leaver's bookmark topic, since a bookmark on the room reads as available to its members", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const member = await createRoomMember(mockContext, newRoom.id);
+    vi.advanceTimersByTime(1);
+    const memberRoomCaller = await createMockCaller(roomRouter, await createMockAuthSession(mockContext.db, member));
+    MockPublishedTopics.length = 0;
+    await memberRoomCaller.leaveRoom(newRoom.id);
+
+    expect(MockPublishedTopics).toContain(getTopic(TopicKind.Bookmark, member.id));
   });
 
   test("counts members", async () => {
