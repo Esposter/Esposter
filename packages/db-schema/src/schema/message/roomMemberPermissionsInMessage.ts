@@ -30,6 +30,7 @@ export const roomMemberPermissionsInMessage = sqliteTable(
       index("roomMemberPermissions_roomId_index").on(roomId),
     ],
     schema: messageSchema,
+    scope: { columns: ["roomId", "userId"] },
   },
 );
 

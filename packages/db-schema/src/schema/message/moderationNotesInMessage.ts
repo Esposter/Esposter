@@ -27,6 +27,7 @@ export const moderationNotesInMessage = sqliteTable(
       index("moderationNotes_targetUserId_index").on(targetUserId),
     ],
     schema: messageSchema,
+    scope: { columns: ["roomId"] },
   },
 );
 

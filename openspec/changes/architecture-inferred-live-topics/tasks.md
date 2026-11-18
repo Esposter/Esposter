@@ -2,7 +2,7 @@
 
 ## 1. Scope declaration and the read side
 
-- [ ] 1.1 Add the scope declaration to `sqliteTable` and declare scope columns on each table the five reads and the hand declarations name, marking the invite id secret. Verified by a scope test that every declared scope column exists on its table, seen failing before the declaration exists and passing after.
+- [x] 1.1 Add the scope declaration to `sqliteTable` and declare scope columns on each table the five reads and the hand declarations name, marking the invite id secret. Verified by a scope test that every declared scope column exists on its table, seen failing before the declaration exists and passing after.
 - [ ] 1.2 Walk a built query's read set: its tables, scope equalities, join keys, null checks, correlated subqueries, set-operator operands and relational aliases. Verified by golden read-set tests of the five reads written first and seen failing, including the direct-message partner read, whose join key must come from the selected key and not from a same-named column.
 - [ ] 1.3 Record each awaited top-level statement through a request-scoped handle over the context's `db`, including the statements of `db.batch`. Verified by a test that records a relational query, a batch and a `$count`, seen failing first, and a check that no drizzle class is patched.
 

@@ -37,6 +37,7 @@ export const usersInAuth = sqliteTable(
       check("users_name_length_check", createNameCheckSql(name, USER_NAME_MAX_LENGTH)),
     ],
     schema: authSchema,
+    scope: { columns: ["id"] },
   },
 );
 

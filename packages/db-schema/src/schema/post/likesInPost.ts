@@ -26,6 +26,7 @@ export const likesInPost = sqliteTable(
       index("likes_postId_index").on(postId),
     ],
     schema: postSchema,
+    scope: { columns: ["postId", "userId"] },
   },
 );
 

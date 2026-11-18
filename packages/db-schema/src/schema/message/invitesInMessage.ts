@@ -33,6 +33,7 @@ export const invitesInMessage = sqliteTable(
       index("invites_roomId_createdAt_id_index").on(roomId, sql`"createdAt" DESC`, sql`"id" DESC`),
     ],
     schema: messageSchema,
+    scope: { columns: ["id", "roomId"], secretColumns: ["id"] },
   },
 );
 

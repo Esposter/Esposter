@@ -21,5 +21,6 @@ export const sessionsInAuth = sqliteTable(
       index("sessions_userId_index").on(userId),
     ],
     schema: authSchema,
+    scope: { columns: ["userId"] },
   },
 );

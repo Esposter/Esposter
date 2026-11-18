@@ -43,6 +43,7 @@ export const webhooksInMessage = sqliteTable(
       unique("webhooks_tokenHash_unique").on(tokenHash),
     ],
     schema: messageSchema,
+    scope: { columns: ["roomId"] },
   },
 );
 

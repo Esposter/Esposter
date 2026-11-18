@@ -67,6 +67,7 @@ export const roomsInMessage = sqliteTable(
       check("rooms_topic_length_check", createMaxLengthCheckSql(topic, ROOM_TOPIC_MAX_LENGTH)),
     ],
     schema: messageSchema,
+    scope: { columns: ["id"] },
   },
 );
 

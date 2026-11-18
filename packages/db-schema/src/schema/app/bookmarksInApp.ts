@@ -40,6 +40,7 @@ export const bookmarksInApp = sqliteTable(
         .where(sql`${roomId} IS NOT NULL`),
     ],
     schema: appSchema,
+    scope: { columns: ["userId", "resourceId", "roomId"] },
   },
 );
 

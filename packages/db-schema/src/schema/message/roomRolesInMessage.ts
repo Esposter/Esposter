@@ -40,6 +40,7 @@ export const roomRolesInMessage = sqliteTable(
         .where(sql`${isEveryone} = 1`),
     ],
     schema: messageSchema,
+    scope: { columns: ["roomId"] },
   },
 );
 

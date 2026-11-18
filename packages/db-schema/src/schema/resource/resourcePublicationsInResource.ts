@@ -21,7 +21,7 @@ export const resourcePublicationsInResource = sqliteTable(
       .primaryKey()
       .references(() => resourcesInResource.id, { onDelete: "cascade" }),
   },
-  { schema: resourceSchema },
+  { schema: resourceSchema, scope: { columns: ["resourceId"] } },
 );
 
 export type ResourcePublicationInResource = typeof resourcePublicationsInResource.$inferSelect;

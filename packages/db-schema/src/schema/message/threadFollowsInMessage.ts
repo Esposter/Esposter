@@ -26,6 +26,7 @@ export const threadFollowsInMessage = sqliteTable(
     // A thread's followers are read by (roomId, threadRootId), so the key leads with them
     extraConfig: ({ roomId, threadRootId, userId }) => [primaryKey({ columns: [roomId, threadRootId, userId] })],
     schema: messageSchema,
+    scope: { columns: ["userId", "roomId"] },
   },
 );
 

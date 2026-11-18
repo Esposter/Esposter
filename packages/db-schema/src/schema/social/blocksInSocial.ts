@@ -21,6 +21,7 @@ export const blocksInSocial = sqliteTable(
       index("blocks_blockedId_index").on(blockedId),
     ],
     schema: socialSchema,
+    scope: { columns: ["blockerId", "blockedId"] },
   },
 );
 

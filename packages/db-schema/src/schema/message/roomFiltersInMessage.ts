@@ -30,6 +30,7 @@ export const roomFiltersInMessage = sqliteTable(
       ),
     ],
     schema: messageSchema,
+    scope: { columns: ["roomId"] },
   },
 );
 

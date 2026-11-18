@@ -34,6 +34,7 @@ export const surveyResponsesInResource = sqliteTable(
       index("surveyResponses_resourceId_isDraft_id_index").on(resourceId, isDraft, id),
     ],
     schema: resourceSchema,
+    scope: { columns: ["resourceId"] },
   },
 );
 

@@ -58,6 +58,7 @@ export const postsInPost = sqliteTable(
       index("posts_firstAncestorId_index").on(sql`json_extract("ancestorIds", '$[0]')`),
     ],
     schema: postSchema,
+    scope: { columns: ["id", "userId", "parentId"] },
   },
 );
 

@@ -52,6 +52,7 @@ export const usersToRoomsInMessage = sqliteTable(
         .where(sql`${timeoutUntil} IS NOT NULL`),
     ],
     schema: messageSchema,
+    scope: { columns: ["userId", "roomId"] },
   },
 );
 

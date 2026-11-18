@@ -26,6 +26,7 @@ export const usersToRoomRolesInMessage = sqliteTable(
       index("usersToRoomRoles_roomId_userId_index").on(roomId, userId),
     ],
     schema: messageSchema,
+    scope: { columns: ["roomId", "userId"] },
   },
 );
 

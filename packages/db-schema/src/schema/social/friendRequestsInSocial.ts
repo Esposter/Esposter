@@ -20,6 +20,7 @@ export const friendRequestsInSocial = sqliteTable(
       index("friendRequests_senderId_index").on(senderId),
     ],
     schema: socialSchema,
+    scope: { columns: ["senderId", "receiverId"] },
   },
 );
 

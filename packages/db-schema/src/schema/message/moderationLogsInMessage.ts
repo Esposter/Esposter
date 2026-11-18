@@ -32,6 +32,7 @@ export const moderationLogsInMessage = sqliteTable(
       index("moderationLogs_targetUserId_index").on(targetUserId),
     ],
     schema: messageSchema,
+    scope: { columns: ["roomId"] },
   },
 );
 

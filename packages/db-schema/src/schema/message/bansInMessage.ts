@@ -13,7 +13,11 @@ export const bansInMessage = sqliteTable(
     bannedByUserId: text().references(() => usersInAuth.id, { onDelete: "set null" }),
     ...createRoomUserColumns(),
   },
-  { extraConfig: ({ roomId, userId }) => [primaryKey({ columns: [roomId, userId] })], schema: messageSchema },
+  {
+    extraConfig: ({ roomId, userId }) => [primaryKey({ columns: [roomId, userId] })],
+    schema: messageSchema,
+    scope: { columns: ["userId", "roomId"] },
+  },
 );
 
 export type BanInMessage = typeof bansInMessage.$inferSelect;

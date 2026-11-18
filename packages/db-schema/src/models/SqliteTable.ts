@@ -1,5 +1,6 @@
 import type { createMetadataSchema } from "#src/createMetadataSchema";
 import type { DatabaseSchema } from "#src/models/DatabaseSchema";
+import type { TableScope } from "#src/models/realtime/TableScope";
 import type { BuildColumns, ColumnBuilderBase } from "drizzle-orm";
 import type { SQLiteTableExtraConfigValue, SQLiteTableWithColumns } from "drizzle-orm/sqlite-core";
 
@@ -7,7 +8,11 @@ import type { SQLiteTableExtraConfigValue, SQLiteTableWithColumns } from "drizzl
 export type SqliteTable = <TTableName extends string, TColumnsMap extends Record<string, ColumnBuilderBase>>(
   name: TTableName,
   columns: TColumnsMap,
-  config?: { extraConfig?: SqliteTableExtraConfig<TTableName, TColumnsMap>; schema?: DatabaseSchema<string> },
+  config?: {
+    extraConfig?: SqliteTableExtraConfig<TTableName, TColumnsMap>;
+    schema?: DatabaseSchema<string>;
+    scope?: TableScope<Extract<keyof TColumnsMap, string>>;
+  },
 ) => SQLiteTableWithColumns<{
   columns: BuildColumns<TTableName, ReturnType<typeof createMetadataSchema> & TColumnsMap, "sqlite">;
   dialect: "sqlite";

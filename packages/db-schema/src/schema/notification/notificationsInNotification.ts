@@ -53,6 +53,7 @@ export const notificationsInNotification = sqliteTable(
         .where(sql`${isRead} = 0`),
     ],
     schema: notificationSchema,
+    scope: { columns: ["userId"] },
   },
 );
 

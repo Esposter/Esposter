@@ -62,6 +62,7 @@ export const resourcesInResource = sqliteTable(
       index("resources_userId_updatedAt_id_index").on(userId, updatedAt, id),
     ],
     schema: resourceSchema,
+    scope: { columns: ["id", "userId"] },
   },
 );
 

@@ -31,6 +31,7 @@ export const roomEmojisInMessage = sqliteTable(
       uniqueIndex("roomEmojis_roomId_name_unique").on(roomId, name),
     ],
     schema: messageSchema,
+    scope: { columns: ["roomId"] },
   },
 );
 
