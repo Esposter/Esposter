@@ -163,5 +163,5 @@ Before the sequence starts, the wrapper, the walker and the write capture are bu
 ## Sources
 
 - The live-query mechanism and its declarations: the [client-data design](../../specs/architecture/client-data/design.md) and the [cloudflare-services design](../../specs/architecture/cloudflare-services/design.md).
-- The event-class refactor that made the typed event the editor's refresh: commit `247d012944`.
+- The event class map that leaves the editor's typed event out: `RealtimeEventClassMap` in [packages/db-schema](../../../packages/db-schema/src/models/realtime/RealtimeEventClassMap.ts).
 - The row-delta subscription model in the alternatives is the owner's description of SpacetimeDB-style subscriptions, taken from the change's brief. Its details were not checked against SpacetimeDB's own documentation, and the alternative's cost claims are reasoned from this stack, not measured.
