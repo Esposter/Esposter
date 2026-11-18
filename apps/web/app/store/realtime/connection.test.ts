@@ -1,11 +1,24 @@
 // @vitest-environment nuxt
 import type { RoomMessage, Topic } from "@esposter/db-schema";
 
+import { MockPublishedTopics, mockTopicNamespace } from "#server/services/realtime/publishTopics.test";
+import { createMockAuthSession, createMockContext } from "#server/trpc/context.test";
+import { createCallerFactory } from "#server/trpc/index";
+import { friendRouter } from "#server/trpc/routers/friend";
+import { readTopicsHeader } from "#shared/services/realtime/readTopicsHeader";
 import { createId } from "#shared/util/math/random/createId";
 import { openRealtimeSocket, sendRealtimeFrame } from "#src/services/realtime/openRealtimeSocket.test";
 import { useConnectionStore } from "#src/store/realtime/connection";
-import { CALL_ID_LENGTH, getTopic, MAX_FRAME_TOPICS, MessageType, TopicKind } from "@esposter/db-schema";
-import { jsonDateParse } from "@esposter/shared";
+import {
+  CALL_ID_LENGTH,
+  friendsInSocial,
+  getTopic,
+  MAX_FRAME_TOPICS,
+  MessageType,
+  TopicKind,
+} from "@esposter/db-schema";
+import { getFriendshipId, jsonDateParse } from "@esposter/shared";
+import { env } from "cloudflare:workers";
 import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 
@@ -149,5 +162,49 @@ describe(useConnectionStore, () => {
       { data: { readAt: newerReadAt, topics: [newerTopic] }, type: "watch" },
       { data: { readAt, topics: [olderTopic] }, type: "watch" },
     ]);
+  });
+
+  // A friend list's read names the rows it selected, and a removal by another person publishes those rows, so the topic the
+  // Read named reaches this person's socket as an invalidation and the store refetches the read through it
+  test("another person's friendship removal refetches the friend list through the connection store", async () => {
+    expect.hasAssertions();
+
+    // The write's publish reads its topic binding from the workers env, which this environment does not get from the shared setup
+    Object.assign(env, { TOPIC: mockTopicNamespace });
+    const context = await createMockContext();
+    const reader = await createMockAuthSession(context.db);
+    const writer = await createMockAuthSession(context.db);
+    await context.db
+      .insert(friendsInSocial)
+      .values({
+        id: getFriendshipId(reader.user.id, writer.user.id),
+        receiverId: writer.user.id,
+        senderId: reader.user.id,
+      });
+    const readerContext = { ...context, responseHeaders: new Headers(), session: reader.session, user: reader.user };
+    await createCallerFactory(friendRouter)(readerContext).readFriends();
+    const reads = readTopicsHeader(readerContext.responseHeaders, "readFriends");
+
+    const connectionStore = useConnectionStore();
+    connectionStore.openUser();
+    const [, onUserFrame] = vi.mocked(openRealtimeSocket).mock.lastCall ?? [];
+    const refetch = vi.fn<() => void>();
+    sendRealtimeFrame.mockClear();
+    for (const read of reads) connectionStore.watchTopics(read.topics, read.readAt, refetch);
+
+    expect(sendRealtimeFrame.mock.calls.map(([frame]) => jsonDateParse(frame))).toStrictEqual(
+      reads.map((read) => ({ data: { readAt: read.readAt, topics: read.topics }, type: "watch" })),
+    );
+    MockPublishedTopics.length = 0;
+    await createCallerFactory(friendRouter)({
+      ...context,
+      responseHeaders: new Headers(),
+      session: writer.session,
+      user: writer.user,
+    }).deleteFriend(reader.user.id);
+    for (const topic of MockPublishedTopics) onUserFrame?.(JSON.stringify({ data: { topic }, type: "invalidate" }));
+
+    expect(refetch).toHaveBeenCalledTimes(1);
+    await expect(createCallerFactory(friendRouter)(readerContext).readFriends()).resolves.toStrictEqual([]);
   });
 });
