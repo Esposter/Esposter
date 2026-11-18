@@ -7,7 +7,7 @@
     "version": "Darwin Kernel Version 27.0.0: Tue Aug 11 21:05:27 PDT 2026; root:xnu-13432.1.9~1/RELEASE_ARM64_T8103"
   },
   "producer": {
-    "commit": "9b4985f0d20b3010a4d0b5328be48accf079ca87",
+    "commit": "bbed485ce6c9b37bedc9a1a2f4bf947e0ca6b105",
     "isDirty": true,
     "producerPaths": [
       "scripts/src/models/genshinAssets",

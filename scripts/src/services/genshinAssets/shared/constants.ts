@@ -456,8 +456,14 @@ export const WAYPOINT_REGIONS: readonly string[] = [DerivedAssetComponent.Mondst
 // The regions whose Statues of the New Moon the waypoints command writes: Nod-Krai, whose statues the official map labels
 // As Statues of The Seven in its own map area, each paired with the scene's transport point it stands at
 export const NEW_MOON_STATUE_REGIONS: readonly string[] = [DerivedAssetComponent.NodKrai];
-// The regions whose ley line blossoms are placed as their outcrop places, for now Mondstadt alone
-export const OUTCROP_REGIONS: readonly string[] = [DerivedAssetComponent.Mondstadt];
+// The regions whose ley line blossoms are placed as their outcrop places: the regions the dump's section order table names
+// Sections for. Fontaine, Natlan, Snezhnaya and Nod-Krai wait on that table, so their blossoms stay out until it names them
+export const OUTCROP_REGIONS: readonly string[] = [
+  DerivedAssetComponent.Mondstadt,
+  DerivedAssetComponent.Liyue,
+  DerivedAssetComponent.Inazuma,
+  DerivedAssetComponent.Sumeru,
+];
 // A cloud atlas holds its painted clouds in two columns of four rows, each traced on a grid of four texels and kept
 // Within one grid cell of it; a texel is the cloud where its alpha passes half, and its lit crown where its red (the
 // Light the painter put on it) does
