@@ -107,3 +107,13 @@ An opened chest SHALL count once toward its area's exploration and its region's 
 - **GIVEN** a chest the player has already opened
 - **WHEN** the player tries to open it again
 - **THEN** the area's exploration count does not change
+
+### Requirement: Regions' Chest Records Held Once
+
+Each region's chest record SHALL be held once, by the store that offers its chests, with no copy kept beside it.
+
+#### Scenario: a region's chests reach the store as its record arrives, with no second copy held
+
+- **GIVEN** a region within reach whose chest record has just arrived
+- **WHEN** the record is read into the world
+- **THEN** the store offers the region's chests from that one record, with no copy kept beside it
