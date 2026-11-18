@@ -1,6 +1,6 @@
 import "@fontsource/signika/600.css";
 import { getScreenBoxStyle, SCREEN_BOX_WIDTH } from "#parity/getScreenBoxStyle";
-import { screens } from "#parity/screens";
+import { loadScreens } from "#parity/screens";
 import { capitalize, getResultAsync } from "@esposter/shared";
 import {
   assertSettledRender,
@@ -28,6 +28,7 @@ const SCREEN_BACKDROP_COLOR = "#4a5560";
 const SCREEN_BOX_HEIGHT = 1080;
 // Set by the browser config from the run's update flag (`vitest.browser.config.ts`)
 declare const IS_VISUAL_UPDATE: boolean;
+const screens = await loadScreens();
 const cases: ((typeof screens)[number] & { imageName: string; title: string })[] = [];
 for (const screen of screens.filter(({ isMotionOnly }) => !isMotionOnly)) {
   cases.push({

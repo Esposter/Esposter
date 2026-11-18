@@ -16,7 +16,7 @@ import { NuxtTimeStub } from "#parity/NuxtTimeStub";
 import { pauseAnimations } from "#parity/pauseAnimations";
 import { recordError } from "#parity/recordError";
 import { renderMusic } from "#parity/renderMusic";
-import { screens } from "#parity/screens";
+import { loadScreen, screenNames } from "#parity/screens";
 import { setSceneCloudColors } from "#parity/setSceneCloudColors";
 import { setSceneCloudCover } from "#parity/setSceneCloudCover";
 import { setSceneCloudHeights } from "#parity/setSceneCloudHeights";
@@ -73,7 +73,7 @@ if (PerformanceObserver.supportedEntryTypes.includes("long-animation-frame"))
 const searchParameters = new URLSearchParams(window.location.search);
 const name = searchParameters.get("screen");
 const motion = searchParameters.get("motion");
-const screen = screens.find((candidate) => candidate.name === name);
+const screen = await loadScreen(name);
 const root = window.document.querySelector("#app");
 const sceneContext = shallowRef<SceneContext>();
 if (screen && root) {
@@ -240,9 +240,7 @@ if (screen && root) {
     pauseAnimations();
   }
 } else if (root)
-  root.innerHTML = screens
-    .map(({ name: screenName }) => `<a href="?screen=${screenName}">${screenName}</a>`)
-    .join("<br>");
+  root.innerHTML = screenNames.map((screenName) => `<a href="?screen=${screenName}">${screenName}</a>`).join("<br>");
 // The load as the page signals ready, taken at that moment so a fetch the page issues after it is not in the reading
 // Which a tool reads back
 Reflect.set(window, "loadAtReady", { bench: benchLoad(sceneContext.value, longFrames, 0), readyMs: performance.now() });
