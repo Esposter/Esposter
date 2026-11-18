@@ -10,6 +10,7 @@ export const GameDataset = {
   Catalogue: "catalogue",
   Character: "character",
   CharacterPackIndex: "characterPackIndex",
+  Characters: "characters",
   CharacterTrials: "characterTrials",
   Chests: "chests",
   Commissions: "commissions",

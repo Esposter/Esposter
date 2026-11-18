@@ -1,20 +1,28 @@
 import type { SubCommandsDef } from "citty";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
 import { formatMeasurement } from "#src/services/genshinAssets/commands/formatMeasurement";
 import { measureAvatarHeight } from "#src/services/genshinAssets/measure/measureAvatarHeight";
 import { measureVerticalExtent } from "#src/services/genshinAssets/measure/measureVerticalExtent";
+import { publishCharacterScale } from "#src/services/genshinAssets/measure/publishCharacterScale";
 import { EXTRACTED_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { defineCommand } from "citty";
 import { parsePmx } from "genshin-engine";
-import { avatarManifestSchema } from "genshin-world";
+import { avatarManifestSchema, TRAVELER_CHARACTER_ID } from "genshin-world";
 import { AVATAR_BINARY_FILE_NAME, AVATAR_MANIFEST_FILE_NAME } from "genshin-world/sceneExport";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
 export const measureCommand: SubCommandsDef[string] = defineCommand({
   args: {
+    ...dryRunArgs,
+    character: {
+      default: String(TRAVELER_CHARACTER_ID),
+      description: "The id of the character the PMX is, under which its scale is published",
+      type: "string",
+    },
     model: {
       default: join(EXTRACTED_DIRECTORY, DerivedAssetComponent.PlayerGirl),
       description: "The extracted model's folder, holding its avatar.json and avatar.bin",
@@ -27,7 +35,8 @@ export const measureCommand: SubCommandsDef[string] = defineCommand({
     },
   },
   meta: {
-    description: "Read a model's height in metres and its PMX's height in units, writing nothing",
+    description:
+      "Read a model's height in metres and its PMX's height in units, and publish the PMX's scale under its character",
     name: "measure",
   },
   run: async ({ args }) => {
@@ -40,6 +49,14 @@ export const measureCommand: SubCommandsDef[string] = defineCommand({
     const pmxHeight = measureVerticalExtent([pmx.vertices.positions]);
     console.log(`model height: ${formatMeasurement(modelHeight)} m`);
     console.log(`pmx height: ${formatMeasurement(pmxHeight)} units`);
-    console.log(`scale: ${formatMeasurement(modelHeight / pmxHeight)} m per unit`);
+    const metresPerUnit = modelHeight / pmxHeight;
+    console.log(`scale: ${formatMeasurement(metresPerUnit)} m per unit`);
+    console.log(
+      await publishCharacterScale(
+        Number(args.character),
+        { metresPerUnit, modelHeightMetres: modelHeight, pmxHeightUnits: pmxHeight },
+        args["dry-run"],
+      ),
+    );
   },
 });
