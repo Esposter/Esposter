@@ -3,7 +3,8 @@ import type { GameText } from "genshin-text";
 
 import ScreenHeader from "#src/components/Menu/ScreenHeader/Index.vue";
 import MenuTimeDial from "#src/components/Menu/Time/Dial/Index.vue";
-import { TIME_DAY_LABEL_KEYS, TIME_DIAL_ORNAMENT_POSITIONS } from "#src/services/menu/constants";
+import { TIME_DIAL_ORNAMENT_POSITIONS } from "#src/services/menu/constants";
+import { getTimeDayLabelKey } from "#src/services/menu/getTimeDayLabelKey";
 import { getTimeTargetDaysAhead } from "#src/services/menu/getTimeTargetDaysAhead";
 import { getTimeTargetMinutes } from "#src/services/menu/getTimeTargetMinutes";
 import { CloseButtonMark, GAME_CREAM, GameButton, GameButtonKind, GameScreen } from "genshin-interface";
@@ -25,7 +26,7 @@ const confirmButton = useTemplateRef("confirmButton");
 const advance = ref(initialAdvance);
 const targetMinutes = computed(() => getTimeTargetMinutes(clockMinutes, advance.value));
 // The day word under the hour: Today while it falls on the clock's day, then Tomorrow and the day after
-const targetDayKey = computed(() => TIME_DAY_LABEL_KEYS[getTimeTargetDaysAhead(clockMinutes, advance.value)]);
+const targetDayKey = computed(() => getTimeDayLabelKey(getTimeTargetDaysAhead(clockMinutes, advance.value)));
 const formatMinutes = (minutes: number): string => {
   const wholeMinutes = Math.floor(minutes);
   return Temporal.PlainTime.from({ hour: Math.floor(wholeMinutes / 60), minute: wholeMinutes % 60 }).toString({
@@ -64,7 +65,7 @@ onMounted(() => {
     <p class="wait-until">{{ gameText[GameTextKey.TimeWaitUntil] }}</p>
     <span class="caret second" />
     <p class="hour">{{ targetTime }}</p>
-    <p v-if="targetDayKey" class="day">{{ gameText[targetDayKey] }}</p>
+    <p class="day">{{ gameText[targetDayKey] }}</p>
     <GameButton
       ref="confirmButton"
       class="confirm"

@@ -51,12 +51,6 @@ export const TIME_DIAL_ORNAMENT_POSITIONS: readonly TimeDialOrnamentPosition[] =
 // The Time screen's advance in game minutes, at least thirty ahead and at most two days, as the game's Time option allows
 export const TIME_MINIMUM_ADVANCE_MINUTES = 30;
 export const TIME_MAXIMUM_ADVANCE_MINUTES = 2 * MINUTES_PER_DAY;
-// The day words the hour the dial points at is labelled with, by the days it falls past the clock's own day
-export const TIME_DAY_LABEL_KEYS: readonly GameTextKey[] = [
-  GameTextKey.TimeToday,
-  GameTextKey.TimeTomorrow,
-  GameTextKey.TimeDayAfterTomorrow,
-];
 // The links out to web pages the menu ends with, drawn disabled, since the world opens no page of their own
 export const PAIMON_MENU_LINKS: readonly PaimonMenuLinkEntry[] = [
   { icon: EntryIcon.Community, labelKey: GameTextKey.Community },
