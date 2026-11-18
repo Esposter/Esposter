@@ -12,9 +12,12 @@ interface Props {
   // The look the quest screen's reward tiles draw: a face lit by its own gradients, and a translucent count strip.
   // The game's reward lists' look when none is given
   variant?: "quest" | undefined;
+  // The item's traced icon: path data in a 100 unit square over the whole face, drawn under the count strip. An item
+  // With none is passed an empty string, and its tile shows its rarity face alone
+  icon?: string | undefined;
 }
 
-const { countSize = "30cqh" } = defineProps<Props>();
+const { countSize = "30cqh", icon = "" } = defineProps<Props>();
 </script>
 
 <template>
@@ -23,12 +26,16 @@ const { countSize = "30cqh" } = defineProps<Props>();
        the wiki's Adventurer Handbook screenshot and the Reputation clip, which agree on the three, four and five star
        tiles, and the Expedition clip's grey tiles, whose items the table gives no stars (rarity zero). A count keeps
        the screen's size rather than the tile's, so each screen passes its own as `countSize`. A two star tile is not
-       measured yet and draws bare. The item's own art is the game's and does not ship -->
+       measured yet and draws bare. The item's art is a traced icon the caller passes as `icon`; an item with none draws
+       its rarity face alone, and the game's own picture is never shipped -->
   <span class="item-tile" :data-rarity="rarity" :data-variant="variant">
     <span
       class="face"
       :style="{ background: (variant ? ItemRarityQuestFaceGradientMap : ItemRarityFaceGradientMap)[rarity] }"
     >
+      <svg v-if="icon" class="art" viewBox="0 0 100 100" aria-hidden="true">
+        <path :d="icon" />
+      </svg>
       <span class="count" aria-hidden="true" :style="{ fontSize: countSize }">{{ count }}</span>
     </span>
   </span>
@@ -41,12 +48,21 @@ const { countSize = "30cqh" } = defineProps<Props>();
 }
 
 .face {
+  position: relative;
   display: flex;
   width: 100%;
   height: 100%;
   align-items: end;
   overflow: hidden;
   border-radius: 7cqw;
+}
+
+.art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: #fff;
 }
 
 .count {
