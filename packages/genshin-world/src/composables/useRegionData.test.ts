@@ -68,6 +68,7 @@ const createLoadedRegion = (id: string): LoadedRegion => ({
 
 describe(useRegionData, () => {
   beforeEach(() => {
+    camera.value = { position: { x: 0, z: 0 } };
     vi.stubGlobal("ref", ref);
     vi.stubGlobal("shallowReactive", shallowReactive);
   });
@@ -100,7 +101,7 @@ describe(useRegionData, () => {
     ],
   };
 
-  test("a region's chest record is read once in reach and kept after, and a region with none is not read", async () => {
+  test("a region's chest record is read once in reach and kept after", async () => {
     expect.hasAssertions();
 
     vi.mocked(readLoadedRegion).mockImplementation((_regionDataBaseUrl, _gameDataBaseUrl, id) =>
@@ -129,5 +130,22 @@ describe(useRegionData, () => {
       keys: [NEAR_REGION_ID, FAR_REGION_ID],
       nearChests: [CHEST],
     });
+  });
+
+  test("a region with no published chest record offers no chest", async () => {
+    expect.hasAssertions();
+
+    vi.mocked(readLoadedRegion).mockImplementation((_regionDataBaseUrl, _gameDataBaseUrl, id) =>
+      Promise.resolve(createLoadedRegion(id)),
+    );
+    vi.mocked(readRegionChestPlaces).mockResolvedValue([CHEST]);
+    const { regionChestMap } = useRegionData(new Vector3(), "regions", "game-data", catalogue);
+    renderFrame();
+    await waitForReads();
+
+    expect({
+      calls: vi.mocked(readRegionChestPlaces).mock.calls,
+      hasNoRecordRegion: regionChestMap.has(NO_RECORD_REGION_ID),
+    }).toStrictEqual({ calls: [["game-data", "chests/mondstadt"]], hasNoRecordRegion: false });
   });
 });
