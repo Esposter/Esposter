@@ -28,6 +28,7 @@ import {
   HIT_TINT_COLOR,
 } from "#src/services/enemy/constants";
 import { EnemyStateColorMap } from "#src/services/enemy/EnemyStateColorMap";
+import { selectDrawnEnemies } from "#src/services/enemy/selectDrawnEnemies";
 import { composeHeadingMatrix } from "#src/services/world/composeHeadingMatrix";
 import { useLoop } from "@tresjs/core";
 import { createInstancedMesh, createToonMaterial } from "genshin-engine";
@@ -184,8 +185,8 @@ onBeforeRender(({ delta }) => {
   if (!isHeld && !isPaused) fixedStepLoop.advance(delta);
   let count = 0;
   let flashCount = 0;
-  for (const { elementalState, heading, hitSeconds, position, state, traits } of enemyMap.values()) {
-    if (count === ENEMY_CAPACITY) break;
+  const drawnEnemies = selectDrawnEnemies(enemyMap.values(), target, ENEMY_CAPACITY);
+  for (const { elementalState, heading, hitSeconds, position, state, traits } of drawnEnemies) {
     point.set(position.x, getGroundHeight(position.x, position.z) + ENEMY_CAPSULE_HEIGHT / 2, position.z);
     enemyMesh.setMatrixAt(count, composeHeadingMatrix(matrix, point, heading));
     enemyMesh.setColorAt(
