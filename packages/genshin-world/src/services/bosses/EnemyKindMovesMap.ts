@@ -1,6 +1,7 @@
 import type { BossMove } from "#src/models/bosses/BossMove";
 
 import { EnemyKindId } from "#src/models/enemy/EnemyKindId";
+import { AEONBLIGHT_DRAKE_MOVES } from "#src/services/bosses/aeonblightDrake";
 import { ALGORITHM_OF_SEMI_INTRANSIENT_MATRIX_MOVES } from "#src/services/bosses/algorithmOfSemiIntransientMatrix";
 import { ANEMO_HYPOSTASIS_MOVES } from "#src/services/bosses/anemoHypostasis";
 import { EMPEROR_OF_FIRE_AND_IRON_MOVES } from "#src/services/bosses/emperorOfFireAndIron";
@@ -36,4 +37,5 @@ export const EnemyKindMovesMap: Partial<Record<EnemyKindId, readonly BossMove[]>
   [EnemyKindId.SetekhWenut]: SETEKH_WENUT_MOVES,
   [EnemyKindId.AlgorithmOfSemiIntransientMatrixOfOverseerNetwork]: ALGORITHM_OF_SEMI_INTRANSIENT_MATRIX_MOVES,
   [EnemyKindId.JadeplumeTerrorshroom]: JADEPLUME_TERRORSHROOM_MOVES,
+  [EnemyKindId.AeonblightDrake]: AEONBLIGHT_DRAKE_MOVES,
 };
