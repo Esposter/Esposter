@@ -8,8 +8,8 @@ import { getGroundPieceKey, getGroundPieceQuarter } from "genshin-world";
 export const splitGroundPiece = ({ centre, checkIsInside, half, key }: GroundPiece): GroundPiece[] =>
   [0, 1, 2, 3].map((quarter) => {
     const square = getGroundPieceQuarter({ centre, half }, quarter);
-    const sideX = square.centre.x < centre.x ? -1 : 1;
-    const sideZ = square.centre.z < centre.z ? -1 : 1;
+    const sideX = quarter % 2 === 0 ? -1 : 1;
+    const sideZ = quarter < 2 ? -1 : 1;
     return {
       centre: square.centre,
       checkIsInside: (x, z) =>
