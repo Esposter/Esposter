@@ -69,9 +69,8 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
     await executeSendFriendRequestMutation(() => $trpc.friendRequest.sendFriendRequest.mutate(receiverId), {
       awaitedBecause: AwaitedReason.ServerIssuedValue,
       key: receiverId,
-      // The sendFriendRequest event on the user socket covers the caller for a newly created request, but the
-      // Already-exists conflict path returns the existing row WITHOUT emitting, so this write is the only one
-      // On that path
+      // No socket event carries a newly created request to the caller, and the already-exists conflict path returns
+      // The existing row WITHOUT emitting, so this write is the caller's only one
       onSuccess: (friendRequest) => {
         storeCreateFriendRequest(friendRequest);
       },
