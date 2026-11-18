@@ -13,7 +13,7 @@ The goal is a root `Index.vue` that reads as a bill of materials: its `<script s
 1. **A distinct panel, region or screen state of the template** (a header, a list pane, a detail pane, a tab body, a dialog) becomes a child component.
 2. **A `v-for` item body** becomes a child that takes the item as a prop.
 3. **A cluster of refs, computeds and handlers serving one region** moves with that region into the child, or into a composable when two regions share it. Pure helpers and constants move to the package's `services/`, one export per file.
-4. **Props go down and events go up** (`defineEmits`, or `defineModel` for a two-way value). A child that needs many props usually means the state belongs inside it, or the cut runs along the wrong line. What a child shares with the rest of a root, the context and the bag and the events its siblings react through, is read from a store and never threaded as a prop (`openspec/changes/genshin-session-store/design.md`); a layer of an integration root takes the props of its own block's values and the store supplies the rest, never `provide`/`inject`.
+4. **Props go down and events go up** (`defineEmits`, or `defineModel` for a two-way value). A child that needs many props usually means the state belongs inside it, or the cut runs along the wrong line. What a child shares with the rest of a root, the context and the bag and the events its siblings react through, is read from a store and never threaded as a prop (`openspec/specs/genshin/session-store/design.md`); a layer of an integration root takes the props of its own block's values and the store supplies the rest, never `provide`/`inject`.
 
 ## A group cut of an integration root is judged by what it adds
 
@@ -29,7 +29,7 @@ So a cut is made in this order, and each step is judged by the lines it leaves b
 1. **Read what the calls repeat from a store.** The members one call after another lists (the bag, the wallet and their
    setters, the item data, the names, the text, the language, the data URL and the events emitter) are the session store's,
    which the composables that need them read themselves; a bundled object spread into every call only moved the list
-   (the `genshin-session-store` change, which took the shared keys from 128 to 0 and the root by 139 lines).
+   (the session store's capability, `openspec/specs/genshin/session-store/design.md`, whose Notes say the store alone removes about a quarter of the options keys and the feature stores that own their state remove the rest).
 2. **Read what another feature produces from that feature's store.** A feature whose results two or more other calls
    took in as options is a store those calls read (`src/store/<feature>.ts`, one way, started by the root before the save
    watches it), judged by its slice's count over the production code. A feature that one call reads, or whose count is
