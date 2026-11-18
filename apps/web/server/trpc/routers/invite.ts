@@ -107,10 +107,12 @@ export const inviteRouter = router({
     throw getInvalidOperationError(Operation.Create, DatabaseEntityType.Invite, roomId, "UNPROCESSABLE_CONTENT");
   }),
   // The landing page reads the invite by its token and whether the caller is a member, which joining and leaving
-  // Both change. The invite's id is its bearer secret, so no topic names it
-  readInvite: getTopicsProcedure(standardAuthedProcedure.input(readInviteInputSchema), ({ ctx }) =>
-    getRoomListTopics(ctx.user.id),
-  ).query<ReadInviteResult | undefined>(async ({ ctx, input }) => {
+  // Both change. The invite's id is its bearer secret, so no topic names it. It also shows the inviter, whose profile
+  // Save publishes the room of each invite they made (getPersonReaderTopics), so the invite's room is named too
+  readInvite: getTopicsProcedure(standardAuthedProcedure.input(readInviteInputSchema), ({ ctx, output }) => {
+    const invite = roomIdSchema.optional().parse(output);
+    return [...getRoomListTopics(ctx.user.id), ...(invite ? [getTopic(TopicKind.Room, invite.roomId)] : [])];
+  }).query<ReadInviteResult | undefined>(async ({ ctx, input }) => {
     // An expired, exhausted, paused or banned link reads as an unknown token, so the landing page cannot tell them apart
     const invite = await resolveLiveInvite(ctx.db, input, ctx.user.id);
     if (!invite) return undefined;
