@@ -7,7 +7,7 @@ import {
   usersInAuth,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
-import { and, eq, ne, sql } from "drizzle-orm";
+import { and, eq, inArray, ne, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/sqlite-core";
 
 // One ordered name per direct message, built from the other participants only; the id tie-breaker keeps equal names
@@ -31,7 +31,18 @@ export const getDirectMessageDisplayNames = (db: Context["db"], userId: string) 
       and(eq(participantMembership.roomId, roomsInMessage.id), ne(participantMembership.userId, userId)),
     )
     .innerJoin(participantUser, eq(participantUser.id, participantMembership.userId))
-    .where(eq(roomsInMessage.type, RoomType.DirectMessage))
+    .where(
+      and(
+        eq(roomsInMessage.type, RoomType.DirectMessage),
+        inArray(
+          roomsInMessage.id,
+          db
+            .select({ roomId: usersToRoomsInMessage.roomId })
+            .from(usersToRoomsInMessage)
+            .where(eq(usersToRoomsInMessage.userId, userId)),
+        ),
+      ),
+    )
     .groupBy(participantMembership.roomId)
     .as("directMessageDisplayNames");
 };

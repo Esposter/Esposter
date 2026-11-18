@@ -144,10 +144,16 @@ describe(getReadSet, () => {
           nullFilled: "right",
           right: { column: "roomId", occurrence: "participantMembership", table: "message_usersToRooms" },
         },
+        {
+          kind: "subquery",
+          left: { column: "id", occurrence: "message_rooms", selectedAs: "id", table: "message_rooms" },
+          right: { column: "roomId", occurrence: "message_usersToRooms", table: "message_usersToRooms" },
+        },
       ],
       levels: [
         { scopedTables: ["message_usersToRooms"], tables: ["message_rooms", "message_usersToRooms"] },
         { scopedTables: [], tables: ["auth_users", "message_rooms", "message_usersToRooms"] },
+        { scopedTables: ["message_usersToRooms"], tables: ["message_usersToRooms"] },
       ],
       scopes: [{ column: "userId", table: "message_usersToRooms", value: userId }],
       tables: ["auth_users", "message_rooms", "message_usersToRooms"],
