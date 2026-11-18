@@ -128,17 +128,23 @@ describe(useWorldShrines, () => {
   test("a shut shrine is not offered without its region's key", () => {
     expect.hasAssertions();
 
-    const { inventory, openShrineById, setInventory, shrineInteractables, shrineMarkers } = setup(
+    const { inventory, openShrineById, puzzleChestPlaces, setInventory, shrineInteractables, shrineMarkers } = setup(
       createBag([OTHER_KEY_ITEM_ID, 1]),
       [OTHER_KEY_SOURCE],
     );
     openShrineById(SHRINE_ID);
 
     expect({
+      chests: puzzleChestPlaces.value,
       interactables: shrineInteractables.value,
       isOpen: shrineMarkers.map(({ shrine }) => shrine.isOpen),
       items: inventory.value.items.map(({ definition, quantity }) => ({ id: definition.id, quantity })),
-    }).toStrictEqual({ interactables: [], isOpen: [false], items: [{ id: OTHER_KEY_ITEM_ID, quantity: 1 }] });
+    }).toStrictEqual({
+      chests: [],
+      interactables: [],
+      isOpen: [false],
+      items: [{ id: OTHER_KEY_ITEM_ID, quantity: 1 }],
+    });
     expect(setInventory).not.toHaveBeenCalled();
   });
 });
