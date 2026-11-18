@@ -1,12 +1,10 @@
 import { adminActionTypeSchema } from "#src/models/message/AdminActionType";
-import { roomEmojiWithPresignedUrlSchema } from "#src/models/message/emoji/RoomEmojiWithPresignedUrl";
 import { revokeRoleInputSchema } from "#src/models/message/RevokeRoleInput";
 import { timeoutUserAdminActionInputSchema } from "#src/models/message/TimeoutUserAdminActionInput";
 import { typingSchema } from "#src/models/message/Typing";
 import { roomMessageSchema } from "#src/models/realtime/RoomMessage";
 import { roomReactionSchema } from "#src/models/realtime/RoomReaction";
 import { userIdSchema } from "#src/models/shared/UserId";
-import { selectRoomEmojiInMessageSchema } from "#src/schema/message/roomEmojisInMessage";
 import { selectRoomRoleInMessageSchema } from "#src/schema/message/roomRolesInMessage";
 import { selectRoomInMessageSchema } from "#src/schema/message/roomsInMessage";
 import { selectUserStatusInMessageSchema } from "#src/schema/message/userStatusesInMessage";
@@ -30,18 +28,6 @@ const updateEmojiEventSchema = z.object({ data: roomReactionSchema, type: z.lite
 const deleteEmojiEventSchema = z.object({
   data: roomReactionSchema.pick({ emojiTag: true, messageId: true }),
   type: z.literal("deleteEmoji"),
-});
-const createRoomEmojiEventSchema = z.object({
-  data: roomEmojiWithPresignedUrlSchema,
-  type: z.literal("createRoomEmoji"),
-});
-const updateRoomEmojiEventSchema = z.object({
-  data: selectRoomEmojiInMessageSchema,
-  type: z.literal("updateRoomEmoji"),
-});
-const deleteRoomEmojiEventSchema = z.object({
-  data: selectRoomEmojiInMessageSchema.pick({ id: true, roomId: true }),
-  type: z.literal("deleteRoomEmoji"),
 });
 // A role's permission bitfield is a bigint, which JSON cannot carry, so a role event names it by its decimal digits
 const roleEventSchema = selectRoomRoleInMessageSchema.extend({
@@ -88,9 +74,6 @@ const roomEventSchemas = [
   createEmojiEventSchema,
   updateEmojiEventSchema,
   deleteEmojiEventSchema,
-  createRoomEmojiEventSchema,
-  updateRoomEmojiEventSchema,
-  deleteRoomEmojiEventSchema,
   assignRoleEventSchema,
   createRoleEventSchema,
   deleteRoleEventSchema,

@@ -119,11 +119,6 @@ describe("emojiRouter", () => {
     expect(roomEmoji.name).toBe(name);
     expect(roomEmoji.roomId).toBe(roomId);
     expect(roomEmoji.presignedUrl).toContain(getRoomEmojiBlobName(roomId, roomEmoji.id));
-    expect(roomObjectCalls).toContainEqual({
-      args: [{ data: roomEmoji, type: "createRoomEmoji" }, {}],
-      method: "broadcastEvent",
-      roomId,
-    });
   });
 
   test("fails createRoomEmoji with an id whose blob never landed", async () => {
@@ -204,11 +199,6 @@ describe("emojiRouter", () => {
 
     expect(updatedRoomEmoji.id).toBe(roomEmoji.id);
     expect(updatedRoomEmoji.name).toBe(updatedName);
-    expect(roomObjectCalls).toContainEqual({
-      args: [{ data: updatedRoomEmoji, type: "updateRoomEmoji" }, {}],
-      method: "broadcastEvent",
-      roomId,
-    });
   });
 
   test("fails updateRoomEmoji with a name another emoji in the room holds", async () => {
@@ -248,11 +238,6 @@ describe("emojiRouter", () => {
     expect(takeOne(blobDeletionEvents) as BlobDeletionQueueMessage).toStrictEqual({
       blobNames: [getRoomEmojiBlobName(roomId, roomEmoji.id)],
       storageBucket: StorageBucket.MessageAssets,
-    });
-    expect(roomObjectCalls).toContainEqual({
-      args: [{ data: { id: roomEmoji.id, roomId }, type: "deleteRoomEmoji" }, {}],
-      method: "broadcastEvent",
-      roomId,
     });
   });
 

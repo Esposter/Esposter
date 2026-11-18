@@ -8,8 +8,6 @@ import { getRoomEmojiNameQuery } from "#server/services/message/emoji/getRoomEmo
 import { getRoomEmojiWithPresignedUrl } from "#server/services/message/emoji/getRoomEmojiWithPresignedUrl";
 import { readRoomEmojiCount } from "#server/services/message/emoji/readRoomEmojiCount";
 import { publishBlobDeletion } from "#server/services/queue/publishBlobDeletion";
-import { getRoomActor } from "#server/services/realtime/getRoomActor";
-import { broadcastRoomEvent } from "#server/services/room/broadcastRoomEvent";
 import { getBucket } from "#server/services/storage/getBucket";
 import { getStorageCredentials } from "#server/services/storage/getStorageCredentials";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
@@ -93,10 +91,7 @@ export const emojiRouter = router({
       DatabaseEntityType.RoomEmoji,
       roomEmojiContext,
     );
-    const roomEmojiWithPresignedUrl = await getRoomEmojiWithPresignedUrl(StorageBucket.MessageAssets, newRoomEmoji);
-    const actor = getRoomActor(ctx);
-    await broadcastRoomEvent(roomId, { data: roomEmojiWithPresignedUrl, type: "createRoomEmoji" }, actor);
-    return roomEmojiWithPresignedUrl;
+    return getRoomEmojiWithPresignedUrl(StorageBucket.MessageAssets, newRoomEmoji);
   }),
   deleteRoomEmoji: getTopicsProcedure(
     getPermissionsProcedure(RoomPermission.ManageEmojis, deleteRoomEmojiInputSchema, "roomId"),
@@ -113,8 +108,6 @@ export const emojiRouter = router({
       DatabaseEntityType.RoomEmoji,
       id,
     );
-    const actor = getRoomActor(ctx);
-    await broadcastRoomEvent(roomId, { data: { id, roomId }, type: "deleteRoomEmoji" }, actor);
     // Best-effort and post-persist: a dropped publish orphans one blob under a prefix the room's own teardown
     // Sweeps anyway, and every reaction and token naming this id already renders its fallback
     await publishBlobDeletion(StorageBucket.MessageAssets, [getRoomEmojiBlobName(roomId, id)]).match(
@@ -188,8 +181,6 @@ export const emojiRouter = router({
       DatabaseEntityType.RoomEmoji,
       id,
     );
-    const actor = getRoomActor(ctx);
-    await broadcastRoomEvent(roomId, { data: updatedRoomEmoji, type: "updateRoomEmoji" }, actor);
     return updatedRoomEmoji;
   }),
 });
