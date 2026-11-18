@@ -16,11 +16,11 @@ import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
-import { readAbyssFloorRewards } from "#src/services/spiralAbyss/readAbyssFloorRewards";
-import { readAbyssPeriods } from "#src/services/spiralAbyss/readAbyssPeriods";
 import { CurrencyItemIdMap, EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
 import { createParty } from "#src/services/party/createParty";
 import { flushReads } from "#src/services/shared/flushReads.test";
+import { readAbyssFloorRewards } from "#src/services/spiralAbyss/readAbyssFloorRewards";
+import { readAbyssPeriods } from "#src/services/spiralAbyss/readAbyssPeriods";
 import { GAME_TIME_ZONE } from "#src/services/time/constants";
 import { startTestWorldParty } from "#src/store/party.fixture";
 import { startTestWorldSession } from "#src/store/session.fixture";
@@ -101,7 +101,7 @@ const otherGroupReward: AbyssFloorReward = { ...reward, chamberRewardIds: [OTHER
 describe(useWorldSpiralAbyss, () => {
   const AREA_ID = "area";
 
-  test("reads the tables as the entrance first opens, once, and holds them after", async () => {
+  test("reads the tables as the entrance first opens, once even when it opens again before they land, and holds them after", async () => {
     expect.hasAssertions();
     const worldSessionStore = startTestWorldSession(
       { gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL, getWorldNow: () => NOW },
@@ -113,6 +113,7 @@ describe(useWorldSpiralAbyss, () => {
 
     expect(readAbyssPeriods).not.toHaveBeenCalled();
 
+    abyss.openAbyssEntrance();
     abyss.openAbyssEntrance();
     await flushReads();
     abyss.openAbyssEntrance();

@@ -77,7 +77,7 @@ flowchart TD
 ## Notes
 
 - **The dump ends at a period.** The community dump's schedule ends with the period of scheduleId 124, so the Moon Spire runs that period until a newer dump holds the later ones.
-- **The readers are called when the entrance opens.** `readAbyssTables` (`packages/genshin-world/src/services/spiralAbyss/readAbyssTables.ts`) reads the five slices together the first time the entrance opens, and `useWorldSpiralAbyss` (`packages/genshin-world/src/composables/useWorldSpiralAbyss.ts`) holds them after, so the world's first frame reads none of them. The benedictions are read with the entrance rather than at a chamber's start: a chamber's start is synchronous, and reading there would let two starts race.
+- **The readers are called when the entrance opens.** `readAbyssTables` (`packages/genshin-world/src/services/spiralAbyss/readAbyssTables.ts`) reads the five slices together the first time the entrance opens, an open while that read is still on its way starting no second one, and `useWorldSpiralAbyss` (`packages/genshin-world/src/composables/useWorldSpiralAbyss.ts`) holds them after, so the world's first frame reads none of them. The benedictions are read with the entrance rather than at a chamber's start: a chamber's start is synchronous, and reading there would let two starts race.
 
 ## Sources
 

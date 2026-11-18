@@ -95,13 +95,17 @@ export const useWorldSpiralAbyss = ({
   });
 
   // The entrance opened: its tables are read the first time it opens and held after, and the period covering the instant it
-  // Opened gives the entry its blessing and the floors it offers. A read that fails is logged, and the next open reads again
+  // Opened gives the entry its blessing and the floors it offers. A read that fails is logged, and the next open reads again.
+  // An open while the read is on its way starts no second read, and the read's period is the one its first open gave
+  let isReadingAbyssTables = false;
   const openAbyssEntrance = () => {
     const openedAt = getWorldNow();
     if (abyssTables.value) {
       abyssEntrancePeriod.value = findAbyssPeriodAt(abyssTables.value.periods, openedAt);
       return;
     }
+    if (isReadingAbyssTables) return;
+    isReadingAbyssTables = true;
     // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
     getResultAsync(() => readAbyssTables(worldSessionStore.gameDataBaseUrl)).match(
       (tables) => {
@@ -109,6 +113,7 @@ export const useWorldSpiralAbyss = ({
         abyssEntrancePeriod.value = findAbyssPeriodAt(tables.periods, openedAt);
       },
       (error) => {
+        isReadingAbyssTables = false;
         console.error(error);
       },
     );
