@@ -141,7 +141,7 @@ describe(runParityPasses, () => {
 
     measureInventory.mockResolvedValueOnce(held);
     measureLayout.mockResolvedValueOnce(failed);
-    const results = await runParityPasses(DerivedAssetComponent.Login, ParityPass.Light);
+    const results = await runParityPasses(DerivedAssetComponent.Login, { passAlone: ParityPass.Light });
 
     expect(results).toStrictEqual(inventoryHeldLayoutFailed);
     expect(measureLight).not.toHaveBeenCalled();
@@ -153,12 +153,24 @@ describe(runParityPasses, () => {
     measureInventory.mockResolvedValueOnce(held);
     measureLayout.mockResolvedValueOnce(held);
     measureCamera.mockResolvedValueOnce(held);
-    const results = await runParityPasses(DerivedAssetComponent.Login, ParityPass.Camera);
+    const results = await runParityPasses(DerivedAssetComponent.Login, { passAlone: ParityPass.Camera });
 
     expect(results).toStrictEqual([
       { isHeld: true, measure: held, pass: ParityPass.Inventory },
       { isHeld: true, measure: held, pass: ParityPass.Layout },
       { isHeld: true, measure: held, pass: ParityPass.Camera },
     ]);
+  });
+
+  test("hands the parity page root to each measure, so a run measures the page it shot", async () => {
+    expect.hasAssertions();
+
+    const pageRoot = "http://localhost:3012/parity/";
+    measureInventory.mockResolvedValueOnce(held);
+    measureLayout.mockResolvedValueOnce(failed);
+    await runParityPasses(DerivedAssetComponent.Login, { pageRoot });
+
+    expect(measureInventory).toHaveBeenCalledWith(DerivedAssetComponent.Login, pageRoot);
+    expect(measureLayout).toHaveBeenCalledWith(DerivedAssetComponent.Login, pageRoot);
   });
 });

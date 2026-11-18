@@ -34,17 +34,27 @@ declare global {
 // Scene's camera there, the furthest apart in the reference's own pixels (`computeLayoutFrameMeasure`). The camera is
 // The next pass's, but both points of a pair move alike under a pose a little off, so their gap reads the placement
 // Alone
-export const measureLayout = async (component: DerivedAssetComponent): Promise<ParityPassMeasure> => {
+export const measureLayout = async (
+  component: DerivedAssetComponent,
+  pageRoot?: string,
+): Promise<ParityPassMeasure> => {
   const { explainedOffsets, families, ratios } = await checkArrangement(component);
   const landmarkRoots = await checkLandmarkRoots(component, WINDRISE_REGION_FILE);
-  const { close, page } = await openComponentWitnessPage(component);
+  const { close, page } = await openComponentWitnessPage(component, pageRoot);
   const familyOffsets = await withFinalizerAsync(
     () => readFamilyOffsets(page),
     () => close(),
   );
   const projected: { families: { gaps: number[]; name: string }[]; referenceId: string }[] = [];
   for (const referenceId of getCurrentBuildReferenceIds(component)) {
-    const { close: referenceClose, page: referencePage } = await openWitnessPage(referenceId, component);
+    const { close: referenceClose, page: referencePage } = await openWitnessPage(
+      referenceId,
+      component,
+      undefined,
+      undefined,
+      undefined,
+      pageRoot,
+    );
     const referenceFamilies = await withFinalizerAsync(
       async () => {
         const [camera, offsets, { height, width }] = await Promise.all([

@@ -30,7 +30,7 @@ const NO_GATE_REASON = "no gate: the family lies within one half";
 // So a surface of the same distribution reads at the least a finite patch can. The pixel-aligned structure of each family stays in the notes, scale by scale, as a diagnostic of where
 // Its detail lies. A glow the materials add over their lit colour is lit, not unlit, so it is scored by the light pass
 // Against the game's frame (`measureGlow`)
-export const measureSurface = (component: DerivedAssetComponent): Promise<ParityPassMeasure> =>
+export const measureSurface = (component: DerivedAssetComponent, pageRoot?: string): Promise<ParityPassMeasure> =>
   measureFamilyTargets(component, TARGET_NAMES, async (referenceId, exportsRead, oursRead, page) => {
     const { families, width } = exportsRead;
     const exportsAlbedo = exportsRead.targets.albedo ?? new Float32Array();
@@ -61,7 +61,7 @@ export const measureSurface = (component: DerivedAssetComponent): Promise<Parity
     // Other, the least a surface of the same distribution can read off a finite patch of it. A family held within one
     // Half has no floor to read, so it has no gate
     // The statistics are reduced on the parity page's GPU, which the page is opened for once per surface
-    const surfaceStatistics = await openSurfaceStatisticsPage();
+    const surfaceStatistics = await openSurfaceStatisticsPage(pageRoot);
     const measured = await withFinalizerAsync(
       () =>
         Promise.all(

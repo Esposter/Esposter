@@ -10,9 +10,10 @@ import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 // Measure holds in any state. The caller closes the page
 export const openComponentWitnessPage = async (
   component: DerivedAssetComponent,
+  pageRoot?: string,
 ): Promise<{ close: () => Promise<void>; page: Page }> => {
   const referenceIds = getComponentReferenceIds(component);
   if (referenceIds.length === 0) throw new InvalidOperationError(Operation.Read, component, "no reference to open");
   await fetchReferences();
-  return openWitnessPage(takeOne(referenceIds), component);
+  return openWitnessPage(takeOne(referenceIds), component, undefined, undefined, undefined, pageRoot);
 };

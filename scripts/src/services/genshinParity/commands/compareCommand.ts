@@ -161,7 +161,7 @@ export const compareCommand: SubCommandsDef[string] = defineCommand({
             component !== undefined &&
             getApprovalValue(comparedScore, approval) >= approval.bar
           ) {
-            const reopened = findReopenedPass(await runParityPasses(component));
+            const reopened = findReopenedPass(await runParityPasses(component, { pageRoot }));
             console.error(
               reopened === undefined
                 ? "stands off, and every pass holds: no measure reads the difference"

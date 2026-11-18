@@ -15,9 +15,10 @@ import { measureSurface } from "#src/services/genshinParity/passes/measureSurfac
 
 // Each pass's measure over a component, every one in the units its own data reads in and gated at that data's noise;
 // A pass with none yet stops the run there, its measure the next tool to build
-// (openspec/changes/genshin-recreation-passes/design.md)
+// (openspec/changes/genshin-recreation-passes/design.md). A measure that opens the parity page takes its root; one that
+// Does not declares only the component
 export const ParityPassMeasureMap: Partial<
-  Record<ParityPass, (component: DerivedAssetComponent) => Promise<ParityPassMeasure>>
+  Record<ParityPass, (component: DerivedAssetComponent, pageRoot?: string) => Promise<ParityPassMeasure>>
 > = {
   [ParityPass.Atmosphere]: measureAtmosphere,
   [ParityPass.Audio]: measureAudio,

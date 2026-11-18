@@ -12,15 +12,14 @@ declare global {
 
 // The parity page's root, where the GPU reductions a surface's structure is scored by are served. The caller closes the
 // Page with `close`, which closes the browser it launched
-export const openSurfaceStatisticsPage = async (): Promise<SurfaceStatisticsPage> => {
+export const openSurfaceStatisticsPage = async (pageRoot?: string): Promise<SurfaceStatisticsPage> => {
   const browser = await chromium.launch({ channel: "msedge" });
   const close = async (): Promise<void> => {
     await browser.close();
   };
   return getResultAsync(async (): Promise<SurfaceStatisticsPage> => {
     const page = await browser.newPage();
-    const pageRoot = await resolveParityPageRoot();
-    await page.goto(pageRoot, { waitUntil: "load" });
+    await page.goto(pageRoot ?? (await resolveParityPageRoot()), { waitUntil: "load" });
     await page.waitForFunction(() => Reflect.has(window, "computeSurfaceStatistics"));
     return {
       close,

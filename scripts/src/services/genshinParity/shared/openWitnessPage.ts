@@ -24,6 +24,8 @@ export const openWitnessPage = async (
   // Props the page is opened with over its reference's own, for a shot of the same state with one prop changed, such as
   // The login's frame without its bloom
   propOverrides?: Record<string, unknown>,
+  // The parity page's root, for a run that shot its screen on a fresh page rather than the one a probe finds
+  pageRoot?: string,
 ): Promise<{
   checkIsScored: (pixel: number, width: number) => boolean;
   close: () => Promise<void>;
@@ -51,6 +53,7 @@ export const openWitnessPage = async (
     .toBuffer();
   const { close, page } = await openParityPage({
     height,
+    pageRoot,
     props: { ...reference.props, ...propOverrides },
     screen: reference.screen,
     width: pageWidth,

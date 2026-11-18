@@ -41,7 +41,10 @@ const DOOR_FAMILY = "Door";
 // Rest, and its pace, how fast those moments pass against the clock. The login's door is the one part a clip moves so
 // Far, so a component's motion pass reads it, and a component placing no such door is not owed the pass until another's
 // Parts move by their clips
-export const measureMotion = async (component: DerivedAssetComponent): Promise<ParityPassMeasure> => {
+export const measureMotion = async (
+  component: DerivedAssetComponent,
+  pageRoot?: string,
+): Promise<ParityPassMeasure> => {
   const placements = await readComponentPlacements(component);
   if (!placements.some(({ name }) => name === LOGIN_DOOR_MESH))
     return { isNotOwed: true, notes: [`${component} places no door a clip moves`], readings: [] };
@@ -57,6 +60,7 @@ export const measureMotion = async (component: DerivedAssetComponent): Promise<P
   const { close, page } = await openParityPage({
     height: MOTION_HEIGHT,
     isClockFaked: true,
+    pageRoot,
     props: { heldScrolled: 0, isInterfaceHidden: true, stage: LoginStage.Title },
     screen: DerivedAssetComponentMap[component].screen,
     width: MOTION_WIDTH,

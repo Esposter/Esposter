@@ -26,7 +26,10 @@ declare global {
 // Drawn yet, as its screen's fixture claims them on the parity page. The page is handed the placements' names and loads
 // None of the exports: a capital's run to over a gigabyte of meshes and textures, which this process serves the page
 // All at once, past 4 GB of its own memory, until the browser's connection drops
-export const measureInventory = async (component: DerivedAssetComponent): Promise<ParityPassMeasure> => {
+export const measureInventory = async (
+  component: DerivedAssetComponent,
+  pageRoot?: string,
+): Promise<ParityPassMeasure> => {
   const [referenceId] = getComponentReferenceIds(component);
   const reference = referenceId === undefined ? undefined : ParityReferenceMap[referenceId];
   if (!reference) throw new InvalidOperationError(Operation.Read, component, "no reference to open");
@@ -35,6 +38,7 @@ export const measureInventory = async (component: DerivedAssetComponent): Promis
   );
   const { close, page } = await openParityPage({
     height: UNDRAWN_PAGE_SIZE,
+    pageRoot,
     screen: reference.screen,
     width: UNDRAWN_PAGE_SIZE,
   });

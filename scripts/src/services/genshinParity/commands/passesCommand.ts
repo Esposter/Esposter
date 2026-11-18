@@ -35,7 +35,7 @@ export const passesCommand: SubCommandsDef[string] = defineCommand({
   run: async ({ args }) => {
     const component = parseDerivedAssetComponent(args.component);
     const recordedRows = await readParityPassRows(component);
-    const results = await runParityPasses(component, args.pass);
+    const results = await runParityPasses(component, { passAlone: args.pass });
     const movedPass = findMovedFrozenPass({ passAlone: args.pass, recordedRows, results });
     for (const {
       isHeld,
