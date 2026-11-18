@@ -14,7 +14,6 @@ import { announceRoomMembersJoined } from "#server/services/room/announceRoomMem
 import { deleteRoom } from "#server/services/room/deleteRoom";
 import { getDirectMessageDisplayNames } from "#server/services/room/getDirectMessageDisplayNames";
 import { getLiveInviteWhere } from "#server/services/room/getLiveInviteWhere";
-import { getRoomListTopics } from "#server/services/room/getRoomListTopics";
 import { getRoomMemberJoinCondition } from "#server/services/room/getRoomMemberJoinCondition";
 import { getRoomMembershipWhere } from "#server/services/room/getRoomMembershipWhere";
 import { getRoomProfileImageBlobPrefix } from "#server/services/room/getRoomProfileImageBlobPrefix";
@@ -31,7 +30,6 @@ import { router } from "#server/trpc/index";
 import { addProfanityFilterMiddleware } from "#server/trpc/middleware/addProfanityFilterMiddleware";
 import { assertIsRoomMiddleware } from "#server/trpc/middleware/assertIsRoomMiddleware";
 import { getProfanityFilterProcedure } from "#server/trpc/procedure/getProfanityFilterProcedure";
-import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { getMemberProcedure } from "#server/trpc/procedure/room/getMemberProcedure";
 import { getPermissionsProcedure } from "#server/trpc/procedure/room/getPermissionsProcedure";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
@@ -53,7 +51,6 @@ import {
   DEFAULT_EVERYONE_PERMISSIONS,
   getDisplayNameExpression,
   getPublicUserColumns,
-  getTopic,
   invitesInMessage,
   MessageType,
   roomIdSchema,
@@ -61,9 +58,7 @@ import {
   roomRolesInMessage,
   roomsInMessage,
   RoomType,
-  selectRoomInMessageSchema,
   StorageBucket,
-  TopicKind,
   updateRoomInputSchema,
   userIdSchema,
   usersInAuth,
@@ -77,37 +72,36 @@ import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
 import { and, count, desc, eq, getColumns, inArray, ne, not, or, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/sqlite-core";
 import { v7 } from "uuid";
-import { z } from "zod";
 
-const baseRoomRouter = router({
-  createRoom: getTopicsProcedure(getProfanityFilterProcedure(createRoomInputSchema, ["name"]), ({ ctx }) =>
-    getRoomListTopics(ctx.user.id),
-  ).mutation<RoomInMessage>(async ({ ctx, input }) => {
-    const userId = ctx.user.id;
-    // The id is named up front, since the membership and the @everyone role both belong to the room being created
-    const roomId = v7();
-    const [newRoomRows] = await ctx.db.batch([
-      ctx.db
-        .insert(roomsInMessage)
-        .values({ ...input, id: roomId, userId })
-        .returning(),
-      ctx.db.insert(usersToRoomsInMessage).values({ roomId, userId }),
-      ctx.db
-        .insert(roomRolesInMessage)
-        .values({
-          isEveryone: true,
-          name: "@everyone",
-          permissions: DEFAULT_EVERYONE_PERMISSIONS,
-          position: 0,
-          roomId,
-        }),
-    ]);
-    return requireMutation(newRoomRows[0], Operation.Create, DatabaseEntityType.Room, JSON.stringify(input));
-  }),
-  deleteRoom: getTopicsProcedure(
-    standardAuthedProcedure.input(deleteRoomInputSchema).use(assertIsRoomMiddleware),
-    ({ ctx, input }) => [getTopic(TopicKind.Room, input), ...getRoomListTopics(ctx.user.id)],
-  ).mutation<RoomInMessage>(({ ctx, input }) => deleteRoom(ctx, input)),
+export const baseRoomRouter = router({
+  createRoom: getProfanityFilterProcedure(createRoomInputSchema, ["name"]).mutation<RoomInMessage>(
+    async ({ ctx, input }) => {
+      const userId = ctx.user.id;
+      // The id is named up front, since the membership and the @everyone role both belong to the room being created
+      const roomId = v7();
+      const [newRoomRows] = await ctx.db.batch([
+        ctx.db
+          .insert(roomsInMessage)
+          .values({ ...input, id: roomId, userId })
+          .returning(),
+        ctx.db.insert(usersToRoomsInMessage).values({ roomId, userId }),
+        ctx.db
+          .insert(roomRolesInMessage)
+          .values({
+            isEveryone: true,
+            name: "@everyone",
+            permissions: DEFAULT_EVERYONE_PERMISSIONS,
+            position: 0,
+            roomId,
+          }),
+      ]);
+      return requireMutation(newRoomRows[0], Operation.Create, DatabaseEntityType.Room, JSON.stringify(input));
+    },
+  ),
+  deleteRoom: standardAuthedProcedure
+    .input(deleteRoomInputSchema)
+    .use(assertIsRoomMiddleware)
+    .mutation<RoomInMessage>(({ ctx, input }) => deleteRoom(ctx, input)),
   generateProfileImageUploadUrl: getPermissionsProcedure(RoomPermission.ManageRoom, roomIdSchema, "roomId")
     .meta({
       staticReason:
@@ -124,10 +118,7 @@ const baseRoomRouter = router({
       );
       return { presignedUrl, publicUrl: getPublicAssetUrl(StorageBucket.PublicUserAssets, blobName) };
     }),
-  joinRoom: getTopicsProcedure(standardAuthedProcedure.input(joinRoomInputSchema), ({ ctx, output }) => {
-    const roomId = selectRoomInMessageSchema.pick({ id: true }).parse(output).id;
-    return [getTopic(TopicKind.Room, roomId), ...getRoomListTopics(ctx.user.id)];
-  }).mutation<RoomInMessage>(async ({ ctx, input }) => {
+  joinRoom: standardAuthedProcedure.input(joinRoomInputSchema).mutation<RoomInMessage>(async ({ ctx, input }) => {
     const userId = ctx.user.id;
     // The room is read once, to name it in the duplicate-join error. Every refusal of the link itself, an unknown,
     // Expired or used-up link, a paused room or a banned user, is decided by the batch below, so no read repeats its rules
@@ -185,97 +176,95 @@ const baseRoomRouter = router({
 
     return room;
   }),
-  leaveRoom: getTopicsProcedure(
-    standardAuthedProcedure.input(leaveRoomInputSchema).use(assertIsRoomMiddleware),
-    ({ ctx, input }) => [getTopic(TopicKind.Room, input), ...getRoomListTopics(ctx.user.id)],
-  ).mutation<RoomInMessage["id"]>(async ({ ctx, input }) => {
-    const userId = ctx.user.id;
-    const ownedRoom = await ctx.db.query.roomsInMessage.findFirst({
-      columns: { id: true },
-      where: { id: { eq: input }, userId: { eq: userId } },
-    });
-
-    if (ownedRoom) return (await deleteRoom(ctx, input)).id;
-
-    const userToRoom = requireMutation(
-      (await ctx.db.delete(usersToRoomsInMessage).where(getRoomMembershipWhere(input, userId)).returning())[0],
-      Operation.Delete,
-      DatabaseEntityType.UserToRoom,
-      input,
-    );
-
-    await announceRoomMemberDeparture(userToRoom);
-    // Best-effort after the membership delete — the name lookup only exists to word the system message, so
-    // A failure costs the room one "X left" line, never the leave that already landed.
-    await getResultAsync(async () => {
-      const leavingMember = await ctx.db.query.usersInAuth.findFirst({
-        columns: { name: true },
-        where: { id: { eq: userId } },
+  leaveRoom: standardAuthedProcedure
+    .input(leaveRoomInputSchema)
+    .use(assertIsRoomMiddleware)
+    .mutation<RoomInMessage["id"]>(async ({ ctx, input }) => {
+      const userId = ctx.user.id;
+      const ownedRoom = await ctx.db.query.roomsInMessage.findFirst({
+        columns: { id: true },
+        where: { id: { eq: input }, userId: { eq: userId } },
       });
-      if (leavingMember)
-        await createSystemRoomMessage(userToRoom.roomId, userId, `${leavingMember.name} left the room.`).match(
-          noop,
-          console.error,
-        );
-    }).match(noop, console.error);
 
-    return userToRoom.roomId;
-  }),
-  readMemberCountsByTopRole: getTopicsProcedure(getMemberProcedure(roomIdSchema, "roomId"), ({ input: { roomId } }) => [
-    getTopic(TopicKind.Room, roomId),
-  ]).query<MemberCountByTopRole[]>(({ ctx, input: { roomId } }) => {
-    // A member's top role is their highest-positioned assigned role; @everyone is implicit and never groups. Each
-    // Member's assigned roles are ranked from the highest, and only the first of each member's is kept
-    const rankedRoles = ctx.db
-      .select({
-        rank: sql<number>`row_number() over (partition by ${usersToRoomRolesInMessage.userId} order by ${roomRolesInMessage.position} desc)`.as(
-          "rank",
-        ),
-        roleId: usersToRoomRolesInMessage.roleId,
-      })
-      .from(usersToRoomRolesInMessage)
-      .innerJoin(
-        roomRolesInMessage,
-        and(eq(roomRolesInMessage.id, usersToRoomRolesInMessage.roleId), not(roomRolesInMessage.isEveryone)),
-      )
-      .where(eq(usersToRoomRolesInMessage.roomId, roomId))
-      .as("rankedRoles");
-    // Only role groups are returned — the roleless trailing group is derived client-side from the
-    // Total member count, which the join and leave events keep current without a refetch
-    return ctx.db
-      .select({ count: count(), roleId: rankedRoles.roleId })
-      .from(rankedRoles)
-      .where(eq(rankedRoles.rank, 1))
-      .groupBy(rankedRoles.roleId);
-  }),
-  readMembers: getTopicsProcedure(getMemberProcedure(readMembersInputSchema, "roomId"), ({ input: { roomId } }) => [
-    getTopic(TopicKind.Room, roomId),
-  ]).query<Page<MemberInRoom>>(async ({ ctx, input: { cursor, filter, limit, roomId } }) => {
-    // The display name is the sort, cursor and search key, so the order, the page boundary and the match all
-    // Agree with the name the row renders
-    const displayName = getDisplayNameExpression(usersToRoomsInMessage, usersInAuth);
-    // Compared without regard to ASCII case, so a name sorts beside its lowercase spelling as a reader expects it to,
-    // Which is the comparison the client sorts the loaded list by
-    const boundSort = createPageSort(
-      { displayName: sql<string>`${displayName} collate nocase`, id: usersInAuth.id },
-      readMembersPageSort,
-    );
-    const wheres: (SQL | undefined)[] = [eq(usersToRoomsInMessage.roomId, roomId), getPageWhere(boundSort, cursor)];
-    if (filter?.name)
-      wheres.push(or(containsLike(displayName, filter.name), containsLike(usersInAuth.name, filter.name)));
+      if (ownedRoom) return (await deleteRoom(ctx, input)).id;
 
-    const members = await ctx.db
-      .select({ ...getPublicUserColumns(usersInAuth), displayName })
-      .from(usersInAuth)
-      .innerJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.userId, usersInAuth.id))
-      .where(and(...wheres))
-      .orderBy(...getPageOrderBy(boundSort, cursor))
-      .limit(limit + 1);
-    return toPage(members, readMembersPageSort, cursor, limit);
-  }),
-  readMembersCount: getTopicsProcedure(getMemberProcedure(roomIdSchema, "roomId"), ({ input: { roomId } }) => [
-    getTopic(TopicKind.Room, roomId),
-  ]).query<number>(
+      const userToRoom = requireMutation(
+        (await ctx.db.delete(usersToRoomsInMessage).where(getRoomMembershipWhere(input, userId)).returning())[0],
+        Operation.Delete,
+        DatabaseEntityType.UserToRoom,
+        input,
+      );
+
+      await announceRoomMemberDeparture(userToRoom);
+      // Best-effort after the membership delete — the name lookup only exists to word the system message, so
+      // A failure costs the room one "X left" line, never the leave that already landed.
+      await getResultAsync(async () => {
+        const leavingMember = await ctx.db.query.usersInAuth.findFirst({
+          columns: { name: true },
+          where: { id: { eq: userId } },
+        });
+        if (leavingMember)
+          await createSystemRoomMessage(userToRoom.roomId, userId, `${leavingMember.name} left the room.`).match(
+            noop,
+            console.error,
+          );
+      }).match(noop, console.error);
+
+      return userToRoom.roomId;
+    }),
+  readMemberCountsByTopRole: getMemberProcedure(roomIdSchema, "roomId").query<MemberCountByTopRole[]>(
+    ({ ctx, input: { roomId } }) => {
+      // A member's top role is their highest-positioned assigned role; @everyone is implicit and never groups. Each
+      // Member's assigned roles are ranked from the highest, and only the first of each member's is kept
+      const rankedRoles = ctx.db
+        .select({
+          rank: sql<number>`row_number() over (partition by ${usersToRoomRolesInMessage.userId} order by ${roomRolesInMessage.position} desc)`.as(
+            "rank",
+          ),
+          roleId: usersToRoomRolesInMessage.roleId,
+        })
+        .from(usersToRoomRolesInMessage)
+        .innerJoin(
+          roomRolesInMessage,
+          and(eq(roomRolesInMessage.id, usersToRoomRolesInMessage.roleId), not(roomRolesInMessage.isEveryone)),
+        )
+        .where(eq(usersToRoomRolesInMessage.roomId, roomId))
+        .as("rankedRoles");
+      // Only role groups are returned — the roleless trailing group is derived client-side from the
+      // Total member count, which the join and leave events keep current without a refetch
+      return ctx.db
+        .select({ count: count(), roleId: rankedRoles.roleId })
+        .from(rankedRoles)
+        .where(eq(rankedRoles.rank, 1))
+        .groupBy(rankedRoles.roleId);
+    },
+  ),
+  readMembers: getMemberProcedure(readMembersInputSchema, "roomId").query<Page<MemberInRoom>>(
+    async ({ ctx, input: { cursor, filter, limit, roomId } }) => {
+      // The display name is the sort, cursor and search key, so the order, the page boundary and the match all
+      // Agree with the name the row renders
+      const displayName = getDisplayNameExpression(usersToRoomsInMessage, usersInAuth);
+      // Compared without regard to ASCII case, so a name sorts beside its lowercase spelling as a reader expects it to,
+      // Which is the comparison the client sorts the loaded list by
+      const boundSort = createPageSort(
+        { displayName: sql<string>`${displayName} collate nocase`, id: usersInAuth.id },
+        readMembersPageSort,
+      );
+      const wheres: (SQL | undefined)[] = [eq(usersToRoomsInMessage.roomId, roomId), getPageWhere(boundSort, cursor)];
+      if (filter?.name)
+        wheres.push(or(containsLike(displayName, filter.name), containsLike(usersInAuth.name, filter.name)));
+
+      const members = await ctx.db
+        .select({ ...getPublicUserColumns(usersInAuth), displayName })
+        .from(usersInAuth)
+        .innerJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.userId, usersInAuth.id))
+        .where(and(...wheres))
+        .orderBy(...getPageOrderBy(boundSort, cursor))
+        .limit(limit + 1);
+      return toPage(members, readMembersPageSort, cursor, limit);
+    },
+  ),
+  readMembersCount: getMemberProcedure(roomIdSchema, "roomId").query<number>(
     async ({ ctx, input: { roomId } }) =>
       takeOne(
         await ctx.db
@@ -284,10 +273,7 @@ const baseRoomRouter = router({
           .where(eq(usersToRoomsInMessage.roomId, roomId)),
       ).count,
   ),
-  readMutualRooms: getTopicsProcedure(standardAuthedProcedure.input(userIdSchema), ({ ctx, input }) => [
-    ...getRoomListTopics(input.userId),
-    ...getRoomListTopics(ctx.user.id),
-  ]).query<RoomInMessage[]>(({ ctx, input }) => {
+  readMutualRooms: standardAuthedProcedure.input(userIdSchema).query<RoomInMessage[]>(({ ctx, input }) => {
     const usersToRoomsInMessage1 = alias(usersToRoomsInMessage, "usersToRoomsInMessage1");
     const usersToRoomsInMessage2 = alias(usersToRoomsInMessage, "usersToRoomsInMessage2");
     return ctx.db
@@ -305,56 +291,46 @@ const baseRoomRouter = router({
       .orderBy(desc(roomsInMessage.lastMessageAt))
       .limit(MAX_READ_LIMIT);
   }),
-  readRoom: getTopicsProcedure(standardAuthedProcedure.input(readRoomInputSchema), ({ ctx, input }) =>
-    input === undefined ? getRoomListTopics(ctx.user.id) : [getTopic(TopicKind.Room, input)],
-  ).query<RoomInMessage | undefined>(async ({ ctx, input }) => {
-    if (input) {
-      const room = ctx.db.query.roomsInMessage.findFirst({
-        where: {
-          RAW: (roomTable, { and: andFilter, eq: eqFilter, exists }) => {
-            const where = andFilter(
-              eqFilter(roomTable.id, input),
-              exists(
-                ctx.db
-                  .select({ _: sql`1` })
-                  .from(usersToRoomsInMessage)
-                  .where(
-                    andFilter(
-                      eqFilter(usersToRoomsInMessage.roomId, roomTable.id),
-                      eqFilter(usersToRoomsInMessage.userId, ctx.user.id),
+  readRoom: standardAuthedProcedure
+    .input(readRoomInputSchema)
+    .query<RoomInMessage | undefined>(async ({ ctx, input }) => {
+      if (input) {
+        const room = ctx.db.query.roomsInMessage.findFirst({
+          where: {
+            RAW: (roomTable, { and: andFilter, eq: eqFilter, exists }) => {
+              const where = andFilter(
+                eqFilter(roomTable.id, input),
+                exists(
+                  ctx.db
+                    .select({ _: sql`1` })
+                    .from(usersToRoomsInMessage)
+                    .where(
+                      andFilter(
+                        eqFilter(usersToRoomsInMessage.roomId, roomTable.id),
+                        eqFilter(usersToRoomsInMessage.userId, ctx.user.id),
+                      ),
                     ),
-                  ),
-              ),
-            );
-            if (!where) throw new InvalidOperationError(Operation.Read, DatabaseEntityType.Room, input);
-            return where;
+                ),
+              );
+              if (!where) throw new InvalidOperationError(Operation.Read, DatabaseEntityType.Room, input);
+              return where;
+            },
           },
-        },
-      });
-      return requireEntity(room, DatabaseEntityType.Room, input);
-    } else
-      return (
-        await ctx.db
-          .select(getColumns(roomsInMessage))
-          .from(roomsInMessage)
-          .innerJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.roomId, roomsInMessage.id))
-          .where(and(eq(usersToRoomsInMessage.userId, ctx.user.id), eq(roomsInMessage.type, RoomType.Room)))
-          .orderBy(desc(roomsInMessage.lastMessageAt))
-          .limit(1)
-      )[0];
-  }),
-  // Each listed room's own topic too, since the sidebar shows its name and image, which change without the list doing so
-  readRooms: getTopicsProcedure(
-    getMemberProcedure(readRoomsInputSchema, "roomId"),
-    ({ ctx, input: { roomId }, output }) => [
-      ...(roomId === undefined ? [] : [getTopic(TopicKind.Room, roomId)]),
-      ...getRoomListTopics(ctx.user.id),
-      ...z
-        .object({ items: z.array(selectRoomInMessageSchema.pick({ id: true })) })
-        .parse(output)
-        .items.map(({ id }) => getTopic(TopicKind.Room, id)),
-    ],
-  ).query<Page<RoomInMessage & { displayName: string }>>(
+        });
+        return requireEntity(room, DatabaseEntityType.Room, input);
+      } else
+        return (
+          await ctx.db
+            .select(getColumns(roomsInMessage))
+            .from(roomsInMessage)
+            .innerJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.roomId, roomsInMessage.id))
+            .where(and(eq(usersToRoomsInMessage.userId, ctx.user.id), eq(roomsInMessage.type, RoomType.Room)))
+            .orderBy(desc(roomsInMessage.lastMessageAt))
+            .limit(1)
+        )[0];
+    }),
+  // The list reads the rooms table as a whole, so a rename or an image change of any room wakes it
+  readRooms: getMemberProcedure(readRoomsInputSchema, "roomId").query<Page<RoomInMessage & { displayName: string }>>(
     async ({ ctx, input: { cursor, filter, includeDirectMessages, limit, roomId, sort } }) => {
       const innerJoinCondition = and(
         eq(usersToRoomsInMessage.roomId, roomsInMessage.id),
@@ -410,25 +386,21 @@ const baseRoomRouter = router({
   ),
   // A row comes back for every id that has an account, a user who has left the room included, so a message whose author
   // Has left is still named. `isMember` tells the two apart, and a user with no membership is named by their account
-  readUsersByIds: getTopicsProcedure(
-    getMemberProcedure(readUsersByIdsInputSchema, "roomId"),
-    ({ input: { roomId } }) => [getTopic(TopicKind.Room, roomId)],
-  ).query<UserInRoom[]>(({ ctx, input: { roomId, userIds } }) =>
-    ctx.db
-      .select({
-        ...getPublicUserColumns(usersInAuth),
-        displayName: getDisplayNameExpression(usersToRoomsInMessage, usersInAuth),
-        isMember: sql<boolean>`${usersToRoomsInMessage.userId} is not null`.mapWith(Boolean),
-      })
-      .from(usersInAuth)
-      .leftJoin(usersToRoomsInMessage, getRoomMemberJoinCondition(roomId))
-      .where(inJsonArray(usersInAuth.id, userIds)),
+  readUsersByIds: getMemberProcedure(readUsersByIdsInputSchema, "roomId").query<UserInRoom[]>(
+    ({ ctx, input: { roomId, userIds } }) =>
+      ctx.db
+        .select({
+          ...getPublicUserColumns(usersInAuth),
+          displayName: getDisplayNameExpression(usersToRoomsInMessage, usersInAuth),
+          isMember: sql<boolean>`${usersToRoomsInMessage.userId} is not null`.mapWith(Boolean),
+        })
+        .from(usersInAuth)
+        .leftJoin(usersToRoomsInMessage, getRoomMemberJoinCondition(roomId))
+        .where(inJsonArray(usersInAuth.id, userIds)),
   ),
-  updateRoom: getTopicsProcedure(
-    addProfanityFilterMiddleware(getPermissionsProcedure(RoomPermission.ManageRoom, updateRoomInputSchema, "id"), [
-      "name",
-    ]),
-    ({ input: { id } }) => [getTopic(TopicKind.Room, id)],
+  updateRoom: addProfanityFilterMiddleware(
+    getPermissionsProcedure(RoomPermission.ManageRoom, updateRoomInputSchema, "id"),
+    ["name"],
   ).mutation<RoomInMessage>(async ({ ctx, input: { id, ...rest } }) => {
     const { image } = rest;
     // The previous row is read in the batch ahead of the update, so the sweep below knows which version the room is

@@ -13,7 +13,6 @@ import {
 import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
 import { banRoomMember } from "#server/services/message/moderation/banRoomMember";
 import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
-import { MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
 import { getRoomProfileImageBlobPrefix } from "#server/services/room/getRoomProfileImageBlobPrefix";
 import { getBucket } from "#server/services/storage/getBucket";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
@@ -21,11 +20,11 @@ import { createMockAuthSession, createMockCaller, createMockContext, getMockSess
 import { createCallerFactory } from "#server/trpc/index";
 import { createRoomMember } from "#server/trpc/routers/createRoomMember.test";
 import { inviteRouter } from "#server/trpc/routers/invite";
+import { expectLiveTopicCoverage } from "#server/trpc/routers/liveTopicCoverage.test";
 import { roleRouter } from "#server/trpc/routers/role";
 import { createDirectMessageWithFriend } from "#server/trpc/routers/room/createDirectMessageWithFriend.test";
-import { roomRouter } from "#server/trpc/routers/room/index";
+import { baseRoomRouter, roomRouter } from "#server/trpc/routers/room/index";
 import { TEST_ORIGIN } from "#shared/services/pageBuilder/constants.test";
-import { readTopicsHeader } from "#shared/services/realtime/readTopicsHeader";
 import { INVITE_MAX_USES_OPTIONS } from "#shared/services/room/invite/constants";
 import { InviteExpireAfterMinutesMap } from "#shared/services/room/invite/InviteExpireAfterMinutesMap";
 import { readAllResourcePages } from "#src/services/resource/readAllResourcePages";
@@ -34,7 +33,6 @@ import { createMockBucket } from "@esposter/db-mock";
 import {
   DatabaseEntityType,
   friendsInSocial,
-  getTopic,
   MAX_BLOB_DELETION_MESSAGE_BLOB_NAMES,
   MessageType,
   PublicUserColumns,
@@ -42,7 +40,6 @@ import {
   RoomPermission,
   roomsInMessage,
   StorageBucket,
-  TopicKind,
   userStatusesInMessage,
   usersToRoomsInMessage,
   WRITE_PRESIGNED_URL_DURATION_MS,
@@ -57,6 +54,8 @@ const uploadPublicUserAssetBlob = async (blobName: string) => {
   const bucket = getBucket(StorageBucket.PublicUserAssets);
   await bucket.put(blobName, Buffer.alloc(0));
 };
+
+const createBaseRoomCaller = (context: Context) => createCallerFactory(baseRoomRouter)(context);
 
 describe("roomRouter", () => {
   let mockContext: Context;
@@ -151,19 +150,6 @@ describe("roomRouter", () => {
     const rooms = await roomCaller.readRooms();
 
     expect(rooms).toStrictEqual({ items: [], nextCursor: "" });
-  });
-
-  test("watches each listed room's own topic, so a renamed room refreshes the sidebar", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    const readContext = await createMockContext();
-    await createCallerFactory(roomRouter)(readContext).readRooms();
-
-    expect(readTopicsHeader(readContext.responseHeaders, "readRooms").flatMap(({ topics }) => topics)).toStrictEqual([
-      getTopic(TopicKind.RoomList, getMockSession().user.id),
-      getTopic(TopicKind.Room, newRoom.id),
-    ]);
   });
 
   test("reads multiple with roomId with inclusive filter", async () => {
@@ -532,12 +518,10 @@ describe("roomRouter", () => {
 
   // The object announces the delete to its online members once its teardown is accepted, so the caller sends no second one.
   // The scheduled messages it removed were other people's, so each of their senders is told
-  test("empties its object, tells the senders of its scheduled messages, and does not announce the delete itself", async () => {
+  test("empties its object and does not announce the delete itself", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const scheduledMessageSenderId = v7();
-    roomObjectReplies.set("deleteAll", () => [scheduledMessageSenderId]);
     await roomCaller.deleteRoom(newRoom.id);
 
     expect(roomObjectCalls).toContainEqual({
@@ -550,7 +534,6 @@ describe("roomRouter", () => {
       method: "notifyOnlineMembers",
       roomId: newRoom.id,
     });
-    expect(MockPublishedTopics).toContain(getTopic(TopicKind.ScheduledMessage, scheduledMessageSenderId));
   });
 
   // The row goes only once the object has emptied, so a refused teardown leaves the room standing for the owner's retry
@@ -576,20 +559,6 @@ describe("roomRouter", () => {
     const joinedRoom = await strangerRoomCaller.joinRoom(newInvite.id);
 
     expect(joinedRoom).toStrictEqual(newRoom);
-  });
-
-  // A bookmark on the room reads as available only to its members, so the joiner's bookmark dock is told of the join
-  test("publishes the joiner's bookmark topic, since a bookmark on the room reads as available to its members", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    const newInvite = await createUnlimitedInvite(newRoom.id);
-    const strangerSession = await createMockAuthSession(mockContext.db);
-    const strangerRoomCaller = await createMockCaller(roomRouter, strangerSession);
-    MockPublishedTopics.length = 0;
-    await strangerRoomCaller.joinRoom(newInvite.id);
-
-    expect(MockPublishedTopics).toContain(getTopic(TopicKind.Bookmark, strangerSession.user.id));
   });
 
   test("joining consumes a use", async () => {
@@ -835,19 +804,6 @@ describe("roomRouter", () => {
     expect(userObjectCalls).toContainEqual({ args: [leaveEvent], method: "broadcastEvent", userId: member.id });
   });
 
-  test("publishes the leaver's bookmark topic, since a bookmark on the room reads as available to its members", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    const member = await createRoomMember(mockContext, newRoom.id);
-    vi.advanceTimersByTime(1);
-    const memberRoomCaller = await createMockCaller(roomRouter, await createMockAuthSession(mockContext.db, member));
-    MockPublishedTopics.length = 0;
-    await memberRoomCaller.leaveRoom(newRoom.id);
-
-    expect(MockPublishedTopics).toContain(getTopic(TopicKind.Bookmark, member.id));
-  });
-
   test("counts members", async () => {
     expect.hasAssertions();
 
@@ -986,5 +942,57 @@ describe("roomRouter", () => {
     await expect(
       strangerRoomCaller.readUsersByIds({ roomId: newRoom.id, userIds: [userId] }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+  });
+
+  // A stranger's join and leave act as another person over the same database. No write deletes a room a query reads, so
+  // Every query answers before and after each write
+  test("every query reads the tables it touches, and each write wakes the queries it changes", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const deletedRoom = await roomCaller.createRoom({ name });
+    const newInvite = await createUnlimitedInvite(newRoom.id);
+    const stranger = await createMockAuthSession(mockContext.db);
+    const strangerCaller = (context: Context) =>
+      createCallerFactory(baseRoomRouter)({ ...context, session: stranger.session, user: stranger.user });
+
+    await expectLiveTopicCoverage(
+      baseRoomRouter,
+      {
+        queries: [
+          {
+            call: (context) => createBaseRoomCaller(context).readMemberCountsByTopRole({ roomId: newRoom.id }),
+            path: "readMemberCountsByTopRole",
+          },
+          { call: (context) => createBaseRoomCaller(context).readMembers({ roomId: newRoom.id }), path: "readMembers" },
+          {
+            call: (context) => createBaseRoomCaller(context).readMembersCount({ roomId: newRoom.id }),
+            path: "readMembersCount",
+          },
+          {
+            call: (context) => createBaseRoomCaller(context).readMutualRooms({ userId: stranger.user.id }),
+            path: "readMutualRooms",
+          },
+          { call: (context) => createBaseRoomCaller(context).readRoom(newRoom.id), path: "readRoom" },
+          { call: (context) => createBaseRoomCaller(context).readRooms(), path: "readRooms" },
+          {
+            call: (context) =>
+              createBaseRoomCaller(context).readUsersByIds({ roomId: newRoom.id, userIds: [stranger.user.id] }),
+            path: "readUsersByIds",
+          },
+        ],
+        writes: [
+          { call: (context) => createBaseRoomCaller(context).createRoom({ name }), path: "createRoom" },
+          {
+            call: (context) => createBaseRoomCaller(context).updateRoom({ id: newRoom.id, name: updatedName }),
+            path: "updateRoom",
+          },
+          { call: (context) => strangerCaller(context).joinRoom(newInvite.id), path: "joinRoom" },
+          { call: (context) => strangerCaller(context).leaveRoom(newRoom.id), path: "leaveRoom" },
+          { call: (context) => createBaseRoomCaller(context).deleteRoom(deletedRoom.id), path: "deleteRoom" },
+        ],
+      },
+      mockContext,
+    );
   });
 });
