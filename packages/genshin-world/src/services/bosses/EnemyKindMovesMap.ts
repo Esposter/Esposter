@@ -10,6 +10,7 @@ import { GLUTTONOUS_YUMKASAUR_MOUNTAIN_KING_MOVES } from "#src/services/bosses/g
 import { GOLDFLAME_QUCUSAUR_TYRANT_MOVES } from "#src/services/bosses/goldflameQucusaurTyrant";
 import { HYDRO_TULPA_MOVES } from "#src/services/bosses/hydroTulpa";
 import { ICEWIND_SUITE_MOVES } from "#src/services/bosses/icewindSuite";
+import { INIQUITOUS_BAPTIST_MOVES } from "#src/services/bosses/iniquitousBaptist";
 import { JADEPLUME_TERRORSHROOM_MOVES } from "#src/services/bosses/jadeplumeTerrorshroom";
 import { LEGATUS_GOLEM_MOVES } from "#src/services/bosses/legatusGolem";
 import { MILLENNIAL_PEARL_SEAHORSE_MOVES } from "#src/services/bosses/millennialPearlSeahorse";
@@ -38,4 +39,5 @@ export const EnemyKindMovesMap: Partial<Record<EnemyKindId, readonly BossMove[]>
   [EnemyKindId.AlgorithmOfSemiIntransientMatrixOfOverseerNetwork]: ALGORITHM_OF_SEMI_INTRANSIENT_MATRIX_MOVES,
   [EnemyKindId.JadeplumeTerrorshroom]: JADEPLUME_TERRORSHROOM_MOVES,
   [EnemyKindId.AeonblightDrake]: AEONBLIGHT_DRAKE_MOVES,
+  [EnemyKindId.IniquitousBaptist]: INIQUITOUS_BAPTIST_MOVES,
 };
