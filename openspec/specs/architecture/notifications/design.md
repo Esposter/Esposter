@@ -18,8 +18,8 @@ flowchart TD
   SUB --> WP["sendWebPushNotifications"]
   WP --> SW["service worker"]
   SW --> OS["OS notification"]
-  SW -->|postMessage| TAB["open tab re-reads the bell"]
-  ROW -->|"each recipient's bell topic"| TAB
+  SW -->|"postMessage, if no bell read has landed"| TAB["the tab reads the bell and toasts what is new"]
+  ROW -->|"each recipient's bell topic"| TAB["an open bell reads its page and toasts what is new"]
   FN -->|"throws past the retry count"| DLQ["dead-letter queue"]
 ```
 
@@ -52,13 +52,15 @@ Feedback about the tab's own action is **not** a member: it never leaves the tab
 
 A type whose channels include the bell writes one `notifications` row per recipient, in one D1 statement. The row is the render shape the panel already uses, and its `severity` comes from `AppNotificationTypeSeverityMap` rather than from a field every publisher would restate identically.
 
-Rows are trimmed to `NOTIFICATION_RETENTION_MS` on the write path, where the recipients are already known — nothing else trims them, and the only other delete is the cascade that takes a user's rows with the user, so an untrimmed bell is a table that only grows. The trim is best-effort, and so is everything past it: a trim that threw would fail the delivery and the queue would redeliver it, writing the rows a second time, so the bell insert is the one step allowed to fail, as [persist then notify](../persist-then-notify/design.md) states for this handler. Once the rows land, each recipient's notification topic is published, also best-effort, so an open bell refetches rather than waiting for its next read. The unread badge is a property of what the panel read, so no count rides on the push payload and no service worker writes one.
+Rows are trimmed to `NOTIFICATION_RETENTION_MS` on the write path, where the recipients are already known — nothing else trims them, and the only other delete is the cascade that takes a user's rows with the user, so an untrimmed bell is a table that only grows. The trim is best-effort, and so is everything past it: a trim that threw would fail the delivery and the queue would redeliver it, writing the rows a second time, so the bell insert is the one step allowed to fail, as [persist then notify](../persist-then-notify/design.md) states for this handler. Once the rows land, each recipient's notification topic is published, also best-effort, so an open bell reads its first page again and toasts what the push brought in, rather than waiting for its next read. The unread badge is a property of what the panel read, so no count rides on the push payload and no service worker writes one.
 
 ## Delivery
 
 `sendWebPushNotifications` is the single caller of `web-push` and owns the retry logging and the pruning of dead subscriptions — a `404` or `410` for one that is gone, and a `403` for one made under another VAPID key, which every later push is refused for too (`DEAD_PUSH_SUBSCRIPTION_STATUS_CODES`); the browser subscribes afresh on its next visit, so a pruned row never strands a device still listening. Its sends go out in waves of `MAX_CONCURRENT_PUSH_SENDS`, as other fan-outs are bounded in width, so a room's worth of subscriptions is never one open socket each. The device lookup behind them reads its users in waves of `MAX_USER_IDS_PER_STATEMENT`, and each wave binds its user ids as one JSON array rather than one parameter per user, so a wave is bounded by its size and never by the statement's parameter cap. `getPushNotificationPayload` is the single envelope the service worker parses: the body is capped and the deep link is made absolute there, so neither is something a new notification can forget, and `type` rides in `data` so a tab that receives one knows whether its bell is meant to show it.
 
 A subscription is per-session, which is what lets a resource operation exclude the session that caused it: that tab showed the toast synchronously, and every other device of the same user is still owed the push.
+
+A push is read once per tab. The bell's first page watches the notification topic, and the read that topic drives lands the rows the push wrote and toasts those the tab did not hold (`getToastedNotificationIds`), so the tab end of the wire, `pushNotification.client.ts`, reads only while no bell read has landed. A tab whose list never loaded has no watch, so the push's own read does the toasting there, and a tab holding nothing toasts the newest row, which is the row the push wrote.
 
 Failure is the queue's once it has the message, not the publisher's. A notification is a queue job like every other: when its handler throws, the queue redelivers it up to the job's retry count, and then the message waits in the `ProcessNotification` dead-letter queue. `handleDeadLetterMessage` republishes it to the source queue with its attempt raised, until `MAX_DEAD_LETTER_ATTEMPTS` is reached, and then quarantines it: its raw body is written once to the private `UserAssets` bucket under `quarantine/<source queue>/<message id>.json`, where a person can read what failed. A body the schema rejects is quarantined at once. The reminder is among them — it publishes a message like every other notification rather than calling `web-push` inline, and an inline send would have neither a retry nor a dead-letter queue. That covers accepted messages only: a publish the queue rejects has no message to retry or dead-letter, and is logged by the publisher as [persist then notify](../persist-then-notify/design.md) sets out. Publishes sit after the write they report and never fail it ([persist then notify](../persist-then-notify/design.md)).
 
@@ -86,3 +88,4 @@ There is no new queue, no new consumer and no new delivery path. The bell's type
 | `packages/db/src/services/notification/getMessageRecipientUserIds.ts`           | a message's recipients, thread followers included    |
 | `packages/db/src/services/notification/getPushSubscriptionsForUsers.ts`         | the one device lookup, minus the originating session |
 | `apps/web/app/plugins/pushNotification.client.ts`                               | the tab end of the service worker's postMessage      |
+| `apps/web/app/services/notification/getToastedNotificationIds.ts`               | the rows a push toasts, from what its read brought   |

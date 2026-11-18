@@ -146,6 +146,54 @@ describe(useCursorPaginationOperationData, () => {
     expect(rowItems.value).toStrictEqual([{ ...firstRow, description }, laterRow]);
   });
 
+  // A list whose new rows arrive by the write itself passes its own handler: the refresh it is handed adds the row a write
+  // Made, at the head, where the default would leave it out, and the page after the first stays as the reader paged it
+  test("adds the rows a topic change brings in at the head, and keeps the pages after the first", async () => {
+    expect.hasAssertions();
+
+    interface Row {
+      id: string;
+    }
+
+    const topic = getTopic(TopicKind.Feed, "posts");
+    const heldRow: Row = { id: "held" };
+    const addedRow: Row = { id: "added" };
+    const laterRow: Row = { id: "later" };
+    const connectionStore = useConnectionStore();
+    connectionStore.openUser();
+    const [, onFrame] = vi.mocked(openRealtimeSocket).mock.lastCall ?? [];
+    let rowOperationData: ReturnType<typeof useCursorPaginationOperationData<Row>> | undefined;
+    await mountSuspended(
+      defineComponent({
+        render: () => h("div"),
+        setup: () => {
+          const cursorPaginationData = ref(createEmptyPage<Row>());
+          const isLoadedSource = ref(false);
+          rowOperationData = useCursorPaginationOperationData(
+            () => cursorPaginationData,
+            () => isLoadedSource,
+          );
+        },
+      }),
+    );
+    assert.exists(rowOperationData);
+    const { items: rowItems, readItems: rowReadItems, readMoreItems: rowReadMoreItems } = rowOperationData;
+    let pageRows = [heldRow];
+    await rowReadItems(
+      () => {
+        readActiveTopicReads()?.push({ readAt, topics: [topic] });
+        return Promise.resolve({ items: pageRows, nextCursor });
+      },
+      { onTopicChange: (refreshWithNewRows) => refreshWithNewRows() },
+    );
+    await rowReadMoreItems(() => Promise.resolve({ items: [laterRow], nextCursor: "" }));
+    pageRows = [addedRow, heldRow];
+    onFrame?.(JSON.stringify({ data: { topic }, type: "invalidate" }));
+    await waitForSynchronizedFunctions();
+
+    expect(rowItems.value).toStrictEqual([addedRow, heldRow, laterRow]);
+  });
+
   test("says a failed read failed without throwing, and clears it once a refresh lands", async () => {
     expect.hasAssertions();
 

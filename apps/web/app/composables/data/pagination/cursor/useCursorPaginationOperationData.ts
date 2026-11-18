@@ -41,6 +41,11 @@ interface ReadItemsOptions<TItem> {
   // For every such page — once for the html, once again as hydration replays the same setup client-side
   key?: string;
   onComplete?: (data: Page<TItem>) => Promisable<void>;
+  // What a write that changed a topic the first page came from does, in place of the default. It is handed a refresh that
+  // Reads the first page again and adds the rows it has that the reader does not, at the head, updating the rest by id
+  // As the default does, so the pages after the first stay. A list whose new rows arrive by that write (the notifications
+  // Bell) passes one, and makes what it toasts from the rows that refresh brings in
+  onTopicChange?: (refreshWithNewRows: () => Promise<void>) => Promisable<void>;
 }
 
 export const useCursorPaginationOperationData = <TItem>(
@@ -67,7 +72,10 @@ export const useCursorPaginationOperationData = <TItem>(
   // Of another partition replaces the watch of the one before it
   const watchTopics = useWatchTopics();
   const topicsTarget = Symbol("readItems");
-  const readItems = async (query: () => Promise<Page<TItem>>, { key, onComplete }: ReadItemsOptions<TItem> = {}) => {
+  const readItems = async (
+    query: () => Promise<Page<TItem>>,
+    { key, onComplete, onTopicChange }: ReadItemsOptions<TItem> = {},
+  ) => {
     const isPending = ref(true);
     // Whether the last read failed, so a list shows its error state rather than reading as empty; a refresh clears it
     const isError = ref(false);
@@ -91,25 +99,38 @@ export const useCursorPaginationOperationData = <TItem>(
         if (retiredCursorPaginationData.has(issuedCursorPaginationData)) return;
 
         await apply({ issued: issuedCursorPaginationData, page, topicRead });
-        watchTopics(topicsTarget, topicRead, getSynchronizedFunction(refreshRows));
+        watchTopics(topicsTarget, topicRead, getSynchronizedFunction(changeOnTopic));
       });
     };
     // A write that changed a topic the first page came from reads it again and updates, by id, the rows it names: a
     // Reader who has paged on keeps their place, since the later pages and the cursor are left as they are. A row
-    // Another writer added or removed waits for the next refresh
-    const refreshRows = async () => {
+    // Another writer added or removed waits for the next refresh, unless the read adds it, which is the list's choice
+    const refreshRows = async (addsNewRows = false) => {
       await readFirstPage(({ issued, page }) => {
+        const heldIds = new Set(issued.items.map((item) => getRowId(item)));
         const idRowMap = new Map<unknown, TItem>();
         for (const item of page.items) {
           const id = getRowId(item);
           if (id !== undefined) idRowMap.set(id, item);
         }
-        issued.items = issued.items.map((item) => {
-          const id = getRowId(item);
-          return id === undefined ? item : (idRowMap.get(id) ?? item);
-        });
+        const newRows = addsNewRows
+          ? page.items.filter((item) => {
+              const id = getRowId(item);
+              return id !== undefined && !heldIds.has(id);
+            })
+          : [];
+        issued.items = [
+          ...newRows,
+          ...issued.items.map((item) => {
+            const id = getRowId(item);
+            return id === undefined ? item : (idRowMap.get(id) ?? item);
+          }),
+        ];
       }).match(noop, console.error);
     };
+    // What a write that changed a topic the first page came from does: the list's own handler when it passed one, which is
+    // Handed the refresh that also adds the rows the page has and the reader does not; the row update by default
+    const changeOnTopic = () => (onTopicChange ? onTopicChange(() => refreshRows(true)) : refreshRows());
     // A failed read is recorded rather than thrown, so component setup never fails on it and a retry is a plain call;
     // The tRPC link chain still alerts it
     const refresh = async () => {
@@ -132,7 +153,7 @@ export const useCursorPaginationOperationData = <TItem>(
       key && nuxtApp.isHydrating ? (nuxtApp.payload.data[key] as HydratedPage<TItem> | undefined) : undefined;
     if (hydratedPage) {
       await storeCursorPaginationData(hydratedPage.page);
-      watchTopics(topicsTarget, hydratedPage.read, getSynchronizedFunction(refreshRows));
+      watchTopics(topicsTarget, hydratedPage.read, getSynchronizedFunction(changeOnTopic));
       isPending.value = false;
     } else await refresh();
     return { isError, isPending, refresh };
