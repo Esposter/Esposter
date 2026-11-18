@@ -174,7 +174,22 @@ export const GameDataKeys = {
     Vietnamese: "gcgText/Vietnamese",
   },
   ground: {
-    fontaine: "ground/fontaine",
+    fontaine: {
+      "belleau-region": "ground/fontaine/belleau-region",
+      "beryl-region": "ground/fontaine/beryl-region",
+      "court-of-fontaine-region": "ground/fontaine/court-of-fontaine-region",
+      "erinnyes-forest": "ground/fontaine/erinnyes-forest",
+      "fontaine-research-institute-of-kinetic-energy-engineering-region": {
+        "0": "ground/fontaine/fontaine-research-institute-of-kinetic-energy-engineering-region/0",
+        "1": "ground/fontaine/fontaine-research-institute-of-kinetic-energy-engineering-region/1",
+        "2": "ground/fontaine/fontaine-research-institute-of-kinetic-energy-engineering-region/2",
+        "3": "ground/fontaine/fontaine-research-institute-of-kinetic-energy-engineering-region/3",
+      },
+      "liffey-region": "ground/fontaine/liffey-region",
+      "morte-region": "ground/fontaine/morte-region",
+      "nostoi-region": "ground/fontaine/nostoi-region",
+      self: "ground/fontaine",
+    },
     inazuma: "ground/inazuma",
     liyue: "ground/liyue",
     mondstadt: "ground/mondstadt",
