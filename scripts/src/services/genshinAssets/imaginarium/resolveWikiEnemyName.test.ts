@@ -17,7 +17,7 @@ describe(resolveWikiEnemyName, () => {
     expect(resolveWikiEnemyName("Ruin Guard", monsters)).toStrictEqual({ describeId: 202, isResolved: true });
   });
 
-  test("a name whose monsters span several describe entries is refused with their count of entries", () => {
+  test("a name whose monsters span several describe entries is refused with their count", () => {
     expect.hasAssertions();
 
     expect(resolveWikiEnemyName("Ruin Drake", monsters)).toStrictEqual({ count: 2, isResolved: false });
