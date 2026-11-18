@@ -26,6 +26,8 @@ import { createCritEnergyPassiveModule } from "#src/services/weapon/passives/cre
 import { createCrownOfTheFinalScionPassiveModule } from "#src/services/weapon/passives/createCrownOfTheFinalScionPassiveModule";
 import { createCrushPassiveModule } from "#src/services/weapon/passives/createCrushPassiveModule";
 import { createCullTheWeakPassiveModule } from "#src/services/weapon/passives/createCullTheWeakPassiveModule";
+import { createDanceOfWingsUnboundPassiveModule } from "#src/services/weapon/passives/createDanceOfWingsUnboundPassiveModule";
+import { createDayAndNightInCounterpointPassiveModule } from "#src/services/weapon/passives/createDayAndNightInCounterpointPassiveModule";
 import { createDaylightsAuguryPassiveModule } from "#src/services/weapon/passives/createDaylightsAuguryPassiveModule";
 import { createDeathlyPactPassiveModule } from "#src/services/weapon/passives/createDeathlyPactPassiveModule";
 import { createDebutPassiveModule } from "#src/services/weapon/passives/createDebutPassiveModule";
@@ -530,4 +532,8 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "1281278291": createCandleWovenFromTheNightPassiveModule,
   // Secrets of Frost (Winter's Heavy Heart)
   "2561949083": createSecretsOfFrostPassiveModule,
+  // Dance of Wings Unbound (Beyond the Chrysalis)
+  "2884010435": createDanceOfWingsUnboundPassiveModule,
+  // Day and Night in Counterpoint (Forged by the Golden Melody)
+  "3082056723": createDayAndNightInCounterpointPassiveModule,
 };
