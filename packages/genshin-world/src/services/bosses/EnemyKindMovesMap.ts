@@ -5,6 +5,7 @@ import { ANEMO_HYPOSTASIS_MOVES } from "#src/services/bosses/anemoHypostasis";
 import { EMPEROR_OF_FIRE_AND_IRON_MOVES } from "#src/services/bosses/emperorOfFireAndIron";
 import { EXPERIMENTAL_FIELD_GENERATOR_MOVES } from "#src/services/bosses/experimentalFieldGenerator";
 import { HYDRO_TULPA_MOVES } from "#src/services/bosses/hydroTulpa";
+import { ICEWIND_SUITE_MOVES } from "#src/services/bosses/icewindSuite";
 import { PERPETUAL_MECHANICAL_ARRAY_MOVES } from "#src/services/bosses/perpetualMechanicalArray";
 import { STORMTERROR_MOVES } from "#src/services/bosses/stormterror";
 
@@ -16,4 +17,5 @@ export const EnemyKindMovesMap: Partial<Record<EnemyKindId, readonly BossMove[]>
   [EnemyKindId.ExperimentalFieldGenerator]: EXPERIMENTAL_FIELD_GENERATOR_MOVES,
   [EnemyKindId.EmperorOfFireAndIron]: EMPEROR_OF_FIRE_AND_IRON_MOVES,
   [EnemyKindId.HydroTulpa]: HYDRO_TULPA_MOVES,
+  [EnemyKindId.IcewindSuite]: ICEWIND_SUITE_MOVES,
 };
