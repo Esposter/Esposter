@@ -2,8 +2,6 @@
 
 ## Queue
 
-- [ ] `[cpu]` {sumeru-terrain-tiles} needs game-install — **Sumeru: the terrain tiles its area outlines name, exported.** `pnpm -C scripts genshin:assets extract sumeru`, with the game closed. Reads the game install through its map, `{data-root}/genshin-parity/extracted/maps/`, the Windrise export `{data-root}/genshin-parity/extracted/windrise/` that places the origin, and `packages/genshin-world/src/data/catalogue.json`. Writes `{data-root}/genshin-parity/extracted/sumeru/`. Measure: `pnpm -C scripts genshin:assets missing-tiles sumeru`, bar `missing 0` of its 29 outline tiles, as the [outline tiles](../README.md#outline-tiles) section sets out.
-
 ## Waiting
 
 - [ ] `[page]` {sumeru-city-location-camera-landmarks} needs game-exports, parity-page — **sumeru-city-location: the camera solved on its landmarks and written.** `pnpm -C scripts genshin:parity pose sumeru-city-location --witness sumeru --write`. Reads the reference, the witness, the nine landmarks in its `ParityReferenceMap` entry and their shares in `DerivedAssetLandmarkMap[sumeru]`. Writes and bars as the [compute bars](../README.md#bars) set out. Its nine landmark shares are already in `DerivedAssetLandmarkMap[sumeru]` (`scripts/src/services/genshinAssets/witness/DerivedAssetLandmarkMap.ts`'s `[DerivedAssetComponent.Sumeru]` entry), so the shares are not what it waits on. Its blocker is the landmark set, which waits on a re-pick: the solve reprojects well past its bar, `FRAME_GATE_PIXELS` (`scripts/src/services/genshinParity/passes/constants.ts`), and writes no pose ([roadmap](../../../../changes/genshin-roadmap/tasks.md)).
