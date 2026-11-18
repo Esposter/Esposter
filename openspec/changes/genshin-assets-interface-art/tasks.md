@@ -7,7 +7,7 @@
 
 ## 2. The login
 
-- [ ] 2.1 [phase 1] Re-export the login's sprite atlas through task 1.1's command, so its folder is the command's output and no longer a hand copy. Verify: the command's dry run over the login block lists the same names the atlas folder holds, checked before and after the re-export.
+- [x] 2.1 [phase 1] Re-export the login's sprite atlas through task 1.1's command, so its folder is the command's output and no longer a hand copy. Verify: the command's dry run over the login block lists the same names the atlas folder holds, checked before and after the re-export.
 
 ## 3. The screens' gaps
 
