@@ -34,8 +34,10 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
   [DerivedAssetComponent.BrightcrownMountains]: DERIVED_WORLD_OPTIONS,
   // The character screen's page is the `AvatarInfoDialogV2` GameObject, the Animator beside `AvatarInfoDescDialog`, the
   // Details dialog, and `AvatarLevelUpDialog`. A tree that names none of the tabs is the wrong page
+  // Its portraits are the textures the character screen's discs take their colour from, so the component exports them by name
   [DerivedAssetComponent.Character]: {
     interface: { anchorPattern: "^AvatarInfoDialogV2$", root: "AvatarInfoDialogV2" },
+    namePattern: String.raw`^UI_AvatarIcon_`,
     roots: [],
     screen: "CharacterScreen",
   },
