@@ -17,6 +17,7 @@ import { LEGATUS_GOLEM_MOVES } from "#src/services/bosses/legatusGolem";
 import { MAGUU_KENKI_MOVES } from "#src/services/bosses/maguuKenki";
 import { MILLENNIAL_PEARL_SEAHORSE_MOVES } from "#src/services/bosses/millennialPearlSeahorse";
 import { PERPETUAL_MECHANICAL_ARRAY_MOVES } from "#src/services/bosses/perpetualMechanicalArray";
+import { PRIMO_GEOVISHAP_MOVES } from "#src/services/bosses/primoGeovishap";
 import { SECRET_SOURCE_AUTOMATON_CONFIGURATION_DEVICE_MOVES } from "#src/services/bosses/secretSourceAutomatonConfigurationDevice";
 import { SETEKH_WENUT_MOVES } from "#src/services/bosses/setekhWenut";
 import { STORMTERROR_MOVES } from "#src/services/bosses/stormterror";
@@ -46,4 +47,5 @@ export const EnemyKindMovesMap: Partial<Record<EnemyKindId, readonly BossMove[]>
   [EnemyKindId.GoldenWolflord]: GOLDEN_WOLFLORD_MOVES,
   [EnemyKindId.ThunderManifestation]: THUNDER_MANIFESTATION_MOVES,
   [EnemyKindId.MaguuKenki]: MAGUU_KENKI_MOVES,
+  [EnemyKindId.PrimoGeovishap]: PRIMO_GEOVISHAP_MOVES,
 };
