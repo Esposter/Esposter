@@ -12,6 +12,7 @@ const createEnemyAt = (id: string, x: number) =>
 
 describe(selectDrawnEnemies, () => {
   const CHARACTER_POINT = { x: 0, z: 0 };
+
   test("an enemy beside the character is drawn when more are loaded than the draw holds", () => {
     expect.hasAssertions();
     const enemies = [createEnemyAt("far", 10), createEnemyAt("beside", 1), createEnemyAt("farther", 12)];

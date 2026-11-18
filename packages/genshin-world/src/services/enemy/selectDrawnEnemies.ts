@@ -13,16 +13,14 @@ export const selectDrawnEnemies = (
   capacity: number,
 ): Enemy[] => {
   if (target === undefined) return [...enemies].slice(0, capacity);
-  const drawn: { distance: number; enemy: Enemy }[] = [];
+  let drawn: { distance: number; enemy: Enemy }[] = [];
   for (const enemy of enemies) {
     const distance = squaredDistance(enemy.position, target);
     // Once the draw is full, an enemy no nearer than its farthest kept is not drawn
     const farthest = drawn.at(-1);
     if (drawn.length === capacity && farthest !== undefined && distance >= farthest.distance) continue;
     const index = drawn.findIndex((kept) => kept.distance > distance);
-    if (index === -1) drawn.push({ distance, enemy });
-    else drawn.splice(index, 0, { distance, enemy });
-    if (drawn.length > capacity) drawn.pop();
+    drawn = drawn.toSpliced(index === -1 ? drawn.length : index, 0, { distance, enemy }).slice(0, capacity);
   }
   return drawn.map(({ enemy }) => enemy);
 };

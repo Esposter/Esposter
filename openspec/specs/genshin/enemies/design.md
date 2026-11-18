@@ -74,7 +74,7 @@ A capsule that a hit landed on is tinted white for `ENEMY_HIT_TINT_SECONDS` afte
 
 ## Cost
 
-- **Two draws for all enemies.** The capsules are one instanced mesh and the hit flashes a second, their matrices and tints written each frame from scratch objects, so a frame allocates nothing for them (`packages/genshin-world/src/components/World/Enemies/Index.vue`, `packages/genshin-world/src/services/world/composeHeadingMatrix.ts`). The nearest-first selection that picks which enemies those draws hold (`packages/genshin-world/src/services/enemy/selectDrawnEnemies.ts`) makes one pass over the loaded enemies, keeping only the draw's capacity of them in one array of that size, rather than sorting them all.
+- **Two draws for all enemies.** The capsules are one instanced mesh and the hit flashes a second, their matrices and tints written each frame from scratch objects, so a frame allocates nothing for them (`packages/genshin-world/src/components/World/Enemies/Index.vue`, `packages/genshin-world/src/services/world/composeHeadingMatrix.ts`). The nearest-first selection that picks which enemies those draws hold (`packages/genshin-world/src/services/enemy/selectDrawnEnemies.ts`) makes one pass over the loaded enemies, keeping only the draw's capacity of them, in order, rather than sorting them all.
 - **The AI costs what is in reach.** Only the camps of regions in reach (`packages/genshin-world/src/composables/useRegionData.ts`) are stepped (`packages/genshin-world/src/components/World/Enemies/Index.vue`), and waking a camp compares each idle enemy with its camp-mates, which a camp's handful keeps cheap.
 
 ## Key files
