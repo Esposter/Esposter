@@ -6,12 +6,12 @@ import { selectDrawnEnemies } from "#src/services/enemy/selectDrawnEnemies";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const CHARACTER_POINT = { x: 0, z: 0 };
 // An enemy standing the given distance along x from the character, under the id given
 const createEnemyAt = (id: string, x: number) =>
   createEnemy(enemyTables, [], { ...ENEMY_CAMP_MEMBER, id, position: { x, z: 0 } }, "");
 
 describe(selectDrawnEnemies, () => {
+  const CHARACTER_POINT = { x: 0, z: 0 };
   test("an enemy beside the character is drawn when more are loaded than the draw holds", () => {
     expect.hasAssertions();
     const enemies = [createEnemyAt("far", 10), createEnemyAt("beside", 1), createEnemyAt("farther", 12)];
