@@ -5,7 +5,7 @@ import { LOGIN_DOOR_MESH, SCENE_POINT_CATEGORY, SCENE_POINT_FILE } from "#src/se
 import { readWeaponRoots } from "#src/services/genshinAssets/weapons/readWeaponRoots";
 
 // The one definition every capital and sub-area of the open world shares: a part derived from its place,
-// with no root of its own
+// With no root of its own
 const DERIVED_WORLD_OPTIONS: DerivedAssetComponentOptions = { isCapitalWorld: true, roots: [], screen: "WorldScreen" };
 
 // Each component's roots, which `extract` follows every pointer from, and the assets no pointer from them reaches by
