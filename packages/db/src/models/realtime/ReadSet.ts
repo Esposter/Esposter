@@ -48,8 +48,8 @@ export interface ReadSetKey extends ReadSetColumn {
   selectedAs?: string;
 }
 
-// The tables one statement level names, and the tables it names by a scope equality of its own. A table named by no
-// Equality at its level is read whole there, whatever a nested statement names of it
+// The tables one statement level declares, each once. The occurrences the statement declares, and their levels, are listed in
+// `occurrences`, so a level's tables are read there and not here by scope
 export interface ReadSetLevel {
   tables: string[];
 }

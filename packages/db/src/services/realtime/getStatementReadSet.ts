@@ -41,14 +41,14 @@ interface Declaration {
   table: string;
 }
 
-type DerivedFields = Map<string, DerivedSubquery>;
-
 // A subquery the statement joins: its alias, the fields it selects, and the table its SQL reads first
 interface DerivedSubquery {
   alias: string;
   base?: Table;
   selectedFields: Record<string, unknown>;
 }
+
+type DerivedSubqueryMap = Map<string, DerivedSubquery>;
 
 // The join whose ON condition a chunk array is: whether it is a left join, and the relation it joins
 interface JoinContext {
@@ -72,7 +72,7 @@ interface ReadContext {
   condition: boolean;
   // Every table occurrence the statement declares, and each one an equality scopes
   declared: Declaration[];
-  derived: DerivedFields;
+  derived: DerivedSubqueryMap;
   join?: JoinContext | undefined;
   level: ReadSetLevel;
   // Whether the chunks walked sit under a `not`, so a condition in them removes the rows it holds, and filters its table
@@ -149,7 +149,7 @@ const findFirstTable = (chunk: unknown): Table | undefined => {
 
 // A column a subquery selects reads the base column its selection names. A selection the subquery's own alias owns
 // Reads the table the subquery selects from, since the alias is the subquery's name, not a table's
-const getDerivedColumns = (subquery: DerivedSubquery, name: string, derived: DerivedFields): ReadColumn[] =>
+const getDerivedColumns = (subquery: DerivedSubquery, name: string, derived: DerivedSubqueryMap): ReadColumn[] =>
   Object.values(subquery.selectedFields).flatMap((field) => {
     if (!is(field, Column) || field.name !== name) return [];
     const owner = getColumnTable(getOriginalColumnFromAlias(field));
@@ -157,7 +157,7 @@ const getDerivedColumns = (subquery: DerivedSubquery, name: string, derived: Der
     return toReadColumns(field, derived);
   });
 
-const toReadColumns = (column: Column, derived: DerivedFields): ReadColumn[] => {
+const toReadColumns = (column: Column, derived: DerivedSubqueryMap): ReadColumn[] => {
   const baseColumn = getOriginalColumnFromAlias(column);
   const subquery = derived.get(getTableName(getColumnTable(baseColumn)));
   return subquery
@@ -549,22 +549,22 @@ const checkIsSelectedColumn = (configured: unknown, key: string): boolean => {
 
 // What the statement's own select returns, by the key each column is selected under. A relational query selects its
 // Table's columns, or the ones its config names
+// The columns a select list names under the name it selects them by
+const toSelections = (column: Column, selectedAs: string): ReadSelection[] =>
+  toReadColumns(column, new Map()).map((readColumn) => ({ ...toTableKey(readColumn), selectedAs }));
+
 const getSelections = (statement: SQLWrapper): ReadSelection[] => {
   const fields = getSelectedFields(statement);
   if (Object.keys(fields).length > 0)
     return Object.entries(fields).flatMap(([selectedAs, field]) =>
-      is(field, Column)
-        ? toReadColumns(field, new Map()).map((readColumn) => ({ ...toTableKey(readColumn), selectedAs }))
-        : [],
+      is(field, Column) ? toSelections(field, selectedAs) : [],
     );
   const table = getRelationalTable(statement);
   if (!table) return [];
   const configured = getStatementConfig(statement)?.columns;
   return Object.entries(getTableColumns(table))
     .filter(([key]) => checkIsSelectedColumn(configured, key))
-    .flatMap(([key, column]) =>
-      toReadColumns(column, new Map()).map((readColumn) => ({ ...toTableKey(readColumn), selectedAs: key })),
-    );
+    .flatMap(([key, column]) => toSelections(column, key));
 };
 
 // The read set of one statement the handle recorded: the tables it reads, the scope values it tests, the joins whose
