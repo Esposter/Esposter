@@ -1,0 +1,51 @@
+import type { RecordedBlobs } from "#src/models/realtime/RecordedBlobs";
+
+import { recordBucket } from "#src/services/realtime/recordBucket";
+import { createMockBucket } from "@esposter/db-mock";
+import { afterAll, beforeAll, describe, expect, test } from "vitest";
+
+describe(recordBucket, () => {
+  const bucketName = "USER_ASSETS";
+  let mockBucket: Awaited<ReturnType<typeof createMockBucket>>;
+
+  beforeAll(async () => {
+    mockBucket = await createMockBucket(bucketName);
+  });
+
+  afterAll(async () => {
+    await mockBucket.dispose();
+  });
+
+  // A read names the key it reads, and a listing names the directory its prefix lies in, so a write beneath the prefix wakes it
+  test("a get and a head record the key they read, and a list records the directory its prefix lies in", async () => {
+    expect.hasAssertions();
+
+    const blobs: RecordedBlobs = { reads: [], writes: [] };
+    const bucket = recordBucket(mockBucket.bucket, bucketName, () => blobs);
+
+    await bucket.get("user/a/one");
+    await bucket.head("user/a/one");
+    await bucket.list({ prefix: "user/a/o" });
+
+    expect(blobs.reads).toStrictEqual([
+      `${bucketName}:user/a/one`,
+      `${bucketName}:user/a/one`,
+      `${bucketName}:user/a/`,
+    ]);
+  });
+
+  // A write publishes its key, every directory above it and the bucket's root, so a listing of any of them is woken, and a
+  // Delete publishes the same
+  test("a put publishes its key, each directory above it and the bucket's root, and a delete the same", async () => {
+    expect.hasAssertions();
+
+    const blobs: RecordedBlobs = { reads: [], writes: [] };
+    const bucket = recordBucket(mockBucket.bucket, bucketName, () => blobs);
+    const published = [`${bucketName}:user/a/one`, `${bucketName}:user/a/`, `${bucketName}:user/`, `${bucketName}:`];
+
+    await bucket.put("user/a/one", "x");
+    await bucket.delete("user/a/one");
+
+    expect(blobs.writes).toStrictEqual([...published, ...published]);
+  });
+});

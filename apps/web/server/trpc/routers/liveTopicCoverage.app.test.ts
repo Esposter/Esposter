@@ -1,6 +1,8 @@
 import { createMockContext } from "#server/trpc/context.test";
 import { createBlockLiveTopicCalls } from "#server/trpc/routers/blockLiveTopicCalls.test";
 import { createBookmarkLiveTopicCalls } from "#server/trpc/routers/bookmarkLiveTopicCalls.test";
+import { createClickerLiveTopicCalls } from "#server/trpc/routers/clickerLiveTopicCalls.test";
+import { createDungeonsLiveTopicCalls } from "#server/trpc/routers/dungeonsLiveTopicCalls.test";
 import { createFriendLiveTopicCalls } from "#server/trpc/routers/friendLiveTopicCalls.test";
 import { createFriendRequestLiveTopicCalls } from "#server/trpc/routers/friendRequestLiveTopicCalls.test";
 import { trpcRouter } from "#server/trpc/routers/index";
@@ -26,6 +28,8 @@ describe("live topic coverage across the app", () => {
     // The cases are built in this order, since each factory sets up its state on the context the one before left
     const calls = [
       createBookmarkLiveTopicCalls(),
+      await createClickerLiveTopicCalls(context),
+      await createDungeonsLiveTopicCalls(context),
       await createBlockLiveTopicCalls(context),
       await createFriendLiveTopicCalls(context),
       await createFriendRequestLiveTopicCalls(context),

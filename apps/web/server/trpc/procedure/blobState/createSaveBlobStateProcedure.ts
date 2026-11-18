@@ -1,11 +1,10 @@
-import type { StorageBucket, TopicKind } from "@esposter/db-schema";
+import type { StorageBucket } from "@esposter/db-schema";
 import type { z } from "zod";
 
 import { writeBlobState } from "#server/services/blobState/writeBlobState";
 import { getBucket } from "#server/services/storage/getBucket";
-import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
-import { getSaveBlobName, getTopic } from "@esposter/db-schema";
+import { getSaveBlobName } from "@esposter/db-schema";
 
 // A save is sent under the ETag its last read or save returned, so a write over a save another session changed is a
 // CONFLICT, which the client answers by reading again. An absent ETag saves only over no save at all
@@ -14,11 +13,8 @@ import { getSaveBlobName, getTopic } from "@esposter/db-schema";
 export const createSaveBlobStateProcedure = <TData, TDataInput>(
   container: StorageBucket,
   inputSchema: z.ZodType<{ data: TData; etag?: string | undefined }, { data: TDataInput; etag?: string | undefined }>,
-  topicKind: TopicKind,
 ) =>
-  getTopicsProcedure(standardAuthedProcedure.input(inputSchema), ({ ctx }) => [
-    getTopic(topicKind, ctx.user.id),
-  ]).mutation<{ etag: string }>(async ({ ctx, input }) => {
+  standardAuthedProcedure.input(inputSchema).mutation<{ etag: string }>(async ({ ctx, input }) => {
     const bucket = getBucket(container);
     const etag = await writeBlobState(bucket, getSaveBlobName(ctx.user.id), JSON.stringify(input.data), input.etag);
     return { etag };

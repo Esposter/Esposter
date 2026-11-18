@@ -1,12 +1,11 @@
-import type { StorageBucket, TopicKind } from "@esposter/db-schema";
+import type { StorageBucket } from "@esposter/db-schema";
 import type { z } from "zod";
 
 import { getUnreadableSaveError } from "#server/services/blobState/getUnreadableSaveError";
 import { readBlobState } from "#server/services/blobState/readBlobState";
 import { getBucket } from "#server/services/storage/getBucket";
-import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
-import { getSaveBlobName, getTopic } from "@esposter/db-schema";
+import { getSaveBlobName } from "@esposter/db-schema";
 import { jsonDateParse } from "@esposter/shared";
 
 // The server holds the save, so a save it cannot parse is an error rather than a fresh game: the client's next save
@@ -16,12 +15,8 @@ export const createReadBlobStateProcedure = <TData, TInit>(
   container: StorageBucket,
   Model: new (init?: TInit) => TData,
   schema: z.ZodType<TInit>,
-  topicKind: TopicKind,
 ) =>
-  getTopicsProcedure(standardAuthedProcedure, ({ ctx }) => [getTopic(topicKind, ctx.user.id)]).query<{
-    data: TData;
-    etag?: string | undefined;
-  }>(async ({ ctx }) => {
+  standardAuthedProcedure.query<{ data: TData; etag?: string | undefined }>(async ({ ctx }) => {
     const bucket = getBucket(container);
     const { etag, json } = await readBlobState(bucket, getSaveBlobName(ctx.user.id));
     if (!json) return { data: new Model(), etag };

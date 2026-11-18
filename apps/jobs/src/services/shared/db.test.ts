@@ -1,7 +1,9 @@
 import { MockPublishedTopics } from "#src/services/realtime/publishTopics.test";
 import { getDb, runUnit } from "#src/services/shared/db";
+import { getBucket } from "#src/services/storage/getBucket";
 import { createMockDb } from "@esposter/db-mock";
-import { getTableTopic, usersInAuth } from "@esposter/db-schema";
+import { getTableTopic, StorageBucket, usersInAuth } from "@esposter/db-schema";
+import { env } from "cloudflare:workers";
 import { eq, getTableName } from "drizzle-orm";
 import { v7 } from "uuid";
 import { beforeAll, beforeEach, describe, expect, test } from "vitest";
@@ -23,6 +25,18 @@ describe("runUnit", () => {
     await runUnit(() => getDb().update(usersInAuth).set({ name: "a" }).where(eq(usersInAuth.id, v7())));
 
     expect(MockPublishedTopics).toContain(authTableTopic);
+  });
+
+  // A blob a unit writes is published under its bucket's binding and its key, so a reader of the blob is woken by the unit
+  test("a blob a unit writes publishes its bucket's topic for its key", async () => {
+    expect.hasAssertions();
+
+    const key = `${v7()}/blob`;
+    const { getBucket: getMockBucket } = await createMockDb();
+    Object.assign(env, { USER_ASSETS: await getMockBucket(StorageBucket.UserAssets) });
+    await runUnit(() => getBucket(StorageBucket.UserAssets).put(key, "a"));
+
+    expect(MockPublishedTopics).toContain(`USER_ASSETS:${key}`);
   });
 
   test("a unit that fails still publishes the writes that landed before it failed", async () => {

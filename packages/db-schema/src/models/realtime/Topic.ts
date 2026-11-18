@@ -2,14 +2,18 @@ import { TopicKind } from "#src/models/realtime/TopicKind";
 import { TOPIC_ID_MAX_LENGTH } from "#src/services/realtime/constants";
 import { z } from "zod";
 
+// A blob a storage bucket holds, named `<bucket binding>:<key>` (the live queries design). A listing names the directory its
+// Prefix lies in, so a write beneath that directory matches it exactly
+export type BlobTopic = `${string}:${string}`;
+
 // A table's scope topic (the live queries design): `<table>:*` for every row of the table, or `<table>:<column>=<value>`
 // For the rows a scope value names. A secret's value is its digest, so the topic never carries the credential itself
 export type ScopeTopic = `${string}:${string}=${string}` | `${string}:*`;
 
-// A piece of state a query reads and a mutation changes, named `<kind>:<id>` (the live queries design) or by a scope
-// Topic the reads and writes of a table infer. A watch frame and the invalidation that answers it carry the name alone,
-// Never data, so a reader refetches through its own query
-export type Topic = `${TopicKind}:${string}` | ScopeTopic;
+// A piece of state a query reads and a mutation changes, named `<kind>:<id>` (the live queries design), by a scope topic the
+// Reads and writes of a table infer, or by a blob topic. A watch frame and the invalidation that answers it carry the name
+// Alone, never data, so a reader refetches through its own query
+export type Topic = `${TopicKind}:${string}` | BlobTopic | ScopeTopic;
 
 const kindTopicSchema = z.templateLiteral([z.enum(TopicKind), ":", z.string().min(1).max(TOPIC_ID_MAX_LENGTH)]);
 const scopeTopicSchema = z.union([
@@ -17,4 +21,6 @@ const scopeTopicSchema = z.union([
   z.templateLiteral([z.string().min(1), ":*"]),
 ]);
 
-export const topicSchema = z.union([kindTopicSchema, scopeTopicSchema]) satisfies z.ZodType<Topic>;
+const blobTopicSchema = z.templateLiteral([z.string().min(1), ":", z.string().min(1).max(TOPIC_ID_MAX_LENGTH)]);
+
+export const topicSchema = z.union([kindTopicSchema, scopeTopicSchema, blobTopicSchema]) satisfies z.ZodType<Topic>;

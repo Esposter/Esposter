@@ -1,5 +1,8 @@
+import type { RecordedBlobs } from "@esposter/db";
+
 import { requestDbStorage } from "#server/db/requestDb";
 import { publishTopicsBestEffort } from "#server/services/realtime/publishTopicsBestEffort";
+import { requestBlobsStorage } from "#server/services/storage/requestBlobs";
 import { t } from "#server/trpc/initTrpc";
 import { TOPICS_HEADER } from "#shared/services/realtime/constants";
 import { formatTopicsHeaderValue } from "#shared/services/realtime/formatTopicsHeaderValue";
@@ -15,18 +18,22 @@ export const inferTopicsMiddleware = t.middleware(async ({ ctx, meta, next, path
   // Taken before the read runs, so a publish that lands after it reaches the watch even when the answer misses it
   const readAt = Date.now();
   const recorded = recordStatements(ctx.db);
-  // The request's handle is in scope for the whole procedure, so a write the auth instance makes (a session revoke) is recorded too
-  const result = await requestDbStorage.run(recorded.database, () => next({ ctx: { db: recorded.database } }));
+  const blobs: RecordedBlobs = { reads: [], writes: [] };
+  // The request's handle and its blobs are in scope for the whole procedure, so a write the auth instance makes (a session
+  // Revoke) and a blob a bucket reads or writes are recorded too
+  const result = await requestDbStorage.run(recorded.database, () =>
+    requestBlobsStorage.run(blobs, () => next({ ctx: { db: recorded.database } })),
+  );
   if (!result.ok) return result;
 
   // A query's topics travel back with its answer, so the client watches what the read it rendered came from
   if (type === "query") {
-    const topics = await getReadTopics(recorded.statements);
+    const topics = [...new Set([...(await getReadTopics(recorded.statements)), ...blobs.reads])];
     if (topics.length > 0) ctx.responseHeaders.append(TOPICS_HEADER, formatTopicsHeaderValue(path, { readAt, topics }));
   }
   // A write is published whichever procedure makes it, since a query may delete the rows it reads (a lapsed invite)
   await publishTopicsBestEffort(
-    () => getWriteTopics(recorded.statements),
+    async () => [...(await getWriteTopics(recorded.statements)), ...blobs.writes],
     `Failed to publish the topics of "${path}":`,
   );
   return result;

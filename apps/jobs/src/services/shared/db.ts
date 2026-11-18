@@ -1,3 +1,4 @@
+import type { RecordedBlobs } from "@esposter/db";
 import type { Database } from "@esposter/db-schema";
 
 import { publishTopicsBestEffort } from "#src/services/realtime/publishTopicsBestEffort";
@@ -8,7 +9,7 @@ import { env } from "cloudflare:workers";
 import { drizzle } from "drizzle-orm/d1";
 import { AsyncLocalStorage } from "node:async_hooks";
 
-type RecordedUnit = ReturnType<typeof recordStatements>;
+type RecordedUnit = ReturnType<typeof recordStatements> & { blobs: RecordedBlobs };
 
 const unitStorage = new AsyncLocalStorage<RecordedUnit>();
 
@@ -21,13 +22,20 @@ const getCoreDatabase = (): Database => (coreDatabase ??= drizzle(env.CORE, { re
 // Are named when it settles; outside one it is the D1 handle itself
 export const getDb = (): Database => unitStorage.getStore()?.database ?? getCoreDatabase();
 
-// Runs one unit of work, a queue message or the nightly purge, with its writes recorded. The topics those writes name are
-// Published best-effort once it settles, whether it succeeded or not: a write that landed before a failure still changed rows
+// The blobs a unit of work reads and writes, which a bucket binding records into while the unit runs, and nothing outside one
+export const getUnitBlobs = (): RecordedBlobs | undefined => unitStorage.getStore()?.blobs;
+
+// Runs one unit of work, a queue message or the nightly purge, with its writes and its blob writes recorded. The topics those
+// Writes name are published best-effort once it settles, whether it succeeded or not: a write that landed before a failure
+// Still changed rows
 export const runUnit = <T>(run: () => Promise<T>): Promise<T> => {
-  const unit = recordStatements(getCoreDatabase());
+  const unit: RecordedUnit = { ...recordStatements(getCoreDatabase()), blobs: { reads: [], writes: [] } };
   return withFinalizerAsync(
     () => unitStorage.run(unit, run),
     () =>
-      publishTopicsBestEffort(() => getWriteTopics(unit.statements), "Failed to publish the topics of a job's writes:"),
+      publishTopicsBestEffort(
+        async () => [...(await getWriteTopics(unit.statements)), ...unit.blobs.writes],
+        "Failed to publish the topics of a job's writes:",
+      ),
   );
 };
