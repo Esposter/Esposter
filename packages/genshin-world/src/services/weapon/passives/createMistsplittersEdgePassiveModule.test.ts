@@ -1,10 +1,10 @@
 import type { KitContext } from "#src/models/kit/KitContext";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";

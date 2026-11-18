@@ -1,5 +1,5 @@
-import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitEffect } from "#src/models/kit/KitEffect";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";

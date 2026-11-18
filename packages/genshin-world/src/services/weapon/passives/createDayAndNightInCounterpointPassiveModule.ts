@@ -33,7 +33,10 @@ export const createDayAndNightInCounterpointPassiveModule = (params: number[]): 
   ];
   return {
     onKitEvent: (event, context, combatant) => {
-      if (!checkIsOwnReactionTriggered(event, combatant) || !event.reactions.some(checkIsStellarGlimmerReaction))
+      if (
+        !checkIsOwnReactionTriggered(event, combatant) ||
+        !event.reactions.some((reaction) => checkIsStellarGlimmerReaction(reaction))
+      )
         return;
       const liveMovements = context.kitEffectState.effects.flatMap((effect) =>
         effect.kind === "buff" &&

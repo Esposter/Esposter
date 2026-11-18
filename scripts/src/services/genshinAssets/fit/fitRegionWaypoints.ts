@@ -33,7 +33,7 @@ const NEW_MOON_STATUE_PAIRING = {
   kind: LandmarkKind.StatueOfTheNewMoon,
   labelId: INTERACTIVE_MAP_STATUE_LABEL_ID,
 } as const;
-const PAIRED_LANDMARK_KINDS = new Set<string | undefined>([WAYPOINT_PAIRING.kind, NEW_MOON_STATUE_PAIRING.kind]);
+const PAIRED_LANDMARK_KINDS = new Set<string | undefined>([NEW_MOON_STATUE_PAIRING.kind, WAYPOINT_PAIRING.kind]);
 
 // The Teleport Waypoints of each region in WAYPOINT_REGIONS and the Statues of the New Moon of each in NEW_MOON_STATUE_REGIONS,
 // Written into its region's data as landmarks of their own kinds, replacing the ones an earlier run wrote. Each is paired
@@ -54,7 +54,7 @@ export const fitRegionWaypoints = async ({ isDryRun }: DryRunOptions): Promise<s
         if (!mapRegion) throw new InvalidOperationError(Operation.Read, region, "has no region on the official map");
         const areas = catalogue.regions.find(({ id }) => id === region)?.areas;
         if (!areas) throw new InvalidOperationError(Operation.Read, CATALOGUE_PATH, `has no region ${region}`);
-        const pair = (pairing: typeof WAYPOINT_PAIRING | typeof NEW_MOON_STATUE_PAIRING) =>
+        const pair = (pairing: typeof NEW_MOON_STATUE_PAIRING | typeof WAYPOINT_PAIRING) =>
           toPairedLandmarks({
             ...pairing,
             areas,

@@ -4,8 +4,8 @@ import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { ElementDamageBonusAttributeMap } from "#src/services/combat/damage/ElementDamageBonusAttributeMap";
 import { addKitHold } from "#src/services/kit/effects/addKitHold";
-import { countEmblemStacks } from "#src/services/weapon/passives/countEmblemStacks";
 import { ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES, EMBLEM_MAXIMUM_STACKS } from "#src/services/weapon/passives/constants";
+import { countEmblemStacks } from "#src/services/weapon/passives/countEmblemStacks";
 import { syncEmblemEnergyStack } from "#src/services/weapon/passives/syncEmblemEnergyStack";
 import { takeOne } from "@esposter/shared";
 

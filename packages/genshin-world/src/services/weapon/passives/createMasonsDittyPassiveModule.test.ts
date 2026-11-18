@@ -5,8 +5,8 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { OTHER_CHARACTER_ID } from "#src/services/kit/constants.test";
 import { createKitTestContext, readBuffTuples } from "#src/services/kit/createKitTestContext.test";
-import { createMasonsDittyPassiveModule } from "#src/services/weapon/passives/createMasonsDittyPassiveModule";
 import { ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES } from "#src/services/weapon/passives/constants";
+import { createMasonsDittyPassiveModule } from "#src/services/weapon/passives/createMasonsDittyPassiveModule";
 import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
 import { describe, expect, test } from "vitest";
 

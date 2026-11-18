@@ -1,10 +1,14 @@
 import type { KitContext } from "#src/models/kit/KitContext";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
@@ -12,10 +16,6 @@ import { createRuleByThunderPassiveModule } from "#src/services/weapon/passives/
 import { createWeaponDamageTaken } from "#src/services/weapon/passives/createWeaponDamageTaken.test";
 import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
 import { describe, expect, test } from "vitest";
-import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
-import { createEnemy } from "#src/services/enemy/createEnemy";
-import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 

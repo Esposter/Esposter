@@ -69,7 +69,6 @@ export interface GenshinSaveState {
   fishingCatchAts: ReadonlyMap<string, readonly Temporal.Instant[]>;
   forgeLearnedRecipeIds: number[];
   foundOculusIds: ReadonlySet<string>;
-  offeringProgressMap: ReadonlyMap<string, OfferingProgressSave>;
   homePlacements: HomePlacement[];
   homePlantings: HomePlanting[];
   homeProgress: HomeProgress;
@@ -82,6 +81,7 @@ export interface GenshinSaveState {
   mails: MailSave[];
   minedOutcrops: readonly MinedOutcrop[];
   namecardItemId: number;
+  offeringProgressMap: ReadonlyMap<string, OfferingProgressSave>;
   openedChestIds: ReadonlySet<string>;
   party: Party;
   processingJobs: Record<number, ProcessingJob>;

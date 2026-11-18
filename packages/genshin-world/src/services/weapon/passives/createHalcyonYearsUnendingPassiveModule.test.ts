@@ -4,16 +4,16 @@ import type { KitContext } from "#src/models/kit/KitContext";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
+import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
+import { createParty } from "#src/services/party/createParty";
 import { createHalcyonYearsUnendingPassiveModule } from "#src/services/weapon/passives/createHalcyonYearsUnendingPassiveModule";
 import { createWeaponDamageTaken } from "#src/services/weapon/passives/createWeaponDamageTaken.test";
 import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
-import { createParty } from "#src/services/party/createParty";
-import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);

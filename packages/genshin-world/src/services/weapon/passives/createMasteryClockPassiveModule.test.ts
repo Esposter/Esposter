@@ -25,8 +25,8 @@ describe(createMasteryClockPassiveModule, () => {
     createKitTestContext(wielder, {
       activeCombatant,
       characterIdCombatantMap: new Map([
-        [TRAVELER_CHARACTER_ID, wielder],
         [OTHER_CHARACTER_ID, other],
+        [TRAVELER_CHARACTER_ID, wielder],
       ]),
       party: createParty([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]),
     });

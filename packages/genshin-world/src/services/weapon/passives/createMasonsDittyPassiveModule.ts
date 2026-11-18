@@ -2,8 +2,8 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
-import { createSymbolPassiveModule } from "#src/services/weapon/passives/createSymbolPassiveModule";
 import { ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES } from "#src/services/weapon/passives/constants";
+import { createSymbolPassiveModule } from "#src/services/weapon/passives/createSymbolPassiveModule";
 import { takeOne } from "@esposter/shared";
 
 const UNITY_SYMBOL_PREFIX = "unitySymbol";

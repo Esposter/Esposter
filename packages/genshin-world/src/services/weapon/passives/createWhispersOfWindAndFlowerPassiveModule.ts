@@ -3,8 +3,8 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { checkIsOwnReactionTriggered } from "#src/services/kit/checkIsOwnReactionTriggered";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { takeOne } from "@esposter/shared";
 
 const WHISPERS_OF_WIND_AND_FLOWER_SOURCE = "whispersOfWindAndFlower";

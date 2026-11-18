@@ -3,8 +3,8 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
 import { addPassiveStack } from "#src/services/kit/effects/addPassiveStack";
+import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
 import { countKitStatusStacks } from "#src/services/kit/effects/countKitStatusStacks";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { takeOne } from "@esposter/shared";
@@ -34,7 +34,7 @@ export const createHalcyonYearsUnendingPassiveModule = (params: number[]): Passi
         (event.attackTag !== AttackTag.NormalAttack && event.attackTag !== AttackTag.PlungingAttack)
       )
         return;
-      const { kitEffectState, party, characterIdCombatantMap } = context;
+      const { characterIdCombatantMap, kitEffectState, party } = context;
       if (
         !addPassiveStack(kitEffectState, combatant.characterId, {
           cooldownSeconds: stackCooldownSeconds,

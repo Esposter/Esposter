@@ -78,5 +78,5 @@ export const useWorldOfferings = ({
         console.error(error);
       },
     );
-  return { offerOffering, offeringInteractables };
+  return { offeringInteractables, offerOffering };
 };

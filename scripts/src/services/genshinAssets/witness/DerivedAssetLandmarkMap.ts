@@ -5,14 +5,39 @@ import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedA
 // Each component's landmarks by name, the points of its parts `pose` solves a reference's camera from where the
 // Reference names the pixels it sees them at
 export const DerivedAssetLandmarkMap: Record<DerivedAssetComponent, Record<string, Landmark>> = {
+  // Each sub-area with a catalogued extent has no landmark of its own: its place is its outline's centre
+  [DerivedAssetComponent.ArdraviValley]: {},
+  [DerivedAssetComponent.AshavanRealm]: {},
+  [DerivedAssetComponent.AshveilPeak]: {},
+  [DerivedAssetComponent.Atocpan]: {},
+  [DerivedAssetComponent.AvidyaForest]: {},
+  [DerivedAssetComponent.BasinOfUnnumberedFlames]: {},
+  [DerivedAssetComponent.BelleauRegion]: {},
+  [DerivedAssetComponent.BerylRegion]: {},
+  [DerivedAssetComponent.BishuiPlain]: {},
+  [DerivedAssetComponent.BrightcrownMountains]: {},
   [DerivedAssetComponent.Character]: {},
+  [DerivedAssetComponent.ChenyuValeSouthernMountain]: {},
+  [DerivedAssetComponent.ChenyuValeUpperVale]: {},
+  [DerivedAssetComponent.CoatepecMountain]: {},
+  [DerivedAssetComponent.CourtOfFontaineRegion]: {},
+  [DerivedAssetComponent.DesertOfHadramaveth]: {},
+  [DerivedAssetComponent.Dragonspine]: {},
+  [DerivedAssetComponent.EasybreezeHolidayResort]: {},
+  [DerivedAssetComponent.ErinnyesForest]: {},
+  [DerivedAssetComponent.EverfrozenEarth]: {},
   // The Court of Fontaine's six landmarks (ParityReferenceMap's court-of-fontaine-location: the arch's feet, the bridge's
   // Springs and the drum tower's roof corners) are all dropped: the re-extraction exports no arch or bridge mesh near the
   // Court, and its tall Talou towers (Area_Fd_Build_FDC_Talou_A_01_Lod0, 85 metres) stand on several instances with no
   // Way to tell which is the reference's drum tower without the pose, which cannot run here (no parity page on
   // Localhost:3011)
   [DerivedAssetComponent.Fontaine]: {},
+  [DerivedAssetComponent.FontaineResearchInstituteOfKineticEnergyEngineeringRegion]: {},
+  [DerivedAssetComponent.GalesongHill]: {},
+  [DerivedAssetComponent.GavirehLajavard]: {},
+  [DerivedAssetComponent.HiisiIsland]: {},
   [DerivedAssetComponent.Hud]: {},
+  [DerivedAssetComponent.HypostyleDesert]: {},
   // Inazuma City's four keep landmarks named: the top tier's eaves and the ledge under them, the silhouette edges of
   // Area_Dq_Build_MS_Tsg_03_Lod0 (the keep's tallest mesh, its top at 176.5 metres) and Area_Dq_Build_MS_Tsg_02_Lod0
   // (its second tier), each the one standing nearest the keep at (-5260, 150, 3320). The platform's corners, the
@@ -45,6 +70,12 @@ export const DerivedAssetLandmarkMap: Record<DerivedAssetComponent, Record<strin
       share: [1, 1, 0.5],
     },
   },
+  [DerivedAssetComponent.Kannazuka]: {},
+  [DerivedAssetComponent.LandOfLowerSetekh]: {},
+  [DerivedAssetComponent.LandOfUpperSetekh]: {},
+  [DerivedAssetComponent.LempoIsle]: {},
+  [DerivedAssetComponent.LiffeyRegion]: {},
+  [DerivedAssetComponent.Lisha]: {},
   // Liyue Harbor's six landmarks (ParityReferenceMap's liyue-harbor-location: the gate's and the tower's plinths) name
   // No mesh, so all six are dropped: the extraction holds nothing rigid within 140 metres of the harbour's anchor, its
   // Nearest floor plate (Plot_05, 1.7 metres across) 142 metres off and its pillars 218 metres; its layout dumps name
@@ -84,11 +115,17 @@ export const DerivedAssetLandmarkMap: Record<DerivedAssetComponent, Record<strin
     wingRightBack: { mesh: "LoginScene_Bridge01_20_Vo", share: [0, 1, 0.8125] },
     wingRightFront: { mesh: "LoginScene_Bridge01_20_Vo", share: [0, 1, 0.351] },
   },
+  [DerivedAssetComponent.LokapalaJungle]: {},
+  [DerivedAssetComponent.LostNursery]: {},
+  [DerivedAssetComponent.Minlin]: {},
   // Mondstadt's six landmarks (ParityReferenceMap's mondstadt-city-location: the towers' and the gate tower's parapets)
   // Are unnamed: the extraction exports the city's candidate meshes (Area_MdBuild_Tower01_Lod0 and Area_MdBuild_Tower02_Lod0
   // For the towers, Area_MdBuild_Gate02_Lod0 for the gate tower, Stages_Build_BeaconTower01 beside them), but which instance
   // Is which landmark needs the camera the pose solves, so the map stays empty until that pose runs on the parity page
   [DerivedAssetComponent.Mondstadt]: {},
+  [DerivedAssetComponent.MorteRegion]: {},
+  [DerivedAssetComponent.MtLaixin]: {},
+  [DerivedAssetComponent.NarukamiIsland]: {},
   // The People of the Springs' seven landmarks (ParityReferenceMap's people-of-the-springs-location: the spire and the
   // Hall, a terrace stair and the walkway post) name no mesh, all seven dropped: the extraction draws the capital
   // As water, planes and terrain tiles alone, and its layout dumps name sentry posts that no OBJ exports
@@ -99,12 +136,21 @@ export const DerivedAssetLandmarkMap: Record<DerivedAssetComponent, Record<strin
   // _02, the tallest near the town, are halls 45 and 66 metres high) matches it with confidence; the pose cannot run
   // Here (no parity page on localhost:3011)
   [DerivedAssetComponent.NodKrai]: {},
+  [DerivedAssetComponent.NostoiRegion]: {},
+  [DerivedAssetComponent.Ochkanatlan]: {},
+  [DerivedAssetComponent.PahaIsle]: {},
   [DerivedAssetComponent.PlayerGirl]: {},
   [DerivedAssetComponent.Props]: {},
+  [DerivedAssetComponent.QiongjiEstuary]: {},
+  [DerivedAssetComponent.QuahuacanCliff]: {},
+  [DerivedAssetComponent.RealmOfFarakhkert]: {},
+  [DerivedAssetComponent.SeaOfClouds]: {},
+  [DerivedAssetComponent.SeiraiIsland]: {},
   // Snezhnograd's seven landmarks (ParityReferenceMap's everfrozen-earth-location: its spires and towers) name no mesh,
   // So all seven are dropped: the extraction holds five house pieces and three stair pieces 128 to 148 metres off the
   // Capital, none a spire or tower, and its layout dumps name sentry posts that no OBJ exports
   [DerivedAssetComponent.Snezhnaya]: {},
+  [DerivedAssetComponent.StarfellValley]: {},
   // Sumeru City's nine landmarks named (ParityReferenceMap's sumeru-city-location: the terrace spire's base, tip and
   // Wings, and the harbour minaret's collar, dome and finial). The spire is the slender
   // Area_Xm_Build_XKC_Shendian_04_Lod0 at the plateau's top (its tip 190.8 to 216.5 metres) for the tip and wings, and
@@ -170,8 +216,19 @@ export const DerivedAssetLandmarkMap: Record<DerivedAssetComponent, Record<strin
       share: [1, 0.85, 0.5],
     },
   },
+  [DerivedAssetComponent.TequemecanValley]: {},
+  [DerivedAssetComponent.TezcatepetoncoRange]: {},
+  [DerivedAssetComponent.TheChasm]: {},
+  [DerivedAssetComponent.ToyacSprings]: {},
   [DerivedAssetComponent.Traveler]: {},
+  [DerivedAssetComponent.TsurumiIsland]: {},
+  [DerivedAssetComponent.Vanarana]: {},
+  [DerivedAssetComponent.VissudhaField]: {},
+  [DerivedAssetComponent.VoidseaOutlook]: {},
+  [DerivedAssetComponent.WatatsumiIsland]: {},
+  [DerivedAssetComponent.WavechaserPlain]: {},
   [DerivedAssetComponent.Weapons]: {},
+  [DerivedAssetComponent.WindrestPeak]: {},
   // Rigid architecture only, never decoration: the statue's own meshes. Points on the statue's axis, which a round part
   // Holds from any heading: the centre of its dish and the top of its figure; the two ends of the dish's brim, the face
   // Centres of its widest ring; and the two outermost vertices of the plinth's rim, read off the rim's band of vertices
@@ -187,63 +244,6 @@ export const DerivedAssetLandmarkMap: Record<DerivedAssetComponent, Record<strin
     // Its axis is pinned across between its two silhouettes whatever its height
     trunkAxis: { isEdge: true, mesh: "Stages_Unique_CyTree01_Bark_Lod1", share: [0.5383, 0.2095, 0.603] },
   },
-  // Each sub-area with a catalogued extent has no landmark of its own: its place is its outline's centre
-  [DerivedAssetComponent.ArdraviValley]: {},
-  [DerivedAssetComponent.AshavanRealm]: {},
-  [DerivedAssetComponent.AshveilPeak]: {},
-  [DerivedAssetComponent.Atocpan]: {},
-  [DerivedAssetComponent.AvidyaForest]: {},
-  [DerivedAssetComponent.BasinOfUnnumberedFlames]: {},
-  [DerivedAssetComponent.BelleauRegion]: {},
-  [DerivedAssetComponent.BerylRegion]: {},
-  [DerivedAssetComponent.BishuiPlain]: {},
-  [DerivedAssetComponent.BrightcrownMountains]: {},
-  [DerivedAssetComponent.ChenyuValeSouthernMountain]: {},
-  [DerivedAssetComponent.ChenyuValeUpperVale]: {},
-  [DerivedAssetComponent.CoatepecMountain]: {},
-  [DerivedAssetComponent.CourtOfFontaineRegion]: {},
-  [DerivedAssetComponent.DesertOfHadramaveth]: {},
-  [DerivedAssetComponent.Dragonspine]: {},
-  [DerivedAssetComponent.EasybreezeHolidayResort]: {},
-  [DerivedAssetComponent.ErinnyesForest]: {},
-  [DerivedAssetComponent.EverfrozenEarth]: {},
-  [DerivedAssetComponent.FontaineResearchInstituteOfKineticEnergyEngineeringRegion]: {},
-  [DerivedAssetComponent.GalesongHill]: {},
-  [DerivedAssetComponent.GavirehLajavard]: {},
-  [DerivedAssetComponent.HiisiIsland]: {},
-  [DerivedAssetComponent.HypostyleDesert]: {},
-  [DerivedAssetComponent.Kannazuka]: {},
-  [DerivedAssetComponent.LandOfLowerSetekh]: {},
-  [DerivedAssetComponent.LandOfUpperSetekh]: {},
-  [DerivedAssetComponent.LempoIsle]: {},
-  [DerivedAssetComponent.LiffeyRegion]: {},
-  [DerivedAssetComponent.Lisha]: {},
-  [DerivedAssetComponent.LokapalaJungle]: {},
-  [DerivedAssetComponent.LostNursery]: {},
-  [DerivedAssetComponent.Minlin]: {},
-  [DerivedAssetComponent.MorteRegion]: {},
-  [DerivedAssetComponent.MtLaixin]: {},
-  [DerivedAssetComponent.NarukamiIsland]: {},
-  [DerivedAssetComponent.NostoiRegion]: {},
-  [DerivedAssetComponent.Ochkanatlan]: {},
-  [DerivedAssetComponent.PahaIsle]: {},
-  [DerivedAssetComponent.QiongjiEstuary]: {},
-  [DerivedAssetComponent.QuahuacanCliff]: {},
-  [DerivedAssetComponent.RealmOfFarakhkert]: {},
-  [DerivedAssetComponent.SeaOfClouds]: {},
-  [DerivedAssetComponent.SeiraiIsland]: {},
-  [DerivedAssetComponent.StarfellValley]: {},
-  [DerivedAssetComponent.TequemecanValley]: {},
-  [DerivedAssetComponent.TezcatepetoncoRange]: {},
-  [DerivedAssetComponent.TheChasm]: {},
-  [DerivedAssetComponent.ToyacSprings]: {},
-  [DerivedAssetComponent.TsurumiIsland]: {},
-  [DerivedAssetComponent.Vanarana]: {},
-  [DerivedAssetComponent.VissudhaField]: {},
-  [DerivedAssetComponent.VoidseaOutlook]: {},
-  [DerivedAssetComponent.WatatsumiIsland]: {},
-  [DerivedAssetComponent.WavechaserPlain]: {},
-  [DerivedAssetComponent.WindrestPeak]: {},
   [DerivedAssetComponent.WindwailHighland]: {},
   [DerivedAssetComponent.YashioriIsland]: {},
 };

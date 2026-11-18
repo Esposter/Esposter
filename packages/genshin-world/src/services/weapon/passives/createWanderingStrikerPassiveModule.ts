@@ -5,8 +5,8 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { checkIsNormalOrChargedAttack } from "#src/services/kit/checkIsNormalOrChargedAttack";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
-import { queueCooldownHit } from "#src/services/weapon/passives/queueCooldownHit";
 import { SMALL_AOE_AREA } from "#src/services/weapon/passives/constants";
+import { queueCooldownHit } from "#src/services/weapon/passives/queueCooldownHit";
 import { takeOne } from "@esposter/shared";
 
 const WANDERING_STRIKER_COOLDOWN_ID = "wanderingStrikerCooldown";

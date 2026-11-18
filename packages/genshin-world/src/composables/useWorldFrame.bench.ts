@@ -1,15 +1,12 @@
-import type { KitContext } from "#src/models/kit/KitContext";
 import type { WorldFrameOptions } from "#src/models/world/WorldFrameOptions";
 import type { Input, InputState } from "genshin-engine";
 
+import { createFrameOptions } from "#src/composables/createFrameOptions.test";
 import { useWorldFrame } from "#src/composables/useWorldFrame";
-import { createParty } from "#src/services/party/createParty";
 import { startTestWorldSession } from "#src/store/session.fixture";
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { createIdleInputState, InputAction } from "genshin-engine";
-import { Object3D } from "three";
 import { describe, test } from "vitest";
-import { ref } from "vue";
 
 // One frame of the render loop at sixty frames a second
 const FRAME_SECONDS = 1 / 60;
@@ -52,7 +49,7 @@ const WALK_STEPS: readonly WalkStep[] = [
 // The walk's inputs, each the state the input reads for its frame, built once and read by every iteration
 const WALK_INPUTS: readonly InputState[] = WALK_STEPS.flatMap(
   ({ frames, held = [], lookYaw = 0, menuDown = 0, moveForward = 0, moveRight = 0, pressed = [] }) =>
-    Array.from({ length: frames }, (_, index) => ({
+    Array.from({ length: frames }, (_value, index) => ({
       ...createIdleInputState(),
       heldActions: new Set(held),
       lookYaw,
@@ -63,9 +60,9 @@ const WALK_INPUTS: readonly InputState[] = WALK_STEPS.flatMap(
     })),
 );
 
-// Each step of the frame as a no-op, over a character on the field with nothing in reach. The walk's inputs are written
-// Into the one state the frame reads, as the input does, and the features' own steps are left as no-ops, so the bench
-// Measures the frame's own glue and the stores it reads, and not the steps a feature's bench measures
+// The frame's options as the frame test builds them, with the walk's inputs written into the one state the frame reads,
+// As the input does. The features' own steps stay no-ops, so the bench measures the frame's own glue and the stores it
+// Reads, and not the steps a feature's bench measures
 const createBenchFrameOptions = (): { options: WorldFrameOptions; setFrame: (index: number) => void } => {
   const inputState = createIdleInputState();
   let frameIndex = 0;
@@ -81,39 +78,7 @@ const createBenchFrameOptions = (): { options: WorldFrameOptions; setFrame: (ind
     turn: () => {},
   };
   return {
-    options: {
-      abyssChoices: ref<unknown>(),
-      characterBody: new Object3D(),
-      checkIsPaused: () => false,
-      closeShortcutWheel: () => {},
-      dispatchInteraction: () => {},
-      domainClaimOffers: ref<unknown>(),
-      drawDayOutcrops: () => {},
-      elementalSight: { isOn: false, origin: { x: 0, z: 0 }, spreadSeconds: 0 },
-      getEquippedGadgetCooldown: () => 0,
-      getMemberMaxHealth: () => undefined,
-      hudFrame: { gadgetCooldown: 0, pivotX: 0, pivotY: 0, seconds: 0, sheerCold: 0, stamina: 0 },
-      input,
-      inputState,
-      interactionPrompts: ref({ interactables: [], selectedId: "", windowStart: 0 }),
-      isHudHidden: ref(false),
-      // Only the frame's random source and the team's effects are read, by the steps that are no-ops here and the switch
-      kitContext: { kitEffectState: { effects: [] }, random: () => 0 } as unknown as KitContext,
-      party: createParty([1, 2]),
-      placeUsedGadget: () => {},
-      readInteraction: () => undefined,
-      refreshMiningOutcrops: () => {},
-      showCursor: () => {},
-      stepAbyss: () => {},
-      stepAutoRecover: () => {},
-      stepDomainChallenge: () => [],
-      stepFishing: () => {},
-      stepMenuNavigation: () => {},
-      stepQuickUse: () => undefined,
-      stepShortcutWheel: () => {},
-      stepTrial: () => undefined,
-      touchOutcropsNear: () => {},
-    },
+    options: createFrameOptions({ input, inputState }),
     setFrame: (index) => {
       frameIndex = index;
     },

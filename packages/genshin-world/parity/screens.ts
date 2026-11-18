@@ -45,7 +45,7 @@ const loadEntry = async ({
 export const screenNames: string[] = screenEntries.map(({ name }) => name);
 
 // The screen a name draws, with its fixture imported, or nothing when no screen has that name
-export const loadScreen = async (name: string | null) => {
+export const loadScreen = async (name: null | string) => {
   const entry = screenEntries.find((candidate) => candidate.name === name);
   return entry ? loadEntry(entry) : undefined;
 };

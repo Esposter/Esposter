@@ -1,9 +1,9 @@
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitStatus } from "#src/models/kit/KitStatus";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
-import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";

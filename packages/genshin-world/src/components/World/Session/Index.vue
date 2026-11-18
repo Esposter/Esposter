@@ -483,7 +483,7 @@ const offeringLandmarks = computed(() =>
     landmarks.flatMap((landmark) => (landmark.kind === LandmarkKind.Offering ? [landmark] : [])),
   ),
 );
-const { offerOffering, offeringInteractables } = useWorldOfferings({ offeringLandmarks, offeringProgressMap });
+const { offeringInteractables, offerOffering } = useWorldOfferings({ offeringLandmarks, offeringProgressMap });
 // The Traveler's resonated regions, Restorative Power and auto-recover, and the element and bonuses they give it
 const {
   autoRecoverSetting,
@@ -729,7 +729,7 @@ const loadedRegionIds = computed(() => [...(windrise.value?.regionDataMap.keys()
 const outcropPlacesMap = computed(
   () =>
     new Map(
-      [...(windrise.value?.regionDataMap ?? [])].map(([regionId, { outcropPlaces }]): [string, OutcropPlacement[]] => [
+      Array.from(windrise.value?.regionDataMap ?? [], ([regionId, { outcropPlaces }]): [string, OutcropPlacement[]] => [
         regionId,
         outcropPlaces,
       ]),
@@ -969,7 +969,6 @@ useWorldSaveSync({
     fishingCatchAts: fishingCatchAts.value,
     forgeLearnedRecipeIds: forgeProgress.value.learnedRecipeIds,
     foundOculusIds: foundOculusIds.value,
-    offeringProgressMap: offeringProgressMap.value,
     homePlacements: savedState.homePlacements,
     homePlantings: savedState.homePlantings,
     homeProgress: homeProgress.value,
@@ -980,6 +979,7 @@ useWorldSaveSync({
     mails: mails.value,
     minedOutcrops: minedOutcrops.value,
     namecardItemId: namecardItemId.value,
+    offeringProgressMap: offeringProgressMap.value,
     openedChestIds: openedChestIds.value,
     party: playerRoster.value?.party ?? party,
     processingJobs: processingJobs.value,

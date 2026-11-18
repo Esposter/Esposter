@@ -1,10 +1,10 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
-import { createParty } from "#src/services/party/createParty";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createParty } from "#src/services/party/createParty";
 import { createTheCatchPassiveModule } from "#src/services/weapon/passives/createTheCatchPassiveModule";
 import { createWeaponStrike } from "#src/services/weapon/passives/createWeaponStrike.test";
 import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";

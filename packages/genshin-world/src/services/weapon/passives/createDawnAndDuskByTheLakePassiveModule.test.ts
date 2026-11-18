@@ -2,6 +2,7 @@ import type { KitHealthChangedEvent } from "#src/models/kit/KitHealthChangedEven
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
@@ -13,7 +14,6 @@ import { createParty } from "#src/services/party/createParty";
 import { createDawnAndDuskByTheLakePassiveModule } from "#src/services/weapon/passives/createDawnAndDuskByTheLakePassiveModule";
 import { createWeaponStrike } from "#src/services/weapon/passives/createWeaponStrike.test";
 import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
-import { AttackTag } from "#src/models/combat/AttackTag";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);

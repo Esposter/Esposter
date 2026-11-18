@@ -1,5 +1,5 @@
-import AchievementScreen from "#src/components/Achievement/Screen/Index.vue";
 import { props } from "#src/components/Achievement/Screen/Index.fixture";
+import AchievementScreen from "#src/components/Achievement/Screen/Index.vue";
 import { describe, expect, test } from "vitest";
 import { render } from "vitest-browser-vue";
 

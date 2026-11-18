@@ -1165,8 +1165,6 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   "menu-paimon-disabled": { pending: NO_VARIANT_SCREENSHOT, screen: "MenuPaimon", variant: "disabled" },
   "menu-paimon-hover": { pending: NO_VARIANT_SCREENSHOT, screen: "MenuPaimon", variant: "hover" },
   "menu-paimon-pressed": { pending: NO_VARIANT_SCREENSHOT, screen: "MenuPaimon", variant: "pressed" },
-  "menu-time-day-after-tomorrow": { pending: NO_VARIANT_SCREENSHOT, screen: "MenuTime", variant: "dayAfterTomorrow" },
-  "menu-time-tomorrow": { pending: NO_VARIANT_SCREENSHOT, screen: "MenuTime", variant: "tomorrow" },
   // The English PC client's Time screen at 1080 high from a public recording (yt-a4_J84iMqR0), ten seconds in: the clock
   // At 03:52 and the dial turned to 18:00 Today, drawn over the world it dims. The capture is a controller's, so the frame
   // Shows no title, close cross or Confirm pill, and the mask leaves those three out: the screen draws them as the pointer's
@@ -1195,6 +1193,8 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "MenuTime",
     source: "yt-a4_J84iMqR0-time.mp4 at 10s",
   },
+  "menu-time-day-after-tomorrow": { pending: NO_VARIANT_SCREENSHOT, screen: "MenuTime", variant: "dayAfterTomorrow" },
+  "menu-time-tomorrow": { pending: NO_VARIANT_SCREENSHOT, screen: "MenuTime", variant: "tomorrow" },
   "menu-world-level-prompt": { pending: NO_SCREEN_SCREENSHOT, screen: "MenuWorldLevelPrompt" },
   "menu-world-level-prompt-hover": { pending: NO_VARIANT_SCREENSHOT, screen: "MenuWorldLevelPrompt", variant: "hover" },
   "menu-world-level-prompt-pressed": {

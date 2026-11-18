@@ -32,9 +32,9 @@ import { startTestWorldSession } from "#src/store/session.fixture";
 import { useWorldStatuesStore } from "#src/store/statues";
 import { jsonDateParse, takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
 import { ItemCategory } from "genshin-interface";
-import { storeToRefs } from "pinia";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
+import { storeToRefs } from "pinia";
 import { assert, describe, expect, test } from "vitest";
 import { nextTick, ref } from "vue";
 
@@ -186,7 +186,7 @@ describe(useWorldOutcrops, () => {
     outcrops.touchOutcropsNear(0, 0, () => 0);
     await nextTick();
 
-    expect([...enemyMap.values()].map(({ campId, level }) => ({ campId, level }))).toStrictEqual(
+    expect(Array.from(enemyMap.values(), ({ campId, level }) => ({ campId, level }))).toStrictEqual(
       Array.from({ length: OUTCROP_CAMP_SIZE }, () => ({ campId: CAMP_ID, level: SPAWNED_LEVEL })),
     );
   });
@@ -210,7 +210,7 @@ describe(useWorldOutcrops, () => {
     outcrops.touchOutcropsNear(place.position.x, place.position.z, () => 0);
     await nextTick();
 
-    expect([...enemyMap.values()].map(({ campId, level }) => ({ campId, level }))).toStrictEqual(
+    expect(Array.from(enemyMap.values(), ({ campId, level }) => ({ campId, level }))).toStrictEqual(
       Array.from({ length: OUTCROP_CAMP_SIZE }, () => ({
         campId: computeOutcropCampId(outcrop.placeId),
         level: SPAWNED_LEVEL,
@@ -417,8 +417,8 @@ describe(useWorldOutcrops, () => {
     // The other region's place stands nearer the claimed one than the fixture region's second place does, and holds no kind
     const context = createOutcrops();
     context.placesMap.value = new Map([
-      [FIXTURE_REGION_ID, PLACEMENTS],
       ["other", [{ id: 3, position: { x: 10, z: 0 } }]],
+      [FIXTURE_REGION_ID, PLACEMENTS],
     ]);
     await clearOutcrop(context);
     const { outcrops } = context;

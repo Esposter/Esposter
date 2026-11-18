@@ -1,5 +1,5 @@
-import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitBuff } from "#src/models/kit/KitBuff";
+import type { KitContext } from "#src/models/kit/KitContext";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { OTHER_CHARACTER_ID } from "#src/services/kit/constants.test";

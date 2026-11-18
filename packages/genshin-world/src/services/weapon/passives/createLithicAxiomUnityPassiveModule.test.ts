@@ -16,8 +16,8 @@ describe(createLithicAxiomUnityPassiveModule, () => {
     const wielder = { ...createWielderCombatant(), regionId: wielderRegionId };
     const other = { ...wielder, characterId: OTHER_CHARACTER_ID, regionId: otherRegionId };
     const characterIdCombatantMap = new Map([
-      [wielder.characterId, wielder],
       [other.characterId, other],
+      [wielder.characterId, wielder],
     ]);
     const party = createParty([wielder.characterId, other.characterId]);
     return passiveModule.getPassiveBonuses?.(wielder, 1, getDeployedCombatants(party, characterIdCombatantMap), []);
