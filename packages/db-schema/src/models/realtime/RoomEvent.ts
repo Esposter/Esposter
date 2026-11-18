@@ -1,6 +1,7 @@
 import { adminActionTypeSchema } from "#src/models/message/AdminActionType";
 import { timeoutUserAdminActionInputSchema } from "#src/models/message/TimeoutUserAdminActionInput";
 import { typingSchema } from "#src/models/message/Typing";
+import { RealtimeEventType } from "#src/models/realtime/RealtimeEventType";
 import { roomMessageSchema } from "#src/models/realtime/RoomMessage";
 import { roomReactionSchema } from "#src/models/realtime/RoomReaction";
 import { userIdSchema } from "#src/models/shared/UserId";
@@ -13,19 +14,25 @@ import { z } from "zod";
 // It: the object skips that socket itself, and the wire never names a session. A message is named by its integer id
 const createMessageEventSchema = z.object({
   data: z.array(roomMessageSchema).max(MESSAGE_BATCH_MAX_LENGTH),
-  type: z.literal("createMessage"),
+  type: z.literal(RealtimeEventType.CreateMessage),
 });
-const createTypingEventSchema = z.object({ data: typingSchema, type: z.literal("createTyping") });
+const createTypingEventSchema = z.object({ data: typingSchema, type: z.literal(RealtimeEventType.CreateTyping) });
 // A delete carries the tombstone the object left, with its deletedAt set, so a client keeps the message by id as deleted
-const deleteMessageEventSchema = z.object({ data: roomMessageSchema, type: z.literal("deleteMessage") });
+const deleteMessageEventSchema = z.object({
+  data: roomMessageSchema,
+  type: z.literal(RealtimeEventType.DeleteMessage),
+});
 // A message update carries the whole message as the object now holds it, so a client replaces it by id
-const updateMessageEventSchema = z.object({ data: roomMessageSchema, type: z.literal("updateMessage") });
+const updateMessageEventSchema = z.object({
+  data: roomMessageSchema,
+  type: z.literal(RealtimeEventType.UpdateMessage),
+});
 // A reaction is one row, and its update carries the whole row, so a client replaces the reaction it holds by its key
-const createEmojiEventSchema = z.object({ data: roomReactionSchema, type: z.literal("createEmoji") });
-const updateEmojiEventSchema = z.object({ data: roomReactionSchema, type: z.literal("updateEmoji") });
+const createEmojiEventSchema = z.object({ data: roomReactionSchema, type: z.literal(RealtimeEventType.CreateEmoji) });
+const updateEmojiEventSchema = z.object({ data: roomReactionSchema, type: z.literal(RealtimeEventType.UpdateEmoji) });
 const deleteEmojiEventSchema = z.object({
   data: roomReactionSchema.pick({ emojiTag: true, messageId: true }),
-  type: z.literal("deleteEmoji"),
+  type: z.literal(RealtimeEventType.DeleteEmoji),
 });
 const adminActionEventSchema = z.object({
   data: z.object({
@@ -34,11 +41,14 @@ const adminActionEventSchema = z.object({
     targetUserId: userIdSchema.shape.userId,
     type: adminActionTypeSchema,
   }),
-  type: z.literal("adminAction"),
+  type: z.literal(RealtimeEventType.AdminAction),
 });
 // A member's status row, which a member coming online or going offline also sends: the status it now has is the one
 // A client detects its presence from
-const upsertStatusEventSchema = z.object({ data: selectUserStatusInMessageSchema, type: z.literal("upsertStatus") });
+const upsertStatusEventSchema = z.object({
+  data: selectUserStatusInMessageSchema,
+  type: z.literal(RealtimeEventType.UpsertStatus),
+});
 
 const roomEventSchemas = [
   createMessageEventSchema,

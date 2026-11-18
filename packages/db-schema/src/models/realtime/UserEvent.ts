@@ -1,5 +1,6 @@
 import { userAchievementInAchievementWithRelationsSchema } from "#src/models/achievement/UserAchievementInAchievementWithRelations";
 import { updateRoomInputSchema } from "#src/models/message/UpdateRoomInput";
+import { RealtimeEventType } from "#src/models/realtime/RealtimeEventType";
 import { topicSchema } from "#src/models/realtime/Topic";
 import { sessionIdSchema } from "#src/models/shared/SessionId";
 import { storageUsageSchema } from "#src/models/storage/StorageUsage";
@@ -18,14 +19,14 @@ const updateAchievementEventSchema = z.object({
   data: createUniqueArraySchema(userAchievementInAchievementWithRelationsSchema, "achievementId").max(
     Object.values(AchievementName).length,
   ),
-  type: z.literal("updateAchievement"),
+  type: z.literal(RealtimeEventType.UpdateAchievement),
 });
 // A start took the lease, so the session the person's save held before is replaced by the one named here
 const replaceSessionEventSchema = z.object({
   data: z.object({ sessionId: sessionIdSchema.shape.sessionId }),
-  type: z.literal("replaceSession"),
+  type: z.literal(RealtimeEventType.ReplaceSession),
 });
-const updateUsageEventSchema = z.object({ data: storageUsageSchema, type: z.literal("updateUsage") });
+const updateUsageEventSchema = z.object({ data: storageUsageSchema, type: z.literal(RealtimeEventType.UpdateUsage) });
 // The content is not carried: a subscriber re-reads it through the type's own read, so a large document crosses by
 // The same path as any read rather than over the socket
 const saveResourceContentEventSchema = z.object({
@@ -34,22 +35,22 @@ const saveResourceContentEventSchema = z.object({
     contentVersion: selectResourceInResourceSchema.shape.contentVersion,
     id: selectResourceInResourceSchema.shape.id,
   }),
-  type: z.literal("saveResourceContent"),
+  type: z.literal(RealtimeEventType.SaveResourceContent),
 });
 // The fields a room edit changes, and the owner a group's departing owner hands it to
 const updateRoomEventSchema = z.object({
   data: updateRoomInputSchema.extend({ userId: selectRoomInMessageSchema.shape.userId.optional() }),
-  type: z.literal("updateRoom"),
+  type: z.literal(RealtimeEventType.UpdateRoom),
 });
 // A room's last message moved it to the top of the list, which is what the room list sorts by. Its own event, since a
 // Room update names only the fields a room edit changes
 const roomActivityEventSchema = z.object({
   data: z.object({ id: selectRoomInMessageSchema.shape.id, lastMessageAt: z.coerce.date() }),
-  type: z.literal("roomActivity"),
+  type: z.literal(RealtimeEventType.RoomActivity),
 });
 const deleteRoomEventSchema = z.object({
   data: selectUserToRoomInMessageSchema.pick({ roomId: true, userId: true }),
-  type: z.literal("deleteRoom"),
+  type: z.literal(RealtimeEventType.DeleteRoom),
 });
 // A member as the room's list shows one: the person and the display name their membership row holds
 const joinRoomEventSchema = z.object({
@@ -58,18 +59,21 @@ const joinRoomEventSchema = z.object({
     roomId: selectUserToRoomInMessageSchema.shape.roomId,
     user: publicUserSchema,
   }),
-  type: z.literal("joinRoom"),
+  type: z.literal(RealtimeEventType.JoinRoom),
 });
 const leaveRoomEventSchema = z.object({
   data: selectUserToRoomInMessageSchema.pick({ roomId: true, userId: true }),
-  type: z.literal("leaveRoom"),
+  type: z.literal(RealtimeEventType.LeaveRoom),
 });
 const updateUserToRoomEventSchema = z.object({
   data: selectUserToRoomInMessageSchema,
-  type: z.literal("updateUserToRoom"),
+  type: z.literal(RealtimeEventType.UpdateUserToRoom),
 });
 // A topic a tab watches changed, so its queries on that topic refetch. The frame names the topic alone, never data
-const invalidateEventSchema = z.object({ data: z.object({ topic: topicSchema }), type: z.literal("invalidate") });
+const invalidateEventSchema = z.object({
+  data: z.object({ topic: topicSchema }),
+  type: z.literal(RealtimeEventType.Invalidate),
+});
 
 const userEventSchemas = [
   updateAchievementEventSchema,

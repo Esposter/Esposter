@@ -59,6 +59,7 @@ flowchart TD
 The watch itself is `useWatchTopics`: one watch per target, kept while a refreshed read names the same topics, with the newest refetch being the one that runs.
 
 The one exception is the room list's reorder: the room object's alarm writes a room's last-message time and sends `roomActivity` to its online members, which carries that time as the row change itself, since the alarm publishes no topic a refetch of the first page could follow.
+The rule is enforced by `RealtimeEventClassMap` (`packages/db-schema/src/models/realtime/RealtimeEventClassMap.ts`): every realtime event type must name the class its frame carries, no class is a refresh of a stored read, so a new event fails to typecheck until its author says what it carries instead.
 
 Four alternatives lost, each for a reason that still holds:
 
@@ -268,3 +269,4 @@ Each entry names a shape to avoid and the shape that takes its place. The check 
 | `apps/web/app/services/trpc/createHttpBatchingLink.ts`                                | The batch choice: production batches a tick's calls, the test build sends each as its own                                            |
 | `packages/configuration/eslint/serverCountFields.js`                                  | The one list of server-derived count fields, read by the selectors                                                                   |
 | `packages/configuration/eslint/restrictedSyntaxes.js`                                 | The `no-restricted-syntax` selectors that fail a delta on a count field                                                              |
+| `packages/db-schema/src/models/realtime/RealtimeEventClassMap.ts`                     | The class of every realtime event type, which the Live reads rule's enforcer typechecks                                              |

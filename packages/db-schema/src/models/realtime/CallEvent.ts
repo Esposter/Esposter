@@ -1,4 +1,5 @@
 import { callParticipantSchema } from "#src/models/message/call/CallParticipant";
+import { RealtimeEventType } from "#src/models/realtime/RealtimeEventType";
 import { callSessionIdSchema } from "#src/models/shared/CallSessionId";
 import { sessionIdSchema } from "#src/models/shared/SessionId";
 import { CALL_AUTH_TOKEN_MAX_LENGTH } from "#src/services/message/constants";
@@ -24,34 +25,34 @@ const joinCallPayloadSchema = z.union([
     type: z.literal("rejoin"),
   }),
 ]);
-const joinCallEventSchema = z.object({ data: joinCallPayloadSchema, type: z.literal("joinCall") });
+const joinCallEventSchema = z.object({ data: joinCallPayloadSchema, type: z.literal(RealtimeEventType.JoinCall) });
 const leaveCallEventSchema = z.object({
   data: z.object({ callSessionId, id: participantId }),
-  type: z.literal("leaveCall"),
+  type: z.literal(RealtimeEventType.LeaveCall),
 });
 const videoChangedEventSchema = z.object({
   data: z.object({ callSessionId, id: participantId, isCameraEnabled: z.boolean() }),
-  type: z.literal("videoChanged"),
+  type: z.literal(RealtimeEventType.VideoChanged),
 });
 const handRaisedChangedEventSchema = z.object({
   data: z.object({ callSessionId, id: participantId, isHandRaised: z.boolean() }),
-  type: z.literal("handRaisedChanged"),
+  type: z.literal(RealtimeEventType.HandRaisedChanged),
 });
 const muteChangedEventSchema = z.object({
   data: z.object({ callSessionId, id: participantId, isMuted: z.boolean() }),
-  type: z.literal("muteChanged"),
+  type: z.literal(RealtimeEventType.MuteChanged),
 });
 const knockCallEventSchema = z.object({
   data: z.object({ callSessionId, knocker: callParticipantSchema }),
-  type: z.literal("knockCall"),
+  type: z.literal(RealtimeEventType.KnockCall),
 });
 const knockerAdmittedEventSchema = z.object({
   data: z.object({ callSessionId, knockerSessionId: sessionIdSchema.shape.sessionId }),
-  type: z.literal("knockerAdmitted"),
+  type: z.literal(RealtimeEventType.KnockerAdmitted),
 });
 const knockerDismissedEventSchema = z.object({
   data: z.object({ callSessionId, knockerSessionId: sessionIdSchema.shape.sessionId }),
-  type: z.literal("knockerDismissed"),
+  type: z.literal(RealtimeEventType.KnockerDismissed),
 });
 
 const callEventSchemas = [

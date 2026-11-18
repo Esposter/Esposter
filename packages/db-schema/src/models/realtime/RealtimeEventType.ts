@@ -1,0 +1,33 @@
+// Every event type a realtime object sends, one member per type of the RoomEvent, UserEvent and CallEvent unions
+// A member's value is the type as it is on the wire
+export const RealtimeEventType = {
+  AdminAction: "adminAction",
+  CreateEmoji: "createEmoji",
+  CreateMessage: "createMessage",
+  CreateTyping: "createTyping",
+  DeleteEmoji: "deleteEmoji",
+  DeleteMessage: "deleteMessage",
+  DeleteRoom: "deleteRoom",
+  HandRaisedChanged: "handRaisedChanged",
+  Invalidate: "invalidate",
+  JoinCall: "joinCall",
+  JoinRoom: "joinRoom",
+  KnockCall: "knockCall",
+  KnockerAdmitted: "knockerAdmitted",
+  KnockerDismissed: "knockerDismissed",
+  LeaveCall: "leaveCall",
+  LeaveRoom: "leaveRoom",
+  MuteChanged: "muteChanged",
+  ReplaceSession: "replaceSession",
+  RoomActivity: "roomActivity",
+  SaveResourceContent: "saveResourceContent",
+  UpdateAchievement: "updateAchievement",
+  UpdateEmoji: "updateEmoji",
+  UpdateMessage: "updateMessage",
+  UpdateRoom: "updateRoom",
+  UpdateUsage: "updateUsage",
+  UpdateUserToRoom: "updateUserToRoom",
+  UpsertStatus: "upsertStatus",
+  VideoChanged: "videoChanged",
+} as const;
+export type RealtimeEventType = (typeof RealtimeEventType)[keyof typeof RealtimeEventType];

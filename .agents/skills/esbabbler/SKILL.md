@@ -21,6 +21,10 @@ The procedure for a screen that shows room members returns the room's `displayNa
 
 An opt-out is recorded on the row rather than deleting it, only the member's own action clears it, and an id lifted off a message is guarded because a webhook has none (`references/third-party-subscriptions.md`).
 
+## A Realtime Event Names Its Class
+
+Each realtime event type names what its frame carries in `RealtimeEventClassMap` (`packages/db-schema/src/models/realtime/RealtimeEventClassMap.ts`), so a live read stays on its topic rather than on an event written for it (`openspec/specs/architecture/client-data/design.md`, "Live reads").
+
 ## Deep Dives
 
 - `references/message-operations.md` — when adding a message operation or `MessageType`, or gating a message menu item on who may use it.
