@@ -12,7 +12,8 @@ import { alias } from "drizzle-orm/sqlite-core";
 
 // One ordered name per direct message, built from the other participants only; the id tie-breaker keeps equal names
 // In the same order across the switcher's page cursor and the participant list. The viewer is left out by the join's
-// Condition rather than a WHERE, so each direct message keeps its own rows and a read of it names them by their room.
+// Condition rather than a WHERE, so each direct message keeps its own rows and a read of it names them by their room. The rows
+// Group by the room, so a direct message the viewer is alone in gets a row keyed by its room, not a null room's row.
 export const getDirectMessageDisplayNames = (db: Context["db"], userId: string) => {
   const participantMembership = alias(usersToRoomsInMessage, "participantMembership");
   const participantUser = alias(usersInAuth, "participantUser");
@@ -23,7 +24,7 @@ export const getDirectMessageDisplayNames = (db: Context["db"], userId: string) 
         sql<string>`group_concat(${participantDisplayName}, ', ' ORDER BY ${participantDisplayName} collate nocase, ${participantUser.id})`.as(
           "displayName",
         ),
-      roomId: participantMembership.roomId,
+      roomId: roomsInMessage.id,
     })
     .from(roomsInMessage)
     .leftJoin(
@@ -43,6 +44,6 @@ export const getDirectMessageDisplayNames = (db: Context["db"], userId: string) 
         ),
       ),
     )
-    .groupBy(participantMembership.roomId)
+    .groupBy(roomsInMessage.id)
     .as("directMessageDisplayNames");
 };

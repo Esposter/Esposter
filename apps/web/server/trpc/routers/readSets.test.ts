@@ -172,15 +172,15 @@ describe(getReadSet, () => {
         },
         {
           kind: "left",
-          left: { column: "id", level: 1, occurrence: "participantUser", table: "auth_users" },
+          left: { column: "id", level: 0, occurrence: "message_rooms", selectedAs: "id", table: "message_rooms" },
           nullFilled: "left",
-          right: { column: "userId", level: 1, occurrence: "participantMembership", table: "message_usersToRooms" },
+          right: { column: "id", level: 0, occurrence: "message_rooms", selectedAs: "id", table: "message_rooms" },
         },
         {
           kind: "left",
-          left: { column: "id", level: 0, occurrence: "message_rooms", selectedAs: "id", table: "message_rooms" },
-          nullFilled: "right",
-          right: { column: "roomId", level: 0, occurrence: "directMessageDisplayNames", table: "message_usersToRooms" },
+          left: { column: "id", level: 1, occurrence: "participantUser", table: "auth_users" },
+          nullFilled: "left",
+          right: { column: "userId", level: 1, occurrence: "participantMembership", table: "message_usersToRooms" },
         },
         {
           kind: "left",
