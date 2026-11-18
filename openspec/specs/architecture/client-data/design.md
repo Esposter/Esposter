@@ -43,6 +43,7 @@ A query procedure names the topics its answer came from, or a `staticReason` whe
 - **`executeQuery`** collects the topics its answer names and watches them for as long as the scope of the `useMutation()` instance lives — the surface that called it, or the store it was created in. A write that changed one runs the same read again, on the same key, so a newer answer supersedes an older one as it does for any read. `useQuery`, `useCachedRead` and every read built on `executeQuery` are live through it, with nothing at their own call sites.
 - **`readItems`** does the same for a paged list's first page. The write's invalidation reads that page again and updates, by id, the rows it names, so a reader who has paged on keeps their place: the later pages and the cursor are left as they are. A row another writer added or removed waits for the next refresh. A server render puts the topics in the payload beside its page, so a hydrated list is watched without a second read.
 - **A read made with no scope** takes no watch, since nothing would release it, and a read that answers after its scope has gone takes none either.
+- **The watch starts when the read answers.** A write another device publishes while a read is in flight is not seen by that read's watch, so it reaches the list at the topic's next publish, or the next read. The replay in `useReadingPushes` covers only the writes this client makes during the read. Friend lists and room emojis, which once had their own events for this window, now share it with every other topic read.
 
 ```mermaid
 flowchart TD
