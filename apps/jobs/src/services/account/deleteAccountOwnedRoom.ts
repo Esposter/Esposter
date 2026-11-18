@@ -2,7 +2,7 @@ import type { RoomInMessage, UserInAuth } from "@esposter/db-schema";
 
 import { publishAccountTopics } from "#src/services/account/publishAccountTopics";
 import { getRoomObject } from "#src/services/room/getRoomObject";
-import { db } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/db";
 import { deleteStoragePrefix } from "#src/services/storage/deleteStoragePrefix";
 import { getTopic, roomsInMessage, StorageBucket, TopicKind } from "@esposter/db-schema";
 import { eq } from "drizzle-orm";
@@ -23,5 +23,5 @@ export const deleteAccountOwnedRoom = async (roomId: RoomInMessage["id"], userId
   await publishAccountTopics(
     scheduledMessageSenderIds.map((senderId) => getTopic(TopicKind.ScheduledMessage, senderId)),
   );
-  await db.delete(roomsInMessage).where(eq(roomsInMessage.id, roomId));
+  await getDb().delete(roomsInMessage).where(eq(roomsInMessage.id, roomId));
 };

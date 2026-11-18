@@ -1,5 +1,5 @@
 import { purgeResourceAndBroadcast } from "#src/services/resource/purgeResourceAndBroadcast";
-import { db } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/db";
 import { getBucket } from "#src/services/storage/getBucket";
 import { RECYCLE_BIN_RETENTION_MS, resourcesInResource, StorageBucket } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
@@ -8,7 +8,7 @@ import { and, isNotNull, lt } from "drizzle-orm";
 // The timer's purge: every row the recycle bin has held past its retention. The row is the durable marker, so anything
 // That fails mid-purge simply keeps its row and is re-driven by the next run of this function.
 export const purgeExpiredResources = async (): Promise<void> => {
-  const expiredResources = await db
+  const expiredResources = await getDb()
     .select({ id: resourcesInResource.id })
     .from(resourcesInResource)
     .where(

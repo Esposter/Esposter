@@ -1,4 +1,4 @@
-import { db } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/db";
 
 // Who a message notification is shown as. Resolved here rather than by each publisher, so the per-room display name
 // ([display names](openspec/specs/esbabbler/display-names/design.md)) is applied once and never on the request path a member is waiting on.
@@ -15,7 +15,7 @@ export const getMessageNotificationAuthor = async ({
   userId?: string | undefined;
 }): Promise<{ icon?: null | string | undefined; title: string }> => {
   if (userId) {
-    const userToRoom = await db.query.usersToRoomsInMessage.findFirst({
+    const userToRoom = await getDb().query.usersToRoomsInMessage.findFirst({
       columns: { displayName: true },
       where: { roomId: { eq: roomId }, userId: { eq: userId } },
       with: { user: { columns: { image: true, name: true } } },
@@ -24,7 +24,7 @@ export const getMessageNotificationAuthor = async ({
     else return { title: "" };
   } else if (appUserId) {
     // The bot's name is its webhook's, so a rename shows on the bot's messages that were posted before it
-    const webhook = await db.query.webhooksInMessage.findFirst({
+    const webhook = await getDb().query.webhooksInMessage.findFirst({
       columns: { name: true },
       where: { userId: { eq: appUserId } },
       with: { appUser: { columns: { image: true } } },

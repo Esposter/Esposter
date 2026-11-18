@@ -22,7 +22,7 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi 
 let mockDb: Database;
 
 vi.mock(import("#src/services/shared/db"), () => ({
-  get db() {
+  getDb() {
     return mockDb;
   },
 }));

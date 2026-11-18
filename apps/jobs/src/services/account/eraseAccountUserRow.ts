@@ -3,7 +3,7 @@ import type { UserInAuth } from "@esposter/db-schema";
 import { getLikedPostIds } from "#src/services/account/getLikedPostIds";
 import { getOtherLikeTotal } from "#src/services/account/getOtherLikeTotal";
 import { getPostRankingUpdates } from "#src/services/account/getPostRankingUpdates";
-import { db } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/db";
 import { postsInPost, usersInAuth } from "@esposter/db-schema";
 import { and, eq, inArray, ne, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/sqlite-core";
@@ -16,16 +16,16 @@ import { alias } from "drizzle-orm/sqlite-core";
 export const eraseAccountUserRow = async (userId: UserInAuth["id"]): Promise<void> => {
   await recountPostLikes(userId);
   const rankingUpdates = await getPostRankingUpdates(userId);
-  await db.batch([
+  await getDb().batch([
     recountPostComments(userId),
     ...rankingUpdates,
-    db.delete(usersInAuth).where(eq(usersInAuth.id, userId)),
+    getDb().delete(usersInAuth).where(eq(usersInAuth.id, userId)),
   ]);
 };
 
 // A post's like count is the sum of its likes' values, recounted for each post the erased person liked
 const recountPostLikes = (userId: UserInAuth["id"]) =>
-  db
+  getDb()
     .update(postsInPost)
     .set({ likeCount: sql`(${getOtherLikeTotal(userId)})` })
     .where(inArray(postsInPost.id, getLikedPostIds(userId)));
@@ -36,8 +36,8 @@ const recountPostLikes = (userId: UserInAuth["id"]) =>
 const recountPostComments = (userId: UserInAuth["id"]) => {
   const ownedPost = alias(postsInPost, "ownedPost");
   const reply = alias(postsInPost, "reply");
-  const ownedPostIds = db.select({ id: ownedPost.id }).from(ownedPost).where(eq(ownedPost.userId, userId));
-  const replyTotal = db
+  const ownedPostIds = getDb().select({ id: ownedPost.id }).from(ownedPost).where(eq(ownedPost.userId, userId));
+  const replyTotal = getDb()
     .select({ total: sql<number>`count(*)` })
     .from(reply)
     .where(
@@ -48,7 +48,7 @@ const recountPostComments = (userId: UserInAuth["id"]) => {
         sql`not exists (select 1 from json_each(${reply.ancestorIds}) where ${inArray(sql`json_each.value`, ownedPostIds)})`,
       ),
     );
-  return db
+  return getDb()
     .update(postsInPost)
     .set({ commentCount: sql`(${replyTotal})` })
     .where(

@@ -4,7 +4,7 @@ import type { RoomReaction, UserInAuth } from "@esposter/db-schema";
 import { ArchiveLikeKind } from "#src/models/user/ArchiveLikeKind";
 import { getRoomObject } from "#src/services/room/getRoomObject";
 import { OBJECT_READ_PAGE_LIMIT } from "#src/services/shared/constants";
-import { db } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/db";
 import { readPagesToEnd } from "#src/services/shared/readPagesToEnd";
 import { getMemberRoomIds } from "@esposter/db";
 
@@ -13,11 +13,11 @@ import { getMemberRoomIds } from "@esposter/db";
 // A post like carries the time it was made.
 // A reaction carries none: its row is shared by its reactors, so its time is the first reactor's
 export const writeLikeEntries = async (archive: UserDataArchive, userId: UserInAuth["id"]): Promise<void> => {
-  const postLikes = await db.query.likesInPost.findMany({
+  const postLikes = await getDb().query.likesInPost.findMany({
     columns: { createdAt: true, postId: true, value: true },
     where: { userId: { eq: userId } },
   });
-  const roomIds = await getMemberRoomIds(db, userId);
+  const roomIds = await getMemberRoomIds(getDb(), userId);
   const emojiReactions: { emojiTag: string; kind: ArchiveLikeKind; roomId: string; targetId: number }[] = [];
   for (const roomId of roomIds)
     // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one room at a time, and one page of its reactions at a time

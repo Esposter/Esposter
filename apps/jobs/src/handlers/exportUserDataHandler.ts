@@ -1,5 +1,5 @@
 import { publishTopics } from "#src/services/realtime/publishTopics";
-import { db } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/db";
 import { getBucket } from "#src/services/storage/getBucket";
 import { buildUserDataArchive } from "#src/services/user/buildUserDataArchive";
 import { getDataExportBlobName } from "#src/services/user/getDataExportBlobName";
@@ -24,7 +24,7 @@ export const exportUserDataHandler = async (body: unknown): Promise<void> => {
   const { dataExportId } = exportUserDataQueueMessageSchema.parse(body);
   const blobName = getDataExportBlobName(dataExportId);
   // The row names the person whose stores the archive reads, so the message carries only the row
-  const [buildingRow] = await db
+  const [buildingRow] = await getDb()
     .update(dataExportsInUser)
     .set({ blobName, status: DataExportStatus.Building })
     .where(eq(dataExportsInUser.id, dataExportId))
@@ -35,7 +35,7 @@ export const exportUserDataHandler = async (body: unknown): Promise<void> => {
   await getResultAsync(() => buildUserDataArchive(buildingRow.userId, blobName)).match(
     async () => {
       const readyAt = Temporal.Now.instant();
-      const readyRows = await db
+      const readyRows = await getDb()
         .update(dataExportsInUser)
         .set({
           expiresAt: new Date(readyAt.epochMilliseconds + DATA_EXPORT_RETENTION_MS),
@@ -50,7 +50,7 @@ export const exportUserDataHandler = async (body: unknown): Promise<void> => {
     },
     async (error) => {
       console.error(`${QueueJob.ExportUserData} failed for ${dataExportId}`, error);
-      await db
+      await getDb()
         .update(dataExportsInUser)
         .set({ failureReason: error.message, status: DataExportStatus.Failed })
         .where(eq(dataExportsInUser.id, dataExportId));

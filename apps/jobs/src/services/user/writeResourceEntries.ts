@@ -2,7 +2,7 @@
 import type { UserDataArchive } from "#src/models/user/UserDataArchive";
 import type { UserInAuth } from "@esposter/db-schema";
 
-import { db } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/db";
 import { getBucket } from "#src/services/storage/getBucket";
 import { getContentBlobName, readJsonBlob } from "@esposter/db";
 import { FILES_DIRECTORY_SEGMENT, getResourceFileBlobName, StorageBucket } from "@esposter/db-schema";
@@ -13,7 +13,7 @@ import { FILES_DIRECTORY_SEGMENT, getResourceFileBlobName, StorageBucket } from 
 // The hashes, sizes and revision counters are the store's bookkeeping, and no update or delete time is the person's.
 // A resource they only work on belongs to its owner, so it is not read here
 export const writeResourceEntries = async (archive: UserDataArchive, userId: UserInAuth["id"]): Promise<void> => {
-  const resources = await db.query.resourcesInResource.findMany({
+  const resources = await getDb().query.resourcesInResource.findMany({
     columns: { contentVersion: true, createdAt: true, id: true, name: true, tags: true, type: true },
     where: { userId: { eq: userId } },
   });
@@ -22,16 +22,16 @@ export const writeResourceEntries = async (archive: UserDataArchive, userId: Use
     const entryDirectory = `resources/${resource.id}`;
     await archive.addJsonEntry(`${entryDirectory}/resource.json`, resource);
     const [publication, links, content, workingAssets] = await Promise.all([
-      db.query.resourcePublicationsInResource.findFirst({
+      getDb().query.resourcePublicationsInResource.findFirst({
         columns: { createdAt: true, publishedAt: true, publishedContentVersion: true, publishVersion: true },
         where: { resourceId: { eq: resource.id } },
       }),
-      db.query.resourceLinksInResource.findMany({
+      getDb().query.resourceLinksInResource.findMany({
         columns: { sourceId: true, targetId: true, type: true },
         where: { sourceId: { eq: resource.id } },
       }),
       readJsonBlob(bucket, getContentBlobName(resource.id)),
-      db.query.resourceWorkingAssetsInResource.findMany({
+      getDb().query.resourceWorkingAssetsInResource.findMany({
         columns: { assetHash: true },
         where: { resourceId: { eq: resource.id } },
       }),

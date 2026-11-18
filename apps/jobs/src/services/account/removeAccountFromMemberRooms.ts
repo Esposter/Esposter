@@ -2,7 +2,7 @@
 import type { UserInAuth } from "@esposter/db-schema";
 
 import { getRoomObject } from "#src/services/room/getRoomObject";
-import { db } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/db";
 import { getMemberRoomIds } from "@esposter/db";
 
 // The account is taken out of each room it is still a member of before its row goes.
@@ -11,7 +11,7 @@ import { getMemberRoomIds } from "@esposter/db";
 // So an open room hears of the erase rather than finding the account gone at its next reload.
 // The rooms it owned went first, so the memberships left are the rooms it is still in
 export const removeAccountFromMemberRooms = async (userId: UserInAuth["id"]): Promise<void> => {
-  const memberRoomIds = await getMemberRoomIds(db, userId);
+  const memberRoomIds = await getMemberRoomIds(getDb(), userId);
   for (const roomId of memberRoomIds) {
     const roomObject = getRoomObject(roomId);
     await roomObject.removeMember(userId);

@@ -4,7 +4,7 @@ import { getPushNotificationPayload } from "#src/services/notification/getPushNo
 import { resolveNotification } from "#src/services/notification/resolveNotification";
 import { sendWebPushNotifications } from "#src/services/notification/sendWebPushNotifications";
 import { publishTopicsBestEffort } from "#src/services/realtime/publishTopicsBestEffort";
-import { db } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/db";
 import { getPushSubscriptionsForUsers, inJsonArray } from "@esposter/db";
 import {
   AppNotificationTypeChannelMap,
@@ -39,7 +39,7 @@ export const sendNotification = async (data: NotificationQueueMessage): Promise<
   if (channels.includes(NotificationChannel.Bell)) {
     // One statement for every recipient: the bell is a row per user, and a notification with a hundred recipients
     // Is still one round trip
-    await db
+    await getDb()
       .insert(notificationsInNotification)
       .values(userIds.map((userId) => ({ body, path, severity, title, type: data.type, userId })));
     // The retention trim rides the write rather than a sweep of its own: the recipients are already known here,
@@ -48,7 +48,7 @@ export const sendNotification = async (data: NotificationQueueMessage): Promise<
     // That inserts them a second time, which is the duplication QueueJobMaxRetriesMap promises this
     // Handler does not cause
     await getResultAsync(() =>
-      db
+      getDb()
         .delete(notificationsInNotification)
         .where(
           and(
@@ -70,7 +70,7 @@ export const sendNotification = async (data: NotificationQueueMessage): Promise<
   // Dropping the recipient: the user's other devices are still owed the push
   // Also past the bell write, so a failed read answers with no subscriptions rather than with a redelivery
   const pushSubscriptions = await getResultAsync(() =>
-    getPushSubscriptionsForUsers(db, userIds, "excludedSessionId" in data ? data.excludedSessionId : undefined),
+    getPushSubscriptionsForUsers(getDb(), userIds, "excludedSessionId" in data ? data.excludedSessionId : undefined),
   )
     .orTee((error) => {
       console.error(`Failed to read push subscriptions for ${data.type}:`, error);

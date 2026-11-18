@@ -31,7 +31,7 @@ const createMention = (id: string) =>
   `<span ${MENTION_TYPE_ATTRIBUTE}="${MENTION_TYPE}" ${MENTION_ID_ATTRIBUTE}="${id}"></span>`;
 
 vi.mock(import("#src/services/shared/db"), () => ({
-  get db() {
+  getDb() {
     return mockDb;
   },
 }));

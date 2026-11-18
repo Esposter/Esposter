@@ -1,6 +1,6 @@
 import type { RoomMessage } from "@esposter/db-schema";
 
-import { db } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/db";
 import { getUserObject } from "#src/services/user/getUserObject";
 import { decrementMentionCounts } from "@esposter/db";
 import { getResultAsync, noop } from "@esposter/shared";
@@ -16,7 +16,7 @@ export const takeBackErasedMentionCounts = async (
   await Promise.all(
     erasedMessages.map(async ({ createdAt, editedAt, message }) => {
       const rows = await getResultAsync(() =>
-        decrementMentionCounts(db, { createdAt, editedAt, message, roomId, userId }),
+        decrementMentionCounts(getDb(), { createdAt, editedAt, message, roomId, userId }),
       )
         .orTee((error) => {
           console.error("Failed to take back an erased message's mention counts", { error, roomId });

@@ -4,5 +4,5 @@ import { publishTopicsBestEffort as basePublishTopicsBestEffort } from "@esposte
 import { env } from "cloudflare:workers";
 
 // The jobs Worker's Topic objects, through its own binding of the realtime Worker's
-export const publishTopicsBestEffort = (getTopics: () => Topic[], failure: string): Promise<void> =>
+export const publishTopicsBestEffort = (getTopics: () => Promise<Topic[]> | Topic[], failure: string): Promise<void> =>
   basePublishTopicsBestEffort(env.TOPIC, getTopics, failure);

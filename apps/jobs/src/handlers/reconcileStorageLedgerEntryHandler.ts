@@ -1,4 +1,4 @@
-import { db } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/db";
 import { broadcastStorageUsage } from "#src/services/storage/broadcastStorageUsage";
 import { verifyResourceAssetBlob } from "#src/services/storage/verifyResourceAssetBlob";
 import { reconcileStorageLedgerEntry } from "@esposter/db";
@@ -20,7 +20,13 @@ export const reconcileStorageLedgerEntryHandler = async (body: unknown): Promise
 
   // R2 gives no per-object ordering token, so the notification's own time orders two writes to one name.
   // A reconcile applies a notification only when it is newer than the one already applied
-  const { chargedUserId } = await reconcileStorageLedgerEntry(db, storageBucket, object.key, object.size, eventTime);
+  const { chargedUserId } = await reconcileStorageLedgerEntry(
+    getDb(),
+    storageBucket,
+    object.key,
+    object.size,
+    eventTime,
+  );
   if (chargedUserId) await broadcastStorageUsage([chargedUserId]);
   // Verified after the ledger step so a mismatched blob is charged before its deletion raises an object-delete notification, which
   // Releases the charge

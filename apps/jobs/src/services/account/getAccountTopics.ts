@@ -1,6 +1,6 @@
 import type { Topic, UserInAuth } from "@esposter/db-schema";
 
-import { db } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/db";
 import { getMemberRoomIds, getPersonReaderTopics, inJsonArray } from "@esposter/db";
 import {
   bookmarksInApp,
@@ -20,7 +20,7 @@ import { and, eq, inArray, ne, or } from "drizzle-orm";
 // Is named here by the reads that show it. A friendship, a bookmark, a thread follow and a webhook cascade with the rows
 // Beside them, and the rooms and resources the person owns cascade with everything in them
 export const getAccountTopics = async (userId: UserInAuth["id"]): Promise<Topic[]> => {
-  const ownedRoomIds = db
+  const ownedRoomIds = getDb()
     .select({ id: roomsInMessage.id })
     .from(roomsInMessage)
     .where(eq(roomsInMessage.userId, userId));
@@ -28,7 +28,7 @@ export const getAccountTopics = async (userId: UserInAuth["id"]): Promise<Topic[
   // Bookmarks read waits on it, so the other reads run beside it
   const readOwnedResourceIds = async () =>
     (
-      await db
+      await getDb()
         .select({ id: resourcesInResource.id })
         .from(resourcesInResource)
         .where(eq(resourcesInResource.userId, userId))
@@ -36,7 +36,7 @@ export const getAccountTopics = async (userId: UserInAuth["id"]): Promise<Topic[
   const ownedResourceIdsRead = readOwnedResourceIds();
   const readBookmarks = async () => {
     const resourceIds = await ownedResourceIdsRead;
-    return db
+    return getDb()
       .select({ userId: bookmarksInApp.userId })
       .from(bookmarksInApp)
       .where(
@@ -48,22 +48,22 @@ export const getAccountTopics = async (userId: UserInAuth["id"]): Promise<Topic[
   };
   const [readerTopics, memberRoomIds, friendships, bookmarks, threadFollows, webhooks, likes, ownedResourceIds] =
     await Promise.all([
-      getPersonReaderTopics(db, userId),
-      getMemberRoomIds(db, userId),
-      db
+      getPersonReaderTopics(getDb(), userId),
+      getMemberRoomIds(getDb(), userId),
+      getDb()
         .select({ receiverId: friendsInSocial.receiverId, senderId: friendsInSocial.senderId })
         .from(friendsInSocial)
         .where(or(eq(friendsInSocial.senderId, userId), eq(friendsInSocial.receiverId, userId))),
       readBookmarks(),
-      db
+      getDb()
         .select({ roomId: threadFollowsInMessage.roomId, userId: threadFollowsInMessage.userId })
         .from(threadFollowsInMessage)
         .where(and(ne(threadFollowsInMessage.userId, userId), inArray(threadFollowsInMessage.roomId, ownedRoomIds))),
-      db
+      getDb()
         .select({ roomId: webhooksInMessage.roomId })
         .from(webhooksInMessage)
         .where(eq(webhooksInMessage.creatorId, userId)),
-      db
+      getDb()
         .select({ ancestorIds: postsInPost.ancestorIds, id: postsInPost.id })
         .from(likesInPost)
         .innerJoin(postsInPost, eq(postsInPost.id, likesInPost.postId))

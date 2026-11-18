@@ -1,7 +1,7 @@
 import type { UserDataArchive } from "#src/models/user/UserDataArchive";
 import type { UserInAuth } from "@esposter/db-schema";
 
-import { db } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/db";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The account.json entry: the user row, the sign-in providers by name and the push subscriptions by endpoint.
@@ -14,7 +14,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 export const writeAccountEntry = async (archive: UserDataArchive, userId: UserInAuth["id"]): Promise<void> => {
   const [user, accounts, pushSubscriptions, blocks, notifications, achievements, bookmarks, settings, statuses] =
     await Promise.all([
-      db.query.usersInAuth.findFirst({
+      getDb().query.usersInAuth.findFirst({
         columns: {
           biography: true,
           createdAt: true,
@@ -28,32 +28,32 @@ export const writeAccountEntry = async (archive: UserDataArchive, userId: UserIn
         },
         where: { id: { eq: userId } },
       }),
-      db.query.accountsInAuth.findMany({ columns: { providerId: true }, where: { userId: { eq: userId } } }),
-      db.query.pushSubscriptionsInNotification.findMany({
+      getDb().query.accountsInAuth.findMany({ columns: { providerId: true }, where: { userId: { eq: userId } } }),
+      getDb().query.pushSubscriptionsInNotification.findMany({
         columns: { endpoint: true },
         where: { userId: { eq: userId } },
       }),
-      db.query.blocksInSocial.findMany({
+      getDb().query.blocksInSocial.findMany({
         columns: { deletedAt: false, updatedAt: false },
         where: { blockerId: { eq: userId } },
       }),
-      db.query.notificationsInNotification.findMany({
+      getDb().query.notificationsInNotification.findMany({
         columns: { createdAt: false, deletedAt: false, updatedAt: false },
         where: { userId: { eq: userId } },
       }),
-      db.query.userAchievementsInAchievement.findMany({
+      getDb().query.userAchievementsInAchievement.findMany({
         columns: { createdAt: false, deletedAt: false, updatedAt: false },
         where: { userId: { eq: userId } },
       }),
-      db.query.bookmarksInApp.findMany({
+      getDb().query.bookmarksInApp.findMany({
         columns: { deletedAt: false, updatedAt: false },
         where: { userId: { eq: userId } },
       }),
-      db.query.userSettingsInMessage.findMany({
+      getDb().query.userSettingsInMessage.findMany({
         columns: { createdAt: false, deletedAt: false, updatedAt: false },
         where: { userId: { eq: userId } },
       }),
-      db.query.userStatusesInMessage.findMany({
+      getDb().query.userStatusesInMessage.findMany({
         columns: { createdAt: false, deletedAt: false, updatedAt: false },
         where: { userId: { eq: userId } },
       }),

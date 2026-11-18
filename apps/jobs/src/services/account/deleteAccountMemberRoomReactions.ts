@@ -3,7 +3,7 @@ import type { RoomReaction, UserInAuth } from "@esposter/db-schema";
 
 import { getRoomObject } from "#src/services/room/getRoomObject";
 import { OBJECT_READ_PAGE_LIMIT } from "#src/services/shared/constants";
-import { db } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/db";
 import { readPagesToEnd } from "#src/services/shared/readPagesToEnd";
 import { getMemberRoomIds } from "@esposter/db";
 import { noop } from "@esposter/shared";
@@ -12,7 +12,7 @@ import { noop } from "@esposter/shared";
 // Each room takes the account off the emoji's reactors, and the reaction goes when the account was its only reactor.
 // The rooms it owned went first, so the memberships left are the rooms it is still in
 export const deleteAccountMemberRoomReactions = async (userId: UserInAuth["id"]): Promise<void> => {
-  const memberRoomIds = await getMemberRoomIds(db, userId);
+  const memberRoomIds = await getMemberRoomIds(getDb(), userId);
   for (const roomId of memberRoomIds) {
     const roomObject = getRoomObject(roomId);
     // The read that answers each page takes the account off its reactions, so a page has nothing left to do

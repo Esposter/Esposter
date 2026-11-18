@@ -3,7 +3,7 @@ import type { NotificationQueueMessage } from "@esposter/db-schema";
 
 import { getMessageNotificationAuthor } from "#src/services/notification/getMessageNotificationAuthor";
 import { getMessageNotificationBody } from "#src/services/notification/getMessageNotificationBody";
-import { db } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/db";
 import { getMessageRecipientUserIds } from "@esposter/db";
 import { AppNotificationType } from "@esposter/db-schema";
 import { exhaustiveGuard, RoutePath } from "@esposter/shared";
@@ -19,7 +19,7 @@ export const resolveNotification = async (
 ): Promise<ResolvedNotification | undefined> => {
   switch (data.type) {
     case AppNotificationType.FriendRequest: {
-      const sender = await db.query.usersInAuth.findFirst({
+      const sender = await getDb().query.usersInAuth.findFirst({
         columns: { image: true, name: true },
         where: { id: { eq: data.senderId } },
       });
@@ -42,7 +42,7 @@ export const resolveNotification = async (
       // Independent reads, so they overlap rather than queue — the author display never depends on who receives it
       const [author, userIds] = await Promise.all([
         getMessageNotificationAuthor({ appUserId: data.appUserId, roomId, userId: senderUserId }),
-        getMessageRecipientUserIds(db, {
+        getMessageRecipientUserIds(getDb(), {
           message: text,
           roomId,
           threadRootId: data.threadRootId,
@@ -61,7 +61,7 @@ export const resolveNotification = async (
     }
     case AppNotificationType.Reminder: {
       // A reminder in a room that does not exist has no room to open, so it is dropped rather than sent to a dead link
-      const room = await db.query.roomsInMessage.findFirst({
+      const room = await getDb().query.roomsInMessage.findFirst({
         columns: { id: true },
         where: { id: { eq: data.roomId } },
       });

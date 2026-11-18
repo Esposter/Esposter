@@ -1,7 +1,7 @@
 import type { UserInAuth } from "@esposter/db-schema";
 
 import { getLikedPostIds } from "#src/services/account/getLikedPostIds";
-import { db } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/db";
 import { postsInPost } from "@esposter/db-schema";
 import { getPostRanking } from "@esposter/shared";
 import { and, eq, inArray } from "drizzle-orm";
@@ -12,12 +12,12 @@ import { and, eq, inArray } from "drizzle-orm";
 // Computed from still stands, as the vote path's own write does, so a vote that lands after this read moves the count and
 // Keeps the ranking its own count wrote
 export const getPostRankingUpdates = async (userId: UserInAuth["id"]) => {
-  const likedPosts = await db
+  const likedPosts = await getDb()
     .select({ createdAt: postsInPost.createdAt, id: postsInPost.id, likeCount: postsInPost.likeCount })
     .from(postsInPost)
     .where(inArray(postsInPost.id, getLikedPostIds(userId)));
   return likedPosts.map(({ createdAt, id, likeCount }) =>
-    db
+    getDb()
       .update(postsInPost)
       .set({ ranking: getPostRanking(likeCount, createdAt) })
       .where(and(eq(postsInPost.id, id), eq(postsInPost.likeCount, likeCount))),

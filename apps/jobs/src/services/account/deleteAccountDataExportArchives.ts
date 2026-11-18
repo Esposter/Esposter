@@ -1,6 +1,6 @@
 import type { UserInAuth } from "@esposter/db-schema";
 
-import { db } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/db";
 import { getBucket } from "#src/services/storage/getBucket";
 import { deleteBlobs } from "@esposter/db";
 import { dataExportsInUser, StorageBucket } from "@esposter/db-schema";
@@ -10,7 +10,7 @@ import { eq } from "drizzle-orm";
 // Removes that row. A queued export names no archive yet, and an archive an earlier sweep removed is reported as gone,
 // Which deleteBlobs already counts as done
 export const deleteAccountDataExportArchives = async (userId: UserInAuth["id"]): Promise<void> => {
-  const dataExportRows = await db
+  const dataExportRows = await getDb()
     .select({ blobName: dataExportsInUser.blobName })
     .from(dataExportsInUser)
     .where(eq(dataExportsInUser.userId, userId));

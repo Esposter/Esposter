@@ -2,7 +2,7 @@ import type { PushSubscriptionInNotification } from "@esposter/db-schema";
 
 import { DEAD_PUSH_SUBSCRIPTION_STATUS_CODES, MAX_CONCURRENT_PUSH_SENDS } from "#src/services/notification/constants";
 import { webpush } from "#src/services/notification/webpush";
-import { db } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/db";
 import { pushSubscriptionsInNotification } from "@esposter/db-schema";
 import { getResultAsync, noop, settleAll } from "@esposter/shared";
 import { eq } from "drizzle-orm";
@@ -24,7 +24,7 @@ export const sendWebPushNotifications = async (
           if (DEAD_PUSH_SUBSCRIPTION_STATUS_CODES.includes(error.statusCode)) {
             console.log(`Subscription for endpoint ${endpoint} is dead (${error.statusCode}). Deleting.`);
             await getResultAsync(() =>
-              db.delete(pushSubscriptionsInNotification).where(eq(pushSubscriptionsInNotification.id, id)),
+              getDb().delete(pushSubscriptionsInNotification).where(eq(pushSubscriptionsInNotification.id, id)),
             ).match(noop, (deleteError) => {
               console.error(`Failed to delete dead subscription ${endpoint}:`, deleteError);
             });

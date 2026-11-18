@@ -1,7 +1,7 @@
 import type { R2Bucket } from "@cloudflare/workers-types";
 import type { StorageBucket } from "@esposter/db-schema";
 
-import { db } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/db";
 import { broadcastStorageUsage } from "#src/services/storage/broadcastStorageUsage";
 import { deleteStorageBlobs } from "@esposter/db";
 
@@ -11,4 +11,4 @@ export const deleteStorageBlobsAndBroadcast = (
   bucket: R2Bucket,
   storageBucket: StorageBucket,
   blobNames: string[],
-): Promise<void> => deleteStorageBlobs(db, bucket, storageBucket, blobNames, broadcastStorageUsage);
+): Promise<void> => deleteStorageBlobs(getDb(), bucket, storageBucket, blobNames, broadcastStorageUsage);

@@ -2,7 +2,7 @@
 import type { UserDataArchive } from "#src/models/user/UserDataArchive";
 import type { UserInAuth } from "@esposter/db-schema";
 
-import { db } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/db";
 import { writeRoomEmojiEntries } from "#src/services/user/writeRoomEmojiEntries";
 import { writeRoomImageEntries } from "#src/services/user/writeRoomImageEntries";
 
@@ -11,7 +11,7 @@ import { writeRoomImageEntries } from "#src/services/user/writeRoomImageEntries"
 // The room's members are not written, since membership is other people's record.
 // Its images and emoji blobs follow it.
 export const writeOwnedRoomEntries = async (archive: UserDataArchive, userId: UserInAuth["id"]): Promise<void> => {
-  const rooms = await db.query.roomsInMessage.findMany({
+  const rooms = await getDb().query.roomsInMessage.findMany({
     columns: {
       allowedMimeCategories: true,
       createdAt: true,
@@ -27,7 +27,7 @@ export const writeOwnedRoomEntries = async (archive: UserDataArchive, userId: Us
     where: { userId: { eq: userId } },
   });
   for (const room of rooms) {
-    const emoji = await db.query.roomEmojisInMessage.findMany({
+    const emoji = await getDb().query.roomEmojisInMessage.findMany({
       columns: { id: true, name: true },
       where: { roomId: { eq: room.id } },
     });

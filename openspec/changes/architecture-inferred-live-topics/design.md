@@ -99,6 +99,8 @@ A client that awaits a second procedure after the first is a separate request wi
 
 The write capture belongs to the database handle, not to the request. A queue job or a Durable Object's SQLite writes through the same handle wrapper, so each handle that writes needs the wrapper: the web context, the jobs' handle, and each object's drizzle handle. A write through a handle that is not wrapped publishes nothing. The migration installs the wrapper on every such handle before any router's declarations are deleted.
 
+The jobs' handle is `getDb()` in `apps/jobs/src/services/shared/db.ts`. A job statement reads it, and outside a unit of work it is the D1 handle itself. `runUnit` opens a unit for each queue message (`handleQueueBatch`) and for the nightly purge (`worker.ts`), records the unit's statements in an `AsyncLocalStorage` scope, and publishes the write set best-effort once the unit settles, whether it succeeded or not, since a write that landed before a failure still changed rows. The hand publishes stay for now. Each of their readers still declares its topic by hand, so the inferred publish does not reach it (task 2.4).
+
 ## Join and table policy
 
 A scope equality names its table exactly. A table with no scope equality but a join on one of its scope columns is named by the joined rows' key values, where the statement selects the key; where it does not, the table is named table-wide. A table with neither is named table-wide. A table's declaration may mark a join table-wide when its measured fan-out says so, which is the decision point task 6.1 produces.
@@ -220,6 +222,7 @@ Before the sequence starts, the wrapper, the walker and the write capture are bu
 | `apps/web/app/composables/message/room/useReadDirectMessages.ts`               | The direct-message list's second request, folded into its procedure                       |
 | `apps/web/server/trpc/routers/room/directMessage.ts`                           | The participant read, folded into the direct-message list procedure                       |
 | `apps/jobs/src/services/account/takeBackErasedMentionCounts.ts`                | A job write to `usersToRooms` that needs the wrapper on its handle                        |
+| `apps/jobs/src/services/shared/db.ts`                                          | The jobs' handle: `getDb()` inside a unit, which `runUnit` records and publishes          |
 
 ## Sources
 

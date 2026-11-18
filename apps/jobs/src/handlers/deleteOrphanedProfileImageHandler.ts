@@ -1,4 +1,4 @@
-import { db } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/db";
 import { getBucket } from "#src/services/storage/getBucket";
 import { deleteBlobs } from "@esposter/db";
 import { getUserProfileImageBlobName, r2ObjectCreatedQueueMessageSchema, StorageBucket } from "@esposter/db-schema";
@@ -15,7 +15,7 @@ export const deleteOrphanedProfileImageHandler = async (body: unknown): Promise<
   const [userId] = blobName.split("/");
   if (!userId || blobName !== getUserProfileImageBlobName(userId)) return;
 
-  const user = await db.query.usersInAuth.findFirst({
+  const user = await getDb().query.usersInAuth.findFirst({
     columns: { deletionRequestedAt: true },
     where: { id: { eq: userId } },
   });

@@ -38,7 +38,7 @@ let mockDb: Database;
 const blobSweepFailure = vi.hoisted(() => ({ error: undefined as Error | undefined }));
 
 vi.mock(import("#src/services/shared/db"), () => ({
-  get db() {
+  getDb() {
     return mockDb;
   },
 }));

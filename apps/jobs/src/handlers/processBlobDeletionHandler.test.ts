@@ -24,7 +24,7 @@ let mockDb: Database;
 // The handler releases each deleted blob's storage hold, so it reaches the database even when this suite
 // Only cares about the blobs — the module-scope client would otherwise open a real database connection at import
 vi.mock(import("#src/services/shared/db"), () => ({
-  get db() {
+  getDb() {
     return mockDb;
   },
 }));

@@ -1,6 +1,6 @@
 import type { UserInAuth } from "@esposter/db-schema";
 
-import { db } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/db";
 import { getUserObject } from "#src/services/user/getUserObject";
 import { StorageTierQuotaMap } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
@@ -15,7 +15,7 @@ export const broadcastStorageUsage = (userIds: UserInAuth["id"][]): Promise<void
   getResultAsync(async () => {
     if (userIds.length === 0) return;
 
-    const users = await db.query.usersInAuth.findMany({
+    const users = await getDb().query.usersInAuth.findMany({
       columns: { id: true, storageBytesUsed: true, storageTier: true },
       where: { id: { in: userIds } },
     });

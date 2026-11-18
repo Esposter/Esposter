@@ -1,6 +1,7 @@
 import type { CloudflareEnvironment } from "@esposter/db-schema";
 
 import { getQueueMessageHandler } from "#src/services/queue/getQueueMessageHandler";
+import { runUnit } from "#src/services/shared/db";
 import { getResultAsync } from "@esposter/shared";
 
 // A batch names its queue in this environment's spelling, and that name finds the handler for the batch.
@@ -13,7 +14,7 @@ export const handleQueueBatch = async (batch: MessageBatch, environment: Cloudfl
   const handleMessage = getQueueMessageHandler(batch.queue, environment);
   await Promise.all(
     batch.messages.map((message) =>
-      getResultAsync(() => handleMessage(message)).match(
+      getResultAsync(() => runUnit(() => handleMessage(message))).match(
         () => {
           message.ack();
         },
