@@ -9,3 +9,4 @@ x-touches:
     "packages/genshin-world/src/components/Hud/Navigation/**",
     "packages/genshin-world/src/components/World/Session/**",
   ]
+x-waiting: "2.1: the quest step that unlocks a waypoint outright waits on game data naming one; the dump's one unlock step (quest 352, step 6) names scene point 3/7, which no region waypoint holds and the statue map does not map."
