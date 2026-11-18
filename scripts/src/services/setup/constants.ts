@@ -32,7 +32,7 @@ export const SETUP_TOOLS: readonly SetupTool[] = [
     probe: { args: ["--version"], file: "claude" },
   },
   {
-    install: { darwin: "brew install ffmpeg", win32: "winget install --id Gyan.FFmpeg" },
+    install: { darwin: "brew install ffmpeg", win32: "winget install --id yt-dlp.FFmpeg" },
     name: "ffmpeg",
     probe: { args: ["-version"], file: "ffmpeg" },
   },
