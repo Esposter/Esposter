@@ -71,7 +71,7 @@ committed.
 | `login-interface-title`                | `LoginInterface`            |                                                                          0.36% | 0.996 |  0.24% | 0.0158 |
 | `login-night-title`                    | `LoginScreen`               |                                                                          9.41% | 0.366 |  7.01% | 0.3916 |
 | `login-screen-dusk`                    | `LoginScreen`               |                                                                         20.03% | 0.379 | 14.71% | 0.6657 |
-| `mail-screen`                          | `MailScreen`                |                                                                          5.05% | 0.643 |  3.18% | 0.2052 |
+| `mail-screen`                          | `MailScreen`                |                                                                          4.96% | 0.659 |  3.12% | 0.2035 |
 | `map-overlay-galesong`                 | `MapOverlay`                |                                                                          6.39% | 0.748 | 22.00% | 0.4761 |
 | `map-overlay-jueyun`                   | `MapOverlay`                |                                                                         25.25% | 0.395 | 24.03% | 0.7322 |
 | `menu-exit-hover`                      | `MenuExit`                  |                                                                          1.69% | 0.999 |  1.32% | 0.1237 |

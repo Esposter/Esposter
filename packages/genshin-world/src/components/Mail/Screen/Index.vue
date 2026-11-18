@@ -8,12 +8,14 @@ import type { GameText } from "genshin-text";
 import MailScreenConfirm from "#src/components/Mail/Screen/Confirm/Index.vue";
 import MailScreenDetail from "#src/components/Mail/Screen/Detail/Index.vue";
 import MailScreenEntry from "#src/components/Mail/Screen/Entry/Index.vue";
+import { MailMark } from "#src/models/mail/MailMark";
 import { MenuFrameIcon } from "#src/models/menu/MenuFrameIcon";
 import { checkIsClaimable } from "#src/services/mail/checkIsClaimable";
 import { checkIsGiftBoxed } from "#src/services/mail/checkIsGiftBoxed";
 import { checkIsSameHeldMail } from "#src/services/mail/checkIsSameHeldMail";
 import { MAX_MAIL_COUNT } from "#src/services/mail/constants";
 import { deleteReadMails } from "#src/services/mail/deleteReadMails";
+import { MailMarkPathMap } from "#src/services/mail/MailMarkPathMap";
 import { sortMails } from "#src/services/mail/sortMails";
 import { MenuFrameGlyphMap } from "#src/services/menu/MenuFrameGlyphMap";
 import { ID_SEPARATOR } from "@esposter/shared";
@@ -96,6 +98,15 @@ const selectTab = (isGift: boolean) => {
     <svg class="mailbox-glyph" aria-hidden="true" viewBox="0 0 72 56" preserveAspectRatio="none">
       <path v-for="path of mailGlyph.paths" :key="path" :d="path" />
     </svg>
+    <svg class="mark mark-pin" viewBox="0 0 32 30" aria-hidden="true">
+      <path :d="MailMarkPathMap[MailMark.Pin]" />
+    </svg>
+    <svg class="mark mark-folder" viewBox="0 0 38 38" aria-hidden="true">
+      <path :d="MailMarkPathMap[MailMark.GiftBoxFolder]" />
+    </svg>
+    <svg class="mark mark-help" viewBox="0 0 38 38" aria-hidden="true">
+      <path :d="MailMarkPathMap[MailMark.Help]" />
+    </svg>
     <GameButton
       class="mailbox-tab"
       :aria-pressed="!isGiftBoxTab"
@@ -126,6 +137,9 @@ const selectTab = (isGift: boolean) => {
     />
     <p v-if="isBagFull" class="notice">{{ gameText[GameTextKey.BagFull] }}</p>
     <p v-if="mails.length >= MAX_MAIL_COUNT" class="notice">{{ gameText[GameTextKey.MailFull] }}</p>
+    <svg class="mark mark-pointer" viewBox="0 0 12 19" aria-hidden="true">
+      <path :d="MailMarkPathMap[MailMark.Pointer]" />
+    </svg>
     <div class="list" role="tablist" aria-orientation="vertical">
       <MailScreenEntry
         v-for="entry of visibleEntries"
@@ -186,6 +200,9 @@ const selectTab = (isGift: boolean) => {
       tip=""
       @click="emit('claimAll')"
     >
+      <svg class="mark mark-claim-all" viewBox="0 0 24 26" aria-hidden="true">
+        <path :d="MailMarkPathMap[MailMark.ClaimAllArrow]" />
+      </svg>
       {{ gameText[GameTextKey.MailClaimAll] }}
     </GameButton>
     <GameButton
@@ -195,6 +212,9 @@ const selectTab = (isGift: boolean) => {
       tip=""
       @click="isConfirmingDeleteRead = true"
     >
+      <svg class="mark mark-trash" viewBox="0 0 22 28" aria-hidden="true">
+        <path :d="MailMarkPathMap[MailMark.Trash]" />
+      </svg>
       {{ gameText[GameTextKey.MailDeleteRead] }}
     </GameButton>
   </GameScreen>
@@ -224,6 +244,64 @@ const selectTab = (isGift: boolean) => {
   width: calc(var(--unit) * 60);
   height: calc(var(--unit) * 44);
   fill: #d8c9a3;
+}
+
+/* The traced marks, each in its measured fill and placed at its reference pixel: the screen's left edge is the reference's x of
+   96, so a mark's left is its x less 96, and a mark inside a pill is placed from the pill's own corner */
+.mark {
+  position: absolute;
+  overflow: visible;
+}
+
+.mark-pin {
+  top: 0;
+  left: calc(var(--unit) * 113);
+  width: calc(var(--unit) * 32);
+  height: calc(var(--unit) * 30);
+  fill: rgb(238 225 152);
+}
+
+.mark-folder {
+  top: calc(var(--unit) * 24);
+  left: calc(var(--unit) * 1243);
+  width: calc(var(--unit) * 38);
+  height: calc(var(--unit) * 38);
+  fill: rgb(221 220 221);
+}
+
+.mark-help {
+  top: calc(var(--unit) * 24);
+  left: calc(var(--unit) * 1553);
+  width: calc(var(--unit) * 38);
+  height: calc(var(--unit) * 38);
+  fill: rgb(228 224 219);
+}
+
+.mark-pointer {
+  top: calc(var(--unit) * 147);
+  left: calc(var(--unit) * 79);
+  width: calc(var(--unit) * 12);
+  height: calc(var(--unit) * 19);
+  fill: rgb(239 244 251);
+}
+
+/* A pill's dark disc is its own ::after, painted over its content, so a mark inside a pill lifts above it */
+.mark-claim-all {
+  z-index: 1;
+  top: calc(var(--unit) * 14);
+  left: calc(var(--unit) * 16);
+  width: calc(var(--unit) * 24);
+  height: calc(var(--unit) * 26);
+  fill: rgb(225 194 66);
+}
+
+.mark-trash {
+  z-index: 1;
+  top: calc(var(--unit) * 14);
+  left: calc(var(--unit) * 18);
+  width: calc(var(--unit) * 22);
+  height: calc(var(--unit) * 28);
+  fill: rgb(212 89 98);
 }
 
 .mailbox-tab,

@@ -25,9 +25,9 @@
 
   Open: the achievement marks are not traced yet, so the scenario test and the `achievement-screen` compare have not run.
 
-- [ ] 3.6 [phase 2] Trace the mail screen's nine marks and its list thumbnail frame from the screen's reference at scale 3, in place of the bare marks, and close each one's roadmap Asset line. Verify: a test named after the scenarios 'A traced mail mark replaces its bare mark on the mail screen' and 'A mark is a vector in the screen', written first and seen failing, then `pnpm -C scripts genshin:parity compare mail-screen` scores no worse than its row.
+- [x] 3.6 [phase 2] Trace the mail screen's nine marks and its list thumbnail frame from the screen's reference at scale 3, in place of the bare marks, and close each one's roadmap Asset line. Verify: a test named after the scenarios 'A traced mail mark replaces its bare mark on the mail screen' and 'A mark is a vector in the screen', written first and seen failing, then `pnpm -C scripts genshin:parity compare mail-screen` scores no worse than its row.
 
-  Open: the nine mail marks and the thumbnail frame are not traced yet, so the scenario tests and the `mail-screen` compare have not run.
+  Done: the nine marks are traced at scale 3 (`MailMarkPathMap`) and drawn in place of the bare marks: the header's pin, folder, help and pointer, the list's sender and star, the foot's star, the Claim All and Claim arrows and the Delete Read trash. The Claim arrows lift above the pill's dark disc, which GameButton paints over its content. The header close mark was already traced (the close button's Cross), so its roadmap line is closed as stale. The thumbnail frame is not traced: the reference shows a flat grey plate under the item picture and no ring, so the picture waits on the item icon asset, and that roadmap line says so. The two scenario tests are titled in lowercase because the repo's lint rule requires it; the scenario names in the spec keep their capitals. `compare mail-screen` moved from 5.05% to 4.96% mean difference, shape 0.643 to 0.659, tone 3.18% to 3.12% and FLIP 0.2052 to 0.2035, so it scores no worse on any measure. Its approve ran three identical renders.
 
 ## 4. The roadmap
 

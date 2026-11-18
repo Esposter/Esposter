@@ -5,10 +5,12 @@ import type { MailSave } from "#src/models/mail/MailSave";
 import type { GameText } from "genshin-text";
 
 import MailScreenConfirm from "#src/components/Mail/Screen/Confirm/Index.vue";
+import { MailMark } from "#src/models/mail/MailMark";
 import { CurrencyGameTextKeyMap } from "#src/services/inventory/CurrencyGameTextKeyMap";
 import { getWalletCurrency } from "#src/services/inventory/getWalletCurrency";
 import { toItemDefinition } from "#src/services/inventory/toItemDefinition";
 import { checkIsGiftBoxed } from "#src/services/mail/checkIsGiftBoxed";
+import { MailMarkPathMap } from "#src/services/mail/MailMarkPathMap";
 import { GameButton, GameButtonKind, ItemTile, OrnamentDivider } from "genshin-interface";
 import { fillGameTextValues, GameTextKey } from "genshin-text";
 
@@ -94,7 +96,11 @@ const itemTiles = computed(() =>
       :kind="GameButtonKind.Disc"
       tip=""
       @click="emit('pin', entry.mail)"
-    />
+    >
+      <svg class="mark mark-star" viewBox="0 0 30 32" aria-hidden="true">
+        <path :d="MailMarkPathMap[MailMark.Star]" />
+      </svg>
+    </GameButton>
     <p v-if="entry.mail.isClaimed && entry.row.items.length > 0" class="claimed">
       {{ gameText[GameTextKey.MailClaimed] }}
     </p>
@@ -105,6 +111,9 @@ const itemTiles = computed(() =>
       tip=""
       @click="emit('claim', entry.mail)"
     >
+      <svg class="mark mark-claim" viewBox="0 0 24 24" aria-hidden="true">
+        <path :d="MailMarkPathMap[MailMark.ClaimArrow]" />
+      </svg>
       {{ gameText[GameTextKey.MailClaim] }}
     </GameButton>
     <GameButton
@@ -201,6 +210,30 @@ const itemTiles = computed(() =>
 .item {
   width: calc(var(--unit) * 84);
   height: calc(var(--unit) * 84);
+}
+
+/* The traced marks inside the bottom row's disc and pill, placed from each one's own corner at the reference's pixels: the
+   star 6 and 10 in from the disc's corner, the Claim arrow 17 and 17 in from the pill's */
+.mark {
+  position: absolute;
+  overflow: visible;
+}
+
+.pin .mark-star {
+  top: calc(var(--unit) * 10);
+  left: calc(var(--unit) * 6);
+  width: calc(var(--unit) * 30);
+  height: calc(var(--unit) * 32);
+  fill: rgb(249 198 19);
+}
+
+.claim .mark-claim {
+  z-index: 1;
+  top: calc(var(--unit) * 17);
+  left: calc(var(--unit) * 17);
+  width: calc(var(--unit) * 24);
+  height: calc(var(--unit) * 24);
+  fill: rgb(159 193 66);
 }
 
 .claimed {

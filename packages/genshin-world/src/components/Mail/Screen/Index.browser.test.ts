@@ -15,6 +15,19 @@ describe("mailScreen", () => {
   const CONTENT_TEXT_ID = "103";
   const SENDER_TEXT_ID = "102";
   const DELIVERED_AT = new Date(0).toISOString();
+  // The classes of the traced marks the Mailbox draws: the header's pin, folder, help and pointer, the list's sender and star, the
+  // Claim All and Claim arrows, the star on the foot and the delete mark
+  const MAIL_MARK_CLASSES = [
+    "mark-pin",
+    "mark-folder",
+    "mark-help",
+    "mark-pointer",
+    "mark-sender",
+    "mark-star",
+    "mark-claim-all",
+    "mark-claim",
+    "mark-trash",
+  ];
   const mailRows = new Map<number, Mail>([
     [
       BIRTHDAY_MAIL_ID,
@@ -195,5 +208,26 @@ describe("mailScreen", () => {
     await expect
       .element(page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.MailCancelStar] }))
       .toBeVisible();
+  });
+
+  // Each mark the Mailbox draws is a traced shape in the place its bare mark held, one of each on a pinned mail's screen
+  test("a traced mail mark replaces its bare mark on the mail screen", async () => {
+    expect.hasAssertions();
+
+    await render(MailScreen, { props: { ...props, mails: [{ ...createMail(false), isPinned: true }] } });
+
+    for (const markClass of MAIL_MARK_CLASSES)
+      expect(document.querySelector(`.mail-screen .${markClass} path`)).not.toBeNull();
+  });
+
+  // Every mark on the Mailbox is an inline vector, with no picture loaded for it
+  test("a mark is a vector in the screen", async () => {
+    expect.hasAssertions();
+
+    await render(MailScreen, { props: { ...props, mails: [{ ...createMail(false), isPinned: true }] } });
+
+    expect(document.querySelectorAll(".mail-screen img")).toHaveLength(0);
+    for (const markClass of MAIL_MARK_CLASSES)
+      expect(document.querySelector(`.mail-screen svg.${markClass} > path[d]`)).not.toBeNull();
   });
 });

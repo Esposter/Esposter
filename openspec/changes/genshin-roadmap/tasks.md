@@ -167,25 +167,7 @@ The References sought are the items below that name a clip or still file (a `.mk
 
   Asset: item icon | needed by: Mail (list thumbnails and attachment tiles), Shop, Inventory, Achievement rewards, the interaction pill's picked item, the forge's recipe tiles | form: texture | seen in: mail-screen, interaction-prompts-jueyun-chili, forge-screen | source: the installed client's item textures; not checked against the genshin:assets output on this Mac, whose install is on the PC | note: ItemTile is the placeholder, its count drawn over the art's place
 
-  Asset: mailbox pin mark | needed by: Mail | form: mark | seen in: mail-screen, the gold pin at the envelope's top left | source: the client's menu icon set; cannot be shipped | note: drawn bare; the envelope reuses the traced Paimon Mail glyph (MenuFrameIcon.Mail)
-
-  Asset: gift box folder mark | needed by: Mail (the Gift Mail Box tab) | form: mark | seen in: mail-screen, beside Gift Mail Box | source: the client's menu icon set; cannot be shipped | note: drawn bare
-
-  Asset: help question mark | needed by: Mail, the menus' help buttons | form: mark | seen in: mail-screen, at the header's right | source: the client's menu icon set; cannot be shipped | note: drawn bare
-
-  Asset: header close mark | needed by: Mail | form: mark | seen in: mail-screen, the close mark across the header | source: the client's menu icon set; cannot be shipped | note: drawn bare
-
-  Asset: sender person mark | needed by: Mail (list rows) | form: mark | seen in: mail-screen, before each sender | source: the client's icon set; cannot be shipped | note: drawn bare
-
-  Asset: gold star mark | needed by: Mail (the pinned row and the foot's star disc), Achievements | form: mark | seen in: mail-screen, the list's star and the foot's disc | source: the client's icon set; cannot be shipped | note: drawn bare, the disc has no icon
-
-  Asset: claim arrow mark | needed by: Mail (Claim All and Claim), Battle Pass, Achievement rewards | form: mark | seen in: mail-screen, the Claim All and Claim pills | source: the client's icon set; cannot be shipped | note: the icon's space is left bare and the label starts where the frame's does
-
-  Asset: delete trash mark | needed by: Mail (Delete Read), Gift Mail Box delete | form: mark | seen in: mail-screen, the Delete Read pill | source: the client's icon set; cannot be shipped | note: drawn bare, the label starts where the frame's does
-
-  Asset: list selection pointer | needed by: Mail, the list screens with a selected row | form: mark | seen in: mail-screen, left of the selected row | source: the client's icon set; cannot be shipped | note: not drawn
-
-  Asset: list thumbnail frame | needed by: Mail | form: texture | seen in: mail-screen, the framed square left of each mail | source: the client's icon frame set; cannot be shipped | note: the grey box is the placeholder
+  Asset: list thumbnail frame | needed by: Mail | form: texture | seen in: mail-screen, the framed square left of each mail | source: the client's icon frame set; cannot be shipped | note: the grey box is the placeholder; the reference shows no frame ring, only a flat grey plate under the item picture, so the picture is the item icon asset above (task 3.6 left the plate untraced)
 
 - [x] **The time screen's labels have no text key: Current Time and Today.** [Menu time](../archive/2026-11-18-genshin-menu-time/design.md) — the time screen's two labels are words the screen leaves undrawn, because `GameTextKey` has no entry and the English text map lacks them. Done when the machine with the install finds the text ids, adds the keys, regenerates the text, and the screen draws the words. Done: `TimeCurrent` and `TimeToday` are in `GameTextKey` and the generated text, and the screen draws both.
 - [ ] **What the eye audits found and left.** [Parity](../../specs/genshin/parity/README.md) — the Login interface: the title's server bar needs a glass tint (a plate overshot light, 84,81,81 against the reference's 67,67,71), the door band's glass is 15 low in blue (the clean-plate page's open list), the older build's repair button above the notice is left undrawn on purpose, and the mainland prompt's words read at about a tenth of full strength in the frame, which does not settle whether that is the fade or the client's colour. Dialogue: the Auto and Skip controls at the top corners appear in none of the four reference frames, so keep or remove them; the narration variant's continue mark has no reference. The time menu: the frame shows 18:00 where the rest advance gives 04:22 (a test pins it) and shows no title, close mark or Confirm, so a frame with the header would settle whether they belong. The Weapon Refine rule sits about 2 px high. The Spiral Abyss entry's render overlaps its title. Several map entries restate their variant's props (the login interface door, the dawn and day titles, the mainland splash and rating, the settings audio rows, the character ids) where the loading entry now reads the variant's, and the title entry's manifest attribution names the mainland recording at 15.5 s while its source is the English frame at 0.5 s, which the next republish of that reference corrects (the manifest is never hand-edited). Done when each is decided or measured, and fixed or removed.

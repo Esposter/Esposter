@@ -3,10 +3,12 @@ import type { Mail } from "#src/models/mail/Mail";
 import type { MailSave } from "#src/models/mail/MailSave";
 import type { GameText } from "genshin-text";
 
+import { MailMark } from "#src/models/mail/MailMark";
 import { checkIsClaimable } from "#src/services/mail/checkIsClaimable";
 import { checkIsGiftBoxed } from "#src/services/mail/checkIsGiftBoxed";
 import { getMailExpiry } from "#src/services/mail/getMailExpiry";
 import { MailExpiryUnitGameTextKeyMap } from "#src/services/mail/MailExpiryUnitGameTextKeyMap";
+import { MailMarkPathMap } from "#src/services/mail/MailMarkPathMap";
 import { GAME_INK, GAME_ROW_HOVER, GAME_ROW_PRESS } from "genshin-interface";
 import { fillGameTextValues, GameTextKey } from "genshin-text";
 
@@ -40,6 +42,12 @@ const statusText = computed(() => {
 <template>
   <button class="entry" role="tab" type="button" :aria-selected="isSelected" @click="emit('select', mail)">
     <span class="thumb" aria-hidden="true" />
+    <svg class="mark mark-sender" viewBox="0 0 18 22" aria-hidden="true">
+      <path :d="MailMarkPathMap[MailMark.Sender]" />
+    </svg>
+    <svg v-if="mail.isPinned" class="mark mark-star" viewBox="0 0 30 32" aria-hidden="true">
+      <path :d="MailMarkPathMap[MailMark.Star]" />
+    </svg>
     <span class="entry-title">{{ textMap[row.titleTextId] }}</span>
     <span class="entry-sender">{{ textMap[row.senderTextId] }}</span>
     <span class="entry-status">{{ statusText }}</span>
@@ -99,6 +107,29 @@ const statusText = computed(() => {
   width: calc(var(--unit) * 76);
   height: calc(var(--unit) * 76);
   background: rgb(40 46 60 / 0.55);
+}
+
+/* The sender's person mark sits 26 pixels before the sender's words, and the pinned row's star at the row's right, each in its
+   measured fill, at the reference's pixel in a row that starts at 99 (the selected one) or 109 (the others) */
+.mark {
+  position: absolute;
+  overflow: visible;
+}
+
+.mark-sender {
+  top: calc(var(--unit) * 61);
+  left: calc(var(--unit) * 113);
+  width: calc(var(--unit) * 18);
+  height: calc(var(--unit) * 22);
+  fill: rgb(165 157 150);
+}
+
+.mark-star {
+  top: calc(var(--unit) * 16);
+  left: calc(var(--unit) * 706);
+  width: calc(var(--unit) * 30);
+  height: calc(var(--unit) * 32);
+  fill: rgb(249 198 19);
 }
 
 .entry-title,
