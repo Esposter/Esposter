@@ -12,7 +12,7 @@
 
 - [x] 3.1 Offer the monthly characters and bi-monthly weapons, refusing a character with full constellations. Verify: tests named after 'Two characters are offered each month' and 'A character with full constellations cannot be bought'. The screen waits on the bag holding the items' definitions.
 - [x] 3.2 Build the Shop screen from a public clip: its goods grid by tab, a good's detail with its costs, limit and refresh, the count picker and the Buy button, emitting buy with the good and count. Verify: a test named after 'buying a good from the screen spends its costs and gives the good'.
-- [ ] 3.3 Show each good on the Shop screen at the costs the game gives it. Verify: a browser test in `components/Shop/Screen/Index.browser.test.ts`, named after the scenario 'A good is offered at its shop's costs', written first and seen failing.
+- [x] 3.3 Show each good on the Shop screen at the costs the game gives it. Verify: a browser test in `components/Shop/Screen/Index.browser.test.ts`, named after the scenario 'A good is offered at its shop's costs', written first and seen failing.
 
 ## 4. Souvenir Shops, city shops and vendors
 
