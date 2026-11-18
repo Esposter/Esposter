@@ -15,6 +15,7 @@ describe(runFits, () => {
     await expect(runFits(fits, [], { isDryRun: false })).resolves.toStrictEqual({
       notes: ["clouds", "sky"],
       objects: { "login/clouds": 0, "login/sky": 1 },
+      retired: [],
     });
   });
 
@@ -24,6 +25,7 @@ describe(runFits, () => {
     await expect(runFits(fits, ["sky"], { isDryRun: false })).resolves.toStrictEqual({
       notes: ["sky"],
       objects: { "login/sky": 1 },
+      retired: [],
     });
   });
 
@@ -40,7 +42,7 @@ describe(runFits, () => {
         ["ground"],
         { isDryRun: false },
       ),
-    ).resolves.toStrictEqual({ notes: ["a", "b"], objects: { "ground/a": 0, "ground/b": 1 } });
+    ).resolves.toStrictEqual({ notes: ["a", "b"], objects: { "ground/a": 0, "ground/b": 1 }, retired: [] });
   });
 
   // A fit's compute holds the thread, so a record another fit fetched meanwhile would outwait its timeout. The fits run
@@ -82,10 +84,12 @@ describe(runFits, () => {
     await expect(runFits(withOptIn, [], { isDryRun: false })).resolves.toStrictEqual({
       notes: ["clouds", "sky"],
       objects: { "login/clouds": 0, "login/sky": 1 },
+      retired: [],
     });
     await expect(runFits(withOptIn, ["pictures"], { isDryRun: false })).resolves.toStrictEqual({
       notes: ["pictures"],
       objects: { "character/pictures": 2 },
+      retired: [],
     });
   });
 

@@ -6,7 +6,7 @@ The one-line rules are in `SKILL.md`; this page is their reasoning.
 
 ## What a publish replaces
 
-`genshin:assets fit <component> --only <part>` and the parity loops (`publishGameDataRecord`) each replace one key and keep the rest of its dataset; `genshin:data authored` publishes each authored file as a key scope too, so it keeps the grounds the fits publish and the fits' `login`, and a retired ground's key is a deleted lock line. A bare dataset is never passed as a key (`toGameDataKeyScopes`).
+`genshin:assets fit <component> --only <part>` and the parity loops (`publishGameDataRecord`) each replace one key and keep the rest of its dataset; `genshin:data authored` publishes each authored file as a key scope too, so it keeps the grounds the fits publish and the fits' `login`, and a retired ground's key is a deleted lock line, except a region's plateau, which the fit that publishes the region's pieces retires in the same publish (`selectRetiredGroundKeys`). A bare dataset is never passed as a key (`toGameDataKeyScopes`).
 
 ## An authored world file
 

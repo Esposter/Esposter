@@ -33,8 +33,8 @@ export const fitCommand: SubCommandsDef[string] = defineCommand({
     const component = parseDerivedAssetComponent(args.component);
     const fit = DerivedAssetFitMap[component];
     if (!fit) throw new InvalidOperationError(Operation.Read, component, "has no fit yet");
-    const { notes, objects } = await fit(only, { isDryRun: args["dry-run"] });
+    const { notes, objects, retired } = await fit(only, { isDryRun: args["dry-run"] });
     for (const note of notes) console.log(note);
-    console.log(await publishObjectsStep({ isDryRun: args["dry-run"], objects }));
+    console.log(await publishObjectsStep({ isDryRun: args["dry-run"], objects, retired }));
   },
 });

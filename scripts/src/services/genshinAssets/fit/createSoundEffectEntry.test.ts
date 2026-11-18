@@ -23,10 +23,10 @@ describe(createSoundEffectEntry, () => {
 
     await expect(
       runFits([createSoundEffectEntry(DerivedAssetComponent.Hud)], ["sounds"], RUN_OPTIONS),
-    ).resolves.toStrictEqual({ notes: [], objects: { "hud/sounds": {} } });
+    ).resolves.toStrictEqual({ notes: [], objects: { "hud/sounds": {} }, retired: [] });
     await expect(
       runFits([createSoundEffectEntry(DerivedAssetComponent.Login)], [], RUN_OPTIONS),
-    ).resolves.toStrictEqual({ notes: [], objects: { "login/sounds": { door: SOUND_EFFECT } } });
+    ).resolves.toStrictEqual({ notes: [], objects: { "login/sounds": { door: SOUND_EFFECT } }, retired: [] });
   });
 
   // A component with no sound effects mapped is opt-in, so an ordinary run leaves its empty record out
@@ -36,6 +36,7 @@ describe(createSoundEffectEntry, () => {
     await expect(runFits([createSoundEffectEntry(DerivedAssetComponent.Hud)], [], RUN_OPTIONS)).resolves.toStrictEqual({
       notes: [],
       objects: {},
+      retired: [],
     });
   });
 });
