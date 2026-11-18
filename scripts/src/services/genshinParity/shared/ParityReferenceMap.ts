@@ -1166,11 +1166,24 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   "menu-paimon-hover": { pending: NO_VARIANT_SCREENSHOT, screen: "MenuPaimon", variant: "hover" },
   "menu-paimon-pressed": { pending: NO_VARIANT_SCREENSHOT, screen: "MenuPaimon", variant: "pressed" },
   // The English PC client's Time screen at 1080 high from a public recording (yt-a4_J84iMqR0), ten seconds in: the clock
-  // At 03:52 and the dial turned to 18:00 Today, drawn over the world it dims. The frame shows no title, close cross or
-  // Confirm, which the screen draws by design, so those pieces score against the frame's dark ground. The dial and the
-  // Column of words are the frame's own pieces, filled from round them, so the frame's copies never show under ours
+  // At 03:52 and the dial turned to 18:00 Today, drawn over the world it dims. The capture is a controller's, so the frame
+  // Shows no title, close cross or Confirm pill, and the mask leaves those three out: the screen draws them as the pointer's
+  // Controls, an input-mode deviation, so they are drawn and unscored. The dial and the column of words are the frame's own
+  // Pieces, filled from round them, so the frame's copies never show under ours. The rest of the frame is scored
   "menu-time": {
     isBackdrop: true,
+    mask: [
+      { height: 1080, width: 140, x: 0, y: 0 },
+      { height: 32, width: 64, x: 140, y: 0 },
+      { height: 1019, width: 64, x: 140, y: 61 },
+      { height: 1080, width: 606, x: 204, y: 0 },
+      { height: 880, width: 300, x: 810, y: 0 },
+      { height: 128, width: 300, x: 810, y: 952 },
+      { height: 1080, width: 704, x: 1110, y: 0 },
+      { height: 19, width: 58, x: 1814, y: 0 },
+      { height: 1003, width: 58, x: 1814, y: 77 },
+      { height: 1080, width: 48, x: 1872, y: 0 },
+    ],
     plate: [
       { height: 530, width: 485, x: 1165, y: 240 },
       { height: 350, width: 180, x: 870, y: 318 },

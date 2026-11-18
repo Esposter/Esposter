@@ -79,7 +79,7 @@ committed.
 | `menu-paimon-disabled`                 | `MenuPaimon`                |                                     pending: no screenshot of this variant yet |       |        |        |
 | `menu-paimon-hover`                    | `MenuPaimon`                |                                     pending: no screenshot of this variant yet |       |        |        |
 | `menu-paimon-pressed`                  | `MenuPaimon`                |                                     pending: no screenshot of this variant yet |       |        |        |
-| `menu-time`                            | `MenuTime`                  |                                                                          1.53% | 0.895 |  1.19% | 0.0415 |
+| `menu-time`                            | `MenuTime`                  |                                                                          0.70% | 0.895 |  1.19% | 0.0304 |
 | `menu-world-level-prompt`              | `MenuWorldLevelPrompt`      |                                       pending: no screenshot of the screen yet |       |        |        |
 | `menu-world-level-prompt-hover`        | `MenuWorldLevelPrompt`      |                                     pending: no screenshot of this variant yet |       |        |        |
 | `menu-world-level-prompt-pressed`      | `MenuWorldLevelPrompt`      |                                     pending: no screenshot of this variant yet |       |        |        |
