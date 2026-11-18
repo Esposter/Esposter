@@ -23,7 +23,7 @@ describe(computeEnemyDrops, () => {
   };
   const { materials } = dropTable;
 
-  test("a defeated common enemy drops its family's Mora and materials", () => {
+  test("a defeated common enemy drops by its level band", () => {
     expect.hasAssertions();
 
     expect(computeEnemyDrops(enemyKind, dropTable, 1, () => 0)).toStrictEqual({
