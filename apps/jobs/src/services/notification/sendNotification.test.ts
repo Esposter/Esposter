@@ -32,7 +32,6 @@ vi.mock(import("#src/services/shared/db"), () => ({
 }));
 
 vi.mock(import("#src/services/notification/webpush"), () => import("#src/services/notification/webpush.test"));
-vi.mock(import("#src/services/realtime/publishTopics"), () => import("#src/services/realtime/publishTopics.test"));
 
 // The generic web-push send/expiry matrix lives in sendWebPushNotifications.test.ts; what this one owns is the
 // Fan-out AppNotificationTypeChannelMap decides — which types write a bell row, which reach a device, and which session

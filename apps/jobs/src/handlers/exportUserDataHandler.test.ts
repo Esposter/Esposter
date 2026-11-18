@@ -36,7 +36,6 @@ vi.mock(import("#src/services/shared/db"), () => ({
 }));
 vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/storage/getBucket.test"));
 vi.mock(import("#src/services/room/getRoomObject"), () => import("#src/services/room/getRoomObject.test"));
-vi.mock(import("#src/services/realtime/publishTopics"), () => import("#src/services/realtime/publishTopics.test"));
 
 const readExportRow = async (dataExportId: string) =>
   takeOne(

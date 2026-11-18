@@ -11,7 +11,7 @@ export const publishAccountTopics = async (topics: Topic[]): Promise<void> => {
     Array.from(
       new Set(topics),
       (topic) => () =>
-        publishTopicsBestEffort([topic], `Failed to publish the topic "${topic}" of an account's deletion:`),
+        publishTopicsBestEffort(() => [topic], `Failed to publish the topic "${topic}" of an account's deletion:`),
     ),
     MAX_CONCURRENT_ACCOUNT_TOPIC_PUBLISHES,
   );

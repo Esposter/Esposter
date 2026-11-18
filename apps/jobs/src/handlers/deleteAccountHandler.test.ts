@@ -43,7 +43,6 @@ vi.mock(import("#src/services/shared/db"), () => ({
   },
 }));
 vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/storage/getBucket.test"));
-vi.mock(import("#src/services/realtime/publishTopics"), () => import("#src/services/realtime/publishTopics.test"));
 vi.mock(import("#src/services/room/getRoomObject"), () => import("#src/services/room/getRoomObject.test"));
 vi.mock(import("#src/services/user/getUserObject"), () => import("#src/services/user/getUserObject.test"));
 vi.mock(import("#src/services/account/deleteAccountBlobDirectories"), async (importOriginal) => {

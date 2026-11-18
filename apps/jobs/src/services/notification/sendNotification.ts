@@ -61,7 +61,7 @@ export const sendNotification = async (data: NotificationQueueMessage): Promise<
     });
     // Each recipient's open bell refetches. Best-effort and past the write, for the same reason as the trim
     await publishTopicsBestEffort(
-      userIds.map((userId) => getTopic(TopicKind.Notification, userId)),
+      () => userIds.map((userId) => getTopic(TopicKind.Notification, userId)),
       "Failed to publish the bell's topics:",
     );
   }

@@ -2,8 +2,10 @@
 /* oxlint-disable no-underscore-dangle -- marker property name is owned by @nuxt/test-utils; Pinia's store registry has no public accessor, and `$dispose` removes each entry */
 import type { Pinia } from "pinia";
 
+import { mockTopicNamespace } from "#server/services/realtime/publishTopics.test";
 import { MOCK_ENVIRONMENT_VARIABLES } from "#shared/services/environment/constants.test";
 import { checkIsServer } from "@esposter/shared";
+import { env } from "cloudflare:workers";
 import { afterAll, afterEach, beforeEach, vi } from "vitest";
 
 // The node environment has no storage at all: the shared Vitest configuration switches node's own Web Storage
@@ -43,11 +45,9 @@ class MemoryStorage implements Storage {
 globalThis.localStorage ??= new MemoryStorage();
 globalThis.sessionStorage ??= new MemoryStorage();
 vi.mock(import("#server/services/queue/getJobQueue"), () => import("#server/services/queue/getJobQueue.test"));
-// A topic's object lives in the realtime Worker, so a published topic is recorded where a test can read it
-vi.mock(
-  import("#server/services/realtime/publishTopics"),
-  () => import("#server/services/realtime/publishTopics.test"),
-);
+// A topic's object lives in the realtime Worker, so a published topic is recorded where a test can read it. The binding
+// Is written into the db-mock env that the Worker's modules read through
+Object.assign(env, { TOPIC: mockTopicNamespace });
 
 // The user object client redirects to its colocated in-memory double, here rather than in `context.test.ts`: a `vi.mock`
 // Is hoisted only within the file that writes it, so one registered from an imported module never intercepts a test
