@@ -20,8 +20,8 @@ import { defineStore } from "pinia";
 import { computed, shallowRef } from "vue";
 
 /**
- * Each region's chests in reach, each region's record handed in as it arrives, and each one offered on the ground
- * beneath its point: an unopened chest to open, and a buried one to dig up. Digging a buried chest holds it dug for the
+ * Each region's chests in reach, read from the scene's region chest map as each record arrives, and each one offered on
+ * the ground beneath its point: an unopened chest to open, and a buried one to dig up. Digging a buried chest holds it dug for the
  * session only, and a dug chest is offered to open, paying nothing until its tier is measured. Opening a chest rolls its
  * Primogems, Mora and Anemo Sigils into the wallet, pays its Adventure EXP to the Adventure Rank and pours its drops out
  * where it stands, or sends them to the bag where a drop would fall away there, and the chest is kept as opened. The
@@ -38,8 +38,8 @@ export const useWorldChestsStore = defineStore("world/chests", () => {
   const { getGroundHeight } = worldGroundStore;
   const worldSessionStore = useWorldSessionStore();
   const { events, setInventory, setWallet } = worldSessionStore;
-  // The chests of every region read so far, handed in by the session as each region's record arrives
-  const regionChestPlaces = shallowRef<ChestPlace[]>([]);
+  // The scene's region chest map, read where the chests are derived, since the scene mounts after the session starts
+  const getRegionChestMap = shallowRef<() => ReadonlyMap<string, ChestPlace[]> | undefined>();
   const openedChestIds = shallowRef<ReadonlySet<string>>(new Set());
   let waterLevel = 0;
   // The camps' chest locks as the Enemies component writes them, and each time trial's lock until it is solved
@@ -53,7 +53,10 @@ export const useWorldChestsStore = defineStore("world/chests", () => {
   ]);
   // The buried chests dug up this session, which the save does not hold yet, so a reload buries them again
   const dugChestIds = shallowRef<ReadonlySet<string>>(new Set());
-  const worldChestPlaces = computed(() => [...regionChestPlaces.value, ...worldPuzzlesStore.puzzleChestPlaces]);
+  const worldChestPlaces = computed(() => [
+    ...[...(getRegionChestMap.value?.().values() ?? [])].flat(),
+    ...worldPuzzlesStore.puzzleChestPlaces,
+  ]);
   const chestInteractables = computed<Interactable[]>(() =>
     computeChestInteractables(
       worldChestPlaces.value,
@@ -117,13 +120,18 @@ export const useWorldChestsStore = defineStore("world/chests", () => {
       events.emit("chestOpened");
     }
   };
-  const start = (starting: { openedChestIds: ReadonlySet<string>; waterLevel: number }) => {
+  const start = (starting: {
+    getRegionChestMap: () => ReadonlyMap<string, ChestPlace[]> | undefined;
+    openedChestIds: ReadonlySet<string>;
+    waterLevel: number;
+  }) => {
+    getRegionChestMap.value = starting.getRegionChestMap;
     openedChestIds.value = starting.openedChestIds;
     ({ waterLevel } = starting);
   };
   const stop = () => {
     campLockSources.value = [];
-    regionChestPlaces.value = [];
+    getRegionChestMap.value = undefined;
     dugChestIds.value = new Set();
     openedChestIds.value = new Set();
   };
@@ -133,7 +141,6 @@ export const useWorldChestsStore = defineStore("world/chests", () => {
     digChestById,
     openChestById,
     openedChestIds,
-    regionChestPlaces,
     start,
     stop,
     worldChestPlaces,

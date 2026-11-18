@@ -1,3 +1,5 @@
+import type { ChestPlace } from "#src/models/chest/ChestPlace";
+
 import { GameDataKeys } from "#src/generated/gameDataKeys";
 import { ChestKind } from "#src/models/chest/ChestKind";
 import { PuzzleKind } from "#src/models/puzzle/PuzzleKind";
@@ -11,6 +13,7 @@ import { useWorldPuzzlesStore } from "#src/store/puzzles";
 import { startTestWorldSession } from "#src/store/session.fixture";
 import { storeToRefs } from "pinia";
 import { afterEach, describe, expect, test, vi } from "vitest";
+import { shallowReactive } from "vue";
 
 // Each region's record is served from the fetch the reader makes, so a record is read through its reader and its schema
 const { datasetRecordsMap } = vi.hoisted(() => ({ datasetRecordsMap: new Map<string, unknown[]>() }));
@@ -28,11 +31,13 @@ const createChests = (puzzleOptions: Parameters<ReturnType<typeof useWorldPuzzle
   worldPuzzlesStore.start(puzzleOptions);
   const worldAdventureRankStore = useWorldAdventureRankStore();
   vi.spyOn(worldAdventureRankStore, "gainWorldAdventureExp").mockImplementation(() => {});
+  // The scene's region chest map, which the session hands in as a getter and which each region's record enters as it arrives
+  const regionChestMap = shallowReactive(new Map<string, ChestPlace[]>());
   const worldChestsStore = useWorldChestsStore();
-  worldChestsStore.start({ openedChestIds: new Set(), waterLevel: -1 });
-  const { chestInteractables, openedChestIds, regionChestPlaces } = storeToRefs(worldChestsStore);
+  worldChestsStore.start({ getRegionChestMap: () => regionChestMap, openedChestIds: new Set(), waterLevel: -1 });
+  const { chestInteractables, openedChestIds } = storeToRefs(worldChestsStore);
   const { openChestById } = worldChestsStore;
-  return { chestInteractables, openChestById, openedChestIds, regionChestPlaces };
+  return { chestInteractables, openChestById, openedChestIds, regionChestMap };
 };
 
 describe(useWorldChestsStore, () => {
@@ -43,6 +48,7 @@ describe(useWorldChestsStore, () => {
 
   const SEELIE_ID = "settled";
   const SEELIE_CHEST_ID = `seelie-chest-${SEELIE_ID}`;
+  const LIYUE_REGION_ID = "liyue";
   const LIYUE_CHEST_ID = "chest-liyue";
   const TIME_TRIAL_ID = "time-trial";
   const puzzleOptions: Parameters<ReturnType<typeof useWorldPuzzlesStore>["start"]>[0] = {
@@ -67,9 +73,10 @@ describe(useWorldChestsStore, () => {
     expect.hasAssertions();
 
     datasetRecordsMap.set("chests/liyue", [{ id: LIYUE_CHEST_ID, kind: ChestKind.Common, position: { x: 0, z: 0 } }]);
-    const { chestInteractables, regionChestPlaces } = createChests({ ...puzzleOptions, seelies: [] });
-    // Liyue's record is read once its region comes within reach, and the session hands it to the store as it arrives
-    regionChestPlaces.value = await readRegionChestPlaces("game-data", GameDataKeys.chests.liyue);
+    const { chestInteractables, regionChestMap } = createChests({ ...puzzleOptions, seelies: [] });
+    // Liyue's record is read once its region comes within reach, and the scene's region chest map holds it as it arrives
+    // The store offers its chests from that map, with no copy of it kept beside it
+    regionChestMap.set(LIYUE_REGION_ID, await readRegionChestPlaces("game-data", GameDataKeys.chests.liyue));
 
     expect(chestInteractables.value.map(({ id }) => id)).toStrictEqual([LIYUE_CHEST_ID]);
   });
