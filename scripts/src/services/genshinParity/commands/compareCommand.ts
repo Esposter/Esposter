@@ -1,3 +1,4 @@
+/* oxlint-disable no-await-in-loop -- One device: the parity page shoots one screen at a time on the GPU, and parallel renders exhaust the free memory each holds, so each reference and its passes wait on the one before */
 import type { ParityScore } from "#src/models/genshinParity/reference/ParityScore";
 import type { ReferenceEntryPath } from "#src/models/genshinParity/reference/ReferenceEntryPath";
 import type { SubCommandsDef } from "citty";
@@ -8,6 +9,8 @@ import { MissingReferenceInputKind } from "#src/models/genshinParity/reference/M
 import { ParityReportRun } from "#src/models/genshinParity/reference/ParityReportRun";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { startFreshPageServer } from "#src/services/genshinParity/page/startFreshPageServer";
+import { findReopenedPass } from "#src/services/genshinParity/passes/findReopenedPass";
+import { runParityPasses } from "#src/services/genshinParity/passes/runParityPasses";
 import { classifyComparisonFailure } from "#src/services/genshinParity/reference/classifyComparisonFailure";
 import { compareScreen } from "#src/services/genshinParity/reference/compareScreen";
 import { DEFAULT_APPROVAL } from "#src/services/genshinParity/reference/constants";
@@ -122,7 +125,6 @@ export const compareCommand: SubCommandsDef[string] = defineCommand({
               continue;
             }
           }
-          // oxlint-disable-next-line no-await-in-loop -- One device: the parity page shoots one screen at a time on the GPU, and parallel renders exhaust the free memory each holds
           const comparisonResult = await getResultAsync(() => compareScreen(referenceId, args.witness, pageRoot));
           comparisonResult.match(
             ({ cells, score }) => {
@@ -147,6 +149,19 @@ export const compareCommand: SubCommandsDef[string] = defineCommand({
                 console.error("the browser closed, so the next reference opens its page on a fresh one");
             },
           );
+          // A frame that stands off names the pass its measures missed: the run of the passes stops at the first one outside
+          // Its gate, which is the one reopened. A frame every pass holds names none, so the measure set is what is short
+          const comparedScore = scores[referenceId];
+          const component = getLayerComponent(referenceId, args.witness);
+          const bar = (ParityReferenceMap[referenceId]?.approval ?? DEFAULT_APPROVAL).bar;
+          if (comparedScore !== undefined && component !== undefined && comparedScore.meanDifference > bar) {
+            const reopened = findReopenedPass(await runParityPasses(component));
+            console.error(
+              reopened === undefined
+                ? "stands off, and every pass holds: no measure reads the difference"
+                : `stands off: reopens ${reopened}`,
+            );
+          }
         }
       },
       () => freshPage?.stop(),
