@@ -901,8 +901,12 @@ export const GameTextKey = {
   TimeConfirm: "UI_STC_LEVELUP_DIALOG_OK",
   // The label over the world's clock time on the Time screen, which the dial's advance is counted from
   TimeCurrent: "UI_CLOCK_PAGE_CURRENT_TIME",
+  // The day under the hour the dial points at, once that hour falls two days on from the clock's own day
+  TimeDayAfterTomorrow: "UI_TIMECHANGE_AFTERTOMORROW",
   // The day under the hour the dial points at, while that hour falls on the clock's own day
   TimeToday: "UI_TIMECHANGE_TODAY",
+  // The day under the hour the dial points at, once that hour falls on the day after the clock's own day
+  TimeTomorrow: "UI_TIMECHANGE_TOMORROW",
   // The label over the hour the Time screen's dial points at, before the player confirms it
   TimeWaitUntil: "UI_CLOCK_PAGE_TO_TIME",
   // The tip popup's button that closes it, in the game's own words for Got it

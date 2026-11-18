@@ -1,6 +1,6 @@
 import { props } from "#src/components/Menu/Time/Index.fixture";
 import MenuTime from "#src/components/Menu/Time/Index.vue";
-import { TIME_MINIMUM_ADVANCE_MINUTES } from "#src/services/menu/constants";
+import { TIME_MAXIMUM_ADVANCE_MINUTES, TIME_MINIMUM_ADVANCE_MINUTES } from "#src/services/menu/constants";
 import { MINUTES_PER_DAY } from "genshin-engine";
 import { ENGLISH_GAME_TEXT, GameTextKey } from "genshin-text";
 import { describe, expect, test, vi } from "vitest";
@@ -41,12 +41,24 @@ describe("menuTime", () => {
     await expect.element(page.getByText(ENGLISH_GAME_TEXT[GameTextKey.TimeToday], { exact: true })).toBeVisible();
   });
 
-  // A clock the minimum advance takes past midnight points the hour at the next day, which has no word drawn yet
-  test("the day under the hour is not drawn once the hour falls on the next day", async () => {
+  // A clock the minimum advance takes past midnight points the hour at the next day, which the day under it names
+  test("the hour past midnight is labelled Tomorrow", async () => {
     expect.hasAssertions();
 
     await render(MenuTime, { props: { ...props, clockMinutes: MINUTES_PER_DAY - TIME_MINIMUM_ADVANCE_MINUTES } });
 
+    await expect.element(page.getByText(ENGLISH_GAME_TEXT[GameTextKey.TimeTomorrow], { exact: true })).toBeVisible();
     expect(page.getByText(ENGLISH_GAME_TEXT[GameTextKey.TimeToday], { exact: true }).query()).toBeNull();
+  });
+
+  // The advance at its two-day maximum points the hour two days on from the clock's day, which the day under it names
+  test("the hour two days on is labelled Day After Tomorrow", async () => {
+    expect.hasAssertions();
+
+    await render(MenuTime, { props: { ...props, initialAdvance: TIME_MAXIMUM_ADVANCE_MINUTES } });
+
+    await expect
+      .element(page.getByText(ENGLISH_GAME_TEXT[GameTextKey.TimeDayAfterTomorrow], { exact: true }))
+      .toBeVisible();
   });
 });

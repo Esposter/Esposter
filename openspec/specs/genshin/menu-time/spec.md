@@ -54,3 +54,25 @@ The Time dial SHALL add one day to the advance for each whole turn the pointer m
 - **GIVEN** the Time screen is open at the current hour
 - **WHEN** the player drags the pointer once fully round the dial
 - **THEN** the advance grows by one day
+
+### Requirement: The hour is labelled with the day it falls on
+
+The Time screen SHALL label the hour the dial points at with the game's day word for the day that hour falls on: Today while it falls on the clock's own day, Tomorrow once it passes midnight, and Day After Tomorrow two days on.
+
+#### Scenario: The day under the hour reads Today while the hour falls on the clock's day
+
+- **GIVEN** the current hour is in the morning
+- **WHEN** the dial points at an hour later that same day
+- **THEN** the hour is labelled Today
+
+#### Scenario: The hour past midnight is labelled Tomorrow
+
+- **GIVEN** the current hour is late in the evening
+- **WHEN** the dial points at the hour after midnight
+- **THEN** the hour is labelled Tomorrow
+
+#### Scenario: The hour two days on is labelled Day After Tomorrow
+
+- **GIVEN** the Time screen is open at the current hour
+- **WHEN** the player dials an advance of two days
+- **THEN** the hour is labelled Day After Tomorrow

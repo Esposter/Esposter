@@ -3,9 +3,9 @@ import type { GameText } from "genshin-text";
 
 import ScreenHeader from "#src/components/Menu/ScreenHeader/Index.vue";
 import MenuTimeDial from "#src/components/Menu/Time/Dial/Index.vue";
-import { TIME_DIAL_ORNAMENT_POSITIONS, TIME_MINIMUM_ADVANCE_MINUTES } from "#src/services/menu/constants";
+import { TIME_DAY_LABEL_KEYS, TIME_DIAL_ORNAMENT_POSITIONS } from "#src/services/menu/constants";
+import { getTimeTargetDaysAhead } from "#src/services/menu/getTimeTargetDaysAhead";
 import { getTimeTargetMinutes } from "#src/services/menu/getTimeTargetMinutes";
-import { MINUTES_PER_DAY } from "genshin-engine";
 import { CloseButtonMark, GAME_CREAM, GameButton, GameButtonKind, GameScreen } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
@@ -24,10 +24,8 @@ const confirmButton = useTemplateRef("confirmButton");
 // How far the pointer has dialled the advance, which the dial moves
 const advance = ref(initialAdvance);
 const targetMinutes = computed(() => getTimeTargetMinutes(clockMinutes, advance.value));
-// Whether the target falls on the clock's own day, counting the advance from its minimum as the target does
-const targetIsToday = computed(
-  () => clockMinutes + Math.max(advance.value, TIME_MINIMUM_ADVANCE_MINUTES) < MINUTES_PER_DAY,
-);
+// The day word under the hour: Today while it falls on the clock's day, then Tomorrow and the day after
+const targetDayKey = computed(() => TIME_DAY_LABEL_KEYS[getTimeTargetDaysAhead(clockMinutes, advance.value)]);
 const formatMinutes = (minutes: number): string => {
   const wholeMinutes = Math.floor(minutes);
   return Temporal.PlainTime.from({ hour: Math.floor(wholeMinutes / 60), minute: wholeMinutes % 60 }).toString({
@@ -44,8 +42,8 @@ onMounted(() => {
 
 <template>
   <!-- The Time screen the Paimon menu's side bar opens: its title and the cross that closes it, the clock's dial on the
-       right of the screen and, in the middle, the clock's time and the hour the dial points at, with Today beneath that
-       hour while it falls on the clock's day, then Confirm, which sets the world's clock to that hour. The dial and the
+       right of the screen and, in the middle, the clock's time and the hour the dial points at, with the day beneath that
+       hour (Today, Tomorrow or the day after) then Confirm, which sets the world's clock to that hour. The dial and the
        column are placed from the English PC client's screen (1080 high, a reference pixel a unit). -->
   <GameScreen class="menu-time" role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.Time]">
     <ScreenHeader :game-text :mark="CloseButtonMark.Cross" :title="gameText[GameTextKey.Time]" @close="emit('close')" />
@@ -66,7 +64,7 @@ onMounted(() => {
     <p class="wait-until">{{ gameText[GameTextKey.TimeWaitUntil] }}</p>
     <span class="caret second" />
     <p class="hour">{{ targetTime }}</p>
-    <p v-if="targetIsToday" class="day">{{ gameText[GameTextKey.TimeToday] }}</p>
+    <p v-if="targetDayKey" class="day">{{ gameText[targetDayKey] }}</p>
     <GameButton
       ref="confirmButton"
       class="confirm"
