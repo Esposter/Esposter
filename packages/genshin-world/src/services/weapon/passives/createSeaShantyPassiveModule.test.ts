@@ -20,9 +20,9 @@ const createHeal = (characterId: number, sourceCharacterId: number): KitHealthCh
   overflowHealthShare: 0,
   sourceCharacterId,
 });
-const skillUsed = { characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed };
 
 describe(createSeaShantyPassiveModule, () => {
+  const skillUsed = { characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed };
   const wielder = createWielderCombatant();
   // Sea Shanty (The Dockhand's Assistant) at its first rank: 40 Elemental Mastery and 2 Energy for each Stoic's Symbol
   // Consumed, each Symbol lasting 30 seconds, the Roused effect 10 seconds and its cooldown 15

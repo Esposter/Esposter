@@ -8,9 +8,8 @@ import { createWielderCombatant } from "#src/services/weapon/passives/createWiel
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const CHARACTER_IDS = [TRAVELER_CHARACTER_ID, 1, 2];
-
 describe(createTalesOfTheTundraPassiveModule, () => {
+  const CHARACTER_IDS = [TRAVELER_CHARACTER_ID, 1, 2];
   // Tales of the Tundra at its first rank: 120 Elemental Mastery with three different Elemental Types in the party
   const passiveModule = createTalesOfTheTundraPassiveModule([120]);
   // The deployed team the elements draw, its first member the wielder, each member in its element

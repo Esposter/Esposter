@@ -20,9 +20,9 @@ const createHeal = (characterId: number, sourceCharacterId: number): KitHealthCh
   overflowHealthShare: 0,
   sourceCharacterId,
 });
-const skillUsed = { characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed };
 
 describe(createMasonsDittyPassiveModule, () => {
+  const skillUsed = { characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed };
   const wielder = createWielderCombatant();
   // Masons' Ditty (Prospector's Drill) at its first rank: 3% ATK and 7% All Elemental DMG for each Unity's Symbol consumed, for
   // Ten seconds, once every fifteen

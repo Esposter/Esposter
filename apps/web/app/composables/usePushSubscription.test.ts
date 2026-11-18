@@ -5,7 +5,12 @@ import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { mockNuxtImport, mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, onTestFinished, test, vi } from "vitest";
 
-const notificationPermission = shallowRef<PermissionState>();
+// The mock's factory is hoisted above the imports, so the ref it returns is built in a hoisted block too
+const { notificationPermission } = await vi.hoisted(async () => {
+  const { shallowRef } = await import("vue");
+  return { notificationPermission: shallowRef<PermissionState>() };
+});
+
 mockNuxtImport("usePermission", () => () => notificationPermission);
 
 describe(usePushSubscription, () => {

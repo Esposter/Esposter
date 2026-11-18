@@ -15,9 +15,9 @@ import { createWielderCombatant } from "#src/services/weapon/passives/createWiel
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const skillUsed = { characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed };
 
 describe(createDanceOfWingsUnboundPassiveModule, () => {
+  const skillUsed = { characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed };
   const wielder = createWielderCombatant();
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   // Beyond the Chrysalis at its first rank: CRIT DMG 56%, Stellar Swirl DMG 36%, 5 Energy every four seconds, for ten seconds

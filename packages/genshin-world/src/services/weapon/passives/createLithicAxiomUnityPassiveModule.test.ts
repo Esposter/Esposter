@@ -5,10 +5,9 @@ import { createLithicAxiomUnityPassiveModule } from "#src/services/weapon/passiv
 import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
 import { describe, expect, test } from "vitest";
 
-const LIYUE_REGION_ID = "liyue";
-const OTHER_CHARACTER_ID = 1;
-
 describe(createLithicAxiomUnityPassiveModule, () => {
+  const LIYUE_REGION_ID = "liyue";
+  const OTHER_CHARACTER_ID = 1;
   // Lithic Axiom: Unity at its first rank: 7% ATK and 3% CRIT Rate for each party member from Liyue
   const passiveModule = createLithicAxiomUnityPassiveModule([0.07, 0.03]);
   // The deployed team of a wielder and one other member, each from the given region
