@@ -96,6 +96,10 @@ export const PARITY_SHARED_DIRECTORY: string = join(
 );
 // A scene's structure is read at this width, small enough that its texture is gone and its shapes and light remain
 export const STRUCTURE_WIDTH = 480;
+// The width a whole-frame measure opens its reference at: the witness draws its targets and shots at the full frame, so
+// The page, the reference and the G-buffer agree only at this width, and a measure reading at a narrower one scores the
+// Top of the frame alone
+export const FULL_FRAME_WIDTH = 1920;
 // The width the cloud tools read a sky at: wide enough that a cloud's painted edge spans several pixels
 export const CLOUDS_WIDTH = 960;
 // The heights over the horizon, in degrees, the sky's cover is read between band by band: the cloud sea's billows and

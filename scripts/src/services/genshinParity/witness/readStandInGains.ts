@@ -1,6 +1,6 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 
-import { COMPARISONS_DIRECTORY } from "#src/services/genshinParity/shared/constants";
+import { COMPARISONS_DIRECTORY, FULL_FRAME_WIDTH } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
 import { readFlipErrorMap } from "#src/services/genshinParity/shared/readFlipErrorMap";
@@ -15,9 +15,6 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import sharp from "sharp";
 
-// Wide enough that a tower's windows, its gold bands and the door's relief span several pixels
-const STAND_IN_WIDTH = 960;
-
 // Each family's stand-in against the game's own exports, both drawn by the one page at the reference's camera, moment,
 // Light and haze: FLIP between the two over the exports' pixels of the family, where every pixel lines up and only the
 // Stand-in differs. It chooses between representations of a stand-in rank's own table already ranks and orders
@@ -30,7 +27,7 @@ export const readStandInGains = async (
   witness: DerivedAssetComponent,
 ): Promise<{ gap: number; mean: number; name: string; share: number; similarity: number }[]> => {
   await fetchReferences();
-  const { checkIsScored, close, height, page } = await openWitnessPage(referenceId, witness, STAND_IN_WIDTH);
+  const { checkIsScored, close, height, page } = await openWitnessPage(referenceId, witness, FULL_FRAME_WIDTH);
   return withFinalizerAsync(
     async () => {
       const families = await readWitnessFamilies(page);

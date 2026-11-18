@@ -2,7 +2,7 @@ import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/Der
 import type { SetLights } from "#src/models/genshinParity/witness/SetLights";
 
 import { computePixelPoint } from "#src/services/genshinParity/shared/computePixelPoint";
-import { CHANNELS, LUMINANCE, SKY_LAYER } from "#src/services/genshinParity/shared/constants";
+import { CHANNELS, FULL_FRAME_WIDTH, LUMINANCE, SKY_LAYER } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
 import { readFlipErrorMap } from "#src/services/genshinParity/shared/readFlipErrorMap";
@@ -56,7 +56,7 @@ export const rankReferenceGains = async (
   terms: { ceiling: number; name: string; share: number }[];
 }> => {
   await fetchReferences();
-  const { checkIsScored, close, height, image, page } = await openWitnessPage(referenceId, witness);
+  const { checkIsScored, close, height, image, page } = await openWitnessPage(referenceId, witness, FULL_FRAME_WIDTH);
   return withFinalizerAsync(
     async () => {
       const families = await readWitnessFamilies(page);
