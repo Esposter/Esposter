@@ -4,7 +4,7 @@ import { createMockContext, getMockSession } from "#server/trpc/context.test";
 import { createCallerFactory, router } from "#server/trpc/index";
 import { createReadBlobStateProcedure } from "#server/trpc/procedure/blobState/createReadBlobStateProcedure";
 import { createSaveBlobStateProcedure } from "#server/trpc/procedure/blobState/createSaveBlobStateProcedure";
-import { TOPICS_HEADER } from "#shared/services/realtime/constants";
+import { readTopicsHeader } from "#shared/services/realtime/readTopicsHeader";
 import { createMockBucket } from "@esposter/db-mock";
 import { getSaveBlobName, StorageBucket } from "@esposter/db-schema";
 import { beforeAll, beforeEach, describe, expect, test } from "vitest";
@@ -47,7 +47,9 @@ describe("blob state procedures", () => {
     const context = await createMockContext();
     await createCallerFactory(blobStateRouter)(context).readSave();
 
-    expect(context.responseHeaders.get(TOPICS_HEADER)).toContain(getSaveTopic());
+    expect(readTopicsHeader(context.responseHeaders, "readSave").flatMap(({ topics }) => topics)).toContain(
+      getSaveTopic(),
+    );
   });
 
   test("a save publishes the blob it writes", async () => {

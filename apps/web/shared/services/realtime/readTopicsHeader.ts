@@ -8,7 +8,7 @@ import { z } from "zod";
 // The header carries the time as text, which is parsed back into the whole number it was taken as
 const readAtSchema = z.coerce.number().pipe(z.int().nonnegative());
 
-// A topic is read back from its encoding. One that is not a valid encoding is no topic, as one the schema refuses is not
+// Decodes a topic from its header encoding. A text that does not decode is no topic, as the schema would refuse it
 const decodeTopic = (text: string): string | undefined =>
   getResult(() => decodeURIComponent(text)).match(
     (decoded) => decoded,

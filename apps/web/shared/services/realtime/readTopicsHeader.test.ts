@@ -1,7 +1,7 @@
 import { TOPICS_HEADER } from "#shared/services/realtime/constants";
 import { formatTopicsHeaderValue } from "#shared/services/realtime/formatTopicsHeaderValue";
 import { readTopicsHeader } from "#shared/services/realtime/readTopicsHeader";
-import { getBlobTopic, getTopic, StorageBucket, TopicKind } from "@esposter/db-schema";
+import { getBlobTopic, getStorageBucketBindingName, getTopic, StorageBucket, TopicKind } from "@esposter/db-schema";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
@@ -24,7 +24,7 @@ describe(readTopicsHeader, () => {
   test("a topic whose key holds a space or a comma reads back whole", () => {
     expect.hasAssertions();
 
-    const blobTopic = getBlobTopic(StorageBucket.UserAssets, "user/a b,c.png");
+    const blobTopic = getBlobTopic(getStorageBucketBindingName(StorageBucket.UserAssets), "user/a b,c.png");
     const headers = new Headers();
     headers.append(TOPICS_HEADER, formatTopicsHeaderValue("post.readPost", { readAt: 0, topics: [blobTopic] }));
 
