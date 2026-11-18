@@ -1,10 +1,10 @@
 import { highPassAngles } from "#src/services/genshinParity/passes/highPassAngles";
 import { describe, expect, test } from "vitest";
 
-const WIDTH = 128;
-const HEIGHT = 16;
-
 describe(highPassAngles, () => {
+  const WIDTH = 128;
+  const HEIGHT = 16;
+
   test("a field that is constant across its radius reads zero after the high-pass", () => {
     expect.hasAssertions();
 
