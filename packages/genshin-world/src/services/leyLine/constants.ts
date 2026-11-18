@@ -1,7 +1,5 @@
 import { EnemyKindId } from "#src/models/enemy/EnemyKindId";
 
-// The region the ley line outcrops are drawn in, whose places the outcrops stand at
-export const OUTCROP_REGION_ID = "mondstadt";
 // The Adventure Rank a mining outcrop is drawn at
 export const MINING_OUTCROP_ADVENTURE_RANK = 30;
 // The id prefix of the camp a touch spawns at an outcrop's place: the camp a place holds is named by it and the place's id

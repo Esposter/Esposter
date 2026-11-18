@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { AttributeLine } from "#src/models/character/AttributeLine";
+import type { OutcropPlacement } from "#src/models/leyLine/OutcropPlacement";
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { ShopPurchase } from "#src/models/shop/ShopPurchase";
 import type { ElementalSight } from "#src/models/sight/ElementalSight";
@@ -96,7 +97,6 @@ import { useWorldTrials } from "#src/composables/useWorldTrials";
 import { useWorldTrounceBlossoms } from "#src/composables/useWorldTrounceBlossoms";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { computeCraftingCrafters } from "#src/services/crafting/computeCraftingCrafters";
-import { OUTCROP_REGION_ID } from "#src/services/leyLine/constants";
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import { MAP_REFERENCE_ZOOM_METRES, TELEPORT_FADE_IN_MS, TELEPORT_FADE_OUT_MS } from "#src/services/map/constants";
 import { findAreaAt } from "#src/services/map/findAreaAt";
@@ -718,9 +718,17 @@ const crafting = computed(() =>
 // The regions the world has loaded, which each region's outcrops are read for as it is entered
 const loadedRegionIds = computed(() => [...(windrise.value?.regionDataMap.keys() ?? [])]);
 // The ley line outcrops the world draws: a touch starts a blossom's fight, a camp's last enemy reveals it, and F claims it
-// With resin, and each day's are drawn at the daily reset
-// The places of the outcrop region, which its loaded data holds, and none while the region is not loaded
-const outcropPlaces = computed(() => windrise.value?.regionDataMap.get(OUTCROP_REGION_ID)?.outcropPlaces ?? []);
+// With resin, and each region's day is drawn at the daily reset. The outcrop places of each region the world has loaded,
+// By the region's id
+const outcropPlacesMap = computed(
+  () =>
+    new Map(
+      [...(windrise.value?.regionDataMap ?? [])].map(([regionId, { outcropPlaces }]): [string, OutcropPlacement[]] => [
+        regionId,
+        outcropPlaces,
+      ]),
+    ),
+);
 // The mining outcrops of each region the world has loaded, drawn at the daily reset and struck as the ores are
 const { minedOutcrops, refreshMiningOutcrops, standingMiningOutcrops, strikeMiningOutcrops } = useMiningOutcrops({
   regionIds: loadedRegionIds,
@@ -736,13 +744,7 @@ const {
   outcropInteractables,
   restoreOutcropClaim,
   touchOutcropsNear,
-} = useWorldOutcrops({
-  adventureRankTables,
-  areaId: ref(OUTCROP_REGION_ID),
-  enemyMap: kitContext.enemyMap,
-  placements: outcropPlaces,
-  regionIds: loadedRegionIds,
-});
+} = useWorldOutcrops({ adventureRankTables, enemyMap: kitContext.enemyMap, placesMap: outcropPlacesMap });
 // The Trounce Blossoms a defeated normal boss leaves, claimed at its place by F for the Original Resin its claim costs
 const {
   chooseTrounceBlossomClaim,

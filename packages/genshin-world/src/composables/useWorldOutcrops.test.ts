@@ -2,6 +2,7 @@ import type { Character } from "#src/models/character/Character";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { FriendshipLevels } from "#src/models/friendship/FriendshipLevels";
 import type { OutcropKindRule } from "#src/models/leyLine/OutcropKindRule";
+import type { OutcropPlacement } from "#src/models/leyLine/OutcropPlacement";
 import type { Ref } from "vue";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
@@ -13,9 +14,11 @@ import { Currency } from "#src/models/inventory/Currency";
 import { OutcropKind } from "#src/models/leyLine/OutcropKind";
 import { OutcropStage } from "#src/models/leyLine/OutcropStage";
 import { BlossomKind } from "#src/models/originalResin/BlossomKind";
+import { regionDataSchema } from "#src/models/world/RegionData";
 import { readAdventureRankTables } from "#src/services/adventureRank/readAdventureRankTables";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { EMPTY_INVENTORY, EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inventory/constants";
+import { computeOutcropCampId } from "#src/services/leyLine/computeOutcropCampId";
 import { OUTCROP_CAMP_SIZE } from "#src/services/leyLine/constants";
 import { BlossomClaimResinMap } from "#src/services/originalResin/BlossomClaimResinMap";
 import { BlossomCompanionshipExpMap } from "#src/services/originalResin/BlossomCompanionshipExpMap";
@@ -26,14 +29,23 @@ import { startTestWorldFriendship } from "#src/store/friendship.fixture";
 import { startTestWorldGround } from "#src/store/ground.fixture";
 import { startTestWorldParty } from "#src/store/party.fixture";
 import { startTestWorldSession } from "#src/store/session.fixture";
-import { takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
+import { useWorldStatuesStore } from "#src/store/statues";
+import { jsonDateParse, takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
 import { ItemCategory } from "genshin-interface";
 import { storeToRefs } from "pinia";
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 import { assert, describe, expect, test } from "vitest";
 import { nextTick, ref } from "vue";
 
 const adventureRankTables = await readAdventureRankTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
+
+// A region's fitted ley line blossom places, as its region data file holds them
+const readOutcropPlaces = async (regionId: string): Promise<OutcropPlacement[]> =>
+  regionDataSchema.parse(
+    jsonDateParse(await readFile(join(import.meta.dirname, "../data/regions", `${regionId}.json`), "utf8")),
+  ).outcropPlaces;
 const createCharacter = (id: number): Character => ({
   artifacts: [],
   ascension: 0,
@@ -72,10 +84,16 @@ describe(useWorldOutcrops, () => {
   ];
   const epoch = Temporal.Instant.fromEpochMilliseconds(0);
   const clearedOutcrop = { kind: OutcropKind.Revelation, placeId: 1, stage: OutcropStage.Cleared };
+  // A region no city is named for, so no publish is read for it and its kinds are set by hand
+  const FIXTURE_REGION_ID = "fixture";
+  // The regions whose blossoms the official map places, each one's kinds read from its own publish
+  const NEWLY_FITTED_REGION_IDS = ["liyue", "inazuma", "sumeru"];
+  // A region's first resonance, which unlocks its city
+  const FIRST_RESONANCE = { claimedLevel: 0, heldCount: 0, level: 1 };
 
   // A region's outcrops over the world's stores, with a held wallet of resin and the setters writing back. The camps the
   // Outcrops fight spawn into the enemy map the way the world spawns them, at WORLD_LEVEL
-  const startOutcrops = (resin: number, regionIds: Ref<string[]>) => {
+  const startOutcrops = (resin: number, placesMap: Ref<Map<string, OutcropPlacement[]>>) => {
     const worldSessionStore = startTestWorldSession(
       { gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL },
       { inventory: { ...EMPTY_INVENTORY }, wallet: { ...EMPTY_WALLET, [Currency.OriginalResin]: resin } },
@@ -93,13 +111,7 @@ describe(useWorldOutcrops, () => {
     );
     startTestWorldGround();
     const enemyMap = new Map<string, Enemy>();
-    const outcrops = useWorldOutcrops({
-      adventureRankTables,
-      areaId: ref("mondstadt"),
-      enemyMap,
-      placements: ref(PLACEMENTS),
-      regionIds,
-    });
+    const outcrops = useWorldOutcrops({ adventureRankTables, enemyMap, placesMap });
     useEnemySpawns({
       bossDefeatMap: new Map(),
       enemyMap,
@@ -127,17 +139,18 @@ describe(useWorldOutcrops, () => {
       enemyMap,
       inventory,
       outcrops,
+      placesMap,
       startingAdventureExp,
       wallet,
       worldFriendshipStore,
     };
   };
 
-  // A region's outcrops with its kinds set and the day drawn, so the Revelation waits at the first place. No region is
-  // Entered here, so the kinds are set by hand and none is read
+  // A region's outcrops with its kinds set and the day drawn, so the Revelation waits at the first place. The fixture
+  // Region is no city's, so its kinds are set by hand and none is read
   const createOutcrops = (resin = BlossomClaimResinMap[BlossomKind.LeyLine] * 2) => {
-    const context = startOutcrops(resin, ref<string[]>([]));
-    context.outcrops.kindRules.value = KIND_RULES;
+    const context = startOutcrops(resin, ref(new Map([[FIXTURE_REGION_ID, PLACEMENTS]])));
+    context.outcrops.kindRulesMap.value = new Map([[FIXTURE_REGION_ID, KIND_RULES]]);
     context.outcrops.drawDayOutcrops(epoch, () => 0);
     return context;
   };
@@ -149,18 +162,18 @@ describe(useWorldOutcrops, () => {
     for (const enemy of enemyMap.values()) defeat(enemy);
   };
 
-  test("the region's kinds are read once the region is entered, not before", async () => {
+  test("each region's kinds are read once the region is entered, not before", async () => {
     expect.hasAssertions();
 
-    const regionIds = ref<string[]>([]);
-    const { outcrops } = startOutcrops(0, regionIds);
+    const placesMap = ref(new Map<string, OutcropPlacement[]>());
+    const { outcrops } = startOutcrops(0, placesMap);
     await waitForSynchronizedFunctions();
-    expect(outcrops.kindRules.value).toStrictEqual([]);
+    expect(outcrops.kindRulesMap.value.size).toBe(0);
 
-    regionIds.value = ["mondstadt"];
+    placesMap.value = new Map([["mondstadt", await readOutcropPlaces("mondstadt")]]);
     await nextTick();
     await waitForSynchronizedFunctions();
-    expect(outcrops.kindRules.value.map(({ kind }) => kind)).toStrictEqual([
+    expect(outcrops.kindRulesMap.value.get("mondstadt")?.map(({ kind }) => kind)).toStrictEqual([
       OutcropKind.Wealth,
       OutcropKind.Revelation,
     ]);
@@ -175,6 +188,33 @@ describe(useWorldOutcrops, () => {
 
     expect([...enemyMap.values()].map(({ campId, level }) => ({ campId, level }))).toStrictEqual(
       Array.from({ length: OUTCROP_CAMP_SIZE }, () => ({ campId: CAMP_ID, level: SPAWNED_LEVEL })),
+    );
+  });
+
+  test.each(NEWLY_FITTED_REGION_IDS)("touching an outcrop spawns its enemies in %s", async (regionId) => {
+    expect.hasAssertions();
+
+    const places = await readOutcropPlaces(regionId);
+    const placesMap = ref(new Map<string, OutcropPlacement[]>());
+    const { enemyMap, outcrops } = startOutcrops(0, placesMap);
+    const worldStatuesStore = useWorldStatuesStore();
+    const { regionStatueProgressMap } = storeToRefs(worldStatuesStore);
+    regionStatueProgressMap.value = new Map([[regionId, FIRST_RESONANCE]]);
+    placesMap.value = new Map([[regionId, places]]);
+    await nextTick();
+    await waitForSynchronizedFunctions();
+    outcrops.drawDayOutcrops(epoch, () => 0);
+    const outcrop = takeOne(outcrops.outcrops.value, 0);
+    const place = places.find(({ id }) => id === outcrop.placeId);
+    assert.exists(place);
+    outcrops.touchOutcropsNear(place.position.x, place.position.z, () => 0);
+    await nextTick();
+
+    expect([...enemyMap.values()].map(({ campId, level }) => ({ campId, level }))).toStrictEqual(
+      Array.from({ length: OUTCROP_CAMP_SIZE }, () => ({
+        campId: computeOutcropCampId(outcrop.placeId),
+        level: SPAWNED_LEVEL,
+      })),
     );
   });
 
@@ -339,8 +379,28 @@ describe(useWorldOutcrops, () => {
     const context = createOutcrops();
     await clearOutcrop(context);
     const { outcrops } = context;
-    outcrops.kindRules.value = [];
+    outcrops.kindRulesMap.value = new Map();
     outcrops.drawDayOutcrops(epoch.add({ hours: 24 }), () => 0);
     expect(outcrops.outcrops.value).toStrictEqual([clearedOutcrop]);
+  });
+
+  test("a claim moves the outcrop to the nearest other place of its own region", async () => {
+    expect.hasAssertions();
+
+    // The other region's place stands nearer the claimed one than the fixture region's second place does, and holds no kind
+    const context = createOutcrops();
+    context.placesMap.value = new Map([
+      [FIXTURE_REGION_ID, PLACEMENTS],
+      ["other", [{ id: 3, position: { x: 10, z: 0 } }]],
+    ]);
+    await clearOutcrop(context);
+    const { outcrops } = context;
+    outcrops.openOutcropClaim(1, epoch);
+    assert.exists(outcrops.claimPrompt.value);
+    outcrops.chooseOutcropClaim(takeOne(outcrops.claimPrompt.value.offers, 0), epoch, 0, () => 0);
+
+    expect(outcrops.outcrops.value).toStrictEqual([
+      { kind: OutcropKind.Revelation, placeId: 2, stage: OutcropStage.Waiting },
+    ]);
   });
 });
