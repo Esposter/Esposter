@@ -21,6 +21,7 @@ import { startTestWorldSession } from "#src/store/session.fixture";
 import { takeOne } from "@esposter/shared";
 import { Object3D } from "three";
 import { beforeEach, describe, expect, test, vi } from "vitest";
+import { shallowRef } from "vue";
 
 const CHARACTER_ID = 1001;
 const TRIAL_AVATAR_ID = 1022;
@@ -45,9 +46,6 @@ const TABLES: CharacterTrialTables = {
   templates: [{ level: 1, reliquaryIds: [], talentLevel: 1 }],
 };
 
-vi.mock(import("#src/services/trial/readCharacterTrials"), () => ({
-  readCharacterTrials: () => Promise.resolve(TABLES),
-}));
 vi.mock(import("#src/services/kit/readCharacterKits"), () => ({
   readCharacterKits: vi.fn<() => Promise<Map<number, Kit>>>(),
 }));
@@ -57,6 +55,7 @@ const createDependencies = () => ({
   characterBody: new Object3D(),
   characterDataMap: new Map([[CHARACTER_ID, { ascensionPhases: [{ attributeLines: [], maxLevel: 90 }] }]]),
   claimedStageIds: new Set<number>(),
+  trialTables: shallowRef<CharacterTrialTables | undefined>(TABLES),
 });
 
 describe(useWorldTrials, () => {

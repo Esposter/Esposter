@@ -5,6 +5,7 @@ import type { TrialRoster } from "#src/models/world/TrialRoster";
 import type { WorldChallengeStep } from "#src/models/world/WorldChallengeStep";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 import type { CharacterTrialTables } from "#src/services/trial/readCharacterTrials";
+import type { Ref } from "vue";
 import type { Object3D } from "three";
 
 import { DomainChallengeOutcome } from "#src/models/domains/DomainChallengeOutcome";
@@ -19,17 +20,16 @@ import { createWorldParty } from "#src/services/party/createWorldParty";
 import { claimTrialStageReward } from "#src/services/trial/claimTrialStageReward";
 import { TRIAL_PROVISIONAL_TIME_LIMIT_MILLISECONDS } from "#src/services/trial/constants";
 import { createTrialCharacter } from "#src/services/trial/createTrialCharacter";
-import { readCharacterTrials } from "#src/services/trial/readCharacterTrials";
 import { useWorldGroundStore } from "#src/store/ground";
 import { useWorldMapStore } from "#src/store/map";
 import { useWorldPartyStore } from "#src/store/party";
 import { useWorldScreenStore } from "#src/store/screen";
 import { useWorldSessionStore } from "#src/store/session";
-import { getResultAsync, getSynchronizedFunction } from "@esposter/shared";
+import { getResultAsync } from "@esposter/shared";
 import { storeToRefs } from "pinia";
 import { computed, shallowRef } from "vue";
 
-// The character trials on the world: their tables read once, a trial entered in place of the player's roster with its party
+// The character trials on the world: a trial entered in place of the player's roster with its party
 // Member alone and no enemies, and its clock stepped each frame. The arena's clock is the only clear there is, so its end pays
 // The stage's first-clear reward once (PROVISIONAL, until the design names the rule). A party down ends the arena with no
 // Reward, and either end gives the player's roster back as it was
@@ -37,10 +37,13 @@ export const useWorldTrials = ({
   characterBody,
   characterDataMap,
   claimedStageIds,
+  trialTables,
 }: {
   characterBody: Object3D;
   characterDataMap: ReadonlyMap<number, Pick<CharacterData, "ascensionPhases">>;
   claimedStageIds: ReadonlySet<number>;
+  // The character trials' tables, read as the Wish screen opens, which the banners and the arena are built from
+  trialTables: Readonly<Ref<CharacterTrialTables | undefined>>;
 }) => {
   const worldPartyStore = useWorldPartyStore();
   const { characterIdKitMap, characters } = storeToRefs(worldPartyStore);
@@ -54,7 +57,6 @@ export const useWorldTrials = ({
   const worldSessionStore = useWorldSessionStore();
   const { inventory, wallet } = storeToRefs(worldSessionStore);
   const { setInventory, setWallet } = worldSessionStore;
-  const trialTables = shallowRef<CharacterTrialTables>();
   // The stages whose first clear has paid, which the save keeps: the ones the save held when the world loaded, and each first
   // Clear since
   const trialClaimedStageIds = shallowRef<ReadonlySet<number>>(claimedStageIds);
@@ -68,17 +70,6 @@ export const useWorldTrials = ({
       ? Math.ceil((TRIAL_PROVISIONAL_TIME_LIMIT_MILLISECONDS - trialArena.value.elapsedMilliseconds) / 1000)
       : undefined,
   );
-  getSynchronizedFunction(() =>
-    getResultAsync(() => readCharacterTrials(worldSessionStore.gameDataBaseUrl)).match(
-      (tables) => {
-        trialTables.value = tables;
-      },
-      (error) => {
-        console.error(error);
-      },
-    ),
-  )();
-
   // The trials the banners can offer, each as the character it tries, the level it fights at and its trial id
   const trials = computed<Trial[]>(() =>
     Object.values(trialTables.value?.avatars ?? {}).map(({ characterId, level, trialAvatarId }) => ({

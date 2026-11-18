@@ -549,12 +549,15 @@ const {
   travelerElement,
   wildlifePlaces,
 });
+// The records the screens read as they open, held after: the character trials' tables among them
+const records = useWorldScreenRecords({ gameDataBaseUrl });
 // The character trials: a trial takes the player's roster for its fight, and the claims its first clears make are saved
 const { openTrial, playerRoster, stepTrial, trialArena, trialClaimedStageIds, trials, trialSecondsRemaining } =
   useWorldTrials({
     characterBody,
     characterDataMap: statTables.characterDataMap,
     claimedStageIds: savedState.characterTrialClaimedStageIds,
+    trialTables: computed(() => records.characterTrials),
   });
 // The rewards each quest's finish pays into the bag, the wallet, the deployed team and the rank, as it finishes
 const { grantRewards } = useWorldQuestRewards({
@@ -589,9 +592,7 @@ const { claimCommission, claimKatheryneBonus, convertLongTermPoint, isLongTermPo
   });
 // The namecards the profile holds, which the profile's screen lists
 const { profileNamecards } = useWorldProfileNamecards();
-// The records the screens read as they open, and the recipes and blueprints a diagram or an instruction opens, by the item's
-// Id, and the progress each is learned in
-const records = useWorldScreenRecords({ gameDataBaseUrl });
+// The recipes and blueprints a diagram or an instruction opens, by the item's Id, and the progress each is learned in
 const blueprintMap = computed(() => createUnlockItemMap(records.homeBlueprints ?? []));
 const craftingRecipeMap = computed(() => createUnlockItemMap(records.craftingRecipes ?? []));
 // Using an entry of the bag, which the bag's screen offers
@@ -1404,7 +1405,7 @@ useWorldSaveSync({
       </template>
       <template #[ScreenKind.Wish]>
         <WishScreen
-          v-if="records.wishSchedule"
+          v-if="records.wishSchedule && records.characterTrials"
           v-model:character-copy-count-map="characterCopyCountMap"
           v-model:characters="characters"
           v-model:pity-map="wishPityMap"

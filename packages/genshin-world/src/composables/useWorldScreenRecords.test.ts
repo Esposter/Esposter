@@ -5,6 +5,7 @@ import type { readCraftingStrongboxes as readCraftingStrongboxesFn } from "#src/
 import type { readDomainChallengeLevels as readDomainChallengeLevelsFn } from "#src/services/domains/readDomainChallengeLevels";
 import type { readHomeBlueprints as readHomeBlueprintsFn } from "#src/services/home/readHomeBlueprints";
 import type { readPaimonsBargainsRotation as readPaimonsBargainsRotationFn } from "#src/services/shop/readPaimonsBargainsRotation";
+import type { readCharacterTrials as readCharacterTrialsFn } from "#src/services/trial/readCharacterTrials";
 import type { readShopGoodMap as readShopGoodMapFn } from "#src/services/shop/readShopGoodMap";
 import type { readWishSchedule as readWishScheduleFn } from "#src/services/wish/readWishSchedule";
 
@@ -16,6 +17,7 @@ import { readCraftingStrongboxes } from "#src/services/crafting/readCraftingStro
 import { readDomainChallengeLevels } from "#src/services/domains/readDomainChallengeLevels";
 import { readHomeBlueprints } from "#src/services/home/readHomeBlueprints";
 import { readPaimonsBargainsRotation } from "#src/services/shop/readPaimonsBargainsRotation";
+import { readCharacterTrials } from "#src/services/trial/readCharacterTrials";
 import { readShopGoodMap } from "#src/services/shop/readShopGoodMap";
 import { readWishSchedule } from "#src/services/wish/readWishSchedule";
 import { flushReads } from "#src/services/shared/flushReads.test";
@@ -41,6 +43,11 @@ vi.mock(import("#src/services/shop/readPaimonsBargainsRotation"), () => ({
 }));
 vi.mock(import("#src/services/shop/readShopGoodMap"), () => ({
   readShopGoodMap: vi.fn<typeof readShopGoodMapFn>(() => Promise.resolve(new Map())),
+}));
+vi.mock(import("#src/services/trial/readCharacterTrials"), () => ({
+  readCharacterTrials: vi.fn<typeof readCharacterTrialsFn>(() =>
+    Promise.resolve({ avatars: {}, builds: {}, reliquaries: {}, rewards: {}, stages: {}, templates: [] }),
+  ),
 }));
 vi.mock(import("#src/services/wish/readWishSchedule"), () => ({
   readWishSchedule: vi.fn<typeof readWishScheduleFn>(() => Promise.resolve([])),
@@ -105,7 +112,7 @@ describe(useWorldScreenRecords, () => {
     expect(records.craftingRecipes).toBe(recipes);
   });
 
-  test("reads the wish schedule as the wish screen opens", async () => {
+  test("reads the wish schedule and the character trials as the wish screen opens", async () => {
     expect.hasAssertions();
 
     startTestWorldSession();
@@ -116,6 +123,7 @@ describe(useWorldScreenRecords, () => {
     await flushReads();
 
     expect(readWishSchedule).toHaveBeenCalledExactlyOnceWith(gameDataBaseUrl);
+    expect(readCharacterTrials).toHaveBeenCalledExactlyOnceWith(gameDataBaseUrl);
   });
 
   test("reads the shop goods as a shop opens", async () => {

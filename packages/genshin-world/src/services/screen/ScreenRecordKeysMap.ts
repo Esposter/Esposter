@@ -8,5 +8,5 @@ export const ScreenRecordKeysMap: Partial<Record<ScreenKind, readonly ScreenReco
   [ScreenKind.Inventory]: [ScreenRecordKey.CraftingRecipes, ScreenRecordKey.HomeBlueprints],
   [ScreenKind.PaimonsBargains]: [ScreenRecordKey.ShopIdShopGoodMap, ScreenRecordKey.PaimonsBargainsRotation],
   [ScreenKind.Shop]: [ScreenRecordKey.ShopIdShopGoodMap],
-  [ScreenKind.Wish]: [ScreenRecordKey.WishSchedule],
+  [ScreenKind.Wish]: [ScreenRecordKey.WishSchedule, ScreenRecordKey.CharacterTrials],
 };

@@ -1,6 +1,7 @@
 import type { ScreenRecords } from "#src/models/screen/ScreenRecords";
 
 import { ScreenRecordKey } from "#src/models/screen/ScreenRecordKey";
+import { readCharacterTrials } from "#src/services/trial/readCharacterTrials";
 import { readCraftingRecipes } from "#src/services/crafting/readCraftingRecipes";
 import { readCraftingStrongboxes } from "#src/services/crafting/readCraftingStrongboxes";
 import { readDomainChallengeLevels } from "#src/services/domains/readDomainChallengeLevels";
@@ -13,6 +14,7 @@ import { readWishSchedule } from "#src/services/wish/readWishSchedule";
 export const ScreenRecordLoaderMap: {
   [K in ScreenRecordKey]: (gameDataBaseUrl: string) => Promise<ScreenRecords[K]>;
 } = {
+  [ScreenRecordKey.CharacterTrials]: readCharacterTrials,
   [ScreenRecordKey.CraftingRecipes]: readCraftingRecipes,
   [ScreenRecordKey.CraftingStrongboxes]: readCraftingStrongboxes,
   [ScreenRecordKey.DomainChallengeLevels]: readDomainChallengeLevels,
