@@ -58,9 +58,9 @@ flowchart TD
 
 ## Performance
 
-- **The frame step must not slow.** The session's per-frame work runs before every draw, so the change adds no store property read, subscription, patch or watcher to it. The check is the frame step's CPU time over a recorded walk, measured before the first slice and after each, and a slice that raises it by more than the bench's noise is not taken. If the frame step has no harness that runs without a canvas, the first task builds the smallest one; the existing benches cover the kit and camp services, which this change does not touch.
+- **The frame step must not slow.** The session's per-frame work runs before every draw, so the change adds no store property read, subscription, patch or watcher to it. The check is the frame step's CPU time over a walk, measured before the first slice and after each, and a slice that raises it by more than the bench's noise is not taken. The harness is `packages/genshin-world/src/composables/useWorldFrame.bench.ts`: the real `useWorldFrame` over the real stores, with a scripted walk of 791 frames (standing, walking, a switch, the sight, attacks, the shortcut wheel, the Paimon menu, the HUD and cursor toggles, a quest and an interaction, and the switch back) and each feature's own step left as a no-op, since a feature's step is a composable of the session root and has no canvas-free harness. So the figure is the frame's glue and the stores it reads, not the features' steps and not the draw.
 - **The cost of a store read is measured once,** by a bench comparing a ref read with the same read through a store, so the guideline above rests on a figure and not on a belief.
-- **Mount cost.** Starting the stores adds work at mount; it must not move the time to the first ready event by more than the noise of the visual suite's load.
+- **Mount cost.** Starting the stores adds work at mount; it must not move the time to the first ready event by more than the noise of the visual suite's load. The measure is the time to ready of `pnpm -C scripts genshin:parity load WorldScreen`, which mounts the session on the parity page's production build ([the load budget](../../specs/genshin/load-budget/design.md)).
 - **The package's bundle** grows with the lines the change adds, and Pinia is a peer, never bundled (the build skill's dependency placement). Its size is in the [bundle sizes](../../specs/architecture/bundle-sizes/design.md) record.
 
 ## Definition of done
@@ -77,9 +77,19 @@ For a slice:
 
 For the change: the shared keys are 0 in every call the root makes, the keys that one feature hands another are reported with the reasons for any that remain, the package is smaller than the investigation's baseline, and the guides state the pattern as the rule.
 
+## Baseline
+
+Measured on the Mac that runs the gate (Apple M1, 8 cores, 16 GiB, Node v26.13.1) at `e432ba77b5`. That commit already holds the session store and the first slices (tasks 1.1 to 3.2), so these are post-slice figures: the pre-slice tree (`2e8b89230~1`) needs a checkout and an install of its own, which this change's worktree does not have. Task 4.2 measures against these, and the pre-slice gap is the owner's to accept or close.
+
+- **Frame step.** `useWorldFrame.bench.ts` reads 61.8 ms for one run of the walk, about 78 µs a frame, with ±9.7% within its sitting. The committed report is the middle of three sittings, which read 93.3 ms (±13.9%), 61.8 ms and 24.7 ms (±11.1%). The Mac is shared with the other agents' builds, and the drift between sittings is nearly fourfold, so no absolute figure gates a change. A slice is read as an interleaved A and B in one sitting (A, B, A, B, A, B) by its direction, as the bench skill says.
+- **Mount.** `genshin:parity load WorldScreen` reads its time to ready at 6,149, 4,403 and 5,310 ms in three runs: a median of 5,310 ms and a spread of about ±17%. Of it the terrain step is 2.7 to 3.5 s and the world-gate 0.3 to 0.5 s. The meter exits non-zero at this commit, on every run, on two counts over their budgets: 379 requests against 132 and 11,031 KB of game data against 4,340 KB. Those counts were the same in all three runs, and a slice that raises them is a finding, since the change should add none. The meter prints the time to ready without checking it, as this Mac is not the machine the budget names.
+- **Read.** `session.bench.md` holds one thousand reads of the same value, the committed report being the middle of three sittings that agree within 5%: a ref reads at 0.29 ms, a store's getter at 0.44 ms and a field of a store's ref at 0.66 ms. So a store read costs about 0.14 µs more than a ref read through a getter and about 0.36 µs more through a field of a store's ref.
+
+The gate for 4.2 is therefore: the frame by an interleaved A and B in one sitting, the mount by the median of three runs against the spread above, and the reads by their own figures within the sittings' spread.
+
 ## The read bench
 
-`packages/genshin-world/src/store/session.bench.md` holds the cost of one thousand reads of the same value: a ref reads at about 0.34 ms, a store's getter at about 0.57 ms and a field of a store's ref at about 0.78 ms, so a store read costs between 0.2 and 0.45 microseconds more than a ref read. The frame step reads the context a few dozen times at most, which costs under a twentieth of a millisecond against a sixteen-millisecond frame, and the guideline stands as written: per-frame state stays out of stores and is read once into a local where a loop needs it. The frame step and the mount have no canvas-free harness here, and the hosted data they read cannot be reached from this container, so their baseline (tasks 0.2 and 4.2) is still to measure on a machine that has it.
+The frame step reads the context a few dozen times at most, which costs under 0.02 ms against a sixteen-millisecond frame at the read costs above, so the guideline stands as written: per-frame state stays out of stores and is read once into a local where a loop needs it. The Linux container's report that first recorded these reads (commit `b01fd8b790`, about 0.34, 0.57 and 0.78 ms) is superseded by the Mac's, since a report compares only on its own host.
 
 ## The count
 
@@ -102,12 +112,14 @@ Where state lives changes and the player sees no difference; the session's parit
 
 ## Key files
 
-| Path                                                                        | Role                                            |
-| :-------------------------------------------------------------------------- | :---------------------------------------------- |
-| `packages/genshin-world/src/components/World/Session/Index.vue`             | The root whose options lists the stores replace |
-| `packages/genshin-world/src/composables/useWorldSave.ts`                    | Owns the bag today, and emits its events        |
-| `packages/genshin-world/src/store/mail.ts`                                  | The first feature                               |
-| `packages/genshin-world/src/composables/useWorldFrame.ts`                   | The per-frame step the change must not slow     |
-| `.agents/skills/vue-component-patterns/references/splitting-a-component.md` | The measure every cut is judged by              |
-| `.agents/skills/pinia/SKILL.md`                                             | How a store is consumed, owned and torn down    |
-| `openspec/rejected/genshin/session-menu-layer/design.md`                    | The measurements this change is the way out of  |
+| Path                                                                        | Role                                                            |
+| :-------------------------------------------------------------------------- | :-------------------------------------------------------------- |
+| `packages/genshin-world/src/components/World/Session/Index.vue`             | The root whose options lists the stores replace                 |
+| `packages/genshin-world/src/composables/useWorldSave.ts`                    | Owns the bag today, and emits its events                        |
+| `packages/genshin-world/src/store/mail.ts`                                  | The first feature                                               |
+| `packages/genshin-world/src/composables/useWorldFrame.ts`                   | The per-frame step the change must not slow                     |
+| `packages/genshin-world/src/composables/useWorldFrame.bench.ts`             | The frame step's canvas-free bench, the baseline's frame figure |
+| `packages/genshin-world/src/store/session.bench.ts`                         | The read comparison, ref against store                          |
+| `.agents/skills/vue-component-patterns/references/splitting-a-component.md` | The measure every cut is judged by                              |
+| `.agents/skills/pinia/SKILL.md`                                             | How a store is consumed, owned and torn down                    |
+| `openspec/rejected/genshin/session-menu-layer/design.md`                    | The measurements this change is the way out of                  |
