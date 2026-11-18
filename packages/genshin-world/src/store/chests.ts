@@ -3,12 +3,13 @@ import type { ChestPlace } from "#src/models/chest/ChestPlace";
 import type { DroppedItem } from "#src/models/enemy/DroppedItem";
 import type { Interactable } from "#src/models/interaction/Interactable";
 
+import { GameDataKeys } from "#src/generated/gameDataKeys";
 import { AchievementEventKind } from "#src/models/achievement/AchievementEventKind";
 import { Currency } from "#src/models/inventory/Currency";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { computeChestInteractables } from "#src/services/chest/computeChestInteractables";
 import { openChest } from "#src/services/chest/openChest";
-import { readMondstadtChestPlaces } from "#src/services/chest/readMondstadtChestPlaces";
+import { readRegionChestPlaces } from "#src/services/chest/readRegionChestPlaces";
 import { checkIsDropFallingAway } from "#src/services/interaction/checkIsDropFallingAway";
 import { addDroppedItem } from "#src/services/inventory/addDroppedItem";
 import { getDroppedItemDefinition } from "#src/services/inventory/getDroppedItemDefinition";
@@ -22,8 +23,8 @@ import { defineStore } from "pinia";
 import { computed, shallowRef } from "vue";
 
 /**
- * Mondstadt's chests, fetched by their key as the world opens, and each one offered on the ground beneath its point: an
- * unopened chest to open, and a buried one to dig up. Digging a buried chest holds it dug for the session only, and a
+ * Every region's chests, each region's record fetched by its key as the world opens, and each one offered on the ground
+ * beneath its point: an unopened chest to open, and a buried one to dig up. Digging a buried chest holds it dug for the session only, and a
  * dug chest is offered to open, paying nothing until its tier is measured. Opening a chest rolls its Primogems, Mora and
  * Anemo Sigils into the wallet, pays its Adventure EXP to the Adventure Rank and pours its drops out where it stands, or
  * sends them to the bag where a drop would fall away there, and the chest is kept as opened. The chests the puzzles
@@ -121,7 +122,15 @@ export const useWorldChestsStore = defineStore("world/chests", () => {
     openedChestIds.value = starting.openedChestIds;
     ({ waterLevel } = starting);
     getSynchronizedFunction(() =>
-      getResultAsync(() => readMondstadtChestPlaces(worldSessionStore.gameDataBaseUrl)).match(
+      getResultAsync(async () =>
+        (
+          await Promise.all(
+            Object.keys(GameDataKeys.chests).map((regionId) =>
+              readRegionChestPlaces(worldSessionStore.gameDataBaseUrl, regionId),
+            ),
+          )
+        ).flat(),
+      ).match(
         (places) => {
           chestPlaces.value = places;
         },

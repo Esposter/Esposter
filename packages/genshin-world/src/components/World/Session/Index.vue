@@ -249,7 +249,7 @@ start(
   { inventory: savedState.inventory, wallet: savedState.wallet },
 );
 onUnmounted(stop);
-// Mondstadt's chests, each unopened one a row to open beneath its point, and opened on the key with the world's random.
+// Every region's chests, each unopened one a row to open beneath its point, and opened on the key with the world's random.
 // They start before the save watches them, so the load is not a change the save grants
 const worldChestsStore = useWorldChestsStore();
 const { start: startChests, stop: stopChests } = worldChestsStore;

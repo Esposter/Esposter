@@ -1,3 +1,4 @@
+import { ChestKind } from "#src/models/chest/ChestKind";
 import { PuzzleKind } from "#src/models/puzzle/PuzzleKind";
 import { SeelieState } from "#src/models/puzzle/SeelieState";
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
@@ -8,9 +9,19 @@ import { startTestWorldSession } from "#src/store/session.fixture";
 import { storeToRefs } from "pinia";
 import { describe, expect, test, vi } from "vitest";
 
-vi.mock(import("#src/services/chest/readMondstadtChestPlaces"), () => ({
-  readMondstadtChestPlaces: () => Promise.resolve([]),
+// Each region's record is served from the fetch the reader makes, so a record is read through its reader and its schema
+const { datasetRecordsMap } = vi.hoisted(() => ({ datasetRecordsMap: new Map<string, unknown[]>() }));
+
+vi.mock(import("#src/services/data/readGameDataObject"), () => ({
+  readGameDataObject: (_gameDataBaseUrl: string, dataset: string) =>
+    Promise.resolve(datasetRecordsMap.get(dataset) ?? []),
 }));
+
+// The start's reads are in the background, so they settle on the next turn of the event loop
+const waitForReads = () =>
+  new Promise((resolve) => {
+    setTimeout(resolve, 0);
+  });
 
 const createChests = (puzzleOptions: Parameters<ReturnType<typeof useWorldPuzzlesStore>["start"]>[0]) => {
   startTestWorldSession();
@@ -29,6 +40,7 @@ const createChests = (puzzleOptions: Parameters<ReturnType<typeof useWorldPuzzle
 describe(useWorldChestsStore, () => {
   const SEELIE_ID = "settled";
   const SEELIE_CHEST_ID = `seelie-chest-${SEELIE_ID}`;
+  const LIYUE_CHEST_ID = "chest-liyue";
   const TIME_TRIAL_ID = "time-trial";
   const puzzleOptions: Parameters<ReturnType<typeof useWorldPuzzlesStore>["start"]>[0] = {
     monumentPlaces: [],
@@ -47,6 +59,17 @@ describe(useWorldChestsStore, () => {
     shrinePlaces: [],
     timeTrialPlaces: [],
   };
+
+  test("An unopened chest in another region is offered to open", async () => {
+    expect.hasAssertions();
+
+    datasetRecordsMap.set("chests/liyue", [{ id: LIYUE_CHEST_ID, kind: ChestKind.Common, position: { x: 0, z: 0 } }]);
+    const { chestInteractables } = createChests({ ...puzzleOptions, seelies: [] });
+    await waitForReads();
+
+    expect(chestInteractables.value.map(({ id }) => id)).toStrictEqual([LIYUE_CHEST_ID]);
+    datasetRecordsMap.clear();
+  });
 
   test("a Seelie's chest is offered once it settles", () => {
     expect.hasAssertions();
