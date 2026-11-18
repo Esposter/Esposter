@@ -59,7 +59,7 @@ flowchart TD
 The watch itself is `useWatchTopics`: one watch per target, kept while a refreshed read names the same topics, with the newest refetch being the one that runs.
 
 The one exception is the room list's reorder: the room object's alarm writes a room's last-message time and sends `roomActivity` to its online members, which carries that time as the row change itself, since the alarm publishes no topic a refetch of the first page could follow.
-The rule is enforced by `RealtimeEventClassMap` (`packages/db-schema/src/models/realtime/RealtimeEventClassMap.ts`): every realtime event type must name the class its frame carries, no class is a refresh of a stored read, so a new event fails to typecheck until its author says what it carries instead.
+The rule is enforced by `RealtimeEventClassMap` (`packages/db-schema/src/models/realtime/RealtimeEventClassMap.ts`): every realtime event type must name the class its frame carries, no class is a refresh of a stored read, so a new event fails to typecheck until its author says what it carries instead. The classes are `Ephemeral`, `MessageStream`, `RowChange`, `ValuePush`, and `Command`, an instruction the client carries out that no stored read answers (leaving a call, dropping a room row, showing an alert).
 
 Four alternatives lost, each for a reason that still holds:
 
