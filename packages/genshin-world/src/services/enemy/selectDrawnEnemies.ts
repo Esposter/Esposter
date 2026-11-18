@@ -13,20 +13,16 @@ export const selectDrawnEnemies = (
   capacity: number,
 ): Enemy[] => {
   if (target === undefined) return [...enemies].slice(0, capacity);
-  if (capacity === 0) return [];
-  const drawn: Enemy[] = [];
-  const distances: number[] = [];
+  const drawn: { distance: number; enemy: Enemy }[] = [];
   for (const enemy of enemies) {
     const distance = squaredDistance(enemy.position, target);
-    if (drawn.length === capacity && distance >= distances[capacity - 1]) continue;
-    // Once the draw is full, the farthest kept is the one this enemy takes the place of
-    let index = Math.min(drawn.length, capacity - 1);
-    for (; index > 0 && distances[index - 1] > distance; index -= 1) {
-      distances[index] = distances[index - 1];
-      drawn[index] = drawn[index - 1];
-    }
-    distances[index] = distance;
-    drawn[index] = enemy;
+    // Once the draw is full, an enemy no nearer than its farthest kept is not drawn
+    const farthest = drawn.at(-1);
+    if (drawn.length === capacity && farthest !== undefined && distance >= farthest.distance) continue;
+    const index = drawn.findIndex((kept) => kept.distance > distance);
+    if (index === -1) drawn.push({ distance, enemy });
+    else drawn.splice(index, 0, { distance, enemy });
+    if (drawn.length > capacity) drawn.pop();
   }
-  return drawn;
+  return drawn.map(({ enemy }) => enemy);
 };
