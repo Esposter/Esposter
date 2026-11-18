@@ -1,6 +1,6 @@
 import { IRREGULAR_FAMILY_LABEL_SINGULARS } from "#src/services/genshinAssets/camps/constants";
 import { toWikiPageVariants } from "#src/services/genshinAssets/camps/toWikiPageVariants";
-import { EnemyKindId } from "genshin-world";
+import { Element, EnemyKindId } from "genshin-world";
 
 export interface FamilyLabelMap {
   matches: FamilyLabelMatch[];
@@ -20,6 +20,7 @@ export interface FamilyPageContent {
 }
 
 const WORLD_KIND_IDS: ReadonlySet<number> = new Set(Object.values(EnemyKindId));
+const ELEMENT_WORDS: ReadonlySet<string> = new Set(Object.keys(Element));
 
 const checkWorldKindId = (id: number): id is EnemyKindId => WORLD_KIND_IDS.has(id);
 
@@ -31,38 +32,51 @@ const toSingularLabel = (label: string): string =>
     .map((word) => (word.length > 3 && word.endsWith("s") && !word.endsWith("ss") ? word.slice(0, -1) : word))
     .join(" ");
 
-// Maps each family label to the first variant that is a kind the world holds, taken in the order of the pages and then of
-// Each page's links. A variant the page names exactly comes before one that carries the family term, so `Hilichurl` is
-// The Hilichurl and not a variant that merely ends in it. A variant's kind is the lowest-id world kind its name is. A label
-// No matching variant leads to a kind is unmapped, and no kind is given to it
+const toPluralLabel = (label: string): string => (label.endsWith("s") ? label : `${label}s`);
+
+// A name with its element words dropped, so that Fatui Pyro Agent is a Fatui Agent
+const stripElementWords = (name: string): string =>
+  name
+    .split(" ")
+    .filter((word) => !ELEMENT_WORDS.has(word))
+    .join(" ");
+
+// Whether a name is a family term of a form, or the form a family term of the name: the name is the form, a variant of it
+// (Fatui Skirmisher - Geochanter Bracer, Abyss Herald: Frost Fall, Cryo Abyss Mage), or the form is a variant the name
+// Is the family of (Fatui Mirror Maiden is the family of Mirror Maiden)
+const checkIsFamilyTerm = (name: string, form: string): boolean =>
+  name === form ||
+  name.startsWith(`${form}:`) ||
+  name.startsWith(`${form} -`) ||
+  name.endsWith(` ${form}`) ||
+  stripElementWords(name) === form ||
+  form.endsWith(` ${name}`);
+
+// Maps each family label to the lowest-id kind the world holds of its family, on the first of the pages that lists the
+// Family, with the first title the page lists for it as the variant. A label's family is its own name, its singular and
+// Plural, and the title the wiki redirects it to. A label no page lists, or no world kind is of its family, is unmapped
 export const buildFamilyLabelEnemyKindIdMap = (
   labels: readonly string[],
   pages: readonly FamilyPageContent[],
   monsters: readonly { id: number; name: string }[],
+  redirects: ReadonlyMap<string, string>,
 ): FamilyLabelMap => {
-  const nameKindIdMap = new Map<string, EnemyKindId>();
-  for (const { id, name } of monsters.toSorted((firstMonster, secondMonster) => firstMonster.id - secondMonster.id))
-    if (checkWorldKindId(id) && !nameKindIdMap.has(name)) nameKindIdMap.set(name, id);
+  const kinds = monsters
+    .flatMap(({ id, name }) => (checkWorldKindId(id) ? [{ id, name }] : []))
+    .toSorted((firstKind, secondKind) => firstKind.id - secondKind.id);
   const variantPages = pages.map(({ content, title }) => ({ title, variants: toWikiPageVariants(content) }));
   const matches: FamilyLabelMatch[] = [];
   const unmapped: string[] = [];
   for (const label of labels) {
-    const forms = [...new Set([label, toSingularLabel(label)])];
-    const exactCandidates = variantPages.flatMap(({ title, variants }) =>
-      variants.filter((variant) => forms.includes(variant)).map((variant) => ({ page: title, variant })),
-    );
-    const familyTermCandidates = variantPages.flatMap(({ title, variants }) =>
-      variants
-        .filter((variant) => forms.some((form) => variant.endsWith(` ${form}`) || variant.startsWith(`${form}:`)))
-        .map((variant) => ({ page: title, variant })),
-    );
-    const match = [...exactCandidates, ...familyTermCandidates].flatMap(({ page, variant }) => {
-      const kindId = nameKindIdMap.get(variant);
-      return kindId === undefined ? [] : [{ kindId, label, page, variant }];
-    });
-    const [firstMatch] = match;
-    if (firstMatch === undefined) unmapped.push(label);
-    else matches.push(firstMatch);
+    const names = [label, redirects.get(label)].filter((name) => name !== undefined);
+    const forms = [...new Set(names.flatMap((name) => [name, toSingularLabel(name), toPluralLabel(name)]))];
+    const isOfFamily = (name: string) => forms.some((form) => checkIsFamilyTerm(name, form));
+    const listing = variantPages
+      .map(({ title, variants }) => ({ page: title, variant: variants.find((variant) => isOfFamily(variant)) }))
+      .find((candidate) => candidate.variant !== undefined);
+    const kind = kinds.find(({ name }) => isOfFamily(name));
+    if (listing?.variant === undefined || kind === undefined) unmapped.push(label);
+    else matches.push({ kindId: kind.id, label, page: listing.page, variant: listing.variant });
   }
   return { matches, unmapped };
 };

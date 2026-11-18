@@ -7,7 +7,8 @@ import {
   FAMILY_LABEL_MAP_PATH,
   FAMILY_LABEL_MAP_RELATIVE_PATH,
 } from "#src/services/genshinAssets/camps/constants";
-import { toFamilyLabelMapSource } from "#src/services/genshinAssets/camps/toFamilyLabelMapSource";
+import { readFamilyLabelRedirects } from "#src/services/genshinAssets/camps/readFamilyLabelRedirects";
+import { toEnemyKindIdMember, toFamilyLabelMapSource } from "#src/services/genshinAssets/camps/toFamilyLabelMapSource";
 import { checkWikiPageCached } from "#src/services/genshinAssets/enemies/checkWikiPageCached";
 import { fetchEnemyWikiPages } from "#src/services/genshinAssets/enemies/fetchEnemyWikiPages";
 import { readWikiPageContent } from "#src/services/genshinAssets/enemies/readWikiPageContent";
@@ -24,7 +25,7 @@ export const familyLabelsCommand: SubCommandsDef[string] = defineCommand({
   args: { ...dryRunArgs },
   meta: {
     description:
-      "Map each enemy family label of the official map to the first variant its wiki family page lists that the world holds a kind for, and write the camps' family-label map from them",
+      "Map each enemy family label of the official map to the lowest-id kind the world holds of a family its wiki enemy pages list, through the wiki's redirects, and write the camps' family-label map from them",
     name: "family-labels",
   },
   run: async ({ args }) => {
@@ -42,15 +43,20 @@ export const familyLabelsCommand: SubCommandsDef[string] = defineCommand({
       return;
     }
     const pages = ENEMY_FAMILY_PAGE_TITLES.map((title) => ({ content: readWikiPageContent(title), title }));
+    const labels = enemyCategory.children.map(({ name }) => name);
     const { matches, unmapped } = buildFamilyLabelEnemyKindIdMap(
-      enemyCategory.children.map(({ name }) => name),
+      labels,
       pages,
       readMonsterNames(),
+      await readFamilyLabelRedirects(labels, isDryRun),
     );
     if (!isDryRun)
       writeFileSync(FAMILY_LABEL_MAP_PATH, formatText(FAMILY_LABEL_MAP_RELATIVE_PATH, toFamilyLabelMapSource(matches)));
     const lines = [
-      ...matches.map(({ label, page, variant }) => `${label}: ${variant} (${page})`),
+      ...matches.map(
+        ({ kindId, label, page, variant }) =>
+          `${label}: ${toEnemyKindIdMember(kindId)} (listed as ${variant} on ${page})`,
+      ),
       ...unmapped.map((label) => `${label}: unmapped, no variant of its page is a kind the world holds`),
       `${matches.length} of ${matches.length + unmapped.length} family labels mapped`,
     ];
