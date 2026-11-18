@@ -214,3 +214,31 @@ A wiki enemy name of a stage SHALL resolve to a codex entry only when every mons
 - **GIVEN** no monster's name is the wiki's enemy name
 - **WHEN** the stage is joined to the game's monsters
 - **THEN** the name is listed on the stage as refused, with a count of zero
+
+### Requirement: A Companion event offers characters of its pool's element, drawn from the eligible characters
+
+A Companion event SHALL offer the characters the season admits at the difficulty of its pool's element, or of any element when its pool names none, drawn from the world's seeded random source, and it SHALL cost the Fantasia Flowers its price.
+
+#### Scenario: A Companion event offers characters of its pool's element
+
+- **GIVEN** a Companion event whose pool names an element
+- **WHEN** its offers are drawn
+- **THEN** every offer is a character of that element
+
+#### Scenario: A Companion event offers only characters the season admits at the difficulty
+
+- **GIVEN** a character of the pool's element below the difficulty's level floor
+- **WHEN** the offers are drawn
+- **THEN** that character is not offered
+
+#### Scenario: A Companion event costs Fantasia Flowers
+
+- **GIVEN** a run holding the Companion's price in Fantasia Flowers
+- **WHEN** the event is paid
+- **THEN** the price is spent
+
+#### Scenario: A paid event is refused without enough Fantasia Flowers
+
+- **GIVEN** a run holding fewer Fantasia Flowers than the price
+- **WHEN** the event is paid
+- **THEN** the event is refused and no flower is spent

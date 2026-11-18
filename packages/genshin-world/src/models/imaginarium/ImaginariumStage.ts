@@ -7,8 +7,8 @@ import type { ImaginariumStageRefusal } from "#src/models/imaginarium/Imaginariu
 export interface ImaginariumStage {
   act: string;
   battle: string;
-  easyLevel: number;
   describeIds: number[];
+  easyLevel: number;
   refusals: ImaginariumStageRefusal[];
   seasonId: number;
   variant: number;

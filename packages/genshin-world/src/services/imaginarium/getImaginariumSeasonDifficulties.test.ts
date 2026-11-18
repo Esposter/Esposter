@@ -19,8 +19,8 @@ describe(getImaginariumSeasonDifficulties, () => {
     endsAt: SEASON_START,
     id: 1,
     openingCharacterIds: [1],
-    rewardGroup: 1,
     openingTrials: [],
+    rewardGroup: 1,
     specialGuestIds: [2],
   };
   const difficulties: ImaginariumDifficulty[] = [
