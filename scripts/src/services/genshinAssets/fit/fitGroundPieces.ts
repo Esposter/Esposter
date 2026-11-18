@@ -25,49 +25,55 @@ const fitQuarters = async (
 };
 
 // A piece fitted, and where its bar misses its gate, its four quarters fitted the same way, until each holds its gate or
-// Reads on fewer samples than a gate needs. A quarter reading under that minimum joins the sibling sharing an edge with the
-// Fewest samples, and the pair is fitted as one piece, refused where it misses rather than split again. A piece reading on
-// Fewer samples than the minimum is refused in place. Every quarter is fitted before the groups are chosen, since a quarter's
-// Sample count is its own fit's, so a joined quarter's fit is discarded for its pair's
+// Reads on fewer samples than a gate needs. The quarters reading under that minimum are grouped by `groupGroundQuarters`,
+// Each group fitted as one piece and kept only where it holds its gate, so a quarter no group holds is refused. A piece
+// Reading on fewer samples than the minimum is refused in place. Every quarter is fitted before the groups are chosen, since
+// A quarter's sample count is its own fit's, so a quarter's fit is discarded for the group it joins
 export const fitGroundPieces = async (piece: GroundPiece, source: GroundSource): Promise<GroundPiecesFit> => {
   const builds: GameDataBuild[] = [];
   let isRefused = false;
   // Depth first over the split, so a refused piece's groups are pushed in reverse and the first of them is fitted next
-  const pending: { fit?: GroundPieceFit; isJoined: boolean; piece: GroundPiece }[] = [{ isJoined: false, piece }];
+  const pending: { fit: GroundPieceFit; piece: GroundPiece }[] = [{ fit: await fitGroundPiece(piece, source), piece }];
   for (let next = pending.pop(); next !== undefined; next = pending.pop()) {
-    const fit = next.fit ?? (await fitGroundPiece(next.piece, source));
-    builds.push(fit.build);
-    if (fit.isHeld) continue;
-    if (next.isJoined || fit.sampleCount < GROUND_GATE_SAMPLES) {
+    builds.push(next.fit.build);
+    if (next.fit.isHeld) continue;
+    if (next.fit.sampleCount < GROUND_GATE_SAMPLES) {
       isRefused = true;
       continue;
     }
 
     const quarters = await fitQuarters(next.piece, source);
-    const groups = groupGroundQuarters(
-      quarters.map(({ fit: quarterFit }) => quarterFit.sampleCount),
+    const toJoinedPiece = (indices: number[]): GroundPiece =>
+      joinGroundPieces(
+        indices.map((index) => takeOne(quarters, index).piece),
+        `${next.piece.key}/${indices.join("-")}`,
+      );
+    // Every joined group the search fits is kept, so one it does not keep reports its bar beside the split
+    const attempts: GroundPieceFit[] = [];
+    const groups = await groupGroundQuarters(
+      quarters.map(({ fit }) => fit),
       GROUND_GATE_SAMPLES,
+      async (indices) => {
+        const fit = await fitGroundPiece(toJoinedPiece(indices), source);
+        attempts.push(fit);
+        return fit;
+      },
     );
-    const groupPieces = groups.map((group) => {
-      const members = group.map((index) => takeOne(quarters, index));
-      const member = takeOne(members, 0);
-      return members.length === 1
-        ? { fit: member.fit, isJoined: false, piece: member.piece }
-        : {
-            isJoined: true,
-            piece: joinGroundPieces(
-              members.map(({ piece: quarter }) => quarter),
-              `${next.piece.key}/${group.join("-")}`,
-            ),
-          };
+    const groupPieces = groups.map(({ fit, indices }) => {
+      const members = indices.map((index) => takeOne(quarters, index).piece);
+      return { fit, piece: members.length === 1 ? takeOne(members, 0) : toJoinedPiece(indices) };
     });
     const joinNotes = groups
-      .filter((group) => group.length > 1)
+      .filter(({ indices }) => indices.length > 1)
       .map(
-        (group) =>
-          `${next.piece.key}: quarters ${group.join(" and ")} read ${group.map((index) => takeOne(quarters, index).fit.sampleCount).join(" and ")} samples against the ${GROUND_GATE_SAMPLES} its gate needs, so they join as one piece`,
+        ({ indices }) =>
+          `${next.piece.key}: quarters ${indices.join(" and ")} read ${indices.map((index) => takeOne(quarters, index).fit.sampleCount).join(" and ")} samples, and join as one piece that holds its gate`,
       );
-    builds.push({ notes: [`${next.piece.key}: refused, split into its four quarters`, ...joinNotes], objects: {} });
+    const discarded = attempts.filter((attempt) => !groups.some(({ fit }) => fit === attempt));
+    builds.push(
+      { notes: [`${next.piece.key}: refused, split into its four quarters`, ...joinNotes], objects: {} },
+      ...discarded.map(({ build }) => build),
+    );
     pending.push(...groupPieces.toReversed());
   }
   return { build: mergeGameDataBuilds(builds), isRefused };
