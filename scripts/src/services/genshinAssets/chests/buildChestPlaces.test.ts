@@ -16,7 +16,7 @@ vi.mock(import("#src/services/genshinAssets/world/readWorldOrigin"), () => ({
 const { buildChestPlaces } = await import("#src/services/genshinAssets/chests/buildChestPlaces");
 
 describe(buildChestPlaces, () => {
-  test("A Mora chest stands at its marker in Mondstadt", async () => {
+  test("a Mora chest stands at its marker in Mondstadt", async () => {
     expect.hasAssertions();
 
     const { objects } = await buildChestPlaces();

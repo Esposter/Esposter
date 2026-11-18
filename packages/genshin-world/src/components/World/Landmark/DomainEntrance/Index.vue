@@ -17,7 +17,7 @@ interface Props {
   partMaterial: ToonNodeMaterial;
 }
 
-const { getGroundHeight, landmark, partMaterial } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>
