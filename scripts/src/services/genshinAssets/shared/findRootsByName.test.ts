@@ -26,7 +26,7 @@ describe(findRootsByName, () => {
     transformId: "0",
     ...overrides,
   });
-  // A prefab's root holding one child, two transforms apart from nothing: the name a child holds finds the root above it
+  // A prefab's root holds one child, and a name the child holds is climbed from the child to the root above it
   const layout = {
     objects: [
       createObject({ childIds: ["21"], gameObjectId: ROOT_GAME_OBJECT_ID, name: ROOT_NAME, transformId: "11" }),
