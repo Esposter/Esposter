@@ -4,7 +4,9 @@ import { Attribute } from "#src/models/character/Attribute";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
 import { createAeonWavePassiveModule } from "#src/services/weapon/passives/createAeonWavePassiveModule";
+import { createAquaRemembrancePassiveModule } from "#src/services/weapon/passives/createAquaRemembrancePassiveModule";
 import { createArchersMessagePassiveModule } from "#src/services/weapon/passives/createArchersMessagePassiveModule";
+import { createAshenSunsShadowPassiveModule } from "#src/services/weapon/passives/createAshenSunsShadowPassiveModule";
 import { createAstralWhispersPassiveModule } from "#src/services/weapon/passives/createAstralWhispersPassiveModule";
 import { createAtTheEndOfTheBeastPathsPassiveModule } from "#src/services/weapon/passives/createAtTheEndOfTheBeastPathsPassiveModule";
 import { createAzureSkiesPassiveModule } from "#src/services/weapon/passives/createAzureSkiesPassiveModule";
@@ -18,6 +20,7 @@ import { createBluntConclusionPassiveModule } from "#src/services/weapon/passive
 import { createBoltOfPerceptionPassiveModule } from "#src/services/weapon/passives/createBoltOfPerceptionPassiveModule";
 import { createBoundlessBlessingPassiveModule } from "#src/services/weapon/passives/createBoundlessBlessingPassiveModule";
 import { createBrightDawnOverturePassiveModule } from "#src/services/weapon/passives/createBrightDawnOverturePassiveModule";
+import { createBrocadeBloomShrineSwordPassiveModule } from "#src/services/weapon/passives/createBrocadeBloomShrineSwordPassiveModule";
 import { createByakuyaKougetsuPassiveModule } from "#src/services/weapon/passives/createByakuyaKougetsuPassiveModule";
 import { createBygoneAzureTeardropPassiveModule } from "#src/services/weapon/passives/createBygoneAzureTeardropPassiveModule";
 import { createCandleWovenFromTheNightPassiveModule } from "#src/services/weapon/passives/createCandleWovenFromTheNightPassiveModule";
@@ -37,6 +40,7 @@ import { createDaylightsAuguryPassiveModule } from "#src/services/weapon/passive
 import { createDeathlyPactPassiveModule } from "#src/services/weapon/passives/createDeathlyPactPassiveModule";
 import { createDebutPassiveModule } from "#src/services/weapon/passives/createDebutPassiveModule";
 import { createDecimatePassiveModule } from "#src/services/weapon/passives/createDecimatePassiveModule";
+import { createDesertWatchPassiveModule } from "#src/services/weapon/passives/createDesertWatchPassiveModule";
 import { createDeterminationPassiveModule } from "#src/services/weapon/passives/createDeterminationPassiveModule";
 import { createDiffusingBoundaryPassiveModule } from "#src/services/weapon/passives/createDiffusingBoundaryPassiveModule";
 import { createDodocoTalesPassiveModule } from "#src/services/weapon/passives/createDodocoTalesPassiveModule";
@@ -66,7 +70,9 @@ import { createGokadaiouOtogibanashiPassiveModule } from "#src/services/weapon/p
 import { createGoldenBloodTidePassiveModule } from "#src/services/weapon/passives/createGoldenBloodTidePassiveModule";
 import { createGoldenMajestyPassiveModule } from "#src/services/weapon/passives/createGoldenMajestyPassiveModule";
 import { createGuerillaTacticsPassiveModule } from "#src/services/weapon/passives/createGuerillaTacticsPassiveModule";
+import { createHalcyonYearsUnendingPassiveModule } from "#src/services/weapon/passives/createHalcyonYearsUnendingPassiveModule";
 import { createHamayumiPassiveModule } from "#src/services/weapon/passives/createHamayumiPassiveModule";
+import { createHeatHazeAtHorizonsEndPassiveModule } from "#src/services/weapon/passives/createHeatHazeAtHorizonsEndPassiveModule";
 import { createHeavyPassiveModule } from "#src/services/weapon/passives/createHeavyPassiveModule";
 import { createHeritagePassiveModule } from "#src/services/weapon/passives/createHeritagePassiveModule";
 import { createHonedFlowPassiveModule } from "#src/services/weapon/passives/createHonedFlowPassiveModule";
@@ -649,4 +655,16 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "280615235": createNetSnapperPassiveModule,
   // The Way of Sunfire (Scion of the Blazing Sun)
   "3791123787": createWayOfSunfirePassiveModule,
+  // Brocade Bloom, Shrine Sword (Uraku Misugiri)
+  "801463315": createBrocadeBloomShrineSwordPassiveModule,
+  // Halcyon Years Unending (Peak Patrol Song)
+  "929949883": createHalcyonYearsUnendingPassiveModule,
+  // Desert Watch (Beacon of the Reed Sea)
+  "4248300875": createDesertWatchPassiveModule,
+  // Heat Haze at Horizon's End (Staff of the Scarlet Sands)
+  "810032467": createHeatHazeAtHorizonsEndPassiveModule,
+  // Ashen Sun's Shadow (Crimson Moon's Semblance)
+  "742248595": createAshenSunsShadowPassiveModule,
+  // Aqua Remembrance (Surf's Up)
+  "3837080627": createAquaRemembrancePassiveModule,
 };
