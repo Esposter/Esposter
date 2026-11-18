@@ -193,6 +193,51 @@ describe(getReadTopics, () => {
     await expect(getReadTopics(statements)).resolves.toStrictEqual(["message_rooms:*", "message_usersToRooms:*"]);
   });
 
+  // An `in` over the table itself keeps the rows its subquery names, since each of the subquery's values is held by a row the
+  // Read returns. So each returned row names the value it holds, and the subquery's own equality names the viewer's rows
+  test("a table an in over itself tests is named by each value its subquery's rows hold", async () => {
+    expect.hasAssertions();
+
+    const { db } = await createMockDb();
+    const userId = v7();
+    const otherUserId = v7();
+    await insertUser(db, userId);
+    await insertUser(db, otherUserId);
+    const firstRoomId = v7();
+    const secondRoomId = v7();
+    await db.insert(roomsInMessage).values([
+      { id: firstRoomId, name: firstRoomId, type: RoomType.Room, userId },
+      { id: secondRoomId, name: secondRoomId, type: RoomType.Room, userId },
+    ]);
+    await db.insert(usersToRoomsInMessage).values([
+      { roomId: firstRoomId, userId },
+      { roomId: secondRoomId, userId },
+      { roomId: firstRoomId, userId: otherUserId },
+    ]);
+    const { database, statements } = recordStatements(db);
+
+    await database
+      .select()
+      .from(usersToRoomsInMessage)
+      .where(
+        inArray(
+          usersToRoomsInMessage.roomId,
+          database
+            .select({ roomId: usersToRoomsInMessage.roomId })
+            .from(usersToRoomsInMessage)
+            .where(eq(usersToRoomsInMessage.userId, userId)),
+        ),
+      );
+
+    await expect(getReadTopics(statements)).resolves.toStrictEqual(
+      [
+        `message_usersToRooms:roomId=${firstRoomId}`,
+        `message_usersToRooms:roomId=${secondRoomId}`,
+        `message_usersToRooms:userId=${userId}`,
+      ].toSorted(),
+    );
+  });
+
   // A table an `in` over another table tests stays table-wide, though its returned rows carry the column. A room the viewer is
   // In may hold no emoji yet, and the first emoji it gets carries a value no returned row names, so the outer table is read whole
   test("a table an in over another table tests stays table-wide, though its returned rows carry the column", async () => {

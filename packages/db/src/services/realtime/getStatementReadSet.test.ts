@@ -17,6 +17,7 @@ describe(getStatementReadSet, () => {
     expect(statements.map(({ statement }) => getStatementReadSet(statement).joins)).toStrictEqual([
       [
         {
+          kind: "inner",
           left: { column: "roomId", selectedAs: "roomId", table: "message_usersToRooms" },
           right: { column: "id", table: "message_rooms" },
         },

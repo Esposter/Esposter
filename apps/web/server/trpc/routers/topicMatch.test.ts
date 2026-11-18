@@ -195,9 +195,9 @@ describe("topicMatch", () => {
     ]);
   });
 
-  // The sidebar lists the rooms the viewer is in, with each direct message's participants joined on the room. Another member
-  // Joining a room the sidebar lists wakes it through that room's own value, not through the participants table as a whole
-  test("another member joining a room the viewer lists wakes the sidebar through that room's value", async () => {
+  // The sidebar's direct-message participants are filtered to the other members, so their table is read whole, and another
+  // Member joining a room the viewer lists wakes the sidebar through that table's topic
+  test("another member joining a room the viewer lists wakes the sidebar through the memberships table", async () => {
     expect.hasAssertions();
 
     const context = await createMockContext();
@@ -215,7 +215,78 @@ describe("topicMatch", () => {
       .returning();
 
     expect(getWokenTopics(await getReadTopics(read.statements), await getWriteTopics(write.statements))).toStrictEqual([
-      `message_usersToRooms:roomId=${room.id}`,
+      "message_usersToRooms:*",
+    ]);
+  });
+
+  // The read inner-joins the memberships, so it returns the rooms that have a member and names the memberships by those rooms.
+  // A room with no member yet gains its first, a membership of a value the read does not return, so only the memberships'
+  // Own table topic reaches the read
+  test("a room gaining its first member wakes a read that inner-joins the memberships", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    const context = await createMockContext();
+    const memberedRoomId = v7();
+    const emptyRoomId = v7();
+    await context.db.insert(roomsInMessage).values([
+      { id: memberedRoomId, name: memberedRoomId, type: RoomType.Room, userId },
+      { id: emptyRoomId, name: emptyRoomId, type: RoomType.Room, userId },
+    ]);
+    await context.db
+      .insert(usersToRoomsInMessage)
+      .values({ notificationType: NotificationType.DirectMessage, roomId: memberedRoomId, userId });
+    const read = recordStatements(context.db);
+    await read.database
+      .select({ id: roomsInMessage.id })
+      .from(roomsInMessage)
+      .innerJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.roomId, roomsInMessage.id));
+    const write = recordStatements(context.db);
+
+    await write.database
+      .insert(usersToRoomsInMessage)
+      .values({ notificationType: NotificationType.DirectMessage, roomId: emptyRoomId, userId })
+      .returning();
+
+    expect(getWokenTopics(await getReadTopics(read.statements), await getWriteTopics(write.statements))).toStrictEqual([
+      "message_usersToRooms:*",
+    ]);
+  });
+
+  // The read filters the memberships to the ones not hidden, so it returns the rooms whose membership is visible and names
+  // Them by those rooms. Unhiding a hidden membership brings its room back, a value the read does not return, so only the
+  // Memberships' own table topic reaches the read
+  test("unhiding a membership wakes a read that filters the memberships by it", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    const context = await createMockContext();
+    const visibleRoomId = v7();
+    const hiddenRoomId = v7();
+    await context.db.insert(roomsInMessage).values([
+      { id: visibleRoomId, name: visibleRoomId, type: RoomType.Room, userId },
+      { id: hiddenRoomId, name: hiddenRoomId, type: RoomType.Room, userId },
+    ]);
+    await context.db.insert(usersToRoomsInMessage).values([
+      { isHidden: false, notificationType: NotificationType.DirectMessage, roomId: visibleRoomId, userId },
+      { isHidden: true, notificationType: NotificationType.DirectMessage, roomId: hiddenRoomId, userId },
+    ]);
+    const read = recordStatements(context.db);
+    await read.database
+      .select({ id: roomsInMessage.id })
+      .from(roomsInMessage)
+      .leftJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.roomId, roomsInMessage.id))
+      .where(eq(usersToRoomsInMessage.isHidden, false));
+    const write = recordStatements(context.db);
+
+    await write.database
+      .update(usersToRoomsInMessage)
+      .set({ isHidden: false })
+      .where(and(eq(usersToRoomsInMessage.roomId, hiddenRoomId), eq(usersToRoomsInMessage.userId, userId)))
+      .returning();
+
+    expect(getWokenTopics(await getReadTopics(read.statements), await getWriteTopics(write.statements))).toStrictEqual([
+      "message_usersToRooms:*",
     ]);
   });
 });

@@ -1,8 +1,13 @@
+import type { JoinKind } from "#src/models/realtime/JoinKind";
+import type { JoinSide } from "#src/models/realtime/JoinSide";
+
 export interface ReadSet {
+  // The columns a read filters on, other than by a scope equality or a join: a row the filter removes can come back, so a
+  // Table filtered this way is read whole
+  filters: ReadSetColumn[];
   joins: ReadSetJoin[];
   // The statement levels a read holds: the statement it awaited and each statement nested in it, read apart
   levels: ReadSetLevel[];
-  nullChecks: ReadSetColumn[];
   scopes: ReadSetScope[];
   // Every table the levels name, each once
   tables: string[];
@@ -14,8 +19,11 @@ export interface ReadSetColumn {
   table: string;
 }
 
+// A join's kind, and for a left join the side it null-fills: the side a row of the other side may come without a match
 export interface ReadSetJoin {
+  kind: JoinKind;
   left: ReadSetKey;
+  nullFilled?: JoinSide;
   right: ReadSetKey;
 }
 
