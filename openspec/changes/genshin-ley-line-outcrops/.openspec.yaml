@@ -3,7 +3,7 @@ affected_areas: [genshin]
 x-phase: 5
 x-model: claude-opus-5-5
 x-needs: [game-exports]
-x-waiting: "Task 5.1: no region but Mondstadt has fitted outcrop places, since OUTCROP_REGIONS holds Mondstadt alone, so Fontaine, Natlan, Snezhnaya and Nod-Krai need their Ley Line Blossom points fitted into their region data first."
+x-waiting: "Task 5.1: Fontaine, Natlan, Snezhnaya and Nod-Krai remain. The dump's section order table has no rows for their cities (5 to 8), so their blossoms stay out of OUTCROP_REGIONS, and Snezhnaya also has no fitted places, since its fit matched none of its statues or waypoints."
 x-touches:
   [
     "scripts/src/models/genshinAssets/leyLine/**",

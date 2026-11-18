@@ -18,4 +18,4 @@
 ## 5. The regions the dump does not cover
 
 - [ ] 5.1 Add the blossoms of Fontaine, Natlan, Snezhnaya and Nod-Krai once each one's Ley Line Blossom points are fitted into its region data as outcrop places, as Mondstadt's are, and the dump's section order table names its sections. Verify: tests named after the scenario "Touching an outcrop spawns its enemies", run for each of the four regions.
-      Waits on fitted places: no region but Mondstadt has outcrop places in its data, since `OUTCROP_REGIONS` in `scripts/src/services/genshinAssets/shared/constants.ts` names Mondstadt alone. Fontaine, Natlan, Snezhnaya and Nod-Krai have none fitted; Liyue, Inazuma and Sumeru have none either, though the dump covers them.
+      Liyue, Inazuma and Sumeru are fitted (67, 22 and 42 places) and their scenario test runs for each. Still open: Fontaine (city 5), Natlan (city 6), Snezhnaya (city 7) and Nod-Krai (city 8) stay out, because the dump's section order table has no rows for those cities, so their sections are unnamed. Snezhnaya also has no fitted places, since its fit matched no statue or waypoint.
