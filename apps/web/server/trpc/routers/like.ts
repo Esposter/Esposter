@@ -10,24 +10,18 @@ import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { router } from "#server/trpc/index";
-import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { createLikeInputSchema } from "#shared/models/db/post/CreateLikeInput";
 import { deleteLikeInputSchema } from "#shared/models/db/post/DeleteLikeInput";
 import { updateLikeInputSchema } from "#shared/models/db/post/UpdateLikeInput";
-import { DatabaseEntityType, getTopic, likesInPost, postsInPost, TopicKind } from "@esposter/db-schema";
+import { DatabaseEntityType, likesInPost, postsInPost } from "@esposter/db-schema";
 import { getResultAsync, Operation } from "@esposter/shared";
 import { and, eq, exists, sql } from "drizzle-orm";
-
-// A like moves its post's count, which the post and the feed both show, and the feed is ranked by it
-const getLikeTopics = (postId: string) => [getTopic(TopicKind.Post, postId), getTopic(TopicKind.Feed, "posts")];
 
 // Each vote is one batch: the like's row and the count it moves commit together or not at all, and the ranking
 // Follows in its own write once the count it was computed from is known (`updateLikeRanking`)
 export const likeRouter = router({
-  createLike: getTopicsProcedure(standardAuthedProcedure.input(createLikeInputSchema), ({ input }) =>
-    getLikeTopics(input.postId),
-  ).mutation<LikeInPost>(async ({ ctx, input }) => {
+  createLike: standardAuthedProcedure.input(createLikeInputSchema).mutation<LikeInPost>(async ({ ctx, input }) => {
     const post = await requireEntity(readLikedPost(ctx.db, input.postId), DatabaseEntityType.Post, input.postId);
     // The primary key on (post, user) refuses a second like of the same post, which fails the batch whole. Mapped to
     // The refusal a client desynced by a double-click or a stale feed has always been given, rather than a raw 500
@@ -41,7 +35,7 @@ export const likeRouter = router({
           .update(postsInPost)
           .set({ likeCount: sql`${postsInPost.likeCount} + ${input.value}` })
           .where(eq(postsInPost.id, input.postId))
-          .returning({ likeCount: postsInPost.likeCount }),
+          .returning(),
       ]),
     ).match(
       (results) => results,
@@ -59,9 +53,7 @@ export const likeRouter = router({
     );
     return newLike;
   }),
-  deleteLike: getTopicsProcedure(standardAuthedProcedure.input(deleteLikeInputSchema), ({ input }) =>
-    getLikeTopics(input),
-  ).mutation<LikeInPost>(async ({ ctx, input }) => {
+  deleteLike: standardAuthedProcedure.input(deleteLikeInputSchema).mutation<LikeInPost>(async ({ ctx, input }) => {
     const userId = ctx.user.id;
     const post = await requireEntity(readLikedPost(ctx.db, input), DatabaseEntityType.Post, input);
     const existingLike = requireMutation(
@@ -87,7 +79,7 @@ export const likeRouter = router({
             ),
           ),
         )
-        .returning({ likeCount: postsInPost.likeCount }),
+        .returning(),
       ctx.db
         .delete(likesInPost)
         .where(and(getLikeWhere(input, userId), eq(likesInPost.value, existingLike.value)))
@@ -101,51 +93,51 @@ export const likeRouter = router({
     );
     return deletedLike;
   }),
-  updateLike: getTopicsProcedure(standardAuthedProcedure.input(updateLikeInputSchema), ({ input }) =>
-    getLikeTopics(input.postId),
-  ).mutation<LikeInPost>(async ({ ctx, input: { postId, value } }) => {
-    const userId = ctx.user.id;
-    const [post, existingLike] = await Promise.all([readLikedPost(ctx.db, postId), readLike(ctx.db, postId, userId)]);
-    if (!post) throw getNotFoundError(DatabaseEntityType.Post, postId);
-    else if (!existingLike) throw getNotFoundError(DatabaseEntityType.Like, postId);
-    else if (existingLike.value === value)
-      throw getInvalidOperationError(Operation.Update, DatabaseEntityType.Like, JSON.stringify({ postId, value }));
+  updateLike: standardAuthedProcedure
+    .input(updateLikeInputSchema)
+    .mutation<LikeInPost>(async ({ ctx, input: { postId, value } }) => {
+      const userId = ctx.user.id;
+      const [post, existingLike] = await Promise.all([readLikedPost(ctx.db, postId), readLike(ctx.db, postId, userId)]);
+      if (!post) throw getNotFoundError(DatabaseEntityType.Post, postId);
+      else if (!existingLike) throw getNotFoundError(DatabaseEntityType.Like, postId);
+      else if (existingLike.value === value)
+        throw getInvalidOperationError(Operation.Update, DatabaseEntityType.Like, JSON.stringify({ postId, value }));
 
-    // The count moves by the change and the like takes the new value, only while the like still holds the value it
-    // Is changed from; the count is written first, so its guard reads the like before the change lands
-    const [updatedPostRows, updatedLikeRows] = await ctx.db.batch([
-      ctx.db
-        .update(postsInPost)
-        .set({ likeCount: sql`${postsInPost.likeCount} + ${value - existingLike.value}` })
-        .where(
-          and(
-            eq(postsInPost.id, postId),
-            exists(
-              ctx.db
-                .select({ _: sql`1` })
-                .from(likesInPost)
-                .where(and(getLikeWhere(postId, userId), eq(likesInPost.value, existingLike.value))),
+      // The count moves by the change and the like takes the new value, only while the like still holds the value it
+      // Is changed from; the count is written first, so its guard reads the like before the change lands
+      const [updatedPostRows, updatedLikeRows] = await ctx.db.batch([
+        ctx.db
+          .update(postsInPost)
+          .set({ likeCount: sql`${postsInPost.likeCount} + ${value - existingLike.value}` })
+          .where(
+            and(
+              eq(postsInPost.id, postId),
+              exists(
+                ctx.db
+                  .select({ _: sql`1` })
+                  .from(likesInPost)
+                  .where(and(getLikeWhere(postId, userId), eq(likesInPost.value, existingLike.value))),
+              ),
             ),
-          ),
-        )
-        .returning({ likeCount: postsInPost.likeCount }),
-      ctx.db
-        .update(likesInPost)
-        .set({ value })
-        .where(and(getLikeWhere(postId, userId), eq(likesInPost.value, existingLike.value)))
-        .returning(),
-    ]);
-    const updatedLike = requireMutation(
-      updatedLikeRows[0],
-      Operation.Update,
-      DatabaseEntityType.Like,
-      JSON.stringify({ postId, value }),
-    );
-    await updateLikeRanking(
-      ctx.db,
-      post,
-      requireMutation(updatedPostRows[0], Operation.Update, DatabaseEntityType.Post, postId).likeCount,
-    );
-    return updatedLike;
-  }),
+          )
+          .returning(),
+        ctx.db
+          .update(likesInPost)
+          .set({ value })
+          .where(and(getLikeWhere(postId, userId), eq(likesInPost.value, existingLike.value)))
+          .returning(),
+      ]);
+      const updatedLike = requireMutation(
+        updatedLikeRows[0],
+        Operation.Update,
+        DatabaseEntityType.Like,
+        JSON.stringify({ postId, value }),
+      );
+      await updateLikeRanking(
+        ctx.db,
+        post,
+        requireMutation(updatedPostRows[0], Operation.Update, DatabaseEntityType.Post, postId).likeCount,
+      );
+      return updatedLike;
+    }),
 });

@@ -1,10 +1,11 @@
 import { createMockContext } from "#server/trpc/context.test";
-import { trpcRouter } from "#server/trpc/routers/index";
 import { createBlockLiveTopicCalls } from "#server/trpc/routers/blockLiveTopicCalls.test";
 import { createBookmarkLiveTopicCalls } from "#server/trpc/routers/bookmarkLiveTopicCalls.test";
 import { createFriendLiveTopicCalls } from "#server/trpc/routers/friendLiveTopicCalls.test";
 import { createFriendRequestLiveTopicCalls } from "#server/trpc/routers/friendRequestLiveTopicCalls.test";
+import { trpcRouter } from "#server/trpc/routers/index";
 import { createInviteLiveTopicCalls } from "#server/trpc/routers/inviteLiveTopicCalls.test";
+import { createLikeLiveTopicCalls } from "#server/trpc/routers/likeLiveTopicCalls.test";
 import { expectLiveTopicCoverage } from "#server/trpc/routers/liveTopicCoverage.test";
 import { createPostLiveTopicCalls } from "#server/trpc/routers/postLiveTopicCalls.test";
 import { createRoomLiveTopicCalls } from "#server/trpc/routers/room/liveTopicCalls.test";
@@ -25,6 +26,7 @@ describe("live topic coverage across the app", () => {
       await createFriendRequestLiveTopicCalls(context),
       await createInviteLiveTopicCalls(context),
       await createPostLiveTopicCalls(context),
+      await createLikeLiveTopicCalls(context),
       await createRoomLiveTopicCalls(context),
     ];
     await expectLiveTopicCoverage(
