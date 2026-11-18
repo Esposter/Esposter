@@ -2,6 +2,7 @@
 export const AssetType = {
   AnimationClip: "AnimationClip",
   Animator: "Animator",
+  AnimatorController: "AnimatorController",
   Avatar: "Avatar",
   Camera: "Camera",
   GameObject: "GameObject",

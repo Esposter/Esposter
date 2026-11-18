@@ -188,47 +188,49 @@ The game's art below cannot ship, because it is the game's own mesh, texture, cl
 
 ## Key files
 
-| File                                                                    | Role                                                                                                                          |
-| :---------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------- |
-| `scripts/src/services/genshinAssets/commands/genshinAssetsCommand.ts`   | The asset tool's subcommands, where the monsters subcommand is added                                                          |
-| `scripts/src/services/recreation/animeStudio/buildAnimeStudio.ts`       | Applies the Ooz and Leviathan edits to the pinned clone and, once task 4.0 applies it, the controller export patch            |
-| `scripts/src/services/genshinAssets/commands/enemiesCommand.ts`         | Publishes the kinds and curves, and the drop families joined to each kind, and prints each family's kinds before it publishes |
-| `scripts/src/services/genshinAssets/commands/enemyPagesCommand.ts`      | Fetches the enemy wiki pages the cache lacks, with its dry run                                                                |
-| `scripts/src/services/genshinAssets/enemies/fetchEnemyWikiPages.ts`     | Walks the enemy wiki pages, fetching each one the cache does not hold                                                         |
-| `scripts/src/services/genshinAssets/commands/timingsCommand.ts`         | Exports the clips a name pattern matches, and prints their events                                                             |
-| `scripts/src/services/genshinAssets/commands/avatarCommand.ts`          | Writes a humanoid's avatar from its exported body                                                                             |
-| `scripts/src/services/genshinAssets/commands/fitCommand.ts`             | Runs each component's fit, with its dry run and its publish                                                                   |
-| `scripts/src/services/genshinAssets/enemies/buildEnemyKinds.ts`         | Builds the kinds and their level curves from the monster tables                                                               |
-| `scripts/src/services/genshinAssets/world/readAssetPathNames.ts`        | Names the path hashes the community index holds                                                                               |
-| `scripts/src/services/genshinAssets/enemies/nameMonsterAssets.ts`       | Names a monster row's prefab, controller and combat config from the path names, and counts the hashes they do not name        |
-| `scripts/src/services/genshinAssets/enemies/readMonsterAssetRows.ts`    | Reads the monster table's rows, its path hashes as the source text the dump writes them in                                    |
-| `scripts/src/services/genshinAssets/world/readPrefabBlocks.ts`          | Finds the blocks a prefab's root is exported from                                                                             |
-| `scripts/src/services/genshinAssets/kits/constants.ts`                  | The wiki's API address and the wiki cache folder                                                                              |
-| `scripts/src/services/genshinAssets/kits/wiki/readWikiTalentPages.ts`   | The wiki's API read the enemy page fetch follows                                                                              |
-| `scripts/src/services/genshinAssets/fit/DerivedAssetFitMap.ts`          | Each component's fit, which gains the monster fit                                                                             |
-| `scripts/src/services/genshinAssets/fit/fitStatueComponent.ts`          | Writes a piece as upright stacks, the candidate for a body's pieces                                                           |
-| `scripts/src/services/genshinAssets/shared/DerivedAssetComponentMap.ts` | Each component's assets and roots, which gains the monster component                                                          |
-| `scripts/src/models/genshinAssets/shared/DerivedAssetComponent.ts`      | The component enum, which gains the monster member                                                                            |
-| `scripts/src/services/genshinAssets/camps/FamilyLabelEnemyKindIdMap.ts` | The family label map, which task 2.2 maps from each family page's variants                                                    |
-| `packages/genshin-world/src/services/enemy/readEnemyTables.ts`          | Reads the enemy records as the world opens, and joins each kind to its drop table                                             |
-| `packages/genshin-world/src/models/enemy/EnemyDropFamilyRow.ts`         | The drop family row the enemies dataset publishes, with its schema, which replaces the hand-written drop table                |
-| `packages/genshin-world/src/services/enemy/computeEnemyDrops.ts`        | Rolls a defeat's drops from its kind's drop table, and its Character EXP                                                      |
-| `packages/genshin-world/src/services/enemy/EnemyKindTraitsMap.ts`       | Each kind's traits, including its attack element                                                                              |
-| `packages/genshin-world/src/models/enemy/EnemyDropFamilyKindRow.ts`     | The row joining each kind to its drop family, with its schema                                                                 |
-| `packages/genshin-world/src/services/enemy/constants.ts`                | The draw capacity and the AI's provisional timings                                                                            |
-| `packages/genshin-world/src/components/World/Enemies/Index.vue`         | Draws the capsules, which gain the nearest-first selection, the telegraph and the bodies                                      |
-| `packages/genshin-world/src/services/kit/computeEnemyStrikeDamage.ts`   | An enemy's strike, which reads its attack's damage                                                                            |
-| `packages/genshin-world/src/services/bosses/EnemyKindMovesLoaderMap.ts` | Each boss's moves, owned by the bosses change                                                                                 |
-| `packages/genshin-world/src/generated/gameDataLock.json`                | The lock of every published record, which gains the drop families and the monster fit                                         |
-| `scripts/src/services/genshinAssets/enemies/buildEnemyDropFamilies.ts`  | Joins each non-boss kind to its drop family through its article, and builds the family and kind rows                          |
-| `scripts/src/services/genshinAssets/enemies/parseLuaTable.ts`           | Reads a wiki data module's Lua table, the Enemies table among them, into values                                               |
-| `scripts/src/services/genshinAssets/enemies/readWikiPageContent.ts`     | Reads a wiki page's text from the cache, and refuses a page the cache lacks                                                   |
-| `scripts/src/services/genshinAssets/enemies/toEnemyWikiPageTitles.ts`   | Derives the titles the enemy step fetches: the drops module and each non-boss kind's English name                             |
-| `scripts/src/services/genshinAssets/enemies/readMaterialIdsByName.ts`   | Each material's item ids by its English name, which the families name their materials by                                      |
-| `scripts/src/services/genshinAssets/enemies/toDropFamilyLines.ts`       | The family lines the enemies step prints before it publishes                                                                  |
-| `scripts/src/services/genshinAssets/enemies/constants.ts`               | The drops module's title, and the familyless kinds with the reason each gives                                                 |
-| `scripts/src/services/genshinAssets/items/buildItems.ts`                | Takes every drop family's materials into the items table, read from the published families                                    |
-| `packages/genshin-world/src/data/regions/mondstadt.json`                | The Mondstadt camps, whose kinds the drop families and the body name                                                          |
+| File                                                                        | Role                                                                                                                          |
+| :-------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------- |
+| `scripts/src/services/genshinAssets/commands/genshinAssetsCommand.ts`       | The asset tool's subcommands, where the monsters subcommand is added                                                          |
+| `scripts/src/services/recreation/animeStudio/buildAnimeStudio.ts`           | Applies the Ooz and Leviathan edits to the pinned clone and, once task 4.0 applies it, the controller export patch            |
+| `scripts/src/services/genshinAssets/commands/enemiesCommand.ts`             | Publishes the kinds and curves, and the drop families joined to each kind, and prints each family's kinds before it publishes |
+| `scripts/src/services/genshinAssets/commands/enemyPagesCommand.ts`          | Fetches the enemy wiki pages the cache lacks, with its dry run                                                                |
+| `scripts/src/services/genshinAssets/enemies/fetchEnemyWikiPages.ts`         | Walks the enemy wiki pages, fetching each one the cache does not hold                                                         |
+| `scripts/src/services/genshinAssets/commands/timingsCommand.ts`             | Exports the clips a name pattern matches, and prints their events                                                             |
+| `scripts/src/services/genshinAssets/commands/avatarCommand.ts`              | Writes a humanoid's avatar from its exported body                                                                             |
+| `scripts/src/services/genshinAssets/commands/fitCommand.ts`                 | Runs each component's fit, with its dry run and its publish                                                                   |
+| `scripts/src/services/genshinAssets/enemies/buildEnemyKinds.ts`             | Builds the kinds and their level curves from the monster tables                                                               |
+| `scripts/src/services/genshinAssets/world/readAssetPathNames.ts`            | Names the path hashes the community index holds                                                                               |
+| `scripts/src/services/genshinAssets/enemies/nameMonsterAssets.ts`           | Names a monster row's prefab, controller and combat config from the path names, and counts the hashes they do not name        |
+| `scripts/src/services/genshinAssets/enemies/readMonsterAssetRows.ts`        | Reads the monster table's rows, its path hashes as the source text the dump writes them in                                    |
+| `scripts/src/services/genshinAssets/enemies/parseControllerStates.ts`       | Reads an Animator controller's JSON export into each state, its name and the clips its blend tree plays                       |
+| `scripts/src/services/genshinAssets/enemies/readMonsterControllerStates.ts` | Exports a recorded controller from its block and reads its states, the block coming from the controller record                |
+| `scripts/src/services/genshinAssets/world/readPrefabBlocks.ts`              | Finds the blocks a prefab's root is exported from                                                                             |
+| `scripts/src/services/genshinAssets/kits/constants.ts`                      | The wiki's API address and the wiki cache folder                                                                              |
+| `scripts/src/services/genshinAssets/kits/wiki/readWikiTalentPages.ts`       | The wiki's API read the enemy page fetch follows                                                                              |
+| `scripts/src/services/genshinAssets/fit/DerivedAssetFitMap.ts`              | Each component's fit, which gains the monster fit                                                                             |
+| `scripts/src/services/genshinAssets/fit/fitStatueComponent.ts`              | Writes a piece as upright stacks, the candidate for a body's pieces                                                           |
+| `scripts/src/services/genshinAssets/shared/DerivedAssetComponentMap.ts`     | Each component's assets and roots, which gains the monster component                                                          |
+| `scripts/src/models/genshinAssets/shared/DerivedAssetComponent.ts`          | The component enum, which gains the monster member                                                                            |
+| `scripts/src/services/genshinAssets/camps/FamilyLabelEnemyKindIdMap.ts`     | The family label map, which task 2.2 maps from each family page's variants                                                    |
+| `packages/genshin-world/src/services/enemy/readEnemyTables.ts`              | Reads the enemy records as the world opens, and joins each kind to its drop table                                             |
+| `packages/genshin-world/src/models/enemy/EnemyDropFamilyRow.ts`             | The drop family row the enemies dataset publishes, with its schema, which replaces the hand-written drop table                |
+| `packages/genshin-world/src/services/enemy/computeEnemyDrops.ts`            | Rolls a defeat's drops from its kind's drop table, and its Character EXP                                                      |
+| `packages/genshin-world/src/services/enemy/EnemyKindTraitsMap.ts`           | Each kind's traits, including its attack element                                                                              |
+| `packages/genshin-world/src/models/enemy/EnemyDropFamilyKindRow.ts`         | The row joining each kind to its drop family, with its schema                                                                 |
+| `packages/genshin-world/src/services/enemy/constants.ts`                    | The draw capacity and the AI's provisional timings                                                                            |
+| `packages/genshin-world/src/components/World/Enemies/Index.vue`             | Draws the capsules, which gain the nearest-first selection, the telegraph and the bodies                                      |
+| `packages/genshin-world/src/services/kit/computeEnemyStrikeDamage.ts`       | An enemy's strike, which reads its attack's damage                                                                            |
+| `packages/genshin-world/src/services/bosses/EnemyKindMovesLoaderMap.ts`     | Each boss's moves, owned by the bosses change                                                                                 |
+| `packages/genshin-world/src/generated/gameDataLock.json`                    | The lock of every published record, which gains the drop families and the monster fit                                         |
+| `scripts/src/services/genshinAssets/enemies/buildEnemyDropFamilies.ts`      | Joins each non-boss kind to its drop family through its article, and builds the family and kind rows                          |
+| `scripts/src/services/genshinAssets/enemies/parseLuaTable.ts`               | Reads a wiki data module's Lua table, the Enemies table among them, into values                                               |
+| `scripts/src/services/genshinAssets/enemies/readWikiPageContent.ts`         | Reads a wiki page's text from the cache, and refuses a page the cache lacks                                                   |
+| `scripts/src/services/genshinAssets/enemies/toEnemyWikiPageTitles.ts`       | Derives the titles the enemy step fetches: the drops module and each non-boss kind's English name                             |
+| `scripts/src/services/genshinAssets/enemies/readMaterialIdsByName.ts`       | Each material's item ids by its English name, which the families name their materials by                                      |
+| `scripts/src/services/genshinAssets/enemies/toDropFamilyLines.ts`           | The family lines the enemies step prints before it publishes                                                                  |
+| `scripts/src/services/genshinAssets/enemies/constants.ts`                   | The drops module's title, and the familyless kinds with the reason each gives                                                 |
+| `scripts/src/services/genshinAssets/items/buildItems.ts`                    | Takes every drop family's materials into the items table, read from the published families                                    |
+| `packages/genshin-world/src/data/regions/mondstadt.json`                    | The Mondstadt camps, whose kinds the drop families and the body name                                                          |
 
 ## Notes
 
