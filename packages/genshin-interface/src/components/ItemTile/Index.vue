@@ -7,14 +7,14 @@ interface Props {
   count: number | string;
   // The count's font size, in the tile's own units (cqh): a screen unit set outside the tile would resolve against the tile
   countSize?: string | undefined;
+  // The item's traced icon: path data in a 100 unit square over the whole face, drawn under the count strip. An item
+  // With none is passed an empty string, and its tile shows its rarity face alone
+  icon?: string | undefined;
   // The item's rarity in stars, which colours the tile
   rarity: number;
   // The look the quest screen's reward tiles draw: a face lit by its own gradients, and a translucent count strip.
   // The game's reward lists' look when none is given
   variant?: "quest" | undefined;
-  // The item's traced icon: path data in a 100 unit square over the whole face, drawn under the count strip. An item
-  // With none is passed an empty string, and its tile shows its rarity face alone
-  icon?: string | undefined;
 }
 
 const { countSize = "30cqh", icon = "" } = defineProps<Props>();
@@ -66,6 +66,7 @@ const { countSize = "30cqh", icon = "" } = defineProps<Props>();
 }
 
 .count {
+  position: relative;
   width: 100%;
   height: 24cqh;
   color: #fff;
