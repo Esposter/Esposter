@@ -64,7 +64,7 @@ describe(useWorldChestsStore, () => {
     timeTrialPlaces: [],
   };
 
-  test("An unopened chest in another region is offered to open", async () => {
+  test("an unopened chest in another region is offered to open", async () => {
     expect.hasAssertions();
 
     datasetRecordsMap.set("chests/liyue", [{ id: LIYUE_CHEST_ID, kind: ChestKind.Common, position: { x: 0, z: 0 } }]);
@@ -72,6 +72,19 @@ describe(useWorldChestsStore, () => {
     await waitForReads();
 
     expect(chestInteractables.value.map(({ id }) => id)).toStrictEqual([LIYUE_CHEST_ID]);
+  });
+
+  test("a region with no published chest record offers no chest", async () => {
+    expect.hasAssertions();
+
+    // The lock publishes no chest record for Dragonspine, so a record served under its name is never read
+    datasetRecordsMap.set("chests/dragonspine", [
+      { id: "chest-dragonspine", kind: ChestKind.Common, position: { x: 0, z: 0 } },
+    ]);
+    const { chestInteractables } = createChests({ ...puzzleOptions, seelies: [] });
+    await waitForReads();
+
+    expect(chestInteractables.value).toStrictEqual([]);
   });
 
   test("a Seelie's chest is offered once it settles", () => {

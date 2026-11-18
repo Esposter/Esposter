@@ -126,8 +126,8 @@ export const useWorldChestsStore = defineStore("world/chests", () => {
       getResultAsync(async () =>
         (
           await Promise.all(
-            Object.keys(GameDataKeys.chests).map((regionId) =>
-              readRegionChestPlaces(worldSessionStore.gameDataBaseUrl, regionId),
+            Object.values(GameDataKeys.chests).map((key) =>
+              readRegionChestPlaces(worldSessionStore.gameDataBaseUrl, key),
             ),
           )
         ).flat(),

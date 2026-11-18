@@ -4,17 +4,17 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 
 | Package                    | File                     |   Bytes |    KiB |
 | :------------------------- | :----------------------- | ------: | -----: |
-| genshin-world              | **/*.js                  | 4092324 | 3996.4 |
-| genshin-world              | **/*.d.ts                | 2802083 | 2736.4 |
+| genshin-world              | **/*.js                  | 4094188 | 3998.2 |
+| genshin-world              | **/*.d.ts                | 2804755 | 2739.0 |
 | @esposter/db               | **/*.js                  |  760635 |  742.8 |
 | genshin-text               | **/*.js                  |  692740 |  676.5 |
 | genshin-engine             | **/*.js                  |  344036 |  336.0 |
 | genshin-interface          | **/*.d.ts                |  316498 |  309.1 |
 | vue-phaserjs               | **/*.d.ts                |  314808 |  307.4 |
-| genshin-world              | index.d.ts               |  278018 |  271.5 |
+| genshin-world              | index.d.ts               |  278299 |  271.8 |
 | genshin-world              | style.css                |  274314 |  267.9 |
 | genshin-interface          | **/*.js                  |  267668 |  261.4 |
-| genshin-world              | index.js                 |  228230 |  222.9 |
+| genshin-world              | index.js                 |  228497 |  223.1 |
 | @esposter/db-schema        | **/*.js                  |  207396 |  202.5 |
 | genshin-interface          | style.css                |  194226 |  189.7 |
 | genshin-engine             | **/*.d.ts                |  128347 |  125.3 |
@@ -154,4 +154,4 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | genshin-engine             | constants.d.ts           |      36 |    0.0 |
 | genshin-world              | terrainTileWorker.d.ts   |       9 |    0.0 |
 
-**Total:** 149 files, 12906260 bytes, 12603.8 KiB, 12.31 MiB
+**Total:** 149 files, 12911344 bytes, 12608.7 KiB, 12.31 MiB
