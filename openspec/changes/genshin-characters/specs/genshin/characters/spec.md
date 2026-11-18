@@ -20,7 +20,7 @@ A character's model SHALL play its standing, walking, running and sprinting moti
 
 A character's model SHALL stand at the height of the game's own model of that character.
 
-#### Scenario: the Traveler's height matches the game's model
+#### Scenario: the Traveler's model stands at its game model's height
 
 - **GIVEN** the Traveler standing in the world
 - **WHEN** the Traveler's height is compared with the game's model of the Traveler
