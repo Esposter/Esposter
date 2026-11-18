@@ -11,6 +11,8 @@ import { checkIsEnemyRespawned } from "#src/services/enemy/checkIsEnemyRespawned
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { getSpawnKey } from "#src/services/enemy/getSpawnKey";
+import { useWorldEnemyKindMovesStore } from "#src/store/enemyKindMoves";
+import { storeToRefs } from "pinia";
 import { watchImmediate } from "@vueuse/core";
 import { toValue } from "vue";
 
@@ -57,9 +59,12 @@ export const useEnemySpawns = ({
   // Every camp of every region whose data has arrived
   const getEnemyCamps = () => [...toValue(regionDataMap).values()].flatMap(({ enemyCamps }) => enemyCamps);
   const loadedCampIds = new Set<string>();
+  const worldEnemyKindMovesStore = useWorldEnemyKindMovesStore();
+  const { enemyKindMovesMap } = storeToRefs(worldEnemyKindMovesStore);
+  const { loadEnemyKindMoves } = worldEnemyKindMovesStore;
   let spawnedWorldLevel = toValue(worldLevel);
   watchImmediate(
-    () => [toValue(worldLevel), getEnemyCamps(), toValue(outcropCamps)] as const,
+    () => [toValue(worldLevel), getEnemyCamps(), toValue(outcropCamps), enemyKindMovesMap.value] as const,
     ([currentWorldLevel, enemyCamps, fightingCamps]) => {
       onLoad();
       if (currentWorldLevel !== spawnedWorldLevel) {
@@ -73,6 +78,8 @@ export const useEnemySpawns = ({
       const now = getWorldNow();
       for (const { areaId, id, members } of enemyCamps) {
         if (loadedCampIds.has(id)) continue;
+        // A camp waits for the moves of its bosses, so a boss is never spawned without them
+        if (loadEnemyKindMoves(members.map(({ enemyKindId }) => enemyKindId))) continue;
         loadedCampIds.add(id);
         const campEnemyTypes = getCampEnemyTypes(members);
         for (const member of members) {
@@ -103,6 +110,7 @@ export const useEnemySpawns = ({
       }
       for (const { id, members } of fightingCamps) {
         if (loadedCampIds.has(id)) continue;
+        if (loadEnemyKindMoves(members.map(({ enemyKindId }) => enemyKindId))) continue;
         loadedCampIds.add(id);
         for (const member of members) {
           const spawnKey = getSpawnKey(id, member.id);

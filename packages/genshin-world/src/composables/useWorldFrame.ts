@@ -1,7 +1,6 @@
 import type { WorldFrameOptions } from "#src/models/world/WorldFrameOptions";
 
 import { ScreenKind } from "#src/models/screen/ScreenKind";
-import { EnemyKindMovesMap } from "#src/services/bosses/EnemyKindMovesMap";
 import { startBossMove } from "#src/services/bosses/startBossMove";
 import { stepElementalSight } from "#src/services/elementalSight/stepElementalSight";
 import { checkIsEnemyKindId } from "#src/services/enemy/checkIsEnemyKindId";
@@ -20,6 +19,7 @@ import { useWorldStatuesStore } from "#src/store/statues";
 import { MILLISECONDS_PER_SECOND } from "@esposter/shared";
 import { InputAction } from "genshin-engine";
 import { InteractionKind } from "genshin-interface";
+import { useWorldEnemyKindMovesStore } from "#src/store/enemyKindMoves";
 import { storeToRefs } from "pinia";
 
 // The world's frame, run before each draw: the input is read, the screen it moves to is chosen, and each feature that
@@ -73,13 +73,15 @@ export const useWorldFrame = ({
   const { getWorldNow } = worldSessionStore;
   // Whether the world is in play: not paused and on the world's own screen, which a step changes as the frame goes on
   const checkIsWorldInPlay = () => !checkIsPaused() && screenKind.value === ScreenKind.World;
+  const worldEnemyKindMovesStore = useWorldEnemyKindMovesStore();
+  const { enemyKindMovesMap } = storeToRefs(worldEnemyKindMovesStore);
   // Each attack a phase's end names starts on whichever boss makes it, and a name no boss makes starts nothing
   const startBossMoves = (attacks: readonly string[]) => {
     for (const attack of attacks)
       for (const enemy of kitContext.enemyMap.values())
         startBossMove(
           enemy,
-          checkIsEnemyKindId(enemy.enemyKindId) ? (EnemyKindMovesMap[enemy.enemyKindId] ?? []) : [],
+          checkIsEnemyKindId(enemy.enemyKindId) ? (enemyKindMovesMap.value[enemy.enemyKindId] ?? []) : [],
           attack,
         );
   };

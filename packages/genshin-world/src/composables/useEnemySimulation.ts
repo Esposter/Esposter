@@ -14,7 +14,6 @@ import { CombatEvent } from "#src/models/combat/CombatEvent";
 import { EnemyEvent } from "#src/models/enemy/EnemyEvent";
 import { EnemyState } from "#src/models/enemy/EnemyState";
 import { EnemyType } from "#src/models/enemy/EnemyType";
-import { EnemyKindMovesMap } from "#src/services/bosses/EnemyKindMovesMap";
 import { advanceElementalState } from "#src/services/combat/aura/advanceElementalState";
 import { checkIsEnemyKindId } from "#src/services/enemy/checkIsEnemyKindId";
 import { checkIsEnemyShieldBroken } from "#src/services/enemy/checkIsEnemyShieldBroken";
@@ -28,7 +27,9 @@ import { stepCombat } from "#src/services/enemy/stepCombat";
 import { stepEnemy } from "#src/services/enemy/stepEnemy";
 import { wakeEnemyCamps } from "#src/services/enemy/wakeEnemyCamps";
 import { selectEnemyTaunt } from "#src/services/kit/selectEnemyTaunt";
+import { useWorldEnemyKindMovesStore } from "#src/store/enemyKindMoves";
 import { createFixedStepLoop } from "genshin-engine";
+import { storeToRefs } from "pinia";
 import { toValue } from "vue";
 
 // The enemies stepped on the engine's fixed-step loop: each one's elements age, its AI moves it at the body or a taunt,
@@ -76,6 +77,8 @@ export const useEnemySimulation = ({
   // The enemies whose shield the last step saw broken, so a shield that is still broken counts as one break and not one
   // For each step
   const brokenShieldEnemies = new WeakSet<Enemy>();
+  const worldEnemyKindMovesStore = useWorldEnemyKindMovesStore();
+  const { enemyKindMovesMap } = storeToRefs(worldEnemyKindMovesStore);
   const getCampLocks = (): ChestLockSource[] => computeCampLockSources(getEnemyCamps(), enemyMap);
   return createFixedStepLoop(ENEMY_STEP_SECONDS, () => {
     let isAnyDefeated = false;
@@ -87,7 +90,7 @@ export const useEnemySimulation = ({
         enemy,
         taunt ? taunt.body.position : toValue(target),
         ENEMY_STEP_SECONDS,
-        checkIsEnemyKindId(enemy.enemyKindId) ? EnemyKindMovesMap[enemy.enemyKindId] : undefined,
+        checkIsEnemyKindId(enemy.enemyKindId) ? enemyKindMovesMap.value[enemy.enemyKindId] : undefined,
       );
       // A shield stands again as its stagger ends or the enemy arrives home, and can break again, so a shield the step sees
       // Broken that it did not see broken before is a break. It is read after the step, where a shield stands again, so a
