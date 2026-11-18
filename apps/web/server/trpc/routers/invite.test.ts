@@ -3,6 +3,7 @@ import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { banRoomMember } from "#server/services/message/moderation/banRoomMember";
+import { MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
 import { createMockAuthSession, createMockCaller, createMockContext, getMockSession } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
 import { createRoomMember } from "#server/trpc/routers/createRoomMember.test";
@@ -10,10 +11,18 @@ import { inviteRouter } from "#server/trpc/routers/invite";
 import { expectLiveTopicCoverage } from "#server/trpc/routers/liveTopicCoverage.test";
 import { createDirectMessageWithFriend } from "#server/trpc/routers/room/createDirectMessageWithFriend.test";
 import { roomRouter } from "#server/trpc/routers/room/index";
+import { readTopicsHeader } from "#shared/services/realtime/readTopicsHeader";
 import { INVITE_MAX_USES_OPTIONS } from "#shared/services/room/invite/constants";
 import { InviteExpireAfterMinutesMap } from "#shared/services/room/invite/InviteExpireAfterMinutesMap";
-import { DatabaseEntityType, friendsInSocial, invitesInMessage, roomsInMessage } from "@esposter/db-schema";
+import {
+  DatabaseEntityType,
+  friendsInSocial,
+  getScopeTopic,
+  invitesInMessage,
+  roomsInMessage,
+} from "@esposter/db-schema";
 import { generateSecretToken, InvalidOperationError, Operation, SECRET_TOKEN_LENGTH, takeOne } from "@esposter/shared";
+import { getTableName } from "drizzle-orm";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 // The code generator is the seam a collision is injected at; it delegates to the real one by default, so every
@@ -163,6 +172,27 @@ describe("inviteRouter", () => {
     const myInvite = await inviteCaller.readMyInvite({ roomId: newRoom.id });
 
     expect(myInvite).toBeUndefined();
+  });
+
+  // The read that finds a lapsed link deletes it, so the room's invite list, which reads every invite of the room, is
+  // Woken by that delete and stops showing the link
+  test("reading my expired invite wakes the room's invite list", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    await inviteCaller.createInvite({ expireAfterMinutes, maxUses: 0, roomId: newRoom.id });
+    const listHeaders = new Headers();
+    await createCallerFactory(inviteRouter)({ ...mockContext, responseHeaders: listHeaders }).readRoomInvites({
+      roomId: newRoom.id,
+    });
+    const roomTopic = getScopeTopic(getTableName(invitesInMessage), "roomId", newRoom.id);
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(0).add({ minutes: expireAfterMinutes + 1 }));
+    MockPublishedTopics.length = 0;
+
+    await inviteCaller.readMyInvite({ roomId: newRoom.id });
+
+    expect(readTopicsHeader(listHeaders, "readRoomInvites").flatMap(({ topics }) => topics)).toContain(roomTopic);
+    expect(MockPublishedTopics).toContain(roomTopic);
   });
 
   // The usability predicate runs over the page rather than in SQL, so a page can filter down to fewer rows than it
