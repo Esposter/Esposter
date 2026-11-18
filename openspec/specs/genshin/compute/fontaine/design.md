@@ -2,8 +2,6 @@
 
 ## Queue
 
-- [ ] `[cpu]` {fontaine-terrain-tiles} needs game-install — **Fontaine: the terrain tiles its area outlines name, exported.** `pnpm -C scripts genshin:assets extract fontaine`, with the game closed. Reads the game install through its map, `{data-root}/genshin-parity/extracted/maps/`, the Windrise export `{data-root}/genshin-parity/extracted/windrise/` that places the origin, and `packages/genshin-world/src/data/catalogue.json`. Writes `{data-root}/genshin-parity/extracted/fontaine/`. Measure: `pnpm -C scripts genshin:assets missing-tiles fontaine`, bar `missing 0` of its 21 outline tiles. Its export lacked 17 of its 21 outline tiles when measured on 19 Nov.
-
 ## Waiting
 
 - [ ] `[page]` {fontaine-light} needs game-exports, parity-page — **Fontaine: the light pass.** `pnpm -C scripts genshin:parity passes fontaine --pass Light`. Reads the solved direction above, the lit stone's colour over the reference and its glow over the reference's frame. Writes `scripts/src/services/genshinParity/passes/snapshots/fontaine.snapshot.md`. Bar: the Light bars of [compute](../README.md#bars). Waits on a solved sun direction, which needs a reference frame whose shadows fall on flat receivers (the shadow image entry under Open).
