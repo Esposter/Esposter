@@ -2,8 +2,6 @@
 
 ## Queue
 
-- [ ] `[cpu]` {natlan-terrain-tiles} needs game-install — **Natlan: the terrain tiles its area outlines name, exported.** `pnpm -C scripts genshin:assets extract natlan`, with the game closed. Reads the game install through its map, `{data-root}/genshin-parity/extracted/maps/`, the Windrise export `{data-root}/genshin-parity/extracted/windrise/` that places the origin, and `packages/genshin-world/src/data/catalogue.json`. Writes `{data-root}/genshin-parity/extracted/natlan/`. Measure: `pnpm -C scripts genshin:assets missing-tiles natlan`, bar `missing 0` of its 37 outline tiles, with "BigWorldTerrain_-1_15.bin" and "BigWorldTerrain_0_15.bin" absent from the install, as the [outline tiles](../README.md#outline-tiles) section sets out.
-
 ## Waiting
 
 - [ ] `[page]` {people-of-the-springs-location-camera-landmarks} needs game-exports, parity-page — **people-of-the-springs-location: the camera solved on its landmarks and written.** `pnpm -C scripts genshin:parity pose people-of-the-springs-location --witness natlan --write`. Reads `{data-root}/genshin-parity/references/people-of-the-springs-location.png`, its seven landmarks in `scripts/src/services/genshinParity/shared/ParityReferenceMap.ts` (read by eye off 4x crops, rigid architecture: the spire's apex and cap, the hall's two roof tips and platform corner, a terrace's stair top, a walkway post's foot) and their shares in `DerivedAssetLandmarkMap`. Seven landmarks solve the pose without `--start`. Writes `cameraPose` as the [compute bars](../README.md#bars) set out. — waits on a mesh the extraction holds for each landmark, and on the witness.
