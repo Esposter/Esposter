@@ -3,6 +3,7 @@ affected_areas: [genshin]
 x-phase: 6
 x-model: claude-haiku-5-5
 x-needs: [game-exports]
+x-waiting: "Task 4.2 waits on a seal measured for each sealed place: no published place names one, and the captured chest-seal-pyro.mkv shows no sealed chest in the frames sampled, so no chest carries a seal for a strike to free."
 x-touches:
   [
     "packages/genshin-world/src/services/chest/**",
