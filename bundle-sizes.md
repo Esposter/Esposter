@@ -4,17 +4,17 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 
 | Package                    | File                     |   Bytes |    KiB |
 | :------------------------- | :----------------------- | ------: | -----: |
-| genshin-world              | **/*.js                  | 4084854 | 3989.1 |
-| genshin-world              | **/*.d.ts                | 2705525 | 2642.1 |
+| genshin-world              | **/*.js                  | 4090260 | 3994.4 |
+| genshin-world              | **/*.d.ts                | 2799573 | 2734.0 |
 | @esposter/db               | **/*.js                  |  760635 |  742.8 |
 | genshin-text               | **/*.js                  |  692740 |  676.5 |
 | genshin-engine             | **/*.js                  |  344036 |  336.0 |
 | genshin-interface          | **/*.d.ts                |  316498 |  309.1 |
 | vue-phaserjs               | **/*.d.ts                |  314808 |  307.4 |
-| genshin-world              | index.d.ts               |  276427 |  269.9 |
-| genshin-world              | style.css                |  272908 |  266.5 |
+| genshin-world              | index.d.ts               |  277369 |  270.9 |
+| genshin-world              | style.css                |  272907 |  266.5 |
 | genshin-interface          | **/*.js                  |  267668 |  261.4 |
-| genshin-world              | index.js                 |  227464 |  222.1 |
+| genshin-world              | index.js                 |  228205 |  222.9 |
 | @esposter/db-schema        | **/*.js                  |  207396 |  202.5 |
 | genshin-interface          | style.css                |  194226 |  189.7 |
 | genshin-engine             | **/*.d.ts                |  128347 |  125.3 |
@@ -154,4 +154,4 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | genshin-engine             | constants.d.ts           |      36 |    0.0 |
 | genshin-world              | terrainTileWorker.d.ts   |       9 |    0.0 |
 
-**Total:** 149 files, 12798469 bytes, 12498.5 KiB, 12.21 MiB
+**Total:** 149 files, 12899605 bytes, 12597.3 KiB, 12.30 MiB
