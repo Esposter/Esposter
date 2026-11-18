@@ -2,7 +2,7 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { ReactionType } from "#src/models/combat/ReactionType";
-import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { checkIsOwnDamageTaken } from "#src/services/kit/checkIsOwnDamageTaken";
 import { addPassiveStack } from "#src/services/kit/effects/addPassiveStack";
 import { countKitStatusStacks } from "#src/services/kit/effects/countKitStatusStacks";
 import { checkIsReactionNamed } from "#src/services/weapon/passives/checkIsReactionNamed";
@@ -29,12 +29,7 @@ export const createWhiteFairysQueeningPassiveModule = (params: number[]): Passiv
         : {};
     },
     onKitEvent: (event, { kitEffectState }, combatant) => {
-      if (
-        event.kind !== KitEventKind.DamageTaken ||
-        event.striker.characterId !== combatant.characterId ||
-        event.attackTag !== AttackTag.ChargedAttack
-      )
-        return;
+      if (!checkIsOwnDamageTaken(event, combatant) || event.attackTag !== AttackTag.ChargedAttack) return;
       addPassiveStack(kitEffectState, combatant.characterId, {
         cooldownSeconds: TRANSCENDENCE_STACK_COOLDOWN_SECONDS,
         id: TRANSCENDENCE_ID,

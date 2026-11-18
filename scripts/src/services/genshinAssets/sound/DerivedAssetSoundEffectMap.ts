@@ -1,4 +1,4 @@
-import type { SoundStart } from "#src/models/genshinAssets/sound/SoundStart";
+import type { DerivedAssetSoundEffect } from "#src/models/genshinAssets/sound/DerivedAssetSoundEffect";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { LOGIN_DOOR_SOUNDS, MINIMUM_PACKAGE_NAME } from "#src/services/genshinAssets/shared/constants";
@@ -6,10 +6,7 @@ import { LOGIN_DOOR_SOUNDS, MINIMUM_PACKAGE_NAME } from "#src/services/genshinAs
 // Each component's sound effects by the name its fitted `<component>/sounds.json` keeps each under: the game's sounds
 // `genshin:assets sounds` matched for it, in the packages a pattern names, which `fit` reads its levels from and the
 // Audio pass scores it against
-export const DerivedAssetSoundEffectMap: Record<
-  DerivedAssetComponent,
-  Record<string, { pattern: string; sounds: readonly SoundStart[] }>
-> = {
+export const DerivedAssetSoundEffectMap: Record<DerivedAssetComponent, Record<string, DerivedAssetSoundEffect>> = {
   // Each sub-area with a catalogued extent has no sound effects of its own
   [DerivedAssetComponent.ArdraviValley]: {},
   [DerivedAssetComponent.AshavanRealm]: {},

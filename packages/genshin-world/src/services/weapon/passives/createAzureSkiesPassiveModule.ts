@@ -1,8 +1,8 @@
 import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
-import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { checkIsNormalOrChargedAttack } from "#src/services/kit/checkIsNormalOrChargedAttack";
+import { checkIsOwnDamageTaken } from "#src/services/kit/checkIsOwnDamageTaken";
 import { addPassiveStack } from "#src/services/kit/effects/addPassiveStack";
 import { takeOne } from "@esposter/shared";
 
@@ -18,12 +18,7 @@ export const createAzureSkiesPassiveModule = (params: number[]): PassiveModule =
   const chargedAttackDamageBonus = takeOne(params, 3);
   return {
     onKitEvent: (event, { kitEffectState }, combatant) => {
-      if (
-        event.kind !== KitEventKind.DamageTaken ||
-        event.striker.characterId !== combatant.characterId ||
-        !checkIsNormalOrChargedAttack(event.attackTag)
-      )
-        return;
+      if (!checkIsOwnDamageTaken(event, combatant) || !checkIsNormalOrChargedAttack(event.attackTag)) return;
       addPassiveStack(kitEffectState, combatant.characterId, {
         cooldownSeconds,
         id: AZURE_SKIES_ID,

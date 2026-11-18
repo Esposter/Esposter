@@ -2,7 +2,7 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
-import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { checkIsOwnDamageTaken } from "#src/services/kit/checkIsOwnDamageTaken";
 import { addPassiveStack } from "#src/services/kit/effects/addPassiveStack";
 import { takeOne } from "@esposter/shared";
 
@@ -18,12 +18,7 @@ export const createUntaintedDesirePassiveModule = (params: number[]): PassiveMod
   const maximumStacks = takeOne(params, 3);
   return {
     onKitEvent: (event, { kitEffectState }, combatant) => {
-      if (
-        event.kind !== KitEventKind.DamageTaken ||
-        event.striker.characterId !== combatant.characterId ||
-        event.attackTag !== AttackTag.ElementalSkill
-      )
-        return;
+      if (!checkIsOwnDamageTaken(event, combatant) || event.attackTag !== AttackTag.ElementalSkill) return;
       addPassiveStack(kitEffectState, combatant.characterId, {
         id: UNTAINTED_DESIRE_ID,
         maximumStacks,

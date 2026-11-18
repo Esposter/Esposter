@@ -2,7 +2,7 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
-import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { checkIsOwnDamageTaken } from "#src/services/kit/checkIsOwnDamageTaken";
 import { addPassiveStack } from "#src/services/kit/effects/addPassiveStack";
 import { takeOne } from "@esposter/shared";
 
@@ -15,12 +15,7 @@ export const createSecretWisdomsFavorPassiveModule = (params: number[]): Passive
   const cooldownSeconds = takeOne(params, 3);
   return {
     onKitEvent: (event, { kitEffectState }, combatant) => {
-      if (
-        event.kind !== KitEventKind.DamageTaken ||
-        event.striker.characterId !== combatant.characterId ||
-        event.attackTag !== AttackTag.ChargedAttack
-      )
-        return;
+      if (!checkIsOwnDamageTaken(event, combatant) || event.attackTag !== AttackTag.ChargedAttack) return;
       addPassiveStack(kitEffectState, combatant.characterId, {
         cooldownSeconds,
         id: "secretWisdomsFavor",

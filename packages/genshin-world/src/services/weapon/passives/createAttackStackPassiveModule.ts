@@ -1,8 +1,8 @@
 import type { PassiveModule } from "#src/models/kit/PassiveModule";
 import type { PassiveStack } from "#src/models/kit/PassiveStack";
 
-import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { checkIsNormalOrChargedAttack } from "#src/services/kit/checkIsNormalOrChargedAttack";
+import { checkIsOwnDamageTaken } from "#src/services/kit/checkIsOwnDamageTaken";
 import { addPassiveStack } from "#src/services/kit/effects/addPassiveStack";
 
 const ATTACK_STACK_MAXIMUM_STACKS = 4;
@@ -14,12 +14,7 @@ export const createAttackStackPassiveModule = (
   passive: Pick<PassiveStack, "cooldownSeconds" | "id" | "perStackBonuses">,
 ): PassiveModule => ({
   onKitEvent: (event, { kitEffectState }, combatant) => {
-    if (
-      event.kind !== KitEventKind.DamageTaken ||
-      event.striker.characterId !== combatant.characterId ||
-      !checkIsNormalOrChargedAttack(event.attackTag)
-    )
-      return;
+    if (!checkIsOwnDamageTaken(event, combatant) || !checkIsNormalOrChargedAttack(event.attackTag)) return;
     addPassiveStack(kitEffectState, combatant.characterId, {
       ...passive,
       maximumStacks: ATTACK_STACK_MAXIMUM_STACKS,
