@@ -66,6 +66,8 @@ Every step treats an already-gone target as done. A missing object's delete coun
 
 **The marker is the row, and the user row goes last.** A resource's purge already works this way: the D1 row is the durable marker, every external sweep treats an already-gone target as success, and the row is deleted last, so a replay after any failure finds the same work. Deleting the user row first would cascade away the rows that still name the work.
 
+**The readers are told by topic, named before the first step.** A sweep removes rows that other people's reads show: a friendship, a request, a block, a post thread, a ban or a log entry, and a bookmark or a thread follow that cascades with a room or resource. `getAccountTopics` lists the topics of those reads before any step runs, and the handler publishes them in a `finally`, so a reader is told even when the run that removed a row is the one that failed. A replay finds the rows gone, so it could not name them.
+
 **The send comes before the sessions.** A failed send fails the request with the person still signed in, and the person can confirm again. The marker is written first, so a failed send leaves `deletionRequestedAt` set. The sweep does not read the column, since it takes the account from the job, and a retry sets it again.
 
 **Owned rooms are deleted, as an owner's departure deletes them.** Account deletion does what `leaveRoom` already does for an owner, rather than inventing a transfer. Transferring ownership is a feature with its own design, and it is the reason to revisit this.

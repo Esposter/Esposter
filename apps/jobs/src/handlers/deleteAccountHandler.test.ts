@@ -1,6 +1,7 @@
 import type { Database } from "@esposter/db-schema";
 
 import { deleteAccountHandler } from "#src/handlers/deleteAccountHandler";
+import { MockPublishedTopics } from "#src/services/realtime/publishTopics.test";
 import { clearRoomObjectCalls, roomObjectCalls, roomObjectReplies } from "#src/services/room/getRoomObject.test";
 import { OBJECT_READ_PAGE_LIMIT } from "#src/services/shared/constants";
 import { createUser } from "#src/services/shared/createUser.test";
@@ -12,12 +13,15 @@ import { getContentBlobName } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import {
   accountsInAuth,
+  friendsInSocial,
+  getTopic,
   getUserProfileImageBlobName,
   resourcesInResource,
   ResourceType,
   roomsInMessage,
   StorageBucket,
   storageLedgerInStorage,
+  TopicKind,
   usersInAuth,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
@@ -37,6 +41,7 @@ vi.mock(import("#src/services/shared/db"), () => ({
   },
 }));
 vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/storage/getBucket.test"));
+vi.mock(import("#src/services/realtime/publishTopics"), () => import("#src/services/realtime/publishTopics.test"));
 vi.mock(import("#src/services/room/getRoomObject"), () => import("#src/services/room/getRoomObject.test"));
 vi.mock(import("#src/services/user/getUserObject"), () => import("#src/services/user/getUserObject.test"));
 vi.mock(import("#src/services/account/deleteAccountBlobDirectories"), async (importOriginal) => {
@@ -112,6 +117,22 @@ describe(deleteAccountHandler, () => {
 
     await expect(deleteAccountHandler({ userId })).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
     await expect(readUserRows(userId)).resolves.toStrictEqual([{ id: userId }]);
+  });
+
+  // A friend's list shows the person, and loses the friendship when the row that erases them goes, so the friend's topic
+  // Is published
+  test("publishes the topic of each friend, whose list the erased person leaves", async () => {
+    expect.hasAssertions();
+
+    const userId = v7();
+    const friendUserId = v7();
+    await mockDb.insert(usersInAuth).values([createUser(userId), createUser(friendUserId)]);
+    await mockDb.insert(friendsInSocial).values({ id: v7(), receiverId: userId, senderId: friendUserId });
+    MockPublishedTopics.length = 0;
+
+    await deleteAccountHandler({ userId });
+
+    expect(MockPublishedTopics).toContain(getTopic(TopicKind.Friend, friendUserId));
   });
 
   test("a second run over a finished sweep finds nothing and succeeds", async () => {
