@@ -30,13 +30,14 @@ Each pass SHALL be judged by its own measure in screen units rather than the fra
 
 ### Requirement: A frame that stands off reopens the pass whose measure missed it
 
-When every gate holds and the frame's perceptual score stands off, the pass whose measure missed the difference SHALL reopen.
+When the frame's perceptual score stands off, the pass whose measure missed the difference SHALL be named from the passes' report as the report last recorded it, without running any measure, and SHALL reopen.
 
 #### Scenario: A frame that stands off reopens the missed pass
 
-- **GIVEN** every pass's gate holds
+- **GIVEN** the passes' report holds a pass outside its gate
 - **WHEN** the frame's perceptual score stands off on a reference
-- **THEN** the pass whose measure missed the difference reopens
+- **THEN** the first such pass in the passes' order is named as the pass that reopens
+- **AND** no pass's measure is run to name it
 - **AND** its measure is fixed before the pass runs again
 
 ### Requirement: Scattered content is matched by its statistics

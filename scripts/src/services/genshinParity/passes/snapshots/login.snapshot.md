@@ -9,12 +9,12 @@
 | Layout | Door | 0.0020 | 0.0200 | m | yes |
 | Layout | Door row across | 0 | 0.0200 | m | yes |
 | Layout | Door row up | 0 | 0.0200 | m | yes |
+| Layout | Walkway row across | 0 | 0.0200 | m | yes |
+| Layout | Walkway row up | 0 | 0.0200 | m | yes |
 | Layout | Bridges row across | 0 | 0.0200 | m | yes |
 | Layout | Bridges row up | 0 | 0.0200 | m | yes |
 | Layout | Towers row across | 0 | 0.0200 | m | yes |
 | Layout | Towers row up | 0 | 0.0200 | m | yes |
-| Layout | Walkway row across | 0 | 0.0200 | m | yes |
-| Layout | Walkway row up | 0 | 0.0200 | m | yes |
 | Layout | login-door-session Towers | 0.0658 | 2 | px | yes |
 | Layout | login-door-session Bridges | 0.0640 | 2 | px | yes |
 | Layout | login-door-session Door | 0.3361 | 2 | px | yes |

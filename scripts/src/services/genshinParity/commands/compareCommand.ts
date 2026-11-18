@@ -10,7 +10,7 @@ import { ParityReportRun } from "#src/models/genshinParity/reference/ParityRepor
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { startFreshPageServer } from "#src/services/genshinParity/page/startFreshPageServer";
 import { findReopenedPass } from "#src/services/genshinParity/passes/findReopenedPass";
-import { runParityPasses } from "#src/services/genshinParity/passes/runParityPasses";
+import { readParityPassRows } from "#src/services/genshinParity/passes/readParityPassRows";
 import { classifyComparisonFailure } from "#src/services/genshinParity/reference/classifyComparisonFailure";
 import { compareScreen } from "#src/services/genshinParity/reference/compareScreen";
 import { DEFAULT_APPROVAL } from "#src/services/genshinParity/reference/constants";
@@ -151,8 +151,8 @@ export const compareCommand: SubCommandsDef[string] = defineCommand({
                 console.error("the browser closed, so the next reference opens its page on a fresh one");
             },
           );
-          // A frame that stands off names the pass its measures missed: the run of the passes stops at the first one outside
-          // Its gate, which is the one reopened. A frame every pass holds names none, so the measure set is what is short
+          // A frame that stands off names the pass its report holds red, as the passes last recorded it: the first one outside
+          // Its gate is the one reopened. The passes are not run here, so a compare costs its own frame alone
           const comparedScore = scores[referenceId];
           const component = getLayerComponent(referenceId, args.witness);
           // At the bar is over it, as the approval's own status counts it, and the measure is the one the approval judges by
@@ -161,12 +161,17 @@ export const compareCommand: SubCommandsDef[string] = defineCommand({
             component !== undefined &&
             getApprovalValue(comparedScore, approval) >= approval.bar
           ) {
-            const reopened = findReopenedPass(await runParityPasses(component, { pageRoot }));
-            console.error(
-              reopened === undefined
-                ? "stands off, and every pass holds: no measure reads the difference"
-                : `stands off: reopens ${reopened}`,
-            );
+            const recordedRows = await readParityPassRows(component);
+            if (recordedRows.length === 0)
+              console.error(`stands off: ${component} has no passes report, so run genshin:parity passes ${component}`);
+            else {
+              const reopened = findReopenedPass(recordedRows);
+              console.error(
+                reopened === undefined
+                  ? "stands off, and the passes' report holds every pass within its gate: no measure reads the difference"
+                  : `stands off: reopens ${reopened}, as the passes' report last recorded it`,
+              );
+            }
           }
         }
       },
