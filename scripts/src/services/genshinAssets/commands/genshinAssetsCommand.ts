@@ -47,6 +47,7 @@ import { mapCommand } from "#src/services/genshinAssets/commands/mapCommand";
 import { materialSourcesCommand } from "#src/services/genshinAssets/commands/materialSourcesCommand";
 import { measureCommand } from "#src/services/genshinAssets/commands/measureCommand";
 import { miningOutcropsCommand } from "#src/services/genshinAssets/commands/miningOutcropsCommand";
+import { missingTilesCommand } from "#src/services/genshinAssets/commands/missingTilesCommand";
 import { monstersCommand } from "#src/services/genshinAssets/commands/monstersCommand";
 import { musicCommand } from "#src/services/genshinAssets/commands/musicCommand";
 import { namecardsCommand } from "#src/services/genshinAssets/commands/namecardsCommand";
@@ -115,6 +116,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     witness: witnessCommand,
     "city-areas": cityAreasCommand,
     "asset-index": assetIndexCommand,
+    "missing-tiles": missingTilesCommand,
     music: musicCommand,
     sounds: soundsCommand,
     playlist: playlistCommand,
