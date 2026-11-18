@@ -208,7 +208,11 @@ export const GameDataKeys = {
     levels: "home/levels",
   },
   hud: { interfaceRects: "hud/interfaceRects" },
-  imaginarium: { difficulties: "imaginarium/difficulties", seasons: "imaginarium/seasons" },
+  imaginarium: {
+    difficulties: "imaginarium/difficulties",
+    seasons: "imaginarium/seasons",
+    stages: "imaginarium/stages",
+  },
   items: { materials: "items/materials", reliquarySets: "items/reliquarySets" },
   leyLine: {
     regions: {

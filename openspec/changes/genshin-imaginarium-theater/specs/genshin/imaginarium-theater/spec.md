@@ -191,3 +191,26 @@ A season's opening characters SHALL each have the trial version the season names
 - **WHEN** the data run writes the season
 - **THEN** the run fails
 - **AND** no season is written
+
+### Requirement: A stage's enemy names resolve to a monster only when exactly one monster holds them
+
+A wiki enemy name of a stage SHALL resolve to a monster only when exactly one monster's English name is that name, and a name that no monster or several monsters hold SHALL be refused and listed on its stage with its count.
+
+#### Scenario: A name held by one monster resolves to its monster
+
+- **GIVEN** exactly one monster's name is the wiki's enemy name
+- **WHEN** the stage is joined to the game's monsters
+- **THEN** the name resolves to that monster's id
+
+#### Scenario: A name held by several monsters is refused with their count
+
+- **GIVEN** several monsters' names are the wiki's enemy name
+- **WHEN** the stage is joined to the game's monsters
+- **THEN** the name is listed on the stage as refused, with the count of monsters that hold it
+- **AND** no monster id is guessed for it
+
+#### Scenario: A name held by no monster is refused with a count of zero
+
+- **GIVEN** no monster's name is the wiki's enemy name
+- **WHEN** the stage is joined to the game's monsters
+- **THEN** the name is listed on the stage as refused, with a count of zero
