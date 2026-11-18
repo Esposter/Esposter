@@ -4,15 +4,11 @@ import type { GcgLevels } from "#src/models/gcg/GcgLevels";
 import type { Interactable } from "#src/models/interaction/Interactable";
 import type { Resident } from "#src/models/world/Resident";
 import type { ResidentSpot } from "#src/models/world/ResidentSpot";
+import type { findGcgTalkDuelGameId } from "#src/services/gcg/findGcgTalkDuelGameId";
 
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { getTalkOffers } from "#src/services/dialogue/getTalkOffers";
 import { mergeTalks } from "#src/services/dialogue/mergeTalks";
-import { checkIsGcgCardGameOpen } from "#src/services/gcg/checkIsGcgCardGameOpen";
-import { computeGcgPlayerLevel } from "#src/services/gcg/computeGcgPlayerLevel";
-import { listGcgOpenGameIds } from "#src/services/gcg/listGcgOpenGameIds";
-import { readGcgLevels } from "#src/services/gcg/readGcgLevels";
-import { GCG_TUTORIAL_QUEST_ID } from "#src/services/quest/constants";
 import { readStandingTalks } from "#src/services/resident/readStandingTalks";
 import { StandingTalkTextLoaderMap } from "#src/services/resident/StandingTalkTextLoaderMap";
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
@@ -55,10 +51,19 @@ export const useWorldTalks = ({
   const gcgGameId = shallowRef<number>();
   const standingTalks = shallowRef<Talk[]>([]);
   const standingTalkTextMap = shallowRef<Readonly<Record<string, string>>>({});
-  // The card game's levels, which open each challenger's duels by the Player Level. Until they arrive, or if they
-  // Cannot be read, no duel is offered
+  // The card game's levels, which open each challenger's duels by the Player Level, and the rule that opens a talk's duel
+  // From them. Both are imported as the levels are read, so the card game's services stay out of the first screen's static
+  // Graph. Until they arrive, or if they cannot be read, no duel is offered
   const gcgLevels = shallowRef<GcgLevels>();
-  getResultAsync(() => readGcgLevels(worldSessionStore.gameDataBaseUrl)).match(
+  const gcgDuelRule = shallowRef<typeof findGcgTalkDuelGameId>();
+  getResultAsync(async () => {
+    const [{ findGcgTalkDuelGameId: findDuelGameId }, { readGcgLevels }] = await Promise.all([
+      import("#src/services/gcg/findGcgTalkDuelGameId"),
+      import("#src/services/gcg/readGcgLevels"),
+    ]);
+    gcgDuelRule.value = findDuelGameId;
+    return readGcgLevels(worldSessionStore.gameDataBaseUrl);
+  }).match(
     (newGcgLevels) => {
       gcgLevels.value = newGcgLevels;
     },
@@ -108,20 +113,13 @@ export const useWorldTalks = ({
   // Is open and the Player Level has opened that duel's game
   const getTalkDuelGameId = (talkId: string) => {
     const duelGameId = getResidents().find((resident) => resident.talkId === talkId)?.duelGameId;
-    if (duelGameId === undefined || !checkIsGcgCardGameOpen(rank.value) || !gcgLevels.value) return undefined;
-    const { challengerGames, playerLevelLocks, playerLevels } = gcgLevels.value;
-    const cardGameExp = getCardGameExp();
-    const playerLevel = computeGcgPlayerLevel(
-      cardGameExp,
-      playerLevels,
-      completedMainQuestIds.value.has(GCG_TUTORIAL_QUEST_ID),
-      playerLevelLocks,
-      completedMainQuestIds.value,
-    );
-    // A challenger's games are listed under the NPC whose week row names them, which is not always the NPC seated at
-    // The duel (Marjorie's row is 9701, her seat 1435), so the seat's game is looked for by its id across every row
-    const challengerGameList = Object.values(challengerGames).flat();
-    return listGcgOpenGameIds(challengerGameList, playerLevel).includes(duelGameId) ? duelGameId : undefined;
+    if (duelGameId === undefined || !gcgDuelRule.value || !gcgLevels.value) return undefined;
+    return gcgDuelRule.value(duelGameId, {
+      adventureRank: rank.value,
+      cardGameExp: getCardGameExp(),
+      completedMainQuestIds: completedMainQuestIds.value,
+      levels: gcgLevels.value,
+    });
   };
   // A resident is a row only at the spot they are shown at this hour, so one absent from it is no row. F begins their
   // Own talk where the world holds it, else the first quest talk open to them, and a resident with neither is no row
