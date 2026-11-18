@@ -39,6 +39,8 @@ export const GameTextKey = {
   AjilenakhNut: "4280106100",
   AmakumoFruit: "3862594948",
   AmethystLump: "2485846164",
+  // The Amrita Pool, the offering the Gift of Amrita is given to, by the name its offering window gives it
+  AmritaPool: "UI_OFFERINGPARI_TITLE",
   AnemoSigil: "4197855388",
   Apple: "2483588484",
   Archive: "UI_CODEX_HOME_TITLE",
@@ -637,6 +639,8 @@ export const GameTextKey = {
   // The Statue's Blessing's heading over the teams not deployed for combat
   PreparingForCombat: "UI_STC_AVATAR_IN_PREPARING",
   PressToOpen: "1860729186",
+  // The Primal Flame Resonance, the offering the Throne of the Primal Fire stands for, by its own name
+  PrimalFlameResonance: "3073199161",
   Primogem: "2696654964",
   // The stove's processing row and its screen's queue button, named by the game's own "Start Processing"
   ProcessingStart: "1809596508",
@@ -720,6 +724,8 @@ export const GameTextKey = {
   Revive: "UI_STC_World_Revive",
   RomaritimeFlower: "3918052700",
   RukkhashavaMushrooms: "225599940",
+  // The Sacred Sakura, the offering Grand Narukami Shrine stands for, by its own name
+  SacredSakura: "1577307203",
   SakuraBloom: "3896942756",
   SandGreasePupa: "3925526556",
   SangoPearl: "4091966756",
@@ -916,9 +922,13 @@ export const GameTextKey = {
   TipHeading: "UI_PUSHTIPS_NEW_TIP",
   // The mainland client's publishing licence under its title logo: its approval, ISBN, publisher and copyright holder
   TitleLicence: "3231160485",
+  // Tona's Flame, the offering the Natlan temple stands for, by the title its offering window gives it
+  TonaFlame: "UI_NATLANTEMPLE_OFFERING_TITLE",
   TrainingGuide: "UI_TRAININGGUIDE_TITLE",
   // The player's own title, a word per gender where the language has one
   Traveler: "UI_TEXT_QUEST_GUIDE_LABEL",
+  // The Tree of Dreams, the offering Vanarana's Favor is given to, by the name its map mark gives it
+  TreeOfDreams: "UI_VANASARA_OFFERRING_MAP_MARK_TITLE",
   Trishiraite: "239145148",
   // The blossom a defeated normal boss leaves for its Original Resin claim, by its English name
   TrounceBlossom: "UI_WORLD_WEEKLYBOSS_TIPS_TITLE",
