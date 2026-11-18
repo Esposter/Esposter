@@ -13,3 +13,6 @@ export const UNLAID_GROUND_REGIONS: readonly string[] = [WINDRISE_GROUND_REGION,
 export const ROCK_STAND_IN_COLOR = "#8c8a84";
 // Inazuma, whose permanent thunderstorm is lifted in its areas unless the player has restored it
 export const INAZUMA_REGION_ID = "inazuma";
+// The half width of the band either side of a region piece's outline across which its ground is blended into the base and
+// Its neighbours, one sample step of the fit's grid, the distance its gate reads its ground at
+export const GROUND_BLEND_WIDTH = 6;

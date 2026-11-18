@@ -1,3 +1,4 @@
+import type { LaidGround } from "#src/models/world/LaidGround";
 import type { RegionGround } from "#src/models/world/RegionGround";
 
 import { HOME_REALM_GROUND_HEIGHT } from "#src/services/home/constants";
@@ -15,12 +16,12 @@ describe(useWorldGroundStore, () => {
   const setUpGround = () => {
     startTestWorldSession();
     const isInHomeRealm = shallowRef(false);
-    const regionGrounds = shallowRef<RegionGround[]>([]);
+    const regionGrounds = shallowRef<LaidGround[]>([]);
     const worldGroundStore = useWorldGroundStore();
     worldGroundStore.start({
       baseGrounds,
       getIsInHomeRealm: () => isInHomeRealm.value,
-      getRegionGrounds: () => regionGrounds.value,
+      getLaidGrounds: () => regionGrounds.value,
     });
     return { isInHomeRealm, regionGrounds, worldGroundStore };
   };
@@ -33,9 +34,11 @@ describe(useWorldGroundStore, () => {
 
     regionGrounds.value = [
       {
-        base: BASE_HEIGHT,
-        features: [{ falloff: 1, height: PLATEAU_HEIGHT, kind: TerrainFeatureKind.Plateau, radius: 10, x: 0, z: 0 }],
-        hills: [],
+        ground: {
+          base: BASE_HEIGHT,
+          features: [{ falloff: 1, height: PLATEAU_HEIGHT, kind: TerrainFeatureKind.Plateau, radius: 10, x: 0, z: 0 }],
+          hills: [],
+        },
       },
     ];
     expect(worldGroundStore.getGroundHeight(0, 0)).toBeCloseTo(BASE_HEIGHT + PLATEAU_HEIGHT);

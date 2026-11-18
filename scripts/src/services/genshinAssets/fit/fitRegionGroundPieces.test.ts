@@ -34,7 +34,9 @@ describe(fitRegionGroundPieces, () => {
       { id: "0", layer: WorldLayer.Surface, outline: createSquareOutline(240) },
       { id: "1", layer: WorldLayer.UndergroundMines, outline: [] },
     ];
-    const fit = await fitRegionGroundPieces(DerivedAssetComponent.Liyue, areas, Promise.resolve(source));
+    const fit = await fitRegionGroundPieces(DerivedAssetComponent.Liyue, areas, Promise.resolve(source), () =>
+      Promise.resolve([{ base: 0, features: [], hills: [] }]),
+    );
 
     expect(fit.isQualified).toBe(true);
     expect(fit.reason).toBe("");
@@ -53,7 +55,9 @@ describe(fitRegionGroundPieces, () => {
       { id: "0", layer: WorldLayer.Surface, outline: createSquareOutline(240) },
       { id: "1", layer: WorldLayer.Surface, outline: [] },
     ];
-    const fit = await fitRegionGroundPieces(DerivedAssetComponent.Liyue, areas, Promise.resolve(source));
+    const fit = await fitRegionGroundPieces(DerivedAssetComponent.Liyue, areas, Promise.resolve(source), () =>
+      Promise.resolve([{ base: 0, features: [], hills: [] }]),
+    );
 
     expect(fit.isQualified).toBe(false);
     expect(fit.reason).toBe("1 has no outline");

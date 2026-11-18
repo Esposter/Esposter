@@ -1,5 +1,5 @@
 import type { PlantedTerrainTile } from "#src/models/shared/PlantedTerrainTile";
-import type { RegionGround } from "#src/models/world/RegionGround";
+import type { LaidGround } from "#src/models/world/LaidGround";
 import type { TerrainTileRequest } from "#src/models/world/TerrainTileRequest";
 import type { TerrainWorkerContext } from "#src/models/world/TerrainWorkerContext";
 import type { TerrainWorkerFailure } from "#src/models/world/TerrainWorkerFailure";
@@ -22,7 +22,7 @@ import {
 // It also takes the regions' grounds laid over it so far, and is built again as each region's ground arrives
 let context: TerrainWorkerContext | undefined;
 let loadedGround: TerrainWorkerGround | undefined;
-let regionGrounds: RegionGround[] = [];
+let laidGrounds: LaidGround[] = [];
 // Tiles asked for before the ground loads, answered in the order they came once it does
 let queuedRequests: TerrainTileRequest[] = [];
 // The tiles' heights, paint and flowers over the loaded ground with the regions' grounds laid over it so far
@@ -35,7 +35,7 @@ const createContext = ({
   const groundPaint = createWindriseGroundPaint(groundLayers, surfaces);
   return {
     plantsGround: {
-      getHeight: createWorldHeight(baseGrounds, regionGrounds),
+      getHeight: createWorldHeight(baseGrounds, laidGrounds),
       getWeights: createGroundLayerWeights(groundPaint),
       waterLevel,
     },
@@ -85,7 +85,7 @@ const answerTile = async (request: TerrainTileRequest, terrainWorkerContext: Ter
 };
 const handleMessage = async (message: TerrainWorkerMessage) => {
   if (message.kind === TerrainWorkerMessageKind.RegionGrounds) {
-    ({ regionGrounds } = message);
+    ({ laidGrounds } = message);
     if (loadedGround) context = createContext(loadedGround);
     return;
   }

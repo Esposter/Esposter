@@ -2,6 +2,7 @@ import type { GroundPiece } from "#src/models/genshinAssets/fit/GroundPiece";
 import type { GroundPieceFit } from "#src/models/genshinAssets/fit/GroundPieceFit";
 import type { GroundSource } from "#src/models/genshinAssets/fit/GroundSource";
 import type { TerrainResidualGrid } from "#src/models/genshinAssets/fit/TerrainResidualGrid";
+import type { RegionGround } from "genshin-world";
 
 import { computeGroundBounds } from "#src/services/genshinAssets/fit/computeGroundBounds";
 import { computeLagDifference } from "#src/services/genshinAssets/fit/computeLagDifference";
@@ -18,6 +19,7 @@ import { readGroundFootprints } from "#src/services/genshinAssets/fit/readGround
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { selectBarSamples } from "#src/services/genshinAssets/fit/selectBarSamples";
 import { smoothTerrainGrid } from "#src/services/genshinAssets/fit/smoothTerrainGrid";
+import { toGroundPieceSamples } from "#src/services/genshinAssets/fit/toGroundPieceSamples";
 import { GROUND_GATE_SAMPLES } from "#src/services/genshinAssets/shared/constants";
 import { computeExtentGap } from "#src/services/genshinAssets/world/computeExtentGap";
 import { toCapitalWorldPlace } from "#src/services/genshinAssets/world/toCapitalWorldPlace";
@@ -96,6 +98,7 @@ export const fitGroundPiece = async (piece: GroundPiece, source: GroundSource): 
         objects: {},
       },
       isHeld: false,
+      key,
       sampleCount,
     };
   const cityLand = smoothTerrainGrid(tileGrid, Math.min(...GROUND_WIDTHS)).values;
@@ -162,7 +165,7 @@ export const fitGroundPiece = async (piece: GroundPiece, source: GroundSource): 
       if (values.length === 0) return `no samples within ${within}`;
       return `${roundFitted(compute([...values]))}${unit} within ${within}`;
     }).join(", ");
-  const ground = { ...hills, features, ...computeGroundBounds(heightGrid.values), residual };
+  const ground: RegionGround = { ...hills, features, ...computeGroundBounds(heightGrid.values), residual };
   // The reader parses the ground against its schema, which refuses a value JSON cannot hold, such as a NaN written out as
   // Null, so a ground the reader would refuse throws here, before anything is published
   regionGroundSchema.parse(ground);
@@ -198,6 +201,8 @@ export const fitGroundPiece = async (piece: GroundPiece, source: GroundSource): 
       objects: isHeld ? { [key]: ground } : {},
     },
     isHeld,
+    key,
+    measure: { gate, ground, samples: toGroundPieceSamples(naturalGrid) },
     sampleCount,
   };
 };

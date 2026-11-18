@@ -7,14 +7,27 @@ import { readGameData } from "#src/services/data/readGameData";
 import { createWindriseTerrainOptions } from "#src/services/windrise/createWindriseTerrainOptions";
 import { readWindriseData } from "#src/services/windrise/readWindriseData";
 import { createWorldHeight } from "#src/services/world/createWorldHeight";
+import { readCatalogue } from "#src/services/world/readCatalogue";
 import { selectLaidGroundKeys } from "#src/services/world/selectLaidGroundKeys";
+import { toLaidGround } from "#src/services/world/toLaidGround";
 import { createTerrainShapeHeight, TerrainFeatureKind } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
 const { baseGrounds } = await readWindriseData(GAME_DATA_LOCAL_BASE_URL);
-const regionGrounds = await Promise.all(
-  selectLaidGroundKeys(gameDataLockKeys).map((key) => readGameData(GAME_DATA_LOCAL_BASE_URL, key, regionGroundSchema)),
+const { regions } = await readCatalogue(GAME_DATA_LOCAL_BASE_URL);
+const laidGrounds = await Promise.all(
+  selectLaidGroundKeys(gameDataLockKeys).map(async (key) =>
+    toLaidGround(key, await readGameData(GAME_DATA_LOCAL_BASE_URL, key, regionGroundSchema), regions),
+  ),
 );
+
+// A square outline of a piece's area, as the catalogue draws one
+const createSquare = (minX: number, minZ: number, maxX: number, maxZ: number) => [
+  { x: minX, z: minZ },
+  { x: maxX, z: minZ },
+  { x: maxX, z: maxZ },
+  { x: minX, z: maxZ },
+];
 
 describe(createWorldHeight, () => {
   // Four made-up quarters of a disc split at the origin, each with its own base, a hill or two and a feature, one cliff
@@ -46,15 +59,15 @@ describe(createWorldHeight, () => {
     { base: 14, features: [], hills: [{ height: 10, width: 70, x: 420, z: -300 }] },
   ];
 
-  test("raises every region no fit has drawn at its plateaus, within the heights every tile is bounded by", () => {
+  test("raises every region no fit has drawn at its plateaus, over the base, within the heights every tile is bounded by", () => {
     expect.hasAssertions();
 
-    const getGroundHeight = createWorldHeight(baseGrounds, regionGrounds);
+    const getGroundHeight = createWorldHeight(baseGrounds, laidGrounds);
     const getWindriseHeight = createWorldHeight(baseGrounds, []);
-    const plateaus = regionGrounds
-      .filter(({ hills }) => hills.length === 0)
-      .flatMap(({ features }) => features.filter((feature) => feature.kind === TerrainFeatureKind.Plateau));
-    const { maxHeight, minHeight } = createWindriseTerrainOptions(baseGrounds);
+    const { maxHeight, minHeight } = createWindriseTerrainOptions(baseGrounds, laidGrounds);
+    const plateaus = laidGrounds
+      .filter(({ domain, ground }) => domain === undefined && ground.hills.length === 0)
+      .flatMap(({ ground }) => ground.features.filter((feature) => feature.kind === TerrainFeatureKind.Plateau));
 
     expect(plateaus).not.toHaveLength(0);
 
@@ -67,16 +80,19 @@ describe(createWorldHeight, () => {
     }
   });
 
-  test("stands every region's ground within the heights Windrise's ground bounds every tile by", () => {
+  test("a point inside one piece's outline reads that piece's surface alone, not the sum of the pieces laid over each other", () => {
     expect.hasAssertions();
 
-    const { maxHeight, minHeight } = createWindriseTerrainOptions(baseGrounds);
-    const outOfBoundsGrounds = regionGrounds.filter(
-      (regionGround) =>
-        (regionGround.minHeight ?? minHeight) < minHeight || (regionGround.maxHeight ?? maxHeight) > maxHeight,
+    const getGroundHeight = createWorldHeight(
+      [{ base: 24, features: [], hills: [] }],
+      [
+        { domain: { outline: createSquare(0, 0, 200, 200) }, ground: { base: 50, features: [], hills: [] } },
+        { domain: { outline: createSquare(150, 0, 350, 200) }, ground: { base: 250, features: [], hills: [] } },
+      ],
     );
 
-    expect(outOfBoundsGrounds).toStrictEqual([]);
+    expect(getGroundHeight(100, 100)).toBeCloseTo(50);
+    expect(getGroundHeight(250, 100)).toBeCloseTo(250);
   });
 
   test("draws Windrise's own features as its fitted ground does", () => {

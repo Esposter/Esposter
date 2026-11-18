@@ -8,6 +8,7 @@ import { describe, expect, test } from "vitest";
 const createFit = (sampleCount: number, isHeld: boolean): GroundPieceFit => ({
   build: { notes: [], objects: {} },
   isHeld,
+  key: "ground/test/quarter",
   sampleCount,
 });
 

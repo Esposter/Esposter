@@ -31,12 +31,16 @@ const fitQuarters = async (
 // A quarter's sample count is its own fit's, so a quarter's fit is discarded for the group it joins
 export const fitGroundPieces = async (piece: GroundPiece, source: GroundSource): Promise<GroundPiecesFit> => {
   const builds: GameDataBuild[] = [];
+  const held: GroundPieceFit[] = [];
   let isRefused = false;
   // Depth first over the split, so a refused piece's groups are pushed in reverse and the first of them is fitted next
   const pending: { fit: GroundPieceFit; piece: GroundPiece }[] = [{ fit: await fitGroundPiece(piece, source), piece }];
   for (let next = pending.pop(); next !== undefined; next = pending.pop()) {
     builds.push(next.fit.build);
-    if (next.fit.isHeld) continue;
+    if (next.fit.isHeld) {
+      held.push(next.fit);
+      continue;
+    }
     if (next.fit.sampleCount < GROUND_GATE_SAMPLES) {
       isRefused = true;
       continue;
@@ -76,5 +80,5 @@ export const fitGroundPieces = async (piece: GroundPiece, source: GroundSource):
     );
     pending.push(...groupPieces.toReversed());
   }
-  return { build: mergeGameDataBuilds(builds), isRefused };
+  return { build: mergeGameDataBuilds(builds), held, isRefused };
 };

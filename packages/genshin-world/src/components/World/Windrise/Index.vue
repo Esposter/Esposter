@@ -20,7 +20,7 @@ import type { ElementalSight } from "#src/models/sight/ElementalSight";
 import type { Wildlife } from "#src/models/wildlife/Wildlife";
 import type { WindriseData } from "#src/models/windrise/WindriseData";
 import type { Catalogue } from "#src/models/world/Catalogue";
-import type { RegionGround } from "#src/models/world/RegionGround";
+import type { LaidGround } from "#src/models/world/LaidGround";
 import type { TerrainWorkerGround } from "#src/models/world/TerrainWorkerGround";
 import type {
   GrassTrail,
@@ -267,9 +267,9 @@ const drawnCharacterAvatar = useCharacterAvatar(sceneExportBaseUrl, () => active
   rampTexture,
 });
 const { baseGrounds, groundLayers, oak, paving, plants, statue, surfaces, water } = windriseData;
-// The ground's quadtree, which the terrain streams and the grass reads, bounded by Windrise's ground, which every
-// Region's ground laid over it stands within, and the records each terrain worker computes its tiles over
-const terrainOptions = createWindriseTerrainOptions(baseGrounds);
+// The ground's quadtree, which the terrain streams and the grass reads, bounded by the heights Windrise's ground and each
+// Region's ground laid over it stand between, and the records each terrain worker computes its tiles over
+const terrainOptions = reactive(createWindriseTerrainOptions(baseGrounds, []));
 const terrainWorkerGround: TerrainWorkerGround = { baseGrounds, groundLayers, surfaces, waterLevel: water.level };
 // The trees the landmarks grow and the plants' impostor is baked from
 const treeSpeciesOptionsMap = createTreeSpeciesOptionsMap(oak);
@@ -316,8 +316,10 @@ const sceneExportMap = useSceneExports(
 // Exports hold the family
 const checkIsOwnFamilyDrawn = (family: WindrisePartFamily): boolean =>
   !checkIsWitnessed(family) && !sceneExportMap.get(WINDRISE_SCENE_EXPORT_COMPONENT)?.familyBoundsMap.has(family);
-// The regions' grounds laid over Windrise's so far, which the terrain's workers raise every tile after by
-const regionGrounds = computed<RegionGround[]>(() => [...regionGroundMap.values()]);
+// The regions' grounds laid over Windrise's so far, which the terrain's workers raise every tile after by. The box the
+// Terrain is bounded by widens to hold each one as it arrives
+const laidGrounds = computed<LaidGround[]>(() => [...regionGroundMap.values()]);
+watch(laidGrounds, (grounds) => Object.assign(terrainOptions, createWindriseTerrainOptions(baseGrounds, grounds)));
 const fogUniforms = createFogUniforms();
 fogUniforms.heightFalloff.value = FOG_HEIGHT_FALLOFF;
 fogUniforms.startDistance.value = FOG_START_DISTANCE;
@@ -471,7 +473,7 @@ onUnmounted(() => {
           :light-uniforms
           :origin
           :ramp-texture
-          :region-grounds
+          :laid-grounds
           :shadow-reach="SHADOW_MAX_FAR"
           :terrain-options
           :terrain-worker-ground

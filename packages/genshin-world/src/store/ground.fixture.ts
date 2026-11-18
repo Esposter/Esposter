@@ -7,7 +7,7 @@ export const startTestWorldGround = (height = 0) => {
   worldGroundStore.start({
     baseGrounds: [{ base: height, features: [], hills: [] }],
     getIsInHomeRealm: () => false,
-    getRegionGrounds: () => [],
+    getLaidGrounds: () => [],
   });
   return worldGroundStore;
 };

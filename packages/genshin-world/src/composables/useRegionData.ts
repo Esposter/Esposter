@@ -1,8 +1,8 @@
 import type { GameDataKey } from "#src/generated/gameDataKeys";
 import type { ChestPlace } from "#src/models/chest/ChestPlace";
 import type { Catalogue } from "#src/models/world/Catalogue";
+import type { LaidGround } from "#src/models/world/LaidGround";
 import type { LoadedRegion } from "#src/models/world/LoadedRegion";
-import type { RegionGround } from "#src/models/world/RegionGround";
 import type { Vector3 } from "three";
 
 import { GameDataKeys } from "#src/generated/gameDataKeys";
@@ -16,6 +16,7 @@ import { createRecheckDueCheck } from "#src/services/world/createRecheckDueCheck
 import { readLoadedRegion } from "#src/services/world/readLoadedRegion";
 import { selectGroundKeysInReach } from "#src/services/world/selectGroundKeysInReach";
 import { selectLaidGroundKeys } from "#src/services/world/selectLaidGroundKeys";
+import { toLaidGround } from "#src/services/world/toLaidGround";
 import { getResultAsync } from "@esposter/shared";
 import { useLoop, useTres } from "@tresjs/core";
 
@@ -36,8 +37,8 @@ export const useRegionData = (
   const { camera } = useTres();
   const { onBeforeRender } = useLoop();
   const regionDataMap = shallowReactive(new Map<string, LoadedRegion>());
-  // Each ground laid over Windrise's, by its lock key, set once as it arrives and kept after
-  const regionGroundMap = shallowReactive(new Map<string, RegionGround>());
+  // Each ground laid over Windrise's, by its lock key, with the domain its key names, set once as it arrives and kept after
+  const regionGroundMap = shallowReactive(new Map<string, LaidGround>());
   // Each region's chest record by its id, set once as the region comes within reach and kept after, as its ground is
   const regionChestMap = shallowReactive(new Map<string, ChestPlace[]>());
   const groundKeys = selectLaidGroundKeys(gameDataLockKeys);
@@ -85,9 +86,9 @@ export const useRegionData = (
       requestLoad(
         pendingGroundKeys,
         key,
-        () => readGameData(gameDataBaseUrl, key, regionGroundSchema),
-        (ground) => {
-          regionGroundMap.set(key, ground);
+        async () => toLaidGround(key, await readGameData(gameDataBaseUrl, key, regionGroundSchema), catalogue.regions),
+        (laidGround) => {
+          regionGroundMap.set(key, laidGround);
         },
       );
     }

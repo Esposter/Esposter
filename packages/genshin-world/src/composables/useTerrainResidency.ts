@@ -1,5 +1,5 @@
 import type { DevRegistry } from "#src/models/dev/DevRegistry";
-import type { RegionGround } from "#src/models/world/RegionGround";
+import type { LaidGround } from "#src/models/world/LaidGround";
 import type { TerrainWorkerMessage } from "#src/models/world/TerrainWorkerMessage";
 import type { TerrainOptions, TerrainRing } from "genshin-engine";
 import type { Group, Material } from "three";
@@ -10,11 +10,11 @@ import { TerrainWorkerMessageKind } from "#src/models/world/TerrainWorkerMessage
 import { MAX_PENDING_TILE_COUNT, TILE_SELECTION_CAPACITY } from "#src/services/constants";
 import { createSettledCommand } from "#src/services/dev/commands/createSettledCommand";
 import { LOAD_STEP_MEASURE_PREFIX } from "#src/services/loading/constants";
+import { getLaidGroundBounds } from "#src/services/world/getLaidGroundBounds";
 import {
   checkTerrainBoundsOverlap,
   createTerrainRing,
   createTileStreamer,
-  getTerrainOverlayBounds,
   getTerrainTileBounds,
   getTerrainTileLevel,
   MAX_TILE_ATTEMPTS,
@@ -33,9 +33,9 @@ const disposeTileMesh = (mesh: Mesh) => {
 export const useTerrainResidency = ({
   checkIsSettled,
   devRegistry,
+  laidGrounds,
   postTile,
   postToEach,
-  regionGrounds,
   terrainMaterial,
   terrainOptions,
   tileGroup,
@@ -44,9 +44,9 @@ export const useTerrainResidency = ({
   // Whether the view the selection holds is settled with nothing in flight behind it, which the settled read answers
   checkIsSettled: () => boolean;
   devRegistry?: DevRegistry | undefined;
+  laidGrounds: MaybeRefOrGetter<LaidGround[]>;
   postTile: (key: number, message: TerrainWorkerMessage) => void;
   postToEach: (message: TerrainWorkerMessage) => void;
-  regionGrounds: MaybeRefOrGetter<RegionGround[]>;
   terrainMaterial: Material;
   terrainOptions: TerrainOptions;
   tileGroup: Group;
@@ -100,12 +100,12 @@ export const useTerrainResidency = ({
   // Again over them, each held one drawn until its replacement arrives. A tile past every arriving ground's reach would be
   // Built again over the very heights it holds, so it is kept
   watch(
-    () => toValue(regionGrounds),
+    () => toValue(laidGrounds),
     (grounds, previousGrounds) => {
-      postToEach({ kind: TerrainWorkerMessageKind.RegionGrounds, regionGrounds: grounds });
+      postToEach({ kind: TerrainWorkerMessageKind.RegionGrounds, laidGrounds: grounds });
       const arrivingReaches = grounds
         .filter((ground) => !previousGrounds.includes(ground))
-        .map((ground) => getTerrainOverlayBounds(ground));
+        .map((laidGround) => getLaidGroundBounds(laidGround));
       tileStreamer.refresh((key) => {
         const tileBounds = getTerrainTileBounds(key, finestTileSize, cellsPerSide);
         return arrivingReaches.some((reach) => checkTerrainBoundsOverlap(reach, tileBounds));

@@ -8,7 +8,9 @@ import { gameDataLockKeys } from "#src/services/data/gameDataLockKeys";
 import { readGameData } from "#src/services/data/readGameData";
 import { readWindriseData } from "#src/services/windrise/readWindriseData";
 import { createWorldHeight } from "#src/services/world/createWorldHeight";
+import { readCatalogue } from "#src/services/world/readCatalogue";
 import { selectLaidGroundKeys } from "#src/services/world/selectLaidGroundKeys";
+import { toLaidGround } from "#src/services/world/toLaidGround";
 import { SOURCE_CONDITION } from "@esposter/configuration";
 import { getTerrainTileKey, TerrainFeatureKind } from "genshin-engine";
 import { isAbsolute, resolve } from "node:path";
@@ -16,8 +18,11 @@ import { scan } from "rolldown/experimental";
 import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vitest";
 
 const { baseGrounds, groundLayers, surfaces, water } = await readWindriseData(GAME_DATA_LOCAL_BASE_URL);
-const regionGrounds = await Promise.all(
-  selectLaidGroundKeys(gameDataLockKeys).map((key) => readGameData(GAME_DATA_LOCAL_BASE_URL, key, regionGroundSchema)),
+const { regions } = await readCatalogue(GAME_DATA_LOCAL_BASE_URL);
+const laidGrounds = await Promise.all(
+  selectLaidGroundKeys(gameDataLockKeys).map(async (key) =>
+    toLaidGround(key, await readGameData(GAME_DATA_LOCAL_BASE_URL, key, regionGroundSchema), regions),
+  ),
 );
 
 describe("terrainTileWorker", () => {
@@ -94,15 +99,15 @@ describe("terrainTileWorker", () => {
   test("raises a tile asked for after the regions' grounds arrive by them", async () => {
     expect.hasAssertions();
 
-    const [plateau] = regionGrounds.flatMap(({ features }) =>
-      features.flatMap((feature) => (feature.kind === TerrainFeatureKind.Plateau ? [feature] : [])),
+    const [plateau] = laidGrounds.flatMap(({ ground }) =>
+      ground.features.flatMap((feature) => (feature.kind === TerrainFeatureKind.Plateau ? [feature] : [])),
     );
     assert.exists(plateau);
     const x = Math.round(plateau.x);
     const z = Math.round(plateau.z);
-    const getGroundHeight = createWorldHeight(baseGrounds, regionGrounds);
+    const getGroundHeight = createWorldHeight(baseGrounds, laidGrounds);
     await receive(loadMessage);
-    await receive({ kind: TerrainWorkerMessageKind.RegionGrounds, regionGrounds });
+    await receive({ kind: TerrainWorkerMessageKind.RegionGrounds, laidGrounds });
     await receive({
       kind: TerrainWorkerMessageKind.Tile,
       request: { cellsPerSide: 1, finestTileSize: 1, key: getTerrainTileKey(0, x, z) },

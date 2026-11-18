@@ -423,7 +423,7 @@ const { getGroundHeight, start: startGround, stop: stopGround } = worldGroundSto
 startGround({
   baseGrounds: windriseData.baseGrounds,
   getIsInHomeRealm: () => homeRealmVisit.value !== undefined,
-  getRegionGrounds: () => [...(windrise.value?.regionGroundMap.values() ?? [])],
+  getLaidGrounds: () => [...(windrise.value?.regionGroundMap.values() ?? [])],
 });
 onUnmounted(stopGround);
 // What the character's body and the camera collide with, given the landmarks as they arrive

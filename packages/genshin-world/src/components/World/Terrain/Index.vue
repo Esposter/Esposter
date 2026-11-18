@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { DevRegistry } from "#src/models/dev/DevRegistry";
-import type { RegionGround } from "#src/models/world/RegionGround";
+import type { LaidGround } from "#src/models/world/LaidGround";
 import type { TerrainWorkerGround } from "#src/models/world/TerrainWorkerGround";
 import type { LightUniforms, TerrainOptions, TerrainSelection, WaterUniforms, WindUniforms } from "genshin-engine";
 import type { DataTexture } from "three";
@@ -30,12 +30,12 @@ interface Props {
   // Whether every region in reach has arrived or failed, so no ground to lay over the terrain is still coming. The
   // Terrain is not ready before then, since a ground arriving after would rebuild the tiles its first view waited on
   isGroundSettled: boolean;
+  // The regions' grounds laid over Windrise's so far, each as its region first comes within reach, with the domain its key names
+  laidGrounds: LaidGround[];
   lightUniforms: LightUniforms;
   // The world coordinate the scene's origin stands on, which the floating origin moves
   origin: Vector3;
   rampTexture: DataTexture;
-  // The regions' grounds laid over Windrise's so far, each as its region first comes within reach
-  regionGrounds: RegionGround[];
   // How far from the eye the sun's shadows reach, past which a ring's tiles are drawn into no shadow map
   shadowReach: number;
   terrainOptions: TerrainOptions;
@@ -52,10 +52,10 @@ const {
   devRegistry,
   draws,
   isGroundSettled,
+  laidGrounds,
   lightUniforms,
   origin,
   rampTexture,
-  regionGrounds,
   shadowReach,
   terrainOptions,
   terrainWorkerGround,
@@ -67,7 +67,19 @@ const { camera } = useTres();
 const { onBeforeRender } = useLoop();
 const { cellsPerSide } = terrainOptions;
 const morphEye = uniform(new Vector3());
-const terrainMaterial = createTerrainMaterial(terrainOptions, morphEye, { lightUniforms, rampTexture }, waterUniforms);
+// The box the terrain is bounded by, read by the material's lift as its uniforms, which follow the options as a ground widens them
+const terrainBox = { maxHeight: uniform(terrainOptions.maxHeight), minHeight: uniform(terrainOptions.minHeight) };
+watch([() => terrainOptions.maxHeight, () => terrainOptions.minHeight], ([maxHeight, minHeight]) => {
+  terrainBox.maxHeight.value = maxHeight;
+  terrainBox.minHeight.value = minHeight;
+});
+const terrainMaterial = createTerrainMaterial(
+  terrainOptions,
+  terrainBox,
+  morphEye,
+  { lightUniforms, rampTexture },
+  waterUniforms,
+);
 const tileIndices = computeTerrainIndices(cellsPerSide);
 const index = new BufferAttribute(tileIndices, 1);
 // Every finest tile's flowers are one instanced draw of the one flower in the one flower material, a child of its tile's
@@ -89,9 +101,9 @@ const { disposeTileMesh, endRefresh, failTile, getRing, ringDrawnKeysMap, ringMa
     // The selection is made below, so the residency reads its check through this closure, once the selection exists
     checkIsSettled: () => checkIsSettled(),
     devRegistry,
+    laidGrounds: () => laidGrounds,
     postTile: workers.postTile,
     postToEach: workers.postToEach,
-    regionGrounds: () => regionGrounds,
     terrainMaterial,
     terrainOptions,
     tileGroup,

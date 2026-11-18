@@ -14,7 +14,6 @@ import { getTerrainMorphStart } from "#src/terrain/getTerrainMorphStart";
 import {
   attribute,
   exp2,
-  float,
   Fn,
   max,
   mix,
@@ -37,7 +36,9 @@ import {
 // Cascade draws, flickering its shadows across the hills. Wet ground darkens and glints as every toon surface does,
 // And where the region has water, the floor under it shimmers with caustics
 export const createTerrainMaterial = (
-  terrainOptions: Pick<TerrainOptions, "finestRange" | "finestTileSize" | "maxHeight" | "minHeight">,
+  terrainOptions: Pick<TerrainOptions, "finestRange" | "finestTileSize">,
+  // The box the ground is bounded by, held as uniforms so a ground laid after the material widens it in place
+  box: { maxHeight: UniformNode<"float", number>; minHeight: UniformNode<"float", number> },
   // The view's eye in the scene's coordinates, written each frame by whatever selects the tiles
   eye: UniformNode<"vec3", Vector3>,
   // No colour of its own: the colour node is the morphed vertex colour, which replaces the material's
@@ -46,12 +47,12 @@ export const createTerrainMaterial = (
 ): ToonNodeMaterial => {
   const terrainMaterial = createToonMaterial({ ...toonMaterialOptions, isOutlined: false });
   const coarsePosition = attribute("coarsePosition", "vec4");
-  const { finestRange, maxHeight, minHeight } = terrainOptions;
+  const { finestRange } = terrainOptions;
   const levelScale = exp2(coarsePosition.w);
   const morphEnd = levelScale.mul(finestRange);
   const morphStart = levelScale.mul(getTerrainMorphStart(terrainOptions));
   const worldPosition = modelWorldMatrix.mul(vec4(positionGeometry, 1)).xyz;
-  const eyeLift = max(eye.y.sub(maxHeight), float(minHeight).sub(eye.y), 0);
+  const eyeLift = max(eye.y.sub(box.maxHeight), box.minHeight.sub(eye.y), 0);
   const eyeDistance = vec3(worldPosition.x.sub(eye.x), eyeLift, worldPosition.z.sub(eye.z)).length();
   const morphAmount = eyeDistance.sub(morphStart).div(morphEnd.sub(morphStart)).saturate();
   terrainMaterial.positionNode = Fn(() => {

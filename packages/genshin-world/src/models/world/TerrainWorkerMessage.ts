@@ -1,4 +1,4 @@
-import type { RegionGround } from "#src/models/world/RegionGround";
+import type { LaidGround } from "#src/models/world/LaidGround";
 import type { TerrainTileRequest } from "#src/models/world/TerrainTileRequest";
 import type { TerrainWorkerGround } from "#src/models/world/TerrainWorkerGround";
 import type { TerrainWorkerMessageKind } from "#src/models/world/TerrainWorkerMessageKind";
@@ -7,5 +7,5 @@ import type { TerrainWorkerMessageKind } from "#src/models/world/TerrainWorkerMe
 // A tile it computes over that ground
 export type TerrainWorkerMessage =
   | { ground: TerrainWorkerGround; kind: typeof TerrainWorkerMessageKind.Load }
-  | { kind: typeof TerrainWorkerMessageKind.RegionGrounds; regionGrounds: RegionGround[] }
+  | { kind: typeof TerrainWorkerMessageKind.RegionGrounds; laidGrounds: LaidGround[] }
   | { kind: typeof TerrainWorkerMessageKind.Tile; request: TerrainTileRequest };

@@ -1,3 +1,4 @@
+import type { LaidGround } from "#src/models/world/LaidGround";
 import type { RegionGround } from "#src/models/world/RegionGround";
 
 import { HOME_REALM_GROUND_HEIGHT } from "#src/services/home/constants";
@@ -9,7 +10,7 @@ import { computed, shallowRef } from "vue";
 interface GroundSource {
   baseGrounds: readonly [RegionGround, ...RegionGround[]];
   getIsInHomeRealm: () => boolean;
-  getRegionGrounds: () => readonly RegionGround[];
+  getLaidGrounds: () => readonly LaidGround[];
 }
 
 // The world's one ground, which everything in the world stands on: Windrise's with each region's laid over it from the
@@ -23,8 +24,8 @@ export const useWorldGroundStore = defineStore("world/ground", () => {
     return source.value;
   };
   const worldHeight = computed(() => {
-    const { baseGrounds, getRegionGrounds } = getSource();
-    return createWorldHeight(baseGrounds, getRegionGrounds());
+    const { baseGrounds, getLaidGrounds } = getSource();
+    return createWorldHeight(baseGrounds, getLaidGrounds());
   });
   const getGroundHeight = (x: number, z: number): number =>
     getSource().getIsInHomeRealm() ? HOME_REALM_GROUND_HEIGHT : worldHeight.value(x, z);
