@@ -3,7 +3,7 @@ affected_areas: [genshin]
 x-phase: 1
 x-model: claude-haiku-5-5
 x-needs: [game-exports]
-x-waiting: "1.2 waits on a finer Ground fit, whose representation the main session chooses (design.md, Decisions), and 1.3 waits on that rebuild."
+x-waiting: "1.2 waits on genshin-ground-detail's layered ground (its 2.2 and 2.3), and 1.3 on the other hours' references, which wait on the sun's direction."
 x-touches:
   [
     "scripts/src/services/genshinAssets/shared/DerivedAssetComponentMap.ts",
