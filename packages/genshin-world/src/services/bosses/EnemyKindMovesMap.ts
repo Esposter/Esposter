@@ -1,6 +1,7 @@
 import type { BossMove } from "#src/models/bosses/BossMove";
 
 import { EnemyKindId } from "#src/models/enemy/EnemyKindId";
+import { ALGORITHM_OF_SEMI_INTRANSIENT_MATRIX_MOVES } from "#src/services/bosses/algorithmOfSemiIntransientMatrix";
 import { ANEMO_HYPOSTASIS_MOVES } from "#src/services/bosses/anemoHypostasis";
 import { EMPEROR_OF_FIRE_AND_IRON_MOVES } from "#src/services/bosses/emperorOfFireAndIron";
 import { EXPERIMENTAL_FIELD_GENERATOR_MOVES } from "#src/services/bosses/experimentalFieldGenerator";
@@ -32,4 +33,5 @@ export const EnemyKindMovesMap: Partial<Record<EnemyKindId, readonly BossMove[]>
   [EnemyKindId.SecretSourceAutomatonConfigurationDevice]: SECRET_SOURCE_AUTOMATON_CONFIGURATION_DEVICE_MOVES,
   [EnemyKindId.WaywardHermeticSpiritspeaker]: WAYWARD_HERMETIC_SPIRITSPEAKER_MOVES,
   [EnemyKindId.SetekhWenut]: SETEKH_WENUT_MOVES,
+  [EnemyKindId.AlgorithmOfSemiIntransientMatrixOfOverseerNetwork]: ALGORITHM_OF_SEMI_INTRANSIENT_MATRIX_MOVES,
 };

@@ -71,6 +71,7 @@ packages/genshin-world/src/services/bosses/
 | `packages/genshin-world/src/services/bosses/computePerpetualMechanicalArrayHealthFloor.ts` | The health the Perpetual Mechanical Array can be damaged to: 30% until Defensive Mode has triggered               |
 | `packages/genshin-world/src/models/bosses/PerpetualMechanicalArrayFight.ts`                | The Perpetual Mechanical Array's fight: its mode, the seconds in it and whether Defensive Mode has triggered      |
 | `packages/genshin-world/src/models/bosses/PerpetualMechanicalArrayMode.ts`                 | The modes the Perpetual Mechanical Array's fight passes through                                                   |
+| `packages/genshin-world/src/services/bosses/algorithmOfSemiIntransientMatrix.ts`           | Algorithm of Semi-Intransient Matrix of Overseer Network's attacks from its wiki page, PROVISIONAL timings        |
 | `packages/genshin-world/src/services/bosses/setekhWenut.ts`                                | Setekh Wenut's attacks from its wiki page, PROVISIONAL timings                                                    |
 | `packages/genshin-world/src/services/bosses/waywardHermeticSpiritspeaker.ts`               | Wayward Hermetic Spiritspeaker's attacks from its wiki page, PROVISIONAL timings                                  |
 | `packages/genshin-world/src/services/bosses/secretSourceAutomatonConfigurationDevice.ts`   | Secret Source Automaton: Configuration Device's attacks from its wiki page, PROVISIONAL timings                   |
@@ -128,4 +129,5 @@ packages/genshin-world/src/services/bosses/
 - [Secret Source Automaton: Configuration Device](https://genshin-impact.fandom.com/wiki/Secret_Source_Automaton:_Configuration_Device), Genshin Impact Wiki: its attacks with their ATK shares and elements, read from the cached page; its phase thresholds are named, not run.
 - [Wayward Hermetic Spiritspeaker](https://genshin-impact.fandom.com/wiki/Wayward_Hermetic_Spiritspeaker), Genshin Impact Wiki: its attacks with their ATK shares and elements, read from the cached page; its phase thresholds are named, not run.
 - [Setekh Wenut](https://genshin-impact.fandom.com/wiki/Setekh_Wenut), Genshin Impact Wiki: its attacks with their ATK shares and elements, read from the cached page; its phase thresholds are named, not run.
+- [Algorithm of Semi-Intransient Matrix of Overseer Network](https://genshin-impact.fandom.com/wiki/Algorithm_of_Semi-Intransient_Matrix_of_Overseer_Network), Genshin Impact Wiki: its attacks with their ATK shares and elements, read from the cached page; its phase thresholds are named, not run.
 - The Domains and Daily Reset sources are the [bosses page](../../specs/genshin/bosses/design.md)'s.
