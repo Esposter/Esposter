@@ -8,37 +8,44 @@ import { fetchOk } from "#src/services/shared/fetchOk";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 
-// The redirects the wiki answers for one batch of titles, each from a title the batch named to the title it sends it to
-const fetchRedirectBatch = async (titles: readonly string[]): Promise<{ from: string; to: string }[]> => {
+// The title each label was asked about redirects to, or null when the wiki has no redirect from it
+type FamilyLabelRedirects = Record<string, null | string>;
+
+// The redirect target of each label in one batch, read from the wiki's answer for the batch
+const fetchRedirectBatch = async (labels: readonly string[]): Promise<FamilyLabelRedirects> => {
   const searchParams = new URLSearchParams({
     action: "query",
     format: "json",
     formatversion: "2",
     redirects: "1",
-    titles: titles.join("|"),
+    titles: labels.join("|"),
   });
   const text = await (await fetchOk(`${WIKI_API_URL}?${searchParams}`)).text();
-  return wikiRedirectResponseSchema.parse(parseMachineJson(text)).query.redirects ?? [];
+  const targets = new Map(
+    (wikiRedirectResponseSchema.parse(parseMachineJson(text)).query.redirects ?? []).map(({ from, to }) => [from, to]),
+  );
+  return Object.fromEntries(labels.map((label) => [label, targets.get(label) ?? null]));
 };
 
-// The title the wiki sends each family label to when the label is a redirect, read from the cache file when it holds them.
-// Else they are fetched through the wiki's API in batches and cached, unless a dry run, which fetches nothing and reads
-// None. A label the wiki has no page for is not redirected, so it is absent from the map
+// The title each family label redirects to on the wiki, read from the cache file, which records every label asked about
+// So that a label added to the map later is fetched once. Labels the cache lacks are fetched in batches unless a dry run,
+// Which fetches nothing and so maps only the labels already cached
 export const readFamilyLabelRedirects = async (
   labels: readonly string[],
   isDryRun: boolean,
 ): Promise<ReadonlyMap<string, string>> => {
-  if (!existsSync(FAMILY_LABEL_REDIRECTS_PATH)) {
-    if (isDryRun) return new Map();
-    const redirects: { from: string; to: string }[] = [];
-    for (let start = 0; start < labels.length; start += FAMILY_LABEL_REDIRECT_BATCH_SIZE) {
-      const batch = labels.slice(start, start + FAMILY_LABEL_REDIRECT_BATCH_SIZE);
+  const cached = existsSync(FAMILY_LABEL_REDIRECTS_PATH)
+    ? parseMachineJson<FamilyLabelRedirects>(readFileSync(FAMILY_LABEL_REDIRECTS_PATH, "utf8"))
+    : {};
+  const uncached = labels.filter((label) => !Object.hasOwn(cached, label));
+  if (uncached.length > 0 && !isDryRun) {
+    for (let start = 0; start < uncached.length; start += FAMILY_LABEL_REDIRECT_BATCH_SIZE) {
+      const batch = uncached.slice(start, start + FAMILY_LABEL_REDIRECT_BATCH_SIZE);
       // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one batch is asked for at a time, as the enemy pages are
-      redirects.push(...(await fetchRedirectBatch(batch)));
+      Object.assign(cached, await fetchRedirectBatch(batch));
     }
     mkdirSync(WIKI_CACHE_DIRECTORY, { recursive: true });
-    writeFileSync(FAMILY_LABEL_REDIRECTS_PATH, JSON.stringify(redirects));
+    writeFileSync(FAMILY_LABEL_REDIRECTS_PATH, JSON.stringify(cached));
   }
-  const redirects = parseMachineJson<{ from: string; to: string }[]>(readFileSync(FAMILY_LABEL_REDIRECTS_PATH, "utf8"));
-  return new Map(redirects.map(({ from, to }) => [from, to]));
+  return new Map(Object.entries(cached).filter((entry): entry is [string, string] => entry[1] !== null));
 };
