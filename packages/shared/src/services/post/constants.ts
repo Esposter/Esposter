@@ -3,6 +3,6 @@
 export const POST_RANKING_EPOCH_MS = 1_500_000_000_000;
 // How much age is worth one order of magnitude of votes: a post half a day older needs ten times the likes to
 // Rank alongside a newer one
-export const POST_RANKING_AGE_PER_ORDER_OF_MAGNITUDE_MS = Temporal.Duration.from({ minutes: 750 }).total(
+export const POST_RANKING_AGE_PER_ORDER_OF_MAGNITUDE_MS: number = Temporal.Duration.from({ minutes: 750 }).total(
   "milliseconds",
 );

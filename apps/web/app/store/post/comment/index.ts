@@ -5,7 +5,6 @@ import type { PostInPostWithRelations } from "@esposter/db-schema";
 import type { Except } from "type-fest";
 
 import { PostSortType } from "#shared/models/post/PostSortType";
-import { getPostRanking } from "#shared/services/post/getPostRanking";
 import { authClient } from "#src/services/auth/authClient";
 import { applyPostCounts } from "#src/services/post/applyPostCounts";
 import { postCountHooks } from "#src/services/post/postCountHooks";
@@ -15,6 +14,7 @@ import { usePostCountStore } from "#src/store/post/count";
 import { usePostStore } from "#src/store/post/index";
 import { EMPTY_TEXT_REGEX } from "#src/util/text/constants";
 import { DerivedDatabaseEntityType } from "@esposter/db-schema";
+import { getPostRanking } from "@esposter/shared";
 import { v7 } from "uuid";
 
 export const useCommentStore = defineStore("post/comment", () => {

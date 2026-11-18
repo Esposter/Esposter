@@ -27,7 +27,7 @@ import {
   usersInAuth,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
-import { takeOne } from "@esposter/shared";
+import { getPostRanking, takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
@@ -138,8 +138,9 @@ describe(deleteAccountHandler, () => {
     expect(MockPublishedTopics).toContain(getTopic(TopicKind.Friend, friendUserId));
   });
 
-  // A post's like count is the sum of its likes, so the erased person's like leaves it with the row that holds it
-  test("recounts a post's likes without the erased person's like", async () => {
+  // A post's like count is the sum of its likes, so the erased person's like leaves it with the row that holds it, and
+  // The ranking the count is stored under follows it
+  test("recounts a post's likes and ranking without the erased person's like", async () => {
     expect.hasAssertions();
 
     const userId = v7();
@@ -157,8 +158,11 @@ describe(deleteAccountHandler, () => {
     await deleteAccountHandler({ userId });
 
     await expect(
-      mockDb.select({ likeCount: postsInPost.likeCount }).from(postsInPost).where(eq(postsInPost.id, post.id)),
-    ).resolves.toStrictEqual([{ likeCount: 1 }]);
+      mockDb
+        .select({ likeCount: postsInPost.likeCount, ranking: postsInPost.ranking })
+        .from(postsInPost)
+        .where(eq(postsInPost.id, post.id)),
+    ).resolves.toStrictEqual([{ likeCount: 1, ranking: getPostRanking(1, post.createdAt) }]);
   });
 
   // A post's comment count is the replies beneath it: the erased comment and every reply beneath it leave the count, and

@@ -27,7 +27,6 @@ import { readPostInputSchema } from "#shared/models/db/post/ReadPostInput";
 import { readPostsInputSchema } from "#shared/models/db/post/ReadPostsInput";
 import { updateCommentInputSchema } from "#shared/models/db/post/UpdateCommentInput";
 import { updatePostInputSchema } from "#shared/models/db/post/UpdatePostInput";
-import { getPostRanking } from "#shared/services/post/getPostRanking";
 import { getPageOrderBy, getPageWhere, inJsonArray, toPage } from "@esposter/db";
 import {
   DatabaseEntityType,
@@ -38,7 +37,7 @@ import {
   selectPostInPostSchema,
   TopicKind,
 } from "@esposter/db-schema";
-import { Operation } from "@esposter/shared";
+import { getPostRanking, Operation } from "@esposter/shared";
 import { and, isNotNull, isNull, sql } from "drizzle-orm";
 import { z } from "zod";
 

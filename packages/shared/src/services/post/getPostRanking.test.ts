@@ -1,5 +1,5 @@
-import { POST_RANKING_AGE_PER_ORDER_OF_MAGNITUDE_MS, POST_RANKING_EPOCH_MS } from "#shared/services/post/constants";
-import { getPostRanking } from "#shared/services/post/getPostRanking";
+import { POST_RANKING_AGE_PER_ORDER_OF_MAGNITUDE_MS, POST_RANKING_EPOCH_MS } from "#src/services/post/constants";
+import { getPostRanking } from "#src/services/post/getPostRanking";
 import { describe, expect, test } from "vitest";
 
 describe(getPostRanking, () => {

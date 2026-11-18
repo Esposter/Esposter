@@ -27,9 +27,9 @@ flowchart LR
 sign(likes) × log10(max(|likes|, 1)) + max(0, createdAtMs − 1.5e12) / 45e6
 ```
 
-Here `1.5e12` is `POST_RANKING_EPOCH_MS` and `45e6` is `POST_RANKING_AGE_PER_ORDER_OF_MAGNITUDE_MS`, both declared in `apps/web/shared/services/post/constants.ts`.
+Here `1.5e12` is `POST_RANKING_EPOCH_MS` and `45e6` is `POST_RANKING_AGE_PER_ORDER_OF_MAGNITUDE_MS`, both declared in `packages/shared/src/services/post/constants.ts`.
 
-The log term means early likes matter most; the time term gives newer posts a constant head start (each ~12.5 hours of age is worth one order of magnitude of likes). Because age is baked in as an absolute offset, scores never need recomputation — newer posts simply start higher. Every like create/update/delete and comment create recomputes the score in the same transaction that updates the counters.
+The log term means early likes matter most; the time term gives newer posts a constant head start (each ~12.5 hours of age is worth one order of magnitude of likes). Because age is baked in as an absolute offset, scores never need recomputation — newer posts simply start higher. Every like create/update/delete and comment create recomputes the score in the same transaction that updates the counters, and so does the account sweep's erasure of a like, for each post whose count it moves.
 
 **Feed UI** — the page's full width: the toolbar, a card per post (who and when with the author's actions at the end, the post, then the vote pill and the comment count), and a `StyledWaypoint` sentinel at the bottom that triggers `readMorePosts` while `hasMore` holds. The page scrolls the document, so pulling to refresh is the browser's own, which reloads the feed.
 
@@ -44,17 +44,17 @@ The log term means early likes matter most; the time term gives newer posts a co
 
 Paths relative to `apps/web`, except `packages/`, which is relative to the repository root.
 
-| File                                              | Role                                                              |
-| ------------------------------------------------- | ----------------------------------------------------------------- |
-| `app/pages/index.vue`                             | the feed page                                                     |
-| `app/components/Post/List.vue`                    | the toolbar, the cards, the waypoint                              |
-| `app/composables/post/useReadPosts.ts`            | initial read + read-more, `sortName`                              |
-| `app/composables/post/usePagedPostRead.ts`        | the first page and cursor pages, shared with the comment branches |
-| `app/store/post/index.ts`                         | feed items store + `sortType`                                     |
-| `shared/services/post/PostSortTypePageSortMap.ts` | sort → declared page sort, Old included                           |
-| `server/trpc/routers/post.ts`                     | `readPosts` / `readPost`                                          |
-| `shared/services/post/getPostRanking.ts`          | the hot score                                                     |
-| `packages/db/src/services/pagination/`            | createPageSort, getPageWhere, getPageOrderBy, toPage              |
+| File                                                  | Role                                                              |
+| ----------------------------------------------------- | ----------------------------------------------------------------- |
+| `app/pages/index.vue`                                 | the feed page                                                     |
+| `app/components/Post/List.vue`                        | the toolbar, the cards, the waypoint                              |
+| `app/composables/post/useReadPosts.ts`                | initial read + read-more, `sortName`                              |
+| `app/composables/post/usePagedPostRead.ts`            | the first page and cursor pages, shared with the comment branches |
+| `app/store/post/index.ts`                             | feed items store + `sortType`                                     |
+| `shared/services/post/PostSortTypePageSortMap.ts`     | sort → declared page sort, Old included                           |
+| `server/trpc/routers/post.ts`                         | `readPosts` / `readPost`                                          |
+| `packages/shared/src/services/post/getPostRanking.ts` | the hot score                                                     |
+| `packages/db/src/services/pagination/`                | createPageSort, getPageWhere, getPageOrderBy, toPage              |
 
 ## Notes
 

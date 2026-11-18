@@ -1,8 +1,8 @@
 import type { Context } from "#server/trpc/context";
 import type { PostInPost } from "@esposter/db-schema";
 
-import { getPostRanking } from "#shared/services/post/getPostRanking";
 import { postsInPost } from "@esposter/db-schema";
+import { getPostRanking } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
 
 // The ranking is a function of the count, so it is written from the count the vote's batch returned, and only while
