@@ -14,6 +14,7 @@ import { runParityPasses } from "#src/services/genshinParity/passes/runParityPas
 import { classifyComparisonFailure } from "#src/services/genshinParity/reference/classifyComparisonFailure";
 import { compareScreen } from "#src/services/genshinParity/reference/compareScreen";
 import { DEFAULT_APPROVAL } from "#src/services/genshinParity/reference/constants";
+import { getApprovalValue } from "#src/services/genshinParity/reference/getApprovalValue";
 import { getLayerComponent } from "#src/services/genshinParity/reference/getLayerComponent";
 import { getMissingReferenceInputs } from "#src/services/genshinParity/reference/getMissingReferenceInputs";
 import { getWorstCells } from "#src/services/genshinParity/reference/getWorstCells";
@@ -96,6 +97,7 @@ export const compareCommand: SubCommandsDef[string] = defineCommand({
             console.error(`pending: ${pending}`);
             continue;
           }
+          const approval = ParityReferenceMap[referenceId]?.approval ?? DEFAULT_APPROVAL;
           if (args.all) {
             const layerComponent = getLayerComponent(referenceId, args.witness);
             const witnessLayoutPath =
@@ -132,7 +134,7 @@ export const compareCommand: SubCommandsDef[string] = defineCommand({
               // The last stdout line of a comparison: its score against its bar and the worst cells of its grid
               console.log(
                 JSON.stringify({
-                  bar: (ParityReferenceMap[referenceId]?.approval ?? DEFAULT_APPROVAL).bar,
+                  bar: approval.bar,
                   id: referenceId,
                   score: roundHundredths(score.meanDifference),
                   worst: getWorstCells(cells, cellCount),
@@ -153,8 +155,12 @@ export const compareCommand: SubCommandsDef[string] = defineCommand({
           // Its gate, which is the one reopened. A frame every pass holds names none, so the measure set is what is short
           const comparedScore = scores[referenceId];
           const component = getLayerComponent(referenceId, args.witness);
-          const bar = (ParityReferenceMap[referenceId]?.approval ?? DEFAULT_APPROVAL).bar;
-          if (comparedScore !== undefined && component !== undefined && comparedScore.meanDifference > bar) {
+          // At the bar is over it, as the approval's own status counts it, and the measure is the one the approval judges by
+          if (
+            comparedScore !== undefined &&
+            component !== undefined &&
+            getApprovalValue(comparedScore, approval) >= approval.bar
+          ) {
             const reopened = findReopenedPass(await runParityPasses(component));
             console.error(
               reopened === undefined
