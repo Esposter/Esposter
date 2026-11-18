@@ -12,6 +12,7 @@ import { LEGATUS_GOLEM_MOVES } from "#src/services/bosses/legatusGolem";
 import { MILLENNIAL_PEARL_SEAHORSE_MOVES } from "#src/services/bosses/millennialPearlSeahorse";
 import { PERPETUAL_MECHANICAL_ARRAY_MOVES } from "#src/services/bosses/perpetualMechanicalArray";
 import { SECRET_SOURCE_AUTOMATON_CONFIGURATION_DEVICE_MOVES } from "#src/services/bosses/secretSourceAutomatonConfigurationDevice";
+import { SETEKH_WENUT_MOVES } from "#src/services/bosses/setekhWenut";
 import { STORMTERROR_MOVES } from "#src/services/bosses/stormterror";
 import { WAYWARD_HERMETIC_SPIRITSPEAKER_MOVES } from "#src/services/bosses/waywardHermeticSpiritspeaker";
 
@@ -30,4 +31,5 @@ export const EnemyKindMovesMap: Partial<Record<EnemyKindId, readonly BossMove[]>
   [EnemyKindId.GoldflameQucusaurTyrant]: GOLDFLAME_QUCUSAUR_TYRANT_MOVES,
   [EnemyKindId.SecretSourceAutomatonConfigurationDevice]: SECRET_SOURCE_AUTOMATON_CONFIGURATION_DEVICE_MOVES,
   [EnemyKindId.WaywardHermeticSpiritspeaker]: WAYWARD_HERMETIC_SPIRITSPEAKER_MOVES,
+  [EnemyKindId.SetekhWenut]: SETEKH_WENUT_MOVES,
 };
