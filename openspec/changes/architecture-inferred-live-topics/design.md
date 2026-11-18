@@ -103,6 +103,18 @@ The write capture belongs to the database handle, not to the request. A queue jo
 
 A scope equality names its table exactly. A table with no scope equality but a join on one of its scope columns is named by the joined rows' key values, where the statement selects the key; where it does not, the table is named table-wide. A table with neither is named table-wide. A table's declaration may mark a join table-wide when its measured fan-out says so, which is the decision point task 6.1 produces.
 
+## Builder decisions
+
+Phase 1 (tasks 1.1 to 1.3) settled the following, which the later phases build on.
+
+- **Scope declaration.** `sqliteTable` takes `scope: { columns, secretColumns? }` and keeps it on the table under `Symbol.for` with the product's prefix, read by `getTableScope`. A registry keyed by table name was rejected: two copies of the db-schema package could disagree, and `sideEffects: false` can drop a module that registers. `alias()` forwards unknown symbol keys to the table it aliases, so an aliased table reads its own scope. The invite's `id` is in `secretColumns`, so its topic carries a digest.
+- **Recorder.** `recordStatements` returns a request-scoped handle over the context's `db`. A query is recorded when it is awaited, a `db.batch` records its statements when it is made, and a builder a method returns is wrapped so the query at the end of its chain is recorded. Drizzle's classes are not patched; a test holds each query class's `then` to the one drizzle wrote. The handle records statements only; a statement's rows are captured in phase 2, where `RETURNING` is needed.
+- **Statement detection.** Drizzle's query classes take `then` through a mixin, so `instanceof` cannot name them. A statement is a value with `then` and `getSQL` functions.
+- **Read set.** A read set holds the tables a read names, its scope equalities with their value and a secret flag, the joins with a scope column on one side (each side oriented by its column, the list sorted), and its null checks. A join side carries `selectedAs` only when the read's own top-level select returns that same table column. Matching is by table and column, never by column name, so the direct-message partner's join is not keyed by the room's own `userId`. A derived column resolves to the base column its subquery selects.
+- **Relational SQL.** Drizzle writes a relational query's aliases and column references as text, so a reference is read against the alias declared in its own parenthesised group.
+- **Known limits.** A later operand of a set operator names its column in the emitted SQL, not as a column, so its join is not read. Its scope equality is, and that equality covers every row the join would name; `searchUsers` is the case. A relation's nested select is not the read's select, so a join key only a relation selects is not a selected key.
+- **Against the spike's counts.** The `readPosts` read set names a join the table counts above do not list: a post's author, through the `user` relation. Whether that topic is per author or table-wide is for the naming step, and task 6.1 measures its fan-out.
+
 ## Alternatives considered
 
 - **Keep hand declaration and fix each gap.** This is the status quo. It was lost because the gaps recur, as the commit history shows, and each fix adds a test that only pins the list it names.
@@ -141,6 +153,10 @@ Before the sequence starts, the wrapper, the walker and the write capture are bu
 | `apps/web/server/trpc/context.ts`                                              | The request context whose `db` the request's handle wraps           |
 | `apps/web/server/db/index.ts`                                                  | The D1 handle the context shares                                    |
 | `packages/db-schema/src/sqliteTable.ts`                                        | The table definition that carries the scope declaration             |
+| `packages/db-schema/src/services/realtime/getTableScope.ts`                    | Reads a table's scope declaration back from its symbol              |
+| `packages/db/src/services/realtime/recordStatements.ts`                        | The request-scoped handle that records each awaited statement       |
+| `packages/db/src/services/realtime/getReadSet.ts`                              | Merges the statements' read sets into the facts a read names        |
+| `packages/db/src/services/realtime/getStatementReadSet.ts`                     | Walks one built statement's chunks into its read set                |
 | `packages/db-schema/src/models/realtime/Topic.ts`                              | The topic name type, which gains inferred names                     |
 | `packages/db-schema/src/services/realtime/getTopic.ts`                         | The hand-written topic constructor, deleted with the declarations   |
 | `packages/db/src/services/realtime/publishTopics.ts`                           | The publish the write set feeds                                     |
