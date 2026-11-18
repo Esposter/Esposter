@@ -18,7 +18,7 @@
 
 ## Sources
 
-- `pnpm -C scripts genshin:assets missing-tiles inazuma`, run on 19 Nov: its export holds 27 of the 31 tiles the area outlines name, and `BigWorldTerrain_-4_-6`, `-3_-6`, `-2_-6` and `-5_0` print as absent from the install. The install's index, `{data-root}/genshin-parity/extracted/maps/index.tsv`, names no asset of any of the four, and names an asset of each of the 27 exported tiles, so no re-extraction can add them and Inazuma needs no terrain-tile item.
+- `pnpm -C scripts genshin:assets missing-tiles inazuma`: its export holds 27 of the 31 tiles the area outlines name, and prints four as absent from the install, "BigWorldTerrain_-4_-6.bin", "BigWorldTerrain_-3_-6.bin", "BigWorldTerrain_-2_-6.bin" and "BigWorldTerrain_-5_0.bin". The install's index, `{data-root}/genshin-parity/extracted/maps/index.tsv`, names no asset of any of the four, and names an asset of each of the 27 exported tiles, so no re-extraction can add them and Inazuma needs no terrain-tile item.
 
 ## Open
 

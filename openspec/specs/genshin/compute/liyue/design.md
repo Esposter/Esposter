@@ -2,7 +2,7 @@
 
 ## Queue
 
-- [ ] `[cpu]` {liyue-terrain-tiles} needs game-install — **Liyue: the terrain tiles its area outlines name, exported.** `pnpm -C scripts genshin:assets extract liyue`, with the game closed. Reads the game install through its map, `{data-root}/genshin-parity/extracted/maps/`, the Windrise export `{data-root}/genshin-parity/extracted/windrise/` that places the origin, and `packages/genshin-world/src/data/catalogue.json`. Writes `{data-root}/genshin-parity/extracted/liyue/`. Measure: `pnpm -C scripts genshin:assets missing-tiles liyue`, bar `missing 0` of its 29 outline tiles. Its export lacked 26 of its 29 outline tiles when measured on 19 Nov.
+- [ ] `[cpu]` {liyue-terrain-tiles} needs game-install — **Liyue: the terrain tiles its area outlines name, exported.** `pnpm -C scripts genshin:assets extract liyue`, with the game closed. Reads the game install through its map, `{data-root}/genshin-parity/extracted/maps/`, the Windrise export `{data-root}/genshin-parity/extracted/windrise/` that places the origin, and `packages/genshin-world/src/data/catalogue.json`. Writes `{data-root}/genshin-parity/extracted/liyue/`. Measure: `pnpm -C scripts genshin:assets missing-tiles liyue`, bar `missing 0` of its 29 outline tiles, as the [outline tiles](../README.md#outline-tiles) section sets out.
 
 ## Waiting
 
@@ -29,4 +29,4 @@
 - [ ] **The liyue-harbor-location camera pose image is written** — no source yet: the pose run's image, and the parity folder's `pose` directory it writes to, are not on disk; `pnpm -C scripts genshin:parity pose liyue-harbor-location --witness liyue` writes `{data-root}/genshin-parity/pose/liyue-harbor-location.png` once its landmark shares exist (the `[DerivedAssetComponent.Liyue]` entry of `scripts/src/services/genshinAssets/witness/DerivedAssetLandmarkMap.ts` is `{}`).
 - [ ] **The liyue-harbor-location shadow image is written** — no source yet: the shadow run's image, and the parity folder's `shadows` directory it writes to, are not on disk; `pnpm -C scripts genshin:parity shadows liyue-harbor-location --witness liyue` writes `{data-root}/genshin-parity/shadows/liyue-harbor-location.png` (`solveReferenceShadows` in `scripts/src/services/genshinParity/witness/solveReferenceShadows.ts`, where it writes the image).
 - [ ] **Liyue's display and shape passes wait on the two facts in [compute's Open](../README.md#open).**
-- [ ] **Liyue's ground fit waits on `liyue-terrain-tiles`** — its `fit liyue --dry-run` reads that export.
+- [ ] **Liyue's ground fit waits on `liyue-terrain-tiles`** — `pnpm -C scripts genshin:assets fit liyue --dry-run` reads that export, as the [outline tiles](../README.md#outline-tiles) section sets out.

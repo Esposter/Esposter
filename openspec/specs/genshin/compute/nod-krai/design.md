@@ -2,7 +2,7 @@
 
 ## Queue
 
-- [ ] `[cpu]` {nod-krai-terrain-tiles} needs game-install — **Nod-Krai: the terrain tiles its area outlines name, exported.** `pnpm -C scripts genshin:assets extract nod-krai`, with the game closed. Reads the game install through its map, `{data-root}/genshin-parity/extracted/maps/`, the Windrise export `{data-root}/genshin-parity/extracted/windrise/` that places the origin, and `packages/genshin-world/src/data/catalogue.json`. Writes `{data-root}/genshin-parity/extracted/nod-krai/`. Measure: `pnpm -C scripts genshin:assets missing-tiles nod-krai`, bar `missing 0` of its 23 outline tiles. Its export lacked 17 of its 23 outline tiles, and two more name no asset, when measured on 19 Nov.
+- [ ] `[cpu]` {nod-krai-terrain-tiles} needs game-install — **Nod-Krai: the terrain tiles its area outlines name, exported.** `pnpm -C scripts genshin:assets extract nod-krai`, with the game closed. Reads the game install through its map, `{data-root}/genshin-parity/extracted/maps/`, the Windrise export `{data-root}/genshin-parity/extracted/windrise/` that places the origin, and `packages/genshin-world/src/data/catalogue.json`. Writes `{data-root}/genshin-parity/extracted/nod-krai/`. Measure: `pnpm -C scripts genshin:assets missing-tiles nod-krai`, bar `missing 0` of its 23 outline tiles, with "BigWorldTerrain_4_11.bin" and "BigWorldTerrain_5_11.bin" absent from the install, as the [outline tiles](../README.md#outline-tiles) section sets out.
 
 ## Waiting
 
@@ -35,4 +35,4 @@
 - [ ] **The central tower's pieces `Area_Ndkl_Build_NXZ_Paota_A_01` and `_03` to `_08` are the prefab's children, and no stream places them by name** — no source yet: of the prefab's eight "m_Children" path ids, only the ring's file names one ("Area_Ndkl_Build_NXZ_Paota_A_02_Lod0.json", line 5), so the seven others tie no piece to a name; a stream placement dump, not on disk, would settle the rest.
 - [ ] **Nod-Krai's display and shape passes wait on the two facts in [compute's Open](../README.md#open).**
 - [ ] **The streams place the tower's ring twice at (1447.9, 209.3, 9257.7), 6.8 metres across** — no source yet: the stream placement dump is not on disk, and {data-root}/genshin-parity/extracted/nod-krai/witness.json holds no placement at those coordinates; the stream placement dump would settle it.
-- [ ] **Nod-Krai's ground fit waits on `nod-krai-terrain-tiles`** — its `fit nod-krai --dry-run` reads that export.
+- [ ] **Nod-Krai's ground fit waits on `nod-krai-terrain-tiles`** — `pnpm -C scripts genshin:assets fit nod-krai --dry-run` reads that export, as the [outline tiles](../README.md#outline-tiles) section sets out.

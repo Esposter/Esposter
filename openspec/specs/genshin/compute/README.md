@@ -52,6 +52,16 @@ The bars the region passes and the area pages' pass items share, each gate named
 - **Display**: the shipped contrast's excess within 0.1 (`DISPLAY_CONTRAST_GATE`), and, on each reference whose screen draws the bloom (`BLOOM_SCREENS`), the drawn bloom's reading at or under zero (`BLOOM_READING_GATE`), negative where the bloom closes.
 - **Frame score** (not gated): a location's frame reads the reference and the screen at the reference's size, writes its row of the parity snapshot and the reference, ours and difference images, and is reported, not gated: the passes above carry the bars.
 
+## Outline tiles
+
+An area's outline names the terrain tiles its ground covers. An export written while its region's terrain list was the capital's 2x2 names few of them, so the region's page queues a `[cpu]` re-extraction, `{<region>-terrain-tiles}`, that writes the tiles its outlines name. Its measure is `pnpm -C scripts genshin:assets missing-tiles <region>`, which prints:
+
+- `missing <count> of <N> outline tiles`, the count of the outline tiles the export lacks, out of the N the outlines name. The bar is `missing 0`.
+- each tile the export lacks that the install names an asset of, after `missing`.
+- each tile the install names no asset of, after `absent from the install`. These are not counted, since an extraction cannot find a tile the game's index never names.
+
+A region's ground fit (`pnpm -C scripts genshin:assets fit <region> --dry-run`) reads the export that item writes, so it runs once that item's measure reads `missing 0`. Its reading is a judgement the main session makes by hand, so the fit is no queue item.
+
 ## Sources
 
 The citations the region pages share: the bar's constant, the passes folder and its writer, the command lines, the solve folders, the pass modules' headers and the sun's reader. Each region page keeps the citations its own items read.

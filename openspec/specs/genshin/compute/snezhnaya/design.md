@@ -2,7 +2,7 @@
 
 ## Queue
 
-- [ ] `[cpu]` {snezhnaya-terrain-tiles} needs game-install — **Snezhnaya: the terrain tiles its area outlines name, exported.** `pnpm -C scripts genshin:assets extract snezhnaya`, with the game closed. Reads the game install through its map, `{data-root}/genshin-parity/extracted/maps/`, the Windrise export `{data-root}/genshin-parity/extracted/windrise/` that places the origin, and `packages/genshin-world/src/data/catalogue.json`. Writes `{data-root}/genshin-parity/extracted/snezhnaya/`. Measure: `pnpm -C scripts genshin:assets missing-tiles snezhnaya`, bar `missing 0` of its 2 outline tiles. Its export lacked 1 of its 2 outline tiles when measured on 19 Nov.
+- [ ] `[cpu]` {snezhnaya-terrain-tiles} needs game-install — **Snezhnaya: the terrain tiles its area outlines name, exported.** `pnpm -C scripts genshin:assets extract snezhnaya`, with the game closed. Reads the game install through its map, `{data-root}/genshin-parity/extracted/maps/`, the Windrise export `{data-root}/genshin-parity/extracted/windrise/` that places the origin, and `packages/genshin-world/src/data/catalogue.json`. Writes `{data-root}/genshin-parity/extracted/snezhnaya/`. Measure: `pnpm -C scripts genshin:assets missing-tiles snezhnaya`, bar `missing 0` of its 2 outline tiles, as the [outline tiles](../README.md#outline-tiles) section sets out.
 
 ## Waiting
 
@@ -36,4 +36,4 @@
 - [ ] **Snezhnaya: the fit's ground key** — contradicted by `readRegionGroundFits` in `scripts/src/services/genshinAssets/fit/readRegionGroundFits.ts`: each area's piece is keyed `ground/<area>`, and the area's catalogue id is "everfrozen-earth" (the area whose `id` is that in `packages/genshin-world/src/data/catalogue.json`), so the key is not `ground/snezhnaya/everfrozen-earth`. The lock holds the key `ground/snezhnaya` in `packages/genshin-world/src/generated/gameDataLock.json`, the region's record that the comment above `fitRegionCapitals` in `scripts/src/services/genshinAssets/fit/fitRegionCapitals.ts` names `ground/<region>`.
 - [ ] **everfrozen-earth-location's pose image** — no source yet: the pose image the pass would write is an output target, not on disk, so it is not evidence; `pnpm -C scripts genshin:parity pose everfrozen-earth-location --witness snezhnaya` writes `{data-root}/genshin-parity/pose/everfrozen-earth-location.png` once its landmark shares exist (`scripts/src/services/genshinAssets/witness/DerivedAssetLandmarkMap.ts`'s `[DerivedAssetComponent.Snezhnaya]` entry is `{}`).
 - [ ] **Snezhnaya's display and shape passes wait on the two facts in [compute's Open](../README.md#open).**
-- [ ] **Snezhnaya's ground fit waits on `snezhnaya-terrain-tiles`** — its `fit snezhnaya --dry-run` reads that export.
+- [ ] **Snezhnaya's ground fit waits on `snezhnaya-terrain-tiles`** — `pnpm -C scripts genshin:assets fit snezhnaya --dry-run` reads that export, as the [outline tiles](../README.md#outline-tiles) section sets out.
