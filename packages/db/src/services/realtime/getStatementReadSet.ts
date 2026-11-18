@@ -586,10 +586,8 @@ export const getStatementReadSet = (statement: SQLWrapper): ReadSet => {
     scopedKeys,
     selections: getSelections(statement),
   });
-  // A level a statement opens with nothing in it, such as a relation that selects only its own columns, names nothing
-  const levels = readSet.levels
-    .map(({ tables }) => ({ tables: [...new Set(tables)].toSorted() }))
-    .filter(({ tables }) => tables.length > 0);
+  // Every level the walk opened is kept, an empty one too, so an occurrence's level is its position in `levels`
+  const levels = readSet.levels.map(({ tables }) => ({ tables: [...new Set(tables)].toSorted() }));
   // A declaration is scoped by an equality of its own in its level, so the scope is read from the level it was declared in
   const occurrences = declared.map(({ level: declaredLevel, occurrence, table }) => ({
     level: readSet.levels.indexOf(declaredLevel),

@@ -40,8 +40,31 @@ const uniqueSorted = <T>(items: T[], toSerial: (item: T) => string): T[] => {
 };
 
 // The read set of the statements a procedure awaited through its handle, merged into one set of facts
+// Each statement numbers its levels from zero, so the merged read set moves a statement's level numbers past the levels the
+// Statements before it opened. The -1 a subquery's selected column carries stays as it is
+const shiftLevel = (level: number, offset: number): number => (level < 0 ? level : level + offset);
+
+const getShiftedReadSet = (readSet: ReadSet, offset: number): ReadSet => ({
+  ...readSet,
+  filters: readSet.filters.map((filter) => ({ ...filter, level: shiftLevel(filter.level, offset) })),
+  joins: readSet.joins.map((join) => ({
+    ...join,
+    left: { ...join.left, level: shiftLevel(join.left.level, offset) },
+    right: { ...join.right, level: shiftLevel(join.right.level, offset) },
+  })),
+  occurrences: readSet.occurrences.map((occurrence) => ({
+    ...occurrence,
+    level: shiftLevel(occurrence.level, offset),
+  })),
+});
+
 export const getReadSet = (statements: RecordedStatement[]): ReadSet => {
-  const readSets = statements.map(({ statement }) => getStatementReadSet(statement));
+  let offset = 0;
+  const readSets = statements.map(({ statement }) => {
+    const readSet = getShiftedReadSet(getStatementReadSet(statement), offset);
+    offset += readSet.levels.length;
+    return readSet;
+  });
   return {
     filters: uniqueSorted(
       readSets.flatMap((readSet) => readSet.filters),

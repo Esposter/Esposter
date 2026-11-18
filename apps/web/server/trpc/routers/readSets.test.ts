@@ -122,7 +122,12 @@ describe(getReadSet, () => {
           right: { column: "id", level: 0, occurrence: "d0", selectedAs: "id", table: "post_posts" },
         },
       ],
-      levels: [{ tables: ["auth_users", "post_likes", "post_posts"] }, { tables: ["social_blocks"] }],
+      levels: [
+        { tables: ["auth_users", "post_likes", "post_posts"] },
+        { tables: [] },
+        { tables: [] },
+        { tables: ["social_blocks"] },
+      ],
       occurrences: [
         { level: 0, occurrence: "d1", scoped: true, table: "auth_users" },
         { level: 0, occurrence: "d1", scoped: true, table: "post_likes" },
@@ -306,10 +311,10 @@ describe(getReadSet, () => {
         { level: 0, occurrence: "message_invites", scoped: true, table: "message_invites" },
         { level: 1, occurrence: "message_rooms", scoped: false, table: "message_rooms" },
         { level: 2, occurrence: "message_bans", scoped: true, table: "message_bans" },
-        { level: 0, occurrence: "d0", scoped: true, table: "message_rooms" },
-        { level: 0, occurrence: "d0", scoped: true, table: "auth_users" },
-        { level: 0, occurrence: "d0", scoped: true, table: "message_usersToRooms" },
-        { level: 0, occurrence: "message_usersToRooms", scoped: true, table: "message_usersToRooms" },
+        { level: 3, occurrence: "d0", scoped: true, table: "message_rooms" },
+        { level: 4, occurrence: "d0", scoped: true, table: "auth_users" },
+        { level: 5, occurrence: "d0", scoped: true, table: "message_usersToRooms" },
+        { level: 6, occurrence: "message_usersToRooms", scoped: true, table: "message_usersToRooms" },
       ],
       scopes: [
         { column: "id", table: "auth_users", value: inviterId },
