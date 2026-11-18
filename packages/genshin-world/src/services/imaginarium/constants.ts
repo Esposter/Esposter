@@ -31,3 +31,6 @@ export const IMAGINARIUM_COMPANION_FLOWER_PRICE = 80;
 // Wiki gives no base count of rerolls and no price of one, so both are provisional
 export const IMAGINARIUM_REROLL_CHANCES = 2;
 export const IMAGINARIUM_REROLL_COST = 1;
+// The rewinds one rewind spends. The wiki gives no count of the rewinds a run holds, only that they are limited, so the run
+// States its count and one rewind costs one
+export const IMAGINARIUM_REWIND_COST = 1;

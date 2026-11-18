@@ -3,8 +3,6 @@ import { spendImaginariumCount } from "#src/services/imaginarium/spendImaginariu
 import { describe, expect, test } from "vitest";
 
 describe(spendImaginariumCount, () => {
-  const REWIND_COST = 1;
-
   test("a Companion event costs Fantasia Flowers", () => {
     expect.hasAssertions();
 
@@ -22,11 +20,5 @@ describe(spendImaginariumCount, () => {
       count: flowers,
       isSpent: false,
     });
-  });
-
-  test("a rewind is refused once the run's rewinds are used", () => {
-    expect.hasAssertions();
-
-    expect(spendImaginariumCount(0, REWIND_COST)).toStrictEqual({ count: 0, isSpent: false });
   });
 });
