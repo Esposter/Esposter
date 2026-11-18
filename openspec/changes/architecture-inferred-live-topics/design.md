@@ -262,7 +262,7 @@ Before the sequence starts, the wrapper, the walker and the write capture are bu
 | `packages/db/src/services/realtime/recordStatements.ts`                        | The request-scoped handle that records each awaited statement                                   |
 | `packages/db/src/services/realtime/recordBucket.ts`                            | The R2 binding's proxy that records a call's blob reads and writes into the scope               |
 | `packages/db/src/services/realtime/getBlobWriteTopics.ts`                      | The topics a write publishes: its key, each directory above it, and the root                    |
-| `packages/db/src/services/realtime/getBlobListTopic.ts`                        | The topic a listing names: the directory its prefix lies in                                     |
+| `packages/db-schema/src/services/realtime/getBlobListTopic.ts`                 | The topic a listing names: the directory its prefix lies in                                     |
 | `packages/db/src/services/realtime/getReadSet.ts`                              | Merges the statements' read sets into the facts a read names                                    |
 | `packages/db/src/services/realtime/getStatementReadSet.ts`                     | Walks one built statement's chunks into its read set                                            |
 | `packages/db/src/services/realtime/getJoinScopeValues.ts`                      | The row policy: the values a returned row names a joined scope table by                         |
