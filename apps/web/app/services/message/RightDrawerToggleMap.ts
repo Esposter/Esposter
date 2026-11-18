@@ -1,6 +1,7 @@
+import type { RIGHT_DRAWER_TOGGLES } from "#src/services/message/constants";
+
 import { RightDrawer } from "#src/models/message/RightDrawer";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
-import type { RIGHT_DRAWER_TOGGLES } from "#src/services/message/constants";
 
 type ToggleDrawer = (typeof RIGHT_DRAWER_TOGGLES)[number];
 
