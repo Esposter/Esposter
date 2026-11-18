@@ -14,7 +14,7 @@ describe(getStatementReadSet, () => {
 
     await database.query.usersToRoomsInMessage.findFirst({ columns: { displayName: false }, with: { room: true } });
 
-    expect(statements.map((statement) => getStatementReadSet(statement).joins)).toStrictEqual([
+    expect(statements.map(({ statement }) => getStatementReadSet(statement).joins)).toStrictEqual([
       [
         {
           left: { column: "roomId", selectedAs: "roomId", table: "message_usersToRooms" },
