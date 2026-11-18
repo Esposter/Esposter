@@ -3,7 +3,7 @@ import type { SetupOptions } from "#src/models/setup/SetupOptions";
 import type { SetupRow } from "#src/models/setup/SetupRow";
 
 import { PARITY_DIRECTORY } from "#src/services/genshinParity/shared/constants";
-import { SETUP_LOGINS, SETUP_TOOLS } from "#src/services/setup/constants";
+import { SETUP_LOGINS, SETUP_MACOS_TOOLS, SETUP_TOOLS } from "#src/services/setup/constants";
 import { readDataRow } from "#src/services/setup/readDataRow";
 import { readDependenciesRow } from "#src/services/setup/readDependenciesRow";
 import { readGameRow } from "#src/services/setup/readGameRow";
@@ -25,6 +25,7 @@ export const readSetupRows = (options: SetupOptions, environment: SetupEnvironme
   readDependenciesRow(options, environment),
   readHooksRow(environment),
   ...SETUP_TOOLS.map((tool) => readToolRow(tool, environment)),
+  ...(environment.platform === "darwin" ? SETUP_MACOS_TOOLS : []).map((tool) => readToolRow(tool, environment)),
   ...SETUP_LOGINS.map((login) => readLoginRow(login, environment)),
   ...readWindowsRows(environment),
   readRootRow("parity folder", PARITY_DIRECTORY, environment),

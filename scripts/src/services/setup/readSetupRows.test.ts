@@ -45,4 +45,15 @@ describe(readSetupRows, () => {
     expect(environment.runVisibly).toHaveBeenCalledWith(PNPM_FILE, [...PNPM_ARGS, ...DATA_VERIFY_ARGS]);
     expect(stepRow(rows, "game data lock")?.status).toBe(SetupStatus.NeedsYou);
   });
+
+  test("the AnimeStudio build's tools are read on macOS alone", () => {
+    expect.hasAssertions();
+
+    const options = { install: false, verify: false };
+    const macosRows = readSetupRows(options, createSetupEnvironment({ platform: "darwin" }));
+    const windowsRows = readSetupRows(options, createSetupEnvironment({ platform: "win32" }));
+
+    expect(stepRow(macosRows, "cmake")).toBeDefined();
+    expect(stepRow(windowsRows, "cmake")).toBeUndefined();
+  });
 });

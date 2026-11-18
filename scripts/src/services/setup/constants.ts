@@ -42,27 +42,27 @@ export const SETUP_TOOLS: readonly SetupTool[] = [
     probe: { args: ["--version"], file: "yt-dlp" },
   },
   {
-    install: { darwin: "brew install --cask dotnet-sdk", win32: "winget install --id Microsoft.DotNet.SDK.10" },
-    name: ".NET 10",
-    probe: { args: ["--version"], file: "dotnet", output: /^10\./mu },
-  },
-  {
-    install: { darwin: "brew install cmake", win32: "winget install --id Kitware.CMake" },
-    name: "cmake",
-    probe: { args: ["--version"], file: "cmake" },
-  },
-  {
-    install: { darwin: "xcode-select --install", win32: "winget install --id LLVM.LLVM" },
-    name: "C++ compiler",
-    probe: { args: ["--version"], file: "clang++" },
-  },
-  {
     install: { darwin: "brew install --cask microsoft-edge", win32: "winget install --id Microsoft.Edge" },
     name: "Microsoft Edge",
     paths: {
       darwin: "/Applications/Microsoft Edge.app",
       win32: String.raw`C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe`,
     },
+  },
+];
+// The tools only the AnimeStudio build runs, read on macOS alone, since a Mac is the one machine that builds the CLI
+// And its natives from source; Windows unpacks a released CLI instead
+export const SETUP_MACOS_TOOLS: readonly SetupTool[] = [
+  {
+    install: { darwin: "brew install --cask dotnet-sdk" },
+    name: ".NET 10",
+    probe: { args: ["--version"], file: "dotnet", output: /^10\./mu },
+  },
+  { install: { darwin: "brew install cmake" }, name: "cmake", probe: { args: ["--version"], file: "cmake" } },
+  {
+    install: { darwin: "xcode-select --install" },
+    name: "C++ compiler",
+    probe: { args: ["--version"], file: "clang++" },
   },
 ];
 
