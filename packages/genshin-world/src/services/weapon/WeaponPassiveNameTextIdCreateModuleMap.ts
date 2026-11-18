@@ -82,6 +82,7 @@ import { createLithicAxiomUnityPassiveModule } from "#src/services/weapon/passiv
 import { createMagicAffinityPassiveModule } from "#src/services/weapon/passives/createMagicAffinityPassiveModule";
 import { createManyOathsOfDawnAndDuskPassiveModule } from "#src/services/weapon/passives/createManyOathsOfDawnAndDuskPassiveModule";
 import { createMasonsDittyPassiveModule } from "#src/services/weapon/passives/createMasonsDittyPassiveModule";
+import { createMasteryClockPassiveModule } from "#src/services/weapon/passives/createMasteryClockPassiveModule";
 import { createMournfulTributePassiveModule } from "#src/services/weapon/passives/createMournfulTributePassiveModule";
 import { createNocturnalDreamsPassiveModule } from "#src/services/weapon/passives/createNocturnalDreamsPassiveModule";
 import { createOathOfQhapaqNanPassiveModule } from "#src/services/weapon/passives/createOathOfQhapaqNanPassiveModule";
@@ -552,4 +553,11 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "488906035": createDawnAndDuskByTheLakePassiveModule,
   // Golden Blood-Tide (Cashflow Supervision)
   "4262553859": createGoldenBloodTidePassiveModule,
+  // Jinni's Whisper, whose rows hold its rate as the percentage its text gives, so scaled by 0.01
+  "815912395": (params) =>
+    createMasteryClockPassiveModule(params, { attribute: Attribute.EnergyRecharge, valueScale: 0.01 }),
+  // Desert Pavilion
+  "1388031387": (params) => createMasteryClockPassiveModule(params, { attribute: Attribute.Attack, valueScale: 1 }),
+  // Wildling Nightstar
+  "3326699803": (params) => createMasteryClockPassiveModule(params, { attribute: Attribute.Attack, valueScale: 1 }),
 };
