@@ -76,24 +76,25 @@ useRafFn(() => {
   transform: translate(-50%, -50%);
 }
 
-/* Provisional: the spark's size and fade, until task 1.1 measures them off the held world attacks capture */
-.spark {
-  width: 1.5rem;
-  height: 1.5rem;
+/* Provisional: the spark and the flash are one disc that grows and fades, each with its own size and glow, until task 1.1
+measures them off the held world attacks capture */
+.spark,
+.flash {
   border-radius: 50%;
-  background: radial-gradient(circle, #fff 0%, transparent 70%);
   opacity: calc(1 - var(--progress));
   transform: translate(-50%, -50%) scale(calc(0.5 + var(--progress)));
 }
 
-/* Provisional: the flash's size and fade, until task 1.1 measures them off the held world attacks capture */
+.spark {
+  width: 1.5rem;
+  height: 1.5rem;
+  background: radial-gradient(circle, #fff 0%, transparent 70%);
+}
+
 .flash {
   width: 4rem;
   height: 4rem;
-  border-radius: 50%;
   background: radial-gradient(circle, rgb(255 255 255 / 0.8) 0%, transparent 70%);
-  opacity: calc(1 - var(--progress));
-  transform: translate(-50%, -50%) scale(calc(0.5 + var(--progress)));
 }
 
 /* Provisional: the number's size, its rise and its fade, until task 1.1 measures them off the held world attacks capture.
