@@ -3,6 +3,8 @@ import type { Achievement } from "#src/models/achievement/Achievement";
 import type { AchievementProgress } from "#src/models/achievement/AchievementProgress";
 import type { GameText } from "genshin-text";
 
+import { AchievementMark } from "#src/models/achievement/AchievementMark";
+import { AchievementMarkPathMap } from "#src/services/achievement/AchievementMarkPathMap";
 import { checkIsAchievementFinished } from "#src/services/achievement/checkIsAchievementFinished";
 import { GameTextKey } from "genshin-text";
 
@@ -26,7 +28,9 @@ const isRevealed = computed(() => !achievement.isHidden || isFinished.value);
 
 <template>
   <li class="achievement">
-    <span class="medal" />
+    <svg class="mark mark-medal" viewBox="0 0 88 88" aria-hidden="true">
+      <path fill-rule="evenodd" :d="AchievementMarkPathMap[AchievementMark.Medal]" />
+    </svg>
     <div class="text">
       <p class="title">{{ isRevealed ? textMap[achievement.titleTextId] : "?" }}</p>
       <p v-if="isRevealed" class="description">{{ textMap[achievement.descriptionTextId] }}</p>
@@ -36,6 +40,9 @@ const isRevealed = computed(() => !achievement.isHidden || isFinished.value);
     </span>
     <span class="progress">
       <span v-if="isFinished" class="stamp">
+        <svg class="mark mark-stamp-ring" viewBox="0 0 124 76" aria-hidden="true">
+          <path fill-rule="evenodd" :d="AchievementMarkPathMap[AchievementMark.StampRing]" />
+        </svg>
         <span class="stamp-text">
           <span class="stamp-word">{{ gameText[GameTextKey.AchievementCompleted] }}</span>
           <NuxtTime
@@ -61,13 +68,18 @@ const isRevealed = computed(() => !achievement.isHidden || isFinished.value);
   background: #f5f0eb;
 }
 
-.medal {
+/* The traced medal of the achievement, placed at the reference's pixel 782 by 266, which is 22 and 7 in from the row's corner */
+.mark {
   position: absolute;
-  top: calc(var(--unit) * 11);
-  left: calc(var(--unit) * 25);
-  width: calc(var(--unit) * 80);
-  height: calc(var(--unit) * 80);
-  background: #d5b795;
+  overflow: visible;
+}
+
+.mark-medal {
+  top: calc(var(--unit) * 7);
+  left: calc(var(--unit) * 22);
+  width: calc(var(--unit) * 88);
+  height: calc(var(--unit) * 88);
+  fill: rgb(231 199 125);
 }
 
 .text {
@@ -138,9 +150,16 @@ const isRevealed = computed(() => !achievement.isHidden || isFinished.value);
   left: 50%;
   width: calc(var(--unit) * 130);
   height: calc(var(--unit) * 130);
-  border: calc(var(--unit) * 4) solid rgb(150 140 120 / 0.35);
-  border-radius: 50%;
   transform: translate(-50%, -50%);
+}
+
+/* The traced ring of the stamp, 14 units down its box and 2 in from its left edge, where the reference draws it */
+.mark-stamp-ring {
+  top: calc(var(--unit) * 14);
+  left: calc(var(--unit) * 2);
+  width: calc(var(--unit) * 124);
+  height: calc(var(--unit) * 76);
+  fill: rgb(150 140 120 / 0.25);
 }
 
 /* The word and the date sit in the ring, the word 50 units down it as the reference sets them, its date 40 below */

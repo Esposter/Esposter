@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { AchievementCategory } from "#src/models/achievement/AchievementCategory";
 
+import { AchievementMark } from "#src/models/achievement/AchievementMark";
+import { AchievementMarkPathMap } from "#src/services/achievement/AchievementMarkPathMap";
 import { GAME_ROW_HOVER, GAME_ROW_PRESS } from "genshin-interface";
 
 interface Props {
@@ -20,7 +22,9 @@ const emit = defineEmits<{ select: [] }>();
 
 <template>
   <button class="category" role="tab" type="button" :aria-selected="isSelected" @click="emit('select')">
-    <span class="badge" />
+    <svg class="mark mark-category-badge" viewBox="0 0 36 48" aria-hidden="true">
+      <path fill-rule="evenodd" :d="AchievementMarkPathMap[AchievementMark.CategoryBadge]" />
+    </svg>
     <span class="name">{{ textMap[category.nameTextId] }}</span>
     <span class="percent">{{ percent }} %</span>
   </button>
@@ -81,13 +85,18 @@ const emit = defineEmits<{ select: [] }>();
   content: "";
 }
 
-.badge {
+/* The traced badge of the category, placed at the reference's pixel 164 by 178, which is 12 in from the row's left edge */
+.mark {
   position: absolute;
-  top: calc(var(--unit) * 14);
-  left: calc(var(--unit) * 18);
-  width: calc(var(--unit) * 28);
-  height: calc(var(--unit) * 32);
-  background: #938a76;
+  overflow: visible;
+}
+
+.mark-category-badge {
+  top: 0;
+  left: calc(var(--unit) * 12);
+  width: calc(var(--unit) * 36);
+  height: calc(var(--unit) * 48);
+  fill: rgb(188 174 137);
 }
 
 .name {

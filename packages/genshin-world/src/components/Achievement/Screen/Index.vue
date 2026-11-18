@@ -7,6 +7,8 @@ import type { GameText } from "genshin-text";
 import AchievementScreenCategory from "#src/components/Achievement/Screen/Category/Index.vue";
 import AchievementScreenEntry from "#src/components/Achievement/Screen/Entry/Index.vue";
 import { useListScreenTabStep } from "#src/composables/useListScreenTabStep";
+import { AchievementMark } from "#src/models/achievement/AchievementMark";
+import { AchievementMarkPathMap } from "#src/services/achievement/AchievementMarkPathMap";
 import { checkIsAchievementFinished } from "#src/services/achievement/checkIsAchievementFinished";
 import { CloseButton, CloseButtonMark, GameScreen } from "genshin-interface";
 import { fillGameTextValues, GameTextKey, splitGameTextColors } from "genshin-text";
@@ -78,10 +80,12 @@ useListScreenTabStep(
   <!-- The game's achievements screen over the blurred world: its title under a laurel and the back disc across the top,
        the count of finished achievements beside the disc, the search box, and the categories down the left, each with its
        share of finished achievements. The selected category's banner and its achievements sit on the cream panel to the
-       right, each with its reward, its progress and a stamp once it is finished. The laurel, the category badges, the
-       medals, the namecard and the Primogem are the game's art, so they are flat placeholders -->
+       right, each with its reward, its progress and a stamp once it is finished. The namecard and the Primogem are the game's
+       art, so they are flat placeholders -->
   <GameScreen class="achievement-screen">
-    <span class="laurel" />
+    <svg class="mark mark-laurel" viewBox="0 0 68 68" aria-hidden="true">
+      <path fill-rule="evenodd" :d="AchievementMarkPathMap[AchievementMark.Laurel]" />
+    </svg>
     <p class="heading" role="heading" aria-level="1">{{ gameText[GameTextKey.Achievements] }}</p>
     <p class="completed">
       <span v-for="({ color, text }, index) of completedCountSegments" :key="index" :style="{ color }">{{ text }}</span>
@@ -111,6 +115,21 @@ useListScreenTabStep(
       />
     </div>
     <div class="frame" />
+    <svg class="mark mark-frame-corner-top-left" viewBox="0 0 30 37" aria-hidden="true">
+      <path fill-rule="evenodd" :d="AchievementMarkPathMap[AchievementMark.FrameCornerTopLeft]" />
+    </svg>
+    <svg class="mark mark-frame-corner-top-right" viewBox="0 0 30 37" aria-hidden="true">
+      <path fill-rule="evenodd" :d="AchievementMarkPathMap[AchievementMark.FrameCornerTopLeft]" />
+    </svg>
+    <svg class="mark mark-frame-corner-bottom-left" viewBox="0 0 38 46" aria-hidden="true">
+      <path fill-rule="evenodd" :d="AchievementMarkPathMap[AchievementMark.FrameCornerBottomLeft]" />
+    </svg>
+    <svg class="mark mark-frame-corner-bottom-right" viewBox="0 0 22 32" aria-hidden="true">
+      <path fill-rule="evenodd" :d="AchievementMarkPathMap[AchievementMark.FrameCornerBottomRight]" />
+    </svg>
+    <svg class="mark mark-frame-tab" viewBox="0 0 66 34" aria-hidden="true">
+      <path fill-rule="evenodd" :d="AchievementMarkPathMap[AchievementMark.FrameTab]" />
+    </svg>
     <div class="banner">
       <span class="namecard" />
       <p class="banner-title">{{ gameText[GameTextKey.AchievementProgress] }}</p>
@@ -139,14 +158,18 @@ useListScreenTabStep(
   color: #fff;
 }
 
-.laurel {
+/* The traced laurel at the header's left, placed at the reference's pixel 132 by 11, which is 36 and 11 in from the screen's corner */
+.mark {
   position: absolute;
-  top: calc(var(--unit) * 12);
-  left: calc(var(--unit) * 37);
-  width: calc(var(--unit) * 64);
-  height: calc(var(--unit) * 64);
-  border-radius: calc(var(--unit) * 12);
-  background: #b99a64;
+  overflow: visible;
+}
+
+.mark-laurel {
+  top: calc(var(--unit) * 11);
+  left: calc(var(--unit) * 36);
+  width: calc(var(--unit) * 68);
+  height: calc(var(--unit) * 68);
+  fill: rgb(206 188 142);
 }
 
 .heading {
@@ -232,7 +255,8 @@ useListScreenTabStep(
   scrollbar-width: thin;
 }
 
-/* The cream panel with its dark slate frame, its corners and bottom drawn by the frame's own pieces */
+/* The cream panel with its dark slate frame, and the frame's ornaments traced over it: the top right bracket is the top left one
+   mirrored across the frame's axis, which is x 1249.5 in the reference, so one trace serves both */
 .frame {
   position: absolute;
   top: calc(var(--unit) * 95);
@@ -250,6 +274,50 @@ useListScreenTabStep(
   height: calc(var(--unit) * 898);
   background: #f1ebe6;
   content: "";
+}
+
+/* The frame's ornaments, each placed at its reference pixel, measured from the frame's own corners: the top left bracket
+   at 719 by 94, its mirror at 1750 by 94, the bottom left tab at 736 by 1004, the bottom right joint at 1760 by 1000, and the
+   bottom tab at 1662 by 1022 */
+.mark-frame-corner-top-left {
+  top: calc(var(--unit) * 94);
+  left: calc(var(--unit) * 623);
+  width: calc(var(--unit) * 30);
+  height: calc(var(--unit) * 37);
+  fill: rgb(141 122 93);
+}
+
+.mark-frame-corner-top-right {
+  top: calc(var(--unit) * 94);
+  left: calc(var(--unit) * 1654);
+  width: calc(var(--unit) * 30);
+  height: calc(var(--unit) * 37);
+  fill: rgb(141 122 93);
+  transform: scaleX(-1);
+}
+
+.mark-frame-corner-bottom-left {
+  top: calc(var(--unit) * 1004);
+  left: calc(var(--unit) * 640);
+  width: calc(var(--unit) * 38);
+  height: calc(var(--unit) * 46);
+  fill: rgb(75 111 139);
+}
+
+.mark-frame-corner-bottom-right {
+  top: calc(var(--unit) * 1000);
+  left: calc(var(--unit) * 1664);
+  width: calc(var(--unit) * 22);
+  height: calc(var(--unit) * 32);
+  fill: rgb(64 84 112);
+}
+
+.mark-frame-tab {
+  top: calc(var(--unit) * 1022);
+  left: calc(var(--unit) * 1566);
+  width: calc(var(--unit) * 66);
+  height: calc(var(--unit) * 34);
+  fill: rgb(51 55 74);
 }
 
 .banner {
