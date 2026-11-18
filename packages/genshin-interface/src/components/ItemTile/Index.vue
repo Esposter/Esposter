@@ -25,8 +25,8 @@ const { countSize = "30cqh", icon = "" } = defineProps<Props>();
        from the foot, and the count in white on a darker strip across the bottom 24%, the corners rounded 7%. Measured on
        the wiki's Adventurer Handbook screenshot and the Reputation clip, which agree on the three, four and five star
        tiles, and the Expedition clip's grey tiles, whose items the table gives no stars (rarity zero). A count keeps
-       the screen's size rather than the tile's, so each screen passes its own as `countSize`. A two star tile is not
-       measured yet and draws bare. The item's art is a traced icon the caller passes as `icon`; an item with none draws
+       the screen's size rather than the tile's, so each screen passes its own as `countSize`. A two star tile's face is
+       provisional, since no reward list in a still shows one. The item's art is a traced icon the caller passes as `icon`; an item with none draws
        its rarity face alone, and the game's own picture is never shipped -->
   <span class="item-tile" :data-rarity="rarity" :data-variant="variant">
     <span

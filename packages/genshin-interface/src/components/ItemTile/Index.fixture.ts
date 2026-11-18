@@ -13,4 +13,5 @@ export const variants = {
   five: { count: 150, rarity: 5 },
   four: { count: 5, rarity: 4 },
   icon: { icon: ICON_SHAPE },
+  two: { count: 12, rarity: 2 },
 };
