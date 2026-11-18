@@ -2,11 +2,21 @@ import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { createMockAuthSession, createMockContext, createMockUser, getMockSession } from "#server/trpc/context.test";
+import { MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
+import {
+  createMockAuthSession,
+  createMockCaller,
+  createMockContext,
+  createMockUser,
+  getMockSession,
+} from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
 import { blockRouter } from "#server/trpc/routers/block";
 import { createFriendship } from "#server/trpc/routers/createFriendship.test";
 import { friendRouter } from "#server/trpc/routers/friend";
+import { expectLiveTopicCoverage } from "#server/trpc/routers/liveTopicCoverage.test";
+import { postRouter } from "#server/trpc/routers/post";
+import { readTopicsHeader } from "#shared/services/realtime/readTopicsHeader";
 import { blocksInSocial, DatabaseEntityType, friendRequestsInSocial, friendsInSocial } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { v7 } from "uuid";
@@ -143,5 +153,42 @@ describe("blockRouter", () => {
     const searchedUsers = await userCaller.searchUsers(blockerAuthSession.user.name);
 
     expect(searchedUsers).toStrictEqual([]);
+  });
+
+  // The feed hides the blocked user's posts, so the feed a blocker reads is woken by the block that hides them
+  test("a block wakes the feed the blocker reads", async () => {
+    expect.hasAssertions();
+
+    const authorAuthSession = await createMockAuthSession(mockContext.db);
+    await (await createMockCaller(postRouter, authorAuthSession)).createPost({ title: "title" });
+    const feedContext = { ...mockContext, responseHeaders: new Headers() };
+    await createCallerFactory(postRouter)(feedContext).readPosts();
+
+    MockPublishedTopics.length = 0;
+    await blockCaller.createBlock(authorAuthSession.user.id);
+
+    const published = new Set(MockPublishedTopics);
+    const feedTopics = readTopicsHeader(feedContext.responseHeaders, "readPosts").flatMap(({ topics }) => topics);
+    expect(feedTopics.some((topic) => published.has(topic))).toBe(true);
+  });
+
+  test("every query reads the tables it touches, and each block change wakes the list it changes", async () => {
+    expect.hasAssertions();
+
+    const user = await createMockUser(mockContext.db);
+
+    await expectLiveTopicCoverage(
+      blockRouter,
+      {
+        queries: [
+          { call: (context) => createCallerFactory(blockRouter)(context).readBlockedUsers(), path: "readBlockedUsers" },
+        ],
+        writes: [
+          { call: (context) => createCallerFactory(blockRouter)(context).createBlock(user.id), path: "createBlock" },
+          { call: (context) => createCallerFactory(blockRouter)(context).deleteBlock(user.id), path: "deleteBlock" },
+        ],
+      },
+      mockContext,
+    );
   });
 });
