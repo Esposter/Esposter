@@ -44,8 +44,7 @@ export const EMPEROR_OF_FIRE_AND_IRON_MOVES: BossMove[] = [
     recoverySeconds: ENEMY_RECOVERY_SECONDS,
     windupSeconds: ENEMY_WINDUP_SECONDS,
   },
-  // Used only while the Molten Horns are intact. The burnt ground it leaves deals 6% ATK as Pyro DMG every 0.5s, a lingering
-  // Effect not yet run
+  // Used only while the Molten Horns are intact
   {
     atkPercent: 70,
     element: Element.Pyro,
@@ -53,8 +52,7 @@ export const EMPEROR_OF_FIRE_AND_IRON_MOVES: BossMove[] = [
     recoverySeconds: ENEMY_RECOVERY_SECONDS,
     windupSeconds: ENEMY_WINDUP_SECONDS,
   },
-  // Used only while the Molten Horns are intact. The burnt ground it leaves deals 6% ATK as Pyro DMG every 0.5s, a lingering
-  // Effect not yet run
+  // Used only while the Molten Horns are intact
   {
     atkPercent: 100,
     element: Element.Pyro,
