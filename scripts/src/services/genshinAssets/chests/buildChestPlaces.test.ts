@@ -5,7 +5,7 @@ vi.mock(import("#src/services/genshinAssets/points/readFittedMapPoints"), () => 
   readFittedMapPoints: () =>
     Promise.resolve({
       points: [{ area_id: 1, id: 1, label_id: 129, x_pos: 1.5, y_pos: 2.25, z_level: 0 }],
-      regions: {},
+      regions: [],
       transform: { mirrored: false, offset: { x: 10, z: 20 }, scale: 1, turn: 0 },
     }),
 }));

@@ -38,6 +38,7 @@ describe(writeResidents, () => {
       origin: [0, 0, 0],
       points: [],
       regionFiles: [{ data: region, file: REGION_FILE, region: REGION }],
+      regionFits: [],
       regionMapPoints: [],
       transform: IDENTITY_TRANSFORM,
     });
@@ -75,6 +76,7 @@ describe(writeResidents, () => {
       origin: [0, 0, 0],
       points: [],
       regionFiles: [{ data: region, file: REGION_FILE, region: REGION }],
+      regionFits: [],
       regionMapPoints: [{ position: { x: 0, z: 0 }, region: REGION }],
       transform: IDENTITY_TRANSFORM,
     });
@@ -123,6 +125,7 @@ describe(writeResidents, () => {
       origin: [0, 0, 0],
       points: [],
       regionFiles: [{ data: region, file: REGION_FILE, region: REGION }],
+      regionFits: [],
       regionMapPoints: [{ position: { x: 0, z: 0 }, region: REGION }],
       transform: IDENTITY_TRANSFORM,
     });

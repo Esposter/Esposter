@@ -66,6 +66,7 @@ describe(writeDomainEntrances, () => {
       origin: [0, 0, 0],
       points: [],
       regionFiles: [mondstadtFile, liyueFile],
+      regionFits: [],
       regionMapPoints,
       transform: { mirrored: false, offset: { x: 0, z: 0 }, scale: 1, turn: 0 },
     });
@@ -94,6 +95,7 @@ describe(writeDomainEntrances, () => {
       origin: [0, 0, 0],
       points: [],
       regionFiles: [mondstadtFile],
+      regionFits: [],
       regionMapPoints,
       transform: { mirrored: false, offset: { x: 0, z: 0 }, scale: 1, turn: 0 },
     });

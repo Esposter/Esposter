@@ -13,12 +13,17 @@ import type { BufferGeometry, DataTexture } from "three";
 import WorldLandmarkBuilding from "#src/components/World/Landmark/Building/Index.vue";
 import WorldLandmarkDomainEntrance from "#src/components/World/Landmark/DomainEntrance/Index.vue";
 import WorldLandmarkOffering from "#src/components/World/Landmark/Offering/Index.vue";
+import WorldLandmarkPillar from "#src/components/World/Landmark/Pillar/Index.vue";
 import WorldLandmarkRock from "#src/components/World/Landmark/Rock/Index.vue";
 import WorldLandmarkStatue from "#src/components/World/Landmark/Statue/Index.vue";
 import WorldLandmarkTree from "#src/components/World/Landmark/Tree/Index.vue";
-import WorldLandmarkWaypoint from "#src/components/World/Landmark/Waypoint/Index.vue";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { LOAD_STEP_MEASURE_PREFIX } from "#src/services/loading/constants";
+import {
+  WAYPOINT_STAND_IN_COLOR,
+  WAYPOINT_STAND_IN_HEIGHT,
+  WAYPOINT_STAND_IN_WIDTH,
+} from "#src/services/map/constants";
 import { SCENE_FAMILY_KEY } from "#src/services/scene/constants";
 import { OAK_BARK_PART, OAK_LEAF_PART } from "#src/services/windrise/constants";
 import { getWindrisePartColor } from "#src/services/windrise/getWindrisePartColor";
@@ -193,11 +198,14 @@ onUnmounted(() => {
         :landmark
         :part-material
       />
-      <WorldLandmarkWaypoint
+      <WorldLandmarkPillar
         v-else-if="landmark.kind === LandmarkKind.TeleportWaypoint"
+        :arrival="landmark.arrival"
+        :color="WAYPOINT_STAND_IN_COLOR"
         :get-ground-height
-        :landmark
+        :height="WAYPOINT_STAND_IN_HEIGHT"
         :part-material
+        :width="WAYPOINT_STAND_IN_WIDTH"
       />
       <WorldLandmarkOffering
         v-else-if="landmark.kind === LandmarkKind.Offering"

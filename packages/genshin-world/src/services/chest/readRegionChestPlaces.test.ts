@@ -2,7 +2,7 @@ import { readRegionChestPlaces } from "#src/services/chest/readRegionChestPlaces
 import { describe, expect, test } from "vitest";
 
 describe(readRegionChestPlaces, () => {
-  test("a region the lock holds no chest record for reads none", async () => {
+  test("A region with no published chest record offers no chest", async () => {
     expect.hasAssertions();
 
     await expect(readRegionChestPlaces("", "dragonspine")).resolves.toStrictEqual([]);
