@@ -14,6 +14,7 @@ import { ICEWIND_SUITE_MOVES } from "#src/services/bosses/icewindSuite";
 import { INIQUITOUS_BAPTIST_MOVES } from "#src/services/bosses/iniquitousBaptist";
 import { JADEPLUME_TERRORSHROOM_MOVES } from "#src/services/bosses/jadeplumeTerrorshroom";
 import { LEGATUS_GOLEM_MOVES } from "#src/services/bosses/legatusGolem";
+import { MAGUU_KENKI_MOVES } from "#src/services/bosses/maguuKenki";
 import { MILLENNIAL_PEARL_SEAHORSE_MOVES } from "#src/services/bosses/millennialPearlSeahorse";
 import { PERPETUAL_MECHANICAL_ARRAY_MOVES } from "#src/services/bosses/perpetualMechanicalArray";
 import { SECRET_SOURCE_AUTOMATON_CONFIGURATION_DEVICE_MOVES } from "#src/services/bosses/secretSourceAutomatonConfigurationDevice";
@@ -44,4 +45,5 @@ export const EnemyKindMovesMap: Partial<Record<EnemyKindId, readonly BossMove[]>
   [EnemyKindId.IniquitousBaptist]: INIQUITOUS_BAPTIST_MOVES,
   [EnemyKindId.GoldenWolflord]: GOLDEN_WOLFLORD_MOVES,
   [EnemyKindId.ThunderManifestation]: THUNDER_MANIFESTATION_MOVES,
+  [EnemyKindId.MaguuKenki]: MAGUU_KENKI_MOVES,
 };
