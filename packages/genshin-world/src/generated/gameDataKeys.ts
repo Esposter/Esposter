@@ -188,6 +188,7 @@ export const GameDataKeys = {
       "liffey-region": "ground/fontaine/liffey-region",
       "morte-region": "ground/fontaine/morte-region",
       "nostoi-region": "ground/fontaine/nostoi-region",
+      self: "ground/fontaine",
     },
     inazuma: "ground/inazuma",
     liyue: "ground/liyue",
