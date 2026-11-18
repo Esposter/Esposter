@@ -6,12 +6,12 @@ import { getResultAsync, noop } from "@esposter/shared";
 
 // A publish behind a write that has already landed is best-effort: a failed one costs readers a refresh, never the write,
 // So the failure is logged under the caller's message and not thrown. The topics are read inside that boundary too, so a
-// Throw from reading them is logged the same way
+// Throw from reading them, or a write set read from the statements a request awaited, is logged the same way
 export const publishTopicsBestEffort = <TId>(
   topicNamespace: TopicNamespace<TId>,
-  getTopics: () => Topic[],
+  getTopics: () => Topic[] | Promise<Topic[]>,
   failure: string,
 ): Promise<void> =>
-  getResultAsync(() => publishTopics(topicNamespace, getTopics())).match(noop, (error) => {
+  getResultAsync(async () => publishTopics(topicNamespace, await getTopics())).match(noop, (error) => {
     console.error(failure, error);
   });

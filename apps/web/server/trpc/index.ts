@@ -1,12 +1,9 @@
-import type { Meta } from "#server/models/trpc/Meta";
-import type { Context } from "#server/trpc/context";
-
-import { rootConfig } from "#server/trpc/rootConfig";
-import { initTRPC } from "@trpc/server";
-
-const t = initTRPC.context<Context>().meta<Meta>().create(rootConfig);
+import { t } from "#server/trpc/initTrpc";
+import { inferTopicsMiddleware } from "#server/trpc/middleware/inferTopicsMiddleware";
 
 export const middleware = t.middleware;
 export const router = t.router;
-export const publicProcedure = t.procedure;
+// Every procedure infers its live topics from the statements it awaits, unless it declares them by hand or declares why it
+// Has none (`getTopicsProcedure`, `staticReason`)
+export const publicProcedure = t.procedure.use(inferTopicsMiddleware);
 export const createCallerFactory = t.createCallerFactory;

@@ -5,20 +5,20 @@ import { trpcRouter } from "#server/trpc/routers/index";
 import { describe, expect, test } from "vitest";
 
 describe("topics", () => {
-  // A procedure with neither would let a read stay static or a write skip its readers without anyone deciding so, and
-  // One with both says two things about the same call
-  test("every procedure declares its topics or why it has none, never both", () => {
+  // A procedure that declares its topics by hand and also why it has none says two things about the same call. One with
+  // Neither is inferred from the statements it awaits, so it needs no declaration
+  test("no procedure declares both its topics by hand and why it has none", () => {
     expect.hasAssertions();
 
     // Read as any router, whose record is flat as it is at runtime, where the type nests the sub-routers
     const anyRouter: AnyRouter = trpcRouter;
-    const undeclaredPaths = Object.entries<AnyProcedure>(anyRouter._def.procedures)
+    const doubleDeclaredPaths = Object.entries<AnyProcedure>(anyRouter._def.procedures)
       .filter(([, { _def }]) => {
         const { staticReason, topics } = (_def.meta ?? {}) as Meta;
-        return (staticReason === undefined) === (topics === undefined);
+        return staticReason !== undefined && topics !== undefined;
       })
       .map(([path]) => path);
 
-    expect(undeclaredPaths).toStrictEqual([]);
+    expect(doubleDeclaredPaths).toStrictEqual([]);
   });
 });
