@@ -25,7 +25,7 @@ flowchart TD
 ## Data
 
 - **The tables.** The blossom refresh, group and section order tables come from the community's dump, `BlossomRefreshExcelConfigData`, `BlossomGroupsExcelConfigData` and `BlossomSectionOrderExcelConfigData`, read from the dump's `ExcelBinOutput` folder under `GENSHIN_TEXT_DIRECTORY` (`{data-root}/genshin-parity/text/ExcelBinOutput/BlossomRefreshExcelConfigData.json`, `{data-root}/genshin-parity/text/ExcelBinOutput/BlossomGroupsExcelConfigData.json`, `{data-root}/genshin-parity/text/ExcelBinOutput/BlossomSectionOrderExcelConfigData.json`). The dump on disk holds all three, as does `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/`, and nothing from them is committed.
-- **The regions.** Each city's region is one hosted record under leyLine/regions/<cityId>, published by `genshin:assets outcrops` and read by `readOutcropRegion`, holding its two kinds' rules, its sections in order and every place its groups name. A region's kinds are read once its key is in the lock, and until then the world draws no outcrop (`scripts/src/services/genshinAssets/leyLine/buildLeyLineRegions.ts`, `packages/genshin-world/src/composables/useWorldOutcrops.ts`).
+- **The regions.** Each city's region is one hosted record under leyLine/regions/<cityId>, published by `genshin:assets outcrops` and read by `readOutcropRegion`, holding its two kinds' rules, its sections in order and every place its groups name. A region's kinds are read when the region is entered, once the world's loaded regions include it, so the world's first screen reads none of them, and until then the world draws no outcrop (`scripts/src/services/genshinAssets/leyLine/buildLeyLineRegions.ts`, `packages/genshin-world/src/composables/useWorldOutcrops.ts`).
 
 ## Not built yet
 
