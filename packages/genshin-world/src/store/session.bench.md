@@ -9,16 +9,16 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Commit: a4709257a
-- Node: v26.13.0
-- OS: linux 6.18.44-fc-v185 (x64)
-- CPU: Intel(R) Xeon(R) Processor @ 2.80GHz × 4
-- RAM: 15.7 GiB
+- Commit: e432ba77b5
+- Node: v26.13.1
+- OS: darwin 27.0.0 (arm64)
+- CPU: Apple M1 × 8
+- RAM: 16.0 GiB
 
 ## a read of the session's context > read one thousand times
 
-| task                     | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
-| ------------------------ | ------- | --------- | ------- | -------- | ------- |
-| a ref                    | 1.00×   | 0.3438    | ±6.93%  | 0.4083   | 10      |
-| a store's getter         | 0.61×   | 0.5655    | ±18.11% | 0.9199   | 10      |
-| a field of a store's ref | 0.44×   | 0.7813    | ±5.93%  | 0.9436   | 10      |
+| task                     | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
+| ------------------------ | ------- | --------- | ------ | -------- | ------- |
+| a ref                    | 1.00×   | 0.2917    | ±2.29% | 0.3122   | 10      |
+| a store's getter         | 0.67×   | 0.4366    | ±3.26% | 0.4755   | 10      |
+| a field of a store's ref | 0.44×   | 0.6577    | ±2.96% | 0.7243   | 10      |

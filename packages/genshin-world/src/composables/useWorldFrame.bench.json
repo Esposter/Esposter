@@ -1,0 +1,21 @@
+{
+  "files": [
+    {
+      "filepath": "src/composables/useWorldFrame.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 61.80156342499999,
+              "name": "a walk of the world's frames",
+              "p99": 130.0942113800003,
+              "rme": 9.716947092511239,
+              "sampleCount": 40
+            }
+          ],
+          "fullName": "useWorldFrame > a walk of the world's frames"
+        }
+      ]
+    }
+  ]
+}
