@@ -1,4 +1,5 @@
 import { regionDataPlugin } from "#parity/regionDataPlugin";
+import { screenNamesPlugin } from "#parity/screenNamesPlugin";
 import { gameDataMirrorPlugin } from "#scripts/gameData/mirror/gameDataMirrorPlugin";
 import { tresCustomElements } from "#scripts/tres/tresCustomElements";
 import { dynamicJsonImportPlugin, getVuePlugins, SOURCE_CONDITION } from "@esposter/configuration";
@@ -16,6 +17,7 @@ export default defineConfig({
     dynamicJsonImportPlugin,
     gameDataMirrorPlugin,
     regionDataPlugin,
+    screenNamesPlugin,
   ],
   resolve: { conditions: [SOURCE_CONDITION, ...defaultClientConditions] },
   root: dirname(import.meta.dirname),

@@ -1,4 +1,6 @@
 import { pendingScreens } from "#parity/pendingScreens";
+import { screenNames } from "#parity/screens";
+import { getComponentName } from "@esposter/configuration";
 import { existsSync, readdirSync } from "node:fs";
 import { basename, dirname, join, normalize } from "node:path";
 import { describe, expect, test } from "vitest";
@@ -37,5 +39,18 @@ describe("screens", () => {
     );
 
     expect(stale).toStrictEqual([]);
+  });
+
+  test("every fixture under the components has its screen on the page", () => {
+    expect.hasAssertions();
+
+    const pageScreens = new Set(screenNames);
+    const missing = readdirSync(COMPONENTS_DIRECTORY, { recursive: true })
+      .map(String)
+      .filter((path) => basename(path) === FIXTURE_FILE)
+      .map((path) => dirname(path).replaceAll("\\", "/"))
+      .filter((directory) => !pageScreens.has(getComponentName(`${directory}/Index.vue`)));
+
+    expect(missing).toStrictEqual([]);
   });
 });
