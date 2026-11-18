@@ -3,7 +3,7 @@ import type { PublicUser, UserEvent, UserStatusInMessage } from "@esposter/db-sc
 
 import { useRoomObject } from "#server/composables/realtime/useRoomObject";
 import { callUserObjects } from "#server/services/realtime/callUserObjects";
-import { publishTopics } from "#server/services/realtime/publishTopics";
+import { publishTopicsBestEffort } from "#server/services/realtime/publishTopicsBestEffort";
 import { notifyOnlineRoomMembers } from "#server/services/room/notifyOnlineRoomMembers";
 import { inJsonArray } from "@esposter/db";
 import {
@@ -63,10 +63,8 @@ export const announceRoomMembersJoined = async (
     await announceRoomMemberJoined(roomId, user, displayName, status);
   }
   // A joiner's bookmark dock is told as a departure's is: a bookmark on the room reads as available to its members only
-  await getResultAsync(() => publishTopics(userIds.map((userId) => getTopic(TopicKind.Bookmark, userId)))).match(
-    noop,
-    (error) => {
-      console.error("Failed to publish the bookmarks of the joined members:", error);
-    },
+  await publishTopicsBestEffort(
+    userIds.map((userId) => getTopic(TopicKind.Bookmark, userId)),
+    "Failed to publish the bookmarks of the joined members:",
   );
 };

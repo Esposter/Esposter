@@ -1,12 +1,11 @@
 import type { R2Bucket } from "@cloudflare/workers-types";
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { publishTopics } from "#src/services/realtime/publishTopics";
+import { publishTopicsBestEffort } from "#src/services/realtime/publishTopicsBestEffort";
 import { db } from "#src/services/shared/db";
 import { broadcastStorageUsage } from "#src/services/storage/broadcastStorageUsage";
 import { purgeResource } from "@esposter/db";
 import { getTopic, TopicKind } from "@esposter/db-schema";
-import { getResultAsync, noop } from "@esposter/shared";
 
 // One resource's purge, then the broadcast to the owners it gave bytes back to. The recycle bin's timer and the account
 // Deletion each call it once per resource. The owner's resource list is published as well, since the recycle bin reads it
@@ -22,10 +21,8 @@ export const purgeResourceAndBroadcast = async (
   const releasedUserIds = await purgeResource(db, bucket, id);
   await broadcastStorageUsage(releasedUserIds);
   if (resource)
-    await getResultAsync(() => publishTopics([getTopic(TopicKind.ResourceList, resource.userId)])).match(
-      noop,
-      (error) => {
-        console.error(`Failed to publish the resource list of "${resource.userId}":`, error);
-      },
+    await publishTopicsBestEffort(
+      [getTopic(TopicKind.ResourceList, resource.userId)],
+      `Failed to publish the resource list of "${resource.userId}":`,
     );
 };

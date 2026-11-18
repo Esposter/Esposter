@@ -10,10 +10,10 @@ import { eraseAccountMessages } from "#src/services/account/eraseAccountMessages
 import { eraseAccountUserObject } from "#src/services/account/eraseAccountUserObject";
 import { getAccountTopics } from "#src/services/account/getAccountTopics";
 import { removeAccountFromMemberRooms } from "#src/services/account/removeAccountFromMemberRooms";
-import { publishTopics } from "#src/services/realtime/publishTopics";
+import { publishTopicsBestEffort } from "#src/services/realtime/publishTopicsBestEffort";
 import { db } from "#src/services/shared/db";
 import { deleteAccountQueueMessageSchema, usersInAuth } from "@esposter/db-schema";
-import { getResultAsync, noop, settleAll, withFinalizerAsync } from "@esposter/shared";
+import { settleAll, withFinalizerAsync } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 
 // The account deletion sweep, in the order each store depends on. Every step treats an already-gone target as done, so a
@@ -45,9 +45,7 @@ export const deleteAccountHandler = async (body: unknown): Promise<void> => {
         Array.from(
           new Set(topics),
           (topic) => () =>
-            getResultAsync(() => publishTopics([topic])).match(noop, (error) => {
-              console.error(`Failed to publish the topic "${topic}" of an account's deletion:`, error);
-            }),
+            publishTopicsBestEffort([topic], `Failed to publish the topic "${topic}" of an account's deletion:`),
         ),
         MAX_CONCURRENT_ACCOUNT_TOPIC_PUBLISHES,
       );

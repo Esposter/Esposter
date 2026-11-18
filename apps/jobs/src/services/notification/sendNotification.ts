@@ -3,7 +3,7 @@ import type { NotificationQueueMessage } from "@esposter/db-schema";
 import { getPushNotificationPayload } from "#src/services/notification/getPushNotificationPayload";
 import { resolveNotification } from "#src/services/notification/resolveNotification";
 import { sendWebPushNotifications } from "#src/services/notification/sendWebPushNotifications";
-import { publishTopics } from "#src/services/realtime/publishTopics";
+import { publishTopicsBestEffort } from "#src/services/realtime/publishTopicsBestEffort";
 import { db } from "#src/services/shared/db";
 import { getPushSubscriptionsForUsers, inJsonArray } from "@esposter/db";
 import {
@@ -60,11 +60,9 @@ export const sendNotification = async (data: NotificationQueueMessage): Promise<
       console.error("Failed to trim delivered notifications:", error);
     });
     // Each recipient's open bell refetches. Best-effort and past the write, for the same reason as the trim
-    await getResultAsync(() => publishTopics(userIds.map((userId) => getTopic(TopicKind.Notification, userId)))).match(
-      noop,
-      (error) => {
-        console.error("Failed to publish the bell's topics:", error);
-      },
+    await publishTopicsBestEffort(
+      userIds.map((userId) => getTopic(TopicKind.Notification, userId)),
+      "Failed to publish the bell's topics:",
     );
   }
   if (!channels.includes(NotificationChannel.Push)) return;

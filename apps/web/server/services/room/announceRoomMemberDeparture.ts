@@ -2,7 +2,7 @@ import type { UserEvent, UserToRoomInMessage } from "@esposter/db-schema";
 
 import { useRoomObject } from "#server/composables/realtime/useRoomObject";
 import { callUserObjects } from "#server/services/realtime/callUserObjects";
-import { publishTopics } from "#server/services/realtime/publishTopics";
+import { publishTopicsBestEffort } from "#server/services/realtime/publishTopicsBestEffort";
 import { notifyOnlineRoomMembers } from "#server/services/room/notifyOnlineRoomMembers";
 import { getTopic, TopicKind } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
@@ -23,7 +23,8 @@ export const announceRoomMemberDeparture = async ({
     notifyOnlineRoomMembers(roomId, event),
     callUserObjects([userId], (userObject) => userObject.broadcastEvent(event)),
   ]);
-  await getResultAsync(() => publishTopics([getTopic(TopicKind.Bookmark, userId)])).match(noop, (error) => {
-    console.error("Failed to publish the bookmarks of a departed member:", error);
-  });
+  await publishTopicsBestEffort(
+    [getTopic(TopicKind.Bookmark, userId)],
+    "Failed to publish the bookmarks of a departed member:",
+  );
 };
