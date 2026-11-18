@@ -14,9 +14,20 @@
 - [x] 3.1 [phase 2] Give the item tile an art place on its face, with the icon drawn under the count strip, and the rarity face alone where no icon is given. Verify: the `genshin-interface` visual suite gains a fixture variant with an art shape, named after the scenario 'An item with an icon shows it on its tile', and a bare variant named after 'An item without an icon shows its rarity face', both written first and seen failing, and the existing item tile variants keep their images.
 - [x] 3.2 [phase 2] Measure the two-star item tile's face from a still that shows a two-star tile, or take a provisional estimate marked as one if no still does, and write its stops into the rarity face map. Verify: the two-star variant of the item tile is shot, and the `genshin-interface` visual suite holds it to its image.
 - [ ] 3.3 [phase 2] Trace the map's landmark pins, one per landmark class, from the overlay references, and draw them in place of the plain circle. Verify: `pnpm -C scripts genshin:parity trace` writes a check image for each class, read before its path is used; then `pnpm -C scripts genshin:parity compare map-overlay-galesong` writes its row once the map fixture draws its pins, which the map page's open list names.
+
+  Open: the pin classes are not traced yet, and the map fixture draws no pins, so the trace check images and the `map-overlay-galesong` compare have not run.
+
 - [ ] 3.4 [phase 2] Trace the attribute star from the attributes still, colour it by its element with a measured fill, and draw it in place of the white star. Verify: `pnpm -C scripts genshin:parity compare character-attributes` writes its row, and the trace's check image is read before its path is used.
+
+  Open: the attribute star is not located in `character-attributes.png`, traced or coloured yet, so the `character-attributes` compare has not run.
+
 - [ ] 3.5 [phase 6] Trace the achievement screen's laurel emblem, category badge, medal icon and stamp ring from its reference, and its corner ornaments from the frame, in place of the flat marks, and close each one's roadmap Asset line. Verify: a test named after the scenario 'A traced mark replaces its flat stand-in on the achievement screen', written first and seen failing, then `pnpm -C scripts genshin:parity compare achievement-screen` scores no worse than its row.
+
+  Open: the achievement marks are not traced yet, so the scenario test and the `achievement-screen` compare have not run.
+
 - [ ] 3.6 [phase 2] Trace the mail screen's nine marks and its list thumbnail frame from the screen's reference at scale 3, in place of the bare marks, and close each one's roadmap Asset line. Verify: a test named after the scenarios 'A traced mail mark replaces its bare mark on the mail screen' and 'A mark is a vector in the screen', written first and seen failing, then `pnpm -C scripts genshin:parity compare mail-screen` scores no worse than its row.
+
+  Open: the nine mail marks and the thumbnail frame are not traced yet, so the scenario tests and the `mail-screen` compare have not run.
 
 ## 4. The roadmap
 

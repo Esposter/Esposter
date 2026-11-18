@@ -14,3 +14,4 @@ x-touches:
     "packages/genshin-world/src/components/Character/AttributeList/**",
     "openspec/changes/genshin-roadmap/**",
   ]
+x-waiting: "The trace and parity compare steps for the map pins, the attribute star, the achievement marks and the mail marks have not run in this session, so tasks 3.3 to 3.6 stay open; the no-portrait, item tile, roadmap, colour fit, login sprite and face tasks are done."
