@@ -98,3 +98,19 @@ The login's cloud layer SHALL match each hour's cover and size statistics within
 - **GIVEN** an hour's cloud layer misses its gate on a reference
 - **WHEN** the login is checked
 - **THEN** that hour is not accepted
+
+### Requirement: A surface's normal detail leans its normals by its exports' bend
+
+A surface whose exports' normal maps bend its normals SHALL lean its normals by a procedural detail whose amplitude is solved from that bend, and where its own tilt already bends more than its exports, SHALL keep only the share of its tilt that brings the bend to theirs.
+
+#### Scenario: Towers and bridges lean by their exports' bend
+
+- **GIVEN** the exports' normal maps bend the towers' normals and the bridges' normals over their families, and the detail's frequency is solved (design.md, Open)
+- **WHEN** the login's shape pass is run
+- **THEN** the towers' and the bridges' surface detail bend readings hold their gates
+
+#### Scenario: Walkway's rims keep the share its exports' bend allows
+
+- **GIVEN** the walkway's rims bend its normals more than its exports' normal maps do
+- **WHEN** the login's shape pass is run
+- **THEN** the walkway's surface detail bend reading holds its gate
