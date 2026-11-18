@@ -16,22 +16,6 @@ An enemy nearer the character SHALL be drawn before one farther away, and when t
 - **WHEN** the enemies are drawn
 - **THEN** the farther enemy is not drawn
 
-### Requirement: A defeated enemy drops what its drop family gives
-
-A defeated enemy SHALL drop the Mora and materials its drop family gives; an enemy with no drop family drops neither.
-
-#### Scenario: A defeated common enemy drops its family's Mora and materials
-
-- **GIVEN** a common enemy whose kind has a drop family
-- **WHEN** it is defeated
-- **THEN** it drops the Mora and materials its family's table gives for its level band
-
-#### Scenario: A defeated enemy with no drop family drops no Mora or materials
-
-- **GIVEN** an enemy whose kind has no drop family
-- **WHEN** it is defeated
-- **THEN** it drops no Mora and no materials
-
 ### Requirement: An enemy with a fitted body is drawn with it
 
 An enemy whose kind has a fitted body SHALL be drawn with that body in place of its capsule.
