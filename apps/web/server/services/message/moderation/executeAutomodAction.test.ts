@@ -2,12 +2,15 @@ import type { Context } from "#server/trpc/context";
 
 import { roomObjectCalls } from "#server/composables/realtime/useRoomObject.test";
 import { executeAutomodAction } from "#server/services/message/moderation/executeAutomodAction";
+import { MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
 import { getRoomMembershipWhere } from "#server/services/room/getRoomMembershipWhere";
 import { createMockContext, getMockSession } from "#server/trpc/context.test";
 import {
   AdminActionType,
+  getTopic,
   getUserSocketTag,
   roomsInMessage,
+  TopicKind,
   usersToRoomsInMessage,
   WordFilterAction,
 } from "@esposter/db-schema";
@@ -81,6 +84,18 @@ describe(executeAutomodAction, () => {
     await executeAutomodAction(mockContext.db, { action: WordFilterAction.Timeout, roomId, timeoutDurationMs, userId });
 
     await expect(readTimeoutUntil(roomId, userId)).resolves.toStrictEqual(new Date(timeoutDurationMs));
+  });
+
+  // The action writes the room's moderation log, which the moderators' log reads. It runs inside the message write that is
+  // Then rejected, so that write publishes nothing: the room's topic is published here, from the action itself
+  test("publishes the room's topic, so an open moderation log refetches", async () => {
+    expect.hasAssertions();
+
+    const { roomId, userId } = await setupMembership();
+    MockPublishedTopics.length = 0;
+    await executeAutomodAction(mockContext.db, { action: WordFilterAction.Timeout, roomId, timeoutDurationMs, userId });
+
+    expect(MockPublishedTopics).toStrictEqual([getTopic(TopicKind.Room, roomId)]);
   });
 
   // The member the automod acted on hears what was done to them in the room, sent to their own sockets alone. Every
