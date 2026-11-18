@@ -7,8 +7,9 @@ import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { standardRateLimitedProcedure } from "#server/trpc/procedure/standardRateLimitedProcedure";
 import { readTopicsHeader } from "#shared/services/realtime/readTopicsHeader";
 import { getTopic, TopicKind } from "@esposter/db-schema";
+import { noop } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { afterEach, describe, expect, test } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 import { z } from "zod";
 
 describe(getTopicsProcedure, () => {
@@ -58,6 +59,21 @@ describe(getTopicsProcedure, () => {
     const caller = createTestCaller(await createMockContext());
     await expect(caller.failPost({ id })).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Post failed]`);
 
+    expect(MockPublishedTopics).toStrictEqual([]);
+  });
+
+  test("a mutation whose topics cannot be read still resolves, since its write has committed", async () => {
+    expect.hasAssertions();
+
+    const unreadableTopicsRouter = router({
+      updateUnreadable: getTopicsProcedure(standardRateLimitedProcedure.input(postInputSchema), () => {
+        throw new Error("Unreadable output");
+      }).mutation<boolean>(() => true),
+    });
+    const caller = createCallerFactory(unreadableTopicsRouter)(await createMockContext());
+    vi.spyOn(console, "error").mockImplementation(noop);
+
+    await expect(caller.updateUnreadable({ id })).resolves.toBe(true);
     expect(MockPublishedTopics).toStrictEqual([]);
   });
 });

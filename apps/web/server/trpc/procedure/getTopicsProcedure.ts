@@ -5,9 +5,10 @@ import type { TRPCProcedureBuilder } from "@trpc/server";
 import type { Overwrite, Simplify } from "@trpc/server/unstable-core-do-not-import";
 import type { User } from "better-auth";
 
-import { publishTopicsBestEffort } from "#server/services/realtime/publishTopicsBestEffort";
+import { publishTopics } from "#server/services/realtime/publishTopics";
 import { TOPICS_HEADER } from "#shared/services/realtime/constants";
 import { formatTopicsHeaderValue } from "#shared/services/realtime/formatTopicsHeaderValue";
+import { getResultAsync, noop } from "@esposter/shared";
 
 interface TopicsOptions<TContextOverrides, TInput> {
   ctx: Simplify<Overwrite<Context, TContextOverrides>>;
@@ -57,9 +58,9 @@ export const getTopicsProcedure = <
     }
     if (type !== "mutation") return result;
 
-    await publishTopicsBestEffort(
-      getTopics({ ctx, input, output: result.data }),
-      `Failed to publish the topics of "${path}":`,
-    );
+    // The topics are read inside the boundary too, so a throw from reading them is logged like a failed publish
+    await getResultAsync(() => publishTopics(getTopics({ ctx, input, output: result.data }))).match(noop, (error) => {
+      console.error(`Failed to publish the topics of "${path}":`, error);
+    });
     return result;
   });
