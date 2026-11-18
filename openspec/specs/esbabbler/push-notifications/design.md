@@ -56,6 +56,12 @@ The notification is shown as its author, resolved at delivery from the ids the e
 
 A reply deep-links to the thread root rather than to itself: the thread is where the reply is read, and it is the one destination that is right for a room member and a thread follower alike.
 
+## The device's subscription
+
+A device is pushed only once its browser holds a subscription the server stored, and a browser grants the permission behind one only from a press. So the ask is the app's own line, as Discord's bar over the app is: `MessageContentPushPermissionAlert` shows above a room while the permission is still unanswered, its **Enable** asks the browser, and closing it is remembered by the browser. Nothing asks on load, which Firefox and Safari ignore and Chrome quiets.
+
+`usePushSubscription` follows the permission live (`usePermission`), so a grant from that line or from the browser's site settings subscribes the device as it happens, and a revoke unsubscribes it. A subscription is bound to the VAPID key it was made under, and a push signed with any other is refused, so one whose key is not the deployment's is replaced rather than registered again — the one case where a device would otherwise stay subscribed and never be reached. `unsubscribe` is idempotent, since the row may already be pruned ([notifications](../../architecture/notifications/design.md)).
+
 ## Key files
 
 | File                                                                      | Role                                                |
@@ -65,3 +71,5 @@ A reply deep-links to the thread root rather than to itself: the thread is where
 | `packages/db/src/services/message/mention/getSenderClassifiedMentions.ts` | broadcasts held to the sender's `MentionEveryone`   |
 | `apps/jobs/src/services/notification/resolveNotification.ts`              | the message case — body, deep link, recipients      |
 | `apps/web/server/services/message/createUserMessage.ts`                   | publishes one notification per send, reply included |
+| `apps/web/app/composables/usePushSubscription.ts`                         | the device's subscription, kept to the permission   |
+| `apps/web/app/components/Message/Content/PushPermissionAlert.vue`         | the ask for the permission, from a press            |

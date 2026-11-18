@@ -1,4 +1,5 @@
 import type { ClientMessage } from "#src/models/message/ClientMessage";
+import type { ClientThread } from "#src/models/message/ClientThread";
 
 import { RightDrawer } from "#src/models/message/RightDrawer";
 import { messageHolderRegistry } from "#src/services/message/messageHolderRegistry";
@@ -16,6 +17,19 @@ export const useThreadStore = defineStore("message/thread", () => {
   const activeThreadRootId = ref<0 | ClientMessage["id"]>(0);
   const activeRoomId = ref<ClientMessage["roomId"]>("");
   const threadMessages = ref<ClientMessage[]>([]);
+  // The open thread as a list of threads shows it, once its root has read: what following it lists at once
+  const activeThread = computed<ClientThread | undefined>(() => {
+    const root = threadMessages.value.find(({ id }) => id === activeThreadRootId.value);
+    if (!root) return undefined;
+
+    const replies = threadMessages.value.filter(({ id }) => id !== root.id);
+    if (replies.length === 0) return { ...root, replyCount: 0 };
+    return {
+      ...root,
+      lastReplyAt: new Date(Math.max(...replies.map(({ createdAt }) => createdAt.getTime()))),
+      replyCount: replies.length,
+    };
+  });
   const layoutStore = useLayoutStore();
   const messageLayoutStore = useMessageLayoutStore();
   const threadFollowStore = useThreadFollowStore();
@@ -51,8 +65,8 @@ export const useThreadStore = defineStore("message/thread", () => {
           threadMessages.value = [...messages, ...threadMessages.value.filter(({ id }) => !readMessageIds.has(id))];
         },
       }),
-      // The pane's menu offers the reply notification toggle, so the follow state it reads loads with the
-      // Thread rather than on the menu's first open — cached per room, so this is free after the first thread
+      // The pane's header shows the follow toggle, so the follow state it reads loads with the thread — cached per
+      // Room, so this is free after the first thread
       readFollowedThreads(roomId),
     ]);
   };
@@ -104,5 +118,13 @@ export const useThreadStore = defineStore("message/thread", () => {
   messageHolderRegistry.register((roomId, hold) => {
     if (roomId === activeRoomId.value) hold(threadMessages.value);
   });
-  return { activeRoomId, activeThreadRootId, closeThread, isReadThreadPending, openThread, threadMessages };
+  return {
+    activeRoomId,
+    activeThread,
+    activeThreadRootId,
+    closeThread,
+    isReadThreadPending,
+    openThread,
+    threadMessages,
+  };
 });

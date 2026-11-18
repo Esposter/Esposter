@@ -49,27 +49,20 @@ export const pushSubscriptionRouter = router({
         );
       },
     ),
+  // Idempotent: a browser whose subscription the server already pruned, or never stored, still drops its own
   unsubscribe: standardAuthedProcedure
     .meta({
       staticReason: "No query reads a push subscription back: the browser holds it, and the server only pushes to it",
     })
     .input(pushSubscriptionInputSchema.shape.endpoint)
-    .mutation<PushSubscriptionInNotification>(async ({ ctx, input }) =>
-      requireMutation(
-        (
-          await ctx.db
-            .delete(pushSubscriptionsInNotification)
-            .where(
-              and(
-                eq(pushSubscriptionsInNotification.endpoint, input),
-                eq(pushSubscriptionsInNotification.userId, ctx.user.id),
-              ),
-            )
-            .returning()
-        )[0],
-        Operation.Delete,
-        DatabaseEntityType.PushSubscription,
-        "unsubscribe",
-      ),
-    ),
+    .mutation<void>(async ({ ctx, input }) => {
+      await ctx.db
+        .delete(pushSubscriptionsInNotification)
+        .where(
+          and(
+            eq(pushSubscriptionsInNotification.endpoint, input),
+            eq(pushSubscriptionsInNotification.userId, ctx.user.id),
+          ),
+        );
+    }),
 });

@@ -66,6 +66,7 @@ const { roomObject, userObject, useRoomObjectMock, useUserObjectMock } = vi.hois
     readReactions: vi.fn<RoomObjectRpc["readReactions"]>(),
     readScheduledMessages: vi.fn<RoomObjectRpc["readScheduledMessages"]>(),
     readThread: vi.fn<RoomObjectRpc["readThread"]>(),
+    readThreads: vi.fn<RoomObjectRpc["readThreads"]>(),
     removeMember: vi.fn<RoomObjectRpc["removeMember"]>(),
     removeReaction: vi.fn<RoomObjectRpc["removeReaction"]>(),
     searchMessages: vi.fn<RoomObjectRpc["searchMessages"]>(),
@@ -460,14 +461,14 @@ describe("messageRouter", () => {
   test("follows a thread, which stays listed while its root message is gone", async () => {
     expect.hasAssertions();
 
-    roomObject.readMessagesByIds.mockReturnValue([]);
+    roomObject.readThreads.mockReturnValue([]);
 
     await messageCaller.followThread({ roomId, threadRootId: messageId });
 
     const followedThreads = await messageCaller.readFollowedThreads({ roomId });
 
     expect(followedThreads).toStrictEqual({ threadRootIds: [messageId], threads: [] });
-    expect(roomObject.readMessagesByIds).toHaveBeenCalledExactlyOnceWith([messageId]);
+    expect(roomObject.readThreads).toHaveBeenCalledExactlyOnceWith([messageId]);
   });
 
   test("unfollows a thread, which leaves the followed list", async () => {
@@ -484,8 +485,8 @@ describe("messageRouter", () => {
   test("asks the room for the followed threads newest first, whichever order they were followed in", async () => {
     expect.hasAssertions();
 
-    const newerRoot = createRoomMessage({ id: messageId + 1 });
-    roomObject.readMessagesByIds.mockReturnValue([newerRoot]);
+    const newerRoot = { ...createRoomMessage({ id: messageId + 1 }), replyCount: 0 };
+    roomObject.readThreads.mockReturnValue([newerRoot]);
     // Followed newer first, so a read that returns the follows latest-first hands the room the older root ahead of the newer
     // One, and only the router's own sort puts the newer root first
     await messageCaller.followThread({ roomId, threadRootId: newerRoot.id });
@@ -493,7 +494,7 @@ describe("messageRouter", () => {
 
     const { threads } = await messageCaller.readFollowedThreads({ roomId });
 
-    expect(roomObject.readMessagesByIds).toHaveBeenCalledExactlyOnceWith([newerRoot.id, messageId]);
+    expect(roomObject.readThreads).toHaveBeenCalledExactlyOnceWith([newerRoot.id, messageId]);
     expect(threads).toStrictEqual([newerRoot]);
   });
 

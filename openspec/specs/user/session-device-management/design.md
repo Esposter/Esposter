@@ -44,7 +44,7 @@ Expired rows are filtered out of the listing, the same way better-auth's own lis
 
 **A push subscription belongs to the session that created it, not to the browser that holds it.** `pushSubscriptions.sessionId` references `sessions` and cascades, so a revoke takes that device's pushes with it — and so do a plain sign-out and an expiry, with no cleanup path of their own. A subscription outliving its session still resolves and still delivers ([push notifications](../../esbabbler/push-notifications/design.md)). Keyed to the session, a device that signs out stops receiving that account's pushes.
 
-Losing the row costs nothing, which is what makes the cascade cheap rather than destructive: `usePushSubscription` resubscribes on mount, so the next authenticated load writes it again under the session actually in use. A row whose session no longer exists is removed rather than kept, since no value would satisfy its reference, and each browser rewrites its own on its next visit.
+Losing the row costs nothing, which is what makes the cascade cheap rather than destructive: `usePushSubscription` registers the device's subscription on every load where notifications are granted, so the next authenticated load writes it again under the session actually in use. A row whose session no longer exists is removed rather than kept, since no value would satisfy its reference, and each browser rewrites its own on its next visit.
 
 Writing a subscription requires its session to exist as a row. The test mock for `auth.api.getSession` writes the row it fabricates, as sign-in does, so the suite exercises the same invariant production does.
 

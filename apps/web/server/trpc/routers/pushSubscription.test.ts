@@ -56,15 +56,13 @@ describe("pushSubscriptionRouter", () => {
     expect(updatedPushSubscription.p256dh).toBe(updatedP256dh);
   });
 
-  test("unsubscribes", async () => {
+  test("unsubscribes, and an endpoint with no subscription unsubscribes as a no-op", async () => {
     expect.hasAssertions();
 
-    const newPushSubscription = await pushSubscriptionCaller.subscribe({ endpoint, keys: { auth, p256dh } });
-    const deletedPushSubscription = await pushSubscriptionCaller.unsubscribe(endpoint);
-    const pushSubscription = await mockContext.db.query.pushSubscriptionsInNotification.findFirst();
+    await pushSubscriptionCaller.subscribe({ endpoint, keys: { auth, p256dh } });
+    await pushSubscriptionCaller.unsubscribe(endpoint);
 
-    expect(deletedPushSubscription.id).toBe(newPushSubscription.id);
-    expect(deletedPushSubscription.endpoint).toBe(endpoint);
-    expect(pushSubscription).toBeUndefined();
+    await expect(pushSubscriptionCaller.unsubscribe(endpoint)).resolves.toBeUndefined();
+    await expect(mockContext.db.query.pushSubscriptionsInNotification.findFirst()).resolves.toBeUndefined();
   });
 });

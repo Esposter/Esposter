@@ -340,7 +340,7 @@ const baseMessageRouter = router({
     if (threadRootIds.length === 0) return { threadRootIds, threads: [] };
     // The follows come back newest root first, so the object's roots do too. The drawer lists the newest of them, and the
     // Follow state keeps every one. The read drops the deleted ones
-    const threads = await useRoomObject(roomId).readMessagesByIds(threadRootIds.slice(0, MAX_FOLLOWED_THREADS));
+    const threads = await useRoomObject(roomId).readThreads(threadRootIds.slice(0, MAX_FOLLOWED_THREADS));
     return { threadRootIds, threads };
   }),
   readMessages: getMemberProcedure(readMessagesInputSchema, "roomId")

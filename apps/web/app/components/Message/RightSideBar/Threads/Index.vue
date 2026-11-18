@@ -19,8 +19,8 @@ const { error, isPending, refresh } = useQuery(
 
 <template>
   <MessageRightSideBarPane title="Followed Threads" is-body-bare @close="isRightDrawerOpen = false">
-    <!-- Each row pads itself, so the rows sit in a plain wrapper that takes neither the body's padding nor its gap -->
-    <div>
+    <!-- Each row pads itself, so the rows sit in a plain list that takes neither the body's padding nor its gap -->
+    <div aria-label="Followed threads" role="list" p-1 flex flex-col>
       <MessageRightSideBarThreadsListItem v-for="thread of followedThreads" :key="thread.id" :thread />
     </div>
     <template v-if="followedThreads.length === 0">
@@ -30,7 +30,7 @@ const { error, isPending, refresh } = useQuery(
       </div>
       <UiEmptyState
         v-else
-        description="Follow a thread from its menu to keep it here."
+        description="Follow a thread with the bell in its header to keep it here and be told of its replies."
         :meaning="UiIconMeaning.Comment"
         title="No followed threads"
       />

@@ -1,4 +1,5 @@
 import type { ClientMessage } from "#src/models/message/ClientMessage";
+import type { ClientThread } from "#src/models/message/ClientThread";
 
 import { messageHolderRegistry } from "#src/services/message/messageHolderRegistry";
 import { MessageHookMap } from "#src/services/message/MessageHookMap";
@@ -15,7 +16,7 @@ export const useThreadFollowStore = defineStore("message/threadFollow", () => {
     data: followedThreads,
     getData: getFollowedThreads,
     setData: setFollowedThreads,
-  } = useDataMap<ClientMessage[]>(
+  } = useDataMap<ClientThread[]>(
     () => roomStore.currentRoomId,
     () => [],
   );
@@ -78,7 +79,7 @@ export const useThreadFollowStore = defineStore("message/threadFollow", () => {
   // In the drawer at once; one whose thread has not read its root yet has the drawer read again once the follow lands,
   // Since only the server can hand back the root then. Exclusive per thread, so a second toggle while the first is out
   // Is dropped rather than flipping the follow back
-  const followThread = (roomId: string, threadRootId: ClientMessage["id"], threadRoot?: ClientMessage) => {
+  const followThread = (roomId: string, threadRootId: ClientMessage["id"], threadRoot?: ClientThread) => {
     executeMutation(() => $trpc.message.followThread.mutate({ roomId, threadRootId }), {
       applyOptimistic: () => {
         const isFollowingBefore = checkIsFollowing(roomId, threadRootId);

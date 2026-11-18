@@ -5,6 +5,7 @@ import { RightDrawer } from "#src/models/message/RightDrawer";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { NotificationTypeLabelMap } from "#src/services/message/NotificationTypeLabelMap";
 import { NotificationTypeMeaningMap } from "#src/services/message/NotificationTypeMeaningMap";
+import { RightDrawerToggleMap } from "#src/services/message/RightDrawerToggleMap";
 import { useLayoutStore } from "#src/store/layout";
 import { useCallStore } from "#src/store/message/room/call/index";
 import { useRoomStore } from "#src/store/message/room/index";
@@ -19,8 +20,12 @@ const { isDesktop } = storeToRefs(layoutStore);
 const callStore = useCallStore();
 const { isConnecting, isInCall } = storeToRefs(callStore);
 const { joinCallByRoomId, leaveCall } = callStore;
-const { isOpen: isSearchOpen, toggle: toggleSearch } = useToggleRightDrawer(RightDrawer.Search);
-const { isOpen: isMemberListOpen, toggle: toggleMemberList } = useToggleRightDrawer(RightDrawer.Member);
+// The header's pane toggles, as rows checked while their pane is open
+const drawerToggles = Object.values(RightDrawerToggleMap).map(({ drawer, meaning, title }) => ({
+  meaning,
+  title,
+  ...useToggleRightDrawer(drawer),
+}));
 const messageLayoutStore = useMessageLayoutStore();
 const { openRightDrawer } = messageLayoutStore;
 const roomStore = useRoomStore();
@@ -48,7 +53,7 @@ const updateNotificationType = (newNotificationType: NotificationType) => {
     key: roomId,
   });
 };
-// Where the drawers do not dock, the header leaves the call and its two toggles to this menu, so they lead it
+// Where the drawers do not dock, the header leaves the call and its toggles to this menu, so they lead it
 const headerItems = computed<Item[]>(() =>
   isDesktop.value
     ? []
@@ -61,24 +66,22 @@ const headerItems = computed<Item[]>(() =>
               onClick: () => joinCallByRoomId(currentRoomId.value),
               title: "Start Call",
             },
-        { isChecked: isSearchOpen.value, meaning: UiIconMeaning.Search, onClick: toggleSearch, title: "Search" },
-        {
-          isChecked: isMemberListOpen.value,
-          meaning: UiIconMeaning.Members,
-          onClick: toggleMemberList,
-          title: "Member List",
-        },
+        ...drawerToggles.map(({ isOpen, meaning, title, toggle }) => ({
+          isChecked: isOpen.value,
+          meaning,
+          onClick: toggle,
+          title,
+        })),
       ],
 );
 const items = computed<Item[]>(() => [
   ...headerItems.value,
   {
     isGroupStart: headerItems.value.length > 0,
-    meaning: UiIconMeaning.Comment,
-    onClick: () => openRightDrawer(RightDrawer.Threads),
-    title: "Followed Threads",
+    meaning: UiIconMeaning.Pin,
+    onClick: () => openRightDrawer(RightDrawer.Pinned),
+    title: "Pinned Messages",
   },
-  { meaning: UiIconMeaning.Pin, onClick: () => openRightDrawer(RightDrawer.Pinned), title: "Pinned Messages" },
   ...Object.values(NotificationType).map<Item>((type, index) => ({
     isGroupStart: index === 0,
     isSelected: type === (myUserToRoom.value?.notificationType ?? NotificationType.DirectMessage),
@@ -89,8 +92,8 @@ const items = computed<Item[]>(() => [
 ]);
 </script>
 
-<!-- What a room offers now and then, behind one mark at every width: the panes read less often than the members and
-     the search, and the notification level as a group of radios, which show the level the reader has as soon as the
+<!-- What a room offers now and then, behind one mark at every width: the panes read less often than the threads, the
+     members and the search, and the notification level as a group of radios, which show the level the reader has as soon as the
      menu opens. Discord keeps a bell of its own in the header; one mark fewer is what lets the header fit a phone
      without a second bar of buttons, and below the cut where the drawers dock the header's call and toggles lead it -->
 <template>

@@ -101,3 +101,19 @@ A message posted by a webhook SHALL notify every member whose setting for the ro
 - **WHEN** a webhook posts a message to the room
 - **THEN** the member set to All is notified
 - **AND** the notification shows the bot's name
+
+### Requirement: A device is pushed once its notifications are turned on
+
+The app SHALL ask for the notification permission from a press rather than on load, SHALL subscribe a device as soon as the permission is granted, and SHALL replace a subscription made under another key.
+
+#### Scenario: a member turns notifications on
+
+- **GIVEN** a member whose browser has not been asked for the permission
+- **WHEN** the member presses Enable on the notifications line above a room and grants it
+- **THEN** the device is subscribed and receives the room's notifications
+
+#### Scenario: a device subscribed before the key changed
+
+- **GIVEN** a device holding a subscription made under an earlier key
+- **WHEN** the member next opens the app with notifications granted
+- **THEN** the old subscription is replaced and the device receives notifications again

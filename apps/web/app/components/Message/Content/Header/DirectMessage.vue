@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { RightDrawer } from "#src/models/message/RightDrawer";
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { authClient } from "#src/services/auth/authClient";
@@ -54,7 +55,7 @@ const isLeaveOpen = ref(false);
         </div>
       </UiPopover>
       <MessageContentHeaderCreateDirectMessageParticipantButton :room-id="currentDirectMessage.id" />
-      <MessageContentShowSearchButton />
+      <MessageContentShowDrawerButton :drawer="RightDrawer.Search" />
     </div>
     <UiConfirmDialog
       v-if="removingParticipant"

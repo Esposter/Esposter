@@ -1,6 +1,6 @@
 import type { PushSubscriptionInNotification } from "@esposter/db-schema";
 
-import { MAX_CONCURRENT_PUSH_SENDS } from "#src/services/notification/constants";
+import { DEAD_PUSH_SUBSCRIPTION_STATUS_CODES, MAX_CONCURRENT_PUSH_SENDS } from "#src/services/notification/constants";
 import { webpush } from "#src/services/notification/webpush";
 import { db } from "#src/services/shared/db";
 import { pushSubscriptionsInNotification } from "@esposter/db-schema";
@@ -21,12 +21,12 @@ export const sendWebPushNotifications = async (
         ),
       ).match(noop, async (error) => {
         if (error instanceof WebPushError)
-          if (error.statusCode === 410) {
-            console.log(`Subscription for endpoint ${endpoint} has expired. Deleting.`);
+          if (DEAD_PUSH_SUBSCRIPTION_STATUS_CODES.includes(error.statusCode)) {
+            console.log(`Subscription for endpoint ${endpoint} is dead (${error.statusCode}). Deleting.`);
             await getResultAsync(() =>
               db.delete(pushSubscriptionsInNotification).where(eq(pushSubscriptionsInNotification.id, id)),
             ).match(noop, (deleteError) => {
-              console.error(`Failed to delete expired subscription ${endpoint}:`, deleteError);
+              console.error(`Failed to delete dead subscription ${endpoint}:`, deleteError);
             });
           } else console.error(`Failed to send push notification to ${endpoint}:`, error);
         else console.error(`Unexpected error sending push notification to ${endpoint}:`, error);

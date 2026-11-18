@@ -31,6 +31,8 @@ export const LocalStorageKey = {
   PdfSidebarOpen: "pdf-sidebar-open",
   // The tab a PDF viewer's sidebar shows: a viewer's choice, kept with the browser
   PdfSidebarTab: "pdf-sidebar-tab",
+  // Whether the reader closed the ask to turn on push notifications: a choice of this browser, as the permission is
+  PushPermissionAlertDismissed: "push-permission-alert-dismissed",
   RecentEmojiSlugs: "recent-emoji-slugs",
   // The dock's recent pages: a convenience of the device, not data worth a server round trip
   RecentPages: "recent-pages",

@@ -23,7 +23,7 @@ describe("messageContentHeaderOverflowMenu", () => {
     const component = await mountSuspended(MessageContentHeaderOverflowMenu);
     const [firstItem] = component.findComponent(UiOverflowMenu).props("items");
 
-    expect(firstItem?.title).toBe("Followed Threads");
+    expect(firstItem?.title).toBe("Pinned Messages");
   });
 
   test("a phone's menu carries the header's toggles as rows", async () => {
@@ -34,12 +34,13 @@ describe("messageContentHeaderOverflowMenu", () => {
     const items = component.findComponent(UiOverflowMenu).props("items");
 
     expect(
-      items.slice(0, 4).map(({ isChecked, isGroupStart, title }) => ({ isChecked, isGroupStart, title })),
+      items.slice(0, 5).map(({ isChecked, isGroupStart, title }) => ({ isChecked, isGroupStart, title })),
     ).toStrictEqual([
       { isChecked: undefined, isGroupStart: undefined, title: "Start Call" },
+      { isChecked: false, isGroupStart: undefined, title: "Followed Threads" },
       { isChecked: false, isGroupStart: undefined, title: "Search" },
       { isChecked: false, isGroupStart: undefined, title: "Member List" },
-      { isChecked: undefined, isGroupStart: true, title: "Followed Threads" },
+      { isChecked: undefined, isGroupStart: true, title: "Pinned Messages" },
     ]);
   });
 });

@@ -1,6 +1,6 @@
 import type { Database } from "@esposter/db-schema";
 
-import { MAX_CONCURRENT_PUSH_SENDS } from "#src/services/notification/constants";
+import { DEAD_PUSH_SUBSCRIPTION_STATUS_CODES, MAX_CONCURRENT_PUSH_SENDS } from "#src/services/notification/constants";
 import { sendWebPushNotifications } from "#src/services/notification/sendWebPushNotifications";
 import { setupWebPushSuite } from "#src/services/notification/setupWebPushSuite.test";
 import { webpush } from "#src/services/notification/webpush.test";
@@ -48,11 +48,11 @@ describe(sendWebPushNotifications, () => {
     );
   });
 
-  test("deletes expired subscription when status code is 410", async () => {
+  test.each(DEAD_PUSH_SUBSCRIPTION_STATUS_CODES)("deletes a dead subscription on %i", async (statusCode) => {
     expect.hasAssertions();
 
     const { auth, endpoint, expirationTime, id, p256dh } = await seedSubscription();
-    vi.mocked(webpush.sendNotification).mockRejectedValueOnce(new WebPushError("", 410, {}, "", ""));
+    vi.mocked(webpush.sendNotification).mockRejectedValueOnce(new WebPushError("", statusCode, {}, "", ""));
     await sendWebPushNotifications([{ auth, endpoint, expirationTime, id, p256dh }], payload);
     const remainingPushSubscriptions = await mockDb
       .select()
@@ -87,7 +87,7 @@ describe(sendWebPushNotifications, () => {
     expect(peakInFlight).toBe(MAX_CONCURRENT_PUSH_SENDS);
   });
 
-  test("keeps subscription when send fails with a non-410 error", async () => {
+  test("keeps subscription when send fails with any other error", async () => {
     expect.hasAssertions();
 
     const { auth, endpoint, expirationTime, id, p256dh } = await seedSubscription();

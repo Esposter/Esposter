@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { useReplyStore } from "#src/store/message/input/reply";
-import { EMPTY_TEXT_REGEX } from "#src/util/text/constants";
 import { MessageType } from "@esposter/db-schema";
 
 interface Props {
@@ -17,11 +16,6 @@ const { getReplyMapRef } = replyStore;
 const replyMap = getReplyMapRef(() => roomId);
 const reply = computed(() => replyMap.value.get(messageId));
 const creator = useCreator(reply);
-// Only a body a member or a webhook wrote came through the sanitizer. Every other type is a line the server wrote
-// Itself, carrying member names verbatim, so it is shown as text rather than parsed as markup
-const isSanitizedHtml = computed(
-  () => reply.value?.type === MessageType.Message || reply.value?.type === MessageType.Webhook,
-);
 const scrollToMessage = useScrollToMessage();
 </script>
 
@@ -33,23 +27,19 @@ const scrollToMessage = useScrollToMessage();
       <MessageModelMessageAppUserBadge v-if="reply.type === MessageType.Webhook" />
       <span text-heading-color shrink-0>{{ creator.name }}</span>
       <span v-if="reply.isForward" class="i-mdi:share" aria-label="Forwarded" role="img" shrink-0 size-6 />
-      <template v-if="!EMPTY_TEXT_REGEX.test(reply.message)">
-        <!-- eslint-disable-next-line vue/no-v-html -- a message or webhook body, sanitized at its Zod boundary -->
-        <span v-if="isSanitizedHtml" class="rich-text-content" max-h-6 min-w-0 truncate v-html="reply.message" />
-        <span v-else class="rich-text-content" max-h-6 min-w-0 truncate>{{ reply.message }}</span>
-      </template>
-      <button
-        v-else
-        :class="isIndicatorActive ? 'text-text' : 'text-muted'"
-        type="button"
-        cursor-pointer
-        italic
-        @mouseenter="isIndicatorActive = true"
-        @mouseleave="isIndicatorActive = false"
-        @click="scrollToMessage(reply.roomId, reply.id)"
-      >
-        Click to see attachment
-      </button>
+      <MessageModelMessageSnippet :message="reply">
+        <button
+          :class="isIndicatorActive ? 'text-text' : 'text-muted'"
+          type="button"
+          cursor-pointer
+          italic
+          @mouseenter="isIndicatorActive = true"
+          @mouseleave="isIndicatorActive = false"
+          @click="scrollToMessage(reply.roomId, reply.id)"
+        >
+          Click to see attachment
+        </button>
+      </MessageModelMessageSnippet>
       <span v-if="reply.files.length > 0" class="i-mdi:file-image" aria-label="Attachment" role="img" shrink-0 size-6 />
     </template>
     <template v-else>

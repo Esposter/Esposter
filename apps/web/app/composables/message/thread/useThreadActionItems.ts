@@ -3,51 +3,25 @@ import type { Item } from "#src/models/shared/Item";
 
 import { useCallStore } from "#src/store/message/room/call/index";
 import { useThreadStore } from "#src/store/message/thread";
-import { useThreadFollowStore } from "#src/store/message/threadFollow";
 import { useMessageLayoutStore } from "#src/store/message/ui/layout";
 import { RoutePath } from "@esposter/shared";
 
-// The thread pane's overflow menu. Everything here acts on the thread the pane is showing, so nothing is
-// Passed in — the store already names it, and a prop would only be a second copy that can disagree
+// The thread pane's overflow menu, beside the follow toggle its header shows. Everything here acts on the thread the
+// Pane is showing, so nothing is passed in — the store already names it, and a prop would only be a second copy that
+// Can disagree
 export const useThreadActionItems = () => {
   const copyMessageLink = useCopyMessageLink();
   const threadStore = useThreadStore();
-  const { activeRoomId, activeThreadRootId, threadMessages } = storeToRefs(threadStore);
-  const threadFollowStore = useThreadFollowStore();
-  const { checkIsFollowing, followThread, unfollowThread } = threadFollowStore;
+  const { activeRoomId, activeThreadRootId } = storeToRefs(threadStore);
   const callStore = useCallStore();
   const { joinCallByRoomId, leaveCall } = callStore;
   const { callThreadRootId, isConnecting, isInCall } = storeToRefs(callStore);
   const messageLayoutStore = useMessageLayoutStore();
   const { previousRightDrawer, splitRightDrawer } = storeToRefs(messageLayoutStore);
-  // The pane renders only on an open thread, but the store's empty root is still the type each read starts from
-  const isFollowing = computed(() => {
-    const threadRootId = activeThreadRootId.value;
-    return threadRootId ? checkIsFollowing(activeRoomId.value, threadRootId) : false;
-  });
   // The call this thread can start is the one the user is already in only when it is this thread's — being in
   // The room's call, or another thread's, still leaves this one to start
   const isInThreadCall = computed(() => isInCall.value && callThreadRootId.value === activeThreadRootId.value);
   return computed<Item[]>(() => [
-    {
-      icon: isFollowing.value ? "i-mdi:bell-off" : "i-mdi:bell",
-      onClick: () => {
-        const roomId = activeRoomId.value;
-        const threadRootId = activeThreadRootId.value;
-        if (!threadRootId) return;
-        if (isFollowing.value) {
-          unfollowThread(roomId, threadRootId);
-          return;
-        }
-        // The drawer lists the thread's root, which the pane holds once its replies have read
-        followThread(
-          roomId,
-          threadRootId,
-          threadMessages.value.find(({ id }) => id === threadRootId),
-        );
-      },
-      title: isFollowing.value ? "Turn off notifications for replies" : "Turn on notifications for replies",
-    },
     {
       icon: "i-mdi:link-variant",
       onClick: async () => {

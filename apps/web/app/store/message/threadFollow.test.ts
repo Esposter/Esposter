@@ -17,7 +17,11 @@ describe(useThreadFollowStore, () => {
   const roomId = v7();
   const threadRootId = 1;
   const userId = v7();
-  const root = { ...createOptimisticMessage({ roomId, type: MessageType.Message }, userId), id: threadRootId };
+  const root = {
+    ...createOptimisticMessage({ roomId, type: MessageType.Message }, userId),
+    id: threadRootId,
+    replyCount: 0,
+  };
 
   beforeEach(() => {
     setCurrentRoomId(roomId);
@@ -78,7 +82,7 @@ describe(useThreadFollowStore, () => {
     expect.hasAssertions();
 
     const author = createUser();
-    const thread = createOptimisticMessage({ roomId, type: MessageType.Message }, author.id);
+    const thread = { ...createOptimisticMessage({ roomId, type: MessageType.Message }, author.id), replyCount: 0 };
     trpcMsw.message.readFollowedThreads.query(() => ({ threadRootIds: [thread.id], threads: [thread] }));
     trpcMsw.room.readUsersByIds.query(() => [{ ...author, displayName: "displayName", isMember: true }]);
     const threadFollowStore = useThreadFollowStore();

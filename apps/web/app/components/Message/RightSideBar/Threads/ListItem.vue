@@ -1,23 +1,49 @@
 <script setup lang="ts">
-import type { ClientMessage } from "#src/models/message/ClientMessage";
+import type { ClientThread } from "#src/models/message/ClientThread";
 
-import { MessageComponentMap } from "#src/services/message/MessageComponentMap";
+import { pluralize } from "#shared/util/text/pluralize";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { useThreadFollowStore } from "#src/store/message/threadFollow";
+import { MessageType } from "@esposter/db-schema";
 
 interface Props {
-  thread: ClientMessage;
+  thread: ClientThread;
 }
 
 const { thread } = defineProps<Props>();
 const creator = useCreator(() => thread);
 const openThread = useOpenThread();
+const threadFollowStore = useThreadFollowStore();
+const { unfollowThread } = threadFollowStore;
 </script>
 
+<!-- One thread as a row that opens it: who started it and what they said, how much and how lately it has been answered,
+     and the chevron of somewhere to go. Unfollowing sits beside the row rather than inside it, as a list row's actions do -->
 <template>
-  <component
-    :is="MessageComponentMap[thread.type]"
-    :creator
-    :message="thread"
-    is-preview
-    @click="openThread(thread.roomId, thread.id)"
-  />
+  <div role="listitem" pr-2 flex items-center>
+    <button type="button" ui-item py-2 flex-1 min-w-0 @click="openThread(thread.roomId, thread.id)">
+      <UiAvatar :image="creator.image" :name="creator.name" />
+      <span flex flex-1 flex-col min-w-0>
+        <span text-muted flex gap-1 min-w-0 items-center>
+          <span text-heading-color shrink-0>{{ creator.name }}</span>
+          <MessageModelMessageAppUserBadge v-if="thread.type === MessageType.Webhook" />
+          <MessageModelMessageSnippet :message="thread">
+            <span italic>Attachment</span>
+          </MessageModelMessageSnippet>
+        </span>
+        <span text-sm text-muted>
+          {{ thread.replyCount }} {{ pluralize("reply", thread.replyCount, "replies") }}
+          <template v-if="thread.lastReplyAt"> · <NuxtTime :datetime="thread.lastReplyAt" relative /> </template>
+        </span>
+      </span>
+      <UiIcon :meaning="UiIconMeaning.Disclosure" text-muted shrink-0 />
+    </button>
+    <UiIconButton
+      label="Unfollow thread"
+      :meaning="UiIconMeaning.NotificationsOff"
+      :variant="UiButtonVariant.Quiet"
+      @click="unfollowThread(thread.roomId, thread.id)"
+    />
+  </div>
 </template>

@@ -9,6 +9,7 @@ import { COMPOSER_ATTRIBUTE } from "#src/services/app/constants";
 <template>
   <div flex flex-col h-full relative ui-body>
     <MessageContentHeader />
+    <MessageContentPushPermissionAlert />
     <MessageContentCallPanel />
     <div flex flex-1 flex-col min-h-0 relative>
       <MessageModelMessageList />

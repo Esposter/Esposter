@@ -17,6 +17,7 @@ import type {
   RoomReactionKey,
   RoomSearchInput,
   RoomSearchResult,
+  RoomThread,
   ScheduledRoomMessage,
   UserEvent,
   UserStatusInMessage,
@@ -412,6 +413,39 @@ export class RoomObject extends RealtimeObject<RoomEvent> implements RoomObjectR
       .all();
     const root = this.#readLiveMessage(threadRootId);
     return root ? [root, ...replies] : replies;
+  }
+
+  readThreads(threadRootIds: number[]): RoomThread[] {
+    const roots = this.readMessagesByIds(threadRootIds);
+    if (roots.length === 0) return [];
+    // One grouped read over the reply index, so a list of threads costs one statement however many it holds
+    const replySummaryMap = new Map(
+      this.db
+        .select({
+          lastReplyAt: max(messagesInRoom.createdAt),
+          replyCount: count(),
+          threadRootId: messagesInRoom.replyToId,
+        })
+        .from(messagesInRoom)
+        .where(
+          and(
+            isNull(messagesInRoom.deletedAt),
+            inArray(
+              messagesInRoom.replyToId,
+              roots.map(({ id }) => id),
+            ),
+          ),
+        )
+        .groupBy(messagesInRoom.replyToId)
+        .all()
+        .map(({ lastReplyAt, replyCount, threadRootId }) => [threadRootId, { lastReplyAt, replyCount }]),
+    );
+    return roots.map((root) => {
+      const replySummary = replySummaryMap.get(root.id);
+      return replySummary?.lastReplyAt
+        ? { ...root, lastReplyAt: replySummary.lastReplyAt, replyCount: replySummary.replyCount }
+        : { ...root, replyCount: 0 };
+    });
   }
 
   // A member who is no longer in the room is no longer online in it, and their sockets here are dropped

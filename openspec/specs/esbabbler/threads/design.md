@@ -17,7 +17,7 @@ flowchart TD
   O --> D["right drawer opens on RightDrawer.Thread"]
   O --> R["message.readThread — root plus replies"]
   R --> RM["useReadMessageMetadata(roomId, replies)"]
-  O --> F["readFollowedThreads — the menu's notification state"]
+  O --> F["readFollowedThreads — the header's follow state"]
   C["thread composer — useComposer's sendComposerMessage(editor, target)"] --> M["message.createMessage with replyToId = root"]
   M --> B["optimistic bubble — room list"]
   M --> HK["MessageHookMap Create / Update / Delete"]
@@ -39,15 +39,14 @@ A half-written reply is a draft like the room's: persisted, restored on reload, 
 
 ## The thread menu
 
-The pane's overflow menu is where everything that acts on the thread as a whole lives:
+The pane's header shows the [follow](../thread-follows/design.md) toggle in view, a bell pressed while the thread is followed, since following is what lists a thread in Followed Threads and pushes its replies, and a row behind the menu was where nobody found it. The overflow menu beside it holds everything else that acts on the thread as a whole:
 
-| Action                                | Effect                                                                                     |
-| :------------------------------------ | :----------------------------------------------------------------------------------------- |
-| Turn notifications for replies on/off | the [follow](../thread-follows/design.md) toggle, worded by the state it is in             |
-| Copy link                             | the root message's deep link — a thread is named by its root, so that link is the thread's |
-| Start / leave call in thread          | a call scoped to the thread, alongside the room's own                                      |
-| Open in split view                    | pins the pane the thread took over beside it, so both are readable at once                 |
-| Open in new window                    | opens the thread's own route in a second window                                            |
+| Action                       | Effect                                                                                     |
+| :--------------------------- | :----------------------------------------------------------------------------------------- |
+| Copy link                    | the root message's deep link — a thread is named by its root, so that link is the thread's |
+| Start / leave call in thread | a call scoped to the thread, alongside the room's own                                      |
+| Open in split view           | pins the pane the thread took over beside it, so both are readable at once                 |
+| Open in new window           | opens the thread's own route in a second window                                            |
 
 ### A call in a thread
 

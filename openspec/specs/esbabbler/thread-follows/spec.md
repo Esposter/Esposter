@@ -27,14 +27,14 @@ A reply SHALL make the replier and the author of the root message followers of t
 - **THEN** the reply is posted
 - **AND** no follow is made for the root message's author
 
-### Requirement: A member may follow or unfollow a thread from its menu
+### Requirement: A member may follow or unfollow a thread from its header
 
-A member SHALL be able to turn reply notifications for a thread on or off from the thread's menu, whether or not the thread's replies have loaded.
+A member SHALL be able to follow or unfollow a thread from a toggle in view in the thread's header, whether or not the thread's replies have loaded.
 
 #### Scenario: a member turns notifications off
 
 - **GIVEN** a member following a thread
-- **WHEN** the member turns reply notifications off from the thread's menu
+- **WHEN** the member turns the follow toggle off in the thread's header
 - **THEN** the member no longer receives notifications for replies in that thread
 
 #### Scenario: a member follows a thread whose replies have not loaded
@@ -87,3 +87,20 @@ The Followed Threads list SHALL show each thread the member follows once, newest
 - **WHEN** the member opens Followed Threads
 - **THEN** each remaining thread is listed once, newest first
 - **AND** the thread with the deleted root is not listed
+
+### Requirement: A Followed Threads row opens its thread and says how it has been answered
+
+Each Followed Threads row SHALL show the root's author and text, its reply count and when it was last replied to, SHALL open the thread when pressed, and SHALL offer an unfollow beside it.
+
+#### Scenario: a member presses a followed thread
+
+- **GIVEN** a followed thread with two replies
+- **WHEN** the member opens Followed Threads
+- **THEN** its row reads 2 replies and the time of the newest
+- **AND** pressing the row opens the thread
+
+#### Scenario: a member unfollows from the list
+
+- **GIVEN** a followed thread listed in Followed Threads
+- **WHEN** the member presses its unfollow
+- **THEN** the thread leaves the list and is no longer followed

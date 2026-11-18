@@ -3,6 +3,7 @@ import type { PageCursor } from "#src/models/pagination/PageCursor";
 import type { RoomEvent } from "#src/models/realtime/RoomEvent";
 import type { RoomMessage } from "#src/models/realtime/RoomMessage";
 import type { RoomReaction } from "#src/models/realtime/RoomReaction";
+import type { RoomThread } from "#src/models/realtime/RoomThread";
 import type { UserEvent } from "#src/models/realtime/UserEvent";
 import type { FileEntity } from "#src/models/streams/FileEntity";
 import type { scheduledMessagesInRoom } from "#src/objects/room/schema";
@@ -98,6 +99,8 @@ export interface RoomObjectRpc {
   readScheduledMessages: (input: { ids: string[]; userId: string }) => ScheduledRoomMessage[];
   // The thread's root, when it is still live, followed by its live replies oldest first
   readThread: (threadRootId: number) => RoomMessage[];
+  // The live roots among the named ids, in the order named, each with its live replies counted
+  readThreads: (threadRootIds: number[]) => RoomThread[];
   removeMember: (userId: string) => void;
   // Takes the actor off the emoji's reactors, deleting the reaction when the actor was its only one. False when the actor
   // Was not a reactor

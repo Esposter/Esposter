@@ -22,6 +22,7 @@ const displayThreadMessages = computed(() =>
   <div :[THREAD_COMPOSER_DROP_ZONE_ATTRIBUTE]="true" contents>
     <MessageRightSideBarPane title="Thread" is-body-bare @close="closeThread()">
       <template v-if="activeThreadRootId" #actions>
+        <MessageRightSideBarThreadFollowButton :thread-root-id="activeThreadRootId" />
         <UiOverflowMenu :items="actionItems" label="Thread actions" />
       </template>
       <template v-if="isReadThreadPending">
