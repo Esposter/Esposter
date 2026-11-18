@@ -1,11 +1,7 @@
 import type { ParityReference } from "#src/models/genshinParity/shared/ParityReference";
 
 import { FixtureReferenceStatus } from "#src/models/genshinParity/fixtures/FixtureReferenceStatus";
-import {
-  BARREL_FILE_NAME,
-  COMPONENT_FILE_NAME,
-  FIXTURE_FILE_NAME,
-} from "#src/services/genshinParity/fixtures/constants";
+import { COMPONENT_FILE_NAME, FIXTURE_FILE_NAME } from "#src/services/genshinParity/fixtures/constants";
 import { listFixtureScreens } from "#src/services/genshinParity/fixtures/listFixtureScreens";
 import { DEFAULT_APPROVAL } from "#src/services/genshinParity/reference/constants";
 import { planReferenceFiles } from "#src/services/genshinParity/reference/planReferenceFiles";
@@ -30,10 +26,7 @@ describe(listFixtureScreens, () => {
   beforeEach(async () => {
     componentsDirectory = await mkdtemp(join(tmpdir(), "fixtures-"));
     await mkdir(join(componentsDirectory, SCREEN_DIRECTORY), { recursive: true });
-    await writeFile(
-      join(componentsDirectory, BARREL_FILE_NAME),
-      `export { default as ${SCREEN_NAME} } from "./${SCREEN_DIRECTORY.replaceAll("\\", "/")}/${COMPONENT_FILE_NAME}";\n`,
-    );
+    await writeFile(join(componentsDirectory, SCREEN_DIRECTORY, COMPONENT_FILE_NAME), "");
     await writeFile(
       join(componentsDirectory, SCREEN_DIRECTORY, FIXTURE_FILE_NAME),
       `export const variants = {\n  ${VARIANT}: {},\n};\n`,
