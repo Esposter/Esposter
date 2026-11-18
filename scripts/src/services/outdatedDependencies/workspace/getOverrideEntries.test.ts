@@ -17,4 +17,23 @@ describe(getOverrideEntries, () => {
       ),
     ).toStrictEqual([{ group: DependencyGroup.Overrides, packageName: "b", specifier: "^0.0.0" }]);
   });
+
+  test("names an override whose key selects versions by its package alone", () => {
+    expect.hasAssertions();
+
+    expect(
+      getOverrideEntries(
+        [
+          { group: DependencyGroup.Overrides, packageName: "a@<1.0.0", specifier: "^1.0.0" },
+          { group: DependencyGroup.Overrides, packageName: "@b/c@>=1.0.0 <2.0.0", specifier: "^2.0.0" },
+          { group: DependencyGroup.Overrides, packageName: "d@1>e@<1.0.0", specifier: "^1.0.0" },
+        ],
+        [],
+      ),
+    ).toStrictEqual([
+      { group: DependencyGroup.Overrides, packageName: "a", specifier: "^1.0.0" },
+      { group: DependencyGroup.Overrides, packageName: "@b/c", specifier: "^2.0.0" },
+      { group: DependencyGroup.Overrides, packageName: "e", specifier: "^1.0.0" },
+    ]);
+  });
 });
