@@ -207,8 +207,9 @@ export class RoomObject extends RealtimeObject<RoomEvent> implements RoomObjectR
   // Each pending scheduled message leaves its sender's index first, and each sender drops the room's sent messages from
   // Their index, since the rows that name them go with the room. The room's storage goes only once every index has
   // Taken its removal, so a failed one leaves the room whole and the teardown is asked again. Once every index has taken
-  // Its removal, the online members are told it is deleted, while the storage that knows them still stands
-  async deleteAll(actor: RoomActor): Promise<void> {
+  // Its removal, the online members are told it is deleted, while the storage that knows them still stands. It returns the
+  // Senders whose scheduled messages went with the room, read before the storage did, so the caller can tell their readers
+  async deleteAll(actor: RoomActor): Promise<string[]> {
     const scheduledMessages = this.db
       .select({ id: scheduledMessagesInRoom.id, userId: scheduledMessagesInRoom.userId })
       .from(scheduledMessagesInRoom)
@@ -231,6 +232,7 @@ export class RoomObject extends RealtimeObject<RoomEvent> implements RoomObjectR
     for (const webSocket of this.ctx.getWebSockets()) webSocket.close(1000, "Room deleted");
     await this.ctx.storage.deleteAlarm();
     await this.ctx.storage.deleteAll();
+    return [...new Set(scheduledMessages.map(({ userId }) => userId))];
   }
 
   deleteFile({ fileId, id }: { fileId: string; id: number }, actor: RoomActor): FileEntity | null {

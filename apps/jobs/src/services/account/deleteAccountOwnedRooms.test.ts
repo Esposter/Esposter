@@ -1,7 +1,7 @@
 import type { Database } from "@esposter/db-schema";
 
 import { deleteAccountOwnedRooms } from "#src/services/account/deleteAccountOwnedRooms";
-import { clearRoomObjectCalls, roomObjectCalls } from "#src/services/room/getRoomObject.test";
+import { clearRoomObjectCalls, roomObjectCalls, roomObjectReplies } from "#src/services/room/getRoomObject.test";
 import { createUser } from "#src/services/shared/createUser.test";
 import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
 import { readBlobNames } from "#src/services/storage/readBlobNames.test";
@@ -17,7 +17,7 @@ import {
 } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { v7 } from "uuid";
-import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
 
@@ -36,6 +36,11 @@ describe(deleteAccountOwnedRooms, () => {
   beforeAll(async () => {
     mockDb = (await createMockDb()).db;
     await openMockBuckets([StorageBucket.MessageAssets, StorageBucket.PublicUserAssets]);
+  });
+
+  // The room's object answers its teardown with the senders whose scheduled messages went with it, and none here
+  beforeEach(() => {
+    roomObjectReplies.set("deleteAll", () => []);
   });
 
   afterEach(async () => {

@@ -965,6 +965,18 @@ describe(RoomObject, () => {
     expect(getUserStub(userId).removeScheduledMessage).toHaveBeenCalledExactlyOnceWith(scheduledMessage.id);
   });
 
+  test("deleting the room returns the senders of the scheduled messages it removed", async () => {
+    expect.hasAssertions();
+
+    const { object } = createRoomObject();
+    await object.createScheduledMessage(
+      { id: v7(), message: "pending", runAt: new Date(ROOM_ACTIVITY_DELAY_MS) },
+      otherActor,
+    );
+
+    await expect(object.deleteAll(actor)).resolves.toStrictEqual([otherUserId]);
+  });
+
   test("deleting the room is kept, and asked again, while a sender's index refuses its removal", async () => {
     expect.hasAssertions();
 
@@ -977,7 +989,7 @@ describe(RoomObject, () => {
     );
     expect(object.readMessages(newestPage)).toHaveLength(1);
 
-    await expect(object.deleteAll(actor)).resolves.toBeUndefined();
+    await expect(object.deleteAll(actor)).resolves.toStrictEqual([]);
   });
 
   test("a refused teardown tells the room's online members nothing, and the accepted one tells each of them once", async () => {

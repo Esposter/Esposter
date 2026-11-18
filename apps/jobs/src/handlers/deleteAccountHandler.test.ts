@@ -77,6 +77,7 @@ describe(deleteAccountHandler, () => {
 
   // The beforeEach answers each room and person read a sweep makes with an empty page, so a sweep ends on its first page
   beforeEach(() => {
+    roomObjectReplies.set("deleteAll", () => []);
     roomObjectReplies.set("deleteUserMessages", () => []);
     roomObjectReplies.set("deleteUserReactions", () => []);
     userObjectReplies.set("readScheduledMessages", () => []);
@@ -187,6 +188,22 @@ describe(deleteAccountHandler, () => {
     await expect(
       mockDb.select({ commentCount: postsInPost.commentCount }).from(postsInPost).where(eq(postsInPost.id, post.id)),
     ).resolves.toStrictEqual([{ commentCount: 1 }]);
+  });
+
+  // A scheduled message is listed by its sender, so the room's removal of one changes that sender's list
+  test("publishes the scheduled-message topic of each sender whose scheduled message the room removed", async () => {
+    expect.hasAssertions();
+
+    const userId = v7();
+    const otherUserId = v7();
+    await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
+    await mockDb.insert(roomsInMessage).values({ name, userId });
+    roomObjectReplies.set("deleteAll", () => [otherUserId]);
+    MockPublishedTopics.length = 0;
+
+    await deleteAccountHandler({ userId });
+
+    expect(MockPublishedTopics).toContain(getTopic(TopicKind.ScheduledMessage, otherUserId));
   });
 
   test("a second run over a finished sweep finds nothing and succeeds", async () => {

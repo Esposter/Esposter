@@ -59,8 +59,9 @@ export interface RoomObjectRpc {
   ) => Promise<ScheduledRoomMessage>;
   createWebhookMessage: (input: CreateWebhookRoomMessageInput) => Promise<RoomMessage>;
   // Empties the room once every sender's index has taken its removal, and tells its online members it is deleted before
-  // The storage goes. The actor is the one who deletes it
-  deleteAll: (actor: RoomActor) => Promise<void>;
+  // The storage goes. The actor is the one who deletes it. Returns the senders whose scheduled messages went with it, so the
+  // Caller can tell their readers
+  deleteAll: (actor: RoomActor) => Promise<string[]>;
   // Returns the file it removed, so the caller can remove its blob
   deleteFile: (input: { fileId: string; id: number }, actor: RoomActor) => FileEntity | null;
   deleteLinkPreview: (id: number, actor: RoomActor) => null | RoomMessage;
