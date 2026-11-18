@@ -20,11 +20,11 @@ const MAXIMUM_RISE_SECONDS = 10;
 // The fall is twice the rise a second, as the text's 4% gives the rank's 2%
 const FALL_RATE_SCALE = 2;
 
+const checkIsOppidanBuff = (effect: KitEffect, characterId: number): effect is KitBuff =>
+  effect.kind === "buff" && effect.characterId === characterId && effect.source === OPPIDAN_AMBUSH_SOURCE;
+
 const findOppidanBuff = (effects: readonly KitEffect[], characterId: number): KitBuff | undefined =>
-  effects.find(
-    (effect): effect is KitBuff =>
-      effect.kind === "buff" && effect.characterId === characterId && effect.source === OPPIDAN_AMBUSH_SOURCE,
-  );
+  effects.find((effect): effect is KitBuff => checkIsOppidanBuff(effect, characterId));
 
 const checkIsOppidanStatus = (effect: KitEffect, characterId: number): boolean =>
   effect.kind === "status" &&
@@ -82,9 +82,7 @@ export const createOppidanAmbushPassiveModule = (params: number[]): PassiveModul
       }
       removeKitEffects(
         kitEffectState,
-        (effect) =>
-          checkIsOppidanStatus(effect, characterId) ||
-          (effect.kind === "buff" && effect.characterId === characterId && effect.source === OPPIDAN_AMBUSH_SOURCE),
+        (effect) => checkIsOppidanStatus(effect, characterId) || checkIsOppidanBuff(effect, characterId),
       );
     },
   };
