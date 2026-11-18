@@ -7,12 +7,14 @@ import {
   bookmarksInApp,
   invitesInMessage,
   resourcesInResource,
+  roomEmojisInMessage,
   roomsInMessage,
+  RoomType,
   usersInAuth,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { SECRET_TOKEN_LENGTH } from "@esposter/shared";
-import { eq, inArray } from "drizzle-orm";
+import { eq, inArray, isNull } from "drizzle-orm";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
@@ -138,5 +140,88 @@ describe(getReadTopics, () => {
     await database.select().from(roomsInMessage);
 
     await expect(getReadTopics(statements)).resolves.toStrictEqual(["message_rooms:*"]);
+  });
+
+  // A table a read joins on a scope column is named by the values its join key takes in the rows the read returns, when the
+  // Read selects that key. A row of another value is not in the read, so a write to it does not wake the read
+  test("a table a read joins is named by the join key values its rows return", async () => {
+    expect.hasAssertions();
+
+    const { db } = await createMockDb();
+    const userId = v7();
+    await insertUser(db, userId);
+    const firstRoomId = v7();
+    const secondRoomId = v7();
+    await db.insert(roomsInMessage).values([
+      { id: firstRoomId, name: firstRoomId, type: RoomType.Room, userId },
+      { id: secondRoomId, name: secondRoomId, type: RoomType.Room, userId },
+    ]);
+    const { database, statements } = recordStatements(db);
+
+    await database
+      .select({ id: roomsInMessage.id })
+      .from(roomsInMessage)
+      .leftJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.roomId, roomsInMessage.id));
+
+    await expect(getReadTopics(statements)).resolves.toStrictEqual(
+      [
+        "message_rooms:*",
+        `message_usersToRooms:roomId=${firstRoomId}`,
+        `message_usersToRooms:roomId=${secondRoomId}`,
+      ].toSorted(),
+    );
+  });
+
+  // A table a read tests for null stays table-wide even when its join key is returned. A write that clears the null brings
+  // A row back into the read, and that row's key is one no returned row carries, so only the table's own topic reaches it
+  test("a table a read tests for null is named table-wide even when its join key is returned", async () => {
+    expect.hasAssertions();
+
+    const { db } = await createMockDb();
+    const userId = v7();
+    await insertUser(db, userId);
+    const roomId = v7();
+    await db.insert(roomsInMessage).values({ id: roomId, name: roomId, type: RoomType.Room, userId });
+    const { database, statements } = recordStatements(db);
+
+    await database
+      .select({ id: roomsInMessage.id })
+      .from(roomsInMessage)
+      .leftJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.roomId, roomsInMessage.id))
+      .where(isNull(usersToRoomsInMessage.lastReadAt));
+
+    await expect(getReadTopics(statements)).resolves.toStrictEqual(["message_rooms:*", "message_usersToRooms:*"]);
+  });
+
+  // A table an `in` over another table tests stays table-wide, though its returned rows carry the column. A room the viewer is
+  // In may hold no emoji yet, and the first emoji it gets carries a value no returned row names, so the outer table is read whole
+  test("a table an in over another table tests stays table-wide, though its returned rows carry the column", async () => {
+    expect.hasAssertions();
+
+    const { db } = await createMockDb();
+    const userId = v7();
+    await insertUser(db, userId);
+    const roomId = v7();
+    await db.insert(roomsInMessage).values({ id: roomId, name: roomId, type: RoomType.Room, userId });
+    await db.insert(usersToRoomsInMessage).values({ roomId, userId });
+    await db.insert(roomEmojisInMessage).values({ name: "emoji", roomId });
+    const { database, statements } = recordStatements(db);
+
+    await database
+      .select({ roomId: roomEmojisInMessage.roomId })
+      .from(roomEmojisInMessage)
+      .where(
+        inArray(
+          roomEmojisInMessage.roomId,
+          database
+            .select({ roomId: usersToRoomsInMessage.roomId })
+            .from(usersToRoomsInMessage)
+            .where(eq(usersToRoomsInMessage.userId, userId)),
+        ),
+      );
+
+    await expect(getReadTopics(statements)).resolves.toStrictEqual(
+      ["message_roomEmojis:*", `message_usersToRooms:userId=${userId}`].toSorted(),
+    );
   });
 });

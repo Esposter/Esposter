@@ -161,4 +161,61 @@ describe("topicMatch", () => {
       `message_usersToRooms:roomId=${room.id}`,
     ]);
   });
+
+  // The dock leaves out a bookmark whose resource is in the recycle bin, and the other bookmark it holds keeps the dock's
+  // Rows, so the dock's read names the rows' resource values. Restoring the binned resource brings its bookmark back, and only
+  // The resource table's own topic names that restore
+  test("restoring a binned resource wakes the bookmark dock that leaves its bookmark out", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    const context = await createMockContext();
+    const bookedResourceId = v7();
+    const binnedResourceId = v7();
+    await context.db.insert(resourcesInResource).values([
+      { id: bookedResourceId, name: bookedResourceId, type: ResourceType.Note, userId },
+      { deletedAt: new Date(), id: binnedResourceId, name: binnedResourceId, type: ResourceType.Note, userId },
+    ]);
+    await context.db.insert(bookmarksInApp).values([
+      { path: `/${bookedResourceId}`, resourceId: bookedResourceId, title: bookedResourceId, userId },
+      { path: `/${binnedResourceId}`, resourceId: binnedResourceId, title: binnedResourceId, userId },
+    ]);
+    const read = recordStatements(context.db);
+    await createCallerFactory(bookmarkRouter)({ ...context, db: read.database }).readBookmarks();
+    const write = recordStatements(context.db);
+
+    await write.database
+      .update(resourcesInResource)
+      .set({ deletedAt: null })
+      .where(eq(resourcesInResource.id, binnedResourceId))
+      .returning();
+
+    expect(getWokenTopics(await getReadTopics(read.statements), await getWriteTopics(write.statements))).toStrictEqual([
+      "resource_resources:*",
+    ]);
+  });
+
+  // The sidebar lists the rooms the viewer is in, with each direct message's participants joined on the room. Another member
+  // Joining a room the sidebar lists wakes it through that room's own value, not through the participants table as a whole
+  test("another member joining a room the viewer lists wakes the sidebar through that room's value", async () => {
+    expect.hasAssertions();
+
+    const context = await createMockContext();
+    const reader = await createMockAuthSession(context.db);
+    const readerContext = { ...context, session: reader.session, user: reader.user };
+    const room = await createCallerFactory(roomRouter)(readerContext).createRoom({ name: "room" });
+    const joiner = await createMockAuthSession(context.db);
+    const read = recordStatements(context.db);
+    await createCallerFactory(roomRouter)({ ...readerContext, db: read.database }).readRooms();
+    const write = recordStatements(context.db);
+
+    await write.database
+      .insert(usersToRoomsInMessage)
+      .values({ notificationType: NotificationType.DirectMessage, roomId: room.id, userId: joiner.user.id })
+      .returning();
+
+    expect(getWokenTopics(await getReadTopics(read.statements), await getWriteTopics(write.statements))).toStrictEqual([
+      `message_usersToRooms:roomId=${room.id}`,
+    ]);
+  });
 });
