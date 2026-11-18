@@ -22,7 +22,7 @@ const { unfollowThread } = threadFollowStore;
      and the chevron of somewhere to go. Unfollowing sits beside the row rather than inside it, as a list row's actions do -->
 <template>
   <div role="listitem" pr-2 flex items-center>
-    <button type="button" ui-item py-2 flex-1 min-w-0 @click="openThread(thread.roomId, thread.id)">
+    <button type="button" ui-item flex-1 min-w-0 @click="openThread(thread.roomId, thread.id)">
       <UiAvatar :image="creator.image" :name="creator.name" />
       <span flex flex-1 flex-col min-w-0>
         <span text-muted flex gap-1 min-w-0 items-center>
