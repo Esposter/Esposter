@@ -3,6 +3,7 @@ import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/Der
 import { getLandmarkMeshes } from "#src/services/genshinAssets/witness/getLandmarkMeshes";
 import { PARITY_DIRECTORY, STRUCTURE_WIDTH } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
+import { fromPageCamera } from "#src/services/genshinParity/shared/fromPageCamera";
 import { getReferencePath } from "#src/services/genshinParity/shared/getReferencePath";
 import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
 import { projectWitnessPoint } from "#src/services/genshinParity/witness/projectWitnessPoint";
@@ -20,7 +21,8 @@ const MARKER_RADIUS = 6;
 // Families given. The landmarks can be a subset of the reference's, to solve one part's pose apart from another's. An
 // Image of every landmark over the reference is written beside the references: the pixel given in blue, the corner it
 // Snapped to in green, and where the pose projects it in red. Given a top row, in the reference's pixels, the
-// Refinement prices only the edges below it
+// Refinement prices only the edges below it. With none of its landmarks held there is nothing to solve: the start, or
+// The scene's own camera, stands and `rms` is undefined
 export const solveReferencePose = async (
   referenceId: string,
   witness: DerivedAssetComponent,
@@ -44,7 +46,7 @@ export const solveReferencePose = async (
   imagePath: string;
   pose: number[];
   refinement?: { after: number; before: number };
-  rms: number;
+  rms?: number | undefined;
   waiting: string[];
 }> => {
   await fetchReferences();
@@ -62,11 +64,13 @@ export const solveReferencePose = async (
         witness,
         landmarkNames,
       );
-      const solved = solveCameraPose(correspondences, width, height, start, heldAxes);
+      const solved =
+        correspondences.length === 0 ? undefined : solveCameraPose(correspondences, width, height, start, heldAxes);
+      const pose = solved?.pose ?? start ?? fromPageCamera(await page.evaluate(() => window.getSceneCamera()));
       const markers = correspondences.flatMap(({ pixel: [snappedX, snappedY], point }, index) => {
         const {
           pixel: [u, v],
-        } = projectWitnessPoint(solved.pose, point, width, height);
+        } = projectWitnessPoint(pose, point, width, height);
         const [givenX = 0, givenY = 0] = given[index] ?? [];
         return [
           `<circle cx="${givenX}" cy="${givenY}" r="${MARKER_RADIUS}" fill="none" stroke="#08f" stroke-width="2"/>`,
@@ -82,13 +86,20 @@ export const solveReferencePose = async (
         .composite([{ input: Buffer.from(svg) }])
         .png()
         .toFile(imagePath);
-      const errors = Object.fromEntries(names.map((name, index) => [name, solved.errors[index] ?? 0]));
-      if (refineIterations === 0) return { errors, imagePath, pose: solved.pose, rms: solved.rms, waiting };
-      const { after, before, pose } = await refineCameraPose(page, image, solved.pose, families, refineIterations, {
+      const errors = Object.fromEntries(names.map((name, index) => [name, solved?.errors[index] ?? 0]));
+      if (refineIterations === 0) return { errors, imagePath, pose, rms: solved?.rms, waiting };
+      const refined = await refineCameraPose(page, image, pose, families, refineIterations, {
         heldAxes,
         topRow: (topRow * pageHeight) / height,
       });
-      return { errors, imagePath, pose, refinement: { after, before }, rms: solved.rms, waiting };
+      return {
+        errors,
+        imagePath,
+        pose: refined.pose,
+        refinement: { after: refined.after, before: refined.before },
+        rms: solved?.rms,
+        waiting,
+      };
     },
     () => close(),
   );

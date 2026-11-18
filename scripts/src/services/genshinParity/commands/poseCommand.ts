@@ -72,7 +72,8 @@ export const poseCommand: SubCommandsDef[string] = defineCommand({
     );
     for (const [name, error] of Object.entries(errors)) console.log(`${name}: ${error.toFixed(2)} px`);
     if (waiting.length > 0) console.log(`waiting, no mesh held for them yet: ${waiting.join(", ")}`);
-    console.log(`reprojection ${rms.toFixed(2)} px root mean square`);
+    if (rms === undefined) console.log("nothing solved: no landmark held to solve from");
+    else console.log(`reprojection ${rms.toFixed(2)} px root mean square`);
     if (refinement)
       console.log(`edges ${refinement.before.toFixed(2)} px to ${refinement.after.toFixed(2)} px from the reference's`);
     console.log(`pose ${CAMERA_POSE_AXES.map((axis, index) => `${axis} ${(pose[index] ?? 0).toFixed(3)}`).join(", ")}`);
@@ -81,6 +82,7 @@ export const poseCommand: SubCommandsDef[string] = defineCommand({
     const bar = getPoseBar(args.reference);
     // Only a pose its bar holds is written, so a miss leaves the map as it was
     if (refinement) console.log("not written: a refinement moved the pose off its landmarks");
+    else if (rms === undefined) console.log("not written: no landmark held to solve from");
     else if (rms > bar) console.log(`not written: ${rms.toFixed(2)} px over ${args.reference}'s bar of ${bar}`);
     else {
       const source = await readFile(PARITY_REFERENCE_MAP_PATH, "utf8");
