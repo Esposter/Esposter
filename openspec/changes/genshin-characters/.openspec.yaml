@@ -3,6 +3,7 @@ affected_areas: [genshin]
 x-phase: 3
 x-model: claude-haiku-5-5
 x-needs: [game-install, game-exports]
+x-waiting: "The Traveler's clips are ACL-compressed and this Mac's AnimeStudio does not decode their database, so the motion fit (2.2) and its playback (2.3) wait on a decode of the clips' curves."
 x-touches:
   [
     "scripts/src/models/genshinAssets/shared/DerivedAssetComponent.ts",

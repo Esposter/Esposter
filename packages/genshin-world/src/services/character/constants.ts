@@ -1,4 +1,5 @@
 import type { TalentLevels } from "#src/models/character/TalentLevels";
+import type { LocomotionState } from "genshin-engine";
 
 import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import { Attribute } from "#src/models/character/Attribute";
@@ -64,6 +65,14 @@ export const CHARACTER_PACK_RETRY_BASE_MS = Temporal.Duration.from({ seconds: 1 
 export const CHARACTER_PACK_RETRY_MAX_MS = Temporal.Duration.from({ seconds: 4 }).total("milliseconds");
 // The Traveler the world plays, the female twin, as the login's Traveler is
 export const TRAVELER_CHARACTER_ID = 10_000_007;
+// The Traveler's locomotion clips, by the body state each plays in: its standing cycle while the body is still, and its
+// Walk, run and sprint cycles as it moves. A state with none of the four plays no clip, and the empty name says so
+export const TRAVELER_LOCOMOTION_CLIPS: Partial<Record<LocomotionState, string>> = {
+  Idle: "Ani_Avatar_Girl_Standby",
+  Run: "Ani_Avatar_Girl_RunCycle",
+  Sprint: "Ani_Avatar_Girl_SprintCycle",
+  Walk: "Ani_Avatar_Girl_WalkCycle",
+};
 // MMD's unit in metres as its community reckons it, eight centimetres, held by every character whose game model is not
 // Measured yet, so it stands as tall in the world as it does in MMD. Provisional until each character's is measured
 export const CHARACTER_PMX_RECKONED_UNIT_METRES = 0.08;
