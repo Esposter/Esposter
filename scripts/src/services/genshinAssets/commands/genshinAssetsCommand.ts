@@ -61,6 +61,7 @@ import { puzzlesCommand } from "#src/services/genshinAssets/commands/puzzlesComm
 import { rankCommand } from "#src/services/genshinAssets/commands/rankCommand";
 import { reputationCommand } from "#src/services/genshinAssets/commands/reputationCommand";
 import { residentsCommand } from "#src/services/genshinAssets/commands/residentsCommand";
+import { rootFindCommand } from "#src/services/genshinAssets/commands/rootFindCommand";
 import { sceneGroupsCommand } from "#src/services/genshinAssets/commands/sceneGroupsCommand";
 import { sceneNpcBornCommand } from "#src/services/genshinAssets/commands/sceneNpcBornCommand";
 import { sceneScriptsCommand } from "#src/services/genshinAssets/commands/sceneScriptsCommand";
@@ -102,6 +103,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     interface: interfaceCommand,
     "ui-find": uiFindCommand,
     "asset-find": assetFindCommand,
+    "root-find": rootFindCommand,
     "ui-tree": uiTreeCommand,
     clips: clipsCommand,
     locomotion: locomotionCommand,

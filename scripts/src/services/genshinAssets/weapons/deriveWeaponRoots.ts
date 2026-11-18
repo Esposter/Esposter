@@ -1,10 +1,10 @@
 import type { AssetRoot } from "#src/models/genshinAssets/shared/AssetRoot";
 import type { SceneLayout } from "#src/models/genshinAssets/shared/SceneLayout";
-import type { SceneObject } from "#src/models/genshinAssets/shared/SceneObject";
 import type { WeaponRootDerivation } from "#src/models/genshinAssets/weapons/WeaponRootDerivation";
 import type { CabEntry } from "#src/models/recreation/animeStudio/CabEntry";
 import type { IndexedAsset } from "#src/models/recreation/animeStudio/IndexedAsset";
 
+import { findHierarchyRoot } from "#src/services/genshinAssets/shared/findHierarchyRoot";
 import { resolveObjectPointer } from "#src/services/genshinAssets/shared/resolveObjectPointer";
 import { toObjectKey } from "#src/services/genshinAssets/shared/toObjectKey";
 
@@ -24,21 +24,13 @@ export const deriveWeaponRoots = <THeldMesh extends HeldMesh>(
 ): WeaponRootDerivation<THeldMesh> => {
   const heldKeys = new Set(heldMeshes.map((mesh) => toMeshKey(mesh)));
   const objectMap = new Map(objects.map((object) => [toObjectKey(object.file, object.transformId), object]));
-  const findRootOf = (object: SceneObject): SceneObject => {
-    let current = object;
-    for (let parent = objectMap.get(toObjectKey(current.parentFile, current.parentId)); parent;) {
-      current = parent;
-      parent = objectMap.get(toObjectKey(current.parentFile, current.parentId));
-    }
-    return current;
-  };
   const reachedKeys = new Set<string>();
   const rootMap = new Map<string, AssetRoot>();
   for (const object of objects)
     for (const pointer of gameObjectDrawingMap.get(toObjectKey(object.file, object.gameObjectId))?.pointers ?? []) {
       const resolved = resolveObjectPointer(cabMap, object.file, pointer);
       if (!resolved || !heldKeys.has(toMeshKey(resolved))) continue;
-      const root = findRootOf(object);
+      const root = findHierarchyRoot(objectMap, object);
       const block = cabMap.get(root.file)?.block;
       if (!block) continue;
       reachedKeys.add(toMeshKey(resolved));
