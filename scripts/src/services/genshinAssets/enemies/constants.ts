@@ -37,3 +37,9 @@ export const FAMILYLESS_ENEMY_KIND_IDS: ReadonlySet<number> = new Set([
   // Secret Source Automaton: Hunter-Seeker
   EnemyKindId.SecretSourceAutomatonHunterSeeker,
 ]);
+// The block each monster's Animator controller is exported from, by the controller's name. A controller's block is found
+// Once, by scanning the monster-named blocks, and recorded here, so a run reads the record rather than scanning again. The
+// Asset index names no AnimatorController, so no index row finds it
+export const MONSTER_CONTROLLER_BLOCK_MAP: Readonly<Record<string, string>> = {
+  Monster_Hili_None_01: "00/11877482.blk",
+};

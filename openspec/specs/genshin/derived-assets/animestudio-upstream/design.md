@@ -45,7 +45,7 @@ static inline void oozCopy64(void *destination, const void *source) {
 
 - `{data-root}/cache/animestudio-db860e1f/AnimeStudio/Classes/AnimatorController.cs` reads the controller's state machine into a local, `var m_Controller = new ControllerConstant(reader)`, and keeps no field of it. The constructor ends with `// TODO add some more stuff maybe?`, and the class's only fields are `m_TOS` and the animation clip list.
 - Repro: `AnimeStudio.CLI` on `00/11877482.blk` from game 7.1.0, `--names '^Monster_Hili_None_01$' --types AnimatorController --export_type JSON`, `--logger_flags Warning Error`. Stock source: the export's top-level keys are `m_TOS` (847 entries), the animation clip list (270 entries), `m_Name` and `Name`. It has no `m_Controller`, so which state plays which clip is not in it.
-- Patch: keep the parsed controller on the object, as a public `m_Controller` field, so the JSON exporter writes its layers, state machines, states and blend trees beside the two fields it writes now. Drafted, not applied:
+- Patch: keep the parsed controller on the object, as a public `m_Controller` field, so the JSON exporter writes its layers, state machines, states and blend trees beside the two fields it writes now. Applied to the clone at build by `scripts/src/services/recreation/animeStudio/patchAnimatorControllerExport.ts`; the draft below is its text:
 
 ```csharp
 public sealed class AnimatorController : RuntimeAnimatorController
@@ -68,9 +68,10 @@ public sealed class AnimatorController : RuntimeAnimatorController
 
 ## Key files
 
-| File                                                              | Role                                                                                                |
-| :---------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------- |
-| `scripts/src/services/recreation/animeStudio/buildAnimeStudio.ts` | Applies the Ooz copy and Leviathan offset edits to the clone the two defects are found in, at build |
+| File                                                                           | Role                                                                                                                              |
+| :----------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------- |
+| `scripts/src/services/recreation/animeStudio/buildAnimeStudio.ts`              | Applies the Ooz copy and Leviathan offset edits, and the controller export patch, to the clone the defects are found in, at build |
+| `scripts/src/services/recreation/animeStudio/patchAnimatorControllerExport.ts` | Keeps the parsed controller as a public `m_Controller` field, so the JSON export writes it                                        |
 
 ## Open
 
@@ -81,4 +82,4 @@ The open item that nothing is filed upstream is recorded with its requirement in
 - [ ] **The stock Leviathan build on `00/06104869.blk` makes 604 Oodle calls, differs from x64 at offset 152 of call 601, and exports 483 textures where Windows exports 485** — no source yet: no run log or output of this repro is on disk; the stock run on `00/06104869.blk` settles it.
 - [ ] **After the Leviathan patch, calls 595 to 603 match the x64 fingerprints and the run logs no exception** — no source yet: no patched run output is on disk; a run of the patched CLI on `00/06104869.blk` with `ANIMESTUDIO_OODLE_LOG` set settles it.
 - [ ] **The x64 build of the Leviathan source does not show the defect, and the arm64 build does** — no source yet: no x64 run output is on disk to compare; an x64 build of that source run on the same block settles it.
-- [ ] **The patched export writes the controller's state machine into `m_Controller`** — no source yet: the patch is drafted above and not applied; the patched CLI's JSON export of `00/11877482.blk` settles it (the genshin-assets-enemies change's task 4.0).
+- [x] **The patched export writes the controller's state machine into `m_Controller`** — the probe build of the patched source passed the parity check on all six reference blocks, and its JSON export of `Monster_Hili_None_01` from `00/11877482.blk` holds `m_Controller` with two layers and two state machines, beside `m_TOS` (847 entries) and the clip list (270), as the stock export has them (the genshin-assets-enemies change's task 4.0).

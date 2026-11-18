@@ -19,6 +19,7 @@ import {
   WORK_DIRECTORY_NAME,
 } from "#src/services/recreation/animeStudio/constants";
 import { fetchSource } from "#src/services/recreation/animeStudio/fetchSource";
+import { patchAnimatorControllerExport } from "#src/services/recreation/animeStudio/patchAnimatorControllerExport";
 import { patchOozCopies } from "#src/services/recreation/animeStudio/patchOozCopies";
 import { patchOozSignedOffsets } from "#src/services/recreation/animeStudio/patchOozSignedOffsets";
 import { retargetProjects } from "#src/services/recreation/animeStudio/retargetProjects";
@@ -52,6 +53,7 @@ export const buildAnimeStudio = async (
   retargetProjects(animeStudio);
   patchOozCopies(join(animeStudio, "AnimeStudio.Ooz"));
   patchOozSignedOffsets(join(animeStudio, "AnimeStudio.Ooz"));
+  patchAnimatorControllerExport(animeStudio);
 
   const oozLibrary = buildCmakeLibrary(
     join(animeStudio, "AnimeStudio.Ooz"),
