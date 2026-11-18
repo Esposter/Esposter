@@ -29,6 +29,7 @@ const UNREFERENCED_MODULE_DIRECTORIES = [
   "services/elementalNode",
   "services/save",
   "services/combat",
+  "services/party",
 ];
 // The parity page's modules the tooling in `scripts` imports as types. The page writes to `window` when it loads, so
 // No wildcard reaches its modules
