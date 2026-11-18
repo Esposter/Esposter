@@ -1,11 +1,21 @@
 import type { ChestPlace } from "#src/models/chest/ChestPlace";
+import type { ClearedCamp } from "#src/models/exploration/ClearedCamp";
+import type { ExplorationArea } from "#src/models/exploration/ExplorationArea";
+import type { Catalogue } from "#src/models/world/Catalogue";
 
+import { useWorldDoings } from "#src/composables/useWorldDoings";
 import { GameDataKeys } from "#src/generated/gameDataKeys";
 import { ChestKind } from "#src/models/chest/ChestKind";
+import { ExplorationKind } from "#src/models/exploration/ExplorationKind";
 import { PuzzleKind } from "#src/models/puzzle/PuzzleKind";
 import { SeelieState } from "#src/models/puzzle/SeelieState";
+import { WorldLayer } from "#src/models/world/WorldLayer";
 import { readRegionChestPlaces } from "#src/services/chest/readRegionChestPlaces";
 import { readGameDataObject } from "#src/services/data/readGameDataObject";
+import { computeExplorationProgress } from "#src/services/exploration/computeExplorationProgress";
+import { computeExploredDoingIds } from "#src/services/exploration/computeExploredDoingIds";
+import { ExplorationKindWeightMap } from "#src/services/exploration/ExplorationKindWeightMap";
+import { placeExplorationDoings } from "#src/services/exploration/placeExplorationDoings";
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
 import { useWorldChestsStore } from "#src/store/chests";
 import { startTestWorldGround } from "#src/store/ground.fixture";
@@ -13,7 +23,7 @@ import { useWorldPuzzlesStore } from "#src/store/puzzles";
 import { startTestWorldSession } from "#src/store/session.fixture";
 import { storeToRefs } from "pinia";
 import { afterEach, describe, expect, test, vi } from "vitest";
-import { shallowReactive } from "vue";
+import { ref, shallowReactive } from "vue";
 
 // Each region's record is served from the fetch the reader makes, so a record is read through its reader and its schema
 const { datasetRecordsMap } = vi.hoisted(() => ({ datasetRecordsMap: new Map<string, unknown[]>() }));
@@ -120,5 +130,54 @@ describe(useWorldChestsStore, () => {
     });
 
     expect(chestInteractables.value.map(({ id }) => id)).toStrictEqual([]);
+  });
+
+  test("an opened chest counts once toward its area's exploration", () => {
+    expect.hasAssertions();
+
+    const AREA_ID = "made-up-area";
+    // A made-up square of catalogue area around the origin, where the Liyue chest stands
+    const catalogue: Catalogue = {
+      regions: [
+        {
+          areas: [
+            {
+              id: AREA_ID,
+              layer: WorldLayer.Surface,
+              name: "Made-up Area",
+              outline: [
+                { x: -50, z: -50 },
+                { x: 50, z: -50 },
+                { x: 50, z: 50 },
+                { x: -50, z: 50 },
+              ],
+              subareas: [],
+              subregion: "",
+              weathers: [],
+            },
+          ],
+          id: LIYUE_REGION_ID,
+          name: "Made-up Region",
+        },
+      ],
+    };
+    const area: ExplorationArea = { areaId: AREA_ID, doings: [], reputationRatio: 0, total: 100 };
+    const { openChestById, regionChestMap } = createChests({ ...puzzleOptions, seelies: [] });
+    regionChestMap.set(LIYUE_REGION_ID, [{ id: LIYUE_CHEST_ID, kind: ChestKind.Common, position: { x: 0, z: 0 } }]);
+    // Opened, then opened again, which adds nothing to the count
+    openChestById(LIYUE_CHEST_ID, () => 0);
+    openChestById(LIYUE_CHEST_ID, () => 0);
+    // The doings the world places and the save records as done, counted the way the exploration progress counts them
+    const { placedDoings, recordedDoingIds } = useWorldDoings({
+      clearedCamps: ref<ClearedCamp[]>([]),
+      monumentPlaces: [],
+      timeTrialPlaces: [],
+    });
+
+    expect(
+      placeExplorationDoings([area], catalogue, placedDoings.value).map((placedArea) =>
+        computeExplorationProgress(placedArea, computeExploredDoingIds(placedArea, [], recordedDoingIds.value)),
+      ),
+    ).toStrictEqual([ExplorationKindWeightMap[ExplorationKind.Chest]]);
   });
 });
