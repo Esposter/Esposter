@@ -184,7 +184,6 @@
     "nuxt-security-module": "workspace:*",
     "playwright": "catalog:",
     "rollup-plugin-visualizer": "catalog:",
-    "sirv": "catalog:",
     "tresjs-nuxt": "workspace:*",
     "trpc-msw": "workspace:*",
     "trpc-nuxt-module": "workspace:*",
