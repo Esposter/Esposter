@@ -23,3 +23,5 @@ export const QUEST_BEAM_TOP = 1000;
 export const QUEST_MARK_MIN_HEIGHT = 10;
 // The translucent white the quest screen's shared ornament dividers are filled with
 export const QUEST_DIVIDER_FILL = "rgb(255 255 255 / 0.3)";
+// The main quest of the card game's tutorial: its finish is what starts the Player Level at one
+export const GCG_TUTORIAL_QUEST_ID = "70665";

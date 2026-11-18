@@ -10,7 +10,6 @@ import { MAX_ADVENTURE_RANK } from "#src/services/adventureRank/constants";
 import { MAX_MINOR_AFFIX_COUNT } from "#src/services/artifact/constants";
 import { COMMISSIONS_PER_DAY, MAX_ENCOUNTER_HALF_POINTS } from "#src/services/commission/constants";
 import { QUICK_SWAP_GADGET_LIMIT } from "#src/services/gadget/constants";
-import { GCG_REWARDABLE_GAME_COUNT } from "#src/services/gcg/constants";
 import {
   MAX_HOME_BLUEPRINT_COUNT,
   MAX_HOME_COMPANION_COUNT,
@@ -24,6 +23,7 @@ import { PARTY_TEAM_MAX_COUNT, PARTY_TEAM_SIZE } from "#src/services/party/const
 import { REPUTATION_WEEKLY_CLAIM_LIMIT } from "#src/services/reputation/constants";
 import {
   EMPTY_GENSHIN_SAVE,
+  GCG_REWARDABLE_GAME_COUNT,
   MAX_ABYSS_CHAMBER_COUNT,
   MAX_ABYSS_CYCLE_COUNT,
   MAX_ACHIEVEMENT_COUNT,

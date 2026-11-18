@@ -43,12 +43,12 @@ import { characterTrialSaveSchema } from "#src/models/trial/CharacterTrialSave";
 import { wishDrawSaveSchema } from "#src/models/wish/WishDrawSave";
 import { wishPityMapSaveSchema } from "#src/models/wish/WishPityMapSave";
 import { MAX_ADVENTURE_RANK } from "#src/services/adventureRank/constants";
-import { GCG_REWARDABLE_GAME_COUNT } from "#src/services/gcg/constants";
 import { MAX_MAIL_COUNT } from "#src/services/mail/constants";
 import { REPUTATION_WEEKLY_CLAIM_LIMIT } from "#src/services/reputation/constants";
 import {
   MAX_CHARACTER_COUNT,
   MAX_CLEARED_CAMP_COUNT,
+  GCG_REWARDABLE_GAME_COUNT,
   MAX_GENSHIN_SAVE_LENGTH,
   MAX_MINED_OUTCROP_COUNT,
   MAX_SAVE_INSTANT_LENGTH,

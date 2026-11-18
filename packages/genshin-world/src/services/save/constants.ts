@@ -15,7 +15,6 @@ import { MAX_ADVENTURE_RANK } from "#src/services/adventureRank/constants";
 import { MAX_MINOR_AFFIX_COUNT } from "#src/services/artifact/constants";
 import { COMMISSIONS_PER_DAY, MAX_ENCOUNTER_HALF_POINTS } from "#src/services/commission/constants";
 import { QUICK_SWAP_GADGET_LIMIT } from "#src/services/gadget/constants";
-import { GCG_REWARDABLE_GAME_COUNT } from "#src/services/gcg/constants";
 import {
   MAX_HOME_BLUEPRINT_COUNT,
   MAX_HOME_COMPANION_COUNT,
@@ -117,6 +116,9 @@ export const MAX_CHARACTER_COUNT = 512;
 // The draws the wish history keeps, the newest of those within its window and never more than this, so a year of draws is
 // Bounded
 export const MAX_WISH_HISTORY_COUNT = 10_000;
+// The games the card game names with a reward, which the save holds once each: the 535 the week rows name and the 407 the dump
+// Rewards a victory of, none the same
+export const GCG_REWARDABLE_GAME_COUNT = 942;
 // The bench's recipes are the craft and conversion rows of the combine table, each named by its id once in the learned list
 // And once in the counts. The cap holds every row the bench holds with some room to spare, so a save that has crafted or
 // Converted each one is never refused

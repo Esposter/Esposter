@@ -21,13 +21,8 @@ export const GCG_ROUND_LIMIT = 15;
 // The shield a character holds at most, and the points one Crystallize grants to its user's active character
 export const GCG_SHIELD_LIMIT = 2;
 
-// The games the card game names with a reward, which the save holds once each: the 535 the week rows name and the 407 the dump
-// Rewards a victory of, none the same
-export const GCG_REWARDABLE_GAME_COUNT = 942;
 // The Adventure Rank the card game opens at: its tutorial quest is offered from it, and no duel of it is offered below
 export const GCG_OPEN_ADVENTURE_RANK = 32;
-// The main quest of the card game's tutorial: its finish is what starts the Player Level at one
-export const GCG_TUTORIAL_QUEST_ID = "70665";
 
 // The card game's virtual item in the dump, which its rewards pay into its Player EXP
 export const GCG_PLAYER_EXP_ITEM_ID = 146;
