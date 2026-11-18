@@ -27,6 +27,7 @@ import { createCrownOfTheFinalScionPassiveModule } from "#src/services/weapon/pa
 import { createCrushPassiveModule } from "#src/services/weapon/passives/createCrushPassiveModule";
 import { createCullTheWeakPassiveModule } from "#src/services/weapon/passives/createCullTheWeakPassiveModule";
 import { createDanceOfWingsUnboundPassiveModule } from "#src/services/weapon/passives/createDanceOfWingsUnboundPassiveModule";
+import { createDawnAndDuskByTheLakePassiveModule } from "#src/services/weapon/passives/createDawnAndDuskByTheLakePassiveModule";
 import { createDayAndNightInCounterpointPassiveModule } from "#src/services/weapon/passives/createDayAndNightInCounterpointPassiveModule";
 import { createDaylightsAuguryPassiveModule } from "#src/services/weapon/passives/createDaylightsAuguryPassiveModule";
 import { createDeathlyPactPassiveModule } from "#src/services/weapon/passives/createDeathlyPactPassiveModule";
@@ -56,6 +57,7 @@ import { createFullHPCriticUpPassiveModule } from "#src/services/weapon/passives
 import { createGashPassiveModule } from "#src/services/weapon/passives/createGashPassiveModule";
 import { createGildingPassiveModule } from "#src/services/weapon/passives/createGildingPassiveModule";
 import { createGokadaiouOtogibanashiPassiveModule } from "#src/services/weapon/passives/createGokadaiouOtogibanashiPassiveModule";
+import { createGoldenBloodTidePassiveModule } from "#src/services/weapon/passives/createGoldenBloodTidePassiveModule";
 import { createGoldenMajestyPassiveModule } from "#src/services/weapon/passives/createGoldenMajestyPassiveModule";
 import { createGuerillaTacticsPassiveModule } from "#src/services/weapon/passives/createGuerillaTacticsPassiveModule";
 import { createHamayumiPassiveModule } from "#src/services/weapon/passives/createHamayumiPassiveModule";
@@ -79,6 +81,7 @@ import { createLegacyOfLangGanPassiveModule } from "#src/services/weapon/passive
 import { createLithicAxiomUnityPassiveModule } from "#src/services/weapon/passives/createLithicAxiomUnityPassiveModule";
 import { createMagicAffinityPassiveModule } from "#src/services/weapon/passives/createMagicAffinityPassiveModule";
 import { createManyOathsOfDawnAndDuskPassiveModule } from "#src/services/weapon/passives/createManyOathsOfDawnAndDuskPassiveModule";
+import { createMasonsDittyPassiveModule } from "#src/services/weapon/passives/createMasonsDittyPassiveModule";
 import { createMournfulTributePassiveModule } from "#src/services/weapon/passives/createMournfulTributePassiveModule";
 import { createNocturnalDreamsPassiveModule } from "#src/services/weapon/passives/createNocturnalDreamsPassiveModule";
 import { createOathOfQhapaqNanPassiveModule } from "#src/services/weapon/passives/createOathOfQhapaqNanPassiveModule";
@@ -99,6 +102,7 @@ import { createRebelliousGuardianPassiveModule } from "#src/services/weapon/pass
 import { createRepentanceAndRedemptionPassiveModule } from "#src/services/weapon/passives/createRepentanceAndRedemptionPassiveModule";
 import { createRustPassiveModule } from "#src/services/weapon/passives/createRustPassiveModule";
 import { createSamuraiConductPassiveModule } from "#src/services/weapon/passives/createSamuraiConductPassiveModule";
+import { createSeaShantyPassiveModule } from "#src/services/weapon/passives/createSeaShantyPassiveModule";
 import { createSeasonedSymphonyPassiveModule } from "#src/services/weapon/passives/createSeasonedSymphonyPassiveModule";
 import { createSecretsOfFrostPassiveModule } from "#src/services/weapon/passives/createSecretsOfFrostPassiveModule";
 import { createSecretSilversTestamentPassiveModule } from "#src/services/weapon/passives/createSecretSilversTestamentPassiveModule";
@@ -536,4 +540,16 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "2884010435": createDanceOfWingsUnboundPassiveModule,
   // Day and Night in Counterpoint (Forged by the Golden Melody)
   "3082056723": createDayAndNightInCounterpointPassiveModule,
+  // Sea Shanty (The Dockhand's Assistant)
+  "608699859": createSeaShantyPassiveModule,
+  // Sea Shanty (Portable Power Saw)
+  "2632477771": createSeaShantyPassiveModule,
+  // Masons' Ditty (Prospector's Drill)
+  "2462229963": createMasonsDittyPassiveModule,
+  // Masons' Ditty (Range Gauge)
+  "4044517627": createMasonsDittyPassiveModule,
+  // Dawn and Dusk by the Lake (Splendor of Tranquil Waters)
+  "488906035": createDawnAndDuskByTheLakePassiveModule,
+  // Golden Blood-Tide (Cashflow Supervision)
+  "4262553859": createGoldenBloodTidePassiveModule,
 };
