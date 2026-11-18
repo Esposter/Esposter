@@ -4,8 +4,8 @@ import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addKitHold } from "#src/services/kit/effects/addKitHold";
-import { countEmblemStacks } from "#src/services/weapon/passives/countEmblemStacks";
 import { EMBLEM_MAXIMUM_STACKS } from "#src/services/weapon/passives/constants";
+import { countEmblemStacks } from "#src/services/weapon/passives/countEmblemStacks";
 import { syncEmblemEnergyStack } from "#src/services/weapon/passives/syncEmblemEnergyStack";
 import { takeOne } from "@esposter/shared";
 
@@ -23,22 +23,16 @@ export const createRuleByThunderPassiveModule = (params: number[]): PassiveModul
       return stacks === 0 ? [] : [{ amount: takeOne(params, stacks), attribute: Attribute.NormalAttackDamageBonus }];
     },
     onKitEvent: (event, { kitEffectState }, { characterId }) => {
-      if (
+      const seconds =
         event.kind === KitEventKind.DamageTaken &&
         event.striker.characterId === characterId &&
         event.attackTag === AttackTag.NormalAttack
-      )
-        addKitHold(kitEffectState, characterId, {
-          id: THUNDER_EMBLEM_ID,
-          maximum: EMBLEM_MAXIMUM_STACKS,
-          seconds: normalAttackSeconds,
-        });
-      else if (event.kind === KitEventKind.SkillUsed && event.characterId === characterId)
-        addKitHold(kitEffectState, characterId, {
-          id: THUNDER_EMBLEM_ID,
-          maximum: EMBLEM_MAXIMUM_STACKS,
-          seconds: skillSeconds,
-        });
+          ? normalAttackSeconds
+          : event.kind === KitEventKind.SkillUsed && event.characterId === characterId
+            ? skillSeconds
+            : undefined;
+      if (seconds !== undefined)
+        addKitHold(kitEffectState, characterId, { id: THUNDER_EMBLEM_ID, maximum: EMBLEM_MAXIMUM_STACKS, seconds });
     },
     onStep: ({ kitEffectState, party }, combatant) => {
       syncEmblemEnergyStack(kitEffectState, party, combatant, THUNDER_EMBLEM_ID);
