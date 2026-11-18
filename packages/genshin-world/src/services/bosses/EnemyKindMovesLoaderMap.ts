@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax -- a lazy-loader contract: each boss kind's moves load as its camp spawns, keeping every boss module out of the world's first screen */
 import type { BossMove } from "#src/models/bosses/BossMove";
 
 import { EnemyKindId } from "#src/models/enemy/EnemyKindId";
