@@ -63,14 +63,14 @@ describe(drawImaginariumCompanionOffers, () => {
     expect.hasAssertions();
 
     const offers = drawImaginariumCompanionOffers(
-      { offerCount: 2 },
+      { offerCount: 3 },
       season,
       difficulty,
       candidates,
       createSeededRandom(1),
     );
 
-    expect(offers).toHaveLength(2);
+    expect(offers).toHaveLength(3);
     expect(new Set(offers.map(({ element }) => element))).toStrictEqual(new Set([Element.Hydro, Element.Pyro]));
   });
 

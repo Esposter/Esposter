@@ -4,9 +4,10 @@ import type { ImaginariumDifficulty } from "#src/models/imaginarium/ImaginariumD
 import type { ImaginariumSeason } from "#src/models/imaginarium/ImaginariumSeason";
 
 import { checkIsImaginariumCastEligible } from "#src/services/imaginarium/checkIsImaginariumCastEligible";
+import { drawRandomSubset } from "#src/services/imaginarium/drawRandomSubset";
 
-// A Companion event's offers: the eligible characters of its pool's element, or of any element, each given a draw from the
-// Random source, the first ones by draw taken. The same source gives the same offers, as the world's one seeded source does
+// A Companion event's offers: the eligible characters of its pool's element, or of any element, drawn at random from the
+// World's one seeded source. The same source gives the same offers
 export const drawImaginariumCompanionOffers = (
   pool: ImaginariumCompanionPool,
   season: ImaginariumSeason,
@@ -14,13 +15,12 @@ export const drawImaginariumCompanionOffers = (
   candidates: readonly ImaginariumCastCandidate[],
   random: () => number,
 ): ImaginariumCastCandidate[] =>
-  candidates
-    .filter(
+  drawRandomSubset(
+    candidates.filter(
       (candidate) =>
         (pool.element === undefined || candidate.element === pool.element) &&
         checkIsImaginariumCastEligible(season, difficulty, candidate),
-    )
-    .map((candidate) => ({ candidate, draw: random() }))
-    .toSorted((firstEntry, secondEntry) => firstEntry.draw - secondEntry.draw)
-    .slice(0, pool.offerCount)
-    .map(({ candidate }) => candidate);
+    ),
+    pool.offerCount,
+    random,
+  );
