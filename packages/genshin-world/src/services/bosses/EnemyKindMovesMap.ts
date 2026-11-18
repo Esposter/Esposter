@@ -19,6 +19,7 @@ import { PERPETUAL_MECHANICAL_ARRAY_MOVES } from "#src/services/bosses/perpetual
 import { SECRET_SOURCE_AUTOMATON_CONFIGURATION_DEVICE_MOVES } from "#src/services/bosses/secretSourceAutomatonConfigurationDevice";
 import { SETEKH_WENUT_MOVES } from "#src/services/bosses/setekhWenut";
 import { STORMTERROR_MOVES } from "#src/services/bosses/stormterror";
+import { THUNDER_MANIFESTATION_MOVES } from "#src/services/bosses/thunderManifestation";
 import { WAYWARD_HERMETIC_SPIRITSPEAKER_MOVES } from "#src/services/bosses/waywardHermeticSpiritspeaker";
 
 // The moves each boss makes in turn, by its kind. A kind with no entry is a common enemy that makes its basic attack
@@ -42,4 +43,5 @@ export const EnemyKindMovesMap: Partial<Record<EnemyKindId, readonly BossMove[]>
   [EnemyKindId.AeonblightDrake]: AEONBLIGHT_DRAKE_MOVES,
   [EnemyKindId.IniquitousBaptist]: INIQUITOUS_BAPTIST_MOVES,
   [EnemyKindId.GoldenWolflord]: GOLDEN_WOLFLORD_MOVES,
+  [EnemyKindId.ThunderManifestation]: THUNDER_MANIFESTATION_MOVES,
 };
