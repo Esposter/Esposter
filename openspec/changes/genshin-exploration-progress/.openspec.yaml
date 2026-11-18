@@ -2,6 +2,7 @@ schema: spec-driven
 affected_areas: [genshin]
 x-phase: 6
 x-model: claude-haiku-5-5
+x-waiting: "3.2 waits on a published clip of Galesong Hill's percentage stepping one doing at a time, which the latest search did not find."
 x-touches:
   [
     "packages/genshin-world/src/services/exploration/**",

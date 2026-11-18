@@ -14,4 +14,5 @@
 
 - [x] 3.1 Show each area's percentage on its label, rounded down. Verify: a test named after the scenario 'A near-complete area reads below 100' written first and seen failing.
 - [ ] 3.2 Re-measure each kind's weight from the owed exploration recording and replace the table's weight of ten where it differs. Provisional: `exploration-steps.mkv` is still sought on the roadmap's References sought list, so each kind stays at ten, the design's provisional bar. Verify: the scenario 'An opened chest adds its kind's weight to its area' still passes against the weights in use.
+      Waits on a published clip of Galesong Hill's percentage stepping one doing at a time: the two clips in `captures` do not (checked in the latest search, recorded on the roadmap item), so each kind stays at ten.
 - [x] 3.3 Read an area with doings and none done as zero percent. Verify: a test named after the scenario 'An area with nothing done reads zero', proven failing with the code it guards reverted (the `testing` skill's regression proof).
