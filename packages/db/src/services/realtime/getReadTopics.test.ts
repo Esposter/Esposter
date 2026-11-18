@@ -623,9 +623,8 @@ describe(getReadTopics, () => {
   });
 
   // The same self-join, where the select also returns the viewer's own room under a name the partner's room does not take. The
-  // Viewer's room is the partner's key, every viewer row returns it, and so the partner is named by each room the viewer holds,
-  // Whichever order the select lists its columns in
-  test("a self-join's partner is named by the viewer's rooms when the select returns them too, whatever its column order", async () => {
+  // Viewer's room is the partner's key, every viewer row returns it, and so the partner is named by each room the viewer holds
+  test("a self-join's partner is named by the viewer's rooms when the select returns them too", async () => {
     expect.hasAssertions();
 
     const { db } = await createMockDb();
