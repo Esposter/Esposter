@@ -91,8 +91,9 @@ interface ReadReference {
   throughSubquery: boolean;
 }
 
-// A column the read's own select returns, under the name it returns it by, in the statement level the select is read in
-interface ReadSelection extends Pick<ReadSetKey, "column" | "level" | "occurrence" | "table"> {
+// A column the read's own select returns, under the name it returns it by. A select is read in the statement's top level only, so
+// Its level is that level, SELECT_LEVEL, and is not stored
+interface ReadSelection extends Pick<ReadSetKey, "column" | "occurrence" | "table"> {
   selectedAs: string;
 }
 
@@ -565,7 +566,6 @@ const checkIsSelectedColumn = (configured: unknown, key: string): boolean => {
 const toSelections = (column: Column, selectedAs: string): ReadSelection[] =>
   toReadColumns(column, new Map()).map((readColumn) => ({
     column: readColumn.key,
-    level: SELECT_LEVEL,
     occurrence: readColumn.occurrence,
     selectedAs,
     table: getTableName(readColumn.owner),
@@ -590,13 +590,7 @@ const getRelationalSelections = (statement: SQLWrapper, table: Table): ReadSelec
   const configured = getStatementConfig(statement)?.columns;
   return Object.keys(getTableColumns(table))
     .filter((key) => checkIsSelectedColumn(configured, key))
-    .map((key) => ({
-      column: key,
-      level: SELECT_LEVEL,
-      occurrence,
-      selectedAs: key,
-      table: getTableName(getBaseTable(table)),
-    }));
+    .map((key) => ({ column: key, occurrence, selectedAs: key, table: getTableName(getBaseTable(table)) }));
 };
 
 const getSelections = (statement: SQLWrapper): ReadSelection[] => {
@@ -611,13 +605,12 @@ const getSelections = (statement: SQLWrapper): ReadSelection[] => {
 
 // The selection of a join side's own column of its own occurrence, at the statement's top level, under the name it returns it by
 const findOwnSelection = (key: ReadSetKey, selections: ReadSelection[]): ReadSelection | undefined =>
-  selections.find(
-    (candidate) =>
-      candidate.table === key.table &&
-      candidate.column === key.column &&
-      candidate.level === key.level &&
-      candidate.occurrence === key.occurrence,
-  );
+  key.level === SELECT_LEVEL
+    ? selections.find(
+        (candidate) =>
+          candidate.table === key.table && candidate.column === key.column && candidate.occurrence === key.occurrence,
+      )
+    : undefined;
 
 // The same column of another top-level occurrence, which names the side when no left join null-fills that occurrence: its value
 // Is then in every row the read returns, where the side's own value is absent for the rows its left join leaves unmatched
@@ -630,7 +623,7 @@ const findBorrowedSelection = (
     (candidate) =>
       candidate.table === key.table &&
       candidate.column === key.column &&
-      !nullFilledKeys.has(getOccurrenceKey(candidate)),
+      !nullFilledKeys.has(getOccurrenceKey({ ...candidate, level: SELECT_LEVEL })),
   );
 
 // The name a join side's value is returned under: its own selection, else a borrowed one
