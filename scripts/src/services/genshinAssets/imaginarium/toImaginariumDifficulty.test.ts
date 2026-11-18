@@ -26,7 +26,7 @@ describe(toImaginariumDifficulty, () => {
     });
   });
 
-  test("keeps the extra absent on a row the first seasons' dump leaves it out of", () => {
+  test("keeps the extra absent on a row that carries none", () => {
     expect.hasAssertions();
 
     const row: ExcelRoleCombatDifficultyRow = {

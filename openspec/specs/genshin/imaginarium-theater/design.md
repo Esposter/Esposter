@@ -1,6 +1,6 @@
 # Imaginarium Theater
 
-The Imaginarium Theater's rules over the game's role combat tables: which season is played, which difficulties it runs and the level a cast member must reach for each, how many stages a Principal Cast can perform before its Vigor runs out, how Blessing Level and its stats are worked out, what an owned opening character gains, and how many rewards a run's Stellas have earned. This page is the first build of the [Imaginarium Theater](../../../changes/genshin-imaginarium-theater/design.md) proposal. The cast's elements and special guests, the acts and events, the rewind and the Theater's screen stay in the proposal.
+The Imaginarium Theater's rules over the game's role combat tables: which season is played, which difficulties it runs and the level a cast member must reach for each, how many stages a Principal Cast can perform before its Vigor runs out, how Blessing Level and its stats are worked out, what an owned opening character gains, and how many rewards a run's Stellas have earned. This page is the first build of the [Imaginarium Theater](../../../changes/genshin-imaginarium-theater/design.md) proposal. The cast's elements and special guests, the acts and events, the rewind's count and the Theater's screen stay in the proposal.
 
 ## How it works
 
@@ -10,7 +10,7 @@ flowchart TD
   SEASON --> DIFF["Its difficulties, ordered by level, each with its level floor"]
   CAST["A Principal Cast of four"] --> READY{"Four members, each with Vigor left?"}
   READY -->|"yes"| PERFORM["Performed: one Vigor spent from each"]
-  READY -->|"no"| HOLD["No stage"]
+  READY -->|"no"| HOLD["No stage: the run rewinds to its checkpoint, if it has a rewind left"]
   ALT["Alternate Cast past its required count, and Brilliant Blessing levels"] --> BL["Blessing Level"]
   BL --> STATS["Each level's stats, doubled for a special guest"]
   OPEN["An owned opening character"] --> BONUS["Max HP, ATK and DEF up a fifth, rounded down"]
@@ -31,6 +31,7 @@ A season names its difficulties by id, and the writer refuses a season that name
 - **The season.** The Theater plays the latest season that began before now, read in the game's time zone, UTC+8 (`packages/genshin-world/src/services/time/constants.ts`, `GAME_TIME_ZONE`); the game's own notices give their dates in UTC+8 (`{data-root}/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json`, line 154177). A season is never played before it begins, and after the last one ends the last begun season is held, so a dump read months on plays its final season rather than none.
 - **The difficulties.** A season's difficulties are the rows its ids name, ordered from the lowest level.
 - **Vigor.** Each character has two Vigor for a run. A stage is performed by a Principal Cast of four, each with Vigor left, and performing it spends one Vigor from each. A cast of fewer than four, or one with a member out of Vigor, performs nothing (`packages/genshin-world/src/services/imaginarium/checkIsImaginariumStageReady.ts`). The wiki gives the same two Vigor and four stage members (`{data-root}/cache/genshin-wiki/Page_Imaginarium_Theater.json`, wikitext line 23).
+- **The rewind.** The run's checkpoint is the Principal Cast as the caller sets it at the end of its last boss stage. A stage the Principal Cast cannot perform returns the run to that checkpoint and spends one of its rewinds, and a run with no rewind left keeps its cast (`packages/genshin-world/src/services/imaginarium/rewindImaginariumRun.ts`, `packages/genshin-world/src/services/imaginarium/startImaginariumStage.ts`). Each rewind costs `IMAGINARIUM_REWIND_COST`, one. The wiki gives no count of the rewinds a run holds, so the run states its own.
 - **Blessing Level.** Each Alternate Cast member past the number its difficulty asks adds two, and each Brilliant Blessing adds the levels it has been gained and raised to, one each. A short Alternate Cast adds nothing (`packages/genshin-world/src/services/imaginarium/computeImaginariumBlessingLevel.ts`). The wiki gives two levels per Alternate Cast member past the count and one per Brilliant Blessing gained or upgraded (`{data-root}/cache/genshin-wiki/Page_Imaginarium_Theater.json`, wikitext line 78).
 - **Blessing stats.** Each level of Blessing adds the stats `IMAGINARIUM_BLESSING_LEVEL_STATS` gives to a cast member, and a special guest's stats are doubled by `IMAGINARIUM_SPECIAL_GUEST_BLESSING_MULTIPLIER` (`packages/genshin-world/src/services/imaginarium/getImaginariumBlessingStats.ts`). The constants hold the wiki's per-level values (`IMAGINARIUM_BLESSING_LEVEL_STATS` in `packages/genshin-world/src/services/imaginarium/constants.ts`; `{data-root}/cache/genshin-wiki/Page_Imaginarium_Theater.json`, wikitext lines 79-82), and the wiki's special guest stats are increased by 100%, which is the doubling (same page, wikitext line 83).
 - **The opening character.** An owned opening character's Max HP, ATK and DEF rise by a fifth, rounded down to whole units. Its Elemental Mastery is unchanged (`packages/genshin-world/src/services/imaginarium/applyImaginariumOpeningBonus.ts`). The wiki gives the bonus as 20% of HP, ATK and DEF (`{data-root}/cache/genshin-wiki/Page_Imaginarium_Theater.json`, wikitext line 38).
@@ -60,14 +61,16 @@ A season names its difficulties by id, and the writer refuses a season that name
 | `packages/genshin-world/src/services/imaginarium/getImaginariumBlessingStats.ts`      | The stats a Blessing Level adds to one cast member                        |
 | `packages/genshin-world/src/services/imaginarium/applyImaginariumOpeningBonus.ts`     | An owned opening character's stats for the season                         |
 | `packages/genshin-world/src/services/imaginarium/countImaginariumStellaRewards.ts`    | The rewards a run's Stellas have earned                                   |
+| `packages/genshin-world/src/services/imaginarium/startImaginariumStage.ts`            | A stage a run starts: fought, or leading to the rewind                    |
+| `packages/genshin-world/src/services/imaginarium/rewindImaginariumRun.ts`             | The run after a rewind to its checkpoint                                  |
 
 ## Not built yet
 
 - **The cast's composition.** Which characters an Alternate Cast may hold, by element or as a special guest, and the season's elements and guests, are not named in the schedule's fields yet, so no cast is checked against a season.
 - **The opening characters and the trial versions.** The characters each season names are not read yet, so an owned opening character is given its bonus by the caller, and a trial version is not told apart from the character.
-- **The stage.** Nothing fights a stage, its enemies, or the health and energy every member starts it with.
+- **The stage's enemies.** The stage's enemies are not read and nothing deals its damage, so the stage's progress is the caller's to state (`packages/genshin-world/src/services/imaginarium/fightImaginariumStage.ts`).
 - **The acts, the events and their costs.** The events between battles, the Battle Event, Companion, Brilliant Blessing and Mystery Cache, their Fantasia Flower costs and the rerolls are not read or built. The wiki could not be read, so their costs are the proposal's to settle.
-- **The rewind and the other limits.** The rewind to a boss stage and the limit on it are not built, nor the Vigor a Mystery Cache restores.
+- **The rewind's count and the other limits.** The wiki gives no count of a run's rewinds, so the run states it. Only the Mystery Cache option that fully restores one character's Vigor is built, not the options that restore one Vigor.
 - **The Stella challenges and the rewards' items.** A run's star challenges are not tracked, and the reward group's items are not resolved.
 - **The screen.** Nothing enters the Theater or returns from it, and the Mondstadt Library's Theater Lobby waits on the library's interior.
 

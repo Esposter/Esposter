@@ -2,7 +2,8 @@ import type { ExcelRoleCombatDifficultyRow } from "#src/models/genshinAssets/ima
 import type { ImaginariumDifficulty } from "genshin-world";
 
 // One difficulty from its table row: its id, its level, the level floor a cast member must reach, its acts, and its
-// Alternate Cast beyond the six openers. An extra the row leaves out stays absent rather than reading as 0
+// Alternate Cast beyond the six openers. The first seasons' rows leave the extra out at its protobuf default, 0, which
+// Written back by `readExcelTable` from a sibling row that holds it, so they read 0; an extra no row holds stays absent
 export const toImaginariumDifficulty = (row: ExcelRoleCombatDifficultyRow): ImaginariumDifficulty => ({
   actCount: row.actCount,
   alternateCastMinimum: row.alternateCastMinimum,
