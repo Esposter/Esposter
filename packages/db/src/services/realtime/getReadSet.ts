@@ -1,5 +1,5 @@
 import type { ReadSet, ReadSetColumn, ReadSetJoin, ReadSetKey, ReadSetScope } from "#src/models/realtime/ReadSet";
-import type { SQLWrapper } from "drizzle-orm";
+import type { RecordedStatement } from "#src/models/realtime/RecordedStatement";
 
 import { getStatementReadSet } from "#src/services/realtime/getStatementReadSet";
 
@@ -24,8 +24,8 @@ const uniqueSorted = <T>(items: T[], toSerial: (item: T) => string): T[] => {
 };
 
 // The read set of the statements a procedure awaited through its handle, merged into one set of facts
-export const getReadSet = (statements: SQLWrapper[]): ReadSet => {
-  const readSets = statements.map((statement) => getStatementReadSet(statement));
+export const getReadSet = (statements: RecordedStatement[]): ReadSet => {
+  const readSets = statements.map(({ statement }) => getStatementReadSet(statement));
   return {
     joins: uniqueSorted(
       readSets.flatMap((readSet) => readSet.joins).map((join) => orderJoin(join)),

@@ -8,7 +8,7 @@
 
 ## 2. Write side and the match
 
-- [ ] 2.1 Capture a write's set from its `RETURNING` scope columns for insert, update, delete, upsert and batched statements, adding the cascading children's table-wide topics from the foreign-key graph and digesting secret values. Verified by write-set tests per statement kind, including a resource delete that must name its twelve cascading child tables, seen failing first.
+- [x] 2.1 Capture a write's set from its `RETURNING` scope columns for insert, update, delete, upsert and batched statements, adding the cascading children's table-wide topics from the foreign-key graph and digesting secret values. Verified by write-set tests per statement kind, including a resource delete that must name its twelve cascading child tables, seen failing first.
 - [ ] 2.2 Test the match and the coverage: every query procedure's read set covers every table its query touches, and each write's publish set matches the read set of each query over the rows it changed, in one router-wide test that replaces the per-procedure topic assertions. Verified by that test failing on the bookmark dock before its declaration is migrated.
 
 ## 3. Router migration, pushed as one sequence

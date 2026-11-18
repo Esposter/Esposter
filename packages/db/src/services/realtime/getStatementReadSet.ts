@@ -1,7 +1,10 @@
 import type { ReadSet, ReadSetKey, ReadSetScope } from "#src/models/realtime/ReadSet";
 import type { SQLWrapper } from "drizzle-orm";
 
-import { getTableScope, schema } from "@esposter/db-schema";
+import { getStatementConfig } from "#src/services/realtime/getStatementConfig";
+import { tableMap } from "#src/services/realtime/tableMap";
+import { checkIsRecord } from "#src/util/object/checkIsRecord";
+import { getTableScope } from "@esposter/db-schema";
 import {
   chunkKindOf,
   chunkKinds,
@@ -58,30 +61,15 @@ interface ReadSelection extends ReadSetKey {
   selectedAs: string;
 }
 
-// Relational SQL names its tables and their aliases in text, so a table is found by its database name
-const nameTableMap = new Map<string, Table>(
-  Object.values(schema)
-    .filter((value) => is(value, Table))
-    .map((table): [string, Table] => [getTableName(table), table]),
-);
-
-const checkIsRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === "object" && value !== null && !Array.isArray(value);
-
 const checkIsStatementLike = (value: unknown): value is SQLWrapper =>
   isSQLWrapper(value) &&
   !is(value, SQL) &&
   !is(value, Column) &&
   !is(value, Subquery) &&
-  getConfig(value) !== undefined;
-
-const getConfig = (statement: unknown): Record<string, unknown> | undefined =>
-  typeof statement === "object" && statement !== null && "config" in statement && checkIsRecord(statement.config)
-    ? statement.config
-    : undefined;
+  getStatementConfig(value) !== undefined;
 
 const getSelectedFields = (statement: unknown): Record<string, unknown> => {
-  const fields = getConfig(statement)?.fields;
+  const fields = getStatementConfig(statement)?.fields;
   return checkIsRecord(fields) ? fields : {};
 };
 
@@ -205,7 +193,7 @@ const getDeclaredAlias = (chunks: unknown[], index: number): undefined | { alias
     return undefined;
   const name = getNameValue(source);
   if (name !== undefined) {
-    const table = nameTableMap.get(name);
+    const table = tableMap.get(name);
     return table ? { alias, table } : undefined;
   }
   return is(source, Table) ? { alias, table: getBaseTable(source) } : undefined;
@@ -235,7 +223,7 @@ const resolveAlias = (alias: string, index: number, declarations: AliasDeclarati
       (!found || declaration.start > found.start)
     )
       found = declaration;
-  return found?.table ?? nameTableMap.get(alias);
+  return found?.table ?? tableMap.get(alias);
 };
 
 // A column a chunk reads: a column object, or an alias and a column name written as text, such as `"d0"."userId"`
@@ -350,7 +338,7 @@ const getSelections = (statement: SQLWrapper): ReadSelection[] => {
     );
   const table = getRelationalTable(statement);
   if (!table) return [];
-  const configured = getConfig(statement)?.columns;
+  const configured = getStatementConfig(statement)?.columns;
   return Object.entries(getTableColumns(table))
     .filter(([key]) => checkIsSelectedColumn(configured, key))
     .flatMap(([key, column]) =>

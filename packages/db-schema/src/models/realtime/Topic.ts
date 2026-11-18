@@ -2,6 +2,11 @@ import { TopicKind } from "#src/models/realtime/TopicKind";
 import { TOPIC_ID_MAX_LENGTH } from "#src/services/realtime/constants";
 import { z } from "zod";
 
+// A table's scope topic (the live queries design): `<table>:*` for every row of the table, or `<table>:<column>=<value>`
+// For the rows a scope value names. A secret's value is its digest, so the topic never carries the credential itself.
+// The watch frames and Topic objects carry kind topics until the inferred mechanism replaces `getTopicsProcedure`
+export type ScopeTopic = `${string}:${string}=${string}` | `${string}:*`;
+
 // A piece of state a query reads and a mutation changes, named `<kind>:<id>` (the live queries design). A watch frame and
 // The invalidation that answers it carry the name alone, never data, so a reader refetches through its own query
 export type Topic = `${TopicKind}:${string}`;

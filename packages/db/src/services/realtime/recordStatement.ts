@@ -1,21 +1,31 @@
+import type { RecordStatement } from "#src/models/realtime/RecordStatement";
 import type { SQLWrapper } from "drizzle-orm";
 
 import { checkIsStatement } from "#src/services/realtime/checkIsStatement";
 
-// A query that records itself when it is awaited. `then` is where a query runs from, so the record is made there.
-// The query's other methods run on the query they came from, and a query one of them returns is recorded in turn, so a
-// Chain is recorded once, at its end. `catch` and `finally` run with the recorded query as `this`, so the `then` they
-// Call is the recorded one
+// A query that records itself when it is awaited. `then` is where a query runs from, so the record is made there, and the
+// Rows it resolves to are handed to the record before the awaiting caller sees them. The query's other methods run on the
+// Query they came from, and a query one of them returns is recorded in turn, so a chain is recorded once, at its end.
+// `catch` and `finally` run with the recorded query as `this`, so the `then` they call is the recorded one
 export const recordStatement = <T extends PromiseLike<unknown> & SQLWrapper>(
   statement: T,
-  record: (statement: SQLWrapper) => void,
+  record: RecordStatement,
 ): T => {
   const recorded: T = new Proxy(statement, {
     get: (target, property) => {
       if (property === "then")
-        return (...args: unknown[]) => {
-          record(target);
-          return Reflect.apply(target.then, target, args);
+        return (
+          onFulfilled?: ((value: unknown) => unknown) | null,
+          onRejected?: ((reason: unknown) => unknown) | null,
+        ) => {
+          const complete = record(target);
+          return Reflect.apply(target.then, target, [
+            (result: unknown) => {
+              complete(result);
+              return onFulfilled ? onFulfilled(result) : result;
+            },
+            onRejected,
+          ]);
         };
 
       const value: unknown = Reflect.get(target, property, target);
