@@ -30,6 +30,18 @@ describe(recordStatements, () => {
     expect(statements).toHaveLength(4);
   });
 
+  // A select is built in steps, and only its last step is a query, so the handle wraps the builder the first step returns
+  test("records a select awaited through its builder chain", async () => {
+    expect.hasAssertions();
+
+    const { db } = await createMockDb();
+    const { database, statements } = recordStatements(db);
+
+    await database.select().from(roomsInMessage);
+
+    expect(statements).toHaveLength(1);
+  });
+
   // The handle wraps the statements without patching drizzle's classes, so a recording never leaks into another request
   // That shares the classes. Each class's `then` is the one drizzle wrote before the handle was made
   test("leaves drizzle's query classes unpatched", async () => {

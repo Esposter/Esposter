@@ -10,12 +10,18 @@ export const recordContainer = <T extends object>(container: T, record: (stateme
     get: (target, property) => {
       const value: unknown = Reflect.get(target, property, target);
       if (typeof value === "function")
-        return (...args: unknown[]) => {
-          const result: unknown = Reflect.apply(value, target, args);
-          return checkIsStatement(result) ? recordStatement(result, record) : result;
-        };
+        return (...args: unknown[]) => recordResult(Reflect.apply(value, target, args), record);
       if (typeof value === "object" && value !== null && !(value instanceof Promise) && !checkIsStatement(value))
         return recordContainer(value, record);
       return value;
     },
   });
+
+// A builder is not a query until its last step, so a builder a method returns is wrapped too, and the query its next
+// Step returns is recorded in turn. Anything else is returned as it is
+const recordResult = (result: unknown, record: (statement: SQLWrapper) => void): unknown => {
+  if (checkIsStatement(result)) return recordStatement(result, record);
+  if (typeof result === "object" && result !== null && !(result instanceof Promise) && !Array.isArray(result))
+    return recordContainer(result, record);
+  return result;
+};
