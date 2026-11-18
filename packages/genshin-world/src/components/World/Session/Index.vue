@@ -715,13 +715,15 @@ const craftingArtifactDropTables = { artifactMainAffixPools, artifactRarityDataM
 const crafting = computed(() =>
   computeCraftingCrafters(deployedCharacterIds.value, activeCharacterId.value, getCharacterName),
 );
+// The regions the world has loaded, which each region's outcrops are read for as it is entered
+const loadedRegionIds = computed(() => [...(windrise.value?.regionDataMap.keys() ?? [])]);
 // The ley line outcrops the world draws: a touch starts a blossom's fight, a camp's last enemy reveals it, and F claims it
 // With resin, and each day's are drawn at the daily reset
 // The places of the outcrop region, which its loaded data holds, and none while the region is not loaded
 const outcropPlaces = computed(() => windrise.value?.regionDataMap.get(OUTCROP_REGION_ID)?.outcropPlaces ?? []);
 // The mining outcrops of each region the world has loaded, drawn at the daily reset and struck as the ores are
 const { minedOutcrops, refreshMiningOutcrops, standingMiningOutcrops, strikeMiningOutcrops } = useMiningOutcrops({
-  regionIds: computed(() => [...(windrise.value?.regionDataMap.keys() ?? [])]),
+  regionIds: loadedRegionIds,
   savedMinedOutcrops: savedState.minedOutcrops,
 });
 const {
@@ -739,6 +741,7 @@ const {
   areaId: ref(OUTCROP_REGION_ID),
   enemyMap: kitContext.enemyMap,
   placements: outcropPlaces,
+  regionIds: loadedRegionIds,
 });
 // The Trounce Blossoms a defeated normal boss leaves, claimed at its place by F for the Original Resin its claim costs
 const {

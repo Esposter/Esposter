@@ -39,6 +39,7 @@ import { useWorldPartyStore } from "#src/store/party";
 import { useWorldSessionStore } from "#src/store/session";
 import { useWorldStatuesStore } from "#src/store/statues";
 import { getResultAsync, getSynchronizedFunction } from "@esposter/shared";
+import { watchImmediate } from "@vueuse/core";
 import { storeToRefs } from "pinia";
 import { computed, shallowRef } from "vue";
 
@@ -53,11 +54,13 @@ export const useWorldOutcrops = ({
   areaId,
   enemyMap,
   placements,
+  regionIds,
 }: {
   adventureRankTables: AdventureRankTables;
   areaId: Readonly<Ref<string>>;
   enemyMap: ReadonlyMap<string, Enemy>;
   placements: Readonly<Ref<OutcropPlacement[]>>;
+  regionIds: Readonly<Ref<string[]>>;
 }) => {
   const worldPartyStore = useWorldPartyStore();
   const { characters } = storeToRefs(worldPartyStore);
@@ -74,20 +77,26 @@ export const useWorldOutcrops = ({
   const { inventory, wallet } = storeToRefs(worldSessionStore);
   const { events, setInventory, setWallet } = worldSessionStore;
   const outcrops = shallowRef<Outcrop[]>([]);
-  // The region's kinds, read by the key its publish wrote. A region no publish wrote opens no kind
+  // The region's kinds, read by the key its publish wrote once the region is entered, never at the world's first screen. A
+  // Region no publish wrote opens no kind
   const kindRules = shallowRef<OutcropKindRule[]>([]);
   const regionKey: `leyLine/regions/${string}` = `leyLine/regions/${RegionIdCityIdMap[OUTCROP_REGION_ID]}`;
-  if (checkIsGameDataKey(regionKey))
-    getSynchronizedFunction(() =>
-      getResultAsync(() => readOutcropRegion(worldSessionStore.gameDataBaseUrl, regionKey)).match(
-        ({ kinds }) => {
-          kindRules.value = kinds;
-        },
-        (error) => {
-          console.error(error);
-        },
-      ),
-    )();
+  let areKindRulesRequested = false;
+  watchImmediate(regionIds, (ids) => {
+    if (areKindRulesRequested || !ids.includes(OUTCROP_REGION_ID)) return;
+    areKindRulesRequested = true;
+    if (checkIsGameDataKey(regionKey))
+      getSynchronizedFunction(() =>
+        getResultAsync(() => readOutcropRegion(worldSessionStore.gameDataBaseUrl, regionKey)).match(
+          ({ kinds }) => {
+            kindRules.value = kinds;
+          },
+          (error) => {
+            console.error(error);
+          },
+        ),
+      )();
+  });
   // The camp each touched outcrop spawned, by its place, which is in the world only while its outcrop is fighting
   const fightCamps = shallowRef<ReadonlyMap<number, EnemyCamp>>(new Map());
   const outcropCamps = computed(() =>

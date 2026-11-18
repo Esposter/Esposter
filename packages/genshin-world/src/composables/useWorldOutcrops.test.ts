@@ -2,8 +2,10 @@ import type { Character } from "#src/models/character/Character";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { FriendshipLevels } from "#src/models/friendship/FriendshipLevels";
 import type { OutcropKindRule } from "#src/models/leyLine/OutcropKindRule";
+import type { Ref } from "vue";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { useEnemySpawns } from "#src/composables/useEnemySpawns";
 import { useWorldOutcrops } from "#src/composables/useWorldOutcrops";
 import { CombatTalent } from "#src/models/character/CombatTalent";
 import { EnemyState } from "#src/models/enemy/EnemyState";
@@ -12,7 +14,9 @@ import { OutcropKind } from "#src/models/leyLine/OutcropKind";
 import { OutcropStage } from "#src/models/leyLine/OutcropStage";
 import { BlossomKind } from "#src/models/originalResin/BlossomKind";
 import { readAdventureRankTables } from "#src/services/adventureRank/readAdventureRankTables";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { EMPTY_INVENTORY, EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inventory/constants";
+import { OUTCROP_CAMP_SIZE } from "#src/services/leyLine/constants";
 import { BlossomClaimResinMap } from "#src/services/originalResin/BlossomClaimResinMap";
 import { BlossomCompanionshipExpMap } from "#src/services/originalResin/BlossomCompanionshipExpMap";
 import { ADVENTURE_EXP_PER_RESIN, FRAGILE_RESIN_ITEM_ID } from "#src/services/originalResin/constants";
@@ -22,13 +26,14 @@ import { startTestWorldFriendship } from "#src/store/friendship.fixture";
 import { startTestWorldGround } from "#src/store/ground.fixture";
 import { startTestWorldParty } from "#src/store/party.fixture";
 import { startTestWorldSession } from "#src/store/session.fixture";
-import { takeOne } from "@esposter/shared";
+import { takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
 import { ItemCategory } from "genshin-interface";
 import { storeToRefs } from "pinia";
 import { assert, describe, expect, test } from "vitest";
-import { ref } from "vue";
+import { nextTick, ref } from "vue";
 
 const adventureRankTables = await readAdventureRankTables(GAME_DATA_LOCAL_BASE_URL);
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const createCharacter = (id: number): Character => ({
   artifacts: [],
   ascension: 0,
@@ -44,6 +49,11 @@ const createCharacter = (id: number): Character => ({
 describe(useWorldOutcrops, () => {
   const CHARACTER_ID = 1;
   const BENCHED_CHARACTER_ID = 2;
+  // The World Level a camp spawns under: World Level 8's monster level of 90, less the spawn reference of 18, plus the
+  // Camp's level of 1
+  const WORLD_LEVEL = 8;
+  const SPAWNED_LEVEL = 73;
+  const CAMP_ID = "outcrop-1";
   const FRIENDSHIP_LEVELS: FriendshipLevels = [
     { exp: 0, level: 1 },
     { exp: 1000, level: 2 },
@@ -63,8 +73,9 @@ describe(useWorldOutcrops, () => {
   const epoch = Temporal.Instant.fromEpochMilliseconds(0);
   const clearedOutcrop = { kind: OutcropKind.Revelation, placeId: 1, stage: OutcropStage.Cleared };
 
-  // A region's outcrops, with a held wallet of resin enough for two claims at a ley line, and the setters writing back
-  const createOutcrops = (resin = BlossomClaimResinMap[BlossomKind.LeyLine] * 2) => {
+  // A region's outcrops over the world's stores, with a held wallet of resin and the setters writing back. The camps the
+  // Outcrops fight spawn into the enemy map the way the world spawns them, at WORLD_LEVEL
+  const startOutcrops = (resin: number, regionIds: Ref<string[]>) => {
     const worldSessionStore = startTestWorldSession(
       { gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL },
       { inventory: { ...EMPTY_INVENTORY }, wallet: { ...EMPTY_WALLET, [Currency.OriginalResin]: resin } },
@@ -81,21 +92,39 @@ describe(useWorldOutcrops, () => {
       }),
     );
     startTestWorldGround();
+    const enemyMap = new Map<string, Enemy>();
     const outcrops = useWorldOutcrops({
       adventureRankTables,
       areaId: ref("mondstadt"),
-      enemyMap: new Map(),
+      enemyMap,
       placements: ref(PLACEMENTS),
+      regionIds,
     });
-    outcrops.kindRules.value = KIND_RULES;
-    outcrops.drawDayOutcrops(epoch, () => 0);
-    outcrops.touchOutcropsNear(0, 0, () => 0);
-    // The defeat of the camp's only enemy, which reveals the blossom
-    events.emit("defeatEnemy", { campId: "outcrop-1", id: "0", state: EnemyState.Dead } as Enemy);
+    useEnemySpawns({
+      bossDefeatMap: new Map(),
+      enemyMap,
+      enemyRespawnMap: new Map(),
+      enemyTables,
+      getWorldNow: () => epoch,
+      lastTeleportAts: new Map(),
+      onLoad: () => {},
+      onRespawn: () => {},
+      outcropCamps: outcrops.outcropCamps,
+      regionDataMap: new Map(),
+      trounceBlossoms: new Map(),
+      worldLevel: WORLD_LEVEL,
+      worldLevelRows: adventureRankTables.worldLevelRows,
+    });
+    // A defeat as the combat reports it, which the outcrop and the rest of the world hear
+    const defeat = (enemy: Enemy) => {
+      enemy.state = EnemyState.Dead;
+      events.emit("defeatEnemy", enemy);
+    };
     return {
       adventureExp,
       characters,
-      events,
+      defeat,
+      enemyMap,
       inventory,
       outcrops,
       startingAdventureExp,
@@ -104,26 +133,84 @@ describe(useWorldOutcrops, () => {
     };
   };
 
-  test("a touch spawns the outcrop's camp, and the last enemy's defeat leaves it claimable", () => {
+  // A region's outcrops with its kinds set and the day drawn, so the Revelation waits at the first place. No region is
+  // Entered here, so the kinds are set by hand and none is read
+  const createOutcrops = (resin = BlossomClaimResinMap[BlossomKind.LeyLine] * 2) => {
+    const context = startOutcrops(resin, ref<string[]>([]));
+    context.outcrops.kindRules.value = KIND_RULES;
+    context.outcrops.drawDayOutcrops(epoch, () => 0);
+    return context;
+  };
+
+  // Touches the Revelation at the first place, then defeats each member of its camp, the last defeat revealing it
+  const clearOutcrop = async ({ defeat, enemyMap, outcrops }: ReturnType<typeof createOutcrops>) => {
+    outcrops.touchOutcropsNear(0, 0, () => 0);
+    await nextTick();
+    for (const enemy of enemyMap.values()) defeat(enemy);
+  };
+
+  test("the region's kinds are read once the region is entered, not before", async () => {
     expect.hasAssertions();
 
-    const { outcrops } = createOutcrops();
-    expect(outcrops.outcropCamps.value).toStrictEqual([]);
+    const regionIds = ref<string[]>([]);
+    const { outcrops } = startOutcrops(0, regionIds);
+    await waitForSynchronizedFunctions();
+    expect(outcrops.kindRules.value).toStrictEqual([]);
+
+    regionIds.value = ["mondstadt"];
+    await nextTick();
+    await waitForSynchronizedFunctions();
+    expect(outcrops.kindRules.value.map(({ kind }) => kind)).toStrictEqual([
+      OutcropKind.Wealth,
+      OutcropKind.Revelation,
+    ]);
+  });
+
+  test("touching an outcrop spawns its enemies", async () => {
+    expect.hasAssertions();
+
+    const { enemyMap, outcrops } = createOutcrops();
+    outcrops.touchOutcropsNear(0, 0, () => 0);
+    await nextTick();
+
+    expect([...enemyMap.values()].map(({ campId, level }) => ({ campId, level }))).toStrictEqual(
+      Array.from({ length: OUTCROP_CAMP_SIZE }, () => ({ campId: CAMP_ID, level: SPAWNED_LEVEL })),
+    );
+  });
+
+  test("defeating the last enemy reveals the blossom", async () => {
+    expect.hasAssertions();
+
+    const { defeat, enemyMap, outcrops } = createOutcrops();
+    outcrops.touchOutcropsNear(0, 0, () => 0);
+    await nextTick();
+    const enemies = [...enemyMap.values()];
+    defeat(takeOne(enemies, 0));
+    defeat(takeOne(enemies, 1));
+
+    expect(outcrops.outcrops.value).toStrictEqual([
+      { kind: OutcropKind.Revelation, placeId: 1, stage: OutcropStage.Fighting },
+    ]);
+    expect(outcrops.outcropInteractables.value).toStrictEqual([]);
+    defeat(takeOne(enemies, 2));
     expect(outcrops.outcropInteractables.value.map(({ id }) => id)).toStrictEqual(["1"]);
   });
 
-  test("pressing F at a cleared challenge's blossom offers its claims", () => {
+  test("pressing F at a cleared challenge's blossom offers its claims", async () => {
     expect.hasAssertions();
 
-    const { outcrops } = createOutcrops();
-    outcrops.openOutcropClaim(1, epoch);
-    expect(outcrops.claimPrompt.value?.offers.length).toBeGreaterThan(0);
+    const context = createOutcrops();
+    await clearOutcrop(context);
+    context.outcrops.openOutcropClaim(1, epoch);
+    expect(context.outcrops.claimPrompt.value?.offers.length).toBeGreaterThan(0);
   });
 
-  test("choosing an offer spends its resin and grants its rewards", () => {
+  test("choosing an offer spends its resin and grants its rewards", async () => {
     expect.hasAssertions();
 
-    const { adventureExp, outcrops, startingAdventureExp, wallet } = createOutcrops();
+    const context = createOutcrops();
+    await clearOutcrop(context);
+    const { adventureExp, outcrops, startingAdventureExp, wallet } = context;
     outcrops.openOutcropClaim(1, epoch);
     assert.exists(outcrops.claimPrompt.value);
     outcrops.chooseOutcropClaim(takeOne(outcrops.claimPrompt.value.offers, 0), epoch, 0, () => 0);
@@ -138,10 +225,12 @@ describe(useWorldOutcrops, () => {
     ]);
   });
 
-  test("a claim gives each deployed character the claim's Companionship EXP, and a benched one none", () => {
+  test("a claim gives each deployed character the claim's Companionship EXP, and a benched one none", async () => {
     expect.hasAssertions();
 
-    const { characters, outcrops } = createOutcrops();
+    const context = createOutcrops();
+    await clearOutcrop(context);
+    const { characters, outcrops } = context;
     outcrops.openOutcropClaim(1, epoch);
     assert.exists(outcrops.claimPrompt.value);
     const offer = takeOne(outcrops.claimPrompt.value.offers, 0);
@@ -153,10 +242,12 @@ describe(useWorldOutcrops, () => {
     ]);
   });
 
-  test("a claim waits until the friendship levels are loaded, and keeps its prompt and its resin", () => {
+  test("a claim waits until the friendship levels are loaded, and keeps its prompt and its resin", async () => {
     expect.hasAssertions();
 
-    const { characters, outcrops, wallet, worldFriendshipStore } = createOutcrops();
+    const context = createOutcrops();
+    await clearOutcrop(context);
+    const { characters, outcrops, wallet, worldFriendshipStore } = context;
     worldFriendshipStore.friendshipLevels = undefined;
     outcrops.openOutcropClaim(1, epoch);
     assert.exists(outcrops.claimPrompt.value);
@@ -167,10 +258,11 @@ describe(useWorldOutcrops, () => {
     expect(characters.value.map(({ friendshipExp }) => friendshipExp)).toStrictEqual([0, 0]);
   });
 
-  test("a short original resin restores with a fragile resin, and the claims are offered again", () => {
+  test("a short original resin restores with a fragile resin, and the claims are offered again", async () => {
     expect.hasAssertions();
 
-    const { inventory, outcrops } = createOutcrops(0);
+    const context = createOutcrops(0);
+    const { inventory, outcrops } = context;
     inventory.value = {
       items: [
         {
@@ -189,6 +281,7 @@ describe(useWorldOutcrops, () => {
       nextId: 2,
       quickSwapItemIds: [],
     };
+    await clearOutcrop(context);
     outcrops.openOutcropClaim(1, epoch);
     expect(outcrops.claimPrompt.value?.canRestore).toBe(true);
 
@@ -198,10 +291,12 @@ describe(useWorldOutcrops, () => {
     expect(outcrops.claimPrompt.value?.offers.length).toBeGreaterThan(0);
   });
 
-  test("a cleared challenge never claimed gives nothing", () => {
+  test("a cleared challenge never claimed gives nothing", async () => {
     expect.hasAssertions();
 
-    const { outcrops, wallet } = createOutcrops();
+    const context = createOutcrops();
+    await clearOutcrop(context);
+    const { outcrops, wallet } = context;
     outcrops.openOutcropClaim(1, epoch);
     outcrops.closeOutcropClaim();
 
@@ -210,20 +305,25 @@ describe(useWorldOutcrops, () => {
     expect(outcrops.outcrops.value).toStrictEqual([clearedOutcrop]);
   });
 
-  test("a claim without enough resin is refused", () => {
+  test("a claim without enough resin is refused", async () => {
     expect.hasAssertions();
 
-    const { outcrops, wallet } = createOutcrops(0);
+    const context = createOutcrops(0);
+    await clearOutcrop(context);
+    const { outcrops, wallet } = context;
+    expect(outcrops.outcrops.value).toStrictEqual([clearedOutcrop]);
     outcrops.openOutcropClaim(1, epoch);
 
     expect(outcrops.claimPrompt.value).toBeUndefined();
     expect(wallet.value[Currency.Mora]).toBe(EMPTY_WALLET[Currency.Mora]);
   });
 
-  test("a draw stands until the next daily reset, which draws the outcrops again", () => {
+  test("a draw stands until the next daily reset, which draws the outcrops again", async () => {
     expect.hasAssertions();
 
-    const { outcrops } = createOutcrops();
+    const context = createOutcrops();
+    await clearOutcrop(context);
+    const { outcrops } = context;
     outcrops.drawDayOutcrops(epoch.add({ hours: 1 }), () => 0);
     expect(outcrops.outcrops.value).toStrictEqual([clearedOutcrop]);
 
@@ -233,10 +333,12 @@ describe(useWorldOutcrops, () => {
     ]);
   });
 
-  test("a day is not drawn while the region's kinds are not loaded", () => {
+  test("a day is not drawn while the region's kinds are not loaded", async () => {
     expect.hasAssertions();
 
-    const { outcrops } = createOutcrops();
+    const context = createOutcrops();
+    await clearOutcrop(context);
+    const { outcrops } = context;
     outcrops.kindRules.value = [];
     outcrops.drawDayOutcrops(epoch.add({ hours: 24 }), () => 0);
     expect(outcrops.outcrops.value).toStrictEqual([clearedOutcrop]);
