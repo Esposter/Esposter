@@ -29,7 +29,7 @@ flowchart LR
   DRAW -->|"it does not"| TRAVELER["the Traveler's model"]
 ```
 
-A model that fails to read is logged with its character's id, and the field draws the Traveler's model in its place; when the Traveler's own model fails to read too, nothing is drawn (`packages/genshin-world/src/components/Character/Model/Index.vue`, `packages/genshin-world/src/services/character/getCharacterPackReader.ts`). A pack whose reader cannot be made, since no model can be chosen from its files, is logged and left out of the readers, and its character draws the Traveler's model (`packages/genshin-world/src/services/character/readCharacterPackReaders.ts`). A texture the release does not ship is logged once, and its material drawn untextured (`packages/genshin-world/src/services/character/readCharacterMesh.ts`).
+A model that fails to read is logged with its character's id, and the field draws the Traveler's model in its place; when the Traveler's own model fails to read too, nothing is drawn (`packages/genshin-world/src/components/Character/Model/Index.vue`, `packages/genshin-world/src/services/character/getCharacterPackReader.ts`). A pack whose model cannot be chosen from its files fails that model's read, so it is logged the same way and its character draws the Traveler's model; the model is chosen by the pack's first read, not when its reader is made, so the names of a folder of several models are read only once a read needs them (`packages/genshin-world/src/services/character/createCharacterPackReader.ts`, `packages/genshin-world/src/services/character/readCharacterPackReaders.ts`). A texture the release does not ship is logged once, and its material drawn untextured (`packages/genshin-world/src/services/character/readCharacterMesh.ts`).
 
 ## Decisions
 
