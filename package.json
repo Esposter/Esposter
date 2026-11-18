@@ -54,6 +54,7 @@
     "ai:genshin:progress": "pnpm -C scripts ai:genshin:progress",
     "ai:identifiers:rename": "pnpm -C scripts ai:identifiers:rename",
     "ai:land": "pnpm -C scripts ai:land",
+    "ai:machine:install-lock": "pnpm -C scripts ai:machine:install-lock",
     "ai:machine:watch": "pnpm -C scripts ai:machine:watch",
     "ai:package:new": "pnpm -C scripts ai:package:new",
     "ai:precheck": "pnpm -C scripts ai:precheck",
@@ -131,9 +132,9 @@
   "packageManager": "pnpm@12.21.0+sha512.66fd8278ee28935ce951792d34367ff3af5c432a2756445823029533835b8da529bbe0be5130afd56ed0713fb8789e47bad82d93bd5ae2fe54b15562d6276ef0",
   "crossOS": {
     "refresh:lockfile": {
-      "darwin": "sh ./scripts/src/refreshLockfile/index.sh",
-      "linux": "./scripts/src/refreshLockfile/index.sh",
-      "win32": "pnpm pwsh scripts/src/refreshLockfile/index.ps1"
+      "darwin": "node scripts/src/machine/installLock/index.ts sh ./scripts/src/refreshLockfile/index.sh",
+      "linux": "node scripts/src/machine/installLock/index.ts ./scripts/src/refreshLockfile/index.sh",
+      "win32": "node scripts/src/machine/installLock/index.ts pnpm pwsh scripts/src/refreshLockfile/index.ps1"
     }
   }
 }

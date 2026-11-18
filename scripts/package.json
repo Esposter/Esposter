@@ -31,6 +31,7 @@
     "ai:format": "node src/format/index.ts",
     "ai:identifiers:rename": "node src/identifiers/rename/index.ts",
     "ai:land": "node src/land/index.ts",
+    "ai:machine:install-lock": "node src/machine/installLock/index.ts",
     "ai:machine:watch": "node src/machine/watch/index.ts",
     "ai:package:new": "node src/package/new/index.ts",
     "ai:precheck": "node src/precheck/index.ts",

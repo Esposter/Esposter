@@ -1,3 +1,4 @@
+import { withInstallLock } from "#src/services/machine/withInstallLock";
 import { readMainCheckoutRoot } from "#src/services/queue/readMainCheckoutRoot";
 import { runCommand } from "#src/services/timing/runCommand";
 import { buildDistributions } from "#src/services/worktree/create/buildDistributions";
@@ -35,7 +36,10 @@ await runCommand(
       const packageNames = args._.slice(1).map(String);
       const mainCheckoutRoot = readMainCheckoutRoot();
       const worktreePath = createWorktree(args.name, mainCheckoutRoot);
-      installWorktree(worktreePath, packageNames);
+      // Under the machine's install lock, since every install writes the pnpm store that the others read and write
+      await withInstallLock(() => {
+        installWorktree(worktreePath, packageNames);
+      });
       buildDistributions(worktreePath, readBuildDirectories(worktreePath, packageNames));
       // Last, since an install prunes whatever it did not select, and the copied file imports packages it did
       copyEslintConfiguration(mainCheckoutRoot, worktreePath);

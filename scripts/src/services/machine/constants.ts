@@ -44,3 +44,13 @@ export const MACHINE_LOCK_TAKEOVER_PATH: string = join(MACHINE_STATE_DIRECTORY, 
 export const EMPTY_LOCK_GRACE_MILLISECONDS: number = Temporal.Duration.from({ seconds: 5 }).total("milliseconds");
 // The code a create-only write gives when its file is already there
 export const FILE_EXISTS_ERROR_CODE = "EEXIST";
+// The machine's install lock, taken by every install that writes the pnpm store this machine shares: a worktree's create
+// And the lockfile refresh. It is taken as the watcher's claim is, by process id, and its takeover file is what one
+// Starter at a time judges a holder that is gone with
+export const INSTALL_LOCK_PATH: string = join(MACHINE_STATE_DIRECTORY, "install.lock");
+export const INSTALL_LOCK_TAKEOVER_PATH: string = join(MACHINE_STATE_DIRECTORY, "install.lock.takeover");
+// A holder killed with its lock in place removes nothing from the folder, so no event reaches a waiter for it: the holder
+// Is judged again on this interval as well
+export const INSTALL_LOCK_RECHECK_MILLISECONDS: number = Temporal.Duration.from({ seconds: 5 }).total("milliseconds");
+export const INSTALL_LOCK_WAITING_MESSAGE =
+  "waiting: another install holds the machine's install lock, and this one starts once it is released";

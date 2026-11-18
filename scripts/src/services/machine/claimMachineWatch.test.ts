@@ -4,7 +4,7 @@ import {
   MACHINE_LOCK_PATH,
   MACHINE_LOCK_TAKEOVER_PATH,
 } from "#src/services/machine/constants";
-import { releaseMachineWatch } from "#src/services/machine/releaseMachineWatch";
+import { releaseLock } from "#src/services/machine/releaseLock";
 import { mkdirSync, readFileSync, rmSync, utimesSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
@@ -95,7 +95,7 @@ describe(claimMachineWatch, () => {
     expect.hasAssertions();
 
     writeFileSync(MACHINE_LOCK_PATH, `${OTHER_PROCESS_ID}`);
-    releaseMachineWatch();
+    releaseLock(MACHINE_LOCK_PATH);
 
     expect(readFileSync(MACHINE_LOCK_PATH, "utf8")).toBe(`${OTHER_PROCESS_ID}`);
   });
