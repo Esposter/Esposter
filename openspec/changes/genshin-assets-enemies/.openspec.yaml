@@ -13,4 +13,4 @@ x-touches:
     "packages/genshin-world/src/components/World/Enemies/**",
     "packages/genshin-world/src/generated/**",
   ]
-x-waiting: "Tasks 2.2 and 3.2 are open and tasks 5.1 to 5.4 are not in this run's order: 2.2 needs the six family pages fetched and their variants read, 3.2 needs the Hilichurl Fighter's combat config located in the blocks, since no index row names it and its path hashes match no MiHoYoBinData name, and its layout decoded, and 5.1 to 5.4 are the body and telegraph."
+x-waiting: "Tasks 2.2 and 3.2 are open and tasks 5.1 to 5.4 are not in this run's order: 2.2 leaves 13 hand-mapped family labels unmapped, 1,372 marks, until a source names them, and 3.2 needs the Hilichurl Fighter's combat config located in the blocks, since no index row names it and its path hashes match no MiHoYoBinData name, and its layout decoded, and 5.1 to 5.4 are the body and telegraph."
