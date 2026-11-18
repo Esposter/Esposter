@@ -51,7 +51,7 @@ describe(recordBucket, () => {
   });
 
   // The bucket's root is the topic with an empty key, so every name a write publishes must be one the topic schema accepts.
-  // Otherwise the publish is rejected whole
+  // A name it rejects fails only its own object's publish, and the rest of the write still publishes
   test("every topic a write publishes is one the topic schema accepts, the bucket's root included", async () => {
     expect.hasAssertions();
 
