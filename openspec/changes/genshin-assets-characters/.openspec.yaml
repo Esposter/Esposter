@@ -15,4 +15,4 @@ x-touches:
     "packages/genshin-engine/src/character/**",
     "openspec/changes/genshin-characters/design.md",
   ]
-x-waiting: "Tasks 2.1, 2.2 and 3.1 wait on the ACL database decode of the Traveler's clips, which this Mac's build cannot run; 1.2 waits on the main session's publish of characters/scale; 6.1 waits on the owner's further official packs; and 3.2, 4.x, 5.1 to 5.4, 6.2, 7.1, 7.2 and 8.1 were not reached in this run."
+x-waiting: "Tasks 2.1, 2.2 and 3.1 wait on the ACL database decode of the Traveler's clips, which this Mac's build cannot run; 1.2 waits on the main session's publish of characterModels/scale; 6.1 waits on the owner's further official packs; and 3.2, 4.x, 5.1 to 5.4, 6.2, 7.1, 7.2 and 8.1 were not reached in this run."

@@ -9,7 +9,7 @@ export interface CharacterScale {
   pmxHeightUnits: number;
 }
 
-// One record of the game data, under the key `characters/scale`: each measured character's scale by its id
+// One record of the game data, under the key `characterModels/scale`: each measured character's scale by its id
 export type CharacterScaleRecord = Record<string, CharacterScale>;
 
 export const characterScaleSchema = z.object({

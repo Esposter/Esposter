@@ -6,7 +6,7 @@ import { readPublishedGameData } from "#src/services/gameData/readPublishedGameD
 import { characterScaleRecordSchema, GameDataset } from "genshin-world";
 
 // The one record of the characters' measured scales, under the key the world reads it by
-const CHARACTER_SCALE_KEY = `${GameDataset.Characters}/scale` as const;
+const CHARACTER_SCALE_KEY = `${GameDataset.CharacterModels}/scale` as const;
 
 // The record the lock holds, or an empty one where no publish has written it yet
 const readHeldCharacterScaleRecord = async (): Promise<CharacterScaleRecord> => {
