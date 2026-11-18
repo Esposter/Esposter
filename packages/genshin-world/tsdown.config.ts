@@ -32,6 +32,7 @@ const UNREFERENCED_MODULE_DIRECTORIES = [
   "services/party",
   "services/spiralAbyss",
   "services/bosses",
+  "services/enemy",
 ];
 // The parity page's modules the tooling in `scripts` imports as types. The page writes to `window` when it loads, so
 // No wildcard reaches its modules
