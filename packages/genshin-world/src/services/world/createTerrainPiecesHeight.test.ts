@@ -48,6 +48,36 @@ describe(createTerrainPiecesHeight, () => {
     expect(getHeight(200 + BLEND_WIDTH + 1, 100)).toBeCloseTo(BASE);
   });
 
+  test("a point just inside an outer edge with no neighbour is that piece's own surface, not blended toward the base", () => {
+    expect.hasAssertions();
+
+    const getHeight = createTerrainPiecesHeight(
+      getBase,
+      [{ domain: { outline: createOutline({ maxX: 200, maxZ: 200, minX: 0, minZ: 0 }) }, getHeight: () => 50 }],
+      BLEND_WIDTH,
+    );
+
+    expect(getHeight(199, 100)).toBeCloseTo(50);
+  });
+
+  test("the height is continuous where a neighbour's band begins inside an outline's band across a gap", () => {
+    expect.hasAssertions();
+
+    const getHeight = createTerrainPiecesHeight(
+      getBase,
+      [
+        { domain: { outline: createOutline({ maxX: 200, maxZ: 200, minX: 0, minZ: 0 }) }, getHeight: () => 50 },
+        { domain: { outline: createOutline({ maxX: 400, maxZ: 200, minX: 202, minZ: 0 }) }, getHeight: () => 90 },
+      ],
+      BLEND_WIDTH,
+    );
+
+    // The second piece's band reaches into the first's at x = 196, four metres inside it, where the first's blend must
+    // Not step from its outer edge's ramp to its seam's, so both sides read the same height there
+    expect(getHeight(195.999, 100)).toBeCloseTo(getHeight(196, 100), 1);
+    expect(getHeight(196.001, 100)).toBeCloseTo(getHeight(196, 100), 1);
+  });
+
   test("the height is continuous across the seam of two quarters of one outline", () => {
     expect.hasAssertions();
 
