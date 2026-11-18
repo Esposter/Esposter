@@ -16,6 +16,10 @@
 - [ ] `[page]` {inazuma-city-location-sun-direction} needs game-exports, parity-page — **inazuma-city-location: the sun's direction by its shadows' edges.** `pnpm -C scripts genshin:parity shadows inazuma-city-location --witness inazuma`. Reads `{data-root}/genshin-parity/references/inazuma-city-location.png` and the witness. Writes a shadow image outside the repository, and the printed directions. Bar: the Sun bars of [compute](../README.md#bars). Waits on a reference frame with a cast shadow on a flat receiver, which no run has read for this reference yet (the shadow image under Open).
 - [ ] `[page]` {inazuma-light} needs game-exports, parity-page — **Inazuma: the light pass.** `pnpm -C scripts genshin:parity passes inazuma --pass Light`. Reads the solved direction above, the lit stone's colour over the reference and its glow over the reference's frame. Writes the Inazuma report in `scripts/src/services/genshinParity/passes/snapshots`. Bar: the Light bars of [compute](../README.md#bars). Waits on `inazuma-city-location-sun-direction`.
 
+## Sources
+
+- `pnpm -C scripts genshin:assets missing-tiles inazuma`, run on 19 Nov: its export holds 27 of the 31 tiles the area outlines name, and `BigWorldTerrain_-4_-6`, `-3_-6`, `-2_-6` and `-5_0` print as absent from the install. The install's index, `{data-root}/genshin-parity/extracted/maps/index.tsv`, names no asset of any of the four, and names an asset of each of the 27 exported tiles, so no re-extraction can add them and Inazuma needs no terrain-tile item.
+
 ## Open
 
 - [ ] **inazuma-city-location: the pose image the camera solve writes** — no source yet: the pose image itself, which the solve has not written, since no `pose` folder exists under `{data-root}/genshin-parity/`.
