@@ -1,6 +1,7 @@
 import type { ObjectPointer } from "#src/models/genshinAssets/shared/ObjectPointer";
 
 import { SERIALIZED_POINTER_BYTES } from "#src/services/genshinAssets/shared/constants";
+import { readObjectPointer } from "#src/services/genshinAssets/shared/readObjectPointer";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The game object a serialized component names by the pointer its bytes lead with, which a raw export must hold, and
@@ -12,5 +13,5 @@ export const readSerializedGameObject = (bytes: Buffer, label: string): ObjectPo
       label,
       `holds ${bytes.length} bytes, too few for its game object's pointer`,
     );
-  return { fileIndex: bytes.readInt32LE(0), pathId: bytes.readBigInt64LE(4).toString() };
+  return readObjectPointer(bytes, 0);
 };

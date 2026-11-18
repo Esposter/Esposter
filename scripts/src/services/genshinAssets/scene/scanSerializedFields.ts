@@ -9,6 +9,7 @@ import { checkIsGradientMode } from "#src/services/genshinAssets/scene/checkIsGr
 import { checkIsPlausible } from "#src/services/genshinAssets/scene/checkIsPlausible";
 import { checkIsSorted } from "#src/services/genshinAssets/scene/checkIsSorted";
 import { SERIALIZED_POINTER_BYTES } from "#src/services/genshinAssets/shared/constants";
+import { readObjectPointer } from "#src/services/genshinAssets/shared/readObjectPointer";
 
 const WORD = 4;
 // A MonoBehaviour's own fields lead its bytes: its game object and its script as pointers, its enabled flag aligned to
@@ -45,7 +46,7 @@ export const scanSerializedFields = (
   const checkHasBytes = (offset: number, count: number): boolean => offset + count <= wordCount * WORD;
   const readPointer: SerializedFieldReader = (offset) => {
     if (!checkHasBytes(offset, SERIALIZED_POINTER_BYTES)) return undefined;
-    const pointer = { fileIndex: readInt(offset), pathId: bytes.readBigInt64LE(offset + WORD).toString() };
+    const pointer = readObjectPointer(bytes, offset);
     return pointer.pathId !== "0" && checkIsPointer(pointer)
       ? { end: offset + SERIALIZED_POINTER_BYTES, field: { kind: SerializedFieldKind.Pointer, offset, pointer } }
       : undefined;
