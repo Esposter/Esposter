@@ -1,8 +1,8 @@
+/* oxlint-disable typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it */
 import type { WorldCardGameOptions } from "#src/models/gcg/WorldCardGameOptions";
 
-import { grantGcgGameReward } from "#src/services/gcg/grantGcgGameReward";
-import { toGcgWeekGameRewards } from "#src/services/gcg/toGcgWeekGameRewards";
 import { useWorldSessionStore } from "#src/store/session";
+import { getResultAsync, noop } from "@esposter/shared";
 import { storeToRefs } from "pinia";
 import { ref } from "vue";
 
@@ -14,26 +14,35 @@ export const useWorldCardGame = ({ getResidents, savedCardGameExp, savedRewarded
   const cardGameExp = ref(savedCardGameExp);
   const cardGameRewardedGameIds = ref(savedRewardedGameIds);
   // A won week game pays its reward once, its Player EXP into the card game's EXP and its Lucky Coins into the bag and wallet,
-  // The way a Mail claim pays into them. A duel that is not a week game, or was lost, pays nothing
+  // The way a Mail claim pays into them. A duel that is not a week game, or was lost, pays nothing. The reward's rules are
+  // Imported as the reward is paid, so the card game stays out of the first screen's static graph
   const payCardGameReward = (gameId: number | undefined, won: boolean) => {
     const weekGame = getResidents().find((resident) => resident.weekGame?.gameId === gameId)?.weekGame;
     if (!won || !weekGame) return;
-    const granted = grantGcgGameReward(
-      {
-        cardGameExp: cardGameExp.value,
-        inventory: inventory.value,
-        rewardedGameIds: cardGameRewardedGameIds.value,
-        wallet: wallet.value,
-      },
-      weekGame.gameId,
-      toGcgWeekGameRewards(weekGame),
-      worldSessionStore.nameText,
-      worldSessionStore.materialDataMap,
-    );
-    cardGameExp.value = granted.cardGameExp;
-    cardGameRewardedGameIds.value = granted.rewardedGameIds;
-    setInventory(granted.inventory);
-    setWallet(granted.wallet);
+    getResultAsync(async () => {
+      const [{ grantGcgGameReward }, { toGcgWeekGameRewards }] = await Promise.all([
+        import("#src/services/gcg/grantGcgGameReward"),
+        import("#src/services/gcg/toGcgWeekGameRewards"),
+      ]);
+      const granted = grantGcgGameReward(
+        {
+          cardGameExp: cardGameExp.value,
+          inventory: inventory.value,
+          rewardedGameIds: cardGameRewardedGameIds.value,
+          wallet: wallet.value,
+        },
+        weekGame.gameId,
+        toGcgWeekGameRewards(weekGame),
+        worldSessionStore.nameText,
+        worldSessionStore.materialDataMap,
+      );
+      cardGameExp.value = granted.cardGameExp;
+      cardGameRewardedGameIds.value = granted.rewardedGameIds;
+      setInventory(granted.inventory);
+      setWallet(granted.wallet);
+    }).match(noop, (error) => {
+      console.error(error);
+    });
   };
   return { cardGameExp, cardGameRewardedGameIds, payCardGameReward };
 };
