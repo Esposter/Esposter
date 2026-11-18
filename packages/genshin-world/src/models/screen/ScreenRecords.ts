@@ -1,6 +1,7 @@
 import type { CraftingRecipe } from "#src/models/crafting/CraftingRecipe";
 import type { CraftingStrongboxData } from "#src/models/crafting/CraftingStrongboxData";
 import type { HomeBlueprint } from "#src/models/home/HomeBlueprint";
+import type { ShopGood } from "#src/models/shop/ShopGood";
 import type { WishScheduleEvent } from "#src/models/wish/WishScheduleEvent";
 
 // The records a screen open over the world reads, each read the first time its screen opens and held after, so the
@@ -12,6 +13,8 @@ export interface ScreenRecords {
   craftingStrongboxes: CraftingStrongboxData[];
   // The Serenitea Pot's furnishings Tubby makes, each with the diagrams that open it, which a diagram's Use learns it from
   homeBlueprints: HomeBlueprint[];
+  // Each city vendor's shop's goods, by the shop's id, which a vendor's talk opens the shop of
+  shopIdShopGoodMap: ReadonlyMap<number, ShopGood[]>;
   // The wish schedule's event banners, each offered by the wish screen only inside its window
   wishSchedule: WishScheduleEvent[];
 }

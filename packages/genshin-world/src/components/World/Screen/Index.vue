@@ -35,7 +35,6 @@ import { createReliquaryPieceEntryMap } from "#src/services/reliquary/createReli
 import { readReliquarySets } from "#src/services/reliquary/readReliquarySets";
 import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
 import { readPaimonsBargainsRotation } from "#src/services/shop/readPaimonsBargainsRotation";
-import { readShopGoodMap } from "#src/services/shop/readShopGoodMap";
 import { readTips } from "#src/services/tip/readTips";
 import { TipTextLoaderMap } from "#src/services/tip/TipTextLoaderMap";
 import { readMondstadtWildlifePlaces } from "#src/services/wildlife/readMondstadtWildlifePlaces";
@@ -107,7 +106,6 @@ getResultAsync(() =>
       measureLoadStep("domain-challenge-levels", readDomainChallengeLevels(props.gameDataBaseUrl)),
       measureLoadStep("puzzle-places", readMondstadtPuzzlePlaces(props.gameDataBaseUrl)),
       measureLoadStep("shrine-key-sources", readMondstadtShrineKeySources(props.gameDataBaseUrl)),
-      measureLoadStep("shop-goods", readShopGoodMap(props.gameDataBaseUrl)),
       measureLoadStep("paimons-bargains-rotation", readPaimonsBargainsRotation(props.gameDataBaseUrl)),
       measureLoadStep("frostbearing-tree-levels", readFrostbearingTreeLevels(props.gameDataBaseUrl)),
       measureLoadStep("reliquary-sets", readReliquarySets(props.gameDataBaseUrl)),
@@ -137,7 +135,6 @@ getResultAsync(() =>
     domainChallengeLevels,
     puzzlePlaces,
     shrineKeySources,
-    shopIdShopGoodMap,
     paimonsBargainsRotation,
     frostbearingTreeLevels,
     reliquarySets,
@@ -170,7 +167,6 @@ getResultAsync(() =>
         puzzlePlaces.filter(({ kind }) => kind === PuzzleKind.Seelie),
         puzzlePlaces.filter(({ kind }) => kind === PuzzleKind.SeelieCourt).map(({ position }) => position),
       ),
-      shopIdShopGoodMap,
       shrineKeySources,
       shrinePlaces: puzzlePlaces.filter(({ kind }) => kind === PuzzleKind.ShrineOfDepths),
       startingCharacterIdKitMap,

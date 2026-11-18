@@ -19,7 +19,6 @@ import type { ShrineKeySource } from "#src/models/puzzle/ShrineKeySource";
 import type { ReliquaryPieceEntry } from "#src/models/reliquary/ReliquaryPieceEntry";
 import type { ReliquarySetData } from "#src/models/reliquary/ReliquarySetData";
 import type { PaimonsBargainsRotation } from "#src/models/shop/PaimonsBargainsRotation";
-import type { ShopGood } from "#src/models/shop/ShopGood";
 import type { Tip } from "#src/models/tip/Tip";
 import type { WildlifePlace } from "#src/models/wildlife/WildlifePlace";
 import type { WindriseData } from "#src/models/windrise/WindriseData";
@@ -68,8 +67,6 @@ export interface WorldTables {
   reliquarySets: readonly ReliquarySetData[];
   // The Seelies of Mondstadt, each paired with its court, which a sight trail leads to while it rests
   seelies: Seelie[];
-  // Each city vendor's shop's goods, by the shop's id, which a vendor's talk opens the shop of
-  shopIdShopGoodMap: ReadonlyMap<number, ShopGood[]>;
   // The Shrine of Depths keys of Mondstadt's region, each opening the shrines of that region
   shrineKeySources: ShrineKeySource[];
   // The Shrines of Depths the official map marks in Mondstadt, each opened by a key of its region

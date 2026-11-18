@@ -1427,13 +1427,14 @@ useWorldSaveSync({
       </template>
       <template #[ScreenKind.PaimonsBargains]>
         <PaimonsBargainsScreen
+          v-if="records.shopIdShopGoodMap"
           v-model:characters="characters"
           v-model:purchases="shopPurchases"
           :adventure-rank="rank"
           :character-data-map="statTables.characterDataMap"
           :game-text
           :get-world-now
-          :goods="shopIdShopGoodMap.get(PAIMON_BARGAINS_SHOP_ID) ?? []"
+          :goods="records.shopIdShopGoodMap?.get(PAIMON_BARGAINS_SHOP_ID) ?? []"
           :inventory
           :material-data-map
           :name-text
@@ -1535,12 +1536,12 @@ useWorldSaveSync({
     />
     <FishingScreen v-if="screenKind === ScreenKind.Fishing" :view="castView" />
     <ShopScreen
-      v-if="screenKind === ScreenKind.Shop"
+      v-if="screenKind === ScreenKind.Shop && records.shopIdShopGoodMap"
       v-model:purchases="shopPurchases"
       :adventure-rank="rank"
       :game-text
       :get-world-now
-      :goods="shopIdShopGoodMap.get(shopId) ?? []"
+      :goods="records.shopIdShopGoodMap.get(shopId) ?? []"
       :inventory
       :material-data-map
       :name-text
