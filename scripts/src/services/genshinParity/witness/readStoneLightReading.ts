@@ -37,84 +37,91 @@ export const readStoneLightReading = async (
   referenceId: string,
   witness: DerivedAssetComponent,
   isSelf = false,
+  pageRoot?: string,
 ): Promise<StoneLightReading> => {
   await fetchReferences();
-  return withReferencePage(referenceId, witness, async ({ checkIsScored, height, image, page }) => {
-    await setPageWitnessView(page, {});
-    const {
-      targets: {
-        albedo = new Float32Array(),
-        depth = new Float32Array(),
-        emission = new Float32Array(),
-        normal = new Float32Array(),
-        occlusion = new Float32Array(),
-        part = new Float32Array(),
-        shadow = new Float32Array(),
-      },
-      width,
-    } = await readWitnessTargets(page, [
-      WitnessTargetName.Albedo,
-      WitnessTargetName.Depth,
-      WitnessTargetName.Emission,
-      WitnessTargetName.Normal,
-      WitnessTargetName.Occlusion,
-      WitnessTargetName.Part,
-      WitnessTargetName.Shadow,
-    ]);
-    const sky = await readPageFunction<{ matrixWorld: number[]; projectionMatrixInverse: number[] }>(
-      page,
-      "getSceneSky",
-    );
-    const fog = await readPageFunction<SceneFog>(page, "getSceneFog");
-    const whiteBalance = new Matrix3().fromArray(await readPageFunction<number[]>(page, "getSceneWhiteBalance"));
-    const { direction } = await page.evaluate(() => window.setSceneLights({}));
-    const source = isSelf
-      ? await shootWitnessFamilies(page, await readWitnessFamilies(page), { height, width })
-      : image;
-    await setPageWitnessView(page, {});
-    const referenceShot = await readRawRgb(source, width, height);
-    const matrixWorld = new Matrix4().fromArray(sky.matrixWorld);
-    const projectionMatrixInverse = new Matrix4().fromArray(sky.projectionMatrixInverse);
-    const eye = new Vector3().setFromMatrixPosition(matrixWorld);
-    const sun = new Vector3(...direction).normalize();
-    const scatterDirection = new Vector3(...fog.scatterDirection).normalize();
-    const pixels: StoneLightPixel[] = [];
-    for (let pixel = 0; pixel < width * height; pixel++) {
-      if (!checkIsPartInterior(part, width, height, pixel) || !checkIsScored(pixel, width)) continue;
-      const pixelDepth = depth[pixel * 4] ?? 0;
-      const point = computePixelPoint(pixel, { height, width }, pixelDepth, { matrixWorld, projectionMatrixInverse });
-      const faceNormal = new Vector3(
-        normal[pixel * 4] ?? 0,
-        normal[pixel * 4 + 1] ?? 0,
-        normal[pixel * 4 + 2] ?? 0,
-      ).normalize();
-      const harmonics = Array.from({ length: STONE_HARMONIC_COUNT }, () => 0);
-      computeStoneHarmonics(faceNormal.toArray(), harmonics);
-      const rampCoordinate = computeStoneRampCoordinate(faceNormal.dot(sun), shadow[pixel * 4] ?? 0);
-      const ray = point.clone().sub(eye).normalize();
-      const scatter = Math.min(Math.max(ray.dot(scatterDirection), 0) ** fog.scatterPower * fog.scatterStrength, 1);
-      const band = STONE_LIGHT_DEPTH_BANDS.findIndex((far) => pixelDepth < far);
-      const heightBand = STONE_HEIGHT_BANDS.findIndex((top) => point.y < top);
-      const rampBin = Math.min(Math.floor(rampCoordinate * RAMP_BIN_COUNT), RAMP_BIN_COUNT - 1);
-      const upwardBin = Math.min(Math.floor(((faceNormal.y + 1) / 2) * UPWARD_BIN_COUNT), UPWARD_BIN_COUNT - 1);
-      pixels.push({
-        point: point.toArray(),
-        sample: {
-          albedo: [albedo[pixel * 4] ?? 0, albedo[pixel * 4 + 1] ?? 0, albedo[pixel * 4 + 2] ?? 0],
-          bin: `${band}${ID_SEPARATOR}${heightBand}${ID_SEPARATOR}${rampBin}${ID_SEPARATOR}${upwardBin}`,
-          display: getPixelDisplayColor(referenceShot, pixel),
-          emission: [emission[pixel * 4] ?? 0, emission[pixel * 4 + 1] ?? 0, emission[pixel * 4 + 2] ?? 0],
-          harmonics,
-          height: point.y,
-          lightBin: `${rampBin}${ID_SEPARATOR}${upwardBin}`,
-          occlusion: occlusion[pixel * 4] ?? 1,
-          opacity: 0,
-          part: part[pixel * 4] ?? 0,
-          rampCoordinate,
-          scatter,
+  return withReferencePage(
+    referenceId,
+    witness,
+    async ({ checkIsScored, height, image, page }) => {
+      await setPageWitnessView(page, {});
+      const {
+        targets: {
+          albedo = new Float32Array(),
+          depth = new Float32Array(),
+          emission = new Float32Array(),
+          normal = new Float32Array(),
+          occlusion = new Float32Array(),
+          part = new Float32Array(),
+          shadow = new Float32Array(),
         },
-      });
-    }
-    return { eye: eye.toArray(), fog, pixels, whiteBalance };
-  });
+        width,
+      } = await readWitnessTargets(page, [
+        WitnessTargetName.Albedo,
+        WitnessTargetName.Depth,
+        WitnessTargetName.Emission,
+        WitnessTargetName.Normal,
+        WitnessTargetName.Occlusion,
+        WitnessTargetName.Part,
+        WitnessTargetName.Shadow,
+      ]);
+      const sky = await readPageFunction<{ matrixWorld: number[]; projectionMatrixInverse: number[] }>(
+        page,
+        "getSceneSky",
+      );
+      const fog = await readPageFunction<SceneFog>(page, "getSceneFog");
+      const whiteBalance = new Matrix3().fromArray(await readPageFunction<number[]>(page, "getSceneWhiteBalance"));
+      const { direction } = await page.evaluate(() => window.setSceneLights({}));
+      const source = isSelf
+        ? await shootWitnessFamilies(page, await readWitnessFamilies(page), { height, width })
+        : image;
+      await setPageWitnessView(page, {});
+      const referenceShot = await readRawRgb(source, width, height);
+      const matrixWorld = new Matrix4().fromArray(sky.matrixWorld);
+      const projectionMatrixInverse = new Matrix4().fromArray(sky.projectionMatrixInverse);
+      const eye = new Vector3().setFromMatrixPosition(matrixWorld);
+      const sun = new Vector3(...direction).normalize();
+      const scatterDirection = new Vector3(...fog.scatterDirection).normalize();
+      const pixels: StoneLightPixel[] = [];
+      for (let pixel = 0; pixel < width * height; pixel++) {
+        if (!checkIsPartInterior(part, width, height, pixel) || !checkIsScored(pixel, width)) continue;
+        const pixelDepth = depth[pixel * 4] ?? 0;
+        const point = computePixelPoint(pixel, { height, width }, pixelDepth, { matrixWorld, projectionMatrixInverse });
+        const faceNormal = new Vector3(
+          normal[pixel * 4] ?? 0,
+          normal[pixel * 4 + 1] ?? 0,
+          normal[pixel * 4 + 2] ?? 0,
+        ).normalize();
+        const harmonics = Array.from({ length: STONE_HARMONIC_COUNT }, () => 0);
+        computeStoneHarmonics(faceNormal.toArray(), harmonics);
+        const rampCoordinate = computeStoneRampCoordinate(faceNormal.dot(sun), shadow[pixel * 4] ?? 0);
+        const ray = point.clone().sub(eye).normalize();
+        const scatter = Math.min(Math.max(ray.dot(scatterDirection), 0) ** fog.scatterPower * fog.scatterStrength, 1);
+        const band = STONE_LIGHT_DEPTH_BANDS.findIndex((far) => pixelDepth < far);
+        const heightBand = STONE_HEIGHT_BANDS.findIndex((top) => point.y < top);
+        const rampBin = Math.min(Math.floor(rampCoordinate * RAMP_BIN_COUNT), RAMP_BIN_COUNT - 1);
+        const upwardBin = Math.min(Math.floor(((faceNormal.y + 1) / 2) * UPWARD_BIN_COUNT), UPWARD_BIN_COUNT - 1);
+        pixels.push({
+          point: point.toArray(),
+          sample: {
+            albedo: [albedo[pixel * 4] ?? 0, albedo[pixel * 4 + 1] ?? 0, albedo[pixel * 4 + 2] ?? 0],
+            bin: `${band}${ID_SEPARATOR}${heightBand}${ID_SEPARATOR}${rampBin}${ID_SEPARATOR}${upwardBin}`,
+            display: getPixelDisplayColor(referenceShot, pixel),
+            emission: [emission[pixel * 4] ?? 0, emission[pixel * 4 + 1] ?? 0, emission[pixel * 4 + 2] ?? 0],
+            harmonics,
+            height: point.y,
+            lightBin: `${rampBin}${ID_SEPARATOR}${upwardBin}`,
+            occlusion: occlusion[pixel * 4] ?? 1,
+            opacity: 0,
+            part: part[pixel * 4] ?? 0,
+            rampCoordinate,
+            scatter,
+          },
+        });
+      }
+      return { eye: eye.toArray(), fog, pixels, whiteBalance };
+    },
+    undefined,
+    pageRoot,
+  );
 };

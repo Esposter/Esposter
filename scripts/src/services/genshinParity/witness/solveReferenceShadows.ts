@@ -73,6 +73,7 @@ export const solveReferenceShadows = async (
   referenceId: string,
   witness: DerivedAssetComponent,
   isSolved: boolean,
+  pageRoot?: string,
 ): Promise<{
   direction: Vector;
   distance: number;
@@ -86,7 +87,7 @@ export const solveReferenceShadows = async (
   await fetchReferences();
   const referencePath = await getReferencePath(referenceId);
   const [{ checkIsScored, close, image, page }, { width: referenceWidth }] = await Promise.all([
-    openWitnessPage(referenceId, witness, SHADOW_WIDTH),
+    openWitnessPage(referenceId, witness, SHADOW_WIDTH, undefined, undefined, pageRoot),
     sharp(referencePath).metadata(),
   ]);
   return withFinalizerAsync(

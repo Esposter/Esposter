@@ -27,8 +27,16 @@ export const readDisplaySamples = async (
   referenceId: string,
   component: DerivedAssetComponent,
   minDisplay: number,
+  pageRoot?: string,
 ): Promise<DisplaySample[]> => {
-  const { checkIsScored, close, height, image, page } = await openWitnessPage(referenceId, component, DISPLAY_WIDTH);
+  const { checkIsScored, close, height, image, page } = await openWitnessPage(
+    referenceId,
+    component,
+    DISPLAY_WIDTH,
+    undefined,
+    undefined,
+    pageRoot,
+  );
   const { targets, width } = await withFinalizerAsync(
     async () => {
       const { pose } = await solveReferenceCamera(page, referenceId, component);

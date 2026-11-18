@@ -10,11 +10,14 @@ import { toSkyReadings } from "#src/services/genshinParity/sky/toSkyReadings";
 // The atmosphere pass: at each current build's reference's camera, its sky and the scene's as statistics blind to
 // Where their clouds stand (`readCloudStatistics`), each held within the spread two halves of the reference's own sky
 // Stand apart, and the clear sky's colour within the distance two colours side by side are told apart at
-export const measureAtmosphere = async (component: DerivedAssetComponent): Promise<ParityPassMeasure> => {
+export const measureAtmosphere = async (
+  component: DerivedAssetComponent,
+  pageRoot?: string,
+): Promise<ParityPassMeasure> => {
   const measures: ParityPassMeasure[] = [];
   for (const referenceId of getCurrentBuildReferenceIds(component)) {
     // oxlint-disable-next-line no-await-in-loop -- One device: each reference's sky is read from its own browser render on the GPU, and parallel renders exhaust the free memory each holds
-    const { distance, ours, reference, skyCount, spread } = await readCloudStatistics(referenceId, component);
+    const { distance, ours, reference, skyCount, spread } = await readCloudStatistics(referenceId, component, pageRoot);
     measures.push({
       notes: [`${referenceId}: ${skyCount} pixels of sky; ${formatSkyComparison(ours, reference)}`],
       readings: toSkyReadings(referenceId, distance, spread),

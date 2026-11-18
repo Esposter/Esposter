@@ -52,4 +52,28 @@ describe(measureCamera, () => {
       { gate: FRAME_GATE_PIXELS, name: "global-bar", unit: "px", value: 5 },
     ]);
   });
+
+  test("opens each reference's witness page on the run's parity page root", async () => {
+    expect.hasAssertions();
+
+    openWitnessPage.mockResolvedValue({
+      checkIsScored: () => false,
+      close: () => Promise.resolve(),
+      height: 0,
+      image: Buffer.alloc(0),
+      page: {} as Page,
+    });
+    solveReferenceCamera.mockResolvedValue({ errors: [], names: [], pose: [], rms: 5 });
+
+    await measureCamera(DerivedAssetComponent.Windrise, "http://localhost:3013/parity/");
+
+    expect(openWitnessPage).toHaveBeenCalledWith(
+      "own-bar",
+      DerivedAssetComponent.Windrise,
+      undefined,
+      undefined,
+      undefined,
+      "http://localhost:3013/parity/",
+    );
+  });
 });

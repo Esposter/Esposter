@@ -24,7 +24,7 @@ import { shootWitnessFamilies } from "#src/services/genshinParity/witness/shootW
 // Stone program cuts it), the reference's frame there against the frame our stand-in lights under the same camera. Each
 // Family's glow is held to where two colours side by side are just told apart, and its structure to the frame's own
 // Softness, the reference moved across by the frame's gate, as a surface's structure is gated at its outline's
-export const measureGlow = async (component: DerivedAssetComponent): Promise<ParityPassMeasure> => {
+export const measureGlow = async (component: DerivedAssetComponent, pageRoot?: string): Promise<ParityPassMeasure> => {
   await fetchReferences();
   return measureEachReference(
     component,
@@ -87,5 +87,6 @@ export const measureGlow = async (component: DerivedAssetComponent): Promise<Par
       };
     },
     SHAPE_WIDTH,
+    pageRoot,
   );
 };

@@ -12,6 +12,7 @@ export const readOurFrame = async (
   referenceId: string,
   component: DerivedAssetComponent,
   propOverrides?: Record<string, unknown>,
+  pageRoot?: string,
 ): Promise<{ frame: Buffer; height: number; image: Buffer }> => {
   const { close, height, image, page } = await openWitnessPage(
     referenceId,
@@ -19,6 +20,7 @@ export const readOurFrame = async (
     DISPLAY_WIDTH,
     undefined,
     propOverrides,
+    pageRoot,
   );
   return withFinalizerAsync(
     async () => {

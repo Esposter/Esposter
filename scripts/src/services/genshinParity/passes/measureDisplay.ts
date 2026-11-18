@@ -26,12 +26,15 @@ const MIN_SAMPLE_COUNT = 3;
 // Solves, so no reference measures it. The bloom's reading (`computeBloomReading`) follows, over the brightest pixels of each
 // Reference whose screen draws the bloom (`getBloomReferenceIds`), our frame drawn with the game's bloom less ours drawn
 // Without it, gated at zero where the drawn bloom closes
-export const measureDisplay = async (component: DerivedAssetComponent): Promise<ParityPassMeasure> => {
+export const measureDisplay = async (
+  component: DerivedAssetComponent,
+  pageRoot?: string,
+): Promise<ParityPassMeasure> => {
   await fetchReferences();
   const measures: ParityPassMeasure[] = [];
   const referenceIds = getCurrentBuildReferenceIds(component);
   for (const referenceId of referenceIds) {
-    const samples = await readDisplaySamples(referenceId, component, MIN_DISPLAY);
+    const samples = await readDisplaySamples(referenceId, component, MIN_DISPLAY, pageRoot);
     if (samples.length < MIN_SAMPLE_COUNT) {
       measures.push({
         notes: [`${referenceId}: ${samples.length} pixels qualify, too few to measure its contrast`],
@@ -58,7 +61,7 @@ export const measureDisplay = async (component: DerivedAssetComponent): Promise<
     });
   }
   for (const referenceId of getBloomReferenceIds(referenceIds)) {
-    const { bloomed, height, reference, unbloomed } = await readBloomFrames(referenceId, component);
+    const { bloomed, height, reference, unbloomed } = await readBloomFrames(referenceId, component, pageRoot);
     const reading = computeBloomReading(reference, bloomed, unbloomed, DISPLAY_WIDTH, height);
     measures.push({
       notes: [

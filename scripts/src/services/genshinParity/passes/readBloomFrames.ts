@@ -10,9 +10,10 @@ import { readRawRgb } from "#src/services/genshinParity/shared/readRawRgb";
 export const readBloomFrames = async (
   referenceId: string,
   component: DerivedAssetComponent,
+  pageRoot?: string,
 ): Promise<{ bloomed: Buffer; height: number; reference: Buffer; unbloomed: Buffer }> => {
-  const bloomed = await readOurFrame(referenceId, component, { isBloomed: undefined });
-  const unbloomed = await readOurFrame(referenceId, component, { isBloomed: false });
+  const bloomed = await readOurFrame(referenceId, component, { isBloomed: undefined }, pageRoot);
+  const unbloomed = await readOurFrame(referenceId, component, { isBloomed: false }, pageRoot);
   return {
     bloomed: bloomed.frame,
     height: bloomed.height,

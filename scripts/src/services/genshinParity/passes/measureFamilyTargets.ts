@@ -28,6 +28,7 @@ export const measureFamilyTargets = async (
     page: Page,
     camera: NonNullable<WitnessView["camera"]>,
   ) => Promisable<ParityPassMeasure>,
+  pageRoot?: string,
 ): Promise<ParityPassMeasure> => {
   await fetchReferences();
   return measureEachReference(
@@ -43,5 +44,6 @@ export const measureFamilyTargets = async (
       return compare(referenceId, exportsRead, oursRead, page, camera);
     },
     SHAPE_WIDTH,
+    pageRoot,
   );
 };

@@ -12,8 +12,9 @@ export const readReferenceStoneSamples = async (
   referenceId: string,
   witness: DerivedAssetComponent,
   isSelf = false,
+  pageRoot?: string,
 ): Promise<{ samples: StoneLightSample[]; whiteBalance: Matrix3 }> => {
-  const { eye, fog, pixels, whiteBalance } = await readStoneLightReading(referenceId, witness, isSelf);
+  const { eye, fog, pixels, whiteBalance } = await readStoneLightReading(referenceId, witness, isSelf, pageRoot);
   for (const { point, sample } of pixels) sample.opacity = computeFogOpacity(eye, point, fog);
   return { samples: pixels.map(({ sample }) => sample), whiteBalance };
 };

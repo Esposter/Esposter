@@ -24,18 +24,18 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 // Edges (`solveReferenceShadows`), gated in the reference's pixels as any place on the frame is; a reference showing no
 // Shadow's edge on a receiver reads none. The glow the materials add over their lit colour is lit too, so the same pass
 // Reads it against the game's frame (`measureGlow`)
-export const measureLight = async (component: DerivedAssetComponent): Promise<ParityPassMeasure> => {
+export const measureLight = async (component: DerivedAssetComponent, pageRoot?: string): Promise<ParityPassMeasure> => {
   const lights = await readPublishedGameData<Record<string, StoneLight>>(STONE_LIGHT_KEY);
   const measures: ParityPassMeasure[] = [];
   for (const referenceId of getCurrentBuildReferenceIds(component)) {
     const timeOfDay = ParityReferenceMap[referenceId]?.props?.timeOfDay;
     const light = typeof timeOfDay === "string" ? lights[timeOfDay] : undefined;
     if (!light) throw new InvalidOperationError(Operation.Read, STONE_LIGHT_KEY, `no light for ${referenceId}`);
-    const reference = await readReferenceStoneSamples(referenceId, component);
-    const self = await readReferenceStoneSamples(referenceId, component, true);
+    const reference = await readReferenceStoneSamples(referenceId, component, false, pageRoot);
+    const self = await readReferenceStoneSamples(referenceId, component, true, pageRoot);
     const { distance, heights } = readStoneColourDistance(reference.samples, light, reference.whiteBalance);
     const floor = readStoneColourDistance(self.samples, light, self.whiteBalance).distance;
-    const shadows = await solveReferenceShadows(referenceId, component, false);
+    const shadows = await solveReferenceShadows(referenceId, component, false, pageRoot);
     measures.push({
       notes: [
         `${referenceId} shadows: ${shadows.edgeCount} edge pixels on its flat receivers, the scene's beside them: ${shadows.imagePath}`,
@@ -49,6 +49,6 @@ export const measureLight = async (component: DerivedAssetComponent): Promise<Pa
       ],
     });
   }
-  const glow = await measureGlow(component);
+  const glow = await measureGlow(component, pageRoot);
   return mergeParityPassMeasures([...measures, glow]);
 };

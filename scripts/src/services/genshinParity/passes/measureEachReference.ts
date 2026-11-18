@@ -15,12 +15,19 @@ export const measureEachReference = async (
     openedPage: Awaited<ReturnType<typeof openWitnessPage>>,
   ) => Promise<ParityPassMeasure>,
   width?: number,
+  pageRoot?: string,
 ): Promise<ParityPassMeasure> => {
   const measures: ParityPassMeasure[] = [];
   for (const referenceId of referenceIds)
     measures.push(
       // oxlint-disable-next-line no-await-in-loop -- One device: each reference's witness page is its own browser render on the GPU, and parallel renders exhaust the free memory each holds
-      await withReferencePage(referenceId, component, (openedPage) => measureReference(referenceId, openedPage), width),
+      await withReferencePage(
+        referenceId,
+        component,
+        (openedPage) => measureReference(referenceId, openedPage),
+        width,
+        pageRoot,
+      ),
     );
   return mergeParityPassMeasures(measures);
 };

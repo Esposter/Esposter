@@ -15,6 +15,7 @@ import { withFinalizerAsync } from "@esposter/shared";
 export const readCloudStatistics = async (
   referenceId: string,
   witness: DerivedAssetComponent,
+  pageRoot?: string,
 ): Promise<{
   distance: SkyDistance;
   ours: SkyStatistics;
@@ -23,7 +24,14 @@ export const readCloudStatistics = async (
   spread: SkyDistance;
 }> => {
   await fetchReferences();
-  const { checkIsScored, close, height, image, page } = await openWitnessPage(referenceId, witness, CLOUDS_WIDTH);
+  const { checkIsScored, close, height, image, page } = await openWitnessPage(
+    referenceId,
+    witness,
+    CLOUDS_WIDTH,
+    undefined,
+    undefined,
+    pageRoot,
+  );
   return withFinalizerAsync(
     async () => {
       const { compareShot, reference, referenceClouds, sky, spread } = await readSkyComparison(
