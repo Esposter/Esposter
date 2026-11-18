@@ -3,6 +3,7 @@ import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { PostInPost } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
 import { createMockAuthSession, createMockCaller, createMockContext } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
 import { blockRouter } from "#server/trpc/routers/block";
@@ -10,15 +11,17 @@ import { likeRouter } from "#server/trpc/routers/like";
 import { expectLiveTopicCoverage } from "#server/trpc/routers/liveTopicCoverage.test";
 import { postRouter } from "#server/trpc/routers/post";
 import { PostSortType } from "#shared/models/post/PostSortType";
+import { readTopicsHeader } from "#shared/services/realtime/readTopicsHeader";
 import {
   blocksInSocial,
   DatabaseEntityType,
   DerivedDatabaseEntityType,
+  getScopeTopic,
   postsInPost,
   PublicUserColumns,
 } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
-import { eq } from "drizzle-orm";
+import { eq, getTableName } from "drizzle-orm";
 import { v7 } from "uuid";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
@@ -246,6 +249,27 @@ describe("postRouter", () => {
 
     expect(deletedComment.removedIds).toHaveLength(3);
     expect(post.commentCount).toBe(0);
+  });
+
+  // A reply page reads the replies of its parent by `parentId`, so the delete of that parent takes the page's replies
+  // With it and wakes the page, which watches the parent's value of `parentId` and never the table as a whole
+  test("deleting a comment wakes the reader of its replies' page", async () => {
+    expect.hasAssertions();
+
+    const newPost = await postCaller.createPost({ title });
+    const { comment: newComment } = await postCaller.createComment({ description, id: v7(), parentId: newPost.id });
+    await postCaller.createComment({ description, id: v7(), parentId: newComment.id });
+    const repliesHeaders = new Headers();
+    await createCallerFactory(postRouter)({ ...mockContext, responseHeaders: repliesHeaders }).readPosts({
+      parentId: newComment.id,
+    });
+    MockPublishedTopics.length = 0;
+
+    await postCaller.deleteComment(newComment.id);
+
+    const repliesTopics = readTopicsHeader(repliesHeaders, "readPosts").flatMap(({ topics }) => topics);
+    expect(repliesTopics).toContain(getScopeTopic(getTableName(postsInPost), "parentId", newComment.id));
+    expect(MockPublishedTopics).toContain(getScopeTopic(getTableName(postsInPost), "parentId", newComment.id));
   });
 
   test("deletes comment with deleting post", async () => {

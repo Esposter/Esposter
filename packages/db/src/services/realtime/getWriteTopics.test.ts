@@ -130,7 +130,8 @@ describe(getWriteTopics, () => {
   });
 
   // A resource delete changes its own row and every row its foreign keys cascade to, which RETURNING does not report, so
-  // The thirteen child tables are named table-wide beside the resource's own topics
+  // The thirteen child tables are named table-wide beside the resource's own topics. The three that reference the
+  // Resource by a scope column are also named by its id, the value the child rows held
   test("a delete names the scope values of the rows it deletes and the tables its foreign keys cascade to", async () => {
     expect.hasAssertions();
 
@@ -148,6 +149,9 @@ describe(getWriteTopics, () => {
         "resource_resources:*",
         `resource_resources:id=${resourceId}`,
         `resource_resources:userId=${userId}`,
+        `app_bookmarks:resourceId=${resourceId}`,
+        `resource_resourcePublications:resourceId=${resourceId}`,
+        `resource_surveyResponses:resourceId=${resourceId}`,
         ...cascadingResourceTables.map((tableName) => `${tableName}:*`),
       ].toSorted(),
     );
