@@ -1,5 +1,6 @@
 import type { RiverCoursePoint } from "#src/models/water/RiverCoursePoint";
 
+import { computeGroundDistance } from "#src/services/world/computeGroundDistance";
 import { BEND_FOAM_FULL_RADIUS_WIDTHS, RIVER_BEND_FOAM_ATTRIBUTE } from "#src/water/constants";
 import { BufferGeometry, Float32BufferAttribute } from "three";
 
@@ -17,8 +18,8 @@ export const createRiverGeometry = (course: readonly RiverCoursePoint[]): Buffer
     const { level, width, x, z } = point;
     const previous = course[Math.max(index - 1, 0)] ?? point;
     const next = course[Math.min(index + 1, course.length - 1)] ?? point;
-    const inLength = Math.hypot(x - previous.x, z - previous.z);
-    const outLength = Math.hypot(next.x - x, next.z - z);
+    const inLength = computeGroundDistance(point, previous);
+    const outLength = computeGroundDistance(next, point);
     downstream += inLength;
     // A course turning straight back has its neighbours on one place, so the point takes the way it came in, or else
     // The way it goes out; a point with neither, alone or on both its neighbours, narrows to nothing

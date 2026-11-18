@@ -7,6 +7,7 @@ import { getQuestTargetId } from "#src/services/quest/getQuestTargetId";
 import { useWorldGroundStore } from "#src/store/ground";
 import { useWorldQuestsStore } from "#src/store/quests";
 import { useWorldSessionStore } from "#src/store/session";
+import { computeGroundDistance } from "genshin-engine";
 import { storeToRefs } from "pinia";
 import { computed, watch } from "vue";
 
@@ -31,11 +32,10 @@ export const useWorldQuestTargets = ({ mapCamera, windrise }: WorldQuestTargetsO
     const distanceMap = new Map<string, number>();
     if (!windrise.value) return distanceMap;
     const { regionDataMap, residentSpots } = windrise.value;
-    const { x, z } = mapCamera.value;
     for (const quest of questsInProgress.value) {
       const targetId = getQuestTargetId(quest, questProgressMap.value.get(quest.id));
       const position = targetId ? findQuestTargetPosition(regionDataMap, residentSpots, targetId) : undefined;
-      if (position) distanceMap.set(quest.id, Math.hypot(position.x - x, position.z - z));
+      if (position) distanceMap.set(quest.id, computeGroundDistance(position, mapCamera.value));
     }
     return distanceMap;
   });
@@ -49,7 +49,7 @@ export const useWorldQuestTargets = ({ mapCamera, windrise }: WorldQuestTargetsO
     if (!position) return undefined;
     const { x, z } = mapCamera.value;
     return {
-      distance: Math.hypot(position.x - x, position.z - z),
+      distance: computeGroundDistance(position, mapCamera.value),
       height: getGroundHeight(position.x, position.z) - getGroundHeight(x, z),
     };
   });

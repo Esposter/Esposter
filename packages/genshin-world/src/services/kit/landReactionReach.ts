@@ -24,6 +24,7 @@ import { dealKitEnemyDamage } from "#src/services/kit/dealKitEnemyDamage";
 import { getDeployedReactionBonuses } from "#src/services/kit/getDeployedReactionBonuses";
 import { getPartyTransformativeDamage } from "#src/services/kit/getPartyTransformativeDamage";
 import { priceEnemyReactions } from "#src/services/kit/priceEnemyReactions";
+import { computeGroundDistance } from "genshin-engine";
 
 // A reaction that landed on an enemy, or burst from a Dendro Core, reaching every other standing enemy within its radius
 // Of it, written into each in place and priced from the combatant that triggered it. An Overloaded's or a Superconduct's
@@ -55,7 +56,7 @@ export const landReactionReach = (
   const elementalMastery = combatant.attributes.attributeTotalMap[Attribute.ElementalMastery];
   // Electro-Charged arcs to the one nearest Wet enemy within its reach, and every other reaction reaches them all
   const reachedEnemies = Array.from(enemies, (enemy) => ({
-    distance: Math.hypot(enemy.position.x - origin.position.x, enemy.position.z - origin.position.z),
+    distance: computeGroundDistance(enemy.position, origin.position),
     enemy,
   }))
     .filter(

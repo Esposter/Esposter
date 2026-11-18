@@ -4,6 +4,7 @@ import type { KitPickUp } from "#src/models/kit/KitPickUp";
 import type { GroundPoint } from "genshin-engine";
 
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
+import { computeGroundDistance } from "genshin-engine";
 
 // Whether a body standing where it stands picks up an effect: a pick-up that has not run out, may be picked up, and lies
 // Within its radius of the body
@@ -11,7 +12,7 @@ const checkIsPickedUp = (effect: KitEffect, body: GroundPoint): effect is KitPic
   effect.kind === "pickUp" &&
   effect.secondsRemaining > 0 &&
   effect.secondsRemaining <= effect.pickableSeconds &&
-  Math.hypot(effect.position.x - body.x, effect.position.z - body.z) <= effect.radius;
+  computeGroundDistance(effect.position, body) <= effect.radius;
 
 // The pick-ups the body of the character on the field stands within reach of, picked up once each may be: each is taken
 // Off the team's effects, so it never runs out and its kit hears no EffectExpired for it, then does what picking it up

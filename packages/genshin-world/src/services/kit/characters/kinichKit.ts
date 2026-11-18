@@ -15,6 +15,7 @@ import { generateKitNightsoulPoints } from "#src/services/kit/effects/generateKi
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 import { takeRandom } from "@esposter/shared";
+import { computeGroundDistance } from "genshin-engine";
 
 // Measured: gcsim (MIT) kinich/burst.go, the Ajaw's Dragon Breath is six lasers
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/kinich/burst.go
@@ -48,7 +49,7 @@ const castBlindSpot = (context: KitContext, target: Enemy) => {
     random,
   } = context;
   const { x, z } = target.position;
-  const distance = Math.hypot(body.position.x - x, body.position.z - z);
+  const distance = computeGroundDistance(body.position, target.position);
   const bearing = Math.atan2(body.position.x - x, body.position.z - z);
   const side = Math.floor(random() * 2) * 2 - 1;
   const centreAngle = bearing + (side * Math.PI) / 2;

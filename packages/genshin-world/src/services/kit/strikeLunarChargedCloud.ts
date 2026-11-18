@@ -9,6 +9,7 @@ import { ENEMY_CAPSULE_RADIUS } from "#src/services/enemy/constants";
 import { strikeLunarCharged } from "#src/services/kit/strikeLunarCharged";
 import { LUNAR_CHARGED_CLOUD_RADIUS, LUNAR_CHARGED_CLOUD_TICK_SECONDS } from "#src/services/party/constants";
 import { runDownSeconds } from "#src/services/runDownSeconds";
+import { computeGroundDistance } from "genshin-engine";
 
 // The party's Lunar-Charged cloud some seconds on, written in place: each tick that falls due while it stands strikes
 // Every standing enemy within its radius of the character on the field, measured to the enemy's edge, whose Electro and
@@ -25,8 +26,7 @@ export const strikeLunarChargedCloud = (stepSeconds: number, position: GroundPoi
         !elementalState.isLunarCharged ||
         !checkIsElectroCharged(elementalState.auras) ||
         elementalState.seconds - elementalState.lunarChargedSeconds < LUNAR_CHARGED_INTERNAL_COOLDOWN_SECONDS ||
-        Math.hypot(enemy.position.x - position.x, enemy.position.z - position.z) >
-          LUNAR_CHARGED_CLOUD_RADIUS + ENEMY_CAPSULE_RADIUS
+        computeGroundDistance(enemy.position, position) > LUNAR_CHARGED_CLOUD_RADIUS + ENEMY_CAPSULE_RADIUS
       )
         continue;
       elementalState.lunarChargedSeconds = elementalState.seconds;

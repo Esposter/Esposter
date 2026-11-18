@@ -23,17 +23,16 @@ import { PoiseTypeSettingsMap } from "#src/services/enemy/PoiseTypeSettingsMap";
 import { setEnemyState } from "#src/services/enemy/setEnemyState";
 import { runDownSeconds } from "#src/services/runDownSeconds";
 import { exhaustiveGuard } from "@esposter/shared";
-
-const computeDistance = (from: GroundPoint, to: GroundPoint): number => Math.hypot(to.x - from.x, to.z - from.z);
+import { computeGroundDistance } from "genshin-engine";
 
 const face = (enemy: Enemy, point: GroundPoint): void => {
-  if (computeDistance(enemy.position, point) === 0) return;
+  if (computeGroundDistance(point, enemy.position) === 0) return;
   enemy.heading = Math.atan2(point.x - enemy.position.x, point.z - enemy.position.z);
 };
 // Walks an enemy at most `distance` toward a point, facing it, and returns whether it has arrived
 const walkToward = (enemy: Enemy, point: GroundPoint, distance: number): boolean => {
   face(enemy, point);
-  const remaining = computeDistance(enemy.position, point);
+  const remaining = computeGroundDistance(point, enemy.position);
   if (remaining <= Math.max(distance, ENEMY_ARRIVAL_DISTANCE)) {
     enemy.position.x = point.x;
     enemy.position.z = point.z;
@@ -76,12 +75,12 @@ export const stepEnemy = (
       if (enemy.stateSeconds >= ENEMY_ALERT_SECONDS) setEnemyState(enemy, EnemyState.Chase);
       return undefined;
     case EnemyState.Chase: {
-      if (!target || computeDistance(enemy.position, enemy.home) > ENEMY_LEASH_DISTANCE) {
+      if (!target || computeGroundDistance(enemy.home, enemy.position) > ENEMY_LEASH_DISTANCE) {
         setEnemyState(enemy, EnemyState.Return);
         return undefined;
       }
 
-      const targetDistance = computeDistance(enemy.position, target);
+      const targetDistance = computeGroundDistance(target, enemy.position);
       if (targetDistance > ENEMY_ATTACK_RANGE)
         walkToward(enemy, target, Math.min(ENEMY_RUN_SPEED * stepSeconds, targetDistance - ENEMY_ATTACK_RANGE));
       else {
@@ -96,7 +95,7 @@ export const stepEnemy = (
         ? EnemyEvent.Defeated
         : undefined;
     case EnemyState.Idle: {
-      if (target && computeDistance(enemy.position, target) <= ENEMY_AGGRO_RANGE) {
+      if (target && computeGroundDistance(target, enemy.position) <= ENEMY_AGGRO_RANGE) {
         face(enemy, target);
         setEnemyState(enemy, EnemyState.Alert);
         return undefined;
@@ -134,7 +133,9 @@ export const stepEnemy = (
       if (target) face(enemy, target);
       if (enemy.stateSeconds < (getMove(enemy, moves)?.windupSeconds ?? ENEMY_WINDUP_SECONDS)) return undefined;
       setEnemyState(enemy, EnemyState.Recovery);
-      return target && computeDistance(enemy.position, target) <= ENEMY_ATTACK_REACH ? EnemyEvent.Strike : undefined;
+      return target && computeGroundDistance(target, enemy.position) <= ENEMY_ATTACK_REACH
+        ? EnemyEvent.Strike
+        : undefined;
     default:
       return exhaustiveGuard(enemy.state);
   }

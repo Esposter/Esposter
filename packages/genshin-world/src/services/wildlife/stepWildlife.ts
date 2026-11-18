@@ -11,8 +11,7 @@ import {
   WILDLIFE_ESCAPE_SECONDS,
   WILDLIFE_FLEE_SPEED,
 } from "#src/services/wildlife/constants";
-
-const computeDistance = (from: GroundPoint, to: GroundPoint): number => Math.hypot(to.x - from.x, to.z - from.z);
+import { computeGroundDistance } from "genshin-engine";
 
 const setWildlifeState = (wildlife: Wildlife, state: WildlifeState): void => {
   wildlife.state = state;
@@ -23,7 +22,7 @@ const setWildlifeState = (wildlife: Wildlife, state: WildlifeState): void => {
 // Is its one hit: the boar then runs off as a fleeing animal does, so its next charge waits until the target is in reach
 // Again. A target out of reach, or none, ends the charge where the boar stands. Returns whether this step's contact hit
 const stepBoarCharge = (boar: Wildlife, target: GroundPoint | undefined, stepSeconds: number): boolean => {
-  const distance = target === undefined ? Number.POSITIVE_INFINITY : computeDistance(boar.position, target);
+  const distance = target === undefined ? Number.POSITIVE_INFINITY : computeGroundDistance(target, boar.position);
   if (boar.state === WildlifeState.Idle) {
     if (distance <= WILDLIFE_CHARGE_REACH) setWildlifeState(boar, WildlifeState.Charging);
     return false;
@@ -52,7 +51,7 @@ export const stepWildlife = (wildlife: Wildlife, target: GroundPoint | undefined
   wildlife.stateSeconds += stepSeconds;
   if (wildlife.kind === WildlifeKind.Boar && wildlife.state !== WildlifeState.Fleeing)
     return stepBoarCharge(wildlife, target, stepSeconds);
-  const isInReach = target !== undefined && computeDistance(wildlife.position, target) <= WILDLIFE_ESCAPE_RADIUS;
+  const isInReach = target !== undefined && computeGroundDistance(target, wildlife.position) <= WILDLIFE_ESCAPE_RADIUS;
   if (wildlife.state === WildlifeState.Idle) {
     if (!isInReach) return false;
     setWildlifeState(wildlife, WildlifeState.Fleeing);

@@ -3,6 +3,7 @@ import type { GroundPoint } from "genshin-engine";
 
 import { EnemyState } from "#src/models/enemy/EnemyState";
 import { takeRandom } from "@esposter/shared";
+import { computeGroundDistance } from "genshin-engine";
 
 // A random living enemy whose ground position lies within a radius of a point, as gcsim's RandomEnemyWithinArea picks one
 // Of the enemies a circle reaches: each one within it is as likely as another, drawn from the world's seeded random
@@ -15,10 +16,7 @@ export const selectRandomKitEnemy = (
 ): Enemy | undefined => {
   const reachedEnemies: Enemy[] = [];
   for (const enemy of enemies)
-    if (
-      enemy.state !== EnemyState.Dead &&
-      Math.hypot(enemy.position.x - centre.x, enemy.position.z - centre.z) <= radius
-    )
+    if (enemy.state !== EnemyState.Dead && computeGroundDistance(enemy.position, centre) <= radius)
       reachedEnemies.push(enemy);
   return reachedEnemies.length === 0 ? undefined : takeRandom(reachedEnemies, random);
 };

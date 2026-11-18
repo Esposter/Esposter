@@ -9,6 +9,7 @@ import {
   CRYSTALLIZE_SHIELD_SECONDS,
 } from "#src/services/combat/shield/constants";
 import { castKitShield } from "#src/services/kit/effects/castKitShield";
+import { computeGroundDistance } from "genshin-engine";
 
 // The Crystallize shards the body of the character on the field stands within reach of, picked up once each may be:
 // Each ends and grants the team its Crystallize shield, which overwrites the one the team held, cast as the character
@@ -21,7 +22,7 @@ export const pickUpCrystallizeShards = (context: KitContext, fieldCharacterId: n
       effect.kind !== "crystallizeShard" ||
       effect.secondsRemaining <= 0 ||
       effect.secondsRemaining > CRYSTALLIZE_SHARD_SECONDS - CRYSTALLIZE_SHARD_PICKUP_DELAY_SECONDS ||
-      Math.hypot(effect.position.x - body.x, effect.position.z - body.z) > CRYSTALLIZE_SHARD_PICKUP_RADIUS
+      computeGroundDistance(effect.position, body) > CRYSTALLIZE_SHARD_PICKUP_RADIUS
     )
       continue;
     const { characterId, element, health } = effect;

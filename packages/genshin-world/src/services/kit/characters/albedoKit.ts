@@ -22,6 +22,7 @@ import { findStandingKitSummon } from "#src/services/kit/effects/findStandingKit
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getPartyMember } from "#src/services/party/getPartyMember";
+import { computeGroundDistance } from "genshin-engine";
 
 // Measured: gcsim v2.47.2 (MIT) albedo/skill.go, Abiogenesis: Solar Isotoma's field set 3 metres ahead of the body with a
 // Radius of 10, and each Transient Blossom set off by a hit on an enemy inside it once every 2 seconds
@@ -181,8 +182,7 @@ export const createAlbedoKitBehaviour = ({
       if (!solarIsotoma || solarIsotoma.secondsRemaining <= 0) return;
       const { position } = event.enemy;
       if (
-        Math.hypot(position.x - solarIsotoma.body.position.x, position.z - solarIsotoma.body.position.z) >
-          solarIsotomaRadius ||
+        computeGroundDistance(position, solarIsotoma.body.position) > solarIsotomaRadius ||
         !startKitCooldown(
           kitEffectState,
           characterId,

@@ -30,6 +30,7 @@ import { spendKitResource } from "#src/services/kit/effects/spendKitResource";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { toKitSeconds } from "#src/services/shared/toKitSeconds";
+import { computeGroundDistance } from "genshin-engine";
 
 // Measured: gcsim (MIT) layla/burst.go, Starlight Slug's field holds a circle of radius 12 round the body. Each tick strikes
 // The closest enemy in the circle, which the kit cannot pick, so each tick reaches every enemy in its reach, which
@@ -88,7 +89,7 @@ const findShootingStarTarget = ({ body, enemyMap }: KitContext): Enemy | undefin
   let targetDistance = Number.POSITIVE_INFINITY;
   for (const enemy of enemyMap.values()) {
     if (!checkIsEnemyStrikable(enemy)) continue;
-    const distance = Math.hypot(enemy.position.x - body.position.x, enemy.position.z - body.position.z);
+    const distance = computeGroundDistance(enemy.position, body.position);
     if (distance <= SHOOTING_STAR_REACH && distance < targetDistance) {
       target = enemy;
       targetDistance = distance;

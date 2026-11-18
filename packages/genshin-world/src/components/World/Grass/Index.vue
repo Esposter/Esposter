@@ -21,6 +21,7 @@ import {
 import { isWebGPURenderer, useLoop, useTres } from "@tresjs/core";
 import {
   checkTerrainDrawsChanged,
+  computeGroundDistance,
   createGrassCulling,
   createGrassGeometry,
   createGrassMaterial,
@@ -125,7 +126,7 @@ onBeforeRender(() => {
       .multiply(grassMesh.matrixWorld);
     culling.cull(renderer);
   }
-  const isFar = Math.hypot(eye.x - captureCenter.x, eye.z - captureCenter.z) > GRASS_RECAPTURE_DISTANCE;
+  const isFar = computeGroundDistance(eye, captureCenter) > GRASS_RECAPTURE_DISTANCE;
   if (
     !isFar &&
     !checkTerrainDrawsChanged(terrainOptions, capturedDraws, terrainDraws, captureCenter, GRASS_CAPTURE_SIZE / 2)

@@ -4,6 +4,7 @@ import type { KitBody } from "#src/models/kit/KitBody";
 
 import { ENEMY_CAPSULE_HEIGHT, ENEMY_CAPSULE_RADIUS } from "#src/services/enemy/constants";
 import { computeFacingAngle } from "#src/services/kit/computeFacingAngle";
+import { computeGroundDistance } from "genshin-engine";
 
 // Whether an area, a cylinder centred on the body's feet or ahead of them by its forward offset, reaches a target's
 // Capsule: within its radius plus the capsule's, within half its fan plus the capsule's angular half width as seen from
@@ -16,7 +17,7 @@ export const checkIsInAttackArea = (
 ): boolean => {
   const forward = area.forward ?? 0;
   const centre = { x: position.x - forward * Math.sin(facing), z: position.z - forward * Math.cos(facing) };
-  const distance = Math.hypot(target.position.x - centre.x, target.position.z - centre.z);
+  const distance = computeGroundDistance(target.position, centre);
   if (distance > area.radius + ENEMY_CAPSULE_RADIUS) return false;
   const capsuleAngle = distance > ENEMY_CAPSULE_RADIUS ? Math.asin(ENEMY_CAPSULE_RADIUS / distance) : Math.PI;
   const isInFan = computeFacingAngle(centre, facing, target.position) <= area.angle / 2 + capsuleAngle;

@@ -6,6 +6,7 @@ import { EnemyState } from "#src/models/enemy/EnemyState";
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
 import { computeFacingAngle } from "#src/services/kit/computeFacingAngle";
 import { TARGET_ANGLE_WEIGHT, TARGET_DISTANCE_WEIGHT } from "#src/services/kit/constants";
+import { computeGroundDistance } from "genshin-engine";
 
 // The enemy an action turns the body to as it starts: the living one scoring highest within its targeting area. The
 // Score is 0.7 × (1 − distance ÷ radius) + 0.3 × (1 − angle ÷ 180°). Every enemy stands on the ground, so the wiki's
@@ -19,7 +20,7 @@ export const selectAttackTarget = (
   let selectedScore = -Infinity;
   for (const enemy of enemies) {
     if (enemy.state === EnemyState.Dead || !checkIsInAttackArea(targetingArea, body, enemy)) continue;
-    const distance = Math.hypot(enemy.position.x - body.position.x, enemy.position.z - body.position.z);
+    const distance = computeGroundDistance(enemy.position, body.position);
     const angle = computeFacingAngle(body.position, body.facing, enemy.position);
     const score =
       TARGET_DISTANCE_WEIGHT * (1 - distance / targetingArea.radius) + TARGET_ANGLE_WEIGHT * (1 - angle / Math.PI);
