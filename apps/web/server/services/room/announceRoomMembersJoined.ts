@@ -64,7 +64,7 @@ export const announceRoomMembersJoined = async (
   }
   // A joiner's bookmark dock is told as a departure's is: a bookmark on the room reads as available to its members only
   await publishTopicsBestEffort(
-    userIds.map((userId) => getTopic(TopicKind.Bookmark, userId)),
+    () => userIds.map((userId) => getTopic(TopicKind.Bookmark, userId)),
     "Failed to publish the bookmarks of the joined members:",
   );
 };

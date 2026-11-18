@@ -24,7 +24,7 @@ export const announceRoomMemberDeparture = async ({
     callUserObjects([userId], (userObject) => userObject.broadcastEvent(event)),
   ]);
   await publishTopicsBestEffort(
-    [getTopic(TopicKind.Bookmark, userId)],
+    () => [getTopic(TopicKind.Bookmark, userId)],
     "Failed to publish the bookmarks of a departed member:",
   );
 };

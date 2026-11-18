@@ -19,7 +19,7 @@ export const executeAutomodAction = async (
 
   // Best-effort behind the action, which has already landed: a failed publish costs the moderators a refetch
   await publishTopicsBestEffort(
-    [getTopic(TopicKind.Room, input.roomId)],
+    () => [getTopic(TopicKind.Room, input.roomId)],
     "Failed to publish the room's topic of an automod action:",
   );
   await broadcastAdminAction(input.roomId, {
