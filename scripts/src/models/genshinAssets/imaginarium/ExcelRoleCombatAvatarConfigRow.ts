@@ -5,7 +5,7 @@ import type { ExcelRoleCombatAvatarConfigRowFieldDumpKey } from "#src/models/gen
 // Ids those openers play as and the four special guests' avatar ids. The dump scrambles every key, so each is read under the
 // Key the dump holds at 7.1, named here by what its values are: `elementCodes` is `FMNCKJDCADH` (its codes read the three
 // Elements of each of the 29 seasons on the wiki), `openingCharacterIds` is `MFNFDFPOAMC` (six in each of those seasons, the
-// Wiki's six openers by name), `openingTrialIds` is `GCLLBFHCLFK` (six in each of the 30 seasons, each a trial avatar whose
+// Wiki's six openers by name), `openingTrialIds` is `GCLLBFHCLFK` (six in each of the 30 config rows, each a trial avatar whose
 // Character is that season's opener) and `specialGuestIds` is `FKFHFHFGMEM` (four in each, the wiki's guests by name)
 export interface ExcelRoleCombatAvatarConfigRow {
   [ExcelRoleCombatAvatarConfigRowFieldDumpKey.AvatarConfigId]: number;
