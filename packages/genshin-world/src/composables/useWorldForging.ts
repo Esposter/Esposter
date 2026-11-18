@@ -1,12 +1,12 @@
 /* oxlint-disable typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it */
 import type { ForgeRecipe } from "#src/models/forging/ForgeRecipe";
 import type { SceneGroupPlace } from "#src/models/sceneGroup/SceneGroupPlace";
+import type { Ref } from "vue";
 
 import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { computeForgeDefinitions } from "#src/services/forging/computeForgeDefinitions";
 import { computeForgeWeapons } from "#src/services/forging/computeForgeWeapons";
 import { FIRST_FORGE_RECIPE_ID, FORGE_CLOCK_INTERVAL_MS } from "#src/services/forging/constants";
-import { readForgeRecipes } from "#src/services/forging/readForgeRecipes";
 import { readMondstadtBlacksmithPlace } from "#src/services/forging/readMondstadtBlacksmithPlace";
 import { createUnlockItemMap } from "#src/services/shared/createUnlockItemMap";
 import { useWorldScreenStore } from "#src/store/screen";
@@ -17,23 +17,19 @@ import { ForgeTab } from "genshin-interface";
 import { storeToRefs } from "pinia";
 import { computed, ref, shallowRef } from "vue";
 
-// The blacksmith's recipes and its place in Mondstadt as the world starts, each read from the hosted game data, and the
-// Recipe each diagram opens, by the diagram's item id
-export const useWorldForging = () => {
+// The blacksmith's recipes, which the screen records hold as the forge opens, and its place in Mondstadt as the world starts,
+// Read from the hosted game data, and the recipe each diagram opens, by the diagram's item id
+export const useWorldForging = ({
+  forgeRecipeRecord,
+}: {
+  forgeRecipeRecord: Readonly<Ref<ForgeRecipe[] | undefined>>;
+}) => {
   const worldScreenStore = useWorldScreenStore();
   const { screenKind } = storeToRefs(worldScreenStore);
   const worldSessionStore = useWorldSessionStore();
   const { getWorldNow } = worldSessionStore;
-  const forgeRecipes = shallowRef<ForgeRecipe[]>([]);
+  const forgeRecipes = computed(() => forgeRecipeRecord.value ?? []);
   const blacksmithPlace = shallowRef<SceneGroupPlace | undefined>();
-  getResultAsync(() => readForgeRecipes(worldSessionStore.gameDataBaseUrl)).match(
-    (recipes) => {
-      forgeRecipes.value = recipes;
-    },
-    (error) => {
-      console.error(error);
-    },
-  );
   getResultAsync(() => readMondstadtBlacksmithPlace(worldSessionStore.gameDataBaseUrl)).match(
     (place) => {
       blacksmithPlace.value = place;

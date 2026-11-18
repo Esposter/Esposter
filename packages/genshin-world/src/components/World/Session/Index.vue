@@ -576,7 +576,7 @@ const {
   forgeRecipes,
   forgeTab,
   forgeWeapons,
-} = useWorldForging();
+} = useWorldForging({ forgeRecipeRecord: computed(() => records.forgeRecipes) });
 const worldFriendshipStore = useWorldFriendshipStore();
 const { start: startFriendship, stop: stopFriendship } = worldFriendshipStore;
 startFriendship();
@@ -1378,7 +1378,7 @@ useWorldSaveSync({
       </template>
       <template #[ScreenKind.Inventory]>
         <InventoryScreen
-          v-if="records.craftingRecipes && records.dishes && records.homeBlueprints"
+          v-if="records.craftingRecipes && records.dishes && records.forgeRecipes && records.homeBlueprints"
           :blueprint-map
           :cooking-progress
           :crafting-progress
@@ -1687,7 +1687,7 @@ useWorldSaveSync({
       @update:wallet="(nextWallet) => setWallet(nextWallet)"
     />
     <ForgeScreen
-      v-if="screenKind === ScreenKind.Forge"
+      v-if="screenKind === ScreenKind.Forge && records.forgeRecipes"
       v-model:adventure-exp="adventureExp"
       v-model:amount="forgeAmount"
       v-model:progress="forgeProgress"
