@@ -1,6 +1,6 @@
 # Menu Time screen
 
-The [Paimon menu](../../specs/genshin/paimon-menu/design.md) opens a Time screen from its side bar, which the menu's shell reaches but does not yet draw. It builds on the [menu screens](../../specs/genshin/screens/design.md) shell, on the [sky and time](../../specs/genshin/sky-and-time/design.md) clock, whose control of the hour it becomes, and on the [Paimon menu](../genshin-menu-paimon/design.md) proposal, which lays out the menu it opens from.
+The [Paimon menu](../../../specs/genshin/paimon-menu/design.md) opens a Time screen from its side bar, which the menu's shell reaches but does not yet draw. It builds on the [menu screens](../../../specs/genshin/screens/design.md) shell, on the [sky and time](../../../specs/genshin/sky-and-time/design.md) clock, whose control of the hour it becomes, and on the [Paimon menu](../../genshin-menu-paimon/design.md) proposal, which lays out the menu it opens from.
 
 ## Decisions
 
