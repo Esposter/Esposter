@@ -114,20 +114,27 @@ Phase 2 built the table policy for every table without an equality. The row poli
 A table a statement names table-wide is named by the rows the statement returns when the statement joins it on one of its scope columns, through a join that keeps the partner's rows, and returns the partner key. Each returned row names the value its partner holds, `table:col=<value>`, and the table's table-wide topic is dropped. A table no returned row carries a join value for stays table-wide, so an empty read names what it named before. The rule has two conditions, and a table that fails either is read whole.
 
 - **The join keeps the partner's rows.** The walker records each join's kind. A left join keeps the partner (the side the join does not null-fill), so the partner's rows are in the read whether or not the joined table holds a row for their value. An `in` over the table itself keeps the rows its subquery names, since each value the subquery returns is held by a row of the outer read. Any other join is `inner`, and so are the right, full and cross joins, which the walker reads as inner: the partner's rows exist in the read only through the joined table, so a row of a value no returned row carries can bring the partner's first row in.
-- **The table carries no filter of its own.** Any condition on one of its columns other than a scope equality or a join is a filter the walker records: a null test, a comparison, a pattern, a `not in`. A write that makes a filtered row pass brings back a row no returned row carries, so the table is read whole. The filter rule covers the bookmark dock's recycle-bin test and the sidebar's direct-message participant query, which filters its memberships to `userId <> viewer`.
+- **The table carries no filter of its own.** A condition on one of its columns, other than a scope equality or a join, is a filter the walker records with the clause it sits in (`FilterSite`): `where`, `joinOn` (the ON clause of an inner join, or of a left join on its partner), or `leftJoinOn` (the ON clause of a left join, on the table that join brings). A filter in `where` or `joinOn` is a null test, a comparison, a pattern or a `not in`, and a write that makes a filtered row pass brings back a row no returned row carries, so the table is read whole. A filter in `leftJoinOn` removes only the joined table's matches, never the partner's rows, so the table is still named by the partner's key values. The filter rule covers the bookmark dock's recycle-bin test, which is in `where`. The sidebar's direct-message participant query moved its `userId <> viewer` into the ON clause of a left join on its memberships (see the sidebar bullet below).
+- **Only conditions filter.** A column in the select list, a group clause or an order clause removes no row, so the walker records it as no filter. A column that a join's condition compares on its right side is read once, as that join's operand, and not again as a filter of its own. An aliased table the join brings is read as the join it is: before this rule its join was read as inner, so its partner's rows were not preserved.
 
 Counts on the same seeded data (the reader, three direct messages with another member each, three bookmarked resources, one invite room), the topic count of each read at HEAD, after the first row-policy build (`756f043c65`), and after the sound rule:
 
-| Read                                  | HEAD | First build | Sound rule |
-| ------------------------------------- | ---- | ----------- | ---------- |
-| `readBookmarks` (dock)                | 4    | 6           | 4          |
-| `readRooms` (sidebar, default)        | 4    | 4           | 4          |
-| `readRooms` (`includeDirectMessages`) | 4    | 7           | 4          |
-| `searchUsers` (name search)           | 3    | 3           | 3          |
-| `readInvite` (landing page)           | 7    | 6           | 7          |
-| `readPosts` (feed)                    | 4    | 4           | 4          |
+| Read                                  | HEAD | First build | Sound rule | ON-clause and walker fixes |
+| ------------------------------------- | ---- | ----------- | ---------- | -------------------------- |
+| `readBookmarks` (dock)                | 4    | 6           | 4          | 4                          |
+| `readRooms` (sidebar, default)        | 4    | 4           | 4          | 4                          |
+| `readRooms` (`includeDirectMessages`) | 4    | 7           | 4          | 7                          |
+| `searchUsers` (name search)           | 3    | 3           | 3          | 3                          |
+| `readInvite` (landing page)           | 7    | 6           | 7          | 7                          |
+| `readPosts` (feed)                    | 4    | 4           | 4          | 4                          |
 
-On this data the sound rule names none of the five reads' tables by row, so their counts equal HEAD: the row policy is now what a left join or a self-table `in` over an unfiltered table gets, and the golden tests in `getReadTopics.test.ts` pin those cases. The sidebar's participant memberships are read whole, not named per listed room. The owner's example, `message_usersToRooms:*` becoming a topic per listed room, is therefore not built: the participant query's `userId <> viewer` filter puts its table under the filter rule. Restoring it needs a filter the rule can show no write moves (a scope column the row is keyed by), which is a decision for the main session.
+Re-measured with the ON-clause rule, the walker fixes and per-occurrence naming (the last column), on the seed the table above describes, rebuilt for this measurement: the reader, three direct messages with another member each, three bookmarked resources, one invite room, and one room of the reader's own. The dock is 4, the feed 4, the name search 3 and the landing page 7, as before. The sidebar's default read is 4: the viewer's `userId` scope and its listed room, `message_usersToRooms:roomId=<room>`, in place of the table-wide topic. The sidebar with direct messages is 7: the viewer's scope, the listed room, and each of the three direct messages' memberships by its room, where it was 4 with the table-wide topic. The first build's 7 is the same set, reached by the per-occurrence rule without the table-wide topic that the statement-wide filter kept.
+
+Filters and naming are kept per table occurrence, the alias or name a statement gives a table (`getOccurrenceKey`). The DM sidebar's viewer membership (scoped by `userId = viewer`, filtered by `isHidden = false`) is a different occurrence from the participants' memberships (a left join's partner in a subquery, named by each room's key), so the filter does not stop the participants being named by their room. Unhiding a direct message is a write to the viewer's own membership, which publishes the viewer's scope topic (`message_usersToRooms:userId=<viewer>`) and wakes the sidebar; its refetch names the room it now shows by that room. A filter still blocks row naming on the occurrence it filters, and on no other occurrence of its table. The rule is the main session's and the coordinator's decision, applied as given.
+
+Known limit: a join's row naming assumes the other joins of the statement keep the partner's rows. An inner join after a left join can drop a returned room that has no match, so a write that gives it its first match names a value no returned row carries. The sidebar's inner join to the other participant is the case; the outer left join to the sidebar's rows names the rooms the viewer lists, which covers it there. The naming is not generalised to every such statement.
+
+Known limit: the table-wide topic is still decided per table. A table with one row-named occurrence and another occurrence that is table-wide and not named drops its table-wide topic, since the join naming is counted per table. The rule that would fix it is to keep a table-wide topic while any of its occurrences is unnamed; the statement's occurrences are not listed, so it is not built here.
 
 The `in` over another table is also not named by the rows. The decided rule named such a table by the outer rows whenever the outer read returned the column. That misses a value's first row when the subquery reads another table: a room's first emoji is in a room the viewer's membership subquery selects, but no emoji row yet carries that room, so the write publishes a value no returned row names. The test "a table an in over another table tests stays table-wide" pins this, and the main session accepted it.
 
@@ -204,51 +211,53 @@ Before the sequence starts, the wrapper, the walker and the write capture are bu
 
 ## Key files
 
-| Path                                                                           | Role                                                                                      |
-| ------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------- |
-| `apps/web/server/trpc/procedure/getTopicsProcedure.ts`                         | The declaration middleware, deleted by the cutover                                        |
-| `apps/web/server/trpc/middleware/inferTopicsMiddleware.ts`                     | The inferred topics middleware every public procedure runs                                |
-| `apps/web/server/trpc/initTrpc.ts`                                             | The one tRPC instance the public procedure and its middleware are built on                |
-| `apps/web/server/trpc/routers/liveTopicCoverage.test.ts`                       | `expectLiveTopicCoverage`, the check over a set of cases                                  |
-| `apps/web/server/trpc/routers/liveTopicCoverage.app.test.ts`                   | The app-wide check: every migrated router's cases against the root router                 |
-| `apps/web/server/models/trpc/Meta.ts`                                          | The `topics` meta flag the declaration sets, deleted by the cutover                       |
-| `apps/web/server/trpc/context.ts`                                              | The request context whose `db` the request's handle wraps                                 |
-| `apps/web/server/db/index.ts`                                                  | The D1 handle the context shares                                                          |
-| `packages/db-schema/src/sqliteTable.ts`                                        | The table definition that carries the scope declaration                                   |
-| `packages/db-schema/src/services/realtime/getTableScope.ts`                    | Reads a table's scope declaration back from its symbol                                    |
-| `packages/db/src/services/realtime/recordStatements.ts`                        | The request-scoped handle that records each awaited statement                             |
-| `packages/db/src/services/realtime/getReadSet.ts`                              | Merges the statements' read sets into the facts a read names                              |
-| `packages/db/src/services/realtime/getStatementReadSet.ts`                     | Walks one built statement's chunks into its read set                                      |
-| `packages/db/src/services/realtime/getJoinScopeValues.ts`                      | The row policy: the values a returned row names a joined scope table by                   |
-| `packages/db-schema/src/models/realtime/Topic.ts`                              | The kind topic type, and `ScopeTopic` for the inferred names                              |
-| `packages/db/src/services/realtime/getWriteTopics.ts`                          | The write set a request's statements publish, from RETURNING rows                         |
-| `packages/db/src/services/realtime/getReadTopics.ts`                           | The topics a request's reads watch: scope equalities and table-wide topics                |
-| `packages/db/src/services/realtime/walkCascade.ts`                             | The cascade walk: the tables a delete removes rows from, and changes                      |
-| `packages/db/src/services/realtime/getCascadeRowTopics.ts`                     | The set null and set default children a delete names by the value each held               |
-| `packages/db/src/services/realtime/getBeforeReads.ts`                          | The reads a write makes before it runs: an update's old scope, a delete's cascades        |
-| `packages/db/src/services/realtime/getRemovalConditions.ts`                    | Each removed table's rows as a subquery over its parent's, and the self-reference closure |
-| `packages/db/src/services/realtime/batchStatements.ts`                         | The one batch call the recorder's reads and writes go through                             |
-| `packages/db/src/services/realtime/getScopeValue.ts`                           | The name a scope value takes, a secret's by its digest, both sides                        |
-| `apps/web/server/trpc/routers/topicMatch.test.ts`                              | The match of reads to writes, and the five reads' table coverage                          |
-| `packages/db-schema/src/services/realtime/getTopic.ts`                         | The hand-written topic constructor, deleted with the declarations                         |
-| `packages/db/src/services/realtime/publishTopics.ts`                           | The publish the write set feeds                                                           |
-| `apps/web/server/services/realtime/publishTopics.ts`                           | The web app's binding of that publish                                                     |
-| `apps/realtime/src/durableObjects/TopicObject.ts`                              | The Topic object the publishes fan out through                                            |
-| `packages/db-schema/src/schema/app/bookmarksInApp.ts`                          | A scope declaration case: the bookmark dock's table                                       |
-| `apps/web/server/trpc/routers/bookmark.ts`                                     | The dock read the spike measured                                                          |
-| `apps/web/server/trpc/routers/post.ts`                                         | The feed read the spike measured                                                          |
-| `apps/web/server/trpc/routers/room/index.ts`                                   | The sidebar read the spike measured                                                       |
-| `apps/web/server/trpc/routers/invite.ts`                                       | The landing page read whose member count the spike found unwatched                        |
-| `apps/web/server/trpc/routers/friend.ts`                                       | The name search declared `staticReason`                                                   |
-| `apps/web/server/trpc/routers/block.ts`                                        | The block write that publishes the feed by hand                                           |
-| `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts`          | The resource content reads and saves the editor section covers                            |
-| `apps/web/app/composables/message/subscribables/useUserToRoomSubscribables.ts` | The `updateUserToRoom` handler whose member re-read goes                                  |
-| `apps/web/app/composables/message/events/useRoomListEvents.ts`                 | The `joinRoom` handler whose participant re-read goes                                     |
-| `apps/web/app/composables/message/room/useReadDirectMessages.ts`               | The direct-message list's second request, folded into its procedure                       |
-| `apps/web/server/trpc/routers/room/directMessage.ts`                           | The participant read, folded into the direct-message list procedure                       |
-| `apps/jobs/src/services/account/takeBackErasedMentionCounts.ts`                | A job write to `usersToRooms` that needs the wrapper on its handle                        |
-| `apps/jobs/src/services/shared/db.ts`                                          | The jobs' handle: `getDb()` inside a unit, which `runUnit` records and publishes          |
-| `apps/web/server/db/requestDb.ts`                                              | The auth instance's handle, read from the request scope each time a call runs             |
+| Path                                                                           | Role                                                                                            |
+| ------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------- |
+| `apps/web/server/trpc/procedure/getTopicsProcedure.ts`                         | The declaration middleware, deleted by the cutover                                              |
+| `apps/web/server/trpc/middleware/inferTopicsMiddleware.ts`                     | The inferred topics middleware every public procedure runs                                      |
+| `apps/web/server/trpc/initTrpc.ts`                                             | The one tRPC instance the public procedure and its middleware are built on                      |
+| `apps/web/server/trpc/routers/liveTopicCoverage.test.ts`                       | `expectLiveTopicCoverage`, the check over a set of cases                                        |
+| `apps/web/server/trpc/routers/liveTopicCoverage.app.test.ts`                   | The app-wide check: every migrated router's cases against the root router                       |
+| `apps/web/server/models/trpc/Meta.ts`                                          | The `topics` meta flag the declaration sets, deleted by the cutover                             |
+| `apps/web/server/trpc/context.ts`                                              | The request context whose `db` the request's handle wraps                                       |
+| `apps/web/server/db/index.ts`                                                  | The D1 handle the context shares                                                                |
+| `packages/db-schema/src/sqliteTable.ts`                                        | The table definition that carries the scope declaration                                         |
+| `packages/db-schema/src/services/realtime/getTableScope.ts`                    | Reads a table's scope declaration back from its symbol                                          |
+| `packages/db/src/services/realtime/recordStatements.ts`                        | The request-scoped handle that records each awaited statement                                   |
+| `packages/db/src/services/realtime/getReadSet.ts`                              | Merges the statements' read sets into the facts a read names                                    |
+| `packages/db/src/services/realtime/getStatementReadSet.ts`                     | Walks one built statement's chunks into its read set                                            |
+| `packages/db/src/services/realtime/getJoinScopeValues.ts`                      | The row policy: the values a returned row names a joined scope table by                         |
+| `packages/db/src/models/realtime/FilterSite.ts`                                | Where a read's filter sits: a left join's ON clause, another ON clause, or the WHERE clause     |
+| `packages/db/src/services/realtime/getOccurrenceKey.ts`                        | The key a table occurrence (its table and the alias or name the statement gives it) is named by |
+| `packages/db-schema/src/models/realtime/Topic.ts`                              | The kind topic type, and `ScopeTopic` for the inferred names                                    |
+| `packages/db/src/services/realtime/getWriteTopics.ts`                          | The write set a request's statements publish, from RETURNING rows                               |
+| `packages/db/src/services/realtime/getReadTopics.ts`                           | The topics a request's reads watch: scope equalities and table-wide topics                      |
+| `packages/db/src/services/realtime/walkCascade.ts`                             | The cascade walk: the tables a delete removes rows from, and changes                            |
+| `packages/db/src/services/realtime/getCascadeRowTopics.ts`                     | The set null and set default children a delete names by the value each held                     |
+| `packages/db/src/services/realtime/getBeforeReads.ts`                          | The reads a write makes before it runs: an update's old scope, a delete's cascades              |
+| `packages/db/src/services/realtime/getRemovalConditions.ts`                    | Each removed table's rows as a subquery over its parent's, and the self-reference closure       |
+| `packages/db/src/services/realtime/batchStatements.ts`                         | The one batch call the recorder's reads and writes go through                                   |
+| `packages/db/src/services/realtime/getScopeValue.ts`                           | The name a scope value takes, a secret's by its digest, both sides                              |
+| `apps/web/server/trpc/routers/topicMatch.test.ts`                              | The match of reads to writes, and the five reads' table coverage                                |
+| `packages/db-schema/src/services/realtime/getTopic.ts`                         | The hand-written topic constructor, deleted with the declarations                               |
+| `packages/db/src/services/realtime/publishTopics.ts`                           | The publish the write set feeds                                                                 |
+| `apps/web/server/services/realtime/publishTopics.ts`                           | The web app's binding of that publish                                                           |
+| `apps/realtime/src/durableObjects/TopicObject.ts`                              | The Topic object the publishes fan out through                                                  |
+| `packages/db-schema/src/schema/app/bookmarksInApp.ts`                          | A scope declaration case: the bookmark dock's table                                             |
+| `apps/web/server/trpc/routers/bookmark.ts`                                     | The dock read the spike measured                                                                |
+| `apps/web/server/trpc/routers/post.ts`                                         | The feed read the spike measured                                                                |
+| `apps/web/server/trpc/routers/room/index.ts`                                   | The sidebar read the spike measured                                                             |
+| `apps/web/server/trpc/routers/invite.ts`                                       | The landing page read whose member count the spike found unwatched                              |
+| `apps/web/server/trpc/routers/friend.ts`                                       | The name search declared `staticReason`                                                         |
+| `apps/web/server/trpc/routers/block.ts`                                        | The block write that publishes the feed by hand                                                 |
+| `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts`          | The resource content reads and saves the editor section covers                                  |
+| `apps/web/app/composables/message/subscribables/useUserToRoomSubscribables.ts` | The `updateUserToRoom` handler whose member re-read goes                                        |
+| `apps/web/app/composables/message/events/useRoomListEvents.ts`                 | The `joinRoom` handler whose participant re-read goes                                           |
+| `apps/web/app/composables/message/room/useReadDirectMessages.ts`               | The direct-message list's second request, folded into its procedure                             |
+| `apps/web/server/trpc/routers/room/directMessage.ts`                           | The participant read, folded into the direct-message list procedure                             |
+| `apps/jobs/src/services/account/takeBackErasedMentionCounts.ts`                | A job write to `usersToRooms` that needs the wrapper on its handle                              |
+| `apps/jobs/src/services/shared/db.ts`                                          | The jobs' handle: `getDb()` inside a unit, which `runUnit` records and publishes                |
+| `apps/web/server/db/requestDb.ts`                                              | The auth instance's handle, read from the request scope each time a call runs                   |
 
 ## Sources
 

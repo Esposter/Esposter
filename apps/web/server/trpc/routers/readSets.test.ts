@@ -22,18 +22,36 @@ describe(getReadSet, () => {
     await createCallerFactory(bookmarkRouter)({ ...context, db: database }).readBookmarks();
 
     expect(getReadSet(statements)).toStrictEqual({
+      filters: [
+        { column: "resourceId", occurrence: "app_bookmarks", site: "where", table: "app_bookmarks" },
+        { column: "deletedAt", occurrence: "resource_resources", site: "where", table: "resource_resources" },
+      ],
       joins: [
         {
-          left: { column: "resourceId", selectedAs: "resourceId", table: "app_bookmarks" },
-          right: { column: "resourceId", table: "resource_resourcePublications" },
+          kind: "inner",
+          left: { column: "resourceId", occurrence: "app_bookmarks", selectedAs: "resourceId", table: "app_bookmarks" },
+          right: {
+            column: "resourceId",
+            occurrence: "resource_resourcePublications",
+            table: "resource_resourcePublications",
+          },
         },
         {
-          left: { column: "resourceId", selectedAs: "resourceId", table: "app_bookmarks" },
-          right: { column: "id", table: "resource_resources" },
+          kind: "left",
+          left: { column: "resourceId", occurrence: "app_bookmarks", selectedAs: "resourceId", table: "app_bookmarks" },
+          nullFilled: "right",
+          right: { column: "id", occurrence: "resource_resources", table: "resource_resources" },
         },
         {
-          left: { column: "roomId", selectedAs: "roomId", table: "app_bookmarks" },
-          right: { column: "roomId", selectedAs: "roomMemberId", table: "message_usersToRooms" },
+          kind: "left",
+          left: { column: "roomId", occurrence: "app_bookmarks", selectedAs: "roomId", table: "app_bookmarks" },
+          nullFilled: "right",
+          right: {
+            column: "roomId",
+            occurrence: "message_usersToRooms",
+            selectedAs: "roomMemberId",
+            table: "message_usersToRooms",
+          },
         },
       ],
       levels: [
@@ -42,10 +60,6 @@ describe(getReadSet, () => {
           tables: ["app_bookmarks", "message_usersToRooms", "resource_resources"],
         },
         { scopedTables: [], tables: ["resource_resourcePublications"] },
-      ],
-      nullChecks: [
-        { column: "resourceId", table: "app_bookmarks" },
-        { column: "deletedAt", table: "resource_resources" },
       ],
       scopes: [
         { column: "userId", table: "app_bookmarks", value: userId },
@@ -64,25 +78,26 @@ describe(getReadSet, () => {
     await createCallerFactory(postRouter)({ ...context, db: database }).readPosts();
 
     expect(getReadSet(statements)).toStrictEqual({
+      filters: [
+        { column: "parentId", occurrence: "d0", site: "where", table: "post_posts" },
+        { column: "userId", occurrence: "d0", site: "where", table: "post_posts" },
+      ],
       joins: [
         {
-          left: { column: "id", table: "auth_users" },
-          right: { column: "userId", selectedAs: "userId", table: "post_posts" },
+          kind: "inner",
+          left: { column: "id", occurrence: "d1", table: "auth_users" },
+          right: { column: "userId", occurrence: "d0", selectedAs: "userId", table: "post_posts" },
         },
         {
-          left: { column: "postId", table: "post_likes" },
-          right: { column: "id", selectedAs: "id", table: "post_posts" },
-        },
-        {
-          left: { column: "userId", selectedAs: "userId", table: "post_posts" },
-          right: { column: "blockedId", table: "social_blocks" },
+          kind: "inner",
+          left: { column: "postId", occurrence: "d1", table: "post_likes" },
+          right: { column: "id", occurrence: "d0", selectedAs: "id", table: "post_posts" },
         },
       ],
       levels: [
         { scopedTables: ["post_likes"], tables: ["auth_users", "post_likes", "post_posts"] },
         { scopedTables: ["social_blocks"], tables: ["social_blocks"] },
       ],
-      nullChecks: [{ column: "parentId", table: "post_posts" }],
       scopes: [
         { column: "userId", table: "post_likes", value: userId },
         { column: "blockerId", table: "social_blocks", value: userId },
@@ -102,18 +117,38 @@ describe(getReadSet, () => {
     await createCallerFactory(roomRouter)({ ...context, db: database }).readRooms();
 
     expect(getReadSet(statements)).toStrictEqual({
+      filters: [
+        { column: "type", occurrence: "message_rooms", site: "where", table: "message_rooms" },
+        { column: "userId", occurrence: "participantMembership", site: "leftJoinOn", table: "message_usersToRooms" },
+      ],
       joins: [
-        { left: { column: "id", table: "auth_users" }, right: { column: "userId", table: "message_usersToRooms" } },
         {
-          left: { column: "id", selectedAs: "id", table: "message_rooms" },
-          right: { column: "roomId", table: "message_usersToRooms" },
+          kind: "inner",
+          left: { column: "id", occurrence: "message_rooms", selectedAs: "id", table: "message_rooms" },
+          right: { column: "roomId", occurrence: "message_usersToRooms", table: "message_usersToRooms" },
+        },
+        {
+          kind: "inner",
+          left: { column: "id", occurrence: "participantUser", table: "auth_users" },
+          right: { column: "userId", occurrence: "participantMembership", table: "message_usersToRooms" },
+        },
+        {
+          kind: "left",
+          left: { column: "id", occurrence: "message_rooms", selectedAs: "id", table: "message_rooms" },
+          nullFilled: "right",
+          right: { column: "roomId", occurrence: "directMessageDisplayNames", table: "message_usersToRooms" },
+        },
+        {
+          kind: "left",
+          left: { column: "id", occurrence: "message_rooms", selectedAs: "id", table: "message_rooms" },
+          nullFilled: "right",
+          right: { column: "roomId", occurrence: "participantMembership", table: "message_usersToRooms" },
         },
       ],
       levels: [
         { scopedTables: ["message_usersToRooms"], tables: ["message_rooms", "message_usersToRooms"] },
         { scopedTables: [], tables: ["auth_users", "message_rooms", "message_usersToRooms"] },
       ],
-      nullChecks: [],
       scopes: [{ column: "userId", table: "message_usersToRooms", value: userId }],
       tables: ["auth_users", "message_rooms", "message_usersToRooms"],
     });
@@ -130,17 +165,23 @@ describe(getReadSet, () => {
     // The blocks subquery's second operand names its column by name, not by column, so its join is not read here. Its
     // Scope equality is, and that equality already covers every block the join would name
     expect(getReadSet(statements)).toStrictEqual({
+      filters: [
+        { column: "id", occurrence: "auth_users", site: "where", table: "auth_users" },
+        { column: "name", occurrence: "auth_users", site: "where", table: "auth_users" },
+        { column: "blockedId", occurrence: "social_blocks", site: "where", table: "social_blocks" },
+      ],
       joins: [
         {
-          left: { column: "id", selectedAs: "id", table: "auth_users" },
-          right: { column: "blockedId", table: "social_blocks" },
+          kind: "left",
+          left: { column: "id", occurrence: "auth_users", selectedAs: "id", table: "auth_users" },
+          nullFilled: "right",
+          right: { column: "blockedId", occurrence: "social_blocks", table: "social_blocks" },
         },
       ],
       levels: [
         { scopedTables: [], tables: ["auth_users"] },
         { scopedTables: ["social_blocks"], tables: ["social_blocks"] },
       ],
-      nullChecks: [{ column: "blockedId", table: "social_blocks" }],
       scopes: [
         { column: "blockedId", table: "social_blocks", value: userId },
         { column: "blockerId", table: "social_blocks", value: userId },
@@ -170,14 +211,20 @@ describe(getReadSet, () => {
     }).readInvite(newInvite.id);
 
     expect(getReadSet(statements)).toStrictEqual({
+      filters: [
+        { column: "deletedAt", occurrence: "message_bans", site: "where", table: "message_bans" },
+        { column: "isInvitePaused", occurrence: "message_rooms", site: "where", table: "message_rooms" },
+      ],
       joins: [
         {
-          left: { column: "roomId", table: "message_bans" },
-          right: { column: "roomId", selectedAs: "roomId", table: "message_invites" },
+          kind: "inner",
+          left: { column: "roomId", occurrence: "message_bans", table: "message_bans" },
+          right: { column: "roomId", occurrence: "message_invites", selectedAs: "roomId", table: "message_invites" },
         },
         {
-          left: { column: "roomId", selectedAs: "roomId", table: "message_invites" },
-          right: { column: "id", table: "message_rooms" },
+          kind: "inner",
+          left: { column: "roomId", occurrence: "message_invites", selectedAs: "roomId", table: "message_invites" },
+          right: { column: "id", occurrence: "message_rooms", table: "message_rooms" },
         },
       ],
       levels: [
@@ -189,7 +236,6 @@ describe(getReadSet, () => {
         { scopedTables: ["message_usersToRooms"], tables: ["message_usersToRooms"] },
         { scopedTables: ["message_usersToRooms"], tables: ["message_usersToRooms"] },
       ],
-      nullChecks: [{ column: "deletedAt", table: "message_bans" }],
       scopes: [
         { column: "id", table: "auth_users", value: inviterId },
         { column: "userId", table: "message_bans", value: reader.user.id },

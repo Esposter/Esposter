@@ -1,6 +1,7 @@
 import type { ReadSet, ReadSetJoin, ReadSetKey, ReadSetLevel, ReadSetScope } from "#src/models/realtime/ReadSet";
 import type { SQLWrapper } from "drizzle-orm";
 
+import { FilterSite } from "#src/models/realtime/FilterSite";
 import { JoinKind } from "#src/models/realtime/JoinKind";
 import { JoinSide } from "#src/models/realtime/JoinSide";
 import { getStatementConfig } from "#src/services/realtime/getStatementConfig";
@@ -49,14 +50,19 @@ interface JoinContext {
 }
 
 // A base table's column by the key its table definition gives it, which is the key a scope declaration names. `relation` is
-// The name the reference reads the column through, which is the name a join's ON condition gives the relation it joins
+// The name the reference reads the column through, which is the name a join's ON condition gives the relation it joins.
+// `occurrence` is the table occurrence the column is read from: the alias or name the statement gives that table, or the base
+// Occurrence a derived table reads the column from
 interface ReadColumn {
   key: string;
+  occurrence: string;
   owner: Table;
   relation: string;
 }
 
 interface ReadContext {
+  // Whether the chunks walked are a WHERE or HAVING condition, which removes the rows it does not hold
+  condition: boolean;
   derived: DerivedFields;
   join?: JoinContext | undefined;
   level: ReadSetLevel;
@@ -107,10 +113,10 @@ const getOperatorText = (chunk: unknown): string | undefined =>
   is(chunk, StringChunk) ? chunk.value.replaceAll(/[()]/gu, "").trim().toLowerCase() : undefined;
 
 // The base column a database column name names in a table, as a key of the table's definition
-const getNamedColumns = (table: Table, name: string): ReadColumn[] => {
+const getNamedColumns = (table: Table, name: string, occurrence = getTableName(table)): ReadColumn[] => {
   const columns = getTableColumns(table);
   const key = Object.keys(columns).find((candidate) => columns[candidate]?.name === name);
-  return key === undefined ? [] : [{ key, owner: getBaseTable(table), relation: getTableName(table) }];
+  return key === undefined ? [] : [{ key, occurrence, owner: getBaseTable(table), relation: getTableName(table) }];
 };
 
 // The first table a statement's SQL reads, which is the table a subquery over it selects from
@@ -139,7 +145,7 @@ const toReadColumns = (column: Column, derived: DerivedFields): ReadColumn[] => 
   const subquery = derived.get(getTableName(getColumnTable(baseColumn)));
   return subquery
     ? getDerivedColumns(subquery, baseColumn.name, derived)
-    : getNamedColumns(getColumnTable(baseColumn), baseColumn.name);
+    : getNamedColumns(getColumnTable(baseColumn), baseColumn.name, getTableName(getColumnTable(column)));
 };
 
 const getScopeOf = ({ key, owner }: ReadColumn) => {
@@ -151,10 +157,12 @@ const getScopeOf = ({ key, owner }: ReadColumn) => {
 };
 
 // A side of a join is selected when the read's own select returns that table column, under the name it returns it by
-const toKey = ({ key, owner }: ReadColumn, selections: ReadSelection[]): ReadSetKey => {
+const toKey = ({ key, occurrence, owner }: ReadColumn, selections: ReadSelection[]): ReadSetKey => {
   const table = getTableName(owner);
   const selection = selections.find((candidate) => candidate.table === table && candidate.column === key);
-  return selection ? { column: key, selectedAs: selection.selectedAs, table } : { column: key, table };
+  return selection
+    ? { column: key, occurrence, selectedAs: selection.selectedAs, table }
+    : { column: key, occurrence, table };
 };
 
 // An equality names the rows its value selects. Through a derived table it narrows the subquery's rows, so it names them
@@ -204,11 +212,25 @@ const addJoins = (left: ReadColumn[], right: ReadColumn[], context: ReadContext,
     }
 };
 
+// The clause a condition on a column sits in: the ON clause of a left join on the table that join brings, another ON clause,
+// Or the WHERE clause, where no join context is set
+const getFilterSite = (readColumn: ReadColumn, join: JoinContext | undefined): FilterSite => {
+  if (!join) return FilterSite.Where;
+  return join.isLeft && readColumn.relation === join.relation ? FilterSite.LeftJoinOn : FilterSite.JoinOn;
+};
+
 // A column a condition tests, other than by a scope equality or a join, filters its table, so a row the condition removes
 // Is one the table's topics must still reach
-const addFilters = (columns: ReadColumn[], { readSet }: ReadContext) => {
+// A column in the select list or a group or order clause is no condition, so it removes no row and filters nothing
+const addFilters = (columns: ReadColumn[], { condition, join, readSet }: ReadContext) => {
+  if (!condition && !join) return;
   for (const readColumn of columns)
-    readSet.filters.push({ column: readColumn.key, table: getTableName(readColumn.owner) });
+    readSet.filters.push({
+      column: readColumn.key,
+      occurrence: readColumn.occurrence,
+      site: getFilterSite(readColumn, join),
+      table: getTableName(readColumn.owner),
+    });
 };
 
 const getParenthesisDelta = (chunk: unknown): number => {
@@ -292,7 +314,7 @@ const readReferenceAt = (
       const table = resolveAlias(alias, index, declarations);
       const columns = table ? getNamedColumns(table, name) : [];
       reference = {
-        columns: columns.map((readColumn) => ({ ...readColumn, relation: alias })),
+        columns: columns.map((readColumn) => ({ ...readColumn, occurrence: alias, relation: alias })),
         length: 3,
         throughSubquery: false,
       };
@@ -306,22 +328,26 @@ const getFirstSelectedColumn = (statement: SQLWrapper): Column | undefined =>
   Object.values(getSelectedFields(statement)).find((field): field is Column => is(field, Column));
 
 // A condition is a scope equality, a join or a filter. A `not in` over a subquery removes its rows, so it is a filter, and so
-// Is any other operator the walker has no fact for
+// Is any other operator the walker has no fact for. Returns the chunks after the operator that the condition read as its
+// Other operand, which the walker does not read again as a column of its own
 const readCondition = (
   chunks: unknown[],
   operatorIndex: number,
   reference: ReadReference,
   declarations: AliasDeclaration[],
   context: ReadContext,
-) => {
+): number => {
   const operator = getOperatorText(chunks[operatorIndex]);
   const operand = chunks[operatorIndex + 1];
   if (operator === "=" && is(operand, Param))
     addScopes(reference.columns, operand.value, context, reference.throughSubquery);
   else if (operator === "=") {
     const other = readReferenceAt(chunks, operatorIndex + 1, declarations, context);
-    if (other) addJoins(reference.columns, other.columns, context, false);
-    else addFilters(reference.columns, context);
+    if (other) {
+      addJoins(reference.columns, other.columns, context, false);
+      return 1 + other.length;
+    }
+    addFilters(reference.columns, context);
   } else if (operator === "in" && Array.isArray(operand)) {
     const values: unknown[] = operand;
     for (const value of values)
@@ -331,15 +357,19 @@ const readCondition = (
     if (selected) addJoins(reference.columns, toReadColumns(selected, context.derived), context, true);
     else addFilters(reference.columns, context);
   } else addFilters(reference.columns, context);
+  return 0;
 };
 
 const joinKinds = new Set(["cross", "full", "inner", "left", "right"]);
 
-// The relation a join names: a table, a subquery, or an aliased table, which is written as its name, ` as ` and its alias
+// The relation a join names: a table, a subquery, or a table under an alias, which the statement writes as the aliased table
+// Itself. An unaliased table is written as its name, so its relation is that name
 const getJoinRelation = (chunk: unknown): string | undefined => {
   if (is(chunk, Table)) return getTableName(chunk);
   if (is(chunk, Subquery)) return chunk._.alias;
-  return is(chunk, SQL) ? getNameValue(chunk.queryChunks.at(-1)) : undefined;
+  if (!is(chunk, SQL)) return undefined;
+  const last = chunk.queryChunks.at(-1);
+  return is(last, Table) ? getTableName(last) : getNameValue(last);
 };
 
 // A join is written as its kind, ` join `, the relation it joins and its ON condition, the chunk after the relation. The
@@ -360,20 +390,36 @@ const getJoinContexts = (chunks: unknown[]): Map<number, JoinContext> =>
     }),
   );
 
-// The conditions of one flat chunk array are read against the aliases it declares, by region
+// Whether a clause keyword's text opens a condition, or a clause that only shapes the rows a statement returns. Text that
+// Opens neither leaves the clause in force as it was
+const getClauseCondition = (text: string): boolean | undefined => {
+  if (/\b(?:where|having)\b/iu.test(text)) return true;
+  if (/\b(?:select|from|group\s+by|order\s+by|limit|offset)\b/iu.test(text)) return false;
+  return undefined;
+};
+
+// The conditions of one flat chunk array are read against the aliases it declares, by region. A clause keyword in the array
+// Sets whether the chunks after it are conditions, so a WHERE's references filter their table and a select list's do not
 const walkSiblings = (chunks: unknown[], context: ReadContext) => {
   const declarations = getAliasDeclarations(chunks, getDepths(chunks));
   const joins = getJoinContexts(chunks);
   for (const declaration of declarations) context.level.tables.push(getTableName(declaration.table));
+  let condition = context.condition;
   let index = 0;
   while (index < chunks.length) {
     const reference = readReferenceAt(chunks, index, declarations, context);
     if (reference) {
-      readCondition(chunks, index + reference.length, reference, declarations, context);
-      index += reference.length;
+      const consumed = readCondition(chunks, index + reference.length, reference, declarations, {
+        ...context,
+        condition,
+      });
+      index += reference.length + consumed;
     } else {
+      const chunk = chunks[index];
+      const clause = is(chunk, StringChunk) ? getClauseCondition(chunk.value) : undefined;
+      if (clause !== undefined) condition = clause;
       const join = joins.get(index);
-      walkChunk(chunks[index], join ? { ...context, join } : context);
+      walkChunk(chunk, { ...context, condition, ...(join ? { join } : {}) });
       index += 1;
     }
   }
@@ -384,7 +430,7 @@ const walkSiblings = (chunks: unknown[], context: ReadContext) => {
 const enterLevel = (context: ReadContext): ReadContext => {
   const level: ReadSetLevel = { scopedTables: [], tables: [] };
   context.readSet.levels.push(level);
-  return { ...context, join: undefined, level };
+  return { ...context, condition: false, join: undefined, level };
 };
 
 // A relational query's nested relation is a parenthesised select written into the query's own text, not a builder, so it
@@ -416,6 +462,7 @@ const walkChunk = (chunk: unknown, context: ReadContext): void => {
 
 const toTableKey = (readColumn: ReadColumn): ReadSetKey => ({
   column: readColumn.key,
+  occurrence: readColumn.occurrence,
   table: getTableName(readColumn.owner),
 });
 
@@ -455,6 +502,7 @@ export const getStatementReadSet = (statement: SQLWrapper): ReadSet => {
   const level: ReadSetLevel = { scopedTables: [], tables: [] };
   readSet.levels.push(level);
   walkChunk(statement.getSQL(), {
+    condition: false,
     derived: new Map(),
     join: undefined,
     level,

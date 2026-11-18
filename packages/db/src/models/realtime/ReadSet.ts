@@ -1,10 +1,11 @@
+import type { FilterSite } from "#src/models/realtime/FilterSite";
 import type { JoinKind } from "#src/models/realtime/JoinKind";
 import type { JoinSide } from "#src/models/realtime/JoinSide";
 
 export interface ReadSet {
   // The columns a read filters on, other than by a scope equality or a join: a row the filter removes can come back, so a
-  // Table filtered this way is read whole
-  filters: ReadSetColumn[];
+  // Table filtered this way is read whole, unless the filter sits in a left join's ON clause on the table the join brings
+  filters: ReadSetFilter[];
   joins: ReadSetJoin[];
   // The statement levels a read holds: the statement it awaited and each statement nested in it, read apart
   levels: ReadSetLevel[];
@@ -19,6 +20,13 @@ export interface ReadSetColumn {
   table: string;
 }
 
+// A column a read tests by a condition other than a scope equality or a join, the clause the condition sits in, and the
+// Occurrence of the table it tests: the alias or name the statement gives that table where the condition reads it
+export interface ReadSetFilter extends ReadSetColumn {
+  occurrence: string;
+  site: FilterSite;
+}
+
 // A join's kind, and for a left join the side it null-fills: the side a row of the other side may come without a match
 export interface ReadSetJoin {
   kind: JoinKind;
@@ -27,8 +35,10 @@ export interface ReadSetJoin {
   right: ReadSetKey;
 }
 
-// One side of a join. `selectedAs` is the name the read's own select gives the column, when it selects it
+// One side of a join. `selectedAs` is the name the read's own select gives the column, when it selects it. `occurrence` is
+// The table occurrence the side reads, so an occurrence of a table is named apart from another occurrence of it
 export interface ReadSetKey extends ReadSetColumn {
+  occurrence: string;
   selectedAs?: string;
 }
 

@@ -195,9 +195,9 @@ describe("topicMatch", () => {
     ]);
   });
 
-  // The sidebar's direct-message participants are filtered to the other members, so their table is read whole, and another
-  // Member joining a room the viewer lists wakes the sidebar through that table's topic
-  test("another member joining a room the viewer lists wakes the sidebar through the memberships table", async () => {
+  // The sidebar names the memberships of each room it lists by that room, so another member joining a listed room wakes the
+  // Sidebar through that room's topic, not the memberships table's
+  test("another member joining a room the viewer lists wakes the sidebar through that room's topic", async () => {
     expect.hasAssertions();
 
     const context = await createMockContext();
@@ -215,8 +215,68 @@ describe("topicMatch", () => {
       .returning();
 
     expect(getWokenTopics(await getReadTopics(read.statements), await getWriteTopics(write.statements))).toStrictEqual([
-      "message_usersToRooms:*",
+      `message_usersToRooms:roomId=${room.id}`,
     ]);
+  });
+
+  // A direct message the viewer has hidden is not in the sidebar. Unhiding it is a write to the viewer's own membership, which
+  // Wakes the sidebar through the viewer's scope, and the sidebar's refetch names the participants of the room it now shows
+  test("unhiding a direct message wakes the sidebar, and its refetch names that room's participants", async () => {
+    expect.hasAssertions();
+
+    const context = await createMockContext();
+    const reader = await createMockAuthSession(context.db);
+    const readerContext = { ...context, session: reader.session, user: reader.user };
+    await createCallerFactory(roomRouter)(readerContext).createRoom({ name: "room" });
+    const joiner = await createMockAuthSession(context.db);
+    const directMessageId = v7();
+    await context.db
+      .insert(roomsInMessage)
+      .values({
+        id: directMessageId,
+        name: "",
+        participantKey: directMessageId,
+        type: RoomType.DirectMessage,
+        userId: reader.user.id,
+      });
+    await context.db.insert(usersToRoomsInMessage).values([
+      {
+        isHidden: true,
+        notificationType: NotificationType.DirectMessage,
+        roomId: directMessageId,
+        userId: reader.user.id,
+      },
+      {
+        isHidden: false,
+        notificationType: NotificationType.DirectMessage,
+        roomId: directMessageId,
+        userId: joiner.user.id,
+      },
+    ]);
+    const read = recordStatements(context.db);
+    await createCallerFactory(roomRouter)({ ...readerContext, db: read.database }).readRooms({
+      includeDirectMessages: true,
+    });
+    const write = recordStatements(context.db);
+
+    await write.database
+      .update(usersToRoomsInMessage)
+      .set({ isHidden: false })
+      .where(and(eq(usersToRoomsInMessage.roomId, directMessageId), eq(usersToRoomsInMessage.userId, reader.user.id)))
+      .returning();
+
+    expect(getWokenTopics(await getReadTopics(read.statements), await getWriteTopics(write.statements))).toStrictEqual([
+      `message_usersToRooms:userId=${reader.user.id}`,
+    ]);
+    const refetch = recordStatements(context.db);
+    const { items } = await createCallerFactory(roomRouter)({ ...readerContext, db: refetch.database }).readRooms({
+      includeDirectMessages: true,
+    });
+    const refetchTopics = await getReadTopics(refetch.statements);
+
+    expect(items.map(({ id }) => id)).toContain(directMessageId);
+    expect(refetchTopics).toContain(`message_usersToRooms:roomId=${directMessageId}`);
+    expect(refetchTopics).not.toContain("message_usersToRooms:*");
   });
 
   // The read inner-joins the memberships, so it returns the rooms that have a member and names the memberships by those rooms.

@@ -1,12 +1,21 @@
-import type { ReadSet, ReadSetColumn, ReadSetJoin, ReadSetKey, ReadSetScope } from "#src/models/realtime/ReadSet";
+import type {
+  ReadSet,
+  ReadSetColumn,
+  ReadSetFilter,
+  ReadSetJoin,
+  ReadSetKey,
+  ReadSetScope,
+} from "#src/models/realtime/ReadSet";
 import type { RecordedStatement } from "#src/models/realtime/RecordedStatement";
 
 import { JoinSide } from "#src/models/realtime/JoinSide";
 import { getStatementReadSet } from "#src/services/realtime/getStatementReadSet";
 
-const toSideSerial = ({ column, selectedAs, table }: ReadSetKey) =>
-  `${table}.${column}${selectedAs === undefined ? "" : `@${selectedAs}`}`;
+const toSideSerial = ({ column, occurrence, selectedAs, table }: ReadSetKey) =>
+  `${occurrence}:${table}.${column}${selectedAs === undefined ? "" : `@${selectedAs}`}`;
 const toColumnSerial = ({ column, table }: ReadSetColumn) => `${table}.${column}`;
+const toFilterSerial = ({ column, occurrence, site, table }: ReadSetFilter) =>
+  `${occurrence}:${toColumnSerial({ column, table })}@${site}`;
 const toJoinSerial = ({ kind, left, nullFilled, right }: ReadSetJoin) =>
   `${kind}:${nullFilled ?? ""}:${toSideSerial(left)}|${toSideSerial(right)}`;
 const toScopeSerial = ({ column, secret, table, value }: ReadSetScope) =>
@@ -36,7 +45,7 @@ export const getReadSet = (statements: RecordedStatement[]): ReadSet => {
   return {
     filters: uniqueSorted(
       readSets.flatMap((readSet) => readSet.filters),
-      toColumnSerial,
+      toFilterSerial,
     ),
     joins: uniqueSorted(
       readSets.flatMap((readSet) => readSet.joins).map((join) => orderJoin(join)),

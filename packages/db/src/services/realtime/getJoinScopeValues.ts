@@ -3,6 +3,7 @@ import type { ReadSetJoin, ReadSetKey } from "#src/models/realtime/ReadSet";
 import type { ScopeValue } from "#src/models/realtime/ScopeValue";
 
 import { JoinKind } from "#src/models/realtime/JoinKind";
+import { getOccurrenceKey } from "#src/services/realtime/getOccurrenceKey";
 import { getScopeKeys } from "#src/services/realtime/getScopeKeys";
 import { tableMap } from "#src/services/realtime/tableMap";
 import { checkIsRecord } from "#src/util/object/checkIsRecord";
@@ -30,14 +31,22 @@ const checkIsPreservingJoin = (join: ReadSetJoin, side: JoinSide): boolean =>
 
 // The scope values the rows a read returned name for the tables it joins on a scope column, through a join that keeps the
 // Partner's rows. A side's value is the one its partner key holds in each row, so a row of another value is not named.
-// A table with no such value is named table-wide
-export const getJoinScopeValues = (joins: ReadSetJoin[], rows: unknown[], tables: string[]): ScopeValue[] => {
+// A table occurrence is named this way only when it is table-wide in the read and no filter tests that occurrence. A
+// Filter on another occurrence of the same table removes none of this occurrence's rows, so it does not stop the naming
+export const getJoinScopeValues = (
+  joins: ReadSetJoin[],
+  rows: unknown[],
+  tables: string[],
+  filteredOccurrences: Set<string>,
+): ScopeValue[] => {
   const namedTables = new Set(tables);
+  const isNamable = (side: ReadSetKey) =>
+    namedTables.has(side.table) && !filteredOccurrences.has(getOccurrenceKey(side));
   return joins.flatMap((join) => [
-    ...(checkIsPreservingJoin(join, "left") && namedTables.has(join.left.table)
+    ...(checkIsPreservingJoin(join, "left") && isNamable(join.left)
       ? getSideScopeValues(join.left, join.right, rows)
       : []),
-    ...(checkIsPreservingJoin(join, "right") && namedTables.has(join.right.table)
+    ...(checkIsPreservingJoin(join, "right") && isNamable(join.right)
       ? getSideScopeValues(join.right, join.left, rows)
       : []),
   ]);

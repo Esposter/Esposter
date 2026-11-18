@@ -14,7 +14,8 @@ import {
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { SECRET_TOKEN_LENGTH } from "@esposter/shared";
-import { eq, inArray, isNull } from "drizzle-orm";
+import { and, eq, inArray, isNull, ne } from "drizzle-orm";
+import { alias } from "drizzle-orm/sqlite-core";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
@@ -189,6 +190,194 @@ describe(getReadTopics, () => {
       .from(roomsInMessage)
       .leftJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.roomId, roomsInMessage.id))
       .where(isNull(usersToRoomsInMessage.lastReadAt));
+
+    await expect(getReadTopics(statements)).resolves.toStrictEqual(["message_rooms:*", "message_usersToRooms:*"]);
+  });
+
+  // A left join keeps the partner's rows whatever its joined table's own condition in the ON clause removes, so the condition
+  // Does not stop the joined table being named by the join key values the rows return. The viewer's own membership is left
+  // Out of the join by its condition, yet its room is still returned, and each returned room names its memberships
+  test("a table a left join's ON clause filters is named by the join key values its rows return", async () => {
+    expect.hasAssertions();
+
+    const { db } = await createMockDb();
+    const userId = v7();
+    await insertUser(db, userId);
+    const firstRoomId = v7();
+    const secondRoomId = v7();
+    await db.insert(roomsInMessage).values([
+      { id: firstRoomId, name: firstRoomId, type: RoomType.Room, userId },
+      { id: secondRoomId, name: secondRoomId, type: RoomType.Room, userId },
+    ]);
+    await db.insert(usersToRoomsInMessage).values({ roomId: firstRoomId, userId });
+    const { database, statements } = recordStatements(db);
+
+    await database
+      .select({ id: roomsInMessage.id })
+      .from(roomsInMessage)
+      .leftJoin(
+        usersToRoomsInMessage,
+        and(eq(usersToRoomsInMessage.roomId, roomsInMessage.id), ne(usersToRoomsInMessage.userId, userId)),
+      )
+      .where(eq(roomsInMessage.userId, userId));
+
+    await expect(getReadTopics(statements)).resolves.toStrictEqual(
+      [
+        "message_rooms:*",
+        `message_usersToRooms:roomId=${firstRoomId}`,
+        `message_usersToRooms:roomId=${secondRoomId}`,
+      ].toSorted(),
+    );
+  });
+
+  // A left join on an aliased table is read as the join it is. The alias is written as the joined table itself, not as a name,
+  // So the join's kind and its relation are read from that table, as they are for an unaliased one
+  test("a table a left join reaches under an alias is named by the join key values its rows return", async () => {
+    expect.hasAssertions();
+
+    const { db } = await createMockDb();
+    const userId = v7();
+    await insertUser(db, userId);
+    const roomId = v7();
+    await db.insert(roomsInMessage).values({ id: roomId, name: roomId, type: RoomType.Room, userId });
+    await db.insert(usersToRoomsInMessage).values({ roomId, userId });
+    const { database, statements } = recordStatements(db);
+    const memberships = alias(usersToRoomsInMessage, "roomMemberships");
+
+    await database
+      .select({ id: roomsInMessage.id })
+      .from(roomsInMessage)
+      .leftJoin(memberships, eq(memberships.roomId, roomsInMessage.id))
+      .where(eq(roomsInMessage.userId, userId));
+
+    await expect(getReadTopics(statements)).resolves.toStrictEqual(
+      ["message_rooms:*", `message_usersToRooms:roomId=${roomId}`].toSorted(),
+    );
+  });
+
+  // A join's condition compares the joined table's key on either side, and the other join's condition that compares it on its
+  // Right side is no filter of the table. The memberships are named by their room, though a second left join reads them too
+  test("a table another left join compares its key against on the right is named by the join key values its rows return", async () => {
+    expect.hasAssertions();
+
+    const { db } = await createMockDb();
+    const userId = v7();
+    await insertUser(db, userId);
+    const firstRoomId = v7();
+    const secondRoomId = v7();
+    await db.insert(roomsInMessage).values([
+      { id: firstRoomId, name: firstRoomId, type: RoomType.Room, userId },
+      { id: secondRoomId, name: secondRoomId, type: RoomType.Room, userId },
+    ]);
+    const { database, statements } = recordStatements(db);
+
+    await database
+      .select({ id: roomsInMessage.id })
+      .from(roomsInMessage)
+      .leftJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.roomId, roomsInMessage.id))
+      .leftJoin(usersInAuth, eq(usersInAuth.id, usersToRoomsInMessage.userId))
+      .where(eq(roomsInMessage.userId, userId));
+
+    await expect(getReadTopics(statements)).resolves.toStrictEqual(
+      [
+        "auth_users:*",
+        "message_rooms:*",
+        `message_usersToRooms:roomId=${firstRoomId}`,
+        `message_usersToRooms:roomId=${secondRoomId}`,
+      ].toSorted(),
+    );
+  });
+
+  // A filter names an occurrence of a table, not the table, so it does not stop another occurrence of that table being named by
+  // Its join key values. The viewer's own membership is filtered by `isHidden`, and the other memberships of each room are read
+  // Through a subquery, which names them by the room the outer rows return
+  test("a filter on one occurrence of a table does not stop another occurrence of it being named by its join key values", async () => {
+    expect.hasAssertions();
+
+    const { db } = await createMockDb();
+    const userId = v7();
+    const otherUserId = v7();
+    await insertUser(db, userId);
+    await insertUser(db, otherUserId);
+    const roomId = v7();
+    await db.insert(roomsInMessage).values({ id: roomId, name: roomId, type: RoomType.Room, userId });
+    await db.insert(usersToRoomsInMessage).values([
+      { isHidden: false, roomId, userId },
+      { isHidden: false, roomId, userId: otherUserId },
+    ]);
+    const { database, statements } = recordStatements(db);
+    const participantMemberships = alias(usersToRoomsInMessage, "participantMemberships");
+    const participants = database
+      .select({ roomId: participantMemberships.roomId })
+      .from(roomsInMessage)
+      .leftJoin(
+        participantMemberships,
+        and(eq(participantMemberships.roomId, roomsInMessage.id), ne(participantMemberships.userId, userId)),
+      )
+      .groupBy(participantMemberships.roomId)
+      .as("participants");
+
+    await database
+      .select({ id: roomsInMessage.id })
+      .from(roomsInMessage)
+      .innerJoin(
+        usersToRoomsInMessage,
+        and(
+          eq(usersToRoomsInMessage.roomId, roomsInMessage.id),
+          eq(usersToRoomsInMessage.userId, userId),
+          eq(usersToRoomsInMessage.isHidden, false),
+        ),
+      )
+      .leftJoin(participants, eq(participants.roomId, roomsInMessage.id))
+      .where(eq(roomsInMessage.userId, userId));
+
+    await expect(getReadTopics(statements)).resolves.toStrictEqual(
+      ["message_rooms:*", `message_usersToRooms:roomId=${roomId}`, `message_usersToRooms:userId=${userId}`].toSorted(),
+    );
+  });
+
+  // A column a read selects or groups by removes no row, so selecting the joined table's key does not filter it. The table
+  // Is still named by the join key values its rows return, which is the room each returned membership belongs to
+  test("a column a read selects from a left-joined table does not filter it out of the join's rows", async () => {
+    expect.hasAssertions();
+
+    const { db } = await createMockDb();
+    const userId = v7();
+    await insertUser(db, userId);
+    const roomId = v7();
+    await db.insert(roomsInMessage).values({ id: roomId, name: roomId, type: RoomType.Room, userId });
+    await db.insert(usersToRoomsInMessage).values({ roomId, userId });
+    const { database, statements } = recordStatements(db);
+
+    await database
+      .select({ id: roomsInMessage.id, membershipRoomId: usersToRoomsInMessage.roomId })
+      .from(roomsInMessage)
+      .leftJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.roomId, roomsInMessage.id))
+      .where(eq(roomsInMessage.userId, userId))
+      .groupBy(usersToRoomsInMessage.roomId, roomsInMessage.id);
+
+    await expect(getReadTopics(statements)).resolves.toStrictEqual(
+      ["message_rooms:*", `message_usersToRooms:roomId=${roomId}`].toSorted(),
+    );
+  });
+
+  // A condition on the table a left join brings, in its WHERE clause, removes the rows the join keeps, which turns the join
+  // Inner. A write that makes a removed row pass brings back a row no returned row carries, so the table is read whole
+  test("a table a left join's WHERE clause filters is named table-wide", async () => {
+    expect.hasAssertions();
+
+    const { db } = await createMockDb();
+    const userId = v7();
+    await insertUser(db, userId);
+    const roomId = v7();
+    await db.insert(roomsInMessage).values({ id: roomId, name: roomId, type: RoomType.Room, userId });
+    const { database, statements } = recordStatements(db);
+
+    await database
+      .select({ id: roomsInMessage.id })
+      .from(roomsInMessage)
+      .leftJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.roomId, roomsInMessage.id))
+      .where(ne(usersToRoomsInMessage.userId, userId));
 
     await expect(getReadTopics(statements)).resolves.toStrictEqual(["message_rooms:*", "message_usersToRooms:*"]);
   });
