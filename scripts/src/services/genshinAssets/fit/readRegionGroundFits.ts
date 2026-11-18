@@ -2,9 +2,8 @@ import type { RegionGroundFit } from "#src/models/genshinAssets/fit/RegionGround
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
 
-import { checkHasOutline } from "#src/services/genshinAssets/fit/checkHasOutline";
-import { checkIsSurfaceArea } from "#src/services/genshinAssets/fit/checkIsSurfaceArea";
 import { fitRegionGroundPieces } from "#src/services/genshinAssets/fit/fitRegionGroundPieces";
+import { readGroundPieceAreas } from "#src/services/genshinAssets/fit/readGroundPieceAreas";
 import { readGroundSource } from "#src/services/genshinAssets/fit/readGroundSource";
 import { readRegionAreas } from "#src/services/genshinAssets/fit/readRegionAreas";
 import { GameDataset } from "genshin-world";
@@ -20,20 +19,15 @@ export const readRegionGroundFits = async (
   const fitRegion = (): Promise<RegionGroundFit> =>
     (fitted ??= fitRegionGroundPieces(region, areas, readGroundSource(region)));
   return Object.fromEntries(
-    areas
-      .filter((area) => checkIsSurfaceArea(area) && checkHasOutline(area))
-      .map(({ id }) => [
-        `${GameDataset.Ground}/${id}`,
-        async () => {
-          const fit = await fitRegion();
-          const build = fit.pieces.find(({ areaId }) => areaId === id)?.build ?? { notes: [], objects: {} };
-          return fit.isQualified
-            ? build
-            : {
-                notes: [...build.notes, `${region}: keeps its plateau and lays no pieces, ${fit.reason}`],
-                objects: {},
-              };
-        },
-      ]),
+    (await readGroundPieceAreas(region)).map(({ id }) => [
+      `${GameDataset.Ground}/${id}`,
+      async () => {
+        const fit = await fitRegion();
+        const build = fit.pieces.find(({ areaId }) => areaId === id)?.build ?? { notes: [], objects: {} };
+        return fit.isQualified
+          ? build
+          : { notes: [...build.notes, `${region}: keeps its plateau and lays no pieces, ${fit.reason}`], objects: {} };
+      },
+    ]),
   );
 };
