@@ -62,7 +62,7 @@ export const measureClipFrames = async (clipPath: string, rect: ImageRegion): Pr
     ],
     { stdio: ["ignore", "pipe", "inherit"] },
   );
-  const exited = new Promise<number | null>((resolve, reject) => {
+  const exited = new Promise<null | number>((resolve, reject) => {
     child.once("error", reject);
     child.once("close", resolve);
   });

@@ -5,5 +5,5 @@ import type { SerializedShader } from "#src/models/genshinAssets/materials/Seria
 export interface ExportedShader {
   block: string;
   folder: string;
-  shader: SerializedShader | undefined;
+  shader?: SerializedShader | undefined;
 }

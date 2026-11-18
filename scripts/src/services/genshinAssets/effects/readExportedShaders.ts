@@ -1,5 +1,5 @@
-import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { ExportedShader } from "#src/models/genshinAssets/effects/ExportedShader";
+import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { parseSerializedShader } from "#src/services/genshinAssets/materials/parseSerializedShader";

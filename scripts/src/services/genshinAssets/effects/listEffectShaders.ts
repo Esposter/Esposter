@@ -1,7 +1,7 @@
 import type { ExportedShader } from "#src/models/genshinAssets/effects/ExportedShader";
 import type { ShaderListing } from "#src/models/genshinAssets/effects/ShaderListing";
 
-import { isEffectPass } from "#src/services/genshinAssets/effects/isEffectPass";
+import { checkIsEffectPass } from "#src/services/genshinAssets/effects/checkIsEffectPass";
 
 // Each exported shader listed with its keywords and its passes' state, and marked as an effect when one of its passes
 // Draws with an effect's blend. A shader whose serialized form does not read is listed with no state, never a guessed one
@@ -16,7 +16,7 @@ export const listEffectShaders = (shaders: ExportedShader[]): ShaderListing[] =>
     return {
       block,
       folder,
-      isEffect: passes.some(({ state }) => isEffectPass(state)),
+      isEffect: passes.some(({ state }) => checkIsEffectPass(state)),
       isRead: true,
       keywords: [...new Set(keywords)].toSorted(),
       name: shader.name,

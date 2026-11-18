@@ -24,6 +24,7 @@ import { getLunarReactionDamage } from "#src/services/combat/damage/getLunarReac
 import { getResistanceMultiplier } from "#src/services/combat/damage/getResistanceMultiplier";
 import { getStellarConductCoefficient } from "#src/services/combat/damage/getStellarConductCoefficient";
 import { getTransformativeDamage } from "#src/services/combat/damage/getTransformativeDamage";
+import { SPARK_SECONDS } from "#src/services/effects/constants";
 import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
 import { computeEnemyStats } from "#src/services/enemy/computeEnemyStats";
 import { ENEMY_LAUNCHED_STATUS_ID, ENEMY_STAGGER_SECONDS } from "#src/services/enemy/constants";
@@ -32,7 +33,6 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { getEnemyResistance } from "#src/services/enemy/getEnemyResistance";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
-import { SPARK_SECONDS } from "#src/services/effects/constants";
 import { RADIANCE_STELLAR_CONDUCT_STATUS_ID } from "#src/services/kit/constants";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
