@@ -336,6 +336,55 @@ describe(getReadTopics, () => {
     );
   });
 
+  // An inner join whose condition references a table occurrence drops the rows of that occurrence that no match reaches. A left
+  // Join names the occurrence by the rows that do not reach it, so the inner join makes the occurrence table-wide
+  test("a table an inner join after a left join references is named table-wide, though the left join names it", async () => {
+    expect.hasAssertions();
+
+    const { db } = await createMockDb();
+    const userId = v7();
+    await insertUser(db, userId);
+    const roomId = v7();
+    await db.insert(roomsInMessage).values({ id: roomId, name: roomId, type: RoomType.Room, userId });
+    await db.insert(usersToRoomsInMessage).values({ roomId, userId });
+    const { database, statements } = recordStatements(db);
+
+    await database
+      .select({ id: roomsInMessage.id })
+      .from(roomsInMessage)
+      .leftJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.roomId, roomsInMessage.id))
+      .innerJoin(usersInAuth, eq(usersInAuth.id, usersToRoomsInMessage.userId))
+      .where(eq(roomsInMessage.userId, userId));
+
+    await expect(getReadTopics(statements)).resolves.toStrictEqual(
+      ["auth_users:*", "message_rooms:*", "message_usersToRooms:*"].toSorted(),
+    );
+  });
+
+  // An inner join whose condition references only other occurrences drops no row of the table a left join names, so the table
+  // Is still named by the rows that join returns
+  test("a table a left join names stays named by its rows when an inner join references only other occurrences", async () => {
+    expect.hasAssertions();
+
+    const { db } = await createMockDb();
+    const userId = v7();
+    await insertUser(db, userId);
+    const roomId = v7();
+    await db.insert(roomsInMessage).values({ id: roomId, name: roomId, type: RoomType.Room, userId });
+    const { database, statements } = recordStatements(db);
+
+    await database
+      .select({ id: roomsInMessage.id })
+      .from(roomsInMessage)
+      .leftJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.roomId, roomsInMessage.id))
+      .innerJoin(usersInAuth, eq(usersInAuth.id, roomsInMessage.userId))
+      .where(eq(roomsInMessage.userId, userId));
+
+    await expect(getReadTopics(statements)).resolves.toStrictEqual(
+      ["auth_users:*", "message_rooms:*", `message_usersToRooms:roomId=${roomId}`].toSorted(),
+    );
+  });
+
   // A column a read selects or groups by removes no row, so selecting the joined table's key does not filter it. The table
   // Is still named by the join key values its rows return, which is the room each returned membership belongs to
   test("a column a read selects from a left-joined table does not filter it out of the join's rows", async () => {

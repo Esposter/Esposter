@@ -30,7 +30,7 @@ export const getDirectMessageDisplayNames = (db: Context["db"], userId: string) 
       participantMembership,
       and(eq(participantMembership.roomId, roomsInMessage.id), ne(participantMembership.userId, userId)),
     )
-    .innerJoin(participantUser, eq(participantUser.id, participantMembership.userId))
+    .leftJoin(participantUser, eq(participantUser.id, participantMembership.userId))
     .where(
       and(
         eq(roomsInMessage.type, RoomType.DirectMessage),

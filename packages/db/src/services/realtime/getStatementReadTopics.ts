@@ -3,6 +3,7 @@ import type { ScopeValue } from "#src/models/realtime/ScopeValue";
 import type { ScopeTopic } from "@esposter/db-schema";
 
 import { FilterSite } from "#src/models/realtime/FilterSite";
+import { JoinKind } from "#src/models/realtime/JoinKind";
 import { getJoinScopeValues } from "#src/services/realtime/getJoinScopeValues";
 import { getOccurrenceKey } from "#src/services/realtime/getOccurrenceKey";
 import { getScopeTopics } from "#src/services/realtime/getScopeTopics";
@@ -27,10 +28,15 @@ export const getStatementReadTopics = async ({ rows, statement }: RecordedStatem
       readSet.levels.flatMap(({ scopedTables, tables }) => tables.filter((table) => !scopedTables.includes(table))),
     ),
   ];
-  const filteredOccurrences = new Set(
-    readSet.filters.filter(({ site }) => site !== FilterSite.LeftJoinOn).map((filter) => getOccurrenceKey(filter)),
-  );
-  const joinScopeValues = getJoinScopeValues(readSet.joins, rows, tableWideTables, filteredOccurrences);
+  // An occurrence a filter tests, or an inner join's condition references, loses the rows no match reaches or the filter removes,
+  // so no left join names it by its rows
+  const blockedOccurrences = new Set([
+    ...readSet.filters.filter(({ site }) => site !== FilterSite.LeftJoinOn).map((filter) => getOccurrenceKey(filter)),
+    ...readSet.joins
+      .filter(({ kind }) => kind === JoinKind.Inner)
+      .flatMap(({ left, right }) => [getOccurrenceKey(left), getOccurrenceKey(right)]),
+  ]);
+  const joinScopeValues = getJoinScopeValues(readSet.joins, rows, tableWideTables, blockedOccurrences);
   const joinedTables = new Set(joinScopeValues.map(({ table }) => table));
   const joinTopics = await getScopeTopics(joinScopeValues);
   const tableTopics = tableWideTables

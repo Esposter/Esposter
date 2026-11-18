@@ -128,8 +128,9 @@ describe(getReadSet, () => {
           right: { column: "roomId", occurrence: "message_usersToRooms", table: "message_usersToRooms" },
         },
         {
-          kind: "inner",
+          kind: "left",
           left: { column: "id", occurrence: "participantUser", table: "auth_users" },
+          nullFilled: "left",
           right: { column: "userId", occurrence: "participantMembership", table: "message_usersToRooms" },
         },
         {
