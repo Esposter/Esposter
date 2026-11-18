@@ -329,6 +329,15 @@ const toTableKey = (readColumn: ReadColumn): ReadSetKey => ({
   table: getTableName(readColumn.owner),
 });
 
+// Drizzle's column config picks its mode from the values in it: any `true` selects only the `true` columns, while a
+// Config of only `false`s selects every other column. A config with no value at all selects none
+const checkIsSelectedColumn = (configured: unknown, key: string): boolean => {
+  if (!checkIsRecord(configured)) return true;
+  const values = Object.values(configured);
+  if (values.includes(true)) return configured[key] === true;
+  return values.includes(false) && configured[key] !== false;
+};
+
 // What the statement's own select returns, by the key each column is selected under. A relational query selects its
 // Table's columns, or the ones its config names
 const getSelections = (statement: SQLWrapper): ReadSelection[] => {
@@ -343,7 +352,7 @@ const getSelections = (statement: SQLWrapper): ReadSelection[] => {
   if (!table) return [];
   const configured = getConfig(statement)?.columns;
   return Object.entries(getTableColumns(table))
-    .filter(([key]) => !checkIsRecord(configured) || configured[key] === true)
+    .filter(([key]) => checkIsSelectedColumn(configured, key))
     .flatMap(([key, column]) =>
       toReadColumns(column, new Map()).map((readColumn) => ({ ...toTableKey(readColumn), selectedAs: key })),
     );
