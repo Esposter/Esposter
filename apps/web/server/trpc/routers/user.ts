@@ -26,7 +26,7 @@ import { getPublicAssetUrl } from "#server/services/storage/getPublicAssetUrl";
 import { getStorageCredentials } from "#server/services/storage/getStorageCredentials";
 import { deleteAccountSessions } from "#server/services/user/deleteAccountSessions";
 import { getDataExportLink } from "#server/services/user/getDataExportLink";
-import { publishUserRoomTopics } from "#server/services/user/publishUserRoomTopics";
+import { publishProfileTopics } from "#server/services/user/publishProfileTopics";
 import { readActiveDataExport } from "#server/services/user/readActiveDataExport";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
@@ -304,8 +304,9 @@ export const userRouter = router({
       }
     },
   ),
-  // A post card shows its author's name and image, so the feed reads the change as well. So does every room the person
-  // Is in, whose members read the name and image through the room's topic, so each membership's room is published too
+  // A post card shows its author's name and image, so the feed reads the change as well. So does every other read that
+  // Names the person beyond their own profile: the rooms they are in, and the requests, blocks, post threads, bans, invites
+  // And log entries that show them, which publishProfileTopics lists
   updateUser: getTopicsProcedure(standardAuthedProcedure.input(updateUserInputSchema), (options) => [
     ...userTopics(options),
     getTopic(TopicKind.Feed, "posts"),
@@ -317,8 +318,8 @@ export const userRouter = router({
       ctx.user.id,
     );
     // Best-effort, as the topics the middleware publishes are: the save has committed, so a failed publish costs readers one refresh
-    await getResultAsync(() => publishUserRoomTopics(ctx.db, ctx.user.id)).match(noop, (error) => {
-      console.error("Failed to publish the rooms a profile save reaches:", error);
+    await getResultAsync(() => publishProfileTopics(ctx.db, ctx.user.id)).match(noop, (error) => {
+      console.error("Failed to publish the topics a profile save reaches:", error);
     });
     return updatedUser;
   }),

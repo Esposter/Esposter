@@ -22,6 +22,8 @@ import {
   getMockSession,
 } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
+import { blockRouter } from "#server/trpc/routers/block";
+import { friendRequestRouter } from "#server/trpc/routers/friendRequest";
 import { roomRouter } from "#server/trpc/routers/room/index";
 import { userRouter } from "#server/trpc/routers/user";
 import { MimeType } from "#shared/models/file/MimeType";
@@ -296,6 +298,32 @@ describe("userRouter", () => {
     await caller.updateUser({ name });
 
     expect(MockPublishedTopics).toContain(getTopic(TopicKind.Room, room.id));
+  });
+
+  // A pending request shows the saver's name on the receiver's list, which names the receiver's own request topic
+  test("publishes the topic of each person whose request shows the name", async () => {
+    expect.hasAssertions();
+
+    const receiverSession = await createMockAuthSession(mockContext.db);
+    await createCallerFactory(friendRequestRouter)(mockContext).sendFriendRequest(receiverSession.user.id);
+    MockPublishedTopics.length = 0;
+    await caller.updateUser({ name });
+
+    expect(MockPublishedTopics).toContain(getTopic(TopicKind.FriendRequest, receiverSession.user.id));
+  });
+
+  // A blocker's list shows the blocked person's name, so the blocker's block topic is published with the save
+  test("publishes the topic of each person who blocked the one saving the profile", async () => {
+    expect.hasAssertions();
+
+    const blockerSession = await createMockAuthSession(mockContext.db);
+    await createCallerFactory(blockRouter)(await createMockContext(blockerSession)).createBlock(
+      getMockSession().user.id,
+    );
+    MockPublishedTopics.length = 0;
+    await caller.updateUser({ name });
+
+    expect(MockPublishedTopics).toContain(getTopic(TopicKind.Block, blockerSession.user.id));
   });
 
   test("reads user", async () => {
