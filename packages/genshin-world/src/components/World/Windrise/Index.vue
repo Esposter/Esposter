@@ -295,7 +295,7 @@ const { cascadedShadowNode, light: sun } = createSunLight({ cascadeCount, maxFar
 // Shade is lit only by this, so the sky's colour above and the grass's below are the shade's colours
 const hemisphere = new HemisphereLight();
 const worldOffset = useFloatingOrigin(origin);
-const { isRegionDataSettled, regionDataMap, regionGroundMap } = useRegionData(
+const { isRegionDataSettled, regionChestMap, regionDataMap, regionGroundMap } = useRegionData(
   origin,
   regionDataBaseUrl,
   gameDataBaseUrl,
@@ -437,7 +437,7 @@ if (devRegistry)
 // The regions' data and grounds, and the spot each resident is shown at, which the world screen reads the residents
 // And the world's ground from, and the clock the Time screen sets the hour of, and the weather the area shows, which a
 // Developer's `state` reads
-defineExpose({ areaWeather, gameClock, regionDataMap, regionGroundMap, residentSpots });
+defineExpose({ areaWeather, gameClock, regionChestMap, regionDataMap, regionGroundMap, residentSpots });
 onUnmounted(() => {
   rampTexture.dispose();
   pavingGeometry.dispose();

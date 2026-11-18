@@ -60,11 +60,11 @@ The world SHALL show a Mora chest at each Mora chest marker of Mondstadt that th
 
 ### Requirement: Every region's unopened chests are offered in the world
 
-The world SHALL offer the unopened chests of each region's chest record, not only Mondstadt's.
+The world SHALL offer the unopened chests of each region's chest record while the region is in reach, not only Mondstadt's.
 
 #### Scenario: An unopened chest in another region is offered to open
 
-- **GIVEN** the player is in a region whose chest record is published
+- **GIVEN** the player is within reach of a region whose chest record is published
 - **WHEN** the player comes near one of its unopened chests
 - **THEN** the chest is offered to open on F
 

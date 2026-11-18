@@ -1,6 +1,9 @@
+import { GameDataKeys } from "#src/generated/gameDataKeys";
 import { ChestKind } from "#src/models/chest/ChestKind";
 import { PuzzleKind } from "#src/models/puzzle/PuzzleKind";
 import { SeelieState } from "#src/models/puzzle/SeelieState";
+import { readRegionChestPlaces } from "#src/services/chest/readRegionChestPlaces";
+import { readGameDataObject } from "#src/services/data/readGameDataObject";
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
 import { useWorldChestsStore } from "#src/store/chests";
 import { startTestWorldGround } from "#src/store/ground.fixture";
@@ -13,15 +16,10 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 const { datasetRecordsMap } = vi.hoisted(() => ({ datasetRecordsMap: new Map<string, unknown[]>() }));
 
 vi.mock(import("#src/services/data/readGameDataObject"), () => ({
-  readGameDataObject: (_gameDataBaseUrl: string, dataset: string) =>
-    Promise.resolve(datasetRecordsMap.get(dataset) ?? []),
+  readGameDataObject: vi.fn<(gameDataBaseUrl: string, dataset: string, hash: string) => Promise<unknown>>(
+    (_gameDataBaseUrl, dataset) => Promise.resolve(datasetRecordsMap.get(dataset) ?? []),
+  ),
 }));
-
-// The start's reads are in the background, so they settle on the next turn of the event loop
-const waitForReads = () =>
-  new Promise((resolve) => {
-    setTimeout(resolve, 0);
-  });
 
 const createChests = (puzzleOptions: Parameters<ReturnType<typeof useWorldPuzzlesStore>["start"]>[0]) => {
   startTestWorldSession();
@@ -32,14 +30,15 @@ const createChests = (puzzleOptions: Parameters<ReturnType<typeof useWorldPuzzle
   vi.spyOn(worldAdventureRankStore, "gainWorldAdventureExp").mockImplementation(() => {});
   const worldChestsStore = useWorldChestsStore();
   worldChestsStore.start({ openedChestIds: new Set(), waterLevel: -1 });
-  const { chestInteractables, openedChestIds } = storeToRefs(worldChestsStore);
+  const { chestInteractables, openedChestIds, regionChestPlaces } = storeToRefs(worldChestsStore);
   const { openChestById } = worldChestsStore;
-  return { chestInteractables, openChestById, openedChestIds };
+  return { chestInteractables, openChestById, openedChestIds, regionChestPlaces };
 };
 
 describe(useWorldChestsStore, () => {
   afterEach(() => {
     datasetRecordsMap.clear();
+    vi.clearAllMocks();
   });
 
   const SEELIE_ID = "settled";
@@ -68,23 +67,20 @@ describe(useWorldChestsStore, () => {
     expect.hasAssertions();
 
     datasetRecordsMap.set("chests/liyue", [{ id: LIYUE_CHEST_ID, kind: ChestKind.Common, position: { x: 0, z: 0 } }]);
-    const { chestInteractables } = createChests({ ...puzzleOptions, seelies: [] });
-    await waitForReads();
+    const { chestInteractables, regionChestPlaces } = createChests({ ...puzzleOptions, seelies: [] });
+    // Liyue's record is read once its region comes within reach, and the session hands it to the store as it arrives
+    regionChestPlaces.value = await readRegionChestPlaces("game-data", GameDataKeys.chests.liyue);
 
     expect(chestInteractables.value.map(({ id }) => id)).toStrictEqual([LIYUE_CHEST_ID]);
   });
 
-  test("a region with no published chest record offers no chest", async () => {
+  test("the world's start reads no chest record of a region outside reach", () => {
     expect.hasAssertions();
 
-    // The lock publishes no chest record for Dragonspine, so a record served under its name is never read
-    datasetRecordsMap.set("chests/dragonspine", [
-      { id: "chest-dragonspine", kind: ChestKind.Common, position: { x: 0, z: 0 } },
-    ]);
-    const { chestInteractables } = createChests({ ...puzzleOptions, seelies: [] });
-    await waitForReads();
+    datasetRecordsMap.set("chests/liyue", [{ id: LIYUE_CHEST_ID, kind: ChestKind.Common, position: { x: 0, z: 0 } }]);
+    createChests({ ...puzzleOptions, seelies: [] });
 
-    expect(chestInteractables.value).toStrictEqual([]);
+    expect(readGameDataObject).not.toHaveBeenCalledWith(expect.anything(), "chests/liyue", expect.anything());
   });
 
   test("a Seelie's chest is offered once it settles", () => {

@@ -454,7 +454,14 @@ startPuzzles({
 onUnmounted(stopPuzzles);
 // Each shut shrine is offered beneath its point while the bag holds a key of its region, and opened with that key
 const { openShrineById, shrineInteractables } = useWorldShrines({ shrineKeySources });
-const { campLockSources, openedChestIds } = storeToRefs(worldChestsStore);
+const { campLockSources, openedChestIds, regionChestPlaces } = storeToRefs(worldChestsStore);
+// The regions' chests as each record arrives, which the store offers beneath their points
+watch(
+  () => [...(windrise.value?.regionChestMap.values() ?? [])].flat(),
+  (places) => {
+    regionChestPlaces.value = places;
+  },
+);
 // The gadget equipped to the quick-use slot, which Z uses once its cooldown group is ready
 const { equippedGadget, gadgetRows, getEquippedGadgetCooldown, isQuickSwapOpen, stepQuickUse } = useWorldGadgets();
 // The Oculi not found, those near the camera and the one the body touches, with the levels the statues have reached

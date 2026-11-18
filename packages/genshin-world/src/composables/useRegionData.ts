@@ -1,9 +1,13 @@
+import type { GameDataKey } from "#src/generated/gameDataKeys";
+import type { ChestPlace } from "#src/models/chest/ChestPlace";
 import type { Catalogue } from "#src/models/world/Catalogue";
 import type { LoadedRegion } from "#src/models/world/LoadedRegion";
 import type { RegionGround } from "#src/models/world/RegionGround";
 import type { Vector3 } from "three";
 
+import { GameDataKeys } from "#src/generated/gameDataKeys";
 import { regionGroundSchema } from "#src/models/world/RegionGround";
+import { readRegionChestPlaces } from "#src/services/chest/readRegionChestPlaces";
 import { gameDataLockKeys } from "#src/services/data/gameDataLockKeys";
 import { readGameData } from "#src/services/data/readGameData";
 import { measureLoadStep } from "#src/services/loading/measureLoadStep";
@@ -34,8 +38,11 @@ export const useRegionData = (
   const regionDataMap = shallowReactive(new Map<string, LoadedRegion>());
   // Each ground laid over Windrise's, by its lock key, set once as it arrives and kept after
   const regionGroundMap = shallowReactive(new Map<string, RegionGround>());
+  // Each region's chest record by its id, set once as the region comes within reach and kept after, as its ground is
+  const regionChestMap = shallowReactive(new Map<string, ChestPlace[]>());
   const groundKeys = selectLaidGroundKeys(gameDataLockKeys);
   const pendingGroundKeys = new Set<string>();
+  const pendingChestRegionIds = new Set<string>();
   const pendingRegionIds = new Set<string>();
   const wantedRegionIds = new Set<string>();
   const isRegionDataSettled = ref(false);
@@ -93,6 +100,17 @@ export const useRegionData = (
       }
 
       wantedRegionIds.add(id);
+      // A region the lock holds no chest record for has no chests to read
+      const chestKey = (GameDataKeys.chests as Partial<Record<string, GameDataKey>>)[id];
+      if (chestKey !== undefined && !regionChestMap.has(id) && !pendingChestRegionIds.has(id))
+        requestLoad(
+          pendingChestRegionIds,
+          id,
+          () => readRegionChestPlaces(gameDataBaseUrl, chestKey),
+          (places) => {
+            regionChestMap.set(id, places);
+          },
+        );
       if (regionDataMap.has(id) || pendingRegionIds.has(id)) continue;
       requestLoad(
         pendingRegionIds,
@@ -108,5 +126,5 @@ export const useRegionData = (
     settle();
   });
 
-  return { isRegionDataSettled, regionDataMap, regionGroundMap };
+  return { isRegionDataSettled, regionChestMap, regionDataMap, regionGroundMap };
 };
