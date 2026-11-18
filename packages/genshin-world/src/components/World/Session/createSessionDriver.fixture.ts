@@ -23,6 +23,9 @@ export const createSessionDriver = (devRegistry: DevRegistry) => {
   // Taken before the clock is faked, so a real frame still comes between two scripted frames, for a worker to answer in
   const requestRealFrame = window.requestAnimationFrame.bind(window);
   const scriptedClock = createScriptedClock();
+  // One Pinia for every mount, as the app has one for its life: each mount starts the session store on it and each
+  // Unmount stops it, so a suite reads the store between two mounts the way the app's next mount finds it
+  const pinia = createPinia();
   let isWorldReady = false;
   let lastSave: GenshinSave | undefined;
   let savedSave: GenshinSave | undefined;
@@ -56,7 +59,7 @@ export const createSessionDriver = (devRegistry: DevRegistry) => {
           lastSave = newSave;
         },
       },
-      global: { plugins: [createPinia()] },
+      global: { plugins: [pinia] },
       props: { ...props, devRegistry, save },
     });
     unmountScreen = () => screen.unmount();
@@ -96,5 +99,5 @@ export const createSessionDriver = (devRegistry: DevRegistry) => {
   // The runner's driver, typed by its interface so a change to the interface reaches this implementation at compile time
   const driver: ScriptedSessionDriver = { frame, load, run: devRegistry.run, save };
 
-  return { ...driver, dispose, mount };
+  return { ...driver, dispose, mount, pinia };
 };

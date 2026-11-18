@@ -10,9 +10,10 @@ import { genshinSaveSchema } from "#src/models/save/GenshinSave";
 import { SCRIPTED_FRAME_MS } from "#src/services/dev/constants";
 import { createDevRegistry } from "#src/services/dev/createDevRegistry";
 import { stepFramesUntil } from "#src/services/dev/stepFramesUntil";
-import { EMPTY_CURRENCIES } from "#src/services/inventory/constants";
+import { EMPTY_CURRENCIES, EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
 import { QuestLoaderMap } from "#src/services/quest/QuestLoaderMap";
 import { EMPTY_GENSHIN_SAVE, MAX_TRAVELER_NAME_LENGTH } from "#src/services/save/constants";
+import { useWorldSessionStore } from "#src/store/session";
 import { assert, describe, expect, onTestFinished, test } from "vitest";
 import { z } from "zod";
 
@@ -37,96 +38,158 @@ const checkIsStandingIn = (devRegistry: DevRegistry, area: string): boolean => {
 };
 
 describe("worldSession", () => {
-  test("a load restores what the save holds", async () => {
-    expect.hasAssertions();
+  // A session mounts a whole world and unmounts it, which takes longer than the default timeout on a machine the suite
+  // Shares with its other files, so each case gets a minute
+  const timeoutMs = 60_000;
 
-    const devRegistry = createDevRegistry();
-    const sessionDriver = createSessionDriver(devRegistry);
-    onTestFinished(() => sessionDriver.dispose());
-    // A save that holds one step of Wanderer's Trail, one defeat and one Mora, so each reading is off its empty value
-    const seededSave: GenshinSave = {
-      ...EMPTY_GENSHIN_SAVE,
-      archive: { ...EMPTY_GENSHIN_SAVE.archive, kills: { "-1": 1 } },
-      quests: { [QuestId.WanderersTrail]: { objectiveCounts: [], stepIndex: 1 } },
-      wallet: { ...EMPTY_GENSHIN_SAVE.wallet, currencies: { ...EMPTY_CURRENCIES, [Currency.Mora]: 1 } },
-    };
-    // The quest's own record, read as the world reads it, so the total the quest reading gives is the record's
-    const quest = questSchema.parse(await QuestLoaderMap[QuestId.WanderersTrail](GAME_DATA_LOCAL_BASE_URL));
-    const mounted = await sessionDriver.mount(seededSave);
-    const readingsBeforeSave = readHolds(devRegistry);
-    const saved = await sessionDriver.save();
-    const loaded = await sessionDriver.load();
-    const readingsAfterLoad = readHolds(devRegistry);
+  test(
+    "a load restores what the save holds",
+    async () => {
+      expect.hasAssertions();
 
-    expect(mounted).toStrictEqual({ ok: true });
-    expect(readingsBeforeSave).toStrictEqual({
-      defeats: { ok: true, value: 1 },
-      mora: { ok: true, value: 1 },
-      questStep: { ok: true, value: `step 2 of ${quest.steps.length}` },
-    });
-    expect(saved).toStrictEqual({ ok: true });
-    expect(loaded).toStrictEqual({ ok: true });
-    expect(readingsAfterLoad).toStrictEqual(readingsBeforeSave);
-  });
+      const devRegistry = createDevRegistry();
+      const sessionDriver = createSessionDriver(devRegistry);
+      onTestFinished(() => sessionDriver.dispose());
+      // A save that holds one step of Wanderer's Trail, one defeat and one Mora, so each reading is off its empty value
+      const seededSave: GenshinSave = {
+        ...EMPTY_GENSHIN_SAVE,
+        archive: { ...EMPTY_GENSHIN_SAVE.archive, kills: { "-1": 1 } },
+        quests: { [QuestId.WanderersTrail]: { objectiveCounts: [], stepIndex: 1 } },
+        wallet: { ...EMPTY_GENSHIN_SAVE.wallet, currencies: { ...EMPTY_CURRENCIES, [Currency.Mora]: 1 } },
+      };
+      // The quest's own record, read as the world reads it, so the total the quest reading gives is the record's
+      const quest = questSchema.parse(await QuestLoaderMap[QuestId.WanderersTrail](GAME_DATA_LOCAL_BASE_URL));
+      const mounted = await sessionDriver.mount(seededSave);
+      const readingsBeforeSave = readHolds(devRegistry);
+      const saved = await sessionDriver.save();
+      const loaded = await sessionDriver.load();
+      const readingsAfterLoad = readHolds(devRegistry);
 
-  test("a save the schema refuses fails the script", async () => {
-    expect.hasAssertions();
+      expect(mounted).toStrictEqual({ ok: true });
+      expect(readingsBeforeSave).toStrictEqual({
+        defeats: { ok: true, value: 1 },
+        mora: { ok: true, value: 1 },
+        questStep: { ok: true, value: `step 2 of ${quest.steps.length}` },
+      });
+      expect(saved).toStrictEqual({ ok: true });
+      expect(loaded).toStrictEqual({ ok: true });
+      expect(readingsAfterLoad).toStrictEqual(readingsBeforeSave);
+    },
+    timeoutMs,
+  );
 
-    const devRegistry = createDevRegistry();
-    const sessionDriver = createSessionDriver(devRegistry);
-    onTestFinished(() => sessionDriver.dispose());
-    // A traveler's name one character past the save's bound, which the world carries through as it was saved
-    const refusedSave: GenshinSave = { ...EMPTY_GENSHIN_SAVE, travelerName: "a".repeat(MAX_TRAVELER_NAME_LENGTH + 1) };
-    const mounted = await sessionDriver.mount(refusedSave);
-    const saved = await sessionDriver.save();
-    const refusal = genshinSaveSchema.safeParse(refusedSave);
+  test(
+    "a save the schema refuses fails the script",
+    async () => {
+      expect.hasAssertions();
 
-    assert.exists(refusal.error);
-    expect(mounted).toStrictEqual({ ok: true });
-    expect(saved).toStrictEqual({ error: z.prettifyError(refusal.error), ok: false });
-  });
+      const devRegistry = createDevRegistry();
+      const sessionDriver = createSessionDriver(devRegistry);
+      onTestFinished(() => sessionDriver.dispose());
+      // A traveler's name one character past the save's bound, which the world carries through as it was saved
+      const refusedSave: GenshinSave = {
+        ...EMPTY_GENSHIN_SAVE,
+        travelerName: "a".repeat(MAX_TRAVELER_NAME_LENGTH + 1),
+      };
+      const mounted = await sessionDriver.mount(refusedSave);
+      const saved = await sessionDriver.save();
+      const refusal = genshinSaveSchema.safeParse(refusedSave);
 
-  test("a save that fails to settle still unmounts the screen", async () => {
-    expect.hasAssertions();
+      assert.exists(refusal.error);
+      expect(mounted).toStrictEqual({ ok: true });
+      expect(saved).toStrictEqual({ error: z.prettifyError(refusal.error), ok: false });
+    },
+    timeoutMs,
+  );
 
-    const devRegistry = createDevRegistry();
-    // A registry that refuses the settle's read, so the save fails before it takes the world's save
-    const refusingRegistry: DevRegistry = {
-      ...devRegistry,
-      run: (line) => (line === "settled" ? { error: " ", ok: false, usage: "" } : devRegistry.run(line)),
-    };
-    const sessionDriver = createSessionDriver(refusingRegistry);
-    onTestFinished(() => sessionDriver.dispose());
-    const mounted = await sessionDriver.mount();
-    const saved = await sessionDriver.save();
-    const kills = devRegistry.run("kills");
+  test(
+    "a save that fails to settle still unmounts the screen",
+    async () => {
+      expect.hasAssertions();
 
-    expect(mounted).toStrictEqual({ ok: true });
-    expect(saved).toStrictEqual({ error: " ", ok: false });
-    // The world's commands leave the registry only once its screen unmounts, so a command still answering here means it did not
-    expect(kills).toStrictEqual({ error: "not available here", ok: false, usage: "kills" });
-  });
+      const devRegistry = createDevRegistry();
+      // A registry that refuses the settle's read, so the save fails before it takes the world's save
+      const refusingRegistry: DevRegistry = {
+        ...devRegistry,
+        run: (line) => (line === "settled" ? { error: " ", ok: false, usage: "" } : devRegistry.run(line)),
+      };
+      const sessionDriver = createSessionDriver(refusingRegistry);
+      onTestFinished(() => sessionDriver.dispose());
+      const mounted = await sessionDriver.mount();
+      const saved = await sessionDriver.save();
+      const kills = devRegistry.run("kills");
 
-  test("write the gauge's value into the HUD bar once the character stands in the subzero climate", async () => {
-    expect.hasAssertions();
+      expect(mounted).toStrictEqual({ ok: true });
+      expect(saved).toStrictEqual({ error: " ", ok: false });
+      // The world's commands leave the registry only once its screen unmounts, so a command still answering here means it did not
+      expect(kills).toStrictEqual({ error: "not available here", ok: false, usage: "kills" });
+    },
+    timeoutMs,
+  );
 
-    // The one area the subzero climate covers, which a teleport names and the character's state line reads back
-    const CLIMATE_AREA = "Dragonspine";
-    // The gauge fills a point a second in the climate, so a second's frames after the landing leave the bar a value
-    const SECOND_FRAMES = Math.round(1000 / SCRIPTED_FRAME_MS);
-    const devRegistry = createDevRegistry();
-    const sessionDriver = createSessionDriver(devRegistry);
-    onTestFinished(() => sessionDriver.dispose());
-    const mounted = await sessionDriver.mount();
-    const teleported = devRegistry.run(`teleport ${CLIMATE_AREA}`);
-    const landed = await stepFramesUntil(sessionDriver.frame, () =>
-      checkIsStandingIn(devRegistry, CLIMATE_AREA) ? true : undefined,
-    );
-    const sheerCold = await stepFramesUntil(sessionDriver.frame, readSheerColdValue, SECOND_FRAMES);
+  test(
+    "a store the session stops is empty, so the next mount starts from its own save",
+    async () => {
+      expect.hasAssertions();
 
-    expect(mounted).toStrictEqual({ ok: true });
-    expect(teleported).toStrictEqual({ ok: true, value: CLIMATE_AREA });
-    expect(landed).toBe(true);
-    expect(sheerCold).toBeGreaterThan(0);
-  });
+      const devRegistry = createDevRegistry();
+      const sessionDriver = createSessionDriver(devRegistry);
+      onTestFinished(() => sessionDriver.dispose());
+      // A save holding one Mora, so a second mount that kept the first session's bag would read it where its own save has none
+      const moraSave: GenshinSave = {
+        ...EMPTY_GENSHIN_SAVE,
+        wallet: { ...EMPTY_GENSHIN_SAVE.wallet, currencies: { ...EMPTY_CURRENCIES, [Currency.Mora]: 1 } },
+      };
+      const mounted = await sessionDriver.mount(moraSave);
+      const firstMora = readHolds(devRegistry).mora;
+      const firstSaved = await sessionDriver.save();
+      // Read from the pinia the screen mounted on, as the app's next mount would find the store
+      const worldSessionStore = useWorldSessionStore(sessionDriver.pinia);
+      const firstStopped = { inventory: worldSessionStore.inventory, wallet: worldSessionStore.wallet };
+      const secondMounted = await sessionDriver.mount();
+      const secondMora = readHolds(devRegistry).mora;
+      const secondSaved = await sessionDriver.save();
+      const secondStopped = { inventory: worldSessionStore.inventory, wallet: worldSessionStore.wallet };
+
+      expect(mounted).toStrictEqual({ ok: true });
+      expect(firstMora).toStrictEqual({ ok: true, value: 1 });
+      expect(firstSaved).toStrictEqual({ ok: true });
+      expect(firstStopped).toStrictEqual({ inventory: EMPTY_INVENTORY, wallet: EMPTY_WALLET });
+      expect(() => worldSessionStore.language).toThrowErrorMatchingInlineSnapshot(
+        `[NotInitializedError: WorldSessionStore is not initialized]`,
+      );
+      expect(secondMounted).toStrictEqual({ ok: true });
+      expect(secondMora).toStrictEqual({ ok: true, value: 0 });
+      expect(secondSaved).toStrictEqual({ ok: true });
+      expect(secondStopped).toStrictEqual({ inventory: EMPTY_INVENTORY, wallet: EMPTY_WALLET });
+    },
+    timeoutMs,
+  );
+
+  test(
+    "write the gauge's value into the HUD bar once the character stands in the subzero climate",
+    async () => {
+      expect.hasAssertions();
+
+      // The one area the subzero climate covers, which a teleport names and the character's state line reads back
+      const CLIMATE_AREA = "Dragonspine";
+      // The gauge fills a point a second in the climate, so a second's frames after the landing leave the bar a value
+      const SECOND_FRAMES = Math.round(1000 / SCRIPTED_FRAME_MS);
+      const devRegistry = createDevRegistry();
+      const sessionDriver = createSessionDriver(devRegistry);
+      onTestFinished(() => sessionDriver.dispose());
+      const mounted = await sessionDriver.mount();
+      const teleported = devRegistry.run(`teleport ${CLIMATE_AREA}`);
+      const landed = await stepFramesUntil(sessionDriver.frame, () =>
+        checkIsStandingIn(devRegistry, CLIMATE_AREA) ? true : undefined,
+      );
+      const sheerCold = await stepFramesUntil(sessionDriver.frame, readSheerColdValue, SECOND_FRAMES);
+
+      expect(mounted).toStrictEqual({ ok: true });
+      expect(teleported).toStrictEqual({ ok: true, value: CLIMATE_AREA });
+      expect(landed).toBe(true);
+      expect(sheerCold).toBeGreaterThan(0);
+    },
+    timeoutMs,
+  );
 });
