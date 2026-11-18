@@ -14,7 +14,7 @@ import {
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { SECRET_TOKEN_LENGTH } from "@esposter/shared";
-import { and, eq, inArray, isNull, ne } from "drizzle-orm";
+import { and, eq, inArray, isNull, ne, not } from "drizzle-orm";
 import { alias } from "drizzle-orm/sqlite-core";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
@@ -409,6 +409,54 @@ describe(getReadTopics, () => {
     await expect(getReadTopics(statements)).resolves.toStrictEqual(
       ["message_rooms:*", "message_usersToRooms:*"].toSorted(),
     );
+  });
+
+  // The equality is on the table a left join keeps, so the join returns that table's rows of every value, and a write of another
+  // Value brings a row no scope topic reaches. The table is read whole, not by the scope the ON clause tests
+  test("an equality on the preserved side of a left join's ON clause names no scope", async () => {
+    expect.hasAssertions();
+
+    const { db } = await createMockDb();
+    const userId = v7();
+    await insertUser(db, userId);
+    const roomId = v7();
+    await db.insert(roomsInMessage).values({ id: roomId, name: roomId, type: RoomType.Room, userId });
+    await db.insert(usersToRoomsInMessage).values({ roomId, userId });
+    const { database, statements } = recordStatements(db);
+
+    await database
+      .select({ roomId: usersToRoomsInMessage.roomId })
+      .from(usersToRoomsInMessage)
+      .leftJoin(
+        roomsInMessage,
+        and(eq(roomsInMessage.id, usersToRoomsInMessage.roomId), eq(usersToRoomsInMessage.userId, userId)),
+      );
+
+    const topics = await getReadTopics(statements);
+    expect(topics).toContain("message_usersToRooms:*");
+    expect(topics.some((topic) => topic.startsWith("message_usersToRooms:userId="))).toBe(false);
+  });
+
+  // A negated equality removes the rows it holds, so the rows it leaves are every other value's, and no scope names them
+  test("an equality under a not names no scope", async () => {
+    expect.hasAssertions();
+
+    const { db } = await createMockDb();
+    const userId = v7();
+    const otherUserId = v7();
+    await insertUser(db, userId);
+    await insertUser(db, otherUserId);
+    const roomId = v7();
+    await db.insert(roomsInMessage).values({ id: roomId, name: roomId, type: RoomType.Room, userId });
+    await db.insert(usersToRoomsInMessage).values({ roomId, userId: otherUserId });
+    const { database, statements } = recordStatements(db);
+
+    await database
+      .select({ roomId: usersToRoomsInMessage.roomId })
+      .from(usersToRoomsInMessage)
+      .where(not(eq(usersToRoomsInMessage.userId, userId)));
+
+    await expect(getReadTopics(statements)).resolves.toStrictEqual(["message_usersToRooms:*"]);
   });
 
   // A column a read selects or groups by removes no row, so selecting the joined table's key does not filter it. The table

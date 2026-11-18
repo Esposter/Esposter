@@ -75,6 +75,8 @@ interface ReadContext {
   derived: DerivedFields;
   join?: JoinContext | undefined;
   level: ReadSetLevel;
+  // Whether the chunks walked sit under a `not`, so a condition in them removes the rows it holds, and filters its table
+  negated: boolean;
   readSet: ReadSet;
   scopedKeys: ScopedKey[];
   selections: ReadSelection[];
@@ -87,7 +89,7 @@ interface ReadReference {
   throughSubquery: boolean;
 }
 
-interface ReadSelection extends Omit<ReadSetKey, "level"> {
+interface ReadSelection extends Pick<ReadSetKey, "column" | "occurrence" | "table"> {
   selectedAs: string;
 }
 
@@ -185,10 +187,15 @@ const toKey = ({ key, occurrence, owner }: ReadColumn, selections: ReadSelection
 
 // An equality names the rows its value selects. Through a derived table it narrows the subquery's rows, so it names them
 // Without naming the table at this level, which the subquery's own level does
+// A left join keeps the rows of the table it does not null-fill, whatever its ON clause tests, so a condition on that table
+// Removes none of its rows and is a filter on it, not a scope
+const checkIsKeptByLeftJoin = (readColumn: ReadColumn, join: JoinContext | undefined): boolean =>
+  join?.isLeft === true && readColumn.relation !== join.relation;
+
 const addScopes = (columns: ReadColumn[], value: unknown, context: ReadContext, throughSubquery: boolean) => {
   for (const readColumn of columns) {
     const { isScope, isSecret } = getScopeOf(readColumn);
-    if (!isScope) {
+    if (!isScope || checkIsKeptByLeftJoin(readColumn, context.join)) {
       addFilters([readColumn], context);
       continue;
     }
@@ -359,6 +366,11 @@ const readCondition = (
   declarations: AliasDeclaration[],
   context: ReadContext,
 ): number => {
+  // A condition under a `not` removes the rows it holds, so every column it names filters its table
+  if (context.negated) {
+    addFilters(reference.columns, context);
+    return 0;
+  }
   const operator = getOperatorText(chunks[operatorIndex]);
   const operand = chunks[operatorIndex + 1];
   if (operator === "=" && is(operand, Param))
@@ -422,8 +434,27 @@ const getClauseCondition = (text: string): boolean | undefined => {
 
 // The conditions of one flat chunk array are read against the aliases it declares, by region. A clause keyword in the array
 // Sets whether the chunks after it are conditions, so a WHERE's references filter their table and a select list's do not
+// Which chunks a `not` negates. Drizzle writes `not (condition)` for a condition, so the chunks inside the parentheses that follow
+// `not (` are negated, and `not column` for a column, so the chunk after a bare `not` is
+const getNegatedAt = (chunks: unknown[], depths: number[]): boolean[] => {
+  const groupDepths: number[] = [];
+  let negatesNext = false;
+  return chunks.map((chunk, index) => {
+    const depth = depths[index] ?? 0;
+    while (groupDepths.length > 0 && depth < (groupDepths.at(-1) ?? 0)) groupDepths.pop();
+    const negated = negatesNext || groupDepths.length > 0;
+    negatesNext = false;
+    const text = is(chunk, StringChunk) ? chunk.value : "";
+    if (/\bnot\s*\(+\s*$/iu.test(text)) groupDepths.push(depth + getParenthesisDelta(chunk));
+    else if (/\bnot\s*$/iu.test(text)) negatesNext = true;
+    return negated;
+  });
+};
+
 const walkSiblings = (chunks: unknown[], context: ReadContext) => {
-  const declarations = getAliasDeclarations(chunks, getDepths(chunks));
+  const depths = getDepths(chunks);
+  const declarations = getAliasDeclarations(chunks, depths);
+  const negatedAt = getNegatedAt(chunks, depths);
   const joins = getJoinContexts(chunks);
   for (const declaration of declarations)
     declareOccurrence(context, declaration.alias, getTableName(declaration.table));
@@ -435,6 +466,7 @@ const walkSiblings = (chunks: unknown[], context: ReadContext) => {
       const consumed = readCondition(chunks, index + reference.length, reference, declarations, {
         ...context,
         condition,
+        negated: context.negated || (negatedAt[index] ?? false),
       });
       index += reference.length + consumed;
     } else {
@@ -442,7 +474,12 @@ const walkSiblings = (chunks: unknown[], context: ReadContext) => {
       const clause = is(chunk, StringChunk) ? getClauseCondition(chunk.value) : undefined;
       if (clause !== undefined) condition = clause;
       const join = joins.get(index);
-      walkChunk(chunk, { ...context, condition, ...(join ? { join } : {}) });
+      walkChunk(chunk, {
+        ...context,
+        condition,
+        negated: context.negated || (negatedAt[index] ?? false),
+        ...(join ? { join } : {}),
+      });
       index += 1;
     }
   }
@@ -495,7 +532,7 @@ const walkChunk = (chunk: unknown, context: ReadContext): void => {
   } else if (checkIsStatementLike(chunk)) walkChunk(chunk.getSQL(), enterLevel(context));
 };
 
-const toTableKey = (readColumn: ReadColumn): Omit<ReadSetKey, "level"> => ({
+const toTableKey = (readColumn: ReadColumn): Pick<ReadSetKey, "column" | "occurrence" | "table"> => ({
   column: readColumn.key,
   occurrence: readColumn.occurrence,
   table: getTableName(readColumn.owner),
@@ -544,6 +581,7 @@ export const getStatementReadSet = (statement: SQLWrapper): ReadSet => {
     derived: new Map(),
     join: undefined,
     level,
+    negated: false,
     readSet,
     scopedKeys,
     selections: getSelections(statement),
@@ -553,10 +591,10 @@ export const getStatementReadSet = (statement: SQLWrapper): ReadSet => {
     .map(({ tables }) => ({ tables: [...new Set(tables)].toSorted() }))
     .filter(({ tables }) => tables.length > 0);
   // A declaration is scoped by an equality of its own in its level, so the scope is read from the level it was declared in
-  const occurrences = declared.map(({ level, occurrence, table }) => ({
-    level: readSet.levels.indexOf(level),
+  const occurrences = declared.map(({ level: declaredLevel, occurrence, table }) => ({
+    level: readSet.levels.indexOf(declaredLevel),
     occurrence,
-    scoped: scopedKeys.some((scopedKey) => scopedKey.level === level && scopedKey.occurrence === occurrence),
+    scoped: scopedKeys.some((scopedKey) => scopedKey.level === declaredLevel && scopedKey.occurrence === occurrence),
     table,
   }));
   return { ...readSet, levels, occurrences, tables: [...new Set(levels.flatMap(({ tables }) => tables))].toSorted() };
