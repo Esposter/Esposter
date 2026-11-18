@@ -11,6 +11,7 @@ import { ICEWIND_SUITE_MOVES } from "#src/services/bosses/icewindSuite";
 import { LEGATUS_GOLEM_MOVES } from "#src/services/bosses/legatusGolem";
 import { MILLENNIAL_PEARL_SEAHORSE_MOVES } from "#src/services/bosses/millennialPearlSeahorse";
 import { PERPETUAL_MECHANICAL_ARRAY_MOVES } from "#src/services/bosses/perpetualMechanicalArray";
+import { SECRET_SOURCE_AUTOMATON_CONFIGURATION_DEVICE_MOVES } from "#src/services/bosses/secretSourceAutomatonConfigurationDevice";
 import { STORMTERROR_MOVES } from "#src/services/bosses/stormterror";
 
 // The moves each boss makes in turn, by its kind. A kind with no entry is a common enemy that makes its basic attack
@@ -26,4 +27,5 @@ export const EnemyKindMovesMap: Partial<Record<EnemyKindId, readonly BossMove[]>
   [EnemyKindId.LegatusGolem]: LEGATUS_GOLEM_MOVES,
   [EnemyKindId.GluttonousYumkasaurMountainKing]: GLUTTONOUS_YUMKASAUR_MOUNTAIN_KING_MOVES,
   [EnemyKindId.GoldflameQucusaurTyrant]: GOLDFLAME_QUCUSAUR_TYRANT_MOVES,
+  [EnemyKindId.SecretSourceAutomatonConfigurationDevice]: SECRET_SOURCE_AUTOMATON_CONFIGURATION_DEVICE_MOVES,
 };
