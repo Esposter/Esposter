@@ -11,7 +11,7 @@ committed.
 | `archive-screen`                       | `ArchiveScreen`             |                                                                          9.00% | 0.897 |  2.01% | 0.3243 |
 | `character-artifacts`                  | `CharacterScreen`           |                                                                          2.86% | 0.924 |  0.89% | 0.1220 |
 | `character-artifacts-tabs`             | `CharacterScreen`           |                                                                          0.88% | 0.976 |  0.32% | 0.0474 |
-| `character-attributes`                 | `CharacterScreen`           |                                                                          1.58% | 0.978 |  0.57% | 0.0676 |
+| `character-attributes`                 | `CharacterScreen`           |                                                                          1.58% | 0.978 |  0.56% | 0.0674 |
 | `character-attributes-panel`           | `CharacterScreen`           |                                                                          2.94% | 0.944 |  1.54% | 0.1428 |
 | `character-attributes-tabs`            | `CharacterScreen`           |                                                                          0.97% | 0.985 |  0.34% | 0.0441 |
 | `character-attributes-top`             | `CharacterScreen`           |                                                                          6.15% | 0.846 |  2.14% | 0.2645 |

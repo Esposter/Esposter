@@ -17,9 +17,9 @@
 
   Open: the pin classes are not traced yet, and the map fixture draws no pins, so the trace check images and the `map-overlay-galesong` compare have not run.
 
-- [ ] 3.4 [phase 2] Trace the attribute star from the attributes still, colour it by its element with a measured fill, and draw it in place of the white star. Verify: `pnpm -C scripts genshin:parity compare character-attributes` writes its row, and the trace's check image is read before its path is used.
+- [x] 3.4 [phase 2] Trace the attribute star from the attributes still, colour it by its element with a measured fill, and draw it in place of the white star. Verify: `pnpm -C scripts genshin:parity compare character-attributes` writes its row, and the trace's check image is read before its path is used.
 
-  Open: the attribute star is not located in `character-attributes.png`, traced or coloured yet, so the `character-attributes` compare has not run.
+  Done: the star is traced at scale 3 from its 26 by 26 box at 2742, 240 (`AttributeStarPathMap`), and drawn in its place; its check image was read. The element colour is not in the stills: the lit stars read white for Geo (Xilonen) and Anemo (Jean), so the fill stays white (see the design's decision on the stars). The row moved from 0.57% to 0.56% in tone and from 0.0676 to 0.0674 in FLIP, and its mean stays 1.58%: the star row sits 37 reference pixels right of the still's, a layout offset the Xilonen stars roadmap item owns.
 
 - [ ] 3.5 [phase 6] Trace the achievement screen's laurel emblem, category badge, medal icon and stamp ring from its reference, and its corner ornaments from the frame, in place of the flat marks, and close each one's roadmap Asset line. Verify: a test named after the scenario 'A traced mark replaces its flat stand-in on the achievement screen', written first and seen failing, then `pnpm -C scripts genshin:parity compare achievement-screen` scores no worse than its row.
 

@@ -6,6 +6,8 @@ import type { GameText } from "genshin-text";
 
 import CharacterAttributeListRows from "#src/components/Character/AttributeList/Rows/Index.vue";
 import { Attribute } from "#src/models/character/Attribute";
+import { AttributeStar } from "#src/models/character/AttributeStar";
+import { AttributeStarPathMap } from "#src/services/character/AttributeStarPathMap";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { formatWholeNumber } from "#src/services/character/formatWholeNumber";
 import { getAttributeDetailGroups } from "#src/services/character/getAttributeDetailGroups";
@@ -83,10 +85,8 @@ const detailGroups = computed(() =>
   <div class="attribute-list">
     <p class="name">{{ name }}</p>
     <div class="stars" aria-hidden="true">
-      <svg v-for="star in characterData?.rarity ?? 0" :key="star" viewBox="0 0 20 20">
-        <path
-          d="M10 0C10.8 7.2 12.8 9.2 20 10C12.8 10.8 10.8 12.8 10 20C9.2 12.8 7.2 10.8 0 10C7.2 9.2 9.2 7.2 10 0Z"
-        />
+      <svg v-for="star in characterData?.rarity ?? 0" :key="star" viewBox="0 0 26 26">
+        <path :d="AttributeStarPathMap[AttributeStar.Star]" />
       </svg>
     </div>
     <svg v-if="elementMarkPath" class="emblem" viewBox="0 0 1600 1600" aria-hidden="true">
@@ -164,6 +164,8 @@ const detailGroups = computed(() =>
   margin-top: calc(var(--unit) * 6.6);
 }
 
+/* Each star's view is the 26 reference pixels its traced box is cut from, 19.5 units. Its fill is the still's lit star, measured
+   253, 254, 254 at the six lit cores of Xilonen's frame; Jean's lit stars measure white in the Anemo capture, so no element tints them */
 .stars svg {
   width: calc(var(--unit) * 19.5);
   height: calc(var(--unit) * 19.5);
