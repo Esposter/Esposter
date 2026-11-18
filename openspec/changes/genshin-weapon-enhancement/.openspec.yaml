@@ -4,4 +4,4 @@ x-phase: 6
 x-model: claude-haiku-5-5
 x-needs: [game-exports]
 x-touches: ["scripts/src/services/genshinAssets/stats/**", "scripts/src/models/genshinAssets/stats/**"]
-x-waiting: "Task 2.2 waits on twenty passives whose kit primitives design.md names, and on sixty-one passives still to be written from the shared effects."
+x-waiting: "Task 2.2 waits on kit primitives: each passive still without a module is listed in design.md with the primitive it needs, a pick-up, a sprint or plunge-start event, a CRIT DMG hook for the kit's own strikes, a reaction carrying both its elements, and the like."
