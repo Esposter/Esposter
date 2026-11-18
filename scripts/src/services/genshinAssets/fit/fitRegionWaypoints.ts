@@ -1,4 +1,3 @@
-import type { RegionDataFile } from "#src/models/genshinAssets/residents/RegionDataFile";
 import type { DryRunOptions } from "#src/models/shared/DryRunOptions";
 
 import { selectFittedRegions } from "#src/services/genshinAssets/fit/selectFittedRegions";
@@ -15,15 +14,14 @@ import {
   WAYPOINT_REGIONS,
 } from "#src/services/genshinAssets/shared/constants";
 import { orderLandmarks } from "#src/services/genshinAssets/shared/orderLandmarks";
+import { readRegionData } from "#src/services/genshinAssets/shared/readRegionData";
 import { readWorldGroundHeight } from "#src/services/genshinAssets/shared/readWorldGroundHeight";
-import { readWorldRecord } from "#src/services/genshinAssets/shared/readWorldRecord";
 import { writeRegionData } from "#src/services/genshinAssets/shared/writeRegionData";
 import { readSceneTransportPoints } from "#src/services/genshinAssets/world/readSceneTransportPoints";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { catalogueSchema, LandmarkKind } from "genshin-world";
 import { readFile } from "node:fs/promises";
-import { join } from "node:path";
 
 // The kinds the official map's labels pair, each with the label it is read from and the word its id carries. A Statue of
 // The Seven's label holds the Statues of the New Moon of Nod-Krai's map area, as the map files them
@@ -56,8 +54,7 @@ export const fitRegionWaypoints = async ({ isDryRun }: DryRunOptions): Promise<s
   const fittedWaypointRegions = selectFittedRegions(regionFits, WAYPOINT_REGIONS);
   const reports = await Promise.all(
     [...WAYPOINT_REGIONS, ...NEW_MOON_STATUE_REGIONS].map(async (region) => {
-      const file = join("regions", `${region}.json`);
-      const data = parseMachineJson<RegionDataFile>(await readWorldRecord(file));
+      const { data, file } = await readRegionData(region);
       const mapRegion = InteractiveMapRegionMap[region];
       if (!mapRegion) throw new InvalidOperationError(Operation.Read, region, "has no region on the official map");
       const areas = catalogue.regions.find(({ id }) => id === region)?.areas;
