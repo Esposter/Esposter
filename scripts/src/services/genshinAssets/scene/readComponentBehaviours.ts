@@ -6,17 +6,12 @@ import type { ObjectPointer } from "#src/models/genshinAssets/shared/ObjectPoint
 import { AnimeStudioExportType } from "#src/models/genshinAssets/shared/AnimeStudioExportType";
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { scanSerializedFields } from "#src/services/genshinAssets/scene/scanSerializedFields";
-import {
-  CAB_MAP_PATH,
-  GENSHIN_ANIMESTUDIO_OPTIONS,
-  SERIALIZED_POINTER_BYTES,
-} from "#src/services/genshinAssets/shared/constants";
+import { GENSHIN_ANIMESTUDIO_OPTIONS, SERIALIZED_POINTER_BYTES } from "#src/services/genshinAssets/shared/constants";
 import { exportBlockBySource } from "#src/services/genshinAssets/shared/exportBlockBySource";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
-import { readSceneLayout } from "#src/services/genshinAssets/shared/readSceneLayout";
+import { readComponentLayoutBlocks } from "#src/services/genshinAssets/shared/readComponentLayoutBlocks";
 import { resolveObjectPointer } from "#src/services/genshinAssets/shared/resolveObjectPointer";
 import { toObjectKey } from "#src/services/genshinAssets/shared/toObjectKey";
-import { parseCabMap } from "#src/services/recreation/animeStudio/parseCabMap";
 import { readIndexedAssets } from "#src/services/recreation/animeStudio/readIndexedAssets";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync } from "node:fs";
@@ -38,17 +33,7 @@ export const readComponentBehaviours = async (
   scriptPattern?: RegExp,
 ): Promise<ComponentBehaviour[]> => {
   const directory = getComponentDirectory(component);
-  const [cabMapBytes, { objectNameMap }] = await Promise.all([
-    readFile(CAB_MAP_PATH),
-    readSceneLayout(directory.layout),
-  ]);
-  const cabMap = parseCabMap(cabMapBytes);
-  const layoutFiles = new Set(
-    (await readdir(directory.layout, { recursive: true, withFileTypes: true }))
-      .filter((entry) => entry.isDirectory() && cabMap.has(entry.name))
-      .map(({ name }) => name),
-  );
-  const blocks = new Set([...layoutFiles].flatMap((file) => cabMap.get(file)?.block ?? []));
+  const { blocks, cabMap, layoutFiles, objectNameMap } = await readComponentLayoutBlocks(directory.layout);
   await rm(directory.behaviours, { force: true, recursive: true });
   for (const block of blocks)
     await exportBlockBySource(

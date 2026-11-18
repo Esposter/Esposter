@@ -18,6 +18,8 @@ import { cookingCommand } from "#src/services/genshinAssets/commands/cookingComm
 import { craftingCommand } from "#src/services/genshinAssets/commands/craftingCommand";
 import { domainLevelsCommand } from "#src/services/genshinAssets/commands/domainLevelsCommand";
 import { domainsCommand } from "#src/services/genshinAssets/commands/domainsCommand";
+import { effectShadersCommand } from "#src/services/genshinAssets/commands/effectShadersCommand";
+import { emittersCommand } from "#src/services/genshinAssets/commands/emittersCommand";
 import { enemiesCommand } from "#src/services/genshinAssets/commands/enemiesCommand";
 import { enemyCampsCommand } from "#src/services/genshinAssets/commands/enemyCampsCommand";
 import { enemyPagesCommand } from "#src/services/genshinAssets/commands/enemyPagesCommand";
@@ -95,6 +97,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     behaviours: behavioursCommand,
     clearance: clearanceCommand,
     shaders: shadersCommand,
+    "effect-shaders": effectShadersCommand,
     inventory: inventoryCommand,
     interface: interfaceCommand,
     "ui-find": uiFindCommand,
@@ -132,6 +135,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     sprites: spritesCommand,
     kits: kitsCommand,
     "character-packs": characterPacksCommand,
+    emitters: emittersCommand,
     enemies: enemiesCommand,
     monsters: monstersCommand,
     items: itemsCommand,

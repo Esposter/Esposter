@@ -12,6 +12,7 @@ export const AssetType = {
   MeshRenderer: "MeshRenderer",
   MiHoYoBinData: "MiHoYoBinData",
   MonoBehaviour: "MonoBehaviour",
+  ParticleSystem: "ParticleSystem",
   RectTransform: "RectTransform",
   Shader: "Shader",
   SkinnedMeshRenderer: "SkinnedMeshRenderer",

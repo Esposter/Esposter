@@ -13,6 +13,7 @@ export const getComponentDirectory = (component: DerivedAssetComponent): Compone
     behaviours: join(root, "behaviours"),
     layout: join(root, "layout"),
     music: join(root, "music"),
+    particles: join(root, "particles"),
     root,
     shaders: join(root, "shaders"),
     world: join(root, "world"),
