@@ -76,7 +76,11 @@ describe("inferTopicsMiddleware", () => {
     const { user } = await createMockAuthSession(context.db);
     await createTestCaller(context).renameUser({ id: user.id, name: "renamed" });
 
-    expect(MockPublishedTopics).toStrictEqual([`${userTable}:*`, `${userTable}:id=${user.id}`]);
+    expect(MockPublishedTopics).toStrictEqual([
+      "auth_users.name:*",
+      "auth_users.updatedAt:*",
+      `${userTable}:id=${user.id}`,
+    ]);
   });
 
   // A procedure that declares its topics by hand keeps exactly those, so no inferred topic is added beside them
@@ -113,7 +117,11 @@ describe("inferTopicsMiddleware", () => {
       createTestCaller(context).renameThenFail({ id: user.id, name: "refused" }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Rename refused]`);
 
-    expect(MockPublishedTopics).toStrictEqual([`${userTable}:*`, `${userTable}:id=${user.id}`]);
+    expect(MockPublishedTopics).toStrictEqual([
+      "auth_users.name:*",
+      "auth_users.updatedAt:*",
+      `${userTable}:id=${user.id}`,
+    ]);
   });
 
   // A blob a failed mutation wrote is published too, for the same reason as a row it wrote

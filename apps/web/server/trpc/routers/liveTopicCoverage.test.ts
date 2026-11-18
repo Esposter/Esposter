@@ -50,8 +50,10 @@ const getPathsOf = (calls: LiveTopicCall[]) => calls.map(({ path }) => path).toS
 const getTopicsOf = (headers: Headers, path: string): Topic[] =>
   readTopicsHeader(headers, path).flatMap(({ topics }) => topics);
 
-// The tables a set of topics names, each the text before its colon. A read's topics and a write's name tables the same way
-const getTopicTables = (topics: string[]) => new Set(topics.map((topic) => topic.slice(0, topic.indexOf(":"))));
+// The tables a set of topics names, each the text before its colon and dot. A read's topics and a write's name tables the same way
+// A column's topic names its table before the dot, so a scoped read of a table meets a write to one of its columns
+const getTopicTables = (topics: string[]) =>
+  new Set(topics.map((topic) => topic.slice(0, topic.indexOf(":")).split(".")[0] ?? ""));
 
 // The tables a write touches: those its topics name, which include the rows its cascade removes, so a read of a table the
 // Cascade reached is rerun too

@@ -7,9 +7,10 @@ import { FilterSite } from "#src/models/realtime/FilterSite";
 import { JoinKind } from "#src/models/realtime/JoinKind";
 import { getJoinScopeValues } from "#src/services/realtime/getJoinScopeValues";
 import { getOccurrenceKey } from "#src/services/realtime/getOccurrenceKey";
+import { getReferencedColumns } from "#src/services/realtime/getReferencedColumns";
 import { getScopeTopics } from "#src/services/realtime/getScopeTopics";
 import { getStatementReadSet } from "#src/services/realtime/getStatementReadSet";
-import { getTableTopic } from "@esposter/db-schema";
+import { getTableColumnTopic, getTableTopic } from "@esposter/db-schema";
 
 // The table occurrences a left join may name by the rows it returns. An occurrence is named by no equality of its own, and is
 // Neither tested by a filter nor referenced by an inner join's condition: an inner join drops the rows no match reaches, and a
@@ -54,6 +55,10 @@ export const getStatementReadTopics = async ({ rows, statement }: RecordedStatem
     .flat()
     .filter(({ table }) => !tableWideTables.includes(table));
   const joinTopics = await getScopeTopics(joinScopeValues);
-  const tableTopics = tableWideTables.map((tableName) => getTableTopic(tableName));
+  // A table-wide table names its rows, and each column it reads, so an update of a column it does not read wakes it not
+  const tableTopics = tableWideTables.flatMap((tableName) => [
+    getTableTopic(tableName),
+    ...getReferencedColumns(statement, tableName).map((columnName) => getTableColumnTopic(tableName, columnName)),
+  ]);
   return [...equalityTopics, ...tableTopics, ...joinTopics];
 };

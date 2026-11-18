@@ -102,7 +102,8 @@ describe(getWriteTopics, () => {
       .returning();
 
     await expect(getWriteTopics(statements)).resolves.toStrictEqual([
-      "message_usersToRooms:*",
+      "message_usersToRooms.displayName:*",
+      "message_usersToRooms.updatedAt:*",
       `message_usersToRooms:roomId=${roomId}`,
       `message_usersToRooms:userId=${userId}`,
     ]);
@@ -214,6 +215,8 @@ describe(getWriteTopics, () => {
 
     await expect(getWriteTopics(statements)).resolves.toStrictEqual(
       [
+        "message_usersToRooms.displayName:*",
+        "message_usersToRooms.updatedAt:*",
         "message_usersToRooms:*",
         `message_usersToRooms:roomId=${roomId}`,
         `message_usersToRooms:userId=${joinerId}`,
@@ -239,7 +242,10 @@ describe(getWriteTopics, () => {
       .set({ displayName: "renamed" })
       .where(eq(usersToRoomsInMessage.userId, userId));
 
-    await expect(getWriteTopics(statements)).resolves.toStrictEqual(["message_usersToRooms:*"]);
+    await expect(getWriteTopics(statements)).resolves.toStrictEqual([
+      "message_usersToRooms.displayName:*",
+      "message_usersToRooms.updatedAt:*",
+    ]);
   });
 
   // A write that matches no row changes nothing, so it publishes nothing
@@ -280,7 +286,8 @@ describe(getWriteTopics, () => {
 
     await expect(getWriteTopics(statements)).resolves.toStrictEqual(
       [
-        "message_usersToRooms:*",
+        "message_usersToRooms.roomId:*",
+        "message_usersToRooms.updatedAt:*",
         `message_usersToRooms:roomId=${roomId}`,
         `message_usersToRooms:roomId=${otherRoomId}`,
         `message_usersToRooms:userId=${userId}`,
@@ -309,7 +316,8 @@ describe(getWriteTopics, () => {
 
     await expect(getWriteTopics(statements)).resolves.toStrictEqual(
       [
-        "message_usersToRooms:*",
+        "message_usersToRooms.roomId:*",
+        "message_usersToRooms.updatedAt:*",
         `message_usersToRooms:roomId=${roomId}`,
         `message_usersToRooms:userId=${userId}`,
       ].toSorted(),

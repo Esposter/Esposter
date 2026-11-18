@@ -77,7 +77,7 @@ describe("topicMatch", () => {
 
   // The dock reads a bookmarked resource through a join, which names the resource table table-wide, so renaming the resource
   // Wakes the dock through that table topic. Without the join the dock would name no resource topic and the rename would not reach it
-  test("a rename of a bookmarked resource wakes the bookmark dock that joins it", async () => {
+  test("a rename of a bookmarked resource wakes no one, since the bookmark dock does not read the resource's name", async () => {
     expect.hasAssertions();
 
     const userId = getMockSession().user.id;
@@ -97,9 +97,9 @@ describe("topicMatch", () => {
       .where(eq(resourcesInResource.id, resourceId))
       .returning();
 
-    expect(getWokenTopics(await getReadTopics(read.statements), await getWriteTopics(write.statements))).toStrictEqual([
-      "resource_resources:*",
-    ]);
+    expect(getWokenTopics(await getReadTopics(read.statements), await getWriteTopics(write.statements))).toStrictEqual(
+      [],
+    );
   });
 
   // The dock reads the viewer's own memberships of the rooms it bookmarks, so a change to the viewer's membership wakes it
@@ -191,7 +191,7 @@ describe("topicMatch", () => {
       .returning();
 
     expect(getWokenTopics(await getReadTopics(read.statements), await getWriteTopics(write.statements))).toStrictEqual([
-      "resource_resources:*",
+      "resource_resources.deletedAt:*",
     ]);
   });
 
@@ -346,7 +346,7 @@ describe("topicMatch", () => {
       .returning();
 
     expect(getWokenTopics(await getReadTopics(read.statements), await getWriteTopics(write.statements))).toStrictEqual([
-      "message_usersToRooms:*",
+      "message_usersToRooms.isHidden:*",
     ]);
   });
 });
