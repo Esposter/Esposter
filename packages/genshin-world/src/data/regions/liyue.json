@@ -19333,15 +19333,6 @@
   "id": "liyue",
   "landmarks": [
     {
-      "areaId": "sea-of-clouds",
-      "building": { "kit": "Liyue", "options": { "depth": 12, "roofTierCount": 3, "storeyHeight": 5, "width": 18 } },
-      "heightOffset": 0,
-      "id": "liyue-harbor",
-      "kind": "Building",
-      "position": { "x": -2392.4, "z": -1562.44 },
-      "rotation": 0
-    },
-    {
       "domainKind": "Forgery",
       "entryId": 3,
       "id": "domain-entrance-3",
@@ -19424,6 +19415,15 @@
       "areaId": "the-chasm",
       "arrival": { "heightOffset": -33.99, "position": { "x": -2368.27, "z": -3169.39 }, "rotation": -2.68 },
       "heightOffset": -33.99
+    },
+    {
+      "areaId": "sea-of-clouds",
+      "building": { "kit": "Liyue", "options": { "depth": 12, "roofTierCount": 3, "storeyHeight": 5, "width": 18 } },
+      "heightOffset": 0,
+      "id": "liyue-harbor",
+      "kind": "Building",
+      "position": { "x": -2392.4, "z": -1562.44 },
+      "rotation": 0
     }
   ],
   "residents": [

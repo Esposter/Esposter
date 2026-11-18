@@ -4917,26 +4917,6 @@
   "id": "natlan",
   "landmarks": [
     {
-      "areaId": "toyac-springs",
-      "building": {
-        "kit": "Natlan",
-        "options": {
-          "depth": 8,
-          "platformHeight": 0.6,
-          "roofHeight": 3,
-          "roofKind": "Conical",
-          "wallHeight": 3,
-          "wallThickness": 0.4,
-          "width": 8
-        }
-      },
-      "heightOffset": 0,
-      "id": "people-of-the-springs",
-      "kind": "Building",
-      "position": { "x": -4568.99, "z": -10185.85 },
-      "rotation": 0
-    },
-    {
       "domainKind": "Mastery",
       "entryId": 29,
       "id": "domain-entrance-29",
@@ -4983,6 +4963,26 @@
       "areaId": "atocpan",
       "arrival": { "heightOffset": -25.75, "position": { "x": -5262.48, "z": -11815.18 }, "rotation": 1.6245 },
       "heightOffset": -25.75
+    },
+    {
+      "areaId": "toyac-springs",
+      "building": {
+        "kit": "Natlan",
+        "options": {
+          "depth": 8,
+          "platformHeight": 0.6,
+          "roofHeight": 3,
+          "roofKind": "Conical",
+          "wallHeight": 3,
+          "wallThickness": 0.4,
+          "width": 8
+        }
+      },
+      "heightOffset": 0,
+      "id": "people-of-the-springs",
+      "kind": "Building",
+      "position": { "x": -4568.99, "z": -10185.85 },
+      "rotation": 0
     }
   ],
   "residents": [

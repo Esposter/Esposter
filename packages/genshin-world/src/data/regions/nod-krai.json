@@ -1326,31 +1326,6 @@
   "id": "nod-krai",
   "landmarks": [
     {
-      "areaId": "lempo-isle",
-      "building": {
-        "kit": "NodKrai",
-        "options": {
-          "boxes": [
-            [-6, 0, -4, 6, 5, 4],
-            [2, 5, -3, 5, 9, 0]
-          ],
-          "pipeRadius": 0.3,
-          "pipeRuns": [{ "from": { "x": -6, "y": 4, "z": 4.3 }, "to": { "x": 6, "y": 4, "z": 4.3 } }],
-          "smokestacks": [
-            {
-              "position": { "x": -3, "y": 5, "z": -2 },
-              "sections": [{ "bottomRadius": 0.8, "height": 6, "topRadius": 0.6 }]
-            }
-          ]
-        }
-      },
-      "heightOffset": 0,
-      "id": "nasha-town",
-      "kind": "Building",
-      "position": { "x": -252.53, "z": -10724.89 },
-      "rotation": 0
-    },
-    {
       "domainKind": "Mastery",
       "entryId": 33,
       "id": "domain-entrance-33",
@@ -1397,6 +1372,31 @@
       "areaId": "ashveil-peak",
       "arrival": { "heightOffset": -26.8, "position": { "x": 4048.71, "z": -11310.25 }, "rotation": -1.4603 },
       "heightOffset": -26.8
+    },
+    {
+      "areaId": "lempo-isle",
+      "building": {
+        "kit": "NodKrai",
+        "options": {
+          "boxes": [
+            [-6, 0, -4, 6, 5, 4],
+            [2, 5, -3, 5, 9, 0]
+          ],
+          "pipeRadius": 0.3,
+          "pipeRuns": [{ "from": { "x": -6, "y": 4, "z": 4.3 }, "to": { "x": 6, "y": 4, "z": 4.3 } }],
+          "smokestacks": [
+            {
+              "position": { "x": -3, "y": 5, "z": -2 },
+              "sections": [{ "bottomRadius": 0.8, "height": 6, "topRadius": 0.6 }]
+            }
+          ]
+        }
+      },
+      "heightOffset": 0,
+      "id": "nasha-town",
+      "kind": "Building",
+      "position": { "x": -252.53, "z": -10724.89 },
+      "rotation": 0
     },
     {
       "areaId": "paha-isle",

@@ -52,7 +52,9 @@ describe(writeDomainEntrances, () => {
     rotation: 1.5708,
     titleTextKey: GameTextKey.DomainTitle,
   };
-  const mondstadt: RegionDataFile = { landmarks: [{ areaId: "starfell-valley", position: { x: 0, z: 0 } }] };
+  const mondstadt: RegionDataFile = {
+    landmarks: [{ areaId: "starfell-valley", id: "mondstadt-city", position: { x: 0, z: 0 } }],
+  };
   const liyue: RegionDataFile = { landmarks: [] };
   const mondstadtFile = { data: mondstadt, file: "regions/mondstadt.json", region: "mondstadt" };
   const liyueFile = { data: liyue, file: "regions/liyue.json", region: "liyue" };

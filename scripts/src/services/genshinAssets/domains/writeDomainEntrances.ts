@@ -9,6 +9,7 @@ import { readDomainEntrancePoints } from "#src/services/genshinAssets/domains/re
 import { toDomainEntrance } from "#src/services/genshinAssets/domains/toDomainEntrance";
 import { readFittedRegions } from "#src/services/genshinAssets/residents/readFittedRegions";
 import { OPEN_WORLD_SCENE_ID } from "#src/services/genshinAssets/shared/constants";
+import { orderLandmarks } from "#src/services/genshinAssets/shared/orderLandmarks";
 import { readWorldGroundHeight } from "#src/services/genshinAssets/shared/readWorldGroundHeight";
 import { toHeightOffset } from "#src/services/genshinAssets/shared/toHeightOffset";
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
@@ -18,9 +19,9 @@ import { LandmarkKind } from "genshin-world";
 
 // Each challenge domain's entrance of the open world written into the region its place is in, as a landmark of its own
 // Kind. Each entry is placed from its scene point round the Windrise origin, and filed under the catalogue area of the
-// Game area its point stands in, in the region holding that area. A region's other landmarks stay as its file holds them,
-// And its entrances from an earlier run are replaced. An entry with no point, or in an area no fitted region holds, is
-// Counted and left out. A dry run counts the entrances and writes nothing
+// Game area its point stands in, in the region holding that area. A region's other landmarks are kept, and its entrances
+// From an earlier run are replaced, then the whole is ordered by orderLandmarks. An entry with no point, or in an area no
+// Fitted region holds, is counted and left out. A dry run counts the entrances and writes nothing
 export const writeDomainEntrances = async ({ isDryRun }: DryRunOptions): Promise<string> => {
   const [{ origin, regionFiles }, getWorldHeight, scenePoints, catalogueAreaPlaceMap] = await Promise.all([
     readFittedRegions(),
@@ -65,7 +66,7 @@ export const writeDomainEntrances = async ({ isDryRun }: DryRunOptions): Promise
   const reports = await Promise.all(
     regionFiles.map(async ({ data, file, region }) => {
       const domainEntrances = placedMap.get(region) ?? [];
-      const landmarks = [...(otherLandmarksMap.get(region) ?? []), ...domainEntrances];
+      const landmarks = orderLandmarks([...(otherLandmarksMap.get(region) ?? []), ...domainEntrances]);
       if (JSON.stringify(landmarks) !== JSON.stringify(data.landmarks) && !isDryRun)
         await writeWorldData(file, { ...data, landmarks });
       return `${region}: ${domainEntrances.length} domain entrances`;

@@ -26594,28 +26594,6 @@
   "id": "sumeru",
   "landmarks": [
     {
-      "areaId": "avidya-forest",
-      "building": {
-        "kit": "Sumeru",
-        "options": {
-          "baseRadius": 40,
-          "domeHeight": 12,
-          "domeRadius": 14,
-          "radialSegments": 24,
-          "radiusStep": 6,
-          "tierCount": 3,
-          "tierHeight": 8,
-          "walkwayHeight": 1,
-          "walkwayOverhang": 3
-        }
-      },
-      "heightOffset": 0,
-      "id": "sumeru-city",
-      "kind": "Building",
-      "position": { "x": -2306.31, "z": -4053.85 },
-      "rotation": 0
-    },
-    {
       "domainKind": "Mastery",
       "entryId": 19,
       "id": "domain-entrance-19",
@@ -26674,6 +26652,28 @@
       "areaId": "gavireh-lajavard",
       "arrival": { "heightOffset": 4.32, "position": { "x": -1969.11, "z": -7325.2 }, "rotation": -2.2744 },
       "heightOffset": 4.32
+    },
+    {
+      "areaId": "avidya-forest",
+      "building": {
+        "kit": "Sumeru",
+        "options": {
+          "baseRadius": 40,
+          "domeHeight": 12,
+          "domeRadius": 14,
+          "radialSegments": 24,
+          "radiusStep": 6,
+          "tierCount": 3,
+          "tierHeight": 8,
+          "walkwayHeight": 1,
+          "walkwayOverhang": 3
+        }
+      },
+      "heightOffset": 0,
+      "id": "sumeru-city",
+      "kind": "Building",
+      "position": { "x": -2306.31, "z": -4053.85 },
+      "rotation": 0
     }
   ],
   "residents": [

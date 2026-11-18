@@ -12158,28 +12158,6 @@
   "id": "inazuma",
   "landmarks": [
     {
-      "areaId": "narukami-island",
-      "building": {
-        "kit": "Inazuma",
-        "options": {
-          "depth": 10,
-          "eaveOverhang": 1.2,
-          "floorHeight": 1,
-          "roof": "Hipped",
-          "roofHeight": 3,
-          "storeyCount": 3,
-          "storeyHeight": 3.5,
-          "storeySetback": 1,
-          "width": 12
-        }
-      },
-      "heightOffset": 0,
-      "id": "inazuma-city",
-      "kind": "Building",
-      "position": { "x": -4942.86, "z": 3135.69 },
-      "rotation": 0
-    },
-    {
       "domainKind": "Forgery",
       "entryId": 14,
       "id": "domain-entrance-14",
@@ -12226,6 +12204,28 @@
       "areaId": "seirai-island",
       "arrival": { "heightOffset": -24.91, "position": { "x": -6193.48, "z": 2942.12 }, "rotation": -1.9417 },
       "heightOffset": -24.91
+    },
+    {
+      "areaId": "narukami-island",
+      "building": {
+        "kit": "Inazuma",
+        "options": {
+          "depth": 10,
+          "eaveOverhang": 1.2,
+          "floorHeight": 1,
+          "roof": "Hipped",
+          "roofHeight": 3,
+          "storeyCount": 3,
+          "storeyHeight": 3.5,
+          "storeySetback": 1,
+          "width": 12
+        }
+      },
+      "heightOffset": 0,
+      "id": "inazuma-city",
+      "kind": "Building",
+      "position": { "x": -4942.86, "z": 3135.69 },
+      "rotation": 0
     }
   ],
   "residents": [
