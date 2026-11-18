@@ -34,6 +34,13 @@ interface AliasDeclaration {
   table: Table;
 }
 
+// A table occurrence a level declares, and an occurrence an equality of its own scopes at a level
+interface Declaration {
+  level: ReadSetLevel;
+  occurrence: string;
+  table: string;
+}
+
 type DerivedFields = Map<string, DerivedSubquery>;
 
 // A subquery the statement joins: its alias, the fields it selects, and the table its SQL reads first
@@ -63,10 +70,13 @@ interface ReadColumn {
 interface ReadContext {
   // Whether the chunks walked are a WHERE or HAVING condition, which removes the rows it does not hold
   condition: boolean;
+  // Every table occurrence the statement declares, and each one an equality scopes
+  declared: Declaration[];
   derived: DerivedFields;
   join?: JoinContext | undefined;
   level: ReadSetLevel;
   readSet: ReadSet;
+  scopedKeys: ScopedKey[];
   selections: ReadSelection[];
 }
 
@@ -77,8 +87,13 @@ interface ReadReference {
   throughSubquery: boolean;
 }
 
-interface ReadSelection extends ReadSetKey {
+interface ReadSelection extends Omit<ReadSetKey, "level"> {
   selectedAs: string;
+}
+
+interface ScopedKey {
+  level: ReadSetLevel;
+  occurrence: string;
 }
 
 const checkIsStatementLike = (value: unknown): value is SQLWrapper =>
@@ -156,13 +171,16 @@ const getScopeOf = ({ key, owner }: ReadColumn) => {
   };
 };
 
+// The statement level a column is read in, numbered in the order the walk opens the statement's levels
+const getLevelIndex = ({ level, readSet }: ReadContext): number => readSet.levels.indexOf(level);
+
 // A side of a join is selected when the read's own select returns that table column, under the name it returns it by
-const toKey = ({ key, occurrence, owner }: ReadColumn, selections: ReadSelection[]): ReadSetKey => {
+const toKey = ({ key, occurrence, owner }: ReadColumn, selections: ReadSelection[], level: number): ReadSetKey => {
   const table = getTableName(owner);
   const selection = selections.find((candidate) => candidate.table === table && candidate.column === key);
   return selection
-    ? { column: key, occurrence, selectedAs: selection.selectedAs, table }
-    : { column: key, occurrence, table };
+    ? { column: key, level, occurrence, selectedAs: selection.selectedAs, table }
+    : { column: key, level, occurrence, table };
 };
 
 // An equality names the rows its value selects. Through a derived table it narrows the subquery's rows, so it names them
@@ -177,7 +195,7 @@ const addScopes = (columns: ReadColumn[], value: unknown, context: ReadContext, 
     const table = getTableName(readColumn.owner);
     const scope: ReadSetScope = { column: readColumn.key, table, value };
     context.readSet.scopes.push(isSecret ? { ...scope, secret: true } : scope);
-    if (!throughSubquery) context.level.scopedTables.push(table);
+    if (!throughSubquery) context.scopedKeys.push({ level: context.level, occurrence: readColumn.occurrence });
   }
 };
 
@@ -190,8 +208,10 @@ const getNullFilled = (left: ReadColumn, right: ReadColumn, relation: string): J
 };
 
 const toJoin = (left: ReadColumn, right: ReadColumn, context: ReadContext, isSubquery: boolean): ReadSetJoin => {
-  const leftKey = toKey(left, context.selections);
-  const rightKey = toKey(right, context.selections);
+  // A subquery's selected column is read in the subquery's own level, which the walk has not opened yet: -1 is the level no
+  // Declared occurrence holds, so that side is never named by its rows
+  const leftKey = toKey(left, context.selections, getLevelIndex(context));
+  const rightKey = toKey(right, context.selections, isSubquery ? -1 : getLevelIndex(context));
   if (isSubquery) return { kind: JoinKind.Subquery, left: leftKey, right: rightKey };
   const nullFilled = context.join?.isLeft ? getNullFilled(left, right, context.join.relation) : undefined;
   return nullFilled === undefined
@@ -222,11 +242,13 @@ const getFilterSite = (readColumn: ReadColumn, join: JoinContext | undefined): F
 // A column a condition tests, other than by a scope equality or a join, filters its table, so a row the condition removes
 // Is one the table's topics must still reach
 // A column in the select list or a group or order clause is no condition, so it removes no row and filters nothing
-const addFilters = (columns: ReadColumn[], { condition, join, readSet }: ReadContext) => {
+const addFilters = (columns: ReadColumn[], context: ReadContext) => {
+  const { condition, join, readSet } = context;
   if (!condition && !join) return;
   for (const readColumn of columns)
     readSet.filters.push({
       column: readColumn.key,
+      level: getLevelIndex(context),
       occurrence: readColumn.occurrence,
       site: getFilterSite(readColumn, join),
       table: getTableName(readColumn.owner),
@@ -403,7 +425,8 @@ const getClauseCondition = (text: string): boolean | undefined => {
 const walkSiblings = (chunks: unknown[], context: ReadContext) => {
   const declarations = getAliasDeclarations(chunks, getDepths(chunks));
   const joins = getJoinContexts(chunks);
-  for (const declaration of declarations) context.level.tables.push(getTableName(declaration.table));
+  for (const declaration of declarations)
+    declareOccurrence(context, declaration.alias, getTableName(declaration.table));
   let condition = context.condition;
   let index = 0;
   while (index < chunks.length) {
@@ -425,10 +448,22 @@ const walkSiblings = (chunks: unknown[], context: ReadContext) => {
   }
 };
 
+// A table occurrence a level declares, once: its alias or name in the statement, and the table it reads
+const declareOccurrence = (context: ReadContext, occurrence: string, table: string) => {
+  context.level.tables.push(table);
+  if (
+    context.declared.some(
+      (declared) => declared.level === context.level && declared.occurrence === occurrence && declared.table === table,
+    )
+  )
+    return;
+  context.declared.push({ level: context.level, occurrence, table });
+};
+
 // A statement nested in another is a level of its own, whose tables and equalities are read apart from the statement that
 // Holds it, so an equality in the nested statement does not name its table for the outer one
 const enterLevel = (context: ReadContext): ReadContext => {
-  const level: ReadSetLevel = { scopedTables: [], tables: [] };
+  const level: ReadSetLevel = { tables: [] };
   context.readSet.levels.push(level);
   return { ...context, condition: false, join: undefined, level };
 };
@@ -448,7 +483,7 @@ const walkChunk = (chunk: unknown, context: ReadContext): void => {
     walkSiblings(chunks, context);
   } else if (is(chunk, SQL))
     walkSiblings(chunk.queryChunks, checkIsNestedSelect(chunk) ? enterLevel(context) : context);
-  else if (is(chunk, Table)) context.level.tables.push(getTableName(getBaseTable(chunk)));
+  else if (is(chunk, Table)) declareOccurrence(context, getTableName(chunk), getTableName(getBaseTable(chunk)));
   else if (is(chunk, Subquery)) {
     const base = findFirstTable(chunk._.sql);
     context.derived.set(chunk._.alias, {
@@ -460,7 +495,7 @@ const walkChunk = (chunk: unknown, context: ReadContext): void => {
   } else if (checkIsStatementLike(chunk)) walkChunk(chunk.getSQL(), enterLevel(context));
 };
 
-const toTableKey = (readColumn: ReadColumn): ReadSetKey => ({
+const toTableKey = (readColumn: ReadColumn): Omit<ReadSetKey, "level"> => ({
   column: readColumn.key,
   occurrence: readColumn.occurrence,
   table: getTableName(readColumn.owner),
@@ -498,23 +533,31 @@ const getSelections = (statement: SQLWrapper): ReadSelection[] => {
 // The read set of one statement the handle recorded: the tables it reads, the scope values it tests, the joins whose
 // Rows are named by a scope column, and the columns it tests for null
 export const getStatementReadSet = (statement: SQLWrapper): ReadSet => {
-  const readSet: ReadSet = { filters: [], joins: [], levels: [], scopes: [], tables: [] };
-  const level: ReadSetLevel = { scopedTables: [], tables: [] };
+  const readSet: ReadSet = { filters: [], joins: [], levels: [], occurrences: [], scopes: [], tables: [] };
+  const level: ReadSetLevel = { tables: [] };
   readSet.levels.push(level);
+  const declared: Declaration[] = [];
+  const scopedKeys: ScopedKey[] = [];
   walkChunk(statement.getSQL(), {
     condition: false,
+    declared,
     derived: new Map(),
     join: undefined,
     level,
     readSet,
+    scopedKeys,
     selections: getSelections(statement),
   });
   // A level a statement opens with nothing in it, such as a relation that selects only its own columns, names nothing
   const levels = readSet.levels
-    .map(({ scopedTables, tables }) => ({
-      scopedTables: [...new Set(scopedTables)].toSorted(),
-      tables: [...new Set(tables)].toSorted(),
-    }))
-    .filter(({ scopedTables, tables }) => scopedTables.length + tables.length > 0);
-  return { ...readSet, levels, tables: [...new Set(levels.flatMap(({ tables }) => tables))].toSorted() };
+    .map(({ tables }) => ({ tables: [...new Set(tables)].toSorted() }))
+    .filter(({ tables }) => tables.length > 0);
+  // A declaration is scoped by an equality of its own in its level, so the scope is read from the level it was declared in
+  const occurrences = declared.map(({ level, occurrence, table }) => ({
+    level: readSet.levels.indexOf(level),
+    occurrence,
+    scoped: scopedKeys.some((scopedKey) => scopedKey.level === level && scopedKey.occurrence === occurrence),
+    table,
+  }));
+  return { ...readSet, levels, occurrences, tables: [...new Set(levels.flatMap(({ tables }) => tables))].toSorted() };
 };

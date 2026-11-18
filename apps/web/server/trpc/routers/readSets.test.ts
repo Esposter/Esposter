@@ -23,31 +23,51 @@ describe(getReadSet, () => {
 
     expect(getReadSet(statements)).toStrictEqual({
       filters: [
-        { column: "resourceId", occurrence: "app_bookmarks", site: "where", table: "app_bookmarks" },
-        { column: "deletedAt", occurrence: "resource_resources", site: "where", table: "resource_resources" },
+        { column: "resourceId", level: 0, occurrence: "app_bookmarks", site: "where", table: "app_bookmarks" },
+        { column: "deletedAt", level: 0, occurrence: "resource_resources", site: "where", table: "resource_resources" },
       ],
       joins: [
         {
           kind: "inner",
-          left: { column: "resourceId", occurrence: "app_bookmarks", selectedAs: "resourceId", table: "app_bookmarks" },
+          left: {
+            column: "resourceId",
+            level: 1,
+            occurrence: "app_bookmarks",
+            selectedAs: "resourceId",
+            table: "app_bookmarks",
+          },
           right: {
             column: "resourceId",
+            level: 1,
             occurrence: "resource_resourcePublications",
             table: "resource_resourcePublications",
           },
         },
         {
           kind: "left",
-          left: { column: "resourceId", occurrence: "app_bookmarks", selectedAs: "resourceId", table: "app_bookmarks" },
+          left: {
+            column: "resourceId",
+            level: 0,
+            occurrence: "app_bookmarks",
+            selectedAs: "resourceId",
+            table: "app_bookmarks",
+          },
           nullFilled: "right",
-          right: { column: "id", occurrence: "resource_resources", table: "resource_resources" },
+          right: { column: "id", level: 0, occurrence: "resource_resources", table: "resource_resources" },
         },
         {
           kind: "left",
-          left: { column: "roomId", occurrence: "app_bookmarks", selectedAs: "roomId", table: "app_bookmarks" },
+          left: {
+            column: "roomId",
+            level: 0,
+            occurrence: "app_bookmarks",
+            selectedAs: "roomId",
+            table: "app_bookmarks",
+          },
           nullFilled: "right",
           right: {
             column: "roomId",
+            level: 0,
             occurrence: "message_usersToRooms",
             selectedAs: "roomMemberId",
             table: "message_usersToRooms",
@@ -55,11 +75,19 @@ describe(getReadSet, () => {
         },
       ],
       levels: [
+        { tables: ["app_bookmarks", "message_usersToRooms", "resource_resources"] },
+        { tables: ["resource_resourcePublications"] },
+      ],
+      occurrences: [
         {
-          scopedTables: ["app_bookmarks", "message_usersToRooms"],
-          tables: ["app_bookmarks", "message_usersToRooms", "resource_resources"],
+          level: 1,
+          occurrence: "resource_resourcePublications",
+          scoped: false,
+          table: "resource_resourcePublications",
         },
-        { scopedTables: [], tables: ["resource_resourcePublications"] },
+        { level: 0, occurrence: "app_bookmarks", scoped: true, table: "app_bookmarks" },
+        { level: 0, occurrence: "resource_resources", scoped: false, table: "resource_resources" },
+        { level: 0, occurrence: "message_usersToRooms", scoped: true, table: "message_usersToRooms" },
       ],
       scopes: [
         { column: "userId", table: "app_bookmarks", value: userId },
@@ -79,24 +107,27 @@ describe(getReadSet, () => {
 
     expect(getReadSet(statements)).toStrictEqual({
       filters: [
-        { column: "parentId", occurrence: "d0", site: "where", table: "post_posts" },
-        { column: "userId", occurrence: "d0", site: "where", table: "post_posts" },
+        { column: "parentId", level: 0, occurrence: "d0", site: "where", table: "post_posts" },
+        { column: "userId", level: 0, occurrence: "d0", site: "where", table: "post_posts" },
       ],
       joins: [
         {
           kind: "inner",
-          left: { column: "id", occurrence: "d1", table: "auth_users" },
-          right: { column: "userId", occurrence: "d0", selectedAs: "userId", table: "post_posts" },
+          left: { column: "id", level: 0, occurrence: "d1", table: "auth_users" },
+          right: { column: "userId", level: 0, occurrence: "d0", selectedAs: "userId", table: "post_posts" },
         },
         {
           kind: "inner",
-          left: { column: "postId", occurrence: "d1", table: "post_likes" },
-          right: { column: "id", occurrence: "d0", selectedAs: "id", table: "post_posts" },
+          left: { column: "postId", level: 0, occurrence: "d1", table: "post_likes" },
+          right: { column: "id", level: 0, occurrence: "d0", selectedAs: "id", table: "post_posts" },
         },
       ],
-      levels: [
-        { scopedTables: ["post_likes"], tables: ["auth_users", "post_likes", "post_posts"] },
-        { scopedTables: ["social_blocks"], tables: ["social_blocks"] },
+      levels: [{ tables: ["auth_users", "post_likes", "post_posts"] }, { tables: ["social_blocks"] }],
+      occurrences: [
+        { level: 0, occurrence: "d1", scoped: true, table: "auth_users" },
+        { level: 0, occurrence: "d1", scoped: true, table: "post_likes" },
+        { level: 0, occurrence: "d0", scoped: false, table: "post_posts" },
+        { level: 3, occurrence: "social_blocks", scoped: true, table: "social_blocks" },
       ],
       scopes: [
         { column: "userId", table: "post_likes", value: userId },
@@ -118,43 +149,58 @@ describe(getReadSet, () => {
 
     expect(getReadSet(statements)).toStrictEqual({
       filters: [
-        { column: "type", occurrence: "message_rooms", site: "where", table: "message_rooms" },
-        { column: "userId", occurrence: "participantMembership", site: "leftJoinOn", table: "message_usersToRooms" },
+        { column: "type", level: 0, occurrence: "message_rooms", site: "where", table: "message_rooms" },
+        { column: "type", level: 1, occurrence: "message_rooms", site: "where", table: "message_rooms" },
+        {
+          column: "userId",
+          level: 1,
+          occurrence: "participantMembership",
+          site: "leftJoinOn",
+          table: "message_usersToRooms",
+        },
       ],
       joins: [
         {
           kind: "inner",
-          left: { column: "id", occurrence: "message_rooms", selectedAs: "id", table: "message_rooms" },
-          right: { column: "roomId", occurrence: "message_usersToRooms", table: "message_usersToRooms" },
+          left: { column: "id", level: 0, occurrence: "message_rooms", selectedAs: "id", table: "message_rooms" },
+          right: { column: "roomId", level: 0, occurrence: "message_usersToRooms", table: "message_usersToRooms" },
         },
         {
           kind: "left",
-          left: { column: "id", occurrence: "participantUser", table: "auth_users" },
+          left: { column: "id", level: 1, occurrence: "participantUser", table: "auth_users" },
           nullFilled: "left",
-          right: { column: "userId", occurrence: "participantMembership", table: "message_usersToRooms" },
+          right: { column: "userId", level: 1, occurrence: "participantMembership", table: "message_usersToRooms" },
         },
         {
           kind: "left",
-          left: { column: "id", occurrence: "message_rooms", selectedAs: "id", table: "message_rooms" },
+          left: { column: "id", level: 0, occurrence: "message_rooms", selectedAs: "id", table: "message_rooms" },
           nullFilled: "right",
-          right: { column: "roomId", occurrence: "directMessageDisplayNames", table: "message_usersToRooms" },
+          right: { column: "roomId", level: 0, occurrence: "directMessageDisplayNames", table: "message_usersToRooms" },
         },
         {
           kind: "left",
-          left: { column: "id", occurrence: "message_rooms", selectedAs: "id", table: "message_rooms" },
+          left: { column: "id", level: 1, occurrence: "message_rooms", selectedAs: "id", table: "message_rooms" },
           nullFilled: "right",
-          right: { column: "roomId", occurrence: "participantMembership", table: "message_usersToRooms" },
+          right: { column: "roomId", level: 1, occurrence: "participantMembership", table: "message_usersToRooms" },
         },
         {
           kind: "subquery",
-          left: { column: "id", occurrence: "message_rooms", selectedAs: "id", table: "message_rooms" },
-          right: { column: "roomId", occurrence: "message_usersToRooms", table: "message_usersToRooms" },
+          left: { column: "id", level: 1, occurrence: "message_rooms", selectedAs: "id", table: "message_rooms" },
+          right: { column: "roomId", level: -1, occurrence: "message_usersToRooms", table: "message_usersToRooms" },
         },
       ],
       levels: [
-        { scopedTables: ["message_usersToRooms"], tables: ["message_rooms", "message_usersToRooms"] },
-        { scopedTables: [], tables: ["auth_users", "message_rooms", "message_usersToRooms"] },
-        { scopedTables: ["message_usersToRooms"], tables: ["message_usersToRooms"] },
+        { tables: ["message_rooms", "message_usersToRooms"] },
+        { tables: ["auth_users", "message_rooms", "message_usersToRooms"] },
+        { tables: ["message_usersToRooms"] },
+      ],
+      occurrences: [
+        { level: 0, occurrence: "message_rooms", scoped: false, table: "message_rooms" },
+        { level: 0, occurrence: "message_usersToRooms", scoped: true, table: "message_usersToRooms" },
+        { level: 1, occurrence: "message_rooms", scoped: false, table: "message_rooms" },
+        { level: 1, occurrence: "participantMembership", scoped: false, table: "message_usersToRooms" },
+        { level: 1, occurrence: "participantUser", scoped: false, table: "auth_users" },
+        { level: 2, occurrence: "message_usersToRooms", scoped: true, table: "message_usersToRooms" },
       ],
       scopes: [{ column: "userId", table: "message_usersToRooms", value: userId }],
       tables: ["auth_users", "message_rooms", "message_usersToRooms"],
@@ -173,21 +219,22 @@ describe(getReadSet, () => {
     // Scope equality is, and that equality already covers every block the join would name
     expect(getReadSet(statements)).toStrictEqual({
       filters: [
-        { column: "id", occurrence: "auth_users", site: "where", table: "auth_users" },
-        { column: "name", occurrence: "auth_users", site: "where", table: "auth_users" },
-        { column: "blockedId", occurrence: "social_blocks", site: "where", table: "social_blocks" },
+        { column: "id", level: 0, occurrence: "auth_users", site: "where", table: "auth_users" },
+        { column: "name", level: 0, occurrence: "auth_users", site: "where", table: "auth_users" },
+        { column: "blockedId", level: 0, occurrence: "social_blocks", site: "where", table: "social_blocks" },
       ],
       joins: [
         {
           kind: "left",
-          left: { column: "id", occurrence: "auth_users", selectedAs: "id", table: "auth_users" },
+          left: { column: "id", level: 0, occurrence: "auth_users", selectedAs: "id", table: "auth_users" },
           nullFilled: "right",
-          right: { column: "blockedId", occurrence: "social_blocks", table: "social_blocks" },
+          right: { column: "blockedId", level: 0, occurrence: "social_blocks", table: "social_blocks" },
         },
       ],
-      levels: [
-        { scopedTables: [], tables: ["auth_users"] },
-        { scopedTables: ["social_blocks"], tables: ["social_blocks"] },
+      levels: [{ tables: ["auth_users"] }, { tables: ["social_blocks"] }],
+      occurrences: [
+        { level: 0, occurrence: "auth_users", scoped: false, table: "auth_users" },
+        { level: 1, occurrence: "social_blocks", scoped: true, table: "social_blocks" },
       ],
       scopes: [
         { column: "blockedId", table: "social_blocks", value: userId },
@@ -219,29 +266,50 @@ describe(getReadSet, () => {
 
     expect(getReadSet(statements)).toStrictEqual({
       filters: [
-        { column: "deletedAt", occurrence: "message_bans", site: "where", table: "message_bans" },
-        { column: "isInvitePaused", occurrence: "message_rooms", site: "where", table: "message_rooms" },
+        { column: "isInvitePaused", level: 1, occurrence: "message_rooms", site: "where", table: "message_rooms" },
+        { column: "deletedAt", level: 2, occurrence: "message_bans", site: "where", table: "message_bans" },
       ],
       joins: [
         {
           kind: "inner",
-          left: { column: "roomId", occurrence: "message_bans", table: "message_bans" },
-          right: { column: "roomId", occurrence: "message_invites", selectedAs: "roomId", table: "message_invites" },
+          left: {
+            column: "roomId",
+            level: 1,
+            occurrence: "message_invites",
+            selectedAs: "roomId",
+            table: "message_invites",
+          },
+          right: { column: "id", level: 1, occurrence: "message_rooms", table: "message_rooms" },
         },
         {
           kind: "inner",
-          left: { column: "roomId", occurrence: "message_invites", selectedAs: "roomId", table: "message_invites" },
-          right: { column: "id", occurrence: "message_rooms", table: "message_rooms" },
+          left: { column: "roomId", level: 2, occurrence: "message_bans", table: "message_bans" },
+          right: {
+            column: "roomId",
+            level: 2,
+            occurrence: "message_invites",
+            selectedAs: "roomId",
+            table: "message_invites",
+          },
         },
       ],
       levels: [
-        { scopedTables: ["message_invites"], tables: ["message_invites"] },
-        { scopedTables: [], tables: ["message_rooms"] },
-        { scopedTables: ["message_bans"], tables: ["message_bans"] },
-        { scopedTables: ["message_rooms"], tables: ["message_rooms"] },
-        { scopedTables: ["auth_users"], tables: ["auth_users"] },
-        { scopedTables: ["message_usersToRooms"], tables: ["message_usersToRooms"] },
-        { scopedTables: ["message_usersToRooms"], tables: ["message_usersToRooms"] },
+        { tables: ["message_invites"] },
+        { tables: ["message_rooms"] },
+        { tables: ["message_bans"] },
+        { tables: ["message_rooms"] },
+        { tables: ["auth_users"] },
+        { tables: ["message_usersToRooms"] },
+        { tables: ["message_usersToRooms"] },
+      ],
+      occurrences: [
+        { level: 0, occurrence: "message_invites", scoped: true, table: "message_invites" },
+        { level: 1, occurrence: "message_rooms", scoped: false, table: "message_rooms" },
+        { level: 2, occurrence: "message_bans", scoped: true, table: "message_bans" },
+        { level: 0, occurrence: "d0", scoped: true, table: "message_rooms" },
+        { level: 0, occurrence: "d0", scoped: true, table: "auth_users" },
+        { level: 0, occurrence: "d0", scoped: true, table: "message_usersToRooms" },
+        { level: 0, occurrence: "message_usersToRooms", scoped: true, table: "message_usersToRooms" },
       ],
       scopes: [
         { column: "id", table: "auth_users", value: inviterId },

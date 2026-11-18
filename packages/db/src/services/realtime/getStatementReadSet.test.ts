@@ -18,8 +18,8 @@ describe(getStatementReadSet, () => {
       [
         {
           kind: "inner",
-          left: { column: "roomId", occurrence: "d0", selectedAs: "roomId", table: "message_usersToRooms" },
-          right: { column: "id", occurrence: "d1", table: "message_rooms" },
+          left: { column: "roomId", level: 0, occurrence: "d0", selectedAs: "roomId", table: "message_usersToRooms" },
+          right: { column: "id", level: 0, occurrence: "d1", table: "message_rooms" },
         },
       ],
     ]);

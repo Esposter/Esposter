@@ -9,6 +9,7 @@ export interface ReadSet {
   joins: ReadSetJoin[];
   // The statement levels a read holds: the statement it awaited and each statement nested in it, read apart
   levels: ReadSetLevel[];
+  occurrences: ReadSetOccurrence[];
   scopes: ReadSetScope[];
   // Every table the levels name, each once
   tables: string[];
@@ -21,8 +22,10 @@ export interface ReadSetColumn {
 }
 
 // A column a read tests by a condition other than a scope equality or a join, the clause the condition sits in, and the
-// Occurrence of the table it tests: the alias or name the statement gives that table where the condition reads it
+// Occurrence of the table it tests, and the statement level it sits in: the alias or name the statement gives that table where
+// The condition reads it, and the level the walk opened for that condition
 export interface ReadSetFilter extends ReadSetColumn {
+  level: number;
   occurrence: string;
   site: FilterSite;
 }
@@ -36,8 +39,11 @@ export interface ReadSetJoin {
 }
 
 // One side of a join. `selectedAs` is the name the read's own select gives the column, when it selects it. `occurrence` is
-// The table occurrence the side reads, so an occurrence of a table is named apart from another occurrence of it
+// The table occurrence the side reads, and the statement level it is read in, so an occurrence of a table is named apart from
+// Another occurrence of it. The level is -1 for a subquery's selected column, whose own level the walk has not opened, so no
+// Declared occurrence holds it and the side is never named by its rows
 export interface ReadSetKey extends ReadSetColumn {
+  level: number;
   occurrence: string;
   selectedAs?: string;
 }
@@ -45,8 +51,17 @@ export interface ReadSetKey extends ReadSetColumn {
 // The tables one statement level names, and the tables it names by a scope equality of its own. A table named by no
 // Equality at its level is read whole there, whatever a nested statement names of it
 export interface ReadSetLevel {
-  scopedTables: string[];
   tables: string[];
+}
+
+// A table occurrence the statement declares: the alias or name it gives the table, the table, the statement level it is declared
+// In, and whether an equality of its own at that level scopes it. Two occurrences of one table are named apart, so a table is
+// Table-wide when any of its occurrences is neither scoped nor named by its rows
+export interface ReadSetOccurrence {
+  level: number;
+  occurrence: string;
+  scoped: boolean;
+  table: string;
 }
 
 // A scope fact: a scope column the read tests against one value, secret when the column is a bearer secret

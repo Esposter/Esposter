@@ -385,6 +385,32 @@ describe(getReadTopics, () => {
     );
   });
 
+  // A table is named by its rows only where each occurrence of it is. A second occurrence of the same table that a left join
+  // Names by no value the read selects is unnamed, so the table stays table-wide, though the first occurrence is row-named
+  test("a table with one row-named occurrence and one unnamed occurrence keeps its table-wide topic", async () => {
+    expect.hasAssertions();
+
+    const { db } = await createMockDb();
+    const userId = v7();
+    await insertUser(db, userId);
+    const roomId = v7();
+    await db.insert(roomsInMessage).values({ id: roomId, name: roomId, type: RoomType.Room, userId });
+    await db.insert(usersToRoomsInMessage).values({ roomId, userId });
+    const participants = alias(usersToRoomsInMessage, "participants");
+    const { database, statements } = recordStatements(db);
+
+    await database
+      .select({ id: roomsInMessage.id })
+      .from(roomsInMessage)
+      .leftJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.roomId, roomsInMessage.id))
+      .leftJoin(participants, eq(participants.roomId, usersToRoomsInMessage.roomId))
+      .where(eq(roomsInMessage.userId, userId));
+
+    await expect(getReadTopics(statements)).resolves.toStrictEqual(
+      ["message_rooms:*", "message_usersToRooms:*"].toSorted(),
+    );
+  });
+
   // A column a read selects or groups by removes no row, so selecting the joined table's key does not filter it. The table
   // Is still named by the join key values its rows return, which is the room each returned membership belongs to
   test("a column a read selects from a left-joined table does not filter it out of the join's rows", async () => {

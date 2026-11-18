@@ -29,25 +29,25 @@ const checkIsPreservingJoin = (join: ReadSetJoin, side: JoinSide): boolean =>
     ? join.nullFilled === side
     : join.kind === JoinKind.Subquery && join.left.table === join.right.table;
 
-// The scope values the rows a read returned name for the tables it joins on a scope column, through a join that keeps the
-// Partner's rows. A side's value is the one its partner key holds in each row, so a row of another value is not named.
-// A table occurrence is named this way only when it is table-wide in the read and no filter tests that occurrence. A
-// Filter on another occurrence of the same table removes none of this occurrence's rows, so it does not stop the naming
+// The scope values the rows a read returned name for each table occurrence it joins on a scope column through a join that
+// keeps the partner's rows, keyed by the occurrence. Only an occurrence in `namable` is named this way: a side's value is the
+// One its partner key holds in each row, so a row of another value is not named
 export const getJoinScopeValues = (
   joins: ReadSetJoin[],
   rows: unknown[],
-  tables: string[],
-  filteredOccurrences: Set<string>,
-): ScopeValue[] => {
-  const namedTables = new Set(tables);
-  const isNamable = (side: ReadSetKey) =>
-    namedTables.has(side.table) && !filteredOccurrences.has(getOccurrenceKey(side));
-  return joins.flatMap((join) => [
-    ...(checkIsPreservingJoin(join, "left") && isNamable(join.left)
-      ? getSideScopeValues(join.left, join.right, rows)
-      : []),
-    ...(checkIsPreservingJoin(join, "right") && isNamable(join.right)
-      ? getSideScopeValues(join.right, join.left, rows)
-      : []),
-  ]);
+  namable: Set<string>,
+): Map<string, ScopeValue[]> => {
+  const occurrenceScopeValuesMap = new Map<string, ScopeValue[]>();
+  for (const join of joins)
+    for (const side of ["left", "right"] as const) {
+      const named = side === "left" ? join.left : join.right;
+      const partner = side === "left" ? join.right : join.left;
+      const key = getOccurrenceKey(named);
+      if (!checkIsPreservingJoin(join, side) || !namable.has(key)) continue;
+      occurrenceScopeValuesMap.set(key, [
+        ...(occurrenceScopeValuesMap.get(key) ?? []),
+        ...getSideScopeValues(named, partner, rows),
+      ]);
+    }
+  return occurrenceScopeValuesMap;
 };
