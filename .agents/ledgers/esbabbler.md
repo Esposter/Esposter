@@ -11,6 +11,6 @@ The messaging module's own rules — Discord parity, display names through the o
 | `app/store/message`                                                                                          | 2026-10-05 · Opus 5.5  |                                         |
 | `app/composables/message`                                                                                    | 2026-10-14 · Haiku 5.5 |                                         |
 | `app/services/message`                                                                                       | 2026-10-05 · Opus 5.5  |                                         |
-| `server/services/message`, `server/services/room`, `server/services/role`                                    | 2026-10-05 · Opus 5.5  |                                         |
+| `server/services/message`, `server/services/room`                                                            | 2026-10-05 · Opus 5.5  |                                         |
 | `server/trpc/routers/message`, `server/trpc/routers/room`                                                    | 2026-10-05 · Opus 5.5  |                                         |
 | `packages/db-schema/src/models/message`                                                                      | 2026-10-05 · Opus 5.5  |                                         |

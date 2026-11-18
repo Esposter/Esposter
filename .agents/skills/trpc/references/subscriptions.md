@@ -25,4 +25,4 @@ A read whose answer a change could overtake waits for its socket to settle, then
 
 ## Room streams are socket routes, not procedures
 
-No room's live events come through a procedure. The room's object writes its `RoomEvent` frames, and `broadcastRoomEvent` (`apps/web/server/services/room/broadcastRoomEvent.ts`) sends the room's writes to it. The membership check is made when the socket opens, in `apps/web/server/routes/ws/room/[roomId].get.ts` (`assertIsMember`). A departure drops the member's sockets on the room's object (`RoomObject.removeMember`), so no socket outlives its membership.
+No room's live events come through a procedure. A room's write publishes the room's topics through `publishTopics` (`apps/web/server/services/realtime/publishTopics.ts`), and each read watching one reads again, as `openspec/specs/architecture/client-data/design.md` sets out. The membership check is made when the socket opens, in `apps/web/server/routes/ws/room/[roomId].get.ts` (`assertIsMember`). A departure drops the member's sockets on the room's object (`RoomObject.removeMember`), so no socket outlives its membership.
