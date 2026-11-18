@@ -12,3 +12,4 @@ x-touches:
     "scripts/src/services/genshinAssets/particles/**",
     "scripts/src/services/genshinAssets/effects/**",
   ]
+x-waiting: "Task 1.4 waits on the login cloud emitter material, which its export names by no pointer; tasks 3.2 to 3.6, 4.1 to 4.3 and 5.1 are phase 7 work outside this unit, and each waits on its own line in tasks.md"
