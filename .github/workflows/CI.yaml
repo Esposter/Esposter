@@ -11,10 +11,12 @@ on:
 permissions:
   contents: read
 
-# A newer push cancels the run in progress on every branch, so only the newest push's run finishes.
+# A newer push cancels the run in progress on a working branch. On `main` and `ai/queue` it waits instead: their pushes
+# land minutes apart, so cancelling left no run to finish and nothing for the deploy to start from. Each job's
+# `timeout-minutes` is several times its longest run, so a hang there frees the branch instead of holding it for hours.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/ai/queue' }}
 
 jobs:
   # Shared with 🏎️ Bench; the job id stays `build-packages` so every `needs:` below reads unchanged
@@ -25,6 +27,7 @@ jobs:
     name: Build App
     needs: build-packages
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -54,6 +57,7 @@ jobs:
       matrix:
         shard: [1, 2, 3, 4, 5, 6, 7, 8]
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -97,6 +101,7 @@ jobs:
     # `!cancelled()` rather than `always()` so a cancelled run still reads as cancelled
     if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       # `needs.*.result` covers the shard matrix as a whole — one shard that did not succeed fails the aggregate
       - name: 🚦 Gate on the shard results
@@ -135,6 +140,7 @@ jobs:
   format:
     name: Format
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -169,6 +175,7 @@ jobs:
           - name: Typecheck
             task: typecheck
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

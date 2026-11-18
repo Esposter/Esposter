@@ -6,7 +6,7 @@ Read when editing `oxlint.config.ts`'s `ignorePatterns`, when the oxlint step ha
 
 `options.typeAware: true` runs the type-aware backend, `tsrs-lint`. A type checker can **infinite-loop** building the type graph of a file that imports giant recursive types, such as `three/webgpu` and `three/tsl`, and a hang of that kind is the only reason a source file is excluded. Importing those types is not itself the trigger: the Genshin engine's TSL lints in about a second, so a new exclusion needs a file measured to hang. `oxlint.config.ts` excludes no source file, so the fluid simulator's composable is linted with the rest. A hang stops the whole `oxlint` step, and every other file lints in seconds, so bisect a suspected hang per-directory, then per-file.
 
-The CI symptom is not what it looks like: the Lint job has no `timeout-minutes` and the workflow sets `cancel-in-progress`, so it runs until the next push cancels it and reports `ELIFECYCLE exit 129` (SIGHUP) — **not** a heap error, which would be 134 with `heap out of memory`.
+The CI symptom is not what it looks like: a hung Lint job runs until its `timeout-minutes` or, on a working branch, until the next push cancels it, and reports a cancellation or `ELIFECYCLE exit 129` (SIGHUP) — **not** a heap error, which would be 134 with `heap out of memory`.
 
 oxlint has no per-file type-aware toggle — `overrides` cannot set `options.typeAware` — so for a hang, `ignorePatterns` is the only lever. A file that finishes but makes one rule expensive takes a per-rule override instead (`references/type-aware-cost.md`). Recheck a hang after a `tsrs` bump before adding an exclusion for it.
 
