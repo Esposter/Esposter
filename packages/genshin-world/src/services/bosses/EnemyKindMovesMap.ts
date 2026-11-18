@@ -20,6 +20,7 @@ import { PERPETUAL_MECHANICAL_ARRAY_MOVES } from "#src/services/bosses/perpetual
 import { PRIMO_GEOVISHAP_MOVES } from "#src/services/bosses/primoGeovishap";
 import { SECRET_SOURCE_AUTOMATON_CONFIGURATION_DEVICE_MOVES } from "#src/services/bosses/secretSourceAutomatonConfigurationDevice";
 import { SETEKH_WENUT_MOVES } from "#src/services/bosses/setekhWenut";
+import { SOLITARY_SUANNI_MOVES } from "#src/services/bosses/solitarySuanni";
 import { STORMTERROR_MOVES } from "#src/services/bosses/stormterror";
 import { THUNDER_MANIFESTATION_MOVES } from "#src/services/bosses/thunderManifestation";
 import { WAYWARD_HERMETIC_SPIRITSPEAKER_MOVES } from "#src/services/bosses/waywardHermeticSpiritspeaker";
@@ -48,4 +49,5 @@ export const EnemyKindMovesMap: Partial<Record<EnemyKindId, readonly BossMove[]>
   [EnemyKindId.ThunderManifestation]: THUNDER_MANIFESTATION_MOVES,
   [EnemyKindId.MaguuKenki]: MAGUU_KENKI_MOVES,
   [EnemyKindId.PrimoGeovishap]: PRIMO_GEOVISHAP_MOVES,
+  [EnemyKindId.SolitarySuanni]: SOLITARY_SUANNI_MOVES,
 };
