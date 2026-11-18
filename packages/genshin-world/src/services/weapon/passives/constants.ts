@@ -11,3 +11,5 @@ export const BOUNDLESS_BLESSING_ID = "boundlessBlessing";
 export const CHORD_HARMONIC_ID = "harmonic";
 // The seven elements' DMG Bonus attributes, which a passive naming all Elemental DMG raises alike
 export const ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES: readonly Attribute[] = Object.values(ElementDamageBonusAttributeMap);
+// The most stacks an Emblem a weapon's passive gives its wielder holds, the three levels its rows give a bonus for
+export const EMBLEM_MAXIMUM_STACKS = 3;

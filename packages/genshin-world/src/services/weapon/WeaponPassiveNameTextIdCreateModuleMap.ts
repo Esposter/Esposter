@@ -37,6 +37,7 @@ import { createDeterminationPassiveModule } from "#src/services/weapon/passives/
 import { createDiffusingBoundaryPassiveModule } from "#src/services/weapon/passives/createDiffusingBoundaryPassiveModule";
 import { createDodocoTalesPassiveModule } from "#src/services/weapon/passives/createDodocoTalesPassiveModule";
 import { createDolorousStrokePassiveModule } from "#src/services/weapon/passives/createDolorousStrokePassiveModule";
+import { createDryasNocturnePassiveModule } from "#src/services/weapon/passives/createDryasNocturnePassiveModule";
 import { createEagleSpearOfJusticePassiveModule } from "#src/services/weapon/passives/createEagleSpearOfJusticePassiveModule";
 import { createEchoesOfThePlentifulLandPassiveModule } from "#src/services/weapon/passives/createEchoesOfThePlentifulLandPassiveModule";
 import { createEchoingBalladPassiveModule } from "#src/services/weapon/passives/createEchoingBalladPassiveModule";
@@ -63,6 +64,7 @@ import { createGuerillaTacticsPassiveModule } from "#src/services/weapon/passive
 import { createHamayumiPassiveModule } from "#src/services/weapon/passives/createHamayumiPassiveModule";
 import { createHeavyPassiveModule } from "#src/services/weapon/passives/createHeavyPassiveModule";
 import { createHeritagePassiveModule } from "#src/services/weapon/passives/createHeritagePassiveModule";
+import { createHonedFlowPassiveModule } from "#src/services/weapon/passives/createHonedFlowPassiveModule";
 import { createHopeBeyondThePeaksPassiveModule } from "#src/services/weapon/passives/createHopeBeyondThePeaksPassiveModule";
 import { createInfusionArrowPassiveModule } from "#src/services/weapon/passives/createInfusionArrowPassiveModule";
 import { createInfusionBladePassiveModule } from "#src/services/weapon/passives/createInfusionBladePassiveModule";
@@ -83,8 +85,10 @@ import { createMagicAffinityPassiveModule } from "#src/services/weapon/passives/
 import { createManyOathsOfDawnAndDuskPassiveModule } from "#src/services/weapon/passives/createManyOathsOfDawnAndDuskPassiveModule";
 import { createMasonsDittyPassiveModule } from "#src/services/weapon/passives/createMasonsDittyPassiveModule";
 import { createMasteryClockPassiveModule } from "#src/services/weapon/passives/createMasteryClockPassiveModule";
+import { createMistsplittersEdgePassiveModule } from "#src/services/weapon/passives/createMistsplittersEdgePassiveModule";
 import { createMournfulTributePassiveModule } from "#src/services/weapon/passives/createMournfulTributePassiveModule";
 import { createNocturnalDreamsPassiveModule } from "#src/services/weapon/passives/createNocturnalDreamsPassiveModule";
+import { createNorthwindWolfPassiveModule } from "#src/services/weapon/passives/createNorthwindWolfPassiveModule";
 import { createOathOfQhapaqNanPassiveModule } from "#src/services/weapon/passives/createOathOfQhapaqNanPassiveModule";
 import { createOceanicVictoryPassiveModule } from "#src/services/weapon/passives/createOceanicVictoryPassiveModule";
 import { createOfferingUntoWindAndSunPassiveModule } from "#src/services/weapon/passives/createOfferingUntoWindAndSunPassiveModule";
@@ -101,6 +105,7 @@ import { createRadianceOnTheWaterPassiveModule } from "#src/services/weapon/pass
 import { createReactionAttackPassiveModule } from "#src/services/weapon/passives/createReactionAttackPassiveModule";
 import { createRebelliousGuardianPassiveModule } from "#src/services/weapon/passives/createRebelliousGuardianPassiveModule";
 import { createRepentanceAndRedemptionPassiveModule } from "#src/services/weapon/passives/createRepentanceAndRedemptionPassiveModule";
+import { createRuleByThunderPassiveModule } from "#src/services/weapon/passives/createRuleByThunderPassiveModule";
 import { createRustPassiveModule } from "#src/services/weapon/passives/createRustPassiveModule";
 import { createSamuraiConductPassiveModule } from "#src/services/weapon/passives/createSamuraiConductPassiveModule";
 import { createSeaShantyPassiveModule } from "#src/services/weapon/passives/createSeaShantyPassiveModule";
@@ -136,6 +141,7 @@ import { createUnbendingPassiveModule } from "#src/services/weapon/passives/crea
 import { createUndyingAdmirationPassiveModule } from "#src/services/weapon/passives/createUndyingAdmirationPassiveModule";
 import { createUnreturningPassiveModule } from "#src/services/weapon/passives/createUnreturningPassiveModule";
 import { createUntaintedDesirePassiveModule } from "#src/services/weapon/passives/createUntaintedDesirePassiveModule";
+import { createViperBalladPassiveModule } from "#src/services/weapon/passives/createViperBalladPassiveModule";
 import { createWanderingCloudsPassiveModule } from "#src/services/weapon/passives/createWanderingCloudsPassiveModule";
 import { createWhispersOfWindAndFlowerPassiveModule } from "#src/services/weapon/passives/createWhispersOfWindAndFlowerPassiveModule";
 import { createWhitehillsBestowalPassiveModule } from "#src/services/weapon/passives/createWhitehillsBestowalPassiveModule";
@@ -560,4 +566,16 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "1388031387": (params) => createMasteryClockPassiveModule(params, { attribute: Attribute.Attack, valueScale: 1 }),
   // Wildling Nightstar
   "3326699803": (params) => createMasteryClockPassiveModule(params, { attribute: Attribute.Attack, valueScale: 1 }),
+  // Northwind Wolf
+  "2361105603": createNorthwindWolfPassiveModule,
+  // Honed Flow
+  "2204995987": createHonedFlowPassiveModule,
+  // Viper's Ballad
+  "840479067": createViperBalladPassiveModule,
+  // Dryas's Nocturne
+  "2934369299": createDryasNocturnePassiveModule,
+  // Mistsplitter's Edge
+  "1919913067": createMistsplittersEdgePassiveModule,
+  // Rule by Thunder
+  "1682410515": createRuleByThunderPassiveModule,
 };
