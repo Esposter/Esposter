@@ -16,3 +16,7 @@ export const INAZUMA_REGION_ID = "inazuma";
 // The half width of the band either side of a region piece's outline across which its ground is blended into the base and
 // Its neighbours, one sample step of the fit's grid, the distance its gate reads its ground at
 export const GROUND_BLEND_WIDTH = 6;
+// The separators of a ground piece's key: a slash names the next level of the split under its area, and a dash joins the
+// Quarter indices a joined group names on its level
+export const GROUND_KEY_SEPARATOR = "/";
+export const GROUND_GROUP_SEPARATOR = "-";

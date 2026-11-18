@@ -12,6 +12,7 @@ import { joinGroundPieces } from "#src/services/genshinAssets/fit/joinGroundPiec
 import { splitGroundPiece } from "#src/services/genshinAssets/fit/splitGroundPiece";
 import { GROUND_GATE_SAMPLES } from "#src/services/genshinAssets/shared/constants";
 import { takeOne } from "@esposter/shared";
+import { getGroundPieceKey } from "genshin-world";
 
 // Each of a split's four quarters fitted with the piece it fits, one fit at a time
 const fitQuarters = async (
@@ -50,7 +51,7 @@ export const fitGroundPieces = async (piece: GroundPiece, source: GroundSource):
     const toJoinedPiece = (indices: number[]): GroundPiece =>
       joinGroundPieces(
         indices.map((index) => takeOne(quarters, index).piece),
-        `${next.piece.key}/${indices.join("-")}`,
+        getGroundPieceKey(next.piece.key, indices),
       );
     // Every joined group the search fits is kept, so one it does not keep reports its bar beside the split
     const attempts: GroundPieceFit[] = [];
