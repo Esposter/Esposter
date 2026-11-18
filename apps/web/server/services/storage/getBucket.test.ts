@@ -1,7 +1,8 @@
 import type { R2Bucket } from "@cloudflare/workers-types";
 import type { StorageBucket } from "@esposter/db-schema";
 
-import { recordStorageBucket } from "#server/services/storage/recordStorageBucket";
+import { requestBlobsStorage } from "#server/services/storage/requestBlobs";
+import { recordStorageBucket } from "@esposter/db";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The buckets a test has made, by storage bucket. A suite that touches one makes it in its own beforeAll
@@ -15,6 +16,5 @@ export const getBucket = (storageBucket: StorageBucket): R2Bucket => {
 
   if (!bucket) throw new InvalidOperationError(Operation.Read, getBucket.name, storageBucket);
 
-  // The production binding records its calls into the request's scope, so the stand-in does too
-  return recordStorageBucket(storageBucket, bucket);
+  return recordStorageBucket(storageBucket, bucket, () => requestBlobsStorage.getStore());
 };

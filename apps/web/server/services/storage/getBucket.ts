@@ -1,11 +1,13 @@
 import type { R2Bucket } from "@cloudflare/workers-types";
 import type { StorageBucket } from "@esposter/db-schema";
 
-import { recordStorageBucket } from "#server/services/storage/recordStorageBucket";
+import { requestBlobsStorage } from "#server/services/storage/requestBlobs";
+import { recordStorageBucket } from "@esposter/db";
 import { getStorageBucketBindingName } from "@esposter/db-schema";
 import { env } from "cloudflare:workers";
 
-// Every bucket name has a binding declared for it, so the lookup is total over the enum. The binding records the reads and
-// Writes its calls make into the request's scope, and records nothing outside one
+// Every bucket name has a binding declared for it, so the lookup is total over the enum
 export const getBucket = (storageBucket: StorageBucket): R2Bucket =>
-  recordStorageBucket(storageBucket, Reflect.get(env, getStorageBucketBindingName(storageBucket)));
+  recordStorageBucket(storageBucket, Reflect.get(env, getStorageBucketBindingName(storageBucket)), () =>
+    requestBlobsStorage.getStore(),
+  );
