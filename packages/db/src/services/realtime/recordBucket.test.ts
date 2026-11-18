@@ -75,4 +75,24 @@ describe(recordBucket, () => {
 
     expect(blobs.writes.filter((topic) => !topicSchema.safeParse(topic).success)).toStrictEqual([]);
   });
+
+  // A multipart upload writes its object when it completes, so the completion publishes the key the way a put does
+  test("a multipart upload publishes its key, each directory above it and the bucket's root when it completes", async () => {
+    expect.hasAssertions();
+
+    const blobs: RecordedBlobs = { reads: [], writes: [] };
+    const bucket = recordBucket(mockBucket.bucket, bucketName, () => blobs);
+    const key = "user/a/archive";
+
+    const upload = await bucket.createMultipartUpload(key);
+    const part = await upload.uploadPart(1, new Uint8Array([1, 2, 3]));
+    await upload.complete([part]);
+
+    expect(blobs.writes).toStrictEqual([
+      `${bucketName}:${key}`,
+      `${bucketName}:user/a/`,
+      `${bucketName}:user/`,
+      `${bucketName}:`,
+    ]);
+  });
 });

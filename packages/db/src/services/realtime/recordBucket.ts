@@ -1,5 +1,5 @@
 import type { RecordedBlobs } from "#src/models/realtime/RecordedBlobs";
-import type { R2Bucket } from "@cloudflare/workers-types";
+import type { R2Bucket, R2MultipartUpload } from "@cloudflare/workers-types";
 
 import { getBlobListTopic } from "#src/services/realtime/getBlobListTopic";
 import { getBlobWriteTopics } from "#src/services/realtime/getBlobWriteTopics";
@@ -27,11 +27,37 @@ const recordCall = (method: string | symbol, args: unknown[], bucket: string, bl
     for (const key of getDeletedKeys(first)) blobs.writes.push(...getBlobWriteTopics(bucket, key));
 };
 
+// A multipart upload writes its object when it completes, so the completion is recorded as the write of the key the upload
+// Was created for, as a put is. Its other methods add parts to an object that does not exist yet, so they record nothing
+const recordUpload = (
+  upload: R2MultipartUpload,
+  key: string,
+  bucket: string,
+  getBlobs: () => RecordedBlobs | undefined,
+): R2MultipartUpload =>
+  new Proxy(upload, {
+    get: (target, property) => {
+      const value: unknown = Reflect.get(target, property, target);
+      if (typeof value !== "function") return value;
+      return (...args: unknown[]) => {
+        const blobs = getBlobs();
+        if (blobs && property === "complete") blobs.writes.push(...getBlobWriteTopics(bucket, key));
+        return Reflect.apply(value, target, args);
+      };
+    },
+  });
+
 export const recordBucket = (bucket: R2Bucket, name: string, getBlobs: () => RecordedBlobs | undefined): R2Bucket =>
   new Proxy(bucket, {
     get: (target, property) => {
       const value: unknown = Reflect.get(target, property, target);
       if (typeof value !== "function") return value;
+      if (property === "createMultipartUpload")
+        return async (...args: unknown[]) => {
+          const upload: R2MultipartUpload = await Reflect.apply(value, target, args);
+          const [key] = args;
+          return typeof key === "string" ? recordUpload(upload, key, name, getBlobs) : upload;
+        };
       return (...args: unknown[]) => {
         const blobs = getBlobs();
         if (blobs) recordCall(property, args, name, blobs);
