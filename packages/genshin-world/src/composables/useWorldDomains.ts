@@ -103,7 +103,7 @@ export const useWorldDomains = ({
 }: {
   adventureRankTables: AdventureRankTables;
   clearedDomainIds: Ref<ReadonlySet<string>>;
-  domainChallengeLevels: DomainChallengeLevelMap;
+  domainChallengeLevels: Readonly<Ref<DomainChallengeLevelMap>>;
   kitEffectState: KitEffectState;
   random: () => number;
 }) => {
@@ -133,7 +133,7 @@ export const useWorldDomains = ({
     domainSchedule.value && domainEntrance.value
       ? computeDomainLevelRows(
           domainSchedule.value,
-          domainChallengeLevels[domainEntrance.value.entryId] ?? {},
+          domainChallengeLevels.value[domainEntrance.value.entryId] ?? {},
           rank.value,
           worldNow.value,
         )
@@ -241,7 +241,7 @@ export const useWorldDomains = ({
     const schedule = domainSchedule.value;
     if (domainArena.value || !entrance || !schedule) return;
     const scheduledLevel = schedule.levels.find((level) => level.dungeonId === dungeonId);
-    const level = scheduledLevel && domainChallengeLevels[entrance.entryId]?.[scheduledLevel.recommendedRank];
+    const level = scheduledLevel && domainChallengeLevels.value[entrance.entryId]?.[scheduledLevel.recommendedRank];
     if (!scheduledLevel || !level) return;
     const now = getWorldNow();
     // The row the player pressed was read at the world's clock, which can be a minute behind a reset that has passed since

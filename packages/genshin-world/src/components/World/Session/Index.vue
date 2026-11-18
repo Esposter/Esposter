@@ -154,7 +154,6 @@ const {
   characterTalentKits,
   craftingBenchPlace,
   devRegistry,
-  domainChallengeLevels,
   enemyTables,
   frostbearingTreeLevels,
   frostbearingTreePlaces,
@@ -788,7 +787,7 @@ const {
 } = useWorldDomains({
   adventureRankTables,
   clearedDomainIds,
-  domainChallengeLevels,
+  domainChallengeLevels: computed(() => records.domainChallengeLevels ?? {}),
   kitEffectState: kitContext.kitEffectState,
   random: () => kitContext.random(),
 });
@@ -1600,7 +1599,7 @@ useWorldSaveSync({
       @offer="offerWorship()"
     />
     <DomainScreen
-      v-if="screenKind === ScreenKind.Domain"
+      v-if="screenKind === ScreenKind.Domain && records.domainChallengeLevels"
       :game-text
       :is-in-domain="domainArena !== undefined"
       :levels="domainLevelRows"

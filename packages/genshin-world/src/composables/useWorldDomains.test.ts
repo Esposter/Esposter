@@ -114,7 +114,7 @@ const createDomains = (clock = createWorldClock(Temporal.Instant.fromEpochMillis
   const domains = useWorldDomains({
     adventureRankTables: { levels: [], locks: [], worldLevelRows: [] },
     clearedDomainIds: shallowRef(new Set<string>()),
-    domainChallengeLevels,
+    domainChallengeLevels: shallowRef(domainChallengeLevels),
     kitEffectState: { effects: [] },
     random: () => 0.5,
   });

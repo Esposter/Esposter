@@ -6,7 +6,6 @@ import type { CharacterTalentKit } from "#src/models/character/CharacterTalentKi
 import type { StatTables } from "#src/models/character/StatTables";
 import type { TalentUpgradeMap } from "#src/models/character/TalentUpgradeMap";
 import type { CraftingBenchPlace } from "#src/models/crafting/CraftingBenchPlace";
-import type { DomainChallengeLevelMap } from "#src/models/domains/DomainChallengeLevelMap";
 import type { EnemyTables } from "#src/models/enemy/EnemyTables";
 import type { HudInterfaceRects } from "#src/models/hud/HudInterfaceRects";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
@@ -42,8 +41,6 @@ export interface WorldTables {
   characterTalentKits: CharacterTalentKit[];
   // The crafting bench's place in Mondstadt, in the region's axes, which its prompt stands on
   craftingBenchPlace: CraftingBenchPlace;
-  // The domains' challenge levels by entry id and then by recommended rank, which a domain's level is entered from
-  domainChallengeLevels: DomainChallengeLevelMap;
   // The game's enemy tables, which the camps spawn their enemies from and every strike reads
   enemyTables: EnemyTables;
   // The Frostbearing Tree's offering levels the game's table holds, the last of which opens Mondstadt's Souvenir Shop
