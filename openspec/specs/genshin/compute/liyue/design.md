@@ -2,8 +2,6 @@
 
 ## Queue
 
-- [ ] `[cpu]` {liyue-terrain-tiles} needs game-install — **Liyue: the terrain tiles its area outlines name, exported.** `pnpm -C scripts genshin:assets extract liyue`, with the game closed. Reads the game install through its map, `{data-root}/genshin-parity/extracted/maps/`, the Windrise export `{data-root}/genshin-parity/extracted/windrise/` that places the origin, and `packages/genshin-world/src/data/catalogue.json`. Writes `{data-root}/genshin-parity/extracted/liyue/`. Measure: `pnpm -C scripts genshin:assets missing-tiles liyue`, bar `missing 0` of its 29 outline tiles, as the [outline tiles](../README.md#outline-tiles) section sets out.
-
 ## Waiting
 
 - [ ] `[page]` {liyue-harbor-location-camera-landmarks} needs game-exports, parity-page — **liyue-harbor-location: the camera solved on its landmarks and written.** `pnpm -C scripts genshin:parity pose liyue-harbor-location --witness liyue --write`. Reads the reference, the witness, the six landmarks in its `ParityReferenceMap` entry and their shares in `DerivedAssetLandmarkMap[liyue]`. Writes and bars as the [compute bars](../README.md#bars) set out. — waits on a mesh the extraction holds for each landmark.
