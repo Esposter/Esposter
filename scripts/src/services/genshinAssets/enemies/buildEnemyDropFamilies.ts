@@ -6,16 +6,13 @@ import type {
   EnemyMaterialDrop,
 } from "genshin-world";
 
-import {
-  DROPS_TABLE_WIKI_MODULE_TITLE,
-  FAMILYLESS_ENEMY_KIND_IDS,
-} from "#src/services/genshinAssets/enemies/constants";
+import { DROPS_TABLE_WIKI_MODULE_TITLE } from "#src/services/genshinAssets/enemies/constants";
 import { parseLuaTable } from "#src/services/genshinAssets/enemies/parseLuaTable";
 import { readWikiPageContent } from "#src/services/genshinAssets/enemies/readWikiPageContent";
 import { toEnemyKindName } from "#src/services/genshinAssets/enemies/toEnemyKindName";
 import { WIKI_CACHE_DIRECTORY } from "#src/services/genshinAssets/kits/constants";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
-import { EnemyType } from "genshin-world";
+import { EnemyType, FAMILYLESS_ENEMY_KIND_IDS } from "genshin-world";
 import { z } from "zod";
 
 // One of a family's material sets: its material names and their counts, paired by position. A set the wiki gives a fixed
