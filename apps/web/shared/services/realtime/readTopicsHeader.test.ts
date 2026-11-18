@@ -1,7 +1,7 @@
 import { TOPICS_HEADER } from "#shared/services/realtime/constants";
 import { formatTopicsHeaderValue } from "#shared/services/realtime/formatTopicsHeaderValue";
 import { readTopicsHeader } from "#shared/services/realtime/readTopicsHeader";
-import { getTopic, TopicKind } from "@esposter/db-schema";
+import { getBlobTopic, getTopic, StorageBucket, TopicKind } from "@esposter/db-schema";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
@@ -18,5 +18,16 @@ describe(readTopicsHeader, () => {
 
     expect(readTopicsHeader(headers, "post.readPost")).toStrictEqual([{ readAt, topics: [postTopic] }]);
     expect(readTopicsHeader(headers, "friend.readFriends")).toStrictEqual([{ readAt, topics: [friendTopic] }]);
+  });
+
+  // A blob's key is a file's name, which may hold a space or a comma, the header's own separators
+  test("a topic whose key holds a space or a comma reads back whole", () => {
+    expect.hasAssertions();
+
+    const blobTopic = getBlobTopic(StorageBucket.UserAssets, "user/a b,c.png");
+    const headers = new Headers();
+    headers.append(TOPICS_HEADER, formatTopicsHeaderValue("post.readPost", { readAt: 0, topics: [blobTopic] }));
+
+    expect(readTopicsHeader(headers, "post.readPost")).toStrictEqual([{ readAt: 0, topics: [blobTopic] }]);
   });
 });

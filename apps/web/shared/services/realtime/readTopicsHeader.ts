@@ -2,10 +2,18 @@ import type { TopicRead } from "#shared/models/realtime/TopicRead";
 
 import { TOPICS_HEADER, TOPICS_HEADER_SEPARATOR } from "#shared/services/realtime/constants";
 import { topicSchema } from "@esposter/db-schema";
+import { getResult } from "@esposter/shared";
 import { z } from "zod";
 
 // The header carries the time as text, which is parsed back into the whole number it was taken as
 const readAtSchema = z.coerce.number().pipe(z.int().nonnegative());
+
+// A topic is read back from its encoding. One that is not a valid encoding is no topic, as one the schema refuses is not
+const decodeTopic = (text: string): string | undefined =>
+  getResult(() => decodeURIComponent(text)).match(
+    (decoded) => decoded,
+    () => undefined,
+  );
 
 // The reads one procedure path's answers made, out of a batch's topics header: each entry's topics, watched from its time
 export const readTopicsHeader = (headers: Headers, path: string): TopicRead[] =>
@@ -15,9 +23,10 @@ export const readTopicsHeader = (headers: Headers, path: string): TopicRead[] =>
     .filter(([valuePath]) => valuePath === path)
     .flatMap(([, readAtText, ...topicTexts]) => {
       const parsedReadAt = readAtSchema.safeParse(readAtText);
-      const topics = topicTexts.flatMap((topic) => {
-        const parsedTopic = topicSchema.safeParse(topic);
-        return parsedTopic.success ? [parsedTopic.data] : [];
+      const topics = topicTexts.flatMap((topicText) => {
+        const decoded = decodeTopic(topicText);
+        const parsedTopic = decoded === undefined ? undefined : topicSchema.safeParse(decoded);
+        return parsedTopic?.success ? [parsedTopic.data] : [];
       });
       return parsedReadAt.success && topics.length > 0 ? [{ readAt: parsedReadAt.data, topics }] : [];
     });
