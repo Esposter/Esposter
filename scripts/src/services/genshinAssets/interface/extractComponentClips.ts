@@ -7,6 +7,7 @@ import { collectInterfacePaths } from "#src/services/genshinAssets/interface/col
 import { collectScenePaths } from "#src/services/genshinAssets/interface/collectScenePaths";
 import { createClipNameResolver } from "#src/services/genshinAssets/interface/createClipNameResolver";
 import { decodeAnimationClip } from "#src/services/genshinAssets/interface/decodeAnimationClip";
+import { readSkeletonPaths } from "#src/services/genshinAssets/interface/readSkeletonPaths";
 import { composeSceneTree } from "#src/services/genshinAssets/scene/composeSceneTree";
 import { ANIMESTUDIO_TOOL, GENSHIN_ASSETS_PRODUCER_PATHS } from "#src/services/genshinAssets/shared/constants";
 import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
@@ -27,10 +28,11 @@ const CLIP_SAMPLE_RATE = 60;
 
 // A component's animation clips, decoded: every clip whose name its map's pattern matches is exported as JSON from the
 // Blocks holding it, its curves decoded and sampled, and each binding named where its CRC32 resolves, a property
-// Against Unity's names and a path against the component's interface tree (written by `interface`, if it has run) and
-// Its scene tree (dumped by `extract`, if it has run). The clips are written beside the exports
+// Against Unity's names and a path against the component's interface tree (written by `interface`, if it has run), its
+// Scene tree (dumped by `extract`, if it has run) and the rig of the model its clips bind (`clipSkeleton`). The clips are
+// Written beside the exports
 export const extractComponentClips = async (component: DerivedAssetComponent): Promise<DecodedClip[]> => {
-  const { clipPattern } = DerivedAssetComponentMap[component];
+  const { clipPattern, clipSkeleton } = DerivedAssetComponentMap[component];
   if (!clipPattern) throw new InvalidOperationError(Operation.Read, component, "names no clips");
   const { layout, root } = getComponentDirectory(component);
   const directory = join(root, "clips");
@@ -46,7 +48,8 @@ export const extractComponentClips = async (component: DerivedAssetComponent): P
   const scenePaths = sceneLayout
     ? composeSceneTree(sceneLayout.objects, sceneLayout.gameObjectDrawingMap).flatMap((top) => collectScenePaths(top))
     : [];
-  const resolveName = createClipNameResolver([...interfacePaths, ...scenePaths]);
+  const skeletonPaths = clipSkeleton ? await readSkeletonPaths(clipSkeleton) : [];
+  const resolveName = createClipNameResolver([...interfacePaths, ...scenePaths, ...skeletonPaths]);
   const clips: DecodedClip[] = (await readExportedClips<ExportedAnimationClip>(directory)).map((clip) =>
     Object.assign(decodeAnimationClip(clip, CLIP_SAMPLE_RATE, resolveName), { name: clip.m_Name }),
   );

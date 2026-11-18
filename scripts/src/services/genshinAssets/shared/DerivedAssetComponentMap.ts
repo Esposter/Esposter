@@ -148,10 +148,13 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
   [DerivedAssetComponent.TezcatepetoncoRange]: DERIVED_WORLD_OPTIONS,
   [DerivedAssetComponent.TheChasm]: DERIVED_WORLD_OPTIONS,
   [DerivedAssetComponent.ToyacSprings]: DERIVED_WORLD_OPTIONS,
-  // The Traveler's four locomotion clips, the standing, walk, run and sprint cycles of `Ani_Avatar_Girl_`, in the character
-  // Block `00/00035183.blk` the asset index names. Her model is rooted by PlayerGirl's entry, so this one roots nothing
+  // The Traveler's four locomotion clips, the standing, walk, run and sprint cycles of `Ani_Avatar_Girl_`, held in the
+  // Blocks `00/04161624.blk` and `00/04523043.blk` (the asset index also names `00/00035183.blk`, which exports none). Her
+  // Model is rooted by PlayerGirl's entry, so this one roots nothing
   [DerivedAssetComponent.Traveler]: {
     clipPattern: "^Ani_Avatar_Girl_(Standby|WalkCycle|RunCycle|SprintCycle)$",
+    // Their bones are PlayerGirl's rig, whose avatar names each bone's path (`avatar playergirl`)
+    clipSkeleton: DerivedAssetComponent.PlayerGirl,
     roots: [],
     screen: "WorldScreen",
   },

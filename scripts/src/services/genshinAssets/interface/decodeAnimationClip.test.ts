@@ -33,4 +33,29 @@ describe(decodeAnimationClip, () => {
       { component: "", path: "7", pathHash: 7, property: "m_Alpha", samples: [1, 1], type: "CanvasGroup" },
     ]);
   });
+
+  test("leaves an ACL-compressed clip's curves undecoded, so none reads as a held zero", () => {
+    expect.hasAssertions();
+
+    const clip: ExportedAnimationClip = {
+      m_ClipBindingConstant: { genericBindings: [{ attribute: 1, path: 0, typeID: "Transform" }] },
+      m_MuscleClip: {
+        m_Clip: {
+          m_ACLClip: { IsSet: true },
+          m_ConstantClip: { data: [] },
+          m_DenseClip: { m_BeginTime: 0, m_CurveCount: 0, m_FrameCount: 0, m_SampleArray: [], m_SampleRate: 1 },
+          m_StreamedClip: { curveCount: 0, data: [] },
+        },
+        m_StartTime: 0,
+        m_StopTime: 1,
+      },
+      m_Name: "",
+    };
+
+    expect(decodeAnimationClip(clip, 1, String).curves).toStrictEqual([
+      { component: "x", path: "0", pathHash: 0, property: "position", samples: [], type: "Transform" },
+      { component: "y", path: "0", pathHash: 0, property: "position", samples: [], type: "Transform" },
+      { component: "z", path: "0", pathHash: 0, property: "position", samples: [], type: "Transform" },
+    ]);
+  });
 });

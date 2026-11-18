@@ -22,9 +22,13 @@ export const clipsCommand: SubCommandsDef[string] = defineCommand({
         const first = samples[0] ?? 0;
         const last = samples.at(-1) ?? 0;
         const moved = samples.some((sample) => Math.abs(sample - first) > 1e-4);
-        console.log(
-          `  ${path} ${property}${component ? `.${component}` : ""}: ${moved ? `${formatRoundedValue(first)} to ${formatRoundedValue(last)}, ${formatRoundedValue(Math.min(...samples))} to ${formatRoundedValue(Math.max(...samples))}` : `held at ${formatRoundedValue(first)}`}`,
-        );
+        const reading =
+          samples.length === 0
+            ? "not decoded, its clip is ACL-compressed"
+            : moved
+              ? `${formatRoundedValue(first)} to ${formatRoundedValue(last)}, ${formatRoundedValue(Math.min(...samples))} to ${formatRoundedValue(Math.max(...samples))}`
+              : `held at ${formatRoundedValue(first)}`;
+        console.log(`  ${path} ${property}${component ? `.${component}` : ""}: ${reading}`);
       }
     }
   },

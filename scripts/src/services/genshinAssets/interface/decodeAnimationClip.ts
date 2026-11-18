@@ -21,7 +21,7 @@ export const decodeAnimationClip = (
   resolveName: (hash: number) => string,
 ): { curves: DecodedCurve[]; duration: number } => {
   const { m_Clip, m_StartTime, m_StopTime } = clip.m_MuscleClip;
-  const { m_ConstantClip, m_DenseClip, m_StreamedClip } = "data" in m_Clip ? m_Clip.data : m_Clip;
+  const { m_ACLClip, m_ConstantClip, m_DenseClip, m_StreamedClip } = "data" in m_Clip ? m_Clip.data : m_Clip;
   const duration = m_StopTime - m_StartTime;
   const sampleCount = Math.max(Math.round(duration * sampleRate), 0) + 1;
   const times = Array.from({ length: sampleCount }, (_value, index) => m_StartTime + index / sampleRate);
@@ -29,6 +29,9 @@ export const decodeAnimationClip = (
   const streamedCount = m_StreamedClip.curveCount;
   const denseCount = m_DenseClip.m_CurveCount;
   const sampleCurve = (index: number): number[] => {
+    // An ACL-compressed clip's curves are read only by ACL's own decompressor with the clip's database, which is not
+    // Run here, so they carry no samples: a curve with none is never a held zero
+    if (m_ACLClip?.IsSet) return [];
     if (index < streamedCount) return times.map((time) => evaluateStreamedCurve(streamedKeys.get(index) ?? [], time));
     if (index < streamedCount + denseCount) {
       const denseIndex = index - streamedCount;

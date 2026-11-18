@@ -1,5 +1,6 @@
 import type { AssetRoot } from "#src/models/genshinAssets/shared/AssetRoot";
 import type { AssetSpawn } from "#src/models/genshinAssets/shared/AssetSpawn";
+import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { WorldOptions } from "#src/models/genshinAssets/world/WorldOptions";
 
 // What a component's exports are found by: the roots of the arrangements it is and the prefabs its scripts spawn into
@@ -10,6 +11,9 @@ import type { WorldOptions } from "#src/models/genshinAssets/world/WorldOptions"
 // And the ground under it. And always the parity page's screen that draws it, which its references are judged on
 export interface DerivedAssetComponentOptions {
   clipPattern?: string;
+  // The component whose game model's rig its clips bind, for a component whose clips name bones its own roots do not
+  // Hold: its avatar (`avatar`) names every bone's path, which is how the clips' paths resolve
+  clipSkeleton?: DerivedAssetComponent;
   interface?: { anchorPattern: string; root: string };
   // A part of the open world whose world block is derived from its capital's place, or a sub-area's outline's centre
   // (`deriveCapitalWorld`), not set by hand
