@@ -1660,7 +1660,7 @@ useWorldSaveSync({
       @update:inventory="(nextInventory) => setInventory(nextInventory)"
     />
     <CraftingScreen
-      v-if="screenKind === ScreenKind.Crafting && records.craftingRecipes"
+      v-if="screenKind === ScreenKind.Crafting && records.craftingRecipes && records.craftingStrongboxes"
       v-model:crafted-count-map="craftedCountMap"
       :adventure-rank="rank"
       :artifact-drop-tables="craftingArtifactDropTables"
@@ -1676,7 +1676,7 @@ useWorldSaveSync({
       :random="kitContext.random"
       :recipes="records.craftingRecipes"
       :reliquary-piece-entry-map
-      :strongboxes="craftingStrongboxes"
+      :strongboxes="records.craftingStrongboxes"
       :wallet
       :weapon-data-map="statTables.weaponDataMap"
       @achievement-events="(achievementEvents) => events.emit('achievementEvents', achievementEvents)"

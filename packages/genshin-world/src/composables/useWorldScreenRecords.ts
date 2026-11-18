@@ -27,7 +27,7 @@ export const useWorldScreenRecords = ({ gameDataBaseUrl }: { gameDataBaseUrl: st
     if (records[key] !== undefined || readingKeys.has(key)) return;
     readingKeys.add(key);
     // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-    getResultAsync(() => ScreenRecordLoaderMap[key](gameDataBaseUrl)).match(
+    getResultAsync((): Promise<ScreenRecords[ScreenRecordKey]> => ScreenRecordLoaderMap[key](gameDataBaseUrl)).match(
       (record) => {
         holdRecord(records, key, record);
       },
