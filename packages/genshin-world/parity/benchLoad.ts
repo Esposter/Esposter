@@ -9,16 +9,19 @@ import { LOAD_STEP_MEASURE_PREFIX } from "#src/services/loading/constants";
 // Requests and bytes of the game data fetched under its base and of every request, the time the page's long frames held
 // The main thread, and the scene's renderer and visible objects as the scene bench counts them. From the page's start it
 // Is the load to ready; from a crossing's move, what the crossing cost. A screen with no scene draws none, so its counts
-// Are zero
+// Are zero. What started inside `excluded` is left out: a download the app runs before the screen, which is not its load
 export const benchLoad = (
   context: SceneContext | undefined,
   longFrames: readonly PerformanceEntry[],
   since: number,
+  excluded?: { from: number; to: number },
 ): LoadBench => {
+  const isKept = (startTime: number) =>
+    startTime >= since && (excluded === undefined || startTime < excluded.from || startTime >= excluded.to);
   const measures = performance
     .getEntriesByType("measure")
     .filter((entry) => entry instanceof PerformanceMeasure)
-    .filter(({ name, startTime }) => name.startsWith(LOAD_STEP_MEASURE_PREFIX) && startTime >= since)
+    .filter(({ name, startTime }) => name.startsWith(LOAD_STEP_MEASURE_PREFIX) && isKept(startTime))
     .map(({ detail, duration, name }) => ({
       duration,
       isFailed: detail?.isFailed === true,
@@ -28,12 +31,12 @@ export const benchLoad = (
   const resources = performance
     .getEntriesByType("resource")
     .filter((entry) => entry instanceof PerformanceResourceTiming)
-    .filter(({ startTime }) => startTime >= since);
+    .filter(({ startTime }) => isKept(startTime));
   const gameDataResources = resources.filter(({ name }) => name.includes(GAME_DATA_LOCAL_BASE_URL));
   const totalBytes = resources.reduce((sum, { transferSize }) => sum + transferSize, 0);
   const gameDataBytes = gameDataResources.reduce((sum, { transferSize }) => sum + transferSize, 0);
   const longFrameMs = longFrames
-    .filter(({ startTime }) => startTime >= since)
+    .filter(({ startTime }) => isKept(startTime))
     .reduce((sum, { duration }) => sum + duration, 0);
   const { geometries, programs, textures } = context?.renderer.info.memory ?? {
     geometries: 0,
