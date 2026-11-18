@@ -98,6 +98,7 @@ Every step treats an already-gone target as done. A missing object's delete coun
 
 - The sweep finds a person's rooms through their memberships, so a message they wrote in a room they have since left stays attributed to them. Their scheduled messages are the exception, since the index names them whatever room they are in.
 - Moderation records in other people's rooms where the user is the moderator, and resource activity on resources the user does not own, are kept as the platform's audit trail, with the moderator's id set to null by the sweep. Moderation records that name the user as target go with the account. Whether that retention is lawful is an owner decision.
+- A vote that lands between the sweep's read of a liked post's count and the batch can leave that post's `ranking` for a count the batch's recount then replaces, since the ranking write's guard fails once the recount moves the count. The ranking then stays the vote's, against the stored count. The fix is open in [user-roadmap](../../../changes/user-roadmap/tasks.md).
 
 ## Key files
 
