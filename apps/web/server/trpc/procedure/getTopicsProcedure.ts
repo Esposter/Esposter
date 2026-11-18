@@ -45,12 +45,15 @@ export const getTopicsProcedure = <
   getTopics: (options: TopicsOptions<TContextOverrides, TInputOut>) => Topic[],
 ) =>
   builder.meta({ topics: true }).use(async ({ ctx, input, next, path, type }) => {
+    // Taken before the read runs, so a publish that lands after it reaches the watch even when the answer misses it
+    const readAt = Date.now();
     const result = await next();
     if (!result.ok) return result;
     // A query's topics travel back with its answer, so the client watches what the read it rendered came from
     if (type === "query") {
       const topics = getTopics({ ctx, input, output: result.data });
-      if (topics.length > 0) ctx.responseHeaders.append(TOPICS_HEADER, formatTopicsHeaderValue(path, topics));
+      if (topics.length > 0)
+        ctx.responseHeaders.append(TOPICS_HEADER, formatTopicsHeaderValue(path, { readAt, topics }));
       return result;
     }
     if (type !== "mutation") return result;

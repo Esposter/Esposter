@@ -1,7 +1,7 @@
+import type { TopicRead } from "#shared/models/realtime/TopicRead";
 import type { CacheTag } from "#src/models/cache/CacheTag";
 import type { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import type { MutationOutcome } from "#src/models/shared/MutationOutcome";
-import type { Topic } from "@esposter/db-schema";
 import type { Promisable } from "type-fest";
 
 import { MutationStatus } from "#src/models/shared/MutationStatus";
@@ -131,14 +131,14 @@ export const useMutation = () => {
     // A stale response applies no state and runs no callback, and a later caller joining it would resolve
     // Holding nothing. It issues its own read instead
     keySharedQueryMap.delete(key);
-    let topics: Topic[] = [];
+    let topicRead: TopicRead | undefined;
     const outcome = withFinalizerAsync(
       () =>
         settleOperation(
           async () => {
-            const read = await collectTopics(() => query(checkIsStale));
-            topics = read.topics;
-            return read.result;
+            const collected = await collectTopics(() => query(checkIsStale));
+            topicRead = collected.read;
+            return collected.result;
           },
           {
             checkIsStale,
@@ -149,7 +149,7 @@ export const useMutation = () => {
               await onSuccess?.(result);
               watchTopics(
                 key,
-                topics,
+                topicRead,
                 getSynchronizedFunction(() => executeQuery(query, options)),
               );
             },

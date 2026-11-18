@@ -110,6 +110,8 @@ describe(UserObject, () => {
   const otherSessionId = v7();
   const deviceId = v7();
   const otherDeviceId = v7();
+  // The time a watch's read began, which its subscribe carries to the topic
+  const readAt = 0;
   // Each topic's object as the person's watches reach it, so a test reads what each topic was asked to hold
   const topicStubs = new Map<string, Record<"subscribe" | "unsubscribe", Mock<TopicObjectRpc["subscribe"]>>>();
   const getTopicStub = (topic: string) => {
@@ -409,12 +411,12 @@ describe(UserObject, () => {
     const topic: Topic = `post:${v7()}`;
     const firstSocket = await connect(object, { deviceId, sessionId });
     const secondSocket = await connect(object, { deviceId: otherDeviceId, sessionId });
-    await sendFrame(object, firstSocket, { data: { topics: [topic] }, type: "watch" });
-    await sendFrame(object, secondSocket, { data: { topics: [topic] }, type: "watch" });
+    await sendFrame(object, firstSocket, { data: { readAt, topics: [topic] }, type: "watch" });
+    await sendFrame(object, secondSocket, { data: { readAt, topics: [topic] }, type: "watch" });
     await sendFrame(object, firstSocket, { data: { topics: [topic] }, type: "unwatch" });
 
     // Each watch subscribes the person again, which the topic holds once, and the topic is let go of only by the last tab
-    expect(getTopicStub(topic).subscribe).toHaveBeenCalledWith(userId);
+    expect(getTopicStub(topic).subscribe).toHaveBeenCalledWith(userId, readAt);
     expect(getTopicStub(topic).unsubscribe).not.toHaveBeenCalled();
 
     await object.webSocketClose(secondSocket as unknown as WebSocket, 1000, "");
@@ -429,7 +431,7 @@ describe(UserObject, () => {
     const topic: Topic = `post:${v7()}`;
     const watchingSocket = await connect(object, { deviceId, sessionId });
     const otherSocket = await connect(object, { deviceId: otherDeviceId, sessionId });
-    await sendFrame(object, watchingSocket, { data: { topics: [topic] }, type: "watch" });
+    await sendFrame(object, watchingSocket, { data: { readAt, topics: [topic] }, type: "watch" });
     await object.invalidate(topic);
 
     expect(readFrames(watchingSocket)).toContainEqual({ data: { topic }, type: "invalidate" });
@@ -446,12 +448,12 @@ describe(UserObject, () => {
     const secondSocket = await connect(object, { deviceId: otherDeviceId, sessionId });
     getTopicStub(topic).subscribe.mockRejectedValueOnce(new Error("subscribe failed"));
     await expect(
-      sendFrame(object, firstSocket, { data: { topics: [topic] }, type: "watch" }),
+      sendFrame(object, firstSocket, { data: { readAt, topics: [topic] }, type: "watch" }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: subscribe failed]`);
-    await sendFrame(object, secondSocket, { data: { topics: [topic] }, type: "watch" });
+    await sendFrame(object, secondSocket, { data: { readAt, topics: [topic] }, type: "watch" });
 
     expect(getTopicStub(topic).subscribe).toHaveBeenCalledTimes(2);
-    expect(getTopicStub(topic).subscribe).toHaveBeenLastCalledWith(userId);
+    expect(getTopicStub(topic).subscribe).toHaveBeenLastCalledWith(userId, readAt);
   });
 
   // The account's erase empties every store its object holds, the watches of its tabs and its alarm, so nothing is left for
@@ -476,7 +478,7 @@ describe(UserObject, () => {
       resourceId,
     });
     const socket = await connect(object, { deviceId, sessionId });
-    await sendFrame(object, socket, { data: { topics: [topic] }, type: "watch" });
+    await sendFrame(object, socket, { data: { readAt, topics: [topic] }, type: "watch" });
     await expect(state.ctx.storage.getAlarm()).resolves.not.toBeNull();
 
     await object.erase();
@@ -496,11 +498,11 @@ describe(UserObject, () => {
     const { object } = createUserObject();
     const topics = Array.from({ length: MAX_FRAME_TOPICS }, (): Topic => `post:${v7()}`);
     const socket = await connect(object, { deviceId, sessionId });
-    await sendFrame(object, socket, { data: { topics }, type: "watch" });
+    await sendFrame(object, socket, { data: { readAt, topics }, type: "watch" });
     const lastTopic = takeOne(topics, topics.length - 1);
     await object.invalidate(lastTopic);
 
-    expect(getTopicStub(lastTopic).subscribe).toHaveBeenCalledExactlyOnceWith(userId);
+    expect(getTopicStub(lastTopic).subscribe).toHaveBeenCalledExactlyOnceWith(userId, readAt);
     expect(readFrames(socket)).toStrictEqual([{ data: { topic: lastTopic }, type: "invalidate" }]);
   });
 

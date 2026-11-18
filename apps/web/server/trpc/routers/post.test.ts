@@ -275,7 +275,7 @@ describe("postRouter", () => {
     mockContext.responseHeaders.delete(TOPICS_HEADER);
     await postCaller.readPost(newReply.id);
 
-    expect(readTopicsHeader(mockContext.responseHeaders, "readPost")).toStrictEqual([
+    expect(readTopicsHeader(mockContext.responseHeaders, "readPost").flatMap(({ topics }) => topics)).toStrictEqual([
       getTopic(TopicKind.Post, newPost.id),
       getTopic(TopicKind.Post, newReply.id),
     ]);

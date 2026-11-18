@@ -42,7 +42,7 @@ describe(TopicObject, () => {
 
     const { object, state } = createTopicObject();
     const userIds = [v7(), v7()];
-    await Promise.all(userIds.map((userId) => object.subscribe(userId)));
+    await Promise.all(userIds.map((userId) => object.subscribe(userId, 0)));
     await object.publish();
     await object.publish();
 
@@ -58,11 +58,45 @@ describe(TopicObject, () => {
 
     const { object } = createTopicObject();
     const userId = v7();
-    await object.subscribe(userId);
+    await object.subscribe(userId, 0);
     await object.unsubscribe(userId);
     await object.publish();
     await object.alarm();
 
     expect(getInvalidate(userId)).not.toHaveBeenCalled();
+  });
+
+  // A read that began before the topic's last publish may hold a state the publish changed, so the subscriber is told now.
+  // Waiting for the publish's alarm would leave the subscriber stale for the length of the window
+  test("a subscription that arrives after a newer publish is notified at once", async () => {
+    expect.hasAssertions();
+
+    const { object } = createTopicObject();
+    const userId = v7();
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(0).add({ seconds: 5 }));
+    await object.publish();
+    await object.subscribe(userId, 0);
+
+    expect(getInvalidate(userId)).toHaveBeenCalledExactlyOnceWith(topic);
+  });
+
+  // A read that began after the last publish already holds every write it published.
+  // So the subscriber waits for the next publish, whose alarm tells it
+  test("a subscription whose read began after the last publish waits for the next one", async () => {
+    expect.hasAssertions();
+
+    const { object } = createTopicObject();
+    const userId = v7();
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(0).add({ seconds: 5 }));
+    await object.publish();
+    await object.subscribe(userId, Temporal.Instant.fromEpochMilliseconds(0).add({ seconds: 7 }).epochMilliseconds);
+
+    expect(getInvalidate(userId)).not.toHaveBeenCalled();
+
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(0).add({ seconds: 8 }));
+    await object.publish();
+    await object.alarm();
+
+    expect(getInvalidate(userId)).toHaveBeenCalledExactlyOnceWith(topic);
   });
 });

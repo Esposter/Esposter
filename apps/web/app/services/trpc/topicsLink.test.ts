@@ -15,10 +15,11 @@ describe(topicsLink, () => {
 
     const path = "post.readPost";
     const topic = getTopic(TopicKind.Post, v7());
-    const headers = new Headers({ [TOPICS_HEADER]: formatTopicsHeaderValue(path, [topic]) });
+    const readAt = 0;
+    const headers = new Headers({ [TOPICS_HEADER]: formatTopicsHeaderValue(path, { readAt, topics: [topic] }) });
     const op = { context: {}, id: 1, input: undefined, path, signal: null, type: "query" } satisfies Operation;
     const link = topicsLink({});
-    const { topics } = await collectTopics(() =>
+    const { read } = await collectTopics(() =>
       observableToPromise(
         link({
           next: () =>
@@ -31,6 +32,6 @@ describe(topicsLink, () => {
       ),
     );
 
-    expect(topics).toStrictEqual([topic]);
+    expect(read).toStrictEqual({ readAt, topics: [topic] });
   });
 });

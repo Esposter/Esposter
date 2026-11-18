@@ -52,7 +52,7 @@ describe("friendRouter", () => {
     const readContext = await createMockContext();
     await createCallerFactory(friendRouter)(readContext).readFriends();
 
-    expect(readTopicsHeader(readContext.responseHeaders, "readFriends")).toStrictEqual([
+    expect(readTopicsHeader(readContext.responseHeaders, "readFriends").flatMap(({ topics }) => topics)).toStrictEqual([
       getTopic(TopicKind.Friend, getMockSession().user.id),
       getTopic(TopicKind.User, user.id),
     ]);

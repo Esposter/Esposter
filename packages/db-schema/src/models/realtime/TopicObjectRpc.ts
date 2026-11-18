@@ -3,6 +3,7 @@
 // Per short window however many writes landed in it
 export interface TopicObjectRpc {
   publish: () => Promise<void>;
-  subscribe: (userId: string) => Promise<void>;
+  // `readAt` is when the subscriber's read began: a publish since then is told to the subscriber at once
+  subscribe: (userId: string, readAt: number) => Promise<void>;
   unsubscribe: (userId: string) => Promise<void>;
 }

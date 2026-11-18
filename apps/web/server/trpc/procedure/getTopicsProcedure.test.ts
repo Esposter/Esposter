@@ -46,7 +46,9 @@ describe(getTopicsProcedure, () => {
     const mockContext = await createMockContext();
     await createTestCaller(mockContext).readPost({ id });
 
-    expect(readTopicsHeader(mockContext.responseHeaders, "readPost")).toStrictEqual([getTopic(TopicKind.Post, id)]);
+    expect(readTopicsHeader(mockContext.responseHeaders, "readPost").flatMap(({ topics }) => topics)).toStrictEqual([
+      getTopic(TopicKind.Post, id),
+    ]);
     expect(MockPublishedTopics).toStrictEqual([]);
   });
 

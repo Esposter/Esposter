@@ -152,7 +152,7 @@ describe("roomRouter", () => {
     const readContext = await createMockContext();
     await createCallerFactory(roomRouter)(readContext).readRooms();
 
-    expect(readTopicsHeader(readContext.responseHeaders, "readRooms")).toStrictEqual([
+    expect(readTopicsHeader(readContext.responseHeaders, "readRooms").flatMap(({ topics }) => topics)).toStrictEqual([
       getTopic(TopicKind.RoomList, getMockSession().user.id),
       getTopic(TopicKind.Room, newRoom.id),
     ]);

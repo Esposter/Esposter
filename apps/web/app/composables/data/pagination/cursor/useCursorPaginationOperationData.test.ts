@@ -4,7 +4,7 @@ import type { Page } from "@esposter/db-schema";
 import { BACKOFF_BASE_DELAY_MS } from "#shared/services/pagination/constants";
 import { createPendingQuery } from "#src/composables/data/pagination/createPendingQuery.test";
 import { goOffline, goOnline } from "#src/composables/shared/network.test";
-import { readActiveTopics } from "#src/services/realtime/collectTopics";
+import { readActiveTopicReads } from "#src/services/realtime/collectTopics";
 import { openRealtimeSocket, sendRealtimeFrame } from "#src/services/realtime/openRealtimeSocket.test";
 import { useConnectionStore } from "#src/store/realtime/connection";
 import { createEmptyPage, getTopic, TopicKind } from "@esposter/db-schema";
@@ -21,6 +21,8 @@ vi.mock(
 describe(useCursorPaginationOperationData, () => {
   const key = "key";
   const item = "item";
+  // The time the first page's read began, which its watch is made from
+  const readAt = 0;
   const nextCursor = "nextCursor";
   let hydratingNuxtApp: ReturnType<typeof useNuxtApp> | undefined;
   let isLoaded: ReturnType<typeof useCursorPaginationOperationData<string>>["isLoaded"];
@@ -73,7 +75,7 @@ describe(useCursorPaginationOperationData, () => {
         setup: () => {
           hydratingNuxtApp = useNuxtApp();
           hydratingNuxtApp.isHydrating = true;
-          hydratingNuxtApp.payload.data[key] = { page: serverPage, topics: [topic] };
+          hydratingNuxtApp.payload.data[key] = { page: serverPage, read: { readAt, topics: [topic] } };
           const cursorPaginationData = ref(createEmptyPage<string>());
           const isLoadedSource = ref(false);
           ({ isLoaded, items, readItems } = useCursorPaginationOperationData(
@@ -95,7 +97,7 @@ describe(useCursorPaginationOperationData, () => {
     expect(isPending.value).toBe(false);
     // The server render's topics are watched, so a page adopted from it stays as live as one read here
     expect(sendRealtimeFrame).toHaveBeenCalledExactlyOnceWith(
-      JSON.stringify({ data: { topics: [topic] }, type: "watch" }),
+      JSON.stringify({ data: { readAt, topics: [topic] }, type: "watch" }),
     );
   });
 
@@ -133,7 +135,7 @@ describe(useCursorPaginationOperationData, () => {
     const { items: rowItems, readItems: rowReadItems, readMoreItems: rowReadMoreItems } = rowOperationData;
     let description = firstRow.description;
     await rowReadItems(() => {
-      readActiveTopics()?.push(topic);
+      readActiveTopicReads()?.push({ readAt, topics: [topic] });
       return Promise.resolve({ items: [{ ...firstRow, description }], nextCursor });
     });
     await rowReadMoreItems(() => Promise.resolve({ items: [laterRow], nextCursor: "" }));

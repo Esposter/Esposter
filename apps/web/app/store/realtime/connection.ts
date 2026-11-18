@@ -120,35 +120,59 @@ export const useConnectionStore = defineStore("realtime/connection", () => {
     ));
     return promise;
   };
-  // The topics the mounted queries watch, each with the refetches of the queries on it. A topic is watched up the user
-  // Socket as its first query mounts and unwatched as its last unmounts, and every open watches them all again, since a
-  // New connection holds nothing. A reconnect refetches every watched query, since an invalidation sent while the
-  // Socket was closed never arrived
-  const topicRefetchesMap = new Map<Topic, Set<() => void>>();
+  // The topics the mounted queries watch, each with the refetches of the queries on it and the server time its
+  // Subscription was made from. A read older than that reaches back past the subscription, so the topic subscribes again
+  // From its time. A topic is watched up the user socket as its first query mounts and unwatched as its last unmounts.
+  // A reconnect subscribes every topic again from its own time, then refetches every watched query. An invalidation sent
+  // While the socket was closed never arrived
+  const topicWatchMap = new Map<Topic, { readAt: number; refetches: Set<() => void> }>();
   const sendUserFrame = (frame: UserClientFrame) => {
     sendUserSocketFrame?.(JSON.stringify(frame));
   };
   // A frame names at most so many topics, so a tab watching more sends them over several
-  const sendTopicsFrames = (topics: Topic[], type: UserClientFrame["type"]) => {
-    for (const frameTopics of chunk(topics, MAX_FRAME_TOPICS)) sendUserFrame({ data: { topics: frameTopics }, type });
+  const sendWatchFrames = (topics: Topic[], readAt: number) => {
+    for (const frameTopics of chunk(topics, MAX_FRAME_TOPICS))
+      sendUserFrame({ data: { readAt, topics: frameTopics }, type: "watch" });
   };
-  const watchTopics = (topics: Topic[], refetch: () => void) => {
-    const newTopics = topics.filter((topic) => !topicRefetchesMap.has(topic));
-    for (const topic of topics) getOrCreate(topicRefetchesMap, topic, () => new Set()).add(refetch);
-    sendTopicsFrames(newTopics, "watch");
+  const sendUnwatchFrames = (topics: Topic[]) => {
+    for (const frameTopics of chunk(topics, MAX_FRAME_TOPICS))
+      sendUserFrame({ data: { topics: frameTopics }, type: "unwatch" });
+  };
+  const watchTopics = (topics: Topic[], readAt: number, refetch: () => void) => {
+    const subscribedTopics = topics.filter((topic) => {
+      const topicWatch = topicWatchMap.get(topic);
+      if (!topicWatch) {
+        topicWatchMap.set(topic, { readAt, refetches: new Set([refetch]) });
+        return true;
+      }
+
+      topicWatch.refetches.add(refetch);
+      if (readAt >= topicWatch.readAt) return false;
+
+      topicWatch.readAt = readAt;
+      return true;
+    });
+    sendWatchFrames(subscribedTopics, readAt);
     return () => {
       const releasedTopics = topics.filter((topic) => {
-        const refetches = topicRefetchesMap.get(topic);
-        refetches?.delete(refetch);
-        if (refetches?.size !== 0) return false;
-        topicRefetchesMap.delete(topic);
+        const topicWatch = topicWatchMap.get(topic);
+        topicWatch?.refetches.delete(refetch);
+        if (topicWatch?.refetches.size !== 0) return false;
+        topicWatchMap.delete(topic);
         return true;
       });
-      sendTopicsFrames(releasedTopics, "unwatch");
+      sendUnwatchFrames(releasedTopics);
     };
   };
+  // Each topic is subscribed again from the time its own watch was made from, a frame per time.
+  // A new connection holds nothing, so every watch goes up again
+  const sendTopicWatchesOnOpen = () => {
+    const readAtTopicsMap = new Map<number, Topic[]>();
+    for (const [topic, { readAt }] of topicWatchMap) getOrCreate(readAtTopicsMap, readAt, () => []).push(topic);
+    for (const [readAt, topics] of readAtTopicsMap) sendWatchFrames(topics, readAt);
+  };
   const refetchTopics = (topics: Iterable<Topic>) => {
-    const refetches = new Set([...topics].flatMap((topic) => [...(topicRefetchesMap.get(topic) ?? [])]));
+    const refetches = new Set([...topics].flatMap((topic) => [...(topicWatchMap.get(topic)?.refetches ?? [])]));
     for (const refetch of refetches) refetch();
   };
   userHub.on("invalidate", ({ topic }) => {
@@ -164,10 +188,10 @@ export const useConnectionStore = defineStore("realtime/connection", () => {
       },
       {
         onOpen: () => {
-          sendTopicsFrames([...topicRefetchesMap.keys()], "watch");
+          sendTopicWatchesOnOpen();
         },
         onReopen: () => {
-          refetchTopics(topicRefetchesMap.keys());
+          refetchTopics(topicWatchMap.keys());
         },
       },
     ));

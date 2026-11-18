@@ -15,6 +15,10 @@ vi.mock(
 );
 
 describe(useConnectionStore, () => {
+  // The times a read began, from the epoch: the older one is the epoch itself
+  const readAt = 0;
+  const newerReadAt = Temporal.Duration.from({ seconds: 1 }).total("milliseconds");
+
   // A knock opens its call's socket and the admission that follows opens the same call again. The socket it holds is
   // Reused, so the admitted knocker is not reconnected to the call it was already listening to
   test("opens a call's socket once when the same call is opened again", async () => {
@@ -80,8 +84,8 @@ describe(useConnectionStore, () => {
     const topic: Topic = `post:${v7()}`;
     const firstRefetch = vi.fn<() => void>();
     const secondRefetch = vi.fn<() => void>();
-    const unwatchFirst = connectionStore.watchTopics([topic], firstRefetch);
-    const unwatchSecond = connectionStore.watchTopics([topic], secondRefetch);
+    const unwatchFirst = connectionStore.watchTopics([topic], readAt, firstRefetch);
+    const unwatchSecond = connectionStore.watchTopics([topic], readAt, secondRefetch);
     onFrame?.(JSON.stringify({ data: { topic }, type: "invalidate" }));
     unwatchFirst();
     unwatchSecond();
@@ -89,7 +93,7 @@ describe(useConnectionStore, () => {
     expect(firstRefetch).toHaveBeenCalledTimes(1);
     expect(secondRefetch).toHaveBeenCalledTimes(1);
     expect(sendRealtimeFrame.mock.calls.map(([frame]) => jsonDateParse(frame))).toStrictEqual([
-      { data: { topics: [topic] }, type: "watch" },
+      { data: { readAt, topics: [topic] }, type: "watch" },
       { data: { topics: [topic] }, type: "unwatch" },
     ]);
   });
@@ -102,11 +106,48 @@ describe(useConnectionStore, () => {
     const connectionStore = useConnectionStore();
     connectionStore.openUser();
     const topics = Array.from({ length: MAX_FRAME_TOPICS + 1 }, () => getTopic(TopicKind.Post, v7()));
-    connectionStore.watchTopics(topics, vi.fn<() => void>());
+    connectionStore.watchTopics(topics, readAt, vi.fn<() => void>());
 
     expect(sendRealtimeFrame.mock.calls.map(([frame]) => jsonDateParse(frame))).toStrictEqual([
-      { data: { topics: topics.slice(0, MAX_FRAME_TOPICS) }, type: "watch" },
-      { data: { topics: topics.slice(MAX_FRAME_TOPICS) }, type: "watch" },
+      { data: { readAt, topics: topics.slice(0, MAX_FRAME_TOPICS) }, type: "watch" },
+      { data: { readAt, topics: topics.slice(MAX_FRAME_TOPICS) }, type: "watch" },
+    ]);
+  });
+
+  // A read older than the subscription a topic holds reaches back past it, since a publish between the two is one the
+  // Newer subscription does not cover, so the topic subscribes again from the older read's time
+  test("subscribes a topic again from the time of a read older than its subscription", () => {
+    expect.hasAssertions();
+
+    const connectionStore = useConnectionStore();
+    connectionStore.openUser();
+    const topic: Topic = `post:${v7()}`;
+    connectionStore.watchTopics([topic], newerReadAt, vi.fn<() => void>());
+    connectionStore.watchTopics([topic], readAt, vi.fn<() => void>());
+
+    expect(sendRealtimeFrame.mock.calls.map(([frame]) => jsonDateParse(frame))).toStrictEqual([
+      { data: { readAt: newerReadAt, topics: [topic] }, type: "watch" },
+      { data: { readAt, topics: [topic] }, type: "watch" },
+    ]);
+  });
+
+  // A reconnect subscribes each topic again from the time its own watch was made from, a frame per time
+  test("subscribes each watched topic again from its own time when the socket reconnects", () => {
+    expect.hasAssertions();
+
+    const connectionStore = useConnectionStore();
+    connectionStore.openUser();
+    const options = vi.mocked(openRealtimeSocket).mock.lastCall?.[2];
+    const newerTopic: Topic = `post:${v7()}`;
+    const olderTopic: Topic = `post:${v7()}`;
+    connectionStore.watchTopics([newerTopic], newerReadAt, vi.fn<() => void>());
+    connectionStore.watchTopics([olderTopic], readAt, vi.fn<() => void>());
+    sendRealtimeFrame.mockClear();
+    options?.onOpen?.();
+
+    expect(sendRealtimeFrame.mock.calls.map(([frame]) => jsonDateParse(frame))).toStrictEqual([
+      { data: { readAt: newerReadAt, topics: [newerTopic] }, type: "watch" },
+      { data: { readAt, topics: [olderTopic] }, type: "watch" },
     ]);
   });
 });

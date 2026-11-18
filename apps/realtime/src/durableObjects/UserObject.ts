@@ -320,17 +320,18 @@ export class UserObject extends RealtimeObject<UserEvent> implements UserObjectR
     if (!frame.success) return;
 
     const watchId = readSocketWatchId(ws) ?? this.#attachWatchId(ws);
-    const { topics } = frame.data.data;
     if (frame.data.type === "watch") {
+      const { readAt, topics } = frame.data.data;
       await Promise.all(
         topics.map((topic) =>
           this.ctx.storage.put(getTopicWatchKey(watchId, topic), { topic, watchId } satisfies TopicWatch),
         ),
       );
-      await this.#subscribeTopics(topics);
+      await this.#subscribeTopics(topics, readAt);
       return;
     }
 
+    const { topics } = frame.data.data;
     const watchesBefore = await this.#readTopicWatches();
     await Promise.all(topics.map((topic) => this.ctx.storage.delete(getTopicWatchKey(watchId, topic))));
     await this.#unsubscribeTopics(getWatchedTopics(watchesBefore), getWatchedTopics(await this.#readTopicWatches()));
@@ -455,10 +456,11 @@ export class UserObject extends RealtimeObject<UserEvent> implements UserObjectR
     );
   }
 
-  // The topics a watch asked for, subscribed to on their Topic objects. A subscribe is a write of the person's id, so repeating it is harmless
-  async #subscribeTopics(topics: Topic[]): Promise<void> {
+  // The topics a watch asked for, subscribed to on their Topic objects from the time its read began.
+  // A subscribe is a write of the person's id, so repeating it is harmless
+  async #subscribeTopics(topics: Topic[], readAt: number): Promise<void> {
     await Promise.all(
-      topics.map((topic) => this.env.TOPIC.get(this.env.TOPIC.idFromName(topic)).subscribe(this.#userId)),
+      topics.map((topic) => this.env.TOPIC.get(this.env.TOPIC.idFromName(topic)).subscribe(this.#userId, readAt)),
     );
   }
 

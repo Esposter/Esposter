@@ -1,4 +1,4 @@
-import type { Topic } from "@esposter/db-schema";
+import type { TopicRead } from "#shared/models/realtime/TopicRead";
 
 import { useConnectionStore } from "#src/store/realtime/connection";
 import { ID_SEPARATOR, noop } from "@esposter/shared";
@@ -23,9 +23,10 @@ export const useWatchTopics = () => {
       for (const { unwatch } of topicsWatchMap.values()) unwatch();
       topicsWatchMap.clear();
     });
-  return (target: unknown, topics: Topic[], refetch: () => void) => {
+  return (target: unknown, read: TopicRead | undefined, refetch: () => void) => {
     if (!connectionStore || isDisposed) return;
 
+    const topics = read?.topics ?? [];
     const topicsKey = [...new Set(topics)].toSorted().join(ID_SEPARATOR);
     const topicsWatch = topicsWatchMap.get(target);
     if (topicsWatch?.topicsKey === topicsKey) {
@@ -34,13 +35,13 @@ export const useWatchTopics = () => {
     }
 
     topicsWatch?.unwatch();
-    if (topics.length === 0) {
+    if (!read) {
       topicsWatchMap.delete(target);
       return;
     }
 
     const newTopicsWatch: TopicsWatch = { refetch, topicsKey, unwatch: noop };
-    newTopicsWatch.unwatch = connectionStore.watchTopics(topics, () => {
+    newTopicsWatch.unwatch = connectionStore.watchTopics(read.topics, read.readAt, () => {
       newTopicsWatch.refetch();
     });
     topicsWatchMap.set(target, newTopicsWatch);

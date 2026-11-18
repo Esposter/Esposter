@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import { readActiveTopics } from "#src/services/realtime/collectTopics";
+import { readActiveTopicReads } from "#src/services/realtime/collectTopics";
 import { openRealtimeSocket, sendRealtimeFrame } from "#src/services/realtime/openRealtimeSocket.test";
 import { useAlertStore } from "#src/store/alert";
 import { useConnectionStore } from "#src/store/realtime/connection";
@@ -16,6 +16,8 @@ vi.mock(
 describe(useQuery, () => {
   const result = "result";
   const rejection = new Error(" ");
+  // The time a read's topics were read at, which its watch is made from
+  const readAt = 0;
 
   test("populates data with the resolved result", async () => {
     expect.hasAssertions();
@@ -108,7 +110,7 @@ describe(useQuery, () => {
     const scope = effectScope();
     const query = scope.run(() =>
       useQuery(() => {
-        readActiveTopics()?.push(topic);
+        readActiveTopicReads()?.push({ readAt, topics: [topic] });
         return Promise.resolve(value);
       }),
     );
@@ -135,7 +137,7 @@ describe(useQuery, () => {
       useQuery(() => {
         // The topics link reads a read's topics from its response header, which the tRPC mock does not send, so the
         // Read names its topic into the collector directly
-        readActiveTopics()?.push(topic);
+        readActiveTopicReads()?.push({ readAt, topics: [topic] });
         onReadReached();
         return promise;
       }),

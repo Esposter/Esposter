@@ -1,4 +1,5 @@
-import type { Page, Topic } from "@esposter/db-schema";
+import type { TopicRead } from "#shared/models/realtime/TopicRead";
+import type { Page } from "@esposter/db-schema";
 import type { Promisable } from "type-fest";
 
 import { BACKOFF_BASE_DELAY_MS, BACKOFF_MAX_DELAY_MS } from "#shared/services/pagination/constants";
@@ -29,10 +30,10 @@ export const emptyCursorPaginationData = <TItem>(data: Ref<Page<TItem>>, isLoade
 // A row's id, for the rows that have one: a list of anything else has nothing for a refresh to update its rows by
 const getRowId = (item: unknown) => (item instanceof Object && "id" in item ? item.id : undefined);
 
-// What a server render hands the client for a list's first page: its rows, and the topics they came from
+// What a server render hands the client for a list's first page: its rows, and the read they came from
 interface HydratedPage<TItem> {
   page: Page<TItem>;
-  topics: Topic[];
+  read?: TopicRead | undefined;
 }
 
 interface ReadItemsOptions<TItem> {
@@ -81,16 +82,16 @@ export const useCursorPaginationOperationData = <TItem>(
     // One read of the first page: `apply` lands its rows, then its topics are watched. A read issued against data
     // A reset has retired answers a partition that no longer holds that data, so it lands nothing and watches nothing
     const readFirstPage = (
-      apply: (read: { issued: Page<TItem>; page: Page<TItem>; topics: Topic[] }) => Promisable<void>,
+      apply: (read: { issued: Page<TItem>; page: Page<TItem>; topicRead?: TopicRead | undefined }) => Promisable<void>,
     ) => {
       const issuedCursorPaginationData = boundCursorPaginationData.value;
       return getResultAsync(async () => {
-        const { result: page, topics } = await collectTopics(query);
+        const { read: topicRead, result: page } = await collectTopics(query);
         // Answers a reset that landed while the read was in flight: the rows are of the order the reset left behind
         if (retiredCursorPaginationData.has(issuedCursorPaginationData)) return;
 
-        await apply({ issued: issuedCursorPaginationData, page, topics });
-        watchTopics(topicsTarget, topics, getSynchronizedFunction(refreshRows));
+        await apply({ issued: issuedCursorPaginationData, page, topicRead });
+        watchTopics(topicsTarget, topicRead, getSynchronizedFunction(refreshRows));
       });
     };
     // A write that changed a topic the first page came from reads it again and updates, by id, the rows it names: a
@@ -114,11 +115,11 @@ export const useCursorPaginationOperationData = <TItem>(
     const refresh = async () => {
       isPending.value = true;
       isError.value = false;
-      await readFirstPage(async ({ page, topics }) => {
+      await readFirstPage(async ({ page, topicRead }) => {
         await storeCursorPaginationData(page);
-        // The page the html was rendered from rides to the client with the topics it came from, so hydration adopts
-        // The rows already on screen, and watches those topics, rather than fetching a second copy of them
-        if (key && checkIsServer()) nuxtApp.payload.data[key] = { page, topics } satisfies HydratedPage<TItem>;
+        // The page the html was rendered from rides to the client with the read it came from, so hydration adopts
+        // The rows already on screen, and watches their topics from the time the render read them, with no second read
+        if (key && checkIsServer()) nuxtApp.payload.data[key] = { page, read: topicRead } satisfies HydratedPage<TItem>;
       }).match(noop, () => {
         isError.value = true;
       });
@@ -131,7 +132,7 @@ export const useCursorPaginationOperationData = <TItem>(
       key && nuxtApp.isHydrating ? (nuxtApp.payload.data[key] as HydratedPage<TItem> | undefined) : undefined;
     if (hydratedPage) {
       await storeCursorPaginationData(hydratedPage.page);
-      watchTopics(topicsTarget, hydratedPage.topics, getSynchronizedFunction(refreshRows));
+      watchTopics(topicsTarget, hydratedPage.read, getSynchronizedFunction(refreshRows));
       isPending.value = false;
     } else await refresh();
     return { isError, isPending, refresh };

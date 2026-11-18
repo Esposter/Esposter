@@ -11,11 +11,12 @@ describe(readTopicsHeader, () => {
 
     const postTopic = getTopic(TopicKind.Post, v7());
     const friendTopic = getTopic(TopicKind.Friend, v7());
+    const readAt = 0;
     const headers = new Headers();
-    headers.append(TOPICS_HEADER, formatTopicsHeaderValue("post.readPost", [postTopic]));
-    headers.append(TOPICS_HEADER, formatTopicsHeaderValue("friend.readFriends", [friendTopic]));
+    headers.append(TOPICS_HEADER, formatTopicsHeaderValue("post.readPost", { readAt, topics: [postTopic] }));
+    headers.append(TOPICS_HEADER, formatTopicsHeaderValue("friend.readFriends", { readAt, topics: [friendTopic] }));
 
-    expect(readTopicsHeader(headers, "post.readPost")).toStrictEqual([postTopic]);
-    expect(readTopicsHeader(headers, "friend.readFriends")).toStrictEqual([friendTopic]);
+    expect(readTopicsHeader(headers, "post.readPost")).toStrictEqual([{ readAt, topics: [postTopic] }]);
+    expect(readTopicsHeader(headers, "friend.readFriends")).toStrictEqual([{ readAt, topics: [friendTopic] }]);
   });
 });
