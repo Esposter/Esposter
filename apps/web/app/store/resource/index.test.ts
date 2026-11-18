@@ -1029,6 +1029,19 @@ describe(useResourceStore, () => {
     expect(isPending.value).toBe(false);
   });
 
+  // Refresh runs the store's reload, which the page's header reads as in flight to disable itself while the read runs
+  test("shows a refresh of the open resource as in flight until it lands", async () => {
+    expect.hasAssertions();
+
+    const resourceStore = useResourceStore();
+    await useReadOpenResource().readResource();
+    const refresh = resourceStore.reloadResource();
+
+    expect(resourceStore.isReloadPending).toBe(true);
+    await refresh;
+    expect(resourceStore.isReloadPending).toBe(false);
+  });
+
   // A third-party editor adopts the content the store's re-read landed, so the two stages run in order rather
   // Than together — the reload hook resolves a microtask late, which a single stage would let the adopt beat
   test("reloads the content before the editors adopt it", async () => {

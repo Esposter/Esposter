@@ -19,11 +19,12 @@ const route = useRoute();
 // Id is stable for this page instance (keyed by id), so a one-time read is safe; only blade changes without a remount
 const { id } = route.params;
 const resourceStore = useResourceStore();
-const { resource } = storeToRefs(resourceStore);
+const { isReloadPending, resource } = storeToRefs(resourceStore);
 const { clearResource, reloadResource } = resourceStore;
 // The read is the page's, so its watch ends with the page and keeps the row merged as the topic publishes. Refresh is
 // The explicit full reload instead: it takes the current version and lifts the stale latch, as a read always did
-const { isPending, readResource } = useReadOpenResource();
+const { isPending: isReadPending, readResource } = useReadOpenResource();
+const isPending = computed(() => isReadPending.value || isReloadPending.value);
 await readResource();
 if (!resource.value) throw createError({ status: 404, statusText: "Resource not found" });
 const activeBlade = computed(() => route.params.blade || ResourceBladeType.Overview);

@@ -25,6 +25,7 @@ import { ResourceContentHookMap } from "#src/services/resource/ResourceContentHo
 import { saveResourceContentDelta } from "#src/services/resource/saveResourceContentDelta";
 import { saveStagedResourceContent } from "#src/services/resource/saveStagedResourceContent";
 import { getSha256Hex } from "#src/services/shared/getSha256Hex";
+import { rethrowFailedRead } from "#src/services/shared/rethrowFailedRead";
 import { getRequestBodyByteLength } from "#src/services/trpc/getRequestBodyByteLength";
 import { useNotificationStore } from "#src/store/notification";
 import { getRouteParam } from "#src/util/router/getRouteParam";
@@ -162,18 +163,28 @@ export const useResourceStore = defineStore("resource", () => {
     publication.value = newPublication ?? undefined;
     mergeResource(newResource.id, { ...newResource, contentVersion: activeResource.contentVersion });
   };
-  // A content reload follows a re-read of the row, so the row it takes is the version the reloaded content is read at
+  // A content reload follows a re-read of the row, so the row it takes is the version the reloaded content is read at.
+  // Tracked on its own executor so the page's Refresh shows the read in flight, and one key so repeated clicks queue
+  // Rather than overlap
+  const { executeQuery: executeReloadQuery, isPending: isReloadPending } = useMutation();
+  const reloadKey = Symbol("reloadResource");
   const reloadResource = async () => {
     // A route with no resource segment names nothing to read, and the empty sentinel would reach the server as a uuid
     // That fails validation
     const id = getRouteParam(currentRoute.value.params, "id");
     if (!checkIsUuidV7(id)) return;
 
-    const { publication: newPublication, ...newResource } = await $trpc.resource.readResource.query({ id });
-    // Reads for two resources are not one target, so a navigation away can let the earlier one land last
-    if (getRouteParam(currentRoute.value.params, "id") !== id) return;
+    await rethrowFailedRead(
+      executeReloadQuery(() => $trpc.resource.readResource.query({ id }), {
+        key: reloadKey,
+        onSuccess: ({ publication: newPublication, ...newResource }) => {
+          // Reads for two resources are not one target, so a navigation away can let the earlier one land last
+          if (getRouteParam(currentRoute.value.params, "id") !== id) return;
 
-    assignResource(newResource, newPublication);
+          assignResource(newResource, newPublication);
+        },
+      }),
+    );
   };
   // The page that opened this resource takes its state back down when it closes. A keyed page swap mounts the
   // Next resource's page before this one unmounts, so the teardown fires only while the state is still the one
@@ -588,6 +599,7 @@ export const useResourceStore = defineStore("resource", () => {
     heldSave,
     isDuplicatePending,
     isPublicationPending,
+    isReloadPending,
     keepUnwrittenContent,
     publication,
     publishResource,
