@@ -1,5 +1,6 @@
 import type { Vector4Tuple } from "three";
 
+import { materialFloatSchema } from "#src/models/material/MaterialFloat";
 import { MAX_MATERIAL_PROPERTY_COUNT } from "#src/services/constants";
 import { createRecordSchema, createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
@@ -18,6 +19,6 @@ export const materialValuesSchema = z.object({
     z.tuple([z.number(), z.number(), z.number(), z.number()]),
     MAX_MATERIAL_PROPERTY_COUNT,
   ),
-  floats: createRecordSchema(z.string().min(1), z.number(), MAX_MATERIAL_PROPERTY_COUNT),
+  floats: createRecordSchema(z.string().min(1), materialFloatSchema, MAX_MATERIAL_PROPERTY_COUNT),
   keywords: createUniqueArraySchema(z.string().min(1)),
 }) satisfies z.ZodType<MaterialValues>;

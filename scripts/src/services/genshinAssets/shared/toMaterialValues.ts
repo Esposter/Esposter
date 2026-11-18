@@ -5,6 +5,7 @@ import type { ShaderColorNames } from "#src/models/genshinAssets/shared/ShaderCo
 import { toMaterialTextures } from "#src/services/genshinAssets/shared/toMaterialTextures";
 import { toLinear } from "#src/services/shared/toLinear";
 import { InvalidOperationError, Operation } from "@esposter/shared";
+import { materialFloatSchema } from "genshin-world/sceneExport";
 
 // A material's export read as its values: its empty texture slots dropped, and its saved colours as tuples, each read as
 // Its shader declares it. Unity saves a colour as the sRGB its inspector shows and, in a project lit in linear space,
@@ -12,7 +13,8 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 // Several times too red on the night's moonlit walkway. A vector, saved in the same table, is never decoded: decoded, the
 // Avatar's outline width knots read a tenth of the game's. A name the shader does not declare, which none of its programs
 // Reads, is still read as a colour, as the stone's fitted `_SpecColor` was, and one declared each way cannot be read. Its
-// Keywords are read apart, from its raw bytes (`readMaterialKeywords`), since the export drops them
+// Keywords are read apart, from its raw bytes (`readMaterialKeywords`), since the export drops them. Its floats are
+// Read as numbers, an unbounded one from the token the export saves it as (`materialFloatSchema`)
 export const toMaterialValues = (
   { m_Name, m_SavedProperties, m_Shader }: ExportedMaterial,
   keywords: readonly string[],
@@ -28,7 +30,12 @@ export const toMaterialValues = (
       },
     ),
   ),
-  floats: { ...m_SavedProperties.m_Floats },
+  floats: Object.fromEntries(
+    Object.entries(m_SavedProperties.m_Floats ?? {}).map(([name, value]): [string, number] => [
+      name,
+      materialFloatSchema.parse(value),
+    ]),
+  ),
   keywords: [...keywords],
   name: m_Name,
   shaderPathId: m_Shader.m_PathID,

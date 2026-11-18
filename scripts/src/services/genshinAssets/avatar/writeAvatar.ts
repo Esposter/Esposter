@@ -28,7 +28,7 @@ import { toObjectKey } from "#src/services/genshinAssets/shared/toObjectKey";
 import { writeStampedFiles } from "#src/services/provenance/writeStampedFiles";
 import { parseCabMap } from "#src/services/recreation/animeStudio/parseCabMap";
 import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
-import { AVATAR_BINARY_FILE_NAME, AVATAR_MANIFEST_FILE_NAME } from "genshin-world/sceneExport";
+import { AVATAR_BINARY_FILE_NAME, AVATAR_MANIFEST_FILE_NAME, encodeNonFiniteFloat } from "genshin-world/sceneExport";
 import { readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
@@ -151,7 +151,7 @@ export const writeAvatar = async (component: DerivedAssetComponent): Promise<str
     { command: `avatar ${component}`, producerPaths: GENSHIN_ASSETS_PRODUCER_PATHS, tools: [ANIMESTUDIO_TOOL] },
     async () => {
       await writeFile(binaryPath, binary.toBuffer());
-      await writeFile(path, JSON.stringify(manifest));
+      await writeFile(path, JSON.stringify(manifest, encodeNonFiniteFloat));
     },
   );
   return path;

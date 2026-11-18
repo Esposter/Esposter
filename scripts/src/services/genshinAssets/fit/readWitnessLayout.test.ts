@@ -2,8 +2,9 @@ import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedA
 import { readWitnessLayout } from "#src/services/genshinAssets/fit/readWitnessLayout";
 import { writeStampedFiles } from "#src/services/provenance/writeStampedFiles";
 import { writeJsonFile } from "#src/services/shared/writeJsonFile";
-import { WITNESS_LAYOUT_FILE_NAME } from "genshin-world/sceneExport";
+import { encodeNonFiniteFloat, WITNESS_LAYOUT_FILE_NAME } from "genshin-world/sceneExport";
 import { mkdirSync, rmSync } from "node:fs";
+import { writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -71,6 +72,30 @@ describe(readWitnessLayout, () => {
     await writeStampedFiles([LAYOUT_PATH], { command: WITNESS_COMMAND, producerPaths: [] }, () => {});
 
     await expect(readWitnessLayout(DerivedAssetComponent.Inazuma)).resolves.toStrictEqual(LAYOUT);
+  });
+
+  test("a witness layout's unbounded float is read back as the number the writer took", async () => {
+    expect.hasAssertions();
+
+    const MATERIAL_NAME = "Stages_MD_Fountain01_Water01";
+    const layout = {
+      materials: {
+        [MATERIAL_NAME]: {
+          colors: {},
+          floats: { _CausticDepth: Infinity },
+          keywords: [],
+          name: MATERIAL_NAME,
+          textures: {},
+        },
+      },
+      placements: [{ ...PLACEMENT, materials: [MATERIAL_NAME] }],
+    };
+
+    await writeStampedFiles([LAYOUT_PATH], { command: WITNESS_COMMAND, producerPaths: [] }, () =>
+      writeFile(LAYOUT_PATH, JSON.stringify(layout, encodeNonFiniteFloat)),
+    );
+
+    await expect(readWitnessLayout(DerivedAssetComponent.Inazuma)).resolves.toStrictEqual(layout);
   });
 
   test("a witness layout whose placement names no mesh is refused, even with a sidecar that vouches for it", async () => {

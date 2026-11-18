@@ -41,6 +41,18 @@ describe(toMaterialValues, () => {
     });
   });
 
+  test("reads a float the export saves as an unbounded token as the number it stands for", () => {
+    expect.hasAssertions();
+
+    expect(
+      toMaterialValues(
+        { ...material, m_SavedProperties: { ...material.m_SavedProperties, m_Floats: { _CausticDepth: "Infinity" } } },
+        [],
+        { colorNames: new Set(), vectorNames: new Set() },
+      ).floats,
+    ).toStrictEqual({ _CausticDepth: Infinity });
+  });
+
   test("throws on a name its shader declares both a colour and a vector", () => {
     expect.hasAssertions();
 

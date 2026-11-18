@@ -20,7 +20,7 @@ import { parseTerrainTileName } from "#src/services/genshinAssets/world/parseTer
 import { readWorldOptions } from "#src/services/genshinAssets/world/readWorldOptions";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
 import { writeStampedFiles } from "#src/services/provenance/writeStampedFiles";
-import { WITNESS_LAYOUT_FILE_NAME } from "genshin-world/sceneExport";
+import { encodeNonFiniteFloat, WITNESS_LAYOUT_FILE_NAME } from "genshin-world/sceneExport";
 import { existsSync } from "node:fs";
 import { writeFile } from "node:fs/promises";
 import { join } from "node:path";
@@ -114,7 +114,7 @@ export const writeWitnessLayout = async (
       command: roots ? `witness ${component} --roots ${roots.join(",")}` : `witness ${component}`,
       producerPaths: GENSHIN_ASSETS_PRODUCER_PATHS,
     },
-    () => writeFile(path, JSON.stringify(layout)),
+    () => writeFile(path, JSON.stringify(layout, encodeNonFiniteFloat)),
   );
   return path;
 };

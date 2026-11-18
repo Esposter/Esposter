@@ -7,6 +7,7 @@ export type { AvatarMaterial } from "#src/models/avatar/AvatarMaterial";
 export type { AvatarMesh } from "#src/models/avatar/AvatarMesh";
 export type { AvatarSubmesh } from "#src/models/avatar/AvatarSubmesh";
 export type { AvatarView } from "#src/models/avatar/AvatarView";
+export { materialFloatSchema } from "#src/models/material/MaterialFloat";
 export {
   AVATAR_BINARY_FILE_NAME,
   AVATAR_MANIFEST_FILE_NAME,
@@ -14,3 +15,4 @@ export {
   SCENE_EXPORT_ROOT_FILE_NAMES,
   WITNESS_LAYOUT_FILE_NAME,
 } from "#src/services/scene/constants";
+export { encodeNonFiniteFloat } from "#src/services/shared/encodeNonFiniteFloat";
