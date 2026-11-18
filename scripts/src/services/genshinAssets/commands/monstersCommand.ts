@@ -17,7 +17,9 @@ const printControllerStates = async (controllerName: string): Promise<void> => {
   const clipNames = await readAnimationClipNames(new Set(states.flatMap(({ clipPathIds }) => clipPathIds)));
   for (const { clipPathIds, name } of states)
     console.log(`  ${name}: ${clipPathIds.map((pathId) => clipNames.get(pathId) ?? pathId).join(", ")}`);
-  for (const { duration, events, name } of await readClipTimings(`^(${[...clipNames.values()].join("|")})$`)) {
+  for (const { duration, events, name } of await readClipTimings(
+    `^(${Array.from(clipNames.values(), (clipName) => RegExp.escape(clipName)).join("|")})$`,
+  )) {
     console.log(`  ${name}: ${formatRoundedValue(duration)} s`);
     for (const { functionName, time } of events) console.log(`    ${formatRoundedValue(time)} s ${functionName}`);
   }
