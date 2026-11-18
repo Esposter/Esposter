@@ -9,9 +9,10 @@ import {
   resourcesInResource,
   roomsInMessage,
   usersInAuth,
+  usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { SECRET_TOKEN_LENGTH } from "@esposter/shared";
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
@@ -66,6 +67,65 @@ describe(getReadTopics, () => {
       `app_bookmarks:userId=${userId}`,
       "resource_resources:*",
     ]);
+  });
+
+  // A subquery's equality names the rows of its own table that it selects, and no more. The read it sits in still depends
+  // On every membership of the table it selects from, where no equality of its own names the table, so the table is named
+  // Table-wide there as well as by the subquery's equality
+  test("a table a read selects from is named table-wide when only a subquery of it names a scope equality", async () => {
+    expect.hasAssertions();
+
+    const { db } = await createMockDb();
+    const userId = v7();
+    const { database, statements } = recordStatements(db);
+
+    await database
+      .select()
+      .from(usersToRoomsInMessage)
+      .where(
+        inArray(
+          usersToRoomsInMessage.roomId,
+          database
+            .select({ roomId: usersToRoomsInMessage.roomId })
+            .from(usersToRoomsInMessage)
+            .where(eq(usersToRoomsInMessage.userId, userId)),
+        ),
+      );
+
+    await expect(getReadTopics(statements)).resolves.toStrictEqual([
+      "message_usersToRooms:*",
+      `message_usersToRooms:userId=${userId}`,
+    ]);
+  });
+
+  // A read that filters a derived table's column narrows the derived table's rows, which the subquery's own level names,
+  // But the read's own reference to the same table is still read whole, so the filter does not name that table here
+  test("a filter on a derived table's column does not name the outer read's own reference to the same table", async () => {
+    expect.hasAssertions();
+
+    const { db } = await createMockDb();
+    const userId = v7();
+    const roomId = v7();
+    const { database, statements } = recordStatements(db);
+    const memberships = database
+      .select({ roomId: usersToRoomsInMessage.roomId })
+      .from(usersToRoomsInMessage)
+      .where(eq(usersToRoomsInMessage.userId, userId))
+      .as("d0");
+
+    await database
+      .select({ userId: usersToRoomsInMessage.userId })
+      .from(usersToRoomsInMessage)
+      .innerJoin(memberships, eq(memberships.roomId, usersToRoomsInMessage.roomId))
+      .where(eq(memberships.roomId, roomId));
+
+    await expect(getReadTopics(statements)).resolves.toStrictEqual(
+      [
+        "message_usersToRooms:*",
+        `message_usersToRooms:roomId=${roomId}`,
+        `message_usersToRooms:userId=${userId}`,
+      ].toSorted(),
+    );
   });
 
   // The table a read starts from has no equality here, so the read depends on all of its rows

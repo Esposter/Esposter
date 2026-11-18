@@ -36,6 +36,13 @@ describe(getReadSet, () => {
           right: { column: "roomId", selectedAs: "roomMemberId", table: "message_usersToRooms" },
         },
       ],
+      levels: [
+        {
+          scopedTables: ["app_bookmarks", "message_usersToRooms"],
+          tables: ["app_bookmarks", "message_usersToRooms", "resource_resources"],
+        },
+        { scopedTables: [], tables: ["resource_resourcePublications"] },
+      ],
       nullChecks: [
         { column: "resourceId", table: "app_bookmarks" },
         { column: "deletedAt", table: "resource_resources" },
@@ -71,6 +78,10 @@ describe(getReadSet, () => {
           right: { column: "blockedId", table: "social_blocks" },
         },
       ],
+      levels: [
+        { scopedTables: ["post_likes"], tables: ["auth_users", "post_likes", "post_posts"] },
+        { scopedTables: ["social_blocks"], tables: ["social_blocks"] },
+      ],
       nullChecks: [{ column: "parentId", table: "post_posts" }],
       scopes: [
         { column: "userId", table: "post_likes", value: userId },
@@ -98,6 +109,10 @@ describe(getReadSet, () => {
           right: { column: "roomId", table: "message_usersToRooms" },
         },
       ],
+      levels: [
+        { scopedTables: ["message_usersToRooms"], tables: ["message_rooms", "message_usersToRooms"] },
+        { scopedTables: [], tables: ["auth_users", "message_rooms", "message_usersToRooms"] },
+      ],
       nullChecks: [],
       scopes: [{ column: "userId", table: "message_usersToRooms", value: userId }],
       tables: ["auth_users", "message_rooms", "message_usersToRooms"],
@@ -120,6 +135,10 @@ describe(getReadSet, () => {
           left: { column: "id", selectedAs: "id", table: "auth_users" },
           right: { column: "blockedId", table: "social_blocks" },
         },
+      ],
+      levels: [
+        { scopedTables: [], tables: ["auth_users"] },
+        { scopedTables: ["social_blocks"], tables: ["social_blocks"] },
       ],
       nullChecks: [{ column: "blockedId", table: "social_blocks" }],
       scopes: [
@@ -160,6 +179,15 @@ describe(getReadSet, () => {
           left: { column: "roomId", selectedAs: "roomId", table: "message_invites" },
           right: { column: "id", table: "message_rooms" },
         },
+      ],
+      levels: [
+        { scopedTables: ["message_invites"], tables: ["message_invites"] },
+        { scopedTables: [], tables: ["message_rooms"] },
+        { scopedTables: ["message_bans"], tables: ["message_bans"] },
+        { scopedTables: ["message_rooms"], tables: ["message_rooms"] },
+        { scopedTables: ["auth_users"], tables: ["auth_users"] },
+        { scopedTables: ["message_usersToRooms"], tables: ["message_usersToRooms"] },
+        { scopedTables: ["message_usersToRooms"], tables: ["message_usersToRooms"] },
       ],
       nullChecks: [{ column: "deletedAt", table: "message_bans" }],
       scopes: [

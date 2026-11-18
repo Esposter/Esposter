@@ -1,4 +1,4 @@
-import type { ReadSet, ReadSetKey, ReadSetScope } from "#src/models/realtime/ReadSet";
+import type { ReadSet, ReadSetKey, ReadSetLevel, ReadSetScope } from "#src/models/realtime/ReadSet";
 import type { SQLWrapper } from "drizzle-orm";
 
 import { getStatementConfig } from "#src/services/realtime/getStatementConfig";
@@ -48,6 +48,7 @@ interface ReadColumn {
 
 interface ReadContext {
   derived: DerivedFields;
+  level: ReadSetLevel;
   readSet: ReadSet;
   selections: ReadSelection[];
 }
@@ -55,6 +56,8 @@ interface ReadContext {
 interface ReadReference {
   columns: ReadColumn[];
   length: number;
+  // Whether the column is read through a derived table, whose own level names its table
+  throughSubquery: boolean;
 }
 
 interface ReadSelection extends ReadSetKey {
@@ -143,12 +146,16 @@ const toKey = ({ key, owner }: ReadColumn, selections: ReadSelection[]): ReadSet
   return selection ? { column: key, selectedAs: selection.selectedAs, table } : { column: key, table };
 };
 
-const addScopes = (columns: ReadColumn[], value: unknown, { readSet }: ReadContext) => {
+// An equality names the rows its value selects. Through a derived table it narrows the subquery's rows, so it names them
+// Without naming the table at this level, which the subquery's own level does
+const addScopes = (columns: ReadColumn[], value: unknown, context: ReadContext, throughSubquery: boolean) => {
   for (const readColumn of columns) {
     const { isScope, isSecret } = getScopeOf(readColumn);
     if (!isScope) continue;
-    const scope: ReadSetScope = { column: readColumn.key, table: getTableName(readColumn.owner), value };
-    readSet.scopes.push(isSecret ? { ...scope, secret: true } : scope);
+    const table = getTableName(readColumn.owner);
+    const scope: ReadSetScope = { column: readColumn.key, table, value };
+    context.readSet.scopes.push(isSecret ? { ...scope, secret: true } : scope);
+    if (!throughSubquery) context.level.scopedTables.push(table);
   }
 };
 
@@ -235,18 +242,21 @@ const readReferenceAt = (
 ): ReadReference | undefined => {
   const chunk = chunks[index];
   let reference: ReadReference | undefined;
-  if (is(chunk, Column)) reference = { columns: toReadColumns(chunk, context.derived), length: 1 };
+  if (is(chunk, Column))
+    reference = {
+      columns: toReadColumns(chunk, context.derived),
+      length: 1,
+      throughSubquery: context.derived.has(getTableName(getColumnTable(getOriginalColumnFromAlias(chunk)))),
+    };
   else {
     const alias = getNameValue(chunk);
     const dot = chunks[index + 1];
     const name = getNameValue(chunks[index + 2]);
     if (alias !== undefined && is(dot, StringChunk) && dot.value === "." && name !== undefined) {
       const table = resolveAlias(alias, index, declarations);
-      reference = { columns: table ? getNamedColumns(table, name) : [], length: 3 };
+      reference = { columns: table ? getNamedColumns(table, name) : [], length: 3, throughSubquery: false };
     }
   }
-  if (reference)
-    for (const readColumn of reference.columns) context.readSet.tables.push(getTableName(readColumn.owner));
   return reference;
 };
 
@@ -263,13 +273,15 @@ const readCondition = (
 ) => {
   const operator = getOperatorText(chunks[operatorIndex]);
   const operand = chunks[operatorIndex + 1];
-  if (operator === "=" && is(operand, Param)) addScopes(reference.columns, operand.value, context);
+  if (operator === "=" && is(operand, Param))
+    addScopes(reference.columns, operand.value, context, reference.throughSubquery);
   else if (operator === "=") {
     const other = readReferenceAt(chunks, operatorIndex + 1, declarations, context);
     if (other) addJoins(reference.columns, other.columns, context);
   } else if (operator === "in" && Array.isArray(operand)) {
     const values: unknown[] = operand;
-    for (const value of values) if (is(value, Param)) addScopes(reference.columns, value.value, context);
+    for (const value of values)
+      if (is(value, Param)) addScopes(reference.columns, value.value, context, reference.throughSubquery);
   } else if ((operator === "in" || operator === "not in") && checkIsStatementLike(operand)) {
     const selected = getFirstSelectedColumn(operand);
     if (selected) addJoins(reference.columns, toReadColumns(selected, context.derived), context);
@@ -279,7 +291,7 @@ const readCondition = (
 // The conditions of one flat chunk array are read against the aliases it declares, by region
 const walkSiblings = (chunks: unknown[], context: ReadContext) => {
   const declarations = getAliasDeclarations(chunks, getDepths(chunks));
-  for (const declaration of declarations) context.readSet.tables.push(getTableName(declaration.table));
+  for (const declaration of declarations) context.level.tables.push(getTableName(declaration.table));
   let index = 0;
   while (index < chunks.length) {
     const reference = readReferenceAt(chunks, index, declarations, context);
@@ -293,14 +305,30 @@ const walkSiblings = (chunks: unknown[], context: ReadContext) => {
   }
 };
 
+// A statement nested in another is a level of its own, whose tables and equalities are read apart from the statement that
+// Holds it, so an equality in the nested statement does not name its table for the outer one
+const enterLevel = (context: ReadContext): ReadContext => {
+  const level: ReadSetLevel = { scopedTables: [], tables: [] };
+  context.readSet.levels.push(level);
+  return { ...context, level };
+};
+
+// A relational query's nested relation is a parenthesised select written into the query's own text, not a builder, so it
+// Is recognised by the select it opens with
+const checkIsNestedSelect = (chunk: SQL): boolean => {
+  const [first] = chunk.queryChunks;
+  return is(first, StringChunk) && /^\s*\(\s*select\b/iu.test(first.value);
+};
+
 // Every chunk of a statement is walked: its text's sibling chunks are read as conditions, and a nested statement or
-// Subquery is walked as its own SQL
+// Subquery is walked as its own level
 const walkChunk = (chunk: unknown, context: ReadContext): void => {
   if (Array.isArray(chunk)) {
     const chunks: unknown[] = chunk;
     walkSiblings(chunks, context);
-  } else if (is(chunk, SQL)) walkSiblings(chunk.queryChunks, context);
-  else if (is(chunk, Table)) context.readSet.tables.push(getTableName(getBaseTable(chunk)));
+  } else if (is(chunk, SQL))
+    walkSiblings(chunk.queryChunks, checkIsNestedSelect(chunk) ? enterLevel(context) : context);
+  else if (is(chunk, Table)) context.level.tables.push(getTableName(getBaseTable(chunk)));
   else if (is(chunk, Subquery)) {
     const base = findFirstTable(chunk._.sql);
     context.derived.set(chunk._.alias, {
@@ -308,8 +336,8 @@ const walkChunk = (chunk: unknown, context: ReadContext): void => {
       selectedFields: chunk._.selectedFields,
       ...(base ? { base } : {}),
     });
-    walkChunk(chunk._.sql, context);
-  } else if (checkIsStatementLike(chunk)) walkChunk(chunk.getSQL(), context);
+    walkChunk(chunk._.sql, enterLevel(context));
+  } else if (checkIsStatementLike(chunk)) walkChunk(chunk.getSQL(), enterLevel(context));
 };
 
 const toTableKey = (readColumn: ReadColumn): ReadSetKey => ({
@@ -349,7 +377,16 @@ const getSelections = (statement: SQLWrapper): ReadSelection[] => {
 // The read set of one statement the handle recorded: the tables it reads, the scope values it tests, the joins whose
 // Rows are named by a scope column, and the columns it tests for null
 export const getStatementReadSet = (statement: SQLWrapper): ReadSet => {
-  const readSet: ReadSet = { joins: [], nullChecks: [], scopes: [], tables: [] };
-  walkChunk(statement.getSQL(), { derived: new Map(), readSet, selections: getSelections(statement) });
-  return readSet;
+  const readSet: ReadSet = { joins: [], levels: [], nullChecks: [], scopes: [], tables: [] };
+  const level: ReadSetLevel = { scopedTables: [], tables: [] };
+  readSet.levels.push(level);
+  walkChunk(statement.getSQL(), { derived: new Map(), level, readSet, selections: getSelections(statement) });
+  // A level a statement opens with nothing in it, such as a relation that selects only its own columns, names nothing
+  const levels = readSet.levels
+    .map(({ scopedTables, tables }) => ({
+      scopedTables: [...new Set(scopedTables)].toSorted(),
+      tables: [...new Set(tables)].toSorted(),
+    }))
+    .filter(({ scopedTables, tables }) => scopedTables.length + tables.length > 0);
+  return { ...readSet, levels, tables: [...new Set(levels.flatMap(({ tables }) => tables))].toSorted() };
 };

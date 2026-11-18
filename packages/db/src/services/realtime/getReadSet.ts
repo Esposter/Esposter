@@ -31,6 +31,7 @@ export const getReadSet = (statements: RecordedStatement[]): ReadSet => {
       readSets.flatMap((readSet) => readSet.joins).map((join) => orderJoin(join)),
       toJoinSerial,
     ),
+    levels: readSets.flatMap((readSet) => readSet.levels),
     nullChecks: uniqueSorted(
       readSets.flatMap((readSet) => readSet.nullChecks),
       toColumnSerial,
