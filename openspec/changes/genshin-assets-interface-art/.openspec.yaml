@@ -14,4 +14,4 @@ x-touches:
     "packages/genshin-world/src/components/Character/AttributeList/**",
     "openspec/changes/genshin-roadmap/**",
   ]
-x-waiting: "Task 3.3 stays open: the map fixture draws no pins because the published Liyue region data holds no waypoints or statues, which the Jueyun overlay reference's pins need; the pins are traced and drawn, and the galesong compare writes its row."
+x-waiting: "Tasks 3.1 and 5.1 stay open: 3.1's icon and bare variants are shot but no test is titled for their scenarios, and 5.1's face export is recorded in the design's Decisions but its task is not yet ticked."

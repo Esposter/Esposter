@@ -73,7 +73,7 @@ committed.
 | `login-screen-dusk`                    | `LoginScreen`               |                                                                         20.03% | 0.379 | 14.71% | 0.6657 |
 | `mail-screen`                          | `MailScreen`                |                                                                          4.96% | 0.659 |  3.12% | 0.2035 |
 | `map-overlay-galesong`                 | `MapOverlay`                |                                                                          6.39% | 0.748 | 22.00% | 0.4761 |
-| `map-overlay-jueyun`                   | `MapOverlay`                |                                                                         25.25% | 0.395 | 24.03% | 0.7322 |
+| `map-overlay-jueyun`                   | `MapOverlay`                |                                                                         13.89% | 0.397 | 30.66% | 0.6304 |
 | `menu-exit-hover`                      | `MenuExit`                  |                                                                          1.69% | 0.999 |  1.32% | 0.1237 |
 | `menu-exit-pressed`                    | `MenuExit`                  |                                                                          1.59% | 0.996 |  1.29% | 0.1233 |
 | `menu-paimon-disabled`                 | `MenuPaimon`                |                                     pending: no screenshot of this variant yet |       |        |        |
