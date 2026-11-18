@@ -1,4 +1,5 @@
 import { regionDataPlugin } from "#parity/regionDataPlugin";
+import { screenNamesPlugin } from "#parity/screenNamesPlugin";
 import { gameDataMirrorPlugin } from "#scripts/gameData/mirror/gameDataMirrorPlugin";
 import { tresCustomElements } from "#scripts/tres/tresCustomElements";
 import {
@@ -26,6 +27,7 @@ export default defineConfig({
     dynamicJsonImportPlugin,
     gameDataMirrorPlugin,
     regionDataPlugin,
+    screenNamesPlugin,
   ],
   // Its siblings from their source, as the page reads them
   resolve: { conditions: [SOURCE_CONDITION, ...defaultClientConditions] },
