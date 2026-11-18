@@ -8,7 +8,6 @@ import { createMockAuthSession, createMockCaller, createMockContext } from "#ser
 import { createCallerFactory } from "#server/trpc/index";
 import { blockRouter } from "#server/trpc/routers/block";
 import { likeRouter } from "#server/trpc/routers/like";
-import { expectLiveTopicCoverage } from "#server/trpc/routers/liveTopicCoverage.test";
 import { postRouter } from "#server/trpc/routers/post";
 import { PostSortType } from "#shared/models/post/PostSortType";
 import { readTopicsHeader } from "#shared/services/realtime/readTopicsHeader";
@@ -505,57 +504,5 @@ describe("postRouter", () => {
     });
 
     expect([...firstPage.items, ...secondPage.items].map(({ id }) => id)).toStrictEqual([firstId, secondId, thirdId]);
-  });
-
-  test("every query reads the tables it touches, and a write wakes each read it changes", async () => {
-    expect.hasAssertions();
-
-    const newPost = await postCaller.createPost({ title });
-    const { comment: newComment } = await postCaller.createComment({ description, id: v7(), parentId: newPost.id });
-    const removedPost = await postCaller.createPost({ title });
-
-    await expectLiveTopicCoverage(
-      postRouter,
-      {
-        queries: [
-          { call: (context) => createCallerFactory(postRouter)(context).readPost(newPost.id), path: "readPost" },
-          {
-            call: (context) => createCallerFactory(postRouter)(context).readPostCounts([newPost.id]),
-            path: "readPostCounts",
-          },
-          { call: (context) => createCallerFactory(postRouter)(context).readPosts(), path: "readPosts" },
-        ],
-        writes: [
-          {
-            call: (context) =>
-              createCallerFactory(postRouter)(context).createComment({ description, id: v7(), parentId: newPost.id }),
-            path: "createComment",
-          },
-          { call: (context) => createCallerFactory(postRouter)(context).createPost({ title }), path: "createPost" },
-          {
-            call: (context) =>
-              createCallerFactory(postRouter)(context).updateComment({
-                description: updatedDescription,
-                id: newComment.id,
-              }),
-            path: "updateComment",
-          },
-          {
-            call: (context) =>
-              createCallerFactory(postRouter)(context).updatePost({ id: newPost.id, title: updatedTitle }),
-            path: "updatePost",
-          },
-          {
-            call: (context) => createCallerFactory(postRouter)(context).deleteComment(newComment.id),
-            path: "deleteComment",
-          },
-          {
-            call: (context) => createCallerFactory(postRouter)(context).deletePost(removedPost.id),
-            path: "deletePost",
-          },
-        ],
-      },
-      mockContext,
-    );
   });
 });

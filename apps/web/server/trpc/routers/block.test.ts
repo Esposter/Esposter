@@ -14,7 +14,6 @@ import { createCallerFactory } from "#server/trpc/index";
 import { blockRouter } from "#server/trpc/routers/block";
 import { createFriendship } from "#server/trpc/routers/createFriendship.test";
 import { friendRouter } from "#server/trpc/routers/friend";
-import { expectLiveTopicCoverage } from "#server/trpc/routers/liveTopicCoverage.test";
 import { postRouter } from "#server/trpc/routers/post";
 import { readTopicsHeader } from "#shared/services/realtime/readTopicsHeader";
 import { blocksInSocial, DatabaseEntityType, friendRequestsInSocial, friendsInSocial } from "@esposter/db-schema";
@@ -170,25 +169,5 @@ describe("blockRouter", () => {
     const published = new Set(MockPublishedTopics);
     const feedTopics = readTopicsHeader(feedContext.responseHeaders, "readPosts").flatMap(({ topics }) => topics);
     expect(feedTopics.some((topic) => published.has(topic))).toBe(true);
-  });
-
-  test("every query reads the tables it touches, and each block change wakes the list it changes", async () => {
-    expect.hasAssertions();
-
-    const user = await createMockUser(mockContext.db);
-
-    await expectLiveTopicCoverage(
-      blockRouter,
-      {
-        queries: [
-          { call: (context) => createCallerFactory(blockRouter)(context).readBlockedUsers(), path: "readBlockedUsers" },
-        ],
-        writes: [
-          { call: (context) => createCallerFactory(blockRouter)(context).createBlock(user.id), path: "createBlock" },
-          { call: (context) => createCallerFactory(blockRouter)(context).deleteBlock(user.id), path: "deleteBlock" },
-        ],
-      },
-      mockContext,
-    );
   });
 });

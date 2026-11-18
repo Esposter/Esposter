@@ -8,7 +8,6 @@ import { createMockAuthSession, createMockCaller, createMockContext, getMockSess
 import { createCallerFactory } from "#server/trpc/index";
 import { createRoomMember } from "#server/trpc/routers/createRoomMember.test";
 import { inviteRouter } from "#server/trpc/routers/invite";
-import { expectLiveTopicCoverage } from "#server/trpc/routers/liveTopicCoverage.test";
 import { createDirectMessageWithFriend } from "#server/trpc/routers/room/createDirectMessageWithFriend.test";
 import { roomRouter } from "#server/trpc/routers/room/index";
 import { readTopicsHeader } from "#shared/services/realtime/readTopicsHeader";
@@ -359,56 +358,5 @@ describe("inviteRouter", () => {
     const invite = await createUnlimitedInvite(newRoom.id);
 
     expect(invite.id).toHaveLength(SECRET_TOKEN_LENGTH);
-  });
-
-  // The owner's link is replaced by the create and a member's link is revoked, so each write changes a different read
-  test("every query reads the tables it touches, and a write wakes each read it changes", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    // Joining a member mints the owner's link on the way, so the owner's own link is minted after it
-    const member = await createRoomMember(mockContext, newRoom.id);
-    const newInvite = await createUnlimitedInvite(newRoom.id);
-    const memberInvite = await createUnlimitedInvite(
-      newRoom.id,
-      await createMockCaller(inviteRouter, await createMockAuthSession(mockContext.db, member)),
-    );
-
-    await expectLiveTopicCoverage(
-      inviteRouter,
-      {
-        queries: [
-          {
-            call: (context) => createCallerFactory(inviteRouter)(context).readInvite(newInvite.id),
-            path: "readInvite",
-          },
-          {
-            call: (context) => createCallerFactory(inviteRouter)(context).readMyInvite({ roomId: newRoom.id }),
-            path: "readMyInvite",
-          },
-          {
-            call: (context) => createCallerFactory(inviteRouter)(context).readRoomInvites({ roomId: newRoom.id }),
-            path: "readRoomInvites",
-          },
-        ],
-        writes: [
-          {
-            call: (context) =>
-              createCallerFactory(inviteRouter)(context).createInvite({
-                expireAfterMinutes: 0,
-                maxUses: 0,
-                roomId: newRoom.id,
-              }),
-            path: "createInvite",
-          },
-          {
-            call: (context) =>
-              createCallerFactory(inviteRouter)(context).revokeInvite({ id: memberInvite.id, roomId: newRoom.id }),
-            path: "revokeInvite",
-          },
-        ],
-      },
-      mockContext,
-    );
   });
 });

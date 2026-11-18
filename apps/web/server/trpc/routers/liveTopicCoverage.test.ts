@@ -17,15 +17,22 @@ export interface LiveTopicCall {
   path: string;
 }
 
+// The cases of one router's procedures: every query that reads and every mutation that writes, set up on the context
+export interface LiveTopicCalls {
+  queries: LiveTopicCall[];
+  writes: LiveTopicCall[];
+}
+
 const compareStrings = (first: string, second: string) => first.localeCompare(second);
 
-// The paths of a router's procedures of one type, leaving out those that declare a static reason
+// The paths of a router's procedures of one type, leaving out those that declare a static reason, and those that declare
+// Their topics by hand, which the cutover removes: until then their declaration is checked by nothing but themselves
 const getWatchedPaths = (procedures: AnyRouter["_def"]["procedures"], type: string) =>
   Object.entries(procedures)
-    .filter(
-      ([, procedure]) =>
-        procedure._def.type === type && ((procedure._def.meta ?? {}) as Meta).staticReason === undefined,
-    )
+    .filter(([, procedure]) => {
+      const meta = (procedure._def.meta ?? {}) as Meta;
+      return procedure._def.type === type && meta.staticReason === undefined && meta.topics === undefined;
+    })
     .map(([path]) => path)
     .toSorted(compareStrings);
 
@@ -40,7 +47,7 @@ const getTopicsOf = (headers: Headers, path: string): Topic[] =>
 // Same rows, so they run together; the writes run one after another, since each reads the rows the writes before it left
 export const expectLiveTopicCoverage = async (
   router: AnyRouter,
-  { queries, writes }: { queries: LiveTopicCall[]; writes: LiveTopicCall[] },
+  { queries, writes }: LiveTopicCalls,
   context: Context,
 ) => {
   expect(getPathsOf(queries)).toStrictEqual(getWatchedPaths(router._def.procedures, "query"));

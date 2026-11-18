@@ -6,7 +6,6 @@ import { createMockAuthSession, createMockContext, getMockSession } from "#serve
 import { createCallerFactory } from "#server/trpc/index";
 import { createFriendship } from "#server/trpc/routers/createFriendship.test";
 import { friendRouter } from "#server/trpc/routers/friend";
-import { expectLiveTopicCoverage } from "#server/trpc/routers/liveTopicCoverage.test";
 import {
   blocksInSocial,
   DatabaseEntityType,
@@ -64,23 +63,6 @@ describe("friendRouter", () => {
     const friendUsers = await friendCaller.readFriends();
 
     expect(friendUsers).toStrictEqual([]);
-  });
-
-  test("every query reads the tables it touches, and a deletion wakes the list it changes", async () => {
-    expect.hasAssertions();
-
-    const { user } = await createFriendship(mockContext);
-
-    await expectLiveTopicCoverage(
-      friendRouter,
-      {
-        queries: [{ call: (context) => createCallerFactory(friendRouter)(context).readFriends(), path: "readFriends" }],
-        writes: [
-          { call: (context) => createCallerFactory(friendRouter)(context).deleteFriend(user.id), path: "deleteFriend" },
-        ],
-      },
-      mockContext,
-    );
   });
 
   test("fails to delete self as friend", async () => {

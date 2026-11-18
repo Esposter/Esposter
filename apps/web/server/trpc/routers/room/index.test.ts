@@ -13,18 +13,22 @@ import {
 import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
 import { banRoomMember } from "#server/services/message/moderation/banRoomMember";
 import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
+import { MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
 import { getRoomProfileImageBlobPrefix } from "#server/services/room/getRoomProfileImageBlobPrefix";
 import { getBucket } from "#server/services/storage/getBucket";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { createMockAuthSession, createMockCaller, createMockContext, getMockSession } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
+import { bookmarkRouter } from "#server/trpc/routers/bookmark";
 import { createRoomMember } from "#server/trpc/routers/createRoomMember.test";
 import { inviteRouter } from "#server/trpc/routers/invite";
-import { expectLiveTopicCoverage } from "#server/trpc/routers/liveTopicCoverage.test";
 import { roleRouter } from "#server/trpc/routers/role";
 import { createDirectMessageWithFriend } from "#server/trpc/routers/room/createDirectMessageWithFriend.test";
-import { baseRoomRouter, roomRouter } from "#server/trpc/routers/room/index";
+import { roomRouter } from "#server/trpc/routers/room/index";
+import { createBookmarkedJoinableRoom } from "#server/trpc/routers/room/liveTopicCalls.test";
+import { PageMarkType } from "#shared/models/app/PageMarkType";
 import { TEST_ORIGIN } from "#shared/services/pageBuilder/constants.test";
+import { readTopicsHeader } from "#shared/services/realtime/readTopicsHeader";
 import { INVITE_MAX_USES_OPTIONS } from "#shared/services/room/invite/constants";
 import { InviteExpireAfterMinutesMap } from "#shared/services/room/invite/InviteExpireAfterMinutesMap";
 import { readAllResourcePages } from "#src/services/resource/readAllResourcePages";
@@ -33,6 +37,7 @@ import { createMockBucket } from "@esposter/db-mock";
 import {
   DatabaseEntityType,
   friendsInSocial,
+  getScopeTopic,
   MAX_BLOB_DELETION_MESSAGE_BLOB_NAMES,
   MessageType,
   PublicUserColumns,
@@ -45,7 +50,7 @@ import {
   WRITE_PRESIGNED_URL_DURATION_MS,
 } from "@esposter/db-schema";
 import { chunk, InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
-import { and, eq } from "drizzle-orm";
+import { and, eq, getTableName } from "drizzle-orm";
 import { v7 } from "uuid";
 import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -54,8 +59,6 @@ const uploadPublicUserAssetBlob = async (blobName: string) => {
   const bucket = getBucket(StorageBucket.PublicUserAssets);
   await bucket.put(blobName, Buffer.alloc(0));
 };
-
-const createBaseRoomCaller = (context: Context) => createCallerFactory(baseRoomRouter)(context);
 
 describe("roomRouter", () => {
   let mockContext: Context;
@@ -944,55 +947,30 @@ describe("roomRouter", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
-  // A stranger's join and leave act as another person over the same database. No write deletes a room a query reads, so
-  // Every query answers before and after each write
-  test("every query reads the tables it touches, and each write wakes the queries it changes", async () => {
+  // The dock lists a room its viewer is a member of, so the join that makes them one wakes the dock's read of it
+  test("a join wakes the joiner's bookmark dock that lists the room", async () => {
     expect.hasAssertions();
 
-    const newRoom = await roomCaller.createRoom({ name });
-    const deletedRoom = await roomCaller.createRoom({ name });
-    const newInvite = await createUnlimitedInvite(newRoom.id);
-    const stranger = await createMockAuthSession(mockContext.db);
-    const strangerCaller = (context: Context) =>
-      createCallerFactory(baseRoomRouter)({ ...context, session: stranger.session, user: stranger.user });
+    const { invite, path, room, title } = await createBookmarkedJoinableRoom(mockContext);
+    const dockHeaders = new Headers();
+    const dockBefore = await createCallerFactory(bookmarkRouter)({
+      ...mockContext,
+      responseHeaders: dockHeaders,
+    }).readBookmarks();
+    const joinerScopeTopic = getScopeTopic(getTableName(usersToRoomsInMessage), "userId", getMockSession().user.id);
+    MockPublishedTopics.length = 0;
 
-    await expectLiveTopicCoverage(
-      baseRoomRouter,
-      {
-        queries: [
-          {
-            call: (context) => createBaseRoomCaller(context).readMemberCountsByTopRole({ roomId: newRoom.id }),
-            path: "readMemberCountsByTopRole",
-          },
-          { call: (context) => createBaseRoomCaller(context).readMembers({ roomId: newRoom.id }), path: "readMembers" },
-          {
-            call: (context) => createBaseRoomCaller(context).readMembersCount({ roomId: newRoom.id }),
-            path: "readMembersCount",
-          },
-          {
-            call: (context) => createBaseRoomCaller(context).readMutualRooms({ userId: stranger.user.id }),
-            path: "readMutualRooms",
-          },
-          { call: (context) => createBaseRoomCaller(context).readRoom(newRoom.id), path: "readRoom" },
-          { call: (context) => createBaseRoomCaller(context).readRooms(), path: "readRooms" },
-          {
-            call: (context) =>
-              createBaseRoomCaller(context).readUsersByIds({ roomId: newRoom.id, userIds: [stranger.user.id] }),
-            path: "readUsersByIds",
-          },
-        ],
-        writes: [
-          { call: (context) => createBaseRoomCaller(context).createRoom({ name }), path: "createRoom" },
-          {
-            call: (context) => createBaseRoomCaller(context).updateRoom({ id: newRoom.id, name: updatedName }),
-            path: "updateRoom",
-          },
-          { call: (context) => strangerCaller(context).joinRoom(newInvite.id), path: "joinRoom" },
-          { call: (context) => strangerCaller(context).leaveRoom(newRoom.id), path: "leaveRoom" },
-          { call: (context) => createBaseRoomCaller(context).deleteRoom(deletedRoom.id), path: "deleteRoom" },
-        ],
-      },
-      mockContext,
-    );
+    await createCallerFactory(roomRouter)(mockContext).joinRoom(invite.id);
+    const dockAfter = await createCallerFactory(bookmarkRouter)(mockContext).readBookmarks();
+
+    expect(dockBefore.find((bookmark) => bookmark.path === path)).toStrictEqual({ isAvailable: false, path, title });
+    expect(dockAfter.find((bookmark) => bookmark.path === path)).toStrictEqual({
+      isAvailable: true,
+      mark: { id: room.id, type: PageMarkType.Room },
+      path,
+      title,
+    });
+    expect(readTopicsHeader(dockHeaders, "readBookmarks").flatMap(({ topics }) => topics)).toContain(joinerScopeTopic);
+    expect(MockPublishedTopics).toContain(joinerScopeTopic);
   });
 });
