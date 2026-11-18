@@ -103,6 +103,8 @@ The write capture belongs to the database handle, not to the request. A queue jo
 
 A scope equality names its table exactly. A table with no scope equality but a join on one of its scope columns is named by the joined rows' key values, where the statement selects the key; where it does not, the table is named table-wide. A table with neither is named table-wide. A table's declaration may mark a join table-wide when its measured fan-out says so, which is the decision point task 6.1 produces.
 
+Phase 2 builds the table policy for every table without an equality, joined or not, and not the row policy above. The row policy names the rows a join returns, and a joined row a WHERE clause removes is not among them: the bookmark dock leaves out a bookmark whose resource is in the recycle bin, so restoring that resource publishes a topic the dock would not hold. The walker records scope equalities, joins and null checks, not the other filters a read applies, so it cannot tell which joined rows were removed. The table policy is sound without that knowledge, since any change to the table publishes its table-wide topic. The row policy waits for task 6.1, which can only build it once the walker records the filters a read applies to a joined table.
+
 ## Builder decisions
 
 Phase 1 (tasks 1.1 to 1.3) settled the following, which the later phases build on.
@@ -114,6 +116,20 @@ Phase 1 (tasks 1.1 to 1.3) settled the following, which the later phases build o
 - **Relational SQL.** Drizzle writes a relational query's aliases and column references as text, so a reference is read against the alias declared in its own parenthesised group.
 - **Known limits.** A later operand of a set operator names its column in the emitted SQL, not as a column, so its join is not read. Its scope equality is, and that equality covers every row the join would name; `searchUsers` is the case. A relation's nested select is not the read's select, so a join key only a relation selects is not a selected key.
 - **Against the spike's counts.** The `readPosts` read set names a join the table counts above do not list: a post's author, through the `user` relation. Whether that topic is per author or table-wide is for the naming step, and task 6.1 measures its fan-out.
+
+Phase 2 (tasks 2.1 and 2.2) settled the following.
+
+- **Statement rows.** The handle records each awaited statement with the rows it resolved to, for a read as for a write. A relational query's single row is a list of one; a count and a write without RETURNING name no row. `db.batch` hands each statement the rows its own position returned.
+- **Write set.** A write that asks for RETURNING publishes the scope values of each row it returned and its table's topic, and one that returned no rows publishes nothing. A write that asks for none publishes its table's topic alone, since its rows are not known. A delete also publishes the tables its foreign keys change beyond its own rows.
+- **Cascades come from the schema.** `getCascadedTables` walks every table's foreign keys, read once per isolate. A cascading key removes the child rows it holds, so the child's own children are walked in turn; a set-null or set-default key changes its child without removing it, so nothing beneath that child is walked. A resource delete changes thirteen tables, not twelve: the twelve its foreign keys name directly, and `resource_resourceVersionAssets`, whose composite key cascades from `resource_resourceVersions`. The spike counted the direct children. The thirteenth is a row the delete removes, so the write set names it and the test pins thirteen.
+- **Digest.** A secret scope value is named `sha256:` and the first twelve hex characters of its `hashSecretToken` digest. One function, `getScopeValue`, serves the write side and the read side, so the two name a secret alike. The test's invite id is 43 characters, which names `sha256:66d34fba71f8`.
+- **Topic types.** `Topic` stays the kind topic. The watch frames and the Topic objects are typed from `topicSchema`, so widening `Topic` now would change the client's contract before a router publishes an inferred name. The inferred names are `ScopeTopic`, and the cutover (task 5.1) is where `Topic` takes them.
+- **Read naming.** A scope equality names its rows by its value, a secret by its digest. Every other table a statement reads is named table-wide, which is the table policy the join section gives: the statement's own FROM table, and each table it joins. The walker's joins are kept in the read set for the row policy task 6.1 may build, but no topic reads them yet.
+- **Match.** A read is woken by a write exactly when a topic in the read's set is in the write's publish set. A table-wide topic in the write set reaches only the readers that watch that table-wide topic, since a Topic object is notified by its own name.
+- **Proof.** Dropping the table-wide topic of every table without an equality (the gap the dock's declaration has, which names only its own bookmarks) leaves the dock's resource rename unmatched, and the rename test fails with the resource's table topic missing; the membership, invite and coverage tests still hold. Removing the cascade rule fails the resource delete test.
+- **Statement rows for reads.** A read's rows are recorded beside its statement, as a write's are, though the table policy does not read them. The row policy is the reader, and the recorder is the same for both.
+- **Coverage scope.** The coverage test checks the five reads the golden read sets pin: every table their SQL names is in their read set. A router-wide sweep needs an input for every query procedure, which the Migration section's per-router coverage tests supply as each router migrates. Task 2.2's router-wide wording is therefore not met by phase 2, and the task stays open until that sweep exists.
+- **Known limits.** An update publishes the scope values its rows hold after it, so a scope value the update changes publishes only its new value. Nothing in the schema cascades on update, so no update's children are walked.
 
 ## Alternatives considered
 
@@ -146,35 +162,40 @@ Before the sequence starts, the wrapper, the walker and the write capture are bu
 
 ## Key files
 
-| Path                                                                           | Role                                                                |
-| ------------------------------------------------------------------------------ | ------------------------------------------------------------------- |
-| `apps/web/server/trpc/procedure/getTopicsProcedure.ts`                         | The declaration middleware, deleted by the cutover                  |
-| `apps/web/server/models/trpc/Meta.ts`                                          | The `topics` meta flag the declaration sets, deleted by the cutover |
-| `apps/web/server/trpc/context.ts`                                              | The request context whose `db` the request's handle wraps           |
-| `apps/web/server/db/index.ts`                                                  | The D1 handle the context shares                                    |
-| `packages/db-schema/src/sqliteTable.ts`                                        | The table definition that carries the scope declaration             |
-| `packages/db-schema/src/services/realtime/getTableScope.ts`                    | Reads a table's scope declaration back from its symbol              |
-| `packages/db/src/services/realtime/recordStatements.ts`                        | The request-scoped handle that records each awaited statement       |
-| `packages/db/src/services/realtime/getReadSet.ts`                              | Merges the statements' read sets into the facts a read names        |
-| `packages/db/src/services/realtime/getStatementReadSet.ts`                     | Walks one built statement's chunks into its read set                |
-| `packages/db-schema/src/models/realtime/Topic.ts`                              | The topic name type, which gains inferred names                     |
-| `packages/db-schema/src/services/realtime/getTopic.ts`                         | The hand-written topic constructor, deleted with the declarations   |
-| `packages/db/src/services/realtime/publishTopics.ts`                           | The publish the write set feeds                                     |
-| `apps/web/server/services/realtime/publishTopics.ts`                           | The web app's binding of that publish                               |
-| `apps/realtime/src/durableObjects/TopicObject.ts`                              | The Topic object the publishes fan out through                      |
-| `packages/db-schema/src/schema/app/bookmarksInApp.ts`                          | A scope declaration case: the bookmark dock's table                 |
-| `apps/web/server/trpc/routers/bookmark.ts`                                     | The dock read the spike measured                                    |
-| `apps/web/server/trpc/routers/post.ts`                                         | The feed read the spike measured                                    |
-| `apps/web/server/trpc/routers/room/index.ts`                                   | The sidebar read the spike measured                                 |
-| `apps/web/server/trpc/routers/invite.ts`                                       | The landing page read whose member count the spike found unwatched  |
-| `apps/web/server/trpc/routers/friend.ts`                                       | The name search declared `staticReason`                             |
-| `apps/web/server/trpc/routers/block.ts`                                        | The block write that publishes the feed by hand                     |
-| `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts`          | The resource content reads and saves the editor section covers      |
-| `apps/web/app/composables/message/subscribables/useUserToRoomSubscribables.ts` | The `updateUserToRoom` handler whose member re-read goes            |
-| `apps/web/app/composables/message/events/useRoomListEvents.ts`                 | The `joinRoom` handler whose participant re-read goes               |
-| `apps/web/app/composables/message/room/useReadDirectMessages.ts`               | The direct-message list's second request, folded into its procedure |
-| `apps/web/server/trpc/routers/room/directMessage.ts`                           | The participant read, folded into the direct-message list procedure |
-| `apps/jobs/src/services/account/takeBackErasedMentionCounts.ts`                | A job write to `usersToRooms` that needs the wrapper on its handle  |
+| Path                                                                           | Role                                                                       |
+| ------------------------------------------------------------------------------ | -------------------------------------------------------------------------- |
+| `apps/web/server/trpc/procedure/getTopicsProcedure.ts`                         | The declaration middleware, deleted by the cutover                         |
+| `apps/web/server/models/trpc/Meta.ts`                                          | The `topics` meta flag the declaration sets, deleted by the cutover        |
+| `apps/web/server/trpc/context.ts`                                              | The request context whose `db` the request's handle wraps                  |
+| `apps/web/server/db/index.ts`                                                  | The D1 handle the context shares                                           |
+| `packages/db-schema/src/sqliteTable.ts`                                        | The table definition that carries the scope declaration                    |
+| `packages/db-schema/src/services/realtime/getTableScope.ts`                    | Reads a table's scope declaration back from its symbol                     |
+| `packages/db/src/services/realtime/recordStatements.ts`                        | The request-scoped handle that records each awaited statement              |
+| `packages/db/src/services/realtime/getReadSet.ts`                              | Merges the statements' read sets into the facts a read names               |
+| `packages/db/src/services/realtime/getStatementReadSet.ts`                     | Walks one built statement's chunks into its read set                       |
+| `packages/db-schema/src/models/realtime/Topic.ts`                              | The kind topic type, and `ScopeTopic` for the inferred names               |
+| `packages/db/src/services/realtime/getWriteTopics.ts`                          | The write set a request's statements publish, from RETURNING rows          |
+| `packages/db/src/services/realtime/getReadTopics.ts`                           | The topics a request's reads watch: scope equalities and table-wide topics |
+| `packages/db/src/services/realtime/getCascadedTables.ts`                       | The tables a delete changes beyond its own rows, from the FK graph         |
+| `packages/db/src/services/realtime/getScopeValue.ts`                           | The name a scope value takes, a secret's by its digest, both sides         |
+| `apps/web/server/trpc/routers/topicMatch.test.ts`                              | The match of reads to writes, and the five reads' table coverage           |
+| `packages/db-schema/src/services/realtime/getTopic.ts`                         | The hand-written topic constructor, deleted with the declarations          |
+| `packages/db/src/services/realtime/publishTopics.ts`                           | The publish the write set feeds                                            |
+| `apps/web/server/services/realtime/publishTopics.ts`                           | The web app's binding of that publish                                      |
+| `apps/realtime/src/durableObjects/TopicObject.ts`                              | The Topic object the publishes fan out through                             |
+| `packages/db-schema/src/schema/app/bookmarksInApp.ts`                          | A scope declaration case: the bookmark dock's table                        |
+| `apps/web/server/trpc/routers/bookmark.ts`                                     | The dock read the spike measured                                           |
+| `apps/web/server/trpc/routers/post.ts`                                         | The feed read the spike measured                                           |
+| `apps/web/server/trpc/routers/room/index.ts`                                   | The sidebar read the spike measured                                        |
+| `apps/web/server/trpc/routers/invite.ts`                                       | The landing page read whose member count the spike found unwatched         |
+| `apps/web/server/trpc/routers/friend.ts`                                       | The name search declared `staticReason`                                    |
+| `apps/web/server/trpc/routers/block.ts`                                        | The block write that publishes the feed by hand                            |
+| `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts`          | The resource content reads and saves the editor section covers             |
+| `apps/web/app/composables/message/subscribables/useUserToRoomSubscribables.ts` | The `updateUserToRoom` handler whose member re-read goes                   |
+| `apps/web/app/composables/message/events/useRoomListEvents.ts`                 | The `joinRoom` handler whose participant re-read goes                      |
+| `apps/web/app/composables/message/room/useReadDirectMessages.ts`               | The direct-message list's second request, folded into its procedure        |
+| `apps/web/server/trpc/routers/room/directMessage.ts`                           | The participant read, folded into the direct-message list procedure        |
+| `apps/jobs/src/services/account/takeBackErasedMentionCounts.ts`                | A job write to `usersToRooms` that needs the wrapper on its handle         |
 
 ## Sources
 
