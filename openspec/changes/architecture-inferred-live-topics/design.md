@@ -59,7 +59,7 @@ The gaps are topics the read depends on that its declared list does not name:
 
 - **`readBookmarks`**: changes to the bookmarked resources and to the viewer's room memberships. This is the gap the owner named. The table policy covers both (`resources:*`, `resourcePublications:*`, the membership topic); the row policy covers them per row.
 - **`readInvite`**: the member count (room memberships of the invite's room, from any member) and the viewer's own bans. Another member's join publishes the room's topic, which this page does not watch.
-- **`readPosts`**: the blocks the feed filters by. Today they reach the feed only because `createBlock` publishes `Feed:posts` by hand (`apps/web/server/trpc/routers/block.ts`). The inferred set makes that hand publish unnecessary. The viewer's own likes are named by the read; whether the like write's topics name them was not checked.
+- **`readPosts`**: the blocks the feed filters by. Today they reach the feed only because `createBlock` and `deleteBlock` publish `Feed:posts` by hand (`apps/web/server/trpc/routers/block.ts`). The inferred set makes that hand publish unnecessary. The viewer's own likes are named by the read; whether the like write's topics name them was not checked.
 - **`readRooms`**: a direct message's partner name, which the declared list does not name. The table policy covers it with `users:*`.
 
 Findings that limit the design:
@@ -84,6 +84,21 @@ Measured on the host, not in a Worker. The figures are the baseline the migratio
 
 The row policy multiplies subscriptions by a page's size: 62 for the dock, against 1 declared. The table policy multiplies fan-out instead. Neither is free, and the trade is decided per join from the migration's measurements, not from this table.
 
+### 4. Client re-reads a watch would replace (code reading at the base commit)
+
+These two cases were found by reading the client, not by the spike's runs. Each is a second request the client makes because a read is not watched, and the inferred design removes both.
+
+- **The `updateUserToRoom` event.** The user event carries the viewer's changed membership row, but a member's display name is a server row the event does not carry. The subscribable (`apps/web/app/composables/message/subscribables/useUserToRoomSubscribables.ts`) therefore re-reads `room.readUsersByIds` for that member. The event is sent by the mention-count notify in the room object, by `notifyMentionCounts`, by the last-read write in `createUserMessage`, by the job that takes back erased mention counts (`apps/jobs/src/services/account/takeBackErasedMentionCounts.ts`), and by the mention-count clear. Each of those writes changes a `usersToRooms` row. The inferred write set publishes `usersToRooms:roomId=<room>` and `usersToRooms:userId=<user>` for it, and the member store's read names `usersToRooms:roomId=<room>` through its room-scoped membership join. The store refreshes from the write, and the event's refresh role goes.
+- **The `joinRoom` participant re-read.** The direct-message list reads its page, then calls `readParticipants` as a second request (`apps/web/app/composables/message/room/useReadDirectMessages.ts`). Its participants are a separate procedure's read, so the list's own watch never collects them, and the `joinRoom` handler (`apps/web/app/composables/message/events/useRoomListEvents.ts`) re-reads the same participant read. The participant read declares one `Room:<id>` topic per input room, and folded into the list by hand it would be a topic per row.
+
+## Nested reads and writes outside a request
+
+A read awaited inside another read runs through the same request handle, so its statements are recorded in the outer procedure's read set. The walker names each nested statement's topics by the same rules as any other statement: a scope equality names its table exactly, and a join on a scope column names the rows the statements return. For the direct-message participants, the nested statements add two kinds of topic. The viewer's own memberships are one scope topic, `usersToRooms:userId=<viewer>`, for the whole list. The participants' membership and user rows are joined by each direct message's room id, which is one topic per direct message the list already names, so the nested read adds no topic per participant.
+
+A client that awaits a second procedure after the first is a separate request with its own read set, and that is why the two re-reads above exist. The migration folds each such second read into its procedure's resolver, so the list's response carries its participants, and it deletes the client's re-read.
+
+The write capture belongs to the database handle, not to the request. A queue job or a Durable Object's SQLite writes through the same handle wrapper, so each handle that writes needs the wrapper: the web context, the jobs' handle, and each object's drizzle handle. A write through a handle that is not wrapped publishes nothing. The migration installs the wrapper on every such handle before any router's declarations are deleted.
+
 ## Join and table policy
 
 A scope equality names its table exactly. A table with no scope equality but a join on one of its scope columns is named by the joined rows' key values, where the statement selects the key; where it does not, the table is named table-wide. A table with neither is named table-wide. A table's declaration may mark a join table-wide when its measured fan-out says so, which is the decision point task 6.1 produces.
@@ -99,7 +114,7 @@ A scope equality names its table exactly. A table with no scope equality but a j
 
 ## Editor content
 
-The open editor's content is read from R2 by its blob key (`readResourceContent`, and `reloadResource` on the client). It is not watched today: a watch would refetch the whole document on every publish and re-apply it to the editor. The editor stays live through the `saveResourceContent` typed event, which the event-class refactor (commit `247d012944`) kept as the one class that refreshes a stored read.
+The open editor's content is read from R2 by its blob key (`readResourceContent`, and `reloadResource` on the client). It is not watched today: a watch would refetch the whole document on every publish and re-apply it to the editor. The editor stays live through the `saveResourceContent` typed event. The event-class refactor (commit `247d012944`) left that event out of its class map on purpose, as a finding: the event makes its subscribers re-read content through a raw read that no topic watches.
 
 Under the inferred design the content has a topic: the blob key that holds the document. Every write to it publishes the key, whether it is `saveResourceContent`, `saveResourceContentDelta`, `saveStagedResourceContent`, or an R2 put or delete of that key. A watch on the key would refetch the whole document. The refetch guard avoids that: the watch first reads the resource row, which holds `contentHash` and `contentVersion` in D1, and it fetches the blob only when the hash differs from the one the editor last saved or applied. The editor's own save then finds the same hash and applies nothing. With the guard, the save event carries nothing the watch does not, and `saveResourceContent`'s event can be removed.
 
@@ -119,26 +134,31 @@ Before the sequence starts, the wrapper, the walker and the write capture are bu
 
 ## Key files
 
-| Path                                                                  | Role                                                                |
-| --------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `apps/web/server/trpc/procedure/getTopicsProcedure.ts`                | The declaration middleware, deleted by the cutover                  |
-| `apps/web/server/models/trpc/Meta.ts`                                 | The `topics` meta flag the declaration sets, deleted by the cutover |
-| `apps/web/server/trpc/context.ts`                                     | The request context whose `db` the request's handle wraps           |
-| `apps/web/server/db/index.ts`                                         | The D1 handle the context shares                                    |
-| `packages/db-schema/src/sqliteTable.ts`                               | The table definition that carries the scope declaration             |
-| `packages/db-schema/src/models/realtime/Topic.ts`                     | The topic name type, which gains inferred names                     |
-| `packages/db-schema/src/services/realtime/getTopic.ts`                | The hand-written topic constructor, deleted with the declarations   |
-| `packages/db/src/services/realtime/publishTopics.ts`                  | The publish the write set feeds                                     |
-| `apps/web/server/services/realtime/publishTopics.ts`                  | The web app's binding of that publish                               |
-| `apps/realtime/src/durableObjects/TopicObject.ts`                     | The Topic object the publishes fan out through                      |
-| `packages/db-schema/src/schema/app/bookmarksInApp.ts`                 | A scope declaration case: the bookmark dock's table                 |
-| `apps/web/server/trpc/routers/bookmark.ts`                            | The dock read the spike measured                                    |
-| `apps/web/server/trpc/routers/post.ts`                                | The feed read the spike measured                                    |
-| `apps/web/server/trpc/routers/room/index.ts`                          | The sidebar read the spike measured                                 |
-| `apps/web/server/trpc/routers/invite.ts`                              | The landing page read whose member count the spike found unwatched  |
-| `apps/web/server/trpc/routers/friend.ts`                              | The name search declared `staticReason`                             |
-| `apps/web/server/trpc/routers/block.ts`                               | The block write that publishes the feed by hand                     |
-| `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts` | The resource content reads and saves the editor section covers      |
+| Path                                                                           | Role                                                                |
+| ------------------------------------------------------------------------------ | ------------------------------------------------------------------- |
+| `apps/web/server/trpc/procedure/getTopicsProcedure.ts`                         | The declaration middleware, deleted by the cutover                  |
+| `apps/web/server/models/trpc/Meta.ts`                                          | The `topics` meta flag the declaration sets, deleted by the cutover |
+| `apps/web/server/trpc/context.ts`                                              | The request context whose `db` the request's handle wraps           |
+| `apps/web/server/db/index.ts`                                                  | The D1 handle the context shares                                    |
+| `packages/db-schema/src/sqliteTable.ts`                                        | The table definition that carries the scope declaration             |
+| `packages/db-schema/src/models/realtime/Topic.ts`                              | The topic name type, which gains inferred names                     |
+| `packages/db-schema/src/services/realtime/getTopic.ts`                         | The hand-written topic constructor, deleted with the declarations   |
+| `packages/db/src/services/realtime/publishTopics.ts`                           | The publish the write set feeds                                     |
+| `apps/web/server/services/realtime/publishTopics.ts`                           | The web app's binding of that publish                               |
+| `apps/realtime/src/durableObjects/TopicObject.ts`                              | The Topic object the publishes fan out through                      |
+| `packages/db-schema/src/schema/app/bookmarksInApp.ts`                          | A scope declaration case: the bookmark dock's table                 |
+| `apps/web/server/trpc/routers/bookmark.ts`                                     | The dock read the spike measured                                    |
+| `apps/web/server/trpc/routers/post.ts`                                         | The feed read the spike measured                                    |
+| `apps/web/server/trpc/routers/room/index.ts`                                   | The sidebar read the spike measured                                 |
+| `apps/web/server/trpc/routers/invite.ts`                                       | The landing page read whose member count the spike found unwatched  |
+| `apps/web/server/trpc/routers/friend.ts`                                       | The name search declared `staticReason`                             |
+| `apps/web/server/trpc/routers/block.ts`                                        | The block write that publishes the feed by hand                     |
+| `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts`          | The resource content reads and saves the editor section covers      |
+| `apps/web/app/composables/message/subscribables/useUserToRoomSubscribables.ts` | The `updateUserToRoom` handler whose member re-read goes            |
+| `apps/web/app/composables/message/events/useRoomListEvents.ts`                 | The `joinRoom` handler whose participant re-read goes               |
+| `apps/web/app/composables/message/room/useReadDirectMessages.ts`               | The direct-message list's second request, folded into its procedure |
+| `apps/web/server/trpc/routers/room/directMessage.ts`                           | The participant read, folded into the direct-message list procedure |
+| `apps/jobs/src/services/account/takeBackErasedMentionCounts.ts`                | A job write to `usersToRooms` that needs the wrapper on its handle  |
 
 ## Sources
 

@@ -15,6 +15,7 @@
 
 - [ ] 3.1 Migrate the dock, room, invite, friend, friend request, block, bookmark and post routers: delete each hand declaration and its topic assertions, and keep each router's coverage test green. Verified by `getTopicsProcedure` no longer appearing in those files and the router-wide test passing.
 - [ ] 3.2 Migrate the remaining routers, including like, message, notification, webhook, resource, blueprint, dataset, achievement, clicker, dungeons, genshin, call and scheduled messages, in the same way, keeping each `staticReason` as a classification. Verified by no `getTopicsProcedure` call remaining in `apps/web/server` and the router-wide test passing.
+- [ ] 3.3 Delete the two client re-reads the inference covers: the member re-read in the `updateUserToRoom` subscribable, and the direct-message participant re-read in the list and the `joinRoom` handler, with the participants folded into the list procedure's resolver so its read set collects them. Verified by a member-store test that another client's display-name write refreshes the member with no `readUsersByIds` request from the subscribable, and a direct-message list test that a new participant's join refreshes the participants with no second request; each seen failing before its re-read is deleted.
 
 ## 4. The editor content read
 
