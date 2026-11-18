@@ -10,3 +10,4 @@ x-touches:
     "packages/genshin-world/src/components/World/Session/**",
     "packages/genshin-world/src/components/World/Windrise/**",
   ]
+x-waiting: "4.1 waits on the Time dial's gear art, which genshin-assets must extract from the install (no extracted asset is named for the Time dial); the Confirm, title and cross the 10-second frame does not draw are the screen's own by design, and about half of the 1.53% is the Confirm alone."

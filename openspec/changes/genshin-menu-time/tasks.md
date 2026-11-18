@@ -14,3 +14,4 @@
 ## 4. Check
 
 - [ ] 4.1 Compare the Time screen's fixture with its reference. Verify: `pnpm -C scripts genshin:parity compare menu-time` writes its row.
+      Open: the row reads 1.53% against the 1% bar. The four cells the Confirm pill covers hold about half of that error, and the 10-second frame draws no Confirm, so that part is the screen's own by design. The rest waits on the Time dial's gear art, which the install's extraction does not hold (no extracted asset is named for the Time dial).
