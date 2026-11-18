@@ -44,7 +44,19 @@ describe(buildFamilyLabelEnemyKindIdMap, () => {
     expect.hasAssertions();
     const { matches, unmapped } = buildFamilyLabelEnemyKindIdMap(["Nobushi"], [HILICHURLS_PAGE], MONSTERS, new Map());
     expect(matches).toStrictEqual([]);
-    expect(unmapped).toStrictEqual(["Nobushi"]);
+    expect(unmapped).toStrictEqual([{ isListed: false, label: "Nobushi" }]);
+  });
+
+  test("a family label its page lists but the world holds no kind of is reported as unheld", () => {
+    expect.hasAssertions();
+    const { matches, unmapped } = buildFamilyLabelEnemyKindIdMap(
+      ["Hilichurl Shooter"],
+      [HILICHURLS_PAGE],
+      [{ id: EnemyKindId.HilichurlFighter, name: "Hilichurl" }],
+      new Map(),
+    );
+    expect(matches).toStrictEqual([]);
+    expect(unmapped).toStrictEqual([{ isListed: true, label: "Hilichurl Shooter" }]);
   });
 
   test("a family label whose wiki title redirects to a title its page lists maps to a kind of that title", () => {

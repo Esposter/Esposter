@@ -57,7 +57,11 @@ export const familyLabelsCommand: SubCommandsDef[string] = defineCommand({
         ({ kindId, label, page, variant }) =>
           `${label}: ${toEnemyKindIdMember(kindId)} (listed as ${variant} on ${page})`,
       ),
-      ...unmapped.map((label) => `${label}: unmapped, no variant of its page is a kind the world holds`),
+      ...unmapped.map(({ isListed, label }) =>
+        isListed
+          ? `${label}: unmapped, no variant of its page is a kind the world holds`
+          : `${label}: unmapped, no family page lists it`,
+      ),
       `${matches.length} of ${matches.length + unmapped.length} family labels mapped`,
     ];
     console.log((isDryRun ? [...lines, "nothing written"] : lines).join("\n"));

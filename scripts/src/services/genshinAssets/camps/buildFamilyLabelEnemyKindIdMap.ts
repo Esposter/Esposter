@@ -4,7 +4,7 @@ import { Element, EnemyKindId } from "genshin-world";
 
 export interface FamilyLabelMap {
   matches: FamilyLabelMatch[];
-  unmapped: string[];
+  unmapped: FamilyLabelUnmapped[];
 }
 
 export interface FamilyLabelMatch {
@@ -12,6 +12,12 @@ export interface FamilyLabelMatch {
   label: string;
   page: string;
   variant: string;
+}
+
+// Whether a family page lists a variant of the label; when it does not, the world may still hold a kind of its family
+export interface FamilyLabelUnmapped {
+  isListed: boolean;
+  label: string;
 }
 
 export interface FamilyPageContent {
@@ -66,7 +72,7 @@ export const buildFamilyLabelEnemyKindIdMap = (
     .toSorted((firstKind, secondKind) => firstKind.id - secondKind.id);
   const variantPages = pages.map(({ content, title }) => ({ title, variants: toWikiPageVariants(content) }));
   const matches: FamilyLabelMatch[] = [];
-  const unmapped: string[] = [];
+  const unmapped: FamilyLabelUnmapped[] = [];
   for (const label of labels) {
     const names = [label, redirects.get(label)].filter((name) => name !== undefined);
     const forms = [...new Set(names.flatMap((name) => [name, toSingularLabel(name), toPluralLabel(name)]))];
@@ -75,7 +81,8 @@ export const buildFamilyLabelEnemyKindIdMap = (
       .map(({ title, variants }) => ({ page: title, variant: variants.find((variant) => isOfFamily(variant)) }))
       .find((candidate) => candidate.variant !== undefined);
     const kind = kinds.find(({ name }) => isOfFamily(name));
-    if (listing?.variant === undefined || kind === undefined) unmapped.push(label);
+    if (listing?.variant === undefined) unmapped.push({ isListed: false, label });
+    else if (kind === undefined) unmapped.push({ isListed: true, label });
     else matches.push({ kindId: kind.id, label, page: listing.page, variant: listing.variant });
   }
   return { matches, unmapped };
