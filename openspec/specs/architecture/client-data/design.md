@@ -58,6 +58,8 @@ flowchart TD
 
 The watch itself is `useWatchTopics`: one watch per target, kept while a refreshed read names the same topics, with the newest refetch being the one that runs.
 
+The one exception is the room list's reorder: the room object's alarm writes a room's last-message time and sends `roomActivity` to its online members, which carries that time as the row change itself, since the alarm publishes no topic a refetch of the first page could follow.
+
 Four alternatives lost, each for a reason that still holds:
 
 - **A query cache keyed by path and input, replacing the stores' own copies.** The stores already are the client's cache, and they carry what a query cache would have to be taught: the optimistic apply and its rollback, the typed events' echoes, and the offline copy. A second cache beside them would disagree with them, and one in place of them is the whole client rewritten for the dedupe of identical reads, which the batching link already gives a tick's worth of.
