@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { PageMarkType } from "#shared/models/app/PageMarkType";
+import { useReadOpenResource } from "#src/composables/resource/useReadOpenResource";
 import { ResourceBladeType } from "#src/models/resource/ResourceBladeType";
 import { checkIsUuidRouteId } from "#src/services/router/checkIsUuidRouteId";
 import { useFavoriteStore } from "#src/store/resource/favorite";
@@ -19,7 +20,10 @@ const route = useRoute();
 const { id } = route.params;
 const resourceStore = useResourceStore();
 const { resource } = storeToRefs(resourceStore);
-const { clearResource, readResource } = resourceStore;
+const { clearResource, reloadResource } = resourceStore;
+// The read is the page's, so its watch ends with the page and keeps the row merged as the topic publishes. Refresh is
+// The explicit full reload instead: it takes the current version and lifts the stale latch, as a read always did
+const { isPending, readResource } = useReadOpenResource();
 await readResource();
 if (!resource.value) throw createError({ status: 404, statusText: "Resource not found" });
 const activeBlade = computed(() => route.params.blade || ResourceBladeType.Overview);
@@ -51,13 +55,13 @@ useValidateResourceBlade(resource, activeBlade);
       <Title>{{ resource?.name ?? "Resource" }}</Title>
     </Head>
     <template v-if="resource" #heading>
-      <ResourceBladeHeader :resource />
+      <ResourceBladeHeader :is-pending :read="reloadResource" :resource />
     </template>
     <template v-if="resource" #navigation>
       <ResourceBladeNavigation :active-blade :resource />
     </template>
     <template v-if="resource">
-      <ResourceExplorer :active-blade :resource />
+      <ResourceExplorer :active-blade :is-pending :resource />
     </template>
   </NuxtLayout>
 </template>

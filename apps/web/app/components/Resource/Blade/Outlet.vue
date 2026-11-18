@@ -10,6 +10,7 @@ import { ID_SEPARATOR } from "@esposter/shared";
 
 interface Props {
   activeBlade: string;
+  isPending: boolean;
   resource: ResourceInResource;
 }
 
@@ -33,6 +34,7 @@ const isBodyBare = computed(() => activeBlade === ResourceBladeType.Editor || bl
     <component
       :is="ResourceOverviewComponentMap[resource.type] ?? ResourceOverview"
       v-if="activeBlade === ResourceBladeType.Overview"
+      :is-pending
       :resource
     />
     <ResourceActivityLog

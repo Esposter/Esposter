@@ -17,6 +17,7 @@ import {
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { setupWithDataSource } from "#src/composables/resource/sheet/commands/setupWithDataSource.test";
 import { useDeleteRow } from "#src/composables/resource/sheet/commands/useDeleteRow";
+import { useReadOpenResource } from "#src/composables/resource/useReadOpenResource";
 import { ResourceSaveState } from "#src/models/resource/ResourceSaveState";
 import { ResourceContentHookMap } from "#src/services/resource/ResourceContentHookMap";
 import { createDefaultSheetResource } from "#src/services/resource/sheet/createDefaultSheetResource";
@@ -135,7 +136,8 @@ describe(useResourceStore, () => {
     expect.hasAssertions();
 
     const resourceStore = useResourceStore();
-    const { readContent, readResource, saveContent } = resourceStore;
+    const { readContent, saveContent } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
     await readContent(noop);
     setRouteId(otherResourceId);
@@ -152,7 +154,8 @@ describe(useResourceStore, () => {
     expect.hasAssertions();
 
     const resourceStore = useResourceStore();
-    const { readResource, saveContent } = resourceStore;
+    const { saveContent } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
     const rollback = vi.fn<() => void>();
     saveContent(createDefaultSheetResource(), rollback);
@@ -177,7 +180,7 @@ describe(useResourceStore, () => {
     });
     const resourceStore = useResourceStore();
     const { resource } = storeToRefs(resourceStore);
-    const { readResource } = resourceStore;
+    const { readResource } = useReadOpenResource();
     const pendingRead = readResource();
     // A read issued in the same tick would share the held one's batch and settle with it
     await isReadReached;
@@ -204,7 +207,8 @@ describe(useResourceStore, () => {
       return createDefaultSheetResource();
     });
     const resourceStore = useResourceStore();
-    const { checkIsContentRead, readContent, readResource } = resourceStore;
+    const { checkIsContentRead, readContent } = resourceStore;
+    const { readResource } = useReadOpenResource();
     const applyContent = vi.fn<() => void>();
     await readResource();
     const pendingRead = readContent(applyContent);
@@ -224,7 +228,8 @@ describe(useResourceStore, () => {
     expect.hasAssertions();
 
     const resourceStore = useResourceStore();
-    const { readContent, readResource, saveContent } = resourceStore;
+    const { readContent, saveContent } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
     await readContent(noop);
     setRouteId(otherResourceId);
@@ -257,7 +262,8 @@ describe(useResourceStore, () => {
 
     const { generateUploadContentPresignedUrl, saveStagedResourceContent } = setupStagedSave();
     const resourceStore = useResourceStore();
-    const { readContent, readResource, saveContent } = resourceStore;
+    const { readContent, saveContent } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
     await readContent(noop);
     const content = createDefaultSheetResource();
@@ -285,7 +291,8 @@ describe(useResourceStore, () => {
     >(() => ({ ...createResource(resourceId), contentVersion: 2 }));
     trpcMsw.sheet.saveResourceContentDelta.mutation(saveResourceContentDelta);
     const resourceStore = useResourceStore();
-    const { readContent, readResource, saveContent } = resourceStore;
+    const { readContent, saveContent } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
     await readContent(noop);
     saveContent(firstContent);
@@ -326,7 +333,8 @@ describe(useResourceStore, () => {
     trpcMsw.sheet.generateReadContentPresignedUrl.query(() => presignedUrl);
     trpcMsw.sheet.saveResourceContentDelta.mutation(saveResourceContentDelta);
     const resourceStore = useResourceStore();
-    const { readContent, readResource, saveContent } = resourceStore;
+    const { readContent, saveContent } = resourceStore;
+    const { readResource } = useReadOpenResource();
     const applyContent = vi.fn<(content: ResourceContent<typeof ResourceType.Sheet> | undefined) => void>();
     await readResource();
     await readContent<typeof ResourceType.Sheet>(applyContent);
@@ -349,7 +357,8 @@ describe(useResourceStore, () => {
     });
     const resourceStore = useResourceStore();
     const { saveState } = storeToRefs(resourceStore);
-    const { readContent, readResource, saveContent } = resourceStore;
+    const { readContent, saveContent } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
     await readContent(noop);
     saveContent(firstContent);
@@ -370,7 +379,8 @@ describe(useResourceStore, () => {
     const saveResourceContentDelta = vi.fn<() => ResourceInResource>(() => createResource(resourceId));
     trpcMsw.sheet.saveResourceContentDelta.mutation(saveResourceContentDelta);
     const resourceStore = useResourceStore();
-    const { readContent, readResource, saveContent } = resourceStore;
+    const { readContent, saveContent } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
     await readContent(noop);
     saveContent(createLargeSheetResource(" "));
@@ -387,7 +397,8 @@ describe(useResourceStore, () => {
 
     const resourceStore = useResourceStore();
     const { saveState } = storeToRefs(resourceStore);
-    const { readContent, readResource, saveContent } = resourceStore;
+    const { readContent, saveContent } = resourceStore;
+    const { readResource } = useReadOpenResource();
     const notificationStore = useNotificationStore();
     const { notifications } = storeToRefs(notificationStore);
     await readResource();
@@ -405,7 +416,8 @@ describe(useResourceStore, () => {
     expect.hasAssertions();
 
     const resourceStore = useResourceStore();
-    const { readContent, readResource, saveContent } = resourceStore;
+    const { readContent, saveContent } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
     await readContent(noop);
     const content = createDefaultSheetResource();
@@ -425,7 +437,8 @@ describe(useResourceStore, () => {
 
     const resourceStore = useResourceStore();
     const { saveState, unwrittenContentResourceId } = storeToRefs(resourceStore);
-    const { readContent, readResource, saveContent, setPersistedContent } = resourceStore;
+    const { readContent, saveContent, setPersistedContent } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
     await readContent(noop);
     setPersistedContent(createDefaultSheetResource());
@@ -445,7 +458,8 @@ describe(useResourceStore, () => {
 
     const resourceStore = useResourceStore();
     const { saveState } = storeToRefs(resourceStore);
-    const { readContent, readResource, refuseSaveContent, saveContent, setPersistedContent } = resourceStore;
+    const { readContent, refuseSaveContent, saveContent, setPersistedContent } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
     await readContent(noop);
     setPersistedContent(createDefaultSheetResource());
@@ -467,7 +481,7 @@ describe(useResourceStore, () => {
 
     const resourceStore = useResourceStore();
     const { saveState, unwrittenContentResourceId } = storeToRefs(resourceStore);
-    const { readResource } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
     const heldResourceId = resourceStore.currentResourceId;
     unwrittenContentResourceId.value = heldResourceId;
@@ -495,7 +509,8 @@ describe(useResourceStore, () => {
     });
     const resourceStore = useResourceStore();
     const { resource } = storeToRefs(resourceStore);
-    const { readContent, readResource, saveContent } = resourceStore;
+    const { readContent, saveContent } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
     await readContent(noop);
     saveContent(createDefaultSheetResource());
@@ -523,7 +538,8 @@ describe(useResourceStore, () => {
     });
     const resourceStore = useResourceStore();
     const { saveState } = storeToRefs(resourceStore);
-    const { readContent, readResource, saveContent } = resourceStore;
+    const { readContent, saveContent } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
     await readContent(noop);
     saveContent(createDefaultSheetResource());
@@ -550,7 +566,8 @@ describe(useResourceStore, () => {
       return { ...createResource(resourceId), contentVersion: input.contentVersion + 1 };
     });
     const resourceStore = useResourceStore();
-    const { readContent, readResource, saveContent } = resourceStore;
+    const { readContent, saveContent } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
     await readContent(noop);
     saveContent(createDefaultSheetResource());
@@ -582,7 +599,8 @@ describe(useResourceStore, () => {
 
     const { releaseFirstSave, savedNames } = holdFirstSave();
     const resourceStore = useResourceStore();
-    const { readContent, readResource, saveContent } = resourceStore;
+    const { readContent, saveContent } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
     await readContent(noop);
     saveContent(createDefaultSheetResource());
@@ -605,7 +623,8 @@ describe(useResourceStore, () => {
 
     const { releaseFirstSave, savedNames } = holdFirstSave();
     const resourceStore = useResourceStore();
-    const { readContent, readResource, saveContent, setPersistedContent } = resourceStore;
+    const { readContent, saveContent, setPersistedContent } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
     await readContent(noop);
     setPersistedContent(createDefaultSheetResource());
@@ -633,7 +652,8 @@ describe(useResourceStore, () => {
     });
     const resourceStore = useResourceStore();
     const { saveState } = storeToRefs(resourceStore);
-    const { readContent, readResource, saveContent } = resourceStore;
+    const { readContent, saveContent } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
     await readContent(noop);
     saveContent(createDefaultSheetResource());
@@ -658,7 +678,8 @@ describe(useResourceStore, () => {
     });
     const notificationStore = useNotificationStore();
     const resourceStore = useResourceStore();
-    const { readContent, readResource, saveContent } = resourceStore;
+    const { readContent, saveContent } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
     await readContent(noop);
     const rollback = vi.fn<() => void>();
@@ -669,7 +690,7 @@ describe(useResourceStore, () => {
     expect(notificationStore.notifications.map(({ action }) => action?.title)).toStrictEqual(["Refresh"]);
   });
 
-  test("reports a stale save as out of date until the next read", async () => {
+  test("reports a stale save as out of date until the resource is opened afresh", async () => {
     expect.hasAssertions();
 
     trpcMsw.sheet.saveResourceContent.mutation(() => {
@@ -677,7 +698,8 @@ describe(useResourceStore, () => {
     });
     const resourceStore = useResourceStore();
     const { saveState } = storeToRefs(resourceStore);
-    const { readContent, readResource, saveContent } = resourceStore;
+    const { clearResource, readContent, saveContent } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
     await readContent(noop);
     saveContent(createDefaultSheetResource());
@@ -685,6 +707,12 @@ describe(useResourceStore, () => {
 
     expect(saveState.value).toBe(ResourceSaveState.Stale);
 
+    // A refresh of the open resource keeps its content, so the stale latch holds until the resource is opened afresh
+    await readResource();
+
+    expect(saveState.value).toBe(ResourceSaveState.Stale);
+
+    clearResource(resourceId);
     await readResource();
 
     expect(saveState.value).toBe(ResourceSaveState.Saved);
@@ -703,7 +731,8 @@ describe(useResourceStore, () => {
     });
     const resourceStore = useResourceStore();
     const { resource } = storeToRefs(resourceStore);
-    const { readResource, renameResource } = resourceStore;
+    const { renameResource } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
     renameResource(newName);
     renameResource(failingName);
@@ -718,7 +747,8 @@ describe(useResourceStore, () => {
 
     trpcMsw.sheet.deleteResource.mutation(() => createResource(resourceId));
     const resourceStore = useResourceStore();
-    const { deleteResource, readResource } = resourceStore;
+    const { deleteResource } = resourceStore;
+    const { readResource } = useReadOpenResource();
     const notificationStore = useNotificationStore();
     const { notifications } = storeToRefs(notificationStore);
     await readResource();
@@ -746,7 +776,8 @@ describe(useResourceStore, () => {
     });
     const resourceStore = useResourceStore();
     const { resource } = storeToRefs(resourceStore);
-    const { readResource, renameResource } = resourceStore;
+    const { renameResource } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
     renameResource(newName);
     setRouteId(otherResourceId);
@@ -774,7 +805,8 @@ describe(useResourceStore, () => {
       return createResource(resourceId);
     });
     const resourceStore = useResourceStore();
-    const { readResource, renameResource, updateResourceTags } = resourceStore;
+    const { renameResource, updateResourceTags } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
     renameResource(newName);
     updateResourceTags(tags);
@@ -795,7 +827,8 @@ describe(useResourceStore, () => {
     let isFailing = false;
     const resourceStore = setupNoteResource();
     const { publication: loadedPublication } = storeToRefs(resourceStore);
-    const { readResource, unpublishResource } = resourceStore;
+    const { unpublishResource } = resourceStore;
+    const { readResource } = useReadOpenResource();
     trpcMsw.resource.readResource.query(({ input }) => ({
       ...createResource(input.id, ResourceType.Note),
       publication,
@@ -823,7 +856,8 @@ describe(useResourceStore, () => {
     const { promise: publishHandled, resolve: resolvePublishHandled } = Promise.withResolvers<void>();
     const resourceStore = setupNoteResource();
     const { publication: loadedPublication } = storeToRefs(resourceStore);
-    const { publishResource, readResource, unpublishResource } = resourceStore;
+    const { publishResource, unpublishResource } = resourceStore;
+    const { readResource } = useReadOpenResource();
     trpcMsw.note.publishResource.mutation(() => {
       resolvePublishHandled();
       return publication;
@@ -850,7 +884,8 @@ describe(useResourceStore, () => {
     const { promise: navigatedPromise, resolve: resolveNavigated } = Promise.withResolvers<void>();
     const resourceStore = setupNoteResource();
     const { publication: loadedPublication } = storeToRefs(resourceStore);
-    const { publishResource, readResource } = resourceStore;
+    const { publishResource } = resourceStore;
+    const { readResource } = useReadOpenResource();
     trpcMsw.note.publishResource.mutation(async () => {
       await navigatedPromise;
       return publication;
@@ -873,7 +908,8 @@ describe(useResourceStore, () => {
 
     const readResourceContent = vi.fn<() => NoteResource>(() => ({ doc: EMPTY_NOTE_DOC }));
     const resourceStore = setupNoteResource();
-    const { readContent, readResource } = resourceStore;
+    const { readContent } = resourceStore;
+    const { readResource } = useReadOpenResource();
     trpcMsw.note.readResourceContent.query(readResourceContent);
     await readResource();
     const applyContent = vi.fn<(content?: unknown) => void>();
@@ -893,7 +929,7 @@ describe(useResourceStore, () => {
     const readResourcePublication = vi.fn<() => ResourcePublicationInResource>(() => publication);
     const resourceStore = setupNoteResource();
     const { publication: loadedPublication } = storeToRefs(resourceStore);
-    const { readResource } = resourceStore;
+    const { readResource } = useReadOpenResource();
     trpcMsw.resource.readResource.query(({ input }) => ({
       ...createResource(input.id, ResourceType.Note),
       publication,
@@ -912,7 +948,7 @@ describe(useResourceStore, () => {
 
     const resourceStore = useResourceStore();
     const { publication: loadedPublication } = storeToRefs(resourceStore);
-    const { readResource } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
 
     expect(loadedPublication.value).toBeUndefined();
@@ -923,7 +959,8 @@ describe(useResourceStore, () => {
 
     const resourceStore = setupNoteResource();
     const { publication: loadedPublication } = storeToRefs(resourceStore);
-    const { publishResource, readResource, unpublishResource } = resourceStore;
+    const { publishResource, unpublishResource } = resourceStore;
+    const { readResource } = useReadOpenResource();
     trpcMsw.note.publishResource.mutation(() => publication);
     trpcMsw.note.unpublishResource.mutation(() => createResource(resourceId, ResourceType.Note));
     await readResource();
@@ -946,7 +983,8 @@ describe(useResourceStore, () => {
 
     const resourceStore = setupNoteResource();
     const { publication: loadedPublication, resource } = storeToRefs(resourceStore);
-    const { clearResource, readResource } = resourceStore;
+    const { clearResource } = resourceStore;
+    const { readResource } = useReadOpenResource();
     trpcMsw.resource.readResource.query(({ input }) => ({
       ...createResource(input.id, ResourceType.Note),
       publication,
@@ -965,7 +1003,8 @@ describe(useResourceStore, () => {
 
     const resourceStore = useResourceStore();
     const { resource } = storeToRefs(resourceStore);
-    const { clearResource, readResource } = resourceStore;
+    const { clearResource } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
     setRouteId(otherResourceId);
     await readResource();
@@ -980,8 +1019,8 @@ describe(useResourceStore, () => {
     expect.hasAssertions();
 
     const resourceStore = useResourceStore();
-    const { isPending, resource } = storeToRefs(resourceStore);
-    const { readResource } = resourceStore;
+    const { resource } = storeToRefs(resourceStore);
+    const { isPending, readResource } = useReadOpenResource();
     setRouteId("");
     await readResource();
 
@@ -1027,7 +1066,7 @@ describe(useResourceStore, () => {
       const reload = vi.fn<(reloadedType: ResourceType) => void>();
       const unregisterReload = ResourceContentHookMap.Reload.register(reload);
       const resourceStore = useResourceStore();
-      await resourceStore.readResource();
+      await useReadOpenResource().readResource();
       await withFinalizerAsync(
         () => resourceStore.storeSaveResourceContent({ apiKeyName: "", contentVersion: 1 }),
         unregisterReload,
@@ -1044,7 +1083,7 @@ describe(useResourceStore, () => {
 
     const resourceStore = useResourceStore();
     const { heldSave, resource, saveState, unwrittenContentResourceId } = storeToRefs(resourceStore);
-    await resourceStore.readResource();
+    await useReadOpenResource().readResource();
     assert.exists(resource.value);
     const { contentVersion, id } = resource.value;
     const reload = vi.fn<(type: ResourceType) => void>();
@@ -1068,7 +1107,7 @@ describe(useResourceStore, () => {
 
     const resourceStore = useResourceStore();
     const { heldSave, resource, saveState, unwrittenContentResourceId } = storeToRefs(resourceStore);
-    await resourceStore.readResource();
+    await useReadOpenResource().readResource();
     assert.exists(resource.value);
     const { contentVersion, id } = resource.value;
     const reload = vi.fn<(type: ResourceType) => void>();
@@ -1090,7 +1129,7 @@ describe(useResourceStore, () => {
 
     const resourceStore = useResourceStore();
     const { heldSave, resource, unwrittenContentResourceId } = storeToRefs(resourceStore);
-    await resourceStore.readResource();
+    await useReadOpenResource().readResource();
     assert.exists(resource.value);
     const { contentVersion, id } = resource.value;
     let contentVersionKept = contentVersion;
@@ -1114,7 +1153,7 @@ describe(useResourceStore, () => {
     const apiKeyName = "agentKey";
     const resourceStore = useResourceStore();
     const { heldSave, resource, unwrittenContentResourceId } = storeToRefs(resourceStore);
-    await resourceStore.readResource();
+    await useReadOpenResource().readResource();
     assert.exists(resource.value);
     const { contentVersion, id } = resource.value;
     unwrittenContentResourceId.value = id;
@@ -1130,7 +1169,7 @@ describe(useResourceStore, () => {
 
     const resourceStore = useResourceStore();
     const { resource } = storeToRefs(resourceStore);
-    await resourceStore.readResource();
+    await useReadOpenResource().readResource();
     assert.exists(resource.value);
     const { contentVersion } = resource.value;
     const reload = vi.fn<(type: ResourceType) => void>();
@@ -1161,7 +1200,7 @@ describe(useResourceStore, () => {
     const { isUndoable } = storeToRefs(sheetHistoryStore);
     const resourceStore = useResourceStore();
     const { resource } = storeToRefs(resourceStore);
-    await resourceStore.readResource();
+    await useReadOpenResource().readResource();
     assert.exists(resource.value);
     const loadedContent = createLargeSheetResource(" ");
     const loadedContentBytes = new TextEncoder().encode(JSON.stringify(loadedContent));
@@ -1176,7 +1215,8 @@ describe(useResourceStore, () => {
     const { saveStagedResourceContent } = setupStagedSave();
     const saveResourceContentDelta = vi.fn<() => ResourceInResource>(() => createResource(resourceId));
     trpcMsw.sheet.saveResourceContentDelta.mutation(saveResourceContentDelta);
-    const { readContent, readResource, saveContent } = resourceStore;
+    const { readContent, saveContent } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
     await readContent(noop);
     assert.exists(resource.value);

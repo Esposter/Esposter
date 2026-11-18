@@ -2,8 +2,8 @@
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import ResourceWebpageSettings from "#src/components/Resource/Webpage/Settings.vue";
+import { useReadOpenResource } from "#src/composables/resource/useReadOpenResource";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
-import { useResourceStore } from "#src/store/resource/index";
 import { useWebpageEditorStore } from "#src/store/webpageEditor/index";
 import { ResourceType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
@@ -23,8 +23,7 @@ describe("resourceWebpageSettings", () => {
     }));
     trpcMsw.webpage.readResourceContent.query(() => new WebpageEditor());
     trpcMsw.webpage.readResourcePublication.query(() => undefined);
-    const resourceStore = useResourceStore();
-    await resourceStore.readResource();
+    await useReadOpenResource().readResource();
   });
 
   // The switch edits the content the autosave watches, so the owner's choice is the one the next save writes

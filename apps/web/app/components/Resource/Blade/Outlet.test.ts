@@ -33,7 +33,9 @@ describe("resourceBladeOutlet", () => {
   test("a blade's content is padded and scrolls", async () => {
     expect.hasAssertions();
 
-    const component = mount(ResourceBladeOutlet, { props: { activeBlade: ResourceBladeSlug.Data, resource } });
+    const component = mount(ResourceBladeOutlet, {
+      props: { activeBlade: ResourceBladeSlug.Data, isPending: false, resource },
+    });
     await flushPromises();
     const body = component.get(".ui-region-body");
 
@@ -45,7 +47,7 @@ describe("resourceBladeOutlet", () => {
   test("the editor blade is full-bleed and keeps no wrapper", async () => {
     expect.hasAssertions();
 
-    const component = mount(ResourceBladeOutlet, { props: { activeBlade: "editor", resource } });
+    const component = mount(ResourceBladeOutlet, { props: { activeBlade: "editor", isPending: false, resource } });
     await flushPromises();
 
     expect(component.find(".ui-region-body").exists()).toBe(false);

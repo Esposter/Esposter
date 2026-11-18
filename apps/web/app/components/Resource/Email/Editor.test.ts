@@ -6,12 +6,12 @@ import { DEVICE_WIDTH_MAP } from "#shared/services/pageBuilder/constants";
 import { TEST_THIRD_ID } from "#shared/services/pageBuilder/constants.test";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import ResourceEmailEditor from "#src/components/Resource/Email/Editor.vue";
+import { useReadOpenResource } from "#src/composables/resource/useReadOpenResource";
 import { useSession } from "#src/services/auth/authClient.test";
 import { TEST_ROOT_TEXT_ID, TEST_SECTION_ID, TEST_TEXT_CONTENT } from "#src/services/pageBuilder/constants.test";
 import { createEmailButtonSection } from "#src/services/pageBuilder/email/createEmailButtonSection.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
-import { useResourceStore } from "#src/store/resource/index";
 import { ResourceType } from "@esposter/db-schema";
 import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
@@ -35,8 +35,7 @@ describe("resourceEmailEditor", () => {
       () => new EmailEditor({ content: [], root: { props: { lang: "", title: "" } } }),
     );
     trpcMsw.email.readResourcePublication.query(() => undefined);
-    const resourceStore = useResourceStore();
-    const { readResource } = resourceStore;
+    const { readResource } = useReadOpenResource();
     // The page reads the row before any blade mounts, and a content load reads only the blob
     await readResource();
   });

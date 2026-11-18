@@ -12,6 +12,7 @@ import DashboardGridTile from "#src/components/Dashboard/Grid/Tile.vue";
 import DashboardVisualPreviewActionsMenu from "#src/components/Dashboard/Visual/Preview/ActionsMenu.vue";
 import DashboardVisualPreviewContainer from "#src/components/Dashboard/Visual/Preview/Container.vue";
 import UiConfirmDialog from "#src/components/Ui/ConfirmDialog.vue";
+import { useReadOpenResource } from "#src/composables/resource/useReadOpenResource";
 import {
   DASHBOARD_EDITOR_ROW_HEIGHT,
   DASHBOARD_GRID_COMMANDS,
@@ -22,7 +23,6 @@ import { stubApexChartEngine } from "#src/services/styled/stubApexChartEngine.te
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useDashboardStore } from "#src/store/dashboard/index";
 import { useVisualStore } from "#src/store/dashboard/visual";
-import { useResourceStore } from "#src/store/resource/index";
 import { useCommandStore } from "#src/store/ui/command";
 import { ResourceType } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
@@ -54,8 +54,7 @@ describe("dashboardEditorContent", () => {
   // The editor draws its visuals off the loaded dashboard, and the page reads the row before any blade mounts
   const mountEditor = async (visuals: Visual[]) => {
     trpcMsw.dashboard.readResourceContent.query(() => new Dashboard({ visuals }));
-    const resourceStore = useResourceStore();
-    const { readResource } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
     const dashboardStore = useDashboardStore();
     const { loadContent } = dashboardStore;

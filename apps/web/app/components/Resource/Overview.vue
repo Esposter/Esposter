@@ -14,6 +14,8 @@ import { SnapshotChannel } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 
 interface Props {
+  // Whether the page's read of the open resource is in flight, which disables Edit tags until it lands
+  isPending: boolean;
   resource: ResourceInResource;
 }
 
@@ -23,7 +25,7 @@ defineSlots<{ essentials?: () => VNode; summary?: () => VNode }>();
 const { resource } = defineProps<Props>();
 const getResourceRouter = useResourceRouter();
 const resourceStore = useResourceStore();
-const { isPending, publication } = storeToRefs(resourceStore);
+const { publication } = storeToRefs(resourceStore);
 const { updateResourceTags } = resourceStore;
 const isTagsEditorOpen = ref(false);
 const tagRows = computed(() => Object.entries(resource.tags));

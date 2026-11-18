@@ -2,8 +2,8 @@
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import ResourceCreateForm from "#src/components/Resource/Create/Form.vue";
 import ResourceWhiteboardEditor from "#src/components/Resource/Whiteboard/Editor/Index.vue";
+import { useReadOpenResource } from "#src/composables/resource/useReadOpenResource";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
-import { useResourceStore } from "#src/store/resource/index";
 import { useWhiteboardStore } from "#src/store/resource/whiteboard/index";
 import { ResourceType } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
@@ -44,8 +44,7 @@ describe("resourceCreateForm", () => {
       publication: null,
     }));
     trpcMsw.whiteboard.readResourceContent.query(() => undefined);
-    const resourceStore = useResourceStore();
-    const { readResource } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
     await mountSuspended(ResourceWhiteboardEditor);
     const whiteboardStore = useWhiteboardStore();

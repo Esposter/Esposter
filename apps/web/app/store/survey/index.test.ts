@@ -5,6 +5,7 @@ import type { SurveyDocument } from "vue-survey-engine-headless";
 
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
+import { useReadOpenResource } from "#src/composables/resource/useReadOpenResource";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useResourceStore } from "#src/store/resource/index";
 import { useSurveyStore } from "#src/store/survey/index";
@@ -48,8 +49,7 @@ describe(useSurveyStore, () => {
     trpcMsw.survey.readResourceContent.query(() => content);
     trpcMsw.survey.saveResourceContent.mutation(saveResourceContent);
     // The page reads the row before any blade mounts, and a content load reads only the blob
-    const resourceStore = useResourceStore();
-    const { readResource } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
   });
 
@@ -106,8 +106,7 @@ describe(useSurveyStore, () => {
     const { document: storedDocument } = storeToRefs(surveyStore);
     saveDocument(newDocument);
     Object.assign(useRouter().currentRoute.value.params, { id: otherResourceId });
-    const resourceStore = useResourceStore();
-    const { readResource } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
     await loadContent();
     await isSaveReached;
@@ -191,8 +190,7 @@ describe(useSurveyStore, () => {
     // A read issued in the same tick would share the held one's batch and settle with it
     await isReadReached;
     Object.assign(useRouter().currentRoute.value.params, { id: otherResourceId });
-    const resourceStore = useResourceStore();
-    const { readResource } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
     await loadContent();
     releaseRead();
@@ -223,7 +221,8 @@ describe(useSurveyStore, () => {
     // A read issued in the same tick would share the held one's batch and settle with it
     await isReadReached;
     const resourceStore = useResourceStore();
-    const { clearResource, readResource } = resourceStore;
+    const { clearResource } = resourceStore;
+    const { readResource } = useReadOpenResource();
     clearResource(resourceId);
     await readResource();
     await loadContent();
@@ -282,7 +281,8 @@ describe(useSurveyStore, () => {
     const { settings } = storeToRefs(surveyStore);
     saveDocument(newDocument);
     const resourceStore = useResourceStore();
-    const { clearResource, readResource } = resourceStore;
+    const { clearResource } = resourceStore;
+    const { readResource } = useReadOpenResource();
     clearResource(resourceId);
     await readResource();
     await loadContent();

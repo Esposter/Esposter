@@ -2,10 +2,10 @@
 import type { BlueprintResource } from "#shared/models/resource/blueprint/BlueprintResource";
 
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
+import { useReadOpenResource } from "#src/composables/resource/useReadOpenResource";
 import { createEmptyBlueprint } from "#src/services/resource/blueprint/createEmptyBlueprint";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useBlueprintStore } from "#src/store/resource/blueprint/index";
-import { useResourceStore } from "#src/store/resource/index";
 import { ResourceType } from "@esposter/db-schema";
 import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -37,8 +37,7 @@ describe(useBlueprintStore, () => {
     }));
     trpcMsw.blueprint.readResourceContent.query(() => createEmptyBlueprint());
     // The page reads the row before any blade mounts, and a content load reads only the blob
-    const resourceStore = useResourceStore();
-    const { readResource } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
   });
 

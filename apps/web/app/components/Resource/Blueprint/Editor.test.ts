@@ -4,12 +4,12 @@ import type { UiMenuItem } from "#src/models/ui/UiMenuItem";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import ResourceBlueprintEditor from "#src/components/Resource/Blueprint/Editor.vue";
 import UiSelect from "#src/components/Ui/Select/Index.vue";
+import { useReadOpenResource } from "#src/composables/resource/useReadOpenResource";
 import { showOpenFilePicker } from "#src/services/file/showOpenFilePicker";
 import { createEmptyBlueprint } from "#src/services/resource/blueprint/createEmptyBlueprint";
 import { PortableFormatMap } from "#src/services/resource/PortableFormatMap";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useBlueprintStore } from "#src/store/resource/blueprint/index";
-import { useResourceStore } from "#src/store/resource/index";
 import { ResourceType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
@@ -32,8 +32,7 @@ describe("resourceBlueprintEditor", () => {
     }));
     trpcMsw.blueprint.readResourceContent.query(() => createEmptyBlueprint());
     trpcMsw.resource.saveResourceRevision.mutation(() => 1);
-    const resourceStore = useResourceStore();
-    const { readResource } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
   });
 

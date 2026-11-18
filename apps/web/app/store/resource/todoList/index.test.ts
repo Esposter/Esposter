@@ -5,6 +5,7 @@ import type { ResourceInResource } from "@esposter/db-schema";
 import { RecurrenceUnit } from "#shared/models/resource/todoList/RecurrenceUnit";
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
+import { useReadOpenResource } from "#src/composables/resource/useReadOpenResource";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useResourceStore } from "#src/store/resource/index";
 import { useTodoListStore } from "#src/store/resource/todoList/index";
@@ -41,8 +42,7 @@ describe(useTodoListStore, () => {
     trpcMsw.todoList.readResourceContent.query(() => content);
     trpcMsw.todoList.saveResourceContent.mutation(saveResourceContent);
     // The page reads the row before any blade mounts, and a content load reads only the blob
-    const resourceStore = useResourceStore();
-    const { readResource } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
   });
 

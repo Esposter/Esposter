@@ -9,11 +9,11 @@ import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregatio
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import DashboardVisualPreviewActionsMenu from "#src/components/Dashboard/Visual/Preview/ActionsMenu.vue";
+import { useReadOpenResource } from "#src/composables/resource/useReadOpenResource";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useDashboardDialogStore } from "#src/store/dashboard/dialog";
 import { useDashboardStore } from "#src/store/dashboard/index";
 import { useVisualStore } from "#src/store/dashboard/visual";
-import { useResourceStore } from "#src/store/resource/index";
 import { ResourceType } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
@@ -56,8 +56,7 @@ describe("dashboardVisualPreviewActionsMenu", () => {
     trpcMsw.dashboard.saveResourceContent.mutation(() =>
       createResourceListItem({ contentVersion: 1, id: resourceId, type: ResourceType.Dashboard }),
     );
-    const resourceStore = useResourceStore();
-    const { readResource } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
     const dashboardStore = useDashboardStore();
     const { loadContent } = dashboardStore;

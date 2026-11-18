@@ -9,6 +9,7 @@ import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { TEST_URL } from "#shared/services/pageBuilder/constants.test";
 import { createButton } from "#shared/services/pageBuilder/createButton.test";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
+import { useReadOpenResource } from "#src/composables/resource/useReadOpenResource";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useEmailEditorStore } from "#src/store/emailEditor/index";
 import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
@@ -93,8 +94,7 @@ describe(useVersionHistoryStore, () => {
     trpcMsw.webpage.readResourcePublication.query(() => undefined);
     trpcMsw.resource.restoreSnapshotVersion.mutation(() => ({ resource: webpage, undoRevisionVersion: undefined }));
     trpcMsw.resource.readSnapshotHistory.query(() => []);
-    const resourceStore = useResourceStore();
-    await resourceStore.readResource();
+    await useReadOpenResource().readResource();
     const webpageEditorStore = useWebpageEditorStore();
     await webpageEditorStore.loadContent();
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
@@ -132,8 +132,7 @@ describe(useVersionHistoryStore, () => {
     trpcMsw.email.readResourcePublication.query(() => undefined);
     trpcMsw.resource.restoreSnapshotVersion.mutation(() => ({ resource: email, undoRevisionVersion: undefined }));
     trpcMsw.resource.readSnapshotHistory.query(() => []);
-    const resourceStore = useResourceStore();
-    await resourceStore.readResource();
+    await useReadOpenResource().readResource();
     const emailEditorStore = useEmailEditorStore();
     await emailEditorStore.loadContent();
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();

@@ -11,14 +11,16 @@ import { getResourceBladeItems } from "#src/services/resource/getResourceBladeIt
 import { useResourceStore } from "#src/store/resource/index";
 
 interface Props {
+  // The page's read of the open resource, which Refresh runs, and whether that read is in flight
+  isPending: boolean;
+  read: () => void;
   resource: ResourceInResource;
 }
 
-const { resource } = defineProps<Props>();
+const { isPending, read, resource } = defineProps<Props>();
 const resourceStore = useResourceStore();
-const { isDuplicatePending, isPending, isPublicationPending, publication } = storeToRefs(resourceStore);
-const { deleteResource, duplicateResource, publishResource, readResource, renameResource, unpublishResource } =
-  resourceStore;
+const { isDuplicatePending, isPublicationPending, publication } = storeToRefs(resourceStore);
+const { deleteResource, duplicateResource, publishResource, renameResource, unpublishResource } = resourceStore;
 const { getContextMenuProps } = useContextMenu();
 const isPublishable = computed(() => checkHasCapability(resource.type, "publishable"));
 // The dialogs mount only while open so their fields start from the current resource every time
@@ -54,7 +56,7 @@ const items = computed<Item[]>(() =>
       },
       duplicate: duplicateResource,
       exportDatasetCsv: () => exportDatasetCsv(resource),
-      read: readResource,
+      read,
       rename: () => {
         isRenameOpen.value = true;
       },
@@ -64,7 +66,7 @@ const items = computed<Item[]>(() =>
     exportFormats: exportFormats.value,
     importFormats: importFormats.value,
     isDuplicatePending: isDuplicatePending.value,
-    isPending: isPending.value,
+    isPending,
     isPublicationPending: isPublicationPending.value,
     isPublished: isPublishable.value && Boolean(publication.value),
   }),

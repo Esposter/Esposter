@@ -8,10 +8,10 @@ import { MAX_VISUAL_GROUP_DEPTH } from "#shared/services/dashboard/constants";
 import { createGroupChain } from "#shared/services/dashboard/createGroupChain.test";
 import { listVisuals } from "#shared/services/dashboard/listVisuals";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
+import { useReadOpenResource } from "#src/composables/resource/useReadOpenResource";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useDashboardStore } from "#src/store/dashboard/index";
 import { useVisualStore } from "#src/store/dashboard/visual";
-import { useResourceStore } from "#src/store/resource/index";
 import { ResourceType } from "@esposter/db-schema";
 import { takeOne, toRawDeep } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -49,8 +49,7 @@ describe(useVisualStore, () => {
     trpcMsw.dashboard.readResourcePublication.query(() => undefined);
     trpcMsw.dashboard.saveResourceContent.mutation(() => createResource(1));
     // The page reads the row before any blade mounts, and a content load reads only the blob
-    const resourceStore = useResourceStore();
-    const { readResource } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
   });
 
@@ -217,8 +216,7 @@ describe(useVisualStore, () => {
     const { visuals } = storeToRefs(visualStore);
     deleteVisual({ id: takeOne(visuals.value).id });
     Object.assign(useRouter().currentRoute.value.params, { id: otherResourceId });
-    const resourceStore = useResourceStore();
-    const { readResource } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
     const dashboardStore = useDashboardStore();
     const { loadContent } = dashboardStore;

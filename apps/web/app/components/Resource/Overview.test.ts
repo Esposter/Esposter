@@ -3,7 +3,6 @@ import { createResourceListItem } from "#shared/services/resource/list/createRes
 import { SnapshotChannelDefinitionMap } from "#shared/services/resource/SnapshotChannelDefinitionMap";
 import ResourceOverview from "#src/components/Resource/Overview.vue";
 import UiSkeleton from "#src/components/Ui/Skeleton.vue";
-import { useResourceStore } from "#src/store/resource/index";
 import { SnapshotChannel } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
@@ -17,10 +16,10 @@ describe("resourceOverview", () => {
   test("keeps the essentials on screen while the resource is re-read", async () => {
     expect.hasAssertions();
 
-    const resourceStore = useResourceStore();
-    const { isPending } = storeToRefs(resourceStore);
-    isPending.value = true;
-    const wrapper = await mountSuspended(ResourceOverview, { global, props: { resource: createResourceListItem() } });
+    const wrapper = await mountSuspended(ResourceOverview, {
+      global,
+      props: { isPending: true, resource: createResourceListItem() },
+    });
 
     expect(wrapper.findComponent(UiSkeleton).exists()).toBe(false);
   });
@@ -37,7 +36,7 @@ describe("resourceOverview", () => {
     const revisionTakenAt = new Date(Date.now() - maxAgeMs + direction * maxAgeMs * 0.5);
     const wrapper = await mountSuspended(ResourceOverview, {
       global,
-      props: { resource: createResourceListItem({ revisionTakenAt, revisionVersion: 1 }) },
+      props: { isPending: false, resource: createResourceListItem({ revisionTakenAt, revisionVersion: 1 }) },
     });
 
     expect(wrapper.text().includes("Restore point available")).toBe(isAvailable);

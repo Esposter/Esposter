@@ -8,6 +8,7 @@ import { getResourceBladePath } from "#src/services/resource/getResourceBladePat
 import { useSurveyStore } from "#src/store/survey/index";
 
 interface Props {
+  isPending: boolean;
   resource: ResourceInResource;
 }
 
@@ -29,7 +30,7 @@ onMounted(() => loadContent());
 </script>
 
 <template>
-  <ResourceOverview :resource>
+  <ResourceOverview :is-pending :resource>
     <template #essentials>
       <template v-if="responseCount">
         <span text-muted>Responses</span>

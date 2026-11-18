@@ -5,6 +5,8 @@ import { ResourceDialogsComponentMap } from "#src/services/resource/ResourceDial
 
 interface Props {
   activeBlade: string;
+  // Whether the page's read of the open resource is in flight, passed on to the blade's overview
+  isPending: boolean;
   resource: ResourceInResource;
 }
 // The resource itself is threaded because the page's own guard is what makes it non-optional; everything else
@@ -36,7 +38,7 @@ useResourceSaveSubscribable();
             :resource
             :snapshot-version-id="previewSnapshotVersionId"
           />
-          <ResourceBladeOutlet v-else :active-blade :resource />
+          <ResourceBladeOutlet v-else :active-blade :is-pending :resource />
         </div>
       </div>
       <ResourceVersionHistory v-if="isVersionHistoryOpen" :resource />

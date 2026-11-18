@@ -2,13 +2,13 @@
 import { MimeType } from "#shared/models/file/MimeType";
 import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
+import { useReadOpenResource } from "#src/composables/resource/useReadOpenResource";
 import { showOpenFilePicker } from "#src/services/file/showOpenFilePicker";
 import { createBlueprintPortableFormat } from "#src/services/resource/createBlueprintPortableFormat";
 import { PortableFormatMap } from "#src/services/resource/PortableFormatMap";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useAlertStore } from "#src/store/alert";
 import { useBlueprintStore } from "#src/store/resource/blueprint/index";
-import { useResourceStore } from "#src/store/resource/index";
 import { ResourceType } from "@esposter/db-schema";
 import { downloadFile } from "@esposter/shared";
 import { flushPromises } from "@vue/test-utils";
@@ -42,8 +42,7 @@ describe(createBlueprintPortableFormat, () => {
   test("exporting downloads the saved manifest", async () => {
     expect.hasAssertions();
 
-    const resourceStore = useResourceStore();
-    const { readResource } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
     const [manifestFormat] = PortableFormatMap[ResourceType.Blueprint];
     assert.exists(manifestFormat?.export);
@@ -56,8 +55,7 @@ describe(createBlueprintPortableFormat, () => {
   test("unsaved editor text is not exported", async () => {
     expect.hasAssertions();
 
-    const resourceStore = useResourceStore();
-    const { readResource } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
     const blueprintStore = useBlueprintStore();
     const { loadContent } = blueprintStore;
@@ -76,8 +74,7 @@ describe(createBlueprintPortableFormat, () => {
   test("an invalid manifest file is refused and changes nothing", async () => {
     expect.hasAssertions();
 
-    const resourceStore = useResourceStore();
-    const { readResource } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
     const invalidFile = new File(
       [JSON.stringify({ entries: [{ key: "notes", name: "Kickoff", type: "Unknown" }] })],
@@ -101,8 +98,7 @@ describe(createBlueprintPortableFormat, () => {
   test("a manifest file over the limit is refused before it is read", async () => {
     expect.hasAssertions();
 
-    const resourceStore = useResourceStore();
-    const { readResource } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
     const oversizedFile = new File([new Uint8Array(MAX_FILE_REQUEST_SIZE + 1)], "Launch.json");
     const readFile = vi.spyOn(oversizedFile, "text");
@@ -121,8 +117,7 @@ describe(createBlueprintPortableFormat, () => {
   test("a manifest exported and imported again is unchanged", async () => {
     expect.hasAssertions();
 
-    const resourceStore = useResourceStore();
-    const { readResource } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
     const [manifestFormat] = PortableFormatMap[ResourceType.Blueprint];
     assert.exists(manifestFormat?.export);

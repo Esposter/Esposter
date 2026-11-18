@@ -14,6 +14,7 @@ import EditorShell from "#src/components/Editor/Shell.vue";
 import ResourceDashboardEditor from "#src/components/Resource/Dashboard/Editor.vue";
 import UiRadioGroup from "#src/components/Ui/RadioGroup.vue";
 import UiTextField from "#src/components/Ui/TextField.vue";
+import { useReadOpenResource } from "#src/composables/resource/useReadOpenResource";
 import { DashboardEditorRegion } from "#src/models/dashboard/DashboardEditorRegion";
 import { DashboardSelectionKind } from "#src/models/dashboard/DashboardSelectionKind";
 import { useSession } from "#src/services/auth/authClient.test";
@@ -25,7 +26,6 @@ import { stubApexChartEngine } from "#src/services/styled/stubApexChartEngine.te
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useDashboardStore } from "#src/store/dashboard/index";
 import { useVisualStore } from "#src/store/dashboard/visual";
-import { useResourceStore } from "#src/store/resource/index";
 import { ResourceType } from "@esposter/db-schema";
 import { takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
@@ -93,8 +93,7 @@ describe("resourceDashboardEditor", () => {
   // The editor mounts over the content its page has read, as the page reads the row before any blade mounts
   const mountEditor = async (visuals: Visual[]) => {
     trpcMsw.dashboard.readResourceContent.query(() => new Dashboard({ visuals }));
-    const resourceStore = useResourceStore();
-    const { readResource } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
     const wrapper = await mountSuspended(ResourceDashboardEditor);
     await flushPromises();

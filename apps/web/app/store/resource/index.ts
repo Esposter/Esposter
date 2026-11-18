@@ -29,7 +29,7 @@ import { getRequestBodyByteLength } from "#src/services/trpc/getRequestBodyByteL
 import { useNotificationStore } from "#src/store/notification";
 import { getRouteParam } from "#src/util/router/getRouteParam";
 import { NotificationSeverity } from "@esposter/db-schema";
-import { getSynchronizedFunction, noop, RoutePath, toRawDeep, withFinalizerAsync } from "@esposter/shared";
+import { getSynchronizedFunction, noop, RoutePath, toRawDeep } from "@esposter/shared";
 
 // The resource the blade has open — its row, its publication and the bookkeeping its content saves need.
 // One resource is open at a time, so the page shell, the toolbar and whichever content store the type's editor
@@ -65,7 +65,6 @@ export const useResourceStore = defineStore("resource", () => {
   // And a switch to another reads that one's instead of carrying this one's across
   const currentResourceId = computed(() => resource.value?.id ?? "");
   const publication = ref<ResourcePublicationInResource>();
-  const isPending = ref(false);
   // A write is keyed by the resource it targets, not by whichever one the blade has open when it settles, so
   // Everything it applies — an optimistic value, a rollback, the server's row — lands only while that resource
   // Is still the loaded one. Applied to another, it would carry the first resource's fields into the second
@@ -79,7 +78,7 @@ export const useResourceStore = defineStore("resource", () => {
   };
   // The resource the in-memory content belongs to. A content store fills its own ref from readContent, so that
   // Read is the moment the content in hand becomes this resource's — and it stays the previous resource's for
-  // The whole of readResource() plus the await that follows it
+  // The whole of a read plus the await that follows it
   let contentResourceId = "";
   // Which opening of the resource the state belongs to. Closing a resource and reopening it loads the same id,
   // So an id cannot tell a content read or a save the first opening issued from one of the reopened blade's —
@@ -102,7 +101,7 @@ export const useResourceStore = defineStore("resource", () => {
   let contentBaseline: ContentBaseline | undefined;
   // A stale contentVersion can only be cured by reloading, so once the server rejects a save every
   // Retry is a guaranteed rejection — the flag turns saveContent() into a no-op (and the warning into a
-  // One-shot) until the next readResource() reads a fresh version. A ref because the toolbar renders it:
+  // One-shot) until the next read of the open resource reads a fresh version. A ref because the toolbar renders it:
   // "out of date" is the one save state the owner has to act on
   const isContentStale = ref(false);
   // Another device's save held behind an unwritten edit, until the person answers the notice. The stale latch holds
@@ -138,38 +137,43 @@ export const useResourceStore = defineStore("resource", () => {
     else if (isSaveContentFailed.value) return ResourceSaveState.Failed;
     else return ResourceSaveState.Saved;
   });
-  const readResource = async () => {
-    // Resolved per call rather than captured: the store outlives the page, so the loader always reads whichever
-    // Resource the route names now
+  // The block a row lands in, whichever read fetched it. A row that is not the one open starts a new opening, and takes
+  // The content state with it: a fresh row carries the current contentVersion, so saving is meaningful again, and what it
+  // Carries is by definition what is written
+  const assignResource = (newResource: ResourceInResource, newPublication: null | ResourcePublicationInResource) => {
+    if (!getActiveResource(newResource.id)) opening = Symbol("opening");
+    resource.value = newResource;
+    publication.value = newPublication ?? undefined;
+    isContentStale.value = false;
+    heldSave.value = undefined;
+    isSaveContentFailed.value = false;
+  };
+  // The page's read lands here. A refresh of the resource already open takes every field but the contentVersion, and
+  // Leaves the content state alone: a content save publishes the topic this row is read under, so a refresh that moved
+  // The version would find it already held when another device's save event arrives, skip adopting that save, and let the
+  // Next autosave write over it. A reset would also drop the notice that save is held behind
+  const applyResource = (newResource: ResourceInResource, newPublication: null | ResourcePublicationInResource) => {
+    const activeResource = getActiveResource(newResource.id);
+    if (!activeResource) {
+      assignResource(newResource, newPublication);
+      return;
+    }
+
+    publication.value = newPublication ?? undefined;
+    mergeResource(newResource.id, { ...newResource, contentVersion: activeResource.contentVersion });
+  };
+  // A content reload follows a re-read of the row, so the row it takes is the version the reloaded content is read at
+  const reloadResource = async () => {
+    // A route with no resource segment names nothing to read, and the empty sentinel would reach the server as a uuid
+    // That fails validation
     const id = getRouteParam(currentRoute.value.params, "id");
-    // A route with no resource segment — a list view, or one this read raced a navigation to — names nothing to
-    // Read, and the empty sentinel would reach the server as a uuid that fails validation
     if (!checkIsUuidV7(id)) return;
 
-    isPending.value = true;
-    await withFinalizerAsync(
-      async () => {
-        // The publication rides the resource read rather than following it: a second round trip only re-resolved
-        // The ownership this one already did. `null` is the read's answer for a resource that has none — an
-        // Unpublished one, or a type that cannot publish at all — where `undefined` here still means unread
-        const { publication: newPublication, ...newResource } = await $trpc.resource.readResource.query({ id });
-        // Reads for two resources are not one target, so a navigation away can let the earlier one land last —
-        // Applied then, the page for the resource on screen would load, edit and save the one it left
-        if (getRouteParam(currentRoute.value.params, "id") !== id) return;
+    const { publication: newPublication, ...newResource } = await $trpc.resource.readResource.query({ id });
+    // Reads for two resources are not one target, so a navigation away can let the earlier one land last
+    if (getRouteParam(currentRoute.value.params, "id") !== id) return;
 
-        if (!getActiveResource(id)) opening = Symbol("opening");
-        resource.value = newResource;
-        publication.value = newPublication ?? undefined;
-        // A fresh read carries the current contentVersion, so saving is meaningful again, and the row it
-        // Carries is by definition what is written
-        isContentStale.value = false;
-        heldSave.value = undefined;
-        isSaveContentFailed.value = false;
-      },
-      () => {
-        isPending.value = false;
-      },
-    );
+    assignResource(newResource, newPublication);
   };
   // The page that opened this resource takes its state back down when it closes. A keyed page swap mounts the
   // Next resource's page before this one unmounts, so the teardown fires only while the state is still the one
@@ -196,7 +200,7 @@ export const useResourceStore = defineStore("resource", () => {
   // Hooks together, so a third-party editor adopting the store's content cannot be a peer of the re-read
   // That fills it (openspec/specs/architecture/third-party-document-adapters/design.md)
   const reloadResourceContent = async () => {
-    await readResource();
+    await reloadResource();
     if (!resource.value) return;
 
     await ResourceContentHookMap.Reload.run(resource.value.type);
@@ -297,7 +301,7 @@ export const useResourceStore = defineStore("resource", () => {
   // None, since the reader's text stays and the state reads Not saved
   const saveContent = (content: ResourceContent<ResourceType>, rollback?: () => void) => {
     const resourceValue = resource.value;
-    // Only content read for this resource is written. A debounced autosave can fire after readResource() swapped
+    // Only content read for this resource is written. A debounced autosave can fire after a read swapped
     // In another resource but before the content store has re-seeded its content ref, and the content in hand is
     // Then still the previous resource's; a store that never read at all holds its empty default. Either write
     // Would replace this resource's document with one that is not its own, under this one's id and version
@@ -574,6 +578,7 @@ export const useResourceStore = defineStore("resource", () => {
     });
   };
   return {
+    applyResource,
     checkIsContentRead,
     clearResource,
     currentResourceId,
@@ -582,14 +587,13 @@ export const useResourceStore = defineStore("resource", () => {
     getOpening,
     heldSave,
     isDuplicatePending,
-    isPending,
     isPublicationPending,
     keepUnwrittenContent,
     publication,
     publishResource,
     readContent,
-    readResource,
     refuseSaveContent,
+    reloadResource,
     reloadResourceContent,
     renameResource,
     resource,

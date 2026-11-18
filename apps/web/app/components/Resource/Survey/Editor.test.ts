@@ -5,6 +5,7 @@ import type { SurveyDocument } from "vue-survey-engine-headless";
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import ResourceSurveyEditor from "#src/components/Resource/Survey/Editor.vue";
+import { useReadOpenResource } from "#src/composables/resource/useReadOpenResource";
 import { useSurveyCreatorCommands } from "#src/composables/survey/useSurveyCreatorCommands";
 import { EditorFindingSeverity } from "#src/models/editor/EditorFindingSeverity";
 import { ResourceSaveState } from "#src/models/resource/ResourceSaveState";
@@ -60,8 +61,7 @@ describe("resourceSurveyEditor", () => {
       settings: surveySettingsSchema.parse({}),
     }));
     trpcMsw.survey.saveResourceContent.mutation(saveResourceContent);
-    const resourceStore = useResourceStore();
-    const { readResource } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
   });
 

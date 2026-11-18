@@ -2,9 +2,9 @@
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import ResourceProgramSetup from "#src/components/Resource/Program/Setup.vue";
+import { useReadOpenResource } from "#src/composables/resource/useReadOpenResource";
 import { useSession } from "#src/services/auth/authClient.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
-import { useResourceStore } from "#src/store/resource/index";
 import { createEmptyPage, ResourceType, SurveyResponseMode } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
@@ -33,8 +33,7 @@ describe("resourceProgramSetup", () => {
       document: createSurveyDocument(),
       settings: surveySettingsSchema.parse({ responseMode: SurveyResponseMode.Anonymous }),
     }));
-    const resourceStore = useResourceStore();
-    await resourceStore.readResource();
+    await useReadOpenResource().readResource();
   });
 
   test("warns under the survey selector when its responses cannot be matched to participants", async () => {

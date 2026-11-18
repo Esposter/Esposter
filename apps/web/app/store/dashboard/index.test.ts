@@ -1,9 +1,9 @@
 // @vitest-environment nuxt
 import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
+import { useReadOpenResource } from "#src/composables/resource/useReadOpenResource";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useDashboardStore } from "#src/store/dashboard/index";
-import { useResourceStore } from "#src/store/resource/index";
 import { ResourceType } from "@esposter/db-schema";
 import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -23,8 +23,7 @@ describe(useDashboardStore, () => {
     trpcMsw.dashboard.readResourceContent.query(() => new Dashboard());
     trpcMsw.dashboard.readResourcePublication.query(() => undefined);
     trpcMsw.dashboard.saveResourceContent.mutation(() => createResource(1));
-    const resourceStore = useResourceStore();
-    const { readResource } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
   });
 

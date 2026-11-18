@@ -5,11 +5,11 @@ import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType"
 import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
 import { TEST_ID, TEST_LABEL, TEST_OTHER_ID, TEST_THIRD_ID } from "#shared/services/pageBuilder/constants.test";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
+import { useReadOpenResource } from "#src/composables/resource/useReadOpenResource";
 import { emailKind } from "#src/services/pageBuilder/emailKind";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useEmailEditorStore } from "#src/store/emailEditor/index";
 import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
-import { useResourceStore } from "#src/store/resource/index";
 import { ResourceType } from "@esposter/db-schema";
 import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -40,8 +40,7 @@ describe(useEmailEditorStore, () => {
       return saveResourceContent();
     });
     // The page reads the row before any blade mounts, and a content load reads only the blob
-    const resourceStore = useResourceStore();
-    const { readResource } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
   });
 

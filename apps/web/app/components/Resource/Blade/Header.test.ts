@@ -4,6 +4,7 @@ import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinit
 import ResourceBladeHeader from "#src/components/Resource/Blade/Header.vue";
 import { useCommandStore } from "#src/store/ui/command";
 import { ResourceType } from "@esposter/db-schema";
+import { noop } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 
@@ -14,7 +15,7 @@ describe("resourceBladeHeader", () => {
 
     const group = ResourceDefinitionMap[type].title;
     const component = await mountSuspended(ResourceBladeHeader, {
-      props: { resource: createResourceListItem({ type }) },
+      props: { isPending: false, read: noop, resource: createResourceListItem({ type }) },
     });
 
     expect(component.find('[aria-label="Ask Claude"]').exists()).toBe(true);

@@ -12,13 +12,13 @@ import { TEST_ID, TEST_LABEL, TEST_OTHER_ID, TEST_ROOT, TEST_URL } from "#shared
 import { createTestTextNode, TEST_GREY_RGB_VALUE } from "#shared/services/pageBuilder/critique/constants.test";
 import { critiqueWebpage } from "#shared/services/pageBuilder/critique/critiqueWebpage";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
+import { useReadOpenResource } from "#src/composables/resource/useReadOpenResource";
 import { EditorFindingSeverity } from "#src/models/editor/EditorFindingSeverity";
 import { getCritiqueEditorFinding } from "#src/services/pageBuilder/getCritiqueEditorFinding";
 import { webpageKind } from "#src/services/pageBuilder/webpageKind";
 import { readBrowserColor } from "#src/services/shared/readBrowserColor";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
-import { useResourceStore } from "#src/store/resource/index";
 import { useWebpageEditorStore } from "#src/store/webpageEditor/index";
 import { ResourceType } from "@esposter/db-schema";
 import { flushPromises } from "@vue/test-utils";
@@ -47,8 +47,7 @@ describe(useWebpageEditorStore, () => {
       return saveResourceContent();
     });
     // The page reads the row before any blade mounts, and a content load reads only the blob
-    const resourceStore = useResourceStore();
-    const { readResource } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
   });
 

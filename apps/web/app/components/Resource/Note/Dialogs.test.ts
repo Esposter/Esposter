@@ -4,8 +4,8 @@ import type { JSONContent } from "@tiptap/core";
 import { EMPTY_NOTE_DOC } from "#shared/services/resource/constants";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import ResourceNoteDialogs from "#src/components/Resource/Note/Dialogs.vue";
+import { useReadOpenResource } from "#src/composables/resource/useReadOpenResource";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
-import { useResourceStore } from "#src/store/resource/index";
 import { useNoteStore } from "#src/store/resource/note/index";
 import { useNotePortableDialogStore } from "#src/store/resource/note/portableDialog";
 import { ResourceType } from "@esposter/db-schema";
@@ -36,8 +36,7 @@ describe("resourceNoteDialogs", () => {
   test("an import previews the content it will replace", async () => {
     expect.hasAssertions();
 
-    const resourceStore = useResourceStore();
-    await resourceStore.readResource();
+    await useReadOpenResource().readResource();
     const noteStore = useNoteStore();
     await noteStore.loadContent();
     const notePortableDialogStore = useNotePortableDialogStore();
@@ -54,8 +53,7 @@ describe("resourceNoteDialogs", () => {
   test("an import's preview sits in the body and its actions in the footer", async () => {
     expect.hasAssertions();
 
-    const resourceStore = useResourceStore();
-    await resourceStore.readResource();
+    await useReadOpenResource().readResource();
     const noteStore = useNoteStore();
     await noteStore.loadContent();
     const notePortableDialogStore = useNotePortableDialogStore();
@@ -73,8 +71,7 @@ describe("resourceNoteDialogs", () => {
   test("cancelling an import keeps the note as it was", async () => {
     expect.hasAssertions();
 
-    const resourceStore = useResourceStore();
-    await resourceStore.readResource();
+    await useReadOpenResource().readResource();
     const noteStore = useNoteStore();
     await noteStore.loadContent();
     const notePortableDialogStore = useNotePortableDialogStore();
@@ -109,8 +106,7 @@ describe("resourceNoteDialogs", () => {
       return createResourceListItem({ id: resourceId, type: ResourceType.Note });
     });
     trpcMsw.resource.readSnapshotHistory.query(() => []);
-    const resourceStore = useResourceStore();
-    await resourceStore.readResource();
+    await useReadOpenResource().readResource();
     const noteStore = useNoteStore();
     await noteStore.loadContent();
     const notePortableDialogStore = useNotePortableDialogStore();

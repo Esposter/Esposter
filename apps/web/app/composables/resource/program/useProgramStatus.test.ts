@@ -5,8 +5,8 @@ import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType"
 import { ProgramInviteScope } from "#shared/models/resource/program/ProgramInviteScope";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { useProgramStatus } from "#src/composables/resource/program/useProgramStatus";
+import { useReadOpenResource } from "#src/composables/resource/useReadOpenResource";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
-import { useResourceStore } from "#src/store/resource/index";
 import { useProgramStore } from "#src/store/resource/program/index";
 import { ResourceType } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
@@ -41,8 +41,7 @@ describe(useProgramStatus, () => {
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
     Object.assign(useRouter().currentRoute.value.params, { id: resource.id });
-    const resourceStore = useResourceStore();
-    const { readResource } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
     const programStore = useProgramStore();
     const { loadContent } = programStore;

@@ -5,8 +5,8 @@ import type { ResourceInResource } from "@esposter/db-schema";
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import ResourceTodoListItems from "#src/components/Resource/TodoList/Items.vue";
+import { useReadOpenResource } from "#src/composables/resource/useReadOpenResource";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
-import { useResourceStore } from "#src/store/resource/index";
 import { ResourceType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
@@ -31,8 +31,7 @@ describe("resourceTodoListItems", () => {
     const content: TodoListResource = { items: [new TodoListItem({ name: itemName })] };
     trpcMsw.resource.readResource.query(() => ({ ...createResource(), publication: null }));
     trpcMsw.todoList.readResourceContent.query(() => content);
-    const resourceStore = useResourceStore();
-    const { readResource } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
   });
 

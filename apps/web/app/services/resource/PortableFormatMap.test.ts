@@ -6,13 +6,13 @@ import { emailBodyChildrenSchema } from "#shared/services/pageBuilder/email/emai
 import { emailRegistry } from "#shared/services/pageBuilder/email/emailRegistry";
 import { noteRichText } from "#shared/services/pageBuilder/email/noteRichText";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
+import { useReadOpenResource } from "#src/composables/resource/useReadOpenResource";
 import { emailKind } from "#src/services/pageBuilder/emailKind";
 import { PortableFormatMap } from "#src/services/resource/PortableFormatMap";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useAlertStore } from "#src/store/alert";
 import { useEmailEditorStore } from "#src/store/emailEditor/index";
 import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
-import { useResourceStore } from "#src/store/resource/index";
 import { ResourceType } from "@esposter/db-schema";
 import { downloadFile, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -55,8 +55,7 @@ describe("portableFormatMap", () => {
     );
     trpcMsw.email.readResourcePublication.query(() => undefined);
     trpcMsw.email.saveResourceContent.mutation(() => createResource(1));
-    const resourceStore = useResourceStore();
-    const { readResource } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
     const emailEditorStore = useEmailEditorStore();
     const { loadContent } = emailEditorStore;

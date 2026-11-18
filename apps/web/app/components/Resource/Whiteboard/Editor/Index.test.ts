@@ -10,12 +10,12 @@ import ResourceWhiteboardEditor from "#src/components/Resource/Whiteboard/Editor
 import ResourceWhiteboardEditorPropertiesArrow from "#src/components/Resource/Whiteboard/Editor/Properties/Arrow.vue";
 import UiConfirmDialog from "#src/components/Ui/ConfirmDialog.vue";
 import UiPalette from "#src/components/Ui/Palette/Index.vue";
+import { useReadOpenResource } from "#src/composables/resource/useReadOpenResource";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { pressKey, WHITEBOARD_ARROW, WHITEBOARD_PROCESS } from "#src/services/whiteboard/constants.test";
 import { WHITEBOARD_DUPLICATE_OFFSET } from "#src/services/whiteboard/edit/constants";
 import { serializeClipboardElements } from "#src/services/whiteboard/serializeClipboardElements";
 import { getFitViewport } from "#src/services/whiteboard/viewport/getFitViewport";
-import { useResourceStore } from "#src/store/resource/index";
 import { useWhiteboardEditorStore } from "#src/store/resource/whiteboard/editor";
 import { useWhiteboardStore } from "#src/store/resource/whiteboard/index";
 import { useContextMenuStore } from "#src/store/ui/contextMenu";
@@ -85,8 +85,7 @@ describe("resourceWhiteboardEditor", () => {
       ...createResourceListItem({ id: resourceId, type: ResourceType.Whiteboard }),
       publication: null,
     }));
-    const resourceStore = useResourceStore();
-    const { readResource } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
   });
 

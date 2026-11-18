@@ -6,8 +6,8 @@ import { createResourceListItem } from "#shared/services/resource/list/createRes
 import { getNoteExtensions } from "#shared/services/resource/note/getNoteExtensions";
 import ResourceNoteCountLine from "#src/components/Resource/Note/CountLine.vue";
 import ResourceNoteEditor from "#src/components/Resource/Note/Editor.vue";
+import { useReadOpenResource } from "#src/composables/resource/useReadOpenResource";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
-import { useResourceStore } from "#src/store/resource/index";
 import { getResourceFileBlobName, ResourceType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { Editor } from "@tiptap/core";
@@ -50,8 +50,7 @@ describe("resourceNoteEditor", () => {
     trpcMsw.note.readResourceContent.query(() => ({ doc: EMPTY_NOTE_DOC }));
     trpcMsw.note.readResourcePublication.query(() => undefined);
     // The page reads the row before any blade mounts, and the editor's load reads only the content
-    const resourceStore = useResourceStore();
-    const { readResource } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
   });
   afterEach(() => {

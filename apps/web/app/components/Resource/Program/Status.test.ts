@@ -8,13 +8,13 @@ import { MimeType } from "#shared/models/file/MimeType";
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import ResourceProgramStatus from "#src/components/Resource/Program/Status.vue";
+import { useReadOpenResource } from "#src/composables/resource/useReadOpenResource";
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { useSession } from "#src/services/auth/authClient.test";
 import { createParticipantLinksCsv } from "#src/services/resource/program/createParticipantLinksCsv";
 import { createProgramInviteHtml } from "#src/services/resource/program/createProgramInviteHtml";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useNotificationStore } from "#src/store/notification";
-import { useResourceStore } from "#src/store/resource/index";
 import { ResourceType, SurveyResponseMode } from "@esposter/db-schema";
 import { downloadFile, generateSecretToken, RoutePath, takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
@@ -75,8 +75,7 @@ describe("resourceProgramStatus", () => {
     trpcMsw.program.readResourceContent.query(() => ({ emailId: "", keyColumn, surveyId }));
     setSurveyMode(SurveyResponseMode.Identified);
     // The page reads the row before any blade mounts, and a content load reads only the blob
-    const resourceStore = useResourceStore();
-    const { readResource } = resourceStore;
+    const { readResource } = useReadOpenResource();
     await readResource();
   });
 
