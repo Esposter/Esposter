@@ -7,8 +7,8 @@ import { getResultAsync } from "@esposter/shared";
 const readRegionDataOnce = async (regionDataBaseUrl: string, id: string): Promise<RegionData> =>
   regionDataSchema.parse(await readJson(`/${regionDataBaseUrl}/${id}.json`));
 
-// Each region's read, held by its base and id, so the landmarks the world lists for its jumps and its reach read share
-// One fetch of a region. A read that fails is dropped, so the next ask fetches it again
+// Each region's read, held by its base and id, so a region asked for twice is fetched once. A read that fails is dropped,
+// So the next ask fetches it again
 const regionDataReads = new Map<string, Promise<RegionData>>();
 
 // A region's data as the host serves it, rejected when its fetch fails, does not answer in time or fails its schema
