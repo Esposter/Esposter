@@ -3,25 +3,16 @@ import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { banRoomMember } from "#server/services/message/moderation/banRoomMember";
-import { MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
 import { createMockAuthSession, createMockCaller, createMockContext, getMockSession } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
 import { createRoomMember } from "#server/trpc/routers/createRoomMember.test";
 import { inviteRouter } from "#server/trpc/routers/invite";
+import { expectLiveTopicCoverage } from "#server/trpc/routers/liveTopicCoverage.test";
 import { createDirectMessageWithFriend } from "#server/trpc/routers/room/createDirectMessageWithFriend.test";
 import { roomRouter } from "#server/trpc/routers/room/index";
-import { userRouter } from "#server/trpc/routers/user";
-import { readTopicsHeader } from "#shared/services/realtime/readTopicsHeader";
 import { INVITE_MAX_USES_OPTIONS } from "#shared/services/room/invite/constants";
 import { InviteExpireAfterMinutesMap } from "#shared/services/room/invite/InviteExpireAfterMinutesMap";
-import {
-  DatabaseEntityType,
-  friendsInSocial,
-  getTopic,
-  invitesInMessage,
-  roomsInMessage,
-  TopicKind,
-} from "@esposter/db-schema";
+import { DatabaseEntityType, friendsInSocial, invitesInMessage, roomsInMessage } from "@esposter/db-schema";
 import { generateSecretToken, InvalidOperationError, Operation, SECRET_TOKEN_LENGTH, takeOne } from "@esposter/shared";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -137,27 +128,6 @@ describe("inviteRouter", () => {
     const invite = await memberInviteCaller.readInvite(newInvite.id);
 
     expect(invite).toBeUndefined();
-  });
-
-  // The landing page shows the inviter's name and image. A profile save publishes the room of each invite its person made,
-  // And an invite outlives the membership it was made in, so the read names that room as well as the viewer's list
-  test("names the room a profile save of its inviter publishes, once the inviter has left it", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    const inviterSession = await createMockAuthSession(mockContext.db, await createRoomMember(mockContext, newRoom.id));
-    const newInvite = await createUnlimitedInvite(newRoom.id, await createMockCaller(inviteRouter, inviterSession));
-    const inviterRoomCaller = await createMockCaller(roomRouter, inviterSession);
-    await inviterRoomCaller.leaveRoom(newRoom.id);
-    const viewerContext = await createMockContext(await createMockAuthSession(mockContext.db));
-    await createCallerFactory(inviteRouter)(viewerContext).readInvite(newInvite.id);
-    MockPublishedTopics.length = 0;
-    await createCallerFactory(userRouter)(await createMockContext(inviterSession)).updateUser({ name });
-
-    expect(
-      readTopicsHeader(viewerContext.responseHeaders, "readInvite").flatMap(({ topics }) => topics),
-    ).toContainEqual(getTopic(TopicKind.Room, newRoom.id));
-    expect(MockPublishedTopics).toContainEqual(getTopic(TopicKind.Room, newRoom.id));
   });
 
   test("reads my invite", async () => {
@@ -359,5 +329,56 @@ describe("inviteRouter", () => {
     const invite = await createUnlimitedInvite(newRoom.id);
 
     expect(invite.id).toHaveLength(SECRET_TOKEN_LENGTH);
+  });
+
+  // The owner's link is replaced by the create and a member's link is revoked, so each write changes a different read
+  test("every query reads the tables it touches, and a write wakes each read it changes", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    // Joining a member mints the owner's link on the way, so the owner's own link is minted after it
+    const member = await createRoomMember(mockContext, newRoom.id);
+    const newInvite = await createUnlimitedInvite(newRoom.id);
+    const memberInvite = await createUnlimitedInvite(
+      newRoom.id,
+      await createMockCaller(inviteRouter, await createMockAuthSession(mockContext.db, member)),
+    );
+
+    await expectLiveTopicCoverage(
+      inviteRouter,
+      {
+        queries: [
+          {
+            call: (context) => createCallerFactory(inviteRouter)(context).readInvite(newInvite.id),
+            path: "readInvite",
+          },
+          {
+            call: (context) => createCallerFactory(inviteRouter)(context).readMyInvite({ roomId: newRoom.id }),
+            path: "readMyInvite",
+          },
+          {
+            call: (context) => createCallerFactory(inviteRouter)(context).readRoomInvites({ roomId: newRoom.id }),
+            path: "readRoomInvites",
+          },
+        ],
+        writes: [
+          {
+            call: (context) =>
+              createCallerFactory(inviteRouter)(context).createInvite({
+                expireAfterMinutes: 0,
+                maxUses: 0,
+                roomId: newRoom.id,
+              }),
+            path: "createInvite",
+          },
+          {
+            call: (context) =>
+              createCallerFactory(inviteRouter)(context).revokeInvite({ id: memberInvite.id, roomId: newRoom.id }),
+            path: "revokeInvite",
+          },
+        ],
+      },
+      mockContext,
+    );
   });
 });
