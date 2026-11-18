@@ -22,7 +22,7 @@ import { describe, expect, test } from "vitest";
 import { z } from "zod";
 
 const readEnemyKindIds = async (): Promise<Set<string>> =>
-  new Set(Array.from((await readEnemyTables(GAME_DATA_LOCAL_BASE_URL)).enemyKindMap.keys(), (id) => String(id)));
+  new Set(Array.from((await readEnemyTables(GAME_DATA_LOCAL_BASE_URL)).enemyKindMap.keys(), String));
 
 // The references no row of a published record holds, each with the place that names its id, so a failure names both
 const findUnpublishedReferences = (
@@ -120,30 +120,29 @@ describe("regionData", () => {
           ),
         ),
     },
-    {
-      name: "domain entrance",
-      published: async () => new Set(Object.keys(await readGameDataIndex(GAME_DATA_LOCAL_BASE_URL, "domains"))),
+    ...[
+      {
+        name: "domain entrance",
+        published: async () => new Set(Object.keys(await readGameDataIndex(GAME_DATA_LOCAL_BASE_URL, "domains"))),
+        trounce: false,
+      },
+      {
+        name: "trounce entrance",
+        published: async () => new Set(Object.keys(await readWeeklyBossDomains(GAME_DATA_LOCAL_BASE_URL))),
+        trounce: true,
+      },
+    ].map(({ name, published, trounce }) => ({
+      name,
+      published,
       references: (regions: RegionData[]) =>
         regions.flatMap(({ landmarks }) =>
           landmarks.flatMap((landmark) =>
-            landmark.kind === LandmarkKind.DomainEntrance && landmark.domainKind !== DomainKind.Trounce
+            landmark.kind === LandmarkKind.DomainEntrance && (landmark.domainKind === DomainKind.Trounce) === trounce
               ? [{ id: String(landmark.entryId), source: landmark.id }]
               : [],
           ),
         ),
-    },
-    {
-      name: "trounce entrance",
-      published: async () => new Set(Object.keys(await readWeeklyBossDomains(GAME_DATA_LOCAL_BASE_URL))),
-      references: (regions: RegionData[]) =>
-        regions.flatMap(({ landmarks }) =>
-          landmarks.flatMap((landmark) =>
-            landmark.kind === LandmarkKind.DomainEntrance && landmark.domainKind === DomainKind.Trounce
-              ? [{ id: String(landmark.entryId), source: landmark.id }]
-              : [],
-          ),
-        ),
-    },
+    })),
   ];
 
   // Each id an authored region names, or the code's EnemyKindId, must be a row of the record its dataset pins. A record
