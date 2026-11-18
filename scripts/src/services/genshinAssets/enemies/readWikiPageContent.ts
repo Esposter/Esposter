@@ -1,15 +1,16 @@
 import { wikiPageResponseSchema } from "#src/models/genshinAssets/enemies/WikiPageResponse";
+import { checkWikiPageCached } from "#src/services/genshinAssets/enemies/checkWikiPageCached";
 import { toWikiPageCachePath } from "#src/services/genshinAssets/enemies/toWikiPageCachePath";
 import { WIKI_CACHE_DIRECTORY } from "#src/services/genshinAssets/kits/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { existsSync, readFileSync } from "node:fs";
+import { readFileSync } from "node:fs";
 
 // The main slot's text of a wiki page the cache holds. A page the cache lacks is an error rather than an empty page, since
 // Reading an empty page would drop whatever the wiki gives it
 export const readWikiPageContent = (title: string, cacheDirectory: string = WIKI_CACHE_DIRECTORY): string => {
   const cachePath = toWikiPageCachePath(cacheDirectory, title);
-  if (!existsSync(cachePath))
+  if (!checkWikiPageCached(cacheDirectory, title))
     throw new InvalidOperationError(
       Operation.Read,
       title,
