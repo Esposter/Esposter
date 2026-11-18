@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import type { PlaceLandmark } from "#src/models/world/PlaceLandmark";
 
+import { LandmarkKind } from "#src/models/world/LandmarkKind";
+import { MAP_MARK_RADIUS_PIXELS, MAP_PIN_CENTRE } from "#src/services/map/constants";
+import { MapPinPathMap } from "#src/services/map/MapPinPathMap";
 import { GAME_CREAM, INTERACTION_HOVER_DURATION, INTERACTION_REST_DURATION } from "genshin-interface/constants";
 
 interface Props {
@@ -10,12 +13,33 @@ interface Props {
   markRadius: number;
 }
 
-defineProps<Props>();
+const { landmark, markRadius } = defineProps<Props>();
 const emit = defineEmits<{ select: [] }>();
+// A class with a traced pin is drawn as that pin, its box's centre on the landmark's place and its pixels at the mark's scale
+const pinPath = computed(() => MapPinPathMap[landmark.kind]);
+const pinTransform = computed(
+  () =>
+    `translate(${landmark.position.x} ${landmark.position.z}) scale(${markRadius / MAP_MARK_RADIUS_PIXELS}) translate(${-MAP_PIN_CENTRE.x} ${-MAP_PIN_CENTRE.y})`,
+);
 </script>
 
 <template>
-  <circle class="mark" :cx="landmark.position.x" :cy="landmark.position.z" :r="markRadius" @click="emit('select')" />
+  <path
+    v-if="pinPath"
+    :class="['mark', 'mark-pin', { 'mark-statue': landmark.kind === LandmarkKind.StatueOfTheSeven }]"
+    fill-rule="evenodd"
+    :d="pinPath"
+    :transform="pinTransform"
+    @click="emit('select')"
+  />
+  <circle
+    v-else
+    class="mark"
+    :cx="landmark.position.x"
+    :cy="landmark.position.z"
+    :r="markRadius"
+    @click="emit('select')"
+  />
 </template>
 
 <style scoped>
@@ -29,6 +53,15 @@ const emit = defineEmits<{ select: [] }>();
   cursor: inherit;
   transition: fill v-bind(INTERACTION_REST_DURATION);
   vector-effect: non-scaling-stroke;
+}
+
+/* A traced waypoint is white, as the reference draws it, and a statue is the dark slate its reference draws round its orb */
+.mark-pin {
+  fill: #fff;
+}
+
+.mark-statue {
+  fill: rgb(60 64 74);
 }
 
 @media (hover: hover) {

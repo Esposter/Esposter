@@ -27,6 +27,10 @@ export const MAP_MARK_SHARE = 0.02;
 // The open map's disc at the reference's scale, about 14.5 pixels of 1080 high, its disc's radius read off the English
 // Map's pointer over Jueyun Karst. The minimap keeps its own share, its view being a fraction of the open map's extent
 export const MAP_OVERLAY_MARK_SHARE = 0.00756;
+// A traced pin is cut from a 42 by 46 box of the reference's pixels, its place at the box's centre. The mark's circle is
+// 14.5 of those pixels across its radius at the reference's zoom, so a pin is drawn at the view's own scale by its mark's radius
+export const MAP_PIN_CENTRE = { x: 21, y: 23 };
+export const MAP_MARK_RADIUS_PIXELS = 14.5;
 // An area's name and its progress line, each a share of the open map's extent so they are drawn at the view's own scale.
 // Read off the English PC client's map over Galesong Hill (yt-kgW2IgWKukg at 4.6 seconds, 1080p): the name's capitals
 // 28.8 pixels high and the line's 16.0, their middles 45.9 apart, which Signika's capitals, 0.706 of its size as the page

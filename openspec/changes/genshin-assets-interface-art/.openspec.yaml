@@ -14,4 +14,4 @@ x-touches:
     "packages/genshin-world/src/components/Character/AttributeList/**",
     "openspec/changes/genshin-roadmap/**",
   ]
-x-waiting: "Tasks 3.3 and 3.5 stay open: the map pins cannot be traced or compared until the map fixture draws them, and the achievement marks are not committed because their approve failed under machine load, with the stamp ring and the corner ornaments still untraced."
+x-waiting: "Task 3.3 stays open: the map fixture draws no pins because the published Liyue region data holds no waypoints or statues, which the Jueyun overlay reference's pins need; the pins are traced and drawn, and the galesong compare writes its row."
