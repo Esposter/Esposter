@@ -3,6 +3,7 @@ affected_areas: [genshin]
 x-phase: 1
 x-model: claude-haiku-5-5
 x-needs: [game-exports]
+x-waiting: "1.2 waits on a finer Ground fit, whose representation the main session chooses (design.md, Decisions), and 1.3 waits on that rebuild."
 x-touches:
   [
     "scripts/src/services/genshinAssets/shared/DerivedAssetComponentMap.ts",
