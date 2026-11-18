@@ -2,6 +2,11 @@ import type { AbyssChamber } from "#src/models/spiralAbyss/AbyssChamber";
 import type { AbyssFloor } from "#src/models/spiralAbyss/AbyssFloor";
 import type { AbyssFloorReward } from "#src/models/spiralAbyss/AbyssFloorReward";
 import type { AbyssPeriod } from "#src/models/spiralAbyss/AbyssPeriod";
+import type { readAbyssBenedictionChoices as readAbyssBenedictionChoicesFn } from "#src/services/spiralAbyss/readAbyssBenedictionChoices";
+import type { readAbyssEnemyKinds as readAbyssEnemyKindsFn } from "#src/services/spiralAbyss/readAbyssEnemyKinds";
+import type { readAbyssFloorRewards as readAbyssFloorRewardsFn } from "#src/services/spiralAbyss/readAbyssFloorRewards";
+import type { readAbyssFloors as readAbyssFloorsFn } from "#src/services/spiralAbyss/readAbyssFloors";
+import type { readAbyssPeriods as readAbyssPeriodsFn } from "#src/services/spiralAbyss/readAbyssPeriods";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { useWorldSpiralAbyss } from "#src/composables/useWorldSpiralAbyss";
@@ -11,6 +16,8 @@ import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { readAbyssFloorRewards } from "#src/services/spiralAbyss/readAbyssFloorRewards";
+import { readAbyssPeriods } from "#src/services/spiralAbyss/readAbyssPeriods";
 import { CurrencyItemIdMap, EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
 import { createParty } from "#src/services/party/createParty";
 import { flushReads } from "#src/services/shared/flushReads.test";
@@ -22,19 +29,21 @@ import { describe, expect, test, vi } from "vitest";
 import { shallowRef } from "vue";
 
 vi.mock(import("#src/services/spiralAbyss/readAbyssPeriods"), () => ({
-  readAbyssPeriods: () => Promise.resolve([period]),
+  readAbyssPeriods: vi.fn<typeof readAbyssPeriodsFn>(() => Promise.resolve([period])),
 }));
 vi.mock(import("#src/services/spiralAbyss/readAbyssFloors"), () => ({
-  readAbyssFloors: () => Promise.resolve([floor]),
+  readAbyssFloors: vi.fn<typeof readAbyssFloorsFn>(() => Promise.resolve([floor])),
 }));
 vi.mock(import("#src/services/spiralAbyss/readAbyssEnemyKinds"), () => ({
-  readAbyssEnemyKinds: () => Promise.resolve({ [DESCRIBE_ID]: EnemyKindId.HilichurlFighter }),
+  readAbyssEnemyKinds: vi.fn<typeof readAbyssEnemyKindsFn>(() =>
+    Promise.resolve({ [DESCRIBE_ID]: EnemyKindId.HilichurlFighter }),
+  ),
 }));
 vi.mock(import("#src/services/spiralAbyss/readAbyssBenedictionChoices"), () => ({
-  readAbyssBenedictionChoices: () => Promise.resolve({}),
+  readAbyssBenedictionChoices: vi.fn<typeof readAbyssBenedictionChoicesFn>(() => Promise.resolve({})),
 }));
 vi.mock(import("#src/services/spiralAbyss/readAbyssFloorRewards"), () => ({
-  readAbyssFloorRewards: () =>
+  readAbyssFloorRewards: vi.fn<typeof readAbyssFloorRewardsFn>(() =>
     Promise.resolve({
       floorRewards: [otherGroupReward, reward],
       rewardItems: {
@@ -42,6 +51,7 @@ vi.mock(import("#src/services/spiralAbyss/readAbyssFloorRewards"), () => ({
         [REWARD_ID]: [{ count: PRIMOGEM_COUNT, itemId: PRIMOGEM_ITEM_ID }],
       },
     }),
+  ),
 }));
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
@@ -91,6 +101,27 @@ const otherGroupReward: AbyssFloorReward = { ...reward, chamberRewardIds: [OTHER
 describe(useWorldSpiralAbyss, () => {
   const AREA_ID = "area";
 
+  test("reads the tables as the entrance first opens, once, and holds them after", async () => {
+    expect.hasAssertions();
+    const worldSessionStore = startTestWorldSession(
+      { gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL, getWorldNow: () => NOW },
+      { inventory: { ...EMPTY_INVENTORY }, wallet: { ...EMPTY_WALLET } },
+    );
+    startTestWorldParty({ party: createParty([TRAVELER_CHARACTER_ID]) });
+    const abyss = useWorldSpiralAbyss({ areaId: AREA_ID, bonusLines: shallowRef([]), savedProgressMap: new Map() });
+    await flushReads();
+
+    expect(readAbyssPeriods).not.toHaveBeenCalled();
+
+    abyss.openAbyssEntrance();
+    await flushReads();
+    abyss.openAbyssEntrance();
+    await flushReads();
+
+    expect(readAbyssPeriods).toHaveBeenCalledExactlyOnceWith(worldSessionStore.gameDataBaseUrl);
+    expect(readAbyssFloorRewards).toHaveBeenCalledExactlyOnceWith(worldSessionStore.gameDataBaseUrl);
+  });
+
   test("a Moon Spire chamber's clear is recorded in its period's cycle, and its period's group pays", async () => {
     expect.hasAssertions();
     const worldSessionStore = startTestWorldSession(
@@ -103,6 +134,7 @@ describe(useWorldSpiralAbyss, () => {
     await flushReads();
 
     abyss.openAbyssEntrance();
+    await flushReads();
     abyss.enterAbyssChamber(FLOOR_ID, CHAMBER_ID);
     const camp = takeOne(abyss.abyssCamps.value);
     events.emit("defeatEnemy", createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, camp.id));

@@ -7,7 +7,7 @@ import type { AbyssChamber } from "#src/models/spiralAbyss/AbyssChamber";
 import type { AbyssFloor } from "#src/models/spiralAbyss/AbyssFloor";
 import type { AbyssPeriod } from "#src/models/spiralAbyss/AbyssPeriod";
 import type { AbyssProgress } from "#src/models/spiralAbyss/AbyssProgress";
-import type { AbyssRewards } from "#src/models/spiralAbyss/AbyssRewards";
+import type { AbyssTables } from "#src/models/spiralAbyss/AbyssTables";
 import type { WorldChallengeStep } from "#src/models/world/WorldChallengeStep";
 import type { Ref } from "vue";
 
@@ -29,16 +29,12 @@ import { getAbyssChamberBlessing } from "#src/services/spiralAbyss/getAbyssChamb
 import { getAbyssChamberSeconds } from "#src/services/spiralAbyss/getAbyssChamberSeconds";
 import { getAbyssCycleKey } from "#src/services/spiralAbyss/getAbyssCycleKey";
 import { getAbyssFloorsOffered } from "#src/services/spiralAbyss/getAbyssFloorsOffered";
-import { readAbyssBenedictionChoices } from "#src/services/spiralAbyss/readAbyssBenedictionChoices";
-import { readAbyssData } from "#src/services/spiralAbyss/readAbyssData";
-import { readAbyssEnemyKinds } from "#src/services/spiralAbyss/readAbyssEnemyKinds";
-import { readAbyssFloorRewards } from "#src/services/spiralAbyss/readAbyssFloorRewards";
-import { readAbyssFloors } from "#src/services/spiralAbyss/readAbyssFloors";
-import { readAbyssPeriods } from "#src/services/spiralAbyss/readAbyssPeriods";
+import { readAbyssTables } from "#src/services/spiralAbyss/readAbyssTables";
 import { settleAbyssClear } from "#src/services/spiralAbyss/settleAbyssClear";
 import { stepAbyssArena } from "#src/services/spiralAbyss/stepAbyssArena";
 import { useWorldPartyStore } from "#src/store/party";
 import { useWorldSessionStore } from "#src/store/session";
+import { getResultAsync } from "@esposter/shared";
 import { storeToRefs } from "pinia";
 import { computed, shallowRef } from "vue";
 
@@ -67,11 +63,13 @@ export const useWorldSpiralAbyss = ({
   const worldSessionStore = useWorldSessionStore();
   const { inventory, wallet } = storeToRefs(worldSessionStore);
   const { events, getWorldNow, setInventory, setWallet } = worldSessionStore;
-  const abyssPeriods = shallowRef<AbyssPeriod[]>([]);
-  const abyssFloors = shallowRef<AbyssFloor[]>([]);
-  const abyssEnemyKinds = shallowRef<Record<string, number>>({});
-  const abyssBenedictionChoices = shallowRef<Record<string, AbyssBenedictionChoice[][]>>({});
-  const abyssRewards = shallowRef<AbyssRewards>();
+  // The tables the entrance reads as it first opens, and holds after
+  const abyssTables = shallowRef<AbyssTables>();
+  const abyssPeriods = computed(() => abyssTables.value?.periods ?? []);
+  const abyssFloors = computed(() => abyssTables.value?.floors ?? []);
+  const abyssEnemyKinds = computed(() => abyssTables.value?.enemyKinds ?? {});
+  const abyssBenedictionChoices = computed(() => abyssTables.value?.benedictionChoices ?? {});
+  const abyssRewards = computed(() => abyssTables.value?.rewards);
   // The period covering the instant the entrance was opened, which the entry's blessing and floors come from
   const abyssEntrancePeriod = shallowRef<AbyssPeriod>();
   const abyssPendingChoice = shallowRef<AbyssPendingChoice>();
@@ -83,37 +81,6 @@ export const useWorldSpiralAbyss = ({
   const abyssBlessingState = shallowRef<AbyssBlessingState>(createInitialAbyssBlessingState());
   // The health and energy the last clear leaves the party with, which the next chamber starts from
   const abyssCarry = shallowRef<AbyssCarryMember[]>([]);
-
-  readAbyssData(
-    () => readAbyssPeriods(worldSessionStore.gameDataBaseUrl),
-    (periods) => {
-      abyssPeriods.value = periods;
-    },
-  );
-  readAbyssData(
-    () => readAbyssFloors(worldSessionStore.gameDataBaseUrl),
-    (floors) => {
-      abyssFloors.value = floors;
-    },
-  );
-  readAbyssData(
-    () => readAbyssEnemyKinds(worldSessionStore.gameDataBaseUrl),
-    (enemyKinds) => {
-      abyssEnemyKinds.value = enemyKinds;
-    },
-  );
-  readAbyssData(
-    () => readAbyssBenedictionChoices(worldSessionStore.gameDataBaseUrl),
-    (choices) => {
-      abyssBenedictionChoices.value = choices;
-    },
-  );
-  readAbyssData(
-    () => readAbyssFloorRewards(worldSessionStore.gameDataBaseUrl),
-    (rewards) => {
-      abyssRewards.value = rewards;
-    },
-  );
 
   const abyssBlessing = computed(() => abyssEntrancePeriod.value?.blessing);
   const abyssArenaBlessing = computed(() => abyssChamberPeriod.value?.blessing);
@@ -127,9 +94,24 @@ export const useWorldSpiralAbyss = ({
     return camp ? [camp] : [];
   });
 
-  // The entrance opened: the period covering now gives the entry its blessing and the floors it offers
+  // The entrance opened: its tables are read the first time it opens and held after, and the period covering the instant it
+  // Opened gives the entry its blessing and the floors it offers. A read that fails is logged, and the next open reads again
   const openAbyssEntrance = () => {
-    abyssEntrancePeriod.value = findAbyssPeriodAt(abyssPeriods.value, getWorldNow());
+    const openedAt = getWorldNow();
+    if (abyssTables.value) {
+      abyssEntrancePeriod.value = findAbyssPeriodAt(abyssTables.value.periods, openedAt);
+      return;
+    }
+    // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
+    getResultAsync(() => readAbyssTables(worldSessionStore.gameDataBaseUrl)).match(
+      (tables) => {
+        abyssTables.value = tables;
+        abyssEntrancePeriod.value = findAbyssPeriodAt(tables.periods, openedAt);
+      },
+      (error) => {
+        console.error(error);
+      },
+    );
   };
   // A chamber's arena starts on the party set, and a Benediction's lines hold for the chamber alone, so a refused arena keeps none.
   // The carry of the last clear lands on the members still in the party as the chamber starts, and is spent with it
