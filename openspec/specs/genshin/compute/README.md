@@ -56,7 +56,7 @@ The bars the region passes and the area pages' pass items share, each gate named
 
 An area's outline names the terrain tiles its ground covers. An export written while its region's terrain list was the capital's 2x2 names few of them, so the region's page queues a `[cpu]` re-extraction, `{<region>-terrain-tiles}`, that writes the tiles its outlines name. Its measure is `pnpm -C scripts genshin:assets missing-tiles <region>`, which prints:
 
-- `missing <count> of <N> outline tiles`, the count of the outline tiles the export lacks, out of the N the outlines name. The bar is `missing 0`.
+- `missing <count> of <N> outline tiles`, the count of the outline tiles the export lacks, out of the N the outlines name. A tile is held when its terrain mesh is on disk, not when the world names it, since the witness lays out only the meshes it finds. The bar is `missing 0`.
 - each tile the export lacks that the install names an asset of, after `missing`.
 - each tile the install names no asset of, after `absent from the install`. These are not counted, since an extraction cannot find a tile the game's index never names.
 
