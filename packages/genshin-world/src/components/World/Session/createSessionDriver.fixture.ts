@@ -48,6 +48,8 @@ export const createSessionDriver = (devRegistry: DevRegistry) => {
   // Mounts the world screen on the registry from the save given, or a new player's, and steps frames until the world is
   // Ready and has emitted its first save: the quests load after the screen is up, and that load is the first change a save takes
   const mount = async (save?: GenshinSave): Promise<ScriptedSessionOutcome> => {
+    // A screen still mounted is unmounted first, so its commands leave the registry and its DOM leaves the document
+    await unmount();
     isWorldReady = false;
     lastSave = undefined;
     const screen = await render(WorldScreen, {

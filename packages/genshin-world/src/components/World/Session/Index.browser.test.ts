@@ -192,4 +192,25 @@ describe("worldSession", () => {
     },
     timeoutMs,
   );
+
+  test(
+    "a mount over a screen still mounted unmounts that screen, so disposing leaves no command behind",
+    async () => {
+      expect.hasAssertions();
+
+      const devRegistry = createDevRegistry();
+      const sessionDriver = createSessionDriver(devRegistry);
+      onTestFinished(() => sessionDriver.dispose());
+      const firstMounted = await sessionDriver.mount();
+      const secondMounted = await sessionDriver.mount();
+      await sessionDriver.dispose();
+      // Only the second screen was ever unmounted by the dispose, so the first one's commands answer here if it was orphaned
+      const kills = devRegistry.run("kills");
+
+      expect(firstMounted).toStrictEqual({ ok: true });
+      expect(secondMounted).toStrictEqual({ ok: true });
+      expect(kills).toStrictEqual({ error: "not available here", ok: false, usage: "kills" });
+    },
+    timeoutMs,
+  );
 });
