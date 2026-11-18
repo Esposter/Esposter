@@ -58,7 +58,7 @@ export const getAccountTopics = async (userId: UserInAuth["id"]): Promise<Topic[
         .from(likesInPost)
         .innerJoin(postsInPost, eq(postsInPost.id, likesInPost.postId))
         .where(eq(likesInPost.userId, userId)),
-      db.select({ id: resourcesInResource.id }).from(resourcesInResource).where(eq(resourcesInResource.userId, userId)),
+      ownedResourceIds,
     ]);
 
   return [
