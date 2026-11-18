@@ -250,8 +250,8 @@ start(
 );
 onUnmounted(stop);
 // Every region's chests, each unopened one a row to open beneath its point, and opened on the key with the world's random.
-// The store reads them from the scene's region chest map as each record arrives. They start before the save watches them,
-// So the load is not a change the save grants
+// The store reads them from the scene's region chest map as each record arrives.
+// They start before the save watches them, so the load is not a change the save grants
 const worldChestsStore = useWorldChestsStore();
 const { start: startChests, stop: stopChests } = worldChestsStore;
 startChests({

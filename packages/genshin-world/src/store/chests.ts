@@ -21,14 +21,14 @@ import { computed, shallowRef } from "vue";
 
 /**
  * Each region's chests in reach, read from the scene's region chest map as each record arrives, and each one offered on
- * the ground beneath its point: an unopened chest to open, and a buried one to dig up. Digging a buried chest holds it dug for the
- * session only, and a dug chest is offered to open, paying nothing until its tier is measured. Opening a chest rolls its
- * Primogems, Mora and Anemo Sigils into the wallet, pays its Adventure EXP to the Adventure Rank and pours its drops out
- * where it stands, or sends them to the bag where a drop would fall away there, and the chest is kept as opened. The
- * chests the puzzles spawn are offered and opened the same way. A load that fails is logged and left off, so no chest is
- * offered rather than a wrong one. A chest within reach of a camp or puzzle not yet done is offered nothing to open
- * until it is done. The chests opened are the save's, and the session starts it with them and the water's level, and
- * stops it as it unmounts
+ * the ground beneath its point: an unopened chest to open, and a buried one to dig up. Digging a buried chest holds it
+ * dug for the session only, and a dug chest is offered to open, paying nothing until its tier is measured. Opening a
+ * chest rolls its Primogems, Mora and Anemo Sigils into the wallet, pays its Adventure EXP to the Adventure Rank and
+ * pours its drops out where it stands, or sends them to the bag where a drop would fall away there, and the chest is
+ * kept as opened. The chests the puzzles spawn are offered and opened the same way. A load that fails is logged and
+ * left off, so no chest is offered rather than a wrong one. A chest within reach of a camp or puzzle not yet done is
+ * offered nothing to open until it is done. The chests opened are the save's, and the session starts it with them and
+ * the water's level, and stops it as it unmounts
  */
 export const useWorldChestsStore = defineStore("world/chests", () => {
   const worldPuzzlesStore = useWorldPuzzlesStore();
@@ -54,7 +54,7 @@ export const useWorldChestsStore = defineStore("world/chests", () => {
   // The buried chests dug up this session, which the save does not hold yet, so a reload buries them again
   const dugChestIds = shallowRef<ReadonlySet<string>>(new Set());
   const worldChestPlaces = computed(() => [
-    ...[...(getRegionChestMap.value?.().values() ?? [])].flat(),
+    ...[...(getRegionChestMap.value?.()?.values() ?? [])].flat(),
     ...worldPuzzlesStore.puzzleChestPlaces,
   ]);
   const chestInteractables = computed<Interactable[]>(() =>
