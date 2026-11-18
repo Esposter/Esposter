@@ -1,6 +1,7 @@
 import type { WorkspacePackage } from "#src/models/dependencies/score/WorkspacePackage";
 
-import { APP_PACKAGE_NAME, NODE_MODULES_DIRECTORY, QUERY_REGEX } from "#src/services/dependencies/score/constants";
+import { NODE_MODULES_DIRECTORY, QUERY_REGEX } from "#src/services/dependencies/score/constants";
+import { APP_PACKAGE_NAME } from "#src/services/shared/constants";
 
 // The package a module of the client bundle belongs to: the package named after its last `node_modules` segment, scoped
 // Names included; else the workspace package whose folder holds it; else the app's own code

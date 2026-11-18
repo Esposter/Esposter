@@ -1,4 +1,4 @@
-import { PACKAGES_DIRECTORY } from "#src/services/package/new/constants";
+import { APPS_DIRECTORY, PACKAGES_DIRECTORY } from "#src/services/package/new/constants";
 import { readWorkspacePackages } from "#src/services/shared/readWorkspacePackages";
 import { SCRIPTS_PACKAGE_NAME, WORKSPACE_PROTOCOL } from "#src/services/worktree/create/constants";
 
@@ -18,10 +18,12 @@ export const readBuildDirectories = (worktreePath: string, packageNames: string[
   const runtimeDirectories = workspacePackages
     .filter(({ manifest }) => runtimeNames.has(manifest.name ?? "") && manifest.scripts?.build)
     .map(({ directory }) => directory);
+  // A member at the repository root, the scripts package, has no build of its own, since its closure is built above
   const namedDirectories = workspacePackages
     .filter(({ manifest }) => packageNames.some((name) => name === manifest.name))
-    .map(({ directory, workspaceDirectory }) =>
-      workspaceDirectory === PACKAGES_DIRECTORY ? directory : PACKAGES_DIRECTORY,
-    );
+    .flatMap(({ directory, workspaceDirectory }) => {
+      if (workspaceDirectory === PACKAGES_DIRECTORY) return [directory];
+      return workspaceDirectory === APPS_DIRECTORY ? [PACKAGES_DIRECTORY] : [];
+    });
   return [...new Set([...runtimeDirectories, ...namedDirectories])];
 };

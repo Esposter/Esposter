@@ -1,6 +1,7 @@
 import { readMainCheckoutRoot } from "#src/services/queue/readMainCheckoutRoot";
 import { runCommand } from "#src/services/timing/runCommand";
 import { buildDistributions } from "#src/services/worktree/create/buildDistributions";
+import { copyEslintConfiguration } from "#src/services/worktree/create/copyEslintConfiguration";
 import { createWorktree } from "#src/services/worktree/create/createWorktree";
 import { installWorktree } from "#src/services/worktree/create/installWorktree";
 import { readBuildDirectories } from "#src/services/worktree/create/readBuildDirectories";
@@ -32,9 +33,12 @@ await runCommand(
         return;
       }
       const packageNames = args._.slice(1).map(String);
-      const worktreePath = createWorktree(args.name, readMainCheckoutRoot());
+      const mainCheckoutRoot = readMainCheckoutRoot();
+      const worktreePath = createWorktree(args.name, mainCheckoutRoot);
       installWorktree(worktreePath, packageNames);
       buildDistributions(worktreePath, readBuildDirectories(worktreePath, packageNames));
+      // Last, since an install prunes whatever it did not select, and the copied file imports packages it did
+      copyEslintConfiguration(mainCheckoutRoot, worktreePath);
       console.info(worktreePath);
     },
   }),

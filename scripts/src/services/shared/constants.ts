@@ -14,6 +14,9 @@ export const REMOTE_NAME = "origin";
 // The two branches as origin holds them, which a read names after a fetch
 export const REMOTE_MAIN_REF: `${typeof REMOTE_NAME}/${typeof MAIN_BRANCH}` = `${REMOTE_NAME}/${MAIN_BRANCH}`;
 export const REMOTE_QUEUE_REF: `${typeof REMOTE_NAME}/${typeof QUEUE_BRANCH}` = `${REMOTE_NAME}/${QUEUE_BRANCH}`;
+// The app's package: a worktree installs its dependencies without the app, and its client bundle report attributes the
+// App's own code to it
+export const APP_PACKAGE_NAME = "@esposter/web";
 export const NPM_REGISTRY_URL = "https://registry.npmjs.org";
 // A mebibyte, as the fleet's transfer line and the parity pack table both count sizes in
 export const MEBIBYTE: number = KIBIBYTE ** 2;

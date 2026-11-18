@@ -43,6 +43,12 @@ describe(readBuildDirectories, () => {
     expect(readBuildDirectories(rootDirectory, ["named"])).toStrictEqual(["built", "named"]);
   });
 
+  test("the scripts package named builds only the packages it depends on, never every package", () => {
+    expect.hasAssertions();
+
+    expect(readBuildDirectories(rootDirectory, ["@esposter/scripts"])).toStrictEqual(["built"]);
+  });
+
   test("a named app builds the packages rather than itself", () => {
     expect.hasAssertions();
 

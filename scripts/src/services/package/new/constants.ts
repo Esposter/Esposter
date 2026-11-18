@@ -1,6 +1,7 @@
 /* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex literal would otherwise infer; `isolatedDeclarations` demands the annotation this template literal would otherwise infer */
 import { LEDGER_DIRECTORY } from "#src/services/sweeps/constants";
 
+export const APPS_DIRECTORY = "apps";
 export const PACKAGES_DIRECTORY = "packages";
 // Lowercase words joined by single hyphens: the name is a directory and an npm name at once
 export const PACKAGE_NAME_REGEX: RegExp = /^[a-z]+(?:-[a-z\d]+)*$/u;
