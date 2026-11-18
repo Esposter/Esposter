@@ -49,6 +49,9 @@ A guard that needs a list of names to stay in step with a declaration elsewhere 
 | A script bent to fit a runner, or a shim built so a runner fits the script                          | the `package-scripts` skill (`references/typescript-scripts.md`)                                                                               |
 | A lint rule or test kept for a shape that can no longer be written                                  | the `invariants` skill (`references/retiring-an-enforcer.md`)                                                                                  |
 | A hand-kept list mirroring a declaration, held equal by a test                                      | this page ("A list kept by hand beside what the code already declares")                                                                        |
+| A per-case declaration restating the body it sits beside                                            | `openspec/specs/architecture/write-once/design.md` (Red flags)                                                                                 |
+| A registry a new case must remember to join                                                         | `openspec/specs/architecture/write-once/design.md` (Red flags)                                                                                 |
+| An allowlist of exceptions a guard skips by name or path                                            | `openspec/specs/architecture/enforcement-ladder/design.md` ("No roster")                                                                       |
 
 ## Reading a finding against this list
 
