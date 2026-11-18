@@ -70,6 +70,25 @@ describe(getReadTopics, () => {
     await expect(getReadTopics(statements)).resolves.toStrictEqual(["message_invites:id=sha256:66d34fba71f8"]);
   });
 
+  // A literal list on a scope column names each value it lists, as an equality names its one value
+  test("a literal IN list on a scope column names each value it lists, as an equality does", async () => {
+    expect.hasAssertions();
+
+    const { db } = await createMockDb();
+    const firstRoomId = v7();
+    const secondRoomId = v7();
+    const { database, statements } = recordStatements(db);
+
+    await database
+      .select()
+      .from(usersToRoomsInMessage)
+      .where(inArray(usersToRoomsInMessage.roomId, [firstRoomId, secondRoomId]));
+
+    await expect(getReadTopics(statements)).resolves.toStrictEqual(
+      [`message_usersToRooms:roomId=${firstRoomId}`, `message_usersToRooms:roomId=${secondRoomId}`].toSorted(),
+    );
+  });
+
   // A table a read joins is named table-wide, whatever the read selects of it. The join's rows would be a narrower name,
   // But a row a WHERE clause removes from the join is not among them, and a change that restores that row would not
   // Reach the read. The bookmark dock's resources are the case: a resource in the recycle bin leaves its bookmark out
