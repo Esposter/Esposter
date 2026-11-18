@@ -3,23 +3,19 @@ import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { PostInPost } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
 import { createMockAuthSession, createMockCaller, createMockContext } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
 import { blockRouter } from "#server/trpc/routers/block";
 import { likeRouter } from "#server/trpc/routers/like";
+import { expectLiveTopicCoverage } from "#server/trpc/routers/liveTopicCoverage.test";
 import { postRouter } from "#server/trpc/routers/post";
 import { PostSortType } from "#shared/models/post/PostSortType";
-import { TOPICS_HEADER } from "#shared/services/realtime/constants";
-import { readTopicsHeader } from "#shared/services/realtime/readTopicsHeader";
 import {
   blocksInSocial,
   DatabaseEntityType,
   DerivedDatabaseEntityType,
-  getTopic,
   postsInPost,
   PublicUserColumns,
-  TopicKind,
 } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";
@@ -125,17 +121,11 @@ describe("postRouter", () => {
 
     const newPost = await postCaller.createPost({ title });
     const { comment: newComment } = await postCaller.createComment({ description, id: v7(), parentId: newPost.id });
-    MockPublishedTopics.length = 0;
     const removedIds = await postCaller.deletePost(newPost.id);
 
     expect(removedIds.toSorted((firstId, secondId) => firstId.localeCompare(secondId))).toStrictEqual(
       [newComment.id, newPost.id].toSorted((firstId, secondId) => firstId.localeCompare(secondId)),
     );
-    // A reply's page watches its thread's root, so the post's own topic reaches it however many replies the cascade took
-    expect(MockPublishedTopics).toStrictEqual([
-      getTopic(TopicKind.Post, newPost.id),
-      getTopic(TopicKind.Feed, "posts"),
-    ]);
     await expect(postCaller.readPost(newPost.id)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new NotFoundError(DatabaseEntityType.Post, newPost.id).message}]`,
     );
@@ -251,34 +241,11 @@ describe("postRouter", () => {
     const { comment: newReply } = await postCaller.createComment({ description, id: v7(), parentId: newComment.id });
     await postCaller.createComment({ description, id: v7(), parentId: newReply.id });
 
-    MockPublishedTopics.length = 0;
     const deletedComment = await postCaller.deleteComment(newComment.id);
     const post = await postCaller.readPost(newPost.id);
 
     expect(deletedComment.removedIds).toHaveLength(3);
     expect(post.commentCount).toBe(0);
-    // The thread's topic stands for every page in it, so the publish stays three topics however deep the subtree went
-    expect(MockPublishedTopics).toStrictEqual([
-      getTopic(TopicKind.Post, newComment.id),
-      getTopic(TopicKind.Post, newPost.id),
-      getTopic(TopicKind.Feed, "posts"),
-    ]);
-  });
-
-  // Every page in a thread watches its root, which is what lets a write publish the thread as one topic
-  test("names a reply's thread among the topics its read watches", async () => {
-    expect.hasAssertions();
-
-    const newPost = await postCaller.createPost({ title });
-    const { comment: newComment } = await postCaller.createComment({ description, id: v7(), parentId: newPost.id });
-    const { comment: newReply } = await postCaller.createComment({ description, id: v7(), parentId: newComment.id });
-    mockContext.responseHeaders.delete(TOPICS_HEADER);
-    await postCaller.readPost(newReply.id);
-
-    expect(readTopicsHeader(mockContext.responseHeaders, "readPost").flatMap(({ topics }) => topics)).toStrictEqual([
-      getTopic(TopicKind.Post, newPost.id),
-      getTopic(TopicKind.Post, newReply.id),
-    ]);
   });
 
   test("deletes comment with deleting post", async () => {
@@ -514,5 +481,57 @@ describe("postRouter", () => {
     });
 
     expect([...firstPage.items, ...secondPage.items].map(({ id }) => id)).toStrictEqual([firstId, secondId, thirdId]);
+  });
+
+  test("every query reads the tables it touches, and a write wakes each read it changes", async () => {
+    expect.hasAssertions();
+
+    const newPost = await postCaller.createPost({ title });
+    const { comment: newComment } = await postCaller.createComment({ description, id: v7(), parentId: newPost.id });
+    const removedPost = await postCaller.createPost({ title });
+
+    await expectLiveTopicCoverage(
+      postRouter,
+      {
+        queries: [
+          { call: (context) => createCallerFactory(postRouter)(context).readPost(newPost.id), path: "readPost" },
+          {
+            call: (context) => createCallerFactory(postRouter)(context).readPostCounts([newPost.id]),
+            path: "readPostCounts",
+          },
+          { call: (context) => createCallerFactory(postRouter)(context).readPosts(), path: "readPosts" },
+        ],
+        writes: [
+          {
+            call: (context) =>
+              createCallerFactory(postRouter)(context).createComment({ description, id: v7(), parentId: newPost.id }),
+            path: "createComment",
+          },
+          { call: (context) => createCallerFactory(postRouter)(context).createPost({ title }), path: "createPost" },
+          {
+            call: (context) =>
+              createCallerFactory(postRouter)(context).updateComment({
+                description: updatedDescription,
+                id: newComment.id,
+              }),
+            path: "updateComment",
+          },
+          {
+            call: (context) =>
+              createCallerFactory(postRouter)(context).updatePost({ id: newPost.id, title: updatedTitle }),
+            path: "updatePost",
+          },
+          {
+            call: (context) => createCallerFactory(postRouter)(context).deleteComment(newComment.id),
+            path: "deleteComment",
+          },
+          {
+            call: (context) => createCallerFactory(postRouter)(context).deletePost(removedPost.id),
+            path: "deletePost",
+          },
+        ],
+      },
+      mockContext,
+    );
   });
 });
