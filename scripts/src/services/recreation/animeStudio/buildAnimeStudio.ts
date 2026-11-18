@@ -22,22 +22,24 @@ import { fetchSource } from "#src/services/recreation/animeStudio/fetchSource";
 import { patchAnimatorControllerExport } from "#src/services/recreation/animeStudio/patchAnimatorControllerExport";
 import { patchOozCopies } from "#src/services/recreation/animeStudio/patchOozCopies";
 import { patchOozSignedOffsets } from "#src/services/recreation/animeStudio/patchOozSignedOffsets";
+import { resolveBuildDirectory } from "#src/services/recreation/animeStudio/resolveBuildDirectory";
 import { retargetProjects } from "#src/services/recreation/animeStudio/retargetProjects";
 import { run } from "#src/services/recreation/animeStudio/run";
 import { copyFileSync, existsSync, mkdirSync, renameSync, rmSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { join } from "node:path";
 
-// Builds the CLI and its natives for macOS, and returns the path the CLI is published to. The CLI carries its own runtime,
-// So it starts wherever .NET was installed from, with no DOTNET_ROOT for the asset runs to pass it. The directory is
-// Resolved first, since clang++ runs from ACL's source and the printed path is set from anywhere. A rebuild keeps the
-// CAB map, which a map run takes hours to rebuild. The CLI is published to a staging folder and replaces the published
-// One only once the parity check passes, so a failed rebuild leaves the published CLI as it was. The parity runs pass
-// No map, so the staged CLI is checked without the CAB map, which moves over only on the pass
+// Builds the CLI and its natives for macOS, and returns the path the CLI is published to. The CLI carries its own
+// Runtime, so it starts wherever .NET was installed from, with no DOTNET_ROOT for the asset runs to pass it. The
+// Directory is named by its real path first, since clang++ runs from ACL's source and the printed path is set from
+// Anywhere, and NuGet's restore drops a project reference reached through a symlink. A rebuild keeps the CAB map, which
+// A map run takes hours to rebuild. The CLI is published to a staging folder and replaces the published one only once
+// The parity check passes, so a failed rebuild leaves the published CLI as it was. The parity runs pass no map, so the
+// Staged CLI is checked without the CAB map, which moves over only on the pass
 export const buildAnimeStudio = async (
   directory: string,
   checkParity: (cliPath: string, outputDirectory: string) => void,
 ): Promise<string> => {
-  const outputDirectory = resolve(directory);
+  const outputDirectory = resolveBuildDirectory(directory);
   const workDirectory = join(outputDirectory, WORK_DIRECTORY_NAME);
   const publishDirectory = join(outputDirectory, PUBLISH_DIRECTORY_NAME);
   const stagingDirectory = join(outputDirectory, STAGING_DIRECTORY_NAME);
