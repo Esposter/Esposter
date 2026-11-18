@@ -24,7 +24,7 @@ export const deleteRoom = async ({ db, user }: Pick<AuthedContext, "db" | "user"
   // The scheduled messages it removed were other people's, so each sender's list is told as soon as they are gone, before
   // The row goes: a failure after this still leaves them told
   await publishTopicsBestEffort(
-    scheduledMessageSenderIds.map((senderId) => getTopic(TopicKind.ScheduledMessage, senderId)),
+    () => scheduledMessageSenderIds.map((senderId) => getTopic(TopicKind.ScheduledMessage, senderId)),
     "Failed to publish the topic of a scheduled message removed with its room:",
   );
   const deletedRooms = await db
