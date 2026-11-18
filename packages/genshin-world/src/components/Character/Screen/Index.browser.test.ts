@@ -54,4 +54,19 @@ describe("characterScreen", () => {
 
     await expect.element(page.getByText(termsText, { exact: true })).toBeVisible();
   });
+
+  // A portrait the game draws is a disc in its measured colour, so the screen holds no picture, element or background
+  test("a screen with a portrait holds a stand-in", async () => {
+    expect.hasAssertions();
+
+    const { container } = await render(CharacterScreenContainer, { props });
+
+    expect(container.querySelectorAll(".character").length).toBeGreaterThan(0);
+    expect(container.querySelectorAll("img, picture, image")).toHaveLength(0);
+    const pictures = Array.from(
+      container.querySelectorAll("*"),
+      (element) => getComputedStyle(element).backgroundImage,
+    ).filter((image) => image.includes("url("));
+    expect(pictures).toStrictEqual([]);
+  });
 });
