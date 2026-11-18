@@ -3,6 +3,7 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 import { Attribute } from "#src/models/character/Attribute";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";
+import { checkHasKitField } from "#src/services/kit/effects/checkHasKitField";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { ID_SEPARATOR, takeOne } from "@esposter/shared";
@@ -26,12 +27,7 @@ export const createMasteryClockPassiveModule = (
   return {
     onStep: ({ kitEffectState }, { characterId }) => {
       // The clock is cast once, so a step that finds it standing casts nothing, as a field restarts by its id
-      if (
-        kitEffectState.effects.some(
-          (effect) => effect.kind === "field" && effect.characterId === characterId && effect.id === MASTERY_CLOCK_ID,
-        )
-      )
-        return;
+      if (checkHasKitField(kitEffectState.effects, characterId, MASTERY_CLOCK_ID)) return;
       castKitField(
         kitEffectState,
         characterId,

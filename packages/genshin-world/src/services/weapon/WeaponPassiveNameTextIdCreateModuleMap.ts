@@ -17,6 +17,7 @@ import { createBluntConclusionPassiveModule } from "#src/services/weapon/passive
 import { createBoltOfPerceptionPassiveModule } from "#src/services/weapon/passives/createBoltOfPerceptionPassiveModule";
 import { createBoundlessBlessingPassiveModule } from "#src/services/weapon/passives/createBoundlessBlessingPassiveModule";
 import { createByakuyaKougetsuPassiveModule } from "#src/services/weapon/passives/createByakuyaKougetsuPassiveModule";
+import { createBygoneAzureTeardropPassiveModule } from "#src/services/weapon/passives/createBygoneAzureTeardropPassiveModule";
 import { createCandleWovenFromTheNightPassiveModule } from "#src/services/weapon/passives/createCandleWovenFromTheNightPassiveModule";
 import { createChordPassiveModule } from "#src/services/weapon/passives/createChordPassiveModule";
 import { createComposedPassiveModule } from "#src/services/weapon/passives/createComposedPassiveModule";
@@ -54,6 +55,7 @@ import { createFlowerFeatherSongPassiveModule } from "#src/services/weapon/passi
 import { createFlowingPurityPassiveModule } from "#src/services/weapon/passives/createFlowingPurityPassiveModule";
 import { createFocusPassiveModule } from "#src/services/weapon/passives/createFocusPassiveModule";
 import { createFrostBurialPassiveModule } from "#src/services/weapon/passives/createFrostBurialPassiveModule";
+import { createFullCirclePassiveModule } from "#src/services/weapon/passives/createFullCirclePassiveModule";
 import { createFullHPCriticUpPassiveModule } from "#src/services/weapon/passives/createFullHPCriticUpPassiveModule";
 import { createGashPassiveModule } from "#src/services/weapon/passives/createGashPassiveModule";
 import { createGildingPassiveModule } from "#src/services/weapon/passives/createGildingPassiveModule";
@@ -75,6 +77,7 @@ import { createIronbonePassiveModule } from "#src/services/weapon/passives/creat
 import { createIsshinArtClarityPassiveModule } from "#src/services/weapon/passives/createIsshinArtClarityPassiveModule";
 import { createItinerantHeroPassiveModule } from "#src/services/weapon/passives/createItinerantHeroPassiveModule";
 import { createIwakuraSuccessionPassiveModule } from "#src/services/weapon/passives/createIwakuraSuccessionPassiveModule";
+import { createJadeCirculationPassiveModule } from "#src/services/weapon/passives/createJadeCirculationPassiveModule";
 import { createJusticePassiveModule } from "#src/services/weapon/passives/createJusticePassiveModule";
 import { createKaguraDanceOfTheSacredSakuraPassiveModule } from "#src/services/weapon/passives/createKaguraDanceOfTheSacredSakuraPassiveModule";
 import { createLabyrinthLordsInstructionPassiveModule } from "#src/services/weapon/passives/createLabyrinthLordsInstructionPassiveModule";
@@ -92,6 +95,7 @@ import { createNorthwindWolfPassiveModule } from "#src/services/weapon/passives/
 import { createOathOfQhapaqNanPassiveModule } from "#src/services/weapon/passives/createOathOfQhapaqNanPassiveModule";
 import { createOceanicVictoryPassiveModule } from "#src/services/weapon/passives/createOceanicVictoryPassiveModule";
 import { createOfferingUntoWindAndSunPassiveModule } from "#src/services/weapon/passives/createOfferingUntoWindAndSunPassiveModule";
+import { createOppidanAmbushPassiveModule } from "#src/services/weapon/passives/createOppidanAmbushPassiveModule";
 import { createPactOfFlowingSpringsPassiveModule } from "#src/services/weapon/passives/createPactOfFlowingSpringsPassiveModule";
 import { createParticleHealPassiveModule } from "#src/services/weapon/passives/createParticleHealPassiveModule";
 import { createPhantomFlashPassiveModule } from "#src/services/weapon/passives/createPhantomFlashPassiveModule";
@@ -101,6 +105,7 @@ import { createPrimordialJadeRegaliaPassiveModule } from "#src/services/weapon/p
 import { createPrincipleOfEquilibriumPassiveModule } from "#src/services/weapon/passives/createPrincipleOfEquilibriumPassiveModule";
 import { createProtectorsVirtuePassiveModule } from "#src/services/weapon/passives/createProtectorsVirtuePassiveModule";
 import { createPurifyingCrownPassiveModule } from "#src/services/weapon/passives/createPurifyingCrownPassiveModule";
+import { createRadianceOfTheDeepsPassiveModule } from "#src/services/weapon/passives/createRadianceOfTheDeepsPassiveModule";
 import { createRadianceOnTheWaterPassiveModule } from "#src/services/weapon/passives/createRadianceOnTheWaterPassiveModule";
 import { createReactionAttackPassiveModule } from "#src/services/weapon/passives/createReactionAttackPassiveModule";
 import { createRebelliousGuardianPassiveModule } from "#src/services/weapon/passives/createRebelliousGuardianPassiveModule";
@@ -143,6 +148,7 @@ import { createUnreturningPassiveModule } from "#src/services/weapon/passives/cr
 import { createUntaintedDesirePassiveModule } from "#src/services/weapon/passives/createUntaintedDesirePassiveModule";
 import { createViperBalladPassiveModule } from "#src/services/weapon/passives/createViperBalladPassiveModule";
 import { createWanderingCloudsPassiveModule } from "#src/services/weapon/passives/createWanderingCloudsPassiveModule";
+import { createWavesplitterPassiveModule } from "#src/services/weapon/passives/createWavesplitterPassiveModule";
 import { createWhispersOfWindAndFlowerPassiveModule } from "#src/services/weapon/passives/createWhispersOfWindAndFlowerPassiveModule";
 import { createWhitehillsBestowalPassiveModule } from "#src/services/weapon/passives/createWhitehillsBestowalPassiveModule";
 import { createWhitemoonBristlePassiveModule } from "#src/services/weapon/passives/createWhitemoonBristlePassiveModule";
@@ -578,4 +584,16 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "1919913067": createMistsplittersEdgePassiveModule,
   // Rule by Thunder
   "1682410515": createRuleByThunderPassiveModule,
+  // Wavesplitter
+  "2504503675": createWavesplitterPassiveModule,
+  // Full Circle
+  "2058138859": createFullCirclePassiveModule,
+  // Jade Circulation
+  "3738338491": createJadeCirculationPassiveModule,
+  // Bygone Azure Teardrop
+  "2327126147": createBygoneAzureTeardropPassiveModule,
+  // Oppidan Ambush
+  "2308173099": createOppidanAmbushPassiveModule,
+  // Radiance of the Deeps
+  "4218009083": createRadianceOfTheDeepsPassiveModule,
 };
