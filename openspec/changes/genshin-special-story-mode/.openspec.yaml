@@ -4,3 +4,4 @@ x-phase: 3
 x-model: claude-haiku-5-5
 x-needs: [game-exports]
 x-touches: ["packages/genshin-world/src/services/screen/**"]
+x-waiting: "Task 3.1 needs the ban groups' contents, which are in the client scripts only a PC export holds, not in the excel tables this Mac has."
