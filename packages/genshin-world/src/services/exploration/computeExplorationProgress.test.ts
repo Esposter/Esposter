@@ -44,6 +44,13 @@ describe(computeExplorationProgress, () => {
     ).toBe(99);
   });
 
+  test("an area with nothing done reads zero", () => {
+    expect.hasAssertions();
+
+    // Both doings weigh ten against a total of fifteen, so counting their weight without being done would read 100
+    expect(computeExplorationProgress(area, new Set())).toBe(0);
+  });
+
   test("should read zero for an area with no total, not divide by it", () => {
     expect.hasAssertions();
 
