@@ -5,7 +5,11 @@ import type { R2Bucket } from "@cloudflare/workers-types";
 import type { BlobDeletionQueueMessage } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { roomObjectCalls, roomObjectFailures } from "#server/composables/realtime/useRoomObject.test";
+import {
+  roomObjectCalls,
+  roomObjectFailures,
+  roomObjectReplies,
+} from "#server/composables/realtime/useRoomObject.test";
 import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
 import { banRoomMember } from "#server/services/message/moderation/banRoomMember";
 import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
@@ -92,12 +96,15 @@ describe("roomRouter", () => {
     vi.useFakeTimers({ now: 0, toFake: ["Date"] });
     roomObjectCalls.length = 0;
     roomObjectFailures.clear();
+    // The object returns the senders of the scheduled messages it removed, and none is removed unless a test says so
+    roomObjectReplies.set("deleteAll", () => []);
     userObjectCalls.length = 0;
   });
 
   afterEach(async () => {
     vi.useRealTimers();
     roomObjectFailures.clear();
+    roomObjectReplies.clear();
     await deleteDirectory(messageAssets);
     await deleteDirectory(publicUserAssets);
     MockJobQueueDatabase.clear();
@@ -523,11 +530,14 @@ describe("roomRouter", () => {
     );
   });
 
-  // The object announces the delete to its online members once its teardown is accepted, so the caller sends no second one
-  test("empties its object as the owner deleting it, and does not announce the delete itself", async () => {
+  // The object announces the delete to its online members once its teardown is accepted, so the caller sends no second one.
+  // The scheduled messages it removed were other people's, so each of their senders is told
+  test("empties its object, tells the senders of its scheduled messages, and does not announce the delete itself", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
+    const scheduledMessageSenderId = v7();
+    roomObjectReplies.set("deleteAll", () => [scheduledMessageSenderId]);
     await roomCaller.deleteRoom(newRoom.id);
 
     expect(roomObjectCalls).toContainEqual({
@@ -540,6 +550,7 @@ describe("roomRouter", () => {
       method: "notifyOnlineMembers",
       roomId: newRoom.id,
     });
+    expect(MockPublishedTopics).toContain(getTopic(TopicKind.ScheduledMessage, scheduledMessageSenderId));
   });
 
   // The row goes only once the object has emptied, so a refused teardown leaves the room standing for the owner's retry

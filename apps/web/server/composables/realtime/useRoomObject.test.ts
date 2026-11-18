@@ -13,6 +13,8 @@ const roomObjectCallsHolder = vi.hoisted(() => ({ roomObjectCalls: [] as RoomObj
 export const roomObjectCalls = roomObjectCallsHolder.roomObjectCalls;
 // A method a test makes refuse, with the error its call rejects with. A method not named here resolves
 export const roomObjectFailures = new Map<string, Error>();
+// A method a test makes answer with a value, computed from the arguments of the call. A method not named here resolves
+export const roomObjectReplies = new Map<string, (...args: unknown[]) => unknown>();
 
 export const useRoomObject = (roomId: string): ReturnType<typeof useRealRoomObject> =>
   new Proxy({} as ReturnType<typeof useRealRoomObject>, {
@@ -21,7 +23,8 @@ export const useRoomObject = (roomId: string): ReturnType<typeof useRealRoomObje
       (...args: unknown[]) => {
         roomObjectCalls.push({ args, method, roomId });
         const failure = roomObjectFailures.get(method);
-        return failure ? Promise.reject(failure) : Promise.resolve();
+        if (failure) return Promise.reject(failure);
+        return Promise.resolve(roomObjectReplies.get(method)?.(...args));
       },
   });
 

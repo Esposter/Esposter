@@ -18,6 +18,8 @@ A row is sent by its room's alarm. `RoomObject.alarm` runs every row that is due
 
 Because the rules are re-read when the row comes due, a member who has lost their membership or their send permission by then never sends the message.
 
+A room's delete takes every scheduled message in the room with it, other people's too. The room's object returns the senders whose messages it removed, and the delete publishes each sender's scheduled-message topic before the room's row goes, so a sender's list is told even when the row's delete then fails. The account sweep's owned-room step publishes the same way.
+
 ## Reminders — held by their owner
 
 Procedures under `message.scheduledMessageJob.`:
