@@ -336,7 +336,7 @@ export const baseRoomRouter = router({
         eq(usersToRoomsInMessage.roomId, roomsInMessage.id),
         eq(usersToRoomsInMessage.userId, ctx.user.id),
       );
-      const directMessageDisplayNames = getDirectMessageDisplayNames(ctx.db, ctx.user.id);
+      const directMessageDisplayNames = await getDirectMessageDisplayNames(ctx.db, ctx.user.id);
       const displayName = sql<string>`coalesce(nullif(${roomsInMessage.name}, ''), ${directMessageDisplayNames.displayName}, '')`;
       const roomColumns = getColumns(roomsInMessage);
       const boundSort = createPageSort(

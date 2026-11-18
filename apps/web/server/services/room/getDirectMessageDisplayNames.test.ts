@@ -12,13 +12,23 @@ describe(getDirectMessageDisplayNames, () => {
     expect.hasAssertions();
 
     const context = await createMockContext();
-    const userId = v7();
-    const directMessageDisplayNames = getDirectMessageDisplayNames(context.db, userId);
+    const viewer = await createMockUser(context.db);
+    const other = await createMockUser(context.db);
+    const roomId = v7();
+    await context.db
+      .insert(roomsInMessage)
+      .values({ id: roomId, name: "", participantKey: roomId, type: RoomType.DirectMessage, userId: viewer.id });
+    await context.db.insert(usersToRoomsInMessage).values([
+      { roomId, userId: viewer.id },
+      { roomId, userId: other.id },
+    ]);
+    const directMessageDisplayNames = await getDirectMessageDisplayNames(context.db, viewer.id);
     const query = context.db
       .select({ displayName: directMessageDisplayNames.displayName, roomId: directMessageDisplayNames.roomId })
       .from(directMessageDisplayNames);
     const plan = await context.db.all(sql`EXPLAIN QUERY PLAN ${query.getSQL()}`);
     const details = plan.map((row) => (row as { detail: string }).detail);
+    console.log(`PLAN ${JSON.stringify(details)}`);
 
     expect(details.filter((detail) => /^SCAN (?:message_rooms|participantMembership)\b/u.test(detail))).toStrictEqual(
       [],
@@ -44,7 +54,7 @@ describe(getDirectMessageDisplayNames, () => {
       { roomId: withOtherId, userId: other.id },
       { roomId: aloneId, userId: viewer.id },
     ]);
-    const directMessageDisplayNames = getDirectMessageDisplayNames(context.db, viewer.id);
+    const directMessageDisplayNames = await getDirectMessageDisplayNames(context.db, viewer.id);
     const rows = await context.db.select({ roomId: directMessageDisplayNames.roomId }).from(directMessageDisplayNames);
 
     expect(rows.map(({ roomId }) => roomId).toSorted()).toStrictEqual([aloneId, withOtherId].toSorted());
