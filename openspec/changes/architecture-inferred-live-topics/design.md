@@ -69,7 +69,7 @@ Findings that limit the design:
 - **A table-wide topic fans out.** `users:*` would fire on every write to the users table. The storage ledger moves `storageBytesUsed` on that row, so every upload would refetch every sidebar that lists a direct message. The migration measures each table's fan-out before its table policy is accepted (task 6.1).
 - **A cascade is not in `RETURNING`.** Deleting one resource removed one bookmark, and the statement's `RETURNING` reported only the resource. The foreign-key graph names twelve child tables that cascade from `resources`, bookmarks among them. The write set adds their table-wide topics.
 - **Batched writes return their rows.** Each statement in `db.batch` returned its `RETURNING` rows in the spike, so batched writes capture their scope values. The cache seam does not see them, so the wrapper cannot rely on it.
-- **Writes outside D1.** The inventory found no raw SQL writes through the D1 handle in `apps/web/server`. Durable Object SQLite writes use drizzle's durable-sqlite builders and take the same wrapper inside the object, where a builder write sits at the call, room and user objects. Durable Object storage writes (`ctx.storage.put` and `delete`, nine sites) hold keys, not topic-watched data, and keep their typed events. R2 writes (two direct puts and fourteen helper sites) publish their blob key, as the editor section explains. KV is not used.
+- **Writes outside D1.** The inventory found no raw SQL writes through the D1 handle in `apps/web/server`. Durable Object SQLite writes use drizzle's durable-sqlite builders and take the same wrapper inside the object, where a builder write sits at the call, room and user objects. Durable Object storage writes (`ctx.storage.put` and `delete`, nine sites) hold keys, not topic-watched data, and keep their typed events. R2 writes (two direct puts and fourteen helper sites) publish their blob key, as the Blob topics section explains. KV is not used.
 - **`staticReason` reads stay as they are.** `searchUsers` is a name search. A table-wide users topic would make it live and bring the fan-out above, so its declaration that it is not watched is kept as a classification, not a topic list.
 
 ### 3. Cost
@@ -204,6 +204,15 @@ A write's `RETURNING` names the rows after it. The rows before it are read first
 - **What a write names.** An update names the scope values of its rows before it and, with RETURNING, after it. A delete names the scope values of every row it removes, its own and its cascades', from its RETURNING and its reads, and names each cascaded table table-wide as before. A write with neither RETURNING nor reads names its table alone.
 - **Limits.** A cycle through tables other than the table itself is not walked: the schema has none, and a table in such a cycle has no condition, so it is not read rather than read in full. A cascade that a set null or set default key starts is named by the delete's own rows, not by a read of the child.
 
+## Blob topics
+
+A bucket binding's reads and writes are topics too. A blob topic is `<bucket binding>:<key>` (`BlobTopic`): `USER_ASSETS:user/a/one` names one blob, and `USER_ASSETS:user/a/` names the directory a listing lies in. The empty key, `USER_ASSETS:`, is the bucket's root. Every listing lies in it, so a write publishes it, and the topic schema accepts the empty key for that reason.
+
+- **Reads.** `get` and `head` record the key they read. `list` records the directory its prefix lies in (`getBlobListTopic`): the prefix up to its last `/`, so a write beneath the prefix wakes it. A prefix that does not end at a directory names the directory it starts in, which is wider and never misses a write beneath the prefix.
+- **Writes.** `put` and `delete` publish their key, each directory above it deepest first, and the root (`getBlobWriteTopics`), so a listing of any of those places is woken. A `delete` takes one key or a list of them.
+- **Recording.** `recordBucket` wraps every bucket binding, on the web and in the jobs. It records a call only while a scope holds blobs: the web request's (`requestBlobsStorage`, which `inferTopicsMiddleware` opens beside the request's database scope) or the jobs unit's. A query's blob reads join its topics header, and a procedure's or unit's blob writes publish with its statements.
+- **Blob-state procedures.** `createReadBlobStateProcedure` and `createSaveBlobStateProcedure` declare no topics and take no topic kind. A read's watch is the blob it reads, and a save publishes the blob it writes, so the clicker and the dungeons routers drop their hand topics.
+
 ## Alternatives considered
 
 - **Keep hand declaration and fix each gap.** This is the status quo. It was lost because the gaps recur, as the commit history shows, and each fix adds a test that only pins the list it names.
@@ -248,8 +257,12 @@ Before the sequence starts, the wrapper, the walker and the write capture are bu
 | `apps/web/server/trpc/context.ts`                                              | The request context whose `db` the request's handle wraps                                       |
 | `apps/web/server/db/index.ts`                                                  | The D1 handle the context shares                                                                |
 | `packages/db-schema/src/sqliteTable.ts`                                        | The table definition that carries the scope declaration                                         |
+| `packages/db-schema/src/services/realtime/getBlobTopic.ts`                     | The topic a blob takes in its bucket, `<binding>:<key>`                                         |
 | `packages/db-schema/src/services/realtime/getTableScope.ts`                    | Reads a table's scope declaration back from its symbol                                          |
 | `packages/db/src/services/realtime/recordStatements.ts`                        | The request-scoped handle that records each awaited statement                                   |
+| `packages/db/src/services/realtime/recordBucket.ts`                            | The R2 binding's proxy that records a call's blob reads and writes into the scope               |
+| `packages/db/src/services/realtime/getBlobWriteTopics.ts`                      | The topics a write publishes: its key, each directory above it, and the root                    |
+| `packages/db/src/services/realtime/getBlobListTopic.ts`                        | The topic a listing names: the directory its prefix lies in                                     |
 | `packages/db/src/services/realtime/getReadSet.ts`                              | Merges the statements' read sets into the facts a read names                                    |
 | `packages/db/src/services/realtime/getStatementReadSet.ts`                     | Walks one built statement's chunks into its read set                                            |
 | `packages/db/src/services/realtime/getJoinScopeValues.ts`                      | The row policy: the values a returned row names a joined scope table by                         |
@@ -283,6 +296,7 @@ Before the sequence starts, the wrapper, the walker and the write capture are bu
 | `apps/web/server/trpc/routers/room/directMessage.ts`                           | The participant read, folded into the direct-message list procedure                             |
 | `apps/jobs/src/services/account/takeBackErasedMentionCounts.ts`                | A job write to `usersToRooms` that needs the wrapper on its handle                              |
 | `apps/jobs/src/services/shared/db.ts`                                          | The jobs' handle: `getDb()` inside a unit, which `runUnit` records and publishes                |
+| `apps/web/server/services/storage/requestBlobs.ts`                             | The request's blob scope, opened by `inferTopicsMiddleware` beside its database scope           |
 | `apps/web/server/db/requestDb.ts`                                              | The auth instance's handle, read from the request scope each time a call runs                   |
 
 ## Sources

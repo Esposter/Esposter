@@ -3,7 +3,8 @@ import { TOPIC_ID_MAX_LENGTH } from "#src/services/realtime/constants";
 import { z } from "zod";
 
 // A blob a storage bucket holds, named `<bucket binding>:<key>` (the live queries design). A listing names the directory its
-// Prefix lies in, so a write beneath that directory matches it exactly
+// Prefix lies in, so a write beneath that directory matches it exactly. The bucket's root is the empty key, which every listing
+// Lies in, so a write publishes it and the schema accepts it
 export type BlobTopic = `${string}:${string}`;
 
 // A table's scope topic (the live queries design): `<table>:*` for every row of the table, or `<table>:<column>=<value>`
@@ -21,6 +22,6 @@ const scopeTopicSchema = z.union([
   z.templateLiteral([z.string().min(1), ":*"]),
 ]);
 
-const blobTopicSchema = z.templateLiteral([z.string().min(1), ":", z.string().min(1).max(TOPIC_ID_MAX_LENGTH)]);
+const blobTopicSchema = z.templateLiteral([z.string().min(1), ":", z.string().max(TOPIC_ID_MAX_LENGTH)]);
 
 export const topicSchema = z.union([kindTopicSchema, scopeTopicSchema, blobTopicSchema]) satisfies z.ZodType<Topic>;

@@ -2,6 +2,7 @@ import type { RecordedBlobs } from "#src/models/realtime/RecordedBlobs";
 
 import { recordBucket } from "#src/services/realtime/recordBucket";
 import { createMockBucket } from "@esposter/db-mock";
+import { topicSchema } from "@esposter/db-schema";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 
 describe(recordBucket, () => {
@@ -47,5 +48,18 @@ describe(recordBucket, () => {
     await bucket.delete("user/a/one");
 
     expect(blobs.writes).toStrictEqual([...published, ...published]);
+  });
+
+  // The bucket's root is the topic with an empty key, so every name a write publishes must be one the topic schema accepts.
+  // Otherwise the publish is rejected whole
+  test("every topic a write publishes is one the topic schema accepts, the bucket's root included", async () => {
+    expect.hasAssertions();
+
+    const blobs: RecordedBlobs = { reads: [], writes: [] };
+    const bucket = recordBucket(mockBucket.bucket, bucketName, () => blobs);
+
+    await bucket.put("user/a/one", "x");
+
+    expect(blobs.writes.filter((topic) => !topicSchema.safeParse(topic).success)).toStrictEqual([]);
   });
 });
