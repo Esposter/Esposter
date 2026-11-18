@@ -264,6 +264,7 @@ The References sought are the items below that name a clip or still file (a `.mk
 
 ## Phase 4: Mondstadt
 
+- [ ] **Statue and waypoint unlock** — `world-waypoint-unlock.mkv`, waits on [map unlocking](../../specs/genshin/map-unlocking/design.md): the resonating light a statue or waypoint shows as it unlocks, and how long it holds the player.
 - [ ] **Timed monument** — `monument-timed.mkv`, waits on [puzzles](../genshin-puzzles/design.md). Searched, none found, with the sources tried: the wiki and YouTube; the [Hospital monuments](https://www.youtube.com/watch?v=bXHYBrpRkvI) video shows no monument going out on a clock.
 - [x] **Seelie route**
 - [x] **Mondstadt monuments** — `monument-mondstadt-pillars.mkv`, waits on [puzzles](../genshin-puzzles/design.md). Found: https://www.youtube.com/watch?v=nu6CwCofVes (Richard Yamato; 1280x720 at 29.97 fps, 63 s), saved as `captures/monument-mondstadt-pillars.mkv`. Near: 720p at 30 fps rather than 1080p at 60, on an older build; the strikes are Diluc's, by Windrise.

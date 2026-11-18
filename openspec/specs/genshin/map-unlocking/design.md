@@ -52,7 +52,7 @@ flowchart TD
 
 ## Notes
 
-- **The unlock is not yet animated.** The game's resonating light and the time it holds the player are not measured, since the published clip that would measure them is not yet held, so the unlock is instant here.
+- **The unlock is not yet animated.** The game's resonating light and the time it holds the player are not measured, since the published clip that would measure them is not yet held (the roadmap's References sought lists it), so the unlock is instant here.
 - **The wiki's waypoint reward disagrees with the game's table.** The [wiki](https://genshin-impact.fandom.com/wiki/Teleport_Waypoint) says every waypoint's first unlock grants 50 Adventure EXP and 5 Primogems (`{data-root}/cache/genshin-wiki/Page_Teleport_Waypoint.json` wikitext line 9), which the waypoints with points 1865 to 2051 contradict, since the game's table has no row for them (`{data-root}/genshin-parity/text/ExcelBinOutput/TransPointRewardConfigData.json`, `packages/genshin-world/src/data/regions/mondstadt.json`). The build follows the game's table, so those pay nothing (`packages/genshin-world/src/store/map.ts`).
 - **No quest step unlocks a waypoint outright.** The game's data has none: its one unlock step, quest 352's step 6, names scene point 7, which no region waypoint holds, so a waypoint unlocks only on the player's own F.
 

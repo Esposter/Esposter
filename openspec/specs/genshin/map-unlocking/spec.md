@@ -70,34 +70,6 @@ Windrise's statue SHALL pay five Primogems and fifty Adventure EXP on its first 
 - **WHEN** Windrise's statue is unlocked for the first time
 - **THEN** five Primogems are added to the wallet and fifty Adventure EXP to the adventure rank
 
-### Requirement: Waypoints unlock as statues do
-
-A Teleport Waypoint SHALL be unlocked by resonating with it on F, as a statue is.
-
-#### Scenario: Waypoint unlocked on F
-
-- **WHEN** the player resonates with a Teleport Waypoint on F
-- **THEN** the waypoint is unlocked and offered as a jump
-
-### Requirement: Waypoint's first unlock pays its reward
-
-A Teleport Waypoint's first unlock SHALL pay the Primogems and Adventure EXP its transport point's reward row holds, once.
-
-#### Scenario: Waypoint's first unlock pays its point's reward
-
-- **WHEN** a Teleport Waypoint whose transport point has a reward row is unlocked for the first time
-- **THEN** the row's Primogems are added to the wallet and its Adventure EXP to the adventure rank
-
-#### Scenario: Waypoint whose point has no reward row pays nothing
-
-- **WHEN** a Teleport Waypoint whose transport point has no reward row is unlocked for the first time
-- **THEN** nothing is added to the wallet or the adventure rank
-
-#### Scenario: A later unlock pays nothing again
-
-- **WHEN** a Teleport Waypoint that is already unlocked is unlocked again (which pays only when the landmark was not yet unlocked)
-- **THEN** nothing is added to the wallet or the adventure rank
-
 ### Requirement: Reaching a waypoint or domain entrance unlocks it
 
 A Teleport Waypoint or a domain entrance SHALL unlock when the player interacts with it. A quest step that names a waypoint by its transport point SHALL finish when the waypoint is unlocked.
@@ -120,15 +92,20 @@ A Teleport Waypoint or a domain entrance SHALL unlock when the player interacts 
 - **WHEN** the player interacts with the waypoint
 - **THEN** the step is finished
 
-### Requirement: The first unlock of a waypoint pays its reward once
+### Requirement: A waypoint's first unlock pays its point's reward once
 
-The first unlock of a waypoint SHALL pay its Adventure EXP and Primogems once, and no later unlock SHALL pay them again.
+A Teleport Waypoint's first unlock SHALL pay the Primogems and Adventure EXP its transport point's reward row holds, and no later unlock SHALL pay them again.
 
 #### Scenario: The first unlock pays the waypoint's reward
 
-- **GIVEN** a waypoint has never been unlocked
+- **GIVEN** a Teleport Waypoint whose transport point has a reward row has never been unlocked
 - **WHEN** the player unlocks it
-- **THEN** the player receives the waypoint's Adventure EXP and Primogems
+- **THEN** the row's Primogems are added to the wallet and its Adventure EXP to the adventure rank
+
+#### Scenario: Waypoint whose point has no reward row pays nothing
+
+- **WHEN** a Teleport Waypoint whose transport point has no reward row is unlocked for the first time
+- **THEN** nothing is added to the wallet or the adventure rank
 
 #### Scenario: A later unlock pays nothing again
 
