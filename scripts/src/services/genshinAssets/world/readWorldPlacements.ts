@@ -2,6 +2,7 @@ import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/Der
 import type { DumpedVector } from "#src/models/genshinAssets/world/DumpedVector";
 import type { WorldPrefabPlacements } from "#src/models/genshinAssets/world/WorldPrefabPlacements";
 
+import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { readStreamPlacements } from "#src/services/genshinAssets/world/readStreamPlacements";
 import { readWorldOptions } from "#src/services/genshinAssets/world/readWorldOptions";
 import { toVector } from "#src/services/genshinAssets/world/toVector";
@@ -39,7 +40,7 @@ export const readWorldPlacements = async (component: DerivedAssetComponent): Pro
   );
   const streamPlacements = await Promise.all(
     world.streams.map(async (stream) => {
-      const placements = await readStreamPlacements(component, stream);
+      const placements = await readStreamPlacements(getComponentDirectory(component).world, stream);
       return stream.prefabs.map(({ prefab, prefabId }) => ({
         places: placements
           .filter((placement) => placement.prefabId === prefabId)

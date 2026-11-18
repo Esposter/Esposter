@@ -1,6 +1,7 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { WorldPlacement } from "#src/models/genshinAssets/world/WorldPlacement";
 
+import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { checkIsPlantName } from "#src/services/genshinAssets/world/checkIsPlantName";
 import { getPrefabNames } from "#src/services/genshinAssets/world/getPrefabNames";
 import { readAssetPathNames } from "#src/services/genshinAssets/world/readAssetPathNames";
@@ -21,7 +22,7 @@ export const readPlantPlacements = async (
   const [origin, pathNames, streamPlacements] = await Promise.all([
     readWorldOrigin(component),
     readAssetPathNames(),
-    Promise.all(world.streams.map((stream) => readStreamPlacements(component, stream))),
+    Promise.all(world.streams.map((stream) => readStreamPlacements(getComponentDirectory(component).world, stream))),
   ]);
   const placements = streamPlacements.flat();
   // A derived world names each prefab it lists, while a placement's path hash names only some prefabs, so the listed

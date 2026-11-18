@@ -72,13 +72,19 @@ A refit of a published record SHALL refuse to run when the record it reads hashe
 
 ### Requirement: Re-extracting leaves no stale file
 
-A writer SHALL clear each folder it owns before it writes, so that no file an earlier run wrote survives a re-extraction.
+A writer SHALL leave no file an earlier run wrote in a folder it owns, either by clearing the folder before it writes or by building the folder beside its live copy and swapping it in once the run has finished, so that no file an earlier run wrote survives a re-extraction.
 
 #### Scenario: Re-extracting leaves no stale file
 
 - **GIVEN** an extraction folder holding a file the current run no longer writes
 - **WHEN** the component is extracted again
 - **THEN** that file is gone
+
+#### Scenario: A failed extraction leaves the previous export in place
+
+- **GIVEN** an extraction folder holding the export of an earlier run
+- **WHEN** the component is extracted again and the run fails
+- **THEN** the export is unchanged and no folder of the failed run is left behind
 
 #### Scenario: A writer clears only the folder it owns
 

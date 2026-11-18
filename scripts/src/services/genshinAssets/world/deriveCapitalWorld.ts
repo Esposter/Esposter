@@ -88,7 +88,7 @@ export const deriveCapitalWorld = async (
   // A placement of a prefab grouped by level of detail carries no path hash, so it takes its finest level's from the
   // Game's LOD table, the prefab it is rooted at
   const prefabIdLodPathHashMap = await readLodPathHashes(directory.world);
-  const recordedPlacements = await Promise.all(streams.map((stream) => readStreamPlacements(component, stream)));
+  const recordedPlacements = await Promise.all(streams.map((stream) => readStreamPlacements(directory.world, stream)));
   const streamPlacements = recordedPlacements.map((placements) =>
     placements.map((placement) =>
       placement.pathHash ? placement : { ...placement, pathHash: prefabIdLodPathHashMap.get(placement.prefabId) ?? "" },

@@ -32,8 +32,9 @@ import { writeProvenance } from "#src/services/provenance/writeProvenance";
 import { parseCabMap } from "#src/services/recreation/animeStudio/parseCabMap";
 import { runAnimeStudio } from "#src/services/recreation/animeStudio/runAnimeStudio";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
+import { withStagedFolders } from "#src/services/shared/withStagedFolders";
 import { existsSync } from "node:fs";
-import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
 // One component's closure out of the game's blocks: the layout of each of its roots' and spawned prefabs' blocks dumped
@@ -55,96 +56,111 @@ export const extractComponent = async (component: DerivedAssetComponent): Promis
     .join("|");
   const directory = getComponentDirectory(component);
   const cabMap = parseCabMap(await readFile(CAB_MAP_PATH));
-  await Promise.all(
-    [directory.assets, directory.layout, directory.world].map((path) => rm(path, { force: true, recursive: true })),
-  );
-  await Promise.all([directory.layout, directory.world].map((path) => mkdir(path, { recursive: true })));
-  // A block's layout is dumped once, however many roots and derived prefabs name it
-  const dumpedBlocks = new Set<string>();
-  const dumpLayouts = async (blocks: readonly string[]): Promise<void> => {
-    for (const block of blocks) {
-      if (dumpedBlocks.has(block)) continue;
-      dumpedBlocks.add(block);
-      // oxlint-disable-next-line no-await-in-loop -- One device: AnimeStudio reads one block at a time, each read a blocking run that finishes before the next block starts
-      await exportBlockBySource(block, LAYOUT_ASSET_TYPES, AnimeStudioExportType.Json, directory.layout);
-    }
-  };
-  await dumpLayouts(
-    [...componentRoots, ...spawns.map(({ prefab }) => prefab), ...getWorldRoots(options.world)].map(
-      ({ block }) => block,
-    ),
-  );
-  // A capital's or a sub-area's open world is derived before the closure, since the prefabs it places are roots the closure
-  // Starts from
-  const derived = options.isCapitalWorld
-    ? await deriveCapitalWorld(component, directory, dumpLayouts, cabMap)
-    : undefined;
-  if (derived) await writeFile(join(directory.world, WORLD_JSON_NAME), JSON.stringify(derived.world));
-  const world = derived?.world ?? options.world;
-  const roots = [...componentRoots, ...spawns.map(({ prefab }) => prefab), ...getWorldRoots(world)];
-  const { gameObjectDrawingMap, objects } = await readSceneLayout(directory.layout);
-  const closure = walkAssetClosure(objects, gameObjectDrawingMap, roots, cabMap);
-  const drawn = await exportResolvedAssets(closure.assets, [AssetType.Mesh, AssetType.Material], directory.assets);
-  await exportResolvedAssets(closure.assets, [AssetType.Mesh], directory.assets, AnimeStudioExportType.Json);
-  // A material's raw bytes beside its JSON, for the shader keywords the JSON drops
-  await exportResolvedAssets(closure.assets, [AssetType.Material], directory.assets, AnimeStudioExportType.Raw);
-  const materialDirectory = join(directory.assets, AssetType.Material);
-  // A material is exported under its name, so of several sharing one, which the JSON holds and which file its texture
-  // Pointers resolve through is unknown
-  const nameMaterialsMap = Map.groupBy(
-    drawn.assets.filter(({ type }) => type === AssetType.Material),
-    ({ name }) => name,
-  );
-  const sharedNames = [...nameMaterialsMap]
-    .filter(([, materials]) => materials.length > 1)
-    .map(([name, materials]) => `material ${name}: exported under one name by ${materials.length} materials`);
-  const textures = (
-    await Promise.all(
-      Array.from(nameMaterialsMap, async ([name, [material, ...others]]) => {
-        if (!material || others.length > 0) return [];
-        const path = join(materialDirectory, `${name}.json`);
-        if (!existsSync(path)) return [];
-        const slots = toMaterialTextures(
-          parseMachineJson<ExportedMaterial>(await readFile(path, "utf8"), reviveSourcePathId).m_SavedProperties
-            .m_TexEnvs,
-        );
-        return Object.values(slots).flatMap((slot) => {
-          const resolved = resolveObjectPointer(cabMap, material.file, slot);
-          return resolved ? [resolved] : [];
-        });
-      }),
-    )
-  ).flat();
-  const sampled = await exportResolvedAssets(textures, [AssetType.Texture2D], directory.assets);
-  if (namePattern)
-    for (const block of await readAssetBlocks(namePattern))
-      runAnimeStudio(
-        [
-          join(INSTALLED_BLOCKS_DIRECTORY, block),
-          directory.assets,
-          "--names",
-          namePattern,
-          "--types",
-          ...EXPORTED_ASSET_TYPES,
-          ...GROUP_BY_TYPE,
-        ],
-        GENSHIN_ANIMESTUDIO_OPTIONS,
+  // The export's three folders are built beside their live copies and swapped in once the run has finished, so a run that
+  // Fails leaves the export it would have replaced in place
+  return withStagedFolders(
+    { assets: directory.assets, layout: directory.layout, world: directory.world },
+    async (staged) => {
+      const stagedDirectory = { ...directory, ...staged };
+      // A block's layout is dumped once, however many roots and derived prefabs name it
+      const dumpedBlocks = new Set<string>();
+      const dumpLayouts = async (blocks: readonly string[]): Promise<void> => {
+        for (const block of blocks) {
+          if (dumpedBlocks.has(block)) continue;
+          dumpedBlocks.add(block);
+          // oxlint-disable-next-line no-await-in-loop -- One device: AnimeStudio reads one block at a time, each read a blocking run that finishes before the next block starts
+          await exportBlockBySource(block, LAYOUT_ASSET_TYPES, AnimeStudioExportType.Json, stagedDirectory.layout);
+        }
+      };
+      await dumpLayouts(
+        [...componentRoots, ...spawns.map(({ prefab }) => prefab), ...getWorldRoots(options.world)].map(
+          ({ block }) => block,
+        ),
       );
-  // A set-by-hand world is exported here; a derived one was exported by its derivation, which read the placements from it
-  if (options.world) await exportWorld(options.world, directory.world);
-  const worldLines = world ? await extractWorld(world, directory) : [];
-  // A derived world's names come from the asset-path index, so its stamp names the index's commit and SHA-256
-  await writeProvenance(directory.root, {
-    command: `extract ${component}`,
-    producerPaths: EXTRACT_PRODUCER_PATHS,
-    sources: derived ? [ASSET_PATH_INDEX_SOURCE] : [],
-    tools: [ANIMESTUDIO_TOOL],
-  });
-  const unresolved = [...closure.unresolved, ...drawn.unresolved, ...sharedNames, ...sampled.unresolved];
-  return [
-    `${closure.objects.length} objects reached from ${roots.length} roots, ${drawn.assets.length} meshes and materials, ${sampled.assets.length} textures`,
-    ...(derived?.lines ?? []),
-    ...worldLines,
-    ...(unresolved.length > 0 ? [`${unresolved.length} unresolved:`, ...unresolved.map((line) => `  ${line}`)] : []),
-  ].join("\n");
+      // A capital's or a sub-area's open world is derived before the closure, since the prefabs it places are roots the closure
+      // Starts from
+      const derived = options.isCapitalWorld
+        ? await deriveCapitalWorld(component, stagedDirectory, dumpLayouts, cabMap)
+        : undefined;
+      if (derived) await writeFile(join(stagedDirectory.world, WORLD_JSON_NAME), JSON.stringify(derived.world));
+      const world = derived?.world ?? options.world;
+      const roots = [...componentRoots, ...spawns.map(({ prefab }) => prefab), ...getWorldRoots(world)];
+      const { gameObjectDrawingMap, objects } = await readSceneLayout(stagedDirectory.layout);
+      const closure = walkAssetClosure(objects, gameObjectDrawingMap, roots, cabMap);
+      const drawn = await exportResolvedAssets(
+        closure.assets,
+        [AssetType.Mesh, AssetType.Material],
+        stagedDirectory.assets,
+      );
+      await exportResolvedAssets(closure.assets, [AssetType.Mesh], stagedDirectory.assets, AnimeStudioExportType.Json);
+      // A material's raw bytes beside its JSON, for the shader keywords the JSON drops
+      await exportResolvedAssets(
+        closure.assets,
+        [AssetType.Material],
+        stagedDirectory.assets,
+        AnimeStudioExportType.Raw,
+      );
+      const materialDirectory = join(stagedDirectory.assets, AssetType.Material);
+      // A material is exported under its name, so of several sharing one, which the JSON holds and which file its texture
+      // Pointers resolve through is unknown
+      const nameMaterialsMap = Map.groupBy(
+        drawn.assets.filter(({ type }) => type === AssetType.Material),
+        ({ name }) => name,
+      );
+      const sharedNames = [...nameMaterialsMap]
+        .filter(([, materials]) => materials.length > 1)
+        .map(([name, materials]) => `material ${name}: exported under one name by ${materials.length} materials`);
+      const textures = (
+        await Promise.all(
+          Array.from(nameMaterialsMap, async ([name, [material, ...others]]) => {
+            if (!material || others.length > 0) return [];
+            const path = join(materialDirectory, `${name}.json`);
+            if (!existsSync(path)) return [];
+            const slots = toMaterialTextures(
+              parseMachineJson<ExportedMaterial>(await readFile(path, "utf8"), reviveSourcePathId).m_SavedProperties
+                .m_TexEnvs,
+            );
+            return Object.values(slots).flatMap((slot) => {
+              const resolved = resolveObjectPointer(cabMap, material.file, slot);
+              return resolved ? [resolved] : [];
+            });
+          }),
+        )
+      ).flat();
+      const sampled = await exportResolvedAssets(textures, [AssetType.Texture2D], stagedDirectory.assets);
+      if (namePattern)
+        for (const block of await readAssetBlocks(namePattern))
+          runAnimeStudio(
+            [
+              join(INSTALLED_BLOCKS_DIRECTORY, block),
+              stagedDirectory.assets,
+              "--names",
+              namePattern,
+              "--types",
+              ...EXPORTED_ASSET_TYPES,
+              ...GROUP_BY_TYPE,
+            ],
+            GENSHIN_ANIMESTUDIO_OPTIONS,
+          );
+      // A set-by-hand world is exported here; a derived one was exported by its derivation, which read the placements from it
+      if (options.world) await exportWorld(options.world, stagedDirectory.world);
+      const worldLines = world ? await extractWorld(world, stagedDirectory) : [];
+      // A derived world's names come from the asset-path index, so its stamp names the index's commit and SHA-256
+      await writeProvenance(directory.root, {
+        command: `extract ${component}`,
+        producerPaths: EXTRACT_PRODUCER_PATHS,
+        sources: derived ? [ASSET_PATH_INDEX_SOURCE] : [],
+        tools: [ANIMESTUDIO_TOOL],
+      });
+      const unresolved = [...closure.unresolved, ...drawn.unresolved, ...sharedNames, ...sampled.unresolved];
+      return [
+        `${closure.objects.length} objects reached from ${roots.length} roots, ${drawn.assets.length} meshes and materials, ${sampled.assets.length} textures`,
+        ...(derived?.lines ?? []),
+        ...worldLines,
+        ...(unresolved.length > 0
+          ? [`${unresolved.length} unresolved:`, ...unresolved.map((line) => `  ${line}`)]
+          : []),
+      ].join("\n");
+    },
+  );
 };

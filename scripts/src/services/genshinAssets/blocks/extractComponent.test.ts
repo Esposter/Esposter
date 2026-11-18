@@ -1,4 +1,5 @@
 import type { exportResolvedAssets as baseExportResolvedAssets } from "#src/services/genshinAssets/blocks/exportResolvedAssets";
+import type { readAssetBlocks as baseReadAssetBlocks } from "#src/services/genshinAssets/shared/readAssetBlocks";
 import type { readGameVersion as baseReadGameVersion } from "#src/services/genshinAssets/shared/readGameVersion";
 import type { readSceneLayout as baseReadSceneLayout } from "#src/services/genshinAssets/shared/readSceneLayout";
 import type { parseCabMap as baseParseCabMap } from "#src/services/recreation/animeStudio/parseCabMap";
@@ -6,9 +7,11 @@ import type { parseCabMap as baseParseCabMap } from "#src/services/recreation/an
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { EXTRACT_PRODUCER_PATHS } from "#src/services/genshinAssets/blocks/constants";
 import { extractComponent } from "#src/services/genshinAssets/blocks/extractComponent";
+import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { readProvenance } from "#src/services/provenance/readProvenance";
+import { TEST_FILENAME } from "#src/services/shared/fixtureConstants.test";
 import { createHash } from "node:crypto";
-import { mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -19,14 +22,16 @@ const { EXTRACTION_ROOT } = await vi.hoisted(async () => {
   return { EXTRACTION_ROOT: joinPath(tmpdir(), "extract-component-test") };
 });
 
-const { exportResolvedAssets, parseCabMap, readGameVersion, readSceneLayout } = vi.hoisted(() => ({
+const { exportResolvedAssets, parseCabMap, readAssetBlocks, readGameVersion, readSceneLayout } = vi.hoisted(() => ({
   exportResolvedAssets: vi.fn<typeof baseExportResolvedAssets>(),
   parseCabMap: vi.fn<typeof baseParseCabMap>(),
+  readAssetBlocks: vi.fn<typeof baseReadAssetBlocks>(),
   readGameVersion: vi.fn<typeof baseReadGameVersion>(),
   readSceneLayout: vi.fn<typeof baseReadSceneLayout>(),
 }));
 
 vi.mock(import("#src/services/genshinAssets/blocks/exportResolvedAssets"), () => ({ exportResolvedAssets }));
+vi.mock(import("#src/services/genshinAssets/shared/readAssetBlocks"), () => ({ readAssetBlocks }));
 vi.mock(import("#src/services/genshinAssets/shared/readGameVersion"), () => ({ readGameVersion }));
 vi.mock(import("#src/services/genshinAssets/shared/readSceneLayout"), () => ({ readSceneLayout }));
 vi.mock(import("#src/services/recreation/animeStudio/parseCabMap"), () => ({ parseCabMap }));
@@ -53,6 +58,7 @@ describe(extractComponent, () => {
     mkdirSync(EXTRACTED_ROOT, { recursive: true });
     writeFileSync(join(EXTRACTION_ROOT, "gi_map.bin"), "");
     writeFileSync(TOOL_PATH, TOOL_CONTENT);
+    readAssetBlocks.mockResolvedValue([]);
     readGameVersion.mockResolvedValue(INSTALL_VERSION);
     parseCabMap.mockReturnValue(new Map());
     readSceneLayout.mockResolvedValue({ gameObjectDrawingMap: new Map(), objectNameMap: new Map(), objects: [] });
@@ -76,5 +82,51 @@ describe(extractComponent, () => {
     expect(provenance?.tools).toStrictEqual([
       { name: "AnimeStudio", sha256: createHash("sha256").update(TOOL_CONTENT).digest("hex") },
     ]);
+  });
+
+  test("a run that fails leaves the previous export in place", async () => {
+    expect.hasAssertions();
+
+    const { assets, layout, world } = getComponentDirectory(COMPONENT);
+    const folders = [assets, layout, world];
+    for (const folder of folders) {
+      mkdirSync(folder, { recursive: true });
+      writeFileSync(join(folder, TEST_FILENAME), " ");
+    }
+    exportResolvedAssets.mockRejectedValueOnce(new Error(" "));
+
+    await expect(extractComponent(COMPONENT)).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
+
+    for (const folder of folders) expect(readFileSync(join(folder, TEST_FILENAME), "utf8")).toBe(" ");
+    expect(readdirSync(EXTRACTED_ROOT).toSorted()).toStrictEqual(["assets", "layout", "world"]);
+  });
+
+  test("a run that succeeds replaces the previous export", async () => {
+    expect.hasAssertions();
+
+    const { assets } = getComponentDirectory(COMPONENT);
+    mkdirSync(assets, { recursive: true });
+    writeFileSync(join(assets, TEST_FILENAME), " ");
+
+    await extractComponent(COMPONENT);
+
+    expect(existsSync(join(assets, TEST_FILENAME))).toBe(false);
+  });
+
+  test("a swap that fails puts the previous export back", async () => {
+    expect.hasAssertions();
+
+    const { assets } = getComponentDirectory(COMPONENT);
+    mkdirSync(assets, { recursive: true });
+    writeFileSync(join(assets, TEST_FILENAME), " ");
+    // The run takes its copy of the meshes away, so the copy cannot be swapped in once the run has finished
+    exportResolvedAssets.mockImplementationOnce((_assets, _types, directory) => {
+      rmSync(directory, { force: true, recursive: true });
+      return Promise.resolve({ assets: [], unresolved: [] });
+    });
+
+    await expect(extractComponent(COMPONENT)).rejects.toHaveProperty("code", "ENOENT");
+
+    expect(readFileSync(join(assets, TEST_FILENAME), "utf8")).toBe(" ");
   });
 });
