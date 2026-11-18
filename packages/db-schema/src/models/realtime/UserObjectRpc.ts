@@ -2,15 +2,11 @@ import type { UserAchievementInAchievementWithRelations } from "#src/models/achi
 import type { PageCursor } from "#src/models/pagination/PageCursor";
 import type { Topic } from "#src/models/realtime/Topic";
 import type { UserEvent } from "#src/models/realtime/UserEvent";
-import type { FriendRequestInSocialWithRelations } from "#src/models/social/FriendRequestInSocialWithRelations";
 import type { StorageUsage } from "#src/models/storage/StorageUsage";
 import type { ReconcileTodoRemindersInput } from "#src/models/todoReminder/ReconcileTodoRemindersInput";
-import type { PublicUser } from "#src/models/user/PublicUser";
 import type { remindersInUser, scheduledMessagesInUser, sentMessagesInUser } from "#src/objects/user/schema";
 import type { UserStatusInMessage } from "#src/schema/message/userStatusesInMessage";
 import type { UserToRoomInMessage } from "#src/schema/message/usersToRoomsInMessage";
-import type { FriendRequestInSocial } from "#src/schema/social/friendRequestsInSocial";
-import type { FriendInSocial } from "#src/schema/social/friendsInSocial";
 import type { SetNonNullable } from "type-fest";
 
 // A scheduled message the person's index names: its id is the scheduled message's, and its body is read from its room
@@ -27,7 +23,6 @@ export type SentMessageInUser = typeof sentMessagesInUser.$inferSelect;
 // The RPC surface of a User object, the one contract its class in the realtime Worker and the web Worker's callers share.
 // A personal event is sent by the write that raised it, and reaches every tab the person has open
 export interface UserObjectRpc {
-  acceptFriendRequest: (input: { receiverUser: PublicUser; senderUser: PublicUser }) => Promise<void>;
   addJoinedCall: (callSessionId: string) => Promise<void>;
   addReminder: (reminder: ScheduledReminder) => Promise<void>;
   addScheduledMessage: (scheduledMessage: { roomId: string; runAt: Date; scheduledId: string }) => Promise<void>;
@@ -37,8 +32,6 @@ export interface UserObjectRpc {
   closeSession: (sessionId: string) => Promise<void>;
   // The reminders and scheduled messages the person holds, as a count of both
   countScheduledMessageJobs: () => Promise<number>;
-  declineFriendRequest: (input: Pick<FriendRequestInSocial, "receiverId" | "senderId">) => Promise<void>;
-  deleteFriend: (input: Pick<FriendInSocial, "receiverId" | "senderId">) => Promise<void>;
   // Every store the person's object holds is emptied, and its alarm cleared, when the account is erased
   erase: () => Promise<void>;
   // A topic one of the person's tabs watches changed: every tab watching it hears so, and no other tab does
@@ -65,7 +58,6 @@ export interface UserObjectRpc {
     content: { apiKeyName: string; contentVersion: number; id: string },
     deviceId: string,
   ) => Promise<void>;
-  sendFriendRequest: (friendRequest: FriendRequestInSocialWithRelations) => Promise<void>;
   updateAchievement: (userAchievements: UserAchievementInAchievementWithRelations[]) => Promise<void>;
   updateUsage: (storageUsage: StorageUsage) => Promise<void>;
   updateUserToRoom: (userToRoom: UserToRoomInMessage) => Promise<void>;

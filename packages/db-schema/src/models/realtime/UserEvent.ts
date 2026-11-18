@@ -2,15 +2,12 @@ import { userAchievementInAchievementWithRelationsSchema } from "#src/models/ach
 import { updateRoomInputSchema } from "#src/models/message/UpdateRoomInput";
 import { topicSchema } from "#src/models/realtime/Topic";
 import { sessionIdSchema } from "#src/models/shared/SessionId";
-import { friendRequestInSocialWithRelationsSchema } from "#src/models/social/FriendRequestInSocialWithRelations";
 import { storageUsageSchema } from "#src/models/storage/StorageUsage";
 import { createApiKeyInputSchema } from "#src/models/user/CreateApiKeyInput";
 import { publicUserSchema } from "#src/models/user/PublicUser";
 import { selectRoomInMessageSchema } from "#src/schema/message/roomsInMessage";
 import { selectUserToRoomInMessageSchema } from "#src/schema/message/usersToRoomsInMessage";
 import { selectResourceInResourceSchema } from "#src/schema/resource/resourcesInResource";
-import { selectFriendRequestInSocialSchema } from "#src/schema/social/friendRequestsInSocial";
-import { selectFriendInSocialSchema } from "#src/schema/social/friendsInSocial";
 import { AchievementName } from "#src/services/achievement/AchievementName";
 import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
@@ -22,22 +19,6 @@ const updateAchievementEventSchema = z.object({
     Object.values(AchievementName).length,
   ),
   type: z.literal("updateAchievement"),
-});
-const sendFriendRequestEventSchema = z.object({
-  data: friendRequestInSocialWithRelationsSchema,
-  type: z.literal("sendFriendRequest"),
-});
-const acceptFriendRequestEventSchema = z.object({
-  data: z.object({ receiverUser: publicUserSchema, senderUser: publicUserSchema }),
-  type: z.literal("acceptFriendRequest"),
-});
-const declineFriendRequestEventSchema = z.object({
-  data: selectFriendRequestInSocialSchema.pick({ receiverId: true, senderId: true }),
-  type: z.literal("declineFriendRequest"),
-});
-const deleteFriendEventSchema = z.object({
-  data: selectFriendInSocialSchema.pick({ receiverId: true, senderId: true }),
-  type: z.literal("deleteFriend"),
 });
 // A start took the lease, so the session the person's save held before is replaced by the one named here
 const replaceSessionEventSchema = z.object({
@@ -92,10 +73,6 @@ const invalidateEventSchema = z.object({ data: z.object({ topic: topicSchema }),
 
 const userEventSchemas = [
   updateAchievementEventSchema,
-  sendFriendRequestEventSchema,
-  acceptFriendRequestEventSchema,
-  declineFriendRequestEventSchema,
-  deleteFriendEventSchema,
   replaceSessionEventSchema,
   updateUsageEventSchema,
   saveResourceContentEventSchema,

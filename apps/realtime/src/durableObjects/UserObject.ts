@@ -1,10 +1,6 @@
 import type { TopicWatch } from "#src/models/user/TopicWatch";
 import type {
-  FriendInSocial,
-  FriendRequestInSocial,
-  FriendRequestInSocialWithRelations,
   PageCursor,
-  PublicUser,
   ReconcileTodoRemindersInput,
   ScheduledMessageInUser,
   ScheduledReminder,
@@ -60,10 +56,6 @@ export class UserObject extends RealtimeObject<UserEvent> implements UserObjectR
   protected readonly db = createDurableObjectDatabase(this.ctx, userMigrations.migrations);
   readonly #userId = getObjectName(this.ctx, "UserObject");
 
-  acceptFriendRequest(input: { receiverUser: PublicUser; senderUser: PublicUser }): Promise<void> {
-    return this.broadcastEvent({ data: input, type: "acceptFriendRequest" });
-  }
-
   // A reminder armed again under its id replaces the one it names, so a re-run of the step that armed it converges
   async addJoinedCall(callSessionId: string): Promise<void> {
     await this.db.insert(joinedCallsInUser).values({ callSessionId }).onConflictDoNothing();
@@ -116,14 +108,6 @@ export class UserObject extends RealtimeObject<UserEvent> implements UserObjectR
     const [reminderCount] = await this.db.select({ count: count() }).from(remindersInUser);
     const [scheduledMessageCount] = await this.db.select({ count: count() }).from(scheduledMessagesInUser);
     return (reminderCount?.count ?? 0) + (scheduledMessageCount?.count ?? 0);
-  }
-
-  declineFriendRequest(input: Pick<FriendRequestInSocial, "receiverId" | "senderId">): Promise<void> {
-    return this.broadcastEvent({ data: input, type: "declineFriendRequest" });
-  }
-
-  deleteFriend(input: Pick<FriendInSocial, "receiverId" | "senderId">): Promise<void> {
-    return this.broadcastEvent({ data: input, type: "deleteFriend" });
   }
 
   // Every store the person's object holds is emptied, and its alarm cleared, when the account is erased. The sweep runs this
@@ -292,10 +276,6 @@ export class UserObject extends RealtimeObject<UserEvent> implements UserObjectR
       { data: content, type: "saveResourceContent" },
       deviceId ? { excludeTag: getDeviceSocketTag(deviceId) } : {},
     );
-  }
-
-  sendFriendRequest(friendRequest: FriendRequestInSocialWithRelations): Promise<void> {
-    return this.broadcastEvent({ data: friendRequest, type: "sendFriendRequest" });
   }
 
   updateAchievement(userAchievements: UserAchievementInAchievementWithRelations[]): Promise<void> {

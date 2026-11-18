@@ -1,7 +1,6 @@
 import type { PublicUser } from "@esposter/db-schema";
 
 import { containsLike } from "#server/services/db/containsLike";
-import { callUserObjects } from "#server/services/realtime/callUserObjects";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { router } from "#server/trpc/index";
@@ -38,9 +37,6 @@ export const friendRouter = router({
       DatabaseEntityType.Friend,
       friendshipId,
       "NOT_FOUND",
-    );
-    await callUserObjects([userId, friendId], (userObject) =>
-      userObject.deleteFriend({ receiverId: friendId, senderId: userId }),
     );
   }),
   // Each friend's own topic too, since the list shows their name and image, which they change without touching it

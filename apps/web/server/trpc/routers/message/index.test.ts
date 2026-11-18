@@ -77,7 +77,6 @@ const { roomObject, userObject, useRoomObjectMock, useUserObjectMock } = vi.hois
     votePoll: vi.fn<RoomObjectRpc["votePoll"]>(),
   } satisfies RoomObjectRpc;
   const userObjectFake = {
-    acceptFriendRequest: vi.fn<UserObjectRpc["acceptFriendRequest"]>(),
     addJoinedCall: vi.fn<UserObjectRpc["addJoinedCall"]>(),
     addReminder: vi.fn<UserObjectRpc["addReminder"]>(),
     addScheduledMessage: vi.fn<UserObjectRpc["addScheduledMessage"]>(),
@@ -85,8 +84,6 @@ const { roomObject, userObject, useRoomObjectMock, useUserObjectMock } = vi.hois
     broadcastEvent: vi.fn<UserObjectRpc["broadcastEvent"]>(),
     closeSession: vi.fn<UserObjectRpc["closeSession"]>(),
     countScheduledMessageJobs: vi.fn<UserObjectRpc["countScheduledMessageJobs"]>(),
-    declineFriendRequest: vi.fn<UserObjectRpc["declineFriendRequest"]>(),
-    deleteFriend: vi.fn<UserObjectRpc["deleteFriend"]>(),
     erase: vi.fn<UserObjectRpc["erase"]>(),
     invalidate: vi.fn<UserObjectRpc["invalidate"]>(),
     readJoinedCallIds: vi.fn<UserObjectRpc["readJoinedCallIds"]>(),
@@ -102,7 +99,6 @@ const { roomObject, userObject, useRoomObjectMock, useUserObjectMock } = vi.hois
     replaceSession: vi.fn<UserObjectRpc["replaceSession"]>(),
     roomActivity: vi.fn<UserObjectRpc["roomActivity"]>(),
     saveResourceContent: vi.fn<UserObjectRpc["saveResourceContent"]>(),
-    sendFriendRequest: vi.fn<UserObjectRpc["sendFriendRequest"]>(),
     updateAchievement: vi.fn<UserObjectRpc["updateAchievement"]>(),
     updateUsage: vi.fn<UserObjectRpc["updateUsage"]>(),
     updateUserToRoom: vi.fn<UserObjectRpc["updateUserToRoom"]>(),

@@ -4,7 +4,6 @@ import { getInsertSelectMetadata } from "#server/services/db/getInsertSelectMeta
 import { getReceivedFriendRequestWhere } from "#server/services/friend/getReceivedFriendRequestWhere";
 import { readUserPair } from "#server/services/friend/readUserPair";
 import { getJobQueue } from "#server/services/queue/getJobQueue";
-import { callUserObjects } from "#server/services/realtime/callUserObjects";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { router } from "#server/trpc/index";
@@ -43,9 +42,7 @@ export const friendRequestRouter = router({
   ).mutation<PublicUser>(async ({ ctx, input: senderId }) => {
     const userId = ctx.user.id;
     const friendshipId = getFriendshipId(senderId, userId);
-    // The sender is both the emit payload and the return value, so nothing fallible sits between the write and
-    // The emit
-    const [senderUser, receiverUser] = await readUserPair(ctx.db, senderId, userId);
+    const [senderUser] = await readUserPair(ctx.db, senderId, userId);
     // The friendship is selected from the request row itself, so it exists only while that request stands for this
     // Receiver, and the request is deleted in the same batch: an accept lands whole or not at all
     const [insertedFriends] = await ctx.db.batch([
@@ -66,9 +63,6 @@ export const friendRequestRouter = router({
       ctx.db.delete(friendRequestsInSocial).where(getReceivedFriendRequestWhere(friendshipId, userId)),
     ]);
     requireMutation(insertedFriends[0], Operation.Update, DatabaseEntityType.Friend, friendshipId, "NOT_FOUND");
-    await callUserObjects([senderId, userId], (userObject) =>
-      userObject.acceptFriendRequest({ receiverUser, senderUser }),
-    );
     return senderUser;
   }),
   declineFriendRequest: getTopicsProcedure(
@@ -90,9 +84,6 @@ export const friendRequestRouter = router({
       DatabaseEntityType.FriendRequest,
       friendshipId,
       "NOT_FOUND",
-    );
-    await callUserObjects([senderId, userId], (userObject) =>
-      userObject.declineFriendRequest({ receiverId: userId, senderId }),
     );
   }),
   readFriendRequests: getTopicsProcedure(standardAuthedProcedure, ({ ctx }) => [
@@ -173,7 +164,6 @@ export const friendRequestRouter = router({
       return existingFriendRequest;
     }
     const friendRequest: FriendRequestInSocialWithRelations = { ...newFriendRequest, sender: senderUser };
-    await callUserObjects([receiverId, userId], (userObject) => userObject.sendFriendRequest(friendRequest));
     // Best-effort after the insert — a failed publish loses one notification, never the friend request that
     // Already landed.
     await getResultAsync(() =>

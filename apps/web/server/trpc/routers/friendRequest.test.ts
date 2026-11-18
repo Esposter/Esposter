@@ -2,7 +2,6 @@ import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
 import {
   createMockAuthSession,
   createMockCaller,
@@ -18,7 +17,6 @@ import {
   DatabaseEntityType,
   friendRequestsInSocial,
   friendsInSocial,
-  PublicUserColumns,
   usersInAuth,
 } from "@esposter/db-schema";
 import { getFriendshipId, InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
@@ -39,7 +37,6 @@ describe("friendRequestRouter", () => {
     await mockContext.db.delete(blocksInSocial);
     await mockContext.db.delete(friendsInSocial);
     await mockContext.db.delete(friendRequestsInSocial);
-    userObjectCalls.length = 0;
   });
 
   test("sends friend request", async () => {
@@ -243,59 +240,6 @@ describe("friendRequestRouter", () => {
 
     expect(allFriendRequests.map(({ receiverId, senderId }) => ({ receiverId, senderId }))).toStrictEqual([
       { receiverId: userId, senderId: user.id },
-    ]);
-  });
-
-  test("sends the friend request to both people's objects", async () => {
-    expect.hasAssertions();
-
-    const receiverUser = getMockSession().user;
-    const senderAuthSession = await createMockAuthSession(mockContext.db);
-    const { user: senderUser } = senderAuthSession;
-    const friendRequest = await (
-      await createMockCaller(friendRequestRouter, senderAuthSession)
-    ).sendFriendRequest(receiverUser.id);
-
-    expect(userObjectCalls).toStrictEqual([
-      { args: [friendRequest], method: "sendFriendRequest", userId: receiverUser.id },
-      { args: [friendRequest], method: "sendFriendRequest", userId: senderUser.id },
-    ]);
-  });
-
-  test("sends the accepted friend request to both people's objects", async () => {
-    expect.hasAssertions();
-
-    const receiverUser = getMockSession().user;
-    const senderAuthSession = await createMockAuthSession(mockContext.db);
-    const { user: senderUser } = senderAuthSession;
-    await (await createMockCaller(friendRequestRouter, senderAuthSession)).sendFriendRequest(receiverUser.id);
-    const acceptedSenderUser = await friendRequestCaller.acceptFriendRequest(senderUser.id);
-    const acceptedReceiverUser = await mockContext.db.query.usersInAuth.findFirst({
-      columns: PublicUserColumns,
-      where: { id: { eq: receiverUser.id } },
-    });
-    const acceptance = { receiverUser: acceptedReceiverUser, senderUser: acceptedSenderUser };
-
-    expect(userObjectCalls.filter(({ method }) => method === "acceptFriendRequest")).toStrictEqual([
-      { args: [acceptance], method: "acceptFriendRequest", userId: senderUser.id },
-      { args: [acceptance], method: "acceptFriendRequest", userId: receiverUser.id },
-    ]);
-  });
-
-  test("sends the declined friend request to both people's objects", async () => {
-    expect.hasAssertions();
-
-    const receiverUser = getMockSession().user;
-    const senderAuthSession = await createMockAuthSession(mockContext.db);
-    const { user: senderUser } = senderAuthSession;
-    await (await createMockCaller(friendRequestRouter, senderAuthSession)).sendFriendRequest(receiverUser.id);
-    await friendRequestCaller.declineFriendRequest(senderUser.id);
-
-    const declinedFriendRequest = { receiverId: receiverUser.id, senderId: senderUser.id };
-
-    expect(userObjectCalls.filter(({ method }) => method === "declineFriendRequest")).toStrictEqual([
-      { args: [declinedFriendRequest], method: "declineFriendRequest", userId: senderUser.id },
-      { args: [declinedFriendRequest], method: "declineFriendRequest", userId: receiverUser.id },
     ]);
   });
 });

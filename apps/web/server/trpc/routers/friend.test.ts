@@ -2,7 +2,6 @@ import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
 import { createMockAuthSession, createMockContext, getMockSession } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
 import { createFriendship } from "#server/trpc/routers/createFriendship.test";
@@ -34,7 +33,6 @@ describe("friendRouter", () => {
     await mockContext.db.delete(blocksInSocial);
     await mockContext.db.delete(friendsInSocial);
     await mockContext.db.delete(friendRequestsInSocial);
-    userObjectCalls.length = 0;
   });
 
   test("reads friends as sender", async () => {
@@ -125,17 +123,5 @@ describe("friendRouter", () => {
     const searchedUsers = await friendCaller.searchUsers(user.name);
 
     expect(searchedUsers).toStrictEqual([]);
-  });
-
-  test("sends the friend deletion to both people's objects", async () => {
-    expect.hasAssertions();
-
-    const { user, userId } = await createFriendship(mockContext);
-    await friendCaller.deleteFriend(user.id);
-
-    expect(userObjectCalls.filter(({ method }) => method === "deleteFriend")).toStrictEqual([
-      { args: [{ receiverId: user.id, senderId: userId }], method: "deleteFriend", userId },
-      { args: [{ receiverId: user.id, senderId: userId }], method: "deleteFriend", userId: user.id },
-    ]);
   });
 });
