@@ -2,13 +2,11 @@ import type { CookingProgress } from "#src/models/cooking/CookingProgress";
 import type { CookingRecipe } from "#src/models/cooking/CookingRecipe";
 import type { CookingTalent } from "#src/models/cooking/CookingTalent";
 import type { ProcessingJob } from "#src/models/cooking/ProcessingJob";
-import type { ProcessingRecipe } from "#src/models/cooking/ProcessingRecipe";
 import type { SceneGroupPlace } from "#src/models/sceneGroup/SceneGroupPlace";
 
 import { readCookingRecipes } from "#src/services/cooking/readCookingRecipes";
 import { readCookingTalents } from "#src/services/cooking/readCookingTalents";
 import { readMondstadtCookingStovePlace } from "#src/services/cooking/readMondstadtCookingStovePlace";
-import { readProcessingRecipes } from "#src/services/cooking/readProcessingRecipes";
 import { createUnlockItemMap } from "#src/services/shared/createUnlockItemMap";
 import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync, getSynchronizedFunction } from "@esposter/shared";
@@ -26,7 +24,7 @@ const read = <T>(readTable: () => Promise<T>, setTable: (table: T) => void) => {
   )();
 };
 
-// The cooking recipes, the processing recipes, the cooks' talents by character id and the stove's place in Mondstadt, each
+// The cooking recipes, the cooks' talents by character id and the stove's place in Mondstadt, each
 // Read from the hosted game data as the world starts, with the progress the save holds: the recipes learned and the
 // Proficiency in each, and the processing jobs running. The bag's use of an instruction item and the stove's prompt read
 // It, and the session starts it before the save watches it and stops it as it unmounts
@@ -37,7 +35,6 @@ export const useWorldCookingStore = defineStore("world/cooking", () => {
   const cookingRecipes = shallowRef<CookingRecipe[]>([]);
   const cookingTalents = shallowRef<Record<string, CookingTalent>>({});
   const cookingStovePlace = shallowRef<SceneGroupPlace>();
-  const processingRecipes = shallowRef<ProcessingRecipe[]>([]);
   const cookingRecipe = shallowRef<CookingRecipe>();
   // The dishes the cook knows at the stove, the one on the screen being the first of them when it opens
   const openCookingRecipes = shallowRef<CookingRecipe[]>([]);
@@ -59,12 +56,6 @@ export const useWorldCookingStore = defineStore("world/cooking", () => {
       },
     );
     read(
-      () => readProcessingRecipes(gameDataBaseUrl),
-      (recipes) => {
-        processingRecipes.value = recipes;
-      },
-    );
-    read(
       () => readMondstadtCookingStovePlace(gameDataBaseUrl),
       (place) => {
         cookingStovePlace.value = place;
@@ -77,7 +68,6 @@ export const useWorldCookingStore = defineStore("world/cooking", () => {
     cookingRecipes.value = [];
     cookingTalents.value = {};
     cookingStovePlace.value = undefined;
-    processingRecipes.value = [];
     cookingRecipe.value = undefined;
     openCookingRecipes.value = [];
   };
@@ -91,7 +81,6 @@ export const useWorldCookingStore = defineStore("world/cooking", () => {
     instructionRecipeMap,
     openCookingRecipes,
     processingJobs,
-    processingRecipes,
     start,
     stop,
   };

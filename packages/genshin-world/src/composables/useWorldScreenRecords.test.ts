@@ -6,6 +6,7 @@ import type { readDomainChallengeLevels as readDomainChallengeLevelsFn } from "#
 import type { readDishes as readDishesFn } from "#src/services/cooking/readDishes";
 import type { readForgeRecipes as readForgeRecipesFn } from "#src/services/forging/readForgeRecipes";
 import type { readHomeBlueprints as readHomeBlueprintsFn } from "#src/services/home/readHomeBlueprints";
+import type { readProcessingRecipes as readProcessingRecipesFn } from "#src/services/cooking/readProcessingRecipes";
 import type { readPaimonsBargainsRotation as readPaimonsBargainsRotationFn } from "#src/services/shop/readPaimonsBargainsRotation";
 import type { readCharacterTrials as readCharacterTrialsFn } from "#src/services/trial/readCharacterTrials";
 import type { readShopGoodMap as readShopGoodMapFn } from "#src/services/shop/readShopGoodMap";
@@ -20,6 +21,7 @@ import { readDomainChallengeLevels } from "#src/services/domains/readDomainChall
 import { readDishes } from "#src/services/cooking/readDishes";
 import { readForgeRecipes } from "#src/services/forging/readForgeRecipes";
 import { readHomeBlueprints } from "#src/services/home/readHomeBlueprints";
+import { readProcessingRecipes } from "#src/services/cooking/readProcessingRecipes";
 import { readPaimonsBargainsRotation } from "#src/services/shop/readPaimonsBargainsRotation";
 import { readCharacterTrials } from "#src/services/trial/readCharacterTrials";
 import { readShopGoodMap } from "#src/services/shop/readShopGoodMap";
@@ -44,6 +46,9 @@ vi.mock(import("#src/services/cooking/readDishes"), () => ({
 }));
 vi.mock(import("#src/services/forging/readForgeRecipes"), () => ({
   readForgeRecipes: vi.fn<typeof readForgeRecipesFn>(() => Promise.resolve([])),
+}));
+vi.mock(import("#src/services/cooking/readProcessingRecipes"), () => ({
+  readProcessingRecipes: vi.fn<typeof readProcessingRecipesFn>(() => Promise.resolve([])),
 }));
 vi.mock(import("#src/services/home/readHomeBlueprints"), () => ({
   readHomeBlueprints: vi.fn<typeof readHomeBlueprintsFn>(() => Promise.resolve([])),
@@ -146,6 +151,19 @@ describe(useWorldScreenRecords, () => {
     await flushReads();
 
     expect(readForgeRecipes).toHaveBeenCalledExactlyOnceWith(gameDataBaseUrl);
+  });
+
+  test("reads the processings as the processing screen opens", async () => {
+    expect.hasAssertions();
+
+    startTestWorldSession();
+    useWorldScreenRecords({ gameDataBaseUrl });
+    const worldScreenStore = useWorldScreenStore();
+    worldScreenStore.screenKind = ScreenKind.Processing;
+    await nextTick();
+    await flushReads();
+
+    expect(readProcessingRecipes).toHaveBeenCalledExactlyOnceWith(gameDataBaseUrl);
   });
 
   test("reads the wish schedule and the character trials as the wish screen opens", async () => {

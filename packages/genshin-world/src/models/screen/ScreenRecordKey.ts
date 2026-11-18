@@ -8,6 +8,7 @@ export const ScreenRecordKey = {
   ForgeRecipes: "forgeRecipes",
   HomeBlueprints: "homeBlueprints",
   PaimonsBargainsRotation: "paimonsBargainsRotation",
+  ProcessingRecipes: "processingRecipes",
   ShopIdShopGoodMap: "shopIdShopGoodMap",
   WishSchedule: "wishSchedule",
 } as const;

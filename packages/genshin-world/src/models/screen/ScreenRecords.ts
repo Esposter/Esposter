@@ -5,6 +5,7 @@ import type { DomainChallengeLevelMap } from "#src/models/domains/DomainChalleng
 import type { ForgeRecipe } from "#src/models/forging/ForgeRecipe";
 import type { HomeBlueprint } from "#src/models/home/HomeBlueprint";
 import type { PaimonsBargainsRotation } from "#src/models/shop/PaimonsBargainsRotation";
+import type { ProcessingRecipe } from "#src/models/cooking/ProcessingRecipe";
 import type { ShopGood } from "#src/models/shop/ShopGood";
 import type { WishScheduleEvent } from "#src/models/wish/WishScheduleEvent";
 import type { CharacterTrialTables } from "#src/services/trial/readCharacterTrials";
@@ -20,6 +21,8 @@ export interface ScreenRecords {
   dishes: Record<string, DishUse>;
   // The blacksmith's recipes, which the forge offers and the bag learns from
   forgeRecipes: ForgeRecipe[];
+  // The processings the cooks run, which the processing screen offers
+  processingRecipes: ProcessingRecipe[];
   // The character trials' tables, which the banners offer each trial from and a trial is entered by
   characterTrials: CharacterTrialTables;
   // The Mystic Offering's strongboxes, one for each set the offering may choose, which the bench offers from its Adventure Rank

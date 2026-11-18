@@ -75,7 +75,7 @@ The quality weights the table gives each dish are all the Delicious weight in th
 | `packages/genshin-world/src/services/cooking/getCookingStovePlace.ts`             | A city's stove place, read from its scene group record's building point                     |
 | `packages/genshin-world/src/services/cooking/computeCookingStoveInteractables.ts` | The stove as a prompt beneath its place, named by the game's text                           |
 | `packages/genshin-world/src/services/cooking/readCookingRecipes.ts`               | The dishes, fetched by their `cooking/recipes` key                                          |
-| `packages/genshin-world/src/services/cooking/readProcessingRecipes.ts`            | The processings, fetched by their `cooking/processing` key                                  |
+| `packages/genshin-world/src/services/cooking/readProcessingRecipes.ts`            | The processings, fetched by their `cooking/processing` key as the processing screen opens   |
 | `packages/genshin-world/src/services/cooking/readCookingTalents.ts`               | The cooking talents, fetched by their `cooking/talents` key                                 |
 | `packages/genshin-world/src/services/cooking/readDishes.ts`                       | The dishes' uses, fetched by their `cooking/dishes` key                                     |
 | `packages/genshin-world/src/components/Cooking/Screen/Index.vue`                  | The cooking screen in the reader's language, its indicator laid out from the recipe's zones |

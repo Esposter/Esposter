@@ -5,6 +5,7 @@ import { readCharacterTrials } from "#src/services/trial/readCharacterTrials";
 import { readCraftingRecipes } from "#src/services/crafting/readCraftingRecipes";
 import { readCraftingStrongboxes } from "#src/services/crafting/readCraftingStrongboxes";
 import { readDishes } from "#src/services/cooking/readDishes";
+import { readProcessingRecipes } from "#src/services/cooking/readProcessingRecipes";
 import { readDomainChallengeLevels } from "#src/services/domains/readDomainChallengeLevels";
 import { readForgeRecipes } from "#src/services/forging/readForgeRecipes";
 import { readHomeBlueprints } from "#src/services/home/readHomeBlueprints";
@@ -23,6 +24,7 @@ export const ScreenRecordLoaderMap: {
   [ScreenRecordKey.ForgeRecipes]: readForgeRecipes,
   [ScreenRecordKey.DomainChallengeLevels]: readDomainChallengeLevels,
   [ScreenRecordKey.HomeBlueprints]: readHomeBlueprints,
+  [ScreenRecordKey.ProcessingRecipes]: readProcessingRecipes,
   [ScreenRecordKey.ShopIdShopGoodMap]: readShopGoodMap,
   [ScreenRecordKey.PaimonsBargainsRotation]: readPaimonsBargainsRotation,
   [ScreenRecordKey.WishSchedule]: readWishSchedule,

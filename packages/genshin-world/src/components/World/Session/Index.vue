@@ -291,15 +291,8 @@ const worldCookingStore = useWorldCookingStore();
 const { start: startCooking, stop: stopCooking } = worldCookingStore;
 // The cooking recipes and the stove's place as the world starts. A used stove opens the cooking screen on a recipe, which
 // Is held here while the screen is open
-const {
-  cookingProgress,
-  cookingRecipe,
-  cookingTalents,
-  instructionRecipeMap,
-  openCookingRecipes,
-  processingJobs,
-  processingRecipes,
-} = storeToRefs(worldCookingStore);
+const { cookingProgress, cookingRecipe, cookingTalents, instructionRecipeMap, openCookingRecipes, processingJobs } =
+  storeToRefs(worldCookingStore);
 startCooking({ cookingProgress: savedState.cookingProgress, processingJobs: savedState.processingJobs });
 onUnmounted(stopCooking);
 const {
@@ -1650,14 +1643,14 @@ useWorldSaveSync({
       @update:inventory="(nextInventory) => setInventory(nextInventory)"
     />
     <ProcessingScreen
-      v-if="screenKind === ScreenKind.Processing"
+      v-if="screenKind === ScreenKind.Processing && records.processingRecipes"
       v-model:jobs="processingJobs"
       :game-text
       :inventory
       :material-data-map
       :name-text
       :now="getWorldNow"
-      :recipes="processingRecipes"
+      :recipes="records.processingRecipes"
       @close="closeScreen()"
       @update:inventory="(nextInventory) => setInventory(nextInventory)"
     />
