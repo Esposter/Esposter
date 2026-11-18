@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
-import { RightDrawerToggleMap } from "#src/services/message/RightDrawerToggleMap";
+import { RIGHT_DRAWER_TOGGLES } from "#src/services/message/constants";
 import { useRoomDialogStore } from "#src/store/message/room/dialog";
 import { useRoomStore } from "#src/store/message/room/index";
 
@@ -41,11 +41,7 @@ const { smAndUp } = useUiDisplay();
     <div flex shrink-0 gap-1 items-center>
       <template v-if="smAndUp">
         <MessageContentCallButton />
-        <MessageContentShowDrawerButton
-          v-for="{ drawer } of Object.values(RightDrawerToggleMap)"
-          :key="drawer"
-          :drawer
-        />
+        <MessageContentShowDrawerButton v-for="drawer of RIGHT_DRAWER_TOGGLES" :key="drawer" :drawer />
       </template>
       <MessageContentHeaderOverflowMenu />
     </div>

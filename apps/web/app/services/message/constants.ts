@@ -1,3 +1,5 @@
+import { RightDrawer } from "#src/models/message/RightDrawer";
+
 // Consecutive messages from the same author within this window render as one batch — one avatar, one header
 export const SAME_BATCH_WINDOW_MS: number = Temporal.Duration.from({ minutes: 5 }).total("milliseconds");
 // The soonest a message may be scheduled for, and therefore also what a picker opens on: a job the user
@@ -7,3 +9,5 @@ export const SCHEDULE_LEAD_TIME_MS = Temporal.Duration.from({ minutes: 1 }).tota
 export const UNKNOWN_USER_NAME = "Unknown user";
 // The identity an author nobody can resolve is drawn with, before the id the message names is put on it
 export const UNKNOWN_CREATOR = { image: "", name: UNKNOWN_USER_NAME };
+// The panes the room header toggles, in the order its buttons and its phone menu's rows stand
+export const RIGHT_DRAWER_TOGGLES = [RightDrawer.Threads, RightDrawer.Search, RightDrawer.Member] as const;

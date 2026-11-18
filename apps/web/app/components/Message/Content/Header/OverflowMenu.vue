@@ -3,6 +3,7 @@ import type { Item } from "#src/models/shared/Item";
 
 import { RightDrawer } from "#src/models/message/RightDrawer";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { RIGHT_DRAWER_TOGGLES } from "#src/services/message/constants";
 import { NotificationTypeLabelMap } from "#src/services/message/NotificationTypeLabelMap";
 import { NotificationTypeMeaningMap } from "#src/services/message/NotificationTypeMeaningMap";
 import { RightDrawerToggleMap } from "#src/services/message/RightDrawerToggleMap";
@@ -19,9 +20,9 @@ const callStore = useCallStore();
 const { isConnecting, isInCall } = storeToRefs(callStore);
 const { joinCallByRoomId, leaveCall } = callStore;
 // The header's pane toggles, as rows checked while their pane is open
-const drawerToggles = Object.values(RightDrawerToggleMap).map(({ drawer, meaning, title }) => ({
-  meaning,
-  title,
+const drawerToggles = RIGHT_DRAWER_TOGGLES.map((drawer) => ({
+  meaning: RightDrawerToggleMap[drawer].meaning,
+  title: RightDrawerToggleMap[drawer].title,
   ...useToggleRightDrawer(drawer),
 }));
 const messageLayoutStore = useMessageLayoutStore();
