@@ -11,6 +11,17 @@ describe("roadmapPhases", () => {
   const ROADMAP_PATH = join(REPOSITORY_ROOT, GENSHIN_ROADMAP_FILE);
   const HEADING_REGEX = /^#{1,2} /u;
   const OPEN_ITEM_REGEX = /^\s*- \[ \] /u;
+  const ASSET_LINE_REGEX = /^\s*Asset: /u;
+  // The pictures a screen draws as a stand-in, each named by the words its roadmap line gives it
+  const STAND_IN_PICTURES = [
+    "duel board frame ornament",
+    "duel board icons and coins",
+    "Gcg plate portraits",
+    "Forge recipe item icons",
+    "Forge support portrait",
+    "quest series-row picture",
+    "expedition pin and book emblem",
+  ];
 
   test("an open roadmap item sits in a phase section", () => {
     expect.hasAssertions();
@@ -23,5 +34,19 @@ describe("roadmapPhases", () => {
       else if (OPEN_ITEM_REGEX.test(line) && !underPhase) offendingLines.push(`${index + 1}: ${line}`);
 
     expect(offendingLines).toStrictEqual([]);
+  });
+
+  // A stand-in for a picture the game draws names the picture as an Asset line, and that line names its source
+  test("a stand-in has a roadmap line", () => {
+    expect.hasAssertions();
+
+    const assetLines = readFileSync(ROADMAP_PATH, "utf8")
+      .split("\n")
+      .filter((line) => ASSET_LINE_REGEX.test(line));
+    const picturesWithoutLine = STAND_IN_PICTURES.filter(
+      (picture) => !assetLines.some((line) => line.includes(picture) && line.includes("source:")),
+    );
+
+    expect(picturesWithoutLine).toStrictEqual([]);
   });
 });
