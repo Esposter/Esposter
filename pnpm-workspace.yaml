@@ -231,6 +231,11 @@ minimumReleaseAge: 0
 nodeOptions: --max-old-space-size=8192 --trace-warnings
 
 overrides:
+  # RealtimeKit declares uuid `^8.3.2`, below the patched 11.1.1 of GHSA-w5hq-g745-h8pq: drop once it declares a patched range
+  "@cloudflare/realtimekit>uuid": ^14.0.3
+  # Arborist, lerna-lite's publish, sigstore's tuf and js-beautify's editorconfig still declare minimatch 10, below the
+  # patched 11.0.1 of GHSA-g3hv-75wg-m249, which glob and map-workspaces already take: drop once those declare 11
+  "minimatch@<11.0.1": ^11.0.9
   nitro: npm:nitro-nightly@latest
   # Nuxt's and its tools' optional `oxc-parser` peers resolve per subtree, so the stable and nightly stacks each took their
   # own 0.140, 0.153, 0.154 or 0.155 copy, and `nuxt-nightly` split into peer variants that each declare a separate `NuxtApp`.
