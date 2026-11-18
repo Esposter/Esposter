@@ -19,7 +19,16 @@ vi.mock(import("#src/services/genshinAssets/shared/readGameVersion"), () => ({ r
 vi.mock(import("#src/services/genshinAssets/shared/getComponentDirectory"), () => ({
   getComponentDirectory: () => {
     const root = getFixtureRoot.root;
-    return { assets: join(root, "assets"), behaviours: "", layout: "", music: "", root, shaders: "", world: "" };
+    return {
+      assets: join(root, "assets"),
+      behaviours: "",
+      layout: "",
+      music: "",
+      particles: "",
+      root,
+      shaders: "",
+      world: "",
+    };
   },
 }));
 
