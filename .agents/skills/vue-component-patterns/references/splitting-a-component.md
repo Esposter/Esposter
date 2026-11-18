@@ -29,7 +29,7 @@ So a cut is made in this order, and each step is judged by the lines it leaves b
 1. **Read what the calls repeat from a store.** The members one call after another lists (the bag, the wallet and their
    setters, the item data, the names, the text, the language, the data URL and the events emitter) are the session store's,
    which the composables that need them read themselves; a bundled object spread into every call only moved the list
-   (the session store's capability, `openspec/specs/genshin/session-store/design.md`, whose Notes say the store alone removes about a quarter of the options keys and the feature stores that own their state remove the rest).
+   (the session store's capability, `openspec/specs/genshin/session-store/design.md`, which measures what the store and the feature stores remove).
 2. **Read what another feature produces from that feature's store.** A feature whose results two or more other calls
    took in as options is a store those calls read (`src/store/<feature>.ts`, one way, started by the root before the save
    watches it), judged by its slice's count over the production code. A feature that one call reads, or whose count is
