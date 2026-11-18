@@ -33,3 +33,6 @@ export const SEELIE_FOLLOW_DISTANCE = 10;
 // The region whose Shrines of Depths the world holds: the shrines the map marks in Mondstadt, and the keys that open them
 // Are the ones of the same region, the region's key being the one a shrine names by its region
 export const SHRINE_REGION_ID = "mondstadt";
+// The chest an open Shrine of Depths holds: the Shrine of Depths page gives each shrine a Luxurious chest, so it is not
+// Provisional, and the chests change opens it as it opens any Luxurious chest
+export const SHRINE_CHEST_KIND = ChestKind.Luxurious;

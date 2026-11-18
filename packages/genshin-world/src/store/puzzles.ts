@@ -14,6 +14,7 @@ import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
 import { checkIsSeelieFollowed } from "#src/services/puzzle/checkIsSeelieFollowed";
 import { checkIsTimeTrialMarkerReached } from "#src/services/puzzle/checkIsTimeTrialMarkerReached";
 import { computeSeelieChestPlaces } from "#src/services/puzzle/computeSeelieChestPlaces";
+import { computeShrineChestPlaces } from "#src/services/puzzle/computeShrineChestPlaces";
 import { computeTimeTrialChestPlaces } from "#src/services/puzzle/computeTimeTrialChestPlaces";
 import { SHRINE_REGION_ID } from "#src/services/puzzle/constants";
 import { createMonumentPuzzle } from "#src/services/puzzle/createMonumentPuzzle";
@@ -56,10 +57,11 @@ export const useWorldPuzzlesStore = defineStore("world/puzzles", () => {
           .map(({ id }) => id),
       ]),
   );
-  // The chests the puzzles spawn, a settled Seelie's at its court and a solved challenge's at its marker
+  // The chests the puzzles spawn, a settled Seelie's at its court, a solved challenge's at its marker and an open shrine's
   const puzzleChestPlaces = computed(() => [
     ...computeSeelieChestPlaces(puzzleSeelies.value),
     ...computeTimeTrialChestPlaces(timeTrialMarkers.value),
+    ...computeShrineChestPlaces(shrineMarkers.value),
   ]);
   const stepWorldPuzzles = (deltaSeconds: number, position: GroundPoint): void => {
     for (const seelie of puzzleSeelies.value) stepSeelie(seelie, deltaSeconds, checkIsSeelieFollowed(seelie, position));

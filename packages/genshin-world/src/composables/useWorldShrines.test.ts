@@ -4,6 +4,7 @@ import type { ShrineKeySource } from "#src/models/puzzle/ShrineKeySource";
 import type { GameText } from "genshin-text";
 
 import { useWorldShrines } from "#src/composables/useWorldShrines";
+import { ChestKind } from "#src/models/chest/ChestKind";
 import { MaterialType } from "#src/models/inventory/MaterialType";
 import { PuzzleKind } from "#src/models/puzzle/PuzzleKind";
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
@@ -78,10 +79,11 @@ describe(useWorldShrines, () => {
       shrinePlaces: [{ id: SHRINE_ID, kind: PuzzleKind.ShrineOfDepths, position: SHRINE_POSITION }],
       timeTrialPlaces: [],
     });
+    const { puzzleChestPlaces } = storeToRefs(worldPuzzlesStore);
     const { shrineMarkers } = worldPuzzlesStore;
     startTestWorldGround(GROUND_HEIGHT);
     const { openShrineById, shrineInteractables } = useWorldShrines({ shrineKeySources: keySources });
-    return { inventory, openShrineById, setInventory, shrineInteractables, shrineMarkers };
+    return { inventory, openShrineById, puzzleChestPlaces, setInventory, shrineInteractables, shrineMarkers };
   };
 
   test("a shut shrine is offered while its region's key is held", () => {
@@ -102,18 +104,20 @@ describe(useWorldShrines, () => {
   test("a shrine opens with its region's key", () => {
     expect.hasAssertions();
 
-    const { inventory, openShrineById, setInventory, shrineInteractables, shrineMarkers } = setup(
+    const { inventory, openShrineById, puzzleChestPlaces, setInventory, shrineInteractables, shrineMarkers } = setup(
       createBag([KEY_ITEM_ID, 2]),
       [KEY_SOURCE],
     );
     openShrineById(SHRINE_ID);
 
     expect({
+      chests: puzzleChestPlaces.value.map(({ kind, position }) => ({ kind, position })),
       interactables: shrineInteractables.value,
       isOpen: shrineMarkers.map(({ shrine }) => shrine.isOpen),
       items: inventory.value.items.map(({ definition, quantity }) => ({ id: definition.id, quantity })),
       setInventoryCalls: setInventory.mock.calls.length,
     }).toStrictEqual({
+      chests: [{ kind: ChestKind.Luxurious, position: SHRINE_POSITION }],
       interactables: [],
       isOpen: [true],
       items: [{ id: KEY_ITEM_ID, quantity: 1 }],
