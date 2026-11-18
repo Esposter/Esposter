@@ -192,22 +192,22 @@ A season's opening characters SHALL each have the trial version the season names
 - **THEN** the run fails
 - **AND** no season is written
 
-### Requirement: A stage's enemy names resolve to a monster only when exactly one monster holds them
+### Requirement: A stage's enemy names resolve to a codex entry only when its monsters share one
 
-A wiki enemy name of a stage SHALL resolve to a monster only when exactly one monster's English name is that name, and a name that no monster or several monsters hold SHALL be refused and listed on its stage with its count.
+A wiki enemy name of a stage SHALL resolve to a codex entry only when every monster whose English name is that name shares one describe id, and a name that no monster holds, or whose monsters span several describe entries, SHALL be refused and listed on its stage with its count of entries.
 
-#### Scenario: A name held by one monster resolves to its monster
+#### Scenario: A name whose monsters share one describe entry resolves to that entry
 
-- **GIVEN** exactly one monster's name is the wiki's enemy name
+- **GIVEN** every monster whose name is the wiki's enemy name shares one describe id
 - **WHEN** the stage is joined to the game's monsters
-- **THEN** the name resolves to that monster's id
+- **THEN** the name resolves to that describe entry
 
-#### Scenario: A name held by several monsters is refused with their count
+#### Scenario: A name whose monsters span several describe entries is refused with their count
 
-- **GIVEN** several monsters' names are the wiki's enemy name
+- **GIVEN** the monsters whose name is the wiki's enemy name span several describe ids
 - **WHEN** the stage is joined to the game's monsters
-- **THEN** the name is listed on the stage as refused, with the count of monsters that hold it
-- **AND** no monster id is guessed for it
+- **THEN** the name is listed on the stage as refused, with the count of describe entries
+- **AND** no entry is guessed for it
 
 #### Scenario: A name held by no monster is refused with a count of zero
 

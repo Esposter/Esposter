@@ -3,22 +3,24 @@ import { describe, expect, test } from "vitest";
 
 describe(resolveWikiEnemyName, () => {
   const monsters = [
-    { id: 1, name: "Ruin Scout" },
-    { id: 2, name: "Ruin Guard" },
-    { id: 3, name: "Ruin Guard" },
-    { id: 4, name: "" },
+    { describeId: 101, id: 1, name: "Ruin Scout" },
+    { describeId: 202, id: 2, name: "Ruin Guard" },
+    { describeId: 202, id: 3, name: "Ruin Guard" },
+    { describeId: 303, id: 4, name: "Ruin Drake" },
+    { describeId: 304, id: 5, name: "Ruin Drake" },
+    { describeId: 404, id: 6, name: "" },
   ];
 
-  test("a name held by one monster resolves to its id", () => {
+  test("a name whose monsters share one describe entry resolves to that entry", () => {
     expect.hasAssertions();
 
-    expect(resolveWikiEnemyName("Ruin Scout", monsters)).toStrictEqual({ isResolved: true, monsterId: 1 });
+    expect(resolveWikiEnemyName("Ruin Guard", monsters)).toStrictEqual({ describeId: 202, isResolved: true });
   });
 
-  test("a name held by several monsters is refused with their count", () => {
+  test("a name whose monsters span several describe entries is refused with their count of entries", () => {
     expect.hasAssertions();
 
-    expect(resolveWikiEnemyName("Ruin Guard", monsters)).toStrictEqual({ count: 2, isResolved: false });
+    expect(resolveWikiEnemyName("Ruin Drake", monsters)).toStrictEqual({ count: 2, isResolved: false });
   });
 
   test("a name held by no monster is refused with a count of zero", () => {

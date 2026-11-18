@@ -5,9 +5,9 @@ import { describe, expect, test } from "vitest";
 
 describe(toImaginariumStage, () => {
   const monsters = [
-    { id: 21030801, name: "Battle-Hardened Samachurl" },
-    { id: 24020401, name: "Ruin Guard" },
-    { id: 24020402, name: "Ruin Guard" },
+    { describeId: 1001, id: 21030801, name: "Battle-Hardened Samachurl" },
+    { describeId: 2002, id: 24020401, name: "Ruin Guard" },
+    { describeId: 2003, id: 24020402, name: "Ruin Guard" },
   ];
   const stage: WikiImaginariumStage = {
     act: "Act 1",
@@ -17,14 +17,14 @@ describe(toImaginariumStage, () => {
     variant: 1,
   };
 
-  test("a stage's names resolve to their monsters, and a name held by several or none is listed as refused", () => {
+  test("a stage's names resolve to their describe entries, and a name held by several entries or none is listed as refused", () => {
     expect.hasAssertions();
 
     expect(toImaginariumStage(stage, 7, monsters)).toStrictEqual({
       act: "Act 1",
       battle: "Normal",
+      describeIds: [1001],
       easyLevel: 75,
-      enemyIds: [21030801],
       refusals: [
         { count: 2, name: "Ruin Guard" },
         { count: 0, name: "Geovishap (Pyro)" },

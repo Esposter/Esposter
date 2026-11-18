@@ -7,7 +7,7 @@ import { readTextMap } from "#src/services/genshinText/readTextMap";
 import { GameLanguage } from "genshin-text";
 
 // Every monster in the dump with its English name, which a monster's description files under the hash that names it
-export const readMonsterNames = (): { id: number; name: string }[] => {
+export const readMonsterNames = (): { describeId: number; id: number; name: string }[] => {
   const englishTextMap = readTextMap(GameLanguage.English);
   const describeNameMap = new Map(
     readExcelTable<ExcelMonsterDescribeRow>(MONSTER_DESCRIBE_TABLE_NAME).map(({ id, nameTextMapHash }) => [
@@ -16,6 +16,7 @@ export const readMonsterNames = (): { id: number; name: string }[] => {
     ]),
   );
   return readExcelTable<MonsterRow>(MONSTER_TABLE_NAME).map(({ describeId, id }) => ({
+    describeId,
     id,
     name: describeNameMap.get(describeId) ?? "",
   }));
