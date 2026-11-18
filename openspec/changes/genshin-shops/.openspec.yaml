@@ -13,3 +13,4 @@ x-touches:
     "packages/genshin-world/src/components/Shop/Screen/**",
     "scripts/src/services/genshinAssets/commands/shopsCommand.ts",
   ]
+x-waiting: "Zherebtsov's Fishing Association shop (task 4.4) waits on Snezhnaya's fit, which waits on Snezhnograd's place in the game's data, the genshin-snezhnaya change's blocker."

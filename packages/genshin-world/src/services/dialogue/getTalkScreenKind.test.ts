@@ -2,6 +2,7 @@ import type { Resident } from "#src/models/world/Resident";
 
 import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { getTalkScreenKind } from "#src/services/dialogue/getTalkScreenKind";
+import { getTalkVendorShopId } from "#src/services/dialogue/getTalkVendorShopId";
 import { describe, expect, test } from "vitest";
 
 describe(getTalkScreenKind, () => {
@@ -32,9 +33,20 @@ describe(getTalkScreenKind, () => {
     expect(getTalkScreenKind("vendorTalkId", [VENDOR], { vendorId: 1 })).toBe(ScreenKind.Shop);
   });
 
-  test("talking to a Fishing Association member opens its shop", () => {
+  // Each Fishing Association member placed in the world, by his NPC id and the shop his association sells from. Zherebtsov
+  // Is not placed, since Snezhnaya has no fitted region yet, so his association's shop does not open
+  test.each([
+    ["1673", 1064],
+    ["2615", 1065],
+    ["3200", 1066],
+    ["4176", 1071],
+    ["5073", 1090],
+    ["6340", 1122],
+    ["7086", 1137],
+  ])("talking to the Fishing Association member %s opens shop %i", (id, shopId) => {
     expect.hasAssertions();
-    const NANTUCK: Resident = { areaId: "areaId", id: "1673", nameTextId: "nameTextId", talkId: "nantuckTalkId" };
-    expect(getTalkScreenKind("nantuckTalkId", [NANTUCK])).toBe(ScreenKind.Shop);
+    const member: Resident = { areaId: "areaId", id, nameTextId: "nameTextId", talkId: "fishingTalkId" };
+    expect(getTalkScreenKind("fishingTalkId", [member])).toBe(ScreenKind.Shop);
+    expect(getTalkVendorShopId("fishingTalkId", [member])).toBe(shopId);
   });
 });

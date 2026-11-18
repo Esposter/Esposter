@@ -37,7 +37,7 @@ The rule over Paimon's Bargains' Fates and the Mondstadt grocery's goods is buil
    - `packages/genshin-world/src/services/shop/buyShopGood.test.ts` gains two cases on good 203001 (item 100075, 60 Mora): bought into an empty bag it adds one item and takes 60 Mora, and into a bag with no room for a new kind it is refused with the wallet unchanged. The existing Fate cases pass the bag through unchanged. It also gains two cases on a good priced in several fish, as the Windtangler is: paid from a bag holding every fish, it takes each and gives the item, and with one fish short it is refused.
 2. **Paimon's Bargains' screen, its rotation, weapons and materials**, once the bag holds the items' definitions.
 3. **Each city's vendors and Souvenir Shop**, as its region is built, with the Sigils in the wallet.
-4. **The Fishing Associations**, with fishing.
+4. **The Fishing Associations**, with fishing, which has landed: the seven members placed in region data open their shops from their talks, and Zherebtsov's waits on Snezhnaya's fit (task 4.4).
 
 ## Data and measures
 

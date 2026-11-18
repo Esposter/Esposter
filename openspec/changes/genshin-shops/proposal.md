@@ -24,7 +24,7 @@ The player can buy what the game's shops sell for Mora, Sigils and Starglitter, 
 
 - The bag's definitions for Paimon's Bargains' characters and weapons, which their names wait on.
 - Each city's vendors, placed as their regions are built; the weekly restock waits on them.
-- The Fishing Associations wait on fishing.
+- Zherebtsov's Fishing Association shop waits on Snezhnaya's fit, which waits on Snezhnograd's place in the game's data.
 - Game data: `game-exports` (per the change's needs).
 
 ## Impact
