@@ -72,6 +72,51 @@ flowchart LR
 
 - **Every landmark shares its kind's material** — `packages/genshin-world/src/components/World/Landmarks/Index.vue` makes one material per kind, once: `partMaterial` for a building's, a statue's and a domain entrance's parts, `barkMaterial` and `leafMaterial` for a tree's.
 
+- **The entry leaves out what nothing in the repo imports from the barrel, and the card game's services.** `packages/genshin-world/tsdown.config.ts` names the directories nothing in the repo imports from the package's barrel (`UNREFERENCED_MODULE_DIRECTORIES`), and the card game's `services/gcg` and `components/Gcg` (`GCG_MODULE_DIRECTORIES`). Both go to `generateExports` as `lazyDirectories`, so the barrel names neither their modules nor their names, and each module loads at its opener through an `import()`. The card game's reward cap and tutorial quest id moved to the save and quest constants, so the first screen's graph reaches none of the card game's services: `useWorldTalks` loads the duel rule and the card game's levels as the talks load (`findGcgTalkDuelGameId`, `readGcgLevels`), and `useWorldCardGame` loads the reward rules when a week game is won. The first screen's graph is 2,305 modules and 2,800,495 bytes, down from 2,318 and 2,820,925, with no `services/gcg` module in it (`packages/genshin-world/src/composables/useWorldTalks.ts`, `packages/genshin-world/src/composables/useWorldCardGame.ts`).
+- **The entry is 224,741 bytes, down from 332,294 (-107,553, -32.4%).** The declaration barrel `dist/index.d.ts` is 273,449 bytes, down from 381,017, and `style.css` is 266,770, down from 307,236, since the cut directories' styles leave the bundle with them. `bundle-sizes.md` records the final build.
+
+### Entry cuts
+
+Each cut is its own commit. Its bytes come from the clause-aware predictor over the entry's import lines (one per clause) and the names in its export line, on the entry as it stood before the series. The predictor started at 332,394 bytes, 100 above the record's 332,294; that gap is not attributed, since intermediate builds were not measured. Before the restore below, the final build measured 223,558: the prediction, plus one newline, plus the four `services/save` import lines that `src/save.ts` re-exports, which the predictor does not model.
+
+| Directory                | Commit       | Bytes off the entry | Entry after (predicted) |
+| :----------------------- | :----------- | ------------------: | ----------------------: |
+| `components/Weapon`      | `fd989acefa` |               1,682 |                 330,712 |
+| `composables`            | `cb584feca0` |               8,709 |                 322,003 |
+| `services/weapon`        | `dd2fdaa82d` |              23,343 |                 298,660 |
+| `components/World/Realm` | `f2d15d802b` |                 223 |                 298,437 |
+| `services/home`          | `14f55a7249` |               4,233 |                 294,204 |
+| `services/imaginarium`   | `2368a9bf61` |               3,137 |                 291,067 |
+| `services/elementalNode` | `1eb244d391` |               1,328 |                 289,739 |
+| `services/save`          | `22b2520bd7` |               5,388 |                 284,351 |
+| `services/combat`        | `239cbf6ac0` |              11,820 |                 272,531 |
+| `services/party`         | `7ce1e2356c` |               9,286 |                 263,245 |
+| `services/spiralAbyss`   | `8c40f4298e` |               5,023 |                 258,222 |
+| `services/bosses`        | `fabf003234` |               4,771 |                 253,451 |
+| `services/enemy`         | `cfee4e3b30` |               4,592 |                 248,859 |
+| `services/cooking`       | `39897a0d39` |               3,483 |                 245,376 |
+| `services/fishing`       | `c04d0d0095` |               3,026 |                 242,350 |
+| `services/fontaine`      | `6f0802e7e0` |               2,930 |                 239,420 |
+| `services/leyLine`       | `534ab5cca7` |               2,522 |                 236,898 |
+| `services/originalResin` | `c7250c690e` |               2,341 |                 234,557 |
+| `services/liyue`         | `7168a2e16f` |               2,249 |                 232,308 |
+| `services/expedition`    | `a755a821fe` |               1,990 |                 230,318 |
+| `services/gadget`        | `15cfeb2dfa` |               1,661 |                 228,657 |
+| `services/chest`         | `ce70c18198` |               1,484 |                 227,173 |
+| `services/inazuma`       | `457f8f2475` |               1,483 |                 225,690 |
+| `services/mondstadt`     | `4353b38403` |               1,346 |                 224,344 |
+| `models/home`            | `2b07b144cb` |               1,183 |                 223,161 |
+
+The `models/home` row is its cut's own bytes. The directory was restored in `3aceefdbdb` (+1,183 bytes), which is why the final entry is above the table's last row.
+
+### What stays in the entry
+
+- **Consumers.** 34 directories have later modules and a repo consumer that imports their names through the barrel, among them `services/kit`, `services/dev` and `services/character`, so their names stay in the entry.
+- **`models/home`, cut and restored.** The cut in `2b07b144cb` left `HomeBlueprint` off the declaration barrel, but `scripts/src/services/genshinAssets/home/toHomeBlueprint.ts` imports that type from `genshin-world`, so the scripts typecheck failed. The directory returned in `3aceefdbdb`. The consumer scan had missed the import, since it is type-only; the check now runs over every name imported from the package in `apps/web`, `packages/` and `scripts/` against the declaration barrel, and only that name was missing.
+- **Entry-only cuts.** `services/combat` and `services/party` stay in the closure, since `services/kit` imports some of their modules statically; only their barrel lines move. `services/save` keeps four names in the entry (397 bytes), since `src/save.ts` re-exports them.
+- **Not cut.** 26 directories have later modules, no repo consumer through the barrel, and no cut in this series: 14,316 bytes of entry between them, each under 4 KB. Six are wholly later-only (`models/bosses`, `models/imaginarium`, `models/save`, `models/investigation`, `models/trial`, `components/Props`, 1,349 bytes together), and twenty keep first-screen modules, so a cut would move only their later few. Each cut needs its own build to measure, and they are left for a next pass. `services/nod-krai` is among them and was left alone, as the brief asked.
+- **Requests.** A session's talks load adds two chunk requests (the duel rule and the card game's levels), and a week game's win adds the chunks of its reward rules. `WorldScreen`'s request budget is not re-recorded; the open item below covers its run.
+
 ## Key files
 
 | File                                                                     | Role                                                               |
