@@ -4,9 +4,14 @@ const knipConfiguration: KnipConfig = {
   exclude: ["types"],
   ignoreBinaries: ["pwsh"],
   ignoreExportsUsedInFile: true,
-  // @TODO: https://github.com/webpro-nl/knip/issues/2399 — drop it once an `import.meta.glob` pattern resolves
-  // Through the manifest's subpath imports, the only users of the app's `#src/*.html`, `*.tsx` and `*.wasm` patterns
-  ignoreIssues: { "apps/web/package.json": ["subpaths"] },
+  ignoreIssues: {
+    // @TODO: https://github.com/webpro-nl/knip/issues/2399 — drop it once an `import.meta.glob` pattern resolves
+    // Through the manifest's subpath imports, the only users of the app's `#src/*.html`, `*.tsx` and `*.wasm` patterns
+    "apps/web/package.json": ["subpaths"],
+    // The persona's copy of genshin-text's models is held byte for byte to its source (getPersonaModuleSource), so it keeps
+    // The exports only the source's readers use
+    "packages/genshin-persona/src/generated/**": ["exports"],
+  },
   // A workspace's `entry` replaces knip's default `src/index.ts`, so a package that sets one lists its barrel too
   workspaces: {
     ".": {

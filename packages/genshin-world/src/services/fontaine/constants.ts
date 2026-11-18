@@ -1,23 +1,14 @@
 import type { LatheSection } from "genshin-engine";
 
-// Fontaine's palette as the proposal names it, in sRGB: turquoise water, white and cream stone, blue slate roofs, gold
-// Trim and green lawns under a hazy blue sky, with pink and purple in Erinnyes Forest and grey in Morte. The hex values
-// Are a first reading of those names, to be checked against the reference screenshots
-export const FONTAINE_WATER_COLOR = 0x3ec9c0;
-// The cream stone and blue slate roofs a palette keeps where it leaves them out, as the proposal names them
+// The cream stone and blue slate roofs a palette keeps where it leaves them out, in sRGB, as the proposal names them: a
+// First reading of those names, to be checked against the reference screenshots
 export const FONTAINE_STONE_COLOR = 0xf1e6cf;
-export const FONTAINE_WHITE_STONE_COLOR = 0xf7f4ec;
 export const FONTAINE_SLATE_COLOR = 0x3f5a7a;
 // Provisional: the gold and iron are trim in the game's atlases, which the palette does not sample
 export const FONTAINE_GOLD_COLOR = 0xd6a94a;
 export const FONTAINE_IRON_COLOR = 0x2e333d;
 // Provisional: the awnings' canvas, a first reading a palette keeps where it leaves the awning out
 export const FONTAINE_AWNING_COLOR = 0x2f6f8f;
-export const FONTAINE_LAWN_COLOR = 0x86c25a;
-export const FONTAINE_SKY_COLOR = 0x9ec8ea;
-export const ERINNYES_PINK_COLOR = 0xd98fb8;
-export const ERINNYES_PURPLE_COLOR = 0x8a62a8;
-export const MORTE_GREY_COLOR = 0x8f9196;
 // Fontaine's building, in metres: a stone ground floor of arched openings, cream ashlar storeys above it, and a mansard
 // Roof of two slopes, the steep lower one meeting the shallow upper one at its break
 export const FONTAINE_GROUND_FLOOR_HEIGHT = 4.5;
