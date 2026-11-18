@@ -15,8 +15,7 @@ export const computeFrameMeasure = (
 ): Except<FrameRow, "index" | "seconds"> => {
   const inkGrid = getInkGrid(getLuminanceGrid(pixels, width, height));
   const ink = Math.round(inkGrid.reduce((sum, distance) => sum + distance, 0));
-  const [red, green, blue] = getMeanColour(pixels, width * height);
-  const mean: [number, number, number] = [Math.round(red), Math.round(green), Math.round(blue)];
+  const mean = getMeanColour(pixels, width * height);
   const box = getInkBox(inkGrid, width, height);
   return box === undefined ? { ink, mean } : { box, ink, mean };
 };

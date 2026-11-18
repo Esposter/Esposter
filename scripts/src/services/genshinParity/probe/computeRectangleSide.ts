@@ -25,11 +25,10 @@ export const computeRectangleSide = (pixels: Uint8Array, width: number, height: 
     const position = findEdgePosition(profile);
     if (position !== undefined) edges[side] = roundHundredths(position);
   }
-  const [red, green, blue] = getMeanColour(pixels, width * height);
   return {
     columnInk: downsampleByMax(columnInk, PROBE_MAX_SAMPLES).map((ink) => Math.round(ink)),
     edges,
-    mean: [Math.round(red), Math.round(green), Math.round(blue)],
+    mean: getMeanColour(pixels, width * height),
     rowInk: downsampleByMax(rowInk, PROBE_MAX_SAMPLES).map((ink) => Math.round(ink)),
   };
 };

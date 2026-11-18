@@ -1,6 +1,6 @@
 import { RGB_CHANNEL_COUNT } from "#src/services/genshinParity/probe/constants";
 
-// The mean of each of a rectangle's red, green and blue channels over its pixels, unrounded
+// The mean of each of a rectangle's red, green and blue channels over its pixels, in whole units
 export const getMeanColour = (pixels: Uint8Array, count: number): [number, number, number] => {
   let red = 0;
   let green = 0;
@@ -12,5 +12,5 @@ export const getMeanColour = (pixels: Uint8Array, count: number): [number, numbe
     blue += pixels[offset + 2] ?? 0;
   }
   const denominator = Math.max(count, 1);
-  return [red / denominator, green / denominator, blue / denominator];
+  return [Math.round(red / denominator), Math.round(green / denominator), Math.round(blue / denominator)];
 };
