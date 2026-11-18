@@ -1,5 +1,5 @@
-import type { Enemy } from "#src/models/enemy/Enemy";
 import type { BossMove } from "#src/models/bosses/BossMove";
+import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyCamp } from "#src/models/enemy/EnemyCamp";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
@@ -17,40 +17,41 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 
 const adventureRankTables = await readAdventureRankTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-// A boss kind the published kinds hold, so its camp can spawn
-const BOSS_KIND_ID = takeOne(
-  Object.values(EnemyKindId).filter(
-    (enemyKindId) => EnemyKindMovesLoaderMap[enemyKindId] !== undefined && enemyTables.enemyKindMap.has(enemyKindId),
-  ),
-);
-const BOSS_MEMBER = { ...ENEMY_CAMP_MEMBER, enemyKindId: BOSS_KIND_ID };
-const CAMP_ID = "camp";
-const WORLD_LEVEL = 8;
-
-const createCamp = (members: EnemyCamp["members"]): EnemyCamp => ({ areaId: "mondstadt", id: CAMP_ID, members });
-
-// The camps spawn into an enemy map as an outcrop's fight does, through the same spawn as a region's camps
-const spawnCamps = (camps: EnemyCamp[]) => {
-  const enemyMap = new Map<string, Enemy>();
-  useEnemySpawns({
-    bossDefeatMap: new Map(),
-    enemyMap,
-    enemyRespawnMap: new Map(),
-    enemyTables,
-    getWorldNow: () => Temporal.Instant.fromEpochMilliseconds(0),
-    lastTeleportAts: new Map(),
-    onLoad: () => {},
-    onRespawn: () => {},
-    outcropCamps: camps,
-    regionDataMap: new Map(),
-    trounceBlossoms: new Map(),
-    worldLevel: WORLD_LEVEL,
-    worldLevelRows: adventureRankTables.worldLevelRows,
-  });
-  return enemyMap;
-};
 
 describe(useEnemySpawns, () => {
+  // A boss kind the published kinds hold, so its camp can spawn
+  const BOSS_KIND_ID = takeOne(
+    Object.values(EnemyKindId).filter(
+      (enemyKindId) => EnemyKindMovesLoaderMap[enemyKindId] !== undefined && enemyTables.enemyKindMap.has(enemyKindId),
+    ),
+  );
+  const BOSS_MEMBER = { ...ENEMY_CAMP_MEMBER, enemyKindId: BOSS_KIND_ID };
+  const CAMP_ID = "camp";
+  const WORLD_LEVEL = 8;
+
+  const createCamp = (members: EnemyCamp["members"]): EnemyCamp => ({ areaId: "mondstadt", id: CAMP_ID, members });
+
+  // The camps spawn into an enemy map as an outcrop's fight does, through the same spawn as a region's camps
+  const spawnCamps = (camps: EnemyCamp[]) => {
+    const enemyMap = new Map<string, Enemy>();
+    useEnemySpawns({
+      bossDefeatMap: new Map(),
+      enemyMap,
+      enemyRespawnMap: new Map(),
+      enemyTables,
+      getWorldNow: () => Temporal.Instant.fromEpochMilliseconds(0),
+      lastTeleportAts: new Map(),
+      onLoad: () => {},
+      onRespawn: () => {},
+      outcropCamps: camps,
+      regionDataMap: new Map(),
+      trounceBlossoms: new Map(),
+      worldLevel: WORLD_LEVEL,
+      worldLevelRows: adventureRankTables.worldLevelRows,
+    });
+    return enemyMap;
+  };
+
   afterEach(() => {
     vi.restoreAllMocks();
   });

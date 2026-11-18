@@ -23,42 +23,42 @@ import { Object3D } from "three";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { shallowRef } from "vue";
 
-const CHARACTER_ID = 1001;
-const TRIAL_AVATAR_ID = 1022;
-const STAGE_ID = 51_001;
-const REWARD_ID = 480_001;
-const PRIMOGEM_COUNT = 20;
-const PRIMOGEM_ITEM_ID = CurrencyItemIdMap[Currency.Primogem];
-const TABLES: CharacterTrialTables = {
-  avatars: { [TRIAL_AVATAR_ID]: { characterId: CHARACTER_ID, level: 85, trialAvatarId: TRIAL_AVATAR_ID } },
-  builds: { [CHARACTER_ID]: { characterId: CHARACTER_ID, constellation: 0, refinement: 1, weaponId: 2001 } },
-  reliquaries: {},
-  rewards: { [REWARD_ID]: [{ count: PRIMOGEM_COUNT, itemId: PRIMOGEM_ITEM_ID }] },
-  stages: {
-    [STAGE_ID]: {
-      dungeonId: 6131,
-      id: STAGE_ID,
-      rewardId: REWARD_ID,
-      trialAvatarId: TRIAL_AVATAR_ID,
-      trialAvatarIndexId: 1,
-    },
-  },
-  templates: [{ level: 1, reliquaryIds: [], talentLevel: 1 }],
-};
-
 vi.mock(import("#src/services/kit/readCharacterKits"), () => ({
   readCharacterKits: vi.fn<() => Promise<Map<number, Kit>>>(),
 }));
 
-// The world's inputs the trials read and write, each a fresh one a test can keep a hold of
-const createDependencies = () => ({
-  characterBody: new Object3D(),
-  characterDataMap: new Map([[CHARACTER_ID, { ascensionPhases: [{ attributeLines: [], maxLevel: 90 }] }]]),
-  claimedStageIds: new Set<number>(),
-  trialTables: shallowRef<CharacterTrialTables | undefined>(TABLES),
-});
-
 describe(useWorldTrials, () => {
+  const CHARACTER_ID = 1001;
+  const TRIAL_AVATAR_ID = 1022;
+  const STAGE_ID = 51_001;
+  const REWARD_ID = 480_001;
+  const PRIMOGEM_COUNT = 20;
+  const PRIMOGEM_ITEM_ID = CurrencyItemIdMap[Currency.Primogem];
+  const TABLES: CharacterTrialTables = {
+    avatars: { [TRIAL_AVATAR_ID]: { characterId: CHARACTER_ID, level: 85, trialAvatarId: TRIAL_AVATAR_ID } },
+    builds: { [CHARACTER_ID]: { characterId: CHARACTER_ID, constellation: 0, refinement: 1, weaponId: 2001 } },
+    reliquaries: {},
+    rewards: { [REWARD_ID]: [{ count: PRIMOGEM_COUNT, itemId: PRIMOGEM_ITEM_ID }] },
+    stages: {
+      [STAGE_ID]: {
+        dungeonId: 6131,
+        id: STAGE_ID,
+        rewardId: REWARD_ID,
+        trialAvatarId: TRIAL_AVATAR_ID,
+        trialAvatarIndexId: 1,
+      },
+    },
+    templates: [{ level: 1, reliquaryIds: [], talentLevel: 1 }],
+  };
+
+  // The world's inputs the trials read and write, each a fresh one a test can keep a hold of
+  const createDependencies = () => ({
+    characterBody: new Object3D(),
+    characterDataMap: new Map([[CHARACTER_ID, { ascensionPhases: [{ attributeLines: [], maxLevel: 90 }] }]]),
+    claimedStageIds: new Set<number>(),
+    trialTables: shallowRef<CharacterTrialTables | undefined>(TABLES),
+  });
+
   const OWNED_CHARACTER_ID = 1002;
   const OWNED_KIT = {} as Kit;
   const TRIAL_KIT = {} as Kit;
