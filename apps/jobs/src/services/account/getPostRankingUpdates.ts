@@ -1,8 +1,9 @@
 import type { UserInAuth } from "@esposter/db-schema";
 
+import { getLikedPostIds } from "#src/services/account/getLikedPostIds";
 import { getOtherLikeTotal } from "#src/services/account/getOtherLikeTotal";
 import { db } from "#src/services/shared/db";
-import { likesInPost, postsInPost } from "@esposter/db-schema";
+import { postsInPost } from "@esposter/db-schema";
 import { getPostRanking } from "@esposter/shared";
 import { and, eq, inArray, sql } from "drizzle-orm";
 
@@ -18,12 +19,7 @@ export const getPostRankingUpdates = async (userId: UserInAuth["id"]) => {
       likeCount: sql<number>`(${getOtherLikeTotal(userId)})`,
     })
     .from(postsInPost)
-    .where(
-      inArray(
-        postsInPost.id,
-        db.select({ postId: likesInPost.postId }).from(likesInPost).where(eq(likesInPost.userId, userId)),
-      ),
-    );
+    .where(inArray(postsInPost.id, getLikedPostIds(userId)));
   return likedPosts.map(({ createdAt, id, likeCount }) =>
     db
       .update(postsInPost)

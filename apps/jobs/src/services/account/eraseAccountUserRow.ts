@@ -1,9 +1,10 @@
 import type { UserInAuth } from "@esposter/db-schema";
 
+import { getLikedPostIds } from "#src/services/account/getLikedPostIds";
 import { getOtherLikeTotal } from "#src/services/account/getOtherLikeTotal";
 import { getPostRankingUpdates } from "#src/services/account/getPostRankingUpdates";
 import { db } from "#src/services/shared/db";
-import { likesInPost, postsInPost, usersInAuth } from "@esposter/db-schema";
+import { postsInPost, usersInAuth } from "@esposter/db-schema";
 import { and, eq, inArray, ne, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/sqlite-core";
 
@@ -28,12 +29,7 @@ const recountPostLikes = (userId: UserInAuth["id"]) =>
   db
     .update(postsInPost)
     .set({ likeCount: sql`(${getOtherLikeTotal(userId)})` })
-    .where(
-      inArray(
-        postsInPost.id,
-        db.select({ postId: likesInPost.postId }).from(likesInPost).where(eq(likesInPost.userId, userId)),
-      ),
-    );
+    .where(inArray(postsInPost.id, getLikedPostIds(userId)));
 
 // A post's comment count is the replies beneath it, all in its thread. The replies the erasure removes are the erased
 // Person's own and every reply beneath one of their posts, so each post above one of them is recounted without those.
