@@ -40,6 +40,7 @@ const UNREFERENCED_MODULE_DIRECTORIES = [
   "services/originalResin",
   "services/liyue",
   "services/expedition",
+  "services/gadget",
 ];
 // The parity page's modules the tooling in `scripts` imports as types. The page writes to `window` when it loads, so
 // No wildcard reaches its modules
