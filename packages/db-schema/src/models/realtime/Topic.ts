@@ -1,5 +1,7 @@
 import { TopicKind } from "#src/models/realtime/TopicKind";
+import { StorageBuckets } from "#src/models/storage/StorageBucket";
 import { BLOB_KEY_MAX_LENGTH, TOPIC_ID_MAX_LENGTH } from "#src/services/realtime/constants";
+import { getStorageBucketBindingName } from "#src/services/storage/getStorageBucketBindingName";
 import { z } from "zod";
 
 // A blob a storage bucket holds, named `<bucket binding>:<key>` (the live queries design). A listing names the directory its
@@ -22,6 +24,10 @@ const scopeTopicSchema = z.union([
   z.templateLiteral([z.string().min(1), ":*"]),
 ]);
 
-const blobTopicSchema = z.templateLiteral([z.string().min(1), ":", z.string().max(BLOB_KEY_MAX_LENGTH)]);
+// The bucket part of a blob topic is a binding a storage bucket names, derived from the buckets rather than listed here
+const bindingNames = new Set(StorageBuckets.map((storageBucket) => getStorageBucketBindingName(storageBucket)));
+const blobTopicSchema = z
+  .templateLiteral([z.string().min(1), ":", z.string().max(BLOB_KEY_MAX_LENGTH)])
+  .refine((topic) => bindingNames.has(topic.slice(0, topic.indexOf(":"))));
 
 export const topicSchema = z.union([kindTopicSchema, scopeTopicSchema, blobTopicSchema]) satisfies z.ZodType<Topic>;
