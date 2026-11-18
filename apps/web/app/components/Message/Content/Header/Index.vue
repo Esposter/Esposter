@@ -2,7 +2,6 @@
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { RightDrawerToggleMap } from "#src/services/message/RightDrawerToggleMap";
-import { useLayoutStore } from "#src/store/layout";
 import { useRoomDialogStore } from "#src/store/message/room/dialog";
 import { useRoomStore } from "#src/store/message/room/index";
 
@@ -10,16 +9,15 @@ const roomStore = useRoomStore();
 const { currentRoom, isCreator } = storeToRefs(roomStore);
 const roomDialogStore = useRoomDialogStore();
 const { isEditRoomDialogOpen } = storeToRefs(roomDialogStore);
-const layoutStore = useLayoutStore();
-const { isDesktop } = storeToRefs(layoutStore);
+const { smAndUp } = useUiDisplay();
 </script>
 
 <!-- The room's name and topic on one line, as a channel's header has them, and the room's tools at its end. Its creator
-     edits the room from its name. One header at every width, with no second bar of buttons above the composer: where
-     the drawers dock, the call and the pane toggles — followed threads, search, members — sit out beside the room's
-     overflow menu; below that cut the room-list button takes their place, and they wait in the overflow menu as rows,
-     the toggles checked while their pane is open, so a phone's header holds the name and two marks. The topic yields first, from the width below
-     which it would leave the name no room -->
+     edits the room from its name. One header at every width, with no second bar of buttons above the composer: from
+     `sm` up, the call and the pane toggles — followed threads, search, members — sit out beside the room's overflow
+     menu; on a phone they wait in the overflow menu as rows, the toggles checked while their pane is open, so a phone's
+     header holds the room-list button, the name and the menu. The topic yields first, from the width below which it
+     would leave the name no room -->
 <template>
   <header v-if="currentRoom" px-2 py-1 flex shrink-0 gap-1 ui-bar items-center>
     <AppDrawerButton label="Show Room List" :meaning="UiIconMeaning.Menu" />
@@ -41,7 +39,7 @@ const { isDesktop } = storeToRefs(layoutStore);
     </div>
     <div flex-1 />
     <div flex shrink-0 gap-1 items-center>
-      <template v-if="isDesktop">
+      <template v-if="smAndUp">
         <MessageContentCallButton />
         <MessageContentShowDrawerButton
           v-for="{ drawer } of Object.values(RightDrawerToggleMap)"

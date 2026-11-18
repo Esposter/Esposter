@@ -6,7 +6,6 @@ import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { NotificationTypeLabelMap } from "#src/services/message/NotificationTypeLabelMap";
 import { NotificationTypeMeaningMap } from "#src/services/message/NotificationTypeMeaningMap";
 import { RightDrawerToggleMap } from "#src/services/message/RightDrawerToggleMap";
-import { useLayoutStore } from "#src/store/layout";
 import { useCallStore } from "#src/store/message/room/call/index";
 import { useRoomStore } from "#src/store/message/room/index";
 import { useUserToRoomStore } from "#src/store/message/room/userToRoom";
@@ -15,8 +14,7 @@ import { NotificationType } from "@esposter/db-schema";
 import { noop } from "@esposter/shared";
 
 const { $trpc } = useNuxtApp();
-const layoutStore = useLayoutStore();
-const { isDesktop } = storeToRefs(layoutStore);
+const { smAndUp } = useUiDisplay();
 const callStore = useCallStore();
 const { isConnecting, isInCall } = storeToRefs(callStore);
 const { joinCallByRoomId, leaveCall } = callStore;
@@ -53,9 +51,9 @@ const updateNotificationType = (newNotificationType: NotificationType) => {
     key: roomId,
   });
 };
-// Where the drawers do not dock, the header leaves the call and its toggles to this menu, so they lead it
+// On a phone the header leaves the call and its toggles to this menu, so they lead it
 const headerItems = computed<Item[]>(() =>
-  isDesktop.value
+  smAndUp.value
     ? []
     : [
         isInCall.value
@@ -93,9 +91,9 @@ const items = computed<Item[]>(() => [
 </script>
 
 <!-- What a room offers now and then, behind one mark at every width: the panes read less often than the threads, the
-     members and the search, and the notification level as a group of radios, which show the level the reader has as soon as the
-     menu opens. Discord keeps a bell of its own in the header; one mark fewer is what lets the header fit a phone
-     without a second bar of buttons, and below the cut where the drawers dock the header's call and toggles lead it -->
+     members and the search, and the notification level as a group of radios, which show the level the reader has as
+     soon as the menu opens. Discord keeps a bell of its own in the header; one mark fewer is what lets the header fit a
+     phone without a second bar of buttons, and on a phone the header's call and toggles lead it -->
 <template>
   <UiOverflowMenu :items label="Room actions" />
 </template>

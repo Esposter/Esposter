@@ -4,20 +4,20 @@ import UiOverflowMenu from "#src/components/Ui/OverflowMenu.vue";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-// Whether the drawers dock is read from the display composable, so a test says how wide the window is before it mounts
-const display = vi.hoisted(() => ({ isMobile: false }));
+// Whether the window is a phone's is read from the display composable, so a test says how wide it is before it mounts
+const display = vi.hoisted(() => ({ smAndUp: true }));
 vi.mock(import("#src/composables/ui/useUiDisplay"), async (importOriginal) => {
   const actual = await importOriginal();
 
-  return { ...actual, useUiDisplay: () => ({ ...actual.useUiDisplay(), isMobile: shallowRef(display.isMobile) }) };
+  return { ...actual, useUiDisplay: () => ({ ...actual.useUiDisplay(), smAndUp: shallowRef(display.smAndUp) }) };
 });
 
 describe("messageContentHeaderOverflowMenu", () => {
   beforeEach(() => {
-    display.isMobile = false;
+    display.smAndUp = true;
   });
 
-  test("where the drawers dock, the menu leaves the call and the toggles to the header", async () => {
+  test("from sm up, the menu leaves the call and the toggles to the header", async () => {
     expect.hasAssertions();
 
     const component = await mountSuspended(MessageContentHeaderOverflowMenu);
@@ -29,7 +29,7 @@ describe("messageContentHeaderOverflowMenu", () => {
   test("a phone's menu carries the header's toggles as rows", async () => {
     expect.hasAssertions();
 
-    display.isMobile = true;
+    display.smAndUp = false;
     const component = await mountSuspended(MessageContentHeaderOverflowMenu);
     const items = component.findComponent(UiOverflowMenu).props("items");
 
