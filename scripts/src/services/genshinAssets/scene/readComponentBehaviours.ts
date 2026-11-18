@@ -6,14 +6,14 @@ import type { ObjectPointer } from "#src/models/genshinAssets/shared/ObjectPoint
 import { AnimeStudioExportType } from "#src/models/genshinAssets/shared/AnimeStudioExportType";
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { scanSerializedFields } from "#src/services/genshinAssets/scene/scanSerializedFields";
-import { GENSHIN_ANIMESTUDIO_OPTIONS, SERIALIZED_POINTER_BYTES } from "#src/services/genshinAssets/shared/constants";
+import { GENSHIN_ANIMESTUDIO_OPTIONS } from "#src/services/genshinAssets/shared/constants";
 import { exportBlockBySource } from "#src/services/genshinAssets/shared/exportBlockBySource";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { readComponentLayoutBlocks } from "#src/services/genshinAssets/shared/readComponentLayoutBlocks";
+import { readSerializedGameObject } from "#src/services/genshinAssets/shared/readSerializedGameObject";
 import { resolveObjectPointer } from "#src/services/genshinAssets/shared/resolveObjectPointer";
 import { toObjectKey } from "#src/services/genshinAssets/shared/toObjectKey";
 import { readIndexedAssets } from "#src/services/recreation/animeStudio/readIndexedAssets";
-import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync } from "node:fs";
 import { readdir, readFile, rm } from "node:fs/promises";
 import { basename, join } from "node:path";
@@ -75,13 +75,7 @@ export const readComponentBehaviours = async (
         );
         for (const name of scripts) {
           const bytes = await readFile(join(blockDirectory, file, name));
-          if (bytes.length < SERIALIZED_POINTER_BYTES)
-            throw new InvalidOperationError(
-              Operation.Read,
-              `${type} ${name} in ${file}`,
-              `holds ${bytes.length} bytes, too few for its game object's pointer`,
-            );
-          const gameObject = { fileIndex: bytes.readInt32LE(0), pathId: bytes.readBigInt64LE(4).toString() };
+          const gameObject = readSerializedGameObject(bytes, `${type} ${name} in ${file}`);
           behaviours.push({
             block,
             describePointer,
