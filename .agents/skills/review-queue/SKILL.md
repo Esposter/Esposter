@@ -31,7 +31,7 @@ Every agent works on **one permanent branch, `ai/queue`**, in the main checkout,
 | `main`       | the review, and a session's sync to main | a fast-forward to the end of the last window that passed                     |
 | other `ai/*` | the one session that owns it             | a plain push                                                                 |
 
-A session pushes `main` only when the owner asks — a sync to main, or a config migration's code under "Settled" — never otherwise. A session lands on `ai/queue` itself; the only other branch it ever holds is a concurrent change's worktree branch, which gives that worktree's pull a fork point.
+The `main` row moves only as the "Settled" bullet on pushing `main` by hand allows. A session lands on `ai/queue` itself; the only other branch it ever holds is a concurrent change's worktree branch, which gives that worktree's pull a fork point.
 
 ## The loop
 
