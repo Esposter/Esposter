@@ -6,15 +6,13 @@ import { createMockAuthSession, createMockContext, getMockSession } from "#serve
 import { createCallerFactory } from "#server/trpc/index";
 import { createFriendship } from "#server/trpc/routers/createFriendship.test";
 import { friendRouter } from "#server/trpc/routers/friend";
-import { readTopicsHeader } from "#shared/services/realtime/readTopicsHeader";
+import { expectLiveTopicCoverage } from "#server/trpc/routers/liveTopicCoverage.test";
 import {
   blocksInSocial,
   DatabaseEntityType,
   friendRequestsInSocial,
   friendsInSocial,
-  getTopic,
   PublicUserColumns,
-  TopicKind,
 } from "@esposter/db-schema";
 import { getFriendshipId, InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { v7 } from "uuid";
@@ -45,19 +43,6 @@ describe("friendRouter", () => {
     expect(takeOne(friendUsers).id).toBe(user.id);
   });
 
-  test("watches each friend's own topic, so a renamed friend refreshes the list", async () => {
-    expect.hasAssertions();
-
-    const { user } = await createFriendship(mockContext);
-    const readContext = await createMockContext();
-    await createCallerFactory(friendRouter)(readContext).readFriends();
-
-    expect(readTopicsHeader(readContext.responseHeaders, "readFriends").flatMap(({ topics }) => topics)).toStrictEqual([
-      getTopic(TopicKind.Friend, getMockSession().user.id),
-      getTopic(TopicKind.User, user.id),
-    ]);
-  });
-
   test("reads friends as receiver", async () => {
     expect.hasAssertions();
 
@@ -79,6 +64,23 @@ describe("friendRouter", () => {
     const friendUsers = await friendCaller.readFriends();
 
     expect(friendUsers).toStrictEqual([]);
+  });
+
+  test("every query reads the tables it touches, and a deletion wakes the list it changes", async () => {
+    expect.hasAssertions();
+
+    const { user } = await createFriendship(mockContext);
+
+    await expectLiveTopicCoverage(
+      friendRouter,
+      {
+        queries: [{ call: (context) => createCallerFactory(friendRouter)(context).readFriends(), path: "readFriends" }],
+        writes: [
+          { call: (context) => createCallerFactory(friendRouter)(context).deleteFriend(user.id), path: "deleteFriend" },
+        ],
+      },
+      mockContext,
+    );
   });
 
   test("fails to delete self as friend", async () => {

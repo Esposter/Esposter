@@ -4,7 +4,6 @@ import { containsLike } from "#server/services/db/containsLike";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { router } from "#server/trpc/index";
-import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { friendUserIdInputSchema } from "#shared/models/db/friend/FriendUserIdInput";
 import { searchUsersInputSchema } from "#shared/models/db/friend/SearchUsersInput";
@@ -13,40 +12,29 @@ import {
   DatabaseEntityType,
   friendsInSocial,
   getPublicUserColumns,
-  getTopic,
-  publicUserSchema,
-  TopicKind,
   usersInAuth,
 } from "@esposter/db-schema";
 import { getFriendshipId, MAX_READ_LIMIT, Operation } from "@esposter/shared";
 import { and, eq, isNull, ne, or } from "drizzle-orm";
-import { z } from "zod";
 
 export const friendRouter = router({
-  deleteFriend: getTopicsProcedure(
-    standardAuthedProcedure.input(friendUserIdInputSchema),
-    ({ ctx, input: friendId }) => [getTopic(TopicKind.Friend, ctx.user.id), getTopic(TopicKind.Friend, friendId)],
-  ).mutation<void>(async ({ ctx, input: friendId }) => {
-    const userId = ctx.user.id;
-    if (userId === friendId) throw getInvalidOperationError(Operation.Delete, DatabaseEntityType.Friend, userId);
+  deleteFriend: standardAuthedProcedure
+    .input(friendUserIdInputSchema)
+    .mutation<void>(async ({ ctx, input: friendId }) => {
+      const userId = ctx.user.id;
+      if (userId === friendId) throw getInvalidOperationError(Operation.Delete, DatabaseEntityType.Friend, userId);
 
-    const friendshipId = getFriendshipId(userId, friendId);
-    requireMutation(
-      (await ctx.db.delete(friendsInSocial).where(eq(friendsInSocial.id, friendshipId)).returning())[0],
-      Operation.Delete,
-      DatabaseEntityType.Friend,
-      friendshipId,
-      "NOT_FOUND",
-    );
-  }),
-  // Each friend's own topic too, since the list shows their name and image, which they change without touching it
-  readFriends: getTopicsProcedure(standardAuthedProcedure, ({ ctx, output }) => [
-    getTopic(TopicKind.Friend, ctx.user.id),
-    ...z
-      .array(publicUserSchema.pick({ id: true }))
-      .parse(output)
-      .map(({ id }) => getTopic(TopicKind.User, id)),
-  ]).query<PublicUser[]>(({ ctx }) => {
+      const friendshipId = getFriendshipId(userId, friendId);
+      requireMutation(
+        (await ctx.db.delete(friendsInSocial).where(eq(friendsInSocial.id, friendshipId)).returning())[0],
+        Operation.Delete,
+        DatabaseEntityType.Friend,
+        friendshipId,
+        "NOT_FOUND",
+      );
+    }),
+  // A friend's name and image are on their user row, which the join reads table-wide, so a rename reaches the list
+  readFriends: standardAuthedProcedure.query<PublicUser[]>(({ ctx }) => {
     const userId = ctx.user.id;
     return ctx.db
       .select(getPublicUserColumns(usersInAuth))
