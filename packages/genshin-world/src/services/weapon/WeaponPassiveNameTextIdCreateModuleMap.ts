@@ -8,6 +8,7 @@ import { createArchersMessagePassiveModule } from "#src/services/weapon/passives
 import { createAstralWhispersPassiveModule } from "#src/services/weapon/passives/createAstralWhispersPassiveModule";
 import { createAtTheEndOfTheBeastPathsPassiveModule } from "#src/services/weapon/passives/createAtTheEndOfTheBeastPathsPassiveModule";
 import { createAzureSkiesPassiveModule } from "#src/services/weapon/passives/createAzureSkiesPassiveModule";
+import { createBalladOfTheCrossroadsPassiveModule } from "#src/services/weapon/passives/createBalladOfTheCrossroadsPassiveModule";
 import { createBaneOfElementsPassiveModule } from "#src/services/weapon/passives/createBaneOfElementsPassiveModule";
 import { createBaneOfTheSoftPassiveModule } from "#src/services/weapon/passives/createBaneOfTheSoftPassiveModule";
 import { createBathhousesHawksAndNarukamiPassiveModule } from "#src/services/weapon/passives/createBathhousesHawksAndNarukamiPassiveModule";
@@ -16,6 +17,7 @@ import { createBlackWingPassiveModule } from "#src/services/weapon/passives/crea
 import { createBluntConclusionPassiveModule } from "#src/services/weapon/passives/createBluntConclusionPassiveModule";
 import { createBoltOfPerceptionPassiveModule } from "#src/services/weapon/passives/createBoltOfPerceptionPassiveModule";
 import { createBoundlessBlessingPassiveModule } from "#src/services/weapon/passives/createBoundlessBlessingPassiveModule";
+import { createBrightDawnOverturePassiveModule } from "#src/services/weapon/passives/createBrightDawnOverturePassiveModule";
 import { createByakuyaKougetsuPassiveModule } from "#src/services/weapon/passives/createByakuyaKougetsuPassiveModule";
 import { createBygoneAzureTeardropPassiveModule } from "#src/services/weapon/passives/createBygoneAzureTeardropPassiveModule";
 import { createCandleWovenFromTheNightPassiveModule } from "#src/services/weapon/passives/createCandleWovenFromTheNightPassiveModule";
@@ -89,6 +91,8 @@ import { createManyOathsOfDawnAndDuskPassiveModule } from "#src/services/weapon/
 import { createMasonsDittyPassiveModule } from "#src/services/weapon/passives/createMasonsDittyPassiveModule";
 import { createMasteryClockPassiveModule } from "#src/services/weapon/passives/createMasteryClockPassiveModule";
 import { createMistsplittersEdgePassiveModule } from "#src/services/weapon/passives/createMistsplittersEdgePassiveModule";
+import { createMillennialHymnPassiveModule } from "#src/services/weapon/passives/createMillennialHymnPassiveModule";
+import { createMindInBloomPassiveModule } from "#src/services/weapon/passives/createMindInBloomPassiveModule";
 import { createMournfulTributePassiveModule } from "#src/services/weapon/passives/createMournfulTributePassiveModule";
 import { createNocturnalDreamsPassiveModule } from "#src/services/weapon/passives/createNocturnalDreamsPassiveModule";
 import { createNorthwindWolfPassiveModule } from "#src/services/weapon/passives/createNorthwindWolfPassiveModule";
@@ -108,6 +112,7 @@ import { createPurifyingCrownPassiveModule } from "#src/services/weapon/passives
 import { createRadianceOfTheDeepsPassiveModule } from "#src/services/weapon/passives/createRadianceOfTheDeepsPassiveModule";
 import { createRadianceOnTheWaterPassiveModule } from "#src/services/weapon/passives/createRadianceOnTheWaterPassiveModule";
 import { createReactionAttackPassiveModule } from "#src/services/weapon/passives/createReactionAttackPassiveModule";
+import { createReactionDamageBonusPassiveModule } from "#src/services/weapon/passives/createReactionDamageBonusPassiveModule";
 import { createRebelliousGuardianPassiveModule } from "#src/services/weapon/passives/createRebelliousGuardianPassiveModule";
 import { createRepentanceAndRedemptionPassiveModule } from "#src/services/weapon/passives/createRepentanceAndRedemptionPassiveModule";
 import { createRuleByThunderPassiveModule } from "#src/services/weapon/passives/createRuleByThunderPassiveModule";
@@ -152,6 +157,7 @@ import { createWavesplitterPassiveModule } from "#src/services/weapon/passives/c
 import { createWhispersOfWindAndFlowerPassiveModule } from "#src/services/weapon/passives/createWhispersOfWindAndFlowerPassiveModule";
 import { createWhitehillsBestowalPassiveModule } from "#src/services/weapon/passives/createWhitehillsBestowalPassiveModule";
 import { createWhitemoonBristlePassiveModule } from "#src/services/weapon/passives/createWhitemoonBristlePassiveModule";
+import { createWindUnattainedPassiveModule } from "#src/services/weapon/passives/createWindUnattainedPassiveModule";
 import { createWithoutHeedForDayNorNightPassiveModule } from "#src/services/weapon/passives/createWithoutHeedForDayNorNightPassiveModule";
 import { createWolfishTrackerPassiveModule } from "#src/services/weapon/passives/createWolfishTrackerPassiveModule";
 
@@ -596,4 +602,26 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "2308173099": createOppidanAmbushPassiveModule,
   // Radiance of the Deeps
   "4218009083": createRadianceOfTheDeepsPassiveModule,
+  // Mind in Bloom (Flame-Forged Insight)
+  "1408290899": createMindInBloomPassiveModule,
+  // The Wind Unattained (Missive Windspear)
+  "2975845811": createWindUnattainedPassiveModule,
+  // Swift and Sure (Prospector's Shovel)
+  "28686483": (params) =>
+    createReactionDamageBonusPassiveModule(params, {
+      firstReactionType: ReactionType.ElectroCharged,
+      secondReactionType: ReactionType.LunarCharged,
+    }),
+  // Token of Covenant (Blackmarrow Lantern)
+  "2704798827": (params) =>
+    createReactionDamageBonusPassiveModule(params, {
+      firstReactionType: ReactionType.Bloom,
+      secondReactionType: ReactionType.LunarBloom,
+    }),
+  // Ballad of the Crossroads (Nocturne's Curtain Call)
+  "2904213659": createBalladOfTheCrossroadsPassiveModule,
+  // Bright Dawn Overture (Lumidouce Elegy)
+  "3325137939": createBrightDawnOverturePassiveModule,
+  // Millennial Hymn (Nightweaver's Looking Glass)
+  "1453394107": createMillennialHymnPassiveModule,
 };
