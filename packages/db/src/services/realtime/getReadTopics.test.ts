@@ -16,7 +16,7 @@ import {
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { SECRET_TOKEN_LENGTH } from "@esposter/shared";
-import { and, eq, getTableName, inArray, isNull, ne, not } from "drizzle-orm";
+import { and, eq, getTableName, inArray, isNull, ne, not, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/sqlite-core";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
@@ -800,6 +800,25 @@ describe(getReadTopics, () => {
       .where(eq(usersToRoomsInMessage.roomId, roomId));
 
     await expect(getWoken(read.statements, write.statements)).resolves.toStrictEqual([`${tableName}.isHidden:*`]);
+  });
+
+  // A raw fragment names its columns in text the walker cannot read, so the read names every column of the table it sits in
+  test("an update to a column a raw fragment names wakes a table-wide read that names it through the fragment", async () => {
+    expect.hasAssertions();
+
+    const { db, roomId } = await seedUserRoom();
+    const read = recordStatements(db);
+    await read.database
+      .select({ roomId: usersToRoomsInMessage.roomId })
+      .from(usersToRoomsInMessage)
+      .where(sql`isHidden = 0`);
+    const write = recordStatements(db);
+    await write.database
+      .update(usersToRoomsInMessage)
+      .set({ isHidden: true })
+      .where(eq(usersToRoomsInMessage.roomId, roomId));
+
+    await expect(getWoken(read.statements, write.statements)).resolves.toContain(`${tableName}.isHidden:*`);
   });
 
   test("an insert wakes a table-wide read through the table's row topic", async () => {
