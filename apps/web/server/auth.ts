@@ -1,4 +1,5 @@
 import { db } from "#server/db/index";
+import { requestDatabase } from "#server/db/requestDb";
 import { apiKeyPlugin } from "#server/services/auth/apiKeyPlugin";
 import { authModelOptions } from "#server/services/auth/authModelOptions";
 import { PRODUCTION_BASE_URL } from "#server/services/auth/constants";
@@ -51,7 +52,7 @@ export const auth = betterAuth({
     // Off a cross-site WebSocket handshake, alongside the Origin check those routes make (`readSocketSession.ts`)
     defaultCookieAttributes: { sameSite: "lax" },
   },
-  database: drizzleAdapter(db, drizzleAdapterConfiguration),
+  database: drizzleAdapter(requestDatabase, drizzleAdapterConfiguration),
   // Every removal of a session row ends its sockets here, whichever path removed it: a sign-out, a revoke, a bulk revoke,
   // And an expired row better-auth deletes when it next reads that row. The row is already gone when this runs, and a
   // Failed close is logged rather than thrown, since the removal it follows has already landed

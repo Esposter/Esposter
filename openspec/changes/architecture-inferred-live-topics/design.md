@@ -101,6 +101,8 @@ The write capture belongs to the database handle, not to the request. A queue jo
 
 The jobs' handle is `getDb()` in `apps/jobs/src/services/shared/db.ts`. A job statement reads it, and outside a unit of work it is the D1 handle itself. `runUnit` opens a unit for each queue message (`handleQueueBatch`) and for the nightly purge (`worker.ts`), records the unit's statements in an `AsyncLocalStorage` scope, and publishes the write set best-effort once the unit settles, whether it succeeded or not, since a write that landed before a failure still changed rows. The hand publishes stay for now. Each of their readers still declares its topic by hand, so the inferred publish does not reach it (task 2.4).
 
+The auth instance writes outside `ctx.db`: it is built once, over the module's handle, so a session revoke bypassed the request's recorder. Its handle is `requestDatabase` in `apps/web/server/db/requestDb.ts`, a proxy that reads the request's handle from an `AsyncLocalStorage` scope (`requestDbStorage`) each time a call runs. The web Worker runs with `nodejs_compat`, since Nitro's `nodeCompat` is on, so the scope is available. `inferTopicsMiddleware` runs a recorded procedure inside that scope. The session router still declares its topics by hand, so its revoke is recorded only once that router is inferred (task 3.2); until then its hand topic covers the revoke.
+
 ## Join and table policy
 
 A scope equality names its table exactly. A table with no scope equality but a join on one of its scope columns is named by the joined rows' key values, where the statement selects the key; where it does not, the table is named table-wide. A table with neither is named table-wide. A table's declaration may mark a join table-wide when its measured fan-out says so, which is the decision point task 6.1 produces.
@@ -223,6 +225,7 @@ Before the sequence starts, the wrapper, the walker and the write capture are bu
 | `apps/web/server/trpc/routers/room/directMessage.ts`                           | The participant read, folded into the direct-message list procedure                       |
 | `apps/jobs/src/services/account/takeBackErasedMentionCounts.ts`                | A job write to `usersToRooms` that needs the wrapper on its handle                        |
 | `apps/jobs/src/services/shared/db.ts`                                          | The jobs' handle: `getDb()` inside a unit, which `runUnit` records and publishes          |
+| `apps/web/server/db/requestDb.ts`                                              | The auth instance's handle, read from the request scope each time a call runs             |
 
 ## Sources
 

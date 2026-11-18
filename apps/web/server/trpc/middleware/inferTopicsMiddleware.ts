@@ -1,3 +1,4 @@
+import { requestDbStorage } from "#server/db/requestDb";
 import { publishTopicsBestEffort } from "#server/services/realtime/publishTopicsBestEffort";
 import { t } from "#server/trpc/initTrpc";
 import { TOPICS_HEADER } from "#shared/services/realtime/constants";
@@ -14,7 +15,8 @@ export const inferTopicsMiddleware = t.middleware(async ({ ctx, meta, next, path
   // Taken before the read runs, so a publish that lands after it reaches the watch even when the answer misses it
   const readAt = Date.now();
   const recorded = recordStatements(ctx.db);
-  const result = await next({ ctx: { db: recorded.database } });
+  // The request's handle is in scope for the whole procedure, so a write the auth instance makes (a session revoke) is recorded too
+  const result = await requestDbStorage.run(recorded.database, () => next({ ctx: { db: recorded.database } }));
   if (!result.ok) return result;
 
   // A query's topics travel back with its answer, so the client watches what the read it rendered came from
