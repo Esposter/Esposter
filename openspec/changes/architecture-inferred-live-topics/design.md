@@ -206,7 +206,7 @@ A write's `RETURNING` names the rows after it. The rows before it are read first
 
 ## Blob topics
 
-A bucket binding's reads and writes are topics too. A blob topic is `<bucket binding>:<key>` (`BlobTopic`): `USER_ASSETS:user/a/one` names one blob, and `USER_ASSETS:user/a/` names the directory a listing lies in. The empty key, `USER_ASSETS:`, is the bucket's root. Every listing lies in it, so a write publishes it, and the topic schema accepts the empty key for that reason.
+A bucket binding's reads and writes are topics too. A blob topic is `<bucket binding>:<key>` (`BlobTopic`): `USER_ASSETS:user/a/one` names one blob, and `USER_ASSETS:user/a/` names the directory a listing lies in. The empty key, `USER_ASSETS:`, is the bucket's root. Every listing lies in it, so a write publishes it, and the topic schema accepts the empty key for that reason. A key is named whole, so the schema bounds it at `BLOB_KEY_MAX_LENGTH`, R2's key limit of 1024: a file's key, which carries its prefix, its id and a name of up to 1000 characters, is the longest a blob takes, and its topic must parse like any other.
 
 - **Reads.** `get` and `head` record the key they read. `list` records the directory its prefix lies in (`getBlobListTopic`): the prefix up to its last `/`, so a write beneath the prefix wakes it. A prefix that does not end at a directory names the directory it starts in, which is wider and never misses a write beneath the prefix.
 - **Writes.** `put` and `delete` publish their key, each directory above it deepest first, and the root (`getBlobWriteTopics`), so a listing of any of those places is woken. A `delete` takes one key or a list of them.

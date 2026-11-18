@@ -1,5 +1,5 @@
 import { TopicKind } from "#src/models/realtime/TopicKind";
-import { TOPIC_ID_MAX_LENGTH } from "#src/services/realtime/constants";
+import { BLOB_KEY_MAX_LENGTH, TOPIC_ID_MAX_LENGTH } from "#src/services/realtime/constants";
 import { z } from "zod";
 
 // A blob a storage bucket holds, named `<bucket binding>:<key>` (the live queries design). A listing names the directory its
@@ -22,6 +22,6 @@ const scopeTopicSchema = z.union([
   z.templateLiteral([z.string().min(1), ":*"]),
 ]);
 
-const blobTopicSchema = z.templateLiteral([z.string().min(1), ":", z.string().max(TOPIC_ID_MAX_LENGTH)]);
+const blobTopicSchema = z.templateLiteral([z.string().min(1), ":", z.string().max(BLOB_KEY_MAX_LENGTH)]);
 
 export const topicSchema = z.union([kindTopicSchema, scopeTopicSchema, blobTopicSchema]) satisfies z.ZodType<Topic>;

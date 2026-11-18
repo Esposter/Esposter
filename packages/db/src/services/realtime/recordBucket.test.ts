@@ -62,4 +62,17 @@ describe(recordBucket, () => {
 
     expect(blobs.writes.filter((topic) => !topicSchema.safeParse(topic).success)).toStrictEqual([]);
   });
+
+  // A blob's key is named whole in its topic, and a file's key runs to the longest name a file takes, so a key of that length
+  // Still publishes a topic the schema accepts
+  test("a key as long as a file's name publishes a topic the schema accepts", async () => {
+    expect.hasAssertions();
+
+    const blobs: RecordedBlobs = { reads: [], writes: [] };
+    const bucket = recordBucket(mockBucket.bucket, bucketName, () => blobs);
+
+    await bucket.put(`user/${"a".repeat(1000)}`, "x");
+
+    expect(blobs.writes.filter((topic) => !topicSchema.safeParse(topic).success)).toStrictEqual([]);
+  });
 });
