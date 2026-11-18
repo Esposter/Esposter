@@ -2,7 +2,7 @@
 
 ## Queue
 
-- [ ] `[cpu]` {sumeru-terrain-tiles} needs game-install — **Sumeru: the terrain tiles its area outlines name, exported.** `pnpm -C scripts genshin:assets extract sumeru`, with the game closed. Reads the game install through its map, `{data-root}/genshin-parity/extracted/maps/`, the Windrise export `{data-root}/genshin-parity/extracted/windrise/` that places the origin, and `packages/genshin-world/src/data/catalogue.json`. Writes `{data-root}/genshin-parity/extracted/sumeru/`. Measure: `pnpm -C scripts genshin:assets missing-tiles sumeru` prints `missing 0 of 29 outline tiles` and each tile its export lacks after `missing`, with the tiles the install names no asset of after `absent from the install`; the bar is `missing 0`. Its export lacked 25 of its 29 outline tiles when measured on 19 Nov.
+- [ ] `[cpu]` {sumeru-terrain-tiles} needs game-install — **Sumeru: the terrain tiles its area outlines name, exported.** `pnpm -C scripts genshin:assets extract sumeru`, with the game closed. Reads the game install through its map, `{data-root}/genshin-parity/extracted/maps/`, the Windrise export `{data-root}/genshin-parity/extracted/windrise/` that places the origin, and `packages/genshin-world/src/data/catalogue.json`. Writes `{data-root}/genshin-parity/extracted/sumeru/`. Measure: `pnpm -C scripts genshin:assets missing-tiles sumeru`, bar `missing 0` of its 29 outline tiles. Its export lacked 25 of its 29 outline tiles when measured on 19 Nov.
 
 ## Waiting
 
@@ -28,4 +28,4 @@
 - [ ] **The sumeru-city-location camera pose image is written** — no source yet, for the reason [Liyue](../liyue/design.md) gives; `pnpm -C scripts genshin:parity pose sumeru-city-location --witness sumeru --write` writes it (`solveReferencePose` in `scripts/src/services/genshinParity/witness/solveReferencePose.ts`).
 - [ ] **The sumeru-city-location shadow image is written** — no source yet, for the reason [Liyue](../liyue/design.md) gives for its shadow image; `pnpm -C scripts genshin:parity shadows sumeru-city-location --witness sumeru` writes it (`solveReferenceShadows` in `scripts/src/services/genshinParity/witness/solveReferenceShadows.ts`).
 - [ ] **Sumeru's shape pass waits on the kit parts through `BuildingKitPartsMap`** — contradicted by the `WorldLandmarks` element in `packages/genshin-world/src/components/World/Windrise/Index.vue`: it mounts `WorldLandmarks`, the only route to `packages/genshin-world/src/components/World/Landmark/Building/Index.vue`, which calls `BuildingKitPartsMap`, and that mount is the Windrise scene's alone.
-- [ ] **Sumeru's ground fit waits on `sumeru-terrain-tiles`** — `pnpm -C scripts genshin:assets fit sumeru --dry-run` reads the export that item writes, so it runs once that item's measure reads `missing 0`. Its reading is a judgement, so it is no queue item: the main session runs it by hand.
+- [ ] **Sumeru's ground fit waits on `sumeru-terrain-tiles`** — its `fit sumeru --dry-run` reads that export.
