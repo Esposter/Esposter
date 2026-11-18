@@ -2,6 +2,7 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { checkIsNormalOrChargedAttack } from "#src/services/kit/checkIsNormalOrChargedAttack";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { queueCooldownHit } from "#src/services/weapon/passives/queueCooldownHit";
@@ -11,9 +12,7 @@ import { takeOne } from "@esposter/shared";
 const WANDERING_STRIKER_COOLDOWN_ID = "wanderingStrikerCooldown";
 
 const checkIsWanderingStrikerAttack = (attackTag: AttackTag | undefined): boolean =>
-  attackTag === AttackTag.NormalAttack ||
-  attackTag === AttackTag.ChargedAttack ||
-  attackTag === AttackTag.PlungingAttack;
+  checkIsNormalOrChargedAttack(attackTag) || attackTag === AttackTag.PlungingAttack;
 
 // Wandering Striker at its rank: a Normal, Charged or Plunging Attack hit its wielder lands releases an Accursed Spirit, a small
 // AoE at the rank's multiplier of ATK on the enemy it struck, once every the rank's cooldown in seconds. The variant with a heal
