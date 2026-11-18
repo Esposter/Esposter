@@ -6,6 +6,7 @@ import { EMPEROR_OF_FIRE_AND_IRON_MOVES } from "#src/services/bosses/emperorOfFi
 import { EXPERIMENTAL_FIELD_GENERATOR_MOVES } from "#src/services/bosses/experimentalFieldGenerator";
 import { HYDRO_TULPA_MOVES } from "#src/services/bosses/hydroTulpa";
 import { ICEWIND_SUITE_MOVES } from "#src/services/bosses/icewindSuite";
+import { MILLENNIAL_PEARL_SEAHORSE_MOVES } from "#src/services/bosses/millennialPearlSeahorse";
 import { PERPETUAL_MECHANICAL_ARRAY_MOVES } from "#src/services/bosses/perpetualMechanicalArray";
 import { STORMTERROR_MOVES } from "#src/services/bosses/stormterror";
 
@@ -18,4 +19,5 @@ export const EnemyKindMovesMap: Partial<Record<EnemyKindId, readonly BossMove[]>
   [EnemyKindId.EmperorOfFireAndIron]: EMPEROR_OF_FIRE_AND_IRON_MOVES,
   [EnemyKindId.HydroTulpa]: HYDRO_TULPA_MOVES,
   [EnemyKindId.IcewindSuite]: ICEWIND_SUITE_MOVES,
+  [EnemyKindId.MillennialPearlSeahorse]: MILLENNIAL_PEARL_SEAHORSE_MOVES,
 };
