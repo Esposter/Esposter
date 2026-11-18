@@ -13,6 +13,7 @@ import { checkIsArchitectureName } from "#src/services/genshinAssets/world/check
 import {
   ARCHITECTURE_VIEW_METRES,
   STREAM_INDEX_SUFFIX,
+  TERRAIN_NAME_MARK,
   TERRAIN_NAME_PREFIX,
 } from "#src/services/genshinAssets/world/constants";
 import { exportTerrainTiles } from "#src/services/genshinAssets/world/exportTerrainTiles";
@@ -22,6 +23,7 @@ import { getCoveredTiles } from "#src/services/genshinAssets/world/getCoveredTil
 import { getPathHashKey } from "#src/services/genshinAssets/world/getPathHashKey";
 import { getPrefabNames } from "#src/services/genshinAssets/world/getPrefabNames";
 import { getStreamBlobName } from "#src/services/genshinAssets/world/getStreamBlobName";
+import { getTerrainSearchBlocks } from "#src/services/genshinAssets/world/getTerrainSearchBlocks";
 import { getTerrainTileNames } from "#src/services/genshinAssets/world/getTerrainTileNames";
 import { getWorldTileName } from "#src/services/genshinAssets/world/getWorldTileName";
 import { readAssetPathNames } from "#src/services/genshinAssets/world/readAssetPathNames";
@@ -166,16 +168,25 @@ export const deriveCapitalWorld = async (
   const worldOrigin = await readWorldOrigin(component);
   const terrainNames = getTerrainTileNames(capitalTile, groundPieceAreas, worldOrigin);
   const terrainAssets = await readIndexedAssets(
-    ({ name }) => name.startsWith(TERRAIN_NAME_PREFIX),
+    ({ name }) => name.includes(TERRAIN_NAME_MARK),
     GENSHIN_ANIMESTUDIO_OPTIONS,
   );
-  // The blocks holding a tile's own textures are searched first, since a tile is often exported beside them, then every
-  // Other terrain block, since the index names no TerrainData: a tile in none of them is reported
-  const nearTerrainBlocks = terrainAssets
+  // The blocks holding a tile's own textures are searched first, since a tile is often exported beside them. A tile they
+  // Lack is then searched for in every other block naming a terrain asset: the index names no TerrainData, but each block
+  // Holding one names a terrain asset beside it, so a tile in none of these blocks is reported
+  const tileAssets = terrainAssets.filter(({ name }) => name.startsWith(TERRAIN_NAME_PREFIX));
+  const nearTerrainBlocks = tileAssets
     .filter(({ name }) => terrainNames.some((terrainName) => name.startsWith(`${terrainName}_`)))
     .map(({ block }) => block);
-  const terrainBlocks = [...new Set([...nearTerrainBlocks, ...terrainAssets.map(({ block }) => block)])];
-  const terrainFound = await exportTerrainTiles(terrainNames, terrainBlocks, directory.world);
+  const tileBlocks = [...new Set([...nearTerrainBlocks, ...tileAssets.map(({ block }) => block)])];
+  const tileFound = await exportTerrainTiles(terrainNames, tileBlocks, directory.world);
+  const missingNames = terrainNames.filter((name) => !tileFound.has(name));
+  const laterFound = await exportTerrainTiles(
+    missingNames,
+    getTerrainSearchBlocks(terrainAssets, tileBlocks),
+    directory.world,
+  );
+  const terrainFound = new Map([...tileFound, ...laterFound]);
   const terrainTiles = terrainNames.flatMap((name) => {
     const block = terrainFound.get(name);
     if (block) return [{ block, name }];

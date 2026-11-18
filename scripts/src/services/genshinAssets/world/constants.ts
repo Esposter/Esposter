@@ -11,6 +11,8 @@ export const STREAM_INDEX_SUFFIX = "_Index";
 // A tile's name, its column and row, and its terrain's TerrainData, which the tile's name names with the `.bin` suffix
 export const TILE_NAME_PREFIX = "BigWorld";
 export const TERRAIN_NAME_PREFIX = "BigWorldTerrain";
+// The mark every terrain asset's name carries, a tile's textures and the level and home terrains' alike
+export const TERRAIN_NAME_MARK = "Terrain";
 export const TERRAIN_NAME_SUFFIX = ".bin";
 // The half side of the square round a capital that its reference is shot across, in metres either way. A city's view
 // Covers its own tile's width and a little past it
