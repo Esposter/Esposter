@@ -1,5 +1,6 @@
 import type { RecordedDatabase } from "#src/models/realtime/RecordedDatabase";
 import type { RecordedStatement } from "#src/models/realtime/RecordedStatement";
+import type { Recorder } from "#src/models/realtime/Recorder";
 import type { RecordStatement } from "#src/models/realtime/RecordStatement";
 import type { Database } from "@esposter/db-schema";
 
@@ -12,16 +13,18 @@ import { toRows } from "#src/services/realtime/toRows";
 export const recordStatements = (database: Database): RecordedDatabase => {
   const statements: RecordedStatement[] = [];
   const record: RecordStatement = (statement) => {
-    const recordedStatement: RecordedStatement = { rows: [], statement };
+    const recordedStatement: RecordedStatement = { before: [], rows: [], statement };
     statements.push(recordedStatement);
-    return (result) => {
+    return (result, before) => {
+      recordedStatement.before = before;
       recordedStatement.rows = toRows(result);
     };
   };
-  const container = recordContainer(database, record);
+  const recorder: Recorder = { database, record };
+  const container = recordContainer(database, recorder);
   const recordedDatabase: Database = new Proxy(container, {
     get: (target, property, receiver) =>
-      property === "batch" ? recordBatch(database, record) : Reflect.get(target, property, receiver),
+      property === "batch" ? recordBatch(recorder) : Reflect.get(target, property, receiver),
   });
   return { database: recordedDatabase, statements };
 };

@@ -8,13 +8,12 @@ import { checkIsRecord } from "#src/util/object/checkIsRecord";
 import { getTableScope } from "@esposter/db-schema";
 import { getTableName } from "drizzle-orm";
 
-// The scope topic of each child row a delete of the given rows reaches directly. A cascading key removes the child rows
-// That hold a deleted row's referenced value, and a key that sets the child's value to null or to its default changes
-// Them, so each child row is named by the value it held. Only a child column that is a scope column is named this way,
-// The rest of the child's rows are named by its table-wide topic
+// The scope topic of each child row a delete of the given rows changes in place: a key that sets the child's value to null
+// Or to its default. Only a child column that is a scope column is named, by the value the deleted row held. A cascading key
+// Removes its child rows, which the delete's before-image reads name, so it is not repeated here
 export const getCascadeRowTopics = (table: Table, rows: unknown[]): Promise<ScopeTopic[]> => {
   const scopeValues: ScopeValue[] = (tableNameReferencingKeysMap.get(getTableName(table)) ?? [])
-    .filter(({ action }) => action === "cascade" || action === "set null" || action === "set default")
+    .filter(({ action }) => action === "set null" || action === "set default")
     .flatMap(({ columns, table: childTable }) => {
       const childTableName = getTableName(childTable);
       const scope = getTableScope(childTable);

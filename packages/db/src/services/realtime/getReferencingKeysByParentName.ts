@@ -20,10 +20,12 @@ const getReferencingColumns = (
   foreignColumns: Column[],
 ): ReferencingColumn[] =>
   columns.flatMap((column, index): ReferencingColumn[] => {
-    const foreignColumn = foreignColumns[index];
+    const referencedColumn = foreignColumns[index];
     const key = getColumnKey(table, column);
-    const parentColumn = foreignColumn === undefined ? undefined : getColumnKey(foreignTable, foreignColumn);
-    return key !== undefined && parentColumn !== undefined ? [{ column: key, parentColumn }] : [];
+    const parentColumn = referencedColumn === undefined ? undefined : getColumnKey(foreignTable, referencedColumn);
+    return key !== undefined && parentColumn !== undefined && referencedColumn !== undefined
+      ? [{ childColumn: column, column: key, parentColumn, referencedColumn }]
+      : [];
   });
 
 // Every foreign key of the schema, keyed by the table it references. Read off each table's declaration, so a key a table

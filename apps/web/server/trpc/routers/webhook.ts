@@ -100,13 +100,13 @@ export const webhookRouter = router({
       DatabaseEntityType.Webhook,
       id,
     );
-    // The app user's delete cascades to the webhook, but the cascade names the room's webhooks only table-wide, and a
-    // Reader of the room's list watches the room's rows. So the webhook's own delete rides in the same batch
-    const [, deletedAppUserRows] = await ctx.db.batch([
-      ctx.db.delete(webhooksInMessage).where(eq(webhooksInMessage.id, id)).returning(),
-      ctx.db.delete(appUsersInMessage).where(eq(appUsersInMessage.id, webhook.userId)).returning(),
-    ]);
-    requireMutation(deletedAppUserRows[0], Operation.Delete, DatabaseEntityType.AppUser, webhook.userId);
+    // The webhook row is cascade-deleted with the app user it posts as, so the app user is the one delete
+    requireMutation(
+      (await ctx.db.delete(appUsersInMessage).where(eq(appUsersInMessage.id, webhook.userId)).returning())[0],
+      Operation.Delete,
+      DatabaseEntityType.AppUser,
+      webhook.userId,
+    );
     return webhook;
   }),
   readAppUsers: getMemberProcedure(readAppUsersInputSchema, "roomId").query<NamedAppUserInMessage[]>(

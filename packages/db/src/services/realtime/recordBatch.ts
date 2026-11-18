@@ -1,19 +1,41 @@
-import type { RecordStatement } from "#src/models/realtime/RecordStatement";
+import type { RecordedRows } from "#src/models/realtime/RecordedRows";
+import type { Recorder } from "#src/models/realtime/Recorder";
 import type { Database } from "@esposter/db-schema";
 
+import { batchStatements } from "#src/services/realtime/batchStatements";
 import { checkIsStatement } from "#src/services/realtime/checkIsStatement";
+import { getBeforeReads } from "#src/services/realtime/getBeforeReads";
+import { toRows } from "#src/services/realtime/toRows";
 import { noop } from "@esposter/shared";
 
-// `batch` runs the statements it is handed without awaiting them, so each one is recorded when the batch is made. Its
-// Statements are drizzle's own builders, each a statement, so the guard only narrows the type. The batch resolves each
-// Statement's rows in the order they were handed, so each one's rows are handed to its record once the batch resolves
+// `batch` runs the statements it is handed without awaiting them, so each one is recorded when the batch is made. A write
+// That needs reads before it runs has them placed ahead of it in the same batch, and each statement's rows and its reads'
+// Rows are handed to its record once the batch resolves. The batch resolves to the results of its own statements alone
 export const recordBatch =
-  (database: Database, record: RecordStatement) =>
+  (recorder: Recorder) =>
   async (...args: Parameters<Database["batch"]>) => {
     const [statements] = args;
-    const completes: ((result: unknown) => void)[] = [];
-    for (const statement of statements) completes.push(checkIsStatement(statement) ? record(statement) : noop);
-    const results = await database.batch(...args);
-    for (const [index, complete] of completes.entries()) complete(results[index]);
-    return results;
+    const items: unknown[] = [];
+    const placed = statements.map((statement: unknown) => {
+      if (!checkIsStatement(statement)) {
+        items.push(statement);
+        return { complete: noop, index: items.length - 1, reads: [], readStart: 0 };
+      }
+      const reads = getBeforeReads(recorder.database, statement);
+      const readStart = items.length;
+      items.push(...reads.map(({ select }) => select));
+      const complete = recorder.record(statement);
+      items.push(statement);
+      return { complete, index: items.length - 1, reads, readStart };
+    });
+    const results = await batchStatements(recorder.database, items);
+    return placed.map(({ complete, index, reads, readStart }) => {
+      const result = results[index];
+      const before: RecordedRows[] = reads.map(({ table }, readIndex) => ({
+        rows: toRows(results[readStart + readIndex]),
+        table,
+      }));
+      complete(result, before);
+      return result;
+    });
   };
