@@ -1,0 +1,8 @@
+import { ScreenKind } from "#src/models/screen/ScreenKind";
+import { ScreenRecordKey } from "#src/models/screen/ScreenRecordKey";
+
+// The records each screen reads as it opens. A screen with none is not listed
+export const ScreenRecordKeysMap: Partial<Record<ScreenKind, readonly ScreenRecordKey[]>> = {
+  [ScreenKind.Crafting]: [ScreenRecordKey.CraftingRecipes],
+  [ScreenKind.Inventory]: [ScreenRecordKey.CraftingRecipes],
+};

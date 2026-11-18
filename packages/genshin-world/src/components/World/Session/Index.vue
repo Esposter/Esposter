@@ -88,6 +88,7 @@ import { useWorldRestorativePower } from "#src/composables/useWorldRestorativePo
 import { useWorldSave } from "#src/composables/useWorldSave";
 import { useWorldSaveSync } from "#src/composables/useWorldSaveSync";
 import { useWorldScreenBehaviour } from "#src/composables/useWorldScreenBehaviour";
+import { useWorldScreenRecords } from "#src/composables/useWorldScreenRecords";
 import { useWorldShortcutWheel } from "#src/composables/useWorldShortcutWheel";
 import { useWorldShrines } from "#src/composables/useWorldShrines";
 import { useWorldSpiralAbyss } from "#src/composables/useWorldSpiralAbyss";
@@ -152,7 +153,6 @@ const {
   catalogue,
   characterTalentKits,
   craftingBenchPlace,
-  craftingRecipes,
   devRegistry,
   domainChallengeLevels,
   enemyTables,
@@ -591,9 +591,11 @@ const { claimCommission, claimKatheryneBonus, convertLongTermPoint, isLongTermPo
   });
 // The namecards the profile holds, which the profile's screen lists
 const { profileNamecards } = useWorldProfileNamecards();
-// The recipes and blueprints a diagram or an instruction opens, by the item's id, and the progress each is learned in
+// The records the screens read as they open, and the recipes and blueprints a diagram or an instruction opens, by the item's
+// Id, and the progress each is learned in
+const records = useWorldScreenRecords({ gameDataBaseUrl });
 const blueprintMap = computed(() => createUnlockItemMap(homeBlueprints));
-const craftingRecipeMap = computed(() => createUnlockItemMap(craftingRecipes));
+const craftingRecipeMap = computed(() => createUnlockItemMap(records.craftingRecipes ?? []));
 // Using an entry of the bag, which the bag's screen offers
 const { useBagEntry } = useWorldBagUse({
   blueprintMap,
@@ -1658,7 +1660,7 @@ useWorldSaveSync({
       @update:inventory="(nextInventory) => setInventory(nextInventory)"
     />
     <CraftingScreen
-      v-if="screenKind === ScreenKind.Crafting"
+      v-if="screenKind === ScreenKind.Crafting && records.craftingRecipes"
       v-model:crafted-count-map="craftedCountMap"
       :adventure-rank="rank"
       :artifact-drop-tables="craftingArtifactDropTables"
@@ -1672,7 +1674,7 @@ useWorldSaveSync({
       :now="worldNow"
       :progress="craftingProgress"
       :random="kitContext.random"
-      :recipes="craftingRecipes"
+      :recipes="records.craftingRecipes"
       :reliquary-piece-entry-map
       :strongboxes="craftingStrongboxes"
       :wallet

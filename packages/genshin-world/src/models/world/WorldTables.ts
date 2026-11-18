@@ -6,7 +6,6 @@ import type { CharacterTalentKit } from "#src/models/character/CharacterTalentKi
 import type { StatTables } from "#src/models/character/StatTables";
 import type { TalentUpgradeMap } from "#src/models/character/TalentUpgradeMap";
 import type { CraftingBenchPlace } from "#src/models/crafting/CraftingBenchPlace";
-import type { CraftingRecipe } from "#src/models/crafting/CraftingRecipe";
 import type { CraftingStrongboxData } from "#src/models/crafting/CraftingStrongboxData";
 import type { DomainChallengeLevelMap } from "#src/models/domains/DomainChallengeLevelMap";
 import type { EnemyTables } from "#src/models/enemy/EnemyTables";
@@ -48,8 +47,6 @@ export interface WorldTables {
   characterTalentKits: CharacterTalentKit[];
   // The crafting bench's place in Mondstadt, in the region's axes, which its prompt stands on
   craftingBenchPlace: CraftingBenchPlace;
-  // The bench's recipes in the game's order, which the crafting screen offers the learned ones of
-  craftingRecipes: CraftingRecipe[];
   // The Mystic Offering's strongboxes, one for each set the offering may choose, which the bench offers from its Adventure Rank
   craftingStrongboxes: CraftingStrongboxData[];
   // The domains' challenge levels by entry id and then by recommended rank, which a domain's level is entered from
