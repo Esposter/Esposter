@@ -86,8 +86,9 @@ describe(executeAutomodAction, () => {
     await expect(readTimeoutUntil(roomId, userId)).resolves.toStrictEqual(new Date(timeoutDurationMs));
   });
 
-  // The action writes the room's moderation log, which the moderators' log reads. It runs inside the message write that is
-  // Then rejected, so that write publishes nothing: the room's topic is published here, from the action itself
+  // The action writes the room's moderation log, which the moderators' log reads. It runs inside a message write that is then
+  // Rejected, and a procedure that declares its topics by hand is not recorded, so no inferred publish names the log for it:
+  // The room's topic is published here, from the action itself
   test("publishes the room's topic, so an open moderation log refetches", async () => {
     expect.hasAssertions();
 

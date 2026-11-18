@@ -8,8 +8,8 @@ import { getTopic, TopicKind } from "@esposter/db-schema";
 
 // The in-process wrapper around the shared automod core: it tells the target's sockets what the action was, and publishes
 // The room's topic, since the moderation log the action wrote is read through it. The message write this runs inside is
-// Rejected, and a rejected mutation publishes nothing. The Scheduled-delivery function calls the core directly, and so
-// Tells no one
+// Rejected, and a procedure that declares its topics by hand is not recorded, so no inferred publish names the log for it:
+// Its declared topics name only what it declares. The Scheduled-delivery function calls the core directly, and so tells no one
 export const executeAutomodAction = async (
   db: Context["db"],
   input: Pick<RoomFilterInMessage, "action" | "timeoutDurationMs"> & { roomId: string; userId: string },
