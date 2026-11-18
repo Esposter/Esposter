@@ -1,6 +1,6 @@
-import type { BlobTopic } from "#src/models/realtime/Topic";
+import type { BlobTopic } from "@esposter/db-schema";
 
-import { getBlobTopic } from "#src/services/realtime/getBlobTopic";
+import { getBlobTopic } from "@esposter/db-schema";
 
 // The topic a listing names: the directory its prefix lies in, which every write beneath the prefix publishes. A prefix that
 // Does not end at a directory names the directory it starts in, a wider topic that never misses a write beneath the prefix

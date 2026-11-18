@@ -1,9 +1,10 @@
 import type { RecordedBlobs } from "#src/models/realtime/RecordedBlobs";
 import type { R2Bucket } from "@cloudflare/workers-types";
 
+import { getBlobListTopic } from "#src/services/realtime/getBlobListTopic";
 import { getBlobWriteTopics } from "#src/services/realtime/getBlobWriteTopics";
 import { checkIsRecord } from "#src/util/object/checkIsRecord";
-import { getBlobListTopic, getBlobTopic } from "@esposter/db-schema";
+import { getBlobTopic } from "@esposter/db-schema";
 
 // The keys a delete names, which R2 takes as one key or a list of them
 const getDeletedKeys = (keys: unknown): string[] => {
