@@ -22,6 +22,7 @@ import { createByakuyaKougetsuPassiveModule } from "#src/services/weapon/passive
 import { createBygoneAzureTeardropPassiveModule } from "#src/services/weapon/passives/createBygoneAzureTeardropPassiveModule";
 import { createCandleWovenFromTheNightPassiveModule } from "#src/services/weapon/passives/createCandleWovenFromTheNightPassiveModule";
 import { createChordPassiveModule } from "#src/services/weapon/passives/createChordPassiveModule";
+import { createCloudfallAxiomPassiveModule } from "#src/services/weapon/passives/createCloudfallAxiomPassiveModule";
 import { createComposedPassiveModule } from "#src/services/weapon/passives/createComposedPassiveModule";
 import { createCouragePassiveModule } from "#src/services/weapon/passives/createCouragePassiveModule";
 import { createCragChiseledForgePassiveModule } from "#src/services/weapon/passives/createCragChiseledForgePassiveModule";
@@ -154,7 +155,9 @@ import { createUntaintedDesirePassiveModule } from "#src/services/weapon/passive
 import { createViperBalladPassiveModule } from "#src/services/weapon/passives/createViperBalladPassiveModule";
 import { createWanderingCloudsPassiveModule } from "#src/services/weapon/passives/createWanderingCloudsPassiveModule";
 import { createWavesplitterPassiveModule } from "#src/services/weapon/passives/createWavesplitterPassiveModule";
+import { createWeightOfFallingBranchesPassiveModule } from "#src/services/weapon/passives/createWeightOfFallingBranchesPassiveModule";
 import { createWhispersOfWindAndFlowerPassiveModule } from "#src/services/weapon/passives/createWhispersOfWindAndFlowerPassiveModule";
+import { createWhiteFairysQueeningPassiveModule } from "#src/services/weapon/passives/createWhiteFairysQueeningPassiveModule";
 import { createWhitehillsBestowalPassiveModule } from "#src/services/weapon/passives/createWhitehillsBestowalPassiveModule";
 import { createWhitemoonBristlePassiveModule } from "#src/services/weapon/passives/createWhitemoonBristlePassiveModule";
 import { createWindUnattainedPassiveModule } from "#src/services/weapon/passives/createWindUnattainedPassiveModule";
@@ -624,4 +627,10 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "3325137939": createBrightDawnOverturePassiveModule,
   // Millennial Hymn (Nightweaver's Looking Glass)
   "1453394107": createMillennialHymnPassiveModule,
+  // The Weight of Falling Branches (Fruitful Hook)
+  "3461989851": createWeightOfFallingBranchesPassiveModule,
+  // Cloudfall Axiom (Crane's Echoing Call)
+  "1544097035": createCloudfallAxiomPassiveModule,
+  // White Fairy's Queening (A Teaspoon of Transcendence)
+  "1811953931": createWhiteFairysQueeningPassiveModule,
 };
