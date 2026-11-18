@@ -100,9 +100,9 @@ export const STRUCTURE_WIDTH = 480;
 // The page, the reference and the G-buffer agree only at this width, and a measure reading at a narrower one scores the
 // Top of the frame alone
 export const FULL_FRAME_WIDTH = 1920;
-// The screens drawn on the World canvas, whose renderer's device ratio is floored at one, named as the world package's
-// Barrel exports them (the fixtures under its `World` folder)
-export const WORLD_SCREENS: readonly string[] = ["WorldRealmPlacementEditor", "WorldScreen"];
+// The prefix every screen drawn on the World canvas carries, whose renderer's device ratio is floored at one: a
+// Component's name is its folder path, so each fixture under the world package's `World` folder starts with it
+export const WORLD_SCREEN_PREFIX = "World";
 // The width the cloud tools read a sky at: wide enough that a cloud's painted edge spans several pixels
 export const CLOUDS_WIDTH = 960;
 // The heights over the horizon, in degrees, the sky's cover is read between band by band: the cloud sea's billows and

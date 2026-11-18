@@ -1,7 +1,7 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { Page } from "playwright";
 
-import { STRUCTURE_WIDTH, WORLD_SCREENS } from "#src/services/genshinParity/shared/constants";
+import { STRUCTURE_WIDTH, WORLD_SCREEN_PREFIX } from "#src/services/genshinParity/shared/constants";
 import { getPageWidth } from "#src/services/genshinParity/shared/getPageWidth";
 import { getReferencePath } from "#src/services/genshinParity/shared/getReferencePath";
 import { openParityPage } from "#src/services/genshinParity/shared/openParityPage";
@@ -36,7 +36,7 @@ export const openWitnessPage = async (
   const referencePath = await getReferencePath(referenceId);
   const { height: referenceHeight, width: referenceWidth } = await sharp(referencePath).metadata();
   const pageWidth = getPageWidth({
-    isWorldScreen: WORLD_SCREENS.includes(reference.screen),
+    isWorldScreen: reference.screen.startsWith(WORLD_SCREEN_PREFIX),
     referenceHeight,
     referenceWidth,
     requestedWidth: width,
