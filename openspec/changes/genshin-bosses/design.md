@@ -71,6 +71,7 @@ packages/genshin-world/src/services/bosses/
 | `packages/genshin-world/src/services/bosses/computePerpetualMechanicalArrayHealthFloor.ts` | The health the Perpetual Mechanical Array can be damaged to: 30% until Defensive Mode has triggered               |
 | `packages/genshin-world/src/models/bosses/PerpetualMechanicalArrayFight.ts`                | The Perpetual Mechanical Array's fight: its mode, the seconds in it and whether Defensive Mode has triggered      |
 | `packages/genshin-world/src/models/bosses/PerpetualMechanicalArrayMode.ts`                 | The modes the Perpetual Mechanical Array's fight passes through                                                   |
+| `packages/genshin-world/src/services/bosses/hydroTulpa.ts`                                 | Hydro Tulpa's attacks from its wiki page, PROVISIONAL timings                                                     |
 | `packages/genshin-world/src/services/bosses/emperorOfFireAndIron.ts`                       | Emperor of Fire and Iron's attacks from its wiki page, PROVISIONAL timings                                        |
 | `packages/genshin-world/src/services/bosses/experimentalFieldGenerator.ts`                 | Experimental Field Generator's attacks from its wiki page, PROVISIONAL timings                                    |
 | `packages/genshin-world/src/services/bosses/EnemyKindMovesMap.ts`                          | Each boss kind's moves, which the enemies' step is passed                                                         |
@@ -110,4 +111,5 @@ packages/genshin-world/src/services/bosses/
 - [Perpetual Mechanical Array](https://genshin-impact.fandom.com/wiki/Perpetual_Mechanical_Array), Genshin Impact Wiki: the six attacks with their ATK shares, Defensive Mode's trigger at 35% health or its first timed activation, the sentinel's paralysis for 20 seconds and the 30% gate, read from the cached page.
 - [Experimental Field Generator](https://genshin-impact.fandom.com/wiki/Experimental_Field_Generator), Genshin Impact Wiki: its attacks with their ATK shares and elements, read from the cached page; its phase thresholds are named, not run.
 - [Emperor of Fire and Iron](https://genshin-impact.fandom.com/wiki/Emperor_of_Fire_and_Iron), Genshin Impact Wiki: its attacks with their ATK shares and elements, read from the cached page; its phase thresholds are named, not run.
+- [Hydro Tulpa](https://genshin-impact.fandom.com/wiki/Hydro_Tulpa), Genshin Impact Wiki: its attacks with their ATK shares and elements, read from the cached page; its phase thresholds are named, not run.
 - The Domains and Daily Reset sources are the [bosses page](../../specs/genshin/bosses/design.md)'s.
