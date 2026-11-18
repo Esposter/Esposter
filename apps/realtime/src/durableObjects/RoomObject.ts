@@ -416,7 +416,8 @@ export class RoomObject extends RealtimeObject<RoomEvent> implements RoomObjectR
   }
 
   readThreads(threadRootIds: number[]): RoomThread[] {
-    const roots = this.readMessagesByIds(threadRootIds);
+    // A reply named as a root is left out, since only a root is a thread
+    const roots = this.readMessagesByIds(threadRootIds).filter(({ replyToId }) => replyToId === null);
     if (roots.length === 0) return [];
     // One grouped read over the reply index, so a list of threads costs one statement however many it holds
     const replySummaryMap = new Map(

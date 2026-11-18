@@ -727,7 +727,7 @@ describe(RoomObject, () => {
     expect(object.readThread(root.id)).toStrictEqual([root, firstReply, secondReply]);
   });
 
-  test("threads are read back as their live roots with their live replies counted, and a deleted root is left out", async () => {
+  test("threads are read back as their live roots with their live replies counted, and a deleted root or a reply is left out", async () => {
     expect.hasAssertions();
 
     const { object } = createRoomObject();
@@ -745,7 +745,7 @@ describe(RoomObject, () => {
     await object.deleteMessage(deletedReply.id, actor);
     await object.deleteMessage(deletedRoot.id, actor);
 
-    expect(object.readThreads([unrepliedRoot.id, deletedRoot.id, root.id])).toStrictEqual([
+    expect(object.readThreads([unrepliedRoot.id, deletedRoot.id, reply.id, root.id])).toStrictEqual([
       { ...unrepliedRoot, replyCount: 0 },
       { ...root, lastReplyAt: reply.createdAt, replyCount: 1 },
     ]);
