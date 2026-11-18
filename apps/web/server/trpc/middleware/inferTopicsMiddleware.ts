@@ -26,7 +26,7 @@ export const inferTopicsMiddleware = t.middleware(async ({ ctx, meta, next, path
   );
   // A query's topics travel back with its answer, so the client watches what the read it rendered came from
   if (type === "query" && result.ok) {
-    const topics = [...new Set([...(await getReadTopics(recorded.statements)), ...blobs.reads])];
+    const topics = [...new Set([...(await getReadTopics(recorded.statements)), ...blobs.reads])].toSorted();
     if (topics.length > 0) ctx.responseHeaders.append(TOPICS_HEADER, formatTopicsHeaderValue(path, { readAt, topics }));
   }
   // A write is published whichever procedure makes it and however it ends, since a query may delete the rows it reads (a
