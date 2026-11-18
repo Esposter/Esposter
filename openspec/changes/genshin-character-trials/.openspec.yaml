@@ -10,3 +10,4 @@ x-touches:
     "packages/genshin-world/src/composables/useWorldTrials.ts",
     "packages/genshin-world/src/components/Wish/Screen/**",
   ]
+x-waiting: "Task 3.2 waits on a source for each trial's waves: the dungeon rows carry no monsters, and the wiki's wave lists join only 11 of the 80 cited builds."
