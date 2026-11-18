@@ -18,7 +18,6 @@ import type { Seelie } from "#src/models/puzzle/Seelie";
 import type { ShrineKeySource } from "#src/models/puzzle/ShrineKeySource";
 import type { ReliquaryPieceEntry } from "#src/models/reliquary/ReliquaryPieceEntry";
 import type { ReliquarySetData } from "#src/models/reliquary/ReliquarySetData";
-import type { PaimonsBargainsRotation } from "#src/models/shop/PaimonsBargainsRotation";
 import type { Tip } from "#src/models/tip/Tip";
 import type { WildlifePlace } from "#src/models/wildlife/WildlifePlace";
 import type { WindriseData } from "#src/models/windrise/WindriseData";
@@ -59,8 +58,6 @@ export interface WorldTables {
   monumentPlaces: PuzzlePlace[];
   // The game's names in the reader's language, by their text ids, which the bag and the pick ups read their names from
   nameText: Readonly<Record<string, string>>;
-  // The characters and weapons Paimon's Bargains offers in turn, which its screen reads each month's pair and set from
-  paimonsBargainsRotation: PaimonsBargainsRotation;
   // The artifact pieces of the reliquary tables by item id, each with its set, which a bag entry of an artifact is defined from
   reliquaryPieceEntryMap: ReadonlyMap<number, ReliquaryPieceEntry>;
   // The artifact sets of the reliquary tables, each with its pieces, which the chests roll their artifacts from

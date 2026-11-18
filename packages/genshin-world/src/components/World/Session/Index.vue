@@ -1427,7 +1427,7 @@ useWorldSaveSync({
       </template>
       <template #[ScreenKind.PaimonsBargains]>
         <PaimonsBargainsScreen
-          v-if="records.shopIdShopGoodMap"
+          v-if="records.shopIdShopGoodMap && records.paimonsBargainsRotation"
           v-model:characters="characters"
           v-model:purchases="shopPurchases"
           :adventure-rank="rank"
@@ -1439,7 +1439,7 @@ useWorldSaveSync({
           :material-data-map
           :name-text
           :now="worldNow"
-          :rotation="paimonsBargainsRotation"
+          :rotation="records.paimonsBargainsRotation"
           :wallet
           :weapon-data-map="statTables.weaponDataMap"
           @close="closeScreen()"

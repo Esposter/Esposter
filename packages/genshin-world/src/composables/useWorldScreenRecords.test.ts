@@ -1,15 +1,19 @@
 import type { CraftingRecipe } from "#src/models/crafting/CraftingRecipe";
+import type { PaimonsBargainsRotation } from "#src/models/shop/PaimonsBargainsRotation";
 import type { readCraftingRecipes as readCraftingRecipesFn } from "#src/services/crafting/readCraftingRecipes";
 import type { readCraftingStrongboxes as readCraftingStrongboxesFn } from "#src/services/crafting/readCraftingStrongboxes";
 import type { readHomeBlueprints as readHomeBlueprintsFn } from "#src/services/home/readHomeBlueprints";
+import type { readPaimonsBargainsRotation as readPaimonsBargainsRotationFn } from "#src/services/shop/readPaimonsBargainsRotation";
 import type { readShopGoodMap as readShopGoodMapFn } from "#src/services/shop/readShopGoodMap";
 import type { readWishSchedule as readWishScheduleFn } from "#src/services/wish/readWishSchedule";
 
 import { useWorldScreenRecords } from "#src/composables/useWorldScreenRecords";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
+import { ShopRefresh } from "#src/models/shop/ShopRefresh";
 import { readCraftingRecipes } from "#src/services/crafting/readCraftingRecipes";
 import { readCraftingStrongboxes } from "#src/services/crafting/readCraftingStrongboxes";
 import { readHomeBlueprints } from "#src/services/home/readHomeBlueprints";
+import { readPaimonsBargainsRotation } from "#src/services/shop/readPaimonsBargainsRotation";
 import { readShopGoodMap } from "#src/services/shop/readShopGoodMap";
 import { readWishSchedule } from "#src/services/wish/readWishSchedule";
 import { flushReads } from "#src/services/shared/flushReads.test";
@@ -27,6 +31,9 @@ vi.mock(import("#src/services/crafting/readCraftingStrongboxes"), () => ({
 vi.mock(import("#src/services/home/readHomeBlueprints"), () => ({
   readHomeBlueprints: vi.fn<typeof readHomeBlueprintsFn>(() => Promise.resolve([])),
 }));
+vi.mock(import("#src/services/shop/readPaimonsBargainsRotation"), () => ({
+  readPaimonsBargainsRotation: vi.fn<typeof readPaimonsBargainsRotationFn>(),
+}));
 vi.mock(import("#src/services/shop/readShopGoodMap"), () => ({
   readShopGoodMap: vi.fn<typeof readShopGoodMapFn>(() => Promise.resolve(new Map())),
 }));
@@ -38,6 +45,16 @@ describe(useWorldScreenRecords, () => {
   const gameDataBaseUrl = "http://a.test";
   // The recipes the crafting screen and the bag both read, held as the one array the reader resolved
   const recipes: CraftingRecipe[] = [];
+  // A rotation with nothing in it, which the test only needs the read of
+  const rotation: PaimonsBargainsRotation = {
+    blackcliffWeaponIds: [],
+    characterGoodIds: [],
+    characterPairs: [],
+    characterPrice: { buyLimit: 1, costs: [], refresh: ShopRefresh.Monthly },
+    royalWeaponIds: [],
+    weaponGoodIds: [],
+    weaponPrice: { buyLimit: 1, costs: [], refresh: ShopRefresh.Monthly },
+  };
 
   afterEach(() => {
     vi.restoreAllMocks();
@@ -107,6 +124,20 @@ describe(useWorldScreenRecords, () => {
     await flushReads();
 
     expect(readShopGoodMap).toHaveBeenCalledExactlyOnceWith(gameDataBaseUrl);
+  });
+
+  test("reads Paimon's Bargains' rotation as its screen opens", async () => {
+    expect.hasAssertions();
+
+    startTestWorldSession();
+    vi.mocked(readPaimonsBargainsRotation).mockResolvedValueOnce(rotation);
+    useWorldScreenRecords({ gameDataBaseUrl });
+    const worldScreenStore = useWorldScreenStore();
+    worldScreenStore.screenKind = ScreenKind.PaimonsBargains;
+    await nextTick();
+    await flushReads();
+
+    expect(readPaimonsBargainsRotation).toHaveBeenCalledExactlyOnceWith(gameDataBaseUrl);
   });
 
   test("closes a screen whose record fails to read, and reads it again on the next open", async () => {

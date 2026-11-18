@@ -1,6 +1,7 @@
 import type { CraftingRecipe } from "#src/models/crafting/CraftingRecipe";
 import type { CraftingStrongboxData } from "#src/models/crafting/CraftingStrongboxData";
 import type { HomeBlueprint } from "#src/models/home/HomeBlueprint";
+import type { PaimonsBargainsRotation } from "#src/models/shop/PaimonsBargainsRotation";
 import type { ShopGood } from "#src/models/shop/ShopGood";
 import type { WishScheduleEvent } from "#src/models/wish/WishScheduleEvent";
 
@@ -15,6 +16,8 @@ export interface ScreenRecords {
   homeBlueprints: HomeBlueprint[];
   // Each city vendor's shop's goods, by the shop's id, which a vendor's talk opens the shop of
   shopIdShopGoodMap: ReadonlyMap<number, ShopGood[]>;
+  // The characters and weapons Paimon's Bargains offers in turn, which its screen reads each month's pair and set from
+  paimonsBargainsRotation: PaimonsBargainsRotation;
   // The wish schedule's event banners, each offered by the wish screen only inside its window
   wishSchedule: WishScheduleEvent[];
 }

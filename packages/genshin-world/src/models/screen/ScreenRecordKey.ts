@@ -3,6 +3,7 @@ export const ScreenRecordKey = {
   CraftingRecipes: "craftingRecipes",
   CraftingStrongboxes: "craftingStrongboxes",
   HomeBlueprints: "homeBlueprints",
+  PaimonsBargainsRotation: "paimonsBargainsRotation",
   ShopIdShopGoodMap: "shopIdShopGoodMap",
   WishSchedule: "wishSchedule",
 } as const;
