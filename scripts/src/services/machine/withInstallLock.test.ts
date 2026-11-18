@@ -1,42 +1,59 @@
-import { INSTALL_LOCK_PATH, MACHINE_STATE_DIRECTORY } from "#src/services/machine/constants";
+import { INSTALL_LOCK_PATH, INSTALL_LOCK_TAKEOVER_PATH } from "#src/services/machine/constants";
+import { takeSocketLock } from "#src/services/machine/takeSocketLock";
 import { withInstallLock } from "#src/services/machine/withInstallLock";
-import { existsSync, mkdirSync, readFileSync, rmSync } from "node:fs";
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/machine/constants"), async (importOriginal) => {
   const { join } = await import("node:path");
   const { tmpdir } = await import("node:os");
   const { SITE_NAME } = await import("@esposter/shared");
-  const directory = join(tmpdir(), `${SITE_NAME.toLowerCase()}-with-install-lock-${process.pid}`);
+  const socketPath =
+    process.platform === "win32"
+      ? `\\\\.\\pipe\\${SITE_NAME.toLowerCase()}-with-install-lock-${process.pid}`
+      : join(tmpdir(), `with-install-lock-${process.pid}.sock`);
   return {
     ...(await importOriginal<typeof import("#src/services/machine/constants")>()),
-    INSTALL_LOCK_PATH: join(directory, "install.lock"),
-    INSTALL_LOCK_TAKEOVER_PATH: join(directory, "install.lock.takeover"),
-    MACHINE_STATE_DIRECTORY: directory,
+    INSTALL_LOCK_PATH: socketPath,
+    INSTALL_LOCK_TAKEOVER_PATH: `${socketPath}.takeover`,
+    MACHINE_STATE_DIRECTORY: tmpdir(),
   };
 });
 
 describe(withInstallLock, () => {
-  const OWN_PROCESS_ID = `${process.pid}`;
-
-  beforeEach(() => {
-    mkdirSync(MACHINE_STATE_DIRECTORY, { recursive: true });
+  afterEach(async () => {
+    const { rmSync } = await import("node:fs");
+    if (process.platform !== "win32") {
+      rmSync(INSTALL_LOCK_PATH, { force: true });
+      rmSync(INSTALL_LOCK_TAKEOVER_PATH, { force: true });
+    }
   });
 
-  afterEach(() => {
-    rmSync(MACHINE_STATE_DIRECTORY, { force: true, recursive: true });
-  });
-
-  test("holds the lock while its run goes, and releases it once the run resolves", async () => {
+  test("holds the lock until its run resolves, so another taker waits for it", async () => {
     expect.hasAssertions();
 
-    const heldDuringRun = await withInstallLock(() => readFileSync(INSTALL_LOCK_PATH, "utf8"));
+    const { promise: acquired, resolve: acquire } = Promise.withResolvers<void>();
+    const { promise: runEnds, resolve: endRun } = Promise.withResolvers<void>();
+    const running = withInstallLock(() => {
+      acquire();
+      return runEnds;
+    });
+    await acquired;
+    const { promise: waiting, resolve: announce } = Promise.withResolvers<void>();
+    const onWaiting = vi.fn<() => void>(() => {
+      announce();
+    });
+    const taking = takeSocketLock(INSTALL_LOCK_PATH, INSTALL_LOCK_TAKEOVER_PATH, onWaiting);
+    await waiting;
 
-    expect(heldDuringRun).toBe(OWN_PROCESS_ID);
-    expect(existsSync(INSTALL_LOCK_PATH)).toBe(false);
+    endRun();
+    await running;
+    const release = await taking;
+
+    expect(onWaiting).toHaveBeenCalledExactlyOnceWith();
+    release();
   });
 
-  test("releases the lock when its run fails, and rethrows the failure", async () => {
+  test("releases the lock when its run fails, so the next run takes it", async () => {
     expect.hasAssertions();
 
     await expect(
@@ -45,6 +62,6 @@ describe(withInstallLock, () => {
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
 
-    expect(existsSync(INSTALL_LOCK_PATH)).toBe(false);
+    await expect(withInstallLock(() => "next")).resolves.toBe("next");
   });
 });

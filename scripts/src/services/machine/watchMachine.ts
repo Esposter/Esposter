@@ -6,12 +6,7 @@ import { RENEW_MILLISECONDS } from "#src/services/fleet/constants";
 import { pushMachineHeartbeat } from "#src/services/fleet/pushMachineHeartbeat";
 import { readMachineProfile } from "#src/services/fleet/readMachineProfile";
 import { claimMachineWatch } from "#src/services/machine/claimMachineWatch";
-import {
-  LAUNCHD_PROCESS_ID,
-  MACHINE_LOCK_PATH,
-  SAMPLE_MILLISECONDS,
-  WINDOW_MINUTES,
-} from "#src/services/machine/constants";
+import { LAUNCHD_PROCESS_ID, SAMPLE_MILLISECONDS, WINDOW_MINUTES } from "#src/services/machine/constants";
 import { formatMachineFigures } from "#src/services/machine/formatMachineFigures";
 import { getCpuPercentage } from "#src/services/machine/getCpuPercentage";
 import { getCpuTotals } from "#src/services/machine/getCpuTotals";
@@ -21,7 +16,7 @@ import { readAvailableGigabytes } from "#src/services/machine/readAvailableGigab
 import { readGpuPercentage } from "#src/services/machine/readGpuPercentage";
 import { readLastPush } from "#src/services/machine/readLastPush";
 import { readProcesses } from "#src/services/machine/readProcesses";
-import { releaseLock } from "#src/services/machine/releaseLock";
+import { releaseMachineWatch } from "#src/services/machine/releaseMachineWatch";
 import { selectOrphans } from "#src/services/machine/selectOrphans";
 import { sweepOrphans } from "#src/services/machine/sweepOrphans";
 import { writeMachineState } from "#src/services/machine/writeMachineState";
@@ -37,9 +32,7 @@ export const watchMachine = async (): Promise<void> => {
     console.info("the machine watcher is already running");
     return;
   }
-  process.once("exit", () => {
-    releaseLock(MACHINE_LOCK_PATH);
-  });
+  process.once("exit", releaseMachineWatch);
   const cpuAverages: number[] = [];
   let previousTotals: CpuTotals = getCpuTotals(cpus());
   let lastState: MachineState | undefined;
