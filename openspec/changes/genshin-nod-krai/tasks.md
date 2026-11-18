@@ -1,7 +1,7 @@
 ## 1. Sky and isles
 
 - [ ] 1.1 Draw the regional moon override in Nod-Krai's night sky, with its size and brightness set from the references. Verify: tests named after the scenarios 'The moon looks larger at night in Nod-Krai' and 'Other regions keep the standard moon', written first and seen failing.
-      Waits on a measured night reference of Nod-Krai's moon: none is on disk (`captures/nasha-town-night.png` shows a dotted particle ring where the moon is, not its disc), so `NOD_KRAI_MOON` stands at the standard moon's values. The 'larger' scenario is unwritten until a value is measured, and a larger disc waits on the engine sizing the disc by the shape.
+      Waits on a measured night reference of Nod-Krai's moon: none is on disk (`captures/nasha-town-night.png` shows a dotted particle ring where the moon is, not its disc). Nothing is built ahead of it: an override at the standard values would have no reader until Nod-Krai has a sky, and a larger disc also waits on the engine sizing the disc by the shape.
 - [ ] 1.2 Draw Lempo Isle, Hiisi Island and Paha Isle as separate outlines on the world map, with the Moontide Sea between them. The Moontide Sea's outline is empty today, one of a dozen the [roadmap](../genshin-roadmap/tasks.md) names. Verify: tests named after the scenarios 'Each isle has its own outline on the world map' and 'The Moontide Sea belongs to Nod-Krai'.
       Waits on the Moontide Sea's outline: `catalogue.json` gives it no polygon, nor Dunanna Pit, Dark Side of the Moon or Lunar Highlands, and the catalogue item in [capitals](../../specs/genshin/compute/capitals/design.md) waits on the community repository's polygons for these areas.
 
