@@ -37,16 +37,17 @@ export const createTerrainPiecesHeight = (
 ): ((x: number, z: number) => number) => {
   const getPieces = fileByCell(pieces, ({ domain }) => getTerrainPieceBounds(domain, blendWidth));
   return (x, z) => {
-    const filed = getPieces(x, z);
-    // Each piece's neighbours take the others' seam shares here, so the total is read first and each piece's own removed
+    // Each piece's distance is read once here, then its neighbours take the others' seam shares, so the total is read first and each piece's own removed
+    const reads = getPieces(x, z).map((piece) => {
+      const signedDistance = getTerrainPieceSignedDistance(piece.domain, x, z);
+      return { piece, seamShare: getTerrainSeamShare(signedDistance, blendWidth), signedDistance };
+    });
     let seamShareTotal = 0;
-    for (const piece of filed)
-      seamShareTotal += getTerrainSeamShare(getTerrainPieceSignedDistance(piece.domain, x, z), blendWidth);
+    for (const { seamShare } of reads) seamShareTotal += seamShare;
     let share = 0;
     let weighted = 0;
-    for (const piece of filed) {
-      const signedDistance = getTerrainPieceSignedDistance(piece.domain, x, z);
-      const neighbourShare = Math.min(Math.max(seamShareTotal - getTerrainSeamShare(signedDistance, blendWidth), 0), 1);
+    for (const { piece, seamShare, signedDistance } of reads) {
+      const neighbourShare = Math.min(Math.max(seamShareTotal - seamShare, 0), 1);
       const pieceShare = getTerrainBlendShare(signedDistance, blendWidth, neighbourShare);
       if (pieceShare === 0) continue;
       share += pieceShare;
