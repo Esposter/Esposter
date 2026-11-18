@@ -49,7 +49,7 @@ A kind with no reward entry stays unopened, and a buried or sealed place stays u
 | `packages/genshin-world/src/models/chest/ChestPlace.ts`                  | A placed chest: its id, kind and ground position                                                                 |
 | `packages/genshin-world/src/services/chest/openChest.ts`                 | Opens a chest once and rolls its Primogems and Mora into the wallet                                              |
 | `packages/genshin-world/src/services/chest/computeChestInteractables.ts` | Each unopened rewarded chest, offered as an Open row beneath its point                                           |
-| `packages/genshin-world/src/store/chests.ts`                             | Holds the chests of the regions in reach and opens one on F                                                      |
+| `packages/genshin-world/src/store/chests.ts`                             | Reads the chests of the regions in reach from the scene's chest map, and opens one on F                          |
 | `packages/genshin-world/src/composables/useRegionData.ts`                | Requests each region's chest record once the camera comes within reach, and keeps it                             |
 | `packages/genshin-world/src/components/World/Session/Index.vue`          | Hands the store a getter for the scene's region chest map, as each record arrives                                |
 | `packages/genshin-world/src/services/chest/readRegionChestPlaces.ts`     | Reads a region's chests from the record of the lock key it is given                                              |

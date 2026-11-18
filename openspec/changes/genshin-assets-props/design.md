@@ -254,7 +254,7 @@ These are the game's art. Each is a missing asset the recreation draws a stand-i
 | `scripts/src/services/genshinAssets/witness/DerivedAssetLandmarkMap.ts`         | names each region's landmark meshes for the export, gains a region's statue prefab, and gains the props entry, empty |
 | `packages/genshin-world/src/models/data/GameDataset.ts`                         | gains the props dataset                                                                                              |
 | `packages/genshin-world/src/generated/gameDataLock.json`                        | gains the props keys on publish                                                                                      |
-| `packages/genshin-world/src/store/chests.ts`                                    | holds the chests of the regions in reach, each record read by `useRegionData` as its region comes within reach       |
+| `packages/genshin-world/src/store/chests.ts`                                    | reads the chests of the regions in reach from the scene's map, each read by `useRegionData` as it comes within reach |
 | `packages/genshin-world/src/components/World/Interactables/Index.vue`           | draws a chest and a gather node from its record, keeping the stand-in for a kind with none                           |
 | `packages/genshin-world/src/components/World/StandIns/Index.vue`                | draws an Oculus and an outcrop from their records, keeping the stand-ins                                             |
 | `packages/genshin-world/src/components/World/Landmark/Statue/Index.vue`         | draws each region's statue from its own record                                                                       |
