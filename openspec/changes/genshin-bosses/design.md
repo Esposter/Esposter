@@ -71,6 +71,7 @@ packages/genshin-world/src/services/bosses/
 | `packages/genshin-world/src/services/bosses/computePerpetualMechanicalArrayHealthFloor.ts` | The health the Perpetual Mechanical Array can be damaged to: 30% until Defensive Mode has triggered               |
 | `packages/genshin-world/src/models/bosses/PerpetualMechanicalArrayFight.ts`                | The Perpetual Mechanical Array's fight: its mode, the seconds in it and whether Defensive Mode has triggered      |
 | `packages/genshin-world/src/models/bosses/PerpetualMechanicalArrayMode.ts`                 | The modes the Perpetual Mechanical Array's fight passes through                                                   |
+| `packages/genshin-world/src/services/bosses/goldflameQucusaurTyrant.ts`                    | Goldflame Qucusaur Tyrant's attacks from its wiki page, PROVISIONAL timings                                       |
 | `packages/genshin-world/src/services/bosses/gluttonousYumkasaurMountainKing.ts`            | Gluttonous Yumkasaur Mountain King's attacks from its wiki page, PROVISIONAL timings                              |
 | `packages/genshin-world/src/services/bosses/legatusGolem.ts`                               | Legatus Golem's attacks from its wiki page, PROVISIONAL timings                                                   |
 | `packages/genshin-world/src/services/bosses/millennialPearlSeahorse.ts`                    | Millennial Pearl Seahorse's attacks from its wiki page, PROVISIONAL timings                                       |
@@ -120,4 +121,5 @@ packages/genshin-world/src/services/bosses/
 - [Millennial Pearl Seahorse](https://genshin-impact.fandom.com/wiki/Millennial_Pearl_Seahorse), Genshin Impact Wiki: its attacks with their ATK shares and elements, read from the cached page; its phase thresholds are named, not run.
 - [Legatus Golem](https://genshin-impact.fandom.com/wiki/Legatus_Golem), Genshin Impact Wiki: its attacks with their ATK shares and elements, read from the cached page; its phase thresholds are named, not run.
 - [Gluttonous Yumkasaur Mountain King](https://genshin-impact.fandom.com/wiki/Gluttonous_Yumkasaur_Mountain_King), Genshin Impact Wiki: its attacks with their ATK shares and elements, read from the cached page; its phase thresholds are named, not run.
+- [Goldflame Qucusaur Tyrant](https://genshin-impact.fandom.com/wiki/Goldflame_Qucusaur_Tyrant), Genshin Impact Wiki: its attacks with their ATK shares and elements, read from the cached page; its phase thresholds are named, not run.
 - The Domains and Daily Reset sources are the [bosses page](../../specs/genshin/bosses/design.md)'s.
