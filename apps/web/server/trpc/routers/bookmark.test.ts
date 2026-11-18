@@ -7,6 +7,7 @@ import { createCallerFactory } from "#server/trpc/index";
 import { bookmarkRouter } from "#server/trpc/routers/bookmark";
 import { createRoomMember } from "#server/trpc/routers/createRoomMember.test";
 import { trpcRouter } from "#server/trpc/routers/index";
+import { expectLiveTopicCoverage } from "#server/trpc/routers/liveTopicCoverage.test";
 import { resourceRouter } from "#server/trpc/routers/resource";
 import { roomRouter } from "#server/trpc/routers/room/index";
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
@@ -100,6 +101,27 @@ describe("bookmarkRouter", () => {
 
     expect(bookmarksWhileMember).toStrictEqual([{ isAvailable: true, mark, path, title }]);
     await expect(memberCaller.readBookmarks()).resolves.toStrictEqual([{ isAvailable: false, path, title }]);
+  });
+
+  // The dock reads the viewer's bookmarks, so the toggle that adds one publishes the viewer's rows and reaches it
+  test("every query reads the tables it touches, and a toggle wakes the dock it changes", async () => {
+    expect.hasAssertions();
+
+    await expectLiveTopicCoverage(
+      bookmarkRouter,
+      {
+        queries: [
+          { call: (context) => createCallerFactory(bookmarkRouter)(context).readBookmarks(), path: "readBookmarks" },
+        ],
+        writes: [
+          {
+            call: (context) => createCallerFactory(bookmarkRouter)(context).toggleBookmark({ path, title }),
+            path: "toggleBookmark",
+          },
+        ],
+      },
+      mockContext,
+    );
   });
 
   test("fails to bookmark past the limit", async () => {

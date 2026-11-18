@@ -4,17 +4,14 @@ import { getInsertSelectMetadata } from "#server/services/db/getInsertSelectMeta
 import { getPublicationWhere } from "#server/services/resource/getPublicationWhere";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { router } from "#server/trpc/index";
-import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { PageMarkType } from "#shared/models/app/PageMarkType";
 import { toggleBookmarkInputSchema } from "#shared/models/db/bookmark/ToggleBookmarkInput";
 import {
   bookmarksInApp,
   DatabaseEntityType,
-  getTopic,
   MAX_BOOKMARKS,
   resourcesInResource,
-  TopicKind,
   usersInAuth,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
@@ -22,9 +19,7 @@ import { Operation } from "@esposter/shared";
 import { and, asc, eq, isNull, or, sql } from "drizzle-orm";
 
 export const bookmarkRouter = router({
-  readBookmarks: getTopicsProcedure(standardAuthedProcedure, ({ ctx }) => [
-    getTopic(TopicKind.Bookmark, ctx.user.id),
-  ]).query<BookmarkPageLink[]>(async ({ ctx }) => {
+  readBookmarks: standardAuthedProcedure.query<BookmarkPageLink[]>(async ({ ctx }) => {
     const userId = ctx.user.id;
     // One query over every target: a resource's owner and publication, and a room's membership, each left-joined so
     // A bookmark with no target answers nulls. A resource in the recycle bin is left out, and comes back with its restore
@@ -81,9 +76,7 @@ export const bookmarkRouter = router({
       },
     );
   }),
-  toggleBookmark: getTopicsProcedure(standardAuthedProcedure.input(toggleBookmarkInputSchema), ({ ctx }) => [
-    getTopic(TopicKind.Bookmark, ctx.user.id),
-  ]).mutation<boolean>(async ({ ctx, input }) => {
+  toggleBookmark: standardAuthedProcedure.input(toggleBookmarkInputSchema).mutation<boolean>(async ({ ctx, input }) => {
     const userId = ctx.user.id;
     // Delete-then-insert rather than a read-then-branch: the delete's own returning() reports whether the page
     // Was bookmarked, so the toggle can never race with itself
@@ -120,7 +113,8 @@ export const bookmarkRouter = router({
               ),
             ),
         )
-        .onConflictDoNothing(),
+        .onConflictDoNothing()
+        .returning(),
       ctx.db
         .select({ path: bookmarksInApp.path })
         .from(bookmarksInApp)
