@@ -16,7 +16,7 @@ const JADE_SOURCE = "jadeCirculation";
 const checkIsJadeStatus = (effect: KitEffect, characterId: number, id: string): boolean =>
   effect.kind === "status" && effect.characterId === characterId && effect.id === id;
 
-const checkHasJadeBuffs = (effects: KitEffect[], characterId: number): boolean =>
+const checkHasJadeBuffs = (effects: readonly KitEffect[], characterId: number): boolean =>
   effects.some(
     (effect) => effect.kind === "buff" && effect.characterId === characterId && effect.source === JADE_SOURCE,
   );

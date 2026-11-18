@@ -20,7 +20,7 @@ const MAXIMUM_RISE_SECONDS = 10;
 // The fall is twice the rise a second, as the text's 4% gives the rank's 2%
 const FALL_RATE_SCALE = 2;
 
-const findOppidanBuff = (effects: KitEffect[], characterId: number): KitBuff | undefined =>
+const findOppidanBuff = (effects: readonly KitEffect[], characterId: number): KitBuff | undefined =>
   effects.find(
     (effect): effect is KitBuff =>
       effect.kind === "buff" && effect.characterId === characterId && effect.source === OPPIDAN_AMBUSH_SOURCE,

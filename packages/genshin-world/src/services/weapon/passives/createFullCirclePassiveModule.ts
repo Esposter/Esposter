@@ -14,7 +14,7 @@ const WAX_AND_WANE_DECAY_ID = "waxAndWaneDecay";
 // The most stacks Wax and Wane holds, as its text gives
 const WAX_AND_WANE_MAXIMUM_STACKS = 5;
 
-const countWaxAndWaneStacks = (effects: KitEffect[], characterId: number): number =>
+const countWaxAndWaneStacks = (effects: readonly KitEffect[], characterId: number): number =>
   findKitStatus(effects, characterId, WAX_AND_WANE_ID)?.stacks ?? 0;
 
 // Full Circle at its rank: an Elemental Reaction, by any character, gains a stack of Wax and Wane, once every cooldown, up to

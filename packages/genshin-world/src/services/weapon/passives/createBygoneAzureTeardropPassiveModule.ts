@@ -1,4 +1,5 @@
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
@@ -18,7 +19,7 @@ const AZURE_TEARDROP_HIT_COOLDOWN_ID = "azureTeardropHitCooldown";
 // The rise ticks once a second, each tick adding the rank's seconds units
 const TICK_SECONDS = 1;
 
-const countRiseUnits = (effects: KitEffectState["effects"], characterId: number): number =>
+const countRiseUnits = (effects: readonly KitEffect[], characterId: number): number =>
   findKitStatus(effects, characterId, AZURE_TEARDROP_RISE_ID)?.stacks ?? 0;
 
 // Adds units to the rise while it stands, up to the rank's maximum

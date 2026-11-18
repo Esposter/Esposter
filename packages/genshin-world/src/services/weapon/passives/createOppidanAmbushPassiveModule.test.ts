@@ -1,4 +1,5 @@
 import type { KitContext } from "#src/models/kit/KitContext";
+import type { KitBuff } from "#src/models/kit/KitBuff";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { OTHER_CHARACTER_ID } from "#src/services/kit/constants.test";
@@ -17,7 +18,7 @@ describe(createOppidanAmbushPassiveModule, () => {
   // The DMG Bonus the wielder's buff raises, zero while none is raised
   const readDamageBonus = (context: KitContext) =>
     context.kitEffectState.effects.find(
-      (effect) => effect.kind === "buff" && effect.characterId === wielder.characterId,
+      (effect): effect is KitBuff => effect.kind === "buff" && effect.characterId === wielder.characterId,
     )?.amount ?? 0;
 
   test("off the field, DMG rises by the rank's amount each second, up to ten steps of it", () => {

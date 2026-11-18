@@ -1,5 +1,6 @@
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffect } from "#src/models/kit/KitEffect";
+import type { KitStatus } from "#src/models/kit/KitStatus";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -13,7 +14,7 @@ import { describe, expect, test } from "vitest";
 
 // The stacks a character's Wavespike holds, read from the status that counts them
 const getWavespikeStacks = (effects: readonly KitEffect[]) =>
-  effects.find((effect) => effect.kind === "status" && effect.stacks !== undefined)?.stacks;
+  effects.find((effect): effect is KitStatus => effect.kind === "status" && effect.stacks !== undefined)?.stacks;
 
 describe(createHonedFlowPassiveModule, () => {
   const wielder = createWielderCombatant();

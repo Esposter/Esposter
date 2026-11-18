@@ -1,4 +1,5 @@
 import type { KitContext } from "#src/models/kit/KitContext";
+import type { KitStatus } from "#src/models/kit/KitStatus";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
@@ -16,7 +17,9 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 
 // The stacks of the one status that counts them, as Hymn of the Pure is held
 const getHymnStacks = (context: KitContext) =>
-  context.kitEffectState.effects.find((effect) => effect.kind === "status" && effect.stacks !== undefined)?.stacks;
+  context.kitEffectState.effects.find(
+    (effect): effect is KitStatus => effect.kind === "status" && effect.stacks !== undefined,
+  )?.stacks;
 
 describe(createViperBalladPassiveModule, () => {
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");

@@ -14,7 +14,7 @@ const WAVESPLITTER_CLOCK_ID = "wavesplitterClock";
 // The most stacks Wavesplitter holds, as its text gives
 const WAVESPLITTER_MAXIMUM_STACKS = 5;
 
-const countWavesplitterStacks = (effects: KitEffect[], characterId: number): number =>
+const countWavesplitterStacks = (effects: readonly KitEffect[], characterId: number): number =>
   findKitStatus(effects, characterId, WAVESPLITTER_ID)?.stacks ?? 0;
 
 // Wavesplitter at its rank: a clock ticks every interval from the start of the battle, and on each tick its wielder is on the
