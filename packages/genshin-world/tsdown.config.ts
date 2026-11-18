@@ -18,7 +18,7 @@ const AVATAR_MODULE_DIRECTORY = "services/character/avatar";
 // The card game's service and session, which the world's session loads on a duel's opening rather than with the world
 const GCG_MODULE_DIRECTORIES = ["services/gcg", "components/Gcg"];
 // Directories nothing in the repo imports from the package's barrel. The barrel leaves their modules out, so the
-// entry does not name them, and a module under one loads only when a module that reaches it does
+// The entry does not name them, and a module under one loads only when a module that reaches it does
 const UNREFERENCED_MODULE_DIRECTORIES = [
   "components/Weapon",
   "composables",
