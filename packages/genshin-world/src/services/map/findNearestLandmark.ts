@@ -1,7 +1,7 @@
 import type { PlaceLandmark } from "#src/models/world/PlaceLandmark";
 import type { GroundPoint } from "genshin-engine";
 
-import { computeLandmarkDistance } from "#src/services/map/computeLandmarkDistance";
+import { computeGroundDistance } from "genshin-engine";
 
 // The landmark standing nearest a point on the ground within the max distance, or none when no landmark is that near
 export const findNearestLandmark = (
@@ -12,7 +12,7 @@ export const findNearestLandmark = (
   let nearestLandmark: PlaceLandmark | undefined;
   let nearestDistance = Infinity;
   for (const landmark of landmarks) {
-    const distance = computeLandmarkDistance(landmark, point);
+    const distance = computeGroundDistance(landmark.position, point);
     if (distance <= maxDistance && distance < nearestDistance) {
       nearestLandmark = landmark;
       nearestDistance = distance;
