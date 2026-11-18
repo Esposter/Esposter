@@ -1,3 +1,4 @@
+import { NAMECARD_ART_PREFIX } from "#src/services/genshinAssets/namecards/constants";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { readdirSync } from "node:fs";
 import { basename, join } from "node:path";
@@ -12,7 +13,7 @@ const listFiles = (directory: string): string[] =>
 // Them: its portraits, card faces and namecard pictures are measured for stand-ins, not shipped
 describe("deployedPictures", () => {
   const SERVED_DIRECTORIES = ["apps/web/public", "apps/web/app/assets"];
-  const GAME_PICTURE_PREFIXES = ["UI_AvatarIcon_", "Gcg_CardFace_", "UI_NameCardPic_"];
+  const GAME_PICTURE_PREFIXES = ["UI_AvatarIcon_", "Gcg_CardFace_", NAMECARD_ART_PREFIX];
 
   test("the deployed files hold no portrait, card face or namecard picture", () => {
     expect.hasAssertions();
