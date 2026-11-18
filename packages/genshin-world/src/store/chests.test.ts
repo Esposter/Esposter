@@ -7,7 +7,7 @@ import { startTestWorldGround } from "#src/store/ground.fixture";
 import { useWorldPuzzlesStore } from "#src/store/puzzles";
 import { startTestWorldSession } from "#src/store/session.fixture";
 import { storeToRefs } from "pinia";
-import { describe, expect, test, vi } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 // Each region's record is served from the fetch the reader makes, so a record is read through its reader and its schema
 const { datasetRecordsMap } = vi.hoisted(() => ({ datasetRecordsMap: new Map<string, unknown[]>() }));
@@ -38,6 +38,10 @@ const createChests = (puzzleOptions: Parameters<ReturnType<typeof useWorldPuzzle
 };
 
 describe(useWorldChestsStore, () => {
+  afterEach(() => {
+    datasetRecordsMap.clear();
+  });
+
   const SEELIE_ID = "settled";
   const SEELIE_CHEST_ID = `seelie-chest-${SEELIE_ID}`;
   const LIYUE_CHEST_ID = "chest-liyue";
@@ -68,7 +72,6 @@ describe(useWorldChestsStore, () => {
     await waitForReads();
 
     expect(chestInteractables.value.map(({ id }) => id)).toStrictEqual([LIYUE_CHEST_ID]);
-    datasetRecordsMap.clear();
   });
 
   test("a Seelie's chest is offered once it settles", () => {

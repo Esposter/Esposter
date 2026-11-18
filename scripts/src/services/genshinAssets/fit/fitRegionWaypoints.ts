@@ -47,7 +47,7 @@ export const fitRegionWaypoints = async ({ isDryRun }: DryRunOptions): Promise<s
     readSceneTransportPoints(),
   ]);
   const catalogue = catalogueSchema.parse(parseMachineJson(await readFile(CATALOGUE_PATH, "utf8")));
-  // A region whose map fit is over its bar writes no waypoints, and any an earlier run wrote are replaced by none
+  // A region whose map fit is over its bar writes no waypoints, so the ones an earlier run wrote are replaced by none
   const fittedWaypointRegions = selectFittedRegions(regionFits, WAYPOINT_REGIONS);
   const reports = await Promise.all(
     regionFiles
