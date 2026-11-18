@@ -151,6 +151,8 @@ useListScreenTabStep(
   </GameScreen>
 </template>
 
+<style scoped src="../../../styles/tracedMark.css"></style>
+
 <style scoped>
 /* The unit is a pixel of the game's 1920 by 1080 screen, so every value is measured from the reference frame, its left
    edge at 96 and the screen drawn from there, and written as the canvas's own pixels */
@@ -159,11 +161,6 @@ useListScreenTabStep(
 }
 
 /* The traced laurel at the header's left, placed at the reference's pixel 132 by 11, which is 36 and 11 in from the screen's corner */
-.mark {
-  position: absolute;
-  overflow: visible;
-}
-
 .mark-laurel {
   top: calc(var(--unit) * 11);
   left: calc(var(--unit) * 36);

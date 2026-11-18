@@ -1,0 +1,6 @@
+/* A traced mark is an SVG its parent places, so it is absolutely positioned and may draw past its own box, as a ring or a tail
+   that overhangs does. Each mark's own rule places it and fills it */
+.mark {
+  position: absolute;
+  overflow: visible;
+}

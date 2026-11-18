@@ -60,6 +60,8 @@ const isRevealed = computed(() => !achievement.isHidden || isFinished.value);
   </li>
 </template>
 
+<style scoped src="../../../../styles/tracedMark.css"></style>
+
 <style scoped>
 .achievement {
   position: relative;
@@ -69,11 +71,6 @@ const isRevealed = computed(() => !achievement.isHidden || isFinished.value);
 }
 
 /* The traced medal of the achievement, placed at the reference's pixel 782 by 266, which is 22 and 7 in from the row's corner */
-.mark {
-  position: absolute;
-  overflow: visible;
-}
-
 .mark-medal {
   top: calc(var(--unit) * 7);
   left: calc(var(--unit) * 22);

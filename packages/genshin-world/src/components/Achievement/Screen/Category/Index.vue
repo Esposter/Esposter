@@ -30,6 +30,8 @@ const emit = defineEmits<{ select: [] }>();
   </button>
 </template>
 
+<style scoped src="../../../../styles/tracedMark.css"></style>
+
 <style scoped>
 .category {
   position: relative;
@@ -86,11 +88,6 @@ const emit = defineEmits<{ select: [] }>();
 }
 
 /* The traced badge of the category, placed at the reference's pixel 164 by 178, which is 12 in from the row's left edge */
-.mark {
-  position: absolute;
-  overflow: visible;
-}
-
 .mark-category-badge {
   top: 0;
   left: calc(var(--unit) * 12);
