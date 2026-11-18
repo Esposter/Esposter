@@ -143,14 +143,15 @@ export const useWorldOutcrops = ({
   // Draw. A draw starts that region's outcrops over, and drops the fights of the camps the last day spawned in it
   const drawnAtMap = new Map<string, Temporal.Instant>();
   const drawDayOutcrops = (now: Temporal.Instant, random: () => number) => {
+    // The cities whose statues are resonated, a region holding only found Oculi not yet among them
+    const unlockedCityIds = [...regionStatueProgressMap.value].flatMap(([unlockedRegionId, { level }]) =>
+      level > 0 ? (RegionIdCityIdMap[unlockedRegionId] ?? []) : [],
+    );
     for (const [regionId, places] of placesMap.value) {
       const kindRules = kindRulesMap.value.get(regionId);
       if (!kindRules || kindRules.length === 0 || places.length === 0) continue;
       const drawnAt = drawnAtMap.get(regionId);
       if (drawnAt !== undefined && checkIsDailyResetDayCurrent(drawnAt, now)) continue;
-      const unlockedCityIds = [...regionStatueProgressMap.value.keys()].flatMap(
-        (unlockedRegionId) => RegionIdCityIdMap[unlockedRegionId] ?? [],
-      );
       const isOutsideRegion = (placeId: number) => regionIdOfPlace.value.get(placeId) !== regionId;
       outcrops.value = [
         ...outcrops.value.filter(({ placeId }) => isOutsideRegion(placeId)),

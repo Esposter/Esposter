@@ -384,6 +384,33 @@ describe(useWorldOutcrops, () => {
     expect(outcrops.outcrops.value).toStrictEqual([clearedOutcrop]);
   });
 
+  test("a region holding only found Oculi does not unlock its city's kinds", () => {
+    expect.hasAssertions();
+
+    const { outcrops } = startOutcrops(0, ref(new Map([[FIXTURE_REGION_ID, PLACEMENTS]])));
+    const kindRules: OutcropKindRule[] = [
+      {
+        kind: OutcropKind.Revelation,
+        playerLevel: 1,
+        unlockCityIds: [3],
+        worldLevelRewards: [[{ itemId: MORA_ITEM_ID, maxCount: 100, minCount: 100 }]],
+      },
+    ];
+    outcrops.kindRulesMap.value = new Map([[FIXTURE_REGION_ID, kindRules]]);
+    const worldStatuesStore = useWorldStatuesStore();
+    const { regionStatueProgressMap } = storeToRefs(worldStatuesStore);
+    // Inazuma is the city 3, and an Oculus found there before its statue is resonated leaves its level at none
+    regionStatueProgressMap.value = new Map([["inazuma", { claimedLevel: 0, heldCount: 1, level: 0 }]]);
+    outcrops.drawDayOutcrops(epoch, () => 0);
+    expect(outcrops.outcrops.value).toStrictEqual([]);
+
+    regionStatueProgressMap.value = new Map([["inazuma", FIRST_RESONANCE]]);
+    outcrops.drawDayOutcrops(epoch.add({ hours: 24 }), () => 0);
+    expect(outcrops.outcrops.value).toStrictEqual([
+      { kind: OutcropKind.Revelation, placeId: 1, stage: OutcropStage.Waiting },
+    ]);
+  });
+
   test("a claim moves the outcrop to the nearest other place of its own region", async () => {
     expect.hasAssertions();
 
