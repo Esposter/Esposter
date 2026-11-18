@@ -2,8 +2,6 @@
 
 ## Queue
 
-- [ ] `[cpu]` {nod-krai-terrain-tiles} needs game-install — **Nod-Krai: the terrain tiles its area outlines name, exported.** `pnpm -C scripts genshin:assets extract nod-krai`, with the game closed. Reads the game install through its map, `{data-root}/genshin-parity/extracted/maps/`, the Windrise export `{data-root}/genshin-parity/extracted/windrise/` that places the origin, and `packages/genshin-world/src/data/catalogue.json`. Writes `{data-root}/genshin-parity/extracted/nod-krai/`. Measure: `pnpm -C scripts genshin:assets missing-tiles nod-krai`, bar `missing 0` of its 23 outline tiles, with "BigWorldTerrain_4_11.bin" and "BigWorldTerrain_5_11.bin" absent from the install, as the [outline tiles](../README.md#outline-tiles) section sets out.
-
 ## Waiting
 
 - [ ] `[cpu]` {nod-krai-dieselpunk-fit} needs game-exports — **Nod-Krai: the dieselpunk kit's values fitted to Nasha Town's exports.** Reads `{data-root}/genshin-parity/extracted/nod-krai/` and the `Area_Ndkl_Build_` meshes `NodKraiPartFamilyMeshRegexMap` names (2,095 of them on the Mac). Fits the boxes, pipe runs and smokestacks `DieselpunkOptions` holds (`packages/genshin-world/src/models/nod-krai/DieselpunkOptions.ts`) to the town's meshes, and writes them as the `nasha-town` landmark's `building.options` in `packages/genshin-world/src/data/regions/nod-krai.json`, where the options are placeholders today. The scenario's cranes wait on a kit change too, since `createDieselpunkGeometry` builds boxes, pipework and smokestacks and no cranes. Bar: the Shape bars of [compute](../README.md#bars). — waits on the cranes in the kit.
