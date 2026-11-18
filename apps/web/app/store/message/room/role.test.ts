@@ -80,9 +80,9 @@ describe(useRoleStore, () => {
       if (roleId === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
     const roleStore = useRoleStore();
-    const { getMemberRoles, readMemberRoles, revokeRole } = roleStore;
+    const { getMemberRoles, revokeRole } = roleStore;
     serveMemberRoles(trpcMsw, roomId, userId, [first, second]);
-    await readMemberRoles({ roomId, userIds: [userId] });
+    await useReadMemberRoles()({ roomId, userIds: [userId] });
     revokeRole({ roleId: first.id, roomId, userId });
     revokeRole({ roleId: second.id, roomId, userId });
     await flushPromises();

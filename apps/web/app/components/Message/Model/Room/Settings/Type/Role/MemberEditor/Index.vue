@@ -24,9 +24,9 @@ const {
   getMemberRoles,
   getMyPermissions,
   getRoles,
-  readMemberRoles,
   upsertMemberPermissionOverride,
 } = roleStore;
+const readMemberRoles = useReadMemberRoles();
 // The member's roles place them against the reader, and an override can name a member the panel has not read yet
 await readMemberRoles({ roomId, userIds: [userId] });
 // Every write here is judged against the member the way the server places them, owner immunity included, so the

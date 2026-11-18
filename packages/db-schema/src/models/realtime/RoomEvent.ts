@@ -1,14 +1,12 @@
 import { adminActionTypeSchema } from "#src/models/message/AdminActionType";
-import { revokeRoleInputSchema } from "#src/models/message/RevokeRoleInput";
 import { timeoutUserAdminActionInputSchema } from "#src/models/message/TimeoutUserAdminActionInput";
 import { typingSchema } from "#src/models/message/Typing";
 import { roomMessageSchema } from "#src/models/realtime/RoomMessage";
 import { roomReactionSchema } from "#src/models/realtime/RoomReaction";
 import { userIdSchema } from "#src/models/shared/UserId";
-import { selectRoomRoleInMessageSchema } from "#src/schema/message/roomRolesInMessage";
 import { selectRoomInMessageSchema } from "#src/schema/message/roomsInMessage";
 import { selectUserStatusInMessageSchema } from "#src/schema/message/userStatusesInMessage";
-import { MEMBER_PERMISSION_BIGINT_REGEX, MESSAGE_BATCH_MAX_LENGTH } from "#src/services/message/constants";
+import { MESSAGE_BATCH_MAX_LENGTH } from "#src/services/message/constants";
 import { z } from "zod";
 
 // The events a room's socket carries, one frame each. A payload is what the object sent, without the device that caused
@@ -28,30 +26,6 @@ const updateEmojiEventSchema = z.object({ data: roomReactionSchema, type: z.lite
 const deleteEmojiEventSchema = z.object({
   data: roomReactionSchema.pick({ emojiTag: true, messageId: true }),
   type: z.literal("deleteEmoji"),
-});
-// A role's permission bitfield is a bigint, which JSON cannot carry, so a role event names it by its decimal digits
-const roleEventSchema = selectRoomRoleInMessageSchema.extend({
-  permissions: z.string().regex(MEMBER_PERMISSION_BIGINT_REGEX),
-});
-const assignRoleEventSchema = z.object({
-  data: z.object({ ...roleEventSchema.shape, ...userIdSchema.shape }),
-  type: z.literal("assignRole"),
-});
-const createRoleEventSchema = z.object({ data: roleEventSchema, type: z.literal("createRole") });
-const deleteRoleEventSchema = z.object({
-  data: selectRoomRoleInMessageSchema.pick({ id: true, roomId: true }),
-  type: z.literal("deleteRole"),
-});
-const revokeRoleEventSchema = z.object({ data: revokeRoleInputSchema, type: z.literal("revokeRole") });
-const updateRoleEventSchema = z.object({ data: roleEventSchema, type: z.literal("updateRole") });
-const updateMemberPermissionOverrideEventSchema = z.object({
-  data: z.object({
-    allow: z.string().regex(MEMBER_PERMISSION_BIGINT_REGEX),
-    deny: z.string().regex(MEMBER_PERMISSION_BIGINT_REGEX),
-    roomId: selectRoomInMessageSchema.shape.id,
-    userId: userIdSchema.shape.userId,
-  }),
-  type: z.literal("updateMemberPermissionOverride"),
 });
 const adminActionEventSchema = z.object({
   data: z.object({
@@ -74,12 +48,6 @@ const roomEventSchemas = [
   createEmojiEventSchema,
   updateEmojiEventSchema,
   deleteEmojiEventSchema,
-  assignRoleEventSchema,
-  createRoleEventSchema,
-  deleteRoleEventSchema,
-  revokeRoleEventSchema,
-  updateRoleEventSchema,
-  updateMemberPermissionOverrideEventSchema,
   adminActionEventSchema,
   upsertStatusEventSchema,
 ] as const;

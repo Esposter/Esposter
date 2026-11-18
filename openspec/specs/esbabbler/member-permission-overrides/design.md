@@ -30,7 +30,7 @@ The fold happens in `getPermissions`, so `checkHasPermission`, `readMyPermission
 
 `readMemberPermissionOverrides` lists the room's rows to any member, as `readMemberRoles` does: a role assignment is already public to the room, and an override is the same kind of fact about the same member.
 
-Each write pushes an `updateMemberPermissionOverride` room event from the room's object, carrying the state it left, to every viewer of the room. Each client applies it to its override map; the member whose override changed re-reads their own permissions, since every permission gate reads that bitfield.
+Each write publishes the room's topic, which the override map's read and each member's own permissions read watch, so every viewer re-reads the state the write left. The member whose override changed re-reads their own permissions through the same watch, since every permission gate reads that bitfield. No socket event carries the state.
 
 Leaving a room deletes the row with the membership, through the composite foreign key's cascade.
 
@@ -60,9 +60,7 @@ The member editor leaves out the Administrator bit, which no override can hold.
 | `packages/db-schema/src/relations/message/roomMemberPermissionsInMessageRelation.ts`            | the room relation the relational read takes                           |
 | `packages/db/src/services/room/rbac/getPermissions.ts`                                          | folds the member's row into the effective bitfield                    |
 | `apps/web/server/services/room/rbac/setMemberPermissionOverride.ts`                             | the three-state write, the empty-row removal and the state it returns |
-| `apps/web/server/trpc/routers/role.ts`                                                          | the upsert, delete and read procedures, and the override event        |
-| `packages/db-schema/src/models/realtime/RoomEvent.ts`                                           | the `updateMemberPermissionOverride` room event and its schema        |
+| `apps/web/server/trpc/routers/role.ts`                                                          | the upsert, delete and read procedures                                |
 | `apps/web/app/store/message/room/role.ts`                                                       | the override map, its reads and writes                                |
-| `apps/web/app/composables/message/events/useRoleEvents.ts`                                      | applies the override event and re-reads the member's own permissions  |
 | `apps/web/app/components/Message/Model/Room/Settings/Type/Role/MemberEditor/Index.vue`          | the member editor                                                     |
 | `apps/web/app/components/Message/Model/Room/Settings/Type/Role/Permission/OverrideListItem.vue` | the three-state row                                                   |

@@ -12,7 +12,8 @@ interface Props {
 
 const { member, roomId } = defineProps<Props>();
 const roleStore = useRoleStore();
-const { getRoles, readMemberRoles } = roleStore;
+const { getRoles } = roleStore;
+const readMemberRoles = useReadMemberRoles();
 const allRoles = computed(() => getRoles(roomId).filter(({ isEveryone }) => !isEveryone));
 
 await readMemberRoles({ roomId, userIds: [member.id] });

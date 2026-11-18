@@ -4,7 +4,6 @@ import type { DeleteMemberPermissionOverrideInput } from "#shared/models/db/role
 import type { DeleteRoleInput } from "#shared/models/db/role/DeleteRoleInput";
 import type { MemberPermissionOverride } from "#shared/models/db/role/MemberPermissionOverride";
 import type { ReadMemberPermissionOverridesInput } from "#shared/models/db/role/ReadMemberPermissionOverridesInput";
-import type { ReadMemberRolesInput } from "#shared/models/db/role/ReadMemberRolesInput";
 import type { ReadMyPermissionsInput } from "#shared/models/db/role/ReadMyPermissionsInput";
 import type { ReadRolesInput } from "#shared/models/db/role/ReadRolesInput";
 import type { UpdateRoleInput } from "#shared/models/db/role/UpdateRoleInput";
@@ -17,11 +16,20 @@ import { mergeMemberPermissionOverride } from "#shared/services/room/rbac/mergeM
 import { memberRoleChangeHooks } from "#src/services/message/member/memberRoleChangeHooks";
 import { MANAGEMENT_PERMISSIONS } from "#src/services/room/rbac/constants";
 import { getRestoredItems } from "#src/services/shared/getRestoredItems";
+import { rethrowFailedRead } from "#src/services/shared/rethrowFailedRead";
 import { useRoomStore } from "#src/store/message/room/index";
 import { useUserStore } from "#src/store/message/user/index";
 import { checkHasPermission } from "@esposter/db-schema";
-import { ID_SEPARATOR, noop, omitUndefined } from "@esposter/shared";
+import { getResultAsync, ID_SEPARATOR, noop, omitUndefined } from "@esposter/shared";
 import { v7 } from "uuid";
+
+// The room's derived totals are re-read through the registered hooks, since only the server's totals say what a
+// Role-membership change did. Two things fire them: a write to a member's roles, and a refresh of the room's roles,
+// Because a membership write publishes the room's topic that refresh watches. A read of one member's roles does not,
+// Its counts the server already includes
+const notifyMemberRoleChange = (roomId: string) => {
+  for (const memberRoleChangeHook of memberRoleChangeHooks.hooks) memberRoleChangeHook(roomId);
+};
 
 export const useRoleStore = defineStore("message/room/role", () => {
   const { $trpc } = useNuxtApp();
@@ -98,13 +106,11 @@ export const useRoleStore = defineStore("message/room/role", () => {
     roomMemberRoleMap.set(userId, memberRoles);
     setMemberRoleMap(roomId, roomMemberRoleMap);
   };
-  // Every role-membership MUTATION funnels through here (reads use setMemberRoles directly — the server
-  // Counts already include them) so the room's derived counts are re-read via the registered hooks. Each hook is told
-  // Of every write, not only of a top-role change: a write that leaves the top role alone can still be the server's
-  // Commit of an optimistic one, and only the server's totals say what that commit did
+  // Every role-membership MUTATION funnels through here, and every hook is told of every write, not only of a top-role
+  // Change: a write that leaves the top role alone can still be the server's commit of an optimistic one
   const mutateMemberRoles = (roomId: string, userId: string, newRoles: RoomRoleInMessage[]) => {
     setMemberRoles(roomId, userId, newRoles);
-    for (const memberRoleChangeHook of memberRoleChangeHooks.hooks) memberRoleChangeHook(roomId);
+    notifyMemberRoleChange(roomId);
   };
   // Both sides of one membership, written against whatever the member's list holds right now rather than a
   // Copy read before the write went out — so an overlapping assign/revoke on another role survives this one
@@ -137,52 +143,79 @@ export const useRoleStore = defineStore("message/room/role", () => {
     setMemberPermissionOverrideMap(roomId, roomOverrideMap);
   };
 
-  const readRoles = async (input: ReadRolesInput) => {
-    const fetchedRoles = await $trpc.role.readRoles.query(input);
-    const roomIdRolesMap = Object.groupBy(fetchedRoles, ({ roomId }) => roomId);
-    for (const roomId of input.roomIds) {
-      const roomRoles = roomIdRolesMap[roomId] ?? [];
-      setRoles(roomId, roomRoles);
+  // The store's reads of a room are live: each room is one target of the store's own instance, so a write in that room
+  // Re-reads the room's answer and the rooms do not supersede one another. A read its caller awaits still throws on
+  // Failure, as the raw query did; the refresh a watch runs has no caller, so it logs instead
+  const { executeQuery: executeReadRolesQuery } = useMutation();
+  const readRoles = async ({ roomIds }: ReadRolesInput) => {
+    await Promise.all(
+      roomIds.map((roomId) =>
+        rethrowFailedRead(
+          executeReadRolesQuery(() => $trpc.role.readRoles.query({ roomIds: [roomId] }), {
+            key: roomId,
+            onError: console.error,
+            onSuccess: (roomRoles) => {
+              // Only a read made after the room's roles were held is a refresh, which is when the totals move
+              const isRefresh = baseGetRoles(roomId) !== undefined;
+              setRoles(roomId, roomRoles);
 
-      const roomSelectedRoleId = getSelectedRoleId(roomId);
-      if (roomSelectedRoleId && roomRoles.some(({ id }) => id === roomSelectedRoleId)) continue;
-      const everyoneRole = roomRoles.find(({ isEveryone }) => isEveryone);
-      setSelectedRoleId(roomId, (everyoneRole ?? roomRoles[0])?.id ?? "");
-    }
+              const roomSelectedRoleId = getSelectedRoleId(roomId);
+              if (!roomSelectedRoleId || !roomRoles.some(({ id }) => id === roomSelectedRoleId)) {
+                const everyoneRole = roomRoles.find(({ isEveryone }) => isEveryone);
+                setSelectedRoleId(roomId, (everyoneRole ?? roomRoles[0])?.id ?? "");
+              }
+              if (isRefresh) notifyMemberRoleChange(roomId);
+            },
+          }),
+        ),
+      ),
+    );
   };
-  const readMyPermissions = async (input: ReadMyPermissionsInput) => {
-    const roomPermissionsList = await $trpc.role.readMyPermissions.query(input);
-    for (const { roomId, ...rest } of roomPermissionsList) setMyPermissions(roomId, rest);
-  };
-  const readMemberRoles = async (input: ReadMemberRolesInput) => {
-    const memberRoles = await $trpc.role.readMemberRoles.query(input);
-    const userIdMemberRolesMap = Object.groupBy(memberRoles, ({ userId }) => userId);
-    for (const userId of input.userIds)
-      setMemberRoles(
-        input.roomId,
-        userId,
-        (userIdMemberRolesMap[userId] ?? []).map(({ role }) => role),
-      );
+  const { executeQuery: executeReadMyPermissionsQuery } = useMutation();
+  const readMyPermissions = async ({ roomIds }: ReadMyPermissionsInput) => {
+    await Promise.all(
+      roomIds.map((roomId) =>
+        rethrowFailedRead(
+          executeReadMyPermissionsQuery(() => $trpc.role.readMyPermissions.query({ roomIds: [roomId] }), {
+            key: roomId,
+            onError: console.error,
+            onSuccess: (roomPermissionsList) => {
+              for (const { roomId: permissionRoomId, ...rest } of roomPermissionsList)
+                setMyPermissions(permissionRoomId, rest);
+            },
+          }),
+        ),
+      ),
+    );
   };
   const { executeMutation: executeCreateRoleMutation } = useMutation();
   // The writes that end one row share a queue named for that row, so each unwinds against what the one before it left
   const { executeMutation: executeRoleMutation } = useMutation();
   const { executeMutation: executeMemberRoleMutation } = useMutation();
   const { executeMutation: executeMemberPermissionOverrideMutation } = useMutation();
+  const { executeQuery: executeReadMemberPermissionOverridesQuery } = useMutation();
   const readMemberPermissionOverrides = async (input: ReadMemberPermissionOverridesInput) => {
-    const overrides = await $trpc.role.readMemberPermissionOverrides.query(input);
-    setMemberPermissionOverrideMap(
-      input.roomId,
-      new Map(overrides.map(({ allow, deny, userId }) => [userId, { allow, deny }])),
-    );
-    // An override names no one, so the rows of the overridden users are read alongside it
-    if (overrides.length === 0) return;
+    await rethrowFailedRead(
+      executeReadMemberPermissionOverridesQuery(() => $trpc.role.readMemberPermissionOverrides.query(input), {
+        key: input.roomId,
+        onError: console.error,
+        onSuccess: async (overrides) => {
+          setMemberPermissionOverrideMap(
+            input.roomId,
+            new Map(overrides.map(({ allow, deny, userId }) => [userId, { allow, deny }])),
+          );
+          // An override names no one, so the rows of the overridden users are read alongside it. Its failure is
+          // Logged rather than thrown, since a refresh that throws has no caller to catch it
+          if (overrides.length === 0) return;
 
-    const users = await $trpc.room.readUsersByIds.query({
-      roomId: input.roomId,
-      userIds: overrides.map(({ userId }) => userId),
-    });
-    storeRoomMembers(input.roomId, users);
+          await getResultAsync(() =>
+            $trpc.room.readUsersByIds.query({ roomId: input.roomId, userIds: overrides.map(({ userId }) => userId) }),
+          ).match((users) => {
+            storeRoomMembers(input.roomId, users);
+          }, console.error);
+        },
+      }),
+    );
   };
   // The entry is drawn at once from the one held: the bits the write allows or denies move into their state, a bit it
   // Names in none of the three keeps the state it had, and a bit it returns to the roles is cleared. A rejection puts
@@ -335,7 +368,6 @@ export const useRoleStore = defineStore("message/room/role", () => {
     mutateMemberRoles,
     myPermissions,
     readMemberPermissionOverrides,
-    readMemberRoles,
     readMyPermissions,
     readRoles,
     revokeRole,
@@ -345,7 +377,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
     selectedRoleId,
     selectMember,
     selectRole,
-    setMemberPermissionOverride,
+    setMemberRoles,
     setRoles,
     updateRole,
     upsertMemberPermissionOverride,

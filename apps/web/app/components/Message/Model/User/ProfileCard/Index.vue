@@ -4,7 +4,6 @@ import type { MemberDialogType } from "#src/models/message/user/MemberDialogType
 
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { useRoomStore } from "#src/store/message/room/index";
-import { useRoleStore } from "#src/store/message/room/role";
 import { useFriendStore } from "#src/store/message/user/friend";
 import { useFriendRequestStore } from "#src/store/message/user/friendRequest";
 import { useStatusStore } from "#src/store/message/user/status";
@@ -20,8 +19,7 @@ const { $trpc } = useNuxtApp();
 const { data: session } = await useAuthSession();
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
-const roleStore = useRoleStore();
-const { readMemberRoles } = roleStore;
+const readMemberRoles = useReadMemberRoles();
 const statusStore = useStatusStore();
 const { getStatusMessage, getUserStatus } = statusStore;
 const friendStore = useFriendStore();

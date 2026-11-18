@@ -4,10 +4,7 @@ import type { MyRoomPermissions } from "#shared/models/db/role/MyRoomPermissions
 import type { RoomRoleInMessage, UserToRoomRoleInMessageWithRelations } from "@esposter/db-schema";
 
 import { inRoom } from "#server/services/db/inRoom";
-import { getRoomActor } from "#server/services/realtime/getRoomActor";
-import { getRoleEventData } from "#server/services/role/getRoleEventData";
 import { assertIsMember } from "#server/services/room/assertIsMember";
-import { broadcastRoomEvent } from "#server/services/room/broadcastRoomEvent";
 import { assertCanGrantPermissions } from "#server/services/room/rbac/assertCanGrantPermissions";
 import { assertCanManageMemberRole } from "#server/services/room/rbac/assertCanManageMemberRole";
 import { assertCanManageRole } from "#server/services/room/rbac/assertCanManageRole";
@@ -74,16 +71,7 @@ export const roleRouter = router({
 
     await assertCanManageMemberRole(ctx.db, actorAuthority, role.position, roomId, userId);
 
-    const [userToRoomRole] = await ctx.db
-      .insert(usersToRoomRolesInMessage)
-      .values({ roleId, roomId, userId })
-      .onConflictDoNothing()
-      .returning();
-    if (userToRoomRole) {
-      const actor = getRoomActor(ctx);
-      const roleData = getRoleEventData(role);
-      await broadcastRoomEvent(roomId, { data: { ...roleData, userId }, type: "assignRole" }, actor);
-    }
+    await ctx.db.insert(usersToRoomRolesInMessage).values({ roleId, roomId, userId }).onConflictDoNothing();
     return role;
   }),
   createRole: getTopicsProcedure(
@@ -105,9 +93,6 @@ export const roleRouter = router({
       JSON.stringify({ name, roomId }),
     );
 
-    const actor = getRoomActor(ctx);
-    const roleData = getRoleEventData(newRole);
-    await broadcastRoomEvent(roomId, { data: roleData, type: "createRole" }, actor);
     return newRole;
   }),
   deleteMemberPermissionOverride: getTopicsProcedure(
@@ -119,12 +104,6 @@ export const roleRouter = router({
     await ctx.db
       .delete(roomMemberPermissionsInMessage)
       .where(and(eq(roomMemberPermissionsInMessage.roomId, roomId), eq(roomMemberPermissionsInMessage.userId, userId)));
-    const actor = getRoomActor(ctx);
-    await broadcastRoomEvent(
-      roomId,
-      { data: { allow: "0", deny: "0", roomId, userId }, type: "updateMemberPermissionOverride" },
-      actor,
-    );
   }),
   deleteRole: getTopicsProcedure(
     getPermissionsProcedure(RoomPermission.ManageRoles, deleteRoleInputSchema, "roomId"),
@@ -150,8 +129,6 @@ export const roleRouter = router({
       "NOT_FOUND",
     );
 
-    const actor = getRoomActor(ctx);
-    await broadcastRoomEvent(roomId, { data: { id, roomId }, type: "deleteRole" }, actor);
     return deletedRole;
   }),
   // Visible to the room as readMemberRoles is: a role assignment is already public to every member, and an override
@@ -226,8 +203,6 @@ export const roleRouter = router({
           eq(usersToRoomRolesInMessage.roleId, roleId),
         ),
       );
-    const actor = getRoomActor(ctx);
-    await broadcastRoomEvent(roomId, { data: { roleId, roomId, userId }, type: "revokeRole" }, actor);
   }),
   updateRole: getTopicsProcedure(
     getPermissionsProcedure(RoomPermission.ManageRoles, updateRoleInputSchema, "roomId"),
@@ -255,9 +230,6 @@ export const roleRouter = router({
       id,
       "NOT_FOUND",
     );
-    const actor = getRoomActor(ctx);
-    const roleData = getRoleEventData(updatedRole);
-    await broadcastRoomEvent(roomId, { data: roleData, type: "updateRole" }, actor);
     return updatedRole;
   }),
   upsertMemberPermissionOverride: getTopicsProcedure(
@@ -283,15 +255,6 @@ export const roleRouter = router({
     // A member may give an override only what they hold themselves, as a role may carry only what its author holds
     await assertCanGrantPermissions(ctx.db, actorUserId, roomId, allow, isOwner);
     const override = await setMemberPermissionOverride(ctx.db, { allow, deny, inherit, roomId, userId });
-    const actor = getRoomActor(ctx);
-    await broadcastRoomEvent(
-      roomId,
-      {
-        data: { allow: override.allow.toString(), deny: override.deny.toString(), roomId, userId },
-        type: "updateMemberPermissionOverride",
-      },
-      actor,
-    );
     return override;
   }),
 });

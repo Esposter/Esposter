@@ -2,7 +2,6 @@ import type { PublicUser } from "@esposter/db-schema";
 
 import { requirePartitionKey } from "#src/services/message/requirePartitionKey";
 import { useRoomStore } from "#src/store/message/room/index";
-import { useRoleStore } from "#src/store/message/room/role";
 import { useUserStore } from "#src/store/message/user/index";
 import { useMemberStore } from "#src/store/message/user/member";
 import { omitUndefined } from "@esposter/shared";
@@ -16,8 +15,7 @@ export const useReadMembers = () => {
   const userStore = useUserStore();
   const { storeRoomMembers, storeUsers } = userStore;
   const readUserStatuses = useReadUserStatuses();
-  const roleStore = useRoleStore();
-  const { readMemberRoles } = roleStore;
+  const readMemberRoles = useReadMemberRoles();
   // The term the rows on screen came from, so paging carries it with the cursor — a member who joins mid-scroll
   // Cannot appear in a later page of a search they do not match
   const searchedName = ref("");

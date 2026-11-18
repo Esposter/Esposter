@@ -32,8 +32,7 @@ describe(useMemberStore, () => {
   // Reads the member's roles the way the member list does, so the store knows what they hold
   const loadMemberRoles = async (readRoomId: string, memberRoles: RoomRoleInMessage[]) => {
     serveMemberRoles(trpcMsw, readRoomId, member.id, memberRoles);
-    const roleStore = useRoleStore();
-    await roleStore.readMemberRoles({ roomId: readRoomId, userIds: [member.id] });
+    await useReadMemberRoles()({ roomId: readRoomId, userIds: [member.id] });
   };
 
   beforeEach(() => {

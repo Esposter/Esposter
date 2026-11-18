@@ -11,7 +11,6 @@ export const useSubscribables = async () => {
   useMessageEvents();
   useModerationEvents();
   usePushSubscription();
-  useRoleEvents();
   useRoomCache();
   useRoomListEvents();
   useRoomSocket();

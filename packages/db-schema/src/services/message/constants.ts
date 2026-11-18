@@ -20,8 +20,6 @@ export const PUSH_NOTIFICATION_MESSAGE_MAX_LENGTH = 100;
 
 // A room event that carries messages carries one send's worth: a message, or a forward and the note sent with it
 export const MESSAGE_BATCH_MAX_LENGTH = 2;
-// A bigint on the wire is its decimal digits, and a permission bitfield fits in a 64-bit integer, which has 20 of them
-export const MEMBER_PERMISSION_BIGINT_REGEX = /^\d{1,20}$/u;
 // A RealtimeKit participant token is a signed JWT, which the call's own join hands its client once
 export const CALL_AUTH_TOKEN_MAX_LENGTH = 4096;
 // The order a room's message list reads in, newest first by the room's own sequence id, which is unique within the room

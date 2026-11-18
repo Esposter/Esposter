@@ -33,8 +33,7 @@ describe(useMemberActionItems, () => {
   // The target's roles are read the way the member list reads them, so the item sees the roles the room holds
   const setupTargetRole = async (targetUserId: string) => {
     serveMemberRoles(trpcMsw, roomId, targetUserId, [createRoomRole({ position, roomId })]);
-    const roleStore = useRoleStore();
-    await roleStore.readMemberRoles({ roomId, userIds: [targetUserId] });
+    await useReadMemberRoles()({ roomId, userIds: [targetUserId] });
   };
 
   beforeEach(() => {
