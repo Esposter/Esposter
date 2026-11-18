@@ -388,7 +388,7 @@
 | `scripts/src/services/genshinAssets/fit/constants.ts`                                     | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/countPoints.ts`                                   | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/coverTriangles.ts`                                | 2026-10-29 · Haiku 5.5  |       |
-| `scripts/src/services/genshinAssets/fit/createInterfaceRectsFit.ts`                       | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/createInterfaceRectsEntry.ts`                     | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/createNearestColourReader.test.ts`                | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/createNearestColourReader.ts`                     | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/createRegionFit.ts`                               | 2026-10-29 · Haiku 5.5  |       |

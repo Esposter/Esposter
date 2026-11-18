@@ -1,11 +1,11 @@
 import type { ExportedMesh } from "#src/models/genshinAssets/shared/ExportedMesh";
 import type { DryRunOptions } from "#src/models/shared/DryRunOptions";
 import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
-import type { SoundEffect } from "genshin-engine";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
-import { createInterfaceRectsEntry } from "#src/services/genshinAssets/fit/createInterfaceRectsFit";
+import { createInterfaceRectsEntry } from "#src/services/genshinAssets/fit/createInterfaceRectsEntry";
+import { createSoundEffectEntry } from "#src/services/genshinAssets/fit/createSoundEffectEntry";
 import { fitCloudLayerDome } from "#src/services/genshinAssets/fit/fitCloudLayerDome";
 import { fitCloudLayerTextures } from "#src/services/genshinAssets/fit/fitCloudLayerTextures";
 import { fitInterfaceClips } from "#src/services/genshinAssets/fit/fitInterfaceClips";
@@ -19,7 +19,6 @@ import { fitLoginTowerFacades } from "#src/services/genshinAssets/fit/fitLoginTo
 import { fitLoginTowers } from "#src/services/genshinAssets/fit/fitLoginTowers";
 import { fitLoginWalkway } from "#src/services/genshinAssets/fit/fitLoginWalkway";
 import { fitSkyGradient } from "#src/services/genshinAssets/fit/fitSkyGradient";
-import { fitSoundEffect } from "#src/services/genshinAssets/fit/fitSoundEffect";
 import { fitTitleLogos } from "#src/services/genshinAssets/fit/fitTitleLogos";
 import { runFits } from "#src/services/genshinAssets/fit/runFits";
 import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
@@ -27,7 +26,6 @@ import { getComponentDirectory } from "#src/services/genshinAssets/shared/getCom
 import { readComponentClips } from "#src/services/genshinAssets/shared/readComponentClips";
 import { readComponentMaterials } from "#src/services/genshinAssets/shared/readComponentMaterials";
 import { readComponentPlacements } from "#src/services/genshinAssets/shared/readComponentPlacements";
-import { DerivedAssetSoundEffectMap } from "#src/services/genshinAssets/sound/DerivedAssetSoundEffectMap";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { GameDataset } from "genshin-world";
 import { readFile } from "node:fs/promises";
@@ -123,14 +121,6 @@ export const fitLoginScene = async (only: readonly string[], options: DryRunOpti
         objects: { [`${GameDataset.Login}/sky`]: { cloudLayer: dome, cloudLayerMaterial, gradient } },
       };
     },
-    // The sounds the login plays beside its music, each from the game's sounds matched for it
-    sounds: async () => {
-      const effects: Record<string, SoundEffect> = {};
-      for (const [name, { pattern, sounds }] of Object.entries(DerivedAssetSoundEffectMap[DerivedAssetComponent.Login]))
-        // oxlint-disable-next-line no-await-in-loop -- One device: each effect's sounds are decoded through one vgmstream run at a time into one shared folder, in turn
-        effects[name] = await fitSoundEffect(pattern, sounds);
-      return { notes: [], objects: { [`${GameDataset.Login}/sounds`]: effects } };
-    },
     stone: async () => {
       const materials = await readComponentMaterials(DerivedAssetComponent.Login);
       return {
@@ -159,5 +149,6 @@ export const fitLoginScene = async (only: readonly string[], options: DryRunOpti
       objects: { [`${GameDataset.Login}/walkway`]: await fitLoginWalkway(placements, meshDirectory) },
     }),
   };
-  return runFits(Object.entries(fits), only, options);
+  // The sounds the login plays beside its music, each from the game's sounds matched for it
+  return runFits([...Object.entries(fits), createSoundEffectEntry(DerivedAssetComponent.Login)], only, options);
 };

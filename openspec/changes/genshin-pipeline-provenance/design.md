@@ -81,7 +81,7 @@ As built, the one writer, the one reader and the sidecar pair exist, and every w
 | `scripts/src/services/genshinAssets/fit/readWitnessWorldMeshes.ts`          | Reads the witness layout through the refusal of its sidecar                                                         |
 | `scripts/src/services/genshinAssets/fit/fitLoginMusic.ts`                   | Reads the playlist's folder through the refusal of its stamp                                                        |
 | `scripts/src/services/genshinAssets/fit/fitLoginScene.ts`                   | Reads the interface tree's folder through the refusal of its stamp                                                  |
-| `scripts/src/services/genshinAssets/fit/createInterfaceRectsFit.ts`         | Reads the interface tree's folder through the refusal of its stamp                                                  |
+| `scripts/src/services/genshinAssets/fit/createInterfaceRectsEntry.ts`       | Reads the interface tree's folder through the refusal of its stamp                                                  |
 | `scripts/src/services/genshinAssets/fit/fitRegionCapitals.ts`               | Reads the region and ground records through the refusal of their sidecars                                           |
 | `scripts/src/services/genshinAssets/fit/readRegionLandmarks.ts`             | Reads each region record through the refusal, and skips the sidecars beside them                                    |
 | `scripts/src/services/genshinAssets/fit/writeRegionKey.ts`                  | Reads the region record through the refusal before it writes a key                                                  |

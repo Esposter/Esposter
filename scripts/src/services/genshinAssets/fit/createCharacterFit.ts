@@ -2,7 +2,7 @@ import type { DerivedAssetFit } from "#src/models/genshinAssets/fit/DerivedAsset
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { createPictureColoursEntry } from "#src/services/genshinAssets/colours/createPictureColoursEntry";
-import { createInterfaceRectsEntry } from "#src/services/genshinAssets/fit/createInterfaceRectsFit";
+import { createInterfaceRectsEntry } from "#src/services/genshinAssets/fit/createInterfaceRectsEntry";
 import { runFits } from "#src/services/genshinAssets/fit/runFits";
 
 // The character screen's fits: its interface's rects, and the colour each portrait's disc takes in place of its picture

@@ -2,11 +2,12 @@ import type { DerivedAssetFit } from "#src/models/genshinAssets/fit/DerivedAsset
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { createCharacterFit } from "#src/services/genshinAssets/fit/createCharacterFit";
-import { createInterfaceRectsFit } from "#src/services/genshinAssets/fit/createInterfaceRectsFit";
+import { createInterfaceRectsEntry } from "#src/services/genshinAssets/fit/createInterfaceRectsEntry";
 import { createRegionFit } from "#src/services/genshinAssets/fit/createRegionFit";
 import { createRegionPlantsFit } from "#src/services/genshinAssets/fit/createRegionPlantsFit";
 import { createRegionRocksFit } from "#src/services/genshinAssets/fit/createRegionRocksFit";
 import { createRegionRuinsFit } from "#src/services/genshinAssets/fit/createRegionRuinsFit";
+import { createSoundEffectEntry } from "#src/services/genshinAssets/fit/createSoundEffectEntry";
 import { fitLoginScene } from "#src/services/genshinAssets/fit/fitLoginScene";
 import { fitProps } from "#src/services/genshinAssets/fit/fitProps";
 import { fitRegionStatue } from "#src/services/genshinAssets/fit/fitRegionStatue";
@@ -14,6 +15,7 @@ import { fitRiverCourses } from "#src/services/genshinAssets/fit/fitRiverCourses
 import { fitWaterfallSheets } from "#src/services/genshinAssets/fit/fitWaterfallSheets";
 import { fitWeaponShapes } from "#src/services/genshinAssets/fit/fitWeaponShapes";
 import { fitWindriseScene } from "#src/services/genshinAssets/fit/fitWindriseScene";
+import { runFits } from "#src/services/genshinAssets/fit/runFits";
 
 // A region's plants and rocks, the two records every region with rocks fits beside each other
 const createRegionPlantsRocksFits = (region: DerivedAssetComponent) => ({
@@ -29,7 +31,12 @@ export const DerivedAssetFitMap: Partial<Record<DerivedAssetComponent, DerivedAs
     DerivedAssetComponent.Fontaine,
     createRegionPlantsRocksFits(DerivedAssetComponent.Fontaine),
   ),
-  [DerivedAssetComponent.Hud]: createInterfaceRectsFit(DerivedAssetComponent.Hud),
+  [DerivedAssetComponent.Hud]: (only, options) =>
+    runFits(
+      [createInterfaceRectsEntry(DerivedAssetComponent.Hud), createSoundEffectEntry(DerivedAssetComponent.Hud)],
+      only,
+      options,
+    ),
   [DerivedAssetComponent.Inazuma]: createRegionFit(DerivedAssetComponent.Inazuma, {
     ...createRegionPlantsRocksFits(DerivedAssetComponent.Inazuma),
     waterfalls: (fitOptions) => fitWaterfallSheets(DerivedAssetComponent.Inazuma, fitOptions),
