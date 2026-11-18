@@ -20,6 +20,17 @@ export const PARITY_PASS_ORDER: readonly ParityPass[] = [
 // Exports' object it stands for, and the motion pass's piece of where its clip carries it, twice the centimetre the
 // Fitted data is written to
 export const PART_GATE_METRES = 0.02;
+// The login's families whose surface wavelength the Shape pass reads from their normal angles in the frame, the families a
+// Normal detail would lean their normals by
+export const SURFACE_WAVELENGTH_FAMILIES: readonly string[] = ["Bridges", "Towers"];
+// The high-pass box the surface wavelength reads its normal angles through, in pixels: a variation longer than it is shape.
+// On the reference's own angles the towers' lobe holds for boxes of 4 to 32 pixels and the bridges' for 16 to 128, so 16,
+// So where both hold, 16 is used for both families
+export const SURFACE_HIGH_PASS_RADIUS_PIXELS = 16;
+// The longest lag a surface wavelength reads, as a share of its family's width: a lobe past it is the object's own size.
+// The bridges' 47 metre repeat is about a quarter of their width and falls outside it. Their 22 metre lobe, about a ninth,
+// Falls inside it, so the bridges' reading is not a detail's wavelength (design.md, Open), and the cap is not tuned past it
+export const SURFACE_LAG_CAP_SHARE = 1 / 8;
 // The gate a landmark's root is held to, the scene's where it stands against its export's, both in metres: a fifth of
 // The 0.97 metres a hand offset once stood the statue under its export's root, which read as most of its outline
 export const LANDMARK_ROOT_GATE_METRES = 0.05;
@@ -103,6 +114,8 @@ export const PARITY_PASSES_DIRECTORY: string = join(
 
 // The reason a family's depth or normal is read as when ours draws none of it where the exports do
 export const NO_OVERLAP_REASON = "no overlap";
+// The reason a surface wavelength reads none: its family's normals hold no variation the measure can resolve, or no lobe in it
+export const NO_DETAIL_LOBE_REASON = "no detail lobe resolved";
 
 // Each reference's shape pass drawn where its readings lie, ours beside the exports
 export const SHAPES_DIRECTORY: string = join(PARITY_DIRECTORY, "shapes");
