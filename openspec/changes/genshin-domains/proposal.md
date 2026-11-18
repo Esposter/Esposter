@@ -22,7 +22,7 @@ Make each domain entrance a place the player can open and enter, run its challen
 ## Waiting on
 
 - `openspec/specs/genshin/kits/`: the domains are fought with the character kits.
-- `openspec/changes/genshin-map-unlocking/`: an entrance joins the jumps once it is unlocked.
+- `openspec/specs/genshin/map-unlocking/`: an entrance joins the jumps once it is unlocked.
 - The scene export the other machine is making, which lays out each domain's scene.
 
 ## Impact

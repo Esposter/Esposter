@@ -175,7 +175,7 @@ Each owned gap is linked here and carries no task in this change. Where an owner
 - Mondstadt's gate bridge: task 2.1 of the [Mondstadt](../genshin-mondstadt/tasks.md) change builds the city's gate bridge matched to its reference, and the Mondstadt buildings page lists it as not yet built.
 - Doors and the rest of a region's buildings: the building work of each region's own change, Mondstadt's gate bridge above among them. This change adds no door of its own.
 - Domain entrances: the entrances' behaviour, the arrival and the claim are the [domains](../genshin-domains/design.md) change.
-- Waypoint unlocking and jumps: task 2.1 of the [map unlocking](../genshin-map-unlocking/design.md) change, which waits on the waypoints in region data.
+- Waypoint unlocking and jumps: the [map unlocking](../../specs/genshin/map-unlocking/design.md) capability, built on the waypoints in region data.
 - Nod-Krai's statues as waypoints: task 3.1 of the [Nod-Krai](../genshin-nod-krai/tasks.md) change.
 - The forge screen and the blacksmith's place: task 2.4 of the [forging](../genshin-forging/design.md) change.
 - The frostbearing tree's places and offerings: the [offering systems](../genshin-offering-systems/design.md) change publishes each region's places. Its tree landmark waits on the world's drawing, which is G22 here.
