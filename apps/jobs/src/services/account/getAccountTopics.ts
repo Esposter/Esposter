@@ -24,43 +24,52 @@ export const getAccountTopics = async (userId: UserInAuth["id"]): Promise<Topic[
     .select({ id: roomsInMessage.id })
     .from(roomsInMessage)
     .where(eq(roomsInMessage.userId, userId));
-  // Read once, then bound as a JSON array: the bookmarks read and the resource topics both need the same rows
-  const ownedResourceIds = (
-    await db
-      .select({ id: resourcesInResource.id })
-      .from(resourcesInResource)
-      .where(eq(resourcesInResource.userId, userId))
-  ).map(({ id }) => id);
-  const [readerTopics, memberRoomIds, friendships, bookmarks, threadFollows, webhooks, likes] = await Promise.all([
-    getPersonReaderTopics(db, userId),
-    getMemberRoomIds(db, userId),
-    db
-      .select({ receiverId: friendsInSocial.receiverId, senderId: friendsInSocial.senderId })
-      .from(friendsInSocial)
-      .where(or(eq(friendsInSocial.senderId, userId), eq(friendsInSocial.receiverId, userId))),
-    db
+  // Read once, then bound as a JSON array: the bookmarks read and the resource topics both need the same rows. Only the
+  // Bookmarks read waits on it, so the other reads run beside it
+  const readOwnedResourceIds = async () =>
+    (
+      await db
+        .select({ id: resourcesInResource.id })
+        .from(resourcesInResource)
+        .where(eq(resourcesInResource.userId, userId))
+    ).map(({ id }) => id);
+  const ownedResourceIdsRead = readOwnedResourceIds();
+  const readBookmarks = async () => {
+    const resourceIds = await ownedResourceIdsRead;
+    return db
       .select({ userId: bookmarksInApp.userId })
       .from(bookmarksInApp)
       .where(
         and(
           ne(bookmarksInApp.userId, userId),
-          or(inJsonArray(bookmarksInApp.resourceId, ownedResourceIds), inArray(bookmarksInApp.roomId, ownedRoomIds)),
+          or(inJsonArray(bookmarksInApp.resourceId, resourceIds), inArray(bookmarksInApp.roomId, ownedRoomIds)),
         ),
-      ),
-    db
-      .select({ roomId: threadFollowsInMessage.roomId, userId: threadFollowsInMessage.userId })
-      .from(threadFollowsInMessage)
-      .where(and(ne(threadFollowsInMessage.userId, userId), inArray(threadFollowsInMessage.roomId, ownedRoomIds))),
-    db
-      .select({ roomId: webhooksInMessage.roomId })
-      .from(webhooksInMessage)
-      .where(eq(webhooksInMessage.creatorId, userId)),
-    db
-      .select({ ancestorIds: postsInPost.ancestorIds, id: postsInPost.id })
-      .from(likesInPost)
-      .innerJoin(postsInPost, eq(postsInPost.id, likesInPost.postId))
-      .where(eq(likesInPost.userId, userId)),
-  ]);
+      );
+  };
+  const [readerTopics, memberRoomIds, friendships, bookmarks, threadFollows, webhooks, likes, ownedResourceIds] =
+    await Promise.all([
+      getPersonReaderTopics(db, userId),
+      getMemberRoomIds(db, userId),
+      db
+        .select({ receiverId: friendsInSocial.receiverId, senderId: friendsInSocial.senderId })
+        .from(friendsInSocial)
+        .where(or(eq(friendsInSocial.senderId, userId), eq(friendsInSocial.receiverId, userId))),
+      readBookmarks(),
+      db
+        .select({ roomId: threadFollowsInMessage.roomId, userId: threadFollowsInMessage.userId })
+        .from(threadFollowsInMessage)
+        .where(and(ne(threadFollowsInMessage.userId, userId), inArray(threadFollowsInMessage.roomId, ownedRoomIds))),
+      db
+        .select({ roomId: webhooksInMessage.roomId })
+        .from(webhooksInMessage)
+        .where(eq(webhooksInMessage.creatorId, userId)),
+      db
+        .select({ ancestorIds: postsInPost.ancestorIds, id: postsInPost.id })
+        .from(likesInPost)
+        .innerJoin(postsInPost, eq(postsInPost.id, likesInPost.postId))
+        .where(eq(likesInPost.userId, userId)),
+      ownedResourceIdsRead,
+    ]);
 
   return [
     ...readerTopics,
