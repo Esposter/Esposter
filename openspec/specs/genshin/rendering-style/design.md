@@ -105,7 +105,6 @@ In a Vite development build, `useGenshinTuning` registers the look's uniforms wi
 | `packages/genshin-engine/src/post/createOcclusionNode.ts`               | The screen-space occlusion over the depth, the scene's and the witness's                     |
 | `packages/genshin-engine/src/post/createHeightFogNode.ts`               | The height fog integrated along each pixel's ray                                             |
 | `packages/genshin-engine/src/models/nodes/GameBloomNode.ts`             | The game's bloom: prefilter, four-level box and blur chain, and the weighted compose         |
-| `packages/genshin-engine/src/post/computeBloomPrefilter.ts`             | The bloom prefilter's arithmetic on one channel, the CPU form the bloom node draws per pixel |
 | `packages/genshin-engine/src/renderer/constants.ts`                     | The tone curve's contrast and exposure, the none every canvas passes, and the bloom's values |
 | `packages/genshin-engine/src/post/toneMapGenshinNode.ts`                | The game's tone curve, which the post pipeline ends on                                       |
 | `packages/genshin-world/src/services/tuning/createLookVariables.ts`     | The look's uniforms as development variables, in the panel's Look tab                        |
