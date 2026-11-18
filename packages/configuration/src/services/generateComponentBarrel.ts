@@ -1,3 +1,4 @@
+import { checkInLazyDirectory } from "#src/services/checkInLazyDirectory";
 import { COMPONENTS_DIRECTORY } from "#src/services/constants";
 import { getComponentName } from "#src/services/getComponentName";
 import { writeBarrel } from "#src/services/writeBarrel";
@@ -13,10 +14,7 @@ export const generateComponentBarrel = (sourceDirectory: string, lazyDirectories
     directory,
     globSync("**/*.vue", { cwd: directory })
       .map((path) => path.replaceAll("\\", "/"))
-      .filter(
-        (path) =>
-          !lazyDirectories.some((lazyDirectory) => `${COMPONENTS_DIRECTORY}/${path}`.startsWith(`${lazyDirectory}/`)),
-      ),
+      .filter((path) => !checkInLazyDirectory(`${COMPONENTS_DIRECTORY}/${path}`, lazyDirectories)),
     (path) => `export { default as ${getComponentName(path)} } from "./${path}";`,
   );
 };

@@ -1,4 +1,5 @@
 import { checkHasExport } from "#src/services/checkHasExport";
+import { checkInLazyDirectory } from "#src/services/checkInLazyDirectory";
 import { BARREL_FILE, NON_SOURCE_SUFFIXES } from "#src/services/constants";
 import { globSync } from "node:fs";
 import { join } from "node:path";
@@ -14,6 +15,6 @@ export const getSourceSpecifiers = (sourceDirectory: string, lazyDirectories: st
         path !== BARREL_FILE &&
         !path.endsWith(".d.ts") &&
         !NON_SOURCE_SUFFIXES.some((suffix) => path.endsWith(suffix)) &&
-        !lazyDirectories.some((directory) => path.startsWith(`${directory}/`)) &&
+        !checkInLazyDirectory(path, lazyDirectories) &&
         checkHasExport(join(sourceDirectory, path)),
     );
