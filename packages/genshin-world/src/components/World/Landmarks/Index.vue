@@ -16,6 +16,7 @@ import WorldLandmarkOffering from "#src/components/World/Landmark/Offering/Index
 import WorldLandmarkRock from "#src/components/World/Landmark/Rock/Index.vue";
 import WorldLandmarkStatue from "#src/components/World/Landmark/Statue/Index.vue";
 import WorldLandmarkTree from "#src/components/World/Landmark/Tree/Index.vue";
+import WorldLandmarkWaypoint from "#src/components/World/Landmark/Waypoint/Index.vue";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { LOAD_STEP_MEASURE_PREFIX } from "#src/services/loading/constants";
 import { SCENE_FAMILY_KEY } from "#src/services/scene/constants";
@@ -188,6 +189,12 @@ onUnmounted(() => {
       />
       <WorldLandmarkDomainEntrance
         v-else-if="landmark.kind === LandmarkKind.DomainEntrance"
+        :get-ground-height
+        :landmark
+        :part-material
+      />
+      <WorldLandmarkWaypoint
+        v-else-if="landmark.kind === LandmarkKind.TeleportWaypoint"
         :get-ground-height
         :landmark
         :part-material

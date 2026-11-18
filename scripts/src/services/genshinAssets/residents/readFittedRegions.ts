@@ -1,4 +1,5 @@
 import type { InteractiveMapPoint } from "#src/models/genshinAssets/points/InteractiveMapPoint";
+import type { InteractiveMapRegionFit } from "#src/models/genshinAssets/points/InteractiveMapRegionFit";
 import type { SimilarityTransform } from "#src/models/genshinAssets/points/SimilarityTransform";
 import type { RegionDataFile } from "#src/models/genshinAssets/residents/RegionDataFile";
 import type { RegionMapPoint } from "#src/services/genshinAssets/residents/classifyPlacementRegion";
@@ -19,6 +20,7 @@ export const readFittedRegions = async (): Promise<{
   origin: [number, number, number];
   points: InteractiveMapPoint[];
   regionFiles: { data: RegionDataFile; file: string; region: string }[];
+  regionFits: InteractiveMapRegionFit[];
   regionMapPoints: RegionMapPoint[];
   transform: SimilarityTransform;
 }> => {
@@ -34,5 +36,12 @@ export const readFittedRegions = async (): Promise<{
       return { data, file, region };
     }),
   );
-  return { origin, points: fittedMapPoints.points, regionFiles, regionMapPoints, transform: fittedMapPoints.transform };
+  return {
+    origin,
+    points: fittedMapPoints.points,
+    regionFiles,
+    regionFits: fittedMapPoints.regions,
+    regionMapPoints,
+    transform: fittedMapPoints.transform,
+  };
 };

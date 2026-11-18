@@ -70,3 +70,8 @@ export const MAP_DRAG_THRESHOLD_PIXELS = 4;
 // The first within 5 of the world's darkness (frame 176). A cross-region teleport loads longer than a near one
 export const TELEPORT_FADE_OUT_MS = 801;
 export const TELEPORT_FADE_IN_MS = 200;
+// The stand-in a Teleport Waypoint draws until its own model is built: one pillar in one colour, standing where its
+// Arrival is
+export const WAYPOINT_STAND_IN_COLOR = "#c9b26b";
+export const WAYPOINT_STAND_IN_HEIGHT = 3;
+export const WAYPOINT_STAND_IN_WIDTH = 1.5;

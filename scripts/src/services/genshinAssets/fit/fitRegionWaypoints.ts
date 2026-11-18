@@ -1,5 +1,6 @@
 import type { DryRunOptions } from "#src/models/shared/DryRunOptions";
 
+import { selectFittedRegions } from "#src/services/genshinAssets/fit/selectFittedRegions";
 import { toPairedLandmarks } from "#src/services/genshinAssets/fit/toPairedLandmarks";
 import {
   INTERACTIVE_MAP_STATUE_LABEL_ID,
@@ -40,12 +41,14 @@ const PAIRED_LANDMARK_KINDS = new Set<string | undefined>([NEW_MOON_STATUE_PAIRI
 // With the scene's transport point it stands at, and only the official map points of the region's own map area are paired.
 // A dry run counts them and writes nothing
 export const fitRegionWaypoints = async ({ isDryRun }: DryRunOptions): Promise<string> => {
-  const [{ origin, points, regionFiles, transform }, getWorldHeight, transportPoints] = await Promise.all([
+  const [{ origin, points, regionFiles, regionFits, transform }, getWorldHeight, transportPoints] = await Promise.all([
     readFittedRegions(),
     readWorldGroundHeight(),
     readSceneTransportPoints(),
   ]);
   const catalogue = catalogueSchema.parse(parseMachineJson(await readFile(CATALOGUE_PATH, "utf8")));
+  // A region whose map fit is over its bar writes no waypoints, and any an earlier run wrote are replaced by none
+  const fittedWaypointRegions = selectFittedRegions(regionFits, WAYPOINT_REGIONS);
   const reports = await Promise.all(
     regionFiles
       .filter(({ region }) => WAYPOINT_REGIONS.includes(region) || NEW_MOON_STATUE_REGIONS.includes(region))
@@ -65,7 +68,7 @@ export const fitRegionWaypoints = async ({ isDryRun }: DryRunOptions): Promise<s
             transform,
             transportPoints,
           });
-        const waypoints = WAYPOINT_REGIONS.includes(region) ? pair(WAYPOINT_PAIRING) : [];
+        const waypoints = fittedWaypointRegions.includes(region) ? pair(WAYPOINT_PAIRING) : [];
         const statues = NEW_MOON_STATUE_REGIONS.includes(region) ? pair(NEW_MOON_STATUE_PAIRING) : [];
         const landmarks = orderLandmarks([
           ...data.landmarks.filter(({ kind }) => !PAIRED_LANDMARK_KINDS.has(kind)),

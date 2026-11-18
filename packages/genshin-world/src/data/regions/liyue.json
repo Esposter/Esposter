@@ -19424,6 +19424,681 @@
       "kind": "Building",
       "position": { "x": -2392.4, "z": -1562.44 },
       "rotation": 0
+    },
+    {
+      "areaId": "bishui-plain",
+      "arrival": { "heightOffset": 0.75, "position": { "x": -316.35, "z": -1474.55 }, "rotation": 0.8585 },
+      "heightOffset": 0.75,
+      "id": "liyue-waypoint-76",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -316.35, "z": -1474.55 },
+      "rotation": 0.8585
+    },
+    {
+      "areaId": "minlin",
+      "arrival": { "heightOffset": 34.57, "position": { "x": -699, "z": -2388.35 }, "rotation": -0.1586 },
+      "heightOffset": 34.57,
+      "id": "liyue-waypoint-77",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -699, "z": -2388.35 },
+      "rotation": -0.1586
+    },
+    {
+      "areaId": "minlin",
+      "arrival": { "heightOffset": -12.81, "position": { "x": -1305.87, "z": -2164.96 }, "rotation": 0.4266 },
+      "heightOffset": -12.81,
+      "id": "liyue-waypoint-78",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -1305.87, "z": -2164.96 },
+      "rotation": 0.4266
+    },
+    {
+      "areaId": "bishui-plain",
+      "arrival": { "heightOffset": 38.05, "position": { "x": -1016.24, "z": -1595.81 }, "rotation": 1.9757 },
+      "heightOffset": 38.05,
+      "id": "liyue-waypoint-79",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -1016.24, "z": -1595.81 },
+      "rotation": 1.9757
+    },
+    {
+      "areaId": "qiongji-estuary",
+      "arrival": { "heightOffset": -20.72, "position": { "x": -1341.19, "z": -1608.4 }, "rotation": 0.3283 },
+      "heightOffset": -20.72,
+      "id": "liyue-waypoint-81",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -1341.19, "z": -1608.4 },
+      "rotation": 0.3283
+    },
+    {
+      "areaId": "qiongji-estuary",
+      "arrival": { "heightOffset": -21.03, "position": { "x": -1667.13, "z": -1756.49 }, "rotation": 0.9459 },
+      "heightOffset": -21.03,
+      "id": "liyue-waypoint-82",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -1667.13, "z": -1756.49 },
+      "rotation": 0.9459
+    },
+    {
+      "areaId": "minlin",
+      "arrival": { "heightOffset": 7.95, "position": { "x": -1953.52, "z": -2535.48 }, "rotation": 1.5704 },
+      "heightOffset": 7.95,
+      "id": "liyue-waypoint-84",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -1953.52, "z": -2535.48 },
+      "rotation": 1.5704
+    },
+    {
+      "areaId": "minlin",
+      "arrival": { "heightOffset": -37.58, "position": { "x": -1263.28, "z": -2449.82 }, "rotation": -0.5249 },
+      "heightOffset": -37.58,
+      "id": "liyue-waypoint-85",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -1263.28, "z": -2449.82 },
+      "rotation": -0.5249
+    },
+    {
+      "areaId": "minlin",
+      "arrival": { "heightOffset": 200.38, "position": { "x": -1171.92, "z": -3061.35 }, "rotation": -2.8617 },
+      "heightOffset": 200.38,
+      "id": "liyue-waypoint-86",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -1171.92, "z": -3061.35 },
+      "rotation": -2.8617
+    },
+    {
+      "areaId": "minlin",
+      "arrival": { "heightOffset": 164.67, "position": { "x": -849.68, "z": -2871.55 }, "rotation": 1.4099 },
+      "heightOffset": 164.67,
+      "id": "liyue-waypoint-87",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -849.68, "z": -2871.55 },
+      "rotation": 1.4099
+    },
+    {
+      "areaId": "sea-of-clouds",
+      "arrival": { "heightOffset": -24.72, "position": { "x": -1979.89, "z": -610.1 }, "rotation": 2.8242 },
+      "heightOffset": -24.72,
+      "id": "liyue-waypoint-91",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -1979.89, "z": -610.1 },
+      "rotation": 2.8242
+    },
+    {
+      "areaId": "qiongji-estuary",
+      "arrival": { "heightOffset": 31.02, "position": { "x": -916.93, "z": -1078.57 }, "rotation": -0.0299 },
+      "heightOffset": 31.02,
+      "id": "liyue-waypoint-92",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -916.93, "z": -1078.57 },
+      "rotation": -0.0299
+    },
+    {
+      "areaId": "sea-of-clouds",
+      "arrival": { "heightOffset": 9.35, "position": { "x": -2001.64, "z": -1293.13 }, "rotation": -1.6413 },
+      "heightOffset": 9.35,
+      "id": "liyue-waypoint-93",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -2001.64, "z": -1293.13 },
+      "rotation": -1.6413
+    },
+    {
+      "areaId": "minlin",
+      "arrival": { "heightOffset": 7.55, "position": { "x": -1502.82, "z": -2932.98 }, "rotation": 1.0557 },
+      "heightOffset": 7.55,
+      "id": "liyue-waypoint-95",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -1502.82, "z": -2932.98 },
+      "rotation": 1.0557
+    },
+    {
+      "areaId": "minlin",
+      "arrival": { "heightOffset": 41.24, "position": { "x": -860.81, "z": -2718.6 }, "rotation": -0.156 },
+      "heightOffset": 41.24,
+      "id": "liyue-waypoint-96",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -860.81, "z": -2718.6 },
+      "rotation": -0.156
+    },
+    {
+      "areaId": "minlin",
+      "arrival": { "heightOffset": 133.95, "position": { "x": -1372.89, "z": -2656.17 }, "rotation": -2.8027 },
+      "heightOffset": 133.95,
+      "id": "liyue-waypoint-97",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -1372.89, "z": -2656.17 },
+      "rotation": -2.8027
+    },
+    {
+      "areaId": "bishui-plain",
+      "arrival": { "heightOffset": -17.64, "position": { "x": -356.89, "z": -2107.19 }, "rotation": -1.3671 },
+      "heightOffset": -17.64,
+      "id": "liyue-waypoint-99",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -356.89, "z": -2107.19 },
+      "rotation": -1.3671
+    },
+    {
+      "areaId": "bishui-plain",
+      "arrival": { "heightOffset": 4.4, "position": { "x": -93.22, "z": -2068.73 }, "rotation": -2.7837 },
+      "heightOffset": 4.4,
+      "id": "liyue-waypoint-100",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -93.22, "z": -2068.73 },
+      "rotation": -2.7837
+    },
+    {
+      "areaId": "lisha",
+      "arrival": { "heightOffset": -27.43, "position": { "x": -2661.82, "z": -1977.82 }, "rotation": -0.0324 },
+      "heightOffset": -27.43,
+      "id": "liyue-waypoint-103",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -2661.82, "z": -1977.82 },
+      "rotation": -0.0324
+    },
+    {
+      "areaId": "lisha",
+      "arrival": { "heightOffset": 29.49, "position": { "x": -2873.73, "z": -2395.62 }, "rotation": -1.4465 },
+      "heightOffset": 29.49,
+      "id": "liyue-waypoint-104",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -2873.73, "z": -2395.62 },
+      "rotation": -1.4465
+    },
+    {
+      "areaId": "lisha",
+      "arrival": { "heightOffset": -7.33, "position": { "x": -2447.38, "z": -2310.33 }, "rotation": -0.555 },
+      "heightOffset": -7.33,
+      "id": "liyue-waypoint-105",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -2447.38, "z": -2310.33 },
+      "rotation": -0.555
+    },
+    {
+      "areaId": "qiongji-estuary",
+      "arrival": { "heightOffset": -22.46, "position": { "x": -1232.42, "z": -1209.71 }, "rotation": 0.9289 },
+      "heightOffset": -22.46,
+      "id": "liyue-waypoint-114",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -1232.42, "z": -1209.71 },
+      "rotation": 0.9289
+    },
+    {
+      "areaId": "bishui-plain",
+      "arrival": { "heightOffset": -13.29, "position": { "x": -706.87, "z": -1102.58 }, "rotation": 1.6243 },
+      "heightOffset": -13.29,
+      "id": "liyue-waypoint-116",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -706.87, "z": -1102.58 },
+      "rotation": 1.6243
+    },
+    {
+      "areaId": "minlin",
+      "arrival": { "heightOffset": -20.34, "position": { "x": -827.22, "z": -1997.32 }, "rotation": -0.1286 },
+      "heightOffset": -20.34,
+      "id": "liyue-waypoint-121",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -827.22, "z": -1997.32 },
+      "rotation": -0.1286
+    },
+    {
+      "areaId": "sea-of-clouds",
+      "arrival": { "heightOffset": 29.98, "position": { "x": -2392.4, "z": -1633.56 }, "rotation": -2.9632 },
+      "heightOffset": 29.98,
+      "id": "liyue-waypoint-127",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -2392.4, "z": -1633.56 },
+      "rotation": -2.9632
+    },
+    {
+      "areaId": "sea-of-clouds",
+      "arrival": { "heightOffset": 9.51, "position": { "x": -2555, "z": -1534.79 }, "rotation": 3.0395 },
+      "heightOffset": 9.51,
+      "id": "liyue-waypoint-128",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -2555, "z": -1534.79 },
+      "rotation": 3.0395
+    },
+    {
+      "areaId": "minlin",
+      "arrival": { "heightOffset": 247.53, "position": { "x": -1052.26, "z": -2700.55 }, "rotation": -0.3177 },
+      "heightOffset": 247.53,
+      "id": "liyue-waypoint-152",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -1052.26, "z": -2700.55 },
+      "rotation": -0.3177
+    },
+    {
+      "areaId": "bishui-plain",
+      "arrival": { "heightOffset": 0.39, "position": { "x": -325.4, "z": -2538.28 }, "rotation": -2.4075 },
+      "heightOffset": 0.39,
+      "id": "liyue-waypoint-153",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -325.4, "z": -2538.28 },
+      "rotation": -2.4075
+    },
+    {
+      "areaId": "bishui-plain",
+      "arrival": { "heightOffset": 28.85, "position": { "x": -122.56, "z": -1814.86 }, "rotation": -0.4462 },
+      "heightOffset": 28.85,
+      "id": "liyue-waypoint-154",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -122.56, "z": -1814.86 },
+      "rotation": -0.4462
+    },
+    {
+      "areaId": "sea-of-clouds",
+      "arrival": { "heightOffset": 16.79, "position": { "x": -2137.15, "z": -1562.44 }, "rotation": 1.1244 },
+      "heightOffset": 16.79,
+      "id": "liyue-waypoint-155",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -2137.15, "z": -1562.44 },
+      "rotation": 1.1244
+    },
+    {
+      "areaId": "sea-of-clouds",
+      "arrival": { "heightOffset": 25.64, "position": { "x": -2519.81, "z": -1775.16 }, "rotation": 2.8889 },
+      "heightOffset": 25.64,
+      "id": "liyue-waypoint-156",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -2519.81, "z": -1775.16 },
+      "rotation": 2.8889
+    },
+    {
+      "areaId": "bishui-plain",
+      "arrival": { "heightOffset": 23.56, "position": { "x": -454.25, "z": -1756.93 }, "rotation": 1.0166 },
+      "heightOffset": 23.56,
+      "id": "liyue-waypoint-162",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -454.25, "z": -1756.93 },
+      "rotation": 1.0166
+    },
+    {
+      "areaId": "qiongji-estuary",
+      "arrival": { "heightOffset": -29.08, "position": { "x": -1447.48, "z": -793.1 }, "rotation": -1.4222 },
+      "heightOffset": -29.08,
+      "id": "liyue-waypoint-165",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -1447.48, "z": -793.1 },
+      "rotation": -1.4222
+    },
+    {
+      "areaId": "lisha",
+      "arrival": { "heightOffset": 53.38, "position": { "x": -2472.8, "z": -2095.36 }, "rotation": -0.4178 },
+      "heightOffset": 53.38,
+      "id": "liyue-waypoint-166",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -2472.8, "z": -2095.36 },
+      "rotation": -0.4178
+    },
+    {
+      "areaId": "sea-of-clouds",
+      "arrival": { "heightOffset": 67.62, "position": { "x": -2174.05, "z": -1878.81 }, "rotation": -0.099 },
+      "heightOffset": 67.62,
+      "id": "liyue-waypoint-167",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -2174.05, "z": -1878.81 },
+      "rotation": -0.099
+    },
+    {
+      "areaId": "sea-of-clouds",
+      "arrival": { "heightOffset": 33.31, "position": { "x": -1750.07, "z": -1321.42 }, "rotation": -2.2404 },
+      "heightOffset": 33.31,
+      "id": "liyue-waypoint-168",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -1750.07, "z": -1321.42 },
+      "rotation": -2.2404
+    },
+    {
+      "areaId": "bishui-plain",
+      "arrival": { "heightOffset": -26.81, "position": { "x": -220.77, "z": -1550.97 }, "rotation": -0.8461 },
+      "heightOffset": -26.81,
+      "id": "liyue-waypoint-180",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -220.77, "z": -1550.97 },
+      "rotation": -0.8461
+    },
+    {
+      "areaId": "qiongji-estuary",
+      "arrival": { "heightOffset": -4.1, "position": { "x": -1654.22, "z": -2104.64 }, "rotation": 2.0767 },
+      "heightOffset": -4.1,
+      "id": "liyue-waypoint-181",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -1654.22, "z": -2104.64 },
+      "rotation": 2.0767
+    },
+    {
+      "areaId": "minlin",
+      "arrival": { "heightOffset": 53.48, "position": { "x": -938.75, "z": -2312.73 }, "rotation": -2.4265 },
+      "heightOffset": 53.48,
+      "id": "liyue-waypoint-197",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -938.75, "z": -2312.73 },
+      "rotation": -2.4265
+    },
+    {
+      "areaId": "minlin",
+      "arrival": { "heightOffset": -15.93, "position": { "x": -1746.5, "z": -2420.17 }, "rotation": 0 },
+      "heightOffset": -15.93,
+      "id": "liyue-waypoint-200",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -1746.5, "z": -2420.17 },
+      "rotation": 0
+    },
+    {
+      "areaId": "the-chasm",
+      "arrival": { "heightOffset": -18.06, "position": { "x": -2618.23, "z": -2737.3 }, "rotation": 1.1981 },
+      "heightOffset": -18.06,
+      "id": "liyue-waypoint-438",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -2618.23, "z": -2737.3 },
+      "rotation": 1.1981
+    },
+    {
+      "areaId": "the-chasm",
+      "arrival": { "heightOffset": -85.16, "position": { "x": -2471.74, "z": -2968.62 }, "rotation": -0.6782 },
+      "heightOffset": -85.16,
+      "id": "liyue-waypoint-443",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -2471.74, "z": -2968.62 },
+      "rotation": -0.6782
+    },
+    {
+      "areaId": "the-chasm",
+      "arrival": { "heightOffset": -79.1, "position": { "x": -2650.23, "z": -3185.01 }, "rotation": -2.4299 },
+      "heightOffset": -79.1,
+      "id": "liyue-waypoint-444",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -2650.23, "z": -3185.01 },
+      "rotation": -2.4299
+    },
+    {
+      "areaId": "the-chasm",
+      "arrival": { "heightOffset": -99.51, "position": { "x": -2763.53, "z": -3026.68 }, "rotation": -2.5313 },
+      "heightOffset": -99.51,
+      "id": "liyue-waypoint-445",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -2763.53, "z": -3026.68 },
+      "rotation": -2.5313
+    },
+    {
+      "areaId": "the-chasm",
+      "arrival": { "heightOffset": 66.91, "position": { "x": -2173.59, "z": -2923.92 }, "rotation": 3.0719 },
+      "heightOffset": 66.91,
+      "id": "liyue-waypoint-446",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -2173.59, "z": -2923.92 },
+      "rotation": 3.0719
+    },
+    {
+      "areaId": "the-chasm",
+      "arrival": { "heightOffset": -53.27, "position": { "x": -2677.66, "z": -3286.55 }, "rotation": 0.6454 },
+      "heightOffset": -53.27,
+      "id": "liyue-waypoint-676",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -2677.66, "z": -3286.55 },
+      "rotation": 0.6454
+    },
+    {
+      "areaId": "chenyu-vale-upper-vale",
+      "arrival": { "heightOffset": 159.16, "position": { "x": 435.77, "z": -3013.79 }, "rotation": 2.6542 },
+      "heightOffset": 159.16,
+      "id": "liyue-waypoint-949",
+      "kind": "TeleportWaypoint",
+      "position": { "x": 435.77, "z": -3013.79 },
+      "rotation": 2.6542
+    },
+    {
+      "areaId": "chenyu-vale-upper-vale",
+      "arrival": { "heightOffset": 59.37, "position": { "x": 356.7, "z": -2812.26 }, "rotation": -2.0157 },
+      "heightOffset": 59.37,
+      "id": "liyue-waypoint-950",
+      "kind": "TeleportWaypoint",
+      "position": { "x": 356.7, "z": -2812.26 },
+      "rotation": -2.0157
+    },
+    {
+      "areaId": "chenyu-vale-upper-vale",
+      "arrival": { "heightOffset": 195.51, "position": { "x": 523.55, "z": -3412.83 }, "rotation": 0.2966 },
+      "heightOffset": 195.51,
+      "id": "liyue-waypoint-951",
+      "kind": "TeleportWaypoint",
+      "position": { "x": 523.55, "z": -3412.83 },
+      "rotation": 0.2966
+    },
+    {
+      "areaId": "chenyu-vale-upper-vale",
+      "arrival": { "heightOffset": 114.24, "position": { "x": 524.74, "z": -3625.34 }, "rotation": 0.2406 },
+      "heightOffset": 114.24,
+      "id": "liyue-waypoint-952",
+      "kind": "TeleportWaypoint",
+      "position": { "x": 524.74, "z": -3625.34 },
+      "rotation": 0.2406
+    },
+    {
+      "areaId": "chenyu-vale-upper-vale",
+      "arrival": { "heightOffset": 184.56, "position": { "x": 191.61, "z": -3269.56 }, "rotation": -0.248 },
+      "heightOffset": 184.56,
+      "id": "liyue-waypoint-953",
+      "kind": "TeleportWaypoint",
+      "position": { "x": 191.61, "z": -3269.56 },
+      "rotation": -0.248
+    },
+    {
+      "areaId": "chenyu-vale-southern-mountain",
+      "arrival": { "heightOffset": 110.5, "position": { "x": -60.07, "z": -2958.46 }, "rotation": -0.084 },
+      "heightOffset": 110.5,
+      "id": "liyue-waypoint-954",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -60.07, "z": -2958.46 },
+      "rotation": -0.084
+    },
+    {
+      "areaId": "chenyu-vale-southern-mountain",
+      "arrival": { "heightOffset": 23.62, "position": { "x": -236.68, "z": -2956.52 }, "rotation": 2.7754 },
+      "heightOffset": 23.62,
+      "id": "liyue-waypoint-955",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -236.68, "z": -2956.52 },
+      "rotation": 2.7754
+    },
+    {
+      "areaId": "chenyu-vale-southern-mountain",
+      "arrival": { "heightOffset": 108.66, "position": { "x": -692.42, "z": -3171.67 }, "rotation": 1.179 },
+      "heightOffset": 108.66,
+      "id": "liyue-waypoint-956",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -692.42, "z": -3171.67 },
+      "rotation": 1.179
+    },
+    {
+      "areaId": "chenyu-vale-southern-mountain",
+      "arrival": { "heightOffset": 70.8, "position": { "x": -636.2, "z": -3474.2 }, "rotation": -1.462 },
+      "heightOffset": 70.8,
+      "id": "liyue-waypoint-957",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -636.2, "z": -3474.2 },
+      "rotation": -1.462
+    },
+    {
+      "areaId": "chenyu-vale-southern-mountain",
+      "arrival": { "heightOffset": 198.5, "position": { "x": -404.89, "z": -3333.3 }, "rotation": -0.6593 },
+      "heightOffset": 198.5,
+      "id": "liyue-waypoint-958",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -404.89, "z": -3333.3 },
+      "rotation": -0.6593
+    },
+    {
+      "areaId": "mt-laixin",
+      "arrival": { "heightOffset": 81.42, "position": { "x": -360.8, "z": -3895.26 }, "rotation": 1.7761 },
+      "heightOffset": 81.42,
+      "id": "liyue-waypoint-959",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -360.8, "z": -3895.26 },
+      "rotation": 1.7761
+    },
+    {
+      "areaId": "mt-laixin",
+      "arrival": { "heightOffset": 209.05, "position": { "x": -385.99, "z": -4137.17 }, "rotation": 2.7453 },
+      "heightOffset": 209.05,
+      "id": "liyue-waypoint-960",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -385.99, "z": -4137.17 },
+      "rotation": 2.7453
+    },
+    {
+      "areaId": "chenyu-vale-upper-vale",
+      "arrival": { "heightOffset": 192.57, "position": { "x": 161.46, "z": -3882.07 }, "rotation": -2.6374 },
+      "heightOffset": 192.57,
+      "id": "liyue-waypoint-961",
+      "kind": "TeleportWaypoint",
+      "position": { "x": 161.46, "z": -3882.07 },
+      "rotation": -2.6374
+    },
+    {
+      "areaId": "chenyu-vale-upper-vale",
+      "arrival": { "heightOffset": 122.64, "position": { "x": 295.52, "z": -3295.37 }, "rotation": -1.1002 },
+      "heightOffset": 122.64,
+      "id": "liyue-waypoint-962",
+      "kind": "TeleportWaypoint",
+      "position": { "x": 295.52, "z": -3295.37 },
+      "rotation": -1.1002
+    },
+    {
+      "areaId": "chenyu-vale-upper-vale",
+      "arrival": { "heightOffset": 229.4, "position": { "x": 221.5, "z": -3458.67 }, "rotation": -0.4248 },
+      "heightOffset": 229.4,
+      "id": "liyue-waypoint-963",
+      "kind": "TeleportWaypoint",
+      "position": { "x": 221.5, "z": -3458.67 },
+      "rotation": -0.4248
+    },
+    {
+      "areaId": "chenyu-vale-southern-mountain",
+      "arrival": { "heightOffset": 181.42, "position": { "x": -87.74, "z": -3729.83 }, "rotation": -2.5775 },
+      "heightOffset": 181.42,
+      "id": "liyue-waypoint-964",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -87.74, "z": -3729.83 },
+      "rotation": -2.5775
+    },
+    {
+      "areaId": "chenyu-vale-upper-vale",
+      "arrival": { "heightOffset": -3.74, "position": { "x": 31.41, "z": -3563.89 }, "rotation": 2.7415 },
+      "heightOffset": -3.74,
+      "id": "liyue-waypoint-965",
+      "kind": "TeleportWaypoint",
+      "position": { "x": 31.41, "z": -3563.89 },
+      "rotation": 2.7415
+    },
+    {
+      "areaId": "mt-laixin",
+      "arrival": { "heightOffset": -254.23, "position": { "x": -364.51, "z": -4044.29 }, "rotation": 2.3877 },
+      "heightOffset": -254.23,
+      "id": "liyue-waypoint-966",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -364.51, "z": -4044.29 },
+      "rotation": 2.3877
+    },
+    {
+      "areaId": "chenyu-vale-southern-mountain",
+      "arrival": { "heightOffset": 113.77, "position": { "x": -298.42, "z": -3130.73 }, "rotation": -1.9243 },
+      "heightOffset": 113.77,
+      "id": "liyue-waypoint-1002",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -298.42, "z": -3130.73 },
+      "rotation": -1.9243
+    },
+    {
+      "areaId": "chenyu-vale-upper-vale",
+      "arrival": { "heightOffset": -26.54, "position": { "x": 58.65, "z": -2381.92 }, "rotation": 0.3274 },
+      "heightOffset": -26.54,
+      "id": "liyue-waypoint-1008",
+      "kind": "TeleportWaypoint",
+      "position": { "x": 58.65, "z": -2381.92 },
+      "rotation": 0.3274
+    },
+    {
+      "areaId": "chenyu-vale-southern-mountain",
+      "arrival": { "heightOffset": 53.27, "position": { "x": -297.1, "z": -3760.28 }, "rotation": 1.0231 },
+      "heightOffset": 53.27,
+      "id": "liyue-waypoint-1011",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -297.1, "z": -3760.28 },
+      "rotation": 1.0231
+    },
+    {
+      "areaId": "chenyu-vale-southern-mountain",
+      "arrival": { "heightOffset": 131.91, "position": { "x": -89.81, "z": -3320.9 }, "rotation": -2.8923 },
+      "heightOffset": 131.91,
+      "id": "liyue-waypoint-1136",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -89.81, "z": -3320.9 },
+      "rotation": -2.8923
+    },
+    {
+      "areaId": "chenyu-vale-upper-vale",
+      "arrival": { "heightOffset": 147.25, "position": { "x": 451.68, "z": -3244.48 }, "rotation": 0.3125 },
+      "heightOffset": 147.25,
+      "id": "liyue-waypoint-1144",
+      "kind": "TeleportWaypoint",
+      "position": { "x": 451.68, "z": -3244.48 },
+      "rotation": 0.3125
+    },
+    {
+      "areaId": "chenyu-vale-upper-vale",
+      "arrival": { "heightOffset": 360.92, "position": { "x": 486.29, "z": -3882.12 }, "rotation": 1.8624 },
+      "heightOffset": 360.92,
+      "id": "liyue-waypoint-1148",
+      "kind": "TeleportWaypoint",
+      "position": { "x": 486.29, "z": -3882.12 },
+      "rotation": 1.8624
+    },
+    {
+      "areaId": "chenyu-vale-upper-vale",
+      "arrival": { "heightOffset": 53.43, "position": { "x": 116.31, "z": -3687.75 }, "rotation": 2.7556 },
+      "heightOffset": 53.43,
+      "id": "liyue-waypoint-1155",
+      "kind": "TeleportWaypoint",
+      "position": { "x": 116.31, "z": -3687.75 },
+      "rotation": 2.7556
+    },
+    {
+      "areaId": "chenyu-vale-upper-vale",
+      "arrival": { "heightOffset": 170.58, "position": { "x": 656.92, "z": -3733.64 }, "rotation": 1.9521 },
+      "heightOffset": 170.58,
+      "id": "liyue-waypoint-1158",
+      "kind": "TeleportWaypoint",
+      "position": { "x": 656.92, "z": -3733.64 },
+      "rotation": 1.9521
+    },
+    {
+      "areaId": "chenyu-vale-southern-mountain",
+      "arrival": { "heightOffset": -3.65, "position": { "x": -498.11, "z": -2959.91 }, "rotation": 1.0756 },
+      "heightOffset": -3.65,
+      "id": "liyue-waypoint-1200",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -498.11, "z": -2959.91 },
+      "rotation": 1.0756
+    },
+    {
+      "areaId": "chenyu-vale-southern-mountain",
+      "arrival": { "heightOffset": 29.28, "position": { "x": -954.43, "z": -3524.2 }, "rotation": -1.7642 },
+      "heightOffset": 29.28,
+      "id": "liyue-waypoint-1201",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -954.43, "z": -3524.2 },
+      "rotation": -1.7642
+    },
+    {
+      "areaId": "chenyu-vale-upper-vale",
+      "arrival": { "heightOffset": 103.17, "position": { "x": 225.63, "z": -2992.59 }, "rotation": 1.7546 },
+      "heightOffset": 103.17,
+      "id": "liyue-waypoint-1206",
+      "kind": "TeleportWaypoint",
+      "position": { "x": 225.63, "z": -2992.59 },
+      "rotation": 1.7546
     }
   ],
   "residents": [

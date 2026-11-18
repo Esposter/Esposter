@@ -452,9 +452,9 @@ export const ORIGIN_TOLERANCE_METRES = 0.001;
 // How near a placed point's nearest official map point must lie, in game units, for the point to be filed in that map
 // Point's region: about nine in ten placed NPCs lie within about twenty of it
 export const REGION_MAX_DISTANCE = 100;
-// The regions whose Teleport Waypoints the waypoints command writes into their region data: Mondstadt, and the others as
-// Each one's map fit is checked
-export const WAYPOINT_REGIONS: readonly string[] = [DerivedAssetComponent.Mondstadt];
+// The regions whose Teleport Waypoints the waypoints command writes into their region data. A region joins the list once its
+// Map fit passes its bar, one at a time, and a region in it whose fit is over the bar writes none
+export const WAYPOINT_REGIONS: readonly string[] = [DerivedAssetComponent.Mondstadt, DerivedAssetComponent.Liyue];
 // The regions whose Statues of the New Moon the waypoints command writes: Nod-Krai, whose statues the official map labels
 // As Statues of The Seven in its own map area, each paired with the scene's transport point it stands at
 export const NEW_MOON_STATUE_REGIONS: readonly string[] = [DerivedAssetComponent.NodKrai];
