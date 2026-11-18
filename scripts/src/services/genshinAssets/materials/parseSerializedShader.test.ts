@@ -226,6 +226,8 @@ describe(parseSerializedShader, () => {
       uint8List(blob),
     ]);
 
+    // Every render state value of the fixture is a zero with no driving name
+    const zeroValue = { name: "", value: 0 };
     expect(parseSerializedShader(shader)).toStrictEqual({
       name: "miHoYo/Test",
       subShaders: [
@@ -238,6 +240,10 @@ describe(parseSerializedShader, () => {
                 [2, "TOON_LIGHTMAP_ON"],
               ]),
               name: "BODY",
+              state: {
+                blend: { colorMask: zeroValue, destination: zeroValue, operation: zeroValue, source: zeroValue },
+                depth: { cull: zeroValue, zTest: zeroValue, zWrite: zeroValue },
+              },
               subPrograms: {
                 Domain: [],
                 Fragment: [

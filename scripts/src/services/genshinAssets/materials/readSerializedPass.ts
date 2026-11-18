@@ -6,8 +6,8 @@ import { readSerializedShaderState } from "#src/services/genshinAssets/materials
 import { readStage } from "#src/services/genshinAssets/materials/readStage";
 import { skipTagMap } from "#src/services/genshinAssets/materials/skipTagMap";
 
-// Reads a pass: its keyword names keyed by index, its state, whose name is the pass's own, its stage programs, then
-// Its use name, name and texture name, which are read past, and its tags
+// Reads a pass: its keyword names keyed by index, its name, its state, its stage programs, then its use name, name and
+// Texture name, which are read past, and its tags
 export const readSerializedPass = (cursor: BinaryCursor): SerializedPassRecord => {
   const keywordNames = new Map(
     cursor.list(() => {
@@ -17,7 +17,8 @@ export const readSerializedPass = (cursor: BinaryCursor): SerializedPassRecord =
     }),
   );
   cursor.int32();
-  const name = readSerializedShaderState(cursor);
+  const name = cursor.string();
+  const state = readSerializedShaderState(cursor);
   cursor.uint32();
   const vertex = readStage(cursor);
   const fragment = readStage(cursor);
@@ -44,6 +45,7 @@ export const readSerializedPass = (cursor: BinaryCursor): SerializedPassRecord =
   return {
     keywordNames,
     name,
+    state,
     subPrograms: {
       [ShaderProgramStage.Domain]: domain,
       [ShaderProgramStage.Fragment]: fragment,

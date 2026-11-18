@@ -99,7 +99,7 @@ export const parseSerializedShader = (data: Buffer): SerializedShader => {
       [ShaderProgramStage.Hull]: resolveStage(pass.subPrograms[ShaderProgramStage.Hull], keywordNames),
       [ShaderProgramStage.Vertex]: resolveStage(pass.subPrograms[ShaderProgramStage.Vertex], keywordNames),
     };
-    return { keywordNames, name: pass.name, subPrograms: stageSubProgramsMap };
+    return { keywordNames, name: pass.name, state: pass.state, subPrograms: stageSubProgramsMap };
   };
   const resolveSubShader = (subShader: SerializedSubShaderRecord): SerializedSubShader => ({
     passes: subShader.passes.map((pass) => resolvePass(pass)),

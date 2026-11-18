@@ -1,3 +1,4 @@
+import type { SerializedShaderState } from "#src/models/genshinAssets/materials/SerializedShaderState";
 import type { SerializedSubProgramRecord } from "#src/models/genshinAssets/materials/SerializedSubProgramRecord";
 import type { ShaderProgramStage } from "#src/models/genshinAssets/materials/ShaderProgramStage";
 
@@ -5,5 +6,6 @@ import type { ShaderProgramStage } from "#src/models/genshinAssets/materials/Sha
 export interface SerializedPassRecord {
   keywordNames: Map<number, string>;
   name: string;
+  state: SerializedShaderState;
   subPrograms: Record<ShaderProgramStage, SerializedSubProgramRecord[]>;
 }

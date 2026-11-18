@@ -6,3 +6,5 @@ export const VECTOR_OR_MATRIX_PARAMETER_BYTES = 12;
 export const PARAMETER_FLAG_BYTES = 2;
 // A DXBC container's magic, the four bytes its compiled program opens with
 export const DXBC_MAGIC = "DXBC";
+// The driving name Unity writes on a render state value no material property drives, so the shader sets it as a literal
+export const UNNAMED_PROPERTY = "<noninit>";
