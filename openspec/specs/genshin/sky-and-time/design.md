@@ -63,7 +63,7 @@ The sky is the scene's background node (`createSkyNode`), drawn behind everythin
 
 - **A set hour is a cut, not a sweep.** Setting the clock jumps the keyframes; only the running clock blends, so reduced motion needs nothing extra.
 - **Weather is its own page.** A weather raises the sky's cloud cover and the fog's density over these keyframes, as the [weather](../weather/design.md) page describes.
-- **The tuning panel sets the clock.** It sets the hour in development. The game's Time screen, which the [menu screens](../../../changes/genshin-menu-time/design.md) proposal adds, will set it for a reader as the game does.
+- **The tuning panel sets the clock.** It sets the hour in development. The game's Time screen, the [Menu time](../menu-time/design.md) screen, sets it for a reader as the game does.
 
 ## Sources
 
