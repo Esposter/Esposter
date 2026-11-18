@@ -3,6 +3,7 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
+import { getFreeStackSource } from "#src/services/weapon/passives/getFreeStackSource";
 import { takeOne } from "@esposter/shared";
 
 const PRESS_THE_ADVANTAGE_MAXIMUM_STACKS = 3;
@@ -18,19 +19,12 @@ export const createPressTheAdvantagePassiveModule = (params: number[]): PassiveM
     onKitEvent: (event, context, combatant) => {
       if (event.kind !== KitEventKind.EnemyDefeated || event.striker?.characterId !== combatant.characterId) return;
       const { characterId } = combatant;
-      const liveSources = new Set(
-        context.kitEffectState.effects.flatMap((effect) =>
-          effect.kind === "buff" &&
-          effect.characterId === characterId &&
-          effect.source?.startsWith(PRESS_THE_ADVANTAGE_SOURCE)
-            ? [effect.source]
-            : [],
-        ),
+      const source = getFreeStackSource(
+        context.kitEffectState.effects,
+        characterId,
+        PRESS_THE_ADVANTAGE_SOURCE,
+        PRESS_THE_ADVANTAGE_MAXIMUM_STACKS,
       );
-      const source = Array.from(
-        { length: PRESS_THE_ADVANTAGE_MAXIMUM_STACKS },
-        (_value, index) => `${PRESS_THE_ADVANTAGE_SOURCE}${index}`,
-      ).find((stackSource) => !liveSources.has(stackSource));
       if (source === undefined) return;
       buffKitMember(context.kitEffectState, characterId, {
         amount: attackPercentage,
