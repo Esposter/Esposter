@@ -1,14 +1,17 @@
 import type { Context } from "#server/trpc/context";
 
 import { MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
+import { getBucket } from "#server/services/storage/getBucket";
+import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { createMockAuthSession, createMockContext } from "#server/trpc/context.test";
 import { createCallerFactory, publicProcedure, router } from "#server/trpc/index";
 import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { readTopicsHeader } from "#shared/services/realtime/readTopicsHeader";
-import { getTopic, TopicKind, usersInAuth } from "@esposter/db-schema";
+import { createMockBucket } from "@esposter/db-mock";
+import { getTopic, StorageBucket, TopicKind, usersInAuth } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
 import { eq, getTableName } from "drizzle-orm";
-import { afterEach, describe, expect, test } from "vitest";
+import { afterEach, beforeAll, describe, expect, test } from "vitest";
 import { z } from "zod";
 
 type UserRow = typeof usersInAuth.$inferSelect;
@@ -21,6 +24,10 @@ const renameUser = async ({ ctx, input }: { ctx: Pick<Context, "db">; input: z.o
   (await ctx.db.update(usersInAuth).set({ name: input.name }).where(eq(usersInAuth.id, input.id)).returning())[0];
 
 const testRouter = router({
+  putBlobThenFail: publicProcedure.input(userInputSchema).mutation<void>(async ({ input }) => {
+    await getBucket(StorageBucket.UserAssets).put(input, "written");
+    throw new TRPCError({ code: "BAD_REQUEST", message: "Write refused" });
+  }),
   readDeclaredUser: getTopicsProcedure(publicProcedure.input(userInputSchema), ({ input }) => [
     getTopic(TopicKind.User, input),
   ]).query<undefined | UserRow>(readUser),
@@ -39,6 +46,10 @@ const createTestCaller = createCallerFactory(testRouter);
 const userTable = getTableName(usersInAuth);
 
 describe("inferTopicsMiddleware", () => {
+  beforeAll(async () => {
+    ({ bucket: mockBuckets[StorageBucket.UserAssets] } = await createMockBucket(StorageBucket.UserAssets));
+  });
+
   afterEach(() => {
     MockPublishedTopics.length = 0;
   });
@@ -92,8 +103,8 @@ describe("inferTopicsMiddleware", () => {
     expect(readTopicsHeader(context.responseHeaders, "readStaticUser")).toStrictEqual([]);
   });
 
-  // A mutation that fails publishes nothing, even though its write landed before the failure
-  test("publishes nothing for a mutation that fails after its write", async () => {
+  // A mutation that fails after its write still publishes the write, since the write landed before the failure
+  test("publishes a mutation's writes when it fails after them", async () => {
     expect.hasAssertions();
 
     const context = await createMockContext();
@@ -102,6 +113,18 @@ describe("inferTopicsMiddleware", () => {
       createTestCaller(context).renameThenFail({ id: user.id, name: "refused" }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Rename refused]`);
 
-    expect(MockPublishedTopics).toStrictEqual([]);
+    expect(MockPublishedTopics).toStrictEqual([`${userTable}:*`, `${userTable}:id=${user.id}`]);
+  });
+
+  // A blob a failed mutation wrote is published too, for the same reason as a row it wrote
+  test("publishes a blob a mutation wrote before it failed", async () => {
+    expect.hasAssertions();
+
+    const key = "inferred/failed-write";
+    await expect(
+      createTestCaller(await createMockContext()).putBlobThenFail(key),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Write refused]`);
+
+    expect(MockPublishedTopics).toContain(`USER_ASSETS:${key}`);
   });
 });

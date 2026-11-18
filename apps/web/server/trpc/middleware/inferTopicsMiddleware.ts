@@ -24,14 +24,13 @@ export const inferTopicsMiddleware = t.middleware(async ({ ctx, meta, next, path
   const result = await requestDbStorage.run(recorded.database, () =>
     requestBlobsStorage.run(blobs, () => next({ ctx: { db: recorded.database } })),
   );
-  if (!result.ok) return result;
-
   // A query's topics travel back with its answer, so the client watches what the read it rendered came from
-  if (type === "query") {
+  if (type === "query" && result.ok) {
     const topics = [...new Set([...(await getReadTopics(recorded.statements)), ...blobs.reads])];
     if (topics.length > 0) ctx.responseHeaders.append(TOPICS_HEADER, formatTopicsHeaderValue(path, { readAt, topics }));
   }
-  // A write is published whichever procedure makes it, since a query may delete the rows it reads (a lapsed invite)
+  // A write is published whichever procedure makes it and however it ends, since a query may delete the rows it reads (a
+  // Lapsed invite) and a write may land before the procedure fails. A published topic only wakes a reader to refetch
   await publishTopicsBestEffort(
     async () => [...(await getWriteTopics(recorded.statements)), ...blobs.writes],
     `Failed to publish the topics of "${path}":`,
