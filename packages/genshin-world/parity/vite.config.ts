@@ -10,8 +10,21 @@ import { defaultClientConditions, defineConfig } from "vite";
 // The package, so the page and the visual suite glob the screens from `/src` alike. Its siblings are read from their
 // Source, as the tests read them, so a change to the engine or the interface library shows without a build. A production
 // Build of the page is what `genshin:parity load` measures: its entry is named here since the root holds no `index.html`
+// A fixture and its reference are the parity page's own, each a lazy chunk of its screen
+const PARITY_ONLY_MODULE_REGEX = /\.(?<kind>fixture|reference)\.ts$/u;
+
 export default defineConfig({
-  build: { rolldownOptions: { input: resolve(import.meta.dirname, "index.html") } },
+  build: {
+    rolldownOptions: {
+      input: resolve(import.meta.dirname, "index.html"),
+      output: {
+        // The components a screen's fixture shares with another screen's are one chunk, not a chunk each: a lazy component
+        // Is a dynamic entry of its own, so each shared one would be a request on every screen that renders it
+        manualChunks: (id) =>
+          id.includes("/src/components/") && !PARITY_ONLY_MODULE_REGEX.test(id) ? "components" : undefined,
+      },
+    },
+  },
   plugins: [
     ...getVuePlugins({ customElements: tresCustomElements }),
     dynamicJsonImportPlugin,
