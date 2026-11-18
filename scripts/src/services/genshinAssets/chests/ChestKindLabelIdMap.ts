@@ -10,4 +10,7 @@ export const ChestKindLabelIdMap: Record<ChestKind, number> = {
   [ChestKind.Precious]: 45,
   [ChestKind.Remarkable]: 269,
   [ChestKind.Sealed]: 75,
+  // The two Mora chests' labels, the wooden one and the stone pile, which the map marks across the regions
+  [ChestKind.StonePileMora]: 359,
+  [ChestKind.WoodenMora]: 129,
 };
