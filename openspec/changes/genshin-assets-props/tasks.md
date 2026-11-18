@@ -11,6 +11,7 @@
 ## 2. Windrise
 
 - [ ] 2.1 [phase 0] Build the comparison of a scene's witness with a recorded frame, then compare the Windrise statue and the oak with the statue-resonance recording and the statue-blessing recording, each at its camera. Verify: a test named after the scenario 'The check reports each placed piece with its score', written first and seen failing; then `pnpm -C scripts genshin:parity compare` writes one row for the statue and one for the oak against each recording, each with its score and bar.
+      Open: the two recordings are on disk, but the reference, landmark and witness pose loop for them is not run and the per-piece check is not built, so this unit left it for the main session.
 
 ## 3. Placement data
 
@@ -19,22 +20,39 @@
 - [x] 3.2 [phase 5] Read each region's chest record in the world, not Mondstadt's alone, and offer its unopened chests on F. Verify: a store test named after the scenarios 'An unopened chest in another region is offered to open' and 'A region with no published chest record offers no chest' reads the Liyue chest record through the reader, written first and seen failing.
 - [x] 3.3 [phase 5] Add one region at a time to the list of regions the waypoints command writes, once its map fit passes its bar, and draw its waypoints as the stand-in landmark. Verify: `pnpm -C scripts genshin:assets points-fit` prints the region's residual under its bar, and `pnpm -C scripts genshin:assets waypoints --dry-run` names its rows; a test named after the scenarios 'A region whose map fit passes has its waypoints in the world' and 'A region whose map fit is over its bar has no waypoints', written first and seen failing.
 - [ ] 3.4 [phase 7] On the PC, export the Goddess statue prefab of Liyue, Natlan, Snezhnaya and Sumeru, each name found with the lookup from task 1.2, and fit each with the statue fit from task 1.6. Fontaine, Inazuma and Nod-Krai are left to their roadmap items. Verify: `pnpm -C scripts genshin:assets fit <region> --only statue --dry-run` prints each region's counts.
+      Waits on the PC: its Goddess statue exports run with the game closed on Windows, and this Mac exports nothing.
 - [ ] 3.5 [phase 4] Read Mondstadt's scene-3 gadget groups from the block scripts the install holds, so its chests, gather points and puzzles take the game's own placements in place of the public map's. The installed client's Lua block holds no group script (genshin-gathering task 2.1), so the first step is to find the block that holds them and write it into the scene-groups design. Verify: a test named after the scenario 'A scene's gadget group is read from its block script', written first and seen failing, then the scene-groups design names the block that holds Mondstadt's groups.
+      Waits on the scene-groups open question whether the client's scene 3 block scripts hold any group's members; the settled direction says the client holds none, so there is no block to read yet.
 - [ ] 3.6 [phase 6] Decide where each region's forge is placed. Mondstadt's blacksmith is read from its scene group's Blacksmith point, as [forging](../genshin-forging/design.md) task 1.1 places it, and each other region takes its forge from a source this task names, either the same group records or another. Verify: the design's Decisions name the source each region's forge placements come from and the one rejected with its reason, and forging task 2.4 reads its placements from that source.
+      Not started in this unit: it needs each region's scene group Blacksmith point read and the forge source named in Decisions, a research pass of its own.
 
 ## 4. Models
 
 - [ ] 4.1 [phase 7] Build the props kit in the engine, which draws a kind's fitted outline in its colour through the existing box and stacked-lathe generators, and have the world components draw a kind's published record through it, keeping the stand-in for a kind with none. Verify: a kit test over a fixture record, written first and seen failing, and a component test named after the scenarios 'A prop of a published kind stands as its fitted shape', 'A prop of a kind with no record keeps its stand-in' and 'A region's statue stands as its own fitted shape', written first and seen failing.
+      Not started in this unit: the props kit draws published records, and the first record comes from the PC export of task 4.2.
 - [ ] 4.2 [phase 7] On the PC, export the Common chest's prefab, named from its dump row, and fit its outline; each other tier and the Buried chest take the same step for their own prefab. This task is the first kind's: it adds the kind's row to `PROP_KINDS` and the colour field to the record, its dry run names the key `props/<kind>` and makes no request, and after its publish `genshin:data verify` passes; tasks 4.3 to 4.12 follow this step for their own kinds. Verify: the fit's dry run prints its counts, the record publishes under its kind's key, and `pnpm -C scripts genshin:data verify` passes.
+      Waits on the PC: exports the Common chest's prefab, named by root-find on the Windows layout dump.
 - [ ] 4.3 [phase 7] On the PC, export one prefab for each seal kind, vines, ice and rock, and fit each. Verify: each kind's dry run prints its counts, and `pnpm -C scripts genshin:parity compare` scores the sealed chest frame of the chest-seal-pyro recording against its bar.
+      Waits on the PC: exports the three seal prefabs.
 - [ ] 4.4 [phase 7] On the PC, export the Wooden and Stone Pile Mora chest prefabs and fit each. Verify: each dry run prints its counts; no recording of a Mora chest is on disk, so the reference is a public clip's frame found by search, and `pnpm -C scripts genshin:parity compare` scores it.
+      Waits on the PC: exports the Wooden and Stone Pile Mora prefabs.
 - [ ] 4.5 [phase 7] On the PC, export the Anemoculus prefab and fit its outline, and read each Oculus kind's colour from its export. Verify: the dry run prints one outline and one colour for each kind of `OculusKind`.
+      Waits on the PC: exports the Anemoculus prefab and the Oculus colours.
 - [ ] 4.6 [phase 7] On the PC, export the commonest gather prefab of each region and the crystal chunk prefab, and fit each. Verify: each dry run prints its counts.
+      Waits on the PC: exports the gather and crystal prefabs.
 - [ ] 4.7 [phase 7] On the PC, export one Elemental Monument prefab and fit it, then compare the monument with the Mondstadt pillars recording. Verify: `pnpm -C scripts genshin:parity compare` scores the monument frame within its bar.
+      Waits on the PC: exports one Elemental Monument prefab.
 - [ ] 4.8 [phase 7] On the PC, export one ley line blossom prefab and fit its outline. Verify: the dry run prints its counts, and the record publishes under its kind's key.
+      Waits on the PC: exports one ley line blossom prefab.
 - [ ] 4.9 [phase 7] On the PC, export one prefab for each crafting bench kind the bench places name, and the forge's prefab, and fit each. Verify: each dry run prints its counts.
+      Waits on the PC: exports the crafting bench prefabs and the forge's prefab.
 - [ ] 4.10 [phase 7] On the PC, export one waypoint prefab from its transport point template, fit it and publish its record under its kind's key, which the props kit of task 4.1 draws for the waypoints in place of the stand-in landmark. Verify: the dry run prints its counts, the record publishes and `pnpm -C scripts genshin:data verify` passes, and `pnpm -C scripts genshin:parity compare` scores a waypoint clip on disk against its bar.
+      Waits on the PC: exports one transport point prefab.
 - [ ] 4.11 [phase 7] On the PC, export one domain entrance prefab, named from its entrance's dungeon row, and fit it. Verify: the dry run prints its counts.
+      Waits on the PC: exports one domain entrance prefab.
 - [ ] 4.12 [phase 7] On the PC, export the Frostbearing Tree prefab and fit it with the tree kit's fit. Verify: the dry run prints its counts, and the record publishes under its kind's key.
+      Waits on the PC: exports the Frostbearing Tree prefab.
 - [ ] 4.13 [phase 4] Add Mondstadt's gate and door part to the Building kit, fitted with the visual-hull fit from the gate and door meshes its extract already holds, and draw it in the deployed build, which draws no gate part today. Verify: a test named after the scenario 'A gate is drawn from its fitted hull in the deployed build', written first and seen failing, and `pnpm -C scripts genshin:assets fit <component> --only gates --dry-run` prints its counts.
+      Not started in this unit: the gate's record must be published before the deployed build draws it, an outward publish for the main session to release.
 - [ ] 4.14 [phase 6] Export the Serenitea Pot realm: add the realm scene to the component map with its roots, export its closure and one furnishing prefab on the PC, and fit the island's outline in place of the disc and two boxes the realm is drawn as. Verify: a test named after the scenario 'The realm is drawn from its fitted island', written first and seen failing, and `pnpm -C scripts genshin:assets fit <component> --only realm --dry-run` prints its counts.
+      Waits on the PC: the Serenitea Pot realm layout is not in the dump and is exported on Windows only.
