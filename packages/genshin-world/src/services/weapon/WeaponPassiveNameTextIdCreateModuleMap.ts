@@ -17,6 +17,7 @@ import { createBluntConclusionPassiveModule } from "#src/services/weapon/passive
 import { createBoltOfPerceptionPassiveModule } from "#src/services/weapon/passives/createBoltOfPerceptionPassiveModule";
 import { createBoundlessBlessingPassiveModule } from "#src/services/weapon/passives/createBoundlessBlessingPassiveModule";
 import { createByakuyaKougetsuPassiveModule } from "#src/services/weapon/passives/createByakuyaKougetsuPassiveModule";
+import { createCandleWovenFromTheNightPassiveModule } from "#src/services/weapon/passives/createCandleWovenFromTheNightPassiveModule";
 import { createChordPassiveModule } from "#src/services/weapon/passives/createChordPassiveModule";
 import { createComposedPassiveModule } from "#src/services/weapon/passives/createComposedPassiveModule";
 import { createCouragePassiveModule } from "#src/services/weapon/passives/createCouragePassiveModule";
@@ -97,6 +98,7 @@ import { createRepentanceAndRedemptionPassiveModule } from "#src/services/weapon
 import { createRustPassiveModule } from "#src/services/weapon/passives/createRustPassiveModule";
 import { createSamuraiConductPassiveModule } from "#src/services/weapon/passives/createSamuraiConductPassiveModule";
 import { createSeasonedSymphonyPassiveModule } from "#src/services/weapon/passives/createSeasonedSymphonyPassiveModule";
+import { createSecretsOfFrostPassiveModule } from "#src/services/weapon/passives/createSecretsOfFrostPassiveModule";
 import { createSecretSilversTestamentPassiveModule } from "#src/services/weapon/passives/createSecretSilversTestamentPassiveModule";
 import { createSecretWisdomsFavorPassiveModule } from "#src/services/weapon/passives/createSecretWisdomsFavorPassiveModule";
 import { createSharpPassiveModule } from "#src/services/weapon/passives/createSharpPassiveModule";
@@ -524,4 +526,8 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "3332024747": createWhispersOfWindAndFlowerPassiveModule,
   // Hope Beyond the Peaks (Mountain-Bracing Bolt)
   "387828091": createHopeBeyondThePeaksPassiveModule,
+  // A Candle Woven From the Night (Jade Vista)
+  "1281278291": createCandleWovenFromTheNightPassiveModule,
+  // Secrets of Frost (Winter's Heavy Heart)
+  "2561949083": createSecretsOfFrostPassiveModule,
 };
