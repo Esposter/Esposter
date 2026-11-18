@@ -71,6 +71,7 @@ packages/genshin-world/src/services/bosses/
 | `packages/genshin-world/src/services/bosses/computePerpetualMechanicalArrayHealthFloor.ts` | The health the Perpetual Mechanical Array can be damaged to: 30% until Defensive Mode has triggered               |
 | `packages/genshin-world/src/models/bosses/PerpetualMechanicalArrayFight.ts`                | The Perpetual Mechanical Array's fight: its mode, the seconds in it and whether Defensive Mode has triggered      |
 | `packages/genshin-world/src/models/bosses/PerpetualMechanicalArrayMode.ts`                 | The modes the Perpetual Mechanical Array's fight passes through                                                   |
+| `packages/genshin-world/src/services/bosses/goldenWolflord.ts`                             | Golden Wolflord's attacks from its wiki page, PROVISIONAL timings                                                 |
 | `packages/genshin-world/src/services/bosses/iniquitousBaptist.ts`                          | Iniquitous Baptist's attacks from its wiki page, PROVISIONAL timings                                              |
 | `packages/genshin-world/src/services/bosses/aeonblightDrake.ts`                            | Aeonblight Drake's attacks from its wiki page, PROVISIONAL timings                                                |
 | `packages/genshin-world/src/services/bosses/jadeplumeTerrorshroom.ts`                      | Jadeplume Terrorshroom's attacks from its wiki page, PROVISIONAL timings                                          |
@@ -136,4 +137,5 @@ packages/genshin-world/src/services/bosses/
 - [Jadeplume Terrorshroom](https://genshin-impact.fandom.com/wiki/Jadeplume_Terrorshroom), Genshin Impact Wiki: its attacks with their ATK shares and elements, read from the cached page; its phase thresholds are named, not run.
 - [Aeonblight Drake](https://genshin-impact.fandom.com/wiki/Aeonblight_Drake), Genshin Impact Wiki: its attacks with their ATK shares and elements, read from the cached page; its phase thresholds are named, not run.
 - [Iniquitous Baptist](https://genshin-impact.fandom.com/wiki/Iniquitous_Baptist), Genshin Impact Wiki: its attacks with their ATK shares and elements, read from the cached page; its phase thresholds are named, not run.
+- [Golden Wolflord](https://genshin-impact.fandom.com/wiki/Golden_Wolflord), Genshin Impact Wiki: its attacks with their ATK shares and elements, read from the cached page; its phase thresholds are named, not run.
 - The Domains and Daily Reset sources are the [bosses page](../../specs/genshin/bosses/design.md)'s.

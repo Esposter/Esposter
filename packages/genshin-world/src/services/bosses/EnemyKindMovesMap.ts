@@ -7,6 +7,7 @@ import { ANEMO_HYPOSTASIS_MOVES } from "#src/services/bosses/anemoHypostasis";
 import { EMPEROR_OF_FIRE_AND_IRON_MOVES } from "#src/services/bosses/emperorOfFireAndIron";
 import { EXPERIMENTAL_FIELD_GENERATOR_MOVES } from "#src/services/bosses/experimentalFieldGenerator";
 import { GLUTTONOUS_YUMKASAUR_MOUNTAIN_KING_MOVES } from "#src/services/bosses/gluttonousYumkasaurMountainKing";
+import { GOLDEN_WOLFLORD_MOVES } from "#src/services/bosses/goldenWolflord";
 import { GOLDFLAME_QUCUSAUR_TYRANT_MOVES } from "#src/services/bosses/goldflameQucusaurTyrant";
 import { HYDRO_TULPA_MOVES } from "#src/services/bosses/hydroTulpa";
 import { ICEWIND_SUITE_MOVES } from "#src/services/bosses/icewindSuite";
@@ -40,4 +41,5 @@ export const EnemyKindMovesMap: Partial<Record<EnemyKindId, readonly BossMove[]>
   [EnemyKindId.JadeplumeTerrorshroom]: JADEPLUME_TERRORSHROOM_MOVES,
   [EnemyKindId.AeonblightDrake]: AEONBLIGHT_DRAKE_MOVES,
   [EnemyKindId.IniquitousBaptist]: INIQUITOUS_BAPTIST_MOVES,
+  [EnemyKindId.GoldenWolflord]: GOLDEN_WOLFLORD_MOVES,
 };
