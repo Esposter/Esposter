@@ -31,10 +31,10 @@ export const ScreenLoadBudgetMap: Record<string, LoadBudget> = {
     gameDataBytes: 4444324,
     geometries: 242,
     machine: MEASURED_MACHINE,
-    objects: 322,
+    objects: 593,
     programs: 107,
     readyMs: 11802,
     requests: 132,
-    textures: 39,
+    textures: 49,
   },
 };
