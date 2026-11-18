@@ -130,7 +130,9 @@ export const useCursorPaginationOperationData = <TItem>(
     };
     // What a write that changed a topic the first page came from does: the list's own handler when it passed one, which is
     // Handed the refresh that also adds the rows the page has and the reader does not; the row update by default
-    const changeOnTopic = () => (onTopicChange ? onTopicChange(() => refreshRows(true)) : refreshRows());
+    const changeOnTopic = async () => {
+      await (onTopicChange ? onTopicChange(() => refreshRows(true)) : refreshRows());
+    };
     // A failed read is recorded rather than thrown, so component setup never fails on it and a retry is a plain call;
     // The tRPC link chain still alerts it
     const refresh = async () => {
