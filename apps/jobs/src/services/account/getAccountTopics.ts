@@ -1,7 +1,7 @@
 import type { Topic, UserInAuth } from "@esposter/db-schema";
 
 import { db } from "#src/services/shared/db";
-import { getMemberRoomIds, getPersonReaderTopics } from "@esposter/db";
+import { getMemberRoomIds, getPersonReaderTopics, inJsonArray } from "@esposter/db";
 import {
   bookmarksInApp,
   friendsInSocial,
@@ -24,42 +24,43 @@ export const getAccountTopics = async (userId: UserInAuth["id"]): Promise<Topic[
     .select({ id: roomsInMessage.id })
     .from(roomsInMessage)
     .where(eq(roomsInMessage.userId, userId));
-  const ownedResourceIds = db
-    .select({ id: resourcesInResource.id })
-    .from(resourcesInResource)
-    .where(eq(resourcesInResource.userId, userId));
-  const [readerTopics, memberRoomIds, friendships, bookmarks, threadFollows, webhooks, likes, ownedResources] =
-    await Promise.all([
-      getPersonReaderTopics(db, userId),
-      getMemberRoomIds(db, userId),
-      db
-        .select({ receiverId: friendsInSocial.receiverId, senderId: friendsInSocial.senderId })
-        .from(friendsInSocial)
-        .where(or(eq(friendsInSocial.senderId, userId), eq(friendsInSocial.receiverId, userId))),
-      db
-        .select({ userId: bookmarksInApp.userId })
-        .from(bookmarksInApp)
-        .where(
-          and(
-            ne(bookmarksInApp.userId, userId),
-            or(inArray(bookmarksInApp.resourceId, ownedResourceIds), inArray(bookmarksInApp.roomId, ownedRoomIds)),
-          ),
+  // Read once, then bound as a JSON array: the bookmarks read and the resource topics both need the same rows
+  const ownedResourceIds = (
+    await db
+      .select({ id: resourcesInResource.id })
+      .from(resourcesInResource)
+      .where(eq(resourcesInResource.userId, userId))
+  ).map(({ id }) => id);
+  const [readerTopics, memberRoomIds, friendships, bookmarks, threadFollows, webhooks, likes] = await Promise.all([
+    getPersonReaderTopics(db, userId),
+    getMemberRoomIds(db, userId),
+    db
+      .select({ receiverId: friendsInSocial.receiverId, senderId: friendsInSocial.senderId })
+      .from(friendsInSocial)
+      .where(or(eq(friendsInSocial.senderId, userId), eq(friendsInSocial.receiverId, userId))),
+    db
+      .select({ userId: bookmarksInApp.userId })
+      .from(bookmarksInApp)
+      .where(
+        and(
+          ne(bookmarksInApp.userId, userId),
+          or(inJsonArray(bookmarksInApp.resourceId, ownedResourceIds), inArray(bookmarksInApp.roomId, ownedRoomIds)),
         ),
-      db
-        .select({ roomId: threadFollowsInMessage.roomId, userId: threadFollowsInMessage.userId })
-        .from(threadFollowsInMessage)
-        .where(and(ne(threadFollowsInMessage.userId, userId), inArray(threadFollowsInMessage.roomId, ownedRoomIds))),
-      db
-        .select({ roomId: webhooksInMessage.roomId })
-        .from(webhooksInMessage)
-        .where(eq(webhooksInMessage.creatorId, userId)),
-      db
-        .select({ ancestorIds: postsInPost.ancestorIds, id: postsInPost.id })
-        .from(likesInPost)
-        .innerJoin(postsInPost, eq(postsInPost.id, likesInPost.postId))
-        .where(eq(likesInPost.userId, userId)),
-      ownedResourceIds,
-    ]);
+      ),
+    db
+      .select({ roomId: threadFollowsInMessage.roomId, userId: threadFollowsInMessage.userId })
+      .from(threadFollowsInMessage)
+      .where(and(ne(threadFollowsInMessage.userId, userId), inArray(threadFollowsInMessage.roomId, ownedRoomIds))),
+    db
+      .select({ roomId: webhooksInMessage.roomId })
+      .from(webhooksInMessage)
+      .where(eq(webhooksInMessage.creatorId, userId)),
+    db
+      .select({ ancestorIds: postsInPost.ancestorIds, id: postsInPost.id })
+      .from(likesInPost)
+      .innerJoin(postsInPost, eq(postsInPost.id, likesInPost.postId))
+      .where(eq(likesInPost.userId, userId)),
+  ]);
 
   return [
     ...readerTopics,
@@ -74,7 +75,7 @@ export const getAccountTopics = async (userId: UserInAuth["id"]): Promise<Topic[
       getTopic(TopicKind.Post, ancestorIds[0] ?? id),
       getTopic(TopicKind.Post, id),
     ]),
-    ...ownedResources.map(({ id }) => getTopic(TopicKind.Resource, id)),
+    ...ownedResourceIds.map((id) => getTopic(TopicKind.Resource, id)),
     getTopic(TopicKind.Feed, "posts"),
   ];
 };
