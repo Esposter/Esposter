@@ -564,8 +564,8 @@ const { grantRewards } = useWorldQuestRewards({
   getMaxLevel: (character) =>
     statTables.characterDataMap.get(character.id)?.ascensionPhases[character.ascension]?.maxLevel ?? 0,
 });
-// The dishes' uses, read as the world starts. A food the bag uses is eaten by the character on the field, through its use
-const { dishUseMap } = useWorldDishes();
+// The dishes' uses, read as the bag opens. A food the bag uses is eaten by the character on the field, through its use
+const { dishUseMap } = useWorldDishes({ dishes: computed(() => records.dishes) });
 const {
   blacksmithPlace,
   forgeAmount,
@@ -1378,7 +1378,7 @@ useWorldSaveSync({
       </template>
       <template #[ScreenKind.Inventory]>
         <InventoryScreen
-          v-if="records.craftingRecipes && records.homeBlueprints"
+          v-if="records.craftingRecipes && records.dishes && records.homeBlueprints"
           :blueprint-map
           :cooking-progress
           :crafting-progress

@@ -1,22 +1,12 @@
-import type { DishUse } from "#src/models/cooking/DishUse";
+import type { ScreenRecords } from "#src/models/screen/ScreenRecords";
+import type { Ref } from "vue";
 
-import { readDishes } from "#src/services/cooking/readDishes";
-import { useWorldSessionStore } from "#src/store/session";
-import { getResultAsync } from "@esposter/shared";
-import { shallowRef } from "vue";
+import { computed } from "vue";
 
-// The dishes' uses as the world starts, each by the item id its dish is eaten from, read from the hosted game data
-export const useWorldDishes = () => {
-  const worldSessionStore = useWorldSessionStore();
-  const dishUseMap = shallowRef<ReadonlyMap<number, DishUse>>(new Map());
-  // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-  getResultAsync(() => readDishes(worldSessionStore.gameDataBaseUrl)).match(
-    (dishes) => {
-      dishUseMap.value = new Map(Object.entries(dishes).map(([itemId, dishUse]) => [Number(itemId), dishUse]));
-    },
-    (error) => {
-      console.error(error);
-    },
+// The dishes' uses, each by the item id its dish is eaten from, as the bag reads them once the dishes are read as it opens
+export const useWorldDishes = ({ dishes }: { dishes: Readonly<Ref<ScreenRecords["dishes"] | undefined>> }) => {
+  const dishUseMap = computed(
+    () => new Map(Object.entries(dishes.value ?? {}).map(([itemId, dishUse]) => [Number(itemId), dishUse])),
   );
   return { dishUseMap };
 };

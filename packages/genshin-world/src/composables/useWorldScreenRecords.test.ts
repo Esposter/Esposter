@@ -3,6 +3,7 @@ import type { PaimonsBargainsRotation } from "#src/models/shop/PaimonsBargainsRo
 import type { readCraftingRecipes as readCraftingRecipesFn } from "#src/services/crafting/readCraftingRecipes";
 import type { readCraftingStrongboxes as readCraftingStrongboxesFn } from "#src/services/crafting/readCraftingStrongboxes";
 import type { readDomainChallengeLevels as readDomainChallengeLevelsFn } from "#src/services/domains/readDomainChallengeLevels";
+import type { readDishes as readDishesFn } from "#src/services/cooking/readDishes";
 import type { readHomeBlueprints as readHomeBlueprintsFn } from "#src/services/home/readHomeBlueprints";
 import type { readPaimonsBargainsRotation as readPaimonsBargainsRotationFn } from "#src/services/shop/readPaimonsBargainsRotation";
 import type { readCharacterTrials as readCharacterTrialsFn } from "#src/services/trial/readCharacterTrials";
@@ -15,6 +16,7 @@ import { ShopRefresh } from "#src/models/shop/ShopRefresh";
 import { readCraftingRecipes } from "#src/services/crafting/readCraftingRecipes";
 import { readCraftingStrongboxes } from "#src/services/crafting/readCraftingStrongboxes";
 import { readDomainChallengeLevels } from "#src/services/domains/readDomainChallengeLevels";
+import { readDishes } from "#src/services/cooking/readDishes";
 import { readHomeBlueprints } from "#src/services/home/readHomeBlueprints";
 import { readPaimonsBargainsRotation } from "#src/services/shop/readPaimonsBargainsRotation";
 import { readCharacterTrials } from "#src/services/trial/readCharacterTrials";
@@ -34,6 +36,9 @@ vi.mock(import("#src/services/crafting/readCraftingStrongboxes"), () => ({
 }));
 vi.mock(import("#src/services/domains/readDomainChallengeLevels"), () => ({
   readDomainChallengeLevels: vi.fn<typeof readDomainChallengeLevelsFn>(() => Promise.resolve({})),
+}));
+vi.mock(import("#src/services/cooking/readDishes"), () => ({
+  readDishes: vi.fn<typeof readDishesFn>(() => Promise.resolve({})),
 }));
 vi.mock(import("#src/services/home/readHomeBlueprints"), () => ({
   readHomeBlueprints: vi.fn<typeof readHomeBlueprintsFn>(() => Promise.resolve([])),
@@ -110,6 +115,19 @@ describe(useWorldScreenRecords, () => {
     expect(readCraftingRecipes).toHaveBeenCalledExactlyOnceWith(gameDataBaseUrl);
     expect(readHomeBlueprints).toHaveBeenCalledExactlyOnceWith(gameDataBaseUrl);
     expect(records.craftingRecipes).toBe(recipes);
+  });
+
+  test("reads the dishes as the bag opens", async () => {
+    expect.hasAssertions();
+
+    startTestWorldSession();
+    useWorldScreenRecords({ gameDataBaseUrl });
+    const worldScreenStore = useWorldScreenStore();
+    worldScreenStore.screenKind = ScreenKind.Inventory;
+    await nextTick();
+    await flushReads();
+
+    expect(readDishes).toHaveBeenCalledExactlyOnceWith(gameDataBaseUrl);
   });
 
   test("reads the wish schedule and the character trials as the wish screen opens", async () => {

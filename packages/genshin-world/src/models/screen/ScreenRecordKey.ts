@@ -3,6 +3,7 @@ export const ScreenRecordKey = {
   CharacterTrials: "characterTrials",
   CraftingRecipes: "craftingRecipes",
   CraftingStrongboxes: "craftingStrongboxes",
+  Dishes: "dishes",
   DomainChallengeLevels: "domainChallengeLevels",
   HomeBlueprints: "homeBlueprints",
   PaimonsBargainsRotation: "paimonsBargainsRotation",
