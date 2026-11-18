@@ -17,6 +17,9 @@ import { mergeConfig } from "tsdown";
 const AVATAR_MODULE_DIRECTORY = "services/character/avatar";
 // The card game's service and session, which the world's session loads on a duel's opening rather than with the world
 const GCG_MODULE_DIRECTORIES = ["services/gcg", "components/Gcg"];
+// Directories nothing in the repo imports from the package's barrel. The barrel leaves their modules out, so the
+// entry does not name them, and a module under one loads only when a module that reaches it does
+const UNREFERENCED_MODULE_DIRECTORIES = ["components/Weapon"];
 // The parity page's modules the tooling in `scripts` imports as types. The page writes to `window` when it loads, so
 // No wildcard reaches its modules
 const PARITY_EXPORT_NAMES = [
@@ -55,6 +58,7 @@ const tsdownConfiguration: UserConfig = mergeConfig(getTsdownConfigurationVue({ 
         KIT_MODULE_DIRECTORY,
         AVATAR_MODULE_DIRECTORY,
         ...GCG_MODULE_DIRECTORIES,
+        ...UNREFERENCED_MODULE_DIRECTORIES,
       ]);
     },
   },
