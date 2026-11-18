@@ -1,6 +1,6 @@
 # Puzzles
 
-The puzzles' places follow the [spawned places](../spawned-places/design.md) page, with the map's public points standing in for them as the Open list below records. This page is the built half of the [puzzles](../../../changes/genshin-puzzles/design.md) proposal: each puzzle mark the map gives is carried into its region's slice by its kind (`scripts/src/services/genshinAssets/puzzles/buildPuzzlePlaces.ts`), and an Elemental Monument is a small state machine that a strike or a reaction lights (`packages/genshin-world/src/models/puzzle/ElementalMonument.ts`, lit by `packages/genshin-world/src/services/puzzle/strikeElementalMonument.ts`). The Mondstadt Seelies are paired with their courts and led in the world (`packages/genshin-world/src/services/puzzle/pairSeelieCourts.ts`, led by `packages/genshin-world/src/services/puzzle/stepSeelie.ts`); each monument mark is placed in the world as a puzzle of its own, and a hit's element strikes it (`packages/genshin-world/src/store/puzzles.ts`).
+The puzzles' places follow the [spawned places](../spawned-places/design.md) page, with the map's public points standing in for them as the Open list below records. This page is the built half of the [puzzles](../../../changes/archive/2026-11-18-genshin-puzzles/design.md) proposal: each puzzle mark the map gives is carried into its region's slice by its kind (`scripts/src/services/genshinAssets/puzzles/buildPuzzlePlaces.ts`), and an Elemental Monument is a small state machine that a strike or a reaction lights (`packages/genshin-world/src/models/puzzle/ElementalMonument.ts`, lit by `packages/genshin-world/src/services/puzzle/strikeElementalMonument.ts`). The Mondstadt Seelies are paired with their courts and led in the world (`packages/genshin-world/src/services/puzzle/pairSeelieCourts.ts`, led by `packages/genshin-world/src/services/puzzle/stepSeelie.ts`); each monument mark is placed in the world as a puzzle of its own, and a hit's element strikes it (`packages/genshin-world/src/store/puzzles.ts`). Each Mondstadt Shrine of Depths is offered beneath its point while the bag holds a key of its region, opens with that key and then holds its Luxurious chest (`packages/genshin-world/src/composables/useWorldShrines.ts`, `packages/genshin-world/src/services/puzzle/openShrineOfDepths.ts`, `packages/genshin-world/src/services/puzzle/computeShrineChestPlaces.ts`).
 
 ## How it works
 
@@ -32,15 +32,18 @@ flowchart TD
 
 ## Key files
 
-| File                                                                  | Role                                                                    |
-| :-------------------------------------------------------------------- | :---------------------------------------------------------------------- |
-| `packages/genshin-world/src/models/puzzle/PuzzleKind.ts`              | The five kinds the official map marks as puzzles                        |
-| `packages/genshin-world/src/models/puzzle/PuzzlePlace.ts`             | A placed puzzle mechanism: its id, kind and ground point                |
-| `packages/genshin-world/src/services/puzzle/constants.ts`             | The timed monument's lit time, and a Seelie's return and route times    |
-| `scripts/src/services/genshinAssets/puzzles/PuzzleKindLabelIdsMap.ts` | Each kind's labels on the official map                                  |
-| `scripts/src/services/genshinAssets/puzzles/buildPuzzlePlaces.ts`     | Builds each region's puzzle places from the points                      |
-| `scripts/src/services/genshinAssets/points/placeMapPoints.ts`         | Carries a kind's labelled points into their regions, shared with chests |
-| `scripts/src/services/genshinAssets/commands/puzzlesCommand.ts`       | `genshin:assets puzzles`                                                |
+| File                                                                     | Role                                                                    |
+| :----------------------------------------------------------------------- | :---------------------------------------------------------------------- |
+| `packages/genshin-world/src/models/puzzle/PuzzleKind.ts`                 | The five kinds the official map marks as puzzles                        |
+| `packages/genshin-world/src/models/puzzle/PuzzlePlace.ts`                | A placed puzzle mechanism: its id, kind and ground point                |
+| `packages/genshin-world/src/services/puzzle/constants.ts`                | The timed monument's lit time, and a Seelie's return and route times    |
+| `packages/genshin-world/src/services/puzzle/openShrineOfDepths.ts`       | A shrine opened by a key of its own region, and no other                |
+| `packages/genshin-world/src/composables/useWorldShrines.ts`              | The shut shrines offered beneath their points, and opened with a key    |
+| `packages/genshin-world/src/services/puzzle/computeShrineChestPlaces.ts` | The Luxurious chest an open shrine holds                                |
+| `scripts/src/services/genshinAssets/puzzles/PuzzleKindLabelIdsMap.ts`    | Each kind's labels on the official map                                  |
+| `scripts/src/services/genshinAssets/puzzles/buildPuzzlePlaces.ts`        | Builds each region's puzzle places from the points                      |
+| `scripts/src/services/genshinAssets/points/placeMapPoints.ts`            | Carries a kind's labelled points into their regions, shared with chests |
+| `scripts/src/services/genshinAssets/commands/puzzlesCommand.ts`          | `genshin:assets puzzles`                                                |
 
 ## Sources
 
@@ -50,3 +53,4 @@ flowchart TD
 
 - [ ] **The servers' puzzle mechanisms are not in the client's data** — no source yet: the servers' puzzle logic is not on disk; the extracted `lua/raw` folder holds `{data-root}/genshin-parity/extracted/lua/raw/scene3_dummy_points.json`, a table of positions keyed by id, whose puzzle-named keys are quest points ("Q11022Puzzle", line 9398), and "Build_Scripts_Scene_3_scene3_block115.dat" in that folder is not readable Lua, so decoding that block would settle it.
 - [ ] **The map gives no element, timing or wiring for a mark** — no source yet: what the points' `ext_attrs` key 11 means for a mark is not settled; its values 71 to 73 are named Torch Puzzle, Large Rock Pile and Small Rock Pile in `{data-root}/genshin-parity/references/interactive-map/label-tree.json`.
+- [ ] **Most Shrine of Depths keys are not carried** — no source yet for them: quests 21004, 21007, 21021 and 2008 give Liyue's and Inazuma's keys, which the [quests](../quests/design.md) page leaves for the PC's export; the other rewards that name a key (two investigations, a tutorial, an NPC and one reward no row owns), the keys of regions no quest names, and the statue, domain and Adventure Rank sources the dump does not link to a key are not carried either.

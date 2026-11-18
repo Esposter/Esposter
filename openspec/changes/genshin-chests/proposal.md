@@ -22,7 +22,7 @@ Opening a chest gives its full reward, and the locked, buried and sealed chests 
 
 ## Waiting on
 
-- `openspec/changes/genshin-puzzles/`: the puzzles that lock the chests within their reach.
+- `openspec/changes/archive/2026-11-18-genshin-puzzles/`: the puzzles that lock the chests within their reach.
 - Game exports, which the chest records are read from.
 - The Luxurious chest's Mora and the Remarkable chest's blueprints, which are not settled yet; a decision is owed before those chests are opened.
 

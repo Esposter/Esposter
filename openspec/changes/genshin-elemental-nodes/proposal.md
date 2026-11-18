@@ -23,7 +23,7 @@ Placing the nodes and stones in the world, and destroying a stone, wait on data 
 
 ## Waiting on
 
-- The node and stone placements, which the scene groups this build holds do not carry, and whose group scripts are read from the PC export: `openspec/changes/genshin-puzzles/`.
+- The node and stone placements, which the scene groups this build holds do not carry, and whose group scripts are read from the PC export: `openspec/changes/archive/2026-11-18-genshin-puzzles/`.
 
 ## Impact
 

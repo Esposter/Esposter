@@ -171,7 +171,7 @@ Each owned gap is linked here and carries no task in this change. Where an owner
 - Oculi and the Statues of the Seven: the Oculi in the world, the minimap mark and the statue levels are built on the [statues of the Seven](../../specs/genshin/statues-of-the-seven/design.md) page.
 - Gathering: the investigation spots and the Mora spots are tasks 2.1 and 2.2 of the [gathering](../genshin-gathering/design.md) change.
 - Ley line blossoms: the claim and the outcrop places are the [ley line outcrops](../genshin-ley-line-outcrops/design.md) change, and task 5.1 there adds the blossoms of four regions.
-- Puzzles: the monuments' and shrines' behaviour and the Seelie courts are tasks of the [puzzles](../genshin-puzzles/design.md) change, and the puzzles' spec records that the servers' puzzle logic is not in the client's data, so that part is not closable here.
+- Puzzles: the monuments' and shrines' behaviour and the Seelie courts are tasks of the [puzzles](../archive/2026-11-18-genshin-puzzles/design.md) change, and the puzzles' spec records that the servers' puzzle logic is not in the client's data, so that part is not closable here.
 - Mondstadt's gate bridge: task 2.1 of the [Mondstadt](../genshin-mondstadt/tasks.md) change builds the city's gate bridge matched to its reference, and the Mondstadt buildings page lists it as not yet built.
 - Doors and the rest of a region's buildings: the building work of each region's own change, Mondstadt's gate bridge above among them. This change adds no door of its own.
 - Domain entrances: the entrances' behaviour, the arrival and the claim are the [domains](../genshin-domains/design.md) change.

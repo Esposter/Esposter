@@ -1,6 +1,6 @@
 # Elemental Nodes and Infusion Stones
 
-Elemental Nodes are the world's own elements: a node pulses its element on a fixed clock, and each pulse lays that element on the enemies it reaches. A buffed enemy resists more while the buff lasts, and a reaction that spends the buff ends it. Infusion Stones, which hold an element over the ground around them, are not built: the data for placing and destroying them is not in the build (see Notes). The [puzzles](../genshin-puzzles/design.md) change waits on the same placements.
+Elemental Nodes are the world's own elements: a node pulses its element on a fixed clock, and each pulse lays that element on the enemies it reaches. A buffed enemy resists more while the buff lasts, and a reaction that spends the buff ends it. Infusion Stones, which hold an element over the ground around them, are not built: the data for placing and destroying them is not in the build (see Notes). The [puzzles](../archive/2026-11-18-genshin-puzzles/design.md) change waits on the same placements.
 
 ## Decisions
 
