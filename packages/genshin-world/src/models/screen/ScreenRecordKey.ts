@@ -3,5 +3,6 @@ export const ScreenRecordKey = {
   CraftingRecipes: "craftingRecipes",
   CraftingStrongboxes: "craftingStrongboxes",
   HomeBlueprints: "homeBlueprints",
+  WishSchedule: "wishSchedule",
 } as const;
 export type ScreenRecordKey = (typeof ScreenRecordKey)[keyof typeof ScreenRecordKey];

@@ -1405,6 +1405,7 @@ useWorldSaveSync({
       </template>
       <template #[ScreenKind.Wish]>
         <WishScreen
+          v-if="records.wishSchedule"
           v-model:character-copy-count-map="characterCopyCountMap"
           v-model:characters="characters"
           v-model:pity-map="wishPityMap"
@@ -1416,7 +1417,7 @@ useWorldSaveSync({
           :stat-tables
           :get-world-now
           :now="worldNow"
-          :wish-schedule
+          :wish-schedule="records.wishSchedule"
           :stella-fortuna-name-text-id-map
           :trials
           @close="closeScreen()"

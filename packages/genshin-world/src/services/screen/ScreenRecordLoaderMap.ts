@@ -4,6 +4,7 @@ import { ScreenRecordKey } from "#src/models/screen/ScreenRecordKey";
 import { readCraftingRecipes } from "#src/services/crafting/readCraftingRecipes";
 import { readCraftingStrongboxes } from "#src/services/crafting/readCraftingStrongboxes";
 import { readHomeBlueprints } from "#src/services/home/readHomeBlueprints";
+import { readWishSchedule } from "#src/services/wish/readWishSchedule";
 
 // Each record's reader, by its key, which reads it from the game data's base
 export const ScreenRecordLoaderMap: {
@@ -12,4 +13,5 @@ export const ScreenRecordLoaderMap: {
   [ScreenRecordKey.CraftingRecipes]: readCraftingRecipes,
   [ScreenRecordKey.CraftingStrongboxes]: readCraftingStrongboxes,
   [ScreenRecordKey.HomeBlueprints]: readHomeBlueprints,
+  [ScreenRecordKey.WishSchedule]: readWishSchedule,
 };

@@ -2,12 +2,14 @@ import type { CraftingRecipe } from "#src/models/crafting/CraftingRecipe";
 import type { readCraftingRecipes as readCraftingRecipesFn } from "#src/services/crafting/readCraftingRecipes";
 import type { readCraftingStrongboxes as readCraftingStrongboxesFn } from "#src/services/crafting/readCraftingStrongboxes";
 import type { readHomeBlueprints as readHomeBlueprintsFn } from "#src/services/home/readHomeBlueprints";
+import type { readWishSchedule as readWishScheduleFn } from "#src/services/wish/readWishSchedule";
 
 import { useWorldScreenRecords } from "#src/composables/useWorldScreenRecords";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { readCraftingRecipes } from "#src/services/crafting/readCraftingRecipes";
 import { readCraftingStrongboxes } from "#src/services/crafting/readCraftingStrongboxes";
 import { readHomeBlueprints } from "#src/services/home/readHomeBlueprints";
+import { readWishSchedule } from "#src/services/wish/readWishSchedule";
 import { flushReads } from "#src/services/shared/flushReads.test";
 import { useWorldScreenStore } from "#src/store/screen";
 import { startTestWorldSession } from "#src/store/session.fixture";
@@ -22,6 +24,9 @@ vi.mock(import("#src/services/crafting/readCraftingStrongboxes"), () => ({
 }));
 vi.mock(import("#src/services/home/readHomeBlueprints"), () => ({
   readHomeBlueprints: vi.fn<typeof readHomeBlueprintsFn>(() => Promise.resolve([])),
+}));
+vi.mock(import("#src/services/wish/readWishSchedule"), () => ({
+  readWishSchedule: vi.fn<typeof readWishScheduleFn>(() => Promise.resolve([])),
 }));
 
 describe(useWorldScreenRecords, () => {
@@ -71,6 +76,19 @@ describe(useWorldScreenRecords, () => {
     expect(readCraftingRecipes).toHaveBeenCalledExactlyOnceWith(gameDataBaseUrl);
     expect(readHomeBlueprints).toHaveBeenCalledExactlyOnceWith(gameDataBaseUrl);
     expect(records.craftingRecipes).toBe(recipes);
+  });
+
+  test("reads the wish schedule as the wish screen opens", async () => {
+    expect.hasAssertions();
+
+    startTestWorldSession();
+    useWorldScreenRecords({ gameDataBaseUrl });
+    const worldScreenStore = useWorldScreenStore();
+    worldScreenStore.screenKind = ScreenKind.Wish;
+    await nextTick();
+    await flushReads();
+
+    expect(readWishSchedule).toHaveBeenCalledExactlyOnceWith(gameDataBaseUrl);
   });
 
   test("closes a screen whose record fails to read, and reads it again on the next open", async () => {

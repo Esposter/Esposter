@@ -40,7 +40,6 @@ import { readTips } from "#src/services/tip/readTips";
 import { TipTextLoaderMap } from "#src/services/tip/TipTextLoaderMap";
 import { readMondstadtWildlifePlaces } from "#src/services/wildlife/readMondstadtWildlifePlaces";
 import { readWindriseData } from "#src/services/windrise/readWindriseData";
-import { readWishSchedule } from "#src/services/wish/readWishSchedule";
 import { readCatalogue } from "#src/services/world/readCatalogue";
 import { getResultAsync } from "@esposter/shared";
 
@@ -108,7 +107,6 @@ getResultAsync(() =>
       measureLoadStep("domain-challenge-levels", readDomainChallengeLevels(props.gameDataBaseUrl)),
       measureLoadStep("puzzle-places", readMondstadtPuzzlePlaces(props.gameDataBaseUrl)),
       measureLoadStep("shrine-key-sources", readMondstadtShrineKeySources(props.gameDataBaseUrl)),
-      measureLoadStep("wish-schedule", readWishSchedule(props.gameDataBaseUrl)),
       measureLoadStep("shop-goods", readShopGoodMap(props.gameDataBaseUrl)),
       measureLoadStep("paimons-bargains-rotation", readPaimonsBargainsRotation(props.gameDataBaseUrl)),
       measureLoadStep("frostbearing-tree-levels", readFrostbearingTreeLevels(props.gameDataBaseUrl)),
@@ -139,7 +137,6 @@ getResultAsync(() =>
     domainChallengeLevels,
     puzzlePlaces,
     shrineKeySources,
-    wishSchedule,
     shopIdShopGoodMap,
     paimonsBargainsRotation,
     frostbearingTreeLevels,
@@ -184,7 +181,6 @@ getResultAsync(() =>
       tipText,
       wildlifePlaces,
       windriseData,
-      wishSchedule,
     };
   },
   (error) => {

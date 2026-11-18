@@ -5,4 +5,5 @@ import { ScreenRecordKey } from "#src/models/screen/ScreenRecordKey";
 export const ScreenRecordKeysMap: Partial<Record<ScreenKind, readonly ScreenRecordKey[]>> = {
   [ScreenKind.Crafting]: [ScreenRecordKey.CraftingRecipes, ScreenRecordKey.CraftingStrongboxes],
   [ScreenKind.Inventory]: [ScreenRecordKey.CraftingRecipes, ScreenRecordKey.HomeBlueprints],
+  [ScreenKind.Wish]: [ScreenRecordKey.WishSchedule],
 };
