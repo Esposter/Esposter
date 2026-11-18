@@ -1,7 +1,8 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { Page } from "playwright";
 
-import { STRUCTURE_WIDTH } from "#src/services/genshinParity/shared/constants";
+import { STRUCTURE_WIDTH, WORLD_SCREENS } from "#src/services/genshinParity/shared/constants";
+import { getPageWidth } from "#src/services/genshinParity/shared/getPageWidth";
 import { getReferencePath } from "#src/services/genshinParity/shared/getReferencePath";
 import { openParityPage } from "#src/services/genshinParity/shared/openParityPage";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
@@ -11,8 +12,9 @@ import sharp from "sharp";
 // One reference's page for the witness tools: the parity page on the reference's screen in its own state (its props, a
 // Time of day), at the structure's width unless another is given and the reference's aspect, drawing the component's
 // Exports, beside the reference at that size, and whether a pixel of a target that wide stands in the reference's
-// Scored region, so a tool reads nothing a recording masks or a corner button covers. The caller fetches the
-// References first and closes the page
+// Scored region, so a tool reads nothing a recording masks or a corner button covers. A World screen's page is never
+// Shorter than the interface (`getPageWidth`), so its pixels are the canvas's. The caller fetches the References first
+// And closes the page
 export const openWitnessPage = async (
   referenceId: string,
   witness: DerivedAssetComponent,
@@ -33,11 +35,17 @@ export const openWitnessPage = async (
   if (!reference) throw new InvalidOperationError(Operation.Read, referenceId, "not a reference");
   const referencePath = await getReferencePath(referenceId);
   const { height: referenceHeight, width: referenceWidth } = await sharp(referencePath).metadata();
-  const height = Math.round((width / referenceWidth) * referenceHeight);
+  const pageWidth = getPageWidth({
+    isWorldScreen: WORLD_SCREENS.includes(reference.screen),
+    referenceHeight,
+    referenceWidth,
+    requestedWidth: width,
+  });
+  const height = Math.round((pageWidth / referenceWidth) * referenceHeight);
   // A WebP reference is shrunk as it loads by default, which resamples its pixels differently from its PNG, so the
   // Shrink is left to the resize, and the reference reads as the screenshot it was packed from
   const image = await sharp(referencePath)
-    .resize(width, height, { fastShrinkOnLoad: false })
+    .resize(pageWidth, height, { fastShrinkOnLoad: false })
     .removeAlpha()
     .png()
     .toBuffer();
@@ -45,7 +53,7 @@ export const openWitnessPage = async (
     height,
     props: { ...reference.props, ...propOverrides },
     screen: reference.screen,
-    width,
+    width: pageWidth,
     witness,
     witnessMeshes,
   });
