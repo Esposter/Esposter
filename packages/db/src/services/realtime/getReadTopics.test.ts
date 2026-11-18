@@ -581,4 +581,87 @@ describe(getReadTopics, () => {
       ["message_roomEmojis:*", `message_usersToRooms:userId=${userId}`].toSorted(),
     );
   });
+
+  // A self-join's partner is named by the partner key the read selects for it. Here the select returns only the partner's own
+  // Room, which is the named side's value, not the viewer's: a room the viewer is alone in has no partner, so its partner row
+  // Carries a null room and names nothing. The partner's table is then read whole, since no returned row names the rows a new
+  // Partner would bring
+  test("a self-join's partner is named table-wide when the select returns only the partner's own room", async () => {
+    expect.hasAssertions();
+
+    const { db } = await createMockDb();
+    const viewerId = v7();
+    const otherUserId = v7();
+    await insertUser(db, viewerId);
+    await insertUser(db, otherUserId);
+    const aloneRoomId = v7();
+    const sharedRoomId = v7();
+    await db.insert(roomsInMessage).values([
+      { id: aloneRoomId, name: aloneRoomId, type: RoomType.Room, userId: viewerId },
+      { id: sharedRoomId, name: sharedRoomId, type: RoomType.Room, userId: viewerId },
+    ]);
+    await db.insert(usersToRoomsInMessage).values([
+      { roomId: aloneRoomId, userId: viewerId },
+      { roomId: sharedRoomId, userId: viewerId },
+      { roomId: sharedRoomId, userId: otherUserId },
+    ]);
+    const { database, statements } = recordStatements(db);
+    const partner = alias(usersToRoomsInMessage, "partner");
+
+    await database
+      .select({ roomId: partner.roomId })
+      .from(usersToRoomsInMessage)
+      .leftJoin(
+        partner,
+        and(eq(partner.roomId, usersToRoomsInMessage.roomId), ne(partner.userId, usersToRoomsInMessage.userId)),
+      )
+      .where(eq(usersToRoomsInMessage.userId, viewerId));
+
+    await expect(getReadTopics(statements)).resolves.toStrictEqual(
+      ["message_usersToRooms:*", `message_usersToRooms:userId=${viewerId}`].toSorted(),
+    );
+  });
+
+  // The same self-join, where the select also returns the viewer's own room under a name the partner's room does not take. The
+  // Viewer's room is the partner's key, every viewer row returns it, and so the partner is named by each room the viewer holds,
+  // Whichever order the select lists its columns in
+  test("a self-join's partner is named by the viewer's rooms when the select returns them too, whatever its column order", async () => {
+    expect.hasAssertions();
+
+    const { db } = await createMockDb();
+    const viewerId = v7();
+    const otherUserId = v7();
+    await insertUser(db, viewerId);
+    await insertUser(db, otherUserId);
+    const aloneRoomId = v7();
+    const sharedRoomId = v7();
+    await db.insert(roomsInMessage).values([
+      { id: aloneRoomId, name: aloneRoomId, type: RoomType.Room, userId: viewerId },
+      { id: sharedRoomId, name: sharedRoomId, type: RoomType.Room, userId: viewerId },
+    ]);
+    await db.insert(usersToRoomsInMessage).values([
+      { roomId: aloneRoomId, userId: viewerId },
+      { roomId: sharedRoomId, userId: viewerId },
+      { roomId: sharedRoomId, userId: otherUserId },
+    ]);
+    const { database, statements } = recordStatements(db);
+    const partner = alias(usersToRoomsInMessage, "partner");
+
+    await database
+      .select({ partnerRoomId: partner.roomId, roomId: usersToRoomsInMessage.roomId })
+      .from(usersToRoomsInMessage)
+      .leftJoin(
+        partner,
+        and(eq(partner.roomId, usersToRoomsInMessage.roomId), ne(partner.userId, usersToRoomsInMessage.userId)),
+      )
+      .where(eq(usersToRoomsInMessage.userId, viewerId));
+
+    await expect(getReadTopics(statements)).resolves.toStrictEqual(
+      [
+        `message_usersToRooms:roomId=${aloneRoomId}`,
+        `message_usersToRooms:roomId=${sharedRoomId}`,
+        `message_usersToRooms:userId=${viewerId}`,
+      ].toSorted(),
+    );
+  });
 });

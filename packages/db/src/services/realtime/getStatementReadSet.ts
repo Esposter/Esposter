@@ -4,6 +4,7 @@ import type { SQLWrapper } from "drizzle-orm";
 import { FilterSite } from "#src/models/realtime/FilterSite";
 import { JoinKind } from "#src/models/realtime/JoinKind";
 import { JoinSide } from "#src/models/realtime/JoinSide";
+import { getOccurrenceKey } from "#src/services/realtime/getOccurrenceKey";
 import { getStatementConfig } from "#src/services/realtime/getStatementConfig";
 import { tableMap } from "#src/services/realtime/tableMap";
 import { checkIsRecord } from "#src/util/object/checkIsRecord";
@@ -77,9 +78,10 @@ interface ReadContext {
   level: ReadSetLevel;
   // Whether the chunks walked sit under a `not`, so a condition in them removes the rows it holds, and filters its table
   negated: boolean;
+  // The keys of the table occurrences a left join null-fills, at every level
+  nullFilledKeys: Set<string>;
   readSet: ReadSet;
   scopedKeys: ScopedKey[];
-  selections: ReadSelection[];
 }
 
 interface ReadReference {
@@ -89,7 +91,8 @@ interface ReadReference {
   throughSubquery: boolean;
 }
 
-interface ReadSelection extends Pick<ReadSetKey, "column" | "occurrence" | "table"> {
+// A column the read's own select returns, under the name it returns it by, in the statement level the select is read in
+interface ReadSelection extends Pick<ReadSetKey, "column" | "level" | "occurrence" | "table"> {
   selectedAs: string;
 }
 
@@ -176,14 +179,12 @@ const getScopeOf = ({ key, owner }: ReadColumn) => {
 // The statement level a column is read in, numbered in the order the walk opens the statement's levels
 const getLevelIndex = ({ level, readSet }: ReadContext): number => readSet.levels.indexOf(level);
 
-// A side of a join is selected when the read's own select returns that table column, under the name it returns it by
-const toKey = ({ key, occurrence, owner }: ReadColumn, selections: ReadSelection[], level: number): ReadSetKey => {
-  const table = getTableName(owner);
-  const selection = selections.find((candidate) => candidate.table === table && candidate.column === key);
-  return selection
-    ? { column: key, level, occurrence, selectedAs: selection.selectedAs, table }
-    : { column: key, level, occurrence, table };
-};
+const toKey = ({ key, occurrence, owner }: ReadColumn, level: number): ReadSetKey => ({
+  column: key,
+  level,
+  occurrence,
+  table: getTableName(owner),
+});
 
 // An equality names the rows its value selects. Through a derived table it narrows the subquery's rows, so it names them
 // Without naming the table at this level, which the subquery's own level does
@@ -215,15 +216,28 @@ const getNullFilled = (left: ReadColumn, right: ReadColumn, relation: string): J
 };
 
 const toJoin = (left: ReadColumn, right: ReadColumn, context: ReadContext, isSubquery: boolean): ReadSetJoin => {
+  const leftKey = toKey(left, getLevelIndex(context));
   // A subquery's selected column is read in the subquery's own level, which the walk has not opened yet: -1 is the level no
   // Declared occurrence holds, so that side is never named by its rows
-  const leftKey = toKey(left, context.selections, getLevelIndex(context));
-  const rightKey = toKey(right, context.selections, isSubquery ? -1 : getLevelIndex(context));
-  if (isSubquery) return { kind: JoinKind.Subquery, left: leftKey, right: rightKey };
+  if (isSubquery) return { kind: JoinKind.Subquery, left: leftKey, right: toKey(right, -1) };
+  const rightKey = toKey(right, getLevelIndex(context));
   const nullFilled = context.join?.isLeft ? getNullFilled(left, right, context.join.relation) : undefined;
   return nullFilled === undefined
     ? { kind: JoinKind.Inner, left: leftKey, right: rightKey }
     : { kind: JoinKind.Left, left: leftKey, nullFilled, right: rightKey };
+};
+
+// A left join null-fills the rows of its occurrence. A derived table's column names its base table, not an occurrence the statement
+// Declares, so it records nothing: its key would be the key of an outer occurrence of the same table
+const addNullFilled = (readColumn: ReadColumn, context: ReadContext) => {
+  if (readColumn.relation !== readColumn.occurrence) return;
+  context.nullFilledKeys.add(
+    getOccurrenceKey({
+      level: getLevelIndex(context),
+      occurrence: readColumn.occurrence,
+      table: getTableName(readColumn.owner),
+    }),
+  );
 };
 
 // A join is a fact when one of its columns is a scope column: the other side's rows are named by its values. A pair of
@@ -235,7 +249,10 @@ const addJoins = (left: ReadColumn[], right: ReadColumn[], context: ReadContext,
         addFilters([leftColumn, rightColumn], context);
         continue;
       }
-      context.readSet.joins.push(toJoin(leftColumn, rightColumn, context, isSubquery));
+      const join = toJoin(leftColumn, rightColumn, context, isSubquery);
+      context.readSet.joins.push(join);
+      if (join.kind === JoinKind.Left)
+        addNullFilled(join.nullFilled === JoinSide.Left ? leftColumn : rightColumn, context);
     }
 };
 
@@ -532,11 +549,8 @@ const walkChunk = (chunk: unknown, context: ReadContext): void => {
   } else if (checkIsStatementLike(chunk)) walkChunk(chunk.getSQL(), enterLevel(context));
 };
 
-const toTableKey = (readColumn: ReadColumn): Pick<ReadSetKey, "column" | "occurrence" | "table"> => ({
-  column: readColumn.key,
-  occurrence: readColumn.occurrence,
-  table: getTableName(readColumn.owner),
-});
+// The statement's own select is its top level, which the walk opens first, so a selection's level is zero
+const SELECT_LEVEL = 0;
 
 // Drizzle's column config picks its mode from the values in it: any `true` selects only the `true` columns, while a
 // Config of only `false`s selects every other column. A config with no value at all selects none
@@ -547,11 +561,43 @@ const checkIsSelectedColumn = (configured: unknown, key: string): boolean => {
   return values.includes(false) && configured[key] !== false;
 };
 
-// What the statement's own select returns, by the key each column is selected under. A relational query selects its
-// Table's columns, or the ones its config names
-// The columns a select list names under the name it selects them by
+// The columns a select list names, under the name it selects them by, read in the occurrence the column belongs to
 const toSelections = (column: Column, selectedAs: string): ReadSelection[] =>
-  toReadColumns(column, new Map()).map((readColumn) => ({ ...toTableKey(readColumn), selectedAs }));
+  toReadColumns(column, new Map()).map((readColumn) => ({
+    column: readColumn.key,
+    level: SELECT_LEVEL,
+    occurrence: readColumn.occurrence,
+    selectedAs,
+    table: getTableName(readColumn.owner),
+  }));
+
+// The alias a relational query gives its root table in its own FROM, such as `from "message_usersToRooms" as "d0"`, which its
+// Selected columns are read through. It is the declaration at the statement's top level, not one a nested relation declares
+const getRootAlias = (statement: SQLWrapper, table: Table): string | undefined => {
+  const chunks: unknown[] = statement.getSQL().queryChunks;
+  const depths = getDepths(chunks);
+  const tableName = getTableName(getBaseTable(table));
+  return getAliasDeclarations(chunks, depths).find(
+    ({ start, table: declared }) => (depths[start] ?? 0) === 0 && getTableName(getBaseTable(declared)) === tableName,
+  )?.alias;
+};
+
+// A relational query selects its root table's columns, or the ones its config names. They are read through the root's alias,
+// So a statement that does not declare one names no key
+const getRelationalSelections = (statement: SQLWrapper, table: Table): ReadSelection[] => {
+  const occurrence = getRootAlias(statement, table);
+  if (occurrence === undefined) return [];
+  const configured = getStatementConfig(statement)?.columns;
+  return Object.keys(getTableColumns(table))
+    .filter((key) => checkIsSelectedColumn(configured, key))
+    .map((key) => ({
+      column: key,
+      level: SELECT_LEVEL,
+      occurrence,
+      selectedAs: key,
+      table: getTableName(getBaseTable(table)),
+    }));
+};
 
 const getSelections = (statement: SQLWrapper): ReadSelection[] => {
   const fields = getSelectedFields(statement);
@@ -560,11 +606,49 @@ const getSelections = (statement: SQLWrapper): ReadSelection[] => {
       is(field, Column) ? toSelections(field, selectedAs) : [],
     );
   const table = getRelationalTable(statement);
-  if (!table) return [];
-  const configured = getStatementConfig(statement)?.columns;
-  return Object.entries(getTableColumns(table))
-    .filter(([key]) => checkIsSelectedColumn(configured, key))
-    .flatMap(([key, column]) => toSelections(column, key));
+  return table ? getRelationalSelections(statement, table) : [];
+};
+
+// The selection of a join side's own column of its own occurrence, at the statement's top level, under the name it returns it by
+const findOwnSelection = (key: ReadSetKey, selections: ReadSelection[]): ReadSelection | undefined =>
+  selections.find(
+    (candidate) =>
+      candidate.table === key.table &&
+      candidate.column === key.column &&
+      candidate.level === key.level &&
+      candidate.occurrence === key.occurrence,
+  );
+
+// The same column of another top-level occurrence, which names the side when no left join null-fills that occurrence: its value
+// Is then in every row the read returns, where the side's own value is absent for the rows its left join leaves unmatched
+const findBorrowedSelection = (
+  key: ReadSetKey,
+  selections: ReadSelection[],
+  nullFilledKeys: Set<string>,
+): ReadSelection | undefined =>
+  selections.find(
+    (candidate) =>
+      candidate.table === key.table &&
+      candidate.column === key.column &&
+      !nullFilledKeys.has(getOccurrenceKey(candidate)),
+  );
+
+// The name a join side's value is returned under: its own selection, else a borrowed one
+const toSelectedKey = (key: ReadSetKey, selections: ReadSelection[], nullFilledKeys: Set<string>): ReadSetKey => {
+  const selection = findOwnSelection(key, selections) ?? findBorrowedSelection(key, selections, nullFilledKeys);
+  return selection ? { ...key, selectedAs: selection.selectedAs } : key;
+};
+
+// A subquery's selected column holds the outer column's value in every row the outer read returns, since the two are compared
+// For equality, so it takes the name of the outer column's own selection, and no borrowed one
+const toSelectedJoin = (join: ReadSetJoin, selections: ReadSelection[], nullFilledKeys: Set<string>): ReadSetJoin => {
+  const left = toSelectedKey(join.left, selections, nullFilledKeys);
+  if (join.kind !== JoinKind.Subquery)
+    return { ...join, left, right: toSelectedKey(join.right, selections, nullFilledKeys) };
+  const outer = findOwnSelection(join.left, selections);
+  return outer === undefined
+    ? { ...join, left }
+    : { ...join, left, right: { ...join.right, selectedAs: outer.selectedAs } };
 };
 
 // The read set of one statement the handle recorded: the tables it reads, the scope values it tests, the joins whose
@@ -575,6 +659,7 @@ export const getStatementReadSet = (statement: SQLWrapper): ReadSet => {
   readSet.levels.push(level);
   const declared: Declaration[] = [];
   const scopedKeys: ScopedKey[] = [];
+  const nullFilledKeys = new Set<string>();
   walkChunk(statement.getSQL(), {
     condition: false,
     declared,
@@ -582,10 +667,12 @@ export const getStatementReadSet = (statement: SQLWrapper): ReadSet => {
     join: undefined,
     level,
     negated: false,
+    nullFilledKeys,
     readSet,
     scopedKeys,
-    selections: getSelections(statement),
   });
+  const selections = getSelections(statement);
+  readSet.joins = readSet.joins.map((join) => toSelectedJoin(join, selections, nullFilledKeys));
   // Every level the walk opened is kept, an empty one too, so an occurrence's level is its position in `levels`
   const levels = readSet.levels.map(({ tables }) => ({ tables: [...new Set(tables)].toSorted() }));
   // A declaration is scoped by an equality of its own in its level, so the scope is read from the level it was declared in
