@@ -102,7 +102,7 @@ catalog:
   "@unocss/eslint-config": ^66.13.0
   "@unocss/nuxt": ^66.13.0
   "@unplugin-pwa/core": ^0.0.6
-  "@unplugin-pwa/vite": ^0.0.6
+  "@unplugin-pwa/vite": ^0.0.7
   "@vite-pwa/workbox-build": ^8.0.15
   "@vite-pwa/workbox-swkit": ^8.0.15
   "@vite-pwa/workbox-window": ^8.0.15
