@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { GroundPoint, LightUniforms } from "genshin-engine";
 
+import { useDisposedMesh } from "#src/composables/useDisposedMesh";
 import { FISHING_SPLASH_OPTIONS } from "#src/services/fishing/constants";
 import { createFishingRippleMaterial, createSplashGeometry } from "genshin-engine";
-import { Mesh } from "three";
 import { uniform } from "three/tsl";
 
 interface Props {
@@ -20,15 +20,10 @@ const { getGroundHeight, lightUniforms, lure, splash } = defineProps<Props>();
 const age = uniform(0);
 const material = createFishingRippleMaterial({ age, lightUniforms });
 const geometry = createSplashGeometry(FISHING_SPLASH_OPTIONS);
-const mesh = new Mesh(geometry, material);
+const mesh = useDisposedMesh(geometry, material);
 watchEffect(() => {
   age.value = splash.age;
   mesh.position.set(lure.x, getGroundHeight(lure.x, lure.z), lure.z);
-});
-
-onUnmounted(() => {
-  geometry.dispose();
-  material.dispose();
 });
 </script>
 
