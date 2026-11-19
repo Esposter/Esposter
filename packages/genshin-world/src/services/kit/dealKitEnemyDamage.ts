@@ -25,15 +25,14 @@ export const dealKitEnemyDamage = (
   const isAlive = enemy.state !== EnemyState.Dead;
   const energyDrops = damageEnemy(enemy, hit);
   // A defeated enemy's energy drops fly from where it fell to the member on the field, which collects them
-  if (enemy.state === EnemyState.Dead) {
-    const flights = energyDrops.map(() => ({
-      kind: WorldEffectKind.EnergyDrop,
-      position: enemy.position,
-      seconds: ENERGY_DROP_SECONDS,
-      target: context.body.position,
-    }));
-    for (const flight of flights) addWorldEffect(context.worldEffects, flight);
-  }
+  if (enemy.state === EnemyState.Dead)
+    for (const _ of energyDrops)
+      addWorldEffect(context.worldEffects, {
+        kind: WorldEffectKind.EnergyDrop,
+        position: enemy.position,
+        seconds: ENERGY_DROP_SECONDS,
+        target: context.body.position,
+      });
   if (isElemental && isAlive && hit.damage > 0 && striker) triggerKitNightsoulBurst(enemy, striker, context);
   return energyDrops;
 };
