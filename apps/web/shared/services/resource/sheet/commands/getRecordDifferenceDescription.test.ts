@@ -25,15 +25,10 @@ describe(getRecordDifferenceDescription, () => {
     );
   });
 
-  test("key only in updated produces table", () => {
+  test("a key on one side only shows undefined in the other side's cell", () => {
     expect.hasAssertions();
 
     expect(getRecordDifferenceDescription({}, { "": "" })).toBe(`${RECORD_DIFFERENCE_HEADER}\n | undefined | `);
-  });
-
-  test("key only in original produces table", () => {
-    expect.hasAssertions();
-
     expect(getRecordDifferenceDescription({ "": "" }, {})).toBe(`${RECORD_DIFFERENCE_HEADER}\n |  | undefined`);
   });
 

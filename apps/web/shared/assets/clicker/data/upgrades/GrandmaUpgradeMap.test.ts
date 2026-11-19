@@ -1,3 +1,4 @@
+import { expectSortedByPrice } from "#shared/assets/clicker/data/expectSortedByPrice.test";
 import { GrandmaUpgradeMap } from "#shared/assets/clicker/data/upgrades/GrandmaUpgradeMap";
 import { describe, expect, test } from "vitest";
 
@@ -7,6 +8,6 @@ describe("grandmaUpgradeMap", () => {
 
     const prices = Object.values(GrandmaUpgradeMap).map(({ price }) => price);
 
-    expect(prices).toStrictEqual(prices.toSorted((firstPrice, secondPrice) => firstPrice - secondPrice));
+    expectSortedByPrice(prices);
   });
 });

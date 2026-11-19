@@ -1,3 +1,4 @@
+import { expectSortedByPrice } from "#shared/assets/clicker/data/expectSortedByPrice.test";
 import { CursorUpgradeMap } from "#shared/assets/clicker/data/upgrades/CursorUpgradeMap";
 import { describe, expect, test } from "vitest";
 
@@ -7,6 +8,6 @@ describe("cursorUpgradeMap", () => {
 
     const prices = Object.values(CursorUpgradeMap).map(({ price }) => price);
 
-    expect(prices).toStrictEqual(prices.toSorted((firstPrice, secondPrice) => firstPrice - secondPrice));
+    expectSortedByPrice(prices);
   });
 });

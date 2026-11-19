@@ -73,7 +73,7 @@ describe("countdownNodeType", () => {
     // The page receives the script as its own source text, where no import of this module is in scope
     runInThisContext(`(${String(countdownNodeType.script)})();`);
 
-    expect(readDigits().map((digits) => /^\d{2}$/u.test(digits ?? ""))).toStrictEqual([true, true, true, true]);
+    expect(readDigits()).toStrictEqual(["01", "00", "00", "00"]);
   });
 
   test("a countdown refuses a date and time that is not on the calendar", () => {

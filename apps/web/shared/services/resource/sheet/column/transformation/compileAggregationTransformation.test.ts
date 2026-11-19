@@ -42,6 +42,15 @@ describe(compileAggregationTransformation, () => {
     expect(readAggregation(transformation, rows, 0)).toBeNull();
   });
 
+  test("returns null without rowIndex", () => {
+    expect.hasAssertions();
+
+    const transformation = createAggregationTransformation(AggregationTransformationType.Count);
+    const bindContext = { readSource, rows };
+
+    expect(compileAggregationTransformation(transformation, findSource)(bindContext)(createRow({}))).toBeNull();
+  });
+
   test(`${AggregationTransformationType.PercentOfTotal} computes percentage of row value over total`, () => {
     expect.hasAssertions();
 

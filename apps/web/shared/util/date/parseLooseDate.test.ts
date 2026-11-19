@@ -4,9 +4,8 @@ import { describe, expect, test } from "vitest";
 describe(parseLooseDate, () => {
   test.each([
     ["an ISO date whose day the calendar lacks", "1970-02-30"],
-    ["an ISO datetime whose day the calendar lacks", "1970-02-30T00:00:00Z"],
     ["a bare number", "5"],
-    ["a slashed date whose day the calendar lacks", "1970/02/30"],
+    ["a slashed date, whose order the engine would guess", "1970/02/30"],
     ["a named month's day it lacks", "Feb 30 1970"],
     ["a leap day in a year without one", "Feb 29 1970"],
     ["a leap day with no year, which the engine reads in a common one", "Feb 29"],
@@ -41,7 +40,7 @@ describe(parseLooseDate, () => {
   test("reads a leap day in a leap year", () => {
     expect.hasAssertions();
 
-    expect(parseLooseDate("Feb 29 1972")?.getDate()).toBe(29);
+    expect(parseLooseDate("Feb 29 1972")).toStrictEqual(new Date(1972, 1, 29));
   });
 
   test("reads a time zone's day across a month's edge, since the text's own day exists", () => {

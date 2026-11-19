@@ -4,7 +4,6 @@ import type { ColumnTransformationBindContext } from "#shared/models/resource/sh
 import { createColumn } from "#shared/models/resource/sheet/column/createColumn.test";
 import { createDateColumn } from "#shared/models/resource/sheet/column/createDateColumn.test";
 import { DateFormat } from "#shared/models/resource/sheet/column/DateFormat";
-import { AggregationTransformationType } from "#shared/models/resource/sheet/column/transformation/AggregationTransformationType";
 import { ColumnTransformationType } from "#shared/models/resource/sheet/column/transformation/ColumnTransformationType";
 import { DatePartType } from "#shared/models/resource/sheet/column/transformation/DatePartType";
 import { StringTransformationType } from "#shared/models/resource/sheet/column/transformation/string/StringTransformationType";
@@ -21,44 +20,25 @@ describe("columnTransformationCompileMap", () => {
   const sourceColumnId = v7();
   const epochDate = new Date(0).toISOString().slice(0, 10);
 
-  test(`${ColumnTransformationType.String} returns null for a null source value`, () => {
+  test(`${ColumnTransformationType.String} and ${ColumnTransformationType.StringSplit} return null for a null source value`, () => {
     expect.hasAssertions();
+
+    const bindContext = createBindContext(null);
+
     expect(
       ColumnTransformationCompileMap[ColumnTransformationType.String]({
         sourceColumnId,
         stringTransformationType: StringTransformationType.UpperCase,
         type: ColumnTransformationType.String,
-      })(createBindContext(null))(createRow({}), 0),
+      })(bindContext)(createRow({}), 0),
     ).toBeNull();
-  });
-
-  test(`${ColumnTransformationType.StringSplit} returns null for a null source value`, () => {
-    expect.hasAssertions();
     expect(
       ColumnTransformationCompileMap[ColumnTransformationType.StringSplit]({
         delimiter: ",",
         segmentIndex: 0,
         sourceColumnId,
         type: ColumnTransformationType.StringSplit,
-      })(createBindContext(null))(createRow({}), 0),
-    ).toBeNull();
-  });
-
-  test(`${ColumnTransformationType.Aggregation} returns null without rowIndex`, () => {
-    expect.hasAssertions();
-
-    const transformation = {
-      aggregationTransformationType: AggregationTransformationType.Count,
-      sourceColumnId,
-      type: ColumnTransformationType.Aggregation,
-    } as const;
-    const sourceColumn = createColumn("");
-
-    expect(
-      ColumnTransformationCompileMap[ColumnTransformationType.Aggregation](
-        transformation,
-        () => sourceColumn,
-      )(createBindContext(null, [createRow({ "": 0 })]))(createRow({ "": 0 })),
+      })(bindContext)(createRow({}), 0),
     ).toBeNull();
   });
 

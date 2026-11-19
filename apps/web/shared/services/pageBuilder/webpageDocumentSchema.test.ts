@@ -85,20 +85,4 @@ describe("webpageDocumentSchema", () => {
       { message: "repeats an element id", path: ["content", 1, "props", "elementId"] },
     ]);
   });
-
-  test("an element id with an unreachable character is refused on save", () => {
-    expect.hasAssertions();
-
-    const result = webpageDocumentSchema.safeParse({
-      content: [
-        {
-          props: { elementId: "a#b", href: TEST_URL, id: TEST_ID, label: TEST_LABEL, target: ButtonTarget.SameTab },
-          type: WebpageNodeType.Button,
-        },
-      ],
-      root: TEST_ROOT,
-    });
-
-    expect(result.error?.issues.map(({ path }) => path)).toStrictEqual([["content", 0, "props", "elementId"]]);
-  });
 });

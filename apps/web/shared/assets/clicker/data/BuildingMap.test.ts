@@ -1,4 +1,5 @@
 import { Buildings } from "#shared/assets/clicker/data/BuildingMap";
+import { expectSortedByPrice } from "#shared/assets/clicker/data/expectSortedByPrice.test";
 import { describe, expect, test } from "vitest";
 
 describe("buildingMap", () => {
@@ -7,6 +8,6 @@ describe("buildingMap", () => {
 
     const prices = Buildings.map(({ basePrice }) => basePrice);
 
-    expect(prices).toStrictEqual(prices.toSorted((firstPrice, secondPrice) => firstPrice - secondPrice));
+    expectSortedByPrice(prices);
   });
 });

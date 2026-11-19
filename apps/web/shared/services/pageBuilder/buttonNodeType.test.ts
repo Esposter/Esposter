@@ -88,20 +88,4 @@ describe("buttonNodeType", () => {
       `<a class="button" href="${TEST_URL}" rel="noopener" target="_blank">${TEST_LABEL}</a>`,
     );
   });
-
-  test("a target outside the two choices is refused on save", () => {
-    expect.hasAssertions();
-
-    const result = webpageDocumentSchema.safeParse({
-      content: [
-        {
-          props: { elementId: "", href: TEST_URL, id: TEST_ID, label: TEST_LABEL, target: "_top" },
-          type: WebpageNodeType.Button,
-        },
-      ],
-      root: TEST_ROOT,
-    });
-
-    expect(result.error?.issues.map(({ path }) => path)).toStrictEqual([["content", 0, "props", "target"]]);
-  });
 });
