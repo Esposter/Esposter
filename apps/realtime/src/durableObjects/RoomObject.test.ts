@@ -577,6 +577,25 @@ describe(RoomObject, () => {
     await expect(state.ctx.storage.getAlarm()).resolves.toBe(later.runAt.getTime());
   });
 
+  // The send deletes the due row and writes its message in one transaction. The delete runs on the transaction's own handle,
+  // So it is recorded there, and the scheduled messages it removed wake the reads that watch them
+  test("sending a due scheduled message wakes a read of the scheduled messages it removed", async () => {
+    expect.hasAssertions();
+
+    const { object } = createRoomObject();
+    const due = await object.createScheduledMessage(
+      { id: v7(), message: "due", runAt: new Date(ROOM_ACTIVITY_DELAY_MS) },
+      actor,
+    );
+    const { readSet } = await object.invoke("readScheduledMessages", [{ ids: [due.id], userId }]);
+    topicPublishes.length = 0;
+
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(due.runAt.getTime()));
+    await object.alarm();
+
+    expect(getWokenTopics(readSet, topicPublishes)).toStrictEqual([`room/${roomId}:scheduledMessages:*`]);
+  });
+
   test("a scheduled message names the members its text mentions, and counts each one's mention as a live send does", async () => {
     expect.hasAssertions();
 
