@@ -2,7 +2,7 @@
 
 | Unit                                                 | Swept                  | Notes                                                                                  |
 | ---------------------------------------------------- | ---------------------- | -------------------------------------------------------------------------------------- |
-| `app/services` — `clicker`                           | 2026-11-19 · Haiku 5.5 | `get*` is a lookup or a one-line formula; `compute*` is an algorithm over a collection |
-| `app/components` — `Clicker`, `Post`                 | 2026-11-19 · Haiku 5.5 |                                                                                        |
-| `app/components` — `Visual`, `User`                  | 2026-11-19 · Haiku 5.5 |                                                                                        |
+| `app/services` — `clicker`                           | 2026-11-20 · Haiku 5.5 | `get*` is a lookup or a one-line formula; `compute*` is an algorithm over a collection |
+| `app/components` — `Clicker`, `Post`                 | 2026-11-20 · Haiku 5.5 |                                                                                        |
+| `app/components` — `Visual`, `User`                  | 2026-11-20 · Haiku 5.5 |                                                                                        |
 | `app/components` — `App`, `Dashboard`, `Achievement` | 2026-10-29 · Haiku 5.5 |                                                                                        |
