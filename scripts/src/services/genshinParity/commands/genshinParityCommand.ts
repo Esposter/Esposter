@@ -48,6 +48,7 @@ import { skyCommand } from "#src/services/genshinParity/commands/skyCommand";
 import { solosCommand } from "#src/services/genshinParity/commands/solosCommand";
 import { stallsCommand } from "#src/services/genshinParity/commands/stallsCommand";
 import { stillCommand } from "#src/services/genshinParity/commands/stillCommand";
+import { tonesCommand } from "#src/services/genshinParity/commands/tonesCommand";
 import { traceCommand } from "#src/services/genshinParity/commands/traceCommand";
 import { trailCommand } from "#src/services/genshinParity/commands/trailCommand";
 import { verifyCommand } from "#src/services/genshinParity/commands/verifyCommand";
@@ -101,6 +102,7 @@ export const genshinParityCommand: CommandDef = defineCommand({
     trace: traceCommand,
     launch: launchCommand,
     still: stillCommand,
+    tones: tonesCommand,
     rank: rankCommand,
     record: recordCommand,
     screens: screensCommand,
