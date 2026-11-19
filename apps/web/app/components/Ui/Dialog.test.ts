@@ -1,6 +1,7 @@
 // @vitest-environment happy-dom
 import UiButton from "#src/components/Ui/Button.vue";
 import UiDialog from "#src/components/Ui/Dialog.vue";
+import { getDialogSizeClasses } from "#src/components/Ui/getDialogSizeClasses.test";
 import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
 import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
 import { UiDialogSize } from "#src/models/ui/UiDialogSize";
@@ -97,9 +98,7 @@ describe("uiDialog", () => {
       await flushPromises();
       const dialogClasses = component.get("dialog").classes();
 
-      expect(
-        Object.values(UiDialogSizeClassMap).filter((sizeClass) => dialogClasses.includes(sizeClass)),
-      ).toStrictEqual([UiDialogSizeClassMap[size]]);
+      expect(getDialogSizeClasses(dialogClasses)).toStrictEqual([UiDialogSizeClassMap[size]]);
     });
 
     test("draws no size class when no size is given", async () => {
@@ -112,9 +111,7 @@ describe("uiDialog", () => {
       await flushPromises();
       const dialogClasses = component.get("dialog").classes();
 
-      expect(
-        Object.values(UiDialogSizeClassMap).filter((sizeClass) => dialogClasses.includes(sizeClass)),
-      ).toStrictEqual([]);
+      expect(getDialogSizeClasses(dialogClasses)).toStrictEqual([]);
     });
 
     // A drawer takes its width from its edge and the full screen from the page, so a size given to one leaves it be
@@ -133,9 +130,7 @@ describe("uiDialog", () => {
       await flushPromises();
       const dialogClasses = component.get("dialog").classes();
 
-      expect(
-        Object.values(UiDialogSizeClassMap).filter((sizeClass) => dialogClasses.includes(sizeClass)),
-      ).toStrictEqual([]);
+      expect(getDialogSizeClasses(dialogClasses)).toStrictEqual([]);
     });
 
     // An editor's close is the title bar's, so the dialog holds open while its caller asks about unsaved changes

@@ -118,9 +118,7 @@ const onGridKeydown = useGridKeyboard({
   getFocusedCell: () => focusedDate.value,
   getNextCell: (event, date) => getNextGridDate(event, date),
   root,
-  setFocusedCell: (date) => {
-    setFocusedDate(date);
-  },
+  setFocusedCell: setFocusedDate,
 });
 // A range's first press starts it and the second ends it, a day before the start becoming the start; a press after the
 // End starts a new one

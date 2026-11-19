@@ -2,6 +2,7 @@
 import type { VueWrapper } from "@vue/test-utils";
 
 import UiConfirmDialog from "#src/components/Ui/ConfirmDialog.vue";
+import { getDialogSizeClasses } from "#src/components/Ui/getDialogSizeClasses.test";
 import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
 import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
@@ -63,9 +64,7 @@ describe("uiConfirmDialog", () => {
       const component = await mountDialog(props);
       const dialogClasses = component.get("dialog").classes();
 
-      expect(
-        Object.values(UiDialogSizeClassMap).filter((sizeClass) => dialogClasses.includes(sizeClass)),
-      ).toStrictEqual([UiDialogSizeClassMap[expected]]);
+      expect(getDialogSizeClasses(dialogClasses)).toStrictEqual([UiDialogSizeClassMap[expected]]);
     });
 
     test("the dialog stays locked while the delete is pending", async () => {

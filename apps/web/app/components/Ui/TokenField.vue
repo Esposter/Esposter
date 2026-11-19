@@ -1,6 +1,7 @@
 <script setup lang="ts" generic="T">
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { handleKeyAction } from "#src/services/ui/handleKeyAction";
 
 interface Props {
   // What a token reads as, which names the button that removes it too
@@ -97,13 +98,7 @@ watch(isFocusWithin, (newIsFocusWithin) => {
             tokens = tokens.slice(0, -1);
           }
         "
-        @keydown.enter="
-          (event: KeyboardEvent) => {
-            if (event.isComposing) return;
-            event.preventDefault();
-            emit('submit');
-          }
-        "
+        @keydown.enter="handleKeyAction($event, () => emit('submit'))"
         @keydown.esc="
           (event: KeyboardEvent) => {
             if (event.isComposing) return;

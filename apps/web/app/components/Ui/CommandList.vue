@@ -2,6 +2,7 @@
 import type { UiCommand } from "#src/models/ui/UiCommand";
 
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { handleKeyAction } from "#src/services/ui/handleKeyAction";
 import { useVirtualFocus } from "@vuetify/v0";
 
 interface Props {
@@ -72,27 +73,9 @@ watch(
         min-w-0
         ui-field
         ui-pill
-        @keydown.down="
-          (event: KeyboardEvent) => {
-            if (event.isComposing) return;
-            event.preventDefault();
-            next();
-          }
-        "
-        @keydown.up="
-          (event: KeyboardEvent) => {
-            if (event.isComposing) return;
-            event.preventDefault();
-            prev();
-          }
-        "
-        @keydown.enter="
-          (event: KeyboardEvent) => {
-            if (event.isComposing) return;
-            event.preventDefault();
-            clickHighlighted();
-          }
-        "
+        @keydown.down="handleKeyAction($event, next)"
+        @keydown.up="handleKeyAction($event, prev)"
+        @keydown.enter="handleKeyAction($event, clickHighlighted)"
       />
     </div>
     <div :id="listboxId" :aria-label="label" role="listbox" pb-2 flex flex-col of-y-auto>
