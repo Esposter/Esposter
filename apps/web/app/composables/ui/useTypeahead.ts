@@ -1,4 +1,5 @@
 import { TYPEAHEAD_RESET_MS } from "#src/services/ui/constants";
+import { checkHasChordModifier } from "#src/util/dom/checkHasChordModifier";
 
 // A list's typeahead, as the listbox and menu patterns describe it: typed characters jump to the next title they
 // Begin, a pause starts the search over, and one character pressed again steps through every title it begins
@@ -13,7 +14,7 @@ export const useTypeahead = () => {
   );
   // The index of the title the key moves to, or undefined when the key is not typing or matches nothing
   return (event: KeyboardEvent, titles: string[], currentIndex: number) => {
-    if (event.key.length !== 1 || event.altKey || event.ctrlKey || event.metaKey) return undefined;
+    if (event.key.length !== 1 || checkHasChordModifier(event)) return undefined;
     // A space is the key that picks, unless it continues a search already under way
     if (event.key === " " && !query) return undefined;
     query += event.key.toLowerCase();

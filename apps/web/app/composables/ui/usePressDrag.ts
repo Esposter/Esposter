@@ -39,13 +39,11 @@ export const usePressDrag = () => {
     const { clientX, clientY, pointerId, pointerType } = event;
     const stops: (() => void)[] = [];
     let isEnded = false;
-    let restTimer: ReturnType<typeof setTimeout> | undefined;
     const end = () => {
       if (isEnded) return;
 
       isEnded = true;
       for (const stop of stops) stop();
-      clearTimeout(restTimer);
       isDragging.value = false;
       point.value = undefined;
       onEnd?.();
@@ -102,8 +100,11 @@ export const usePressDrag = () => {
     );
     point.value = { x: clientX, y: clientY };
     if (pointerType === "touch") {
-      restTimer = setTimeout(start, TOUCH_DRAG_DELAY_MS);
-      stops.push(holdPageStillWhile(() => isDragging.value));
+      const { stop: stopRest } = useTimeoutFn(start, TOUCH_DRAG_DELAY_MS);
+      stops.push(
+        stopRest,
+        holdPageStillWhile(() => isDragging.value),
+      );
     }
     cancelPress = end;
   };
