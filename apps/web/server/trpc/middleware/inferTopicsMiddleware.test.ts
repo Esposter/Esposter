@@ -10,8 +10,8 @@ import { getWokenTopics, inJsonArray } from "@esposter/db";
 import { createMockBucket } from "@esposter/db-mock";
 import {
   MAX_READ_TOPICS,
-  RoomType,
   roomsInMessage,
+  RoomType,
   StorageBucket,
   usersInAuth,
   usersToRoomsInMessage,
