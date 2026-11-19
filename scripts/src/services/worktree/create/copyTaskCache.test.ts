@@ -41,7 +41,7 @@ describe(copyTaskCache, () => {
     createCache(source, []);
     mkdirSync(destination);
 
-    await expect(copyTaskCache(source, destination)).rejects.toThrowError(
+    await expect(copyTaskCache(source, destination)).rejects.toStrictEqual(
       new InvalidOperationError(
         Operation.Create,
         destination,

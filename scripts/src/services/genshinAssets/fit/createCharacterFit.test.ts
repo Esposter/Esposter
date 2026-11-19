@@ -81,7 +81,7 @@ describe(createCharacterFit, () => {
   test("a named run without the portraits' textures fails with its message", async () => {
     expect.hasAssertions();
 
-    await expect(createCharacterFit(["pictureColours"], { isDryRun: true })).rejects.toThrow(
+    await expect(createCharacterFit(["pictureColours"], { isDryRun: true })).rejects.toStrictEqual(
       new InvalidOperationError(
         Operation.Read,
         join(root, "assets", AssetType.Texture2D),
@@ -100,7 +100,7 @@ describe(createCharacterFit, () => {
       .png()
       .toFile(join(textureDirectory, "Gcg_CardFace_Fixture.png"));
 
-    await expect(createCharacterFit(["pictureColours"], { isDryRun: true })).rejects.toThrow(
+    await expect(createCharacterFit(["pictureColours"], { isDryRun: true })).rejects.toStrictEqual(
       new InvalidOperationError(
         Operation.Read,
         join(root, "assets", AssetType.Texture2D),
