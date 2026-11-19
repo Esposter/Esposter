@@ -8,9 +8,8 @@ interface Props {
   value: number;
 }
 
-const { value } = defineProps<Props>();
+defineProps<Props>();
 const uiStyle = useUiStyle();
-const filledBlockCount = computed(() => Math.round((value / 100) * LOADING_BAR_BLOCK_COUNT));
 </script>
 
 <!-- A game's loading bar: a row of the style's blocks, filled from the start as the work gets done -->
@@ -23,11 +22,6 @@ const filledBlockCount = computed(() => Math.round((value / 100) * LOADING_BAR_B
     ui-blocks
   >
     <Progress.Fill renderless />
-    <span
-      v-for="index of LOADING_BAR_BLOCK_COUNT"
-      :key="index"
-      :data-filled="index <= filledBlockCount || undefined"
-      ui-block
-    />
+    <UiFilledBlocks :block-count="LOADING_BAR_BLOCK_COUNT" :value />
   </Progress.Root>
 </template>

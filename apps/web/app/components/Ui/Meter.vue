@@ -17,7 +17,6 @@ interface Props {
 // One. A level with no worse end, such as a microphone's, takes neither mark and stays in the accent
 const { high, low, value } = defineProps<Props>();
 const uiStyle = useUiStyle();
-const filledBlockCount = computed(() => Math.round((value / 100) * METER_BLOCK_COUNT));
 const level = computed(() => {
   if (high !== undefined && value >= high) return "high";
   else if (low !== undefined && value >= low) return "low";
@@ -38,12 +37,7 @@ const level = computed(() => {
     :style="{ '--ui-blocks-value': `${value}%` }"
     ui-blocks
   >
-    <span
-      v-for="index of METER_BLOCK_COUNT"
-      :key="index"
-      :data-filled="index <= filledBlockCount || undefined"
-      ui-block
-    />
+    <UiFilledBlocks :block-count="METER_BLOCK_COUNT" :value />
   </div>
 </template>
 

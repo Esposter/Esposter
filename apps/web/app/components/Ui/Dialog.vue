@@ -43,10 +43,11 @@ const isExpanded = defineModel<boolean>("isExpanded", { default: false });
 const { isSizeFixed, isTall, placement = UiDialogPlacement.High, size } = defineProps<Props>();
 // The body and the footer both take this id, so a footer's submit names the form the body holds
 const formId = useId();
+// A dialog standing in the page rather than at an edge: only it has a page to take, and only it keeps the size a call site gives it
+const isStandingInPage = (value: UiDialogPlacement) =>
+  value === UiDialogPlacement.High || value === UiDialogPlacement.Middle;
 // A drawer and the full screen already stand at their edges, so only a dialog standing in the page has a page to take
-const isExpandable = computed(
-  () => !isSizeFixed && (placement === UiDialogPlacement.High || placement === UiDialogPlacement.Middle),
-);
+const isExpandable = computed(() => !isSizeFixed && isStandingInPage(placement));
 const displayPlacement = computed(() =>
   isExpandable.value && isExpanded.value ? UiDialogPlacement.FullScreen : placement,
 );
@@ -57,11 +58,9 @@ const frameClass = computed(() => {
   const { height, tallHeight } = UiDialogFrameClassMap[displayPlacement.value];
   return isTall ? tallHeight : height;
 });
-const sizeClass = computed(() => {
-  const isStandingInPage =
-    displayPlacement.value === UiDialogPlacement.High || displayPlacement.value === UiDialogPlacement.Middle;
-  return size && isStandingInPage ? UiDialogSizeClassMap[size] : undefined;
-});
+const sizeClass = computed(() =>
+  size && isStandingInPage(displayPlacement.value) ? UiDialogSizeClassMap[size] : undefined,
+);
 const frame = useTemplateRef("frame");
 // Opening moves focus into the dialog, and the browser gives it to the first control when nothing asks for it — the
 // Close button. The dialog takes it itself instead, so nothing reads as chosen until the reader moves, and a control

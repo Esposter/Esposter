@@ -71,9 +71,7 @@ const id = useId();
 .mark[data-state="checked"] {
   transform: none;
 }
-</style>
 
-<style scoped>
 /* An invalid group tints each round mark's field in the error colour, as an invalid text field is tinted */
 [aria-invalid="true"] .field-mark {
   background-color: var(--ui-field-invalid-background);
