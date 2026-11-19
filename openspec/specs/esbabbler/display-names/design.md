@@ -67,7 +67,7 @@ A member holding `ManageDisplayNames` sets the name of a member they outrank fro
 
 The save is `updateUserToRoom` with `targetUserId`. The server checks the permission alongside `assertIsManageable`, the hierarchy guard the moderation and role procedures share, so a refused target is `UNAUTHORIZED` whatever the client shows. The input rule admits a targeted write only when it sets a display name and nothing else. A self-edit needs no permission and carries the caller's own id, or none.
 
-After the write the dialog reads the target's row back with `room.readUsersByIds`, and the member store and the room's names take the resolved name, so the moderator's own list is current at once. The renamed member's client receives the row as an `updateUserToRoom` event on its sockets and takes it the same way.
+After the write the dialog reads the target's row back with `room.readUsersByIds`, and the member store and the room's names take the resolved name, so the moderator's own list is current at once. The renamed member's client receives its own membership row as an `updateUserToRoom` event on its sockets and records it. Every other client's member list refreshes the renamed member when the write publishes the room's membership topic, which that list watches, so no client re-reads the member by id on the event.
 
 ```mermaid
 sequenceDiagram
