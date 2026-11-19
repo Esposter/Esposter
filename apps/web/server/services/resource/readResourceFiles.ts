@@ -4,7 +4,7 @@ import type { ResourceInResource } from "@esposter/db-schema";
 
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { listR2Objects } from "@esposter/db";
-import { getResourceFilesDirectoryName } from "@esposter/db-schema";
+import { getResourceFilesPrefix } from "@esposter/db-schema";
 
 // The files a resource holds, read off its files directory in the resource-assets bucket. A file's type is the one its
 // Latest upload declared: a signed upload's type is part of its signature, and a re-upload of held bytes rewrites the
@@ -13,7 +13,7 @@ export const readResourceFiles = async (
   bucket: R2Bucket,
   resourceId: ResourceInResource["id"],
 ): Promise<ResourceFile[]> =>
-  (await listR2Objects(bucket, `${getResourceFilesDirectoryName(resourceId)}/`, ["httpMetadata"])).map(
+  (await listR2Objects(bucket, getResourceFilesPrefix(resourceId), ["httpMetadata"])).map(
     ({ httpMetadata, key, size }) => ({
       mimetype: httpMetadata?.contentType ?? "",
       size,

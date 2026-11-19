@@ -14,11 +14,12 @@ export const useExportResourcesCsv = () => {
   const { createErrorNotification, createNotification, createWarningNotification } = notificationStore;
   const exportFile = useExportFile();
   const exportResourcesCsv = async (resources: ResourceInResource[]) => {
+    const csvConfiguration = DataSourceConfigurationMap[DataSourceType.Csv];
     const isExported = await exportFile(
       (mimeType) => Promise.resolve(new Blob([getResourcesCsv(resources)], { type: mimeType })),
       "resources",
-      DataSourceConfigurationMap[DataSourceType.Csv].mimeType,
-      DataSourceConfigurationMap[DataSourceType.Csv].accept,
+      csvConfiguration.mimeType,
+      csvConfiguration.accept,
     );
     if (isExported)
       createNotification({

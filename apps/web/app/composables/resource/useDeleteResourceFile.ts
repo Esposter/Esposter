@@ -3,7 +3,7 @@ import type { FileAssetsResourceType } from "#shared/models/resource/FileAssetsR
 import { ASSET_HASH_REGEX } from "#shared/services/resource/constants";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { getDecodedUriComponent } from "#shared/util/text/getDecodedUriComponent";
-import { getResourceFilesDirectoryName } from "@esposter/db-schema";
+import { getResourceFilesPrefix } from "@esposter/db-schema";
 import { noop } from "@esposter/shared";
 
 // Only a FileAssets type has files to delete, so the capability is the parameter type — a type without it is
@@ -15,7 +15,7 @@ export const useDeleteResourceFile = (type: FileAssetsResourceType, id: MaybeRef
     const idValue = toValue(id);
     // Only the stable asset url survives in the editor model, so the blob path is recovered from it.
     // Anything outside this resource's files directory is not ours to delete, so it is ignored rather than sent
-    const filesDirectoryPrefix = getResourceAssetUrl(`${getResourceFilesDirectoryName(idValue)}/`);
+    const filesDirectoryPrefix = getResourceAssetUrl(getResourceFilesPrefix(idValue));
     if (!url.startsWith(filesDirectoryPrefix)) return;
     // A file is named by its content hash, which is the server's definition, imported rather than restated —
     // A local copy that accepts one more form than the server does turns a suppressed affordance into a request
