@@ -18,6 +18,12 @@ const selectRange = (rowStart: number, rowEnd: number, columnStart: number, colu
   extendCellSelection(rowEnd, columnEnd);
 };
 
+const setIsCopyIncludingHeaders = (isIncluding: boolean) => {
+  const rowStore = useRowStore();
+  const { isCopyIncludingHeaders } = storeToRefs(rowStore);
+  isCopyIncludingHeaders.value = isIncluding;
+};
+
 describe(useCopyRangeToClipboard, () => {
   let writeTextMock: ReturnType<typeof vi.fn<() => Promise<void>>>;
 
@@ -36,9 +42,7 @@ describe(useCopyRangeToClipboard, () => {
   test("writes selected range as TSV without headers when toggle is off", async () => {
     expect.hasAssertions();
 
-    const rowStore = useRowStore();
-    const { isCopyIncludingHeaders } = storeToRefs(rowStore);
-    isCopyIncludingHeaders.value = false;
+    setIsCopyIncludingHeaders(false);
     setupWithDataSource(createDataSource([createColumn("a"), createColumn("b")], [createRow({ a: "1", b: "2" })]));
     selectRange(0, 0, 0, 1);
     const copyRangeToClipboard = useCopyRangeToClipboard();
@@ -50,9 +54,7 @@ describe(useCopyRangeToClipboard, () => {
   test("writes only columns within the selection range", async () => {
     expect.hasAssertions();
 
-    const rowStore = useRowStore();
-    const { isCopyIncludingHeaders } = storeToRefs(rowStore);
-    isCopyIncludingHeaders.value = true;
+    setIsCopyIncludingHeaders(true);
     setupWithDataSource(
       createDataSource(
         [createColumn("a"), createColumn("b"), createColumn("c")],
@@ -69,9 +71,7 @@ describe(useCopyRangeToClipboard, () => {
   test("writes only rows within the selection range", async () => {
     expect.hasAssertions();
 
-    const rowStore = useRowStore();
-    const { isCopyIncludingHeaders } = storeToRefs(rowStore);
-    isCopyIncludingHeaders.value = true;
+    setIsCopyIncludingHeaders(true);
     setupWithDataSource(
       createDataSource([createColumn("a")], [createRow({ a: "1" }), createRow({ a: "2" }), createRow({ a: "3" })]),
     );
@@ -85,9 +85,7 @@ describe(useCopyRangeToClipboard, () => {
   test("materializes computed column values instead of empty cells", async () => {
     expect.hasAssertions();
 
-    const rowStore = useRowStore();
-    const { isCopyIncludingHeaders } = storeToRefs(rowStore);
-    isCopyIncludingHeaders.value = true;
+    setIsCopyIncludingHeaders(true);
     const sourceColumn = createNumberColumn("a");
     const computedColumn = createComputedColumn("b", sourceColumn.id);
     setupWithDataSource(createDataSource([sourceColumn, computedColumn], [createRow({ a: 0 })]));
@@ -104,9 +102,7 @@ describe(useCopyRangeToClipboard, () => {
   test("materializes a computed column whose source column is hidden", async () => {
     expect.hasAssertions();
 
-    const rowStore = useRowStore();
-    const { isCopyIncludingHeaders } = storeToRefs(rowStore);
-    isCopyIncludingHeaders.value = true;
+    setIsCopyIncludingHeaders(true);
     const sourceColumn = createNumberColumn("a");
     sourceColumn.isHidden = true;
     const computedColumn = createComputedColumn("b", sourceColumn.id);
