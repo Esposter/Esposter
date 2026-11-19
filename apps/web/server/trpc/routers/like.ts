@@ -75,14 +75,14 @@ export const likeRouter = router({
               ctx.db
                 .select({ _: sql`1` })
                 .from(likesInPost)
-                .where(and(getLikeWhere(input, userId), eq(likesInPost.value, existingLike.value))),
+                .where(getLikeWhere(input, userId, existingLike.value)),
             ),
           ),
         )
         .returning(),
       ctx.db
         .delete(likesInPost)
-        .where(and(getLikeWhere(input, userId), eq(likesInPost.value, existingLike.value)))
+        .where(getLikeWhere(input, userId, existingLike.value))
         .returning(),
     ]);
     const deletedLike = requireMutation(deletedLikeRows[0], Operation.Delete, DatabaseEntityType.Like, input);
@@ -116,7 +116,7 @@ export const likeRouter = router({
                 ctx.db
                   .select({ _: sql`1` })
                   .from(likesInPost)
-                  .where(and(getLikeWhere(postId, userId), eq(likesInPost.value, existingLike.value))),
+                  .where(getLikeWhere(postId, userId, existingLike.value)),
               ),
             ),
           )
@@ -124,7 +124,7 @@ export const likeRouter = router({
         ctx.db
           .update(likesInPost)
           .set({ value })
-          .where(and(getLikeWhere(postId, userId), eq(likesInPost.value, existingLike.value)))
+          .where(getLikeWhere(postId, userId, existingLike.value))
           .returning(),
       ]);
       const updatedLike = requireMutation(
