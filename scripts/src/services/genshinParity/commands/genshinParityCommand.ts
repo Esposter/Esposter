@@ -36,6 +36,7 @@ import { planCommand } from "#src/services/genshinParity/commands/planCommand";
 import { polarCommand } from "#src/services/genshinParity/commands/polarCommand";
 import { poseCommand } from "#src/services/genshinParity/commands/poseCommand";
 import { probeCommand } from "#src/services/genshinParity/commands/probeCommand";
+import { radianceCommand } from "#src/services/genshinParity/commands/radianceCommand";
 import { rankCommand } from "#src/services/genshinParity/commands/rankCommand";
 import { recordCommand } from "#src/services/genshinParity/commands/recordCommand";
 import { recordingsCommand } from "#src/services/genshinParity/commands/recordingsCommand";
@@ -103,6 +104,7 @@ export const genshinParityCommand: CommandDef = defineCommand({
     launch: launchCommand,
     still: stillCommand,
     tones: tonesCommand,
+    radiance: radianceCommand,
     rank: rankCommand,
     record: recordCommand,
     screens: screensCommand,
