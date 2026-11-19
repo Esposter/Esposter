@@ -6,15 +6,15 @@ import { computeFishingFish } from "#src/services/fishing/computeFishingFish";
 import { FISH_STAND_IN_OPTIONS } from "#src/services/fishing/constants";
 import { describe, expect, test } from "vitest";
 
-const createFish = (fishCateId?: number): Fish => ({
+const createFish = (categoryTagId?: number): Fish => ({
   attractRange: 0,
   biteTimeout: 0,
   bonusDuration: [],
   bonusOffset: [],
   bonusSpeed: [],
   bonusWidth: 0,
+  categoryTagId,
   feelerTimes: [],
-  fishCateId,
   fleeRange: 0,
   hp: 1,
   id: 1,

@@ -11,8 +11,8 @@ export interface Fish {
   bonusOffset: number[];
   bonusSpeed: number[];
   bonusWidth: number;
+  categoryTagId?: number | undefined;
   feelerTimes: number[];
-  fishCateId?: number | undefined;
   fleeRange: number;
   hp: number;
   id: number;
@@ -30,8 +30,8 @@ export const fishSchema = z.object({
   bonusOffset: z.array(z.number()),
   bonusSpeed: z.array(z.number()),
   bonusWidth: z.number().nonnegative(),
+  categoryTagId: z.int().positive().optional(),
   feelerTimes: z.array(z.number().nonnegative()),
-  fishCateId: z.int().positive().optional(),
   fleeRange: z.number().nonnegative(),
   hp: z.int().positive(),
   id: z.int().positive(),

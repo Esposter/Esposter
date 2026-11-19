@@ -5,7 +5,7 @@ import { describe, expect, test } from "vitest";
 
 describe(toFish, () => {
   const MONSTER_ID = 28_040_201;
-  const FISH_CATEGORY_ID = 1;
+  const CATEGORY_TAG_ID = 1;
 
   test("a fish record keeps its monster id and category", () => {
     expect.hasAssertions();
@@ -28,6 +28,6 @@ describe(toFish, () => {
       skillId: [],
     };
 
-    expect(toFish(row, FISH_CATEGORY_ID)).toStrictEqual({ ...row, fishCateId: FISH_CATEGORY_ID });
+    expect(toFish(row, CATEGORY_TAG_ID)).toStrictEqual({ ...row, categoryTagId: CATEGORY_TAG_ID });
   });
 });
