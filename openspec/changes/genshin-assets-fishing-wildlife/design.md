@@ -156,6 +156,11 @@ These are the game's art, which cannot ship. Each row names the stand-in that dr
 - **The reel's challenge panel stops each line before its count.** The count is the reel's, which genshin-fishing owns, so the panel shows the words alone. Rejected: drawing the `#1#` placeholder, which the reader would see, or waiting for the count.
 - **The fishing-area props are picked by a name pattern over the witness layouts.** The pattern keeps the fishing, fish, fish-stand, pole and globefish props. Rejected: a hand-typed list. Whether `Pole` belongs is a name judgement, not checked in game.
 - **`find` and `ui-find` share one matching loop over different indexes.** `find` streams the asset index's rows, and `ui-find` reads the per-block UI indexes; the loop that picks the matching entries is the one helper. Rejected: a second loop beside `ui-find`, which the task forbids.
+- **A fish's body is picked by its `fishCateId` modulo three, a placeholder spread and not a category.** The dump's column does not group the fish, so three generic bodies are spread over the ids, and a fish without an id takes the first. Rejected: one body for every fish, which leaves the category unused, and categories from names, which the record does not hold. This is provisional until a grouping source is found.
+- **The water's ripple normal is one node that the water and the fishing rings both read.** It was lifted out of the water material with its expressions unchanged, so the water draws as before. Rejected: a second copy in the ring's kit. The water still needs an eye-check in login and world, since a shared render change is checked there.
+- **The rod is held at the character's feet plus a fixed height, not at a hand bone.** The rig's hand is not read here, so the height is a constant, and the rod turns to lie along the line toward the lure. Rejected: reading the hand bone, which needs the character's rig, not in this change's reach.
+- **Butterflies are left out of the critter stand-ins by their item id.** The Coral Butterfly's gather row gives item 101689, and naming butterflies by label breaks in the game's other languages. Rejected: matching the name, and a group field on the material source, which needs a scripts change and a republish this round does not take.
+- **The reel's pieces are drawn in Windrise only.** Windrise is the one region whose ground the scene's heights read, so the fish, rod, float and splash mount there. Rejected: mounting them in every region before each region's ground is read, which would place them on the wrong height. Each other region waits on its own ground.
 
 ## Scope and order
 
@@ -210,7 +215,8 @@ packages/genshin-engine/src/kits/fishing/
   createRodGeometry.ts         the tapered rod (F2)
   createFloatGeometry.ts       the float (F3)
   createSplashGeometry.ts      the bite's rings and spray (F4)
-  createPropGeometry.ts        one stand-in per fishing-area prop (P1)
+packages/genshin-engine/src/kits/props/
+  createPropStandInGeometry.ts one stand-in per fishing-area prop (P1), on the props kit's outline builder
 packages/genshin-engine/src/kits/wildlife/
   createSilhouetteGeometry.ts  one silhouette per fleeing kind (W1)
   createCritterGeometry.ts     one stand-in per critter group (W2)
