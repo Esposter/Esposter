@@ -81,6 +81,35 @@ import {
 import { getResultAsync, getSynchronizedFunction, noop, Operation, RoutePath } from "@esposter/shared";
 import { and, eq, exists, sql } from "drizzle-orm";
 
+// The procedure names each group adds, exported for the router tests to read rather than restate. Each group's object is
+// Typed to exactly its names, so a procedure added to or dropped from one side fails the build, not the test. The base
+// Group rides on every resource router, since every type stores content and is renamable and deletable
+export const BASE_PROCEDURE_NAMES = [
+  "createResource",
+  "deleteResource",
+  "generateReadContentPresignedUrl",
+  "generateUploadContentPresignedUrl",
+  "readResourceContent",
+  "readResources",
+  "saveResourceContent",
+  "saveResourceContentDelta",
+  "saveStagedResourceContent",
+  "updateResource",
+] as const;
+export const FILE_PROCEDURE_NAMES = [
+  "deleteFile",
+  "generateUploadFilePresignedUrlEntities",
+  "readResourceFiles",
+] as const;
+export const PUBLISH_PROCEDURE_NAMES = [
+  "publishResource",
+  "readPublishedResourceContent",
+  "readPublishedVersionContent",
+  "readResourcePublication",
+  "readResourceViewCount",
+  "unpublishResource",
+] as const;
+
 export const createResourceProcedures = <TType extends ResourceType>(
   type: TType,
   ...args: TType extends PublishableResourceType
@@ -233,7 +262,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
     updateResource: getOwnerProcedure(type, updateResourceInputSchema, "id").mutation<ResourceInResource>(
       ({ ctx, input: { name, tags } }) => updateResourceRow(ctx, ctx.resource, { name, tags }),
     ),
-  };
+  } satisfies Record<(typeof BASE_PROCEDURE_NAMES)[number], unknown>;
   // Binary assets live under {id}/files/{hash} — the owner uploads through short-lived presigned urls and reads resolve
   // Through the /api/resource-assets endpoint (content embeds only stable urls, never a signature). An asset is never
   // Deleted here: the file's hash is handed to the release path, which deletes it only once no stored version names it
@@ -263,7 +292,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
     readResourceFiles: getOwnerProcedure(type, resourceIdInputSchema, "id").query<ResourceFile[]>(({ input: { id } }) =>
       readResourceFiles(getBucket(StorageBucket.ResourceAssets), id),
     ),
-  };
+  } satisfies Record<(typeof FILE_PROCEDURE_NAMES)[number], unknown>;
   const publishProcedures = {
     publishResource: getOwnerProcedure(type, resourceIdInputSchema, "id").mutation<ResourcePublicationInResource>(
       async ({ ctx, input: { id } }) => {
@@ -463,7 +492,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
         return ctx.resource;
       },
     ),
-  };
+  } satisfies Record<(typeof PUBLISH_PROCEDURE_NAMES)[number], unknown>;
   return {
     ...baseProcedures,
     ...(checkHasCapability(type, "fileAssets") ? fileAssetsProcedures : {}),

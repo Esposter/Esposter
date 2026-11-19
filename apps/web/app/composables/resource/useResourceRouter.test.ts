@@ -1,5 +1,10 @@
 import type { ResourceType } from "@esposter/db-schema";
 
+import {
+  BASE_PROCEDURE_NAMES,
+  FILE_PROCEDURE_NAMES,
+  PUBLISH_PROCEDURE_NAMES,
+} from "#server/trpc/procedure/resource/createResourceProcedures";
 import { trpcRouter } from "#server/trpc/routers/index";
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
 import { CreatableResourceTypes } from "#src/models/resource/CreatableResourceType";
@@ -20,25 +25,12 @@ const getResourceRouterProcedureNames = (type: ResourceType) => {
 // Asserted against the server registry, not the client: the tRPC client is a lazy proxy that answers to every
 // Key, so it can say nothing about which procedures a type actually has
 describe(useResourceRouter, () => {
-  // Every type stores content and is renamable and deletable, so these ride on every resource router — they are
-  // What useResource calls for any resource the route names, before it knows which type it opened
-  const BASE_PROCEDURE_NAMES = ["deleteResource", "readResourceContent", "saveResourceContent", "updateResource"];
-  const FILE_PROCEDURE_NAMES = ["deleteFile", "generateUploadFilePresignedUrlEntities", "readResourceFiles"];
-  const PUBLISH_PROCEDURE_NAMES = [
-    "publishResource",
-    "readPublishedResourceContent",
-    "readPublishedVersionContent",
-    "readResourcePublication",
-    "readResourceViewCount",
-    "unpublishResource",
-  ];
-
   // A multi-word type's key is not simply its lowercased name, so this is also what pins `todoList` over
   // `todolist`: a router registered under the wrong key contributes no procedures at all
   test.each(ResourceTypes)("%s: exposes the base procedures", (type) => {
     expect.hasAssertions();
 
-    expect(getResourceRouterProcedureNames(type)).toStrictEqual(expect.arrayContaining(BASE_PROCEDURE_NAMES));
+    expect(getResourceRouterProcedureNames(type)).toStrictEqual(expect.arrayContaining([...BASE_PROCEDURE_NAMES]));
   });
 
   // `useCreateResource` dispatches a create the same way, so a gallery entry whose router cannot create it would
