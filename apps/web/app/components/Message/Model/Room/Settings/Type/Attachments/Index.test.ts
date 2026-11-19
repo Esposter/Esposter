@@ -118,4 +118,21 @@ describe("messageModelRoomSettingsTypeAttachmentsIndex", () => {
 
     expect(inputs).toStrictEqual([{ id: room.id, maxFileSizeBytes: maxFileSizeBytes + MEGABYTE }]);
   });
+
+  test("does not save a max file size the field refuses", async () => {
+    expect.hasAssertions();
+
+    const inputs: UpdateRoomInput[] = [];
+    trpcMsw.room.updateRoom.mutation(({ input }) => {
+      inputs.push(input);
+      return { ...room, ...omitUndefined(input) };
+    });
+    const component = await mountSuspended(MessageModelRoomSettingsTypeAttachmentsIndex, { props: { room } });
+    const input = component.get("input");
+    await input.setValue(String(maxFileSizeBytes / MEGABYTE / 2));
+    await input.trigger("focusout");
+    await flushPromises();
+
+    expect(inputs).toStrictEqual([]);
+  });
 });

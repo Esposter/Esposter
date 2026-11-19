@@ -24,14 +24,20 @@ const {
 } = useStoredDraft(() => room.allowedMimeCategories);
 const maxFileSizeMegabytes = MAX_FILE_REQUEST_SIZE / MEGABYTE;
 const maxFileSizeRules = [UiRules.minValue(1), UiRules.maxValue(maxFileSizeMegabytes)];
+// The text the field shows, which its rules judge, so a size the field refuses is judged on what the reader sees
+const maxFileSizeText = computed(() =>
+  editedMaxFileSizeBytes.value ? String(editedMaxFileSizeBytes.value / MEGABYTE) : "",
+);
+const isMaxFileSizeValid = computed(() => maxFileSizeRules.every((rule) => rule(maxFileSizeText.value) === true));
 const save = () => {
-  if (!isMaxFileSizeBytesDirty.value && !isAllowedMimeCategoriesDirty.value) return;
+  const isMaxFileSizeBytesSavable = isMaxFileSizeBytesDirty.value && isMaxFileSizeValid.value;
+  if (!isMaxFileSizeBytesSavable && !isAllowedMimeCategoriesDirty.value) return;
 
   // The fields this session edited and no others, so one another client changed since the panel opened is not written
-  // Back with the value this panel was opened on
+  // Back with the value this panel was opened on. A size the field refuses stays in the draft under its message
   saveRoom({
     ...(isAllowedMimeCategoriesDirty.value && { allowedMimeCategories: editedAllowedMimeCategories.value }),
-    ...(isMaxFileSizeBytesDirty.value && { maxFileSizeBytes: editedMaxFileSizeBytes.value }),
+    ...(isMaxFileSizeBytesSavable && { maxFileSizeBytes: editedMaxFileSizeBytes.value }),
   });
   settleMaxFileSizeBytes();
   settleAllowedMimeCategories();
@@ -44,7 +50,7 @@ const save = () => {
   <div flex flex-col gap-6>
     <UiTextField
       :hint="`In MB. Leave empty to use the platform limit of ${maxFileSizeMegabytes} MB.`"
-      :model-value="editedMaxFileSizeBytes ? String(editedMaxFileSizeBytes / MEGABYTE) : ''"
+      :model-value="maxFileSizeText"
       label="Maximum file size"
       :rules="maxFileSizeRules"
       :type="UiTextFieldType.Number"
