@@ -41,7 +41,7 @@ The Paimon menu SHALL list its side bar from Back to Quit Game and its contents 
 
 ### Requirement: Entries follow their system's open state
 
-The Paimon menu SHALL draw an entry only once its system is open, at the Adventure Rank the player holds and with the main quests its system opens after finished, and SHALL draw an open entry whose screen is not built as disabled.
+The Paimon menu SHALL draw an entry only once its system is open, at the Adventure Rank the player holds and with the main quests its system opens after finished, and SHALL draw an open entry whose screen is not built as disabled, except a payment entry, which it never draws.
 
 #### Scenario: Entry whose system is not open
 
@@ -55,12 +55,18 @@ The Paimon menu SHALL draw an entry only once its system is open, at the Adventu
 - **WHEN** the Paimon menu opens
 - **THEN** that entry is drawn disabled
 
+#### Scenario: The menu draws no Battle Pass entry at any rank
+
+- **GIVEN** the player is at Adventure Rank 20 or above with every main quest the menu's systems open after finished
+- **WHEN** the Paimon menu opens
+- **THEN** the Battle Pass is not drawn, disabled or otherwise
+
 #### Scenario: A locked account's contents
 
 - **GIVEN** the player is at Adventure Rank 2 with quests 2010001, 35001 and 20505 not finished
 - **WHEN** the Paimon menu opens
 - **THEN** the contents drawn are Party Setup, Friends, Achievements, Archive, Character Archive, Character, Inventory, Quests and Map, in that order
-- **AND** Shop, Wish, Battle Pass, Co-Op Mode, Events and Adventurer Handbook are not drawn (`paimon-menu`'s design, for the hidden contents, which is unverified against a locked account)
+- **AND** Shop, Wish, Co-Op Mode, Events and Adventurer Handbook are not drawn (`paimon-menu`'s design, for the hidden contents, which is unverified against a locked account)
 
 #### Scenario: Entry whose screen is built
 

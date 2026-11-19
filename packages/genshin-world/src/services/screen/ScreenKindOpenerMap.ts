@@ -8,7 +8,7 @@ export const ScreenKindOpenerMap: Readonly<Record<ScreenKind, ScreenKindOpener>>
   [ScreenKind.Achievements]: ScreenKindOpener.PaimonMenu,
   [ScreenKind.AdventurerHandbook]: ScreenKindOpener.PaimonMenu,
   [ScreenKind.Archive]: ScreenKindOpener.PaimonMenu,
-  [ScreenKind.BattlePass]: ScreenKindOpener.PaimonMenu,
+  [ScreenKind.BattlePass]: ScreenKindOpener.Shortcut,
   // Opened from a statue's Worship screen, which the statue's interaction opens
   [ScreenKind.Blessing]: ScreenKindOpener.Interaction,
   [ScreenKind.Character]: ScreenKindOpener.PaimonMenu,

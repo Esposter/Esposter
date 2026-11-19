@@ -22,8 +22,8 @@ export const STAMINA_METER_LOW_SHARE = 0.125;
 export const STAMINA_METER_SECTION = 100;
 
 // The top right's shortcuts the world backs, in the game's order from the left, each the key that opens its screen and
-// The Paimon menu's icon for it, which is the same art: the game's Events and Battle Pass stand before them, and join
-// Once their screens are more than a placeholder
+// The Paimon menu's icon for it, which is the same art: the game's Events stands before them, and joins once its screen
+// Is more than a placeholder
 export const HUD_SHORTCUTS: readonly { icon: MenuEntryIcon; inputAction: InputAction; labelKey: GameTextKey }[] = [
   { icon: MenuEntryIcon.Wish, inputAction: InputAction.OpenWish, labelKey: GameTextKey.Wish },
   {

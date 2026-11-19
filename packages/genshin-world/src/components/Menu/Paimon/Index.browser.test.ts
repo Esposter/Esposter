@@ -143,22 +143,22 @@ describe("menuPaimon", () => {
     );
   });
 
-  test("a player at rank 20 with the quests finished sees all fifteen contents", async () => {
+  // The Battle Pass opens at Adventure Rank 20, and its entry is never drawn even with that rank and the quests finished
+  test("The menu draws no Battle Pass entry at any rank", async () => {
     expect.hasAssertions();
 
     await render(MenuPaimon, { props: { ...props, adventureRank: 20, finishedMainQuestIds: openedQuestIds } });
 
-    expect(getContentLabels()).toHaveLength(15);
-    expect(getContentLabels()).toContain(ENGLISH_GAME_TEXT[GameTextKey.BattlePass]);
+    expect(getContentLabels()).toHaveLength(14);
+    expect(getContentLabels()).not.toContain(ENGLISH_GAME_TEXT[GameTextKey.BattlePass]);
   });
 
-  test("a player at rank 15 with the quests finished has no Battle Pass and no Co-Op Mode", async () => {
+  test("a player at rank 15 with the quests finished has no Co-Op Mode", async () => {
     expect.hasAssertions();
 
     await render(MenuPaimon, { props: { ...props, adventureRank: 15, finishedMainQuestIds: openedQuestIds } });
 
     expect(getContentLabels()).toHaveLength(13);
-    expect(getContentLabels()).not.toContain(ENGLISH_GAME_TEXT[GameTextKey.BattlePass]);
     expect(getContentLabels()).not.toContain(ENGLISH_GAME_TEXT[GameTextKey.CoOp]);
   });
 

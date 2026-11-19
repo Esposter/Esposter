@@ -40,7 +40,6 @@ export const PAIMON_MENU_CONTENTS: readonly PaimonMenuScreenEntry<MenuEntryIcon>
   { icon: EntryIcon.Events, screenKind: ScreenKind.Events },
   { icon: EntryIcon.AdventurerHandbook, screenKind: ScreenKind.AdventurerHandbook },
   { icon: EntryIcon.Wish, screenKind: ScreenKind.Wish },
-  { icon: EntryIcon.BattlePass, screenKind: ScreenKind.BattlePass },
   { icon: EntryIcon.CoOp, screenKind: ScreenKind.CoOp },
 ];
 // The two ornaments the time dial's frame carries, at its top and at its bottom

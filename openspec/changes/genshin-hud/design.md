@@ -17,7 +17,7 @@ The [HUD](../../specs/genshin/hud/design.md) is built with its pieces and their 
 
 ## What this does not propose
 
-- **The pieces of features the world lacks**: the chat, the Events and Battle Pass shortcuts, the shortcuts' badges and the latency.
+- **The pieces of features the world lacks**: the chat, the Events shortcut, the shortcuts' badges and the latency.
 
 ## Key files
 

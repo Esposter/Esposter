@@ -3,7 +3,6 @@ export const MenuEntryIcon = {
   Achievements: "Achievements",
   AdventurerHandbook: "AdventurerHandbook",
   Archive: "Archive",
-  BattlePass: "BattlePass",
   Character: "Character",
   CharacterArchive: "CharacterArchive",
   Community: "Community",
