@@ -13,7 +13,7 @@ export const sortBlueprintEntriesTopologically = (
   const visited = new Set<string>();
   const visiting = new Set<string>();
   const sortedEntries: BlueprintEntry[] = [];
-  const visit = (entry: BlueprintEntry): void => {
+  const visit = (entry: BlueprintEntry) => {
     if (visited.has(entry.key)) return;
     else if (visiting.has(entry.key)) throw getInvalidBlueprintError(`cyclic entry reference ${entry.key}`);
 
