@@ -7,7 +7,7 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
-import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { createKitTestContext, readBuffTuples } from "#src/services/kit/createKitTestContext.test";
 import { createGuerillaTacticsPassiveModule } from "#src/services/weapon/passives/createGuerillaTacticsPassiveModule";
 import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
 import { getBuff } from "#src/services/weapon/passives/getBuff.test";
@@ -31,8 +31,10 @@ describe(createGuerillaTacticsPassiveModule, () => {
       wielder,
     );
 
-    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBe(0.1);
-    expect(getBuff(kitEffectState, Attribute.MovementSpeed)?.amount).toBe(0.1);
+    expect(readBuffTuples(kitEffectState.effects)).toStrictEqual([
+      [Attribute.AttackPercent, 0.1, 12],
+      [Attribute.MovementSpeed, 0.1, 12],
+    ]);
   });
 
   test("a defeat with no striker raises nothing", () => {

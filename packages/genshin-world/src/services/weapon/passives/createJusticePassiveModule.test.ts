@@ -41,7 +41,7 @@ describe(createJusticePassiveModule, () => {
     striker: wielder,
   });
 
-  test("normal and charged attacks deal the rank's DMG bonus and no other attack does", () => {
+  test("normal and charged attacks deal the rank's DMG bonus, and an elemental skill does not", () => {
     expect.hasAssertions();
 
     const { party } = createKitTestContext(wielder);

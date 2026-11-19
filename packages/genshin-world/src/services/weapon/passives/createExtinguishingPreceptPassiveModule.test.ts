@@ -33,46 +33,23 @@ describe(createExtinguishingPreceptPassiveModule, () => {
     ).toStrictEqual(ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES.map((attribute) => ({ amount: 0.1, attribute })));
   });
 
-  test("after an Elemental Skill, ATK rises by 5% for each second that passes", () => {
+  // The stepping leaves a float residue, so the first stack is read once its whole second has passed
+  test.each([
+    [1, attackBonusPerSecond],
+    [2.5, 2 * attackBonusPerSecond],
+    [7, 4 * attackBonusPerSecond],
+  ])("after %s seconds of an Elemental Skill, ATK rises by %s, at most four stacks", (seconds, amount) => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
     extinguishingPreceptPassiveModule.onKitEvent?.(skillUsed, context, wielder);
-    stepKitSeconds(context, 2.5);
+    stepKitSeconds(context, seconds);
 
     expect(
       extinguishingPreceptPassiveModule
         .getPassiveBonuses?.(wielder, 1, onField, context.kitEffectState.effects)
         ?.find(({ attribute }) => attribute === Attribute.AttackPercent)?.amount,
-    ).toBe(2 * attackBonusPerSecond);
-  });
-
-  test("the first stack is read once a whole second has passed, though the stepping leaves a float residue", () => {
-    expect.hasAssertions();
-
-    const context = createKitTestContext(wielder);
-    extinguishingPreceptPassiveModule.onKitEvent?.(skillUsed, context, wielder);
-    stepKitSeconds(context, 1);
-
-    expect(
-      extinguishingPreceptPassiveModule
-        .getPassiveBonuses?.(wielder, 1, onField, context.kitEffectState.effects)
-        ?.find(({ attribute }) => attribute === Attribute.AttackPercent)?.amount,
-    ).toBe(attackBonusPerSecond);
-  });
-
-  test("the ATK rise stops at four stacks", () => {
-    expect.hasAssertions();
-
-    const context = createKitTestContext(wielder);
-    extinguishingPreceptPassiveModule.onKitEvent?.(skillUsed, context, wielder);
-    stepKitSeconds(context, 7);
-
-    expect(
-      extinguishingPreceptPassiveModule
-        .getPassiveBonuses?.(wielder, 1, onField, context.kitEffectState.effects)
-        ?.find(({ attribute }) => attribute === Attribute.AttackPercent)?.amount,
-    ).toBe(4 * attackBonusPerSecond);
+    ).toBe(amount);
   });
 
   test("the ATK rise is doubled while the wielder is off the field", () => {

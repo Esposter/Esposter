@@ -80,7 +80,7 @@ describe(createTurquoiseHuntPassiveModule, () => {
     expect(getSkillBonus()).toBe(0);
   });
 
-  test("a Burning or Burgeon a nearby party member triggers gains the wielder three stacks", () => {
+  test("a Burning triggered by a nearby party member gains the wielder three stacks", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);

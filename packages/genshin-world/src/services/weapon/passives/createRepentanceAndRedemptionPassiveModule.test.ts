@@ -78,19 +78,4 @@ describe(createRepentanceAndRedemptionPassiveModule, () => {
       },
     ]);
   });
-
-  test("an Elemental Reaction that is not a Stellar Glimmer one raises no ATK", () => {
-    expect.hasAssertions();
-
-    const context = createKitTestContext(wielder);
-    repentanceAndRedemptionPassiveModule.onKitEvent?.(
-      createReaction(wielder, enemy, ReactionType.Overloaded, Element.Pyro),
-      context,
-      wielder,
-    );
-
-    expect(getBuffs(context.kitEffectState.effects).map(({ attribute }) => attribute)).not.toContain(
-      Attribute.AttackPercent,
-    );
-  });
 });

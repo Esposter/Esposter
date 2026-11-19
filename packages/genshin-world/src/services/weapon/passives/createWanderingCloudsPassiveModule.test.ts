@@ -2,6 +2,7 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEvent } from "#src/models/kit/KitEvent";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
@@ -10,7 +11,7 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
-import { ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES, SMALL_AOE_AREA } from "#src/services/weapon/passives/constants";
+import { SMALL_AOE_AREA } from "#src/services/weapon/passives/constants";
 import { createWanderingCloudsPassiveModule } from "#src/services/weapon/passives/createWanderingCloudsPassiveModule";
 import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
 import { describe, expect, test } from "vitest";
@@ -37,9 +38,15 @@ describe(createWanderingCloudsPassiveModule, () => {
   test("the rank's Elemental DMG Bonus is a passive bonus on every element", () => {
     expect.hasAssertions();
 
-    expect(wanderingCloudsPassiveModule.getPassiveBonuses?.(wielder, 1, [], [])).toStrictEqual(
-      ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES.map((attribute) => ({ amount: 0.2, attribute })),
-    );
+    expect(wanderingCloudsPassiveModule.getPassiveBonuses?.(wielder, 1, [], [])).toStrictEqual([
+      { amount: 0.2, attribute: Attribute.AnemoDamageBonus },
+      { amount: 0.2, attribute: Attribute.CryoDamageBonus },
+      { amount: 0.2, attribute: Attribute.DendroDamageBonus },
+      { amount: 0.2, attribute: Attribute.ElectroDamageBonus },
+      { amount: 0.2, attribute: Attribute.GeoDamageBonus },
+      { amount: 0.2, attribute: Attribute.HydroDamageBonus },
+      { amount: 0.2, attribute: Attribute.PyroDamageBonus },
+    ]);
   });
 
   test("a Normal Attack hit that rolls under the chance queues a physical AoE at the rank's multiplier", () => {

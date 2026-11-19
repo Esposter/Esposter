@@ -1,8 +1,6 @@
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { KitContext } from "#src/models/kit/KitContext";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
@@ -12,16 +10,12 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { OTHER_CHARACTER_ID } from "#src/services/kit/constants.test";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
-import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { createMillennialHymnPassiveModule } from "#src/services/weapon/passives/createMillennialHymnPassiveModule";
 import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
+import { readElementalMastery } from "#src/services/weapon/passives/readElementalMastery.test";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-
-const readElementalMastery = (context: KitContext, wielder: Combatant): number =>
-  getBuffedCombatant(wielder, context.kitEffectState.effects, context.party, context.characterIdCombatantMap).attributes
-    .attributeTotalMap[Attribute.ElementalMastery];
 
 describe(createMillennialHymnPassiveModule, () => {
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
@@ -68,6 +62,10 @@ describe(createMillennialHymnPassiveModule, () => {
     stepKitSeconds(context, 5);
 
     expect(readElementalMastery(context, wielder)).toBe(60);
+
+    stepKitSeconds(context, 5.1);
+
+    expect(readElementalMastery(context, wielder)).toBe(0);
   });
 
   test("with both in effect, every Bloom reaction of the party gains its amount, and nothing without both", () => {
@@ -81,13 +79,12 @@ describe(createMillennialHymnPassiveModule, () => {
     passiveModule.onKitEvent?.(createSkillHit(Element.Dendro), context, wielder);
     passiveModule.onKitEvent?.(createLunarBloomTriggered(other), context, wielder);
 
-    expect(passiveModule.getPartyReactionBonus?.(wielder, bloomReaction, context)?.damageBonus).toBe(1.2);
     expect(
-      passiveModule.getPartyReactionBonus?.(
-        wielder,
-        { combatant: other, enemy, reactionType: ReactionType.Burgeon },
-        context,
-      )?.damageBonus,
-    ).toBe(0.8);
+      [ReactionType.Bloom, ReactionType.Burgeon, ReactionType.Hyperbloom, ReactionType.LunarBloom].map(
+        (reactionType) =>
+          passiveModule.getPartyReactionBonus?.(wielder, { combatant: other, enemy, reactionType }, context)
+            ?.damageBonus,
+      ),
+    ).toStrictEqual([1.2, 0.8, 0.8, 0.4]);
   });
 });

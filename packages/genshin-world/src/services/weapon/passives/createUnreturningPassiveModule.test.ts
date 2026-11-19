@@ -9,11 +9,10 @@ import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
-import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { createKitTestContext, readBuffTuples } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createUnreturningPassiveModule } from "#src/services/weapon/passives/createUnreturningPassiveModule";
 import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
-import { getBuff } from "#src/services/weapon/passives/getBuff.test";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
@@ -40,8 +39,10 @@ describe(createUnreturningPassiveModule, () => {
     const context = createKitTestContext(wielder, { kitEffectState });
     unreturningPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.ChargedAttack, true), context, wielder);
 
-    expect(getBuff(kitEffectState, Attribute.MovementSpeed)?.amount).toBe(0.2);
-    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBe(0.3);
+    expect(readBuffTuples(kitEffectState.effects)).toStrictEqual([
+      [Attribute.MovementSpeed, 0.2, 3],
+      [Attribute.AttackPercent, 0.3, 3],
+    ]);
   });
 
   test("a charged attack off a weak point, or a normal attack on one, raises nothing", () => {
@@ -52,6 +53,6 @@ describe(createUnreturningPassiveModule, () => {
     unreturningPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.ChargedAttack, false), context, wielder);
     unreturningPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.NormalAttack, true), context, wielder);
 
-    expect(getBuff(kitEffectState, Attribute.MovementSpeed)).toBeUndefined();
+    expect(kitEffectState.effects).toStrictEqual([]);
   });
 });

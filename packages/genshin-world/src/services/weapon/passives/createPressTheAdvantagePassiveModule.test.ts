@@ -7,6 +7,7 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { OTHER_CHARACTER_ID } from "#src/services/kit/constants.test";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { createPressTheAdvantagePassiveModule } from "#src/services/weapon/passives/createPressTheAdvantagePassiveModule";
 import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
@@ -22,6 +23,7 @@ const getStackSeconds = (context: KitContext) =>
 describe(createPressTheAdvantagePassiveModule, () => {
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const wielder: Combatant = createWielderCombatant();
+  const other = { ...wielder, characterId: OTHER_CHARACTER_ID };
   // A synthetic fifth ATK for four seconds a stack, not the weapon's row
   const pressTheAdvantagePassiveModule = createPressTheAdvantagePassiveModule([0.2, 4]);
   const createDefeat = (striker: Combatant | undefined) => ({ enemy, kind: KitEventKind.EnemyDefeated, striker });
@@ -71,6 +73,7 @@ describe(createPressTheAdvantagePassiveModule, () => {
 
     const context = createKitTestContext(wielder);
     pressTheAdvantagePassiveModule.onKitEvent?.(createDefeat(undefined), context, wielder);
+    pressTheAdvantagePassiveModule.onKitEvent?.(createDefeat(other), context, wielder);
 
     expect(getStackSeconds(context)).toStrictEqual([]);
   });

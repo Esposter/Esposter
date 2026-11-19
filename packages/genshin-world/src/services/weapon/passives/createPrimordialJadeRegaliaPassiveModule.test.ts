@@ -12,6 +12,7 @@ import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
+import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 import { createPrimordialJadeRegaliaPassiveModule } from "#src/services/weapon/passives/createPrimordialJadeRegaliaPassiveModule";
 import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
 import { getBuff } from "#src/services/weapon/passives/getBuff.test";
@@ -69,9 +70,9 @@ describe(createPrimordialJadeRegaliaPassiveModule, () => {
 
     const context = createContext(createWielder(20000));
     castKitShield(context, TRAVELER_CHARACTER_ID, { health: 1, secondsRemaining: 10 });
-    stepKitSeconds(context, 2.3);
+    stepKitSeconds(context, toKitSeconds(141));
     const energyBefore = getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy;
-    stepKitSeconds(context, 2);
+    stepKitSeconds(context, toKitSeconds(1));
 
     expect(energyBefore).toBe(0);
     expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy).toBe(4.5);

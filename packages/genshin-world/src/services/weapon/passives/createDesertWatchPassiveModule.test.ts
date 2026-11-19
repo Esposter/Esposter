@@ -78,6 +78,6 @@ describe(createDesertWatchPassiveModule, () => {
         [{ ...wielder, energy: 0, isOnField: true }],
         context.kitEffectState.effects,
       ),
-    ).toContainEqual({ amount: 0.32, attribute: Attribute.HealthPercent });
+    ).toStrictEqual([{ amount: 0.32, attribute: Attribute.HealthPercent }]);
   });
 });

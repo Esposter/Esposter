@@ -68,6 +68,14 @@ describe(createBrocadeBloomShrineSwordPassiveModule, () => {
         context.kitEffectState.effects,
       ),
     ).toBe(0.32);
+    expect(
+      passiveModule.getStrikeDamageBonus?.(
+        createWeaponStrike(wielder, AttackTag.ElementalSkill),
+        enemy,
+        party,
+        context.kitEffectState.effects,
+      ),
+    ).toBe(0.48);
 
     stepKitSeconds(context, 15.1);
 

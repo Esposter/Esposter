@@ -1,8 +1,6 @@
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { KitContext } from "#src/models/kit/KitContext";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { Attribute } from "#src/models/character/Attribute";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
@@ -11,18 +9,14 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { OTHER_CHARACTER_ID } from "#src/services/kit/constants.test";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
-import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { createMindInBloomPassiveModule } from "#src/services/weapon/passives/createMindInBloomPassiveModule";
 import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
+import { readElementalMastery } from "#src/services/weapon/passives/readElementalMastery.test";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-
-const readElementalMastery = (context: KitContext, wielder: Combatant): number =>
-  getBuffedCombatant(wielder, context.kitEffectState.effects, context.party, context.characterIdCombatantMap).attributes
-    .attributeTotalMap[Attribute.ElementalMastery];
 
 describe(createMindInBloomPassiveModule, () => {
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");

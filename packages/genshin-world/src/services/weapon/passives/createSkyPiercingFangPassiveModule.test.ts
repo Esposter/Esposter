@@ -58,7 +58,7 @@ describe(createSkyPiercingFangPassiveModule, () => {
           context.characterIdCombatantMap,
         ),
       ),
-    ).toStrictEqual([0.5 * wielder.attributes.attack, 0.5 * wielder.attributes.attack]);
+    ).toStrictEqual([500, 500]);
   });
 
   test("the share is the striker's ATK, priced with its buffs on", () => {
@@ -72,11 +72,7 @@ describe(createSkyPiercingFangPassiveModule, () => {
       secondsRemaining: 12,
       source: "test",
     });
-    const { attributeTotalMap } = wielder.attributes;
-    const buffedAttack =
-      attributeTotalMap[Attribute.BaseAttack] * (1 + attributeTotalMap[Attribute.AttackPercent] + 0.5) +
-      attributeTotalMap[Attribute.Attack];
-
+    // The wielder's 1000 base ATK with its 50% ATK buff is 1500 ATK, and the share is half of it
     const pricedWielder = getBuffedCombatant(
       wielder,
       context.kitEffectState.effects,
@@ -92,7 +88,7 @@ describe(createSkyPiercingFangPassiveModule, () => {
         context.kitEffectState.effects,
         context.characterIdCombatantMap,
       ),
-    ).toBeCloseTo(0.5 * buffedAttack);
+    ).toBe(750);
   });
 
   test("an elemental skill's strike gains no base damage, and neither does a normal attack before the burst", () => {

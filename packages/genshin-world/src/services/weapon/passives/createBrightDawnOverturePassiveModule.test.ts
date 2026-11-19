@@ -60,7 +60,7 @@ describe(createBrightDawnOverturePassiveModule, () => {
     ).toBe(0);
   });
 
-  test("a second stack restores the rank's Energy once every cooldown", () => {
+  test("a second stack restores the rank's Energy", () => {
     expect.hasAssertions();
 
     const context = { ...createKitTestContext(wielder), party: structuredClone(party) };

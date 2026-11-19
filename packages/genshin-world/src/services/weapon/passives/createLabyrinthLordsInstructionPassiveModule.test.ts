@@ -15,6 +15,7 @@ import { createKitTestContext, stepKitSecondsSendingExpiries } from "#src/servic
 import { endKitSwapEffects } from "#src/services/kit/effects/endKitSwapEffects";
 import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { SMALL_AOE_AREA } from "#src/services/weapon/passives/constants";
 import { createLabyrinthLordsInstructionPassiveModule } from "#src/services/weapon/passives/createLabyrinthLordsInstructionPassiveModule";
 import { describe, expect, test } from "vitest";
 
@@ -80,10 +81,15 @@ describe(createLabyrinthLordsInstructionPassiveModule, () => {
     stepKitSecondsSendingExpiries(context, 0.1);
 
     expect(strikeCountBeforeEnd).toBe(0);
-    expect(context.strikes).toHaveLength(1);
-    expect(context.strikes[0]?.target).toBe(nearest);
-    expect(context.strikes[0]?.hit.talentMultiplier).toBe(1);
-    expect(context.strikes[0]?.hit.element).toBeUndefined();
+    expect(context.strikes).toStrictEqual([
+      {
+        body: context.body,
+        combatant: wielder,
+        hit: { hitArea: SMALL_AOE_AREA, hitmarkSeconds: 0, poiseDamage: 0, talentMultiplier: 1 },
+        hitbox: { offset: { x: 0, z: 0 }, shape: { kind: "circle", radius: 1.6 } },
+        target: nearest,
+      },
+    ]);
   });
 
   test("the wielder leaving the field ends Teachings of the Forest and deals its hit", () => {

@@ -50,8 +50,8 @@ describe(createCritEnergyPassiveModule, () => {
     critEnergyPassiveModule.onKitEvent?.(createDamageTaken(true), context, wielder);
     const afterFirstCrit = getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy;
     critEnergyPassiveModule.onKitEvent?.(createDamageTaken(true), context, wielder);
+    const afterSecondCrit = getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy;
 
-    expect(afterNonCrit).toBe(0);
-    expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy).toBe(afterFirstCrit);
+    expect([afterNonCrit, afterFirstCrit, afterSecondCrit]).toStrictEqual([0, 6, 6]);
   });
 });

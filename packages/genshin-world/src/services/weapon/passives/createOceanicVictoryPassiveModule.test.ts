@@ -34,7 +34,7 @@ describe(createOceanicVictoryPassiveModule, () => {
     striker: wielder,
   });
 
-  test("an elemental burst raises the wielder's burst DMG by the rank's percentage, and no other attack", () => {
+  test("an elemental burst raises the wielder's burst DMG by the rank's percentage, and a normal attack does not", () => {
     expect.hasAssertions();
 
     const party = createParty([TRAVELER_CHARACTER_ID]);

@@ -3,6 +3,7 @@ import type { KitEvent } from "#src/models/kit/KitEvent";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
+import { OTHER_CHARACTER_ID } from "#src/services/kit/constants.test";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { createPrincipleOfEquilibriumPassiveModule } from "#src/services/weapon/passives/createPrincipleOfEquilibriumPassiveModule";
@@ -27,7 +28,7 @@ describe(createPrincipleOfEquilibriumPassiveModule, () => {
   test("a heal the wielder performs restores the rank's Energy to it, even off the field", () => {
     expect.hasAssertions();
 
-    const context = createKitTestContext(wielder);
+    const context = createKitTestContext(wielder, { activeCombatant: { ...wielder, characterId: OTHER_CHARACTER_ID } });
     principleOfEquilibriumPassiveModule.onKitEvent?.(healPerformed, context, wielder);
 
     expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy).toBe(8);

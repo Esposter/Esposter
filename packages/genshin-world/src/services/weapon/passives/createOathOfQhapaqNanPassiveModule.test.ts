@@ -29,7 +29,7 @@ describe(createOathOfQhapaqNanPassiveModule, () => {
     striker: wielder,
   });
 
-  test("a Pyro-related reaction raises the wielder's Elemental Skill DMG and nothing else", () => {
+  test("a Pyro-related reaction raises the wielder's Elemental Skill DMG and not its Normal Attack DMG", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);

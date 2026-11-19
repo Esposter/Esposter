@@ -75,6 +75,11 @@ describe(createDryasNocturnePassiveModule, () => {
     const context = createKitTestContext(wielder);
     healSelf(context);
     useSkill(context);
+
+    expect(passiveModule.getPassiveBonuses?.(wielder, 1, [], context.kitEffectState.effects)).toStrictEqual([
+      { amount: 0.24, attribute: Attribute.HealthPercent },
+    ]);
+
     stepSeconds(context, 21);
 
     expect(passiveModule.getPassiveBonuses?.(wielder, 1, [], context.kitEffectState.effects)).toStrictEqual([

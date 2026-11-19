@@ -62,7 +62,8 @@ describe(createMasteryClockPassiveModule, () => {
     stepSeconds(context, jinnisWhisper, 20.5);
 
     expect(context.kitEffectState.effects.filter((effect) => effect.kind === "buff")).toHaveLength(2);
-    expect(findBuff(context, TRAVELER_CHARACTER_ID)?.secondsRemaining).toBeCloseTo(11.5, 0);
+    // Twelve seconds, less the 29 sixtieths of a second run since the tick at about twenty seconds
+    expect(findBuff(context, TRAVELER_CHARACTER_ID)?.secondsRemaining).toBeCloseTo(11.5167);
   });
 
   test("the clock runs off the field, and a raised rank reads its own rate", () => {

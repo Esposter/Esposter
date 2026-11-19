@@ -41,7 +41,7 @@ describe(createIwakuraSuccessionPassiveModule, () => {
     expect(countKitHolds(context.kitEffectState.effects, TRAVELER_CHARACTER_ID, SEED_ID)).toBe(2);
   });
 
-  test("a burst consumes the seeds and gives their energy two seconds later", () => {
+  test("a burst consumes the seeds, and their energy is given when the status it leaves expires", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);

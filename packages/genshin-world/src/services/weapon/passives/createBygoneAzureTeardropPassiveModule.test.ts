@@ -64,7 +64,7 @@ describe(createBygoneAzureTeardropPassiveModule, () => {
     expect(readNormalAttackDamage(context)).toBeCloseTo(0.48);
   });
 
-  test("an Elemental Skill again restarts the rise, and leaving the field ends it", () => {
+  test("an Elemental Skill again restarts the rise", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);

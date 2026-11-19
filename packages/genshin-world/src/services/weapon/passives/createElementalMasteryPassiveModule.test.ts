@@ -11,6 +11,7 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES } from "#src/services/weapon/passives/constants";
 import { createElementalMasteryPassiveModule } from "#src/services/weapon/passives/createElementalMasteryPassiveModule";
 import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
 import { getBuff } from "#src/services/weapon/passives/getBuff.test";
@@ -40,8 +41,9 @@ describe(createElementalMasteryPassiveModule, () => {
     const context = createKitTestContext(wielder, { kitEffectState });
     elementalMasteryPassiveModule.onKitEvent?.(createNormalAttackHit(), context, wielder);
 
-    expect(getBuff(kitEffectState, Attribute.PyroDamageBonus)?.amount).toBeCloseTo(0.05);
-    expect(getBuff(kitEffectState, Attribute.HydroDamageBonus)?.amount).toBeCloseTo(0.05);
+    expect(
+      ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES.map((attribute) => getBuff(kitEffectState, attribute)?.amount),
+    ).toStrictEqual(ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES.map(() => 0.05));
   });
 
   test("a third normal attack hit holds the stacks at two", () => {

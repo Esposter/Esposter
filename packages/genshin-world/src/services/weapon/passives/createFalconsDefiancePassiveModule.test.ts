@@ -50,7 +50,7 @@ describe(createFalconsDefiancePassiveModule, () => {
     expect(context.strikes.map(({ hit }) => hit.talentMultiplier)).toStrictEqual([1.5]);
   });
 
-  test("taking DMG inside the three-second cooldown heals and queues nothing", () => {
+  test("taking DMG inside the three-second cooldown neither heals nor queues a hit", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);

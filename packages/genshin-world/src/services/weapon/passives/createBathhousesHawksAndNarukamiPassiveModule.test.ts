@@ -1,8 +1,6 @@
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { KitContext } from "#src/models/kit/KitContext";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -11,17 +9,14 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
-import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createBathhousesHawksAndNarukamiPassiveModule } from "#src/services/weapon/passives/createBathhousesHawksAndNarukamiPassiveModule";
 import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
+import { readElementalMastery } from "#src/services/weapon/passives/readElementalMastery.test";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const readElementalMastery = (context: KitContext, wielder: Combatant): number =>
-  getBuffedCombatant(wielder, context.kitEffectState.effects, context.party, context.characterIdCombatantMap).attributes
-    .attributeTotalMap[Attribute.ElementalMastery];
 
 describe(createBathhousesHawksAndNarukamiPassiveModule, () => {
   // Bathhouses, Hawks, and Narukami with synthetic params: 50 Elemental Mastery for two seconds after a Swirl, 40 for
@@ -45,35 +40,25 @@ describe(createBathhousesHawksAndNarukamiPassiveModule, () => {
     striker: wielder,
   });
 
-  test("a Swirl its wielder triggers raises Elemental Mastery by the rank's amount for two seconds", () => {
-    expect.hasAssertions();
+  test.each([ReactionType.Swirl, ReactionType.StellarSwirl])(
+    "a %s its wielder triggers raises Elemental Mastery by the rank's amount for two seconds",
+    (reactionType) => {
+      expect.hasAssertions();
 
-    const context = createKitTestContext(wielder);
-    bathhousesHawksAndNarukamiPassiveModule.onKitEvent?.(
-      createReactionTriggered(ReactionType.Swirl, wielder),
-      context,
-      wielder,
-    );
+      const context = createKitTestContext(wielder);
+      bathhousesHawksAndNarukamiPassiveModule.onKitEvent?.(
+        createReactionTriggered(reactionType, wielder),
+        context,
+        wielder,
+      );
 
-    expect(readElementalMastery(context, wielder)).toBe(50);
+      expect(readElementalMastery(context, wielder)).toBe(50);
 
-    stepKitSeconds(context, 2.1);
+      stepKitSeconds(context, 2.1);
 
-    expect(readElementalMastery(context, wielder)).toBe(0);
-  });
-
-  test("a Stellar Swirl its wielder triggers raises Elemental Mastery the same way", () => {
-    expect.hasAssertions();
-
-    const context = createKitTestContext(wielder);
-    bathhousesHawksAndNarukamiPassiveModule.onKitEvent?.(
-      createReactionTriggered(ReactionType.StellarSwirl, wielder),
-      context,
-      wielder,
-    );
-
-    expect(readElementalMastery(context, wielder)).toBe(50);
-  });
+      expect(readElementalMastery(context, wielder)).toBe(0);
+    },
+  );
 
   test("a Swirl another party member triggers raises nothing", () => {
     expect.hasAssertions();
@@ -88,31 +73,24 @@ describe(createBathhousesHawksAndNarukamiPassiveModule, () => {
     expect(readElementalMastery(context, wielder)).toBe(0);
   });
 
-  test("an Elemental Skill hit raises Elemental Mastery by the rank's amount for three seconds", () => {
-    expect.hasAssertions();
+  test.each([
+    [AttackTag.ElementalSkill, 40, 3],
+    [AttackTag.ElementalBurst, 30, 4],
+  ])(
+    "a %s hit its wielder lands raises Elemental Mastery by the rank's amount for the rank's seconds",
+    (attackTag, amount, seconds) => {
+      expect.hasAssertions();
 
-    const context = createKitTestContext(wielder);
-    bathhousesHawksAndNarukamiPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.ElementalSkill), context, wielder);
+      const context = createKitTestContext(wielder);
+      bathhousesHawksAndNarukamiPassiveModule.onKitEvent?.(createDamageTaken(attackTag), context, wielder);
 
-    expect(readElementalMastery(context, wielder)).toBe(40);
+      expect(readElementalMastery(context, wielder)).toBe(amount);
 
-    stepKitSeconds(context, 3.1);
+      stepKitSeconds(context, seconds + 0.1);
 
-    expect(readElementalMastery(context, wielder)).toBe(0);
-  });
-
-  test("an Elemental Burst hit raises Elemental Mastery by the rank's amount for four seconds", () => {
-    expect.hasAssertions();
-
-    const context = createKitTestContext(wielder);
-    bathhousesHawksAndNarukamiPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.ElementalBurst), context, wielder);
-
-    expect(readElementalMastery(context, wielder)).toBe(30);
-
-    stepKitSeconds(context, 4.1);
-
-    expect(readElementalMastery(context, wielder)).toBe(0);
-  });
+      expect(readElementalMastery(context, wielder)).toBe(0);
+    },
+  );
 
   test("a normal attack hit raises nothing", () => {
     expect.hasAssertions();

@@ -37,9 +37,9 @@ describe(createBoltOfPerceptionPassiveModule, () => {
     const context = createKitTestContext(wielder);
     boltOfPerceptionPassiveModule.onKitEvent?.(createNormalAttackHit(), context, wielder);
 
-    expect(context.strikes).toHaveLength(1);
-    expect(context.strikes[0]?.target).toBe(enemy);
-    expect(context.strikes[0]?.hit.talentMultiplier).toBeCloseTo(1.5);
+    expect(
+      context.strikes.map(({ hit, target }) => ({ target, talentMultiplier: hit.talentMultiplier })),
+    ).toStrictEqual([{ target: enemy, talentMultiplier: 1.5 }]);
   });
 
   test("a second attack inside the rank's cooldown queues no second bolt", () => {

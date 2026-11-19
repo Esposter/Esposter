@@ -78,6 +78,10 @@ describe(createGoldenBloodTidePassiveModule, () => {
       if (change < 2) stepKitSeconds(context, 0.5);
     }
 
-    expect(readBuffTuples(context.kitEffectState.effects)).toContainEqual([Attribute.NormalAttackSpeed, 0.08, 4]);
+    expect(readBuffTuples(context.kitEffectState.effects)).toStrictEqual([
+      [Attribute.NormalAttackDamageBonus, 0.16 * 3, 4],
+      [Attribute.ChargedAttackDamageBonus, 0.14 * 3, 4],
+      [Attribute.NormalAttackSpeed, 0.08, 4],
+    ]);
   });
 });

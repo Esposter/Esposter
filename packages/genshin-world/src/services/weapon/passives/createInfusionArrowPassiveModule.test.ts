@@ -33,24 +33,17 @@ describe(createInfusionArrowPassiveModule, () => {
     striker: wielder,
   });
 
-  test("a normal attack hit raises ATK and Normal ATK SPD by the rank's numbers at one stack", () => {
-    expect.hasAssertions();
+  test.each([AttackTag.NormalAttack, AttackTag.ChargedAttack])(
+    "a %s hit raises ATK and Normal ATK SPD by the rank's numbers at one stack",
+    (attackTag) => {
+      expect.hasAssertions();
 
-    const kitEffectState: KitEffectState = { effects: [] };
-    const context = createKitTestContext(wielder, { kitEffectState });
-    infusionArrowPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.NormalAttack), context, wielder);
+      const kitEffectState: KitEffectState = { effects: [] };
+      const context = createKitTestContext(wielder, { kitEffectState });
+      infusionArrowPassiveModule.onKitEvent?.(createDamageTaken(attackTag), context, wielder);
 
-    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBe(0.05);
-    expect(getBuff(kitEffectState, Attribute.NormalAttackSpeed)?.amount).toBe(0.02);
-  });
-
-  test("a charged attack hit stacks the same as a normal attack", () => {
-    expect.hasAssertions();
-
-    const kitEffectState: KitEffectState = { effects: [] };
-    const context = createKitTestContext(wielder, { kitEffectState });
-    infusionArrowPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.ChargedAttack), context, wielder);
-
-    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBe(0.05);
-  });
+      expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBe(0.05);
+      expect(getBuff(kitEffectState, Attribute.NormalAttackSpeed)?.amount).toBe(0.02);
+    },
+  );
 });

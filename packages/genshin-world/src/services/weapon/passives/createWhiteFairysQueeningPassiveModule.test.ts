@@ -56,7 +56,7 @@ describe(createWhiteFairysQueeningPassiveModule, () => {
     stepKitSeconds(context, 0.2);
     passiveModule.onKitEvent?.(createWeaponDamageTaken(wielder, AttackTag.ChargedAttack, enemy), context, wielder);
 
-    expect(passiveModule.getPartyReactionBonus?.(wielder, stellarConduct, context).damageBonus).toBeCloseTo(0.48);
+    expect(passiveModule.getPartyReactionBonus?.(wielder, stellarConduct, context).damageBonus).toBe(0.48);
 
     stepKitSeconds(context, 5.1);
 

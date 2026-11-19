@@ -66,7 +66,11 @@ describe(createWeightOfFallingBranchesPassiveModule, () => {
 
     stepKitSeconds(context, 10.1);
 
-    expect(readAttributeTotal(context, wielder, Attribute.PlungingAttackDamageBonus)).toBe(0);
+    expect(
+      [Attribute.NormalAttackDamageBonus, Attribute.ChargedAttackDamageBonus, Attribute.PlungingAttackDamageBonus].map(
+        (attribute) => readAttributeTotal(context, wielder, attribute),
+      ),
+    ).toStrictEqual([0, 0, 0]);
   });
 
   test("a Normal Attack hit raises nothing", () => {

@@ -26,8 +26,8 @@ describe(createUntaintedDesirePassiveModule, () => {
     const context = createKitTestContext(wielder);
     passiveModule.onKitEvent?.(createWeaponDamageTaken(wielder, AttackTag.ElementalSkill, enemy), context, wielder);
 
-    expect(getBuff(context.kitEffectState, Attribute.AttackPercent)?.amount).toBeCloseTo(0.08);
-    expect(getBuff(context.kitEffectState, Attribute.EnergyRecharge)?.amount).toBeCloseTo(0.06);
+    expect(getBuff(context.kitEffectState, Attribute.AttackPercent)?.amount).toBe(0.08);
+    expect(getBuff(context.kitEffectState, Attribute.EnergyRecharge)?.amount).toBe(0.06);
   });
 
   test("a normal attack hit adds no stack", () => {
@@ -46,8 +46,8 @@ describe(createUntaintedDesirePassiveModule, () => {
     for (let hit = 0; hit < 4; hit++)
       passiveModule.onKitEvent?.(createWeaponDamageTaken(wielder, AttackTag.ElementalSkill, enemy), context, wielder);
 
-    expect(getBuff(context.kitEffectState, Attribute.AttackPercent)?.amount).toBeCloseTo(0.24);
-    expect(getBuff(context.kitEffectState, Attribute.EnergyRecharge)?.amount).toBeCloseTo(0.18);
+    expect(getBuff(context.kitEffectState, Attribute.AttackPercent)?.amount).toBe(0.24);
+    expect(getBuff(context.kitEffectState, Attribute.EnergyRecharge)?.amount).toBe(0.18);
   });
 
   test("a hit counts off the field, and another member's hit adds nothing", () => {
@@ -58,6 +58,6 @@ describe(createUntaintedDesirePassiveModule, () => {
     passiveModule.onKitEvent?.(createWeaponDamageTaken(wielder, AttackTag.ElementalSkill, enemy), context, wielder);
     passiveModule.onKitEvent?.(createWeaponDamageTaken(other, AttackTag.ElementalSkill, enemy), context, wielder);
 
-    expect(getBuff(context.kitEffectState, Attribute.AttackPercent)?.amount).toBeCloseTo(0.08);
+    expect(getBuff(context.kitEffectState, Attribute.AttackPercent)?.amount).toBe(0.08);
   });
 });

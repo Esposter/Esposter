@@ -37,8 +37,7 @@ describe(createCrushPassiveModule, () => {
     const context = createKitTestContext(wielder);
     crushPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.NormalAttack), context, wielder);
 
-    expect(context.strikes).toHaveLength(1);
-    expect(context.strikes[0]?.hit.talentMultiplier).toBeCloseTo(1.5);
+    expect(context.strikes.map(({ hit }) => hit.talentMultiplier)).toStrictEqual([1.5]);
   });
 
   test("a roll above the rank's chance queues no extra hit", () => {

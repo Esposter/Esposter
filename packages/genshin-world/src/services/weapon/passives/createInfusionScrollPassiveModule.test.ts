@@ -10,7 +10,8 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { OTHER_CHARACTER_ID } from "#src/services/kit/constants.test";
-import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
+import { createKitTestContext, readBuffTuples, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
+import { ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES } from "#src/services/weapon/passives/constants";
 import { createInfusionScrollPassiveModule } from "#src/services/weapon/passives/createInfusionScrollPassiveModule";
 import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
 import { getBuff } from "#src/services/weapon/passives/getBuff.test";
@@ -38,8 +39,9 @@ describe(createInfusionScrollPassiveModule, () => {
     const context = createKitTestContext(wielder, { kitEffectState });
     infusionScrollPassiveModule.onKitEvent?.(createReaction(wielder), context, wielder);
 
-    expect(getBuff(kitEffectState, Attribute.PyroDamageBonus)?.amount).toBe(0.1);
-    expect(getBuff(kitEffectState, Attribute.HydroDamageBonus)?.amount).toBe(0.1);
+    expect(readBuffTuples(kitEffectState.effects)).toStrictEqual(
+      ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES.map((attribute) => [attribute, 0.1, 10]),
+    );
   });
 
   test("a second reaction stacks the bonus to two, and a third holds it there", () => {

@@ -16,7 +16,7 @@ describe(createDeterminationPassiveModule, () => {
   // Determination with synthetic params: its percentage and its seconds
   const determinationPassiveModule = createDeterminationPassiveModule([0.2, 3]);
 
-  test("a burst the wielder uses raises its ATK and Movement SPD by the rank's percentage for its seconds", () => {
+  test("a burst the wielder uses raises its ATK and Movement SPD by the rank's percentage", () => {
     expect.hasAssertions();
 
     const kitEffectState: KitEffectState = { effects: [] };

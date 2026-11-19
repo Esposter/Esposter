@@ -37,9 +37,14 @@ describe(createDayAndNightInCounterpointPassiveModule, () => {
     stepKitSeconds(context, 5);
     passiveModule.onStep?.(context, wielder, 0.1);
 
+    // The stepping leaves a float residue on the seconds left, so they are compared to the whole second
     expect(
-      readBuffTuples(context.kitEffectState.effects).map(([attribute, amount]) => [attribute, amount]),
-    ).toStrictEqual([[Attribute.AttackPercent, 0.18]]);
+      readBuffTuples(context.kitEffectState.effects).map(([attribute, amount, secondsRemaining]) => [
+        attribute,
+        amount,
+        Math.round(secondsRemaining),
+      ]),
+    ).toStrictEqual([[Attribute.AttackPercent, 0.18, 5]]);
 
     stepKitSeconds(context, 5);
     passiveModule.onStep?.(context, wielder, 0.1);

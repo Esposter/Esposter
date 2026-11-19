@@ -40,28 +40,22 @@ describe(createFocusPassiveModule, () => {
   const LEVEL = 90;
   const STURDY_HEALTH = 1e9;
 
-  test("each hit the wielder deals that is not critical adds a stack, and the stacks are a CRIT Rate bonus on the wielder", () => {
-    expect.hasAssertions();
+  test.each([
+    [2, 0.2],
+    [6, 0.5],
+  ])(
+    "%s non-critical hits the wielder deals give a CRIT Rate bonus of %s, up to five stacks",
+    (hits, criticalRateBonus) => {
+      expect.hasAssertions();
 
-    const context = createKitTestContext(wielder);
-    focusPassiveModule.onKitEvent?.(createDamageTaken(false), context, wielder);
-    focusPassiveModule.onKitEvent?.(createDamageTaken(false), context, wielder);
+      const context = createKitTestContext(wielder);
+      for (let hit = 0; hit < hits; hit++) focusPassiveModule.onKitEvent?.(createDamageTaken(false), context, wielder);
 
-    expect(focusPassiveModule.getPassiveBonuses?.(wielder, 1, [], context.kitEffectState.effects)).toStrictEqual([
-      { amount: 0.1 * 2, attribute: Attribute.CriticalRate },
-    ]);
-  });
-
-  test("the stacks stop at five", () => {
-    expect.hasAssertions();
-
-    const context = createKitTestContext(wielder);
-    for (let hit = 0; hit < 6; hit++) focusPassiveModule.onKitEvent?.(createDamageTaken(false), context, wielder);
-
-    expect(focusPassiveModule.getPassiveBonuses?.(wielder, 1, [], context.kitEffectState.effects)).toStrictEqual([
-      { amount: 0.1 * 5, attribute: Attribute.CriticalRate },
-    ]);
-  });
+      expect(focusPassiveModule.getPassiveBonuses?.(wielder, 1, [], context.kitEffectState.effects)).toStrictEqual([
+        { amount: criticalRateBonus, attribute: Attribute.CriticalRate },
+      ]);
+    },
+  );
 
   test("a critical hit removes every stack and adds none", () => {
     expect.hasAssertions();
@@ -117,7 +111,9 @@ describe(createFocusPassiveModule, () => {
       return STURDY_HEALTH - sturdyEnemy.health;
     };
 
-    // A roll of 10% lands under the stacked 20% CRIT Rate, so the reaction is critical; a roll of 99% lands over it
-    expect(getStackedDamage(0.1)).toBeCloseTo(2 * getStackedDamage(0.99));
+    // A roll of 10% lands under the stacked 20% CRIT Rate, so the reaction is critical and deals twice the damage that a
+    // roll of 99%, which lands over it, does
+    expect(getStackedDamage(0.1)).toBeCloseTo(4687.8052);
+    expect(getStackedDamage(0.99)).toBeCloseTo(2343.9026);
   });
 });

@@ -49,7 +49,7 @@ describe(createMistsplittersEdgePassiveModule, () => {
     );
   const elementalBonuses = ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES.map((attribute) => ({ amount: 0.12, attribute }));
 
-  test("its Elemental DMG Bonus is a passive bonus on every element, and the Emblem's share is on the wielder's element alone", () => {
+  test("its Elemental DMG Bonus is a passive bonus on every element, and a full Energy holds no Emblem share", () => {
     expect.hasAssertions();
 
     expect(readBonuses(createFullEnergyContext())).toStrictEqual(elementalBonuses);

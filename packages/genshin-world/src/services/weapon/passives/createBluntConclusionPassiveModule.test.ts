@@ -42,8 +42,7 @@ describe(createBluntConclusionPassiveModule, () => {
     );
     bluntConclusionPassiveModule.onKitEvent?.(createNormalAttackHit(), context, wielder);
 
-    expect(context.strikes).toHaveLength(1);
-    expect(context.strikes[0]?.hit.talentMultiplier).toBeCloseTo(0.5);
+    expect(context.strikes.map(({ hit }) => hit.talentMultiplier)).toStrictEqual([0.5]);
   });
 
   test("a normal attack with no skill before it queues nothing", () => {

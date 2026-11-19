@@ -74,7 +74,7 @@ describe(createBalladOfTheCrossroadsPassiveModule, () => {
     expect(getPartyMember(context.party, wielder.characterId).energy).toBe(14);
   });
 
-  test("the wielder's Lunar reaction DMG gains the rank's CRIT DMG while the effect lasts", () => {
+  test("the wielder's Lunar reaction DMG gains the rank's CRIT DMG once it triggers a Lunar reaction", () => {
     expect.hasAssertions();
 
     const context = { ...createKitTestContext(wielder), party: structuredClone(party) };

@@ -31,7 +31,7 @@ describe(createWhispersOfWindAndFlowerPassiveModule, () => {
     const context = createKitTestContext(wielder);
     passiveModule.onKitEvent?.(createWeaponDamageTaken(wielder, AttackTag.ElementalSkill, enemy), context, wielder);
 
-    expect(getBuff(context.kitEffectState, Attribute.AttackPercent)?.amount).toBeCloseTo(0.12);
+    expect(getBuff(context.kitEffectState, Attribute.AttackPercent)?.amount).toBe(0.12);
     expect(getBuff(context.kitEffectState, Attribute.ElementalMastery)?.amount).toBe(48);
     expect(getBuff(context.kitEffectState, Attribute.ElementalMastery)?.secondsRemaining).toBe(8);
   });
@@ -42,7 +42,7 @@ describe(createWhispersOfWindAndFlowerPassiveModule, () => {
     const context = createKitTestContext(wielder);
     passiveModule.onKitEvent?.(createReaction(wielder, enemy, ReactionType.Vaporize, Element.Pyro), context, wielder);
 
-    expect(getBuff(context.kitEffectState, Attribute.AttackPercent)?.amount).toBeCloseTo(0.12);
+    expect(getBuff(context.kitEffectState, Attribute.AttackPercent)?.amount).toBe(0.12);
     expect(getBuff(context.kitEffectState, Attribute.ElementalMastery)?.amount).toBe(48);
   });
 

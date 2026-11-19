@@ -5,6 +5,7 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
+import { SMALL_AOE_AREA } from "#src/services/weapon/passives/constants";
 import { createNetSnapperPassiveModule } from "#src/services/weapon/passives/createNetSnapperPassiveModule";
 import { createWeaponDamageTaken } from "#src/services/weapon/passives/createWeaponDamageTaken.test";
 import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
@@ -30,8 +31,14 @@ describe(createNetSnapperPassiveModule, () => {
     hit();
     hit();
 
-    expect(context.strikes).toHaveLength(1);
-    expect(context.strikes[0]?.hit.talentMultiplier).toBe(0.8);
+    expect(context.strikes).toStrictEqual([
+      {
+        body: context.body,
+        combatant: wielder,
+        hit: { hitArea: SMALL_AOE_AREA, hitmarkSeconds: 0, poiseDamage: 0, talentMultiplier: 0.8 },
+        target: enemy,
+      },
+    ]);
 
     stepKitSeconds(context, 2);
     hit();

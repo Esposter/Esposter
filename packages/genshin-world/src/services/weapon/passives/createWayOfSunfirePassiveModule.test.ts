@@ -5,6 +5,7 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { createWayOfSunfirePassiveModule } from "#src/services/weapon/passives/createWayOfSunfirePassiveModule";
 import { createWeaponDamageTaken } from "#src/services/weapon/passives/createWeaponDamageTaken.test";
@@ -13,6 +14,7 @@ import { createWielderCombatant } from "#src/services/weapon/passives/createWiel
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
+const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 
 describe(createWayOfSunfirePassiveModule, () => {
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
@@ -28,8 +30,19 @@ describe(createWayOfSunfirePassiveModule, () => {
     const context = createKitTestContext(wielder);
     passiveModule.onKitEvent?.(createWeaponDamageTaken(wielder, AttackTag.ChargedAttack, enemy), context, wielder);
 
-    expect(context.strikes).toHaveLength(1);
-    expect(context.strikes[0]?.hit.talentMultiplier).toBe(0.6);
+    expect(context.strikes).toStrictEqual([
+      {
+        body: context.body,
+        combatant: wielder,
+        hit: {
+          hitArea: TRAVELER_KIT.plungeCollision.hitArea,
+          hitmarkSeconds: 0,
+          poiseDamage: 0,
+          talentMultiplier: 0.6,
+        },
+        target: enemy,
+      },
+    ]);
     expect(enemy.statuses).toHaveLength(1);
     expect(
       passiveModule.getStrikeDamageBonus?.(

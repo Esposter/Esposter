@@ -53,7 +53,7 @@ describe(createSeasonedSymphonyPassiveModule, () => {
     ).toStrictEqual([{ amount: 0.75, attribute: Attribute.AttackPercent }]);
   });
 
-  test("a heal the wielder initiates gives it and the character it healed Sweet Echoes for three seconds", () => {
+  test("a heal the wielder initiates gives it and the character it healed Sweet Echoes for two seconds", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder, { party: createParty([TRAVELER_CHARACTER_ID, healedCharacterId]) });

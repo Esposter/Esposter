@@ -8,6 +8,7 @@ import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
+import { SMALL_AOE_AREA } from "#src/services/weapon/passives/constants";
 import { createWanderingStrikerPassiveModule } from "#src/services/weapon/passives/createWanderingStrikerPassiveModule";
 import { createWeaponDamageTaken } from "#src/services/weapon/passives/createWeaponDamageTaken.test";
 import { createWeaponStrike } from "#src/services/weapon/passives/createWeaponStrike.test";
@@ -33,9 +34,14 @@ describe(createWanderingStrikerPassiveModule, () => {
     const context = { ...createKitTestContext(wielder), party: structuredClone(party) };
     passiveModule.onKitEvent?.(createWeaponDamageTaken(wielder, AttackTag.NormalAttack, enemy), context, wielder);
 
-    expect(context.strikes).toHaveLength(1);
-    expect(context.strikes[0]?.hit.talentMultiplier).toBe(1.8);
-    expect(context.strikes[0]?.target).toBe(enemy);
+    expect(context.strikes).toStrictEqual([
+      {
+        body: context.body,
+        combatant: wielder,
+        hit: { hitArea: SMALL_AOE_AREA, hitmarkSeconds: 0, poiseDamage: 0, talentMultiplier: 1.8 },
+        target: enemy,
+      },
+    ]);
   });
 
   test("the Accursed Spirit restores the wielder its ATK share as HP, and a hit inside the cooldown queues nothing", () => {
@@ -47,7 +53,7 @@ describe(createWanderingStrikerPassiveModule, () => {
     passiveModule.onKitEvent?.(createWeaponDamageTaken(wielder, AttackTag.PlungingAttack, enemy), context, wielder);
 
     expect(context.strikes).toHaveLength(1);
-    expect(getPartyMember(context.party, wielder.characterId).healthShare).toBeCloseTo(0.6);
+    expect(getPartyMember(context.party, wielder.characterId).healthShare).toBe(0.6);
   });
 
   test("the wielder's own strikes are decreased by the rank's amount", () => {

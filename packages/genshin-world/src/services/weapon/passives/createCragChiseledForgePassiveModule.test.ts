@@ -15,7 +15,7 @@ describe(createCragChiseledForgePassiveModule, () => {
   // Crag-Chiseled Forge at its first rank: 40 Elemental Mastery for 18 seconds after each Elemental Burst, two at most
   const passiveModule = createCragChiseledForgePassiveModule([40, 18]);
 
-  test("each Elemental Burst the wielder uses adds a stack on its own timer, and a third is held at two", () => {
+  test("each Elemental Burst the wielder uses adds a stack for the rank's seconds, and a third is held at two", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);

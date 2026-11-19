@@ -33,8 +33,8 @@ describe(createDawnAndDuskByTheLakePassiveModule, () => {
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const party = createParty([TRAVELER_CHARACTER_ID]);
   // Dawn and Dusk by the Lake (Splendor of Tranquil Waters) at its first rank: 8% Elemental Skill DMG for each stack of the
-  // Wielder's own HP changes, up to three, and 14% Max HP for each of the others', up to two, six seconds each and a 0.2 second
-  // Cooldown on each stack
+  // Wielder's own HP changes, up to three, and 14% Max HP for each of the others', up to two. Each stack waits out a
+  // 0.2 second Cooldown, and each stack added restarts the six seconds of all of them, as addPassiveStack does
   const passiveModule = createDawnAndDuskByTheLakePassiveModule([0.08, 6, 0.2, 0.14, 6, 0.2]);
 
   test("the wielder's own HP change gives a stack of Elemental Skill DMG, which a skill hit reads, and a normal attack reads none of it", () => {
@@ -82,7 +82,7 @@ describe(createDawnAndDuskByTheLakePassiveModule, () => {
     ).toBe(0.08 * 3);
   });
 
-  test("another member's HP change gives a stack of Max HP for its six seconds, two at most", () => {
+  test("another member's HP change gives a stack of Max HP, and each new stack restarts the six seconds of all of them, two at most", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
@@ -95,9 +95,7 @@ describe(createDawnAndDuskByTheLakePassiveModule, () => {
     stepKitSeconds(context, 0.5);
     passiveModule.onKitEvent?.(createHealthChange(OTHER_CHARACTER_ID), context, wielder);
 
-    expect(
-      readBuffTuples(context.kitEffectState.effects).map(([attribute, amount]) => [attribute, amount]),
-    ).toStrictEqual([[Attribute.HealthPercent, 0.14 * 2]]);
+    expect(readBuffTuples(context.kitEffectState.effects)).toStrictEqual([[Attribute.HealthPercent, 0.14 * 2, 6]]);
   });
 
   test("another member's HP change adds no Elemental Skill DMG, and the wielder's own adds no Max HP", () => {

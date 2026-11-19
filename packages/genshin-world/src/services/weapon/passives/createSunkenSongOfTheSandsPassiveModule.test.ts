@@ -55,7 +55,7 @@ describe(createSunkenSongOfTheSandsPassiveModule, () => {
       .getPassiveBonuses?.(wielder, 1, onField, context.kitEffectState.effects)
       ?.find(({ attribute }) => attribute === Attribute.ElementalMastery)?.amount;
 
-  test("an Elemental Skill hit gives the wielder Elemental Mastery of 0.12% of its Max HP", () => {
+  test("an Elemental Skill hit gives the wielder Elemental Mastery of 1% of its Max HP", () => {
     expect.hasAssertions();
 
     const context = createContext();
