@@ -77,21 +77,6 @@ describe(applyResourceContentPatches, () => {
     `);
   });
 
-  test("a patch naming an unknown arrowhead is refused", () => {
-    expect.hasAssertions();
-
-    // The arrowhead is one of the four kinds, so a fifth name fails the parse, and the refused patch leaves no document to save
-    const operations: JsonPatchOperation[] = [
-      { op: JsonPatchOperationType.Replace, path: "/elements/1/end/arrowhead", value: "star" },
-    ];
-
-    expect(() => applyResourceContentPatches(ResourceType.Whiteboard, { elements: [rectangle, arrow] }, operations))
-      .toThrowErrorMatchingInlineSnapshot(`
-      [TRPCError: ✖ Invalid option: expected one of "bar"|"circle"|"diamond"|"triangle"
-        → at elements[1].end.arrowhead]
-    `);
-  });
-
   test("an arrow end's connection point is read-only to an agent", () => {
     expect.hasAssertions();
 

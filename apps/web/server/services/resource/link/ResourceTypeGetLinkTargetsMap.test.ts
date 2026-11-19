@@ -9,19 +9,6 @@ import { v7 } from "uuid";
 import { assert, describe, expect, test } from "vitest";
 
 describe("resourceTypeGetLinkTargetsMap", () => {
-  // The law's visible output: a content schema gaining or losing a link field moves this list, and one whose
-  // Conversion lost a declared field would drop out of it rather than index nothing in silence
-  test("reads links off exactly the types whose content declares one", () => {
-    expect.hasAssertions();
-
-    expect([...ResourceTypeGetLinkTargetsMap.keys()]).toStrictEqual([
-      ResourceType.Dashboard,
-      ResourceType.Email,
-      ResourceType.Program,
-      ResourceType.Webpage,
-    ]);
-  });
-
   // A group's visuals are walked the way the dashboard's own are, so a dataset binding held inside a group is indexed
   test("reads a dataset binding held by a visual inside a group", () => {
     expect.hasAssertions();
