@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import type { LikeInPost } from "@esposter/db-schema";
+import type { LikeInPost, PostInPostWithRelations } from "@esposter/db-schema";
 
 import { useLikeOperations } from "#src/composables/post/useLikeOperations";
 import { useSession } from "#src/services/auth/authClient.test";
@@ -23,6 +23,13 @@ describe(useLikeOperations, () => {
     userId,
     value,
   });
+
+  // The list the composable reads its copies from, seeded with the one post a test starts from
+  const seedItems = (post: PostInPostWithRelations) => {
+    const { items } = storeToRefs(usePostStore());
+    items.value = [post];
+    return items;
+  };
 
   // A new vote is drawn for the signed-in viewer, so every test here signs one in
   beforeEach(() => {
@@ -57,9 +64,7 @@ describe(useLikeOperations, () => {
     });
     serveLikeCount(-1);
     const post = createPost({ id: postId, likeCount: 1, viewerLike: createLike(1) });
-    const postStore = usePostStore();
-    const { items } = storeToRefs(postStore);
-    items.value = [post];
+    const items = seedItems(post);
     const { updateLike } = useLikeOperations(items);
     updateLike({ postId, value: -1 });
     updateLike({ postId, value: 1 });
@@ -80,9 +85,7 @@ describe(useLikeOperations, () => {
     trpcMsw.like.deleteLike.mutation(() => createLike(1));
     const readCount = serveLikeCount(0);
     const post = createPost({ id: postId, likeCount: 1, viewerLike: createLike(1) });
-    const postStore = usePostStore();
-    const { items } = storeToRefs(postStore);
-    items.value = [post];
+    const items = seedItems(post);
     const { deleteLike } = useLikeOperations(items);
     deleteLike(postId);
     deleteLike(postId);
@@ -93,7 +96,8 @@ describe(useLikeOperations, () => {
     expect(post.likeCount).toBe(0);
   });
 
-  // The vote's own effect on the count is known to the client, so the count moves before the server answers
+  // A second click while the first create is still in flight is dropped by the single-flight guard, so the likes
+  // Primary key never sees a second create
   test("a rapid second click on a like creates only one like", async () => {
     expect.hasAssertions();
 
@@ -104,9 +108,7 @@ describe(useLikeOperations, () => {
     });
     serveLikeCount(1);
     const post = createPost({ id: postId, likeCount: 0 });
-    const postStore = usePostStore();
-    const { items } = storeToRefs(postStore);
-    items.value = [post];
+    const items = seedItems(post);
     const { createLike: sendLike } = useLikeOperations(items);
     sendLike({ postId, value: 1 });
     sendLike({ postId, value: 1 });
@@ -115,6 +117,7 @@ describe(useLikeOperations, () => {
     expect(receivedValues).toStrictEqual([1]);
   });
 
+  // The vote's own effect on the count is known to the client, so the count moves before the server answers
   test("a count moves at once while its write is in flight", async () => {
     expect.hasAssertions();
 
@@ -128,9 +131,7 @@ describe(useLikeOperations, () => {
     });
     const readCount = serveLikeCount(2);
     const post = createPost({ id: postId, likeCount: 1 });
-    const postStore = usePostStore();
-    const { items } = storeToRefs(postStore);
-    items.value = [post];
+    const items = seedItems(post);
     const { createLike: sendLike } = useLikeOperations(items);
     sendLike({ postId, value: 1 });
 
@@ -155,9 +156,7 @@ describe(useLikeOperations, () => {
     });
     serveLikeCount(0);
     const post = createPost({ id: postId, likeCount: 1, viewerLike: createLike(1) });
-    const postStore = usePostStore();
-    const { items } = storeToRefs(postStore);
-    items.value = [post];
+    const items = seedItems(post);
     const { updateLike } = useLikeOperations(items);
     updateLike({ postId, value: -1 });
 
@@ -183,9 +182,7 @@ describe(useLikeOperations, () => {
     });
     const readCount = serveLikeCount(0);
     const post = createPost({ id: postId, likeCount: 1, viewerLike: createLike(1) });
-    const postStore = usePostStore();
-    const { items } = storeToRefs(postStore);
-    items.value = [post];
+    const items = seedItems(post);
     const { deleteLike } = useLikeOperations(items);
     deleteLike(postId);
 
@@ -218,9 +215,7 @@ describe(useLikeOperations, () => {
       return [{ commentCount: 0, id: postId, likeCount: 2 }];
     });
     const post = createPost({ id: postId, likeCount: 1 });
-    const postStore = usePostStore();
-    const { items } = storeToRefs(postStore);
-    items.value = [post];
+    const items = seedItems(post);
     const { createLike: sendLike } = useLikeOperations(items);
     sendLike({ postId, value: 1 });
     await isWriteReceived.promise;
@@ -242,9 +237,7 @@ describe(useLikeOperations, () => {
     trpcMsw.like.createLike.mutation(({ input }) => createLike(input.value));
     serveLikeCount(3);
     const post = createPost({ id: postId, likeCount: 1 });
-    const postStore = usePostStore();
-    const { items } = storeToRefs(postStore);
-    items.value = [post];
+    const items = seedItems(post);
     const { createLike: sendLike } = useLikeOperations(items);
     sendLike({ postId, value: 1 });
 
@@ -267,9 +260,7 @@ describe(useLikeOperations, () => {
     });
     const readCount = serveLikeCount(1);
     const post = createPost({ id: postId, likeCount: 1, viewerLike: createLike(1) });
-    const postStore = usePostStore();
-    const { items } = storeToRefs(postStore);
-    items.value = [post];
+    const items = seedItems(post);
     const { updateLike } = useLikeOperations(items);
     updateLike({ postId, value: -1 });
 

@@ -12,29 +12,27 @@ import { noop } from "@esposter/shared";
 const getRollback = (rollbacks: (() => void)[]) => () => {
   for (const rollback of rollbacks) rollback();
 };
-// Moves one copy's count by the change its viewer's own vote makes, which the client holds exactly, and returns the
-// Rollback that restores the count the copy held. The count the server reads back is what the copy is left with
-const moveLikeCount = (post: PostInPostWithRelations, delta: number) => {
+// Writes one copy's vote and moves its count by the change the vote makes, which the client holds exactly, and returns
+// the rollback that restores what the copy held. The count the server reads back is what the copy is left with
+const setViewerLike = (
+  post: PostInPostWithRelations,
+  nextViewerLike: PostInPostWithRelations["viewerLike"],
+  delta: number,
+) => {
+  const previousViewerLike = post.viewerLike;
   const previousLikeCount = post.likeCount;
+  post.viewerLike = nextViewerLike;
   // eslint-disable-next-line no-restricted-syntax -- the viewer's own vote moves the count before the server answers, and the read-back replaces it
   post.likeCount += delta;
   return () => {
+    post.viewerLike = previousViewerLike;
     post.likeCount = previousLikeCount;
   };
 };
 // Writes the viewer's new vote onto each copy, moves its count by the vote, and returns the rollback that restores what
 // Each copy held
-const applyOptimisticNewLike = (posts: PostInPostWithRelations[], newLike: LikeInPost) => {
-  const rollbacks: (() => void)[] = [];
-  for (const post of posts) {
-    const previousViewerLike = post.viewerLike;
-    post.viewerLike = newLike;
-    rollbacks.push(moveLikeCount(post, newLike.value), () => {
-      post.viewerLike = previousViewerLike;
-    });
-  }
-  return getRollback(rollbacks);
-};
+const applyOptimisticNewLike = (posts: PostInPostWithRelations[], newLike: LikeInPost) =>
+  getRollback(posts.map((post) => setViewerLike(post, newLike, newLike.value)));
 // Writes the next vote onto each copy that holds one, moves its count by the difference, and returns the rollback that
 // Restores what each copy held
 const applyOptimisticViewerLike = (
@@ -49,10 +47,7 @@ const applyOptimisticViewerLike = (
     if (!previousViewerLike) continue;
 
     const nextViewerLike = getNextViewerLike(previousViewerLike);
-    post.viewerLike = nextViewerLike;
-    rollbacks.push(moveLikeCount(post, (nextViewerLike?.value ?? 0) - previousViewerLike.value), () => {
-      post.viewerLike = previousViewerLike;
-    });
+    rollbacks.push(setViewerLike(post, nextViewerLike, (nextViewerLike?.value ?? 0) - previousViewerLike.value));
   }
   return getRollback(rollbacks);
 };
