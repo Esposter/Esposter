@@ -5,7 +5,7 @@ import { getStatementReadTopics } from "#src/services/realtime/getStatementReadT
 import { mergeColumnTopics } from "@esposter/db-schema";
 
 // The topics a read watches, from the statements it awaited, each once and in a fixed order, with the columns it reads of each
-export const getReadTopics = async (statements: RecordedStatement[]): Promise<ColumnTopic[]> => {
+export const computeReadTopics = async (statements: RecordedStatement[]): Promise<ColumnTopic[]> => {
   const topicLists = await Promise.all(
     statements.map((recordedStatement) => getStatementReadTopics(recordedStatement)),
   );

@@ -4,7 +4,7 @@ import { roomObjectCalls } from "#server/composables/realtime/useRoomObject.test
 import { executeAutomodAction } from "#server/services/message/moderation/executeAutomodAction";
 import { getRoomMembershipWhere } from "#server/services/room/getRoomMembershipWhere";
 import { createMockContext, getMockSession } from "#server/trpc/context.test";
-import { getWriteTopics, recordStatements } from "@esposter/db";
+import { computeWriteTopics, recordStatements } from "@esposter/db";
 import {
   AdminActionType,
   getScopeTopic,
@@ -101,7 +101,7 @@ describe(executeAutomodAction, () => {
       userId,
     });
 
-    const writeTopics = (await getWriteTopics(recorded.statements)).map(({ topic }) => topic);
+    const writeTopics = (await computeWriteTopics(recorded.statements)).map(({ topic }) => topic);
     expect(writeTopics).toContain(getScopeTopic(getTableName(moderationLogsInMessage), "roomId", roomId));
   });
 

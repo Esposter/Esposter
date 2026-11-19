@@ -8,11 +8,11 @@ import { inviteRouter } from "#server/trpc/routers/invite";
 import { postRouter } from "#server/trpc/routers/post";
 import { roomRouter } from "#server/trpc/routers/room/index";
 import {
-  getReadSet,
-  getReadTopics,
+  computeReadSet,
+  computeReadTopics,
   getSchemaTables,
   getWokenTopics,
-  getWriteTopics,
+  computeWriteTopics,
   recordStatements,
 } from "@esposter/db";
 import {
@@ -103,7 +103,7 @@ describe("topicMatch", () => {
         reads.map(async (read) => {
           const { database, statements } = recordStatements(context.db);
           await read(database);
-          const readTableNames = new Set(getReadSet(statements).tables);
+          const readTableNames = new Set(computeReadSet(statements).tables);
           return statements.flatMap(({ statement }) => {
             const sql = new SQLiteDialect().sqlToQuery(statement.getSQL()).sql;
             return schemaTableNames.filter(
@@ -138,9 +138,9 @@ describe("topicMatch", () => {
       .set({ name: "renamed" })
       .where(eq(resourcesInResource.id, resourceId));
 
-    expect(getWokenTopics(await getReadTopics(read.statements), await getWriteTopics(write.statements))).toStrictEqual(
-      [],
-    );
+    expect(
+      getWokenTopics(await computeReadTopics(read.statements), await computeWriteTopics(write.statements)),
+    ).toStrictEqual([]);
   });
 
   // The dock reads the viewer's own memberships of the rooms it bookmarks, by their room and their user. Removing one is a
@@ -164,9 +164,9 @@ describe("topicMatch", () => {
       .delete(usersToRoomsInMessage)
       .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, userId)));
 
-    expect(getWokenTopics(await getReadTopics(read.statements), await getWriteTopics(write.statements))).toStrictEqual([
-      `message_usersToRooms:userId=${userId}`,
-    ]);
+    expect(
+      getWokenTopics(await computeReadTopics(read.statements), await computeWriteTopics(write.statements)),
+    ).toStrictEqual([`message_usersToRooms:userId=${userId}`]);
   });
 
   // The dock does not read a membership's display name, so renaming the viewer's membership wakes it through no topic
@@ -190,9 +190,9 @@ describe("topicMatch", () => {
       .set({ displayName: "renamed" })
       .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, userId)));
 
-    expect(getWokenTopics(await getReadTopics(read.statements), await getWriteTopics(write.statements))).toStrictEqual(
-      [],
-    );
+    expect(
+      getWokenTopics(await computeReadTopics(read.statements), await computeWriteTopics(write.statements)),
+    ).toStrictEqual([]);
   });
 
   // The landing page counts its room's members, which another member's join changes. The page reads the count through
@@ -222,9 +222,9 @@ describe("topicMatch", () => {
       .insert(usersToRoomsInMessage)
       .values({ notificationType: NotificationType.DirectMessage, roomId: room.id, userId: joiner.user.id });
 
-    expect(getWokenTopics(await getReadTopics(read.statements), await getWriteTopics(write.statements))).toStrictEqual([
-      `message_usersToRooms:roomId=${room.id}`,
-    ]);
+    expect(
+      getWokenTopics(await computeReadTopics(read.statements), await computeWriteTopics(write.statements)),
+    ).toStrictEqual([`message_usersToRooms:roomId=${room.id}`]);
   });
 
   // The dock leaves out a bookmark whose resource is in the recycle bin, and the other bookmark it holds keeps the dock's
@@ -254,9 +254,9 @@ describe("topicMatch", () => {
       .set({ deletedAt: null })
       .where(eq(resourcesInResource.id, binnedResourceId));
 
-    expect(getWokenTopics(await getReadTopics(read.statements), await getWriteTopics(write.statements))).toStrictEqual([
-      `${getTableName(resourcesInResource)}:*`,
-    ]);
+    expect(
+      getWokenTopics(await computeReadTopics(read.statements), await computeWriteTopics(write.statements)),
+    ).toStrictEqual([`${getTableName(resourcesInResource)}:*`]);
   });
 
   // The sidebar names the memberships of each room it lists by that room, so another member joining a listed room wakes the
@@ -277,9 +277,9 @@ describe("topicMatch", () => {
       .insert(usersToRoomsInMessage)
       .values({ notificationType: NotificationType.DirectMessage, roomId: room.id, userId: joiner.user.id });
 
-    expect(getWokenTopics(await getReadTopics(read.statements), await getWriteTopics(write.statements))).toStrictEqual([
-      `message_usersToRooms:roomId=${room.id}`,
-    ]);
+    expect(
+      getWokenTopics(await computeReadTopics(read.statements), await computeWriteTopics(write.statements)),
+    ).toStrictEqual([`message_usersToRooms:roomId=${room.id}`]);
   });
 
   // A direct message the viewer has hidden is not in the sidebar. Unhiding it is a write to the viewer's own membership, which
@@ -299,14 +299,14 @@ describe("topicMatch", () => {
       .set({ isHidden: false })
       .where(and(eq(usersToRoomsInMessage.roomId, directMessageId), eq(usersToRoomsInMessage.userId, reader.user.id)));
 
-    expect(getWokenTopics(await getReadTopics(read.statements), await getWriteTopics(write.statements))).toStrictEqual([
-      `message_usersToRooms:userId=${reader.user.id}`,
-    ]);
+    expect(
+      getWokenTopics(await computeReadTopics(read.statements), await computeWriteTopics(write.statements)),
+    ).toStrictEqual([`message_usersToRooms:userId=${reader.user.id}`]);
     const refetch = recordStatements(context.db);
     const { items } = await createCallerFactory(roomRouter)({ ...readerContext, db: refetch.database }).readRooms({
       includeDirectMessages: true,
     });
-    const refetchTopics = (await getReadTopics(refetch.statements)).map(({ topic }) => topic);
+    const refetchTopics = (await computeReadTopics(refetch.statements)).map(({ topic }) => topic);
 
     expect(items.map(({ id }) => id)).toContain(directMessageId);
     expect(refetchTopics).toContain(`message_usersToRooms:roomId=${directMessageId}`);
@@ -341,9 +341,9 @@ describe("topicMatch", () => {
       .insert(usersToRoomsInMessage)
       .values({ notificationType: NotificationType.DirectMessage, roomId: emptyRoomId, userId });
 
-    expect(getWokenTopics(await getReadTopics(read.statements), await getWriteTopics(write.statements))).toStrictEqual([
-      "message_usersToRooms:*",
-    ]);
+    expect(
+      getWokenTopics(await computeReadTopics(read.statements), await computeWriteTopics(write.statements)),
+    ).toStrictEqual(["message_usersToRooms:*"]);
   });
 
   // The read filters the memberships to the ones not hidden, so it returns the rooms whose membership is visible and names
@@ -377,9 +377,9 @@ describe("topicMatch", () => {
       .set({ isHidden: false })
       .where(and(eq(usersToRoomsInMessage.roomId, hiddenRoomId), eq(usersToRoomsInMessage.userId, userId)));
 
-    expect(getWokenTopics(await getReadTopics(read.statements), await getWriteTopics(write.statements))).toStrictEqual([
-      "message_usersToRooms:*",
-    ]);
+    expect(
+      getWokenTopics(await computeReadTopics(read.statements), await computeWriteTopics(write.statements)),
+    ).toStrictEqual(["message_usersToRooms:*"]);
   });
 
   // The sidebar names the viewer's membership of each room it lists by that room, so a member joining or leaving it wakes the
@@ -397,9 +397,9 @@ describe("topicMatch", () => {
       .insert(usersToRoomsInMessage)
       .values({ notificationType: NotificationType.DirectMessage, roomId: directMessageId, userId: newcomer.user.id });
 
-    expect(getWokenTopics(await getReadTopics(read.statements), await getWriteTopics(write.statements))).toStrictEqual([
-      `${getTableName(usersToRoomsInMessage)}:roomId=${directMessageId}`,
-    ]);
+    expect(
+      getWokenTopics(await computeReadTopics(read.statements), await computeWriteTopics(write.statements)),
+    ).toStrictEqual([`${getTableName(usersToRoomsInMessage)}:roomId=${directMessageId}`]);
   });
 
   test("a member leaving a shared direct message wakes the sidebar through the room it lists", async () => {
@@ -414,9 +414,9 @@ describe("topicMatch", () => {
       .delete(usersToRoomsInMessage)
       .where(and(eq(usersToRoomsInMessage.roomId, directMessageId), eq(usersToRoomsInMessage.userId, joiner.user.id)));
 
-    expect(getWokenTopics(await getReadTopics(read.statements), await getWriteTopics(write.statements))).toStrictEqual([
-      `${getTableName(usersToRoomsInMessage)}:roomId=${directMessageId}`,
-    ]);
+    expect(
+      getWokenTopics(await computeReadTopics(read.statements), await computeWriteTopics(write.statements)),
+    ).toStrictEqual([`${getTableName(usersToRoomsInMessage)}:roomId=${directMessageId}`]);
   });
 
   // The sidebar reads a membership's display name and its visibility, not its last read time, so another member's last-read
@@ -434,9 +434,9 @@ describe("topicMatch", () => {
       .set({ lastReadAt: new Date() })
       .where(and(eq(usersToRoomsInMessage.roomId, directMessageId), eq(usersToRoomsInMessage.userId, joiner.user.id)));
 
-    expect(getWokenTopics(await getReadTopics(read.statements), await getWriteTopics(write.statements))).toStrictEqual(
-      [],
-    );
+    expect(
+      getWokenTopics(await computeReadTopics(read.statements), await computeWriteTopics(write.statements)),
+    ).toStrictEqual([]);
   });
 
   // The sidebar shows each participant by the display name the membership holds, so another member renaming it wakes the
@@ -454,9 +454,9 @@ describe("topicMatch", () => {
       .set({ displayName: "renamed" })
       .where(and(eq(usersToRoomsInMessage.roomId, directMessageId), eq(usersToRoomsInMessage.userId, joiner.user.id)));
 
-    expect(getWokenTopics(await getReadTopics(read.statements), await getWriteTopics(write.statements))).toStrictEqual([
-      `${getTableName(usersToRoomsInMessage)}:roomId=${directMessageId}`,
-    ]);
+    expect(
+      getWokenTopics(await computeReadTopics(read.statements), await computeWriteTopics(write.statements)),
+    ).toStrictEqual([`${getTableName(usersToRoomsInMessage)}:roomId=${directMessageId}`]);
   });
 
   test("a participant's rename wakes the sidebar through the name column its display name reads", async () => {
@@ -469,8 +469,8 @@ describe("topicMatch", () => {
 
     await write.database.update(usersInAuth).set({ name: "renamed" }).where(eq(usersInAuth.id, joiner.user.id));
 
-    expect(getWokenTopics(await getReadTopics(read.statements), await getWriteTopics(write.statements))).toContain(
-      `${getTableName(usersInAuth)}:*`,
-    );
+    expect(
+      getWokenTopics(await computeReadTopics(read.statements), await computeWriteTopics(write.statements)),
+    ).toContain(`${getTableName(usersInAuth)}:*`);
   });
 });

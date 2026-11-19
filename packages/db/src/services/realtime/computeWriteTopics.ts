@@ -6,7 +6,7 @@ import { mergeColumnTopics } from "@esposter/db-schema";
 
 // The topics a request's writes publish, each once and in a fixed order, so the same writes name the same list whatever
 // Order they ran in. A statement that is not a write publishes nothing
-export const getWriteTopics = async (statements: RecordedStatement[]): Promise<ColumnTopic[]> => {
+export const computeWriteTopics = async (statements: RecordedStatement[]): Promise<ColumnTopic[]> => {
   const topicLists = await Promise.all(
     statements.map((recordedStatement) => getStatementWriteTopics(recordedStatement)),
   );

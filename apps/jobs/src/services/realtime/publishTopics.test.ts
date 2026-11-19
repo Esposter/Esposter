@@ -1,7 +1,7 @@
 import type { TopicNamespace } from "@esposter/db";
 import type { ColumnTopic, Database, Topic } from "@esposter/db-schema";
 
-import { getReadTopics, getWokenTopics, recordStatements } from "@esposter/db";
+import { computeReadTopics, getWokenTopics, recordStatements } from "@esposter/db";
 import { getColumnTopic, topicSchema } from "@esposter/db-schema";
 import { describe } from "vitest";
 
@@ -21,7 +21,7 @@ export const getReaderWakes = async (
 ): Promise<Topic[]> => {
   const recorded = recordStatements(database);
   await read(recorded.database);
-  return getWokenTopics(await getReadTopics(recorded.statements), MockPublishedTopics);
+  return getWokenTopics(await computeReadTopics(recorded.statements), MockPublishedTopics);
 };
 
 // The Topic objects' binding. Each object's publish records the topic it was named for and the columns it changed, so a

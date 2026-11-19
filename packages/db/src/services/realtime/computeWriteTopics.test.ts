@@ -1,7 +1,7 @@
 import type { RecordedStatement } from "#src/models/realtime/RecordedStatement";
 import type { Database } from "@esposter/db-schema";
 
-import { getWriteTopics } from "#src/services/realtime/getWriteTopics";
+import { computeWriteTopics } from "#src/services/realtime/computeWriteTopics";
 import { insertUser } from "#src/services/realtime/insertUser.test";
 import { recordStatements } from "#src/services/realtime/recordStatements";
 import { createMockDb } from "@esposter/db-mock";
@@ -34,9 +34,9 @@ const insertRoom = async (db: Database, roomId: string, userId: string) => {
 
 // The names of the topics a write publishes, for a golden that records which topics a write names
 const getWriteTopicNames = async (statements: RecordedStatement[]) =>
-  (await getWriteTopics(statements)).map(({ topic }) => topic);
+  (await computeWriteTopics(statements)).map(({ topic }) => topic);
 
-describe(getWriteTopics, () => {
+describe(computeWriteTopics, () => {
   // The child tables a resource delete cascades to, transitively: its versions cascade to their assets, so a delete of
   // The resource changes twelve tables its foreign keys name directly and thirteen with that grandchild
   const cascadingResourceTables = [

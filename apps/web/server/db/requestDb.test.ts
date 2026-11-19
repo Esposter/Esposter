@@ -1,5 +1,5 @@
 import { requestDatabase, requestDbStorage } from "#server/db/requestDb";
-import { getWriteTopics, recordStatements } from "@esposter/db";
+import { computeWriteTopics, recordStatements } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import { getTableTopic, sessionsInAuth, usersInAuth } from "@esposter/db-schema";
 import { eq, getTableName } from "drizzle-orm";
@@ -23,7 +23,7 @@ describe("requestDatabase", () => {
     );
 
     expect(recorded.statements).toHaveLength(1);
-    await expect(getWriteTopics(recorded.statements)).resolves.toContainEqual({
+    await expect(computeWriteTopics(recorded.statements)).resolves.toContainEqual({
       topic: getTableTopic(getTableName(sessionsInAuth)),
     });
   });

@@ -1,8 +1,8 @@
 import type { RecordedStatement } from "#src/models/realtime/RecordedStatement";
 
-import { getReadTopics } from "#src/services/realtime/getReadTopics";
+import { computeReadTopics } from "#src/services/realtime/computeReadTopics";
+import { computeWriteTopics } from "#src/services/realtime/computeWriteTopics";
 import { getWokenTopics } from "#src/services/realtime/getWokenTopics";
-import { getWriteTopics } from "#src/services/realtime/getWriteTopics";
 import { insertUser } from "#src/services/realtime/insertUser.test";
 import { recordStatements } from "#src/services/realtime/recordStatements";
 import { inJsonArray } from "#src/services/shared/inJsonArray";
@@ -47,11 +47,11 @@ const seedSelfJoinRooms = async () => {
 
 // The topics a read and a write both name, which the write wakes through the columns it changes and the read reads
 const getWoken = async (read: RecordedStatement[], write: RecordedStatement[]) =>
-  getWokenTopics(await getReadTopics(read), await getWriteTopics(write));
+  getWokenTopics(await computeReadTopics(read), await computeWriteTopics(write));
 
 // The names of the topics a read watches, for a golden that records which topics a read names
 const getReadTopicNames = async (statements: RecordedStatement[]) =>
-  (await getReadTopics(statements)).map(({ topic }) => topic);
+  (await computeReadTopics(statements)).map(({ topic }) => topic);
 
 const seedUserRoom = async () => {
   const { db } = await createMockDb();
@@ -63,7 +63,7 @@ const seedUserRoom = async () => {
   return { db, roomId, userId };
 };
 
-describe(getReadTopics, () => {
+describe(computeReadTopics, () => {
   // A scope equality names the rows its value selects, and a secret's value is named by its digest, not the secret. The
   // Table the read starts from is named by that equality alone
   test("a scope equality names the rows its value selects, and a secret by its digest", async () => {
@@ -822,7 +822,7 @@ describe(getReadTopics, () => {
       .from(usersToRoomsInMessage)
       .where(eq(usersToRoomsInMessage.isHidden, false));
 
-    await expect(getReadTopics(statements)).resolves.toStrictEqual([
+    await expect(computeReadTopics(statements)).resolves.toStrictEqual([
       { columns: ["isHidden", "roomId"], topic: `${tableName}:*` },
     ]);
   });

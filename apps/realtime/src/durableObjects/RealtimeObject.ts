@@ -9,7 +9,7 @@ import { getObjectName } from "#src/services/durableObject/getObjectName";
 import { objectInvocationStorage } from "#src/services/durableObject/objectInvocationStorage";
 import { scopeColumnTopic } from "#src/services/durableObject/scopeColumnTopic";
 import { readSocketIdentity } from "#src/services/realtime/readSocketIdentity";
-import { getReadTopics, getWriteTopics, runRecordedWrites } from "@esposter/db";
+import { computeReadTopics, computeWriteTopics, runRecordedWrites } from "@esposter/db";
 import { getDeviceSocketTag, getSessionSocketTag, getUserSocketTag } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 import { DurableObject } from "cloudflare:workers";
@@ -123,13 +123,13 @@ export abstract class RealtimeObject<
   protected runInvocation<TResult>(label: string, run: () => TResult): Promise<ObjectInvocation<Awaited<TResult>>> {
     const handles: ObjectInvocationHandles = new Map();
     let writeSet: Promise<ColumnTopic[]> | undefined;
-    const getWriteSet = () => (writeSet ??= this.#getTopics(handles, getWriteTopics));
+    const getWriteSet = () => (writeSet ??= this.#getTopics(handles, computeWriteTopics));
     return runRecordedWrites(
       objectInvocationStorage,
       handles,
       async () => {
         const result = await run();
-        return { readSet: await this.#getTopics(handles, getReadTopics), result, writeSet: await getWriteSet() };
+        return { readSet: await this.#getTopics(handles, computeReadTopics), result, writeSet: await getWriteSet() };
       },
       { failure: `Failed to publish the topics of ${label}:`, readTopics: getWriteSet, topicNamespace: this.env.TOPIC },
     );
@@ -153,14 +153,17 @@ export abstract class RealtimeObject<
 
   // The topics of an invocation's statements. The object's own tables name the object, since each object holds its own rows,
   // So a write in one object reaches no watch of another. The core's tables are shared, so they are named as they are
-  async #getTopics(handles: ObjectInvocationHandles, getStatementTopics: typeof getReadTopics): Promise<ColumnTopic[]> {
+  async #getTopics(
+    handles: ObjectInvocationHandles,
+    computeStatementTopics: typeof computeReadTopics,
+  ): Promise<ColumnTopic[]> {
     const statementsOf = (owned: boolean) =>
       [...handles.values()].filter((record) => record.owned === owned).flatMap(({ recorder }) => recorder.statements);
-    const sharedTopics = await getStatementTopics(statementsOf(false));
+    const sharedTopics = await computeStatementTopics(statementsOf(false));
     const ownedStatements = statementsOf(true);
     if (ownedStatements.length === 0) return sharedTopics;
     const scope = `${this.topicKind}/${getObjectName(this.ctx, this.topicKind)}`;
-    const ownedTopics = await getStatementTopics(ownedStatements);
+    const ownedTopics = await computeStatementTopics(ownedStatements);
     return [...sharedTopics, ...ownedTopics.map((topic) => scopeColumnTopic(topic, scope))];
   }
 

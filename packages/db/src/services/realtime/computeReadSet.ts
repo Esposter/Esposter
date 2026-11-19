@@ -58,7 +58,7 @@ const getShiftedReadSet = (readSet: ReadSet, offset: number): ReadSet => ({
   })),
 });
 
-export const getReadSet = (statements: RecordedStatement[]): ReadSet => {
+export const computeReadSet = (statements: RecordedStatement[]): ReadSet => {
   let offset = 0;
   const readSets = statements.map(({ statement }) => {
     const readSet = getShiftedReadSet(computeStatementReadSet(statement), offset);

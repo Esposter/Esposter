@@ -8,7 +8,7 @@ import { requestBlobsStorage } from "#server/services/storage/requestBlobs";
 import { t } from "#server/trpc/initTrpc";
 import { TOPICS_HEADER } from "#shared/services/realtime/constants";
 import { formatTopicsHeaderValue } from "#shared/services/realtime/formatTopicsHeaderValue";
-import { getReadTopics, getWriteTopics, recordStatements } from "@esposter/db";
+import { computeReadTopics, computeWriteTopics, recordStatements } from "@esposter/db";
 import { fitTopicsBudget, MAX_READ_TOPICS } from "@esposter/db-schema";
 
 // The live topics of every procedure, from the statements it awaits, the blobs its buckets read or write, and the read sets
@@ -34,7 +34,7 @@ export const inferTopicsMiddleware = t.middleware(async ({ ctx, meta, next, path
   if (type === "query" && result.ok) {
     // The one place a procedure's read topics merge, so the header's budget holds for every read however many lists or joins it has
     const topics = fitTopicsBudget(
-      [...(await getReadTopics(recorded.statements)), ...blobs.reads.map((topic) => ({ topic })), ...objectReads],
+      [...(await computeReadTopics(recorded.statements)), ...blobs.reads.map((topic) => ({ topic })), ...objectReads],
       MAX_READ_TOPICS,
     );
     if (topics.length > 0) ctx.responseHeaders.append(TOPICS_HEADER, formatTopicsHeaderValue(path, { readAt, topics }));
@@ -42,7 +42,7 @@ export const inferTopicsMiddleware = t.middleware(async ({ ctx, meta, next, path
   // A write is published whichever procedure makes it and however it ends, since a query may delete the rows it reads (a
   // Lapsed invite) and a write may land before the procedure fails. A published topic only wakes a reader to refetch
   await publishTopicsBestEffort(
-    async () => [...(await getWriteTopics(recorded.statements)), ...blobs.writes.map((topic) => ({ topic }))],
+    async () => [...(await computeWriteTopics(recorded.statements)), ...blobs.writes.map((topic) => ({ topic }))],
     `Failed to publish the topics of "${path}":`,
   );
   return result;

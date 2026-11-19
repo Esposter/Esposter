@@ -5,14 +5,14 @@ import { friendRouter } from "#server/trpc/routers/friend";
 import { inviteRouter } from "#server/trpc/routers/invite";
 import { postRouter } from "#server/trpc/routers/post";
 import { roomRouter } from "#server/trpc/routers/room/index";
-import { getReadSet, recordStatements } from "@esposter/db";
+import { computeReadSet, recordStatements } from "@esposter/db";
 import { describe, expect, test } from "vitest";
 
 // Each read's read set is pinned from the statements the handle recorded. A scope fact is a scope column equal to a
 // Value, a join fact pairs two columns where one is a scope column, and a join side is selected only when the read's
 // Own select names that same table column. Joins are oriented by their columns and the lists sorted, so the sets
 // Compare the same however drizzle orders its SQL
-describe(getReadSet, () => {
+describe(computeReadSet, () => {
   test("the bookmark dock reads its bookmarks, their targets and publications, and the viewer's room memberships", async () => {
     expect.hasAssertions();
 
@@ -21,7 +21,7 @@ describe(getReadSet, () => {
     const { database, statements } = recordStatements(context.db);
     await createCallerFactory(bookmarkRouter)({ ...context, db: database }).readBookmarks();
 
-    expect(getReadSet(statements)).toStrictEqual({
+    expect(computeReadSet(statements)).toStrictEqual({
       filters: [
         { column: "resourceId", level: 0, occurrence: "app_bookmarks", site: "where", table: "app_bookmarks" },
         { column: "deletedAt", level: 0, occurrence: "resource_resources", site: "where", table: "resource_resources" },
@@ -105,7 +105,7 @@ describe(getReadSet, () => {
     const { database, statements } = recordStatements(context.db);
     await createCallerFactory(postRouter)({ ...context, db: database }).readPosts();
 
-    expect(getReadSet(statements)).toStrictEqual({
+    expect(computeReadSet(statements)).toStrictEqual({
       filters: [
         { column: "parentId", level: 0, occurrence: "d0", site: "where", table: "post_posts" },
         { column: "userId", level: 0, occurrence: "d0", site: "where", table: "post_posts" },
@@ -152,7 +152,7 @@ describe(getReadSet, () => {
     const { database, statements } = recordStatements(context.db);
     await createCallerFactory(roomRouter)({ ...context, db: database }).readRooms();
 
-    expect(getReadSet(statements)).toStrictEqual({
+    expect(computeReadSet(statements)).toStrictEqual({
       filters: [
         { column: "type", level: 0, occurrence: "message_rooms", site: "where", table: "message_rooms" },
         {
@@ -228,7 +228,7 @@ describe(getReadSet, () => {
 
     // The blocks subquery's second operand names its column by name, not by column, so its join is not read here. Its
     // Scope equality is, and that equality already covers every block the join would name
-    expect(getReadSet(statements)).toStrictEqual({
+    expect(computeReadSet(statements)).toStrictEqual({
       filters: [
         { column: "id", level: 0, occurrence: "auth_users", site: "where", table: "auth_users" },
         { column: "name", level: 0, occurrence: "auth_users", site: "where", table: "auth_users" },
@@ -275,7 +275,7 @@ describe(getReadSet, () => {
       user: reader.user,
     }).readInvite(newInvite.id);
 
-    expect(getReadSet(statements)).toStrictEqual({
+    expect(computeReadSet(statements)).toStrictEqual({
       filters: [
         { column: "isInvitePaused", level: 1, occurrence: "message_rooms", site: "where", table: "message_rooms" },
         { column: "deletedAt", level: 2, occurrence: "message_bans", site: "where", table: "message_bans" },
