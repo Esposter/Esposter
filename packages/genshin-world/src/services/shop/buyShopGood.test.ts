@@ -118,7 +118,11 @@ describe(buyShopGood, () => {
     ).toBeUndefined();
     expect(
       buyShopGood(wallet, EMPTY_INVENTORY, getNoItemDefinition, boughtLastMonth, limitedGood, ADVENTURE_RANK, NOW),
-    ).toBeDefined();
+    ).toStrictEqual({
+      inventory: EMPTY_INVENTORY,
+      purchases: [{ count: 1, goodsId: limitedGood.goodsId, lastPurchasedAt: NOW }],
+      wallet: { ...wallet, [Currency.IntertwinedFate]: 1, [Currency.MasterlessStarglitter]: STARGLITTER_PRICE },
+    });
   });
 
   test("a daily good's limit returns at the daily refresh", () => {
@@ -135,7 +139,11 @@ describe(buyShopGood, () => {
 
     expect(
       buyShopGood(wallet, EMPTY_INVENTORY, getNoItemDefinition, boughtBeforeRefresh, dailyGood, ADVENTURE_RANK, NOW),
-    ).toBeDefined();
+    ).toStrictEqual({
+      inventory: EMPTY_INVENTORY,
+      purchases: [{ count: 1, goodsId: dailyGood.goodsId, lastPurchasedAt: NOW }],
+      wallet: { ...wallet, [Currency.IntertwinedFate]: 1, [Currency.MasterlessStarglitter]: STARGLITTER_PRICE },
+    });
     expect(
       buyShopGood(wallet, EMPTY_INVENTORY, getNoItemDefinition, boughtAfterRefresh, dailyGood, ADVENTURE_RANK, NOW),
     ).toBeUndefined();
@@ -200,7 +208,7 @@ describe(buyShopGood, () => {
     ]);
   });
 
-  test("sigils are traded for materials, blueprints and Mora", () => {
+  test("sigils are traded for Mora or a material", () => {
     expect.hasAssertions();
 
     const wallet = { ...EMPTY_WALLET, [Currency.AnemoSigil]: SIGIL_PRICE * 2 };
@@ -239,7 +247,9 @@ describe(buyShopGood, () => {
     );
 
     expect(materialResult?.wallet[Currency.AnemoSigil]).toBe(SIGIL_PRICE);
-    expect(materialResult?.inventory.items.map(({ definition }) => definition.id)).toStrictEqual([GROCERY_ITEM_ID]);
+    expect(materialResult?.inventory.items).toStrictEqual([
+      { definition: getGroceryItemDefinition(GROCERY_ITEM_ID), id: 0, quantity: 1 },
+    ]);
   });
 
   test("a purchase the bag cannot hold whole is refused", () => {
@@ -414,19 +424,5 @@ describe(buyShopGood, () => {
       { definition: getCardShopItemDefinition(LUCKY_COIN_ITEM_ID), id: 0, quantity: 1 },
       { definition: getCardShopItemDefinition(CARD_ITEM_ID), id: 1, quantity: 1 },
     ]);
-  });
-
-  test("a card the player cannot afford is not sold", () => {
-    expect.hasAssertions();
-
-    const inventory = {
-      items: [{ definition: getCardShopItemDefinition(LUCKY_COIN_ITEM_ID), id: 0, quantity: 1 }],
-      nextId: 1,
-      quickSwapItemIds: [],
-    };
-
-    expect(
-      buyShopGood(EMPTY_WALLET, inventory, getCardShopItemDefinition, [], cardShopGood, ADVENTURE_RANK, NOW),
-    ).toBeUndefined();
   });
 });

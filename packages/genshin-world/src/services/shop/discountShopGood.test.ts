@@ -24,18 +24,18 @@ describe(discountShopGood, () => {
     reputationDiscountLevel: DISCOUNT_LEVEL,
   };
 
-  test("a discount applies at its named shop", () => {
+  test.each([
+    [61, 50],
+    [62, 55],
+    [120, 105],
+  ])("a Mora price of %s is discounted and rounded down to %s", (price, discountedPrice) => {
     expect.hasAssertions();
-    expect(discountShopGood({ ...moraGood, costs: moraCosts(61) }, DISCOUNT_LEVEL).costs).toStrictEqual(moraCosts(50));
-    expect(discountShopGood({ ...moraGood, costs: moraCosts(62) }, DISCOUNT_LEVEL).costs).toStrictEqual(moraCosts(55));
+    expect(discountShopGood({ ...moraGood, costs: moraCosts(price) }, DISCOUNT_LEVEL).costs).toStrictEqual(
+      moraCosts(discountedPrice),
+    );
   });
 
-  test("a discounted Mora price is rounded down to a multiple of five", () => {
-    expect.hasAssertions();
-    expect(discountShopGood(moraGood, DISCOUNT_LEVEL).costs).toStrictEqual(moraCosts(105));
-  });
-
-  test("a price below reputation level four is not discounted", () => {
+  test("a reputation below the good's discount level leaves its price", () => {
     expect.hasAssertions();
     expect(discountShopGood(moraGood, DISCOUNT_LEVEL - 1).costs).toStrictEqual(moraCosts(120));
   });

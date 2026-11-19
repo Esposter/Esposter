@@ -2,7 +2,7 @@ import type { ShopGood } from "#src/models/shop/ShopGood";
 
 import { Currency } from "#src/models/inventory/Currency";
 import { ShopRefresh } from "#src/models/shop/ShopRefresh";
-import { EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
+import { EMPTY_INVENTORY, EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inventory/constants";
 import { buyShopGoodCount } from "#src/services/shop/buyShopGoodCount";
 import { getNoItemDefinition } from "#src/services/shop/getNoItemDefinition.test";
 import { describe, expect, test } from "vitest";
@@ -11,7 +11,6 @@ describe(buyShopGoodCount, () => {
   const ADVENTURE_RANK = 4;
   const MORA_PRICE = 3;
   const ANEMO_SIGIL_ITEM_ID = 305;
-  const MORA_ITEM_ID = 202;
   const EPOCH = Temporal.Instant.fromEpochMilliseconds(0);
   const NOW = EPOCH.add({ hours: 24 * 40 });
   const GOOD: ShopGood = {
