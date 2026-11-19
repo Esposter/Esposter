@@ -18,12 +18,14 @@ const { accept, isMultiple } = defineProps<Props>();
 const id = useId();
 const dropZone = useTemplateRef("dropZone");
 const input = useTemplateRef("input");
+// A pick or a drop replaces what the field holds only when some of it is accepted, so a choice with none of it leaves the field as it was
+const takeAccepted = (files: File[]) => {
+  const acceptedFiles = files.filter((file) => checkIsFileAccepted(file, accept));
+  if (acceptedFiles.length > 0) modelValue.value = acceptedFiles;
+};
 const { isOverDropZone } = useDropZone(dropZone, {
   multiple: isMultiple,
-  onDrop: (files) => {
-    const acceptedFiles = files?.filter((file) => checkIsFileAccepted(file, accept)) ?? [];
-    if (acceptedFiles.length > 0) modelValue.value = acceptedFiles;
-  },
+  onDrop: (files) => takeAccepted(files ?? []),
 });
 </script>
 
@@ -80,7 +82,7 @@ const { isOverDropZone } = useDropZone(dropZone, {
       hidden
       @change="
         () => {
-          if (input?.files) modelValue = [...input.files].filter((file) => checkIsFileAccepted(file, accept));
+          if (input?.files) takeAccepted([...input.files]);
         }
       "
     />

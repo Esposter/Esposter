@@ -76,6 +76,19 @@ describe("uiFileField", () => {
       expect(component.find(`[aria-label="Clear ${label}"]`).exists()).toBe(false);
     });
 
+    test("keeps what it holds when a pick has nothing it accepts, as a drop does", async () => {
+      expect.hasAssertions();
+
+      const component = mountFileField(true);
+      const input = component.get<HTMLInputElement>('input[type="file"]');
+      Object.defineProperty(input.element, "files", { configurable: true, value: [image] });
+      await input.trigger("change");
+      Object.defineProperty(input.element, "files", { configurable: true, value: [text] });
+      await input.trigger("change");
+
+      expect(component.props("modelValue")).toStrictEqual([image]);
+    });
+
     test("takes what is dropped onto it that it accepts", async () => {
       expect.hasAssertions();
 
