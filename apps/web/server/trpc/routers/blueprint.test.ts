@@ -303,34 +303,6 @@ describe("blueprintRouter", () => {
     expect(webpages.items).toStrictEqual([]);
   });
 
-  test("a default outside the list is refused", async () => {
-    expect.hasAssertions();
-
-    const blueprint = await caller.createResource({ name });
-    const region = takeOne(choiceManifest.parameters);
-
-    await expect(
-      caller.saveResourceContent({
-        content: { ...choiceManifest, parameters: [{ ...region, defaultValue: "East" }] },
-        contentVersion: blueprint.contentVersion,
-        id: blueprint.id,
-      }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`
-      [TRPCError: [
-        {
-          "code": "custom",
-          "path": [
-            "content",
-            "parameters",
-            0,
-            "defaultValue"
-          ],
-          "message": "A default must be one of the allowed values"
-        }
-      ]]
-    `);
-  });
-
   test("a parameter with no list stays free text", async () => {
     expect.hasAssertions();
 

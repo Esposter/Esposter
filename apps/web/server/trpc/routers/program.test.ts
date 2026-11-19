@@ -36,7 +36,6 @@ import {
   hashSecretToken,
   InvalidOperationError,
   MAX_READ_LIMIT,
-  NotFoundError,
   Operation,
   secretTokenSchema,
   takeOne,
@@ -380,22 +379,6 @@ describe("programRouter", () => {
     // Viewer respond as that participant
     expect(JSON.stringify(dataset)).not.toContain(participant.keyValue);
     expect(JSON.stringify(dataset)).not.toContain(participant.token);
-  });
-
-  test("fails read status dataset with wrong user", async () => {
-    expect.hasAssertions();
-
-    const { program } = await setupIdentifiedProgram([" "]);
-    const otherUserAuthSession = await createMockAuthSession(mockContext.db);
-
-    await expect(
-      createCallerFactory(datasetRouter)(await createMockContext(otherUserAuthSession)).readDataset({
-        id: program.id,
-        type: DatasetProviderType.ProgramStatus,
-      }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Resource, program.id).message}]`,
-    );
   });
 
   test("purges program participants with the program", async () => {

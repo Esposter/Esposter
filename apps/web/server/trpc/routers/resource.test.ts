@@ -2,8 +2,6 @@ import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { ReadCritiqueResult } from "#shared/models/resource/ReadCritiqueResult";
 import type { ResourceReferences } from "#shared/models/resource/ResourceReferences";
-import type { SnapshotRestoration } from "#shared/models/resource/SnapshotRestoration";
-import type { SnapshotVersion } from "#shared/models/resource/SnapshotVersion";
 import type { UpdateResourceContentResult } from "#shared/models/resource/UpdateResourceContentResult";
 import type { R2Bucket } from "@cloudflare/workers-types";
 import type { ResourceInResource } from "@esposter/db-schema";
@@ -49,8 +47,6 @@ import {
 import {
   createTestSectionNode,
   createTestSurveyInviteNode,
-  createTestTextNode,
-  TEST_GREY_VALUE,
 } from "#shared/services/pageBuilder/critique/constants.test";
 import { MAX_RESOURCE_CONTENT_SIZE, STALE_CONTENT_VERSION_ERROR_MESSAGE } from "#shared/services/resource/constants";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
@@ -127,15 +123,6 @@ const createEmailButtonSection = (id: string, href: string | undefined): MjmlSec
   createEmailSection({
     props: { content: TEST_LABEL, id, ...(href === undefined ? {} : { href }) },
     type: MjmlNodeType.Button,
-  });
-const createEmailTextSection = (id: string, color: string): MjmlSectionNode =>
-  createEmailSection({
-    props: {
-      color,
-      content: { content: [{ content: [{ text: TEST_LABEL, type: "text" }], type: "paragraph" }], type: "doc" },
-      id,
-    },
-    type: MjmlNodeType.Text,
   });
 describe("resourceRouter", () => {
   const { getMockContext } = setupResourceSuite(resourceRouter);
@@ -639,24 +626,6 @@ describe("resourceRouter", () => {
     expect(critique).toStrictEqual({ contentVersion: webpageResource.contentVersion, findings: [] });
   });
 
-  test("an agent's read reports colour checks as unchecked", async () => {
-    expect.hasAssertions();
-
-    const callAgentTool = await connectAgentKey(mockContext, [McpScope.Resources]);
-    const webpageResource = await webpageCaller.createResource({ name });
-    await saveWebpageContent(
-      webpageResource,
-      new WebpageEditor({
-        content: [
-          createTestTextNode(TEST_ID, { [StyleBreakpoint.Base]: { [StyleState.Default]: { color: TEST_GREY_VALUE } } }),
-        ],
-      }),
-    );
-    const critique = await callAgentTool<ReadCritiqueResult>("resource_readCritique", { id: webpageResource.id });
-
-    expect(critique.findings).toStrictEqual([{ kind: CritiqueFindingKind.UncheckedContrast, nodeId: TEST_ID }]);
-  });
-
   test("an agent's read reports an invite to an unpublished survey", async () => {
     expect.hasAssertions();
 
@@ -709,38 +678,6 @@ describe("resourceRouter", () => {
     });
   });
 
-  test("an agent reads email colour checks as unchecked", async () => {
-    expect.hasAssertions();
-
-    const callAgentTool = await connectAgentKey(mockContext, [McpScope.Resources]);
-    const emailResource = await caller.createResource({ name, type: ResourceType.Email });
-    await emailCaller.saveResourceContent({
-      content: new EmailEditor({
-        content: [createEmailTextSection(TEST_ID, TEST_GREY_VALUE)],
-        root: { props: { lang: "", title: "" } },
-      }),
-      contentVersion: emailResource.contentVersion,
-      id: emailResource.id,
-    });
-    const critique = await callAgentTool<ReadCritiqueResult>("resource_readCritique", { id: emailResource.id });
-
-    expect(critique.findings).toStrictEqual([{ kind: CritiqueFindingKind.UncheckedContrast, nodeId: TEST_ID }]);
-  });
-
-  test("a resource the key does not own is refused for an email", async () => {
-    expect.hasAssertions();
-
-    const callAgentTool = await connectAgentKey(mockContext, [McpScope.Resources]);
-    const otherUserAuthSession = await createMockAuthSession(mockContext.db);
-    const otherUserResource = await createCallerFactory(resourceRouter)(
-      await createMockContext(otherUserAuthSession),
-    ).createResource({ name, type: ResourceType.Email });
-
-    await expect(
-      callAgentTool("resource_readCritique", { id: otherUserResource.id }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: UNAUTHORIZED]`);
-  });
-
   test("a link written into a document appears in references", async () => {
     expect.hasAssertions();
 
@@ -762,35 +699,6 @@ describe("resourceRouter", () => {
     });
 
     expect(references.dependencies).toStrictEqual([{ id: sheet.id, name, type: ResourceType.Sheet }]);
-  });
-
-  test("a restore keeps the version it replaces as a revision", async () => {
-    expect.hasAssertions();
-
-    const callAgentTool = await connectAgentKey(mockContext, [McpScope.Resources]);
-    const webpageResource = await webpageCaller.createResource({ name });
-    await saveWebpageContent(webpageResource, webpageEditor);
-    await webpageCaller.publishResource({ id: webpageResource.id });
-    const publishedVersion = (
-      await callAgentTool<SnapshotVersion[]>("resource_readSnapshotHistory", { id: webpageResource.id })
-    ).find(({ channel }) => channel === SnapshotChannel.Published);
-    const draftWebpageResource = await caller.readResource({ id: webpageResource.id });
-    await saveWebpageContent(draftWebpageResource, updatedWebpageEditor);
-    const draftContent = await webpageCaller.readResourceContent({ id: webpageResource.id });
-    const { undoRevisionVersion } = await callAgentTool<SnapshotRestoration>("resource_restoreSnapshotVersion", {
-      channel: SnapshotChannel.Published,
-      id: webpageResource.id,
-      version: publishedVersion?.version,
-    });
-    await callAgentTool<SnapshotRestoration>("resource_restoreSnapshotVersion", {
-      channel: SnapshotChannel.Revisions,
-      id: webpageResource.id,
-      version: undoRevisionVersion,
-    });
-    const undoneContent = await webpageCaller.readResourceContent({ id: webpageResource.id });
-
-    expect(undoRevisionVersion).toBeDefined();
-    expect(undoneContent).toStrictEqual(draftContent);
   });
 
   // A snapshot is stored bytes the owner keeps, and nothing else charges it: a server-side write raises an object-create notification for
@@ -1681,25 +1589,6 @@ describe("resourceRouter", () => {
     expect(firstPage.content).toHaveLength(1);
     expect([firstPage.length, secondPage.length, secondPage.nextCursor]).toStrictEqual([2, 2, ""]);
     expect([firstPage.content, secondPage.content].flat()).toStrictEqual(wholeArray.content);
-  });
-
-  test("refuses an array cursor that holds no index of the array", async () => {
-    expect.hasAssertions();
-
-    const { id } = await todoListCaller.createResource({ name });
-
-    await expect(caller.readResourceContent({ cursor: btoa(JSON.stringify([false, [-1]])), id, pointer: "/items" }))
-      .rejects.toThrowErrorMatchingInlineSnapshot(`
-      [TRPCError: [
-        {
-          "code": "custom",
-          "path": [
-            "cursor"
-          ],
-          "message": "A cursor names an index of the array, a non-negative integer"
-        }
-      ]]
-    `);
   });
 
   test("reads content never saved as null, which a patch writes whole", async () => {

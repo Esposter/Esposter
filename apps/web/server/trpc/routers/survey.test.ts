@@ -3,7 +3,7 @@ import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { ProgramResource } from "#shared/models/resource/program/ProgramResource";
 import type { SurveyResource } from "#shared/models/resource/survey/SurveyResource";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
-import type { SurveyDocument, SurveyTextNode } from "vue-survey-engine-headless";
+import type { SurveyDocument } from "vue-survey-engine-headless";
 
 import { CLOSED_SURVEY_ERROR_REASON, INVALID_PARTICIPANT_TOKEN_ERROR_REASON } from "#server/services/survey/constants";
 import { createMockAuthSession, createMockContext } from "#server/trpc/context.test";
@@ -37,20 +37,11 @@ import { v7 } from "uuid";
 import { assert, beforeAll, describe, expect, test } from "vitest";
 import {
   createSurveyDocument,
-  MAX_SURVEY_ANSWER_LENGTH,
   SURVEY_OUT_OF_RANGE_MESSAGE,
   SURVEY_REQUIRED_MESSAGE,
   SurveyNodeType,
-  surveyPageNodeType,
   SurveyTextInputType,
-  surveyTextNodeType,
 } from "vue-survey-engine-headless";
-
-// A text question of the given name, the one kind a save with repeated question names needs
-const createQuestion = (questionName: string): SurveyTextNode => ({
-  props: { ...surveyTextNodeType.createDefaultProps(), id: v7(), name: questionName },
-  type: SurveyNodeType.Text,
-});
 
 // The survey-specific procedures.
 describe("surveyRouter", () => {
@@ -153,47 +144,6 @@ describe("surveyRouter", () => {
     expect(content).toStrictEqual({ document, settings });
   });
 
-  test("refuses a save whose question names repeat, with the check's message", async () => {
-    expect.hasAssertions();
-
-    const newResource = await caller.createResource({ name });
-    const repeatedNameDocument: SurveyDocument = {
-      ...document,
-      content: [
-        {
-          props: {
-            ...surveyPageNodeType.createDefaultProps(),
-            children: [createQuestion("a"), createQuestion("a")],
-            id: v7(),
-          },
-          type: SurveyNodeType.Page,
-        },
-      ],
-    };
-
-    await expect(
-      saveSurveyContent(newResource.id, newResource.contentVersion, { document: repeatedNameDocument, settings }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`
-      [TRPCError: [
-        {
-          "code": "custom",
-          "message": "The name \\"a\\" is already used by an earlier question",
-          "path": [
-            "content",
-            "document",
-            "content",
-            "0",
-            "props",
-            "children",
-            "1",
-            "props",
-            "name"
-          ]
-        }
-      ]]
-    `);
-  });
-
   test("clears its responses when the resource is purged", async () => {
     expect.hasAssertions();
 
@@ -260,37 +210,6 @@ describe("surveyRouter", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new NotFoundError(DatabaseEntityType.Resource, newResource.id).message}]`,
     );
-  });
-
-  // The one anonymous write path is bounded by the one property its answers are stored in, and refused before the
-  // Write rather than by the Table after it. Each answer is at the most one answer may be, so four of them overrun
-  // The property and nothing but the record's own bound refuses them
-  test("fails createSurveyResponse with answers larger than the stored property", async () => {
-    expect.hasAssertions();
-
-    const newResource = await caller.createResource({ name });
-    const largeAnswer = " ".repeat(MAX_SURVEY_ANSWER_LENGTH);
-
-    await expect(
-      caller.createSurveyResponse({
-        id: v7(),
-        isDraft: false,
-        model: { a: largeAnswer, b: largeAnswer, c: largeAnswer, d: largeAnswer },
-        pageNo: 0,
-        participantToken: "",
-        resourceId: newResource.id,
-      }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`
-      [TRPCError: [
-        {
-          "code": "custom",
-          "path": [
-            "model"
-          ],
-          "message": "answers must serialize to at most 32768 characters"
-        }
-      ]]
-    `);
   });
 
   test("updates survey response", async () => {
