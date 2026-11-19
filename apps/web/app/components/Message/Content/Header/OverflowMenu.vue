@@ -13,8 +13,12 @@ import { useUserToRoomStore } from "#src/store/message/room/userToRoom";
 import { useMessageLayoutStore } from "#src/store/message/ui/layout";
 import { NotificationType } from "@esposter/db-schema";
 
+interface Props {
+  isToolsInHeader: boolean;
+}
+
+const { isToolsInHeader } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
-const { smAndUp } = useUiDisplay();
 const callStore = useCallStore();
 const { isConnecting, isInCall } = storeToRefs(callStore);
 const { joinCallByRoomId, leaveCall } = callStore;
@@ -41,7 +45,7 @@ const updateNotificationType = (newNotificationType: NotificationType) => {
 };
 // On a phone the header leaves the call and its toggles to this menu, so they lead it
 const headerItems = computed<Item[]>(() =>
-  smAndUp.value
+  isToolsInHeader
     ? []
     : [
         isInCall.value

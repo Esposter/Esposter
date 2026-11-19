@@ -43,7 +43,7 @@ const { smAndUp } = useUiDisplay();
         <MessageContentCallButton />
         <MessageContentShowDrawerButton v-for="drawer of RIGHT_DRAWER_TOGGLES" :key="drawer" :drawer />
       </template>
-      <MessageContentHeaderOverflowMenu />
+      <MessageContentHeaderOverflowMenu :is-tools-in-header="smAndUp" />
     </div>
   </header>
   <MessageContentHeaderDirectMessage v-else />

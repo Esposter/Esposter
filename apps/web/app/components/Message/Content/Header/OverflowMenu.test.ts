@@ -14,27 +14,15 @@ import { noop } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
-import { beforeEach, describe, expect, test, vi } from "vitest";
-
-// Whether the window is a phone's is read from the display composable, so a test says how wide it is before it mounts
-const display = vi.hoisted(() => ({ smAndUp: true }));
-vi.mock(import("#src/composables/ui/useUiDisplay"), async (importOriginal) => {
-  const actual = await importOriginal();
-
-  return { ...actual, useUiDisplay: () => ({ ...actual.useUiDisplay(), smAndUp: shallowRef(display.smAndUp) }) };
-});
+import { describe, expect, test, vi } from "vitest";
 
 describe("messageContentHeaderOverflowMenu", () => {
   const { trpcMsw } = setupMswTrpc();
 
-  beforeEach(() => {
-    display.smAndUp = true;
-  });
-
   test("from sm up, the menu leaves the call and the toggles to the header", async () => {
     expect.hasAssertions();
 
-    const component = await mountSuspended(MessageContentHeaderOverflowMenu);
+    const component = await mountSuspended(MessageContentHeaderOverflowMenu, { props: { isToolsInHeader: true } });
     const items = component.findComponent(UiOverflowMenu).props("items");
 
     expect(items.map(({ title }) => title)).toStrictEqual([
@@ -46,8 +34,7 @@ describe("messageContentHeaderOverflowMenu", () => {
   test("a phone's menu carries the header's toggles as rows", async () => {
     expect.hasAssertions();
 
-    display.smAndUp = false;
-    const component = await mountSuspended(MessageContentHeaderOverflowMenu);
+    const component = await mountSuspended(MessageContentHeaderOverflowMenu, { props: { isToolsInHeader: false } });
     const items = component.findComponent(UiOverflowMenu).props("items");
 
     expect(items.map(({ isChecked, isGroupStart, title }) => ({ isChecked, isGroupStart, title }))).toStrictEqual([
@@ -82,7 +69,7 @@ describe("messageContentHeaderOverflowMenu", () => {
     });
     const { promise: queued, resolve: releaseQueued } = Promise.withResolvers<void>();
     executeUserToRoomMutation(() => queued, { applyOptimistic: () => noop, key: roomId });
-    const component = await mountSuspended(MessageContentHeaderOverflowMenu);
+    const component = await mountSuspended(MessageContentHeaderOverflowMenu, { props: { isToolsInHeader: true } });
     // Set after mounting, which resets the route the room is read from
     setCurrentRoomId(roomId);
     const item = component
