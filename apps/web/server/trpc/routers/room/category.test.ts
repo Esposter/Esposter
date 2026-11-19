@@ -64,7 +64,7 @@ describe("categoryRouter", () => {
     expect(third.position).toBe(2);
   });
 
-  test("reorders in one statement", async () => {
+  test("reorders to the positions given, and reads the category moved to the front first", async () => {
     expect.hasAssertions();
 
     const first = await roomCategoryCaller.createRoomCategory({ id: v7(), name });

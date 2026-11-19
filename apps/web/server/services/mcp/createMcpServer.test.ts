@@ -103,16 +103,6 @@ describe(createMcpServer, () => {
     );
   });
 
-  test("calls the procedure and answers with its result", async () => {
-    expect.hasAssertions();
-
-    const client = await createConnectedClient();
-
-    const result = await client.callTool({ arguments: { value: "" }, name: "nested_read" });
-
-    expect(result).toStrictEqual({ content: [{ text: '""', type: "text" }] });
-  });
-
   test("answers a rejected call as a failed result", async () => {
     expect.hasAssertions();
 

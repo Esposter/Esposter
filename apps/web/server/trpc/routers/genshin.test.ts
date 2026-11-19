@@ -36,6 +36,7 @@ describe("genshinRouter", () => {
   });
 
   afterEach(async () => {
+    vi.useRealTimers();
     await deleteDirectory(bucket);
   });
 
@@ -98,6 +99,7 @@ describe("genshinRouter", () => {
   test("the current session's save is accepted under the ETag its start returned", async () => {
     expect.hasAssertions();
 
+    vi.useFakeTimers({ now: 0, toFake: ["Date", "Temporal"] });
     const start = await genshinCaller.startGenshin({ sessionId: firstSessionId });
     assert.exists(start.etag);
     const result = await genshinCaller.saveGenshin({
@@ -106,7 +108,7 @@ describe("genshinRouter", () => {
       sessionId: start.sessionId,
     });
 
-    expect(result.serverNow).toBeTypeOf("string");
+    expect(result.serverNow).toBe("1970-01-01T00:00:00Z");
   });
 
   // A save whose response was lost is sent again under the ETag it was first sent with, which that save has replaced

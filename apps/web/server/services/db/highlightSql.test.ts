@@ -103,16 +103,16 @@ describe(highlightSql, () => {
   test("#189 paints RETURNING as a keyword", () => {
     expect.hasAssertions();
 
-    expect(highlightSql(`insert into "brands" ("name") values ('x') returning "id"`)).toContain(
-      styleText(HighlightStyleMap.keyword, "returning"),
+    expect(highlightSql(`insert into "brands" ("name") values ('x') returning "id"`)).toBe(
+      `${styleText(HighlightStyleMap.keyword, "insert")} ${styleText(HighlightStyleMap.keyword, "into")} ${styleText(HighlightStyleMap.identifier, `"brands"`)} (${styleText(HighlightStyleMap.identifier, `"name"`)}) ${styleText(HighlightStyleMap.keyword, "values")} (${styleText(HighlightStyleMap.string, "'x'")}) ${styleText(HighlightStyleMap.keyword, "returning")} ${styleText(HighlightStyleMap.identifier, `"id"`)}`,
     );
   });
 
   test("#26 does not paint OVERLAPS as a keyword, since SQLite has no such keyword", () => {
     expect.hasAssertions();
 
-    expect(highlightSql("select 1 where (a, b) overlaps (c, d)")).not.toContain(
-      styleText(HighlightStyleMap.keyword, "overlaps"),
+    expect(highlightSql("select 1 where (a, b) overlaps (c, d)")).toBe(
+      `${styleText(HighlightStyleMap.keyword, "select")} ${styleText(HighlightStyleMap.number, "1")} ${styleText(HighlightStyleMap.keyword, "where")} (a, b) ${styleText(HighlightStyleMap.function, "overlaps")} (c, d)`,
     );
   });
 

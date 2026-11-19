@@ -73,6 +73,7 @@ describe("userRouter", () => {
   const size = 1;
   const unexpiredAt = new Date(Temporal.Duration.from({ days: 7 }).total("milliseconds"));
   const updatedMessage = "updatedMessage";
+  const refusedDataExportId = v7();
   const userId = getMockSession().user.id;
   // A second session the caller holds, and a revoke that deletes its row the way better-auth would
   const holdOtherSession = async () => {
@@ -531,39 +532,20 @@ describe("userRouter", () => {
     expect(presignedLink.searchParams.get("X-Amz-Expires")).toBe(String(DATA_EXPORT_LINK_DURATION_MS / 1000));
   });
 
-  const insertDataExportWithStatus = async (status: DataExportStatus) =>
-    takeOne(await mockContext.db.insert(dataExportsInUser).values({ status, userId }).returning()).id;
+  // Every row inserts under this one id: an inline snapshot takes its message from its call site, so the rows must
+  // produce the same message, and afterEach deletes each row's export before the next one is inserted
+  test.each([DataExportStatus.Building, DataExportStatus.Failed, DataExportStatus.Queued])(
+    "generateDataExportLink refuses a %s export",
+    async (status) => {
+      expect.hasAssertions();
 
-  // Each status gets its own test: an inline snapshot belongs to its call site, and the id in the message differs per row
-  test("generateDataExportLink refuses a building export", async () => {
-    expect.hasAssertions();
+      await mockContext.db.insert(dataExportsInUser).values({ id: refusedDataExportId, status, userId });
 
-    const dataExportId = await insertDataExportWithStatus(DataExportStatus.Building);
-
-    await expect(caller.generateDataExportLink(dataExportId)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.DataExport, dataExportId).message}]`,
-    );
-  });
-
-  test("generateDataExportLink refuses a failed export", async () => {
-    expect.hasAssertions();
-
-    const dataExportId = await insertDataExportWithStatus(DataExportStatus.Failed);
-
-    await expect(caller.generateDataExportLink(dataExportId)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.DataExport, dataExportId).message}]`,
-    );
-  });
-
-  test("generateDataExportLink refuses a queued export", async () => {
-    expect.hasAssertions();
-
-    const dataExportId = await insertDataExportWithStatus(DataExportStatus.Queued);
-
-    await expect(caller.generateDataExportLink(dataExportId)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.DataExport, dataExportId).message}]`,
-    );
-  });
+      await expect(caller.generateDataExportLink(refusedDataExportId)).rejects.toThrowErrorMatchingInlineSnapshot(
+        `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.DataExport, refusedDataExportId).message}]`,
+      );
+    },
+  );
 
   test("generateDataExportLink refuses another person's export", async () => {
     expect.hasAssertions();
