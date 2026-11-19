@@ -1258,6 +1258,8 @@ describe(createResourceProcedures, () => {
           content: publishedContent,
           name,
         });
+        // The public read counts as a view of the type's own resource
+        await expect(caller.readResourceViewCount({ id: newResource.id })).resolves.toBe(1);
       });
 
       test("unpublishes a resource, which then reads as unpublished", async () => {
