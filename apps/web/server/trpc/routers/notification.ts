@@ -32,11 +32,9 @@ export const notificationRouter = router({
       requireMutation(deletedRows[0], Operation.Delete, DatabaseEntityType.Notification, input);
       return takeOne(unreadRows).count;
     }),
-  // RETURNING names each deleted row's user, which the lists of the viewer's notifications watch. A bare delete names
-  // Only the table, which none of them watch
   deleteNotifications: standardAuthedProcedure.mutation<number>(async ({ ctx }) => {
     const [, unreadRows] = await ctx.db.batch([
-      ctx.db.delete(notificationsInNotification).where(eq(notificationsInNotification.userId, ctx.user.id)).returning(),
+      ctx.db.delete(notificationsInNotification).where(eq(notificationsInNotification.userId, ctx.user.id)),
       selectUnreadNotificationCount(ctx.db, ctx.user.id),
     ]);
     return takeOne(unreadRows).count;
@@ -61,6 +59,7 @@ export const notificationRouter = router({
       return unreadRows ? { ...page, unreadCount: takeOne(unreadRows).count } : page;
     }),
   updateNotificationsReadStatus: standardAuthedProcedure.mutation<number>(async ({ ctx }) => {
+    // The set holds no user, so RETURNING is what names the lists of the viewer's notifications to wake
     const [, unreadRows] = await ctx.db.batch([
       ctx.db
         .update(notificationsInNotification)

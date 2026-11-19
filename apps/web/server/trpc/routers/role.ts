@@ -66,7 +66,7 @@ export const roleRouter = router({
 
     await assertCanManageMemberRole(ctx.db, actorAuthority, role.position, roomId, userId);
 
-    await ctx.db.insert(usersToRoomRolesInMessage).values({ roleId, roomId, userId }).onConflictDoNothing().returning();
+    await ctx.db.insert(usersToRoomRolesInMessage).values({ roleId, roomId, userId }).onConflictDoNothing();
     return role;
   }),
   createRole: getPermissionsProcedure(

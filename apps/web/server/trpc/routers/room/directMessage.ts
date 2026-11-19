@@ -81,6 +81,7 @@ export const directMessageRouter = router({
           .values({ participantKey, type: RoomType.DirectMessage, userId })
           .onConflictDoNothing({ target: roomsInMessage.participantKey })
           .returning({ id: roomsInMessage.id }),
+        // The membership's room is a subquery, not a value, so RETURNING is what names the room each row lands on
         ...chunk(allUserIds, Math.floor(D1_MAX_BOUND_PARAMETERS / 2)).map((userIdChunk) =>
           ctx.db
             .insert(usersToRoomsInMessage)
@@ -88,6 +89,7 @@ export const directMessageRouter = router({
             .onConflictDoNothing()
             .returning(),
         ),
+        // The set holds no scope column, so RETURNING is what names the rows it reveals
         ctx.db
           .update(usersToRoomsInMessage)
           .set({ isHidden: false })
@@ -132,6 +134,7 @@ export const directMessageRouter = router({
     // Takes any number of them
     const [, updatedRoomRows] = await runParticipantBatch(() =>
       ctx.db.batch([
+        // The memberships are selected from a JSON array, not valued, so RETURNING is what names the rows they wrote
         ctx.db
           .insert(usersToRoomsInMessage)
           .select(
@@ -244,6 +247,7 @@ export const directMessageRouter = router({
     .mutation<void>(async ({ ctx, input }) => {
       await assertIsMember(ctx, input);
       await assertIsRoom(ctx.db, input, RoomType.DirectMessage);
+      // The set holds no scope column, so RETURNING is what names the rows it hides
       await ctx.db
         .update(usersToRoomsInMessage)
         .set({ isHidden: true })

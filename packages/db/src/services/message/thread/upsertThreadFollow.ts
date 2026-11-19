@@ -14,6 +14,4 @@ export const upsertThreadFollow = (
   db
     .insert(threadFollowsInMessage)
     .values({ isUnfollowed, roomId, threadRootId, userId })
-    .onConflictDoUpdate({ set: { isUnfollowed }, target: THREAD_FOLLOW_CONFLICT_TARGET })
-    // The row comes back, so the member's followed-thread readers, which watch the member's scope, are woken by it
-    .returning();
+    .onConflictDoUpdate({ set: { isUnfollowed }, target: THREAD_FOLLOW_CONFLICT_TARGET });
