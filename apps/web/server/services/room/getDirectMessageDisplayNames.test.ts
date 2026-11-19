@@ -1,6 +1,8 @@
+import { D1_MAX_BOUND_PARAMETERS } from "#server/services/db/constants";
 import { getDirectMessageDisplayNames } from "#server/services/room/getDirectMessageDisplayNames";
 import { createMockContext, createMockUser } from "#server/trpc/context.test";
 import { roomsInMessage, RoomType, usersToRoomsInMessage } from "@esposter/db-schema";
+import { chunk } from "@esposter/shared";
 import { sql } from "drizzle-orm";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
@@ -58,5 +60,43 @@ describe(getDirectMessageDisplayNames, () => {
     const rows = await context.db.select({ roomId: directMessageDisplayNames.roomId }).from(directMessageDisplayNames);
 
     expect(rows.map(({ roomId }) => roomId).toSorted()).toStrictEqual([aloneId, withOtherId].toSorted());
+  });
+
+  // A viewer with more direct messages than D1 binds in one statement is still named in full, since the room list is bound
+  // As one value rather than a parameter per room
+  test("names every direct message of a viewer past D1's parameter cap, binding their ids as one list", async () => {
+    expect.hasAssertions();
+
+    const context = await createMockContext();
+    const viewer = await createMockUser(context.db);
+    const roomIds = Array.from({ length: D1_MAX_BOUND_PARAMETERS + 1 }, () => v7());
+    // Each write is one chunk of rows, so no statement binds more than the cap the read is held to
+    const roomIdChunks = chunk(roomIds, 5);
+    await Promise.all(
+      roomIdChunks.map((roomIdChunk) =>
+        context.db
+          .insert(roomsInMessage)
+          .values(
+            roomIdChunk.map((id) => ({
+              id,
+              name: "",
+              participantKey: id,
+              type: RoomType.DirectMessage,
+              userId: viewer.id,
+            })),
+          ),
+      ),
+    );
+    await Promise.all(
+      roomIdChunks.map((roomIdChunk) =>
+        context.db.insert(usersToRoomsInMessage).values(roomIdChunk.map((roomId) => ({ roomId, userId: viewer.id }))),
+      ),
+    );
+    const directMessageDisplayNames = await getDirectMessageDisplayNames(context.db, viewer.id);
+    const query = context.db.select({ roomId: directMessageDisplayNames.roomId }).from(directMessageDisplayNames);
+    const rows = await query;
+
+    expect(rows.map(({ roomId }) => roomId).toSorted()).toStrictEqual(roomIds.toSorted());
+    expect(query.toSQL().params.length).toBeLessThanOrEqual(D1_MAX_BOUND_PARAMETERS);
   });
 });

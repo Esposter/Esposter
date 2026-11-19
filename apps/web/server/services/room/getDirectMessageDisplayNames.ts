@@ -1,5 +1,6 @@
 import type { Context } from "#server/trpc/context";
 
+import { inJsonArray } from "@esposter/db";
 import {
   getDisplayNameExpression,
   roomsInMessage,
@@ -7,7 +8,7 @@ import {
   usersInAuth,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
-import { and, eq, inArray, ne, sql } from "drizzle-orm";
+import { and, eq, ne, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/sqlite-core";
 
 // One ordered name per direct message, built from the other participants only; the id tie-breaker keeps equal names
@@ -41,7 +42,7 @@ export const getDirectMessageDisplayNames = async (db: Context["db"], userId: st
       and(eq(participantMembership.roomId, roomsInMessage.id), ne(participantMembership.userId, userId)),
     )
     .leftJoin(participantUser, eq(participantUser.id, participantMembership.userId))
-    .where(inArray(roomsInMessage.id, directMessageRoomIds))
+    .where(inJsonArray(roomsInMessage.id, directMessageRoomIds))
     .groupBy(roomsInMessage.id)
     .as("directMessageDisplayNames");
 };
