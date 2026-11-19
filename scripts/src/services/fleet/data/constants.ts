@@ -1,4 +1,5 @@
 import { SITE_NAME } from "@esposter/shared";
+import { DATA_ROOT } from "@esposter/shared-node/cache";
 import { homedir } from "node:os";
 import { join } from "node:path";
 
@@ -17,7 +18,7 @@ export const EXCLUDED_FOLDERS: readonly string[] = ["frames", "tmp"];
 export const STAT_CONCURRENCY = 64;
 // The stamps read at once, so a list of paths of any length never holds a read open for each one
 export const STAMP_CONCURRENCY = 16;
-export const DEFAULT_PARITY_DIRECTORY: string = join(homedir(), SITE_NAME, "genshin-parity");
+export const DEFAULT_PARITY_DIRECTORY: string = join(DATA_ROOT, "genshin-parity");
 export const PEERS_FILE_PATH: string = join(homedir(), `.${SITE_NAME.toLowerCase()}`, "peers.json");
 export const SUCCESS_EXIT_CODE = 0;
 export const FAILURE_EXIT_CODE = 1;

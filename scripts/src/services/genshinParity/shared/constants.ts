@@ -1,14 +1,12 @@
 import { getWorktreeName } from "#src/services/genshinParity/shared/getWorktreeName";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { SITE_NAME } from "@esposter/shared";
-import { homedir } from "node:os";
+import { DATA_ROOT } from "@esposter/shared-node/cache";
 import { join } from "node:path";
 
 // Everything the tool fetches, records and draws lives here, outside the repository.
 // The exceptions are the references the map names, and the manifest that holds their provenance.
 // Both are committed in the repository.
-export const PARITY_DIRECTORY: string =
-  process.env.GENSHIN_PARITY_DIRECTORY ?? join(homedir(), SITE_NAME, "genshin-parity");
+export const PARITY_DIRECTORY: string = process.env.GENSHIN_PARITY_DIRECTORY ?? join(DATA_ROOT, "genshin-parity");
 // The scratch images that are never committed: the clean plates, the softness caches, and the wiki files a trace reads.
 // The namecards and the interactive map are scratch as well.
 // So are the reference files a machine has not yet packed (`references pack`).

@@ -26,9 +26,8 @@ import {
   TOOLS_DIRECTORY,
 } from "#src/services/recreation/animeStudio/constants";
 import { PINNED_TOOL_DOWNLOAD_TIMEOUT_MS, REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { CACHE_ROOT } from "@esposter/shared-node/cache";
+import { CACHE_ROOT, WINDOWS_ANIMESTUDIO_DIRECTORY } from "@esposter/shared-node/cache";
 import { GameDataset } from "genshin-world";
-import { homedir } from "node:os";
 import { dirname, join } from "node:path";
 
 // What the game's own files are exported into: scratch like every other, kept outside the repository and never
@@ -53,7 +52,7 @@ export const ANIMESTUDIO_CLI_PATH: string =
   process.env[ANIMESTUDIO_CLI_ENVIRONMENT_VARIABLE] ??
   (process.platform === "darwin"
     ? join(TOOLS_DIRECTORY, PUBLISH_DIRECTORY_NAME, CLI_EXECUTABLE_NAME)
-    : join(homedir(), "Downloads", "AnimeStudio", "AnimeStudio.CLI.exe"));
+    : join(WINDOWS_ANIMESTUDIO_DIRECTORY, "AnimeStudio.CLI.exe"));
 // AnimeStudio's Maps folder, beside its command line: where each shard of `map` writes its CAB map.
 // The CLI reads the merged one from there on every export
 export const ANIMESTUDIO_MAPS_DIRECTORY: string = join(dirname(ANIMESTUDIO_CLI_PATH), MAPS_DIRECTORY_NAME);

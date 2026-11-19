@@ -1,9 +1,8 @@
-import { SITE_NAME } from "@esposter/shared";
-import { homedir } from "node:os";
+import { DATA_ROOT } from "@esposter/shared-node/cache";
 import { join } from "node:path";
 
 // Where the sources, the builds and the published CLI are kept by default, outside the repository
-export const TOOLS_DIRECTORY: string = join(homedir(), SITE_NAME, "tools");
+export const TOOLS_DIRECTORY: string = join(DATA_ROOT, "tools");
 // AnimeStudio (github.com/Escartem/AnimeStudio) at the commit the build was proven against: its CLI, its Ooz source and its
 // ACL source all come from this one tree
 export const ANIMESTUDIO_REPOSITORY = "Escartem/AnimeStudio";
