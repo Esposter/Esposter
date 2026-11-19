@@ -39,5 +39,5 @@ flowchart LR
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/gaming), MIT: the kit's four strikes' hitmarks, cancels, poise and reaches, the collision and the low and high plunges' frames and reaches, and the low and high plunges' poise, Bestial Ascent's animation and cooldown, Suanni's Gilded Dance's animation, strike and cooldown, and the multiplier indices of each group. The v2.47.2 source is on disk at `{cache-root}/gcsim-v2.47.2`, which the citations above read.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/gaming), MIT: the kit's four strikes' hitmarks, cancels, poise and reaches, the collision and the low and high plunges' frames and reaches, and the low and high plunges' poise, Bestial Ascent's animation and cooldown, Suanni's Gilded Dance's animation, strike and cooldown, and the multiplier indices of each group. The source is kept where [the kits index](../README.md#sources) places it, which the citations above read.
 - [Stellar Rend](https://genshin-impact.fandom.com/wiki/Stellar_Rend), Genshin Impact Wiki: the collision's poise, 35, and the normal attacks' poise. The cached page is in `{cache-root}/genshin-wiki/Category_Gaming_Talents.json`.

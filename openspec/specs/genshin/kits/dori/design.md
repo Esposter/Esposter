@@ -33,7 +33,7 @@ flowchart LR
 
 ## Sources
 
-- [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/dori), MIT: Dori's strikes' hitmarks, cancels and poise, Troubleshooter Shot's hitmark and After-Sales Service Round's hits, Alcazarzaray's Exactitude's Connector ticks, and the low and high plunges' hitmarks and poise. The v2.47.2 source is on disk at `{cache-root}/gcsim-v2.47.2/internal/characters/dori`, and the lines cited above are in it.
+- [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/dori), MIT: Dori's strikes' hitmarks, cancels and poise, Troubleshooter Shot's hitmark and After-Sales Service Round's hits, Alcazarzaray's Exactitude's Connector ticks, and the low and high plunges' hitmarks and poise. The source is kept where [the kits index](../README.md#sources) places it, and the lines cited above are in it.
 - Genshin Impact Wiki, cached at `{cache-root}/genshin-wiki/Category_Dori_Talents.json`: the pages Spirit-Warding Lamp: Troubleshooter Cannon (its CD 9s and poise 30 and 10), Alcazarzaray's Exactitude (its energy cost 80, CD 20s, duration 12s, and the Connector's poise 8) and Marvelous Sword-Dance (Modified) (the strikes' poise, the charged attack's maximum duration of 5s, and the collision's poise 35).
 - The dump, `{data-root}/genshin-parity/text/ExcelBinOutput`: `ProudSkillExcelConfigData.json` (groups 6831, 6832 and 6839) and `AvatarSkillExcelConfigData.json` (skills 10681, 10682 and 10685).
 - [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/dori), MIT: gives Troubleshooter Shot, the Connector and the plunging collision no poise, as the Decisions above set out; grounds Requirement: Poise from the shot, the Connector and the collision.

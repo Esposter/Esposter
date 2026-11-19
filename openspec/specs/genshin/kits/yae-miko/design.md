@@ -36,7 +36,7 @@ flowchart TD
 
 ## Sources
 
-- [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/yaemiko), MIT: the totems' strikes and frames, their 900-frame lifetime, the cap of three standing totems, and Tenko Kenshin's strike and the totems it destroys. The source is on disk at `{cache-root}/gcsim-v2.47.2/internal/characters/yaemiko/`, and the line numbers above are its files'.
+- [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/yaemiko), MIT: the totems' strikes and frames, their 900-frame lifetime, the cap of three standing totems, and Tenko Kenshin's strike and the totems it destroys. The source is kept where [the kits index](../README.md#sources) places it, and the line numbers above are its files'.
 - Local copies: `{data-root}/genshin-parity/text/ExcelBinOutput/ProudSkillExcelConfigData.json` (groups 5831, 5832 and 5839, read by level) and `{cache-root}/genshin-wiki/Category_Yae_Miko_Talents.json` (Great Secret Art: Tenko Kenshin, Yakan Evocation: Sesshou Sakura, The Shrine's Sacred Shade and Enlightened Blessing pages).
 
 ## Open

@@ -37,7 +37,7 @@ flowchart LR
 
 ## Sources
 
-- [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/diona), MIT: the kit's hitmarks, cancel frames and areas, Icy Paws' hitmarks, travel and paw count, its shield's duration and cooldown, Signature Mix's frames, ticks and field, and her constellations' shield and energy. The v2.47.2 source is on disk at `{cache-root}/gcsim-v2.47.2/internal/characters/diona`, and the lines cited above are in it.
+- [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/diona), MIT: the kit's hitmarks, cancel frames and areas, Icy Paws' hitmarks, travel and paw count, its shield's duration and cooldown, Signature Mix's frames, ticks and field, and her constellations' shield and energy. The source is kept where [the kits index](../README.md#sources) places it, and the lines cited above are in it.
 - Genshin Impact Wiki, cached at `{cache-root}/genshin-wiki/Category_Diona_Talents.json`: the pages Kätzlein Style (her strikes, charged attack and plunges), Icy Paws (the shield's table, the paws' 30 poise, the CDs and the hold's 1.75 multiplier), Signature Mix (the field's values, 12 seconds, CD 20s, energy 80, poise 50, and Cat's Tail Closing Time), Cat's Tail Secret Menu and Drunkards' Farce.
 - The dump's groups 3931, 3932 and 3939 and skills 10391, 10392 and 10395, from the files [Diluc's design](../diluc/design.md) cites, with the tap's CD 6 and the burst's CD 20 and energy cost 80.
 - `{cache-root}/gcsim-v2.47.2/internal/characters/diona/skill.go`, lines 96 to 97 (gcsim): grounds the requirement Constellation 2 shields.

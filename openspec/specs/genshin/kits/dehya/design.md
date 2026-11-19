@@ -26,7 +26,7 @@ flowchart LR
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/dehya), MIT: Dehya's strikes' hitmarks, cancel frames, reaches and poise, Molten Inferno's initial hit and its animation, the plunges' timings and poise, and the burst's first punch. The v2.47.2 source is on disk at `{cache-root}/gcsim-v2.47.2/internal/characters/dehya`, and the lines cited above are in it.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/dehya), MIT: Dehya's strikes' hitmarks, cancel frames, reaches and poise, Molten Inferno's initial hit and its animation, the plunges' timings and poise, and the burst's first punch. The source is kept where [the kits index](../README.md#sources) places it, and the lines cited above are in it.
 - Genshin Impact Wiki, cached at `{cache-root}/genshin-wiki/Category_Dehya_Talents.json`: the pages Sandstorm Assault (the charged attack's maximum duration, stamina and the collision's poise), Molten Inferno (the Fiery Sanctum, Redmane's Blood and Ranging Flame), Unstinting Succor and Stalwart and True.
 - The dump, `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/`: `ProudSkillExcelConfigData.json` (groups 7931, 7932 and 7939) and `AvatarSkillExcelConfigData.json` (skills 10791, 10792 and 10795).
 - `{data-root}/genshin-parity/text/ExcelBinOutput/AvatarSkillExcelConfigData.json`, id 10792: Molten Inferno's skill row, with a cooldown of 20 and no energy cost, grounding requirement "Molten Inferno initial hit".

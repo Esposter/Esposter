@@ -34,5 +34,5 @@ flowchart LR
 
 ## Sources
 
-- [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/ganyu), MIT: Ganyu's strikes' hitmarks and cancels, the shot's and Bloom's frames, Ice Lotus's flower and explosion, Celestial Shower's ticks and hits, Constellation 4's status and stacks, and Undivided Heart's, Harmony's and Constellation 1's values. The v2.47.2 source is on disk at `{cache-root}/gcsim-v2.47.2/`.
+- [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/ganyu), MIT: Ganyu's strikes' hitmarks and cancels, the shot's and Bloom's frames, Ice Lotus's flower and explosion, Celestial Shower's ticks and hits, Constellation 4's status and stacks, and Undivided Heart's, Harmony's and Constellation 1's values. The source is kept where [the kits index](../README.md#sources) places it.
 - The Genshin Impact Wiki pages for Trail of the Qilin, Celestial Shower, Undivided Heart and Harmony between Heaven and Earth are cached in `{cache-root}/genshin-wiki/Category_Ganyu_Talents.json`: Undivided Heart's 5 seconds, Westward Sojourn's stacking, and the Ice Lotus's Inherited HP.

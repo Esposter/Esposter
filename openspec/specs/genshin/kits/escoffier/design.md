@@ -46,7 +46,7 @@ sequenceDiagram
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/escoffier), MIT, at v2.47.2: the hitmarks, cancels and reaches of the strikes and the charged attack, the plunges, Low-Temperature Cooking with Frosty Parfait and the Surging Blade, Scoring Cuts, Rehab Diet and the constellations. The v2.47.2 source is on disk at `{cache-root}/gcsim-v2.47.2/internal/characters/escoffier`, and the lines cited above are in it.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/escoffier), MIT, at v2.47.2: the hitmarks, cancels and reaches of the strikes and the charged attack, the plunges, Low-Temperature Cooking with Frosty Parfait and the Surging Blade, Scoring Cuts, Rehab Diet and the constellations. The source is kept where [the kits index](../README.md#sources) places it, and the lines cited above are in it.
 - Genshin Impact Wiki, cached at `{cache-root}/genshin-wiki/Category_Escoffier_Talents.json`: the page Kitchen Skills (the strikes' and charged attack's poise, the collision's 25, the plunges' 100 and 150, the stamina 25), Low-Temperature Cooking (CD 15s, its poise), and Scoring Cuts (CD 15s, energy cost 60).
 - The dump, `{data-root}/genshin-parity/text/ExcelBinOutput`: `ProudSkillExcelConfigData.json` (groups 11231, 11232 and 11239) and `AvatarSkillExcelConfigData.json` (skills 11121, 11122 and 11125, with the skill's CD 15 and the burst's CD 15 and energy cost 60).
 - Genshin Impact Wiki, cached at `{cache-root}/genshin-wiki/Category_Escoffier_Talents.json`: the Kitchen Skills rows' poise for the normal attacks (47.95, 44.27 and 34.11), the charged attack (120) and the collision (25); grounds Requirement: Poise from strikes, charged attack and collision.

@@ -13,9 +13,10 @@ import { readRepositoryPathShingles } from "#src/services/sweeps/duplicateProse/
 // Spec's requirements are shaped by a template each of their kind repeats — a requirement is a SHALL and its scenarios,
 // Which `openspec validate` holds — so the designs, proposals, tasks and skills are the pages read; a run that is a
 // Citation rather than prose is set aside (`checkIsPathRun`).
-// A `{data-root}` path names a game-data file a page cites, and a markdown link's target names the page or anchor it
-// Cites: each is a citation by the same convention a repository path is, so its words are set aside like a tracked path's
-const DATA_ROOT_PATH_REGEX = /\{data-root\}\/[^\s`()[\]<>]+/gu;
+// A `{data-root}`, `{cache-root}` or `{state-root}` path names a file on this machine that a page cites, and a markdown
+// Link's target names the page or anchor it cites: each is a citation by the same convention a repository path is, so its
+// Words are set aside like a tracked path's
+const MACHINE_ROOT_PATH_REGEX = /\{(?:data|cache|state)-root\}\/[^\s`()[\]<>]+/gu;
 const LINK_TARGET_REGEX = /(?<=\]\()[^)\s]+(?=\))/gu;
 export const readDuplicateProseFindings = (): DuplicateProseFinding[] => {
   const pages = readCitingPages().filter(
@@ -25,7 +26,7 @@ export const readDuplicateProseFindings = (): DuplicateProseFinding[] => {
   const citationShingles = getPathShingles(
     pages
       .flatMap(({ text }) => [
-        ...Array.from(text.matchAll(DATA_ROOT_PATH_REGEX), ({ 0: path }) => path),
+        ...Array.from(text.matchAll(MACHINE_ROOT_PATH_REGEX), ({ 0: path }) => path),
         ...Array.from(text.matchAll(LINK_TARGET_REGEX), ({ 0: target }) => target),
       ])
       .map((path) => getProseWords(path).join(" ")),

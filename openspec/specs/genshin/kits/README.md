@@ -444,6 +444,7 @@ Each page names only what it alone lacks. These are the gaps every page shares, 
 - **Avatar ability configs, not read for timings.** The per-avatar ability tables are scrambled `MiHoYoBinData` named by hash, and no Kachina or new kit's ability file is identified among them, so this source gives no timing for any kit.
 - [Template:Advanced Properties](https://genshin-impact.fandom.com/wiki/Template:Advanced_Properties), Genshin Impact Wiki, read through the wiki's [MediaWiki API](https://genshin-impact.fandom.com/api.php) (`action=parse`, `prop=wikitext`): each hit's gauge, ICD tag and type, and poise. [Dough-Fu](https://genshin-impact.fandom.com/wiki/Dough-Fu) is the hand-worked case the builder's tests take their oracle from.
 - [Shield](https://genshin-impact.fandom.com/wiki/Shield), Genshin Impact Wiki: the active character's damage is taken by its shields first, every active shield takes an enemy's strike at once, and absorption is scaled by the active character's Shield Strength.
+- **Where the sources are kept.** gcsim at v2.47.2 is cloned to `{cache-root}/gcsim-v2.47.2` when it is absent, and the wiki's answers are kept in `{cache-root}/genshin-wiki`, where a page is read again only once its cached answer is deleted. Both sit outside the repository and are shared by every checkout on the machine, so a kit's citations into gcsim are paths under that clone.
 
 ## Characters
 

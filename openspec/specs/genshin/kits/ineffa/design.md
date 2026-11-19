@@ -43,5 +43,5 @@ flowchart TD
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/ineffa), MIT, at v2.47.2: the strikes and the charged attack as the index gives them, Cleaning Mode and its shield and Birgitta, Cyclonic Exterminator, the Moonsign Benediction, and her Ascension 1 passive and constellations not yet built. The v2.47.2 source is on disk at `{cache-root}/gcsim-v2.47.2`, which the line references above read.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/ineffa), MIT, at v2.47.2: the strikes and the charged attack as the index gives them, Cleaning Mode and its shield and Birgitta, Cyclonic Exterminator, the Moonsign Benediction, and her Ascension 1 passive and constellations not yet built. The source is kept where [the kits index](../README.md#sources) places it, which the line references above read.
 - [Hosted game data](../../hosted-game-data/design.md): proud skill groups 11631, 11632 and 11639, with the skill-kit record behind her cooldowns and energy cost.
