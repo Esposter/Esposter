@@ -138,7 +138,7 @@ describe(buildEnemyDropSources, () => {
     await rm(cacheDirectory, { force: true, recursive: true });
   });
 
-  test("a kind takes the drop family its article's Drops Table names, a bounty kind as a placed one does", async () => {
+  test("Hilichurl Fighter and Dendro Samachurl each take the drop family their articles' Drops Tables name", async () => {
     expect.hasAssertions();
     await writeWikiPage(cacheDirectory, "Hilichurl Fighter", HILICHURL_FIGHTER_ARTICLE);
     await writeWikiPage(cacheDirectory, "Dendro Samachurl", DENDRO_SAMACHURL_ARTICLE);

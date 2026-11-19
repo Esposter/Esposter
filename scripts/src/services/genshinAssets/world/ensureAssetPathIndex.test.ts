@@ -1,11 +1,7 @@
-import {
-  ASSET_PATH_INDEX_COMMIT,
-  ASSET_PATH_INDEX_TIMEOUT_MILLISECONDS,
-} from "#src/services/genshinAssets/world/constants";
+import { ASSET_PATH_INDEX_TIMEOUT_MILLISECONDS } from "#src/services/genshinAssets/world/constants";
 import { ensureAssetPathIndex } from "#src/services/genshinAssets/world/ensureAssetPathIndex";
 import { fetchOk } from "#src/services/shared/fetchOk";
 import { publishFile } from "#src/services/shared/publishFile";
-import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
 import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -17,7 +13,7 @@ vi.mock(import("#src/services/shared/publishFile"));
 
 describe(ensureAssetPathIndex, () => {
   const fixtureIndex = "{}";
-  const fixtureSha256 = createHash("sha256").update(fixtureIndex).digest("hex");
+  const fixtureSha256 = "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a";
   const indexFileName = "gi-2.6.0.json";
   let directory: string;
 
@@ -64,9 +60,10 @@ describe(ensureAssetPathIndex, () => {
     vi.mocked(fetchOk).mockResolvedValueOnce(new Response(fixtureIndex));
 
     await expect(ensureAssetPathIndex(indexPath, fixtureSha256)).resolves.toBe(indexPath);
-    expect(vi.mocked(fetchOk)).toHaveBeenCalledExactlyOnceWith(expect.stringContaining(ASSET_PATH_INDEX_COMMIT), {
-      timeoutMs: ASSET_PATH_INDEX_TIMEOUT_MILLISECONDS,
-    });
+    expect(vi.mocked(fetchOk)).toHaveBeenCalledExactlyOnceWith(
+      "https://raw.githubusercontent.com/radioegor146/gi-asset-indexes/3192b1759a6d1f6879cc348ad92e078092c1fb9f/mapped/GenshinImpact_2.6.0.zip_31049740.blk.asset_index.json",
+      { timeoutMs: ASSET_PATH_INDEX_TIMEOUT_MILLISECONDS },
+    );
   });
 
   test("a fetched source whose SHA-256 differs from its pin is refused", async () => {

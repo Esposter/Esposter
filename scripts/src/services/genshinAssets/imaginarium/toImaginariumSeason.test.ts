@@ -6,17 +6,12 @@ import { toImaginariumSeason } from "#src/services/genshinAssets/imaginarium/toI
 import { Element } from "genshin-world";
 import { describe, expect, test } from "vitest";
 
-// The game's time as the dump writes it, read off the epoch
-const toGameTime = (date: Date) => date.toISOString().slice(0, 19).replace("T", " ");
-
 describe(toImaginariumSeason, () => {
-  const BEGIN_DATE = new Date(0);
-  const END_DATE = new Date(1000);
   const scheduleRow: ExcelRoleCombatScheduleRow = {
     avatarConfigId: 3,
-    beginTimeStr: toGameTime(BEGIN_DATE),
+    beginTimeStr: "1970-01-01 00:00:00",
     difficultyIds: [1, 2],
-    endTimeStr: toGameTime(END_DATE),
+    endTimeStr: "1970-01-01 00:00:01",
     rewardGroupId: 2,
     scheduleId: 1,
   };
@@ -36,10 +31,10 @@ describe(toImaginariumSeason, () => {
     expect.hasAssertions();
 
     expect(toImaginariumSeason(scheduleRow, avatarConfigRow, trials)).toStrictEqual({
-      beginsAt: BEGIN_DATE.toISOString().slice(0, 19),
+      beginsAt: "1970-01-01T00:00:00",
       difficultyIds: [1, 2],
       elements: [Element.Pyro, Element.Electro, Element.Cryo],
-      endsAt: END_DATE.toISOString().slice(0, 19),
+      endsAt: "1970-01-01T00:00:01",
       id: 1,
       openingCharacterIds: [1, 2],
       openingTrials: [

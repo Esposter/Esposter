@@ -31,9 +31,10 @@ describe(parseTerrainHeights, () => {
     const terrainHeights = parseTerrainHeights(bytes);
 
     assert.exists(terrainHeights);
-    expect(terrainHeights.resolution).toBe(resolution);
-    expect(terrainHeights.spacing).toBe(2);
-    expect([terrainHeights.heights[1], terrainHeights.heights[resolution]]).toStrictEqual([0, 4]);
+    // Only the one sample written is non-zero, and it lands in the second row along z
+    const heights = new Float32Array(resolution * resolution);
+    heights[resolution] = 4;
+    expect(terrainHeights).toStrictEqual({ heights, resolution, spacing: 2 });
   });
 
   test("finds nothing without a heightfield", () => {

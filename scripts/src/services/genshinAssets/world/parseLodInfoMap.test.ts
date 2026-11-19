@@ -33,7 +33,7 @@ describe(parseLodInfoMap, () => {
       ]),
     ]);
 
-    expect(parseLodInfoMap(bytes)).toStrictEqual(new Map([[1, String(2n ** 63n)]]));
+    expect(parseLodInfoMap(bytes)).toStrictEqual(new Map([[1, "9223372036854775808"]]));
   });
 
   test("throws when the records do not end where the bytes do", () => {

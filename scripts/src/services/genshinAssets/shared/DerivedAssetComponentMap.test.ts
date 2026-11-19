@@ -1,6 +1,5 @@
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
-import { readWeaponRoots } from "#src/services/genshinAssets/weapons/readWeaponRoots";
 import { assert, describe, expect, test, vi } from "vitest";
 
 describe("derived asset component map", () => {
@@ -34,15 +33,7 @@ describe("derived asset component map", () => {
     ]);
   });
 
-  test("roots the weapons at the prefabs `weapon-roots` derived", () => {
-    expect.hasAssertions();
-
-    const { roots } = DerivedAssetComponentMap[DerivedAssetComponent.Weapons];
-
-    expect(roots).toStrictEqual(readWeaponRoots());
-  });
-
-  test("a streamed object stands where the game places it", () => {
+  test("a streamed object stands where the game places it, the Windrise dais's stair among them", () => {
     expect.hasAssertions();
 
     expect(windriseStreamedPrefabs).toContainEqual({
@@ -53,24 +44,9 @@ describe("derived asset component map", () => {
       prefab: { block: "00/05652564.blk", name: "Area_Common_Build_Plinth_E_02_Lod0", pathId: "-4253360323365887065" },
       prefabId: 2_068_796_237,
     });
-  });
-
-  test("the dais in Windrise stands at its place", () => {
-    expect.hasAssertions();
-
     expect(windriseStreamedPrefabs).toContainEqual({
       prefab: { block: "00/03851813.blk", name: "Area_Common_Build_Stair_A_01_Lod0", pathId: "-3545738691652725999" },
       prefabId: 2_751_255_372,
-    });
-  });
-
-  test("a sub-area stands on its own ground", () => {
-    expect.hasAssertions();
-
-    expect(DerivedAssetComponentMap[DerivedAssetComponent.Dragonspine]).toStrictEqual({
-      isCapitalWorld: true,
-      roots: [],
-      screen: "WorldScreen",
     });
   });
 

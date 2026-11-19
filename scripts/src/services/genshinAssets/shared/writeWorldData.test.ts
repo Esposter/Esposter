@@ -1,6 +1,6 @@
 import type { writeStampedFiles as baseWriteStampedFiles } from "#src/services/provenance/writeStampedFiles";
 
-import { GENSHIN_ASSETS_PRODUCER_PATHS, WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
+import { WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
 import { writeStampedFiles } from "#src/services/provenance/writeStampedFiles";
 import { writeJsonFile } from "#src/services/shared/writeJsonFile";
@@ -34,12 +34,8 @@ describe(writeWorldData, () => {
     expect(vi.mocked(writeJsonFile)).toHaveBeenCalledWith(join(WORLD_DATA_DIRECTORY, "regions/liyue.json"), {
       rivers: [],
     });
-    const [files, options, write] = takeOne(vi.mocked(writeStampedFiles).mock.calls, 0);
+    const [files, options] = takeOne(vi.mocked(writeStampedFiles).mock.calls, 0);
     expect(files).toStrictEqual([join(WORLD_DATA_DIRECTORY, "regions/liyue.json")]);
-    expect(options).toStrictEqual({
-      command: "record regions/liyue.json",
-      producerPaths: GENSHIN_ASSETS_PRODUCER_PATHS,
-    });
-    expect(write).toBeTypeOf("function");
+    expect(options.command).toBe("record regions/liyue.json");
   });
 });

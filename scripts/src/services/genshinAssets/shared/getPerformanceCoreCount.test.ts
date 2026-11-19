@@ -12,13 +12,14 @@ vi.mock(import("@esposter/shared-node/child-process"), () => ({
 vi.mock(import("node:os"), async (importOriginal) => ({ ...(await importOriginal()), platform: () => "darwin" }));
 
 describe(getPerformanceCoreCount, () => {
-  test("the system's sysctl runs from /usr/sbin on macos", () => {
+  test("the system's sysctl runs from /usr/sbin on macos, and its printed count is the one returned", () => {
     expect.hasAssertions();
 
-    getPerformanceCoreCount();
+    const count = getPerformanceCoreCount();
 
     expect(spawnSync).toHaveBeenCalledExactlyOnceWith("/usr/sbin/sysctl", ["-n", "hw.perflevel0.physicalcpu"], {
       encoding: "utf8",
     });
+    expect(count).toBe(8);
   });
 });

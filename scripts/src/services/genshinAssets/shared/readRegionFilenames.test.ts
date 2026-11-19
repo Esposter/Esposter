@@ -15,20 +15,13 @@ describe(readRegionFilenames, () => {
     await rm(regionsDirectory, { force: true, recursive: true });
   });
 
-  test("a region file's provenance sidecar is no region, so it is left out beside the region", async () => {
+  test("a region file's provenance sidecar and its landmarks file are no regions, so both are left out beside the region", async () => {
     expect.hasAssertions();
     await writeFile(join(regionsDirectory, "mondstadt.json"), "{}");
     await writeFile(join(regionsDirectory, "mondstadt.json.provenance.json"), "{}");
+    await writeFile(join(regionsDirectory, "mondstadt.landmarks.json"), "{}");
     await writeFile(join(regionsDirectory, "liyue.json"), "{}");
 
     expect((await readRegionFilenames(regionsDirectory)).toSorted()).toStrictEqual(["liyue.json", "mondstadt.json"]);
-  });
-
-  test("a region's landmarks file is part of the region, so it is left out beside the region", async () => {
-    expect.hasAssertions();
-    await writeFile(join(regionsDirectory, "mondstadt.json"), "{}");
-    await writeFile(join(regionsDirectory, "mondstadt.landmarks.json"), "{}");
-
-    await expect(readRegionFilenames(regionsDirectory)).resolves.toStrictEqual(["mondstadt.json"]);
   });
 });

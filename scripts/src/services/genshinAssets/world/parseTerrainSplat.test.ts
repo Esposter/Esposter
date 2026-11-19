@@ -48,12 +48,17 @@ describe(parseTerrainSplat, () => {
     );
 
     assert.exists(splat);
-    expect(splat.layers).toStrictEqual([
-      { diffusePathId: "-5", kind: 1, tileSize: 8 },
-      { diffusePathId: "9", kind: 3, tileSize: 15 },
-    ]);
-    expect(splat.resolution).toBe(resolution);
-    expect([splat.cells[0], splat.cells[resolution]]).toStrictEqual([0, 1]);
+    // Only the one cell written is non-zero, and it lands in the second row along z
+    const expectedCells = new Uint8Array(resolution * resolution);
+    expectedCells[resolution] = 1;
+    expect(splat).toStrictEqual({
+      cells: expectedCells,
+      layers: [
+        { diffusePathId: "-5", kind: 1, tileSize: 8 },
+        { diffusePathId: "9", kind: 3, tileSize: 15 },
+      ],
+      resolution,
+    });
   });
 
   test("reads none from a tile listing no layers", () => {

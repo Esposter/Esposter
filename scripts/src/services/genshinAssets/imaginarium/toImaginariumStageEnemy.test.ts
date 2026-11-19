@@ -37,29 +37,14 @@ describe(toImaginariumStageEnemy, () => {
     ],
   };
 
-  test("a stage enemy's health at a level equals its base times the health curve at that level", () => {
-    expect.hasAssertions();
-
-    expect(toImaginariumStageEnemy(monsterRow, 2, levelCurves).health).toBeCloseTo(13.584 * 2.5);
-  });
-
-  test("a stage enemy's attack and defense at a level equal their bases times their curves at that level", () => {
-    expect.hasAssertions();
-
-    const { attack, defense } = toImaginariumStageEnemy(monsterRow, 2, levelCurves);
-
-    expect(attack).toBeCloseTo(22.608 * 2);
-    expect(defense).toBeCloseTo(4 * 1.25);
-  });
-
-  test("a stage enemy is the monster its describe entry resolves to", () => {
+  test("a stage enemy's stats are its bases times their grow curves at the level, with its monster's describe entry and id", () => {
     expect.hasAssertions();
 
     expect(toImaginariumStageEnemy(monsterRow, 2, levelCurves)).toStrictEqual({
-      attack: expect.closeTo(22.608 * 2),
-      defense: expect.closeTo(4 * 1.25),
+      attack: 45.216,
+      defense: 5,
       describeId: 10101,
-      health: expect.closeTo(13.584 * 2.5),
+      health: 33.96,
       monsterId: 21010101,
     });
   });
