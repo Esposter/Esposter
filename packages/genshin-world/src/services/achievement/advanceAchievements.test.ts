@@ -118,7 +118,7 @@ describe(advanceAchievements, () => {
     ).toStrictEqual({ primogems: PRIMOGEMS, progressMap: new Map([[COUNTED_ID, { count: 1, finishedAt: EPOCH }]]) });
   });
 
-  test("an exploring trigger counts a chest its trigger names once", () => {
+  test("an exploring trigger advances each achievement that counts it by one", () => {
     expect.hasAssertions();
     const chest: Achievement = {
       ...counted,

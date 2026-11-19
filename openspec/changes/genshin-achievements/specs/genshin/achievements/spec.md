@@ -4,7 +4,7 @@
 
 The achievement system SHALL count an exploring trigger only once its page's rule is called from the world.
 
-#### Scenario: an exploring trigger counts a chest its trigger names once
+#### Scenario: an exploring trigger advances each achievement that counts it by one
 
 - **WHEN** the world calls the rule for a doing that an exploring trigger counts
 - **THEN** each achievement counting that trigger advances by one
