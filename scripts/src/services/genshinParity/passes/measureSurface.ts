@@ -9,6 +9,7 @@ import { computeStructureError } from "#src/services/genshinParity/passes/comput
 import { computeStructureTerms } from "#src/services/genshinParity/passes/computeStructureTerms";
 import { COLOUR_GATE } from "#src/services/genshinParity/passes/constants";
 import { formatScales } from "#src/services/genshinParity/passes/formatScales";
+import { formatStructureTerms } from "#src/services/genshinParity/passes/formatStructureTerms";
 import { measureFamilyTargets } from "#src/services/genshinParity/passes/measureFamilyTargets";
 import { readTargetLightness } from "#src/services/genshinParity/passes/readTargetLightness";
 import { writeStructureDiff } from "#src/services/genshinParity/passes/writeStructureDiff";
@@ -110,7 +111,7 @@ export const measureSurface = (component: DerivedAssetComponent, pageRoot?: stri
           ),
           ...measured.map(
             ({ family, terms }) =>
-              `${referenceId} ${families[family] ?? family} structure terms, variance then bands finest first (exports | ours | error): ${terms.map(({ error, reference, shot }) => `${reference.toFixed(4)} | ${shot.toFixed(4)} | ${error.toFixed(3)}`).join(", ")}`,
+              `${referenceId} ${families[family] ?? family} structure terms, variance then bands finest first (exports | ours | error): ${formatStructureTerms(terms)}`,
           ),
         ],
         readings: measured.flatMap(({ colour, family, gate, structure }): ParityPassReading[] => {
