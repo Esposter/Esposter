@@ -1,3 +1,3 @@
 export interface GroupProps {
-  gAttrs?: Record<string, unknown> | undefined;
+  groupAttrs?: Record<string, unknown> | undefined;
 }

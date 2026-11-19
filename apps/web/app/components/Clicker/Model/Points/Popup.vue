@@ -4,12 +4,12 @@ import type { PopupProps } from "#src/components/Clicker/Model/Points/PopupProps
 import { formatNumberLong } from "#src/services/clicker/formatNumberLong";
 import { useClickerStore } from "#src/store/clicker/index";
 
-const { duration, left, points, top } = defineProps<PopupProps>();
+const { durationMs, left, points, top } = defineProps<PopupProps>();
 const clickerStore = useClickerStore();
 const { clickerItemProperties } = storeToRefs(clickerStore);
 const color = computed(() => clickerItemProperties.value.color);
 const displayPoints = computed(() => formatNumberLong(points));
-const durationMs = computed(() => `${duration}ms`);
+const animationDuration = computed(() => `${durationMs}ms`);
 const leftPx = computed(() => `${left}px`);
 const topPx = computed(() => `${top}px`);
 </script>
@@ -33,6 +33,6 @@ const topPx = computed(() => `${top}px`);
   top: v-bind(topPx);
   left: v-bind(leftPx);
   color: v-bind(color);
-  animation: animation v-bind(durationMs) forwards;
+  animation: animation v-bind(animationDuration) forwards;
 }
 </style>

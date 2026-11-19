@@ -7,7 +7,7 @@ const emit = defineEmits<{ click: [event: MouseEvent] }>();
 </script>
 
 <template>
-  <g :="gAttrs" @click="emit('click', $event)">
+  <g :="groupAttrs" @click="emit('click', $event)">
     <slot />
   </g>
 </template>

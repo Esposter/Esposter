@@ -20,7 +20,7 @@ const { createBoughtBuilding, getBoughtBuildingAmount, getBoughtBuildingStatisti
   buildingStore;
 const { buyQuantity } = storeToRefs(buildingStore);
 const { play } = useClickerSound(Sound.Buy);
-const buildingStatsHtml = computed(() =>
+const buildingStatisticsHtml = computed(() =>
   getBoughtBuildingStatistics(building).map((statistic) => marked.parse(statistic, { async: false })),
 );
 const buildingPrice = computed(() => getBuildingPriceForQuantity(building, buyQuantity.value));
@@ -38,9 +38,13 @@ const displayFlavorDescription = useDecompileString(building.flavorDescription);
     :price="buildingPrice"
     :amount
   >
-    <template v-if="buildingStatsHtml.length > 0" #append-text>
+    <template v-if="buildingStatisticsHtml.length > 0" #append-text>
       <div text-sm flex flex-col gap-1>
-        <div v-for="(buildingStatHtml, index) of buildingStatsHtml" :key="index" v-html="buildingStatHtml" />
+        <div
+          v-for="(buildingStatisticHtml, index) of buildingStatisticsHtml"
+          :key="index"
+          v-html="buildingStatisticHtml"
+        />
       </div>
     </template>
     <template #action>

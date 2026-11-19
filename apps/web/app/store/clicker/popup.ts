@@ -14,7 +14,7 @@ export const usePopupStore = defineStore("clicker/popup", () => {
     const id = v7();
     incrementPoints(mouseStore.mousePower);
     popups.value.push({
-      duration: POPUP_DURATION_MS,
+      durationMs: POPUP_DURATION_MS,
       id,
       left: event.pageX,
       points: mouseStore.mousePower,

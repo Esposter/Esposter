@@ -13,7 +13,7 @@ const { createPopup } = popupStore;
     <ClickerModelItem
       size-50
       relative
-      :g-attrs="{ class: 'origin-center active:scale-95', cursor: 'pointer' }"
+      :group-attrs="{ class: 'origin-center active:scale-95', cursor: 'pointer' }"
       @click="(event) => createPopup(event)"
     />
   </div>

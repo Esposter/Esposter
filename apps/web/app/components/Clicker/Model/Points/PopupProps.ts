@@ -1,5 +1,5 @@
 export interface PopupProps {
-  duration: number;
+  durationMs: number;
   left: number;
   points: number;
   top: number;
