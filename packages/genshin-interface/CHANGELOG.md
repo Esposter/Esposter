@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.13.0](https://github.com/Esposter/Esposter/compare/v4.12.0...v4.13.0) (2026-11-19)
+
+### Bug Fixes
+
+* **genshin-interface:** the shared shop stylesheet declares the coin swatch again, so the list rows show it ([7aeb93e](https://github.com/Esposter/Esposter/commit/7aeb93e9540011b5a9983cb12e9972bfe36dc977))
+* **genshin-interface:** the shop's coin swatch is defined once in the shared stylesheet, not twice ([e3134a4](https://github.com/Esposter/Esposter/commit/e3134a4fed2e239c3d3af501ec1f81806e35d3b5))
+* **genshin:** the item tile's count strip paints over its traced icon, as its comment says ([4c8c350](https://github.com/Esposter/Esposter/commit/4c8c350ad4b33fea26c6eaa116f168d92f5c9e00))
+
+### Features
+
+* **genshin:** a two-star item tile has a provisional face lifted from the bag cell ([4b4a8e1](https://github.com/Esposter/Esposter/commit/4b4a8e135787cce8f214e1318dfbd8ed8fbf4a87))
+* **genshin:** an item tile draws its traced icon in an art place under the count strip ([3c04252](https://github.com/Esposter/Esposter/commit/3c04252c6aa1e1b906c530ba9d71c47a6cecbf34))
+
 # [4.12.0](https://github.com/Esposter/Esposter/compare/v4.11.0...v4.12.0) (2026-11-16)
 
 ### Features

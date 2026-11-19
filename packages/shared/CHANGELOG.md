@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.13.0](https://github.com/Esposter/Esposter/compare/v4.12.0...v4.13.0) (2026-11-19)
+
+### Bug Fixes
+
+* **jobs:** the account sweep rewrites the ranking of each post whose like it erases ([5745a33](https://github.com/Esposter/Esposter/commit/5745a3311685ce6c59f831000977b75d5875fc6b))
+* **scripts:** the R2 transport keeps sixteen requests in flight across every bucket, not a hundred ([7b50ad9](https://github.com/Esposter/Esposter/commit/7b50ad99aba7457e3af7c0857e02e8af9fb90f22))
+
 # [4.12.0](https://github.com/Esposter/Esposter/compare/v4.11.0...v4.12.0) (2026-11-16)
 
 ### Bug Fixes

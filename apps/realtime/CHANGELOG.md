@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.13.0](https://github.com/Esposter/Esposter/compare/v4.12.0...v4.13.0) (2026-11-19)
+
+### Bug Fixes
+
+* **esbabbler:** push reaches every device once notifications are on, and followed threads read as rows that open them ([e6e548d](https://github.com/Esposter/Esposter/commit/e6e548daa207b13d13bcf8c816b8801df28d91f6))
+* **jobs:** a room's teardown tells the senders of the scheduled messages it removes ([09fbc02](https://github.com/Esposter/Esposter/commit/09fbc02e11aa28b18f43de8df8a723fedbfdb16e))
+* **realtime:** a read's watch is told of a publish made since the read began ([06c5aa9](https://github.com/Esposter/Esposter/commit/06c5aa95a99b70e550a059427e998ad1b90d7bca))
+* **realtime:** readThreads leaves a reply named as a thread root out of the list ([55fa1cf](https://github.com/Esposter/Esposter/commit/55fa1cf8979ad41325fb8a8f284043ba046467cd))
+* **web:** the friend requests and friend deletion send no user event, since their lists are kept by the topic ([2b20b09](https://github.com/Esposter/Esposter/commit/2b20b093ea9fdd6f0cfee3828a7da536a99d65e0))
+
+### Performance Improvements
+
+* **jobs:** the mock buckets a suite opens share one Miniflare instance ([14948a7](https://github.com/Esposter/Esposter/commit/14948a7d19cbd8ffaac530958cf290ff66a3407e))
+* **test:** cloudflare:workers resolves to a stand-in that imports nothing, so a test file no longer loads Miniflare ([ba6f0c7](https://github.com/Esposter/Esposter/commit/ba6f0c745c3f47e155f47b74349945a63e2aa45b))
+
 # [4.12.0](https://github.com/Esposter/Esposter/compare/v4.11.0...v4.12.0) (2026-11-16)
 
 ### Bug Fixes

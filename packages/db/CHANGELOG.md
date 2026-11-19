@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.13.0](https://github.com/Esposter/Esposter/compare/v4.12.0...v4.13.0) (2026-11-19)
+
+### Bug Fixes
+
+* **db:** a builder a handle method returns is wrapped too, so an awaited select chain is recorded ([8835222](https://github.com/Esposter/Esposter/commit/883522281fbbd43aeebd7660fa1f715bc6b8245f))
+* **db:** an exclusion-mode column config keeps the join sides it still selects ([bd92fe6](https://github.com/Esposter/Esposter/commit/bd92fe65860bd6713e7a784c063fd6dded092848))
+* **db:** the walker's exclusion-mode test reads the SQL of the statement each recorded entry holds ([f793679](https://github.com/Esposter/Esposter/commit/f793679c11d10a87fbf868133b780b68de3a8c7f))
+* **web:** a profile save publishes the topics of the reads that show the person ([244fe17](https://github.com/Esposter/Esposter/commit/244fe1754dd539067683fbd625e80a990b7e0205))
+
+### Features
+
+* **db:** a read watches the scope values its equalities name and table-wide every other table it reads ([b2490b6](https://github.com/Esposter/Esposter/commit/b2490b69fc60ad909b0ba845e29bd27a190e4346))
+* **db:** a read's read set names its tables, scope equalities, joins and null checks from the statements it awaited ([778e9a8](https://github.com/Esposter/Esposter/commit/778e9a894950faa0cd732d20158eef6d003e7394))
+* **db:** a request's database handle records each statement it awaits, without patching drizzle ([867627f](https://github.com/Esposter/Esposter/commit/867627f9e43faa324332a2e747886961af648909))
+* **db:** a write's set names the scope values of the rows it returns, the tables its deletes cascade to, and a secret by its digest ([bd04b17](https://github.com/Esposter/Esposter/commit/bd04b17789017eecae6a482afd63c2bcc6921ad9))
+
 # [4.12.0](https://github.com/Esposter/Esposter/compare/v4.11.0...v4.12.0) (2026-11-16)
 
 ### Bug Fixes

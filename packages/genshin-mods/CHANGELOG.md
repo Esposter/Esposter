@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.13.0](https://github.com/Esposter/Esposter/compare/v4.12.0...v4.13.0) (2026-11-19)
+
+### Bug Fixes
+
+* **genshin-mods:** the delegation hook names only tools the engine declares, and its list is built from the tool sets ([e0768e1](https://github.com/Esposter/Esposter/commit/e0768e17d762b347983cdc698c9b26a798c20dd0))
+
 # [4.12.0](https://github.com/Esposter/Esposter/compare/v4.11.0...v4.12.0) (2026-11-16)
 
 ### Bug Fixes

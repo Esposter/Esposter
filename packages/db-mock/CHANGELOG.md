@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.13.0](https://github.com/Esposter/Esposter/compare/v4.12.0...v4.13.0) (2026-11-19)
+
+### Performance Improvements
+
+* **jobs:** the mock buckets a suite opens share one Miniflare instance ([14948a7](https://github.com/Esposter/Esposter/commit/14948a7d19cbd8ffaac530958cf290ff66a3407e))
+* **test:** cloudflare:workers resolves to a stand-in that imports nothing, so a test file no longer loads Miniflare ([ba6f0c7](https://github.com/Esposter/Esposter/commit/ba6f0c745c3f47e155f47b74349945a63e2aa45b))
+
 # [4.12.0](https://github.com/Esposter/Esposter/compare/v4.11.0...v4.12.0) (2026-11-16)
 
 ### Bug Fixes

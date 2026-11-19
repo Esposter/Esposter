@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.13.0](https://github.com/Esposter/Esposter/compare/v4.12.0...v4.13.0) (2026-11-19)
+
+### Bug Fixes
+
+* **esbabbler:** push reaches every device once notifications are on, and followed threads read as rows that open them ([e6e548d](https://github.com/Esposter/Esposter/commit/e6e548daa207b13d13bcf8c816b8801df28d91f6))
+* **jobs:** a room's teardown tells the senders of the scheduled messages it removes ([09fbc02](https://github.com/Esposter/Esposter/commit/09fbc02e11aa28b18f43de8df8a723fedbfdb16e))
+* **jobs:** the account sweep publishes the topics of the readers it removes from ([656c9f5](https://github.com/Esposter/Esposter/commit/656c9f5ad8f7f3b00956baa4c309ee3113ac70d5))
+* **jobs:** the account sweep recounts the post counts its cascade moves ([8b9f219](https://github.com/Esposter/Esposter/commit/8b9f219527731a579b6794a29cac226fb8444585))
+* **jobs:** the account sweep rewrites the ranking of each post whose like it erases ([5745a33](https://github.com/Esposter/Esposter/commit/5745a3311685ce6c59f831000977b75d5875fc6b))
+* **jobs:** the erasure reads each liked post's ranking after the recount, so a vote in the gap keeps its own ranking ([2520d19](https://github.com/Esposter/Esposter/commit/2520d19b0d90fb990d3544e69c93d8f83dfdcad2))
+
+### Performance Improvements
+
+* **jobs:** the account's independent topic reads run beside the owned resource read ([3c93173](https://github.com/Esposter/Esposter/commit/3c9317321a2509d74d839a98bad6692c8c604431))
+* **jobs:** the account's owned resources are read once, bound as a JSON array ([4c65645](https://github.com/Esposter/Esposter/commit/4c6564546287085a8b05c6c7316fffcff0c41051))
+* **jobs:** the mock buckets a suite opens share one Miniflare instance ([14948a7](https://github.com/Esposter/Esposter/commit/14948a7d19cbd8ffaac530958cf290ff66a3407e))
+* **test:** cloudflare:workers resolves to a stand-in that imports nothing, so a test file no longer loads Miniflare ([ba6f0c7](https://github.com/Esposter/Esposter/commit/ba6f0c745c3f47e155f47b74349945a63e2aa45b))
+
 # [4.12.0](https://github.com/Esposter/Esposter/compare/v4.11.0...v4.12.0) (2026-11-16)
 
 ### Bug Fixes

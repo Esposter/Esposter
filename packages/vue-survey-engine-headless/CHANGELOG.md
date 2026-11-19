@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.13.0](https://github.com/Esposter/Esposter/compare/v4.12.0...v4.13.0) (2026-11-19)
+
+### Bug Fixes
+
+* **survey:** the page's enable condition, the root's background picture and a rating's first step default, so a survey saved before them still parses ([d312658](https://github.com/Esposter/Esposter/commit/d31265879270488422f5cbe39393ac072a816516))
+
+### Features
+
+* **survey:** a page can take an enable condition, and its questions wait on it ([f22756c](https://github.com/Esposter/Esposter/commit/f22756c4b28bcb4446500778a2ef7e3d02c67f2e))
+* **survey:** a rating scale can start at zero, and a tag box takes a minimum selection ([f3e680e](https://github.com/Esposter/Esposter/commit/f3e680e5eecee8593dd9ae9ebd6721faec665929))
+* **survey:** a survey takes a background picture on the Theme tab, drawn behind its page ([628777c](https://github.com/Esposter/Esposter/commit/628777c2407f957789e45c78d583e3b97148fee9))
+* **survey:** the canvas edits in place, with an adorner bar, choice rows, a kind switch and add controls ([fac57f2](https://github.com/Esposter/Esposter/commit/fac57f2bb86d2dae15eccf132344ff1f2aef0b8b))
+
 # [4.12.0](https://github.com/Esposter/Esposter/compare/v4.11.0...v4.12.0) (2026-11-16)
 
 ### Features

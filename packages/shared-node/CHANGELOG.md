@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.13.0](https://github.com/Esposter/Esposter/compare/v4.12.0...v4.13.0) (2026-11-19)
+
+### Features
+
+* **genshin-pipeline-hygiene:** the cache, parity, tools and fleet roots derive from one data root ([4cd0df4](https://github.com/Esposter/Esposter/commit/4cd0df4121a6d0546bf34c82ed9ea8d32872ef2e))
+
 # [4.12.0](https://github.com/Esposter/Esposter/compare/v4.11.0...v4.12.0) (2026-11-16)
 
 ### Features

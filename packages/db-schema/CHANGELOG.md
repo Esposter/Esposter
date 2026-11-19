@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.13.0](https://github.com/Esposter/Esposter/compare/v4.12.0...v4.13.0) (2026-11-19)
+
+### Bug Fixes
+
+* **esbabbler:** push reaches every device once notifications are on, and followed threads read as rows that open them ([e6e548d](https://github.com/Esposter/Esposter/commit/e6e548daa207b13d13bcf8c816b8801df28d91f6))
+* **jobs:** a room's teardown tells the senders of the scheduled messages it removes ([09fbc02](https://github.com/Esposter/Esposter/commit/09fbc02e11aa28b18f43de8df8a723fedbfdb16e))
+* **realtime:** a read's watch is told of a publish made since the read began ([06c5aa9](https://github.com/Esposter/Esposter/commit/06c5aa95a99b70e550a059427e998ad1b90d7bca))
+* **web:** the friend requests and friend deletion send no user event, since their lists are kept by the topic ([2b20b09](https://github.com/Esposter/Esposter/commit/2b20b093ea9fdd6f0cfee3828a7da536a99d65e0))
+* **web:** the room emoji mutations send no event, since their lists are kept by the room topic ([d3af333](https://github.com/Esposter/Esposter/commit/d3af3330d52e951673f266a80841ace606dd87d6))
+
+### Features
+
+* **db-schema:** a table declares the columns its topics are keyed by, beside its definition ([e6dd7a9](https://github.com/Esposter/Esposter/commit/e6dd7a90cb6817486c137f7ea96b222a1dd15f5b))
+* **db:** a write's set names the scope values of the rows it returns, the tables its deletes cascade to, and a secret by its digest ([bd04b17](https://github.com/Esposter/Esposter/commit/bd04b17789017eecae6a482afd63c2bcc6921ad9))
+
 # [4.12.0](https://github.com/Esposter/Esposter/compare/v4.11.0...v4.12.0) (2026-11-16)
 
 ### Bug Fixes
