@@ -13,7 +13,6 @@ import { getStorageCredentials } from "#server/services/storage/getStorageCreden
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { router } from "#server/trpc/index";
-import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { getMemberProcedure } from "#server/trpc/procedure/room/getMemberProcedure";
 import { getPermissionsProcedure } from "#server/trpc/procedure/room/getPermissionsProcedure";
 import { createRoomEmojiInputSchema } from "#shared/models/db/roomEmoji/CreateRoomEmojiInput";
@@ -26,23 +25,23 @@ import {
   DatabaseEntityType,
   getMimeCategory,
   getRoomEmojiBlobName,
-  getTopic,
   MimeCategory,
   roomEmojisInMessage,
   roomIdSchema,
   RoomPermission,
   roomsInMessage,
   StorageBucket,
-  TopicKind,
 } from "@esposter/db-schema";
 import { noop, Operation } from "@esposter/shared";
 import { and, eq, notExists, sql } from "drizzle-orm";
 import { v7 } from "uuid";
 
 export const emojiRouter = router({
-  createRoomEmoji: getTopicsProcedure(
-    getPermissionsProcedure(RoomPermission.ManageEmojis, createRoomEmojiInputSchema, "roomId", RateLimiterType.Slow),
-    ({ input: { roomId } }) => [getTopic(TopicKind.Room, roomId)],
+  createRoomEmoji: getPermissionsProcedure(
+    RoomPermission.ManageEmojis,
+    createRoomEmojiInputSchema,
+    "roomId",
+    RateLimiterType.Slow,
   ).mutation<RoomEmojiWithPresignedUrl>(async ({ ctx, input: { id, name, roomId } }) => {
     const bucket = getBucket(StorageBucket.MessageAssets);
     // The row may only name a blob that landed. Nothing else proves the upload happened: the presigned write url was
@@ -93,9 +92,10 @@ export const emojiRouter = router({
     );
     return getRoomEmojiWithPresignedUrl(StorageBucket.MessageAssets, newRoomEmoji);
   }),
-  deleteRoomEmoji: getTopicsProcedure(
-    getPermissionsProcedure(RoomPermission.ManageEmojis, deleteRoomEmojiInputSchema, "roomId"),
-    ({ input: { roomId } }) => [getTopic(TopicKind.Room, roomId)],
+  deleteRoomEmoji: getPermissionsProcedure(
+    RoomPermission.ManageEmojis,
+    deleteRoomEmojiInputSchema,
+    "roomId",
   ).mutation<RoomEmojiInMessage>(async ({ ctx, input: { id, roomId } }) => {
     const deletedRoomEmoji = requireMutation(
       (
@@ -150,17 +150,18 @@ export const emojiRouter = router({
     }),
   // Membership rather than the `ManageEmojis` its panel is gated on: the picker and every rendered message read
   // This, so the list is already the room's to see — the panel is a management surface over public-to-the-room data
-  readRoomEmojis: getTopicsProcedure(getMemberProcedure(roomIdSchema, "roomId"), ({ input: { roomId } }) => [
-    getTopic(TopicKind.Room, roomId),
-  ]).query<RoomEmojiWithPresignedUrl[]>(async ({ ctx, input: { roomId } }) => {
-    const roomEmojis = await ctx.db.query.roomEmojisInMessage.findMany({ where: { roomId: { eq: roomId } } });
-    return Promise.all(
-      roomEmojis.map((roomEmoji) => getRoomEmojiWithPresignedUrl(StorageBucket.MessageAssets, roomEmoji)),
-    );
-  }),
-  updateRoomEmoji: getTopicsProcedure(
-    getPermissionsProcedure(RoomPermission.ManageEmojis, updateRoomEmojiInputSchema, "roomId"),
-    ({ input: { roomId } }) => [getTopic(TopicKind.Room, roomId)],
+  readRoomEmojis: getMemberProcedure(roomIdSchema, "roomId").query<RoomEmojiWithPresignedUrl[]>(
+    async ({ ctx, input: { roomId } }) => {
+      const roomEmojis = await ctx.db.query.roomEmojisInMessage.findMany({ where: { roomId: { eq: roomId } } });
+      return Promise.all(
+        roomEmojis.map((roomEmoji) => getRoomEmojiWithPresignedUrl(StorageBucket.MessageAssets, roomEmoji)),
+      );
+    },
+  ),
+  updateRoomEmoji: getPermissionsProcedure(
+    RoomPermission.ManageEmojis,
+    updateRoomEmojiInputSchema,
+    "roomId",
   ).mutation<RoomEmojiInMessage>(async ({ ctx, input: { id, name, roomId } }) => {
     if (checkIsUnicodeEmojiSlug(name))
       throw getInvalidOperationError(Operation.Update, DatabaseEntityType.RoomEmoji, name);
