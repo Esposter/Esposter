@@ -434,8 +434,8 @@ describe(UserObject, () => {
     await sendFrame(object, watchingSocket, { data: { readAt, topics: [topic] }, type: "watch" });
     await object.invalidate(topic);
 
-    expect(readFrames(watchingSocket)).toContainEqual({ data: { topic }, type: "invalidate" });
-    expect(readFrames(otherSocket)).not.toContainEqual({ data: { topic }, type: "invalidate" });
+    expect(readFrames(watchingSocket)).toStrictEqual([{ data: { topic }, type: "invalidate" }]);
+    expect(readFrames(otherSocket)).toStrictEqual([]);
   });
 
   // A subscribe that failed on a watch is retried by the next watch of the topic, from any tab, rather than left unsubscribed
@@ -479,7 +479,7 @@ describe(UserObject, () => {
     });
     const socket = await connect(object, { deviceId, sessionId });
     await sendFrame(object, socket, { data: { readAt, topics: [topic] }, type: "watch" });
-    await expect(state.ctx.storage.getAlarm()).resolves.not.toBeNull();
+    await expect(state.ctx.storage.getAlarm()).resolves.toBe(dueAt.getTime());
 
     await object.erase();
 

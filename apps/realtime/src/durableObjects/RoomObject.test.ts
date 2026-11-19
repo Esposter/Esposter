@@ -265,11 +265,20 @@ describe(RoomObject, () => {
 
     await object.deleteUserMessages({ limit: 10, userId });
 
-    const tombstone = readFrames(viewerSocket).at(-1);
-    expect(tombstone.type).toBe("deleteMessage");
-    expect(tombstone.data.id).toBe(message.id);
-    expect(tombstone.data.deletedAt).toStrictEqual(new Date(0));
-    expect(tombstone.data.message).toBe("");
+    expect(readFrames(viewerSocket)).toStrictEqual([
+      { data: structuredClone([message]), type: "createMessage" },
+      {
+        data: {
+          ...message,
+          deletedAt: new Date(0),
+          files: [],
+          linkPreviewResponse: null,
+          message: "",
+          updatedAt: new Date(0),
+        },
+        type: "deleteMessage",
+      },
+    ]);
   });
 
   test("a socket that reconnects with the last id it heard is replayed the messages after it, oldest first", async () => {

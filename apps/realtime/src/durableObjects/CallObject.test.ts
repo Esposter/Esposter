@@ -365,6 +365,8 @@ describe(CallObject, () => {
     const leave = callObject.participantLeft({ callSessionId, leftAt: kickedAt, sessionId: participant.id });
 
     expect(leave).toBeNull();
-    expect(callObject.readParticipantMap().has(participant.id)).toBe(true);
+    expect(callObject.readParticipantMap()).toStrictEqual(
+      new Map([[participant.id, { ...participant, isCameraEnabled: false }]]),
+    );
   });
 });
