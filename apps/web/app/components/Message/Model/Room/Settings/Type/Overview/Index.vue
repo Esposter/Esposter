@@ -8,7 +8,6 @@ import { prependNoneSelectItem } from "#src/services/ui/prependNoneSelectItem";
 import { useUserToRoomStore } from "#src/store/message/room/userToRoom";
 import { useRoomCategoryStore } from "#src/store/message/roomCategory";
 import { selectRoomInMessageSchema } from "@esposter/db-schema";
-import { noop } from "@esposter/shared";
 
 interface Props {
   room: RoomInMessage;
@@ -22,7 +21,7 @@ await readRoomCategories();
 const roomCategoryStore = useRoomCategoryStore();
 const { roomCategories } = storeToRefs(roomCategoryStore);
 const userToRoomStore = useUserToRoomStore();
-const { executeUserToRoomMutation, getMyUserToRoom, setMyUserToRoom } = userToRoomStore;
+const { applyMyUserToRoomField, executeUserToRoomMutation, getMyUserToRoom } = userToRoomStore;
 const { $trpc } = useNuxtApp();
 // The category is the reader's own, so the field holds the reader's row for this room, resolved against the
 // Categories. The reader still has a category deleted elsewhere, which resolves to none
@@ -61,17 +60,7 @@ const categoryItems = computed<UiSelectItem<string>[]>(() =>
 const saveCategory = () => {
   const categoryId = editedCategoryId.value;
   executeUserToRoomMutation(() => $trpc.userToRoom.updateUserToRoom.mutate({ categoryId, roomId: room.id }), {
-    applyOptimistic: () => {
-      const previousUserToRoom = getMyUserToRoom(room.id);
-      if (!previousUserToRoom) return noop;
-
-      const { categoryId: previousCategoryId } = previousUserToRoom;
-      setMyUserToRoom(room.id, { ...previousUserToRoom, categoryId });
-      return () => {
-        const currentUserToRoom = getMyUserToRoom(room.id);
-        if (currentUserToRoom) setMyUserToRoom(room.id, { ...currentUserToRoom, categoryId: previousCategoryId });
-      };
-    },
+    applyOptimistic: () => applyMyUserToRoomField(room.id, "categoryId", categoryId),
     key: room.id,
   });
   settleCategory();

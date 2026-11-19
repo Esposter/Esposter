@@ -12,7 +12,6 @@ import { useRoomStore } from "#src/store/message/room/index";
 import { useUserToRoomStore } from "#src/store/message/room/userToRoom";
 import { useMessageLayoutStore } from "#src/store/message/ui/layout";
 import { NotificationType } from "@esposter/db-schema";
-import { noop } from "@esposter/shared";
 
 const { $trpc } = useNuxtApp();
 const { smAndUp } = useUiDisplay();
@@ -30,28 +29,14 @@ const { openRightDrawer } = messageLayoutStore;
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const userToRoomStore = useUserToRoomStore();
-const { executeUserToRoomMutation, getMyUserToRoom, setMyUserToRoom } = userToRoomStore;
+const { applyMyUserToRoomField, executeUserToRoomMutation } = userToRoomStore;
 const { myUserToRoom } = storeToRefs(userToRoomStore);
 const updateNotificationType = (newNotificationType: NotificationType) => {
   const roomId = currentRoomId.value;
   if (!roomId || !myUserToRoom.value) return;
   executeUserToRoomMutation(
     () => $trpc.userToRoom.updateUserToRoom.mutate({ notificationType: newNotificationType, roomId }),
-    {
-      applyOptimistic: () => {
-        const previousUserToRoom = getMyUserToRoom(roomId);
-        if (!previousUserToRoom) return noop;
-
-        const { notificationType: previousNotificationType } = previousUserToRoom;
-        setMyUserToRoom(roomId, { ...previousUserToRoom, notificationType: newNotificationType });
-        return () => {
-          const currentUserToRoom = getMyUserToRoom(roomId);
-          if (currentUserToRoom)
-            setMyUserToRoom(roomId, { ...currentUserToRoom, notificationType: previousNotificationType });
-        };
-      },
-      key: roomId,
-    },
+    { applyOptimistic: () => applyMyUserToRoomField(roomId, "notificationType", newNotificationType), key: roomId },
   );
 };
 // On a phone the header leaves the call and its toggles to this menu, so they lead it

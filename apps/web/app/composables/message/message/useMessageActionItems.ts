@@ -13,7 +13,7 @@ import { useReplyStore } from "#src/store/message/input/reply";
 import { useRoleStore } from "#src/store/message/room/role";
 import { useUserToRoomStore } from "#src/store/message/room/userToRoom";
 import { MessageType, RoomPermission } from "@esposter/db-schema";
-import { exhaustiveGuard, noop, normalizeString } from "@esposter/shared";
+import { exhaustiveGuard, normalizeString } from "@esposter/shared";
 import { parse } from "node-html-parser";
 
 export const useMessageActionItems = (message: ClientMessage, isEditable: Ref<boolean>, isCreator: Ref<boolean>) => {
@@ -31,7 +31,7 @@ export const useMessageActionItems = (message: ClientMessage, isEditable: Ref<bo
   const { forwardMessageId } = storeToRefs(forwardStore);
   const copyMessageLink = useCopyMessageLink();
   const userToRoomStore = useUserToRoomStore();
-  const { executeUserToRoomMutation, getMyUserToRoom, setMyUserToRoom } = userToRoomStore;
+  const { applyMyUserToRoomField, executeUserToRoomMutation } = userToRoomStore;
   const openThread = useOpenThread();
   const roleStore = useRoleStore();
   const { checkHasMyPermission } = roleStore;
@@ -132,19 +132,7 @@ export const useMessageActionItems = (message: ClientMessage, isEditable: Ref<bo
       executeUserToRoomMutation(() => $trpc.userToRoom.updateUserToRoom.mutate({ lastReadAt, roomId }), {
         // Read as the write is sent, so a rejected mark-unread restores the marker the write ahead of it stored
         // Rather than the one on screen when the user clicked
-        applyOptimistic: () => {
-          const previousUserToRoom = getMyUserToRoom(roomId);
-          if (!previousUserToRoom) return noop;
-
-          const { lastReadAt: previousLastReadAt } = previousUserToRoom;
-          setMyUserToRoom(roomId, { ...previousUserToRoom, lastReadAt });
-          return () => {
-            // Only the field this write moved, against the record as it stands — reinstating the row as a whole
-            // Would undo everything else that landed on it while this write was in flight
-            const currentUserToRoom = getMyUserToRoom(roomId);
-            if (currentUserToRoom) setMyUserToRoom(roomId, { ...currentUserToRoom, lastReadAt: previousLastReadAt });
-          };
-        },
+        applyOptimistic: () => applyMyUserToRoomField(roomId, "lastReadAt", lastReadAt),
         key: roomId,
       });
     },
