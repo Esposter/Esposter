@@ -10,5 +10,5 @@
 | `scripts/src/services/genshinParity`                                              | 2026-11-19 · Opus 5.5 |                                                            |
 | `scripts/src/services/{fleet,sweeps,genshinText,setup,shared}`                    | 2026-11-19 · Opus 5.5 |                                                            |
 | `scripts/src/services` — the rest                                                 | 2026-11-19 · Opus 5.5 |                                                            |
-| `scripts/src` — the rest                                                          | 2026-10-26            |                                                            |
+| `scripts/src` — the rest                                                          | —                     |                                                            |
 | `apps/web/uno.config`                                                             | 2026-11-19 · Opus 5.5 | the resolved-config snapshot stays — see the README        |
