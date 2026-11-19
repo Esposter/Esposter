@@ -61,3 +61,43 @@ The Audio pass over the login's door recording SHALL write its readings, the doo
 - **GIVEN** the login's door recording and its door sounds are held
 - **WHEN** the Audio pass runs over the recording
 - **THEN** it writes the door sound's decibels and correlations, the rush's length and level, and the delay
+
+### Requirement: The door plays a sound as its pieces settle
+
+The login's door SHALL play the game's own sound as its pieces settle, once that sound is matched to the game and fitted, and SHALL play none until it is matched.
+
+#### Scenario: The door sounds as its pieces settle
+
+- **GIVEN** the login's door has begun to rise and its sound is matched and fitted
+- **WHEN** its pieces settle between 0.4 and 1.33 seconds after the rise begins
+- **THEN** the matched sound plays across that span as the door forms
+
+### Requirement: The title press plays its sound
+
+The login's title SHALL play the game's own sound from the player's press to start, once that sound is matched to the game and fitted, and SHALL play none until it is matched.
+
+#### Scenario: The title press plays its sound
+
+- **GIVEN** the login's title is showing and its sound is matched and fitted
+- **WHEN** the player presses to start
+- **THEN** the matched sound plays from that press
+
+### Requirement: A corner button plays its click at its press
+
+A corner button on the login page SHALL play its own click from the press, once that click is matched to the game and fitted, and SHALL play none until it is matched.
+
+#### Scenario: A corner button plays its click at its press
+
+- **GIVEN** a corner button on the login page has a matched click
+- **WHEN** the player presses that button
+- **THEN** its click plays from the press
+
+### Requirement: The music falls as the door is clicked
+
+The login's music SHALL fall in level as the door is clicked, by about 10 decibels over about 0.7 seconds, as the game's does, and SHALL hold its level until then.
+
+#### Scenario: The music falls as the door is clicked
+
+- **GIVEN** the login's music is playing and the door has formed
+- **WHEN** the player clicks the door
+- **THEN** the music's level falls by about 10 decibels over about 0.7 seconds
