@@ -46,6 +46,17 @@ describe("achievementRouter", () => {
     userObjectCalls.length = 0;
   });
 
+  // The unlocks below are earned by saving an empty webpage, so each test that needs one starts from this
+  const createSavedWebpage = async () => {
+    const newResource = await caller.webpage.createResource({ name });
+    await caller.webpage.saveResourceContent({
+      content: new WebpageEditor(),
+      contentVersion: newResource.contentVersion,
+      id: newResource.id,
+    });
+    return newResource;
+  };
+
   // Masking is what the map endpoint adds over the definitions, so that is what is asserted — restating every
   // Definition instead would fail on any edit to the catalogue and on none to the masking
   test("readAchievementMap masks a hidden achievement description until it is unlocked", async () => {
@@ -106,12 +117,7 @@ describe("achievementRouter", () => {
     expect(emptyLeaderboard.entries).toStrictEqual([]);
     expect(emptyLeaderboard.myEntry).toBeUndefined();
 
-    const newResource = await caller.webpage.createResource({ name });
-    await caller.webpage.saveResourceContent({
-      content: new WebpageEditor(),
-      contentVersion: newResource.contentVersion,
-      id: newResource.id,
-    });
+    await createSavedWebpage();
     const leaderboard = await caller.achievement.readPointsLeaderboard();
     const leaderboardEntry = takeOne(leaderboard.entries);
 
@@ -124,12 +130,7 @@ describe("achievementRouter", () => {
   test("an earned achievement survives the cutover", async () => {
     expect.hasAssertions();
 
-    const newResource = await caller.webpage.createResource({ name });
-    await caller.webpage.saveResourceContent({
-      content: new WebpageEditor(),
-      contentVersion: newResource.contentVersion,
-      id: newResource.id,
-    });
+    const newResource = await createSavedWebpage();
     const readUnlockedAchievementIds = async () =>
       (await caller.achievement.readUserAchievements())
         .filter(({ unlockedAt }) => unlockedAt)
@@ -145,12 +146,7 @@ describe("achievementRouter", () => {
   test("readAchievementRarities reports the share of users who have unlocked each achievement", async () => {
     expect.hasAssertions();
 
-    const newResource = await caller.webpage.createResource({ name });
-    await caller.webpage.saveResourceContent({
-      content: new WebpageEditor(),
-      contentVersion: newResource.contentVersion,
-      id: newResource.id,
-    });
+    await createSavedWebpage();
     await createMockUser(mockContext.db);
     const { totalUsers } = takeOne(await mockContext.db.select({ totalUsers: count() }).from(usersInAuth));
     const achievementRarities = await caller.achievement.readAchievementRarities();
@@ -162,12 +158,7 @@ describe("achievementRouter", () => {
   test("updateAchievement sends every achievement the save moved to the saver's object", async () => {
     expect.hasAssertions();
 
-    const newResource = await caller.webpage.createResource({ name });
-    await caller.webpage.saveResourceContent({
-      content: new WebpageEditor(),
-      contentVersion: newResource.contentVersion,
-      id: newResource.id,
-    });
+    await createSavedWebpage();
 
     const updateAchievementCalls = userObjectCalls.filter(({ method }) => method === "updateAchievement");
     expect(updateAchievementCalls).toHaveLength(1);

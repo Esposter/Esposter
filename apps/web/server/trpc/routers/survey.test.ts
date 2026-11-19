@@ -248,14 +248,7 @@ describe("surveyRouter", () => {
     expect.hasAssertions();
 
     const newResource = await createResponseSurvey();
-    const newSurveyResponse = await caller.createSurveyResponse({
-      id: v7(),
-      isDraft: false,
-      model: { a: 0 },
-      pageNo: 0,
-      participantToken: "",
-      resourceId: newResource.id,
-    });
+    const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
     // Same answers, later page — a real progress write, so it is not a duplicate and the resume position advances
     const updatedSurveyResponse = await caller.updateSurveyResponse({
       id: newSurveyResponse.id,
