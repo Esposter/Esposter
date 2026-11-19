@@ -18,9 +18,8 @@ export const readTodoMarkers = (): TodoMarker[] =>
   ).match(
     (output) =>
       getNonEmptyLines(output).flatMap((grepLine) => {
-        const groups = GREP_LINE_REGEX.exec(grepLine)?.groups;
-        if (!groups) return [];
-        const { line, path, text } = groups;
+        const { line, path, text } = GREP_LINE_REGEX.exec(grepLine)?.groups ?? {};
+        if (line === undefined || path === undefined || text === undefined) return [];
         return getTodoMarkers(text).map((marker) => ({ ...marker, line: Number(line), path }));
       }),
     (error) => {
