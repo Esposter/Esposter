@@ -323,7 +323,7 @@ The References sought are the items below that name a clip or still file (a `.mk
 
 - [ ] **home/events is published with no reader.** [Serenitea Pot](../genshin-serenitea-pot/design.md) — the favour events the home builder publishes are read by nothing yet. Their consumer is the Serenitea Pot companions' invitations, which are not built. **Done when** the invitations read `home/events`.
 
-- [ ] **The Imaginarium Theater's Lobby and run screen.** [Imaginarium Theater](../genshin-imaginarium-theater/design.md) — its rules are partly built, and no screen draws the Lobby or a run. **Done when** the Lobby opens the Theater at Adventure Rank 35 and a run is played through the screen, the change's tasks holding it.
+- [ ] **The Imaginarium Theater's Lobby and run screen.** The Lobby is task 4.1 of the [Imaginarium Theater](../genshin-imaginarium-theater/tasks.md) change, blocked on the Mondstadt Library's interior, and the live arena screen is its task 2.4, blocked on 2.5.
 
 - [ ] **The Serenitea Pot's realm is drawn.** [Serenitea Pot](../genshin-serenitea-pot/design.md) — the pot enters a stand-in realm, and the realm's own scene, its placement editor and load, the depot, gardens, ponds and the Adeptal Mirror are not built. **Done when** the pot enters the realm's own scene and a furnishing is placed in it.
 
@@ -349,7 +349,7 @@ The References sought are the items below that name a clip or still file (a `.mk
 
 ## Phase 7: Fidelity
 
-- [ ] `opening-korean.mkv` — **Korean launch to the title**, waits on [localized opening](../genshin-localized-opening/design.md). Searched, none found, with the sources tried: the wiki (Loading Screen), the HoYoverse Korean FAQ and YouTube.
+- [ ] `opening-korean.mkv` — **Korean launch to the title**: the recording [localized opening](../genshin-localized-opening/design.md) names, which task 1.2 of [its tasks](../genshin-localized-opening/tasks.md) searches for.
 - [ ] **Japanese launch** — `japanese-launch.mkv`, waits on [localized opening](../genshin-localized-opening/design.md). Searched on the wiki and YouTube, standard and extended, none found. Checked on screen, not it: `8lY4AR6nQeM` (the opening cinematic only, with English subtitles).
 - [ ] **Korean launch** — `korean-launch.mkv`, waits on [localized opening](../genshin-localized-opening/design.md). Searched on the wiki and YouTube, standard and extended, none found. Checked on screen, not it: `PcHC3IG8G8g` (the opening cinematic only).
 - [ ] **The Japanese health notice's reference is named two ways.** [Login compute](../../specs/genshin/compute/login/design.md) — the item names the Japanese opening at 30 seconds, while the login design's Open list says the reference is the session-2 frame at 12.5 seconds; its line has no needs clause and its measure is visual with no bar. Done when one source is named, the line says what a machine needs to run it, and its measure has a bar or says it has none.
