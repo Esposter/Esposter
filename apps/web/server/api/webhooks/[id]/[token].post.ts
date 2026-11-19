@@ -1,11 +1,10 @@
 import { db } from "#server/db/index";
 import { getJobQueue } from "#server/services/queue/getJobQueue";
-import { consumeAddressRateLimit } from "#server/services/rateLimiter/consumeAddressRateLimit";
-import { getIpAddress } from "#server/services/request/getIpAddress";
+import { consumeRequestAddressRateLimit } from "#server/services/rateLimiter/consumeRequestAddressRateLimit";
 import { QueueJob, selectWebhookInMessageSchema, webhookPayloadSchema } from "@esposter/db-schema";
 import { getResult, getResultAsync, hashSecretToken, secretTokenSchema } from "@esposter/shared";
 import { env } from "cloudflare:workers";
-import { defineEventHandler, getRequestIP, getRouterParams } from "nuxt/server";
+import { defineEventHandler, getRouterParams } from "nuxt/server";
 import { v7 } from "uuid";
 
 export default defineEventHandler(async (event) => {
@@ -23,8 +22,7 @@ export default defineEventHandler(async (event) => {
     // The address is spent first: an id matching no webhook would otherwise draw a fresh budget of its own, and nothing
     // Would cap the route across ids
     const isWithinBudget =
-      (await consumeAddressRateLimit(getIpAddress(event.req.headers, getRequestIP(event) ?? ""))) &&
-      (await env.RATE_LIMITER_WEBHOOK.limit({ key: id })).success;
+      (await consumeRequestAddressRateLimit(event)) && (await env.RATE_LIMITER_WEBHOOK.limit({ key: id })).success;
     if (!isWithinBudget) {
       event.res.status = 429;
       return { message: "Rate limit exceeded." };

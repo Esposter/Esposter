@@ -1,14 +1,13 @@
 import { auth } from "#server/auth";
 import { getAgentSession } from "#server/services/auth/getAgentSession";
 import { createMcpServer } from "#server/services/mcp/createMcpServer";
-import { consumeAddressRateLimit } from "#server/services/rateLimiter/consumeAddressRateLimit";
-import { getIpAddress } from "#server/services/request/getIpAddress";
+import { consumeRequestAddressRateLimit } from "#server/services/rateLimiter/consumeRequestAddressRateLimit";
 import { createContext } from "#server/trpc/context";
 import { trpcRouter } from "#server/trpc/routers/index";
 import { getApiKeyScopes } from "#shared/services/auth/getApiKeyScopes";
 import { withFinalizerAsync } from "@esposter/shared";
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
-import { defineEventHandler, getRequestIP } from "nuxt/server";
+import { defineEventHandler } from "nuxt/server";
 
 // The Model Context Protocol over its Streamable HTTP transport, stateless: each POST builds a server, answers one
 // Message and returns. This server never pushes unprompted, so the router's 405 to any other method is the answer the
@@ -29,8 +28,7 @@ export default defineEventHandler(async (event) => {
 
   // A key matching no row has no budget of its own, and checking one costs a lookup, so every request spends its address
   // First: the address is the one key a caller cannot choose
-  const address = getIpAddress(event.req.headers, getRequestIP(event) ?? "");
-  if (!(await consumeAddressRateLimit(address))) {
+  if (!(await consumeRequestAddressRateLimit(event))) {
     event.res.status = 429;
     return { message: "Rate limit exceeded." };
   }

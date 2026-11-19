@@ -2,11 +2,10 @@ import { useCallObject } from "#server/composables/realtime/useCallObject";
 import { db } from "#server/db/index";
 import { checkIsCallConnectionAdmitted } from "#server/services/message/call/checkIsCallConnectionAdmitted";
 import { writeCallSummary } from "#server/services/message/call/writeCallSummary";
-import { consumeAddressRateLimit } from "#server/services/rateLimiter/consumeAddressRateLimit";
+import { consumeRequestAddressRateLimit } from "#server/services/rateLimiter/consumeRequestAddressRateLimit";
 import { verifyRealtimeKitWebhook } from "#server/services/realtimeKit/verifyRealtimeKitWebhook";
-import { getIpAddress } from "#server/services/request/getIpAddress";
 import { getResultAsync, jsonDateParse } from "@esposter/shared";
-import { defineEventHandler, getRequestIP } from "nuxt/server";
+import { defineEventHandler } from "nuxt/server";
 import { z } from "zod";
 
 // The two events this route is subscribed to; RealtimeKit delivers no other to it
@@ -24,8 +23,7 @@ export default defineEventHandler(async (event) => {
   };
 
   // The route answers before it knows its caller, so the address is spent first, as every such route spends it
-  if (!(await consumeAddressRateLimit(getIpAddress(event.req.headers, getRequestIP(event) ?? ""))))
-    return getInvalidWebhookResponse(429);
+  if (!(await consumeRequestAddressRateLimit(event))) return getInvalidWebhookResponse(429);
   // Verified over the bytes as they arrived: a body re-serialised after parsing would not match what was signed
   return getResultAsync(() => verifyRealtimeKitWebhook(body, event.req.headers.get("rtk-signature") ?? "")).match(
     async (isVerified) => {
