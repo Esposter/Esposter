@@ -1,6 +1,7 @@
 /* oxlint-disable id-denylist -- `dir` is Nitro's own option name */
 import type { NuxtConfig } from "nuxt/schema";
 
+import { compatibilityDate } from "#configuration/compatibilityDate";
 import { TEMPORAL_POLYFILL_BASE_URL } from "#configuration/constants";
 import { getCloudflareEnvironment, getEnvironmentWrangler } from "#configuration/wrangler";
 import { MEGABYTE } from "#shared/services/app/constants";
@@ -26,7 +27,7 @@ export const nitro: NonNullable<NuxtConfig["nitro"]> = {
   cloudflare: {
     deployConfig: true,
     nodeCompat: true,
-    wrangler: { compatibility_date: "2026-11-01", ...getEnvironmentWrangler(getCloudflareEnvironment()) },
+    wrangler: { compatibility_date: compatibilityDate, ...getEnvironmentWrangler(getCloudflareEnvironment()) },
   },
   // A package resolves the build the Workers runtime runs, as wrangler's own bundler resolves it: a Worker is a web
   // Runtime, so a package's browser build is taken over its Node one. The preset names `workerd` and `worker` alone, so

@@ -1,15 +1,15 @@
 # Esposter — Repository Score
 
-> Nuxt `compatibilityDate`: `2026-10-31` · Overall: **95 / 100**
+> Nuxt `compatibilityDate`: `2026-11-16` · Overall: **95 / 100**
 
 | Area                 | Score   | Notes                                                                             |
 | -------------------- | ------- | --------------------------------------------------------------------------------- |
 | Architecture         | 20 / 20 | One responsibility per package, clean DAG, data-driven maps, command pattern      |
 | TypeScript           | 10 / 10 | Maximum strictness; `skipLibCheck` only trade-off                                 |
 | Code Quality         | 10 / 10 | Guard clauses, `neverthrow` over `try`/`catch`, every `@TODO` tracked             |
-| Testing              | 10 / 10 | Several hundred test files; only Phaser store gaps remain                         |
+| Testing              | 10 / 10 | Several thousand test files; only Phaser store gaps remain                        |
 | Security             | 9 / 10  | CSP trade-offs documented                                                         |
-| Dependencies         | 8 / 10  | Nuxt 5 and Nitro 3 nightlies, `unstorage` beta and the Drizzle RC in production   |
+| Dependencies         | 8 / 10  | Nuxt 5 and Nitro 3 nightlies and the Drizzle RC in production                     |
 | Styling              | 9 / 10  | Attributify enforced; one UI library, one palette; no app visual regression tests |
 | CI / CD              | 10 / 10 | Cached reusable build; SHA-pinned actions; least-privilege; CodeQL on `main`      |
 | Bundle & Performance | 9 / 10  | Vite auto-splits; exact bundle-size record; app bundle ungated                    |
@@ -34,7 +34,7 @@ Guard clauses over nested conditionals. `InvalidOperationError` for impossible s
 
 ## Testing — 10 / 10
 
-Several hundred test files, concentrated in `app` but present in every package that holds logic. Benchmarks cover the sheet editor hot paths. Miniflare provides an in-memory D1 for server tests — no real DB required. Queue job logic lives in extracted `handlers/` and is directly tested wherever a handler holds any; a handler that only configures a tested primitive, like the thin `queue` entry in `apps/jobs/src/worker.ts`, has no test of its own, since a test of that wiring fails only on a deliberate edit.
+Several thousand test files, concentrated in `app` but present in every package that holds logic. Benchmarks cover the sheet editor, the page builder, the Genshin engine's terrain and kits, and the repo's own tooling. Miniflare provides an in-memory D1 for server tests — no real DB required. Queue job logic lives in extracted `handlers/` and is directly tested wherever a handler holds any; a handler that only configures a tested primitive, like the thin `queue` entry in `apps/jobs/src/worker.ts`, has no test of its own, since a test of that wiring fails only on a deliberate edit.
 
 **Accepted trade-off:** untested Pinia stores are Phaser game-engine state (dungeons, clicker) that cannot be meaningfully exercised outside the canvas runtime, or thin CRUD holders with no logic to assert.
 
@@ -58,8 +58,7 @@ These **pre-release packages sit in production paths**:
 | Package                       | Role                  | Why it's accepted                                                                                         |
 | ----------------------------- | --------------------- | --------------------------------------------------------------------------------------------------------- |
 | `nuxt` (nightly, 5.x)         | Framework             | Nuxt 5 runs on Nitro 3 and h3 2, which the app moved to ahead of release rather than in one jump after it |
-| `nitro` (nightly)             | Server runtime        | Nuxt 5's own runtime; Nitro 3 is at a release candidate, and Nuxt 5 builds against its nightly            |
-| `unstorage` (beta)            | Storage mounts        | Nitro 3 resolves it from the app for the mounts Nuxt's storage options become, and needs the 2.x line     |
+| `nitro` (nightly)             | Server runtime        | Nuxt 5's own runtime, built against its nightly; it brings its own `unstorage` 2 beta, which nothing pins |
 | `drizzle-orm` / `drizzle-kit` | Core ORM + migrations | v1 API is stable in practice and the schema/query migration is complete                                   |
 
 ## Styling — 9 / 10
