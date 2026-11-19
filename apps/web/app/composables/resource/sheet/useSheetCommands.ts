@@ -4,6 +4,7 @@ import { PasteMode } from "#src/models/resource/sheet/commands/PasteMode";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { ArrowKeyDefinitionMap } from "#src/services/resource/sheet/ArrowKeyDefinitionMap";
 import { SHEET_COMMAND_GROUP } from "#src/services/resource/sheet/constants";
+import { clampIndex } from "#src/services/ui/clampIndex";
 import { getHistoryCommands } from "#src/services/ui/getHistoryCommands";
 import { useCellStore } from "#src/store/resource/sheet/cell";
 import { useColumnStore } from "#src/store/resource/sheet/column";
@@ -26,13 +27,12 @@ export const useSheetCommands = () => {
   const copyRangeToClipboard = getSynchronizedFunction(useCopyRangeToClipboard());
   const pasteRangeFromClipboard = getSynchronizedFunction(usePasteRangeFromClipboard());
   const extendSelection = ([rowDelta, columnDelta]: readonly [number, number]) => {
-    if (!focusedCell.value) return;
-    const newRowIndex = Math.max(0, Math.min(displayRows.value.length - 1, focusedCell.value.rowIndex + rowDelta));
-    const newColumnIndex = Math.max(
-      0,
-      Math.min(displayColumns.value.length - 1, focusedCell.value.columnIndex + columnDelta),
+    // An empty grid has no cell to extend to, so a focus left on a row or column it no longer holds selects nothing
+    if (!focusedCell.value || displayRows.value.length === 0 || displayColumns.value.length === 0) return;
+    extendCellSelection(
+      clampIndex(focusedCell.value.rowIndex + rowDelta, displayRows.value.length),
+      clampIndex(focusedCell.value.columnIndex + columnDelta, displayColumns.value.length),
     );
-    extendCellSelection(newRowIndex, newColumnIndex);
   };
 
   useCommands((): UiCommand[] => [
