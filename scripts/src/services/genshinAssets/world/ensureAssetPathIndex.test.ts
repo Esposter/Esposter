@@ -1,4 +1,7 @@
-import { ASSET_PATH_INDEX_TIMEOUT_MILLISECONDS } from "#src/services/genshinAssets/world/constants";
+import {
+  ASSET_PATH_INDEX_TIMEOUT_MILLISECONDS,
+  ASSET_PATH_INDEX_URL,
+} from "#src/services/genshinAssets/world/constants";
 import { ensureAssetPathIndex } from "#src/services/genshinAssets/world/ensureAssetPathIndex";
 import { fetchOk } from "#src/services/shared/fetchOk";
 import { publishFile } from "#src/services/shared/publishFile";
@@ -60,10 +63,9 @@ describe(ensureAssetPathIndex, () => {
     vi.mocked(fetchOk).mockResolvedValueOnce(new Response(fixtureIndex));
 
     await expect(ensureAssetPathIndex(indexPath, fixtureSha256)).resolves.toBe(indexPath);
-    expect(vi.mocked(fetchOk)).toHaveBeenCalledExactlyOnceWith(
-      "https://raw.githubusercontent.com/radioegor146/gi-asset-indexes/3192b1759a6d1f6879cc348ad92e078092c1fb9f/mapped/GenshinImpact_2.6.0.zip_31049740.blk.asset_index.json",
-      { timeoutMs: ASSET_PATH_INDEX_TIMEOUT_MILLISECONDS },
-    );
+    expect(vi.mocked(fetchOk)).toHaveBeenCalledExactlyOnceWith(ASSET_PATH_INDEX_URL, {
+      timeoutMs: ASSET_PATH_INDEX_TIMEOUT_MILLISECONDS,
+    });
   });
 
   test("a fetched source whose SHA-256 differs from its pin is refused", async () => {
