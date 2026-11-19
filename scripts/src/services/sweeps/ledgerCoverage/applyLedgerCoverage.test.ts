@@ -2,8 +2,8 @@ import type { LedgerEvent } from "#src/models/sweeps/ledgerCoverage/LedgerEvent"
 import type { LedgerFile } from "#src/models/sweeps/ledgerCoverage/LedgerFile";
 
 import { LedgerEventType } from "#src/models/sweeps/ledgerCoverage/LedgerEventType";
-import { OPEN_CELL } from "#src/services/sweeps/ledgerCoverage/constants";
 import { applyLedgerCoverage } from "#src/services/sweeps/ledgerCoverage/applyLedgerCoverage";
+import { OPEN_CELL } from "#src/services/sweeps/ledgerCoverage/constants";
 import { describe, expect, test } from "vitest";
 
 const getText = (unit: string) =>
