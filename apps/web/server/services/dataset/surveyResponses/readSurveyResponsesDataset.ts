@@ -19,10 +19,9 @@ const reserveColumnName = (name: string, questionNames: Set<string>) => {
 
 // The submission time leads, and the respondent follows it when the survey is Identified, ahead of the questions
 export const readSurveyResponsesDataset: DatasetProvider["read"] = async (db, survey) => {
-  const [{ columns: questionColumns, surveyResponses, totalRows }, { responseMode }] = await Promise.all([
-    readSurveyResponseDatasetSource(db, survey.id),
-    readSurveySettings(survey.id),
-  ]);
+  const [{ columns: questionColumns, isCountCapped, surveyResponses, totalRows }, { responseMode }] = await Promise.all(
+    [readSurveyResponseDatasetSource(db, survey.id), readSurveySettings(survey.id)],
+  );
   const isIdentified = responseMode === SurveyResponseMode.Identified;
   const respondents = isIdentified ? await readSurveyRespondents(db, survey) : undefined;
   const questionNames = new Set(questionColumns.map(({ name }) => name));
@@ -42,6 +41,8 @@ export const readSurveyResponsesDataset: DatasetProvider["read"] = async (db, su
     }),
     // A respondent past a program read's cap is absent from the column, and every row still carries it as null
     ...(respondents?.isPartial && { partialColumns: [respondentName] }),
+    // Stored only when set, so an exact total carries no flag and a snapshot of one stays as it was
+    ...(isCountCapped && { isCountCapped }),
     totalRows,
   };
 };

@@ -9,8 +9,14 @@ import { describe, expect, test } from "vitest";
 describe(getDatasetTruncation, () => {
   const columnName = "columnName";
   const columns: DatasetColumn[] = [{ name: columnName, type: ColumnType.String }];
-  const createDataset = (rowCount: number, totalRows?: number, partialColumns?: string[]): Dataset => ({
+  const createDataset = (
+    rowCount: number,
+    totalRows?: number,
+    partialColumns?: string[],
+    isCountCapped?: boolean,
+  ): Dataset => ({
     columns,
+    isCountCapped,
     partialColumns,
     rows: Array.from({ length: rowCount }, () => ({ [columnName]: "" })),
     totalRows,
@@ -72,10 +78,36 @@ describe(getDatasetTruncation, () => {
     });
   });
 
-  test("marks the count as capped at the counting bound", () => {
+  // An exact total at the bound is still exact: only a bounded count that ran out of rows to walk is a floor
+  test("reports an exact total at the counting bound uncapped", () => {
     expect.hasAssertions();
 
     expect(getDatasetTruncation(createDataset(1, DATASET_MAX_COUNTED_ROWS))).toStrictEqual({
+      hiddenRows: DATASET_MAX_COUNTED_ROWS - 1,
+      isCountCapped: false,
+      partialColumns: [],
+      shownRows: 1,
+      totalRows: DATASET_MAX_COUNTED_ROWS,
+    });
+  });
+
+  // A sheet holds every row, so its total can sit past the bound and still be exact
+  test("reports an exact total past the counting bound uncapped", () => {
+    expect.hasAssertions();
+
+    expect(getDatasetTruncation(createDataset(1, DATASET_MAX_COUNTED_ROWS + 1))).toStrictEqual({
+      hiddenRows: DATASET_MAX_COUNTED_ROWS,
+      isCountCapped: false,
+      partialColumns: [],
+      shownRows: 1,
+      totalRows: DATASET_MAX_COUNTED_ROWS + 1,
+    });
+  });
+
+  test("marks a bounded count as capped", () => {
+    expect.hasAssertions();
+
+    expect(getDatasetTruncation(createDataset(1, DATASET_MAX_COUNTED_ROWS, undefined, true))).toStrictEqual({
       hiddenRows: DATASET_MAX_COUNTED_ROWS - 1,
       isCountCapped: true,
       partialColumns: [],

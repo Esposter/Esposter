@@ -15,8 +15,10 @@ export const readProgramStatusDataset: DatasetProvider["read"] = async (db, prog
   const { id } = program;
   const { isRespondedPartial, rows: statusRows } = await readProgramStatusRows(db, program);
   // A read that fit under the cap answers for itself; only a read that filled it pays for the count
-  const totalRows =
-    statusRows.length < MAX_READ_LIMIT ? statusRows.length : await readProgramParticipantEntitiesCount(db, id);
+  const { count: totalRows, isCapped: isCountCapped } =
+    statusRows.length < MAX_READ_LIMIT
+      ? { count: statusRows.length, isCapped: false }
+      : await readProgramParticipantEntitiesCount(db, id);
   return {
     columns: [
       { name: ProgramStatusDatasetColumnName.Participant, type: ColumnType.String },
@@ -27,6 +29,8 @@ export const readProgramStatusDataset: DatasetProvider["read"] = async (db, prog
     // Still present — so the funnel looks complete while under-reporting. The dataset says so rather than
     // Letting a dashboard or a published snapshot chart it as an exact total
     ...(isRespondedPartial && { partialColumns: [ProgramStatusDatasetColumnName.Responded] }),
+    // Stored only when set, so an exact total carries no flag and a snapshot of one stays as it was
+    ...(isCountCapped && { isCountCapped }),
     // Charting a funnel needs the day, not the minute — and a date-only string is what survives the
     // Published-snapshot round trip (see getUtcDateString)
     rows: statusRows.map(({ addedAt, isResponded, publicId }) => ({

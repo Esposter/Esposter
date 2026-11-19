@@ -6,11 +6,11 @@ The fix is metadata, not pagination. A [`Dataset`](../../architecture/dataset/de
 
 ## How it works
 
-`Dataset` gains one optional field, `totalRows`. `getDatasetTruncation` is the single check every consumer shares: given `rows.length < totalRows`, it returns what was shown, what is hidden, the total, and whether that total is itself a floor — otherwise nothing. A provider that cannot cheaply count omits `totalRows`, and its consumers simply never warn.
+`Dataset` gains two optional fields, `totalRows` and `isCountCapped`. `getDatasetTruncation` is the single check every consumer shares: given `rows.length < totalRows`, it returns what was shown, what is hidden, the total, and whether that total is itself a floor (`isCountCapped`, carried through as set) — otherwise nothing. A provider that cannot cheaply count omits `totalRows`, and its consumers simply never warn.
 
 ```mermaid
 flowchart TD
-  SHEET["readSheetDataset<br/>totalRows = data.rows.length"] --> DS[("Dataset<br/>columns · rows · totalRows?")]
+  SHEET["readSheetDataset<br/>totalRows = data.rows.length"] --> DS[("Dataset<br/>columns · rows · totalRows? · isCountCapped?")]
   SURVEY["readSurveyResponsesDataset<br/>totalRows = bounded count when capped"] --> DS
   PROGRAM["readProgramStatusDataset<br/>totalRows = bounded count when capped"] --> DS
   DS --> CHECK["getDatasetTruncation<br/>rows.length < totalRows?"]
@@ -24,7 +24,7 @@ flowchart TD
 ### The providers
 
 - **Sheet** parses the whole content blob before slicing to the cap, so `totalRows` costs nothing — it is already holding every row.
-- **SurveyResponses** and **ProgramStatus** cannot count for free: a total means counting every matching row. They therefore **only pay when they have to, and never more than a bounded count**. A read that proved itself complete answers for itself (`totalRows = rows.length`) — the survey read fetches one row past the cap so a response set holding exactly the cap never pays for a count — and only a read known to be truncated runs a count over the matching rows, bounded at `DATASET_MAX_COUNTED_ROWS` so a huge table cannot stall the read just to render a banner number. A count that hit the bound is a floor: `getDatasetTruncation` marks it `isCountCapped`, and every surface renders it as "M+" via `formatTruncationCount` rather than as an exact total.
+- **SurveyResponses** and **ProgramStatus** cannot count for free: a total means counting every matching row. They therefore **only pay when they have to, and never more than a bounded count**. A read that proved itself complete answers for itself (`totalRows = rows.length`) — the survey read fetches one row past the cap so a response set holding exactly the cap never pays for a count — and only a read known to be truncated runs a count over the matching rows, bounded at `DATASET_MAX_COUNTED_ROWS` so a huge table cannot stall the read just to render a banner number. A count that reads past the bound is a floor: its reader sets `isCountCapped` on the `Dataset`, and every surface renders it as "M+" via `formatTruncationCount` rather than as an exact total. `readCappedCount` reads one row past the bound and clamps the count to it, so a count of exactly the bound is exact and unflagged. The flag cannot be derived from the total, since the clamped total is the bound either way, so it travels beside it. A total past the bound with no flag is exact, which is how a sheet reports every row it holds.
 
 ### The consumers
 
@@ -40,7 +40,7 @@ Each surface is chosen by what an unnoticed truncation would cost there:
 
 | File                                                                    | Role                                                |
 | ----------------------------------------------------------------------- | --------------------------------------------------- |
-| `shared/models/dataset/Dataset.ts`                                      | the `totalRows` field                               |
+| `shared/models/dataset/Dataset.ts`                                      | the `totalRows` and `isCountCapped` fields          |
 | `shared/services/dataset/getDatasetTruncation.ts`                       | the one truncation check every consumer shares      |
 | `app/services/dataset/getDatasetTruncationText.ts`                      | the one "Showing N of M rows" phrasing              |
 | `app/services/dataset/formatTruncationCount.ts`                         | renders a bound-hitting count as "M+"               |

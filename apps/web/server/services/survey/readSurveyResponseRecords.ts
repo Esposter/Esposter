@@ -11,9 +11,10 @@ export const readSurveyResponseRecords = async (
   db: Context["db"],
   surveyId: ResourceInResource["id"],
 ): Promise<SurveyResponseRecords> => {
-  const { columns, surveyResponses, totalRows } = await readSurveyResponseDatasetSource(db, surveyId);
+  const { columns, isCountCapped, surveyResponses, totalRows } = await readSurveyResponseDatasetSource(db, surveyId);
   return {
     columns,
+    isCountCapped,
     // The row is built fresh per response and shared with nobody, so the id is assigned onto it rather
     // Than spread into a second copy
     rows: surveyResponses.map(({ id, model }) =>

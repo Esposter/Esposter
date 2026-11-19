@@ -9,6 +9,9 @@ import { z } from "zod";
 
 export interface Dataset {
   columns: DatasetColumn[];
+  // Set when totalRows is a floor: a bounded count reached its cap and stopped there. Unset means the total is exact,
+  // So a total past the cap is exact too, as a sheet's every row is counted
+  isCountCapped?: boolean | undefined;
   // Columns whose values a capped read may have got *wrong* rather than left out. A derived column resolved
   // Against a second capped read reports its unmatched rows as a negative — every row is present, so row
   // Counts look complete — which makes an exact aggregation over such a column a floor rather than a total
@@ -24,6 +27,7 @@ export const datasetSchema = z.object({
   // A row is keyed by column name, so two columns sharing one cannot both be read - the uniqueness the array
   // Declares is the one the row shape already depends on
   columns: createUniqueArraySchema(datasetColumnSchema, "name").max(MAX_RESOURCE_CONTENT_SIZE),
+  isCountCapped: z.boolean().optional(),
   partialColumns: createUniqueArraySchema(z.string().max(MAX_RESOURCE_CONTENT_SIZE))
     .max(MAX_RESOURCE_CONTENT_SIZE)
     .optional(),

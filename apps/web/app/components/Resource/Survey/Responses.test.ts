@@ -51,6 +51,7 @@ describe("resourceSurveyResponses", () => {
   };
   const records: SurveyResponseRecords = {
     columns: [{ name: "colour", type: ColumnType.String }],
+    isCountCapped: false,
     rows: [{ colour: "Teal", responseId }],
     totalRows: 1,
   };
@@ -69,7 +70,12 @@ describe("resourceSurveyResponses", () => {
   test("says there are no responses yet when the survey has none", async () => {
     expect.hasAssertions();
 
-    trpcMsw.survey.readSurveyResponseRecords.query(() => ({ columns: records.columns, rows: [], totalRows: 0 }));
+    trpcMsw.survey.readSurveyResponseRecords.query(() => ({
+      columns: records.columns,
+      isCountCapped: false,
+      rows: [],
+      totalRows: 0,
+    }));
     const component = await mountSuspended(ResourceSurveyResponses, { route: RoutePath.Resource(surveyId) });
 
     expect(component.findComponent(UiEmptyState).props("title")).toBe("No responses yet");
@@ -111,6 +117,7 @@ describe("resourceSurveyResponses", () => {
 
     trpcMsw.survey.readSurveyResponseRecords.query(() => ({
       columns: [{ name: "actions", type: ColumnType.String }],
+      isCountCapped: false,
       rows: [{ actions: "Teal", responseId }],
       totalRows: 1,
     }));

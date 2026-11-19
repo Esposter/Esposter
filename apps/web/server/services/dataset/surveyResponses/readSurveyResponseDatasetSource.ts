@@ -10,18 +10,24 @@ import { getSurveyDocumentDatasetColumns } from "#shared/services/dataset/survey
 
 // The one read behind both the dataset and the Responses blade, so a row and its key always come from
 // The same snapshot — two independent reads could interleave a submit or a delete and drift apart.
-// It carries the uncapped total too, so neither surface can show a truncated table without saying so
+// It carries the total and whether that total is a floor too, so neither surface can show a truncated table without saying so
 export const readSurveyResponseDatasetSource = async (
   db: Context["db"],
   surveyId: ResourceInResource["id"],
-): Promise<{ columns: DatasetColumn[]; surveyResponses: SurveyResponseInResource[]; totalRows: number }> => {
+): Promise<{
+  columns: DatasetColumn[];
+  isCountCapped: boolean;
+  surveyResponses: SurveyResponseInResource[];
+  totalRows: number;
+}> => {
   // The blob is written on first save, so a freshly created survey serves an empty dataset
   const content = await readResourceContent(surveyResourceSchema, surveyId);
   const columns = content ? getSurveyDocumentDatasetColumns(content.document) : [];
   const { hasMore, surveyResponses } = await readSurveyResponseEntities(db, surveyId);
   // Counting is a bounded partition scan, so only a read that saw rows past the cap pays for it —
-  // The one case where the caller needs to know what it is missing. `isCapped` is dropped here because
-  // The truncation helper re-derives it from the total against the same ceiling
-  const totalRows = hasMore ? (await readSurveyResponsesCount(db, surveyId)).count : surveyResponses.length;
-  return { columns, surveyResponses, totalRows };
+  // The one case where the caller needs to know what it is missing
+  const { count: totalRows, isCapped: isCountCapped } = hasMore
+    ? await readSurveyResponsesCount(db, surveyId)
+    : { count: surveyResponses.length, isCapped: false };
+  return { columns, isCountCapped, surveyResponses, totalRows };
 };
