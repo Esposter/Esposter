@@ -3,7 +3,7 @@ import type { NotificationQueueMessage } from "@esposter/db-schema";
 import { getPushNotificationPayload } from "#src/services/notification/getPushNotificationPayload";
 import { resolveNotification } from "#src/services/notification/resolveNotification";
 import { sendWebPushNotifications } from "#src/services/notification/sendWebPushNotifications";
-import { getDb } from "#src/services/shared/db";
+import { getDb, runUnit } from "#src/services/shared/db";
 import { getPushSubscriptionsForUsers, inJsonArray } from "@esposter/db";
 import {
   AppNotificationTypeChannelMap,
@@ -35,10 +35,13 @@ export const sendNotification = async (data: NotificationQueueMessage): Promise<
   const channels = AppNotificationTypeChannelMap[data.type];
   if (channels.includes(NotificationChannel.Bell)) {
     // One statement for every recipient: the bell is a row per user, and a notification with a hundred recipients
-    // Is still one round trip
-    await getDb()
-      .insert(notificationsInNotification)
-      .values(userIds.map((userId) => ({ body, path, severity, title, type: data.type, userId })));
+    // Is still one round trip. Its own unit publishes the bell's topics once the rows land, so the bell is woken before
+    // The device push below waits on each device in turn
+    await runUnit(() =>
+      getDb()
+        .insert(notificationsInNotification)
+        .values(userIds.map((userId) => ({ body, path, severity, title, type: data.type, userId }))),
+    );
     // The retention trim rides the write rather than a sweep of its own: the recipients are already known here,
     // So bounding the table costs one indexed delete against the rows that were just added to. Best-effort,
     // Because it runs after the rows above have landed — a throw here would ask the queue for a redelivery

@@ -1,10 +1,10 @@
-import type { Database, PushNotificationPayload } from "@esposter/db-schema";
+import type { Database, PushNotificationPayload, Topic } from "@esposter/db-schema";
 
 import { MOCK_ENDPOINT } from "#src/services/notification/constants.test";
 import { sendNotification } from "#src/services/notification/sendNotification";
 import { setupWebPushSuite } from "#src/services/notification/setupWebPushSuite.test";
 import { webpush } from "#src/services/notification/webpush.test";
-import { getReaderWakes, MockPublishedTopics } from "#src/services/realtime/publishTopics.test";
+import { getMockPublishedTopics, getReaderWakes, MockPublishedTopics } from "#src/services/realtime/publishTopics.test";
 import { createUser } from "#src/services/shared/createUser.test";
 import { getDb, runUnit } from "#src/services/shared/db";
 import { readNotificationRows } from "@esposter/db";
@@ -21,7 +21,7 @@ import {
   usersInAuth,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
-import { jsonDateParse, RoutePath } from "@esposter/shared";
+import { jsonDateParse, RoutePath, takeOne } from "@esposter/shared";
 import { getTableName } from "drizzle-orm";
 import { v7 } from "uuid";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
@@ -154,6 +154,27 @@ describe(sendNotification, () => {
     expect(vi.mocked(webpush.sendNotification).mock.calls[0]?.[0].endpoint).toBe(MOCK_ENDPOINT);
     expect(notification?.title).toBe(title);
     expect(notification?.type).toBe(AppNotificationType.ResourceOperation);
+  });
+
+  // A bell row's topic is published once the row lands, so the bell is woken before the device push waits on each device
+  test("a bell row's topic is published before the device push is sent", async () => {
+    expect.hasAssertions();
+
+    vi.stubEnv("BASE_URL", "");
+    await mockDb.insert(pushSubscriptionsInNotification).values(pushSubscription);
+    const publishedAtPush: Topic[][] = [];
+    vi.mocked(webpush.sendNotification).mockImplementationOnce(() => {
+      publishedAtPush.push(getMockPublishedTopics());
+      return Promise.resolve({ body: "", headers: {}, statusCode: 201 });
+    });
+
+    await runUnit(() =>
+      sendNotification({ path, title, type: AppNotificationType.ResourceOperation, userId: subscriberUserId }),
+    );
+
+    expect(takeOne(publishedAtPush, 0)).toContain(
+      getScopeTopic(getTableName(notificationsInNotification), "userId", subscriberUserId),
+    );
   });
 
   // The bell reads the rows of its recipient through the reader the web's notification list reads them with, so the bell row a
