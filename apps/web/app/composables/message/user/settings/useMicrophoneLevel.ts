@@ -6,15 +6,13 @@ import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared"
 // Opens a local microphone and exposes the live input level (dB) so the Input Sensitivity panel
 // Can show a calibration meter. There is no shared analyser to reuse - in-call speaking detection
 // Comes from the call's active-speaker event, and this panel can be opened outside a call.
+// The stream itself is the store's: every panel reading a level holds the one microphone, so two panels open it once.
 export const useMicrophoneLevel = () => {
   const voiceDeviceSettingsStore = useVoiceDeviceSettingsStore();
-  const { inputDeviceId } = storeToRefs(voiceDeviceSettingsStore);
+  const { holdMicrophone, releaseMicrophone } = voiceDeviceSettingsStore;
+  const holder = Symbol("microphone level");
   const isTesting = ref(false);
   const level = ref(MIN_INPUT_SENSITIVITY_DECIBELS);
-  const constraints = computed<MediaStreamConstraints>(() => ({
-    audio: inputDeviceId.value ? { deviceId: inputDeviceId.value } : {},
-  }));
-  const { start: startStream, stop: stopStream } = useUserMedia({ constraints });
   let audioContext: AudioContext | undefined;
   let analyser: AnalyserNode | undefined;
   let timeDomainData: Float32Array<ArrayBuffer> | undefined;
@@ -33,22 +31,19 @@ export const useMicrophoneLevel = () => {
   const { executeQuery } = useMutation();
   // A start that lands while one is pending joins it, so a double click cannot open a second stream beside the first
   const start = async () => {
-    await executeQuery(startStream, {
+    await executeQuery(() => holdMicrophone(holder), {
       isExclusive: true,
       key: "start",
       onError: (error) => {
+        releaseMicrophone(holder);
         isTesting.value = false;
         console.error(error);
       },
       onSuccess: async (stream) => {
         if (!stream) return;
-        // A dispose can land while getUserMedia is still pending, and it cannot be cancelled.
-        // `useUserMedia`'s own dispose then no-ops (its stream ref is still empty) and assigns the live
-        // Stream afterwards, leaving the mic hot with nothing left to tear it down - so stop it here.
-        if (isDisposed) {
-          stopStream();
-          return;
-        }
+        // A dispose can land while the request is still pending, and the store closes the stream once no panel holds it,
+        // So there is nothing left for this panel to tear down
+        if (isDisposed) return;
         // A start that lands on a running test reuses its stream, so the context it replaces is taken out here
         const previousAudioContext = audioContext;
         audioContext = new window.AudioContext();
@@ -71,7 +66,7 @@ export const useMicrophoneLevel = () => {
     audioContext = undefined;
     analyser = undefined;
     timeDomainData = undefined;
-    stopStream();
+    releaseMicrophone(holder);
     level.value = MIN_INPUT_SENSITIVITY_DECIBELS;
     isTesting.value = false;
     await previousAudioContext?.close();

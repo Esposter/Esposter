@@ -18,6 +18,7 @@ describe(useMicrophoneLevel, () => {
   let getUserMedia: ReturnType<typeof vi.fn<(constraints: MediaStreamConstraints) => Promise<MediaStream>>>;
   let resolveRequests: ((stream: MediaStream) => void)[];
   let microphoneLevel: ReturnType<typeof useMicrophoneLevel>;
+  let secondMicrophoneLevel: ReturnType<typeof useMicrophoneLevel>;
   let wrapper: Awaited<ReturnType<typeof mountSuspended>>;
 
   beforeEach(() => {
@@ -87,5 +88,27 @@ describe(useMicrophoneLevel, () => {
     await flushPromises();
 
     expect(microphoneLevel.isTesting.value).toBe(false);
+  });
+
+  test("two panels reading the level share one microphone stream rather than asking for a second", async () => {
+    expect.hasAssertions();
+
+    wrapper = await mountSuspended(
+      defineComponent({
+        render: () => h("div"),
+        setup: () => {
+          microphoneLevel = useMicrophoneLevel();
+          secondMicrophoneLevel = useMicrophoneLevel();
+        },
+      }),
+    );
+    const starting = Promise.all([microphoneLevel.start(), secondMicrophoneLevel.start()]);
+    await flushPromises();
+    for (const resolve of resolveRequests) resolve({ getTracks: () => [] } as unknown as MediaStream);
+    await starting;
+    await flushPromises();
+
+    expect(getUserMedia).toHaveBeenCalledExactlyOnceWith({ audio: {}, video: false });
+    expect(secondMicrophoneLevel.isTesting.value).toBe(true);
   });
 });
