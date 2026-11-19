@@ -16,7 +16,7 @@ export const pickUpMaterialSource = (
 ): { inventory: Inventory; materialSources: MaterialSourcePlace[]; overflow: number } => {
   const place = materialSources.find(({ id }) => id === placeId);
   if (!place) return { inventory, materialSources: [...materialSources], overflow: 0 };
-  const addition = addInventoryItem(inventory, getItemDefinition(place.kind, names, materialDataMap), 1);
+  const addition = addInventoryItem(inventory, getItemDefinition(place.kind.itemId, names, materialDataMap), 1);
   return {
     inventory: addition.inventory,
     materialSources: addition.overflow > 0 ? [...materialSources] : materialSources.filter(({ id }) => id !== placeId),

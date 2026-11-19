@@ -9,10 +9,10 @@ import { GameDataset } from "genshin-world";
 // Slice of the material source dataset: each point placed by the fit, its kind the id of the item it gives. The notes name
 // Each critter group's join and each gather row left out, then count each region's sources and what was left out
 export const buildMaterialSourcePlaces = async (): Promise<GameDataBuild> => {
-  const { itemIdMap, notes: joinNotes } = readMaterialSourceItemIdMap(await readInteractiveMapLabels());
+  const { kindMap, notes: joinNotes } = readMaterialSourceItemIdMap(await readInteractiveMapLabels());
   const { notes, objects } = await buildFittedMapPointSlices(
     GameDataset.MaterialSources,
-    itemIdMap,
+    kindMap,
     "material-source",
     "material sources",
   );

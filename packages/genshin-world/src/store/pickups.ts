@@ -97,7 +97,7 @@ export const useWorldPickupsStore = defineStore("world/pickups", () => {
     const sources = materialSources.value.map(({ id, kind, position: { x, z } }) => ({
       id,
       kind: InteractionKind.PickUp,
-      name: getItemDefinition(kind, worldSessionStore.nameText, worldSessionStore.materialDataMap).name,
+      name: getItemDefinition(kind.itemId, worldSessionStore.nameText, worldSessionStore.materialDataMap).name,
       position: { x, y: worldGroundStore.getGroundHeight(x, z), z },
     }));
     return [...drops, ...gatherings, ...sources];

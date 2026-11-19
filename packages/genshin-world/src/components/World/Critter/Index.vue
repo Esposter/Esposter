@@ -11,8 +11,6 @@ import { createCritterGeometry, createInstancedMesh, createToonMaterial } from "
 import { Matrix4, Vector3 } from "three";
 
 interface Props {
-  // The item ids of the butterfly kinds, whose points stand bare, since no butterfly stands at a point
-  butterflyKinds: ReadonlySet<number>;
   // The world's ground at a point in its own coordinates, which each stand-in stands on
   getGroundHeight: (x: number, z: number) => number;
   lightUniforms: LightUniforms;
@@ -21,11 +19,11 @@ interface Props {
   rampTexture: DataTexture;
 }
 
-const { butterflyKinds, getGroundHeight, lightUniforms, materialSources, rampTexture } = defineProps<Props>();
+const { getGroundHeight, lightUniforms, materialSources, rampTexture } = defineProps<Props>();
 const { onBeforeRender } = useLoop();
 // Every critter point is one stand-in of one instanced draw, stood on the ground until its species is fitted. The points
 // Are filtered when the material sources change, not each frame, and the critters stand still
-const standInPlaces = computed(() => getCritterStandInPlaces(materialSources, butterflyKinds));
+const standInPlaces = computed(() => getCritterStandInPlaces(materialSources));
 const critterMaterial = createToonMaterial({ color: WILDLIFE_COLOR, lightUniforms, rampTexture });
 const critterMesh = createInstancedMesh(createCritterGeometry(), critterMaterial, WILDLIFE_CAPACITY);
 critterMesh.frustumCulled = false;

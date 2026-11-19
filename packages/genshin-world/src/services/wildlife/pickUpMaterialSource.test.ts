@@ -15,17 +15,6 @@ describe(pickUpMaterialSource, () => {
   const CRITTER_NAME_TEXT_ID = "2";
   const materialDataMap = new Map<number, MaterialData>([
     [
-      ITEM_ID,
-      {
-        id: ITEM_ID,
-        materialType: MaterialType.Exchange,
-        nameTextId: NAME_TEXT_ID,
-        rank: 1,
-        rarity: 1,
-        stackLimit: 99,
-      },
-    ],
-    [
       CRITTER_ITEM_ID,
       {
         id: CRITTER_ITEM_ID,
@@ -36,11 +25,34 @@ describe(pickUpMaterialSource, () => {
         stackLimit: 99,
       },
     ],
+    [
+      ITEM_ID,
+      {
+        id: ITEM_ID,
+        materialType: MaterialType.Exchange,
+        nameTextId: NAME_TEXT_ID,
+        rank: 1,
+        rarity: 1,
+        stackLimit: 99,
+      },
+    ],
   ]);
   const names = { [CRITTER_NAME_TEXT_ID]: "Test Critter", [NAME_TEXT_ID]: "Test Crystalfly" };
-  const crystalfly: MaterialSourcePlace = { id: "crystalfly", kind: ITEM_ID, position: { x: 1, z: 2 } };
-  const otherCrystalfly: MaterialSourcePlace = { id: "other", kind: ITEM_ID, position: { x: 3, z: 4 } };
-  const critter: MaterialSourcePlace = { id: "critter", kind: CRITTER_ITEM_ID, position: { x: 5, z: 6 } };
+  const crystalfly: MaterialSourcePlace = {
+    id: "crystalfly",
+    kind: { hasStandIn: true, itemId: ITEM_ID },
+    position: { x: 1, z: 2 },
+  };
+  const otherCrystalfly: MaterialSourcePlace = {
+    id: "other",
+    kind: { hasStandIn: true, itemId: ITEM_ID },
+    position: { x: 3, z: 4 },
+  };
+  const critter: MaterialSourcePlace = {
+    id: "critter",
+    kind: { hasStandIn: true, itemId: CRITTER_ITEM_ID },
+    position: { x: 5, z: 6 },
+  };
 
   test("a crystalfly picked up gives its item and vanishes", () => {
     expect.hasAssertions();

@@ -271,6 +271,7 @@ export const GameDataKeys = {
     liyue: "materialSources/liyue",
     mondstadt: "materialSources/mondstadt",
     natlan: "materialSources/natlan",
+    "nod-krai": "materialSources/nod-krai",
     snezhnaya: "materialSources/snezhnaya",
     sumeru: "materialSources/sumeru",
   },

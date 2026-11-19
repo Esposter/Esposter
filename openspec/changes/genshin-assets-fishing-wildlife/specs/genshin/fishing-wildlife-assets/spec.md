@@ -122,7 +122,7 @@ A fleeing animal SHALL run at the speed and for the time its own run clip gives,
 
 ### Requirement: A critter of a gather row stands at each of its points
 
-A critter of a gather row SHALL stand at each of its map points as one stand-in shape per species group.
+A critter of a gather row SHALL stand at each of its map points, unless its picked item is a chest, as one stand-in shape per species group.
 
 #### Scenario: A critter stands at each of its points
 
@@ -130,11 +130,11 @@ A critter of a gather row SHALL stand at each of its map points as one stand-in 
 - **WHEN** the region's points are drawn
 - **THEN** a crab stand-in stands at each of them
 
-#### Scenario: A butterfly stands at no point
+#### Scenario: A critter whose picked item is a chest stands at no point
 
-- **GIVEN** a butterfly is among a region's animal points
+- **GIVEN** a critter's gather row gives an item the dump types as a chest, as the Coral Butterfly's does
 - **WHEN** the region's points are drawn
-- **THEN** no butterfly stands at any point
+- **THEN** no stand-in stands at that critter's points
 
 ### Requirement: A picked critter gives its item and vanishes
 

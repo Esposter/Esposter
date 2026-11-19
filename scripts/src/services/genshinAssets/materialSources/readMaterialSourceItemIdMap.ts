@@ -1,9 +1,13 @@
 import type { EnvAnimalGatherRow } from "#src/models/genshinAssets/materialSources/EnvAnimalGatherRow";
 import type { InteractiveMapLabel } from "#src/models/genshinAssets/points/InteractiveMapLabel";
 import type { ExcelAnimalDescribeRow } from "#src/models/genshinAssets/shared/ExcelAnimalDescribeRow";
+import type { MaterialRow } from "#src/models/genshinAssets/shared/MaterialRow";
+import type { MaterialSourceKind } from "genshin-world";
 
 import { ANIMAL_DESCRIBE_TABLE_NAME } from "#src/services/genshinAssets/archive/constants";
+import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants";
 import {
+  CHEST_MATERIAL_TYPE,
   ENV_ANIMAL_GATHER_TABLE_NAME,
   MATERIAL_SOURCE_LABEL_IDS,
 } from "#src/services/genshinAssets/materialSources/constants";
@@ -13,12 +17,13 @@ import { readTextMap } from "#src/services/genshinText/readTextMap";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameLanguage } from "genshin-text";
 
-// Each material source label's item id, read off the gather row of the animal the label's name is the English name of. A
-// Label with no such row gives no item, so it is refused rather than placed as nothing. The notes name each label's match
-// And each gather row no label joins, which print as unmatched and stay out of the dataset
+// Each material source label's kind, read off the gather row of the animal the label's name is the English name of: the
+// Item that row gives when picked, and whether a critter stands at the label's points, which it does unless the item is a
+// Chest. A label with no such row gives no item, so it is refused rather than placed as nothing. The notes name each
+// Label's match and each gather row no label joins, which print as unmatched and stay out of the dataset
 export const readMaterialSourceItemIdMap = (
   labels: readonly InteractiveMapLabel[],
-): { itemIdMap: Map<number, number>; notes: string[] } => {
+): { kindMap: Map<number, MaterialSourceKind>; notes: string[] } => {
   const envAnimalGatherRows = readExcelTable<EnvAnimalGatherRow>(ENV_ANIMAL_GATHER_TABLE_NAME);
   const englishText = readTextMap(GameLanguage.English);
   const animalNameMap = new Map(
@@ -27,7 +32,10 @@ export const readMaterialSourceItemIdMap = (
       englishText.get(String(nameTextMapHash)),
     ]),
   );
-  const itemIdMap = new Map<number, number>();
+  const materialTypeMap = new Map(
+    readExcelTable<MaterialRow>(MATERIAL_TABLE_NAME).map(({ id, materialType }) => [id, materialType]),
+  );
+  const kindMap = new Map<number, MaterialSourceKind>();
   const joinedRows = new Set<EnvAnimalGatherRow>();
   const notes: string[] = [];
   for (const { id, name } of flattenLabelTree(labels)) {
@@ -37,13 +45,16 @@ export const readMaterialSourceItemIdMap = (
       .flatMap(({ gatherItemList }) => gatherItemList)
       .find((entry) => entry.id !== undefined && entry.id > 0)?.id;
     if (itemId === undefined) throw new InvalidOperationError(Operation.Read, name, "has no gather row giving an item");
+    const hasStandIn = materialTypeMap.get(itemId) !== CHEST_MATERIAL_TYPE;
     for (const row of rows) joinedRows.add(row);
-    itemIdMap.set(id, itemId);
-    notes.push(`${name} (${id}): gather rows ${rows.length}, gives item ${itemId}`);
+    kindMap.set(id, { hasStandIn, itemId });
+    notes.push(
+      `${name} (${id}): gather rows ${rows.length}, gives item ${itemId}${hasStandIn ? "" : ", no critter stand-in"}`,
+    );
   }
   for (const row of envAnimalGatherRows) {
     if (joinedRows.has(row)) continue;
     notes.push(`unmatched: animal ${row.animalId} (${animalNameMap.get(row.animalId) ?? "no English name"}), left out`);
   }
-  return { itemIdMap, notes };
+  return { kindMap, notes };
 };
