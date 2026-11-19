@@ -14,6 +14,7 @@ import { requireReadableCallSession } from "#server/services/message/call/requir
 import { requireThreadRoot } from "#server/services/message/call/requireThreadRoot";
 import { writeCallSummary } from "#server/services/message/call/writeCallSummary";
 import { createSystemRoomMessage } from "#server/services/message/createSystemRoomMessage";
+import { MessageCreationRejectionReasonMap } from "#server/services/message/moderation/MessageCreationRejectionReasonMap";
 import { getForbiddenError } from "#server/trpc/guards/getForbiddenError";
 import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
 import { router } from "#server/trpc/index";
@@ -26,9 +27,18 @@ import { setCameraEnabledInputSchema } from "#shared/models/db/call/SetCameraEna
 import { setHandRaisedInputSchema } from "#shared/models/db/call/SetHandRaisedInput";
 import { setMutedInputSchema } from "#shared/models/db/call/SetMutedInput";
 import { checkHasPermission } from "@esposter/db";
-import { callSessionIdSchema, DatabaseEntityType, MessageType, RoomPermission } from "@esposter/db-schema";
+import {
+  callSessionIdSchema,
+  DatabaseEntityType,
+  MessageCreationRejectionType,
+  MessageType,
+  RoomPermission,
+} from "@esposter/db-schema";
 import { noop } from "@esposter/shared";
 import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
+
+// A member timed out of the room is refused a join with the sentence the message gate gives a timed-out sender
+const timedOutMessage = MessageCreationRejectionReasonMap[MessageCreationRejectionType.Timeout];
 
 const baseCallRouter = router({
   createCall: standardAuthedProcedure
@@ -77,7 +87,7 @@ const baseCallRouter = router({
       // Nobody knocks on a room call — membership is its door, asked here as the webhook asks it of every connection,
       // So a member timed out of the room is refused a token rather than handed one the webhook then disconnects
       if (!(await checkIsCallConnectionAdmitted(ctx.db, callSessionId, user.id)))
-        throw getForbiddenError("You are timed out of this room");
+        throw getForbiddenError(timedOutMessage);
 
       const join = await useCallObject(callSessionId).joinCall({
         callSessionId,
@@ -85,7 +95,7 @@ const baseCallRouter = router({
         participant: createParticipant(user),
         sessionId: session.id,
       });
-      if (!join) throw getForbiddenError("You are timed out of this room");
+      if (!join) throw getForbiddenError(timedOutMessage);
       // A call's first join announces it in the thread the call is in, or the room, as a line with no duration yet
       if (join.isFirstJoiner)
         await createSystemRoomMessage(roomId, user.id, "", {
