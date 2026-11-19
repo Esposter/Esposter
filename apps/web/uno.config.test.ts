@@ -188,6 +188,7 @@ describe("unoConfig", () => {
           "ui-guide": "shadow-[inset_var(--ui-border-width)_0_0_0_var(--ui-divider)]",
           "ui-header-trigger": "data-[variant=Header]:aria-[expanded=true]:text-text data-[variant=Header]:aria-[expanded=true]:shadow-[inset_0_calc(var(--ui-indicator-width)*-2)_0_0_var(--ui-accent)]",
           "ui-item": "ui-row [@media(pointer:coarse)]:min-h-11 cursor-pointer hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] aria-selected:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] aria-[current=page]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] aria-[current=true]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] data-[highlighted]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)]",
+          "ui-popover-list": "max-h-[40dvh] py-1 flex flex-col overflow-y-auto ui-lifted",
           "ui-region-body": "flex flex-1 flex-col gap-3 min-h-0 of-y-auto",
           "ui-region-footer": "p-3 flex gap-2 items-center justify-end shrink-0",
           "ui-ring-outside": "focus-visible:outline-offset-[var(--ui-focus-width)]",

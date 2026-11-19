@@ -309,6 +309,8 @@ export default defineConfig({
     // Resource — rather than a row of a list or a menu. A frame, padded, that takes the style's hover as a button does
     "ui-card":
       "p-3 text-left cursor-pointer ui-frame hover:[filter:var(--ui-hover-filter)] hover:[background-image:var(--ui-hover-overlay)]",
+    // The scrolling list of a popover's items, lifted off the popover and held to the upper part of the screen at most
+    "ui-popover-list": "max-h-[40dvh] py-1 flex flex-col overflow-y-auto ui-lifted",
     // A guide line down the start edge of what it holds — a navigation's nested list, a thread — as a divider
     "ui-guide": "shadow-[inset_var(--ui-border-width)_0_0_0_var(--ui-divider)]",
     // The open trigger of a collapsible that heads a sector, drawn as a selected header tab is: in the full text colour under a heavier indicator

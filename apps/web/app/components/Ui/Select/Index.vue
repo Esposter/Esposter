@@ -35,7 +35,7 @@ defineProps<Props>();
   >
     <UiSelectActivator :="$attrs" :items :label :placeholder />
     <Select.Content ui-popover>
-      <div role="none" max-h="[40dvh]" py-1 flex flex-col of-y-auto ui-lifted>
+      <div role="none" ui-popover-list>
         <Select.Item
           v-for="{ description, icon, image, meaning, title, value } of items"
           :id="value"

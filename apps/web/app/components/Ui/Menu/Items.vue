@@ -20,7 +20,7 @@ const getItemRole = (isChecked: boolean | undefined, isSelected: boolean | undef
 </script>
 
 <template>
-  <div role="none" max-h="[40dvh]" py-1 flex flex-col of-y-auto ui-lifted>
+  <div role="none" ui-popover-list>
     <template
       v-for="(
         {
