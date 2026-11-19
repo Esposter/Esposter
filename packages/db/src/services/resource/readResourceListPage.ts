@@ -1,14 +1,15 @@
-import type { getResourceSearchHits } from "#server/services/resource/getResourceSearchHits";
-import type { Context } from "#server/trpc/context";
-import type { ResourceListColumnKey } from "#shared/models/resource/ResourceListColumnKey";
-import type { ResourceListPage } from "#shared/models/resource/ResourceListPage";
-import type { PageCursor, PageSort } from "@esposter/db-schema";
+import type { ResourceListColumnKey } from "#src/models/resource/ResourceListColumnKey";
+import type { getResourceSearchHits } from "#src/services/resource/getResourceSearchHits";
+import type { Database, PageCursor, PageSort } from "@esposter/db-schema";
 import type { SQL, SQLWrapper } from "drizzle-orm";
 
-import { getLastAccessedJoin } from "#server/services/resource/getLastAccessedJoin";
-import { getResourceNameSearchMatch } from "#server/services/resource/getResourceNameSearchMatch";
-import { resourceListSelection } from "#server/services/resource/resourceListSelection";
-import { createPageSort, getPageOrderBy, getPageWhere, toPage } from "@esposter/db";
+import { createPageSort } from "#src/services/pagination/createPageSort";
+import { getPageOrderBy } from "#src/services/pagination/getPageOrderBy";
+import { getPageWhere } from "#src/services/pagination/getPageWhere";
+import { toPage } from "#src/services/pagination/toPage";
+import { getLastAccessedJoin } from "#src/services/resource/getLastAccessedJoin";
+import { getResourceNameSearchMatch } from "#src/services/resource/getResourceNameSearchMatch";
+import { resourceListSelection } from "#src/services/resource/resourceListSelection";
 import { resourceAccessesInResource, resourcesInResource } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { and, count, eq, sql } from "drizzle-orm";
@@ -27,9 +28,9 @@ interface ReadResourceListPageOptions {
 // Cursor is the first page, and it also answers how many rows the where matches. A search's relevance keys are read off
 // Each row so the cursor can continue from the last one, and they are left out of the page
 export const readResourceListPage = async (
-  db: Context["db"],
+  db: Database,
   { cursor, limit, search, sort, userId, where }: ReadResourceListPageOptions,
-): Promise<ResourceListPage> => {
+) => {
   const columns = {
     createdAt: resourcesInResource.createdAt,
     deletedAt: resourcesInResource.deletedAt,

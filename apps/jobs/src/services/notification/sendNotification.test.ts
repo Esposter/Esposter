@@ -7,6 +7,7 @@ import { webpush } from "#src/services/notification/webpush.test";
 import { getReaderWakes, MockPublishedTopics } from "#src/services/realtime/publishTopics.test";
 import { createUser } from "#src/services/shared/createUser.test";
 import { getDb, runUnit } from "#src/services/shared/db";
+import { readNotificationRows } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import {
   AppNotificationType,
@@ -16,11 +17,12 @@ import {
   pushSubscriptionsInNotification,
   roomsInMessage,
   sessionsInAuth,
+  START_PAGE_CURSOR,
   usersInAuth,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { jsonDateParse, RoutePath } from "@esposter/shared";
-import { eq, getTableName } from "drizzle-orm";
+import { getTableName } from "drizzle-orm";
 import { v7 } from "uuid";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
@@ -41,6 +43,7 @@ describe(sendNotification, () => {
   const roomId = v7();
   const messageId = 1;
   const replyId = 2;
+  const bellPageLimit = 10;
   const actingSessionId = v7();
   const standardMessage = { id: messageId, message, roomId, userId: senderUserId };
   const { pushSubscription, seedSession } = setupWebPushSuite(() => mockDb, subscriberUserId);
@@ -153,8 +156,8 @@ describe(sendNotification, () => {
     expect(notification?.type).toBe(AppNotificationType.ResourceOperation);
   });
 
-  // The bell reads the rows of its recipient, as the web's notification list reads them, so the bell row a unit writes
-  // Is what wakes it
+  // The bell reads the rows of its recipient through the reader the web's notification list reads them with, so the bell row a
+  // Unit writes is what wakes it
   test("a bell row wakes its recipient's bell, which reads the rows of that recipient", async () => {
     expect.hasAssertions();
 
@@ -164,10 +167,7 @@ describe(sendNotification, () => {
 
     await expect(
       getReaderWakes(mockDb, (database) =>
-        database
-          .select()
-          .from(notificationsInNotification)
-          .where(eq(notificationsInNotification.userId, subscriberUserId)),
+        readNotificationRows(database, { cursor: START_PAGE_CURSOR, limit: bellPageLimit, userId: subscriberUserId }),
       ),
     ).resolves.toContain(getScopeTopic(getTableName(notificationsInNotification), "userId", subscriberUserId));
   });

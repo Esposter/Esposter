@@ -8,7 +8,7 @@ import { runUnit } from "#src/services/shared/db";
 import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
 import { readBlobNames } from "#src/services/storage/readBlobNames.test";
 import { getDataExportBlobName } from "#src/services/user/getDataExportBlobName";
-import { getFileBlobNames } from "@esposter/db";
+import { getFileBlobNames, readDataExport } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import {
   dataExportsInUser,
@@ -140,12 +140,10 @@ describe(exportUserDataHandler, () => {
     expect(row.expiresAt).toStrictEqual(
       new Date(row.readyAt.getTime() + Temporal.Duration.from({ days: 7 }).total("milliseconds")),
     );
-    // The owner's export panel reads its export by the row's id, so the unit's write to that row wakes it
-    await expect(
-      getReaderWakes(mockDb, (database) =>
-        database.query.dataExportsInUser.findFirst({ where: { id: { eq: dataExportId }, userId: { eq: userId } } }),
-      ),
-    ).resolves.toContain(getTableTopic(getTableName(dataExportsInUser)));
+    // The owner's export panel reads the owner's export, so the unit's write to that row wakes it
+    await expect(getReaderWakes(mockDb, (database) => readDataExport(database, userId))).resolves.toContain(
+      getTableTopic(getTableName(dataExportsInUser)),
+    );
   });
 
   test("a replayed event rebuilds the same blob, leaving one archive for the export", async () => {

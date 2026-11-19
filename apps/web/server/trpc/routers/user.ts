@@ -24,7 +24,6 @@ import { getPublicAssetUrl } from "#server/services/storage/getPublicAssetUrl";
 import { getStorageCredentials } from "#server/services/storage/getStorageCredentials";
 import { deleteAccountSessions } from "#server/services/user/deleteAccountSessions";
 import { getDataExportLink } from "#server/services/user/getDataExportLink";
-import { readActiveDataExport } from "#server/services/user/readActiveDataExport";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
@@ -40,7 +39,13 @@ import { userStatusIdsInputSchema } from "#shared/models/db/user/UserStatusIdsIn
 import { updateUserSettingsInputSchema } from "#shared/models/db/userSettings/UpdateUserSettingsInput";
 import { callBackgroundSlotSchema } from "#shared/models/message/call/CallBackgroundSlot";
 import { MAX_CALL_BACKGROUND_SIZE_BYTES } from "#shared/services/message/constants";
-import { createPresignedGetUrl, createPresignedPutUrl, inJsonArray } from "@esposter/db";
+import {
+  createPresignedGetUrl,
+  createPresignedPutUrl,
+  inJsonArray,
+  readActiveDataExport,
+  readDataExport,
+} from "@esposter/db";
 import {
   createApiKeyInputSchema,
   DatabaseEntityType,
@@ -187,17 +192,10 @@ export const userRouter = router({
       })),
     );
   }),
-  // The export the settings page shows: the one being built, else the latest export of any status, so a failed build is
-  // Shown rather than hidden behind an older ready one
-  readDataExport: standardAuthedProcedure.query<DataExportInUser | undefined>(async ({ ctx }) => {
-    const activeDataExport = await readActiveDataExport(ctx);
-    if (activeDataExport) return activeDataExport;
-    else
-      return ctx.db.query.dataExportsInUser.findFirst({
-        orderBy: { requestedAt: "desc" },
-        where: { userId: { eq: ctx.user.id } },
-      });
-  }),
+  // The export the settings page shows, read by the reader the jobs' export test reads the same way
+  readDataExport: standardAuthedProcedure.query<DataExportInUser | undefined>(({ ctx }) =>
+    readDataExport(ctx.db, ctx.user.id),
+  ),
   readStatuses: standardAuthedProcedure
     .meta({ staticReason: "The user object pushes each status change to its sockets as a typed event" })
     .input(userStatusIdsInputSchema)
@@ -282,7 +280,7 @@ export const userRouter = router({
       });
       return insertedDataExport;
     } else {
-      const activeDataExport = readActiveDataExport(ctx);
+      const activeDataExport = readActiveDataExport(ctx.db, ctx.user.id);
       return requireEntity(activeDataExport, DatabaseEntityType.DataExport, userId);
     }
   }),

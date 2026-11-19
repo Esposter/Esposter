@@ -24,7 +24,6 @@ import { incrementResourceViewCount } from "#server/services/resource/incrementR
 import { readResourceContent } from "#server/services/resource/readResourceContent";
 import { readResourceContentDelta } from "#server/services/resource/readResourceContentDelta";
 import { readResourceFiles } from "#server/services/resource/readResourceFiles";
-import { readResourceListPage } from "#server/services/resource/readResourceListPage";
 import { readResourceViewCount } from "#server/services/resource/readResourceViewCount";
 import { readStagedResourceContent } from "#server/services/resource/readStagedResourceContent";
 import { reapplyLiveResourceContent } from "#server/services/resource/reapplyLiveResourceContent";
@@ -67,7 +66,7 @@ import { ResourceOperationTitleMap } from "#shared/services/notification/Resourc
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { ResourceSortNamePageSortMap } from "#shared/services/resource/ResourceSortNamePageSortMap";
-import { createPresignedGetUrl, getContentBlobName } from "@esposter/db";
+import { createPresignedGetUrl, getContentBlobName, readResourceListPage } from "@esposter/db";
 import {
   DatabaseEntityType,
   ResourceActivityType,
@@ -381,7 +380,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
 
         const content = await readPublishedContent(ctx.db, resource, resource.publication.publishVersion);
         // Counted after the read is guaranteed to succeed, so a 404 never lands in the buckets. Awaited, so the write is recorded
-        // and published before the read returns; a failed increment still loses only one view, never the page.
+        // And published before the read returns; a failed increment still loses only one view, never the page.
         await incrementResourceViewCount(ctx.db, input);
         return { content, name: resource.name };
       }),

@@ -4,9 +4,8 @@ import type { ResourceListColumnKey } from "#shared/models/resource/ResourceList
 import type { ResourceListPage } from "#shared/models/resource/ResourceListPage";
 import type { PageCursor, PageSort } from "@esposter/db-schema";
 
-import { getResourceSearchHits } from "#server/services/resource/getResourceSearchHits";
 import { getResourcesWhere } from "#server/services/resource/getResourcesWhere";
-import { readResourceListPage } from "#server/services/resource/readResourceListPage";
+import { getResourceSearchHits, readResourceListPage } from "@esposter/db";
 import { getSearchExpression } from "@esposter/shared";
 
 // One page of the owner's resources matching the filter, in the order the sort declares. A search is ordered by how

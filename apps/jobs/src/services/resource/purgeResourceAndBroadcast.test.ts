@@ -6,10 +6,19 @@ import { createUser } from "#src/services/shared/createUser.test";
 import { runUnit } from "#src/services/shared/db";
 import { getBucket } from "#src/services/storage/getBucket";
 import { disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
+import { readDeletedResourcePage } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
-import { getScopeTopic, ResourceType, resourcesInResource, StorageBucket, usersInAuth } from "@esposter/db-schema";
+import {
+  getScopeTopic,
+  resourcesInResource,
+  ResourceType,
+  SortOrder,
+  START_PAGE_CURSOR,
+  StorageBucket,
+  usersInAuth,
+} from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
-import { and, eq, getTableName, isNotNull } from "drizzle-orm";
+import { getTableName } from "drizzle-orm";
 import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
@@ -19,6 +28,9 @@ vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/s
 
 describe(purgeResourceAndBroadcast, () => {
   const userId = v7();
+  // The bin's default order, newest deletion first, and a page size no test here outgrows
+  const binSort = { keys: ["deletedAt", "id"], order: SortOrder.Desc } as const;
+  const binPageLimit = 10;
 
   beforeAll(async () => {
     mockDb = (await createMockDb()).db;
@@ -50,10 +62,7 @@ describe(purgeResourceAndBroadcast, () => {
 
     await expect(
       getReaderWakes(mockDb, (database) =>
-        database
-          .select()
-          .from(resourcesInResource)
-          .where(and(eq(resourcesInResource.userId, userId), isNotNull(resourcesInResource.deletedAt))),
+        readDeletedResourcePage(database, { cursor: START_PAGE_CURSOR, limit: binPageLimit, sort: binSort, userId }),
       ),
     ).resolves.toContain(getScopeTopic(getTableName(resourcesInResource), "userId", userId));
   });

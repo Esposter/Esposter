@@ -7,15 +7,15 @@ import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { router } from "#server/trpc/index";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { readNotificationsInputSchema } from "#shared/models/db/notification/ReadNotificationsInput";
-import { NOTIFICATION_PAGE_SORT } from "#shared/services/notification/constants";
-import { createPageSort, getPageOrderBy, getPageWhere, toPage } from "@esposter/db";
+import { readNotificationRows, toPage } from "@esposter/db";
 import {
   DatabaseEntityType,
+  NOTIFICATION_PAGE_SORT,
   notificationsInNotification,
   selectNotificationInNotificationSchema,
 } from "@esposter/db-schema";
 import { Operation, takeOne } from "@esposter/shared";
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 
 export const notificationRouter = router({
   // Each write answers the unread count it leaves, read in the same batch, so the bell takes the settled value
@@ -43,16 +43,10 @@ export const notificationRouter = router({
     .input(readNotificationsInputSchema)
     .query<ReadNotificationsResult>(async ({ ctx, input: { cursor, limit } }) => {
       const userId = ctx.user.id;
-      const boundSort = createPageSort({ id: notificationsInNotification.id }, NOTIFICATION_PAGE_SORT);
       // The badge counts every unread row, not the ones a page happens to hold: unread notifications sit on pages the
       // Bell has never read, so the total is answered with the first page alone and the later pages leave it as it is
       const [rows, unreadRows] = await Promise.all([
-        ctx.db
-          .select()
-          .from(notificationsInNotification)
-          .where(and(eq(notificationsInNotification.userId, userId), getPageWhere(boundSort, cursor)))
-          .orderBy(...getPageOrderBy(boundSort, cursor))
-          .limit(limit + 1),
+        readNotificationRows(ctx.db, { cursor, limit, userId }),
         cursor.values.length === 0 ? selectUnreadNotificationCount(ctx.db, userId) : undefined,
       ]);
       const page = toPage(rows, NOTIFICATION_PAGE_SORT, cursor, limit);

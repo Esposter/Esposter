@@ -20,7 +20,6 @@ import { cloneContentAssets } from "#server/services/resource/cloneContentAssets
 import { DUPLICATE_NAME_SUFFIX } from "#server/services/resource/constants";
 import { createResourceRow } from "#server/services/resource/createResourceRow";
 import { getFavoriteJoin } from "#server/services/resource/getFavoriteJoin";
-import { getLastAccessedJoin } from "#server/services/resource/getLastAccessedJoin";
 import { getResourcesWhere } from "#server/services/resource/getResourcesWhere";
 import { omitDerivedContent } from "#server/services/resource/omitDerivedContent";
 import { readContentAtPointer } from "#server/services/resource/readContentAtPointer";
@@ -28,13 +27,11 @@ import { readResourceConsumers } from "#server/services/resource/readResourceCon
 import { readResourceContent } from "#server/services/resource/readResourceContent";
 import { readResourceDependencies } from "#server/services/resource/readResourceDependencies";
 import { readResourceList } from "#server/services/resource/readResourceList";
-import { readResourceListPage } from "#server/services/resource/readResourceListPage";
 import { readResourceTagCounts } from "#server/services/resource/readResourceTagCounts";
 import { readStoredResourceContent } from "#server/services/resource/readStoredResourceContent";
 import { reapplyLiveResourceContent } from "#server/services/resource/reapplyLiveResourceContent";
 import { requireAgentWritableOperations } from "#server/services/resource/requireAgentWritableOperations";
 import { ResourceCritiqueMap } from "#server/services/resource/ResourceCritiqueMap";
-import { resourceListSelection } from "#server/services/resource/resourceListSelection";
 import { saveResourceContent } from "#server/services/resource/saveResourceContent";
 import { readSnapshotHistory } from "#server/services/resource/snapshot/readSnapshotHistory";
 import { readSnapshotVersionContent } from "#server/services/resource/snapshot/readSnapshotVersionContent";
@@ -68,7 +65,17 @@ import { updateResourceInputSchema } from "#shared/models/db/resource/UpdateReso
 import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { createPageSort, getPageOrderBy, getPageWhere, inJsonArray, purgeResource, toPage } from "@esposter/db";
+import {
+  createPageSort,
+  getLastAccessedJoin,
+  getPageOrderBy,
+  getPageWhere,
+  inJsonArray,
+  purgeResource,
+  readDeletedResourcePage,
+  resourceListSelection,
+  toPage,
+} from "@esposter/db";
 import {
   DatabaseEntityType,
   McpScope,
@@ -220,13 +227,7 @@ export const resourceRouter = router({
   readDeletedResources: standardAuthedProcedure
     .input(readDeletedResourcesInputSchema)
     .query<ResourceListPage>(({ ctx, input: { cursor, limit, sort } }) =>
-      readResourceListPage(ctx.db, {
-        cursor,
-        limit,
-        sort,
-        userId: ctx.user.id,
-        where: getResourcesWhere(ctx.db, ctx.user.id, {}, true),
-      }),
+      readDeletedResourcePage(ctx.db, { cursor, limit, sort, userId: ctx.user.id }),
     ),
   // Starred-first rather than updated-first, which is the one thing the Favorites list route cannot do: the
   // Star's own timestamp is not a column any list shows

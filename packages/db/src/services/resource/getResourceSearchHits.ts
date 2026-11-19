@@ -1,10 +1,10 @@
-import type { Context } from "#server/trpc/context";
+import type { Database } from "@esposter/db-schema";
 
 import { sql } from "drizzle-orm";
 
 // The search index's rows for the words, each with its bm25 rank, where a lower rank is the closer match. The name is
 // Weighted 10 over the tags' 1, so among the matches the one whose name holds the word ranks first
-export const getResourceSearchHits = (db: Context["db"], expression: string) =>
+export const getResourceSearchHits = (db: Database, expression: string) =>
   db
     .select({
       id: sql<string>`resources_search.id`.as("id"),
