@@ -327,6 +327,15 @@ describe("userRouter", () => {
     expect(getMockPublishedTopics()).toContain(getTopic(TopicKind.Block, blockerSession.user.id));
   });
 
+  test("updates settings and reads them back", async () => {
+    expect.hasAssertions();
+
+    await caller.updateUserSettings({ isMuteOnJoin: true });
+    const userSettings = await caller.readUserSettings();
+
+    expect(userSettings.isMuteOnJoin).toBe(true);
+  });
+
   test("reads user", async () => {
     expect.hasAssertions();
 

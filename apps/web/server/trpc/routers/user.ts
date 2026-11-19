@@ -5,12 +5,10 @@ import type {
   DataExportInUser,
   DeleteAccountQueueMessage,
   ExportUserDataQueueMessage,
-  Topic,
   UserInAuth,
   UserSettingsInMessage,
   UserStatusInMessage,
 } from "@esposter/db-schema";
-import type { User } from "better-auth";
 import type { SetNonNullable } from "type-fest";
 
 import { auth } from "#server/auth";
@@ -32,7 +30,6 @@ import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperatio
 import { requireEntity } from "#server/trpc/guards/requireEntity";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { router } from "#server/trpc/index";
-import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { standardRateLimitedProcedure } from "#server/trpc/procedure/standardRateLimitedProcedure";
 import { generateCallBackgroundUploadUrlInputSchema } from "#shared/models/db/user/GenerateCallBackgroundUploadUrlInput";
@@ -57,13 +54,11 @@ import {
   DEFAULT_SPEAKER_VOLUME_PERCENTAGE,
   getDetectedUserStatus,
   getMimeCategory,
-  getTopic,
   getUserProfileImageBlobName,
   MimeCategory,
   NoiseSuppressionMode,
   QueueJob,
   StorageBucket,
-  TopicKind,
   userSettingsInMessage,
   usersInAuth,
   UserStatus,
@@ -72,9 +67,6 @@ import {
 } from "@esposter/db-schema";
 import { getResultAsync, noop, Operation } from "@esposter/shared";
 import { eq } from "drizzle-orm";
-
-// The session's own user, whose profile, settings and call backgrounds the procedures below read or change
-const userTopics = ({ ctx }: { ctx: { user: User } }): Topic[] => [getTopic(TopicKind.User, ctx.user.id)];
 
 export const userRouter = router({
   // Made here rather than by the plugin's own client call, which may not set a key's permissions: the server is the one
@@ -108,23 +100,22 @@ export const userRouter = router({
       });
       await deleteAccountSessions(ctx);
     }),
-  deleteCallBackground: getTopicsProcedure(
-    standardAuthedProcedure.input(callBackgroundSlotSchema),
-    userTopics,
-  ).mutation<void>(async ({ ctx, input: { slot } }) => {
-    const userId = ctx.user.id;
-    // Published as a bounded prefix rather than as the name itself, because a slot's name is fixed: a replace
-    // And a delete address the same blob, so a redelivered delete would take the replacement with it. The
-    // Bound is the instant the delete was decided, so a slot re-uploaded after it keeps its new image and the
-    // Worst case is a blob nothing points at rather than a background that vanishes after being replaced.
-    // The settings row keeps naming a slot that no longer resolves, which the picker already renders as no
-    // Background - so there is nothing to unwind here and no cleanup pass to schedule
-    await publishBlobPrefixDeletion(
-      StorageBucket.UserAssets,
-      getCallBackgroundBlobName(userId, slot),
-      new Date(),
-    ).match(noop, console.error);
-  }),
+  deleteCallBackground: standardAuthedProcedure
+    .input(callBackgroundSlotSchema)
+    .mutation<void>(async ({ ctx, input: { slot } }) => {
+      const userId = ctx.user.id;
+      // Published as a bounded prefix rather than as the name itself, because a slot's name is fixed: a replace
+      // And a delete address the same blob, so a redelivered delete would take the replacement with it. The
+      // Bound is the instant the delete was decided, so a slot re-uploaded after it keeps its new image and the
+      // Worst case is a blob nothing points at rather than a background that vanishes after being replaced.
+      // The settings row keeps naming a slot that no longer resolves, which the picker already renders as no
+      // Background - so there is nothing to unwind here and no cleanup pass to schedule
+      await publishBlobPrefixDeletion(
+        StorageBucket.UserAssets,
+        getCallBackgroundBlobName(userId, slot),
+        new Date(),
+      ).match(noop, console.error);
+    }),
   generateCallBackgroundUploadUrl: standardAuthedProcedure
     .meta({
       staticReason:
@@ -176,42 +167,38 @@ export const userRouter = router({
       );
       return { presignedUrl, publicUrl: getPublicAssetUrl(StorageBucket.PublicUserAssets, blobName) };
     }),
-  readCallBackgrounds: getTopicsProcedure(standardAuthedProcedure, userTopics).query<CallBackground[]>(
-    async ({ ctx }) => {
-      const userId = ctx.user.id;
-      const bucket = getBucket(StorageBucket.UserAssets);
-      const callBackgroundBlobs = await readCallBackgroundBlobs(bucket, userId);
-      // Partitioned in one pass rather than filtered twice, so the cap is applied to each slot exactly once
-      const servableCallBackgroundBlobs: CallBackgroundBlob[] = [];
-      const unservableBlobNames: string[] = [];
-      for (const callBackgroundBlob of callBackgroundBlobs)
-        if (checkIsServableCallBackground(callBackgroundBlob)) servableCallBackgroundBlobs.push(callBackgroundBlob);
-        else unservableBlobNames.push(callBackgroundBlob.name);
-      // A slot that came back over the cap is dropped from what the picker receives and reclaimed through the
-      // Same event every other blob delete goes through. Best-effort: a dropped publish only leaves a slot
-      // Occupied by a blob nothing will ever hand out
-      await publishBlobDeletion(StorageBucket.UserAssets, unservableBlobNames).match(noop, console.error);
-      return Promise.all(
-        servableCallBackgroundBlobs.map(async ({ name, slot }) => ({
-          presignedUrl: await createPresignedGetUrl(getStorageCredentials(), StorageBucket.UserAssets, name),
-          slot,
-        })),
-      );
-    },
-  ),
+  readCallBackgrounds: standardAuthedProcedure.query<CallBackground[]>(async ({ ctx }) => {
+    const userId = ctx.user.id;
+    const bucket = getBucket(StorageBucket.UserAssets);
+    const callBackgroundBlobs = await readCallBackgroundBlobs(bucket, userId);
+    // Partitioned in one pass rather than filtered twice, so the cap is applied to each slot exactly once
+    const servableCallBackgroundBlobs: CallBackgroundBlob[] = [];
+    const unservableBlobNames: string[] = [];
+    for (const callBackgroundBlob of callBackgroundBlobs)
+      if (checkIsServableCallBackground(callBackgroundBlob)) servableCallBackgroundBlobs.push(callBackgroundBlob);
+      else unservableBlobNames.push(callBackgroundBlob.name);
+    // A slot that came back over the cap is dropped from what the picker receives and reclaimed through the
+    // Same event every other blob delete goes through. Best-effort: a dropped publish only leaves a slot
+    // Occupied by a blob nothing will ever hand out
+    await publishBlobDeletion(StorageBucket.UserAssets, unservableBlobNames).match(noop, console.error);
+    return Promise.all(
+      servableCallBackgroundBlobs.map(async ({ name, slot }) => ({
+        presignedUrl: await createPresignedGetUrl(getStorageCredentials(), StorageBucket.UserAssets, name),
+        slot,
+      })),
+    );
+  }),
   // The export the settings page shows: the one being built, else the latest export of any status, so a failed build is
   // Shown rather than hidden behind an older ready one
-  readDataExport: getTopicsProcedure(standardAuthedProcedure, userTopics).query<DataExportInUser | undefined>(
-    async ({ ctx }) => {
-      const activeDataExport = await readActiveDataExport(ctx);
-      if (activeDataExport) return activeDataExport;
-      else
-        return ctx.db.query.dataExportsInUser.findFirst({
-          orderBy: { requestedAt: "desc" },
-          where: { userId: { eq: ctx.user.id } },
-        });
-    },
-  ),
+  readDataExport: standardAuthedProcedure.query<DataExportInUser | undefined>(async ({ ctx }) => {
+    const activeDataExport = await readActiveDataExport(ctx);
+    if (activeDataExport) return activeDataExport;
+    else
+      return ctx.db.query.dataExportsInUser.findFirst({
+        orderBy: { requestedAt: "desc" },
+        where: { userId: { eq: ctx.user.id } },
+      });
+  }),
   readStatuses: standardAuthedProcedure
     .meta({ staticReason: "The user object pushes each status change to its sockets as a typed event" })
     .input(userStatusIdsInputSchema)
@@ -241,76 +228,68 @@ export const userRouter = router({
     }),
   // Public profile identity — projects only the allowlisted columns so private fields (email) never
   // Leave the database, and runs unauthenticated on the rate-limited procedure
-  readUser: getTopicsProcedure(standardRateLimitedProcedure.input(readUserInputSchema), ({ input }) => [
-    getTopic(TopicKind.User, input),
-  ]).query<Pick<UserInAuth, "biography" | "image" | "name">>(({ ctx, input }) =>
-    requireEntity(
-      ctx.db.query.usersInAuth.findFirst({
-        columns: { biography: true, image: true, name: true },
-        where: { id: { eq: input } },
-      }),
-      DatabaseEntityType.User,
-      input,
+  readUser: standardRateLimitedProcedure
+    .input(readUserInputSchema)
+    .query<Pick<UserInAuth, "biography" | "image" | "name">>(({ ctx, input }) =>
+      requireEntity(
+        ctx.db.query.usersInAuth.findFirst({
+          columns: { biography: true, image: true, name: true },
+          where: { id: { eq: input } },
+        }),
+        DatabaseEntityType.User,
+        input,
+      ),
     ),
-  ),
-  readUserSettings: getTopicsProcedure(standardAuthedProcedure, userTopics).query<UserSettingsInMessage>(
-    async ({ ctx }) => {
-      const foundUserSettings = await ctx.db.query.userSettingsInMessage.findFirst({
-        where: { userId: { eq: ctx.user.id } },
-      });
-      if (foundUserSettings) return foundUserSettings;
-      // No row yet — return the defaults without persisting; the first update upserts the row
-      else
-        return {
-          autoIdleThresholdMs: DEFAULT_AUTO_IDLE_THRESHOLD_MS,
-          createdAt: new Date(),
-          deletedAt: null,
-          inputSensitivityDecibels: DEFAULT_INPUT_SENSITIVITY_DECIBELS,
-          isDeafenOnJoin: false,
-          isMuteOnJoin: false,
-          microphoneVolumePercentage: DEFAULT_MICROPHONE_VOLUME_PERCENTAGE,
-          noiseSuppressionMode: NoiseSuppressionMode.Custom,
-          pushToTalkKeybind: "",
-          pushToTalkReleaseDelayMs: DEFAULT_PUSH_TO_TALK_RELEASE_DELAY_MS,
-          speakerVolumePercentage: DEFAULT_SPEAKER_VOLUME_PERCENTAGE,
-          updatedAt: new Date(),
-          userId: ctx.user.id,
-          virtualBackground: "",
-          voiceInputMode: VoiceInputMode.VoiceActivity,
-        } satisfies UserSettingsInMessage;
-    },
-  ),
+  readUserSettings: standardAuthedProcedure.query<UserSettingsInMessage>(async ({ ctx }) => {
+    const foundUserSettings = await ctx.db.query.userSettingsInMessage.findFirst({
+      where: { userId: { eq: ctx.user.id } },
+    });
+    if (foundUserSettings) return foundUserSettings;
+    // No row yet — return the defaults without persisting; the first update upserts the row
+    else
+      return {
+        autoIdleThresholdMs: DEFAULT_AUTO_IDLE_THRESHOLD_MS,
+        createdAt: new Date(),
+        deletedAt: null,
+        inputSensitivityDecibels: DEFAULT_INPUT_SENSITIVITY_DECIBELS,
+        isDeafenOnJoin: false,
+        isMuteOnJoin: false,
+        microphoneVolumePercentage: DEFAULT_MICROPHONE_VOLUME_PERCENTAGE,
+        noiseSuppressionMode: NoiseSuppressionMode.Custom,
+        pushToTalkKeybind: "",
+        pushToTalkReleaseDelayMs: DEFAULT_PUSH_TO_TALK_RELEASE_DELAY_MS,
+        speakerVolumePercentage: DEFAULT_SPEAKER_VOLUME_PERCENTAGE,
+        updatedAt: new Date(),
+        userId: ctx.user.id,
+        virtualBackground: "",
+        voiceInputMode: VoiceInputMode.VoiceActivity,
+      } satisfies UserSettingsInMessage;
+  }),
   // A request while one is queued or building conflicts with that export's row, so nothing is inserted and the
   // Active one comes back unpublished. The event goes out after the row lands; a refused publish deletes the row, so
   // The retry queues a new export rather than returning one that nothing will build
-  requestDataExport: getTopicsProcedure(standardAuthedProcedure, userTopics).mutation<DataExportInUser>(
-    async ({ ctx }) => {
-      const userId = ctx.user.id;
-      const [insertedDataExport] = await ctx.db
-        .insert(dataExportsInUser)
-        .values({ status: DataExportStatus.Queued, userId })
-        .onConflictDoNothing()
-        .returning();
-      if (insertedDataExport) {
-        const data: ExportUserDataQueueMessage = { dataExportId: insertedDataExport.id };
-        await getResultAsync(() => getJobQueue(QueueJob.ExportUserData).send(data)).match(noop, async (error) => {
-          await ctx.db.delete(dataExportsInUser).where(eq(dataExportsInUser.id, insertedDataExport.id));
-          throw error;
-        });
-        return insertedDataExport;
-      } else {
-        const activeDataExport = readActiveDataExport(ctx);
-        return requireEntity(activeDataExport, DatabaseEntityType.DataExport, userId);
-      }
-    },
-  ),
-  // A post card shows its author's name and image, so the feed reads the change as well. So does every other read that
-  // Names the person beyond their own profile: the rooms they are in, and the requests, blocks, post threads, bans, invites
-  // And log entries that show them, which publishProfileTopics lists
-  updateUser: getTopicsProcedure(standardAuthedProcedure.input(updateUserInputSchema), (options) => [
-    ...userTopics(options),
-    getTopic(TopicKind.Feed, "posts"),
-  ]).mutation<UserInAuth>(async ({ ctx, input }) => {
+  requestDataExport: standardAuthedProcedure.mutation<DataExportInUser>(async ({ ctx }) => {
+    const userId = ctx.user.id;
+    const [insertedDataExport] = await ctx.db
+      .insert(dataExportsInUser)
+      .values({ status: DataExportStatus.Queued, userId })
+      .onConflictDoNothing()
+      .returning();
+    if (insertedDataExport) {
+      const data: ExportUserDataQueueMessage = { dataExportId: insertedDataExport.id };
+      await getResultAsync(() => getJobQueue(QueueJob.ExportUserData).send(data)).match(noop, async (error) => {
+        await ctx.db.delete(dataExportsInUser).where(eq(dataExportsInUser.id, insertedDataExport.id));
+        throw error;
+      });
+      return insertedDataExport;
+    } else {
+      const activeDataExport = readActiveDataExport(ctx);
+      return requireEntity(activeDataExport, DatabaseEntityType.DataExport, userId);
+    }
+  }),
+  // The rooms the person is in, and the requests, blocks, post threads, bans, invites and log entries that show them, are
+  // Published by publishProfileTopics, since a save reaches those readers through their rows rather than through its own
+  updateUser: standardAuthedProcedure.input(updateUserInputSchema).mutation<UserInAuth>(async ({ ctx, input }) => {
     const updatedUser = requireMutation(
       (await ctx.db.update(usersInAuth).set(input).where(eq(usersInAuth.id, ctx.user.id)).returning())[0],
       Operation.Update,
@@ -323,23 +302,22 @@ export const userRouter = router({
     });
     return updatedUser;
   }),
-  updateUserSettings: getTopicsProcedure(
-    standardAuthedProcedure.input(updateUserSettingsInputSchema),
-    userTopics,
-  ).mutation<UserSettingsInMessage>(async ({ ctx, input }) =>
-    requireMutation(
-      (
-        await ctx.db
-          .insert(userSettingsInMessage)
-          .values({ ...input, userId: ctx.user.id })
-          .onConflictDoUpdate({ set: input, target: userSettingsInMessage.userId })
-          .returning()
-      )[0],
-      Operation.Update,
-      DatabaseEntityType.UserSettings,
-      JSON.stringify(input),
+  updateUserSettings: standardAuthedProcedure
+    .input(updateUserSettingsInputSchema)
+    .mutation<UserSettingsInMessage>(async ({ ctx, input }) =>
+      requireMutation(
+        (
+          await ctx.db
+            .insert(userSettingsInMessage)
+            .values({ ...input, userId: ctx.user.id })
+            .onConflictDoUpdate({ set: input, target: userSettingsInMessage.userId })
+            .returning()
+        )[0],
+        Operation.Update,
+        DatabaseEntityType.UserSettings,
+        JSON.stringify(input),
+      ),
     ),
-  ),
   upsertStatus: standardAuthedProcedure
     .meta({ staticReason: "The user object pushes each status change to its sockets as a typed event" })
     .input(upsertStatusInputSchema)
