@@ -9,13 +9,15 @@ describe(getPostRanking, () => {
   test("ranks a more-liked post above a less-liked one posted at the same time", () => {
     expect.hasAssertions();
 
-    expect(getPostRanking(likes, createdAt)).toBeGreaterThan(getPostRanking(1, createdAt));
+    expect(getPostRanking(likes, createdAt)).toBe(1);
+    expect(getPostRanking(1, createdAt)).toBe(0);
   });
 
   test("ranks a downvoted post below one with no votes", () => {
     expect.hasAssertions();
 
-    expect(getPostRanking(-likes, createdAt)).toBeLessThan(getPostRanking(0, createdAt));
+    expect(getPostRanking(-likes, createdAt)).toBe(-1);
+    expect(getPostRanking(0, createdAt)).toBe(0);
   });
 
   test("trades one age unit for one order of magnitude of likes", () => {

@@ -371,7 +371,7 @@ describe(createPanzoom, () => {
     expect(panzoom.getPan()).toStrictEqual({ x: 25, y: 0 });
   });
 
-  test("zoomIn and zoomOut step the scale by the step, animated unless the call says otherwise", () => {
+  test("zoomIn and zoomOut step the scale by the step, and the default zoom animates", () => {
     expect.hasAssertions();
 
     const element = getElement();

@@ -1,5 +1,3 @@
-import { InvalidOperationError } from "#src/models/error/InvalidOperationError";
-import { Operation } from "#src/models/shared/Operation";
 import { getResultAsync } from "#src/services/error/getResultAsync";
 import { noop } from "#src/util/function/noop";
 import { settleAll } from "#src/util/promise/settleAll";
@@ -119,7 +117,7 @@ describe(settleAll, () => {
       await expect(
         settleAll([() => Promise.resolve("a")], concurrencyLimit),
       ).rejects.toThrowErrorMatchingInlineSnapshot(
-        `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, settleAll.name, "the concurrency limit is not a whole number of at least one").message}]`,
+        `[InvalidOperationError: Invalid operation: Read, name: settleAll, the concurrency limit is not a whole number of at least one]`,
       );
     },
   );

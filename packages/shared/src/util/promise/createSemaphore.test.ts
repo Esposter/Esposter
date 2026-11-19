@@ -1,5 +1,3 @@
-import { InvalidOperationError } from "#src/models/error/InvalidOperationError";
-import { Operation } from "#src/models/shared/Operation";
 import { createSemaphore } from "#src/util/promise/createSemaphore";
 import { describe, expect, test } from "vitest";
 
@@ -72,7 +70,7 @@ describe(createSemaphore, () => {
       expect.hasAssertions();
 
       expect(() => createSemaphore(slots)).toThrowErrorMatchingInlineSnapshot(
-        `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, createSemaphore.name, "the slot count is not a whole number of at least one").message}]`,
+        `[InvalidOperationError: Invalid operation: Read, name: createSemaphore, the slot count is not a whole number of at least one]`,
       );
     },
   );

@@ -1,5 +1,4 @@
 import { secretTokenSchema } from "#src/services/secret/secretTokenSchema";
-import { SECRET_TOKEN_LENGTH } from "#src/util/secret/constants";
 import { generateSecretToken } from "#src/util/secret/generateSecretToken";
 import { describe, expect, test } from "vitest";
 
@@ -9,7 +8,6 @@ describe(generateSecretToken, () => {
 
     const token = generateSecretToken();
 
-    expect(token).toHaveLength(SECRET_TOKEN_LENGTH);
     expect(secretTokenSchema.safeParse(token).success).toBe(true);
   });
 

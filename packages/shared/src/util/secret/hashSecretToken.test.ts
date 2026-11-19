@@ -1,4 +1,3 @@
-import { SECRET_TOKEN_HASH_LENGTH } from "#src/util/secret/constants";
 import { hashSecretToken } from "#src/util/secret/hashSecretToken";
 import { describe, expect, test } from "vitest";
 
@@ -10,6 +9,5 @@ describe(hashSecretToken, () => {
     await expect(hashSecretToken("abc")).resolves.toBe(
       "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad",
     );
-    await expect(hashSecretToken("abc")).resolves.toHaveLength(SECRET_TOKEN_HASH_LENGTH);
   });
 });

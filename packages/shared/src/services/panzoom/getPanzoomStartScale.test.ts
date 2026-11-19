@@ -15,7 +15,7 @@ describe(getPanzoomStartScale, () => {
     expect(getPanzoomStartScale(measure, { startScale: 1 })).toBe(1);
   });
 
-  test("the start scale is clamped to the limits, the one a start lands on and a pan at the start is judged against", () => {
+  test("a start scale below the minimum is clamped up to it", () => {
     expect.hasAssertions();
 
     expect(getPanzoomStartScale(measure, { startScale: 0.05 })).toBe(0.125);
