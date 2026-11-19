@@ -1,6 +1,6 @@
-// A wiki enemy name a stage's join refused: the count of monsters whose English name it is, zero when none holds it and more
-// Than one when several do, so the name's monster is never guessed
-export interface ImaginariumStageRefusal {
-  count: number;
-  name: string;
-}
+// A wiki enemy name a stage's join refused, and why, so no monster is ever guessed. Its monsters span other than one describe
+// Entry, which the count gives (zero when none holds the name, more than one when several do); or its describe entry's codex
+// Names no monster row the game gives base stats and curves to fight as
+export type ImaginariumStageRefusal =
+  | { count: number; name: string; reason: "entries" }
+  | { describeId: number; name: string; reason: "codex" };

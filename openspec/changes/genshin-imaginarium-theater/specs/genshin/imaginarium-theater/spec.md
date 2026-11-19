@@ -192,28 +192,40 @@ A season's opening characters SHALL each have the trial version the season names
 - **THEN** the run fails
 - **AND** no season is written
 
-### Requirement: A stage's enemy names resolve to a codex entry only when its monsters share one
+### Requirement: A stage's enemy names resolve to the canonical monster of one codex entry, with its stats at the stage's level
 
-A wiki enemy name of a stage SHALL resolve to a codex entry only when every monster whose English name is that name shares one describe id, and a name that no monster holds, or whose monsters span several describe entries, SHALL be refused and listed on its stage with its count of entries.
+A wiki enemy name of a stage SHALL resolve to a codex entry only when every monster whose English name is that name shares one describe id. The entry's enemy SHALL be the monster its codex row names, filed under that entry, with health, attack and defense at the stage's Easy level as their bases times their grow curves' multipliers at that level. A name whose monsters span several describe entries or that no monster holds, and an entry whose codex names no such monster, SHALL be refused and listed on its stage.
 
-#### Scenario: A name whose monsters share one describe entry resolves to that entry
+#### Scenario: A name whose monsters share one describe entry resolves to that entry's canonical monster
 
-- **GIVEN** every monster whose name is the wiki's enemy name shares one describe id
+- **GIVEN** every monster whose name is the wiki's enemy name shares one describe id, and its codex row names a monster filed under that entry
 - **WHEN** the stage is joined to the game's monsters
-- **THEN** the name resolves to that describe entry
+- **THEN** the name resolves to that monster, with its health, attack and defense at the stage's level
+
+#### Scenario: A stage enemy's health at a level equals its base times the health curve at that level
+
+- **GIVEN** a monster whose health base and health grow curve are given
+- **WHEN** its stats are read at a level
+- **THEN** its health is the base times the curve's multiplier at that level
 
 #### Scenario: A name whose monsters span several describe entries is refused with their count
 
 - **GIVEN** the monsters whose name is the wiki's enemy name span several describe ids
 - **WHEN** the stage is joined to the game's monsters
-- **THEN** the name is listed on the stage as refused, with the count of describe entries
+- **THEN** the name is listed on the stage as refused with reason `entries`, with the count of describe entries
 - **AND** no entry is guessed for it
 
 #### Scenario: A name held by no monster is refused with a count of zero
 
 - **GIVEN** no monster's name is the wiki's enemy name
 - **WHEN** the stage is joined to the game's monsters
-- **THEN** the name is listed on the stage as refused, with a count of zero
+- **THEN** the name is listed on the stage as refused with reason `entries` and a count of zero
+
+#### Scenario: A codex entry that names no fightable monster refuses its name
+
+- **GIVEN** a wiki enemy name resolves to one describe entry whose codex names no monster filed under it, or names a monster with no base curve
+- **WHEN** the stage is joined
+- **THEN** the name is listed on the stage as refused with reason `codex` and that describe id
 
 ### Requirement: A Companion event offers characters of its pool's element, drawn from the eligible characters
 

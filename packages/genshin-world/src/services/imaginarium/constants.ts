@@ -28,8 +28,6 @@ export const IMAGINARIUM_BATTLE_CHOICE_COUNT = 2;
 // The Fantasia Flowers a Companion: Select or Companion: Random event costs. Select's 80 is the dump's two Companion effect rows'
 // Price, and Random's is the wiki's
 export const IMAGINARIUM_COMPANION_FLOWER_PRICE = 80;
-// The Fantasia Flowers a Companion: Invite event costs, as the wiki gives it; the dump has no row for Invite
-export const IMAGINARIUM_COMPANION_INVITE_FLOWER_PRICE = 100;
 // The chances to reroll the events a Mystery Cache's Surprise: Reroll! option gives, and the rerolls one reroll spends. The
 // Wiki gives no base count of rerolls and no price of one, so both are provisional
 export const IMAGINARIUM_REROLL_CHANCES = 2;

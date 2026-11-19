@@ -19,6 +19,7 @@ import {
 import { findMonsterCodexRow } from "#src/services/genshinAssets/enemies/findMonsterCodexRow";
 import { getGrowCurve } from "#src/services/genshinAssets/enemies/getGrowCurve";
 import { readRegionCampsData } from "#src/services/genshinAssets/enemies/readRegionCampsData";
+import { toLevelCurve } from "#src/services/genshinAssets/enemies/toLevelCurve";
 import { MONDSTADT_BOUNTY_TARGET_NAMES } from "#src/services/genshinAssets/reputation/constants";
 import { readMonsterNames } from "#src/services/genshinAssets/reputation/readMonsterNames";
 import { toBountyTargetIds } from "#src/services/genshinAssets/reputation/toBountyTargetIds";
@@ -83,16 +84,8 @@ export const buildEnemyKinds = async (): Promise<Record<string, unknown>> => {
   const curves = new Set(
     enemyKinds.flatMap(({ attackCurve, defenseCurve, healthCurve }) => [attackCurve, defenseCurve, healthCurve]),
   );
-  const levelRows = monsterCurveRows.toSorted((firstRow, secondRow) => firstRow.level - secondRow.level);
   const levelCurves = Object.fromEntries(
-    [...curves].toSorted().map((curve) => [
-      curve,
-      levelRows.map(({ curveInfos, level }) => {
-        const value = curveInfos.find(({ type }) => type === curve)?.GGKIEIJLCJJ;
-        if (value === undefined) throw new InvalidOperationError(Operation.Read, curve, `has no level ${level}`);
-        return value;
-      }),
-    ]),
+    [...curves].toSorted().map((curve) => [curve, toLevelCurve(monsterCurveRows, curve)]),
   );
   return { [`${GameDataset.Enemies}/kinds`]: enemyKinds, [`${GameDataset.Enemies}/levelCurves`]: levelCurves };
 };
