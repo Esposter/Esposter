@@ -9,10 +9,8 @@ interface Props {
 
 defineProps<Props>();
 const voiceDeviceSettingsStore = useVoiceDeviceSettingsStore();
-const { cameraDeviceId, inputDeviceId, outputDeviceId } = storeToRefs(voiceDeviceSettingsStore);
-// One enumeration feeds all three pickers — a call per picker re-enumerates the same device list and
-// Registers a devicechange listener of its own for it
-const { audioInputs, audioOutputs, videoInputs } = useDevicesList();
+const { audioInputs, audioOutputs, cameraDeviceId, inputDeviceId, outputDeviceId, videoInputs } =
+  storeToRefs(voiceDeviceSettingsStore);
 </script>
 
 <template>

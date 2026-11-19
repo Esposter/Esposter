@@ -4,13 +4,16 @@ import type { UserSettingsInMessage } from "@esposter/db-schema";
 import { MESSAGE_DISPLAY_NAME } from "#shared/services/message/constants";
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiToken } from "#src/models/ui/UiToken";
+import { useVoiceDeviceSettingsStore } from "#src/store/message/user/settings/voiceDevice";
 
 interface Props {
   userSettings: UserSettingsInMessage;
 }
 
 defineProps<Props>();
-const { audioInputs, ensurePermissions, permissionGranted } = useDevicesList({ requestPermissions: false });
+const voiceDeviceSettingsStore = useVoiceDeviceSettingsStore();
+const { audioInputs, permissionGranted } = storeToRefs(voiceDeviceSettingsStore);
+const { ensurePermissions } = voiceDeviceSettingsStore;
 </script>
 
 <template>

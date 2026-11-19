@@ -6,5 +6,17 @@ export const useVoiceDeviceSettingsStore = defineStore("message/user/settings/vo
   const inputDeviceId = useLocalStorage(LocalStorageKey.VoiceInputDeviceId, "");
   const outputDeviceId = useLocalStorage(LocalStorageKey.VoiceOutputDeviceId, "");
   const cameraDeviceId = useLocalStorage(LocalStorageKey.VoiceCameraDeviceId, "");
-  return { cameraDeviceId, inputDeviceId, outputDeviceId };
+  // One enumeration and one devicechange listener serve every device picker and the input sensitivity panel, so each
+  // of them reads the same list rather than enumerating and listening for its own
+  const { audioInputs, audioOutputs, ensurePermissions, permissionGranted, videoInputs } = useDevicesList();
+  return {
+    audioInputs,
+    audioOutputs,
+    cameraDeviceId,
+    ensurePermissions,
+    inputDeviceId,
+    outputDeviceId,
+    permissionGranted,
+    videoInputs,
+  };
 });
