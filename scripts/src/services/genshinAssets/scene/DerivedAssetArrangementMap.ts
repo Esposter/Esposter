@@ -32,6 +32,8 @@ export const DerivedAssetArrangementMap: Record<
     ratios: Record<string, ArrangementRatio>;
   }
 > = {
+  // The animals and the fishing scene have no parts laid out in a witness, so neither has an arrangement of its own
+  [DerivedAssetComponent.Animals]: { explainedOffsets: {}, families: [], ratios: {} },
   // Each sub-area with a catalogued extent has no arrangement of its own: its parts are its region's
   [DerivedAssetComponent.ArdraviValley]: { explainedOffsets: {}, families: [], ratios: {} },
   [DerivedAssetComponent.AshavanRealm]: { explainedOffsets: {}, families: [], ratios: {} },
@@ -53,6 +55,7 @@ export const DerivedAssetArrangementMap: Record<
   [DerivedAssetComponent.EasybreezeHolidayResort]: { explainedOffsets: {}, families: [], ratios: {} },
   [DerivedAssetComponent.ErinnyesForest]: { explainedOffsets: {}, families: [], ratios: {} },
   [DerivedAssetComponent.EverfrozenEarth]: { explainedOffsets: {}, families: [], ratios: {} },
+  [DerivedAssetComponent.Fishing]: { explainedOffsets: {}, families: [], ratios: {} },
   // The Court's parts stand where the world's own data places them, as Windrise's do, so its families wait on the export
   [DerivedAssetComponent.Fontaine]: { explainedOffsets: {}, families: [], ratios: {} },
   [DerivedAssetComponent.FontaineResearchInstituteOfKineticEnergyEngineeringRegion]: {

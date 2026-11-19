@@ -9,7 +9,11 @@ import { parseDerivedAssetComponent } from "#src/services/genshinAssets/shared/p
 import { defineCommand } from "citty";
 import { join } from "node:path";
 
-const AXIS_NAMES = ["x", "y", "z"];
+const AXES = [
+  ["x", 0],
+  ["y", 1],
+  ["z", 2],
+] as const;
 
 export const boundsCommand: SubCommandsDef[string] = defineCommand({
   args: {
@@ -32,9 +36,9 @@ export const boundsCommand: SubCommandsDef[string] = defineCommand({
   run: async ({ args }) => {
     const { assets } = getComponentDirectory(parseDerivedAssetComponent(args.component));
     const { maximum, minimum } = await readMeshBounds(join(assets, AssetType.Mesh, `${args.name}.obj`));
-    for (const [index, axis] of AXIS_NAMES.entries())
+    for (const [axisName, axis] of AXES)
       console.log(
-        `${axis}: ${formatMeasurement(minimum[index])} to ${formatMeasurement(maximum[index])} m, size ${formatMeasurement(maximum[index] - minimum[index])} m`,
+        `${axisName}: ${formatMeasurement(minimum[axis])} to ${formatMeasurement(maximum[axis])} m, size ${formatMeasurement(maximum[axis] - minimum[axis])} m`,
       );
   },
 });

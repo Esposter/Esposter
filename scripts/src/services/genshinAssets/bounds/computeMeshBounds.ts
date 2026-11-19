@@ -2,6 +2,8 @@ import type { MeshBounds } from "#src/models/genshinAssets/bounds/MeshBounds";
 
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
+const AXES = [0, 1, 2] as const;
+
 // The lowest and the highest of a mesh's vertices on each axis, in the game's own axes and in metres as Unity keeps them.
 // A mesh with no vertices has no bounds to read, so it is refused rather than measured as infinite
 export const computeMeshBounds = (vertices: [number, number, number][]): MeshBounds => {
@@ -9,7 +11,7 @@ export const computeMeshBounds = (vertices: [number, number, number][]): MeshBou
   const minimum: MeshBounds["minimum"] = [Infinity, Infinity, Infinity];
   const maximum: MeshBounds["maximum"] = [-Infinity, -Infinity, -Infinity];
   for (const vertex of vertices)
-    for (let axis = 0; axis < 3; axis++) {
+    for (const axis of AXES) {
       minimum[axis] = Math.min(minimum[axis], vertex[axis]);
       maximum[axis] = Math.max(maximum[axis], vertex[axis]);
     }
