@@ -5,15 +5,14 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
-const FILE_NAME = "module.ts";
-const HOOKS_DIRECTORY = join(REPOSITORY_ROOT, ".githooks");
-
 const runGit = (root: string, args: string[]): string =>
   execFileSync("git", ["-c", "commit.gpgsign=false", ...args], { cwd: root, encoding: "utf8" });
 
 // A file whose two declarations are both unformatted at the end, so a format pass that reaches either one is visible.
 // The first is the staged hunk; the last is the unstaged one.
 describe("pre-commit hook", () => {
+  const FILE_NAME = "module.ts";
+  const HOOKS_DIRECTORY = join(REPOSITORY_ROOT, ".githooks");
   let root: string;
 
   beforeEach(() => {
