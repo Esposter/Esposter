@@ -10,7 +10,7 @@ import { applyOptimisticReplacement } from "#src/services/shared/applyOptimistic
 import { LINKED_ACCOUNTS_MUTATION_KEY } from "#src/services/user/constants";
 import { useAlertStore } from "#src/store/alert";
 import { useUserLinkedAccountDialogStore } from "#src/store/user/linkedAccountDialog";
-import { RoutePath } from "@esposter/shared";
+import { getOwnValue, RoutePath } from "@esposter/shared";
 
 interface Props {
   section?: undefined | UserSettingsPageSection;
@@ -53,7 +53,7 @@ const unlinkSelectedAccount = () => {
 // Reaches the write that issued it
 const linkError = router.currentRoute.value.query.error;
 if (typeof linkError === "string") {
-  createAlert(AccountLinkErrorMessageMap[linkError] ?? "Your account could not be linked.", "error");
+  createAlert(getOwnValue(AccountLinkErrorMessageMap, linkError) ?? "Your account could not be linked.", "error");
   // The alert is this outcome's delivery, so the param has done its job — left in the url it replays the toast on
   // Every reload of it. Client-side only: rewriting it during ssr answers the request with a redirect instead
   onMounted(async () => {
