@@ -15,8 +15,10 @@ interface Props {
 
 const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
 const { isDisabled, node } = defineProps<Props>();
+// Each choice keyed by its place, which the list's options and the answer's values are both read through
+const keyedChoices = computed(() => getSurveyKeyedChoices(node.props.choices));
 const items = computed<(UiListItem<string> & { imageLink: string })[]>(() =>
-  getSurveyKeyedChoices(node.props.choices).map(({ choice, key }) => ({
+  keyedChoices.value.map(({ choice, key }) => ({
     hasMarkSlot: true,
     imageLink: choice.imageLink,
     title: getSurveyChoiceText(choice),
@@ -35,16 +37,12 @@ const pictureStyle = computed(() => ({
   width: node.props.imageWidth === undefined ? undefined : `${node.props.imageWidth}px`,
 }));
 const selectedKeys = computed(() =>
-  getSurveyKeyedChoices(node.props.choices)
-    .filter(({ choice }) => selectedValues.value.includes(choice.value))
-    .map(({ key }) => key),
+  keyedChoices.value.filter(({ choice }) => selectedValues.value.includes(choice.value)).map(({ key }) => key),
 );
 // The list hands back the picked keys, each read back to the value its choice holds
 const onSelect = (keys: string[] | undefined = []) => {
   if (isDisabled) return;
-  const values = getSurveyKeyedChoices(node.props.choices)
-    .filter(({ key }) => keys.includes(key))
-    .map(({ choice }) => choice.value);
+  const values = keyedChoices.value.filter(({ key }) => keys.includes(key)).map(({ choice }) => choice.value);
   answer.value = node.props.multiSelect ? values : values[0];
 };
 </script>

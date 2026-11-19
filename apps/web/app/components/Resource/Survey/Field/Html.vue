@@ -19,5 +19,6 @@ const sanitizedHtml = computed(() => sanitizeHtml(node.props.html));
 </script>
 
 <template>
+  <!-- eslint-disable-next-line vue/no-v-html -- the markup sanitized by sanitizeHtml above, where it is read -->
   <div v-html="sanitizedHtml" />
 </template>

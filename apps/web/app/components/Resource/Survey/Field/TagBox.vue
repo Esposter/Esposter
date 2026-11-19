@@ -2,6 +2,7 @@
 import type { UiMenuItem } from "#src/models/ui/UiMenuItem";
 import type { SurveyAnswerValue, SurveyTagBoxNode } from "vue-survey-engine-headless";
 
+import { SURVEY_OTHER_TITLE } from "#src/services/resource/survey/constants";
 import { getSurveyChoiceText, getSurveyOrderedChoices } from "vue-survey-engine-headless";
 
 interface Props {
@@ -37,7 +38,9 @@ const items = computed<UiMenuItem<string>[]>(() => {
     title: getSurveyChoiceText(choice),
     value: choiceKey(index),
   }));
-  return node.props.hasOther ? [...choices, { title: node.props.otherText || "Other", value: otherKey }] : choices;
+  return node.props.hasOther
+    ? [...choices, { title: node.props.otherText || SURVEY_OTHER_TITLE, value: otherKey }]
+    : choices;
 });
 const selectedKeys = computed(() => {
   const keys = orderedChoices.value.flatMap(({ value }, index) =>
@@ -82,7 +85,7 @@ const setOtherText = (text: string) => {
         v-if="isOtherChosen"
         :is-disabled="isDisabled ? true : undefined"
         is-label-hidden
-        :label="node.props.otherText || 'Other'"
+        :label="node.props.otherText || SURVEY_OTHER_TITLE"
         :model-value="otherText"
         @update:model-value="(text) => setOtherText(text)"
       />

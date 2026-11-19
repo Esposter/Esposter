@@ -66,6 +66,9 @@ const toggleChoice = (value: SurveyAnswerValue | undefined, choiceValue: SurveyC
 const setRow = (rowIndex: number, row: SurveyAnswers) => {
   answer.value = rows.value.toSpliced(rowIndex, 1, row);
 };
+const removeRow = (rowIndex: number) => {
+  answer.value = rows.value.toSpliced(rowIndex, 1);
+};
 // A dropdown cell chooses from its column's choices, and the choice a key picks is written as that choice's own value
 const getChoiceCellAttributes = (column: SurveyMatrixColumn, row: SurveyAnswers, rowIndex: number) => ({
   "aria-invalid": invalid.value,
@@ -110,24 +113,14 @@ const getChoiceCellAttributes = (column: SurveyMatrixColumn, row: SurveyAnswers,
           <tr v-for="(row, rowIndex) of rows" :key="rowIndex">
             <td v-for="(column, columnIndex) of node.props.columns" :key="column.name" p-1 align-top>
               <UiTextField
-                v-if="column.cellType === SurveyMatrixCellType.Text"
+                v-if="column.cellType === SurveyMatrixCellType.Text || column.cellType === SurveyMatrixCellType.Comment"
                 is-label-hidden
                 :is-disabled="isDisabled || undefined"
                 :is-invalid="invalid"
                 :is-required="column.isRequired || undefined"
                 :label="column.title || column.name"
                 :model-value="getSurveyAnswerText(row[column.name])"
-                @update:model-value="(value) => setRow(rowIndex, withSurveyAnswer(row, column.name, value))"
-              />
-              <UiTextField
-                v-else-if="column.cellType === SurveyMatrixCellType.Comment"
-                is-label-hidden
-                :is-disabled="isDisabled || undefined"
-                :is-invalid="invalid"
-                :is-required="column.isRequired || undefined"
-                :label="column.title || column.name"
-                :model-value="getSurveyAnswerText(row[column.name])"
-                :rows="2"
+                :rows="column.cellType === SurveyMatrixCellType.Comment ? 2 : undefined"
                 @update:model-value="(value) => setRow(rowIndex, withSurveyAnswer(row, column.name, value))"
               />
               <UiSelect
@@ -180,14 +173,16 @@ const getChoiceCellAttributes = (column: SurveyMatrixColumn, row: SurveyAnswers,
               />
             </td>
             <td p-1 align-top>
+              <!-- eslint-disable vue/no-restricted-syntax -- removes a row from the unsaved answer draft, which nothing persists until the survey is submitted -->
               <UiIconButton
                 :disabled="isDisabled || rows.length <= node.props.minRowCount"
                 :label="node.props.removeRowText || 'Remove row'"
                 :meaning="UiIconMeaning.Remove"
                 :variant="UiButtonVariant.Quiet"
                 type="button"
-                @click="answer = rows.toSpliced(rowIndex, 1)"
+                @click="removeRow(rowIndex)"
               />
+              <!-- eslint-enable vue/no-restricted-syntax -->
             </td>
           </tr>
         </tbody>

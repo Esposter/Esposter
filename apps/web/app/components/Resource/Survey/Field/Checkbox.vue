@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { SurveyAnswerValue, SurveyCheckboxNode } from "vue-survey-engine-headless";
 
+import { SURVEY_NONE_TITLE, SURVEY_OTHER_TITLE } from "#src/services/resource/survey/constants";
 import { getSurveyChoiceText, getSurveyOrderedChoices, SURVEY_NONE_ANSWER } from "vue-survey-engine-headless";
 
 interface Props {
@@ -96,7 +97,7 @@ const setOtherText = (text: string) => {
           is-label-shown
           :aria-invalid="error ? true : undefined"
           :disabled="isDisabled"
-          :label="node.props.noneText || 'None'"
+          :label="node.props.noneText || SURVEY_NONE_TITLE"
           :model-value="isNoneChosen"
           @update:model-value="(isPicked) => toggleNone(isPicked)"
         />
@@ -105,7 +106,7 @@ const setOtherText = (text: string) => {
             is-label-shown
             :aria-invalid="error ? true : undefined"
             :disabled="isDisabled"
-            :label="node.props.otherText || 'Other'"
+            :label="node.props.otherText || SURVEY_OTHER_TITLE"
             :model-value="isOtherChosen"
             @update:model-value="(isPicked) => toggleOther(isPicked)"
           />
@@ -113,7 +114,7 @@ const setOtherText = (text: string) => {
             v-if="isOtherChosen"
             :is-disabled="isDisabled ? true : undefined"
             is-label-hidden
-            :label="node.props.otherText || 'Other'"
+            :label="node.props.otherText || SURVEY_OTHER_TITLE"
             :model-value="otherText"
             @update:model-value="(text) => setOtherText(text)"
           />

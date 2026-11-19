@@ -115,6 +115,25 @@ describe("resourceSurveyFieldMatrixDynamic", () => {
       expect(component.emitted<[SurveyAnswerValue]>("update:modelValue")).toStrictEqual([[[{ [columnName]: value }]]]);
     });
 
+    test("draws a comment cell as a box of two rows, and writes its text into its row", async () => {
+      expect.hasAssertions();
+
+      const component = mountMatrixDynamic(createNode(1, 0, 2, [createColumn(SurveyMatrixCellType.Comment)]));
+      await component.get("textarea").setValue(value);
+
+      expect(component.get("textarea").attributes("rows")).toBe("2");
+      expect(component.emitted<[SurveyAnswerValue]>("update:modelValue")).toStrictEqual([[[{ [columnName]: value }]]]);
+    });
+
+    test("removes a row by its remove button, leaving the other rows in their order", async () => {
+      expect.hasAssertions();
+
+      const component = mountMatrixDynamic(createNode(2, 0, 2), [{ [columnName]: "x" }, { [columnName]: value }]);
+      await takeOne(component.findAll('[aria-label="Remove row"]'), 0).trigger("click");
+
+      expect(component.props("modelValue")).toStrictEqual([{ [columnName]: value }]);
+    });
+
     test("names a rating cell's steps from one, one for each step of its scale", () => {
       expect.hasAssertions();
 

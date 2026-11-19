@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { SurveyAnswerValue, SurveyExpressionNode } from "vue-survey-engine-headless";
 
+import { getSurveyQuestionTitle } from "#src/services/resource/survey/getSurveyQuestionTitle";
 import { SurveyExpressionDisplayFormat } from "vue-survey-engine-headless";
 
 interface Props {
@@ -28,8 +29,8 @@ const text = computed(() => {
 
 <template>
   <div flex flex-col gap-1>
-    <span text-sm text-muted>{{ node.props.title || node.props.name }}</span>
-    <output :aria-label="node.props.title || node.props.name">{{ text }}</output>
+    <span text-sm text-muted>{{ getSurveyQuestionTitle(node.props) }}</span>
+    <output :aria-label="getSurveyQuestionTitle(node.props)">{{ text }}</output>
     <span v-if="node.props.description" text-sm text-muted>{{ node.props.description }}</span>
   </div>
 </template>
