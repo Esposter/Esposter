@@ -70,35 +70,20 @@ const useWeapon = (module: GcgCardModule, cardId: number, element: Element) => {
   return { damage, dice: takeOne(duel.sides, 0).dice, usedCardIds: takeOne(duel.sides, 0).usedCardIds };
 };
 
-describe("sacrificialGreatsword", () => {
-  test("the character deals +1 DMG, and a die of its element is made once per round after an elemental skill", () => {
-    expect.hasAssertions();
-    expect(useWeapon(sacrificialGreatsword, 311_302, Element.Electro)).toStrictEqual({
-      damage: { damageType: Element.Pyro, value: 3 },
-      dice: [Element.Electro],
-      usedCardIds: [311_302],
-    });
-  });
-});
-
-describe("sacrificialSword", () => {
-  test("the character deals +1 DMG, and a die of its element is made once per round after an elemental skill", () => {
-    expect.hasAssertions();
-    expect(useWeapon(sacrificialSword, 311_502, Element.Hydro)).toStrictEqual({
-      damage: { damageType: Element.Pyro, value: 3 },
-      dice: [Element.Hydro],
-      usedCardIds: [311_502],
-    });
-  });
-});
-
-describe("sacrificialBow", () => {
-  test("the character deals +1 DMG, and a die of its element is made once per round after an elemental skill", () => {
-    expect.hasAssertions();
-    expect(useWeapon(sacrificialBow, 311_202, Element.Cryo)).toStrictEqual({
-      damage: { damageType: Element.Pyro, value: 3 },
-      dice: [Element.Cryo],
-      usedCardIds: [311_202],
-    });
-  });
+describe("the sacrificial weapons", () => {
+  test.each([
+    { cardId: 311_302, element: Element.Electro, module: sacrificialGreatsword, name: "sacrificialGreatsword" },
+    { cardId: 311_502, element: Element.Hydro, module: sacrificialSword, name: "sacrificialSword" },
+    { cardId: 311_202, element: Element.Cryo, module: sacrificialBow, name: "sacrificialBow" },
+  ])(
+    "$name deals +1 DMG, and a die of its element is made once per round after an elemental skill",
+    ({ cardId, element, module }) => {
+      expect.hasAssertions();
+      expect(useWeapon(module, cardId, element)).toStrictEqual({
+        damage: { damageType: Element.Pyro, value: 3 },
+        dice: [element],
+        usedCardIds: [cardId],
+      });
+    },
+  );
 });

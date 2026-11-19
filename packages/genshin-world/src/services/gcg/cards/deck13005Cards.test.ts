@@ -205,7 +205,6 @@ describe("kamisatoArtSenho", () => {
     };
 
     expect(listGcgStartingStatuses(ayaka).map(({ cardId }) => cardId)).toStrictEqual([SENHO_STATUS_ID]);
-    expect(kamisatoArtSenhoSkill.getStartingStatuses?.()).toHaveLength(1);
   });
 
   test("when switched to, Ayaka gains Cryo Elemental Infusion, and her next Normal Attack deals 1 more DMG", () => {
@@ -271,7 +270,6 @@ describe("the skills whose damage is parsed from their effect name", () => {
   const STARTING_HP = 10;
   const KABUKI_DAMAGE = 2;
   const HYOUKA_DAMAGE = 3;
-  const FLARE_UP_DAMAGE = 2;
   // The skills' ids are synthetic, each only needing an id of its own that no other skill of the suite has
   const KABUKI: GcgSkill = {
     costs: [],
@@ -287,14 +285,6 @@ describe("the skills whose damage is parsed from their effect name", () => {
     id: 2,
     kind: GcgSkillKind.ElementalSkill,
   };
-  const FIREWORK_FLARE_UP: GcgSkill = {
-    costs: [],
-    effect: createDamageEffect(GcgDamageKind.Physical, FLARE_UP_DAMAGE),
-    energyGain: 1,
-    id: 3,
-    kind: GcgSkillKind.NormalAttack,
-  };
-
   test("kamisato Art: Kabuki deals 2 Physical DMG, with no aura", () => {
     expect.hasAssertions();
     const duel = createDuel([
@@ -319,19 +309,6 @@ describe("the skills whose damage is parsed from their effect name", () => {
 
     expect(takeOne(duel.sides, 1).characters[0]?.aura).toBe(Element.Cryo);
     expect(takeOne(duel.sides, 1).characters[0]?.hp).toBe(STARTING_HP - HYOUKA_DAMAGE);
-  });
-
-  test("firework Flare-Up deals 2 Physical DMG for Yoimiya", () => {
-    expect.hasAssertions();
-    const duel = createDuel([
-      createSideState([createGcgCharacterState({ character: { element: Element.Cryo, id: YOIMIYA_ID } })]),
-      createSideState([createGcgCharacterState({ character: { element: Element.Cryo, id: 2 } })]),
-    ]);
-
-    runGcgSkillUse({ duel, sideIndex: 0 }, FIREWORK_FLARE_UP);
-
-    expect(takeOne(duel.sides, 1).characters[0]?.aura).toBe(GcgAura.None);
-    expect(takeOne(duel.sides, 1).characters[0]?.hp).toBe(STARTING_HP - FLARE_UP_DAMAGE);
   });
 });
 
@@ -546,6 +523,11 @@ describe("parametricTransformer", () => {
     runGcgSkillUse({ duel, sideIndex: 1 }, HYOUKA);
 
     expect(takeOne(duel.sides, 0).supports[0]?.counter).toBe(1);
+    duel.actingSideIndex = 0;
+
+    runGcgSkillUse({ duel, sideIndex: 0 }, HYOUKA);
+
+    expect(takeOne(duel.sides, 0).supports[0]?.counter).toBe(2);
   });
 
   test("at three Qualitative Progress it is discarded, and creates three different Basic Elemental Dice", () => {

@@ -49,7 +49,6 @@ import { sumeruCity } from "#src/services/gcg/cards/sumeruCity";
 import { tenshukaku } from "#src/services/gcg/cards/tenshukaku";
 import { vourukashasGlow } from "#src/services/gcg/cards/vourukashasGlow";
 import { weepingWillowOfTheLake } from "#src/services/gcg/cards/weepingWillowOfTheLake";
-import { GCG_SHIELD_LIMIT } from "#src/services/gcg/constants";
 import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { payGcgSubjectCost } from "#src/services/gcg/payGcgSubjectCost";
@@ -148,7 +147,7 @@ describe("juugaForwardUntoVictory", () => {
     }).toStrictEqual({ defenderHp: 8, onstages: [GENERALS_WAR_BANNER_ID], summons: [GENERALS_GLORY_ID] });
   });
 
-  test("should stack the banner's rounds by 2, up to 3", () => {
+  test("should stack the banner's rounds up to 3 over two plays, and keep one banner at 3 rounds when played a fourth time", () => {
     expect.hasAssertions();
 
     const attacker = createSideState([createGcgCharacterState({ character: { element: Element.Geo, id: GOROU_ID } })]);
@@ -160,20 +159,10 @@ describe("juugaForwardUntoVictory", () => {
     runGcgSkillUse({ duel, sideIndex: 0 }, JUUGA);
     runGcgSkillUse({ duel, sideIndex: 0 }, JUUGA);
 
-    expect(takeOne(attacker.onstages, 0).rounds).toBe(3);
-  });
-
-  test("should keep one banner at 3 rounds when it is played a fourth time", () => {
-    expect.hasAssertions();
-
-    const attacker = createSideState([createGcgCharacterState({ character: { element: Element.Geo, id: GOROU_ID } })]);
-    const duel = createDuel([
-      attacker,
-      createSideState([createGcgCharacterState({ character: { element: Element.Hydro, id: 2101 }, hp: 20 })]),
+    expect(attacker.onstages).toStrictEqual([
+      { ...createGcgZoneCard(GENERALS_WAR_BANNER_ID, generalsWarBanner), rounds: 3 },
     ]);
 
-    runGcgSkillUse({ duel, sideIndex: 0 }, JUUGA);
-    runGcgSkillUse({ duel, sideIndex: 0 }, JUUGA);
     runGcgSkillUse({ duel, sideIndex: 0 }, JUUGA);
     runGcgSkillUse({ duel, sideIndex: 0 }, JUUGA);
 
@@ -615,7 +604,14 @@ describe("tenshukaku", () => {
 
     tenshukaku.onActionPhase?.({ duel, sideIndex: 0 }, createGcgZoneCard(TENSHUKAKU_ID, tenshukaku));
 
-    expect(attacker.dice.at(-1)).toBe(GcgDieFace.Omni);
+    expect(attacker.dice).toStrictEqual([
+      Element.Pyro,
+      Element.Hydro,
+      Element.Electro,
+      Element.Cryo,
+      Element.Geo,
+      GcgDieFace.Omni,
+    ]);
   });
 
   test("should create no die with only 4 different Elemental Dice", () => {
@@ -631,7 +627,7 @@ describe("tenshukaku", () => {
 
     tenshukaku.onActionPhase?.({ duel, sideIndex: 0 }, createGcgZoneCard(TENSHUKAKU_ID, tenshukaku));
 
-    expect(attacker.dice).toHaveLength(4);
+    expect(attacker.dice).toStrictEqual([Element.Pyro, Element.Hydro, Element.Electro, Element.Cryo]);
   });
 });
 
@@ -658,7 +654,15 @@ describe("grandNarukamiShrine", () => {
     attacker.dice.push(Element.Pyro);
     use();
 
-    expect(attacker.dice).toHaveLength(7);
+    expect(attacker.dice).toStrictEqual([
+      Element.Pyro,
+      Element.Pyro,
+      Element.Pyro,
+      GcgDieFace.Omni,
+      Element.Pyro,
+      GcgDieFace.Omni,
+      Element.Pyro,
+    ]);
   });
 });
 
@@ -742,10 +746,10 @@ describe("weepingWillowOfTheLake", () => {
 
     runGcgEndPhase(duel);
 
-    expect({ hand: attacker.hand.length, usages: takeOne(attacker.supports, 0).usages }).toStrictEqual({
-      hand: 2,
-      usages: 1,
-    });
+    expect({
+      hand: attacker.hand,
+      supports: attacker.supports.map(({ cardId, usages }) => ({ cardId, usages })),
+    }).toStrictEqual({ hand: [CARD_ID, CARD_ID], supports: [{ cardId: WEEPING_WILLOW_OF_THE_LAKE_ID, usages: 1 }] });
   });
 
   test("should draw nothing with 3 cards in hand", () => {
@@ -763,7 +767,7 @@ describe("weepingWillowOfTheLake", () => {
 
     runGcgEndPhase(duel);
 
-    expect(attacker.hand).toHaveLength(3);
+    expect(attacker.hand).toStrictEqual([CARD_ID, CARD_ID, CARD_ID]);
   });
 });
 
@@ -800,7 +804,7 @@ describe("elementalResonanceWovenStone", () => {
 });
 
 describe("elementalResonanceEnduringRock", () => {
-  test("should grant 3 shield points to the active character, up to the shield limit", () => {
+  test("should grant 3 shield points to the active character, which the shield limit clips to 2", () => {
     expect.hasAssertions();
 
     const attacker = createSideState([
@@ -814,6 +818,6 @@ describe("elementalResonanceEnduringRock", () => {
 
     elementalResonanceEnduringRock.play?.({ duel, sideIndex: 0 }, undefined);
 
-    expect(attackerOf(duel).shield).toBe(Math.min(GCG_SHIELD_LIMIT, 3));
+    expect(attackerOf(duel).shield).toBe(2);
   });
 });

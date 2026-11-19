@@ -101,7 +101,7 @@ describe("fieryRebirth", () => {
 
     applyGcgDamage(duel, 1, { damageType: Element.Pyro, value: 5 }, TEST_RULE);
 
-    expect(takeOne(duel.sides, 0).characters[0]?.hp).toBeLessThanOrEqual(0);
+    expect(takeOne(duel.sides, 0).characters[0]?.hp).toBe(0);
   });
 
   test("once triggered, the character's skill damage is 1 higher", () => {
@@ -479,7 +479,7 @@ describe("absorbingPrism", () => {
     expect(takeOne(duel.sides, 0).hand).toStrictEqual([]);
   });
 
-  test("when the active character is another, the card is refused and the duel is left as it was", () => {
+  test("when the active character is another, the card is refused and stays in hand", () => {
     expect.hasAssertions();
 
     const lector = { ...createGcgCharacterState({ character: { element: Element.Pyro, id: ABYSS_LECTOR_ID } }), hp: 5 };
@@ -816,7 +816,7 @@ describe("shimenawasReminiscence", () => {
   const TENGU_STORMCALL = createSkill(14_062, "Char_Skill_14062", GcgSkillKind.ElementalSkill);
   const SARA_NORMAL_ATTACK = createSkill(14_061, "Effect_Damage_Physic_2", GcgSkillKind.NormalAttack);
 
-  test("once per round, a Talent card or Elemental Skill spends one Elemental Die less", () => {
+  test("once per round, an Elemental Skill spends one Elemental Die less", () => {
     expect.hasAssertions();
 
     const sara = createGcgCharacterState({ character: { element: Element.Electro, id: KUJOU_SARA_ID } });

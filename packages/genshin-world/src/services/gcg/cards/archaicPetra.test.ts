@@ -1,5 +1,4 @@
 import type { GcgCard } from "#src/models/gcg/GcgCard";
-import type { GcgCharacterState } from "#src/models/gcg/GcgCharacterState";
 import type { GcgCostSubject } from "#src/models/gcg/GcgCostSubject";
 import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 import type { GcgEffectContext } from "#src/models/gcg/GcgEffectContext";
@@ -10,31 +9,13 @@ import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { archaicPetra } from "#src/services/gcg/cards/archaicPetra";
 import { ARCHAIC_PETRA_ID } from "#src/services/gcg/cards/constants";
+import { createSideState } from "#src/services/gcg/cards/createSideState.test";
 import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { runGcgRollPhase } from "#src/services/gcg/runGcgRollPhase";
 import { describe, expect, test } from "vitest";
-
-const createSide = (characters: GcgCharacterState[], dice: Element[]) => ({
-  activeIndex: 0,
-  cards: [],
-  characters,
-  deckCardIds: [],
-  dice,
-  drawPile: [],
-  hand: [],
-  hasDeclaredEnd: false,
-  hasPrepared: true,
-  hasRolled: true,
-  isReplacementPending: false,
-  onstages: [],
-  summons: [],
-  supports: [],
-  usedCardIds: [],
-  usedSkillIds: [],
-});
 
 // A duel with the first side holding Archaic Petra on its active character and the given starting dice
 const createDuel = (dice: Element[]): GcgDuel => ({
@@ -48,7 +29,7 @@ const createDuel = (dice: Element[]): GcgDuel => ({
   round: 1,
   rule: { handCardLimit: 10 } as GcgDuel["rule"],
   sides: [
-    createSide(
+    createSideState(
       [
         createGcgCharacterState({
           character: { element: Element.Geo },
@@ -57,7 +38,7 @@ const createDuel = (dice: Element[]): GcgDuel => ({
       ],
       dice,
     ),
-    createSide([createGcgCharacterState({ character: { element: Element.Geo } })], []),
+    createSideState([createGcgCharacterState({ character: { element: Element.Geo } })], []),
   ],
   skillModules: GcgEffectNameSkillModuleMap,
   winnerSideIndex: undefined,

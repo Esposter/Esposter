@@ -10,6 +10,7 @@ import type { GcgZoneCard } from "#src/models/gcg/GcgZoneCard";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Element } from "#src/models/Element";
 import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
+import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GcgCardKind } from "#src/models/gcg/GcgCardKind";
 import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
 import { GcgDieFace } from "#src/models/gcg/GcgDieFace";
@@ -441,11 +442,15 @@ describe("ragingOniKing", () => {
           statuses: [createGcgZoneCard(RAGING_ONI_KING_ID, ragingOniKing)],
         },
       ]),
-      createSideState([createGcgCharacterState({ character: { element: Element.Anemo, id: XIAO_ID } })]),
+      createSideState([
+        { ...createGcgCharacterState({ character: { element: Element.Anemo, id: XIAO_ID } }), aura: Element.Cryo },
+      ]),
     ]);
     runGcgSkillUse({ duel, sideIndex: 0 }, ITTO_NORMAL_ATTACK);
 
-    expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([7]);
+    expect(takeOne(duel.sides, 1).characters.map(({ aura, hp }) => ({ aura, hp }))).toStrictEqual([
+      { aura: GcgAura.None, hp: 6 },
+    ]);
   });
 
   test("after a Normal Attack its character gains Superlative Superstrength, once a round", () => {
@@ -628,11 +633,14 @@ describe("emblemOfSeveredFate", () => {
           equipments: [createGcgZoneCard(EMBLEM_OF_SEVERED_FATE_ID, emblemOfSeveredFate)],
         },
       ]),
-      createSideState([createGcgCharacterState({ character: { element: Element.Anemo, id: XIAO_ID } })]),
+      createSideState([withHp(createGcgCharacterState({ character: { element: Element.Anemo, id: XIAO_ID } }), 20)]),
     ]);
     runGcgSkillUse({ duel, sideIndex: 0 }, ROYAL);
 
-    expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([4]);
+    expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([14]);
+    runGcgSkillUse({ duel, sideIndex: 0 }, ROYAL);
+
+    expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([10]);
   });
 });
 
@@ -754,7 +762,7 @@ describe("theShrinesSacredShade", () => {
     const context: GcgEffectContext = { duel, sideIndex: 0 };
 
     expect(theShrinesSacredShade.canPlay?.(context, 0)).toBe(true);
-    expect(theShrinesSacredShade.skillOnPlay?.(context, 0)?.id).toBe(TENKO_KENSHIN_ID);
+    expect(theShrinesSacredShade.skillOnPlay?.(context, 0)).toStrictEqual(TENKO);
   });
 
   test("after Yae Miko destroys a Sesshou Sakura through Tenko Kenshin, the next Yakan Evocation this round costs 2 fewer", () => {

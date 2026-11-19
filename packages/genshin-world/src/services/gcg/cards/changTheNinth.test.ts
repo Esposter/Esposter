@@ -11,6 +11,7 @@ import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgReactionKind } from "#src/models/gcg/GcgReactionKind";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { changTheNinth } from "#src/services/gcg/cards/changTheNinth";
+import { createSideState } from "#src/services/gcg/cards/createSideState.test";
 import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
@@ -18,22 +19,8 @@ import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { describe, expect, test } from "vitest";
 
 const createSide = (drawPile: number[]): GcgSideState => ({
-  activeIndex: 0,
-  cards: [],
-  characters: [createGcgCharacterState()],
-  deckCardIds: [],
-  dice: [],
+  ...createSideState([createGcgCharacterState()]),
   drawPile,
-  hand: [],
-  hasDeclaredEnd: false,
-  hasPrepared: true,
-  hasRolled: true,
-  isReplacementPending: false,
-  onstages: [],
-  summons: [],
-  supports: [],
-  usedCardIds: [],
-  usedSkillIds: [],
 });
 
 describe("changTheNinth", () => {
@@ -58,26 +45,14 @@ describe("changTheNinth", () => {
     changTheNinth.onAnySkillUsed?.(context, SKILL, zoneCard, dealt);
   };
 
-  test("should gain an Inspiration when the skill deals Physical damage", () => {
+  test.each([
+    ["Physical damage", [{ damageType: GcgDamageKind.Physical }]],
+    ["Piercing damage", [{ damageType: GcgDamageKind.Piercing }]],
+    ["an Elemental Reaction", [{ damageType: Element.Pyro, reaction: GcgReactionKind.Melt }]],
+  ])("should gain an Inspiration when the skill deals %s", (_hit, dealt) => {
     expect.hasAssertions();
     const zoneCard = createGcgZoneCard(CHANG_THE_NINTH_ID, changTheNinth);
-    hearSkill(createSide([]), zoneCard, [{ damageType: GcgDamageKind.Physical }]);
-
-    expect({ counter: zoneCard.counter, usages: zoneCard.usages }).toStrictEqual({ counter: 1, usages: 1 });
-  });
-
-  test("should gain an Inspiration when the skill deals Piercing damage", () => {
-    expect.hasAssertions();
-    const zoneCard = createGcgZoneCard(CHANG_THE_NINTH_ID, changTheNinth);
-    hearSkill(createSide([]), zoneCard, [{ damageType: GcgDamageKind.Piercing }]);
-
-    expect({ counter: zoneCard.counter, usages: zoneCard.usages }).toStrictEqual({ counter: 1, usages: 1 });
-  });
-
-  test("should gain an Inspiration when the skill triggers an Elemental Reaction", () => {
-    expect.hasAssertions();
-    const zoneCard = createGcgZoneCard(CHANG_THE_NINTH_ID, changTheNinth);
-    hearSkill(createSide([]), zoneCard, [{ damageType: Element.Pyro, reaction: GcgReactionKind.Melt }]);
+    hearSkill(createSide([]), zoneCard, dealt);
 
     expect({ counter: zoneCard.counter, usages: zoneCard.usages }).toStrictEqual({ counter: 1, usages: 1 });
   });

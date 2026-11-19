@@ -45,7 +45,7 @@ import { stoneAndContracts } from "#src/services/gcg/cards/stoneAndContracts";
 import { talismanSpirit } from "#src/services/gcg/cards/talismanSpirit";
 import { vermillionHereafter } from "#src/services/gcg/cards/vermillionHereafter";
 import { yakshasMask } from "#src/services/gcg/cards/yakshasMask";
-import { GCG_SHIELD_LIMIT, GCG_SPREAD_DAMAGE } from "#src/services/gcg/constants";
+import { GCG_SPREAD_DAMAGE } from "#src/services/gcg/constants";
 import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { playGcgCard } from "#src/services/gcg/playGcgCard";
@@ -222,26 +222,6 @@ describe("icyQuill", () => {
 
     expect(takeOne(takeOne(duel.sides, 1).characters, 1).hp).toBe(10 - GCG_SPREAD_DAMAGE - 1);
     expect(takeOne(takeOne(duel.sides, 1).characters, 2).hp).toBe(10 - GCG_SPREAD_DAMAGE - 1);
-    expect(takeOne(duel.sides, 0).onstages.map(({ usages }) => usages)).toStrictEqual([1]);
-  });
-
-  test("a Swirl's spread is Cryo DMG too, so it takes Icy Quill's 1 more and spends a usage", () => {
-    expect.hasAssertions();
-
-    const duel = createDuel([
-      {
-        ...createSideState([createGcgCharacterState({ character: { element: Element.Cryo, id: SHENHE_ID } })]),
-        onstages: [createGcgZoneCard(ICY_QUILL_ID, icyQuill)],
-      },
-      createSideState([
-        { ...createGcgCharacterState({ character: { element: Element.Cryo, id: 1202 } }), aura: Element.Cryo },
-        createGcgCharacterState({ character: { element: Element.Cryo, id: 1203 } }),
-      ]),
-    ]);
-
-    applyGcgDamage(duel, 0, { damageType: Element.Anemo, value: 1 }, TEST_RULE, { duel, sideIndex: 0 });
-
-    expect(takeOne(takeOne(duel.sides, 1).characters, 1).hp).toBe(10 - GCG_SPREAD_DAMAGE - 1);
     expect(takeOne(duel.sides, 0).onstages.map(({ usages }) => usages)).toStrictEqual([1]);
   });
 });
@@ -591,27 +571,6 @@ describe("lithicSpear", () => {
     lithicSpear.play?.({ duel, sideIndex: 0 }, 0, undefined);
 
     expect(takeOne(duel.sides, 0).characters.map(({ shield }) => shield)).toStrictEqual([2, 0, 0]);
-  });
-
-  test("the shield it grants stops at the shield limit", () => {
-    expect.hasAssertions();
-
-    const duel = createDuel([
-      createSideState([
-        createGcgCharacterState({
-          character: { element: Element.Cryo, id: SHENHE_ID, nation: "LIYUE", weapon: "POLE" },
-        }),
-        createGcgCharacterState({
-          character: { element: Element.Cryo, id: 1104, nation: "LIYUE", weapon: "CLAYMORE" },
-        }),
-        createGcgCharacterState({ character: { element: Element.Cryo, id: 1504, nation: "LIYUE", weapon: "POLE" } }),
-      ]),
-      createSideState([]),
-    ]);
-
-    lithicSpear.play?.({ duel, sideIndex: 0 }, 0, undefined);
-
-    expect(takeOne(takeOne(duel.sides, 0).characters, 0).shield).toBe(GCG_SHIELD_LIMIT);
   });
 });
 

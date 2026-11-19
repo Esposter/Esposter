@@ -123,7 +123,7 @@ describe("stellarRestoration", () => {
     runGcgSkillUse({ duel, sideIndex: 0 }, NORMAL_SKILL);
 
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([FULL_HP - 3]);
-    expect(takeOne(duel.sides, 0).hand).toStrictEqual([114_031]);
+    expect(takeOne(duel.sides, 0).hand).toStrictEqual([LIGHTNING_STILETTO_ID]);
   });
 
   test("a Lightning Stiletto in hand is discarded, with every copy, and Keqing gains Electro Infusion in its place", () => {
@@ -143,9 +143,9 @@ describe("stellarRestoration", () => {
     runGcgSkillUse({ duel, sideIndex: 0 }, NORMAL_SKILL);
 
     expect({
+      characterStatuses: side.characters.map(({ statuses }) => statuses.map(({ cardId }) => cardId)),
       hand: side.hand,
-      keqingStatuses: takeOne(side.characters, 1).statuses.map(({ cardId }) => cardId),
-    }).toStrictEqual({ hand: [], keqingStatuses: [114_032] });
+    }).toStrictEqual({ characterStatuses: [[], [ELECTRO_INFUSION_ID]], hand: [] });
   });
 
   test("a second grant while Electro Infusion still stands refreshes it, rather than stacking a second copy", () => {
@@ -167,8 +167,9 @@ describe("stellarRestoration", () => {
     side.hand.push(LIGHTNING_STILETTO_ID);
     runGcgSkillUse({ duel, sideIndex: 0 }, NORMAL_SKILL);
 
-    expect(takeOne(side.characters, 1).statuses).toStrictEqual([
-      { cardId: ELECTRO_INFUSION_ID, counter: 0, rounds: 2, usages: 0 },
+    expect(side.characters.map(({ statuses }) => statuses)).toStrictEqual([
+      [],
+      [{ cardId: ELECTRO_INFUSION_ID, counter: 0, rounds: 2, usages: 0 }],
     ]);
   });
 });
@@ -206,9 +207,9 @@ describe("lightningStiletto", () => {
     expect(playGcgCard(duel, 0, 0, undefined, [])).toBe(GcgActionResult.Done);
     expect({
       activeIndex: side.activeIndex,
+      characterStatuses: side.characters.map(({ statuses }) => statuses.map(({ cardId }) => cardId)),
       hand: side.hand,
       icicleUsages: icicleZoneCard.usages,
-      keqingStatuses: takeOne(side.characters, 1).statuses.map(({ cardId }) => cardId),
-    }).toStrictEqual({ activeIndex: 1, hand: [], icicleUsages: 2, keqingStatuses: [114_032] });
+    }).toStrictEqual({ activeIndex: 1, characterStatuses: [[], [ELECTRO_INFUSION_ID]], hand: [], icicleUsages: 2 });
   });
 });

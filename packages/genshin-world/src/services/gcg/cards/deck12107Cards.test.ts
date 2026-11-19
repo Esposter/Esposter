@@ -167,10 +167,13 @@ describe("fatalRainscreen", () => {
         ]),
       ]);
       runGcgSkillUse({ duel, sideIndex: 0 }, FATAL_RAINSCREEN_SKILL);
-      const user = takeOne(duel.sides, 0).characters.at(0);
-      expect(user?.aura).toBe(expectedAura);
-      expect(user?.isFrozen).toBe(isFrozen);
-      expect(user?.hp).toBe(10);
+      expect(
+        takeOne(duel.sides, 0).characters.map((character) => ({
+          aura: character.aura,
+          hp: character.hp,
+          isFrozen: character.isFrozen,
+        })),
+      ).toStrictEqual([{ aura: expectedAura, hp: 10, isFrozen }]);
       expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([8, 10]);
     },
   );
@@ -304,12 +307,13 @@ describe("stoneForce", () => {
       createGcgZoneCard(STONE_FORCE_ID, stoneForce),
     ]);
     applyGcgDamage(duel, 1, { damageType: GcgDamageKind.Physical, value: 2 }, TEST_RULE);
-    const holder = takeOne(duel.sides, 0).characters.at(0);
 
-    expect(holder?.statuses.map(({ cardId }) => cardId)).toStrictEqual([STONEHIDE_ID, STONE_FORCE_ID]);
+    expect(takeOne(duel.sides, 0).characters.map(({ statuses }) => statuses.map(({ cardId }) => cardId))).toStrictEqual(
+      [[STONEHIDE_ID, STONE_FORCE_ID]],
+    );
     applyGcgDamage(duel, 1, { damageType: GcgDamageKind.Physical, value: 2 }, TEST_RULE);
 
-    expect(holder?.statuses).toStrictEqual([]);
+    expect(takeOne(duel.sides, 0).characters.map(({ statuses }) => statuses)).toStrictEqual([[]]);
   });
 });
 
@@ -327,7 +331,10 @@ describe("infusedStonehide", () => {
       ...createGcgCharacterState({ character: { id: 2601 } }).character,
       skills: [INFUSED_STONEHIDE_PASSIVE],
     };
-    expect(listGcgStartingStatuses(character).map(({ cardId }) => cardId)).toStrictEqual([126_011, 126_012]);
+    expect(listGcgStartingStatuses(character).map(({ cardId }) => cardId)).toStrictEqual([
+      STONEHIDE_ID,
+      STONE_FORCE_ID,
+    ]);
   });
 });
 
@@ -416,11 +423,9 @@ describe("sweepingTimeSkill", () => {
     runGcgSkillUse({ duel, sideIndex: 0 }, SWEEPING_TIME_SKILL);
 
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([6]);
-    expect(
-      takeOne(duel.sides, 0)
-        .characters.at(0)
-        ?.statuses.map(({ cardId }) => cardId),
-    ).toStrictEqual([SWEEPING_TIME_ID]);
+    expect(takeOne(duel.sides, 0).characters.map(({ statuses }) => statuses.map(({ cardId }) => cardId))).toStrictEqual(
+      [[SWEEPING_TIME_ID]],
+    );
   });
 
   test("using the skill again refreshes the status rather than stacking a second one", () => {
@@ -432,9 +437,10 @@ describe("sweepingTimeSkill", () => {
     runGcgSkillUse({ duel, sideIndex: 0 }, SWEEPING_TIME_SKILL);
     takeOne(takeOne(takeOne(duel.sides, 0).characters, 0).statuses, 0).rounds = 1;
     runGcgSkillUse({ duel, sideIndex: 0 }, SWEEPING_TIME_SKILL);
-    const statuses = takeOne(takeOne(duel.sides, 0).characters, 0).statuses;
-
-    expect(statuses.map(({ cardId }) => cardId)).toStrictEqual([SWEEPING_TIME_ID]);
-    expect(statuses.map(({ rounds }) => rounds)).toStrictEqual([2]);
+    expect(
+      takeOne(duel.sides, 0).characters.map(({ statuses }) =>
+        statuses.map(({ cardId, rounds }) => ({ cardId, rounds })),
+      ),
+    ).toStrictEqual([[{ cardId: SWEEPING_TIME_ID, rounds: 2 }]]);
   });
 });
