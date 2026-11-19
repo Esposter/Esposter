@@ -2,7 +2,6 @@ import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { getMockPublishedTopics, MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
 import {
   createMockAuthSession,
   createMockCaller,
@@ -15,7 +14,6 @@ import { blockRouter } from "#server/trpc/routers/block";
 import { createFriendship } from "#server/trpc/routers/createFriendship.test";
 import { friendRouter } from "#server/trpc/routers/friend";
 import { postRouter } from "#server/trpc/routers/post";
-import { readTopicsHeader } from "#shared/services/realtime/readTopicsHeader";
 import { blocksInSocial, DatabaseEntityType, friendRequestsInSocial, friendsInSocial } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { v7 } from "uuid";
@@ -154,22 +152,19 @@ describe("blockRouter", () => {
     expect(searchedUsers).toStrictEqual([]);
   });
 
-  // The feed hides the blocked user's posts, so the feed a blocker reads is woken by the block that hides them
-  test("a block wakes the feed the blocker reads", async () => {
+  // The feed hides the blocked user's posts, so the feed a blocker reads changes when the block lands
+  test("a block removes the blocked user's posts from the feed the blocker reads", async () => {
     expect.hasAssertions();
 
     const authorAuthSession = await createMockAuthSession(mockContext.db);
     await (await createMockCaller(postRouter, authorAuthSession)).createPost({ title: "title" });
-    const feedContext = { ...mockContext, responseHeaders: new Headers() };
-    await createCallerFactory(postRouter)(feedContext).readPosts();
+    const feedCaller = createCallerFactory(postRouter)(mockContext);
+    const feedBefore = await feedCaller.readPosts();
+    expect(feedBefore.items.map(({ userId }) => userId)).toContain(authorAuthSession.user.id);
 
-    MockPublishedTopics.length = 0;
     await blockCaller.createBlock(authorAuthSession.user.id);
 
-    const published = new Set(getMockPublishedTopics());
-    const feedTopics = readTopicsHeader(feedContext.responseHeaders, "readPosts").flatMap(({ topics }) =>
-      topics.map(({ topic }) => topic),
-    );
-    expect(feedTopics.some((topic) => published.has(topic))).toBe(true);
+    const feedAfter = await feedCaller.readPosts();
+    expect(feedAfter.items.map(({ userId }) => userId)).not.toContain(authorAuthSession.user.id);
   });
 });

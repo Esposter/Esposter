@@ -9,7 +9,6 @@ import { userObjectCalls } from "#server/composables/realtime/useUserObject.test
 import { getCallBackgroundBlobName } from "#server/services/message/call/getCallBackgroundBlobName";
 import { getCallBackgroundPrefix } from "#server/services/message/call/getCallBackgroundPrefix";
 import { MockJobQueue, MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
-import { getMockPublishedTopics, MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
 import { getBucket } from "#server/services/storage/getBucket";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { DATA_EXPORT_LINK_DURATION_MS } from "#server/services/user/constants";
@@ -35,12 +34,10 @@ import {
   DatabaseEntityType,
   dataExportsInUser,
   DataExportStatus,
-  getTopic,
   McpScope,
   QueueJob,
   sessionsInAuth,
   StorageBucket,
-  TopicKind,
   UserStatus,
   userStatusesInMessage,
   WRITE_PRESIGNED_URL_DURATION_MS,
@@ -291,40 +288,48 @@ describe("userRouter", () => {
     expect(updatedUser.biography).toBe("");
   });
 
-  test("publishes each room the person is in, whose members read the profile through the room's topic", async () => {
+  // A member's list shows the saver's name, so the save wakes the room's read that a member made before it
+  test("a save shows its new name to the members of each room the person is in", async () => {
     expect.hasAssertions();
 
+    const savedName = "saved name";
     const room = await createCallerFactory(roomRouter)(mockContext).createRoom({ name });
-    MockPublishedTopics.length = 0;
-    await caller.updateUser({ name });
+    const roomCaller = createCallerFactory(roomRouter)(mockContext);
+    await roomCaller.readMembers({ roomId: room.id });
+    await caller.updateUser({ name: savedName });
 
-    expect(getMockPublishedTopics()).toContain(getTopic(TopicKind.Room, room.id));
+    const { items } = await roomCaller.readMembers({ roomId: room.id });
+    expect(items.map((member) => member.name)).toContain(savedName);
   });
 
-  // A pending request shows the saver's name on the receiver's list, which names the receiver's own request topic
-  test("publishes the topic of each person whose request shows the name", async () => {
+  // A pending request shows the saver's name on the receiver's list, so the save wakes the list the receiver read before it
+  test("a save shows its new name on the pending requests its receiver lists", async () => {
     expect.hasAssertions();
 
+    const savedName = "saved name";
     const receiverSession = await createMockAuthSession(mockContext.db);
+    const receiverCaller = createCallerFactory(friendRequestRouter)(await createMockContext(receiverSession));
     await createCallerFactory(friendRequestRouter)(mockContext).sendFriendRequest(receiverSession.user.id);
-    MockPublishedTopics.length = 0;
-    await caller.updateUser({ name });
+    await receiverCaller.readFriendRequests();
+    await caller.updateUser({ name: savedName });
 
-    expect(getMockPublishedTopics()).toContain(getTopic(TopicKind.FriendRequest, receiverSession.user.id));
+    const requests = await receiverCaller.readFriendRequests();
+    expect(requests.map(({ sender }) => sender.name)).toStrictEqual([savedName]);
   });
 
-  // A blocker's list shows the blocked person's name, so the blocker's block topic is published with the save
-  test("publishes the topic of each person who blocked the one saving the profile", async () => {
+  // A blocker's list shows the blocked person's name, so the save wakes the list the blocker read before it
+  test("a save shows its new name on the blocked list of each person who blocked the one saving", async () => {
     expect.hasAssertions();
 
+    const savedName = "saved name";
     const blockerSession = await createMockAuthSession(mockContext.db);
-    await createCallerFactory(blockRouter)(await createMockContext(blockerSession)).createBlock(
-      getMockSession().user.id,
-    );
-    MockPublishedTopics.length = 0;
-    await caller.updateUser({ name });
+    const blockerCaller = createCallerFactory(blockRouter)(await createMockContext(blockerSession));
+    await blockerCaller.createBlock(getMockSession().user.id);
+    await blockerCaller.readBlockedUsers();
+    await caller.updateUser({ name: savedName });
 
-    expect(getMockPublishedTopics()).toContain(getTopic(TopicKind.Block, blockerSession.user.id));
+    const blockedUsers = await blockerCaller.readBlockedUsers();
+    expect(blockedUsers.map((blockedUser) => blockedUser.name)).toStrictEqual([savedName]);
   });
 
   test("updates settings and reads them back", async () => {

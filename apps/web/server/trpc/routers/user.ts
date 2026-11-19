@@ -24,7 +24,6 @@ import { getPublicAssetUrl } from "#server/services/storage/getPublicAssetUrl";
 import { getStorageCredentials } from "#server/services/storage/getStorageCredentials";
 import { deleteAccountSessions } from "#server/services/user/deleteAccountSessions";
 import { getDataExportLink } from "#server/services/user/getDataExportLink";
-import { publishProfileTopics } from "#server/services/user/publishProfileTopics";
 import { readActiveDataExport } from "#server/services/user/readActiveDataExport";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
@@ -287,21 +286,17 @@ export const userRouter = router({
       return requireEntity(activeDataExport, DatabaseEntityType.DataExport, userId);
     }
   }),
-  // The rooms the person is in, and the requests, blocks, post threads, bans, invites and log entries that show them, are
-  // Published by publishProfileTopics, since a save reaches those readers through their rows rather than through its own
-  updateUser: standardAuthedProcedure.input(updateUserInputSchema).mutation<UserInAuth>(async ({ ctx, input }) => {
-    const updatedUser = requireMutation(
-      (await ctx.db.update(usersInAuth).set(input).where(eq(usersInAuth.id, ctx.user.id)).returning())[0],
-      Operation.Update,
-      DatabaseEntityType.User,
-      ctx.user.id,
-    );
-    // Best-effort, as the topics the middleware publishes are: the save has committed, so a failed publish costs readers one refresh
-    await getResultAsync(() => publishProfileTopics(ctx.db, ctx.user.id)).match(noop, (error) => {
-      console.error("Failed to publish the topics a profile save reaches:", error);
-    });
-    return updatedUser;
-  }),
+  // A save's row names the person, so the rooms, requests, blocks and posts that show them are woken by the write itself
+  updateUser: standardAuthedProcedure
+    .input(updateUserInputSchema)
+    .mutation<UserInAuth>(async ({ ctx, input }) =>
+      requireMutation(
+        (await ctx.db.update(usersInAuth).set(input).where(eq(usersInAuth.id, ctx.user.id)).returning())[0],
+        Operation.Update,
+        DatabaseEntityType.User,
+        ctx.user.id,
+      ),
+    ),
   updateUserSettings: standardAuthedProcedure
     .input(updateUserSettingsInputSchema)
     .mutation<UserSettingsInMessage>(async ({ ctx, input }) =>
