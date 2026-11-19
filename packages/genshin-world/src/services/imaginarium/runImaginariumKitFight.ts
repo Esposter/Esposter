@@ -137,6 +137,9 @@ export const runImaginariumKitFight = (
     const standingIndex = getDeployedCharacterIds(party).findIndex((id) => !checkIsCharacterDown(party, id));
     if (checkIsCharacterDown(party, characterId) && standingIndex !== -1)
       switchPartyMember(party, standingIndex, FIXED_STEP_SECONDS, context.kitEffectState.effects);
+    // The fight has no screen to emit its events to, and the party's and the enemies' health are already changed, so
+    // Each step's events are dropped once they are raised
+    context.outbox.length = 0;
     elapsedSeconds += FIXED_STEP_SECONDS;
     stepCount += 1;
   }
