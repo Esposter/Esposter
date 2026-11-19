@@ -132,10 +132,10 @@ describe(useTodoListStore, () => {
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
     const todoListStore = await setupStore();
-    const { editItem, saveItem } = todoListStore;
+    const { editItem, removeItem } = todoListStore;
     const { items } = storeToRefs(todoListStore);
     await editItem({ id: takeOne(items.value).id });
-    saveItem(true);
+    removeItem();
     await flushPromises();
 
     expect(items.value.map(({ name }) => name)).toStrictEqual([itemName, newItemName]);
