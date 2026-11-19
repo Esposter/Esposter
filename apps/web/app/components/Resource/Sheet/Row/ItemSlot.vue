@@ -1,27 +1,21 @@
 <script setup lang="ts">
+import type { Column } from "#shared/models/resource/sheet/column/Column";
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
 import type { ToData } from "@esposter/shared";
 
 import { checkIsEditableColumnValue } from "#shared/services/resource/sheet/column/checkIsEditableColumnValue";
-import { toColumnKey } from "#src/services/resource/sheet/column/toColumnKey";
 import { useCellStore } from "#src/store/resource/sheet/cell";
-import { useColumnStore } from "#src/store/resource/sheet/column";
 
 interface Props {
-  columnKey: string;
+  column: ToData<Column> | undefined;
   item: ToData<Row>;
   rowIndex: number;
 }
 
-const { columnKey } = defineProps<Props>();
-const columnStore = useColumnStore();
-const { displayColumns } = storeToRefs(columnStore);
+const { column } = defineProps<Props>();
 const cellStore = useCellStore();
 const { checkIsEditingCell } = cellStore;
-const column = computed(() => displayColumns.value.find(({ name }) => toColumnKey(name) === columnKey));
-const editableColumn = computed(() =>
-  column.value && checkIsEditableColumnValue(column.value) ? column.value : undefined,
-);
+const editableColumn = computed(() => (column && checkIsEditableColumnValue(column) ? column : undefined));
 </script>
 
 <template>

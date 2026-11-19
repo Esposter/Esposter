@@ -11,6 +11,7 @@ import { NumberFormat } from "#shared/models/resource/sheet/column/NumberFormat"
 import { createDataSource } from "#shared/models/resource/sheet/datasource/createDataSource.test";
 import { createRow } from "#shared/models/resource/sheet/datasource/createRow.test";
 import { USD_CURRENCY_FORMATTER } from "#shared/services/intl/constants";
+import ResourceSheetRowColumnFilterInput from "#src/components/Resource/Sheet/Row/ColumnFilterInput.vue";
 import ResourceSheetRowTable from "#src/components/Resource/Sheet/Row/Table.vue";
 import { createBooleanColumn } from "#src/composables/resource/sheet/commands/createBooleanColumn.test";
 import { setupWithDataSource } from "#src/composables/resource/sheet/commands/setupWithDataSource.test";
@@ -93,6 +94,17 @@ describe("resourceSheetRowTable", () => {
     await mountWithDataSource(createDataSource([sourceColumn, computedColumn], [createRow({ [name]: 0 })]));
 
     expect(getCellTexts(firstDataColumnIndex + 1)).toStrictEqual(["0"]);
+  });
+
+  // A computed column keeps no value in `row.data` for a filter to read, so only the stored columns draw a filter
+  test("draws a filter for each stored column but not for a computed one", async () => {
+    expect.hasAssertions();
+
+    const sourceColumn = createNumberColumn(name);
+    const computedColumn = createComputedColumn("a", sourceColumn.id);
+    await mountWithDataSource(createDataSource([sourceColumn, computedColumn], [createRow({ [name]: 0 })]));
+
+    expect(wrapper.findAllComponents(ResourceSheetRowColumnFilterInput)).toHaveLength(1);
   });
 
   // What a reader sees is the formatted text, so that is what the search box has to match — matching the

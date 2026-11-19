@@ -1,15 +1,14 @@
 <script setup lang="ts">
-import type { Column } from "#shared/models/resource/sheet/column/Column";
+import type { EditableColumnValue } from "#shared/models/resource/sheet/column/EditableColumnValue";
 import type { BooleanFilterValue } from "#src/models/resource/sheet/column/BooleanFilterValue";
 import type { ColumnFilter } from "#src/models/resource/sheet/column/ColumnFilter";
-import type { ToData } from "@esposter/shared";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { UiTextFieldType } from "#src/models/ui/UiTextFieldType";
 import { BooleanFilterValueItemCategoryDefinitions } from "#src/services/resource/sheet/column/BooleanFilterValueItemCategoryDefinitions";
 
 interface Props {
-  column: ToData<Column>;
+  column: EditableColumnValue;
 }
 
 const modelValue = defineModel<ColumnFilter | undefined>({ required: true });
@@ -45,7 +44,7 @@ const stringValue = computed({
     else return "";
   },
   set: (value) => {
-    if (column.type !== ColumnType.Boolean && column.type !== ColumnType.Computed && column.type !== ColumnType.Number)
+    if (column.type === ColumnType.Date || column.type === ColumnType.String)
       modelValue.value = value ? { type: column.type, value } : undefined;
   },
 });

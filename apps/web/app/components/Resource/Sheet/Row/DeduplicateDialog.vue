@@ -7,6 +7,7 @@ import { KeepDuplicateMode, KeepDuplicateModes } from "#src/models/resource/shee
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiDialogSize } from "#src/models/ui/UiDialogSize";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { getDisplayText } from "#src/services/resource/sheet/column/getDisplayText";
 import { getVisibleEditableColumns } from "#src/services/resource/sheet/column/getVisibleEditableColumns";
 import { findDuplicateRows } from "#src/services/resource/sheet/commands/findDuplicateRows";
 import { useSheetStore } from "#src/store/resource/sheet/index";
@@ -26,10 +27,7 @@ const duplicateItems = computed(() =>
 const duplicateColumns = computed<UiDataTableColumn<IndexedRow & { id: string }>[]>(() => [
   { getValue: ({ index }) => String(index + 1), isSortable: false, key: "index", title: "#" },
   ...getVisibleEditableColumns(dataSource.value.columns).map((column) => ({
-    getValue: ({ row }: IndexedRow) => {
-      const value = takeOne(row.data, column.name);
-      return value === null ? "" : String(value);
-    },
+    getValue: ({ row }: IndexedRow) => getDisplayText(takeOne(row.data, column.name), column),
     isSortable: false as const,
     key: column.name,
     title: column.name,

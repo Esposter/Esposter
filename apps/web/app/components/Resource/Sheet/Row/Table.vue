@@ -117,6 +117,8 @@ const getHeaderProps = (tableColumn: UiDataTableColumn<ToData<Row>>) => {
   const columnData = columnKeyMap.value.get(tableColumn.key);
   return columnData ? getContextMenuProps(columnData.column.id, () => getColumnActionItems(columnData.column)) : {};
 };
+// A row the table does not draw has no place in it, so its number and its actions read as -1
+const getRowIndex = (id: string) => rowIdIndexMap.value.get(id) ?? -1;
 
 onClickOutside(table, () => {
   clearCellSelection();
@@ -136,7 +138,7 @@ onClickOutside(table, () => {
       :columns="tableColumns"
       :get-cell-props
       :get-header-props
-      :get-item-title="({ id }) => `row ${(rowIdIndexMap.get(id) ?? -1) + 1}`"
+      :get-item-title="({ id }) => `row ${getRowIndex(id) + 1}`"
       is-cell-navigable
       is-first-column-sticky
       is-multi-sort
@@ -169,7 +171,7 @@ onClickOutside(table, () => {
       "
     >
       <template #header="{ column: tableColumn }">
-        <ResourceSheetRowHeaderSlot :column-key="tableColumn.key" />
+        <ResourceSheetRowHeaderSlot :column="columnKeyMap.get(tableColumn.key)?.column" />
       </template>
       <template #cell="{ column: tableColumn, item }">
         <UiIcon
@@ -178,17 +180,17 @@ onClickOutside(table, () => {
           :meaning="UiIconMeaning.Drag"
           cursor-move
         />
-        <template v-else-if="tableColumn.key === '#'">{{ (rowIdIndexMap.get(item.id) ?? -1) + 1 }}</template>
+        <template v-else-if="tableColumn.key === '#'">{{ getRowIndex(item.id) + 1 }}</template>
         <ResourceSheetRowActionSlot
           v-else-if="tableColumn.key === 'actions'"
-          :index="rowIdIndexMap.get(item.id) ?? -1"
+          :index="getRowIndex(item.id)"
           :row="item"
         />
         <ResourceSheetRowItemSlot
           v-else
-          :column-key="tableColumn.key"
+          :column="columnKeyMap.get(tableColumn.key)?.column"
           :item
-          :row-index="rowIdIndexMap.get(item.id) ?? -1"
+          :row-index="getRowIndex(item.id)"
         />
       </template>
       <template #foot="{ column: tableColumn }">{{ columnKeySummaryMap.get(tableColumn.key) ?? "" }}</template>
@@ -201,7 +203,7 @@ onClickOutside(table, () => {
       v-if="editingRow"
       :key="editingRow.id"
       :columns="dataSource.columns"
-      :index="rowIdIndexMap.get(editingRow.id) ?? -1"
+      :index="getRowIndex(editingRow.id)"
       :row="editingRow"
     />
   </div>

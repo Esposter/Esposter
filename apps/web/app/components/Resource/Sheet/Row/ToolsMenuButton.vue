@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Item } from "#src/models/shared/Item";
+import type { SelectItemCategoryDefinition } from "#src/models/shared/SelectItemCategoryDefinition";
 
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { NullStrategyItemCategoryDefinitions } from "#src/services/resource/sheet/commands/NullStrategyItemCategoryDefinitions";
@@ -15,8 +16,22 @@ const nullStrategy = useNullStrategy();
 const stringTransformation = useStringTransformation();
 const isStatisticsOpen = ref(false);
 const isDeduplicateOpen = ref(false);
-// The two families of cleanup are flat groups named by what they do and to what, as a Data menu lists them, rather than
-// A submenu each
+// Each family of cleanup is one flat group, its first option starting it, as a Data menu lists them rather than a
+// Submenu each
+const getCategoryItems = <TValue>(
+  definitions: SelectItemCategoryDefinition<TValue>[],
+  prefix: string,
+  icon: string,
+  apply: (value: TValue) => void,
+): Item[] =>
+  definitions.map(({ title, value }, index) => ({
+    icon,
+    isGroupStart: index === 0,
+    onClick: () => {
+      apply(value);
+    },
+    title: `${prefix}: ${title}`,
+  }));
 const items = computed<Item[]>(() => [
   {
     icon: "i-mdi:sigma",
@@ -46,22 +61,13 @@ const items = computed<Item[]>(() => [
     },
     title: isCopyIncludingHeaders.value ? "Headers included in copy" : "Headers excluded from copy",
   },
-  ...StringTransformationItemCategoryDefinitions.map(({ title, value }, index) => ({
-    icon: "i-mdi:format-letter-case",
-    isGroupStart: index === 0,
-    onClick: () => {
-      stringTransformation(value);
-    },
-    title: `Text: ${title}`,
-  })),
-  ...NullStrategyItemCategoryDefinitions.map(({ title, value }, index) => ({
-    icon: "i-mdi:null",
-    isGroupStart: index === 0,
-    onClick: () => {
-      nullStrategy(value);
-    },
-    title: `Empty cells: ${title}`,
-  })),
+  ...getCategoryItems(
+    StringTransformationItemCategoryDefinitions,
+    "Text",
+    "i-mdi:format-letter-case",
+    stringTransformation,
+  ),
+  ...getCategoryItems(NullStrategyItemCategoryDefinitions, "Empty cells", "i-mdi:null", nullStrategy),
 ]);
 </script>
 
