@@ -17,13 +17,12 @@ interface Props {
 defineProps<Props>();
 const emit = defineEmits<{ toggle: [id: TodoListItem["id"]] }>();
 const todoListStore = useTodoListStore();
-const { editItem, reorderItems, toggleImportant } = todoListStore;
+const { checkIsCompleted, editItem, reorderItems, toggleImportant } = todoListStore;
 const { items: todoListItems } = storeToRefs(todoListStore);
 const todoDialogStore = useTodoDialogStore();
 const { deletingIds } = storeToRefs(todoDialogStore);
 const { getContextMenuProps } = useContextMenu();
 const findItem = (id: TodoListItem["id"]) => todoListItems.value.find((todo) => todo.id === id);
-const checkIsCompleted = (id: TodoListItem["id"]) => Boolean(findItem(id)?.completedAt);
 const checkIsImportant = (id: TodoListItem["id"]) => Boolean(findItem(id)?.isImportant);
 // What a todo's context menu holds: the tick its checkbox gives, the star it trails, and the delete its dialog also has
 const getTodoItems = (id: TodoListItem["id"]): Item[] => [

@@ -20,7 +20,7 @@ import { parse } from "node-html-parser";
 const resourceStore = useResourceStore();
 const { currentResourceId } = storeToRefs(resourceStore);
 const todoListStore = useTodoListStore();
-const { loadContent, toggleCompleted } = todoListStore;
+const { checkIsCompleted, loadContent, toggleCompleted } = todoListStore;
 const { items, searchQuery, sort } = storeToRefs(todoListStore);
 const todoDialogStore = useTodoDialogStore();
 const { deletingIds } = storeToRefs(todoDialogStore);
@@ -62,7 +62,6 @@ const completedListItems = computed(() => {
   const sortedItems = sortCompletedTodoListItems(completedItems);
   return sortedItems.map((item) => toListItem(item));
 });
-const checkIsCompleted = (id: TodoListItem["id"]) => Boolean(items.value.find((item) => item.id === id)?.completedAt);
 // Ends the hold a tick took after its time, and only that hold: a todo unticked and ticked again inside the hold keeps
 // Its own
 const endHold = async (id: TodoListItem["id"], hold: symbol) => {

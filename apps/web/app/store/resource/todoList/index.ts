@@ -109,6 +109,7 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
       if (todoList.value === writtenTodoList) item[key] = previousValue;
     });
   };
+  const checkIsCompleted = (id: TodoListItem["id"]) => Boolean(items.value.find((item) => item.id === id)?.completedAt);
   // A tick or an untick: completedAt is set to now or cleared — except the tick of a repeating todo, which rolls to its
   // Next due date in the browser's time zone. A refused save puts both back, unless another device's content was
   // Reloaded mid-flight
@@ -159,6 +160,7 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
   };
   return {
     addItem,
+    checkIsCompleted,
     deleteItems,
     editedItem,
     isEditFormDialogOpen,
