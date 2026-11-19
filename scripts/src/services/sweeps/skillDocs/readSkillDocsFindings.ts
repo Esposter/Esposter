@@ -16,12 +16,12 @@ import { getUnindexedFindings } from "#src/services/sweeps/skillDocs/getUnindexe
 import { getUnresolvedFindings } from "#src/services/sweeps/skillDocs/getUnresolvedFindings";
 
 // A skill's own file is `<skill>/SKILL.md`, which a page under `references/` never is, even when it is named SKILL.md
-const isSkillFile = (file: QueueFile) => file.path === `${SKILLS_DIRECTORY}/${getSkillName(file.path)}/SKILL.md`;
+const checkIsSkillFile = (file: QueueFile) => file.path === `${SKILLS_DIRECTORY}/${getSkillName(file.path)}/SKILL.md`;
 // Every check over the skill tree, in one read: the sweep prints them and the workspace test refuses all but the budget
 export const readSkillDocsFindings = (): SkillDocsFinding[] => {
   const documents = readWorkingTreeFiles(`${SKILLS_DIRECTORY}/*/SKILL.md`, `${SKILLS_DIRECTORY}/*/references/*.md`);
-  const skills = documents.filter((file) => isSkillFile(file));
-  const pages = documents.filter((file) => !isSkillFile(file));
+  const skills = documents.filter((file) => checkIsSkillFile(file));
+  const pages = documents.filter((file) => !checkIsSkillFile(file));
   const files = [...skills, ...pages];
   const paths = new Set(files.map(({ path }) => path));
   const skillNames = new Set(skills.map(({ path }) => getSkillName(path)));

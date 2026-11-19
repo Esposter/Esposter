@@ -428,6 +428,51 @@ describe("typescriptRules", () => {
         source: "export interface A {\n  isB(c: string): boolean;\n}",
         violations: 1,
       },
+      // An unannotated function whose body is a boolean expression answers with a boolean the annotation would have shown
+      {
+        filePath: "isInferredComparison.ts",
+        name: "isInferredComparison",
+        source: "export const isA = (b: number) => b === 1;",
+        violations: 1,
+      },
+      {
+        filePath: "hasInferredNegation.ts",
+        name: "hasInferredNegation",
+        source: "export const hasA = (b: string) => !b;",
+        violations: 1,
+      },
+      {
+        filePath: "isInferredBlockReturn.ts",
+        name: "isInferredBlockReturn",
+        source: "export function isA(b: number) {\n  return b > 1;\n}",
+        violations: 1,
+      },
+      // An async function resolves to the boolean its body shows, and is a call like any other, so it takes `check*` too
+      {
+        filePath: "hasInferredAsyncComparison.ts",
+        name: "hasInferredAsyncComparison",
+        source: "export const hasA = async (b: string) => (await Promise.resolve(b)) !== null;",
+        violations: 1,
+      },
+      {
+        filePath: "isInferredObjectProperty.ts",
+        name: "isInferredObjectProperty",
+        source: "export const a = { isB: () => 1 === 1 };",
+        violations: 1,
+      },
+      {
+        filePath: "checkIsInferredComparison.ts",
+        name: "checkIsInferredComparison",
+        source: "export const checkIsA = (b: number) => b === 1;",
+        violations: 0,
+      },
+      // A value other than a boolean expression is not a boolean, whatever the name says
+      {
+        filePath: "isInferredArithmetic.ts",
+        name: "isInferredArithmetic",
+        source: "export const isA = (b: number) => b + 1;",
+        violations: 0,
+      },
       {
         filePath: "checkIsFunctionProperty.ts",
         name: "checkIsFunctionProperty",

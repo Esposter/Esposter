@@ -23,8 +23,8 @@ const id = useId();
 // Mounted on the client only: the browser reads a colour off the document, which a server render does not have
 const isMounted = useMounted();
 const getReference = (name: string) => `var(--${name})`;
-const isSelected = (name: string) => modelValue.value === getReference(name);
-const selectedSwatch = computed(() => swatches.find(({ name }) => isSelected(name)));
+const checkIsSelected = (name: string) => modelValue.value === getReference(name);
+const selectedSwatch = computed(() => swatches.find(({ name }) => checkIsSelected(name)));
 // A colour as the six-digit hex the browser reads it as, or undefined before mount, where no browser has read it yet
 const readHexColor = (cssColor: string): string | undefined => {
   if (HEX_COLOR_REGEX.test(cssColor)) return cssColor;
@@ -61,12 +61,12 @@ const getCheckColor = (fill: string) => getContrastingColor(readHexColor(fill) ?
         rd-full
         class="aria-pressed:ui-selected"
         :aria-label="swatch.name"
-        :aria-pressed="isSelected(swatch.name)"
+        :aria-pressed="checkIsSelected(swatch.name)"
         :style="{ backgroundColor: swatch.value }"
         @click="modelValue = getReference(swatch.name)"
       >
         <UiIcon
-          v-if="isSelected(swatch.name)"
+          v-if="checkIsSelected(swatch.name)"
           :meaning="UiIconMeaning.Selected"
           :style="{ color: getCheckColor(swatch.value) }"
         />

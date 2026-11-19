@@ -7,4 +7,4 @@ import { ResourceType } from "@esposter/db-schema";
 // `{{entry:*}}` and `{{parameter:*}}` tokens name that child's entries and parameters, not this deploy's, so
 // The outer grammar never descends into it and the nested manifest is created byte-for-byte as authored.
 // Callers take the whole entry rather than its content precisely so the decision cannot be bypassed
-export const isOuterGrammarEntry = (entry: BlueprintEntryContent) => entry.type !== ResourceType.Blueprint;
+export const checkIsOuterGrammarEntry = (entry: BlueprintEntryContent) => entry.type !== ResourceType.Blueprint;

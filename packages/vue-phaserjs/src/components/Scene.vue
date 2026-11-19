@@ -20,13 +20,13 @@ defineSlots<{ default: () => VNode }>();
 const { autoStart, sceneKey } = defineProps<SceneProps>();
 const emit = defineEmits<SceneEmits>();
 const phaserStore = usePhaserStore();
-const { isSameScene, switchToScene } = phaserStore;
+const { checkIsSameScene, switchToScene } = phaserStore;
 const cameraStore = useCameraStore();
 const { isFading } = storeToRefs(cameraStore);
 const inputStore = useInputStore();
 const { isInputActive } = storeToRefs(inputStore);
 const { parallelSceneKeys } = storeToRefs(phaserStore);
-const isActive = computed(() => isSameScene(sceneKey) || parallelSceneKeys.value.includes(sceneKey));
+const isActive = computed(() => checkIsSameScene(sceneKey) || parallelSceneKeys.value.includes(sceneKey));
 const fadeStartListener = () => {
   isInputActive.value = false;
 };

@@ -1,7 +1,7 @@
 import type { GeoPoint } from "#src/models/visual/GeoPoint";
 import type { LandMask } from "#src/models/visual/LandMask";
 
-import { isLandAt } from "#src/services/visual/globe/isLandAt";
+import { checkIsLandAt } from "#src/services/visual/globe/checkIsLandAt";
 
 // Rings of latitude, each spaced evenly in arc length, so the dots stay the same distance apart from the equator to the poles
 export const createLandDots = (landMask: LandMask, spacing: number) => {
@@ -12,7 +12,7 @@ export const createLandDots = (landMask: LandMask, spacing: number) => {
     const dotCount = Math.max(1, Math.round((360 * Math.cos((lat * Math.PI) / 180)) / spacing));
     for (let i = 0; i < dotCount; i++) {
       const lng = -180 + (i + 0.5) * (360 / dotCount);
-      if (isLandAt(landMask, lat, lng)) dots.push({ lat, lng });
+      if (checkIsLandAt(landMask, lat, lng)) dots.push({ lat, lng });
     }
   }
   return dots;

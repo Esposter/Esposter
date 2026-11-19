@@ -155,12 +155,12 @@ export const useWorldOutcrops = ({
       if (!kindRules || kindRules.length === 0 || places.length === 0) continue;
       const drawnAt = drawnAtMap.get(regionId);
       if (drawnAt !== undefined && checkIsDailyResetDayCurrent(drawnAt, now)) continue;
-      const isOutsideRegion = (placeId: number) => regionIdOfPlace.value.get(placeId) !== regionId;
+      const checkIsOutsideRegion = (placeId: number) => regionIdOfPlace.value.get(placeId) !== regionId;
       outcrops.value = [
-        ...outcrops.value.filter(({ placeId }) => isOutsideRegion(placeId)),
+        ...outcrops.value.filter(({ placeId }) => checkIsOutsideRegion(placeId)),
         ...computeDailyOutcrops(kindRules, places, rank.value, unlockedCityIds, random),
       ];
-      fightCamps.value = new Map([...fightCamps.value].filter(([placeId]) => isOutsideRegion(placeId)));
+      fightCamps.value = new Map([...fightCamps.value].filter(([placeId]) => checkIsOutsideRegion(placeId)));
       drawnAtMap.set(regionId, now);
     }
   };

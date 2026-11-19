@@ -21,9 +21,9 @@ export const usePhaserStore = defineStore("phaser", () => {
       parallelSceneKeys.value = [];
     },
   });
-  const isSameScene = (newSceneKey: SceneWithPlugins["scene"]["key"]) => newSceneKey === sceneKey.value;
+  const checkIsSameScene = (newSceneKey: SceneWithPlugins["scene"]["key"]) => newSceneKey === sceneKey.value;
   const switchToScene = async (newSceneKey: SceneWithPlugins["scene"]["key"]) => {
-    if (isSameScene(newSceneKey)) return;
+    if (checkIsSameScene(newSceneKey)) return;
 
     const activeGame = game.value;
     if (!activeGame) throw new NotInitializedError(Game.name);
@@ -59,8 +59,8 @@ export const usePhaserStore = defineStore("phaser", () => {
   };
 
   return {
+    checkIsSameScene,
     game,
-    isSameScene,
     launchParallelScene,
     parallelSceneKeys,
     prioritizedParallelSceneKeys,

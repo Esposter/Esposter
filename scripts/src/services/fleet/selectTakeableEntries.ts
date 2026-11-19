@@ -20,8 +20,8 @@ export const selectTakeableEntries = (
   now: number,
 ): FleetEntry[] => {
   const isLent = (area: string) => profile.areas.some((lent) => ALL_AREAS.includes(lent) || lent === area);
-  const isLive = (claim: ClaimedRef) => getClaimStatus(claim.message, now) !== ClaimStatus.Stale;
-  const liveClaimIds = new Set([...claims].filter(([, claim]) => isLive(claim)).map(([id]) => id));
+  const checkIsLive = (claim: ClaimedRef) => getClaimStatus(claim.message, now) !== ClaimStatus.Stale;
+  const liveClaimIds = new Set([...claims].filter(([, claim]) => checkIsLive(claim)).map(([id]) => id));
   const liveTouches = entries.filter(({ id }) => liveClaimIds.has(id)).flatMap(({ touches }) => touches);
   return entries
     .filter(

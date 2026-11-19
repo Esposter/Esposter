@@ -11,6 +11,16 @@ const MAP_TYPE_NAME_REGEX = "/^(Map|ReadonlyMap|Record)$/";
 // That makes it a boolean-returning one are each written once.
 const CALLABLE_NAME_REGEX = "/^(is|has)[A-Z]/";
 const BOOLEAN_RETURN_TYPE = ":matches(TSBooleanKeyword, TSTypePredicate)";
+// An unannotated function answers with the boolean its body shows: a comparison, a negation or a literal true/false.
+// Only that syntax is read here, since a boolean that comes from a call or a variable is the checker's to know.
+const BOOLEAN_OPERATOR_REGEX = "/^(===|!==|==|!=|<|<=|>|>=|instanceof|in)$/";
+const BOOLEAN_LITERAL_REGEX = "/^(true|false)$/";
+const booleanExpressionOf = (field) =>
+  `:matches([${field}.type='BinaryExpression'][${field}.operator=${BOOLEAN_OPERATOR_REGEX}], [${field}.type='UnaryExpression'][${field}.operator='!'], [${field}.raw=${BOOLEAN_LITERAL_REGEX}])`;
+// The two shapes a named function takes its body in: an arrow's expression, or a block whose top-level return is one.
+// `:not([returnType])` leaves an annotated function to the `BOOLEAN_RETURN_TYPE` selectors, so each is matched once.
+const UNANNOTATED_BOOLEAN_EXPRESSION_BODY = `ArrowFunctionExpression:not([returnType])${booleanExpressionOf("body")}`;
+const UNANNOTATED_BOOLEAN_BLOCK_RETURN = `:matches(ArrowFunctionExpression, FunctionExpression):not([returnType]) > BlockStatement > ReturnStatement${booleanExpressionOf("argument")}`;
 // Only `no-restricted-syntax` lives on the ESLint side: oxlint enforces the rest natively but has no
 // Selector-based rule, so these AST-selector bans have nowhere else to go
 // (see openspec/specs/architecture/lint-toolchain/design.md).
@@ -110,7 +120,10 @@ export default {
       // Function whose declared return is `boolean` or a type predicate answers with one and is `check*`, and so
       // Is a parameter typed as one: a callback handed in is called at every site that reads it. Each shape a
       // Named function takes is matched: a declaration, a variable, a method, an object or class member, and a
-      // Member typed as a function (`isB?: (c) => boolean`), which an interface declares without a body
+      // Member typed as a function (`isB?: (c) => boolean`), which an interface declares without a body. An
+      // Unannotated one is held too when its body is a boolean expression (`isA = (b) => b === 1`), since that is a
+      // Boolean without the annotation; a boolean that comes from a call or a variable needs the checker, so the review
+      // Holds it. An async one resolves to that boolean and is still a call, so it is held the same way (`checkHasBlob`)
       message:
         "Name a boolean-returning function `check*` — `is*`/`has*` is a stored boolean, never a call. See the naming skill.",
       selector: [
@@ -120,6 +133,11 @@ export default {
         `TSMethodSignature[key.name=${CALLABLE_NAME_REGEX}] > TSTypeAnnotation.returnType > ${BOOLEAN_RETURN_TYPE}`,
         `:matches(TSPropertySignature, PropertyDefinition, TSAbstractPropertyDefinition)[key.name=${CALLABLE_NAME_REGEX}] > TSTypeAnnotation > TSFunctionType > TSTypeAnnotation.returnType > ${BOOLEAN_RETURN_TYPE}`,
         `Identifier[name=${CALLABLE_NAME_REGEX}] > TSTypeAnnotation > TSFunctionType > TSTypeAnnotation.returnType > ${BOOLEAN_RETURN_TYPE}`,
+        `VariableDeclarator[id.name=${CALLABLE_NAME_REGEX}] > ${UNANNOTATED_BOOLEAN_EXPRESSION_BODY}`,
+        `VariableDeclarator[id.name=${CALLABLE_NAME_REGEX}] > ${UNANNOTATED_BOOLEAN_BLOCK_RETURN}`,
+        `FunctionDeclaration[id.name=${CALLABLE_NAME_REGEX}]:not([returnType]) > BlockStatement > ReturnStatement${booleanExpressionOf("argument")}`,
+        `:matches(Property, PropertyDefinition, MethodDefinition, TSAbstractMethodDefinition)[key.name=${CALLABLE_NAME_REGEX}] > ${UNANNOTATED_BOOLEAN_EXPRESSION_BODY}`,
+        `:matches(Property, PropertyDefinition, MethodDefinition, TSAbstractMethodDefinition)[key.name=${CALLABLE_NAME_REGEX}] > ${UNANNOTATED_BOOLEAN_BLOCK_RETURN}`,
       ].join(", "),
     },
     {

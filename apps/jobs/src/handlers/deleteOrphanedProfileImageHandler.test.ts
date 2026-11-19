@@ -25,7 +25,8 @@ const createObjectCreatedMessage = (key: string) =>
     eventTime: new Date(0).toISOString(),
     object: { key, size: 1 },
   }) satisfies R2ObjectCreatedQueueMessage;
-const hasBlob = async (blobName: string) => (await getBucket(StorageBucket.PublicUserAssets).head(blobName)) !== null;
+const checkHasBlob = async (blobName: string) =>
+  (await getBucket(StorageBucket.PublicUserAssets).head(blobName)) !== null;
 
 describe(deleteOrphanedProfileImageHandler, () => {
   const userId = v7();
@@ -56,7 +57,7 @@ describe(deleteOrphanedProfileImageHandler, () => {
     await seedBlob(blobName);
     await deleteOrphanedProfileImageHandler(createObjectCreatedMessage(blobName));
 
-    await expect(hasBlob(blobName)).resolves.toBe(false);
+    await expect(checkHasBlob(blobName)).resolves.toBe(false);
   });
 
   test("deletes a profile image whose account has asked to be deleted", async () => {
@@ -67,7 +68,7 @@ describe(deleteOrphanedProfileImageHandler, () => {
     await seedBlob(blobName);
     await deleteOrphanedProfileImageHandler(createObjectCreatedMessage(blobName));
 
-    await expect(hasBlob(blobName)).resolves.toBe(false);
+    await expect(checkHasBlob(blobName)).resolves.toBe(false);
   });
 
   test("keeps the profile image of an account in use", async () => {
@@ -77,7 +78,7 @@ describe(deleteOrphanedProfileImageHandler, () => {
     await seedBlob(blobName);
     await deleteOrphanedProfileImageHandler(createObjectCreatedMessage(blobName));
 
-    await expect(hasBlob(blobName)).resolves.toBe(true);
+    await expect(checkHasBlob(blobName)).resolves.toBe(true);
   });
 
   // The room's prefix has no account behind it, so a missing row would match it without the name check
@@ -88,6 +89,6 @@ describe(deleteOrphanedProfileImageHandler, () => {
     await seedBlob(blobName);
     await deleteOrphanedProfileImageHandler(createObjectCreatedMessage(blobName));
 
-    await expect(hasBlob(blobName)).resolves.toBe(true);
+    await expect(checkHasBlob(blobName)).resolves.toBe(true);
   });
 });

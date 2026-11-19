@@ -36,12 +36,13 @@ const mergeFieldColumns = getMergeFieldColumnsRef(() => resourceId);
 const insertMergeField = (columnName: string) =>
   insert(MjmlNodeType.Text, (id) => createMergeFieldNode(columnName, id));
 // A press starts a drag only where a frame can take the block or the column, so a press that has no frame stays a click
-const hasFrame = () => getFrameGeometry?.() !== undefined;
+const checkHasFrame = () => getFrameGeometry?.() !== undefined;
 const startDrag = (type: BlockNode["type"], event: PointerEvent) => {
-  if (startPaletteDrag && getFrameGeometry && hasFrame()) startPaletteDrag(type, event, getFrameGeometry);
+  if (startPaletteDrag && getFrameGeometry && checkHasFrame()) startPaletteDrag(type, event, getFrameGeometry);
 };
 const startColumnDrag = (columnName: string, event: PointerEvent) => {
-  if (startMergeFieldDrag && getFrameGeometry && hasFrame()) startMergeFieldDrag(columnName, event, getFrameGeometry);
+  if (startMergeFieldDrag && getFrameGeometry && checkHasFrame())
+    startMergeFieldDrag(columnName, event, getFrameGeometry);
 };
 // A type with no icon or no title is left out, rather than drawn with one the kind does not give it. A type no slot at the
 // Selection takes is left out the same way, and a group left with nothing in it is not drawn
