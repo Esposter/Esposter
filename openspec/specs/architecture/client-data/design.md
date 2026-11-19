@@ -231,7 +231,7 @@ Post counts have one owner, `usePostCountStore`: a write that changes a count as
 
 Each entry names a shape to avoid and the shape that takes its place. The check that stops it coming back is its enforcer's, not restated here.
 
-- **A count moved by a delta.** `count++` on a join, `commentCount += 1` on a reply, a live event's echo added to a `likeCount`. Use a re-read of the aggregate. The one site that may move a count at once is the viewer's own vote, in `moveLikeCount`, which carries its disable with the reason.
+- **A count moved by a delta.** `count++` on a join, `commentCount += 1` on a reply, a live event's echo added to a `likeCount`. Use a re-read of the aggregate. The one site that may move a count at once is the viewer's own vote, in `setViewerLike`, which carries its disable with the reason.
 - **A delta from an event payload.** A live event echo read as a number to add to the count. An echo says the inputs changed; the count is read again.
 - **Guessing an unknown prior state.** Treating a member with no read roles as roleless (`?? ""`), or a read-tracking set that says whether the roles were read. An unknown prior state is not a value. The owner re-reads the aggregate instead of computing a change it cannot prove. The review lane checks it, since no mechanism does yet.
 - **Ordering reads one at a time.** `createBatchedRefresh` runs one read at a time per owner: reads never overlap, the newest is always last, and a change marked during a read is read by the run after it. An older read can therefore never finish last and overwrite the newer one.
