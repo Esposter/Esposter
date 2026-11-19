@@ -115,6 +115,7 @@ export const GameDataKeys = {
     points: "fishing/points",
     pools: "fishing/pools",
     proficiency: "fishing/proficiency",
+    props: "fishing/props",
     rewards: "fishing/rewards",
     rods: "fishing/rods",
     skills: "fishing/skills",
