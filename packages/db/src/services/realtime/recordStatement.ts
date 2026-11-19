@@ -6,8 +6,8 @@ import type { SQLWrapper } from "drizzle-orm";
 import { batchStatements } from "#src/services/realtime/batchStatements";
 import { checkIsStatement } from "#src/services/realtime/checkIsStatement";
 import { getBeforeReads } from "#src/services/realtime/getBeforeReads";
+import { getBeforeRows } from "#src/services/realtime/getBeforeRows";
 import { getWriteTable } from "#src/services/realtime/getWriteTable";
-import { toRows } from "#src/services/realtime/toRows";
 import {
   answerReturned,
   returnedAnswers,
@@ -24,11 +24,6 @@ const runWidenedWrite = async (statement: PromiseLike<unknown> & SQLWrapper): Pr
   return checkIsRecord(run) ? run.results : undefined;
 };
 
-// A query that records itself when it is awaited. `then` is where a query runs from, so the record is made there, and the
-// Rows it resolves to are handed to the record before the awaiting caller sees them. A write that needs reads before it runs
-// Runs them in the same batch, ahead of it, so they see the rows as the write does. The query's other methods run on the
-// Query they came from, and a query one of them returns is recorded in turn, so a chain is recorded once, at its end.
-// `catch` and `finally` run with the recorded query as `this`, so the `then` they call is the recorded one
 // Runs a statement with the reads it needs before it, and returns what it resolved to with the rows of those reads. The
 // Statement awaited alone is run as it is, so its own `then` runs it
 const runStatement = async (
@@ -42,15 +37,17 @@ const runStatement = async (
       result: executed.answer ? await runWidenedWrite(executed.statement) : await executed.statement,
     };
   const results = await batchStatements(recorder.database, [...reads.map(({ select }) => select), executed.statement]);
-  return {
-    before: reads.map(({ table }, index) => ({ rows: toRows(results[index]), table })),
-    result: results[reads.length],
-  };
+  return { before: getBeforeRows(reads, results, 0), result: results[reads.length] };
 };
 
 // The methods a synchronous statement runs by: a query's rows (`all`, `get`) or its write (`run`)
 const SYNC_EXECUTE_METHODS = new Set(["all", "get", "run"]);
 
+// A query that records itself when it is awaited. `then` is where a query runs from, so the record is made there, and the
+// Rows it resolves to are handed to the record before the awaiting caller sees them. A write that needs reads before it runs
+// Runs them in the same batch, ahead of it, so they see the rows as the write does. The query's other methods run on the
+// Query they came from, and a query one of them returns is recorded in turn, so a chain is recorded once, at its end.
+// `catch` and `finally` run with the recorded query as `this`, so the `then` they call is the recorded one
 export const recordStatement = <T extends PromiseLike<unknown> & SQLWrapper>(statement: T, recorder: Recorder): T => {
   const recorded: T = new Proxy(statement, {
     get: (target, property) => {

@@ -8,7 +8,7 @@ import { JoinKind } from "#src/models/realtime/JoinKind";
 import { getJoinScopeValues } from "#src/services/realtime/getJoinScopeValues";
 import { getOccurrenceKey } from "#src/services/realtime/getOccurrenceKey";
 import { getReferencedColumns } from "#src/services/realtime/getReferencedColumns";
-import { getScopeValueTopic } from "#src/services/realtime/getScopeTopics";
+import { getScopeColumnTopics } from "#src/services/realtime/getScopeColumnTopics";
 import { getStatementReadSet } from "#src/services/realtime/getStatementReadSet";
 import { getColumnTopic, getTableTopic } from "@esposter/db-schema";
 import { SQLiteDialect } from "drizzle-orm/sqlite-core";
@@ -53,11 +53,7 @@ export const getStatementReadTopics = async ({ rows, statement }: RecordedStatem
   const scopeValues: ScopeValue[] = readSet.scopes
     .filter(({ value }) => value !== undefined && value !== null)
     .map(({ column, table, value }) => ({ column, table, value }));
-  const equalityTopics = await Promise.all(
-    scopeValues.map(async (scopeValue) =>
-      getColumnTopic(await getScopeValueTopic(scopeValue), getColumns(scopeValue.table)),
-    ),
-  );
+  const equalityTopics = await getScopeColumnTopics(scopeValues, getColumns);
   const occurrenceScopeValuesMap = getJoinScopeValues(readSet.joins, rows, getNamableOccurrences(readSet));
   const namedOccurrences = new Set(
     [...occurrenceScopeValuesMap].filter(([, values]) => values.length > 0).map(([key]) => key),
@@ -72,11 +68,7 @@ export const getStatementReadTopics = async ({ rows, statement }: RecordedStatem
   const joinScopeValues = [...occurrenceScopeValuesMap.values()]
     .flat()
     .filter(({ table }) => !tableWideTables.includes(table));
-  const joinTopics = await Promise.all(
-    joinScopeValues.map(async (scopeValue) =>
-      getColumnTopic(await getScopeValueTopic(scopeValue), getColumns(scopeValue.table)),
-    ),
-  );
+  const joinTopics = await getScopeColumnTopics(joinScopeValues, getColumns);
   // A table-wide table names its rows, and the columns its statement reads, so an update of a column it does not read wakes it not
   const tableTopics = tableWideTables.map((tableName) =>
     getColumnTopic(getTableTopic(tableName), getColumns(tableName)),

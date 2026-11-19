@@ -1,11 +1,10 @@
-import type { RecordedRows } from "#src/models/realtime/RecordedRows";
 import type { Recorder } from "#src/models/realtime/Recorder";
 import type { Database } from "@esposter/db-schema";
 
 import { batchStatements } from "#src/services/realtime/batchStatements";
 import { checkIsStatement } from "#src/services/realtime/checkIsStatement";
 import { getBeforeReads } from "#src/services/realtime/getBeforeReads";
-import { toRows } from "#src/services/realtime/toRows";
+import { getBeforeRows } from "#src/services/realtime/getBeforeRows";
 import { answerReturned, widenUnreturnedWrite } from "#src/services/realtime/widenReturning";
 import { noop } from "@esposter/shared";
 
@@ -45,11 +44,7 @@ export const recordBatch =
     const results = await batchStatements(recorder.database, items);
     return placed.map(({ answer, complete, index, reads, readStart }) => {
       const result = results[index];
-      const before: RecordedRows[] = reads.map(({ table }, readIndex) => ({
-        rows: toRows(results[readStart + readIndex]),
-        table,
-      }));
-      complete(result, before);
+      complete(result, getBeforeRows(reads, results, readStart));
       return answer(result);
     });
   };
