@@ -1,4 +1,4 @@
-import type { AnyProcedure } from "@trpc/server";
+import type { AnyProcedure, AnyRouter } from "@trpc/server";
 
 import { OPAQUE_KEY } from "#server/services/mcp/constants";
 import { getRequestJsonSchema } from "#server/services/request/getRequestJsonSchema.test";
@@ -83,5 +83,31 @@ describe("trpcRouter", () => {
     );
 
     expect(readUnboundedPaths(schema, "input")).toStrictEqual(["input.open (record)"]);
+  });
+
+  // The root router is listed by hand, so a router file left out of it fails nothing else. Every procedure a router
+  // Defines must be on the root, whether the root mounts that router directly or through another file's merge
+  test("every routers file exporting a router has its procedures on the root router", () => {
+    expect.hasAssertions();
+
+    const rootRouter: AnyRouter = trpcRouter;
+    const rootProcedures = new Set(Object.values<AnyProcedure>(rootRouter._def.procedures));
+    const routerModules = import.meta.glob<Record<string, AnyRouter>>(["./**/*.ts", "!./**/*.test.ts", "!./index.ts"], {
+      eager: true,
+    });
+    const routers = Object.entries(routerModules).flatMap(([path, routerModule]) =>
+      Object.entries(routerModule)
+        .filter(([name]) => name.endsWith("Router"))
+        .map(([, router]) => ({ path, router })),
+    );
+
+    expect(routers.length).toBeGreaterThan(0);
+    expect(
+      routers
+        .filter(({ router }) =>
+          Object.values<AnyProcedure>(router._def.procedures).some((procedure) => !rootProcedures.has(procedure)),
+        )
+        .map(({ path }) => path),
+    ).toStrictEqual([]);
   });
 });
