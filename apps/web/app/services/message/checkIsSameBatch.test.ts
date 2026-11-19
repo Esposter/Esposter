@@ -21,20 +21,23 @@ describe(checkIsSameBatch, () => {
     userId: null,
   });
 
-  test("batches an author's consecutive messages within the window", () => {
+  test.each([
+    {
+      expected: true,
+      gapMs: SAME_BATCH_WINDOW_MS,
+      title: "batches an author's consecutive messages within the window",
+    },
+    {
+      expected: false,
+      gapMs: SAME_BATCH_WINDOW_MS + 1,
+      title: "does not batch an author's consecutive messages past the window",
+    },
+  ])("$title", ({ expected, gapMs }) => {
     expect.hasAssertions();
 
-    const nextMessage = createStandardMessage(userId, new Date(createdAt.getTime() - SAME_BATCH_WINDOW_MS));
+    const nextMessage = createStandardMessage(userId, new Date(createdAt.getTime() - gapMs));
 
-    expect(checkIsSameBatch(createStandardMessage(userId, createdAt), nextMessage)).toBe(true);
-  });
-
-  test("does not batch a message past the window", () => {
-    expect.hasAssertions();
-
-    const nextMessage = createStandardMessage(userId, new Date(createdAt.getTime() - SAME_BATCH_WINDOW_MS - 1));
-
-    expect(checkIsSameBatch(createStandardMessage(userId, createdAt), nextMessage)).toBe(false);
+    expect(checkIsSameBatch(createStandardMessage(userId, createdAt), nextMessage)).toBe(expected);
   });
 
   test("does not batch another author's message", () => {

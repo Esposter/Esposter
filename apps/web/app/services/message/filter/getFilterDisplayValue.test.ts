@@ -36,18 +36,10 @@ describe(getFilterDisplayValue, () => {
     );
   });
 
-  test(`${FilterType.Pinned}: rejects a value no picker could have chosen`, () => {
+  test.each([FilterType.Pinned, FilterType.AuthorType])("%s: rejects a value no picker could have chosen", (type) => {
     expect.hasAssertions();
 
-    expect(() => getFilterDisplayValue({ type: FilterType.Pinned, value })).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: ${invalidValueMessage}]`,
-    );
-  });
-
-  test(`${FilterType.AuthorType}: rejects a value no picker could have chosen`, () => {
-    expect.hasAssertions();
-
-    expect(() => getFilterDisplayValue({ type: FilterType.AuthorType, value })).toThrowErrorMatchingInlineSnapshot(
+    expect(() => getFilterDisplayValue({ type, value })).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: ${invalidValueMessage}]`,
     );
   });

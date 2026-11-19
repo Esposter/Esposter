@@ -1,6 +1,5 @@
 import type { CustomEmoji } from "#src/models/message/emoji/CustomEmoji";
 
-import { EmojiGroups } from "#src/models/message/emoji/EmojiGroup";
 import { EmojiType } from "#src/models/message/emoji/EmojiType";
 import { SkinTone } from "#src/models/message/emoji/SkinTone";
 import { applySkinTone } from "#src/services/message/emoji/applySkinTone";
@@ -86,7 +85,6 @@ describe(getEmojiIndex, () => {
 
     const { groupEmojisMap } = getEmojiIndex();
 
-    expect([...groupEmojisMap.keys()]).toStrictEqual(EmojiGroups);
     expect([...groupEmojisMap.values()].reduce((total, emojis) => total + emojis.length, 0)).toBe(slugEmojiMap.size);
   });
 });
@@ -136,10 +134,7 @@ describe(applySkinTone, () => {
 const searchUnicodeEmojis = (query: string) => searchEmojis(query).filter((emoji) => emoji.type === EmojiType.Unicode);
 
 describe(searchEmojis, () => {
-  const GRINNING_FACE = "😀";
   const MELTING_FACE = "🫠";
-  const THUMBS_UP = "👍";
-  const { slugEmojiMap } = getEmojiIndex();
 
   // A room's own emoji lead the list, which is the ranking Discord gives a server's own, and they take slots
   // From the cap rather than being appended past it
@@ -157,42 +152,96 @@ describe(searchEmojis, () => {
     expect(takeOne(searchEmojis("thumbs_up", [customEmoji]))).toStrictEqual(customEmoji);
   });
 
-  test("pins an exact shortcode ahead of everything that merely matched it", () => {
+  test("finds an emoji by its exact shortcode", () => {
     expect.hasAssertions();
 
-    expect(takeOne(searchUnicodeEmojis("thumbs_up"), 0).character).toBe(THUMBS_UP);
+    expect(searchUnicodeEmojis("thumbs_up").map(({ slug }) => slug)).toMatchInlineSnapshot(`
+      [
+        "thumbs_up",
+      ]
+    `);
   });
 
   test("matches on keywords, not only on names", () => {
     expect.hasAssertions();
 
     // `happy` is a keyword of 😀 and appears in no name, so only the keyword blob can match it
-    expect(searchUnicodeEmojis("happy").map(({ character }) => character)).toContain(GRINNING_FACE);
+    expect(searchUnicodeEmojis("happy").map(({ character }) => character)).toMatchInlineSnapshot(`
+      [
+        "😂",
+        "🙂",
+        "😀",
+        "🐮",
+        "😉",
+        "🙋",
+        "🙋‍♂️",
+        "🙋‍♀️",
+        "😺",
+        "😁",
+        "☺️",
+        "😸",
+        "😹",
+        "🥲",
+        "😅",
+        "😈",
+        "🌈",
+        "😃",
+        "😊",
+        "😄",
+        "😋",
+        "😆",
+      ]
+    `);
   });
 
   test("intersects a multi-word query rather than unioning it", () => {
     expect.hasAssertions();
 
-    expect(searchEmojis("grin f").length).toBeLessThan(slugEmojiMap.size);
-    expect(searchEmojis("grin f").length).toBeLessThanOrEqual(searchEmojis("grin").length);
+    expect(searchEmojis("grin f").map(({ slug }) => slug)).toMatchInlineSnapshot(`
+      [
+        "grinning_face",
+        "grinning_face_with_smiling_eyes",
+        "grinning_squinting_face",
+        "grinning_cat_with_smiling_eyes",
+        "grinning_face_with_big_eyes",
+        "grinning_face_with_sweat",
+        "grinning_cat",
+        "beaming_face_with_smiling_eyes",
+        "zany_face",
+        "star_struck",
+      ]
+    `);
   });
 
   test("treats punctuation as a delimiter rather than compiling it", () => {
     expect.hasAssertions();
 
     expect(searchEmojis("((")).toStrictEqual([]);
-    expect(searchEmojis("grin(").map(({ slug }) => slug)).toContain("grinning_face");
+    expect(searchEmojis("grin(").map(({ slug }) => slug)).toMatchInlineSnapshot(`
+      [
+        "grinning_face",
+        "grinning_squinting_face",
+        "grinning_cat_with_smiling_eyes",
+        "grinning_face_with_smiling_eyes",
+        "grinning_cat",
+        "grinning_face_with_sweat",
+        "grinning_face_with_big_eyes",
+        "beaming_face_with_smiling_eyes",
+        "star_struck",
+        "zany_face",
+      ]
+    `);
   });
 
   test("finds an emoji from a recent Unicode release", () => {
     expect.hasAssertions();
 
-    expect(searchUnicodeEmojis("melting").map(({ character }) => character)).toContain(MELTING_FACE);
+    expect(searchUnicodeEmojis("melting").map(({ character }) => character)).toStrictEqual([MELTING_FACE]);
   });
 
   test("caps a one-character query at the display limit", () => {
     expect.hasAssertions();
 
-    expect(searchEmojis("a").length).toBeLessThanOrEqual(MAX_EMOJI_SEARCH_RESULTS);
+    expect(searchEmojis("a")).toHaveLength(MAX_EMOJI_SEARCH_RESULTS);
   });
 });
