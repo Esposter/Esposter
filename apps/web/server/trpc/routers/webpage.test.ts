@@ -4,7 +4,8 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { createCallerFactory } from "#server/trpc/index";
-import { createSurvey, createSurveyDocumentWith } from "#server/trpc/routers/createSurvey.test";
+import { createSurvey } from "#server/trpc/routers/createSurvey.test";
+import { createSurveyDocumentWith } from "#server/trpc/routers/createSurveyDocumentWith.test";
 import { trpcRouter } from "#server/trpc/routers/index";
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { surveyRouter } from "#server/trpc/routers/survey";

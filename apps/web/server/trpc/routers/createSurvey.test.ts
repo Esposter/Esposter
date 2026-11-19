@@ -2,12 +2,9 @@ import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { surveyResourceSchema } from "#shared/models/resource/survey/SurveyResource";
 import type { ResourceInResource } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
-import type { SurveyDocument } from "vue-survey-engine-headless";
 import type { z } from "zod";
 
-import { v7 } from "uuid";
 import { describe } from "vitest";
-import { surveyDocumentSchema, SurveyNodeType } from "vue-survey-engine-headless";
 
 // A survey with its content written — the shape every suite that answers one or binds a program to it starts
 // From. The content is the schema's input, so it carries its settings as well as its document
@@ -20,28 +17,5 @@ export const createSurvey = async (
   await surveyCaller.saveResourceContent({ content, contentVersion: newResource.contentVersion, id: newResource.id });
   return newResource;
 };
-
-// A survey published as it is created, the state a response write is checked against
-export const createPublishedSurvey = async (
-  surveyCaller: DecorateRouterRecord<TRPCRouter["survey"]>,
-  name: string,
-  content: z.input<typeof surveyResourceSchema>,
-): Promise<ResourceInResource> => {
-  const survey = await createSurvey(surveyCaller, name, content);
-  await surveyCaller.publishResource({ id: survey.id });
-  return survey;
-};
-
-// A survey document whose one page holds the elements given, parsed so a fixture is a document a save would accept
-export const createPageDocument = (children: unknown[]): SurveyDocument =>
-  surveyDocumentSchema.parse({
-    content: [{ props: { children, enableIf: "", id: v7() }, type: SurveyNodeType.Page }],
-    root: { props: { backgroundImage: "" } },
-  });
-
-// A survey document whose one page holds a question of each given name and kind. Each question takes its kind's
-// Defaults and a fresh id the document requires to be unique
-export const createSurveyDocumentWith = (questions: { name: string; type: SurveyNodeType }[]): SurveyDocument =>
-  createPageDocument(questions.map(({ name, type }) => ({ props: { id: v7(), name }, type })));
 
 describe.todo("createSurvey");

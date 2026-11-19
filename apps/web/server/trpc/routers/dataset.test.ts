@@ -6,11 +6,10 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import { insertSurveyResponses } from "#server/services/survey/insertSurveyResponses.test";
 import { createMockAuthSession, createMockContext } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
-import {
-  createPageDocument,
-  createPublishedSurvey,
-  createSurveyDocumentWith,
-} from "#server/trpc/routers/createSurvey.test";
+import { createPageDocument } from "#server/trpc/routers/createPageDocument.test";
+import { createPublishedSurvey } from "#server/trpc/routers/createPublishedSurvey.test";
+import { createSurveyDocumentWith } from "#server/trpc/routers/createSurveyDocumentWith.test";
+import { createSurveyResponse } from "#server/trpc/routers/createSurveyResponse.test";
 import { datasetRouter } from "#server/trpc/routers/dataset";
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { sheetRouter } from "#server/trpc/routers/sheet";
@@ -78,14 +77,7 @@ describe("datasetRouter", () => {
 
     const newSurvey = await setupSurvey();
     vi.useFakeTimers({ now: 0, toFake: ["Date"] });
-    await surveyCaller.createSurveyResponse({
-      id: v7(),
-      isDraft: false,
-      model: { a: 1, b: true, c: "" },
-      pageNo: 0,
-      participantToken: "",
-      resourceId: newSurvey.id,
-    });
+    await createSurveyResponse(surveyCaller, newSurvey.id, { a: 1, b: true, c: "" });
     const dataset = await caller.readDataset({ id: newSurvey.id, type: DatasetProviderType.SurveyResponses });
 
     expect(dataset.columns).toStrictEqual([
@@ -133,14 +125,7 @@ describe("datasetRouter", () => {
 
     const newSurvey = await setupSurvey();
     vi.useFakeTimers({ now: 0, toFake: ["Date"] });
-    await surveyCaller.createSurveyResponse({
-      id: v7(),
-      isDraft: false,
-      model: { a: 1 },
-      pageNo: 0,
-      participantToken: "",
-      resourceId: newSurvey.id,
-    });
+    await createSurveyResponse(surveyCaller, newSurvey.id, { a: 1 });
     const dataset = await caller.readDataset({ id: newSurvey.id, type: DatasetProviderType.SurveyResponses });
 
     expect(dataset.rows).toStrictEqual([{ a: 1, b: null, c: null, submittedAt }]);
@@ -157,14 +142,7 @@ describe("datasetRouter", () => {
       settings: {},
     });
     vi.useFakeTimers({ now: 0, toFake: ["Date"] });
-    await surveyCaller.createSurveyResponse({
-      id: v7(),
-      isDraft: false,
-      model: { c: ["red", 2] },
-      pageNo: 0,
-      participantToken: "",
-      resourceId: newSurvey.id,
-    });
+    await createSurveyResponse(surveyCaller, newSurvey.id, { c: ["red", 2] });
     const dataset = await caller.readDataset({ id: newSurvey.id, type: DatasetProviderType.SurveyResponses });
 
     expect(dataset.rows).toStrictEqual([{ c: "red; 2", submittedAt }]);
@@ -176,14 +154,7 @@ describe("datasetRouter", () => {
     const questionDocument = createSurveyDocumentWith([{ name: "submittedAt", type: SurveyNodeType.Text }]);
     const newSurvey = await createPublishedSurvey(surveyCaller, name, { document: questionDocument, settings: {} });
     vi.useFakeTimers({ now: 0, toFake: ["Date"] });
-    await surveyCaller.createSurveyResponse({
-      id: v7(),
-      isDraft: false,
-      model: { submittedAt: "answer" },
-      pageNo: 0,
-      participantToken: "",
-      resourceId: newSurvey.id,
-    });
+    await createSurveyResponse(surveyCaller, newSurvey.id, { submittedAt: "answer" });
     const dataset = await caller.readDataset({ id: newSurvey.id, type: DatasetProviderType.SurveyResponses });
 
     expect(dataset.columns).toStrictEqual([

@@ -11,7 +11,9 @@ import { CLOSED_SURVEY_ERROR_REASON, INVALID_PARTICIPANT_TOKEN_ERROR_REASON } fr
 import { createMockContext } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
 import { AUDIENCE_KEY_COLUMN, createAudienceSheet } from "#server/trpc/routers/createAudienceSheet.test";
-import { createPublishedSurvey, createSurveyDocumentWith } from "#server/trpc/routers/createSurvey.test";
+import { createPublishedSurvey } from "#server/trpc/routers/createPublishedSurvey.test";
+import { createSurveyDocumentWith } from "#server/trpc/routers/createSurveyDocumentWith.test";
+import { createSurveyResponse } from "#server/trpc/routers/createSurveyResponse.test";
 import { dashboardRouter } from "#server/trpc/routers/dashboard";
 import { datasetRouter } from "#server/trpc/routers/dataset";
 import { emailRouter } from "#server/trpc/routers/email";
@@ -28,7 +30,6 @@ import { deleteDirectory } from "@esposter/db";
 import { createMockBucket } from "@esposter/db-mock";
 import { DatabaseEntityType, resourcesInResource, StorageBucket, SurveyResponseMode } from "@esposter/db-schema";
 import { generateSecretToken, InvalidOperationError, Operation, takeOne } from "@esposter/shared";
-import { v7 } from "uuid";
 import { afterAll, assert, beforeAll, describe, expect, test } from "vitest";
 import { SurveyNodeType } from "vue-survey-engine-headless";
 
@@ -110,32 +111,11 @@ describe("surveyFunnel", () => {
     assert.exists(silentParticipant);
 
     // 5. The respondents — one answers, one token is reused for a resume, one forgery is rejected
-    const firstResponse = await surveyCaller.createSurveyResponse({
-      id: v7(),
-      isDraft: false,
-      model: { a: 1 },
-      pageNo: 0,
-      participantToken: firstParticipant.token,
-      resourceId: survey.id,
-    });
-    const secondResponse = await surveyCaller.createSurveyResponse({
-      id: v7(),
-      isDraft: false,
-      model: { a: 1 },
-      pageNo: 0,
-      participantToken: secondParticipant.token,
-      resourceId: survey.id,
-    });
+    const firstResponse = await createSurveyResponse(surveyCaller, survey.id, { a: 1 }, firstParticipant.token);
+    const secondResponse = await createSurveyResponse(surveyCaller, survey.id, { a: 1 }, secondParticipant.token);
 
     await expect(
-      surveyCaller.createSurveyResponse({
-        id: v7(),
-        isDraft: false,
-        model: { a: 1 },
-        pageNo: 0,
-        participantToken: generateSecretToken(),
-        resourceId: survey.id,
-      }),
+      createSurveyResponse(surveyCaller, survey.id, { a: 1 }, generateSecretToken()),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${
         new InvalidOperationError(

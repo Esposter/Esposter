@@ -10,7 +10,10 @@ import { createMockAuthSession, createMockContext } from "#server/trpc/context.t
 import { createCallerFactory } from "#server/trpc/index";
 import { AUDIENCE_KEY_COLUMN, createAudienceSheet } from "#server/trpc/routers/createAudienceSheet.test";
 import { createBoundProgram } from "#server/trpc/routers/createBoundProgram.test";
-import { createPublishedSurvey, createSurvey, createSurveyDocumentWith } from "#server/trpc/routers/createSurvey.test";
+import { createPublishedSurvey } from "#server/trpc/routers/createPublishedSurvey.test";
+import { createSurvey } from "#server/trpc/routers/createSurvey.test";
+import { createSurveyDocumentWith } from "#server/trpc/routers/createSurveyDocumentWith.test";
+import { createSurveyResponse } from "#server/trpc/routers/createSurveyResponse.test";
 import { datasetRouter } from "#server/trpc/routers/dataset";
 import { emailRouter } from "#server/trpc/routers/email";
 import { trpcRouter } from "#server/trpc/routers/index";
@@ -262,14 +265,7 @@ describe("programRouter", () => {
     const [respondedParticipant, unrespondedParticipant] = participants;
     assert.exists(respondedParticipant);
     assert.exists(unrespondedParticipant);
-    await surveyCaller.createSurveyResponse({
-      id: v7(),
-      isDraft: false,
-      model: { a: 1 },
-      pageNo: 0,
-      participantToken: respondedParticipant.token,
-      resourceId: survey.id,
-    });
+    await createSurveyResponse(surveyCaller, survey.id, { a: 1 }, respondedParticipant.token);
     const { rows: statusRows } = await caller.readProgramStatus({ id: program.id });
 
     expect(
@@ -301,14 +297,7 @@ describe("programRouter", () => {
     const { program, survey } = await setupIdentifiedProgram([" "], settings);
     await caller.generateProgramParticipants({ id: program.id });
     // A response carrying no token carries nobody, so it is simply not a participant row
-    await surveyCaller.createSurveyResponse({
-      id: v7(),
-      isDraft: false,
-      model: { a: 1 },
-      pageNo: 0,
-      participantToken: "",
-      resourceId: survey.id,
-    });
+    await createSurveyResponse(surveyCaller, survey.id, { a: 1 });
     const { rows: statusRows } = await caller.readProgramStatus({ id: program.id });
 
     expect(statusRows.map(({ isResponded }) => isResponded)).toStrictEqual([false]);
@@ -508,14 +497,7 @@ describe("programRouter", () => {
     const { program, survey } = await setupIdentifiedProgram([" "]);
     const { participants } = await caller.generateProgramParticipants({ id: program.id });
     const participant = takeOne(participants);
-    await surveyCaller.createSurveyResponse({
-      id: v7(),
-      isDraft: false,
-      model: { a: 1 },
-      pageNo: 0,
-      participantToken: participant.token,
-      resourceId: survey.id,
-    });
+    await createSurveyResponse(surveyCaller, survey.id, { a: 1 }, participant.token);
     const regenerated = await caller.regenerateProgramParticipantToken({
       id: program.id,
       keyValue: participant.keyValue,

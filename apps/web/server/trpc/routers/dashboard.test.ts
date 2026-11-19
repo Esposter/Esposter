@@ -2,7 +2,9 @@ import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { createCallerFactory } from "#server/trpc/index";
-import { createPublishedSurvey, createSurveyDocumentWith } from "#server/trpc/routers/createSurvey.test";
+import { createPublishedSurvey } from "#server/trpc/routers/createPublishedSurvey.test";
+import { createSurveyDocumentWith } from "#server/trpc/routers/createSurveyDocumentWith.test";
+import { createSurveyResponse } from "#server/trpc/routers/createSurveyResponse.test";
 import { dashboardRouter } from "#server/trpc/routers/dashboard";
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { surveyRouter } from "#server/trpc/routers/survey";
@@ -13,7 +15,6 @@ import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregatio
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { takeOne } from "@esposter/shared";
-import { v7 } from "uuid";
 import { beforeAll, describe, expect, test } from "vitest";
 import { SurveyNodeType } from "vue-survey-engine-headless";
 
@@ -42,14 +43,7 @@ describe("dashboardRouter", () => {
       ]),
       settings: {},
     });
-    await surveyCaller.createSurveyResponse({
-      id: v7(),
-      isDraft: false,
-      model: { [name]: 1, [unreadName]: unreadName },
-      pageNo: 0,
-      participantToken: "",
-      resourceId: newSurvey.id,
-    });
+    await createSurveyResponse(surveyCaller, newSurvey.id, { [name]: 1, [unreadName]: unreadName });
     const newResource = await caller.createResource({ name });
     const dashboard = new Dashboard({
       visuals: [
@@ -80,14 +74,7 @@ describe("dashboardRouter", () => {
       document: createSurveyDocumentWith([{ name, type: SurveyNodeType.Rating }]),
       settings: {},
     });
-    await surveyCaller.createSurveyResponse({
-      id: v7(),
-      isDraft: false,
-      model: { [name]: 1 },
-      pageNo: 0,
-      participantToken: "",
-      resourceId: newSurvey.id,
-    });
+    await createSurveyResponse(surveyCaller, newSurvey.id, { [name]: 1 });
     const newResource = await caller.createResource({ name });
     const dashboard = new Dashboard({
       visuals: [

@@ -9,7 +9,10 @@ import { CLOSED_SURVEY_ERROR_REASON, INVALID_PARTICIPANT_TOKEN_ERROR_REASON } fr
 import { createMockAuthSession, createMockContext } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
 import { createBoundProgram } from "#server/trpc/routers/createBoundProgram.test";
-import { createPageDocument, createPublishedSurvey, createSurvey } from "#server/trpc/routers/createSurvey.test";
+import { createPageDocument } from "#server/trpc/routers/createPageDocument.test";
+import { createPublishedSurvey } from "#server/trpc/routers/createPublishedSurvey.test";
+import { createSurvey } from "#server/trpc/routers/createSurvey.test";
+import { createSurveyResponse } from "#server/trpc/routers/createSurveyResponse.test";
 import { trpcRouter } from "#server/trpc/routers/index";
 import { programRouter } from "#server/trpc/routers/program";
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
@@ -76,17 +79,6 @@ describe("surveyRouter", () => {
   // By writing content at a known version — the version is what the caller varies, never the envelope
   const saveSurveyContent = (id: string, contentVersion: number, content: SurveyResource) =>
     caller.saveResourceContent({ content, contentVersion, id });
-  // A response is always the same envelope — one answer under a fresh id — and the token is the only part
-  // An Anonymous survey leaves empty, so it defaults to what the mode that does not use it sends
-  const createSurveyResponse = (resourceId: string, answer: number, participantToken = "") =>
-    caller.createSurveyResponse({
-      id: v7(),
-      isDraft: false,
-      model: { a: answer },
-      pageNo: 0,
-      participantToken,
-      resourceId,
-    });
   // An edit addresses the response it is editing, so the row identifies itself rather than being restated
   const updateSurveyResponse = (
     surveyResponse: Awaited<ReturnType<typeof createSurveyResponse>>,
@@ -148,7 +140,7 @@ describe("surveyRouter", () => {
     expect.hasAssertions();
 
     const newResource = await createResponseSurvey();
-    await createSurveyResponse(newResource.id, 0);
+    await createSurveyResponse(caller, newResource.id, { a: 0 });
 
     const isSurveyResponse = eq(surveyResponsesInResource.resourceId, newResource.id);
 
@@ -188,7 +180,7 @@ describe("surveyRouter", () => {
     expect.hasAssertions();
 
     const newResource = await createResponseSurvey();
-    const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
+    const newSurveyResponse = await createSurveyResponse(caller, newResource.id, { a: 0 });
     const surveyResponse = await caller.readSurveyResponse({
       id: newSurveyResponse.id,
       participantToken: "",
@@ -202,7 +194,7 @@ describe("surveyRouter", () => {
     expect.hasAssertions();
 
     const newResource = await createResponseSurvey();
-    const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
+    const newSurveyResponse = await createSurveyResponse(caller, newResource.id, { a: 0 });
     await caller.deleteResource({ id: newResource.id });
 
     await expect(
@@ -216,7 +208,7 @@ describe("surveyRouter", () => {
     expect.hasAssertions();
 
     const newResource = await createResponseSurvey();
-    const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
+    const newSurveyResponse = await createSurveyResponse(caller, newResource.id, { a: 0 });
     const updatedSurveyResponse = await updateSurveyResponse(newSurveyResponse, 1);
 
     expect(updatedSurveyResponse.model).toStrictEqual({ a: 1 });
@@ -227,7 +219,7 @@ describe("surveyRouter", () => {
     expect.hasAssertions();
 
     const newResource = await createResponseSurvey();
-    const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
+    const newSurveyResponse = await createSurveyResponse(caller, newResource.id, { a: 0 });
 
     await expect(
       caller.updateSurveyResponse({
@@ -248,7 +240,7 @@ describe("surveyRouter", () => {
     expect.hasAssertions();
 
     const newResource = await createResponseSurvey();
-    const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
+    const newSurveyResponse = await createSurveyResponse(caller, newResource.id, { a: 0 });
     // Same answers, later page — a real progress write, so it is not a duplicate and the resume position advances
     const updatedSurveyResponse = await caller.updateSurveyResponse({
       id: newSurveyResponse.id,
@@ -298,7 +290,7 @@ describe("surveyRouter", () => {
     expect.hasAssertions();
 
     const newResource = await createResponseSurvey();
-    const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
+    const newSurveyResponse = await createSurveyResponse(caller, newResource.id, { a: 0 });
     const settledSaves = await Promise.allSettled([
       updateSurveyResponse(newSurveyResponse, 1),
       updateSurveyResponse(newSurveyResponse, 2),
@@ -318,7 +310,7 @@ describe("surveyRouter", () => {
     expect.hasAssertions();
 
     const newResource = await createResponseSurvey();
-    const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
+    const newSurveyResponse = await createSurveyResponse(caller, newResource.id, { a: 0 });
     await updateSurveyResponse(newSurveyResponse, 1);
 
     await expect(updateSurveyResponse(newSurveyResponse, 2)).rejects.toThrowErrorMatchingInlineSnapshot(
@@ -337,7 +329,7 @@ describe("surveyRouter", () => {
 
     const newResource = await createResponseSurvey();
     // A stale participant link into an anonymous survey still works, it just carries nothing
-    const newSurveyResponse = await createSurveyResponse(newResource.id, 0, generateSecretToken());
+    const newSurveyResponse = await createSurveyResponse(caller, newResource.id, { a: 0 }, generateSecretToken());
 
     expect(newSurveyResponse.participantTokenHash).toBe("");
   });
@@ -346,7 +338,7 @@ describe("surveyRouter", () => {
     expect.hasAssertions();
 
     const { survey, token } = await setupIdentifiedSurvey();
-    const newSurveyResponse = await createSurveyResponse(survey.id, 0, token);
+    const newSurveyResponse = await createSurveyResponse(caller, survey.id, { a: 0 }, token);
 
     expect(newSurveyResponse.participantTokenHash).toBe(await hashSecretToken(token));
   });
@@ -356,7 +348,7 @@ describe("surveyRouter", () => {
 
     const { survey } = await setupIdentifiedSurvey();
 
-    await expect(createSurveyResponse(survey.id, 0)).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(createSurveyResponse(caller, survey.id, { a: 0 })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${invalidParticipantTokenErrorMessage}]`,
     );
   });
@@ -378,7 +370,7 @@ describe("surveyRouter", () => {
       id: program.id,
     });
 
-    await expect(createSurveyResponse(survey.id, 0, token)).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(createSurveyResponse(caller, survey.id, { a: 0 }, token)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${invalidParticipantTokenErrorMessage}]`,
     );
   });
@@ -404,7 +396,7 @@ describe("surveyRouter", () => {
       id: program.id,
     });
 
-    await expect(createSurveyResponse(survey.id, 0, token)).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(createSurveyResponse(caller, survey.id, { a: 0 }, token)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${invalidParticipantTokenErrorMessage}]`,
     );
   });
@@ -416,9 +408,9 @@ describe("surveyRouter", () => {
     // A token issued by a program bound to a different survey is as good as a forgery
     const { token: otherToken } = await setupIdentifiedSurvey();
 
-    await expect(createSurveyResponse(survey.id, 0, otherToken)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${invalidParticipantTokenErrorMessage}]`,
-    );
+    await expect(
+      createSurveyResponse(caller, survey.id, { a: 0 }, otherToken),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: ${invalidParticipantTokenErrorMessage}]`);
   });
 
   test(`${SurveyResponseMode.Identified}: a recycle-binned program still resolves its token`, async () => {
@@ -427,7 +419,7 @@ describe("surveyRouter", () => {
     const { program, survey, token } = await setupIdentifiedSurvey();
     // Soft-deleting the program must not invalidate token links already distributed to participants
     await programCaller.deleteResource({ id: program.id });
-    const newSurveyResponse = await createSurveyResponse(survey.id, 0, token);
+    const newSurveyResponse = await createSurveyResponse(caller, survey.id, { a: 0 }, token);
 
     expect(newSurveyResponse.participantTokenHash).toBe(await hashSecretToken(token));
   });
@@ -436,7 +428,7 @@ describe("surveyRouter", () => {
     expect.hasAssertions();
 
     const { survey, token } = await setupIdentifiedSurvey();
-    const newSurveyResponse = await createSurveyResponse(survey.id, 0, token);
+    const newSurveyResponse = await createSurveyResponse(caller, survey.id, { a: 0 }, token);
     const updatedSurveyResponse = await updateSurveyResponse(newSurveyResponse, 1, token);
 
     expect(updatedSurveyResponse.participantTokenHash).toBe(await hashSecretToken(token));
@@ -458,7 +450,7 @@ describe("surveyRouter", () => {
     const [firstParticipant, secondParticipant] = participants;
     assert.exists(firstParticipant);
     assert.exists(secondParticipant);
-    const newSurveyResponse = await createSurveyResponse(survey.id, 0, firstParticipant.token);
+    const newSurveyResponse = await createSurveyResponse(caller, survey.id, { a: 0 }, firstParticipant.token);
 
     await expect(
       updateSurveyResponse(newSurveyResponse, 1, secondParticipant.token),
@@ -469,10 +461,10 @@ describe("surveyRouter", () => {
     expect.hasAssertions();
 
     const { survey, token } = await setupIdentifiedSurvey();
-    const newSurveyResponse = await createSurveyResponse(survey.id, 0, token);
+    const newSurveyResponse = await createSurveyResponse(caller, survey.id, { a: 0 }, token);
     // Settings are live working state, so no re-publish is involved in the switch
     await saveSurveyContent(survey.id, survey.contentVersion + 1, { document, settings });
-    const anonymousSurveyResponse = await createSurveyResponse(survey.id, 1);
+    const anonymousSurveyResponse = await createSurveyResponse(caller, survey.id, { a: 1 });
     const existingSurveyResponse = await caller.readSurveyResponse({
       id: newSurveyResponse.id,
       participantToken: "",
@@ -488,7 +480,7 @@ describe("surveyRouter", () => {
     expect.hasAssertions();
 
     const { survey, token } = await setupIdentifiedSurvey();
-    const newSurveyResponse = await createSurveyResponse(survey.id, 0, token);
+    const newSurveyResponse = await createSurveyResponse(caller, survey.id, { a: 0 }, token);
     await saveSurveyContent(survey.id, survey.contentVersion + 1, { document, settings });
     const updatedSurveyResponse = await updateSurveyResponse(newSurveyResponse, 1);
 
@@ -501,7 +493,7 @@ describe("surveyRouter", () => {
 
     const newResource = await createSurvey(caller, name, { document, settings: closedSettings });
 
-    await expect(createSurveyResponse(newResource.id, 0)).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(createSurveyResponse(caller, newResource.id, { a: 0 })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${closedSurveyErrorMessage}]`,
     );
   });
@@ -512,7 +504,7 @@ describe("surveyRouter", () => {
     const newResource = await caller.createResource({ name });
     await caller.deleteResource({ id: newResource.id });
 
-    await expect(createSurveyResponse(newResource.id, 0)).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(createSurveyResponse(caller, newResource.id, { a: 0 })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new NotFoundError(DatabaseEntityType.Resource, newResource.id).message}]`,
     );
   });
@@ -521,7 +513,7 @@ describe("surveyRouter", () => {
     expect.hasAssertions();
 
     const newResource = await createResponseSurvey();
-    const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
+    const newSurveyResponse = await createSurveyResponse(caller, newResource.id, { a: 0 });
     // An in-flight respondent — form open when the survey closed — gets the rejection on submit
     await saveSurveyContent(newResource.id, newResource.contentVersion + 1, { document, settings: closedSettings });
 
@@ -588,7 +580,7 @@ describe("surveyRouter", () => {
     const newResource = await createResponseSurvey(closedSettings);
     // No re-publish involved — the toggle alone reopens collection
     await saveSurveyContent(newResource.id, newResource.contentVersion + 1, { document, settings });
-    await createSurveyResponse(newResource.id, 0);
+    await createSurveyResponse(caller, newResource.id, { a: 0 });
     const responseCount = await caller.readSurveyResponsesCount({ id: newResource.id });
 
     expect(responseCount).toStrictEqual({ count: 1, isCapped: false });
@@ -598,8 +590,8 @@ describe("surveyRouter", () => {
     expect.hasAssertions();
 
     const newResource = await createResponseSurvey();
-    const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
-    await createSurveyResponse(newResource.id, 1);
+    const newSurveyResponse = await createSurveyResponse(caller, newResource.id, { a: 0 });
+    await createSurveyResponse(caller, newResource.id, { a: 1 });
     await caller.deleteSurveyResponse({ id: newResource.id, responseId: newSurveyResponse.id });
     const responseCount = await caller.readSurveyResponsesCount({ id: newResource.id });
 
@@ -613,7 +605,7 @@ describe("surveyRouter", () => {
     expect.hasAssertions();
 
     const newResource = await createResponseSurvey();
-    const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
+    const newSurveyResponse = await createSurveyResponse(caller, newResource.id, { a: 0 });
     await caller.deleteSurveyResponse({ id: newResource.id, responseId: newSurveyResponse.id });
 
     await expect(
@@ -627,7 +619,7 @@ describe("surveyRouter", () => {
     expect.hasAssertions();
 
     const newResource = await createResponseSurvey();
-    const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
+    const newSurveyResponse = await createSurveyResponse(caller, newResource.id, { a: 0 });
     const otherUserAuthSession = await createMockAuthSession(mockContext.db);
 
     await expect(
@@ -643,7 +635,7 @@ describe("surveyRouter", () => {
 
     const newResource = await createResponseSurvey();
     const otherResource = await caller.createResource({ name });
-    const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
+    const newSurveyResponse = await createSurveyResponse(caller, newResource.id, { a: 0 });
 
     // The response is looked up under the owner-checked survey id, so another survey's id cannot reach this row
     await expect(
@@ -661,7 +653,7 @@ describe("surveyRouter", () => {
 
     expect(emptyCount).toStrictEqual({ count: 0, isCapped: false });
 
-    await createSurveyResponse(newResource.id, 0);
+    await createSurveyResponse(caller, newResource.id, { a: 0 });
     const responseCount = await caller.readSurveyResponsesCount({ id: newResource.id });
 
     expect(responseCount).toStrictEqual({ count: 1, isCapped: false });
@@ -701,7 +693,7 @@ describe("surveyRouter", () => {
     expect.hasAssertions();
 
     const newResource = await createResponseSurvey();
-    const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
+    const newSurveyResponse = await createSurveyResponse(caller, newResource.id, { a: 0 });
     await caller.updateSurveyResponse({
       id: newSurveyResponse.id,
       isDraft: true,
