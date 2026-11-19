@@ -39,6 +39,18 @@ describe("dashboardVisualPreviewActionsMenu", () => {
   const menuLabel = '[aria-label="Visual actions"]';
   const responseColumn = "response";
   const dataset: Dataset = { columns: [], rows: [] };
+  // A visual bound to a count of the response column, so its menu has the rows it draws to export
+  const createBoundVisual = (type: VisualType) =>
+    new Visual({
+      dataset: {
+        query: {
+          series: [{ aggregation: DatasetAggregationType.Count, column: responseColumn }],
+          xColumn: responseColumn,
+        },
+        reference: { id: v7(), type: DatasetProviderType.Sheet },
+      },
+      type,
+    });
   // The menu's rows are listed once it is opened from the keyboard, the way the overflow menu's own test opens it
   const openMenu = async (wrapper: VueWrapper) => {
     await wrapper.get(menuLabel).trigger("keydown", { key: "ArrowDown" });
@@ -66,16 +78,7 @@ describe("dashboardVisualPreviewActionsMenu", () => {
   test("opening a visual's menu", async () => {
     expect.hasAssertions();
 
-    const table = new Visual({
-      dataset: {
-        query: {
-          series: [{ aggregation: DatasetAggregationType.Count, column: responseColumn }],
-          xColumn: responseColumn,
-        },
-        reference: { id: v7(), type: DatasetProviderType.Sheet },
-      },
-      type: VisualType.Table,
-    });
+    const table = createBoundVisual(VisualType.Table);
     await loadDashboard([table]);
     const menu = await mountMenu(table, dataset);
 
@@ -101,16 +104,7 @@ describe("dashboardVisualPreviewActionsMenu", () => {
   test("a bound visual's menu offers its rows as an export", async () => {
     expect.hasAssertions();
 
-    const bound = new Visual({
-      dataset: {
-        query: {
-          series: [{ aggregation: DatasetAggregationType.Count, column: responseColumn }],
-          xColumn: responseColumn,
-        },
-        reference: { id: v7(), type: DatasetProviderType.Sheet },
-      },
-      type: VisualType.Card,
-    });
+    const bound = createBoundVisual(VisualType.Card);
     await loadDashboard([bound]);
     const menu = await mountMenu(bound, dataset);
 

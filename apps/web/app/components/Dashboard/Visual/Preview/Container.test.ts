@@ -1,4 +1,6 @@
 // @vitest-environment nuxt
+import type { VueWrapper } from "@vue/test-utils";
+
 import { Visual } from "#shared/models/dashboard/data/Visual";
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
 import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregationType";
@@ -37,6 +39,12 @@ describe("dashboardVisualPreviewContainer", () => {
       },
       type: VisualType.Card,
     });
+  // The menu opens from the keyboard, as the overflow menu's own test opens it, and its rows are read once it is open
+  const openMenu = async (wrapper: VueWrapper) => {
+    await wrapper.get(menuLabel).trigger("keydown", { key: "ArrowDown" });
+    await flushPromises();
+    return wrapper.findAll('[role="menuitem"]');
+  };
 
   // The tile's menu offers the file of the rows its visual draws, once the read has answered
   test("a bound visual's menu downloads the CSV of the rows it draws", async () => {
@@ -55,12 +63,8 @@ describe("dashboardVisualPreviewContainer", () => {
     });
     await readAnswered;
     await flushPromises();
-    await wrapper.get(menuLabel).trigger("keydown", { key: "ArrowDown" });
-    await flushPromises();
-    await wrapper
-      .findAll('[role="menuitem"]')
-      .find((item) => item.text() === "Export CSV")
-      ?.trigger("click");
+    const items = await openMenu(wrapper);
+    await items.find((item) => item.text() === "Export CSV")?.trigger("click");
 
     expect(downloadFile).toHaveBeenCalledExactlyOnceWith(
       `${VisualType.Card}.csv`,
@@ -76,14 +80,9 @@ describe("dashboardVisualPreviewContainer", () => {
     const wrapper = await mountSuspended(DashboardVisualPreviewContainer, {
       props: { ...gridProps, visual: new Visual({ type: VisualType.Card }) },
     });
-    await wrapper.get(menuLabel).trigger("keydown", { key: "ArrowDown" });
-    await flushPromises();
+    const items = await openMenu(wrapper);
 
-    expect(wrapper.findAll('[role="menuitem"]').map((item) => item.text())).toStrictEqual([
-      "Edit visual",
-      "Duplicate visual",
-      "Delete visual",
-    ]);
+    expect(items.map((item) => item.text())).toStrictEqual(["Edit visual", "Duplicate visual", "Delete visual"]);
   });
 
   // A visual whose source is gone shows its error state, and there are no rows left to export
@@ -102,13 +101,8 @@ describe("dashboardVisualPreviewContainer", () => {
     await flushPromises();
 
     expect(wrapper.findComponent(UiErrorState).exists()).toBe(true);
-    await wrapper.get(menuLabel).trigger("keydown", { key: "ArrowDown" });
-    await flushPromises();
+    const items = await openMenu(wrapper);
 
-    expect(wrapper.findAll('[role="menuitem"]').map((item) => item.text())).toStrictEqual([
-      "Edit visual",
-      "Duplicate visual",
-      "Delete visual",
-    ]);
+    expect(items.map((item) => item.text())).toStrictEqual(["Edit visual", "Duplicate visual", "Delete visual"]);
   });
 });

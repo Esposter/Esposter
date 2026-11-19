@@ -134,12 +134,7 @@ const { copy } = clipboardStore;
           label="Copy link to this view"
           :meaning="UiIconMeaning.Link"
           :variant="UiButtonVariant.Quiet"
-          @click="
-            () => {
-              const viewUrl = getViewUrl();
-              copy(viewUrl);
-            }
-          "
+          @click="copy(getViewUrl())"
         />
         <!-- A snapshotted binding renders baked data, so there is nothing to refresh -->
         <UiIconButton
