@@ -13,16 +13,80 @@ describe(createLandDots, () => {
   test("dots stand on land only", () => {
     expect.hasAssertions();
 
-    const dots = createLandDots(landMask, 0.25);
-
-    expect(dots.length).toBeGreaterThan(0);
-    expect(dots.every(({ lat, lng }) => lat >= 0 && lat < 1 && lng >= 0 && lng < 1)).toBe(true);
+    expect(createLandDots(landMask, 0.25)).toMatchInlineSnapshot(`
+      [
+        {
+          "lat": 0.125,
+          "lng": 0.125,
+        },
+        {
+          "lat": 0.125,
+          "lng": 0.375,
+        },
+        {
+          "lat": 0.125,
+          "lng": 0.625,
+        },
+        {
+          "lat": 0.125,
+          "lng": 0.875,
+        },
+        {
+          "lat": 0.375,
+          "lng": 0.125,
+        },
+        {
+          "lat": 0.375,
+          "lng": 0.375,
+        },
+        {
+          "lat": 0.375,
+          "lng": 0.625,
+        },
+        {
+          "lat": 0.375,
+          "lng": 0.875,
+        },
+        {
+          "lat": 0.625,
+          "lng": 0.125,
+        },
+        {
+          "lat": 0.625,
+          "lng": 0.375,
+        },
+        {
+          "lat": 0.625,
+          "lng": 0.625,
+        },
+        {
+          "lat": 0.625,
+          "lng": 0.875,
+        },
+        {
+          "lat": 0.875,
+          "lng": 0.125,
+        },
+        {
+          "lat": 0.875,
+          "lng": 0.375,
+        },
+        {
+          "lat": 0.875,
+          "lng": 0.625,
+        },
+        {
+          "lat": 0.875,
+          "lng": 0.875,
+        },
+      ]
+    `);
   });
 
   test("a wider spacing draws fewer dots", () => {
     expect.hasAssertions();
 
     expect(createLandDots(landMask, 0.5)).toHaveLength(4);
-    expect(createLandDots(landMask, 0.25).length).toBeGreaterThan(4);
+    expect(createLandDots(landMask, 0.25)).toHaveLength(16);
   });
 });

@@ -18,19 +18,17 @@ describe(getArcState, () => {
     const { end, start } = getArcState(arcGrowTime / 2, 0);
 
     expect(start).toBe(0);
-    expect(end).toBeGreaterThan(0);
-    expect(end).toBeLessThan(1);
+    expect(end).toBe(0.5);
   });
 
   test("an arc that has landed pulses where it lands", () => {
     expect.hasAssertions();
 
-    const { end, pulseOpacity, pulseScale, start } = getArcState(arcGrowTime + 1, 0);
+    // Halfway through the pulse's run after the landing
+    const { pulseOpacity, pulseScale } = getArcState(arcGrowTime + (arcGrowTime + arcHoldTime) / 2, 0);
 
-    expect(start).toBe(0);
-    expect(end).toBe(1);
-    expect(pulseOpacity).toBeGreaterThan(0);
-    expect(pulseScale).toBeGreaterThan(0);
+    expect(pulseOpacity).toBe(0.5);
+    expect(pulseScale).toBe(1 - Math.exp(-1.5));
   });
 
   test("an arc shrinks away from its start", () => {
@@ -39,8 +37,7 @@ describe(getArcState, () => {
     const { end, start } = getArcState(arcGrowTime + arcHoldTime + arcGrowTime / 2, 0);
 
     expect(end).toBe(1);
-    expect(start).toBeGreaterThan(0);
-    expect(start).toBeLessThan(1);
+    expect(start).toBe(0.5);
   });
 
   test("an arc repeats every period", () => {
