@@ -6,8 +6,8 @@ import { useDisposedMesh } from "#src/composables/useDisposedMesh";
 import { watchImmediate } from "@vueuse/core";
 import { toValue } from "vue";
 
-// A mesh standing on the water at the lure, following the lure as it moves and the ground under it, disposed with the
-// Component that draws it
+// A mesh standing on the water at the lure, following the lure as it moves and the ground under it.
+// It is disposed with the Component that draws it
 export const useLureMesh = (
   geometry: BufferGeometry,
   material: Material,
