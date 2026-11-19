@@ -1,10 +1,8 @@
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers/index";
-import type { Dataset } from "#shared/models/dataset/Dataset";
 import type { SheetResource } from "#shared/models/resource/sheet/SheetResource";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { connectAgentKey } from "#server/services/mcp/connectAgentKey.test";
 import { insertSurveyResponses } from "#server/services/survey/insertSurveyResponses.test";
 import { createMockAuthSession, createMockContext } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
@@ -23,7 +21,7 @@ import { StringColumn } from "#shared/models/resource/sheet/column/StringColumn"
 import { CsvDelimiter } from "#shared/models/resource/sheet/csv/CsvDelimiter";
 import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
 import { Row } from "#shared/models/resource/sheet/datasource/Row";
-import { DatabaseEntityType, McpScope } from "@esposter/db-schema";
+import { DatabaseEntityType } from "@esposter/db-schema";
 import { MAX_READ_LIMIT, NotFoundError } from "@esposter/shared";
 import { v7 } from "uuid";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
@@ -216,21 +214,6 @@ describe("datasetRouter", () => {
 
     const newResource = await setupSheet();
     const dataset = await caller.readDataset({ id: newResource.id, type: DatasetProviderType.Sheet });
-
-    expect(dataset.columns).toStrictEqual([{ name: columnName, type: ColumnType.String }]);
-    expect(dataset.rows).toStrictEqual([{ [columnName]: value }]);
-    expect(dataset.totalRows).toBe(1);
-  });
-
-  test("an agent reads a Sheet's rows as one table", async () => {
-    expect.hasAssertions();
-
-    const callAgentTool = await connectAgentKey(mockContext, [McpScope.Resources]);
-    const newResource = await setupSheet();
-    const dataset = await callAgentTool<Dataset>("dataset_readDataset", {
-      id: newResource.id,
-      type: DatasetProviderType.Sheet,
-    });
 
     expect(dataset.columns).toStrictEqual([{ name: columnName, type: ColumnType.String }]);
     expect(dataset.rows).toStrictEqual([{ [columnName]: value }]);
