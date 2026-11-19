@@ -4,6 +4,7 @@ import { useSheetStore } from "#src/store/resource/sheet/index";
 
 export const useFindReplaceStore = defineStore("resource/sheet/findReplace", () => {
   const resourceStore = useResourceStore();
+  const { checkIsContentRead } = resourceStore;
   const sheetStore = useSheetStore();
   // A search is the sheet's own, so every field of it is keyed by the sheet it was typed into
   const { data: isFindReplaceOpen } = useDataMap(() => resourceStore.currentResourceId, false);
@@ -34,12 +35,13 @@ export const useFindReplaceStore = defineStore("resource/sheet/findReplace", () 
       (currentOccurrenceIndex.value + delta + occurrences.value.length) % occurrences.value.length;
   };
 
-  watch(
-    () => occurrences.value.length,
-    (newLength) => {
-      if (currentOccurrenceIndex.value >= newLength) currentOccurrenceIndex.value = Math.max(0, newLength - 1);
-    },
-  );
+  // The occurrences are the open sheet's content, and a switch re-keys the search before that content is read, so the
+  // List is the previous sheet's until the read replaces the content. The clamp waits for that read, and runs again
+  // When the content is replaced, since a read can leave the count unchanged while the saved occurrence is out of range
+  watch([() => occurrences.value.length, () => sheetStore.sheetResource], ([newLength]) => {
+    if (!checkIsContentRead()) return;
+    if (currentOccurrenceIndex.value >= newLength) currentOccurrenceIndex.value = Math.max(0, newLength - 1);
+  });
 
   return { currentOccurrenceIndex, findValue, goToOccurrence, isFindReplaceOpen, occurrences, replaceValue };
 });

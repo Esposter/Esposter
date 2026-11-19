@@ -56,4 +56,22 @@ describe(useFindReplaceStore, () => {
 
     expect(currentOccurrenceIndex.value).toBe(0);
   });
+
+  // A switch re-keys the search before the other sheet's content is read, so until that read the occurrences are the
+  // Previous sheet's matches, and clamping the saved occurrence against them would reset it before the new sheet's exist
+  test("holds a search's occurrence while the other sheet's content is not yet read", async () => {
+    expect.hasAssertions();
+
+    setupWithDataSource(createDataSource([createColumn("")], [createRow({ "": 0 })]));
+    const resourceStore = useResourceStore();
+    const { resource } = storeToRefs(resourceStore);
+    const findReplaceStore = useFindReplaceStore();
+    const { currentOccurrenceIndex, findValue } = storeToRefs(findReplaceStore);
+    resource.value = createResourceListItem();
+    findValue.value = "0";
+    currentOccurrenceIndex.value = 2;
+    await nextTick();
+
+    expect(currentOccurrenceIndex.value).toBe(2);
+  });
 });
