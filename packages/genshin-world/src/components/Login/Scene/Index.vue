@@ -85,6 +85,7 @@ import { computeLoginTowerAtlas } from "#src/services/login/tower/computeLoginTo
 import {
   LOGIN_TOWER_NORMAL_DETAIL_AMPLITUDE,
   LOGIN_TOWER_NORMAL_DETAIL_WAVELENGTH,
+  LOGIN_TOWER_SURFACE_DETAIL,
 } from "#src/services/login/tower/constants";
 import { createLoginTowerFacade } from "#src/services/login/tower/createLoginTowerFacade";
 import { createLoginTowersGeometry } from "#src/services/login/tower/createLoginTowersGeometry";
@@ -319,7 +320,9 @@ const towersMaterial = createStoneMaterial(stone.towers, loginStoneLight);
 // Tower stands open its colonnade lets the sky through
 const towerAtlas = computeLoginTowerAtlas(towers);
 const towerFacade = createLoginTowerFacade(towers, towerAtlas);
-towersMaterial.colorNode = towerFacade.shade.mul(color(stone.towers.albedo));
+towersMaterial.colorNode = towerFacade.shade
+  .mul(color(stone.towers.albedo))
+  .mul(createMaterialDetailNode(LOGIN_TOWER_SURFACE_DETAIL));
 towersMaterial.opacityNode = towerFacade.solid;
 towersMaterial.alphaTest = 0.5;
 // The towers' and bridges' procedural normal detail, at the wavelength their exports' surfaces read and the amplitude that

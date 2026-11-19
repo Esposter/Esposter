@@ -49,5 +49,5 @@
 | Surface | login-door-session Walkway structure | 0.5824 | 0.0268 | share | no |
 | Surface | login-door-session Bridges colour | 1.1881 | 2.3000 | ΔE | yes |
 | Surface | login-door-session Bridges structure | 0.0544 | 0.3425 | share | yes |
-| Surface | login-door-session Towers colour | 0.1333 | 2.3000 | ΔE | yes |
-| Surface | login-door-session Towers structure | 0.4702 | 0.0216 | share | no |
+| Surface | login-door-session Towers colour | 0.2718 | 2.3000 | ΔE | yes |
+| Surface | login-door-session Towers structure | 0.0179 | 0.0216 | share | yes |
