@@ -7,6 +7,7 @@ import type { SurveyChoice, SurveyQuestionNode } from "vue-survey-engine-headles
 import { getAverage } from "#shared/services/resource/sheet/column/getAverage";
 import { CHECKBOX_ANSWER_SEPARATOR } from "#shared/services/resource/survey/constants";
 import { SurveySummaryCardType } from "#src/models/resource/survey/SurveySummaryCardType";
+import { SURVEY_NO_TITLE, SURVEY_OTHER_TITLE, SURVEY_YES_TITLE } from "#src/services/resource/survey/constants";
 import { getSurveyRatingItems } from "#src/services/resource/survey/getSurveyRatingItems";
 import { SURVEY_SUMMARY_ANSWER_LIMIT } from "#src/services/survey/summary/constants";
 import {
@@ -32,9 +33,6 @@ interface ChoiceSource {
   otherLabel?: string;
 }
 
-// The label an other answer is counted under when its question gives the other option no text of its own
-const DEFAULT_OTHER_LABEL = "Other";
-
 const toChoiceOptions = (choices: SurveyChoice[]): ChoiceOption[] =>
   choices.map((choice) => ({ label: getSurveyChoiceText(choice), value: choice.value }));
 
@@ -49,7 +47,7 @@ const toOtherSource = ({
 }: {
   hasOther: boolean;
   otherText: string;
-}): Pick<ChoiceSource, "otherLabel"> => (hasOther ? { otherLabel: otherText || DEFAULT_OTHER_LABEL } : {});
+}): Pick<ChoiceSource, "otherLabel"> => (hasOther ? { otherLabel: otherText || SURVEY_OTHER_TITLE } : {});
 
 // A boolean's two answers and a rating's steps are its choices, so they are counted as a choice question's are
 const getChoiceSource = (question: SurveyQuestionNode): ChoiceSource | undefined => {
@@ -58,8 +56,8 @@ const getChoiceSource = (question: SurveyQuestionNode): ChoiceSource | undefined
       return {
         isMultiple: false,
         options: [
-          { label: question.props.labelTrue || "Yes", value: true },
-          { label: question.props.labelFalse || "No", value: false },
+          { label: question.props.labelTrue || SURVEY_YES_TITLE, value: true },
+          { label: question.props.labelFalse || SURVEY_NO_TITLE, value: false },
         ],
       };
     case SurveyNodeType.ButtonGroup:

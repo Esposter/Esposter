@@ -85,10 +85,14 @@ export const SURVEY_CONDITION_JOIN_ITEMS: UiMenuItem<SurveyConditionJoin>[] = [
   { title: "Any of these", value: SurveyConditionJoin.Or },
 ];
 
+// The titles a yes or no answer is drawn under, when its question gives them no label of its own
+export const SURVEY_YES_TITLE = "Yes";
+export const SURVEY_NO_TITLE = "No";
+
 // A yes or no answer is compared with the boolean its value names
 export const SURVEY_BOOLEAN_VALUE_ITEMS: UiMenuItem<string>[] = [
-  { title: "Yes", value: "true" },
-  { title: "No", value: "false" },
+  { title: SURVEY_YES_TITLE, value: "true" },
+  { title: SURVEY_NO_TITLE, value: "false" },
 ];
 
 export const SURVEY_CONDITION_ADVANCED_MESSAGE = "This is an advanced expression, so it is edited as text below.";
