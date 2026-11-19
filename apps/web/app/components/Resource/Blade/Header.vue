@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { Item } from "#src/models/shared/Item";
 import type { ResourceInResource } from "@esposter/db-schema";
 
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
@@ -48,7 +47,7 @@ useCommands(() => [
 ]);
 // Every command but the lead one, in the overflow menu on every width and on a right-click of the title, so the two
 // Never disagree. Delete comes last, alone, in the danger colour
-const items = computed<Item[]>(() =>
+const items = computed(() =>
   getResourceBladeItems(resource, {
     commands: {
       delete: () => {
