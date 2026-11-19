@@ -1,4 +1,4 @@
-/* oxlint-disable vitest/prefer-import-in-mock -- A partial fake: the typed module would load Phaser and its full store type; A partial fake: the typed module would load Phaser through the dialog store; A partial fake: the typed module would load Phaser */
+/* oxlint-disable vitest/prefer-import-in-mock -- A partial fake: the typed module would load Phaser and its full store type */
 // @vitest-environment nuxt
 import type { Item } from "#shared/models/dungeons/item/Item";
 import type { Monster } from "#shared/models/dungeons/monster/Monster";
