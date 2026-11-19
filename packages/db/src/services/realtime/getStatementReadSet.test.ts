@@ -1,7 +1,7 @@
 import type { Database } from "@esposter/db-schema";
 import type { SQL, SQLWrapper } from "drizzle-orm";
 
-import { getStatementReadSet } from "#src/services/realtime/getStatementReadSet";
+import { getStatementReadSet, MAX_SCOPE_VALUES } from "#src/services/realtime/getStatementReadSet";
 import { recordStatements } from "#src/services/realtime/recordStatements";
 import { inJsonArray } from "#src/services/shared/inJsonArray";
 import { notInJsonArray } from "#src/services/shared/notInJsonArray";
@@ -134,5 +134,42 @@ describe(getStatementReadSet, () => {
     expect(filters).toStrictEqual([
       { column: "roomId", level: 0, occurrence: "message_usersToRooms", site: "where", table: "message_usersToRooms" },
     ]);
+  });
+
+  // A list past the cap names no value: its table is read table-wide, as a filter over it, which is the read the walker made.
+  // Before a list was read as its scopes. An IN list and a JSON array list take the same cap
+  test.each<[string, (column: SQLWrapper, values: string[]) => SQL]>([
+    ["an IN list", inArrayList],
+    ["a JSON array list", inJsonArray],
+  ])("%s past the cap filters its table, and names no scope", async (_title, inList) => {
+    expect.hasAssertions();
+
+    const { db } = await createMockDb();
+    const values = Array.from({ length: MAX_SCOPE_VALUES + 1 }, () => v7());
+    const { filters, scopes } = getStatementReadSet(
+      db.select().from(usersToRoomsInMessage).where(inList(usersToRoomsInMessage.roomId, values)),
+    );
+
+    expect(scopes).toStrictEqual([]);
+    expect(filters).toStrictEqual([
+      { column: "roomId", level: 0, occurrence: "message_usersToRooms", site: "where", table: "message_usersToRooms" },
+    ]);
+  });
+
+  // The cap is inclusive: a list of exactly the cap still names each of its values
+  test.each<[string, (column: SQLWrapper, values: string[]) => SQL]>([
+    ["an IN list", inArrayList],
+    ["a JSON array list", inJsonArray],
+  ])("%s of exactly the cap names a scope per value", async (_title, inList) => {
+    expect.hasAssertions();
+
+    const { db } = await createMockDb();
+    const values = Array.from({ length: MAX_SCOPE_VALUES }, () => v7());
+    const { filters, scopes } = getStatementReadSet(
+      db.select().from(usersToRoomsInMessage).where(inList(usersToRoomsInMessage.roomId, values)),
+    );
+
+    expect(scopes).toHaveLength(MAX_SCOPE_VALUES);
+    expect(filters).toStrictEqual([]);
   });
 });

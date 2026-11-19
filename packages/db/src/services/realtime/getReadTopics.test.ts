@@ -1,6 +1,7 @@
 import type { RecordedStatement } from "#src/models/realtime/RecordedStatement";
 
 import { getReadTopics } from "#src/services/realtime/getReadTopics";
+import { MAX_SCOPE_VALUES } from "#src/services/realtime/getStatementReadSet";
 import { getWokenTopics } from "#src/services/realtime/getWokenTopics";
 import { getWriteTopics } from "#src/services/realtime/getWriteTopics";
 import { insertUser } from "#src/services/realtime/insertUser.test";
@@ -152,6 +153,41 @@ describe(getReadTopics, () => {
       .where(or(inJsonArray(usersToRoomsInMessage.roomId, [v7(), v7()]), eq(usersToRoomsInMessage.isHidden, true)));
 
     await expect(getReadTopicNames(statements)).resolves.toStrictEqual(["message_usersToRooms:*"]);
+  });
+
+  // Past the cap a list names no value, so its table is read table-wide, and a write to a row the list does not name still
+  // Wakes the read, through the table's topic. That is the safe direction: the read wakes more often, and never misses a write
+  test("a write to a room a JSON array list past the cap does not name still wakes the read through its table", async () => {
+    expect.hasAssertions();
+
+    const { db } = await createMockDb();
+    const userId = v7();
+    await insertUser(db, userId);
+    const unlistedRoomId = v7();
+    await db.insert(roomsInMessage).values({ id: unlistedRoomId, name: unlistedRoomId, type: RoomType.Room, userId });
+    await db.insert(usersToRoomsInMessage).values({ roomId: unlistedRoomId, userId });
+    const read = recordStatements(db);
+    await read.database
+      .select({ roomId: usersToRoomsInMessage.roomId })
+      .from(usersToRoomsInMessage)
+      .where(
+        inJsonArray(
+          usersToRoomsInMessage.roomId,
+          Array.from({ length: MAX_SCOPE_VALUES + 1 }, () => v7()),
+        ),
+      );
+    const unlistedWrite = recordStatements(db);
+    await unlistedWrite.database
+      .update(usersToRoomsInMessage)
+      .set({ isHidden: true })
+      .where(eq(usersToRoomsInMessage.roomId, unlistedRoomId));
+
+    const unlistedWoken = await getWoken(read.statements, unlistedWrite.statements);
+    // The database is shared by the file's tests, and the join test below reads every room, so this test removes its rows
+    await db.delete(usersToRoomsInMessage).where(eq(usersToRoomsInMessage.userId, userId));
+    await db.delete(roomsInMessage).where(eq(roomsInMessage.userId, userId));
+
+    expect(unlistedWoken).toStrictEqual(["message_usersToRooms:*"]);
   });
 
   // A table a read joins is named table-wide, whatever the read selects of it. The join's rows would be a narrower name,

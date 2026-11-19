@@ -66,18 +66,18 @@ interface ReadColumn {
 }
 
 interface ReadContext {
-  // Whether the chunks walked are a WHERE or HAVING condition, which removes the rows it does not hold
-  isCondition: boolean;
   // Every table occurrence the statement declares, and each one an equality scopes
   declared: Declaration[];
   derived: DerivedSubqueryMap;
+  // Whether the chunks walked are a WHERE or HAVING condition, which removes the rows it does not hold
+  isCondition: boolean;
   // Whether the chunks walked are a branch of an `or`. A row another branch holds is not this branch's value, so a condition
   // In it filters its table, as one under a `not` does
   isInOr: boolean;
-  join?: JoinContext | undefined;
-  level: ReadSetLevel;
   // Whether the chunks walked sit under a `not`, so a condition in them removes the rows it holds, and filters its table
   isNegated: boolean;
+  join?: JoinContext | undefined;
+  level: ReadSetLevel;
   // The keys of the table occurrences a left join null-fills, at every level
   nullFilledKeys: Set<string>;
   readSet: ReadSet;
@@ -86,9 +86,9 @@ interface ReadContext {
 
 interface ReadReference {
   columns: ReadColumn[];
-  length: number;
   // Whether the column is read through a derived table, whose own level names its table
   isThroughSubquery: boolean;
+  length: number;
 }
 // A column the read's own select returns, under the name it returns it by. A select is read in the statement's top level only, so
 // Its level is that level, SELECT_LEVEL, and is not stored
@@ -199,6 +199,14 @@ const addScopes = (columns: ReadColumn[], value: unknown, context: ReadContext, 
     if (!isThroughSubquery) context.scopedKeys.push({ level: context.level, occurrence: readColumn.occurrence });
   }
 };
+
+// A list names a scope per value it holds, up to MAX_SCOPE_VALUES. Past the cap it names none and filters its table instead, so
+// The table is read table-wide, as it was before a list was read as its scopes
+const addScopeList = (reference: ReadReference, values: readonly unknown[], context: ReadContext) => {
+  if (values.length > MAX_SCOPE_VALUES) addFilters(reference.columns, context);
+  else for (const value of values) addScopes(reference.columns, value, context, reference.isThroughSubquery);
+};
+
 // A left join null-fills the side that reads its joined relation, when only that side does. Neither side, or both, is no
 // Left join's null-filled side, so the join is read as an inner one
 const getNullFilled = (left: ReadColumn, right: ReadColumn, relation: string): JoinSide | undefined => {
@@ -345,8 +353,8 @@ const readReferenceAt = (
     const relation = getTableName(getColumnTable(chunk));
     reference = {
       columns: toReadColumns(chunk, context.derived).map((readColumn) => ({ ...readColumn, relation })),
-      length: 1,
       isThroughSubquery: context.derived.has(getTableName(getColumnTable(getOriginalColumnFromAlias(chunk)))),
+      length: 1,
     };
   } else {
     const alias = getNameValue(chunk);
@@ -357,8 +365,8 @@ const readReferenceAt = (
       const columns = table ? getNamedColumns(table, name) : [];
       reference = {
         columns: columns.map((readColumn) => ({ ...readColumn, occurrence: alias, relation: alias })),
-        length: 3,
         isThroughSubquery: false,
+        length: 3,
       };
     }
   }
@@ -388,8 +396,7 @@ const readCondition = (
   const operator = getOperatorText(chunks[operatorIndex]);
   const operand = chunks[operatorIndex + 1];
   // A list bound as one JSON array is the IN list over the values it holds, so each value is a scope of the column
-  if (is(operand, JsonArrayParam))
-    for (const value of operand.values) addScopes(reference.columns, value, context, reference.isThroughSubquery);
+  if (is(operand, JsonArrayParam)) addScopeList(reference, operand.values, context);
   else if (operator === "=" && is(operand, Param))
     addScopes(reference.columns, operand.value, context, reference.isThroughSubquery);
   else if (operator === "=") {
@@ -402,8 +409,11 @@ const readCondition = (
     addFilters(reference.columns, context);
   } else if (operator === "in" && Array.isArray(operand)) {
     const values: unknown[] = operand;
-    for (const value of values)
-      if (is(value, Param)) addScopes(reference.columns, value.value, context, reference.isThroughSubquery);
+    addScopeList(
+      reference,
+      values.flatMap((value) => (is(value, Param) ? [value.value] : [])),
+      context,
+    );
   } else if (operator === "in" && checkIsStatementLike(operand)) {
     const selected = getFirstSelectedColumn(operand);
     if (selected) addJoins(reference.columns, toReadColumns(selected, context.derived), context, { isSubquery: true });
@@ -545,6 +555,12 @@ const walkChunk = (chunk: unknown, context: ReadContext): void => {
 };
 // The statement's own select is its top level, which the walk opens first, so a selection's level is zero
 const SELECT_LEVEL = 0;
+
+// The most values one condition may name for a scope column. A response's topics header has a budget of a few KB, and a topic
+// Is about 60 to 80 bytes encoded, so 64 topics take about 5 KB and stay well inside it. A list past the cap names no value:
+// Its table is read table-wide, as it was before a list was read as its scopes, so a write to any row of it still wakes the
+// Read, only more often
+export const MAX_SCOPE_VALUES = 64;
 // Drizzle's column config picks its mode from the values in it: any `true` selects only the `true` columns, while a
 // Config of only `false`s selects every other column. A config with no value at all selects none
 const checkIsSelectedColumn = (configured: unknown, key: string): boolean => {
@@ -639,13 +655,13 @@ export const getStatementReadSet = (statement: SQLWrapper): ReadSet => {
   const scopedKeys: ScopedKey[] = [];
   const nullFilledKeys = new Set<string>();
   walkChunk(statement.getSQL(), {
-    isCondition: false,
     declared,
     derived: new Map(),
+    isCondition: false,
     isInOr: false,
+    isNegated: false,
     join: undefined,
     level,
-    isNegated: false,
     nullFilledKeys,
     readSet,
     scopedKeys,
