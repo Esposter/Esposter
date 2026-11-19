@@ -89,13 +89,13 @@ describe(useFriendRequestStore, () => {
     expect(friendRequests.value).toStrictEqual([secondFriendRequest]);
   });
 
-  // Each sender is its own target, so two answers overlap on one list and the failing one has to unwind to the
-  // List the answer ahead of it left, not to the one the user was looking at when they clicked
-  test("rolls a failed decline back to the list the decline ahead of it left", async () => {
+  // Each sender is its own target, so two answers overlap on one list, and the failing one unwinds to the list the
+  // Answer ahead of it left, whichever of the two was the one rejected
+  test.each([first, second])("puts back only the request whose decline was rejected: $name", async (failedSender) => {
     expect.hasAssertions();
 
     trpcMsw.friendRequest.declineFriendRequest.mutation(({ input: senderId }) => {
-      if (senderId === second.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+      if (senderId === failedSender.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
     const alertStore = useAlertStore();
     const friendRequestStore = useFriendRequestStore();
@@ -106,26 +106,8 @@ describe(useFriendRequestStore, () => {
     declineFriendRequest(second.id);
     await flushPromises();
 
-    expect(friendRequests.value).toStrictEqual([secondFriendRequest]);
+    expect(friendRequests.value).toStrictEqual([createFriendRequest(failedSender)]);
     expect(alertStore.alerts).toHaveLength(1);
-  });
-
-  // The failing answer is the one that applied first, so its rollback lands after the other has persisted
-  test("puts back only the request whose decline was rejected", async () => {
-    expect.hasAssertions();
-
-    trpcMsw.friendRequest.declineFriendRequest.mutation(({ input: senderId }) => {
-      if (senderId === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-    });
-    const friendRequestStore = useFriendRequestStore();
-    const { friendRequests } = storeToRefs(friendRequestStore);
-    const { declineFriendRequest } = friendRequestStore;
-    friendRequests.value = [firstFriendRequest, secondFriendRequest];
-    declineFriendRequest(first.id);
-    declineFriendRequest(second.id);
-    await flushPromises();
-
-    expect(friendRequests.value).toStrictEqual([firstFriendRequest]);
   });
 
   // An accept and a decline answer different senders, so neither queues behind the other while both write the

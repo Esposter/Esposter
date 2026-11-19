@@ -560,8 +560,9 @@ describe(useDataStore, () => {
     dataStore.refreshLoadedMessages(roomId);
     await waitForSynchronizedFunctions();
 
-    expect(threadMessages.value.map(({ id }) => id)).toStrictEqual([editedReply.id]);
-    expect(threadMessages.value[0]?.message).toBe(updatedMessage);
+    expect(threadMessages.value.map(({ id, message: text }) => ({ id, message: text }))).toStrictEqual([
+      { id: editedReply.id, message: updatedMessage },
+    ]);
   });
 
   test("storeUpdateMessage is idempotent", async () => {

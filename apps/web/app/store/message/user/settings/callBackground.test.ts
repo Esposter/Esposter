@@ -5,7 +5,6 @@ import { CallVirtualBackgroundDefinitions } from "#src/services/message/room/cal
 import { getCallBackgroundSelection } from "#src/services/message/room/call/getCallBackgroundSelection";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useCallBackgroundStore } from "#src/store/message/user/settings/callBackground";
-import { takeOne } from "@esposter/shared";
 import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test, vi } from "vitest";
 
@@ -54,18 +53,17 @@ describe(useCallBackgroundStore, () => {
   });
 
   // Only a slot needs the listing, so a preset never spends a request resolving to the path it already is
-  test("resolves a preset without reading the listing", async () => {
+  test("resolves every preset to its url without reading the listing", async () => {
     expect.hasAssertions();
 
     const handler = vi.fn<() => CallBackground[]>(() => []);
     trpcMsw.user.readCallBackgrounds.query(handler);
     const callBackgroundStore = useCallBackgroundStore();
     const { readVirtualBackgroundImagePath } = callBackgroundStore;
-    // The last preset rather than the first, because the first is the None entry and resolves to the empty
-    // Sentinel either way — which would pass whether or not presets are resolved at all
-    const { id, url } = takeOne(CallVirtualBackgroundDefinitions.slice(-1));
 
-    await expect(readVirtualBackgroundImagePath(id)).resolves.toBe(url);
+    await expect(
+      Promise.all(CallVirtualBackgroundDefinitions.map(({ id }) => readVirtualBackgroundImagePath(id))),
+    ).resolves.toStrictEqual(CallVirtualBackgroundDefinitions.map(({ url }) => url));
     expect(handler).not.toHaveBeenCalled();
   });
 

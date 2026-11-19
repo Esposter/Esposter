@@ -64,8 +64,10 @@ describe(usePinStore, () => {
     pinStore.getSlice(roomId).items.value = [newerPin, editedPin];
     await MessageHookMap[Operation.Update].run({ id: editedPin.id, message: "edited", roomId });
 
-    expect(items.value.map(({ id }) => id)).toStrictEqual([newerPin.id, editedPin.id]);
-    expect(items.value[1]?.message).toBe("edited");
+    expect(items.value.map(({ id, message: text }) => ({ id, message: text }))).toStrictEqual([
+      { id: newerPin.id, message },
+      { id: editedPin.id, message: "edited" },
+    ]);
   });
 
   // The pinned list holds its own rows, read past what the room has loaded, so a deletion reaches it through the hook

@@ -284,7 +284,7 @@ describe(useCallStore, () => {
     callStore.leaveCall();
     await flushPromises();
 
-    expect(leaveCall).toHaveBeenCalledTimes(1);
+    expect(leaveCall).toHaveBeenCalledExactlyOnceWith();
     expect(isLeaving.value).toBe(false);
   });
 
@@ -306,7 +306,7 @@ describe(useCallStore, () => {
     callStore.leaveCall();
     await flushPromises();
 
-    expect(leaveCall).toHaveBeenCalledTimes(1);
+    expect(leaveCall).toHaveBeenCalledExactlyOnceWith();
   });
 
   test("clears the leaving flag when the disconnect is rejected", async () => {

@@ -32,7 +32,7 @@ describe(useSlashCommandStore, () => {
     type: SlashCommandType.Me,
   };
 
-  test("initializes correctly without text", () => {
+  test("setPendingSlashCommand without text leaves every parameter empty", () => {
     expect.hasAssertions();
 
     const slashCommandStore = useSlashCommandStore();
@@ -122,9 +122,11 @@ describe(useSlashCommandStore, () => {
       `${parameter1}${ID_SEPARATOR}${parameterValue1} ${parameter3}${ID_SEPARATOR}${parameterValue3} ${parameter2}${ID_SEPARATOR}${parameterValue2}`,
     );
 
-    expect(parameterValues.value[parameter1]).toBe(parameterValue1);
-    expect(parameterValues.value[parameter3]).toBe(parameterValue3);
-    expect(parameterValues.value[parameter2]).toBe("");
+    expect(parameterValues.value).toStrictEqual({
+      [parameter1]: parameterValue1,
+      [parameter2]: "",
+      [parameter3]: parameterValue3,
+    });
   });
 
   // Collapsing is the one thing that turns the parameter chips back into text the composer can send, so the
@@ -158,7 +160,7 @@ describe(useSlashCommandStore, () => {
     expect(input.value).toBe(`/${SlashCommandType.Me} ${parameter2}${ID_SEPARATOR}value2`);
   });
 
-  test("clears store correctly", () => {
+  test("clearPendingSlashCommand drops the pending command and its parameter state", () => {
     expect.hasAssertions();
 
     const slashCommandStore = useSlashCommandStore();

@@ -38,10 +38,12 @@ describe(useInputStore, () => {
     expect.hasAssertions();
 
     setStoredDraft(roomId1, draftContent);
+    setStoredDraft(roomId2, draftContent);
     const inputStore = useInputStore();
     const { drafts } = storeToRefs(inputStore);
 
     expect(drafts.value.get(roomId1)?.content).toBe(draftContent);
+    expect(drafts.value.get(roomId2)?.content).toBe(draftContent);
   });
 
   test("restores a draft under the stamp the previous session stored", () => {
@@ -56,17 +58,21 @@ describe(useInputStore, () => {
     expect(readStoredDraft(roomId1)?.updatedAt).toStrictEqual(new Date(0));
   });
 
-  test("ignores empty draft content in localStorage", () => {
-    expect.hasAssertions();
+  test.each([marked.parse("", { async: false }), "<script></script>"])(
+    "removes stored draft content that sanitizes to empty: %s",
+    (content) => {
+      expect.hasAssertions();
 
-    setStoredDraft(roomId1, marked.parse("", { async: false }));
-    const inputStore = useInputStore();
-    const { drafts } = storeToRefs(inputStore);
+      setStoredDraft(roomId1, content);
+      const inputStore = useInputStore();
+      const { drafts, input } = storeToRefs(inputStore);
 
-    expect(drafts.value.has(roomId1)).toBe(false);
-    // And drops the key rather than leaving it to be re-scanned on every boot
-    expect(readStoredDraft(roomId1)).toBeUndefined();
-  });
+      // And drops the key rather than leaving it to be re-scanned on every boot
+      expect(readStoredDraft(roomId1)).toBeUndefined();
+      expect(input.value).toBe("");
+      expect(drafts.value.has(roomId1)).toBe(false);
+    },
+  );
 
   test("ignores unparseable draft content", () => {
     expect.hasAssertions();
@@ -80,62 +86,17 @@ describe(useInputStore, () => {
     expect(drafts.value.has(roomId1)).toBe(false);
   });
 
-  test("removes stored draft content that sanitizes to empty", () => {
+  test("clearComposer removes the room's draft from drafts, localStorage and input", () => {
     expect.hasAssertions();
 
-    setStoredDraft(roomId1, "<script></script>");
+    setStoredDraft(roomId1, draftContent);
     const inputStore = useInputStore();
     const { drafts, input } = storeToRefs(inputStore);
-
-    expect(readStoredDraft(roomId1)).toBeUndefined();
-    expect(input.value).toBe("");
-    expect(drafts.value.has(roomId1)).toBe(false);
-  });
-
-  test("populates drafts for multiple rooms", () => {
-    expect.hasAssertions();
-
-    setStoredDraft(roomId1, draftContent);
-    setStoredDraft(roomId2, draftContent);
-    const inputStore = useInputStore();
-    const { drafts } = storeToRefs(inputStore);
-
-    expect(drafts.value.get(roomId1)?.content).toBe(draftContent);
-    expect(drafts.value.get(roomId2)?.content).toBe(draftContent);
-  });
-
-  test("clearComposer removes room from drafts", () => {
-    expect.hasAssertions();
-
-    setStoredDraft(roomId1, draftContent);
-    const inputStore = useInputStore();
-    const { drafts } = storeToRefs(inputStore);
     const { clearComposer } = inputStore;
     clearComposer({ roomId: roomId1, threadRootId: 0 });
 
     expect(drafts.value.has(roomId1)).toBe(false);
-  });
-
-  test("clearComposer removes draft from localStorage", () => {
-    expect.hasAssertions();
-
-    setStoredDraft(roomId1, draftContent);
-    const inputStore = useInputStore();
-    const { clearComposer } = inputStore;
-    clearComposer({ roomId: roomId1, threadRootId: 0 });
-
     expect(readStoredDraft(roomId1)).toBeUndefined();
-  });
-
-  test("clearComposer clears input data for the room", () => {
-    expect.hasAssertions();
-
-    setStoredDraft(roomId1, draftContent);
-    const inputStore = useInputStore();
-    const { input } = storeToRefs(inputStore);
-    const { clearComposer } = inputStore;
-    clearComposer({ roomId: roomId1, threadRootId: 0 });
-
     expect(input.value).toBe("");
   });
 
@@ -197,34 +158,23 @@ describe(useInputStore, () => {
     expect(drafts.value.has(roomId1)).toBe(false);
   });
 
-  test("removes localStorage draft when input becomes empty", async () => {
-    expect.hasAssertions();
+  test.each(["", "<script></script>"])(
+    "removes localStorage draft when input is empty after sanitizing: %s",
+    async (content) => {
+      expect.hasAssertions();
 
-    setStoredDraft(roomId1, draftContent);
-    const inputStore = useInputStore();
-    const { drafts, input } = storeToRefs(inputStore);
-    input.value = "";
-    await nextTick();
-    vi.advanceTimersByTime(DRAFT_DEBOUNCE_MS);
-    await nextTick();
+      setStoredDraft(roomId1, draftContent);
+      const inputStore = useInputStore();
+      const { drafts, input } = storeToRefs(inputStore);
+      input.value = content;
+      await nextTick();
+      vi.advanceTimersByTime(DRAFT_DEBOUNCE_MS);
+      await nextTick();
 
-    expect(readStoredDraft(roomId1)).toBeUndefined();
-    expect(drafts.value.has(roomId1)).toBe(false);
-  });
-
-  test("removes localStorage draft when input sanitizes to empty", async () => {
-    expect.hasAssertions();
-
-    const inputStore = useInputStore();
-    const { drafts, input } = storeToRefs(inputStore);
-    input.value = "<script></script>";
-    await nextTick();
-    vi.advanceTimersByTime(DRAFT_DEBOUNCE_MS);
-    await nextTick();
-
-    expect(readStoredDraft(roomId1)).toBeUndefined();
-    expect(drafts.value.has(roomId1)).toBe(false);
-  });
+      expect(readStoredDraft(roomId1)).toBeUndefined();
+      expect(drafts.value.has(roomId1)).toBe(false);
+    },
+  );
 
   // The editor holds what the user typed and the store persists the sanitized form of it. The autosave writing
   // That sanitized text back into `input` would rewrite the composer under a user who is still typing in it —

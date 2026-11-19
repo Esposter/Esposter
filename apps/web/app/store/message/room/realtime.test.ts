@@ -114,6 +114,9 @@ describe(useRealtimeStore, () => {
     await connect("authToken", vi.fn<() => Promise<void>>(), false);
     const participant = createParticipant("identity");
     joinedEvents.emit("participantJoined", participant);
+
+    expect(document.querySelectorAll("audio")).toHaveLength(1);
+
     joinedEvents.emit("participantLeft", participant);
 
     expect(document.querySelectorAll("audio")).toHaveLength(0);

@@ -55,7 +55,9 @@ describe(useThreadFollowStore, () => {
     await readFollowedThreads(roomId);
     await MessageHookMap[Operation.Update].run({ id: threadRootId, message: "edited", roomId });
 
-    expect(followedThreads.value[0]?.message).toBe("edited");
+    expect(followedThreads.value.map(({ id, message }) => ({ id, message }))).toStrictEqual([
+      { id: threadRootId, message: "edited" },
+    ]);
   });
 
   // Every follow button in the room asks on mount, so the read is issued once — and the buttons that joined it

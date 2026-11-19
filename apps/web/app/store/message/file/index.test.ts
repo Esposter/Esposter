@@ -201,7 +201,7 @@ describe(useFileStore, () => {
       ),
     );
 
-    expect(queriedRoomIds).toContain(otherRoomId);
+    expect([...new Set(queriedRoomIds)]).toStrictEqual([otherRoomId]);
   });
 
   // A rolled-back send is deleted after the Create hook's await, by which time the reader can be in another room —

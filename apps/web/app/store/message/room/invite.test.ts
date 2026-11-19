@@ -48,7 +48,7 @@ describe(useInviteStore, () => {
     expect(invites.value.get(roomId)).toStrictEqual({ ...invite, user: creator });
   });
 
-  test("seeds", () => {
+  test("seedInvite stores the invite for the room", () => {
     expect.hasAssertions();
 
     const inviteStore = useInviteStore();

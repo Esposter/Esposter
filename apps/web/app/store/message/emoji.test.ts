@@ -40,7 +40,7 @@ describe(useEmojiStore, () => {
     expect(getEmojis(roomId, messageId)).toStrictEqual([createReaction([userId])]);
   });
 
-  test("deletes", () => {
+  test("storeDeleteEmoji removes the reaction row it names", () => {
     expect.hasAssertions();
 
     const emojiStore = useEmojiStore();

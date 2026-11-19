@@ -87,7 +87,7 @@ describe(useScrollStore, () => {
 
   // A reader who paged forward to the present still has the permalink route in the address bar, and re-reading
   // The room over a window that already holds the newest message throws away everything they scrolled through
-  test("jumpToPresent scrolls rather than re-reads when the loaded window is the live tail", async () => {
+  test("jumpToPresent does not re-read the room when the loaded window is the live tail", async () => {
     expect.hasAssertions();
 
     Object.assign(router.currentRoute.value.params, { messageId });
