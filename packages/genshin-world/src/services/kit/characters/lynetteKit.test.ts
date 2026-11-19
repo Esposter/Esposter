@@ -42,9 +42,9 @@ describe(createLynetteKitBehaviour, () => {
       ...LYNETTE_KIT.normalAttacks.flatMap(({ hits }) => hits.map(({ talentMultiplier }) => talentMultiplier)),
       ...LYNETTE_KIT.chargedAttack.hits.map(({ talentMultiplier }) => talentMultiplier),
       LYNETTE_KIT.plungeCollision.talentMultiplier,
-      LYNETTE_KIT.lowPlunge.hits[0]?.talentMultiplier,
-      LYNETTE_KIT.highPlunge.hits[0]?.talentMultiplier,
-      LYNETTE_KIT.elementalSkill.hits[0]?.talentMultiplier,
+      ...LYNETTE_KIT.lowPlunge.hits.map(({ talentMultiplier }) => talentMultiplier),
+      ...LYNETTE_KIT.highPlunge.hits.map(({ talentMultiplier }) => talentMultiplier),
+      ...LYNETTE_KIT.elementalSkill.hits.map(({ talentMultiplier }) => talentMultiplier),
     ];
     expect(multipliers).toStrictEqual([
       0.430817, 0.376121, 0.27864, 0.215929, 0.631541, 0.44204, 0.61404, 0.639324, 1.278377, 1.596762, 2.68,
@@ -119,12 +119,12 @@ describe(createLynetteKitBehaviour, () => {
     expect(readSynergyBuffs(0)).toStrictEqual([]);
   });
 
-  test("an active constellation's switch changes its character's kit", () => {
+  test("constellation 4 adds one charge to her skill", () => {
     expect.hasAssertions();
     expect(LYNETTE_KIT.getSkillChargeBonus?.({ ...createLynetteCombatant(), constellationCount: 4 })).toBe(1);
   });
 
-  test("an inactive constellation changes nothing", () => {
+  test("constellation 3 adds no charge to her skill", () => {
     expect.hasAssertions();
     expect(LYNETTE_KIT.getSkillChargeBonus?.({ ...createLynetteCombatant(), constellationCount: 3 })).toBe(0);
   });

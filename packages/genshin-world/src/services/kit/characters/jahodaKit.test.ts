@@ -169,18 +169,18 @@ describe(createJahodaKitBehaviour, () => {
     expect.hasAssertions();
     const multipliers = [
       ...JAHODA_KIT.normalAttacks.flatMap((action) => action.hits.map(({ talentMultiplier }) => talentMultiplier)),
-      takeOne(JAHODA_KIT.chargedAttack.hits).talentMultiplier,
+      ...JAHODA_KIT.chargedAttack.hits.map(({ talentMultiplier }) => talentMultiplier),
       JAHODA_KIT.plungeCollision.talentMultiplier,
-      takeOne(JAHODA_KIT.lowPlunge.hits).talentMultiplier,
-      takeOne(JAHODA_KIT.highPlunge.hits).talentMultiplier,
-      takeOne(JAHODA_KIT.elementalBurst.hits).talentMultiplier,
+      ...JAHODA_KIT.lowPlunge.hits.map(({ talentMultiplier }) => talentMultiplier),
+      ...JAHODA_KIT.highPlunge.hits.map(({ talentMultiplier }) => talentMultiplier),
+      ...JAHODA_KIT.elementalBurst.hits.map(({ talentMultiplier }) => talentMultiplier),
     ];
     expect(multipliers).toStrictEqual([
       0.416739, 0.192313, 0.192313, 0.511975, 1.24, 0.568288, 1.136335, 1.419344, 2.072,
     ]);
   });
 
-  test("each strike lands 10 frames after its hitmark, and each action cancels at its walk frame", () => {
+  test("each normal attack's hits land at their hitmark frames, and each action cancels at its walk frame", () => {
     expect.hasAssertions();
     expect(
       JAHODA_KIT.normalAttacks.map((action) => ({
@@ -284,13 +284,16 @@ describe(createJahodaKitBehaviour, () => {
       source: "test",
     });
     const secondHeal = stepUntil(99);
-    expect(secondHeal).toBeGreaterThan(firstHeal);
+    expect(firstHeal).toBeCloseTo(0.0129945764, 10);
+    expect(secondHeal).toBeCloseTo(0.0209817764, 10);
   });
 
-  test("above 70% of her health, Hidden Aces heals the lowest member as well, on its first tick", () => {
+  test("above 70% of her health, Hidden Aces heals the lowest member as well, on each of its ticks", () => {
     expect.hasAssertions();
     const context = createBurstHealContext(0.9, 0.4);
-    expect(readHealedFrames(context, MOONSIGN_PARTNER_CHARACTER_ID)).toContain(12);
+    expect(readHealedFrames(context, MOONSIGN_PARTNER_CHARACTER_ID)).toStrictEqual([
+      12, 99, 186, 273, 360, 447, 534, 621, 708,
+    ]);
   });
 
   test("at 70% of her health or below, Hidden Aces heals no member but the active one", () => {
@@ -334,9 +337,8 @@ describe(createJahodaKitBehaviour, () => {
     const context = createRobotBurstContext();
     const strikes = [];
     for (let frame = 0; frame < 300; frame++) strikes.push(...stepKitTestEffects(1 / 60, context));
-    expect(strikes.length).toBeGreaterThan(0);
-    expect(new Set(strikes.map(({ hit }) => hit.internalCooldownTag))).toStrictEqual(
-      new Set<InternalCooldownTag>([InternalCooldownTag.JahodaRobotStrike]),
+    expect(strikes.map(({ hit }) => hit.internalCooldownTag)).toStrictEqual(
+      Array.from({ length: 4 }, () => InternalCooldownTag.JahodaRobotStrike),
     );
   });
 

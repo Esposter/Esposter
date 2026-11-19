@@ -48,7 +48,7 @@ describe(createChioriKitBehaviour, () => {
     expect(multipliers).toStrictEqual(expectedMultipliers);
   });
 
-  test("her charged attack's stamina is the table's 20, and its burst costs 50 energy on a 13.5 second cooldown", () => {
+  test("her charged attack's stamina is the table's 20, her burst costs 50 energy on a 13.5 second cooldown, and her skill cools for 16 seconds", () => {
     expect.hasAssertions();
 
     expect(CHIORI_KIT.chargedAttackStamina).toBe(20);
@@ -76,16 +76,19 @@ describe(createChioriKitBehaviour, () => {
   test("the upward sweep prices its DEF share of her Defense, and a press holds Tamoto for 17 seconds from its cast", () => {
     expect.hasAssertions();
     const combatant = createChioriCombatant(1000);
-    const sweep = takeOne(CHIORI_KIT.elementalSkill.hits);
     const summon = takeOne(castSummons(CHIORI_KIT.elementalSkill, combatant));
 
-    expect(Math.round(sweep.additiveBaseDamageBonus?.(combatant) ?? Number.NaN)).toBe(1866);
+    expect(
+      CHIORI_KIT.elementalSkill.hits.map((hit) => Math.round(hit.additiveBaseDamageBonus?.(combatant) ?? Number.NaN)),
+    ).toStrictEqual([1866]);
     expect(summon.secondsRemaining * 60).toBeCloseTo(19 + 1020);
     expect((summon.secondsRemaining - (summon.spawnSeconds ?? Number.NaN)) * 60).toBeCloseTo(1020);
     expect(summon.hits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60))).toStrictEqual([
       60, 276, 492, 708, 924,
     ]);
-    expect(Math.round(takeOne(summon.hits).additiveBaseDamageBonus?.(combatant) ?? Number.NaN)).toBe(1026);
+    expect(summon.hits.map((hit) => Math.round(hit.additiveBaseDamageBonus?.(combatant) ?? Number.NaN))).toStrictEqual([
+      1026, 1026, 1026, 1026, 1026,
+    ]);
   });
 
   test("a hold casts Tamoto at 34 frames, and needs the provisional half second to be held", () => {
@@ -101,12 +104,15 @@ describe(createChioriKitBehaviour, () => {
     expect((summon.secondsRemaining - (summon.spawnSeconds ?? Number.NaN)) * 60).toBeCloseTo(1020);
   });
 
-  test("her burst strikes at 92 frames as a circle of 12 metres, priced by her DEF share", () => {
+  test("her burst strikes at 92 frames, priced by her DEF share", () => {
     expect.hasAssertions();
     const combatant = createChioriCombatant(1000);
-    const [burstHit] = CHIORI_KIT.elementalBurst.hits;
 
-    expect(Math.round((burstHit?.hitmarkSeconds ?? 0) * 60)).toBe(92);
-    expect(Math.round(burstHit?.additiveBaseDamageBonus?.(combatant) ?? Number.NaN)).toBe(3204);
+    expect(
+      CHIORI_KIT.elementalBurst.hits.map((hit) => ({
+        bonus: Math.round(hit.additiveBaseDamageBonus?.(combatant) ?? Number.NaN),
+        frames: Math.round(hit.hitmarkSeconds * 60),
+      })),
+    ).toStrictEqual([{ bonus: 3204, frames: 92 }]);
   });
 });

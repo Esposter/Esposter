@@ -87,7 +87,7 @@ describe(createChascaKitBehaviour, () => {
     expect.hasAssertions();
     const multipliers = [
       ...CHASCA_KIT.normalAttacks.flatMap(({ hits }) => hits.map(({ talentMultiplier }) => talentMultiplier)),
-      CHASCA_KIT.chargedAttack.hits[0]?.talentMultiplier ?? 0,
+      ...CHASCA_KIT.chargedAttack.hits.map(({ talentMultiplier }) => talentMultiplier),
     ];
     expect(multipliers).toStrictEqual([
       expect.closeTo(0.4801, 3),

@@ -67,9 +67,9 @@ describe(createEmilieKitBehaviour, () => {
       EMILIE_KIT.elementalSkill.hits[1]?.talentMultiplier,
     ];
     const expectedMultipliers = [0.4856, 0.449, 0.593, 0.751, 0.9133, 0.6393, 1.2784, 1.5968, 0.4708, 0.3852];
-    expect(multipliers).toHaveLength(expectedMultipliers.length);
-    for (const [index, expectedMultiplier] of expectedMultipliers.entries())
-      expect(multipliers[index]).toBeCloseTo(expectedMultiplier, 4);
+    expect(multipliers).toStrictEqual(
+      expectedMultipliers.map((expectedMultiplier) => expect.closeTo(expectedMultiplier, 4)),
+    );
     expect([
       EMILIE_KIT.chargedAttackStamina,
       EMILIE_KIT.skillCooldownSeconds,

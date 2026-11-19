@@ -56,7 +56,7 @@ describe(createDoriKitBehaviour, () => {
     ]);
   });
 
-  test("the Connector ticks every 24 frames from 28 frames, 32 times, in the circle ahead of the body", () => {
+  test("the Connector ticks every 24 frames from 28 frames, in a circle of radius 10 ahead of the body", () => {
     expect.hasAssertions();
     const field = castKitAction(DORI_KIT.elementalBurst, createDoriCombatant()).effects.find(
       (effect): effect is KitField => effect.kind === "field",

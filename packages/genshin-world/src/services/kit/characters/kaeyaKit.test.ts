@@ -142,28 +142,16 @@ describe("kaeya kit", () => {
       expect(multipliers[index]).toBeCloseTo(expectedMultiplier, 2);
   });
 
-  test("its Glacial Waltz icicles land thirteen Cryo ticks at the wiki's 77.6%, and end with the summon", () => {
+  test("its Glacial Waltz icicles land thirteen Cryo ticks at the wiki's 77.6% as Elemental Burst, and end with the summon", () => {
     expect.hasAssertions();
     const context = createKitTestContext(createKaeyaCombatant());
     KAEYA_KIT.elementalBurst.onStart?.(context);
 
     const icicles = stepKitTestEffects(9, context);
-    expect(icicles).toHaveLength(13);
-    expect(icicles.map(({ hit }) => [hit.talentMultiplier, hit.element])).toStrictEqual(
-      Array.from({ length: 13 }, () => [0.776, "Ice"]),
+    expect(icicles.map(({ attackTag, hit }) => [hit.talentMultiplier, hit.element, attackTag])).toStrictEqual(
+      Array.from({ length: 13 }, () => [0.776, Element.Cryo, AttackTag.ElementalBurst]),
     );
     expect(context.kitEffectState.effects).toStrictEqual([]);
-  });
-
-  test("its Glacial Waltz icicles are dealt as Elemental Burst, the kind gcsim tags them", () => {
-    expect.hasAssertions();
-    const context = createKitTestContext(createKaeyaCombatant());
-    KAEYA_KIT.elementalBurst.onStart?.(context);
-
-    const icicles = stepKitTestEffects(9, context);
-    expect(icicles.map(({ attackTag }) => attackTag)).toStrictEqual(
-      Array.from({ length: 13 }, () => AttackTag.ElementalBurst),
-    );
   });
 
   test("ascension 1 heals Kaeya by 15% of his ATK for each enemy Frostgnaw strikes, and gives none before it", () => {

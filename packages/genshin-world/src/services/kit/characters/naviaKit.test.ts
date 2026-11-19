@@ -135,9 +135,9 @@ describe(createNaviaKitBehaviour, () => {
       ...NAVIA_KIT.normalAttacks.flatMap(({ hits }) => hits.map(({ talentMultiplier }) => talentMultiplier)),
       ...NAVIA_KIT.chargedAttack.hits.map(({ talentMultiplier }) => talentMultiplier),
       NAVIA_KIT.plungeCollision.talentMultiplier,
-      takeOne(NAVIA_KIT.lowPlunge.hits).talentMultiplier,
-      takeOne(NAVIA_KIT.highPlunge.hits).talentMultiplier,
-      getBlastHit().talentMultiplier,
+      ...NAVIA_KIT.lowPlunge.hits.map(({ talentMultiplier }) => talentMultiplier),
+      ...NAVIA_KIT.highPlunge.hits.map(({ talentMultiplier }) => talentMultiplier),
+      ...NAVIA_KIT.elementalBurst.hits.map(({ talentMultiplier }) => talentMultiplier),
     ];
     expect(multipliers).toStrictEqual([
       0.93519, 0.865065, 0.348859, 0.348859, 0.348859, 1.334316, 0.62522, 1.1309, 0.745878, 1.49144, 1.862889, 0.752,
@@ -171,7 +171,7 @@ describe(createNaviaKitBehaviour, () => {
     ).toStrictEqual([163, 205, 253, 295, 337]);
   });
 
-  test("a cannon hit gains a crystal shrapnel once per 2.4 second cooldown, and holds six at most", () => {
+  test("a cannon hit gains a crystal shrapnel, and holds six at most", () => {
     expect.hasAssertions();
     const kitEffectState: KitEffectState = { effects: [] };
     const blastHit = getBlastHit();
@@ -206,7 +206,7 @@ describe(createNaviaKitBehaviour, () => {
     });
   });
 
-  test("surging blade lands 75 frames into a press, and its cooldown keeps a second blade out for seven seconds", () => {
+  test("surging blade lands 75 frames into a press, and its cooldown keeps a second blade out until it ends", () => {
     expect.hasAssertions();
     const kitEffectState: KitEffectState = { effects: [] };
     startAction(NAVIA_KIT.elementalSkill, kitEffectState);

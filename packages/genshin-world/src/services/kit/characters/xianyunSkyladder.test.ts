@@ -72,7 +72,7 @@ describe(createXianyunKitBehaviour, () => {
     expect(countKitResource(context.kitEffectState.effects, XIANYUN_CHARACTER_ID, XIANYUN_DRIFTCLOUD_ID)).toBe(2);
   });
 
-  test("a Constellation 6 Burst gives eight presses that cost no cooldown, and a press spends one", () => {
+  test("a Constellation 6 Burst gives eight presses, and a press spends one and leaves the status at 16 seconds", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(createCombatant(6));

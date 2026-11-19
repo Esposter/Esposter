@@ -75,15 +75,15 @@ describe(createTartagliaKitBehaviour, () => {
       createKitTestContext(createTartagliaCombatant(), { kitEffectState: rangedBurstEffectState }),
     );
     const multipliers = [
-      ...TARTAGLIA_KIT.normalAttacks.map((action) => takeOne(action.hits).talentMultiplier),
-      takeOne(TARTAGLIA_KIT.chargedAttack.hits).talentMultiplier,
+      ...TARTAGLIA_KIT.normalAttacks.flatMap((action) => action.hits.map(({ talentMultiplier }) => talentMultiplier)),
+      ...TARTAGLIA_KIT.chargedAttack.hits.map(({ talentMultiplier }) => talentMultiplier),
       TARTAGLIA_KIT.plungeCollision.talentMultiplier,
-      takeOne(TARTAGLIA_KIT.lowPlunge.hits).talentMultiplier,
-      takeOne(TARTAGLIA_KIT.highPlunge.hits).talentMultiplier,
-      takeOne(TARTAGLIA_KIT.elementalSkill.hits).talentMultiplier,
+      ...TARTAGLIA_KIT.lowPlunge.hits.map(({ talentMultiplier }) => talentMultiplier),
+      ...TARTAGLIA_KIT.highPlunge.hits.map(({ talentMultiplier }) => talentMultiplier),
+      ...TARTAGLIA_KIT.elementalSkill.hits.map(({ talentMultiplier }) => talentMultiplier),
       ...meleeKit.normalAttacks.flatMap((action) => action.hits.map(({ talentMultiplier }) => talentMultiplier)),
       ...meleeKit.chargedAttack.hits.map(({ talentMultiplier }) => talentMultiplier),
-      takeOne(meleeKit.elementalBurst.hits).talentMultiplier,
+      ...meleeKit.elementalBurst.hits.map(({ talentMultiplier }) => talentMultiplier),
       ...rangedBurstEffectState.effects.flatMap((effect) =>
         effect.kind === "summon" ? effect.hits.map(({ talentMultiplier }) => talentMultiplier) : [],
       ),

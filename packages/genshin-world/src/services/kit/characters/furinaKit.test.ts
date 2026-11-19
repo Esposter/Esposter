@@ -55,7 +55,7 @@ describe(createFurinaKitBehaviour, () => {
   const TEAMMATE_CHARACTER_ID = 1;
   const LOW_TEAMMATE_CHARACTER_ID = 2;
 
-  test("the charged attack turns her to Pneuma a frame after its hit, handing Salon Solitaire's members to the Singer", () => {
+  test("the charged attack turns her to Pneuma, handing Salon Solitaire's members to the Singer", () => {
     expect.hasAssertions();
     const context = createKitTestContext(createFurinaCombatant());
     const { kitEffectState } = context;
@@ -94,14 +94,13 @@ describe(createFurinaKitBehaviour, () => {
       (effect) => effect.kind === "summon" && effect.id === "furina-salon-attack",
     );
 
-    expect(party.healthChanges.map(({ characterId }) => characterId)).toStrictEqual([
-      FURINA_CHARACTER_ID,
-      TEAMMATE_CHARACTER_ID,
+    expect(party.healthChanges.map(({ characterId, healthShare }) => ({ characterId, healthShare }))).toStrictEqual([
+      { characterId: FURINA_CHARACTER_ID, healthShare: expect.closeTo(-0.036, 5) },
+      { characterId: TEAMMATE_CHARACTER_ID, healthShare: expect.closeTo(-0.036, 5) },
     ]);
-    for (const { healthShare } of party.healthChanges) expect(healthShare).toBeCloseTo(-0.036, 5);
-    expect(attack?.kind === "summon" ? attack.hits[0]?.additiveBaseDamageBonus?.(furina) : undefined).toBeCloseTo(
-      0.08288 * 1.2 * MAX_HEALTH,
-    );
+    expect(
+      attack?.kind === "summon" ? attack.hits.map((hit) => hit.additiveBaseDamageBonus?.(furina)) : undefined,
+    ).toStrictEqual([expect.closeTo(0.08288 * 1.2 * MAX_HEALTH, 2)]);
   });
 
   test("the Salon drains no one and strikes nothing with no enemy in reach", () => {
@@ -241,7 +240,7 @@ describe(createFurinaKitBehaviour, () => {
   });
 
   // The first attack of the Salon, 90 frames after the skill, at the ascension stood, with a teammate and an enemy in reach
-  const getSalonAttackDamageBonus = (ascension: number): number => {
+  const getSalonAttackDamageBonus = (ascension: number): number[] => {
     const furina = createFurinaCombatant({ ascension });
     const context = createKitTestContext(furina, {
       characterIdCombatantMap: new Map([
@@ -257,7 +256,7 @@ describe(createFurinaKitBehaviour, () => {
       (effect) => effect.kind === "summon" && effect.id === "furina-salon-attack",
     );
     if (attack?.kind !== "summon") throw new Error("the Salon's attack is not cast");
-    return attack.hits[0]?.damageBonus ?? 0;
+    return attack.hits.map(({ damageBonus }) => damageBonus ?? 0);
   };
 
   // The Singer's tick interval, read off its field once the charged attack turns her to Pneuma
@@ -277,14 +276,16 @@ describe(createFurinaKitBehaviour, () => {
   test("the Ascension 4 passive, Unheard Confession, takes effect at its ascension phase", () => {
     expect.hasAssertions();
 
-    expect(getSalonAttackDamageBonus(4)).toBeCloseTo(0.14, 5);
-    expect(getSingerInterval(4)).toBeLessThan(getSingerInterval(3));
+    expect([getSalonAttackDamageBonus(4), getSingerInterval(4), getSingerInterval(3)]).toStrictEqual([
+      [expect.closeTo(0.14, 5)],
+      expect.closeTo(11 / 6, 9),
+      2,
+    ]);
   });
 
   test("the Ascension 4 passive, Unheard Confession, does not take effect below its ascension phase", () => {
     expect.hasAssertions();
 
-    expect(getSalonAttackDamageBonus(3)).toBe(0);
-    expect(getSingerInterval(3)).toBe(getSingerInterval(0));
+    expect([getSalonAttackDamageBonus(3), getSingerInterval(3), getSingerInterval(0)]).toStrictEqual([[0], 2, 2]);
   });
 });

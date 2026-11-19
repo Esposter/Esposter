@@ -30,13 +30,13 @@ describe(createXianyunKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [
-      ...XIANYUN_KIT.normalAttacks.map((action) => takeOne(action.hits).talentMultiplier),
-      takeOne(XIANYUN_KIT.chargedAttack.hits).talentMultiplier,
+      ...XIANYUN_KIT.normalAttacks.flatMap((action) => action.hits.map(({ talentMultiplier }) => talentMultiplier)),
+      ...XIANYUN_KIT.chargedAttack.hits.map(({ talentMultiplier }) => talentMultiplier),
       XIANYUN_KIT.plungeCollision.talentMultiplier,
-      takeOne(XIANYUN_KIT.lowPlunge.hits).talentMultiplier,
-      takeOne(XIANYUN_KIT.highPlunge.hits).talentMultiplier,
-      takeOne(XIANYUN_KIT.elementalSkill.hits).talentMultiplier,
-      takeOne(XIANYUN_KIT.elementalBurst.hits).talentMultiplier,
+      ...XIANYUN_KIT.lowPlunge.hits.map(({ talentMultiplier }) => talentMultiplier),
+      ...XIANYUN_KIT.highPlunge.hits.map(({ talentMultiplier }) => talentMultiplier),
+      ...XIANYUN_KIT.elementalSkill.hits.map(({ talentMultiplier }) => talentMultiplier),
+      ...XIANYUN_KIT.elementalBurst.hits.map(({ talentMultiplier }) => talentMultiplier),
     ];
     const expectedMultipliers = [
       0.403024, 0.388552, 0.488776, 0.649168, 1.2312, 0.568288, 1.136335, 1.419344, 0.248, 1.08,

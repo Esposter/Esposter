@@ -72,9 +72,9 @@ describe(createGamingKitBehaviour, () => {
       takeOne(GAMING_KIT.elementalBurst.hits).talentMultiplier,
     ];
     const expectedMultipliers = [0.8386, 0.7904, 1.0665, 1.2795, 1.1309, 0.6415, 1.2826, 1.6021, 3.704];
-    expect(multipliers).toHaveLength(expectedMultipliers.length);
-    for (const [index, expectedMultiplier] of expectedMultipliers.entries())
-      expect(multipliers[index]).toBeCloseTo(expectedMultiplier, 2);
+    expect(multipliers).toStrictEqual(
+      expectedMultipliers.map((expectedMultiplier) => expect.closeTo(expectedMultiplier, 2)),
+    );
   });
 
   test("reads the skill's cooldown, the burst's cooldown and energy cost, and the charged attack's stamina from their groups", () => {
@@ -150,6 +150,6 @@ describe(createGamingKitBehaviour, () => {
   test("an inactive constellation changes nothing", () => {
     expect.hasAssertions();
 
-    expect(reportHealing(createGamingCombatant(1), 0.1).effects).toHaveLength(0);
+    expect(reportHealing(createGamingCombatant(1), 0.1).effects).toStrictEqual([]);
   });
 });

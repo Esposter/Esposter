@@ -111,12 +111,17 @@ describe(createChongyunKitBehaviour, () => {
 
   test("the skill's Cryo hit lands at 36 frames for 2U of Cryo and 150 poise", () => {
     expect.hasAssertions();
-    const [skillHit] = CHONGYUN_KIT.elementalSkill.hits;
 
-    expect(skillHit?.element).toBe(Element.Cryo);
-    expect(skillHit?.gauge).toBe(2);
-    expect(skillHit?.hitmarkSeconds).toBeCloseTo(36 / 60);
-    expect(skillHit?.poiseDamage).toBe(150);
+    expect(
+      CHONGYUN_KIT.elementalSkill.hits.map(({ element, gauge, hitmarkSeconds, poiseDamage }) => ({
+        element,
+        gauge,
+        hitmarkSeconds,
+        poiseDamage,
+      })),
+    ).toStrictEqual([
+      { element: Element.Cryo, gauge: 2, hitmarkSeconds: expect.closeTo(36 / 60, 2), poiseDamage: 150 },
+    ]);
   });
 
   test("the field infuses the active character with Cryo each second from the hit, for the table's infusion seconds", () => {
@@ -306,7 +311,7 @@ describe(createChongyunKitBehaviour, () => {
     expect(partyMember.skillCooldownSeconds).toBeCloseTo(15 * 0.85);
   });
 
-  test("four constellations give him 1 energy as his hit lands on an enemy with Cryo on it, once in 2 seconds", () => {
+  test("four constellations give him 1 energy as his hit lands on an enemy with Cryo on it, and a second hit at once gives none", () => {
     expect.hasAssertions();
     const combatant = createChongyunCombatant(0, 4);
     const context = createKitTestContext(combatant);
@@ -352,21 +357,6 @@ describe(createChongyunKitBehaviour, () => {
     expect([getDamageBonus(1), getDamageBonus(0.5)]).toStrictEqual([0, 0.15]);
   });
 
-  test("the Ascension 1 passive, Steady Breathing, takes effect at its ascension phase", () => {
-    expect.hasAssertions();
-    const combatant = createChongyunCombatant(1);
-
-    expect(tickFieldOn(combatant, castField(combatant))).toStrictEqual([
-      {
-        characterId: CHONGYUN_CHARACTER_ID,
-        element: Element.Cryo,
-        kind: "infusion",
-        normalAttackSpeedBonus: 0.08,
-        secondsRemaining: 2,
-      },
-    ]);
-  });
-
   test("the Ascension 1 passive, Steady Breathing, does not take effect below its ascension phase", () => {
     expect.hasAssertions();
     const combatant = createChongyunCombatant(0);
@@ -376,15 +366,9 @@ describe(createChongyunKitBehaviour, () => {
     ]);
   });
 
-  test("the Ascension 4 passive, Rimechaser Blade, takes effect at its ascension phase", () => {
-    expect.hasAssertions();
-
-    expect(endFieldOf(createChongyunCombatant(4)).filter((effect) => effect.kind === "summon")).toHaveLength(1);
-  });
-
   test("the Ascension 4 passive, Rimechaser Blade, does not take effect below its ascension phase", () => {
     expect.hasAssertions();
 
-    expect(endFieldOf(createChongyunCombatant(3)).filter((effect) => effect.kind === "summon")).toHaveLength(0);
+    expect(endFieldOf(createChongyunCombatant(3)).filter((effect) => effect.kind === "summon")).toStrictEqual([]);
   });
 });

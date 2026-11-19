@@ -4,7 +4,6 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import {
   createNeferKitBehaviour,
   NEFER_CHARACTER_ID,
@@ -14,11 +13,9 @@ import { createKitTestContext } from "#src/services/kit/createKitTestContext.tes
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
-import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const NEFER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, NEFER_CHARACTER_ID);
-const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 
 describe(createNeferKitBehaviour, () => {
   const MAX_HEALTH = 10_000;
@@ -37,12 +34,12 @@ describe(createNeferKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
     expect([
-      takeOne(takeOne(NEFER_KIT.normalAttacks).hits).talentMultiplier,
-      takeOne(NEFER_KIT.chargedAttack.hits).talentMultiplier,
+      ...NEFER_KIT.normalAttacks.flatMap(({ hits }) => hits.map(({ talentMultiplier }) => talentMultiplier)),
+      ...NEFER_KIT.chargedAttack.hits.map(({ talentMultiplier }) => talentMultiplier),
       NEFER_KIT.plungeCollision.talentMultiplier,
-      takeOne(NEFER_KIT.lowPlunge.hits).talentMultiplier,
-      takeOne(NEFER_KIT.highPlunge.hits).talentMultiplier,
-    ]).toStrictEqual([0.380712, 1.3088, 0.568288, 1.136335, 1.419344]);
+      ...NEFER_KIT.lowPlunge.hits.map(({ talentMultiplier }) => talentMultiplier),
+      ...NEFER_KIT.highPlunge.hits.map(({ talentMultiplier }) => talentMultiplier),
+    ]).toStrictEqual([0.380712, 0.37564, 0.2524, 0.2524, 0.609944, 1.3088, 0.568288, 1.136335, 1.419344]);
   });
 
   test("costs 60 energy for its burst, cooling for 15 seconds, and 50 stamina for its charged attack, its skill cooling for 9 seconds", () => {
@@ -55,7 +52,9 @@ describe(createNeferKitBehaviour, () => {
 
   test("nefer's elemental skill uses her own hits", () => {
     expect.hasAssertions();
-    expect(NEFER_KIT.elementalSkill.hits).not.toStrictEqual(TRAVELER_KIT.elementalSkill.hits);
+    expect(NEFER_KIT.elementalSkill.hits.map(({ talentMultiplier }) => talentMultiplier)).toStrictEqual([
+      0.76384, 1.52768,
+    ]);
   });
 
   test("her skill enters Shadow Dance, where her charged attack is Phantasm Performance, a stance with its own seven hits, for a positive time", () => {
@@ -67,7 +66,7 @@ describe(createNeferKitBehaviour, () => {
 
     expect(stance?.combatant.kit.chargedAttack.hits).toHaveLength(7);
     expect(stance?.combatant.kit.chargedAttack).not.toStrictEqual(NEFER_KIT.chargedAttack);
-    expect(stance?.secondsRemaining).toBeGreaterThan(0);
+    expect(stance?.secondsRemaining).toBe(9);
   });
 
   test("her Shadow Dance starts with two Verdant Dew", () => {

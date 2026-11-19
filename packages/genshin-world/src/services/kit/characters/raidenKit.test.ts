@@ -63,7 +63,7 @@ describe(createRaidenKitBehaviour, () => {
 
     expect(summon.hits[0]?.talentMultiplier).toBeCloseTo(4.008 + 0.03888);
     expect(stance?.combatant.kit.normalAttacks[0]?.hits[0]?.talentMultiplier).toBeCloseTo(0.447374 + 0.007262);
-    expect(kitEffectState.effects.some((effect) => effect.kind === "status")).toBe(false);
+    expect(kitEffectState.effects.map(({ kind }) => kind)).toStrictEqual(["summon", "stance"]);
   });
 
   test("another member's burst gives her resolve by its energy cost, constellation 1 raising an electro member's", () => {

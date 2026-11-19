@@ -63,7 +63,7 @@ describe(createArlecchinoKitBehaviour, () => {
     expect.hasAssertions();
 
     expect(toFrames(ARLECCHINO_KIT.chargedAttack.seconds)).toBe(60);
-    expect(toFrames(takeOne(ARLECCHINO_KIT.chargedAttack.hits).hitmarkSeconds)).toBe(37);
+    expect(ARLECCHINO_KIT.chargedAttack.hits.map(({ hitmarkSeconds }) => toFrames(hitmarkSeconds))).toStrictEqual([37]);
     expect(ARLECCHINO_KIT.chargedAttackStamina).toBe(25);
   });
 
@@ -71,10 +71,18 @@ describe(createArlecchinoKitBehaviour, () => {
     expect.hasAssertions();
 
     expect(toFrames(ARLECCHINO_KIT.plungeCollision.hitmarkSeconds)).toBe(41);
-    expect(toFrames(takeOne(ARLECCHINO_KIT.lowPlunge.hits).hitmarkSeconds)).toBe(47);
-    expect(toFrames(takeOne(ARLECCHINO_KIT.highPlunge.hits).hitmarkSeconds)).toBe(48);
-    expect(takeOne(ARLECCHINO_KIT.lowPlunge.hits).poiseDamage).toBe(100);
-    expect(takeOne(ARLECCHINO_KIT.highPlunge.hits).poiseDamage).toBe(150);
+    expect(
+      ARLECCHINO_KIT.lowPlunge.hits.map(({ hitmarkSeconds, poiseDamage }) => ({
+        frames: toFrames(hitmarkSeconds),
+        poiseDamage,
+      })),
+    ).toStrictEqual([{ frames: 47, poiseDamage: 100 }]);
+    expect(
+      ARLECCHINO_KIT.highPlunge.hits.map(({ hitmarkSeconds, poiseDamage }) => ({
+        frames: toFrames(hitmarkSeconds),
+        poiseDamage,
+      })),
+    ).toStrictEqual([{ frames: 48, poiseDamage: 150 }]);
   });
 
   test("her skill is Spike at 17 frames and Cleave at 38, on a 30 second cooldown", () => {
@@ -93,17 +101,20 @@ describe(createArlecchinoKitBehaviour, () => {
 
   test("her burst lands at 110 frames of 146, costs 60 energy and recharges in 15 seconds", () => {
     expect.hasAssertions();
-    const [burstHit] = ARLECCHINO_KIT.elementalBurst.hits;
 
     expect(toFrames(ARLECCHINO_KIT.elementalBurst.seconds)).toBe(146);
-    expect(toFrames(burstHit?.hitmarkSeconds ?? 0)).toBe(110);
-    expect(burstHit?.talentMultiplier).toBeCloseTo(3.704, 3);
+    expect(
+      ARLECCHINO_KIT.elementalBurst.hits.map(({ hitmarkSeconds, talentMultiplier }) => ({
+        frames: toFrames(hitmarkSeconds),
+        talentMultiplier,
+      })),
+    ).toStrictEqual([{ frames: 110, talentMultiplier: expect.closeTo(3.704, 3) }]);
     expect(ARLECCHINO_KIT.burstEnergyCost).toBe(60);
     expect(ARLECCHINO_KIT.burstCooldownSeconds).toBe(15);
   });
 
   // Her utility passive, The Balemoon Alone May Know, has no ascension phase: it holds from the start, below every phase
-  test("the utility passive, The Balemoon Alone May Know, takes effect at its ascension phase", () => {
+  test("the utility passive, The Balemoon Alone May Know, holds from ascension 0, having no phase to reach", () => {
     expect.hasAssertions();
     const combatant = createArlecchinoCombatant(0);
     const { party } = createKitTestContext(combatant);

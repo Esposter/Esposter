@@ -65,9 +65,9 @@ describe(createQiqiKitBehaviour, () => {
       ...QIQI_KIT.normalAttacks.flatMap((action) => action.hits.map((hit) => hit.talentMultiplier)),
       ...QIQI_KIT.chargedAttack.hits.map((hit) => hit.talentMultiplier),
       QIQI_KIT.plungeCollision.talentMultiplier,
-      takeOne(QIQI_KIT.lowPlunge.hits).talentMultiplier,
-      takeOne(QIQI_KIT.highPlunge.hits).talentMultiplier,
-      takeOne(QIQI_KIT.elementalBurst.hits).talentMultiplier,
+      ...QIQI_KIT.lowPlunge.hits.map((hit) => hit.talentMultiplier),
+      ...QIQI_KIT.highPlunge.hits.map((hit) => hit.talentMultiplier),
+      ...QIQI_KIT.elementalBurst.hits.map((hit) => hit.talentMultiplier),
     ];
     const expectedMultipliers = [
       0.37754, 0.38872, 0.24166, 0.24166, 0.24682, 0.24682, 0.63038, 0.64328, 0.64328, 0.639324, 1.278377, 1.596762,
@@ -88,7 +88,9 @@ describe(createQiqiKitBehaviour, () => {
     expect(swipeHits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60))).toStrictEqual([
       96, 231, 291, 426, 486, 621, 681, 816, 876,
     ]);
-    expect(swipeHits.every(({ talentMultiplier }) => talentMultiplier === 0.36)).toBe(true);
+    expect(swipeHits.map(({ talentMultiplier }) => talentMultiplier)).toStrictEqual(
+      Array.from({ length: 9 }, () => 0.36),
+    );
   });
 
   test("the regeneration ticks every 4.5 seconds from the press's hitmark, for the skill's 15 seconds", () => {
@@ -231,7 +233,8 @@ describe(createQiqiKitBehaviour, () => {
     });
     const secondHeal = healFromTalisman();
 
-    expect(secondHeal).toBeGreaterThan(firstHeal);
+    expect(firstHeal).toBeCloseTo(0.14773388, 10);
+    expect(secondHeal).toBeCloseTo(0.23773388, 10);
   });
 
   test("ascension 4's Normal Attack hit gives the enemy a Talisman, once in 30 seconds", () => {

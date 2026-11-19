@@ -1,6 +1,5 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
-import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
@@ -47,13 +46,6 @@ describe(createCynoKitBehaviour, () => {
 
     expect(CYNO_KIT.getNormalAttackSpeedBonus?.(createKitTestContext(combatant, { kitEffectState }))).toBe(0);
   });
-
-  // The effects an action's start adds to the team's, which its owner holds
-  const castAction = (action: KitAction, combatant = createCynoCombatant()): KitEffectState => {
-    const context = createKitTestContext(combatant);
-    action.onStart?.(context);
-    return context.kitEffectState;
-  };
 
   const createCynoCombatant = (overrides: Partial<Combatant> = {}): Combatant => ({
     ascension: 0,
@@ -114,7 +106,7 @@ describe(createCynoKitBehaviour, () => {
 
   test("sacred Rite: Wolf's Swiftness sets Pactsworn Pathclearer on the team for its ten seconds and 112 frames, with Elemental Mastery", () => {
     expect.hasAssertions();
-    const kitEffectState = castAction(CYNO_KIT.elementalBurst);
+    const kitEffectState = castKitAction(CYNO_KIT.elementalBurst, createCynoCombatant());
     const buff = kitEffectState.effects.find((effect) => effect.kind === "buff");
 
     expect({
@@ -125,10 +117,10 @@ describe(createCynoKitBehaviour, () => {
     expect(findStance(kitEffectState)?.secondsRemaining).toBeCloseTo(10 + 112 / 60, 3);
   });
 
-  test("mortuary Rite extends the burst by four seconds, twice at most, and its cooldown is three seconds in the stance", () => {
+  test("mortuary Rite extends the burst by four seconds, twice at most, and cuts the skill's cooldown to 0.4 in the stance", () => {
     expect.hasAssertions();
     const combatant = createCynoCombatant();
-    const kitEffectState = castAction(CYNO_KIT.elementalBurst, combatant);
+    const kitEffectState = castKitAction(CYNO_KIT.elementalBurst, combatant);
     const stanceSeconds = findStance(kitEffectState)?.secondsRemaining ?? 0;
     const mortuaryRite = findStance(kitEffectState)?.combatant.kit.elementalSkill;
     const context = createKitTestContext(combatant, { kitEffectState });
@@ -148,7 +140,7 @@ describe(createCynoKitBehaviour, () => {
   test("judication's Endseer lands on the first tick at 328 frames", () => {
     expect.hasAssertions();
     const combatant = createCynoCombatant({ ascension: 1 });
-    const kitEffectState = castAction(CYNO_KIT.elementalBurst, combatant);
+    const kitEffectState = castKitAction(CYNO_KIT.elementalBurst, combatant);
     const field = findField(kitEffectState);
     field?.onTick(createKitTestContext(combatant, { kitEffectState }), 0);
 
@@ -161,7 +153,7 @@ describe(createCynoKitBehaviour, () => {
   test("judication's 35% raises the Mortuary Rite hit a press under Endseer lands, and no other hit", () => {
     expect.hasAssertions();
     const combatant = createCynoCombatant({ ascension: 1 });
-    const kitEffectState = castAction(CYNO_KIT.elementalBurst, combatant);
+    const kitEffectState = castKitAction(CYNO_KIT.elementalBurst, combatant);
     const context = createKitTestContext(combatant, { kitEffectState });
     findField(kitEffectState)?.onTick(context, 0);
     const stanceKit = findStance(kitEffectState)?.combatant.kit;
@@ -176,7 +168,7 @@ describe(createCynoKitBehaviour, () => {
   test("a Mortuary Rite press outside Endseer raises no hit", () => {
     expect.hasAssertions();
     const combatant = createCynoCombatant({ ascension: 1 });
-    const kitEffectState = castAction(CYNO_KIT.elementalBurst, combatant);
+    const kitEffectState = castKitAction(CYNO_KIT.elementalBurst, combatant);
     const context = createKitTestContext(combatant, { kitEffectState });
     const stanceKit = findStance(kitEffectState)?.combatant.kit;
     stanceKit?.elementalSkill.onStart?.(context);
@@ -186,33 +178,37 @@ describe(createCynoKitBehaviour, () => {
 
   test("the Ascension 1 passive, Featherfall Judgment, takes effect at its ascension phase", () => {
     expect.hasAssertions();
-    expect(findField(castAction(CYNO_KIT.elementalBurst, createCynoCombatant({ ascension: 1 })))?.id).toBe(
+    expect(findField(castKitAction(CYNO_KIT.elementalBurst, createCynoCombatant({ ascension: 1 })))?.id).toBe(
       "cyno-judication",
     );
   });
 
   test("the Ascension 1 passive, Featherfall Judgment, does not take effect below its ascension phase", () => {
     expect.hasAssertions();
-    expect(findField(castAction(CYNO_KIT.elementalBurst, createCynoCombatant({ ascension: 0 })))).toBeUndefined();
+    expect(findField(castKitAction(CYNO_KIT.elementalBurst, createCynoCombatant({ ascension: 0 })))).toBeUndefined();
   });
 
   test("the Ascension 4 passive, Authority Over the Nine Bows, takes effect at its ascension phase", () => {
     expect.hasAssertions();
-    const stance = findStance(castAction(CYNO_KIT.elementalBurst, createCynoCombatant({ ascension: 4 })));
-    const hit = takeOne(takeOne(stance?.combatant.kit.normalAttacks ?? []).hits);
+    const stance = findStance(castKitAction(CYNO_KIT.elementalBurst, createCynoCombatant({ ascension: 4 })));
+    const stanceHits = stance?.combatant.kit.normalAttacks.flatMap(({ hits }) => hits) ?? [];
 
-    expect(hit.additiveBaseDamageBonus?.(createCynoCombatant({ ascension: 4 }))).toBe(ELEMENTAL_MASTERY * 1.5);
+    expect(stanceHits.map((hit) => hit.additiveBaseDamageBonus?.(createCynoCombatant({ ascension: 4 })))).toStrictEqual(
+      [300, 300, 300, 300, 300, 300],
+    );
   });
 
   test("the Ascension 4 passive, Authority Over the Nine Bows, does not take effect below its ascension phase", () => {
     expect.hasAssertions();
-    const stance = findStance(castAction(CYNO_KIT.elementalBurst, createCynoCombatant({ ascension: 3 })));
-    const hit = takeOne(takeOne(stance?.combatant.kit.normalAttacks ?? []).hits);
+    const stance = findStance(castKitAction(CYNO_KIT.elementalBurst, createCynoCombatant({ ascension: 3 })));
+    const stanceHits = stance?.combatant.kit.normalAttacks.flatMap(({ hits }) => hits) ?? [];
 
-    expect(hit.additiveBaseDamageBonus?.(createCynoCombatant({ ascension: 3 }))).toBe(0);
+    expect(stanceHits.map((hit) => hit.additiveBaseDamageBonus?.(createCynoCombatant({ ascension: 3 })))).toStrictEqual(
+      [0, 0, 0, 0, 0, 0],
+    );
   });
 
-  test("constellation 2 raises Electro DMG by 10% a stack for each normal attack's strike, once every 0.1 seconds", () => {
+  test("constellation 2 raises Electro DMG by 10% for a normal attack's strike, and a second strike at once adds none", () => {
     expect.hasAssertions();
     const combatant = createCynoCombatant({ constellationCount: 2 });
     const kitEffectState: KitEffectState = { effects: [] };
@@ -231,7 +227,7 @@ describe(createCynoKitBehaviour, () => {
     const combatant = createCynoCombatant({ constellationCount: 4 });
     const other = createCynoCombatant({ characterId: 10_000_066, constellationCount: 0 });
     const party = createParty([CYNO_CHARACTER_ID, other.characterId]);
-    const kitEffectState = castAction(CYNO_KIT.elementalBurst, combatant);
+    const kitEffectState = castKitAction(CYNO_KIT.elementalBurst, combatant);
     const reaction = {
       enemy,
       kind: KitEventKind.ReactionTriggered,

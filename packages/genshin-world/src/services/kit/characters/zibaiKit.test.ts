@@ -64,12 +64,14 @@ describe(createZibaiKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
     expect([
-      takeOne(takeOne(ZIBAI_KIT.normalAttacks).hits).talentMultiplier,
-      takeOne(ZIBAI_KIT.chargedAttack.hits).talentMultiplier,
+      ...ZIBAI_KIT.normalAttacks.flatMap(({ hits }) => hits.map(({ talentMultiplier }) => talentMultiplier)),
+      ...ZIBAI_KIT.chargedAttack.hits.map(({ talentMultiplier }) => talentMultiplier),
       ZIBAI_KIT.plungeCollision.talentMultiplier,
-      takeOne(ZIBAI_KIT.lowPlunge.hits).talentMultiplier,
-      takeOne(ZIBAI_KIT.highPlunge.hits).talentMultiplier,
-    ]).toStrictEqual([0.505542, 0.73659, 0.639324, 1.278377, 1.596762]);
+      ...ZIBAI_KIT.lowPlunge.hits.map(({ talentMultiplier }) => talentMultiplier),
+      ...ZIBAI_KIT.highPlunge.hits.map(({ talentMultiplier }) => talentMultiplier),
+    ]).toStrictEqual([
+      0.505542, 0.465527, 0.308882, 0.308882, 0.778954, 0.73659, 0.73659, 0.639324, 1.278377, 1.596762,
+    ]);
   });
 
   test("costs 60 energy for its burst, cooling for 15 seconds, and 20 stamina for its charged attack, its skill cooling for 18 seconds", () => {
@@ -97,9 +99,9 @@ describe(createZibaiKitBehaviour, () => {
     const chargedAttackHits = stance?.combatant.kit.chargedAttack.hits ?? [];
 
     expect(stance?.combatant.kit.normalAttacks).toHaveLength(4);
-    expect(normalAttackHits.every((hit) => hit.element === Element.Geo)).toBe(true);
+    expect(new Set(normalAttackHits.map(({ element }) => element))).toStrictEqual(new Set<Element>([Element.Geo]));
     expect(new Set(chargedAttackHits.map(({ element }) => element))).toStrictEqual(new Set<Element>([Element.Geo]));
-    expect(stance?.secondsRemaining).toBeGreaterThan(0);
+    expect(stance?.secondsRemaining).toBe(15);
   });
 
   test("her fourth normal attack's extra instance of Geo DMG lands only at Ascendant Gleam", () => {

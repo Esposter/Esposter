@@ -82,9 +82,31 @@ describe(createSayuKitBehaviour, () => {
     expect.hasAssertions();
     const maximumRoll = SAYU_KIT.elementalSkillHolds?.at(-1);
     if (!maximumRoll) throw new Error("Sayu has no roll");
-    const kick = maximumRoll.action.hits.at(-1);
 
-    expect(kick?.hitmarkSeconds).toBeCloseTo((67 + 600) / 60);
+    expect(maximumRoll.action.hits.map(({ hitmarkSeconds }) => hitmarkSeconds)).toStrictEqual([
+      0.3,
+      0.8,
+      1.3,
+      1.8,
+      2.3,
+      2.8,
+      3.3,
+      3.8,
+      4.3,
+      4.8,
+      5.3,
+      5.8,
+      6.3,
+      6.8,
+      7.3,
+      7.8,
+      8.3,
+      8.8,
+      9.3,
+      9.8,
+      10.3,
+      (67 + 600) / 60,
+    ]);
     expect(maximumRoll.cooldownSeconds).toBeCloseTo(11);
   });
 
@@ -98,8 +120,7 @@ describe(createSayuKitBehaviour, () => {
       strikeAttackTags.push(...context.strikes.map(({ attackTag }) => attackTag));
     }
 
-    expect(strikeAttackTags.length).toBeGreaterThan(0);
-    expect(new Set(strikeAttackTags)).toStrictEqual(new Set<AttackTag>([AttackTag.ElementalBurst]));
+    expect(strikeAttackTags).toStrictEqual(Array.from({ length: 6 }, () => AttackTag.ElementalBurst));
   });
 
   test("a passive takes effect at its ascension phase", () => {
@@ -114,8 +135,7 @@ describe(createSayuKitBehaviour, () => {
 
     expect(getPartyMember(context.party, SAYU_CHARACTER_ID).healthShare).toBeCloseTo(0.5 + (300 + 1.2 * 100) / 10_000);
     const radii = getDarumaRadii(4);
-    expect(radii.length).toBeGreaterThan(0);
-    expect(new Set(radii)).toStrictEqual(new Set([3.5]));
+    expect(radii).toStrictEqual(Array.from({ length: 6 }, () => 3.5));
   });
 
   test("a passive does not take effect below its ascension phase", () => {
@@ -152,7 +172,8 @@ describe(createSayuKitBehaviour, () => {
     stepKitSeconds(context, 3);
     const secondHeal = healFromSwirl();
 
-    expect(secondHeal).toBeGreaterThan(firstHeal);
+    expect(firstHeal).toBeCloseTo(0.042, 10);
+    expect(secondHeal).toBeCloseTo(0.054, 10);
   });
 
   test("a Constellation 4 Swirl of hers on the field restores 1.2 Energy to her, once every 2 seconds", () => {

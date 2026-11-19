@@ -380,9 +380,9 @@ describe("constellation 2", () => {
     for (const event of outbox) HU_TAO_KIT.onKitEvent?.(event, tickContext, combatant);
 
     const tick = tickState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
-    expect(tick?.hits[0]?.additiveBaseDamageBonus?.(combatant)).toBeCloseTo(
-      0.1 * (combatant.attributes.maxHealth + healthBuff.amount),
-    );
+    expect(tick?.hits.map((hit) => hit.additiveBaseDamageBonus?.(combatant))).toStrictEqual([
+      expect.closeTo(0.1 * (combatant.attributes.maxHealth + healthBuff.amount), 2),
+    ]);
   });
 
   test("spirit Soother also applies Blood Blossom to each enemy its hit strikes", () => {
@@ -390,17 +390,22 @@ describe("constellation 2", () => {
     const combatant = { ...createHuTaoCombatant(), constellationCount: 2 };
 
     expect(
-      [HU_TAO_KIT.elementalBurst.hits[0], HU_TAO_KIT.elementalBurstVariant?.action.hits[0]].map(
-        (hit) => hit?.enemyStatus?.(combatant, combatant.attributes.maxHealth)?.id,
+      HU_TAO_KIT.elementalBurst.hits.map((hit) => hit.enemyStatus?.(combatant, combatant.attributes.maxHealth)?.id),
+    ).toStrictEqual(["hu-tao-blood-blossom"]);
+    expect(
+      HU_TAO_KIT.elementalBurstVariant?.action.hits.map(
+        (hit) => hit.enemyStatus?.(combatant, combatant.attributes.maxHealth)?.id,
       ),
-    ).toStrictEqual(["hu-tao-blood-blossom", "hu-tao-blood-blossom"]);
+    ).toStrictEqual(["hu-tao-blood-blossom"]);
   });
 
   test("below constellation 2, Spirit Soother applies no Blood Blossom", () => {
     expect.hasAssertions();
     const combatant = createHuTaoCombatant();
 
-    expect(HU_TAO_KIT.elementalBurst.hits[0]?.enemyStatus?.(combatant, combatant.attributes.maxHealth)).toBeUndefined();
+    expect(
+      HU_TAO_KIT.elementalBurst.hits.map((hit) => hit.enemyStatus?.(combatant, combatant.attributes.maxHealth)),
+    ).toStrictEqual([undefined]);
   });
 });
 

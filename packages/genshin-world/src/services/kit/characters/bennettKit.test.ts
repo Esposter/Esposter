@@ -259,13 +259,11 @@ describe("bennett kit", () => {
 
   test("plays each Charge Level by how long the skill was held, with that level's cooldown", () => {
     expect.hasAssertions();
-    const [chargeLevel1, chargeLevel2] = BENNETT_KIT.elementalSkillHolds ?? [];
     const level1 = releaseSkill(0.6, NO_EFFECT_STATE);
-    expect(level1.action).toBe(chargeLevel1?.action);
     expect(level1.partyMember.skillCooldownSeconds).toBeCloseTo(7.5, 5);
 
     const level2 = releaseSkill(1.2, NO_EFFECT_STATE);
-    expect(level2.action).toBe(chargeLevel2?.action);
+    expect([level1.action, level2.action]).toStrictEqual(BENNETT_KIT.elementalSkillHolds?.map(({ action }) => action));
     expect(level2.partyMember.skillCooldownSeconds).toBeCloseTo(10, 5);
 
     // A tap is the press, on the press's own cooldown

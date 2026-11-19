@@ -191,9 +191,8 @@ describe(createIneffaKitBehaviour, () => {
 
     expect(birgitta.spawnSeconds).toBeCloseTo(68 / 60);
     expect(birgitta.secondsRemaining).toBeCloseTo((68 + 1200) / 60);
-    expect(birgitta.hits).toHaveLength(10);
-    expect(birgitta.hits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60)).slice(0, 2)).toStrictEqual([
-      110, 229,
+    expect(birgitta.hits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60))).toStrictEqual([
+      110, 229, 348, 467, 586, 705, 824, 943, 1062, 1181,
     ]);
   });
 
@@ -337,7 +336,7 @@ describe(createIneffaKitBehaviour, () => {
     });
   });
 
-  test("a constellation 4 Lunar-Charged reaction restores 5 energy to Ineffa once, until its cooldown ends", () => {
+  test("a constellation 4 Lunar-Charged reaction restores 5 energy to Ineffa once, for three reactions at once", () => {
     expect.hasAssertions();
 
     expect(readEnergyAfterReactions(4, [{ reactionType: LunarReactionType.LunarCharged }], 3)).toBe(5);

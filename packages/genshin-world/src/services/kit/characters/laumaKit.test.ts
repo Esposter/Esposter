@@ -51,12 +51,12 @@ describe(createLaumaKitBehaviour, () => {
   test("reads the strikes', charged attack's, plunges' and press's multipliers from her proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [
-      ...LAUMA_KIT.normalAttacks.map(({ hits }) => hits[0]?.talentMultiplier),
-      LAUMA_KIT.chargedAttack.hits[0]?.talentMultiplier,
+      ...LAUMA_KIT.normalAttacks.flatMap(({ hits }) => hits.map(({ talentMultiplier }) => talentMultiplier)),
+      ...LAUMA_KIT.chargedAttack.hits.map(({ talentMultiplier }) => talentMultiplier),
       LAUMA_KIT.plungeCollision.talentMultiplier,
-      LAUMA_KIT.lowPlunge.hits[0]?.talentMultiplier,
-      LAUMA_KIT.highPlunge.hits[0]?.talentMultiplier,
-      LAUMA_KIT.elementalSkill.hits[0]?.talentMultiplier,
+      ...LAUMA_KIT.lowPlunge.hits.map(({ talentMultiplier }) => talentMultiplier),
+      ...LAUMA_KIT.highPlunge.hits.map(({ talentMultiplier }) => talentMultiplier),
+      ...LAUMA_KIT.elementalSkill.hits.map(({ talentMultiplier }) => talentMultiplier),
     ];
     expect(multipliers).toStrictEqual([0.337024, 0.318048, 0.444968, 1.2904, 0.568288, 1.136335, 1.419344, 1.216]);
   });
@@ -121,7 +121,7 @@ describe(createLaumaKitBehaviour, () => {
     });
   });
 
-  test("spends up to three Dew with Hymn of Eternal Rest on a Lunar-Bloom hit of its multiplier for each, beside the sanctuary", () => {
+  test("spends each Dew it holds with Hymn of Eternal Rest on a Lunar-Bloom hit of its multiplier for each, beside the sanctuary", () => {
     expect.hasAssertions();
 
     const holdAction = takeOne(LAUMA_KIT.elementalSkillHolds ?? [], 0).variant?.action;

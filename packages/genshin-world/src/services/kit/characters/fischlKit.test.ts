@@ -95,20 +95,18 @@ describe(createFischlKitBehaviour, () => {
     const expectedMultipliers = [
       0.4412, 0.4678, 0.5814, 0.5771, 0.7207, 1.24, 0.5683, 1.1363, 1.4193, 1.1544, 0.888, 2.08,
     ];
-    expect(multipliers).toHaveLength(expectedMultipliers.length);
-    for (const [index, expectedMultiplier] of expectedMultipliers.entries())
-      expect(multipliers[index]).toBeCloseTo(expectedMultiplier, 2);
+    expect(multipliers).toStrictEqual(
+      expectedMultipliers.map((expectedMultiplier) => expect.closeTo(expectedMultiplier, 2)),
+    );
   });
 
   test("the skill's Oz strikes at 38 frames on the press and attacks 10 times, the first at 92 frames", () => {
     expect.hasAssertions();
     const [oz] = castSummons(FISCHL_KIT.elementalSkill);
-    const [summonHit, ...attackHits] = oz?.hits ?? [];
 
     expect(oz?.spawnSeconds).toBeCloseTo(18 / 60);
-    expect(summonHit?.hitmarkSeconds).toBeCloseTo(38 / 60);
-    expect(attackHits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60))).toStrictEqual([
-      92, 151, 210, 269, 328, 387, 446, 505, 564, 623,
+    expect(oz?.hits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60))).toStrictEqual([
+      38, 92, 151, 210, 269, 328, 387, 446, 505, 564, 623,
     ]);
   });
 
@@ -125,24 +123,27 @@ describe(createFischlKitBehaviour, () => {
     expect.hasAssertions();
     const combatant = createFischlCombatant();
     const kitEffectState = castStandingOz(combatant);
-    const [skillOz] = kitEffectState.effects;
     FISCHL_KIT.elementalBurst.onStart?.(createKitTestContext(combatant, { kitEffectState }));
 
-    expect(skillOz?.secondsRemaining).toBe(0);
-    expect(kitEffectState.effects).toHaveLength(2);
+    expect(kitEffectState.effects.map(({ secondsRemaining }) => secondsRemaining)).toStrictEqual([
+      0,
+      expect.closeTo(670 / 60, 9),
+    ]);
   });
 
-  test("two constellations raise the summon's damage by 200% over a radius of 3, and six keep Oz 2 seconds longer", () => {
+  test("two constellations raise the summon's damage by 200% over a radius of 3, and six give Oz two more attacks", () => {
     expect.hasAssertions();
     const [devourerOz] = castSummons(FISCHL_KIT.elementalSkill, createFischlCombatant(0, 2));
     const [evernightOz] = castSummons(FISCHL_KIT.elementalSkill, createFischlCombatant(0, 6));
 
     expect(devourerOz?.hits[0]?.talentMultiplier).toBeCloseTo(3.1544);
     expect(devourerOz?.hits[0]?.hitArea.radius).toBe(FISCHL_KIT.elementalSkill.targetingArea.radius + 3);
-    expect(evernightOz?.hits.slice(1)).toHaveLength(12);
+    expect(evernightOz?.hits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60))).toStrictEqual([
+      38, 92, 151, 210, 269, 328, 387, 446, 505, 564, 623, 682, 741,
+    ]);
   });
 
-  test("ascension 4 strikes Thundering Retribution on an Electro reaction while Oz stands, once in half a second", () => {
+  test("ascension 4 strikes Thundering Retribution on an Electro reaction while Oz stands, and a second reaction at once strikes nothing", () => {
     expect.hasAssertions();
     const combatant = createFischlCombatant(4);
     const kitEffectState = castStandingOz(combatant);
@@ -167,12 +168,6 @@ describe(createFischlKitBehaviour, () => {
         effect.kind === "summon" && effect.id === undefined ? [effect.attackTag] : [],
       ),
     ).toStrictEqual([AttackTag.ElementalSkill]);
-  });
-
-  test("the Ascension 4 passive, Undone Be Thy Sinful Hex, takes effect at its ascension phase", () => {
-    expect.hasAssertions();
-
-    expect(castHits(triggerOverloaded(4))).toStrictEqual([0.8]);
   });
 
   test("the Ascension 4 passive, Undone Be Thy Sinful Hex, does not take effect below its ascension phase", () => {

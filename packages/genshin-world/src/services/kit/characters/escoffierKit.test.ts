@@ -99,7 +99,9 @@ describe(createEscoffierKitBehaviour, () => {
 
   test("the charged attack hits at 20 frames of a 65-frame animation, costing 25 stamina", () => {
     expect.hasAssertions();
-    expect(Math.round(takeOne(ESCOFFIER_KIT.chargedAttack.hits).hitmarkSeconds * 60)).toBe(20);
+    expect(ESCOFFIER_KIT.chargedAttack.hits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60))).toStrictEqual(
+      [20],
+    );
     expect(Math.round(ESCOFFIER_KIT.chargedAttack.seconds * 60)).toBe(65);
     expect(ESCOFFIER_KIT.chargedAttackStamina).toBe(25);
   });
@@ -113,10 +115,18 @@ describe(createEscoffierKitBehaviour, () => {
 
   test("the low plunge lands at 41 frames and the high plunge at 43, with their gcsim poise", () => {
     expect.hasAssertions();
-    expect(Math.round(takeOne(ESCOFFIER_KIT.lowPlunge.hits).hitmarkSeconds * 60)).toBe(41);
-    expect(takeOne(ESCOFFIER_KIT.lowPlunge.hits).poiseDamage).toBe(100);
-    expect(Math.round(takeOne(ESCOFFIER_KIT.highPlunge.hits).hitmarkSeconds * 60)).toBe(43);
-    expect(takeOne(ESCOFFIER_KIT.highPlunge.hits).poiseDamage).toBe(150);
+    expect(
+      ESCOFFIER_KIT.lowPlunge.hits.map(({ hitmarkSeconds, poiseDamage }) => ({
+        frames: Math.round(hitmarkSeconds * 60),
+        poiseDamage,
+      })),
+    ).toStrictEqual([{ frames: 41, poiseDamage: 100 }]);
+    expect(
+      ESCOFFIER_KIT.highPlunge.hits.map(({ hitmarkSeconds, poiseDamage }) => ({
+        frames: Math.round(hitmarkSeconds * 60),
+        poiseDamage,
+      })),
+    ).toStrictEqual([{ frames: 43, poiseDamage: 150 }]);
   });
 
   test("the Ascension 1 passive, Better to Salivate Than Medicate, takes effect at its ascension phase", () => {
@@ -175,7 +185,7 @@ describe(createEscoffierKitBehaviour, () => {
   test("scoring Cuts' heal reads her ATK with the buffs on her as they stand at its tick, as gcsim's TotalAtk does", () => {
     expect.hasAssertions();
 
-    expect(
+    expect([
       readScoringCutsRaise((context) => {
         buffKitMember(context.kitEffectState, ESCOFFIER_CHARACTER_ID, {
           amount: 1,
@@ -184,7 +194,8 @@ describe(createEscoffierKitBehaviour, () => {
           source: "test",
         });
       }),
-    ).toBeGreaterThan(readScoringCutsRaise(() => undefined));
+      readScoringCutsRaise(() => undefined),
+    ]).toStrictEqual([expect.closeTo(0.045191655, 6), expect.closeTo(0.027988455, 6)]);
   });
 
   test("rehab Diet's heals read her ATK with the buffs on her as they stand at each tick, as gcsim's TotalAtk does", () => {
@@ -212,7 +223,11 @@ describe(createEscoffierKitBehaviour, () => {
     }
     const heals = raises.filter((raise) => raise > 0);
 
-    expect(takeOne(heals, 2)).toBeCloseTo(2 * takeOne(heals, 1), 6);
+    expect(heals).toStrictEqual([
+      expect.closeTo(0.027988455, 6),
+      expect.closeTo(0.013824, 6),
+      expect.closeTo(0.027648, 6),
+    ]);
   });
 });
 

@@ -128,7 +128,7 @@ describe("lisa kit", () => {
     expect(readDischargeEnemyStatuses(3)).toStrictEqual(Array.from({ length: 30 }, () => undefined));
   });
 
-  test("stacks Conductive on each enemy its press strikes, up to three", () => {
+  test("stacks Conductive on the enemy its press strikes, up to three", () => {
     expect.hasAssertions();
     const enemy = { ...createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""), health: 1e9, maxHealth: 1e9 };
     const press = takeOne(LISA_KIT.elementalSkill.hits);

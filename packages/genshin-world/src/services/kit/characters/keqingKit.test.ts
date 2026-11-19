@@ -91,8 +91,10 @@ describe(createKeqingKitBehaviour, () => {
       ),
     ).toStrictEqual([{ amount: 0.25, attribute: Attribute.AttackPercent, secondsRemaining: 10 }]);
     expect(
-      getReactionBuffs(combatant, combatant, [{ element: Element.Electro, reactionType: ReactionType.Swirl }]),
-    ).toHaveLength(1);
+      getReactionBuffs(combatant, combatant, [{ element: Element.Electro, reactionType: ReactionType.Swirl }]).map(
+        (buff) => pickBuffTerms(buff),
+      ),
+    ).toStrictEqual([{ amount: 0.25, attribute: Attribute.AttackPercent, secondsRemaining: 10 }]);
   });
 
   test("constellation 4 gives nothing for another character's reaction, a Cryo Swirl, or below constellation 4", () => {

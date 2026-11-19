@@ -148,11 +148,11 @@ describe(createNicoleKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
     expect([
-      takeOne(NICOLE_KIT.elementalSkill.hits).talentMultiplier,
-      takeOne(NICOLE_KIT.elementalBurst.hits).talentMultiplier,
+      ...NICOLE_KIT.elementalSkill.hits.map(({ talentMultiplier }) => talentMultiplier),
+      ...NICOLE_KIT.elementalBurst.hits.map(({ talentMultiplier }) => talentMultiplier),
       NICOLE_KIT.plungeCollision.talentMultiplier,
-      takeOne(NICOLE_KIT.lowPlunge.hits).talentMultiplier,
-      takeOne(NICOLE_KIT.highPlunge.hits).talentMultiplier,
+      ...NICOLE_KIT.lowPlunge.hits.map(({ talentMultiplier }) => talentMultiplier),
+      ...NICOLE_KIT.highPlunge.hits.map(({ talentMultiplier }) => talentMultiplier),
     ]).toStrictEqual([1.384, 3.168, 0.568288, 1.136335, 1.419344]);
   });
 
@@ -271,12 +271,9 @@ describe(createNicoleKitBehaviour, () => {
     emitKitEvent({ element: undefined, enemy, kind: KitEventKind.EnemyHit, striker: nicole }, context);
 
     stepKitSeconds(context, 30 / 60);
-    expect(onKitEvent.mock.calls.map(([event]) => event)).toContainEqual({
-      element: Element.Pyro,
-      enemy,
-      kind: KitEventKind.EnemyHit,
-      striker: nicole,
-    });
+    expect(
+      onKitEvent.mock.calls.flatMap(([event]) => (event.kind === KitEventKind.EnemyHit ? [event.element] : [])),
+    ).toStrictEqual([undefined, Element.Pyro]);
   });
 
   test("her burst's projection lands 30 frames after the hit that starts it", () => {
@@ -399,7 +396,8 @@ describe(createNicoleKitBehaviour, () => {
     emitKitEvent(createEnemyHit(enemy, klee), context);
     const secondDamage = stepDamage(186 / 60);
 
-    expect(secondDamage).toBeGreaterThan(firstDamage);
+    expect(firstDamage).toBeCloseTo(2344.639175257762, 9);
+    expect(secondDamage).toBeCloseTo(4107.525773195899, 9);
   });
 
   test("her first ascension gives the character swapped in ATK 300 three seconds on, for as long as her skill's buff stands", () => {
@@ -498,7 +496,10 @@ describe(createNicoleKitBehaviour, () => {
         attribute,
         secondsRemaining,
       })),
-    ).toContainEqual({ amount: 300, attribute: Attribute.Attack, secondsRemaining: 8 });
+    ).toStrictEqual([
+      { amount: 82.5, attribute: Attribute.Attack, secondsRemaining: 20 },
+      { amount: 300, attribute: Attribute.Attack, secondsRemaining: 8 },
+    ]);
   });
 
   test("her fourth ascension gives her nothing on a physical hit", () => {
@@ -870,7 +871,11 @@ describe(createNicoleKitBehaviour, () => {
     emitKitEvent(createEnemyHit(enemy, nicole), context);
     stepKitSeconds(context, 10);
 
-    expect(getBuffs(context, NICOLE_CHARACTER_ID).map(({ source }) => source)).toContain("nicole-a1");
+    expect(getBuffs(context, NICOLE_CHARACTER_ID).map(({ source }) => source)).toStrictEqual([
+      "grace-of-kenosis",
+      "nicole-c2",
+      "nicole-a1",
+    ]);
   });
 
   test("her sixth constellation upgrades each other member for as long as her skill's buff stands when she is upgraded", () => {
@@ -904,6 +909,10 @@ describe(createNicoleKitBehaviour, () => {
     stepKitSeconds(context, 3);
 
     emitSwap(context, NICOLE_CHARACTER_ID, TRAVELER_CHARACTER_ID);
-    expect(getBuffs(context, TRAVELER_CHARACTER_ID).map(({ source }) => source)).toContain("nicole-a1");
+    expect(getBuffs(context, TRAVELER_CHARACTER_ID).map(({ source }) => source)).toStrictEqual([
+      "grace-of-kenosis",
+      "nicole-c2",
+      "nicole-a1",
+    ]);
   });
 });

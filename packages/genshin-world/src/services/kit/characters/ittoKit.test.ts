@@ -220,12 +220,12 @@ describe(createIttoKitBehaviour, () => {
     const talentMultipliers = ITTO_KIT.normalAttacks.map(({ hits }) => hits[0]?.talentMultiplier);
 
     expect(talentMultipliers).toStrictEqual([0.792318, 0.76368, 0.916416, 1.172249]);
-    expect(ITTO_KIT.chargedAttack.hits[0]?.talentMultiplier).toBe(0.90472);
+    expect(ITTO_KIT.chargedAttack.hits.map(({ talentMultiplier }) => talentMultiplier)).toStrictEqual([0.90472]);
     expect(ITTO_KIT.chargedAttackStamina).toBe(toParameter(ittoRecord.chargedAttackStamina));
     expect(ITTO_KIT.plungeCollision.talentMultiplier).toBe(0.818335);
-    expect(ITTO_KIT.lowPlunge.hits[0]?.talentMultiplier).toBe(1.636323);
-    expect(ITTO_KIT.highPlunge.hits[0]?.talentMultiplier).toBe(2.043855);
-    expect(ITTO_KIT.elementalSkill.hits[0]?.talentMultiplier).toBe(3.072);
+    expect(ITTO_KIT.lowPlunge.hits.map(({ talentMultiplier }) => talentMultiplier)).toStrictEqual([1.636323]);
+    expect(ITTO_KIT.highPlunge.hits.map(({ talentMultiplier }) => talentMultiplier)).toStrictEqual([2.043855]);
+    expect(ITTO_KIT.elementalSkill.hits.map(({ talentMultiplier }) => talentMultiplier)).toStrictEqual([3.072]);
   });
 
   test("the skill and burst read their cooldowns and the burst its energy cost from the proud skill groups", () => {
@@ -270,7 +270,7 @@ describe("bloodline of the Crimson Oni", () => {
     const { bonuses, defense } = readKesagiriDamageBonuses(4);
 
     expect(bonuses).toStrictEqual(Array.from({ length: 3 }, () => 0.35 * defense));
-    expect(defense).toBeGreaterThan(0);
+    expect(defense).toBe(800);
   });
 
   test("a passive does not take effect below its ascension phase", () => {

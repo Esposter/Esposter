@@ -188,16 +188,16 @@ describe(createGorouKitBehaviour, () => {
     expect(kitEffectState.effects.filter((effect) => checkIsField(effect))).toHaveLength(1);
   });
 
-  test("the crystal collapse's five ticks are set out at the cast, the first at its task's 90 frames and its own 1 after the burst's hit", () => {
+  test("the crystal collapse is set out as five following hits, 90 frames apart from 122 to 482", () => {
     expect.hasAssertions();
     const crystalCollapse = castKitAction(GOROU_KIT.elementalBurst, createGorouCombatant()).effects.find(
       (effect): effect is KitSummon => effect.kind === "summon",
     );
 
     expect(crystalCollapse?.isFollowing).toBe(true);
-    expect(crystalCollapse?.hits).toHaveLength(5);
-    expect(crystalCollapse?.hits[0]?.hitmarkSeconds).toBeCloseTo(122 / 60);
-    expect(crystalCollapse?.hits[4]?.hitmarkSeconds).toBeCloseTo(482 / 60);
+    expect(crystalCollapse?.hits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60))).toStrictEqual([
+      122, 212, 302, 392, 482,
+    ]);
   });
 
   test("the Ascension 1 passive, Heedless of the Wind and Weather, takes effect at its ascension phase", () => {
@@ -224,13 +224,17 @@ describe(createGorouKitBehaviour, () => {
   test("the Ascension 4 passive, A Favor Repaid, takes effect at its ascension phase", () => {
     expect.hasAssertions();
 
-    expect(takeOne(GOROU_KIT.elementalSkill.hits).additiveBaseDamageBonus?.(createGorouWithDefense(4))).toBe(1560);
+    expect(
+      GOROU_KIT.elementalSkill.hits.map((hit) => hit.additiveBaseDamageBonus?.(createGorouWithDefense(4))),
+    ).toStrictEqual([1560]);
   });
 
   test("the Ascension 4 passive, A Favor Repaid, does not take effect below its ascension phase", () => {
     expect.hasAssertions();
 
-    expect(takeOne(GOROU_KIT.elementalSkill.hits).additiveBaseDamageBonus?.(createGorouWithDefense(3))).toBe(0);
+    expect(
+      GOROU_KIT.elementalSkill.hits.map((hit) => hit.additiveBaseDamageBonus?.(createGorouWithDefense(3))),
+    ).toStrictEqual([0]);
   });
 
   test("constellation 6 gives every party member 40% CRIT DMG on Geo for 12 seconds after the skill, with three Geo characters on the team", () => {
@@ -323,7 +327,7 @@ describe(createGorouKitBehaviour, () => {
     });
   });
 
-  test("constellation 1 counts Juuga's field, which covers eight metres round Gorou", () => {
+  test("constellation 1 cuts the cooldown for a hit in Juuga's field", () => {
     expect.hasAssertions();
     const { combatant, context, kitEffectState, party } = createTeam(1, [createGorouCombatant(OTHER_CHARACTER_ID)]);
     GOROU_KIT.elementalBurst.onStart?.(context);
@@ -337,7 +341,7 @@ describe(createGorouKitBehaviour, () => {
     expect(getPartyMember(party, GOROU_CHARACTER_ID).skillCooldownSeconds).toBe(8);
   });
 
-  test("constellation 4 heals the active character by half Gorou's DEF every 1.5 seconds from the burst's hit, with two Geo characters on the team", () => {
+  test("constellation 4 heals the active character by half Gorou's DEF 1.5 seconds after the burst's hit, with two Geo characters on the team", () => {
     expect.hasAssertions();
     const { context, party } = createTeam(4, [createGorouCombatant(OTHER_CHARACTER_ID)], createGorouWithDefense(0));
     GOROU_KIT.elementalBurst.onStart?.(context);
@@ -357,7 +361,7 @@ describe(createGorouKitBehaviour, () => {
 
     stepKitTestEffects(12, context);
     const healthShareAtGloryEnd = member.healthShare;
-    expect(healthShareAtGloryEnd).toBeGreaterThan(0.5);
+    expect(healthShareAtGloryEnd).toBeCloseTo(0.85, 10);
     stepKitTestEffects(30, context);
     expect(member.healthShare).toBe(healthShareAtGloryEnd);
   });

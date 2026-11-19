@@ -21,7 +21,6 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
-import { getBenedictionBaseDamageBonus } from "#src/services/kit/characters/columbinaBenediction";
 import {
   COLUMBINA_CHARACTER_ID,
   CONSTELLATION_2_HEALTH_SOURCE,
@@ -203,12 +202,10 @@ describe(createColumbinaKitBehaviour, () => {
 
   test("her skill and burst deal their multiplier on max HP, as gcsim's UseHP gives them", () => {
     expect.hasAssertions();
-    const shares = [
-      takeOne(COLUMBINA_KIT.elementalSkill.hits).additiveBaseDamageBonus,
-      takeOne(COLUMBINA_KIT.elementalBurst.hits).additiveBaseDamageBonus,
-    ].map((bonus) => bonus?.(combatant));
-    expect(shares[0]).toBeCloseTo(0.1672 * 10_000);
-    expect(shares[1]).toBeCloseTo(0.3224 * 10_000);
+    expect([
+      COLUMBINA_KIT.elementalSkill.hits.map((hit) => hit.additiveBaseDamageBonus?.(combatant)),
+      COLUMBINA_KIT.elementalBurst.hits.map((hit) => hit.additiveBaseDamageBonus?.(combatant)),
+    ]).toStrictEqual([[expect.closeTo(0.1672 * 10_000, 2)], [expect.closeTo(0.3224 * 10_000, 2)]]);
     expect(COLUMBINA_KIT.elementalSkill.hits.map(({ talentMultiplier }) => talentMultiplier)).toStrictEqual([0]);
   });
 
@@ -254,10 +251,13 @@ describe(createColumbinaKitBehaviour, () => {
     field?.onTick(context, 0);
     const summons = kitEffectState.effects.filter((effect: KitEffect): effect is KitSummon => effect.kind === "summon");
 
-    expect(summons).toHaveLength(1);
-    expect(summons[0]?.combatant).toBe(combatant);
-    expect(summons[0]?.body.position).toStrictEqual({ x: 0, z: 0 });
-    expect(summons[0]?.hits.map(({ hitmarkSeconds }) => hitmarkSeconds)).toStrictEqual([0]);
+    expect(
+      summons.map((summon) => ({
+        combatant: summon.combatant,
+        hitmarkSeconds: summon.hits.map(({ hitmarkSeconds }) => hitmarkSeconds),
+        position: summon.body.position,
+      })),
+    ).toStrictEqual([{ combatant, hitmarkSeconds: [0], position: { x: 0, z: 0 } }]);
   });
 
   test("a DoT tick reaches four from the field's centre while her team is short of Ascendant Gleam", () => {
@@ -272,9 +272,7 @@ describe(createColumbinaKitBehaviour, () => {
 
   test("her Benediction's Base DMG bonus is the curve of her max HP", () => {
     expect.hasAssertions();
-    expect(COLUMBINA_KIT.moonsignBenediction?.getBaseDamageBonus?.(combatant)).toBeCloseTo(
-      getBenedictionBaseDamageBonus(combatant.attributes.maxHealth),
-    );
+    expect(COLUMBINA_KIT.moonsignBenediction?.getBaseDamageBonus?.(combatant)).toBeCloseTo(0.02, 10);
   });
 
   test("ascension 1's Lunacy takes effect as a passive at its ascension phase", () => {
@@ -411,7 +409,7 @@ describe(createColumbinaKitBehaviour, () => {
     expect(shield?.health).toBeCloseTo(0.12 * 1.4 * pressed.attributes.maxHealth);
   });
 
-  test("gravity interference gives her 40% max HP for eight seconds with each Gravity Ripple at constellation 2", () => {
+  test("gravity interference gives her 40% max HP for eight seconds from a constellation 2 skill press", () => {
     expect.hasAssertions();
 
     const kitEffectState: KitEffectState = { effects: [] };
@@ -430,7 +428,7 @@ describe(createColumbinaKitBehaviour, () => {
     });
   });
 
-  test("gravity interference gives the active member 1% of her max HP in ATK from a constellation 2 Lunar-Charged ripple, and a Lunar-Crystallize one moves it to DEF", () => {
+  test("with the Moonsign team, constellation 2 gives her 1% of her max HP in ATK on a press, and six seconds of Lunar-Crystallize gravity move it to DEF", () => {
     expect.hasAssertions();
 
     const kitEffectState: KitEffectState = { effects: [] };
@@ -451,10 +449,13 @@ describe(createColumbinaKitBehaviour, () => {
     const [field] = kitEffectState.effects as KitField[];
     const teamBuffs = readTeamBuffs(kitEffectState);
 
-    expect(teamBuffs.map(({ attribute, characterId }) => ({ attribute, characterId }))).toStrictEqual([
-      { attribute: Attribute.Attack, characterId: COLUMBINA_CHARACTER_ID },
+    expect(teamBuffs).toStrictEqual([
+      {
+        amount: expect.closeTo(0.01 * 1.4 * pressed.attributes.maxHealth, 2),
+        attribute: Attribute.Attack,
+        characterId: COLUMBINA_CHARACTER_ID,
+      },
     ]);
-    expect(teamBuffs[0]?.amount).toBeCloseTo(0.01 * 1.4 * pressed.attributes.maxHealth);
 
     for (let second = 0; second < GRAVITY_SECONDS_PER_RIPPLE; second++)
       feedGravitySecond(field, context, pressed, LunarReactionType.LunarCrystallize);
@@ -639,8 +640,7 @@ describe(createColumbinaKitBehaviour, () => {
       ) ?? 0;
     const variantHits = COLUMBINA_KIT.chargedAttackVariant?.action.hits ?? [];
 
-    expect(variantHits).toHaveLength(3);
-    for (const hit of variantHits) expect(readDefenceIgnored(hit)).toBe(1);
-    expect(readDefenceIgnored(takeOne(COLUMBINA_KIT.chargedAttack.hits))).toBe(0);
+    expect(variantHits.map((hit) => readDefenceIgnored(hit))).toStrictEqual([1, 1, 1]);
+    expect(COLUMBINA_KIT.chargedAttack.hits.map((hit) => readDefenceIgnored(hit))).toStrictEqual([0]);
   });
 });

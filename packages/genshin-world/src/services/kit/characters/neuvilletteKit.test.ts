@@ -42,11 +42,11 @@ describe(createNeuvilletteKitBehaviour, () => {
     const multipliers = [
       ...NEUVILLETTE_KIT.normalAttacks.flatMap(({ hits }) => hits.map(({ talentMultiplier }) => talentMultiplier)),
       NEUVILLETTE_KIT.plungeCollision.talentMultiplier,
-      NEUVILLETTE_KIT.lowPlunge.hits[0]?.talentMultiplier,
-      NEUVILLETTE_KIT.highPlunge.hits[0]?.talentMultiplier,
-      NEUVILLETTE_KIT.elementalSkill.hits[1]?.talentMultiplier,
+      ...NEUVILLETTE_KIT.lowPlunge.hits.map(({ talentMultiplier }) => talentMultiplier),
+      ...NEUVILLETTE_KIT.highPlunge.hits.map(({ talentMultiplier }) => talentMultiplier),
+      ...NEUVILLETTE_KIT.elementalSkill.hits.map(({ talentMultiplier }) => talentMultiplier),
     ];
-    expect(multipliers).toStrictEqual([0.545768, 0.462456, 0.723376, 0.568288, 1.136335, 1.419344, 0.208]);
+    expect(multipliers).toStrictEqual([0.545768, 0.462456, 0.723376, 0.568288, 1.136335, 1.419344, 0, 0.208]);
   });
 
   test("the charged attack costs no stamina, his burst costs 70 energy and cools for 18 seconds, and his skill cools for 12 seconds", () => {
