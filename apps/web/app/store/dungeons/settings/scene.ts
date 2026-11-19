@@ -50,7 +50,7 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
 
     const option = getSettingsOption(rowIndex);
     const restingX = settingsOptionGrid.getPositionX(
-      settingsStore.settings[option as keyof typeof settingsStore.settings] as typeof settingsOptionGrid.value,
+      settingsStore.settings[option as keyof typeof settingsStore.settings],
       rowIndex,
     );
     // A saved value that matches no cell rests on the first, so the cursor stays on a value cell
@@ -58,13 +58,7 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
   };
   // The one place a value is saved: only the cursor's own value cell calls it, so an option with no cells cannot write
   const saveSelectedValue = () => {
-    // Close is the one option without a value to save, so the cursor can never be on a cell that would save for it
-    if (selectedSettingsOption.value === SettingsOption.Close) return;
-
-    setSettings(
-      selectedSettingsOption.value,
-      settingsOptionGrid.value as (typeof settingsStore.settings)[keyof typeof settingsStore.settings],
-    );
+    setSettings(selectedSettingsOption.value, settingsOptionGrid.value);
   };
 
   const moveSettingsRow = (direction: Direction) => {
