@@ -1,7 +1,4 @@
-import type { UserInAuth } from "@esposter/db-schema";
+import type { PointsLeaderboardEntry } from "#shared/models/achievement/PointsLeaderboardEntry";
 
-export interface UserPointsTotal {
-  points: number;
-  unlockCount: number;
-  user: Pick<UserInAuth, "id" | "image" | "name">;
-}
+// A user's summed points before they are ranked: a leaderboard entry without its rank
+export type UserPointsTotal = Omit<PointsLeaderboardEntry, "rank">;
