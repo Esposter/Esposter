@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { SurveyAnswerValue, SurveySliderNode } from "vue-survey-engine-headless";
 
+import { useSurveyDescribedBy } from "#src/composables/resource/survey/useSurveyDescribedBy";
 import { getSurveyQuestionTitle } from "#src/services/resource/survey/getSurveyQuestionTitle";
 
 interface Props {
@@ -12,9 +13,6 @@ interface Props {
 // The respondent moves it, so an untouched question stays unanswered
 const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
 const { error, node } = defineProps<Props>();
-const id = useId();
-const descriptionId = `${id}-description`;
-const errorId = `${id}-error`;
 const value = computed<number>({
   get: () => (typeof answer.value === "number" ? answer.value : node.props.min),
   set: (next) => {
@@ -24,8 +22,9 @@ const value = computed<number>({
 // A hidden value is an empty reading, so assistive technology reads the thumb by its own number instead
 const valueText = computed(() => (node.props.isValueVisible ? String(value.value) : ""));
 // The description and the error the thumb is described by, so a reader of speech hears both with its value
-const describedBy = computed(
-  () => [node.props.description && descriptionId, error && errorId].filter(Boolean).join(" ") || undefined,
+const { describedBy, descriptionId, errorId } = useSurveyDescribedBy(
+  () => node.props.description,
+  () => error,
 );
 </script>
 

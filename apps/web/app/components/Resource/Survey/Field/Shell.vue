@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { SurveyQuestionBaseProps } from "vue-survey-engine-headless";
 
+import { useSurveyDescribedBy } from "#src/composables/resource/survey/useSurveyDescribedBy";
 import { getSurveyQuestionTitle } from "#src/services/resource/survey/getSurveyQuestionTitle";
 
 interface Props {
@@ -12,13 +13,11 @@ interface Props {
 
 defineSlots<{ default: (props: { describedBy?: string; labelledBy: string; title: string }) => VNode }>();
 const { error, question } = defineProps<Props>();
-const id = useId();
 const titleId = useId();
-const descriptionId = `${id}-description`;
-const errorId = `${id}-error`;
 // The description and the error a control is described by, so a reader of speech hears both with it
-const describedBy = computed(
-  () => [question.description && descriptionId, error && errorId].filter(Boolean).join(" ") || undefined,
+const { describedBy, descriptionId, errorId } = useSurveyDescribedBy(
+  () => question.description,
+  () => error,
 );
 </script>
 

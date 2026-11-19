@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { SurveyAnswerValue, SurveyTextNode } from "vue-survey-engine-headless";
 
+import { useSurveyDescribedBy } from "#src/composables/resource/survey/useSurveyDescribedBy";
 import { SURVEY_TEXT_FIELD_TYPES } from "#src/services/resource/survey/constants";
 import { getSurveyQuestionTitle } from "#src/services/resource/survey/getSurveyQuestionTitle";
 import { SurveyTextInputType } from "vue-survey-engine-headless";
@@ -14,9 +15,6 @@ interface Props {
 
 const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
 const { error, node } = defineProps<Props>();
-const id = useId();
-const descriptionId = `${id}-description`;
-const errorId = `${id}-error`;
 const isDate = computed(
   () => node.props.inputType === SurveyTextInputType.Date || node.props.inputType === SurveyTextInputType.DatetimeLocal,
 );
@@ -34,8 +32,9 @@ const updateText = (value: string) => {
   answer.value = toAnswer(value);
 };
 // The description and the error a date field is described by, which its own label does not draw
-const describedBy = computed(
-  () => [node.props.description && descriptionId, error && errorId].filter(Boolean).join(" ") || undefined,
+const { describedBy, descriptionId, errorId } = useSurveyDescribedBy(
+  () => node.props.description,
+  () => error,
 );
 // A date is held as the ISO text of its instant, which the picker reads back as the same moment
 const date = computed<Date | undefined>({
