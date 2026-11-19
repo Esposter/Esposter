@@ -9,7 +9,7 @@ import { PerspectiveCamera, Vector3 } from "three";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 const { camera, onBeforeRender } = vi.hoisted(() => {
-  const view: { value: Camera | undefined } = { value: undefined };
+  const view: { value?: Camera | undefined } = { value: undefined };
   return { camera: view, onBeforeRender: vi.fn<(callback: () => void) => void>() };
 });
 

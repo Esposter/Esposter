@@ -1,7 +1,7 @@
+import type { SurfaceDetail } from "genshin-engine";
+
 import { LoginStatusStep } from "#src/models/login/LoginStatusStep";
 import { TravelerGender } from "genshin-text";
-
-import type { SurfaceDetail } from "genshin-engine";
 
 // The server the English recording's account is on (`yt-rBnfA4pXw6U`, 1080 high): the game names its servers from the
 // List it is sent, so no text of its own carries the name
