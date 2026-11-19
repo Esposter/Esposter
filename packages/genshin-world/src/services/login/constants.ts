@@ -1,6 +1,8 @@
 import { LoginStatusStep } from "#src/models/login/LoginStatusStep";
 import { TravelerGender } from "genshin-text";
 
+import type { SurfaceDetail } from "genshin-engine";
+
 // The server the English recording's account is on (`yt-rBnfA4pXw6U`, 1080 high): the game names its servers from the
 // List it is sent, so no text of its own carries the name
 export const LOGIN_SERVER_NAME = "Asia";
@@ -75,3 +77,13 @@ export const LOGIN_LAST_STRETCH_PACE: number = (1 - LOGIN_FLIGHT_LOADING_SHARE) 
 // 1.7607 degrees, solved at that wavelength (design.md)
 export const LOGIN_BRIDGE_NORMAL_DETAIL_WAVELENGTH = 21.8913;
 export const LOGIN_BRIDGE_NORMAL_DETAIL_AMPLITUDE = 0.8388;
+// The bridges' grain: their exports' structure over their pixels (the surface pass's terms, variance then bands finest
+// First), each divided by their mean lightness of 0.6256 squared as the textures' statistics are relative, and scaled by
+// The ratio the surface pass read our grain's terms at against the exports' (0.20 to 0.26), since a colour's multiplier
+// Moves its lightness at a fraction of its own share. At a pixel's 0.2280 metres at the bridges' depth, the octave
+// Amplitudes that reproduce these are solved by `computeSurfaceOctaves`
+export const LOGIN_BRIDGE_SURFACE_DETAIL: SurfaceDetail = {
+  bands: [0.00083468, 0.00017876, 0.00009911, 0.000058],
+  metresPerTexel: 0.228,
+  variance: 0.0023388,
+};

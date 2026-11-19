@@ -76,6 +76,16 @@ export const measureSurface = (component: DerivedAssetComponent, pageRoot?: stri
               const evenMask = computeFamilyMask(exportsPart, exportsPart, comparison.family, width, 0);
               const oddMask = computeFamilyMask(exportsPart, exportsPart, comparison.family, width, 1);
               const familyMask = computeFamilyMask(exportsPart, oursPart, comparison.family, width);
+              const meanOf = (values: Float32Array): number => {
+                let sum = 0;
+                let count = 0;
+                for (const [pixel, value] of values.entries())
+                  if (familyMask[pixel]) {
+                    sum += value;
+                    count++;
+                  }
+                return count === 0 ? 0 : sum / count;
+              };
               const readGate = async () => {
                 if (!evenMask.includes(1) || !oddMask.includes(1)) return undefined;
                 const [gateReference, gateShot] = await Promise.all([
@@ -94,6 +104,8 @@ export const measureSurface = (component: DerivedAssetComponent, pageRoot?: stri
                 family: comparison.family,
                 gate,
                 scales: comparison.scales,
+                meanExports: meanOf(exportsLightness),
+                meanOurs: meanOf(oursLightness),
                 structure: computeStructureError(structureReference, structureShot),
                 terms: computeStructureTerms(structureReference, structureShot),
               };
@@ -108,6 +120,10 @@ export const measureSurface = (component: DerivedAssetComponent, pageRoot?: stri
           ...measured.map(
             ({ family, scales }) =>
               `${referenceId} ${families[family] ?? family} structure by scale, finest first (pixel-aligned, diagnostic): ${formatScales(scales)}`,
+          ),
+          ...measured.map(
+            ({ family, meanExports, meanOurs }) =>
+              `${referenceId} ${families[family] ?? family} mean lightness (exports | ours): ${meanExports.toFixed(4)} | ${meanOurs.toFixed(4)}`,
           ),
           ...measured.map(
             ({ family, terms }) =>

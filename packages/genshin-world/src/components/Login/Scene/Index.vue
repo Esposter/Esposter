@@ -22,6 +22,7 @@ import { LoginCloudCoverMap } from "#src/services/login/cloud/LoginCloudCoverMap
 import {
   LOGIN_BRIDGE_NORMAL_DETAIL_AMPLITUDE,
   LOGIN_BRIDGE_NORMAL_DETAIL_WAVELENGTH,
+  LOGIN_BRIDGE_SURFACE_DETAIL,
   LOGIN_DOOR_LIGHT_MS,
   LOGIN_SCENE_EXPORT_COMPONENT,
 } from "#src/services/login/constants";
@@ -102,6 +103,7 @@ import {
   createCloudLayerUniforms,
   createFogUniforms,
   createLightUniforms,
+  createMaterialDetailNode,
   createNormalDetailNode,
   createPostUniforms,
   createSkyGradientTexture,
@@ -327,6 +329,8 @@ towersMaterial.normalNode = createNormalDetailNode(
   LOGIN_TOWER_NORMAL_DETAIL_AMPLITUDE,
 );
 const bridgesMaterial = createStoneMaterial(stone.bridges, loginStoneLight);
+// The bridges' grain over their flat colour, its octaves fitted to their exports' structure (`LOGIN_BRIDGE_SURFACE_DETAIL`)
+bridgesMaterial.colorNode = color(stone.bridges.albedo).mul(createMaterialDetailNode(LOGIN_BRIDGE_SURFACE_DETAIL));
 bridgesMaterial.normalNode = createNormalDetailNode(
   LOGIN_BRIDGE_NORMAL_DETAIL_WAVELENGTH,
   LOGIN_BRIDGE_NORMAL_DETAIL_AMPLITUDE,
