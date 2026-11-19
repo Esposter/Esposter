@@ -4,10 +4,10 @@ import { takeOne } from "@esposter/shared";
 
 interface UseCardCarouselOptions {
   cards: () => Card[];
-  duration: number;
+  durationMs: number;
 }
 // The carousel's cycle: each move takes the top-right card through its active turn, and rotates the stack by one
-export const useCardCarousel = ({ cards, duration }: UseCardCarouselOptions) => {
+export const useCardCarousel = ({ cards, durationMs }: UseCardCarouselOptions) => {
   // Fake card ids are just the card indexes, so we can "rotate" by incrementing the whole list by 1.
   // They double as a z-index.
   const cardIds = ref<number[]>(cards().map((_card, index) => index));
@@ -33,7 +33,7 @@ export const useCardCarousel = ({ cards, duration }: UseCardCarouselOptions) => 
   };
 
   // Comment this line out when debugging animations so the cards stop moving on you.
-  if (duration > 0) useWorkerInterval(moveCards, duration);
+  if (durationMs > 0) useWorkerInterval(moveCards, durationMs);
   onMounted(() => {
     moveCards();
   });

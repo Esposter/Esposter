@@ -17,7 +17,7 @@ describe("visualCardCarousel", () => {
   const DURATION = 1000;
   const cards: Card[] = [{ text: "a" }, { text: "b" }, { text: "c" }];
   // The cards are the root's children in the order given, so each card's classes are read where it sits
-  const mountCarousel = () => mountSuspended(VisualCardCarousel, { props: { cards, duration: DURATION } });
+  const mountCarousel = () => mountSuspended(VisualCardCarousel, { props: { cards, durationMs: DURATION } });
 
   beforeEach(() => {
     vi.useFakeTimers();

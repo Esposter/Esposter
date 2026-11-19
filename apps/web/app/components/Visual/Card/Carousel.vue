@@ -16,7 +16,7 @@ interface Props {
   cards: Card[];
   cardScaleYRatioLoss?: number | undefined;
   cardTemplate?: Component | undefined;
-  duration?: number | undefined;
+  durationMs?: number | undefined;
   maxShownCards?: number | undefined;
 }
 
@@ -26,7 +26,7 @@ const {
   cardScaleYRatioLoss = 0.05,
   cardTemplate = CardBase,
   // Duration before cards move
-  duration = Temporal.Duration.from({ seconds: 10 }).total("milliseconds"),
+  durationMs = Temporal.Duration.from({ seconds: 10 }).total("milliseconds"),
   maxShownCards = 5,
 } = defineProps<Props>();
 // Generate CSS card styling for smooth, non-jumping animations.
@@ -39,7 +39,7 @@ const {
 // - Hide the old last card behind the second-last one.
 // - Slide the left card to the far right.
 // - Shuffle every other right card left, exposing a new card atop the second right-most.
-const { activeCardId, cardIds, inactiveCardId } = useCardCarousel({ cards: () => cards, duration });
+const { activeCardId, cardIds, inactiveCardId } = useCardCarousel({ cards: () => cards, durationMs });
 // Re-animate on every screen change to avoid cards getting stuck in weird positions.
 const { breakpoints, width } = useUiDisplay();
 const gap = computed<string>(() => {

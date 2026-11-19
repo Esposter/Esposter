@@ -14,7 +14,7 @@ const { $trpc } = useNuxtApp();
 const {
   data: dataExport,
   error,
-  isPending: isReading,
+  isPending,
   refresh,
 } = useQuery(() => $trpc.user.readDataExport.query(), { isInlineError: true });
 const isInFlight = computed(
@@ -41,13 +41,13 @@ const isDownloadable = computed(
       </li>
     </ul>
     <UiErrorState v-if="error" :error @retry="refresh()" />
-    <UserSettingsListSkeleton v-else-if="isReading && !dataExport" />
+    <UserSettingsListSkeleton v-else-if="isPending && !dataExport" />
     <p v-else-if="!dataExport" text-muted>Request the archive to have it built in the background.</p>
     <template v-else-if="isInFlight">
       <p>
         {{ dataExport.status === DataExportStatus.Queued ? "Queued, waiting to be built." : "Building the archive." }}
       </p>
-      <UiButton :is-pending="isReading" @click="refresh()">
+      <UiButton :is-pending="isPending" @click="refresh()">
         <UiIcon :meaning="UiIconMeaning.Refresh" />
         Check status
       </UiButton>

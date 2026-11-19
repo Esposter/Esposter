@@ -11,7 +11,7 @@ import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vitest";
 
-const hasButton = (component: VueWrapper, label: string) =>
+const checkHasButton = (component: VueWrapper, label: string) =>
   component.findAll("button").some((button) => button.text() === label);
 const getButton = (component: VueWrapper, label: string) => {
   const button = component.findAll("button").find((element) => element.text() === label);
@@ -78,7 +78,7 @@ describe("userDataExportCard", () => {
       const component = await mountCard();
       await flushPromises();
 
-      expect(hasButton(component, "Get download link")).toBe(false);
+      expect(checkHasButton(component, "Get download link")).toBe(false);
       expect(component.find("a").exists()).toBe(false);
       expect(generateDataExportLink).not.toHaveBeenCalled();
     },
@@ -91,7 +91,7 @@ describe("userDataExportCard", () => {
     const component = await mountCard();
     await flushPromises();
 
-    expect(hasButton(component, "Request export")).toBe(true);
+    expect(checkHasButton(component, "Request export")).toBe(true);
     expect(component.text()).not.toContain(failureReason);
   });
 
@@ -130,7 +130,7 @@ describe("userDataExportCard", () => {
     const component = await mountCard();
     await flushPromises();
 
-    expect(hasButton(component, "Get download link")).toBe(false);
+    expect(checkHasButton(component, "Get download link")).toBe(false);
     expect(component.find("a").exists()).toBe(false);
     expect(generateDataExportLink).not.toHaveBeenCalled();
   });
