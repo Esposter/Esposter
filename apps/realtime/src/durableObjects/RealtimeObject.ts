@@ -10,7 +10,7 @@ import { objectInvocationStorage } from "#src/services/durableObject/objectInvoc
 import { scopeColumnTopic } from "#src/services/durableObject/scopeColumnTopic";
 import { readSocketIdentity } from "#src/services/realtime/readSocketIdentity";
 import { computeReadTopics, computeWriteTopics, runRecordedWrites } from "@esposter/db";
-import { getDeviceSocketTag, getSessionSocketTag, getUserSocketTag } from "@esposter/db-schema";
+import { getDeviceSocketTag, getKindTableTopic, getSessionSocketTag, getUserSocketTag } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 import { DurableObject } from "cloudflare:workers";
 
@@ -123,7 +123,8 @@ export abstract class RealtimeObject<
   protected runInvocation<TResult>(label: string, run: () => TResult): Promise<ObjectInvocation<Awaited<TResult>>> {
     const handles: ObjectInvocationHandles = new Map();
     let writeSet: Promise<ColumnTopic[]> | undefined;
-    const getWriteSet = () => (writeSet ??= this.#getTopics(handles, computeWriteTopics, true));
+    const getWriteSet = () =>
+      (writeSet ??= this.#getTopics(handles, computeWriteTopics, { publishesKindTopics: true }));
     return runRecordedWrites(
       objectInvocationStorage,
       handles,
@@ -158,7 +159,7 @@ export abstract class RealtimeObject<
   async #getTopics(
     handles: ObjectInvocationHandles,
     computeStatementTopics: typeof computeReadTopics,
-    publishesKindTopics = false,
+    { publishesKindTopics = false }: { publishesKindTopics?: boolean } = {},
   ): Promise<ColumnTopic[]> {
     const statementsOf = (owned: boolean) =>
       [...handles.values()].filter((record) => record.owned === owned).flatMap(({ recorder }) => recorder.statements);
@@ -170,7 +171,10 @@ export abstract class RealtimeObject<
     const kindTopics = publishesKindTopics
       ? ownedTopics
           .filter(({ topic }) => topic.endsWith(":*"))
-          .map((columnTopic) => scopeColumnTopic(columnTopic, `${this.topicKind}/*`))
+          .map(({ columns, topic }) => ({
+            columns,
+            topic: getKindTableTopic(this.topicKind, topic.slice(0, -":*".length)),
+          }))
       : [];
     return [...sharedTopics, ...ownedTopics.map((topic) => scopeColumnTopic(topic, scope)), ...kindTopics];
   }

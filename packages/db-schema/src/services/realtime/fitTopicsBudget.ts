@@ -3,6 +3,7 @@ import type { ColumnTopic, Topic } from "#src/models/realtime/Topic";
 import { blobBindingNames } from "#src/models/realtime/Topic";
 import { TopicKind } from "#src/models/realtime/TopicKind";
 import { getBlobTopic } from "#src/services/realtime/getBlobTopic";
+import { getKindTableTopic } from "#src/services/realtime/getKindTableTopic";
 import { getTableTopic } from "#src/services/realtime/getTableTopic";
 import { mergeColumnTopics } from "#src/services/realtime/mergeColumnTopics";
 
@@ -20,17 +21,16 @@ const getCoarseTopic = (topic: Topic, kindNames: Set<string>): Topic | undefined
   return getTableTopic(topic.slice(0, topic.lastIndexOf(":", topic.indexOf("="))));
 };
 
-// An object's own topic, `<kind>/<id>:<table>:<rest>`, where the rest is the table's topic or one of its rows. Every object of a
-// Kind writes its own table and publishes the kind's table topic, `<kind>/*:<table>:*`, beside its own, so the object's topic
-// Collapses to it: a read that names many objects' tables is then woken by a write in any of them. A shared topic has no kind
-// In front of its table, so it has no such form
-const getKindTableTopic = (topic: Topic): Topic | undefined => {
+// An object's own topic, `<kind>/<id>:<table>:<rest>`, where the rest is the table's topic or one of its rows, collapses to the kind's
+// Table topic for that table. An object publishes that topic for each table its own writes change, so the collapse is sound for the
+// Tables the objects of the kind write, and a shared topic, which has no kind in front of its table, has no such form
+const getKindTopicOf = (topic: Topic): Topic | undefined => {
   const kindEnd = topic.indexOf("/");
   const scopeEnd = topic.indexOf(":");
   if (kindEnd === -1 || kindEnd > scopeEnd) return undefined;
   const tableEnd = topic.indexOf(":", scopeEnd + 1);
   if (tableEnd === -1) return undefined;
-  return `${topic.slice(0, kindEnd)}/*:${topic.slice(scopeEnd + 1, tableEnd)}:*`;
+  return getKindTableTopic(topic.slice(0, kindEnd), topic.slice(scopeEnd + 1, tableEnd));
 };
 
 // Collapses the topics `getCoarse` gives a coarser form, a group at a time, the largest group first and then the next, until the
@@ -83,5 +83,5 @@ export const fitTopicsBudget = (columnTopics: ColumnTopic[], budget: number): Co
   const kindNames = new Set<string>(Object.values(TopicKind));
   const collapsedTopics = collapseGroups(topics, (topic) => getCoarseTopic(topic, kindNames), budget);
   if (collapsedTopics.length <= budget) return collapsedTopics;
-  return collapseGroups(collapsedTopics, getKindTableTopic, budget);
+  return collapseGroups(collapsedTopics, getKindTopicOf, budget);
 };
