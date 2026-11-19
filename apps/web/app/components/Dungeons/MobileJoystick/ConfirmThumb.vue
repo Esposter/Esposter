@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
 import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";
-import { JOYSTICK_RADIUS } from "#src/services/dungeons/scene/joystick/constants";
+import { JOYSTICK_DEPTH, JOYSTICK_RADIUS } from "#src/services/dungeons/scene/joystick/constants";
 import { getJoystickX } from "#src/services/dungeons/scene/joystick/getJoystickX";
 import { getJoystickY } from "#src/services/dungeons/scene/joystick/getJoystickY";
 import { useControlsStore } from "#src/store/dungeons/controls";
@@ -28,7 +28,7 @@ onCreate((scene) => {
       displayWidth: JOYSTICK_RADIUS,
       displayHeight: JOYSTICK_RADIUS,
       texture: ImageKey.Thumb,
-      depth: Number.MAX_SAFE_INTEGER,
+      depth: JOYSTICK_DEPTH,
       alpha,
       scrollFactor: 0,
     }"

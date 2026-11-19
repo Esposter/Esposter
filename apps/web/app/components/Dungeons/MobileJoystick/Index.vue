@@ -3,7 +3,7 @@ import type { GameObjects } from "phaser";
 import type VirtualJoystick from "phaser4-rex-plugins/plugins/virtualjoystick";
 
 import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
-import { JOYSTICK_RADIUS } from "#src/services/dungeons/scene/joystick/constants";
+import { JOYSTICK_DEPTH, JOYSTICK_RADIUS } from "#src/services/dungeons/scene/joystick/constants";
 import { getJoystickX } from "#src/services/dungeons/scene/joystick/getJoystickX";
 import { getJoystickY } from "#src/services/dungeons/scene/joystick/getJoystickY";
 import { useControlsStore } from "#src/store/dungeons/controls";
@@ -46,7 +46,7 @@ onUnmounted(() => {
       displayWidth: JOYSTICK_RADIUS * 2,
       displayHeight: JOYSTICK_RADIUS * 2,
       texture: ImageKey.Base,
-      depth: Number.MAX_SAFE_INTEGER,
+      depth: JOYSTICK_DEPTH,
     }"
     :on-complete="
       (_scene, image) => {
@@ -59,7 +59,7 @@ onUnmounted(() => {
       displayWidth: JOYSTICK_RADIUS,
       displayHeight: JOYSTICK_RADIUS,
       texture: ImageKey.Thumb,
-      depth: Number.MAX_SAFE_INTEGER,
+      depth: JOYSTICK_DEPTH,
     }"
     :on-complete="
       (_scene, image) => {
