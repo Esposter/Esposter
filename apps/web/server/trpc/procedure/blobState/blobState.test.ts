@@ -10,8 +10,6 @@ import { getSaveBlobName, StorageBucket } from "@esposter/db-schema";
 import { beforeAll, beforeEach, describe, expect, test } from "vitest";
 import { z } from "zod";
 
-const saveSchema = z.object({ value: z.number() });
-
 class Save {
   value: number;
 
@@ -20,18 +18,19 @@ class Save {
   }
 }
 
-const blobStateRouter = router({
-  readSave: createReadBlobStateProcedure(StorageBucket.UserAssets, Save, saveSchema),
-  saveSave: createSaveBlobStateProcedure(
-    StorageBucket.UserAssets,
-    z.object({ data: saveSchema, etag: z.string().optional() }),
-  ),
-});
-
 // The save blob's topic, which a read of the save names and a save of it publishes
 const getSaveTopic = () => `USER_ASSETS:${getSaveBlobName(getMockSession().user.id)}`;
 
 describe("blob state procedures", () => {
+  const saveSchema = z.object({ value: z.number() });
+  const blobStateRouter = router({
+    readSave: createReadBlobStateProcedure(StorageBucket.UserAssets, Save, saveSchema),
+    saveSave: createSaveBlobStateProcedure(
+      StorageBucket.UserAssets,
+      z.object({ data: saveSchema, etag: z.string().optional() }),
+    ),
+  });
+
   beforeAll(async () => {
     ({ bucket: mockBuckets[StorageBucket.UserAssets] } = await createMockBucket(StorageBucket.UserAssets));
   });

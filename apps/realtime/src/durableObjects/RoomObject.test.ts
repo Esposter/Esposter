@@ -38,21 +38,6 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi 
 
 vi.mock(import("#src/services/queue/getJobQueue"), () => import("#src/services/queue/getJobQueue.test"));
 
-const USER_METHODS = [
-  "addScheduledMessage",
-  "addSentMessage",
-  "broadcastEvent",
-  "removeScheduledMessage",
-  "removeSentMessages",
-  "removeSentMessagesInRoom",
-  "roomActivity",
-  "updateUserToRoom",
-] as const;
-type UserMethod = (typeof USER_METHODS)[number];
-const checkIsUserMethod = (method: string): method is UserMethod => USER_METHODS.some((name) => name === method);
-// A person's object as the room reaches it: each method a mock a test reads, and the invoke every call goes through
-type UserStub = Record<UserMethod, Mock> & { invoke: Mock<ObjectInvoker["invoke"]> };
-
 // The Response the object builds for an upgrade. The test reads no part of it, so the stub builds nothing
 const ResponseStub = function () {};
 
@@ -120,6 +105,21 @@ const readSearchIds = async (
 };
 
 describe(RoomObject, () => {
+  const USER_METHODS = [
+    "addScheduledMessage",
+    "addSentMessage",
+    "broadcastEvent",
+    "removeScheduledMessage",
+    "removeSentMessages",
+    "removeSentMessagesInRoom",
+    "roomActivity",
+    "updateUserToRoom",
+  ] as const;
+  type UserMethod = (typeof USER_METHODS)[number];
+  const checkIsUserMethod = (method: string): method is UserMethod => USER_METHODS.some((name) => name === method);
+  // A person's object as the room reaches it: each method a mock a test reads, and the invoke every call goes through
+  type UserStub = Record<UserMethod, Mock> & { invoke: Mock<ObjectInvoker["invoke"]> };
+
   let mockDatabase: Awaited<ReturnType<typeof createMockDb>>;
   // Each person's user object as the room reaches it, so a test reads what the room asked each one to do
   const userStubs = new Map<string, UserStub>();

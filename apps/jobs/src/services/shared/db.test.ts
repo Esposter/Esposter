@@ -1,6 +1,6 @@
 import { getMockPublishedTopics, MockPublishedTopics } from "#src/services/realtime/publishTopics.test";
-import { getDb, runUnit } from "#src/services/shared/db";
 import { createUser } from "#src/services/shared/createUser.test";
+import { getDb, runUnit } from "#src/services/shared/db";
 import { getBucket } from "#src/services/storage/getBucket";
 import { createMockDb } from "@esposter/db-mock";
 import { getTableTopic, StorageBucket, usersInAuth } from "@esposter/db-schema";
@@ -8,8 +8,6 @@ import { env } from "cloudflare:workers";
 import { eq, getTableName } from "drizzle-orm";
 import { v7 } from "uuid";
 import { beforeAll, beforeEach, describe, expect, test } from "vitest";
-
-const authTableTopic = getTableTopic(getTableName(usersInAuth));
 
 // An update returns the rows its where matches, and a unit names only the rows that changed, so a write needs a row to change
 const insertUser = async () => {
@@ -19,6 +17,8 @@ const insertUser = async () => {
 };
 
 describe("runUnit", () => {
+  const authTableTopic = getTableTopic(getTableName(usersInAuth));
+
   beforeAll(async () => {
     await createMockDb();
   });

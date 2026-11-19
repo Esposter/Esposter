@@ -38,10 +38,11 @@ const testRouter = router({
   }),
   renameUser: publicProcedure.input(renameInputSchema).mutation<undefined | UserRow>(renameUser),
 });
-const createTestCaller = createCallerFactory(testRouter);
-const userTable = getTableName(usersInAuth);
 
 describe("inferTopicsMiddleware", () => {
+  const createTestCaller = createCallerFactory(testRouter);
+  const userTable = getTableName(usersInAuth);
+
   beforeAll(async () => {
     ({ bucket: mockBuckets[StorageBucket.UserAssets] } = await createMockBucket(StorageBucket.UserAssets));
   });

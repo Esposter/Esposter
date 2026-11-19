@@ -6,22 +6,22 @@ import { eq } from "drizzle-orm";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
 
-// The probe the wake check is shown on: a read of a user, and a rename of one that returns the row it changed, so the
-// Recorder names the row by its topic and the read it answers is woken
-const probeRouter = router({
-  readUser: publicProcedure
-    .input(z.string())
-    .query<typeof usersInAuth.$inferSelect | undefined>(({ ctx, input }) =>
-      ctx.db.query.usersInAuth.findFirst({ where: { id: { eq: input } } }),
-    ),
-  renameUser: publicProcedure
-    .input(z.object({ id: z.string(), name: z.string() }))
-    .mutation<(typeof usersInAuth.$inferSelect)[]>(({ ctx, input }) =>
-      ctx.db.update(usersInAuth).set({ name: input.name }).where(eq(usersInAuth.id, input.id)).returning(),
-    ),
-});
-
 describe("live topic wake check", () => {
+  // The probe the wake check is shown on: a read of a user, and a rename of one that returns the row it changed, so the
+  // Recorder names the row by its topic and the read it answers is woken
+  const probeRouter = router({
+    readUser: publicProcedure
+      .input(z.string())
+      .query<typeof usersInAuth.$inferSelect | undefined>(({ ctx, input }) =>
+        ctx.db.query.usersInAuth.findFirst({ where: { id: { eq: input } } }),
+      ),
+    renameUser: publicProcedure
+      .input(z.object({ id: z.string(), name: z.string() }))
+      .mutation<(typeof usersInAuth.$inferSelect)[]>(({ ctx, input }) =>
+        ctx.db.update(usersInAuth).set({ name: input.name }).where(eq(usersInAuth.id, input.id)).returning(),
+      ),
+  });
+
   test("passes a write whose topics wake the read it changes", async () => {
     expect.hasAssertions();
 
