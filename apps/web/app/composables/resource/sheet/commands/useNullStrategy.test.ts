@@ -5,7 +5,7 @@ import { createRow } from "#shared/models/resource/sheet/datasource/createRow.te
 import { NULL_STRATEGY_NA_VALUE } from "#shared/services/resource/sheet/commands/constants";
 import { setupCommandTest } from "#src/composables/resource/sheet/commands/setupCommandTest.test";
 import { setupWithDataSource } from "#src/composables/resource/sheet/commands/setupWithDataSource.test";
-import { NullStrategy } from "#src/models/resource/sheet/commands/NullStrategy";
+import { NullStrategies, NullStrategy } from "#src/models/resource/sheet/commands/NullStrategy";
 import { useSheetHistoryStore } from "#src/store/resource/sheet/history/index";
 import { describe, expect, test } from "vitest";
 
@@ -38,21 +38,18 @@ describe(useNullStrategy, () => {
     expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ "": " ", " ": " " }]);
   });
 
-  test.each([NullStrategy.ReplaceWithNA, NullStrategy.DropRow])(
-    "%s is a no-op when every cell has a value",
-    (strategy) => {
-      expect.hasAssertions();
+  test.each(NullStrategies)("%s is a no-op when every cell has a value", (strategy) => {
+    expect.hasAssertions();
 
-      const initialDataSource = createDataSource([createColumn("")], [createRow({ "": " " })]);
-      setupWithDataSource(initialDataSource);
-      const nullStrategy = useNullStrategy();
-      const sheetHistoryStore = useSheetHistoryStore();
-      const { isUndoable } = storeToRefs(sheetHistoryStore);
-      nullStrategy(strategy);
+    const initialDataSource = createDataSource([createColumn("")], [createRow({ "": " " })]);
+    setupWithDataSource(initialDataSource);
+    const nullStrategy = useNullStrategy();
+    const sheetHistoryStore = useSheetHistoryStore();
+    const { isUndoable } = storeToRefs(sheetHistoryStore);
+    nullStrategy(strategy);
 
-      expect(isUndoable.value).toBe(false);
-    },
-  );
+    expect(isUndoable.value).toBe(false);
+  });
 
   test("description includes the strategy", () => {
     expect.hasAssertions();

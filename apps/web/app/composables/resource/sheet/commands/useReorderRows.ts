@@ -8,19 +8,16 @@ export const useReorderRows = () =>
     const oldRows = dataSource.rows;
     const oldRowIdIndexMap = new Map(oldRows.map((row, index) => [row.id, index]));
     const newRowIdRelativePositionMap = new Map(newRows.map((row, index) => [row.id, index]));
-    // Determine the expected relative position of each row within this page subset
-    const expectedRowIdRelativePositionMap = new Map(
-      oldRows.filter((row) => newRowIdRelativePositionMap.has(row.id)).map((row, index) => [row.id, index]),
-    );
+    // The rows of this page subset in their old order: a row's index among them is where it was expected to land
+    const pagePositions = oldRows.flatMap((row, oldIndex) => {
+      const actualRelativePosition = newRowIdRelativePositionMap.get(row.id);
+      return actualRelativePosition === undefined ? [] : [{ actualRelativePosition, oldIndex }];
+    });
 
     let movedRelativePosition = -1;
     let fromIndex = -1;
     let maxDisplacement = 0;
-    for (const [oldIndex, row] of oldRows.entries()) {
-      const actualRelativePosition = newRowIdRelativePositionMap.get(row.id);
-      if (actualRelativePosition === undefined) continue;
-      const expectedRelativePosition = expectedRowIdRelativePositionMap.get(row.id);
-      if (expectedRelativePosition === undefined) continue;
+    for (const [expectedRelativePosition, { actualRelativePosition, oldIndex }] of pagePositions.entries()) {
       const displacement = Math.abs(actualRelativePosition - expectedRelativePosition);
       if (displacement > maxDisplacement) {
         maxDisplacement = displacement;
