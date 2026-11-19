@@ -36,7 +36,7 @@ describe(readWikiReferenceClip, () => {
     await expect(
       readWikiReferenceClip(TEST_FILENAME, VoiceLanguage.English, TEST_FILENAME, decoder),
     ).resolves.toStrictEqual(clip);
-    expect(writeStateFile).toHaveBeenCalledWith(TEST_FILENAME, bytes);
+    expect(writeStateFile).toHaveBeenCalledExactlyOnceWith(TEST_FILENAME, bytes);
   });
 
   test("keeps nothing that will not decode", async () => {

@@ -2,6 +2,7 @@ import type { ClipDecoder } from "#src/models/ClipDecoder";
 import type { PcmClip } from "#src/models/PcmClip";
 
 import { VoiceLanguage } from "#src/models/VoiceLanguage";
+import { VOICE_SAMPLE_RATE } from "#src/services/constants";
 import { TEST_FILENAME } from "#src/services/constants.test";
 import { cutReferenceClip } from "#src/services/cutReferenceClip";
 import { getReferencePath } from "#src/services/getReferencePath";
@@ -49,7 +50,7 @@ describe(readReferenceClip, () => {
 
     await expect(
       readReferenceClip(TEST_FILENAME, TEST_FILENAME, VoiceLanguage.English, decoder),
-    ).resolves.toMatchObject({ samples: clip.samples });
+    ).resolves.toStrictEqual({ sampleRate: VOICE_SAMPLE_RATE, samples: clip.samples });
     expect(readWikiReferenceClip).toHaveBeenCalledTimes(1);
   });
 
@@ -61,7 +62,7 @@ describe(readReferenceClip, () => {
 
     await expect(
       readReferenceClip(TEST_FILENAME, TEST_FILENAME, VoiceLanguage.English, decoder),
-    ).resolves.toMatchObject({ samples: clip.samples });
+    ).resolves.toStrictEqual({ sampleRate: VOICE_SAMPLE_RATE, samples: clip.samples });
     expect(readWikiReferenceClip).not.toHaveBeenCalled();
   });
 });

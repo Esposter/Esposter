@@ -28,7 +28,7 @@ describe(runHookCommand, () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: A state file that is not JSON]`);
   });
 
-  test("prints the usage rather than running the command on --help", async () => {
+  test("does not run the command on --help", async () => {
     expect.hasAssertions();
 
     const run = vi.fn<() => void>();
