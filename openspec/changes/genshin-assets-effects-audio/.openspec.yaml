@@ -1,6 +1,6 @@
 schema: spec-driven
 affected_areas: [genshin]
-x-phase: 0
+x-phase: 7
 x-model: claude-haiku-5-5
 x-needs: [game-exports, game-install, media-engine]
 x-touches:
@@ -12,4 +12,4 @@ x-touches:
     "scripts/src/services/genshinAssets/particles/**",
     "scripts/src/services/genshinAssets/effects/**",
   ]
-x-waiting: "Task 1.4 waits on the login cloud emitter material, which its export names by no pointer; tasks 3.2 to 3.6, 4.1 to 4.3 and 5.1 are phase 7 work outside this unit, and each waits on its own line in tasks.md"
+x-waiting: "Tasks 3.2, 3.4 to 3.6, 4.1 to 4.3 and 5.1 to 5.4 are phase 7 work outside this unit, each waiting on the PC or Mac step its line in tasks.md names; 3.5 also waits on the login cloud emitter's shader, which no export names"
