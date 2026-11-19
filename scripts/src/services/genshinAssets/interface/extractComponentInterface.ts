@@ -9,6 +9,7 @@ import { readAssetBlocks } from "#src/services/genshinAssets/shared/readAssetBlo
 import { readUiBlockEntries } from "#src/services/genshinAssets/ui/readUiBlockEntries";
 import { readUiBlockIndex } from "#src/services/genshinAssets/ui/readUiBlockIndex";
 import { writeProvenance } from "#src/services/provenance/writeProvenance";
+import { clearOwnedFolder } from "#src/services/shared/clearOwnedFolder";
 import { writeJsonFile } from "#src/services/shared/writeJsonFile";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { join } from "node:path";
@@ -30,6 +31,7 @@ export const extractComponentInterface = async (component: DerivedAssetComponent
     root,
   );
   const directory = join(getComponentDirectory(component).root, "interface");
+  await clearOwnedFolder(directory);
   writeJsonFile(join(directory, "interface.json"), tree);
   await writeProvenance(directory, { command: `interface ${component}`, producerPaths: GENSHIN_ASSETS_PRODUCER_PATHS });
   return tree;
