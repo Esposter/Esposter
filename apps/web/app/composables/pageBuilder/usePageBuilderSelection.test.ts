@@ -1,4 +1,3 @@
-// @vitest-environment nuxt
 import { usePageBuilderSelection } from "#src/composables/pageBuilder/usePageBuilderSelection";
 import {
   TEST_NESTED_TEXT_ID,

@@ -1,4 +1,4 @@
-// @vitest-environment nuxt
+// @vitest-environment happy-dom
 import type { TextNode } from "#shared/models/pageBuilder/TextNode";
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 

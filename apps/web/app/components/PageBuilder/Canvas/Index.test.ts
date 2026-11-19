@@ -83,54 +83,48 @@ describe("pageBuilderCanvas", () => {
     return component;
   };
 
-  test("switching to tablet draws the page at tablet width", async () => {
-    expect.hasAssertions();
-
-    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-    pageBuilderDocumentStore.setDocument(TEST_ID, webpageKind, {
-      content: [
-        {
-          props: {
-            content: { content: [{ content: [{ text: "a", type: "text" }], type: "paragraph" }], type: "doc" },
-            elementId: "",
-            id: TEST_OTHER_ID,
-          },
-          type: WebpageNodeType.Text,
-        },
-      ],
-      root: TEST_ROOT,
-    });
-    pageBuilderCanvasStore.setDevice(TEST_ID, PageBuilderDevice.Tablet);
-
-    const component = await mountSuspended(PageBuilderCanvas, {
-      props: {
-        announce: vi.fn<(message: string) => void>(),
-        draggedNodeId: "",
-        kind: webpageKind,
-        resourceId: TEST_ID,
-
-        startNodeDrag: noop,
+  test.each([
+    {
+      kind: webpageKind,
+      name: "the page",
+      seed: () => {
+        const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+        pageBuilderDocumentStore.setDocument(TEST_ID, webpageKind, {
+          content: [
+            {
+              props: {
+                content: { content: [{ content: [{ text: "a", type: "text" }], type: "paragraph" }], type: "doc" },
+                elementId: "",
+                id: TEST_OTHER_ID,
+              },
+              type: WebpageNodeType.Text,
+            },
+          ],
+          root: TEST_ROOT,
+        });
       },
-    });
+    },
+    {
+      kind: emailKind,
+      name: "the email",
+      seed: () => {
+        const result = parseMjmlDocument(
+          `<mjml><mj-body><mj-section><mj-column><mj-text>a</mj-text></mj-column></mj-section></mj-body></mjml>`,
+          emailRegistry,
+          emailBodyChildrenSchema,
+          noteRichText,
+          MAX_EMAIL_NODES,
+        );
+        if (!result.success) throw new Error("the test email should parse");
 
-    expect(component.get<HTMLIFrameElement>("iframe").element.style.width).toBe(TABLET_WIDTH);
-  });
-
-  test("switching to tablet draws the email at tablet width", async () => {
+        const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+        pageBuilderDocumentStore.setEmailDocument(TEST_ID, emailKind, result.data);
+      },
+    },
+  ])("switching to tablet draws $name at tablet width", async ({ kind, seed }) => {
     expect.hasAssertions();
 
-    const result = parseMjmlDocument(
-      `<mjml><mj-body><mj-section><mj-column><mj-text>a</mj-text></mj-column></mj-section></mj-body></mjml>`,
-      emailRegistry,
-      emailBodyChildrenSchema,
-      noteRichText,
-      MAX_EMAIL_NODES,
-    );
-    if (!result.success) throw new Error("the test email should parse");
-
-    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setEmailDocument(TEST_ID, emailKind, result.data);
+    seed();
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     pageBuilderCanvasStore.setDevice(TEST_ID, PageBuilderDevice.Tablet);
 
@@ -138,7 +132,7 @@ describe("pageBuilderCanvas", () => {
       props: {
         announce: vi.fn<(message: string) => void>(),
         draggedNodeId: "",
-        kind: emailKind,
+        kind,
         resourceId: TEST_ID,
 
         startNodeDrag: noop,

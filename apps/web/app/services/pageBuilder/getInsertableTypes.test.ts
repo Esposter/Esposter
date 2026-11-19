@@ -1,4 +1,3 @@
-// @vitest-environment nuxt
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 
 import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";

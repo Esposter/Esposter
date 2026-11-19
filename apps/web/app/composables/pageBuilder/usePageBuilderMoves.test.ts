@@ -1,4 +1,3 @@
-// @vitest-environment nuxt
 import type { ColumnNode } from "#shared/models/pageBuilder/ColumnNode";
 import type { ColumnsNode } from "#shared/models/pageBuilder/ColumnsNode";
 import type { ImageNode } from "#shared/models/pageBuilder/ImageNode";

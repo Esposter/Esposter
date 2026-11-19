@@ -1,6 +1,7 @@
 import type { NodeStyle } from "#shared/models/pageBuilder/NodeStyle";
 
 import { ButtonTarget } from "#shared/models/pageBuilder/ButtonTarget";
+import { PageBuilderDevice } from "#shared/models/pageBuilder/PageBuilderDevice";
 import { StyleBreakpoint } from "#shared/models/pageBuilder/StyleBreakpoint";
 import { StyleState } from "#shared/models/pageBuilder/StyleState";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
@@ -117,5 +118,25 @@ describe(usePageBuilderStyle, () => {
     pageBuilderHistoryStore.undo(resourceId);
 
     expect(pageBuilderHistoryStore.getUndoLabel(resourceId)).toBe("");
+  });
+
+  test("a style edit writes the breakpoint of the device the canvas shows", () => {
+    expect.hasAssertions();
+
+    const resourceId = v7();
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
+      content: [createButton(TEST_ID)],
+      root: TEST_ROOT,
+    });
+    const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ID);
+    pageBuilderCanvasStore.setDevice(resourceId, PageBuilderDevice.Tablet);
+
+    usePageBuilderStyle(resourceId).setField("color", "red");
+
+    expect(pageBuilderDocumentStore.getDocument(resourceId)?.content[0]?.props.style).toStrictEqual({
+      [StyleBreakpoint.Tablet]: { [StyleState.Default]: { color: "red" } },
+    });
   });
 });
