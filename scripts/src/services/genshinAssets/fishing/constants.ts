@@ -6,7 +6,7 @@ export const FISHING_POINT_LABEL_ID = 261;
 export const FISHING_POINT_KIND = "fishing";
 // The fishing-area props among a region's placements, by the names the game gives them: a fishing prop, a fish stand, a
 // Fish-shaped prop or a fishing pole. A light named for fishing is no prop, so the `Prop_` before the name is required
-export const FISHING_PROP_NAME_PATTERN = /^Area_\w*Prop_\w*(?:[Ff]ish|Pole)/u;
+export const FISHING_PROP_NAME_REGEX = /^Area_\w*Prop_\w*(?:[Ff]ish|Pole)/u;
 // The regions whose witness layouts hold a fishing-area prop, each read for its placements
 export const FISHING_PROP_COMPONENTS: readonly DerivedAssetComponent[] = [
   DerivedAssetComponent.Mondstadt,

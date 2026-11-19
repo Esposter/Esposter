@@ -39,7 +39,7 @@ export const readMaterialSourceItemIdMap = (
     if (itemId === undefined) throw new InvalidOperationError(Operation.Read, name, "has no gather row giving an item");
     for (const row of rows) joinedRows.add(row);
     itemIdMap.set(id, itemId);
-    notes.push(`${name} (${id}): ${rows.length} gather row${rows.length === 1 ? "" : "s"}, gives item ${itemId}`);
+    notes.push(`${name} (${id}): gather rows ${rows.length}, gives item ${itemId}`);
   }
   for (const row of envAnimalGatherRows) {
     if (joinedRows.has(row)) continue;

@@ -12,7 +12,7 @@ const DROPLET_RISE = 3;
 
 // A splash as one ring on the water and a burst of droplets standing up from it, evenly round the ring, on the origin
 export const createSplashGeometry = ({ dropletCount, dropletSize, radius }: SplashGeometryOptions): BufferGeometry => {
-  const droplets = Array.from({ length: dropletCount }, (_, index) => {
+  const droplets = Array.from({ length: dropletCount }, (_value, index) => {
     const angle = (index / dropletCount) * Math.PI * 2;
     const x = Math.cos(angle) * radius;
     const z = Math.sin(angle) * radius;

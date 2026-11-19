@@ -1,11 +1,11 @@
 import type { BufferGeometry } from "three";
 
+import { createLatheStackGeometry } from "#src/kits/architecture/createLatheStackGeometry";
 import {
   CRITTER_STAND_IN_HEIGHT,
   CRITTER_STAND_IN_RADIAL_SEGMENTS,
   CRITTER_STAND_IN_RADIUS,
 } from "#src/kits/wildlife/constants";
-import { createLatheStackGeometry } from "#src/kits/architecture/createLatheStackGeometry";
 
 // A critter's stand-in as a low cone standing on its point, one shape for every critter group until a fit gives each
 // Group its own outline

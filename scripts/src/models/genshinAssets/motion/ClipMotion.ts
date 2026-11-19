@@ -4,6 +4,6 @@
 export interface ClipMotion {
   duration: number;
   name: string;
-  rootTranslation: number | undefined;
-  speed: number | undefined;
+  rootTranslation?: number | undefined;
+  speed?: number | undefined;
 }

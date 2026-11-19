@@ -11,7 +11,7 @@ const ROD_RADIAL_SEGMENTS = 8;
 export const createRodGeometry = ({ baseRadius, length, tipRadius }: RodGeometryOptions): BufferGeometry => {
   const sectionHeight = length / ROD_SECTIONS;
   const radiusAt = (share: number) => baseRadius + (tipRadius - baseRadius) * share;
-  const sections = Array.from({ length: ROD_SECTIONS }, (_, index) => ({
+  const sections = Array.from({ length: ROD_SECTIONS }, (_value, index) => ({
     bottomRadius: radiusAt(index / ROD_SECTIONS),
     height: sectionHeight,
     topRadius: radiusAt((index + 1) / ROD_SECTIONS),
