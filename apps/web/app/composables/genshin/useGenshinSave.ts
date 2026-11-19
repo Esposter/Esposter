@@ -6,6 +6,7 @@ import type { GenshinSave } from "genshin-world/save";
 import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { MutationStatus } from "#src/models/shared/MutationStatus";
 import { AUTOSAVE_INTERVAL_MS } from "#src/services/clicker/constants";
+import { genshinLocalSave } from "#src/services/genshin/genshinLocalSave";
 import { getGenshinStartRetryDelayMs } from "#src/services/genshin/getGenshinStartRetryDelayMs";
 import { parseGenshinJournal } from "#src/services/genshin/parseGenshinJournal";
 import { readGuestSave } from "#src/services/genshin/readGuestSave";
@@ -22,7 +23,7 @@ import { z } from "zod";
 
 const clearGuestSave = () => {
   getResult(() => {
-    window.localStorage.removeItem(LocalStorageKey.GenshinSave);
+    window.localStorage.removeItem(genshinLocalSave.key);
   }).match(noop, console.error);
 };
 // The save the Genshin page plays, loaded before the world is made. Signed in, it is the account's blob under the lease
@@ -135,7 +136,7 @@ export const useGenshinSave = async () => {
     const saveJson = JSON.stringify(save);
     if (!isSaveLoaded.value || saveJson === persistedJson || isReplaced.value) return;
     if (!sessionId) {
-      if (saveToLocalStorage(LocalStorageKey.GenshinSave, genshinSaveSchema, save)) persistedJson = saveJson;
+      if (saveToLocalStorage(genshinLocalSave.key, genshinLocalSave.schema, save)) persistedJson = saveJson;
       return;
     }
     // A save the schema refuses is not sent and is never marked saved: it is logged and shown, and is sent again only
