@@ -16,55 +16,36 @@ const setupWithDeletedRow = (index = 0) => {
 describe(useSheetHistoryStore, () => {
   setupCommandTest();
 
-  test("becomes undoable after an operation", () => {
-    expect.hasAssertions();
-
-    setupWithDeletedRow();
-    const sheetHistoryStore = useSheetHistoryStore();
-    const { isRedoable, isUndoable } = storeToRefs(sheetHistoryStore);
-
-    expect(isUndoable.value).toBe(true);
-    expect(isRedoable.value).toBe(false);
-  });
-
-  test("becomes redoable after undo", () => {
+  test("an operation makes history undoable, and an undo makes it redoable", () => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDeletedRow();
     const sheetHistoryStore = useSheetHistoryStore();
     const { isRedoable, isUndoable } = storeToRefs(sheetHistoryStore);
     const { undo } = sheetHistoryStore;
+
+    expect(isUndoable.value).toBe(true);
+    expect(isRedoable.value).toBe(false);
+
     undo(dataSource);
 
     expect(isUndoable.value).toBe(false);
     expect(isRedoable.value).toBe(true);
   });
 
-  test("undo no-op when history is empty", () => {
+  test("undo and redo leave the rows alone with no history or future", () => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDataSource();
     const sheetHistoryStore = useSheetHistoryStore();
-    const { isUndoable } = storeToRefs(sheetHistoryStore);
-    const { undo } = sheetHistoryStore;
+    const { isRedoable, isUndoable } = storeToRefs(sheetHistoryStore);
+    const { redo, undo } = sheetHistoryStore;
     const rowCountBefore = dataSource.rows.length;
     undo(dataSource);
-
-    expect(dataSource.rows).toHaveLength(rowCountBefore);
-    expect(isUndoable.value).toBe(false);
-  });
-
-  test("redo no-op when future is empty", () => {
-    expect.hasAssertions();
-
-    const { dataSource } = setupWithDataSource();
-    const sheetHistoryStore = useSheetHistoryStore();
-    const { isRedoable } = storeToRefs(sheetHistoryStore);
-    const { redo } = sheetHistoryStore;
-    const rowCountBefore = dataSource.rows.length;
     redo(dataSource);
 
     expect(dataSource.rows).toHaveLength(rowCountBefore);
+    expect(isUndoable.value).toBe(false);
     expect(isRedoable.value).toBe(false);
   });
 
@@ -84,43 +65,27 @@ describe(useSheetHistoryStore, () => {
     expect(isRedoable.value).toBe(false);
   });
 
-  test("undoDescription is empty when no history", () => {
+  test("both descriptions are empty with no history or future", () => {
     expect.hasAssertions();
 
     setupWithDataSource();
     const sheetHistoryStore = useSheetHistoryStore();
-    const { undoDescription } = storeToRefs(sheetHistoryStore);
+    const { redoDescription, undoDescription } = storeToRefs(sheetHistoryStore);
 
     expect(undoDescription.value).toBe("");
-  });
-
-  test("undoDescription reflects last command", () => {
-    expect.hasAssertions();
-
-    setupWithDeletedRow();
-    const sheetHistoryStore = useSheetHistoryStore();
-    const { undoDescription } = storeToRefs(sheetHistoryStore);
-
-    expect(undoDescription.value).toBe("Delete Row 1");
-  });
-
-  test("redoDescription is empty when no future", () => {
-    expect.hasAssertions();
-
-    setupWithDataSource();
-    const sheetHistoryStore = useSheetHistoryStore();
-    const { redoDescription } = storeToRefs(sheetHistoryStore);
-
     expect(redoDescription.value).toBe("");
   });
 
-  test("redoDescription reflects undone command", () => {
+  test("undoDescription reflects the last command, and redoDescription the one undone", () => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDeletedRow();
     const sheetHistoryStore = useSheetHistoryStore();
-    const { redoDescription } = storeToRefs(sheetHistoryStore);
+    const { redoDescription, undoDescription } = storeToRefs(sheetHistoryStore);
     const { undo } = sheetHistoryStore;
+
+    expect(undoDescription.value).toBe("Delete Row 1");
+
     undo(dataSource);
 
     expect(redoDescription.value).toBe("Delete Row 1");

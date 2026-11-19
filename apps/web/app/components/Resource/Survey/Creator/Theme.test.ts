@@ -12,7 +12,7 @@ import { useAlertStore } from "#src/store/alert";
 import { useSurveyCreatorStore } from "#src/store/survey/creator";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
-import { afterEach, assert, describe, expect, test, vi } from "vitest";
+import { assert, describe, expect, test, vi } from "vitest";
 import { surveyDocumentSchema, SurveyProgressBarPlacement } from "vue-survey-engine-headless";
 
 const { deleteFile, uploadFile } = vi.hoisted(() => ({
@@ -32,9 +32,6 @@ describe("resourceSurveyCreatorTheme", () => {
 
   describe.each(UiStyles)("%s", (uiStyle) => {
     setupUiStyle(uiStyle);
-    afterEach(() => {
-      vi.clearAllMocks();
-    });
 
     test("the accent colour is applied to the preview as the library's accent token", async () => {
       expect.hasAssertions();
@@ -203,7 +200,7 @@ describe("resourceSurveyCreatorTheme", () => {
 
       const component = await mountSuspended(ResourceSurveyCreatorTheme);
 
-      expect(component.get('[aria-label="Preview"] img').attributes("src")).toContain("background.png");
+      expect(component.get('[aria-label="Preview"] img').attributes("src")).toBe("/background.png");
     });
   });
 });

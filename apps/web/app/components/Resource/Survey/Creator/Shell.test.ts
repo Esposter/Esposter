@@ -95,10 +95,9 @@ describe("resourceSurveyCreatorShell", () => {
     // A key press bubbles to the window, where the commands bind their shortcuts
     document.body.dispatchEvent(new KeyboardEvent("keydown", { altKey: true, bubbles: true, key: "ArrowUp" }));
 
-    expect(surveyCreatorStore.document.content[0]?.props.children.map(({ props }) => props.id)).toStrictEqual([
-      "second",
-      "first",
-    ]);
+    expect(
+      surveyCreatorStore.document.content.map(({ props }) => props.children.map(({ props: { id } }) => id)),
+    ).toStrictEqual([["second", "first"]]);
 
     component.unmount();
   });

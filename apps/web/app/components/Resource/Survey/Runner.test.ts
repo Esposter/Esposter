@@ -161,7 +161,7 @@ describe("runner", () => {
 
       const label = findLabel(component, "b");
       assert.exists(label);
-      expect(label.text()).toContain("*");
+      expect(label.text()).toBe("b *");
 
       const nextButton = findButton(component, "Next");
       assert.exists(nextButton);
@@ -177,7 +177,7 @@ describe("runner", () => {
       await nextButton.trigger("click");
       await flushPromises();
 
-      expect(findLabel(component, "c")).toBeDefined();
+      expect(findLabel(component, "c")?.text()).toBe("c");
     });
 
     test("a question stops drawing the required mark when its requiring condition stops holding", async () => {
@@ -201,14 +201,14 @@ describe("runner", () => {
 
       const label = findLabel(component, "b");
       assert.exists(label);
-      expect(label.text()).not.toContain("*");
+      expect(label.text()).toBe("b");
 
       const nextButton = findButton(component, "Next");
       assert.exists(nextButton);
       await nextButton.trigger("click");
       await flushPromises();
 
-      expect(findLabel(component, "c")).toBeDefined();
+      expect(findLabel(component, "c")?.text()).toBe("c");
     });
 
     test("a row shows only the template question its own answer shows", async () => {
@@ -267,11 +267,10 @@ describe("runner", () => {
       });
       await flushPromises();
 
-      const [firstRow, secondRow] = findRows(component);
-      assert.exists(firstRow);
-      assert.exists(secondRow);
-      expect(firstRow.text()).toContain("*");
-      expect(secondRow.text()).not.toContain("*");
+      expect(findRowLabels(component)).toStrictEqual([
+        ["a", "b *"],
+        ["a", "b"],
+      ]);
 
       const completeButton = findButton(component, "Complete");
       assert.exists(completeButton);
@@ -361,7 +360,7 @@ describe("runner", () => {
       });
 
       const picture = component.get("img");
-      expect(picture.attributes("src")).toContain("background.png");
+      expect(picture.attributes("src")).toBe("/background.png");
       expect(component.element.firstElementChild).toBe(picture.element);
     });
 

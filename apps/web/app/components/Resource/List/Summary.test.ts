@@ -8,7 +8,7 @@ import { describe, expect, test } from "vitest";
 describe("resourceListSummary", () => {
   // A filter change re-reads the counts with the last read's cards still in hand — a skeleton over them hides what
   // The reader was just looking at for the length of a round trip
-  test("keeps the cards it already has on screen while a read is out", async () => {
+  test("draws no skeleton over the counts while a re-read is out", async () => {
     expect.hasAssertions();
 
     const wrapper = await mountSuspended(ResourceListSummary, {

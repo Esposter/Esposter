@@ -44,7 +44,7 @@ describe("resourceWhiteboardEditorPropertiesAltText", () => {
     expect(whiteboardStore.editState).toBe(editStateBefore);
   });
 
-  test("an undo that changes the stored alt text shows in the field", async () => {
+  test("the field shows the alt text the element holds, and empties when the element holds none", async () => {
     expect.hasAssertions();
 
     const image = createWhiteboardImageElement(FILE_ID, { x: 0, y: 0 });

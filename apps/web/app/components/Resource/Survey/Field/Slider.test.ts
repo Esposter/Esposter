@@ -25,8 +25,8 @@ describe("resourceSurveyFieldSlider", () => {
       const required = mount(SurveyFieldSlider, { props: { error: "", isDisabled: false, node: createNode(true) } });
       const optional = mount(SurveyFieldSlider, { props: { error: "", isDisabled: false, node: createNode(false) } });
 
-      expect(required.text()).toContain(`${title} * required`);
-      expect(optional.text()).not.toContain("required");
+      expect(required.text()).toBe(`${title} * required0`);
+      expect(optional.text()).toBe(`${title} 0`);
     });
   });
 });

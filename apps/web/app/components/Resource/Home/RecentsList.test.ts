@@ -28,7 +28,10 @@ describe("resourceHomeRecentsList", () => {
     const wrapper = await mountSuspended(ResourceHomeRecentsList, { shallow: true });
     await flushPromises();
 
-    expect(wrapper.findComponent(ResourceHomeList).props("isPending")).toBe(false);
+    const list = wrapper.findComponent(ResourceHomeList);
+
+    expect(list.props("resources")).toStrictEqual([recent]);
+    expect(list.props("isPending")).toBe(false);
 
     releaseRead();
     await flushPromises();

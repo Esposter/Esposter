@@ -25,14 +25,11 @@ describe("resourceSurveyCreatorMatrixColumnsEditor", () => {
     await getButtonByText(wrapper, "Remove")?.trigger("click");
     await wrapper.vm.$nextTick();
 
-    expect(wrapper.emitted("update:modelValue")).toHaveLength(3);
-    expect(wrapper.emitted("update:modelValue")?.[0]).toStrictEqual([
-      [{ cellType: SurveyMatrixCellType.Text, choices: [], isRequired: false, name: "Often", title: "Often" }],
+    expect(wrapper.emitted("update:modelValue")).toStrictEqual([
+      [[{ cellType: SurveyMatrixCellType.Text, choices: [], isRequired: false, name: "Often", title: "Often" }]],
+      [[{ cellType: SurveyMatrixCellType.Text, choices: [], isRequired: false, name: "Sometimes", title: "Often" }]],
+      [[]],
     ]);
-    expect(wrapper.emitted("update:modelValue")?.[1]).toStrictEqual([
-      [{ cellType: SurveyMatrixCellType.Text, choices: [], isRequired: false, name: "Sometimes", title: "Often" }],
-    ]);
-    expect(wrapper.emitted("update:modelValue")?.[2]).toStrictEqual([[]]);
   });
 
   test("removing a row asks first, and removes it once confirmed", async () => {
@@ -62,7 +59,7 @@ describe("resourceSurveyCreatorMatrixColumnsEditor", () => {
     await getButtonByText(wrapper, "Remove")?.trigger("click");
     await wrapper.vm.$nextTick();
 
-    expect(wrapper.emitted("update:modelValue")?.[0]).toStrictEqual([[sometimes]]);
+    expect(wrapper.emitted("update:modelValue")).toStrictEqual([[[sometimes]]]);
   });
 
   test("declining leaves the row", async () => {
@@ -101,8 +98,8 @@ describe("resourceSurveyCreatorMatrixColumnsEditor", () => {
     wrapper.findComponent(UiSelect).vm.$emit("update:modelValue", SurveyMatrixCellType.Dropdown);
     await wrapper.vm.$nextTick();
 
-    expect(wrapper.emitted("update:modelValue")?.[0]).toStrictEqual([
-      [{ cellType: SurveyMatrixCellType.Dropdown, choices: [], isRequired: false, name: "often", title: "" }],
+    expect(wrapper.emitted("update:modelValue")).toStrictEqual([
+      [[{ cellType: SurveyMatrixCellType.Dropdown, choices: [], isRequired: false, name: "often", title: "" }]],
     ]);
     expect(wrapper.findComponent(ResourceSurveyCreatorChoiceListEditor).exists()).toBe(true);
   });

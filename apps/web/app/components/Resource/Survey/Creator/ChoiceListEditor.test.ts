@@ -22,9 +22,7 @@ describe("resourceSurveyCreatorChoiceListEditor", () => {
     await wrapper.findAll('[role="group"]')[2]?.trigger("keydown", { altKey: true, key: "ArrowUp" });
     await wrapper.vm.$nextTick();
 
-    expect(wrapper.emitted("update:modelValue")).toHaveLength(2);
-    expect(wrapper.emitted("update:modelValue")?.[0]).toStrictEqual([[red, blue, green]]);
-    expect(wrapper.emitted("update:modelValue")?.[1]).toStrictEqual([[red, green, blue]]);
+    expect(wrapper.emitted("update:modelValue")).toStrictEqual([[[red, blue, green]], [[red, green, blue]]]);
   });
 
   test("a repeated value is flagged on its row and the list is not written", async () => {
@@ -52,10 +50,12 @@ describe("resourceSurveyCreatorChoiceListEditor", () => {
     await wrapper.vm.$nextTick();
 
     expect(paste.defaultPrevented).toBe(true);
-    expect(wrapper.emitted("update:modelValue")?.[0]).toStrictEqual([
+    expect(wrapper.emitted("update:modelValue")).toStrictEqual([
       [
-        { text: "", value: "green" },
-        { text: "Yellow", value: "yellow" },
+        [
+          { text: "", value: "green" },
+          { text: "Yellow", value: "yellow" },
+        ],
       ],
     ]);
   });
@@ -75,7 +75,7 @@ describe("resourceSurveyCreatorChoiceListEditor", () => {
     await getButtonByText(wrapper, "Remove")?.trigger("click");
     await wrapper.vm.$nextTick();
 
-    expect(wrapper.emitted("update:modelValue")?.[0]).toStrictEqual([[blue]]);
+    expect(wrapper.emitted("update:modelValue")).toStrictEqual([[[blue]]]);
   });
 
   test("declining leaves the row", async () => {

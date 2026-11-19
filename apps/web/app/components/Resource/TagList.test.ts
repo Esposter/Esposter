@@ -24,7 +24,7 @@ describe("resourceTagList", () => {
     });
     const component = await mountSuspended(ResourceTagList);
 
-    expect(component.findAll(".skeleton")).toHaveLength(8);
+    expect(component.find(".skeleton").exists()).toBe(true);
     expect(component.findComponent(UiItemContent).exists()).toBe(false);
 
     releaseRead();

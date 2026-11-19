@@ -45,7 +45,7 @@ describe("resourceNoteDialogs", () => {
     openPreview(resourceId, importedDoc);
     await flushPromises();
 
-    expect(wrapper.text()).toContain("imported");
+    expect(wrapper.get(".rich-text-content").text()).toBe("imported");
     expect(noteStore.note.doc).toStrictEqual(EMPTY_NOTE_DOC);
   });
 
@@ -64,7 +64,7 @@ describe("resourceNoteDialogs", () => {
     const importButton = wrapper.findAll("button").find((button) => button.text() === "Import");
     assert.exists(importButton);
 
-    expect(wrapper.get("[ui-region-body]").text()).toContain("imported");
+    expect(wrapper.get("[ui-region-body]").text()).toBe("imported");
     expect(importButton.element.closest("[ui-region-footer]")).not.toBeNull();
   });
 

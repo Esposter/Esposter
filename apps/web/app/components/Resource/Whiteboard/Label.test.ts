@@ -104,7 +104,9 @@ describe("resourceWhiteboardLabel", () => {
     } as const;
     const label = mount(ResourceWhiteboardLabel, { props: { element: shape } }).get("text");
 
+    const exportFontSize = /font-size="(?<size>[^"]*)"/u.exec(toElementTextSvg(shape))?.groups?.size;
+
     expect(label.attributes("font-size")).toBe(`${TextSize.ExtraLarge}`);
-    expect(toElementTextSvg(shape)).toContain(`font-size="${TextSize.ExtraLarge}"`);
+    expect(label.attributes("font-size")).toBe(exportFontSize);
   });
 });

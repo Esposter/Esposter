@@ -15,7 +15,7 @@ describe("resourceActivityLog", () => {
 
   // The store outlives the blade, so reopening a resource's Activity re-reads with the last read's rows in hand — a
   // Skeleton over them hides what the reader was just looking at for the length of a round trip
-  test("keeps the rows it already has on screen while a read is out", async () => {
+  test("draws no skeleton over the rows while a re-read is out", async () => {
     expect.hasAssertions();
 
     const resourceId = v7();

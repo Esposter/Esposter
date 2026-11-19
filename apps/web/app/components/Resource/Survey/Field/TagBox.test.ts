@@ -106,7 +106,7 @@ describe("resourceSurveyFieldTagBox", () => {
       await component.setProps({ modelValue: ["a"] });
 
       expect(component.get<HTMLInputElement>('input[type="text"]').element.value).toBe("a");
-      expect(component.emitted("update:modelValue")?.at(-1)).toStrictEqual([["a"]]);
+      expect(component.emitted("update:modelValue")).toStrictEqual([[[""]], [["a"]]]);
     });
 
     test("shows its error beside the select", async () => {

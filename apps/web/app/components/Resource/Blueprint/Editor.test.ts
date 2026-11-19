@@ -56,7 +56,7 @@ describe("resourceBlueprintEditor", () => {
   });
 
   // An imported manifest is shown as text the owner has not saved, in place of the text the Editor held
-  test("importing a manifest fills the editor unsaved", async () => {
+  test("importing a manifest fills the editor with the imported text", async () => {
     expect.hasAssertions();
 
     const importedManifest = { entries: [{ key: "notes", name: "Kickoff", type: ResourceType.Note }], parameters: [] };

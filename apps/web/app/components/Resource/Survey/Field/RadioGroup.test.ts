@@ -87,7 +87,7 @@ describe("resourceSurveyFieldRadioGroup", () => {
       await flushPromises();
       await component.get("input").setValue("a");
 
-      expect(component.emitted("update:modelValue")?.at(-1)).toStrictEqual(["a"]);
+      expect(component.emitted("update:modelValue")).toStrictEqual([["a"]]);
     });
 
     test("shows its error beside it", () => {

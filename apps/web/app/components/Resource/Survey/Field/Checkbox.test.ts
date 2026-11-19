@@ -49,10 +49,9 @@ describe("resourceSurveyFieldCheckbox", () => {
       const component = mount(ResourceSurveyFieldCheckbox, {
         props: { error: "", isDisabled: false, modelValue: [1], node: createNode({}), seed },
       });
-      const [first, second] = component.findAll('[role="checkbox"]');
+      const checkboxes = component.findAll('[role="checkbox"]');
 
-      expect(first?.attributes("aria-checked")).toBe("true");
-      expect(second?.attributes("aria-checked")).toBe("false");
+      expect(checkboxes.map((checkbox) => checkbox.attributes("aria-checked"))).toStrictEqual(["true", "false"]);
     });
 
     test("adds a picked choice to the answer list", async () => {
@@ -125,7 +124,7 @@ describe("resourceSurveyFieldCheckbox", () => {
       expect(noneChosen.emitted("update:modelValue")).toStrictEqual([[[2]]]);
     });
 
-    test("picks other as an empty entry, and shows its text field only while other is picked", async () => {
+    test("picks other as an empty entry, and has no text field before it is picked", async () => {
       expect.hasAssertions();
 
       const component = mount(ResourceSurveyFieldCheckbox, {
@@ -175,7 +174,7 @@ describe("resourceSurveyFieldCheckbox", () => {
       await component.setProps({ modelValue: ["a"] });
 
       expect(component.get("input").element.value).toBe("a");
-      expect(component.emitted("update:modelValue")?.at(-1)).toStrictEqual([["a"]]);
+      expect(component.emitted("update:modelValue")).toStrictEqual([[[""]], [["a"]]]);
     });
 
     test("shows its error beside the group and marks each checkbox invalid", async () => {
@@ -187,7 +186,9 @@ describe("resourceSurveyFieldCheckbox", () => {
       await flushPromises();
 
       expect(component.get('[role="alert"]').text()).toBe(error);
-      expect(component.get('[role="checkbox"]').attributes("aria-invalid")).toBe("true");
+      const checkboxes = component.findAll('[role="checkbox"]');
+
+      expect(checkboxes.map((checkbox) => checkbox.attributes("aria-invalid"))).toStrictEqual(["true", "true"]);
     });
   });
 });

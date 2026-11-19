@@ -16,7 +16,7 @@ describe("resourceNoteCountLine", () => {
   });
 
   // A collapsed caret counts the whole note, and a range counts only its own text, so the line follows the selection
-  test("a selection shows its own counts", async () => {
+  test("the line counts the whole note at a caret and only the range under a selection", async () => {
     expect.hasAssertions();
 
     const component = await mountSuspended(ResourceNoteCountLine, { props: { editor } });

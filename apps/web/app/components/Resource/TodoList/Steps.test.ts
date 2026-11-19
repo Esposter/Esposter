@@ -22,9 +22,11 @@ describe("resourceTodoListSteps", () => {
     field.element.dispatchEvent(event);
 
     expect(event.defaultPrevented).toBe(true);
-    expect(wrapper.emitted<[TodoListStep[]]>("update:modelValue")?.[0]?.[0].map((step) => step.name)).toStrictEqual([
-      name,
-    ]);
+    const emittedNames = wrapper
+      .emitted<[TodoListStep[]]>("update:modelValue")
+      ?.map(([steps]) => steps.map((step) => step.name));
+
+    expect(emittedNames).toStrictEqual([[name]]);
   });
 
   test("adds no step past the most the item's schema takes", async () => {

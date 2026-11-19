@@ -143,7 +143,7 @@ describe("resourceDashboardEditor", () => {
   });
 
   // The form's change is written onto the visual while the canvas is in view, so the tile it draws redraws as the type changes
-  test("a form change redraws the visual", async () => {
+  test("a visual type picked in the form is written onto the visual", async () => {
     expect.hasAssertions();
 
     const barVisual = new Visual({ type: VisualType.Bar });

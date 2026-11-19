@@ -161,8 +161,9 @@ describe("resourceSurveyFieldPanelDynamic", () => {
       await findAddButton(component).trigger("click");
       await flushPromises();
 
-      expect(component.findAll('[aria-label="Remove panel"]')).toHaveLength(2);
-      expect(component.findAll('[aria-label="Remove panel"]')[0]?.attributes("disabled")).toBeUndefined();
+      expect(
+        component.findAll('[aria-label="Remove panel"]').map((button) => button.attributes("disabled")),
+      ).toStrictEqual([undefined, undefined]);
       expect(findAddButton(component).attributes("disabled")).toBe("");
     });
 

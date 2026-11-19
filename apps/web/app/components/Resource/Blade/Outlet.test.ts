@@ -30,7 +30,7 @@ describe("resourceBladeOutlet", () => {
 
   // The outlet owns the padding and the scroll a blade used to write, so a blade's content is padded and scrolls
   // Inside the outlet's body. jsdom measures no layout, so the overflow itself is proven in a driven browser
-  test("a blade's content is padded and scrolls", async () => {
+  test("a blade's content is padded inside the outlet's body", async () => {
     expect.hasAssertions();
 
     const component = mount(ResourceBladeOutlet, {

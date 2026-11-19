@@ -38,7 +38,17 @@ describe("resourceWhiteboardEditorPropertiesSketch", () => {
       props: { element: ellipse, index: 0 },
     });
 
-    expect(processWrapper.findAll("button").map((button) => button.text())).toContain("Round");
-    expect(ellipseWrapper.findAll("button").map((button) => button.text())).not.toContain("Round");
+    expect(processWrapper.findAll("button").map((button) => button.text())).toStrictEqual([
+      "Architect",
+      "Artist",
+      "Cartoonist",
+      "Sharp",
+      "Round",
+    ]);
+    expect(ellipseWrapper.findAll("button").map((button) => button.text())).toStrictEqual([
+      "Architect",
+      "Artist",
+      "Cartoonist",
+    ]);
   });
 });

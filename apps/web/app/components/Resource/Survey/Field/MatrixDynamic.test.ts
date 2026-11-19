@@ -115,20 +115,14 @@ describe("resourceSurveyFieldMatrixDynamic", () => {
       expect(component.emitted<[SurveyAnswerValue]>("update:modelValue")).toStrictEqual([[[{ [columnName]: value }]]]);
     });
 
-    test("draws a rating cell with one step for each step of its scale", () => {
+    test("names a rating cell's steps from one, one for each step of its scale", () => {
       expect.hasAssertions();
 
       const component = mountMatrixDynamic(createNode(1, 0, 2, [createColumn(SurveyMatrixCellType.Rating)]));
 
-      expect(component.findAll('[role="radio"]')).toHaveLength(MATRIX_CELL_RATING_COUNT);
-    });
-
-    test("names a rating cell's steps from one", () => {
-      expect.hasAssertions();
-
-      const component = mountMatrixDynamic(createNode(1, 0, 2, [createColumn(SurveyMatrixCellType.Rating)]));
-
-      expect(component.findAll('[role="radio"]').map((step) => step.text())).toStrictEqual(["1", "2", "3", "4", "5"]);
+      expect(component.findAll('[role="radio"]').map((step) => step.text())).toStrictEqual(
+        Array.from({ length: MATRIX_CELL_RATING_COUNT }, (_, index) => String(index + 1)),
+      );
     });
 
     test("writes the step pressed into its row as the number of that step", async () => {

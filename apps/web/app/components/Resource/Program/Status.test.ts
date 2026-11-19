@@ -93,24 +93,14 @@ describe("resourceProgramStatus", () => {
     expect(component.text()).toContain("1 of 1 responded");
   });
 
-  test("warns when an anonymous survey has no participant responses to match", async () => {
+  test.each([
+    ["has no participant responses to match", []],
+    ["leaves every participant awaiting", [{ ...statusRow, isResponded: false }]],
+  ])("warns when an anonymous survey %s", async (_description, rows) => {
     expect.hasAssertions();
 
     setSurveyMode(SurveyResponseMode.Anonymous);
-    trpcMsw.program.readProgramStatus.query(() => ({ isRespondedPartial: false, rows: [] }));
-    const component = await mountSuspended(ResourceProgramStatus, { route: RoutePath.Resource(resourceId) });
-
-    expect(component.text()).toContain("Anonymous mode drops participant tokens");
-  });
-
-  test("warns when anonymous survey responses leave every participant awaiting", async () => {
-    expect.hasAssertions();
-
-    setSurveyMode(SurveyResponseMode.Anonymous);
-    trpcMsw.program.readProgramStatus.query(() => ({
-      isRespondedPartial: false,
-      rows: [{ ...statusRow, isResponded: false }],
-    }));
+    trpcMsw.program.readProgramStatus.query(() => ({ isRespondedPartial: false, rows }));
     const component = await mountSuspended(ResourceProgramStatus, { route: RoutePath.Resource(resourceId) });
 
     expect(component.text()).toContain("Anonymous mode drops participant tokens");
@@ -230,7 +220,9 @@ describe("resourceProgramStatus", () => {
     await flushPromises();
 
     expect(downloadFile).not.toHaveBeenCalled();
-    expect(getNotificationTitles()).toContain("Bind an email, an audience on the Setup blade before exporting invites");
+    expect(getNotificationTitles()).toStrictEqual([
+      "Bind an email, an audience on the Setup blade before exporting invites",
+    ]);
   });
 
   test("asks for participants to be generated before exporting invites", async () => {
@@ -249,7 +241,7 @@ describe("resourceProgramStatus", () => {
     await flushPromises();
 
     expect(downloadFile).not.toHaveBeenCalled();
-    expect(getNotificationTitles()).toContain("Generate participants before exporting invites");
+    expect(getNotificationTitles()).toStrictEqual(["Generate participants before exporting invites"]);
   });
 
   test("says no participant has an audience row when the invite read finds none", async () => {
@@ -266,7 +258,7 @@ describe("resourceProgramStatus", () => {
     await clickExportWithInvites(component, "Export invites", { emailHtml: "", invites: [], unmatchedCount: 0 });
 
     expect(downloadFile).not.toHaveBeenCalled();
-    expect(getNotificationTitles()).toContain("No participant has an audience row to invite");
+    expect(getNotificationTitles()).toStrictEqual(["No participant has an audience row to invite"]);
   });
 
   test("says every participant has responded when there are no reminders to export", async () => {
@@ -283,7 +275,9 @@ describe("resourceProgramStatus", () => {
     await clickExportWithInvites(component, "Export reminders", { emailHtml: "", invites: [], unmatchedCount: 0 });
 
     expect(downloadFile).not.toHaveBeenCalled();
-    expect(getNotificationTitles()).toContain("Every participant has responded, so there are no reminders to export");
+    expect(getNotificationTitles()).toStrictEqual([
+      "Every participant has responded, so there are no reminders to export",
+    ]);
   });
 
   // A participant past the audience read's cap has no row to fill, so the file is named as short rather than sent
@@ -332,6 +326,6 @@ describe("resourceProgramStatus", () => {
     });
 
     expect(downloadFile).toHaveBeenCalledTimes(1);
-    expect(getNotificationTitles()).toContain("1 reminder ready");
+    expect(getNotificationTitles()).toStrictEqual(["1 reminder ready"]);
   });
 });

@@ -18,12 +18,9 @@ describe("resourceSurveyCreatorMultipleTextItemsEditor", () => {
     wrapper.findComponent(UiSelect).vm.$emit("update:modelValue", SurveyMultipleTextItemInputType.Email);
     await wrapper.vm.$nextTick();
 
-    expect(wrapper.emitted("update:modelValue")).toHaveLength(2);
-    expect(wrapper.emitted("update:modelValue")?.[0]).toStrictEqual([
-      [{ inputType: SurveyMultipleTextItemInputType.Text, isRequired: false, name: "Email", title: "Email" }],
-    ]);
-    expect(wrapper.emitted("update:modelValue")?.[1]).toStrictEqual([
-      [{ inputType: SurveyMultipleTextItemInputType.Email, isRequired: false, name: "Email", title: "Email" }],
+    expect(wrapper.emitted("update:modelValue")).toStrictEqual([
+      [[{ inputType: SurveyMultipleTextItemInputType.Text, isRequired: false, name: "Email", title: "Email" }]],
+      [[{ inputType: SurveyMultipleTextItemInputType.Email, isRequired: false, name: "Email", title: "Email" }]],
     ]);
   });
 });

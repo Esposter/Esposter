@@ -126,7 +126,7 @@ describe("resourceSurveyCreatorPalette", () => {
     );
   });
 
-  test("a kind no slot accepts here is absent", async () => {
+  test("a survey with no page has no kind to offer at its top level", async () => {
     expect.hasAssertions();
 
     const surveyCreatorStore = useSurveyCreatorStore();

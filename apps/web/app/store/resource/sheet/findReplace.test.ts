@@ -33,7 +33,7 @@ describe(useFindReplaceStore, () => {
   });
 
   // Reset by the write rather than by a watch on the value, which a switch away and back also changes
-  test("keeps a search on its occurrence across a switch to another sheet and back", async () => {
+  test("keeps a search's occurrence across a switch to another sheet and back, and resets it when the search is written again", async () => {
     expect.hasAssertions();
 
     setupWithDataSource(createDataSource([createColumn("")], [createRow({ "": 0 }), createRow({ "": 0 })]));

@@ -36,7 +36,7 @@ describe("resourceProgramSetup", () => {
     await useReadOpenResource().readResource();
   });
 
-  test("warns under the survey selector when its responses cannot be matched to participants", async () => {
+  test("warns that an anonymous survey's responses cannot be matched to participants", async () => {
     expect.hasAssertions();
 
     const component = await mountSuspended(ResourceProgramSetup, { route: RoutePath.Resource(resourceId) });

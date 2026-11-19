@@ -686,7 +686,7 @@ describe(useResourceStore, () => {
     saveContent(createDefaultSheetResource(), rollback);
     await settleSave();
 
-    expect(rollback).toHaveBeenCalledTimes(1);
+    expect(rollback).toHaveBeenCalledExactlyOnceWith();
     expect(notificationStore.notifications.map(({ action }) => action?.title)).toStrictEqual(["Refresh"]);
   });
 

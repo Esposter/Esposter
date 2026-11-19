@@ -44,11 +44,13 @@ describe("resourceTodoListItems", () => {
     const wrapper = await mountSuspended(ResourceTodoListItems);
     await wrapper.get(`[aria-label="${itemName}"]`).trigger("click");
     await flushPromises();
-    const completedList = wrapper.find('[aria-label="Completed todos"]');
-    const isCompletedListed = completedList.exists() && completedList.text().includes(itemName);
+    const completedNames = wrapper
+      .get('[aria-label="Completed todos"]')
+      .findAll(`[aria-label="${itemName}"]`)
+      .map((row) => row.attributes("aria-label"));
     resolve(createResource(1));
     await flushPromises();
 
-    expect(isCompletedListed).toBe(true);
+    expect(completedNames).toStrictEqual([itemName]);
   });
 });

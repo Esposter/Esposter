@@ -42,7 +42,7 @@ describe("resourceSheetImportDatasetDialog", () => {
     expect(wrapper.emitted("update:modelValue")).toBeUndefined();
   });
 
-  test("draws its actions in the footer beneath the survey choice", async () => {
+  test("draws its actions in the footer", async () => {
     expect.hasAssertions();
 
     const wrapper = await mountSuspended(ResourceSheetImportDatasetDialog, { props: { modelValue: true } });

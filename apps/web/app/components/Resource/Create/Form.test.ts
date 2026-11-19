@@ -25,7 +25,7 @@ describe("resourceCreateForm", () => {
     Object.assign(useRouter().currentRoute.value.params, { id: resourceId });
   });
 
-  test("a Whiteboard is created from the create flow", async () => {
+  test("creating a Whiteboard navigates to it, which opens an empty canvas", async () => {
     expect.hasAssertions();
 
     trpcMsw.whiteboard.createResource.mutation(() =>

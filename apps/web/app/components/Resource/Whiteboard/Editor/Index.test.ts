@@ -11,6 +11,7 @@ import ResourceWhiteboardEditorPropertiesArrow from "#src/components/Resource/Wh
 import UiConfirmDialog from "#src/components/Ui/ConfirmDialog.vue";
 import UiPalette from "#src/components/Ui/Palette/Index.vue";
 import { useReadOpenResource } from "#src/composables/resource/useReadOpenResource";
+import { getSha256Hex } from "#src/services/shared/getSha256Hex";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { pressKey, WHITEBOARD_ARROW, WHITEBOARD_PROCESS } from "#src/services/whiteboard/constants.test";
 import { WHITEBOARD_DUPLICATE_OFFSET } from "#src/services/whiteboard/edit/constants";
@@ -405,9 +406,8 @@ describe("resourceWhiteboardEditor", () => {
     await sendPointer(canvas, "pointermove", { x: 20, y: 10 });
     await sendPointer(canvas, "pointermove", { x: 20, y: 20 });
     await sendPointer(canvas, "pointerup", { x: 30, y: 30 });
-    const [stroke] = whiteboard.value.elements;
 
-    expect(stroke?.type).toBe(PositionedElementType.Stroke);
+    expect(whiteboard.value.elements.map(({ type }) => type)).toStrictEqual([PositionedElementType.Stroke]);
   });
 
   test("a whiteboard with content opens fitted to the canvas, once", async () => {
@@ -494,6 +494,7 @@ describe("resourceWhiteboardEditor", () => {
       click.mockRestore();
     });
     const file = new File(["a"], "a", { type: MimeType.Png });
+    const fileId = await getSha256Hex(new Uint8Array(await file.arrayBuffer()));
     // The file's bytes are hashed before the upload, a step a flush does not outlast, so the test awaits the upload itself
     const { promise: isUploaded, resolve: onUploaded } = Promise.withResolvers<void>();
     uploadResourceFileMock.mockImplementationOnce(() => {
@@ -508,8 +509,8 @@ describe("resourceWhiteboardEditor", () => {
     await input.trigger("change");
     await isUploaded;
 
-    expect(click).toHaveBeenCalledTimes(1);
-    expect(uploadResourceFileMock).toHaveBeenCalledTimes(1);
+    expect(click).toHaveBeenCalledExactlyOnceWith();
+    expect(uploadResourceFileMock).toHaveBeenCalledExactlyOnceWith(file, fileId);
   });
 
   test("undo and redo are buttons beside zoom", async () => {
@@ -577,7 +578,7 @@ describe("resourceWhiteboardEditor", () => {
 
     // A bottom bar is drawn after the canvas and outside it, where a region over the canvas sits inside it
     expect(canvas.element.contains(tools.element)).toBe(false);
-    expect(canvas.element.compareDocumentPosition(tools.element) & Node.DOCUMENT_POSITION_FOLLOWING).not.toBe(0);
+    expect(canvas.element.compareDocumentPosition(tools.element)).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
   });
 
   test("the first element cannot be sent further back", async () => {

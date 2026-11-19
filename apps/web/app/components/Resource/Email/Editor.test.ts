@@ -40,7 +40,7 @@ describe("resourceEmailEditor", () => {
     await readResource();
   });
 
-  test("a validation message is a finding in Design", async () => {
+  test("a strict validation message is counted as one problem", async () => {
     expect.hasAssertions();
 
     trpcMsw.email.compile.mutation(() => ({ message, messages: [{ level: EmailValidationLevel.Strict, message }] }));
@@ -62,7 +62,7 @@ describe("resourceEmailEditor", () => {
     expect(component.text()).toContain("Select a block on the canvas");
   });
 
-  test("a link finding is a warning in the problems surface", async () => {
+  test("a link finding on a button is counted as one problem", async () => {
     expect.hasAssertions();
 
     trpcMsw.email.compile.mutation(() => ({ html }));
@@ -77,7 +77,7 @@ describe("resourceEmailEditor", () => {
     expect(component.find('[aria-label="Problems: 1"]').exists()).toBe(true);
   });
 
-  test("the device toggle applies to both modes", async () => {
+  test("a mobile device sizes the preview frame to the mobile width", async () => {
     expect.hasAssertions();
 
     trpcMsw.email.compile.mutation(() => ({ html }));

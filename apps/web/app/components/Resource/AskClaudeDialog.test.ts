@@ -6,7 +6,7 @@ import { getAssistantPrompt } from "#src/services/resource/getAssistantPrompt";
 import { McpScope } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
-import { afterEach, describe, expect, test } from "vitest";
+import { afterEach, assert, describe, expect, test } from "vitest";
 
 describe("resourceAskClaudeDialog", () => {
   afterEach(() => {
@@ -35,7 +35,7 @@ describe("resourceAskClaudeDialog", () => {
     await mountSuspended(ResourceAskClaudeDialog, { attachTo: document.body, props: { modelValue: true, resource } });
     await flushPromises();
     const input = document.body.querySelector("input");
-    if (!input) throw new Error(" ");
+    assert.exists(input);
 
     expect(document.body.querySelector("code")).toBeNull();
 

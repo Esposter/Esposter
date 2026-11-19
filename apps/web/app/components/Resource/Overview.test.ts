@@ -13,7 +13,7 @@ describe("resourceOverview", () => {
 
   // The blade mounts only over a resource already read, so a Refresh re-reads with its essentials in hand — a
   // Skeleton over them hides what the reader was just looking at for the length of a round trip
-  test("keeps the essentials on screen while the resource is re-read", async () => {
+  test("draws no skeleton over the essentials while the resource is re-read", async () => {
     expect.hasAssertions();
 
     const wrapper = await mountSuspended(ResourceOverview, {

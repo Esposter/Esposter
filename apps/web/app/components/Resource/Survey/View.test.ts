@@ -3,7 +3,9 @@ import type { useSurveyResponse } from "#src/composables/survey/useSurveyRespons
 
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
 import { DEFAULT_COMPLETED_MESSAGE, INVITE_ONLY_MESSAGE } from "#shared/services/resource/survey/constants";
+import ResourceSurveyRunner from "#src/components/Resource/Survey/Runner.vue";
 import ResourceSurveyView from "#src/components/Resource/Survey/View.vue";
+import UiEmptyState from "#src/components/Ui/EmptyState.vue";
 import { createSurveyTestDocument } from "#src/services/survey/createSurveyTestDocument.test";
 import { createSurveyTestPage } from "#src/services/survey/createSurveyTestPage.test";
 import { createSurveyTestQuestion } from "#src/services/survey/createSurveyTestQuestion.test";
@@ -12,7 +14,7 @@ import { SurveyResponseMode } from "@esposter/db-schema";
 import { mockNuxtImport, mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 import { surveyRootPropsSchema } from "vue-survey-engine-headless";
 
 const { clearSurveyResponseIdMock, saveSurveyResponseMock } = vi.hoisted(() => ({
@@ -47,10 +49,6 @@ describe("resourceSurveyView", () => {
     }));
   };
 
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
   test("shows the closed message when the survey is not accepting responses", async () => {
     expect.hasAssertions();
 
@@ -58,7 +56,7 @@ describe("resourceSurveyView", () => {
     const component = await mountSuspended(ResourceSurveyView, { props: { id } });
     await flushPromises();
 
-    expect(component.text()).toContain("b");
+    expect(component.findComponent(UiEmptyState).props("description")).toBe("b");
   });
 
   test("asks for the personal link when the survey is open to invited participants only", async () => {
@@ -68,7 +66,7 @@ describe("resourceSurveyView", () => {
     const component = await mountSuspended(ResourceSurveyView, { props: { id } });
     await flushPromises();
 
-    expect(component.text()).toContain(INVITE_ONLY_MESSAGE);
+    expect(component.findComponent(UiEmptyState).props("description")).toBe(INVITE_ONLY_MESSAGE);
   });
 
   test("thanks the respondent after a submit that persisted", async () => {
@@ -81,8 +79,8 @@ describe("resourceSurveyView", () => {
     await component.get("button").trigger("click");
     await flushPromises();
 
-    expect(component.text()).toContain(DEFAULT_COMPLETED_MESSAGE);
-    expect(clearSurveyResponseIdMock).toHaveBeenCalledTimes(1);
+    expect(component.get("p").text()).toBe(DEFAULT_COMPLETED_MESSAGE);
+    expect(clearSurveyResponseIdMock).toHaveBeenCalledExactlyOnceWith();
   });
 
   test("does not thank the respondent after a submit that did not persist", async () => {
@@ -95,7 +93,7 @@ describe("resourceSurveyView", () => {
     await component.get("button").trigger("click");
     await flushPromises();
 
-    expect(component.text()).not.toContain(DEFAULT_COMPLETED_MESSAGE);
+    expect(component.findComponent(ResourceSurveyRunner).exists()).toBe(true);
     expect(component.find('[role="alert"]').exists()).toBe(true);
     expect(clearSurveyResponseIdMock).not.toHaveBeenCalled();
   });

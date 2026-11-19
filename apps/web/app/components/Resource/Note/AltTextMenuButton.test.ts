@@ -29,7 +29,6 @@ describe("resourceNoteAltTextMenuButton", () => {
     await wrapper.get("input").setValue(alt);
     await wrapper.get("form").trigger("submit");
 
-    expect(editor.getJSON().content?.[0]?.attrs?.alt).toBe(alt);
     // The editor keeps an empty paragraph after the image, and the published copy keeps it too
     expect(renderNoteHtml(editor.getJSON())).toBe(`<img src="${assetUrl}" alt="${alt}"><p></p>`);
   });

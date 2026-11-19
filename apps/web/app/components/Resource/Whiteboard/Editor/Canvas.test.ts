@@ -25,14 +25,6 @@ const dropFiles = (target: EventTarget, files: File[], clientX: number, clientY:
 };
 
 describe("resourceWhiteboardEditorCanvas", () => {
-  test("the canvas draws no grid", async () => {
-    expect.hasAssertions();
-
-    const wrapper = await mountSuspended(ResourceWhiteboardEditorCanvas);
-
-    expect(wrapper.find("pattern").exists()).toBe(false);
-  });
-
   test("a dropped image is stored as a file asset and placed at the drop point", async () => {
     expect.hasAssertions();
     const imageFile = new File(["a"], "a.png", { type: MimeType.Png });

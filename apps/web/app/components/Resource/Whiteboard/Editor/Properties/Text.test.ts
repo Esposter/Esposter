@@ -40,7 +40,7 @@ describe("resourceWhiteboardEditorPropertiesText", () => {
     y: 0,
   };
 
-  test("a larger size draws and wraps the text larger", async () => {
+  test("choosing a larger size sets the element's text size", async () => {
     expect.hasAssertions();
 
     const whiteboardStore = useWhiteboardStore();
@@ -134,8 +134,6 @@ describe("resourceWhiteboardEditorPropertiesText", () => {
     });
     const labels = wrapper.findAll("button").map((button) => button.text());
 
-    expect(labels).toContain("XL");
-    expect(labels).not.toContain("Left");
-    expect(labels).not.toContain("Top");
+    expect(labels).toStrictEqual(["S", "M", "L", "XL"]);
   });
 });

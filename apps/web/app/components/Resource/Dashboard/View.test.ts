@@ -47,7 +47,7 @@ describe("resourceDashboardView", () => {
   });
 
   // A viewer reads the visuals and exports the page, and no control to edit the dashboard is drawn
-  test("viewing a published dashboard", async () => {
+  test("a viewer of a published dashboard gets its tiles and Export PNG, but no visual menu", async () => {
     expect.hasAssertions();
 
     mockPublishedDashboard(new Dashboard({ visuals: [new Visual({ h: 2, type: VisualType.Card, w: 2, x: 0, y: 0 })] }));

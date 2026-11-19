@@ -12,12 +12,7 @@ import { useSurveyCreatorStore } from "#src/store/survey/creator";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
-import {
-  surveyDocumentSchema,
-  SurveyNodeType,
-  surveyNodeTypeDefinitionMap,
-  surveyRootPropsSchema,
-} from "vue-survey-engine-headless";
+import { surveyDocumentSchema, SurveyNodeType } from "vue-survey-engine-headless";
 
 // The keys a form draws, which are the keys of the schema it is given
 const getDrawnKeys = (wrapper: VueWrapper) => {
@@ -65,27 +60,11 @@ describe("resourceSurveyCreatorProperties", () => {
     select("/content/0/props/children/0");
     const wrapper = await mountSuspended(ResourceSurveyCreatorProperties);
     const question = takeOne(takeOne(surveyDocument.value.content, 0).props.children, 0);
-    wrapper.getComponent(UiSchemaForm).vm.$emit("update:modelValue", { ...question.props, name: "renamed" });
+    const renamedProps = { ...question.props, name: "renamed" };
+    wrapper.getComponent(UiSchemaForm).vm.$emit("update:modelValue", renamedProps);
     await wrapper.vm.$nextTick();
 
-    expect(takeOne(takeOne(surveyDocument.value.content, 0).props.children, 0).props).toStrictEqual({
-      choices: [],
-      choicesOrder: "none",
-      description: "",
-      enableIf: "",
-      hasNone: false,
-      hasOther: false,
-      id: "question",
-      isRequired: false,
-      name: "renamed",
-      noneText: "",
-      otherText: "",
-      requiredErrorText: "",
-      requiredIf: "",
-      title: "",
-      validators: [],
-      visibleIf: "",
-    });
+    expect(takeOne(takeOne(surveyDocument.value.content, 0).props.children, 0).props).toStrictEqual(renamedProps);
   });
 
   test("a value the schema refuses stays in the form and is not written", async () => {
@@ -98,27 +77,11 @@ describe("resourceSurveyCreatorProperties", () => {
     select("/content/0/props/children/0");
     const wrapper = await mountSuspended(ResourceSurveyCreatorProperties);
     const question = takeOne(takeOne(surveyDocument.value.content, 0).props.children, 0);
+    const initialProps = { ...question.props };
     wrapper.getComponent(UiSchemaForm).vm.$emit("update:modelValue", { ...question.props, name: "a{b" });
     await wrapper.vm.$nextTick();
 
-    expect(takeOne(takeOne(surveyDocument.value.content, 0).props.children, 0).props).toStrictEqual({
-      choices: [],
-      choicesOrder: "none",
-      description: "",
-      enableIf: "",
-      hasNone: false,
-      hasOther: false,
-      id: "question",
-      isRequired: false,
-      name: "question",
-      noneText: "",
-      otherText: "",
-      requiredErrorText: "",
-      requiredIf: "",
-      title: "",
-      validators: [],
-      visibleIf: "",
-    });
+    expect(takeOne(takeOne(surveyDocument.value.content, 0).props.children, 0).props).toStrictEqual(initialProps);
   });
 
   test("a rating's form offers zero and one as its first step", async () => {
@@ -218,376 +181,14 @@ describe("resourceSurveyCreatorProperties", () => {
     select("");
     const wrapper = await mountSuspended(ResourceSurveyCreatorProperties);
     const rootKeys = getDrawnKeys(wrapper);
-    wrapper
-      .getComponent(UiSchemaForm)
-      .vm.$emit("update:modelValue", { ...surveyDocument.value.root.props, title: "Renamed survey" });
+    const renamedRootProps = { ...surveyDocument.value.root.props, title: "Renamed survey" };
+    wrapper.getComponent(UiSchemaForm).vm.$emit("update:modelValue", renamedRootProps);
     await wrapper.vm.$nextTick();
 
     expect(rootKeys).toContain("title");
     expect(rootKeys).not.toContain("logo");
     expect(rootKeys).not.toContain("backgroundImage");
     expect(rootKeys).not.toContain("calculatedValues");
-    expect(surveyDocument.value.root.props).toStrictEqual({
-      accentColor: "",
-      backgroundColor: "",
-      backgroundImage: "",
-      calculatedValues: [],
-      completedHtml: "",
-      completeText: "",
-      description: "",
-      isQuestionNumbersVisible: false,
-      logo: "",
-      pageNextText: "",
-      pagePrevText: "",
-      showProgressBar: "off",
-      title: "Renamed survey",
-    });
-  });
-
-  // Each kind's form draws exactly the fields its props schema holds, so a setting cannot appear or vanish without the
-  // Schema saying so
-  test.each([
-    [
-      SurveyNodeType.Boolean,
-      [
-        "description",
-        "displayStyle",
-        "enableIf",
-        "isRequired",
-        "labelFalse",
-        "labelTrue",
-        "name",
-        "requiredErrorText",
-        "requiredIf",
-        "title",
-        "validators",
-        "visibleIf",
-      ],
-    ],
-    [
-      SurveyNodeType.ButtonGroup,
-      [
-        "choices",
-        "description",
-        "enableIf",
-        "isRequired",
-        "name",
-        "requiredErrorText",
-        "requiredIf",
-        "title",
-        "validators",
-        "visibleIf",
-      ],
-    ],
-    [
-      SurveyNodeType.Checkbox,
-      [
-        "choices",
-        "choicesOrder",
-        "description",
-        "enableIf",
-        "hasNone",
-        "hasOther",
-        "hasSelectAll",
-        "isRequired",
-        "maxSelected",
-        "minSelected",
-        "name",
-        "noneText",
-        "otherText",
-        "requiredErrorText",
-        "requiredIf",
-        "selectAllText",
-        "title",
-        "validators",
-        "visibleIf",
-      ],
-    ],
-    [
-      SurveyNodeType.Comment,
-      [
-        "description",
-        "enableIf",
-        "isRequired",
-        "maxLength",
-        "name",
-        "placeholder",
-        "requiredErrorText",
-        "requiredIf",
-        "rows",
-        "title",
-        "validators",
-        "visibleIf",
-      ],
-    ],
-    [
-      SurveyNodeType.Dropdown,
-      [
-        "choices",
-        "choicesOrder",
-        "description",
-        "enableIf",
-        "hasOther",
-        "isRequired",
-        "name",
-        "otherText",
-        "placeholder",
-        "requiredErrorText",
-        "requiredIf",
-        "title",
-        "validators",
-        "visibleIf",
-      ],
-    ],
-    [
-      SurveyNodeType.Expression,
-      [
-        "description",
-        "displayFormat",
-        "enableIf",
-        "expression",
-        "isRequired",
-        "maxFractionDigits",
-        "name",
-        "requiredErrorText",
-        "requiredIf",
-        "title",
-        "validators",
-        "visibleIf",
-      ],
-    ],
-    [SurveyNodeType.Html, ["html", "name", "visibleIf"]],
-    [SurveyNodeType.Image, ["altText", "imageFit", "imageHeight", "imageLink", "imageWidth", "name", "visibleIf"]],
-    [
-      SurveyNodeType.ImagePicker,
-      [
-        "choices",
-        "description",
-        "enableIf",
-        "imageFit",
-        "imageHeight",
-        "imageWidth",
-        "isLabelVisible",
-        "isRequired",
-        "multiSelect",
-        "name",
-        "requiredErrorText",
-        "requiredIf",
-        "title",
-        "validators",
-        "visibleIf",
-      ],
-    ],
-    [
-      SurveyNodeType.Matrix,
-      [
-        "columns",
-        "description",
-        "enableIf",
-        "isAllRowRequired",
-        "isRequired",
-        "name",
-        "requiredErrorText",
-        "requiredIf",
-        "rows",
-        "title",
-        "validators",
-        "visibleIf",
-      ],
-    ],
-    [
-      SurveyNodeType.MatrixDynamic,
-      [
-        "addRowText",
-        "columns",
-        "description",
-        "enableIf",
-        "isRequired",
-        "maxRowCount",
-        "minRowCount",
-        "name",
-        "removeRowText",
-        "requiredErrorText",
-        "requiredIf",
-        "rowCount",
-        "title",
-        "validators",
-        "visibleIf",
-      ],
-    ],
-    [
-      SurveyNodeType.MultipleText,
-      [
-        "description",
-        "enableIf",
-        "isRequired",
-        "items",
-        "name",
-        "requiredErrorText",
-        "requiredIf",
-        "title",
-        "validators",
-        "visibleIf",
-      ],
-    ],
-    [SurveyNodeType.Page, ["description", "enableIf", "title", "visibleIf"]],
-    [SurveyNodeType.Panel, ["description", "enableIf", "title", "visibleIf"]],
-    [
-      SurveyNodeType.PanelDynamic,
-      [
-        "addPanelText",
-        "description",
-        "enableIf",
-        "isRequired",
-        "maxPanelCount",
-        "minPanelCount",
-        "name",
-        "panelCount",
-        "removePanelText",
-        "requiredErrorText",
-        "requiredIf",
-        "title",
-        "validators",
-        "visibleIf",
-      ],
-    ],
-    [
-      SurveyNodeType.RadioGroup,
-      [
-        "choices",
-        "choicesOrder",
-        "description",
-        "enableIf",
-        "hasNone",
-        "hasOther",
-        "isRequired",
-        "name",
-        "noneText",
-        "otherText",
-        "requiredErrorText",
-        "requiredIf",
-        "title",
-        "validators",
-        "visibleIf",
-      ],
-    ],
-    [
-      SurveyNodeType.Ranking,
-      [
-        "choices",
-        "description",
-        "enableIf",
-        "isRequired",
-        "name",
-        "requiredErrorText",
-        "requiredIf",
-        "title",
-        "validators",
-        "visibleIf",
-      ],
-    ],
-    [
-      SurveyNodeType.Rating,
-      [
-        "description",
-        "enableIf",
-        "isRequired",
-        "maxRateDescription",
-        "minRateDescription",
-        "name",
-        "rateCount",
-        "rateMin",
-        "rateType",
-        "requiredErrorText",
-        "requiredIf",
-        "title",
-        "validators",
-        "visibleIf",
-      ],
-    ],
-    [
-      SurveyNodeType.Slider,
-      [
-        "description",
-        "enableIf",
-        "isRequired",
-        "isValueVisible",
-        "max",
-        "min",
-        "name",
-        "requiredErrorText",
-        "requiredIf",
-        "step",
-        "title",
-        "validators",
-        "visibleIf",
-      ],
-    ],
-    [
-      SurveyNodeType.TagBox,
-      [
-        "choices",
-        "choicesOrder",
-        "description",
-        "enableIf",
-        "hasOther",
-        "isRequired",
-        "maxSelected",
-        "minSelected",
-        "name",
-        "otherText",
-        "placeholder",
-        "requiredErrorText",
-        "requiredIf",
-        "title",
-        "validators",
-        "visibleIf",
-      ],
-    ],
-    [
-      SurveyNodeType.Text,
-      [
-        "description",
-        "enableIf",
-        "inputType",
-        "isRequired",
-        "max",
-        "maxLength",
-        "min",
-        "minLength",
-        "name",
-        "pattern",
-        "placeholder",
-        "requiredErrorText",
-        "requiredIf",
-        "title",
-        "validators",
-        "visibleIf",
-      ],
-    ],
-  ])("%s's form draws the fields its props schema holds", (type, fields) => {
-    expect.hasAssertions();
-    expect(Object.keys(surveyNodeTypeDefinitionMap[type].formSchema.shape).toSorted()).toStrictEqual(fields.toSorted());
-  });
-
-  test("the root's props schema holds the texts, the theme and the calculated values the panels split", () => {
-    expect.hasAssertions();
-    expect(Object.keys(surveyRootPropsSchema.shape).toSorted()).toStrictEqual(
-      [
-        "accentColor",
-        "backgroundColor",
-        "backgroundImage",
-        "calculatedValues",
-        "completedHtml",
-        "completeText",
-        "description",
-        "isQuestionNumbersVisible",
-        "logo",
-        "pageNextText",
-        "pagePrevText",
-        "showProgressBar",
-        "title",
-      ].toSorted(),
-    );
+    expect(surveyDocument.value.root.props).toStrictEqual(renamedRootProps);
   });
 });

@@ -4,7 +4,10 @@ import type { SurveyDocument } from "vue-survey-engine-headless";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
+import ResourceSurveyResponseSummaryCard from "#src/components/Resource/Survey/Response/SummaryCard.vue";
 import ResourceSurveyResponses from "#src/components/Resource/Survey/Responses.vue";
+import UiEmptyState from "#src/components/Ui/EmptyState.vue";
+import UiErrorState from "#src/components/Ui/ErrorState.vue";
 import { useSession } from "#src/services/auth/authClient.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { SurveyResponseMode } from "@esposter/db-schema";
@@ -69,7 +72,7 @@ describe("resourceSurveyResponses", () => {
     trpcMsw.survey.readSurveyResponseRecords.query(() => ({ columns: records.columns, rows: [], totalRows: 0 }));
     const component = await mountSuspended(ResourceSurveyResponses, { route: RoutePath.Resource(surveyId) });
 
-    expect(component.text()).toContain("No responses yet");
+    expect(component.findComponent(UiEmptyState).props("title")).toBe("No responses yet");
   });
 
   test("summarises each question the responses answer", async () => {
@@ -77,8 +80,10 @@ describe("resourceSurveyResponses", () => {
 
     const component = await mountSuspended(ResourceSurveyResponses, { route: RoutePath.Resource(surveyId) });
 
-    expect(component.text()).toContain(question);
-    expect(component.text()).not.toContain("No responses yet");
+    const cards = component.findAllComponents(ResourceSurveyResponseSummaryCard);
+
+    expect(cards.map((card) => card.props("card").title)).toStrictEqual([question]);
+    expect(component.findComponent(UiEmptyState).exists()).toBe(false);
   });
 
   // The survey is read only for the summary, so a survey that cannot be read leaves the responses to the Individual view
@@ -91,11 +96,13 @@ describe("resourceSurveyResponses", () => {
     const component = await mountSuspended(ResourceSurveyResponses, { route: RoutePath.Resource(surveyId) });
     const individualTab = component.findAll('[role="tab"]').find((tab) => tab.text() === "Individual");
     assert.exists(individualTab);
-    expect(component.text()).toContain("Survey unavailable");
+    expect(component.findComponent(UiErrorState).props("error")).toBe("Survey unavailable");
     await individualTab.trigger("click");
     await flushPromises();
 
-    expect(component.text()).toContain("Teal");
+    const cellTexts = component.findAll("td").map((cell) => cell.text());
+
+    expect(cellTexts).toStrictEqual(["Teal", "Response actionsView response Delete response"]);
   });
 
   // A question named like the actions column is a column of answers, so it keeps its own cells and gets no menu of its own
@@ -113,6 +120,8 @@ describe("resourceSurveyResponses", () => {
     await individualTab.trigger("click");
     await flushPromises();
 
-    expect(component.findAll("td").map((cell) => cell.text())).toContain("Teal");
+    const cellTexts = component.findAll("td").map((cell) => cell.text());
+
+    expect(cellTexts).toStrictEqual(["Teal", "Response actionsView response Delete response"]);
   });
 });

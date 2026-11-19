@@ -10,7 +10,7 @@ import { describe, expect, test } from "vitest";
 
 describe("resourceBladeHeader", () => {
   // Every type's blade shares this header, so Ask Claude is offered in every type's editor, in the toolbar and the palette
-  test.each(Object.values(ResourceType))("ask Claude is available in the %s editor", async (type) => {
+  test.each(Object.values(ResourceType))("offers Ask Claude in the %s blade header and palette", async (type) => {
     expect.hasAssertions();
 
     const group = ResourceDefinitionMap[type].title;

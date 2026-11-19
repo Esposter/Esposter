@@ -7,7 +7,7 @@ import { describe, expect, test } from "vitest";
 import { surveyDocumentSchema, SurveyNodeType } from "vue-survey-engine-headless";
 
 describe("resourceSurveyCreatorToolbar", () => {
-  test("undo and redo are disabled until an edit gives them something to act on", async () => {
+  test("undo and redo are disabled on a freshly loaded survey", async () => {
     expect.hasAssertions();
 
     const surveyCreatorStore = useSurveyCreatorStore();
