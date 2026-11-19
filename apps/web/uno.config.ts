@@ -309,8 +309,6 @@ export default defineConfig({
     // Resource — rather than a row of a list or a menu. A frame, padded, that takes the style's hover as a button does
     "ui-card":
       "p-3 text-left cursor-pointer ui-frame hover:[filter:var(--ui-hover-filter)] hover:[background-image:var(--ui-hover-overlay)]",
-    // The scrolling list of a popover's items, lifted off the popover and held to the upper part of the screen at most
-    "ui-popover-list": "max-h-[40dvh] py-1 flex flex-col overflow-y-auto ui-lifted",
     // A guide line down the start edge of what it holds — a navigation's nested list, a thread — as a divider
     "ui-guide": "shadow-[inset_var(--ui-border-width)_0_0_0_var(--ui-divider)]",
     // The open trigger of a collapsible that heads a sector, drawn as a selected header tab is: in the full text colour under a heavier indicator
@@ -320,6 +318,8 @@ export default defineConfig({
     // Current or focused one. A focused row rings as `ui-row` does. Under a finger, eleven steps tall, as a button is
     "ui-item":
       "ui-row [@media(pointer:coarse)]:min-h-11 cursor-pointer hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] aria-selected:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] aria-[current=page]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] aria-[current=true]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] data-[highlighted]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)]",
+    // The scrolling list of a popover's items, lifted off the popover and held to the upper part of the screen at most
+    "ui-popover-list": "max-h-[40dvh] py-1 flex flex-col overflow-y-auto ui-lifted",
     // The body of a dialog or a popover's panel: a column of its content, and the one region that scrolls once it
     // Is taller than the frame or panel holding it. Its flex column shrinks it to the room under the title bar and above
     // The footer, so a short body keeps its content's height and a long one scrolls inside its own edges. The padding is not here:
