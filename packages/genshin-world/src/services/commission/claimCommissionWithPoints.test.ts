@@ -170,4 +170,35 @@ describe(claimCommissionWithPoints, () => {
       }),
     ).toBeUndefined();
   });
+
+  test("a claim past the day's four is refused", () => {
+    expect.hasAssertions();
+
+    const claimedDay: CommissionDay = {
+      claimedCommissionIds: [1, 2, 3, 4],
+      dealtAt: NOW,
+      dealtCommissions: [1, 2, 3, 4].map((commissionId) => ({
+        commissionId,
+        count: FINISH_PROGRESS,
+        dealtRank: DEALT_RANK,
+      })),
+      isBonusClaimed: false,
+    };
+    const slice: CommissionSlice = {
+      ...createSlice(moraBands),
+      tasks: [1, 2, 3, 4, 5].map((id) =>
+        createCommission(id, { finishProgress: FINISH_PROGRESS, nameTextId: NAME_TEXT_ID, rewardTier: REWARD_TIER }),
+      ),
+    };
+
+    expect(
+      claimCommissionWithPoints({
+        ...base,
+        commissionDay: claimedDay,
+        commissionId: 5,
+        encounterPoints: createPoints(4),
+        slice,
+      }),
+    ).toBeUndefined();
+  });
 });

@@ -75,8 +75,8 @@ describe(useWorldCommissions, () => {
     };
   };
 
-  // The four unfinished commissions of a kept day, with one whole Encounter Point held, read as the world opens at the given rank
-  const useUnfinishedDay = (rank: number) => {
+  // The four unfinished commissions of a kept day, with the given half points held, read at the given rank
+  const useUnfinishedDay = (rank: number, halfPoints = 2) => {
     const { getWorldNow, worldNow } = createWorldClock(afterReset);
     startTestWorldSession({ getWorldNow, worldNow });
     startTestAdventureRank(rank);
@@ -89,7 +89,7 @@ describe(useWorldCommissions, () => {
         dealtCommissions: [2, 3, 4, 5].map((commissionId) => ({ commissionId, count: 0, dealtRank: RANK })),
         isBonusClaimed: false,
       },
-      savedEncounterPoints: { earnedOn: todayReset, halfPoints: 2 },
+      savedEncounterPoints: { earnedOn: todayReset, halfPoints },
     });
   };
 
@@ -168,7 +168,7 @@ describe(useWorldCommissions, () => {
     expect(encounterPoints.value.halfPoints).toBe(1);
   });
 
-  test("an item the wiki does not list earns none", () => {
+  test("a collected Mnemonic Cluster earns none", () => {
     expect.hasAssertions();
     const { encounterPoints, events } = useAfterReset();
     events.emit("gatheringPickedUp", "107033");
@@ -189,7 +189,7 @@ describe(useWorldCommissions, () => {
     expect(encounterPoints.value.halfPoints).toBe(1);
   });
 
-  test("the Commissions tab offers no point claim below Adventure Rank 24", async () => {
+  test("the panel is hidden below Adventure Rank 24", async () => {
     expect.hasAssertions();
     const { handbookDayCommissions, isAdventureEncountersUnlocked } = useUnfinishedDay(23);
     await flushReads();
@@ -208,5 +208,16 @@ describe(useWorldCommissions, () => {
     await flushReads();
     expect(isAdventureEncountersUnlocked.value).toBe(true);
     expect(handbookDayCommissions.value.map(({ isClaimable }) => isClaimable)).toStrictEqual([true, true, true, true]);
+  });
+
+  test("the panel shows the daily points held at Adventure Rank 24", async () => {
+    expect.hasAssertions();
+    const { encounterPointLimit, isAdventureEncountersUnlocked, wholeEncounterPoints, wholeLongTermEncounterPoints } =
+      useUnfinishedDay(24, 4);
+    await flushReads();
+    expect(isAdventureEncountersUnlocked.value).toBe(true);
+    expect(wholeEncounterPoints.value).toBe(2);
+    expect(encounterPointLimit.value).toBe(4);
+    expect(wholeLongTermEncounterPoints.value).toBe(0);
   });
 });
