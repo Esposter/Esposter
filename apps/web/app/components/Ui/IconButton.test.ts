@@ -7,7 +7,7 @@ import { mount } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 
 describe("uiIconButton", () => {
-  test("draws its shortcut in its tooltip, beside its label", () => {
+  test("draws its shortcut in capitals inside its tooltip", () => {
     expect.hasAssertions();
 
     const label = "label";

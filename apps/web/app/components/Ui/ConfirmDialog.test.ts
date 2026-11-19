@@ -86,7 +86,7 @@ describe("uiConfirmDialog", () => {
 
       const { component, confirm } = await mountAnswering();
 
-      expect(confirm).toHaveBeenCalledTimes(1);
+      expect(confirm).toHaveBeenCalledExactlyOnceWith();
       expect(component.emitted("update:modelValue")).toStrictEqual([[false]]);
     });
 
@@ -100,7 +100,7 @@ describe("uiConfirmDialog", () => {
       confirmButton.click();
       confirmButton.click();
 
-      expect(confirm).toHaveBeenCalledTimes(1);
+      expect(confirm).toHaveBeenCalledExactlyOnceWith();
     });
 
     test("holds a guarded answer until the name is typed", async () => {

@@ -87,7 +87,7 @@ describe("uiPopover", () => {
       await flushPromises();
 
       expect(component.emitted("update:isOpen")).toBeUndefined();
-      expect(showPopover).toHaveBeenCalledTimes(1);
+      expect(showPopover).toHaveBeenCalledExactlyOnceWith();
     });
 
     test("closes when it is moved to another anchor while still shown and then dismissed", async () => {

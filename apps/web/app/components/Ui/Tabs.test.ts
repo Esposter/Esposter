@@ -36,7 +36,9 @@ describe("uiTabs", () => {
       expect(component.get('[role="tablist"]').attributes("aria-label")).toBe(label);
       expect(selectedTab.text()).toBe("b");
       expect(shownPanels.map((panel) => panel.text())).toStrictEqual(["b"]);
-      expect(shownPanels[0]?.attributes("aria-labelledby")).toBe(selectedTab.attributes("id"));
+      expect(shownPanels.map((panel) => panel.attributes("aria-labelledby"))).toStrictEqual([
+        selectedTab.attributes("id"),
+      ]);
     });
 
     test("reads a tab's count after its title, in its name", () => {
@@ -56,7 +58,6 @@ describe("uiTabs", () => {
       const press = async (key: string) => {
         await component.get('[role="tab"][aria-selected="true"]').trigger("keydown", { key });
         await flushPromises();
-        return component.emitted<[string]>("update:modelValue")?.at(-1)?.[0];
       };
 
       expect(component.findAll('[role="tab"]').map((tab) => tab.attributes("tabindex"))).toStrictEqual([
@@ -64,13 +65,15 @@ describe("uiTabs", () => {
         "0",
         "-1",
       ]);
-      await expect(press("ArrowRight")).resolves.toBe("c");
+      await press("ArrowRight");
       await component.setProps({ modelValue: "c" });
-      await expect(press("Home")).resolves.toBe("a");
+      await press("Home");
       await component.setProps({ modelValue: "a" });
-      await expect(press("End")).resolves.toBe("c");
+      await press("End");
       await component.setProps({ modelValue: "c" });
-      await expect(press("ArrowLeft")).resolves.toBe("b");
+      await press("ArrowLeft");
+
+      expect(component.emitted<[string]>("update:modelValue")).toStrictEqual([["c"], ["a"], ["c"], ["b"]]);
     });
   });
 });

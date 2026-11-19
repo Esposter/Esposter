@@ -83,7 +83,7 @@ describe("uiToggleGroup", () => {
       });
       await flushPromises();
 
-      expect(component.get('[role="radiogroup"]').attributes()).toHaveProperty(attribute);
+      expect(component.get('[role="radiogroup"]').attributes(attribute)).toBe("");
     });
 
     test("holds a disabled choice, which a click does not choose", async () => {

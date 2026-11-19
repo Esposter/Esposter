@@ -89,7 +89,7 @@ describe("uiPopoverField", () => {
       });
       await clearableComponent.get(`button[aria-label="Clear ${label}"]`).trigger("click");
 
-      expect(clearableComponent.emitted("clear")).toHaveLength(1);
+      expect(clearableComponent.emitted("clear")).toStrictEqual([[]]);
       expect(unclearableComponent.find(`button[aria-label="Clear ${label}"]`).exists()).toBe(false);
     });
   });

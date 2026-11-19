@@ -84,7 +84,7 @@ describe("uiSelect", () => {
       expect(activator.element.firstElementChild?.textContent.trim()).toBe("Plan");
     });
 
-    test("draws the chosen option's mark in the trigger's column", () => {
+    test("draws the chosen option's mark on the trigger", () => {
       expect.hasAssertions();
 
       const marked: UiSelectItem<string>[] = [{ icon: "i-test-plan", title: "Plan", value: "plan" }];

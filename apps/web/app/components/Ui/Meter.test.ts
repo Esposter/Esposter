@@ -39,7 +39,7 @@ describe("uiMeter", () => {
       expect(component.attributes("data-level")).toBe(level);
     });
 
-    test("stays in the accent at any reading without marks", () => {
+    test("draws no level without marks, even at its top reading", () => {
       expect.hasAssertions();
 
       const component = mount(UiMeter, { props: { label, value: 100, valueText } });

@@ -52,8 +52,10 @@ describe("uiEventCalendar", () => {
       const component = await mountEventCalendar();
 
       expect(component.get("section").attributes("aria-label")).toBe(label);
-      expect(component.get(getDaySelector(date.toString())).text()).toContain(event.title);
-      expect(component.get(getDaySelector(nextDay.toString())).text()).not.toContain(event.title);
+      // The time before the title is the runner's own zone, so only the title is pinned
+      expect(component.get(getDaySelector(date.toString())).findAll(".event")).toHaveLength(1);
+      expect(component.get(getDaySelector(date.toString())).get(".event").text()).toContain(event.title);
+      expect(component.get(getDaySelector(nextDay.toString())).findAll(".event")).toStrictEqual([]);
     });
 
     test("folds a day's events past its limit into a count", async () => {
@@ -63,6 +65,7 @@ describe("uiEventCalendar", () => {
       const component = await mountEventCalendar({ events });
 
       expect(component.get(getDaySelector(date.toString())).findAll(".event")).toHaveLength(CALENDAR_DAY_EVENT_LIMIT);
+      // The day's date and events are read in the runner's locale and zone, so only the count's label is pinned
       expect(component.get(getDaySelector(date.toString())).text()).toContain("1 more");
     });
 
@@ -156,6 +159,8 @@ describe("uiEventCalendar", () => {
       expect(onCreate.mock.calls.map(([start]) => getZonedDateTime(start).toPlainDateTime().toString())).toStrictEqual([
         nextDay.toPlainDateTime({ hour: CALENDAR_OPENING_HOUR }).toString(),
       ]);
+
+      expect(component.get(getDaySelector(nextDay.toString())).classes()).toContain("cursor-cell");
 
       await component.setProps({ onCreate: undefined });
 

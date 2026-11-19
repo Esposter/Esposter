@@ -3,7 +3,6 @@ import { MimeType } from "#shared/models/file/MimeType";
 import UiFileField from "#src/components/Ui/FileField.vue";
 import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
 import { UiStyles } from "#src/models/ui/UiStyle";
-import { getFileSize } from "#src/services/file/getFileSize";
 import { flushPromises, mount } from "@vue/test-utils";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
@@ -25,7 +24,7 @@ describe("uiFileField", () => {
 
     const label = "label";
     const accept = "image/*";
-    const image = new File([""], "a", { type: MimeType.Png });
+    const image = new File([new Uint8Array(2048)], "a", { type: MimeType.Png });
     const text = new File([""], "b", { type: MimeType.PlainText });
     const mountFileField = (isMultiple?: true) => {
       const component = mount(UiFileField, {
@@ -68,7 +67,7 @@ describe("uiFileField", () => {
       expect(input.attributes("multiple")).toBe("");
       expect(component.props("modelValue")).toStrictEqual([image]);
       expect(component.get(`#${component.get("button").attributes("aria-describedby")}`).text()).toBe(
-        `${image.name} ${getFileSize(image.size)}`,
+        `${image.name} 2 KB`,
       );
 
       await component.get(`[aria-label="Clear ${label}"]`).trigger("click");

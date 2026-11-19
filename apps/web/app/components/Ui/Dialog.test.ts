@@ -87,21 +87,6 @@ describe("uiDialog", () => {
 
     // A size is the dialog element's width class, which the browser holds to the viewport. jsdom lays nothing out, so the
     // Class is what is checked
-    test("a named size sets the width", async () => {
-      expect.hasAssertions();
-
-      const component = mount(UiDialog, {
-        attachTo: document.body,
-        props: { modelValue: true, placement: UiDialogPlacement.Middle, size: UiDialogSize.Large, title },
-      });
-      await flushPromises();
-      const dialogClasses = component.get("dialog").classes();
-
-      expect(
-        Object.values(UiDialogSizeClassMap).filter((sizeClass) => dialogClasses.includes(sizeClass)),
-      ).toStrictEqual([UiDialogSizeClassMap[UiDialogSize.Large]]);
-    });
-
     test.each(Object.values(UiDialogSize))("each named size draws its own width class: %s", async (size) => {
       expect.hasAssertions();
 
@@ -117,7 +102,7 @@ describe("uiDialog", () => {
       ).toStrictEqual([UiDialogSizeClassMap[size]]);
     });
 
-    test("a named size sets the width, and no size class when none is given", async () => {
+    test("draws no size class when no size is given", async () => {
       expect.hasAssertions();
 
       const component = mount(UiDialog, {
@@ -186,23 +171,6 @@ describe("uiDialog", () => {
       expect(cancelEvent.defaultPrevented).toBe(true);
       expect(component.emitted("update:modelValue")).toStrictEqual([[false]]);
       expect(dialog.open).toBe(true);
-    });
-
-    // The body is the one region the frame's flex column scrolls, so a list taller than the frame is held inside it.
-    // Jsdom measures no layout, so the overflow itself is proven in a driven browser; this pins the structure it needs
-    test("a long list scrolls inside the body", async () => {
-      expect.hasAssertions();
-
-      const component = mount(UiDialog, {
-        attachTo: document.body,
-        props: { modelValue: true, title },
-        slots: { default: () => h("ul", [h("li", "a")]) },
-      });
-      await flushPromises();
-      const body = component.get("[ui-region-body]");
-
-      expect(body.element.parentElement).toBe(component.get("section").element);
-      expect(body.element.contains(component.get("ul").element)).toBe(true);
     });
 
     // A tall frame stands at its placement's height rather than only being capped by it, so a two-pane body has a height
@@ -323,7 +291,7 @@ describe("uiDialog", () => {
       await flushPromises();
       component.get<HTMLButtonElement>('button[type="submit"]').element.click();
 
-      expect(submit).toHaveBeenCalledTimes(1);
+      expect(submit).toHaveBeenCalledExactlyOnceWith();
     });
 
     // A footer can draw more than the submit, and the submit still names the form the body holds beside that action
@@ -382,7 +350,7 @@ describe("uiDialog", () => {
 
     // The body is the one region that scrolls, and the title bar and the footer sit outside it, so a long body scrolls
     // Between them and leaves both in view. jsdom lays nothing out, so the scroll itself is proven in a driven browser
-    test("a long body scrolls inside the dialog", async () => {
+    test("a long body scrolls inside the dialog, which holds it and not the title bar or footer", async () => {
       expect.hasAssertions();
 
       const component = mount(UiDialog, {
@@ -394,6 +362,7 @@ describe("uiDialog", () => {
       const body = component.get("[ui-region-body]").element;
 
       expect(body.parentElement).toBe(component.get("section").element);
+      expect(body.contains(component.get("ul").element)).toBe(true);
       expect(body.contains(component.get("header").element)).toBe(false);
       expect(body.contains(component.get("footer").element)).toBe(false);
     });

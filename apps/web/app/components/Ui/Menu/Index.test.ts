@@ -28,7 +28,7 @@ describe("uiMenu", () => {
       return { component, trigger };
     };
 
-    test("a setting is a checkbox, marked at its end while it is on", async () => {
+    test("a setting is a checkbox, marked by its selected icon while it is on", async () => {
       expect.hasAssertions();
 
       const component = mount(UiMenu, {

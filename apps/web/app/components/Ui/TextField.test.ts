@@ -98,7 +98,7 @@ describe("uiTextField", () => {
       expect(component.get("label").text()).toBe(`${label} *`);
     });
 
-    test("takes several lines as a textarea", () => {
+    test("draws a textarea of the rows it is given", () => {
       expect.hasAssertions();
 
       const { component } = mountForm(1);

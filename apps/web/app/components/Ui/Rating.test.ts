@@ -36,8 +36,7 @@ describe("uiRating", () => {
       const steps = component.findAll('[role="radio"]');
 
       expect(component.get('[role="radiogroup"]').attributes("aria-label")).toBe(label);
-      expect(steps).toHaveLength(count);
-      expect(steps[0]?.attributes("aria-label")).toBe("1");
+      expect(steps.map((step) => step.attributes("aria-label"))).toStrictEqual(["1", "2", "3", "4", "5"]);
     });
 
     test("a scale starting at zero with nothing chosen fills no step", async () => {
@@ -46,7 +45,13 @@ describe("uiRating", () => {
       const component = mountRating({ firstStep: 0, modelValue: "" });
       await flushPromises();
 
-      expect(component.findAll('[role="radio"]')[0]?.attributes("aria-label")).toBe("0");
+      expect(component.findAll('[role="radio"]').map((step) => step.attributes("aria-label"))).toStrictEqual([
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+      ]);
       expect(getFilled(component)).toStrictEqual([false, false, false, false, false]);
     });
 

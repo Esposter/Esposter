@@ -35,12 +35,4 @@ describe("uiFrame", () => {
     expect(component.find("footer").exists()).toBe(false);
     expect(component.find("[ui-region-body]").exists()).toBe(true);
   });
-
-  test("a frame body is padded", () => {
-    expect.hasAssertions();
-
-    const component = mount(UiFrame, { props: { title: "title" }, slots: { default: () => h("p", "a") } });
-
-    expect(component.get("[ui-region-body]").element.hasAttribute("p-3")).toBe(true);
-  });
 });

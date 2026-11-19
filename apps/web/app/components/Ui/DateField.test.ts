@@ -50,7 +50,7 @@ describe("uiDateField", () => {
         props: { isClearable: true, isDisabled: true, label, modelValue: epoch },
       });
 
-      expect(component.get("button[aria-describedby]").attributes("disabled")).toBeDefined();
+      expect(component.get("button[aria-describedby]").attributes("disabled")).toBe("");
       expect(component.find(`button[aria-label="Clear ${label}"]`).exists()).toBe(false);
     });
 

@@ -57,7 +57,7 @@ describe("uiSchemaForm", () => {
       await input.setValue("a");
       await flushPromises();
 
-      expect(component.text()).toContain("Name");
+      expect(component.text()).toBe("Name");
       expect(component.emitted("update:modelValue")?.at(-1)).toStrictEqual([{ name: "a" }]);
     });
 
@@ -108,7 +108,6 @@ describe("uiSchemaForm", () => {
     test("draws the ranked fields of a schema with a node nothing draws, and no notice for that node", async () => {
       expect.hasAssertions();
 
-      const noRendererNotice = "No applicable renderer found.";
       const nothingSchema = z.object({ name: z.string(), nothing: z.null() });
       const component = await mountSuspended(UiSchemaForm, {
         props: { modelValue: { name: "", nothing: null }, schema: nothingSchema },
@@ -116,8 +115,7 @@ describe("uiSchemaForm", () => {
       await flushPromises();
 
       expect(component.findAll("input")).toHaveLength(1);
-      expect(component.text()).toContain("Name");
-      expect(component.text()).not.toContain(noRendererNotice);
+      expect(component.text()).toBe("Name");
     });
 
     test("#2003: editing a field nested in a list changes the form's value once, at its own path", async () => {
