@@ -2,7 +2,7 @@
 import type { Grid } from "#src/models/dungeons/Grid";
 
 import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
-import { getGridKey } from "#src/services/dungeons/getGridKey";
+import { getPositionId } from "#src/services/dungeons/direction/getPositionId";
 import { INITIAL_MENU_CURSOR_POSITION, MENU_CURSOR_POSITION_INCREMENT } from "#src/services/dungeons/UI/menu/constants";
 
 interface Props {
@@ -16,7 +16,7 @@ defineProps<Props>();
   <template v-for="(row, rowIndex) of unref(grid.grid)" :key="rowIndex">
     <DungeonsUIMenuContentText
       v-for="(text, columnIndex) of row"
-      :key="getGridKey(rowIndex, columnIndex)"
+      :key="getPositionId({ x: columnIndex, y: rowIndex })"
       :grid
       :row-index
       :column-index

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getGridKey } from "#src/services/dungeons/getGridKey";
+import { getPositionId } from "#src/services/dungeons/direction/getPositionId";
 import { useSettingsSceneStore } from "#src/store/dungeons/settings/scene";
 
 const settingsSceneStore = useSettingsSceneStore();
@@ -11,7 +11,7 @@ const { settingsOptionGrid } = settingsSceneStore;
     <DungeonsSettingsMenuContentClickableRow :row-index />
     <DungeonsSettingsMenuContentText
       v-for="(text, columnIndex) of row"
-      :key="getGridKey(rowIndex, columnIndex)"
+      :key="getPositionId({ x: columnIndex, y: rowIndex })"
       :row-index
       :column-index
       :text

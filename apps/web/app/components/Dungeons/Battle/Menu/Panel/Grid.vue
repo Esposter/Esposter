@@ -2,7 +2,7 @@
 import type { Grid } from "#src/models/dungeons/Grid";
 import type { GridValue } from "#src/models/dungeons/GridValue";
 
-import { getGridKey } from "#src/services/dungeons/getGridKey";
+import { getPositionId } from "#src/services/dungeons/direction/getPositionId";
 import {
   CURSOR_POSITION_INCREMENT,
   INITIAL_CURSOR_POSITION,
@@ -37,7 +37,7 @@ const { x = 0 } = defineProps<Props>();
     <template v-for="(row, rowIndex) of unref(grid.grid)" :key="rowIndex">
       <DungeonsBattleMenuPanelText
         v-for="(value, columnIndex) of row"
-        :key="getGridKey(rowIndex, columnIndex)"
+        :key="getPositionId({ x: columnIndex, y: rowIndex })"
         :grid
         :grid-position="{ x: columnIndex, y: rowIndex }"
         :position="getPanelTextPosition(rowIndex, columnIndex)"

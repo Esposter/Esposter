@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getGridKey } from "#src/services/dungeons/getGridKey";
+import { getPositionId } from "#src/services/dungeons/direction/getPositionId";
 import { useMonsterPartySceneStore } from "#src/store/dungeons/monsterParty/scene";
 
 const monsterPartySceneStore = useMonsterPartySceneStore();
@@ -10,7 +10,7 @@ const { monstersGrid } = storeToRefs(monsterPartySceneStore);
   <template v-for="(row, rowIndex) of monstersGrid" :key="rowIndex">
     <DungeonsMonsterPartyPanelListItem
       v-for="(monster, columnIndex) of row"
-      :key="getGridKey(rowIndex, columnIndex)"
+      :key="getPositionId({ x: columnIndex, y: rowIndex })"
       :row-index
       :column-index
       :monster
