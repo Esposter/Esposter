@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { TransitionProps } from "vue";
 
-defineProps<{ mode?: TransitionProps["mode"] }>();
 defineSlots<{ default: () => VNode }>();
+defineProps<{ mode?: TransitionProps["mode"] }>();
 </script>
 
 <template>
