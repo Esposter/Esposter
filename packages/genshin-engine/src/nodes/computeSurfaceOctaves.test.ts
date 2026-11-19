@@ -18,7 +18,7 @@ describe(computeSurfaceOctaves, () => {
       variance: 0,
     });
 
-    expect(octaves.map(({ amplitude }) => amplitude)).toStrictEqual(octaves.map(() => 0));
+    expect(octaves.map(({ amplitude }) => amplitude)).toStrictEqual([0, 0, 0, 0, 0]);
   });
 
   test("a base-map surface's detail reads at its texture's texel size", () => {

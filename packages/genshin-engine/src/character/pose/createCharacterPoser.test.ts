@@ -108,7 +108,8 @@ describe(createCharacterPoser, () => {
     const mesh = createChain(new Quaternion(), new Quaternion(), ["Spine", "Head"]);
     createCharacterPoser(mesh, { [MmdBoneName.Upper]: "Spine" }).update(update);
 
-    expect(getWorldRotation(mesh, "Spine").angleTo(new Quaternion())).toBeGreaterThan(0);
+    // The idle breath at its crest lifts the chest 0.02 radians
+    expect(getWorldRotation(mesh, "Spine").angleTo(new Quaternion())).toBeCloseTo(0.02, 10);
     expect(mesh.skeleton.getBoneByName("Head")?.quaternion.toArray()).toStrictEqual(new Quaternion().toArray());
   });
 });

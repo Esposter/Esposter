@@ -115,7 +115,7 @@ describe(createCharacterController, () => {
     expect(characterController.position.y).toBe(WATER_LEVEL - LOCOMOTION.swimDepth);
   });
 
-  test("comes back where it was placed when it drowns before standing anywhere", () => {
+  test("a drown before standing anywhere returns to the x it was placed at", () => {
     expect.hasAssertions();
 
     const characterController = createCharacterController({

@@ -164,7 +164,7 @@ describe(createInput, () => {
     expect(readInput(0).pressedActions).toStrictEqual(new Set([InputAction.QuickUseGadget]));
   });
 
-  test("zooms by the wheel's notches since the last read, however far each scrolls", () => {
+  test("zooms by the wheel events since the last read", () => {
     expect.hasAssertions();
 
     const target = createTarget();

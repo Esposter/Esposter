@@ -101,7 +101,7 @@ describe(createCharacterMaterial, () => {
     expect(multiplied.edge).toBeUndefined();
   });
 
-  test("outlines a solid material whose file sets no edge by the world's outline, and leaves a transparent one bare", () => {
+  test("a material its file does not outline has no edge, and only a solid one is toon", () => {
     expect.hasAssertions();
 
     const rampTexture = new DataTexture();
