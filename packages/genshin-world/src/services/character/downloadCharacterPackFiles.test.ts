@@ -67,11 +67,11 @@ describe(downloadCharacterPackFiles, () => {
     expect(retryPlan.files.map(({ path }) => path)).toStrictEqual([CHARACTER_TERMS_PATH]);
     expect(fetchSpy).toHaveBeenCalledTimes(1);
     expect(fetchSpy.mock.calls[0]?.[0]).toBe(termsUrl);
-    expect(fetchSpy.mock.calls[0]?.[1]).toBeTypeOf("object");
+    expect(fetchSpy.mock.calls[0]?.[1]).toStrictEqual({ signal: expect.any(AbortSignal) });
     expect(retryError).toBeUndefined();
   });
 
-  test("failure never enters the world without the model", async () => {
+  test("a terms file that fails all its attempts is not cached, and the download reports the failure", async () => {
     expect.hasAssertions();
 
     const cache = createCharacterPackCacheStub();

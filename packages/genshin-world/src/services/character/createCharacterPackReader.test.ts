@@ -48,18 +48,6 @@ describe(createCharacterPackReader, () => {
     await expect(modelBlob?.text()).resolves.toBe(modelText);
   });
 
-  test("held pack draws the character's model", async () => {
-    expect.hasAssertions();
-
-    const cache = createCharacterPackCacheStub();
-    await cache.put(modelUrl, new Response(modelText));
-    const characterPackReader = createCharacterPackReader(cache, gameDataBaseUrl, avatar);
-
-    const modelBlob = await characterPackReader.readFile(CHARACTER_MODEL_PATH);
-
-    await expect(modelBlob?.text()).resolves.toBe(modelText);
-  });
-
   test("a texture the model names is read beside the model's folder", async () => {
     expect.hasAssertions();
 

@@ -36,7 +36,7 @@ describe(getConstellationActivationRefusal, () => {
     );
   });
 
-  test("activate is disabled when all six constellations are active", () => {
+  test("activate is disabled when all of the set's constellations are active", () => {
     expect.hasAssertions();
 
     expect(getConstellationActivationRefusal({ ...CHARACTER, constellationCount: 3 }, CONSTELLATIONS)).toBe(

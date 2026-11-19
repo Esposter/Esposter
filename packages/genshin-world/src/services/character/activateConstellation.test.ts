@@ -52,7 +52,7 @@ describe(activateConstellation, () => {
     );
   });
 
-  test("refuses a character holding no Stella Fortuna, nothing taken", () => {
+  test("refuses a character holding no Stella Fortuna", () => {
     expect.hasAssertions();
 
     expect(() =>
