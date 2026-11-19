@@ -62,7 +62,7 @@ A quest task SHALL finish when its quest completes.
 
 The Adventurer Handbook's Commissions tab SHALL list the day's four with each one's preferred region, using the game's own words for each title and description.
 
-#### Scenario: the Commissions tab lists the dealt commissions in dealt order with their preferred region
+#### Scenario: the Commissions tab lists the dealt commissions with their preferred region
 
 - **GIVEN** a day with four commissions dealt
 - **WHEN** the player opens the Commissions tab of the Adventurer Handbook

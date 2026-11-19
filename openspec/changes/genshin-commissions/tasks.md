@@ -16,7 +16,7 @@
 
 ## 4. Handbook
 
-- [x] 4.1 Show the day's four on the Commissions tab with each preferred region. Verify: a test named after the scenario 'the Commissions tab lists the dealt commissions in dealt order with their preferred region', seen failing first.
+- [x] 4.1 Show the day's four on the Commissions tab with each preferred region. Verify: a test named after the scenario 'the Commissions tab lists the dealt commissions with their preferred region', seen failing first.
 
 ## 5. Region pools and routing
 
