@@ -117,7 +117,7 @@ The table's rows are read from `scripts/src/services/recreation/animeStudio/runA
 
 The PC runs no SSH server, so a transfer between the two runs from the PC to the Mac only, by `ai:fleet:data push` (`scripts/src/fleet/data/index.ts`). The Mac cannot pull from the PC.
 
-`vkd3d-compiler` is found by `VKD3D_COMPILER` or on `PATH` (`scripts/src/services/genshinAssets/materials/disassembleWithVkd3d.ts`); the Mac's is a vkd3d 2.1 build (`{cache-root}/vkd3d/vkd3d-2.1`), named by `VKD3D_COMPILER`. A step whose compiler is missing stops, rather than writing programs without their assembly (`scripts/src/services/genshinAssets/materials/disassembleWithVkd3d.ts`).
+`vkd3d-compiler` is found by `VKD3D_COMPILER` or on `PATH` (`scripts/src/services/genshinAssets/materials/disassembleWithVkd3d.ts`); `pnpm ai:setup` checks for it on macOS and prints the line that builds and installs vkd3d 2.1 (`scripts/src/services/setup/constants.ts`). A step whose compiler is missing stops, rather than writing programs without their assembly (`scripts/src/services/genshinAssets/materials/disassembleWithVkd3d.ts`).
 
 ### What is kept where
 

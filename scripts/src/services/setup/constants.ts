@@ -3,6 +3,7 @@ import type { SetupLogin } from "#src/models/setup/SetupLogin";
 import type { SetupTool } from "#src/models/setup/SetupTool";
 
 import { GENSHIN_FLEET_AREA } from "#src/services/fleet/constants";
+import { VKD3D_COMPILER_NAME } from "#src/services/genshinAssets/materials/constants";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { homedir } from "node:os";
 import { join } from "node:path";
@@ -50,9 +51,18 @@ export const SETUP_TOOLS: readonly SetupTool[] = [
     },
   },
 ];
-// The tools only the AnimeStudio build runs, read on macOS alone, since a Mac is the one machine that builds the CLI
-// And its natives from source; Windows unpacks a released CLI instead
+// The tools read on macOS alone: the AnimeStudio build's, since a Mac is the one machine that builds the CLI and its
+// Natives from source while Windows unpacks a released CLI, and the shaders step's disassembler, which Windows replaces
+// With its own compiler library. Homebrew has no vkd3d, so it is built from WineHQ's source with brew's keg-only bison
 export const SETUP_MACOS_TOOLS: readonly SetupTool[] = [
+  {
+    install: {
+      darwin:
+        "brew install bison flex spirv-headers vulkan-headers, then with $(brew --prefix bison)/bin first on PATH, in the unpacked https://dl.winehq.org/vkd3d/source/vkd3d-2.1.tar.xz run ./configure --disable-doxygen-doc --disable-tests --without-ncurses && make && sudo make install",
+    },
+    name: VKD3D_COMPILER_NAME,
+    probe: { args: ["--version"], file: process.env.VKD3D_COMPILER ?? VKD3D_COMPILER_NAME },
+  },
   {
     install: { darwin: "brew install --cask dotnet-sdk" },
     name: ".NET 10",

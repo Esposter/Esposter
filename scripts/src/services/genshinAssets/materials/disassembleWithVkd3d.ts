@@ -1,3 +1,4 @@
+import { VKD3D_COMPILER_NAME } from "#src/services/genshinAssets/materials/constants";
 import { spawnSync } from "@esposter/shared-node/child-process";
 import { readdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -14,7 +15,7 @@ export const disassembleWithVkd3d = (directory: string): number => {
   for (const name of readdirSync(directory)) {
     if (!name.endsWith(".dxbc")) continue;
     const { error, status, stdout } = spawnSync(
-      process.env.VKD3D_COMPILER ?? "vkd3d-compiler",
+      process.env.VKD3D_COMPILER ?? VKD3D_COMPILER_NAME,
       [...VKD3D_ARGUMENTS, join(directory, name)],
       { encoding: "utf8", maxBuffer: VKD3D_MAX_BUFFER },
     );
