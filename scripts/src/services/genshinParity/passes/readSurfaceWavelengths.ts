@@ -1,6 +1,6 @@
 import type { SurfaceBendSide } from "#src/models/genshinParity/passes/SurfaceBendSide";
 
-import { computeMetresPerPixel } from "#src/services/genshinParity/passes/computeMetresPerPixel";
+import { computeMedianMetresPerPixel } from "#src/services/genshinParity/passes/computeMedianMetresPerPixel";
 import { computeNormalAngle } from "#src/services/genshinParity/passes/computeNormalAngle";
 import { computeSurfaceWavelength } from "#src/services/genshinParity/passes/computeSurfaceWavelength";
 import { SURFACE_HIGH_PASS_RADIUS_PIXELS, SURFACE_LAG_CAP_SHARE } from "#src/services/genshinParity/passes/constants";
@@ -42,9 +42,7 @@ export const readSurfaceWavelengths = ({
     left = Math.min(left, column);
     right = Math.max(right, column);
   }
-  const sortedDepths = depths.toSorted((firstDepth, secondDepth) => firstDepth - secondDepth);
-  const medianDepth = sortedDepths[Math.floor(sortedDepths.length / 2)] ?? 0;
-  const metresPerPixel = computeMetresPerPixel({ depth: medianDepth, fovDegrees, height });
+  const metresPerPixel = computeMedianMetresPerPixel({ depths, fovDegrees, height });
   const maxLag = Math.floor((right - left + 1) * SURFACE_LAG_CAP_SHARE);
   const measure = (angles: Float64Array): number | undefined =>
     depths.length === 0

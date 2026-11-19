@@ -5,7 +5,7 @@ import type { ParityPassReading } from "#src/models/genshinParity/shared/ParityP
 import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import { compareFamilyColour } from "#src/services/genshinParity/passes/compareFamilyColour";
 import { computeFamilyMask } from "#src/services/genshinParity/passes/computeFamilyMask";
-import { computeMetresPerPixel } from "#src/services/genshinParity/passes/computeMetresPerPixel";
+import { computeMedianMetresPerPixel } from "#src/services/genshinParity/passes/computeMedianMetresPerPixel";
 import { computeStructureError } from "#src/services/genshinParity/passes/computeStructureError";
 import { computeStructureTerms } from "#src/services/genshinParity/passes/computeStructureTerms";
 import { COLOUR_GATE } from "#src/services/genshinParity/passes/constants";
@@ -47,13 +47,15 @@ export const measureSurface = (component: DerivedAssetComponent, pageRoot?: stri
       const exportsTargets = { colour: exportsAlbedo, part: exportsPart };
       const height = exportsPart.length / 4 / width;
       // A family's pixel at its median depth, the metres a pixel of the surface's structure spans where the family stands
-      const familyPixelMetres = families.map((_name, family) => {
-        const depths = [...computeFamilyMask(exportsPart, exportsPart, family, width)]
-          .flatMap((isDrawn, pixel) => (isDrawn ? [exportsDepth[pixel * 4] ?? 0] : []))
-          .toSorted((first, second) => first - second);
-        const medianDepth = depths[Math.floor(depths.length / 2)] ?? 0;
-        return computeMetresPerPixel({ depth: medianDepth, fovDegrees: camera.fov, height });
-      });
+      const familyPixelMetres = families.map((_name, family) =>
+        computeMedianMetresPerPixel({
+          depths: [...computeFamilyMask(exportsPart, exportsPart, family, width)].flatMap((isDrawn, pixel) =>
+            isDrawn ? [exportsDepth[pixel * 4] ?? 0] : [],
+          ),
+          fovDegrees: camera.fov,
+          height,
+        }),
+      );
       const exportsLightness = readTargetLightness(exportsAlbedo);
       const oursLightness = readTargetLightness(oursAlbedo);
       const albedo = await compareFamilyColour(
@@ -113,9 +115,9 @@ export const measureSurface = (component: DerivedAssetComponent, pageRoot?: stri
                 colour: comparison.colour,
                 family: comparison.family,
                 gate,
-                scales: comparison.scales,
                 meanExports: meanOf(exportsLightness),
                 meanOurs: meanOf(oursLightness),
+                scales: comparison.scales,
                 structure: computeStructureError(structureReference, structureShot),
                 terms: computeStructureTerms(structureReference, structureShot),
               };
