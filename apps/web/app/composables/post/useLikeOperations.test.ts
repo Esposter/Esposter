@@ -11,6 +11,14 @@ import { TRPCError } from "@trpc/server";
 import { v7 } from "uuid";
 import { beforeEach, describe, expect, test } from "vitest";
 
+// The list the composable reads its copies from, seeded with the one post a test starts from
+const seedItems = (post: PostInPostWithRelations) => {
+  const postStore = usePostStore();
+  const { items } = storeToRefs(postStore);
+  items.value = [post];
+  return items;
+};
+
 describe(useLikeOperations, () => {
   const { trpcMsw } = setupMswTrpc();
   const postId = v7();
@@ -23,13 +31,6 @@ describe(useLikeOperations, () => {
     userId,
     value,
   });
-
-  // The list the composable reads its copies from, seeded with the one post a test starts from
-  const seedItems = (post: PostInPostWithRelations) => {
-    const { items } = storeToRefs(usePostStore());
-    items.value = [post];
-    return items;
-  };
 
   // A new vote is drawn for the signed-in viewer, so every test here signs one in
   beforeEach(() => {

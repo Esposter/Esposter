@@ -84,7 +84,7 @@ export const fitSurfaceGrain = async (
               { amplitudes, family },
             );
             const oursRead = await readWitnessTargets(page, GRAIN_TARGETS, true);
-            const mask = computeFamilyMask(
+            const familyMask = computeFamilyMask(
               exportsPart,
               oursRead.targets.part ?? new Float32Array(),
               familyIndex,
@@ -95,7 +95,7 @@ export const fitSurfaceGrain = async (
                 surfaceStatistics.computeStatistics(values, mask, width, height, SURFACE_DETAIL_BAND_SIGMAS),
               exportsLightness,
               readTargetLightness(oursRead.targets.albedo ?? new Float32Array()),
-              mask,
+              familyMask,
             );
             return targets.map((_target, index) => terms.find((term) => term.index === index)?.error ?? 0);
           };

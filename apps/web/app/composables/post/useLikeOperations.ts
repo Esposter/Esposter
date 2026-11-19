@@ -13,7 +13,7 @@ const getRollback = (rollbacks: (() => void)[]) => () => {
   for (const rollback of rollbacks) rollback();
 };
 // Writes one copy's vote and moves its count by the change the vote makes, which the client holds exactly, and returns
-// the rollback that restores what the copy held. The count the server reads back is what the copy is left with
+// The rollback that restores what the copy held. The count the server reads back is what the copy is left with
 const setViewerLike = (
   post: PostInPostWithRelations,
   nextViewerLike: PostInPostWithRelations["viewerLike"],
