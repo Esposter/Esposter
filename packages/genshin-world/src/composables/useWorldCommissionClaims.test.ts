@@ -211,7 +211,7 @@ describe(useWorldCommissionClaims, () => {
     expect(wallet.value[Currency.OriginalResin]).toBe(0);
   });
 
-  test("should offer the conversion once the Original Resin regenerates to its cost, with no wallet write", () => {
+  test("should offer the conversion once the Original Resin regenerates to its cost", () => {
     expect.hasAssertions();
     const clock = createWorldClock(NOW);
     const { claims } = createClaims({

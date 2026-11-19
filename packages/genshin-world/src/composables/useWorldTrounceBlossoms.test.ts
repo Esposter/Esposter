@@ -180,7 +180,7 @@ describe(useWorldTrounceBlossoms, () => {
     expect(checkIsBossRespawned()).toBe(true);
   });
 
-  test("a weekly boss's Trounce Blossom is offered again once the weekly reset passes, with no write", () => {
+  test("a weekly boss's Trounce Blossom is offered again once the weekly reset passes", () => {
     expect.hasAssertions();
     const clock = createWorldClock(epoch.add({ hours: 1 }));
     startTestWorldSession({ getWorldNow: clock.getWorldNow, worldNow: clock.worldNow });
@@ -209,7 +209,7 @@ describe(useWorldTrounceBlossoms, () => {
     ]);
   });
 
-  test("a normal boss's claim pays its Adventure EXP once, the resin's own EXP not written back", async () => {
+  test("a normal boss's claim pays its Adventure EXP once", async () => {
     expect.hasAssertions();
     const adventureExp = ref(0);
     startEpochSession(

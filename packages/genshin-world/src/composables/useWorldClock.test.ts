@@ -1,8 +1,16 @@
 import { useWorldClock } from "#src/composables/useWorldClock";
-import { describe, expect, test } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useWorldClock, () => {
   const OFFSET_MILLISECONDS = 120_000;
+
+  beforeEach(() => {
+    vi.useFakeTimers({ now: 0, toFake: ["Temporal"] });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
 
   test("the world's time follows the offset as it is measured again", () => {
     expect.hasAssertions();
@@ -12,6 +20,7 @@ describe(useWorldClock, () => {
     const before = getWorldNow();
     offsetMilliseconds = OFFSET_MILLISECONDS;
 
-    expect(getWorldNow().epochMilliseconds).toBeGreaterThanOrEqual(before.epochMilliseconds + OFFSET_MILLISECONDS);
+    expect(before.epochMilliseconds).toBe(0);
+    expect(getWorldNow().epochMilliseconds).toBe(120_000);
   });
 });

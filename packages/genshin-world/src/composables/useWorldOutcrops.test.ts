@@ -244,7 +244,10 @@ describe(useWorldOutcrops, () => {
     const context = createOutcrops();
     await clearOutcrop(context);
     context.outcrops.openOutcropClaim(1, epoch);
-    expect(context.outcrops.claimPrompt.value?.offers.length).toBeGreaterThan(0);
+    expect(context.outcrops.claimPrompt.value?.offers).toStrictEqual([
+      { claimCount: 1, condensedResinCount: 0, resin: 20 },
+      { claimCount: 2, condensedResinCount: 0, resin: 40 },
+    ]);
   });
 
   test("choosing an offer spends its resin and grants its rewards", async () => {
@@ -330,7 +333,10 @@ describe(useWorldOutcrops, () => {
     outcrops.restoreOutcropClaim(epoch);
     expect(inventory.value.items).toStrictEqual([]);
     expect(outcrops.claimPrompt.value?.canRestore).toBe(false);
-    expect(outcrops.claimPrompt.value?.offers.length).toBeGreaterThan(0);
+    expect(outcrops.claimPrompt.value?.offers).toStrictEqual([
+      { claimCount: 1, condensedResinCount: 0, resin: 20 },
+      { claimCount: 2, condensedResinCount: 0, resin: 40 },
+    ]);
   });
 
   test("a cleared challenge never claimed gives nothing", async () => {

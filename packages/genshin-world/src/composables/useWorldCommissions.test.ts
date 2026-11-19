@@ -152,7 +152,7 @@ describe(useWorldCommissions, () => {
     expect(longTermEncounterPoints.value).toStrictEqual({ halfPoints: 4, majorVersion: LONG_TERM_MAJOR_VERSION });
   });
 
-  test("the whole Encounter Points held lapse at the next daily reset with no write", () => {
+  test("the whole Encounter Points held lapse at the next daily reset", () => {
     expect.hasAssertions();
     const clock = createWorldClock(afterReset);
     const { wholeEncounterPoints } = useAfterReset({ earnedOn: todayReset, halfPoints: 2 }, clock);

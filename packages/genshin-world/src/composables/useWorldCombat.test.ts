@@ -177,7 +177,8 @@ describe(useWorldCombat, () => {
     });
     strikeParty(enemy, taunt);
 
-    expect(TAUNT_HEALTH - taunt.health).toBeLessThan(unbuffedLoss);
+    // A tenth of DMG Reduction takes a tenth off the same strike
+    expect(TAUNT_HEALTH - taunt.health).toBeCloseTo(unbuffedLoss * 0.9);
   });
 
   // After the team's shield takes the interval's damage first, so only the damage it does not absorb costs the share
