@@ -3,7 +3,7 @@ import type { SetupLogin } from "#src/models/setup/SetupLogin";
 import type { SetupTool } from "#src/models/setup/SetupTool";
 
 import { GENSHIN_FLEET_AREA } from "#src/services/fleet/constants";
-import { VKD3D_COMPILER_NAME } from "#src/services/genshinAssets/materials/constants";
+import { resolveVkd3dCompiler, VKD3D_COMPILER_NAME } from "#src/services/genshinAssets/materials/constants";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { homedir } from "node:os";
 import { join } from "node:path";
@@ -61,7 +61,7 @@ export const SETUP_MACOS_TOOLS: readonly SetupTool[] = [
         "brew install bison flex spirv-headers vulkan-headers, then with $(brew --prefix bison)/bin first on PATH, in the unpacked https://dl.winehq.org/vkd3d/source/vkd3d-2.1.tar.xz run ./configure --disable-doxygen-doc --disable-tests --without-ncurses && make && sudo make install",
     },
     name: VKD3D_COMPILER_NAME,
-    probe: { args: ["--version"], file: process.env.VKD3D_COMPILER ?? VKD3D_COMPILER_NAME },
+    probe: { args: ["--version"], file: resolveVkd3dCompiler() },
   },
   {
     install: { darwin: "brew install --cask dotnet-sdk" },
