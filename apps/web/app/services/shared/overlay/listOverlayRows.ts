@@ -13,7 +13,7 @@ export const listOverlayRows = <TRow extends Versioned>(
   slotFor: SlotFor,
   table: Table<TRow>,
   entries: Entry[],
-): Draft<TRow>[] => {
+): readonly Readonly<Draft<TRow>>[] => {
   const draft = createDraft();
   const view = createKeyedView(slotFor, draft);
   for (const entry of entries) entry(view);

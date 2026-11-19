@@ -11,7 +11,7 @@ Ordered by dependency: the primitive first, then the schema the pilot needs, the
 - [x] 1.5 Entries and view: a pending entry applies over held state, a response confirms it at the versions it names, it drops once each confirmed key is held at or above its version, and a failure drops it with held state untouched. Verified: cases written first and seen failing that a failed entry leaves the view equal to held state, and a confirmed entry stays until its arrival.
 - [x] 1.6 Awaited writes take no key: the arrival gate orders two awaited responses for one row. Verified: a case written first and seen failing that two responses for one row, arriving in reverse order, leave the higher version held.
 - [x] 1.7 Run scope: a new run in a scope aborts the run before it, and only the newest run commits. Verified: a case written first and seen failing that an aborted run commits nothing and an older run's result is not applied.
-- [ ] 1.8 Type enforcement: a write's options take an entry and no key and no rollback member, ingest accepts only versioned rows, and the view is readonly. Verified: a type test beside the primitive's test file, written first and seen failing on a key or a rollback option.
+- [x] 1.8 Type enforcement: a write's options take an entry and no key and no rollback member, ingest accepts only versioned rows, and the view is readonly. Verified: a type test beside the primitive's test file, written first and seen failing on a key or a rollback option.
 
 ## 2. Schema (architecture cloud services)
 
