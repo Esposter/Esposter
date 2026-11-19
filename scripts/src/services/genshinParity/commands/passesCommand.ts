@@ -6,7 +6,7 @@ import { parseDerivedAssetComponent } from "#src/services/genshinAssets/shared/p
 import { checkIsReadingHeld } from "#src/services/genshinParity/passes/checkIsReadingHeld";
 import { findMovedFrozenPass } from "#src/services/genshinParity/passes/findMovedFrozenPass";
 import { formatPassValue } from "#src/services/genshinParity/passes/formatPassValue";
-import { formatReadingValue } from "#src/services/genshinParity/passes/formatReadingValue";
+import { formatReadingWithUnit } from "#src/services/genshinParity/passes/formatReadingWithUnit";
 import { readParityPassRows } from "#src/services/genshinParity/passes/readParityPassRows";
 import { runParityPasses } from "#src/services/genshinParity/passes/runParityPasses";
 import { writeParityPasses } from "#src/services/genshinParity/passes/writeParityPasses";
@@ -39,14 +39,16 @@ export const passesCommand: SubCommandsDef[string] = defineCommand({
     const movedPass = findMovedFrozenPass({ passAlone: args.pass, recordedRows, results });
     for (const {
       isHeld,
-      measure: { notes, readings },
+      measure: { diagnostics = [], notes, readings },
       pass,
     } of results) {
       console.log(`${pass}: ${isHeld ? "held" : "not held"}`);
       for (const reading of readings)
         console.log(
-          `  ${reading.name}: ${formatReadingValue(reading)} ${reading.unit} against ${formatPassValue(reading.gate)} ${checkIsReadingHeld(reading) ? "held" : "FAILED"}`,
+          `  ${reading.name}: ${formatReadingWithUnit(reading)} against ${formatPassValue(reading.gate)} ${checkIsReadingHeld(reading) ? "held" : "FAILED"}`,
         );
+      for (const diagnostic of diagnostics)
+        console.log(`  ${diagnostic.name}: ${formatReadingWithUnit(diagnostic)} (not gated)`);
       for (const note of notes) console.log(`  ${note}`);
     }
     if (movedPass)

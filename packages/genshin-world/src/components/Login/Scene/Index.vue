@@ -19,7 +19,12 @@ import { LoginPartFamily } from "#src/models/login/LoginPartFamily";
 import { LoginStage } from "#src/models/login/LoginStage";
 import { createLoginClouds } from "#src/services/login/cloud/createLoginClouds";
 import { LoginCloudCoverMap } from "#src/services/login/cloud/LoginCloudCoverMap";
-import { LOGIN_DOOR_LIGHT_MS, LOGIN_SCENE_EXPORT_COMPONENT } from "#src/services/login/constants";
+import {
+  LOGIN_BRIDGE_NORMAL_DETAIL_AMPLITUDE,
+  LOGIN_BRIDGE_NORMAL_DETAIL_WAVELENGTH,
+  LOGIN_DOOR_LIGHT_MS,
+  LOGIN_SCENE_EXPORT_COMPONENT,
+} from "#src/services/login/constants";
 import { applyLoginDoorLift } from "#src/services/login/door/applyLoginDoorLift";
 import { computeLoginDoorLiftMs } from "#src/services/login/door/computeLoginDoorLiftMs";
 import {
@@ -74,6 +79,10 @@ import { LoginShadowRadiusMap } from "#src/services/login/scene/LoginShadowRadiu
 import { LoginSkyStateMap } from "#src/services/login/scene/LoginSkyStateMap";
 import { loginStoneLight } from "#src/services/login/scene/loginStoneLight";
 import { computeLoginTowerAtlas } from "#src/services/login/tower/computeLoginTowerAtlas";
+import {
+  LOGIN_TOWER_NORMAL_DETAIL_AMPLITUDE,
+  LOGIN_TOWER_NORMAL_DETAIL_WAVELENGTH,
+} from "#src/services/login/tower/constants";
 import { createLoginTowerFacade } from "#src/services/login/tower/createLoginTowerFacade";
 import { createLoginTowersGeometry } from "#src/services/login/tower/createLoginTowersGeometry";
 import { LOGIN_WALKWAY_SUNK_DISTANCE } from "#src/services/login/walkway/constants";
@@ -91,6 +100,7 @@ import {
   createCloudLayerUniforms,
   createFogUniforms,
   createLightUniforms,
+  createNormalDetailNode,
   createPostUniforms,
   createSkyGradientTexture,
   createSkyNode,
@@ -308,7 +318,17 @@ const towerFacade = createLoginTowerFacade(towers, towerAtlas);
 towersMaterial.colorNode = towerFacade.shade.mul(color(stone.towers.albedo));
 towersMaterial.opacityNode = towerFacade.solid;
 towersMaterial.alphaTest = 0.5;
+// The towers' and bridges' procedural normal detail, at the wavelength their exports' surfaces read and the amplitude that
+// Brings their mean lean to the exports' bend (`LOGIN_TOWER_NORMAL_DETAIL_*`, `LOGIN_BRIDGE_NORMAL_DETAIL_*`)
+towersMaterial.normalNode = createNormalDetailNode(
+  LOGIN_TOWER_NORMAL_DETAIL_WAVELENGTH,
+  LOGIN_TOWER_NORMAL_DETAIL_AMPLITUDE,
+);
 const bridgesMaterial = createStoneMaterial(stone.bridges, loginStoneLight);
+bridgesMaterial.normalNode = createNormalDetailNode(
+  LOGIN_BRIDGE_NORMAL_DETAIL_WAVELENGTH,
+  LOGIN_BRIDGE_NORMAL_DETAIL_AMPLITUDE,
+);
 const doorFrameMaterial = createStoneMaterial(stone.door, loginStoneLight);
 const doorMaterial = createStoneMaterial(stone.doorPanel, loginStoneLight, doorLightNode);
 // The door's front painted with its panel's raised bands and its feet's gilding over its stone

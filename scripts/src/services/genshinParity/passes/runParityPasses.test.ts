@@ -162,6 +162,24 @@ describe(runParityPasses, () => {
     ]);
   });
 
+  test("a diagnostic holds no gate, so a pass whose readings hold is held whatever its diagnostics read", async () => {
+    expect.hasAssertions();
+
+    const withDiagnostic: ParityPassMeasure = {
+      diagnostics: [{ name: "wavelength", reason: "no detail lobe resolved", unit: "m" }],
+      notes: [],
+      readings: held.readings,
+    };
+    measureInventory.mockResolvedValueOnce(withDiagnostic);
+    measureLayout.mockResolvedValueOnce(failed);
+    const results = await runParityPasses(DerivedAssetComponent.Login);
+
+    expect(results).toStrictEqual([
+      { isHeld: true, measure: withDiagnostic, pass: ParityPass.Inventory },
+      { isHeld: false, measure: failed, pass: ParityPass.Layout },
+    ]);
+  });
+
   test("hands the parity page root to each measure, so a run measures the page it shot", async () => {
     expect.hasAssertions();
 

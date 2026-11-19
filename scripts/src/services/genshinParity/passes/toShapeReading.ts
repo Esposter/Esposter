@@ -8,5 +8,5 @@ export const toShapeReading = (
   gate: number,
   unit: string,
   value: number | undefined,
-  reason: string = NO_OVERLAP_REASON,
-): ParityPassReading => (value === undefined ? { gate, name, reason, unit } : { gate, name, unit, value });
+): ParityPassReading =>
+  value === undefined ? { gate, name, reason: NO_OVERLAP_REASON, unit } : { gate, name, unit, value };

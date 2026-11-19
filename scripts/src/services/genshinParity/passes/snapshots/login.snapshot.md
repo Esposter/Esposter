@@ -29,10 +29,12 @@
 | Shape | login-door-session Towers depth | 0.0033 | 0.0100 | share | yes |
 | Shape | login-door-session Towers normal | 6.7281 | 10 | degrees | yes |
 | Shape | login-door-session Walkway surface detail bend | 0.0006 | 0.0198 | degrees | yes |
-| Shape | login-door-session Bridges surface detail bend | 1.7607 | 0.1320 | degrees | no |
-| Shape | login-door-session Towers surface detail bend | 3.1419 | 0.0198 | degrees | no |
-| Shape | login-door-session Bridges surface detail wavelength | no detail lobe resolved | 0.2280 | m | no |
-| Shape | login-door-session Towers surface detail wavelength | no detail lobe resolved | 0.0712 | m | no |
+| Shape | login-door-session Bridges surface detail bend | 0.0000 | 0.1320 | degrees | yes |
+| Shape | login-door-session Towers surface detail bend | 0.0005 | 0.0198 | degrees | yes |
+| Shape | login-door-session Bridges surface detail wavelength, exports | 21.8913 | - | m | - |
+| Shape | login-door-session Bridges surface detail wavelength, ours | 23.2595 | - | m | - |
+| Shape | login-door-session Towers surface detail wavelength, exports | 2.5648 | - | m | - |
+| Shape | login-door-session Towers surface detail wavelength, ours | 8.5495 | - | m | - |
 | Motion | door lift path | 0.0080 | 0.0200 | m | yes |
 | Motion | door lift pace | 0.0001 | 0.0100 | share | yes |
 | Surface | login-door-session Door colour | 0.3250 | 2.3000 | ΔE | yes |

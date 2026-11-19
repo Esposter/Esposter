@@ -29,7 +29,8 @@ export const SURFACE_WAVELENGTH_FAMILIES: readonly string[] = ["Bridges", "Tower
 export const SURFACE_HIGH_PASS_RADIUS_PIXELS = 16;
 // The longest lag a surface wavelength reads, as a share of its family's width: a lobe past it is the object's own size.
 // The bridges' 47 metre repeat is about a quarter of their width and falls outside it. Their 22 metre lobe, about a ninth,
-// Falls inside it, so the bridges' reading is not a detail's wavelength (design.md, Open), and the cap is not tuned past it
+// Falls inside it, and is the bridges' detail wavelength (design.md, Decisions). The cap is set before the bridges were
+// Read, and is not tuned past that reading
 export const SURFACE_LAG_CAP_SHARE = 1 / 8;
 // The gate a landmark's root is held to, the scene's where it stands against its export's, both in metres: a fifth of
 // The 0.97 metres a hand offset once stood the statue under its export's root, which read as most of its outline
@@ -101,6 +102,8 @@ export const ROW_PREFIX = "| ";
 // No reading was taken
 export const HELD_YES = "yes";
 export const HELD_NO = "no";
+// The cell a diagnostic prints in its gate and held columns, since a diagnostic holds no gate
+export const NOT_GATED = "-";
 // The directory each component's committed report of its last run of its passes is written to, a file per component
 export const PARITY_PASSES_DIRECTORY: string = join(
   REPOSITORY_ROOT,

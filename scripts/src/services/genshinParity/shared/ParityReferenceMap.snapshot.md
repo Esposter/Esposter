@@ -55,11 +55,11 @@ committed.
 | `inventory-weapons`                    | `InventoryScreen`           |                                                                          5.48% | 0.813 |  2.25% | 0.2414 |
 | `liyue-harbor-location`                | `WorldScreen`               |                                                                         19.83% | 0.392 | 17.24% | 0.6757 |
 | `loading-startup`                      | `LoadingStartup`            |                                                                          0.07% | 0.765 |  0.04% | 0.0027 |
-| `login-dawn-title`                     | `LoginScreen`               |                                                                         10.85% | 0.477 |  7.84% | 0.4432 |
-| `login-day-title`                      | `LoginScreen`               |                                                                         13.31% | 0.320 | 10.42% | 0.4842 |
+| `login-dawn-title`                     | `LoginScreen`               |                                                                         10.85% | 0.479 |  7.85% | 0.4432 |
+| `login-day-title`                      | `LoginScreen`               |                                                                         13.31% | 0.319 | 10.42% | 0.4842 |
 | `login-door`                           | `LoginScreen`               |                                                                         13.40% | 0.205 | 11.04% | 0.5123 |
-| `login-door-recording`                 | `LoginScreen`               |                                                                         17.24% | 0.357 | 12.35% | 0.6003 |
-| `login-door-session`                   | `LoginScreen`               |                                                                         12.27% | 0.417 |  8.42% | 0.4568 |
+| `login-door-recording`                 | `LoginScreen`               |                                                                         17.26% | 0.358 | 12.37% | 0.6006 |
+| `login-door-session`                   | `LoginScreen`               |                                                                         12.28% | 0.416 |  8.42% | 0.4568 |
 | `login-interface-arriving`             | `LoginInterface`            |                                     pending: no screenshot of this variant yet |       |        |        |
 | `login-interface-door`                 | `LoginInterface`            |                                                                          0.46% | 0.992 |  0.20% | 0.0381 |
 | `login-interface-door-mainland`        | `LoginInterface`            |                                                                          0.57% | 0.975 |  0.38% | 0.0288 |
@@ -67,8 +67,8 @@ committed.
 | `login-interface-loading-game`         | `LoginInterface`            |                                     pending: no screenshot of this variant yet |       |        |        |
 | `login-interface-mainland-rating`      | `LoginInterface`            |                                                                          3.01% | 0.992 |  2.34% | 0.1915 |
 | `login-interface-title`                | `LoginInterface`            |                                                                          0.36% | 0.996 |  0.24% | 0.0158 |
-| `login-night-title`                    | `LoginScreen`               |                                                                          9.41% | 0.366 |  7.01% | 0.3916 |
-| `login-screen-dusk`                    | `LoginScreen`               |                                                                         20.03% | 0.379 | 14.71% | 0.6657 |
+| `login-night-title`                    | `LoginScreen`               |                                                                          9.41% | 0.369 |  7.01% | 0.3915 |
+| `login-screen-dusk`                    | `LoginScreen`               |                                                                         20.55% | 0.348 | 14.98% | 0.6709 |
 | `mail-screen`                          | `MailScreen`                |                                                                          4.96% | 0.659 |  3.12% | 0.2035 |
 | `map-overlay-galesong`                 | `MapOverlay`                |                                                                          6.39% | 0.748 | 22.00% | 0.4761 |
 | `map-overlay-jueyun`                   | `MapOverlay`                |                                                                         13.89% | 0.397 | 30.66% | 0.6304 |
@@ -140,36 +140,36 @@ drawn away from the reference shows on its own row.
 | `inazuma-city-location/sky`            |   100.0% |  12.18 | 16.71% | 0.6035 |
 | `liyue-harbor-location/frame`          |   100.0% |  10.58 | 17.24% | 0.6757 |
 | `liyue-harbor-location/sky`            |   100.0% |  10.58 | 17.24% | 0.6757 |
-| `login-dawn-title/frame`               |   100.0% |   7.02 |  7.84% | 0.4432 |
-| `login-dawn-title/Walkway`             |    13.3% |  10.54 | 10.24% | 0.5915 |
-| `login-dawn-title/Bridges`             |     2.5% |  10.80 |  9.16% | 0.5483 |
-| `login-dawn-title/Towers`              |    35.5% |  10.73 |  8.90% | 0.5110 |
-| `login-dawn-title/sky`                 |    48.7% |   4.66 |  6.36% | 0.3479 |
-| `login-day-title/frame`                |   100.0% |   4.49 | 10.42% | 0.4842 |
-| `login-day-title/Walkway`              |     8.5% |   8.19 | 10.14% | 0.5177 |
+| `login-dawn-title/frame`               |   100.0% |   7.03 |  7.85% | 0.4432 |
+| `login-dawn-title/Walkway`             |    13.3% |  10.54 | 10.24% | 0.5912 |
+| `login-dawn-title/Bridges`             |     2.5% |  10.79 |  9.16% | 0.5482 |
+| `login-dawn-title/Towers`              |    35.5% |  10.74 |  8.91% | 0.5112 |
+| `login-dawn-title/sky`                 |    48.7% |   4.66 |  6.35% | 0.3478 |
+| `login-day-title/frame`                |   100.0% |   4.48 | 10.42% | 0.4842 |
+| `login-day-title/Walkway`              |     8.5% |   8.15 | 10.13% | 0.5171 |
 | `login-day-title/Bridges`              |     1.8% |   3.92 |  5.01% | 0.4252 |
-| `login-day-title/Towers`               |    55.6% |   5.72 | 12.20% | 0.5507 |
+| `login-day-title/Towers`               |    55.6% |   5.72 | 12.20% | 0.5508 |
 | `login-day-title/sky`                  |    34.1% |   3.39 |  7.88% | 0.3705 |
 | `login-door/frame`                     |   100.0% |   9.09 | 11.04% | 0.5123 |
 | `login-door/Walkway`                   |    20.4% |  14.81 | 10.16% | 0.5809 |
 | `login-door/Bridges`                   |     8.3% |  11.91 |  8.41% | 0.5026 |
-| `login-door/Towers`                    |    30.1% |   4.83 |  9.79% | 0.5010 |
+| `login-door/Towers`                    |    30.1% |   4.82 |  9.78% | 0.5010 |
 | `login-door/sky`                       |    41.3% |  12.58 | 12.92% | 0.4885 |
-| `login-door-recording/frame`           |   100.0% |   7.46 | 12.35% | 0.6003 |
-| `login-door-recording/Walkway`         |     7.0% |  21.11 |  9.51% | 0.7033 |
-| `login-door-recording/Bridges`         |     4.7% |  10.40 | 13.15% | 0.6144 |
-| `login-door-recording/Towers`          |    36.6% |   9.43 | 13.05% | 0.6399 |
-| `login-door-recording/sky`             |    51.7% |   5.44 | 12.17% | 0.5571 |
-| `login-door-session/frame`             |   100.0% |   0.94 |  8.42% | 0.4568 |
-| `login-door-session/Walkway`           |     4.7% |  34.62 | 14.40% | 0.7110 |
-| `login-door-session/Bridges`           |     2.5% |  12.06 |  6.45% | 0.5273 |
-| `login-door-session/Towers`            |    53.7% |   4.26 |  7.57% | 0.4298 |
-| `login-door-session/sky`               |    39.1% |   4.69 |  8.99% | 0.4591 |
-| `login-night-title/frame`              |   100.0% |   5.28 |  7.01% | 0.3916 |
-| `login-night-title/Walkway`            |     9.9% |  24.24 | 12.21% | 0.5998 |
-| `login-night-title/Bridges`            |     2.5% |  18.95 |  7.52% | 0.5182 |
-| `login-night-title/Towers`             |    37.7% |  10.09 |  7.15% | 0.4154 |
-| `login-night-title/sky`                |    49.9% |   6.55 |  5.85% | 0.3262 |
+| `login-door-recording/frame`           |   100.0% |   7.49 | 12.37% | 0.6006 |
+| `login-door-recording/Walkway`         |     7.0% |  21.13 |  9.54% | 0.7036 |
+| `login-door-recording/Bridges`         |     4.7% |  10.43 | 13.19% | 0.6152 |
+| `login-door-recording/Towers`          |    36.6% |   9.48 | 13.09% | 0.6406 |
+| `login-door-recording/sky`             |    51.7% |   5.47 | 12.17% | 0.5571 |
+| `login-door-session/frame`             |   100.0% |   0.95 |  8.42% | 0.4568 |
+| `login-door-session/Walkway`           |     4.7% |  34.63 | 14.40% | 0.7111 |
+| `login-door-session/Bridges`           |     2.5% |  12.05 |  6.43% | 0.5271 |
+| `login-door-session/Towers`            |    53.7% |   4.25 |  7.58% | 0.4296 |
+| `login-door-session/sky`               |    39.1% |   4.71 |  8.99% | 0.4592 |
+| `login-night-title/frame`              |   100.0% |   5.27 |  7.01% | 0.3915 |
+| `login-night-title/Walkway`            |     9.9% |  24.25 | 12.19% | 0.5994 |
+| `login-night-title/Bridges`            |     2.5% |  18.95 |  7.51% | 0.5179 |
+| `login-night-title/Towers`             |    37.7% |  10.08 |  7.15% | 0.4153 |
+| `login-night-title/sky`                |    49.9% |   6.55 |  5.85% | 0.3263 |
 | `mondstadt-city-location/frame`        |   100.0% |  17.86 | 20.87% | 0.6846 |
 | `mondstadt-city-location/sky`          |   100.0% |  17.86 | 20.87% | 0.6846 |
 | `nasha-town-location/frame`            |   100.0% |  21.40 | 27.58% | 0.7918 |

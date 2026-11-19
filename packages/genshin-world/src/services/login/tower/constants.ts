@@ -14,3 +14,8 @@ export const LOGIN_FACADE_ATTRIBUTE = "facade";
 // The geometry attribute saying whether a tower vertex is its lathe's, which the facade's openings cut, or a slab's,
 // Which stands whole
 export const LOGIN_FACADE_CUT_ATTRIBUTE = "facadeCut";
+// The procedural normal detail the towers' stone leans its normals by: a cell as wide as the exports' own surface
+// Wavelength read from their frame (2.5648 metres), and the amplitude that brings our mean lean to the exports' bend of
+// 3.1419 degrees, solved at that wavelength (design.md)
+export const LOGIN_TOWER_NORMAL_DETAIL_WAVELENGTH = 2.5648;
+export const LOGIN_TOWER_NORMAL_DETAIL_AMPLITUDE = 0.1619;

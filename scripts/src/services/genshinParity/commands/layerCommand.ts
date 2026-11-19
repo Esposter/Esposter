@@ -3,7 +3,7 @@ import type { SubCommandsDef } from "citty";
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { checkIsReadingHeld } from "#src/services/genshinParity/passes/checkIsReadingHeld";
 import { formatPassValue } from "#src/services/genshinParity/passes/formatPassValue";
-import { formatReadingValue } from "#src/services/genshinParity/passes/formatReadingValue";
+import { formatReadingWithUnit } from "#src/services/genshinParity/passes/formatReadingWithUnit";
 import { solveReferenceCloudLayer } from "#src/services/genshinParity/sky/solveReferenceCloudLayer";
 import { parseNames } from "#src/services/shared/parseNames";
 import { parseWholeCount } from "#src/services/shared/parseWholeCount";
@@ -55,7 +55,7 @@ export const layerCommand: SubCommandsDef[string] = defineCommand({
     );
     for (const reading of measure.readings)
       console.log(
-        `${reading.name}: ${formatReadingValue(reading)} ${reading.unit} against ${formatPassValue(reading.gate)} ${checkIsReadingHeld(reading) ? "held" : "FAILED"}`,
+        `${reading.name}: ${formatReadingWithUnit(reading)} against ${formatPassValue(reading.gate)} ${checkIsReadingHeld(reading) ? "held" : "FAILED"}`,
       );
     for (const note of measure.notes) console.log(note);
     console.log(`settings ${JSON.stringify(settings)}`);

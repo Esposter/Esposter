@@ -105,7 +105,7 @@ A surface whose exports' normal maps bend its normals SHALL lean its normals by 
 
 #### Scenario: Towers and bridges lean by their exports' bend
 
-- **GIVEN** the exports' normal maps bend the towers' normals and the bridges' normals over their families, and the detail's frequency is solved (design.md, Open)
+- **GIVEN** the exports' normal maps bend the towers' normals and the bridges' normals over their families, and the detail's frequency is the exports' lobe under the cap (design.md, Decisions)
 - **WHEN** the login's shape pass is run
 - **THEN** the towers' and the bridges' surface detail bend readings hold their gates
 

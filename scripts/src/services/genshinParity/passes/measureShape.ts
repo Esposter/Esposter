@@ -5,7 +5,6 @@ import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTarge
 import { compareFamilyTargets } from "#src/services/genshinParity/passes/compareFamilyTargets";
 import { computeSurfaceBend } from "#src/services/genshinParity/passes/computeSurfaceBend";
 import {
-  NO_DETAIL_LOBE_REASON,
   SHAPE_DEPTH_GATE,
   SHAPE_NORMAL_GATE_DEGREES,
   SHAPE_OUTLINE_GATE_PIXELS,
@@ -16,10 +15,8 @@ import { measureEnvelope } from "#src/services/genshinParity/passes/measureEnvel
 import { measureFamilyTargets } from "#src/services/genshinParity/passes/measureFamilyTargets";
 import { readSurfaceWavelengths } from "#src/services/genshinParity/passes/readSurfaceWavelengths";
 import { toShapeReading } from "#src/services/genshinParity/passes/toShapeReading";
+import { toSurfaceWavelengthDiagnostics } from "#src/services/genshinParity/passes/toSurfaceWavelengthDiagnostics";
 import { writeShapeDiff } from "#src/services/genshinParity/passes/writeShapeDiff";
-
-// A wavelength in metres to four places, or none where no lobe was resolved
-const formatMetres = (metres: number | undefined): string => (metres === undefined ? "none" : `${metres.toFixed(4)} m`);
 
 const TARGET_NAMES: WitnessTargetName[] = [
   WitnessTargetName.Part,
@@ -114,11 +111,14 @@ export const measureShape = (component: DerivedAssetComponent, pageRoot?: string
           : [],
       );
       const wavelengthNotes = wavelengths.map(
-        ({ exportsWavelength, index, metresPerPixel, oursWavelength }) =>
-          `${familyName(index)} surface detail wavelength: the exports' frame ${formatMetres(exportsWavelength)}, ours ${formatMetres(oursWavelength)}, a pixel ${metresPerPixel.toFixed(4)} m at the family's depth`,
+        ({ index, metresPerPixel }) =>
+          `${familyName(index)} surface detail wavelength: a pixel ${metresPerPixel.toFixed(4)} m at the family's depth`,
       );
       const envelopeReadings = await measureEnvelope(referenceId, exportsRead, oursRead, page, camera);
       return {
+        diagnostics: wavelengths.flatMap(({ exportsWavelength, index, oursWavelength }) =>
+          toSurfaceWavelengthDiagnostics({ exportsWavelength, family: familyName(index), oursWavelength }),
+        ),
         notes: [
           `${referenceId} exports | ours | normals' angle and outlines apart: ${diffPath}`,
           ...partNotes,
@@ -139,17 +139,6 @@ export const measureShape = (component: DerivedAssetComponent, pageRoot?: string
             const { gate, value } = getSurfaceBendReading(surfaceBend);
             return toShapeReading(`${familyName(surfaceBend.family)} surface detail bend`, gate, "degrees", value);
           }),
-          ...wavelengths.map(({ exportsWavelength, index, metresPerPixel, oursWavelength }) =>
-            toShapeReading(
-              `${familyName(index)} surface detail wavelength`,
-              metresPerPixel,
-              "m",
-              exportsWavelength === undefined || oursWavelength === undefined
-                ? undefined
-                : Math.abs(oursWavelength - exportsWavelength),
-              NO_DETAIL_LOBE_REASON,
-            ),
-          ),
           ...envelopeReadings,
         ],
       };
