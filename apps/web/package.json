@@ -61,7 +61,7 @@
     "preview": "nuxt preview",
     "pwsh": "pwsh -ExecutionPolicy Unrestricted",
     "start": "wrangler dev --config .output/server/wrangler.json --env-file .env",
-    "test": "vitest",
+    "test": "vp run -w build:packages && vitest",
     "tiled:gen": "node scripts/tiled/index.ts",
     "typecheck": "nuxt prepare && tsrs -b --fast --runExternalCode",
     "zstd:gen": "node scripts/zstd/index.ts"
