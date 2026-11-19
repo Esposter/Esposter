@@ -29,8 +29,9 @@ const root = useTemplateRef("root");
 const { today } = useCalendarClock();
 const { smAndUp } = useUiDisplay();
 const monthCount = computed(() => (isRange && smAndUp.value ? 2 : 1));
-// A day before the minimum or after the maximum is disabled. The grids are not given the bounds: a grid pages itself into
-// Them, so a month outside would be drawn as the bound's month instead of with its days disabled
+// A day before the minimum or after the maximum is disabled.
+// The grids are not given the bounds, since a grid pages itself into the bound's month.
+// So a month outside would be drawn as that month instead of with its days disabled.
 const checkIsOutOfBounds = (iso: string) =>
   (min !== undefined && iso < min.toString()) || (max !== undefined && iso > max.toString());
 const clamp = (date: Temporal.PlainDate) => {
@@ -45,8 +46,8 @@ const focusedDate = ref(clamp(modelValue.value ?? from.value ?? today.value));
 const focusedMonthIndex = ref(0);
 const shownMonthIndex = computed(() => Math.min(focusedMonthIndex.value, monthCount.value - 1));
 const firstMonth = computed(() => focusedDate.value.toPlainYearMonth().subtract({ months: shownMonthIndex.value }));
-// The days the grids draw as selected: one day, or a range's two ends, each as the ISO day a grid reads. The span out to
-// A day under the pointer is not among them, so it is a preview and never selected
+// The days the grids draw as selected: one day, or a range's two ends, each as the ISO day a grid reads.
+// The span out to the day under the pointer is not among them, so it is a preview and never selected.
 const selection = computed(() => {
   if (!isRange) return modelValue.value?.toString();
   else if (!from.value) return undefined;
