@@ -1,3 +1,4 @@
+import type { RegionCityIds } from "#src/models/leyLine/RegionCityIds";
 import type { MapCamera } from "#src/models/map/MapCamera";
 import type { OculusPlace } from "#src/models/oculus/OculusPlace";
 import type { StatueLevel } from "#src/models/statue/StatueLevel";
@@ -46,6 +47,8 @@ export const useWorldStatuesStore = defineStore("world/statues", () => {
   // The body that touches an Oculus and the camera the minimap marks those near it from, which the scene owns
   let characterBody: undefined | { position: GroundPoint };
   let getMapCamera: (() => MapCamera) | undefined;
+  // The city each region's statues are read against, the joined city table the world starts with
+  let regionCityIds: RegionCityIds = {};
   const unfoundOculusPlaces = computed(() => oculusPlaces.value.filter(({ id }) => !foundOculusIds.value.has(id)));
   const nearOculusPlaces = computed(() =>
     getMapCamera
@@ -63,7 +66,12 @@ export const useWorldStatuesStore = defineStore("world/statues", () => {
   // The region's progress is kept as the save holds it, its levels left to the table. A level the region rises to is an
   // Achievement event for its city, read against the level the region held before it
   const setRegionProgress = (regionId: string, progress: StatueRegionProgressSave) => {
-    const achievementEvents = computeStatueLevelEvents(regionId, getRegionProgress(regionId).level, progress.level);
+    const achievementEvents = computeStatueLevelEvents(
+      regionId,
+      getRegionProgress(regionId).level,
+      progress.level,
+      regionCityIds,
+    );
     if (achievementEvents.length > 0) events.emit("achievementEvents", achievementEvents);
     regionStatueProgressMap.value = new Map([...regionStatueProgressMap.value, [regionId, progress]]);
   };
@@ -194,9 +202,10 @@ export const useWorldStatuesStore = defineStore("world/statues", () => {
     characterBody: { position: GroundPoint };
     foundOculusIds: ReadonlySet<string>;
     getMapCamera: () => MapCamera;
+    regionCityIds: RegionCityIds;
     regionStatueProgressMap: ReadonlyMap<string, StatueRegionProgressSave>;
   }) => {
-    ({ characterBody, getMapCamera } = saved);
+    ({ characterBody, getMapCamera, regionCityIds } = saved);
     foundOculusIds.value = saved.foundOculusIds;
     regionStatueProgressMap.value = saved.regionStatueProgressMap;
     // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
@@ -216,6 +225,7 @@ export const useWorldStatuesStore = defineStore("world/statues", () => {
   const stop = () => {
     characterBody = undefined;
     getMapCamera = undefined;
+    regionCityIds = {};
     collectingOculusIds.clear();
     foundOculusIds.value = new Set();
     oculusPlaces.value = [];

@@ -25,6 +25,7 @@ describe(useWorldStatuesStore, () => {
       characterBody: { position: characterPosition },
       foundOculusIds: new Set([FOUND_OCULUS_ID]),
       getMapCamera: () => ({ facing: 0, x: 0, yaw: 0, z: 0 }),
+      regionCityIds: {},
       regionStatueProgressMap: new Map(),
     });
     await flushReads();

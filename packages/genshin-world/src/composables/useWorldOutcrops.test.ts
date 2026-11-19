@@ -20,6 +20,7 @@ import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { EMPTY_INVENTORY, EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inventory/constants";
 import { computeOutcropCampId } from "#src/services/leyLine/computeOutcropCampId";
 import { OUTCROP_CAMP_SIZE } from "#src/services/leyLine/constants";
+import { readRegionCityIds } from "#src/services/leyLine/readRegionCityIds";
 import { BlossomClaimResinMap } from "#src/services/originalResin/BlossomClaimResinMap";
 import { BlossomCompanionshipExpMap } from "#src/services/originalResin/BlossomCompanionshipExpMap";
 import { ADVENTURE_EXP_PER_RESIN, FRAGILE_RESIN_ITEM_ID } from "#src/services/originalResin/constants";
@@ -40,6 +41,7 @@ import { nextTick, ref } from "vue";
 
 const adventureRankTables = await readAdventureRankTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
+const regionCityIds = await readRegionCityIds(GAME_DATA_LOCAL_BASE_URL);
 
 // A region's fitted ley line blossom places, as its region data file holds them
 const readOutcropPlaces = async (regionId: string): Promise<OutcropPlacement[]> =>
@@ -111,7 +113,7 @@ describe(useWorldOutcrops, () => {
     );
     startTestWorldGround();
     const enemyMap = new Map<string, Enemy>();
-    const outcrops = useWorldOutcrops({ adventureRankTables, enemyMap, placesMap });
+    const outcrops = useWorldOutcrops({ adventureRankTables, enemyMap, placesMap, regionCityIds });
     useEnemySpawns({
       bossDefeatMap: new Map(),
       enemyMap,

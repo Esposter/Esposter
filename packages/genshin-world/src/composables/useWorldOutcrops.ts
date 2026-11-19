@@ -7,6 +7,7 @@ import type { Outcrop } from "#src/models/leyLine/Outcrop";
 import type { OutcropKind } from "#src/models/leyLine/OutcropKind";
 import type { OutcropKindRule } from "#src/models/leyLine/OutcropKindRule";
 import type { OutcropPlacement } from "#src/models/leyLine/OutcropPlacement";
+import type { RegionCityIds } from "#src/models/leyLine/RegionCityIds";
 import type { BlossomClaimOffer } from "#src/models/originalResin/BlossomClaimOffer";
 import type { BlossomClaimPrompt } from "#src/models/originalResin/BlossomClaimPrompt";
 import type { Ref } from "vue";
@@ -25,7 +26,6 @@ import { computeOutcropInteractables } from "#src/services/leyLine/computeOutcro
 import { OUTCROP_TOUCH_RADIUS } from "#src/services/leyLine/constants";
 import { createOutcropCamp } from "#src/services/leyLine/createOutcropCamp";
 import { readOutcropRegion } from "#src/services/leyLine/readOutcropRegion";
-import { RegionIdCityIdMap } from "#src/services/leyLine/RegionIdCityIdMap";
 import { BlossomCompanionshipExpMap } from "#src/services/originalResin/BlossomCompanionshipExpMap";
 import { claimResinReward } from "#src/services/originalResin/claimResinReward";
 import { computeBlossomClaimPrompt } from "#src/services/originalResin/computeBlossomClaimPrompt";
@@ -54,10 +54,12 @@ export const useWorldOutcrops = ({
   adventureRankTables,
   enemyMap,
   placesMap,
+  regionCityIds,
 }: {
   adventureRankTables: AdventureRankTables;
   enemyMap: ReadonlyMap<string, Enemy>;
   placesMap: Readonly<Ref<ReadonlyMap<string, OutcropPlacement[]>>>;
+  regionCityIds: RegionCityIds;
 }) => {
   const worldPartyStore = useWorldPartyStore();
   const { characters } = storeToRefs(worldPartyStore);
@@ -88,7 +90,7 @@ export const useWorldOutcrops = ({
   const requestedRegionIds = new Set<string>();
   watchImmediate(placesMap, (places) => {
     for (const regionId of places.keys()) {
-      const cityId = RegionIdCityIdMap[regionId];
+      const cityId = regionCityIds[regionId];
       if (cityId === undefined || requestedRegionIds.has(regionId)) continue;
       requestedRegionIds.add(regionId);
       const regionKey: `leyLine/regions/${string}` = `leyLine/regions/${cityId}`;
@@ -145,7 +147,7 @@ export const useWorldOutcrops = ({
   const drawDayOutcrops = (now: Temporal.Instant, random: () => number) => {
     // The cities whose statues are resonated, a region holding only found Oculi not yet among them
     const unlockedCityIds = [...regionStatueProgressMap.value].flatMap(([unlockedRegionId, { level }]) =>
-      level > 0 ? (RegionIdCityIdMap[unlockedRegionId] ?? []) : [],
+      level > 0 ? (regionCityIds[unlockedRegionId] ?? []) : [],
     );
     for (const [regionId, places] of placesMap.value) {
       const kindRules = kindRulesMap.value.get(regionId);

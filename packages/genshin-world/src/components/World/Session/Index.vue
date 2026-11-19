@@ -166,6 +166,7 @@ const {
   monumentPlaces,
   nameText,
   qualityTier,
+  regionCityIds,
   regionDataBaseUrl,
   reliquaryPieceEntryMap,
   reliquarySets,
@@ -281,6 +282,7 @@ startStatues({
   characterBody,
   foundOculusIds: savedState.foundOculusIds,
   getMapCamera: () => mapCamera.value,
+  regionCityIds,
   regionStatueProgressMap: savedState.regionStatueProgressMap,
 });
 onUnmounted(stopStatues);
@@ -754,7 +756,12 @@ const {
   outcropInteractables,
   restoreOutcropClaim,
   touchOutcropsNear,
-} = useWorldOutcrops({ adventureRankTables, enemyMap: kitContext.enemyMap, placesMap: outcropPlacesMap });
+} = useWorldOutcrops({
+  adventureRankTables,
+  enemyMap: kitContext.enemyMap,
+  placesMap: outcropPlacesMap,
+  regionCityIds,
+});
 // The Trounce Blossoms a defeated normal boss leaves, claimed at its place by F for the Original Resin its claim costs
 const {
   chooseTrounceBlossomClaim,

@@ -217,6 +217,7 @@ export const GameDataKeys = {
   },
   items: { materials: "items/materials", reliquarySets: "items/reliquarySets" },
   leyLine: {
+    cities: "leyLine/cities",
     regions: {
       "1": "leyLine/regions/1",
       "2": "leyLine/regions/2",

@@ -10,6 +10,7 @@ import type { EnemyTables } from "#src/models/enemy/EnemyTables";
 import type { HudInterfaceRects } from "#src/models/hud/HudInterfaceRects";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Kit } from "#src/models/kit/Kit";
+import type { RegionCityIds } from "#src/models/leyLine/RegionCityIds";
 import type { FrostbearingTreePlace } from "#src/models/offering/FrostbearingTreePlace";
 import type { OfferingLevel } from "#src/models/offering/OfferingLevel";
 import type { PuzzlePlace } from "#src/models/puzzle/PuzzlePlace";
@@ -55,6 +56,8 @@ export interface WorldTables {
   monumentPlaces: PuzzlePlace[];
   // The game's names in the reader's language, by their text ids, which the bag and the pick ups read their names from
   nameText: Readonly<Record<string, string>>;
+  // Each region's city in the game's city table, which its ley line kinds and its statue's unlock are read through
+  regionCityIds: RegionCityIds;
   // The artifact pieces of the reliquary tables by item id, each with its set, which a bag entry of an artifact is defined from
   reliquaryPieceEntryMap: ReadonlyMap<number, ReliquaryPieceEntry>;
   // The artifact sets of the reliquary tables, each with its pieces, which the chests roll their artifacts from

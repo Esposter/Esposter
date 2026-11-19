@@ -24,6 +24,7 @@ import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { readHudInterfaceRects } from "#src/services/hud/readHudInterfaceRects";
 import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap";
 import { readCharacterKits } from "#src/services/kit/readCharacterKits";
+import { readRegionCityIds } from "#src/services/leyLine/readRegionCityIds";
 import { measureLoadStep } from "#src/services/loading/measureLoadStep";
 import { readFrostbearingTreeLevels } from "#src/services/offering/readFrostbearingTreeLevels";
 import { readMondstadtFrostbearingTreePlaces } from "#src/services/offering/readMondstadtFrostbearingTreePlaces";
@@ -98,6 +99,7 @@ getResultAsync(() =>
       measureLoadStep("character-kits", readStartingCharacterKits()),
       measureLoadStep("windrise-data", readWindriseData(props.gameDataBaseUrl)),
       measureLoadStep("catalogue", readCatalogue(props.gameDataBaseUrl)),
+      measureLoadStep("region-city-ids", readRegionCityIds(props.gameDataBaseUrl)),
       measureLoadStep("wildlife-places", readMondstadtWildlifePlaces(props.gameDataBaseUrl)),
       measureLoadStep("frostbearing-tree-places", readMondstadtFrostbearingTreePlaces(props.gameDataBaseUrl)),
       measureLoadStep("crafting-bench-place", readMondstadtCraftingBenchPlace(props.gameDataBaseUrl)),
@@ -125,6 +127,7 @@ getResultAsync(() =>
     startingCharacterIdKitMap,
     windriseData,
     catalogue,
+    regionCityIds,
     wildlifePlaces,
     frostbearingTreePlaces,
     craftingBenchPlace,
@@ -153,6 +156,7 @@ getResultAsync(() =>
       materialDataMap,
       monumentPlaces: puzzlePlaces.filter(({ kind }) => kind === PuzzleKind.ElementalMonument),
       nameText,
+      regionCityIds,
       reliquaryPieceEntryMap: createReliquaryPieceEntryMap(reliquarySets),
       reliquarySets,
       seelies: pairSeelieCourts(
