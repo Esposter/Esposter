@@ -75,12 +75,13 @@ describe(createBatchedRefresh, () => {
     await markChanged([""]);
     await vi.runAllTimersAsync();
 
-    const callsAtCap = refresh.mock.calls.length;
+    expect(refresh).toHaveBeenCalledTimes(6);
+
     refresh.mockResolvedValueOnce(undefined);
     const markedAgain = markChanged([" "]);
     // The wait does not reset at the cap, so the mark's read is held for the whole maximum
     await vi.advanceTimersByTimeAsync(BATCHED_REFRESH_MAX_DELAY_MS - 1);
-    expect(refresh).toHaveBeenCalledTimes(callsAtCap);
+    expect(refresh).toHaveBeenCalledTimes(6);
     await vi.runAllTimersAsync();
     await markedAgain;
 

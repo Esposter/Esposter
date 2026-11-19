@@ -40,7 +40,8 @@ describe(parseLooseDate, () => {
   test("reads a leap day in a leap year", () => {
     expect.hasAssertions();
 
-    expect(parseLooseDate("Feb 29 1972")?.getDate()).toBe(29);
+    const leapDay = parseLooseDate("Feb 29 1972");
+    expect([leapDay?.getFullYear(), leapDay?.getMonth(), leapDay?.getDate()]).toStrictEqual([1972, 1, 29]);
   });
 
   test("reads a time zone's day across a month's edge, since the text's own day exists", () => {
