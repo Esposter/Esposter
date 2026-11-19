@@ -21,6 +21,7 @@ import { DRAG_PREVIEW_NODE_ID, withDragPreview } from "#src/services/pageBuilder
 import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
 import { usePageBuilderHistoryStore } from "#src/store/pageBuilder/history";
+import { checkHasChordModifier } from "#src/util/dom/checkHasChordModifier";
 import { checkIsEditableTarget } from "#src/util/dom/checkIsEditableTarget";
 import { ResourceType } from "@esposter/db-schema";
 
@@ -128,7 +129,7 @@ const onFrameKeydown = (event: KeyboardEvent) => {
   if (checkIsEditableTarget(event.target)) return;
 
   const frameKeyAction = frameKeyActions[event.key];
-  if (!frameKeyAction || event.altKey || event.ctrlKey || event.metaKey) {
+  if (!frameKeyAction || checkHasChordModifier(event)) {
     emit("canvasKeydown", event);
     return;
   }

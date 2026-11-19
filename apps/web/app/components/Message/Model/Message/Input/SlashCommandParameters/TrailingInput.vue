@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { pluralize } from "#shared/util/text/pluralize";
 import { useSlashCommandStore } from "#src/store/message/input/slashCommand";
+import { checkHasChordModifier } from "#src/util/dom/checkHasChordModifier";
 import { checkIsCaretAtStart } from "#src/util/dom/checkIsCaretAtStart";
 
 interface Props {
@@ -77,7 +78,7 @@ useFocusWhenActive(input, () => isFocused);
             event.preventDefault();
             const parameter = hiddenParameters[selectedHiddenIndex] ?? hiddenParameters[0];
             if (parameter) emit('createParameter', parameter.name);
-          } else if (event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey) {
+          } else if (event.key.length === 1 && !checkHasChordModifier(event)) {
             event.preventDefault();
             const parameter = hiddenParameters[selectedHiddenIndex] ?? hiddenParameters[0];
             if (parameter) {
