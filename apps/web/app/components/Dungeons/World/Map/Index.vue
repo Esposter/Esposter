@@ -1,27 +1,23 @@
 <script setup lang="ts">
+import type { Tilemaps } from "phaser";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { TilemapKey } from "#shared/generated/tiled/propertyTypes/enum/TilemapKey";
 import { createTilemapAssets } from "#src/services/dungeons/tilemap/createTilemapAssets";
 import { useWorldSceneStore } from "#src/store/dungeons/world/scene";
-import { getScene, onCreate, onShutdown, Tilemap, useInjectSceneKey } from "vue-phaserjs";
+import { onCreate, onShutdown, Tilemap } from "vue-phaserjs";
 
 const worldSceneStore = useWorldSceneStore();
 const { tilemapKey } = storeToRefs(worldSceneStore);
-const sceneKey = useInjectSceneKey();
-const initializeBounds = (scene: SceneWithPlugins) => {
-  if (tilemapKey.value === TilemapKey.Home) scene.cameras.main.setBounds(0, 0, 1280, 2176);
+// Runs on every tilemap the component builds, so the bounds follow the tilemap's own size rather than a number kept here
+const initializeBounds = (scene: SceneWithPlugins, tilemap: Tilemaps.Tilemap) => {
+  if (tilemapKey.value === TilemapKey.Home)
+    scene.cameras.main.setBounds(0, 0, tilemap.widthInPixels, tilemap.heightInPixels);
   else scene.cameras.main.removeBounds();
 };
 
 onCreate((scene) => {
-  initializeBounds(scene);
   scene.cameras.main.setZoom(0.8);
-});
-
-watch(tilemapKey, () => {
-  const scene = getScene(sceneKey);
-  initializeBounds(scene);
 });
 
 onShutdown((scene) => {
@@ -31,5 +27,13 @@ onShutdown((scene) => {
 </script>
 
 <template>
-  <Tilemap :configuration="{ key: tilemapKey }" @complete="(scene, tilemap) => createTilemapAssets(scene, tilemap)" />
+  <Tilemap
+    :configuration="{ key: tilemapKey }"
+    @complete="
+      (scene, tilemap) => {
+        createTilemapAssets(scene, tilemap);
+        initializeBounds(scene, tilemap);
+      }
+    "
+  />
 </template>
