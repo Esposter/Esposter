@@ -4,6 +4,7 @@ import { authModelOptions } from "#server/services/auth/authModelOptions";
 import { PRODUCTION_BASE_URL } from "#server/services/auth/constants";
 import { drizzleAdapterConfiguration } from "#server/services/auth/drizzleAdapterConfiguration";
 import { closeSessionSockets } from "#server/services/realtime/closeSessionSockets";
+import { SocialProvider } from "#shared/models/auth/SocialProvider";
 import { drizzleAdapter } from "@better-auth/drizzle-adapter/relations-v2";
 import { getResultAsync, noop } from "@esposter/shared";
 import { betterAuth } from "better-auth";
@@ -31,7 +32,7 @@ export const auth = betterAuth({
       // Would link into an already-verified local user — accepted, because the alternative is a provider that
       // Can sign in and never join the account it belongs to. Google and GitHub report the claim, so they earn
       // Nothing by being listed here
-      trustedProviders: ["facebook"],
+      trustedProviders: [SocialProvider.Facebook],
       // The profile is user-owned and editable in settings, so linking a provider never overwrites it
       updateUserInfoOnLink: false,
     },
@@ -71,10 +72,14 @@ export const auth = betterAuth({
   // Off: better-auth's limiter keeps its counts in each isolate's memory. The auth route budgets these endpoints through a binding
   // Instead (`server/api/auth/[...].ts`)
   rateLimit: { enabled: false },
+  // Keyed by the shared provider list the login screen reads too, so a provider added to that list has to be configured here
   socialProviders: {
-    facebook: { clientId: process.env.FACEBOOK_CLIENT_ID, clientSecret: process.env.FACEBOOK_CLIENT_SECRET },
-    github: { clientId: process.env.GITHUB_CLIENT_ID, clientSecret: process.env.GITHUB_CLIENT_SECRET },
-    google: { clientId: process.env.GOOGLE_CLIENT_ID, clientSecret: process.env.GOOGLE_CLIENT_SECRET },
-  },
+    [SocialProvider.Facebook]: {
+      clientId: process.env.FACEBOOK_CLIENT_ID,
+      clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+    },
+    [SocialProvider.Github]: { clientId: process.env.GITHUB_CLIENT_ID, clientSecret: process.env.GITHUB_CLIENT_SECRET },
+    [SocialProvider.Google]: { clientId: process.env.GOOGLE_CLIENT_ID, clientSecret: process.env.GOOGLE_CLIENT_SECRET },
+  } satisfies Record<SocialProvider, NonNullable<Parameters<typeof betterAuth>[0]["socialProviders"]>[SocialProvider]>,
   user: authModelOptions.user,
 });

@@ -48,7 +48,7 @@ sequenceDiagram
   BA->>DB: delete the row unless it is the last one
 ```
 
-The card renders one row per configured provider, connected or not, reading the provider list and its logos from the same `LoginButtonItems` constant the login page renders — a second hand-maintained logo mapping is how the two surfaces drift apart. Both actions run through `useMutation` on **one key for the whole card**, not one per provider: they write a single target — the set of connected accounts — and better-auth's last-account guard reads that set and deletes without a transaction, so two unlinks in flight together would both see two providers, both pass, and both delete. Sharing a key queues them, and the second one meets the guard it is supposed to meet. Each row still reads its own pending state: its write is wrapped in a second write keyed by its provider, so the row that issued a link or an unlink shows it in flight, and the others stay usable, while it waits behind the queue or runs. Rejections reach the alert store the way a failed sign-in does, carrying the api's own message rather than the http status text — `fetchOptions: { throw: true }` throws away the former, so the card reads the returned payload instead (`requireAuthData`).
+The card renders one row per configured provider, connected or not, reading the providers from the shared `SocialProvider` list the server configures, and their logos from the same `LoginButtonItems` constant the login page renders — a second hand-maintained logo mapping is how the two surfaces drift apart. Both actions run through `useMutation` on **one key for the whole card**, not one per provider: they write a single target — the set of connected accounts — and better-auth's last-account guard reads that set and deletes without a transaction, so two unlinks in flight together would both see two providers, both pass, and both delete. Sharing a key queues them, and the second one meets the guard it is supposed to meet. Each row still reads its own pending state: its write is wrapped in a second write keyed by its provider, so the row that issued a link or an unlink shows it in flight, and the others stay usable, while it waits behind the queue or runs. Rejections reach the alert store the way a failed sign-in does, carrying the api's own message rather than the http status text — `fetchOptions: { throw: true }` throws away the former, so the card reads the returned payload instead (`requireAuthData`).
 
 The link round trip is the exception that needs its own handling: a rejection in the OAuth callback arrives as a **redirect** back to `/user/settings?error=<code>`, never as a rejected promise, so the card reads that query parameter on return, translates the code through `AccountLinkErrorMessageMap`, and then strips it from the url — the alert is the delivery of that outcome, and a parameter left behind replays the toast on every reload of the address. The case with no remedy is `account_already_linked_to_different_user` — two user rows already exist and better-auth will not join them, so the message says to sign in with that provider directly rather than implying a retry helps.
 
@@ -66,15 +66,16 @@ Merging two user rows that already exist. This prevents the split going forward,
 
 Paths relative to `apps/web`.
 
-| File                                                       | Role                                                           |
-| ---------------------------------------------------------- | -------------------------------------------------------------- |
-| `server/auth.ts`                                           | the explicit `account.accountLinking` block                    |
-| `app/components/User/LinkedAccountsCard/Index.vue`         | the settings section — lists accounts, links and unlinks       |
-| `app/components/User/LinkedAccountsCard/Row.vue`           | one provider row and its Link / Unlink action                  |
-| `app/services/auth/AccountLinkErrorMessageMap.ts`          | redirect error codes translated into readable text             |
-| `app/services/auth/requireAuthData.ts`                     | raises an auth rejection from the payload, keeping its message |
-| `app/services/login/LoginButtonItems.ts`                   | the single provider list and logos, shared with the login page |
-| `app/services/user/settings/UserSettingsPageSectionMap.ts` | the section's heading and its sidebar entry                    |
+| File                                                       | Role                                                                 |
+| ---------------------------------------------------------- | -------------------------------------------------------------------- |
+| `server/auth.ts`                                           | the explicit `account.accountLinking` block                          |
+| `app/components/User/LinkedAccountsCard/Index.vue`         | the settings section — lists accounts, links and unlinks             |
+| `app/components/User/LinkedAccountsCard/Row.vue`           | one provider row and its Link / Unlink action                        |
+| `app/services/auth/AccountLinkErrorMessageMap.ts`          | redirect error codes translated into readable text                   |
+| `app/services/auth/requireAuthData.ts`                     | raises an auth rejection from the payload, keeping its message       |
+| `shared/models/auth/SocialProvider.ts`                     | the one provider list the server config and the buttons key on       |
+| `app/services/login/LoginButtonItems.ts`                   | one button per listed provider, its logo, shared with the login page |
+| `app/services/user/settings/UserSettingsPageSectionMap.ts` | the section's heading and its sidebar entry                          |
 
 ## Notes
 

@@ -1,6 +1,6 @@
-import type { betterAuth } from "better-auth";
+import type { SocialProvider } from "#shared/models/auth/SocialProvider";
 
 export interface ButtonProps {
   logo: Component;
-  provider: keyof NonNullable<Parameters<typeof betterAuth>[0]["socialProviders"]>;
+  provider: SocialProvider;
 }
