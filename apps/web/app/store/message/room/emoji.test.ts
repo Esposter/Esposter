@@ -1,6 +1,8 @@
 // @vitest-environment nuxt
 import type { RoomEmojiWithPresignedUrl } from "@esposter/db-schema";
 
+import { EmojiType } from "#src/models/message/emoji/EmojiType";
+import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useRoomEmojiStore } from "#src/store/message/room/emoji";
 import { v7 } from "uuid";
@@ -37,5 +39,18 @@ describe(useRoomEmojiStore, () => {
     await roomEmojiStore.readRoomEmojis(roomId);
 
     expect(roomEmojiStore.getSlice(roomId).items.value).toStrictEqual([kept, createdRoomEmoji]);
+  });
+
+  test("stamps the emoji type on the room's own set", () => {
+    expect.hasAssertions();
+
+    setCurrentRoomId(roomId);
+    const roomEmojiStore = useRoomEmojiStore();
+    const roomEmoji = createRoomEmoji();
+    roomEmojiStore.storeCreateRoomEmoji(roomId, roomEmoji);
+
+    expect(roomEmojiStore.customEmojis).toStrictEqual([
+      { id: roomEmoji.id, name: roomEmoji.name, presignedUrl, slug: roomEmoji.name, type: EmojiType.Custom },
+    ]);
   });
 });

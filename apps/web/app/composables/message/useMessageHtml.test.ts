@@ -2,7 +2,6 @@
 import type { RoomEmojiWithPresignedUrl } from "@esposter/db-schema";
 
 import { useMessageHtml } from "#src/composables/message/useMessageHtml";
-import { EmojiType } from "#src/models/message/emoji/EmojiType";
 import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { createUser } from "#src/services/message/user/createUser.test";
 import { useRoomEmojiStore } from "#src/store/message/room/emoji";
@@ -81,17 +80,5 @@ describe(useMessageHtml, () => {
     const messageHtml = useMessageHtml(createCustomEmojiNode(roomEmojiId), roomId);
 
     expect(messageHtml.value).toBe(createCustomEmojiNode(roomEmojiId));
-  });
-
-  test("stamps the emoji type on the room's own set", () => {
-    expect.hasAssertions();
-
-    const roomEmojiStore = useRoomEmojiStore();
-    const { storeCreateRoomEmoji } = roomEmojiStore;
-    storeCreateRoomEmoji(roomId, roomEmoji);
-
-    expect(roomEmojiStore.customEmojis).toStrictEqual([
-      { id: roomEmojiId, name, presignedUrl, slug: name, type: EmojiType.Custom },
-    ]);
   });
 });
