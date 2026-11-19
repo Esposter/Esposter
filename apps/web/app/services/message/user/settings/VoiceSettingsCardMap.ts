@@ -1,3 +1,5 @@
+import type { UserSettingsInMessage } from "@esposter/db-schema";
+
 import VoiceDevices from "#src/components/Message/Model/User/Settings/Type/Voice/Devices/Index.vue";
 import VoiceInputMode from "#src/components/Message/Model/User/Settings/Type/Voice/InputMode.vue";
 import VoiceInputProfile from "#src/components/Message/Model/User/Settings/Type/Voice/InputProfile/Index.vue";
@@ -13,4 +15,4 @@ export const VoiceSettingsCardMap = {
   [VoiceSettingsSection.InputProfile]: VoiceInputProfile,
   [VoiceSettingsSection.InputSensitivity]: VoiceInputSensitivity,
   [VoiceSettingsSection.JoinSettings]: VoiceJoinSwitches,
-} as const satisfies Record<VoiceSettingsSection, Component>;
+} as const satisfies Record<VoiceSettingsSection, Component<{ userSettings: UserSettingsInMessage }>>;
