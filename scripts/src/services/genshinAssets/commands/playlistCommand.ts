@@ -1,7 +1,7 @@
 import type { SubCommandsDef } from "citty";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
-import { formatSeconds } from "#src/services/genshinAssets/commands/formatSeconds";
+import { formatSecondsThreeDecimals } from "#src/services/genshinAssets/commands/formatSecondsThreeDecimals";
 import { extractComponentPlaylist } from "#src/services/genshinAssets/music/extractComponentPlaylist";
 import { parseDerivedAssetComponent } from "#src/services/genshinAssets/shared/parseDerivedAssetComponent";
 import { defineCommand } from "citty";
@@ -25,10 +25,10 @@ export const playlistCommand: SubCommandsDef[string] = defineCommand({
       if (!segment) continue;
       const clips = segment.clips.map(
         ({ beginTrim, endTrim, playAt, sourceId }) =>
-          `${sourceId} at ${formatSeconds(playAt)}, trimmed ${formatSeconds(beginTrim)} and ${formatSeconds(endTrim)}`,
+          `${sourceId} at ${formatSecondsThreeDecimals(playAt)}, trimmed ${formatSecondsThreeDecimals(beginTrim)} and ${formatSecondsThreeDecimals(endTrim)}`,
       );
       console.log(
-        `segment ${segment.id}: ${formatSeconds(segment.duration)} at ${segment.volume.toFixed(1)} dB, ${clips.join("; ") || "silent"}`,
+        `segment ${segment.id}: ${formatSecondsThreeDecimals(segment.duration)} at ${segment.volume.toFixed(1)} dB, ${clips.join("; ") || "silent"}`,
       );
     }
     console.log(isLooping ? "then loops forever" : "then ends");
