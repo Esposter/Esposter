@@ -5,6 +5,7 @@ import { SkillDocsFindingType } from "#src/models/sweeps/skillDocs/SkillDocsFind
 import { CITATION_REGEX } from "#src/services/sweeps/skillDocs/constants";
 import { getCitedSkillNames } from "#src/services/sweeps/skillDocs/getCitedSkillNames";
 import { getSkillName } from "#src/services/sweeps/skillDocs/getSkillName";
+import { getFilename } from "@esposter/shared";
 
 // A page pointing the reader at itself is a block moved off `SKILL.md` with its pointer still attached, and it is
 // Almost always a restatement of the rule the page already states above it. A line naming another skill cites that
@@ -12,7 +13,7 @@ import { getSkillName } from "#src/services/sweeps/skillDocs/getSkillName";
 export const getSelfCitationFindings = (pages: SkillDocsFile[], skillNames: Set<string>): SkillDocsFinding[] =>
   pages.flatMap(({ path, text }) => {
     const skill = getSkillName(path);
-    const self = path.slice(path.lastIndexOf("/") + 1);
+    const self = getFilename(path);
     return text
       .split("\n")
       .filter(

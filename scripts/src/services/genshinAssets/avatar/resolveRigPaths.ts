@@ -1,4 +1,4 @@
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { getFilename, InvalidOperationError, Operation } from "@esposter/shared";
 import { crc32 } from "node:zlib";
 
 // The path of each bone of a rig, from its parents and the CRC32 of each bone's last name. A rig's table lists every
@@ -18,7 +18,7 @@ export const resolveRigPaths = (
     for (const [child, parent] of parents.entries()) {
       if (parent !== bone) continue;
       const matches = (childPathsMap.get(path) ?? []).filter(
-        (childPath) => crc32(childPath.slice(childPath.lastIndexOf("/") + 1)) === nameHashes[child],
+        (childPath) => crc32(getFilename(childPath)) === nameHashes[child],
       );
       const [match] = matches;
       if (matches.length !== 1 || match === undefined)
