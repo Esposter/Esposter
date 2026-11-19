@@ -11,7 +11,7 @@ describe(computeBossRespawnTime, () => {
     expect(computeBossRespawnTime([epoch])?.toString()).toBe(epoch.add(BOSS_RESPAWN_AFTER_CLAIM_DURATION).toString());
   });
 
-  test("an unclaimed boss has no respawn time, held by its area's teleports instead", () => {
+  test("an unclaimed boss has no respawn time", () => {
     expect.hasAssertions();
 
     expect(computeBossRespawnTime([])).toBeUndefined();
