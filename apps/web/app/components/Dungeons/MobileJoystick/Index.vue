@@ -36,8 +36,7 @@ watch([virtualJoystick, controls], ([newVirtualJoystick, newControls]) => {
 });
 
 onUnmounted(() => {
-  if (!virtualJoystick.value) return;
-  virtualJoystick.value.destroy();
+  virtualJoystick.value?.destroy();
 });
 </script>
 
