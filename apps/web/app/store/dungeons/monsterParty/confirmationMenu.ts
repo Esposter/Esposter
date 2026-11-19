@@ -51,10 +51,19 @@ export const useConfirmationMenuStore = defineStore("dungeons/monsterParty/confi
     return true;
   };
 
-  const onCancel = () => {
-    monsterPartySceneStore.sceneMode = SceneMode.Menu;
+  // The one place the confirmation hands the info panel back to its default text, whichever way it is left
+  const resetInfoDialogMessage = () => {
     monsterPartyInfoPanelStore.infoDialogMessage.text = DEFAULT_INFO_DIALOG_MESSAGE;
   };
+  const onCancel = () => {
+    monsterPartySceneStore.sceneMode = SceneMode.Menu;
+    resetInfoDialogMessage();
+  };
+  // Dismissing the confirmation from outside it closes the menu too, rather than going back to that menu
+  const onDismiss = () => {
+    monsterPartySceneStore.sceneMode = SceneMode.Default;
+    resetInfoDialogMessage();
+  };
 
-  return { monsterPartyConfirmationMenuOptionGrid, onPlayerInput };
+  return { monsterPartyConfirmationMenuOptionGrid, onDismiss, onPlayerInput };
 });
