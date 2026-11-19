@@ -1,4 +1,7 @@
+import { createObjectStub } from "#server/services/realtime/createObjectStub";
 import { env } from "cloudflare:workers";
 
-// The call's object, named by the call session's id. Its stub is typed by the class the realtime Worker exports
-export const useCallObject = (callSessionId: string) => env.CALL.get(env.CALL.idFromName(callSessionId));
+// The call's object, named by the call session's id. Its stub is typed by the class the realtime Worker exports, and each RPC
+// It is called with records the read set the call reports into the request in scope
+export const useCallObject = (callSessionId: string) =>
+  createObjectStub(env.CALL.get(env.CALL.idFromName(callSessionId)));
