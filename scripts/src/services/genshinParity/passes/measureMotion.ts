@@ -36,6 +36,8 @@ declare global {
 
 // The family whose pieces a clip moves, and the stages the scene stands still in and plays it at
 const DOOR_FAMILY = "Door";
+// The page's frames as its faked clock fires them, every 16 milliseconds
+const PAGE_FRAME_MS = 16;
 
 // The motion pass: the door's pieces as the scene plays their lift, read frame by frame on a faked clock from the
 // Frame its stage turns to the door's, held against where the game's own lift clip carries each piece: its path, the
@@ -85,11 +87,19 @@ export const measureMotion = async (
       const sampleFrame = createLiftFrameSampler(
         {
           advance: (ms) => page.clock.runFor(ms),
-          readFrame: (): Promise<LiftFrame> =>
-            page.evaluate(
+          // The page draws its frames on its own schedule, so a read waits until the frame at the clock's tick is drawn: the
+          // Last one the faked clock has passed, a multiple of the page's frame. Read as it stood, a sample could take the
+          // Frame a tick earlier, and the moments the pace is fitted over moved by a tick between runs
+          readFrame: async (): Promise<LiftFrame> => {
+            await page.waitForFunction(
+              (frameMs) => (window.frameTimes.at(-1) ?? -1) >= Math.floor(performance.now() / frameMs) * frameMs,
+              PAGE_FRAME_MS,
+            );
+            return page.evaluate(
               (family) => ({ pieces: window.getScenePieces(family), time: window.frameTimes.at(-1) ?? 0 }),
               DOOR_FAMILY,
-            ),
+            );
+          },
         },
         PARITY_FRAME_MS,
       );
