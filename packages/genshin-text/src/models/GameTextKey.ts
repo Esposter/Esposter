@@ -4,6 +4,8 @@
 // Here and a run of `pnpm -C scripts genshin:text write`, which reads this const object as its inventory; `genshin:text find`
 // Prints the id of any English text
 export const GameTextKey = {
+  // The Abandon button of a challenge, named as the challenge's interrupt control names it
+  AbandonChallenge: "CONTROL_CHALLENGE_INTERRUPT",
   // The screens the world opens are named as the Paimon menu names their entries, or as a screen titles its own page
   // The Spiral Abyss's fixed words the Abyss's screens show, named as the game's manual text map files them
   AbyssBenedictionEffectiveChamber: "UI_TOWER_BUFF_DURATION_STAGE",
@@ -574,6 +576,10 @@ export const GameTextKey = {
   MistFlowerCorolla: "3227888900",
   Mondstadt: "UI_MAP_AREA1_TITLE_7",
   MoonfallSilver: "1570138468",
+  // The Moonfin challenge's title and its two progress lines, each of which holds its count as the game's `#1#` value
+  MoonfinChallengeCaught: "3647406687",
+  MoonfinChallengeTensionTime: "3579569687",
+  MoonfinChallengeTitle: "3514908478",
   Mora: "3578052980",
   MourningFlower: "1761418508",
   MoveBackward: "CONTROL_MOVE_BACKWARD",

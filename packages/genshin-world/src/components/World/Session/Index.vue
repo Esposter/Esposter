@@ -1537,7 +1537,7 @@ useWorldSaveSync({
         }
       "
     />
-    <FishingScreen v-if="screenKind === ScreenKind.Fishing" :view="castView" />
+    <FishingScreen v-if="screenKind === ScreenKind.Fishing" :game-text :view="castView" />
     <ShopScreen
       v-if="screenKind === ScreenKind.Shop && records.shopIdShopGoodMap"
       v-model:purchases="shopPurchases"

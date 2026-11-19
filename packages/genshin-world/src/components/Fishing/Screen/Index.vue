@@ -1,16 +1,22 @@
 <script setup lang="ts">
 import type { FishingZone } from "#src/models/fishing/FishingZone";
+import type { GameText } from "genshin-text";
 
 import { REEL_BAR_MAX } from "#src/services/fishing/constants";
 import { GameScreen } from "genshin-interface";
+import { GameTextKey } from "genshin-text";
 
 interface Props {
+  // The game's words in the reader's language
+  gameText: GameText;
   // The cast as it stands: the tension held on the bar and the zone it is held in, or none while no line is out
   view?: undefined | { tension: number; zone: FishingZone };
 }
 
-defineProps<Props>();
+const props = defineProps<Props>();
 const percent = (value: number) => `${(value / REEL_BAR_MAX) * 100}%`;
+// The line's words before its count, which the reel that genshin-fishing owns fills and this panel does not draw
+const getChallengeWords = (key: GameTextKey) => props.gameText[key].replace(/:?\s*#\d#.*$/u, "");
 </script>
 
 <template>
@@ -31,6 +37,12 @@ const percent = (value: number) => `${(value / REEL_BAR_MAX) * 100}%`;
           d="M6 0h16.5q.75-.25.5 2.5 3.7 2.8 4 9l-4.5 7.5-3.5 2.5v30l2 3v2l4.5 4.5 3 1h5l3-1 3.5-3.5v-2l2-3v-9l-1.5-1.5h-6.5q-1.12-2.67 1.5-2l11-10h1.5q-1.12-2.67 1.5-2 1.25-2.25 2.5.5v26q-2 1-1 5l-3 5-4.5 4.5-5 3h-17l-8.5-7.5-3-5-1-6-1-1v-31l-5-7v-8l3-4v-2.5zm7 6-3 1q-1 6 3 7 3 1 4-1h1v-5q-1-3-5-2z"
         />
       </svg>
+      <div class="fishing-challenge">
+        <p>{{ getChallengeWords(GameTextKey.MoonfinChallengeTitle) }}</p>
+        <p>{{ getChallengeWords(GameTextKey.MoonfinChallengeCaught) }}</p>
+        <p>{{ getChallengeWords(GameTextKey.MoonfinChallengeTensionTime) }}</p>
+        <p>{{ getChallengeWords(GameTextKey.AbandonChallenge) }}</p>
+      </div>
     </template>
   </GameScreen>
 </template>
@@ -138,5 +150,15 @@ const percent = (value: number) => `${(value / REEL_BAR_MAX) * 100}%`;
   width: calc(var(--unit) * 20);
   height: calc(var(--unit) * 24);
   fill: #cbd8e8;
+}
+
+/* The challenge panel in the upper left, clear of the bar and the ring, its lines in the reel's pale yellow */
+.fishing-challenge {
+  position: absolute;
+  top: calc(var(--unit) * 96);
+  left: calc(var(--unit) * 96);
+  color: #fff7b2;
+  font-size: calc(var(--unit) * 22);
+  line-height: calc(var(--unit) * 30);
 }
 </style>
