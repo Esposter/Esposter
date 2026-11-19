@@ -17,7 +17,9 @@ await loadContent();
 // The manifest saves on Save alone, unlike the editors that autosave, so text not yet saved is guarded on the way out
 // And kept from Deploy, which always runs the saved manifest
 useConfirmBeforeNavigation(isManifestDirty);
-onUnmounted(discardManifest);
+onUnmounted(() => {
+  discardManifest();
+});
 const errorMessage = ref("");
 const save = () => {
   errorMessage.value = "";
