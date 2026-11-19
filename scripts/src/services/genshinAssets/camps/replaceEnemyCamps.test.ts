@@ -3,7 +3,7 @@ import type { EnemyCamp } from "genshin-world";
 import { replaceEnemyCamps } from "#src/services/genshinAssets/camps/replaceEnemyCamps";
 import { describe, expect, test } from "vitest";
 
-describe("replaceEnemyCamps", () => {
+describe(replaceEnemyCamps, () => {
   test("the stand-in camp in Mondstadt is replaced", () => {
     expect.hasAssertions();
     const standIn: EnemyCamp = {

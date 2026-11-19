@@ -50,7 +50,7 @@ describe(deriveWeaponRoots, () => {
     const { assets } = walkAssetClosure(layout.objects, layout.gameObjectDrawingMap, roots, cabMap);
 
     expect(roots).toStrictEqual([{ block: BLOCK, name: ROOT_NAME, pathId: ROOT_GAME_OBJECT_ID }]);
-    expect(assets).toContainEqual({ block: BLOCK, file: FILE, pathId: DRAWN_MESH.pathId });
+    expect(assets).toStrictEqual([{ block: BLOCK, file: FILE, pathId: DRAWN_MESH.pathId }]);
   });
 
   test("a held mesh under a root whose file the CAB map lacks is reported, not counted as reached", () => {

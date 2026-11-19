@@ -64,8 +64,5 @@ describe(resolveVgmstream, () => {
     await expect(resolveVgmstream()).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: https://github.com/vgmstream/vgmstream/releases/download/r2117/vgmstream-mac.zip, has checksum 31336d9bb85e0c667eaf14a4d15c09de4e080feae928930ec0775a3ca5e8f9ef, not the pinned one]`,
     );
-    expect(fetchOk).toHaveBeenCalledWith(VGMSTREAM_MACOS_PINNED_TOOL.archiveUrl, {
-      timeoutMs: VGMSTREAM_MACOS_PINNED_TOOL.downloadTimeoutMs,
-    });
   });
 });

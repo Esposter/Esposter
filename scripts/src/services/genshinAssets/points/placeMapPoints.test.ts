@@ -1,4 +1,3 @@
-import { LabelIdOfferingKindMap } from "#src/services/genshinAssets/offerings/LabelIdOfferingKindMap";
 import { placeMapPoints } from "#src/services/genshinAssets/points/placeMapPoints";
 import { OfferingKind } from "genshin-world";
 import { describe, expect, test } from "vitest";
@@ -60,7 +59,7 @@ describe(placeMapPoints, () => {
     const placement = placeMapPoints(
       [{ area_id: 3, id: 7, label_id: 316, x_pos: 1.5, y_pos: 2.25, z_level: 0 }],
       transform,
-      LabelIdOfferingKindMap,
+      new Map([[316, OfferingKind.SacredSakura]]),
       "offering",
       [0, 0, 0],
     );

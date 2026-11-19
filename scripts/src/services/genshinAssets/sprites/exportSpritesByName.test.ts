@@ -81,7 +81,7 @@ describe(exportSpritesByName, () => {
     });
 
     await expect(exportSpritesByName(["UI_FixtureIcon"])).resolves.toStrictEqual(
-      expect.stringContaining("1 of 1 names exported"),
+      `1 of 1 names exported into ${spriteDirectory}; 0 not in the asset index: `,
     );
   });
 });

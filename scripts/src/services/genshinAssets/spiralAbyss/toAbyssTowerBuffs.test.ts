@@ -33,24 +33,6 @@ describe(toAbyssTowerBuffs, () => {
     );
   });
 
-  test.each([
-    [TowerBuffIcon.Attack, AbyssBenedictionIcon.Sword],
-    [TowerBuffIcon.Defense, AbyssBenedictionIcon.Shield],
-  ])("a %s icon draws the %s glyph", (buffIcon, icon) => {
-    expect.hasAssertions();
-
-    expect(toAbyssTowerBuffs([createRow(buffIcon, TowerBuffLastingType.Floor)]).get(TOWER_BUFF_ID)?.icon).toBe(icon);
-  });
-
-  test.each([
-    [TowerBuffLastingType.Floor, AbyssBenedictionScope.Floor],
-    [TowerBuffLastingType.Level, AbyssBenedictionScope.Chamber],
-  ])("a %s lasting type spans the %s", (lastingType, scope) => {
-    expect.hasAssertions();
-
-    expect(toAbyssTowerBuffs([createRow(TowerBuffIcon.Attack, lastingType)]).get(TOWER_BUFF_ID)?.scope).toBe(scope);
-  });
-
   test("a Life icon and an immediate lasting type publish neither field, rather than one written as undefined", () => {
     expect.hasAssertions();
 

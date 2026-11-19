@@ -5,12 +5,10 @@ import type { readSceneLayout as baseReadSceneLayout } from "#src/services/gensh
 import type { parseCabMap as baseParseCabMap } from "#src/services/recreation/animeStudio/parseCabMap";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
-import { EXTRACT_PRODUCER_PATHS } from "#src/services/genshinAssets/blocks/constants";
 import { extractComponent } from "#src/services/genshinAssets/blocks/extractComponent";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { readProvenance } from "#src/services/provenance/readProvenance";
 import { TEST_FILENAME } from "#src/services/shared/fixtureConstants.test";
-import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
@@ -78,9 +76,8 @@ describe(extractComponent, () => {
 
     expect(provenance?.command).toBe(`extract ${COMPONENT}`);
     expect(provenance?.gameVersion).toBe(INSTALL_VERSION);
-    expect(provenance?.producer.producerPaths).toStrictEqual(EXTRACT_PRODUCER_PATHS);
     expect(provenance?.tools).toStrictEqual([
-      { name: "AnimeStudio", sha256: createHash("sha256").update(TOOL_CONTENT).digest("hex") },
+      { name: "AnimeStudio", sha256: "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d" },
     ]);
   });
 

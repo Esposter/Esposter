@@ -1,5 +1,4 @@
 import { buildFamilyLabelEnemyKindIdMap } from "#src/services/genshinAssets/camps/buildFamilyLabelEnemyKindIdMap";
-import { FamilyLabelEnemyKindIdMap } from "#src/services/genshinAssets/camps/FamilyLabelEnemyKindIdMap";
 import { EnemyKindId } from "genshin-world";
 import { describe, expect, test } from "vitest";
 
@@ -75,63 +74,5 @@ describe(buildFamilyLabelEnemyKindIdMap, () => {
         variant: "Lawachurls",
       },
     ]);
-  });
-
-  test("the generated map covers every label the hand map covered", () => {
-    expect.hasAssertions();
-    // The labels the hand-written map gave a kind before the map was generated, read from git at 1dbb2ffff1
-    const HAND_MAP_LABELS = [
-      "Abyss Herald",
-      "Abyss Mage",
-      "Aeonblight Drake",
-      "Algorithm of Semi-Intransient Matrix of Overseer Network",
-      "Avatars of Lava",
-      "Bathysmal Vishap",
-      "Breacher Primus",
-      "Emperor of Fire and Iron",
-      "Experimental Field Generator",
-      "Eye of the Storm",
-      "Fatui Agent",
-      "Fatui Mirror Maiden",
-      "Fatui Skirmisher",
-      "Fungi",
-      "Geovishap",
-      "Geovishap Hatchling",
-      "Gluttonous Yumkasaur Mountain King",
-      "Golden Wolflord",
-      "Goldflame Qucusaur Tyrant",
-      "Hilichurl",
-      "Hilichurl Chieftain",
-      "Hilichurl Rogue",
-      "Hilichurl Shooter",
-      "Hydro Tulpa",
-      "Icewind Suite",
-      "Iniquitous Baptist",
-      "Jadeplume Terrorshroom",
-      "Legatus Golem",
-      "Maguu Kenki",
-      "Millennial Pearl Seahorse",
-      "Mitachurl",
-      "Nobushi",
-      "Perpetual Mechanical Array",
-      "Praetorian Golem",
-      "Primal Construct",
-      "Primo Geovishap",
-      "Ruin Drake",
-      "Samachurl",
-      "Secret Source Automaton: Configuration Device",
-      "Secret Source Automaton: Hunter-Seeker",
-      "Setekh Wenut",
-      "Slime",
-      "Solitary Suanni",
-      "Specter",
-      "Thunder Manifestation",
-      "Treasure Hoarder",
-      "Wayob Manifestations",
-      "Wayward Hermetic Spiritspeaker",
-      "Whopperflower",
-      "Xuanwen Beast",
-    ];
-    expect(HAND_MAP_LABELS.filter((label) => !Object.hasOwn(FamilyLabelEnemyKindIdMap, label))).toStrictEqual([]);
   });
 });

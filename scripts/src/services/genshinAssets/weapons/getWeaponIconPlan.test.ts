@@ -16,7 +16,6 @@ describe(getWeaponIconPlan, () => {
     );
 
     expect(missingNames).toStrictEqual([MISSING_NAME]);
-    expect(blockNamesMap.get(BLOCK)).toStrictEqual([HELD_NAME]);
-    expect([...blockNamesMap.values()].flat()).not.toContain(MISSING_NAME);
+    expect(blockNamesMap).toStrictEqual(new Map([[BLOCK, [HELD_NAME]]]));
   });
 });

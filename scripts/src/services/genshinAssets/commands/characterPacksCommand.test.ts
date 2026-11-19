@@ -61,7 +61,7 @@ describe("characterPacksCommand", () => {
     const log = vi.spyOn(console, "log").mockReturnValue(undefined);
     await runCharacterPacks(["--dry-run"]);
 
-    expect(log).toHaveBeenCalledWith(expect.stringContaining("2 avatars, 12 bytes"));
+    expect(log).toHaveBeenCalledWith("character packs: 2 avatars, 12 bytes, 3 files");
     expect(vi.mocked(publishCharacterPacks)).not.toHaveBeenCalled();
     expect(vi.mocked(publishGameDataStep).mock.calls[0]?.[0]).toStrictEqual({
       isDryRun: true,

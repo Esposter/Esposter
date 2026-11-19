@@ -32,9 +32,6 @@ vi.mock(import("#src/services/genshinAssets/cooking/readCookingRecipes"), () => 
 }));
 vi.mock(import("#src/services/genshinText/readExcelTable"), () => ({ readExcelTable: vi.fn<() => never[]>(() => []) }));
 
-// The game's time as the dump writes it, read off the epoch
-const toGameTime = (date: Date) => date.toISOString().slice(0, 19).replace("T", " ");
-
 describe(buildItems, () => {
   const TREE_ITEM_ID = 107010;
 
@@ -61,13 +58,13 @@ describe(buildItems, () => {
   const WEAPON_ITEM_ID = 11_426;
 
   const toShopGood = (shopType: number, itemId: number): ExcelShopGoodsRow => ({
-    beginTime: toGameTime(new Date(0)),
+    beginTime: "1970-01-01 00:00:00",
     buyLimit: 0,
     costHcoin: 0,
     costItems: [{ count: 1, id: FISH_ITEM_ID }],
     costMcoin: 0,
     costScoin: 0,
-    endTime: toGameTime(new Date(0)),
+    endTime: "1970-01-01 00:00:00",
     goodsId: 1,
     itemCount: 1,
     itemId,
@@ -243,8 +240,20 @@ describe(buildItems, () => {
 
     const ids = built[`${GameDataset.Items}/materials`] as { id: number }[];
 
-    expect(ids.map(({ id }) => id)).toStrictEqual(expect.arrayContaining([TREE_ITEM_ID, TREE_REWARD_ITEM_ID]));
-    expect(ids.map(({ id }) => id)).not.toContain(ADVENTURE_EXP_ID);
+    expect(ids.map(({ id }) => id)).toMatchInlineSnapshot(`
+      [
+        1001,
+        2000,
+        3000,
+        107010,
+        108011,
+        109101,
+        112005,
+        112006,
+        112007,
+        140004,
+      ]
+    `);
   });
 
   test("a gadget appears in the gadget tab", async () => {
@@ -319,7 +328,18 @@ describe(buildItems, () => {
 
     const ids = built[`${GameDataset.Items}/materials`] as { id: number }[];
 
-    expect(ids.map(({ id }) => id)).toContain(DISH_ITEM_ID);
+    expect(ids.filter(({ id }) => id === DISH_ITEM_ID)).toMatchInlineSnapshot(`
+      [
+        {
+          "id": 108011,
+          "materialType": "MATERIAL_FOOD",
+          "nameTextId": "5",
+          "rank": 1,
+          "rarity": 1,
+          "stackLimit": 99,
+        },
+      ]
+    `);
   });
 
   test("publishes the instruction item a cook recipe unlocks", async () => {
@@ -347,7 +367,18 @@ describe(buildItems, () => {
 
     const ids = built[`${GameDataset.Items}/materials`] as { id: number }[];
 
-    expect(ids.map(({ id }) => id)).toContain(INSTRUCTION_ITEM_ID);
+    expect(ids.filter(({ id }) => id === INSTRUCTION_ITEM_ID)).toMatchInlineSnapshot(`
+      [
+        {
+          "id": 109101,
+          "materialType": "MATERIAL_CONSUME",
+          "nameTextId": "6",
+          "rank": 1,
+          "rarity": 1,
+          "stackLimit": 99,
+        },
+      ]
+    `);
   });
 
   test("publishes the item a Reputation level pays", async () => {
@@ -357,7 +388,18 @@ describe(buildItems, () => {
 
     const ids = built[`${GameDataset.Items}/materials`] as { id: number }[];
 
-    expect(ids.map(({ id }) => id)).toContain(REPUTATION_REWARD_ITEM_ID);
+    expect(ids.filter(({ id }) => id === REPUTATION_REWARD_ITEM_ID)).toMatchInlineSnapshot(`
+      [
+        {
+          "id": 140004,
+          "materialType": "MATERIAL_FLYCLOAK",
+          "nameTextId": "4",
+          "rank": 1,
+          "rarity": 4,
+          "stackLimit": 1,
+        },
+      ]
+    `);
   });
 
   test("publishes the item the Mondstadt grocery sells", async () => {
@@ -367,7 +409,18 @@ describe(buildItems, () => {
 
     const ids = built[`${GameDataset.Items}/materials`] as { id: number }[];
 
-    expect(ids.map(({ id }) => id)).toContain(GROCERY_ITEM_ID);
+    expect(ids.filter(({ id }) => id === GROCERY_ITEM_ID)).toMatchInlineSnapshot(`
+      [
+        {
+          "id": 3000,
+          "materialType": "MATERIAL_ADSORBATE",
+          "nameTextId": "5",
+          "rank": 1,
+          "rarity": 1,
+          "stackLimit": 99,
+        },
+      ]
+    `);
   });
 
   test("a named item the material table gives no type fails the publish", async () => {
@@ -445,7 +498,7 @@ describe(buildItems, () => {
 
     const ids = built[`${GameDataset.Items}/materials`] as { id: number }[];
 
-    expect(ids.map(({ id }) => id)).not.toContain(QUEST_CONSUMABLE_ITEM_ID);
+    expect(ids.filter(({ id }) => id === QUEST_CONSUMABLE_ITEM_ID)).toStrictEqual([]);
   });
 
   test("a fishing good that is a weapon is held by the weapon table, so the bag holds no item for it", async () => {
@@ -458,7 +511,7 @@ describe(buildItems, () => {
 
     const ids = built[`${GameDataset.Items}/materials`] as { id: number }[];
 
-    expect(ids.map(({ id }) => id)).not.toContain(WEAPON_ITEM_ID);
+    expect(ids.filter(({ id }) => id === WEAPON_ITEM_ID)).toStrictEqual([]);
   });
 
   test("a good whose item no item table holds fails the publish, naming the id", async () => {

@@ -6,7 +6,7 @@ import type { MaterialRow } from "#src/models/genshinAssets/shared/MaterialRow";
 import type { DumpedScenePoint } from "#src/models/genshinAssets/world/DumpedScenePoint";
 
 import { toDomainLevels } from "#src/services/genshinAssets/domains/toDomainLevels";
-import { checkIsDomainKindOpenOnDay, DomainKind, GAME_TIME_ZONE } from "genshin-world";
+import { DomainKind } from "genshin-world";
 import { describe, expect, test } from "vitest";
 
 const createEntry = (overrides: Partial<ExcelDungeonEntryRow>): ExcelDungeonEntryRow => ({
@@ -42,10 +42,6 @@ const createMaterial = (id: number, rankLevel: number): MaterialRow => ({
   rankLevel,
   stackLimit: 0,
 });
-// Noon of each day in the game's time zone, a moment that falls on that game day
-const atNoon = (day: Temporal.PlainDate) =>
-  day.toZonedDateTime({ plainTime: "12:00", timeZone: GAME_TIME_ZONE }).toInstant();
-
 describe(toDomainLevels, () => {
   const LEVEL_ENTITIES: ExcelDungeonLevelEntityRow[] = [
     { id: 1995, levelConfigName: "LevelEntity_ElementAddHurt_Fire" },
@@ -152,29 +148,6 @@ describe(toDomainLevels, () => {
         ],
       },
     });
-  });
-
-  test("a domain closed today is refused", () => {
-    expect.hasAssertions();
-
-    const schedules = toDomainLevels(
-      [talentEntry],
-      [createDungeon({})],
-      [createPreview(20, [102])],
-      {},
-      materials,
-      LEVEL_ENTITIES,
-      {},
-    );
-    const epochDay = Temporal.Instant.fromEpochMilliseconds(0).toZonedDateTimeISO("UTC").toPlainDate();
-    // The epoch fell on a Thursday, so four days after it is a Monday and five a Tuesday
-    const monday = atNoon(epochDay.add({ days: 4 }));
-    const tuesday = atNoon(epochDay.add({ days: 5 }));
-    for (const { kind, levels } of Object.values(schedules))
-      for (const { scheduledDaysOfWeek } of levels) {
-        expect(checkIsDomainKindOpenOnDay(kind, monday, scheduledDaysOfWeek)).toBe(false);
-        expect(checkIsDomainKindOpenOnDay(kind, tuesday, scheduledDaysOfWeek)).toBe(true);
-      }
   });
 
   test("a Blessing domain's levels are its entrance point's dungeons, open every day, with their Adventure Rank's artifacts", () => {

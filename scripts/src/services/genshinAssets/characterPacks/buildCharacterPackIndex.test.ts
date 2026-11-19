@@ -9,13 +9,13 @@ import { afterEach, beforeEach, describe, expect, test } from "vitest";
 const getSha256 = (content: string): string => createHash("sha256").update(content).digest("hex");
 
 // An avatar's folder as the owner's extraction leaves it: each file, then the manifest listing them by path, bytes and
-// SHA-256 hash, in the order given. The index lists them in that order, and the manifest's text is returned here.
+// SHA-256 hash, in the order given. The index lists them in that order.
 const writePack = (
   directory: string,
   avatarId: string,
   name: string | undefined,
   files: { content: string; path: string }[],
-): string => {
+): void => {
   const avatarDirectory = join(directory, avatarId);
   for (const { content, path } of files) {
     mkdirSync(dirname(join(avatarDirectory, path)), { recursive: true });
@@ -27,7 +27,6 @@ const writePack = (
     name,
   });
   writeFileSync(join(avatarDirectory, "manifest.json"), manifest);
-  return manifest;
 };
 
 describe(buildCharacterPackIndex, () => {
@@ -44,28 +43,48 @@ describe(buildCharacterPackIndex, () => {
   test("index lists each avatar's files", async () => {
     expect.hasAssertions();
 
-    const firstManifest = writePack(directory, "10000006", "丽莎", [
+    writePack(directory, "10000006", "丽莎", [
       { content: "body", path: "Texture/body.png" },
       { content: "terms", path: "terms/readme.txt" },
     ]);
-    const secondManifest = writePack(directory, "10000007", "女主角", [{ content: "hair", path: "Texture/hair.png" }]);
+    writePack(directory, "10000007", "女主角", [{ content: "hair", path: "Texture/hair.png" }]);
 
     await expect(buildCharacterPackIndex(await readCharacterPackFiles(directory))).resolves.toStrictEqual({
       avatars: [
         {
           avatarId: 10000006,
           files: [
-            { bytes: 4, path: "Texture/body.png", sha256: getSha256("body") },
-            { bytes: 5, path: "terms/readme.txt", sha256: getSha256("terms") },
-            { bytes: Buffer.byteLength(firstManifest), path: "manifest.json", sha256: getSha256(firstManifest) },
+            {
+              bytes: 4,
+              path: "Texture/body.png",
+              sha256: "230d8358dc8e8890b4c58deeb62912ee2f20357ae92a5cc861b98e68fe31acb5",
+            },
+            {
+              bytes: 5,
+              path: "terms/readme.txt",
+              sha256: "51d2361f4faea3bc8f9facdbc7d99abb555596a2e51f7b25fd3b41c93587e616",
+            },
+            {
+              bytes: 277,
+              path: "manifest.json",
+              sha256: "22a1ff0450c8557848043171c3185dfe480d6d403ae59ab086fabfe3211ed0ac",
+            },
           ],
           name: "丽莎",
         },
         {
           avatarId: 10000007,
           files: [
-            { bytes: 4, path: "Texture/hair.png", sha256: getSha256("hair") },
-            { bytes: Buffer.byteLength(secondManifest), path: "manifest.json", sha256: getSha256(secondManifest) },
+            {
+              bytes: 4,
+              path: "Texture/hair.png",
+              sha256: "4dc2159bba05da394c3b94c6f54354db1f1f43b321ac4bbdfc2f658237858c70",
+            },
+            {
+              bytes: 166,
+              path: "manifest.json",
+              sha256: "3ae9315555b2068757e6151feb1dd7d9188b8a3e70da09121052352bb4cd92d7",
+            },
           ],
           name: "女主角",
         },

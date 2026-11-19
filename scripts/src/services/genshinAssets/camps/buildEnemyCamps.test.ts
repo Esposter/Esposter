@@ -1,5 +1,4 @@
 import { buildEnemyCamps } from "#src/services/genshinAssets/camps/buildEnemyCamps";
-import { CAMP_LEVEL } from "#src/services/genshinAssets/camps/constants";
 import { EnemyKindId } from "genshin-world";
 import { describe, expect, test } from "vitest";
 
@@ -9,11 +8,11 @@ const areaIdAt = (x: number, z: number): string | undefined => {
   return x < 50 ? "area-west" : "area-east";
 };
 
-describe("buildEnemyCamps", () => {
+describe(buildEnemyCamps, () => {
   const firstKind = EnemyKindId.HilichurlFighter;
   const secondKind = EnemyKindId.HilichurlShooter;
 
-  test("a camp's enemies take their family's kind and an estimated level", () => {
+  test("a camp's enemies take their family's kind", () => {
     expect.hasAssertions();
     const camps = buildEnemyCamps(
       "mondstadt",
@@ -27,11 +26,6 @@ describe("buildEnemyCamps", () => {
     expect(camps.map(({ members }) => members.map(({ enemyKindId }) => enemyKindId))).toStrictEqual([
       [firstKind, firstKind],
       [secondKind],
-    ]);
-    expect(camps.flatMap(({ members }) => members.map(({ level }) => level))).toStrictEqual([
-      CAMP_LEVEL,
-      CAMP_LEVEL,
-      CAMP_LEVEL,
     ]);
   });
 

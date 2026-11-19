@@ -108,6 +108,6 @@ describe(computeWwiseVolume, () => {
         new Map(objects.map((object) => [object.id, object])),
         new Map([[gameParameterId, 0]]),
       ),
-    ).toBeCloseTo(-15 + 20 * Math.log10(0.5));
+    ).toBeCloseTo(-21.0206, 4);
   });
 });

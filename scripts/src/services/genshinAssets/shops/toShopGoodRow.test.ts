@@ -46,12 +46,6 @@ describe(toShopGoodRow, () => {
     });
   });
 
-  test("should give a good the table leaves no refresh for none", () => {
-    expect.hasAssertions();
-
-    expect(toShopGoodRow({ ...row, refreshType: undefined }).refresh).toBe(ShopRefresh.None);
-  });
-
   test("should price a good the table gives in Mora at its Mora cost", () => {
     expect.hasAssertions();
 

@@ -2,7 +2,7 @@ import type { ExcelShopGoodsRow } from "#src/models/genshinAssets/shops/ExcelSho
 
 import { ShopRefresh } from "#src/models/genshinAssets/shops/ShopRefresh";
 import { buildRealmDepotGoods } from "#src/services/genshinAssets/shops/buildRealmDepotGoods";
-import { GAME_TIME_OFFSET, MORA_ITEM_ID, REALM_DEPOT_SHOP_TYPE } from "#src/services/genshinAssets/shops/constants";
+import { MORA_ITEM_ID, REALM_DEPOT_SHOP_TYPE } from "#src/services/genshinAssets/shops/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { GameDataset } from "genshin-world";
 import { describe, expect, test, vi } from "vitest";
@@ -10,8 +10,6 @@ import { describe, expect, test, vi } from "vitest";
 vi.mock(import("#src/services/genshinText/readExcelTable"));
 
 describe(buildRealmDepotGoods, () => {
-  // A table date in the table's own shape, computed from the epoch
-  const EPOCH_TIME = new Date(0).toISOString().slice(0, 19).replace("T", " ");
   // Made-up good ids, and a sub tab of the depot each good is filed under, which the test reads back
   const TREASURE_GOOD_ID = 1;
   const FURNISHING_GOOD_ID = 2;
@@ -20,13 +18,13 @@ describe(buildRealmDepotGoods, () => {
   const FURNISHING_SUB_TAB_ID = 2;
   const OTHER_SHOP_TYPE = 1001;
   const createGoodRow = (goodsId: number, shopType: number, subTabId: number): ExcelShopGoodsRow => ({
-    beginTime: EPOCH_TIME,
+    beginTime: "1970-01-01 00:00:00",
     buyLimit: 0,
     costHcoin: 0,
     costItems: [],
     costMcoin: 0,
     costScoin: 100,
-    endTime: EPOCH_TIME,
+    endTime: "1970-01-01 00:00:00",
     goodsId,
     itemCount: 1,
     itemId: 1,
@@ -37,10 +35,10 @@ describe(buildRealmDepotGoods, () => {
   });
   // The good as the shops dataset holds it, its dates with the game's offset and the sub tab it is shown on
   const createPublishedGood = (goodsId: number, tabId: number) => ({
-    beginTime: `${EPOCH_TIME.replace(" ", "T")}${GAME_TIME_OFFSET}`,
+    beginTime: "1970-01-01T00:00:00+08:00",
     buyLimit: 0,
     costs: [{ count: 100, itemId: MORA_ITEM_ID }],
-    endTime: `${EPOCH_TIME.replace(" ", "T")}${GAME_TIME_OFFSET}`,
+    endTime: "1970-01-01T00:00:00+08:00",
     goodsId,
     itemCount: 1,
     itemId: 1,

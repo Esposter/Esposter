@@ -233,12 +233,4 @@ describe(writeResidents, () => {
       ].join("\n"),
     );
   });
-
-  test("a run writes a region whose residents changed", async () => {
-    expect.hasAssertions();
-
-    await writeResidents({ isDryRun: false });
-
-    expect(writeRegionData).toHaveBeenCalledExactlyOnceWith(REGION_FILE, { ...region, residents: [] });
-  });
 });

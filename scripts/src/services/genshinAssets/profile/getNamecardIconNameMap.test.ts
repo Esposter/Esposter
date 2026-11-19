@@ -36,9 +36,9 @@ describe(getNamecardIconNameMap, () => {
         [{ avatarId: AVATAR_ID, fetterLevel: 10, rewardId: REWARD_ID }],
         createRewardMap(GIFT_ID),
         [giftMaterialRow, namecardMaterialRow],
-      ).size,
-    ).toBe(0);
-    expect(getNamecardIconNameMap([], createRewardMap(NAMECARD_ID), [namecardMaterialRow]).size).toBe(0);
+      ),
+    ).toStrictEqual(new Map());
+    expect(getNamecardIconNameMap([], createRewardMap(NAMECARD_ID), [namecardMaterialRow])).toStrictEqual(new Map());
   });
 
   test("refuses a character paid two namecards", () => {
