@@ -270,4 +270,36 @@ describe(useLikeOperations, () => {
     heldWrite.resolve();
     await until(readCount).toBe(1);
   });
+
+  // A copy the list gains while a vote waits behind another is one the queued vote reaches when it is sent, the way a
+  // Copy the list held when the vote was issued is, and the server's answer lands on it too
+  test("a copy gained while a vote waits behind another takes that vote", async () => {
+    expect.hasAssertions();
+
+    const heldFirstVote = Promise.withResolvers<void>();
+    const isFirstVoteReceived = Promise.withResolvers<void>();
+    trpcMsw.like.updateLike.mutation(async ({ input }) => {
+      if (input.value === -1) {
+        isFirstVoteReceived.resolve();
+        await heldFirstVote.promise;
+      }
+
+      return createLike(input.value);
+    });
+    serveLikeCount(1);
+    const post = createPost({ id: postId, likeCount: 1, viewerLike: createLike(1) });
+    const items = seedItems(post);
+    const { updateLike } = useLikeOperations(items);
+    updateLike({ postId, value: -1 });
+    await isFirstVoteReceived.promise;
+    updateLike({ postId, value: 1 });
+
+    // The copy a read of the post's page gives, while the second vote is still queued behind the first
+    const gainedCopy = createPost({ id: postId, likeCount: 1, viewerLike: createLike(-1) });
+    items.value = [post, gainedCopy];
+    heldFirstVote.resolve();
+    await waitForSynchronizedFunctions();
+
+    expect(gainedCopy.viewerLike).toStrictEqual(createLike(1));
+  });
 });

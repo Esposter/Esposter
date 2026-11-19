@@ -105,31 +105,32 @@ export const useLikeOperations = (allPosts: MaybeRefOrGetter<PostInPostWithRelat
     });
   };
   const updateLike = (input: UpdateLikeInput) => {
-    const posts = getPosts(input.postId);
-    if (!posts.some(({ viewerLike }) => viewerLike)) return;
+    if (!getPosts(input.postId).some(({ viewerLike }) => viewerLike)) return;
 
     executeUpdateLikeMutation(() => $trpc.like.updateLike.mutate(input), {
-      // The vote is read when the write is sent rather than when it was issued: a second vote on one post queues
-      // Behind the first, so a value captured at click time is the one from before that vote landed, and the rollback
-      // Would restore a vote the server has already replaced
+      // The copies and the vote are read when the write is sent rather than when it was issued: a second vote on one
+      // Post queues behind the first, so a copy gained meanwhile must take it too, and a vote captured at click time is
+      // The one from before that vote landed, whose rollback would restore a vote the server has already replaced
       applyOptimistic: () =>
-        applyOptimisticViewerLike(posts, (previousViewerLike) => ({ ...previousViewerLike, value: input.value })),
+        applyOptimisticViewerLike(getPosts(input.postId), (previousViewerLike) => ({
+          ...previousViewerLike,
+          value: input.value,
+        })),
       key: input.postId,
       onError: getOnVoteError(input.postId),
       reconcile: async (updatedLike) => {
-        for (const post of posts) post.viewerLike = updatedLike;
+        for (const post of getPosts(input.postId)) post.viewerLike = updatedLike;
         await refreshPostCounts([input.postId]);
       },
     });
   };
   const deleteLike = (postId: DeleteLikeInput) => {
-    const posts = getPosts(postId);
-    if (!posts.some(({ viewerLike }) => viewerLike)) return;
+    if (!getPosts(postId).some(({ viewerLike }) => viewerLike)) return;
 
     executeDeleteLikeMutation(() => $trpc.like.deleteLike.mutate(postId), {
       // Read when the write is sent, so a second delete queued behind the first finds the vote already gone and
       // Withdraws nothing, rather than rolling a rejection back onto a like the first delete already removed
-      applyOptimistic: () => applyOptimisticViewerLike(posts, () => undefined),
+      applyOptimistic: () => applyOptimisticViewerLike(getPosts(postId), () => undefined),
       key: postId,
       onError: getOnVoteError(postId),
       reconcile: () => refreshPostCounts([postId]),
