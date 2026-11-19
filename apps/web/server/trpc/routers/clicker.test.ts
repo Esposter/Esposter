@@ -2,6 +2,7 @@ import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { R2Bucket } from "@cloudflare/workers-types";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { createMockContext } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
 import { clickerRouter } from "#server/trpc/routers/clicker";
@@ -11,12 +12,6 @@ import { createMockBucket } from "@esposter/db-mock";
 import { StorageBucket } from "@esposter/db-schema";
 import { afterAll, afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
 
-const { buckets } = vi.hoisted(() => ({ buckets: {} as Record<StorageBucket, R2Bucket> }));
-
-vi.mock(import("#server/services/storage/getBucket"), () => ({
-  getBucket: (storageBucket: StorageBucket) => buckets[storageBucket],
-}));
-
 describe("clickerRouter", () => {
   let caller: DecorateRouterRecord<TRPCRouter["clicker"]>;
   let bucket: R2Bucket;
@@ -24,7 +19,7 @@ describe("clickerRouter", () => {
 
   beforeAll(async () => {
     ({ bucket, dispose } = await createMockBucket(StorageBucket.ClickerAssets));
-    buckets[StorageBucket.ClickerAssets] = bucket;
+    mockBuckets[StorageBucket.ClickerAssets] = bucket;
     const mockContext = await createMockContext();
     caller = createCallerFactory(clickerRouter)(mockContext);
   });

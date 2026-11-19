@@ -35,6 +35,14 @@ describe("bookmarkRouter", () => {
     await mockContext.db.delete(roomsInMessage);
   });
 
+  // A resource bookmarked from its own page, with the mark that names it
+  const bookmarkResource = async () => {
+    const resource = await resourceCaller.createResource({ name, type: ResourceType.Blueprint });
+    const mark = { id: resource.id, resourceType: ResourceType.Blueprint, type: PageMarkType.Resource };
+    await caller.toggleBookmark({ mark, path, title });
+    return { mark, resource };
+  };
+
   test("toggles a bookmark on and off", async () => {
     expect.hasAssertions();
 
@@ -52,9 +60,7 @@ describe("bookmarkRouter", () => {
   test("stores a resource page's target and reads it back with its mark", async () => {
     expect.hasAssertions();
 
-    const resource = await resourceCaller.createResource({ name, type: ResourceType.Blueprint });
-    const mark = { id: resource.id, resourceType: ResourceType.Blueprint, type: PageMarkType.Resource };
-    await caller.toggleBookmark({ mark, path, title });
+    const { mark } = await bookmarkResource();
 
     await expect(caller.readBookmarks()).resolves.toStrictEqual([{ isAvailable: true, mark, path, title }]);
   });
@@ -62,9 +68,7 @@ describe("bookmarkRouter", () => {
   test("hides a bookmarked resource while it is in the recycle bin, and reads it back once restored", async () => {
     expect.hasAssertions();
 
-    const resource = await resourceCaller.createResource({ name, type: ResourceType.Blueprint });
-    const mark = { id: resource.id, resourceType: ResourceType.Blueprint, type: PageMarkType.Resource };
-    await caller.toggleBookmark({ mark, path, title });
+    const { mark, resource } = await bookmarkResource();
     await resourceCaller.deleteResources({ ids: [resource.id] });
     const bookmarksWhileBinned = await caller.readBookmarks();
     await resourceCaller.restoreResources({ ids: [resource.id] });
@@ -76,9 +80,7 @@ describe("bookmarkRouter", () => {
   test("takes a purged resource's bookmark with it", async () => {
     expect.hasAssertions();
 
-    const resource = await resourceCaller.createResource({ name, type: ResourceType.Blueprint });
-    const mark = { id: resource.id, resourceType: ResourceType.Blueprint, type: PageMarkType.Resource };
-    await caller.toggleBookmark({ mark, path, title });
+    const { resource } = await bookmarkResource();
     await resourceCaller.deleteResources({ ids: [resource.id] });
     await resourceCaller.purgeResource({ id: resource.id });
 
