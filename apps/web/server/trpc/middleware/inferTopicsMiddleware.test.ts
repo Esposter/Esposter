@@ -5,10 +5,9 @@ import { getBucket } from "#server/services/storage/getBucket";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { createMockAuthSession, createMockContext } from "#server/trpc/context.test";
 import { createCallerFactory, publicProcedure, router } from "#server/trpc/index";
-import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { readTopicsHeader } from "#shared/services/realtime/readTopicsHeader";
 import { createMockBucket } from "@esposter/db-mock";
-import { getTopic, StorageBucket, TopicKind, usersInAuth } from "@esposter/db-schema";
+import { StorageBucket, usersInAuth } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
 import { eq, getTableName } from "drizzle-orm";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
@@ -28,9 +27,6 @@ const testRouter = router({
     await getBucket(StorageBucket.UserAssets).put(input, "written");
     throw new TRPCError({ code: "BAD_REQUEST", message: "Write refused" });
   }),
-  readDeclaredUser: getTopicsProcedure(publicProcedure.input(userInputSchema), ({ input }) => [
-    getTopic(TopicKind.User, input),
-  ]).query<undefined | UserRow>(readUser),
   readStaticUser: publicProcedure
     .meta({ staticReason: "A test read that no topic watches" })
     .input(userInputSchema)
@@ -80,21 +76,6 @@ describe("inferTopicsMiddleware", () => {
       { columns: ["name", "updatedAt"], topic: `${userTable}:*` },
       { columns: ["name", "updatedAt"], topic: `${userTable}:id=${user.id}` },
     ]);
-  });
-
-  // A procedure that declares its topics by hand keeps exactly those, so no inferred topic is added beside them
-  test("sends a hand-declared procedure's declared topics and no inferred ones", async () => {
-    expect.hasAssertions();
-
-    const context = await createMockContext();
-    const { user } = await createMockAuthSession(context.db);
-    await createTestCaller(context).readDeclaredUser(user.id);
-
-    expect(
-      readTopicsHeader(context.responseHeaders, "readDeclaredUser").flatMap(({ topics }) =>
-        topics.map(({ topic }) => topic),
-      ),
-    ).toStrictEqual([getTopic(TopicKind.User, user.id)]);
   });
 
   // A procedure with a static reason is watched by no topic, however its statement reads

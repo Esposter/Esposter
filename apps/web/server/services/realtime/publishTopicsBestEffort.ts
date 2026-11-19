@@ -5,6 +5,6 @@ import { env } from "cloudflare:workers";
 
 // The web Worker's Topic objects, through its own binding of the realtime Worker's
 export const publishTopicsBestEffort = (
-  getTopics: () => ColumnTopic[] | Promise<ColumnTopic[]>,
+  readTopics: () => ColumnTopic[] | Promise<ColumnTopic[]>,
   failure: string,
-): Promise<void> => basePublishTopicsBestEffort(env.TOPIC, getTopics, failure);
+): Promise<void> => basePublishTopicsBestEffort(env.TOPIC, readTopics, failure);

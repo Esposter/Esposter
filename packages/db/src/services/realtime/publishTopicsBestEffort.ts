@@ -9,9 +9,9 @@ import { getResultAsync, noop } from "@esposter/shared";
 // Throw from reading them, or a write set read from the statements a request awaited, is logged the same way
 export const publishTopicsBestEffort = <TId>(
   topicNamespace: TopicNamespace<TId>,
-  getTopics: () => ColumnTopic[] | Promise<ColumnTopic[]>,
+  readTopics: () => ColumnTopic[] | Promise<ColumnTopic[]>,
   failure: string,
 ): Promise<void> =>
-  getResultAsync(async () => publishTopics(topicNamespace, await getTopics())).match(noop, (error) => {
+  getResultAsync(async () => publishTopics(topicNamespace, await readTopics())).match(noop, (error) => {
     console.error(failure, error);
   });

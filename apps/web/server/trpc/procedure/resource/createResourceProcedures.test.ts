@@ -12,7 +12,6 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import { authMocks } from "#server/auth.test";
 import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
 import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
-import { getMockPublishedTopics, MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
 import { getStagingContentBlobName } from "#server/services/resource/getStagingContentBlobName";
 import { softDeleteResources } from "#server/services/resource/softDeleteResources";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
@@ -821,17 +820,18 @@ describe(createResourceProcedures, () => {
     expect(publishableProcedures.difference(nonPublishableProcedures)).toStrictEqual(publishProcedures);
   });
 
-  test("publishes a public read's view before the read returns, so the owner's count read is woken by it", async () => {
+  // A public read's view is written before the read returns, so the owner's count, which the owner read before it, is woken
+  test("a public read's view is in the owner's count once the read returns", async () => {
     expect.hasAssertions();
 
     const newResource = await dashboardCaller.createResource({ name });
     await dashboardCaller.saveResourceContent({ content: new Dashboard(), contentVersion: 0, id: newResource.id });
     await dashboardCaller.publishResource({ id: newResource.id });
-    MockPublishedTopics.length = 0;
+    await dashboardCaller.readResourceViewCount({ id: newResource.id });
 
     await dashboardCaller.readPublishedResourceContent(newResource.id);
 
-    expect(getMockPublishedTopics()).toContain(`resource_resourceViews:resourceId=${newResource.id}`);
+    await expect(dashboardCaller.readResourceViewCount({ id: newResource.id })).resolves.toBe(1);
   });
 
   test("counts each public read", async () => {

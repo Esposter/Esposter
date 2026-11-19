@@ -49,15 +49,13 @@ const calledProcedures = new Set<unknown>();
 const counts = { changed: 0, reruns: 0, writes: 0 };
 
 // The app's procedures keyed by their own identity, which a suite's router shares with the app's: the path each is called by
-// In the app's router, and whether the run-level check requires a suite to call it (no static reason, no topics by hand)
+// In the app's router, and whether the run-level check requires a suite to call it (no static reason)
 const getAppProcedures = async () => {
   const { trpcRouter }: { trpcRouter: AnyRouter } = await import("#server/trpc/routers/index");
   return Object.entries(trpcRouter._def.procedures).map(([path, procedure]) => ({
     path,
     procedure,
-    watched:
-      (procedure._def.meta as Meta | undefined)?.staticReason === undefined &&
-      (procedure._def.meta as Meta | undefined)?.topics === undefined,
+    watched: (procedure._def.meta as Meta | undefined)?.staticReason === undefined,
   }));
 };
 

@@ -11,12 +11,12 @@ import { formatTopicsHeaderValue } from "#shared/services/realtime/formatTopicsH
 import { getReadTopics, getWriteTopics, recordStatements } from "@esposter/db";
 import { mergeColumnTopics } from "@esposter/db-schema";
 
-// The live topics of every procedure that does not declare them, from the statements it awaits, the blobs its buckets read
-// Or write, and the read sets its objects report (the live queries design). A query's topics are what its answer was read from, sent back on its response. The writes
-// A procedure makes, a query's included, are published best-effort once it resolves. A procedure that declares its topics by
-// Hand keeps its declaration, and one that declares a static reason is watched by no topic at all
+// The live topics of every procedure, from the statements it awaits, the blobs its buckets read or write, and the read sets
+// Its objects report (the live queries design). A query's topics are what its answer was read from, sent back on its response.
+// The writes a procedure makes, a query's included, are published best-effort once it resolves. A procedure that declares a
+// Static reason is watched by no topic at all
 export const inferTopicsMiddleware = t.middleware(async ({ ctx, meta, next, path, type }) => {
-  if (type === "subscription" || meta?.topics !== undefined || meta?.staticReason !== undefined) return next();
+  if (type === "subscription" || meta?.staticReason !== undefined) return next();
 
   // Taken before the read runs, so a publish that lands after it reaches the watch even when the answer misses it
   const readAt = Date.now();
