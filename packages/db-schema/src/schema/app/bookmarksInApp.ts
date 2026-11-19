@@ -47,6 +47,7 @@ export const bookmarksInApp = sqliteTable(
 export type BookmarkInApp = typeof bookmarksInApp.$inferSelect;
 
 export const selectBookmarkInAppSchema = createSelectSchema(bookmarksInApp, {
-  path: (schema) => schema.startsWith("/").max(BOOKMARK_PATH_MAX_LENGTH),
+  // A path of this app: a second slash would make it protocol-relative, which a new tab opens on another host
+  path: (schema) => schema.regex(/^\/(?!\/)/u).max(BOOKMARK_PATH_MAX_LENGTH),
   title: (schema) => createNameSchema(BOOKMARK_TITLE_MAX_LENGTH, schema),
 });
