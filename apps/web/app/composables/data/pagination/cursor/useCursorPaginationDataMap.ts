@@ -1,8 +1,7 @@
 import type { CursorPaginationSlice } from "#src/models/pagination/cursor/CursorPaginationSlice";
 import type { Except } from "type-fest";
 
-import { emptyCursorPaginationData } from "#src/composables/data/pagination/cursor/useCursorPaginationOperationData";
-import { getPropertyComputed } from "#src/util/vue/getPropertyComputed";
+import { createCursorPaginationSlice } from "#src/composables/data/pagination/cursor/useCursorPaginationOperationData";
 import { createEmptyPage } from "@esposter/db-schema";
 
 export const useCursorPaginationDataMap = <TItem>(
@@ -21,21 +20,8 @@ export const useCursorPaginationDataMap = <TItem>(
 } => {
   const { getBoundData, getDataRef, keys } = useDataMap(currentId, () => createEmptyPage<TItem>());
   const { getBoundData: getBoundIsLoaded, getDataRef: getIsLoadedRef } = useDataMap(currentId, false);
-  const getSlice = (key: string): CursorPaginationSlice<TItem> => {
-    const data = getDataRef(key);
-    const isLoaded = getIsLoadedRef(key);
-    return {
-      initializeCursorPaginationData: (newData) => {
-        data.value = newData;
-        isLoaded.value = true;
-      },
-      isLoaded,
-      items: getPropertyComputed(data, "items"),
-      resetCursorPaginationData: () => {
-        emptyCursorPaginationData(data, isLoaded);
-      },
-    };
-  };
+  const getSlice = (key: string): CursorPaginationSlice<TItem> =>
+    createCursorPaginationSlice(getDataRef(key), getIsLoadedRef(key));
   const getSliceOperationData = (key: string) =>
     useCursorPaginationOperationData<TItem>(
       () => getDataRef(key),

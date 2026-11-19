@@ -1,4 +1,5 @@
 import type { TopicRead } from "#shared/models/realtime/TopicRead";
+import type { CursorPaginationSlice } from "#src/models/pagination/cursor/CursorPaginationSlice";
 import type { Page } from "@esposter/db-schema";
 import type { Promisable } from "type-fest";
 
@@ -26,6 +27,23 @@ export const emptyCursorPaginationData = <TItem>(data: Ref<Page<TItem>>, isLoade
   data.value = createEmptyPage<TItem>();
   isLoaded.value = false;
 };
+
+// The slice a partition's writers are handed: its rows and whether they are loaded, written through the same two
+// Functions whichever partition the slice names
+export const createCursorPaginationSlice = <TItem>(
+  data: Ref<Page<TItem>>,
+  isLoaded: Ref<boolean>,
+): CursorPaginationSlice<TItem> => ({
+  initializeCursorPaginationData: (newData) => {
+    data.value = newData;
+    isLoaded.value = true;
+  },
+  isLoaded,
+  items: getPropertyComputed(data, "items"),
+  resetCursorPaginationData: () => {
+    emptyCursorPaginationData(data, isLoaded);
+  },
+});
 
 // A row's id, for the rows that have one: a list of anything else has nothing for a refresh to update its rows by
 const getRowId = (item: unknown) => (item instanceof Object && "id" in item ? item.id : undefined);
