@@ -25,7 +25,7 @@ const MIN_SAMPLE_COUNT = 3;
 // And a reference with too few pixels to read fails it. The curve's exposure only scales the light the light pass
 // Solves, so no reference measures it. The bloom's reading (`computeBloomReading`) follows, over the brightest pixels of each
 // Reference whose screen draws the bloom (`getBloomReferenceIds`), our frame drawn with the game's bloom less ours drawn
-// Without it, gated at zero where the drawn bloom closes
+// Without it, held only strictly below zero, where the drawn bloom closes
 export const measureDisplay = async (
   component: DerivedAssetComponent,
   pageRoot?: string,
@@ -67,7 +67,9 @@ export const measureDisplay = async (
       notes: [
         `${referenceId}: the drawn bloom less none reads ${reading.toFixed(3)} ΔE over the reference's brightest pixels, negative where it closes`,
       ],
-      readings: [{ gate: BLOOM_READING_GATE, name: `${referenceId} bloom's reading`, unit: "ΔE", value: reading }],
+      readings: [
+        { gate: BLOOM_READING_GATE, name: `${referenceId} bloom's reading`, strict: true, unit: "ΔE", value: reading },
+      ],
     });
   }
   return mergeParityPassMeasures(measures);

@@ -1,4 +1,6 @@
+import { checkIsReadingHeld } from "#src/services/genshinParity/passes/checkIsReadingHeld";
 import { computeBloomReading } from "#src/services/genshinParity/passes/computeBloomReading";
+import { BLOOM_READING_GATE } from "#src/services/genshinParity/passes/constants";
 import { BYTE } from "#src/services/shared/constants";
 import { describe, expect, test } from "vitest";
 
@@ -22,5 +24,19 @@ describe(computeBloomReading, () => {
 
     expect(computeBloomReading(reference, bloomed, unbloomed, width, height)).toBeCloseTo(-0.488315, 6);
     expect(computeBloomReading(reference, overGlown, unbloomed, width, height)).toBeCloseTo(2.053673, 6);
+  });
+
+  test("a bloom that reads no closer reopens its field", () => {
+    expect.hasAssertions();
+
+    // The reference shows white at the start, and the drawn bloom changes nothing, so it reads exactly none. Held only
+    // Strictly below its gate, that reading holds none, and the field is re-read
+    const reference = createRow([BYTE, 0, 0]);
+    const unbloomed = createRow([BYTE, 0, 0]);
+    const reading = computeBloomReading(reference, unbloomed, unbloomed, 3, 1);
+
+    expect(
+      checkIsReadingHeld({ gate: BLOOM_READING_GATE, name: "bloom", strict: true, unit: "ΔE", value: reading }),
+    ).toBe(false);
   });
 });
