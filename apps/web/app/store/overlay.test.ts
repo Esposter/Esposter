@@ -1,3 +1,4 @@
+import type { Arrival } from "#src/models/shared/overlay/Arrival";
 import type { KeyedView } from "#src/models/shared/overlay/KeyedView";
 import type { Table } from "#src/models/shared/overlay/Table";
 import type { Versioned } from "#src/models/shared/overlay/Versioned";
@@ -255,5 +256,33 @@ describe(useOverlayStore, () => {
     await flushPromises();
 
     expect(overlayStore.view(table).value).toStrictEqual([{ id: "a", name: serverName, version: 2 }]);
+  });
+
+  test("two awaited responses for one row hold the higher version, whichever arrives first", async () => {
+    expect.hasAssertions();
+
+    const overlayStore = useOverlayStore();
+    const first = Promise.withResolvers<Arrival[]>();
+    const second = Promise.withResolvers<Arrival[]>();
+    const firstWrite = overlayStore.writeAwaited(() => first.promise, {});
+    const secondWrite = overlayStore.writeAwaited(() => second.promise, {});
+    second.resolve([createArrival(table, { id: "a", name: serverName, version: 2 })]);
+    await secondWrite;
+    first.resolve([createArrival(table, { id: "a", name, version: 1 })]);
+    await firstWrite;
+
+    expect(overlayStore.view(table).value).toStrictEqual([{ id: "a", name: serverName, version: 2 }]);
+  });
+
+  test("an awaited write is issued at once, since it has no entry and so no queue key", async () => {
+    expect.hasAssertions();
+
+    const overlayStore = useOverlayStore();
+    const optimisticMutate = vi.fn<() => Promise<WriteResponse>>(() => neverSettles());
+    const awaitedMutate = vi.fn<() => Promise<Arrival[]>>(() => Promise.resolve([]));
+    overlayStore.writeOptimistic(optimisticMutate, { entry: writeFirstRow });
+    await overlayStore.writeAwaited(awaitedMutate, {});
+
+    expect(awaitedMutate).toHaveBeenCalledExactlyOnceWith();
   });
 });

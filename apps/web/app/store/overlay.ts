@@ -1,3 +1,5 @@
+import type { Arrival } from "#src/models/shared/overlay/Arrival";
+import type { AwaitedWriteOptions } from "#src/models/shared/overlay/AwaitedWriteOptions";
 import type { OptimisticWriteOptions } from "#src/models/shared/overlay/OptimisticWriteOptions";
 import type { PendingEntry } from "#src/models/shared/overlay/PendingEntry";
 import type { Table } from "#src/models/shared/overlay/Table";
@@ -21,6 +23,11 @@ export const useOverlayStore = defineStore("overlay", () => {
   const settlePendingEntries = () => {
     pendingEntries.value = pendingEntries.value.filter((pendingEntry) => !checkIsSettled(pendingEntry, slotFor));
   };
+  // Every row a response returned is an arrival, and the entries those rows confirm drop with them
+  const applyArrivals = (arrivals: Arrival[]) => {
+    for (const arrival of arrivals) arrival(slotFor);
+    settlePendingEntries();
+  };
   const arrive = <TRow extends Versioned>(table: Table<TRow>, row: TRow) => {
     slotFor(table).arrive(row);
     settlePendingEntries();
@@ -42,9 +49,8 @@ export const useOverlayStore = defineStore("overlay", () => {
       enqueue(touches, () =>
         getResultAsync(mutate).match(
           (response) => {
-            for (const arrival of response.arrivals) arrival(slotFor);
             pendingEntry.confirmed = response.confirmed;
-            settlePendingEntries();
+            applyArrivals(response.arrivals);
           },
           (error) => {
             pendingEntries.value = pendingEntries.value.filter((other) => other !== pendingEntry);
@@ -54,5 +60,11 @@ export const useOverlayStore = defineStore("overlay", () => {
       ),
     )();
   };
-  return { arrive, view, writeOptimistic };
+  // A write with no entry shows nothing until its answer, so it takes no queue key: the version gate orders its
+  // Responses, and it is issued at once
+  const writeAwaited = (mutate: () => Promise<Arrival[]>, { onError }: AwaitedWriteOptions): Promise<void> =>
+    getResultAsync(mutate).match(applyArrivals, (error) => {
+      onError?.(error);
+    });
+  return { arrive, view, writeAwaited, writeOptimistic };
 });
