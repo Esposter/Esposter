@@ -4,7 +4,6 @@ import type { ImaginariumSeason } from "#src/models/imaginarium/ImaginariumSeaso
 
 import { Element } from "#src/models/Element";
 import { IMAGINARIUM_INVITE_COMPANION_EVENT } from "#src/services/imaginarium/constants";
-import { drawImaginariumCompanionOffers } from "#src/services/imaginarium/drawImaginariumCompanionOffers";
 import { takeImaginariumCompanionEvent } from "#src/services/imaginarium/takeImaginariumCompanionEvent";
 import { createSeededRandom } from "genshin-engine";
 import { describe, expect, test } from "vitest";
@@ -49,13 +48,14 @@ describe(takeImaginariumCompanionEvent, () => {
     ).toStrictEqual({
       flowers: 0,
       isTaken: true,
-      offers: drawImaginariumCompanionOffers(
-        IMAGINARIUM_INVITE_COMPANION_EVENT.pool,
-        season,
-        difficulty,
-        candidates,
-        createSeededRandom(1),
-      ),
+      offers: [
+        { characterId: 10000002, element: Element.Hydro, level: 80 },
+        { characterId: 10000006, element: Element.Cryo, level: 80 },
+        { characterId: 10000003, element: Element.Cryo, level: 80 },
+        { characterId: 10000001, element: Element.Pyro, level: 80 },
+        { characterId: 10000005, element: Element.Hydro, level: 80 },
+        { characterId: 10000004, element: Element.Pyro, level: 80 },
+      ],
     });
   });
 

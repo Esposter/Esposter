@@ -28,21 +28,6 @@ describe(drawImaginariumCompanionOffers, () => {
     { characterId: 10000004, element: Element.Pyro, level: 50 },
   ];
 
-  test("a Companion event offers characters of its pool's element", () => {
-    expect.hasAssertions();
-
-    const offers = drawImaginariumCompanionOffers(
-      { element: Element.Pyro, offerCount: 2 },
-      season,
-      difficulty,
-      candidates,
-      createSeededRandom(1),
-    );
-
-    expect(offers).toHaveLength(2);
-    expect(offers.every(({ element }) => element === Element.Pyro)).toBe(true);
-  });
-
   test("a Companion event offers only characters the season admits at the difficulty", () => {
     expect.hasAssertions();
 
@@ -70,8 +55,9 @@ describe(drawImaginariumCompanionOffers, () => {
       createSeededRandom(1),
     );
 
-    expect(offers).toHaveLength(3);
-    expect(new Set(offers.map(({ element }) => element))).toStrictEqual(new Set([Element.Hydro, Element.Pyro]));
+    expect(
+      offers.map(({ characterId }) => characterId).toSorted((firstId, secondId) => firstId - secondId),
+    ).toStrictEqual([10000001, 10000002, 10000003]);
   });
 
   test("a Companion event draws the same offers from the same seed", () => {

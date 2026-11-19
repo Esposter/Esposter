@@ -56,6 +56,13 @@ describe(fightImaginariumKitStage, () => {
   // The level the stage's enemy is fought at, and one far above the performers' that outlasts the short time limit
   const STAGE_LEVEL = 1;
   const FAR_ABOVE_LEVEL = 90;
+  // The four performers after a fight they took part in: each spent its one point of Vigor and filled its Burst energy
+  const PERFORMED_CAST: ImaginariumMember[] = [
+    { burstEnergyCost: 40, energy: 40, healthShare: 1, isSpecialGuest: false, maxHealth: 0, vigor: 1 },
+    { burstEnergyCost: 80, energy: 80, healthShare: 1, isSpecialGuest: false, maxHealth: 0, vigor: 1 },
+    { burstEnergyCost: 60, energy: 60, healthShare: 1, isSpecialGuest: false, maxHealth: 0, vigor: 1 },
+    { burstEnergyCost: 80, energy: 80, healthShare: 1, isSpecialGuest: false, maxHealth: 0, vigor: 1 },
+  ];
 
   test("a stage is fought by four performers with Vigor", () => {
     expect.hasAssertions();
@@ -70,9 +77,8 @@ describe(fightImaginariumKitStage, () => {
     expect(fight).toStrictEqual({
       isFought: true,
       outcome: DomainChallengeOutcome.Cleared,
-      principalCast: fight.principalCast,
+      principalCast: PERFORMED_CAST,
     });
-    expect(fight.principalCast.map(({ vigor }) => vigor)).toStrictEqual([1, 1, 1, 1]);
   });
 
   test("a character with no Vigor cannot perform", () => {
@@ -105,7 +111,7 @@ describe(fightImaginariumKitStage, () => {
     expect(fight).toStrictEqual({
       isFought: true,
       outcome: DomainChallengeOutcome.TimedOut,
-      principalCast: fight.principalCast,
+      principalCast: PERFORMED_CAST,
     });
   });
 });

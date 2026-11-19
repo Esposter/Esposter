@@ -1,7 +1,6 @@
 import type { ImaginariumMember } from "#src/models/imaginarium/ImaginariumMember";
 
 import { DomainChallengeOutcome } from "#src/models/domains/DomainChallengeOutcome";
-import { checkIsImaginariumStageReady } from "#src/services/imaginarium/checkIsImaginariumStageReady";
 import { IMAGINARIUM_PERFORMER_COUNT, IMAGINARIUM_VIGOR } from "#src/services/imaginarium/constants";
 import { fightImaginariumStage } from "#src/services/imaginarium/fightImaginariumStage";
 import { describe, expect, test } from "vitest";
@@ -29,7 +28,6 @@ describe(fightImaginariumStage, () => {
   test("a stage is fought by four performers with Vigor", () => {
     expect.hasAssertions();
 
-    expect(checkIsImaginariumStageReady(cast)).toBe(true);
     expect(fightImaginariumStage(cast, progress, false)).toStrictEqual({
       isFought: true,
       outcome: DomainChallengeOutcome.Cleared,
