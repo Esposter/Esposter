@@ -1,13 +1,31 @@
-import type { RowKey } from "#src/models/shared/overlay/RowKey";
 import type { Table } from "#src/models/shared/overlay/Table";
-import type { Versioned } from "#src/models/shared/overlay/Versioned";
-import type { SQLiteTable } from "drizzle-orm/sqlite-core";
+import type { TableSource } from "#src/models/shared/overlay/TableSource";
 
+import { checkIsKeyValue } from "#src/services/shared/overlay/checkIsKeyValue";
+import { checkIsRowField } from "#src/services/shared/overlay/checkIsRowField";
+import { listKeyFieldNames } from "#src/services/shared/overlay/listKeyFieldNames";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { getTableName } from "drizzle-orm";
 
-// The overlay's table over a Drizzle table. The name and the identity both come from the table object, which the schema
-// Holds once, so every Table made over it shares one slot
-export const createTable = <TRow extends Versioned>(
-  source: SQLiteTable,
-  keyOf: (row: TRow) => RowKey,
-): Table<TRow> => ({ keyOf, name: getTableName(source), source });
+// The overlay's table over a Drizzle table. The row is the table's select model and the key is read from its primary
+// Key, so a caller names neither. The schema holds the table object once, so every Table made over it shares one slot
+export const createTable = <TSource extends TableSource>(source: TSource): Table<TSource["$inferSelect"], TSource> => {
+  const keyFieldNames = listKeyFieldNames(source);
+  return {
+    // A primary key's value is a string or a number, and every row holds each of its key fields, so a row holding
+    // Neither a string nor a number under one is a broken row rather than a key to skip
+    keyOf: (row) =>
+      keyFieldNames.map((fieldName) => {
+        const value = checkIsRowField(row, fieldName) ? row[fieldName] : undefined;
+        if (checkIsKeyValue(value)) return value;
+
+        throw new InvalidOperationError(
+          Operation.Read,
+          fieldName,
+          "a key field of the row holds neither a string nor a number",
+        );
+      }),
+    name: getTableName(source),
+    source,
+  };
+};

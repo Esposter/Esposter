@@ -6,19 +6,14 @@ import { recordTouches } from "#src/services/shared/overlay/recordTouches";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { describe, expect, test } from "vitest";
 
-interface TestRow {
-  id: string;
-  name: string;
-  version: number;
-}
-
 describe(recordTouches, () => {
   const rowTable = sqliteTable("row", {
+    deletedAt: integer({ mode: "timestamp_ms" }),
     id: text().primaryKey(),
     name: text().notNull(),
     version: integer().notNull(),
   });
-  const table = createTable<TestRow>(rowTable, (row) => [row.id]);
+  const table = createTable(rowTable);
   const name = "";
 
   test("records the keys of the rows an entry reads and writes", () => {
@@ -29,7 +24,7 @@ describe(recordTouches, () => {
     expect(
       recordTouches(slotFor, (view) => {
         view.get(table, ["a"]);
-        view.set(table, ["b"], { id: "b", name, version: 0 });
+        view.set(table, ["b"], { deletedAt: null, id: "b", name, version: 0 });
       }),
     ).toStrictEqual([
       { key: ["a"], table: "row" },
@@ -44,7 +39,7 @@ describe(recordTouches, () => {
 
     expect(
       recordTouches(slotFor, (view) => {
-        view.set(table, ["b"], { id: "b", name, version: 0 });
+        view.set(table, ["b"], { deletedAt: null, id: "b", name, version: 0 });
       }),
     ).toHaveLength(1);
     expect(slotFor(table).list()).toStrictEqual([]);
@@ -55,12 +50,12 @@ describe(recordTouches, () => {
 
     const entry = (view: KeyedView) => {
       view.get(table, ["a"]);
-      view.set(table, ["b"], { id: "b", name, version: 0 });
+      view.set(table, ["b"], { deletedAt: null, id: "b", name, version: 0 });
     };
     const emptySlotFor = createSlotFor();
     const populatedSlotFor = createSlotFor();
-    populatedSlotFor(table).arrive({ id: "a", name, version: 1 });
-    populatedSlotFor(table).arrive({ id: "c", name, version: 3 });
+    populatedSlotFor(table).arrive({ deletedAt: null, id: "a", name, version: 1 });
+    populatedSlotFor(table).arrive({ deletedAt: null, id: "c", name, version: 3 });
 
     expect(recordTouches(populatedSlotFor, entry)).toStrictEqual(recordTouches(emptySlotFor, entry));
   });
