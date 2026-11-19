@@ -29,6 +29,9 @@ const runStatement = async (
   };
 };
 
+// The methods a synchronous statement runs by: a query's rows (`all`, `get`) or its write (`run`)
+const SYNC_EXECUTE_METHODS = new Set(["all", "get", "run"]);
+
 export const recordStatement = <T extends PromiseLike<unknown> & SQLWrapper>(statement: T, recorder: Recorder): T => {
   const recorded: T = new Proxy(statement, {
     get: (target, property) => {
@@ -53,6 +56,15 @@ export const recordStatement = <T extends PromiseLike<unknown> & SQLWrapper>(sta
 
       const value: unknown = Reflect.get(target, property, target);
       if (typeof value !== "function") return value;
+      // A synchronous execution, as a Durable Object's SQLite runs its statements: the statement runs when it is called, so it
+      // Is recorded there, with the rows it returned. A write answers its run result, which names no row
+      if (typeof property === "string" && SYNC_EXECUTE_METHODS.has(property))
+        return (...args: unknown[]) => {
+          const complete = recorder.record(target);
+          const result: unknown = Reflect.apply(value, target, args);
+          complete(property === "run" ? undefined : result, []);
+          return result;
+        };
       const self = property === "catch" || property === "finally" ? recorded : target;
       return (...args: unknown[]) => {
         const result: unknown = Reflect.apply(value, self, args);

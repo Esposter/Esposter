@@ -1,5 +1,6 @@
 import { RealtimeObject } from "#src/durableObjects/RealtimeObject";
-import { createMockObjectState, createSocket } from "#src/services/durableObject/createMockObjectState.test";
+import { createSocket } from "#src/services/durableObject/createMockSocket.test";
+import { createMockObjectState } from "@esposter/db-mock";
 import { SOCKET_IDENTITY_HEADER } from "@esposter/db-schema";
 import { v7 } from "uuid";
 import { afterEach, assert, describe, expect, test, vi } from "vitest";

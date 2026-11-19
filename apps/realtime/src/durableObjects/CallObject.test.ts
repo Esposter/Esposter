@@ -1,13 +1,10 @@
-import type { MockObjectState } from "#src/services/durableObject/createMockObjectState.test";
+import type { MockObjectState } from "@esposter/db-mock";
 import type { CallParticipant } from "@esposter/db-schema";
 
 import { CallObject } from "#src/durableObjects/CallObject";
-import {
-  createMockObjectState,
-  createSocket,
-  readFrames,
-} from "#src/services/durableObject/createMockObjectState.test";
+import { createSocket, readFrames } from "#src/services/durableObject/createMockSocket.test";
 import { REALTIMEKIT_API_ORIGIN } from "#src/services/realtimeKit/constants";
+import { createMockObjectState } from "@esposter/db-mock";
 import {
   CLOUDFLARE_ACCOUNT_ID,
   getSessionSocketTag,

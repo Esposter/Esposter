@@ -14,6 +14,7 @@ import { RealtimeObject } from "#src/durableObjects/RealtimeObject";
 import { HttpMethod } from "#src/models/realtimeKit/HttpMethod";
 import { createDurableObjectDatabase } from "#src/services/durableObject/createDurableObjectDatabase";
 import { getObjectName } from "#src/services/durableObject/getObjectName";
+import { createObjectHandle } from "#src/services/durableObject/recordObjectHandle";
 import { readSocketIdentity } from "#src/services/realtime/readSocketIdentity";
 import { addRealtimeKitParticipant } from "#src/services/realtimeKit/addRealtimeKitParticipant";
 import { JOIN_PUBLISH_SOURCES } from "#src/services/realtimeKit/constants";
@@ -47,12 +48,12 @@ const CALL_STATE_ID = 1;
 // It also holds who has been let in and each joined connection's RealtimeKit participant, all in its own SQLite.
 // The web Worker authorises a call operation against D1 and then calls the method for it here.
 // Each method broadcasts the call's events to the sockets they concern
-export class CallObject extends RealtimeObject<CallEvent> implements CallObjectRpc {
-  protected readonly db = createDurableObjectDatabase(this.ctx, callMigrations.migrations);
+export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> implements CallObjectRpc {
+  protected readonly db = createObjectHandle(createDurableObjectDatabase(this.ctx, callMigrations.migrations));
   readonly #callSessionId = getObjectName(this.ctx, "CallObject");
   // The preset update in flight for each connection, so the next one starts from what the last one wrote
   readonly #connectionUpdates = new Map<string, Promise<void>>();
-  readonly #core = drizzle(this.env.CORE, { relations });
+  readonly #core = createObjectHandle(drizzle(this.env.CORE, { relations }));
   // The meeting being made, shared by every join that arrives while the first one is still creating it
   #meetingCreation?: Promise<string> | undefined;
 

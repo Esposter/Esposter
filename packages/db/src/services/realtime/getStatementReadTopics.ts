@@ -40,7 +40,7 @@ export const getStatementReadTopics = async ({ rows, statement }: RecordedStatem
   const readSet = getStatementReadSet(statement);
   const { sql } = new SQLiteDialect().sqlToQuery(statement.getSQL());
   // A table's watch reads the columns its statement references, under the names and aliases the statement gives the table
-  const tableColumnsMap = new Map<string, string[]>();
+  const tableColumnsMap = new Map<string, string[] | undefined>();
   const getColumns = (tableName: string) => {
     if (!tableColumnsMap.has(tableName)) {
       const aliases = readSet.occurrences
@@ -48,7 +48,7 @@ export const getStatementReadTopics = async ({ rows, statement }: RecordedStatem
         .map(({ occurrence }) => occurrence);
       tableColumnsMap.set(tableName, getReferencedColumns(sql, tableName, aliases));
     }
-    return tableColumnsMap.get(tableName) ?? [];
+    return tableColumnsMap.get(tableName);
   };
   const scopeValues: ScopeValue[] = readSet.scopes
     .filter(({ value }) => value !== undefined && value !== null)

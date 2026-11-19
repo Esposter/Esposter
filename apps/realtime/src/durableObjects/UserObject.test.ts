@@ -1,5 +1,5 @@
 import type { RoomObject } from "#src/durableObjects/RoomObject";
-import type { MockSocket } from "#src/services/durableObject/createMockObjectState.test";
+import type { MockSocket } from "#src/services/durableObject/createMockSocket.test";
 import type {
   Page,
   PageCursor,
@@ -13,17 +13,13 @@ import type {
 import type { Mock } from "vitest";
 
 import { UserObject } from "#src/durableObjects/UserObject";
-import {
-  createMockObjectState,
-  createSocket,
-  readFrames,
-} from "#src/services/durableObject/createMockObjectState.test";
+import { createSocket, readFrames } from "#src/services/durableObject/createMockSocket.test";
 import { MockJobQueueDatabase } from "#src/services/queue/getJobQueue.test";
 import { createOnlineStatus } from "#src/services/room/createOnlineStatus.test";
 import { createUser } from "#src/services/shared/createUser.test";
 import { sendTodoReminder } from "#src/services/todoReminder/sendTodoReminder";
 import { toPage } from "@esposter/db";
-import { createMockDb } from "@esposter/db-mock";
+import { createMockDb, createMockObjectState } from "@esposter/db-mock";
 import {
   AppNotificationType,
   createPageInputSchema,

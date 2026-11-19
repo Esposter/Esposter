@@ -26,6 +26,7 @@ import type {
 import { RealtimeObject } from "#src/durableObjects/RealtimeObject";
 import { createDurableObjectDatabase } from "#src/services/durableObject/createDurableObjectDatabase";
 import { getObjectName } from "#src/services/durableObject/getObjectName";
+import { createObjectHandle } from "#src/services/durableObject/recordObjectHandle";
 import { getJobQueue } from "#src/services/queue/getJobQueue";
 import { applyPollVote } from "#src/services/room/applyPollVote";
 import {
@@ -97,9 +98,9 @@ const REACTION_PAGE_SORT = { keys: ["messageId", "emojiTag"], order: SortOrder.A
 // It also holds the scheduled messages still to send and the members online. Its sockets are the room's viewers.
 // The caller authorises each write against D1 and names the actor.
 // The write is applied in one synchronous turn and broadcasts exactly what it wrote
-export class RoomObject extends RealtimeObject<RoomEvent> implements RoomObjectRpc {
-  protected readonly db = createDurableObjectDatabase(this.ctx, roomMigrations.migrations);
-  readonly #core = drizzle(this.env.CORE, { relations });
+export class RoomObject extends RealtimeObject<RoomEvent, RoomObjectRpc> implements RoomObjectRpc {
+  protected readonly db = createObjectHandle(createDurableObjectDatabase(this.ctx, roomMigrations.migrations));
+  readonly #core = createObjectHandle(drizzle(this.env.CORE, { relations }));
   readonly #roomId = getObjectName(this.ctx, "RoomObject");
 
   addReaction({ emojiTag, messageId }: { emojiTag: string; messageId: number }, actor: RoomActor): null | RoomReaction {
@@ -126,11 +127,7 @@ export class RoomObject extends RealtimeObject<RoomEvent> implements RoomObjectR
   // One alarm serves three jobs: the scheduled messages that have come due, the room-activity wave a message owes, and
   // The sent messages whose sender's index is still to be written
   override async alarm(): Promise<void> {
-    const now = new Date();
-    await this.#sendDueScheduledMessages(now);
-    await this.#sendDueActivity(now);
-    await this.#retryUnindexedMessages(now);
-    await this.#armAlarm();
+    await this.runInvocation("the alarm", () => this.#runAlarm());
   }
 
   attachMember(userId: string, status: UserStatusInMessage): void {
@@ -899,6 +896,14 @@ export class RoomObject extends RealtimeObject<RoomEvent> implements RoomObjectR
           .where(eq(unindexedMessagesInRoom.messageId, messageId))
           .run();
     }
+  }
+
+  async #runAlarm(): Promise<void> {
+    const now = new Date();
+    await this.#sendDueScheduledMessages(now);
+    await this.#sendDueActivity(now);
+    await this.#retryUnindexedMessages(now);
+    await this.#armAlarm();
   }
 
   // The room-activity wave runs once per window: the room's lastMessageAt is written in D1.

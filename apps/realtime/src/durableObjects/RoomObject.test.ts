@@ -2,16 +2,12 @@ import type { PageCursor, RoomObjectRpc, RoomReaction, UserObjectRpc } from "@es
 import type { Mock } from "vitest";
 
 import { RoomObject } from "#src/durableObjects/RoomObject";
-import {
-  createMockObjectState,
-  createSocket,
-  readFrames,
-} from "#src/services/durableObject/createMockObjectState.test";
+import { createSocket, readFrames } from "#src/services/durableObject/createMockSocket.test";
 import { MockJobQueueDatabase } from "#src/services/queue/getJobQueue.test";
 import { ROOM_ACTIVITY_DELAY_MS, ROOM_MEMBER_REMOVED_CODE, WRITE_RETRY_DELAY_MS } from "#src/services/room/constants";
 import { createUser } from "#src/services/shared/createUser.test";
 import { toMergedPage } from "@esposter/db";
-import { createMockDb } from "@esposter/db-mock";
+import { createMockDb, createMockObjectState } from "@esposter/db-mock";
 import {
   AppNotificationType,
   appUsersInMessage,
@@ -126,6 +122,17 @@ describe(RoomObject, () => {
     return stub;
   };
   const userNamespace = { get: getUserStub, idFromName: (userId: string) => userId };
+  // Every topic a write published, with the columns it changed, read as the topic objects receive them
+  const topicPublishes: { columns?: string[] | undefined; topic: string }[] = [];
+  const topicNamespace = {
+    get: (topic: string) => ({
+      publish: (columns?: string[]) => {
+        topicPublishes.push({ columns, topic });
+        return Promise.resolve();
+      },
+    }),
+    idFromName: (topic: string) => topic,
+  };
 
   const userId = v7();
   const otherUserId = v7();
@@ -173,19 +180,65 @@ describe(RoomObject, () => {
     await mockDatabase.db
       .insert(roomRolesInMessage)
       .values({ isEveryone: true, name: "name", permissions: RoomPermission.SendMessages, roomId });
-    environment = { CORE: mockDatabase.coreDatabase, USER: userNamespace } as unknown as Cloudflare.Env;
+    environment = {
+      CORE: mockDatabase.coreDatabase,
+      TOPIC: topicNamespace,
+      USER: userNamespace,
+    } as unknown as Cloudflare.Env;
   });
 
   afterEach(async () => {
     vi.unstubAllGlobals();
     vi.useRealTimers();
     userStubs.clear();
+    topicPublishes.length = 0;
     MockJobQueueDatabase.clear();
     await mockDatabase.reset();
   });
 
   afterAll(async () => {
     await mockDatabase.dispose();
+  });
+
+  // The entry a caller reaches the object through: its method's result, with the read set its reads watch
+  test("invoke answers a method's result with the read set its reads watch", async () => {
+    expect.hasAssertions();
+
+    const { object } = createRoomObject();
+    const message = await sendMessage(object, "a");
+    const { readSet, result } = await object.invoke("readMessagesByIds", [[message.id]]);
+
+    expect(result).toStrictEqual([message]);
+    expect(readSet).toStrictEqual([{ topic: "messages:*" }]);
+  });
+
+  // A write's topics are published from the entry, once the write has run. An insert changes which rows the table holds, so
+  // It publishes no columns, and every watch of the topic hears it
+  test("invoke publishes the topics its insert names, with no columns, since it changes which rows exist", async () => {
+    expect.hasAssertions();
+
+    const { object } = createRoomObject();
+    await object.invoke("createMessage", [{ message: "a", type: MessageType.Message }, actor]);
+
+    expect(topicPublishes).toStrictEqual([
+      { columns: undefined, topic: "messages:*" },
+      { columns: undefined, topic: "roomState:*" },
+    ]);
+  });
+
+  test("a topic that cannot be published leaves the invocation's result standing", async () => {
+    expect.hasAssertions();
+
+    const failingNamespace = {
+      get: () => ({ publish: () => Promise.reject(new Error("The topic is unavailable")) }),
+      idFromName: (topic: string) => topic,
+    };
+    environment = { ...environment, TOPIC: failingNamespace } as unknown as Cloudflare.Env;
+    const { object } = createRoomObject();
+
+    await expect(
+      object.invoke("createMessage", [{ message: "a", type: MessageType.Message }, actor]),
+    ).resolves.toMatchObject({ result: { message: "a" } });
   });
 
   test("a write reaches the room's other devices, and not the device that made it", async () => {

@@ -17,6 +17,7 @@ import type {
 import { RealtimeObject } from "#src/durableObjects/RealtimeObject";
 import { createDurableObjectDatabase } from "#src/services/durableObject/createDurableObjectDatabase";
 import { getObjectName } from "#src/services/durableObject/getObjectName";
+import { createObjectHandle } from "#src/services/durableObject/recordObjectHandle";
 import { getJobQueue } from "#src/services/queue/getJobQueue";
 import { readSocketIdentity } from "#src/services/realtime/readSocketIdentity";
 import { REMINDER_RETRY_DELAY_MS } from "#src/services/reminder/constants";
@@ -53,8 +54,8 @@ const getWatchedTopics = (watches: TopicWatch[]) => new Set(watches.map(({ topic
 // One User object per person: its SQLite indexes the messages they sent and their pending scheduled messages.
 // Its reminders and TodoList reminders are held there too.
 // Its one alarm is set to the earliest of them still ahead, or a retry for one that failed.
-export class UserObject extends RealtimeObject<UserEvent> implements UserObjectRpc {
-  protected readonly db = createDurableObjectDatabase(this.ctx, userMigrations.migrations);
+export class UserObject extends RealtimeObject<UserEvent, UserObjectRpc> implements UserObjectRpc {
+  protected readonly db = createObjectHandle(createDurableObjectDatabase(this.ctx, userMigrations.migrations));
   readonly #userId = getObjectName(this.ctx, "UserObject");
 
   // A reminder armed again under its id replaces the one it names, so a re-run of the step that armed it converges
@@ -84,10 +85,7 @@ export class UserObject extends RealtimeObject<UserEvent> implements UserObjectR
   // A reminder whose send failed is retried this long after the failure.
   // The alarm is re-armed here and in the alarm itself, so a row that stays overdue is never left without one.
   override async alarm(): Promise<void> {
-    const now = new Date();
-    await this.#sendDueTodoReminders(now);
-    await this.#sendDueReminders(now);
-    await this.#armAlarm();
+    await this.runInvocation("the alarm", () => this.#runAlarm());
   }
 
   // A room-list event sent to every tab the person has open, whichever room's write or D1 change raised it. The sockets
@@ -395,6 +393,13 @@ export class UserObject extends RealtimeObject<UserEvent> implements UserObjectR
         console.error("UserStatus failed to report presence", { error, isConnected, userId });
       }),
     );
+  }
+
+  async #runAlarm(): Promise<void> {
+    const now = new Date();
+    await this.#sendDueTodoReminders(now);
+    await this.#sendDueReminders(now);
+    await this.#armAlarm();
   }
 
   // The reminder is published to the notification queue as the person's own, and removed only once it is queued.

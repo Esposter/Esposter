@@ -2,8 +2,8 @@ import type { Topic, UserObjectRpc } from "@esposter/db-schema";
 import type { Mock } from "vitest";
 
 import { TopicObject } from "#src/durableObjects/TopicObject";
-import { createMockObjectState } from "#src/services/durableObject/createMockObjectState.test";
 import { TOPIC_COALESCE_MS } from "#src/services/topic/constants";
+import { createMockObjectState } from "@esposter/db-mock";
 import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
