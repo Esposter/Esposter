@@ -5,6 +5,7 @@ import type { ParityPassReading } from "#src/models/genshinParity/shared/ParityP
 import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import { compareFamilyColour } from "#src/services/genshinParity/passes/compareFamilyColour";
 import { computeFamilyMask } from "#src/services/genshinParity/passes/computeFamilyMask";
+import { computeMetresPerPixel } from "#src/services/genshinParity/passes/computeMetresPerPixel";
 import { computeStructureError } from "#src/services/genshinParity/passes/computeStructureError";
 import { computeStructureTerms } from "#src/services/genshinParity/passes/computeStructureTerms";
 import { COLOUR_GATE } from "#src/services/genshinParity/passes/constants";
@@ -19,7 +20,7 @@ import { computeLabelSimilarity } from "#src/services/genshinParity/witness/comp
 import { withFinalizerAsync } from "@esposter/shared";
 import { SURFACE_DETAIL_BAND_SIGMAS } from "genshin-engine";
 
-const TARGET_NAMES: WitnessTargetName[] = [WitnessTargetName.Part, WitnessTargetName.Albedo];
+const TARGET_NAMES: WitnessTargetName[] = [WitnessTargetName.Part, WitnessTargetName.Albedo, WitnessTargetName.Depth];
 // The reason a family's structure is read as when the exports draw it within one half of the blocks, so no gate is read
 const NO_GATE_REASON = "no gate: the family lies within one half";
 
@@ -36,14 +37,23 @@ export const measureSurface = (component: DerivedAssetComponent, pageRoot?: stri
   measureFamilyTargets(
     component,
     TARGET_NAMES,
-    async (referenceId, exportsRead, oursRead, page) => {
+    async (referenceId, exportsRead, oursRead, page, camera) => {
       const { families, width } = exportsRead;
+      const exportsDepth = exportsRead.targets.depth ?? new Float32Array();
       const exportsAlbedo = exportsRead.targets.albedo ?? new Float32Array();
       const exportsPart = exportsRead.targets.part ?? new Float32Array();
       const oursAlbedo = oursRead.targets.albedo ?? new Float32Array();
       const oursPart = oursRead.targets.part ?? new Float32Array();
       const exportsTargets = { colour: exportsAlbedo, part: exportsPart };
       const height = exportsPart.length / 4 / width;
+      // A family's pixel at its median depth, the metres a pixel of the surface's structure spans where the family stands
+      const familyPixelMetres = families.map((_name, family) => {
+        const depths = [...computeFamilyMask(exportsPart, exportsPart, family, width)]
+          .flatMap((isDrawn, pixel) => (isDrawn ? [exportsDepth[pixel * 4] ?? 0] : []))
+          .toSorted((first, second) => first - second);
+        const medianDepth = depths[Math.floor(depths.length / 2)] ?? 0;
+        return computeMetresPerPixel({ depth: medianDepth, fovDegrees: camera.fov, height });
+      });
       const exportsLightness = readTargetLightness(exportsAlbedo);
       const oursLightness = readTargetLightness(oursAlbedo);
       const albedo = await compareFamilyColour(
@@ -120,6 +130,10 @@ export const measureSurface = (component: DerivedAssetComponent, pageRoot?: stri
           ...measured.map(
             ({ family, scales }) =>
               `${referenceId} ${families[family] ?? family} structure by scale, finest first (pixel-aligned, diagnostic): ${formatScales(scales)}`,
+          ),
+          ...families.map(
+            (name, family) =>
+              `${referenceId} ${name} pixel at its median depth: ${(familyPixelMetres[family] ?? 0).toFixed(4)} m`,
           ),
           ...measured.map(
             ({ family, meanExports, meanOurs }) =>

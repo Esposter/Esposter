@@ -36,6 +36,7 @@ import {
   LOGIN_DOOR_PANEL_STRENGTH,
   LOGIN_DOOR_SLIT_STRENGTH,
   LOGIN_DOOR_SLIT_WIDTH,
+  LOGIN_DOOR_SURFACE_DETAIL,
 } from "#src/services/login/door/constants";
 import { createLoginDoorGeometry } from "#src/services/login/door/createLoginDoorGeometry";
 import { createLoginDoorRelief } from "#src/services/login/door/createLoginDoorRelief";
@@ -350,7 +351,9 @@ doorMaterial.normalNode = createNormalDetailNode(
   LOGIN_DOOR_NORMAL_DETAIL_AMPLITUDE,
 );
 // The door's front painted with its panel's raised bands and its feet's gilding over its stone
-const doorAlbedo = createLoginDoorRelief(door).mul(color(stone.door.albedo));
+const doorAlbedo = createLoginDoorRelief(door)
+  .mul(color(stone.door.albedo))
+  .mul(createMaterialDetailNode(LOGIN_DOOR_SURFACE_DETAIL));
 doorFrameMaterial.colorNode = doorAlbedo;
 doorMaterial.colorNode = doorAlbedo;
 // Each family's tag, one object per family so every copy's mesh keeps the same prop identity across renders
