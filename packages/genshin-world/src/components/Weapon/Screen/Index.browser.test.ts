@@ -17,8 +17,10 @@ import WeaponScreenContainer from "#src/components/Weapon/Screen/Index.vue";
 import { Currency } from "#src/models/inventory/Currency";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
+import { enhanceWeapon } from "#src/services/weapon/enhanceWeapon";
 import { getBagWeapon } from "#src/services/weapon/getBagWeapon";
 import { getRarityRequiredExps } from "#src/services/weapon/getRarityRequiredExps";
+import { getWeaponData } from "#src/services/weapon/getWeaponData";
 import { ENGLISH_GAME_TEXT, fillGameTextValues, GameLanguage, GameTextKey, GameTextLoaderMap } from "genshin-text";
 import { assert, describe, expect, test, vi } from "vitest";
 import { render } from "vitest-browser-vue";
@@ -38,6 +40,13 @@ describe("weaponScreen", () => {
   const heldRequiredExp =
     getRarityRequiredExps(props.rarityRequiredExpsMap, weaponData.rarity)[heldWeapon.level - 1] ?? 0;
   const heldExperienceText = `${heldWeapon.experience}/${heldRequiredExp}`;
+  // The weapon an Enhance of one largest ore and the fodder weapon leaves, levelled by the service the screen calls
+  // On the same data the fixture holds
+  const fodder = getBagWeapon(props.inventory.items, FODDER_ENTRY_ID);
+  const enhancedWeapon = enhanceWeapon(heldWeapon, weaponData, props.rarityRequiredExpsMap, props.wallet, {
+    fodders: [{ data: getWeaponData(props.weaponDataMap, fodder.id), weapon: fodder }],
+    ores: [{ count: 1, id: ORE_ID }],
+  }).weapon;
 
   // The weapon's name, rarity, level in the game's own format, EXP, phase and refinement rank
   test("the weapon screen opens on a held weapon", async () => {
@@ -125,7 +134,7 @@ describe("weaponScreen", () => {
     expect(onUpdateInventory).toHaveBeenCalledTimes(1);
     expect(writtenInventory?.items.some((item) => item.id === FODDER_ENTRY_ID)).toBe(false);
     expect(countInventoryItem(writtenInventory?.items ?? [], ORE_ID)).toBe(2);
-    expect(getBagWeapon(writtenInventory?.items ?? [], OPEN_ENTRY_ID).level).toBeGreaterThan(1);
+    expect(getBagWeapon(writtenInventory?.items ?? [], OPEN_ENTRY_ID).level).toBe(enhancedWeapon.level);
     expect(onUpdateWallet).toHaveBeenCalledTimes(1);
     expect(onUpdateWallet.mock.calls[0]?.[0][Currency.Mora]).toBeLessThan(props.wallet[Currency.Mora]);
   });
@@ -195,6 +204,7 @@ describe("weaponScreen", () => {
     const nextPhaseItems = weaponData.ascensionPhases[1]?.costItems ?? [];
     const writtenItems = onUpdateInventory.mock.calls[0]?.[0].items ?? [];
 
+    expect(nextPhaseItems).not.toHaveLength(0);
     expect(onUpdateInventory).toHaveBeenCalledTimes(1);
     expect(getBagWeapon(onUpdateInventory.mock.calls[0]?.[0].items ?? [], OPEN_ENTRY_ID)).toStrictEqual({
       ...atCapWeapon,
