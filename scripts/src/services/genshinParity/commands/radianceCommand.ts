@@ -36,12 +36,8 @@ const printRows = (rows: readonly RadianceRow[]): void => {
 };
 
 // The references the table cannot read, each with the reason it is named and left out: the phone's door is framed at 4:3,
-// Which the scene's camera does not frame, and the dusk's entry names a variant and no props, which the witness page
-// Does not take, so it would shoot the default state
-const UNREADABLE_REFERENCES = new Map([
-  ["login-door", "the phone build's 4:3 framing is not the scene camera's"],
-  ["login-screen-dusk", "its entry names a variant and no props, which the witness page does not take"],
-]);
+// Which the scene's camera does not frame
+const UNREADABLE_REFERENCES = new Map([["login-door", "the phone build's 4:3 framing is not the scene camera's"]]);
 
 // The radiance table of every login reference whose screen draws the scene, per reference and pooled over all of them.
 // Each family is read lit, shaded and whole. Its last line is the rows as JSON

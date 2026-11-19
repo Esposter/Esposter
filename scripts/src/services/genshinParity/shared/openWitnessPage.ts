@@ -54,6 +54,8 @@ export const openWitnessPage = async (
     pageRoot,
     props: { ...reference.props, ...propOverrides },
     screen: reference.screen,
+    // The fixture's variant the reference names, so the page is in the state the reference was recorded in
+    variant: reference.variant,
     width: pageWidth,
     witness,
     witnessMeshes,

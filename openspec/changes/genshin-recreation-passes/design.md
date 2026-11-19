@@ -138,30 +138,30 @@ Each step is answered by its pass, in the order above, and is done once the pass
 
 ## The radiance table
 
-`genshin:parity radiance` (`radiance/readRadianceFrames.ts`, `radiance/tallyRadiance.ts`, `radiance/toRadianceByte.ts`) puts each login reference's frame and ours through the same inverse: the display byte's sRGB decode, then the engine's tone-curve inverse (`toSceneColor`), so each channel is the curve's input with the white balance inside it. Both frames are resized to the display width by the same sharp lanczos3 kernel. Ours is shot with the bloom off, at the reference's recorded camera where it records one and the scene's camera otherwise, as `compare` shoots it. Families are the exports' parts drawn over the reference's scored region, and a pixel is lit where our render's sun-shadow target reaches it above a half. A pixel where a channel saturates on either frame is dropped and counted as clipped. Two references are not read, each named by the command: `login-door`, whose phone build is framed at 4:3 against the scene's camera, and `login-screen-dusk`, whose entry names a variant and no props, which the witness page does not take, so it would shoot the default state.
+`genshin:parity radiance` (`radiance/readRadianceFrames.ts`, `radiance/tallyRadiance.ts`, `radiance/toRadianceByte.ts`) puts each login reference's frame and ours through the same inverse: the display byte's sRGB decode, then the engine's tone-curve inverse (`toSceneColor`), so each channel is the curve's input with the white balance inside it. Both frames are resized to the display width by the same sharp lanczos3 kernel. Ours is shot with the bloom off, at the reference's recorded camera where it records one and the scene's camera otherwise, as `compare` shoots it. Families are the exports' parts drawn over the reference's scored region, and a pixel is lit where our render's sun-shadow target reaches it above a half. A pixel where a channel saturates on either frame is dropped and counted as clipped. One reference is not read, named by the command: `login-door`, whose phone build is framed at 4:3 against the scene's camera. `login-screen-dusk` is read in its variant's state: `openWitnessPage` passes each reference's `variant` to the parity page, as `readBrightnessBands` and `compare` already do, so the dusk is no longer shot in the default state.
 
-Pooled over the five aligned references (dawn, day, door recording, door session and night), the table's ratio is ours over the reference's radiance:
+Pooled over the six aligned references (dawn, day, door recording, door session, night and dusk), the table's ratio is ours over the reference's radiance. The dusk reference joined the table when `openWitnessPage` began passing each reference's variant to the parity page, so the dusk is read in its own state rather than the default one; before that its entry shot the default, and the table read the five references alone:
 
-| Family            | Light  | Pixels | Clipped | Ours mean | Reference mean | Ratio |     R |     G |     B |
-| :---------------- | :----- | -----: | ------: | --------: | -------------: | ----: | ----: | ----: | ----: |
-| every pixel       | all    | 947023 |   29091 |     0.476 |          0.518 | 0.919 | 0.960 | 0.931 | 0.881 |
-| every pixel       | lit    | 372484 |    8637 |     0.556 |          0.606 | 0.917 | 0.964 | 0.920 | 0.880 |
-| every pixel       | shaded | 574539 |   20454 |     0.425 |          0.462 | 0.920 | 0.957 | 0.940 | 0.881 |
-| Towers            | all    | 409582 |    8887 |     0.502 |          0.540 | 0.930 | 0.995 | 0.957 | 0.873 |
-| Towers            | lit    | 286544 |    6204 |     0.542 |          0.557 | 0.973 | 1.098 | 1.002 | 0.889 |
-| Towers            | shaded | 123038 |    2683 |     0.411 |          0.501 | 0.819 | 0.794 | 0.857 | 0.818 |
-| Walkway           | all    |  83558 |    1437 |     0.523 |          0.913 | 0.573 | 0.584 | 0.568 | 0.563 |
-| Walkway           | lit    |  46363 |     274 |     0.551 |          0.922 | 0.598 | 0.566 | 0.589 | 0.689 |
-| Walkway           | shaded |  37195 |    1163 |     0.488 |          0.902 | 0.541 | 0.625 | 0.520 | 0.503 |
-| Door              | all    |  31909 |     360 |     0.351 |          0.435 | 0.807 | 1.118 | 0.973 | 0.620 |
-| Door              | lit    |  16490 |     212 |     0.315 |          0.405 | 0.778 | 1.083 | 0.927 | 0.597 |
-| Door              | shaded |  15419 |     148 |     0.390 |          0.467 | 0.834 | 1.154 | 1.010 | 0.641 |
-| Bridges           | all    |  20493 |    2038 |     0.930 |          0.723 | 1.286 | 1.440 | 1.191 | 1.183 |
-| Bridges           | lit    |  20137 |    1757 |     0.928 |          0.725 | 1.281 | 1.428 | 1.192 | 1.183 |
-| Bridges           | shaded |    356 |     281 |     1.006 |          0.623 | 1.615 | 1.956 | 1.140 | 1.209 |
-| outside the parts | all    | 401481 |   16369 |     0.427 |          0.410 | 1.040 | 1.073 | 1.041 | 1.013 |
-| outside the parts | lit    |   2950 |     190 |     0.777 |          0.665 | 1.168 | 1.239 | 1.139 | 1.116 |
-| outside the parts | shaded | 398531 |   16179 |     0.424 |          0.408 | 1.039 | 1.071 | 1.040 | 1.012 |
+| Family            | Light  |  Pixels | Clipped | Ours mean | Reference mean | Ratio |     R |     G |     B |
+| :---------------- | :----- | ------: | ------: | --------: | -------------: | ----: | ----: | ----: | ----: |
+| Towers            | shaded |  176696 |   11524 |     0.457 |          0.501 | 0.913 | 0.942 | 0.964 | 0.826 |
+| Towers            | all    |  485356 |   22396 |     0.534 |          0.539 | 0.992 | 1.091 | 1.025 | 0.882 |
+| Towers            | lit    |  308660 |   10872 |     0.578 |          0.560 | 1.032 | 1.208 | 1.059 | 0.899 |
+| outside the parts | shaded |  482848 |   38334 |     0.486 |          0.423 | 1.148 | 1.238 | 1.153 | 1.041 |
+| outside the parts | all    |  486282 |   38686 |     0.488 |          0.425 | 1.149 | 1.238 | 1.153 | 1.042 |
+| outside the parts | lit    |    3434 |     352 |     0.824 |          0.674 | 1.224 | 1.299 | 1.215 | 1.136 |
+| Door              | shaded |   18189 |     994 |     0.542 |          0.468 | 1.157 | 1.750 | 1.354 | 0.707 |
+| Door              | all    |   37075 |    2383 |     0.468 |          0.457 | 1.024 | 1.425 | 1.213 | 0.664 |
+| Door              | lit    |   18886 |    1389 |     0.398 |          0.447 | 0.889 | 1.151 | 1.049 | 0.619 |
+| Bridges           | lit    |   23042 |    2316 |     0.970 |          0.719 | 1.350 | 1.517 | 1.258 | 1.198 |
+| Bridges           | all    |   23399 |    2598 |     0.971 |          0.717 | 1.353 | 1.524 | 1.256 | 1.198 |
+| Bridges           | shaded |     357 |     282 |     1.007 |          0.625 | 1.611 | 1.945 | 1.142 | 1.212 |
+| Walkway           | shaded |   37683 |    1226 |     0.486 |          0.899 | 0.540 | 0.618 | 0.523 | 0.503 |
+| Walkway           | all    |  104874 |    3465 |     0.530 |          0.820 | 0.646 | 0.703 | 0.655 | 0.562 |
+| Walkway           | lit    |   67191 |    2239 |     0.555 |          0.776 | 0.715 | 0.732 | 0.706 | 0.677 |
+| every pixel       | shaded |  715773 |   52360 |     0.481 |          0.469 | 1.025 | 1.116 | 1.053 | 0.905 |
+| every pixel       | all    | 1136986 |   69528 |     0.521 |          0.517 | 1.008 | 1.104 | 1.023 | 0.897 |
+| every pixel       | lit    |  421213 |   17168 |     0.590 |          0.599 | 0.985 | 1.086 | 0.986 | 0.888 |
 
 The whole frame per reference, lit and shaded alike in the command's output, reads (ratio, then R, G and B):
 
@@ -172,16 +172,53 @@ The whole frame per reference, lit and shaded alike in the command's output, rea
 | login-door-recording | 156855 |    9545 | 1.058 | 1.053 | 1.056 | 1.114 |
 | login-door-session   | 139596 |      38 | 0.851 | 1.392 | 0.731 | 0.866 |
 | login-night-title    | 226038 |    4362 | 0.858 | 3.036 | 1.128 | 0.828 |
+| login-screen-dusk    | 189963 |   40437 | 1.460 | 1.432 | 1.660 | 1.343 |
 
-Diagnosis:
+Diagnosis, read again with the dusk in the table:
 
-- **The level is short by about eight per cent, uniformly in lit and shaded pixels, and it varies by hour.** The whole frame reads 0.917 of the reference in lit pixels and 0.920 in shaded ones, and 0.85 to 1.06 per reference. The tone curve's exposure is the game's (E = 1, the stage table's match), so this is a light level, not the curve. The mean is a level error, but the level is not one constant across hours.
-- **The walkway is the one family error steady across every hour and both light classes.** It reads 0.48 to 0.69 on each aligned reference (dawn 0.54, day 0.68, door recording 0.63, door session 0.69, night 0.48), pooled 0.57, and short in shade (0.54) as much as in light (0.60). The Surface pass matches its unlit colour, so the shortfall is the light the stone takes: the upward-face ambient its exports carry, or the glow the Light notes leave as an open share. A family short in both light classes on every hour names that family's material, not the light balance.
-- **Lit against shaded does not show the named ambient-to-direct signature.** That signature is shade above one with light below one. The towers read 0.82 in shade against 0.97 in light, the reverse arrangement, so their shade is short against their light. The only shade above one is the walkway on door session (1.50, on 931 pixels), too few to read.
-- **The hue is set by the hour, not by the family.** Whole-frame R, G and B ratios run dawn 1.01, 0.92, 0.94; day 0.73, 0.88, 0.91; door session 1.39, 0.73, 0.87; night 3.04, 1.13, 0.83. The night's red is mostly the sky (outside the parts, R 4.6 at night), and the hour's balance is the white balance, which the dumps do not hold (`_WhiteBalanceMat` is set on screen only) and which the night's fit set against these same references (`LoginSkyStateMap`).
-- **Verdict: the table names no single value that closes it.** Exposure is ruled out as the curve's, since E matches. The walkway is the steady family error and points at a family's material light term. The hue belongs to the per-hour white balance, which was fitted to these references and would need a per-family objective, not a scalar. Nothing was changed. A value moved to lift the walkway would move the Light pass's frozen bins, and the table does not yet show which walkway term is short.
+- **The five-reference level of about eight per cent short is not the level of the six.** The pooled whole frame reads 1.008 (lit 0.985, shaded 1.025). Dusk alone reads 1.46, with 40,437 of its 189,963 pixels clipped, and our sky and towers are brighter than its. Its frame is the public clip at an older build, drawn at the scene's camera, so its alignment is approximate and its level is not yet a basis for a fit.
+- **The walkway is short on every hour that has pixels to read it**, and the shortfall is not one number: pooled 0.646 over all, 0.715 lit and 0.540 shaded. Dawn reads 0.54, day 0.68, door recording 0.63, door session 0.69 (shaded 1.50 on 931 pixels), night 0.48. Dusk reads 1.22 on 21,316 pixels, lit 1.25 and shaded 0.45 on 488.
+- **Verdict:** the walkway is the family the table names, and its brightness sources are read below. Nothing in the table names the hue error as a level error: the walkway's channels are near one another (R 0.70, G 0.66, B 0.56 pooled), so the walkway is short in every channel, not in one.
 
-The limits of the reading: the dawn, day and night title frames are drawn at the scene's camera, so their alignment is approximate; the door recording is an older build at the scene's camera; each reference carries the game's bloom while ours is drawn bloom-off, which the Display notes measure as small over the brightest pixels; and a byte below about 30 reads at the curve's floor, so shaded ratios carry more noise than lit ones. The table was read at this change's base with nothing else moved, so its numbers stand on the recorded gates: `passes login --pass Display` still reads its bloom at 1.1762 against a gate of 0 (task 1.1 stays open), and task 1.4 stays open with it.
+## The walkway's brightness, from the exports and the fit
+
+Each family's brightness, read from the login's exported materials (`Material/*.json` and the witness export's `materials`, the family's materials by name, `fitLoginStone` for the record ours is drawn from):
+
+| Family     | Materials the exports draw it with                                                     | Albedo, tint and emission                                   | Rim glow, as exported                                                                                                             | Ours, from the stone record                                            |
+| :--------- | :------------------------------------------------------------------------------------- | :---------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------- |
+| Walkway    | Bridge01 (the family's record); its middle lane Ground02, its borders and curbs Edge01 | Bridge01's diffuse; `_Color` 1 and no emission on all three | Bridge01 strength 0, gold, power 1.5; Ground02 strength 1, cyan (0.446, 0.917, 1), power 2; Edge01 strength 0.5, blue, power 3.88 | Bridge01's record: strength 0, gold, power 1.5. The lane draws no glow |
+| Towers     | Build01, Build03, Build04, Build05                                                     | Diffuse; `_Color` 1, no emission                            | Strengths 1, 0.5, 0.7, 0.7 (mean 0.725), blue, power 4.1                                                                          | Strength 0.09 = 0.725 × 1/8, the frame's share (`GLOW_SCALES`)         |
+| Bridges    | Bridge02 to Bridge04, Pillar, Broken                                                   | Diffuse; `_Color` 1, no emission                            | Strength 0 under `ENABLE_RIM_GLOW_ON`                                                                                             | Strength 0: matches                                                    |
+| Door       | Door01 (the frame)                                                                     | Diffuse; `_Color` 1, no emission                            | Strength 1.1, blue, power 3                                                                                                       | Strength 0.14 = 1.1 × 1/8                                              |
+| Door panel | Door02                                                                                 | Diffuse; `_Color` 1, no emission                            | No `ENABLE_RIM_GLOW_ON` keyword, so no glow compiled                                                                              | Strength 0: matches                                                    |
+
+Taken as they are: every family's `_Color` is 1 and no family emits, so no tint or emission term is in question; the albedo is the Surface pass's, whose gates hold. What remains is the rim glow, and its share of the exports' strength, which the Light pass fitted to 1/8 for the towers and the door. The walkway's middle lane is the one family whose exported glow is not in the record: the record takes Bridge01's strength 0 and gold colour, where its lane is Ground02's cyan at strength 1. The up-facing light is not an export: the stone's harmonics are the hour's solved sky light, shared by every stone material, so a walkway-only up-facing term is a second unknown, not a value the dumps hold.
+
+The walkway's glow share was fitted against the radiance table, one parameter, with Ground02's colour and power taken as exported. Each share replaced the walkway's glow in the scene and was read by a run of `genshin:parity radiance`:
+
+| Share of Ground02's glow | Walkway pooled, all |   lit | shaded | Walkway channels, pooled (R, G, B) |
+| -----------------------: | ------------------: | ----: | -----: | :--------------------------------- |
+|              0 (shipped) |               0.646 | 0.715 |  0.540 | 0.703, 0.655, 0.562                |
+|    1 (exported as it is) |               1.247 | 1.379 |  1.039 | not read                           |
+|            0.59 (fitted) |               1.016 | 1.130 |  0.835 | 0.914, 1.282, 0.992                |
+
+The fit is the pixel-weighted least squares of the log ratio over the lit and shaded classes, over all hours at once. Over the two measured shares the linear model's minimum is at 0.59, and the run at 0.59 confirms it. Its residual is not zero: lit reads 13 per cent over and shaded 16.5 per cent under, and the glow adds green faster than red, so the hue is wrong at 0.59 (G 1.28 against R 0.91). Per hour at 0.59 the walkway reads dawn 0.79, day 0.98, door recording 0.88, door session 1.21 and night 0.80, dusk 2.08. A second parameter, a walkway-only up-facing term, would be needed to take the shaded class up without lifting the lit one, and a per-channel term for the hue; neither is fitted here.
+
+The share is not shipped. Its compare rows against `ParityReferenceMap.snapshot.md` at 0.59, each reading mean difference, shape, tone and FLIP:
+
+| Reference            | Mean difference (row) | Shape (row)   | Tone (row)    | FLIP (row)      | Reads no worse            |
+| :------------------- | :-------------------- | :------------ | :------------ | :-------------- | :------------------------ |
+| login-dawn-title     | 10.43 (10.85)         | 0.477 (0.480) | 7.75 (7.85)   | 0.4284 (0.4432) | no: shape                 |
+| login-day-title      | 13.29 (13.31)         | 0.323 (0.321) | 10.56 (10.42) | 0.4823 (0.4841) | no: tone                  |
+| login-door           | 12.31 (13.40)         | 0.221 (0.205) | 10.37 (11.04) | 0.4938 (0.5123) | yes                       |
+| login-door-recording | 17.07 (17.26)         | 0.364 (0.357) | 12.40 (12.37) | 0.5865 (0.6008) | no: tone                  |
+| login-door-session   | 12.22 (12.28)         | 0.427 (0.416) | 8.41 (8.42)   | 0.4514 (0.4568) | yes                       |
+| login-night-title    | 9.76 (9.42)           | 0.380 (0.369) | 7.55 (7.01)   | 0.3882 (0.3917) | no: mean difference, tone |
+| login-screen-dusk    | 20.28 (20.18)         | 0.389 (0.349) | 15.06 (14.45) | 0.6557 (0.6674) | no: mean difference, tone |
+
+Four references read worse on one measure or more, so the share is not shipped, and no row of the snapshot is committed for it. Task 1.4 stays open. The bloom and the Display pass are unchanged by it: `passes login --pass Surface` holds every family at the share (its unlit colour is not moved by the glow), `--pass Display` still fails its bloom reading at 1.1762 against a gate of 0, and `genshin:parity bloom` holds no one of its 32 combinations (the lowest is 1.1642), so task 1.1 stays open too.
+
+The limits of the reading: the dawn, day and night title frames and the dusk are drawn at the scene's camera, so their alignment is approximate; the door recording is an older build at the scene's camera; each reference carries the game's bloom while ours is drawn bloom-off, which the Display notes measure as small over the brightest pixels; and a byte below about 30 reads at the curve's floor, so shaded ratios carry more noise than lit ones. The table was read with nothing else moved, and `passes login --pass Display` still reads its bloom at 1.1762 against a gate of 0 (task 1.1 stays open), so task 1.4 stays open with it.
 
 ## Scope
 
@@ -230,7 +267,7 @@ Everything the passes already have is reused as it is, and each measure, once bu
 
 ## Open
 
-- [ ] **The walkway reads about 0.57 of the reference's radiance on every aligned hour, in shade as in light, and no value in the radiance table closes it.** Task 1.4 waits on this. The next step reads the walkway's upward-face ambient and its glow against the table, each value taken from its export or fitted by the solver over the radiance table as the objective, and re-reads the compare rows after it.
+- [ ] **The walkway reads 0.65 of the reference's radiance pooled over the aligned hours, short in shade (0.54) as in light (0.72), and its exported glow fitted to 0.59 of Ground02's leaves its lit class at 1.13 and its shaded at 0.84, with the hue off (green 1.28 against red 0.91).** Task 1.4 waits on this. The fitted share is not shipped, since four references read worse on one measure or more (the table above). The next unknown is a walkway-only up-facing light with its own colour, two parameters solved over the same objective, which the exports do not hold.
 - [ ] **The display bloom reads above its gate under every structure of its chain, and the measure moved it most.** `genshin:parity bloom` (`passes/readBloomAblation.ts`) reads the Display pass's bloom reading on `login-door-session`, the one current-build reference whose screen draws the bloom, over 32 combinations: the prefilter (one tap, or four taps averaged before the threshold, `00004`), the downsample's tap offset (half a texel or one, `00011`), the blur (the engine's separable pair, or the game's rotated pass, each once or twice a level), and the measure (ours drawn at the display width, or at the reference's own width, both sides resized by the reference's lanczos3). Each reading is CIELab ΔE over the reference's brightest pixels, the drawn bloom less none, and holds at a gate strictly below 0. Its table, as the run printed it:
 
 | Prefilter | Tap offset | Blur         | Measured at                | login-door-session | Mean   | Holds |
