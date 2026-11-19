@@ -41,51 +41,31 @@ describe(destroyInventoryItems, () => {
     quantity: 1,
   });
 
-  test("destroys a 3-star weapon and returns its enhancement ore into the bag", () => {
-    expect.hasAssertions();
+  test.each([1, 2])(
+    "destroys a 3-star weapon and returns its enhancement ore into the bag once, however often it is chosen (%i)",
+    (chosenCount) => {
+      expect.hasAssertions();
 
-    const weapon = createWeapon(0, 3, DestroyRule.ReturnMaterial);
+      const weapon = createWeapon(0, 3, DestroyRule.ReturnMaterial);
 
-    expect(
-      destroyInventoryItems(
-        { items: [weapon], nextId: 1, quickSwapItemIds: [] },
-        EMPTY_WALLET,
-        [weapon.id],
-        englishNameText,
-        materialDataMap,
-      ),
-    ).toStrictEqual({
-      inventory: {
-        items: [{ definition: getItemDefinition(ORE_ID, englishNameText, materialDataMap), id: 1, quantity: 3 }],
-        nextId: 2,
-        quickSwapItemIds: [],
-      },
-      wallet: EMPTY_WALLET,
-    });
-  });
-
-  test("returns an entry chosen twice once", () => {
-    expect.hasAssertions();
-
-    const weapon = createWeapon(0, 3, DestroyRule.ReturnMaterial);
-
-    expect(
-      destroyInventoryItems(
-        { items: [weapon], nextId: 1, quickSwapItemIds: [] },
-        EMPTY_WALLET,
-        [weapon.id, weapon.id],
-        englishNameText,
-        materialDataMap,
-      ),
-    ).toStrictEqual({
-      inventory: {
-        items: [{ definition: getItemDefinition(ORE_ID, englishNameText, materialDataMap), id: 1, quantity: 3 }],
-        nextId: 2,
-        quickSwapItemIds: [],
-      },
-      wallet: EMPTY_WALLET,
-    });
-  });
+      expect(
+        destroyInventoryItems(
+          { items: [weapon], nextId: 1, quickSwapItemIds: [] },
+          EMPTY_WALLET,
+          Array.from({ length: chosenCount }, () => weapon.id),
+          englishNameText,
+          materialDataMap,
+        ),
+      ).toStrictEqual({
+        inventory: {
+          items: [{ definition: getItemDefinition(ORE_ID, englishNameText, materialDataMap), id: 1, quantity: 3 }],
+          nextId: 2,
+          quickSwapItemIds: [],
+        },
+        wallet: EMPTY_WALLET,
+      });
+    },
+  );
 
   test("returns Mora into the wallet rather than the bag", () => {
     expect.hasAssertions();

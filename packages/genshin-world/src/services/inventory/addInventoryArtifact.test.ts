@@ -32,14 +32,15 @@ describe(addInventoryArtifact, () => {
 
   const emptyInventory: Inventory = { items: [], nextId: 0, quickSwapItemIds: [] };
 
-  test("takes each artifact in as an entry of its own holding the artifact it was rolled as", () => {
+  test("takes each artifact in as an entry of its own holding the artifact it was rolled as, keeping the equipped gadget", () => {
     expect.hasAssertions();
 
     const otherArtifact: Artifact = { ...artifact, level: 4 };
-    const { inventory } = addInventoryArtifact(emptyInventory, definition, artifact);
+    const { inventory } = addInventoryArtifact({ ...emptyInventory, equippedGadgetItemId: 1 }, definition, artifact);
 
     expect(addInventoryArtifact(inventory, definition, otherArtifact)).toStrictEqual({
       inventory: {
+        equippedGadgetItemId: 1,
         items: [
           { artifact, definition, id: 0, quantity: 1 },
           { artifact: otherArtifact, definition, id: 1, quantity: 1 },
@@ -49,14 +50,6 @@ describe(addInventoryArtifact, () => {
       },
       overflow: 0,
     });
-  });
-
-  test("keeps the equipped gadget in the bag it takes an artifact into", () => {
-    expect.hasAssertions();
-
-    const { inventory } = addInventoryArtifact({ ...emptyInventory, equippedGadgetItemId: 1 }, definition, artifact);
-
-    expect(inventory.equippedGadgetItemId).toBe(1);
   });
 
   test("leaves the artifact over once the artifacts tab is full, keeping the equipped gadget", () => {
