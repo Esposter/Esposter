@@ -44,7 +44,7 @@ export const useFileStore = defineStore("message/file", () => {
   // Single read-modify-write of the room map from losing a concurrent chunk's entries.
   const readFileUrls = async (roomId: string, files: FileEntity[]) => {
     const newFileUrlMaps = await Promise.all(
-      chunk(files, MAX_READ_LIMIT).map((fileChunk) => baseReadFileUrls(fileChunk, roomId)),
+      chunk(files, MAX_READ_LIMIT).map((fileChunk) => baseReadFileUrls(roomId, fileChunk)),
     );
     const roomFileUrlMap = getData(roomId) ?? new Map<string, ReadFileUrl>();
     for (const newFileUrlMap of newFileUrlMaps)

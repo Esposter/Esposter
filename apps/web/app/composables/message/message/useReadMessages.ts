@@ -32,10 +32,11 @@ export const useReadMessages = () => {
       // A route param is whatever the address bar holds, so one that is no message id reads as no message to open on
       const messageId = getRouteParam(currentRoute.value.params, "messageId");
       if (checkIsMessageId(messageId)) {
+        const anchorId = Number(messageId);
         // The room opens at the message and reads both ways from it. A message the room does not hold leaves the
         // Window around its id, so the window only counts when it holds the message itself
-        const anchoredPage = await $trpc.message.readMessagesAround.query({ messageId: Number(messageId), roomId });
-        if (anchoredPage.items.some(({ id }) => id === Number(messageId))) {
+        const anchoredPage = await $trpc.message.readMessagesAround.query({ messageId: anchorId, roomId });
+        if (anchoredPage.items.some(({ id }) => id === anchorId)) {
           const roomMessagePage = toRoomMessagePage(anchoredPage, roomId);
           await readMetadata(roomId, roomMessagePage.items);
           previousCursor.value = anchoredPage.previousCursor;

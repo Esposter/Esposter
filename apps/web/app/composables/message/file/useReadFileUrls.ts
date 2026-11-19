@@ -12,7 +12,7 @@ import { getResultAsync, takeOne } from "@esposter/shared";
 // No command of theirs to attribute it to.
 export const useReadFileUrls = () => {
   const { $trpc } = useNuxtApp();
-  return async (files: FileEntity[], roomId: string) => {
+  return async (roomId: string, files: FileEntity[]) => {
     const fileUrlMap = new Map<FileEntity["id"], ReadFileUrl>();
     if (files.length === 0) return fileUrlMap;
     // A file whose upload recorded no thumbnail gets no thumbnail url minted for it — nothing downstream has
