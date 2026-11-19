@@ -32,8 +32,8 @@ The event calendar's month view takes its six weeks from the same composable wit
 
 ## Risks
 
-- **Today.** `UiCalendar` reads today from `useCalendarClock`, and the grid's today comes from its adapter's `Date`. Both are the reader's local day in the browser, so the grid's flag replaces the clock only if the two agree across midnight, which task 1.3 checks against the clock's own tests.
-- **Spill days.** `createCalendar` refuses a press on a day outside the month. The task that moves the grid confirms no spill day is pressable today before relying on the flag.
+- **Today.** `UiCalendar` reads today from `useCalendarClock`, and the grid's today comes from its adapter's `Date`. Both are the reader's local day in the browser, so the grid's flag replaces the clock only if the two agree across midnight, which task 1.3 measures, since the clock has no test of its own.
+- **Spill days.** `createCalendar` refuses a press on a day outside the month. A one-month grid draws its spill days as pressable buttons today, and they stay pressable: the press is `UiCalendar`'s `choose`, which does not read the grid's `outside` flag, and the grid's `select`, the one that refuses them, is never called.
 
 ## Key files
 
