@@ -98,6 +98,7 @@ interface PublishableResourceCaller<TContent> {
   readPublishedResourceContent: (id: string) => Promise<{ content: TContent; name: string }>;
   readPublishedVersionContent: (input: { id: string; version: number }) => Promise<{ content: TContent; name: string }>;
   readResourcePublication: (input: { id: string }) => Promise<ResourcePublicationInResource | undefined>;
+  readResourceViewCount: (input: { id: string }) => Promise<number>;
   unpublishResource: (input: { id: string }) => Promise<ResourceInResource>;
 }
 // The procedures every type's factory generates, over that type's content. The content is the one thing a type narrows, so the
