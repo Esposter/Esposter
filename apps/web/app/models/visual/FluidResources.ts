@@ -1,4 +1,5 @@
 import type { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import type { Inspector } from "three/examples/jsm/inspector/Inspector.js";
 import type { SkyMesh } from "three/examples/jsm/objects/SkyMesh.js";
 import type { WaterMesh } from "three/examples/jsm/objects/WaterMesh.js";
 import type {
@@ -10,11 +11,13 @@ import type {
   WebGPURenderer,
 } from "three/webgpu";
 
-// Everything the teardown must dispose, assembled only after onMounted finishes wiring three.js
+// Everything the teardown must dispose, assembled before the renderer's init is awaited, so an unmount at any point
+// Finds it
 export interface FluidResources {
   box: Mesh<BoxGeometry, MeshStandardMaterial>;
   controls: OrbitControls;
   disposeRenderTarget: () => void;
+  inspector: Inspector;
   pmremGenerator: PMREMGenerator;
   renderer: WebGPURenderer;
   renderPipeline: RenderPipeline;

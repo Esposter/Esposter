@@ -2,6 +2,7 @@ import type { FluidResources } from "#src/models/visual/FluidResources";
 import type { RenderTarget } from "three/webgpu";
 
 import waterNormalsUrl from "#src/assets/visual/textures/waternormals.jpg";
+import { getResultAsync } from "@esposter/shared";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { SkyMesh } from "three/examples/jsm/objects/SkyMesh.js";
 import { WaterMesh } from "three/examples/jsm/objects/WaterMesh.js";
@@ -28,10 +29,27 @@ import {
 const getSize = ({ clientHeight, clientWidth }: HTMLElement) => ({ height: clientHeight, width: clientWidth });
 
 const disposeFluidResources = async (resources: FluidResources) => {
-  const { box, controls, disposeRenderTarget, pmremGenerator, renderer, renderPipeline, sky, stopResize, water } =
-    resources;
+  const {
+    box,
+    controls,
+    disposeRenderTarget,
+    inspector,
+    pmremGenerator,
+    renderer,
+    renderPipeline,
+    sky,
+    stopResize,
+    water,
+  } = resources;
   stopResize();
-  await renderer.setAnimationLoop(null);
+  // Waits for an init still under way. A refused init never started the renderer, so it has no loop to stop and
+  // Nothing else to dispose. The refusal was already raised by the setup that awaited it, so it is read here as a
+  // Boolean only
+  const isInitialized = await getResultAsync(() => renderer.init()).match(
+    () => true,
+    () => false,
+  );
+  if (isInitialized) await renderer.setAnimationLoop(null);
   renderPipeline.dispose();
   water.geometry.dispose();
   water.material.dispose();
@@ -43,21 +61,27 @@ const disposeFluidResources = async (resources: FluidResources) => {
   pmremGenerator.dispose();
   disposeRenderTarget();
   controls.dispose();
-  await renderer.dispose();
+  // An initialised renderer disposes the inspector it holds, so the inspector is disposed here only without it
+  if (isInitialized) await renderer.dispose();
+  else inspector.dispose();
   renderer.domElement.remove();
 };
 
 export const useFluidSimulator = (container: MaybeRefOrGetter<HTMLElement | undefined>) => {
   const parameters = { azimuth: 180, elevation: 2, exposure: 0.5 };
-  // Assigned only at the tail of onMounted, past every await, so an unmount that races setup finds it undefined
+  // Assigned as soon as every resource exists, before the renderer's init is awaited, so an unmount at any later
+  // Point releases what the setup has built, whether the init settles or is refused
   let fluidResources: FluidResources | undefined;
-  // Set by an unmount, which the tail of onMounted then answers by tearing down the resources it has just built
+  // Set by an unmount, which the awaits check so that the setup builds nothing the unmount has already passed
   let isUnmounted = false;
   onMounted(async () => {
     const containerValue = toValue(container);
     if (!containerValue) return;
     // eslint-disable-next-line no-restricted-syntax -- the Inspector is the renderer's debug overlay, loaded only once the simulator mounts so it stays out of the server and eager graphs
     const { Inspector } = await import("three/examples/jsm/inspector/Inspector.js");
+    // An unmount during the import found no resources to release, so nothing is built after it
+    if (isUnmounted) return;
+
     const renderer = new WebGPURenderer();
     renderer.setPixelRatio(window.devicePixelRatio);
     const { height, width } = getSize(containerValue);
@@ -124,9 +148,6 @@ export const useFluidSimulator = (container: MaybeRefOrGetter<HTMLElement | unde
       scene.environment = renderTarget.texture;
     };
 
-    await renderer.init();
-    updateSun();
-
     const boxGeometry = new BoxGeometry(30, 30, 30);
     const boxMaterial = new MeshStandardMaterial({ roughness: 0 });
     const box = new Mesh(boxGeometry, boxMaterial);
@@ -138,6 +159,41 @@ export const useFluidSimulator = (container: MaybeRefOrGetter<HTMLElement | unde
     controls.minDistance = 40;
     controls.maxDistance = 200;
     controls.update();
+
+    // Registered outside the synchronous setup scope, so it is not auto-disposed. Its stop handle travels in the
+    // Resources
+    const stopResize = useEventListener("resize", () => {
+      const { height: newHeight, width: newWidth } = getSize(containerValue);
+      camera.aspect = newWidth / newHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(newWidth, newHeight);
+    });
+
+    const render = () => {
+      const time = performance.now() * 0.001;
+      box.position.y = Math.sin(time) * 20 + 5;
+      box.rotation.x = time * 0.5;
+      box.rotation.z = time * 0.51;
+      renderPipeline.render();
+    };
+
+    fluidResources = {
+      box,
+      controls,
+      disposeRenderTarget: () => renderTarget?.dispose(),
+      inspector,
+      pmremGenerator,
+      renderer,
+      renderPipeline,
+      sky,
+      stopResize,
+      water,
+    };
+    await renderer.init();
+    // The unmount has already released what exists, and waited for this init to settle, so nothing more is set up
+    if (isUnmounted) return;
+
+    updateSun();
 
     const gui = inspector.createParameters("Settings");
     // Creating parameters opens their panel, which starts closed behind its button instead
@@ -162,41 +218,11 @@ export const useFluidSimulator = (container: MaybeRefOrGetter<HTMLElement | unde
     folderClouds.add(sky.cloudCoverage, "value", 0, 1, 0.01).name("coverage");
     folderClouds.add(sky.cloudDensity, "value", 0, 1, 0.01).name("density");
     folderClouds.add(sky.cloudElevation, "value", 0, 1, 0.01).name("elevation");
-    // Registered after awaits, so it is outside the synchronous setup scope and won't auto-dispose.
-    // Its stop handle travels in the resources so teardown can detach it
-    const stopResize = useEventListener("resize", () => {
-      const { height: newHeight, width: newWidth } = getSize(containerValue);
-      camera.aspect = newWidth / newHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(newWidth, newHeight);
-    });
-
-    const render = () => {
-      const time = performance.now() * 0.001;
-      box.position.y = Math.sin(time) * 20 + 5;
-      box.rotation.x = time * 0.5;
-      box.rotation.z = time * 0.51;
-      renderPipeline.render();
-    };
 
     await renderer.setAnimationLoop(() => {
       render();
     });
-
-    fluidResources = {
-      box,
-      controls,
-      disposeRenderTarget: () => renderTarget?.dispose(),
-      pmremGenerator,
-      renderer,
-      renderPipeline,
-      sky,
-      stopResize,
-      water,
-    };
-    if (isUnmounted) await disposeFluidResources(fluidResources);
   });
-  // An unmount before the tail finds no handle, so it only sets the flag that the tail reads
   onUnmounted(async () => {
     isUnmounted = true;
     if (fluidResources) await disposeFluidResources(fluidResources);
