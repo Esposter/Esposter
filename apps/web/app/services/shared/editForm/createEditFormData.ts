@@ -1,5 +1,6 @@
 import type { AItemEntity } from "#shared/models/entity/AItemEntity";
 import type { EntityIdKeys } from "#src/models/entity/EntityIdKeys";
+import type { EntityIds } from "#src/models/entity/EntityIds";
 import type { ToData } from "@esposter/shared";
 
 import { getEntityIdEqualComparator } from "#src/services/entity/getEntityIdEqualComparator";
@@ -10,7 +11,7 @@ import { checkIsDeepEqual, toRawDeep } from "@esposter/shared";
 export const createEditFormData = <TItem extends ToData<AItemEntity>, TIdKeys extends EntityIdKeys<TItem>>(
   items: ComputedRef<TItem[]>,
   idKeys: [...TIdKeys],
-  onEdit?: (ids: { [P in keyof TItem & TIdKeys[number]]: TItem[P] }) => void,
+  onEdit?: (ids: EntityIds<TItem, TIdKeys>) => void,
 ) => {
   const router = useRouter();
   const isEditFormDialogOpen = ref(false);
@@ -34,7 +35,7 @@ export const createEditFormData = <TItem extends ToData<AItemEntity>, TIdKeys ex
   );
   const isDirty = computed(() => !isEditFormValid.value || isSavable.value);
 
-  const editItem = async (ids: { [P in keyof TItem & TIdKeys[number]]: TItem[P] }) => {
+  const editItem = async (ids: EntityIds<TItem, TIdKeys>) => {
     const checkIsEntityIdEqual = getEntityIdEqualComparator(
       Object.keys(ids) as (keyof TItem & string)[],
       ids as Partial<TItem>,
@@ -62,7 +63,7 @@ export const createEditFormData = <TItem extends ToData<AItemEntity>, TIdKeys ex
       return typeof value === "string" ? [[key, value] as const] : [];
     });
     if (queryIdEntries.length !== idKeys.length) return;
-    await editItem(Object.fromEntries(queryIdEntries) as { [P in keyof TItem & TIdKeys[number]]: TItem[P] });
+    await editItem(Object.fromEntries(queryIdEntries) as EntityIds<TItem, TIdKeys>);
   });
 
   return { editedItem, editItem, isDirty, isEditFormDialogOpen, isEditFormValid, isSavable, originalItem, resetItem };
