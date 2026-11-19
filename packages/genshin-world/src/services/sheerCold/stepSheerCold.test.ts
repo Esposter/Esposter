@@ -1,17 +1,6 @@
 import type { SheerCold } from "#src/models/sheerCold/SheerCold";
 import type { SheerColdStep } from "#src/models/sheerCold/SheerColdStep";
 
-import {
-  SHEER_COLD_DAMAGE_FLAT,
-  SHEER_COLD_DAMAGE_INTERVAL_SECONDS,
-  SHEER_COLD_DAMAGE_SHARE,
-  SHEER_COLD_GAIN_PER_SECOND,
-  SHEER_COLD_HEAT_DRAIN_PER_SECOND,
-  SHEER_COLD_LEAVE_DRAIN_PER_SECOND,
-  SHEER_COLD_MAXIMUM,
-  SHEER_COLD_SNOWSTORM_MODIFIER,
-  SHEER_COLD_SWIM_MODIFIER,
-} from "#src/services/sheerCold/constants";
 import { stepSheerCold } from "#src/services/sheerCold/stepSheerCold";
 import { describe, expect, test } from "vitest";
 
@@ -41,8 +30,6 @@ describe(stepSheerCold, () => {
     isSwimming: false,
     maxHealth,
   };
-  // The damage one interval costs a character with the test's max HP
-  const intervalDamage = SHEER_COLD_DAMAGE_SHARE * maxHealth + SHEER_COLD_DAMAGE_FLAT;
 
   test("fill the gauge in the subzero climate", () => {
     expect.hasAssertions();
@@ -50,7 +37,7 @@ describe(stepSheerCold, () => {
     const sheerCold: SheerCold = { damageSeconds: 0, value: 0 };
     stepSheerCold(sheerCold, inCold, 2);
 
-    expect(sheerCold.value).toBeCloseTo(2 * SHEER_COLD_GAIN_PER_SECOND);
+    expect(sheerCold.value).toBeCloseTo(2);
   });
 
   test("fill the gauge faster while swimming", () => {
@@ -59,7 +46,7 @@ describe(stepSheerCold, () => {
     const sheerCold: SheerCold = { damageSeconds: 0, value: 0 };
     stepSheerCold(sheerCold, { ...inCold, isSwimming: true }, 2);
 
-    expect(sheerCold.value).toBeCloseTo(2 * SHEER_COLD_GAIN_PER_SECOND * (1 + SHEER_COLD_SWIM_MODIFIER));
+    expect(sheerCold.value).toBeCloseTo(5.6);
   });
 
   test("fill the gauge faster in a snowstorm", () => {
@@ -68,7 +55,7 @@ describe(stepSheerCold, () => {
     const sheerCold: SheerCold = { damageSeconds: 0, value: 0 };
     stepSheerCold(sheerCold, { ...inCold, isSnowstorm: true }, 2);
 
-    expect(sheerCold.value).toBeCloseTo(2 * SHEER_COLD_GAIN_PER_SECOND * (1 + SHEER_COLD_SNOWSTORM_MODIFIER));
+    expect(sheerCold.value).toBeCloseTo(6);
   });
 
   test("suppress the fill with an anti-cold dish", () => {
@@ -79,7 +66,7 @@ describe(stepSheerCold, () => {
     const suppressed: SheerCold = { damageSeconds: 0, value: 40 };
     stepSheerCold(suppressed, { ...inCold, antiColdRatio: -1 }, 2);
 
-    expect(filled.value).toBeCloseTo(2 * SHEER_COLD_GAIN_PER_SECOND * 0.5);
+    expect(filled.value).toBeCloseTo(1);
     expect(suppressed.value).toBe(40);
   });
 
@@ -89,7 +76,7 @@ describe(stepSheerCold, () => {
     const sheerCold: SheerCold = { damageSeconds: 0, value: 40 };
     stepSheerCold(sheerCold, outOfCold, 2);
 
-    expect(sheerCold.value).toBeCloseTo(40 - 2 * SHEER_COLD_LEAVE_DRAIN_PER_SECOND);
+    expect(sheerCold.value).toBeCloseTo(30);
   });
 
   test("drain the gauge near heat, wherever it stands", () => {
@@ -100,8 +87,8 @@ describe(stepSheerCold, () => {
     const heatedOutOfCold: SheerCold = { damageSeconds: 0, value: 80 };
     stepSheerCold(heatedOutOfCold, { ...outOfCold, isHeated: true }, 2);
 
-    expect(sheerCold.value).toBeCloseTo(80 - 2 * SHEER_COLD_HEAT_DRAIN_PER_SECOND);
-    expect(heatedOutOfCold.value).toBeCloseTo(80 - 2 * SHEER_COLD_HEAT_DRAIN_PER_SECOND);
+    expect(sheerCold.value).toBeCloseTo(30);
+    expect(heatedOutOfCold.value).toBeCloseTo(30);
   });
 
   test("keep the gauge between none and its maximum", () => {
@@ -109,31 +96,33 @@ describe(stepSheerCold, () => {
 
     const drained: SheerCold = { damageSeconds: 0, value: 1 };
     stepSheerCold(drained, heated, 10);
-    const filled: SheerCold = { damageSeconds: 0, value: SHEER_COLD_MAXIMUM - 1 };
+    const filled: SheerCold = { damageSeconds: 0, value: 99 };
     stepSheerCold(filled, inCold, 10);
 
     expect(drained.value).toBe(0);
-    expect(filled.value).toBe(SHEER_COLD_MAXIMUM);
+    expect(filled.value).toBe(100);
   });
 
   test("deal its share of damage for each interval it stays full", () => {
     expect.hasAssertions();
 
-    const sheerCold: SheerCold = { damageSeconds: 0, value: SHEER_COLD_MAXIMUM };
+    const sheerCold: SheerCold = { damageSeconds: 0, value: 100 };
     const damage = stepSheerCold(sheerCold, inCold, 2);
 
-    expect(damage).toBeCloseTo(2 * intervalDamage);
+    // Two intervals at 160 HP each: 1% of the 1000 max HP and 150 HP flat
+    expect(damage).toBeCloseTo(320);
     expect(sheerCold.damageSeconds).toBe(0);
   });
 
   test("carry a part interval into the next step before dealing damage", () => {
     expect.hasAssertions();
 
-    const sheerCold: SheerCold = { damageSeconds: 0, value: SHEER_COLD_MAXIMUM };
-    const firstDamage = stepSheerCold(sheerCold, inCold, SHEER_COLD_DAMAGE_INTERVAL_SECONDS / 2);
+    const sheerCold: SheerCold = { damageSeconds: 0, value: 100 };
+    const firstDamage = stepSheerCold(sheerCold, inCold, 0.5);
 
     expect(firstDamage).toBe(0);
-    expect(stepSheerCold(sheerCold, inCold, SHEER_COLD_DAMAGE_INTERVAL_SECONDS / 2)).toBeCloseTo(intervalDamage);
+    // One interval at 160 HP: 1% of the 1000 max HP and 150 HP flat
+    expect(stepSheerCold(sheerCold, inCold, 0.5)).toBeCloseTo(160);
   });
 
   test("deal no damage while the gauge is not full", () => {
@@ -147,7 +136,7 @@ describe(stepSheerCold, () => {
   test("clear the time toward the next interval once heat drains the gauge below full", () => {
     expect.hasAssertions();
 
-    const sheerCold: SheerCold = { damageSeconds: 1, value: SHEER_COLD_MAXIMUM };
+    const sheerCold: SheerCold = { damageSeconds: 1, value: 100 };
     stepSheerCold(sheerCold, { ...heated, isInCold: false }, 1);
 
     expect(sheerCold.damageSeconds).toBe(0);
