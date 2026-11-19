@@ -9,6 +9,6 @@
 | `app/components/Clicker`                                                           | 2026-11-19 · Haiku 5.5 |                                                                  |
 | `app/components/Post`                                                              | 2026-11-19 · Haiku 5.5 |                                                                  |
 | `app/components/Visual`                                                            | 2026-11-19 · Haiku 5.5 |                                                                  |
-| `app/components/User`                                                              | —                      |                                                                  |
-| `app/components/Dashboard`                                                         | —                      |                                                                  |
-| `app/components/RichTextEditor`, `Achievement`                                     | —                      |                                                                  |
+| `app/components/User`                                                              | 2026-11-19 · Haiku 5.5 |                                                                  |
+| `app/components/Dashboard`                                                         | 2026-11-19 · Haiku 5.5 |                                                                  |
+| `app/components/RichTextEditor`, `Achievement`                                     | 2026-11-19 · Haiku 5.5 |                                                                  |
