@@ -5,6 +5,7 @@ import { ParityPass } from "#src/models/genshinParity/passes/ParityPass";
 import { parseDerivedAssetComponent } from "#src/services/genshinAssets/shared/parseDerivedAssetComponent";
 import { checkIsReadingHeld } from "#src/services/genshinParity/passes/checkIsReadingHeld";
 import { findMovedFrozenPass } from "#src/services/genshinParity/passes/findMovedFrozenPass";
+import { findMovedGate } from "#src/services/genshinParity/passes/findMovedGate";
 import { formatPassValue } from "#src/services/genshinParity/passes/formatPassValue";
 import { formatReadingWithUnit } from "#src/services/genshinParity/passes/formatReadingWithUnit";
 import { readParityPassRows } from "#src/services/genshinParity/passes/readParityPassRows";
@@ -56,6 +57,13 @@ export const passesCommand: SubCommandsDef[string] = defineCommand({
         Operation.Update,
         "passes",
         `${movedPass} is frozen, and ${args.pass} moved it: reopen ${movedPass} rather than compensating for it`,
+      );
+    const movedGate = findMovedGate({ recordedRows, results });
+    if (movedGate)
+      throw new InvalidOperationError(
+        Operation.Update,
+        "passes",
+        `${movedGate.pass} ${movedGate.name}'s gate would move from ${movedGate.recorded} to ${movedGate.measured}: the exports or the camera it reads moved, so the report keeps the gate it holds until its rows are cleared to record this one`,
       );
     await writeParityPasses(component, results, { isPassAlone: args.pass !== undefined });
   },
