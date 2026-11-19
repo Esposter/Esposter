@@ -2,9 +2,9 @@ import { runPrecheck } from "#src/services/precheck/runPrecheck";
 import { runCommand } from "#src/services/timing/runCommand";
 import { defineCommand } from "citty";
 
-// `pnpm ai:precheck [--fix]` — the formatter, the barrel check and, after a manifest change, the dependency graph check over
-// What the checkout changed against ai/queue, run before a push (the `running-checks` skill). `--fix` rewrites a stale
-// Barrel or graph with the generator that writes it
+// `pnpm ai:precheck [--fix]` — the formatter, the barrel check, after a manifest change the dependency graph check, and the
+// Ledger trailers of the commits ahead of ai/queue, over what the checkout changed against ai/queue, run before a push (the
+// `running-checks` skill). `--fix` rewrites a stale barrel or graph with the generator that writes it
 await runCommand(
   defineCommand({
     args: {
@@ -16,7 +16,7 @@ await runCommand(
     },
     meta: {
       description:
-        "Check the formatting of the files changed against ai/queue, each changed package's barrel and, after a manifest change, dependency-graph.svg; prints each problem, or ok; exits 1 on a problem, 3 with no built configuration",
+        "Check the formatting of the files changed against ai/queue, each changed package's barrel, after a manifest change dependency-graph.svg, and each ledger trailer of the commits ahead of ai/queue against the row it names; prints each problem, or ok; exits 1 on a problem, 3 with no built configuration",
       name: "ai:precheck",
     },
     run: async ({ args }) => {

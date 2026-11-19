@@ -1,52 +1,20 @@
-import type { LedgerEvent } from "#src/models/sweeps/ledgerCoverage/LedgerEvent";
-
-import { LedgerEventTypes } from "#src/models/sweeps/ledgerCoverage/LedgerEventType";
+import { applyLedgerCoverage } from "#src/services/sweeps/ledgerCoverage/applyLedgerCoverage";
+import { readLedgerEvents } from "#src/services/sweeps/ledgerCoverage/readLedgerEvents";
+import { readLedgerFiles } from "#src/services/sweeps/ledgerCoverage/readLedgerFiles";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { runGit } from "#src/services/shared/runGit";
-import { LEDGER_DIRECTORY } from "#src/services/sweeps/constants";
-import { applyLedgerEvents } from "#src/services/sweeps/ledgerCoverage/applyLedgerEvents";
-import { getLedgerEvents } from "#src/services/sweeps/ledgerCoverage/getLedgerEvents";
-import { LedgerUnitsMap } from "#src/services/sweeps/ledgerCoverage/LedgerUnitsMap";
-import { syncLedgerUnits } from "#src/services/sweeps/ledgerCoverage/syncLedgerUnits";
-import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
 import { timeCommand } from "#src/services/timing/timeCommand";
-import { readFileSync, writeFileSync } from "node:fs";
+import { writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 timeCommand("ai:sweep:ledger-coverage");
 
-// Oldest first so a later trailer wins, ordered and dated by author date so a rebase moves neither — the default
-// Traversal is committer-dated, which replays a rebased pass after the reopen that was meant to undo it — and only
-// The commits with a line opening on a trailer key: git matches `--grep` per line, so it cannot hold the match to a
-// Trailer block. getLedgerEvents reads every such line, since a trailer often sits in a paragraph of its own above the
-// Co-author lines, which `git interpret-trailers` does not read
-const log = runGit([
-  "log",
-  "--reverse",
-  "--author-date-order",
-  "--format=%as%x1F%B%x1E",
-  ...LedgerEventTypes.map((type) => `--grep=^${type}: `),
-]);
-const events = getLedgerEvents(log);
-const matchedEvents = new Set<LedgerEvent>();
-
-for (const ledgerPath of readSweepFilePaths(`${LEDGER_DIRECTORY}/*.md`).filter((path) => !path.endsWith("README.md"))) {
-  const ledger = ledgerPath.slice(LEDGER_DIRECTORY.length + 1, -".md".length);
-  const absolutePath = resolve(REPOSITORY_ROOT, ledgerPath);
-  const text = readFileSync(absolutePath, "utf8");
-  // A derived ledger's rows are the tree's before any trailer dates them, so a unit added since opens at `—` and
-  // One removed goes, with no row anyone edits by hand
-  const getUnits = LedgerUnitsMap[ledger];
-  const syncedText = getUnits ? syncLedgerUnits(text, getUnits()) : text;
-  const { matched, text: rewrittenText } = applyLedgerEvents(syncedText, ledger, events);
-  for (const event of matched) matchedEvents.add(event);
+const { files, unmatched } = applyLedgerCoverage(readLedgerEvents(), readLedgerFiles());
+for (const { ledgerPath, rewrittenText, text } of files) {
   if (rewrittenText === text) continue;
 
-  writeFileSync(absolutePath, rewrittenText);
+  writeFileSync(resolve(REPOSITORY_ROOT, ledgerPath), rewrittenText);
   console.info(ledgerPath);
 }
 // Reported once the whole tree has been read, because a trailer naming a ledger that is now a coverage folder is
 // In scope for every area file in it and a row in one — reporting per file would call it unmatched in the rest
-for (const event of events)
-  if (event.unit !== undefined && !matchedEvents.has(event))
-    console.info(`unmatched ${event.ledger}: ${event.unit} (${event.date})`);
+for (const event of unmatched) console.info(`unmatched ${event.ledger}: ${event.unit} (${event.date})`);
