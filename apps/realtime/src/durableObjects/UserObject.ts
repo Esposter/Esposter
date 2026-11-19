@@ -16,8 +16,8 @@ import type {
 
 import { RealtimeObject } from "#src/durableObjects/RealtimeObject";
 import { createDurableObjectDatabase } from "#src/services/durableObject/createDurableObjectDatabase";
+import { createObjectHandle } from "#src/services/durableObject/createObjectHandle";
 import { getObjectName } from "#src/services/durableObject/getObjectName";
-import { createObjectHandle } from "#src/services/durableObject/recordObjectHandle";
 import { getJobQueue } from "#src/services/queue/getJobQueue";
 import { readSocketIdentity } from "#src/services/realtime/readSocketIdentity";
 import { REMINDER_RETRY_DELAY_MS } from "#src/services/reminder/constants";

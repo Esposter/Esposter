@@ -1,3 +1,4 @@
+import type { StoredColumns } from "#src/models/topic/StoredColumns";
 import type { Topic, TopicObjectRpc } from "@esposter/db-schema";
 
 import { getObjectName } from "#src/services/durableObject/getObjectName";
@@ -8,22 +9,11 @@ import {
   TOPIC_READ_SKEW_MS,
   TOPIC_SUBSCRIBER_KEY_PREFIX,
 } from "#src/services/topic/constants";
+import { getColumns } from "#src/services/topic/getColumns";
+import { unionColumns } from "#src/services/topic/unionColumns";
 import { getObjectStub } from "@esposter/db";
 import { checkWakes, topicSchema } from "@esposter/db-schema";
 import { DurableObject } from "cloudflare:workers";
-
-// The columns held in storage: null names every column, which a subscriber or a publish with no columns to name holds
-type StoredColumns = null | string[];
-
-// The columns a stored entry names, where an absent one names every column
-const getColumns = (stored: StoredColumns | undefined): string[] | undefined => stored ?? undefined;
-
-// The union of the columns held and the columns named now, where null names every column and absent names none yet
-const unionColumns = (stored: StoredColumns | undefined, columns: string[] | undefined): StoredColumns => {
-  if (stored === undefined) return columns ?? null;
-  if (stored === null || columns === undefined) return null;
-  return [...new Set([...stored, ...columns])];
-};
 
 // One Topic object per topic, named for it: the users watching it with the columns each one reads, each held as a storage
 // Key, and the time it was last published. A publish arms the alarm unless one is already set, so every write in the window

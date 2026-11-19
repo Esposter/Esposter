@@ -1,22 +1,7 @@
-import type { RecordedDatabase } from "@esposter/db";
 import type { Database } from "@esposter/db-schema";
 
+import { objectInvocationStorage } from "#src/services/durableObject/objectInvocationStorage";
 import { recordStatements } from "@esposter/db";
-import { AsyncLocalStorage } from "node:async_hooks";
-
-// The recorder of one handle in an invocation. An owned handle is the object's own database, whose rows belong to the object
-// Alone, so its topics name the object
-export interface ObjectHandleRecord {
-  owned: boolean;
-  recorder: RecordedDatabase;
-}
-
-// The recorded handles of one invocation, by the handle each was made over. A handle an invocation never reads is never recorded
-export type ObjectInvocationHandles = Map<object, ObjectHandleRecord>;
-
-// The scope an invocation runs in. An object's handles read it when a statement runs, so the statements the invocation's
-// Method awaits are recorded into its own handles and none of another invocation's
-export const objectInvocationStorage = new AsyncLocalStorage<ObjectInvocationHandles>();
 
 // The handle an object reads and writes through, whether its SQLite (drizzle's durable-sqlite builder) or the core D1. Inside
 // An invocation it is that invocation's recorded handle for the same database; outside one it is the database itself, so

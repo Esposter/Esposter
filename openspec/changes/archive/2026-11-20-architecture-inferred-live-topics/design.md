@@ -315,7 +315,7 @@ The wrapper, the walker and the write capture are built and tested against the f
 | `apps/web/server/services/realtime/requestObjectReads.ts`                      | The request's object read scope, opened by `inferTopicsMiddleware` beside its blob scope                |
 | `packages/db/src/services/realtime/getObjectStub.ts`                           | The one way a Worker names a Durable Object: each RPC method runs through the object's `invoke`         |
 | `packages/db/src/services/realtime/createObjectStub.ts`                        | The stub wrapper `getObjectStub` applies, handing each call's read set to the caller's callback         |
-| `apps/realtime/src/services/durableObject/recordObjectHandle.ts`               | The object handles that record each invocation's statements into its own recorder                       |
+| `apps/realtime/src/services/durableObject/createObjectHandle.ts`               | The object handles that record each invocation's statements into its own recorder                       |
 | `apps/realtime/src/durableObjects/RealtimeObject.ts`                           | The base object's `invoke` entry, which answers the read set and publishes the writes of a call         |
 | `apps/realtime/src/services/durableObject/scopeColumnTopic.ts`                 | Scopes an owned table's topic by its object, `<kind>/<id>:` before the table topic                      |
 

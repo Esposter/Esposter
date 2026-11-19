@@ -1,10 +1,8 @@
 import type { RecordedBlobs } from "@esposter/db";
 import type { Database } from "@esposter/db-schema";
 
-import { publishTopicsBestEffort } from "#src/services/realtime/publishTopicsBestEffort";
-import { getWriteTopics, recordStatements } from "@esposter/db";
+import { getWriteTopics, recordStatements, runRecordedWrites } from "@esposter/db";
 import { relations } from "@esposter/db-schema";
-import { withFinalizerAsync } from "@esposter/shared";
 import { env } from "cloudflare:workers";
 import { drizzle } from "drizzle-orm/d1";
 import { AsyncLocalStorage } from "node:async_hooks";
@@ -30,12 +28,12 @@ export const getUnitBlobs = (): RecordedBlobs | undefined => unitStorage.getStor
 // Still changed rows
 export const runUnit = <T>(run: () => Promise<T>): Promise<T> => {
   const unit: RecordedUnit = { ...recordStatements(getCoreDatabase()), blobs: { reads: [], writes: [] } };
-  return withFinalizerAsync(
-    () => unitStorage.run(unit, run),
-    () =>
-      publishTopicsBestEffort(
-        async () => [...(await getWriteTopics(unit.statements)), ...unit.blobs.writes.map((topic) => ({ topic }))],
-        "Failed to publish the topics of a job's writes:",
-      ),
-  );
+  return runRecordedWrites(unitStorage, unit, run, {
+    failure: "Failed to publish the topics of a job's writes:",
+    readTopics: async () => [
+      ...(await getWriteTopics(unit.statements)),
+      ...unit.blobs.writes.map((topic) => ({ topic })),
+    ],
+    topicNamespace: env.TOPIC,
+  });
 };

@@ -13,8 +13,8 @@ import type {
 import { RealtimeObject } from "#src/durableObjects/RealtimeObject";
 import { HttpMethod } from "#src/models/realtimeKit/HttpMethod";
 import { createDurableObjectDatabase } from "#src/services/durableObject/createDurableObjectDatabase";
+import { createObjectHandle } from "#src/services/durableObject/createObjectHandle";
 import { getObjectName } from "#src/services/durableObject/getObjectName";
-import { createObjectHandle } from "#src/services/durableObject/recordObjectHandle";
 import { readSocketIdentity } from "#src/services/realtime/readSocketIdentity";
 import { addRealtimeKitParticipant } from "#src/services/realtimeKit/addRealtimeKitParticipant";
 import { JOIN_PUBLISH_SOURCES } from "#src/services/realtimeKit/constants";

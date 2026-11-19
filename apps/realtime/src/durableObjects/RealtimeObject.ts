@@ -1,24 +1,18 @@
-import type { ObjectInvocationHandles } from "#src/services/durableObject/recordObjectHandle";
+import type { MethodArgs } from "#src/models/durableObject/MethodArgs";
+import type { MethodResult } from "#src/models/durableObject/MethodResult";
+import type { ObjectInvocationHandles } from "#src/models/durableObject/ObjectInvocationHandles";
 import type { ObjectInvocation } from "@esposter/db";
 import type { ColumnTopic, TopicKind } from "@esposter/db-schema";
 
 import { RESERVED_CLOSE_CODES } from "#src/services/durableObject/constants";
 import { getObjectName } from "#src/services/durableObject/getObjectName";
-import { objectInvocationStorage } from "#src/services/durableObject/recordObjectHandle";
+import { objectInvocationStorage } from "#src/services/durableObject/objectInvocationStorage";
 import { scopeColumnTopic } from "#src/services/durableObject/scopeColumnTopic";
 import { readSocketIdentity } from "#src/services/realtime/readSocketIdentity";
-import { getReadTopics, getWriteTopics, publishTopicsBestEffort } from "@esposter/db";
+import { getReadTopics, getWriteTopics, runRecordedWrites } from "@esposter/db";
 import { getDeviceSocketTag, getSessionSocketTag, getUserSocketTag } from "@esposter/db-schema";
-import { getResultAsync, noop, withFinalizerAsync } from "@esposter/shared";
+import { getResultAsync, noop } from "@esposter/shared";
 import { DurableObject } from "cloudflare:workers";
-
-// The arguments and the result of one of an object's RPC methods, as its RPC interface declares them
-type MethodArgs<TRpc, TMethod extends keyof TRpc> = TRpc[TMethod] extends (...args: infer TArgs) => unknown
-  ? TArgs
-  : never;
-type MethodResult<TRpc, TMethod extends keyof TRpc> = TRpc[TMethod] extends (...args: never[]) => infer TResult
-  ? Awaited<TResult>
-  : never;
 
 // A revoked or expired session's sockets close with code 1008, the policy close for a credential the server does not
 // Accept
@@ -130,12 +124,14 @@ export abstract class RealtimeObject<
     const handles: ObjectInvocationHandles = new Map();
     let writeSet: Promise<ColumnTopic[]> | undefined;
     const getWriteSet = () => (writeSet ??= this.#getTopics(handles, getWriteTopics));
-    return withFinalizerAsync(
+    return runRecordedWrites(
+      objectInvocationStorage,
+      handles,
       async () => {
-        const result = await objectInvocationStorage.run(handles, run);
+        const result = await run();
         return { readSet: await this.#getTopics(handles, getReadTopics), result, writeSet: await getWriteSet() };
       },
-      () => publishTopicsBestEffort(this.env.TOPIC, getWriteSet, `Failed to publish the topics of ${label}:`),
+      { failure: `Failed to publish the topics of ${label}:`, readTopics: getWriteSet, topicNamespace: this.env.TOPIC },
     );
   }
 
