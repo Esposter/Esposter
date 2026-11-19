@@ -5,9 +5,9 @@ import type { ParityPassReading } from "#src/models/genshinParity/shared/ParityP
 import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import { compareFamilyColour } from "#src/services/genshinParity/passes/compareFamilyColour";
 import { computeFamilyMask } from "#src/services/genshinParity/passes/computeFamilyMask";
+import { computeFamilyStructure } from "#src/services/genshinParity/passes/computeFamilyStructure";
 import { computeMedianMetresPerPixel } from "#src/services/genshinParity/passes/computeMedianMetresPerPixel";
 import { computeStructureError } from "#src/services/genshinParity/passes/computeStructureError";
-import { computeStructureTerms } from "#src/services/genshinParity/passes/computeStructureTerms";
 import { COLOUR_GATE } from "#src/services/genshinParity/passes/constants";
 import { formatScales } from "#src/services/genshinParity/passes/formatScales";
 import { formatStructureTerms } from "#src/services/genshinParity/passes/formatStructureTerms";
@@ -106,10 +106,9 @@ export const measureSurface = (component: DerivedAssetComponent, pageRoot?: stri
                 ]);
                 return computeStructureError(gateReference, gateShot);
               };
-              const [gate, structureReference, structureShot] = await Promise.all([
+              const [gate, { structure, terms }] = await Promise.all([
                 readGate(),
-                statisticsOf(exportsLightness, familyMask),
-                statisticsOf(oursLightness, familyMask),
+                computeFamilyStructure(statisticsOf, exportsLightness, oursLightness, familyMask),
               ]);
               return {
                 colour: comparison.colour,
@@ -118,8 +117,8 @@ export const measureSurface = (component: DerivedAssetComponent, pageRoot?: stri
                 meanExports: meanOf(exportsLightness),
                 meanOurs: meanOf(oursLightness),
                 scales: comparison.scales,
-                structure: computeStructureError(structureReference, structureShot),
-                terms: computeStructureTerms(structureReference, structureShot),
+                structure,
+                terms,
               };
             }),
           ),

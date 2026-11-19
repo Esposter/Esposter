@@ -17,6 +17,7 @@ import { fogCommand } from "#src/services/genshinParity/commands/fogCommand";
 import { frameCommand } from "#src/services/genshinParity/commands/frameCommand";
 import { framesCommand } from "#src/services/genshinParity/commands/framesCommand";
 import { gbufferCommand } from "#src/services/genshinParity/commands/gbufferCommand";
+import { grainCommand } from "#src/services/genshinParity/commands/grainCommand";
 import { instrumentsCommand } from "#src/services/genshinParity/commands/instrumentsCommand";
 import { launchCommand } from "#src/services/genshinParity/commands/launchCommand";
 import { layerCommand } from "#src/services/genshinParity/commands/layerCommand";
@@ -70,6 +71,7 @@ export const genshinParityCommand: CommandDef = defineCommand({
     fog: fogCommand,
     shadows: shadowsCommand,
     overlay: overlayCommand,
+    grain: grainCommand,
     pose: poseCommand,
     plan: planCommand,
     lost: lostCommand,

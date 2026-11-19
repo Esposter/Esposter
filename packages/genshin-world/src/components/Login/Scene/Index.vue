@@ -94,6 +94,7 @@ import { LOGIN_WALKWAY_SUNK_DISTANCE } from "#src/services/login/walkway/constan
 import { createLoginWalkway } from "#src/services/login/walkway/createLoginWalkway";
 import { sinkLoginWitnessWalkway } from "#src/services/login/walkway/sinkLoginWitnessWalkway";
 import { SCENE_FAMILY_KEY } from "#src/services/scene/constants";
+import { createSceneSurfaceDetail } from "#src/services/scene/createSceneSurfaceDetail";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import { getResultAsync } from "@esposter/shared";
 import { useLoop, useTres } from "@tresjs/core";
@@ -105,7 +106,6 @@ import {
   createCloudLayerUniforms,
   createFogUniforms,
   createLightUniforms,
-  createMaterialDetailNode,
   createNormalDetailNode,
   createPostUniforms,
   createSkyGradientTexture,
@@ -323,7 +323,7 @@ const towerAtlas = computeLoginTowerAtlas(towers);
 const towerFacade = createLoginTowerFacade(towers, towerAtlas);
 towersMaterial.colorNode = towerFacade.shade
   .mul(color(stone.towers.albedo))
-  .mul(createMaterialDetailNode(LOGIN_TOWER_SURFACE_DETAIL));
+  .mul(createSceneSurfaceDetail(towersMaterial, LoginPartFamily.Towers, LOGIN_TOWER_SURFACE_DETAIL));
 towersMaterial.opacityNode = towerFacade.solid;
 towersMaterial.alphaTest = 0.5;
 // The towers' and bridges' procedural normal detail, at the wavelength their exports' surfaces read and the amplitude that
@@ -334,7 +334,9 @@ towersMaterial.normalNode = createNormalDetailNode(
 );
 const bridgesMaterial = createStoneMaterial(stone.bridges, loginStoneLight);
 // The bridges' grain over their flat colour, its octaves fitted to their exports' structure (`LOGIN_BRIDGE_SURFACE_DETAIL`)
-bridgesMaterial.colorNode = color(stone.bridges.albedo).mul(createMaterialDetailNode(LOGIN_BRIDGE_SURFACE_DETAIL));
+bridgesMaterial.colorNode = color(stone.bridges.albedo).mul(
+  createSceneSurfaceDetail(bridgesMaterial, LoginPartFamily.Bridges, LOGIN_BRIDGE_SURFACE_DETAIL),
+);
 bridgesMaterial.normalNode = createNormalDetailNode(
   LOGIN_BRIDGE_NORMAL_DETAIL_WAVELENGTH,
   LOGIN_BRIDGE_NORMAL_DETAIL_AMPLITUDE,
@@ -353,7 +355,7 @@ doorMaterial.normalNode = createNormalDetailNode(
 // The door's front painted with its panel's raised bands and its feet's gilding over its stone
 const doorAlbedo = createLoginDoorRelief(door)
   .mul(color(stone.door.albedo))
-  .mul(createMaterialDetailNode(LOGIN_DOOR_SURFACE_DETAIL));
+  .mul(createSceneSurfaceDetail(doorFrameMaterial, LoginPartFamily.Door, LOGIN_DOOR_SURFACE_DETAIL));
 doorFrameMaterial.colorNode = doorAlbedo;
 doorMaterial.colorNode = doorAlbedo;
 // Each family's tag, one object per family so every copy's mesh keeps the same prop identity across renders

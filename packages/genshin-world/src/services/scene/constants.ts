@@ -3,6 +3,8 @@ import { LoginPartFamily } from "#src/models/login/LoginPartFamily";
 // The user data key a scene marks each object of its own families with, by the family's name, so a witness tool draws
 // A family of ours into the same targets as the exports' it stands for
 export const SCENE_FAMILY_KEY = "sceneFamily";
+// The user data key a material holds its surface detail's amplitudes and family under (`createSceneSurfaceDetail`)
+export const SURFACE_DETAIL_KEY = "surfaceDetail";
 // The user data key a copy of the game's door holds its placement within its family under, which followLoginWitnessDoor
 // Carries to our door's axes each frame
 export const IN_FAMILY_KEY = "inFamily";

@@ -4,7 +4,7 @@ import type { ColorRepresentation } from "three";
 import type { Node } from "three/webgpu";
 
 import { ToonNodeMaterial } from "#src/models/nodes/ToonNodeMaterial";
-import { createMaterialDetailNode } from "#src/nodes/createMaterialDetailNode";
+import { createMaterialDetail } from "#src/nodes/createMaterialDetail";
 import { createObjectSurfaceNode } from "#src/nodes/createObjectSurfaceNode";
 import { createRimNode } from "#src/nodes/createRimNode";
 import { createWetDarkeningNode } from "#src/nodes/createWetDarkeningNode";
@@ -22,7 +22,7 @@ const createMaterialSurfaceNode = (
 ): Node<"color"> | Node<"vec3"> => {
   const colorUniform = uniform(new Color(color ?? 0xffffff));
   if (detail === undefined) return colorUniform;
-  return colorUniform.mul(createMaterialDetailNode(detail));
+  return colorUniform.mul(createMaterialDetail(detail).node);
 };
 
 // The environment's one material: three's toon lighting reading the world's ramp, so light steps from shade to lit

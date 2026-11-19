@@ -10,6 +10,7 @@ import { getSceneCamera } from "#parity/getSceneCamera";
 import { getSceneFog } from "#parity/getSceneFog";
 import { getScenePieces } from "#parity/getScenePieces";
 import { getSceneSky } from "#parity/getSceneSky";
+import { getSceneSurfaceDetail } from "#parity/getSceneSurfaceDetail";
 import { getSceneWhiteBalance } from "#parity/getSceneWhiteBalance";
 import { getScreenBoxStyle } from "#parity/getScreenBoxStyle";
 import { NuxtTimeStub } from "#parity/NuxtTimeStub";
@@ -22,6 +23,7 @@ import { setSceneCloudCover } from "#parity/setSceneCloudCover";
 import { setSceneCloudHeights } from "#parity/setSceneCloudHeights";
 import { setSceneCloudLayer } from "#parity/setSceneCloudLayer";
 import { setSceneLights } from "#parity/setSceneLights";
+import { setSceneSurfaceAmplitudes } from "#parity/setSceneSurfaceAmplitudes";
 import { computeLabelSimilarityFromBase64 } from "#parity/surfaceStatistics/computeLabelSimilarityFromBase64";
 import { computeSurfaceStatisticsFromBase64 } from "#parity/surfaceStatistics/computeSurfaceStatisticsFromBase64";
 import { claimWitnessRenderers } from "#parity/witness/claimWitnessRenderers";
@@ -197,6 +199,11 @@ if (screen && root) {
   Reflect.set(window, "setSceneLights", (shares: Parameters<typeof setSceneLights>[1]) =>
     setSceneLights(sceneContext.value, shares),
   );
+  // A family's grain, its octave amplitudes set on the live scene, which the grain fit solves against the frame
+  Reflect.set(window, "getSceneSurfaceDetail", (family: string) => getSceneSurfaceDetail(sceneContext.value, family));
+  Reflect.set(window, "setSceneSurfaceAmplitudes", (family: string, amplitudes: number[]) => {
+    setSceneSurfaceAmplitudes(sceneContext.value, family, amplitudes);
+  });
   // Each renderer of a component's exports with what of the scene claims it, the inventory pass's measure, from the
   // Placements the host reads out of the exports' layout, so no witness is loaded for it
   Reflect.set(

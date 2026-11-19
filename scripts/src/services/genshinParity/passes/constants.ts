@@ -126,3 +126,7 @@ export const NO_DETAIL_LOBE_REASON = "no detail lobe resolved";
 
 // Each reference's shape pass drawn where its readings lie, ours beside the exports
 export const SHAPES_DIRECTORY: string = join(PARITY_DIRECTORY, "shapes");
+// The grain fit's solve (`fitSurfaceGrain`): every structure term within this relative error of its exports', which holds
+// The structure's root mean square under the walkway's gate of 0.0268 with room to spare, and the steps it may take
+export const GRAIN_TOLERANCE = 0.01;
+export const GRAIN_MAX_ITERATIONS = 12;

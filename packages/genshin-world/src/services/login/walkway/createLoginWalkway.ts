@@ -15,7 +15,8 @@ import { createLoginPaving } from "#src/services/login/walkway/createLoginPaving
 import { createLoginWalkwayPieces } from "#src/services/login/walkway/createLoginWalkwayPieces";
 import { getLoginWalkwaySink } from "#src/services/login/walkway/getLoginWalkwaySink";
 import { SCENE_FAMILY_KEY } from "#src/services/scene/constants";
-import { createMaterialDetailNode, createStoneMaterial } from "genshin-engine";
+import { createSceneSurfaceDetail } from "#src/services/scene/createSceneSurfaceDetail";
+import { createStoneMaterial } from "genshin-engine";
 import { BatchedMesh, Matrix4 } from "three";
 import { color } from "three/tsl";
 
@@ -33,7 +34,7 @@ export const createLoginWalkway = (
   const walkwayPaving = createLoginPaving(paving, LOGIN_WALKWAY_RIM_TILT_SHARE);
   material.colorNode = walkwayPaving.shade
     .mul(color(stone.albedo))
-    .mul(createMaterialDetailNode(LOGIN_WALKWAY_SURFACE_DETAIL));
+    .mul(createSceneSurfaceDetail(material, LoginPartFamily.Walkway, LOGIN_WALKWAY_SURFACE_DETAIL));
   material.normalNode = walkwayPaving.normalNode;
   const pieces = createLoginWalkwayPieces(walkway);
   const batch = new BatchedMesh(
