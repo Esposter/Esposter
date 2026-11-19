@@ -171,14 +171,13 @@ describe("inviteRouter", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     await inviteCaller.createInvite({ expireAfterMinutes, maxUses: 0, roomId: newRoom.id });
-    const inviteListCaller = createCallerFactory(inviteRouter)(mockContext);
-    const listedBefore = await inviteListCaller.readRoomInvites({ roomId: newRoom.id });
+    const listedBefore = await inviteCaller.readRoomInvites({ roomId: newRoom.id });
     expect(listedBefore.items).toHaveLength(1);
 
     vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(0).add({ minutes: expireAfterMinutes + 1 }));
     await inviteCaller.readMyInvite({ roomId: newRoom.id });
 
-    const listedAfter = await inviteListCaller.readRoomInvites({ roomId: newRoom.id });
+    const listedAfter = await inviteCaller.readRoomInvites({ roomId: newRoom.id });
     expect(listedAfter.items).toHaveLength(0);
   });
 
