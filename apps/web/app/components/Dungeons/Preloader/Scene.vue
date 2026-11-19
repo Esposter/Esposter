@@ -3,13 +3,19 @@ import type { Loader } from "phaser";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { SceneKey } from "#src/models/dungeons/keys/SceneKey";
-import { FontLoaders } from "#src/services/dungeons/loader/FontLoaderMap";
-import { ImageLoaders } from "#src/services/dungeons/loader/image/ImageLoaderMap";
+import { FontAssetMap } from "#src/services/dungeons/loader/FontAssetMap";
+import { ImageAssetMap } from "#src/services/dungeons/loader/image/ImageAssetMap";
+import { loadFonts } from "#src/services/dungeons/loader/loadFonts";
+import { loadImages } from "#src/services/dungeons/loader/loadImages";
+import { loadSounds } from "#src/services/dungeons/loader/loadSounds";
+import { loadSpritesheets } from "#src/services/dungeons/loader/loadSpritesheets";
+import { loadTilemaps } from "#src/services/dungeons/loader/loadTilemaps";
+import { loadTilesets } from "#src/services/dungeons/loader/loadTilesets";
 import { PixelArtTextureKeys } from "#src/services/dungeons/loader/PixelArtTextureKeys";
-import { SoundLoaders } from "#src/services/dungeons/loader/sound/SoundLoaderMap";
-import { SpritesheetLoaders } from "#src/services/dungeons/loader/spritesheet/SpritesheetLoaderMap";
-import { TilemapLoaders } from "#src/services/dungeons/loader/TilemapLoaderMap";
-import { TilesetLoaders } from "#src/services/dungeons/loader/TilesetLoaderMap";
+import { SoundAssetMap } from "#src/services/dungeons/loader/sound/SoundAssetMap";
+import { SpritesheetAssetMap } from "#src/services/dungeons/loader/spritesheet/SpritesheetAssetMap";
+import { TilemapAssetMap } from "#src/services/dungeons/loader/TilemapAssetMap";
+import { TilesetAssetMap } from "#src/services/dungeons/loader/TilesetAssetMap";
 import {
   PROGRESS_BAR_HEIGHT,
   PROGRESS_BAR_MAX_WIDTH,
@@ -50,12 +56,12 @@ const preload = (scene: SceneWithPlugins) => {
       getSynchronizedFunction(() => getResultAsync(() => switchToScene(SceneKey.Title)).match(noop, console.error)),
     );
 
-  for (const fontLoader of FontLoaders) fontLoader(scene);
-  for (const soundLoader of SoundLoaders) soundLoader(scene);
-  for (const spritesheetLoader of SpritesheetLoaders) spritesheetLoader(scene);
-  for (const imageLoader of ImageLoaders) imageLoader(scene);
-  for (const tilesetLoader of TilesetLoaders) tilesetLoader(scene);
-  for (const tilemapLoader of TilemapLoaders) tilemapLoader(scene);
+  loadFonts(scene, FontAssetMap);
+  loadSounds(scene, SoundAssetMap);
+  loadSpritesheets(scene, SpritesheetAssetMap);
+  loadImages(scene, ImageAssetMap);
+  loadTilesets(scene, TilesetAssetMap);
+  loadTilemaps(scene, TilemapAssetMap);
 };
 </script>
 

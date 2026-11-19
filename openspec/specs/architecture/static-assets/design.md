@@ -67,7 +67,7 @@ A file under `shared/` is parsed by the server and read by the Nuxt config in No
 | `apps/web/app/assets/dungeons/tilesets/`                                      | The Tiled tilesets, each `.tsx` beside its image, read by the maps and imported by the loader          |
 | `apps/web/app/assets/visual/textures/`                                        | The gem model and the textures the visual scenes and the fluid simulator load                          |
 | `apps/web/app/assets/message/room/call/backgrounds/`                          | The call background images, bundled and resolved from their preset ids                                 |
-| `apps/web/app/services/dungeons/loader/TilesetLoaderMap.ts`                   | Each tileset's bundled image URL, handed to Phaser by import                                           |
+| `apps/web/app/services/dungeons/loader/TilesetAssetMap.ts`                    | Each tileset's bundled image or spritesheet URL, handed to Phaser by import                            |
 | `apps/web/app/services/dungeons/loader/TilesetUrlMap.ts`                      | Each tileset's bundled Tiled definition, keyed by name, for the external tileset loader                |
 | `packages/vue-phaserjs/src/models/plugins/TiledJSONExternalFile.ts`           | Reads a map's external tilesets from the URL map, never from a folder name                             |
 | `apps/web/app/models/message/room/call/CallVirtualBackground.ts`              | The preset ids a user's setting saves, one member per background                                       |
