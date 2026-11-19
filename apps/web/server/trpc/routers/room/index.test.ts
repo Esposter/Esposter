@@ -25,7 +25,6 @@ import { inviteRouter } from "#server/trpc/routers/invite";
 import { roleRouter } from "#server/trpc/routers/role";
 import { createDirectMessageWithFriend } from "#server/trpc/routers/room/createDirectMessageWithFriend.test";
 import { roomRouter } from "#server/trpc/routers/room/index";
-import { createBookmarkedJoinableRoom } from "#server/trpc/routers/room/liveTopicCalls.test";
 import { PageMarkType } from "#shared/models/app/PageMarkType";
 import { TEST_ORIGIN } from "#shared/services/pageBuilder/constants.test";
 import { readTopicsHeader } from "#shared/services/realtime/readTopicsHeader";
@@ -58,6 +57,27 @@ import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, t
 const uploadPublicUserAssetBlob = async (blobName: string) => {
   const bucket = getBucket(StorageBucket.PublicUserAssets);
   await bucket.put(blobName, Buffer.alloc(0));
+};
+
+// A room another user owns, which the viewer bookmarks from outside it. The bookmark is taken before the viewer joins,
+// So the dock lists the room unavailable until the link the owner made admits the viewer
+const createBookmarkedJoinableRoom = async (context: Context) => {
+  const owner = await createMockAuthSession(context.db);
+  const ownerContext: Context = { ...context, session: owner.session, user: owner.user };
+  const room = await createCallerFactory(roomRouter)(ownerContext).createRoom({ name: "name" });
+  const invite = await createCallerFactory(inviteRouter)(ownerContext).createInvite({
+    expireAfterMinutes: 0,
+    maxUses: 0,
+    roomId: room.id,
+  });
+  const path = `/rooms/${room.id}`;
+  const title = "title";
+  await createCallerFactory(bookmarkRouter)(context).toggleBookmark({
+    mark: { id: room.id, type: PageMarkType.Room },
+    path,
+    title,
+  });
+  return { invite, path, room, title };
 };
 
 describe("roomRouter", () => {
