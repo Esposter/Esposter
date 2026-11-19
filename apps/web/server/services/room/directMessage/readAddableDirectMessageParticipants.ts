@@ -13,12 +13,13 @@ import {
   usersInAuth,
 } from "@esposter/db-schema";
 import { getOrCreate, Operation } from "@esposter/shared";
-import { and, eq, or } from "drizzle-orm";
+import { and, eq, isNull, or } from "drizzle-orm";
 
 // The users a direct message adds, in the order they are named. Each is refused when already a participant, when not a
 // Friend of the actor, or when a block joins them to a participant, counting the users admitted before them in the same
 // Request. The users, friendships and blocks are each one set read, so a request costs the same number of reads however
-// Many users it names, and the checks run in memory in the order that decides which refusal a user gets
+// Many users it names, and the checks run in memory in the order that decides which refusal a user gets. A removed
+// Friendship or block is a tombstone, so each read keeps to the live rows
 export const readAddableDirectMessageParticipants = async (
   db: Context["db"],
   actorUserId: string,
@@ -32,23 +33,29 @@ export const readAddableDirectMessageParticipants = async (
       .select()
       .from(friendsInSocial)
       .where(
-        or(
-          and(eq(friendsInSocial.senderId, actorUserId), inJsonArray(friendsInSocial.receiverId, userIds)),
-          and(eq(friendsInSocial.receiverId, actorUserId), inJsonArray(friendsInSocial.senderId, userIds)),
+        and(
+          isNull(friendsInSocial.deletedAt),
+          or(
+            and(eq(friendsInSocial.senderId, actorUserId), inJsonArray(friendsInSocial.receiverId, userIds)),
+            and(eq(friendsInSocial.receiverId, actorUserId), inJsonArray(friendsInSocial.senderId, userIds)),
+          ),
         ),
       ),
     db
       .select()
       .from(blocksInSocial)
       .where(
-        or(
-          and(
-            inJsonArray(blocksInSocial.blockedId, userIds),
-            inJsonArray(blocksInSocial.blockerId, participantAndUserIds),
-          ),
-          and(
-            inJsonArray(blocksInSocial.blockerId, userIds),
-            inJsonArray(blocksInSocial.blockedId, participantAndUserIds),
+        and(
+          isNull(blocksInSocial.deletedAt),
+          or(
+            and(
+              inJsonArray(blocksInSocial.blockedId, userIds),
+              inJsonArray(blocksInSocial.blockerId, participantAndUserIds),
+            ),
+            and(
+              inJsonArray(blocksInSocial.blockerId, userIds),
+              inJsonArray(blocksInSocial.blockedId, participantAndUserIds),
+            ),
           ),
         ),
       ),

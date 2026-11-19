@@ -22,7 +22,7 @@ import {
   usersInAuth,
 } from "@esposter/db-schema";
 import { getFriendshipId, getResultAsync, noop, Operation } from "@esposter/shared";
-import { and, eq, notExists, or, sql } from "drizzle-orm";
+import { and, eq, isNotNull, isNull, notExists, or, sql } from "drizzle-orm";
 
 export const friendRequestRouter = router({
   acceptFriendRequest: standardAuthedProcedure
@@ -32,7 +32,8 @@ export const friendRequestRouter = router({
       const friendshipId = getFriendshipId(senderId, userId);
       const [senderUser] = await readUserPair(ctx.db, senderId, userId);
       // The friendship is selected from the request row itself, so it exists only while that request stands for this
-      // Receiver, and the request is deleted in the same batch: an accept lands whole or not at all
+      // Receiver, and the request is tombstoned in the same batch: an accept lands whole or not at all. A friendship that was
+      // Removed is revived by the conflict branch, which clears its deletion and takes the request's direction
       const [insertedFriends] = await ctx.db.batch([
         ctx.db
           .insert(friendsInSocial)
@@ -47,8 +48,20 @@ export const friendRequestRouter = router({
               .from(friendRequestsInSocial)
               .where(getReceivedFriendRequestWhere(friendshipId, userId)),
           )
+          .onConflictDoUpdate({
+            set: {
+              deletedAt: null,
+              receiverId: sql`excluded.${sql.identifier(friendsInSocial.receiverId.name)}`,
+              senderId: sql`excluded.${sql.identifier(friendsInSocial.senderId.name)}`,
+            },
+            setWhere: isNotNull(friendsInSocial.deletedAt),
+            target: friendsInSocial.id,
+          })
           .returning(),
-        ctx.db.delete(friendRequestsInSocial).where(getReceivedFriendRequestWhere(friendshipId, userId)),
+        ctx.db
+          .update(friendRequestsInSocial)
+          .set({ deletedAt: new Date() })
+          .where(getReceivedFriendRequestWhere(friendshipId, userId)),
       ]);
       requireMutation(insertedFriends[0], Operation.Update, DatabaseEntityType.Friend, friendshipId, "NOT_FOUND");
       return senderUser;
@@ -63,7 +76,8 @@ export const friendRequestRouter = router({
       requireMutation(
         (
           await ctx.db
-            .delete(friendRequestsInSocial)
+            .update(friendRequestsInSocial)
+            .set({ deletedAt: new Date() })
             .where(getReceivedFriendRequestWhere(friendshipId, userId))
             .returning()
         )[0],
@@ -73,6 +87,7 @@ export const friendRequestRouter = router({
         "NOT_FOUND",
       );
     }),
+  // Declined and accepted requests stay in this read as tombstones, so the client applies their removal
   readFriendRequests: standardAuthedProcedure.query<FriendRequestInSocialWithRelations[]>(({ ctx }) => {
     const userId = ctx.user.id;
     return ctx.db.query.friendRequestsInSocial.findMany({
@@ -87,8 +102,8 @@ export const friendRequestRouter = router({
       assertIsNotSelf(Operation.Create, DatabaseEntityType.Friend, userId, receiverId);
       const [, senderUser] = await readUserPair(ctx.db, receiverId, userId);
       const friendshipId = getFriendshipId(userId, receiverId);
-      // The request is only inserted while no block or friendship stands between the two users, so the check and the
-      // Insert are one statement; a second request for the same pair is the conflict the insert ignores
+      // The request is only inserted while no live block or friendship stands between the two users, so the check and the
+      // Insert are one statement. A live request for the pair is the conflict left alone, and a removed one is revived by it
       const [newFriendRequest] = await ctx.db
         .insert(friendRequestsInSocial)
         .select(
@@ -108,9 +123,12 @@ export const friendRequestRouter = router({
                     .select({ _: sql`1` })
                     .from(blocksInSocial)
                     .where(
-                      or(
-                        and(eq(blocksInSocial.blockedId, receiverId), eq(blocksInSocial.blockerId, userId)),
-                        and(eq(blocksInSocial.blockedId, userId), eq(blocksInSocial.blockerId, receiverId)),
+                      and(
+                        or(
+                          and(eq(blocksInSocial.blockedId, receiverId), eq(blocksInSocial.blockerId, userId)),
+                          and(eq(blocksInSocial.blockedId, userId), eq(blocksInSocial.blockerId, receiverId)),
+                        ),
+                        isNull(blocksInSocial.deletedAt),
                       ),
                     ),
                 ),
@@ -118,17 +136,26 @@ export const friendRequestRouter = router({
                   ctx.db
                     .select({ _: sql`1` })
                     .from(friendsInSocial)
-                    .where(eq(friendsInSocial.id, friendshipId)),
+                    .where(and(eq(friendsInSocial.id, friendshipId), isNull(friendsInSocial.deletedAt))),
                 ),
               ),
             ),
         )
-        .onConflictDoNothing({ target: friendRequestsInSocial.id })
+        .onConflictDoUpdate({
+          set: {
+            deletedAt: null,
+            receiverId: sql`excluded.${sql.identifier(friendRequestsInSocial.receiverId.name)}`,
+            senderId: sql`excluded.${sql.identifier(friendRequestsInSocial.senderId.name)}`,
+          },
+          setWhere: isNotNull(friendRequestsInSocial.deletedAt),
+          target: friendRequestsInSocial.id,
+        })
         .returning();
       if (!newFriendRequest) {
         // Nothing was inserted, so the refusal is read back in the order the insert's conditions were checked
         const existingBlock = await ctx.db.query.blocksInSocial.findFirst({
           where: {
+            deletedAt: { isNull: true },
             OR: [
               { blockedId: { eq: receiverId }, blockerId: { eq: userId } },
               { blockedId: { eq: userId }, blockerId: { eq: receiverId } },
@@ -136,11 +163,13 @@ export const friendRequestRouter = router({
           },
         });
         if (existingBlock) throw getInvalidOperationError(Operation.Create, DatabaseEntityType.Friend, receiverId);
-        const existingFriend = await ctx.db.query.friendsInSocial.findFirst({ where: { id: { eq: friendshipId } } });
+        const existingFriend = await ctx.db.query.friendsInSocial.findFirst({
+          where: { deletedAt: { isNull: true }, id: { eq: friendshipId } },
+        });
         if (existingFriend)
           throw getInvalidOperationError(Operation.Create, DatabaseEntityType.FriendRequest, friendshipId);
         const existingFriendRequest = await ctx.db.query.friendRequestsInSocial.findFirst({
-          where: { id: { eq: friendshipId } },
+          where: { deletedAt: { isNull: true }, id: { eq: friendshipId } },
           with: FriendRequestInSocialRelations,
         });
         if (existingFriendRequest?.senderId !== userId)

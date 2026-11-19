@@ -1,4 +1,4 @@
-import type { PublicUser } from "@esposter/db-schema";
+import type { FriendInSocial, PublicUser } from "@esposter/db-schema";
 
 import { containsLike } from "#server/services/db/containsLike";
 import { assertIsNotSelf } from "#server/services/friend/assertIsNotSelf";
@@ -20,13 +20,20 @@ import { and, eq, isNull, ne, or } from "drizzle-orm";
 export const friendRouter = router({
   deleteFriend: standardAuthedProcedure
     .input(friendUserIdInputSchema)
-    .mutation<void>(async ({ ctx, input: friendId }) => {
+    .mutation<FriendInSocial>(async ({ ctx, input: friendId }) => {
       const userId = ctx.user.id;
       assertIsNotSelf(Operation.Delete, DatabaseEntityType.Friend, userId, friendId);
 
+      // A removal keeps the friendship as a tombstone, so its version rises and a later arrival of the row loses to it
       const friendshipId = getFriendshipId(userId, friendId);
-      requireMutation(
-        (await ctx.db.delete(friendsInSocial).where(eq(friendsInSocial.id, friendshipId)).returning())[0],
+      return requireMutation(
+        (
+          await ctx.db
+            .update(friendsInSocial)
+            .set({ deletedAt: new Date() })
+            .where(and(eq(friendsInSocial.id, friendshipId), isNull(friendsInSocial.deletedAt)))
+            .returning()
+        )[0],
         Operation.Delete,
         DatabaseEntityType.Friend,
         friendshipId,
@@ -45,7 +52,8 @@ export const friendRouter = router({
           and(eq(friendsInSocial.senderId, userId), eq(usersInAuth.id, friendsInSocial.receiverId)),
           and(eq(friendsInSocial.receiverId, userId), eq(usersInAuth.id, friendsInSocial.senderId)),
         ),
-      );
+      )
+      .where(isNull(friendsInSocial.deletedAt));
   }),
   searchUsers: standardAuthedProcedure
     .meta({
@@ -58,12 +66,12 @@ export const friendRouter = router({
       const blockedSubquery = ctx.db
         .select({ id: blocksInSocial.blockedId })
         .from(blocksInSocial)
-        .where(eq(blocksInSocial.blockerId, userId))
+        .where(and(eq(blocksInSocial.blockerId, userId), isNull(blocksInSocial.deletedAt)))
         .union(
           ctx.db
             .select({ id: blocksInSocial.blockerId })
             .from(blocksInSocial)
-            .where(eq(blocksInSocial.blockedId, userId)),
+            .where(and(eq(blocksInSocial.blockedId, userId), isNull(blocksInSocial.deletedAt))),
         )
         .as("blocked_users");
       return ctx.db

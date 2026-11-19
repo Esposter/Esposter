@@ -43,7 +43,7 @@ import {
 } from "@esposter/db-schema";
 import { chunk, noop, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { and, eq, getColumns, or, sql } from "drizzle-orm";
+import { and, eq, getColumns, isNull, or, sql } from "drizzle-orm";
 
 export const directMessageRouter = router({
   createDirectMessage: standardAuthedProcedure
@@ -59,9 +59,12 @@ export const directMessageRouter = router({
         .select()
         .from(friendsInSocial)
         .where(
-          or(
-            and(eq(friendsInSocial.senderId, userId), inJsonArray(friendsInSocial.receiverId, targetUserIds)),
-            and(eq(friendsInSocial.receiverId, userId), inJsonArray(friendsInSocial.senderId, targetUserIds)),
+          and(
+            isNull(friendsInSocial.deletedAt),
+            or(
+              and(eq(friendsInSocial.senderId, userId), inJsonArray(friendsInSocial.receiverId, targetUserIds)),
+              and(eq(friendsInSocial.receiverId, userId), inJsonArray(friendsInSocial.senderId, targetUserIds)),
+            ),
           ),
         );
       if (acceptedFriendships.length !== targetUserIds.length)

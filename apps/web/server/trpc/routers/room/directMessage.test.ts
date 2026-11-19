@@ -11,6 +11,7 @@ import { createMockAuthSession, createMockContext, createMockUser, getMockSessio
 import { createCallerFactory } from "#server/trpc/index";
 import { blockRouter } from "#server/trpc/routers/block";
 import { createFriends } from "#server/trpc/routers/createFriends.test";
+import { friendRouter } from "#server/trpc/routers/friend";
 import { createDirectMessageWithFriend } from "#server/trpc/routers/room/createDirectMessageWithFriend.test";
 import { directMessageRouter } from "#server/trpc/routers/room/directMessage";
 import { roomRouter } from "#server/trpc/routers/room/index";
@@ -357,6 +358,21 @@ describe("directMessageRouter", () => {
     );
   });
 
+  // A removed friendship no longer makes the user a friend, so the add refuses them as it refuses a stranger
+  test("fails create direct message participant with a removed friend", async () => {
+    expect.hasAssertions();
+
+    const { directMessage } = await createDirectMessageWithFriend(mockContext);
+    const addedUser = await createFriends(mockContext);
+    await createCallerFactory(friendRouter)(mockContext).deleteFriend(addedUser.id);
+
+    await expect(
+      directMessageCaller.createDirectMessageParticipants({ roomId: directMessage.id, userIds: [addedUser.id] }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Create, DerivedDatabaseEntityType.DirectMessage, addedUser.id).message}]`,
+    );
+  });
+
   test("refuses an add whose participants a concurrent add changed before it wrote, and adds no member", async () => {
     expect.hasAssertions();
 
@@ -506,6 +522,18 @@ describe("directMessageRouter", () => {
 
     const userId = getMockSession().user.id;
     const user = await createMockUser(mockContext.db);
+
+    await expect(directMessageCaller.createDirectMessage([user.id])).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Create, DerivedDatabaseEntityType.DirectMessage, userId).message}]`,
+    );
+  });
+
+  test("fails create direct message with a removed friend", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    const user = await createFriends(mockContext);
+    await createCallerFactory(friendRouter)(mockContext).deleteFriend(user.id);
 
     await expect(directMessageCaller.createDirectMessage([user.id])).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Create, DerivedDatabaseEntityType.DirectMessage, userId).message}]`,

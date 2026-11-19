@@ -12,6 +12,8 @@ import {
 } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
 import { blockRouter } from "#server/trpc/routers/block";
+import { createFriendship } from "#server/trpc/routers/createFriendship.test";
+import { friendRouter } from "#server/trpc/routers/friend";
 import { friendRequestRouter } from "#server/trpc/routers/friendRequest";
 import {
   blocksInSocial,
@@ -201,7 +203,8 @@ describe("friendRequestRouter", () => {
     );
   });
 
-  test("declines friend request", async () => {
+  // A decline leaves the request as a tombstone, and the request read returns it, so the client can apply the removal
+  test("declines friend request as a tombstone that the request read still returns", async () => {
     expect.hasAssertions();
 
     const userId = getMockSession().user.id;
@@ -212,7 +215,65 @@ describe("friendRequestRouter", () => {
 
     const allFriendRequests = await friendRequestCaller.readFriendRequests();
 
-    expect(allFriendRequests).toStrictEqual([]);
+    expect(
+      allFriendRequests.map(({ deletedAt, version }) => ({ isDeleted: deletedAt !== null, version })),
+    ).toStrictEqual([{ isDeleted: true, version: 1 }]);
+  });
+
+  test("sends friend request again after a decline, reviving the request at a higher version", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    const senderAuthSession = await createMockAuthSession(mockContext.db);
+    const { user } = senderAuthSession;
+    const senderCaller = await createMockCaller(friendRequestRouter, senderAuthSession);
+    const declinedRequest = await senderCaller.sendFriendRequest(userId);
+    await friendRequestCaller.declineFriendRequest(user.id);
+    const revivedRequest = await senderCaller.sendFriendRequest(userId);
+
+    expect(revivedRequest.deletedAt).toBeNull();
+    expect(revivedRequest.version).toBeGreaterThan(declinedRequest.version);
+  });
+
+  test("fails to accept a declined friend request", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    const senderAuthSession = await createMockAuthSession(mockContext.db);
+    const { user } = senderAuthSession;
+    await (await createMockCaller(friendRequestRouter, senderAuthSession)).sendFriendRequest(userId);
+    await friendRequestCaller.declineFriendRequest(user.id);
+    const friendshipId = getFriendshipId(userId, user.id);
+
+    await expect(friendRequestCaller.acceptFriendRequest(user.id)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.Friend, friendshipId).message}]`,
+    );
+  });
+
+  // A removed block no longer stands between the two users, so the request is sent
+  test("sends friend request once the block between the two users is removed", async () => {
+    expect.hasAssertions();
+
+    const receiverUser = getMockSession().user;
+    const blockerAuthSession = await createMockAuthSession(mockContext.db);
+    const { user: blockerUser } = blockerAuthSession;
+    const blockerCaller = await createMockCaller(blockRouter, blockerAuthSession);
+    await blockerCaller.createBlock(receiverUser.id);
+    await blockerCaller.deleteBlock(receiverUser.id);
+    const friendRequest = await friendRequestCaller.sendFriendRequest(blockerUser.id);
+
+    expect(friendRequest.receiverId).toBe(blockerUser.id);
+  });
+
+  // A removed friendship no longer stands between the two users, and the request revives the request row the accept left
+  test("sends friend request once the friendship between the two users is removed", async () => {
+    expect.hasAssertions();
+
+    const { user } = await createFriendship(mockContext);
+    await createCallerFactory(friendRouter)(mockContext).deleteFriend(user.id);
+    const friendRequest = await friendRequestCaller.sendFriendRequest(user.id);
+
+    expect(friendRequest.receiverId).toBe(user.id);
   });
 
   test("reads received friend requests", async () => {

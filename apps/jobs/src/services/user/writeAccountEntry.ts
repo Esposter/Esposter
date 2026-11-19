@@ -35,7 +35,7 @@ export const writeAccountEntry = async (archive: UserDataArchive, userId: UserIn
       }),
       getDb().query.blocksInSocial.findMany({
         columns: { deletedAt: false, updatedAt: false, version: false },
-        where: { blockerId: { eq: userId } },
+        where: { blockerId: { eq: userId }, deletedAt: { isNull: true } },
       }),
       getDb().query.notificationsInNotification.findMany({
         columns: { createdAt: false, deletedAt: false, updatedAt: false, version: false },

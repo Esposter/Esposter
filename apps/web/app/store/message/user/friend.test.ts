@@ -3,6 +3,7 @@ import { createUser } from "#src/services/message/user/createUser.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useAlertStore } from "#src/store/alert";
 import { useFriendStore } from "#src/store/message/user/friend";
+import { getFriendshipId } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
@@ -11,6 +12,16 @@ describe(useFriendStore, () => {
   const { trpcMsw } = setupMswTrpc();
   const first = createUser({ name: "first" });
   const second = createUser({ name: "second" });
+  // The row an unfriend answers with: the friendship between the two, tombstoned at the version its removal left
+  const removedFriendship = {
+    createdAt: new Date(0),
+    deletedAt: new Date(0),
+    id: getFriendshipId(first.id, second.id),
+    receiverId: second.id,
+    senderId: first.id,
+    updatedAt: new Date(0),
+    version: 1,
+  };
 
   // Each friend is its own target, so two removals overlap on one list, and the failing one unwinds to the list the
   // Removal ahead of it left, whichever of the two was the one rejected
@@ -19,6 +30,8 @@ describe(useFriendStore, () => {
 
     trpcMsw.friend.deleteFriend.mutation(({ input: friendId }) => {
       if (friendId === failedFriend.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+
+      return removedFriendship;
     });
     const alertStore = useAlertStore();
     const friendStore = useFriendStore();

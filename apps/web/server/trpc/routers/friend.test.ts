@@ -4,8 +4,10 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { createMockAuthSession, createMockContext, getMockSession } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
+import { createFriends } from "#server/trpc/routers/createFriends.test";
 import { createFriendship } from "#server/trpc/routers/createFriendship.test";
 import { friendRouter } from "#server/trpc/routers/friend";
+import { ROW_VERSIONS_HEADER } from "#shared/services/realtime/constants";
 import {
   blocksInSocial,
   DatabaseEntityType,
@@ -14,8 +16,9 @@ import {
   PublicUserColumns,
 } from "@esposter/db-schema";
 import { getFriendshipId, InvalidOperationError, Operation, takeOne } from "@esposter/shared";
+import { getTableName } from "drizzle-orm";
 import { v7 } from "uuid";
-import { afterEach, beforeAll, describe, expect, test } from "vitest";
+import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
 describe("friendRouter", () => {
   let mockContext: Context;
@@ -63,6 +66,50 @@ describe("friendRouter", () => {
     const friendUsers = await friendCaller.readFriends();
 
     expect(friendUsers).toStrictEqual([]);
+  });
+
+  // A removal keeps the friendship as a tombstone, so the version it leaves is the one a later arrival is ordered against
+  test("deletes friend as a tombstone at a higher version", async () => {
+    expect.hasAssertions();
+
+    const { user } = await createFriendship(mockContext);
+    const tombstone = await friendCaller.deleteFriend(user.id);
+
+    expect(tombstone.deletedAt).not.toBeNull();
+    expect(tombstone.version).toBe(1);
+  });
+
+  test("revives a removed friendship at a higher version", async () => {
+    expect.hasAssertions();
+
+    const { user } = await createFriendship(mockContext);
+    const tombstone = await friendCaller.deleteFriend(user.id);
+    await createFriends(mockContext, user);
+    const friendship = await mockContext.db.query.friendsInSocial.findFirst({ where: { id: { eq: tombstone.id } } });
+
+    expect(friendship?.deletedAt).toBeNull();
+    expect(friendship?.version).toBe(tombstone.version + 1);
+  });
+
+  // The removal's write returns the row it changed, so the row versions header names the tombstone at the version it left
+  test("names a removed friendship at its tombstone version in the row versions header", async () => {
+    expect.hasAssertions();
+
+    const { user } = await createFriendship(mockContext);
+    const context = await createMockContext();
+    await createCallerFactory(friendRouter)(context).deleteFriend(user.id);
+
+    // The header's value is the path and the encoded row version, read back here so the key's order is not the point
+    const headerValue = context.responseHeaders.get(ROW_VERSIONS_HEADER);
+    assert.exists(headerValue);
+    const headerParts = headerValue.split(" ");
+
+    expect(takeOne(headerParts, 0)).toBe("deleteFriend");
+    expect(JSON.parse(decodeURIComponent(takeOne(headerParts, 1)))).toStrictEqual({
+      key: { receiverId: getMockSession().user.id, senderId: user.id },
+      table: getTableName(friendsInSocial),
+      version: 1,
+    });
   });
 
   test("fails to delete self as friend", async () => {

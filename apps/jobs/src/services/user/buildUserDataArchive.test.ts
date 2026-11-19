@@ -284,6 +284,27 @@ describe(buildUserDataArchive, () => {
     }
   });
 
+  // A removal leaves its row as a tombstone, and the export writes only the relations that still stand
+  test("leaves a removed block and a removed friendship out of the export", async () => {
+    expect.hasAssertions();
+
+    const userId = v7();
+    const otherUserId = v7();
+    const blobName = `${v7()}.zip`;
+    await mockDb.insert(usersInAuth).values(createUser(userId));
+    await mockDb.insert(usersInAuth).values(createUser(otherUserId));
+    await mockDb.insert(blocksInSocial).values({ blockedId: otherUserId, blockerId: userId, deletedAt: new Date(0) });
+    await mockDb
+      .insert(friendsInSocial)
+      .values({ deletedAt: new Date(0), id: v7(), receiverId: userId, senderId: otherUserId });
+
+    await buildUserDataArchive(userId, blobName);
+    const entries = await readArchiveEntries(blobName);
+
+    expect(readEntryJson(entries, "account.json").blocks).toStrictEqual([]);
+    expect(readEntryJson(entries, "friends.json").friends).toStrictEqual([]);
+  });
+
   test("writes a person's own posts, likes and friends, leaving out other people's counts and records", async () => {
     expect.hasAssertions();
 
