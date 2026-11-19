@@ -10,15 +10,15 @@ Where work is placed and how it is shaped — a fact resolved once at the consum
 | `server/services/message`                                                      | 2026-10-29 · Haiku 5.5 |       |
 | `server/services/resource`, `room`, `role`, `user`                             | 2026-10-29 · Haiku 5.5 |       |
 | `server/services` — the rest                                                   | 2026-10-29 · Haiku 5.5 |       |
-| `server/api`, `server/plugins`                                                 | 2026-10-14 · Haiku 5.5 |       |
-| `apps/jobs`                                                                    | 2026-10-14 · Haiku 5.5 |       |
-| `apps/realtime`                                                                | 2026-10-14 · Haiku 5.5 |       |
-| `packages/db`, `packages/db-schema/src/services`                               | 2026-10-14 · Haiku 5.5 |       |
-| `packages/keyframe-store`                                                      | 2026-10-14 · Haiku 5.5 |       |
-| `scripts/src/services/sweeps`                                                  | 2026-10-14 · Haiku 5.5 |       |
-| `scripts/src` — the rest                                                       | 2026-10-14 · Haiku 5.5 |       |
-| `packages/genshin-engine` — `terrain`, `streaming`, `vegetation`, `atmosphere` | 2026-10-14 · Haiku 5.5 |       |
-| `packages/genshin-engine` — the rest                                           | 2026-10-14 · Haiku 5.5 |       |
-| `packages/genshin-world`                                                       | 2026-10-14 · Haiku 5.5 |       |
-| `packages/pitch-transcription`                                                 | 2026-10-14 · Haiku 5.5 |       |
-| `scripts/src/services/genshinParity`, `scripts/src/services/genshinAssets`     | 2026-10-14 · Haiku 5.5 |       |
+| `server/api`, `server/plugins`                                                 | —                      |       |
+| `apps/jobs`                                                                    | —                      |       |
+| `apps/realtime`                                                                | —                      |       |
+| `packages/db`, `packages/db-schema/src/services`                               | —                      |       |
+| `packages/keyframe-store`                                                      | —                      |       |
+| `scripts/src/services/sweeps`                                                  | —                      |       |
+| `scripts/src` — the rest                                                       | —                      |       |
+| `packages/genshin-engine` — `terrain`, `streaming`, `vegetation`, `atmosphere` | —                      |       |
+| `packages/genshin-engine` — the rest                                           | —                      |       |
+| `packages/genshin-world`                                                       | —                      |       |
+| `packages/pitch-transcription`                                                 | —                      |       |
+| `scripts/src/services/genshinParity`, `scripts/src/services/genshinAssets`     | —                      |       |

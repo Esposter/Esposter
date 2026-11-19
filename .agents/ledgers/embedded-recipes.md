@@ -10,9 +10,9 @@ meant to **run** the block.
 
 | Unit                                           | Swept                   | Notes                                                                          |
 | ---------------------------------------------- | ----------------------- | ------------------------------------------------------------------------------ |
-| `.agents/skills/*/references/*.md`, `SKILL.md` | 2026-10-05 · Opus 5.5   |                                                                                |
-| `.agents/ledgers/*.md`                         | 2026-10-05 · Opus 5.5   | a grep pipeline is one command — the find recipes are mostly already compliant |
-| root markdown                                  | 2026-10-05 · Opus 5.5   |                                                                                |
+| `.agents/skills/*/references/*.md`, `SKILL.md` | —                       |                                                                                |
+| `.agents/ledgers/*.md`                         | —                       | a grep pipeline is one command — the find recipes are mostly already compliant |
+| root markdown                                  | —                       |                                                                                |
 | `openspec/**/*.md`                             | 2026-10-31 · Sonnet 5.5 |                                                                                |
 
 Find recipe, over `*.md`: fenced `bash`/`sh` blocks are the candidates, and a block is a finding when it holds a

@@ -5,18 +5,18 @@
 | `apps/jobs`                  | 2026-10-29 · Haiku 5.5 |                                                  |
 | `apps/realtime`              | 2026-10-29 · Haiku 5.5 |                                                  |
 | `db`, `db-schema`, `db-mock` | 2026-10-29 · Haiku 5.5 |                                                  |
-| `shared`, `shared-node`      | 2026-10-05 · Opus 5.5  |                                                  |
-| `parse-tmx`                  | 2026-10-05 · Opus 5.5  |                                                  |
-| `vue-phaserjs`               | 2026-10-05 · Opus 5.5  |                                                  |
-| `configuration`, `infra`     | 2026-10-05 · Opus 5.5  |                                                  |
-| `keyframe-store`             | 2026-10-05 · Opus 5.5  |                                                  |
-| `genshin-persona`            | 2026-10-05 · Opus 5.5  | keeps its own `TEST_EPOCH_DATE` — see the README |
-| `genshin-engine`             | 2026-10-05 · Opus 5.5  |                                                  |
-| `genshin-world`              | 2026-10-05 · Opus 5.5  |                                                  |
-| `genshin-interface`          | 2026-10-05 · Opus 5.5  |                                                  |
-| `genshin-text`               | 2026-10-05 · Opus 5.5  |                                                  |
-| `genshin-mods`               | 2026-10-05 · Opus 5.5  |                                                  |
-| `pitch-transcription`        | 2026-10-05 · Opus 5.5  |                                                  |
-| `trpc-msw`                   | 2026-10-05 · Opus 5.5  |                                                  |
-| `trpc-nuxt-module`           | 2026-10-05 · Opus 5.5  |                                                  |
-| `follow-ups`                 | 2026-10-05 · Opus 5.5  |                                                  |
+| `shared`, `shared-node`      | —                      |                                                  |
+| `parse-tmx`                  | —                      |                                                  |
+| `vue-phaserjs`               | —                      |                                                  |
+| `configuration`, `infra`     | —                      |                                                  |
+| `keyframe-store`             | —                      |                                                  |
+| `genshin-persona`            | —                      | keeps its own `TEST_EPOCH_DATE` — see the README |
+| `genshin-engine`             | —                      |                                                  |
+| `genshin-world`              | —                      |                                                  |
+| `genshin-interface`          | —                      |                                                  |
+| `genshin-text`               | —                      |                                                  |
+| `genshin-mods`               | —                      |                                                  |
+| `pitch-transcription`        | —                      |                                                  |
+| `trpc-msw`                   | —                      |                                                  |
+| `trpc-nuxt-module`           | —                      |                                                  |
+| `follow-ups`                 | —                      |                                                  |

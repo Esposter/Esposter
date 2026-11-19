@@ -4,20 +4,20 @@ Zod and Drizzle together, because a table, its select schema and the input schem
 
 | Unit                                                       | Swept                   | Notes                                                                                                |
 | ---------------------------------------------------------- | ----------------------- | ---------------------------------------------------------------------------------------------------- |
-| `packages/db-schema/src/generated/schema.ts` + `relations` | 2026-10-05 · Opus 5.5   | a `r.many` key is the child table's own name; an `r.one` off a role column is the role               |
-| `packages/db-schema/src/schema` — the message tables       | 2026-10-05 · Opus 5.5   | the `*InMessage` family                                                                              |
-| `packages/db-schema/src/schema` — the rest                 | 2026-10-05 · Opus 5.5   | the twin `friends`/`friendRequests` blocks stay, and the `drizzle` skill says why                    |
-| `shared/models/db/message`                                 | 2026-10-05 · Opus 5.5   | every input is composed by `.pick`/`.shape` spread, so a derived type alias is sanctioned            |
-| `shared/models/db` — the room family                       | 2026-10-05 · Opus 5.5   | `room`, `roomCategory`, `roomEmoji`, `role`, `moderation`, `webhook`                                 |
-| `shared/models/db` — the rest                              | 2026-10-05 · Opus 5.5   | `blueprint`, `friend`, `notification`, `post`, `searchHistory`, `user`, `userSettings`, `userToRoom` |
-| `shared/models/resource/sheet`                             | 2026-10-05 · Opus 5.5   | the split transformation's form defaults stay on the shared schema — `zod` says why                  |
-| `shared/models/resource` — the rest                        | 2026-10-05 · Opus 5.5   | the per-type content shapes and the capability types                                                 |
-| `shared/models/dungeons`                                   | 2026-10-05 · Opus 5.5   |                                                                                                      |
+| `packages/db-schema/src/generated/schema.ts` + `relations` | —                       | a `r.many` key is the child table's own name; an `r.one` off a role column is the role               |
+| `packages/db-schema/src/schema` — the message tables       | —                       | the `*InMessage` family                                                                              |
+| `packages/db-schema/src/schema` — the rest                 | —                       | the twin `friends`/`friendRequests` blocks stay, and the `drizzle` skill says why                    |
+| `shared/models/db/message`                                 | —                       | every input is composed by `.pick`/`.shape` spread, so a derived type alias is sanctioned            |
+| `shared/models/db` — the room family                       | —                       | `room`, `roomCategory`, `roomEmoji`, `role`, `moderation`, `webhook`                                 |
+| `shared/models/db` — the rest                              | —                       | `blueprint`, `friend`, `notification`, `post`, `searchHistory`, `user`, `userSettings`, `userToRoom` |
+| `shared/models/resource/sheet`                             | —                       | the split transformation's form defaults stay on the shared schema — `zod` says why                  |
+| `shared/models/resource` — the rest                        | —                       | the per-type content shapes and the capability types                                                 |
+| `shared/models/dungeons`                                   | —                       |                                                                                                      |
 | `shared/models` — the page builder and game trees          | 2026-10-29 · Sonnet 5.5 |                                                                                                      |
-| `shared/models` — the rest                                 | 2026-10-05 · Opus 5.5   | `achievement`, `message`, `pagination`, `dataset`, `entity`, `compiler` and the singles              |
-| `app/models`, `app/services/*` form schemas                | 2026-10-05 · Opus 5.5   | the schema-form ones carry extra rules                                                               |
-| `packages/db`, `packages/db-mock`                          | 2026-10-05 · Opus 5.5   | neither declares a table or a zod schema; the mock's snapshot is generated                           |
-| `packages/shared`, `packages/parse-tmx`                    | 2026-10-05 · Opus 5.5   | `parse-tmx` depends on zod nowhere                                                                   |
+| `shared/models` — the rest                                 | —                       | `achievement`, `message`, `pagination`, `dataset`, `entity`, `compiler` and the singles              |
+| `app/models`, `app/services/*` form schemas                | —                       | the schema-form ones carry extra rules                                                               |
+| `packages/db`, `packages/db-mock`                          | —                       | neither declares a table or a zod schema; the mock's snapshot is generated                           |
+| `packages/shared`, `packages/parse-tmx`                    | —                       | `parse-tmx` depends on zod nowhere                                                                   |
 
 ## Exclusions
 

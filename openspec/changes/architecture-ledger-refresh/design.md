@@ -27,7 +27,9 @@ flowchart TD
   batch -->|a fix would change behaviour| proposal[A proposal, out of the sweep]
 ```
 
-Reopening a row sets its `Swept` cell to `—` in the commit that reshapes or reopens its ledger. The sweeps skill already treats a row read against a narrower rule set as unswept, so this records a fact rather than adding a mechanism.
+Reopening a row is a `Reopens:` trailer on the commit that reopens it, with the `Swept` cell set to `—` in that same commit. The coverage run re-dates an open cell from any sweep trailer still in history, so a cell edit alone is undone by the next run; the trailer is the record the run reads.
+
+1.6 reopened 1,086 rows in 84 files in one commit: 557 rows under 54 whole-file trailers, and 529 rows under per-unit trailers. The cutoff is 2026-10-18, the latest add date of the three pages taken literally from `git log --diff-filter=A`, which the migration into openspec set. Following renames gives 2026-09-29 instead, and then no row is reopened, since every reopened row is dated 10-05 to 10-17. The three pages were last changed on 2026-11-18, after the cutoff, and 1.6 does not reopen rows dated since. Left for the other agent: `testing`, which is not reopened, and 12 pre-cutoff rows in `genshin-evidence`, `genshin-spec-evidence`, `kit-records`, `kit-differs-from-source` and `summon-placement`.
 
 ## Shape candidates
 

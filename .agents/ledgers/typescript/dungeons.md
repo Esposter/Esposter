@@ -5,18 +5,18 @@
 | `app/store/dungeons/battle`, `world`, `monsterParty`                       | 2026-10-29 · Haiku 5.5 |                                                                                 |
 | `app/store/dungeons` — the rest                                            | 2026-10-29 · Haiku 5.5 |                                                                                 |
 | `app/composables/dungeons/scene`                                           | 2026-10-29 · Haiku 5.5 |                                                                                 |
-| `app/composables/dungeons` — the rest                                      | 2026-10-05 · Opus 5.5  |                                                                                 |
-| `app/services/dungeons/scene/world`, `settings`, `preloader`               | 2026-10-05 · Opus 5.5  |                                                                                 |
-| `app/services/dungeons/scene` — the rest                                   | 2026-10-05 · Opus 5.5  | battle, monsterParty, joystick, title, inventory and the top level              |
-| `app/services/dungeons/state`                                              | 2026-10-05 · Opus 5.5  |                                                                                 |
-| `app/services/dungeons/loader`                                             | 2026-10-05 · Opus 5.5  |                                                                                 |
-| `app/services/dungeons/UI`, `monster`                                      | 2026-10-05 · Opus 5.5  |                                                                                 |
-| `app/services/dungeons/tilemap`, `direction`, `sound`, `item`, `animation` | 2026-10-05 · Opus 5.5  | the grid and scene maths, where an index is a coordinate rather than a position |
-| `app/services/dungeons` — the top level and the small trees                | 2026-10-05 · Opus 5.5  | attack, settings, npc, chest, area                                              |
-| `app/models/dungeons/scene`, `tilemap`, `UI`                               | 2026-10-05 · Opus 5.5  |                                                                                 |
-| `app/models/dungeons/npc`, `keys`, `input`, `gridEngine`, `area`           | 2026-10-05 · Opus 5.5  |                                                                                 |
-| `app/models/dungeons` — the top level and the small trees                  | 2026-10-05 · Opus 5.5  | state, direction, attack, theme, item                                           |
-| `app/components/Dungeons/Battle`                                           | 2026-10-05 · Opus 5.5  |                                                                                 |
-| `app/components/Dungeons/World`, `UI`                                      | 2026-10-05 · Opus 5.5  |                                                                                 |
-| `app/components/Dungeons/Settings`, `Inventory`                            | 2026-10-05 · Opus 5.5  |                                                                                 |
-| `app/components/Dungeons` — the top level and the rest                     | 2026-10-05 · Opus 5.5  | MonsterParty, Title, MobileJoystick, MonsterDetails, Preloader                  |
+| `app/composables/dungeons` — the rest                                      | —                      |                                                                                 |
+| `app/services/dungeons/scene/world`, `settings`, `preloader`               | —                      |                                                                                 |
+| `app/services/dungeons/scene` — the rest                                   | —                      | battle, monsterParty, joystick, title, inventory and the top level              |
+| `app/services/dungeons/state`                                              | —                      |                                                                                 |
+| `app/services/dungeons/loader`                                             | —                      |                                                                                 |
+| `app/services/dungeons/UI`, `monster`                                      | —                      |                                                                                 |
+| `app/services/dungeons/tilemap`, `direction`, `sound`, `item`, `animation` | —                      | the grid and scene maths, where an index is a coordinate rather than a position |
+| `app/services/dungeons` — the top level and the small trees                | —                      | attack, settings, npc, chest, area                                              |
+| `app/models/dungeons/scene`, `tilemap`, `UI`                               | —                      |                                                                                 |
+| `app/models/dungeons/npc`, `keys`, `input`, `gridEngine`, `area`           | —                      |                                                                                 |
+| `app/models/dungeons` — the top level and the small trees                  | —                      | state, direction, attack, theme, item                                           |
+| `app/components/Dungeons/Battle`                                           | —                      |                                                                                 |
+| `app/components/Dungeons/World`, `UI`                                      | —                      |                                                                                 |
+| `app/components/Dungeons/Settings`, `Inventory`                            | —                      |                                                                                 |
+| `app/components/Dungeons` — the top level and the rest                     | —                      | MonsterParty, Title, MobileJoystick, MonsterDetails, Preloader                  |

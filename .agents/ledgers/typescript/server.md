@@ -7,11 +7,11 @@
 | `server/trpc/routers` — the rest                                                                | 2026-10-29 · Haiku 5.5 |                                         |
 | `server/services/message`                                                                       | 2026-10-29 · Haiku 5.5 |                                         |
 | `server/services/resource`                                                                      | 2026-10-29 · Haiku 5.5 | the snapshot and rollback paths         |
-| `server/services/room`, `friend`, `user`, `role`, `achievement`                                 | 2026-10-05 · Opus 5.5  | membership and the social graph         |
-| `server/services/survey`, `dataset`, `program`                                                  | 2026-10-05 · Opus 5.5  | the response and reporting path         |
-| `server/services/blueprint`, `storage`, `blobState`, `notification`, `dashboard`, `emailEditor` | 2026-10-05 · Opus 5.5  |                                         |
-| `server/services/auth`, `rateLimiter`, `request`                                                | 2026-10-05 · Opus 5.5  |                                         |
-| `db`, `events`, `post`                                                                          | 2026-10-05 · Opus 5.5  |                                         |
-| `server/trpc` — everything outside `routers`                                                    | 2026-10-05 · Opus 5.5  | context, procedure builders, middleware |
-| `server/composables`, `server/api`                                                              | 2026-10-05 · Opus 5.5  |                                         |
-| `server/models`, `server/db`, `server/plugins`, `server/auth.ts`                                | 2026-10-05 · Opus 5.5  |                                         |
+| `server/services/room`, `friend`, `user`, `role`, `achievement`                                 | —                      | membership and the social graph         |
+| `server/services/survey`, `dataset`, `program`                                                  | —                      | the response and reporting path         |
+| `server/services/blueprint`, `storage`, `blobState`, `notification`, `dashboard`, `emailEditor` | —                      |                                         |
+| `server/services/auth`, `rateLimiter`, `request`                                                | —                      |                                         |
+| `db`, `events`, `post`                                                                          | —                      |                                         |
+| `server/trpc` — everything outside `routers`                                                    | —                      | context, procedure builders, middleware |
+| `server/composables`, `server/api`                                                              | —                      |                                         |
+| `server/models`, `server/db`, `server/plugins`, `server/auth.ts`                                | —                      |                                         |

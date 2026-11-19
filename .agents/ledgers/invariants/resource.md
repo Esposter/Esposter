@@ -14,7 +14,7 @@
 | `app/store/resource`, less the `sheet` unit above                                                 | 2026-10-29 · Haiku 5.5 |       |
 | `Dashboard`, `Dataset` + their store, composable and service layers                               | 2026-10-29 · Haiku 5.5 |       |
 | `emailEditor`, `webpageEditor`, `pageBuilder`, `survey` — store, composables, services            | 2026-10-29 · Haiku 5.5 |       |
-| `Resource/` root files less `Overview.vue`                                                        | 2026-10-14 · Haiku 5.5 |       |
-| `Resource/Create`, `Home`, `RecycleBin`, `Search`, `VersionHistory`                               | 2026-10-14 · Haiku 5.5 |       |
-| `app/models/resource/sheet`                                                                       | 2026-10-14 · Haiku 5.5 |       |
-| `app/models/resource` less `sheet`                                                                | 2026-10-14 · Haiku 5.5 |       |
+| `Resource/` root files less `Overview.vue`                                                        | —                      |       |
+| `Resource/Create`, `Home`, `RecycleBin`, `Search`, `VersionHistory`                               | —                      |       |
+| `app/models/resource/sheet`                                                                       | —                      |       |
+| `app/models/resource` less `sheet`                                                                | —                      |       |

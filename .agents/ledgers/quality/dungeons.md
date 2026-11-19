@@ -1,14 +1,14 @@
 # Dungeons
 
-| Unit                                                                                                | Swept                  | Notes                                                 |
-| --------------------------------------------------------------------------------------------------- | ---------------------- | ----------------------------------------------------- |
-| `Dungeons/Battle`, `MonsterParty`, `MonsterDetails` + their `store/dungeons` slices                 | 2026-10-14 · Haiku 5.5 |                                                       |
-| `Dungeons/UI`, `Settings`, `Inventory` + the `UI`/`settings`/`inventory` slices of all three layers | 2026-10-14 · Haiku 5.5 |                                                       |
-| `Dungeons/World`, `Title`, `MobileJoystick`, `Preloader`, `Scene.vue` + `store/dungeons` roots      | 2026-10-14 · Haiku 5.5 |                                                       |
-| `services/dungeons/scene` + `composables/dungeons/scene`                                            | 2026-10-14 · Haiku 5.5 | the scene layer is half the game's non-component code |
-| `services/dungeons` less `scene` and `UI`                                                           | 2026-10-14 · Haiku 5.5 |                                                       |
-| `composables/dungeons` less `scene` and `UI`, + `composables/phaser` + `services/phaser`            | 2026-10-14 · Haiku 5.5 |                                                       |
-| `models/dungeons` — the grid layer every menu navigates through                                     | 2026-10-14 · Haiku 5.5 |                                                       |
+| Unit                                                                                                | Swept | Notes                                                 |
+| --------------------------------------------------------------------------------------------------- | ----- | ----------------------------------------------------- |
+| `Dungeons/Battle`, `MonsterParty`, `MonsterDetails` + their `store/dungeons` slices                 | —     |                                                       |
+| `Dungeons/UI`, `Settings`, `Inventory` + the `UI`/`settings`/`inventory` slices of all three layers | —     |                                                       |
+| `Dungeons/World`, `Title`, `MobileJoystick`, `Preloader`, `Scene.vue` + `store/dungeons` roots      | —     |                                                       |
+| `services/dungeons/scene` + `composables/dungeons/scene`                                            | —     | the scene layer is half the game's non-component code |
+| `services/dungeons` less `scene` and `UI`                                                           | —     |                                                       |
+| `composables/dungeons` less `scene` and `UI`, + `composables/phaser` + `services/phaser`            | —     |                                                       |
+| `models/dungeons` — the grid layer every menu navigates through                                     | —     |                                                       |
 
 `shared/models/dungeons` belongs to `shared.md`; `app/models/dungeons` is in scope here, on its own row,
 because a model every group shares belongs to none of their rows.

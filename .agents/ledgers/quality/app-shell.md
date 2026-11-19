@@ -1,17 +1,17 @@
 # App Shell
 
-| Unit                                                                                                            | Swept                 | Notes                                                             |
-| --------------------------------------------------------------------------------------------------------------- | --------------------- | ----------------------------------------------------------------- |
-| `App/`, `Nuxt/`, `layouts/`, `App.vue`                                                                          | 2026-10-05 · Opus 5.5 |                                                                   |
-| `pages/` + `middleware/` + `plugins/`                                                                           | 2026-10-05 · Opus 5.5 | only the pages no other row names — a feature row carries its own |
-| `app/store` and `app/composables` root files                                                                    | 2026-10-05 · Opus 5.5 |                                                                   |
-| `app/util`, `app/types`                                                                                         | 2026-10-05 · Opus 5.5 |                                                                   |
-| `app/models` less `dungeons`, `message`, `resource` and `resolvers`                                             | 2026-10-05 · Opus 5.5 |                                                                   |
-| `app/models/resolvers`                                                                                          | 2026-10-05 · Opus 5.5 | the dungeons input and dashboard visual resolvers both sit here   |
-| `services/{app,auth,route,router,trpc,notification}` + `composables/{data,shared}`                              | 2026-10-05 · Opus 5.5 |                                                                   |
-| `services/{styled,entity,zod,jsonSchema,compiler,shared,cache,file}` + `util/date` + the matching `composables` | —                     |                                                                   |
-| `Ui/`                                                                                                           | 2026-10-05 · Opus 5.5 |                                                                   |
-| `services/ui` + `composables/ui` + `store/ui`                                                                   | 2026-10-05 · Opus 5.5 |                                                                   |
+| Unit                                                                                                            | Swept | Notes                                                             |
+| --------------------------------------------------------------------------------------------------------------- | ----- | ----------------------------------------------------------------- |
+| `App/`, `Nuxt/`, `layouts/`, `App.vue`                                                                          | —     |                                                                   |
+| `pages/` + `middleware/` + `plugins/`                                                                           | —     | only the pages no other row names — a feature row carries its own |
+| `app/store` and `app/composables` root files                                                                    | —     |                                                                   |
+| `app/util`, `app/types`                                                                                         | —     |                                                                   |
+| `app/models` less `dungeons`, `message`, `resource` and `resolvers`                                             | —     |                                                                   |
+| `app/models/resolvers`                                                                                          | —     | the dungeons input and dashboard visual resolvers both sit here   |
+| `services/{app,auth,route,router,trpc,notification}` + `composables/{data,shared}`                              | —     |                                                                   |
+| `services/{styled,entity,zod,jsonSchema,compiler,shared,cache,file}` + `util/date` + the matching `composables` | —     |                                                                   |
+| `Ui/`                                                                                                           | —     |                                                                   |
+| `services/ui` + `composables/ui` + `store/ui`                                                                   | —     |                                                                   |
 
 `app/components/Styled` belongs to `shared.md`, not here, and `app/models/{dungeons,message,resource}` to the
 ledger of the feature that owns them.

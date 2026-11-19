@@ -5,26 +5,26 @@
 | `composables/data`                                  | 2026-10-29 · Haiku 5.5 | one of the two pagination cores |
 | `composables/shared`                                | 2026-10-29 · Haiku 5.5 | the other pagination core       |
 | `services/{app,auth,login}`                         | 2026-10-29 · Haiku 5.5 |                                 |
-| `services/{route,router,notification}`              | 2026-10-05 · Opus 5.5  |                                 |
-| `services/trpc`                                     | 2026-10-05 · Opus 5.5  |                                 |
-| `services/cache`                                    | 2026-10-05 · Opus 5.5  |                                 |
-| `services/file`                                     | 2026-10-05 · Opus 5.5  |                                 |
-| `services/{zod,jsonSchema}`                         | 2026-10-05 · Opus 5.5  |                                 |
-| `util/date`                                         | 2026-10-05 · Opus 5.5  |                                 |
-| `services/shared`                                   | 2026-10-05 · Opus 5.5  |                                 |
-| `services/{styled,entity,codemirror}`               | 2026-10-05 · Opus 5.5  |                                 |
-| `composables` root files                            | 2026-10-05 · Opus 5.5  |                                 |
-| `composables/{storage,file,notification,cache}`     | 2026-10-05 · Opus 5.5  |                                 |
-| `store` root files, `store/{user,storage}`          | 2026-10-05 · Opus 5.5  |                                 |
-| `app/models/dungeons`                               | 2026-10-05 · Opus 5.5  |                                 |
-| `app/models/resource`                               | 2026-10-05 · Opus 5.5  |                                 |
-| `app/models/message`                                | 2026-10-05 · Opus 5.5  |                                 |
-| `app/models/{resolvers,shared}`                     | 2026-10-05 · Opus 5.5  |                                 |
-| `app/models` — its root files and the small folders | 2026-10-05 · Opus 5.5  |                                 |
-| `app/util`                                          | 2026-10-05 · Opus 5.5  |                                 |
-| `app/types`                                         | 2026-10-05 · Opus 5.5  |                                 |
-| `components/{App,Nuxt,Transition}`, `App.vue`       | 2026-10-05 · Opus 5.5  |                                 |
-| `pages`, `layouts`                                  | 2026-10-05 · Opus 5.5  |                                 |
-| `plugins`, `middleware`                             | 2026-10-05 · Opus 5.5  |                                 |
-| `components/Ui`                                     | 2026-10-05 · Opus 5.5  |                                 |
-| `services/ui`, `composables/ui`, `store/ui`         | 2026-10-05 · Opus 5.5  |                                 |
+| `services/{route,router,notification}`              | —                      |                                 |
+| `services/trpc`                                     | —                      |                                 |
+| `services/cache`                                    | —                      |                                 |
+| `services/file`                                     | —                      |                                 |
+| `services/{zod,jsonSchema}`                         | —                      |                                 |
+| `util/date`                                         | —                      |                                 |
+| `services/shared`                                   | —                      |                                 |
+| `services/{styled,entity,codemirror}`               | —                      |                                 |
+| `composables` root files                            | —                      |                                 |
+| `composables/{storage,file,notification,cache}`     | —                      |                                 |
+| `store` root files, `store/{user,storage}`          | —                      |                                 |
+| `app/models/dungeons`                               | —                      |                                 |
+| `app/models/resource`                               | —                      |                                 |
+| `app/models/message`                                | —                      |                                 |
+| `app/models/{resolvers,shared}`                     | —                      |                                 |
+| `app/models` — its root files and the small folders | —                      |                                 |
+| `app/util`                                          | —                      |                                 |
+| `app/types`                                         | —                      |                                 |
+| `components/{App,Nuxt,Transition}`, `App.vue`       | —                      |                                 |
+| `pages`, `layouts`                                  | —                      |                                 |
+| `plugins`, `middleware`                             | —                      |                                 |
+| `components/Ui`                                     | —                      |                                 |
+| `services/ui`, `composables/ui`, `store/ui`         | —                      |                                 |

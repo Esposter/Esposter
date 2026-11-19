@@ -24,8 +24,8 @@
 | `app/components/Resource/Sheet/Column`, `FindReplace`                                      | 2026-10-29 · Haiku 5.5 |                                                                             |
 | `app/components/Resource/Sheet` — the top level, `Toolbar`, `EditDialog`                   | 2026-10-29 · Haiku 5.5 |                                                                             |
 | `app/components/Resource/List`                                                             | 2026-10-29 · Haiku 5.5 |                                                                             |
-| `app/components/Resource` — the top level                                                  | 2026-10-05 · Opus 5.5  |                                                                             |
-| `app/components/Resource/TodoList`, `Survey`, `Home`                                       | 2026-10-05 · Opus 5.5  |                                                                             |
-| `app/components/Resource/VersionHistory`, `Search`, `Note`, `Blade`                        | 2026-10-05 · Opus 5.5  |                                                                             |
-| `app/components/Resource` — the editor and the small trees                                 | 2026-10-05 · Opus 5.5  | Email, Create, Blueprint, Webpage, Program, Dashboard, RecycleBin, Explorer |
-| `app/pages/resource-explorer`, `messages`                                                  | 2026-10-05 · Opus 5.5  |                                                                             |
+| `app/components/Resource` — the top level                                                  | —                      |                                                                             |
+| `app/components/Resource/TodoList`, `Survey`, `Home`                                       | —                      |                                                                             |
+| `app/components/Resource/VersionHistory`, `Search`, `Note`, `Blade`                        | —                      |                                                                             |
+| `app/components/Resource` — the editor and the small trees                                 | —                      | Email, Create, Blueprint, Webpage, Program, Dashboard, RecycleBin, Explorer |
+| `app/pages/resource-explorer`, `messages`                                                  | —                      |                                                                             |

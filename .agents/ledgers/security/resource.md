@@ -2,19 +2,19 @@
 
 | Unit                                                                                              | Swept                  | Notes |
 | ------------------------------------------------------------------------------------------------- | ---------------------- | ----- |
-| `Resource/List` + list composables                                                                | 2026-10-05 · Opus 5.5  |       |
-| `Resource/Blade`, `Resource/Overview`, `Resource/Explorer`                                        | 2026-10-05 · Opus 5.5  |       |
-| `Resource/Sheet` components                                                                       | 2026-10-05 · Opus 5.5  |       |
-| `composables/resource/sheet`                                                                      | 2026-10-05 · Opus 5.5  |       |
-| `services/resource/sheet`                                                                         | 2026-10-05 · Opus 5.5  |       |
-| `store/resource/sheet` + `shared/models/resource/sheet`                                           | 2026-10-05 · Opus 5.5  |       |
-| `Resource/Dashboard`, `Resource/Email`, `Resource/Webpage`                                        | 2026-10-05 · Opus 5.5  |       |
-| `Resource/Survey`, `Resource/Program`, `Resource/TodoList`, `Resource/Blueprint`, `Resource/Note` | 2026-10-05 · Opus 5.5  |       |
-| `app/composables/resource` + `app/services/resource`, less the `sheet` and list units above       | 2026-10-05 · Opus 5.5  |       |
-| `app/store/resource`, less the `sheet` unit above                                                 | 2026-10-05 · Opus 5.5  |       |
-| `Dashboard`, `Dataset` + their store, composable and service layers                               | 2026-10-05 · Opus 5.5  |       |
+| `Resource/List` + list composables                                                                | —                      |       |
+| `Resource/Blade`, `Resource/Overview`, `Resource/Explorer`                                        | —                      |       |
+| `Resource/Sheet` components                                                                       | —                      |       |
+| `composables/resource/sheet`                                                                      | —                      |       |
+| `services/resource/sheet`                                                                         | —                      |       |
+| `store/resource/sheet` + `shared/models/resource/sheet`                                           | —                      |       |
+| `Resource/Dashboard`, `Resource/Email`, `Resource/Webpage`                                        | —                      |       |
+| `Resource/Survey`, `Resource/Program`, `Resource/TodoList`, `Resource/Blueprint`, `Resource/Note` | —                      |       |
+| `app/composables/resource` + `app/services/resource`, less the `sheet` and list units above       | —                      |       |
+| `app/store/resource`, less the `sheet` unit above                                                 | —                      |       |
+| `Dashboard`, `Dataset` + their store, composable and service layers                               | —                      |       |
 | `emailEditor`, `webpageEditor`, `pageBuilder`, `survey` — store, composables, services            | 2026-10-29 · Haiku 5.5 |       |
-| `Resource/` root files less `Overview.vue`                                                        | 2026-10-05 · Opus 5.5  |       |
-| `Resource/Create`, `Home`, `RecycleBin`, `Search`, `VersionHistory`                               | 2026-10-05 · Opus 5.5  |       |
-| `app/models/resource/sheet`                                                                       | 2026-10-05 · Opus 5.5  |       |
-| `app/models/resource` less `sheet`                                                                | 2026-10-05 · Opus 5.5  |       |
+| `Resource/` root files less `Overview.vue`                                                        | —                      |       |
+| `Resource/Create`, `Home`, `RecycleBin`, `Search`, `VersionHistory`                               | —                      |       |
+| `app/models/resource/sheet`                                                                       | —                      |       |
+| `app/models/resource` less `sheet`                                                                | —                      |       |
