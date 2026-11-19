@@ -60,6 +60,7 @@ For a complete example, see [the dungeons page](https://github.com/Esposter/Espo
 | `useAnimations`                                                           | composable | Creates a scene's animation frames. Removes them on shutdown or unmount.                             |
 | `useGame`                                                                 | composable | The Phaser game in the store. Throws until a Game component has created it.                          |
 | `useTween`                                                                | composable | Sets a tween on a ref. Clears the ref when the tween completes.                                      |
+| `useTweenAsync`                                                           | composable | Sets a tween on a ref and resolves once it completes, after the caller's own `onComplete`.           |
 
 ## <a name="license">⚖️ License</a>
 
