@@ -37,6 +37,7 @@ import { gatheringCommand } from "#src/services/genshinAssets/commands/gathering
 import { gcgCommand } from "#src/services/genshinAssets/commands/gcgCommand";
 import { homeCommand } from "#src/services/genshinAssets/commands/homeCommand";
 import { imaginariumCommand } from "#src/services/genshinAssets/commands/imaginariumCommand";
+import { indexFindCommand } from "#src/services/genshinAssets/commands/indexFindCommand";
 import { interfaceCommand } from "#src/services/genshinAssets/commands/interfaceCommand";
 import { inventoryCommand } from "#src/services/genshinAssets/commands/inventoryCommand";
 import { itemsCommand } from "#src/services/genshinAssets/commands/itemsCommand";
@@ -109,6 +110,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     "ui-find": uiFindCommand,
     "asset-find": assetFindCommand,
     "root-find": rootFindCommand,
+    find: indexFindCommand,
     "ui-tree": uiTreeCommand,
     clips: clipsCommand,
     locomotion: locomotionCommand,

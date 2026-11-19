@@ -7,6 +7,7 @@ import { readUiIndexPaths } from "#src/services/genshinAssets/ui/readUiIndexPath
 import { resolveUiBlock } from "#src/services/genshinAssets/ui/resolveUiBlock";
 import { toUiFindResult } from "#src/services/genshinAssets/ui/toUiFindResult";
 import { parseWholeCount } from "#src/services/shared/parseWholeCount";
+import { readMatchingEntries } from "#src/services/shared/readMatchingEntries";
 import { defineCommand } from "citty";
 
 export const uiFindCommand: SubCommandsDef[string] = defineCommand({
@@ -34,13 +35,11 @@ export const uiFindCommand: SubCommandsDef[string] = defineCommand({
     const indexPaths = args.block
       ? [await readUiBlockIndex(await resolveUiBlock(args.block))]
       : await readUiIndexPaths();
-    let printed = 0;
-    for (const indexPath of indexPaths)
-      for await (const entry of readUiIndexEntries(indexPath)) {
-        if (!matchesUiName(entry.name, pattern)) continue;
-        console.log(JSON.stringify(toUiFindResult(entry)));
-        printed += 1;
-        if (printed === limit) return;
-      }
+    const entries = readMatchingEntries(
+      indexPaths.map((indexPath) => readUiIndexEntries(indexPath)),
+      (entry) => matchesUiName(entry.name, pattern),
+      limit,
+    );
+    for await (const entry of entries) console.log(JSON.stringify(toUiFindResult(entry)));
   },
 });
