@@ -3,16 +3,9 @@ import type { PublicUser, UserEvent, UserStatusInMessage } from "@esposter/db-sc
 
 import { useRoomObject } from "#server/composables/realtime/useRoomObject";
 import { callUserObjects } from "#server/services/realtime/callUserObjects";
-import { publishTopicsBestEffort } from "#server/services/realtime/publishTopicsBestEffort";
 import { notifyOnlineRoomMembers } from "#server/services/room/notifyOnlineRoomMembers";
 import { inJsonArray } from "@esposter/db";
-import {
-  getDetectedUserStatus,
-  getTopic,
-  TopicKind,
-  userStatusesInMessage,
-  usersToRoomsInMessage,
-} from "@esposter/db-schema";
+import { getDetectedUserStatus, userStatusesInMessage, usersToRoomsInMessage } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
 
@@ -62,9 +55,4 @@ export const announceRoomMembersJoined = async (
     // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: a joiner attached here hears the joins after theirs
     await announceRoomMemberJoined(roomId, user, displayName, status);
   }
-  // A joiner's bookmark dock is told as a departure's is: a bookmark on the room reads as available to its members only
-  await publishTopicsBestEffort(
-    () => userIds.map((userId) => ({ topic: getTopic(TopicKind.Bookmark, userId) })),
-    "Failed to publish the bookmarks of the joined members:",
-  );
 };

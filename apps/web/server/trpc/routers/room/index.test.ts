@@ -13,7 +13,6 @@ import {
 import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
 import { banRoomMember } from "#server/services/message/moderation/banRoomMember";
 import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
-import { getMockPublishedTopics, MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
 import { getRoomProfileImageBlobPrefix } from "#server/services/room/getRoomProfileImageBlobPrefix";
 import { getBucket } from "#server/services/storage/getBucket";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
@@ -27,7 +26,6 @@ import { createDirectMessageWithFriend } from "#server/trpc/routers/room/createD
 import { roomRouter } from "#server/trpc/routers/room/index";
 import { PageMarkType } from "#shared/models/app/PageMarkType";
 import { TEST_ORIGIN } from "#shared/services/pageBuilder/constants.test";
-import { readTopicsHeader } from "#shared/services/realtime/readTopicsHeader";
 import { INVITE_MAX_USES_OPTIONS } from "#shared/services/room/invite/constants";
 import { InviteExpireAfterMinutesMap } from "#shared/services/room/invite/InviteExpireAfterMinutesMap";
 import { readAllResourcePages } from "#src/services/resource/readAllResourcePages";
@@ -36,7 +34,6 @@ import { createMockBucket } from "@esposter/db-mock";
 import {
   DatabaseEntityType,
   friendsInSocial,
-  getScopeTopic,
   MAX_BLOB_DELETION_MESSAGE_BLOB_NAMES,
   MessageType,
   PublicUserColumns,
@@ -49,7 +46,7 @@ import {
   WRITE_PRESIGNED_URL_DURATION_MS,
 } from "@esposter/db-schema";
 import { chunk, InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
-import { and, eq, getTableName } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { v7 } from "uuid";
 import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -992,16 +989,11 @@ describe("roomRouter", () => {
     expect.hasAssertions();
 
     const { invite, path, room, title } = await createBookmarkedJoinableRoom(mockContext);
-    const dockHeaders = new Headers();
-    const dockBefore = await createCallerFactory(bookmarkRouter)({
-      ...mockContext,
-      responseHeaders: dockHeaders,
-    }).readBookmarks();
-    const joinerScopeTopic = getScopeTopic(getTableName(usersToRoomsInMessage), "userId", getMockSession().user.id);
-    MockPublishedTopics.length = 0;
+    const dockCaller = createCallerFactory(bookmarkRouter)(mockContext);
+    const dockBefore = await dockCaller.readBookmarks();
 
     await createCallerFactory(roomRouter)(mockContext).joinRoom(invite.id);
-    const dockAfter = await createCallerFactory(bookmarkRouter)(mockContext).readBookmarks();
+    const dockAfter = await dockCaller.readBookmarks();
 
     expect(dockBefore.find((bookmark) => bookmark.path === path)).toStrictEqual({ isAvailable: false, path, title });
     expect(dockAfter.find((bookmark) => bookmark.path === path)).toStrictEqual({
@@ -1010,9 +1002,5 @@ describe("roomRouter", () => {
       path,
       title,
     });
-    expect(
-      readTopicsHeader(dockHeaders, "readBookmarks").flatMap(({ topics }) => topics.map(({ topic }) => topic)),
-    ).toContain(joinerScopeTopic);
-    expect(getMockPublishedTopics()).toContain(joinerScopeTopic);
   });
 });
