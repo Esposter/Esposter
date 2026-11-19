@@ -7,3 +7,5 @@ export const TODO_EXCLUDED_PATHSPECS: string[] = [
   ":(exclude)scripts/src/services/sweeps/todos",
   CLAUDE_PATHSPEC_EXCLUDE,
 ];
+// The links GitHub's own record answers for, read in one request by the report
+export const GITHUB_URL_PREFIX = "https://github.com/";

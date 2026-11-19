@@ -1,4 +1,4 @@
-import { createColor } from "#src/services/outdatedDependencies/print/createColor";
+import { createColor } from "#src/services/shared/createColor";
 import { getColorizedLatestVersion } from "#src/services/outdatedDependencies/print/getColorizedLatestVersion";
 import { describe, expect, test } from "vitest";
 

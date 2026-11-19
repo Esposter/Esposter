@@ -1,6 +1,6 @@
 import type { ColorPalette } from "#src/models/shared/ColorPalette";
 
-import { wrap } from "#src/services/outdatedDependencies/print/wrap";
+import { wrap } from "#src/services/shared/wrap";
 
 export const createColor = (isColorEnabled: boolean): ColorPalette => ({
   cyan: (text) => (isColorEnabled ? wrap(36, text) : text),

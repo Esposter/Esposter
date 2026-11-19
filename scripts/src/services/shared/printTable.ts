@@ -1,8 +1,8 @@
 import type { ColorPalette } from "#src/models/shared/ColorPalette";
 
-import { createTableBorder } from "#src/services/outdatedDependencies/print/createTableBorder";
-import { getVisibleLength } from "#src/services/outdatedDependencies/print/getVisibleLength";
-import { padEndVisible } from "#src/services/outdatedDependencies/print/padEndVisible";
+import { createTableBorder } from "#src/services/shared/createTableBorder";
+import { getVisibleLength } from "#src/services/shared/getVisibleLength";
+import { padEndVisible } from "#src/services/shared/padEndVisible";
 
 export const printTable = (headers: string[], rows: string[][], color: ColorPalette): void => {
   const widths = headers.map((header, index) =>

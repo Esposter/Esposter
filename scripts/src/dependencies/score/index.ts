@@ -3,7 +3,7 @@ import { printDependencyScores } from "#src/services/dependencies/score/printDep
 import { printTopBundles } from "#src/services/dependencies/score/printTopBundles";
 import { readDependencyScores } from "#src/services/dependencies/score/readDependencyScores";
 import { runAnalyze } from "#src/services/dependencies/score/runAnalyze";
-import { createColor } from "#src/services/outdatedDependencies/print/createColor";
+import { createColor } from "#src/services/shared/createColor";
 import { runCommand } from "#src/services/timing/runCommand";
 import { defineCommand } from "citty";
 

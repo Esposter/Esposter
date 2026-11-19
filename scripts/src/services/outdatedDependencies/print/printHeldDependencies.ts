@@ -3,7 +3,7 @@ import type { OutdatedDependency } from "#src/models/outdatedDependencies/shared
 import type { ColorPalette } from "#src/models/shared/ColorPalette";
 
 import { getColorizedLatestVersion } from "#src/services/outdatedDependencies/print/getColorizedLatestVersion";
-import { printTable } from "#src/services/outdatedDependencies/print/printTable";
+import { printTable } from "#src/services/shared/printTable";
 import { RENOVATE_CONFIGURATION_FILE } from "#src/services/shared/constants";
 
 export const printHeldDependencies = (heldDependencies: HeldDependency[], color: ColorPalette): void => {

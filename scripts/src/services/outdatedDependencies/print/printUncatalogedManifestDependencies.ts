@@ -2,7 +2,7 @@ import type { ManifestDependency } from "#src/models/outdatedDependencies/shared
 import type { ColorPalette } from "#src/models/shared/ColorPalette";
 
 import { getDependencyType } from "#src/services/outdatedDependencies/getDependencyType";
-import { printTable } from "#src/services/outdatedDependencies/print/printTable";
+import { printTable } from "#src/services/shared/printTable";
 
 export const printUncatalogedManifestDependencies = (dependencies: ManifestDependency[], color: ColorPalette): void => {
   if (dependencies.length === 0) return;

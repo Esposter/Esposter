@@ -2,7 +2,7 @@ import type { OutdatedDependency } from "#src/models/outdatedDependencies/shared
 import type { ColorPalette } from "#src/models/shared/ColorPalette";
 
 import { getColorizedLatestVersion } from "#src/services/outdatedDependencies/print/getColorizedLatestVersion";
-import { printTable } from "#src/services/outdatedDependencies/print/printTable";
+import { printTable } from "#src/services/shared/printTable";
 
 export const printOutdatedDependencies = (outdatedDependencies: OutdatedDependency[], color: ColorPalette): void => {
   if (outdatedDependencies.length === 0) return;

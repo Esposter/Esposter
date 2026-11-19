@@ -1,4 +1,4 @@
-import { createTableBorder } from "#src/services/outdatedDependencies/print/createTableBorder";
+import { createTableBorder } from "#src/services/shared/createTableBorder";
 import { describe, expect, test } from "vitest";
 
 describe(createTableBorder, () => {

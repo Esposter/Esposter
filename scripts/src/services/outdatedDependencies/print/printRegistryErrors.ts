@@ -1,7 +1,7 @@
 import type { ColorPalette } from "#src/models/shared/ColorPalette";
 import type { RegistryCheckError } from "#src/models/shared/RegistryCheckError";
 
-import { printTable } from "#src/services/outdatedDependencies/print/printTable";
+import { printTable } from "#src/services/shared/printTable";
 
 export const printRegistryErrors = (errors: RegistryCheckError[], color: ColorPalette): void => {
   if (errors.length === 0) return;

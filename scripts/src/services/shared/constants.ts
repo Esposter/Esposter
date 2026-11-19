@@ -87,6 +87,11 @@ export const FIELD_SEPARATOR = "\u001F";
 // Excerpt.
 // oxlint-disable-next-line no-control-regex -- the escape is the sequence's opener; `isolatedDeclarations` demands the annotation
 export const ANSI_ESCAPE_REGEX: RegExp = /\u001B\[[\d;]*m/gu;
+// The opener of an ANSI SGR sequence, and the sequence returning the foreground to the terminal's default
+export const ANSI_ESCAPE = "\u001B";
+
+// oxlint-disable-next-line typescript/no-inferrable-types -- isolatedDeclarations demands the annotation this value would otherwise infer
+export const ANSI_FOREGROUND_RESET: string = `${ANSI_ESCAPE}[39m`;
 // `pnpm run` names the executable it is in `npm_execpath` — the native binary, or the `pnpm.cjs` corepack ships
 // That node runs — so a script spawns that file with its args and never a shell: the `pnpm` on a Windows PATH is
 // A `.cmd` shim only a shell resolves, and an args array under `shell` is what Node deprecates (DEP0190). Bare

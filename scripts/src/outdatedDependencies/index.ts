@@ -12,7 +12,7 @@ import { getUncatalogedManifestDependencies } from "#src/services/outdatedDepend
 import { readNpmProjects } from "#src/services/outdatedDependencies/npm/readNpmProjects";
 import { getRegularOutdatedDependencies } from "#src/services/outdatedDependencies/pnpm/getRegularOutdatedDependencies";
 import { omitDependents } from "#src/services/outdatedDependencies/pnpm/omitDependents";
-import { createColor } from "#src/services/outdatedDependencies/print/createColor";
+import { createColor } from "#src/services/shared/createColor";
 import { printExecutionTime } from "#src/services/outdatedDependencies/print/printExecutionTime";
 import { printHeldDependencies } from "#src/services/outdatedDependencies/print/printHeldDependencies";
 import { printMismatches } from "#src/services/outdatedDependencies/print/printMismatches";

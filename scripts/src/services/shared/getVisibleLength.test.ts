@@ -1,5 +1,5 @@
-import { createColor } from "#src/services/outdatedDependencies/print/createColor";
-import { getVisibleLength } from "#src/services/outdatedDependencies/print/getVisibleLength";
+import { createColor } from "#src/services/shared/createColor";
+import { getVisibleLength } from "#src/services/shared/getVisibleLength";
 import { describe, expect, test } from "vitest";
 
 describe(getVisibleLength, () => {

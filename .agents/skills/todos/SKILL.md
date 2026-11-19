@@ -11,7 +11,7 @@ An `@TODO` marks a workaround the repository carries because something outside i
 
 - **A TODO for our own work** — "retirement removes this", "until the actions name meanings", "clean up once X is migrated". Work of ours is done in the change that finds it, or it is a GitHub issue (`.agents/issue-tracker.md`) or a proposal (the `openspec` skill, `references/page-shapes.md`). A marker for it is a finding to fix now, never a line to reword.
 - **A TODO linking one of our own issues.** The issue is the record, and the code carries no marker for it.
-- **A pull request to another project's repository, or a fork made for one.** Each one spends a maintainer's review time on a change they never asked for, and for now we keep that cost off them, even when the ask is to fix the gap. A gap only upstream can close goes to the user as its cause, the fix and the evidence. In the repo, it waits as a marker on the upstream record when a workaround is carried, or in the unfiled form when no record exists. Filing an issue stays the owner's, by hand ("Unfiled upstream issues"). The report the owner files is drafted as `references/upstream-reports.md` says.
+- **A pull request to another project's repository, or a fork made for one.** Each one spends a maintainer's review time on a change they never asked for, and for now we keep that cost off them, even when the ask is to fix the gap. A gap only upstream can close goes to the user as its cause, the fix and the evidence. In the repo, it waits as a marker on the upstream record when a workaround is carried, or in the unfiled form when no record exists. Filing an issue stays the owner's, by hand, and `pnpm ai:todos:report` lists every unfiled marker to file. The report the owner files is drafted as `references/upstream-reports.md` says.
 - **A condition in words in place of the link** — "once nuxt fixes its types", "in nitro v3". Nobody can check it, so it reads the same the day the condition is met as the day it was written; the link is what a later reader opens to find out.
 
 ## The form
@@ -23,7 +23,7 @@ The marker is followed by the link and nothing else first — `scripts/src/works
 
 **The link is the thing whose resolution ends the workaround** — the upstream issue or pull request, the `webstatus.dev` feature, the release. A search result, a discussion that tracks nothing or a docs page does not end anything. When no issue exists yet, one is filed upstream before the marker is written, and a limitation upstream closes as won't-fix or documents as intended is no longer a TODO: the workaround is permanent, so it keeps a plain comment saying why, and that comment may cite the upstream record.
 
-**When no issue exists yet and none is filed now**, the marker says so in place of the link — `// @TODO: no upstream issue — <what waits, and on whom>` — and its file is listed under "Unfiled upstream issues", on this page, with the repository to file against, so the reminder to file one lives in one place. `scripts/src/workspace/todos.test.ts` holds that list to the tree both ways. Once filed, the marker takes the link and the row goes.
+**When no issue exists yet and none is filed now**, the marker says so in place of the link — `// @TODO: no upstream issue — <what waits, and on whom>` — naming the repository to file against. The marker is the one reminder: `pnpm ai:todos:report` lists it until it takes a link, so no list beside the tree is kept. A session files the issue once its minimal reproduction is proven and the tracker holds no issue with the same cause (`references/upstream-reports.md`); an open issue with the same cause gets a comment with the reproduction instead, and the marker links what was filed or found.
 
 **What to remove follows the link, in one clause, when it is not obvious** — `— drop getSynchronizedFunction once Nitro awaits its plugins`. A marker over a single-purpose line (`// @TODO: https://github.com/vuejs/core/issues/11371` on a `Props` the compiler cannot resolve yet) needs no clause: the line under it is what goes.
 
@@ -39,7 +39,3 @@ A marker is revisited on every bump of the package it links and whenever its iss
 
 - `references/revisiting.md` — when bumping a package a marker links, or a linked issue may have closed.
 - `references/upstream-reports.md` — when a gap only upstream can close is written up and filed: the proof steps, the section order and the plain-language rules.
-
-## Unfiled upstream issues
-
-Each row is a marker in the unfiled form, waiting for its issue to be filed: the file, where it goes, and its title. A session files the issue once its minimal reproduction is proven and its tracker holds no issue with the same cause (`references/upstream-reports.md`); an open issue with the same cause gets a comment with the reproduction instead. The marker then links what it filed or found, and its row goes. The list is empty while every gap has its issue.

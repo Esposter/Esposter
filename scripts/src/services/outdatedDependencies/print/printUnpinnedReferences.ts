@@ -1,7 +1,7 @@
 import type { UnpinnedReference } from "#src/models/outdatedDependencies/shared/UnpinnedReference";
 import type { ColorPalette } from "#src/models/shared/ColorPalette";
 
-import { printTable } from "#src/services/outdatedDependencies/print/printTable";
+import { printTable } from "#src/services/shared/printTable";
 
 export const printUnpinnedReferences = (references: UnpinnedReference[], color: ColorPalette): void => {
   if (references.length === 0) return;

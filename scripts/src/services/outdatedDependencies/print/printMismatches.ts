@@ -1,7 +1,7 @@
 import type { Mismatch } from "#src/models/outdatedDependencies/shared/Mismatch";
 import type { ColorPalette } from "#src/models/shared/ColorPalette";
 
-import { printTable } from "#src/services/outdatedDependencies/print/printTable";
+import { printTable } from "#src/services/shared/printTable";
 
 export const printMismatches = (mismatches: Mismatch[], color: ColorPalette): void => {
   if (mismatches.length === 0) return;

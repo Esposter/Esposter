@@ -1,5 +1,5 @@
-import { createColor } from "#src/services/outdatedDependencies/print/createColor";
-import { padEndVisible } from "#src/services/outdatedDependencies/print/padEndVisible";
+import { createColor } from "#src/services/shared/createColor";
+import { padEndVisible } from "#src/services/shared/padEndVisible";
 import { describe, expect, test } from "vitest";
 
 describe(padEndVisible, () => {

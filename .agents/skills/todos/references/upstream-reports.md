@@ -1,6 +1,6 @@
 # Writing an upstream report
 
-Read when a gap only upstream can close is written up and filed ("Unfiled upstream issues" in `SKILL.md`).
+Read when a gap only upstream can close is written up and filed (the unfiled markers `pnpm ai:todos:report` lists).
 
 A report is a small, checked experiment that someone else can run in a minute. It does not describe this repository. It is written after the experiment is proven, never before.
 
