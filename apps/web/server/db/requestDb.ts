@@ -8,7 +8,7 @@ export const requestDbStorage = new AsyncLocalStorage<Database>();
 
 // The handle a statement runs through: the request's recorded handle when a request is in scope, so the statement's writes
 // Are named with the request's. Outside one it is the D1 handle itself
-const getRequestDb = (): Database => requestDbStorage.getStore() ?? db;
+const getRequestDb = () => requestDbStorage.getStore() ?? db;
 
 // The handle better-auth writes through. Its instance is built once for every request, so each call reads the handle of
 // The request it serves when the call runs, not when the instance is built. A function is bound to the handle it was read
