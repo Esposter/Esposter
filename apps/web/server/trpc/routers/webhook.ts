@@ -23,6 +23,7 @@ import { inJsonArray } from "@esposter/db";
 import {
   appUsersInMessage,
   DatabaseEntityType,
+  PublicWebhookColumns,
   roomIdSchema,
   RoomPermission,
   roomsInMessage,
@@ -94,7 +95,7 @@ export const webhookRouter = router({
   ).mutation<PublicWebhookInMessage>(async ({ ctx, input: { id, roomId } }) => {
     const webhook = await requireEntity(
       ctx.db.query.webhooksInMessage.findFirst({
-        columns: { tokenHash: false },
+        columns: PublicWebhookColumns,
         where: { id: { eq: id }, roomId: { eq: roomId } },
       }),
       DatabaseEntityType.Webhook,
@@ -122,7 +123,7 @@ export const webhookRouter = router({
     WebhookInMessageWithRelations[]
   >(({ ctx, input: { roomId } }) =>
     ctx.db.query.webhooksInMessage.findMany({
-      columns: { tokenHash: false },
+      columns: PublicWebhookColumns,
       orderBy: { id: "desc" },
       where: { roomId: { eq: roomId } },
       with: WebhookInMessageRelations,
