@@ -3,12 +3,10 @@ import type { Page, ScheduledReminder } from "@esposter/db-schema";
 
 import { useRoomObject } from "#server/composables/realtime/useRoomObject";
 import { useUserObject } from "#server/composables/realtime/useUserObject";
-import { getScheduledMessageTopics } from "#server/services/message/getScheduledMessageTopics";
 import { readMyScheduledMessageJobs } from "#server/services/message/scheduledMessageJob/readMyScheduledMessageJobs";
 import { getRoomActor } from "#server/services/realtime/getRoomActor";
 import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
 import { router } from "#server/trpc/index";
-import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { getMemberProcedure } from "#server/trpc/procedure/room/getMemberProcedure";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { readMyScheduledMessagesInputSchema } from "#shared/models/db/message/scheduledMessage/ReadMyScheduledMessagesInput";
@@ -22,32 +20,29 @@ import { v7 } from "uuid";
 export const scheduledMessageJobRouter = router({
   // A reminder is the person's own row, so their object answers first. A miss means the id is a scheduled message, which
   // Its room's object deletes for the sender who scheduled it and for nobody else
-  cancelScheduledMessageJob: getTopicsProcedure(
-    standardAuthedProcedure.input(scheduledMessageIdentityInputSchema),
-    getScheduledMessageTopics,
-  ).mutation<void>(async ({ ctx, input: { id, roomId } }) => {
-    if (await useUserObject(ctx.user.id).removeReminder(id)) return;
+  cancelScheduledMessageJob: standardAuthedProcedure
+    .input(scheduledMessageIdentityInputSchema)
+    .mutation<void>(async ({ ctx, input: { id, roomId } }) => {
+      if (await useUserObject(ctx.user.id).removeReminder(id)) return;
 
-    const isDeleted = await useRoomObject(roomId).deleteScheduledMessage(id, getRoomActor(ctx));
-    if (!isDeleted) throw getNotFoundError(DatabaseEntityType.ScheduledMessageJob, id);
-  }),
-  readMyScheduledMessageJobs: getTopicsProcedure(
-    standardAuthedProcedure.input(readMyScheduledMessagesInputSchema),
-    getScheduledMessageTopics,
-  ).query<Page<ScheduledMessageJobWithRoom>>(({ ctx, input }) =>
-    readMyScheduledMessageJobs(ctx.db, ctx.user.id, input),
-  ),
-  readMyScheduledMessageJobsCount: getTopicsProcedure(standardAuthedProcedure, getScheduledMessageTopics).query<number>(
-    ({ ctx }) => useUserObject(ctx.user.id).countScheduledMessageJobs(),
+      const isDeleted = await useRoomObject(roomId).deleteScheduledMessage(id, getRoomActor(ctx));
+      if (!isDeleted) throw getNotFoundError(DatabaseEntityType.ScheduledMessageJob, id);
+    }),
+  readMyScheduledMessageJobs: standardAuthedProcedure
+    .input(readMyScheduledMessagesInputSchema)
+    .query<Page<ScheduledMessageJobWithRoom>>(({ ctx, input }) =>
+      readMyScheduledMessageJobs(ctx.db, ctx.user.id, input),
+    ),
+  readMyScheduledMessageJobsCount: standardAuthedProcedure.query<number>(({ ctx }) =>
+    useUserObject(ctx.user.id).countScheduledMessageJobs(),
   ),
   // A reminder is written to its owner's object, which the alarm sends at `runAt`. Its room is what the notification links
   // To, so only a member of that room can set one
-  scheduleReminder: getTopicsProcedure(
-    getMemberProcedure(scheduleReminderInputSchema, "roomId"),
-    getScheduledMessageTopics,
-  ).mutation<ScheduledReminder>(async ({ ctx, input }) => {
-    const reminder = { id: v7(), roomId: input.roomId, runAt: input.runAt, text: input.text };
-    await useUserObject(ctx.user.id).addReminder(reminder);
-    return reminder;
-  }),
+  scheduleReminder: getMemberProcedure(scheduleReminderInputSchema, "roomId").mutation<ScheduledReminder>(
+    async ({ ctx, input }) => {
+      const reminder = { id: v7(), roomId: input.roomId, runAt: input.runAt, text: input.text };
+      await useUserObject(ctx.user.id).addReminder(reminder);
+      return reminder;
+    },
+  ),
 });
