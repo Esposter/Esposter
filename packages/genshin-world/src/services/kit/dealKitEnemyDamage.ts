@@ -4,7 +4,10 @@ import type { EnergyDrop } from "#src/models/enemy/EnergyDrop";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitContext } from "#src/models/kit/KitContext";
 
+import { WorldEffectKind } from "#src/models/effects/WorldEffectKind";
 import { EnemyState } from "#src/models/enemy/EnemyState";
+import { addWorldEffect } from "#src/services/effects/addWorldEffect";
+import { ENERGY_DROP_SECONDS } from "#src/services/effects/constants";
 import { damageEnemy } from "#src/services/enemy/damageEnemy";
 import { triggerKitNightsoulBurst } from "#src/services/kit/triggerKitNightsoulBurst";
 
@@ -21,6 +24,16 @@ export const dealKitEnemyDamage = (
 ): EnergyDrop[] => {
   const isAlive = enemy.state !== EnemyState.Dead;
   const energyDrops = damageEnemy(enemy, hit);
+  // A defeated enemy's energy drops fly from where it fell to the member on the field, which collects them
+  if (enemy.state === EnemyState.Dead) {
+    const flights = energyDrops.map(() => ({
+      kind: WorldEffectKind.EnergyDrop,
+      position: enemy.position,
+      seconds: ENERGY_DROP_SECONDS,
+      target: context.body.position,
+    }));
+    for (const flight of flights) addWorldEffect(context.worldEffects, flight);
+  }
   if (isElemental && isAlive && hit.damage > 0 && striker) triggerKitNightsoulBurst(enemy, striker, context);
   return energyDrops;
 };

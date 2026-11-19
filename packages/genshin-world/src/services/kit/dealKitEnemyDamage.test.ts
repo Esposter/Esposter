@@ -3,9 +3,11 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEvent } from "#src/models/kit/KitEvent";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { WorldEffectKind } from "#src/models/effects/WorldEffectKind";
 import { EnemyState } from "#src/models/enemy/EnemyState";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { ENERGY_DROP_SECONDS } from "#src/services/effects/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
@@ -98,5 +100,21 @@ describe(dealKitEnemyDamage, () => {
     const { bursts, context } = createNatlanTeam();
     dealKitEnemyDamage(createSturdyEnemy(), { damage: 100, poiseDamage: 0 }, true, undefined, context);
     expect(bursts).toHaveLength(0);
+  });
+
+  test("a defeated enemy's energy drops fly to the party", () => {
+    expect.hasAssertions();
+    const { context, striker } = createNatlanTeam();
+    const enemy = { ...createSturdyEnemy(), position: { x: 3, z: -4 } };
+    dealKitEnemyDamage(enemy, { damage: STURDY_HEALTH, poiseDamage: 0 }, false, striker, context);
+    const flight = {
+      kind: WorldEffectKind.EnergyDrop,
+      position: { x: 3, z: -4 },
+      seconds: ENERGY_DROP_SECONDS,
+      secondsRemaining: ENERGY_DROP_SECONDS,
+      target: { x: 0, z: 0 },
+    };
+
+    expect(context.worldEffects).toStrictEqual(enemy.traits.energyDrops.map(() => flight));
   });
 });

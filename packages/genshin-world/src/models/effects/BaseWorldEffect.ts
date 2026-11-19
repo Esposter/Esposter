@@ -11,4 +11,6 @@ export interface BaseWorldEffect {
   position: GroundPoint;
   // The seconds its whole life lasts, from which how far through it is read
   seconds: number;
+  // The ground point it flies to over its life, a copy of the point it was given, and none for one that holds still
+  target?: GroundPoint | undefined;
 }

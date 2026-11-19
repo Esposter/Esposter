@@ -30,16 +30,19 @@ useRafFn(() => {
     if (drawings.value.length > 0) drawings.value = [];
     return;
   }
-  drawings.value = effects.flatMap(({ damage, kind, position, seconds, secondsRemaining }) => {
-    point
-      .set(position.x - origin.x, getGroundHeight(position.x, position.z) + EFFECT_HEIGHT, position.z - origin.z)
-      .project(camera);
+  drawings.value = effects.flatMap(({ damage, kind, position, seconds, secondsRemaining, target }) => {
+    // An effect with a target is drawn where its life has carried it from its point towards that target
+    const progress = 1 - secondsRemaining / seconds;
+    const to = target ?? position;
+    const x = position.x + (to.x - position.x) * progress;
+    const z = position.z + (to.z - position.z) * progress;
+    point.set(x - origin.x, getGroundHeight(x, z) + EFFECT_HEIGHT, z - origin.z).project(camera);
     if (Math.abs(point.z) > 1) return [];
     return [
       {
         kind,
         left: ((point.x + 1) / 2) * 100,
-        progress: 1 - secondsRemaining / seconds,
+        progress,
         text: damage === undefined ? "" : String(Math.round(damage)),
         top: ((1 - point.y) / 2) * 100,
       },
@@ -95,6 +98,16 @@ measures them off the held world attacks capture */
   width: 4rem;
   height: 4rem;
   background: radial-gradient(circle, rgb(255 255 255 / 0.8) 0%, transparent 70%);
+}
+
+/* Provisional: the energy drop's size, until a recording of it is measured. It does not fade: it leaves the screen
+as it arrives */
+.energyDrop {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff 0%, transparent 70%);
+  transform: translate(-50%, -50%);
 }
 
 /* Provisional: the number's size, its rise and its fade, until task 1.1 measures them off the held world attacks capture.
