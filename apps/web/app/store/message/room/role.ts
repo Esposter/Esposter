@@ -316,10 +316,8 @@ export const useRoleStore = defineStore("message/room/role", () => {
       key: input.id,
     });
   };
-  // A role the room's list holds is drawn at once. The room's roles are only cached once a surface has read them, so an
-  // Assignment made before that has nothing to draw until the server hands back the role itself, and waits for it
-  // A role the room's list holds is drawn on the member at once. One it has not read yet is drawn from the row the server
-  // Answers with, since the client has nothing to draw it from
+  // A role the room's list holds is drawn on the member at once. The room's roles are only cached once a surface has
+  // Read them, so one it has not read yet is drawn from the row the server answers with, the only row to draw it from
   const assignRole = (input: AssignRoleInput) => {
     if (getMemberRoles(input.roomId, input.userId).some(({ id }) => id === input.roleId)) return;
     const role = getRoles(input.roomId).find(({ id }) => id === input.roleId);
