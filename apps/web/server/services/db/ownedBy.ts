@@ -1,6 +1,4 @@
-import type { AnyColumn } from "drizzle-orm";
+import { scopedBy } from "#server/services/db/scopedBy";
 
-import { and, eq } from "drizzle-orm";
-
-export const ownedBy = (table: { id: AnyColumn; userId: AnyColumn }, id: string, userId: string) =>
-  and(eq(table.id, id), eq(table.userId, userId));
+// The row with this id that the caller owns, the where-predicate every ownership guard uses
+export const ownedBy = scopedBy("userId");

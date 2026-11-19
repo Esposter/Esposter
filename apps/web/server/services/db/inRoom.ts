@@ -1,6 +1,4 @@
-import type { AnyColumn } from "drizzle-orm";
+import { scopedBy } from "#server/services/db/scopedBy";
 
-import { and, eq } from "drizzle-orm";
-
-export const inRoom = (table: { id: AnyColumn; roomId: AnyColumn }, id: string, roomId: string) =>
-  and(eq(table.id, id), eq(table.roomId, roomId));
+// The row with this id inside the room its permission was checked against, so a manager of one room cannot reach another's
+export const inRoom = scopedBy("roomId");
