@@ -16,7 +16,7 @@ const sqlTextPlugin: Plugin = {
 const vitestConfig: ViteUserConfig = {
   ...vitestConfiguration,
   plugins: [...(vitestConfiguration.plugins ?? []), sqlTextPlugin],
-  resolve: { ...vitestConfiguration.resolve, alias: { "cloudflare:workers": "@esposter/db-mock" } },
+  resolve: { ...vitestConfiguration.resolve, alias: { "cloudflare:workers": "@esposter/db-mock/cloudflare-workers" } },
 };
 
 export default vitestConfig;

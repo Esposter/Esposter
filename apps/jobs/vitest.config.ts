@@ -10,7 +10,7 @@ const vitestConfiguration: ViteUserConfig = getVitestConfiguration(import.meta.d
 // `env` `createMockDb` fills with the file's Miniflare bindings
 const vitestConfig: ViteUserConfig = {
   ...vitestConfiguration,
-  resolve: { ...vitestConfiguration.resolve, alias: { "cloudflare:workers": "@esposter/db-mock" } },
+  resolve: { ...vitestConfiguration.resolve, alias: { "cloudflare:workers": "@esposter/db-mock/cloudflare-workers" } },
 };
 
 export default vitestConfig;

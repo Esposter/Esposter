@@ -37,7 +37,8 @@ vitestConfig.test.environment = "node";
 // `env` `createMockDb` fills with the file's Miniflare bindings
 vitestConfig.resolve = {
   ...vitestConfig.resolve,
-  alias: mergeAlias(vitestConfig.resolve?.alias, { "cloudflare:workers": "@esposter/db-mock" }) ?? {},
+  alias:
+    mergeAlias(vitestConfig.resolve?.alias, { "cloudflare:workers": "@esposter/db-mock/cloudflare-workers" }) ?? {},
 };
 
 export default vitestConfig;
