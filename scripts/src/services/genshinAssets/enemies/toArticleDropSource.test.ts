@@ -33,7 +33,7 @@ describe(toArticleDropSource, () => {
     ).toStrictEqual({ type: "bossReward" });
   });
 
-  test("an article naming no drop source gives none, which the build refuses for a kind that is no boss", () => {
+  test("an article naming no drop source gives none, which the build publishes as the kind's source", () => {
     expect.hasAssertions();
 
     expect(toArticleDropSource("Stormterror", "==Drops==\nNone.")).toStrictEqual({ type: "none" });

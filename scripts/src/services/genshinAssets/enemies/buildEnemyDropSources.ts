@@ -92,7 +92,7 @@ const toDropSource = (
 };
 
 // Each kind's drop source, from its own wiki article, and the drop families the kinds of a family take, from the wiki's
-// Enemies table. A boss's article gives its reward or none, and a kind that is no boss gives a family or a Drops template.
+// Enemies table. A boss's article gives its reward or none; a kind that is no boss gives a family, template or none.
 // A kind whose article lists two Drops Tables takes the first, the one its defeat drops. Families are keyed by
 // The Drops Table type they are named by, and each material is resolved to the one item its English name is. Returns the
 // Family rows, the rows joining each family kind to its family, and every kind with the drop source its article gives
@@ -119,7 +119,7 @@ export const buildEnemyDropSources = <T extends Pick<EnemyKind, "enemyType" | "i
   const kindArticleSources = enemyKinds.map((enemyKind) => {
     const name = toEnemyKindName(enemyKind, englishTextMap);
     const articleSource = toArticleDropSource(name, readWikiPageContent(name, cacheDirectory));
-    // A boss's article gives its reward or none, and a kind that is no boss gives a family or a template
+    // A boss's article gives its reward or none, and a kind that is no boss gives a family, a template or none
     const isBossSource = articleSource.type === "bossReward" || articleSource.type === "none";
     if (enemyKind.enemyType === EnemyType.Boss && !isBossSource)
       throw new InvalidOperationError(
@@ -127,12 +127,8 @@ export const buildEnemyDropSources = <T extends Pick<EnemyKind, "enemyType" | "i
         name,
         "is a boss whose article gives a drop family or a template",
       );
-    if (enemyKind.enemyType !== EnemyType.Boss && isBossSource)
-      throw new InvalidOperationError(
-        Operation.Read,
-        name,
-        "is no boss, but its article gives no drop family or template",
-      );
+    if (enemyKind.enemyType !== EnemyType.Boss && articleSource.type === "bossReward")
+      throw new InvalidOperationError(Operation.Read, name, "is no boss, but its article gives a boss's reward");
     return { articleSource, enemyKind };
   });
   const dropFamilyRowMap = new Map<string, EnemyDropFamilyRow>();

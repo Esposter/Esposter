@@ -1,7 +1,9 @@
 import type { AnimalCodexRow } from "#src/models/genshinAssets/enemies/AnimalCodexRow";
 import type { ExcelMonsterDescribeRow } from "#src/models/genshinAssets/enemies/ExcelMonsterDescribeRow";
 import type { MonsterRow } from "#src/models/genshinAssets/enemies/MonsterRow";
+import type { ImaginariumStage } from "genshin-world";
 
+import { readPublishedGameData } from "#src/services/gameData/readPublishedGameData";
 import { ANIMAL_CODEX_TABLE_NAME } from "#src/services/genshinAssets/archive/constants";
 import { collectEnemyKindIds } from "#src/services/genshinAssets/enemies/collectEnemyKindIds";
 import {
@@ -29,11 +31,11 @@ import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameDataset } from "genshin-world";
 
-// The kinds every region's camps place and every Mondstadt bounty, weekly boss and Spiral Abyss chamber fights, each read
-// From the game's monster table with its family from the archive and its name's text id, and every level curve they name,
-// As the records of the enemies dataset. A kind the tables lack is an Error. The resistances are keyed by the world's
-// Elements, spelt as the game's tables spell them, which the world's schema checks. Returns the records the kinds and
-// Curves publish under
+// The kinds every region's camps place and every Mondstadt bounty, weekly boss, Spiral Abyss chamber and Imaginarium
+// Stage fights, each read from the game's monster table with its family from the archive and its name's text id, and
+// Every level curve they name, as the records of the enemies dataset. A kind the tables lack is an Error. The
+// Resistances are keyed by the world's Elements, spelt as the game's tables spell them, which the world's schema
+// Checks. Returns the records the kinds and curves publish under
 export const buildEnemyKinds = async (): Promise<Record<string, unknown>> => {
   const regionDatas = await readRegionCampsData();
   const monsterRows = readExcelTable<MonsterRow>(MONSTER_TABLE_NAME);
@@ -47,7 +49,11 @@ export const buildEnemyKinds = async (): Promise<Record<string, unknown>> => {
   const abyssEnemyKindIds = Object.values(
     toAbyssEnemyKinds(readAbyssDescribeIds(readAbyssFloors(), animalCodexRows), monsterRows),
   );
-  const extraKindIds = [...bountyKindIds, ...WEEKLY_BOSS_KIND_IDS, ...abyssEnemyKindIds];
+  // The monsters the published Imaginarium stages fight, which the stages record names by monster id
+  const stageEnemyKindIds = (
+    await readPublishedGameData<ImaginariumStage[]>(`${GameDataset.Imaginarium}/stages`)
+  ).flatMap(({ enemies }) => enemies.map(({ monsterId }) => monsterId));
+  const extraKindIds = [...bountyKindIds, ...WEEKLY_BOSS_KIND_IDS, ...abyssEnemyKindIds, ...stageEnemyKindIds];
   const enemyKinds = collectEnemyKindIds(regionDatas, extraKindIds).map((enemyKindId) => {
     const monsterRow = monsterRows.find(({ id }) => id === enemyKindId);
     if (!monsterRow) throw new InvalidOperationError(Operation.Read, String(enemyKindId), "has no monster row");

@@ -4,8 +4,8 @@ import { enemyTemplateMaterialSchema } from "#src/models/enemy/EnemyTemplateMate
 import { z } from "zod";
 
 // Where a kind's defeat takes its drops from, as its wiki article names it: a drop family's table, the materials of a
-// Drops template, a boss's reward, which its blossom gives and its defeat does not drop, or none, for a boss whose article
-// Names no reward
+// Drops template, a boss's reward, which its blossom gives and its defeat does not drop, or none, for a kind whose
+// Article names no drop family, template or reward
 export type EnemyDropSource =
   | { materials: EnemyTemplateMaterial[]; type: "template" }
   | { type: "bossReward" }

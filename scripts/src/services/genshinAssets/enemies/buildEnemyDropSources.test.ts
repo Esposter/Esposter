@@ -189,19 +189,21 @@ describe(buildEnemyDropSources, () => {
     );
   });
 
-  test("a boss whose article names no reward takes none, and a kind that is no boss takes none only by refusal", async () => {
+  test("a kind whose article names no drop family or template is published with source none, a boss or not", async () => {
     expect.hasAssertions();
     await writeWikiPage(cacheDirectory, "Anemo Hypostasis", "==Stats==\nNone.");
     await writeWikiPage(cacheDirectory, "Hilichurl Fighter", "==Stats==\nNone.");
 
     expect(
-      buildEnemyDropSources([anemoHypostasis], ENGLISH_TEXT_MAP, NAME_ITEM_IDS_MAP, cacheDirectory).enemyKindRows,
-    ).toStrictEqual([{ ...anemoHypostasis, dropSource: { type: "none" } }]);
-    expect(() =>
-      buildEnemyDropSources([hilichurlFighter], ENGLISH_TEXT_MAP, NAME_ITEM_IDS_MAP, cacheDirectory),
-    ).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Read, name: Hilichurl Fighter, is no boss, but its article gives no drop family or template]`,
-    );
+      buildEnemyDropSources([anemoHypostasis, hilichurlFighter], ENGLISH_TEXT_MAP, NAME_ITEM_IDS_MAP, cacheDirectory),
+    ).toStrictEqual({
+      dropFamilies: [],
+      dropFamilyKinds: [],
+      enemyKindRows: [
+        { ...anemoHypostasis, dropSource: { type: "none" } },
+        { ...hilichurlFighter, dropSource: { type: "none" } },
+      ],
+    });
   });
 
   test("a boss whose article gives a family, and a kind that is no boss whose article gives a reward, are refused", async () => {
@@ -217,7 +219,7 @@ describe(buildEnemyDropSources, () => {
     expect(() =>
       buildEnemyDropSources([hilichurlFighter], ENGLISH_TEXT_MAP, NAME_ITEM_IDS_MAP, cacheDirectory),
     ).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Read, name: Hilichurl Fighter, is no boss, but its article gives no drop family or template]`,
+      `[InvalidOperationError: Invalid operation: Read, name: Hilichurl Fighter, is no boss, but its article gives a boss's reward]`,
     );
   });
 
