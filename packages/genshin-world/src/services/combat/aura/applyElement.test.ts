@@ -112,7 +112,7 @@ describe(applyElement, () => {
     },
   );
 
-  test("swirls 0.8U of Hydro with 1U of Anemo, spreading 2.2U of Hydro", () => {
+  test("swirls 0.5U of a 0.8U Hydro with 1U of Anemo, spreading 2.2U of Hydro", () => {
     expect.hasAssertions();
 
     const state = createElementalState();
@@ -138,7 +138,7 @@ describe(applyElement, () => {
     expect(state.auras.get(AuraType.Electro)?.gauge).toBeCloseTo(0.3);
   });
 
-  test("crystallizes the Electro of an Electro-Charged target and not the Hydro beside it, once a second", () => {
+  test("crystallizes the Electro of an Electro-Charged target and not the Hydro beside it", () => {
     expect.hasAssertions();
 
     const hydro = { decayRate: 0, gauge: 1, isImmutable: false };
