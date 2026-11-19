@@ -27,6 +27,10 @@ const input = useTemplateRef("input");
 const optionsLabel = computed(
   () => `+${hiddenParameters.value.length} ${pluralize("option", hiddenParameters.value.length)}`,
 );
+// The option the arrow keys have selected, or the first while none is
+const selectedHiddenParameter = computed(
+  () => hiddenParameters.value[selectedHiddenIndex.value] ?? hiddenParameters.value[0],
+);
 
 useFocusWhenActive(input, () => isFocused);
 </script>
@@ -76,14 +80,12 @@ useFocusWhenActive(input, () => isFocused);
             selectNextHiddenParameter();
           } else if (event.key === 'Enter') {
             event.preventDefault();
-            const parameter = hiddenParameters[selectedHiddenIndex] ?? hiddenParameters[0];
-            if (parameter) emit('createParameter', parameter.name);
+            if (selectedHiddenParameter) emit('createParameter', selectedHiddenParameter.name);
           } else if (event.key.length === 1 && !checkHasChordModifier(event)) {
             event.preventDefault();
-            const parameter = hiddenParameters[selectedHiddenIndex] ?? hiddenParameters[0];
-            if (parameter) {
-              emit('createParameter', parameter.name);
-              emit('updateParameterValue', parameter.name, event.key);
+            if (selectedHiddenParameter) {
+              emit('createParameter', selectedHiddenParameter.name);
+              emit('updateParameterValue', selectedHiddenParameter.name, event.key);
             }
           }
         }
