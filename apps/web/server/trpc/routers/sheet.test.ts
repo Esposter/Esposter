@@ -39,14 +39,7 @@ describe("sheetRouter", () => {
 
     expect(newResource.type).toBe(ResourceType.Sheet);
 
-    const sheetResource: SheetResource = {
-      data: {
-        columns: [],
-        metadata: { dataSourceType: DataSourceType.Csv, importedAt: new Date(0), name: "", size: 0 },
-        rows: [],
-      },
-      settings: { configuration: { delimiter: CsvDelimiter.Comma }, type: DataSourceType.Csv },
-    };
+    const sheetResource = createSheetResource([], []);
     await caller.saveResourceContent({
       content: sheetResource,
       contentVersion: newResource.contentVersion,
@@ -67,14 +60,7 @@ describe("sheetRouter", () => {
     // As the string it was stored as
     const cell = new Date(0).toISOString();
     const row = new Row({ data: { [column.id]: cell } });
-    const sheetResource: SheetResource = {
-      data: {
-        columns: [column],
-        metadata: { dataSourceType: DataSourceType.Csv, importedAt: new Date(0), name: "", size: 0 },
-        rows: [row],
-      },
-      settings: { configuration: { delimiter: CsvDelimiter.Comma }, type: DataSourceType.Csv },
-    };
+    const sheetResource = createSheetResource([column], [row]);
     await caller.saveResourceContent({
       content: sheetResource,
       contentVersion: newResource.contentVersion,
