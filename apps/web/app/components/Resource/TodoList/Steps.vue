@@ -14,7 +14,6 @@ const nameRules = [UiRules.maxLength(ITEM_NAME_MAX_LENGTH)];
 const stepNameRules = [UiRules.required(), UiRules.maxLength(ITEM_NAME_MAX_LENGTH)];
 // The item's schema rejects a longer checklist, so the field stops adding at the limit rather than the save failing
 const isAtMaxSteps = computed(() => (modelValue.value?.length ?? 0) >= TODO_LIST_ITEM_STEPS_MAX_LENGTH);
-// A browser global the template cannot reach
 const addStep = () => {
   if (isAtMaxSteps.value || !name.value) return;
   modelValue.value = [...(modelValue.value ?? []), { id: v7(), name: name.value }];
