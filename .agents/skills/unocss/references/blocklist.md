@@ -10,8 +10,3 @@ The generator honours it by emitting nothing for a blocked token, and `unocss/bl
 config) reports the attribute or `class` literal that wrote one, with the message. A string inside a `:class`
 expression is out of the rule's reach, so `apps/web/app/templates.test.ts` checks those against the same list. A new alias found in the tree
 joins the list rather than the prose.
-
-**Blocking a spelling is a render change, so it owes `pnpm test app/App.test.ts -u --run`.** The attribute
-survives into the rendered markup, and the committed HTML beside each component (`apps/web/app/components/**/<Name>.snapshot.html`) is the only place
-that still holds the old one — no linter reads a snapshot, so the rewrite of the components passes every check
-and the suite goes red on a file the change never touched.

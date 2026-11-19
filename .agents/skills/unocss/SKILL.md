@@ -30,7 +30,7 @@ When the same attributify utility combination recurs across components, define a
 
 ## One spelling per utility — the blocklist
 
-`BLOCKED_SPELLINGS` in `uno.config.ts` is the one source of which spelling is canonical — `unocss/blocklist` reports the rest — and blocking one owes `pnpm test app/App.test.ts -u --run` (`references/blocklist.md`).
+`BLOCKED_SPELLINGS` in `uno.config.ts` is the one source of which spelling is canonical — `unocss/blocklist` reports the rest (`references/blocklist.md`).
 
 ## The resolved-config snapshot
 

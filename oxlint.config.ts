@@ -466,10 +466,14 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
           "Assert the whole value with `toStrictEqual`, which checks the class too — `toBeInstanceOf` passes whatever the fields hold. See the testing skill.",
         toMatchObject:
           "Use `toStrictEqual` — `toMatchObject` passes while the fields it does not name drift. See the testing skill.",
+        toMatchSnapshot:
+          "Assert the value with `toStrictEqual` or an inline snapshot, or keep a shipped output beside its code with `toMatchFileSnapshot` — a `__snapshots__` file is one nobody reads. See the testing skill.",
         toThrow:
           "Assert a throw with `toThrowErrorMatchingInlineSnapshot()` — it captures the exact message. See the testing skill.",
         toThrowError:
           "Assert a throw with `toThrowErrorMatchingInlineSnapshot()` — it captures the exact message. See the testing skill.",
+        toThrowErrorMatchingSnapshot:
+          "Assert a throw with `toThrowErrorMatchingInlineSnapshot()` — the message belongs at the call site, not in a `__snapshots__` file. See the testing skill.",
       },
     ],
     "vitest/prefer-called-once": "off",
