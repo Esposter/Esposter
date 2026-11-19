@@ -12,12 +12,11 @@ import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { router } from "#server/trpc/index";
 import { createResourceProcedures } from "#server/trpc/procedure/resource/createResourceProcedures";
 import { getOwnerProcedure } from "#server/trpc/procedure/resource/getOwnerProcedure";
+import { issueProgramInvitesInputSchema } from "#shared/models/db/program/IssueProgramInvitesInput";
 import { regenerateProgramParticipantTokenInputSchema } from "#shared/models/db/program/RegenerateProgramParticipantTokenInput";
 import { resourceIdInputSchema } from "#shared/models/db/resource/ResourceIdInput";
-import { ProgramInviteScope } from "#shared/models/resource/program/ProgramInviteScope";
 import { DatabaseEntityType, McpScope, ResourceType } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
-import { z } from "zod";
 
 export const programRouter = router({
   ...createResourceProcedures(ResourceType.Program),
@@ -34,11 +33,7 @@ export const programRouter = router({
     .mutation<GeneratedProgramParticipants>(({ ctx }) => generateProgramParticipants(ctx, ctx.resource.id)),
   // The invite export issues each participant in scope a new link, the one answer besides generation that carries links
   // Scoped to the still-awaiting for the reminder, so the reminder never re-sends a responder
-  issueProgramInvites: getOwnerProcedure(
-    ResourceType.Program,
-    z.object({ ...resourceIdInputSchema.shape, scope: z.enum(ProgramInviteScope) }),
-    "id",
-  )
+  issueProgramInvites: getOwnerProcedure(ResourceType.Program, issueProgramInvitesInputSchema, "id")
     .meta({
       humanOnly: "Issues participants new links, so every link already sent to them stops working",
       staticReason: "The invite export a person downloads once, whose links no reader shows",
