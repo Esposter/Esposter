@@ -21,5 +21,22 @@ export const useReorder = () => {
       startRestoreAnnouncement(message);
     } else announcement.value = message;
   };
-  return { announce, announcement, getKeyedOrder };
+  // A key's move of one value within its group: the new order goes to onReorder and is read out, and focus goes back to
+  // The value once it is drawn in its new place, since a moved element loses focus on the way. Undefined when no key moved it
+  const reorderByKey = <T>(
+    event: KeyboardEvent,
+    values: T[],
+    value: T,
+    onReorder: (keyedOrder: T[]) => void,
+    focusValue: () => void,
+  ) => {
+    const keyedOrder = getKeyedOrder(event, values, values.indexOf(value));
+    if (!keyedOrder) return undefined;
+
+    event.preventDefault();
+    onReorder(keyedOrder);
+    announce(keyedOrder, value);
+    return nextTick(focusValue);
+  };
+  return { announcement, reorderByKey };
 };

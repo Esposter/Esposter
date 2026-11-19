@@ -43,7 +43,7 @@ const { focus, focusedId, onKeydown } = useRovingFocus(
   { orientation: "vertical" },
 );
 const typeahead = useTypeahead();
-const { announce, announcement, getKeyedOrder } = useReorder();
+const { announcement, reorderByKey } = useReorder();
 const getDragReorderProps = useDragReorder();
 // Rows sharing a group sit together under its heading, in the order they come
 const groups = computed(() => {
@@ -97,15 +97,17 @@ const onListKeydown = async (event: KeyboardEvent) => {
   );
   const groupValues = groups.value[groupIndex]?.items.map(({ value }) => value) ?? [];
   const value = takeOne(items, index).value;
-  const keyedOrder = isReorderable ? getKeyedOrder(event, groupValues, groupValues.indexOf(value)) : undefined;
-  if (keyedOrder) {
-    event.preventDefault();
-    reorder(groupIndex, keyedOrder);
-    announce(keyedOrder, value);
-    // Re-rendered in its new place, the row is a moved element that lost focus on the way
-    await nextTick();
-    focus(value);
-  } else if (event.key === "Enter" || event.key === " ") {
+  const movedRow = isReorderable
+    ? reorderByKey(
+        event,
+        groupValues,
+        value,
+        (keyedOrder) => reorder(groupIndex, keyedOrder),
+        () => focus(value),
+      )
+    : undefined;
+  if (movedRow) await movedRow;
+  else if (event.key === "Enter" || event.key === " ") {
     // A button presses itself on either; an option and a link are pressed here
     if (row instanceof HTMLButtonElement) return;
     event.preventDefault();

@@ -7,7 +7,7 @@ import { checkIsDeepEqual } from "@esposter/shared";
 // A survey list's draft: its rows are held apart from the model, so a row the list refuses stays where it was typed,
 // Flagged, while the model keeps the last list that was valid. The model is written only once every row is valid
 export const useSurveyListEditor = <T extends object>(modelValue: Ref<T[]>, options: SurveyListEditorOptions<T>) => {
-  const { announce, announcement, getKeyedOrder } = useReorder();
+  const { announcement, reorderByKey } = useReorder();
   let rowCount = 0;
   const createRow = (item: T): SurveyListRow<T> => {
     const id = String(rowCount);
@@ -96,15 +96,18 @@ export const useSurveyListEditor = <T extends object>(modelValue: Ref<T[]>, opti
     if (event.altKey) event.stopPropagation();
 
     const ids = rows.value.map((row) => row.id);
-    const keyedOrder = getKeyedOrder(event, ids, ids.indexOf(id));
-    if (!keyedOrder) return;
-
-    event.preventDefault();
     const { target } = event;
-    moveItem(id, keyedOrder.indexOf(id));
-    announce(keyedOrder, id);
-    await nextTick();
-    if (target instanceof HTMLElement) target.focus();
+    await reorderByKey(
+      event,
+      ids,
+      id,
+      (keyedOrder) => {
+        moveItem(id, keyedOrder.indexOf(id));
+      },
+      () => {
+        if (target instanceof HTMLElement) target.focus();
+      },
+    );
   };
 
   return { addFromText, addItems, addText, announcement, errors, moveItem, onRowKeydown, removeItem, rows, updateItem };
