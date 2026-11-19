@@ -1,7 +1,6 @@
-import type { ExcelFishRow } from "#src/models/genshinAssets/fishing/ExcelFishRow";
 import type { Fish } from "genshin-world";
 
-export const toFish = (row: ExcelFishRow): Fish => ({
+export const toFish = (row: Fish): Fish => ({
   attractRange: row.attractRange,
   biteTimeout: row.biteTimeout,
   bonusDuration: row.bonusDuration,

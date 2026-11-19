@@ -1,4 +1,4 @@
-import type { ExcelFishRow } from "#src/models/genshinAssets/fishing/ExcelFishRow";
+import type { Fish } from "genshin-world";
 
 import { toFish } from "#src/services/genshinAssets/fishing/toFish";
 import { describe, expect, test } from "vitest";
@@ -10,7 +10,7 @@ describe(toFish, () => {
   test("a fish record keeps its monster id and category", () => {
     expect.hasAssertions();
 
-    const row: ExcelFishRow = {
+    const row: Fish = {
       attractRange: 0,
       biteTimeout: 0,
       bonusDuration: [],

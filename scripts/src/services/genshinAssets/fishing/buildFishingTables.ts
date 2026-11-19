@@ -4,10 +4,10 @@ import type { ExcelFishPoolRow } from "#src/models/genshinAssets/fishing/ExcelFi
 import type { ExcelFishProficientRow } from "#src/models/genshinAssets/fishing/ExcelFishProficientRow";
 import type { ExcelFishRewardRow } from "#src/models/genshinAssets/fishing/ExcelFishRewardRow";
 import type { ExcelFishRodRow } from "#src/models/genshinAssets/fishing/ExcelFishRodRow";
-import type { ExcelFishRow } from "#src/models/genshinAssets/fishing/ExcelFishRow";
 import type { ExcelFishSkillRow } from "#src/models/genshinAssets/fishing/ExcelFishSkillRow";
 import type { ExcelFishStockRow } from "#src/models/genshinAssets/fishing/ExcelFishStockRow";
 import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
+import type { Fish } from "genshin-world";
 
 import { toFish } from "#src/services/genshinAssets/fishing/toFish";
 import { toFishingBait } from "#src/services/genshinAssets/fishing/toFishingBait";
@@ -29,7 +29,7 @@ export const buildFishingTables = (cityRegionMap: ReadonlyMap<number, string>): 
   const poolRows = readExcelTable<ExcelFishPoolRow>("FishPoolExcelConfigData");
   const { regionPools, skippedPools } = toFishingPoolsByRegion(poolRows, stocks, cityRegionMap);
   const poolIdFishIdsMap = new Map(poolRows.map((row) => [row.id, toFishingPoolFishIds(row, stocks)]));
-  const fishRows = readExcelTable<ExcelFishRow>("FishExcelConfigData");
+  const fishRows = readExcelTable<Fish>("FishExcelConfigData");
   const fish = fishRows.map((row) => toFish(row));
   const groupIdTagsMap = new Map(
     readExcelTable<ExcelFeatureTagGroupRow>("FeatureTagGroupExcelConfigData").map((group) => [
