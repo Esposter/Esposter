@@ -64,4 +64,4 @@
 
 ## 7. Specs
 
-- [ ] 7.1 Rewrite the "Live reads" section of the client-data design and the topic section of the cloudflare-services design for the inferred mechanism, and archive this change with its spec deltas. Verified by `openspec validate` passing with the deltas and the archive moving the change into the specs.
+- [x] 7.1 Rewrite the "Live reads" section of the client-data design and the topic section of the cloudflare-services design for the inferred mechanism, and archive this change with its spec deltas. Verified by `openspec validate` passing with the deltas and the archive moving the change into the specs. Evidence: the two rewrites are in `caa4763e0e` and `997a6fdd41`, `openspec validate architecture-inferred-live-topics --strict --no-interactive` passes, and the change is archived as `2026-11-20-architecture-inferred-live-topics`.

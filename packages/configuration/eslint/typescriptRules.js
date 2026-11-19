@@ -25,7 +25,7 @@ export default {
       // Through the object's invoke, which records the reads of each call and publishes its writes. A stub named any other way
       // Records nothing and publishes nothing, so a topic's Topic object is named through `publishTopics` alone
       message:
-        "Name a Durable Object through `getObjectStub` (`@esposter/db`), so its invoke records each call's reads and publishes its writes. See openspec/changes/architecture-inferred-live-topics/design.md (Object invocations).",
+        "Name a Durable Object through `getObjectStub` (`@esposter/db`), so its invoke records each call's reads and publishes its writes. See openspec/changes/archive/2026-11-20-architecture-inferred-live-topics/design.md (Object invocations).",
       selector: "MemberExpression[property.name=/^(idFromName|idFromString|newUniqueId)$/]",
     },
     {
