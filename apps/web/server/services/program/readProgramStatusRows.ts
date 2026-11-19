@@ -4,9 +4,9 @@ import type { ResourceInResource } from "@esposter/db-schema";
 
 import { readProgramParticipantEntities } from "#server/services/program/readProgramParticipantEntities";
 import { readResourceContent } from "#server/services/resource/readResourceContent";
+import { getLiveSurveyWhere } from "#server/services/survey/getLiveSurveyWhere";
 import { readSurveyResponseEntities } from "#server/services/survey/readSurveyResponseEntities";
 import { programResourceSchema } from "#shared/models/resource/program/ProgramResource";
-import { ResourceType } from "@esposter/db-schema";
 
 // The canonical participants × responses join, purpose-built rather than routed through a generic join engine.
 // A response with no matching participant (an anonymous-era row) carries nobody, so it never appears here
@@ -31,12 +31,7 @@ export const readProgramStatusRows = async (
   const survey = content?.surveyId
     ? await db.query.resourcesInResource.findFirst({
         columns: { id: true },
-        where: {
-          deletedAt: { isNull: true },
-          id: { eq: content.surveyId },
-          type: { eq: ResourceType.Survey },
-          userId: { eq: userId },
-        },
+        where: { ...getLiveSurveyWhere(content.surveyId), userId: { eq: userId } },
       })
     : undefined;
   if (survey) {

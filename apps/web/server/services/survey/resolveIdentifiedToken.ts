@@ -1,8 +1,9 @@
 import type { SurveyResponseModeValidator } from "#server/models/survey/SurveyResponseModeValidator";
 
 import { getInvalidParticipantTokenError } from "#server/services/survey/getInvalidParticipantTokenError";
+import { getLiveSurveyWhere } from "#server/services/survey/getLiveSurveyWhere";
 import { readBoundProgramIds } from "#server/services/survey/readBoundProgramIds";
-import { programParticipantsInResource, ResourceType } from "@esposter/db-schema";
+import { programParticipantsInResource } from "@esposter/db-schema";
 import { hashSecretToken } from "@esposter/shared";
 import { and, eq, inArray } from "drizzle-orm";
 
@@ -11,9 +12,7 @@ import { and, eq, inArray } from "drizzle-orm";
 export const resolveIdentifiedToken: SurveyResponseModeValidator = async (db, surveyId, participantToken) => {
   if (!participantToken) throw getInvalidParticipantTokenError();
 
-  const survey = await db.query.resourcesInResource.findFirst({
-    where: { deletedAt: { isNull: true }, id: { eq: surveyId }, type: { eq: ResourceType.Survey } },
-  });
+  const survey = await db.query.resourcesInResource.findFirst({ where: getLiveSurveyWhere(surveyId) });
   if (!survey) throw getInvalidParticipantTokenError();
   // A recycle-binned program stays in the set: its token links were already distributed to participants,
   // And only an actual purge — not a recoverable soft-delete — should invalidate them.
