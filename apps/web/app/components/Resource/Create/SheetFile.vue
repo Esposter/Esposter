@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { SheetResource } from "#shared/models/resource/sheet/SheetResource";
 
+import { createDefaultSheetSettings } from "#shared/services/resource/sheet/createDefaultSheetSettings";
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
-import { createDefaultSheetSettings } from "#shared/services/resource/sheet/createDefaultSheetSettings";
 import { DATA_SOURCE_ACCEPT, DATA_SOURCE_ACCEPTS } from "#src/services/resource/sheet/dataSource/constants";
 import { DataSourceConfigurationMap } from "#src/services/resource/sheet/dataSource/DataSourceConfigurationMap";
 import { getDataSourceTypeByFilename } from "#src/services/resource/sheet/dataSource/getDataSourceTypeByFilename";

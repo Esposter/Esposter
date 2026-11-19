@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { createDefaultSheetSettings } from "#shared/services/resource/sheet/createDefaultSheetSettings";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import {
   DataSourceTypeItemCategoryDefinitionMap,
   DataSourceTypeItemCategoryDefinitions,
