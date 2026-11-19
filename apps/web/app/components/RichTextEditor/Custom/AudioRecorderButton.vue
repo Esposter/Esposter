@@ -54,12 +54,7 @@ useWorkerInterval(() => {
       :label="isRecording ? 'Stop recording' : 'Record audio message'"
       :meaning="isRecording ? UiIconMeaning.Stop : UiIconMeaning.Record"
       :variant="isRecording ? UiButtonVariant.Danger : undefined"
-      @click="
-        () => {
-          if (isRecording) stop();
-          else start();
-        }
-      "
+      @click="isRecording ? stop() : start()"
     />
   </div>
 </template>
