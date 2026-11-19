@@ -7,9 +7,6 @@ import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { watch } from "vue";
 
-const MOVES: readonly BossMove[] = [];
-const KIND = EnemyKindId.AeonblightDrake;
-
 // Resolves on the store's next write to the value the getter reads, which is the completion a request waits for
 const nextWrite = (read: () => unknown): Promise<void> =>
   new Promise((resolve) => {
@@ -23,6 +20,8 @@ const nextWrite = (read: () => unknown): Promise<void> =>
   });
 
 describe(useWorldEnemyKindMovesStore, () => {
+  const MOVES: readonly BossMove[] = [];
+  const KIND = EnemyKindId.AeonblightDrake;
   const originalLoader = EnemyKindMovesLoaderMap[KIND];
 
   beforeEach(() => {
