@@ -41,12 +41,8 @@ describe(copyTaskCache, () => {
     createCache(source, []);
     mkdirSync(destination);
 
-    await expect(copyTaskCache(source, destination)).rejects.toStrictEqual(
-      new InvalidOperationError(
-        Operation.Create,
-        destination,
-        `the copied task cache names archives its source no longer holds: ${ARCHIVE_NAME}`,
-      ),
+    await expect(copyTaskCache(source, destination)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: ${new InvalidOperationError(Operation.Create, destination, `the copied task cache names archives its source no longer holds: ${ARCHIVE_NAME}`).message}]`,
     );
   });
 
