@@ -5,12 +5,14 @@ import { getBucket } from "#server/services/storage/getBucket";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { createMockAuthSession, createMockContext, createMockUser } from "#server/trpc/context.test";
 import { createCallerFactory, publicProcedure, router } from "#server/trpc/index";
+import { ROW_VERSIONS_HEADER } from "#shared/services/realtime/constants";
 import { readTopicsHeader } from "#shared/services/realtime/readTopicsHeader";
-import { getWokenTopics, inJsonArray } from "@esposter/db";
+import { getScopeValue, getWokenTopics, inJsonArray } from "@esposter/db";
 import { createMockBucket } from "@esposter/db-mock";
 import {
   getBlobTopic,
   getStorageBucketBindingName,
+  invitesInMessage,
   MAX_READ_TOPICS,
   roomsInMessage,
   RoomType,
@@ -18,6 +20,7 @@ import {
   usersInAuth,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
+import { generateSecretToken, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq, getTableName } from "drizzle-orm";
 import { v7 } from "uuid";
@@ -76,7 +79,13 @@ const testRouter = router({
     await renameUser({ ctx, input });
     throw new TRPCError({ code: "BAD_REQUEST", message: "Rename refused" });
   }),
+  renameUnreturned: publicProcedure.input(renameInputSchema).mutation<void>(async ({ ctx, input }) => {
+    await ctx.db.update(usersInAuth).set({ name: input.name }).where(eq(usersInAuth.id, input.id));
+  }),
   renameUser: publicProcedure.input(renameInputSchema).mutation<undefined | UserRow>(renameUser),
+  useInvite: publicProcedure.input(z.string()).mutation<void>(async ({ ctx, input }) => {
+    await ctx.db.update(invitesInMessage).set({ uses: 1 }).where(eq(invitesInMessage.id, input)).returning();
+  }),
 });
 
 describe("inferTopicsMiddleware", () => {
@@ -85,6 +94,7 @@ describe("inferTopicsMiddleware", () => {
   const userTable = getTableName(usersInAuth);
   const usersToRoomTable = getTableName(usersToRoomsInMessage);
   const userAssetsRootTopic = getBlobTopic(getStorageBucketBindingName(StorageBucket.UserAssets), "");
+  const inviteTable = getTableName(invitesInMessage);
 
   beforeAll(async () => {
     ({ bucket: mockBuckets[StorageBucket.UserAssets] } = await createMockBucket(StorageBucket.UserAssets));
@@ -120,6 +130,49 @@ describe("inferTopicsMiddleware", () => {
       { columns: ["name", "updatedAt", "version"], topic: `${userTable}:*` },
       { columns: ["name", "updatedAt", "version"], topic: `${userTable}:id=${user.id}` },
     ]);
+  });
+
+  // A mutation names each row it changed by its key and version, so its answer settles the entry the write made at that version
+  test("names each row a mutation changed by its key and version in the row versions header", async () => {
+    expect.hasAssertions();
+
+    const context = await createMockContext();
+    const { user } = await createMockAuthSession(context.db);
+    await createTestCaller(context).renameUser({ id: user.id, name: "renamed" });
+
+    expect(context.responseHeaders.get(ROW_VERSIONS_HEADER)).toBe(
+      `renameUser ${encodeURIComponent(JSON.stringify({ key: { id: user.id }, table: userTable, version: 1 }))}`,
+    );
+  });
+
+  // A write that asks for no RETURNING is widened to name its rows, so it names the version it left them at as well
+  test("names the rows of a write that asks for no RETURNING, at the version the write left them", async () => {
+    expect.hasAssertions();
+
+    const context = await createMockContext();
+    const { user } = await createMockAuthSession(context.db);
+    await createTestCaller(context).renameUnreturned({ id: user.id, name: "renamed" });
+
+    expect(context.responseHeaders.get(ROW_VERSIONS_HEADER)).toBe(
+      `renameUnreturned ${encodeURIComponent(JSON.stringify({ key: { id: user.id }, table: userTable, version: 1 }))}`,
+    );
+  });
+
+  // An invite's code is a credential, so its row is named by the digest its topic names, never by the code itself
+  test("names a secret row by its digest, never by its credential, in the row versions header", async () => {
+    expect.hasAssertions();
+
+    const context = await createMockContext();
+    const { user } = await createMockAuthSession(context.db);
+    const room = takeOne(await context.db.insert(roomsInMessage).values({ name: "room", userId: user.id }).returning());
+    const token = generateSecretToken();
+    await context.db.insert(invitesInMessage).values({ id: token, roomId: room.id, userId: user.id });
+    await createTestCaller(context).useInvite(token);
+
+    const digest = await getScopeValue(token, true);
+    expect(context.responseHeaders.get(ROW_VERSIONS_HEADER)).toBe(
+      `useInvite ${encodeURIComponent(JSON.stringify({ key: { id: digest, roomId: room.id }, table: inviteTable, version: 1 }))}`,
+    );
   });
 
   // A procedure with a static reason is watched by no topic, however its statement reads

@@ -6,9 +6,10 @@ import { publishTopicsBestEffort } from "#server/services/realtime/publishTopics
 import { requestObjectReadsStorage } from "#server/services/realtime/requestObjectReads";
 import { requestBlobsStorage } from "#server/services/storage/requestBlobs";
 import { t } from "#server/trpc/initTrpc";
-import { TOPICS_HEADER } from "#shared/services/realtime/constants";
+import { ROW_VERSIONS_HEADER, TOPICS_HEADER } from "#shared/services/realtime/constants";
+import { formatRowVersionHeaderValue } from "#shared/services/realtime/formatRowVersionHeaderValue";
 import { formatTopicsHeaderValue } from "#shared/services/realtime/formatTopicsHeaderValue";
-import { computeReadTopics, computeWriteTopics, recordStatements } from "@esposter/db";
+import { computeReadTopics, computeWriteTopics, getWriteRowVersions, recordStatements } from "@esposter/db";
 import { fitTopicsBudget, MAX_READ_TOPICS } from "@esposter/db-schema";
 
 // The live topics of every procedure, from the statements it awaits, the blobs its buckets read or write, and the read sets
@@ -38,6 +39,14 @@ export const inferTopicsMiddleware = t.middleware(async ({ ctx, meta, next, path
       MAX_READ_TOPICS,
     );
     if (topics.length > 0) ctx.responseHeaders.append(TOPICS_HEADER, formatTopicsHeaderValue(path, { readAt, topics }));
+  }
+  // A mutation that succeeds names each row it changed by its key and the version the write left it at, so its answer settles
+  // The entry the client made for that write at those versions. A failed mutation names none: its entry drops, and a write that
+  // Landed before the failure is published below
+  if (type === "mutation" && result.ok) {
+    const rowVersions = await getWriteRowVersions(recorded.statements);
+    for (const rowVersion of rowVersions)
+      ctx.responseHeaders.append(ROW_VERSIONS_HEADER, formatRowVersionHeaderValue(path, rowVersion));
   }
   // A write is published whichever procedure makes it and however it ends, since a query may delete the rows it reads (a
   // Lapsed invite) and a write may land before the procedure fails. A published topic only wakes a reader to refetch
