@@ -17,14 +17,13 @@ import { assert, describe, expect, test } from "vitest";
 describe("dashboardVisualPreviewDatasetBindingForm", () => {
   const { trpcMsw } = setupMswTrpc();
 
-  // Picking a source reads it before binding it, so a slow read of the source picked first can land after the one
-  // Picked second — bound then, the visual charts a source the reader has already moved off
-  test("binds the source picked last when an earlier pick's read lands after it", async () => {
+  // Picking a source reads it once, and that read is the one the bound source's columns come from. A slow read of the
+  // Source picked first can land after the one picked second, and must not bind over it
+  test("reads a picked source once and binds the source picked last when an earlier read lands after it", async () => {
     expect.hasAssertions();
 
     const { promise: readGate, resolve: releaseRead } = Promise.withResolvers<void>();
     const { promise: firstReadReached, resolve: onFirstReadReached } = Promise.withResolvers<void>();
-    const { promise: boundReadReached, resolve: onBoundReadReached } = Promise.withResolvers<void>();
     const firstReference = { id: v7(), type: DatasetProviderType.Sheet };
     const secondReference = { id: v7(), type: DatasetProviderType.Sheet };
     let secondReferenceReadCount = 0;
@@ -32,11 +31,7 @@ describe("dashboardVisualPreviewDatasetBindingForm", () => {
       if (input.id === firstReference.id) {
         onFirstReadReached();
         await readGate;
-      } else {
-        secondReferenceReadCount += 1;
-        // The pick reads the source once, and the bound source's columns read it again
-        if (secondReferenceReadCount === 2) onBoundReadReached();
-      }
+      } else secondReferenceReadCount += 1;
       return { columns: [{ name: "", type: ColumnType.String }], rows: [] };
     });
     useSession.mockReturnValue(ref({ data: { user: { id: v7() } } }));
@@ -46,16 +41,16 @@ describe("dashboardVisualPreviewDatasetBindingForm", () => {
     });
     const picker = wrapper.findComponent(DatasetReferencePicker);
     picker.vm.$emit("update:modelValue", firstReference);
-    picker.vm.$emit("update:modelValue", secondReference);
     await firstReadReached;
+    picker.vm.$emit("update:modelValue", secondReference);
     await flushPromises();
     releaseRead();
     await flushPromises();
-    await boundReadReached;
     const emittedBindings = wrapper.emitted<[undefined | VisualDatasetBinding]>("update:modelValue");
     assert.exists(emittedBindings);
 
     expect(emittedBindings.map(([binding]) => binding?.reference)).toStrictEqual([secondReference]);
+    expect(secondReferenceReadCount).toBe(1);
   });
 
   // The Order control ranks the categories by one of the query's series, and the Direction control sets how
