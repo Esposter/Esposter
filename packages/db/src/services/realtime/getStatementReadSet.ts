@@ -4,6 +4,7 @@ import type { SQLWrapper } from "drizzle-orm";
 import { FilterSite } from "#src/models/realtime/FilterSite";
 import { JoinKind } from "#src/models/realtime/JoinKind";
 import { JoinSide } from "#src/models/realtime/JoinSide";
+import { JsonArrayParam } from "#src/models/shared/JsonArrayParam";
 import { getOccurrenceKey } from "#src/services/realtime/getOccurrenceKey";
 import { getStatementConfig } from "#src/services/realtime/getStatementConfig";
 import { tableMap } from "#src/services/realtime/tableMap";
@@ -395,7 +396,10 @@ const readCondition = (
   }
   const operator = getOperatorText(chunks[operatorIndex]);
   const operand = chunks[operatorIndex + 1];
-  if (operator === "=" && is(operand, Param))
+  // A list bound as one JSON array is the IN list over the values it holds, so each value is a scope of the column
+  if (is(operand, JsonArrayParam))
+    for (const value of operand.values) addScopes(reference.columns, value, context, reference.throughSubquery);
+  else if (operator === "=" && is(operand, Param))
     addScopes(reference.columns, operand.value, context, reference.throughSubquery);
   else if (operator === "=") {
     const other = readReferenceAt(chunks, operatorIndex + 1, declarations, context);

@@ -5,6 +5,7 @@ import { getWokenTopics } from "#src/services/realtime/getWokenTopics";
 import { getWriteTopics } from "#src/services/realtime/getWriteTopics";
 import { insertUser } from "#src/services/realtime/insertUser.test";
 import { recordStatements } from "#src/services/realtime/recordStatements";
+import { inJsonArray } from "#src/services/shared/inJsonArray";
 import { createMockDb } from "@esposter/db-mock";
 import {
   bookmarksInApp,
@@ -96,6 +97,61 @@ describe(getReadTopics, () => {
     await expect(getReadTopicNames(statements)).resolves.toStrictEqual(
       [`message_usersToRooms:roomId=${firstRoomId}`, `message_usersToRooms:roomId=${secondRoomId}`].toSorted(),
     );
+  });
+
+  // A JSON array list names each value it lists, as the IN list does, so a write to a room the list does not name wakes no
+  // Read of it, even one that reads the column the write changes. A write to a listed room wakes the read through its topic
+  test("a write to a room a JSON array list does not name wakes no read of it", async () => {
+    expect.hasAssertions();
+
+    const { db } = await createMockDb();
+    const userId = v7();
+    await insertUser(db, userId);
+    const firstRoomId = v7();
+    const secondRoomId = v7();
+    const unlistedRoomId = v7();
+    const roomIds = [firstRoomId, secondRoomId, unlistedRoomId];
+    await db.insert(roomsInMessage).values(roomIds.map((id) => ({ id, name: id, type: RoomType.Room, userId })));
+    await db.insert(usersToRoomsInMessage).values(roomIds.map((roomId) => ({ roomId, userId })));
+    const read = recordStatements(db);
+    await read.database
+      .select({ isHidden: usersToRoomsInMessage.isHidden, roomId: usersToRoomsInMessage.roomId })
+      .from(usersToRoomsInMessage)
+      .where(inJsonArray(usersToRoomsInMessage.roomId, [firstRoomId, secondRoomId]));
+    const unlistedWrite = recordStatements(db);
+    await unlistedWrite.database
+      .update(usersToRoomsInMessage)
+      .set({ isHidden: true })
+      .where(eq(usersToRoomsInMessage.roomId, unlistedRoomId));
+    const listedWrite = recordStatements(db);
+    await listedWrite.database
+      .update(usersToRoomsInMessage)
+      .set({ isHidden: true })
+      .where(eq(usersToRoomsInMessage.roomId, firstRoomId));
+
+    const unlistedWoken = await getWoken(read.statements, unlistedWrite.statements);
+    const listedWoken = await getWoken(read.statements, listedWrite.statements);
+    // The database is shared by the file's tests, and the join test below reads every room, so this test removes its rows
+    await db.delete(usersToRoomsInMessage).where(eq(usersToRoomsInMessage.userId, userId));
+    await db.delete(roomsInMessage).where(eq(roomsInMessage.userId, userId));
+
+    expect(unlistedWoken).toStrictEqual([]);
+    expect(listedWoken).toStrictEqual([`message_usersToRooms:roomId=${firstRoomId}`]);
+  });
+
+  // Under an `or` a list is a condition like any other, so a branch that names no scope of its own leaves its table table-wide
+  test("a JSON array list under an or with a branch that names no scope leaves its table table-wide", async () => {
+    expect.hasAssertions();
+
+    const { db } = await createMockDb();
+    const { database, statements } = recordStatements(db);
+
+    await database
+      .select()
+      .from(usersToRoomsInMessage)
+      .where(or(inJsonArray(usersToRoomsInMessage.roomId, [v7(), v7()]), eq(usersToRoomsInMessage.isHidden, true)));
+
+    await expect(getReadTopicNames(statements)).resolves.toStrictEqual(["message_usersToRooms:*"]);
   });
 
   // A table a read joins is named table-wide, whatever the read selects of it. The join's rows would be a narrower name,
